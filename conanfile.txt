@@ -1,0 +1,8 @@
+[requires]
+boost/1.69.0@conan/stable
+
+[generators]
+cmake
+
+[options]
+boost:without_python=False
