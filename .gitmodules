@@ -1,0 +1,6 @@
+[submodule "external/malmo"]
+	path = external/malmo
+	url = https://github.com/ml4ai/malmo
+[submodule "external/OpenFace"]
+	path = external/OpenFace
+	url = https://github.com/ml4ai/OpenFace
