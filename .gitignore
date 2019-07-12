@@ -1,3 +1,7 @@
 # Build directory for CMake
 
 build
+
+# Automatically generated files and directories from example.cpp mission
+mission_records
+*.tgz
