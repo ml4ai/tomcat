@@ -26,7 +26,12 @@ using namespace malmo;
 #include <cstdlib>
 #include <exception>
 #include <iostream>
+
+// fmt
+#include <fmt/core.h>
+
 using namespace std;
+using fmt::print;
 
 int main(int argc, const char **argv)
 {
@@ -38,13 +43,13 @@ int main(int argc, const char **argv)
     }
     catch( const exception& e )
     {
-        cout << "ERROR: " << e.what() << endl;
-        cout << agent_host.getUsage() << endl;
+        print("ERROR: {}", e.what());
+        print(agent_host.getUsage());
         return EXIT_SUCCESS;
     }
     if( agent_host.receivedArgument("help") )
     {
-        cout << agent_host.getUsage() << endl;
+        print(agent_host.getUsage());
         return EXIT_SUCCESS;
     }
 
@@ -67,7 +72,7 @@ int main(int argc, const char **argv)
             connected = true;
         }
         catch (exception& e) {
-            cout << "Error starting mission: " << e.what() << endl;
+            print("Error starting mission: {}", e.what());
             attempts += 1;
             if (attempts >= 3)
                 return EXIT_FAILURE;    // Give up after three attempts.
@@ -84,7 +89,7 @@ int main(int argc, const char **argv)
         boost::this_thread::sleep(boost::posix_time::milliseconds(100));
         world_state = agent_host.getWorldState();
         for( boost::shared_ptr<TimestampedString> error : world_state.errors )
-            cout << "Error: " << error->text << endl;
+            print("Error: {}", error->text);
     } while (!world_state.has_mission_begun);
     cout << endl;
 
@@ -98,17 +103,17 @@ int main(int argc, const char **argv)
         }
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         world_state = agent_host.getWorldState();
-        cout << "video,observations,rewards received: "
-             << world_state.number_of_video_frames_since_last_state << ","
-             << world_state.number_of_observations_since_last_state << ","
-             << world_state.number_of_rewards_since_last_state << endl;
+        print("video, observations, rewards received: {}, {}, {}",
+             world_state.number_of_video_frames_since_last_state,
+             world_state.number_of_observations_since_last_state,
+             world_state.number_of_rewards_since_last_state);
         for( boost::shared_ptr<TimestampedReward> reward : world_state.rewards )
-            cout << "Summed reward: " << reward->getValue() << endl;
+            print("Summed reward: {}", reward->getValue());
         for( boost::shared_ptr<TimestampedString> error : world_state.errors )
-            cout << "Error: " << error->text << endl;
+            print("Error: {}", error->text);
     } while (world_state.is_mission_running);
 
-    cout << "Mission has stopped." << endl;
+    print("Mission has stopped.");
 
     return EXIT_SUCCESS;
 }
