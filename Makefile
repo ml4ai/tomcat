@@ -9,17 +9,17 @@ $(XS3P_XSL):
 install: $(XS3P_XSL)
 	pip install conan numpy
 	mkdir -p build
-	cd build \
+	MALMO_XSD_PATH=`pwd`/external/malmo/Schemas cd build \
 	  && conan install .. -b missing \
 	  && cmake .. \
 	  && cmake --build . -- -j
 
 # Launch the Minecraft client on *nix (basically, non-Windows) systems
 launch_unix:
-	./external/malmo/Minecraft/launchClient.sh
+	MALMO_XSD_PATH=`pwd`/external/malmo/Schemas ./external/malmo/Minecraft/launchClient.sh
 
 run_example_mission:
-	./build/bin/example
+	MALMO_XSD_PATH=`pwd`/external/malmo/Schemas ./build/bin/example
 
 clean:
 	rm -rf build
