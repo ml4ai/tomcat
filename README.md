@@ -58,8 +58,20 @@ Installation
 create a Python virtual environment for this project and activating it prior to
 this step.
 
+
 ```
 git clone --recursive https://github.com/ml4ai/tomcat
 cd tomcat
 make install
 ```
+
+Running the example mission
+---------------------------
+
+To run the example mission, do
+
+`make launch_unix`
+
+to launch Minecraft, and then in a separate terminal, do
+
+`make run_example_mission`
