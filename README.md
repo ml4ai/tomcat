@@ -75,3 +75,7 @@ To run the example mission, do
 to launch Minecraft, and then in a separate terminal, do
 
 `make run_example_mission`
+
+This creates an output file `saved_data.tgz`  and an output directory
+`mission_records` for further inspection.
+
