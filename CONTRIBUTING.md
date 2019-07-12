@@ -22,3 +22,15 @@ display information about the submodules.
 git config --global diff.submodule log
 git config status.submodulesummary 1
 ```
+
+Speeding up builds with Gradle
+------------------------------
+
+You can speed up builds by installing Gradle and adding the line
+
+```
+org.gradle.daemon=true
+```
+
+to your `~/.gradle/gradle.properties` file. (Source:
+https://stackoverflow.com/a/34738800)
