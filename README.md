@@ -56,8 +56,18 @@ Installation
 
 **Note**: If you are an active developer of ToMCAT, it is highly recommended to
 create a Python virtual environment for this project and activating it prior to
-this step.
+this step. Also, you can speed up builds by installing Gradle and
+adding the line
 
+```
+org.gradle.daemon=true
+```
+
+to your `~/.gradle/gradle.properties` file. (Source:
+https://stackoverflow.com/a/34738800)
+
+
+To clone the project and install it, do the following:
 
 ```
 git clone --recursive https://github.com/ml4ai/tomcat
