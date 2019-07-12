@@ -27,6 +27,8 @@ If you don't have Python 3 already, you can install it with
 
 ```
 sudo port install py37-pip
+sudo port select --set python python37
+sudo port select --set python3 python37
 sudo port select --set pip pip37
 sudo port select --set pip3 pip37
 ```
