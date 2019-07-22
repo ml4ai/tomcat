@@ -1,0 +1,10 @@
+.gradle/
+.minecraft/
+.minecraftserver/
+run/config/
+run/logs/
+run/saves/
+run/usercache.json
+run/usernamecache.json
+src/main/resources/schemas.index
+src/main/resources/version.properties

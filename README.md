@@ -1,91 +1,85 @@
-ToMCAT
-======
+# ToMCAT
 
 This is the repository for the ToMCAT (Theory-of-Mind based Cognitive
 Architecture for Teams) project at the University of Arizona.
 
-Dependencies
-------------
+### Dependencies
 
-You will need Python 3, and the following
-
-- cmake
-- ffmpeg
-- swig
-- wget
-- Java 8
-- doxygen 
+First, you'll need to grab the dependencies.
 
 ### MacOS
 
 #### MacPorts
 
-If you have the MacPorts package manager, you can install these with the
-following commands.
-
-If you don't have Python 3 already, you can install it with 
-
 ```
-sudo port install py37-pip
-sudo port select --set python python37
-sudo port select --set python3 python37
-sudo port select --set pip pip37
-sudo port select --set pip3 pip37
+port install cmake libfmt doxygen boost ffmpeg opencv4 dlib openjdk8 gradle
 ```
 
-Then install the rest of the dependencies:
+Add the following line to your `~/.bash_profile` to make Java 8 the default
+version:
 
 ```
-sudo port install cmake wget openjdk8 swig swig-java ffmpeg doxygen
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk8/Contents/Home
 ```
+
+Then run `source ~/.bash_profile` to activate this Java version.
 
 
 #### Homebrew
 
 If you are using the Homebrew package manager, you can install these with the
-following commands (copied from the Project Malmo documentation).
+following commands.
 
 ```
-brew install python3 # (If you don't have it already)
-brew install cmake wget swig ffmpeg doxygen
-sudo brew cask install java8
+brew install cmake fmt doxygen boost ffmpeg opencv dlib
+brew tap adoptopenjdk/openjdk
+brew cask install adoptopenjdk8
+brew install gradle
 ```
 
 Installation
 ------------
 
-**Note**: If you are an active developer of ToMCAT, it is highly recommended to
-create a Python virtual environment for this project and activating it prior to
-this step. Also, you can speed up builds by installing Gradle and
-adding the line
+Malmo requires the environment variable `MALMO_XSD_PATH` to point to the Schemas directory.
+
+For convenience, in your `~/.bash_profile` file, add:
 
 ```
-org.gradle.daemon=true
+export MALMO_XSD_PATH=<path_to_tomcat_repo>/external/malmo/Schemas
 ```
-
-to your `~/.gradle/gradle.properties` file. (Source:
-https://stackoverflow.com/a/34738800)
-
 
 To clone the project and install it, do the following:
 
 ```
-git clone --recursive https://github.com/ml4ai/tomcat
+git clone https://github.com/ml4ai/tomcat
 cd tomcat
-make install
+mkdir build && cd build 
+cmake .. 
+make -j
+make -j Minecraft
 ```
 
-Running the example mission
----------------------------
+Running experiments
+-------------------
 
-To run the example mission, do
+To launch Minecraft, execute the script (in the build directory)
 
-`make launch_unix`
+```
+./launch_minecraft.sh
+```
 
-to launch Minecraft, and then in a separate terminal, do
+Then in a separate terminal, run the executable `runExperiment`:
 
-`make run_example_mission`
+```
+./bin/runExperiment --mission_xml <path_to_some_mission_XML_file>
+```
 
-This creates an output file `saved_data.tgz`  and an output directory
-`mission_records` for further inspection.
+To allow human control of the character press the `<Enter>` key.
 
+## For developers
+
+To speed up builds, create a file called gradle.properties and add `org.gradle.daemon=true` to it:
+
+```
+echo "org.gradle.daemon=true" > ~/.gradle/gradle.properties.
+```

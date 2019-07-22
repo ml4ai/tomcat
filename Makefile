@@ -1,25 +1,28 @@
-MALMO_DIR:=external/malmo
+PATCH_EXPERTS_DIR:=external/OpenFace/lib/local/LandmarkDetector/model/patch_experts
 
-XS3P_XSL_URL_STUB:=https://raw.githubusercontent.com/bitfehler/xs3p/1b71310dd1e8b9e4087cf6120856c5f701bd336b
-XS3P_XSL:=external/malmo/Schemas/xs3p.xsl
 
-$(XS3P_XSL):
-	curl $(XS3P_XSL_URL_STUB)/$(@F) -o $@
+# Download patch experts for OpenFace
+$(PATCH_EXPERTS_DIR)/cen_patches_0.25_of.dat:
+	curl https://www.dropbox.com/s/7na5qsjzz8yfoer/$(@F) -o $@
+$(PATCH_EXPERTS_DIR)/cen_patches_0.35_of.dat:
+	curl https://www.dropbox.com/s/k7bj804cyiu474t/$(@F) -o $@
+$(PATCH_EXPERTS_DIR)/cen_patches_0.50_of.dat:
+	curl https://www.dropbox.com/s/ixt4vkbmxgab1iu/$(@F) -o $@
+$(PATCH_EXPERTS_DIR)/cen_patches_1.00_of.dat:
+	curl https://www.dropbox.com/s/2t5t1sdpshzfhpj/$(@F) -o $@
 
-install: $(XS3P_XSL)
-	pip install conan numpy
-	mkdir -p build
-	MALMO_XSD_PATH=`pwd`/external/malmo/Schemas cd build \
-	  && conan install .. -b missing \
+MODELS:=$(PATCH_EXPERTS_DIR)/cen_patches_0.25_of.dat\
+		$(PATCH_EXPERTS_DIR)/cen_patches_0.35_of.dat\
+		$(PATCH_EXPERTS_DIR)/cen_patches_0.50_of.dat\
+		$(PATCH_EXPERTS_DIR)/cen_patches_1.00_of.dat
+
+models: $(MODELS)
+
+install:
+	mkdir -p build \
+	  && cd build \
 	  && cmake .. \
 	  && cmake --build . -- -j
-
-# Launch the Minecraft client on *nix (basically, non-Windows) systems
-launch_unix:
-	MALMO_XSD_PATH=`pwd`/external/malmo/Schemas ./external/malmo/Minecraft/launchClient.sh
-
-run_example_mission:
-	MALMO_XSD_PATH=`pwd`/external/malmo/Schemas ./build/bin/example
 
 clean:
 	rm -rf build

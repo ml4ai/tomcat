@@ -1,0 +1,32 @@
+os:
+  - osx
+
+osx_image: xcode11
+
+language: 
+ - cpp
+
+
+script:
+  - cd external && curl -O http://dlib.net/files/dlib-19.17.tar.bz2 
+    && tar -xvjf dlib-19.17.tar.bz2 && cd ../
+  - cd external 
+    && curl -O http://vision.cs.arizona.edu/adarsh/libs/libMalmo.a && cd ../
+  - make install
+  - cd docs; make
+
+addons:
+  homebrew:
+    packages:
+      - graphviz
+      - cmake
+      - boost
+      - doxygen
+      - opencv
+      - fmt
+      - gradle
+      - ffmpeg
+      - openblas
+
+env:
+  - MALMO_XSD_PATH=~/tomcat/external/malmo/Schemas
