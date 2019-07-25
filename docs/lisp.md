@@ -4,16 +4,18 @@
 * Created: 2019-05-26
 * Last update: 2019-07-24
 
-
-
 ## Get a Lisp
 
-There are several very good free, open-source Common Lisp implementations. Clay is most familiar (for modest values of familiar) Clozure Common Lisp (CCL), so the focus here will be CCL, but I'll also note SBCL. It is safe to have both on your machine.
+There are several very good free, open-source Common Lisp implementations. Clay
+is most familiar (for modest values of familiar) Clozure Common Lisp (CCL), so
+the focus here will be CCL, but I'll also note SBCL. It is safe to have both on
+your machine.
 
 ### Steel Bank Common Lisp (SBCL)
 [http://www.sbcl.org/](http://www.sbcl.org/)
 
-You will need SBCL to build the local Shop3 documentation (although Clay is still working on getting local doc build to work).
+You will need SBCL to build the local Shop3 documentation (although Clay is
+still working on getting local doc build to work).
 
 #### Intall:
 ```
@@ -68,7 +70,8 @@ After launching the CCL lisp image, evaluate the following
 
 > Optionally build the cocoa application.
 This step is not necessary
-> ```
+
+```
 ? (require 'cocoa-application)
 ```
 
@@ -92,13 +95,13 @@ Add to PATH in `~/.bash_profile`:
 export PATH=$PATH":/usr/local/src/ccl/scripts"
 ```
 
-After source'ing `~/.bash_profile` or starting a new shell, you should be able to access `ccl64` from the command line:
+After source'ing `~/.bash_profile` or starting a new shell, you should be able
+to access `ccl64` from the command line:
 
 ```
 $ which ccl64
 /usr/local/src/ccl/scripts/ccl64
 ```
-
 
 
 ## Quicklisp
@@ -114,9 +117,11 @@ Get quicklisp:
 $ curl -O https://beta.quicklisp.org/quicklisp.lisp
 ```
 
-Next, launch CCL in the location where you would like your quicklisp repository to be maintained. You specify the path of the quicklisp repo root by the `:path` argument.
-(I chose to launch ccl within my `<repo-root>/lisp/` directory, so I only needed to add the `quicklisp` root dir (the name I chose) as the `:path` argument.)
-Evaluate the following within CCL:
+Next, launch CCL in the location where you would like your quicklisp repository
+to be maintained. You specify the path of the quicklisp repo root by the
+`:path` argument.  (I chose to launch ccl within my `<repo-root>/lisp/`
+directory, so I only needed to add the `quicklisp` root dir (the name I chose)
+as the `:path` argument.) Evaluate the following within CCL:
 
 ```
 ? (load "<path_to>quicklisp.lisp")
@@ -124,15 +129,24 @@ Evaluate the following within CCL:
 ? (ql:add-to-init-file)  # adds lines to ~/.ccl-init.lisp
 ```
 
-NOTE: Most lisps use some sort of init file facility in order to permit configuration and pre-loading. For CCL, one of these files goes in: `~.ccl-init.lisp`. The last line of the commands above adds a form to `~.ccl-init.lisp` so that quicklisp will automatically be loaded (it's very lightweight) at CCL startup.
+NOTE: Most lisps use some sort of init file facility in order to permit
+configuration and pre-loading. For CCL, one of these files goes in:
+`~.ccl-init.lisp`. The last line of the commands above adds a form to
+`~.ccl-init.lisp` so that quicklisp will automatically be loaded (it's very
+lightweight) at CCL startup.
 
 
 
 ## Lisp Editor
 
-A good editor is essential for lisp dev. It should grok paren matching and support canonical lisp formatting ([http://wiki.c2.com/?LispIndentation](http://wiki.c2.com/?LispIndentation)).
+A good editor is essential for lisp dev. It should grok paren matching and
+support canonical lisp formatting
+([http://wiki.c2.com/?LispIndentation](http://wiki.c2.com/?LispIndentation)).
 
-It is also good to have direct integration with a Lisp REPL with backtrace navigation support. One of the most widely used general Lisp integration is the Superior Lisp Interaction Mode for Emacs (SLIME: [https://common-lisp.net/project/slime/](https://common-lisp.net/project/slime/)). 
+It is also good to have direct integration with a Lisp REPL with backtrace
+navigation support. One of the most widely used general Lisp integration is the
+Superior Lisp Interaction Mode for Emacs (SLIME:
+[https://common-lisp.net/project/slime/](https://common-lisp.net/project/slime/)). 
 
 Some helpful notes about SLIME use:<br>
 [https://common-lisp.net/project/slime/doc/html/Evaluation.html](https://common-lisp.net/project/slime/doc/html/Evaluation.html)
@@ -174,8 +188,9 @@ If you have already installed quicklisp, then you just need to evaluate the foll
 ? (ql:quickload "quicklisp-slime-helper")
 ```
 
-At the end of installing quicklisp-slime-helper, it will display a message explaining what to put in your `~/.emacs`,
-except this should go where Aquamacs puts such things:
+At the end of installing quicklisp-slime-helper, it will display a message
+explaining what to put in your `~/.emacs`, except this should go where Aquamacs
+puts such things:
 
 ```
 ~/.emacs.d/init.el
@@ -192,7 +207,9 @@ In my setup, I've added the following two lines to `~/.emacs.d/init.el`:
 
 There is a commonly used Emacs package manager called MELPA ([https://melpa.org/#/](https://melpa.org/#/)).
 
-I had to work a bit to get this to work with Aquamacs, including working with Win from the Aquamacs dev group; here is the issue I followed that provided insight:<br>
+I had to work a bit to get this to work with Aquamacs, including working with
+Win from the Aquamacs dev group; here is the issue I followed that provided
+insight:<br>
 [https://github.com/davidswelt/aquamacs-emacs/issues/133](https://github.com/davidswelt/aquamacs-emacs/issues/133)
 
 Here's what I did:
@@ -254,7 +271,6 @@ There are two things you can do about this warning:
 ```
 M-x package-refresh-contents
 ```
-
 
 
 ## SHOP3
