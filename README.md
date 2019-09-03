@@ -40,6 +40,13 @@ brew install gradle
 Installation
 ------------
 
+Clone the repo:
+
+```
+git clone https://github.com/ml4ai/tomcat
+```
+
+
 Malmo requires the environment variable `MALMO_XSD_PATH` to point to the Schemas directory.
 
 For convenience, in your `~/.bash_profile` file, add:
@@ -48,10 +55,13 @@ For convenience, in your `~/.bash_profile` file, add:
 export MALMO_XSD_PATH=<path_to_tomcat_repo>/external/malmo/Schemas
 ```
 
-To clone the project and install it, do the following:
+and make sure to run `source ~/.bash_profile` to activate the environment
+variable.
+
+
+To install the ToMCAT local agent, Malmo, and Minecraft, do the following:
 
 ```
-git clone https://github.com/ml4ai/tomcat
 cd tomcat
 mkdir build && cd build 
 cmake .. 
@@ -77,7 +87,7 @@ Then in a separate terminal, run the executable `runExperiment`:
 For example, to run the default world mission, you would do
 
 ```
-./bin/runExperiment --mission_xml ../external/malmo/sample_missions/default_world_1.xml
+./bin/runExperiment --mission ../external/malmo/sample_missions/default_world_1.xml
 ```
 
 To allow human control of the character press the `<Enter>` key.
