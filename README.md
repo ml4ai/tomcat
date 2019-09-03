@@ -81,7 +81,7 @@ To launch Minecraft, execute the script (in the build directory)
 Then in a separate terminal, run the executable `runExperiment`:
 
 ```
-./bin/runExperiment --mission_xml <path_to_mission_XML_file>
+./bin/runExperiment --mission <path_to_mission_XML_file>
 ```
 
 For example, to run the default world mission, you would do
