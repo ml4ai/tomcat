@@ -5,3 +5,45 @@ build
 # Automatically generated files and directories from example.cpp mission
 mission_records
 *.tgz
+
+*.swp
+
+# IDEs
+.idea
+cmake-build-debug
+
+# Data
+data/*
+
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
