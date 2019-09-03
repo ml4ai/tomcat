@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/ml4ai/delphi.svg?branch=master)](https://travis-ci.com/ml4ai/delphi)
+
 # ToMCAT
 
 This is the repository for the ToMCAT (Theory-of-Mind based Cognitive
