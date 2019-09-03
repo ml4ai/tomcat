@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/ml4ai/delphi.svg?branch=master)](https://travis-ci.com/ml4ai/delphi)
+[![Build Status](https://travis-ci.com/ml4ai/tomcat.svg?token=sUdVniYKnyysze9kdsDd&branch=master)](https://travis-ci.com/ml4ai/tomcat)
 
 # ToMCAT
 
