@@ -24,14 +24,15 @@ string get_file_contents(string filename) {
   return sstr.str();
 }
 
-void LocalAgent::set_mission(string mission_xml_filepath) {
+void LocalAgent::set_mission(string mission_xml_filepath,
+                             unsigned int time_limit = 20) {
   string mission_xml = get_file_contents(mission_xml_filepath);
   this->mission = MissionSpec(mission_xml, true);
   this->mission.requestVideo(640, 480);
-  this->mission.timeLimitInSeconds(100);
+  this->mission.timeLimitInSeconds(20);
 }
 
-int LocalAgent::startMission(int port=10000) {
+int LocalAgent::startMission(int port = 10000) {
   using boost::shared_ptr;
   MissionRecordSpec mission_record;
   WorldState world_state;
@@ -44,11 +45,11 @@ int LocalAgent::startMission(int port=10000) {
   print("Waiting for the mission to start...");
   do {
     try {
-      this->host.startMission(this->mission, client_pool, mission_record, 0, "");
-      //this->host.startMission(this->mission, mission_record);
+      this->host.startMission(this->mission, client_pool, mission_record, 0,
+                              "");
+      // this->host.startMission(this->mission, mission_record);
       connected = true;
-    }
-    catch (exception &e) {
+    } catch (exception &e) {
       print("Error starting mission: {}", e.what());
       attempts += 1;
       // Give up after three attempts.

@@ -71,7 +71,13 @@ To launch Minecraft, execute the script (in the build directory)
 Then in a separate terminal, run the executable `runExperiment`:
 
 ```
-./bin/runExperiment --mission_xml <path_to_some_mission_XML_file>
+./bin/runExperiment --mission_xml <path_to_mission_XML_file>
+```
+
+For example, to run the default world mission, you would do
+
+```
+./bin/runExperiment --mission_xml ../external/malmo/sample_missions/default_world_1.xml
 ```
 
 To allow human control of the character press the `<Enter>` key.

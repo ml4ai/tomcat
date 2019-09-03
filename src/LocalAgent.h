@@ -19,8 +19,9 @@ class LocalAgent {
    * Set the agent's mission from an XML file.
    * @param mission_xml_filepath The path to the XML file containing the mission
    * specification.
+   * @param time_limit The time limit for the mission.
    */
-  void set_mission(std::string mission_xml_filepath);
+  void set_mission(std::string mission_xml_filepath, unsigned int time_limit);
 
   int startMission(int);
   void sendCommand(std::string);
