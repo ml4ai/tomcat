@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.com/ml4ai/tomcat.svg?token=sUdVniYKnyysze9kdsDd&branch=master)](https://travis-ci.com/ml4ai/tomcat)
+[![codecov](https://codecov.io/gh/ml4ai/tomcat/branch/master/graph/badge.svg?token=OKXelvVO4z)](https://codecov.io/gh/ml4ai/tomcat)
 
 # ToMCAT
 

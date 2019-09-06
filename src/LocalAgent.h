@@ -21,7 +21,10 @@ class LocalAgent {
    * specification.
    * @param time_limit The time limit for the mission.
    */
-  void set_mission(std::string mission_xml_filepath, unsigned int time_limit);
+  void set_mission(std::string mission_xml_filepath,
+                   unsigned int time_limit = 20,
+                   unsigned int width = 640,
+                   unsigned int height = 480);
 
   int startMission(int);
   void sendCommand(std::string);

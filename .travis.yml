@@ -7,14 +7,6 @@ language:
  - cpp
 
 
-script:
-  - cd external && curl -O http://dlib.net/files/dlib-19.17.tar.bz2 
-    && tar -xvjf dlib-19.17.tar.bz2 && cd ../
-  - cd external 
-    && curl -O http://vision.cs.arizona.edu/adarsh/libs/libMalmo.a && cd ../
-  - make install
-  - cd docs; make
-
 addons:
   homebrew:
     packages:
@@ -24,9 +16,25 @@ addons:
       - doxygen
       - opencv
       - fmt
-      - gradle
       - ffmpeg
       - openblas
+      - lcov
+
+install:
+  - cd external && curl -O http://dlib.net/files/dlib-19.17.tar.bz2 
+    && tar -xvjf dlib-19.17.tar.bz2 && cd ../
+
+script:
+  - mkdir build && cd build && cmake .. && make -j test && cd ../
+  - cd build && ./bin/test --mission ../external/malmo/sample_missions/default_world_1.xml && cd ../
+
+after_script:
+  - cd docs && make
 
 env:
   - MALMO_XSD_PATH=~/tomcat/external/malmo/Schemas
+
+after_success:
+  - lcov -d build/tests/CMakeFiles/test.dir -d build/src/CMakeFiles/tomcat.dir -c -o coverage.info
+  - lcov -e coverage.info '*tomcat/src*' -o coverage.info
+  - bash <(curl -s https://codecov.io/bash) -f coverage.info

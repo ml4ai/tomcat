@@ -25,10 +25,12 @@ string get_file_contents(string filename) {
 }
 
 void LocalAgent::set_mission(string mission_xml_filepath,
-                             unsigned int time_limit = 20) {
+                             unsigned int time_limit,
+                             unsigned int width,
+                             unsigned int height) {
   string mission_xml = get_file_contents(mission_xml_filepath);
   this->mission = MissionSpec(mission_xml, true);
-  this->mission.requestVideo(640, 480);
+  this->mission.requestVideo(width, height);
   this->mission.timeLimitInSeconds(20);
 }
 

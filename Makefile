@@ -1,6 +1,5 @@
 PATCH_EXPERTS_DIR:=external/OpenFace/lib/local/LandmarkDetector/model/patch_experts
 
-
 # Download patch experts for OpenFace
 $(PATCH_EXPERTS_DIR)/cen_patches_0.25_of.dat:
 	curl https://www.dropbox.com/s/7na5qsjzz8yfoer/$(@F) -o $@
@@ -17,12 +16,6 @@ MODELS:=$(PATCH_EXPERTS_DIR)/cen_patches_0.25_of.dat\
 		$(PATCH_EXPERTS_DIR)/cen_patches_1.00_of.dat
 
 models: $(MODELS)
-
-install:
-	mkdir -p build \
-	  && cd build \
-	  && cmake .. \
-	  && cmake --build . -- -j
 
 clean:
 	rm -rf build
