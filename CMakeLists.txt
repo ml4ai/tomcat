@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.11)
+
 project(tomcat)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/tools/cmake/")
+
+include(utils)
 
 set(ENV{MALMO_XSD_PATH} external/malmo/Schemas)
 
@@ -11,25 +14,19 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
 
 set(CMAKE_CXX_FLAGS
     "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
-cmake_policy(SET CMP0074 NEW)
 
-include(utils)
+cmake_policy(SET CMP0074 NEW)
 
 # Download and unzip the OpenFace models
 set(MODELS ${CMAKE_CURRENT_BINARY_DIR}/models.zip)
-message("Downloading OpenFace models...")
-download_file(http://vision.cs.arizona.edu/adarsh/models.zip ${MODELS})
-
-execute_process(COMMAND ${CMAKE_COMMAND}
-                        -E
-                        tar
-                        -xf
-                        ${MODELS}
-                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+download_and_unzip_tgz(http://vision.cs.arizona.edu/adarsh/OpenFace_models.tgz
+                       ${MODELS} "OpenFace models")
 
 find_package(FMT REQUIRED)
 
-if(NOT FMT_FOUND)
+if(FMT_FOUND)
+  message("-- fmt package found.")
+else()
   message(
     "-- fmt package not found on system, please install it.  (https://fmt.dev)")
 endif()
@@ -48,7 +45,7 @@ find_package(Boost 1.69
 find_package(OpenCV REQUIRED)
 
 if(DEFINED ENV{TRAVIS})
-  message("-- Installation running on Travis, using downloaded dlib.")
+  message("-- CMake running on Travis, using downloaded dlib.")
   add_subdirectory(external/dlib-19.17)
 else()
   find_package(dlib REQUIRED)
@@ -56,9 +53,18 @@ endif()
 
 add_subdirectory(external/malmo)
 add_subdirectory(external/OpenFace)
-include_directories(external/malmo/Malmo/src)
-include_directories(${OpenFace_INCLUDE_DIRS})
+
+if(DEFINED ENV{TRAVIS})
+  option(CODE_COVERAGE "Enable coverage reporting" ON)
+endif()
+
 add_subdirectory(src)
+target_include_directories(tomcat
+                           PRIVATE src external/malmo/Malmo/src
+                                   ${OpenFace_INCLUDE_DIRS})
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/tools/launch_minecraft.sh
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+add_subdirectory(tests)
+target_include_directories(test PRIVATE src external/malmo/Malmo/src)

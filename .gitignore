@@ -47,3 +47,6 @@ data/*
 *.exe
 *.out
 *.app
+
+# lcov output
+coverage.info
