@@ -63,6 +63,7 @@ target_include_directories(tomcat
                            PRIVATE src external/malmo/Malmo/src
                                    ${OpenFace_INCLUDE_DIRS})
 
+target_include_directories(runExperiment PRIVATE external/malmo/Malmo/src)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/tools/launch_minecraft.sh
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
