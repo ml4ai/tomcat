@@ -18,7 +18,7 @@ set(CMAKE_CXX_FLAGS
 cmake_policy(SET CMP0074 NEW)
 
 # Download and unzip the OpenFace models
-set(MODELS ${CMAKE_CURRENT_BINARY_DIR}/models.zip)
+set(MODELS ${CMAKE_CURRENT_BINARY_DIR}/OpenFace_models.tgz)
 download_and_unzip_tgz(http://vision.cs.arizona.edu/adarsh/OpenFace_models.tgz
                        ${MODELS} "OpenFace models")
 
