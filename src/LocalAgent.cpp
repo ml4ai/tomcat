@@ -34,7 +34,7 @@ void LocalAgent::set_mission(string mission_xml_filepath,
   this->mission.timeLimitInSeconds(20);
 }
 
-int LocalAgent::startMission(int port = 10000) {
+int LocalAgent::startMission(int port = 10000, bool activateWebcam = false) {
   using boost::shared_ptr;
   MissionRecordSpec mission_record;
   WorldState world_state;
@@ -68,11 +68,15 @@ int LocalAgent::startMission(int port = 10000) {
     world_state = this->host.getWorldState();
   } while (!world_state.has_mission_begun);
 
-  this->webcam_sensor.initialize();
+  if (activateWebcam) {
+    this->webcam_sensor.initialize();
+  }
 
   do {
     sleep_for(milliseconds(10));
-    this->webcam_sensor.get_observation();
+    if (activateWebcam) {
+      this->webcam_sensor.get_observation();
+    }
     world_state = this->host.getWorldState();
   } while (world_state.is_mission_running);
 

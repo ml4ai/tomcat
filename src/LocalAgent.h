@@ -26,7 +26,7 @@ class LocalAgent {
                    unsigned int width = 640,
                    unsigned int height = 480);
 
-  int startMission(int);
+  int startMission(int, bool);
   void sendCommand(std::string);
 
   WebcamSensor webcam_sensor;
