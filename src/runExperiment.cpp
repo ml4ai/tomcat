@@ -20,6 +20,7 @@ int main(int argc, const char *argv[]) {
     ("time_limit", value<unsigned int>()->default_value(20),
      "Time limit for mission.")
     ("port,p", value<unsigned int>()->default_value(10000), "Port to control (>=10000)")
+    ("activate_webcam,w", value<bool>()->default_value(false), "Activate webcam to detect face landmarks? (true=1 or false=0)")
   ;
   variables_map vm;
   store(parse_command_line(argc, argv, desc), vm);
@@ -32,7 +33,7 @@ int main(int argc, const char *argv[]) {
   if (vm.count("mission")) {
     LocalAgent agent;
     agent.set_mission(mission_xml, vm["time_limit"].as<unsigned int>());
-    agent.startMission(vm["port"].as<unsigned int>());
+    agent.startMission(vm["port"].as<unsigned int>(), vm["activate_webcam"].as<bool>());
   }
   else {
     cout << desc << endl;
