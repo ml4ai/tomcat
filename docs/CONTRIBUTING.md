@@ -36,7 +36,7 @@ feature, do the following:
   ```
   git push
   ```
-- Wait for an email from [Travis CI](https://travis-ci.org/ml4ai/tomcat), to let
+- Wait for an email from [Travis CI](https://travis-ci.com/ml4ai/tomcat), to let
   you know whether the automated tests have passed or failed (if you haven't
   signed up for email alerts from Travis, you can simply view the live test
   execution log on the Travis website itself.) 
