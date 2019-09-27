@@ -25,10 +25,12 @@ namespace tomcat {
                     mission = new SARMission();
                     break;
 
+                // TODO Need to design item crafting mission
                 case missionID::itemCrafting:
                     mission = new SARMission();
                     break;
 
+                // TODO Need to design room escape mission
                 case missionID::roomEscape:
                     mission = new SARMission();
                     break;
