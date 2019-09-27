@@ -8,7 +8,7 @@ using namespace std;
 
 namespace tomcat {
 
-    enum missionID { saveAndRescue = 1, itemCrafting = 2, roomEscape = 3};
+    enum missionID { searchAndRescue = 1, itemCrafting = 2, roomEscape = 3};
 
     Mission* MissionFactory::create(string missionIdOrPathToXML) {
         Mission *mission;
@@ -21,7 +21,7 @@ namespace tomcat {
             mission_id_as_string >> mission_id;
 
             switch (mission_id) {
-                case missionID::saveAndRescue:
+                case missionID::searchAndRescue:
                     mission = new SARMission();
                     break;
 
