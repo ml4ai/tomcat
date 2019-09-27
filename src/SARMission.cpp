@@ -7,7 +7,14 @@ using namespace std;
 namespace tomcat {
 
     const static int HEIGHT_OF_GROUND_LEVEL = 2;
-    const static string WORLD_SKELETON_XML = "../resources/world_skeletons/search_and_rescue_mission.xml";
+    const static string WORLD_SKELETON_XML = R"(<?xml version="1.0" encoding="UTF-8" ?><Mission
+xmlns="http://ProjectMalmo.microsoft.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><About><Summary>
+Search and Rescue</Summary></About><ServerSection><ServerInitialConditions><AllowSpawning>false</AllowSpawning>
+</ServerInitialConditions><ServerHandlers><FlatWorldGenerator generatorString="3;2*2;1;village"/>
+</ServerHandlers></ServerSection><AgentSection mode="Survival"><Name>Tomcat</Name><AgentStart>
+<Placement x="0" y="2.0" z="0"/></AgentStart><AgentHandlers><ContinuousMovementCommands turnSpeedDegs="840">
+<ModifierList type="deny-list"><command>strafe</command></ModifierList></ContinuousMovementCommands>
+</AgentHandlers></AgentSection></Mission>)";
 
     const static int FLOOR_HEIGHT = 5;
     const static int BUILDING_WIDTH = 20;
@@ -32,16 +39,11 @@ namespace tomcat {
         this->drawTomcatSign();
 
         // Put a zombie on the ground floor!
-        this->drawEntity(BUILDING_SOUTHWEST_X_POSITION-20, HEIGHT_OF_GROUND_LEVEL, BUILDING_SOUTHWEST_Z_POSITION+20,"Zombie");
-
-//        this->drawStairs(10, 3, HEIGHT_OF_GROUND_LEVEL, 4, 5, orientation::south_north);
-//        this->drawStairs(20, 3, HEIGHT_OF_GROUND_LEVEL, 4, 5, orientation::north_south);
-//        this->drawStairs(30, 3, HEIGHT_OF_GROUND_LEVEL, 4, 5, orientation::west_east);
-//        this->drawStairs(40, 3, HEIGHT_OF_GROUND_LEVEL, 4, 5, orientation::east_west);
+        this->drawEntity(BUILDING_SOUTHWEST_X_POSITION-10, HEIGHT_OF_GROUND_LEVEL, BUILDING_SOUTHWEST_Z_POSITION+20,"Zombie");
     }
 
     string SARMission::getWorldSkeletonFromXML() {
-        return FileHandler::getFileContent(WORLD_SKELETON_XML);
+        return WORLD_SKELETON_XML;
     }
 
     void SARMission::drawTomcatSign(){
