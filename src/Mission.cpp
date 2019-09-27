@@ -58,6 +58,15 @@ namespace tomcat {
         }
     }
 
+    //! Draw a Minecraft entity in the world.
+    //! @param x The east-west location.
+    //! @param y The up-down location.
+    //! @param z The north-south location.
+    //! @param entityType A string corresponding to one of the Minecraft entity types.
+    void Mission::drawEntity(int x, int y, int z, const string& entityType){
+        this->missionSpec.drawEntity(x, y, z, entityType);
+    }
+
     void Mission::drawPlane(int fromX, int fromZ, int fromY, int width, int height, int depth, string blockType) {
         for (int w = fromX; w > fromX - width; w--) {
             for (int d = fromZ; d < fromZ + depth; d++) {

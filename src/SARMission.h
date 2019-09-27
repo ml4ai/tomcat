@@ -34,6 +34,11 @@ namespace tomcat {
         std::string getWorldSkeletonFromXML();
 
         /**
+         * Draws a giant ToMCAT sign using gold blocks, above the main building.
+         */
+        void drawTomcatSign();
+
+        /**
          * Draws the main building of the mission
          */
         void drawMainBuilding();

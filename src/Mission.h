@@ -61,6 +61,15 @@ namespace tomcat {
          */
         void drawWall(int fromX, int fromZ, int fromY, int length, int height, int orientation, std::string blockType = "stone");
 
+        /** 
+         * Draw a Minecraft entity in the world.
+         * @param x The east-west location.
+         * @param y The up-down location.
+         * @param z The north-south location.
+         * @param entityType A string corresponding to one of the Minecraft entity types.
+         */
+        void drawEntity(int x, int y, int z, const std::string& entityType);
+
         /**
          *
          * @param fromX - Initial position of the plane on the x axis

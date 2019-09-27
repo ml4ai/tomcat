@@ -29,6 +29,10 @@ namespace tomcat {
         Mission::buildWorld();
 
         this->drawMainBuilding();
+        this->drawTomcatSign();
+
+        // Put a zombie on the ground floor!
+        this->drawEntity(BUILDING_SOUTHWEST_X_POSITION-20, HEIGHT_OF_GROUND_LEVEL, BUILDING_SOUTHWEST_Z_POSITION+20,"Zombie");
 
 //        this->drawStairs(10, 3, HEIGHT_OF_GROUND_LEVEL, 4, 5, orientation::south_north);
 //        this->drawStairs(20, 3, HEIGHT_OF_GROUND_LEVEL, 4, 5, orientation::north_south);
@@ -40,14 +44,12 @@ namespace tomcat {
         return FileHandler::getFileContent(WORLD_SKELETON_XML);
     }
 
-    void SARMission::drawMainBuilding() {
-        this->drawGroundFloor();
-        this->drawSecondFloor();
-
+    void SARMission::drawTomcatSign(){
         int tomcatX = BUILDING_SOUTHWEST_X_POSITION + 10;
         int tomcatZ = BUILDING_SOUTHWEST_Z_POSITION;
         int tomcatY = 2*FLOOR_HEIGHT + 5;
         int tomcatWidth = 7;
+
         string tomcatBlockType = "gold_block";
 
         // Letter T
@@ -87,19 +89,27 @@ namespace tomcat {
         this->drawPlane(tomcatX + tomcatWidth/2, tomcatZ, tomcatY + 2*FLOOR_HEIGHT - 1, tomcatWidth, 1, 1, tomcatBlockType);
     }
 
+    void SARMission::drawMainBuilding() {
+        this->drawGroundFloor();
+        this->drawSecondFloor();
+    }
+
     void SARMission::drawSecondFloor() {
         this->drawRoom(BUILDING_SOUTHWEST_X_POSITION, BUILDING_SOUTHWEST_Z_POSITION, HEIGHT_OF_GROUND_LEVEL + FLOOR_HEIGHT, BUILDING_WIDTH,
                  FLOOR_HEIGHT, BUILDING_DEPTH);
         this->drawStairs(BUILDING_SOUTHWEST_X_POSITION - 1, FLOOR_HEIGHT + BUILDING_SOUTHWEST_Z_POSITION - 1,
                    HEIGHT_OF_GROUND_LEVEL + FLOOR_HEIGHT, STAIRS_WIDTH, FLOOR_HEIGHT, north_south);
+
         // Make hole in the roof to open an access to the next floor
         this->makeHole(BUILDING_SOUTHWEST_X_POSITION - 1, BUILDING_SOUTHWEST_Z_POSITION + 1,
                  HEIGHT_OF_GROUND_LEVEL + 2*FLOOR_HEIGHT - 1, STAIRS_WIDTH, 1, FLOOR_HEIGHT - 1);
+
         // Make holes in the lateral walls to receive light from outside
         this->makeHole(BUILDING_SOUTHWEST_X_POSITION - BUILDING_WIDTH - 1, BUILDING_SOUTHWEST_Z_POSITION + 2,
                  HEIGHT_OF_GROUND_LEVEL + FLOOR_HEIGHT + 2, 1, 2, BUILDING_DEPTH - 4);
         this->makeHole(BUILDING_SOUTHWEST_X_POSITION, BUILDING_SOUTHWEST_Z_POSITION + 6,
                  HEIGHT_OF_GROUND_LEVEL + FLOOR_HEIGHT + 2, 1, 2, BUILDING_DEPTH - FLOOR_HEIGHT - 6);
+
     }
 
     void SARMission::drawGroundFloor() {

@@ -36,8 +36,10 @@ const int MillisecondsInOneSecond = 1000;
 
 const std::vector<std::string> MissionSpec::all_continuous_movement_commands = {
     "jump", "move", "pitch", "strafe", "turn", "crouch", "attack", "use"};
+
 const std::vector<std::string> MissionSpec::all_absolute_movement_commands = {
     "tpx", "tpy", "tpz", "tp", "setYaw", "setPitch"};
+
 const std::vector<std::string> MissionSpec::all_discrete_movement_commands = {
     "move",
     "jumpmove",
@@ -57,6 +59,7 @@ const std::vector<std::string> MissionSpec::all_discrete_movement_commands = {
     "attack",
     "use",
     "jumpuse"};
+
 const std::vector<std::string> MissionSpec::all_inventory_commands = {
     "swapInventoryItems",
     "combineInventoryItems",
@@ -70,11 +73,15 @@ const std::vector<std::string> MissionSpec::all_inventory_commands = {
     "hotbar.7",
     "hotbar.8",
     "hotbar.9"};
+
 const std::vector<std::string> MissionSpec::all_simplecraft_commands = {
     "craft"};
+
 const std::vector<std::string> MissionSpec::all_chat_commands = {"chat"};
+
 const std::vector<std::string> MissionSpec::all_mission_quit_commands = {
     "quit"};
+
 const std::vector<std::string> MissionSpec::all_human_level_commands = {
     "forward",   "left",      "right",    "jump",     "sneak",    "sprint",
     "inventory", "swapHands", "drop",     "use",      "attack",   "moveMouse",
@@ -83,6 +90,7 @@ const std::vector<std::string> MissionSpec::all_human_level_commands = {
 
 const std::string MissionSpec::XMLNS_XSI =
     "http://www.w3.org/2001/XMLSchema-instance";
+
 const std::string MissionSpec::MALMO_NAMESPACE =
     "http://ProjectMalmo.microsoft.com";
 
@@ -122,8 +130,7 @@ std::string MissionSpec::getAsXML(bool prettyPrint) const {
   return xml;
 }
 
-// -------------------- settings for the server
-// ---------------------------------
+// -------------------- settings for the server ---------------------------------
 
 void MissionSpec::setSummary(const std::string& summary) {
   mission.put("Mission.About.Summary", summary);
@@ -196,6 +203,16 @@ void MissionSpec::drawBlock(int x, int y, int z, const string& blockType) {
   block.put("<xmlattr>.y", y);
   block.put("<xmlattr>.z", z);
   drawing_decorator.add_child("DrawBlock", block);
+}
+
+void MissionSpec::drawEntity(int x, int y, int z, const string& entityType) {
+  auto& drawing_decorator = getDrawingDecorator();
+  boost::property_tree::ptree entity;
+  entity.put("<xmlattr>.type", entityType);
+  entity.put("<xmlattr>.x", x);
+  entity.put("<xmlattr>.y", y);
+  entity.put("<xmlattr>.z", z);
+  drawing_decorator.add_child("DrawEntity", entity);
 }
 
 void MissionSpec::drawCuboid(int x1,
