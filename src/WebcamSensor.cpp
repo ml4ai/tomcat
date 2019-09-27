@@ -7,88 +7,92 @@
 #include <Visualizer.h>
 #include <opencv2/highgui/highgui.hpp>
 
-void WebcamSensor::get_observation() {
-  using cv::Vec6d;
-  using cv::Point3f;
-  using GazeAnalysis::EstimateGaze;
-  using LandmarkDetector::Calculate3DEyeLandmarks;
-  using LandmarkDetector::CalculateAllEyeLandmarks;
-  using LandmarkDetector::DetectLandmarksInVideo;
-  using LandmarkDetector::FaceModelParameters;
-  using LandmarkDetector::GetPose;
+namespace tomcat {
 
-  // Reading the images
-  this->grayscale_image = this->sequence_reader.GetGrayFrame();
+    void WebcamSensor::get_observation() {
+        using cv::Vec6d;
+        using cv::Point3f;
+        using GazeAnalysis::EstimateGaze;
+        using LandmarkDetector::Calculate3DEyeLandmarks;
+        using LandmarkDetector::CalculateAllEyeLandmarks;
+        using LandmarkDetector::DetectLandmarksInVideo;
+        using LandmarkDetector::FaceModelParameters;
+        using LandmarkDetector::GetPose;
 
-  // The actual facial landmark detection / tracking
-  bool detection_success = DetectLandmarksInVideo(this->rgb_image,
-                                                  this->face_model,
-                                                  this->det_parameters,
-                                                  this->grayscale_image);
+        // Reading the images
+        this->grayscale_image = this->sequence_reader.GetGrayFrame();
 
-  // Gaze tracking, absolute gaze direction
-  Point3f gazeDirection0(0, 0, -1);
-  Point3f gazeDirection1(0, 0, -1);
+        // The actual facial landmark detection / tracking
+        bool detection_success = DetectLandmarksInVideo(this->rgb_image,
+                                                        this->face_model,
+                                                        this->det_parameters,
+                                                        this->grayscale_image);
 
-  // If tracking succeeded and we have an eye model, estimate gaze
-  if (detection_success && this->face_model.eye_model) {
+        // Gaze tracking, absolute gaze direction
+        Point3f gazeDirection0(0, 0, -1);
+        Point3f gazeDirection1(0, 0, -1);
 
-    EstimateGaze(this->face_model,
-                 gazeDirection0,
-                 this->sequence_reader.fx,
-                 this->sequence_reader.fy,
-                 this->sequence_reader.cx,
-                 this->sequence_reader.cy,
-                 true);
+        // If tracking succeeded and we have an eye model, estimate gaze
+        if (detection_success && this->face_model.eye_model) {
 
-    EstimateGaze(this->face_model,
-                 gazeDirection1,
-                 this->sequence_reader.fx,
-                 this->sequence_reader.fy,
-                 this->sequence_reader.cx,
-                 this->sequence_reader.cy,
-                 false);
-  }
+            EstimateGaze(this->face_model,
+                         gazeDirection0,
+                         this->sequence_reader.fx,
+                         this->sequence_reader.fy,
+                         this->sequence_reader.cx,
+                         this->sequence_reader.cy,
+                         true);
 
-  // Work out the pose of the head from the tracked model
-  Vec6d pose_estimate = GetPose(this->face_model,
-                                this->sequence_reader.fx,
-                                this->sequence_reader.fy,
-                                this->sequence_reader.cx,
-                                this->sequence_reader.cy);
+            EstimateGaze(this->face_model,
+                         gazeDirection1,
+                         this->sequence_reader.fx,
+                         this->sequence_reader.fy,
+                         this->sequence_reader.cx,
+                         this->sequence_reader.cy,
+                         false);
+        }
 
-  this->fps_tracker.AddFrame();
-  // Displaying the tracking visualizations
-  this->visualizer.SetImage(this->rgb_image,
-                            this->sequence_reader.fx,
-                            this->sequence_reader.fy,
-                            this->sequence_reader.cx,
-                            this->sequence_reader.cy);
+        // Work out the pose of the head from the tracked model
+        Vec6d pose_estimate = GetPose(this->face_model,
+                                      this->sequence_reader.fx,
+                                      this->sequence_reader.fy,
+                                      this->sequence_reader.cx,
+                                      this->sequence_reader.cy);
 
-  this->visualizer.SetObservationLandmarks(this->face_model.detected_landmarks,
-                                           this->face_model.detection_certainty,
-                                           this->face_model.GetVisibilities());
+        this->fps_tracker.AddFrame();
+        // Displaying the tracking visualizations
+        this->visualizer.SetImage(this->rgb_image,
+                                  this->sequence_reader.fx,
+                                  this->sequence_reader.fy,
+                                  this->sequence_reader.cx,
+                                  this->sequence_reader.cy);
 
-  this->visualizer.SetObservationPose(pose_estimate,
-                                      this->face_model.detection_certainty);
+        this->visualizer.SetObservationLandmarks(this->face_model.detected_landmarks,
+                                                 this->face_model.detection_certainty,
+                                                 this->face_model.GetVisibilities());
 
-  this->visualizer.SetObservationGaze(
-      gazeDirection0,
-      gazeDirection1,
-      CalculateAllEyeLandmarks(this->face_model),
-      Calculate3DEyeLandmarks(this->face_model,
-                              this->sequence_reader.fx,
-                              this->sequence_reader.fy,
-                              this->sequence_reader.cx,
-                              this->sequence_reader.cy),
-      this->face_model.detection_certainty);
+        this->visualizer.SetObservationPose(pose_estimate,
+                                            this->face_model.detection_certainty);
 
-    this->visualizer.SetFps(this->fps_tracker.GetFPS());
+        this->visualizer.SetObservationGaze(
+                gazeDirection0,
+                gazeDirection1,
+                CalculateAllEyeLandmarks(this->face_model),
+                Calculate3DEyeLandmarks(this->face_model,
+                                        this->sequence_reader.fx,
+                                        this->sequence_reader.fy,
+                                        this->sequence_reader.cx,
+                                        this->sequence_reader.cy),
+                this->face_model.detection_certainty);
 
-    char character_press = this->visualizer.ShowObservation();
-    if (character_press == 'r') {
-      this->face_model.Reset();
+        this->visualizer.SetFps(this->fps_tracker.GetFPS());
+
+        char character_press = this->visualizer.ShowObservation();
+        if (character_press == 'r') {
+            this->face_model.Reset();
+        }
+
+        this->rgb_image = this->sequence_reader.GetNextFrame();
     }
 
-    this->rgb_image = this->sequence_reader.GetNextFrame();
-}
+} // namespace tomcat

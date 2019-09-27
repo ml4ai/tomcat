@@ -1,11 +1,7 @@
 #include <exception>
-#include <fstream>
-#include <iostream>
 #include <string>
 #include <thread>
-
 #include "LocalAgent.h"
-#include "WebcamSensor.h"
 #include <AgentHost.h>
 #include <ClientPool.h>
 #include <fmt/core.h>
@@ -16,75 +12,77 @@ using namespace std;
 using namespace std::this_thread;
 using namespace std::chrono;
 
-string get_file_contents(string filename) {
-  ifstream input_file(filename);
-  stringstream sstr;
-  sstr << input_file.rdbuf();
-  input_file.close();
-  return sstr.str();
-}
+namespace tomcat {
 
-void LocalAgent::set_mission(string mission_xml_filepath,
-                             unsigned int time_limit,
-                             unsigned int width,
-                             unsigned int height) {
-  string mission_xml = get_file_contents(mission_xml_filepath);
-  this->mission = MissionSpec(mission_xml, true);
-  this->mission.requestVideo(width, height);
-  this->mission.timeLimitInSeconds(20);
-}
+    LocalAgent::LocalAgent() { }
 
-int LocalAgent::startMission(int port = 10000, bool activateWebcam = false) {
-  using boost::shared_ptr;
-  MissionRecordSpec mission_record;
-  WorldState world_state;
-  int attempts = 0;
-  bool connected = false;
+    LocalAgent::~LocalAgent() { }
 
-  ClientPool client_pool;
-  client_pool.add(ClientInfo("127.0.0.1", port));
-
-  print("Waiting for the mission to start...");
-  do {
-    try {
-      this->host.startMission(this->mission, client_pool, mission_record, 0,
-                              "");
-      // this->host.startMission(this->mission, mission_record);
-      connected = true;
-    } catch (exception &e) {
-      print("Error starting mission: {}", e.what());
-      attempts += 1;
-      // Give up after three attempts.
-      if (attempts >= 3)
-        return EXIT_FAILURE;
-      else
-        // Wait a second and try again.
-        sleep_for(milliseconds(1000));
+    void LocalAgent::setMission(string missionIdOrPathToXML, unsigned int timeLimitInSeconds,
+            unsigned int width, unsigned int height) {
+        //this->mission.requestVideo(width, height);
+        this->missionHandler = MissionHandler();
+        this->missionHandler.setMission(missionIdOrPathToXML);
+        this->missionHandler.setTimeLimitInSeconds(timeLimitInSeconds);
     }
-  } while (!connected);
 
-  do {
-    sleep_for(milliseconds(100));
-    world_state = this->host.getWorldState();
-  } while (!world_state.has_mission_begun);
+    int LocalAgent::startMission(int portNumber = 10000, bool activateWebcam = false) {
+        using boost::shared_ptr;
+        MissionRecordSpec missionRecord;
+        WorldState worldState;
+        int attempts = 0;
+        bool connected = false;
 
-  if (activateWebcam) {
-    this->webcam_sensor.initialize();
-  }
+        ClientPool clientPool = getClientPool(portNumber);
 
-  do {
-    sleep_for(milliseconds(10));
-    if (activateWebcam) {
-      this->webcam_sensor.get_observation();
+        print("Waiting for the mission to start...");
+        do {
+            try {
+                this->host.startMission(this->missionHandler.getMissionSpec(), clientPool,
+                        missionRecord,0,"");
+                connected = true;
+            } catch (exception &e) {
+                print("Error starting mission: {}", e.what());
+                attempts += 1;
+                // Give up after three attempts.
+                if (attempts >= 3)
+                    return EXIT_FAILURE;
+                else
+                    // Wait a second and try again.
+                    sleep_for(milliseconds(1000));
+            }
+        } while (!connected);
+
+        do {
+            sleep_for(milliseconds(100));
+            worldState = this->host.getWorldState();
+        } while (!worldState.has_mission_begun);
+
+        if (activateWebcam) {
+            this->webcamSensor.initialize();
+        }
+
+        do {
+            sleep_for(milliseconds(10));
+            if (activateWebcam) {
+                this->webcamSensor.get_observation();
+            }
+            worldState = this->host.getWorldState();
+        } while (worldState.is_mission_running);
+
+        print("Mission has stopped.");
+
+        return EXIT_SUCCESS;
     }
-    world_state = this->host.getWorldState();
-  } while (world_state.is_mission_running);
 
-  print("Mission has stopped.");
+    ClientPool LocalAgent::getClientPool(int portNumber) const {
+        ClientPool clientPool;
+        clientPool.add(ClientInfo("127.0.0.1", portNumber));
+        return clientPool;
+    }
 
-  return EXIT_SUCCESS;
-}
+    void LocalAgent::sendCommand(string command) {
+        this->host.sendCommand(command);
+    }
 
-void LocalAgent::sendCommand(string command) {
-  this->host.sendCommand(command);
-}
+} // namespace tomcat
