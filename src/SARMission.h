@@ -1,0 +1,47 @@
+#pragma once
+
+#include "Mission.h"
+
+namespace tomcat {
+
+    /**
+     * The SARMission class represents the Save and Rescue mission
+     */
+    class SARMission : public Mission 
+    {
+    public:
+        /**
+         * Constructor
+         */
+        SARMission();
+
+        /**
+         * Destructor
+         */
+        ~SARMission();
+
+    protected:
+
+        /**
+         * Builds the world for the Save and Rescue mission
+         */
+        void buildWorld();
+
+        /**
+         * Retrieves the content of an XML which defines the skeleton of the world for the Save and Rescue mission
+         * @return
+         */
+        std::string getWorldSkeletonFromXML();
+
+        /**
+         * Draws the main building of the mission
+         */
+        void drawMainBuilding();
+
+        /**
+         * Draws the ground floor of the main building
+         */
+        void drawGroundFloor();
+    };
+
+} // namespace tomcat
