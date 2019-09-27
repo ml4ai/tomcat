@@ -5,7 +5,7 @@
 namespace tomcat {
 
     /**
-     * The SARMission class represents the Save and Rescue mission
+     * The SARMission class represents the Search and Rescue mission
      */
     class SARMission : public Mission 
     {
@@ -23,12 +23,12 @@ namespace tomcat {
     protected:
 
         /**
-         * Builds the world for the Save and Rescue mission
+         * Builds the world for the Search and Rescue mission
          */
         void buildWorld();
 
         /**
-         * Retrieves the content of an XML which defines the skeleton of the world for the Save and Rescue mission
+         * Retrieves the content of an XML which defines the skeleton of the world for the Search and Rescue mission
          * @return
          */
         std::string getWorldSkeletonFromXML();
@@ -42,6 +42,11 @@ namespace tomcat {
          * Draws the ground floor of the main building
          */
         void drawGroundFloor();
+
+        /**
+         * Draws the second floor of the main building
+         */
+        void drawSecondFloor();
     };
 
 } // namespace tomcat
