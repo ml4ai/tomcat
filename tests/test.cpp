@@ -9,6 +9,7 @@ int main(int argc, const char *argv[]) {
   using namespace std;
   using fmt::print;
   using namespace fmt::literals;
+  using namespace tomcat;
 
   // Program options
   options_description desc("Allowed options");
@@ -30,7 +31,7 @@ int main(int argc, const char *argv[]) {
 
   if (vm.count("mission")) {
     LocalAgent agent;
-    agent.set_mission(mission_xml, vm["time_limit"].as<unsigned int>());
+    agent.setMission(mission_xml, vm["time_limit"].as<unsigned int>());
   }
   else {
     cout << desc << endl;

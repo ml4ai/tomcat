@@ -85,7 +85,15 @@ namespace malmo
             //! \param z The north-south location.
             //! \param blockType A string corresponding to one of the Minecraft block types.
             void drawBlock(int x, int y, int z, const std::string& blockType);
-            
+
+            //! Draw a Minecraft entity in the world.
+            //! \param x The east-west location.
+            //! \param y The up-down location.
+            //! \param z The north-south location.
+            //! \param entityType A string corresponding to one of the Minecraft entity types.
+            void drawEntity(int x, int y, int z, const std::string& entityType);
+ 
+
             //! Draw a solid cuboid in the world.
             //! \param x1 The west-most location.
             //! \param y1 The down-most location.
