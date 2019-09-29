@@ -41,24 +41,26 @@ brew install gradle
 ```
 
 
-### WindowsOS
+### Windows
 
-- Install Ubuntu alongside Windows (see https://tutorials.ubuntu.com/tutorial/tutorial-install-ubuntu-desktop#0 for a tutorial on how to install it).
-- Boot up into the Ubuntu OS.
-- Fire up a terminal (on Ubuntu, you can open a terminal with Ctrl+Alt+T).
-- Install dependencies using apt-get - use the following commands
+We don't officially support Windows right now, but pull requests that add
+Windows support are welcome.
 
-#### Ubuntu
+### Linux (Ubuntu)
 
-```
+Install the requirements using apt-get:
+
+```bash
 sudo apt-get update
-sudo apt-get install gcc-8 libfmt-dev doxygen ffmpeg libopencv-dev libdlib-dev openjdk-8-jdk
+sudo apt-get install gcc-9 libfmt-dev doxygen ffmpeg libopencv-dev libdlib-dev openjdk-8-jdk
 ```
 
-- ToMCAT requires Boost 1.69 or higher, so just install Boost from source (https://www.boost.org/doc/libs/1_71_0/more/getting_started/unix-variants.html)
-- You'll need a newer version of Cmake than is available through apt. Use the following commands to do so.
+- ToMCAT requires Boost 1.69 or higher, so just [install Boost from
+  source](https://www.boost.org/doc/libs/1_71_0/more/getting_started/unix-variants.html)
+- You'll need a newer version of CMake than is available through apt. Use the
+  following commands to do so.
 
-```
+``` bash
 curl -LO https://github.com/Kitware/CMake/releases/download/v3.15.3/cmake-3.15.3.tar.gz
 tar -zxvf cmake-3.15.3.tar.gz
 cd cmake-3.15.3
@@ -67,8 +69,11 @@ make -j
 sudo make -j install
 ```
 
-- Navigate to the folder (or create the folder) where you want to install tomcat, using the cd command (if you are not familiar with basic shell commands, see here: https://swcarpentry.github.io/shell-novice/reference/ ).
-- Follow the instructions here: https://github.com/ml4ai/tomcat#installation to install and run the ToMCAT agent.
+- Navigate to the folder (or create the folder) where you want to install
+  tomcat, using the cd command (if you are not familiar with basic shell
+  commands, see [here](https://swcarpentry.github.io/shell-novice/reference/).
+- Follow the instructions [here](https://github.com/ml4ai/tomcat#installation) to
+  install and run the ToMCAT agent.
 
 
 Installation
