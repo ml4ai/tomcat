@@ -123,10 +123,10 @@ Then in a separate terminal, run the executable `runExperiment`:
 ./bin/runExperiment --mission <path_to_mission_XML_file>
 ```
 
-For example, to run the default world mission, you would do
+To run the default search-and-rescue mission, you can just do
 
 ```
-./bin/runExperiment --mission ../external/malmo/sample_missions/default_world_1.xml
+./bin/runExperiment
 ```
 
 To allow human control of the character press the `<Enter>` key.
