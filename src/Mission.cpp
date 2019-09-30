@@ -93,21 +93,15 @@ void Mission::drawWall(int fromX,
   }
 }
 
-//! Draw a Minecraft entity in the world.
-//! @param x The east-west location.
-//! @param y The up-down location.
-//! @param z The north-south location.
-//! @param entityType A string corresponding to one of the Minecraft entity
-//! types.
 void Mission::drawEntity(int x, int y, int z, const string& entityType) {
   this->missionSpec.drawEntity(x, y, z, entityType);
 }
 
-void Mission::drawTree(int x, int z, int yBase) {
+void Mission::drawTree(int x, int z, int fromY) {
   unsigned short treeHeight = 10; // Height of tree
   unsigned short leavesHeight = 2;
   for (unsigned short h = 0; h < treeHeight; h++) {
-    unsigned short height = yBase + h;
+    unsigned short height = fromY + h;
 
     this->missionSpec.drawBlock(x, height, z, "log");
 

@@ -84,11 +84,15 @@ class Mission {
    */
   void drawEntity(int x, int y, int z, const std::string& entityType);
 
-  /** Draw a tree */
-  void drawTree(int x, int z, int yBase = 0);
+  /** Draw a tree
+   * Draw a tree in the world.
+   * @param x The east-west location.
+   * @param z The north-south location.
+   * @param fromY y-position of the base of the tree
+   */
+  void drawTree(int x, int z, int fromY = 0);
 
   /**
-   *
    * @param fromX - Initial position of the plane on the x axis
    * @param fromZ - Initial position of the plane on the z axis
    * @param fromY - Initial position of the plane on the y axis
