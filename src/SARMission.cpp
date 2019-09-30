@@ -64,6 +64,9 @@ void SARMission::buildWorld() {
                    HEIGHT_OF_GROUND_LEVEL + FLOOR_HEIGHT,
                    BUILDING_SOUTHWEST_Z_POSITION + 20,
                    "Villager");
+  for (unsigned short int i = 0; i < 5; i++) {
+    this->drawTree(-20 - 5 * i, 20);
+  }
 }
 
 string SARMission::getWorldSkeletonFromXML() { return WORLD_SKELETON_XML; }
