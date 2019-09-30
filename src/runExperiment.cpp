@@ -27,7 +27,7 @@ int main(int argc, const char *argv[]) {
   variables_map vm;
   store(parse_command_line(argc, argv, desc), vm);
   notify(vm);
-  if (vm.count("help") || argc == 1) {
+  if (vm.count("help")) {
     cout << desc << endl;
     return 1;
   }
