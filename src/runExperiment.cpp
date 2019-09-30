@@ -21,7 +21,7 @@ int main(int argc, const char *argv[]) {
     ("time_limit", value<unsigned int>()->default_value(20),
      "Time limit for mission.")
     ("port,p", value<unsigned int>()->default_value(10000), "Port to control (>=10000)")
-    ("activate_webcam,w", value<bool>()->default_value(false), "Activate webcam to detect face landmarks? (true=1 or false=0)")
+    ("activate_webcam,w", bool_switch()->default_value(false), "Activate webcam to detect face landmarks? (true=1 or false=0)")
   ;
 
   variables_map vm;
