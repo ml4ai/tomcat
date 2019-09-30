@@ -59,6 +59,11 @@ void SARMission::buildWorld() {
                    HEIGHT_OF_GROUND_LEVEL,
                    BUILDING_SOUTHWEST_Z_POSITION + 20,
                    "Zombie");
+
+  this->drawEntity(BUILDING_SOUTHWEST_X_POSITION - 10,
+                   HEIGHT_OF_GROUND_LEVEL + FLOOR_HEIGHT,
+                   BUILDING_SOUTHWEST_Z_POSITION + 20,
+                   "Villager");
 }
 
 string SARMission::getWorldSkeletonFromXML() { return WORLD_SKELETON_XML; }
