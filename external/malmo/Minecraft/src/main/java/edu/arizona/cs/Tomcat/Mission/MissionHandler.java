@@ -8,7 +8,7 @@ public class MissionHandler {
 	
 	/**
 	 * Sets the main mission
-	 * @param id - Missio ID
+	 * @param id - Mission ID
 	 * @param timeLimitInSeconds - Duration of the mission in seconds
 	 */
 	public void setMission(int id, int timeLimitInSeconds) {
