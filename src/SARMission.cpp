@@ -19,6 +19,7 @@ const static string WORLD_SKELETON_XML = R"(
           </ServerInitialConditions>
           <ServerHandlers>
             <FlatWorldGenerator generatorString="3;2*2;1;village" />
+            <TomcatDecorator />
           </ServerHandlers>
       </ServerSection>
       <AgentSection mode="Survival">
