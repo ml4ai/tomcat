@@ -2557,5 +2557,17 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
+
+  <xs:element name="TomcatDecorator">
+    <xs:annotation>
+      <xs:documentation>
+        Draws structures into the world.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attribute name="mission" type="xs:integer" use="optional" default="1"/>
+      <xs:attribute name="timeLimitInSeconds" type="xs:integer" use="optional" default="100"/>
+    </xs:complexType>
+  </xs:element>
   
 </xs:schema>
