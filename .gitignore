@@ -50,3 +50,6 @@ data/*
 
 # lcov output
 coverage.info
+
+# xsd
+*.xsd
