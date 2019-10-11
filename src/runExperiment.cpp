@@ -16,8 +16,8 @@ int main(int argc, const char *argv[]) {
 
   desc.add_options()
     ("help,h", "Executable for running ToMCAT experiments.")
-    ("mission", value<string>(&missionIdOrPathToXML)->default_value("1"),
-    "Id or path to mission XML file.\n1: Search and Rescue\n2: Item Crafting\n3: Room Escape")
+    ("mission", value<string>(&missionIdOrPathToXML)->default_value("0"),
+    "Id or path to mission XML file.\n0: Tutorial\n1: Search and Rescue\n2: Item Crafting\n3: Room Escape")
     ("time_limit", value<unsigned int>()->default_value(100),
      "Time limit for mission.")
     ("port,p", value<unsigned int>()->default_value(10000), "Port to control (>=10000)")

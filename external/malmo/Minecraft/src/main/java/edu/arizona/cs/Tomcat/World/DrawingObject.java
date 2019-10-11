@@ -24,5 +24,16 @@ public abstract class DrawingObject {
 		return malmoDrawObjects.iterator();
 	}
 	
+	/**
+	 * Merge malmo objects from one drawing with another
+	 * @param drawingObject - Drawing Object
+	 */
+	public void mergeWith(DrawingObject drawingObject) {
+		Iterator<DrawObjectType> alienMalmoDrawObjects = drawingObject.getMalmoDrawObjects();
+		while (alienMalmoDrawObjects.hasNext()) {
+			this.malmoDrawObjects.add(alienMalmoDrawObjects.next());
+		}
+	}
+	
 
 }

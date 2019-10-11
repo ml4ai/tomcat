@@ -12,7 +12,11 @@ namespace tomcat {
 
     void MissionHandler::setMission(string missionIdOrPathToXML) {
         this->mission = MissionFactory::create(missionIdOrPathToXML);
-    } 
+    }
+
+    void MissionHandler::startMission() {
+        this->mission->buildWorld();
+    }
 
     void MissionHandler::setTimeLimitInSeconds(int timeInSeconds) {
         this->mission->setTimeLimitInSeconds(timeInSeconds);

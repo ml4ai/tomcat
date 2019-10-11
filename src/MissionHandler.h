@@ -27,7 +27,12 @@ namespace tomcat {
          */
         void setMission(std::string missionIdOrPathToXML);
 
-        /** 
+        /**
+         * Fills the missionSpec object with the skeleton of the world
+         */
+        void startMission();
+
+        /**
          * Defines the time limit for the current mission
          * @param timeInSeconds - Time (in seconds) to the end of the mission
          */

@@ -2,6 +2,7 @@ package edu.arizona.cs.Tomcat.Mission;
 
 public class MissionFactory {
 	
+	private static final int TUTORIAL = 0;
 	private static final int SEARCH_AND_RESCUE = 1;
 	private static final int ITEM_CRAFTING = 2;
 	private static final int ROOM_ESCAPE = 3;
@@ -10,6 +11,10 @@ public class MissionFactory {
 		Mission mission = null;
 		
 		switch (missionID) {
+		case TUTORIAL:
+			mission = new TutorialMission();
+			break;
+			
 		case SEARCH_AND_RESCUE:
 			mission = new SARMission();
 			break;
