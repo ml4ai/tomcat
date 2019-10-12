@@ -42,7 +42,8 @@ find_package(Boost 1.69
                         thread
              REQUIRED)
 
-find_package(OpenCV REQUIRED)
+find_package(OpenCV 4.0 REQUIRED COMPONENTS core imgproc calib3d
+             highgui objdetect)
 
 if(DEFINED ENV{TRAVIS})
   message("-- CMake running on Travis, using downloaded dlib.")
