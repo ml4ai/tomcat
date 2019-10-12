@@ -1,15 +1,16 @@
 package edu.arizona.cs.Tomcat.Mission;
 
-import com.microsoft.Malmo.Utils.TimeHelper;
+import java.util.ArrayList;
 
 import edu.arizona.cs.Tomcat.Emotion.EmotionHandler;
 import edu.arizona.cs.Tomcat.Emotion.EmotionHandler.Emotion;
 import edu.arizona.cs.Tomcat.Mission.gui.FeedbackListener;
+import edu.arizona.cs.Tomcat.Utils.Converter;
 import edu.arizona.cs.Tomcat.World.DrawingHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
 
-public abstract class Mission implements FeedbackListener {
+public abstract class Mission implements FeedbackListener, PhaseListener {
 	
 	protected static final int REMAINING_SECONDS_ALERT = 30;
 	
@@ -17,13 +18,27 @@ public abstract class Mission implements FeedbackListener {
 	protected long initialWorldTime;
 	protected DrawingHandler drawingHandler;
 	protected EmotionHandler.Emotion currentEmotion;
+	protected ArrayList<MissionPhase> phases;
+	protected MissionPhase currentPhase;
+	protected int numberOfPhasesCompleted; 
 	
 	/**
 	 * Abstract constructor for initialization of the drawing handler
 	 */
 	protected Mission() {
 		this.drawingHandler = DrawingHandler.getInstance();
+		this.numberOfPhasesCompleted = 0;
+		this.phases = new ArrayList<MissionPhase>();
+		this.createPhases();
+		if (!this.phases.isEmpty()) {
+			this.currentPhase = this.phases.get(0);
+		}
 	}
+	
+	/**
+	 * Create phases of the mission. Implemented in the subclasses.
+	 */
+	protected abstract void createPhases();
 	
 	/**
 	 * Draws the initial objects and entities of the mission.
@@ -37,6 +52,8 @@ public abstract class Mission implements FeedbackListener {
 	 */
 	public void update(World world) {
 		this.drawingHandler.drawCountdown(this.getRemainingSeconds(), REMAINING_SECONDS_ALERT);
+		this.updateCurrentPhase(world);
+		this.updateScene(world);
 	}
 	
 	/**
@@ -50,11 +67,25 @@ public abstract class Mission implements FeedbackListener {
 			this.initialWorldTime = currentWorldTime;
 		}	
 		
-		long timeElapsedInWorldTicks = currentWorldTime - this.initialWorldTime;
-		float timeRemainingInMs = this.timeLimitInSeconds * TimeHelper.MillisecondsPerSecond - (timeElapsedInWorldTicks * TimeHelper.MillisecondsPerWorldTick);
-				
-		return (int) Math.ceil(timeRemainingInMs / TimeHelper.MillisecondsPerSecond);	    
+		return Converter.getRemainingTimeInSeconds(this.initialWorldTime, this.timeLimitInSeconds);		    
 	}
+	
+	/**
+	 * Update the current phase of the mission if there's any 
+	 * @param world
+	 */
+	protected void updateCurrentPhase(World world) {
+		if (this.currentPhase != null) {
+			this.currentPhase.update(world);
+		}
+	}
+	
+	/**
+	 * Updates the mission scene programmatically. Must be implemented at the subclass level. 
+	 * @param world
+	 */
+	protected abstract void updateScene(World world);
+	
 	
 	/**
 	 * Defines the duration of the mission in seconds 
@@ -67,6 +98,24 @@ public abstract class Mission implements FeedbackListener {
 	@Override
 	public void emotionProvided(Emotion emotion) {
 		this.currentEmotion = emotion;		
-	}		
+	}	
+	
+	/**
+	 * Adds a phase to the mission
+	 * @param phase - Mission phase
+	 */
+	public void addPhase(MissionPhase phase) {
+		phase.addListener(this);
+		this.phases.add(phase);		
+	}
+	
+	@Override
+	public void phaseCompleted() {
+		this.numberOfPhasesCompleted++;
+		this.currentPhase = null;
+		if (this.numberOfPhasesCompleted < this.phases.size()) {
+			this.currentPhase = this.phases.get(this.numberOfPhasesCompleted);
+		}		
+	}
 	
 }

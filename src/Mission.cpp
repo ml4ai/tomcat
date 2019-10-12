@@ -11,12 +11,10 @@ void Mission::buildWorld() {
   this->missionSpec.forceWorldReset();
 }
 
-// string Mission::getWorldSkeletonFromXML() { return ""; }
-
 MissionSpec Mission::getMissionSpec() { return this->missionSpec; }
 
 void Mission::setTimeLimitInSeconds(int timeInSeconds) {
-  this->missionSpec.timeLimitInSeconds(timeInSeconds);
+  this->timeLimitInSeconds = timeInSeconds;
 }
 
 void Mission::drawStairs(int fromX,

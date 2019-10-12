@@ -23,7 +23,7 @@ namespace tomcat {
         //this->mission.requestVideo(width, height);
         this->missionHandler = MissionHandler();
         this->missionHandler.setMission(missionIdOrPathToXML);
-        //this->missionHandler.setTimeLimitInSeconds(timeLimitInSeconds);
+        this->missionHandler.setTimeLimitInSeconds(timeLimitInSeconds);
     }
 
     int LocalAgent::startMission(int portNumber = 10000, bool activateWebcam = false) {
@@ -38,6 +38,7 @@ namespace tomcat {
         print("Waiting for the mission to start...");
         do {
             try {
+                this->missionHandler.startMission();
                 this->host.startMission(this->missionHandler.getMissionSpec(), clientPool,
                         missionRecord,0,"");
                 connected = true;

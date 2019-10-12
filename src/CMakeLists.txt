@@ -1,5 +1,5 @@
 add_library(tomcat STATIC LocalAgent.cpp WebcamSensor.cpp MissionHandler.cpp 
-MissionFactory.cpp Mission.cpp SARMission.cpp XMLMission.cpp FileHandler.cpp)
+MissionFactory.cpp Mission.cpp TomcatMission.cpp XMLMission.cpp FileHandler.cpp)
 
 target_link_libraries(
   tomcat

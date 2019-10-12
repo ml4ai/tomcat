@@ -1,5 +1,7 @@
-#include "SARMission.h"
+#include "TomcatMission.h"
 #include "FileHandler.h"
+#include "fmt/format.h"
+
 
 using namespace malmo;
 using namespace std;
@@ -7,36 +9,6 @@ using namespace std;
 namespace tomcat {
 
 const static int HEIGHT_OF_GROUND_LEVEL = 2;
-const static string WORLD_SKELETON_XML = R"(
-    <?xml version="1.0" encoding="UTF-8"?>
-    <Mission xmlns="http://ProjectMalmo.microsoft.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-      <About>
-          <Summary>Search and Rescue</Summary>
-      </About>
-      <ServerSection>
-          <ServerInitialConditions>
-            <AllowSpawning>false</AllowSpawning>
-          </ServerInitialConditions>
-          <ServerHandlers>
-            <FlatWorldGenerator generatorString="3;2*2;1;village" />
-            <TomcatDecorator />
-          </ServerHandlers>
-      </ServerSection>
-      <AgentSection mode="Survival">
-          <Name>Tomcat</Name>
-          <AgentStart>
-            <Placement x="0" y="2.0" z="0" />
-          </AgentStart>
-          <AgentHandlers>
-            <ContinuousMovementCommands turnSpeedDegs="840">
-                <ModifierList type="deny-list">
-                  <command>strafe</command>
-                </ModifierList>
-            </ContinuousMovementCommands>
-          </AgentHandlers>
-      </AgentSection>
-    </Mission>)";
-
 const static int FLOOR_HEIGHT = 5;
 const static int BUILDING_WIDTH = 20;
 const static int BUILDING_DEPTH = 30;
@@ -45,11 +17,13 @@ const static int BUILDING_SOUTHWEST_Z_POSITION = 30;
 const static int STAIRS_WIDTH = 3;
 const static int MAIN_ENTRANCE_WIDTH = 3;
 
-SARMission::SARMission() { this->buildWorld(); }
+TomcatMission::TomcatMission(int missionId) {
+    this->missionId = missionId;
+}
 
-SARMission::~SARMission() {}
+TomcatMission::~TomcatMission() {}
 
-void SARMission::buildWorld() {
+void TomcatMission::buildWorld() {
   Mission::buildWorld();
 
   this->drawMainBuilding();
@@ -70,9 +44,41 @@ void SARMission::buildWorld() {
   }
 }
 
-string SARMission::getWorldSkeletonFromXML() { return WORLD_SKELETON_XML; }
+string TomcatMission::getWorldSkeletonFromXML() {
+    string worldSkeletonXML = fmt::format(R"(
+    <?xml version="1.0" encoding="UTF-8"?>
+    <Mission xmlns="http://ProjectMalmo.microsoft.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <About>
+          <Summary>Search and Rescue</Summary>
+      </About>
+      <ServerSection>
+          <ServerInitialConditions>
+            <AllowSpawning>false</AllowSpawning>
+          </ServerInitialConditions>
+          <ServerHandlers>
+            <FlatWorldGenerator generatorString="3;2*2;1;village" />
+            <TomcatDecorator mission="{}" timeLimitInSeconds="{}"/>
+          </ServerHandlers>
+      </ServerSection>
+      <AgentSection mode="Survival">
+          <Name>Tomcat</Name>
+          <AgentStart>
+            <Placement x="0" y="2.0" z="0" />
+          </AgentStart>
+          <AgentHandlers>
+            <ContinuousMovementCommands turnSpeedDegs="840">
+                <ModifierList type="deny-list">
+                  <command>strafe</command>
+                </ModifierList>
+            </ContinuousMovementCommands>
+          </AgentHandlers>
+      </AgentSection>
+    </Mission>)", this->missionId, this->timeLimitInSeconds);
 
-void SARMission::drawTomcatSign() {
+    return worldSkeletonXML;
+}
+
+void TomcatMission::drawTomcatSign() {
   int tomcatX = BUILDING_SOUTHWEST_X_POSITION + 10;
   int tomcatZ = BUILDING_SOUTHWEST_Z_POSITION;
   int tomcatY = 2 * FLOOR_HEIGHT + 5;
@@ -206,12 +212,12 @@ void SARMission::drawTomcatSign() {
                   tomcatBlockType);
 }
 
-void SARMission::drawMainBuilding() {
+void TomcatMission::drawMainBuilding() {
   this->drawGroundFloor();
   this->drawSecondFloor();
 }
 
-void SARMission::drawSecondFloor() {
+void TomcatMission::drawSecondFloor() {
   this->drawRoom(BUILDING_SOUTHWEST_X_POSITION,
                  BUILDING_SOUTHWEST_Z_POSITION,
                  HEIGHT_OF_GROUND_LEVEL + FLOOR_HEIGHT,
@@ -248,7 +254,7 @@ void SARMission::drawSecondFloor() {
                  BUILDING_DEPTH - FLOOR_HEIGHT - 6);
 }
 
-void SARMission::drawGroundFloor() {
+void TomcatMission::drawGroundFloor() {
   this->drawRoom(BUILDING_SOUTHWEST_X_POSITION,
                  BUILDING_SOUTHWEST_Z_POSITION,
                  HEIGHT_OF_GROUND_LEVEL,

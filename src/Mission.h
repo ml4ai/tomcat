@@ -166,5 +166,6 @@ class Mission {
     north_south = 4
   };
   malmo::MissionSpec missionSpec;
+  int timeLimitInSeconds;
 };
 } // namespace tomcat

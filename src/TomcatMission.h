@@ -5,30 +5,30 @@
 namespace tomcat {
 
     /**
-     * The SARMission class represents the Search and Rescue mission
+     * The TomcatMission class represents one of the standard ToMCAT missions
      */
-    class SARMission : public Mission 
+    class TomcatMission : public Mission
     {
     public:
         /**
          * Constructor
          */
-        SARMission();
+        TomcatMission(int missionId);
 
         /**
          * Destructor
          */
-        ~SARMission();
+        ~TomcatMission();
 
     protected:
 
         /**
-         * Builds the world for the Search and Rescue mission
+         * Builds the world for the ToMCAT mission
          */
         void buildWorld();
 
         /**
-         * Retrieves the content of an XML which defines the skeleton of the world for the Search and Rescue mission
+         * Retrieves the content of an XML which defines the skeleton of the world for the ToMCAT mission
          * @return
          */
         std::string getWorldSkeletonFromXML();
@@ -52,6 +52,8 @@ namespace tomcat {
          * Draws the second floor of the main building
          */
         void drawSecondFloor();
+
+        int missionId;
     };
 
 } // namespace tomcat
