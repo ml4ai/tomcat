@@ -42,6 +42,13 @@ namespace tomcat {
          * Retrieves the object of class MissionSpec of the current mission 
          */
         malmo::MissionSpec getMissionSpec();
+
+        /**
+         * Requests video
+         * @param width - width of video
+         * @param height - height of video
+         */
+        void requestVideo(unsigned int width, unsigned int height);      
     
     };   
     

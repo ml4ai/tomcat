@@ -27,4 +27,8 @@ namespace tomcat {
         return this->mission->getMissionSpec();
     }
 
+    void MissionHandler::requestVideo(unsigned int width, unsigned int height) {
+      this->mission->requestVideo(width,height);
+    }
+
 } //namespace tomcat
