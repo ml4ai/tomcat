@@ -30,9 +30,10 @@ namespace tomcat {
          * @param mission_xml_filepath The path to the XML file containing the mission
          * specification.
          * @param time_limit The time limit for the mission.
+         * @param activateVideo Requests video when set to True
          */
         void setMission(std::string missionIdOrPathToXML, unsigned int timeLimitInSeconds = 20,
-                unsigned int width = 640, unsigned int height = 480);
+                unsigned int width = 640, unsigned int height = 480, bool activateVideo = false);
 
         /**
          * Starts a mission
@@ -40,7 +41,7 @@ namespace tomcat {
          * @param activateWebcam - Option to activate the webcam to perform face tracking
          * @return
          */
-        int startMission(int portNumber, bool activateWebcam);
+        int startMission(int portNumber = 10000, bool activateWebcam = false);
 
         /**
          * Sends command to the local agent

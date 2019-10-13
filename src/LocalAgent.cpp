@@ -19,14 +19,16 @@ namespace tomcat {
     LocalAgent::~LocalAgent() { }
 
     void LocalAgent::setMission(string missionIdOrPathToXML, unsigned int timeLimitInSeconds,
-            unsigned int width, unsigned int height) {
-        //this->mission.requestVideo(width, height);
+            unsigned int width, unsigned int height, bool activateVideo) {
         this->missionHandler = MissionHandler();
+        if (activateVideo) {
+          this->missionHandler.requestVideo(width, height);
+        }
         this->missionHandler.setMission(missionIdOrPathToXML);
         this->missionHandler.setTimeLimitInSeconds(timeLimitInSeconds);
     }
 
-    int LocalAgent::startMission(int portNumber = 10000, bool activateWebcam = false) {
+    int LocalAgent::startMission(int portNumber, bool activateWebcam) {
         using boost::shared_ptr;
         MissionRecordSpec missionRecord;
         WorldState worldState;
