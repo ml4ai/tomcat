@@ -28,6 +28,13 @@ class Mission {
    */
   void setTimeLimitInSeconds(int timeInSeconds);
 
+  /**
+   * Requests video from MissionSpec
+   * @param width - width of the video
+   * @param height - height of the video
+   */
+  void requestVideo(unsigned int width, unsigned int height);
+
   protected:
   /**
    * Retrieves the content of an XML which defines the skeleton of the world for
@@ -167,5 +174,7 @@ class Mission {
   };
   malmo::MissionSpec missionSpec;
   int timeLimitInSeconds;
+
+
 };
 } // namespace tomcat
