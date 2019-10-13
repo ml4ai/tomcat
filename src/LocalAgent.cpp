@@ -28,12 +28,28 @@ namespace tomcat {
         this->missionHandler.setTimeLimitInSeconds(timeLimitInSeconds);
     }
 
-    int LocalAgent::startMission(int portNumber, bool activateWebcam) {
+    int LocalAgent::startMission(int portNumber, bool activateWebcam, bool activateVideo, bool activateObsRec, bool activateComRec, bool activateRewRec, int frames_per_second, int64_t bit_rate, std::string recordPath) {
         using boost::shared_ptr;
-        MissionRecordSpec missionRecord;
+        MissionRecordSpec missionRecord(recordPath);
         WorldState worldState;
         int attempts = 0;
         bool connected = false;
+
+        if (activateVideo) {
+          missionRecord.recordMP4(frames_per_second,bit_rate);
+        }
+        
+        if (activateObsRec) {
+          missionRecord.recordObservations();
+        }
+
+        if (activateComRec) {
+          missionRecord.recordCommands();
+        }
+
+        if (activateRewRec) {
+          missionRecord.recordRewards();
+        }
 
         ClientPool clientPool = getClientPool(portNumber);
 

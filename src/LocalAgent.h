@@ -41,7 +41,7 @@ namespace tomcat {
          * @param activateWebcam - Option to activate the webcam to perform face tracking
          * @return
          */
-        int startMission(int portNumber = 10000, bool activateWebcam = false);
+        int startMission(int portNumber = 10000, bool activateWebcam = false, bool activateVideo = false, bool activateObsRec = false, bool activateComRec = false, bool activateRewRec = false, int frames_per_second = 20, int64_t bit_rate = 400000, std::string recordPath = "./saved_data.tgz");
 
         /**
          * Sends command to the local agent
