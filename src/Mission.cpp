@@ -190,4 +190,8 @@ void Mission::makeHole(
   this->drawPlane(fromX, fromZ, fromY, width, height, depth, "air");
 }
 
+void Mission::requestVideo(unsigned int width, unsigned int height) {
+  missionSpec.requestVideo(width,height);
+}
+
 } // namespace tomcat
