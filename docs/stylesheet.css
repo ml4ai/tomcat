@@ -1,24 +1,55 @@
 /* The standard CSS for doxygen 1.8.15 */
 
-body, table, div, p, dl {
-	font: 400 14px/22px Roboto,sans-serif;
+body, div, p, h1, h2, h3, h4, h5, h6 {
+  font-family: "Gill Sans", sans-serif;
+
+}
+
+pre, code {
+  font-family: "Fira Code", Menlo, Consolas, monospace;
+}
+
+.sm-dox {
+  background-image: none;
+}
+
+div.fragment {
+  font-family: "Fira Code", Menlo, Consolas, monospace;
+  background-color: #f6f8fa;
+  color:#212529;
+  border: 0px;
+  padding: 1rem;
+  overflow-x:scroll;
+  word-wrap: normal;
+  margin: auto;
+}
+
+div.line {
+  font-family: inherit;
+  margin-bottom: 0.3rem;
+}
+
+div.contents{
+  margin: auto;
+}
+
+body {
+  margin: auto;
+}
+
+.title {
+  padding: 0.5rem;
+  width: auto;
 }
 
 p.reference, p.definition {
-	font: 400 14px/22px Roboto,sans-serif;
+	font: 400 14px/22px "Gill Sans",sans-serif;
 }
 
 /* @group Heading Levels */
 
 h1.groupheader {
 	font-size: 150%;
-}
-
-.title {
-	font: 400 14px/28px Roboto,sans-serif;
-	font-size: 150%;
-	font-weight: bold;
-	margin: 10px 2px;
 }
 
 h2.groupheader {
@@ -34,19 +65,6 @@ h2.groupheader {
 
 h3.groupheader {
 	font-size: 100%;
-}
-
-h1, h2, h3, h4, h5, h6 {
-	-webkit-transition: text-shadow 0.5s linear;
-	-moz-transition: text-shadow 0.5s linear;
-	-ms-transition: text-shadow 0.5s linear;
-	-o-transition: text-shadow 0.5s linear;
-	transition: text-shadow 0.5s linear;
-	margin-right: 15px;
-}
-
-h1.glow, h2.glow, h3.glow, h4.glow, h5.glow, h6.glow {
-	text-shadow: 0 0 15px cyan;
 }
 
 dt {
@@ -128,10 +146,6 @@ a {
 	text-decoration: none;
 }
 
-.contents a:visited {
-	color: #4665A2;
-}
-
 a:hover {
 	text-decoration: underline;
 }
@@ -147,9 +161,6 @@ a.qindexHL {
 	border: 1px double #869DCA;
 }
 
-.contents a.qindexHL:visited {
-        color: #FFFFFF;
-}
 
 a.el {
 	font-weight: bold;
@@ -184,70 +195,7 @@ ul {
   overflow: visible; /* reset ul rule for the navigation bar drop down lists */
 }
 
-.fragment {
-  text-align: left;
-  direction: ltr;
-  overflow-x: auto; /*Fixed: fragment lines overlap floating elements*/
-  overflow-y: hidden;
-}
-
-pre.fragment {
-        border: 1px solid #C4CFE5;
-        background-color: #FBFCFD;
-        padding: 4px 6px;
-        margin: 4px 8px 4px 2px;
-        overflow: auto;
-        word-wrap: break-word;
-        font-size:  9pt;
-        line-height: 125%;
-        font-family: monospace, fixed;
-        font-size: 105%;
-}
-
-div.fragment {
-  padding: 0 0 1px 0; /*Fixed: last line underline overlap border*/
-  margin: 4px 8px 4px 2px;
-	background-color: #FBFCFD;
-	border: 1px solid #C4CFE5;
-}
-
-div.line {
-	font-family: monospace, fixed;
-        font-size: 13px;
-	min-height: 13px;
-	line-height: 1.0;
-	text-wrap: unrestricted;
-	white-space: -moz-pre-wrap; /* Moz */
-	white-space: -pre-wrap;     /* Opera 4-6 */
-	white-space: -o-pre-wrap;   /* Opera 7 */
-	white-space: pre-wrap;      /* CSS3  */
-	word-wrap: break-word;      /* IE 5.5+ */
-	text-indent: -53px;
-	padding-left: 53px;
-	padding-bottom: 0px;
-	margin: 0px;
-	-webkit-transition-property: background-color, box-shadow;
-	-webkit-transition-duration: 0.5s;
-	-moz-transition-property: background-color, box-shadow;
-	-moz-transition-duration: 0.5s;
-	-ms-transition-property: background-color, box-shadow;
-	-ms-transition-duration: 0.5s;
-	-o-transition-property: background-color, box-shadow;
-	-o-transition-duration: 0.5s;
-	transition-property: background-color, box-shadow;
-	transition-duration: 0.5s;
-}
-
-div.line:after {
-    content:"\000A";
-    white-space: pre;
-}
-
-div.line.glow {
-	background-color: cyan;
-	box-shadow: 0 0 10px cyan;
-}
-
+.fragment {}
 
 span.lineno {
 	padding-right: 4px;
@@ -311,18 +259,6 @@ div.groupText {
 	font-style: italic;
 }
 
-body {
-	background-color: white;
-	color: black;
-        margin: 0;
-}
-
-div.contents {
-	margin-top: 10px;
-	margin-left: 12px;
-	margin-right: 8px;
-}
-
 td.indexkey {
 	background-color: #EBEFF6;
 	font-weight: bold;
@@ -358,9 +294,8 @@ img.formulaInl, img.inline {
 
 div.center {
 	text-align: center;
-        margin-top: 0px;
-        margin-bottom: 0px;
-        padding: 0px;
+    margin: auto;
+    padding: 1rem;
 }
 
 div.center img {
@@ -561,7 +496,6 @@ table.memberdecls {
 	background-repeat: repeat-x;
 	background-color: #E2E8F2;
 	line-height: 1.25;
-	font-weight: 300;
 	float:left;
 }
 
@@ -834,7 +768,7 @@ div.directory {
 }
 
 .icon {
-    font-family: Arial, Helvetica;
+    font-family: "Gill Sans", Helvetica;
     font-weight: bold;
     font-size: 12px;
     height: 14px;
@@ -888,7 +822,7 @@ div.directory {
 }
 
 table.directory {
-    font: 400 14px Roboto,sans-serif;
+    font: 400 14px "Gill Sans",sans-serif;
 }
 
 /* @end */
@@ -1009,9 +943,6 @@ table.fieldtable {
 .navpath ul
 {
 	font-size: 11px;
-	background-image:url('tab_b.png');
-	background-repeat:repeat-x;
-	background-position: 0 -5px;
 	height:30px;
 	line-height:30px;
 	color:#8AA0CC;
@@ -1027,9 +958,7 @@ table.fieldtable {
 	float:left;
 	padding-left:10px;
 	padding-right:15px;
-	background-image:url('bc_s.png');
-	background-repeat:no-repeat;
-	background-position:right;
+    background-image: none;
 	color:#364D7C;
 }
 
@@ -1040,7 +969,7 @@ table.fieldtable {
 	text-decoration: none;
 	outline: none;
 	color: #283A5D;
-	font-family: 'Lucida Grande',Geneva,Helvetica,Arial,sans-serif;
+	font-family: 'Gill Sans',Geneva,Helvetica,sans-serif;
 	text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.9);
 	text-decoration: none;        
 }
@@ -1068,8 +997,7 @@ div.summary
 {
 	float: right;
 	font-size: 8pt;
-	padding-right: 5px;
-	width: 50%;
+	padding-right: 0.1rem;
 	text-align: right;
 }       
 
@@ -1104,16 +1032,8 @@ div.ingroups a
 
 div.header
 {
-        background-image:url('nav_h.png');
-        background-repeat:repeat-x;
-	background-color: #F9FAFC;
 	margin:  0px;
 	border-bottom: 1px solid #C4CFE5;
-}
-
-div.headertitle
-{
-	padding: 5px 5px 5px 10px;
 }
 
 .PageDocRTL-title div.headertitle {
@@ -1279,29 +1199,25 @@ dl.section dd {
 
 #projectname
 {
-	font: 300% Tahoma, Arial,sans-serif;
-	margin: 0px;
-	padding: 2px 0px;
+	font-size: 3rem;
+	padding: 0.5rem;
 }
     
 #projectbrief
 {
-	font: 120% Tahoma, Arial,sans-serif;
-	margin: 0px;
-	padding: 0px;
+	padding: 0.5px;
 }
 
 #projectnumber
 {
-	font: 50% Tahoma, Arial,sans-serif;
-	margin: 0px;
-	padding: 0px;
+	font-size: 0.5rem;
+	padding: 0.5rem;
 }
 
 #titlearea
 {
-	padding: 0px;
-	margin: 0px;
+	padding-top: 1rem;
+	padding-bottom: 1rem;
 	width: 100%;
 	border-bottom: 1px solid #5373B4;
 }
@@ -1376,7 +1292,7 @@ div.toc {
 
 div.toc li {
         background: url("bdwn.png") no-repeat scroll 0 5px transparent;
-        font: 10px/1.2 Verdana,DejaVu Sans,Geneva,sans-serif;
+        font: 10px/1.2 "Gill Sans",DejaVu Sans,Geneva,sans-serif;
         margin-top: 5px;
         padding-left: 10px;
         padding-top: 2px;
@@ -1389,7 +1305,7 @@ div.toc li {
 }
 
 div.toc h3 {
-        font: bold 12px/1.2 Arial,FreeSans,sans-serif;
+        font: bold 12px/1.2 "Gill Sans",FreeSans,sans-serif;
 	color: #4665A2;
         border-bottom: 0 none;
         margin: 0;
@@ -1505,7 +1421,7 @@ tr.heading h2 {
 #powerTip div {
         margin: 0px;
         padding: 0px;
-        font: 12px/16px Roboto,sans-serif;
+        font: 12px/16px "Gill Sans",sans-serif;
 }
 
 #powerTip:before, #powerTip:after {
@@ -1751,11 +1667,6 @@ table.DocNodeLTR {
    margin-left: 0;
 }
 
-tt, code, kbd, samp
-{
-  display: inline-block;
-  direction:ltr; 
-}
 /* @end */
 
 u {

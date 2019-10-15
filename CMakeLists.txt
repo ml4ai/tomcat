@@ -42,7 +42,8 @@ find_package(Boost 1.69
                         thread
              REQUIRED)
 
-find_package(OpenCV REQUIRED)
+find_package(OpenCV 4.0 REQUIRED COMPONENTS core imgproc calib3d
+             highgui objdetect)
 
 if(DEFINED ENV{TRAVIS})
   message("-- CMake running on Travis, using downloaded dlib.")
@@ -66,6 +67,8 @@ target_include_directories(tomcat
 target_include_directories(runExperiment PRIVATE external/malmo/Malmo/src)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/tools/launch_minecraft.sh
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+add_subdirectory(docs)
 
 add_subdirectory(tests)
 target_include_directories(test PRIVATE src external/malmo/Malmo/src)
