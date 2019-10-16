@@ -31,4 +31,20 @@ namespace tomcat {
       this->mission->requestVideo(width,height);
     }
 
+    void MissionHandler::observeRecentCommands() {
+      this->mission->observeRecentCommands();
+    }
+
+    void MissionHandler::observeHotBar() {
+      this->mission->observeHotBar();
+    }
+
+    void MissionHandler::observeFullInventory() {
+      this->mission->observeFullInventory();
+    }
+
+    void MissionHandler::observeChat() {
+      this->mission->observeChat();
+    }
+
 } //namespace tomcat

@@ -49,7 +49,15 @@ namespace tomcat {
          * @param height - height of video
          */
         void requestVideo(unsigned int width, unsigned int height);      
-    
+
+        void observeRecentCommands();
+
+        void observeHotBar();
+
+        void observeFullInventory();
+
+        void observeChat();
+
     };   
     
 } // namespace tomcat
