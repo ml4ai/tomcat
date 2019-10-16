@@ -15,14 +15,19 @@ using namespace std::chrono;
 namespace tomcat {
 
     LocalAgent::LocalAgent() { }
-
     LocalAgent::~LocalAgent() { }
 
     void LocalAgent::setMission(string missionIdOrPathToXML, unsigned int timeLimitInSeconds,
-            unsigned int width, unsigned int height, bool activateVideo) {
+            unsigned int width, unsigned int height, bool activateVideo, bool activateObsRec) {
         this->missionHandler = MissionHandler();
         if (activateVideo) {
           this->missionHandler.requestVideo(width, height);
+        }
+        if (activateObsRec) {
+          this->missionHandler.observeRecentCommands();
+          //this->missionHandler.observeHotBar();
+          //this->missionHandler.observeFullInventory();
+          //this->missionHandler.observeChat();
         }
         this->missionHandler.setMission(missionIdOrPathToXML);
         this->missionHandler.setTimeLimitInSeconds(timeLimitInSeconds);

@@ -33,7 +33,7 @@ namespace tomcat {
          * @param activateVideo Requests video when set to True
          */
         void setMission(std::string missionIdOrPathToXML, unsigned int timeLimitInSeconds = 20,
-                unsigned int width = 640, unsigned int height = 480, bool activateVideo = false);
+                unsigned int width = 640, unsigned int height = 480, bool activateVideo = false, bool activateObsRec = false);
 
         /**
          * Starts a mission
