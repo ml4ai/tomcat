@@ -22,11 +22,11 @@ int main(int argc, const char *argv[]) {
      "Time limit for mission.")
     ("port,p", value<unsigned int>()->default_value(10000), "Port to control (>=10000)")
     ("activate_webcam,w", bool_switch()->default_value(false), "Activate webcam to detect face landmarks? (true=1 or false=0)")
-    ("record-all", bool_switch()->default_value(false), "Activate all recordings except bitmaps")
-    ("record-video", bool_switch()->default_value(false), "Activate video recordings")
-    ("record-observations", bool_switch()->default_value(false), "Activate observation recordings")
-    ("record-commands", bool_switch()->default_value(false), "Activate command recordings")
-    ("record-rewards", bool_switch()->default_value(false), "Activate reward recordings")
+    ("record_all", bool_switch()->default_value(false), "Activate all recordings except bitmaps")
+    ("record_video", bool_switch()->default_value(false), "Activate video recordings")
+    ("record_observations", bool_switch()->default_value(false), "Activate observation recordings")
+    ("record_commands", bool_switch()->default_value(false), "Activate command recordings")
+    ("record_rewards", bool_switch()->default_value(false), "Activate reward recordings")
     ("video_fps", value<unsigned int>()->default_value(20), "Frames per second for video recordings")
     ("video_bit_rate", value<int64_t>()->default_value(400000), "Bit rate for video recordings")
     ("record_path", value<string>()->default_value("./saved_data.tgz"), "Path to save recordings")
@@ -51,28 +51,21 @@ int main(int argc, const char *argv[]) {
     int64_t bit_rate = vm["video_bit_rate"].as<int64_t>();
     string recordPath = vm["record_path"].as<string>();
     bool activateWebcam = vm["activate_webcam"].as<bool>();
+    bool activateRecAll = vm["record_all"].as<bool>();
+    bool activateVideo = vm["record_video"].as<bool>();
+    bool activateObsRec = vm["record_observations"].as<bool>();
+    bool activateComRec = vm["record_commands"].as<bool>();
+    bool activateRewRec = vm["record_rewards"].as<bool>();
 
-    bool activateVideo;
-    bool activateObsRec;
-    bool activateComRec;
-    bool activateRewRec;
- 
-    if (vm.count("record-all")) {
+    if (activateRecAll) {
       activateVideo = true;
       activateObsRec = true;
       activateComRec = true;
       activateRewRec = true;
-
-    } else {
-      activateVideo = vm["record-video"].as<bool>();
-      activateObsRec = vm["record-observations"].as<bool>();
-      activateComRec = vm["record-commmands"].as<bool>();
-      activateRewRec = vm["record-rewards"].as<bool>();
-
     }
  
     LocalAgent agent;
-    agent.setMission(missionIdOrPathToXML, timeLimitInSeconds, width, height, activateVideo);
+    agent.setMission(missionIdOrPathToXML, timeLimitInSeconds, width, height, activateVideo, activateObsRec);
     agent.startMission(portNumber, activateWebcam, activateVideo, activateObsRec, activateComRec, activateRewRec, frames_per_second, bit_rate, recordPath);
   } else {
     cout << desc << endl;
