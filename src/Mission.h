@@ -34,6 +34,14 @@ class Mission {
    * @param height - height of the video
    */
   void requestVideo(unsigned int width, unsigned int height);
+  
+  void observeRecentCommands();
+
+  void observeHotBar();
+
+  void observeFullInventory();
+
+  void observeChat();
 
   protected:
   /**

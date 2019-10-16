@@ -194,4 +194,20 @@ void Mission::requestVideo(unsigned int width, unsigned int height) {
   missionSpec.requestVideo(width,height);
 }
 
+void Mission::observeRecentCommands() {
+  missionSpec.observeRecentCommands();
+}
+
+void Mission::observeHotBar() {
+  missionSpec.observeHotBar();
+}
+
+void Mission::observeFullInventory() {
+  missionSpec.observeFullInventory();
+}
+
+void Mission::observeChat() {
+  missionSpec.observeChat();
+}
+
 } // namespace tomcat
