@@ -3,7 +3,7 @@ package edu.arizona.tomcat.World;
 import com.microsoft.Malmo.Schemas.DrawItem;
 import com.microsoft.Malmo.Schemas.ItemType;
 
-public class Item extends DrawingObject{
+public class CompositeItem extends CompositeDrawingObject{
 	
 	/**
 	 * Constructor
@@ -12,7 +12,7 @@ public class Item extends DrawingObject{
 	 * @param z - Position of the item in the z axis
 	 * @param type - Type of the item
 	 */
-	public Item(int x, int y, int z, ItemType type) {
+	public CompositeItem(int x, int y, int z, ItemType type) {
 		super();
 		this.createItem(x, y, z, type);
 	}
