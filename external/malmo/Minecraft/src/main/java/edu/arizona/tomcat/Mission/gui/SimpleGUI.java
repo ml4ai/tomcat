@@ -14,6 +14,9 @@ public class SimpleGUI extends GuiScreen {
 	
 	private ArrayList<FeedbackListener> listeners;
 	
+	/**
+	 * Constructor
+	 */
 	public SimpleGUI() {
 		this.listeners = new ArrayList<FeedbackListener>();
 	}

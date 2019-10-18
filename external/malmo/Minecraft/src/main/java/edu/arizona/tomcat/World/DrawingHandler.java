@@ -62,7 +62,7 @@ public class DrawingHandler {
 	 * @return
 	 */
 	private ArrayList<JAXBElement<DrawObjectType>> getJAXBElements(Drawing drawing) {
-		Iterator<DrawingObject> objects = drawing.getObjects();
+		Iterator<CompositeDrawingObject> objects = drawing.getObjects();
 		Iterator<DrawObjectType> malmoDrawObjects;
 		ArrayList<JAXBElement<DrawObjectType>> jaxbeObjects = new ArrayList<JAXBElement<DrawObjectType>>();
 		

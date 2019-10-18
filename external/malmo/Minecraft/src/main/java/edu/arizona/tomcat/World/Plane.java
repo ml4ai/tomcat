@@ -3,7 +3,7 @@ package edu.arizona.tomcat.World;
 import com.microsoft.Malmo.Schemas.BlockType;
 import com.microsoft.Malmo.Schemas.DrawCuboid;
 
-public class Plane extends DrawingObject{
+public class Plane extends CompositeDrawingObject{
 	
 	/**
 	 * Constructor

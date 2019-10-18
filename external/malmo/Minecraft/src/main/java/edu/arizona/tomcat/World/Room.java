@@ -2,7 +2,7 @@ package edu.arizona.tomcat.World;
 
 import com.microsoft.Malmo.Schemas.BlockType;
 
-public class Room extends DrawingObject{
+public class Room extends CompositeDrawingObject{
 	
 	private static final int THICKNESS_OF_THE_WALLS = 1;
 	

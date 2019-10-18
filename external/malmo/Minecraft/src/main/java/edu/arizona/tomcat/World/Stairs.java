@@ -1,6 +1,6 @@
 package edu.arizona.tomcat.World;
 
-public class Stairs extends DrawingObject {
+public class Stairs extends CompositeDrawingObject {
 	
 	/**
 	 * Constructor
