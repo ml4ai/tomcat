@@ -7,6 +7,7 @@ import com.microsoft.Malmo.Schemas.EntityTypes;
 import com.microsoft.Malmo.Schemas.SpawnableTypes;
 
 public class Entity extends DrawingObject{
+	private static entityNum = 0;
 	
 	/**
 	 * Constructor
@@ -18,6 +19,7 @@ public class Entity extends DrawingObject{
 	public Entity(int x, int y, int z, EntityTypes type) {
 		super();
 		this.createEntity(x, y, z, type);
+		entityNum++;
 	}
 	
 	/**
