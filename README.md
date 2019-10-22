@@ -136,5 +136,5 @@ To allow human control of the character press the `<Enter>` key.
 To speed up builds, create a file called gradle.properties and add `org.gradle.daemon=true` to it:
 
 ```
-echo "org.gradle.daemon=true" > ~/.gradle/gradle.properties.
+echo "org.gradle.daemon=true" > ~/.gradle/gradle.properties
 ```

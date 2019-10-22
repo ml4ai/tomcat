@@ -8,7 +8,7 @@ import com.microsoft.Malmo.MissionHandlerInterfaces.IWorldDecorator;
 import com.microsoft.Malmo.Schemas.MissionInit;
 import com.microsoft.Malmo.Schemas.TomcatDecorator;
 
-import edu.arizona.cs.Tomcat.Mission.MissionHandler;
+import edu.arizona.tomcat.Mission.MissionHandler;
 import net.minecraft.world.World;
 
 /** 

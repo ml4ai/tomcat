@@ -54,5 +54,5 @@ coverage.info
 # xsd
 *.xsd
 
-#.DS_store
-.DS_store
+# MacOS filesystem
+.DS_Store
