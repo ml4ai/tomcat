@@ -26,8 +26,6 @@ install:
 script:
   - mkdir build && cd build && cmake .. && make -j test && cd ../
   - cd build && ./bin/test --mission ../external/malmo/sample_missions/default_world_1.xml && cd ../
-
-after_script:
   - cd build && make docs
 
 env:
