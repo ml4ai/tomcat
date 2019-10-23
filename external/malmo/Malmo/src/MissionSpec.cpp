@@ -102,17 +102,17 @@ MissionSpec::MissionSpec() {
 <ContinuousMovementCommands/></AgentHandlers></AgentSection></Mission>)";
 
   std::istringstream is(defaultMission);
-  boost::property_tree::read_xml(is, mission);
+  boost::property_tree::read_xml(is, this->mission);
 }
 
 MissionSpec::MissionSpec(const std::string& xml, bool validate) {
   std::istringstream is(xml);
-  boost::property_tree::read_xml(is, mission);
+  boost::property_tree::read_xml(is, this->mission);
 
   if (validate) {
     // Agent side schema validation is lacking but Minecraft client will perform
     // full validation (which is not optional).
-    const auto& xmlns = mission.get_optional<string>("Mission.<xmlattr>.xmlns");
+    const auto& xmlns = this->mission.get_optional<string>("Mission.<xmlattr>.xmlns");
     if (xmlns == boost::none || MALMO_NAMESPACE != xmlns.get()) {
       throw runtime_error("MissionSpec is invalid (namespace)");
     }
@@ -122,7 +122,7 @@ MissionSpec::MissionSpec(const std::string& xml, bool validate) {
 std::string MissionSpec::getAsXML(bool prettyPrint) const {
   std::ostringstream oss;
 
-  write_xml(oss, mission);
+  write_xml(oss, this->mission);
 
   std::string xml = oss.str();
   if (!prettyPrint)
@@ -133,23 +133,23 @@ std::string MissionSpec::getAsXML(bool prettyPrint) const {
 // -------------------- settings for the server ---------------------------------
 
 void MissionSpec::setSummary(const std::string& summary) {
-  mission.put("Mission.About.Summary", summary);
+  this->mission.put("Mission.About.Summary", summary);
 }
 
 void MissionSpec::timeLimitInSeconds(float s) {
-  mission.put("Mission.ServerSection.ServerHandlers.ServerQuitFromTimeUp.<"
+  this->mission.put("Mission.ServerSection.ServerHandlers.ServerQuitFromTimeUp.<"
               "xmlattr>.timeLimitMs",
               s * MillisecondsInOneSecond);
 }
 
 void MissionSpec::createDefaultTerrain() {
   worldGeneratorReset();
-  mission.put("Mission.ServerSection.ServerHandlers.DefaultWorldGenerator", "");
+  this->mission.put("Mission.ServerSection.ServerHandlers.DefaultWorldGenerator", "");
 }
 
 void MissionSpec::worldGeneratorReset() {
   const auto& parent =
-      mission.get_child_optional("Mission.ServerSection.ServerHandlers");
+      this->mission.get_child_optional("Mission.ServerSection.ServerHandlers");
   if (parent) {
     auto& child = mission.get_child("Mission.ServerSection.ServerHandlers");
     child.erase("FlatWorldGenerator");
@@ -159,28 +159,28 @@ void MissionSpec::worldGeneratorReset() {
 }
 
 void MissionSpec::setWorldSeed(const std::string& seed) {
-  const auto& default_wg = mission.get_child_optional(
+  const auto& default_wg = this->mission.get_child_optional(
       "Mission.ServerSection.ServerHandlers.DefaultWorldGenerator");
   if (default_wg)
     default_wg.get().put("<xmlattr>.seed", seed);
-  const auto& flat_wg = mission.get_child_optional(
+  const auto& flat_wg = this->mission.get_child_optional(
       "Mission.ServerSection.ServerHandlers.FlatWorldGenerator");
   if (flat_wg)
     flat_wg.get().put("<xmlattr>.seed", seed);
 }
 
 void MissionSpec::forceWorldReset() {
-  const auto& flatWorldGenerator = mission.get_child_optional(
+  const auto& flatWorldGenerator = this->mission.get_child_optional(
       "Mission.ServerSection.ServerHandlers.FlatWorldGenerator");
   if (flatWorldGenerator) {
     flatWorldGenerator.get().put("<xmlattr>.forceReset", true);
   }
-  const auto& fileWorldGenerator = mission.get_child_optional(
+  const auto& fileWorldGenerator = this->mission.get_child_optional(
       "Mission.ServerSection.ServerHandlers.FileWorldGenerator");
   if (fileWorldGenerator) {
     fileWorldGenerator.get().put("<xmlattr>.forceReset", true);
   }
-  const auto& defaultWorldGenerator = mission.get_child_optional(
+  const auto& defaultWorldGenerator = this->mission.get_child_optional(
       "Mission.ServerSection.ServerHandlers.DefaultWorldGenerator");
   if (defaultWorldGenerator) {
     defaultWorldGenerator.get().put("<xmlattr>.forceReset", true);
@@ -188,9 +188,9 @@ void MissionSpec::forceWorldReset() {
 }
 
 void MissionSpec::setTimeOfDay(int t, bool allowTimeToPass) {
-  mission.put("Mission.ServerSection.ServerInitialConditions.Time.StartTime",
+  this->mission.put("Mission.ServerSection.ServerInitialConditions.Time.StartTime",
               t);
-  mission.put(
+  this->mission.put(
       "Mission.ServerSection.ServerInitialConditions.Time.AllowPassageOfTime",
       allowTimeToPass);
 }
@@ -278,28 +278,28 @@ void MissionSpec::drawLine(int x1,
 // ------------------ settings for the agents --------------------------------
 
 void MissionSpec::startAt(float x, float y, float z) {
-  mission.put("Mission.AgentSection.AgentStart.Placement.<xmlattr>.x", x);
-  mission.put("Mission.AgentSection.AgentStart.Placement.<xmlattr>.y", y);
-  mission.put("Mission.AgentSection.AgentStart.Placement.<xmlattr>.z", z);
+  this->mission.put("Mission.AgentSection.AgentStart.Placement.<xmlattr>.x", x);
+  this->mission.put("Mission.AgentSection.AgentStart.Placement.<xmlattr>.y", y);
+  this->mission.put("Mission.AgentSection.AgentStart.Placement.<xmlattr>.z", z);
 }
 
 void MissionSpec::startAtWithPitchAndYaw(
     float x, float y, float z, float pitch, float yaw) {
   startAt(x, y, z);
-  mission.put("Mission.AgentSection.AgentStart.Placement.<xmlattr>.pitch",
+  this->mission.put("Mission.AgentSection.AgentStart.Placement.<xmlattr>.pitch",
               pitch);
-  mission.put("Mission.AgentSection.AgentStart.Placement.<xmlattr>.yaw", yaw);
+  this->mission.put("Mission.AgentSection.AgentStart.Placement.<xmlattr>.yaw", yaw);
 }
 
 void MissionSpec::endAt(float x, float y, float z, float tolerance) {
   const auto& elementName =
       "Mission.AgentSection.AgentHandlers.AgentQuitFromReachingPosition";
   const auto& agentQuitFromReachingPosition =
-      mission.get_child_optional(elementName);
+      this->mission.get_child_optional(elementName);
   if (agentQuitFromReachingPosition == boost::none) {
-    mission.add(elementName, "");
+    this->mission.add(elementName, "");
   }
-  auto& element = mission.get_child(elementName);
+  auto& element = this->mission.get_child(elementName);
   boost::property_tree::ptree marker;
   marker.add("<xmlattr>.x", x);
   marker.add("<xmlattr>.y", y);
@@ -309,51 +309,51 @@ void MissionSpec::endAt(float x, float y, float z, float tolerance) {
 }
 
 void MissionSpec::setModeToCreative() {
-  mission.put("Mission.AgentSection.<xmlattr>.mode", "Creative");
+  this->mission.put("Mission.AgentSection.<xmlattr>.mode", "Creative");
 }
 
 void MissionSpec::setModeToSpectator() {
-  mission.put("Mission.AgentSection.<xmlattr>.mode", "Spectator");
+  this->mission.put("Mission.AgentSection.<xmlattr>.mode", "Spectator");
 }
 
 void MissionSpec::requestVideo(int width, int height) {
-  mission.put("Mission.AgentSection.AgentHandlers.VideoProducer.Width", width);
-  mission.put("Mission.AgentSection.AgentHandlers.VideoProducer.Height",
+  this->mission.put("Mission.AgentSection.AgentHandlers.VideoProducer.Width", width);
+  this->mission.put("Mission.AgentSection.AgentHandlers.VideoProducer.Height",
               height);
 }
 
 void MissionSpec::requestLuminance(int width, int height) {
-  mission.put("Mission.AgentSection.AgentHandlers.LuminanceProducer.Width",
+  this->mission.put("Mission.AgentSection.AgentHandlers.LuminanceProducer.Width",
               width);
-  mission.put("Mission.AgentSection.AgentHandlers.LuminanceProducer.Height",
+  this->mission.put("Mission.AgentSection.AgentHandlers.LuminanceProducer.Height",
               height);
 }
 
 void MissionSpec::requestColourMap(int width, int height) {
-  mission.put("Mission.AgentSection.AgentHandlers.ColourMapProducer.Width",
+  this->mission.put("Mission.AgentSection.AgentHandlers.ColourMapProducer.Width",
               width);
-  mission.put("Mission.AgentSection.AgentHandlers.ColourMapProducer.Height",
+  this->mission.put("Mission.AgentSection.AgentHandlers.ColourMapProducer.Height",
               height);
 }
 
 void MissionSpec::request32bppDepth(int width, int height) {
-  mission.put("Mission.AgentSection.AgentHandlers.DepthProducer.Width", width);
-  mission.put("Mission.AgentSection.AgentHandlers.DepthProducer.Height",
+  this->mission.put("Mission.AgentSection.AgentHandlers.DepthProducer.Width", width);
+  this->mission.put("Mission.AgentSection.AgentHandlers.DepthProducer.Height",
               height);
 }
 
 void MissionSpec::requestVideoWithDepth(int width, int height) {
   requestVideo(width, height);
-  mission.put(
+  this->mission.put(
       "Mission.AgentSection.AgentHandlers.VideoProducer.<xmlattr>.want_depth",
       true);
 }
 
 void MissionSpec::setViewpoint(int viewpoint) {
-  const auto& v = mission.get_child_optional(
+  const auto& v = this->mission.get_child_optional(
       "Mission.AgentSection.AgentHandlers.VideoProducer");
   if (v) {
-    mission.put(
+    this->mission.put(
         "Mission.AgentSection.AgentHandlers.VideoProducer.<xmlattr>.viewpoint",
         viewpoint);
   }
@@ -364,11 +364,11 @@ void MissionSpec::rewardForReachingPosition(
   const auto& elementName =
       "Mission.AgentSection.AgentHandlers.RewardForReachingPosition";
   const auto& rewardForReachingPosition =
-      mission.get_child_optional(elementName);
+      this->mission.get_child_optional(elementName);
   if (rewardForReachingPosition == boost::none) {
-    mission.add(elementName, "");
+    this->mission.add(elementName, "");
   }
-  auto& element = mission.get_child(elementName);
+  auto& element = this->mission.get_child(elementName);
   boost::property_tree::ptree marker;
   marker.add("<xmlattr>.x", x);
   marker.add("<xmlattr>.y", y);
@@ -379,16 +379,16 @@ void MissionSpec::rewardForReachingPosition(
 }
 
 void MissionSpec::observeRecentCommands() {
-  mission.put(
+  this->mission.put(
       "Mission.AgentSection.AgentHandlers.ObservationFromRecentCommands", "");
 }
 
 void MissionSpec::observeHotBar() {
-  mission.put("Mission.AgentSection.AgentHandlers.ObservationFromHotBar", "");
+  this->mission.put("Mission.AgentSection.AgentHandlers.ObservationFromHotBar", "");
 }
 
 void MissionSpec::observeFullInventory() {
-  mission.put("Mission.AgentSection.AgentHandlers.ObservationFromFullInventory",
+  this->mission.put("Mission.AgentSection.AgentHandlers.ObservationFromFullInventory",
               "");
 }
 
@@ -396,11 +396,11 @@ void MissionSpec::observeGrid(
     int x1, int y1, int z1, int x2, int y2, int z2, const std::string& name) {
   const auto& elementName =
       "Mission.AgentSection.AgentHandlers.ObservationFromGrid";
-  const auto& observationFromGrid = mission.get_child_optional(elementName);
+  const auto& observationFromGrid = this->mission.get_child_optional(elementName);
   if (observationFromGrid == boost::none) {
-    mission.add(elementName, "");
+    this->mission.add(elementName, "");
   }
-  auto& element = mission.get_child(elementName);
+  auto& element = this->mission.get_child(elementName);
   boost::property_tree::ptree grid;
   grid.add("min.<xmlattr>.x", x1);
   grid.add("min.<xmlattr>.y", y1);
@@ -418,11 +418,11 @@ void MissionSpec::observeDistance(float x,
                                   const std::string& name) {
   const auto& elementName =
       "Mission.AgentSection.AgentHandlers.ObservationFromDistance";
-  const auto& observationFromDistance = mission.get_child_optional(elementName);
+  const auto& observationFromDistance = this->mission.get_child_optional(elementName);
   if (observationFromDistance == boost::none) {
-    mission.add(elementName, "");
+    this->mission.add(elementName, "");
   }
-  auto& element = mission.get_child(elementName);
+  auto& element = this->mission.get_child(elementName);
   boost::property_tree::ptree marker;
   marker.add("<xmlattr>.x", x);
   marker.add("<xmlattr>.y", y);
@@ -432,7 +432,7 @@ void MissionSpec::observeDistance(float x,
 }
 
 void MissionSpec::observeChat() {
-  mission.put("Mission.AgentSection.AgentHandlers.ObservationFromChat", "");
+  this->mission.put("Mission.AgentSection.AgentHandlers.ObservationFromChat", "");
 }
 
 // ------------------ settings for the agents : command handlers
@@ -440,9 +440,9 @@ void MissionSpec::observeChat() {
 
 void MissionSpec::removeAllCommandHandlers() {
   const auto& agent_handlers =
-      mission.get_child_optional("Mission.AgentSection.AgentHandlers");
+      this->mission.get_child_optional("Mission.AgentSection.AgentHandlers");
   if (agent_handlers) {
-    auto& child = mission.get_child("Mission.AgentSection.AgentHandlers");
+    auto& child = this->mission.get_child("Mission.AgentSection.AgentHandlers");
 
     child.erase("ContinuousMovementCommands");
     child.erase("DiscreteMovementCommands");
@@ -454,7 +454,7 @@ void MissionSpec::removeAllCommandHandlers() {
 }
 
 void MissionSpec::allowAllContinuousMovementCommands() {
-  mission.put("Mission.AgentSection.AgentHandlers.ContinuousMovementCommands",
+  this->mission.put("Mission.AgentSection.AgentHandlers.ContinuousMovementCommands",
               "");
 }
 
@@ -464,7 +464,7 @@ void MissionSpec::allowContinuousMovementCommand(const std::string& verb) {
 }
 
 void MissionSpec::allowAllDiscreteMovementCommands() {
-  mission.put("Mission.AgentSection.AgentHandlers.DiscreteMovementCommands",
+  this->mission.put("Mission.AgentSection.AgentHandlers.DiscreteMovementCommands",
               "");
 }
 
@@ -474,7 +474,7 @@ void MissionSpec::allowDiscreteMovementCommand(const std::string& verb) {
 }
 
 void MissionSpec::allowAllAbsoluteMovementCommands() {
-  mission.put("Mission.AgentSection.AgentHandlers.AbsoluteMovementCommands",
+  this->mission.put("Mission.AgentSection.AgentHandlers.AbsoluteMovementCommands",
               "");
 }
 
@@ -484,7 +484,7 @@ void MissionSpec::allowAbsoluteMovementCommand(const std::string& verb) {
 }
 
 void MissionSpec::allowAllInventoryCommands() {
-  mission.put("Mission.AgentSection.AgentHandlers.InventoryCommands", "");
+  this->mission.put("Mission.AgentSection.AgentHandlers.InventoryCommands", "");
 }
 
 void MissionSpec::allowInventoryCommand(const std::string& verb) {
@@ -493,19 +493,19 @@ void MissionSpec::allowInventoryCommand(const std::string& verb) {
 }
 
 void MissionSpec::allowAllChatCommands() {
-  mission.put("Mission.AgentSection.AgentHandlers.ChatCommands", "");
+  this->mission.put("Mission.AgentSection.AgentHandlers.ChatCommands", "");
 }
 
 // ------------------------------- information
 // ---------------------------------------------------
 
 string MissionSpec::getSummary() const {
-  return mission.get<std::string>("Mission.About.Summary");
+  return this->mission.get<std::string>("Mission.About.Summary");
 }
 
 int MissionSpec::getNumberOfAgents() const {
   int i = 0;
-  for (auto& e : mission.get_child("Mission"))
+  for (auto& e : this->mission.get_child("Mission"))
     if (e.first == "AgentSection")
       i++;
   return i;
@@ -573,7 +573,7 @@ int MissionSpec::getVideoChannels(int role) const {
 }
 
 vector<string> MissionSpec::getListOfCommandHandlers(int role) const {
-  const boost::property_tree::ptree& m = mission.get_child("Mission");
+  const boost::property_tree::ptree& m = this->mission.get_child("Mission");
   for (auto& e : m) {
     if (e.first != "AgentSection")
       continue;
@@ -617,7 +617,7 @@ vector<string>
 MissionSpec::getAllowedCommands(int role, const string& command_handler) const {
   vector<string> allowed_commands;
 
-  const boost::property_tree::ptree& m = mission.get_child("Mission");
+  const boost::property_tree::ptree& m = this->mission.get_child("Mission");
   for (auto& e : m) {
     if (e.first != "AgentSection")
       continue;
@@ -695,7 +695,7 @@ MissionSpec::getAllowedCommands(int role, const string& command_handler) const {
 
 int MissionSpec::getChildCount(const std::string& elementPath,
                                const std::string& childName) const {
-  const auto& element = mission.get_child_optional(elementPath);
+  const auto& element = this->mission.get_child_optional(elementPath);
   int count = 0;
   if (element == boost::none)
     return -1;
@@ -710,11 +710,11 @@ int MissionSpec::getChildCount(const std::string& elementPath,
 // -----------------------------------------------
 
 boost::property_tree::ptree& MissionSpec::getDrawingDecorator() {
-  const auto& drawing_decorator = mission.get_child_optional(
+  const auto& drawing_decorator = this->mission.get_child_optional(
       "Mission.ServerSection.ServerHandlers.DrawingDecorator");
   if (drawing_decorator == boost::none) {
-    mission.put("Mission.ServerSection.ServerHandlers.DrawingDecorator", "");
-    return mission.get_child(
+    this->mission.put("Mission.ServerSection.ServerHandlers.DrawingDecorator", "");
+    return this->mission.get_child(
         "Mission.ServerSection.ServerHandlers.DrawingDecorator");
   }
   return drawing_decorator.get();
@@ -722,7 +722,7 @@ boost::property_tree::ptree& MissionSpec::getDrawingDecorator() {
 
 boost::optional<int>
 MissionSpec::getRoleValue(int role, std::string videoType, char what) const {
-  const boost::property_tree::ptree& m = mission.get_child("Mission");
+  const boost::property_tree::ptree& m = this->mission.get_child("Mission");
   for (auto& e : m) {
     if (e.first != "AgentSection")
       continue;
@@ -759,11 +759,11 @@ MissionSpec::getRoleValue(int role, std::string videoType, char what) const {
 
 void MissionSpec::addVerbToCommandType(std::string verb,
                                        std::string commandType) {
-  const auto& c = mission.get_child_optional(commandType);
+  const auto& c = this->mission.get_child_optional(commandType);
   if (c == boost::none) {
-    mission.put(commandType, "");
+    this->mission.put(commandType, "");
   }
-  boost::property_tree::ptree& commands = mission.get_child(commandType);
+  boost::property_tree::ptree& commands = this->mission.get_child(commandType);
   bool found = false;
   for (auto& e : commands) {
     if (e.first == "ModifierList") {
