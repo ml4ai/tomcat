@@ -20,6 +20,7 @@ namespace tomcat {
     void LocalAgent::setMission(string missionIdOrPathToXML, unsigned int timeLimitInSeconds,
             unsigned int width, unsigned int height, bool activateVideo, bool activateObsRec) {
         this->missionHandler = MissionHandler();
+        this->missionHandler.setMission(missionIdOrPathToXML);
         if (activateVideo) {
           this->missionHandler.requestVideo(width, height);
         }
@@ -29,7 +30,6 @@ namespace tomcat {
           //this->missionHandler.observeFullInventory();
           //this->missionHandler.observeChat();
         }
-        this->missionHandler.setMission(missionIdOrPathToXML);
         this->missionHandler.setTimeLimitInSeconds(timeLimitInSeconds);
     }
 
