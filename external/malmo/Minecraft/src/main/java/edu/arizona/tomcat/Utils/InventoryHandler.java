@@ -5,12 +5,11 @@ import com.microsoft.Malmo.Schemas.ItemType;
 import com.microsoft.Malmo.Utils.MinecraftTypeHelper;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 public class InventoryHandler {
-	
+
 	/**
 	 * Adds an item to the player's main inventory
 	 * @param type - Item type
@@ -18,10 +17,10 @@ public class InventoryHandler {
 	 */
 	public static void addItemToInventory(ItemType type, int quantity) {
 		Item item = MinecraftTypeHelper.ParseItemType(type.value(), false);
-		ItemStack itemStack = new ItemStack(item);
-		Minecraft.getMinecraft().player.inventory.addItemStackToInventory(itemStack);
+		ItemStack itemStack = new ItemStack(item, quantity);
+		MinecraftServerHelper.getFirstPlayer().inventory.addItemStackToInventory(itemStack);
 	}
-	
+
 	/**
 	 * Adds a block to the player's main inventory
 	 * @param type - Block type
@@ -29,8 +28,8 @@ public class InventoryHandler {
 	 */
 	public static void addBlockToInventory(BlockType type, int quantity) {
 		Block block = MinecraftTypeHelper.ParseBlockType(type.value()).getBlock();
-		ItemStack itemStack = new ItemStack(block);
-		Minecraft.getMinecraft().player.inventory.addItemStackToInventory(itemStack);		
+		ItemStack itemStack = new ItemStack(block, quantity);
+		MinecraftServerHelper.getFirstPlayer().inventory.addItemStackToInventory(itemStack);		
 	}
-	
+
 }

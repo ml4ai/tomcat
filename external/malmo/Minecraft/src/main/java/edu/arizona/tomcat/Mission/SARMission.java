@@ -5,7 +5,7 @@ import com.microsoft.Malmo.Schemas.EntityTypes;
 import edu.arizona.tomcat.Emotion.EmotionHandler;
 import edu.arizona.tomcat.Mission.gui.SimpleGUI;
 import edu.arizona.tomcat.World.Drawing;
-import edu.arizona.tomcat.World.Entity;
+import edu.arizona.tomcat.World.CompositeEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -27,7 +27,7 @@ public class SARMission extends Mission {
 	 * @throws Exception 
 	 */
 	private void createZombieHorde(World world) throws Exception {
-		int distance = 10; // Number of voxels apart from the player
+		int distance = 5; // Number of voxels apart from the player
 		int playersX = (int) Minecraft.getMinecraft().player.posX;
 		int playersZ = (int) Minecraft.getMinecraft().player.posZ;
 		int playersY = (int) Minecraft.getMinecraft().player.posY;
@@ -35,13 +35,13 @@ public class SARMission extends Mission {
 		Drawing drawing = new Drawing();
 
 		// Create zombie in front of the player
-		Entity zombie1 = new Entity(playersX, playersZ + distance, playersY, EntityTypes.ZOMBIE);
+		CompositeEntity zombie1 = new CompositeEntity(playersX, playersY, playersZ + distance, EntityTypes.ZOMBIE);
 
 		// Create zombie to the northwest of the player
-		Entity zombie2 = new Entity(playersX + distance, playersZ + distance/2, playersY, EntityTypes.ZOMBIE);
+		CompositeEntity zombie2 = new CompositeEntity(playersX + distance, playersY, playersZ + distance/2, EntityTypes.ZOMBIE);
 
 		// Create zombie to the northeast of the player
-		Entity zombie3 = new Entity(playersX - distance, playersZ + distance/2, playersY, EntityTypes.ZOMBIE);
+		CompositeEntity zombie3 = new CompositeEntity(playersX - distance, playersY, playersZ + distance/2, EntityTypes.ZOMBIE);
 
 		drawing.addObject(zombie1);
 		drawing.addObject(zombie2);
@@ -57,7 +57,7 @@ public class SARMission extends Mission {
 	 * @throws Exception 
 	 */
 	private void createZombieMegaHorde(World world) throws Exception {
-		int distance = 20; // Number of voxels apart from the player
+		int distance = 10; // Number of voxels apart from the player
 		int playersX = (int) Minecraft.getMinecraft().player.posX;
 		int playersZ = (int) Minecraft.getMinecraft().player.posZ;
 		int playersY = (int) Minecraft.getMinecraft().player.posY;
@@ -65,28 +65,28 @@ public class SARMission extends Mission {
 		Drawing drawing = new Drawing();
 
 		// Create zombie in front of the player
-		Entity zombie1 = new Entity(playersX, playersZ + distance, playersY, EntityTypes.ZOMBIE);
+		CompositeEntity zombie1 = new CompositeEntity(playersX, playersY, playersZ + distance, EntityTypes.ZOMBIE);
 
 		// Create zombie to the northwest of the player
-		Entity zombie2 = new Entity(playersX + distance, playersZ + distance/2, playersY, EntityTypes.ZOMBIE);
+		CompositeEntity zombie2 = new CompositeEntity(playersX + distance, playersY, playersZ + distance/2, EntityTypes.ZOMBIE);
 
 		// Create zombie to the left of the player
-		Entity zombie3 = new Entity(playersX + distance, playersZ, playersY, EntityTypes.ZOMBIE);
+		CompositeEntity zombie3 = new CompositeEntity(playersX + distance, playersY, playersZ, EntityTypes.ZOMBIE);
 
 		// Create zombie to the southwest of the player
-		Entity zombie4 = new Entity(playersX + distance, playersZ - distance/2, playersY, EntityTypes.ZOMBIE);
+		CompositeEntity zombie4 = new CompositeEntity(playersX + distance, playersY, playersZ - distance/2, EntityTypes.ZOMBIE);
 
 		// Create zombie behind the player
-		Entity zombie5 = new Entity(playersX, playersZ - distance, playersY, EntityTypes.ZOMBIE);
+		CompositeEntity zombie5 = new CompositeEntity(playersX, playersY, playersZ - distance, EntityTypes.ZOMBIE);
 
 		// Create zombie to the southeast of the player
-		Entity zombie6 = new Entity(playersX - distance, playersZ - distance/2, playersY, EntityTypes.ZOMBIE);
+		CompositeEntity zombie6 = new CompositeEntity(playersX - distance, playersY, playersZ - distance/2, EntityTypes.ZOMBIE);
 
 		// Create zombie to the right of the player
-		Entity zombie7 = new Entity(playersX - distance, playersZ, playersY, EntityTypes.ZOMBIE);
+		CompositeEntity zombie7 = new CompositeEntity(playersX - distance, playersY, playersZ, EntityTypes.ZOMBIE);
 
 		// Create zombie to the northeast of the player
-		Entity zombie8 = new Entity(playersX - distance, playersZ + distance/2, playersY, EntityTypes.ZOMBIE);
+		CompositeEntity zombie8 = new CompositeEntity(playersX - distance, playersY, playersZ + distance/2, EntityTypes.ZOMBIE);
 
 		drawing.addObject(zombie1);
 		drawing.addObject(zombie2);

@@ -5,14 +5,14 @@ import java.util.Iterator;
 
 import com.microsoft.Malmo.Schemas.DrawObjectType;
 
-public abstract class DrawingObject {
+public abstract class CompositeDrawingObject {
 	
 	protected ArrayList<DrawObjectType> malmoDrawObjects;
 	
 	/**
 	 * Constructor
 	 */
-	public DrawingObject() {
+	public CompositeDrawingObject() {
 		this.malmoDrawObjects = new ArrayList<DrawObjectType>();
 	}
 	
@@ -28,7 +28,7 @@ public abstract class DrawingObject {
 	 * Merge malmo objects from one drawing with another
 	 * @param drawingObject - Drawing Object
 	 */
-	public void mergeWith(DrawingObject drawingObject) {
+	public void mergeWith(CompositeDrawingObject drawingObject) {
 		Iterator<DrawObjectType> alienMalmoDrawObjects = drawingObject.getMalmoDrawObjects();
 		while (alienMalmoDrawObjects.hasNext()) {
 			this.malmoDrawObjects.add(alienMalmoDrawObjects.next());

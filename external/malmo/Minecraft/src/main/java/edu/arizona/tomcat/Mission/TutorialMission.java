@@ -35,8 +35,7 @@ public class TutorialMission extends Mission {
 	}
 	
 	private void craftAWoodAxe() {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub		
 	}
 	
 	private void goToTheMainEntrance() {
@@ -51,15 +50,9 @@ public class TutorialMission extends Mission {
 		this.addPhase(goToTheMainEntrancePhase);
 	}
 
-	
-
 	private void killAZombie() {
 		// TODO Auto-generated method stub		
 	}
-
-	
-
-	
 
 	@Override
 	public void init(World world) {
@@ -80,11 +73,10 @@ public class TutorialMission extends Mission {
 //				drawing.addObject(villager);
 //				drawing.addObject(door);
 //				this.drawingHandler.draw(world, drawing);
-				this.drawn = true;							
-				
+				this.drawn = true;	
 				
 				InventoryHandler.addItemToInventory(ItemType.STICK, 2);
-				InventoryHandler.addBlockToInventory(BlockType.PLANKS, 3);
+				InventoryHandler.addBlockToInventory(BlockType.PLANKS, 7);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

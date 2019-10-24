@@ -5,20 +5,20 @@ import java.util.Iterator;
 
 public class Drawing {
 	
-	private ArrayList<DrawingObject> objects;
+	private ArrayList<CompositeDrawingObject> objects;
 	
 	/**
 	 * Constructor
 	 */
 	public Drawing() {
-		this.objects = new ArrayList<DrawingObject>();
+		this.objects = new ArrayList<CompositeDrawingObject>();
 	}
 	
 	/**
 	 * List of objects in the drawing
 	 * @return
 	 */
-	public Iterator<DrawingObject> getObjects() {
+	public Iterator<CompositeDrawingObject> getObjects() {
 		return this.objects.iterator();
 	}
 	
@@ -26,7 +26,7 @@ public class Drawing {
 	 * Adds a new object to the drawing
 	 * @param object
 	 */
-	public void addObject(DrawingObject object) {
+	public void addObject(CompositeDrawingObject object) {
 		this.objects.add(object);
 	}
 	
@@ -34,7 +34,7 @@ public class Drawing {
 	 * Removes an object to the drawing
 	 * @param object
 	 */
-	public void removeObject(DrawingObject object) {
+	public void removeObject(CompositeDrawingObject object) {
 		this.objects.remove(object);
 	}
 

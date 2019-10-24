@@ -6,9 +6,9 @@ import com.microsoft.Malmo.Schemas.DrawEntity;
 import com.microsoft.Malmo.Schemas.EntityTypes;
 import com.microsoft.Malmo.Schemas.SpawnableTypes;
 
-public class Entity extends DrawingObject{
-	private static entityNum = 0;
-	
+public class CompositeEntity extends CompositeDrawingObject{
+	private static int entityNum;
+
 	/**
 	 * Constructor
 	 * @param x - Position of the entity in the x axis
@@ -16,7 +16,7 @@ public class Entity extends DrawingObject{
 	 * @param z - Position of the entity in the z axis
 	 * @param type - Type of the entity
 	 */
-	public Entity(int x, int y, int z, EntityTypes type) {
+	public CompositeEntity(int x, int y, int z, EntityTypes type) {
 		super();
 		this.createEntity(x, y, z, type);
 		entityNum++;

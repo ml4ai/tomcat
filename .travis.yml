@@ -6,7 +6,6 @@ osx_image: xcode11
 language: 
  - cpp
 
-
 addons:
   homebrew:
     packages:
@@ -27,9 +26,7 @@ install:
 script:
   - mkdir build && cd build && cmake .. && make -j test && cd ../
   - cd build && ./bin/test --mission ../external/malmo/sample_missions/default_world_1.xml && cd ../
-
-after_script:
-  - cd docs && make
+  - cd build && make docs
 
 env:
   - MALMO_XSD_PATH=~/tomcat/external/malmo/Schemas
@@ -38,3 +35,13 @@ after_success:
   - lcov -d build/tests/CMakeFiles/test.dir -d build/src/CMakeFiles/tomcat.dir -c -o coverage.info
   - lcov -e coverage.info '*tomcat/src*' -o coverage.info
   - bash <(curl -s https://codecov.io/bash) -f coverage.info
+
+deploy:
+  local-dir: build/docs/html
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  on:
+    branch:
+      - master
+      - website
