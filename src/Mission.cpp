@@ -1,4 +1,5 @@
 #include "Mission.h"
+#include <fmt/format.h>
 
 using namespace malmo;
 using namespace std;

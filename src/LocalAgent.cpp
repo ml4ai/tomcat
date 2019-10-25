@@ -30,9 +30,9 @@ void LocalAgent::setMission(string missionIdOrPathToXML,
   }
   if (activateObsRec) {
     this->missionHandler.observeRecentCommands();
-    // this->missionHandler.observeHotBar();
-    // this->missionHandler.observeFullInventory();
-    // this->missionHandler.observeChat();
+    this->missionHandler.observeHotBar();
+    this->missionHandler.observeFullInventory();
+    this->missionHandler.observeChat();
   }
   this->missionHandler.setTimeLimitInSeconds(timeLimitInSeconds);
 }
