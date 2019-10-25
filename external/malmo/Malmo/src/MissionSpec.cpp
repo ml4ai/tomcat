@@ -29,6 +29,7 @@
 
 // STL:
 #include <iostream>
+#include <fmt/format.h>
 using namespace std;
 
 namespace malmo {
