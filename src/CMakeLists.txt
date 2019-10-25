@@ -52,3 +52,8 @@ if(BUILD_PYTHON_WRAPPER)
     pytomcat PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}" SUFFIX
                             "${PYTHON_MODULE_EXTENSION}")
 endif()
+
+add_executable(paex_record paex_record.c)
+target_include_directories(paex_record PUBLIC "/opt/local/include")
+target_link_directories(paex_record PUBLIC "/opt/local/lib")
+target_link_libraries(paex_record portaudio)
