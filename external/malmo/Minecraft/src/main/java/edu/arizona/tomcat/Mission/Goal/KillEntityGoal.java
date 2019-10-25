@@ -38,6 +38,5 @@ public class KillEntityGoal extends MissionGoal {
 		}
 		
 		
-		
 	}
 }
