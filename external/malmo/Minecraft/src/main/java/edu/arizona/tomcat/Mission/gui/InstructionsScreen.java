@@ -33,6 +33,7 @@ public class InstructionsScreen extends GUIScreenUndismissableOnEscapeKey {
 		for(String pieceOfInstructions : this.instructions) {
 			instructionsLabel.addLine(pieceOfInstructions);
 		}
+		
 		this.labelList.add(instructionsLabel);
 		this.buttonList.add(new GuiButton(BUTTON_OK, width/ 2 - 25, height / 2, 50, 20, "Ok"));
 	}

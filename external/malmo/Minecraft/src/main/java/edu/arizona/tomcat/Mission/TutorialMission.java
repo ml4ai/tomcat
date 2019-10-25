@@ -47,6 +47,7 @@ public class TutorialMission extends Mission {
 		openInventoryPhase.addInstructionsLine("Used to check if succeed in battling.");
 		openInventoryPhase.addGoal(goal);
 		this.addPhase(openInventoryPhase);
+		
 	}
 	
 	private void goToTheMainEntrance() {

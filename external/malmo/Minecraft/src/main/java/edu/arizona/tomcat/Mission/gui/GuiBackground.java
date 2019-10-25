@@ -25,6 +25,7 @@ public class GuiBackground extends GuiLabel {
     private int brColor;
     private final FontRenderer fontRenderer;
     private int border;
+    
 
 
 	public GuiBackground(FontRenderer fontRendererObj, int p_i45540_2_, int p_i45540_3_, int p_i45540_4_,
