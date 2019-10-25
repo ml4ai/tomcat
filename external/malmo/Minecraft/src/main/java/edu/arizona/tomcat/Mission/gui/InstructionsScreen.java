@@ -1,9 +1,14 @@
 package edu.arizona.tomcat.Mission.gui;
 
+
 import java.util.ArrayList;
+
+
+
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiLabel;
+
 
 public class InstructionsScreen extends GUIScreenUndismissableOnEscapeKey {
 	
@@ -11,7 +16,8 @@ public class InstructionsScreen extends GUIScreenUndismissableOnEscapeKey {
 	
 	private ArrayList<String> instructions;
 	private ArrayList<ScreenListener> listeners;
-		
+	public boolean visible = true;
+	
 	public InstructionsScreen(ArrayList<String> instructions) {
 		this.instructions = instructions;
 		this.listeners = new ArrayList<ScreenListener>();
@@ -21,8 +27,9 @@ public class InstructionsScreen extends GUIScreenUndismissableOnEscapeKey {
 	public void initGui() {
 		super.initGui();	
 		
-		GuiLabel instructionsLabel = new GuiLabel(fontRendererObj, 1, (this.width - 200) / 2, this.height / 4, 200, 20, 0xFFFFFF);
+		GuiLabel instructionsLabel = new GuiBackground(fontRendererObj, 1, (this.width - 200) / 2, this.height / 4, 200, 20, 0x000000);
 		instructionsLabel.setCentered();
+		
 		for(String pieceOfInstructions : this.instructions) {
 			instructionsLabel.addLine(pieceOfInstructions);
 		}
@@ -30,6 +37,11 @@ public class InstructionsScreen extends GUIScreenUndismissableOnEscapeKey {
 		this.buttonList.add(new GuiButton(BUTTON_OK, width/ 2 - 25, height / 2, 50, 20, "Ok"));
 	}
 
+	
+	
+
+	
+	
 	@Override
 	protected void actionPerformed(GuiButton guiButton) {
 		if(guiButton.id == BUTTON_OK) {
