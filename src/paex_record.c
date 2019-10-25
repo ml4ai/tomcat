@@ -193,9 +193,6 @@ int main(void) {
   SAMPLE max, val;
   double average;
 
-  printf("patest_record.c\n");
-  fflush(stdout);
-
   data.maxFrameIndex = totalFrames =
       NUM_SECONDS * SAMPLE_RATE; /* Record for a few seconds. */
   data.frameIndex = 0;
