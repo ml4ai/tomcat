@@ -52,27 +52,23 @@ const unsigned int NUM_SECONDS = 5;
 const unsigned int NUM_CHANNELS = 2;
 /* #define DITHER_FLAG     (paDitherOff) */
 #define DITHER_FLAG (0) /**/
-/** Set to 1 if you want to capture the recording to a file. */
-#define WRITE_TO_FILE (1)
 
 /* Select sample format. */
 #if 1
-#define PA_SAMPLE_TYPE paFloat32
+#define paInt16 paFloat32
 typedef float SAMPLE;
 #define SAMPLE_SILENCE (0.0f)
 #define PRINTF_S_FORMAT "%.8f"
 #elif 1
-#define PA_SAMPLE_TYPE paInt16
 typedef short SAMPLE;
 #define SAMPLE_SILENCE (0)
 #define PRINTF_S_FORMAT "%d"
 #elif 0
-#define PA_SAMPLE_TYPE paInt8
 typedef char SAMPLE;
 #define SAMPLE_SILENCE (0)
 #define PRINTF_S_FORMAT "%d"
 #else
-#define PA_SAMPLE_TYPE paUInt8
+#define paInt16 paUInt8
 typedef unsigned char SAMPLE;
 #define SAMPLE_SILENCE (128)
 #define PRINTF_S_FORMAT "%d"
@@ -225,7 +221,7 @@ int main(void) {
     goto done;
   }
   inputParameters.channelCount = 2; /* stereo input */
-  inputParameters.sampleFormat = PA_SAMPLE_TYPE;
+  inputParameters.sampleFormat = paInt16;
   inputParameters.suggestedLatency =
       Pa_GetDeviceInfo(inputParameters.device)->defaultLowInputLatency;
   inputParameters.hostApiSpecificStreamInfo = NULL;
@@ -279,24 +275,17 @@ int main(void) {
   printf("sample max amplitude = " PRINTF_S_FORMAT "\n", max);
   printf("sample average = %lf\n", average);
 
-  /* Write recorded data to a file. */
-#if WRITE_TO_FILE
-  {
-    FILE* fid;
-    fid = fopen("recorded.wav", "wb");
-    if (fid == NULL) {
-      printf("Could not open file.");
-    }
-    else {
-      fwrite(data.recordedSamples,
-             NUM_CHANNELS * sizeof(SAMPLE),
-             totalFrames,
-             fid);
-      fclose(fid);
-      printf("Wrote data to 'recorded.raw'\n");
-    }
+  FILE* fid;
+  fid = fopen("recorded.wav", "wb");
+  if (fid == NULL) {
+    printf("Could not open file.");
   }
-#endif
+  else {
+    fwrite(
+        data.recordedSamples, NUM_CHANNELS * sizeof(SAMPLE), totalFrames, fid);
+    fclose(fid);
+    printf("Wrote data to 'recorded.raw'\n");
+  }
 
   /* Playback recorded data.  -------------------------------------------- */
   data.frameIndex = 0;
@@ -308,7 +297,7 @@ int main(void) {
     goto done;
   }
   outputParameters.channelCount = 2; /* stereo output */
-  outputParameters.sampleFormat = PA_SAMPLE_TYPE;
+  outputParameters.sampleFormat = paInt16;
   outputParameters.suggestedLatency =
       Pa_GetDeviceInfo(outputParameters.device)->defaultLowOutputLatency;
   outputParameters.hostApiSpecificStreamInfo = NULL;
