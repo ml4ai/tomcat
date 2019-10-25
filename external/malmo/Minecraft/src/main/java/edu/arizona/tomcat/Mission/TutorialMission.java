@@ -1,12 +1,15 @@
 package edu.arizona.tomcat.Mission;
 
 import com.microsoft.Malmo.Schemas.BlockType;
+import com.microsoft.Malmo.Schemas.EntityTypes;
 import com.microsoft.Malmo.Schemas.ItemType;
 
+import edu.arizona.tomcat.Mission.Goal.KillEntityGoal;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
 import edu.arizona.tomcat.Mission.Goal.OpenInventoryGoal;
 import edu.arizona.tomcat.Mission.Goal.ReachPositionGoal;
 import edu.arizona.tomcat.Utils.InventoryHandler;
+
 import net.minecraft.world.World;
 
 public class TutorialMission extends Mission {
@@ -21,9 +24,12 @@ public class TutorialMission extends Mission {
 	@Override
 	protected void createPhases() {
 		this.openInventory();
-		this.craftAWoodAxe();
+		//this.craftAWoodAxe();
 		this.goToTheMainEntrance();
-		this.killAZombie();		
+		this.killAZombie();
+		this.craftAWoodAxe();
+		
+				
 	}
 	
 	private void openInventory() {
@@ -36,6 +42,11 @@ public class TutorialMission extends Mission {
 	
 	private void craftAWoodAxe() {
 		// TODO Auto-generated method stub		
+		MissionPhase openInventoryPhase = new MissionPhase();
+		MissionGoal goal = new OpenInventoryGoal();		
+		openInventoryPhase.addInstructionsLine("Used to check if succeed in battling.");
+		openInventoryPhase.addGoal(goal);
+		this.addPhase(openInventoryPhase);
 	}
 	
 	private void goToTheMainEntrance() {
@@ -50,8 +61,17 @@ public class TutorialMission extends Mission {
 		this.addPhase(goToTheMainEntrancePhase);
 	}
 
-	private void killAZombie() {
-		// TODO Auto-generated method stub		
+	
+	
+	
+	private void killAZombie()  {
+		
+		MissionPhase fightMonster = new MissionPhase();
+		MissionGoal goal = new KillEntityGoal();		
+		fightMonster.addInstructionsLine("Battle one monster.");
+		fightMonster.addGoal(goal);
+		this.addPhase(fightMonster);
+	
 	}
 
 	@Override
