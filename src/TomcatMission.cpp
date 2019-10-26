@@ -47,7 +47,7 @@ void TomcatMission::buildWorld() {
 string TomcatMission::getWorldSkeletonFromXML() {
     string worldSkeletonXML = fmt::format(R"(
     <?xml version="1.0" encoding="UTF-8"?>
-    <Mission xmlns="http://ProjectMalmo.microsoft.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Mission xmlns="http://ProjectMalmo.microsoft.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance xsi:schemaLocation="Mission.xsd">
       <About>
           <Summary>Search and Rescue</Summary>
       </About>
