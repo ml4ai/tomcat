@@ -57,8 +57,8 @@ string TomcatMission::getWorldSkeletonFromXML() {
           </ServerInitialConditions>
           <ServerHandlers>
             <FlatWorldGenerator generatorString="3;2*2;1;village" />
-            <TomcatDecorator mission="{}" timeLimitInSeconds="{}"/>
-          </ServerHandlers>
+            <TomcatDecorator mission="{0}" timeLimitInSeconds="{1}"/>
+         </ServerHandlers>
       </ServerSection>
       <AgentSection mode="Survival">
           <Name>Tomcat</Name>
