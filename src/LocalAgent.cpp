@@ -25,6 +25,7 @@ void LocalAgent::setMission(string missionIdOrPathToXML,
                             bool activateObsRec) {
   this->missionHandler = MissionHandler();
   this->missionHandler.setMission(missionIdOrPathToXML);
+  this->missionHandler.setTimeLimitInSeconds(timeLimitInSeconds);
   if (activateVideo) {
     this->missionHandler.requestVideo(width, height);
   }
@@ -34,7 +35,6 @@ void LocalAgent::setMission(string missionIdOrPathToXML,
     this->missionHandler.observeFullInventory();
     this->missionHandler.observeChat();
   }
-  this->missionHandler.setTimeLimitInSeconds(timeLimitInSeconds);
 }
 
 int LocalAgent::startMission(int portNumber,
