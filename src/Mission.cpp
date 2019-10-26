@@ -16,6 +16,7 @@ MissionSpec Mission::getMissionSpec() { return this->missionSpec; }
 
 void Mission::setTimeLimitInSeconds(int timeInSeconds) {
   this->timeLimitInSeconds = timeInSeconds;
+  this->missionSpec.timeLimitInSeconds(this->timeLimitInSeconds);
 }
 
 void Mission::drawStairs(int fromX,
