@@ -65,10 +65,9 @@ public class TutorialMission extends Mission {
 	
 	
 	private void killAZombie()  {
-		
 		MissionPhase fightMonster = new MissionPhase();
 		MissionGoal goal = new KillEntityGoal();		
-		fightMonster.addInstructionsLine("Battle one monster.");
+		fightMonster.addInstructionsLine("Battle one monster. (behind you)");
 		fightMonster.addGoal(goal);
 		this.addPhase(fightMonster);
 	
