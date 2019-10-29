@@ -3,6 +3,7 @@ package edu.arizona.tomcat.Mission;
 import com.microsoft.Malmo.Schemas.BlockType;
 import com.microsoft.Malmo.Schemas.ItemType;
 
+import edu.arizona.tomcat.Mission.Goal.KillEntityGoal;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
 import edu.arizona.tomcat.Mission.Goal.OpenInventoryGoal;
 import edu.arizona.tomcat.Mission.Goal.ReachPositionGoal;
@@ -37,6 +38,7 @@ public class TutorialMission extends Mission {
 		this.approachRoom3Phase = new MissionPhase();
 		this.approachRoom3Phase.addGoal(new ReachPositionGoal(-11, 2, 2, 1));
 		this.addPhase(this.approachRoom3Phase);
+
 	}
 
 	private void openInventory() {
@@ -50,6 +52,11 @@ public class TutorialMission extends Mission {
 
 	private void craftAWoodAxe() {
 		// TODO Auto-generated method stub		
+		MissionPhase openInventoryPhase = new MissionPhase();
+		MissionGoal goal = new OpenInventoryGoal();		
+		openInventoryPhase.addInstructionsLine("Used to check if succeed in battling.");
+		openInventoryPhase.addGoal(goal);
+		this.addPhase(openInventoryPhase);
 	}
 
 	private void goToTheMainEntrance() {
@@ -65,8 +72,17 @@ public class TutorialMission extends Mission {
 		this.addPhase(goToTheMainEntrancePhase);
 	}
 
-	private void killAZombie() {
-		// TODO Auto-generated method stub		
+	
+	
+	
+	private void killAZombie()  {
+		
+		MissionPhase fightMonster = new MissionPhase();
+		MissionGoal goal = new KillEntityGoal();		
+		fightMonster.addInstructionsLine("Battle one monster. (behind you)");
+		fightMonster.addGoal(goal);
+		this.addPhase(fightMonster);
+	
 	}
 
 	@Override
