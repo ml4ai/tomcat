@@ -5,7 +5,7 @@ import com.microsoft.Malmo.Schemas.BlockType;
 public class Room extends CompositeDrawingObject{
 	
 	private static final int THICKNESS_OF_THE_WALLS = 1;
-	
+		
 	/**
 	 * Constructor
 	 * @param x - Bottom-left position of the room in the x axis
@@ -33,9 +33,9 @@ public class Room extends CompositeDrawingObject{
 	 * @return
 	 */
 	public void createRoom(int x, int y, int z, int width, int height, int depth, BlockType type, boolean withRoof) {
-		Plane west_wall = new Plane(x, y, z, THICKNESS_OF_THE_WALLS, height, depth, type);
-		Plane north_wall = new Plane(x - 1, y, z + depth - 1, width, height, THICKNESS_OF_THE_WALLS, type);
-		Plane east_wall = new Plane(x - width - 1, y, z, THICKNESS_OF_THE_WALLS, height, depth, type);
+		Plane west_wall = new Plane(x, y, z, THICKNESS_OF_THE_WALLS, height, depth + 2, type);
+		Plane north_wall = new Plane(x - 1, y, z + depth + 1, width, height, THICKNESS_OF_THE_WALLS, type);
+		Plane east_wall = new Plane(x - width - 1, y, z, THICKNESS_OF_THE_WALLS, height, depth + 2, type);
 		Plane south_wall = new Plane(x - 1, y, z, width, height, THICKNESS_OF_THE_WALLS, type);
 		
 		this.mergeWith(west_wall);
@@ -46,8 +46,7 @@ public class Room extends CompositeDrawingObject{
 		if (withRoof) {
 			Plane roof = new Plane(x, y + height, z, width + 2, THICKNESS_OF_THE_WALLS, depth,type);
 			this.mergeWith(roof);
-		}	
-		
+		}			
 	}
 
 }

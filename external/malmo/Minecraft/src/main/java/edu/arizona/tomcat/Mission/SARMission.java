@@ -5,7 +5,7 @@ import com.microsoft.Malmo.Schemas.EntityTypes;
 import edu.arizona.tomcat.Emotion.EmotionHandler;
 import edu.arizona.tomcat.Mission.gui.SimpleGUI;
 import edu.arizona.tomcat.World.Drawing;
-import edu.arizona.tomcat.World.CompositeEntity;
+import edu.arizona.tomcat.World.TomcatEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -35,13 +35,13 @@ public class SARMission extends Mission {
 		Drawing drawing = new Drawing();
 
 		// Create zombie in front of the player
-		CompositeEntity zombie1 = new CompositeEntity(playersX, playersY, playersZ + distance, EntityTypes.ZOMBIE);
+		TomcatEntity zombie1 = new TomcatEntity(playersX, playersY, playersZ + distance, EntityTypes.ZOMBIE);
 
 		// Create zombie to the northwest of the player
-		CompositeEntity zombie2 = new CompositeEntity(playersX + distance, playersY, playersZ + distance/2, EntityTypes.ZOMBIE);
+		TomcatEntity zombie2 = new TomcatEntity(playersX + distance, playersY, playersZ + distance/2, EntityTypes.ZOMBIE);
 
 		// Create zombie to the northeast of the player
-		CompositeEntity zombie3 = new CompositeEntity(playersX - distance, playersY, playersZ + distance/2, EntityTypes.ZOMBIE);
+		TomcatEntity zombie3 = new TomcatEntity(playersX - distance, playersY, playersZ + distance/2, EntityTypes.ZOMBIE);
 
 		drawing.addObject(zombie1);
 		drawing.addObject(zombie2);
@@ -65,28 +65,28 @@ public class SARMission extends Mission {
 		Drawing drawing = new Drawing();
 
 		// Create zombie in front of the player
-		CompositeEntity zombie1 = new CompositeEntity(playersX, playersY, playersZ + distance, EntityTypes.ZOMBIE);
+		TomcatEntity zombie1 = new TomcatEntity(playersX, playersY, playersZ + distance, EntityTypes.ZOMBIE);
 
 		// Create zombie to the northwest of the player
-		CompositeEntity zombie2 = new CompositeEntity(playersX + distance, playersY, playersZ + distance/2, EntityTypes.ZOMBIE);
+		TomcatEntity zombie2 = new TomcatEntity(playersX + distance, playersY, playersZ + distance/2, EntityTypes.ZOMBIE);
 
 		// Create zombie to the left of the player
-		CompositeEntity zombie3 = new CompositeEntity(playersX + distance, playersY, playersZ, EntityTypes.ZOMBIE);
+		TomcatEntity zombie3 = new TomcatEntity(playersX + distance, playersY, playersZ, EntityTypes.ZOMBIE);
 
 		// Create zombie to the southwest of the player
-		CompositeEntity zombie4 = new CompositeEntity(playersX + distance, playersY, playersZ - distance/2, EntityTypes.ZOMBIE);
+		TomcatEntity zombie4 = new TomcatEntity(playersX + distance, playersY, playersZ - distance/2, EntityTypes.ZOMBIE);
 
 		// Create zombie behind the player
-		CompositeEntity zombie5 = new CompositeEntity(playersX, playersY, playersZ - distance, EntityTypes.ZOMBIE);
+		TomcatEntity zombie5 = new TomcatEntity(playersX, playersY, playersZ - distance, EntityTypes.ZOMBIE);
 
 		// Create zombie to the southeast of the player
-		CompositeEntity zombie6 = new CompositeEntity(playersX - distance, playersY, playersZ - distance/2, EntityTypes.ZOMBIE);
+		TomcatEntity zombie6 = new TomcatEntity(playersX - distance, playersY, playersZ - distance/2, EntityTypes.ZOMBIE);
 
 		// Create zombie to the right of the player
-		CompositeEntity zombie7 = new CompositeEntity(playersX - distance, playersY, playersZ, EntityTypes.ZOMBIE);
+		TomcatEntity zombie7 = new TomcatEntity(playersX - distance, playersY, playersZ, EntityTypes.ZOMBIE);
 
 		// Create zombie to the northeast of the player
-		CompositeEntity zombie8 = new CompositeEntity(playersX - distance, playersY, playersZ + distance/2, EntityTypes.ZOMBIE);
+		TomcatEntity zombie8 = new TomcatEntity(playersX - distance, playersY, playersZ + distance/2, EntityTypes.ZOMBIE);
 
 		drawing.addObject(zombie1);
 		drawing.addObject(zombie2);

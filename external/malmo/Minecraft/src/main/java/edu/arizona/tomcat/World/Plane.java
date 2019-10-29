@@ -42,5 +42,20 @@ public class Plane extends CompositeDrawingObject{
 		cuboid.setType(type);
 		this.malmoDrawObjects.add(cuboid);
 	}
+	
+	public boolean intersects(int x, int y, int z) {
+		DrawCuboid cuboid = (DrawCuboid) this.malmoDrawObjects.get(0);
+		boolean intersects = false;
+		
+		if (Math.abs(x) >= Math.abs(cuboid.getX1()) && Math.abs(x) <= Math.abs(cuboid.getX2())) {
+			if (Math.abs(y) >= Math.abs(cuboid.getY1()) && Math.abs(y) <= Math.abs(cuboid.getY2())) {
+				if (Math.abs(z) >= Math.abs(cuboid.getZ1()) && Math.abs(z) <= Math.abs(cuboid.getZ2())) {
+					intersects = true;
+				}	
+			}
+		}
+		
+		return intersects;
+	}
 
 }

@@ -6,7 +6,7 @@ import com.microsoft.Malmo.Schemas.DrawEntity;
 import com.microsoft.Malmo.Schemas.EntityTypes;
 import com.microsoft.Malmo.Schemas.SpawnableTypes;
 
-public class CompositeEntity extends CompositeDrawingObject{
+public class TomcatEntity extends CompositeDrawingObject{
 	
 	/**
 	 * Constructor
@@ -15,7 +15,7 @@ public class CompositeEntity extends CompositeDrawingObject{
 	 * @param z - Position of the entity in the z axis
 	 * @param type - Type of the entity
 	 */
-	public CompositeEntity(int x, int y, int z, EntityTypes type) {
+	public TomcatEntity(int x, int y, int z, EntityTypes type) {
 		super();
 		this.createEntity(x, y, z, type);
 	}
