@@ -1,4 +1,5 @@
 Loading Pre-built Worlds.
+=========================
 
 Aim: To load pre-built Minecraft worlds into the XML missions. 
 
@@ -12,8 +13,8 @@ https://drive.google.com/drive/folders/1sA5F7ifgzglJnxFaeNuXHFwdMjmrpNHB?usp=sha
 
 	and save it somewhere convenient. Unzip the file. Henceforth Tomcat_Preloaded refers
 	to the folder that you got from unzipping.
-	NOTE: Ensure the path to where you save this folder has no white spaces.
-	Ex:  Documents/folder name is not allowed but Documents/folder_name is allowed
+	**NOTE: Ensure the path to where you save this folder has no white spaces.
+	Ex:  Documents/folder name is not allowed but Documents/folder_name is allowed**
 
     2. Download the file_gen and file_gen_skeleton XML s from this google drive link:
 
