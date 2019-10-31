@@ -8,6 +8,7 @@ import com.microsoft.Malmo.Schemas.SpawnableTypes;
 
 public class CompositeEntity extends CompositeDrawingObject{
 	private static int entityNum;
+	private String CustomName;
 
 	/**
 	 * Constructor
@@ -41,4 +42,11 @@ public class CompositeEntity extends CompositeDrawingObject{
 		this.malmoDrawObjects.add(entity);	
 	}
 
+	public String getCustomNameTag(){
+       return CustomName;
+	};
+
+	public void setCustomNameTag(String entityName){
+		this.CustomName = entityName;
+	};
 }
