@@ -45,9 +45,10 @@ set(BUILD_PYTHON_WRAPPER
 
 if(BUILD_PYTHON_WRAPPER)
   find_package(pybind11 REQUIRED)
-  add_library(tomcatPython MODULE Python_wrapper.cpp)
-  target_link_libraries(tomcatPython PRIVATE pybind11::module tomcat)
+  add_library(pytomcat MODULE Python_wrapper.cpp)
+  target_link_libraries(pytomcat PRIVATE pybind11::module tomcat)
+  target_include_directories(pytomcat PRIVATE ../external/malmo/Malmo/src)
   set_target_properties(
-    tomcatPython PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}" SUFFIX
+    pytomcat PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}" SUFFIX
                             "${PYTHON_MODULE_EXTENSION}")
 endif()
