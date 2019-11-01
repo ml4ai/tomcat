@@ -14,115 +14,117 @@ using namespace std::chrono;
 
 namespace tomcat {
 
-LocalAgent::LocalAgent() {}
-LocalAgent::~LocalAgent() {}
+  LocalAgent::LocalAgent() {}
+  LocalAgent::~LocalAgent() {}
 
-void LocalAgent::setMission(string missionIdOrPathToXML,
-                            unsigned int timeLimitInSeconds,
-                            unsigned int width,
-                            unsigned int height,
-                            bool activateVideo,
-                            bool activateObsRec) {
-  this->missionHandler = MissionHandler();
-  this->missionHandler.setMission(missionIdOrPathToXML);
-  this->missionHandler.setTimeLimitInSeconds(timeLimitInSeconds);
-  if (activateVideo) {
-    this->missionHandler.requestVideo(width, height);
-  }
-  if (activateObsRec) {
-    this->missionHandler.observeRecentCommands();
-    this->missionHandler.observeHotBar();
-    this->missionHandler.observeFullInventory();
-    this->missionHandler.observeChat();
-  }
-}
+  void LocalAgent::setMission(string missionIdOrPathToXML,
+                              unsigned int timeLimitInSeconds,
+                              unsigned int width,
+                              unsigned int height,
+                              bool activateVideo,
+                              bool activateObsRec) {
+    this->missionHandler = MissionHandler();
+    this->missionHandler.setMission(missionIdOrPathToXML);
+    this->missionHandler.setTimeLimitInSeconds(timeLimitInSeconds);
 
-int LocalAgent::startMission(int portNumber,
-                             bool activateWebcam,
-                             bool activateVideo,
-                             bool activateObsRec,
-                             bool activateComRec,
-                             bool activateRewRec,
-                             int frames_per_second,
-                             int64_t bit_rate,
-                             std::string recordPath) {
-  using boost::shared_ptr;
-  MissionRecordSpec missionRecord(recordPath);
-  WorldState worldState;
-  int attempts = 0;
-  bool connected = false;
-
-  if (activateVideo) {
-    missionRecord.recordMP4(frames_per_second, bit_rate);
-  }
-
-  if (activateObsRec) {
-    missionRecord.recordObservations();
-  }
-
-  if (activateComRec) {
-    missionRecord.recordCommands();
-  }
-
-  if (activateRewRec) {
-    missionRecord.recordRewards();
-  }
-
-  ClientPool clientPool = getClientPool(portNumber);
-
-  print("Waiting for the mission to start...");
-  do {
-    try {
-      this->missionHandler.startMission();
-      this->host.startMission(this->missionHandler.getMissionSpec(),
-                              clientPool,
-                              missionRecord,
-                              0,
-                              "");
-      connected = true;
+    if (activateVideo) {
+      this->missionHandler.requestVideo(width, height);
     }
-    catch (exception& e) {
-      print("Error starting mission: {}", e.what());
-      attempts += 1;
-      // Give up after three attempts.
-      if (attempts >= 3)
-        return EXIT_FAILURE;
-      else
-        // Wait a second and try again.
-        sleep_for(milliseconds(1000));
+
+    if (activateObsRec) {
+      this->missionHandler.observeRecentCommands();
+      this->missionHandler.observeHotBar();
+      this->missionHandler.observeFullInventory();
+      this->missionHandler.observeChat();
     }
-  } while (!connected);
-
-  do {
-    sleep_for(milliseconds(100));
-    worldState = this->host.getWorldState();
-  } while (!worldState.has_mission_begun);
-
-  if (activateWebcam) {
-    this->webcamSensor.initialize();
   }
 
-  do {
-    sleep_for(milliseconds(10));
+  int LocalAgent::startMission(int portNumber,
+                               bool activateWebcam,
+                               bool activateVideo,
+                               bool activateObsRec,
+                               bool activateComRec,
+                               bool activateRewRec,
+                               int frames_per_second,
+                               int64_t bit_rate,
+                               std::string recordPath) {
+    using boost::shared_ptr;
+    MissionRecordSpec missionRecord(recordPath);
+    WorldState worldState;
+    int attempts = 0;
+    bool connected = false;
+
+    if (activateVideo) {
+      missionRecord.recordMP4(frames_per_second, bit_rate);
+    }
+
+    if (activateObsRec) {
+      missionRecord.recordObservations();
+    }
+
+    if (activateComRec) {
+      missionRecord.recordCommands();
+    }
+
+    if (activateRewRec) {
+      missionRecord.recordRewards();
+    }
+
+    ClientPool clientPool = getClientPool(portNumber);
+
+    print("Waiting for the mission to start...");
+    do {
+      try {
+        this->missionHandler.startMission();
+        this->host.startMission(this->missionHandler.getMissionSpec(),
+                                clientPool,
+                                missionRecord,
+                                0,
+                                "");
+        connected = true;
+      }
+      catch (exception& e) {
+        print("Error starting mission: {}", e.what());
+        attempts += 1;
+        // Give up after three attempts.
+        if (attempts >= 3)
+          return EXIT_FAILURE;
+        else
+          // Wait a second and try again.
+          sleep_for(milliseconds(1000));
+      }
+    } while (!connected);
+
+    do {
+      sleep_for(milliseconds(100));
+      worldState = this->host.getWorldState();
+    } while (!worldState.has_mission_begun);
+
     if (activateWebcam) {
-      this->webcamSensor.get_observation();
+      this->webcamSensor.initialize();
     }
-    worldState = this->host.getWorldState();
-  } while (worldState.is_mission_running);
 
-  print("Mission has stopped.");
+    do {
+      sleep_for(milliseconds(10));
+      if (activateWebcam) {
+        this->webcamSensor.get_observation();
+      }
+      worldState = this->host.getWorldState();
+    } while (worldState.is_mission_running);
 
-  return EXIT_SUCCESS;
-}
+    print("Mission has stopped.");
 
-ClientPool LocalAgent::getClientPool(int portNumber) const {
-  ClientPool clientPool;
-  clientPool.add(ClientInfo("127.0.0.1", portNumber));
-  return clientPool;
-}
+    return EXIT_SUCCESS;
+  }
 
-void LocalAgent::sendCommand(string command) {
-  this->host.sendCommand(command);
-}
+  ClientPool LocalAgent::getClientPool(int portNumber) const {
+    ClientPool clientPool;
+    clientPool.add(ClientInfo("127.0.0.1", portNumber));
+    return clientPool;
+  }
+
+  void LocalAgent::sendCommand(string command) {
+    this->host.sendCommand(command);
+  }
 
 } // namespace tomcat
