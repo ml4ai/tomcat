@@ -15,7 +15,4 @@ namespace tomcat {
     return stringStream.str();
   }
 
-  std::string FileHandler::getFileExtensionFromFilename(std::string filename) {
-    return filename.substr(filename.find_last_of(".") + 1);
-  }
 } // namespace tomcat

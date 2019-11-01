@@ -12,13 +12,6 @@ namespace tomcat {
      * @return
      */
     static std::string getFileContent(std::string filename);
-
-    /**
-     * Returns the file extension from a filename
-     * @param filename - Filename with extension (e.g. mission.xml)
-     * @return
-     */
-    static std::string getFileExtensionFromFilename(std::string filename);
   };
 
 } // namespace tomcat
