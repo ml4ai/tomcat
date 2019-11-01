@@ -23,6 +23,7 @@ public class TutorialMission extends Mission {
 
 	@Override
 	protected void createPhases() {
+	
 		this.openInventory();
 		//this.craftAWoodAxe();
 		this.goToTheMainEntrance();
@@ -69,6 +70,7 @@ public class TutorialMission extends Mission {
 		MissionPhase fightMonster = new MissionPhase();
 		MissionGoal goal = new KillEntityGoal();		
 		fightMonster.addInstructionsLine("Battle one monster.");
+		fightMonster.addInstructionsLine("Battle one monster. (behind you)");
 		fightMonster.addGoal(goal);
 		this.addPhase(fightMonster);
 	
