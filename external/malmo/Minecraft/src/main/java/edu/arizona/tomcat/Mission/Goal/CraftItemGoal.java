@@ -1,5 +1,8 @@
 package edu.arizona.tomcat.Mission.Goal;
 
+import com.microsoft.Malmo.Schemas.ItemType;
+import edu.arizona.tomcat.Utils.InventoryHandler;
+import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityZombie;
@@ -11,7 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class CraftItemGoal extends  MissionGoal {
-    private static ItemStack itemStack;
+    private static ItemType type;
 
     /* constructor to recieve Itemstack from libraries, check the player's inventory, */
 
@@ -19,26 +22,21 @@ public class CraftItemGoal extends  MissionGoal {
 
     // check the type of Item
 
-    public CraftItemGoal(ItemStack itemSt){
-        this.itemStack =  itemSt;
+    public CraftItemGoal(ItemType ITy){
+        this.type =  ITy;
     }
 
     @Override
     public void update(World world)
     {
         if (!this.goalAchieved) {
-            EntityPlayer player = world.getPlayerEntityByName(Minecraft.getMinecraft().player.getName());
-            Iterator itemStacks = player.getHeldEquipment().iterator();
-            int count = 0;
-            while(itemStacks.hasNext()) {
-                ItemStack pItemSt = (ItemStack)itemStacks.next();
-                if (itemStacks.equals(pItemSt)) {
-                    hasBeenAchieved();
-                }
-                System.out.println("Item(Stack) " + pItemSt.getDisplayName() + " is contained");
-                count++;
+
+            if(InventoryHandler.checkItemToInventory(type, 1)){
+                this.goalAchieved = true;
             }
-            System.out.println("Totally " + count + " items(Stack) in players inventory");
+
+             System.out.println("Item(Stack) " + type.name() + " is contained");
+
         }
 
     }
