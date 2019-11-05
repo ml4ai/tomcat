@@ -9,6 +9,6 @@ set(DOXYGEN_HTML_EXTRA_STYLESHEET "stylesheet.css")
 set(DOXYGEN_HTML_EXTRA_FILES "doxy-boot.js")
 
 doxygen_add_docs(
-   docs ../README.md ../external/malmo/Minecraft/src
+   docs ../README.md ../external/malmo/Minecraft/src/main/java/edu
   COMMENT "Generating documentation with Doxygen..."
 )
