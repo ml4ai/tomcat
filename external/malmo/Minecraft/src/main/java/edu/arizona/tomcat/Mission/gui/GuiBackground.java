@@ -84,14 +84,31 @@ public class GuiBackground extends GuiLabel {
 	            }
 	        }
 	    }
-	
-	//@Override
-	public void drawLabelBackground(Minecraft mcIn, int p_146160_2_, int p_146160_3_, int oo)
-	{
-		
-		int i = this.width + this.border * 2;
-		int j = this.height + this.border * 2;
-		int k = this.x - this.border;
+	  /**
+	   * Renders the specified text to the screen, center-aligned. Args : renderer, string, x, y, color
+	   */
+	 @Override
+	 public void drawCenteredString(FontRenderer fontRendererIn, String text, int x, int y, int color)
+	 {
+		 fontRendererIn.drawString(text, (float)(x - fontRendererIn.getStringWidth(text) / 2), (float)y, color, false);
+	 }
+
+	 /**
+	  * Renders the specified text to the screen. Args : renderer, string, x, y, color
+	  */
+	 @Override
+	 public void drawString(FontRenderer fontRendererIn, String text, int x, int y, int color)
+	 {
+		 fontRendererIn.drawString(text, (float)x, (float)y, color, false);
+	 }
+
+	 //@Override
+	 public void drawLabelBackground(Minecraft mcIn, int p_146160_2_, int p_146160_3_, int oo)
+	 {
+
+		 int i = this.width + this.border * 2;
+		 int j = this.height + this.border * 2;
+		 int k = this.x - this.border;
 		int l = this.y - this.border;
 		drawRect(k, l - 5 * oo, k + i, l + j + 5 * oo, this.backColor);
 		this.drawHorizontalLine(k, k + i, l - 5 * oo, this.ulColor);
