@@ -61,7 +61,8 @@ highlight_language = 'cpp'
 extensions = [
     'breathe',
     'exhale',
-    'recommonmark'
+    'recommonmark',
+    'sphinx_rtd_theme'
 ]
 
 source_suffix = {
