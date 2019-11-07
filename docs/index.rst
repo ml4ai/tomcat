@@ -32,6 +32,7 @@ as the C++ API and links to the Java API and other ToMAT components.
    :maxdepth: 2
    :caption: Contents:
 
+   team
    installation
    lisp
    CONTRIBUTING
