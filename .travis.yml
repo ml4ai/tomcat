@@ -23,6 +23,12 @@ addons:
       - openblas
       - lcov
 
+before_install:
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update          ; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install python3; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then virtualenv venv -p python3; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source venv/bin/activate; fi
+
 install:
   - pip install exhale
   - cd external && curl -O http://dlib.net/files/dlib-19.17.tar.bz2 
