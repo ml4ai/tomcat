@@ -2,7 +2,7 @@
 
 find_package(Doxygen REQUIRED)
 set(DOXYGEN_PROJECT_BRIEF "Theory of Mind-based Cognitive Architecture for Teams")
-set(DOXYGEN_USE_MDFILE_AS_MAINPAGE "../README.md")
+set(DOXYGEN_USE_MDFILE_AS_MAINPAGE "README.md")
 set(DOT_IMAGE_FORMAT "svg")
 set(DOXYGEN_INTERACTIVE_SVG "YES")
 set(DOXYGEN_HTML_OUTPUT ${CMAKE_CURRENT_BINARY_DIR})
