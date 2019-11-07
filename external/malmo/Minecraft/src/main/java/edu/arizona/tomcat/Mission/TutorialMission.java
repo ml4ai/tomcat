@@ -20,14 +20,10 @@ public class TutorialMission extends Mission {
 
 	@Override
 	protected void createPhases() {
-	
 		this.openInventory();
 		this.craftAWoodAxe();
 		this.goToTheMainEntrance();
 		this.killAZombie();
-		//this.craftAWoodAxe();
-		
-				
 	}
 	
 	private void openInventory() {
@@ -40,7 +36,6 @@ public class TutorialMission extends Mission {
 
 	private void craftAWoodAxe() {
 		MissionPhase openInventoryPhase = new MissionPhase();
-		//MissionGoal goal = new CraftItemGoal(ItemType.WOODEN_AXE);
 		MissionGoal goal = new CraftItemGoal(ItemType.WOODEN_AXE);
 		openInventoryPhase.addInstructionsLine("Craft a wood Axe in your Inventory");
 		openInventoryPhase.addInstructionsLine("1. Creating the crafting table by left clicking " +
@@ -69,15 +64,10 @@ public class TutorialMission extends Mission {
 		goToTheMainEntrancePhase.addGoal(goal);	
 		this.addPhase(goToTheMainEntrancePhase);
 	}
-
-	
-	
 	
 	private void killAZombie()  {
-		
 		MissionPhase fightMonster = new MissionPhase();
 		MissionGoal goal = new KillEntityGoal();		
-		fightMonster.addInstructionsLine("Battle one monster.");
 		fightMonster.addInstructionsLine("Battle one monster. (behind you)");
 		fightMonster.addGoal(goal);
 		this.addPhase(fightMonster);
@@ -94,17 +84,7 @@ public class TutorialMission extends Mission {
 		// Not needed. The tutorial will load a predefined world.	
 		if (!this.drawn) {
 			try {
-//				Drawing drawing = new Drawing();
-//				//Plane plane = new Plane(0, 2, 10, 4, 2, 3, BlockType.STONE);
-//				Entity villager = new Entity(0, 10, 2, EntityTypes.VILLAGER);
-//				Room room = new Room(0, 2, 10, 4, 2, 3, BlockType.STONE, true);
-//				Item door = new Item(10, 2, 0, ItemType.WOODEN_DOOR);
-//				drawing.addObject(room);
-//				drawing.addObject(villager);
-//				drawing.addObject(door);
-//				this.drawingHandler.draw(world, drawing);
-				this.drawn = true;	
-				
+				this.drawn = true;
 				InventoryHandler.addItemToInventory(ItemType.STICK, 2);
 				InventoryHandler.addBlockToInventory(BlockType.PLANKS, 7);
 			} catch (Exception e) {
