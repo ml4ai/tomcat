@@ -7,7 +7,7 @@ Welcome to ToMCAT's documentation!
 ==================================
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
    :caption: Contents:
 
    installation
@@ -15,8 +15,7 @@ Welcome to ToMCAT's documentation!
    CONTRIBUTING
    Client_Server_Communication
    prebuilt_world_loading
-   api/library_root
-
+   cpp_api/index
 
 `Java API <java_api/index.html>`_
 

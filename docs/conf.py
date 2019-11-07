@@ -35,7 +35,7 @@ breathe_default_project = "ToMCAT"
 exhale_args = {
     # These arguments are required
     "containmentFolder":     "./cpp_api",
-    "rootFileName":          "cpp_api.rst",
+    "rootFileName":          "index.rst",
     "rootFileTitle":         "C++ API",
     "doxygenStripFromPath":  "..",
     # Suggested optional arguments
@@ -76,7 +76,7 @@ templates_path = ['_templates']
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'cpp_api', 'java_api']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'java_api']
 
 
 # -- Options for HTML output -------------------------------------------------
