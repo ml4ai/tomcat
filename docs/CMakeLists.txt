@@ -1,14 +1,17 @@
-# build the documentation from the C++ comments
+find_package(Sphinx REQUIRED)
 
-find_package(Doxygen REQUIRED)
-set(DOXYGEN_PROJECT_BRIEF "Theory of Mind-based Cognitive Architecture for Teams")
-set(DOXYGEN_USE_MDFILE_AS_MAINPAGE "../README.md")
-set(DOXYGEN_HTML_HEADER "header.html")
-set(DOXYGEN_HTML_FOOTER "footer.html")
-set(DOXYGEN_HTML_EXTRA_STYLESHEET "stylesheet.css")
-set(DOXYGEN_HTML_EXTRA_FILES "doxy-boot.js")
+set(SPHINX_SOURCE ${CMAKE_CURRENT_SOURCE_DIR})
+set(SPHINX_BUILD ${CMAKE_CURRENT_BINARY_DIR})
+set(SPHINX_INDEX_FILE ${SPHINX_BUILD}/index.html)
 
-doxygen_add_docs(
-   docs ../README.md ../external/malmo/Minecraft/src/main/java/edu
-  COMMENT "Generating documentation with Doxygen..."
-)
+add_custom_command(
+  OUTPUT ${SPHINX_INDEX_FILE}
+  COMMAND ${SPHINX_EXECUTABLE} -b html ${SPHINX_SOURCE} ${SPHINX_BUILD}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/index.rst ${DOXYGEN_INDEX_FILE}
+  MAIN_DEPENDENCY ${SPHINX_SOURCE}/conf.py
+  COMMENT "Generating documentation with Sphinx")
+
+add_custom_target(sphinx ALL DEPENDS ${SPHINX_INDEX_FILE})
+add_subdirectory(java_api)
+add_custom_target(docs ALL DEPENDS sphinx java_apidocs)
