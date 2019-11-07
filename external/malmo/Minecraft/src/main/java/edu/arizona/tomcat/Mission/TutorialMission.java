@@ -23,6 +23,7 @@ public class TutorialMission extends Mission {
 
 	@Override
 	protected void createPhases() {
+	
 		this.openInventory();
 		//this.craftAWoodAxe();
 		this.goToTheMainEntrance();
