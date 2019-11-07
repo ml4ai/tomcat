@@ -39,7 +39,6 @@ public class TutorialMission extends Mission {
 	}
 
 	private void craftAWoodAxe() {
-		// TODO Auto-generated method stub		
 		MissionPhase openInventoryPhase = new MissionPhase();
 		//MissionGoal goal = new CraftItemGoal(ItemType.WOODEN_AXE);
 		MissionGoal goal = new CraftItemGoal(ItemType.WOODEN_AXE);
