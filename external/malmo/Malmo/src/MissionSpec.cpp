@@ -138,10 +138,6 @@ void MissionSpec::setSummary(const std::string& summary) {
 }
 
 void MissionSpec::timeLimitInSeconds(float s) {
-  const auto& check = this->mission.get_child_optional("Mission.ServerSection.ServerHandlers.ServerQuitFromTimeUp");
-  if (check == boost::none){
-    this->mission.put("Mission.ServerSection.ServerHandlers.ServerQuitFromTimeUp","");
-  }
   this->mission.put("Mission.ServerSection.ServerHandlers.ServerQuitFromTimeUp.<"
               "xmlattr>.timeLimitMs",
               s * MillisecondsInOneSecond);
