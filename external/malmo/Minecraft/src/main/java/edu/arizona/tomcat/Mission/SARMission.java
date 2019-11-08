@@ -66,6 +66,8 @@ public class SARMission extends Mission {
 
 		// Create zombie in front of the player
 		CompositeEntity zombie1 = new CompositeEntity(playersX, playersY, playersZ + distance, EntityTypes.ZOMBIE);
+		zombie1.setCustomNameTag("Test_zombie1");
+		zombie1.getCustomNameTag();
 
 		// Create zombie to the northwest of the player
 		CompositeEntity zombie2 = new CompositeEntity(playersX + distance, playersY, playersZ + distance/2, EntityTypes.ZOMBIE);
