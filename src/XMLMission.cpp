@@ -7,16 +7,15 @@ using namespace std;
 
 namespace tomcat {
 
-    XMLMission::XMLMission(const string& missionIdOrPathToXML) {
-        this->missionSpec = MissionSpec(FileHandler::getFileContent(missionIdOrPathToXML), true);
-    }
+  XMLMission::XMLMission(const string& missionIdOrPathToXML) {
+    this->missionSpec =
+        MissionSpec(FileHandler::getFileContent(missionIdOrPathToXML), true);
+  }
 
-    XMLMission::~XMLMission() {
-        
-    }
+  XMLMission::~XMLMission() {}
 
-    void XMLMission::buildWorld() { }
+  void XMLMission::buildWorld() {}
 
-    string XMLMission::getWorldSkeletonFromXML() { return ""; }
+  string XMLMission::getWorldSkeletonFromXML() { return ""; }
 
 } // namespace tomcat
