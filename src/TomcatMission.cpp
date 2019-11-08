@@ -40,6 +40,28 @@ namespace tomcat {
     for (unsigned short int i = 0; i < 5; i++) {
       this->drawTree(-20 - 5 * i, 20);
     }
+
+    Mission::insertTimeLimitInSeconds();
+
+    if (this->requestVideo_switch) {
+      Mission::insertVideoProducer();
+    }
+
+    if (this->observeRecentCommands_switch) {
+      Mission::insertObserveRecentCommandsProducer();
+    }
+
+    if (this->observeHotBar_switch) {
+      Mission::insertObserveHotBarProducer();
+    }
+
+    if (this->observeFullInventory_switch) {
+      Mission::insertObserveFullInventoryProducer();
+    }
+
+    if (observeChat_switch) {
+      Mission::insertObserveChatProducer();
+    }
   }
 
   string TomcatMission::getWorldSkeletonFromXML() {

@@ -29,10 +29,10 @@ namespace tomcat {
     void setTimeLimitInSeconds(int timeInSeconds);
 
     /**
-     * Requests video from MissionSpec
-     * @param width - width of the video
-     * @param height - height of the video
-     */
+    * Requests video from MissionSpec
+    * @param width - width of the video
+    * @param height - height of the video
+    */
     void requestVideo(unsigned int width, unsigned int height);
 
     void observeRecentCommands();
@@ -45,10 +45,10 @@ namespace tomcat {
 
   protected:
     /**
-     * Retrieves the content of an XML which defines the skeleton of the world
-     * for the Save and Rescue mission
-     * @return
-     */
+    * Retrieves the content of an XML which defines the skeleton of the world
+    * for the Save and Rescue mission
+    * @return
+    */
     virtual std::string getWorldSkeletonFromXML() = 0;
 
     /**
@@ -175,6 +175,19 @@ namespace tomcat {
     void
     makeHole(int fromX, int fromZ, int fromY, int width, int height, int depth);
 
+
+    void insertTimeLimitInSeconds();
+
+    void insertVideoProducer();
+
+    void insertObserveRecentCommandsProducer();
+
+    void insertObserveHotBarProducer();
+
+    void insertObserveFullInventoryProducer();
+
+    void insertObserveChatProducer();
+
     enum orientation {
       west_east = 1,
       east_west = 2,
@@ -183,5 +196,12 @@ namespace tomcat {
     };
     malmo::MissionSpec missionSpec;
     int timeLimitInSeconds;
+    bool requestVideo_switch = false;
+    unsigned int video_width = 640; 
+    unsigned int video_height = 480;
+    bool observeRecentCommands_switch = false;
+    bool observeHotBar_switch = false;
+    bool observeFullInventory_switch = false;
+    bool observeChat_switch = false;
   };
 } // namespace tomcat

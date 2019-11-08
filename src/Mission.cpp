@@ -16,6 +16,9 @@ namespace tomcat {
 
   void Mission::setTimeLimitInSeconds(int timeInSeconds) {
     this->timeLimitInSeconds = timeInSeconds;
+  }
+
+  void Mission::insertTimeLimitInSeconds() {
     this->missionSpec.timeLimitInSeconds(this->timeLimitInSeconds);
   }
 
@@ -198,15 +201,46 @@ namespace tomcat {
   }
 
   void Mission::requestVideo(unsigned int width, unsigned int height) {
-    missionSpec.requestVideo(width, height);
+    this->requestVideo_switch = true;
+    this->video_width = width;
+    this->video_height = height;
   }
 
-  void Mission::observeRecentCommands() { missionSpec.observeRecentCommands(); }
+  void Mission::insertVideoProducer(){
+    this->missionSpec.requestVideo(this->video_width,this->video_height);
+  }
 
-  void Mission::observeHotBar() { missionSpec.observeHotBar(); }
+  void Mission::observeRecentCommands() {
+    this->observeRecentCommands_switch = true;
+  }
 
-  void Mission::observeFullInventory() { missionSpec.observeFullInventory(); }
+  void Mission::observeHotBar() {
+    this->observeHotBar_switch = true;
+  }
 
-  void Mission::observeChat() { missionSpec.observeChat(); }
+  void Mission::observeFullInventory() {
+    this->observeFullInventory_switch = true;
+  }
+
+  void Mission::observeChat() {
+    this->observeChat_switch = true;
+  }
+
+  void Mission::insertObserveRecentCommandsProducer() {
+    this->missionSpec.observeRecentCommands();
+  }
+
+  void Mission::insertObserveHotBarProducer() {
+    this->missionSpec.observeHotBar();
+  }
+
+  void Mission::insertObserveFullInventoryProducer() {
+    this->missionSpec.observeFullInventory();
+  }
+
+  void Mission::insertObserveChatProducer() {
+    this->missionSpec.observeChat();
+  }
+
 
 } // namespace tomcat
