@@ -46,7 +46,7 @@
           
           <DrawBlock type="planks" x="19" y="230" z="19"/>
       </DrawingDecorator>  
-      <ServerQuitFromTimeUp description="" timeLimitMs="100000"/>
+      <ServerQuitFromTimeUp description="" timeLimitMs="10000"/>
       <ServerQuitWhenAnyAgentFinishes/>
     </ServerHandlers>
   </ServerSection>

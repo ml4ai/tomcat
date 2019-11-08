@@ -5,6 +5,7 @@ osx_image: xcode11
 
 language: 
  - cpp
+ - python
 
 addons:
   homebrew:
@@ -19,7 +20,12 @@ addons:
       - openblas
       - lcov
 
+before_install:
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python3 -m venv tomcat; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source tomcat/bin/activate; fi
+
 install:
+  - pip install exhale recommonmark sphinx-rtd-theme
   - cd external && curl -O http://dlib.net/files/dlib-19.17.tar.bz2 
     && tar -xvjf dlib-19.17.tar.bz2 && cd ../
 

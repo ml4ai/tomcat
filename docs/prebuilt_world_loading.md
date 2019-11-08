@@ -1,4 +1,4 @@
-Loading Pre-built Worlds.
+Loading pre-built Worlds.
 =========================
 
 Aim: To load pre-built Minecraft worlds into the XML missions. 
