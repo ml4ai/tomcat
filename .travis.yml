@@ -43,7 +43,7 @@ after_success:
   - bash <(curl -s https://codecov.io/bash) -f coverage.info
 
 deploy:
-  local-dir: build/docs/html
+  local-dir: build/docs
   provider: pages
   skip-cleanup: true
   github-token: $GITHUB_TOKEN
