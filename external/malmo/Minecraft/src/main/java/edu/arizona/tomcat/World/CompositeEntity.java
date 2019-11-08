@@ -7,7 +7,9 @@ import com.microsoft.Malmo.Schemas.EntityTypes;
 import com.microsoft.Malmo.Schemas.SpawnableTypes;
 
 public class CompositeEntity extends CompositeDrawingObject{
-	
+	private static int entityNum;
+	private String CustomName;
+
 	/**
 	 * Constructor
 	 * @param x - Position of the entity in the x axis
@@ -18,6 +20,7 @@ public class CompositeEntity extends CompositeDrawingObject{
 	public CompositeEntity(int x, int y, int z, EntityTypes type) {
 		super();
 		this.createEntity(x, y, z, type);
+		entityNum++;
 	}
 	
 	/**
@@ -39,4 +42,11 @@ public class CompositeEntity extends CompositeDrawingObject{
 		this.malmoDrawObjects.add(entity);	
 	}
 
+	public String getCustomNameTag(){
+       return CustomName;
+	};
+
+	public void setCustomNameTag(String entityName){
+		this.CustomName = entityName;
+	};
 }
