@@ -18,6 +18,10 @@ namespace tomcat {
     this->timeLimitInSeconds = timeInSeconds;
   }
 
+  void Mission::insertTimeLimitInSeconds() {
+    this->missionSpec.timeLimitInSeconds(this->timeLimitInSeconds);
+  }
+
   void Mission::drawStairs(int fromX,
                            int fromZ,
                            int fromY,

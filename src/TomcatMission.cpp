@@ -39,27 +39,28 @@ namespace tomcat {
                      "Villager");
     for (unsigned short int i = 0; i < 5; i++) {
       this->drawTree(-20 - 5 * i, 20);
+    }
 
-    this->insertTimeLimitInSeconds();
+    Mission::insertTimeLimitInSeconds();
 
     if (this->requestVideo_switch) {
-      this->insertVideoProducer();
+      Mission::insertVideoProducer();
     }
 
     if (this->observeRecentCommands_switch) {
-      this->insertObserveRecentCommandsProducer();
+      Mission::insertObserveRecentCommandsProducer();
     }
 
     if (this->observeHotBar_switch) {
-      this->insertObserveHotBarProducer();
+      Mission::insertObserveHotBarProducer();
     }
 
     if (this->observeFullInventory_switch) {
-      this->insertObserveFullInventoryProducer();
+      Mission::insertObserveFullInventoryProducer();
     }
 
     if (observeChat_switch) {
-      this->insertObserveChatProducer();
+      Mission::insertObserveChatProducer();
     }
   }
 

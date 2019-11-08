@@ -28,8 +28,6 @@ namespace tomcat {
      */
     void setTimeLimitInSeconds(int timeInSeconds);
 
-    void insertTimeLimitInSeconds();
-
     /**
     * Requests video from MissionSpec
     * @param width - width of the video
@@ -37,23 +35,13 @@ namespace tomcat {
     */
     void requestVideo(unsigned int width, unsigned int height);
 
-    void insertVideoProducer();
-  
     void observeRecentCommands();
-
-    void insertObserveRecentCommandsProducer();
 
     void observeHotBar();
 
-    void insertObserveHotBarProducer();
-
     void observeFullInventory();
 
-    void insertObserveFullInventoryProducer();
-
     void observeChat();
-
-    void insertObserveChatProducer();
 
   protected:
     /**
@@ -186,6 +174,19 @@ namespace tomcat {
      */
     void
     makeHole(int fromX, int fromZ, int fromY, int width, int height, int depth);
+
+
+    void insertTimeLimitInSeconds();
+
+    void insertVideoProducer();
+
+    void insertObserveRecentCommandsProducer();
+
+    void insertObserveHotBarProducer();
+
+    void insertObserveFullInventoryProducer();
+
+    void insertObserveChatProducer();
 
     enum orientation {
       west_east = 1,
