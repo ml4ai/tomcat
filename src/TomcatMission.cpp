@@ -42,6 +42,28 @@ void TomcatMission::buildWorld() {
   for (unsigned short int i = 0; i < 5; i++) {
     this->drawTree(-20 - 5 * i, 20);
   }
+  this->insertTimeLimitInSeconds();
+
+  if (this->requestVideo_switch) {
+    this->insertVideoProducer();
+  }
+
+  if (this->observeRecentCommands_switch) {
+    this->insertObserveRecentCommandsProducer();
+  }
+
+  if (this->observeHotBar_switch) {
+    this->insertObserveHotBarProducer();
+  }
+
+  if (this->observeFullInventory_switch) {
+    this->insertObserveFullInventoryProducer();
+  }
+
+  if (observeChat_switch) {
+    this->insertObserveChatProducer();
+  }
+
 }
 
 string TomcatMission::getWorldSkeletonFromXML() {

@@ -28,20 +28,32 @@ class Mission {
    */
   void setTimeLimitInSeconds(int timeInSeconds);
 
+  void insertTimeLimitInSeconds();
+
   /**
    * Requests video from MissionSpec
    * @param width - width of the video
    * @param height - height of the video
    */
   void requestVideo(unsigned int width, unsigned int height);
+
+  void insertVideoProducer();
   
   void observeRecentCommands();
 
+  void insertObserveRecentCommandsProducer();
+
   void observeHotBar();
+
+  void insertObserveHotBarProducer();
 
   void observeFullInventory();
 
+  void insertObserveFullInventoryProducer();
+
   void observeChat();
+
+  void insertObserveChatProducer();
 
   protected:
   /**
@@ -182,6 +194,15 @@ class Mission {
   };
   malmo::MissionSpec missionSpec;
   int timeLimitInSeconds;
+  bool requestVideo_switch = false;
+  unsigned int video_width = 640; 
+  unsigned int video_height = 480;
+  bool observeRecentCommands_switch = false;
+  bool observeHotBar_switch = false;
+  bool observeFullInventory_switch = false;
+  bool observeChat_switch = false;
+
+
 
 
 };
