@@ -68,7 +68,7 @@ public class DrawingHandler {
 		
 		while(objects.hasNext()) {
 			malmoDrawObjects = objects.next().getMalmoDrawObjects();
-			while(malmoDrawObjects.hasNext()) {
+			while(malmoDrawObjects.hasNext()) { 
 				jaxbeObjects.add(toJAXB(malmoDrawObjects.next()));
 			}
 		}
@@ -91,7 +91,7 @@ public class DrawingHandler {
 	 */
 	public void drawCountdown(long remainingSeconds, long remainingSecondsAlert) {
 		if (remainingSeconds >= 0) {
-			TextComponentString text = new TextComponentString("Mission ends in " + remainingSeconds + " seconds...");
+			TextComponentString text = new TextComponentString("Mission ends in " + this.secondsToString(remainingSeconds) + "...");
 			Style style = new Style();
 			style.setBold(true);
 			
@@ -103,6 +103,25 @@ public class DrawingHandler {
 			Minecraft.getMinecraft().ingameGUI.getChatGUI().clearChatMessages(true);
 			Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(text);
 		}
+	}
+	
+	/**
+	 * Convert seconds to MM:SS
+	 * @param seconds - Number of seconds
+	 * @return
+	 */
+	private String secondsToString(long seconds) {
+		String time = "";
+				
+		if(seconds <= 60) {
+			time = Long.toString(seconds) + "seconds";
+		} else {
+			long minutes = seconds / 60;
+			seconds = seconds % 60;
+			time = minutes + ":" + String.format("%02d", seconds) + " minutes";
+		}
+		
+		return time;
 	}
 
 }

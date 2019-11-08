@@ -1,19 +1,15 @@
 package edu.arizona.tomcat.Mission.Goal;
 
-import java.util.logging.Level;
-
-import com.microsoft.Malmo.Utils.TCPUtils;
-
-import net.minecraft.client.Minecraft;
+import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import net.minecraft.world.World;
 
 public class ReachPositionGoal extends MissionGoal {
-	
+
 	private int x;
 	private int y;
 	private int z;
 	private int range;
-	
+
 	/**
 	 * Constructor
 	 * @param x - Position in the x axis 
@@ -29,13 +25,9 @@ public class ReachPositionGoal extends MissionGoal {
 	}
 
 	@Override
-	public void update(World world) {
-		if (!this.goalAchieved) {
-			TCPUtils.Log(Level.INFO, "Updating goal");
-			this.goalAchieved = Minecraft.getMinecraft().player.getDistanceSq(this.x, this.y, this.z) < (this.range * this.range);
-			TCPUtils.Log(Level.INFO, "Goal : (" + this.x + ", " + this.y + ", " + this.z + ")" + "Player : (" + Minecraft.getMinecraft().player.posX + ", " + Minecraft.getMinecraft().player.posY + ", " + Minecraft.getMinecraft().player.posZ + ")");
-		}
+	public void updateGoalStatus(World world) {				
+		this.goalAchieved = MinecraftServerHelper.getFirstPlayer().getDistanceSq(this.x, this.y, this.z) < Math.pow(this.range, 2);
 	}
-	
+
 
 }

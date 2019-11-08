@@ -26,22 +26,22 @@ TomcatMission::~TomcatMission() {}
 void TomcatMission::buildWorld() {
   Mission::buildWorld();
 
-  this->drawMainBuilding();
-  this->drawTomcatSign();
+  //this->drawMainBuilding();
+  //this->drawTomcatSign();
 
   // Put a zombie on the ground floor!
-  this->drawEntity(BUILDING_SOUTHWEST_X_POSITION - 10,
-                   HEIGHT_OF_GROUND_LEVEL,
-                   BUILDING_SOUTHWEST_Z_POSITION + 20,
-                   "Zombie");
+  //this->drawEntity(BUILDING_SOUTHWEST_X_POSITION - 10,
+  //                 HEIGHT_OF_GROUND_LEVEL,
+  //                 BUILDING_SOUTHWEST_Z_POSITION + 20,
+  //                 "Zombie");
 
-  this->drawEntity(BUILDING_SOUTHWEST_X_POSITION - 10,
-                   HEIGHT_OF_GROUND_LEVEL + FLOOR_HEIGHT,
-                   BUILDING_SOUTHWEST_Z_POSITION + 20,
-                   "Villager");
-  for (unsigned short int i = 0; i < 5; i++) {
-    this->drawTree(-20 - 5 * i, 20);
-  }
+  //this->drawEntity(BUILDING_SOUTHWEST_X_POSITION - 10,
+  //                 HEIGHT_OF_GROUND_LEVEL + FLOOR_HEIGHT,
+  //                 BUILDING_SOUTHWEST_Z_POSITION + 20,
+  //                 "Villager");
+  //for (unsigned short int i = 0; i < 5; i++) {
+  //  this->drawTree(-20 - 5 * i, 20);
+  //}
 }
 
 string TomcatMission::getWorldSkeletonFromXML() {
@@ -56,14 +56,14 @@ string TomcatMission::getWorldSkeletonFromXML() {
             <AllowSpawning>false</AllowSpawning>
           </ServerInitialConditions>
           <ServerHandlers>
-            <FlatWorldGenerator generatorString="3;2*2;1;village" />
+            <FileWorldGenerator src="/Users/paulosoares/Desktop/SARV01" forceReset="true"/>
             <TomcatDecorator mission="{}" timeLimitInSeconds="{}"/>
           </ServerHandlers>
       </ServerSection>
       <AgentSection mode="Survival">
           <Name>Tomcat</Name>
           <AgentStart>
-            <Placement x="0" y="2.0" z="0" />
+            <Placement x="22" y="64" z="73" yaw = "-90"/>
           </AgentStart>
           <AgentHandlers>
             <ContinuousMovementCommands turnSpeedDegs="840">

@@ -21,6 +21,7 @@ package com.microsoft.Malmo.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.xml.bind.JAXBElement;
 
@@ -383,6 +384,9 @@ public class BlockDrawingHelper
             {
                 positionEntity(entity, e.getX().doubleValue(), e.getY().doubleValue(), e.getZ().doubleValue(), e.getYaw().floatValue(), e.getPitch().floatValue());
                 entity.setVelocity(e.getXVel().doubleValue(), e.getYVel().doubleValue(), e.getZVel().doubleValue());
+                if (e.getUniqueId() != null && !e.getUniqueId().toString().equals("")) {
+                	entity.setUniqueId(UUID.fromString(e.getUniqueId()));
+                }
                 // Set all the yaw values imaginable:
                 if (entity instanceof EntityLivingBase)
                 {

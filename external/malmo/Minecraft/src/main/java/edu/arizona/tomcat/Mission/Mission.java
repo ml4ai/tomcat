@@ -31,7 +31,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 		this.createPhases();
 		if (!this.phases.isEmpty()) {
 			this.currentPhase = this.phases.get(0);
-		}
+		}		
 	}
 	
 	/**
@@ -50,9 +50,15 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 	 * @param world - Mission world
 	 */
 	public void update(World world) {
-		this.drawingHandler.drawCountdown(this.getRemainingSeconds(), REMAINING_SECONDS_ALERT);
-		this.updateCurrentPhase(world);
-		this.updateScene(world);
+		int remainingSeconds = this.getRemainingSeconds();
+		
+		if(remainingSeconds > 0) {
+			this.drawingHandler.drawCountdown(remainingSeconds, REMAINING_SECONDS_ALERT);
+			this.updateCurrentPhase(world);
+			this.updateScene(world);
+		} else {
+			this.onTimeOut();
+		}
 	}
 	
 	/**
@@ -110,11 +116,30 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 	
 	@Override
 	public void phaseCompleted() {
+		this.beforePhaseTrasition();
 		this.numberOfPhasesCompleted++;
 		this.currentPhase = null;
 		if (this.numberOfPhasesCompleted < this.phases.size()) {
 			this.currentPhase = this.phases.get(this.numberOfPhasesCompleted);
-		}		
+		} else {
+			this.afterLastPhaseCompletion();
+		}	
 	}
+	
+	/**
+	 * Method called after the current phase is completed and before the next phase is selected. It can be implemented in
+	 * a concrete mission class to provide specific logic.
+	 */
+	protected abstract void beforePhaseTrasition();
+	
+	/**
+	 * Method called after the last phase of the mission is completed.
+	 */
+	protected abstract void afterLastPhaseCompletion();
+	
+	/**
+	 * Method called after the the total time for the mission has passes.
+	 */
+	protected abstract void onTimeOut();
 	
 }

@@ -8,9 +8,13 @@ public abstract class MissionGoal {
 	
 	/**
 	 * Keeps track of the goal progress at each game iteration
-	 * @param world
+	 * @param world - Minecraft world
 	 */
-	public abstract void update(World world);
+	public void update(World world) {
+		if(!this.goalAchieved) {
+			this.updateGoalStatus(world);
+		}
+	}
 	
 	/**
 	 * Indicates whether the goal has been achieved
@@ -26,5 +30,11 @@ public abstract class MissionGoal {
 	public void reset() {
 		this.goalAchieved = false;
 	}
+	
+	/**
+	 * Update goal status if it was accomplished 
+	 * @param world - Minecraft world
+	 */
+	protected abstract void updateGoalStatus(World world);
 
 }

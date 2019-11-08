@@ -1,63 +1,83 @@
 package edu.arizona.tomcat.Mission.Goal;
 
-
-
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
-
-import net.minecraft.client.Minecraft;
+import com.microsoft.Malmo.Schemas.EntityTypes;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.world.World;
 
-
 public class KillEntityGoal extends MissionGoal {
-	private static boolean isCreate = false;
-	private List<UUID> idList; // record IDs of entities we create in this class
-	private List<UUID> willBeKilled; // record IDs of entities we need to kill
+	private UUID uniqueId;
+	private EntityTypes entityType;
+	private ArrayList<Entity> trackedEntities;
 
-	public KillEntityGoal() {
-		this.idList = new ArrayList<UUID>(); // initialize
-		this.willBeKilled = new ArrayList<UUID>();
+	/**
+	 * Constructor
+	 * @param uniqueId - Id that uniquely identifies an entity
+	 */
+	public KillEntityGoal(UUID uniqueId) {
+		this.uniqueId = uniqueId;
+	}
+
+	/**
+	 * Constructor
+	 * @param entityType - Type of the entity
+	 */
+	public KillEntityGoal(EntityTypes entityType) {
+		this.entityType = entityType;
 	}
 
 	@Override
-	public void update(World world) 
-	{
-		if (isCreate == false) {
-			int distance = -15; // Number of voxels apart from the player
-			int playersX = (int) Minecraft.getMinecraft().player.posX;
-			int playersZ = (int) Minecraft.getMinecraft().player.posZ;
-			int playersY = (int) Minecraft.getMinecraft().player.posY;	
-			EntityZombie n = new EntityZombie(world);
-			n.setPosition(playersX, playersY, playersZ  + distance);
-			UUID id = UUID.randomUUID(); // generate new id for new entity
-			idList.add(id); // keep both idList and willBeKilled here, they have different functions
-			willBeKilled.add(id);
-			n.setUniqueId(id);		
-			//world.onEntityAdded(n); // draw an entity cannot move (save this line, it maybe used to apply AI)
-			world.spawnEntity(n); // spawn an Entity
-			isCreate = true; // create only one
+	public void updateGoalStatus(World world) {	
+		if (this.trackedEntities == null) {
+			this.storeObservableEntities(world);
+		} else {		
+			this.checkGoalStatus(world);
 		}
-		List<UUID> loadedEntityIdList = new ArrayList<UUID>(); // need to refresh every tick to get updated entities on the world
-		for (Entity n : world.getLoadedEntityList()) {	
-			loadedEntityIdList.add(n.getUniqueID());
-		}
-		if (!this.goalAchieved) {
-			Iterator<UUID> itr= willBeKilled.iterator(); 
-			while (itr.hasNext()) {
-				UUID id = itr.next();
-				if (!loadedEntityIdList.contains(id)) {
-					itr.remove(); // remove the entity we killed
-					idList.remove(id);
-					this.goalAchieved = true;
-				}
+	}
+
+	/**
+	 * Add entities of interest to the set of tracked entities. These are the entities alive in the beginning of the phase where this goal is set.
+	 * @param world - Minecraft world
+	 */
+	private void storeObservableEntities(World world) {
+		this.trackedEntities = new ArrayList<Entity>();
+		for (Entity entity : world.getLoadedEntityList()) {				
+			if (this.uniqueId != null && entity.getUniqueID().toString().equals(this.uniqueId.toString())) {
+				this.trackedEntities.add(entity);			
+			} else if (this.entityType != null && entity.getName().equals(this.entityType.value())) {
+				this.trackedEntities.add(entity);				
+			}			
+		}	
+	}
+
+	/**
+	 * Check whether the goal was accomplished or not
+	 * @param world - Minecraft world
+	 */
+	private void checkGoalStatus(World world) {
+		this.goalAchieved = this.isAnyEntityKilled(world);
+	}
+
+	/**
+	 * Check whether any of the tracked entities was killed 
+	 * @param world - Minecraft world
+	 */
+	private boolean isAnyEntityKilled(World world) {
+		boolean someEntityKilled = false;
+		Set<Entity> aliveEntities = new HashSet<Entity>();
+		aliveEntities.addAll(world.getLoadedEntityList());
+
+		for (Entity entity : this.trackedEntities) {			
+			if (!aliveEntities.contains(entity)) { 				
+				someEntityKilled = true;
+				break;
 			}
-
 		}
 
+		return someEntityKilled;
 	}
 
 }

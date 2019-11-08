@@ -22,12 +22,11 @@ public class MissionPhase implements ScreenListener {
 	private long timeOnStatusSet;
 	private long worldTimeOnPhaseCompletion;
 	private boolean showCompletionMessage;
-	
+	private String messageOnCompletion;	
 	private CompletionStrategy completionStrategy;	
 	private Status status;
 	private InstructionsScreen instructionsScreen;
-	private MessageScreen messageScreen;
-	
+	private MessageScreen messageScreen;	
 	private ArrayList<String> instructions;
 	private ArrayList<MissionGoal> openGoals;
 	private ArrayList<MissionGoal> completedGoals;
@@ -37,6 +36,36 @@ public class MissionPhase implements ScreenListener {
 	 * Default constructor. Sets the completion strategy to ALL_GOALS and defines start as immediate
 	 */
 	public MissionPhase() {
+		this.init();
+	}
+	
+	/**
+	 * Constructor
+	 */
+	public MissionPhase(CompletionStrategy completionStrategy, int secondsBeforeStart, boolean showCompletionMessage) {
+		this.init();
+		this.completionStrategy = completionStrategy;
+		this.secondsBeforeStart = secondsBeforeStart;
+		this.showCompletionMessage = showCompletionMessage;
+	}
+	
+	/**
+	 * Constructor
+	 * @param instructions - Instructions to complete de phase
+	 * @param showCompletionMessage - Flag that indicates the presence of a message screen on the completion of the phase  
+	 * @param messageOnCompletion - Message to be shown on the completion of the phase
+	 */
+	public MissionPhase(ArrayList<String> instructions, boolean showCompletionMessage, String messageOnCompletion) {
+		this.init();
+		this.instructions = instructions;
+		this.showCompletionMessage = showCompletionMessage;
+		this.messageOnCompletion = messageOnCompletion;
+	}
+	
+	/**
+	 * Initialization of the private attributes
+	 */
+	private void init() {
 		this.showCompletionMessage = false;
 		this.completionStrategy = CompletionStrategy.ALL_GOALS;
 		this.secondsBeforeStart = 0;
@@ -45,20 +74,7 @@ public class MissionPhase implements ScreenListener {
 		this.openGoals = new ArrayList<MissionGoal>();
 		this.completedGoals = new ArrayList<MissionGoal>();
 		this.listeners = new ArrayList<PhaseListener>();
-	}
-	
-	/**
-	 * Constructor
-	 */
-	public MissionPhase(CompletionStrategy completionStrategy, int secondsBeforeStart, boolean showCompletionMessage) {
-		this.completionStrategy = completionStrategy;
-		this.secondsBeforeStart = secondsBeforeStart;
-		this.status = Status.WAITING_TO_START;
-		this.instructions = new ArrayList<String>();
-		this.openGoals = new ArrayList<MissionGoal>();
-		this.completedGoals = new ArrayList<MissionGoal>();
-		this.listeners = new ArrayList<PhaseListener>();
-		this.showCompletionMessage = showCompletionMessage;
+		this.messageOnCompletion = "";
 	}
 	
 	/**
@@ -142,7 +158,8 @@ public class MissionPhase implements ScreenListener {
 			goal.update(world);
 			if (goal.hasBeenAchieved()) {
 				toBeRemoved.add(goal);
-				this.completedGoals.add(goal);
+				this.completedGoals.add(goal);	
+				this.notifyAllAboutGoalAchievement(goal);
 			} 
 		}
 		this.openGoals.removeAll(toBeRemoved);
@@ -168,7 +185,7 @@ public class MissionPhase implements ScreenListener {
 			createAndOpenMessageScreen();		
 			updateMessageScreen();
 		} else {
-			this.completePhase();
+			this.notifyAllAboutPhaseCompletion();
 		}
 	}
 	
@@ -191,7 +208,7 @@ public class MissionPhase implements ScreenListener {
 		int remainingTimeToShowMessageScreen = this.getRemainingSecondsToShowMessageScreen();
 		
 		if (remainingTimeToShowMessageScreen <= 0 && this.messageScreen == null) {
-			this.messageScreen = new MessageScreen("Well Done!", SECONDS_TO_DISMISS_MESSAGE_SCREEN);
+			this.messageScreen = new MessageScreen(this.messageOnCompletion, SECONDS_TO_DISMISS_MESSAGE_SCREEN);
 			this.messageScreen.addListener(this);
 			Minecraft.getMinecraft().displayGuiScreen(this.messageScreen);
 		}
@@ -224,16 +241,25 @@ public class MissionPhase implements ScreenListener {
 			this.timeOnStatusSet = 0;
 			this.status = Status.RUNNING;
 		} else if (screen.equals(this.messageScreen)) {
-			this.completePhase();
+			this.notifyAllAboutPhaseCompletion();
 		}		
 	}
 	
 	/**
 	 * Notifies listeners about the phase completion
 	 */
-	private void completePhase() {
+	private void notifyAllAboutPhaseCompletion() {		
 		for (PhaseListener listener : this.listeners) {
 			listener.phaseCompleted();			
+		}
+	}
+	
+	/**
+	 * Notifies listeners about a goal achievement
+	 */
+	private void notifyAllAboutGoalAchievement(MissionGoal goal) {		
+		for (PhaseListener listener : this.listeners) {
+			listener.goalAchieved(goal);			
 		}
 	}
 	
@@ -284,6 +310,15 @@ public class MissionPhase implements ScreenListener {
 	 */
 	public void setCompletionStrategy(CompletionStrategy completionStrategy) {
 		this.completionStrategy = completionStrategy;
+	}
+	
+	/**
+	 * Sets the message to be shown on the completion of the phase
+	 * @param messageOnCompletion - Message to be shown on the completion of the phase
+	 */
+	public void setMessageOnCompletion(String messageOnCompletion) {
+		this.messageOnCompletion = messageOnCompletion;
 	}	
+	
 	
 }

@@ -1,6 +1,9 @@
 package edu.arizona.tomcat.Mission;
 
+import java.util.UUID;
+
 import com.microsoft.Malmo.Schemas.BlockType;
+import com.microsoft.Malmo.Schemas.EntityTypes;
 import com.microsoft.Malmo.Schemas.ItemType;
 
 import edu.arizona.tomcat.Mission.Goal.KillEntityGoal;
@@ -10,6 +13,7 @@ import edu.arizona.tomcat.Mission.Goal.ReachPositionGoal;
 import edu.arizona.tomcat.Utils.InventoryHandler;
 import edu.arizona.tomcat.World.Drawing;
 import edu.arizona.tomcat.World.Room;
+import edu.arizona.tomcat.World.TomcatEntity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemDoor;
 import net.minecraft.util.EnumFacing;
@@ -22,11 +26,12 @@ public class TutorialMission extends Mission {
 	private boolean drawn;
 	private boolean blockRoom3;
 	private MissionPhase approachRoom3Phase;
+	private UUID zombieId;
 
 	public TutorialMission() {
 		super();
 		this.drawn = false; 
-		this.blockRoom3 = false;
+		this.blockRoom3 = false;				
 	}
 
 	@Override
@@ -34,7 +39,7 @@ public class TutorialMission extends Mission {
 		//		this.openInventory();
 		//		this.craftAWoodAxe();
 		//		this.goToTheMainEntrance();
-		//		this.killAZombie();		
+		this.killAZombie();		
 		this.approachRoom3Phase = new MissionPhase();
 		this.approachRoom3Phase.addGoal(new ReachPositionGoal(-11, 2, 2, 1));
 		this.addPhase(this.approachRoom3Phase);
@@ -72,17 +77,14 @@ public class TutorialMission extends Mission {
 		this.addPhase(goToTheMainEntrancePhase);
 	}
 
-	
-	
-	
 	private void killAZombie()  {
-		
+		this.zombieId = UUID.randomUUID();
 		MissionPhase fightMonster = new MissionPhase();
-		MissionGoal goal = new KillEntityGoal();		
-		fightMonster.addInstructionsLine("Battle one monster. (behind you)");
+		MissionGoal goal = new KillEntityGoal(this.zombieId);		
+		fightMonster.addInstructionsLine("Battle one monster.");
+		fightMonster.setShowCompletionMessage(true);
 		fightMonster.addGoal(goal);
-		this.addPhase(fightMonster);
-	
+		this.addPhase(fightMonster);	
 	}
 
 	@Override
@@ -95,15 +97,15 @@ public class TutorialMission extends Mission {
 		// Not needed. The tutorial will load a predefined world.	
 		if (!this.drawn) {
 			try {
-				//				Drawing drawing = new Drawing();
+				Drawing drawing = new Drawing();
 				//				//Plane plane = new Plane(0, 2, 10, 4, 2, 3, BlockType.STONE);
-				//				Entity villager = new Entity(0, 10, 2, EntityTypes.VILLAGER);
+				TomcatEntity zombie = new TomcatEntity(this.zombieId, 0, 2, 10, EntityTypes.ZOMBIE);
 				//				Room room = new Room(0, 2, 10, 4, 2, 3, BlockType.STONE, true);
 				//				Item door = new Item(10, 2, 0, ItemType.WOODEN_DOOR);
 				//				drawing.addObject(room);
-				//				drawing.addObject(villager);
+				drawing.addObject(zombie);
 				//				drawing.addObject(door);
-				//				this.drawingHandler.draw(world, drawing);
+				this.drawingHandler.draw(world, drawing);
 				this.drawn = true;	
 
 				InventoryHandler.addItemToInventory(ItemType.STICK, 2);
@@ -146,13 +148,30 @@ public class TutorialMission extends Mission {
 		ItemDoor.placeDoor(world, new BlockPos(-16,2,6), EnumFacing.SOUTH, Blocks.OAK_DOOR, true);
 		ItemDoor.placeDoor(world, new BlockPos(-17,2,2), EnumFacing.WEST, Blocks.OAK_DOOR, true);		
 	}
-
+	
 	@Override
-	public void phaseCompleted() {
+	protected void beforePhaseTrasition() {
 		if (this.currentPhase.equals(this.approachRoom3Phase)) {
 			this.blockRoom3 = true;
 		}
-		super.phaseCompleted();
+	}
+
+	@Override
+	protected void afterLastPhaseCompletion() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void goalAchieved(MissionGoal goal) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void onTimeOut() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
