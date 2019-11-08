@@ -1,7 +1,5 @@
 package edu.arizona.tomcat.Mission.Goal;
 
-
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -59,5 +57,4 @@ public class KillEntityGoal extends MissionGoal {
 		}
 
 	}
-
 }
