@@ -62,7 +62,9 @@ extensions = [
     'breathe',
     'exhale',
     'recommonmark',
-    'sphinx_rtd_theme'
+    'sphinx_rtd_theme',
+    "sphinx.ext.viewcode",
+    "sphinx.ext.githubpages",
 ]
 
 source_suffix = {
