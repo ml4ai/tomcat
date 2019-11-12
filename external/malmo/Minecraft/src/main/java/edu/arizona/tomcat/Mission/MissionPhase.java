@@ -2,11 +2,16 @@ package edu.arizona.tomcat.Mission;
 
 import java.util.ArrayList;
 
+import com.microsoft.Malmo.MalmoMod;
+
+import edu.arizona.tomcat.Messaging.TomcatMessageData;
+import edu.arizona.tomcat.Messaging.TomcatMessaging;
+import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
-import edu.arizona.tomcat.Mission.gui.InstructionsScreen;
 import edu.arizona.tomcat.Mission.gui.MessageScreen;
 import edu.arizona.tomcat.Mission.gui.ScreenListener;
 import edu.arizona.tomcat.Utils.Converter;
+import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.world.World;
@@ -14,18 +19,18 @@ import net.minecraft.world.World;
 public class MissionPhase implements ScreenListener {
 	
 	public static enum CompletionStrategy { ANY_GOAL, ALL_GOALS };
-	private static enum Status {WAITING_TO_START, DISPLAYING_INSTRUCTIONS, RUNNING, COMPLETED};
-	private static int SECONDS_TO_DISMISS_MESSAGE_SCREEN = 2;
-	private static int SECONDS_UNTIL_SHOW_MESSAGE_SCREEN = 2;
+	private static enum Status {WAITING_TO_START, DISPLAYING_INSTRUCTIONS, WAITING_FOR_INSTRUCTIONS_DISMISSAL, RUNNING, COMPLETED};
 
 	private long secondsBeforeStart;
 	private long timeOnStatusSet;
 	private long worldTimeOnPhaseCompletion;
 	private boolean showCompletionMessage;
 	private String messageOnCompletion;	
+	private int secondsUntilShowMessageScreen;
+	private int secondsToDismissMessageScreen;
 	private CompletionStrategy completionStrategy;	
 	private Status status;
-	private InstructionsScreen instructionsScreen;
+	//private InstructionsScreen instructionsScreen;
 	private MessageScreen messageScreen;	
 	private ArrayList<String> instructions;
 	private ArrayList<MissionGoal> openGoals;
@@ -41,25 +46,38 @@ public class MissionPhase implements ScreenListener {
 	
 	/**
 	 * Constructor
+	 * @param completionStrategy - Indicates if the phase ends after at least one of the goals was achieved or all of them
+	 * @param secondsBeforeStart - Seconds before the phase starts
+	 * showCompletionMessage - Flag that indicates the presence of a message screen on the completion of the phase  
+	 * @param messageOnCompletion - Message to be shown on the completion of the phase
+	 * @param secondsUntilShowMessageScreen - Seconds before the message screen shows up after the phase completion
+	 * @param secondsToDismissMessageScreen - Seconds to dismiss the message screen once it is open
 	 */
-	public MissionPhase(CompletionStrategy completionStrategy, int secondsBeforeStart, boolean showCompletionMessage) {
+	public MissionPhase(CompletionStrategy completionStrategy, int secondsBeforeStart, boolean showCompletionMessage, String messageOnCompletion, 
+			int secondsUntilShowMessageScreen, int secondsToDismissMessageScreen) {
 		this.init();
 		this.completionStrategy = completionStrategy;
 		this.secondsBeforeStart = secondsBeforeStart;
 		this.showCompletionMessage = showCompletionMessage;
+		this.messageOnCompletion = messageOnCompletion;
+		this.secondsUntilShowMessageScreen = secondsUntilShowMessageScreen;
+		this.secondsToDismissMessageScreen = secondsToDismissMessageScreen;
 	}
 	
 	/**
 	 * Constructor
-	 * @param instructions - Instructions to complete de phase
-	 * @param showCompletionMessage - Flag that indicates the presence of a message screen on the completion of the phase  
+	 * @param completionStrategy - Indicates if the phase ends after at least one of the goals was achieved or all of them
+	 * @param secondsBeforeStart - Seconds before the phase starts
+	 * showCompletionMessage - Flag that indicates the presence of a message screen on the completion of the phase  
 	 * @param messageOnCompletion - Message to be shown on the completion of the phase
+	 * @param secondsUntilShowMessageScreen - Seconds before the message screen shows up after the phase completion
+	 * @param secondsToDismissMessageScreen - Seconds to dismiss the message screen once it is open
 	 */
-	public MissionPhase(ArrayList<String> instructions, boolean showCompletionMessage, String messageOnCompletion) {
+	public MissionPhase(CompletionStrategy completionStrategy, int secondsBeforeStart) {
 		this.init();
-		this.instructions = instructions;
-		this.showCompletionMessage = showCompletionMessage;
-		this.messageOnCompletion = messageOnCompletion;
+		this.completionStrategy = completionStrategy;
+		this.secondsBeforeStart = secondsBeforeStart;
+		this.showCompletionMessage = false;
 	}
 	
 	/**
@@ -100,6 +118,8 @@ public class MissionPhase implements ScreenListener {
 			break;
 		
 		default:
+			//Here fall all the status that depend on some player's action. The server can only proceed after the player has provided an answer.
+			//e.g. WAITING_FOR_INSTRUCTIONS_DISMISSAL
 			break;
 		}
 	}
@@ -140,11 +160,10 @@ public class MissionPhase implements ScreenListener {
 		if (this.instructions.isEmpty()) {
 			this.status = Status.RUNNING;
 		} else {
-			if (this.instructionsScreen == null) {
-				this.instructionsScreen = new InstructionsScreen(this.instructions);
-				this.instructionsScreen.addListener(this);
-				Minecraft.getMinecraft().displayGuiScreen(this.instructionsScreen);
-			}			
+			TomcatMessageData messageData = new TomcatMessageData();
+			messageData.setMissionPhaseInstructions(String.join("\n", this.instructions));
+			MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.SHOW_INSTRUCTIONS_SCREEN, messageData), MinecraftServerHelper.getFirstPlayer());
+			this.status = Status.WAITING_FOR_INSTRUCTIONS_DISMISSAL;
 		}
 	}
 	
@@ -208,7 +227,7 @@ public class MissionPhase implements ScreenListener {
 		int remainingTimeToShowMessageScreen = this.getRemainingSecondsToShowMessageScreen();
 		
 		if (remainingTimeToShowMessageScreen <= 0 && this.messageScreen == null) {
-			this.messageScreen = new MessageScreen(this.messageOnCompletion, SECONDS_TO_DISMISS_MESSAGE_SCREEN);
+			this.messageScreen = new MessageScreen(this.messageOnCompletion, this.secondsToDismissMessageScreen);
 			this.messageScreen.addListener(this);
 			Minecraft.getMinecraft().displayGuiScreen(this.messageScreen);
 		}
@@ -221,7 +240,7 @@ public class MissionPhase implements ScreenListener {
 			this.worldTimeOnPhaseCompletion = currentWorldTime;
 		}	
 		
-		return Converter.getRemainingTimeInSeconds(this.worldTimeOnPhaseCompletion, SECONDS_UNTIL_SHOW_MESSAGE_SCREEN);		
+		return Converter.getRemainingTimeInSeconds(this.worldTimeOnPhaseCompletion, this.secondsUntilShowMessageScreen);		
 	}
 	
 	/**
@@ -237,10 +256,7 @@ public class MissionPhase implements ScreenListener {
 
 	@Override
 	public void screenDismissed(GuiScreen screen, ButtonType buttonType) {
-		if (screen.equals(this.instructionsScreen) && buttonType == ScreenListener.ButtonType.OK) {
-			this.timeOnStatusSet = 0;
-			this.status = Status.RUNNING;
-		} else if (screen.equals(this.messageScreen)) {
+		if (screen.equals(this.messageScreen)) {
 			this.notifyAllAboutPhaseCompletion();
 		}		
 	}
@@ -288,37 +304,9 @@ public class MissionPhase implements ScreenListener {
 		this.listeners.add(listener);
 	}
 	
-	/**
-	 * Sets the number of seconds before the mission starts
-	 * @param secondsBeforeStart - Waiting time in seconds
-	 */
-	public void setSecondsBeforeStart(long secondsBeforeStart) {
-		this.secondsBeforeStart = secondsBeforeStart;
+	public void setInstructionsScreenDismissed() {
+		this.timeOnStatusSet = 0;
+		this.status = Status.RUNNING;			
 	}
-	
-	/**
-	 * Indicates if a message should be rendered on the screen at the completion of the phase
-	 * @param showCompletionMessage - Flag that indicates the presence of the message 
-	 */
-	public void setShowCompletionMessage(boolean showCompletionMessage) {
-		this.showCompletionMessage = showCompletionMessage;
-	}
-	
-	/**
-	 * Sets the strategy for the completion of the phase
-	 * @param completionStrategy - Strategy (all goals must be completed or just one of them)
-	 */
-	public void setCompletionStrategy(CompletionStrategy completionStrategy) {
-		this.completionStrategy = completionStrategy;
-	}
-	
-	/**
-	 * Sets the message to be shown on the completion of the phase
-	 * @param messageOnCompletion - Message to be shown on the completion of the phase
-	 */
-	public void setMessageOnCompletion(String messageOnCompletion) {
-		this.messageOnCompletion = messageOnCompletion;
-	}	
-	
 	
 }

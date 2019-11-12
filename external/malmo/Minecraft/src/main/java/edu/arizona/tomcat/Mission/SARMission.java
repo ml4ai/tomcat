@@ -4,45 +4,34 @@ import java.util.UUID;
 
 import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.Schemas.EntityTypes;
-import com.microsoft.Malmo.Schemas.ItemType;
 
+import edu.arizona.tomcat.Messaging.TomcatMessaging;
+import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
+import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
 import edu.arizona.tomcat.Mission.MissionPhase.CompletionStrategy;
+import edu.arizona.tomcat.Mission.gui.InstructionsScreen;
+import edu.arizona.tomcat.Mission.gui.SARCompletionScreen;
+import edu.arizona.tomcat.Mission.Client.SARClientMission;
 import edu.arizona.tomcat.Mission.Goal.ApproachEntityGoal;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
-import edu.arizona.tomcat.Mission.gui.SARCompletionScreen;
-import edu.arizona.tomcat.Utils.InventoryHandler;
+import edu.arizona.tomcat.Utils.Converter;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.World.Drawing;
 import edu.arizona.tomcat.World.TomcatEntity;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
+import scala.actors.threadpool.Arrays;
 
 public class SARMission extends Mission {
 
-	private static final int NUMBER_OF_VILLAGERS = 4;
+	public static final int NUMBER_OF_VILLAGERS = 4;
 	private static final int MAX_DISTANCE_TO_SAVE_VILLAGER = 1;
 
 	private boolean dynamicInitializationComplete;
 	private UUID[] villagersIDs; 
-	private int totalVillagersSaved;
 
 	public SARMission() {
-		super();
-		this.dynamicInitializationComplete = false;
-		this.totalVillagersSaved = 0;
-
-		MalmoMod.network.registerMessage(SARMissionCompletionScreenMessageHandler.class, SARMissionCompletionScreenMessage.class, 0, Side.CLIENT);
-	}
-
-	@Override
-	public void init(World world) {
-		// No initialization required
+		this.dynamicInitializationComplete = false;		
 	}
 
 	@Override
@@ -52,24 +41,22 @@ public class SARMission extends Mission {
 
 	@Override
 	protected void afterLastPhaseCompletion() {
-		MalmoMod.network.sendTo(new SARMissionCompletionScreenMessage(NUMBER_OF_VILLAGERS), MinecraftServerHelper.getFirstPlayer());
+		MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.SHOW_COMPLETION_SCREEN), MinecraftServerHelper.getFirstPlayer());
 	}
 
 	@Override
 	protected void onTimeOut() {
-		MalmoMod.network.sendTo(new SARMissionCompletionScreenMessage(this.totalVillagersSaved), MinecraftServerHelper.getFirstPlayer());
+		MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.SHOW_COMPLETION_SCREEN), MinecraftServerHelper.getFirstPlayer());
 	}
 
 	@Override
 	protected void createPhases() {
 		this.createVillagersIDs();
-		MissionPhase rescueVillagersPhase = new MissionPhase(CompletionStrategy.ALL_GOALS, 0, true);	
-		rescueVillagersPhase.addInstructionsLine("Save 4 villagers trapped in some of the rooms in the building ahead.");
-		rescueVillagersPhase.addInstructionsLine("To save villagers, just get as close as you can from them.");
+		MissionPhase rescueVillagersPhase = new MissionPhase(CompletionStrategy.ALL_GOALS, 0);	
+		rescueVillagersPhase.addInstructionsLine("Save 4 villagers trapped in the buildings.");
 		rescueVillagersPhase.addInstructionsLine("Take care! You may have to battle some scary creatures on the way.");
-		rescueVillagersPhase.addInstructionsLine("You have 10 minutes to accomplish this goal.");
+		rescueVillagersPhase.addInstructionsLine("You have " + Converter.secondsToString(this.timeLimitInSeconds, true) + " to accomplish this goal.");
 		rescueVillagersPhase.addInstructionsLine("Press OK when you are ready to start.");
-		rescueVillagersPhase.setMessageOnCompletion("Mission Accomplished!");
 		for(int i = 0; i < NUMBER_OF_VILLAGERS; i++) {
 			ApproachEntityGoal goal = new ApproachEntityGoal(this.villagersIDs[i], MAX_DISTANCE_TO_SAVE_VILLAGER);
 			rescueVillagersPhase.addGoal(goal);
@@ -166,54 +153,30 @@ public class SARMission extends Mission {
 	 * @param world
 	 */
 	private void addItensToInventory(World world) {
-		InventoryHandler.addItemToInventory(ItemType.IRON_SWORD, 1);
-	}
-
-	public static class SARMissionCompletionScreenMessage implements IMessage {
-
-		private int totalVillagersSaved;
-
-		public SARMissionCompletionScreenMessage() {
-
-		}
-
-		public SARMissionCompletionScreenMessage(int totalVillagersSaved) {
-			this.totalVillagersSaved = totalVillagersSaved;
-		}
-
-		@Override
-		public void fromBytes(ByteBuf buf) {
-			this.totalVillagersSaved = buf.readInt();
-		}
-
-		@Override
-		public void toBytes(ByteBuf buf) {
-			buf.writeInt(this.totalVillagersSaved);
-		}		
-	}
-
-	public static class SARMissionCompletionScreenMessageHandler implements IMessageHandler<SARMissionCompletionScreenMessage, IMessage> {
-
-		@Override
-		public IMessage onMessage(final SARMissionCompletionScreenMessage message, final MessageContext ctx) {
-			IThreadListener mainThread = null;			
-			if (ctx.side == Side.CLIENT) {
-				mainThread = Minecraft.getMinecraft();
-
-				mainThread.addScheduledTask(new Runnable() {
-					@Override
-					public void run() {
-						SARCompletionScreen teste = new SARCompletionScreen(message.totalVillagersSaved);
-						Minecraft.getMinecraft().displayGuiScreen(teste);
-					}
-				});    
-			}
-			return null;
-		}
+		//InventoryHandler.addItemToInventory(ItemType.IRON_SWORD, 1);
 	}
 
 	@Override
 	public void goalAchieved(MissionGoal goal) {
-		this.totalVillagersSaved += 1;
+		MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.VILLAGER_SAVED), MinecraftServerHelper.getFirstPlayer());
+	}
+
+	@Override
+	public void handleMessageFromClient(TomcatMessage message) {
+		switch (message.getMessageType()) {
+		case INSTRUCTIONS_SCREEN_DISMISSED:
+			this.currentPhase.setInstructionsScreenDismissed();	
+			break;
+			
+		default:
+			break;
+		}		
+		
+	}
+
+	@Override
+	public void initMalmoModClientAndServerMission() {
+		MalmoMod.instance.getClient().setTomcatClientMission(new SARClientMission());
+		MalmoMod.instance.getServer().setTomcatServerMission(this);		
 	}
 }

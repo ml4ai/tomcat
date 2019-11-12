@@ -3,6 +3,7 @@ package edu.arizona.tomcat.Mission;
 import java.util.ArrayList;
 
 import edu.arizona.tomcat.Emotion.EmotionHandler;
+import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
 import edu.arizona.tomcat.Mission.gui.FeedbackListener;
 import edu.arizona.tomcat.Utils.Converter;
 import edu.arizona.tomcat.World.DrawingHandler;
@@ -26,12 +27,6 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 	 */
 	protected Mission() {
 		this.drawingHandler = DrawingHandler.getInstance();
-		this.numberOfPhasesCompleted = 0;
-		this.phases = new ArrayList<MissionPhase>();
-		this.createPhases();
-		if (!this.phases.isEmpty()) {
-			this.currentPhase = this.phases.get(0);
-		}		
 	}
 	
 	/**
@@ -40,10 +35,23 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 	protected abstract void createPhases();
 	
 	/**
-	 * Draws the initial objects and entities of the mission.
+	 * Initialize data for the mission.
 	 * @param world - Mission world
 	 */
-	public abstract void init(World world);
+	public void init(World world) {
+		this.numberOfPhasesCompleted = 0;
+		this.phases = new ArrayList<MissionPhase>();
+		this.createPhases();
+		if (!this.phases.isEmpty()) {
+			this.currentPhase = this.phases.get(0);
+		}	
+		this.initMalmoModClientAndServerMission();
+	};
+	
+	/**
+	 * Initialize client and server mission objects in the active MalmoMod instance
+	 */
+	public abstract void initMalmoModClientAndServerMission();
 	
 	/**
 	 * Updates the mission from time to time. This method is called at every tick.
@@ -141,5 +149,10 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 	 * Method called after the the total time for the mission has passes.
 	 */
 	protected abstract void onTimeOut();
+	
+	/**
+	 * Handle message from the client side
+	 */
+	public abstract void handleMessageFromClient(TomcatMessage message);
 	
 }

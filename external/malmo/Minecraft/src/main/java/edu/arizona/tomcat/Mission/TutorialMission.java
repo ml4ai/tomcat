@@ -6,6 +6,8 @@ import com.microsoft.Malmo.Schemas.BlockType;
 import com.microsoft.Malmo.Schemas.EntityTypes;
 import com.microsoft.Malmo.Schemas.ItemType;
 
+import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
+import edu.arizona.tomcat.Mission.MissionPhase.CompletionStrategy;
 import edu.arizona.tomcat.Mission.Goal.KillEntityGoal;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
 import edu.arizona.tomcat.Mission.Goal.OpenInventoryGoal;
@@ -47,10 +49,9 @@ public class TutorialMission extends Mission {
 	}
 
 	private void openInventory() {
-		MissionPhase openInventoryPhase = new MissionPhase();
+		MissionPhase openInventoryPhase = new MissionPhase(CompletionStrategy.ANY_GOAL, 0, true, "Well Done!", 2, 2);
 		MissionGoal goal = new OpenInventoryGoal();		
 		openInventoryPhase.addInstructionsLine("Open the inventory by typing the key E.");
-		openInventoryPhase.setShowCompletionMessage(true);
 		openInventoryPhase.addGoal(goal);
 		this.addPhase(openInventoryPhase);
 	}
@@ -65,24 +66,22 @@ public class TutorialMission extends Mission {
 	}
 
 	private void goToTheMainEntrance() {
-		MissionPhase goToTheMainEntrancePhase = new MissionPhase();
+		MissionPhase goToTheMainEntrancePhase = new MissionPhase(CompletionStrategy.ANY_GOAL, 0, true, "Well Done!", 2, 2);
 		MissionGoal goal = new ReachPositionGoal(0, 2, 30, 2);
 		goToTheMainEntrancePhase.addInstructionsLine("Go to the main entrance of the building.");
 		goToTheMainEntrancePhase.addInstructionsLine("Press the key A to move left.");
 		goToTheMainEntrancePhase.addInstructionsLine("Press the key W to move forward.");
 		goToTheMainEntrancePhase.addInstructionsLine("Press the key D to move right.");
 		goToTheMainEntrancePhase.addInstructionsLine("Press the key S to move backwards.");	
-		goToTheMainEntrancePhase.setShowCompletionMessage(true);
 		goToTheMainEntrancePhase.addGoal(goal);	
 		this.addPhase(goToTheMainEntrancePhase);
 	}
 
 	private void killAZombie()  {
 		this.zombieId = UUID.randomUUID();
-		MissionPhase fightMonster = new MissionPhase();
+		MissionPhase fightMonster = new MissionPhase(CompletionStrategy.ANY_GOAL, 0, true, "Well Done!", 2, 2);
 		MissionGoal goal = new KillEntityGoal(this.zombieId);		
 		fightMonster.addInstructionsLine("Battle one monster.");
-		fightMonster.setShowCompletionMessage(true);
 		fightMonster.addGoal(goal);
 		this.addPhase(fightMonster);	
 	}
@@ -170,6 +169,18 @@ public class TutorialMission extends Mission {
 
 	@Override
 	protected void onTimeOut() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void handleMessageFromClient(TomcatMessage message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void initMalmoModClientAndServerMission() {
 		// TODO Auto-generated method stub
 		
 	}

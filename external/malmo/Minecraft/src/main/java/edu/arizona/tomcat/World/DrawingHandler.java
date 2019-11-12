@@ -10,6 +10,7 @@ import com.microsoft.Malmo.Schemas.DrawingDecorator;
 import com.microsoft.Malmo.Schemas.ObjectFactory;
 import com.microsoft.Malmo.Utils.BlockDrawingHelper;
 
+import edu.arizona.tomcat.Utils.Converter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
@@ -91,7 +92,7 @@ public class DrawingHandler {
 	 */
 	public void drawCountdown(long remainingSeconds, long remainingSecondsAlert) {
 		if (remainingSeconds >= 0) {
-			TextComponentString text = new TextComponentString("Mission ends in " + this.secondsToString(remainingSeconds) + "...");
+			TextComponentString text = new TextComponentString("Mission ends in " + Converter.secondsToString(remainingSeconds, false) + "...");
 			Style style = new Style();
 			style.setBold(true);
 			
@@ -103,25 +104,6 @@ public class DrawingHandler {
 			Minecraft.getMinecraft().ingameGUI.getChatGUI().clearChatMessages(true);
 			Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(text);
 		}
-	}
-	
-	/**
-	 * Convert seconds to MM:SS
-	 * @param seconds - Number of seconds
-	 * @return
-	 */
-	private String secondsToString(long seconds) {
-		String time = "";
-				
-		if(seconds <= 60) {
-			time = Long.toString(seconds) + "seconds";
-		} else {
-			long minutes = seconds / 60;
-			seconds = seconds % 60;
-			time = minutes + ":" + String.format("%02d", seconds) + " minutes";
-		}
-		
-		return time;
 	}
 
 }

@@ -19,6 +19,10 @@
 
 package com.microsoft.Malmo.Server;
 
+import com.microsoft.Malmo.Schemas.MissionInit;
+import com.microsoft.Malmo.Utils.TimeHelper;
+
+import edu.arizona.tomcat.Mission.Mission;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -26,13 +30,11 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.relauncher.Side;
 
-import com.microsoft.Malmo.Schemas.MissionInit;
-import com.microsoft.Malmo.Utils.TimeHelper;
-
 public class MalmoModServer
 {
     private ServerStateMachine stateMachine;
     private TimeHelper.TickRateMonitor serverTickMonitor = new TimeHelper.TickRateMonitor();
+    private Mission tomcatServerMission;
 
     /**
      * Called when creating a dedicated server
@@ -80,4 +82,20 @@ public class MalmoModServer
     {
         return this.serverTickMonitor.getEventsPerSecond();
     }
+    
+    /**
+	 * Retrieves the ToMCAT server mission
+	 * @return
+	 */
+	public Mission getTomcatServerMission() {
+		return this.tomcatServerMission;
+	}
+	
+	/**
+	 * Sets the ToMCAT server mission
+	 * @param tomcatServerMission - ToMCAT server mission
+	 */
+	public void setTomcatServerMission(Mission tomcatServerMission) {
+		this.tomcatServerMission = tomcatServerMission;
+	}
 }

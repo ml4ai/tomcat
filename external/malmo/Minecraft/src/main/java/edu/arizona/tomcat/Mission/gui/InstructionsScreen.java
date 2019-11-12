@@ -2,6 +2,7 @@ package edu.arizona.tomcat.Mission.gui;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.microsoft.Malmo.MalmoMod;
 
@@ -19,11 +20,11 @@ public class InstructionsScreen extends GUIScreenUndismissableOnEscapeKey {
 	private static final int BUTTON_HEIGHT = 20;
 	public static final int BUTTON_OK = 0;
 	
-	protected ArrayList<String> instructions;
+	protected List<String> instructions;
 	private ArrayList<ScreenListener> listeners;
 	private String image;
 	
-	public InstructionsScreen(ArrayList<String> instructions) {
+	public InstructionsScreen(List<String> instructions) {
 		this.instructions = instructions;
 		this.listeners = new ArrayList<ScreenListener>();
 	}
@@ -62,8 +63,7 @@ public class InstructionsScreen extends GUIScreenUndismissableOnEscapeKey {
 	 * Draw image on the screen
 	 */
 	protected void drawImage() {
-		if(this.image != null) {
-			System.out.println("--------------------Draw texture");
+		if(this.image != null) {			
 			this.mc.getTextureManager().bindTexture(new ResourceLocation(MalmoMod.MODID, "textures/" + this.image));
 			this.drawTexturedModalRect(100, LABEL_Y + LABEL_HEIGHT + 10, 0, 0, 256, 256);
 		}
