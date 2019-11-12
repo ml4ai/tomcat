@@ -56,7 +56,7 @@ string TomcatMission::getWorldSkeletonFromXML() {
             <AllowSpawning>false</AllowSpawning>
           </ServerInitialConditions>
           <ServerHandlers>
-            <FileWorldGenerator src="/Users/paulosoares/Desktop/SARV01" forceReset="true"/>
+            <FileWorldGenerator src="/Users/paulosoares/Desktop/ivilab/tomcat/data/worlds/SARV01" forceReset="true"/>
             <TomcatDecorator mission="{}" timeLimitInSeconds="{}"/>
           </ServerHandlers>
       </ServerSection>
