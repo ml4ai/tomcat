@@ -639,6 +639,7 @@
     </xs:annotation>
     <xs:complexContent>
         <xs:extension base="DrawObjectType">
+            <xs:attribute name="uniqueId" type="xs:string" use="optional" />
             <xs:attribute name="x" type="xs:decimal" use="required" />
             <xs:attribute name="y" type="xs:decimal" use="required" />
             <xs:attribute name="z" type="xs:decimal" use="required" />
