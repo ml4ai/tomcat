@@ -273,7 +273,7 @@ int main(void) {
   printf("sample average = %lf\n", average);
 
   FILE* fid;
-  fid = fopen("recorded.wav", "wb");
+  fid = fopen("recorded.raw", "wb");
   if (fid == NULL) {
     printf("Could not open file.");
   }
