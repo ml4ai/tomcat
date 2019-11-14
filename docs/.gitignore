@@ -1,2 +1,4 @@
 build
 doxygen-tags
+doxyoutput
+cpp_api

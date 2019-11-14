@@ -34,6 +34,5 @@ public abstract class CompositeDrawingObject {
 			this.malmoDrawObjects.add(alienMalmoDrawObjects.next());
 		}
 	}
-	
 
 }

@@ -79,5 +79,4 @@ public class KillEntityGoal extends MissionGoal {
 
 		return someEntityKilled;
 	}
-
 }

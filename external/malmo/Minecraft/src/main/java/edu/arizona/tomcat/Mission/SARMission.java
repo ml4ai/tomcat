@@ -68,6 +68,7 @@ public class SARMission extends Mission {
 	/**
 	 * Create unique IDs for each one of the villagers
 	 */
+
 	private void createVillagersIDs() {
 		this.villagersIDs = new UUID[NUMBER_OF_VILLAGERS];
 		for(int i = 0; i < NUMBER_OF_VILLAGERS; i++) {

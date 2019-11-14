@@ -15,11 +15,11 @@ import edu.arizona.tomcat.Mission.MissionHandler;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 
-/** 
+/**
  * WorldBuilder for the ToMCAT missions.
  */
-public class TomcatDecoratorImplementation extends HandlerBase implements IWorldDecorator
-{
+public class TomcatDecoratorImplementation
+extends HandlerBase implements IWorldDecorator {
 	TomcatDecorator decorator;
 	MissionHandler missionHandler;
 
@@ -29,12 +29,13 @@ public class TomcatDecoratorImplementation extends HandlerBase implements IWorld
 			return false;
 		}
 
+
 		this.decorator = (TomcatDecorator) params;
 		this.initMissionHandler();
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Initialize the mission handler object
 	 */
@@ -45,9 +46,9 @@ public class TomcatDecoratorImplementation extends HandlerBase implements IWorld
 		MalmoMod.network.registerMessage(TomcatMessageHandler.class, TomcatMessage.class, 101, Side.SERVER);		
 	}
 
+
 	@Override
-	public void buildOnWorld(MissionInit missionInit, World world)
-	{	
+	public void buildOnWorld(MissionInit missionInit, World world) {
 		this.missionHandler.initMission(world);
 	}
 
@@ -57,32 +58,25 @@ public class TomcatDecoratorImplementation extends HandlerBase implements IWorld
 	}
 
 	@Override
-	public boolean getExtraAgentHandlersAndData(List<Object> handlers, Map<String, String> data)
-	{
+	public boolean getExtraAgentHandlersAndData(List<Object> handlers,
+			Map<String, String> data) {
 		return false;
 	}
 
 	@Override
-	public void prepare(MissionInit missionInit)
-	{
+	public void prepare(MissionInit missionInit) {}
+
+	@Override
+	public void cleanup() {}
+
+	@Override
+	public boolean targetedUpdate(String nextAgentName) {
+		return false; // Does nothing.
 	}
 
 	@Override
-	public void cleanup()
-	{
-	}
-
-	@Override
-	public boolean targetedUpdate(String nextAgentName)
-	{
-		return false;   // Does nothing.
-	}
-
-	@Override
-	public void getTurnParticipants(ArrayList<String> participants, ArrayList<Integer> participantSlots)
-	{
+	public void getTurnParticipants(ArrayList<String> participants,
+			ArrayList<Integer> participantSlots) {
 		// Does nothing.
 	}
-
 }
-

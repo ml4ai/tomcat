@@ -61,7 +61,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 		int remainingSeconds = this.getRemainingSeconds();
 		
 		if(remainingSeconds > 0) {
-			this.drawingHandler.drawCountdown(remainingSeconds, REMAINING_SECONDS_ALERT);
+			//this.drawingHandler.drawCountdown(remainingSeconds, REMAINING_SECONDS_ALERT);
 			this.updateCurrentPhase(world);
 			this.updateScene(world);
 		} else {

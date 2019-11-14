@@ -5,9 +5,9 @@ import java.util.UUID;
 import com.microsoft.Malmo.Schemas.BlockType;
 import com.microsoft.Malmo.Schemas.EntityTypes;
 import com.microsoft.Malmo.Schemas.ItemType;
-
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
 import edu.arizona.tomcat.Mission.MissionPhase.CompletionStrategy;
+import edu.arizona.tomcat.Mission.Goal.CraftItemGoal;
 import edu.arizona.tomcat.Mission.Goal.KillEntityGoal;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
 import edu.arizona.tomcat.Mission.Goal.OpenInventoryGoal;
@@ -57,10 +57,20 @@ public class TutorialMission extends Mission {
 	}
 
 	private void craftAWoodAxe() {
-		// TODO Auto-generated method stub		
 		MissionPhase openInventoryPhase = new MissionPhase();
-		MissionGoal goal = new OpenInventoryGoal();		
-		openInventoryPhase.addInstructionsLine("Used to check if succeed in battling.");
+		MissionGoal goal = new CraftItemGoal(ItemType.WOODEN_AXE);
+		openInventoryPhase.addInstructionsLine("Craft a wood Axe in your Inventory");
+		openInventoryPhase.addInstructionsLine("1. Creating the crafting table by left clicking " +
+				"wooden planks and right clicking to place four wooden palcks to each grid of 2x2 crafting grids " +
+				"under the 'Crafting' respectively, then hit the grid that the arrow points at to create a crafting table");
+		openInventoryPhase.addInstructionsLine("2. go into your inventory and put the crafting table " +
+				"in your hotbar and exit your inventory");
+		openInventoryPhase.addInstructionsLine("3. Select the crafting table in the hotbar and right " +
+				"click an empty area to place the crafting table. Once it is placed, walk up to it and right click on" +
+				" it and it will open up its crafting menu");
+		openInventoryPhase.addInstructionsLine("4. Place 3 wood planks and 2 sticks in the 3x3 " +
+				"crafting grid. 2 wood planks placed in the first row. 1 wood plank and 1 stick in the second box of " +
+				"second row. In third row, 1 stick in the middle box");
 		openInventoryPhase.addGoal(goal);
 		this.addPhase(openInventoryPhase);
 	}
@@ -82,6 +92,7 @@ public class TutorialMission extends Mission {
 		MissionPhase fightMonster = new MissionPhase(CompletionStrategy.ANY_GOAL, 0, true, "Well Done!", 2, 2);
 		MissionGoal goal = new KillEntityGoal(this.zombieId);		
 		fightMonster.addInstructionsLine("Battle one monster.");
+
 		fightMonster.addGoal(goal);
 		this.addPhase(fightMonster);	
 	}
@@ -147,7 +158,7 @@ public class TutorialMission extends Mission {
 		ItemDoor.placeDoor(world, new BlockPos(-16,2,6), EnumFacing.SOUTH, Blocks.OAK_DOOR, true);
 		ItemDoor.placeDoor(world, new BlockPos(-17,2,2), EnumFacing.WEST, Blocks.OAK_DOOR, true);		
 	}
-	
+
 	@Override
 	protected void beforePhaseTrasition() {
 		if (this.currentPhase.equals(this.approachRoom3Phase)) {
@@ -158,31 +169,31 @@ public class TutorialMission extends Mission {
 	@Override
 	protected void afterLastPhaseCompletion() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void goalAchieved(MissionGoal goal) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	protected void onTimeOut() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void handleMessageFromClient(TomcatMessage message) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void initMalmoModClientAndServerMission() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

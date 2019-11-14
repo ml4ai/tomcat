@@ -32,4 +32,15 @@ public class InventoryHandler {
 		MinecraftServerHelper.getFirstPlayer().inventory.addItemStackToInventory(itemStack);		
 	}
 
+	/**
+	 * Checks an item in the player's main inventory
+	 * @param type - Item type
+	 * @param quantity - Number of items to be checked 
+	 */
+	public static boolean checkItemToInventory(ItemType type, int quantity) {
+		Item item = MinecraftTypeHelper.ParseItemType(type.value(), false);
+		ItemStack itemStack = new ItemStack(item, quantity);
+		return MinecraftServerHelper.getFirstPlayer().inventory.hasItemStack(itemStack);
+	}
+
 }
