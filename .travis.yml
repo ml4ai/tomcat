@@ -19,6 +19,8 @@ addons:
       - ffmpeg
       - openblas
       - lcov
+      - portaudio
+      - libsndfile
 
 before_install:
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python3 -m venv tomcat; fi
