@@ -76,11 +76,11 @@ namespace tomcat {
       string folderName = "";
       switch (this->missionId) {
           case tutorial:
-            folderName = "tutorial0.01";
+            folderName = "tutorial_0_0_1";
             break;
 
           case sar:
-              folderName = "sar0.01";
+              folderName = "sar_0_0_1";
               break;
       }
 

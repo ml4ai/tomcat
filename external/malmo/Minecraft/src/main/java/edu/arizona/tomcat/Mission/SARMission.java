@@ -86,6 +86,8 @@ public class SARMission extends Mission {
 		if(!this.dynamicInitializationComplete) {
 			this.doDynamicInitialization(world);
 		}
+		
+		//System.out.println("===========>Player's position: " + MinecraftServerHelper.getFirstPlayer().getPosition().toString());
 	}
 
 	/**
@@ -114,8 +116,8 @@ public class SARMission extends Mission {
 		try {
 			Drawing drawing = new Drawing();
 
-			TomcatEntity zombie1 = new TomcatEntity(46, 64, 47, EntityTypes.ZOMBIE);
-			TomcatEntity zombie2 = new TomcatEntity(93, 64, 53, EntityTypes.ZOMBIE);
+			TomcatEntity zombie1 = new TomcatEntity(46, 64, 47, EntityTypes.SKELETON);
+			TomcatEntity zombie2 = new TomcatEntity(93, 64, 53, EntityTypes.SKELETON);
 			TomcatEntity zombie3 = new TomcatEntity(57, 64, 61, EntityTypes.ZOMBIE);
 			TomcatEntity zombie4 = new TomcatEntity(72, 64, 75, EntityTypes.ZOMBIE);
 			TomcatEntity zombie5 = new TomcatEntity(88, 64, 87, EntityTypes.ZOMBIE);			
@@ -140,7 +142,7 @@ public class SARMission extends Mission {
 			Drawing drawing = new Drawing();
 
 			TomcatEntity villager1 = new TomcatEntity(this.villagersIDs[0], 52, 67, 89, EntityTypes.VILLAGER);
-			TomcatEntity villager2 = new TomcatEntity(this.villagersIDs[1], 96, 64, 90, EntityTypes.VILLAGER);
+			TomcatEntity villager2 = new TomcatEntity(this.villagersIDs[1], 95, 64, 90, EntityTypes.VILLAGER);
 			TomcatEntity villager3 = new TomcatEntity(this.villagersIDs[2], 69, 64, 81, EntityTypes.VILLAGER);
 			TomcatEntity villager4 = new TomcatEntity(this.villagersIDs[3], 63, 64, 63, EntityTypes.VILLAGER);		
 
