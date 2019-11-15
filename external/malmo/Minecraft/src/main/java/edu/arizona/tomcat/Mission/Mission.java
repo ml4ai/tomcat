@@ -3,6 +3,7 @@ package edu.arizona.tomcat.Mission;
 import java.util.ArrayList;
 
 import com.microsoft.Malmo.MalmoMod;
+import com.microsoft.Malmo.Schemas.PosAndDirection;
 
 import edu.arizona.tomcat.Emotion.EmotionHandler;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
@@ -11,6 +12,7 @@ import edu.arizona.tomcat.Mission.gui.FeedbackListener;
 import edu.arizona.tomcat.Utils.Converter;
 import edu.arizona.tomcat.World.DrawingHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
 
 public abstract class Mission implements FeedbackListener, PhaseListener {
@@ -185,5 +187,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 		}				
 
 	}
+	
+	public abstract PosAndDirection getPlayersInitialPositionAndDirection(EntityPlayerMP player);
 
 }

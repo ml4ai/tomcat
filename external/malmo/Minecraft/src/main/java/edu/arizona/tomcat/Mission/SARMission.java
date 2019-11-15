@@ -1,9 +1,11 @@
 package edu.arizona.tomcat.Mission;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.Schemas.EntityTypes;
+import com.microsoft.Malmo.Schemas.PosAndDirection;
 
 import edu.arizona.tomcat.Messaging.TomcatMessaging;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
@@ -16,6 +18,7 @@ import edu.arizona.tomcat.Utils.Converter;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.World.Drawing;
 import edu.arizona.tomcat.World.TomcatEntity;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
 
 public class SARMission extends Mission {
@@ -58,6 +61,7 @@ public class SARMission extends Mission {
 		rescueVillagersPhase.addInstructionsLine("Save 4 villagers trapped in the buildings.");
 		rescueVillagersPhase.addInstructionsLine("Take care! You may have to battle some scary creatures on the way.");
 		rescueVillagersPhase.addInstructionsLine("You have " + Converter.secondsToString(this.timeLimitInSeconds, true) + " to accomplish this goal.");
+		rescueVillagersPhase.addInstructionsLine("");
 		rescueVillagersPhase.addInstructionsLine("Press OK when you are ready to start.");
 		for(int i = 0; i < NUMBER_OF_VILLAGERS; i++) {
 			ApproachEntityGoal goal = new ApproachEntityGoal(this.villagersIDs[i], MAX_DISTANCE_TO_SAVE_VILLAGER);
@@ -80,11 +84,8 @@ public class SARMission extends Mission {
 	@Override
 	protected void updateScene(World world) {
 		if(!this.dynamicInitializationComplete) {
-			world.playerEntities.get(0).setPositionAndRotation(22, 64, 73, -90, 0);
 			this.doDynamicInitialization(world);
 		}
-		
-		System.out.println("===========>Player's distance from goal: " + MinecraftServerHelper.getFirstPlayer().getPosition().toString());
 	}
 
 	/**
@@ -139,7 +140,7 @@ public class SARMission extends Mission {
 			Drawing drawing = new Drawing();
 
 			TomcatEntity villager1 = new TomcatEntity(this.villagersIDs[0], 52, 67, 89, EntityTypes.VILLAGER);
-			TomcatEntity villager2 = new TomcatEntity(this.villagersIDs[1], 94, 64, 90, EntityTypes.VILLAGER);
+			TomcatEntity villager2 = new TomcatEntity(this.villagersIDs[1], 96, 64, 90, EntityTypes.VILLAGER);
 			TomcatEntity villager3 = new TomcatEntity(this.villagersIDs[2], 69, 64, 81, EntityTypes.VILLAGER);
 			TomcatEntity villager4 = new TomcatEntity(this.villagersIDs[3], 63, 64, 63, EntityTypes.VILLAGER);		
 
@@ -171,5 +172,15 @@ public class SARMission extends Mission {
 	@Override
 	public ClientMission getClientMissionInstance() {
 		return new SARClientMission();		
+	}
+	
+	@Override
+	public PosAndDirection getPlayersInitialPositionAndDirection(EntityPlayerMP player) {
+		PosAndDirection positionAndDirection = new PosAndDirection();
+		positionAndDirection.setX(new BigDecimal(22));
+		positionAndDirection.setY(new BigDecimal(64));
+		positionAndDirection.setZ(new BigDecimal(73));
+		positionAndDirection.setYaw(new BigDecimal(-90));
+		return positionAndDirection;
 	}
 }

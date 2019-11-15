@@ -1,9 +1,11 @@
 package edu.arizona.tomcat.Mission;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.Schemas.EntityTypes;
+import com.microsoft.Malmo.Schemas.PosAndDirection;
 
 import edu.arizona.tomcat.Messaging.TomcatMessaging;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
@@ -17,6 +19,7 @@ import edu.arizona.tomcat.Mission.Goal.ReachPositionGoal;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.World.Drawing;
 import edu.arizona.tomcat.World.TomcatEntity;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
 
 public class TutorialMission extends Mission {
@@ -27,7 +30,6 @@ public class TutorialMission extends Mission {
 	private boolean shouldSpawnSkeletonInTheArena;
 	private boolean shouldSpawnZombieInsideTheBuilding;
 	private boolean shouldSpawnVillagerInsideTheBuilding;
-	private boolean shouldSetPlayersInitialPosition;
 	private MissionPhase enterTheArenaPhase;
 	private MissionPhase killSkeletonPhase;
 	private MissionPhase killZombiePhase;
@@ -40,7 +42,6 @@ public class TutorialMission extends Mission {
 		this.shouldSpawnSkeletonInTheArena = false;
 		this.shouldSpawnZombieInsideTheBuilding = false;
 		this.shouldSpawnVillagerInsideTheBuilding = false;
-		this.shouldSetPlayersInitialPosition = true;
 		this.skeletonUUID = UUID.randomUUID();
 		this.zombieUUID = UUID.randomUUID();
 		this.villagerUUID = UUID.randomUUID();
@@ -69,8 +70,9 @@ public class TutorialMission extends Mission {
 		MissionPhase approachPoolsPhase = new MissionPhase(CompletionStrategy.ALL_GOALS, 0, true, "You got it!", 0, 2);	
 		approachPoolsPhase.addInstructionsLine("Approach the lava and water tanks.");
 		approachPoolsPhase.addInstructionsLine("Use the keys A,W,D and S to move around.");
-		approachPoolsPhase.addInstructionsLine("Take care! If you fall in the lava tank, you die.");
+		approachPoolsPhase.addInstructionsLine("Take care! If you fall into the lava tank, you die.");
 		approachPoolsPhase.addInstructionsLine("If you fall into the water tank, press space until you reach the surface.");
+		approachPoolsPhase.addInstructionsLine("");
 		approachPoolsPhase.addInstructionsLine("Press OK when you are ready.");
 		approachPoolsPhase.addGoal(new ReachPositionGoal(-635, 4, 1582, 2));
 		this.addPhase(approachPoolsPhase);
@@ -80,10 +82,11 @@ public class TutorialMission extends Mission {
 	 * Creates a phase in the mission where the objective is to locate the entities in the world
 	 */
 	private void addApproachEntitiesPhase() {
-		MissionPhase approachEntitiesPhase = new MissionPhase(CompletionStrategy.ALL_GOALS, 0, true, "You got it!", 0, 2);	
+		MissionPhase approachEntitiesPhase = new MissionPhase(CompletionStrategy.ALL_GOALS, 5, true, "You got it!", 0, 2);	
 		approachEntitiesPhase.addInstructionsLine("Take a closer look at a villager, a skeleton and a zombie.");
 		approachEntitiesPhase.addInstructionsLine("Pay attention to their appearance.");
 		approachEntitiesPhase.addInstructionsLine("You might need to distinguish them well in the future.");
+		approachEntitiesPhase.addInstructionsLine("");
 		approachEntitiesPhase.addInstructionsLine("Press OK when you are ready.");
 		approachEntitiesPhase.addGoal(new ReachPositionGoal(-615, 4, 1585, 3));
 		addPhase(approachEntitiesPhase);
@@ -96,6 +99,7 @@ public class TutorialMission extends Mission {
 		this.enterTheArenaPhase = new MissionPhase(CompletionStrategy.ALL_GOALS, 10, true, "You got it!", 0, 2);	
 		this.enterTheArenaPhase.addInstructionsLine("Go to the center of the combat arena.");
 		this.enterTheArenaPhase.addInstructionsLine("To open the gate, right-click on it.");
+		this.enterTheArenaPhase.addInstructionsLine("");
 		this.enterTheArenaPhase.addInstructionsLine("Press OK when you are ready.");
 		this.enterTheArenaPhase.addGoal(new ReachPositionGoal(-623, 4, 1600, 2));
 		this.addPhase(this.enterTheArenaPhase);
@@ -109,6 +113,7 @@ public class TutorialMission extends Mission {
 		this.killSkeletonPhase.addInstructionsLine("Battle and kill the skeleton behind you.");		
 		this.killSkeletonPhase.addInstructionsLine("Left-click to attack him.");
 		this.killSkeletonPhase.addInstructionsLine("You can also try to take him outside the arena. He will burn under the sun.");
+		this.killSkeletonPhase.addInstructionsLine("");
 		this.killSkeletonPhase.addInstructionsLine("Press OK when you are ready.");
 		this.killSkeletonPhase.addGoal(new KillEntityGoal(this.skeletonUUID));
 		this.addPhase(this.killSkeletonPhase);
@@ -122,6 +127,7 @@ public class TutorialMission extends Mission {
 		this.killZombiePhase.addInstructionsLine("Leave the arena and kill the zombie inside the building.");		
 		this.killZombiePhase.addInstructionsLine("To open an iron door, right-click on the switch close to it.");
 		this.killZombiePhase.addInstructionsLine("Zombies also burn under the sun.");
+		this.killZombiePhase.addInstructionsLine("");
 		this.killZombiePhase.addInstructionsLine("Press OK when you are ready.");
 		this.killZombiePhase.addGoal(new KillEntityGoal(this.zombieUUID));
 		this.addPhase(this.killZombiePhase);
@@ -135,6 +141,7 @@ public class TutorialMission extends Mission {
 		saveVillagerPhase.addInstructionsLine("Open the wooden door to access the other room and rescue a villager.");		
 		saveVillagerPhase.addInstructionsLine("To open a wooden door, just right-click on it.");
 		saveVillagerPhase.addInstructionsLine("Rescue the villagger by bumping into him.");
+		saveVillagerPhase.addInstructionsLine("");
 		saveVillagerPhase.addInstructionsLine("Press OK when you are ready.");
 		saveVillagerPhase.addGoal(new ApproachEntityGoal(this.villagerUUID, MAX_DISTANCE_TO_SAVE_VILLAGER));
 		this.addPhase(saveVillagerPhase);
@@ -149,20 +156,15 @@ public class TutorialMission extends Mission {
 		leaveTheBuildingPhase.addInstructionsLine("corner of your screen increases.");
 		leaveTheBuildingPhase.addInstructionsLine("Your bar is full because you saved all the villagers in this mission.");
 		leaveTheBuildingPhase.addInstructionsLine("Now, get out of the building.");
+		leaveTheBuildingPhase.addInstructionsLine("");
 		leaveTheBuildingPhase.addInstructionsLine("Press OK when you are ready.");
-		leaveTheBuildingPhase.addGoal(new ReachPositionGoal(-623, 4, 1576, 2));
+		leaveTheBuildingPhase.addGoal(new ReachPositionGoal(-623, 4, 1579, 2));
 		addPhase(leaveTheBuildingPhase);
 	}
 
 	
 	@Override
 	protected void updateScene(World world) {
-		if (this.shouldSetPlayersInitialPosition) {
-			world.playerEntities.get(0).setPositionAndRotation(-623, 4, 1584, 0, 0);
-			this.shouldSetPlayersInitialPosition = false;
-		}
-		
-		
 		if (this.shouldSpawnSkeletonInTheArena) {
 			this.spawnSkeletonInTheArena(world);
 			this.shouldSpawnSkeletonInTheArena = false;
@@ -272,6 +274,15 @@ public class TutorialMission extends Mission {
 	public void setTimeLimitInSeconds(long timeLimitInSeconds) {
 		// Tutorial mission has no time limit
 		this.timeLimitInSeconds = -1;
+	}
+
+	@Override
+	public PosAndDirection getPlayersInitialPositionAndDirection(EntityPlayerMP player) {
+		PosAndDirection positionAndDirection = new PosAndDirection();
+		positionAndDirection.setX(new BigDecimal(-623));
+		positionAndDirection.setY(new BigDecimal(4));
+		positionAndDirection.setZ(new BigDecimal(1584));
+		return positionAndDirection;
 	}
 
 }
