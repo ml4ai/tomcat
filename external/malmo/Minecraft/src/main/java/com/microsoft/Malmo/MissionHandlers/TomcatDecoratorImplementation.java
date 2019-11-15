@@ -40,12 +40,11 @@ extends HandlerBase implements IWorldDecorator {
 	 * Initialize the mission handler object
 	 */
 	private void initMissionHandler() {		
-		this.missionHandler = new MissionHandler();
-		this.missionHandler.setMission(this.decorator.getMission().intValue(), this.decorator.getTimeLimitInSeconds().intValue());
 		MalmoMod.network.registerMessage(TomcatMessageHandler.class, TomcatMessage.class, 100, Side.CLIENT);
-		MalmoMod.network.registerMessage(TomcatMessageHandler.class, TomcatMessage.class, 101, Side.SERVER);		
+		MalmoMod.network.registerMessage(TomcatMessageHandler.class, TomcatMessage.class, 101, Side.SERVER);
+		this.missionHandler = new MissionHandler();
+		this.missionHandler.setMission(this.decorator.getMission().intValue(), this.decorator.getTimeLimitInSeconds().intValue());				
 	}
-
 
 	@Override
 	public void buildOnWorld(MissionInit missionInit, World world) {

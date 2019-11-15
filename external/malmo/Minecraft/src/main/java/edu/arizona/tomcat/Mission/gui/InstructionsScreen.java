@@ -24,6 +24,11 @@ public class InstructionsScreen extends GUIScreenUndismissableOnEscapeKey {
 	private ArrayList<ScreenListener> listeners;
 	private String image;
 	
+	public InstructionsScreen() {
+		this.instructions = new ArrayList<String>();
+		this.listeners = new ArrayList<ScreenListener>();
+	}
+	
 	public InstructionsScreen(List<String> instructions) {
 		this.instructions = instructions;
 		this.listeners = new ArrayList<ScreenListener>();
@@ -81,7 +86,7 @@ public class InstructionsScreen extends GUIScreenUndismissableOnEscapeKey {
 	@Override
 	protected void actionPerformed(GuiButton guiButton) {
 		if(guiButton.id == BUTTON_OK) {
-			this.dismissScreen(ScreenListener.ButtonType.OK);
+			this.dismissScreen();
 		}
 	}
 
@@ -102,10 +107,10 @@ public class InstructionsScreen extends GUIScreenUndismissableOnEscapeKey {
 	 * Close the GUI and notify listeners which of the buttons was pressed
 	 * @param buttonType - Type of the button pressed
 	 */
-	public void dismissScreen(ScreenListener.ButtonType buttonType) {
+	public void dismissScreen() {
 		this.mc.player.closeScreen();
 		for (ScreenListener listener : this.listeners) {
-			listener.screenDismissed(this, buttonType);
+			listener.screenDismissed(this);
 		}		
 	}	
 

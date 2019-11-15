@@ -6,11 +6,9 @@ import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.Schemas.EntityTypes;
 
 import edu.arizona.tomcat.Messaging.TomcatMessaging;
-import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
 import edu.arizona.tomcat.Mission.MissionPhase.CompletionStrategy;
-import edu.arizona.tomcat.Mission.gui.InstructionsScreen;
-import edu.arizona.tomcat.Mission.gui.SARCompletionScreen;
+import edu.arizona.tomcat.Mission.Client.ClientMission;
 import edu.arizona.tomcat.Mission.Client.SARClientMission;
 import edu.arizona.tomcat.Mission.Goal.ApproachEntityGoal;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
@@ -18,9 +16,7 @@ import edu.arizona.tomcat.Utils.Converter;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.World.Drawing;
 import edu.arizona.tomcat.World.TomcatEntity;
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
-import scala.actors.threadpool.Arrays;
 
 public class SARMission extends Mission {
 
@@ -31,7 +27,13 @@ public class SARMission extends Mission {
 	private UUID[] villagersIDs; 
 
 	public SARMission() {
+		super();
 		this.dynamicInitializationComplete = false;		
+	}
+	
+	@Override
+	public void init(World world) {		
+		super.init(world);	
 	}
 
 	@Override
@@ -79,15 +81,18 @@ public class SARMission extends Mission {
 	@Override
 	protected void updateScene(World world) {
 		if(!this.dynamicInitializationComplete) {
+			world.playerEntities.get(0).setPositionAndRotation(22, 64, 73, -90, 0);
 			this.doDynamicInitialization(world);
 		}
+		
+		System.out.println("===========>Player's distance from goal: " + MinecraftServerHelper.getFirstPlayer().getPosition().toString());
 	}
 
 	/**
 	 * Perform dynamic initializations in the mission
 	 * @param world - Minecraft world
 	 */
-	private void doDynamicInitialization(World world) {
+	private void doDynamicInitialization(World world) {		
 		this.spawnEntities(world);
 		this.addItensToInventory(world);
 		this.dynamicInitializationComplete = true;
@@ -159,25 +164,13 @@ public class SARMission extends Mission {
 
 	@Override
 	public void goalAchieved(MissionGoal goal) {
-		MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.VILLAGER_SAVED), MinecraftServerHelper.getFirstPlayer());
+		if (goal instanceof ApproachEntityGoal) {
+			MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.VILLAGER_SAVED), MinecraftServerHelper.getFirstPlayer());
+		}
 	}
 
 	@Override
-	public void handleMessageFromClient(TomcatMessage message) {
-		switch (message.getMessageType()) {
-		case INSTRUCTIONS_SCREEN_DISMISSED:
-			this.currentPhase.setInstructionsScreenDismissed();	
-			break;
-			
-		default:
-			break;
-		}		
-		
-	}
-
-	@Override
-	public void initMalmoModClientAndServerMission() {
-		MalmoMod.instance.getClient().setTomcatClientMission(new SARClientMission());
-		MalmoMod.instance.getServer().setTomcatServerMission(this);		
+	public ClientMission getClientMissionInstance() {
+		return new SARClientMission();		
 	}
 }

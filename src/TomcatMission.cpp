@@ -15,7 +15,7 @@ namespace tomcat {
   void TomcatMission::buildWorld() {
     Mission::buildWorld();
 
-    Mission::insertTimeLimitInSeconds();
+    //Mission::insertTimeLimitInSeconds();
 
     if (this->requestVideo_switch) {
       this->insertVideoProducer();
@@ -51,14 +51,13 @@ namespace tomcat {
             <AllowSpawning>false</AllowSpawning>
           </ServerInitialConditions>
           <ServerHandlers>
-            <FileWorldGenerator src="/Users/paulosoares/Desktop/ivilab/tomcat/data/worlds/SARV01" forceReset="true"/>
+            <FileWorldGenerator src="/Users/paulosoares/Desktop/ivilab/tomcat/data/worlds/{}" forceReset="true"/>
             <TomcatDecorator mission="{}" timeLimitInSeconds="{}"/>
           </ServerHandlers>
       </ServerSection>
       <AgentSection mode="Survival">
           <Name>Tomcat</Name>
           <AgentStart>
-            <Placement x="22" y="64" z="73" yaw = "-90"/>
           </AgentStart>
           <AgentHandlers>
             <ContinuousMovementCommands turnSpeedDegs="840">
@@ -68,9 +67,24 @@ namespace tomcat {
             </ContinuousMovementCommands>
           </AgentHandlers>
       </AgentSection>
-    </Mission>)", this->missionId, this->timeLimitInSeconds);
+    </Mission>)", this->getWorldFolder(), this->missionId, this->timeLimitInSeconds);
 
     return worldSkeletonXML;
+  }
+
+  string TomcatMission::getWorldFolder() {
+      string folderName = "";
+      switch (this->missionId) {
+          case tutorial:
+            folderName = "tutorial0.01";
+            break;
+
+          case sar:
+              folderName = "sar0.01";
+              break;
+      }
+
+      return folderName;
   }
 
 } // namespace tomcat

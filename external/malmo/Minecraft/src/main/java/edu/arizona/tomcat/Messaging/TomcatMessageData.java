@@ -11,7 +11,7 @@ import io.netty.buffer.ByteBufOutputStream;
 
 public class TomcatMessageData {
 	
-	private static enum Key { MISSION_PHASE_INSTRUCTIONS };
+	private static enum Key { MISSION_PHASE_INSTRUCTIONS, MISSION_PHASE_MESSAGE, MISSION_PHASE_MESSAGE_DURATION };
 
 	private Map<String, String> data;
 	
@@ -81,4 +81,21 @@ public class TomcatMessageData {
 	public String getMissionPhaseInstructions() {
 		return this.data.get(Key.MISSION_PHASE_INSTRUCTIONS.toString());
 	}
+	
+	/**
+	 * Adds a mission phase message to the data map
+	 * @param message - Mission phase message
+	 */
+	public void setMissionPhaseMessage(String message) {
+		this.data.put(Key.MISSION_PHASE_MESSAGE.toString(), message);
+	}
+	
+	/**
+	 * Retrieves a mission phase message from the data map
+	 * @return
+	 */
+	public String getMissionPhaseMessage() {
+		return this.data.get(Key.MISSION_PHASE_MESSAGE.toString());
+	}
+	
 }

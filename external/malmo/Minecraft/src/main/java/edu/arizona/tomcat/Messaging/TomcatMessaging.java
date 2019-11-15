@@ -15,11 +15,12 @@ import net.minecraftforge.fml.relauncher.Side;
 
 public class TomcatMessaging {
 
-	public enum TomcatMessageType { SHOW_COMPLETION_SCREEN, SHOW_INSTRUCTIONS_SCREEN, VILLAGER_SAVED, INSTRUCTIONS_SCREEN_DISMISSED };
+	public enum TomcatMessageType { SHOW_COMPLETION_SCREEN, SHOW_INSTRUCTIONS_SCREEN, SHOW_MESSAGE_SCREEN, VILLAGER_SAVED, 
+		INSTRUCTIONS_SCREEN_DISMISSED, OPEN_SCREEN_DISMISSED, DISMISS_OPEN_SCREEN };
 
 
 	public static class TomcatMessage implements IMessage {
-
+ 
 		private TomcatMessageType messageType;
 		private TomcatMessageData data;
 
@@ -27,7 +28,7 @@ public class TomcatMessaging {
 		public TomcatMessage() {
 
 		}
-		
+
 		/**
 		 * Constructor
 		 * @param messageType - Message type
@@ -36,7 +37,7 @@ public class TomcatMessaging {
 			this.messageType = messageType;
 			this.data = new TomcatMessageData();
 		}
-		
+
 		/**
 		 * Constructor
 		 * @param messageType - Message type
@@ -77,7 +78,7 @@ public class TomcatMessaging {
 		public TomcatMessageType getMessageType() {
 			return this.messageType;
 		}	
-		
+
 		/**
 		 * Retrieves the message data
 		 * @return
@@ -92,7 +93,7 @@ public class TomcatMessaging {
 
 		@Override
 		public IMessage onMessage(final TomcatMessage message, final MessageContext ctx) {
-			IThreadListener mainThread = null;			
+			IThreadListener mainThread = null;	
 			if (ctx.side == Side.CLIENT) {
 				mainThread = Minecraft.getMinecraft();
 				mainThread.addScheduledTask(new Runnable() {
