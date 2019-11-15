@@ -17,15 +17,18 @@ namespace tomcat {
   LocalAgent::LocalAgent() {}
   LocalAgent::~LocalAgent() {}
 
+
+  void LocalAgent::setMissionTimeLimit(unsigned int timeLimitInSeconds) {
+    this->missionHandler.setTimeLimitInSeconds(timeLimitInSeconds);
+  }
+
   void LocalAgent::setMission(string missionIdOrPathToXML,
-                              unsigned int timeLimitInSeconds,
                               unsigned int width,
                               unsigned int height,
                               bool activateVideo,
                               bool activateObsRec) {
     this->missionHandler = MissionHandler();
     this->missionHandler.setMission(missionIdOrPathToXML);
-    this->missionHandler.setTimeLimitInSeconds(timeLimitInSeconds);
 
     if (activateVideo) {
       this->missionHandler.requestVideo(width, height);
@@ -42,6 +45,7 @@ namespace tomcat {
   int LocalAgent::startMission(int portNumber,
                                bool activateWebcam,
                                bool activateVideo,
+                               bool activateMicrophone,
                                bool activateObsRec,
                                bool activateComRec,
                                bool activateRewRec,
@@ -102,8 +106,10 @@ namespace tomcat {
       worldState = this->host.getWorldState();
     } while (!worldState.has_mission_begun);
 
-    this->microphone.set_time_limit_in_seconds(this->missionHandler.getTimeLimitInSeconds());
-    this->microphone.initialize();
+    if (activateMicrophone) {
+      this->microphone.set_time_limit_in_seconds(this->missionHandler.getTimeLimitInSeconds());
+      this->microphone.initialize();
+    }
 
     if (activateWebcam) {
       this->webcamSensor.initialize();
@@ -117,7 +123,9 @@ namespace tomcat {
       worldState = this->host.getWorldState();
     } while (worldState.is_mission_running);
 
-    this->microphone.finalize();
+    if (activateMicrophone) {
+      this->microphone.finalize();
+    }
 
     return EXIT_SUCCESS;
   }
