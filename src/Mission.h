@@ -29,6 +29,12 @@ namespace tomcat {
     void setTimeLimitInSeconds(int timeInSeconds);
 
     /**
+     * Returns the time limit of the mission, in seconds
+     */
+
+    int getTimeLimitInSeconds();
+
+    /**
     * Requests video from MissionSpec
     * @param width - width of the video
     * @param height - height of the video

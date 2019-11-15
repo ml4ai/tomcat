@@ -45,6 +45,10 @@ find_package(Boost 1.69
 find_package(OpenCV 4.0 REQUIRED COMPONENTS core imgproc calib3d
              highgui objdetect)
 
+find_package(PortAudio)
+find_package(LibSndFile)
+
+
 if(DEFINED ENV{TRAVIS})
   message("-- CMake running on Travis, using downloaded dlib.")
   add_subdirectory(external/dlib-19.17)
@@ -68,7 +72,10 @@ target_include_directories(runExperiment PRIVATE external/malmo/Malmo/src)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/tools/launch_minecraft.sh
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
-add_subdirectory(docs)
+option(BUILD_DOCS "Build documentation" OFF)
+if (BUILD_DOCS)
+  add_subdirectory(docs)
+endif()
 
 add_subdirectory(tests)
 target_include_directories(test PRIVATE src external/malmo/Malmo/src)

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Microphone.h"
 #include "MissionHandler.h"
 #include "WebcamSensor.h"
 #include <AgentHost.h>
@@ -31,14 +32,16 @@ namespace tomcat {
      * mission specification.
      * @param time_limit The time limit for the mission.
      * @param activateVideo Requests video when set to True
+     * @param activateAudio Activates audio recording
      */
     void setMission(std::string missionIdOrPathToXML,
-                    unsigned int timeLimitInSeconds = 20,
                     unsigned int width = 640,
                     unsigned int height = 480,
                     bool activateVideo = false,
                     bool activateObsRec = false);
 
+    /** Set the time limit in seconds for the mission */
+    void setMissionTimeLimit(unsigned int timeLimitInSeconds = 20);
     /**
      * Starts a mission
      * @param portNumber - Port number to connect with the Minecraft mod
@@ -49,6 +52,7 @@ namespace tomcat {
     int startMission(int portNumber = 10000,
                      bool activateWebcam = false,
                      bool activateVideo = false,
+                     bool activateMicrophone = false,
                      bool activateObsRec = false,
                      bool activateComRec = false,
                      bool activateRewRec = false,
@@ -72,6 +76,7 @@ namespace tomcat {
     WebcamSensor webcamSensor;
     malmo::AgentHost host;
     tomcat::MissionHandler missionHandler;
+    Microphone microphone;
   };
 
 } // namespace tomcat
