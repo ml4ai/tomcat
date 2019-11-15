@@ -15,7 +15,7 @@ First, you'll need to grab the dependencies.
 #### MacPorts
 
 ```
-port install cmake libfmt doxygen boost ffmpeg opencv4 dlib openjdk8 gradle
+port install cmake libfmt doxygen boost ffmpeg opencv4 dlib openjdk8 gradle libsndfile portaudio
 ```
 
 Add the following line to your `~/.bash_profile` to make Java 8 the default
@@ -34,7 +34,7 @@ If you are using the Homebrew package manager, you can install these with the
 following commands.
 
 ```
-brew install cmake fmt doxygen boost ffmpeg opencv dlib
+brew install cmake fmt doxygen boost ffmpeg opencv dlib libsndfile portaudio
 brew tap adoptopenjdk/openjdk
 brew cask install adoptopenjdk8
 brew install gradle
@@ -52,7 +52,7 @@ Install the requirements using apt-get:
 
 ```bash
 sudo apt-get update
-sudo apt-get install gcc-9 libfmt-dev doxygen ffmpeg libopencv-dev libdlib-dev openjdk-8-jdk
+sudo apt-get install gcc-9 libfmt-dev doxygen ffmpeg libopencv-dev libdlib-dev openjdk-8-jdk portaudio19-dev libsndfile1-dev
 ```
 
 - ToMCAT requires Boost 1.69 or higher, so just [install Boost from
