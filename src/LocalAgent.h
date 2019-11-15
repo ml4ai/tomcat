@@ -73,6 +73,7 @@ namespace tomcat {
     WebcamSensor webcamSensor;
     malmo::AgentHost host;
     tomcat::MissionHandler missionHandler;
+    Microphone microphone;
   };
 
 } // namespace tomcat

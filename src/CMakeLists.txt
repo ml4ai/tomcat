@@ -1,12 +1,22 @@
 add_library(
   tomcat STATIC
+  LocalAgent.h
   LocalAgent.cpp
+  WebcamSensor.h
   WebcamSensor.cpp
+  Microphone.h
+  Microphone.cpp
+  MissionHandler.h
   MissionHandler.cpp
+  MissionFactory.h
   MissionFactory.cpp
+  Mission.h
   Mission.cpp
+  TomcatMission.h
   TomcatMission.cpp
+  XMLMission.h
   XMLMission.cpp
+  FileHandler.h
   FileHandler.cpp)
 
 target_link_libraries(
@@ -18,6 +28,8 @@ target_link_libraries(
   OpenFace::LandmarkDetector
   OpenFace::Utilities
   "z"
+  ${PORTAUDIO_LIBRARIES}
+  ${LIBSNDFILE_LIBRARIES}
   fmt::fmt)
 
 if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
@@ -48,9 +60,8 @@ if(BUILD_PYTHON_WRAPPER)
   add_library(pytomcat MODULE Python_wrapper.cpp)
   target_link_libraries(pytomcat PRIVATE pybind11::module tomcat)
   target_include_directories(pytomcat PRIVATE ../external/malmo/Malmo/src)
-  set_target_properties(
-    pytomcat PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}" SUFFIX
-                            "${PYTHON_MODULE_EXTENSION}")
+  set_target_properties(pytomcat PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}"
+                                            SUFFIX "${PYTHON_MODULE_EXTENSION}")
 endif()
 
 add_executable(paex_record paex_record.c)

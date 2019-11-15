@@ -46,6 +46,8 @@ find_package(OpenCV 4.0 REQUIRED COMPONENTS core imgproc calib3d
              highgui objdetect)
 
 find_package(PortAudio)
+find_package(LibSndFile)
+
 
 if(DEFINED ENV{TRAVIS})
   message("-- CMake running on Travis, using downloaded dlib.")

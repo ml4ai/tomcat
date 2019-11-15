@@ -100,6 +100,7 @@ namespace tomcat {
       worldState = this->host.getWorldState();
     } while (!worldState.has_mission_begun);
 
+    this->microphone.initialize();
     if (activateWebcam) {
       this->webcamSensor.initialize();
     }
@@ -113,6 +114,8 @@ namespace tomcat {
     } while (worldState.is_mission_running);
 
     print("Mission has stopped.");
+    this->microphone.write_data_to_file();
+    this->microphone.finalize();
 
     return EXIT_SUCCESS;
   }
