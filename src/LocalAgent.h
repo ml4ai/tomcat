@@ -2,6 +2,7 @@
 
 #include "MissionHandler.h"
 #include "WebcamSensor.h"
+#include "Microphone.h"
 #include <AgentHost.h>
 #include <fmt/core.h>
 #include <string>
