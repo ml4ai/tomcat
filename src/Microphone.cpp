@@ -7,7 +7,7 @@ namespace tomcat {
 
   const unsigned int num_channels = 2;
   const unsigned int frames_per_buffer = 512;
-  const unsigned int num_seconds = 5;
+  const unsigned int num_seconds = 10;
   const unsigned int sample_rate = 44100;
 
   class PortAudioException : public runtime_error {
@@ -134,13 +134,8 @@ namespace tomcat {
 
   void Microphone::write_data_to_file() {
 
-    string fname = "recorded.wav";
-    int channels = 2;
-
-    int BUFFER_LEN = 1024;
-    float buffer[BUFFER_LEN];
     auto file =
-        SndfileHandle(fname, SFM_WRITE, SF_FORMAT_WAV, channels, sample_rate);
+        SndfileHandle("recorded.wav", SFM_WRITE, SF_FORMAT_WAV | SF_FORMAT_PCM_16, num_channels, sample_rate);
 
     file.writef(this->data.recorded_samples, this->total_frames);
 
