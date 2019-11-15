@@ -25,19 +25,18 @@ public class KillEntityGoal extends MissionGoal {
 	public void update(World world) 
 	{
 		if (isCreate == false) {
-			int distance = -15; // Number of voxels apart from the player
+			int distance = -15; 
 			int playersX = (int) Minecraft.getMinecraft().player.posX;
 			int playersZ = (int) Minecraft.getMinecraft().player.posZ;
 			int playersY = (int) Minecraft.getMinecraft().player.posY;	
 			EntityZombie n = new EntityZombie(world);
 			n.setPosition(playersX, playersY, playersZ  + distance);
-			UUID id = UUID.randomUUID(); // generate new id for new entity
-			idList.add(id); // keep both idList and willBeKilled here, they have different functions
+			UUID id = UUID.randomUUID(); 
+			idList.add(id); 
 			willBeKilled.add(id);
 			n.setUniqueId(id);		
-			//world.onEntityAdded(n); // draw an entity cannot move (save this line, it maybe used to apply AI)
-			world.spawnEntity(n); // spawn an Entity
-			isCreate = true; // create only one
+			world.spawnEntity(n);
+			isCreate = true; 
 		}
 		List<UUID> loadedEntityIdList = new ArrayList<UUID>(); // need to refresh every tick to get updated entities on the world
 		for (Entity n : world.getLoadedEntityList()) {	
@@ -53,8 +52,6 @@ public class KillEntityGoal extends MissionGoal {
 					this.goalAchieved = true;
 				}
 			}
-
 		}
-
 	}
 }
