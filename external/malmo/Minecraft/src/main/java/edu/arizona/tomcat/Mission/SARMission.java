@@ -63,7 +63,6 @@ public class SARMission extends Mission {
 			ApproachEntityGoal goal = new ApproachEntityGoal(this.villagersIDs[i], MAX_DISTANCE_TO_SAVE_VILLAGER);
 			rescueVillagersPhase.addGoal(goal);
 		}
-		//rescueVillagersPhase.addGoal(new ReachPositionGoal(22, 64, 80, 2));
 		this.addPhase(rescueVillagersPhase);
 	}
 
