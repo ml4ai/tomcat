@@ -6,9 +6,6 @@ using namespace fmt::literals;
 namespace tomcat {
 
   const unsigned int num_channels = 2;
-  const unsigned int frames_per_buffer = 512;
-  const unsigned int num_seconds = 10;
-  const unsigned int sample_rate = 44100;
 
   class PortAudioException : public runtime_error {
   public:
@@ -20,11 +17,14 @@ namespace tomcat {
     PortAudioException(string msg) : runtime_error(msg) {}
   };
 
+  void Microphone::set_time_limit_in_seconds(unsigned int num_seconds) {
+    this->num_seconds = num_seconds;
+  };
+
   /* This routine will be called by the PortAudio engine when audio is needed.
    * It may be called at interrupt level on some machines so don't do anything
    * that could mess up the system like calling malloc() or free().
    */
-
   int recordCallback(const void* input_buffer,
                      void* output_buffer,
                      unsigned long frames_per_buffer,
@@ -53,7 +53,8 @@ namespace tomcat {
       callback_return_code = paContinue;
     }
 
-    float* wptr = &data->recorded_samples[data->frame_index * num_channels];
+    float* wptr =
+        &data->recorded_samples[data->frame_index * num_channels];
     const float* rptr = (const float*)input_buffer;
     if (input_buffer == NULL) {
       for (int i = 0; i < frames_to_calc; i++) {
@@ -76,11 +77,11 @@ namespace tomcat {
   }
 
   void Microphone::initialize() {
-    PaStreamParameters input_parameters, outputParameters;
     PaStream* stream;
 
-    /* Record for NUM_SECONDS seconds. */
-    this->data.max_frame_index = this->total_frames = NUM_SECONDS * sample_rate;
+    /* Record for num_seconds seconds. */
+    this->data.max_frame_index = this->total_frames =
+        this->num_seconds * this->sample_rate;
     this->data.frame_index = 0;
     this->num_samples = this->total_frames * num_channels;
     this->num_bytes = this->num_samples * sizeof(float);
@@ -98,66 +99,47 @@ namespace tomcat {
     this->err = Pa_Initialize();
     this->check_portaudio_error_code();
 
-    input_parameters.device = Pa_GetDefaultInputDevice();
-    if (input_parameters.device == paNoDevice) {
+    int device = Pa_GetDefaultInputDevice();
+    if (device == paNoDevice) {
       throw PortAudioException("Error: No default input device.\n");
     }
-    input_parameters.channelCount = 2; /* stereo input */
-    input_parameters.sampleFormat = paInt16;
-    input_parameters.suggestedLatency =
-        Pa_GetDeviceInfo(input_parameters.device)->defaultLowInputLatency;
-    input_parameters.hostApiSpecificStreamInfo = NULL;
 
-    /* Record some audio. -------------------------------------------- */
-    this->err = Pa_OpenStream(&stream,
-                              &input_parameters,
-                              NULL, /* &outputParameters, */
-                              sample_rate,
-                              frames_per_buffer,
-                              paClipOff, /* we won't output out of range samples
-                                            so don't bother clipping them */
+    this->err = Pa_OpenDefaultStream(&stream,
+                              Pa_GetDeviceInfo(device)->maxInputChannels,
+                              Pa_GetDeviceInfo(device)->maxOutputChannels,
+                              paFloat32,
+                              this->sample_rate,
+                              this->frames_per_buffer,
                               recordCallback,
                               &this->data);
+
     this->check_portaudio_error_code();
 
     this->err = Pa_StartStream(stream);
     this->check_portaudio_error_code();
 
-    while ((this->err = Pa_IsStreamActive(stream)) == 1) {
-      Pa_Sleep(1000);
+    while ((err = Pa_IsStreamActive(stream)) == 1) {
+      Pa_Sleep(10);
     }
-    this->check_portaudio_error_code();
 
     this->err = Pa_CloseStream(stream);
     this->check_portaudio_error_code();
   };
 
   void Microphone::write_data_to_file() {
+    auto file = SndfileHandle(this->output_filename,
+                              SFM_WRITE,
+                              SF_FORMAT_WAV | SF_FORMAT_FLOAT,
+                              num_channels,
+                              this->sample_rate);
 
-    auto file =
-        SndfileHandle("recorded.wav", SFM_WRITE, SF_FORMAT_WAV | SF_FORMAT_PCM_16, num_channels, sample_rate);
-
-    file.writef(this->data.recorded_samples, this->total_frames);
-
-    // FILE* fid;
-    // fid = fopen("recorded.raw", "wb");
-    // if (fid == NULL) {
-    // printf("Could not open file.");
-    //}
-    // else {
-    // fwrite(this->data.recorded_samples,
-    // num_channels * sizeof(float),
-    // this->total_frames,
-    // fid);
-    // fclose(fid);
-    // printf("Wrote data to 'recorded.raw'\n");
-    //}
+    file.write(this->data.recorded_samples, this->num_samples);
   }
 
   void Microphone::finalize() {
     this->write_data_to_file();
     Pa_Terminate();
-    if (this->data.recorded_samples) { /* Sure it is NULL or valid. */
+    if (this->data.recorded_samples) {
       free(this->data.recorded_samples);
     }
   };

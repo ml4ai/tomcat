@@ -20,6 +20,10 @@ namespace tomcat {
     this->mission->setTimeLimitInSeconds(timeInSeconds);
   }
 
+  int MissionHandler::getTimeLimitInSeconds() {
+    return this->mission->getTimeLimitInSeconds();
+  }
+
   MissionSpec MissionHandler::getMissionSpec() {
     return this->mission->getMissionSpec();
   }

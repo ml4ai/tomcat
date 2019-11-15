@@ -18,6 +18,10 @@ namespace tomcat {
     this->timeLimitInSeconds = timeInSeconds;
   }
 
+  int Mission::getTimeLimitInSeconds() {
+    return this->timeLimitInSeconds;
+  }
+
   void Mission::insertTimeLimitInSeconds() {
     this->missionSpec.timeLimitInSeconds(this->timeLimitInSeconds);
   }

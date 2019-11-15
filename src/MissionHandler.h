@@ -40,6 +40,11 @@ namespace tomcat {
     void setTimeLimitInSeconds(int timeInSeconds);
 
     /**
+     * Returns the time limit in seconds
+     */
+    int getTimeLimitInSeconds();
+
+    /**
      * Retrieves the object of class MissionSpec of the current mission
      */
     malmo::MissionSpec getMissionSpec();

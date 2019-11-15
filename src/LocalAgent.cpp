@@ -50,9 +50,6 @@ namespace tomcat {
                                std::string recordPath) {
     using boost::shared_ptr;
     MissionRecordSpec missionRecord(recordPath);
-    WorldState worldState;
-    int attempts = 0;
-    bool connected = false;
 
     if (activateVideo) {
       missionRecord.recordMP4(frames_per_second, bit_rate);
@@ -73,6 +70,8 @@ namespace tomcat {
     ClientPool clientPool = getClientPool(portNumber);
 
     print("Waiting for the mission to start...");
+    int attempts = 0;
+    bool connected = false;
     do {
       try {
         this->missionHandler.startMission();
@@ -87,20 +86,25 @@ namespace tomcat {
         print("Error starting mission: {}", e.what());
         attempts += 1;
         // Give up after three attempts.
-        if (attempts >= 3)
+        if (attempts >= 3) {
           return EXIT_FAILURE;
-        else
+        }
+        else {
           // Wait a second and try again.
           sleep_for(milliseconds(1000));
+        }
       }
     } while (!connected);
 
+    WorldState worldState;
     do {
       sleep_for(milliseconds(100));
       worldState = this->host.getWorldState();
     } while (!worldState.has_mission_begun);
 
+    this->microphone.set_time_limit_in_seconds(this->missionHandler.getTimeLimitInSeconds());
     this->microphone.initialize();
+
     if (activateWebcam) {
       this->webcamSensor.initialize();
     }
@@ -113,8 +117,6 @@ namespace tomcat {
       worldState = this->host.getWorldState();
     } while (worldState.is_mission_running);
 
-    print("Mission has stopped.");
-    this->microphone.write_data_to_file();
     this->microphone.finalize();
 
     return EXIT_SUCCESS;
