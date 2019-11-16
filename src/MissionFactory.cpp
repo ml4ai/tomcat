@@ -13,7 +13,7 @@ namespace tomcat {
   Mission* MissionFactory::create(string missionIdOrPathToXML) {
     Mission* mission;
     path p(missionIdOrPathToXML);
-    if (p.extension() == "xml") {
+    if (p.extension() == ".xml") {
       mission = new XMLMission(missionIdOrPathToXML);
     }
     else {

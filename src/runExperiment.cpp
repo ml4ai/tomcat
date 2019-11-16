@@ -18,12 +18,12 @@ int main(int argc, const char* argv[]) {
       "mission",
       value<string>(&missionIdOrPathToXML)->default_value("0"),
       "Id or path to mission XML file.\n0: Tutorial\n1: Search and Rescue\n2: "
-      "Item Crafting\n3: Room Escape")(
-      "time_limit",
-      value<unsigned int>()->default_value(100),
-      "Time limit for mission.")("port,p",
-                                 value<unsigned int>()->default_value(10000),
-                                 "Port to control (>=10000)")(
+      "Item Crafting\n3: Room Escape")("time_limit",
+                                       value<unsigned int>()->default_value(10),
+                                       "Time limit for mission (in seconds).")(
+      "port,p",
+      value<unsigned int>()->default_value(10000),
+      "Port to control (>=10000)")(
       "activate_webcam,w",
       bool_switch()->default_value(false),
       "Activate webcam to detect face landmarks? (true=1 or false=0)")(
@@ -32,17 +32,19 @@ int main(int argc, const char* argv[]) {
       "Activate all recordings except bitmaps")(
       "record_video",
       bool_switch()->default_value(false),
-      "Activate video recordings")("record_observations",
+      "Activate video recordings")("record_audio",
                                    bool_switch()->default_value(false),
-                                   "Activate observation recordings")(
-      "record_commands",
+                                   "Activate audio recordings")(
+      "record_observations",
       bool_switch()->default_value(false),
-      "Activate command recordings")("record_rewards",
-                                     bool_switch()->default_value(false),
-                                     "Activate reward recordings")(
-      "video_fps",
-      value<unsigned int>()->default_value(20),
-      "Frames per second for video recordings")(
+      "Activate observation recordings")("record_commands",
+                                         bool_switch()->default_value(false),
+                                         "Activate command recordings")(
+      "record_rewards",
+      bool_switch()->default_value(false),
+      "Activate reward recordings")("video_fps",
+                                    value<unsigned int>()->default_value(20),
+                                    "Frames per second for video recordings")(
       "video_bit_rate",
       value<int64_t>()->default_value(400000),
       "Bit rate for video recordings")(
@@ -64,7 +66,6 @@ int main(int argc, const char* argv[]) {
   }
 
   if (vm.count("mission")) {
-    unsigned int timeLimitInSeconds = vm["time_limit"].as<unsigned int>();
     unsigned int portNumber = vm["port"].as<unsigned int>();
     unsigned int width = vm["video_width"].as<unsigned int>();
     unsigned int height = vm["video_height"].as<unsigned int>();
@@ -74,6 +75,7 @@ int main(int argc, const char* argv[]) {
     bool activateWebcam = vm["activate_webcam"].as<bool>();
     bool activateRecAll = vm["record_all"].as<bool>();
     bool activateVideo = vm["record_video"].as<bool>();
+    bool activateMicrophone = vm["record_audio"].as<bool>();
     bool activateObsRec = vm["record_observations"].as<bool>();
     bool activateComRec = vm["record_commands"].as<bool>();
     bool activateRewRec = vm["record_rewards"].as<bool>();
@@ -87,16 +89,18 @@ int main(int argc, const char* argv[]) {
 
     LocalAgent agent;
 
-    agent.setMission(missionIdOrPathToXML,
-                     timeLimitInSeconds,
-                     width,
-                     height,
-                     activateVideo,
-                     activateObsRec);
+    agent.setMission(
+        missionIdOrPathToXML, width, height, activateVideo, activateObsRec);
+
+    if (vm.count("time_limit")) {
+      unsigned int timeLimitInSeconds = vm["time_limit"].as<unsigned int>();
+      agent.setMissionTimeLimit(timeLimitInSeconds);
+    }
 
     agent.startMission(portNumber,
                        activateWebcam,
                        activateVideo,
+                       activateMicrophone,
                        activateObsRec,
                        activateComRec,
                        activateRewRec,

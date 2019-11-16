@@ -12,6 +12,6 @@ add_custom_command(
   MAIN_DEPENDENCY ${SPHINX_SOURCE}/conf.py
   COMMENT "Generating documentation with Sphinx")
 
-add_custom_target(sphinx ALL DEPENDS ${SPHINX_INDEX_FILE})
+add_custom_target(sphinx DEPENDS ${SPHINX_INDEX_FILE})
 add_subdirectory(java_api)
-add_custom_target(docs ALL DEPENDS sphinx java_apidocs)
+add_custom_target(docs DEPENDS sphinx java_apidocs)

@@ -1,15 +1,20 @@
-# Installation
+Installation
+============
 
-### Dependencies
+Dependencies
+------------
 
 First, you'll need to grab the dependencies.
 
 ### MacOS
 
+MacPorts and Homebrew are the most commonly used package managers for MacOS.
+Below we provide instructions for each.
+
 #### MacPorts
 
 ```
-port install cmake libfmt doxygen boost ffmpeg opencv4 dlib openjdk8 gradle
+port install cmake libfmt doxygen boost ffmpeg opencv4 dlib openjdk8 gradle libsndfile portaudio
 ```
 
 Add the following line to your `~/.bash_profile` to make Java 8 the default
@@ -28,17 +33,11 @@ If you are using the Homebrew package manager, you can install these with the
 following commands.
 
 ```
-brew install cmake fmt doxygen boost ffmpeg opencv dlib
+brew install cmake fmt doxygen boost ffmpeg opencv dlib libsndfile portaudio
 brew tap adoptopenjdk/openjdk
 brew cask install adoptopenjdk8
 brew install gradle
 ```
-
-
-### Windows
-
-We don't officially support Windows right now, but pull requests that add
-Windows support are welcome.
 
 ### Linux (Ubuntu)
 
@@ -46,7 +45,7 @@ Install the requirements using apt-get:
 
 ```bash
 sudo apt-get update
-sudo apt-get install gcc-9 libfmt-dev doxygen ffmpeg libopencv-dev libdlib-dev openjdk-8-jdk
+sudo apt-get install gcc-9 libfmt-dev doxygen ffmpeg libopencv-dev libdlib-dev openjdk-8-jdk portaudio19-dev libsndfile1-dev
 ```
 
 - ToMCAT requires Boost 1.69 or higher, so just [install Boost from
@@ -70,8 +69,8 @@ sudo make -j install
   install and run the ToMCAT agent.
 
 
-Installation
-------------
+Installing ToMCAT
+-----------------
 
 Clone the repo:
 
@@ -102,6 +101,12 @@ make -j
 make -j Minecraft
 ```
 
+### Windows
+
+We don't officially support Windows right now, but pull requests that add
+Windows support are welcome.
+
+
 Running experiments
 -------------------
 
@@ -124,7 +129,6 @@ To run the default search-and-rescue mission, you can just do
 ```
 
 To allow human control of the character press the `<Enter>` key.
-
 ## For developers
 
 To speed up builds, create a file called gradle.properties and add `org.gradle.daemon=true` to it:
