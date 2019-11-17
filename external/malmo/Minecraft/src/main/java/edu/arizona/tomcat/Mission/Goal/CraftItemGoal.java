@@ -1,37 +1,25 @@
 package edu.arizona.tomcat.Mission.Goal;
 
 import com.microsoft.Malmo.Schemas.ItemType;
+
 import edu.arizona.tomcat.Utils.InventoryHandler;
 import net.minecraft.world.World;
 
-/**
- *  CraftItemGoal is a class to check whehther a specific type of Item received from constructor exists in player's
- *  inventory
- */
-
 public class CraftItemGoal extends  MissionGoal {
-    private static ItemType type;  // itemtype that needs to check
+	private ItemType itemType;  
 
-    /*
-    * Constructor to receive Itemstack from libraries, check the player's inventory,
-    * @param ITy: itemtype that needs to check
-    */
-    public CraftItemGoal(ItemType ITy){
-        this.type =  ITy;
-    }
+	/**
+	 * Constructor 
+	 * @param itemType - Type of the item to be checked in the inventory
+	 */
+	public CraftItemGoal(ItemType itemType){
+		this.itemType =  itemType;
+	}
 
-    /*
-    * Update to check whether the item is contained
-    * @param world: World object that contains the player
-     */
-    @Override
-    public void update(World world)
-    {
-        if (!this.goalAchieved) {
-            if(InventoryHandler.checkItemToInventory(type, 1)){
-                this.goalAchieved = true;
-            }
-        }
-    }
+	@Override
+	public void updateGoalStatus(World world)
+	{
+		this.goalAchieved = InventoryHandler.checkItemToInventory(this.itemType, 1);
+	}
 
 }

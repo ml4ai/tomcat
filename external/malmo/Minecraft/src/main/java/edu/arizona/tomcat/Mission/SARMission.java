@@ -1,166 +1,188 @@
 package edu.arizona.tomcat.Mission;
 
-import com.microsoft.Malmo.Schemas.EntityTypes;
+import java.math.BigDecimal;
+import java.util.UUID;
 
-import edu.arizona.tomcat.Emotion.EmotionHandler;
-import edu.arizona.tomcat.Mission.gui.SimpleGUI;
+import com.microsoft.Malmo.MalmoMod;
+import com.microsoft.Malmo.Schemas.EntityTypes;
+import com.microsoft.Malmo.Schemas.PosAndDirection;
+
+import edu.arizona.tomcat.Messaging.TomcatMessaging;
+import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
+import edu.arizona.tomcat.Mission.MissionPhase.CompletionStrategy;
+import edu.arizona.tomcat.Mission.Client.ClientMission;
+import edu.arizona.tomcat.Mission.Client.SARClientMission;
+import edu.arizona.tomcat.Mission.Goal.ApproachEntityGoal;
+import edu.arizona.tomcat.Mission.Goal.MissionGoal;
+import edu.arizona.tomcat.Utils.Converter;
+import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.World.Drawing;
-import edu.arizona.tomcat.World.CompositeEntity;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.math.BlockPos;
+import edu.arizona.tomcat.World.TomcatEntity;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
 
 public class SARMission extends Mission {
 
-	private boolean zombieHordeCreated;
-	private boolean feedbackRequested;
+	public static final int NUMBER_OF_VILLAGERS = 4;
+	private static final int MAX_DISTANCE_TO_SAVE_VILLAGER = 1;
+
+	private boolean dynamicInitializationComplete;
+	private UUID[] villagersIDs; 
 
 	public SARMission() {
 		super();
-		this.zombieHordeCreated = false;
-		this.timeLimitInSeconds = 100;
+		this.dynamicInitializationComplete = false;		
+	}
+	
+	@Override
+	public void init(World world) {		
+		super.init(world);	
 	}
 
-	/**
-	 * Creates a horde of 3 zombies in front of the player 
-	 * @param world - Mission world
-	 * @throws Exception 
-	 */
-	private void createZombieHorde(World world) throws Exception {
-		int distance = 5; // Number of voxels apart from the player
-		int playersX = (int) Minecraft.getMinecraft().player.posX;
-		int playersZ = (int) Minecraft.getMinecraft().player.posZ;
-		int playersY = (int) Minecraft.getMinecraft().player.posY;
-
-		Drawing drawing = new Drawing();
-
-		// Create zombie in front of the player
-		CompositeEntity zombie1 = new CompositeEntity(playersX, playersY, playersZ + distance, EntityTypes.ZOMBIE);
-
-		// Create zombie to the northwest of the player
-		CompositeEntity zombie2 = new CompositeEntity(playersX + distance, playersY, playersZ + distance/2, EntityTypes.ZOMBIE);
-
-		// Create zombie to the northeast of the player
-		CompositeEntity zombie3 = new CompositeEntity(playersX - distance, playersY, playersZ + distance/2, EntityTypes.ZOMBIE);
-
-		drawing.addObject(zombie1);
-		drawing.addObject(zombie2);
-		drawing.addObject(zombie3);
-		this.drawingHandler.draw(world, drawing);
-
-		this.zombieHordeCreated = true;
+	@Override
+	protected void beforePhaseTrasition() {
+		// No action to be taken	
 	}
 
-	/**
-	 * Creates a horde of zombies all around the player 
-	 * @param world - Mission world
-	 * @throws Exception 
-	 */
-	private void createZombieMegaHorde(World world) throws Exception {
-		int distance = 10; // Number of voxels apart from the player
-		int playersX = (int) Minecraft.getMinecraft().player.posX;
-		int playersZ = (int) Minecraft.getMinecraft().player.posZ;
-		int playersY = (int) Minecraft.getMinecraft().player.posY;
-
-		Drawing drawing = new Drawing();
-
-		// Create zombie in front of the player
-		CompositeEntity zombie1 = new CompositeEntity(playersX, playersY, playersZ + distance, EntityTypes.ZOMBIE);
-		zombie1.setCustomNameTag("Test_zombie1");
-		zombie1.getCustomNameTag();
-
-		// Create zombie to the northwest of the player
-		CompositeEntity zombie2 = new CompositeEntity(playersX + distance, playersY, playersZ + distance/2, EntityTypes.ZOMBIE);
-
-		// Create zombie to the left of the player
-		CompositeEntity zombie3 = new CompositeEntity(playersX + distance, playersY, playersZ, EntityTypes.ZOMBIE);
-
-		// Create zombie to the southwest of the player
-		CompositeEntity zombie4 = new CompositeEntity(playersX + distance, playersY, playersZ - distance/2, EntityTypes.ZOMBIE);
-
-		// Create zombie behind the player
-		CompositeEntity zombie5 = new CompositeEntity(playersX, playersY, playersZ - distance, EntityTypes.ZOMBIE);
-
-		// Create zombie to the southeast of the player
-		CompositeEntity zombie6 = new CompositeEntity(playersX - distance, playersY, playersZ - distance/2, EntityTypes.ZOMBIE);
-
-		// Create zombie to the right of the player
-		CompositeEntity zombie7 = new CompositeEntity(playersX - distance, playersY, playersZ, EntityTypes.ZOMBIE);
-
-		// Create zombie to the northeast of the player
-		CompositeEntity zombie8 = new CompositeEntity(playersX - distance, playersY, playersZ + distance/2, EntityTypes.ZOMBIE);
-
-		drawing.addObject(zombie1);
-		drawing.addObject(zombie2);
-		drawing.addObject(zombie3);
-		drawing.addObject(zombie4);
-		drawing.addObject(zombie5);
-		drawing.addObject(zombie6);
-		drawing.addObject(zombie7);
-		drawing.addObject(zombie8);
-		this.drawingHandler.draw(world, drawing);
-
-		this.zombieHordeCreated = true;
+	@Override
+	protected void afterLastPhaseCompletion() {
+		MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.SHOW_COMPLETION_SCREEN), MinecraftServerHelper.getFirstPlayer());
 	}
 
-	/**
-	 * Request for the player's feedback about his emotion
-	 */
-	private void requestFeedback() {
-		SimpleGUI simpleGUI = new SimpleGUI();
-		simpleGUI.addListener(this);
-		Minecraft.getMinecraft().displayGuiScreen(simpleGUI);
-		this.feedbackRequested = true;
+	@Override
+	protected void onTimeOut() {
+		MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.SHOW_COMPLETION_SCREEN), MinecraftServerHelper.getFirstPlayer());
 	}
 
 	@Override
 	protected void createPhases() {
-		// No phase
+		this.createVillagersIDs();
+		MissionPhase rescueVillagersPhase = new MissionPhase(CompletionStrategy.ALL_GOALS, 0);	
+		rescueVillagersPhase.addInstructionsLine("Save 4 villagers trapped in the buildings.");
+		rescueVillagersPhase.addInstructionsLine("Take care! You may have to battle some scary creatures on the way.");
+		rescueVillagersPhase.addInstructionsLine("You have " + Converter.secondsToString(this.timeLimitInSeconds, true) + " to accomplish this goal.");
+		rescueVillagersPhase.addInstructionsLine("");
+		rescueVillagersPhase.addInstructionsLine("Press OK when you are ready to start.");
+		for(int i = 0; i < NUMBER_OF_VILLAGERS; i++) {
+			ApproachEntityGoal goal = new ApproachEntityGoal(this.villagersIDs[i], MAX_DISTANCE_TO_SAVE_VILLAGER);
+			rescueVillagersPhase.addGoal(goal);
+		}
+		this.addPhase(rescueVillagersPhase);
+	}
+
+	/**
+	 * Create unique IDs for each one of the villagers
+	 */
+
+	private void createVillagersIDs() {
+		this.villagersIDs = new UUID[NUMBER_OF_VILLAGERS];
+		for(int i = 0; i < NUMBER_OF_VILLAGERS; i++) {
+			this.villagersIDs[i] = UUID.randomUUID();
+		}
 	}
 
 	@Override
 	protected void updateScene(World world) {
+		if(!this.dynamicInitializationComplete) {
+			this.doDynamicInitialization(world);
+		}
+		
+		//System.out.println("===========>Player's position: " + MinecraftServerHelper.getFirstPlayer().getPosition().toString());
+	}
+
+	/**
+	 * Perform dynamic initializations in the mission
+	 * @param world - Minecraft world
+	 */
+	private void doDynamicInitialization(World world) {		
+		this.spawnEntities(world);
+		this.addItensToInventory(world);
+		this.dynamicInitializationComplete = true;
+	}
+
+	/**
+	 * Spawn entities in the mission when it starts
+	 */
+	private void spawnEntities(World world) {
+		this.spawnEnemies(world);
+		this.spawnVillagers(world);
+	}
+
+	/**
+	 * Spawn enemies in the mission
+	 * @param world - Minecraft world
+	 */
+	private void spawnEnemies(World world) {		
 		try {
-			if (this.getRemainingSeconds() < 90 && !this.zombieHordeCreated) {
-				this.createZombieHorde(world);
-			}
+			Drawing drawing = new Drawing();
 
-			// Ask for feedback for the first time
-			if (this.getRemainingSeconds() > 50 && this.getRemainingSeconds() < 60 && !this.feedbackRequested) {
-				this.requestFeedback();
-			}
+			TomcatEntity zombie1 = new TomcatEntity(46, 64, 47, EntityTypes.SKELETON);
+			TomcatEntity zombie2 = new TomcatEntity(93, 64, 53, EntityTypes.SKELETON);
+			TomcatEntity zombie3 = new TomcatEntity(57, 64, 61, EntityTypes.ZOMBIE);
+			TomcatEntity zombie4 = new TomcatEntity(72, 64, 75, EntityTypes.ZOMBIE);
+			TomcatEntity zombie5 = new TomcatEntity(88, 64, 87, EntityTypes.ZOMBIE);			
 
-			// Allow feedback request for the second time
-			if (this.getRemainingSeconds() > 45 && this.getRemainingSeconds() < 50) {
-				this.feedbackRequested = false;
-			}
-
-			// Ask for feedback for the second time
-			if (this.getRemainingSeconds() < 45 && !this.feedbackRequested) {
-				this.requestFeedback();
-			}
-
-			if (this.currentEmotion == EmotionHandler.Emotion.CALMNESS) {
-				this.createZombieMegaHorde(world);
-				this.currentEmotion = null;
-
-				world.setBlockToAir(new BlockPos(2, 2, 30));
-				world.setBlockToAir(new BlockPos(2, 2, 31));
-				world.setBlockToAir(new BlockPos(2, 2, 32));
-				world.setBlockToAir(new BlockPos(2, 2, 33));
-			}			
-
+			drawing.addObject(zombie1);
+			drawing.addObject(zombie2);
+			drawing.addObject(zombie3);
+			drawing.addObject(zombie4);
+			drawing.addObject(zombie5);
+			this.drawingHandler.draw(world, drawing);			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}		
+		}
+	}
+
+	/**
+	 * Spawn villagers in the mission
+	 * @param world - Minecraft world
+	 */
+	private void spawnVillagers(World world) {
+		try {
+			Drawing drawing = new Drawing();
+
+			TomcatEntity villager1 = new TomcatEntity(this.villagersIDs[0], 52, 67, 89, EntityTypes.VILLAGER);
+			TomcatEntity villager2 = new TomcatEntity(this.villagersIDs[1], 95, 64, 90, EntityTypes.VILLAGER);
+			TomcatEntity villager3 = new TomcatEntity(this.villagersIDs[2], 69, 64, 81, EntityTypes.VILLAGER);
+			TomcatEntity villager4 = new TomcatEntity(this.villagersIDs[3], 63, 64, 63, EntityTypes.VILLAGER);		
+
+			drawing.addObject(villager1);
+			drawing.addObject(villager2);
+			drawing.addObject(villager3);
+			drawing.addObject(villager4);
+			this.drawingHandler.draw(world, drawing);			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Add itens to the player's inventory to help him accomplish the mission goals
+	 * @param world
+	 */
+	private void addItensToInventory(World world) {
+		//InventoryHandler.addItemToInventory(ItemType.IRON_SWORD, 1);
 	}
 
 	@Override
-	public void init(World world) {
-		// No initialization required
-
+	public void goalAchieved(MissionGoal goal) {
+		if (goal instanceof ApproachEntityGoal) {
+			MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.VILLAGER_SAVED), MinecraftServerHelper.getFirstPlayer());
+		}
 	}
 
-
+	@Override
+	public ClientMission getClientMissionInstance() {
+		return new SARClientMission();		
+	}
+	
+	@Override
+	public PosAndDirection getPlayersInitialPositionAndDirection(EntityPlayerMP player) {
+		PosAndDirection positionAndDirection = new PosAndDirection();
+		positionAndDirection.setX(new BigDecimal(22));
+		positionAndDirection.setY(new BigDecimal(64));
+		positionAndDirection.setZ(new BigDecimal(73));
+		positionAndDirection.setYaw(new BigDecimal(-90));
+		return positionAndDirection;
+	}
 }

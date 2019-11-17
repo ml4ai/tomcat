@@ -10,6 +10,7 @@ import com.microsoft.Malmo.Schemas.DrawingDecorator;
 import com.microsoft.Malmo.Schemas.ObjectFactory;
 import com.microsoft.Malmo.Utils.BlockDrawingHelper;
 
+import edu.arizona.tomcat.Utils.Converter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
@@ -68,7 +69,7 @@ public class DrawingHandler {
 		
 		while(objects.hasNext()) {
 			malmoDrawObjects = objects.next().getMalmoDrawObjects();
-			while(malmoDrawObjects.hasNext()) {
+			while(malmoDrawObjects.hasNext()) { 
 				jaxbeObjects.add(toJAXB(malmoDrawObjects.next()));
 			}
 		}
@@ -91,7 +92,7 @@ public class DrawingHandler {
 	 */
 	public void drawCountdown(long remainingSeconds, long remainingSecondsAlert) {
 		if (remainingSeconds >= 0) {
-			TextComponentString text = new TextComponentString("Mission ends in " + remainingSeconds + " seconds...");
+			TextComponentString text = new TextComponentString("Mission ends in " + Converter.secondsToString(remainingSeconds, false) + "...");
 			Style style = new Style();
 			style.setBold(true);
 			

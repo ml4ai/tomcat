@@ -12,9 +12,6 @@ mission_records
 .idea
 cmake-build-debug
 
-# Data
-data/*
-
 # Prerequisites
 *.d
 
@@ -56,3 +53,12 @@ coverage.info
 
 # MacOS filesystem
 .DS_Store
+
+# Extras
+external/malmo/Minecraft/.classpath
+external/malmo/Minecraft/.project
+external/malmo/Minecraft/.settings/
+external/malmo/Minecraft/Minecraft_Server.launch
+external/malmo/Minecraft/bin/
+external/malmo/Minecraft/run/crash-reports/
+external/malmo/Minecraft/run/

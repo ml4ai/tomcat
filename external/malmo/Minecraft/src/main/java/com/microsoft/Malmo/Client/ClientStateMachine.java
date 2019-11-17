@@ -1460,7 +1460,7 @@ public class ClientStateMachine
       World world = null;
       if (Minecraft.getMinecraft().getIntegratedServer() != null)
         world = Minecraft.getMinecraft().getIntegratedServer().getEntityWorld();
-
+      
       boolean needsNewWorld =
           serverHandlers != null && serverHandlers.worldGenerator != null &&
           serverHandlers.worldGenerator.shouldCreateWorld(currentMissionInit(),
@@ -1501,6 +1501,7 @@ public class ClientStateMachine
                       currentMissionInit);
                 }
                 catch (Exception e) {
+                	System.out.println("--------------------------_Error 2");
                   episodeHasCompletedWithErrors(
                       ClientState.ERROR_INTEGRATED_SERVER_UNREACHABLE,
                       "Could not send MissionInit to our integrated server: " +
@@ -1515,6 +1516,7 @@ public class ClientStateMachine
       else if (!needsNewWorld && !worldCurrentlyExists) {
         // Mission has requested no new world, but there is no current world to
         // play in - this is an error:
+    	  System.out.println("--------------------------_Error 3");
         episodeHasCompletedWithErrors(
             ClientState.ERROR_NO_WORLD,
             "We have no world to play in - check that your ServerHandlers section contains a world generator");
@@ -1888,7 +1890,7 @@ public class ClientStateMachine
       }
 
       // Make sure we have mouse control:
-      ClientStateMachine.this.inputController.setInputType(InputType.AI);
+      ClientStateMachine.this.inputController.setInputType(InputType.HUMAN);
       Minecraft.getMinecraft().inGameHasFocus =
           true; // Otherwise auto-repeat won't work for mouse clicks.
 

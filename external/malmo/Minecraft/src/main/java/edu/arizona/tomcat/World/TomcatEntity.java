@@ -1,15 +1,27 @@
 package edu.arizona.tomcat.World;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import com.microsoft.Malmo.Schemas.DrawEntity;
 import com.microsoft.Malmo.Schemas.EntityTypes;
 import com.microsoft.Malmo.Schemas.SpawnableTypes;
 
-public class CompositeEntity extends CompositeDrawingObject{
-	private static int entityNum;
-	private String CustomName;
-
+public class TomcatEntity extends CompositeDrawingObject{
+	
+	/**
+	 * Constructor
+	 * @param uniqueId - Id that uniquely identifies the entity
+	 * @param x - Position of the entity in the x axis
+	 * @param y - Position of the entity in the y axis
+	 * @param z - Position of the entity in the z axis
+	 * @param type - Type of the entity
+	 */
+	public TomcatEntity(UUID uniqueId, int x, int y, int z, EntityTypes type) {
+		super();
+		this.createEntity(uniqueId, x, y, z, type);
+	}
+	
 	/**
 	 * Constructor
 	 * @param x - Position of the entity in the x axis
@@ -17,10 +29,9 @@ public class CompositeEntity extends CompositeDrawingObject{
 	 * @param z - Position of the entity in the z axis
 	 * @param type - Type of the entity
 	 */
-	public CompositeEntity(int x, int y, int z, EntityTypes type) {
+	public TomcatEntity(int x, int y, int z, EntityTypes type) {
 		super();
-		this.createEntity(x, y, z, type);
-		entityNum++;
+		this.createEntity(null, x, y, z, type);
 	}
 	
 	/**
@@ -31,10 +42,14 @@ public class CompositeEntity extends CompositeDrawingObject{
 	 * @param type - Type of the entity
 	 * @return
 	 */
-	public void createEntity(int x, int y, int z, EntityTypes type) {
+	public void createEntity(UUID uniqueId, int x, int y, int z, EntityTypes type) {
 		DrawEntity entity = new DrawEntity();
 		SpawnableTypes entityType = new SpawnableTypes();
 		entityType.setValue(type.value());
+		
+		if (uniqueId != null) {
+			entity.setUniqueId(uniqueId.toString());
+		}
 		entity.setType(entityType);
 		entity.setX(new BigDecimal(x));
 		entity.setY(new BigDecimal(y));
@@ -42,11 +57,4 @@ public class CompositeEntity extends CompositeDrawingObject{
 		this.malmoDrawObjects.add(entity);	
 	}
 
-	public String getCustomNameTag(){
-       return CustomName;
-	};
-
-	public void setCustomNameTag(String entityName){
-		this.CustomName = entityName;
-	};
 }

@@ -25,6 +25,10 @@ package com.microsoft.Malmo.Client;
 import com.microsoft.Malmo.Utils.CraftingHelper;
 import com.microsoft.Malmo.Utils.ScreenHelper.TextCategory;
 import com.microsoft.Malmo.Utils.TextureHelper;
+
+import edu.arizona.tomcat.Mission.Client.ClientMission;
+import edu.arizona.tomcat.Mission.gui.GUIOverlayVillagersSaved;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import net.minecraft.client.Minecraft;
@@ -35,158 +39,179 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import org.lwjgl.input.Mouse;
 
 public class MalmoModClient {
-  public interface MouseEventListener {
-    public void onXYZChange(int deltaX, int deltaY, int deltaZ);
-  }
 
-  public class MouseHook extends MouseHelper {
-    public boolean isOverriding = true;
-    private MouseEventListener observer = null;
+	public interface MouseEventListener {
+		public void onXYZChange(int deltaX, int deltaY, int deltaZ);
+	}
 
-    /* (non-Javadoc)
-     * @see net.minecraft.util.MouseHelper#mouseXYChange()
-     * If we are overriding control, don't allow Minecraft to do any of the
-     * usual camera/yaw/pitch stuff that happens when the mouse moves.
-     */
-    @Override
-    public void mouseXYChange() {
-      if (this.isOverriding) {
-        this.deltaX = 0;
-        this.deltaY = 0;
-        if (Mouse.isGrabbed())
-          Mouse.setGrabbed(false);
-      }
-      else {
-        super.mouseXYChange();
-        if (this.observer != null)
-          this.observer.onXYZChange(
-              this.deltaX, this.deltaY, Mouse.getDWheel());
-      }
-    }
+	public class MouseHook extends MouseHelper {
+		public boolean isOverriding = true;
+		private MouseEventListener observer = null;
 
-    @Override
-    public void grabMouseCursor() {
-      if (MalmoModClient.this.inputType != InputType.HUMAN) {
-        return;
-      }
-      super.grabMouseCursor();
-    }
+		/* (non-Javadoc)
+		 * @see net.minecraft.util.MouseHelper#mouseXYChange()
+		 * If we are overriding control, don't allow Minecraft to do any of the
+		 * usual camera/yaw/pitch stuff that happens when the mouse moves.
+		 */
+		@Override
+		public void mouseXYChange() {
+			if (this.isOverriding) {
+				this.deltaX = 0;
+				this.deltaY = 0;
+				if (Mouse.isGrabbed())
+					Mouse.setGrabbed(false);
+			}
+			else {
+				super.mouseXYChange();
+				if (this.observer != null)
+					this.observer.onXYZChange(
+							this.deltaX, this.deltaY, Mouse.getDWheel());
+			}
+		}
 
-    @Override
-    /**
-     * Ungrabs the mouse cursor so it can be moved and set it to the center of
-     * the screen
-     */
-    public void
-    ungrabMouseCursor() {
-      // Vanilla Minecraft calls Mouse.setCursorPosition(Display.getWidth() / 2,
-      // Display.getHeight() / 2) at this point... but it's seriously annoying,
-      // so we don't.
-      Mouse.setGrabbed(false);
-    }
+		@Override
+		public void grabMouseCursor() {
+			if (MalmoModClient.this.inputType != InputType.HUMAN) {
+				return;
+			}
+			super.grabMouseCursor();
+		}
 
-    public void requestEvents(MouseEventListener observer) {
-      this.observer = observer;
-    }
-  }
+		@Override
+		/**
+		 * Ungrabs the mouse cursor so it can be moved and set it to the center of
+		 * the screen
+		 */
+		public void
+		ungrabMouseCursor() {
+			// Vanilla Minecraft calls Mouse.setCursorPosition(Display.getWidth() / 2,
+			// Display.getHeight() / 2) at this point... but it's seriously annoying,
+			// so we don't.
+			Mouse.setGrabbed(false);
+		}
 
-  // Control overriding:
-  enum InputType { HUMAN, AI }
+		public void requestEvents(MouseEventListener observer) {
+			this.observer = observer;
+		}
+	}
 
-  protected InputType inputType = InputType.HUMAN;
-  protected MouseHook mouseHook;
-  protected MouseHelper originalMouseHelper;
-  private KeyManager keyManager;
-  private ClientStateMachine stateMachine;
-  private static final String INFO_MOUSE_CONTROL = "mouse_control";
+	// Control overriding:
+	enum InputType { HUMAN, AI }
 
-  public void init(FMLInitializationEvent event) {
-    // Register for various events:
-    MinecraftForge.EVENT_BUS.register(this);
-    GameSettings settings = Minecraft.getMinecraft().gameSettings;
-    TextureHelper.hookIntoRenderPipeline();
-    setUpExtraKeys(settings);
+	protected InputType inputType = InputType.HUMAN;
+	protected MouseHook mouseHook;
+	protected MouseHelper originalMouseHelper;
+	private KeyManager keyManager;
+	private ClientStateMachine stateMachine;
+	private static final String INFO_MOUSE_CONTROL = "mouse_control";
 
-    this.stateMachine =
-        new ClientStateMachine(ClientState.WAITING_FOR_MOD_READY, this);
+	private ClientMission tomcatClientMission;
 
-    this.originalMouseHelper = Minecraft.getMinecraft().mouseHelper;
-    this.mouseHook = new MouseHook();
-    this.mouseHook.isOverriding = true;
-    Minecraft.getMinecraft().mouseHelper = this.mouseHook;
-    setInputType(InputType.AI);
-  }
+	public void init(FMLInitializationEvent event) {
+		// Register for various events:
+		MinecraftForge.EVENT_BUS.register(this);    
+		GameSettings settings = Minecraft.getMinecraft().gameSettings;
+		TextureHelper.hookIntoRenderPipeline();
+		setUpExtraKeys(settings);
 
-  /**
-   * Switch the input type between Human and AI.<br>
-   * Will switch on/off the command overrides.
-   * @param input type of control (Human/AI)
-   */
-  public void setInputType(InputType input) {
-    if (this.stateMachine.currentMissionBehaviour() != null &&
-        this.stateMachine.currentMissionBehaviour().commandHandler != null)
-      this.stateMachine.currentMissionBehaviour().commandHandler.setOverriding(
-          input == InputType.AI);
+		this.stateMachine =
+				new ClientStateMachine(ClientState.WAITING_FOR_MOD_READY, this);
 
-    if (this.mouseHook != null)
-      this.mouseHook.isOverriding = (input == InputType.AI);
+		this.originalMouseHelper = Minecraft.getMinecraft().mouseHelper;
+		this.mouseHook = new MouseHook();
+		this.mouseHook.isOverriding = true;
+		Minecraft.getMinecraft().mouseHelper = this.mouseHook;
+		setInputType(InputType.AI);
+	}
 
-    // This stops Minecraft from doing the annoying thing of stealing your
-    // mouse.
-    System.setProperty("fml.noGrab", input == InputType.AI ? "true" : "false");
-    inputType = input;
-    if (input == InputType.HUMAN) {
-      Minecraft.getMinecraft().mouseHelper.grabMouseCursor();
-    }
-    else {
-      Minecraft.getMinecraft().mouseHelper.ungrabMouseCursor();
-    }
+	/**
+	 * Switch the input type between Human and AI.<br>
+	 * Will switch on/off the command overrides.
+	 * @param input type of control (Human/AI)
+	 */
+	public void setInputType(InputType input) {
+		if (this.stateMachine.currentMissionBehaviour() != null &&
+				this.stateMachine.currentMissionBehaviour().commandHandler != null)
+			this.stateMachine.currentMissionBehaviour().commandHandler.setOverriding(
+					input == InputType.AI);
 
-    this.stateMachine.getScreenHelper().addFragment(
-        "Mouse: " + input, TextCategory.TXT_INFO, INFO_MOUSE_CONTROL);
-  }
+		if (this.mouseHook != null)
+			this.mouseHook.isOverriding = (input == InputType.AI);
 
-  /**
-   * Set up some handy extra keys:
-   * @param settings Minecraft's original GameSettings object
-   */
-  private void setUpExtraKeys(GameSettings settings) {
-    // Create extra key bindings here and pass them to the KeyManager.
-    ArrayList<InternalKey> extraKeys = new ArrayList<InternalKey>();
-    // Create a key binding to toggle between player and Malmo control:
-    extraKeys.add(
-        new InternalKey("key.toggleMalmo",
-                        28,
-                        "key.categories.malmo") // 28 is the keycode for enter.
-        {
-          @Override
-          public void onPressed() {
-            InputType it =
-                (inputType != InputType.AI) ? InputType.AI : InputType.HUMAN;
-            System.out.println("Toggling control between human and AI - now " +
-                               it);
-            setInputType(it);
-            super.onPressed();
-          }
-        });
+		// This stops Minecraft from doing the annoying thing of stealing your
+		// mouse.
+		System.setProperty("fml.noGrab", input == InputType.AI ? "true" : "false");
+		inputType = input;
+		if (input == InputType.HUMAN) {
+			Minecraft.getMinecraft().mouseHelper.grabMouseCursor();
+		}
+		else {
+			Minecraft.getMinecraft().mouseHelper.ungrabMouseCursor();
+		}
 
-    extraKeys.add(
-        new InternalKey("key.handyTestHook", 22, "key.categories.malmo") {
-          @Override
-          public void onPressed() {
-            // Use this if you want to test some code with a handy key press
-            try {
-              CraftingHelper.dumpRecipes("recipe_dump.txt");
-            }
-            catch (IOException e) {
-              e.printStackTrace();
-            }
-          }
-        });
-    this.keyManager = new KeyManager(settings, extraKeys);
-  }
+		this.stateMachine.getScreenHelper().addFragment(
+				"Mouse: " + input, TextCategory.TXT_INFO, INFO_MOUSE_CONTROL);
+	}
 
-  /*
+	/**
+	 * Set up some handy extra keys:
+	 * @param settings Minecraft's original GameSettings object
+	 */
+	private void setUpExtraKeys(GameSettings settings) {
+		// Create extra key bindings here and pass them to the KeyManager.
+		ArrayList<InternalKey> extraKeys = new ArrayList<InternalKey>();
+		// Create a key binding to toggle between player and Malmo control:
+		extraKeys.add(
+				new InternalKey("key.toggleMalmo",
+						28,
+						"key.categories.malmo") // 28 is the keycode for enter.
+				{
+					@Override
+					public void onPressed() {
+						InputType it =
+								(inputType != InputType.AI) ? InputType.AI : InputType.HUMAN;
+						System.out.println("Toggling control between human and AI - now " +
+								it);
+						setInputType(it);
+						super.onPressed();
+					}
+				});
+
+		extraKeys.add(
+				new InternalKey("key.handyTestHook", 22, "key.categories.malmo") {
+					@Override
+					public void onPressed() {
+						// Use this if you want to test some code with a handy key press
+						try {
+							CraftingHelper.dumpRecipes("recipe_dump.txt");
+						}
+						catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				});
+		this.keyManager = new KeyManager(settings, extraKeys);
+	}
+	
+	/**
+	 * Retrieves the ToMCAT client mission
+	 * @return
+	 */
+	public ClientMission getTomcatClientMission() {
+		return this.tomcatClientMission;
+	}
+	
+	/**
+	 * Sets the ToMCAT client mission
+	 * @param tomcatClientMission - ToMCAT client mission
+	 */
+	public void setTomcatClientMission(ClientMission tomcatClientMission) {
+		this.tomcatClientMission = tomcatClientMission;
+	}
+
+
+
+	/*
   @SideOnly(Side.CLIENT)
   @SubscribeEvent
   public void onEvent(GuiOpenEvent event)

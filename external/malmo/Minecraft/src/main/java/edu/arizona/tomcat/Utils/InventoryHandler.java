@@ -35,7 +35,7 @@ public class InventoryHandler {
 	/**
 	 * Checks an item in the player's main inventory
 	 * @param type - Item type
-	 * @param quantity - Number of blocks to be stored in the inventory
+	 * @param quantity - Number of items to be checked 
 	 */
 	public static boolean checkItemToInventory(ItemType type, int quantity) {
 		Item item = MinecraftTypeHelper.ParseItemType(type.value(), false);

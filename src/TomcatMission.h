@@ -33,25 +33,12 @@ namespace tomcat {
     std::string getWorldSkeletonFromXML();
 
     /**
-     * Draws a giant ToMCAT sign using gold blocks, above the main building.
+     * Retrieves the name of the folder that contains the mission prebuilt world
+     * @return
      */
-    void drawTomcatSign();
+    std::string getWorldFolder();
 
-    /**
-     * Draws the main building of the mission
-     */
-    void drawMainBuilding();
-
-    /**
-     * Draws the ground floor of the main building
-     */
-    void drawGroundFloor();
-
-    /**
-     * Draws the second floor of the main building
-     */
-    void drawSecondFloor();
-
+    enum MissionId { tutorial = 0, sar = 1};
     int missionId;
   };
 

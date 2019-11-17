@@ -8,15 +8,6 @@ using fmt::format;
 
 namespace tomcat {
 
-  const static int HEIGHT_OF_GROUND_LEVEL = 2;
-  const static int FLOOR_HEIGHT = 5;
-  const static int BUILDING_WIDTH = 20;
-  const static int BUILDING_DEPTH = 30;
-  const static int BUILDING_SOUTHWEST_X_POSITION = 2;
-  const static int BUILDING_SOUTHWEST_Z_POSITION = 30;
-  const static int STAIRS_WIDTH = 3;
-  const static int MAIN_ENTRANCE_WIDTH = 3;
-
   TomcatMission::TomcatMission(int missionId) { this->missionId = missionId; }
 
   TomcatMission::~TomcatMission() {}
@@ -24,43 +15,26 @@ namespace tomcat {
   void TomcatMission::buildWorld() {
     Mission::buildWorld();
 
-    this->drawMainBuilding();
-    this->drawTomcatSign();
-
-    // Put a zombie on the ground floor!
-    this->drawEntity(BUILDING_SOUTHWEST_X_POSITION - 10,
-                     HEIGHT_OF_GROUND_LEVEL,
-                     BUILDING_SOUTHWEST_Z_POSITION + 20,
-                     "Zombie");
-
-    this->drawEntity(BUILDING_SOUTHWEST_X_POSITION - 10,
-                     HEIGHT_OF_GROUND_LEVEL + FLOOR_HEIGHT,
-                     BUILDING_SOUTHWEST_Z_POSITION + 20,
-                     "Villager");
-    for (unsigned short int i = 0; i < 5; i++) {
-      this->drawTree(-20 - 5 * i, 20);
-    }
-
-    Mission::insertTimeLimitInSeconds();
+    //Mission::insertTimeLimitInSeconds();
 
     if (this->requestVideo_switch) {
-      Mission::insertVideoProducer();
+      this->insertVideoProducer();
     }
 
     if (this->observeRecentCommands_switch) {
-      Mission::insertObserveRecentCommandsProducer();
+      this->insertObserveRecentCommandsProducer();
     }
 
     if (this->observeHotBar_switch) {
-      Mission::insertObserveHotBarProducer();
+      this->insertObserveHotBarProducer();
     }
 
     if (this->observeFullInventory_switch) {
-      Mission::insertObserveFullInventoryProducer();
+      this->insertObserveFullInventoryProducer();
     }
 
     if (observeChat_switch) {
-      Mission::insertObserveChatProducer();
+      this->insertObserveChatProducer();
     }
   }
 
@@ -77,14 +51,13 @@ namespace tomcat {
             <AllowSpawning>false</AllowSpawning>
           </ServerInitialConditions>
           <ServerHandlers>
-            <FlatWorldGenerator generatorString="3;2*2;1;village" />
-            <TomcatDecorator mission="{0}" timeLimitInSeconds="{1}"/>
-         </ServerHandlers>
+            <FileWorldGenerator src="/Users/paulosoares/Desktop/ivilab/tomcat/data/worlds/{}" forceReset="true"/>
+            <TomcatDecorator mission="{}" timeLimitInSeconds="{}"/>
+          </ServerHandlers>
       </ServerSection>
       <AgentSection mode="Survival">
           <Name>Tomcat</Name>
           <AgentStart>
-            <Placement x="0" y="2.0" z="0" />
           </AgentStart>
           <AgentHandlers>
             <ContinuousMovementCommands turnSpeedDegs="840">
@@ -94,235 +67,24 @@ namespace tomcat {
             </ContinuousMovementCommands>
           </AgentHandlers>
       </AgentSection>
-    </Mission>)",
-                                     this->missionId,
-                                     this->timeLimitInSeconds);
+    </Mission>)", this->getWorldFolder(), this->missionId, this->timeLimitInSeconds);
 
     return worldSkeletonXML;
   }
 
-  void TomcatMission::drawTomcatSign() {
-    int tomcatX = BUILDING_SOUTHWEST_X_POSITION + 10;
-    int tomcatZ = BUILDING_SOUTHWEST_Z_POSITION;
-    int tomcatY = 2 * FLOOR_HEIGHT + 5;
-    int tomcatWidth = 7;
+  string TomcatMission::getWorldFolder() {
+      string folderName = "";
+      switch (this->missionId) {
+          case tutorial:
+            folderName = "tutorial_0_0_1";
+            break;
 
-    string tomcatBlockType = "gold_block";
+          case sar:
+              folderName = "sar_0_0_1";
+              break;
+      }
 
-    // Letter T
-    this->drawPlane(
-        tomcatX, tomcatZ, tomcatY, 1, 2 * FLOOR_HEIGHT, 1, tomcatBlockType);
-
-    this->drawPlane(tomcatX + tomcatWidth / 2,
-                    tomcatZ,
-                    tomcatY + 2 * FLOOR_HEIGHT - 1,
-                    tomcatWidth,
-                    1,
-                    1,
-                    tomcatBlockType);
-
-    // Letter O
-    tomcatX = tomcatX - tomcatWidth / 2 - 2;
-    this->drawWall(tomcatX,
-                   tomcatZ,
-                   tomcatY,
-                   tomcatWidth,
-                   2 * FLOOR_HEIGHT,
-                   orientation::west_east,
-                   tomcatBlockType);
-    this->makeHole(tomcatX - 1,
-                   tomcatZ,
-                   tomcatY + 1,
-                   tomcatWidth - 2,
-                   2 * FLOOR_HEIGHT - 2,
-                   1);
-
-    // Letter M
-    tomcatX = tomcatX - tomcatWidth - 1;
-    this->drawPlane(
-        tomcatX, tomcatZ, tomcatY, 1, 2 * FLOOR_HEIGHT, 1, tomcatBlockType);
-    this->drawPlane(tomcatX - 1,
-                    tomcatZ,
-                    tomcatY + 2 * FLOOR_HEIGHT - 1,
-                    1,
-                    1,
-                    1,
-                    tomcatBlockType);
-    this->drawPlane(tomcatX - 2,
-                    tomcatZ,
-                    tomcatY + 2 * FLOOR_HEIGHT - 2,
-                    1,
-                    1,
-                    1,
-                    tomcatBlockType);
-    this->drawPlane(tomcatX - 3,
-                    tomcatZ,
-                    tomcatY + 2 * FLOOR_HEIGHT - 3,
-                    1,
-                    1,
-                    1,
-                    tomcatBlockType);
-    this->drawPlane(tomcatX - 4,
-                    tomcatZ,
-                    tomcatY + 2 * FLOOR_HEIGHT - 2,
-                    1,
-                    1,
-                    1,
-                    tomcatBlockType);
-    this->drawPlane(tomcatX - 5,
-                    tomcatZ,
-                    tomcatY + 2 * FLOOR_HEIGHT - 1,
-                    1,
-                    1,
-                    1,
-                    tomcatBlockType);
-    this->drawPlane(tomcatX - tomcatWidth + 1,
-                    tomcatZ,
-                    tomcatY,
-                    1,
-                    2 * FLOOR_HEIGHT,
-                    1,
-                    tomcatBlockType);
-
-    // Letter C
-    tomcatX = tomcatX - tomcatWidth - 1;
-    this->drawWall(tomcatX,
-                   tomcatZ,
-                   tomcatY,
-                   tomcatWidth,
-                   2 * FLOOR_HEIGHT,
-                   orientation::west_east,
-                   tomcatBlockType);
-    this->makeHole(tomcatX - 1,
-                   tomcatZ,
-                   tomcatY + 1,
-                   tomcatWidth,
-                   2 * FLOOR_HEIGHT - 2,
-                   1);
-
-    // Letter A
-    tomcatX = tomcatX - tomcatWidth - 1;
-    this->drawPlane(
-        tomcatX, tomcatZ, tomcatY, 1, 2 * FLOOR_HEIGHT, 1, tomcatBlockType);
-    this->drawPlane(tomcatX - 1,
-                    tomcatZ,
-                    tomcatY + 2 * FLOOR_HEIGHT - 1,
-                    tomcatWidth - 1,
-                    1,
-                    1,
-                    tomcatBlockType);
-    this->drawPlane(tomcatX - 1,
-                    tomcatZ,
-                    tomcatY + 2 * FLOOR_HEIGHT - 6,
-                    tomcatWidth - 1,
-                    1,
-                    1,
-                    tomcatBlockType);
-    this->drawPlane(tomcatX - tomcatWidth + 1,
-                    tomcatZ,
-                    tomcatY,
-                    1,
-                    2 * FLOOR_HEIGHT,
-                    1,
-                    tomcatBlockType);
-
-    // Letter T
-    tomcatX = tomcatX - 3 * tomcatWidth / 2 - 1;
-    this->drawPlane(
-        tomcatX, tomcatZ, tomcatY, 1, 2 * FLOOR_HEIGHT, 1, tomcatBlockType);
-    this->drawPlane(tomcatX + tomcatWidth / 2,
-                    tomcatZ,
-                    tomcatY + 2 * FLOOR_HEIGHT - 1,
-                    tomcatWidth,
-                    1,
-                    1,
-                    tomcatBlockType);
-  }
-
-  void TomcatMission::drawMainBuilding() {
-    this->drawGroundFloor();
-    this->drawSecondFloor();
-  }
-
-  void TomcatMission::drawSecondFloor() {
-    this->drawRoom(BUILDING_SOUTHWEST_X_POSITION,
-                   BUILDING_SOUTHWEST_Z_POSITION,
-                   HEIGHT_OF_GROUND_LEVEL + FLOOR_HEIGHT,
-                   BUILDING_WIDTH,
-                   FLOOR_HEIGHT,
-                   BUILDING_DEPTH);
-    this->drawStairs(BUILDING_SOUTHWEST_X_POSITION - 1,
-                     FLOOR_HEIGHT + BUILDING_SOUTHWEST_Z_POSITION - 1,
-                     HEIGHT_OF_GROUND_LEVEL + FLOOR_HEIGHT,
-                     STAIRS_WIDTH,
-                     FLOOR_HEIGHT,
-                     north_south);
-
-    // Make hole in the roof to open an access to the next floor
-    this->makeHole(BUILDING_SOUTHWEST_X_POSITION - 1,
-                   BUILDING_SOUTHWEST_Z_POSITION + 1,
-                   HEIGHT_OF_GROUND_LEVEL + 2 * FLOOR_HEIGHT - 1,
-                   STAIRS_WIDTH,
-                   1,
-                   FLOOR_HEIGHT - 1);
-
-    // Make holes in the lateral walls to receive light from outside
-    this->makeHole(BUILDING_SOUTHWEST_X_POSITION - BUILDING_WIDTH - 1,
-                   BUILDING_SOUTHWEST_Z_POSITION + 2,
-                   HEIGHT_OF_GROUND_LEVEL + FLOOR_HEIGHT + 2,
-                   1,
-                   2,
-                   BUILDING_DEPTH - 4);
-    this->makeHole(BUILDING_SOUTHWEST_X_POSITION,
-                   BUILDING_SOUTHWEST_Z_POSITION + 6,
-                   HEIGHT_OF_GROUND_LEVEL + FLOOR_HEIGHT + 2,
-                   1,
-                   2,
-                   BUILDING_DEPTH - FLOOR_HEIGHT - 6);
-  }
-
-  void TomcatMission::drawGroundFloor() {
-    this->drawRoom(BUILDING_SOUTHWEST_X_POSITION,
-                   BUILDING_SOUTHWEST_Z_POSITION,
-                   HEIGHT_OF_GROUND_LEVEL,
-                   BUILDING_WIDTH,
-                   FLOOR_HEIGHT,
-                   BUILDING_DEPTH);
-    // Make hole in the wall for the main entrance of the floor
-    this->makeHole(BUILDING_SOUTHWEST_X_POSITION - 1,
-                   BUILDING_SOUTHWEST_Z_POSITION,
-                   HEIGHT_OF_GROUND_LEVEL,
-                   MAIN_ENTRANCE_WIDTH,
-                   FLOOR_HEIGHT - 1,
-                   1);
-    this->drawStairs(BUILDING_SOUTHWEST_X_POSITION - 1,
-                     BUILDING_SOUTHWEST_Z_POSITION + BUILDING_DEPTH -
-                         FLOOR_HEIGHT - 1,
-                     HEIGHT_OF_GROUND_LEVEL,
-                     STAIRS_WIDTH,
-                     FLOOR_HEIGHT,
-                     south_north);
-    // Make hole in the roof to open an access to the next floor
-    this->makeHole(BUILDING_SOUTHWEST_X_POSITION - 1,
-                   BUILDING_SOUTHWEST_Z_POSITION + BUILDING_DEPTH -
-                       FLOOR_HEIGHT - 1,
-                   HEIGHT_OF_GROUND_LEVEL + FLOOR_HEIGHT - 1,
-                   STAIRS_WIDTH,
-                   1,
-                   FLOOR_HEIGHT - 1);
-    // Make holes in the lateral walls to receive light from outside
-    this->makeHole(BUILDING_SOUTHWEST_X_POSITION - BUILDING_WIDTH - 1,
-                   BUILDING_SOUTHWEST_Z_POSITION + 2,
-                   HEIGHT_OF_GROUND_LEVEL + 2,
-                   1,
-                   2,
-                   BUILDING_DEPTH - 4);
-    this->makeHole(BUILDING_SOUTHWEST_X_POSITION,
-                   BUILDING_SOUTHWEST_Z_POSITION + 2,
-                   HEIGHT_OF_GROUND_LEVEL + 2,
-                   1,
-                   2,
-                   BUILDING_DEPTH - FLOOR_HEIGHT - 4);
+      return folderName;
   }
 
 } // namespace tomcat

@@ -61,6 +61,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.GameType;
@@ -753,7 +754,7 @@ public class ServerStateMachine extends StateMachine {
                 player.posX = pos.getX().doubleValue();
                 player.posY = pos.getY().doubleValue();
                 player.posZ = pos.getZ().doubleValue();
-              }
+              } 
               // And set their game type back now:
               player.setGameType(
                   GameType.getByName(as.getMode().name().toLowerCase()));
@@ -819,14 +820,19 @@ public class ServerStateMachine extends StateMachine {
 
         // Set their initial position and speed:
         PosAndDirection pos = as.getAgentStart().getPlacement();
-        if (pos != null) {
-          player.rotationYaw = pos.getYaw().floatValue();
-          player.rotationPitch = pos.getPitch().floatValue();
-          player.setPositionAndUpdate(pos.getX().doubleValue(),
+        System.out.println("============> Position from XML");
+        if (pos == null) {
+        	System.out.println("==============> Position is null " + MalmoMod.instance.getServer().getTomcatServerMission());
+        	pos  = MalmoMod.instance.getServer().getTomcatServerMission().getPlayersInitialPositionAndDirection(player);
+        }
+        
+        player.rotationYaw = pos.getYaw().floatValue();
+        player.rotationPitch = pos.getPitch().floatValue();
+        player.setPositionAndUpdate(pos.getX().doubleValue(),
                                       pos.getY().doubleValue(),
                                       pos.getZ().doubleValue());
-          player.onUpdate(); // Needed to force scene to redraw
-        }
+        player.onUpdate(); // Needed to force scene to redraw
+         
         player.setVelocity(0, 0, 0); // Minimise chance of drift!
 
         // Set their inventory:

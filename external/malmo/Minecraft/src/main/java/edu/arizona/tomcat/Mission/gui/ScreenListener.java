@@ -9,6 +9,6 @@ public interface ScreenListener {
 	/**
 	 * Handles actions after a button was pressed in a screen
 	 */
-	public void screenDismissed(GuiScreen screen, ButtonType buttonType);
+	public void screenDismissed(GuiScreen screen);
 	
 }
