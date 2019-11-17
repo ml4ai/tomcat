@@ -110,6 +110,13 @@ Windows support are welcome.
 Running experiments
 -------------------
 
+Go to the folder `data/`, download and extract the hand-constructed world with the following commands:
+
+```
+curl -O http://vanga.sista.arizona.edu/tomcat/data/worlds.tgz
+tar -xvzf worlds.tgz
+```
+
 To launch Minecraft, execute the script (in the build directory)
 
 ```
@@ -122,13 +129,24 @@ Then in a separate terminal, run the executable `runExperiment`:
 ./bin/runExperiment --mission <path_to_mission_XML_file>
 ```
 
-To run the default search-and-rescue mission, you can just do
+To run the default tutorial mission, just do:
 
 ```
 ./bin/runExperiment
 ```
 
-To allow human control of the character press the `<Enter>` key.
+To run the default search-and-rescue mission with a time limit of 10 minutes, you can just do:
+
+```
+./bin/runExperiment --mission 1 --time_limit 600
+```
+
+You can run ./bin/runExperiment --help to see the other possible options.
+
+If any of the following conditions happens, Minecraft needs to be relaunched before another mission can be executed:
+1. The player dies
+2. The mission ends (either by timeout or by achievement of all the goals)
+
 ## For developers
 
 To speed up builds, create a file called gradle.properties and add `org.gradle.daemon=true` to it:
@@ -136,3 +154,5 @@ To speed up builds, create a file called gradle.properties and add `org.gradle.d
 ```
 echo "org.gradle.daemon=true" > ~/.gradle/gradle.properties
 ```
+
+If you want to activate video recording and other things that depend on Malmo quiting the server, uncomment line 18 in the src/TomcatMission.cpp file and comment line 79 in the /external/malmo/Minecraft/src/main/java/edu/arizona/tomcat/Mission.java file. We are still working on this issue so we don't need to perform this step in the future.
