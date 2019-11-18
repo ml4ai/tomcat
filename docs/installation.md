@@ -20,7 +20,7 @@ port install cmake libfmt doxygen boost ffmpeg opencv4 dlib openjdk8 gradle libs
 Add the following line to your `~/.bash_profile` to make Java 8 the default
 version:
 
-```
+```bash
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk8/Contents/Home
 ```
 
@@ -32,7 +32,7 @@ Then run `source ~/.bash_profile` to activate this Java version.
 If you are using the Homebrew package manager, you can install these with the
 following commands.
 
-```
+```bash
 brew install cmake fmt doxygen boost ffmpeg opencv dlib libsndfile portaudio
 brew tap adoptopenjdk/openjdk
 brew cask install adoptopenjdk8
@@ -74,7 +74,7 @@ Installing ToMCAT
 
 Clone the repo:
 
-```
+```bash
 git clone https://github.com/ml4ai/tomcat
 ```
 
@@ -83,7 +83,7 @@ Malmo requires the environment variable `MALMO_XSD_PATH` to point to the Schemas
 
 For convenience, in your `~/.bash_profile` file, add:
 
-```
+```bash
 export MALMO_XSD_PATH=<path_to_tomcat_repo>/external/malmo/Schemas
 ```
 
@@ -93,7 +93,7 @@ variable.
 
 To install the ToMCAT local agent, Malmo, and Minecraft, do the following:
 
-```
+```bash
 cd tomcat
 mkdir build && cd build 
 cmake .. 
@@ -112,47 +112,46 @@ Running experiments
 
 Go to the folder `data/`, download and extract the hand-constructed world with the following commands:
 
-```
+```bash
 curl -O http://vanga.sista.arizona.edu/tomcat/data/worlds.tgz
 tar -xvzf worlds.tgz
 ```
 
 To launch Minecraft, execute the script (in the build directory)
 
-```
-./launch_minecraft.sh
-```
+    ./launch_minecraft.sh
 
 Then in a separate terminal, run the executable `runExperiment`:
 
-```
-./bin/runExperiment --mission <path_to_mission_XML_file>
-```
+    ./bin/runExperiment --mission <path_to_mission_XML_file>
 
 To run the default tutorial mission, just do:
 
-```
-./bin/runExperiment
-```
+    ./bin/runExperiment
 
 To run the default search-and-rescue mission with a time limit of 10 minutes, you can just do:
 
-```
-./bin/runExperiment --mission 1 --time_limit 600
-```
+    ./bin/runExperiment --mission 1 --time_limit 600
 
 You can run ./bin/runExperiment --help to see the other possible options.
 
-If any of the following conditions happens, Minecraft needs to be relaunched before another mission can be executed:
+If any of the following conditions happens, Minecraft needs to be relaunched
+before another mission can be executed:
+
 1. The player dies
 2. The mission ends (either by timeout or by achievement of all the goals)
 
 ## For developers
 
-To speed up builds, create a file called gradle.properties and add `org.gradle.daemon=true` to it:
+To speed up builds, create a file called gradle.properties and add
+`org.gradle.daemon=true` to it:
 
-```
-echo "org.gradle.daemon=true" > ~/.gradle/gradle.properties
-```
+    echo "org.gradle.daemon=true" > ~/.gradle/gradle.properties
 
-If you want to activate video recording and other things that depend on Malmo quiting the server, uncomment line 18 in the src/TomcatMission.cpp file and comment line 79 in the /external/malmo/Minecraft/src/main/java/edu/arizona/tomcat/Mission.java file. We are still working on this issue so we don't need to perform this step in the future.
+If you want to activate video recording and other things that depend on Malmo
+quitting the server, uncomment line 18 in `src/TomcatMission.cpp` and
+comment line 79 in 
+`/external/malmo/Minecraft/src/main/java/edu/arizona/tomcat/Mission.java` file.
+
+We are still working on this issue so we don't need to perform this step in the
+future.
