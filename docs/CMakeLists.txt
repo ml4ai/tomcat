@@ -13,5 +13,5 @@ add_custom_command(
   COMMENT "Generating documentation with Sphinx")
 
 add_custom_target(sphinx DEPENDS ${SPHINX_INDEX_FILE})
-add_subdirectory(java_api)
+add_subdirectory(developer/java_api)
 add_custom_target(docs DEPENDS sphinx java_apidocs)
