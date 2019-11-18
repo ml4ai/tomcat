@@ -133,7 +133,7 @@ To run the default search-and-rescue mission with a time limit of 10 minutes, yo
 
     ./bin/runExperiment --mission 1 --time_limit 600
 
-You can run ./bin/runExperiment --help to see the other possible options.
+You can run `./bin/runExperiment --help` to see the other possible options.
 
 If any of the following conditions happens, Minecraft needs to be relaunched
 before another mission can be executed:
