@@ -73,7 +73,7 @@ public class TutorialMission extends Mission {
 		approachPoolsPhase.addInstructionsLine("Take care! If you fall into the lava tank, you die.");
 		approachPoolsPhase.addInstructionsLine("If you fall into the water tank, press space until you reach the surface.");
 		approachPoolsPhase.addInstructionsLine("");
-		approachPoolsPhase.addInstructionsLine("Press OK when you are ready.");
+		approachPoolsPhase.addInstructionsLine("Click OK when you are ready.");
 		approachPoolsPhase.addGoal(new ReachPositionGoal(-635, 4, 1582, 2));
 		this.addPhase(approachPoolsPhase);
 	}
@@ -87,7 +87,7 @@ public class TutorialMission extends Mission {
 		approachEntitiesPhase.addInstructionsLine("Pay attention to their appearance.");
 		approachEntitiesPhase.addInstructionsLine("You might need to distinguish them well in the future.");
 		approachEntitiesPhase.addInstructionsLine("");
-		approachEntitiesPhase.addInstructionsLine("Press OK when you are ready.");
+		approachEntitiesPhase.addInstructionsLine("Click OK when you are ready.");
 		approachEntitiesPhase.addGoal(new ReachPositionGoal(-615, 4, 1585, 3));
 		addPhase(approachEntitiesPhase);
 	}
@@ -100,7 +100,7 @@ public class TutorialMission extends Mission {
 		this.enterTheArenaPhase.addInstructionsLine("Go to the center of the combat arena.");
 		this.enterTheArenaPhase.addInstructionsLine("To open the gate, right-click on it.");
 		this.enterTheArenaPhase.addInstructionsLine("");
-		this.enterTheArenaPhase.addInstructionsLine("Press OK when you are ready.");
+		this.enterTheArenaPhase.addInstructionsLine("Click OK when you are ready.");
 		this.enterTheArenaPhase.addGoal(new ReachPositionGoal(-623, 4, 1600, 2));
 		this.addPhase(this.enterTheArenaPhase);
 	}
@@ -114,7 +114,7 @@ public class TutorialMission extends Mission {
 		this.killSkeletonPhase.addInstructionsLine("Left-click to attack him.");
 		this.killSkeletonPhase.addInstructionsLine("You can also try to take him outside the arena. He will burn under the sun.");
 		this.killSkeletonPhase.addInstructionsLine("");
-		this.killSkeletonPhase.addInstructionsLine("Press OK when you are ready.");
+		this.killSkeletonPhase.addInstructionsLine("Click OK when you are ready.");
 		this.killSkeletonPhase.addGoal(new KillEntityGoal(this.skeletonUUID));
 		this.addPhase(this.killSkeletonPhase);
 	}
@@ -128,7 +128,7 @@ public class TutorialMission extends Mission {
 		this.killZombiePhase.addInstructionsLine("To open an iron door, right-click on the switch close to it.");
 		this.killZombiePhase.addInstructionsLine("Zombies also burn under the sun.");
 		this.killZombiePhase.addInstructionsLine("");
-		this.killZombiePhase.addInstructionsLine("Press OK when you are ready.");
+		this.killZombiePhase.addInstructionsLine("Click OK when you are ready.");
 		this.killZombiePhase.addGoal(new KillEntityGoal(this.zombieUUID));
 		this.addPhase(this.killZombiePhase);
 	}
@@ -142,7 +142,7 @@ public class TutorialMission extends Mission {
 		saveVillagerPhase.addInstructionsLine("To open a wooden door, just right-click on it.");
 		saveVillagerPhase.addInstructionsLine("Rescue the villagger by bumping into him.");
 		saveVillagerPhase.addInstructionsLine("");
-		saveVillagerPhase.addInstructionsLine("Press OK when you are ready.");
+		saveVillagerPhase.addInstructionsLine("Click OK when you are ready.");
 		saveVillagerPhase.addGoal(new ApproachEntityGoal(this.villagerUUID, MAX_DISTANCE_TO_SAVE_VILLAGER));
 		this.addPhase(saveVillagerPhase);
 	}
@@ -157,7 +157,7 @@ public class TutorialMission extends Mission {
 		leaveTheBuildingPhase.addInstructionsLine("Your bar is full because you saved all the villagers in this mission.");
 		leaveTheBuildingPhase.addInstructionsLine("Now, get out of the building.");
 		leaveTheBuildingPhase.addInstructionsLine("");
-		leaveTheBuildingPhase.addInstructionsLine("Press OK when you are ready.");
+		leaveTheBuildingPhase.addInstructionsLine("Click OK when you are ready.");
 		leaveTheBuildingPhase.addGoal(new ReachPositionGoal(-623, 4, 1579, 2));
 		addPhase(leaveTheBuildingPhase);
 	}

@@ -62,7 +62,7 @@ public class SARMission extends Mission {
 		rescueVillagersPhase.addInstructionsLine("Take care! You may have to battle some scary creatures on the way.");
 		rescueVillagersPhase.addInstructionsLine("You have " + Converter.secondsToString(this.timeLimitInSeconds, true) + " to accomplish this goal.");
 		rescueVillagersPhase.addInstructionsLine("");
-		rescueVillagersPhase.addInstructionsLine("Press OK when you are ready to start.");
+		rescueVillagersPhase.addInstructionsLine("Click OK when you are ready to start.");
 		for(int i = 0; i < NUMBER_OF_VILLAGERS; i++) {
 			ApproachEntityGoal goal = new ApproachEntityGoal(this.villagersIDs[i], MAX_DISTANCE_TO_SAVE_VILLAGER);
 			rescueVillagersPhase.addGoal(goal);
