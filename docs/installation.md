@@ -79,22 +79,28 @@ git clone https://github.com/ml4ai/tomcat
 ```
 
 
-Malmo requires the environment variable `MALMO_XSD_PATH` to point to the Schemas directory.
+Malmo requires the environment variable `TOMCAT` to point to the ToMCAT root
+directory, and the variable `MALMO_XSD_PATH` to point to the Schemas directory.
 
 For convenience, in your `~/.bash_profile` file, add:
 
 ```bash
-export MALMO_XSD_PATH=<path_to_tomcat_repo>/external/malmo/Schemas
+export TOMCAT=<path_to_tomcat_repo>
+export MALMO_XSD_PATH="${TOMCAT}/external/malmo/Schemas"
 ```
 
 and make sure to run `source ~/.bash_profile` to activate the environment
 variable.
 
 
-To install the ToMCAT local agent, Malmo, and Minecraft, do the following:
+To download the mission files, install the ToMCAT local agent, Malmo, and
+Minecraft, do the following:
 
 ```bash
-cd tomcat
+cd ${TOMCAT}/data
+curl -O http://vanga.sista.arizona.edu/tomcat/data/worlds.tgz
+tar -xvzf worlds.tgz
+cd ..
 mkdir build && cd build 
 cmake .. 
 make -j
@@ -109,13 +115,6 @@ Windows support are welcome.
 
 Running experiments
 -------------------
-
-Go to the folder `data/`, download and extract the hand-constructed world with the following commands:
-
-```bash
-curl -O http://vanga.sista.arizona.edu/tomcat/data/worlds.tgz
-tar -xvzf worlds.tgz
-```
 
 To launch Minecraft, execute the script (in the build directory)
 
