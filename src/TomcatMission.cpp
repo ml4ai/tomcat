@@ -51,7 +51,7 @@ namespace tomcat {
             <AllowSpawning>false</AllowSpawning>
           </ServerInitialConditions>
           <ServerHandlers>
-            <FileWorldGenerator src="/Users/paulosoares/Desktop/ivilab/tomcat/data/worlds/{}" forceReset="true"/>
+            <FileWorldGenerator src="{}/data/worlds/{}" forceReset="true"/>
             <TomcatDecorator mission="{}" timeLimitInSeconds="{}"/>
           </ServerHandlers>
       </ServerSection>
@@ -67,7 +67,7 @@ namespace tomcat {
             </ContinuousMovementCommands>
           </AgentHandlers>
       </AgentSection>
-    </Mission>)", this->getWorldFolder(), this->missionId, this->timeLimitInSeconds);
+    </Mission>)", getenv("TOMCAT"), this->getWorldFolder(), this->missionId, this->timeLimitInSeconds);
 
     return worldSkeletonXML;
   }
