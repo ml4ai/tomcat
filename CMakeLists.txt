@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.11)
 
 project(tomcat)
 
+set(CXX_STANDARD 17)
+set(CXX_STANDARD_REQUIRED ON)
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/tools/cmake/")
 
 include(utils)
