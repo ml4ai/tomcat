@@ -14,7 +14,7 @@ Below we provide instructions for each.
 #### MacPorts
 
 ```
-port install cmake libfmt doxygen boost ffmpeg opencv4 dlib openjdk8 gradle libsndfile portaudio
+sudo port install cmake libfmt doxygen boost ffmpeg opencv4 dlib openjdk8 gradle libsndfile portaudio
 ```
 
 Add the following line to your `~/.bash_profile` to make Java 8 the default
