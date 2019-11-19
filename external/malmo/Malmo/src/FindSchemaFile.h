@@ -20,20 +20,15 @@
 //  IN THE SOFTWARE.
 // --------------------------------------------------------------------------------------------------
 
-#ifndef _FINDSCHEMAFILE_H_
-#define _FINDSCHEMAFILE_H_
+#pragma once
 
-// STL:
 #include <string>
 
 namespace malmo {
 
-const std::string xml_namespace("http://ProjectMalmo.microsoft.com");
+  const std::string xml_namespace("http://ProjectMalmo.microsoft.com");
 
-// Use the MALMO_XSD_PATH environment variable, if set, to find a .xsd file.
-// Or look in the current directory. Or in ../Schemas. If not found, throw an
-// exception.
-std::string FindSchemaFile(const std::string &name);
+  // Use the TOMCAT environment variable, if set, to find a .xsd file.
+  // If not found, throw an exception.
+  std::string FindSchemaFile(const std::string& name);
 } // namespace malmo
-
-#endif

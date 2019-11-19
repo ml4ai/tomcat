@@ -97,12 +97,9 @@ To download the mission files, install the ToMCAT local agent, Malmo, and
 Minecraft, do the following:
 
 ```bash
-cd ${TOMCAT}/data
-curl -O http://vanga.sista.arizona.edu/tomcat/data/worlds.tgz
-tar -xvzf worlds.tgz
-cd ..
+./tools/download_tomcat_data.sh
 mkdir build && cd build 
-cmake .. 
+cmake ..
 make -j
 make -j Minecraft
 ```

@@ -42,8 +42,6 @@ message("Configure MALMO_VERSION at ${MALMO_VERSION}")
 # N.B. Check that this version number matches the ones in the schemas.
 
 set(BUILD_MOD_DESC "Specifies whether to build the Malmo Minecraft Mod")
-set(BUILD_DOCUMENTATION_DESC
-    "Specifies whether to build the documentation for the API and XML")
 set(
   INCLUDE_ALE_DESC
   "Specifies whether to build Malmo with bindings to the Arcade Learning Environment"
@@ -226,9 +224,6 @@ set(CMAKE_INSTALL_PREFIX "install") # useful for testing the sample scripts
 add_subdirectory(Malmo)
 if(BUILD_MOD)
   add_subdirectory(Minecraft EXCLUDE_FROM_ALL)
-endif()
-if(BUILD_DOCUMENTATION)
-  add_subdirectory(doc)
 endif()
 add_subdirectory(Schemas)
 if(INCLUDE_ALE)
