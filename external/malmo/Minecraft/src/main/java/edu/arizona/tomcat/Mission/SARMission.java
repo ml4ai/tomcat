@@ -157,7 +157,7 @@ public class SARMission extends Mission {
 	}
 
 	/**
-	 * Add itens to the player's inventory to help him accomplish the mission goals
+	 * Add items to the player's inventory to help them accomplish the mission goals
 	 * @param world
 	 */
 	private void addItensToInventory(World world) {
