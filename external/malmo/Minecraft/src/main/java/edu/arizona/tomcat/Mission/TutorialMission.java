@@ -69,9 +69,9 @@ public class TutorialMission extends Mission {
 	private void addApproachPoolsPhase() {
 		MissionPhase approachPoolsPhase = new MissionPhase(CompletionStrategy.ALL_GOALS, 0, true, "You got it!", 0, 2);	
 		approachPoolsPhase.addInstructionsLine("Approach the lava and water tanks.");
-		approachPoolsPhase.addInstructionsLine("Use the keys A,W,D and S to move around.");
-		approachPoolsPhase.addInstructionsLine("Take care! If you fall into the lava tank, you die.");
-		approachPoolsPhase.addInstructionsLine("If you fall into the water tank, press space until you reach the surface.");
+		approachPoolsPhase.addInstructionsLine("Use the keys A, W, D and S to move around.");
+		approachPoolsPhase.addInstructionsLine("Take care! If you fall into the lava tank, you will die.");
+		approachPoolsPhase.addInstructionsLine("If you fall into the water tank, press <Spacebar> until you reach the surface.");
 		approachPoolsPhase.addInstructionsLine("");
 		approachPoolsPhase.addInstructionsLine("Click OK when you are ready.");
 		approachPoolsPhase.addGoal(new ReachPositionGoal(-635, 4, 1582, 2));
@@ -83,9 +83,9 @@ public class TutorialMission extends Mission {
 	 */
 	private void addApproachEntitiesPhase() {
 		MissionPhase approachEntitiesPhase = new MissionPhase(CompletionStrategy.ALL_GOALS, 5, true, "You got it!", 0, 2);	
-		approachEntitiesPhase.addInstructionsLine("Take a closer look at a villager, a skeleton and a zombie.");
+		approachEntitiesPhase.addInstructionsLine("Walk around the area and try to find a villager, a skeleton and a zombie.");
 		approachEntitiesPhase.addInstructionsLine("Pay attention to their appearance.");
-		approachEntitiesPhase.addInstructionsLine("You might need to distinguish them well in the future.");
+		approachEntitiesPhase.addInstructionsLine("You might need to distinguish them well in the future!");
 		approachEntitiesPhase.addInstructionsLine("");
 		approachEntitiesPhase.addInstructionsLine("Click OK when you are ready.");
 		approachEntitiesPhase.addGoal(new ReachPositionGoal(-615, 4, 1585, 3));
