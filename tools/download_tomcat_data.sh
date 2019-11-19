@@ -8,5 +8,5 @@ cd ${TOMCAT}/data
 
 # Download and extract the manually-created worlds from vanga.
 curl -O http://vanga.sista.arizona.edu/tomcat/data/worlds.tgz
-tar -xvzf worlds.tgz
+tar -xvzf worlds.tgz && rm -rf worlds.tgz
 cd ..
