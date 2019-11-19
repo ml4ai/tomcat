@@ -86,7 +86,6 @@ For convenience, in your `~/.bash_profile` file, add:
 
 ```bash
 export TOMCAT=<path_to_tomcat_repo>
-export MALMO_XSD_PATH="${TOMCAT}/external/malmo/Schemas"
 ```
 
 and make sure to run `source ~/.bash_profile` to activate the environment
@@ -113,7 +112,7 @@ Windows support are welcome.
 Running experiments
 -------------------
 
-To launch Minecraft, execute the script (in the build directory)
+To launch Minecraft, execute the script (in the `build` directory)
 
     ./launch_minecraft.sh
 
