@@ -45,6 +45,12 @@ functionality - The API for those components can be found here: `Java API <devel
 
 The Github repository for ToMCAT can be found `here <https://github.com/ml4ai/tomcat>`_.
 
+**Presentations**
+
+`Site Visit, 9-25-2019 <http://vanga.sista.arizona.edu/tomcat/presentations/site_visit_09_25_2019.pdf>`_
+
+
+
 Indices and tables
 ==================
 

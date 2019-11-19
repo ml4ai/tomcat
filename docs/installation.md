@@ -150,7 +150,7 @@ To speed up builds, create a file called gradle.properties and add
 If you want to activate video recording and other things that depend on Malmo
 quitting the server, uncomment line 18 in `src/TomcatMission.cpp` and
 comment line 79 in 
-`/external/malmo/Minecraft/src/main/java/edu/arizona/tomcat/Mission.java` file.
+`/external/malmo/Minecraft/src/main/java/edu/arizona/tomcat/Mission/Mission.java` file.
 
 We are still working on this issue so we don't need to perform this step in the
 future.
