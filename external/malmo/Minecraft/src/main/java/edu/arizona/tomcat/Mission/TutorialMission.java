@@ -140,7 +140,7 @@ public class TutorialMission extends Mission {
 		MissionPhase saveVillagerPhase = new MissionPhase(CompletionStrategy.ALL_GOALS, 0, true, "You got it!", 0, 2);	
 		saveVillagerPhase.addInstructionsLine("Open the wooden door to access the other room and rescue a villager.");		
 		saveVillagerPhase.addInstructionsLine("To open a wooden door, just right-click on it.");
-		saveVillagerPhase.addInstructionsLine("Rescue the villagger by bumping into him.");
+		saveVillagerPhase.addInstructionsLine("Rescue the villager by bumping into him.");
 		saveVillagerPhase.addInstructionsLine("");
 		saveVillagerPhase.addInstructionsLine("Click OK when you are ready.");
 		saveVillagerPhase.addGoal(new ApproachEntityGoal(this.villagerUUID, MAX_DISTANCE_TO_SAVE_VILLAGER));
