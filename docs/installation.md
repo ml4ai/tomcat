@@ -16,9 +16,7 @@ Homebrew, or apt-get as their package manager.
 
 ```bash
 git clone https://github.com/ml4ai/tomcat
-cd tomcat
-./tools/install_tomcat_dependencies.sh
-./tools/install_tomcat.sh
+cd tomcat && ./tools/install_tomcat.sh
 ```
 
 The scripts assume that the default shell is bash - if this is not the case for
