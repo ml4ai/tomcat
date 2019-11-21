@@ -1,0 +1,34 @@
+{
+  "pages": 
+  [
+    {
+      "text": [
+         "Besides gates, you can also open different kinds of doors.", 
+         "To open an iron door, right-click on the lever close to it."
+      ],
+      "images":
+      [ 
+        {
+          "texture": "textures1.png",
+          "caption": "Lever",
+          "originXInTexture": 32,
+          "originYInTexture": 32,
+          "width": 32,
+          "height": 32
+        }
+      ]
+    },
+    {
+      "text": [
+      	 "Now leave the arena and find a building accessible by an iron door.",
+         "Open the iron door and kill the zombie inside the building.",
+         "",
+         "Press OK when you are ready."
+      ],
+      "images":
+      [ 
+        
+      ]
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "pages": 
+  [
+    {
+      "text": [
+         "There will be villagers, zombies and skeletons in the missions.", 
+         "Pay attention to their appearance because you",
+         "might need to distinguish them well in the future."
+      ],
+      "images":
+      [ 
+        {
+          "texture": "textures1.png",
+          "caption": "Villager",
+          "originXInTexture": 160,
+          "originYInTexture": 0,
+          "width": 32,
+          "height": 32
+        },
+        {
+          "texture": "textures1.png",
+          "caption": "Zombie",
+          "originXInTexture": 96,
+          "originYInTexture": 0,
+          "width": 32,
+          "height": 32
+        },
+        {
+          "texture": "textures1.png",
+          "caption": "Skeleton",
+          "originXInTexture": 128,
+          "originYInTexture": 0,
+          "width": 32,
+          "height": 32
+        }
+      ]
+    },
+    {
+      "text": [
+         "Now find and approach these entities.", 
+         "Don't worry! The zombie and the skeleton won't hurt you.",
+         "They are trapped behind invisible walls.",
+         "",
+         "Press OK when you are ready."
+      ],
+      "images":
+      [ 
+        
+      ]
+    }
+  ]
+}
