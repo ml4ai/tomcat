@@ -4,6 +4,8 @@
 
 set -e
 
+echo "Downloading ToMCAT data..."
+
 cd data
 
 # Download and extract the manually-created worlds from vanga.
