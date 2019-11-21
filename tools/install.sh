@@ -47,7 +47,7 @@ if [ -z "$TOMCAT" ]; then
 else
   echo "TOMCAT environment variable is already set to ${TOMCAT}."
   echo "If this does not match `pwd`/tomcat, please correct it in"\
-  "~/.bash_profile."
+  "~/.bashrc (or ~/.bash_profile for MacOS."
 fi
 
 echo "Finished ToMCAT installation!"

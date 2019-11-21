@@ -24,6 +24,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
       doxygen \
       ffmpeg \
       opencv4 \
+      openblas \
       dlib \
       openjdk8 \
       gradle \
@@ -58,6 +59,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
       doxygen \
       ffmpeg \
       opencv \
+      openblas \
       dlib \
       boost \
       libsndfile \
@@ -77,6 +79,7 @@ elif [ -x "$(command -v apt-get)" ]; then
     libfmt-dev \
     doxygen \
     ffmpeg \
+    libopenblas-dev \
     libopencv-dev \
     libdlib-dev \
     openjdk-8-jdk \
