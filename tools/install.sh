@@ -7,7 +7,7 @@ set -e
 
 echo "Installing ToMCAT..."
 
-mkdir build 
+mkdir -p build 
 cd build 
 cmake ..
 make -j
