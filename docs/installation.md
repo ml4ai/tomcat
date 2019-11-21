@@ -1,13 +1,11 @@
 Installation
 ============
 
-### Dependencies
-
 ToMCAT depends on the following: CMake 3.15+, Boost 1.69+, a C++17 compatible
 compiler (tested with GCC 9 and AppleClang 11.0 so far), libfmt, doxygen,
 ffmpeg, OpenCV 4, dlib, Java 8, Gradle, libsndfile, and portaudio.
 
-**Note** On Debian-flavored Linux distros, you will need to install CMake and
+**Note:** On Debian-flavored Linux distros, you will need to install CMake and
 Boost from source, since the versions installed by apt-get are not new enough
 (as of 11/19/2019).
 
@@ -16,7 +14,7 @@ Homebrew, or apt-get as their package manager.
 
 ```bash
 git clone https://github.com/ml4ai/tomcat
-cd tomcat && ./tools/install_tomcat.sh
+cd tomcat && ./tools/install.sh
 ```
 
 The scripts assume that the default shell is bash - if this is not the case for
