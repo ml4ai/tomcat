@@ -1,109 +1,29 @@
 Installation
 ============
 
-Dependencies
-------------
+### Dependencies
 
-First, you'll need to grab the dependencies.
+ToMCAT depends on the following: CMake 3.15+, Boost 1.69+, a C++17 compatible
+compiler (tested with GCC 9 and AppleClang 11.0 so far), libfmt, doxygen,
+ffmpeg, OpenCV 4, dlib, Java 8, Gradle, libsndfile, and portaudio.
 
-### MacOS
+**Note** On Debian-flavored Linux distros, you will need to install CMake and
+Boost from source, since the versions installed by apt-get are not new enough
+(as of 11/19/2019).
 
-MacPorts and Homebrew are the most commonly used package managers for MacOS.
-Below we provide instructions for each.
-
-#### MacPorts
-
-```
-sudo port install cmake libfmt doxygen boost ffmpeg opencv4 dlib openjdk8 gradle libsndfile portaudio
-```
-
-Add the following line to your `~/.bash_profile` to make Java 8 the default
-version:
-
-```bash
-export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk8/Contents/Home
-```
-
-Then run `source ~/.bash_profile` to activate this Java version.
-
-
-#### Homebrew
-
-If you are using the Homebrew package manager, you can install these with the
-following commands.
-
-```bash
-brew install cmake fmt doxygen boost ffmpeg opencv dlib libsndfile portaudio
-brew tap adoptopenjdk/openjdk
-brew cask install adoptopenjdk8
-brew install gradle
-```
-
-### Linux (Ubuntu)
-
-Install the requirements using apt-get:
-
-```bash
-sudo apt-get update
-sudo apt-get install gcc-9 libfmt-dev doxygen ffmpeg libopencv-dev libdlib-dev openjdk-8-jdk portaudio19-dev libsndfile1-dev
-```
-
-- ToMCAT requires Boost 1.69 or higher, so just [install Boost from
-  source](https://www.boost.org/doc/libs/1_71_0/more/getting_started/unix-variants.html)
-- You'll need a newer version of CMake than is available through apt. Use the
-  following commands to do so.
-
-``` bash
-curl -LO https://github.com/Kitware/CMake/releases/download/v3.15.3/cmake-3.15.3.tar.gz
-tar -zxvf cmake-3.15.3.tar.gz
-cd cmake-3.15.3
-./bootstrap
-make -j
-sudo make -j install
-```
-
-- Navigate to the folder (or create the folder) where you want to install
-  tomcat, using the cd command (if you are not familiar with basic shell
-  commands, see [here](https://swcarpentry.github.io/shell-novice/reference/).
-- Follow the instructions [here](https://github.com/ml4ai/tomcat#installation) to
-  install and run the ToMCAT agent.
-
-
-Installing ToMCAT
------------------
-
-Clone the repo:
+The following commands should work for users that use either MacPorts,
+Homebrew, or apt-get as their package manager. 
 
 ```bash
 git clone https://github.com/ml4ai/tomcat
+cd tomcat
+./tools/install_tomcat_dependencies.sh
+./tools/install_tomcat.sh
 ```
 
-
-Malmo requires the environment variable `TOMCAT` to point to the ToMCAT root
-directory, and the variable `MALMO_XSD_PATH` to point to the Schemas directory.
-
-For convenience, in your `~/.bash_profile` file, add:
-
-```bash
-export TOMCAT=<path_to_tomcat_repo>
-```
-
-and make sure to run `source ~/.bash_profile` to activate the environment
-variable.
-
-
-To download the mission files, install the ToMCAT local agent, Malmo, and
-Minecraft, do the following:
-
-```bash
-./tools/download_tomcat_data.sh
-mkdir build && cd build 
-cmake ..
-make -j
-make -j Minecraft
-```
-
-### Windows
+The scripts assume that the default shell is bash - if this is not the case for
+you, then you are probably an advanced user, and may want to take a look at the
+shell scripts before running them :).
 
 We don't officially support Windows right now, but pull requests that add
 Windows support are welcome.
