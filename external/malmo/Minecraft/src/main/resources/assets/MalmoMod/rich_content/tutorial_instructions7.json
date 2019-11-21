@@ -1,0 +1,34 @@
+{
+  "pages": 
+  [
+    {
+      "text": [
+         "Every time you save a villager, the progress bar in the top-left,", 
+         "corner of your screen is updated.",
+         "Your bar is full because you saved all the villagers in this mission."         
+      ],    
+      "images":
+      [ 
+        {
+          "texture": "textures1.png",
+          "caption": "Progress Bar",
+          "originXInTexture": 128,
+          "originYInTexture": 32,
+          "width": 96,
+          "height": 32
+        }
+      ]
+    },
+    {
+      "text": [
+      	 "Finally, leave the building to complete the tutorial.",
+         "",
+         "Press OK when you are ready."
+      ],
+      "images":
+      [ 
+        
+      ]
+    }
+  ]
+}

@@ -1,11 +1,8 @@
 package edu.arizona.tomcat.Mission.Client;
 
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
-import edu.arizona.tomcat.Mission.SARMission;
 import edu.arizona.tomcat.Mission.TutorialMission;
 import edu.arizona.tomcat.Mission.gui.GUIOverlayVillagersSaved;
-import edu.arizona.tomcat.Mission.gui.TutorialCompletionScreen;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.common.MinecraftForge;
 
 public class TutorialClientMission extends ClientMission {
@@ -39,8 +36,4 @@ public class TutorialClientMission extends ClientMission {
 		return this.numberOfSavedVillagers;
 	}
 
-	@Override
-	public GuiScreen getCompletionScreenInstance() {
-		return new TutorialCompletionScreen();
-	}
 }
