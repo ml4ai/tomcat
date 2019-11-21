@@ -64,4 +64,4 @@ external/malmo/Minecraft/run/crash-reports/
 external/malmo/Minecraft/run/
 
 # data
-data/worlds
+data/*
