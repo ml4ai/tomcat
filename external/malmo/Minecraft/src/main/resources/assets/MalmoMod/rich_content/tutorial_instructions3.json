@@ -1,0 +1,61 @@
+{
+  "pages": 
+  [
+    {
+      "text": [
+         "You can interact with objects by getting close", 
+         "and gazing at them. The cross in the middle of your screen",
+         "shows you where your character is looking at."
+      ],
+      "images":
+      [ 
+        {
+          "texture": "textures1.png",
+          "caption": "View Point",
+          "originXInTexture": 96,
+          "originYInTexture": 32,
+          "width": 32,
+          "height": 32
+        }
+      ]
+    },
+    {
+      "text": [
+      	 "To open gates, get close enough and move your mouse",
+         "until your character's is aiming the gate the just",
+         "right-click on it."
+      ],
+      "images":
+      [ 
+        {
+          "texture": "textures1.png",
+          "caption": "Gate",
+          "originXInTexture": 192,
+          "originYInTexture": 0,
+          "width": 32,
+          "height": 32
+        },
+        {
+          "texture": "textures1.png",
+          "caption": "Open",
+          "originXInTexture": 32,
+          "originYInTexture": 0,
+          "width": 32,
+          "height": 32
+        }
+      ]
+    },
+    {
+      "text": [
+      	 "Now find the arena and go to its center.", 
+      	 "You will need to open a gate to do that.",
+         "",
+         "Press OK when you are ready."
+      ],
+      "images":
+      [ 
+        
+      ]
+    }
+  ]
+}

@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import edu.arizona.tomcat.Utils.Converter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import edu.arizona.tomcat.Mission.gui.RichContent;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
@@ -14,30 +17,44 @@ public class TomcatMessageData {
 	private static enum Key { MISSION_PHASE_INSTRUCTIONS, MISSION_PHASE_MESSAGE, MISSION_PHASE_MESSAGE_DURATION };
 
 	private Map<String, String> data;
+	private RichContent richContent;
 	
+	/**
+	 * Constructor
+	 */
 	public TomcatMessageData() {
 		this.data = new HashMap<String, String>();
 	}
 	
 	/**
-	 * Reads data from a ByteBuffer object
+	 * Constructor
+	 * @param richContent - Rich content object
+	 */
+	public TomcatMessageData(RichContent richContent) {
+		this.data = new HashMap<String, String>();
+		this.richContent = richContent;
+	}
+	
+	/**
+	 * Reads the .json content of a buffer and loads it to the attributes of this class
 	 * @param buffer - ByteBuffer object
 	 * @throws IOException
 	 */
 	public void readDataFromBuffer(ByteBuf buffer) throws IOException {
-		this.data = Converter.jsonToMap(this.readStringFromByteBuffer(buffer));
-		if (this.data == null) {
-			this.data = new HashMap<String, String>();
-		}
+		Gson gson = new Gson();        
+        TomcatMessageData messageData = gson.fromJson(this.readStringFromByteBuffer(buffer), TomcatMessageData.class);
+		this.data = messageData.data;
+		this.richContent = messageData.richContent;
 	}
 	
 	/**
-	 * Reads data to a ByteBuffer object
+	 * Convert the attributes of this class to a .json string and write it to the buffer
 	 * @param buffer - ByteBuffer object
 	 * @throws IOException
 	 */
 	public void writeDataToBuffer(ByteBuf buffer) throws IOException {
-		String json = Converter.mapToJson(this.data);
+		Gson gson = new GsonBuilder().create();
+        String json = gson.toJson(this);
 		this.writeStringToByteBuffer(json, buffer);		
 	}
 	
@@ -67,22 +84,6 @@ public class TomcatMessageData {
 	}
 	
 	/**
-	 * Adds a series of mission phase instructions to the data map
-	 * @param instructions - Mission phase instructions
-	 */
-	public void setMissionPhaseInstructions(String instructions) {
-		this.data.put(Key.MISSION_PHASE_INSTRUCTIONS.toString(), instructions);
-	}
-	
-	/**
-	 * Retrieves a series of mission phase instructions from the data map
-	 * @return
-	 */
-	public String getMissionPhaseInstructions() {
-		return this.data.get(Key.MISSION_PHASE_INSTRUCTIONS.toString());
-	}
-	
-	/**
 	 * Adds a mission phase message to the data map
 	 * @param message - Mission phase message
 	 */
@@ -96,6 +97,14 @@ public class TomcatMessageData {
 	 */
 	public String getMissionPhaseMessage() {
 		return this.data.get(Key.MISSION_PHASE_MESSAGE.toString());
+	}
+	
+	/**
+	 * Retrieves a rich content included in the message
+	 * @return
+	 */
+	public RichContent getRichContent() {
+		return this.richContent;
 	}
 	
 }

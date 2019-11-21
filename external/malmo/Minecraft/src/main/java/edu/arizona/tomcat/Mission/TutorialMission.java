@@ -7,6 +7,7 @@ import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.Schemas.EntityTypes;
 import com.microsoft.Malmo.Schemas.PosAndDirection;
 
+import edu.arizona.tomcat.Messaging.TomcatMessageData;
 import edu.arizona.tomcat.Messaging.TomcatMessaging;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
 import edu.arizona.tomcat.Mission.MissionPhase.CompletionStrategy;
@@ -16,6 +17,7 @@ import edu.arizona.tomcat.Mission.Goal.ApproachEntityGoal;
 import edu.arizona.tomcat.Mission.Goal.KillEntityGoal;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
 import edu.arizona.tomcat.Mission.Goal.ReachPositionGoal;
+import edu.arizona.tomcat.Mission.gui.RichContent;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.World.Drawing;
 import edu.arizona.tomcat.World.TomcatEntity;
@@ -67,13 +69,8 @@ public class TutorialMission extends Mission {
 	 * Creates a phase in the mission where the objective is to locate the pools of water and lava in the world
 	 */
 	private void addApproachPoolsPhase() {
-		MissionPhase approachPoolsPhase = new MissionPhase(CompletionStrategy.ALL_GOALS, 0, true, "You got it!", 0, 2);	
-		approachPoolsPhase.addInstructionsLine("Approach the lava and water tanks.");
-		approachPoolsPhase.addInstructionsLine("Use the keys A,W,D and S to move around.");
-		approachPoolsPhase.addInstructionsLine("Take care! If you fall into the lava tank, you die.");
-		approachPoolsPhase.addInstructionsLine("If you fall into the water tank, press space until you reach the surface.");
-		approachPoolsPhase.addInstructionsLine("");
-		approachPoolsPhase.addInstructionsLine("Press OK when you are ready.");
+		RichContent instructions = RichContent.createFromJson("tutorial_instructions1.json");
+		MissionPhase approachPoolsPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 0, true, "Well Done!", 0, 2);	
 		approachPoolsPhase.addGoal(new ReachPositionGoal(-635, 4, 1582, 2));
 		this.addPhase(approachPoolsPhase);
 	}
@@ -82,12 +79,8 @@ public class TutorialMission extends Mission {
 	 * Creates a phase in the mission where the objective is to locate the entities in the world
 	 */
 	private void addApproachEntitiesPhase() {
-		MissionPhase approachEntitiesPhase = new MissionPhase(CompletionStrategy.ALL_GOALS, 5, true, "You got it!", 0, 2);	
-		approachEntitiesPhase.addInstructionsLine("Take a closer look at a villager, a skeleton and a zombie.");
-		approachEntitiesPhase.addInstructionsLine("Pay attention to their appearance.");
-		approachEntitiesPhase.addInstructionsLine("You might need to distinguish them well in the future.");
-		approachEntitiesPhase.addInstructionsLine("");
-		approachEntitiesPhase.addInstructionsLine("Press OK when you are ready.");
+		RichContent instructions = RichContent.createFromJson("tutorial_instructions2.json");
+		MissionPhase approachEntitiesPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 5, true, "Well Done!", 0, 2);	
 		approachEntitiesPhase.addGoal(new ReachPositionGoal(-615, 4, 1585, 3));
 		addPhase(approachEntitiesPhase);
 	}
@@ -96,11 +89,8 @@ public class TutorialMission extends Mission {
 	 * Creates a phase in the mission where the objective is to go to the center of the arena
 	 */
 	private void addEnterTheArenaPhase() {
-		this.enterTheArenaPhase = new MissionPhase(CompletionStrategy.ALL_GOALS, 10, true, "You got it!", 0, 2);	
-		this.enterTheArenaPhase.addInstructionsLine("Go to the center of the combat arena.");
-		this.enterTheArenaPhase.addInstructionsLine("To open the gate, right-click on it.");
-		this.enterTheArenaPhase.addInstructionsLine("");
-		this.enterTheArenaPhase.addInstructionsLine("Press OK when you are ready.");
+		RichContent instructions = RichContent.createFromJson("tutorial_instructions3.json");
+		this.enterTheArenaPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 10, true, "Well Done!", 0, 2);	
 		this.enterTheArenaPhase.addGoal(new ReachPositionGoal(-623, 4, 1600, 2));
 		this.addPhase(this.enterTheArenaPhase);
 	}
@@ -109,12 +99,8 @@ public class TutorialMission extends Mission {
 	 * Creates a phase in the mission where the objective is to battle and kill a skeleton
 	 */
 	private void addKillSkeletonPhase() {
-		this.killSkeletonPhase = new MissionPhase(CompletionStrategy.ALL_GOALS, 0, true, "You got it!", 0, 2);	
-		this.killSkeletonPhase.addInstructionsLine("Battle and kill the skeleton behind you.");		
-		this.killSkeletonPhase.addInstructionsLine("Left-click to attack him.");
-		this.killSkeletonPhase.addInstructionsLine("You can also try to take him outside the arena. He will burn under the sun.");
-		this.killSkeletonPhase.addInstructionsLine("");
-		this.killSkeletonPhase.addInstructionsLine("Press OK when you are ready.");
+		RichContent instructions = RichContent.createFromJson("tutorial_instructions4.json");
+		this.killSkeletonPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 0, true, "Well Done!", 0, 2);	
 		this.killSkeletonPhase.addGoal(new KillEntityGoal(this.skeletonUUID));
 		this.addPhase(this.killSkeletonPhase);
 	}
@@ -123,12 +109,8 @@ public class TutorialMission extends Mission {
 	 * Creates a phase in the mission where the objective is to battle and kill a zombie
 	 */
 	private void addKillZombiePhase() {
-		this.killZombiePhase = new MissionPhase(CompletionStrategy.ALL_GOALS, 0, true, "You got it!", 0, 2);	
-		this.killZombiePhase.addInstructionsLine("Leave the arena and kill the zombie inside the building.");		
-		this.killZombiePhase.addInstructionsLine("To open an iron door, right-click on the switch close to it.");
-		this.killZombiePhase.addInstructionsLine("Zombies also burn under the sun.");
-		this.killZombiePhase.addInstructionsLine("");
-		this.killZombiePhase.addInstructionsLine("Press OK when you are ready.");
+		RichContent instructions = RichContent.createFromJson("tutorial_instructions5.json");
+		this.killZombiePhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 0, true, "Well Done!", 0, 2);	
 		this.killZombiePhase.addGoal(new KillEntityGoal(this.zombieUUID));
 		this.addPhase(this.killZombiePhase);
 	}
@@ -137,12 +119,8 @@ public class TutorialMission extends Mission {
 	 * Creates a phase in the mission where the objective is to save a villager
 	 */
 	private void addSaveVillagerPhase() {
-		MissionPhase saveVillagerPhase = new MissionPhase(CompletionStrategy.ALL_GOALS, 0, true, "You got it!", 0, 2);	
-		saveVillagerPhase.addInstructionsLine("Open the wooden door to access the other room and rescue a villager.");		
-		saveVillagerPhase.addInstructionsLine("To open a wooden door, just right-click on it.");
-		saveVillagerPhase.addInstructionsLine("Rescue the villagger by bumping into him.");
-		saveVillagerPhase.addInstructionsLine("");
-		saveVillagerPhase.addInstructionsLine("Press OK when you are ready.");
+		RichContent instructions = RichContent.createFromJson("tutorial_instructions6.json");
+		MissionPhase saveVillagerPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 0, true, "Well Done!", 0, 2);	
 		saveVillagerPhase.addGoal(new ApproachEntityGoal(this.villagerUUID, MAX_DISTANCE_TO_SAVE_VILLAGER));
 		this.addPhase(saveVillagerPhase);
 	}
@@ -151,13 +129,8 @@ public class TutorialMission extends Mission {
 	 * Creates a phase in the mission where the objective is leave the building
 	 */
 	private void addLeaveTheBuildingPhase() {
-		MissionPhase leaveTheBuildingPhase = new MissionPhase(CompletionStrategy.ALL_GOALS, 0, true, "You got it!", 0, 2);	
-		leaveTheBuildingPhase.addInstructionsLine("Everytime you save a villager, the progress bar in the top-left");
-		leaveTheBuildingPhase.addInstructionsLine("corner of your screen increases.");
-		leaveTheBuildingPhase.addInstructionsLine("Your bar is full because you saved all the villagers in this mission.");
-		leaveTheBuildingPhase.addInstructionsLine("Now, get out of the building.");
-		leaveTheBuildingPhase.addInstructionsLine("");
-		leaveTheBuildingPhase.addInstructionsLine("Press OK when you are ready.");
+		RichContent instructions = RichContent.createFromJson("tutorial_instructions7.json");
+		MissionPhase leaveTheBuildingPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 0, true, "Well Done!", 0, 2);	
 		leaveTheBuildingPhase.addGoal(new ReachPositionGoal(-623, 4, 1579, 2));
 		addPhase(leaveTheBuildingPhase);
 	}
@@ -237,7 +210,8 @@ public class TutorialMission extends Mission {
 
 	@Override
 	protected void afterLastPhaseCompletion() {
-		MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.SHOW_COMPLETION_SCREEN), MinecraftServerHelper.getFirstPlayer());
+		RichContent content = RichContent.createFromJson("tutorial_completion.json");
+		MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.SHOW_COMPLETION_SCREEN, new TomcatMessageData(content)), MinecraftServerHelper.getFirstPlayer());
 	}
 
 	@Override
