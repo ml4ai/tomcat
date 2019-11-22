@@ -1,0 +1,34 @@
+{
+  "pages": 
+  [
+    {
+      "text": [
+         "Opening a wooden door is easy. Just like you did to open the gate,", 
+         "get close enough, aim at the door and right-click on it."
+      ],
+      "images":
+      [ 
+        {
+          "texture": "textures1.png",
+          "caption": "Wooden Door",
+          "originXInTexture": 64,
+          "originYInTexture": 32,
+          "width": 32,
+          "height": 32
+        }
+      ]
+    },
+    {
+      "text": [
+      	 "Now Open the wooden door to access the other room and rescue a villager.",
+         "You can achieve that by bumping into him.",
+         "",
+         "Press OK when you are ready."
+      ],
+      "images":
+      [ 
+        
+      ]
+    }
+  ]
+}

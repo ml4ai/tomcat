@@ -174,12 +174,8 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 	 */
 	public void handleMessageFromClient(TomcatMessage message) {		
 		switch (message.getMessageType()) {
-		case INSTRUCTIONS_SCREEN_DISMISSED:
-			this.currentPhase.instructionsScreenDismissed();
-			break;
-
 		case OPEN_SCREEN_DISMISSED:
-			this.currentPhase.messageScreenDismissed();
+			this.currentPhase.openScreenDismissed();
 			break;
 
 		default:

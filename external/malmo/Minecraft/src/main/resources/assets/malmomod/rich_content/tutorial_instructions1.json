@@ -1,0 +1,67 @@
+{
+  "pages": 
+  [
+    {
+      "text": [
+         "Press the keys W,A,S and D to move, drag your mouse", 
+         "to turn around and press space to jump."
+      ],
+      "images":
+      [ 
+        {
+          "texture": "textures1.png",
+          "caption": "Move",
+          "originXInTexture": 0,
+          "originYInTexture": 64,
+          "width": 96,
+          "height": 64
+        },
+        {
+          "texture": "textures1.png",
+          "caption": "Jump",
+          "originXInTexture": 96,
+          "originYInTexture": 64,
+          "width": 160,
+          "height": 64
+        },
+        {
+          "texture": "textures1.png",
+          "caption": "Turn Around",
+          "originXInTexture": 64,
+          "originYInTexture": 0,
+          "width": 32,
+          "height": 32
+        }
+      ]
+    },
+    {
+      "text": [
+         "Approach the lava and water pits to your left.", 
+         "Take care! If you fall into the lava pit, you die.",
+         "If you fall into the water pit, keep pressing space",
+         "until you reach the surface.", 
+         "",
+         "Press OK when you are ready."
+      ],
+      "images":
+      [ 
+        {
+          "texture": "textures1.png",
+          "caption": "Water",
+          "originXInTexture": 0,
+          "originYInTexture": 32,
+          "width": 32,
+          "height": 32
+        },
+        {
+          "texture": "textures1.png",
+          "caption": "Lava",
+          "originXInTexture": 224,
+          "originYInTexture": 0,
+          "width": 32,
+          "height": 32
+        }
+      ]
+    }
+  ]
+}

@@ -43,24 +43,23 @@
 #include <iostream>
 #include <sstream>
 
-#ifndef CONFIG_DIR
-#define CONFIG_DIR "~"
-#endif
-
 using namespace std;
+
+namespace fs = boost::filesystem;
+using fs::path, fs::exists;
+
 using namespace FaceAnalysis;
-using boost::filesystem::path;
 
 FaceAnalyserParameters::FaceAnalyserParameters() : root() {
   // initialise the default values
-  init();
+  this->init();
 }
 
 FaceAnalyserParameters::FaceAnalyserParameters(string root_dir) {
   this->root = root_dir;
-  init();
+  this->init();
 }
-FaceAnalyserParameters::FaceAnalyserParameters(vector<string> &arguments)
+FaceAnalyserParameters::FaceAnalyserParameters(vector<string>& arguments)
     : root() {
 
   // First element is reserved for the executable location (useful for finding
@@ -68,9 +67,9 @@ FaceAnalyserParameters::FaceAnalyserParameters(vector<string> &arguments)
   this->root = path(arguments[0]).parent_path();
 
   // initialise the default values
-  init();
+  this->init();
 
-  bool *valid = new bool[arguments.size()];
+  bool* valid = new bool[arguments.size()];
   valid[0] = true;
 
   bool scale_set = false;
@@ -80,7 +79,7 @@ FaceAnalyserParameters::FaceAnalyserParameters(vector<string> &arguments)
     valid[i] = true;
 
     if (arguments[i].compare("-au_static") == 0) {
-      dynamic = false;
+      this->dynamic = false;
       valid[i] = false;
     }
     else if (arguments[i].compare("-g") == 0) {
@@ -88,18 +87,18 @@ FaceAnalyserParameters::FaceAnalyserParameters(vector<string> &arguments)
       valid[i] = false;
     }
     else if (arguments[i].compare("-nomask") == 0) {
-      sim_align_face_mask = false;
+      this->sim_align_face_mask = false;
       valid[i] = false;
     }
     else if (arguments[i].compare("-simscale") == 0) {
-      sim_scale_out = stod(arguments[i + 1]);
+      this->sim_scale_out = stod(arguments[i + 1]);
       valid[i] = false;
       valid[i + 1] = false;
       scale_set = true;
       i++;
     }
     else if (arguments[i].compare("-simsize") == 0) {
-      sim_size_out = stoi(arguments[i + 1]);
+      this->sim_size_out = stoi(arguments[i + 1]);
       valid[i] = false;
       valid[i + 1] = false;
       size_set = true;
@@ -113,34 +112,10 @@ FaceAnalyserParameters::FaceAnalyserParameters(vector<string> &arguments)
     }
   }
 
-  if (dynamic) {
-    this->model_location = "models/AU_predictors/main_dynamic_svms.txt";
-  }
-  else {
-    this->model_location = "models/AU_predictors/main_static_svms.txt";
-  }
-
+  this->setModelLoc();
   // If we set the size but not the scale, adapt the scale to the right size
-  if (!scale_set && size_set)
-    sim_scale_out = sim_size_out * (0.7 / 112.0);
-
-  // Make sure model_location is valid
-  // First check working directory, then the executable's directory, then the
-  // config path set by the build process.
-  path config_path = path(CONFIG_DIR);
-  path model_path =
-      path(this->model_location);
-  if (boost::filesystem::exists(model_path)) {
-    this->model_location = model_path.string();
-  }
-  else if (boost::filesystem::exists(root / model_path)) {
-    this->model_location = (root / model_path).string();
-  }
-  else if (boost::filesystem::exists(config_path / model_path)) {
-    this->model_location = (config_path / model_path).string();
-  }
-  else {
-    std::cout << "Could not find the face analysis module to load" << std::endl;
+  if (!scale_set && size_set) {
+    this->sim_scale_out *= (0.7 / 112.0);
   }
 }
 
@@ -152,28 +127,8 @@ void FaceAnalyserParameters::init() {
   this->sim_size_out = 112;
   this->sim_align_face_mask = true;
 
-  this->model_location = "models/AU_predictors/main_dynamic_svms.txt";
-
-  // Make sure model_location is valid
-  // First check working directory, then the executable's directory, then the
-  // config path set by the build process.
-  path config_path = path(CONFIG_DIR);
-  path model_path =
-      path(this->model_location);
-  if (boost::filesystem::exists(model_path)) {
-    this->model_location = model_path.string();
-  }
-  else if (boost::filesystem::exists(root / model_path)) {
-    this->model_location = (root / model_path).string();
-  }
-  else if (boost::filesystem::exists(config_path / model_path)) {
-    this->model_location = (config_path / model_path).string();
-  }
-  else {
-    std::cout << "Could not find the face analysis module to load" << std::endl;
-  }
-
-  orientation_bins = vector<cv::Vec3d>();
+  this->setModelLoc();
+  this->orientation_bins = vector<cv::Vec3d>();
 }
 
 // Use getters and setters for these as they might need to reload models and
@@ -192,55 +147,15 @@ void FaceAnalyserParameters::setAlignedOutput(int output_size,
 
   this->sim_align_face_mask = masked;
 }
-// This will also change the model location
+
 void FaceAnalyserParameters::OptimizeForVideos() {
   // Set the post-processing to true and load a dynamic model
-  dynamic = true;
-
-  this->model_location = "models/AU_predictors/main_dynamic_svms.txt";
-
-  // Make sure model_location is valid
-  // First check working directory, then the executable's directory, then the
-  // config path set by the build process.
-  path config_path = path(CONFIG_DIR);
-  path model_path =
-      path(this->model_location);
-  if (boost::filesystem::exists(model_path)) {
-    this->model_location = model_path.string();
-  }
-  else if (boost::filesystem::exists(root / model_path)) {
-    this->model_location = (root / model_path).string();
-  }
-  else if (boost::filesystem::exists(config_path / model_path)) {
-    this->model_location = (config_path / model_path).string();
-  }
-  else {
-    std::cout << "Could not find the face analysis module to load" << std::endl;
-  }
+  this->dynamic = true;
+  this->setModelLoc();
 }
 
 void FaceAnalyserParameters::OptimizeForImages() {
   // Set the post-processing to true and load a dynamic model
-  dynamic = false;
-
-  this->model_location = "models/AU_predictors/main_static_svms.txt";
-
-  // Make sure model_location is valid
-  // First check working directory, then the executable's directory, then the
-  // config path set by the build process.
-  path config_path = path(CONFIG_DIR);
-  path model_path =
-      path(this->model_location);
-  if (boost::filesystem::exists(model_path)) {
-    this->model_location = model_path.string();
-  }
-  else if (boost::filesystem::exists(root / model_path)) {
-    this->model_location = (root / model_path).string();
-  }
-  else if (boost::filesystem::exists(config_path / model_path)) {
-    this->model_location = (config_path / model_path).string();
-  }
-  else {
-    std::cout << "Could not find the AU detection model to load" << std::endl;
-  }
+  this->dynamic = false;
+  this->setModelLoc();
 }

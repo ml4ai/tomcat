@@ -16,7 +16,7 @@ import net.minecraftforge.fml.relauncher.Side;
 public class TomcatMessaging {
 
 	public enum TomcatMessageType { SHOW_COMPLETION_SCREEN, SHOW_INSTRUCTIONS_SCREEN, SHOW_MESSAGE_SCREEN, VILLAGER_SAVED, 
-		INSTRUCTIONS_SCREEN_DISMISSED, OPEN_SCREEN_DISMISSED, DISMISS_OPEN_SCREEN };
+		OPEN_SCREEN_DISMISSED, DISMISS_OPEN_SCREEN };
 
 
 	public static class TomcatMessage implements IMessage {

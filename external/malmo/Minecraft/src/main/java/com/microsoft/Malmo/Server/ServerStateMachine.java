@@ -820,9 +820,7 @@ public class ServerStateMachine extends StateMachine {
 
         // Set their initial position and speed:
         PosAndDirection pos = as.getAgentStart().getPlacement();
-        System.out.println("============> Position from XML");
         if (pos == null) {
-        	System.out.println("==============> Position is null " + MalmoMod.instance.getServer().getTomcatServerMission());
         	pos  = MalmoMod.instance.getServer().getTomcatServerMission().getPlayersInitialPositionAndDirection(player);
         }
         

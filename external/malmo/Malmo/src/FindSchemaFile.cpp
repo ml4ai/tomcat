@@ -24,6 +24,7 @@
 #include "FindSchemaFile.h"
 
 // STL:
+#include <boost/filesystem.hpp>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -31,68 +32,20 @@
 #include <string>
 
 using namespace std;
+namespace fs = boost::filesystem;
+using fs::path, fs::exists;
 
 namespace malmo {
-bool fileExists(const string &filename) {
-  ifstream in(filename.c_str());
-  return in.good();
-}
-
-string FindSchemaFile(const string &name) {
-  // first preference: location specified in MALMO_XSD_PATH environment variable
-  char *malmo_xsd_path = getenv("MALMO_XSD_PATH");
-  if (malmo_xsd_path != NULL) {
-    ostringstream path_using_env;
-    path_using_env << malmo_xsd_path << "/" << name;
-    if (fileExists(path_using_env.str())) {
-      return path_using_env.str();
-    } else {
-      ostringstream error_message;
-      error_message << "Schema file " << name
-                    << " not found in folder specified by MALMO_XSD_PATH "
-                       "environment variable: "
-                    << malmo_xsd_path;
-      throw runtime_error(error_message.str());
+  string FindSchemaFile(const string& name) {
+    char* tomcat_dir = getenv("TOMCAT");
+    if (tomcat_dir == NULL) {
+      throw runtime_error("The TOMCAT environment variable has not been set."
+          " Please set it to point to your local copy of the ToMCAT repository");
     }
+    path schema_path = path(tomcat_dir) / "external/malmo/Schemas" / name;
+    if (!exists(schema_path)) {
+      throw runtime_error("Schema file " + schema_path.string() + "not found!");
+    }
+    return schema_path.string();
   }
-
-  // second preference: current directory
-  cerr << "MALMO_XSD_PATH environment variable not set, trying to locate "
-          "schema file "
-       << name << " in current directory..." << endl;
-  if (fileExists(name)) {
-    return name;
-  } 
-  else {
-    cerr << "Schema file " << name
-         << " not found in current directory. Trying relative path "
-            "../Schemas ..."
-         << endl;
-  }
-
-  // third preference: ../Schemas
-  ostringstream path_using_relative_dir;
-  path_using_relative_dir << "../Schemas/" << name;
-  if (fileExists(path_using_relative_dir.str())){
-    return path_using_relative_dir.str();
-  }
-  else {
-    cerr << "Schema file " << name
-         << " not found in relative directory ../Schemas"
-         << endl;
-  }
-
-
-  if (fileExists("/usr/local/malmo/Schemas/"+name)){
-    return "/usr/local/malmo/Schemas/"+name;
-  }
-
-  // file not found
-  ostringstream error_message;
-  error_message
-      << "Schema file " << name
-      << " not found. Please set the MALMO_XSD_PATH environment "
-         "variable to the location of the .xsd schema files.";
-  throw runtime_error(error_message.str());
-}
 } // namespace malmo
