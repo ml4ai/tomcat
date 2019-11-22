@@ -170,7 +170,7 @@ namespace malmo {
                                              "MALMO_KILL_CLIENT\n",
                                              false);
     }
-    catch (std::exception& e) {
+    catch (exception& e) {
       // This is expected quite often - client is likely not running.
       LOGINFO(LT("Exception attempting to kill client: "), e.what());
       return false;
@@ -197,21 +197,21 @@ namespace malmo {
                                const MissionRecordSpec& mission_record,
                                int role,
                                string unique_experiment_id) {
-    std::call_once(test_schemas_flag, testSchemasCompatible);
+    call_once(test_schemas_flag, testSchemasCompatible);
 
     LOGSIMPLE(LOG_FINE, "testSchemasCompatible\n");
     if (role < 0 || role >= mission.getNumberOfAgents()) {
       if (mission.getNumberOfAgents() == 1)
         throw MissionException(
-            "Role " + std::to_string(role) +
+            "Role " + to_string(role) +
                 " is invalid for this single-agent mission - must be 0.",
             MissionException::MISSION_BAD_ROLE_REQUEST);
       else
         throw MissionException(
-            "Role " + std::to_string(role) +
+            "Role " + to_string(role) +
                 " is invalid for this multi-agent mission - must be in range "
                 "0-" +
-                std::to_string(mission.getNumberOfAgents() - 1) + ".",
+                to_string(mission.getNumberOfAgents() - 1) + ".",
             MissionException::MISSION_BAD_ROLE_REQUEST);
     }
     if (mission.isVideoRequested(role)) {
@@ -257,8 +257,7 @@ namespace malmo {
               "There are not enough clients available in the ClientPool to "
               "start "
               "this " +
-                  std::to_string(mission.getNumberOfAgents()) +
-                  " agent mission.",
+                  to_string(mission.getNumberOfAgents()) + " agent mission.",
               MissionException::MISSION_INSUFFICIENT_CLIENTS_AVAILABLE);
       }
       pool = reservedAgents;
@@ -283,7 +282,7 @@ namespace malmo {
     //     time this->world_state->is_mission_running is false.
 
     if (this->current_mission_record->isRecording()) {
-      std::ofstream missionInitXML(
+      ofstream missionInitXML(
           this->current_mission_record->getMissionInitPath());
       missionInitXML << this->current_mission_init->getAsXML(true);
     }
@@ -408,7 +407,7 @@ namespace malmo {
                                                request,
                                                false);
       }
-      catch (std::exception& e) {
+      catch (exception& e) {
         // This is expected quite often - client is likely not running.
         LOGINFO(LT("Client could not be contacted: "),
                 item->ip_address,
@@ -447,7 +446,7 @@ namespace malmo {
                                                  "MALMO_CANCEL_REQUEST\n",
                                                  false);
         }
-        catch (std::exception&) {
+        catch (exception&) {
           // This is not expected, and probably means something bad has
           // happened.
           LOGERROR(LT("Failed to cancel reservation request with "),
@@ -485,7 +484,7 @@ namespace malmo {
                                                request,
                                                false);
       }
-      catch (std::exception&) {
+      catch (exception&) {
         // This is expected quite often - client is likely not running.
         continue;
       }
@@ -563,7 +562,7 @@ namespace malmo {
                                                mission_init_xml,
                                                false);
       }
-      catch (std::exception&) {
+      catch (exception&) {
         LOGINFO(LT("No response from "),
                 item->ip_address,
                 LT(":"),
@@ -782,7 +781,7 @@ namespace malmo {
     try {
       boost::property_tree::read_xml(ss, pt);
     }
-    catch (std::exception& e) {
+    catch (exception& e) {
       TimestampedString error_message(xml);
       error_message.text =
           string("Error parsing mission control message as XML: ") + e.what() +
@@ -818,7 +817,7 @@ namespace malmo {
 
         if (status != MissionEndedXML::ENDED &&
             status != MissionEndedXML::PLAYER_DIED) {
-          std::ostringstream oss;
+          ostringstream oss;
           oss << "Mission ended abnormally: "
               << mission_ended.getHumanReadableStatus();
           TimestampedString error_message(xml);
@@ -864,8 +863,8 @@ namespace malmo {
           xml.text = mission_ended.toXml();
         }
       }
-      catch (const std::exception& e) {
-        std::ostringstream oss;
+      catch (const exception& e) {
+        ostringstream oss;
         oss << "Error processing MissionEnded message XML: " << e.what()
             << " : " << xml.text.substr(0, 20) << "...";
         TimestampedString error_message(xml);
@@ -875,7 +874,7 @@ namespace malmo {
         return;
       }
       if (this->current_mission_record->isRecording()) {
-        std::ofstream missionEndedXML(
+        ofstream missionEndedXML(
             this->current_mission_record->getMissionEndedPath());
         missionEndedXML << xml.text;
       }
@@ -1018,8 +1017,8 @@ namespace malmo {
       reward.createFromSimpleString(message.timestamp, message.text);
       this->processReceivedReward(reward);
     }
-    catch (std::exception& e) {
-      std::ostringstream oss;
+    catch (exception& e) {
+      ostringstream oss;
       oss << "Error parsing Reward message: " << e.what() << " : "
           << message.text;
       TimestampedString error_message(message);
@@ -1093,7 +1092,7 @@ namespace malmo {
     try {
       this->commands_connection->send(full_command);
     }
-    catch (const std::runtime_error& e) {
+    catch (const runtime_error& e) {
       TimestampedString error_message(
           boost::posix_time::microsec_clock::universal_time(),
           "AgentHost::sendCommand : failed to send command: " +
@@ -1106,7 +1105,7 @@ namespace malmo {
     if (this->commands_stream.is_open()) {
       string timestamp = boost::posix_time::to_iso_string(
           boost::posix_time::microsec_clock::universal_time());
-      this->commands_stream << timestamp << " " << command << std::endl;
+      this->commands_stream << timestamp << " " << command << endl;
     }
   }
 
@@ -1118,7 +1117,7 @@ namespace malmo {
     return this->current_mission_init;
   }
 
-  std::ostream& operator<<(std::ostream& os, const AgentHost& agent_host) {
+  ostream& operator<<(ostream& os, const AgentHost& agent_host) {
     os << "AgentHost";
     if (agent_host.getMissionInit())
       os << ": active (with mission)";
