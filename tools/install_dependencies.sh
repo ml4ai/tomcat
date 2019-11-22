@@ -30,7 +30,9 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
       gradle \
       libsndfile \
       portaudio
-    sudo port install boost -no_static
+    if ! port installed | grep -q boost; then
+      sudo port install boost -no_static
+    fi
 
     # Check if JAVA_HOME is set to Java 8
     if ! [[ "$JAVA_HOME" == "/Library/Java/JavaVirtualMachines/openjdk8/Contents/Home" ]]; then
