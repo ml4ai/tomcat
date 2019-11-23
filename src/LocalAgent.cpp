@@ -2,7 +2,7 @@
 #include <AgentHost.h>
 #include <ClientPool.h>
 #include <exception>
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <string>
 #include <thread>
 
