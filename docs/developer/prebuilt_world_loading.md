@@ -9,13 +9,13 @@
 
 **Getting Started:**
 
-1\. Download the Tomcat_Preloaded world from this Drive link: 
+1\. Download the SAR_v1 world from this Drive link: 
 
-    https://drive.google.com/drive/folders/1sA5F7ifgzglJnxFaeNuXHFwdMjmrpNHB?usp=sharing
+    https://drive.google.com/open?id=19PjgHmUeJmOQ4DS4dAy-4bgax2_TnJRp
 
 Save it somewhere convenient and unzip the file. 
 
-Henceforth, Tomcat_Preloaded refers to the folder you got from unzipping.
+Henceforth, SAR_v1 refers to the folder you got from unzipping.
 	
 **NOTE** : Ensure the path to where you save this folder has no white spaces.
 
@@ -28,9 +28,9 @@ Ex:  Documents/folder name is not allowed, but Documents/folder_name is allowed
 
 file_gen will serve as a reference for you to use file_gen_skeleton to get your pre-built world working.
 
-**DO NOT** save it inside  Tomcat_Preloaded
+**DO NOT** save it inside  SAR_v1
 
-This is because the _entire_ Tomcat_Preloaded folder represents the Minecraft world. It is not meant to hold anything else.
+This is because the _entire_ SAR_v1 folder represents the Minecraft world. It is not meant to hold anything else.
 
 I saved mine in: 
 /home/$USER/Documents/TOMCAT/tomcat/external/malmo/sample_missions to keep it with all the other missions
@@ -46,9 +46,9 @@ Don’t change the name after we modify it (the next step) for the sake of this 
 The comments in the XML indicate what needs to be filled in generally, but for
 the tutorial go to the line `<FileWorldGenerator src = “” />`
 
-Within the quotes specify the path to which you saved your Tomcat_Preloaded folder.
+Within the quotes specify the path to which you saved your SAR_v1 folder.
 
-Again,the **Minecraft world is the whole folder and not just one file inside the folder, so the path should end in:** Tomcat_Preloaded
+Again,the **Minecraft world is the whole folder and not just one file inside the folder, so the path should end in:** SAR_v1
 	
 Refer to file_gen.xml to see how I specified my path. 
 
