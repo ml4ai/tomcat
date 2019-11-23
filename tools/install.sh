@@ -11,6 +11,7 @@ mkdir -p build
 cd build 
 cmake ..
 make -j
+make -j Minecraft
 cd ../
 
 echo "Setting TOMCAT environment variable automatically..."
