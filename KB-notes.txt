@@ -1,0 +1,27 @@
+
+Install
+   
+    
+
+
+Run 
+    Launch should be faster and integrated with running the mission
+
+    Scripts should be in one place and robust to how they are called. 
+
+
+Game
+    It is not clear that "you" are quite wide and that it is your right arm that
+    you see. Getting through a tight passage might be on more thing to do in the
+    tutorial mission.
+
+    "e" key --- I assume for us. Easy to hit instead of "w". Any options as to
+    how the keys work? 
+
+    Short delay after success? 
+
+    Success for seeing creatures is not clear. 
+
+    What is the amphitheatre is not so clear. Gate latch also.
+
+
