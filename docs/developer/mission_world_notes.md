@@ -1,5 +1,4 @@
-**Author:** Aditya Banerjee                                                 
-**Date:** 2019-11-24
+**Author:** Aditya Banerjee **Date:** 2019-11-24
 
 # Notes for The Mission Worlds
 
@@ -76,10 +75,10 @@ by themselves (this could be a non-issue depending on the mob you are using). Th
 
 The day-night and weather cycles were turned off to keep the
 environment constant. The `/time set` and `/weather`commands can still be used
-to change the time and weather. The environment variables above only control
-that it won't change on its own after that.
+to change the time and weather. The environment variables (the modified
+world parameters) above only control that it won't change on its own after that.
 
-Similarly mob spawning was turned off to prevent creatures from spawning
+Similarly, mob spawning was turned off to prevent creatures from spawning
 randomly. Mobs can still be spawned using the `/summon` command.
 
 Reference images for noteworthy points on the worlds can be found at:
@@ -87,7 +86,7 @@ Reference images for noteworthy points on the worlds can be found at:
     https://drive.google.com/open?id=1sA5F7ifgzglJnxFaeNuXHFwdMjmrpNHB
 
 Spawning entities at the coordinates in the reference image will spawn that
-entity _inside_ the structure not on top of it.
+entity _inside_ the structure, not on top of it.
 
 **A Potential Issue**
 

@@ -1,5 +1,4 @@
-**Author:** Aditya Banerjee
-**Date:** 2019-11-24
+**Author:** Aditya Banerjee **Date:** 2019-11-24
 
 # Pre-Built World Loading Tutorial
 
@@ -77,7 +76,7 @@ don't have to do this.
 
 
 
-##  Making A  World to Load
+##  Creating A World to Load
 
 1\.	Simply launch Minecraft from inside the build folder using:
 
