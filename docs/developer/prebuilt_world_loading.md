@@ -1,7 +1,9 @@
 **Author:** Aditya Banerjee
-**Date:** 2019-11-23
+**Date:** 2019-11-24
 
-#  Loading Pre-Built Worlds
+# Pre-Built World Loading Tutorial
+
+##  Loading Pre-Built Worlds
 
 **Pre-requisites: Make sure you are able to run Minecraft and the default mission before attempting this tutorial.**
 
@@ -12,7 +14,7 @@
 
 **Getting Started:**
 
-1\. Download the `SAR_v` world from this Drive link: 
+1\. Download the `SAR_v1` world from this Drive link: 
 
     https://drive.google.com/open?id=19PjgHmUeJmOQ4DS4dAy-4bgax2_TnJRp
 
@@ -20,7 +22,7 @@ Save it somewhere convenient and unzip the file.
 
 Henceforth, `SAR_v1` refers to the folder you got from unzipping.
 	
-**NOTE** : Ensure the path to where you save this folder has no white spaces.
+**NOTE** : Ensure the path to which you save this folder has no white spaces.
 
 Ex:  `Documents/folder name` is not allowed, but `Documents/folder_name` is allowed
 
@@ -75,7 +77,7 @@ don't have to do this.
 
 
 
-###  Making A  World to Load
+##  Making A  World to Load
 
 1\.	Simply launch Minecraft from inside the build folder using:
 
@@ -120,7 +122,7 @@ It is better to save it elsewhere and then load it in from that path.
 
 
 
-<h3> Final Notes </h3>
+## Final Notes
 
 I intentionally left file_gen_skeleton as a very basic XML with no real mission elements. It is meant to serve as a foundation to build missions without needing to change or delete much.
 When you’ve finished going through this documentation, you may add as much as you want to the file_gen_skeleton.xml to implement your mission. There is no need to follow
