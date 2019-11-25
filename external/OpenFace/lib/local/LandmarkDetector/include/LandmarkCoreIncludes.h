@@ -33,12 +33,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 
-#ifndef LANDMARK_CORE_INCLUDES_H
-#define LANDMARK_CORE_INCLUDES_H
+#pragma once
 
 #include "LandmarkDetectorModel.h"
 #include "LandmarkDetectorFunc.h"
 #include "LandmarkDetectorParameters.h"
 #include "LandmarkDetectorUtils.h"
-
-#endif // LANDMARK_CORE_INCLUDES_H
