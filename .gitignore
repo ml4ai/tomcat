@@ -65,3 +65,17 @@ external/malmo/Minecraft/run/
 
 # data
 data/*
+
+# Images
+*.png
+*.svg
+*.jpeg
+*.jpg
+
+# PDFs
+*.pdf
+
+# Zipped and Gzipped files
+*.tar.gz
+*.tgz
+*.zip
