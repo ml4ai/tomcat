@@ -1,54 +1,49 @@
 #!/bin/bash
 
-set -e 
+called_as=`echo $0 | sed | sed 's#^\./##'` 
+script_path=`pwd`/$called_as 
+tomcat=`echo $script_path | sed 's#^\./##' | sed 's#^\(.*\)//*tools/*install.sh#\1#'`
 
-./tools/install_dependencies.sh
-./tools/download_tomcat_data.sh
-
-echo "Installing ToMCAT..."
-
-mkdir -p build 
-cd build 
-cmake ..
-make -j
-make -j Minecraft
-cd ../
-
-echo "Setting TOMCAT environment variable automatically..."
-
-if [ -z "$TOMCAT" ]; then
-
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    echo "MacOS detected. Assuming that you are using bash as your default shell."
-    echo "If this is not the case, then make sure to set the TOMCAT"\
-    "environment variable to point to the tomcat/ directory."
-    echo ""
-    echo "# The following line has been automatically added to"\
-    "your ~/.bash_profile file:"
-    echo ""
-    echo "export TOMCAT=`pwd`"
-    echo "# TOMCAT environment variable automatically set by TOMCAT installer." >> ~/.bash_profile
-    echo "export TOMCAT=`pwd`" >> ~/.bash_profile
-    source ~/.bash_profile
-
-  elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    echo "Linux detected. Assuming that you are using bash as your default shell."
-    echo "If this is not the case, then make sure to set the TOMCAT"\
-    "environment variable to point to the tomcat/ directory."
-    echo ""
-    echo "# The following line has been automatically added to"\
-    "your ~/.bashrc file:"
-    echo ""
-    echo "export TOMCAT=`pwd`"
-    echo "# TOMCAT environment variable automatically set by TOMCAT installer." >> ~/.bashrc
-    echo "export TOMCAT=`pwd`" >> ~/.bashrc
-    source ~/.bashrc
-  fi
-
-else
-  echo "TOMCAT environment variable is already set to ${TOMCAT}."
-  echo "If this does not match `pwd`/tomcat, please correct it in"\
-  "~/.bashrc (or ~/.bash_profile for MacOS."
+# We do not actually need to consult TOMCAT as an environment variable, but it
+# gives us a chance to remind the the user that we are ignoring their location
+# hint. 
+#
+if [ ! -z "$TOMCAT" ]; then
+    if [[ "${TOMCAT}" != "${tomcat}" ]]; then
+        echo "Resetting TOMCAT variable from ${TOMCAT} to ${tomcat}."
+    fi
 fi
 
-echo "Finished ToMCAT installation!"
+export TOMCAT=${tomcat}
+
+${TOMCAT}/tools/install_dependencies.sh
+if [[ $? -ne 0 ]]; then exit 1; fi;
+
+${TOMCAT}/tools/download_tomcat_data.sh
+if [[ $? -ne 0 ]]; then exit 1; fi;
+
+
+pushd "${TOMCAT}"
+    echo "Installing ToMCAT in `pwd`"
+
+    mkdir -p build 
+    if [[ $? -ne 0 ]]; then exit 1; fi;
+
+    pushd build > /dev/null 
+
+    cmake ${TOMCAT}
+    if [[ $? -ne 0 ]]; then exit 1; fi;
+
+    make -j
+    if [[ $? -ne 0 ]]; then exit 1; fi;
+
+    make -j Minecraft
+    if [[ $? -ne 0 ]]; then exit 1; fi;
+popd > /dev/null 
+
+mkdir bin
+if [[ $? -ne 0 ]]; then exit 1; fi;
+
+echo " "
+echo "Finished installing ToMCAT in ${TOMCAT}!"
+echo " "

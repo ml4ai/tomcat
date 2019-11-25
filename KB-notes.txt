@@ -9,6 +9,8 @@ Run
 
     Scripts should be in one place and robust to how they are called. 
 
+    It is not clear how and when the env var TOMCAT is or should be used.
+
 
 Game
     It is not clear that "you" are quite wide and that it is your right arm that
