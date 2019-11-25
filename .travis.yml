@@ -32,7 +32,7 @@ install:
     && tar -xvjf dlib-19.17.tar.bz2 && cd ../
 
 env:
-  - TOMCAT=~/tomcat
+  - TOMCAT=$TRAVIS_BUILD_DIR
 
 script:
   - ./tools/download_tomcat_data.sh
