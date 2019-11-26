@@ -4,8 +4,9 @@
 //
 // ACADEMIC OR NON-PROFIT ORGANIZATION NONCOMMERCIAL RESEARCH USE ONLY
 //
-// BY USING OR DOWNLOADING THE SOFTWARE, YOU ARE AGREEING TO THE TERMS OF THIS LICENSE AGREEMENT.  
-// IF YOU DO NOT AGREE WITH THESE TERMS, YOU MAY NOT USE OR DOWNLOAD THE SOFTWARE.
+// BY USING OR DOWNLOADING THE SOFTWARE, YOU ARE AGREEING TO THE TERMS OF THIS
+// LICENSE AGREEMENT. IF YOU DO NOT AGREE WITH THESE TERMS, YOU MAY NOT USE OR
+// DOWNLOAD THE SOFTWARE.
 //
 // License can be found in OpenFace-license.txt
 //
@@ -14,107 +15,116 @@
 //       reports and manuals, must cite at least one of the following works:
 //
 //       OpenFace 2.0: Facial Behavior Analysis Toolkit
-//       Tadas Baltrušaitis, Amir Zadeh, Yao Chong Lim, and Louis-Philippe Morency
-//       in IEEE International Conference on Automatic Face and Gesture Recognition, 2018  
+//       Tadas Baltrušaitis, Amir Zadeh, Yao Chong Lim, and Louis-Philippe
+//       Morency in IEEE International Conference on Automatic Face and Gesture
+//       Recognition, 2018
 //
-//       Convolutional experts constrained local model for facial landmark detection.
-//       A. Zadeh, T. Baltrušaitis, and Louis-Philippe Morency,
-//       in Computer Vision and Pattern Recognition Workshops, 2017.    
+//       Convolutional experts constrained local model for facial landmark
+//       detection. A. Zadeh, T. Baltrušaitis, and Louis-Philippe Morency, in
+//       Computer Vision and Pattern Recognition Workshops, 2017.
 //
 //       Rendering of Eyes for Eye-Shape Registration and Gaze Estimation
-//       Erroll Wood, Tadas Baltrušaitis, Xucong Zhang, Yusuke Sugano, Peter Robinson, and Andreas Bulling 
-//       in IEEE International. Conference on Computer Vision (ICCV),  2015 
+//       Erroll Wood, Tadas Baltrušaitis, Xucong Zhang, Yusuke Sugano, Peter
+//       Robinson, and Andreas Bulling in IEEE International. Conference on
+//       Computer Vision (ICCV),  2015
 //
-//       Cross-dataset learning and person-specific normalisation for automatic Action Unit detection
-//       Tadas Baltrušaitis, Marwa Mahmoud, and Peter Robinson 
-//       in Facial Expression Recognition and Analysis Challenge, 
-//       IEEE International Conference on Automatic Face and Gesture Recognition, 2015 
+//       Cross-dataset learning and person-specific normalisation for automatic
+//       Action Unit detection Tadas Baltrušaitis, Marwa Mahmoud, and Peter
+//       Robinson in Facial Expression Recognition and Analysis Challenge, IEEE
+//       International Conference on Automatic Face and Gesture Recognition,
+//       2015
 //
 ///////////////////////////////////////////////////////////////////////////////
 
 //  Parameters of the CE-CLM, CLNF, and CLM trackers
-#ifndef LANDMARK_DETECTOR_PARAM_H
-#define LANDMARK_DETECTOR_PARAM_H
+#pragma once
 
+#include <boost/filesystem.hpp>
+#include <string>
 #include <vector>
 
-using namespace std;
+namespace LandmarkDetector {
+  using boost::filesystem::path;
 
-namespace LandmarkDetector
-{
+  class FaceModelParameters {
 
-struct FaceModelParameters
-{
+  public:
+    // Path to OpenFace models
+    std::string OpenFace_models_dir =
+        (path(getenv("TOMCAT")) / "data/OpenFace_models").string();
 
-	// A number of RLMS or NU-RLMS iterations
-	int num_optimisation_iteration;
-	
-	// Should pose be limited to 180 degrees frontal
-	bool limit_pose;
-	
-	// Should face validation be done
-	bool validate_detections;
+    // A number of RLMS or NU-RLMS iterations
+    int num_optimisation_iteration;
 
-	// Landmark detection validator boundary for correct detection, the regressor output 1 (perfect alignment) 0 (bad alignment), 
-	float validation_boundary;
+    // Should pose be limited to 180 degrees frontal
+    bool limit_pose;
 
-	// Used when tracking is going well
-	vector<int> window_sizes_small;
+    // Should face validation be done
+    bool validate_detections;
 
-	// Used when initialising or tracking fails
-	vector<int> window_sizes_init;
-	
-	// Used for the current frame
-	vector<int> window_sizes_current;
-	
-	// How big is the tracking template that helps with large motions
-	float face_template_scale;	
-	bool use_face_template;
+    // Landmark detection validator boundary for correct detection, the
+    // regressor output 1 (perfect alignment) 0 (bad alignment),
+    float validation_boundary;
 
-	// Where to load the model from
-	string model_location;
-	
-	// this is used for the smooting of response maps (KDE sigma)
-	float sigma;
+    // Used when tracking is going well
+    std::vector<int> window_sizes_small;
 
-	float reg_factor;	// weight put to regularisation
-	float weight_factor; // factor for weighted least squares
+    // Used when initialising or tracking fails
+    std::vector<int> window_sizes_init;
 
-	// should multiple views be considered during reinit
-	bool multi_view;
-	
-	// Based on model location, this affects the parameter settings
-	enum LandmarkDetector { CLM_DETECTOR, CLNF_DETECTOR, CECLM_DETECTOR };
-	LandmarkDetector curr_landmark_detector;
+    // Used for the current frame
+    std::vector<int> window_sizes_current;
 
-	// How often should face detection be used to attempt reinitialisation, every n frames (set to negative not to reinit)
-	int reinit_video_every;
+    // How big is the tracking template that helps with large motions
+    float face_template_scale;
+    bool use_face_template;
 
-	// Determining which face detector to use for (re)initialisation, HAAR is quicker but provides more false positives and is not goot for in-the-wild conditions
-	// Also HAAR detector can detect smaller faces while HOG SVM is only capable of detecting faces at least 70px across
-	// MTCNN detector is much more accurate that the other two, and is even suitable for profile faces, but it is somewhat slower
-	enum FaceDetector{HAAR_DETECTOR, HOG_SVM_DETECTOR, MTCNN_DETECTOR};
+    // Where to load the model from
+    std::string model_location;
 
-	string haar_face_detector_location;
-	string mtcnn_face_detector_location;
-	FaceDetector curr_face_detector;
+    // this is used for the smooting of response maps (KDE sigma)
+    float sigma;
 
-	// Should the model be refined hierarchically (if available)
-	bool refine_hierarchical;
+    float reg_factor;    // weight put to regularisation
+    float weight_factor; // factor for weighted least squares
 
-	// Should the parameters be refined for different scales
-	bool refine_parameters;
+    // should multiple views be considered during reinit
+    bool multi_view;
 
-	FaceModelParameters();
+    // Based on model location, this affects the parameter settings
+    enum LandmarkDetector { CLM_DETECTOR, CLNF_DETECTOR, CECLM_DETECTOR };
+    LandmarkDetector curr_landmark_detector;
 
-	FaceModelParameters(vector<string> &arguments);
+    // How often should face detection be used to attempt reinitialisation,
+    // every n frames (set to negative not to reinit)
+    int reinit_video_every;
 
-	private:
-		void init();
-		void check_model_path(const std::string& root = "/");
+    // Determining which face detector to use for (re)initialisation, HAAR is
+    // quicker but provides more false positives and is not goot for in-the-wild
+    // conditions Also HAAR detector can detect smaller faces while HOG SVM is
+    // only capable of detecting faces at least 70px across MTCNN detector is
+    // much more accurate that the other two, and is even suitable for profile
+    // faces, but it is somewhat slower
+    enum FaceDetector { HAAR_DETECTOR, HOG_SVM_DETECTOR, MTCNN_DETECTOR };
 
-};
+    std::string haar_face_detector_location;
+    std::string mtcnn_face_detector_location;
+    FaceDetector curr_face_detector;
 
-}
+    // Should the model be refined hierarchically (if available)
+    bool refine_hierarchical;
 
-#endif // LANDMARK_DETECTOR_PARAM_H
+    // Should the parameters be refined for different scales
+    bool refine_parameters;
+
+    FaceModelParameters();
+
+    FaceModelParameters(std::vector<std::string>& arguments);
+
+  private:
+    void init();
+    void check_model_path(std::string model_path);
+    void check_model_paths();
+  };
+
+} // namespace LandmarkDetector

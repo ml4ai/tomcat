@@ -4,7 +4,7 @@
 #include "MissionHandler.h"
 #include "WebcamSensor.h"
 #include <AgentHost.h>
-#include <fmt/core.h>
+#include <fmt/format.h>
 #include <string>
 
 namespace tomcat {

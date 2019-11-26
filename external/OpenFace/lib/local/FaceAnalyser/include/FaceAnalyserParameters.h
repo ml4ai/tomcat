@@ -85,8 +85,7 @@ namespace FaceAnalysis {
       path model_path = OpenFace_models_dir /
                         ("AU_Predictors/main_" + model_type + "_svms.txt");
       if (!exists(model_path)) {
-        throw std::runtime_error(
-            "Could not find the face analysis module to load");
+        throw runtime_error("Could not find the face analysis module to load");
       }
 
       this->model_location = model_path.string();

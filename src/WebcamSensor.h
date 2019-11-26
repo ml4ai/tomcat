@@ -1,6 +1,6 @@
 #pragma once
 
-#include <fmt/core.h>
+#include <fmt/format.h>
 
 #include <LandmarkCoreIncludes.h>
 #include <SequenceCapture.h>
@@ -12,16 +12,16 @@ namespace tomcat {
   class WebcamSensor {
   public:
     WebcamSensor()
-        : visualizer(true, false, false, false), det_parameters(arguments) {}
+        : visualizer(true, false, false, false), det_parameters(this->arguments) {}
 
     void initialize() {
       // The modules that are being used for tracking
       this->face_model = LandmarkDetector::CLNF();
-      if (!face_model.loaded_successfully) {
+      if (!this->face_model.loaded_successfully) {
         fmt::print("ERROR: Could not load the landmark detector");
       }
 
-      if (!face_model.eye_model) {
+      if (!this->face_model.eye_model) {
         fmt::print("WARNING: no eye model found");
       }
 
@@ -35,7 +35,7 @@ namespace tomcat {
     void get_observation();
 
   private:
-    vector<string> arguments = {"-device", "0"};
+    std::vector<std::string> arguments = {"-device", "0"};
     Utilities::Visualizer visualizer;
     cv::Mat rgb_image;
     Utilities::SequenceCapture sequence_reader;
