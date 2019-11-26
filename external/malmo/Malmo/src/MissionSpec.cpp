@@ -458,8 +458,7 @@ namespace malmo {
                       "");
   }
 
-  // ------------------ settings for the agents : command handlers
-  // --------------------------------
+  // Settings for the agents : command handlers
 
   void MissionSpec::removeAllCommandHandlers() {
     const auto& agent_handlers =
