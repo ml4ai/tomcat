@@ -1,5 +1,4 @@
 #include "LocalAgent.h"
-#include "MissionFactory.h"
 #include <AgentHost.h>
 #include <ClientPool.h>
 #include <exception>
