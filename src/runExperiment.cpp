@@ -81,7 +81,6 @@ int main(int argc, const char* argv[]) {
     bool activateRewRec = vm["record_rewards"].as<bool>();
 
     if (activateRecAll) {
-      activateVideo = true;
       activateObsRec = true;
       activateComRec = true;
       activateRewRec = true;
