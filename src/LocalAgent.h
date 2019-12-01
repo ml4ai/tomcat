@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Mission.h"
 #include "Microphone.h"
-#include "MissionHandler.h"
 #include "WebcamSensor.h"
 #include <AgentHost.h>
 #include <fmt/format.h>
@@ -75,7 +75,7 @@ namespace tomcat {
 
     WebcamSensor webcamSensor;
     malmo::AgentHost host;
-    tomcat::MissionHandler missionHandler;
+    Mission mission;
     Microphone microphone;
   };
 

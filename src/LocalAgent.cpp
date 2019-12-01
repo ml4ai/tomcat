@@ -1,4 +1,5 @@
 #include "LocalAgent.h"
+#include "MissionFactory.h"
 #include <AgentHost.h>
 #include <ClientPool.h>
 #include <exception>
@@ -17,9 +18,8 @@ namespace tomcat {
   LocalAgent::LocalAgent() {}
   LocalAgent::~LocalAgent() {}
 
-
   void LocalAgent::setMissionTimeLimit(unsigned int timeLimitInSeconds) {
-    this->missionHandler.setTimeLimitInSeconds(timeLimitInSeconds);
+    this->mission.timeLimitInSeconds(timeLimitInSeconds);
   }
 
   void LocalAgent::setMission(string missionIdOrPathToXML,
@@ -27,18 +27,17 @@ namespace tomcat {
                               unsigned int height,
                               bool activateVideo,
                               bool activateObsRec) {
-    this->missionHandler = MissionHandler();
-    this->missionHandler.setMission(missionIdOrPathToXML);
 
+    this->mission = Mission::fromMissionIdOrPathToXML(missionIdOrPathToXML);
     if (activateVideo) {
-      this->missionHandler.requestVideo(width, height);
+      this->mission.requestVideo(width, height);
     }
 
     if (activateObsRec) {
-      this->missionHandler.observeRecentCommands();
-      this->missionHandler.observeHotBar();
-      this->missionHandler.observeFullInventory();
-      this->missionHandler.observeChat();
+      this->mission.observeRecentCommands();
+      this->mission.observeHotBar();
+      this->mission.observeFullInventory();
+      this->mission.observeChat();
     }
   }
 
@@ -51,7 +50,7 @@ namespace tomcat {
                                bool activateRewRec,
                                int frames_per_second,
                                int64_t bit_rate,
-                               std::string recordPath) {
+                               string recordPath) {
     using boost::shared_ptr;
     MissionRecordSpec missionRecord(recordPath);
 
@@ -78,12 +77,8 @@ namespace tomcat {
     bool connected = false;
     do {
       try {
-        this->missionHandler.startMission();
-        this->host.startMission(this->missionHandler.getMissionSpec(),
-                                clientPool,
-                                missionRecord,
-                                0,
-                                "");
+        this->host.startMission(
+            this->mission, clientPool, missionRecord, 0, "");
         connected = true;
       }
       catch (exception& e) {
@@ -107,7 +102,8 @@ namespace tomcat {
     } while (!worldState.has_mission_begun);
 
     if (activateMicrophone) {
-      this->microphone.set_time_limit_in_seconds(this->missionHandler.getTimeLimitInSeconds());
+      this->microphone.set_time_limit_in_seconds(
+          this->mission.getTimeLimitInSeconds());
       this->microphone.initialize();
     }
 
