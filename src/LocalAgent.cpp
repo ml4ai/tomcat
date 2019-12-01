@@ -107,13 +107,14 @@ namespace tomcat {
     }
 
     if (activateWebcam) {
-      this->webcamSensor.initialize();
+      this->webcamSensor = new WebcamSensor();
+      this->webcamSensor->initialize();
     }
 
     do {
       sleep_for(milliseconds(10));
       if (activateWebcam) {
-        this->webcamSensor.get_observation();
+        this->webcamSensor->get_observation();
       }
       worldState = this->host.getWorldState();
     } while (worldState.is_mission_running);

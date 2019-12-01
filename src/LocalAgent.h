@@ -73,7 +73,7 @@ namespace tomcat {
      */
     malmo::ClientPool getClientPool(int portNumber) const;
 
-    WebcamSensor webcamSensor;
+    WebcamSensor* webcamSensor;
     malmo::AgentHost host;
     Mission mission;
     Microphone microphone;
