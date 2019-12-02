@@ -18,8 +18,7 @@ int main(int argc, const char* argv[]) {
       "mission",
       value<string>(&missionIdOrPathToXML)->default_value("0"),
       "Id or path to mission XML file.\n0: Tutorial\n1: Search and Rescue\n2: "
-      "Item Crafting\n3: Room Escape")("time_limit",
-                                       value<unsigned int>()->default_value(10),
+      "Item Crafting\n3: Room Escape")("time_limit", value<unsigned int>(),
                                        "Time limit for mission (in seconds).")(
       "port,p",
       value<unsigned int>()->default_value(10000),
