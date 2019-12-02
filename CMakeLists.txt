@@ -2,7 +2,10 @@ cmake_minimum_required(VERSION 3.15)
 
 project(tomcat)
 
-set(CMAKE_CXX_STANDARD 17)
+if(NOT DEFINED ENV(TRAVIS))
+  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD REQUIRED)
+endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/tools/cmake/")
 
