@@ -13,7 +13,7 @@ public class MissionHandler {
 	 */
 	public void setMission(int id, int timeLimitInSeconds) {
 		this.mission = MissionFactory.create(id);
-		this.mission.setTimeLimitInSeconds(timeLimitInSeconds);
+		this.mission.setTimeLimitInSeconds(timeLimitInSeconds);		
 	}
 	
 	/**

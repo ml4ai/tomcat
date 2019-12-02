@@ -26,6 +26,7 @@ import com.microsoft.Malmo.IState;
 import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.MalmoMod.IMalmoMessageListener;
 import com.microsoft.Malmo.MalmoMod.MalmoMessageType;
+import com.microsoft.Malmo.MissionHandlerInterfaces.IWantToQuit;
 import com.microsoft.Malmo.MissionHandlerInterfaces.IWorldDecorator.DecoratorException;
 import com.microsoft.Malmo.MissionHandlers.MissionBehaviour;
 import com.microsoft.Malmo.Schemas.AgentSection;
@@ -347,6 +348,14 @@ public class ServerStateMachine extends StateMachine {
       this.queuedMissionInit = null;
     }
     return minit;
+  }
+  
+  /**
+   * Dynamically adds an object to determine if the mission must end or not
+   * @param handler - Quit producer handler object
+   */
+  public void addQuitProducer(IWantToQuit handler) {
+	  this.missionHandlers.addQuitProducer(handler);
   }
 
   //---------------------------------------------------------------------------------------------------------
@@ -1260,7 +1269,8 @@ public class ServerStateMachine extends StateMachine {
       MalmoMod.safeSendToAll(MalmoMessageType.SERVER_ABORT);
       // And abort ourselves:
       episodeHasCompleted(ServerState.ERROR);
-    }
+    }    
+    
   }
 
   //---------------------------------------------------------------------------------------------------------
@@ -1284,4 +1294,5 @@ public class ServerStateMachine extends StateMachine {
       episodeHasCompleted(ServerState.DORMANT);
     }
   }
+  
 }
