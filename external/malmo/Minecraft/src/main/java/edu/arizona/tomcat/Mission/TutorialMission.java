@@ -212,6 +212,7 @@ public class TutorialMission extends Mission {
 	protected void afterLastPhaseCompletion() {
 		RichContent content = RichContent.createFromJson("tutorial_completion.json");
 		MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.SHOW_COMPLETION_SCREEN, new TomcatMessageData(content)), MinecraftServerHelper.getFirstPlayer());
+		this.notifyAllAboutMissionEnding("0");
 	}
 
 	@Override

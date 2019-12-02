@@ -25,6 +25,7 @@ public class RichContentScreen extends GUIScreenUndismissableOnEscapeKey {
 	private RichContent content;
 	private int currentPage;
 	private boolean dismissible;
+	private boolean shouldPauseGame;
 	private String closeButtonLabel;
 	private GuiButton buttonPrevious;
 	private GuiButton buttonNext;
@@ -49,6 +50,7 @@ public class RichContentScreen extends GUIScreenUndismissableOnEscapeKey {
 		this.content.addPage(page);
 
 		this.dismissible = true;
+		this.shouldPauseGame = true;
 		this.closeButtonLabel = "Ok";
 		this.listeners = new ArrayList<ScreenListener>();
 	}
@@ -59,12 +61,13 @@ public class RichContentScreen extends GUIScreenUndismissableOnEscapeKey {
 	 * @param dismissible - Indicates whether there is a button to close the window
 	 * @param closeButtonLabel - Label of the button which closes the screen
 	 */
-	public RichContentScreen(RichContent content, boolean dismissable, String closeButtonLabel) {
+	public RichContentScreen(RichContent content, boolean shouldPauseGame, boolean dismissable, String closeButtonLabel) {
 		this.content = content;
 		this.currentPage = 0;
 		this.dismissible = dismissable;
 		this.closeButtonLabel = closeButtonLabel;
 		this.listeners = new ArrayList<ScreenListener>();
+		this.shouldPauseGame = shouldPauseGame;
 	}
 
 	/**
@@ -72,11 +75,12 @@ public class RichContentScreen extends GUIScreenUndismissableOnEscapeKey {
 	 * @param content - Content of the screen
 	 * @param dismissible - Indicates whether there is a button to close the window
 	 */
-	public RichContentScreen(RichContent content, boolean dismissable) {
+	public RichContentScreen(RichContent content, boolean shouldPauseGame, boolean dismissable) {
 		this.content = content;
 		this.currentPage = 0;
 		this.dismissible = dismissable;		
 		this.listeners = new ArrayList<ScreenListener>();
+		this.shouldPauseGame = shouldPauseGame;
 	}
 
 
@@ -236,7 +240,7 @@ public class RichContentScreen extends GUIScreenUndismissableOnEscapeKey {
 
 	@Override
 	public boolean doesGuiPauseGame() {
-		return true;
+		return this.shouldPauseGame;
 	}
 
 	/**

@@ -3,6 +3,7 @@ package edu.arizona.tomcat.Mission;
 import java.util.ArrayList;
 
 import com.microsoft.Malmo.MalmoMod;
+import com.microsoft.Malmo.MissionHandlers.MissionBehaviour;
 import com.microsoft.Malmo.Schemas.PosAndDirection;
 
 import edu.arizona.tomcat.Emotion.EmotionHandler;
@@ -26,12 +27,22 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 	protected ArrayList<MissionPhase> phases;
 	protected MissionPhase currentPhase;
 	protected int numberOfPhasesCompleted; 
+	protected ArrayList<MissionListener> listeners;
 
 	/**
 	 * Abstract constructor for initialization of the drawing handler
 	 */
 	protected Mission() {
 		this.drawingHandler = DrawingHandler.getInstance();
+		this.listeners = new ArrayList<MissionListener>();
+	}
+	
+	/**
+	 * Adds listener to be notified upon relevant mission events
+	 * @param listener - Mission listener object
+	 */
+	public void addListener(MissionListener listener) {
+		this.listeners.add(listener);
 	}
 
 	/**
@@ -59,6 +70,9 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 	public void initMalmoModClientAndServerMission() {
 		MalmoMod.instance.getClient().setTomcatClientMission(this.getClientMissionInstance());
 		MalmoMod.instance.getServer().setTomcatServerMission(this);	
+		QuitProducer quitProducerHandler = new QuitProducer();
+		this.addListener(quitProducerHandler);
+		MalmoMod.instance.getServer().addQuitProducer(quitProducerHandler);
 	}
 
 	/**
@@ -165,7 +179,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 	protected abstract void afterLastPhaseCompletion();
 
 	/**
-	 * Method called after the the total time for the mission has passes.
+	 * Method called after the the total time for the mission has passed.
 	 */
 	protected abstract void onTimeOut();
 
@@ -185,5 +199,14 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 	}
 	
 	public abstract PosAndDirection getPlayersInitialPositionAndDirection(EntityPlayerMP player);
+	
+	/**
+	 * Notifies listeners about the mission ending
+	 */
+	protected void notifyAllAboutMissionEnding(String exitCode) {		
+		for (MissionListener listener : this.listeners) {
+			listener.missionEnded(exitCode);			
+		}
+	}
 
 }
