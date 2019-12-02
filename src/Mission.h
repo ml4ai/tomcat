@@ -1,82 +1,60 @@
 #pragma once
 
 #include "MissionSpec.h"
+#include <boost/filesystem.hpp>
 #include <string>
+#include <unordered_map>
 
 namespace tomcat {
 
   /**
    * The Mission interface represents an abstract Minecraft mission
    */
-  class Mission {
+  class Mission : public malmo::MissionSpec {
   public:
-    /**
-     * Build the world with all the features and elements the mission must have.
-     * This method must be overwritten by the subclasses of Mission to specify
-     * the details of a concrete mission.
-     */
-    virtual void buildWorld();
+    /* ============
+     * Constructors
+     * ============ */
 
-    /**
-     * Retrieves the object of class MissionSpec of the mission
-     */
-    malmo::MissionSpec getMissionSpec();
+    Mission(){};
+    Mission(std::string xml, bool validate)
+        : malmo::MissionSpec(xml, validate){};
 
-    /**
-     * Defines the time limit for the mission
-     * @param timeInSeconds - Time (in seconds) to the end of the mission
-     */
-    void setTimeLimitInSeconds(int timeInSeconds);
-
-    /**
-     * Returns the time limit of the mission, in seconds
+    /* =======================================================================
+     *
+     * Static method 'constructors'
+     * ----------------------------
+     *
+     * These functions play a role similar to 'factory' classes, but with less
+     * indirection.
+     *
+     * =======================================================================
      */
 
-    int getTimeLimitInSeconds();
+    static Mission fromMissionIdOrPathToXML(std::string missionIdOrPathToXML);
+    static Mission from_mission_id(int missionID);
+    static Mission from_XML_string(std::string xml);
+    static Mission from_XML_file(std::string missionIdOrPathToXML);
 
-    /**
-    * Requests video from MissionSpec
-    * @param width - width of the video
-    * @param height - height of the video
-    */
-    void requestVideo(unsigned int width, unsigned int height);
-
-    void observeRecentCommands();
-
-    void observeHotBar();
-
-    void observeFullInventory();
-
-    void observeChat();
+    int getTimeLimitInSeconds() { return this->timeLimit; };
+    void setTimeLimitInSeconds(int time_limit_in_seconds) {
+      this->timeLimit = time_limit_in_seconds;
+    };
 
   protected:
     /**
-    * Retrieves the content of an XML which defines the skeleton of the world
-    * for the Save and Rescue mission
-    * @return
-    */
-    virtual std::string getWorldSkeletonFromXML() = 0;
+     * Retrieves the content of an XML which defines the skeleton of the world
+     * for the Search and Rescue mission
+     * @return
+     */
+    static std::string getWorldSkeletonFromXML(int mission_id);
+    std::string getWorldFolder();
 
-    void insertTimeLimitInSeconds();
-
-    void insertVideoProducer();
-
-    void insertObserveRecentCommandsProducer();
-
-    void insertObserveHotBarProducer();
-
-    void insertObserveFullInventoryProducer();
-
-    void insertObserveChatProducer();
-
-    malmo::MissionSpec missionSpec;
-    int timeLimitInSeconds;
-    bool requestVideo_switch = false;
-    unsigned int video_width = 640; 
-    unsigned int video_height = 480;
-    bool observeRecentCommands_switch = false;
-    bool observeHotBar_switch = false;
-    bool observeFullInventory_switch = false;
-    bool observeChat_switch = false;
+    int timeLimit = 10;
+    enum MissionId { tutorial = 0, sar = 1 };
+    inline static std::unordered_map<int, std::string> IdToWorldFolderMap = {
+        {tutorial, "tutorial_0_0_1"},
+        {sar, "sar_0_0_1"},
+    };
   };
 } // namespace tomcat

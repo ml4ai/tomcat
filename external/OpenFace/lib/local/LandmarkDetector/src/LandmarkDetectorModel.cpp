@@ -51,7 +51,6 @@
 using namespace LandmarkDetector;
 
 //=============================================================================
-//=============================================================================
 
 // Constructors
 // A default constructor
@@ -73,7 +72,7 @@ CLNF::CLNF(string fname) {
 }
 
 // Copy constructor (makes a deep copy of CLNF)
-CLNF::CLNF(const CLNF &other)
+CLNF::CLNF(const CLNF& other)
     : pdm(other.pdm), params_local(other.params_local.clone()),
       params_global(other.params_global),
       detected_landmarks(other.detected_landmarks.clone()),
@@ -119,7 +118,7 @@ CLNF::CLNF(const CLNF &other)
 }
 
 // Assignment operator for lvalues (makes a deep copy of CLNF)
-CLNF &CLNF::operator=(const CLNF &other) {
+CLNF& CLNF::operator=(const CLNF& other) {
   if (this != &other) // protect against invalid self-assignment
   {
     pdm = PDM(other.pdm);
@@ -181,7 +180,7 @@ CLNF &CLNF::operator=(const CLNF &other) {
 }
 
 // Move constructor
-CLNF::CLNF(const CLNF &&other) {
+CLNF::CLNF(const CLNF&& other) {
   this->detection_success = other.detection_success;
   this->tracking_initialised = other.tracking_initialised;
   this->detection_certainty = other.detection_certainty;
@@ -219,7 +218,7 @@ CLNF::CLNF(const CLNF &&other) {
 }
 
 // Assignment operator for rvalues
-CLNF &CLNF::operator=(const CLNF &&other) {
+CLNF& CLNF::operator=(const CLNF&& other) {
   this->detection_success = other.detection_success;
   this->tracking_initialised = other.tracking_initialised;
   this->detection_certainty = other.detection_certainty;
@@ -263,8 +262,7 @@ bool CLNF::Read_CLNF(string clnf_location) {
   ifstream locations(clnf_location.c_str(), ios_base::in);
 
   if (!locations.is_open()) {
-    cout << "Couldn't open the CLNF model file aborting" << endl;
-    cout.flush();
+    throw std::runtime_error("Couldn't open the CLNF model file, aborting");
     return false;
   }
 
@@ -307,20 +305,18 @@ bool CLNF::Read_CLNF(string clnf_location) {
     location = (root / location).string();
 
     if (module.compare("PDM") == 0) {
-      cout << "Reading the PDM module from: " << location << "....";
       bool read_success = pdm.Read(location);
 
       if (!read_success) {
-        return false;
+        throw std::runtime_error(
+            "Could not read the PDM module from: " + location + "....");
       }
-
-      cout << "Done" << endl;
-    } else if (module.compare("Triangulations") == 0) {
-      cout << "Reading the Triangulations module from: " << location << "....";
+    }
+    else if (module.compare("Triangulations") == 0) {
       ifstream triangulationFile(location.c_str(), ios_base::in);
 
       if (!triangulationFile.is_open()) {
-        return false;
+        throw std::runtime_error("Could not read the Triangulations module from: " + location + "....");
       }
 
       LandmarkDetector::SkipComments(triangulationFile);
@@ -335,14 +331,17 @@ bool CLNF::Read_CLNF(string clnf_location) {
         LandmarkDetector::SkipComments(triangulationFile);
         LandmarkDetector::ReadMat(triangulationFile, triangulations[i]);
       }
-      cout << "Done" << endl;
-    } else if (module.compare("PatchesIntensity") == 0) {
+    }
+    else if (module.compare("PatchesIntensity") == 0) {
       intensity_expert_locations.push_back(location);
-    } else if (module.compare("PatchesCCNF") == 0) {
+    }
+    else if (module.compare("PatchesCCNF") == 0) {
       ccnf_expert_locations.push_back(location);
-    } else if (module.compare("PatchesCEN") == 0) {
+    }
+    else if (module.compare("PatchesCEN") == 0) {
       cen_expert_locations.push_back(location);
-    } else if (module.compare("EarlyTermination") == 0) {
+    }
+    else if (module.compare("EarlyTermination") == 0) {
       early_term_loc = location;
     }
   }
@@ -412,7 +411,8 @@ void CLNF::Read(string main_location) {
         loaded_successfully = false;
         return;
       }
-    } else if (module.compare("LandmarkDetector_part") == 0) {
+    }
+    else if (module.compare("LandmarkDetector_part") == 0) {
       string part_name;
       lineStream >> part_name;
       cout << "Reading part based module...." << part_name << endl;
@@ -468,8 +468,9 @@ void CLNF::Read(string main_location) {
 
         params.reg_factor = 0.1;
         params.sigma = 2;
-      } else if (part_name.compare("left_eye_28") == 0 ||
-                 part_name.compare("right_eye_28") == 0) {
+      }
+      else if (part_name.compare("left_eye_28") == 0 ||
+               part_name.compare("right_eye_28") == 0) {
         vector<int> windows_large;
         windows_large.push_back(3);
         windows_large.push_back(5);
@@ -488,8 +489,8 @@ void CLNF::Read(string main_location) {
         params.sigma = 1.0;
 
         eye_model = true;
-
-      } else if (part_name.compare("mouth") == 0) {
+      }
+      else if (part_name.compare("mouth") == 0) {
         vector<int> windows_large;
         windows_large.push_back(7);
         windows_large.push_back(7);
@@ -504,7 +505,8 @@ void CLNF::Read(string main_location) {
 
         params.reg_factor = 1.0;
         params.sigma = 2.0;
-      } else if (part_name.compare("brow") == 0) {
+      }
+      else if (part_name.compare("brow") == 0) {
         vector<int> windows_large;
         windows_large.push_back(11);
         windows_large.push_back(9);
@@ -519,7 +521,8 @@ void CLNF::Read(string main_location) {
 
         params.reg_factor = 10.0;
         params.sigma = 3.5;
-      } else if (part_name.compare("inner") == 0) {
+      }
+      else if (part_name.compare("inner") == 0) {
         vector<int> windows_large;
         windows_large.push_back(9);
 
@@ -538,7 +541,8 @@ void CLNF::Read(string main_location) {
       this->hierarchical_params.push_back(params);
 
       cout << "Done" << endl;
-    } else if (module.compare("DetectionValidator") == 0) {
+    }
+    else if (module.compare("DetectionValidator") == 0) {
       cout << "Reading the landmark validation module....";
       landmark_validator.Read(location);
       cout << "Done" << endl;
@@ -602,8 +606,8 @@ void CLNF::Reset(double x, double y) {
 }
 
 // The main internal landmark detection call (should not be used externally?)
-bool CLNF::DetectLandmarks(const cv::Mat_<uchar> &image,
-                           FaceModelParameters &params) {
+bool CLNF::DetectLandmarks(const cv::Mat_<uchar>& image,
+                           FaceModelParameters& params) {
 
   // TODO this could be moved out
   cv::Mat_<float> gray_image_flt;
@@ -620,7 +624,7 @@ bool CLNF::DetectLandmarks(const cv::Mat_<uchar> &image,
 
     // Do the hierarchical models in parallel
     parallel_for_(
-        cv::Range(0, hierarchical_models.size()), [&](const cv::Range &range) {
+        cv::Range(0, hierarchical_models.size()), [&](const cv::Range& range) {
           for (int part_model = range.start; part_model < range.end;
                part_model++) {
 
@@ -660,8 +664,8 @@ bool CLNF::DetectLandmarks(const cv::Mat_<uchar> &image,
               // Do the actual landmark detection
               hierarchical_models[part_model].DetectLandmarks(
                   image, hierarchical_params[part_model]);
-
-            } else {
+            }
+            else {
               hierarchical_models[part_model].pdm.CalcShape2D(
                   hierarchical_models[part_model].detected_landmarks,
                   hierarchical_models[part_model].params_local,
@@ -706,12 +710,13 @@ bool CLNF::DetectLandmarks(const cv::Mat_<uchar> &image,
         landmark_validator.Check(orientation, image, detected_landmarks);
 
     detection_success = detection_certainty > params.validation_boundary;
-
-  } else {
+  }
+  else {
     detection_success = fit_success;
     if (fit_success) {
       detection_certainty = 1;
-    } else {
+    }
+    else {
       detection_certainty = 0;
     }
   }
@@ -720,9 +725,9 @@ bool CLNF::DetectLandmarks(const cv::Mat_<uchar> &image,
 }
 
 //=============================================================================
-bool CLNF::Fit(const cv::Mat_<float> &im,
-               const std::vector<int> &window_sizes,
-               const FaceModelParameters &parameters) {
+bool CLNF::Fit(const cv::Mat_<float>& im,
+               const std::vector<int>& window_sizes,
+               const FaceModelParameters& parameters) {
   // Making sure it is a single channel image
   assert(im.channels() == 1);
 
@@ -832,7 +837,8 @@ bool CLNF::Fit(const cv::Mat_<float> &im,
                                              this->landmark_likelihoods,
                                              tmp_parameters,
                                              true);
-    } else {
+    }
+    else {
       this->NU_RLMS(params_global,
                     params_local,
                     patch_expert_responses,
@@ -866,15 +872,15 @@ bool CLNF::Fit(const cv::Mat_<float> &im,
 }
 
 void CLNF::NonVectorisedMeanShift_precalc_kde(
-    cv::Mat_<float> &out_mean_shifts,
-    const vector<cv::Mat_<float>> &patch_expert_responses,
-    const cv::Mat_<float> &dxs,
-    const cv::Mat_<float> &dys,
+    cv::Mat_<float>& out_mean_shifts,
+    const vector<cv::Mat_<float>>& patch_expert_responses,
+    const cv::Mat_<float>& dxs,
+    const cv::Mat_<float>& dys,
     int resp_size,
     float a,
     int scale,
     int view_id,
-    map<int, cv::Mat_<float>> &kde_resp_precalc) {
+    map<int, cv::Mat_<float>>& kde_resp_precalc) {
 
   int n = dxs.rows;
 
@@ -911,7 +917,8 @@ void CLNF::NonVectorisedMeanShift_precalc_kde(
     }
 
     kde_resp_precalc[resp_size] = kde_resp.clone();
-  } else {
+  }
+  else {
     // use the precomputed version
     kde_resp = kde_resp_precalc.find(resp_size)->second;
   }
@@ -984,10 +991,10 @@ void CLNF::NonVectorisedMeanShift_precalc_kde(
   }
 }
 
-void CLNF::GetWeightMatrix(cv::Mat_<float> &WeightMatrix,
+void CLNF::GetWeightMatrix(cv::Mat_<float>& WeightMatrix,
                            int scale,
                            int view_id,
-                           const FaceModelParameters &parameters) {
+                           const FaceModelParameters& parameters) {
   int n = pdm.NumberOfPoints();
 
   // Is the weight matrix needed at all
@@ -1004,8 +1011,8 @@ void CLNF::GetWeightMatrix(cv::Mat_<float> &WeightMatrix,
 
         // for they y dimension
         WeightMatrix.at<float>(p + n, p + n) = WeightMatrix.at<float>(p, p);
-
-      } else if (!patch_experts.ccnf_expert_intensity.empty()) {
+      }
+      else if (!patch_experts.ccnf_expert_intensity.empty()) {
 
         // for the x dimension
         WeightMatrix.at<float>(p, p) =
@@ -1015,8 +1022,8 @@ void CLNF::GetWeightMatrix(cv::Mat_<float> &WeightMatrix,
 
         // for they y dimension
         WeightMatrix.at<float>(p + n, p + n) = WeightMatrix.at<float>(p, p);
-
-      } else {
+      }
+      else {
         // Across the modalities add the confidences
         for (size_t pc = 0;
              pc < patch_experts.svr_expert_intensity[scale][view_id][p]
@@ -1034,26 +1041,27 @@ void CLNF::GetWeightMatrix(cv::Mat_<float> &WeightMatrix,
       }
     }
     WeightMatrix = parameters.weight_factor * WeightMatrix;
-  } else {
+  }
+  else {
     WeightMatrix = cv::Mat_<float>::eye(n * 2, n * 2);
   }
 }
 
 //=============================================================================
-float CLNF::NU_RLMS(cv::Vec6f &final_global,
-                    cv::Mat_<float> &final_local,
-                    const vector<cv::Mat_<float>> &patch_expert_responses,
-                    const cv::Vec6f &initial_global,
-                    const cv::Mat_<float> &initial_local,
-                    const cv::Mat_<float> &base_shape,
-                    const cv::Matx22f &sim_img_to_ref,
-                    const cv::Matx22f &sim_ref_to_img,
+float CLNF::NU_RLMS(cv::Vec6f& final_global,
+                    cv::Mat_<float>& final_local,
+                    const vector<cv::Mat_<float>>& patch_expert_responses,
+                    const cv::Vec6f& initial_global,
+                    const cv::Mat_<float>& initial_local,
+                    const cv::Mat_<float>& base_shape,
+                    const cv::Matx22f& sim_img_to_ref,
+                    const cv::Matx22f& sim_ref_to_img,
                     int resp_size,
                     int view_id,
                     bool rigid,
                     int scale,
-                    cv::Mat_<float> &landmark_lhoods,
-                    const FaceModelParameters &parameters,
+                    cv::Mat_<float>& landmark_lhoods,
+                    const FaceModelParameters& parameters,
                     bool compute_lhood) {
 
   int n = pdm.NumberOfPoints();
@@ -1077,7 +1085,8 @@ float CLNF::NU_RLMS(cv::Vec6f &final_global,
 
   if (rigid) {
     regTerm = cv::Mat_<float>::zeros(6, 6);
-  } else {
+  }
+  else {
     cv::Mat_<float> regularisations = cv::Mat_<float>::zeros(1, 6 + m);
 
     // Setting the regularisation to the inverse of eigenvalues
@@ -1116,7 +1125,8 @@ float CLNF::NU_RLMS(cv::Vec6f &final_global,
     if (rigid) {
       pdm.ComputeRigidJacobian(
           current_local, current_global, J, WeightMatrix, J_w_t);
-    } else {
+    }
+    else {
       pdm.ComputeJacobian(
           current_local, current_global, J, WeightMatrix, J_w_t);
     }
@@ -1194,12 +1204,12 @@ float CLNF::NU_RLMS(cv::Vec6f &final_global,
            &J_w_t.rows,
            &J_w_t.cols,
            &alpha1,
-           (float *)J.data,
+           (float*)J.data,
            &J.cols,
-           (float *)J_w_t.data,
+           (float*)J_w_t.data,
            &J_w_t.cols,
            &beta1,
-           (float *)Hessian.data,
+           (float*)Hessian.data,
            &J.cols);
 
     // Above is a fast (but ugly) version of

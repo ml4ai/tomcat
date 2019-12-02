@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Mission.h"
 #include "Microphone.h"
-#include "MissionHandler.h"
 #include "WebcamSensor.h"
 #include <AgentHost.h>
 #include <fmt/format.h>
@@ -73,9 +73,9 @@ namespace tomcat {
      */
     malmo::ClientPool getClientPool(int portNumber) const;
 
-    WebcamSensor webcamSensor;
+    WebcamSensor* webcamSensor;
     malmo::AgentHost host;
-    tomcat::MissionHandler missionHandler;
+    Mission mission;
     Microphone microphone;
   };
 

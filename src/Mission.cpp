@@ -1,72 +1,76 @@
 #include "Mission.h"
+#include "FileHandler.h"
+#include <boost/filesystem.hpp>
 #include <fmt/format.h>
 
 using namespace malmo;
 using namespace std;
+using boost::filesystem::path;
+using fmt::format;
 
 namespace tomcat {
 
-  void Mission::buildWorld() {
-    string xml = this->getWorldSkeletonFromXML();
-    this->missionSpec = MissionSpec(xml, true);
-    this->missionSpec.forceWorldReset();
+  Mission Mission::from_XML_string(string xml) { return Mission(xml, true); }
+
+  Mission Mission::from_XML_file(string missionIdOrPathToXML) {
+    string xml = FileHandler::getFileContent(missionIdOrPathToXML);
+    return Mission::from_XML_string(xml);
   }
 
-  MissionSpec Mission::getMissionSpec() { return this->missionSpec; }
-
-  void Mission::setTimeLimitInSeconds(int timeInSeconds) {
-    this->timeLimitInSeconds = timeInSeconds;
+  Mission Mission::from_mission_id(int mission_id) {
+    string xml = Mission::getWorldSkeletonFromXML(mission_id);
+    return Mission::from_XML_string(xml);
   }
 
-  int Mission::getTimeLimitInSeconds() {
-    return this->timeLimitInSeconds;
+  Mission Mission::fromMissionIdOrPathToXML(string missionIdOrPathToXML) {
+    path p(missionIdOrPathToXML);
+    if (p.extension() == ".xml") {
+      return Mission::from_XML_file(missionIdOrPathToXML);
+    }
+    else {
+      return Mission::from_mission_id(std::stoi(missionIdOrPathToXML));
+    }
   }
 
-  void Mission::insertTimeLimitInSeconds() {
-    this->missionSpec.timeLimitInSeconds(this->timeLimitInSeconds);
+  string Mission::getWorldSkeletonFromXML(int mission_id) {
+    string worldSkeletonXML = format(R"(
+    <?xml version="1.0" encoding="UTF-8"?>
+    <Mission xmlns="http://ProjectMalmo.microsoft.com" 
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> 
+      <About>
+          <Summary>Search and Rescue</Summary>
+      </About>
+      <ServerSection>
+          <ServerInitialConditions>
+            <AllowSpawning>false</AllowSpawning>
+          </ServerInitialConditions>
+          <ServerHandlers>
+            <FileWorldGenerator 
+              src="{}/data/worlds/{}" 
+              forceReset="true"
+            />
+            <TomcatDecorator 
+              mission="{}" 
+            />
+          </ServerHandlers>
+      </ServerSection>
+      <AgentSection mode="Survival">
+          <Name>Tomcat</Name>
+          <AgentStart>
+          </AgentStart>
+          <AgentHandlers>
+            <ContinuousMovementCommands turnSpeedDegs="840">
+                <ModifierList type="deny-list">
+                  <command>strafe</command>
+                </ModifierList>
+            </ContinuousMovementCommands>
+          </AgentHandlers>
+      </AgentSection>
+    </Mission>)",
+                                     getenv("TOMCAT"),
+                                     Mission::IdToWorldFolderMap.at(mission_id),
+                                     mission_id);
+
+    return worldSkeletonXML;
   }
-
-  void Mission::requestVideo(unsigned int width, unsigned int height) {
-    this->requestVideo_switch = true;
-    this->video_width = width;
-    this->video_height = height;
-  }
-
-  void Mission::insertVideoProducer(){
-    this->missionSpec.requestVideo(this->video_width,this->video_height);
-  }
-
-  void Mission::observeRecentCommands() {
-    this->observeRecentCommands_switch = true;
-  }
-
-  void Mission::observeHotBar() {
-    this->observeHotBar_switch = true;
-  }
-
-  void Mission::observeFullInventory() {
-    this->observeFullInventory_switch = true;
-  }
-
-  void Mission::observeChat() {
-    this->observeChat_switch = true;
-  }
-
-  void Mission::insertObserveRecentCommandsProducer() {
-    this->missionSpec.observeRecentCommands();
-  }
-
-  void Mission::insertObserveHotBarProducer() {
-    this->missionSpec.observeHotBar();
-  }
-
-  void Mission::insertObserveFullInventoryProducer() {
-    this->missionSpec.observeFullInventory();
-  }
-
-  void Mission::insertObserveChatProducer() {
-    this->missionSpec.observeChat();
-  }
-
-
 } // namespace tomcat

@@ -6,16 +6,8 @@ add_library(
   WebcamSensor.cpp
   Microphone.h
   Microphone.cpp
-  MissionHandler.h
-  MissionHandler.cpp
-  MissionFactory.h
-  MissionFactory.cpp
   Mission.h
   Mission.cpp
-  TomcatMission.h
-  TomcatMission.cpp
-  XMLMission.h
-  XMLMission.cpp
   FileHandler.h
   FileHandler.cpp)
 
