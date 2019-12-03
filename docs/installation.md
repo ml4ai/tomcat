@@ -17,6 +17,8 @@ git clone https://github.com/ml4ai/tomcat
 cd tomcat && ./tools/install.sh
 ```
 
+Please make sure your internet connection is active while the `install.sh`
+script is running. Mac users may want to turn off their firewalls.
 The scripts assume that the default shell is bash - if this is not the case for
 you, then you are probably an advanced user, and may want to take a look at the
 shell scripts before running them :).
