@@ -1,24 +1,31 @@
 # This script constructs a dictionary with Minecraft types to bootstrap a
 # Minecraft ontology for reading.
 
-# Usage: python extract_info_from_xml_2.py <SCHEMA_FILE> .. 
+# Usage: python extract_info_from_xml_2.py [--input <FILE_PATH>] [--output <FILE_PATH>]  
 import sys
-
+import argparse
 from ruamel.yaml import YAML
 from pathlib import Path
 
 import xml.etree.ElementTree as ET
-from pprint import pprint
+
+arguments = argparse.ArgumentParser()
 
 yaml = YAML(typ='safe')
 yaml.default_flow_style = False
 
 minecraft_ontology_dict = {}
 
-if len(sys.argv) > 1:
-    for schema in sys.argv[1:]:
-        tree = ET.parse(schema)
-        out = open(Path(Path(schema).parent).joinpath('../YAML/' + Path(schema).stem + '.yaml'), 'w')
+arguments = argparse.ArgumentParser()
+
+arguments.add_argument("-i", "--input", help="Input Schema")
+arguments.add_argument("-o", "--output", help="YAML output")
+args = arguments.parse_args()
+
+def schemaToYAML(schema, output):
+    try:
+        tree = ET.parse(Path(schema))
+        out = open(Path(output), 'w')
         for simple_type in tree.getroot():
             category = simple_type.attrib["name"]
             for restriction_or_union in simple_type:
@@ -26,3 +33,10 @@ if len(sys.argv) > 1:
                     minecraft_ontology_dict[category] = [member.attrib['value'] for member in restriction_or_union]
         data = yaml.load(str(minecraft_ontology_dict))
         yaml.dump(data, out)
+        return 1
+    except Exception as e:
+        print("Error:", str(e))
+        sys.exit(1)
+
+
+schemaToYAML(schema=args.input, output=args.output)
