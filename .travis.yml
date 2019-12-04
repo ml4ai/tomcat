@@ -19,7 +19,8 @@ before_install:
 install:
   - pip install exhale recommonmark sphinx-rtd-theme
   - cd external && curl -O http://dlib.net/files/dlib-19.17.tar.bz2 
-                && tar -xvjf dlib-19.17.tar.bz2 
+                && tar -xvjf dlib-19.17.tar.bz2
+                && cd ../
 
 env:
   - TOMCAT=$TRAVIS_BUILD_DIR
@@ -28,6 +29,7 @@ script:
   - ./tools/install.sh
   - cd build && make -j test 
              && ./bin/test --mission ../external/malmo/sample_missions/default_world_1.xml 
+             && cd ../
   - cd build && make docs
 
 
