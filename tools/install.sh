@@ -7,7 +7,7 @@ tomcat=`echo $script_path | sed 's#^\./##' | sed 's#^\(.*\)//*tools/*install.sh#
 # We do not actually need to consult TOMCAT as an environment variable, but it
 # gives us a chance to remind the the user that we are ignoring their location
 # hint. 
-#
+
 if [ ! -z "$TOMCAT" ]; then
     if [[ "${TOMCAT}" != "${tomcat}" ]]; then
         echo "Resetting TOMCAT variable from ${TOMCAT} to ${tomcat}."
@@ -31,7 +31,13 @@ pushd "${TOMCAT}"
 
     pushd build > /dev/null 
 
-    cmake ${TOMCAT}
+    if [[ ! -z $TRAVIS ]]; then
+      cmake ${TOMCAT}
+    else
+      # On Travis, we will build HTML documentation by default.
+      cmake ${TOMCAT} -DBUILD_DOCS=ON
+    fi;
+
     if [[ $? -ne 0 ]]; then exit 1; fi;
 
     make -j

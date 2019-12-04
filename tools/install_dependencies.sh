@@ -66,6 +66,9 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         brew update
         if [[ $? -ne 0 ]]; then exit 1; fi;
 
+        # We do not check exit codes for Homebrew installs since `brew install`
+        # can return an exit code of 1 when a package is already installed (!!)
+
         brew install \
           cmake \
           fmt \
@@ -77,26 +80,22 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
           libsndfile \
           portaudio
 
-        echo "Exit code from brew install is $?"
-        if [[ $? -ne 0 ]]; then exit 1; fi;
-
-
+        # The Homebrew install of DLib on Travis doesn't play well with CMake
+        # for some reason, so we install DLib on Travis from source rather than
+        # with the Homebrew package manager.
         if [[ ! -z $TRAVIS ]]; then
           brew install dlib
-          if [[ $? -ne 0 ]]; then exit 1; fi;
         else
-          echo "This script is running on Travis CI, so we will not install dlib using Homebrew."
+          # If we are running this installation on Travis, we will also install
+          # lcov for code coverage measurement.
+          brew install lcov
         fi;
 
         # Installing Java
         brew tap adoptopenjdk/openjdk
-        if [[ $? -ne 0 ]]; then exit 1; fi;
-
         brew cask install adoptopenjdk8
-        if [[ $? -ne 0 ]]; then exit 1; fi;
-
         brew install gradle
-        if [[ $? -ne 0 ]]; then exit 1; fi;
+
     else 
         echo "No package manager found for $OSTYPE"
         exit 1 
