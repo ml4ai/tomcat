@@ -56,6 +56,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 
         sudo port install boost -no_static
         if [[ $? -ne 0 ]]; then exit 1; fi;
+
     elif [ -x "$(command -v brew)" ]; then
         echo "\'brew\' executable detected, assuming that Homebrew"\
         "\(https://brew.sh\) is installed and is the package manager."
@@ -79,7 +80,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         if [[ $? -ne 0 ]]; then exit 1; fi;
 
 
-        if [[ ! -z $TRAVIS ]]
+        if [[ ! -z $TRAVIS ]]; then
           brew install dlib
         else
           echo("This script is running on Travis CI, so we will not install dlib using Homebrew.")
