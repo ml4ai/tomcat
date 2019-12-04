@@ -83,7 +83,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         if [[ ! -z $TRAVIS ]]; then
           brew install dlib
         else
-          echo("This script is running on Travis CI, so we will not install dlib using Homebrew.")
+          echo "This script is running on Travis CI, so we will not install dlib using Homebrew."
         fi;
         if [[ $? -ne 0 ]]; then exit 1; fi;
 
