@@ -82,10 +82,10 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 
         if [[ ! -z $TRAVIS ]]; then
           brew install dlib
+          if [[ $? -ne 0 ]]; then exit 1; fi;
         else
           echo "This script is running on Travis CI, so we will not install dlib using Homebrew."
         fi;
-        if [[ $? -ne 0 ]]; then exit 1; fi;
 
         # Installing Java
         brew tap adoptopenjdk/openjdk
