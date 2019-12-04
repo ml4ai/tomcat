@@ -49,12 +49,12 @@ find_package(PortAudio)
 find_package(LibSndFile)
 
 
-#if(DEFINED ENV{TRAVIS})
-  #message("-- CMake running on Travis, using downloaded dlib.")
-  #add_subdirectory(external/dlib-19.17)
-#else()
-  #find_package(dlib REQUIRED)
-#endif()
+if(DEFINED ENV{TRAVIS})
+  message("-- CMake running on Travis, using downloaded dlib.")
+  add_subdirectory(external/dlib-19.17)
+else()
+  find_package(dlib REQUIRED)
+endif()
 
 add_subdirectory(external/malmo)
 add_subdirectory(external/OpenFace)

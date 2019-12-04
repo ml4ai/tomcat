@@ -6,21 +6,21 @@ echo "Checking OS."
 # If MacOS, then try MacPorts and Homebrew
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    echo "MacOS detected. Checking for xcode developer kit."
+    echo "MacOS detected. Checking for XCode developer kit."
 
-    xcode_sdk_dir="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs"
-    if [[ ! -d "${xcode_sdk_dir}" ]]; then
-        echo "No xcode developer kit found. You need to get this from the app store."
+    XCode_sdk_dir="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs"
+    if [[ ! -d "${XCode_sdk_dir}" ]]; then
+        echo "No XCode developer kit found. You need to get this from the app store."
         exit 1 
     else 
-        if [[ ! -e "${xcode_sdk_dir}/MacOSX10.14.sdk" ]]; then
-            if [[ ! -e "${xcode_sdk_dir}/MacOSX.sdk" ]]; then
-                echo "No MacOSX.sdk in ${xcode_sdk_dir}."
+        if [[ ! -e "${XCode_sdk_dir}/MacOSX10.14.sdk" ]]; then
+            if [[ ! -e "${XCode_sdk_dir}/MacOSX.sdk" ]]; then
+                echo "No MacOSX.sdk in ${XCode_sdk_dir}."
                 echo "Possibly MacOS has changed things (again)."
                 exit 1 
             else 
-                pushd "${xcode_sdk_dir}" > /dev/null
-                    echo "Linking missing MacOSX10.14.sdk to MacOSX.sdk in ${xcode_sdk_dir}/"
+                pushd "${XCode_sdk_dir}" > /dev/null
+                    echo "Linking missing MacOSX10.14.sdk to MacOSX.sdk in ${XCode_sdk_dir}/"
                     sudo ln -s "MacOSX.sdk" "MacOSX10.14.sdk" 
                     if [[ $? -ne 0 ]]; then exit 1; fi;
                 popd > /dev/null
@@ -28,7 +28,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         fi 
     fi 
   
-    echo "Found xcode developer kit."
+    echo "Found XCode developer kit."
     echo "Checking for MacPorts or Homebrew package managers."
   
     if [ -x "$(command -v port)" ]; then
@@ -72,13 +72,21 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
           ffmpeg \
           opencv \
           openblas \
-          dlib \
           boost \
           libsndfile \
           portaudio
 
         if [[ $? -ne 0 ]]; then exit 1; fi;
 
+
+        if [[ ! -z $TRAVIS ]]
+          brew install dlib
+        else
+          echo("This script is running on Travis CI, so we will not install dlib using Homebrew.")
+        fi;
+        if [[ $? -ne 0 ]]; then exit 1; fi;
+
+        # Installing Java
         brew tap adoptopenjdk/openjdk
         if [[ $? -ne 0 ]]; then exit 1; fi;
 
@@ -114,7 +122,7 @@ elif [ -x "$(command -v apt-get)" ]; then
         libsndfile1-dev
     if [[ $? -ne 0 ]]; then exit 1; fi;
 else 
-    echo "This is not a mac and not Ubuntu (at least apt-get is not around). We cannot proceed."
+    echo "This is not a Mac and not Ubuntu (at least apt-get is not around). We cannot proceed."
     exit 1 
 fi
 
