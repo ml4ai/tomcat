@@ -26,6 +26,7 @@ env:
 
 script:
   - ./tools/download_tomcat_data.sh
+  - ./tools/install_dependencies.sh
   - mkdir build && cd build && cmake .. -DBUILD_DOCS=ON && make -j test && cd ../
   - cd build && ./bin/test --mission ../external/malmo/sample_missions/default_world_1.xml && cd ../
   - cd build && make docs
