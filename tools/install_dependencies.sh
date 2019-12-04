@@ -84,11 +84,11 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         # for some reason, so we install DLib on Travis from source rather than
         # with the Homebrew package manager.
         if [[ ! -z $TRAVIS ]]; then
-          brew install dlib
-        else
           # If we are running this installation on Travis, we will also install
           # lcov for code coverage measurement.
           brew install lcov
+        else
+          brew install dlib
         fi;
 
         # Installing Java
