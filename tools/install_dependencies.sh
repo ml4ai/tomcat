@@ -77,6 +77,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
           libsndfile \
           portaudio
 
+        echo "Exit code from brew install is $?"
         if [[ $? -ne 0 ]]; then exit 1; fi;
 
 
