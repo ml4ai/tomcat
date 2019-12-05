@@ -59,9 +59,6 @@ endif()
 add_subdirectory(external/malmo)
 add_subdirectory(external/OpenFace)
 
-if(DEFINED ENV{TRAVIS})
-  option(CODE_COVERAGE "Enable coverage reporting" ON)
-endif()
 
 add_subdirectory(src)
 target_include_directories(tomcat

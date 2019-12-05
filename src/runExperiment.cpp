@@ -1,6 +1,5 @@
 #include "LocalAgent.h"
 #include <boost/program_options.hpp>
-#include <fmt/format.h>
 #include <string>
 
 int main(int argc, const char* argv[]) {

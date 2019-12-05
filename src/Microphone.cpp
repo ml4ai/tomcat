@@ -1,4 +1,5 @@
 #include "Microphone.h"
+#include <fmt/format.h>
 
 using namespace std;
 using namespace fmt::literals;
