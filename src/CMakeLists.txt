@@ -24,6 +24,11 @@ target_link_libraries(
   ${LIBSNDFILE_LIBRARIES}
   fmt::fmt)
 
+if(DEFINED ENV{TRAVIS})
+  option(CODE_COVERAGE "Enable coverage reporting" ON)
+  message("Compilation occurring on Travis, code coverage reporting on.")
+endif()
+
 if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
   # Add required flags (GCC & LLVM/Clang)
   message("Building with code coverage")
