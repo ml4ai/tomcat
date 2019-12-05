@@ -34,14 +34,14 @@ if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
   message("Building with code coverage")
   target_compile_options(
     tomcat
-    PRIVATE -O0 # no optimization
+    PUBLIC -O0 # no optimization
             -g # generate debug info
             --coverage # sets all required flags
   )
   if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.13)
-    target_link_options(tomcat PRIVATE --coverage)
+    target_link_options(tomcat PUBLIC --coverage)
   else()
-    target_link_libraries(tomcat PRIVATE --coverage)
+    target_link_libraries(tomcat PUBLIC --coverage)
   endif()
 endif()
 
