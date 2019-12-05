@@ -7,6 +7,11 @@ language:
  - cpp
  - python
 
+addons:
+  homebrew:
+    packages:
+    - lcov
+
 before_install:
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python3 -m venv tomcat; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source tomcat/bin/activate; fi
