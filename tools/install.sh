@@ -32,10 +32,10 @@ pushd "${TOMCAT}"
     pushd build > /dev/null 
 
     if [[ ! -z $TRAVIS ]]; then
-      cmake ${TOMCAT}
-    else
       # On Travis, we will build HTML documentation by default.
       cmake ${TOMCAT} -DBUILD_DOCS=ON
+    else
+      cmake ${TOMCAT}
     fi;
 
     if [[ $? -ne 0 ]]; then exit 1; fi;

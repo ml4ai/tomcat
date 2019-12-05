@@ -30,7 +30,7 @@ script:
   - cd build && make -j test 
              && ./bin/test --mission ../external/malmo/sample_missions/default_world_1.xml 
              && cd ../
-  - cd ${TOMCAT}/build && make docs && cd $TOMCAT
+  - cd ${TOMCAT}/build && make docs && cd ../
 
 
 after_success:
