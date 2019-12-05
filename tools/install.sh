@@ -43,7 +43,12 @@ pushd "${TOMCAT}"
     make -j
     if [[ $? -ne 0 ]]; then exit 1; fi;
 
-    make -j Minecraft
+    # We skip building Minecraft on Travis since we cannot get an
+    # appropriate version of Java on their MacOS image.
+    if [[ -z $TRAVIS ]]; then
+      make -j Minecraft
+    fi
+
     if [[ $? -ne 0 ]]; then exit 1; fi;
 popd > /dev/null 
 
