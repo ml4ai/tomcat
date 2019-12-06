@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <fmt/format.h>
 #include <sndfile.hh>
 
 #define SAMPLE_SILENCE (0.0f)

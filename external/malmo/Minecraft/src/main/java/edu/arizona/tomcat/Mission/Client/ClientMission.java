@@ -18,7 +18,7 @@ public abstract class ClientMission implements ScreenListener {
 	public void handleMessageFromServer(TomcatMessage message) {		
 		switch (message.getMessageType()) {
 		case SHOW_INSTRUCTIONS_SCREEN:
-			RichContentScreen instructionsScreen = new RichContentScreen(message.getMessageData().getRichContent(), true, "Ok");
+			RichContentScreen instructionsScreen = new RichContentScreen(message.getMessageData().getRichContent(), true, true, "Ok");
 			instructionsScreen.addListener(this);
 			Minecraft.getMinecraft().displayGuiScreen(instructionsScreen);			
 			break;
@@ -29,7 +29,7 @@ public abstract class ClientMission implements ScreenListener {
 			break;
 			
 		case SHOW_COMPLETION_SCREEN:
-			Minecraft.getMinecraft().displayGuiScreen(new RichContentScreen(message.getMessageData().getRichContent(), false));		
+			Minecraft.getMinecraft().displayGuiScreen(new RichContentScreen(message.getMessageData().getRichContent(), false, false));		
 			break;	
 		
 		case DISMISS_OPEN_SCREEN:
