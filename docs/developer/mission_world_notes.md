@@ -1,4 +1,4 @@
-**Author:** Aditya Banerjee **Date:** 2019-11-24
+**Author:** Aditya Banerjee **Date:** 2019-12-7
 
 # Notes for The Mission Worlds
 
@@ -7,11 +7,14 @@ with Minecraft's in-game command system at:
 
     https://minecraft.gamepedia.com/Commands
 
+The worlds used are also updated often, so the number attached to world
+names represent the current version. `x_x_x`is simply a placeholder for this
+number.
 
 ## Tutorial Mission World
 
 This is the world used for the Tutorial Mission, and it can
-be downloaded from this Drive link as the `Tutorial_v0.01` folder:
+be downloaded from this Drive link as the `tutorial_x_x_x` folder:
 
     https://drive.google.com/open?id=19PjgHmUeJmOQ4DS4dAy-4bgax2_TnJRp 
 
@@ -42,7 +45,7 @@ coordinates in the  `<x> <y> <z>` spaces (without <>) in the following command:
 ## Search and Rescure Mission World
 
 This is the world used for the Search and Rescue(SAR) Mission, and it can
-be downloaded from this Drive link as the `SAR_v1` folder:
+be downloaded from this Drive link as the `sar_x_x_x` folder:
 
     https://drive.google.com/open?id=19PjgHmUeJmOQ4DS4dAy-4bgax2_TnJRp 
 
@@ -65,7 +68,7 @@ coordinates in the  `<x> <y> <z>` spaces (without <>) in the following command:
     /setworldspawn <x> <y> <z>
 
 
-It should be noted that the doors used in `SAR_v1` world are all iron doors.
+It should be noted that the doors used in `sar_x_x_x` world are all iron doors.
 Wooden doors wern't used in order to prevent mobs from randomly opening doors
 by themselves (this could be a non-issue depending on the mob you are using). The doors can, however, be opened by a player who can right-click the lever next to the door and open it. This is true for all the doors in the mission except the "final door" in a structure. This final door is meant to be opened programatically once the player has successfully killed/saved (depends on the mob) the mob in the chamber.
 

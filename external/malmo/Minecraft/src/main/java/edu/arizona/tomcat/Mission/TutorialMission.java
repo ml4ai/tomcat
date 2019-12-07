@@ -21,6 +21,7 @@ import edu.arizona.tomcat.Mission.gui.RichContent;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.World.Drawing;
 import edu.arizona.tomcat.World.TomcatEntity;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
 
@@ -29,6 +30,7 @@ public class TutorialMission extends Mission {
 	public static final int NUMBER_OF_VILLAGERS = 1;
 	private static final int MAX_DISTANCE_TO_SAVE_VILLAGER = 1;
 
+	private double viewTime;
 	private boolean shouldSpawnSkeletonInTheArena;
 	private boolean shouldSpawnZombieInsideTheBuilding;
 	private boolean shouldSpawnVillagerInsideTheBuilding;
@@ -38,9 +40,11 @@ public class TutorialMission extends Mission {
 	private UUID skeletonUUID;
 	private UUID zombieUUID;
 	private UUID villagerUUID;
+
 	
 	public TutorialMission() {
 		super();
+		this.viewTime = 0;
 		this.shouldSpawnSkeletonInTheArena = false;
 		this.shouldSpawnZombieInsideTheBuilding = false;
 		this.shouldSpawnVillagerInsideTheBuilding = false;
@@ -70,7 +74,7 @@ public class TutorialMission extends Mission {
 	 */
 	private void addApproachPoolsPhase() {
 		RichContent instructions = RichContent.createFromJson("tutorial_instructions1.json");
-		MissionPhase approachPoolsPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 0, true, "Well Done!", 0, 2);	
+		MissionPhase approachPoolsPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 10, true, "Well Done!", 0, 2);
 		approachPoolsPhase.addGoal(new ReachPositionGoal(-635, 4, 1582, 2));
 		this.addPhase(approachPoolsPhase);
 	}
@@ -151,10 +155,25 @@ public class TutorialMission extends Mission {
 		if (this.shouldSpawnVillagerInsideTheBuilding) {
 			this.spawnVillagerInsideTheBuilding(world);
 			this.shouldSpawnVillagerInsideTheBuilding = false;
-		}		
-		
+		}
+
+		/* viewTime is in seconds. The player stays in each view mode for 3 seconds.
+		 20 Minecraft ticks equal 1 real second. viewTime is incremented by 0.05 till 60 such ticks (3 seconds)
+		 have passed for each view */
+
+		if (this.viewTime < 3.00) {
+			Minecraft.getMinecraft().gameSettings.thirdPersonView = 2; // third person front view
+			this.viewTime += 0.05;
+		}
+		else if(this.viewTime < 6.00){
+		     Minecraft.getMinecraft().gameSettings.thirdPersonView = 3; // third person back view
+		     this.viewTime += 0.05;
+		}
+		else if (this.viewTime < 9.00) {
+			Minecraft.getMinecraft().gameSettings.thirdPersonView = 0; // first person view
+			this.viewTime = 10.00;
+		}
 		//System.out.println("===========>Player's position: " + MinecraftServerHelper.getFirstPlayer().getPosition().toString());
-		
 	}
 		
 	/**
