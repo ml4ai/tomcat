@@ -1,4 +1,4 @@
-**Author:** Aditya Banerjee **Date:** 2019-11-24
+**Author:** Aditya Banerjee **Date:** 2019-12-7
 
 # Pre-Built World Loading Tutorial
 
@@ -13,13 +13,17 @@
 
 **Getting Started:**
 
-1\. Download the `SAR_v1` world from this Drive link: 
+The `sar`world is expected to be updated often, so the number attached to the name
+will reflect the current version number.`x_x_x` is simply the placeholder to
+represent this number. 
+
+1\. Download the `sar_x_x_x` world from this Drive link: 
 
     https://drive.google.com/open?id=19PjgHmUeJmOQ4DS4dAy-4bgax2_TnJRp
 
 Save it somewhere convenient and unzip the file. 
 
-Henceforth, `SAR_v1` refers to the folder you got from unzipping.
+Henceforth, `sar_x_x_x` refers to the folder you got from unzipping.
 	
 **NOTE** : Ensure the path to which you save this folder has no white spaces.
 
@@ -32,9 +36,9 @@ Ex:  `Documents/folder name` is not allowed, but `Documents/folder_name` is allo
 
 `file_gen` will serve as a reference for you to use `file_gen_skeleton` to get your pre-built world working.
 
-**DO NOT** save it inside  `SAR_v1`
+**DO NOT** save it inside  `sar_x_x_x`
 
-This is because the _entire_ `SAR_v1`  folder represents the Minecraft world. It is not meant to hold anything else.
+This is because the _entire_ `sar_x_x_x`  folder represents the Minecraft world. It is not meant to hold anything else.
 
 I saved mine in: 
 `/home/$USER/Documents/TOMCAT/tomcat/external/malmo/sample_missions` to keep it with all the other missions
@@ -50,9 +54,9 @@ Don’t change the name after we modify it (the next step) for the sake of this 
 The comments in the XML indicate what needs to be filled in generally, but for
 the tutorial go to the line `<FileWorldGenerator src = “” />`
 
-Within the quotes specify the path to which you saved your `SAR_v1 folder`.
+Within the quotes specify the path to which you saved your `sar_x_x_x` folder.
 
-Again,the **Minecraft world is the whole folder and not just one file inside the folder, so the path should end in:** `SAR_v1`
+Again,the **Minecraft world is the whole folder and not just one file inside the folder, so the path should end in:** `sar_x_x_x`
 	
 Refer to `file_gen.xml` to see how I specified my path. 
 
@@ -69,11 +73,7 @@ The whole path needs to be specified using `home/<your username>`
     run ./bin/runExperiment –mission <Path to the file_gen_skeleton.xml you modified>
 
 
-7\.	That’s it! You should be inside the world I built. I've placed a few
-command blocks and notebooks to get you started with in-game commands, but you
-don't have to do this.
-
-
+7\.	That’s it! You should be inside the world I built.
 
 
 ##  Creating A World to Load
@@ -123,8 +123,8 @@ It is better to save it elsewhere and then load it in from that path.
 
 ## Final Notes
 
-I intentionally left file_gen_skeleton as a very basic XML with no real mission elements. It is meant to serve as a foundation to build missions without needing to change or delete much.
-When you’ve finished going through this documentation, you may add as much as you want to the file_gen_skeleton.xml to implement your mission. There is no need to follow
+I intentionally left `file_gen_skeleton` as a very basic XML with no real mission elements. It is meant to serve as a foundation to build missions without needing to change or delete much.
+When you’ve finished going through this documentation, you may add as much as you want to `file_gen_skeleton` to implement your mission. There is no need to follow
 the tutorial's XML modification restrictions at that time.
 
 Note however, it is better to set trivial paramaters through in-game commands while playing the world so that the XML can be more streamlined in its implementation of the mission itself. The goal of this endeavour is to move the trivial tasks of building and setting daytime etc. away from the XML.
