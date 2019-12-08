@@ -31,30 +31,26 @@ namespace tomcat {
      * =======================================================================
      */
 
-    static Mission fromMissionIdOrPathToXML(std::string missionIdOrPathToXML);
-    static Mission from_mission_id(int missionID);
+    static Mission fromMissionIdOrPathToXML(std::string missionIdOrPathToXML, unsigned int timeLimitInSeconds);
+    static Mission from_mission_id(int missionID, unsigned int timeLimitInSeconds);
     static Mission from_XML_string(std::string xml);
     static Mission from_XML_file(std::string missionIdOrPathToXML);
 
     int getTimeLimitInSeconds() { return this->timeLimit; };
-    void setTimeLimitInSeconds(int time_limit_in_seconds) {
-      this->timeLimit = time_limit_in_seconds;
-    };
-
   protected:
     /**
      * Retrieves the content of an XML which defines the skeleton of the world
      * for the Search and Rescue mission
      * @return
      */
-    static std::string getWorldSkeletonFromXML(int mission_id);
+    static std::string getWorldSkeletonFromXML(int missionID, unsigned int timeLimitInSeconds);
     std::string getWorldFolder();
 
     int timeLimit = 10;
     enum MissionId { tutorial = 0, sar = 1 };
     inline static std::unordered_map<int, std::string> IdToWorldFolderMap = {
-        {tutorial, "tutorial_0_0_1"},
-        {sar, "sar_0_0_1"},
+        {tutorial, "tutorial_0_0_2"},
+        {sar, "sar_0_0_2"},
     };
   };
 } // namespace tomcat

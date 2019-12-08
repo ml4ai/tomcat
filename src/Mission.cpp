@@ -17,22 +17,26 @@ namespace tomcat {
     return Mission::from_XML_string(xml);
   }
 
-  Mission Mission::from_mission_id(int mission_id) {
-    string xml = Mission::getWorldSkeletonFromXML(mission_id);
+  Mission Mission::from_mission_id(int missionID, unsigned int timeLimitInSeconds) {
+    string xml = Mission::getWorldSkeletonFromXML(missionID, timeLimitInSeconds);
     return Mission::from_XML_string(xml);
   }
 
-  Mission Mission::fromMissionIdOrPathToXML(string missionIdOrPathToXML) {
+  Mission Mission::fromMissionIdOrPathToXML(string missionIdOrPathToXML, unsigned int timeLimitInSeconds) {
     path p(missionIdOrPathToXML);
+    Mission newMission;
     if (p.extension() == ".xml") {
-      return Mission::from_XML_file(missionIdOrPathToXML);
+      newMission = Mission::from_XML_file(missionIdOrPathToXML);
+      newMission.timeLimitInSeconds(timeLimitInSeconds);
     }
     else {
-      return Mission::from_mission_id(std::stoi(missionIdOrPathToXML));
+      newMission = Mission::from_mission_id(std::stoi(missionIdOrPathToXML), timeLimitInSeconds);
     }
+    newMission.timeLimit = timeLimitInSeconds;
+    return newMission;
   }
 
-  string Mission::getWorldSkeletonFromXML(int mission_id) {
+  string Mission::getWorldSkeletonFromXML(int missionID, unsigned int timeLimitInSeconds) {
     string worldSkeletonXML = format(R"(
     <?xml version="1.0" encoding="UTF-8"?>
     <Mission xmlns="http://ProjectMalmo.microsoft.com" 
@@ -50,7 +54,8 @@ namespace tomcat {
               forceReset="true"
             />
             <TomcatDecorator 
-              mission="{}" 
+              mission="{}"
+              timeLimitInSeconds="{}"
             />
           </ServerHandlers>
       </ServerSection>
@@ -68,8 +73,9 @@ namespace tomcat {
       </AgentSection>
     </Mission>)",
                                      getenv("TOMCAT"),
-                                     Mission::IdToWorldFolderMap.at(mission_id),
-                                     mission_id);
+                                     Mission::IdToWorldFolderMap.at(missionID),
+                                     missionID,
+                                     timeLimitInSeconds);
 
     return worldSkeletonXML;
   }

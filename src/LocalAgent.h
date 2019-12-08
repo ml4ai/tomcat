@@ -35,21 +35,13 @@ namespace tomcat {
      * @param activateAudio Activates audio recording
      */
     void setMission(std::string missionIdOrPathToXML,
+                    unsigned int timeLimitInSeconds,
                     unsigned int width = 640,
                     unsigned int height = 480,
                     bool activateVideo = false,
                     bool activateObsRec = false);
 
-    /** Set the time limit in seconds for the mission */
-    void setMissionTimeLimit(unsigned int timeLimitInSeconds = 20);
-    /**
-     * Starts a mission
-     * @param portNumber - Port number to connect with the Minecraft mod
-     * @param activateWebcam - Option to activate the webcam to perform face
-     * tracking
-     * @return
-     */
-    int startMission(int portNumber = 10000,
+        int startMission(int portNumber = 10000,
                      bool activateWebcam = false,
                      bool activateVideo = false,
                      bool activateMicrophone = false,
