@@ -49,8 +49,8 @@ namespace tomcat {
     int timeLimit = 10;
     enum MissionId { tutorial = 0, sar = 1 };
     inline static std::unordered_map<int, std::string> IdToWorldFolderMap = {
-        {tutorial, "tutorial_0_0_2"},
-        {sar, "sar_0_0_2"},
+        {tutorial, "tutorial"},
+        {sar, "sar"},
     };
   };
 } // namespace tomcat
