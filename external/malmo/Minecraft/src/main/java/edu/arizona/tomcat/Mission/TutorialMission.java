@@ -74,7 +74,7 @@ public class TutorialMission extends Mission {
 	 */
 	private void addApproachPoolsPhase() {
 		RichContent instructions = RichContent.createFromJson("tutorial_instructions1.json");
-		MissionPhase approachPoolsPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 10, true, "Well Done!", 0, 2);
+		MissionPhase approachPoolsPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 5, true, "Well Done!", 0, 2);
 		approachPoolsPhase.addGoal(new ReachPositionGoal(-635, 4, 1582, 2));
 		this.addPhase(approachPoolsPhase);
 	}
@@ -157,25 +157,37 @@ public class TutorialMission extends Mission {
 			this.shouldSpawnVillagerInsideTheBuilding = false;
 		}
 
-		/* viewTime is in seconds. The player stays in each view mode for 3 seconds.
-		 20 Minecraft ticks equal 1 real second. viewTime is incremented by 0.05 till 60 such ticks (3 seconds)
-		 have passed for each view */
-
-		if (this.viewTime < 3.00) {
-			Minecraft.getMinecraft().gameSettings.thirdPersonView = 2; // third person front view
-			this.viewTime += 0.05;
-		}
-		else if(this.viewTime < 6.00){
-		     Minecraft.getMinecraft().gameSettings.thirdPersonView = 3; // third person back view
-		     this.viewTime += 0.05;
-		}
-		else if (this.viewTime < 9.00) {
-			Minecraft.getMinecraft().gameSettings.thirdPersonView = 0; // first person view
-			this.viewTime = 10.00;
+		if (this.viewTime < 3.05) {
+			this.changePlayerPerspective();
 		}
 		//System.out.println("===========>Player's position: " + MinecraftServerHelper.getFirstPlayer().getPosition().toString());
 	}
-		
+
+	/**
+	 *  Cycles through Minecraft player perspectives
+	 */
+	private void changePlayerPerspective() {
+		/* viewTime is in seconds. The player stays in each view mode for 1.5 seconds.
+		 20 Minecraft ticks equal 1 real second. viewTime is incremented by 0.05 till 30 such ticks (1.5 second)
+		 have passed for each view */
+
+		double roundedTime = Math.round(this.viewTime*100.0)/100.0;
+
+		if (roundedTime == 0.00) {
+			MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.VIEW_CHANGED), MinecraftServerHelper.getFirstPlayer());
+		 	// third person back view
+		}
+		else if(roundedTime == 1.50){
+			MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.VIEW_CHANGED), MinecraftServerHelper.getFirstPlayer());
+			// third person front view
+		}
+		else if (roundedTime == 3.00) {
+			MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.VIEW_CHANGED), MinecraftServerHelper.getFirstPlayer());
+			// first person view
+		}
+		this.viewTime += 0.05;
+	}
+
 	/**
 	 * Spawn skeleton in the arena
 	 * @param world - Minecraft world
