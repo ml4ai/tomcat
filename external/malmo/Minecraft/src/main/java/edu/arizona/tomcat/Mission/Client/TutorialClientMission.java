@@ -3,6 +3,7 @@ package edu.arizona.tomcat.Mission.Client;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
 import edu.arizona.tomcat.Mission.TutorialMission;
 import edu.arizona.tomcat.Mission.gui.GUIOverlayVillagersSaved;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 
 public class TutorialClientMission extends ClientMission {
@@ -21,8 +22,16 @@ public class TutorialClientMission extends ClientMission {
 		switch (message.getMessageType()) {
 		case VILLAGER_SAVED:
 			this.numberOfSavedVillagers++;
-			break;	
+			break;
 
+			case VIEW_CHANGED:
+			if (Minecraft.getMinecraft().gameSettings.thirdPersonView < 2) {
+				Minecraft.getMinecraft().gameSettings.thirdPersonView++;
+			}
+			else {
+				Minecraft.getMinecraft().gameSettings.thirdPersonView = 0;
+			}
+				break;
 		default:
 			break;
 		}		
