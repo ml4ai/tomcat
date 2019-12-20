@@ -39,7 +39,6 @@ public class TutorialClientMission extends ClientMission {
 
 	/**
 	 * Retrieves the total number of villagers saved by the player
-	 * @param numberOfSavedVillagers - Total number of rescued villagers
 	 */
 	public int getNumberOfSavedVillagers() {
 		return this.numberOfSavedVillagers;
