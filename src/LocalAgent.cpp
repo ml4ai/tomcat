@@ -17,17 +17,14 @@ namespace tomcat {
   LocalAgent::LocalAgent() {}
   LocalAgent::~LocalAgent() {}
 
-  void LocalAgent::setMissionTimeLimit(unsigned int timeLimitInSeconds) {
-    this->mission.timeLimitInSeconds(timeLimitInSeconds);
-  }
-
   void LocalAgent::setMission(string missionIdOrPathToXML,
+                              unsigned int timeLimitInSeconds,
                               unsigned int width,
                               unsigned int height,
                               bool activateVideo,
                               bool activateObsRec) {
 
-    this->mission = Mission::fromMissionIdOrPathToXML(missionIdOrPathToXML);
+    this->mission = Mission::fromMissionIdOrPathToXML(missionIdOrPathToXML, timeLimitInSeconds);
     if (activateVideo) {
       this->mission.requestVideo(width, height);
     }

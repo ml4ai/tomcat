@@ -53,7 +53,7 @@ public class SARMission extends Mission {
 		RichContent content = RichContent.createFromJson("sar_completion.json");
 		content.setTextPlaceholder(0, Integer.toString(this.numberOfVillagersSaved));
 		MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.SHOW_COMPLETION_SCREEN, new TomcatMessageData(content)), MinecraftServerHelper.getFirstPlayer());
-		this.notifyAllAboutMissionEnding("1");
+		this.notifyAllAboutMissionEnding("0");
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class SARMission extends Mission {
 		RichContent content = RichContent.createFromJson("sar_completion.json");
 		content.setTextPlaceholder(0, Integer.toString(this.numberOfVillagersSaved));
 		MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.SHOW_COMPLETION_SCREEN, new TomcatMessageData(content)), MinecraftServerHelper.getFirstPlayer());
-		this.notifyAllAboutMissionEnding("0");
+		this.notifyAllAboutMissionEnding("1");
 	}
 
 	@Override

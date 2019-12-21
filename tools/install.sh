@@ -19,9 +19,11 @@ export TOMCAT=${tomcat}
 ${TOMCAT}/tools/install_dependencies.sh
 if [[ $? -ne 0 ]]; then exit 1; fi;
 
-${TOMCAT}/tools/download_tomcat_data.sh
+${TOMCAT}/tools/download_tomcat_worlds.sh
 if [[ $? -ne 0 ]]; then exit 1; fi;
 
+${TOMCAT}/tools/download_OpenFace_models.sh
+if [[ $? -ne 0 ]]; then exit 1; fi;
 
 pushd "${TOMCAT}"
     echo "Installing ToMCAT in `pwd`"

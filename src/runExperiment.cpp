@@ -13,12 +13,14 @@ int main(int argc, const char* argv[]) {
   options_description desc("Allowed options");
   string missionIdOrPathToXML;
 
-  desc.add_options()("help,h", "Executable for running ToMCAT experiments.")(
-      "mission",
+  desc.add_options()
+      ("help,h", "Executable for running ToMCAT experiments.")
+      ("mission",
       value<string>(&missionIdOrPathToXML)->default_value("0"),
       "Id or path to mission XML file.\n0: Tutorial\n1: Search and Rescue\n2: "
-      "Item Crafting\n3: Room Escape")("time_limit", value<unsigned int>(),
-                                       "Time limit for mission (in seconds).")(
+      "Item Crafting\n3: Room Escape")
+      ("time_limit", value<unsigned int>()->default_value(20),
+              "Time limit for mission (in seconds).")(
       "port,p",
       value<unsigned int>()->default_value(10000),
       "Port to control (>=10000)")(
@@ -86,13 +88,8 @@ int main(int argc, const char* argv[]) {
 
     LocalAgent agent;
 
-    agent.setMission(
-        missionIdOrPathToXML, width, height, activateVideo, activateObsRec);
-
-    if (vm.count("time_limit")) {
-      unsigned int timeLimitInSeconds = vm["time_limit"].as<unsigned int>();
-      agent.setMissionTimeLimit(timeLimitInSeconds);
-    }
+    unsigned int timeLimitInSeconds = vm["time_limit"].as<unsigned int>();
+    agent.setMission(missionIdOrPathToXML, timeLimitInSeconds, width, height, activateVideo, activateObsRec);
 
     agent.startMission(portNumber,
                        activateWebcam,
