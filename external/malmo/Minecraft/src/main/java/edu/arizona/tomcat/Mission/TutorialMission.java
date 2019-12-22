@@ -7,6 +7,16 @@ import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.Schemas.EntityTypes;
 import com.microsoft.Malmo.Schemas.PosAndDirection;
 
+import com.microsoft.Malmo.Schemas.BlockType;
+import com.microsoft.Malmo.Schemas.ItemType;
+import com.microsoft.Malmo.Utils.MinecraftTypeHelper;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import com.microsoft.Malmo.Schemas.ItemType;
+import edu.arizona.tomcat.Utils.InventoryHandler;
+import net.minecraft.world.World;
+
 import edu.arizona.tomcat.Messaging.TomcatMessageData;
 import edu.arizona.tomcat.Messaging.TomcatMessaging;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
@@ -14,6 +24,7 @@ import edu.arizona.tomcat.Mission.MissionPhase.CompletionStrategy;
 import edu.arizona.tomcat.Mission.Client.ClientMission;
 import edu.arizona.tomcat.Mission.Client.TutorialClientMission;
 import edu.arizona.tomcat.Mission.Goal.ApproachEntityGoal;
+import edu.arizona.tomcat.Mission.Goal.CraftItemGoal;
 import edu.arizona.tomcat.Mission.Goal.KillEntityGoal;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
 import edu.arizona.tomcat.Mission.Goal.ReachPositionGoal;
@@ -35,10 +46,10 @@ public class TutorialMission extends Mission {
 	private boolean shouldSpawnZombieInsideTheBuilding;
 	private boolean shouldSpawnVillagerInsideTheBuilding;
 	private boolean shouldaddMaterialsInUsersInventory;
+	private MissionPhase approachPoolsPhase;
 	private MissionPhase enterTheArenaPhase;
 	private MissionPhase killSkeletonPhase;
 	private MissionPhase killZombiePhase;
-	private MissionPhase craftItemPhase;
 	private UUID skeletonUUID;
 	private UUID zombieUUID;
 	private UUID villagerUUID;
@@ -77,7 +88,7 @@ public class TutorialMission extends Mission {
 	 */
 	private void addApproachPoolsPhase() {
 		RichContent instructions = RichContent.createFromJson("tutorial_instructions1.json");
-		MissionPhase approachPoolsPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 5, true, "Well Done!", 0, 2);
+		approachPoolsPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 5, true, "Well Done!", 0, 2);
 		approachPoolsPhase.addGoal(new ReachPositionGoal(-635, 4, 1582, 2));
 		this.addPhase(approachPoolsPhase);
 	}
@@ -88,8 +99,8 @@ public class TutorialMission extends Mission {
 	private void addCraftItemPhase() {
 		RichContent instructions = RichContent.createFromJson("tutorial_instruction_craftItem.json");
 		MissionPhase craftItemPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 10, true, "You finished Jiangfeng Mission!", 0, 2);
-		approachPoolsPhase.addGoal(new CraftItemGoal(new ItemType("wooden_axe")));
-		this.addPhase(approachPoolsPhase);
+		craftItemPhase.addGoal(new CraftItemGoal(ItemType.WOODEN_AXE));
+		this.addPhase(craftItemPhase);
 	}
 
 	/**
@@ -270,8 +281,8 @@ d		 have passed for each view */
 	 */
 	private void addMaterialsInUsersInventory(World world) {
 		try {
-			InventoryHandler.addBlockToInventory(new BlockType("planks"), 3);
-			InventoryHandler.addItemToInventory(new BlockType("stick"), 2);
+			InventoryHandler.addBlockToInventory(BlockType.PLANKS, 3);
+			InventoryHandler.addItemToInventory(ItemType.STICK, 2);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -310,7 +321,7 @@ d		 have passed for each view */
 			this.shouldSpawnZombieInsideTheBuilding = true;
 		} else if (this.currentPhase.equals(this.killZombiePhase)){
 			this.shouldSpawnVillagerInsideTheBuilding = true;
-		} else if(this.currentPhase.equals(this.craftItemPhase)){
+		} else if(this.currentPhase.equals(this.approachPoolsPhase)){
 			this.shouldaddMaterialsInUsersInventory = true;
 		}
 	}
