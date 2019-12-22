@@ -1,0 +1,37 @@
+{
+  "pages":
+  [
+    {
+      "text": [
+        "Click the right mouse to open the Craft Table"
+      ],
+      "images":
+      [
+        {
+        "texture": "textures1.png",
+        "caption": "Open",
+        "originXInTexture": 32,
+        "originYInTexture": 0,
+        "width": 32,
+        "height": 32
+        }
+      ]
+    },
+    {
+      "text": [
+        "Follow the diagram instruction below to craft a wooden axe."
+      ],
+      "images":
+      [
+        {
+          "texture": "textures2.png",
+          "caption": "Craft a wooden axe",
+          "originXInTexture": 0,
+          "originYInTexture": 128,
+          "width": 96,
+          "height": 64
+        }
+      ]
+    }
+  ]
+}
