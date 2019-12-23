@@ -276,7 +276,7 @@ d		 have passed for each view */
 	}
 
 	/**
-	 * Spawn villager inside the building
+	 * Add three planks and two sticks inside the player's inventory.
 	 * @param world - Minecraft world
 	 */
 	private void addMaterialsInUsersInventory(World world) {
