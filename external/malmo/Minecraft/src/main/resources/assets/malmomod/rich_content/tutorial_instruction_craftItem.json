@@ -3,10 +3,20 @@
   [
     {
       "text": [
-        "Click the right mouse to open the Craft Table"
+        "Turn around, you can see crafting table.",
+        "(which is shown in the left-button figure)",
+        " Click the right mouse to open the Craft Table"
       ],
       "images":
       [
+        {
+          "texture": "textures1.png",
+          "caption": "Open",
+          "originXInTexture": 96,
+          "originYInTexture": 128,
+          "width": 32,
+          "height": 32
+        },
         {
         "texture": "textures1.png",
         "caption": "Open",
@@ -24,7 +34,7 @@
       "images":
       [
         {
-          "texture": "textures2.png",
+          "texture": "textures1.png",
           "caption": "Craft a wooden axe",
           "originXInTexture": 0,
           "originYInTexture": 128,
