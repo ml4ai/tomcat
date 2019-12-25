@@ -16,6 +16,7 @@ import edu.arizona.tomcat.Mission.Client.SARClientMission;
 import edu.arizona.tomcat.Mission.Goal.ApproachEntityGoal;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
 import edu.arizona.tomcat.Mission.gui.RichContent;
+import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 import edu.arizona.tomcat.Utils.Converter;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.World.Drawing;
@@ -31,11 +32,16 @@ public class SARMission extends Mission {
 	private boolean dynamicInitializationComplete;
 	private UUID[] villagersIDs; 
 	private int numberOfVillagersSaved;
-
+	
 	public SARMission() {
 		super();
 		this.dynamicInitializationComplete = false;		
 		this.numberOfVillagersSaved = 0;
+	}
+	
+	@Override
+	protected int getID() {
+		return MissionFactory.SEARCH_AND_RESCUE;
 	}
 	
 	@Override
@@ -54,6 +60,7 @@ public class SARMission extends Mission {
 		content.setTextPlaceholder(0, Integer.toString(this.numberOfVillagersSaved));
 		MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.SHOW_COMPLETION_SCREEN, new TomcatMessageData(content)), MinecraftServerHelper.getFirstPlayer());
 		this.notifyAllAboutMissionEnding("0");
+		this.cleanup();
 	}
 
 	@Override
@@ -62,6 +69,7 @@ public class SARMission extends Mission {
 		content.setTextPlaceholder(0, Integer.toString(this.numberOfVillagersSaved));
 		MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.SHOW_COMPLETION_SCREEN, new TomcatMessageData(content)), MinecraftServerHelper.getFirstPlayer());
 		this.notifyAllAboutMissionEnding("1");
+		this.cleanup();
 	}
 
 	@Override
@@ -90,20 +98,20 @@ public class SARMission extends Mission {
 	}
 
 	@Override
-	protected void updateScene(World world) {
-		if(!this.dynamicInitializationComplete) {
-			this.doDynamicInitialization(world);
-		}		
+	protected void updateScene(World world) {		
+		this.doDynamicInitialization(world);			
 	}
 
 	/**
 	 * Perform dynamic initializations in the mission
 	 * @param world - Minecraft world
 	 */
-	private void doDynamicInitialization(World world) {		
-		this.spawnEntities(world);
-		this.addItensToInventory(world);
-		this.dynamicInitializationComplete = true;
+	private void doDynamicInitialization(World world) {
+		if(!this.dynamicInitializationComplete) {
+			this.spawnEntities(world);
+			this.addItensToInventory(world);
+			this.dynamicInitializationComplete = true;
+		}
 	}
 
 	/**
@@ -191,5 +199,16 @@ public class SARMission extends Mission {
 		positionAndDirection.setZ(new BigDecimal(73));
 		positionAndDirection.setYaw(new BigDecimal(-90));
 		return positionAndDirection;
+	}
+
+	@Override
+	protected boolean hasSelfReport() {
+		return true;
+	}
+
+	@Override
+	protected SelfReportContent getSelfReportContent(World world) {
+		String id = Long.toString(world.getTotalWorldTime());
+		return SelfReportContent.createFromJson(id, "self_report1.json");
 	}
 }

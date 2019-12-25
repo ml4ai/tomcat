@@ -31,8 +31,8 @@ namespace tomcat {
      * =======================================================================
      */
 
-    static Mission fromMissionIdOrPathToXML(std::string missionIdOrPathToXML, unsigned int timeLimitInSeconds);
-    static Mission from_mission_id(int missionID, unsigned int timeLimitInSeconds);
+    static Mission fromMissionIdOrPathToXML(std::string missionIdOrPathToXML, unsigned int timeLimitInSeconds, unsigned int selfReportPromptTimeInSeconds);
+    static Mission from_mission_id(int missionID, unsigned int timeLimitInSeconds, unsigned int selfReportPromptTimeInSeconds);
     static Mission from_XML_string(std::string xml);
     static Mission from_XML_file(std::string missionIdOrPathToXML);
 
@@ -43,7 +43,7 @@ namespace tomcat {
      * for the Search and Rescue mission
      * @return
      */
-    static std::string getWorldSkeletonFromXML(int missionID, unsigned int timeLimitInSeconds);
+    static std::string getWorldSkeletonFromXML(int missionID, unsigned int timeLimitInSeconds, unsigned int selfReportPromptTimeInSeconds);
     std::string getWorldFolder();
 
     int timeLimit = 10;

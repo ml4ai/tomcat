@@ -43,7 +43,9 @@ extends HandlerBase implements IWorldDecorator {
 		MalmoMod.network.registerMessage(TomcatMessageHandler.class, TomcatMessage.class, 100, Side.CLIENT);
 		MalmoMod.network.registerMessage(TomcatMessageHandler.class, TomcatMessage.class, 101, Side.SERVER);
 		this.missionHandler = new MissionHandler();
-		this.missionHandler.setMission(this.decorator.getMission().intValue(), this.decorator.getTimeLimitInSeconds().intValue());				
+		this.missionHandler.setMission(this.decorator.getMission().intValue(), 
+				this.decorator.getTimeLimitInSeconds().intValue(),
+				this.decorator.getSelfReportPromptTimeInSeconds().intValue());				
 	}
 
 	@Override

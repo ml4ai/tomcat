@@ -18,18 +18,18 @@ import edu.arizona.tomcat.Mission.Goal.KillEntityGoal;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
 import edu.arizona.tomcat.Mission.Goal.ReachPositionGoal;
 import edu.arizona.tomcat.Mission.gui.RichContent;
+import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.World.Drawing;
 import edu.arizona.tomcat.World.TomcatEntity;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
 
 public class TutorialMission extends Mission {
-	
-	public static final int NUMBER_OF_VILLAGERS = 1;
-	private static final int MAX_DISTANCE_TO_SAVE_VILLAGER = 1;
 
+	private static final int MAX_DISTANCE_TO_SAVE_VILLAGER = 1;
+	private static final float SECONDS_PER_CAMERA_VIEW = 1.5f;  
+	
 	private double viewTime;
 	private boolean shouldSpawnSkeletonInTheArena;
 	private boolean shouldSpawnZombieInsideTheBuilding;
@@ -40,8 +40,9 @@ public class TutorialMission extends Mission {
 	private UUID skeletonUUID;
 	private UUID zombieUUID;
 	private UUID villagerUUID;
-
 	
+	public static final int NUMBER_OF_VILLAGERS = 1;
+
 	public TutorialMission() {
 		super();
 		this.viewTime = 0;
@@ -52,7 +53,12 @@ public class TutorialMission extends Mission {
 		this.zombieUUID = UUID.randomUUID();
 		this.villagerUUID = UUID.randomUUID();
 	}
-	
+
+	@Override
+	protected int getID() {
+		return MissionFactory.TUTORIAL;
+	}
+
 	@Override
 	public void init(World world) {
 		super.init(world);		
@@ -68,7 +74,7 @@ public class TutorialMission extends Mission {
 		this.addSaveVillagerPhase();
 		this.addLeaveTheBuildingPhase();
 	}
-	
+
 	/**
 	 * Creates a phase in the mission where the objective is to locate the pools of water and lava in the world
 	 */
@@ -78,7 +84,7 @@ public class TutorialMission extends Mission {
 		approachPoolsPhase.addGoal(new ReachPositionGoal(-635, 4, 1582, 2));
 		this.addPhase(approachPoolsPhase);
 	}
-	
+
 	/**
 	 * Creates a phase in the mission where the objective is to locate the entities in the world
 	 */
@@ -88,7 +94,7 @@ public class TutorialMission extends Mission {
 		approachEntitiesPhase.addGoal(new ReachPositionGoal(-615, 4, 1585, 3));
 		addPhase(approachEntitiesPhase);
 	}
-	
+
 	/**
 	 * Creates a phase in the mission where the objective is to go to the center of the arena
 	 */
@@ -98,7 +104,7 @@ public class TutorialMission extends Mission {
 		this.enterTheArenaPhase.addGoal(new ReachPositionGoal(-623, 4, 1600, 2));
 		this.addPhase(this.enterTheArenaPhase);
 	}
-	
+
 	/**
 	 * Creates a phase in the mission where the objective is to battle and kill a skeleton
 	 */
@@ -108,7 +114,7 @@ public class TutorialMission extends Mission {
 		this.killSkeletonPhase.addGoal(new KillEntityGoal(this.skeletonUUID));
 		this.addPhase(this.killSkeletonPhase);
 	}
-	
+
 	/**
 	 * Creates a phase in the mission where the objective is to battle and kill a zombie
 	 */
@@ -118,7 +124,7 @@ public class TutorialMission extends Mission {
 		this.killZombiePhase.addGoal(new KillEntityGoal(this.zombieUUID));
 		this.addPhase(this.killZombiePhase);
 	}
-	
+
 	/**
 	 * Creates a phase in the mission where the objective is to save a villager
 	 */
@@ -128,7 +134,7 @@ public class TutorialMission extends Mission {
 		saveVillagerPhase.addGoal(new ApproachEntityGoal(this.villagerUUID, MAX_DISTANCE_TO_SAVE_VILLAGER));
 		this.addPhase(saveVillagerPhase);
 	}
-	
+
 	/**
 	 * Creates a phase in the mission where the objective is leave the building
 	 */
@@ -139,103 +145,97 @@ public class TutorialMission extends Mission {
 		addPhase(leaveTheBuildingPhase);
 	}
 
-	
+
 	@Override
 	protected void updateScene(World world) {
-		if (this.shouldSpawnSkeletonInTheArena) {
-			this.spawnSkeletonInTheArena(world);
-			this.shouldSpawnSkeletonInTheArena = false;
-		}	
-		
-		if (this.shouldSpawnZombieInsideTheBuilding) {
-			this.spawnZombieInsideTheBuilding(world);
-			this.shouldSpawnZombieInsideTheBuilding = false;
-		}	
-		
-		if (this.shouldSpawnVillagerInsideTheBuilding) {
-			this.spawnVillagerInsideTheBuilding(world);
-			this.shouldSpawnVillagerInsideTheBuilding = false;
-		}
-
-		if (this.viewTime < 3.05) {
-			this.changePlayerPerspective();
-		}
-		//System.out.println("===========>Player's position: " + MinecraftServerHelper.getFirstPlayer().getPosition().toString());
+		this.changePlayerPerspective();
+		this.spawnSkeletonInTheArena(world);
+		this.spawnZombieInsideTheBuilding(world);
+		this.spawnVillagerInsideTheBuilding(world);		
 	}
 
 	/**
 	 *  Cycles through Minecraft player perspectives
 	 */
 	private void changePlayerPerspective() {
-		/* viewTime is in seconds. The player stays in each view mode for 1.5 seconds.
-		 20 Minecraft ticks equal 1 real second. viewTime is incremented by 0.05 till 30 such ticks (1.5 second)
-		 have passed for each view */
+		if (this.viewTime <= 2*SECONDS_PER_CAMERA_VIEW) {
+			/* viewTime is in seconds. The player stays in each view mode for 1.5 seconds.
+		     20 Minecraft ticks equal 1 real second. viewTime is incremented by 0.05 till 30 such ticks (1.5 second)
+		     have passed for each view */
 
-		double roundedTime = Math.round(this.viewTime*100.0)/100.0;
+			double roundedTime = Math.round(this.viewTime*100.0)/100.0;
 
-		if (roundedTime == 0.00) {
-			MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.VIEW_CHANGED), MinecraftServerHelper.getFirstPlayer());
-		 	// third person back view
+			if (roundedTime == 0.00) {
+				MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.VIEW_CHANGED), MinecraftServerHelper.getFirstPlayer());
+				// third person back view
+			}
+			else if(roundedTime == SECONDS_PER_CAMERA_VIEW){
+				MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.VIEW_CHANGED), MinecraftServerHelper.getFirstPlayer());
+				// third person front view
+			}
+			else if (roundedTime == 2*SECONDS_PER_CAMERA_VIEW) {
+				MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.VIEW_CHANGED), MinecraftServerHelper.getFirstPlayer());
+				// first person view
+			}
+			this.viewTime += 0.05;
 		}
-		else if(roundedTime == 1.50){
-			MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.VIEW_CHANGED), MinecraftServerHelper.getFirstPlayer());
-			// third person front view
-		}
-		else if (roundedTime == 3.00) {
-			MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.VIEW_CHANGED), MinecraftServerHelper.getFirstPlayer());
-			// first person view
-		}
-		this.viewTime += 0.05;
 	}
 
 	/**
 	 * Spawn skeleton in the arena
 	 * @param world - Minecraft world
 	 */
-	private void spawnSkeletonInTheArena(World world) {		
-		try {
-			Drawing drawing = new Drawing();
-
-			TomcatEntity skeleton = new TomcatEntity(this.skeletonUUID, -620, 4, 1596, EntityTypes.SKELETON);			
-
-			drawing.addObject(skeleton);
-			this.drawingHandler.draw(world, drawing);			
-		} catch (Exception e) {
-			e.printStackTrace();
+	private void spawnSkeletonInTheArena(World world) {	
+		if (this.shouldSpawnSkeletonInTheArena) {
+			try {
+				Drawing drawing = new Drawing();
+				TomcatEntity skeleton = new TomcatEntity(this.skeletonUUID, -620, 4, 1596, EntityTypes.SKELETON);
+				drawing.addObject(skeleton);
+				this.drawingHandler.draw(world, drawing);			
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			this.shouldSpawnSkeletonInTheArena = false;
 		}
 	}	
-	
+
 	/**
 	 * Spawn zombie inside the building
 	 * @param world - Minecraft world
 	 */
-	private void spawnZombieInsideTheBuilding(World world) {		
-		try {
-			Drawing drawing = new Drawing();
+	private void spawnZombieInsideTheBuilding(World world) {	
+		if (this.shouldSpawnZombieInsideTheBuilding) {
+			try {
+				Drawing drawing = new Drawing();
 
-			TomcatEntity zombie = new TomcatEntity(this.zombieUUID, -623, 4, 1571, EntityTypes.ZOMBIE);			
+				TomcatEntity zombie = new TomcatEntity(this.zombieUUID, -623, 4, 1571, EntityTypes.ZOMBIE);			
 
-			drawing.addObject(zombie);
-			this.drawingHandler.draw(world, drawing);			
-		} catch (Exception e) {
-			e.printStackTrace();
+				drawing.addObject(zombie);
+				this.drawingHandler.draw(world, drawing);			
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			this.shouldSpawnZombieInsideTheBuilding = false;
 		}
 	}	
-	
+
 	/**
 	 * Spawn villager inside the building
 	 * @param world - Minecraft world
 	 */
-	private void spawnVillagerInsideTheBuilding(World world) {		
-		try {
-			Drawing drawing = new Drawing();
+	private void spawnVillagerInsideTheBuilding(World world) {	
+		if (this.shouldSpawnVillagerInsideTheBuilding) {
+			try {
+				Drawing drawing = new Drawing();
 
-			TomcatEntity villager = new TomcatEntity(this.villagerUUID, -631, 4, 1570, EntityTypes.VILLAGER);			
+				TomcatEntity villager = new TomcatEntity(this.villagerUUID, -631, 4, 1570, EntityTypes.VILLAGER);			
 
-			drawing.addObject(villager);
-			this.drawingHandler.draw(world, drawing);			
-		} catch (Exception e) {
-			e.printStackTrace();
+				drawing.addObject(villager);
+				this.drawingHandler.draw(world, drawing);			
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			this.shouldSpawnVillagerInsideTheBuilding = false;
 		}
 	}	
 
@@ -257,8 +257,8 @@ public class TutorialMission extends Mission {
 	protected void onTimeOut() {
 		// There's no timeout in the tutorial mission
 	}	
-	
-	
+
+
 
 	@Override
 	public ClientMission getClientMissionInstance() {
@@ -275,7 +275,7 @@ public class TutorialMission extends Mission {
 			this.shouldSpawnVillagerInsideTheBuilding = true;
 		}
 	}
-	
+
 	@Override
 	public void setTimeLimitInSeconds(long timeLimitInSeconds) {
 		// Tutorial mission has no time limit
@@ -289,6 +289,16 @@ public class TutorialMission extends Mission {
 		positionAndDirection.setY(new BigDecimal(4));
 		positionAndDirection.setZ(new BigDecimal(1584));
 		return positionAndDirection;
+	}
+
+	@Override
+	protected boolean hasSelfReport() {
+		return false;
+	}
+
+	@Override
+	protected SelfReportContent getSelfReportContent(World world) {
+		return null;
 	}
 
 }

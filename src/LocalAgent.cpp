@@ -19,12 +19,13 @@ namespace tomcat {
 
   void LocalAgent::setMission(string missionIdOrPathToXML,
                               unsigned int timeLimitInSeconds,
+                              unsigned int selfReportPromptTimeInSeconds,
                               unsigned int width,
                               unsigned int height,
                               bool activateVideo,
                               bool activateObsRec) {
 
-    this->mission = Mission::fromMissionIdOrPathToXML(missionIdOrPathToXML, timeLimitInSeconds);
+    this->mission = Mission::fromMissionIdOrPathToXML(missionIdOrPathToXML, timeLimitInSeconds, selfReportPromptTimeInSeconds);
     if (activateVideo) {
       this->mission.requestVideo(width, height);
     }

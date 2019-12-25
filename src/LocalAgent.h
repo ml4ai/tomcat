@@ -36,6 +36,7 @@ namespace tomcat {
      */
     void setMission(std::string missionIdOrPathToXML,
                     unsigned int timeLimitInSeconds,
+                    unsigned int selfReportPromptTimeInSeconds,
                     unsigned int width = 640,
                     unsigned int height = 480,
                     bool activateVideo = false,
