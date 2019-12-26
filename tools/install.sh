@@ -1,20 +1,34 @@
 #!/bin/bash
 
-called_as=`echo $0 | sed | sed 's#^\./##'` 
-script_path=`pwd`/$called_as 
-tomcat=`echo $script_path | sed 's#^\./##' | sed 's#^\(.*\)//*tools/*install.sh#\1#'`
+# We cannot use '-u' and declare TRAVIS as cmake checks whether TRAVIS is set. 
+# If we had confidence that tcsh was installed, then we could use tcsh to check
+# if the variable was bound as we do in scripts that are not part of installing.
 
-# We do not actually need to consult TOMCAT as an environment variable, but it
-# gives us a chance to remind the the user that we are ignoring their location
-# hint. 
+# set -x 
+
+###############################################################################
+
+# If TOMCAT is set as an enviroment variable, we will respect it. We do not use
+# the tcsh trick to test this because tcsh might not be installed yet. 
 
 if [ ! -z "$TOMCAT" ]; then
-    if [[ "${TOMCAT}" != "${tomcat}" ]]; then
-        echo "Resetting TOMCAT variable from ${TOMCAT} to ${tomcat}."
-    fi
+    echo "Using requested TOMCAT location ${TOMCAT}."
+else 
+    # This script should be in a directory 'tools' which should be a subdirectory of
+    # the TOMCAT directory. The following uses those assumptions to determine
+    # TOMCAT.
+    #
+    called_as_dir=`echo $0 | sed 's#^[^/][^/]*$#./#'`
+    called_as_dir=`echo $called_as_dir | sed 's#^\(.*\)/.*$#\1#'`
+    pushd "${called_as_dir}" > /dev/null; called_as_dir=`pwd`; popd > /dev/null
+    export TOMCAT=`echo $called_as_dir | sed 's#^\./##' | sed 's#^\(.*\)/tools$#\1#'`
+    echo "Using inferreed TOMCAT location ${TOMCAT}."
 fi
 
-export TOMCAT=${tomcat}
+###############################################################################
+
+# Bug! Interacts badly with cmake!! 
+# declare -x TRAVIS
 
 ${TOMCAT}/tools/install_dependencies.sh
 if [[ $? -ne 0 ]]; then exit 1; fi;
@@ -32,31 +46,29 @@ pushd "${TOMCAT}"
     if [[ $? -ne 0 ]]; then exit 1; fi;
 
     pushd build > /dev/null 
+        if [[ ! -z $TRAVIS ]]; then
+            # On Travis, we will build HTML documentation by default.
+            cmake ${TOMCAT} -DBUILD_DOCS=ON
+            if [[ $? -ne 0 ]]; then exit 1; fi;
+        else
+            cmake ${TOMCAT}
+            if [[ $? -ne 0 ]]; then exit 1; fi;
+        fi;
 
-    if [[ ! -z $TRAVIS ]]; then
-      # On Travis, we will build HTML documentation by default.
-      cmake ${TOMCAT} -DBUILD_DOCS=ON
-    else
-      cmake ${TOMCAT}
-    fi;
+        make -j
+        if [[ $? -ne 0 ]]; then exit 1; fi;
 
-    if [[ $? -ne 0 ]]; then exit 1; fi;
-
-    make -j
-    if [[ $? -ne 0 ]]; then exit 1; fi;
-
-    # We skip building Minecraft on Travis since we cannot get an
-    # appropriate version of Java on their MacOS image.
-    if [[ -z $TRAVIS ]]; then
-      make -j Minecraft
-    fi
-
-    if [[ $? -ne 0 ]]; then exit 1; fi;
+        # We skip building Minecraft on Travis since we cannot get an
+        # appropriate version of Java on their MacOS image.
+        if [[ -z $TRAVIS ]]; then
+            make -j Minecraft
+            if [[ $? -ne 0 ]]; then exit 1; fi;
+        fi
+    popd > /dev/null 
 popd > /dev/null 
 
-mkdir bin
-if [[ $? -ne 0 ]]; then exit 1; fi;
 
 echo " "
 echo "Finished installing ToMCAT in ${TOMCAT}!"
 echo " "
+
