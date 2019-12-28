@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 import com.microsoft.Malmo.MalmoMod;
+import com.microsoft.Malmo.Schemas.BlockType;
 import com.microsoft.Malmo.Schemas.EntityTypes;
+import com.microsoft.Malmo.Schemas.ItemType;
 import com.microsoft.Malmo.Schemas.PosAndDirection;
 
 import edu.arizona.tomcat.Messaging.TomcatMessageData;
@@ -14,11 +16,13 @@ import edu.arizona.tomcat.Mission.MissionPhase.CompletionStrategy;
 import edu.arizona.tomcat.Mission.Client.ClientMission;
 import edu.arizona.tomcat.Mission.Client.TutorialClientMission;
 import edu.arizona.tomcat.Mission.Goal.ApproachEntityGoal;
+import edu.arizona.tomcat.Mission.Goal.CraftItemGoal;
 import edu.arizona.tomcat.Mission.Goal.KillEntityGoal;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
 import edu.arizona.tomcat.Mission.Goal.ReachPositionGoal;
 import edu.arizona.tomcat.Mission.gui.RichContent;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
+import edu.arizona.tomcat.Utils.InventoryHandler;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.World.Drawing;
 import edu.arizona.tomcat.World.TomcatEntity;
@@ -29,18 +33,20 @@ public class TutorialMission extends Mission {
 
 	private static final int MAX_DISTANCE_TO_SAVE_VILLAGER = 1;
 	private static final float SECONDS_PER_CAMERA_VIEW = 1.5f;  
-	
+
 	private double viewTime;
 	private boolean shouldSpawnSkeletonInTheArena;
 	private boolean shouldSpawnZombieInsideTheBuilding;
 	private boolean shouldSpawnVillagerInsideTheBuilding;
+	private boolean shouldaddMaterialsToUsersInventory;
+	private MissionPhase approachPoolsPhase;
 	private MissionPhase enterTheArenaPhase;
 	private MissionPhase killSkeletonPhase;
 	private MissionPhase killZombiePhase;
 	private UUID skeletonUUID;
 	private UUID zombieUUID;
 	private UUID villagerUUID;
-	
+
 	public static final int NUMBER_OF_VILLAGERS = 1;
 
 	public TutorialMission() {
@@ -61,12 +67,13 @@ public class TutorialMission extends Mission {
 
 	@Override
 	public void init(World world) {
-		super.init(world);		
+		super.init(world);
 	}
 
 	@Override
-	protected void createPhases() {		
+	protected void createPhases() {
 		this.addApproachPoolsPhase();
+		this.addCraftItemPhase();
 		this.addApproachEntitiesPhase();
 		this.addEnterTheArenaPhase();
 		this.addKillSkeletonPhase();
@@ -79,18 +86,28 @@ public class TutorialMission extends Mission {
 	 * Creates a phase in the mission where the objective is to locate the pools of water and lava in the world
 	 */
 	private void addApproachPoolsPhase() {
-		RichContent instructions = RichContent.createFromJson("tutorial_instructions1.json");
-		MissionPhase approachPoolsPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 5, true, "Well Done!", 0, 2);
-		approachPoolsPhase.addGoal(new ReachPositionGoal(-635, 4, 1582, 2));
+		RichContent instructions = RichContent.createFromJson("tutorial_instructions_pits.json");
+		this.approachPoolsPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 5, true, "Well Done!", 0, 2);
+		this.approachPoolsPhase.addGoal(new ReachPositionGoal(-635, 4, 1582, 2));
 		this.addPhase(approachPoolsPhase);
+	}
+
+	/**
+	 * Creates a phase in the mission where the objective is to craft a wooden item in the world
+	 */
+	private void addCraftItemPhase() {
+		RichContent instructions = RichContent.createFromJson("tutorial_instruction_crafting.json");
+		MissionPhase craftItemPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 5, true, "Well Done!", 0, 2);
+		craftItemPhase.addGoal(new CraftItemGoal(ItemType.WOODEN_AXE));
+		this.addPhase(craftItemPhase);
 	}
 
 	/**
 	 * Creates a phase in the mission where the objective is to locate the entities in the world
 	 */
 	private void addApproachEntitiesPhase() {
-		RichContent instructions = RichContent.createFromJson("tutorial_instructions2.json");
-		MissionPhase approachEntitiesPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 5, true, "Well Done!", 0, 2);	
+		RichContent instructions = RichContent.createFromJson("tutorial_instructions_entities.json");
+		MissionPhase approachEntitiesPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 5, true, "Well Done!", 0, 2);
 		approachEntitiesPhase.addGoal(new ReachPositionGoal(-615, 4, 1585, 3));
 		addPhase(approachEntitiesPhase);
 	}
@@ -99,8 +116,8 @@ public class TutorialMission extends Mission {
 	 * Creates a phase in the mission where the objective is to go to the center of the arena
 	 */
 	private void addEnterTheArenaPhase() {
-		RichContent instructions = RichContent.createFromJson("tutorial_instructions3.json");
-		this.enterTheArenaPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 10, true, "Well Done!", 0, 2);	
+		RichContent instructions = RichContent.createFromJson("tutorial_instructions_arena.json");
+		this.enterTheArenaPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 10, true, "Well Done!", 0, 2);
 		this.enterTheArenaPhase.addGoal(new ReachPositionGoal(-623, 4, 1600, 2));
 		this.addPhase(this.enterTheArenaPhase);
 	}
@@ -109,8 +126,8 @@ public class TutorialMission extends Mission {
 	 * Creates a phase in the mission where the objective is to battle and kill a skeleton
 	 */
 	private void addKillSkeletonPhase() {
-		RichContent instructions = RichContent.createFromJson("tutorial_instructions4.json");
-		this.killSkeletonPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 0, true, "Well Done!", 0, 2);	
+		RichContent instructions = RichContent.createFromJson("tutorial_instructions_skeleton.json");
+		this.killSkeletonPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 0, true, "Well Done!", 0, 2);
 		this.killSkeletonPhase.addGoal(new KillEntityGoal(this.skeletonUUID));
 		this.addPhase(this.killSkeletonPhase);
 	}
@@ -119,8 +136,8 @@ public class TutorialMission extends Mission {
 	 * Creates a phase in the mission where the objective is to battle and kill a zombie
 	 */
 	private void addKillZombiePhase() {
-		RichContent instructions = RichContent.createFromJson("tutorial_instructions5.json");
-		this.killZombiePhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 0, true, "Well Done!", 0, 2);	
+		RichContent instructions = RichContent.createFromJson("tutorial_instructions_zombie.json");
+		this.killZombiePhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 0, true, "Well Done!", 0, 2);
 		this.killZombiePhase.addGoal(new KillEntityGoal(this.zombieUUID));
 		this.addPhase(this.killZombiePhase);
 	}
@@ -129,8 +146,8 @@ public class TutorialMission extends Mission {
 	 * Creates a phase in the mission where the objective is to save a villager
 	 */
 	private void addSaveVillagerPhase() {
-		RichContent instructions = RichContent.createFromJson("tutorial_instructions6.json");
-		MissionPhase saveVillagerPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 0, true, "Well Done!", 0, 2);	
+		RichContent instructions = RichContent.createFromJson("tutorial_instructions_villager.json");
+		MissionPhase saveVillagerPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 0, true, "Well Done!", 0, 2);
 		saveVillagerPhase.addGoal(new ApproachEntityGoal(this.villagerUUID, MAX_DISTANCE_TO_SAVE_VILLAGER));
 		this.addPhase(saveVillagerPhase);
 	}
@@ -139,8 +156,8 @@ public class TutorialMission extends Mission {
 	 * Creates a phase in the mission where the objective is leave the building
 	 */
 	private void addLeaveTheBuildingPhase() {
-		RichContent instructions = RichContent.createFromJson("tutorial_instructions7.json");
-		MissionPhase leaveTheBuildingPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 0, true, "Well Done!", 0, 2);	
+		RichContent instructions = RichContent.createFromJson("tutorial_instructions_end.json");
+		MissionPhase leaveTheBuildingPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 0, true, "Well Done!", 0, 2);
 		leaveTheBuildingPhase.addGoal(new ReachPositionGoal(-623, 4, 1579, 2));
 		addPhase(leaveTheBuildingPhase);
 	}
@@ -149,9 +166,10 @@ public class TutorialMission extends Mission {
 	@Override
 	protected void updateScene(World world) {
 		this.changePlayerPerspective();
+		this.addMaterialsToUsersInventory(world);
 		this.spawnSkeletonInTheArena(world);
 		this.spawnZombieInsideTheBuilding(world);
-		this.spawnVillagerInsideTheBuilding(world);		
+		this.spawnVillagerInsideTheBuilding(world);	
 	}
 
 	/**
@@ -237,7 +255,19 @@ public class TutorialMission extends Mission {
 			}
 			this.shouldSpawnVillagerInsideTheBuilding = false;
 		}
-	}	
+	}
+
+	/**
+	 * Add three planks and two sticks inside the player's inventory.
+	 * @param world - Minecraft world
+	 */
+	private void addMaterialsToUsersInventory(World world) {
+		if(this.shouldaddMaterialsToUsersInventory){
+			InventoryHandler.addBlockToInventory(BlockType.PLANKS, 3);
+			InventoryHandler.addItemToInventory(ItemType.STICK, 2);
+			this.shouldaddMaterialsToUsersInventory = false;
+		}
+	}
 
 	@Override
 	protected void afterLastPhaseCompletion() {
@@ -258,11 +288,9 @@ public class TutorialMission extends Mission {
 		// There's no timeout in the tutorial mission
 	}	
 
-
-
 	@Override
 	public ClientMission getClientMissionInstance() {
-		return new TutorialClientMission();	
+		return new TutorialClientMission();
 	}
 
 	@Override
@@ -273,6 +301,8 @@ public class TutorialMission extends Mission {
 			this.shouldSpawnZombieInsideTheBuilding = true;
 		} else if (this.currentPhase.equals(this.killZombiePhase)){
 			this.shouldSpawnVillagerInsideTheBuilding = true;
+		} else if(this.currentPhase.equals(this.approachPoolsPhase)){
+			this.shouldaddMaterialsToUsersInventory = true;
 		}
 	}
 
