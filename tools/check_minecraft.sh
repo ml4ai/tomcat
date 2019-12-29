@@ -71,7 +71,7 @@ while [ $try -lt $num_tries ]; do
         echo "Script check_minecraft executing: "
         echo "    ${TOMCAT}/tools/wrap_launch_minecraft.sh" 
         ${TOMCAT}/tools/wrap_launch_minecraft.sh & 
-        echo "Waiting for ${initial_wait} seconds as Minecraft takes at least that long to get ready."  
+        echo "Waiting for ${initial_wait} seconds to ensure wrap_launch_minecraft has started to launch Minecraft."  
         sleep ${initial_wait}
     fi 
 

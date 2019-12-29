@@ -2,6 +2,10 @@
 
 set -u 
 
+mission_one_time=120
+do_tutorial=0
+do_invasion=1
+
 ###############################################################################
 
 # If TOMCAT is set as an enviroment variable, we will respect it. 
@@ -27,26 +31,40 @@ fi
 
 ${TOMCAT}/tools/check_minecraft.sh
 
-# tmp_dir="/tmp/$USER/tomcat"
-# mkdir -p "${tmp_dir}"
+if [[ ${do_tutorial} -eq 1 ]]; then
+    echo " "
+    echo "Running the tutorial mission in ${TOMCAT}."
+    echo " "
 
-echo " "
-echo "Now running the tutorial mission in ${TOMCAT}."
-echo " "
+    echo "About to run: ${TOMCAT}/build/bin/runExperiment --mission 0"
+    echo "Required env var TOMCAT is set to: ${TOMCAT}" 
 
-${TOMCAT}/build/bin/runExperiment --mission 0
+    ${TOMCAT}/build/bin/runExperiment --mission 0 &
+    bg_pid=$!
+    echo "Running: ${TOMCAT}/build/bin/runExperiment --mission 0"
+    echo "Process is $bg_pid" 
+    echo "Waiting for it"
+    wait
 
-echo "Tutorial mission ended with exits status $?"
+    echo "Tutorial mission ended with exits status $?"
+    echo " "
+fi
 
-echo " "
-echo "Now running the Zombie invasion mission in ${TOMCAT}."
-echo " "
+if [[ ${do_invasion} -eq 1 ]]; then
+    echo "Running the Zombie invasion mission in ${TOMCAT}."
 
-${TOMCAT}/build/bin/runExperiment --mission 1 --time_limit 600 
+    ${TOMCAT}/build/bin/runExperiment --mission 1 --time_limit ${mission_one_time} &
+    bg_pid=$!
+    echo "Running: ${TOMCAT}/build/bin/runExperiment --mission 1 --time_limit ${mission_one_time}"
+    echo "Process is $bg_pid" 
+    echo "Waiting for it"
+    echo " "
+    wait
 
-echo "Zombie invasion mission ended with exits status $?"
+    echo "Zombie invasion mission ended with exits status $?"
+    echo " "
+fi
 
-echo " "
 echo "Finished running all sessions in ${TOMCAT}."
 echo " "
 

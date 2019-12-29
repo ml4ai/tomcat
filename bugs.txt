@@ -1,0 +1,19 @@
+
+If TOMCAT env var is not set when we do runExperiment, we get an abort. Could we
+check that it is set via the getenv() system call and exit with a better error
+message? 
+
+If we kill runExperiment, then Minecraft is not useable, even though it seems
+to be running. Likely more cleanup in runExperiment and/or dealing with signal
+15 is needed?
+
+If I run two missions in a row without killing Minecraft, I often (always) loose
+my cursor control. I think this is whenever the mission does not exit
+successfully?
+
+Once I had the time limit set to 30s and then went wondering around in the wrong
+direction, and the time limit was forgotten. I have not been able to reproduce
+this. 
+
+
+
