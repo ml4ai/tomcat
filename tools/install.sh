@@ -1,8 +1,11 @@
 #!/bin/bash
 
-# We cannot use '-u' and declare TRAVIS as cmake checks whether TRAVIS is set. 
-# If we had confidence that tcsh was installed, then we could use tcsh to check
-# if the variable was bound as we do in scripts that are not part of installing.
+# We cannot use '-u' because we need to be able to test if TRAVIS is set. We
+# cannot simply declare TRAVIS and then test if it is NULL, as cmake checks
+# whether TRAVIS is set. If we had confidence that tcsh was installed, then we
+# could use tcsh to check if the variable was bound, but this is an install
+# script that is supposed to install things we might need, counting on as little
+# as possible.
 
 # set -x 
 
