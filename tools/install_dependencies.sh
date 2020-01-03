@@ -85,8 +85,8 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
           # for some reason, so we install DLib on Travis from source rather than
           # with the Homebrew package manager.
           pushd "${TOMCAT}/external"
-            curl -O http://dlib.net/files/dlib-19.17.tar.bz2 > /dev/null
-            tar -xvjf dlib-19.17.tar.bz2
+            curl -O http://dlib.net/files/dlib-19.17.tar.bz2
+            tar -xvjf dlib-19.17.tar.bz2 > /dev/null
           popd
 
           # On Travis, we will install lcov to provide code coverage estimates.

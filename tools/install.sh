@@ -30,7 +30,8 @@ if [[ $? -ne 0 ]]; then exit 1; fi;
 if [[ ! -z $TRAVIS ]]; then
   if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     echo "Creating virtual environment for tomcat"
-    /usr/local/bin/python3 -m venv tomcat_venv
+    brew unlink python@2
+    python -m venv tomcat_venv
     if [[ $? -ne 0 ]]; then exit 1; fi;
 
     echo "Activating virtual environment for tomcat"
