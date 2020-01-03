@@ -16,6 +16,14 @@ fi
 
 export TOMCAT=${tomcat}
 
+# On Travis, we will create and activate a Python virtual environment
+if [[ ! -z $TRAVIS ]]; then
+  if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+    python3 -m venv tomcat_venv
+    source tomcat_venv/bin/activate
+  fi
+fi
+
 ${TOMCAT}/tools/install_dependencies.sh
 if [[ $? -ne 0 ]]; then exit 1; fi;
 

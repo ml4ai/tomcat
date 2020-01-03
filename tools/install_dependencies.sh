@@ -80,11 +80,20 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
           libsndfile \
           portaudio
 
-        # The Homebrew install of DLib on Travis doesn't play well with CMake
-        # for some reason, so we install DLib on Travis from source rather than
-        # with the Homebrew package manager.
         if [[ ! -z $TRAVIS ]]; then
-          echo "Not installing dlib through Homebrew."
+          # The Homebrew install of DLib on Travis doesn't play well with CMake
+          # for some reason, so we install DLib on Travis from source rather than
+          # with the Homebrew package manager.
+          pushd "${TOMCAT}/external"
+            curl -O http://dlib.net/files/dlib-19.17.tar.bz2
+            tar -xvjf dlib-19.17.tar.bz2
+          popd
+
+          # Installing Sphinx HTML documentation requirements.
+          pip install exhale recommonmark sphinx-rtd-theme
+
+          # On Travis, we will install lcov to provide code coverage estimates.
+          brew install lcov
         else
           brew install dlib
         fi;
