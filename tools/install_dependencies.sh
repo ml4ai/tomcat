@@ -89,9 +89,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
             tar -xvjf dlib-19.17.tar.bz2
           popd
 
-          # Installing Sphinx HTML documentation requirements.
-          pip install exhale recommonmark sphinx-rtd-theme
-
           # On Travis, we will install lcov to provide code coverage estimates.
           brew install lcov
         else

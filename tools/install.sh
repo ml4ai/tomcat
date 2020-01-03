@@ -16,13 +16,6 @@ fi
 
 export TOMCAT=${tomcat}
 
-# On Travis, we will create and activate a Python virtual environment
-if [[ ! -z $TRAVIS ]]; then
-  if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-    python3 -m venv tomcat_venv
-    source tomcat_venv/bin/activate
-  fi
-fi
 
 ${TOMCAT}/tools/install_dependencies.sh
 if [[ $? -ne 0 ]]; then exit 1; fi;
@@ -33,7 +26,26 @@ if [[ $? -ne 0 ]]; then exit 1; fi;
 ${TOMCAT}/tools/download_OpenFace_models.sh
 if [[ $? -ne 0 ]]; then exit 1; fi;
 
+# On Travis, we will create and activate a Python virtual environment
+if [[ ! -z $TRAVIS ]]; then
+  if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+    echo "Creating virtual environment for tomcat"
+    python3 -m venv tomcat_venv
+    if [[ $? -ne 0 ]]; then exit 1; fi;
+
+    echo "Activating virtual environment for tomcat"
+    source tomcat_venv/bin/activate
+    if [[ $? -ne 0 ]]; then exit 1; fi;
+
+    # Installing Sphinx HTML documentation requirements.
+    pip install exhale recommonmark sphinx-rtd-theme
+    if [[ $? -ne 0 ]]; then exit 1; fi;
+  fi
+fi
+
 pushd "${TOMCAT}"
+
+
     echo "Installing ToMCAT in `pwd`"
 
     mkdir -p build 
