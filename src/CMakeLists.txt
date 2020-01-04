@@ -1,5 +1,7 @@
 add_library(
   tomcat STATIC
+  utils.h
+  utils.cpp
   LocalAgent.h
   LocalAgent.cpp
   WebcamSensor.h
