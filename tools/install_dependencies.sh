@@ -88,9 +88,10 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
             # We download a specific commit snapshot of dlib from Github that
             # contains a fix for the latest version of OpenCV that is being
             # installed by Homebrew.
-            curl -L https://github.com/davisking/dlib/archive/34dc7303045877226ebdd6cd07ce6384c0881eb8.zip -o dlib.zip
+            commit_sha=471c3d30e181a40942177a4358aa0496273d2108
+            curl -L https://github.com/davisking/dlib/archive/${commit_sha}.zip -o dlib.zip
             unzip dlib.zip
-            mv dlib-34dc7303045877226ebdd6cd07ce6384c0881eb8 dlib
+            mv dlib-${commit_sha} dlib
           popd
 
           # On Travis, we will install lcov to provide code coverage estimates.
