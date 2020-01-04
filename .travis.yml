@@ -1,6 +1,8 @@
 os:
   - osx
+  - linux
 
+dist: bionic
 osx_image: xcode11
 
 language: 
@@ -18,9 +20,10 @@ script:
 
 
 after_success:
-  - lcov -d build/tests/CMakeFiles/test.dir -d build/src/CMakeFiles/tomcat.dir -c -o coverage.info
-  - lcov -e coverage.info '*tomcat/src*' -o coverage.info
-  - bash <(curl -s https://codecov.io/bash) -f coverage.info
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      lcov -d build/tests/CMakeFiles/test.dir -d build/src/CMakeFiles/tomcat.dir -c -o coverage.info
+   && lcov -e coverage.info '*tomcat/src*' -o coverage.info
+   && bash <(curl -s https://codecov.io/bash) -f coverage.info; fi
 
 deploy:
   local-dir: build/docs

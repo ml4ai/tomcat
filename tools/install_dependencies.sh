@@ -85,8 +85,12 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
           # for some reason, so we install DLib on Travis from source rather than
           # with the Homebrew package manager.
           pushd "${TOMCAT}/external"
-            curl -O http://dlib.net/files/dlib-19.19.tar.bz2
-            tar -xvjf dlib-19.19.tar.bz2 &> /dev/null
+            # We download a specific commit snapshot of dlib from Github that
+            # contains a fix for the latest version of OpenCV that is being
+            # installed by Homebrew.
+            curl -L https://github.com/davisking/dlib/archive/34dc7303045877226ebdd6cd07ce6384c0881eb8.zip -o dlib.zip
+            unzip dlib.zip
+            mv dlib-34dc7303045877226ebdd6cd07ce6384c0881eb8 dlib
           popd
 
           # On Travis, we will install lcov to provide code coverage estimates.
