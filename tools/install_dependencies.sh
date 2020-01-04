@@ -116,7 +116,7 @@ elif [ -x "$(command -v apt-get)" ]; then
     echo ""
     echo "Installing dependencies using apt-get"
 
-    sudo add-apt-repository -f ppa:ubuntu-toolchain-r/test
+    sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
     sudo apt-get update
     if [[ $? -ne 0 ]]; then exit 1; fi;
 
