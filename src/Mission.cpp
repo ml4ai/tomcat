@@ -17,12 +17,18 @@ namespace tomcat {
     return Mission::from_XML_string(xml);
   }
 
-  Mission Mission::from_mission_id(int missionID, unsigned int timeLimitInSeconds, unsigned int selfReportPromptTimeInSeconds) {
-    string xml = Mission::getWorldSkeletonFromXML(missionID, timeLimitInSeconds, selfReportPromptTimeInSeconds);
+  Mission Mission::from_mission_id(int missionID,
+                                   unsigned int timeLimitInSeconds,
+                                   unsigned int selfReportPromptTimeInSeconds) {
+    string xml = Mission::getWorldSkeletonFromXML(
+        missionID, timeLimitInSeconds, selfReportPromptTimeInSeconds);
     return Mission::from_XML_string(xml);
   }
 
-  Mission Mission::fromMissionIdOrPathToXML(string missionIdOrPathToXML, unsigned int timeLimitInSeconds, unsigned int selfReportPromptTimeInSeconds) {
+  Mission Mission::fromMissionIdOrPathToXML(
+      string missionIdOrPathToXML,
+      unsigned int timeLimitInSeconds,
+      unsigned int selfReportPromptTimeInSeconds) {
     path p(missionIdOrPathToXML);
     Mission newMission;
     if (p.extension() == ".xml") {
@@ -30,13 +36,18 @@ namespace tomcat {
       newMission.timeLimitInSeconds(timeLimitInSeconds);
     }
     else {
-      newMission = Mission::from_mission_id(std::stoi(missionIdOrPathToXML), timeLimitInSeconds, selfReportPromptTimeInSeconds);
+      newMission = Mission::from_mission_id(std::stoi(missionIdOrPathToXML),
+                                            timeLimitInSeconds,
+                                            selfReportPromptTimeInSeconds);
     }
     newMission.timeLimit = timeLimitInSeconds;
     return newMission;
   }
 
-  string Mission::getWorldSkeletonFromXML(int missionID, unsigned int timeLimitInSeconds, unsigned int selfReportPromptTimeInSeconds) {
+  string
+  Mission::getWorldSkeletonFromXML(int missionID,
+                                   unsigned int timeLimitInSeconds,
+                                   unsigned int selfReportPromptTimeInSeconds) {
     string worldSkeletonXML = format(R"(
     <?xml version="1.0" encoding="UTF-8"?>
     <Mission xmlns="http://ProjectMalmo.microsoft.com" 
@@ -65,6 +76,7 @@ namespace tomcat {
           <AgentStart>
           </AgentStart>
           <AgentHandlers>
+            <ObservationFromFullStats/>
             <ContinuousMovementCommands turnSpeedDegs="840">
                 <ModifierList type="deny-list">
                   <command>strafe</command>
