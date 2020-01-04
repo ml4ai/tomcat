@@ -17,6 +17,9 @@ git clone https://github.com/ml4ai/tomcat
 cd tomcat && ./tools/install.sh
 ```
 
+**Also, set the environment variable `TOMCAT` to point to the cloned repository
+on your computer.**
+
 Please make sure your internet connection is active while the `install.sh`
 script is running. Mac users may want to turn off their firewalls.
 The scripts assume that the default shell is bash - if this is not the case for
@@ -60,11 +63,3 @@ To speed up builds, create a file called gradle.properties and add
 `org.gradle.daemon=true` to it:
 
     echo "org.gradle.daemon=true" > ~/.gradle/gradle.properties
-
-If you want to activate video recording and other things that depend on Malmo
-quitting the server, uncomment line 18 in `src/TomcatMission.cpp` and
-comment line 79 in 
-`/external/malmo/Minecraft/src/main/java/edu/arizona/tomcat/Mission/Mission.java` file.
-
-We are still working on this issue so we don't need to perform this step in the
-future.
