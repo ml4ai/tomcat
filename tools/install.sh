@@ -14,7 +14,11 @@ if [ ! -z "$TOMCAT" ]; then
     fi
 fi
 
-export TOMCAT=${tomcat}
+if [[ ! -z $TRAVIS ]]; then
+  export TOMCAT=${TRAVIS_BUILD_DIR}
+else
+  export TOMCAT=${tomcat}
+fi
 
 
 ${TOMCAT}/tools/install_dependencies.sh
