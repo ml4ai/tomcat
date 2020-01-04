@@ -20,6 +20,8 @@ int main(int argc, const char *argv[]) {
     ("mission", value<string>(&mission_xml), "Path to mission XML file.")
     ("time_limit", value<unsigned int>()->default_value(20),
      "Time limit for mission.")
+     ("self_report", value<unsigned int>()->default_value(180),
+                  "Self-report prompt interval time.")
   ;
   variables_map vm;
   store(parse_command_line(argc, argv, desc), vm);
@@ -31,7 +33,7 @@ int main(int argc, const char *argv[]) {
 
   if (vm.count("mission")) {
     LocalAgent agent;
-    agent.setMission(mission_xml, vm["time_limit"].as<unsigned int>());
+    agent.setMission(mission_xml, vm["time_limit"].as<unsigned int>(), vm["self_report"].as<unsigned int>());
   }
   else {
     cout << desc << endl;

@@ -2568,6 +2568,7 @@
     <xs:complexType>
       <xs:attribute name="mission" type="xs:integer" use="optional" default="1"/>
       <xs:attribute name="timeLimitInSeconds" type="xs:integer" use="optional" default="100"/>
+      <xs:attribute name="selfReportPromptTimeInSeconds" type="xs:integer" use="optional" default="180"/>
     </xs:complexType>
   </xs:element>
   

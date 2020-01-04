@@ -11,4 +11,9 @@ public interface ScreenListener {
 	 */
 	public void screenDismissed(GuiScreen screen);
 	
+	/**
+	 * Handles actions after a screen was dismissed with self-report
+	 */
+	public void screenDismissed(GuiScreen screen, SelfReportContent selfReport);
+	
 }

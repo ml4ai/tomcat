@@ -131,7 +131,7 @@ public class MissionPhase {
 	 * @param world
 	 */
 	protected void handleStatusWaitingToStart(World world) {
-		long remainingTime = this.getRemainingTimeOnStatus(this.secondsBeforeStart);
+		long remainingTime = this.getRemainingTimeOnStatus(world, this.secondsBeforeStart);
 		
 		if (remainingTime <= 0) {
 			this.timeOnStatusSet = 0;
@@ -143,14 +143,14 @@ public class MissionPhase {
 	 * Get remaining time in the current status
 	 * @return
 	 */
-	private long getRemainingTimeOnStatus(long timeLimit) {
+	private long getRemainingTimeOnStatus(World world, long timeLimit) {
 		long currentWorldTime = Minecraft.getMinecraft().world.getTotalWorldTime();
 		
 		if (this.timeOnStatusSet == 0) {
 			this.timeOnStatusSet = currentWorldTime;
 		}	
 		
-		return Converter.getRemainingTimeInSeconds(this.timeOnStatusSet, timeLimit);
+		return Converter.getRemainingTimeInSeconds(world, this.timeOnStatusSet, timeLimit);
 	}
 	
 	
@@ -233,7 +233,7 @@ public class MissionPhase {
 			this.worldTimeOnPhaseCompletion = currentWorldTime;
 		}	
 		
-		return Converter.getRemainingTimeInSeconds(this.worldTimeOnPhaseCompletion, this.secondsUntilShowMessageScreen);		
+		return Converter.getRemainingTimeInSeconds(world, this.worldTimeOnPhaseCompletion, this.secondsUntilShowMessageScreen);		
 	}
 	
 	/**
@@ -260,7 +260,7 @@ public class MissionPhase {
 			this.worldTimeOnMessageDisplay = currentWorldTime;
 		}	
 		
-		return Converter.getRemainingTimeInSeconds(this.worldTimeOnMessageDisplay, this.secondsToDismissMessageScreen);
+		return Converter.getRemainingTimeInSeconds(world, this.worldTimeOnMessageDisplay, this.secondsToDismissMessageScreen);
 	}
 	
 	/**

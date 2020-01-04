@@ -9,6 +9,7 @@ import net.minecraftforge.common.MinecraftForge;
 public class TutorialClientMission extends ClientMission {
 
 	private int numberOfSavedVillagers;
+	private enum CAMERA_PERSPECTIVE {FIRST_PERSON, BACK_VIEW, FRONT_VIEW};
 
 	public TutorialClientMission() {
 		// Sets indicator of number of villagers saved to be rerendered by a Minecraft event schema.
@@ -24,14 +25,9 @@ public class TutorialClientMission extends ClientMission {
 			this.numberOfSavedVillagers++;
 			break;
 
-			case VIEW_CHANGED:
-			if (Minecraft.getMinecraft().gameSettings.thirdPersonView < 2) {
-				Minecraft.getMinecraft().gameSettings.thirdPersonView++;
-			}
-			else {
-				Minecraft.getMinecraft().gameSettings.thirdPersonView = 0;
-			}
-				break;
+		case VIEW_CHANGED:
+			this.showNextCameraPerspective();
+			break;
 		default:
 			break;
 		}		
@@ -43,5 +39,31 @@ public class TutorialClientMission extends ClientMission {
 	public int getNumberOfSavedVillagers() {
 		return this.numberOfSavedVillagers;
 	}
+	
+	/**
+	 * Changes the camera focus to the next perspective 
+	 */
+	private void showNextCameraPerspective() {
+		CAMERA_PERSPECTIVE currentCameraPerspective = CAMERA_PERSPECTIVE.values()[Minecraft.getMinecraft().gameSettings.thirdPersonView];
+		CAMERA_PERSPECTIVE nextCameraPerspective = currentCameraPerspective;
+		
+		switch (currentCameraPerspective) {
+		case FIRST_PERSON:
+			nextCameraPerspective = CAMERA_PERSPECTIVE.BACK_VIEW;
+			break;
+		
+		case BACK_VIEW:
+			nextCameraPerspective = CAMERA_PERSPECTIVE.FRONT_VIEW;
+			break;
+			
+		case FRONT_VIEW:
+			nextCameraPerspective = CAMERA_PERSPECTIVE.FIRST_PERSON;
+			break;
 
+		default:
+			break;
+		}
+		
+		Minecraft.getMinecraft().gameSettings.thirdPersonView = nextCameraPerspective.ordinal();
+	}
 }

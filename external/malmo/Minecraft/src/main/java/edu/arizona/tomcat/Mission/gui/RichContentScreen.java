@@ -32,32 +32,10 @@ public class RichContentScreen extends GUIScreenUndismissableOnEscapeKey {
 	private GuiButton closeButton;
 	private ArrayList<ScreenListener> listeners;
 
-	public RichContentScreen() {
-		this.content = new RichContent();
-		ArrayList<String> text = new ArrayList<String>();
-		text.add("Testing rich content.");
-		ArrayList<RichContentImage> images = new ArrayList<RichContentImage>();
-		RichContentImage rightClick = new RichContentImage("right_click.png", "mouse", 0, 0, 32, 32);
-		images.add(rightClick);
-		images.add(new RichContentImage("right_click.png", "rato", 0, 0, 32, 32));
-		RichContentPage page = new RichContentPage(text, images);
-		this.content.addPage(page);
-
-		text = new ArrayList<String>();
-		text.add("Testing rich content 2.");
-		images = new ArrayList<RichContentImage>();		
-		page = new RichContentPage(text);
-		this.content.addPage(page);
-
-		this.dismissible = true;
-		this.shouldPauseGame = true;
-		this.closeButtonLabel = "Ok";
-		this.listeners = new ArrayList<ScreenListener>();
-	}
-
 	/**
 	 * Constructor
 	 * @param content - Content of the screen
+	 * @param shouldPauseGame - Indicates whether the game should be pause or not
 	 * @param dismissible - Indicates whether there is a button to close the window
 	 * @param closeButtonLabel - Label of the button which closes the screen
 	 */
@@ -73,6 +51,7 @@ public class RichContentScreen extends GUIScreenUndismissableOnEscapeKey {
 	/**
 	 * Constructor
 	 * @param content - Content of the screen
+	 * @param shouldPauseGame - Indicates whether the game should be pause or not
 	 * @param dismissible - Indicates whether there is a button to close the window
 	 */
 	public RichContentScreen(RichContent content, boolean shouldPauseGame, boolean dismissable) {
@@ -94,7 +73,6 @@ public class RichContentScreen extends GUIScreenUndismissableOnEscapeKey {
 	 * Draw buttons on the screen
 	 */
 	protected void drawButtons() {
-		//this.dismissible = false;		
 		int avaliableWidth = this.width - 2*MARGIN;
 		int avaliableSpace = avaliableWidth - 3*BUTTON_WIDTH;
 		int spaceBetweenButtons = avaliableSpace / 4;

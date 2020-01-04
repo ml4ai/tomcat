@@ -54,8 +54,7 @@ find_package(LibSndFile)
 
 
 if(DEFINED ENV{TRAVIS})
-  message("-- CMake running on Travis, using downloaded dlib.")
-  add_subdirectory(external/dlib-19.17)
+  add_subdirectory(external/dlib)
 else()
   find_package(dlib REQUIRED)
 endif()
