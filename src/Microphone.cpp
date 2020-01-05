@@ -18,6 +18,10 @@ namespace tomcat {
     PortAudioException(string msg) : runtime_error(msg) {}
   };
 
+  void Microphone::set_output_filename(string audio_record_path) {
+    this->output_filename = audio_record_path;
+  };
+
   void Microphone::set_time_limit_in_seconds(unsigned int num_seconds) {
     this->num_seconds = num_seconds;
   };

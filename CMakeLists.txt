@@ -54,8 +54,7 @@ find_package(LibSndFile)
 
 
 if(DEFINED ENV{TRAVIS})
-  message("-- CMake running on Travis, using downloaded dlib.")
-  add_subdirectory(external/dlib-19.17)
+  add_subdirectory(external/dlib)
 else()
   find_package(dlib REQUIRED)
 endif()
@@ -70,6 +69,7 @@ target_include_directories(tomcat
                                    ${OpenFace_INCLUDE_DIRS})
 
 target_include_directories(runExperiment PRIVATE external/malmo/Malmo/src)
+
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/tools/launch_minecraft.sh
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 

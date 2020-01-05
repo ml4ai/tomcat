@@ -1,0 +1,53 @@
+{
+  "pages":
+  [
+    {
+      "text": [
+        "Turn around and find a crafting table.",
+        "You can use a crafting table to produce weapons",
+        "by using itens in your inventory. To open a",
+        "crafting table, just right-click on it."
+      ],
+      "images":
+      [
+        {
+          "texture": "textures1.png",
+          "caption": "Crafting Table",
+          "originXInTexture": 96,
+          "originYInTexture": 128,
+          "width": 32,
+          "height": 32
+        },
+        {
+        "texture": "textures1.png",
+        "caption": "Open",
+        "originXInTexture": 32,
+        "originYInTexture": 0,
+        "width": 32,
+        "height": 32
+        }
+      ]
+    },
+    {
+      "text": [
+        "Follow the diagram instruction below to craft a wooden axe.",
+        "Right-click on an item from your inventory and drag it to",
+        "the correct slot in the table. Once you finish placing the items",
+        "and the axe shows up on the screen, click on it and drag it to",
+        "the first slot of your main inventory (bottom slots).",
+        "Press OK when you are ready."
+      ],
+      "images":
+      [
+        {
+          "texture": "textures1.png",
+          "caption": "Wooden Axe",
+          "originXInTexture": 0,
+          "originYInTexture": 128,
+          "width": 96,
+          "height": 64
+        }
+      ]
+    }
+  ]
+}

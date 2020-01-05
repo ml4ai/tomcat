@@ -8,16 +8,18 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import edu.arizona.tomcat.Mission.gui.RichContent;
+import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 
 public class TomcatMessageData {
 	
-	private static enum Key { MISSION_PHASE_INSTRUCTIONS, MISSION_PHASE_MESSAGE, MISSION_PHASE_MESSAGE_DURATION };
+	private static enum Key { MISSION_PHASE_MESSAGE, PLAYER_NAME };
 
-	private Map<String, String> data;
-	private RichContent richContent;
+	protected Map<String, String> data;
+	protected RichContent richContent;
+	protected SelfReportContent selfReport;
 	
 	/**
 	 * Constructor
@@ -36,6 +38,15 @@ public class TomcatMessageData {
 	}
 	
 	/**
+	 * Constructor
+	 * @param selfReport - Self-report object
+	 */
+	public TomcatMessageData(SelfReportContent selfReport) {
+		this.data = new HashMap<String, String>();
+		this.selfReport = selfReport;
+	}
+	
+	/**
 	 * Reads the .json content of a buffer and loads it to the attributes of this class
 	 * @param buffer - ByteBuffer object
 	 * @throws IOException
@@ -45,6 +56,7 @@ public class TomcatMessageData {
         TomcatMessageData messageData = gson.fromJson(this.readStringFromByteBuffer(buffer), TomcatMessageData.class);
 		this.data = messageData.data;
 		this.richContent = messageData.richContent;
+		this.selfReport = messageData.selfReport;
 	}
 	
 	/**
@@ -64,7 +76,7 @@ public class TomcatMessageData {
 	 * @param buffer - ByteBuffer object
 	 * @throws IOException
 	 */
-	private void writeStringToByteBuffer(String string, ByteBuf buffer) throws IOException {			
+	protected void writeStringToByteBuffer(String string, ByteBuf buffer) throws IOException {			
 		ByteBufOutputStream byteBufOutputStream = new ByteBufOutputStream(buffer);
 		byteBufOutputStream.writeUTF(string);
 		byteBufOutputStream.close();			
@@ -76,7 +88,7 @@ public class TomcatMessageData {
 	 * @return
 	 * @throws IOException
 	 */
-	private String readStringFromByteBuffer(ByteBuf buffer) throws IOException {			
+	protected String readStringFromByteBuffer(ByteBuf buffer) throws IOException {			
 		ByteBufInputStream byteBufInputStream = new ByteBufInputStream(buffer);
 		String string =  byteBufInputStream.readUTF();
 		byteBufInputStream.close();
@@ -100,11 +112,35 @@ public class TomcatMessageData {
 	}
 	
 	/**
+	 * Adds the player's name to the data map
+	 * @param name - Player's name
+	 */
+	public void setPlayerName(String name) {
+		this.data.put(Key.PLAYER_NAME.toString(), name);
+	}
+	
+	/**
+	 * Retrieves the player's name from the data map
+	 * @return
+	 */
+	public String getPlayerName() {
+		return this.data.get(Key.PLAYER_NAME.toString());
+	}
+	
+	/**
 	 * Retrieves a rich content included in the message
 	 * @return
 	 */
 	public RichContent getRichContent() {
 		return this.richContent;
+	}
+	
+	/**
+	 * Retrieves a self-report included in the message
+	 * @return
+	 */
+	public SelfReportContent getSelfReport() {
+		return this.selfReport;
 	}
 	
 }

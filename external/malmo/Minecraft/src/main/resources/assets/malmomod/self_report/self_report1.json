@@ -1,0 +1,49 @@
+{
+  "questions":
+  [
+    {
+      "text": [
+         "How positive are you feeling about the agent right now?"
+      ],
+      "choices":
+      [ 
+        "Not at all positive",
+        "Somewhat positive",
+        "Very positive"
+      ]
+    },
+    {
+      "text": [
+         "How negative are you feeling about the agent right now?"
+      ],
+      "choices":
+      [
+        "Not at all negative",
+        "Somewhat negative",
+        "Very negative"
+      ]
+    },
+    {
+      "text": [
+         "How positive are you feeling about the video game right now?"
+      ],
+      "choices":
+      [
+        "Not at all positive",
+        "Somewhat positive",
+        "Very positive"
+      ]
+    },
+    {
+      "text": [
+         "How negative are you feeling about the video game right now?"
+      ],
+      "choices":
+      [
+        "Not at all negative",
+        "Somewhat negative",
+        "Very negative"
+      ]
+    }
+  ]
+}

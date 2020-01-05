@@ -19,12 +19,16 @@ namespace tomcat {
 
   void LocalAgent::setMission(string missionIdOrPathToXML,
                               unsigned int timeLimitInSeconds,
+                              unsigned int selfReportPromptTimeInSeconds,
                               unsigned int width,
                               unsigned int height,
                               bool activateVideo,
                               bool activateObsRec) {
 
-    this->mission = Mission::fromMissionIdOrPathToXML(missionIdOrPathToXML, timeLimitInSeconds);
+    this->mission =
+        Mission::fromMissionIdOrPathToXML(missionIdOrPathToXML,
+                                          timeLimitInSeconds,
+                                          selfReportPromptTimeInSeconds);
     if (activateVideo) {
       this->mission.requestVideo(width, height);
     }
@@ -46,7 +50,8 @@ namespace tomcat {
                                bool activateRewRec,
                                int frames_per_second,
                                int64_t bit_rate,
-                               string recordPath) {
+                               string recordPath,
+                               string audio_record_path) {
     using boost::shared_ptr;
     MissionRecordSpec missionRecord(recordPath);
 
@@ -117,6 +122,7 @@ namespace tomcat {
     } while (worldState.is_mission_running);
 
     if (activateMicrophone) {
+      this->microphone.set_output_filename(audio_record_path);
       this->microphone.finalize();
     }
 

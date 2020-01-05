@@ -2,11 +2,14 @@ package edu.arizona.tomcat.Mission.Client;
 
 import com.microsoft.Malmo.MalmoMod;
 
+import edu.arizona.tomcat.Messaging.TomcatMessageData;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
 import edu.arizona.tomcat.Mission.gui.MessageScreen;
 import edu.arizona.tomcat.Mission.gui.RichContentScreen;
 import edu.arizona.tomcat.Mission.gui.ScreenListener;
+import edu.arizona.tomcat.Mission.gui.SelfReportContent;
+import edu.arizona.tomcat.Mission.gui.SelfReportScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 
@@ -36,6 +39,12 @@ public abstract class ClientMission implements ScreenListener {
 			Minecraft.getMinecraft().player.closeScreen();
 			MalmoMod.network.sendToServer(new TomcatMessage(TomcatMessageType.OPEN_SCREEN_DISMISSED));
 			break;	
+		
+		case SHOW_SELF_REPORT:
+			SelfReportScreen selfReportScreen = new SelfReportScreen(message.getMessageData().getSelfReport(), true);
+			selfReportScreen.addListener(this);
+			Minecraft.getMinecraft().displayGuiScreen(selfReportScreen);			
+			break;
 
 		default:
 			break;
@@ -45,6 +54,13 @@ public abstract class ClientMission implements ScreenListener {
 	@Override
 	public void screenDismissed(GuiScreen screen) {		
 		MalmoMod.network.sendToServer(new TomcatMessage(TomcatMessageType.OPEN_SCREEN_DISMISSED));		 			
+	}
+	
+	@Override
+	public void screenDismissed(GuiScreen screen, SelfReportContent selfReport) {
+		TomcatMessageData data = new TomcatMessageData(selfReport);
+		data.setPlayerName(Minecraft.getMinecraft().player.getName());
+		MalmoMod.network.sendToServer(new TomcatMessage(TomcatMessageType.SELF_REPORT_ANSWERED, data));		
 	}
 
 }

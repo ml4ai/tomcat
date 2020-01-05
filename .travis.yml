@@ -7,36 +7,24 @@ language:
  - cpp
  - python
 
-addons:
-  homebrew:
-    packages:
-    - lcov
-
-before_install:
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python3 -m venv tomcat; fi
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source tomcat/bin/activate; fi
-
 install:
-  - pip install exhale recommonmark sphinx-rtd-theme
-  - cd $TOMCAT/external && curl -O http://dlib.net/files/dlib-19.17.tar.bz2 
-                && tar -xvjf dlib-19.17.tar.bz2
-                && cd ../
+  - ./tools/install.sh
 
 env:
   - TOMCAT=$TRAVIS_BUILD_DIR
 
 script:
-  - cd $TOMCAT && ./tools/install.sh && cd $TOMCAT
-  - cd build && make -j test 
+  - cd ${TOMCAT}/build && make -j test
              && ./bin/test --mission ../external/malmo/sample_missions/default_world_1.xml 
              && cd ../
   - cd ${TOMCAT}/build && make docs && cd ../
 
 
 after_success:
-  - lcov -d build/tests/CMakeFiles/test.dir -d build/src/CMakeFiles/tomcat.dir -c -o coverage.info
-  - lcov -e coverage.info '*tomcat/src*' -o coverage.info
-  - bash <(curl -s https://codecov.io/bash) -f coverage.info
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      lcov -d build/tests/CMakeFiles/test.dir -d build/src/CMakeFiles/tomcat.dir -c -o coverage.info
+   && lcov -e coverage.info '*tomcat/src*' -o coverage.info
+   && bash <(curl -s https://codecov.io/bash) -f coverage.info; fi
 
 deploy:
   local-dir: build/docs

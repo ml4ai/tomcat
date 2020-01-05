@@ -80,11 +80,22 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
           libsndfile \
           portaudio
 
-        # The Homebrew install of DLib on Travis doesn't play well with CMake
-        # for some reason, so we install DLib on Travis from source rather than
-        # with the Homebrew package manager.
         if [[ ! -z $TRAVIS ]]; then
-          echo "Not installing dlib through Homebrew."
+          # The Homebrew install of DLib on Travis doesn't play well with CMake
+          # for some reason, so we install DLib on Travis from source rather than
+          # with the Homebrew package manager.
+          pushd "${TOMCAT}/external"
+            # We download a specific commit snapshot of dlib from Github that
+            # contains a fix for the latest version of OpenCV that is being
+            # installed by Homebrew.
+            commit_sha=471c3d30e181a40942177a4358aa0496273d2108
+            curl -L https://github.com/davisking/dlib/archive/${commit_sha}.zip -o dlib.zip
+            unzip dlib.zip
+            mv dlib-${commit_sha} dlib
+          popd
+
+          # On Travis, we will install lcov to provide code coverage estimates.
+          brew install lcov
         else
           brew install dlib
         fi;
@@ -105,8 +116,27 @@ elif [ -x "$(command -v apt-get)" ]; then
     echo ""
     echo "Installing dependencies using apt-get"
 
+    sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
     sudo apt-get update
     if [[ $? -ne 0 ]]; then exit 1; fi;
+
+    # Install a version of CMake more up-to-date than what is available by
+    # default for Ubuntu Bionic
+
+    if [[ ! -z $TRAVIS ]]; then
+      sudo apt purge --auto-remove cmake
+      version=3.16
+      build=2
+      mkdir -p ~/temp
+        pushd ~/temp
+          wget https://cmake.org/files/v$version/cmake-$version.$build.tar.gz
+          tar -xzvf cmake-$version.$build.tar.gz
+          cd cmake-$version.$build/
+          ./bootstrap
+          make -j
+          sudo make install
+        popd
+    fi
 
     sudo apt-get install \
         gcc-9 \

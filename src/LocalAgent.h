@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Mission.h"
 #include "Microphone.h"
+#include "Mission.h"
 #include "WebcamSensor.h"
 #include <AgentHost.h>
 #include <fmt/format.h>
@@ -36,12 +36,13 @@ namespace tomcat {
      */
     void setMission(std::string missionIdOrPathToXML,
                     unsigned int timeLimitInSeconds,
+                    unsigned int selfReportPromptTimeInSeconds,
                     unsigned int width = 640,
                     unsigned int height = 480,
                     bool activateVideo = false,
                     bool activateObsRec = false);
 
-        int startMission(int portNumber = 10000,
+    int startMission(int portNumber = 10000,
                      bool activateWebcam = false,
                      bool activateVideo = false,
                      bool activateMicrophone = false,
@@ -50,7 +51,8 @@ namespace tomcat {
                      bool activateRewRec = false,
                      int frames_per_second = 20,
                      int64_t bit_rate = 400000,
-                     std::string recordPath = "./saved_data.tgz");
+                     std::string recordPath = "./saved_data.tgz",
+                     std::string audio_record_path = "audio_recording.wav");
 
     /**
      * Sends command to the local agent
