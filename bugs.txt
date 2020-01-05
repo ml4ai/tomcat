@@ -1,0 +1,58 @@
+
+If TOMCAT env var is not set when we do runExperiment, we get an abort. Could we
+check that it is set via the getenv() system call and exit with a better error
+message? 
+
+If we kill runExperiment, then Minecraft is not useable, even though it seems to
+be running. Likely more cleanup in runExperiment and/or dealing with signals 2
+and 15 (and perhaps others---I can help choose which) is needed? To reproduce,
+start the runExperiment, and then do a ctl-c. runExperiment dies, but Minecraft
+still displays the mission. 
+
+If I run two missions in a row without killing Minecraft, I often (always?)
+loose my cursor control. I think this is whenever the mission does not exit
+successfully?
+
+UPDATE: The timer is forgotten if you die and "respawn". Also, if you respawn,
+then you cannot affect the villager saved count. So, we need a strategy for what
+to do if we die, and how to clean up. (While I am not sure if I respawned in the
+initial case that I reported on below, but this is the likeliest explanation.) 
+     PREVIOUS: Once I had the time limit set to 30s and then went wondering
+     around in the wrong direction, and the time limit was forgotten. HOWEVER, I
+     have not been able to reproduce this. 
+
+When the SRA mission begins, it tells you that you should save the villagers:
+Perhaps remind the player how to do it by adding "by bumping into them". 
+
+Is it easy to (more significantly) change the appearance of villager who has
+been saved? (Or just make them disappear (beamed up)? 
+
+The crafting instructions (second screen) it should be more clear that you are
+matching the exact pattern shown in the picture. Once they click OK, they will
+not be able to see the pattern. I am guessing the pattern "axe-shaped", in which
+case, perhaps refer to that---otherwise the pattern seems arbitrary. 
+
+The instruction for opening an iron door should say more explicitly where to
+click. You do not simply click next to it.  You need to click on the brown part.
+Clicking on the gray end does not work. The instruction should be more specific. 
+
+Can we provide a way to restart the specific subtask (i.e., back the previous
+instruction screen)? It is possible to end up wondering around aimlessly, trying
+to remember what it was that you were going to do. 
+
+If run_session fails, it needs to exit with non-zero status. If the issue is
+with malmo, hopefully we can get an error from malmo/Minecraft. I can help hack
+it if needed. Here is an example of failure because Minecraft needs to be
+restarted (but to do so, we need to know that the run failed--right now I have a
+hack for it).
+    kobus@alpine:~/projects/ASIST/mission/run_session_try_2/tomcat$ /Volumes/home/kobus/projects/ASIST/mission/run_session_try_2/tomcat/build/bin/runExperiment --mission 0
+    Waiting for the mission to start...Error starting mission: Failed to find an
+    available client for this mission - tried all (BLAH BLAH BLAH) 
+    kobus@alpine:~/projects/ASIST/mission/run_session_try_2/tomcat$ echo $?
+    0        (I would expect a non-zero value here)
+
+
+
+
+
+
