@@ -33,7 +33,6 @@ fi
 # Bug! Interacts badly with cmake!! 
 # declare -x TRAVIS
 
-
 ${TOMCAT}/tools/install_dependencies.sh
 if [[ $? -ne 0 ]]; then exit 1; fi;
 
@@ -56,10 +55,14 @@ if [[ ! -z $TRAVIS ]]; then
   fi
 fi
 
+${TOMCAT}/tools/download_tomcat_worlds.sh
+if [[ $? -ne 0 ]]; then exit 1; fi;
+
+${TOMCAT}/tools/download_OpenFace_models.sh
+if [[ $? -ne 0 ]]; then exit 1; fi;
+
 pushd "${TOMCAT}"
-
-
-    echo "Installing ToMCAT in `pwd`"
+    echo "Building ToMCAT in `pwd`"
 
     mkdir -p build 
     if [[ $? -ne 0 ]]; then exit 1; fi;
@@ -86,12 +89,6 @@ pushd "${TOMCAT}"
     popd > /dev/null 
 popd > /dev/null 
 
-
-${TOMCAT}/tools/download_tomcat_worlds.sh
-if [[ $? -ne 0 ]]; then exit 1; fi;
-
-${TOMCAT}/tools/download_OpenFace_models.sh
-if [[ $? -ne 0 ]]; then exit 1; fi;
 
 echo " "
 echo "Finished installing ToMCAT in ${TOMCAT}!"
