@@ -10,7 +10,16 @@
 
 mkdir -p build
 
+parent_dir=`pwd`
+
 pushd build
-  make -j
-  make -j Minecraft
+    # Kobus says: The above mkdir build suggests that build might not have
+    # existed, which means that this will break. Also, if you are uipdating, it
+    # might be best to rebuild makefiles. So, I am adding a cmake command. 
+    #
+    cmake "${parent_dir}"
+
+    make -j
+    make -j Minecraft
 popd
+
