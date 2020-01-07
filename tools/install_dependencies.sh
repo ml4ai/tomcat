@@ -17,45 +17,6 @@ download_and_extract_dlib() {
   popd
 }
 
-install_cmake_from_source() {
-  local version=3.16
-  local build=2
-  local filename="cmake-$version.$build-Linux-x86_64.sh"
-  curl -O https://cmake.org/files/v$version/$filename
-  sudo sh $filename --skip-license
-}
-
-install_boost_from_source() {
-  wget https://dl.bintray.com/boostorg/release/1.71.0/source/boost_1_71_0.tar.gz
-  tar xfz boost_1_71_0.tar.gz
-  pushd boost_1_71_0
-    ./bootstrap.sh
-    if [[ $? -ne 0 ]]; then exit 1; fi;
-    sudo ./b2 install
-    if [[ $? -ne 0 ]]; then exit 1; fi;
-  popd
-  rm -rf boost_1_71_0*
-}
-
-install_opencv_from_source() {
-  local version=4.2.0
-  wget https://github.com/opencv/opencv/archive/$version.tar.gz && \
-  tar xfz opencv-$version.tar.gz
-  pushd opencv-$version
-    mkdir build
-    pushd build
-      cmake -D CMAKE_BUILD_TYPE=RELEASE -D OPENCV_GENERATE_PKGCONFIG=ON ..
-      if [[ $? -ne 0 ]]; then exit 1; fi;
-      make -j8
-      if [[ $? -ne 0 ]]; then exit 1; fi;
-      sudo make install
-      if [[ $? -ne 0 ]]; then exit 1; fi;
-      pkg-config --modversion opencv4
-      if [[ $? -ne 0 ]]; then exit 1; fi;
-    popd
-  popd
-}
-
 if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "MacOS detected. Checking for XCode developer kit."
 
@@ -159,19 +120,16 @@ elif [ -x "$(command -v apt-get)" ]; then
     # Install a version of CMake more up-to-date than what is available by
     # default for Ubuntu Bionic
 
-    sudo apt-get install cmake
-
     if [ -x "$(command -v cmake)" ]; then
       cmake_version=`cmake --version | head -n 1 | cut -d ' ' -f 3`
       cmake_major_version=`$cmake_version | cut -d '.' -f 1`
       cmake_minor_version=`$cmake_version | cut -d '.' -f 2`
       if [[ (( $cmake_major_version < 3 )) || (( $cmake_minor_version < 15 )) ]]; then
-        install_cmake_from_source
+        ./tools/install_cmake_from_source.sh
       fi
     else
-      install_cmake_from_source
+      ./tools/install_cmake_from_source.sh
     fi
-
 
     sudo apt-get install -y \
         gcc-9 \
@@ -188,14 +146,18 @@ elif [ -x "$(command -v apt-get)" ]; then
     if [[ -f $boost_version_header ]]; then
       boost_version=`cat $boost_version_header | grep "define BOOST_VERSION " | cut -d' ' -f3`
       if (( $boost_version < 106900 )); then
-        install_boost_from_source
+        ./tools/install_boost_from_source.sh
       fi
     else
-      install_boost_from_source
+      ./tools/install_boost_from_source.sh
+    fi
+
+    if [[ ! -f "usr/local/lib/libdlib.a" ]]; then
+      ./tools/install_dlib_from_source.sh
     fi
     
     if [[ ! -d "/usr/local/include/opencv4" ]]; then
-      install_opencv_from_source
+      ./tools/install_opencv_from_source.sh
     fi
 
 else

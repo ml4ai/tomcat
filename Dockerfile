@@ -41,9 +41,13 @@ RUN echo  'alias python=python3' >> ~/.bashrc
 # ------------------------------------------------------------------------------
 # Setup the tomcat repository
 COPY . /tomcat
-ENV TOMCAT=/tomcat
 WORKDIR /tomcat
+RUN ./tools/install_cmake_from_source.sh
+RUN ./tools/install_boost_from_source.sh
+RUN ./tools/install_opencv_from_source.sh
+RUN ./tools/install_dlib_from_source.sh
 ENV TRAVIS=1
+ENV TOMCAT=/tomcat
 RUN ./tools/install.sh
 
 
