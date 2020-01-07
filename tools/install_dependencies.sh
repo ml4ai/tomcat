@@ -5,6 +5,57 @@ echo "Installing ToMCAT dependencies."
 echo "Checking OS."
 # If MacOS, then try MacPorts and Homebrew
 
+download_and_extract_dlib() {
+  pushd "${TOMCAT}/external"
+    # We download a specific commit snapshot of dlib from Github that
+    # contains a fix for the latest version of OpenCV that is being
+    # installed by Homebrew.
+    commit_sha=471c3d30e181a40942177a4358aa0496273d2108
+    curl -L https://github.com/davisking/dlib/archive/${commit_sha}.zip -o dlib.zip
+    unzip dlib.zip
+    mv dlib-${commit_sha} dlib
+  popd
+}
+
+install_cmake_from_source() {
+  local version=3.16
+  local build=2
+  local filename="cmake-$version.$build-Linux-x86_64.sh"
+  curl -O https://cmake.org/files/v$version/$filename
+  sudo sh $filename --skip-license
+}
+
+install_boost_from_source() {
+  wget https://dl.bintray.com/boostorg/release/1.71.0/source/boost_1_71_0.tar.gz
+  tar xfz boost_1_71_0.tar.gz
+  pushd boost_1_71_0
+    ./bootstrap.sh
+    if [[ $? -ne 0 ]]; then exit 1; fi;
+    sudo ./b2 install
+    if [[ $? -ne 0 ]]; then exit 1; fi;
+  popd
+  rm -rf boost_1_71_0*
+}
+
+install_opencv_from_source() {
+  local version=4.2.0
+  wget https://github.com/opencv/opencv/archive/$version.tar.gz && \
+  tar xfz opencv-$version.tar.gz
+  pushd opencv-$version
+    mkdir build
+    pushd build
+      cmake -D CMAKE_BUILD_TYPE=RELEASE -D OPENCV_GENERATE_PKGCONFIG=ON ..
+      if [[ $? -ne 0 ]]; then exit 1; fi;
+      make -j8
+      if [[ $? -ne 0 ]]; then exit 1; fi;
+      sudo make install
+      if [[ $? -ne 0 ]]; then exit 1; fi;
+      pkg-config --modversion opencv4
+      if [[ $? -ne 0 ]]; then exit 1; fi;
+    popd
+  popd
+}
+
 if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "MacOS detected. Checking for XCode developer kit."
 
@@ -69,6 +120,9 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         # We do not check exit codes for Homebrew installs since `brew install`
         # can return an exit code of 1 when a package is already installed (!!)
 
+        # Adding adoptopenjdk/openjdk tap
+        brew tap adoptopenjdk/openjdk
+
         brew install \
           cmake \
           fmt \
@@ -78,33 +132,15 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
           openblas \
           boost \
           libsndfile \
-          portaudio
+          portaudio \
+          adoptopenjdk8 \
+          gradle
 
         if [[ ! -z $TRAVIS ]]; then
-          # The Homebrew install of DLib on Travis doesn't play well with CMake
-          # for some reason, so we install DLib on Travis from source rather than
-          # with the Homebrew package manager.
-          pushd "${TOMCAT}/external"
-            # We download a specific commit snapshot of dlib from Github that
-            # contains a fix for the latest version of OpenCV that is being
-            # installed by Homebrew.
-            commit_sha=471c3d30e181a40942177a4358aa0496273d2108
-            curl -L https://github.com/davisking/dlib/archive/${commit_sha}.zip -o dlib.zip
-            unzip dlib.zip
-            mv dlib-${commit_sha} dlib
-          popd
-
           # On Travis, we will install lcov to provide code coverage estimates.
-          brew install lcov
-        else
-          brew install dlib
+          brew install lcov;
         fi;
-
-        # Installing Java
-        brew tap adoptopenjdk/openjdk
-        brew cask install adoptopenjdk8
-        brew install gradle
-
+        download_and_extract_dlib
     else
         echo "No package manager found for $OSTYPE"
         exit 1
@@ -123,35 +159,45 @@ elif [ -x "$(command -v apt-get)" ]; then
     # Install a version of CMake more up-to-date than what is available by
     # default for Ubuntu Bionic
 
-    if [[ ! -z $TRAVIS ]]; then
-      sudo apt purge --auto-remove cmake
-      version=3.16
-      build=2
-      mkdir -p ~/temp
-        pushd ~/temp
-          wget https://cmake.org/files/v$version/cmake-$version.$build.tar.gz
-          tar -xzvf cmake-$version.$build.tar.gz
-          cd cmake-$version.$build/
-          ./bootstrap
-          make -j
-          sudo make install
-        popd
+    sudo apt-get install cmake
+
+    if [ -x "$(command -v cmake)" ]; then
+      cmake_version=`cmake --version | head -n 1 | cut -d ' ' -f 3`
+      cmake_major_version=`$cmake_version | cut -d '.' -f 1`
+      cmake_minor_version=`$cmake_version | cut -d '.' -f 2`
+      if [[ (( $cmake_major_version < 3 )) || (( $cmake_minor_version < 15 )) ]]; then
+        install_cmake_from_source
+      fi
+    else
+      install_cmake_from_source
     fi
 
-    # TODO: Need to install boost from source here
 
-    sudo apt-get install \
+    sudo apt-get install -y \
         gcc-9 \
         libfmt-dev \
         doxygen \
         ffmpeg \
         libopenblas-dev \
-        libopencv-dev \
-        libdlib-dev \
         openjdk-8-jdk \
         portaudio19-dev \
         libsndfile1-dev
     if [[ $? -ne 0 ]]; then exit 1; fi;
+
+    boost_version_header="/usr/local/include/boost/version.hpp"
+    if [[ -f $boost_version_header ]]; then
+      boost_version=`cat $boost_version_header | grep "define BOOST_VERSION " | cut -d' ' -f3`
+      if (( $boost_version < 106900 )); then
+        install_boost_from_source
+      fi
+    else
+      install_boost_from_source
+    fi
+    
+    if [[ ! -d "/usr/local/include/opencv4" ]]; then
+      install_opencv_from_source
+    fi
+
 else
     echo "This is not a Mac and not Ubuntu (at least apt-get is not around). We cannot proceed."
     exit 1
