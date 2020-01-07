@@ -1,0 +1,39 @@
+sudo: required
+
+services:
+  - docker
+
+addons:
+  apt:
+    packages:
+      - docker-ce
+
+env:
+  - TOMCAT=$TRAVIS_BUILD_DIR
+  global:
+    CACHE_IMAGE: ml4ailab/tomcat
+
+before_install:
+  - docker pull $CACHE_IMAGE:latest
+  - CI_ENV=`bash <(curl -s https://codecov.io/env)`
+  - docker run $CI_ENV -itd --rm --name tomcat-test $CACHE_IMAGE:latest
+  - docker exec tomcat-test git fetch
+  - docker exec tomcat-test git checkout $TRAVIS_BRANCH
+
+script:
+  - docker exec tomcat-test make test
+  - docker exec --workdir /tomcat/build tomcat-test make -j test
+  - docker exec --workdir /tomcat/build tomcat-test ./bin/test --mission ../external/malmo/sample_missions/default_world_1.xml
+  - docker exec --workdir /tomcat/build tomcat-test make docs
+  - docker cp tomcat-test:/tomcat/build/docs .
+  - docker exec -e CODECOV_TOKEN=$CODECOV_TOKEN tomcat-test bash -c 'bash <(curl -s https://codecov.io/bash)'
+
+deploy:
+  local-dir: docs
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  on:
+    branch:
+      - master
+      - website
