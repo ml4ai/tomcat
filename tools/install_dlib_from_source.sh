@@ -7,7 +7,7 @@
 # installed by Homebrew.
 commit_sha=471c3d30e181a40942177a4358aa0496273d2108
 curl -L https://github.com/davisking/dlib/archive/${commit_sha}.zip -o dlib.zip
-unzip dlib.zip
+unzip -q dlib.zip
 mv dlib-${commit_sha} dlib
 pushd dlib
   mkdir build
