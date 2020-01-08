@@ -40,7 +40,7 @@ RUN echo  'alias python=python3' >> ~/.bashrc
 
 # ------------------------------------------------------------------------------
 # Setup the tomcat repository
-COPY . /tomcat
+RUN git clone https://github.com/ml4ai/tomcat.git
 WORKDIR /tomcat
 ENV TOMCAT=/tomcat
 RUN ./tools/install.sh
