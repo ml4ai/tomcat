@@ -42,6 +42,7 @@ RUN echo  'alias python=python3' >> ~/.bashrc
 # Setup the tomcat repository
 RUN git clone https://github.com/ml4ai/tomcat.git
 WORKDIR /tomcat
+RUN git checkout dockerfile-ci-ap
 ENV TOMCAT=/tomcat
 RUN ./tools/install.sh
 
