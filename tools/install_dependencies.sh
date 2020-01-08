@@ -81,8 +81,8 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         # We do not check exit codes for Homebrew installs since `brew install`
         # can return an exit code of 1 when a package is already installed (!!)
 
-        # Adding adoptopenjdk/openjdk tap
-        brew tap adoptopenjdk/openjdk
+        brew tap AdoptOpenJDK/openjdk
+        brew cask install adoptopenjdk8
 
         brew install \
           cmake \
@@ -94,7 +94,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
           boost \
           libsndfile \
           portaudio \
-          adoptopenjdk8 \
           gradle
 
         if [[ ! -z $TRAVIS ]]; then
