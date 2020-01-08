@@ -52,7 +52,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         sudo port selfupdate
         if [[ $? -ne 0 ]]; then exit 1; fi;
 
-        sudo port install \
+        sudo port -N install \
             cmake \
             libfmt \
             doxygen \
@@ -66,7 +66,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
             portaudio
         if [[ $? -ne 0 ]]; then exit 1; fi;
 
-        sudo port install boost -no_static
+        sudo port -N install boost -no_static
         if [[ $? -ne 0 ]]; then exit 1; fi;
 
     elif [ -x "$(command -v brew)" ]; then
@@ -124,7 +124,8 @@ elif [ -x "$(command -v apt-get)" ]; then
       cmake_version=`cmake --version | head -n 1 | cut -d ' ' -f 3`
       cmake_major_version=`$cmake_version | cut -d '.' -f 1`
       cmake_minor_version=`$cmake_version | cut -d '.' -f 2`
-      if [[ (( $cmake_major_version < 3 )) || (( $cmake_minor_version < 15 )) ]]; then
+      echo $cmake_version $cmake_major_version $cmake_minor_version
+      if (( $cmake_major_version < 3 )) || (( $cmake_minor_version < 15 )); then
         ./tools/install_cmake_from_source.sh
       fi
     else

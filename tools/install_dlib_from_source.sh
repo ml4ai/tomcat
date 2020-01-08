@@ -12,6 +12,7 @@ mv dlib-${commit_sha} dlib
 pushd dlib
   mkdir build
   pushd build
+    cmake ..
     cmake --build . --config Release
     if [[ $? -ne 0 ]]; then exit 1; fi;
     make -j8

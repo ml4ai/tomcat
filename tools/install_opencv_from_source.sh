@@ -13,7 +13,7 @@ pushd opencv-$opencv_version
   pushd build
     cmake -D CMAKE_BUILD_TYPE=RELEASE -D OPENCV_GENERATE_PKGCONFIG=ON ..
     if [[ $? -ne 0 ]]; then exit 1; fi;
-    make -j
+    make -j8
     if [[ $? -ne 0 ]]; then exit 1; fi;
     sudo make install
     if [[ $? -ne 0 ]]; then exit 1; fi;

@@ -25,7 +25,7 @@ else
     called_as_dir=`echo $called_as_dir | sed 's#^\(.*\)/.*$#\1#'`
     pushd "${called_as_dir}" > /dev/null; called_as_dir=`pwd`; popd > /dev/null
     export TOMCAT=`echo $called_as_dir | sed 's#^\./##' | sed 's#^\(.*\)/tools$#\1#'`
-    echo "Using inferreed TOMCAT location ${TOMCAT}."
+    echo "Using inferred TOMCAT location ${TOMCAT}."
 fi
 
 ###############################################################################
