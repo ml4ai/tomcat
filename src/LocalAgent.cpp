@@ -2,7 +2,6 @@
 #include "Mission.h"
 #include <ClientPool.h>
 
-
 using fmt::print;
 using namespace malmo;
 using namespace std;
@@ -14,8 +13,8 @@ namespace tomcat {
   LocalAgent::LocalAgent() {}
   LocalAgent::~LocalAgent() {}
 
-  void LocalAgent::observe_mission(Mission &mission) {
-      // Model will be developed here
+  void LocalAgent::observe_mission(Mission& mission) {
+    // Model will be developed here
   }
 
 } // namespace tomcat

@@ -179,7 +179,7 @@ public class MissionPhase {
 			if (goal.hasBeenAchieved()) {
 				toBeRemoved.add(goal);
 				this.completedGoals.add(goal);	
-				this.notifyAllAboutGoalAchievement(goal);
+				this.notifyAllAboutGoalAchievement(world, goal);
 			} 
 		}
 		this.openGoals.removeAll(toBeRemoved);
@@ -286,9 +286,9 @@ public class MissionPhase {
 	/**
 	 * Notifies listeners about a goal achievement
 	 */
-	private void notifyAllAboutGoalAchievement(MissionGoal goal) {		
+	private void notifyAllAboutGoalAchievement(World world, MissionGoal goal) {		
 		for (PhaseListener listener : this.listeners) {
-			listener.goalAchieved(goal);			
+			listener.goalAchieved(world, goal);			
 		}
 	}
 		
@@ -325,5 +325,14 @@ public class MissionPhase {
 			break;
 		}
 	}	
+	
+	/**
+	 * Allows the player to reread the instructions for in the middle of an active phase;
+	 */
+	public void showInstructions() {
+		if(this.status == Status.RUNNING) {
+			this.status = Status.DISPLAYING_INSTRUCTIONS;
+		}
+	}
 	
 }

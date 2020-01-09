@@ -39,9 +39,7 @@
          "Approach the lava and water pits to your left.", 
          "Take care! If you fall into the lava pit, you die.",
          "If you fall into the water pit, keep pressing space",
-         "until you reach the surface.", 
-         "",
-         "Press OK when you are ready."
+         "until you reach the surface."
       ],
       "images":
       [ 
@@ -61,6 +59,18 @@
           "width": 32,
           "height": 32
         }
+      ]
+    },
+    {
+      "text": [
+         "If you want to see the instructions again during the mission,",
+         "just type the key I.",
+         "",
+         "Press OK when you are ready."
+      ],
+      "images":
+      [
+        
       ]
     }
   ]

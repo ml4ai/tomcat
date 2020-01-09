@@ -59,6 +59,10 @@ import com.microsoft.Malmo.Utils.TCPUtils;
 import com.microsoft.Malmo.Utils.TextureHelper;
 import com.microsoft.Malmo.Utils.TimeHelper;
 import com.mojang.authlib.properties.Property;
+
+import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
+import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -1933,10 +1937,11 @@ public class ClientStateMachine
       TimeHelper.displayGranularityMs = 0;
 
       ClientStateMachine.this.missionQuitCode = this.quitCode;
-      if (errorReport != null)
+      if (errorReport != null) {
         episodeHasCompletedWithErrors(nextState, errorReport);
-      else
+      }else {
         episodeHasCompleted(nextState);
+      }
     }
 
     @Override
@@ -2197,6 +2202,9 @@ public class ClientStateMachine
             "ERROR: TCP messages are not getting through - quitting mission.");
         this.wantsToQuit = true;
         this.quitCode = MalmoMod.AGENT_UNRESPONSIVE_CODE;
+        // This code was included so that a Tomcat mission can display a screen informing that
+        // the mission was interrupted because the connection was lost with the malmo client
+        MalmoMod.instance.getClient().getTomcatClientMission().showScreenConnectionLost();
       }
       ls.close();
     }

@@ -58,8 +58,7 @@ namespace tomcat {
       callback_return_code = paContinue;
     }
 
-    float* wptr =
-        &data->recorded_samples[data->frame_index * num_channels];
+    float* wptr = &data->recorded_samples[data->frame_index * num_channels];
     const float* rptr = (const float*)input_buffer;
     if (input_buffer == NULL) {
       for (int i = 0; i < frames_to_calc; i++) {
@@ -109,14 +108,15 @@ namespace tomcat {
       throw PortAudioException("Error: No default input device.\n");
     }
 
-    this->err = Pa_OpenDefaultStream(&stream,
-                              Pa_GetDeviceInfo(device)->maxInputChannels,
-                              Pa_GetDeviceInfo(device)->maxOutputChannels,
-                              paFloat32,
-                              this->sample_rate,
-                              this->frames_per_buffer,
-                              recordCallback,
-                              &this->data);
+    this->err =
+        Pa_OpenDefaultStream(&stream,
+                             Pa_GetDeviceInfo(device)->maxInputChannels,
+                             Pa_GetDeviceInfo(device)->maxOutputChannels,
+                             paFloat32,
+                             this->sample_rate,
+                             this->frames_per_buffer,
+                             recordCallback,
+                             &this->data);
 
     this->check_portaudio_error_code();
 
