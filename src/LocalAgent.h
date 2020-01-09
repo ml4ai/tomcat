@@ -1,13 +1,8 @@
 #pragma once
 
-#include "Microphone.h"
-#include "Mission.h"
-#include "WebcamSensor.h"
-#include <AgentHost.h>
-#include <fmt/format.h>
-#include <string>
-
 namespace tomcat {
+
+  class Mission; // Forward declaration to deal with circular dependency
 
   /**
    * The LocalAgent class is a template for ToMCAT agents that accompany human
@@ -27,50 +22,10 @@ namespace tomcat {
     ~LocalAgent();
 
     /**
-     * Sets the agent's mission from an XML file.
-     * @param mission_xml_filepath The path to the XML file containing the
-     * mission specification.
-     * @param time_limit The time limit for the mission.
-     * @param activateVideo Requests video when set to True
-     * @param activateAudio Activates audio recording
+     * Method called by a mission main loop
+     * @param mission - Tomcat mission
      */
-    void setMission(std::string missionIdOrPathToXML,
-                    unsigned int timeLimitInSeconds,
-                    unsigned int selfReportPromptTimeInSeconds,
-                    unsigned int width = 640,
-                    unsigned int height = 480,
-                    bool activateVideo = false,
-                    bool activateObsRec = false);
-
-    int startMission(int portNumber = 10000,
-                     bool activateWebcam = false,
-                     bool activateVideo = false,
-                     bool activateMicrophone = false,
-                     bool activateObsRec = false,
-                     bool activateComRec = false,
-                     bool activateRewRec = false,
-                     int frames_per_second = 20,
-                     int64_t bit_rate = 400000,
-                     std::string recordPath = "./saved_data.tgz",
-                     std::string audio_record_path = "audio_recording.wav");
-
-    /**
-     * Sends command to the local agent
-     * @param command - Command to be executed
-     */
-    void sendCommand(std::string command);
-
-  private:
-    /**
-     * Retrieves the client pool for connecting with the Minecraft mod
-     * @param portNumber - Port number to connect with the Minecraft mod
-     */
-    malmo::ClientPool getClientPool(int portNumber) const;
-
-    WebcamSensor* webcamSensor;
-    malmo::AgentHost host;
-    Mission mission;
-    Microphone microphone;
+    void observe_mission(Mission& mission);
   };
 
 } // namespace tomcat

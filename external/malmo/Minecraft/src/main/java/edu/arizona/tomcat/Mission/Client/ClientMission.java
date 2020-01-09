@@ -6,6 +6,7 @@ import edu.arizona.tomcat.Messaging.TomcatMessageData;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
 import edu.arizona.tomcat.Mission.gui.MessageScreen;
+import edu.arizona.tomcat.Mission.gui.RichContent;
 import edu.arizona.tomcat.Mission.gui.RichContentScreen;
 import edu.arizona.tomcat.Mission.gui.ScreenListener;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
@@ -61,6 +62,14 @@ public abstract class ClientMission implements ScreenListener {
 		TomcatMessageData data = new TomcatMessageData(selfReport);
 		data.setPlayerName(Minecraft.getMinecraft().player.getName());
 		MalmoMod.network.sendToServer(new TomcatMessage(TomcatMessageType.SELF_REPORT_ANSWERED, data));		
+	}
+	
+	/**
+	 * Show screen informing the user connection was lost with malmo client
+	 */
+	public void showScreenConnectionLost() {
+		RichContent content = RichContent.createFromJson("connection_lost.json");
+		Minecraft.getMinecraft().displayGuiScreen(new RichContentScreen(content, false, false));
 	}
 
 }

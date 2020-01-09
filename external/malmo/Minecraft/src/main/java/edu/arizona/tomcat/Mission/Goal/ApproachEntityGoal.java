@@ -13,6 +13,7 @@ public class ApproachEntityGoal extends MissionGoal {
 	private UUID uniqueId;
 	private EntityTypes entityType;
 	private int distance;
+	private Entity entity;
 	
 	/**
 	 * Constructor
@@ -40,6 +41,7 @@ public class ApproachEntityGoal extends MissionGoal {
 			if(shouldBeChecked(entity)) {
 				this.goalAchieved = MinecraftServerHelper.getFirstPlayer().getDistanceToEntity(entity) < Math.pow(this.distance, 2);
 				if(this.goalAchieved) {
+					this.entity = entity;
 					break;
 				}
 			}
@@ -61,6 +63,14 @@ public class ApproachEntityGoal extends MissionGoal {
 		}
 		
 		return shouldBeChecked;
+	}
+	
+	/**
+	 * Retrieves the entity approached by the player
+	 * @return
+	 */
+	public Entity getEntity() {
+		return this.entity;
 	}
 
 }

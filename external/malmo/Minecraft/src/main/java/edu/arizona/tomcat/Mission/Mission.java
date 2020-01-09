@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Set;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -25,12 +26,19 @@ import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 import edu.arizona.tomcat.Utils.Converter;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.World.DrawingHandler;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.CommandEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public abstract class Mission implements FeedbackListener, PhaseListener {
-
+	
+	private static final long ENTITY_DELETION_DELAY = 1;
 	private static final String SELF_REPORT_FOLDER = "saves/self_reports";
 	private HashMap<String, MissionSelfReport> selfReportPerPlayer;
 
@@ -45,6 +53,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 	protected MissionPhase currentPhase;
 	protected ArrayList<MissionPhase> phases;
 	protected ArrayList<MissionListener> listeners;	
+	protected HashMap<Entity, Long> entitiesToRemove;
 
 	/**
 	 * Abstract constructor for initialization of the drawing handler
@@ -54,7 +63,32 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 		this.listeners = new ArrayList<MissionListener>();
 		this.selfReportPerPlayer = new HashMap<String, MissionSelfReport>();
 		this.canShowSelfReport = false;
+		this.entitiesToRemove = new HashMap<Entity, Long>();
+		MinecraftForge.EVENT_BUS.register(this);
 	}
+	
+	@SubscribeEvent
+	public void PlayerDeath(LivingDeathEvent event) {
+		if (!event.getEntity().world.isRemote && event.getEntity() instanceof EntityPlayer) {		
+			event.setCanceled(true);
+			this.onPlayerDeath();
+		}				
+	}
+	
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void CommandEvents(CommandEvent evt) {
+		System.out.println("================>COMMAND");		
+		System.out.println(evt.getSender().getName());
+		System.out.println(evt.getCommand().getName());
+		if(evt.getSender() instanceof EntityPlayer){
+			System.out.println("============>Player sent event");
+		}		
+	}
+	
+	/**
+	 * Method called after if the player dies
+	 */
+	protected abstract void onPlayerDeath();
 
 	/**
 	 * Gets the ID that identifies the type of mission
@@ -117,16 +151,35 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 
 			if(remainingSeconds >= 0 || this.timeLimitInSeconds == -1) {
 				this.drawingHandler.drawCountdown(remainingSeconds, REMAINING_SECONDS_ALERT);
-				this.updateCurrentPhase(world);
-				this.updateScene(world);
+				this.updateOnRunningState(world);
 			} else {
 				this.onTimeOut();
 			}
 		} else {
-			this.updateCurrentPhase(world);
-			this.updateScene(world);
-		}
+			this.updateOnRunningState(world);
+		}		
+	}
+	
+	/**
+	 * Updates the mission if it's not timed out
+	 */
+	private void updateOnRunningState(World world) {
+		this.removeEntities(world);
+		this.updateCurrentPhase(world);
+		this.updateScene(world);
 		this.showSelfReportScreen(world);
+	}
+	
+	private void removeEntities(World world) {
+		Set<Entity> entities = this.entitiesToRemove.keySet();
+		for (Entity entity : entities) {
+			int remainingTime = Converter.getRemainingTimeInSeconds(world, this.entitiesToRemove.get(entity), 
+					ENTITY_DELETION_DELAY);
+			if (remainingTime <= 0) {
+				world.removeEntity(entity);
+				this.entitiesToRemove.remove(entity);
+			}			
+		}
 	}
 
 	/**
@@ -258,6 +311,13 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 			SelfReportContent content = message.getMessageData().getSelfReport();
 			this.selfReportPerPlayer.get(playerName).addContent(content);
 			break;
+		
+		case DISPLAY_INSTRUCTIONS:
+			this.currentPhase.showInstructions();
+			
+		case CONNECTION_ERROR:
+			this.onTimeOut();
+			
 		default:
 			break;
 		}				
@@ -351,5 +411,14 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 	public void setSelfReportPromptTimeInSeconds(long selfReportPromptTimeInSeconds) {
 		this.selfReportPromptTimeInSeconds = selfReportPromptTimeInSeconds;
 	}
-
+	
+	/**
+	 * Adds an entity to be deleted after certain amount of time
+	 * @param entity - Entity to be removed
+	 * @param delayInSeconds - Time (in seconds) to wait until removing the entity
+	 */
+	public void addToDeletion(Entity entity, long worldTime) {
+		this.entitiesToRemove.put(entity, worldTime);
+	}
+	
 }

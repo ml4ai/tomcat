@@ -12,7 +12,8 @@ namespace tomcat {
   class WebcamSensor {
   public:
     WebcamSensor()
-        : visualizer(true, false, false, false), det_parameters(this->arguments) {}
+        : visualizer(true, false, false, false),
+          det_parameters(this->arguments) {}
 
     void initialize() {
       // The modules that are being used for tracking

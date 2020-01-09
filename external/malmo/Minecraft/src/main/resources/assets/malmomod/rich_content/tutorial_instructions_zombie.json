@@ -4,7 +4,8 @@
     {
       "text": [
          "Besides gates, you can also open different kinds of doors.", 
-         "To open an iron door, right-click on the lever close to it."
+         "To open an iron door, right-click on the center of the lever",
+         "located to the left of such door."
       ],
       "images":
       [ 

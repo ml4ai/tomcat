@@ -22,10 +22,13 @@
 
 package com.microsoft.Malmo.Client;
 
+import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.Utils.CraftingHelper;
 import com.microsoft.Malmo.Utils.ScreenHelper.TextCategory;
 import com.microsoft.Malmo.Utils.TextureHelper;
 
+import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
+import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
 import edu.arizona.tomcat.Mission.Client.ClientMission;
 import edu.arizona.tomcat.Mission.gui.GUIOverlayVillagersSaved;
 
@@ -58,8 +61,10 @@ public class MalmoModClient {
 			if (this.isOverriding) {
 				this.deltaX = 0;
 				this.deltaY = 0;
-				if (Mouse.isGrabbed())
-					Mouse.setGrabbed(false);
+				// This code was commented out because it was causing the mouse cursor to 
+				// disappear every time the Tomcat mission was recreated.
+				//if (Mouse.isGrabbed())
+					//Mouse.setGrabbed(false);
 			}
 			else {
 				super.mouseXYChange();
@@ -74,7 +79,9 @@ public class MalmoModClient {
 			if (MalmoModClient.this.inputType != InputType.HUMAN) {
 				return;
 			}
-			super.grabMouseCursor();
+			// This code was commented out because it was causing the mouse cursor to 
+			// disappear every time the Tomcat mission was recreated.
+			//super.grabMouseCursor();
 		}
 
 		@Override
@@ -161,21 +168,23 @@ public class MalmoModClient {
 		// Create extra key bindings here and pass them to the KeyManager.
 		ArrayList<InternalKey> extraKeys = new ArrayList<InternalKey>();
 		// Create a key binding to toggle between player and Malmo control:
-		extraKeys.add(
-				new InternalKey("key.toggleMalmo",
-						28,
-						"key.categories.malmo") // 28 is the keycode for enter.
-				{
-					@Override
-					public void onPressed() {
-						InputType it =
-								(inputType != InputType.AI) ? InputType.AI : InputType.HUMAN;
-						System.out.println("Toggling control between human and AI - now " +
-								it);
-						setInputType(it);
-						super.onPressed();
-					}
-				});
+		// The code below was commented out because we don't need the AI mode for the 
+		// Tomcat missions
+//		extraKeys.add(
+//				new InternalKey("key.toggleMalmo",
+//						28,
+//						"key.categories.malmo") // 28 is the keycode for enter.
+//				{
+//					@Override
+//					public void onPressed() {
+//						InputType it =
+//								(inputType != InputType.AI) ? InputType.AI : InputType.HUMAN;
+//						System.out.println("Toggling control between human and AI - now " +
+//								it);
+//						setInputType(it);
+//						super.onPressed();
+//					}
+//				});
 
 		extraKeys.add(
 				new InternalKey("key.handyTestHook", 22, "key.categories.malmo") {
@@ -188,6 +197,14 @@ public class MalmoModClient {
 						catch (IOException e) {
 							e.printStackTrace();
 						}
+					}
+				});
+		// Letter I
+		extraKeys.add(
+				new InternalKey("key.displayInstructions", 23, "key.categories.malmo") {
+					@Override
+					public void onPressed() {
+						MalmoMod.network.sendToServer(new TomcatMessage(TomcatMessageType.DISPLAY_INSTRUCTIONS));	
 					}
 				});
 		this.keyManager = new KeyManager(settings, extraKeys);

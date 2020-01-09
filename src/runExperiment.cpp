@@ -1,25 +1,23 @@
 #include "LocalAgent.h"
-#include "utils.h"
+#include "Mission.h"
 #include <boost/program_options.hpp>
 #include <string>
 
-int main(int argc, const char* argv[]) {
-  using namespace boost::program_options;
-  using namespace std;
-  using fmt::print;
-  using namespace fmt::literals;
-  using namespace tomcat;
+using namespace boost::program_options;
+using namespace std;
+using fmt::print;
+using namespace fmt::literals;
+using namespace tomcat;
 
-  // Program options
-  options_description desc("Allowed options");
-  string missionIdOrPathToXML;
-  desc.add_options()("help,h", "Executable for running ToMCAT experiments.")(
+options_description load_options() {
+  options_description options("Allowed options");
+  options.add_options()("help,h", "Executable for running ToMCAT experiments.")(
       "mission",
-      value<string>(&missionIdOrPathToXML)->default_value("0"),
-      "Id or path to mission XML file.\n0: Tutorial\n1: Search and Rescue\n2: "
-      "Item Crafting\n3: Room Escape")("time_limit",
-                                       value<unsigned int>()->default_value(20),
-                                       "Time limit for mission (in seconds).")(
+      value<string>()->default_value("0"),
+      "Id or path to mission XML file.\n0: Tutorial\n1: Zombie Invasion")(
+      "time_limit",
+      value<unsigned int>()->default_value(20),
+      "Time limit for mission (in seconds).")(
       "self_report",
       value<unsigned int>()->default_value(180),
       "Self-report prompt interval time (in seconds).")(
@@ -51,75 +49,103 @@ int main(int argc, const char* argv[]) {
       value<int64_t>()->default_value(400000),
       "Bit rate for video recordings")(
       "record_path",
-      value<string>()->default_value("./saved_data_" + get_timestamp() +
-                                     ".tgz"),
-      "Path to save recordings")(
-      "audio_record_path",
-      value<string>()->default_value("./audio_recording_" + get_timestamp() +
-                                     ".wav"),
-      "Path to save audio recording")("video_width",
-                                      value<unsigned int>()->default_value(640),
-                                      "Width for video recordings")(
+      value<string>()->default_value("./saved_data.tgz"),
+      "Path to save recordings")("video_width",
+                                 value<unsigned int>()->default_value(640),
+                                 "Width for video recordings")(
       "video_height",
       value<unsigned int>()->default_value(480),
       "Height for video recordings");
 
-  variables_map vm;
-  store(parse_command_line(argc, argv, desc), vm);
-  notify(vm);
-  if (vm.count("help")) {
-    cout << desc << endl;
-    return 1;
+  return options;
+}
+
+variables_map
+parse_parameters(options_description options, int argc, const char* argv[]) {
+  variables_map parameters_map;
+  store(parse_command_line(argc, argv, options), parameters_map);
+  notify(parameters_map);
+
+  return parameters_map;
+}
+
+bool are_parameters_ok(variables_map parameters_map,
+                       options_description options) {
+  if (parameters_map.count("help")) {
+    cout << options << endl;
+    return false;
+  }
+  else if (!parameters_map.count("mission")) {
+    cout << options << endl;
+    return false;
   }
 
-  if (vm.count("mission")) {
-    unsigned int portNumber = vm["port"].as<unsigned int>();
-    unsigned int width = vm["video_width"].as<unsigned int>();
-    unsigned int height = vm["video_height"].as<unsigned int>();
-    unsigned int frames_per_second = vm["video_fps"].as<unsigned int>();
-    int64_t bit_rate = vm["video_bit_rate"].as<int64_t>();
-    string recordPath = vm["record_path"].as<string>();
-    string audio_record_path = vm["audio_record_path"].as<string>();
-    bool activateWebcam = vm["activate_webcam"].as<bool>();
-    bool activateRecAll = vm["record_all"].as<bool>();
-    bool activateVideo = vm["record_video"].as<bool>();
-    bool activateMicrophone = vm["record_audio"].as<bool>();
-    bool activateObsRec = vm["record_observations"].as<bool>();
-    bool activateComRec = vm["record_commands"].as<bool>();
-    bool activateRewRec = vm["record_rewards"].as<bool>();
+  return true;
+}
 
-    if (activateRecAll) {
-      activateObsRec = true;
-      activateComRec = true;
-      activateRewRec = true;
+Mission create_mission(variables_map parameters_map) {
+  string mission_id_or_path = parameters_map["mission"].as<string>();
+  string record_path = parameters_map["record_path"].as<string>();
+  unsigned int port_number = parameters_map["port"].as<unsigned int>();
+  unsigned int video_width = parameters_map["video_width"].as<unsigned int>();
+  unsigned int video_height = parameters_map["video_height"].as<unsigned int>();
+  unsigned int frames_per_second =
+      parameters_map["video_fps"].as<unsigned int>();
+  unsigned int time_limit_in_seconds =
+      parameters_map["time_limit"].as<unsigned int>();
+  unsigned int self_report_prompt_time_in_seconds =
+      parameters_map["self_report"].as<unsigned int>();
+  int64_t bit_rate = parameters_map["video_bit_rate"].as<int64_t>();
+  bool activate_webcam = parameters_map["activate_webcam"].as<bool>();
+  bool record_all = parameters_map["record_all"].as<bool>();
+  bool record_video = parameters_map["record_video"].as<bool>();
+  bool record_audio = parameters_map["record_audio"].as<bool>();
+  bool record_observations = parameters_map["record_observations"].as<bool>();
+  bool record_commands = parameters_map["record_commands"].as<bool>();
+  bool record_rewards = parameters_map["record_rewards"].as<bool>();
+
+  if (record_all) {
+    record_observations = true;
+    record_commands = true;
+    record_rewards = true;
+  }
+
+  Mission mission = Mission(mission_id_or_path,
+                            time_limit_in_seconds,
+                            self_report_prompt_time_in_seconds,
+                            video_width,
+                            video_height,
+                            port_number,
+                            frames_per_second,
+                            bit_rate,
+                            record_video,
+                            record_observations,
+                            activate_webcam,
+                            record_audio,
+                            record_commands,
+                            record_rewards,
+                            record_path);
+  return mission;
+}
+
+int main(int argc, const char* argv[]) {
+  options_description options = load_options();
+  variables_map parameters_map = parse_parameters(options, argc, argv);
+
+  if (are_parameters_ok(parameters_map, options)) {
+    Mission mission = create_mission(parameters_map);
+    try {
+      std::shared_ptr<LocalAgent> tomcat_agent = std::make_shared<LocalAgent>();
+      mission.add_listener(tomcat_agent);
+      mission.start();
     }
-
-    LocalAgent agent;
-    unsigned int timeLimitInSeconds = vm["time_limit"].as<unsigned int>();
-    unsigned int selfReportPromptTimeInSeconds =
-        vm["self_report"].as<unsigned int>();
-    agent.setMission(missionIdOrPathToXML,
-                     timeLimitInSeconds,
-                     selfReportPromptTimeInSeconds,
-                     width,
-                     height,
-                     activateVideo,
-                     activateObsRec);
-    agent.startMission(portNumber,
-                       activateWebcam,
-                       activateVideo,
-                       activateMicrophone,
-                       activateObsRec,
-                       activateComRec,
-                       activateRewRec,
-                       frames_per_second,
-                       bit_rate,
-                       recordPath,
-                       audio_record_path);
+    catch (exception& e) {
+      print("Error starting mission: {}", e.what());
+      return EXIT_FAILURE;
+    }
   }
   else {
-    cout << desc << endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 
   return EXIT_SUCCESS;

@@ -277,10 +277,15 @@ public class TutorialMission extends Mission {
 	}
 
 	@Override
-	public void goalAchieved(MissionGoal goal) {
+	public void goalAchieved(World world, MissionGoal goal) {
 		if (goal instanceof ApproachEntityGoal) {
-			MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.VILLAGER_SAVED), MinecraftServerHelper.getFirstPlayer());
+			this.handleVillagerRescue(world, (ApproachEntityGoal) goal);			
 		}
+	}
+	
+	private void handleVillagerRescue(World world, ApproachEntityGoal goal) {
+		this.addToDeletion(goal.getEntity(), world.getTotalWorldTime());
+		MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.VILLAGER_SAVED), MinecraftServerHelper.getFirstPlayer());
 	}
 
 	@Override
@@ -329,6 +334,14 @@ public class TutorialMission extends Mission {
 	@Override
 	protected SelfReportContent getSelfReportContent(World world) {
 		return null;
+	}
+
+	@Override
+	protected void onPlayerDeath() {
+		RichContent content = RichContent.createFromJson("tutorial_completion_fail.json");
+		MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.SHOW_COMPLETION_SCREEN, new TomcatMessageData(content)), MinecraftServerHelper.getFirstPlayer());
+		this.notifyAllAboutMissionEnding("1");
+		this.cleanup();
 	}
 
 }

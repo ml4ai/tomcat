@@ -179,11 +179,16 @@ public class SARMission extends Mission {
 	}
 
 	@Override
-	public void goalAchieved(MissionGoal goal) {
+	public void goalAchieved(World world, MissionGoal goal) {
 		if (goal instanceof ApproachEntityGoal) {
-			this.numberOfVillagersSaved++;
-			MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.VILLAGER_SAVED), MinecraftServerHelper.getFirstPlayer());
+			this.handleVillagerRescue(world, (ApproachEntityGoal) goal);
 		}
+	}
+	
+	private void handleVillagerRescue(World world, ApproachEntityGoal goal) {
+		this.numberOfVillagersSaved++;
+		this.addToDeletion(goal.getEntity(), world.getTotalWorldTime());
+		MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.VILLAGER_SAVED), MinecraftServerHelper.getFirstPlayer());
 	}
 
 	@Override
@@ -210,5 +215,10 @@ public class SARMission extends Mission {
 	protected SelfReportContent getSelfReportContent(World world) {
 		String id = Long.toString(world.getTotalWorldTime());
 		return SelfReportContent.createFromJson(id, "self_report1.json");
+	}
+
+	@Override
+	protected void onPlayerDeath() {
+		this.onTimeOut();
 	}
 }
