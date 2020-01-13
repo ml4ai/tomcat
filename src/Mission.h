@@ -69,7 +69,8 @@ namespace tomcat {
             bool record_commands,
             bool record_rewards,
             std::string record_path = "./saved_data.tgz",
-            std::string audio_record_path = "audio_recording.wav");
+            std::string audio_record_path = "audio_recording.wav"
+            );
 
     /**
      * Destructor
