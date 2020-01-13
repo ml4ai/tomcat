@@ -1,11 +1,12 @@
 #include "LocalAgent.h"
 #include "Mission.h"
+#include "utils.h"
 #include <boost/program_options.hpp>
 #include <string>
 
 using namespace boost::program_options;
 using namespace std;
-using fmt::print;
+using fmt::print, tomcat::get_timestamp;
 using namespace fmt::literals;
 using namespace tomcat;
 
@@ -23,10 +24,16 @@ options_description load_options() {
       "Self-report prompt interval time (in seconds).")(
       "port,p",
       value<unsigned int>()->default_value(10000),
-      "Port to control (>=10000)")(
-      "activate_webcam,w",
+      "Port to control (>=10000)")("activate_webcam,w",
+                                   bool_switch()->default_value(false),
+                                   "Activate webcam to detect face landmarks.")(
+      "activate_microphone",
       bool_switch()->default_value(false),
-      "Activate webcam to detect face landmarks? (true=1 or false=0)")(
+      "Activate microphone to record audio.")(
+      "audio_record_path",
+      value<string>()->default_value("./audio_recording_" + get_timestamp() +
+                                     ".wav"),
+      "Filepath to save audio recording to.")(
       "record_all",
       bool_switch()->default_value(false),
       "Activate all recordings except bitmaps")(
@@ -49,8 +56,9 @@ options_description load_options() {
       value<int64_t>()->default_value(400000),
       "Bit rate for video recordings")(
       "record_path",
-      value<string>()->default_value("./saved_data.tgz"),
-      "Path to save recordings")("video_width",
+      value<string>()->default_value("./saved_data_" + get_timestamp() +
+                                     ".tgz"),
+      "Path to save Malmo data")("video_width",
                                  value<unsigned int>()->default_value(640),
                                  "Width for video recordings")(
       "video_height",
@@ -100,6 +108,7 @@ Mission create_mission(variables_map parameters_map) {
   bool record_all = parameters_map["record_all"].as<bool>();
   bool record_video = parameters_map["record_video"].as<bool>();
   bool record_audio = parameters_map["record_audio"].as<bool>();
+  string audio_record_path = parameters_map["audio_record_path"].as<string>();
   bool record_observations = parameters_map["record_observations"].as<bool>();
   bool record_commands = parameters_map["record_commands"].as<bool>();
   bool record_rewards = parameters_map["record_rewards"].as<bool>();
@@ -124,7 +133,8 @@ Mission create_mission(variables_map parameters_map) {
                             record_audio,
                             record_commands,
                             record_rewards,
-                            record_path);
+                            record_path,
+                            audio_record_path);
   return mission;
 }
 
