@@ -65,5 +65,5 @@ feature, do the following:
     into your branch and resolve any merge conflicts (another reason to not
     delay PRs!). Assuming you are on the `new_feature` branch, you would do:
     ```
-    git pull origin master --rebase
+    git pull origin master
     ```
