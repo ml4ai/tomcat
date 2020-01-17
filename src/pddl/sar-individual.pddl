@@ -1,7 +1,7 @@
 ;; This file defines the domain for an urban search-and-rescue mission in the
-;; context of a collapsed office building, with 
-;; four human team members, each of which is assigned a specific role.
-;; Note that the :method definitions are not part of standard PDDL, but are
+;; context of a collapsed office building, with a single human whose goal is to
+;; triage as many victims of the collapse as possible within a given time
+;; limit. Note that the :method definitions are not part of standard PDDL, but are
 ;; taken from SHOP3's modified version of PDDL, to support HTN planning.
 
 (define (domain SAR)
@@ -10,21 +10,7 @@
   ;; addition to STRIPS).
   (:requirements :strips :typing :durative-actions)
 
-  (:types agent 
-          triager      ;; Only triagers can triage victims.
-          firefighter  ;; Only firefighters can put out fires.
-          excavator    ;; Only excavators can clear blockages.
-          victim       ;; Victims that need medical attention.
-          multi-victim ;; Victims that require two triagers to triage.
-          path         ;; A path from one location to another.
-          region       ;; A region of the building.
-          direction    ;; Direction in which to move.
-          hallway      ;; A hallway.
-          room         ;; A room in the office building.
-          landmark     ;; A landmark for orienting the human.
-          fire         ;; A fire that has broken out in some location.
-  )
-
+  (:types victim room)
   (:predicates (path-clear ?path - path)
                (is ?object - object ?thing - object)
                (at ?object - object ?place - location)
@@ -57,12 +43,6 @@
     :preconditions (and)
     :effect (and))
 
-  (:action simul-triage
-    :parameters ()
-    :precondition (and (is multi-victim) ())
-    :effect (and ()))
-
-
   (:method clear-multiple-blocks 
     (loop for block in 'blocks do (clear-blockage block)))
 
@@ -75,3 +55,4 @@
   (:method (visiting-all-rooms))
   (:method (coordinate-multiple-resources))
   (:method (in-region (find-all-victims)))
+)
