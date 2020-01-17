@@ -6,16 +6,23 @@
 
 (define (domain SAR)
 
-  ;; We require the ability to handle typing durative actions and durative (in
-  ;; addition to STRIPS).
-  (:requirements :strips :typing :durative-actions)
+  (:requirements :strips :typing :equality :durative-actions :object-fluents)
 
-  (:types victim room)
-  (:predicates (path-clear ?path - path)
-               (is ?object - object ?thing - object)
-               (at ?object - object ?place - location)
-               (in ?object - object ?thing - object))
+  ;; Here we define a type hierarchy
+  (:types human - object ;; Everything, including 'human' inherits from the base 'object' type
+          triager victim - human ;; The triager and the victims are humans.
+          location region - object
+          room hallway - region ;; Rooms and hallways are classified as discrete 'regions'
+  )
 
+  (:functions (room-of ?x - human) - room)
+
+  ;; Here we define our boolean predicates.
+  (:predicates (in ?x - human ?y - room) ;; Is human x in room y? 
+               (at ?x - triager ?y - location)) ;; Is triager x at location y?  And so on...
+
+  (:durative-action (triage ?x - victim)
+    :parameters )
   (:action put-out-fire
     :parameters (?agent - firefighter ?place - location)
     :precondition (and (at fire place) (at agent place))
