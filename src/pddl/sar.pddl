@@ -9,17 +9,18 @@
   (:requirements :strips :typing :durative-actions)
 
   (:types agent 
+          triager      ;; Only triagers can triage victims.
           firefighter  ;; Only firefighters can put out fires.
-          excavator    ;; Only excavators can clear blockages. 
-          victim       ;; Victims that need medical attention 
-          multi-victim ;; Victims that require two triagers to triage
-          path         ;; A path from one location to another
-          region       ;; A region of the building
-          direction    ;; Direction in which to move
-          hallway      ;; A hallway 
-          room         ;; A room in the office building
-          landmark     ;; A landmark for orienting the human
-          fire         ;; A fire that has broken out in some location
+          excavator    ;; Only excavators can clear blockages.
+          victim       ;; Victims that need medical attention.
+          multi-victim ;; Victims that require two triagers to triage.
+          path         ;; A path from one location to another.
+          region       ;; A region of the building.
+          direction    ;; Direction in which to move.
+          hallway      ;; A hallway.
+          room         ;; A room in the office building.
+          landmark     ;; A landmark for orienting the human.
+          fire         ;; A fire that has broken out in some location.
   )
 
   (:predicates (path-clear ?path - path)
