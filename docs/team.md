@@ -19,6 +19,7 @@ The ToMCAT team (so far!):
 **Graduate Students:**
 - Savannah Boyd
 - Loren Champlin
+- John Culnan
 - Harry Go
 - Ashley Kuelz
 - Paulo Soares

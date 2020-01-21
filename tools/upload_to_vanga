@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# This script uploads a file to the tomcat data directory on vanga
+# so that people can download programmatically.
+# Usage:
+#    ./upload_to_vanga <filename>
+
+filepath=$1
+filename=${filepath##*/}
+
+scp $filepath vanga:
+ssh -t vanga "mv -f ${filename} /var/www/html/tomcat/data"

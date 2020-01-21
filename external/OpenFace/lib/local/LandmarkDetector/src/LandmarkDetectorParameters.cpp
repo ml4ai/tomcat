@@ -49,274 +49,208 @@
 #include <iostream>
 #include <sstream>
 
-#ifndef CONFIG_DIR
-#define CONFIG_DIR "~"
-#endif
-
 using namespace std;
 using boost::filesystem::exists;
 using boost::filesystem::path;
 
-using namespace LandmarkDetector;
+namespace LandmarkDetector {
 
-FaceModelParameters::FaceModelParameters() {
-  // initialise the default values
-  init();
-  check_model_path();
-}
-
-FaceModelParameters::FaceModelParameters(vector<string> &arguments) {
-  // initialise the default values
-  init();
-
-  // First element is reserved for the executable location (useful for finding
-  // relative model locs)
-  path root = path(arguments[0]).parent_path();
-
-  bool *valid = new bool[arguments.size()];
-  valid[0] = true;
-
-  for (size_t i = 1; i < arguments.size(); ++i) {
-    valid[i] = true;
-
-    if (arguments[i].compare("-mloc") == 0) {
-      string model_loc = arguments[i + 1];
-      model_location = model_loc;
-      valid[i] = false;
-      valid[i + 1] = false;
-      i++;
-    }
-    if (arguments[i].compare("-fdloc") == 0) {
-      string face_detector_loc = arguments[i + 1];
-      haar_face_detector_location = face_detector_loc;
-      curr_face_detector = HAAR_DETECTOR;
-      valid[i] = false;
-      valid[i + 1] = false;
-      i++;
-    }
-    if (arguments[i].compare("-sigma") == 0) {
-      stringstream data(arguments[i + 1]);
-      data >> sigma;
-      valid[i] = false;
-      valid[i + 1] = false;
-      i++;
-    }
-    else if (arguments[i].compare("-w_reg") == 0) {
-      stringstream data(arguments[i + 1]);
-      data >> weight_factor;
-      valid[i] = false;
-      valid[i + 1] = false;
-      i++;
-    }
-    else if (arguments[i].compare("-reg") == 0) {
-      stringstream data(arguments[i + 1]);
-      data >> reg_factor;
-      valid[i] = false;
-      valid[i + 1] = false;
-      i++;
-    }
-    else if (arguments[i].compare("-multi_view") == 0) {
-
-      stringstream data(arguments[i + 1]);
-      int m_view;
-      data >> m_view;
-
-      multi_view = (bool)(m_view != 0);
-      valid[i] = false;
-      valid[i + 1] = false;
-      i++;
-    }
-    else if (arguments[i].compare("-validate_detections") == 0) {
-      stringstream data(arguments[i + 1]);
-      int v_det;
-      data >> v_det;
-
-      validate_detections = (bool)(v_det != 0);
-      valid[i] = false;
-      valid[i + 1] = false;
-      i++;
-    }
-    else if (arguments[i].compare("-n_iter") == 0) {
-      stringstream data(arguments[i + 1]);
-      data >> num_optimisation_iteration;
-
-      valid[i] = false;
-      valid[i + 1] = false;
-      i++;
-    }
-    else if (arguments[i].compare("-wild") == 0) {
-      // For in the wild fitting these parameters are suitable
-      window_sizes_init = vector<int>(4);
-      window_sizes_init[0] = 15;
-      window_sizes_init[1] = 13;
-      window_sizes_init[2] = 11;
-      window_sizes_init[3] = 11;
-
-      sigma = 1.25;
-      reg_factor = 35;
-      weight_factor = 2.5;
-      num_optimisation_iteration = 10;
-
-      valid[i] = false;
-
-      // For in-the-wild images use an in-the wild detector
-      curr_face_detector = MTCNN_DETECTOR;
-
-      // Use multi-view hypotheses if in-the-wild setting
-      multi_view = true;
+  void FaceModelParameters::check_model_path(string model_path) {
+    if (!exists(path(model_path))) {
+      throw runtime_error("Could not find the the model " + model_path);
     }
   }
 
-  for (int i = (int)arguments.size() - 1; i >= 0; --i) {
-    if (!valid[i]) {
-      arguments.erase(arguments.begin() + i);
+  void FaceModelParameters::check_model_paths() {
+    this->check_model_path(this->model_location);
+    this->check_model_path(this->haar_face_detector_location);
+    this->check_model_path(this->mtcnn_face_detector_location);
+  }
+
+  FaceModelParameters::FaceModelParameters() {
+    // initialise the default values
+    this->init();
+    this->check_model_paths();
+  }
+
+  FaceModelParameters::FaceModelParameters(vector<string>& arguments) {
+    // initialise the default values
+    this->init();
+
+    // First element is reserved for the executable location (useful for finding
+    // relative model locs)
+    path root = path(arguments[0]).parent_path();
+
+    bool* valid = new bool[arguments.size()];
+    valid[0] = true;
+
+    for (size_t i = 1; i < arguments.size(); ++i) {
+      valid[i] = true;
+
+      if (arguments[i].compare("-mloc") == 0) {
+        string model_loc = arguments[i + 1];
+        this->model_location = model_loc;
+        valid[i] = false;
+        valid[i + 1] = false;
+        i++;
+      }
+      if (arguments[i].compare("-fdloc") == 0) {
+        string face_detector_loc = arguments[i + 1];
+        this->haar_face_detector_location = face_detector_loc;
+        this->curr_face_detector = HAAR_DETECTOR;
+        valid[i] = false;
+        valid[i + 1] = false;
+        i++;
+      }
+      if (arguments[i].compare("-sigma") == 0) {
+        stringstream data(arguments[i + 1]);
+        data >> sigma;
+        valid[i] = false;
+        valid[i + 1] = false;
+        i++;
+      }
+      else if (arguments[i].compare("-w_reg") == 0) {
+        stringstream data(arguments[i + 1]);
+        data >> this->weight_factor;
+        valid[i] = false;
+        valid[i + 1] = false;
+        i++;
+      }
+      else if (arguments[i].compare("-reg") == 0) {
+        stringstream data(arguments[i + 1]);
+        data >> this->reg_factor;
+        valid[i] = false;
+        valid[i + 1] = false;
+        i++;
+      }
+      else if (arguments[i].compare("-multi_view") == 0) {
+
+        stringstream data(arguments[i + 1]);
+        int m_view;
+        data >> m_view;
+
+        this->multi_view = (bool)(m_view != 0);
+        valid[i] = false;
+        valid[i + 1] = false;
+        i++;
+      }
+      else if (arguments[i].compare("-validate_detections") == 0) {
+        stringstream data(arguments[i + 1]);
+        int v_det;
+        data >> v_det;
+
+        this->validate_detections = (bool)(v_det != 0);
+        valid[i] = false;
+        valid[i + 1] = false;
+        i++;
+      }
+      else if (arguments[i].compare("-n_iter") == 0) {
+        stringstream data(arguments[i + 1]);
+        data >> this->num_optimisation_iteration;
+
+        valid[i] = false;
+        valid[i + 1] = false;
+        i++;
+      }
+      else if (arguments[i].compare("-wild") == 0) {
+        // For in the wild fitting these parameters are suitable
+        this->window_sizes_init = vector<int>(4);
+        this->window_sizes_init[0] = 15;
+        this->window_sizes_init[1] = 13;
+        this->window_sizes_init[2] = 11;
+        this->window_sizes_init[3] = 11;
+
+        this->sigma = 1.25;
+        this->reg_factor = 35;
+        this->weight_factor = 2.5;
+        this->num_optimisation_iteration = 10;
+
+        valid[i] = false;
+
+        // For in-the-wild images use an in-the wild detector
+        this->curr_face_detector = MTCNN_DETECTOR;
+
+        // Use multi-view hypotheses if in-the-wild setting
+        this->multi_view = true;
+      }
+    }
+
+    for (int i = (int)arguments.size() - 1; i >= 0; --i) {
+      if (!valid[i]) {
+        arguments.erase(arguments.begin() + i);
+      }
+    }
+
+    this->check_model_paths();
+    path model_path = path(this->model_location);
+
+    if (model_path.stem().string().compare("main_ceclm_general") == 0) {
+      this->curr_landmark_detector = this->CECLM_DETECTOR;
+      this->sigma = 1.5f * sigma;
+      this->reg_factor = 0.9f * reg_factor;
+    }
+    else if (model_path.stem().string().compare("main_clnf_general") == 0) {
+      this->curr_landmark_detector = this->CLNF_DETECTOR;
+    }
+    else if (model_path.stem().string().compare("main_clm_general") == 0) {
+      this->curr_landmark_detector = this->CLM_DETECTOR;
     }
   }
 
-  // Make sure model_location is valid
-  // First check working directory, then the executable's directory, then the
-  // config path set by the build process.
-  path config_path = path(CONFIG_DIR);
-  path model_path = path(model_location);
-  if (exists(model_path)) {
-    model_location = model_path.string();
+  void FaceModelParameters::init() {
+
+    // number of iterations that will be performed at each scale
+    this->num_optimisation_iteration = 5;
+
+    // using an external face checker based on SVM
+    this->validate_detections = true;
+
+    // Using hierarchical refinement by default (can be turned off)
+    this->refine_hierarchical = true;
+
+    // Refining parameters by default
+    this->refine_parameters = true;
+
+    // For fast tracking
+    this->window_sizes_small = {0, 9, 7, 0};
+
+    // Just for initialisation
+    this->window_sizes_init = {11, 9, 7, 5};
+
+    this->face_template_scale = 0.3f;
+    // Off by default (as it might lead to some slight inaccuracies in slowly
+    // moving faces)
+    use_face_template = false;
+
+    // For first frame use the initialisation
+    this->window_sizes_current = window_sizes_init;
+
+    this->model_location = this->OpenFace_models_dir +
+                           "/landmark_detection/main_ceclm_general.txt";
+    this->curr_landmark_detector = CECLM_DETECTOR;
+
+    this->sigma = 1.5f;
+    this->reg_factor = 25.0f;
+    this->weight_factor = 0.0f; // By default do not use NU-RLMS for videos as
+                                // it does not work as well for them
+
+    this->validation_boundary = 0.725f;
+
+    this->limit_pose = true;
+    this->multi_view = false;
+
+    this->reinit_video_every = 2;
+
+    // Face detection
+    this->haar_face_detector_location =
+        this->OpenFace_models_dir +
+        "/classifiers/haarcascade_frontalface_alt.xml";
+    this->mtcnn_face_detector_location =
+        this->OpenFace_models_dir +
+        "/landmark_detection/mtcnn_detector/MTCNN_detector.txt";
+
+    // By default use MTCNN
+    this->curr_face_detector = MTCNN_DETECTOR;
   }
-  else if (exists(root / model_path)) {
-    model_location = (root / model_path).string();
-  }
-  else if (exists(config_path / model_path)) {
-    model_location = (config_path / model_path).string();
-  }
-  else {
-    cout << "Could not find the landmark detection model to load" << endl;
-  }
 
-  if (model_path.stem().string().compare("main_ceclm_general") == 0) {
-    curr_landmark_detector = CECLM_DETECTOR;
-    sigma = 1.5f * sigma;
-    reg_factor = 0.9f * reg_factor;
-  }
-  else if (model_path.stem().string().compare("main_clnf_general") == 0) {
-    curr_landmark_detector = CLNF_DETECTOR;
-  }
-  else if (model_path.stem().string().compare("main_clm_general") == 0) {
-    curr_landmark_detector = CLM_DETECTOR;
-  }
-
-  // Make sure face detector location is valid
-  // First check working directory, then the executable's directory, then the
-  // config path set by the build process.
-  model_path = path(haar_face_detector_location);
-  if (exists(model_path)) {
-    haar_face_detector_location = model_path.string();
-  }
-  else if (exists(root / model_path)) {
-    haar_face_detector_location = (root / model_path).string();
-  }
-  else if (exists(config_path / model_path)) {
-    haar_face_detector_location = (config_path / model_path).string();
-  }
-  else {
-    cout << "Could not find the HAAR face detector location" << endl;
-  }
-
-  // Make sure face detector location is valid
-  // First check working directory, then the executable's directory, then the
-  // config path set by the build process.
-  model_path = path(mtcnn_face_detector_location);
-  if (exists(model_path)) {
-    mtcnn_face_detector_location = model_path.string();
-  }
-  else if (exists(root / model_path)) {
-    mtcnn_face_detector_location = (root / model_path).string();
-  }
-  else if (exists(config_path / model_path)) {
-    mtcnn_face_detector_location = (config_path / model_path).string();
-  }
-  else {
-    cout << "Could not find the MTCNN face detector location" << endl;
-  }
-  check_model_path(root.string());
-}
-
-void FaceModelParameters::check_model_path(const std::string &root) {
-  // Make sure model_location is valid
-  // First check working directory, then the executable's directory, then the
-  // config path set by the build process.
-  path config_path = path(CONFIG_DIR);
-  path model_path = path(model_location);
-  path root_path = path(root);
-
-  if (exists(model_path)) {
-    model_location = model_path.string();
-  }
-  else if (exists(root_path / model_path)) {
-    model_location = (root_path / model_path).string();
-  }
-  else if (exists(config_path / model_path)) {
-    model_location = (config_path / model_path).string();
-  }
-  else {
-    cout << "Could not find the landmark detection model to load" << endl;
-  }
-}
-
-void FaceModelParameters::init() {
-
-  // number of iterations that will be performed at each scale
-  num_optimisation_iteration = 5;
-
-  // using an external face checker based on SVM
-  validate_detections = true;
-
-  // Using hierarchical refinement by default (can be turned off)
-  refine_hierarchical = true;
-
-  // Refining parameters by default
-  refine_parameters = true;
-
-  window_sizes_small = vector<int>(4);
-  window_sizes_init = vector<int>(4);
-
-  // For fast tracking
-  window_sizes_small[0] = 0;
-  window_sizes_small[1] = 9;
-  window_sizes_small[2] = 7;
-  window_sizes_small[3] = 0;
-
-  // Just for initialisation
-  window_sizes_init.at(0) = 11;
-  window_sizes_init.at(1) = 9;
-  window_sizes_init.at(2) = 7;
-  window_sizes_init.at(3) = 5;
-
-  face_template_scale = 0.3f;
-  // Off by default (as it might lead to some slight inaccuracies in slowly
-  // moving faces)
-  use_face_template = false;
-
-  // For first frame use the initialisation
-  window_sizes_current = window_sizes_init;
-
-  model_location = "models/landmark_detection/main_ceclm_general.txt";
-  curr_landmark_detector = CECLM_DETECTOR;
-
-  sigma = 1.5f;
-  reg_factor = 25.0f;
-  weight_factor = 0.0f; // By default do not use NU-RLMS for videos as it does
-                        // not work as well for them
-
-  validation_boundary = 0.725f;
-
-  limit_pose = true;
-  multi_view = false;
-
-  reinit_video_every = 2;
-
-  // Face detection
-  haar_face_detector_location = "models/classifiers/haarcascade_frontalface_alt.xml";
-  mtcnn_face_detector_location = "models/landmark_detection/mtcnn_detector/MTCNN_detector.txt";
-
-  // By default use MTCNN
-  curr_face_detector = MTCNN_DETECTOR;
-}
+} // namespace LandmarkDetector

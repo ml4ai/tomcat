@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <fmt/format.h>
 #include <sndfile.hh>
 
 #define SAMPLE_SILENCE (0.0f)
@@ -37,6 +36,7 @@ namespace tomcat {
     void initialize();
     void finalize();
     void set_time_limit_in_seconds(unsigned int);
+    void set_output_filename(std::string);
 
   private:
     void check_portaudio_error_code();

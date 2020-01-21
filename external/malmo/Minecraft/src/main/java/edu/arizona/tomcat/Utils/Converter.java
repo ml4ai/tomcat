@@ -8,9 +8,31 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.microsoft.Malmo.Utils.TimeHelper;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.world.World;
 
 public class Converter {
+	
+	/**
+	 * Calculates the number of world ticks passed since the beginning of the mission
+	 * @param world - Minecraft world
+	 * @param initialTime - Initial time in ticks
+	 * @return
+	 */
+	private static final long getElapsedTime(World world, long initialTime) {
+		long currentWorldTime = world.getTotalWorldTime();
+		return (currentWorldTime - initialTime);
+	} 
+	
+	/**
+	 * Calculates the number of seconds passed since the beginning of the mission
+	 * @param world - Minecraft world
+	 * @param initialTime - Initial time in ticks
+	 * @return
+	 */
+	public static final int getElapsedTimeInSeconds(World world, long initialTime) {
+		long elapsedTime = getElapsedTime(world, initialTime);	
+		return (int) Math.ceil((elapsedTime * TimeHelper.MillisecondsPerWorldTick) / TimeHelper.MillisecondsPerSecond);
+	}
 
 	/**
 	 * Calculates the remaining time in seconds given the initial and current time in ticks
@@ -18,11 +40,9 @@ public class Converter {
 	 * @param timeLimitInSeconds - Time limit in seconds
 	 * @return
 	 */
-	public static final int getRemainingTimeInSeconds(long initialTime, long timeLimitInSeconds) {
-		long currentWorldTime = Minecraft.getMinecraft().world.getTotalWorldTime();
-		long timeElapsedInWorldTicks = currentWorldTime - initialTime;
-		float timeRemainingInMs = timeLimitInSeconds * TimeHelper.MillisecondsPerSecond - (timeElapsedInWorldTicks * TimeHelper.MillisecondsPerWorldTick);
-
+	public static final int getRemainingTimeInSeconds(World world, long initialTime, long timeLimitInSeconds) {
+		long elapsedTime = getElapsedTime(world, initialTime);
+		float timeRemainingInMs = timeLimitInSeconds * TimeHelper.MillisecondsPerSecond - (elapsedTime * TimeHelper.MillisecondsPerWorldTick);
 		return (int) Math.ceil(timeRemainingInMs / TimeHelper.MillisecondsPerSecond);
 	}
 

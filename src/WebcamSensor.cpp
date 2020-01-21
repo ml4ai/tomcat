@@ -1,10 +1,7 @@
-#include <fmt/core.h>
+#include <fmt/format.h>
 
 #include "WebcamSensor.h"
 #include <GazeEstimation.h>
-#include <SequenceCapture.h>
-#include <VisualizationUtils.h>
-#include <Visualizer.h>
 #include <opencv2/highgui/highgui.hpp>
 
 namespace tomcat {

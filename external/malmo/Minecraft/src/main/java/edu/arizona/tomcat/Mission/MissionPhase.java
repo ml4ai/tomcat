@@ -8,6 +8,7 @@ import edu.arizona.tomcat.Messaging.TomcatMessageData;
 import edu.arizona.tomcat.Messaging.TomcatMessaging;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
+import edu.arizona.tomcat.Mission.gui.RichContent;
 import edu.arizona.tomcat.Utils.Converter;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import net.minecraft.client.Minecraft;
@@ -28,7 +29,7 @@ public class MissionPhase {
 	private int secondsToDismissMessageScreen;
 	private CompletionStrategy completionStrategy;	
 	private Status status;
-	private ArrayList<String> instructions;
+	private RichContent instructions;
 	private ArrayList<MissionGoal> openGoals;
 	private ArrayList<MissionGoal> completedGoals;
 	private ArrayList<PhaseListener> listeners;	
@@ -49,9 +50,10 @@ public class MissionPhase {
 	 * @param secondsUntilShowMessageScreen - Seconds before the message screen shows up after the phase completion
 	 * @param secondsToDismissMessageScreen - Seconds to dismiss the message screen once it is open
 	 */
-	public MissionPhase(CompletionStrategy completionStrategy, int secondsBeforeStart, boolean showCompletionMessage, String messageOnCompletion, 
+	public MissionPhase(RichContent instructions, CompletionStrategy completionStrategy, int secondsBeforeStart, boolean showCompletionMessage, String messageOnCompletion, 
 			int secondsUntilShowMessageScreen, int secondsToDismissMessageScreen) {
 		this.init();
+		this.instructions = instructions;
 		this.completionStrategy = completionStrategy;
 		this.secondsBeforeStart = secondsBeforeStart;
 		this.showCompletionMessage = showCompletionMessage;
@@ -69,8 +71,9 @@ public class MissionPhase {
 	 * @param secondsUntilShowMessageScreen - Seconds before the message screen shows up after the phase completion
 	 * @param secondsToDismissMessageScreen - Seconds to dismiss the message screen once it is open
 	 */
-	public MissionPhase(CompletionStrategy completionStrategy, int secondsBeforeStart) {
+	public MissionPhase(RichContent instructions, CompletionStrategy completionStrategy, int secondsBeforeStart) {
 		this.init();
+		this.instructions = instructions;
 		this.completionStrategy = completionStrategy;
 		this.secondsBeforeStart = secondsBeforeStart;
 		this.showCompletionMessage = false;
@@ -83,8 +86,7 @@ public class MissionPhase {
 		this.showCompletionMessage = false;
 		this.completionStrategy = CompletionStrategy.ALL_GOALS;
 		this.secondsBeforeStart = 0;
-		this.status = Status.WAITING_TO_START;
-		this.instructions = new ArrayList<String>();
+		this.status = Status.WAITING_TO_START;		
 		this.openGoals = new ArrayList<MissionGoal>();
 		this.completedGoals = new ArrayList<MissionGoal>();
 		this.listeners = new ArrayList<PhaseListener>();
@@ -129,7 +131,7 @@ public class MissionPhase {
 	 * @param world
 	 */
 	protected void handleStatusWaitingToStart(World world) {
-		long remainingTime = this.getRemainingTimeOnStatus(this.secondsBeforeStart);
+		long remainingTime = this.getRemainingTimeOnStatus(world, this.secondsBeforeStart);
 		
 		if (remainingTime <= 0) {
 			this.timeOnStatusSet = 0;
@@ -141,14 +143,14 @@ public class MissionPhase {
 	 * Get remaining time in the current status
 	 * @return
 	 */
-	private long getRemainingTimeOnStatus(long timeLimit) {
+	private long getRemainingTimeOnStatus(World world, long timeLimit) {
 		long currentWorldTime = Minecraft.getMinecraft().world.getTotalWorldTime();
 		
 		if (this.timeOnStatusSet == 0) {
 			this.timeOnStatusSet = currentWorldTime;
 		}	
 		
-		return Converter.getRemainingTimeInSeconds(this.timeOnStatusSet, timeLimit);
+		return Converter.getRemainingTimeInSeconds(world, this.timeOnStatusSet, timeLimit);
 	}
 	
 	
@@ -157,11 +159,10 @@ public class MissionPhase {
 	 * @param world
 	 */
 	protected void handleStatusDisplayingInstructions(World world) {
-		if (this.instructions.isEmpty()) {
+		if (this.instructions == null) {
 			this.status = Status.RUNNING;
 		} else {
-			TomcatMessageData messageData = new TomcatMessageData();
-			messageData.setMissionPhaseInstructions(String.join("\n", this.instructions));
+			TomcatMessageData messageData = new TomcatMessageData(this.instructions);
 			MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.SHOW_INSTRUCTIONS_SCREEN, messageData), MinecraftServerHelper.getFirstPlayer());
 			this.status = Status.WAITING_FOR_INSTRUCTIONS_DISMISSAL;
 		}
@@ -178,7 +179,7 @@ public class MissionPhase {
 			if (goal.hasBeenAchieved()) {
 				toBeRemoved.add(goal);
 				this.completedGoals.add(goal);	
-				this.notifyAllAboutGoalAchievement(goal);
+				this.notifyAllAboutGoalAchievement(world, goal);
 			} 
 		}
 		this.openGoals.removeAll(toBeRemoved);
@@ -232,7 +233,7 @@ public class MissionPhase {
 			this.worldTimeOnPhaseCompletion = currentWorldTime;
 		}	
 		
-		return Converter.getRemainingTimeInSeconds(this.worldTimeOnPhaseCompletion, this.secondsUntilShowMessageScreen);		
+		return Converter.getRemainingTimeInSeconds(world, this.worldTimeOnPhaseCompletion, this.secondsUntilShowMessageScreen);		
 	}
 	
 	/**
@@ -259,7 +260,7 @@ public class MissionPhase {
 			this.worldTimeOnMessageDisplay = currentWorldTime;
 		}	
 		
-		return Converter.getRemainingTimeInSeconds(this.worldTimeOnMessageDisplay, this.secondsToDismissMessageScreen);
+		return Converter.getRemainingTimeInSeconds(world, this.worldTimeOnMessageDisplay, this.secondsToDismissMessageScreen);
 	}
 	
 	/**
@@ -285,21 +286,12 @@ public class MissionPhase {
 	/**
 	 * Notifies listeners about a goal achievement
 	 */
-	private void notifyAllAboutGoalAchievement(MissionGoal goal) {		
+	private void notifyAllAboutGoalAchievement(World world, MissionGoal goal) {		
 		for (PhaseListener listener : this.listeners) {
-			listener.goalAchieved(goal);			
+			listener.goalAchieved(world, goal);			
 		}
 	}
-	
-	
-	/**
-	 * Set instructions for the phase
-	 * @param instructions
-	 */
-	public void addInstructionsLine(String pieceOfInstructions) {
-		this.instructions.add(pieceOfInstructions);
-	}
-	
+		
 	/**
 	 * Adds a new goal to the phase
 	 * @param goal - Goal to be achieved
@@ -317,18 +309,30 @@ public class MissionPhase {
 	}
 	
 	/**
-	 * Defines actions to be taken after the instructions screen was dismissed by the client
+	 * Defines actions to be taken after the currently open screen was dismissed by the client
 	 */
-	public void instructionsScreenDismissed() {
-		this.timeOnStatusSet = 0;
-		this.status = Status.RUNNING;			
-	}
+	public void openScreenDismissed() {
+		switch (this.status) {
+		case WAITING_FOR_INSTRUCTIONS_DISMISSAL:
+			this.timeOnStatusSet = 0;
+			this.status = Status.RUNNING;	
+			break;		
+		case WAITING_FOR_MESSAGE_DISMISSAL:
+			this.notifyAllAboutPhaseCompletion();	
+			break;
+
+		default:
+			break;
+		}
+	}	
 	
 	/**
-	 * Defines actions to be taken after the message screen was dismissed by the client
+	 * Allows the player to reread the instructions for in the middle of an active phase;
 	 */
-	public void messageScreenDismissed() {
-		this.notifyAllAboutPhaseCompletion();	
+	public void showInstructions() {
+		if(this.status == Status.RUNNING) {
+			this.status = Status.DISPLAYING_INSTRUCTIONS;
+		}
 	}
 	
 }

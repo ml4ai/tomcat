@@ -7,6 +7,7 @@ import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.Schemas.EntityTypes;
 import com.microsoft.Malmo.Schemas.PosAndDirection;
 
+import edu.arizona.tomcat.Messaging.TomcatMessageData;
 import edu.arizona.tomcat.Messaging.TomcatMessaging;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
 import edu.arizona.tomcat.Mission.MissionPhase.CompletionStrategy;
@@ -14,6 +15,8 @@ import edu.arizona.tomcat.Mission.Client.ClientMission;
 import edu.arizona.tomcat.Mission.Client.SARClientMission;
 import edu.arizona.tomcat.Mission.Goal.ApproachEntityGoal;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
+import edu.arizona.tomcat.Mission.gui.RichContent;
+import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 import edu.arizona.tomcat.Utils.Converter;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.World.Drawing;
@@ -28,10 +31,17 @@ public class SARMission extends Mission {
 
 	private boolean dynamicInitializationComplete;
 	private UUID[] villagersIDs; 
-
+	private int numberOfVillagersSaved;
+	
 	public SARMission() {
 		super();
 		this.dynamicInitializationComplete = false;		
+		this.numberOfVillagersSaved = 0;
+	}
+	
+	@Override
+	protected int getID() {
+		return MissionFactory.SEARCH_AND_RESCUE;
 	}
 	
 	@Override
@@ -46,23 +56,29 @@ public class SARMission extends Mission {
 
 	@Override
 	protected void afterLastPhaseCompletion() {
-		MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.SHOW_COMPLETION_SCREEN), MinecraftServerHelper.getFirstPlayer());
+		RichContent content = RichContent.createFromJson("sar_completion.json");
+		content.setTextPlaceholder(0, Integer.toString(this.numberOfVillagersSaved));
+		MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.SHOW_COMPLETION_SCREEN, new TomcatMessageData(content)), MinecraftServerHelper.getFirstPlayer());
+		this.notifyAllAboutMissionEnding("0");
+		this.cleanup();
 	}
 
 	@Override
 	protected void onTimeOut() {
-		MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.SHOW_COMPLETION_SCREEN), MinecraftServerHelper.getFirstPlayer());
+		RichContent content = RichContent.createFromJson("sar_completion.json");
+		content.setTextPlaceholder(0, Integer.toString(this.numberOfVillagersSaved));
+		MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.SHOW_COMPLETION_SCREEN, new TomcatMessageData(content)), MinecraftServerHelper.getFirstPlayer());
+		this.notifyAllAboutMissionEnding("1");
+		this.cleanup();
 	}
 
 	@Override
 	protected void createPhases() {
 		this.createVillagersIDs();
-		MissionPhase rescueVillagersPhase = new MissionPhase(CompletionStrategy.ALL_GOALS, 0);	
-		rescueVillagersPhase.addInstructionsLine("Save 4 villagers trapped in the buildings.");
-		rescueVillagersPhase.addInstructionsLine("Take care! You may have to battle some scary creatures on the way.");
-		rescueVillagersPhase.addInstructionsLine("You have " + Converter.secondsToString(this.timeLimitInSeconds, true) + " to accomplish this goal.");
-		rescueVillagersPhase.addInstructionsLine("");
-		rescueVillagersPhase.addInstructionsLine("Click OK when you are ready to start.");
+		RichContent instructions = RichContent.createFromJson("sar_instructions.json");
+		instructions.setTextPlaceholder(0, Integer.toString(NUMBER_OF_VILLAGERS));
+		instructions.setTextPlaceholder(1, Converter.secondsToString(this.timeLimitInSeconds, true));
+		MissionPhase rescueVillagersPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 0);	
 		for(int i = 0; i < NUMBER_OF_VILLAGERS; i++) {
 			ApproachEntityGoal goal = new ApproachEntityGoal(this.villagersIDs[i], MAX_DISTANCE_TO_SAVE_VILLAGER);
 			rescueVillagersPhase.addGoal(goal);
@@ -82,22 +98,20 @@ public class SARMission extends Mission {
 	}
 
 	@Override
-	protected void updateScene(World world) {
-		if(!this.dynamicInitializationComplete) {
-			this.doDynamicInitialization(world);
-		}
-		
-		//System.out.println("===========>Player's position: " + MinecraftServerHelper.getFirstPlayer().getPosition().toString());
+	protected void updateScene(World world) {		
+		this.doDynamicInitialization(world);			
 	}
 
 	/**
 	 * Perform dynamic initializations in the mission
 	 * @param world - Minecraft world
 	 */
-	private void doDynamicInitialization(World world) {		
-		this.spawnEntities(world);
-		this.addItensToInventory(world);
-		this.dynamicInitializationComplete = true;
+	private void doDynamicInitialization(World world) {
+		if(!this.dynamicInitializationComplete) {
+			this.spawnEntities(world);
+			this.addItensToInventory(world);
+			this.dynamicInitializationComplete = true;
+		}
 	}
 
 	/**
@@ -157,7 +171,7 @@ public class SARMission extends Mission {
 	}
 
 	/**
-	 * Add itens to the player's inventory to help him accomplish the mission goals
+	 * Add items to the player's inventory to help them accomplish the mission goals
 	 * @param world
 	 */
 	private void addItensToInventory(World world) {
@@ -165,10 +179,16 @@ public class SARMission extends Mission {
 	}
 
 	@Override
-	public void goalAchieved(MissionGoal goal) {
+	public void goalAchieved(World world, MissionGoal goal) {
 		if (goal instanceof ApproachEntityGoal) {
-			MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.VILLAGER_SAVED), MinecraftServerHelper.getFirstPlayer());
+			this.handleVillagerRescue(world, (ApproachEntityGoal) goal);
 		}
+	}
+	
+	private void handleVillagerRescue(World world, ApproachEntityGoal goal) {
+		this.numberOfVillagersSaved++;
+		this.addToDeletion(goal.getEntity(), world.getTotalWorldTime());
+		MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.VILLAGER_SAVED), MinecraftServerHelper.getFirstPlayer());
 	}
 
 	@Override
@@ -184,5 +204,21 @@ public class SARMission extends Mission {
 		positionAndDirection.setZ(new BigDecimal(73));
 		positionAndDirection.setYaw(new BigDecimal(-90));
 		return positionAndDirection;
+	}
+
+	@Override
+	protected boolean hasSelfReport() {
+		return true;
+	}
+
+	@Override
+	protected SelfReportContent getSelfReportContent(World world) {
+		String id = Long.toString(world.getTotalWorldTime());
+		return SelfReportContent.createFromJson(id, "self_report1.json");
+	}
+
+	@Override
+	protected void onPlayerDeath() {
+		this.onTimeOut();
 	}
 }

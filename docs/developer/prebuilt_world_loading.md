@@ -1,94 +1,130 @@
-Loading pre-built Worlds.
-=========================
+**Author:** Aditya Banerjee **Date:** 2019-12-7
 
-Aim: To load pre-built Minecraft worlds into the XML missions. 
+# Pre-Built World Loading Tutorial
 
-Purpose: The pre-built world can have structures and command blocks that define and control various aspects of the mission which we won’t need to code in XML anymore.
+##  Loading Pre-Built Worlds
 
-Getting Started:
+**Pre-requisites: Make sure you are able to run Minecraft and the default mission before attempting this tutorial.**
 
-    1. Download the Tomcat_Preloaded world from this google drive link: 
+**Aim:** To load pre-built Minecraft worlds into the XML missions.
 
-https://drive.google.com/drive/folders/1sA5F7ifgzglJnxFaeNuXHFwdMjmrpNHB?usp=sharing
+**Purpose:**  The pre-built world can have handmade structures which will help speed up mission development by shifting some load away from the XML. It is easier to build more complex environments by hand than through the XML. It will also allow us to set environment variables and command blocks in the world and control some aspects of the mission.
 
-	and save it somewhere convenient. Unzip the file. Henceforth Tomcat_Preloaded refers
-	to the folder that you got from unzipping.
-	**NOTE: Ensure the path to where you save this folder has no white spaces.
-	Ex:  Documents/folder name is not allowed but Documents/folder_name is allowed**
 
-    2. Download the file_gen and file_gen_skeleton XML s from this google drive link:
+**Getting Started:**
 
-https://drive.google.com/drive/folders/1sA5F7ifgzglJnxFaeNuXHFwdMjmrpNHB?usp=sharing
+The `sar`world is expected to be updated often, so the number attached to the name
+will reflect the current version number.`x_x_x` is simply the placeholder to
+represent this number. 
 
-	file_gen will serve as a reference for you to use file_gen_skeleton to get your pre-built world 	working. DO NOT SAVE IT INSIDE Tomcat_Preloaded
-	 I saved mine in: 
-	/home/adi-ua/Documents/TOMCAT/tomcat/external/malmo/sample_missions
+1\. Download the `sar_x_x_x` world from this Drive link: 
 
-3.	Open file_gen_skeleton.xml. Don’t change the name after we modify it for the sake of the 	tutorial
+    https://drive.google.com/open?id=19PjgHmUeJmOQ4DS4dAy-4bgax2_TnJRp
 
-4.	The comments in the XML indicate what needs to be filled in generally, but for the tutorial go to 	the line <FileWorldGenerator src = “” />
+Save it somewhere convenient and unzip the file. 
 
-	Within the quotes specify the path to which you saved your Tomcat_Preloaded folder download.
-	The Minecraft world is the whole folder and not just one file inside the folder, so the path 	should end in Tomcat_Preloaded
+Henceforth, `sar_x_x_x` refers to the folder you got from unzipping.
 	
-	Refer to file_gen.xml to see how I specified my path. 
+**NOTE** : Ensure the path to which you save this folder has no white spaces.
 
-	It is important to note here that ~ and 	$USER wont work as placeholders and the 	whole path needs to be specified using home/ <	your 	username>
-
-5.  For now, don’t modify any of the other variables. Simply save the XML.
-
-6.  Launch Minecraft from the build directory in tomcat and in a separate terminal from inside build run ./bin/runExperiment –mission <Path to the file_gen_skeleton.xml you modified>
-
-7. 	That’s it! You should be inside the world I built.
-	Press Enter to start playing. 
-	Open the chest I placed with right click, and read the book titled READ_ME that I placed 	inside with some basic instructions.
+Ex:  `Documents/folder name` is not allowed, but `Documents/folder_name` is allowed
 
 
-Additional Notes for when you're done with the tutorial:
+2\. Download the `file_gen` and `file_gen_skeleton` XMLs from this Drive link:
 
-I’ve placed a few command blocks in-game with the following commands:
+    https://drive.google.com/drive/folders/1sA5F7ifgzglJnxFaeNuXHFwdMjmrpNHB?usp=sharing
 
-Note: This part of the instruction is mostly repeated in my READ_ME in-game. You can activate the commands by right clicking the button on the command block. You can also access the command itself by right clicking the command block.
+`file_gen` will serve as a reference for you to use `file_gen_skeleton` to get your pre-built world working.
 
-1.  set time day: It sets the time to daytime (This is probably a good command that you might set to always run in the background if you want to maintain daytime. More information on that below)
+**DO NOT** save it inside  `sar_x_x_x`
 
-2.  give @p command_block: This is from the family of give @p [object] commands where an item can be given to someone or something. Here, @p simply means that the item is given to the player closest to the place where the command is executed.
-Other than @p, @a and @e also exist.
-@a targets all players in the world. So tp @a <x> <y> <z> teleport everyone to a certain place
-@e targets all entities including mobs. So the command kill @e would kill everything including you.
-Specifying a player’s name instead of the @ modifier targets the specific player. This is especially useful when there’s multiple players in a single world
-There’re more modifiers not listed here.
+This is because the _entire_ `sar_x_x_x`  folder represents the Minecraft world. It is not meant to hold anything else.
 
-3. summon Zombie ~ ~ ~:  Spawns the specified mob to the location of the calling function. The ~ ~ ~ means that the Zombie is summoned at the place of the calling function. In this case it spawns at the location of the command block. If however, the player enters the command as /summon Zombie ~ ~ ~ in their chat, the Zombie is summoned right at their location. The ~ ~ ~ can be replaced with <x> <y> <z> to spawn it at a specific place.
-
-4. gamerule keepInventory true: Makes the environment such that if the player dies then they don’t lose the stuff they had in their inventory like they would usually. This comes from the environment modifying family of commands. There’s quite a few, so I’ve not covered them all here, but these can be used to stop explosions from breaking things when they explode, disable command feedback, modify ticks and so on.
-
-[The functions I used here are simple but composite commands can be created. I’ll upload and demonstrate a sample of such a composite command soon.]
-
-Here’s some documentation for more extensive information on what’s possible:
- https://minecraft.gamepedia.com/Commands
+I saved mine in: 
+`/home/$USER/Documents/TOMCAT/tomcat/external/malmo/sample_missions` to keep it with all the other missions
 
 
-Making your own pre-built world:
+3\.	Open `file_gen_skeleton.xml`
 
-1. 	Simply launch Minecraft from inside the build folder
-
-2. 	Single player → Create new world
-3. 	Name the world anything you want and select modify if you want it to be flat or use a specific 	seed and game-play mode(survival creative are the only options available during world creation 	but spectator and adventure mode are available through in-game commands)
-4.	Just play the game. Build structures. Experiment with command blocks.
-5. 	Once you’re done building. Press Esc and Save and quit.
-6. 	Navigate to tomcat/external/malmo/Minecraft/run/saves/
-7.  	You should see the world you just played on as a folder in this directory.  You can now preload 	this world. It is possible to load it from this directory itself similar to how you loaded 	Tomcat_Preloaded in the tutorial, but it is not recommended. Many worlds will be create each 	time a mission is run and this directory becomes hard to manage, so it is better to save it 	elsewhere and then load it in from that path.
+Don’t change the name after we modify it (the next step) for the sake of this tutorial.
 
 
+4\.	Modifying the XML
+
+The comments in the XML indicate what needs to be filled in generally, but for
+the tutorial go to the line `<FileWorldGenerator src = “” />`
+
+Within the quotes specify the path to which you saved your `sar_x_x_x` folder.
+
+Again,the **Minecraft world is the whole folder and not just one file inside the folder, so the path should end in:** `sar_x_x_x`
+	
+Refer to `file_gen.xml` to see how I specified my path. 
+
+**It is important to note here that `~` and `$USER` won't work as placeholders inside the XML**
+
+The whole path needs to be specified using `home/<your username>`
+
+
+5\. For now, don’t modify any of the other variables. Simply save the XML.
+
+
+6\. Launch Minecraft from the build directory in tomcat, and in a separate terminal from inside build
+    
+    run ./bin/runExperiment –mission <Path to the file_gen_skeleton.xml you modified>
+
+
+7\.	That’s it! You should be inside the world I built.
+
+
+##  Creating A World to Load
+
+1\.	Simply launch Minecraft from inside the build folder using:
+
+    ./launch_minecraft.sh
+
+
+2\.	Single player →  Create new world
+
+
+3\.	Name the world anything you want and hit create.
+
+This next part of the step is optional. 
+
+Select modify if you want it to be flat or use a specific seed for a certain world.
+You can also set the game-play mode to survival or creative.
+These modes are the  only options available during world creation, but spectator and adventure mode are available through in-game commands.
+
+
+4\.	Just play the game!
+
+Build monuments, buildings or anything you want.
+
+You might even experiment with command blocks. For a list of commands and how to use them, refer to this link:
+
+    https://minecraft.gamepedia.com/Commands
+
+
+5\.	Once you’re done building, press Esc ->  Save and Quit.
+
+
+6\. Navigate to `tomcat/external/malmo/Minecraft/run/saves/`
+
+
+7\. Wrapping Up:
+
+You should see the world you just played on as a folder in this directory.  You can now load this world. 
+
+It is possible to load the world into the XML from this saves directory itself; however it is not recommended. 
+Many worlds will be created each time a mission is run, and this directory will become hard to manage.
+It is better to save it elsewhere and then load it in from that path.
 
 
 
 
-I intentionally left file_gen_skeleton as a very basic XML with no real mission elements. It is meant to serve as a foundation to build missions without needing to change or delete much. I will be making some more fleshed out missions where I will use the skeleton XML as my base.  When you’ve finished going through this documentation, you may add as much as you want to the file_gen_skeleton.xml to implement your mission. There is no need to follow the tutorials XML modification restrictions at that time. However, since the point of this is to move some parts of the mission to in-game command blocks, I recommend using command blocks to implement commands in-game and simply load that world in.
+## Final Notes
 
+I intentionally left `file_gen_skeleton` as a very basic XML with no real mission elements. It is meant to serve as a foundation to build missions without needing to change or delete much.
+When you’ve finished going through this documentation, you may add as much as you want to `file_gen_skeleton` to implement your mission. There is no need to follow
+the tutorial's XML modification restrictions at that time.
 
-
- 
-
-
+Note however, it is better to set trivial paramaters through in-game commands while playing the world so that the XML can be more streamlined in its implementation of the mission itself. The goal of this endeavour is to move the trivial tasks of building and setting daytime etc. away from the XML.

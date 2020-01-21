@@ -1,9 +1,32 @@
 #pragma once
 
+#include "Microphone.h"
 #include "MissionSpec.h"
+#include "WebcamSensor.h"
+#include <AgentHost.h>
+#include <boost/filesystem.hpp>
 #include <string>
+#include <unordered_map>
 
 namespace tomcat {
+
+  class LocalAgent; // Forward declaration to deal with circular dependency
+
+  class TomcatMissionException : public std::exception {
+  public:
+    enum ErrorCode { CONNECTION_NOT_ESTABLISHED, TOMCAT_VAR_INEXISTENT };
+
+    TomcatMissionException(const std::string& message, ErrorCode error_code)
+        : message(message), error_code(error_code) {}
+    ~TomcatMissionException() throw() {}
+    ErrorCode get_error_code() const { return this->error_code; }
+    std::string get_message() const { return this->message; }
+    const char* what() const throw() { return this->message.c_str(); }
+
+  private:
+    std::string message;
+    ErrorCode error_code;
+  };
 
   /**
    * The Mission interface represents an abstract Minecraft mission
@@ -11,72 +34,146 @@ namespace tomcat {
   class Mission {
   public:
     /**
-     * Build the world with all the features and elements the mission must have.
-     * This method must be overwritten by the subclasses of Mission to specify
-     * the details of a concrete mission.
+     * Constructor
+     * @param mission_id_or_path - Mission ID or path to an xml file with the
+     * mission specifications
+     * @param time_limit_in_seconds - Duration of the mission in seconds
+     * @param self_report_prompt_time_in_seconds - Frequency of self-reports
+     * @param video_width - Width of the screen
+     * @param video_height - Height of the screen
+     * @param port_number - Port number to connect with the Minecraft server
+     * @param frames_per_second - Number of frames per seconds when recording
+     * video
+     * @param bit_rate - Bit rate when recording video
+     * @param record_video - Flag that activates video recording
+     * @param record_observations - Flag that activates observations recording
+     * @param activate_webcam - Flag that activates the webcam
+     * @param record_audio - Flag that activates audio recording
+     * @param record_commands - Flag that activates commands recording
+     * @param record_rewards - Flag that activates rewards recording
+     * @param record_path - Path where recordings will be saved
+     * @param audio_record_path - Path where the audio will be saved
      */
-    virtual void buildWorld();
+    Mission(std::string mission_id_or_path,
+            unsigned int time_limit_in_seconds,
+            unsigned int self_report_prompt_time_in_seconds,
+            unsigned int video_width,
+            unsigned int video_height,
+            int port_number,
+            int frames_per_second,
+            int64_t bit_rate,
+            bool record_video,
+            bool record_observations,
+            bool activate_webcam,
+            bool record_audio,
+            bool record_commands,
+            bool record_rewards,
+            std::string record_path = "./saved_data.tgz",
+            std::string audio_record_path = "audio_recording.wav"
+            );
 
     /**
-     * Retrieves the object of class MissionSpec of the mission
+     * Destructor
      */
-    malmo::MissionSpec getMissionSpec();
+    ~Mission(){};
 
     /**
-     * Defines the time limit for the mission
-     * @param timeInSeconds - Time (in seconds) to the end of the mission
+     * Adds a Tomcat agent as a listener of the mission
+     * @param tomcat_agent - Tomcat agent
      */
-    void setTimeLimitInSeconds(int timeInSeconds);
+    void add_listener(std::shared_ptr<LocalAgent> tomcat_agent);
 
     /**
-     * Returns the time limit of the mission, in seconds
+     * Starts the mission
+     * @return
      */
-
-    int getTimeLimitInSeconds();
+    void start();
 
     /**
-    * Requests video from MissionSpec
-    * @param width - width of the video
-    * @param height - height of the video
-    */
-    void requestVideo(unsigned int width, unsigned int height);
+     * Sends command to the host
+     * @param command - Command to be executed
+     */
+    void send_command(std::string command);
 
-    void observeRecentCommands();
+  private:
+    enum MissionId { TUTORIAL = 0, SAR = 1 };
 
-    void observeHotBar();
+    malmo::MissionSpec mission_spec;
+    boost::shared_ptr<malmo::AgentHost> host;
+    boost::shared_ptr<WebcamSensor> webcam;
+    Microphone microphone;
+    std::string mission_id_or_path;
+    unsigned int time_limit_in_seconds;
+    unsigned int self_report_prompt_time_in_seconds;
+    unsigned int video_width;
+    unsigned int video_height;
+    int port_number;
+    int frames_per_second;
+    int64_t bit_rate;
+    bool record_video;
+    bool record_observations;
+    bool activate_webcam;
+    bool record_audio;
+    bool record_commands;
+    bool record_rewards;
+    std::string record_path = "./saved_data.tgz";
+    std::string audio_record_path = "audio_recording.wav";
+    std::vector<std::shared_ptr<LocalAgent>> tomcat_agents;
 
-    void observeFullInventory();
-
-    void observeChat();
-
-  protected:
     /**
-    * Retrieves the content of an XML which defines the skeleton of the world
-    * for the Save and Rescue mission
-    * @return
-    */
-    virtual std::string getWorldSkeletonFromXML() = 0;
+     * Creates the MissionSpec object based on the mission Id or XML file
+     */
+    void create_mission_spec();
 
-    void insertTimeLimitInSeconds();
+    /**
+     * Retrieves, from a mission id, the folder name where its hand-constructed
+     * world is
+     */
+    inline static std::unordered_map<int, std::string> id_to_world_folder_map =
+        {
+            {TUTORIAL, "tutorial"},
+            {SAR, "sar"},
+    };
 
-    void insertVideoProducer();
+    /**
+     * Retrieves the content of an XML which defines the skeleton of the world
+     * for the Search and Rescue mission
+     * @return
+     */
+    std::string get_world_skeleton_from_xml();
 
-    void insertObserveRecentCommandsProducer();
+    /**
+     * Establish connection with Minecraft host
+     */
+    void connect_to_host();
 
-    void insertObserveHotBarProducer();
+    /**
+     * Retrieves a MissionRecordSpec for the mission
+     * @return
+     */
+    malmo::MissionRecordSpec get_mission_record_spec();
 
-    void insertObserveFullInventoryProducer();
+    /**
+     * Retrieves a client pool for the mission
+     * @return
+     */
+    malmo::ClientPool get_client_pool() const;
 
-    void insertObserveChatProducer();
+    /**
+     * Initialize external sensors
+     */
+    void init_external_sensors();
 
-    malmo::MissionSpec missionSpec;
-    int timeLimitInSeconds;
-    bool requestVideo_switch = false;
-    unsigned int video_width = 640; 
-    unsigned int video_height = 480;
-    bool observeRecentCommands_switch = false;
-    bool observeHotBar_switch = false;
-    bool observeFullInventory_switch = false;
-    bool observeChat_switch = false;
+    /**
+     * Observe the mission. This method corresponds to the mission main loop and
+     * is executed while the mission is running
+     */
+    void observe();
+
+    /**
+     * Clean up processes related to external sensors
+     */
+    void finalize_external_sensors();
   };
+
 } // namespace tomcat

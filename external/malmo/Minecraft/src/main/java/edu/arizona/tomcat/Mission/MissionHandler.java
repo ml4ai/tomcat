@@ -11,9 +11,10 @@ public class MissionHandler {
 	 * @param id - Mission ID
 	 * @param timeLimitInSeconds - Duration of the mission in seconds
 	 */
-	public void setMission(int id, int timeLimitInSeconds) {
+	public void setMission(int id, int timeLimitInSeconds, int selfReportPromptTimeInSeconds) {
 		this.mission = MissionFactory.create(id);
-		this.mission.setTimeLimitInSeconds(timeLimitInSeconds);
+		this.mission.setTimeLimitInSeconds(timeLimitInSeconds);	
+		this.mission.setSelfReportPromptTimeInSeconds(selfReportPromptTimeInSeconds);
 	}
 	
 	/**

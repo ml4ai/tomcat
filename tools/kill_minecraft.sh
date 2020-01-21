@@ -1,0 +1,131 @@
+#!/bin/bash
+
+# There can be multiple instances of Minecraft running. It is not clear whether
+# we ever want this to happen. By default, this script only kills processes that
+# were started on the most recent call to wrap_launch_minecraft.sh. However, the
+# '-a' argument asks this script to kill every last instance of Minecraft that
+# is owned by the calling user. This is necessarily a bit of a hack because
+# some of the processes resist being killed (so we cannot just kill the
+# grandparent) and the process signatures might be somewhat system dependent. We
+# also do not want to rely on the process tree structure because if we are using
+# '-a', then things are likely broken and some of them might be dead. 
+#
+# TODO: We could make it so that if the user is root, every Minecraft process is
+#       killed, but this is not yet implemented.
+#
+# So that this script can be used for cleaning up stale Minecraft related
+# process, currently it also kills gradle daemons. 
+#
+# TODO: Again, we do not have enough use cases, but the killing of gradle
+# daemons might be something we prefer to do selectively. 
+#
+# TODO: This script likely does not work on linux (UNTESTED)
+
+set -u 
+
+to_kill=""
+
+
+kill_all=0
+bad_invocation=0
+
+if [[ $# -eq 1 ]]; then 
+    if [[ "$1" == '-a' ]]; then
+        kill_all=1
+    else
+        bad_invocation=1
+    fi 
+elif [[ $# -gt 0 ]]; then
+    bad_invocation=1
+fi 
+
+if [[ $bad_invocation -ne 0 ]]; then
+    echo "Script kill_minecraft takes either no arguments or the single argument '-a'"
+    exit 1 
+fi 
+
+if [[ $kill_all -ne 0 ]]; then 
+    ps_tmp=`ps -u ${USER} | grep java | grep -i 'malmomod' | grep -i 'gradlestart' | sed "s/^ *[0-9][0-9]* *\([0-9][0-9]*\)  *.*/\1/"`
+    if [[ $? -ne 0 ]]; then exit 1; fi;
+    
+    if [[ -n "${ps_tmp}" ]]; then
+        to_kill="${to_kill} ${ps_tmp}" 
+    fi 
+
+    ps_tmp=`ps -u ${USER} | grep java | grep -i 'gradlewrappermain' | grep -i 'runclient' | sed "s/^ *[0-9][0-9]* *\([0-9][0-9]*\)  *.*/\1/"`
+    if [[ $? -ne 0 ]]; then exit 1; fi;
+    
+    if [[ -n "${ps_tmp}" ]]; then
+        to_kill="${to_kill} ${ps_tmp}" 
+    fi 
+
+    ps_tmp=`ps -u ${USER} | grep java | grep -i 'gradledaemon' | sed "s/^ *[0-9][0-9]* *\([0-9][0-9]*\)  *.*/\1/"`
+    if [[ $? -ne 0 ]]; then exit 1; fi;
+    
+    if [[ -n "${ps_tmp}" ]]; then
+        to_kill="${to_kill} ${ps_tmp}" 
+    fi 
+else 
+    declare -x TOMCAT_TMP_DIR
+    if [[ -z "${TOMCAT_TMP_DIR}" ]]; then
+        export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
+    fi 
+
+    minecraft_launch_pid_file="${TOMCAT_TMP_DIR}/minecraft_launch.pid"
+
+    if [[ -e "${minecraft_launch_pid_file}" ]]; then 
+        launch_pid=`cat "${minecraft_launch_pid_file}"`
+        if [[ $? -ne 0 ]]; then exit 1; fi;
+    
+        ps ${launch_pid} >& /dev/null
+        if [[ $? -eq 0 ]]; then 
+            # Linux often provides a way to get the process tree (e.g., using
+            # the -H argument), but Mac OS does not. Rather than get more
+            # packages, and reason about variations, we will build our own tree,
+            # with the knowledge that it will only be children and grand
+            # children. 
+    
+            to_kill="${to_kill} ${launch_pid}"
+
+            children=`ps -u ${USER} -o pid,ppid | grep " ${launch_pid}" | sed 's#^\([0-9][0-9]*\).*#\1#'`
+
+            if [[ -n "${children}" ]]; then
+                to_kill="${to_kill} ${children}"
+
+                for child in "${children}"; do
+                    grand_children=`ps -u ${USER} -o pid,ppid | grep " ${child}" | sed 's#^\([0-9][0-9]*\).*#\1#'`
+                    to_kill="${to_kill} ${grand_children}"
+                done
+             fi 
+        fi
+    fi
+fi 
+
+if [[ -n "${to_kill}" ]]; then
+    # We sleep between operations to get off the CPU and give programs a chance
+    # to cleanup. 
+
+    for proc in ${to_kill}; do
+        ps ${proc} >& /dev/null
+        if [[ $? -eq 0 ]]; then 
+            echo kill -15 ${proc}
+            kill -15 ${proc}
+            sleep 1 
+        else 
+            echo "Process ${proc} no longer exists." 
+        fi 
+    done 
+
+    for proc in ${to_kill}; do
+        ps ${proc} >& /dev/null
+        if [[ $? -eq 0 ]]; then 
+            echo kill -9 ${proc}
+            kill -9 ${proc}
+            sleep 1 
+        fi 
+    done 
+fi
+
+
+
+

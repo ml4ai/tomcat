@@ -7,7 +7,7 @@ using namespace std;
 
 namespace tomcat {
 
-  string tomcat::FileHandler::getFileContent(string filename) {
+  string FileHandler::getFileContent(string filename) {
     ifstream inputFile(filename);
     stringstream stringStream;
     stringStream << inputFile.rdbuf();

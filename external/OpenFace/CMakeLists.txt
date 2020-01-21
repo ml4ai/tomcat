@@ -2,15 +2,10 @@ cmake_minimum_required (VERSION 3.2)
 project(OpenFace VERSION 2.0.2)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
-
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/modules/")
 
-set(CMAKE_CONFIG_DIR etc/OpenFace)
-set(CONFIG_DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_CONFIG_DIR}")
-add_definitions(-DCONFIG_DIR="${CONFIG_DIR}")
-
-# make sure we'll use OpenBLAS only: there's a header file naming difference between different
-# implementations; so OpenFace wants OpenBLAS;
+# make sure we'll use OpenBLAS only: there's a header file naming difference
+# between different implementations; so OpenFace wants OpenBLAS;
 find_package(OpenBLAS REQUIRED)
 if ( ${OpenBLAS_FOUND} )
     MESSAGE("OpenBLAS information:")

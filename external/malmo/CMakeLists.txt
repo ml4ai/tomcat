@@ -42,8 +42,6 @@ message("Configure MALMO_VERSION at ${MALMO_VERSION}")
 # N.B. Check that this version number matches the ones in the schemas.
 
 set(BUILD_MOD_DESC "Specifies whether to build the Malmo Minecraft Mod")
-set(BUILD_DOCUMENTATION_DESC
-    "Specifies whether to build the documentation for the API and XML")
 set(
   INCLUDE_ALE_DESC
   "Specifies whether to build Malmo with bindings to the Arcade Learning Environment"
@@ -53,7 +51,6 @@ set(INCLUDE_PYTHON_DESC "Specifies whether to build Malmo with Python bindings")
 set(STATIC_BOOST_DESC
     "Specifies whether to link Malmo statically against Boost")
 set(BUILD_MOD ON CACHE BOOL ${BUILD_MOD_DESC})
-set(BUILD_DOCUMENTATION OFF CACHE BOOL ${BUILD_DOCUMENTATION_DESC})
 set(INCLUDE_ALE OFF CACHE BOOL ${INCLUDE_ALE_DESC})
 set(INCLUDE_JAVA OFF CACHE BOOL ${INCLUDE_JAVA_DESC})
 set(INCLUDE_PYTHON OFF CACHE BOOL ${INCLUDE_PYTHON_DESC})
@@ -226,9 +223,6 @@ set(CMAKE_INSTALL_PREFIX "install") # useful for testing the sample scripts
 add_subdirectory(Malmo)
 if(BUILD_MOD)
   add_subdirectory(Minecraft EXCLUDE_FROM_ALL)
-endif()
-if(BUILD_DOCUMENTATION)
-  add_subdirectory(doc)
 endif()
 add_subdirectory(Schemas)
 if(INCLUDE_ALE)
