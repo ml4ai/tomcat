@@ -51,6 +51,11 @@ To run the default search-and-rescue mission with a time limit of 10 minutes, yo
 
 You can run `./bin/runExperiment --help` to see the other possible options.
 
+For UA researchers gathering speech data (in addition to other Malmo data), do
+the following invocation:
+
+    ./bin/runExperiment --mission 1 --record_all --record_audio --time_limit 600
+
 If any of the following conditions happens, Minecraft needs to be relaunched
 before another mission can be executed:
 
