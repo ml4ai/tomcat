@@ -1,5 +1,7 @@
 # Setup instructions for people new to the command line.
 
+This is a set of instructions for macOS users who are new to the command line.
+
 ## Launching the terminal
 
 macOS comes with a built-in terminal application, named 'Terminal'. You
