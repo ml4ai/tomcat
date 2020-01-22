@@ -28,11 +28,11 @@ change the working directory to it, you would enter the two following commands
 key - in the code chunk below, each line break corresponds to hitting the
 `<Return>` key.)
 
-  mkdir Research
-  cd Research
+    mkdir Research
+    cd Research
 
 Once you are in your desired working directory, run the following commands in
 the terminal:
 
-  git clone https://github.com/ml4ai/tomcat
-  cd tomcat && ./tools/install.sh
+    git clone https://github.com/ml4ai/tomcat
+    cd tomcat && ./tools/install.sh
