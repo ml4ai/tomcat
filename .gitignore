@@ -79,3 +79,8 @@ data/*
 *.tar.gz
 *.tgz
 *.zip
+
+# Misc
+src/pddl/#sar-individual-domain.pddl#  
+src/pddl/#sar-individual-domain.shop#
+src/pddl/sar-individual-domain.shop
