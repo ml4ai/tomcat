@@ -3,5 +3,5 @@
 
 (ql:quickload "shop3")
 (in-package :shop-user)
-(load "sar-individual-domain.pddl")
-(load "sar-individual-problem.pddl")
+(load "sar-individual-domain.lisp")
+(load "sar-individual-problem.lisp")
