@@ -99,8 +99,10 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         if [[ ! -z $TRAVIS ]]; then
           # On Travis, we will install lcov to provide code coverage estimates.
           brew install lcov;
+          download_and_extract_dlib
+        else
+          ./install_dlib_from_source.sh
         fi;
-        download_and_extract_dlib
     else
         echo "No package manager found for $OSTYPE"
         exit 1
