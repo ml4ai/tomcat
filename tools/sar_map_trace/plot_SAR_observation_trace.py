@@ -59,6 +59,10 @@ def main():
 
 
 def get_time_and_position_data(observations_filename):
+    """
+    Parses the JSON objects and timestamps from an observations file and returns
+    a collection of timestamps with a matching collection of positions.
+    """
     timestamps, positions = list(), list()
     with open(observations_filename, "r") as infile:
         for line in infile:
@@ -96,23 +100,27 @@ def find_first_position_change(positions, i):
 
 
 def scaleX(x):
+    """Manual derived scaling function for the x-axis of the original SAR map."""
     # Scale the amount to be within 1000 (leaving a 40px barrier on either side)
     # NOTE Xrange is from 0 -- 1080
     return (((x-22)/(99.7-22)) * 1000) + 40
 
 
 def scaleY(y):
+    """Manual derived scaling function for the y-axis of the original SAR map."""
     # Scale the amount to be within 1100 (leaving a 40px barrier on either side)
     # NOTE Yrange is from 0 -- 1180 AND the axes is inverted
     return 1140 - ((((y-45)/(97-45)) * 1100) + 40)
 
 
 def datetime_to_seconds(dt):
+    """Convert a Python Datetime object into an amount in seconds."""
     return (dt.day*86400) + (dt.hour*3600) + (dt.minute*60) \
         + dt.second + (dt.microsecond*1e-6)
 
 
 def seconds_to_minutes(seconds):
+    """Convert seconds to minutes."""
     return seconds / 60
 
 

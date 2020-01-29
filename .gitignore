@@ -79,3 +79,5 @@ data/*
 *.tar.gz
 *.tgz
 *.zip
+
+!tools/sar_map_trace/*.png
