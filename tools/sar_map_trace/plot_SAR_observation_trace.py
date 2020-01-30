@@ -3,59 +3,61 @@
 
 import sys
 import json
-import math
 from datetime import datetime
 
-import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
+from matplotlib.path import Path
+from matplotlib.collections import PathCollection
 
 
 def main():
     """Generates a plot overlaying user trace data on the SAR V1 map."""
-    obs_file = sys.argv[1]
 
     # Load time and position data from the observation file
+    obs_file = sys.argv[1]
     time_data, position_data = get_time_and_position_data(obs_file)
 
-    # Get the first change-position-point to truncate trace data
-    i = find_first_position_change(position_data, 0)
-    time_start, time_end = min(time_data), max(time_data)
+    # Shorten time and position data by the border entry point
+    border_pt_idx = find_border_entry(position_data, 0)
+    time_data = time_data[border_pt_idx:]
+    start_time = min(time_data)
+    position_times = [(s-start_time) / 60 for s in time_data]
+    position_coords = position_data[border_pt_idx:]
 
-    # Shorten the position data by the first change-position-point
-    important_position_data = position_data[i:]
-
-    # Shorten the time data by the first change-position-point and normalize
-    # by the start time
-    times = [t - time_start for t in time_data[i:]]
-
-    # Separation X, Y coordinate lists for plotting purposes
-    (X, Y) = map(list, zip(*important_position_data))
-
-    # Load the image data for the V1 SAR map
-    img = mpimg.imread("SAR_v1_reference.png")
-
-    # Plot the image and trace data
-    fig, ax = plt.subplots()
-    cax = ax.imshow(img)
-    ax.scatter(X, Y, c=times, cmap=plt.get_cmap("viridis"))
-
-    # Add a helpful title
+    # Create the plot object with a helpful title
+    fig = plt.figure(figsize=(7, 8))
+    ax = plt.gca()
     ax.set_title("SAR Gameplay Time-based Position Trace")
 
-    # Remove unnecessary axes ticks from image data
-    ax.set_xticks([])
-    ax.set_yticks([])
-
-    # Add a colorbar legend with ticks in minutes
-    min_start, min_end = 0, math.ceil(seconds_to_minutes(time_end - time_start))
-    cbar = fig.colorbar(cax)
-    cbar.ax.set_yticklabels(
-        [f"{int(i)} minutes" for i in np.linspace(min_start, min_end, num=6)]
+    # Add arena walls and house objects
+    arena_walls = PathCollection(
+        [
+            Path([(44, 43), (98, 43), (98, 100), (44, 100), (44, 43)]),
+            Path([(58, 77), (60, 77), (60, 74), (73, 74), (83, 74), (83, 43)])
+        ], edgecolor="black", facecolor="None", lw=3
     )
+    small_and_large_houses = PathCollection(
+        [
+            Path([(50, 96), (56, 96), (56, 90), (50, 90), (50, 96)]),
+            Path([(45, 49), (49, 49), (49, 44), (45, 44), (45, 49)]),
+            Path([(87, 55), (92, 55), (92, 49), (87, 49), (87, 55)]),
+            Path([(85, 97), (94, 97), (94, 91), (90, 91), (90, 85),
+                  (84, 85), (84, 90), (85, 90), (85, 97)]),
+            Path([(73, 74), (83, 74), (83, 63), (78, 63),
+                  (78, 69), (73, 69), (73, 74)]),
+            Path([(59, 66), (68, 66), (68, 60), (64, 60), (64, 54),
+                  (58, 54), (58, 59), (59, 59), (59, 66)])
+        ], color=(166/255, 89/255, 50/255, 1.0), lw=1
+    )
+    ax.add_collection(small_and_large_houses)
+    ax.add_collection(arena_walls)
 
-    # Display the plots
-    plt.show()
+    # Plot the user observation trace with a time legend
+    (X, Y) = map(list, zip(*position_coords))
+    cax = ax.scatter(X, Y, s=1, c=position_times, cmap=plt.get_cmap("viridis"))
+    cbar = fig.colorbar(cax)
+    cbar.ax.set_ylabel("Time in minutes")
+    plt.show()  # Display the plots
 
 
 def get_time_and_position_data(observations_filename):
@@ -66,62 +68,35 @@ def get_time_and_position_data(observations_filename):
     timestamps, positions = list(), list()
     with open(observations_filename, "r") as infile:
         for line in infile:
-            # Use the start of the JSON object to split the timestamp data
-            # and the JSON data
-            json_start = line.find("{")
+            # Split the line into a JSON object and a timestamp string
+            split_pt = line.find("{")
 
-            # Recover and parse the JSON data
-            json_data = json.loads(line[json_start:])
+            # Recover the (x, y) position data from a JSON object
+            obj = json.loads(line[split_pt:])
+            positions.append((float(obj["ZPos"]), float(obj["XPos"])))
 
-            # Add a tuple (x, y) position scaled by the arena dimensions
-            positions.append((
-                scaleX(float(json_data["XPos"])),
-                scaleY(float(json_data["ZPos"]))
-            ))
-
-            # Parse a time string from the line
-            time_string = line[:json_start].strip()
-
-            # Convert the time string to a Python datetime object
-            timestamp = datetime.strptime(time_string, "%Y%m%dT%H%M%S.%f")
-
-            # Create a timestamp in seconds
-            timestamps.append(datetime_to_seconds(timestamp))
+            # Convert a time string into a measure of seconds
+            time_string = line[:split_pt].strip()
+            dt_obj = datetime.strptime(time_string, "%Y%m%dT%H%M%S.%f")
+            timestamps.append(datetime_to_seconds(dt_obj))
     return timestamps, positions
 
 
-def find_first_position_change(positions, i):
+def find_border_entry(positions, i, border_pt=42):
     """
     Recursively search through the positions list for the first position where
     the player actually moves. Return the index of that position.
     """
-    return i if i == len(positions)-1 or positions[i] != positions[i+1] \
-        else find_first_position_change(positions, i+1)
-
-
-def scaleX(x):
-    """Manual derived scaling function for the x-axis of the original SAR map."""
-    # Scale the amount to be within 1000 (leaving a 40px barrier on either side)
-    # NOTE Xrange is from 0 -- 1080
-    return (((x-22)/(99.7-22)) * 1000) + 40
-
-
-def scaleY(y):
-    """Manual derived scaling function for the y-axis of the original SAR map."""
-    # Scale the amount to be within 1100 (leaving a 40px barrier on either side)
-    # NOTE Yrange is from 0 -- 1180 AND the axes is inverted
-    return 1140 - ((((y-45)/(97-45)) * 1100) + 40)
+    i = 0
+    while i < len(positions)-1 and positions[i][1] < border_pt:
+        i += 1
+    return i
 
 
 def datetime_to_seconds(dt):
     """Convert a Python Datetime object into an amount in seconds."""
     return (dt.day*86400) + (dt.hour*3600) + (dt.minute*60) \
         + dt.second + (dt.microsecond*1e-6)
-
-
-def seconds_to_minutes(seconds):
-    """Convert seconds to minutes."""
-    return seconds / 60
 
 
 if __name__ == '__main__':
