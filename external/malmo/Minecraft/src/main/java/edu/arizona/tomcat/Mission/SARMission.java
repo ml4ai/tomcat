@@ -1,6 +1,7 @@
 package edu.arizona.tomcat.Mission;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import com.microsoft.Malmo.MalmoMod;
@@ -21,14 +22,21 @@ import edu.arizona.tomcat.Utils.Converter;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.World.Drawing;
 import edu.arizona.tomcat.World.TomcatEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class SARMission extends Mission {
 
 	public static final int NUMBER_OF_VILLAGERS = 4;
-	private static final int MAX_DISTANCE_TO_SAVE_VILLAGER = 1;
-
+	private static final int MAX_DISTANCE_TO_SAVE_VILLAGER = 1;	
+	private static final BlockPos[] CENTERS_OF_SINGLE_ROOMS = {new BlockPos(46, 64, 47), new BlockPos(93, 64, 53)};
+	private static final BlockPos[] CENTERS_OF_INTERNAL_ROOMS = {new BlockPos(52, 67, 89), new BlockPos(95, 64, 90),
+			new BlockPos(69, 64, 81), new BlockPos(63, 64, 63)};
+	private static final BlockPos[] CENTERS_OF_EXTERNAL_ROOMS = {new BlockPos(57, 64, 61), new BlockPos(72, 64, 75), 
+			new BlockPos(88, 64, 87)};
+	
 	private boolean dynamicInitializationComplete;
 	private UUID[] villagersIDs; 
 	private int numberOfVillagersSaved;
@@ -56,6 +64,7 @@ public class SARMission extends Mission {
 
 	@Override
 	protected void afterLastPhaseCompletion() {
+		this.removeAllEntities();
 		RichContent content = RichContent.createFromJson("sar_completion.json");
 		content.setTextPlaceholder(0, Integer.toString(this.numberOfVillagersSaved));
 		MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.SHOW_COMPLETION_SCREEN, new TomcatMessageData(content)), MinecraftServerHelper.getFirstPlayer());
@@ -65,11 +74,19 @@ public class SARMission extends Mission {
 
 	@Override
 	protected void onTimeOut() {
+		this.removeAllEntities();
 		RichContent content = RichContent.createFromJson("sar_completion.json");
 		content.setTextPlaceholder(0, Integer.toString(this.numberOfVillagersSaved));
 		MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.SHOW_COMPLETION_SCREEN, new TomcatMessageData(content)), MinecraftServerHelper.getFirstPlayer());
 		this.notifyAllAboutMissionEnding("1");
 		this.cleanup();
+	}
+	
+	public void removeAllEntities() {
+		World world = MinecraftServerHelper.getServer().getEntityWorld();
+		for(Entity entity : world.getLoadedEntityList()) {
+			world.removeEntity(entity);
+		}
 	}
 
 	@Override

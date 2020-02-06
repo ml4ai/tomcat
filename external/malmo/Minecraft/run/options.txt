@@ -15,8 +15,8 @@ difficulty:2
 fancyGraphics:false
 ao:0
 renderClouds:true
-resourcePacks:[]
-incompatibleResourcePacks:[]
+resourcePacks:["tomcat"]
+incompatibleResourcePacks:["tomcat"]
 lastServer:
 lang:en_us
 chatVisibility:0
@@ -81,9 +81,9 @@ key_key.hotbar.6:7
 key_key.hotbar.7:8
 key_key.hotbar.8:9
 key_key.hotbar.9:10
-key_key.toggleMalmo:28
 key_key.handyTestHook:22
-soundCategory_master:0.0
+key_key.displayInstructions:23
+soundCategory_master:1.0
 soundCategory_music:1.0
 soundCategory_record:1.0
 soundCategory_weather:1.0

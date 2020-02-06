@@ -171,6 +171,8 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 	}
 	
 	private void removeEntities(World world) {
+		System.out.println("===============> Removing entities");
+		System.out.println(this.entitiesToRemove.size());
 		Set<Entity> entities = this.entitiesToRemove.keySet();
 		for (Entity entity : entities) {
 			int remainingTime = Converter.getRemainingTimeInSeconds(world, this.entitiesToRemove.get(entity), 
@@ -325,7 +327,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 	}
 
 	public abstract PosAndDirection getPlayersInitialPositionAndDirection(EntityPlayerMP player);
-
+	
 	/**
 	 * Notifies listeners about the mission ending
 	 */
