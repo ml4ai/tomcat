@@ -158,7 +158,7 @@ public class TutorialMission extends Mission {
 	private void addLeaveTheBuildingPhase() {
 		RichContent instructions = RichContent.createFromJson("tutorial_instructions_end.json");
 		MissionPhase leaveTheBuildingPhase = new MissionPhase(instructions, CompletionStrategy.ALL_GOALS, 0, true, "Well Done!", 0, 2);
-		leaveTheBuildingPhase.addGoal(new ReachPositionGoal(-623, 4, 1579, 2));
+		leaveTheBuildingPhase.addGoal(new ReachPositionGoal(-630, 4, 1574, 2));
 		addPhase(leaveTheBuildingPhase);
 	}
 

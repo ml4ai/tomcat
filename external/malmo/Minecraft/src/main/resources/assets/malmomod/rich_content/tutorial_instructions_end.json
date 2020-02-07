@@ -21,7 +21,26 @@
     },
     {
       "text": [
-      	 "Finally, leave the building to complete the tutorial.",
+         "Another type of door you may find during a mission is an iron door.",
+         "To open it, right-click on the center of the lever located to the",
+         "left of such door."
+      ],
+      "images":
+      [
+        {
+          "texture": "textures1.png",
+          "caption": "Lever",
+          "originXInTexture": 32,
+          "originYInTexture": 32,
+          "width": 32,
+          "height": 32
+        }
+      ]
+    },
+    {
+      "text": [
+      	 "Finally, open the iron door in this room and leave the building to",
+         "complete the tutorial.",
          "",
          "Press OK when you are ready."
       ],
