@@ -47,4 +47,4 @@
 
 (defproblem sar-individual-problem sar-individual-domain ((room r1) (room r2) (triager t1) (in t1 r1)) (check-all-rooms))
   
-(find-plans 'sar-individual-problem :verbose :plans)
+(find-plans 'sar-individual-problem :verbose :long-plans)
