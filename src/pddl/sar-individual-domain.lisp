@@ -11,44 +11,40 @@
 ;; provides support for actions typing, equality, disjunctions, quantifiers,
 ;; and conditional-effects
 
-(defdomain (sar-individual0 :type pddl-domain :redefine-ok T)
-  (
-  ;;(:include sar-group #.(asdf:system-relative-pathname "sar-group-domain.lisp"))
-   (:types object
-           thing
-           human - object
-           triager victim - human
-           specialist - triager
-           firefighter excavator - specialist
-           agent - specialist
-           location
-           place - location
-           room
-           door
-           doorway - door
-           exit - door)
+(ql:quickload "shop3")
+(in-package :shop-user)
+(defdomain (sar-individual-domain :type pddl-domain :redefine-ok T) (
+   (:types human - object ;; Everything, including 'human' inherits from the base 'object' type
+           victim triager - human ;; The triager and the victims are humans.
+           room - object;; Rooms (includes elevators and bathrooms)
+   )
    
-   (:predicates (is ?object - object ?thing - thing)
-                (at ?o - object  ?l location)
-                (in ?object - object ?place object)
+   (:predicates (in ?h - human ?r - room)
                 (triaged ?v - victim)
                 (checked ?r - room))
 
-   (:- (and (at ?a ?b)
-       (at ?a ?b)
-       ()))
-   (:CONSTANTS P1 - HUMAN)
-   (:op (!move-to ?agent ?location ?destination))
-   (:op (!check-room ?agent ?room))
-   (:op (!extinguish ?agent ?room))
-   (:op (!excavate ?agent ?location ?victim))
-   (:op (!triage ?agent ?location ?victim))
-   (:op (!open ?agent ?door))
-  
-   (:method (move-to) ())
-   (:method (visiting-all-rooms) ())
-   (:method (coordinate-multiple-resources) ())
-   (:method (find-all-victims) ())
-   (:method (clear-multiple-blocks) ())
+  (:action check-room
+    :parameters (?t - triager ?r - room)
+    :precondition (and (not (checked ?r)) (in ?t ?r))
+    :effect (checked ?r))
+
+  (:action move-to
+    :parameters (?t - triager ?source - room ?destination - room)
+    :precondition ((not (in ?t ?destination)) (in ?t ?source))
+    :effect ((in ?t ?destination) (not (in ?t ?source))))
+
+  (:pddl-method (check-all-rooms)
+                NIL
+                (forall (?r - room)
+                        (check-room ?r))
   )
-)
+  (:action triage
+    :parameters (?t - triager ?v - victim ?r - room)
+    :precondition (and (not (triaged ?v)) (in ?t ?r)) 
+    :effect (triaged ?v)
+  )
+))
+
+(defproblem sar-individual-problem sar-individual-domain ((room r1) (room r2) (triager t1) (in t1 r1)) (check-all-rooms))
+  
+(find-plans 'sar-individual-problem :verbose :plans)
