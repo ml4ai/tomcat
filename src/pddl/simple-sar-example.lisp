@@ -26,7 +26,7 @@
 )
 
 (defproblem sar-example1 simple-sar
-  ((have triager) (have victim1) (have victim2) (have room1) (have room2) (in victim1 room1) (in victim2 room2) (in triager room1))
+  ((in victim1 room1) (in victim2 room2) (in triager room1))
   ((visit-rooms triager room1 room2)))
 
-(find-plans 'sar-example1 :verbose :plans)
+(find-plans 'sar-example1 :verbose :long-plans)
