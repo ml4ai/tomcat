@@ -38,14 +38,18 @@
       :precondition (and (not (triaged ?v)) (in ?t ?r)) 
       :effect (triaged ?v)
     )
-    (:pddl-method (main ?t ?r) 
-                  (in ?t ?r) 
-                  (!check-room ?t ?r))
+
+    (:method (main) 
+             ((not (checked ?r))) 
+             ((!check-room ?t ?r) (main))
+             ((checked ?r)) 
+             ((!move-to ?t ?r ?r2))
+             )
   )
 )
 
 (defproblem sar-individual-problem 
-            ((room r1) (room r2) (triager t1) (in t1 r1))
-            ((main t1 r1)))
+            ((room r2) (room r1) (triager t1) (in t1 r1))
+            ((main)))
   
 (find-plans 'sar-individual-problem :verbose :long-plans)
