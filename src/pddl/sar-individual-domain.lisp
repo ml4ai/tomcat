@@ -14,37 +14,38 @@
 (ql:quickload "shop3")
 (in-package :shop-user)
 (defdomain (sar-individual-domain :type pddl-domain :redefine-ok T) (
-   (:types human - object ;; Everything, including 'human' inherits from the base 'object' type
-           victim triager - human ;; The triager and the victims are humans.
-           room - object;; Rooms (includes elevators and bathrooms)
-   )
-   
-   (:predicates (in ?h - human ?r - room)
-                (triaged ?v - victim)
-                (checked ?r - room))
+    (:types human - object ;; Everything, including 'human' inherits from the base 'object' type
+            victim triager - human ;; The triager and the victims are humans.
+            room - object;; Rooms (includes elevators and bathrooms)
+    )
+    
+    (:predicates (in ?h - human ?r - room)
+                  (triaged ?v - victim)
+                  (checked ?r - room))
 
-  (:action check-room
-    :parameters (?t - triager ?r - room)
-    :precondition (and (not (checked ?r)) (in ?t ?r))
-    :effect (checked ?r))
+    (:action check-room
+      :parameters (?t - triager ?r - room)
+      :precondition (and (not (checked ?r)) (in ?t ?r))
+      :effect (checked ?r))
 
-  (:action move-to
-    :parameters (?t - triager ?source - room ?destination - room)
-    :precondition ((not (in ?t ?destination)) (in ?t ?source))
-    :effect ((in ?t ?destination) (not (in ?t ?source))))
+    (:action move-to
+      :parameters (?t - triager ?source - room ?destination - room)
+      :precondition ((not (in ?t ?destination)) (in ?t ?source))
+      :effect ((in ?t ?destination) (not (in ?t ?source))))
 
-  (:pddl-method (check-all-rooms)
-                NIL
-                (forall (?r - room)
-                        (check-room ?r))
+    (:action triage
+      :parameters (?t - triager ?v - victim ?r - room)
+      :precondition (and (not (triaged ?v)) (in ?t ?r)) 
+      :effect (triaged ?v)
+    )
+    (:pddl-method (main ?t ?r) 
+                  (in ?t ?r) 
+                  (!check-room ?t ?r))
   )
-  (:action triage
-    :parameters (?t - triager ?v - victim ?r - room)
-    :precondition (and (not (triaged ?v)) (in ?t ?r)) 
-    :effect (triaged ?v)
-  )
-))
+)
 
-(defproblem sar-individual-problem sar-individual-domain ((room r1) (room r2) (triager t1) (in t1 r1)) (check-all-rooms))
+(defproblem sar-individual-problem 
+            ((room r1) (room r2) (triager t1) (in t1 r1))
+            ((main t1 r1)))
   
 (find-plans 'sar-individual-problem :verbose :long-plans)
