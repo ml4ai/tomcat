@@ -152,18 +152,20 @@ public class SARMission extends Mission {
 		try {
 			Drawing drawing = new Drawing();
 
-			TomcatEntity villager1 = new TomcatEntity(this.villagersIDs[2], 69, 64, 81, EntityTypes.VILLAGER);
-			TomcatEntity villager2 = new TomcatEntity(this.villagersIDs[3], 63, 64, 63, EntityTypes.VILLAGER);
+			TomcatEntity villager1 = new TomcatEntity(this.villagersIDs[0], 69, 64, 81, EntityTypes.VILLAGER);
+			TomcatEntity villager2 = new TomcatEntity(this.villagersIDs[1], 63, 64, 63, EntityTypes.VILLAGER);
 			drawing.addObject(villager1);
 			drawing.addObject(villager2);
 
 			TomcatEntity[] villagerSet = new TomcatEntity[2];
+			int villagerID = 2;
 
 			for(TomcatEntity villager : villagerSet){
 				int[] currentCoordinates = getRandomCoordinates(usableCoordinateList);
 				int x= currentCoordinates[0],y = currentCoordinates[1], z = currentCoordinates[2];
 
-				villager = new TomcatEntity(this.villagersIDs[2], x, y, z, EntityTypes.VILLAGER);
+
+				villager = new TomcatEntity(this.villagersIDs[villagerID++], x, y, z, EntityTypes.VILLAGER);
 
 				drawing.addObject(villager);
 				usableCoordinateList.remove(currentCoordinates);
@@ -222,16 +224,15 @@ public class SARMission extends Mission {
 	    int j=0;
 
 	    for(int i=0;i<threePointCoordinates.length;i++){
-	        if(i%3==0){
-	        	if(!(unusableCoordinateList.contains(currentCoordinates))){
+	        currentCoordinates[j++]=threePointCoordinates[i];
+
+			if(((i+1)%3)==0){
+				if(!(unusableCoordinateList.contains(currentCoordinates))){
 					coordinateList.add(currentCoordinates);
 				}
 				currentCoordinates = new int[3];
-	            j=0;
-            }
-	        else{
-				currentCoordinates[j++]=threePointCoordinates[i];
-            }
+				j=0;
+			}
         }
 	    return coordinateList;
     }
