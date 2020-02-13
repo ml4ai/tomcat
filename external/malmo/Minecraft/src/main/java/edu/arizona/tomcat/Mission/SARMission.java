@@ -146,22 +146,34 @@ public class SARMission extends Mission {
 
 	/**
 	 * Spawn villagers in the mission
+	 * Villagers will not spawn at already used coordinates, but usually the list of
+	 * unusable coordinates at this stage is empty.
+	 *
 	 * @param world - Minecraft world
+	 *              - A usable set of spawn coordinates: A list of integer arrays (each array of size 3)
+	 *              where the arrays contain x,y,z coodinates. (List<int[]>)
+	 *              - An unusable set of coordinates barring villagers from spawning in certain places. This
+	 *              is also a list of integer arrays whre each array is size 3. (List<int[]>)
 	 */
 	private void spawnVillagers(World world, List<int[]> usableCoordinateList, List<int[]> unusableCoordinateList) {
 		try {
 			Drawing drawing = new Drawing();
 
-			TomcatEntity villager1 = new TomcatEntity(this.villagersIDs[0], 69, 64, 81, EntityTypes.VILLAGER);
-			TomcatEntity villager2 = new TomcatEntity(this.villagersIDs[1], 63, 64, 63, EntityTypes.VILLAGER);
+			// villager 1 and 2 will always spawn inside inner room of the complex buildings in the middle
+			// This is to prevent cases where those middle complex buildiings only have enemies
+			// The code can be changed easily if that is the desired outcome, however
+
+			int villagerID = 0;
+			TomcatEntity villager1 = new TomcatEntity(this.villagersIDs[villagerID++], 69, 64, 81, EntityTypes.VILLAGER);
+			TomcatEntity villager2 = new TomcatEntity(this.villagersIDs[villagerID++], 63, 64, 63, EntityTypes.VILLAGER);
+
 			drawing.addObject(villager1);
 			drawing.addObject(villager2);
 
 			TomcatEntity[] villagerSet = new TomcatEntity[2];
-			int villagerID = 2;
 
 			for(TomcatEntity villager : villagerSet){
-				int[] currentCoordinates = getRandomCoordinates(usableCoordinateList);
+				int[] currentCoordinates = getRandomListElement(usableCoordinateList);
 				int x= currentCoordinates[0],y = currentCoordinates[1], z = currentCoordinates[2];
 
 
@@ -169,7 +181,7 @@ public class SARMission extends Mission {
 
 				drawing.addObject(villager);
 				usableCoordinateList.remove(currentCoordinates);
-				unusableCoordinateList.add(currentCoordinates);
+				unusableCoordinateList.add(currentCoordinates); // we will not use this coordinate again
 			}
 			this.drawingHandler.draw(world, drawing);
 
@@ -180,7 +192,15 @@ public class SARMission extends Mission {
 
 	/**
 	 * Spawn enemies in the mission
+	 * Enemies will not spawn at coordinates already used (unusable list). This is
+	 * usually called after the villagers are spawned so enemies only spawn at
+	 * the remaining free locations.
+	 *
 	 * @param world - Minecraft world
+	 *              - A usable set of spawn coordinates: A list of integer arrays (each array of size 3)
+	 * 	 *              where the arrays contain x,y,z coodinates. (List<int[]>)
+	 * 	 *          - An unusable set of coordinates barring enemies from spawning in certain places. This
+	 * 	 *              is also a list of integer arrays where each array is size 3. (List<int[]>)
 	 */
 	private void spawnEnemies(World world, List<int[]> usableCoordinateList, List<int[]> unusableCoordinateList) {
 		try {
@@ -188,7 +208,7 @@ public class SARMission extends Mission {
 
 			TomcatEntity[] enemies = new TomcatEntity[usableCoordinateList.size()];
 			for(TomcatEntity enemy : enemies){
-				int[] currentCoordinates = getRandomCoordinates(usableCoordinateList);
+				int[] currentCoordinates = getRandomListElement(usableCoordinateList);
 				int x= currentCoordinates[0],y = currentCoordinates[1], z = currentCoordinates[2];
 
 				double mobRandomizer = Math.random();
@@ -202,7 +222,7 @@ public class SARMission extends Mission {
 
 				drawing.addObject(enemy);
 				usableCoordinateList.remove(currentCoordinates);
-				unusableCoordinateList.add(currentCoordinates);
+				unusableCoordinateList.add(currentCoordinates); // we will not use this coordinate again
 			}
 			this.drawingHandler.draw(world, drawing);
 
@@ -211,13 +231,34 @@ public class SARMission extends Mission {
 		}
 	}
 
-
-	private static int[] getRandomCoordinates(List<int[]> coordinateList){
-		int randomIndex = (int)(Math.random())*coordinateList.size();
-		return coordinateList.remove(randomIndex);
+	/**
+	 * Given a list of coordinates where the list is a list of integer arrays (each array of size 3)
+	 * this function will return a random element of the List.
+	 *
+	 * @param 		- List<int[]> list
+	 */
+	private static int[] getRandomListElement(List<int[]> List){
+		int randomIndex = (int)(Math.random())*List.size();
+		return List.remove(randomIndex);
 
 	}
 
+	/**
+	 * This function accepts an array of integers, but the array is expected to have a size
+	 * that is a multiple of 3.
+	 *
+	 * This function will then extract 3 elements at the time and
+	 * put them into arrays of size 3 that represent a coordinate (x,y,z).
+	 * This array is then added to a list as a new coordinate in the list of coordinates.
+	 *
+	 * It will coordinates passed in the list fo unusable coordinates.
+	 *
+	 * The resulting list is returned.
+	 *
+	 * @param 		- int[] array of coordinates
+	 *              - List<int[]> List of unuable coordinates where each element is an array of size 3.
+	 *
+	 */
 	private static List<int[]> createCoordinateList (int[] threePointCoordinates, List<int[]> unusableCoordinateList){
 	    List<int[]> coordinateList = new ArrayList<int[]>();
 	    int[] currentCoordinates = new int[3];
