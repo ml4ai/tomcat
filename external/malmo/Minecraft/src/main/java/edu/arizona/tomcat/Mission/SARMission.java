@@ -1,8 +1,7 @@
 package edu.arizona.tomcat.Mission;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.UUID;
+import java.util.*;
 
 import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.Schemas.EntityTypes;
@@ -131,61 +130,111 @@ public class SARMission extends Mission {
 		}
 	}
 
-	/**
-	 * Spawn entities in the mission when it starts
-	 */
-	private void spawnEntities(World world) {
-		this.spawnEnemies(world);
-		this.spawnVillagers(world);
-	}
 
-	/**
-	 * Spawn enemies in the mission
-	 * @param world - Minecraft world
-	 */
-	private void spawnEnemies(World world) {		
-		try {
-			Drawing drawing = new Drawing();
+	private void spawnEntities(World world){
+		int[] villagerPointCoordinates = {52,67,89,95,64,90,93,64,63,94,64,90,46,64,47,52,66,89};
+		List<int[]> unusableCoordinateList = new ArrayList<int[]>();
+		List<int[]> usableCoordinateList = createCoordinateList(villagerPointCoordinates, unusableCoordinateList);
 
-			TomcatEntity zombie1 = new TomcatEntity(46, 64, 47, EntityTypes.SKELETON);
-			TomcatEntity zombie2 = new TomcatEntity(93, 64, 53, EntityTypes.SKELETON);
-			TomcatEntity zombie3 = new TomcatEntity(57, 64, 61, EntityTypes.ZOMBIE);
-			TomcatEntity zombie4 = new TomcatEntity(72, 64, 75, EntityTypes.ZOMBIE);
-			TomcatEntity zombie5 = new TomcatEntity(88, 64, 87, EntityTypes.ZOMBIE);			
+		this.spawnVillagers(world, usableCoordinateList, unusableCoordinateList);
 
-			drawing.addObject(zombie1);
-			drawing.addObject(zombie2);
-			drawing.addObject(zombie3);
-			drawing.addObject(zombie4);
-			drawing.addObject(zombie5);
-			this.drawingHandler.draw(world, drawing);			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		int[] enemyPointCoordinates = {46,64,47,93,64,53,57,64,61,72,64,75,88,64,87};
+		usableCoordinateList = createCoordinateList(enemyPointCoordinates,unusableCoordinateList);
+
+		this.spawnEnemies(world, usableCoordinateList, unusableCoordinateList);
 	}
 
 	/**
 	 * Spawn villagers in the mission
 	 * @param world - Minecraft world
 	 */
-	private void spawnVillagers(World world) {
+	private void spawnVillagers(World world, List<int[]> usableCoordinateList, List<int[]> unusableCoordinateList) {
 		try {
 			Drawing drawing = new Drawing();
 
-			TomcatEntity villager1 = new TomcatEntity(this.villagersIDs[0], 52, 67, 89, EntityTypes.VILLAGER);
-			TomcatEntity villager2 = new TomcatEntity(this.villagersIDs[1], 95, 64, 90, EntityTypes.VILLAGER);
-			TomcatEntity villager3 = new TomcatEntity(this.villagersIDs[2], 69, 64, 81, EntityTypes.VILLAGER);
-			TomcatEntity villager4 = new TomcatEntity(this.villagersIDs[3], 63, 64, 63, EntityTypes.VILLAGER);		
-
+			TomcatEntity villager1 = new TomcatEntity(this.villagersIDs[2], 69, 64, 81, EntityTypes.VILLAGER);
+			TomcatEntity villager2 = new TomcatEntity(this.villagersIDs[3], 63, 64, 63, EntityTypes.VILLAGER);
 			drawing.addObject(villager1);
 			drawing.addObject(villager2);
-			drawing.addObject(villager3);
-			drawing.addObject(villager4);
-			this.drawingHandler.draw(world, drawing);			
+
+			TomcatEntity[] villagerSet = new TomcatEntity[2];
+
+			for(TomcatEntity villager : villagerSet){
+				int[] currentCoordinates = getRandomCoordinates(usableCoordinateList);
+				int x= currentCoordinates[0],y = currentCoordinates[1], z = currentCoordinates[2];
+
+				villager = new TomcatEntity(this.villagersIDs[2], x, y, z, EntityTypes.VILLAGER);
+
+				drawing.addObject(villager);
+				usableCoordinateList.remove(currentCoordinates);
+				unusableCoordinateList.add(currentCoordinates);
+			}
+			this.drawingHandler.draw(world, drawing);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+
+	/**
+	 * Spawn enemies in the mission
+	 * @param world - Minecraft world
+	 */
+	private void spawnEnemies(World world, List<int[]> usableCoordinateList, List<int[]> unusableCoordinateList) {
+		try {
+			Drawing drawing = new Drawing();
+
+			TomcatEntity[] enemies = new TomcatEntity[usableCoordinateList.size()];
+			for(TomcatEntity enemy : enemies){
+				int[] currentCoordinates = getRandomCoordinates(usableCoordinateList);
+				int x= currentCoordinates[0],y = currentCoordinates[1], z = currentCoordinates[2];
+
+				double mobRandomizer = Math.random();
+
+				if(mobRandomizer > 0.7){
+					enemy = new TomcatEntity(x, y, z, EntityTypes.SKELETON);
+				}
+				else{
+					enemy = new TomcatEntity(	x, y, z, EntityTypes.ZOMBIE);
+				}
+
+				drawing.addObject(enemy);
+				usableCoordinateList.remove(currentCoordinates);
+				unusableCoordinateList.add(currentCoordinates);
+			}
+			this.drawingHandler.draw(world, drawing);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	private static int[] getRandomCoordinates(List<int[]> coordinateList){
+		int randomIndex = (int)(Math.random())*coordinateList.size();
+		return coordinateList.remove(randomIndex);
+
+	}
+
+	private static List<int[]> createCoordinateList (int[] threePointCoordinates, List<int[]> unusableCoordinateList){
+	    List<int[]> coordinateList = new ArrayList<int[]>();
+	    int[] currentCoordinates = new int[3];
+	    int j=0;
+
+	    for(int i=0;i<threePointCoordinates.length;i++){
+	        if(i%3==0){
+	        	if(!(unusableCoordinateList.contains(currentCoordinates))){
+					coordinateList.add(currentCoordinates);
+				}
+				currentCoordinates = new int[3];
+	            j=0;
+            }
+	        else{
+				currentCoordinates[j++]=threePointCoordinates[i];
+            }
+        }
+	    return coordinateList;
+    }
 
 	/**
 	 * Add items to the player's inventory to help them accomplish the mission goals
