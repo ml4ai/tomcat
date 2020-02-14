@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -12,6 +13,9 @@ import com.microsoft.Malmo.MalmoMod;
 public class SelfReportContent {
 	
 	private String id;
+	private ArrayList<String> firstTimePreamble;
+	private ArrayList<String> recurrentPreamble;
+	private ArrayList<String> speechAfterQuestions;
 	private List<SelfReportQuestion> questions;
 	private float durationInSeconds;
 
@@ -44,7 +48,7 @@ public class SelfReportContent {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 		Gson gson = new Gson();
 		content = gson.fromJson(reader, SelfReportContent.class);
-		content.id = id;
+		content.id = id;		
 		return content;
 	}
 
@@ -98,8 +102,31 @@ public class SelfReportContent {
 	 */
 	public float getDurationInSeconds() {
 		return durationInSeconds;
+	}
+	
+	/**
+	 * Gets the preamble text that must show up in the first appearance of a self-report
+	 * @return
+	 */
+	public Iterator<String> getFirstTimePreamble() {
+		return this.firstTimePreamble.iterator();
+	}
+
+	/**
+	 * Gets the preamble text that must show up for recurrent self-reports
+	 * @return
+	 */
+	public Iterator<String> getRecurrentPreamble() {
+		return this.recurrentPreamble.iterator();
+	}
+
+	/**
+	 * Gets the text that must show up after the last question was answered
+	 * @return
+	 */
+	public Iterator<String> getSpeechAfterQuestions() {
+		return this.speechAfterQuestions.iterator();
 	}		
-	
-	
+		
 
 }

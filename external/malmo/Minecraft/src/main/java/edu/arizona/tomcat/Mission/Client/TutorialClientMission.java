@@ -13,6 +13,7 @@ public class TutorialClientMission extends ClientMission {
 	private enum CAMERA_PERSPECTIVE {FIRST_PERSON, BACK_VIEW, FRONT_VIEW};
 
 	public TutorialClientMission() {
+		super();
 		// Sets indicator of number of villagers saved to be rerendered by a Minecraft event schema.
 		MinecraftForge.EVENT_BUS.register(new GUIOverlayVillagersSaved(TutorialMission.NUMBER_OF_VILLAGERS));
 	}

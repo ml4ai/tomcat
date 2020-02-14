@@ -16,6 +16,13 @@ import net.minecraft.client.gui.GuiScreen;
 
 public abstract class ClientMission implements ScreenListener {
 	
+	private boolean firstTimeSelfReportRequest;
+	
+	protected ClientMission() {
+		System.out.println("=========================> Client Mission initialization");
+		this.firstTimeSelfReportRequest = true;
+	}
+	
 	/**
 	 * Handle message from the server side
 	 */
@@ -42,8 +49,10 @@ public abstract class ClientMission implements ScreenListener {
 			break;	
 		
 		case SHOW_SELF_REPORT:
-			SelfReportScreen selfReportScreen = new SelfReportScreen(message.getMessageData().getSelfReport(), true);
+			SelfReportScreen selfReportScreen;
+			selfReportScreen = new SelfReportScreen(message.getMessageData().getSelfReport(), true, this.firstTimeSelfReportRequest);
 			selfReportScreen.addListener(this);
+			this.firstTimeSelfReportRequest = false;
 			Minecraft.getMinecraft().displayGuiScreen(selfReportScreen);			
 			break;
 
