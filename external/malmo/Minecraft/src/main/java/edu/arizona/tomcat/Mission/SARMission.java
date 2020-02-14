@@ -1,7 +1,6 @@
 package edu.arizona.tomcat.Mission;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.UUID;
 
 import com.microsoft.Malmo.MalmoMod;
@@ -24,18 +23,12 @@ import edu.arizona.tomcat.World.Drawing;
 import edu.arizona.tomcat.World.TomcatEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class SARMission extends Mission {
 
 	public static final int NUMBER_OF_VILLAGERS = 4;
 	private static final int MAX_DISTANCE_TO_SAVE_VILLAGER = 1;	
-	private static final BlockPos[] CENTERS_OF_SINGLE_ROOMS = {new BlockPos(46, 64, 47), new BlockPos(93, 64, 53)};
-	private static final BlockPos[] CENTERS_OF_INTERNAL_ROOMS = {new BlockPos(52, 67, 89), new BlockPos(95, 64, 90),
-			new BlockPos(69, 64, 81), new BlockPos(63, 64, 63)};
-	private static final BlockPos[] CENTERS_OF_EXTERNAL_ROOMS = {new BlockPos(57, 64, 61), new BlockPos(72, 64, 75), 
-			new BlockPos(88, 64, 87)};
 	
 	private boolean dynamicInitializationComplete;
 	private UUID[] villagersIDs; 

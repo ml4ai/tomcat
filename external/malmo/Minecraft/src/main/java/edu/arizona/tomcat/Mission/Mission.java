@@ -24,7 +24,6 @@ import edu.arizona.tomcat.Mission.Client.ClientMission;
 import edu.arizona.tomcat.Mission.gui.FeedbackListener;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 import edu.arizona.tomcat.Utils.Converter;
-import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.World.DrawingHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -171,8 +170,6 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 	}
 	
 	private void removeEntities(World world) {
-		System.out.println("===============> Removing entities");
-		System.out.println(this.entitiesToRemove.size());
 		Set<Entity> entities = this.entitiesToRemove.keySet();
 		for (Entity entity : entities) {
 			int remainingTime = Converter.getRemainingTimeInSeconds(world, this.entitiesToRemove.get(entity), 
@@ -239,7 +236,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 
 			if(elapsedTime%this.selfReportPromptTimeInSeconds == 0 && this.canShowSelfReport) {
 				SelfReportContent content = this.getSelfReportContent(world);
-				MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.SHOW_SELF_REPORT, new TomcatMessageData(content)), MinecraftServerHelper.getFirstPlayer());
+				MalmoMod.network.sendToAll(new TomcatMessaging.TomcatMessage(TomcatMessageType.SHOW_SELF_REPORT, new TomcatMessageData(content)));
 				this.canShowSelfReport = false;
 			}
 		}
@@ -256,7 +253,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 	 * @return
 	 */
 	protected abstract SelfReportContent getSelfReportContent(World world);
-
+	
 	@Override
 	public void emotionProvided(EmotionHandler.Emotion emotion) {
 		this.currentEmotion = emotion;		
