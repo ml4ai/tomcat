@@ -221,7 +221,7 @@ public class SARMission extends Mission {
 
                     villager = new TomcatEntity(this.villagersIDs[i], x, y, z, EntityTypes.VILLAGER);
                     ((MultiRoomBuilding) randomBuilding).markRoomAsFilled(coordinates); // Marking this room as used
-                    
+
                     this.fillRemainingWithEnemies(drawing, (MultiRoomBuilding) randomBuilding);
 
                 } else {
@@ -263,7 +263,7 @@ public class SARMission extends Mission {
      * drawingHandler
      *
      * @param drawing - An instance of Drawing
-     * @param mlb     - An instance of a Multiroom building
+     * @param mlb     - An instance of a MultiRoom building
      */
     private void fillRemainingWithEnemies(Drawing drawing, MultiRoomBuilding mlb) {
         if (mlb.mainRoomIsFilled()) {

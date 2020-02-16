@@ -93,6 +93,7 @@ public class MultiRoomBuilding extends Building {
      */
     public void markRoomAsFilled(int[] coordinate) {
         int[] mainRoomCoord = {this.getX(), this.getY(), this.getZ()};
+
         if (coordinate.equals(mainRoomCoord)) {
             this.fillMainRoom();
         } else if (this.additionalRooms.contains(coordinate)) {

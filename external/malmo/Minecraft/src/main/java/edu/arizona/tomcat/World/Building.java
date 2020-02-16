@@ -80,10 +80,6 @@ public class Building {
      * @return boolean - true or false depending on if the main room is filled or not.
      */
     public boolean mainRoomIsFilled() {
-        if (this.mainRoomFilled) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.mainRoomFilled;
     }
 }
