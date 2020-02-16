@@ -1,9 +1,26 @@
 {
+  "firstTimePreamble":
+  [
+      "ToMCAT here. I’d like to know how you’re feeling. First, can",
+      "you use the buttons to tell me briefly how you’re feeling? Then",
+      "I’ll ask you to tell me out loud in more detail. Thanks!"
+  ],
+  "recurrentPreamble":
+  [
+      "Hi again. Can you please tell me how you’re feeling now,",
+      "first with the buttons and then out loud? Thanks!"
+  ],
+  "speechAfterQuestions":
+  [
+      "Thanks! Now, can you tell me out loud in more detail about what",
+      "you’re feeling? Take your time and tell me as much as you can.",
+      "When you’re done, click the button to move on."
+  ],
   "questions":
   [
     {
       "text": [
-         "How positive are you feeling about the agent right now?"
+        "How positive are you feeling about the agent right now?"
       ],
       "choices":
       [ 
@@ -25,7 +42,7 @@
     },
     {
       "text": [
-         "How positive are you feeling about the video game right now?"
+         "How positive are you feeling about the mission right now?"
       ],
       "choices":
       [
@@ -36,13 +53,59 @@
     },
     {
       "text": [
-         "How negative are you feeling about the video game right now?"
+         "How negative are you feeling about the mission right now?"
       ],
       "choices":
       [
         "Not at all negative",
         "Somewhat negative",
         "Very negative"
+      ]
+    },
+    {
+      "text": [
+         "How worried are you that you aren’t doing well in the mission?"
+      ],
+      "choices":
+      [
+        "Not at all worried",
+        "Somewhat worried",
+        "Very worried"
+      ]
+    },
+    {
+      "text": [
+         "How excited are you about the possibility of winning the",
+         "top-scoring award?"
+      ],
+      "choices":
+      [
+        "Not at all excited",
+        "Somewhat excited",
+        "Very excited"
+      ]
+    },
+    {
+      "text": [
+         "How much are you trying to avoid getting hurt or killed",
+         "by the creatures?"
+      ],
+      "choices":
+      [
+        "Not at all",
+        "Somewhat",
+        "Very"
+      ]
+    },
+    {
+      "text": [
+         "How much are you trying to attack and kill the creatures?"
+      ],
+      "choices":
+      [
+        "Not at all",
+        "Somewhat",
+        "Very"
       ]
     }
   ]

@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class SARMission extends Mission {
-
+    
     public static final int NUMBER_OF_VILLAGERS = 4;
     private static final int MAX_DISTANCE_TO_SAVE_VILLAGER = 1;
 
@@ -359,4 +359,5 @@ public class SARMission extends Mission {
     protected void onPlayerDeath() {
         this.onTimeOut();
     }
+
 }

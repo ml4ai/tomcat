@@ -12,6 +12,7 @@ public class SARClientMission extends ClientMission {
 	private int numberOfSavedVillagers;
 
 	public SARClientMission() {
+		super();
 		// Sets indicator of number of villagers saved to be rerendered by a Minecraft event schema.
 		MinecraftForge.EVENT_BUS.register(new GUIOverlayVillagersSaved(SARMission.NUMBER_OF_VILLAGERS));
 	}
