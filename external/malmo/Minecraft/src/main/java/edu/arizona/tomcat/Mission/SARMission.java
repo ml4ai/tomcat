@@ -17,7 +17,7 @@ import edu.arizona.tomcat.Utils.Converter;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.World.Building;
 import edu.arizona.tomcat.World.Drawing;
-import edu.arizona.tomcat.World.MultiroomBuilding;
+import edu.arizona.tomcat.World.MultiRoomBuilding;
 import edu.arizona.tomcat.World.TomcatEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -62,13 +62,13 @@ public class SARMission extends Mission {
         Building singleRoomBuilding3 = new Building(52, 66, 89);
 
         //MultiRoom Buildings
-        MultiroomBuilding multiRoomBuilding1 = new MultiroomBuilding(57, 64, 61);
+        MultiRoomBuilding multiRoomBuilding1 = new MultiRoomBuilding(57, 64, 61);
         multiRoomBuilding1.addRoom(63, 64, 63);
 
-        MultiroomBuilding multiRoomBuilding2 = new MultiroomBuilding(72, 64, 75);
+        MultiRoomBuilding multiRoomBuilding2 = new MultiRoomBuilding(72, 64, 75);
         multiRoomBuilding2.addRoom(69, 64, 81);
 
-        MultiroomBuilding multiRoomBuilding3 = new MultiroomBuilding(88, 64, 87);
+        MultiRoomBuilding multiRoomBuilding3 = new MultiRoomBuilding(88, 64, 87);
         multiRoomBuilding3.addRoom(94, 64, 90);
 
         // Creating List
@@ -102,16 +102,14 @@ public class SARMission extends Mission {
      * @param mlb - Instance of MultiRoomBuilding
      * @return int[] Integer array of size 3 with coordinates {x,y,z}
      */
-    private static int[] getRandomRoom(MultiroomBuilding mlb) {
+    private static int[] getRandomRoom(MultiRoomBuilding mlb) {
         double randomize = Math.random();
 
         if (randomize > 0.5) {
-            int[] coordinates = {mlb.getX(), mlb.getY(), mlb.getZ()};
-            return coordinates;
+            return new int[]{mlb.getX(), mlb.getY(), mlb.getZ()};
         } else {
             int randomIndex = (int) (Math.random()) * (mlb.getNumberOfAdditionalRooms());
-            int[] coordinates = mlb.getAdditionalRooms().get(randomIndex);
-            return coordinates;
+            return mlb.getAdditionalRooms().get(randomIndex);
 
         }
     }
@@ -217,20 +215,21 @@ public class SARMission extends Mission {
                 Building randomBuilding = getRandomBuilding();
                 TomcatEntity villager;
 
-                if (randomBuilding instanceof MultiroomBuilding) {
-                    int[] coordinates = getRandomRoom((MultiroomBuilding) randomBuilding);
+                if (randomBuilding instanceof MultiRoomBuilding) {
+                    int[] coordinates = getRandomRoom((MultiRoomBuilding) randomBuilding);
                     int x = coordinates[0], y = coordinates[1], z = coordinates[2];
-                    ((MultiroomBuilding) randomBuilding).markRoomAsFilled(coordinates); // Marking this room as used
 
                     villager = new TomcatEntity(this.villagersIDs[i], x, y, z, EntityTypes.VILLAGER);
-                    this.fillRemainingWithEnemies(drawing, (MultiroomBuilding) randomBuilding);
+                    ((MultiRoomBuilding) randomBuilding).markRoomAsFilled(coordinates); // Marking this room as used
+                    
+                    this.fillRemainingWithEnemies(drawing, (MultiRoomBuilding) randomBuilding);
 
                 } else {
                     // Normal Building with one room so there's only one set of coordinates we can use
                     int x = randomBuilding.getX(), y = randomBuilding.getY(), z = randomBuilding.getZ();
                     villager = new TomcatEntity(this.villagersIDs[i], x, y, z, EntityTypes.VILLAGER);
 
-                    randomBuilding.setMainRoomStatusToFilled();
+                    randomBuilding.fillMainRoom();
                 }
                 drawing.addObject(villager);
                 this.availableListOfBuildings.remove(randomBuilding);
@@ -238,13 +237,13 @@ public class SARMission extends Mission {
 
             // All rooms in all remaining buildings are filled with random enemies
             for (Building building : this.availableListOfBuildings) {
-                if (building instanceof MultiroomBuilding) {
-                    fillRemainingWithEnemies(drawing, (MultiroomBuilding) building);
+                if (building instanceof MultiRoomBuilding) {
+                    fillRemainingWithEnemies(drawing, (MultiRoomBuilding) building);
                 } else {
                     int x = building.getX(), y = building.getY(), z = building.getZ();
                     TomcatEntity enemy = new TomcatEntity(x, y, z, getRandomEnemy());
                     drawing.addObject(enemy);
-                    building.setMainRoomStatusToFilled();
+                    building.fillMainRoom();
                 }
             }
 
@@ -266,7 +265,7 @@ public class SARMission extends Mission {
      * @param drawing - An instance of Drawing
      * @param mlb     - An instance of a Multiroom building
      */
-    private void fillRemainingWithEnemies(Drawing drawing, MultiroomBuilding mlb) {
+    private void fillRemainingWithEnemies(Drawing drawing, MultiRoomBuilding mlb) {
         if (mlb.mainRoomIsFilled()) {
             List<int[]> additionalRooms = mlb.getAdditionalRooms();
             List<int[]> filledAdditionalRooms = mlb.getFilledAdditionalRooms();
@@ -288,7 +287,7 @@ public class SARMission extends Mission {
             TomcatEntity enemy = new TomcatEntity(x, y, z, getRandomEnemy());
 
             drawing.addObject(enemy);
-            mlb.setMainRoomStatusToFilled();
+            mlb.fillMainRoom();
 
             // After filling the main room, it will recurse to fill any remaining additional rooms
             fillRemainingWithEnemies(drawing, mlb);
