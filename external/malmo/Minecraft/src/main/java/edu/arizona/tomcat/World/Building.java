@@ -51,6 +51,7 @@ public class Building {
      * This method is meant to be overridden. When it is called from an extended class
      * it will fill the indicated room, otherwise if it is called from an instance of Building,
      * it simply marks the main room as filled.
+     *
      * @param coordinate - BlockPos coordinates of room to be filled
      */
     public void markRoomAsFilled(BlockPos coordinate) {

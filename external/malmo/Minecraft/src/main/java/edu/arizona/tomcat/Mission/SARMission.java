@@ -226,7 +226,8 @@ public class SARMission extends Mission {
                 int x = coordinates.getX(), y = coordinates.getY(), z = coordinates.getZ();
 
                 TomcatEntity villager = new TomcatEntity(this.villagersIDs[i], x, y, z, EntityTypes.VILLAGER);
-                randomBuilding.markRoomAsFilled(coordinates); // Marking this room as used
+                randomBuilding.markRoomAsFilled(coordinates); // Marking this room as used.
+                // The building type doesn't matter above because of the overridden methods for marking filled rooms.
 
                 if (randomBuilding instanceof MultiRoomBuilding) {
                     this.fillRemainingWithEnemies(drawing, (randomBuilding));
@@ -255,7 +256,7 @@ public class SARMission extends Mission {
      * <p>
      * This method can handle both single and MultiRoom Buildings.
      * <p>
-     * This method only modified the Drawing instance and does not call the
+     * This method only modifies the Drawing instance and does not call the
      * drawingHandler
      *
      * @param drawing  - An instance of Drawing
@@ -278,7 +279,7 @@ public class SARMission extends Mission {
             }
 
         } else if (!building.mainRoomIsFilled()) {
-            // If the Main room is still empty
+            // If the Main room is still empty for either a normal or MultiRoom Building
             BlockPos mainRoomCoords = building.getMainRoomCoordinates();
             int x = mainRoomCoords.getX(), y = mainRoomCoords.getY(), z = mainRoomCoords.getZ();
             TomcatEntity enemy = new TomcatEntity(x, y, z, getRandomEnemy());
@@ -289,7 +290,7 @@ public class SARMission extends Mission {
             // After filling the main room, it will recurse to fill any remaining additional rooms
             fillRemainingWithEnemies(drawing, building);
         } else {
-            ; //pass. This is when a normal building has it's main room filled.
+            ; //pass. This is when a normal building has it's main room filled. It ends the recursive call for that case.
         }
 
 
@@ -299,6 +300,8 @@ public class SARMission extends Mission {
      * This method will return a random building from the global variable
      * which stores the available list of buildings. The
      * buildings returned may be an instance of MultiRoomBuilding.
+     *
+     * @return Building - An instance of Building which may be either a normal or MultiRoom Building
      */
     private Building getRandomBuilding() {
         int randomIndex = (int) (Math.random()) * this.availableListOfBuildings.size();
