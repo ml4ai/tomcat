@@ -1,4 +1,5 @@
 package edu.arizona.tomcat.World;
+import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +16,8 @@ import java.util.List;
  */
 public class MultiRoomBuilding extends Building {
 
-    private List<int[]> additionalRooms;
-    private List<int[]> filledAdditionalRooms;
+    private List<BlockPos> additionalRooms;
+    private List<BlockPos> filledAdditionalRooms;
 
     /**
      * This constructor requires the x,y and z coordinates of the main room of the building.
@@ -27,47 +28,45 @@ public class MultiRoomBuilding extends Building {
      */
     public MultiRoomBuilding(int x, int y, int z) {
         super(x, y, z);
-        this.additionalRooms = new ArrayList<int[]>();
-        this.filledAdditionalRooms = new ArrayList<int[]>();
+        this.additionalRooms = new ArrayList<BlockPos>();
+        this.filledAdditionalRooms = new ArrayList<BlockPos>();
     }
 
     /**
      * This method will add a room with the coordinates x,y,z to the MultiRoomBuilding.
-     * This new room is called an additional room and is the second room in the building
-     * after the main room.
+     * This new room is called an additional room.
      *
      * @param x - The x coordinate of the building as an integer
      * @param y - The y coordinate of the building as an integer
      * @param z - The z coordinate of the building as an integer
      */
     public void addRoom(int x, int y, int z) {
-        int[] newRoom = {x, y, z};
-        this.additionalRooms.add(newRoom);
+        this.additionalRooms.add(new BlockPos(x, y, z));
     }
 
     /**
      * This method will return a list of the additional rooms in the building
-     * as a list of coordinates. each integer array in the returned list
-     * is of size 3 and stores x,y,z coordinates for an additional room.
+     * as a list of coordinates where each coordinate corresponds to one
+     * additional room. Each coordinate is a BlockPos object.
      * <p>
-     * The main room is not included in this list.Use the superclass method for that.
+     * The main room is not included in this list. Use the superclass method for that.
      *
-     * @return List<int [ ]> - A list of size 3 arrays representing the coordinates of the additional rooms
+     * @return List<BlockPos> - A list of BlockPos representing the coordinates of the additional rooms
      */
-    public List<int[]> getAdditionalRooms() {
+    public List<BlockPos> getAdditionalRooms() {
         return this.additionalRooms;
     }
 
     /**
      * This method will return a list of the filled additional rooms in the building
-     * as a list of coordinates. each integer array in the returned list
-     * is of size 3 and stores x,y,z coordinates for a filled additional room.
+     * as a list of coordinates where each coordinate corresponds to one
+     * additional room. Each coordinate is a BlockPos object.
      * <p>
      * The main room is never included in this list. Use the superclass method for that.
      *
-     * @return List<int [ ]> - A list of size 3 arrays representing the coordinates of the additional rooms
+     * @return List<BlockPos> - A list of BlockPos representing the coordinates of the filled additional rooms
      */
-    public List<int[]> getFilledAdditionalRooms() {
+    public List<BlockPos> getFilledAdditionalRooms() {
         return this.filledAdditionalRooms;
     }
 
@@ -88,11 +87,11 @@ public class MultiRoomBuilding extends Building {
      * If the coordinates passed are not of the main room or any of the additional rooms, then
      * nothing will change.
      *
-     * @param coordinate - int[x,y,z], an array of size 3 representing a 3 point coordinate for
-     *                   the room to be marked as filled.
+     * @param coordinate - BlockPos object of coordinates
      */
-    public void markRoomAsFilled(int[] coordinate) {
-        int[] mainRoomCoord = {this.getX(), this.getY(), this.getZ()};
+    @Override
+    public void markRoomAsFilled(BlockPos coordinate) {
+        BlockPos mainRoomCoord = this.getMainRoomCoordinates();
 
         if (coordinate.equals(mainRoomCoord)) {
             this.fillMainRoom();

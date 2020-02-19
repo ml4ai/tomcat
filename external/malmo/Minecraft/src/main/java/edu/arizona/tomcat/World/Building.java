@@ -1,5 +1,7 @@
 package edu.arizona.tomcat.World;
 
+import net.minecraft.util.math.BlockPos;
+
 /**
  * This file contains the Building class which can be instantiated to represent
  * a single room building in Minecraft. At the time it is created, the instance
@@ -12,7 +14,7 @@ package edu.arizona.tomcat.World;
  */
 public class Building {
 
-    private int[] mainRoomCoordinates;
+    private BlockPos mainRoomCoordinates;
     private boolean mainRoomFilled;
 
     /**
@@ -23,38 +25,18 @@ public class Building {
      * @param z - The z coordinate of the building as an integer
      */
     public Building(int x, int y, int z) {
-        this.mainRoomCoordinates = new int[3];
-        this.mainRoomCoordinates[0] = x;
-        this.mainRoomCoordinates[1] = y;
-        this.mainRoomCoordinates[2] = z;
+        this.mainRoomCoordinates = new BlockPos(x, y, z);
         this.mainRoomFilled = false;
     }
 
     /**
-     * This method will return the x coordinate of the main room
+     * This method will return coordinates of the main room as a a
+     * BlockPos object.
      *
-     * @return int - coordinate on x axis
+     * @return BlockPos - Three point coordinate of the main room
      */
-    public int getX() {
-        return this.mainRoomCoordinates[0];
-    }
-
-    /**
-     * This method will return the y coordinate of the main room
-     *
-     * @return int - coordinate on y axis
-     */
-    public int getY() {
-        return this.mainRoomCoordinates[1];
-    }
-
-    /**
-     * This method will return the z coordinate of the main room
-     *
-     * @return int - coordinate on z axis
-     */
-    public int getZ() {
-        return this.mainRoomCoordinates[2];
+    public BlockPos getMainRoomCoordinates() {
+        return this.mainRoomCoordinates;
     }
 
     /**
@@ -63,6 +45,16 @@ public class Building {
      */
     public void fillMainRoom() {
         this.mainRoomFilled = true;
+    }
+
+    /**
+     * This method is meant to be overridden. When it is called from an extended class
+     * it will fill the indicated room, otherwise if it is called from an instance of Building,
+     * it simply marks the main room as filled.
+     * @param coordinate - BlockPos coordinates of room to be filled
+     */
+    public void markRoomAsFilled(BlockPos coordinate) {
+        this.fillMainRoom();
     }
 
     /**
@@ -82,4 +74,6 @@ public class Building {
     public boolean mainRoomIsFilled() {
         return this.mainRoomFilled;
     }
+
+
 }
