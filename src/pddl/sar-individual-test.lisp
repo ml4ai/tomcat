@@ -46,12 +46,12 @@
                        (:task main))
 
              room-checked-victim-found 
-             (and (checked ?r) (in v1 ?r) (not (triaged ?v))) 
+             (and (checked ?r) (forall (?v - victim) (in ?v ?r)) (not (triaged ?v))) 
              (:ordered (:task :immediate !triage ?t ?v ?r)
                        (:task main))
 
              room-checked-victim-triaged
-             (and (checked ?r) (in v1 ?r) (triaged ?v))
+             (and (checked ?r) (forall (?v - victim) (in ?v ?r)) (triaged ?v))
              ((:task !move-to ?t ?r ?r2))
 
              room-checked-no-victim
