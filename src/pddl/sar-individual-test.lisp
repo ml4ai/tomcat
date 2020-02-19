@@ -13,12 +13,13 @@
 
 (ql:quickload "shop3")
 (in-package :shop-user)
+;;(shop-trace :all)
 (defdomain (sar-individual-domain :type pddl-domain :redefine-ok T) (
     (:types human - object ;; Everything, including 'human' inherits from the base 'object' type
             victim rescuer - human ;; The rescuer and the victims are humans.
             room - object;; Rooms (includes elevators and bathrooms)
     )
-    
+   
     (:predicates (in ?h - human ?r - room)
                   (triaged ?v - victim)
                   (checked ?r - room))
@@ -39,30 +40,30 @@
       :effect (triaged ?v)
     )
 
-    (:method (main) 
+    (:method (main ?t ?v) 
              room-not-checked
              ((not (checked ?r))) 
              (:ordered (:task :immediate !check-room ?t ?r) 
-                       (:task main))
+                       (:task main ?t ?v))
 
              room-checked-victim-found 
-             (and (checked ?r) (forall (?v - victim) (in ?v ?r)) (not (triaged ?v))) 
+             (and (checked ?r) (same-room ?t ?v ?r) (not (triaged ?v))) 
              (:ordered (:task :immediate !triage ?t ?v ?r)
-                       (:task main))
+                       (:task main ?t ?v))
 
-             room-checked-victim-triaged
-             (and (checked ?r) (forall (?v - victim) (in ?v ?r)) (triaged ?v))
-             ((:task !move-to ?t ?r ?r2))
-
-             room-checked-no-victim
+             room-checked-all-triaged
              ((checked ?r))
              ((:task !move-to ?t ?r ?r2))
              )
+
+    (:- (same-room ?t ?v ?r) (and (different ?t ?v) (in ?t ?r) (in ?v ?r)))
+    (:- (same ?x ?x) nil)
+    (:- (different ?x ?y) ((eval (not (eq '?x '?y))))) ;(not (same ?x ?y))))
   )
 )
 
 (defproblem sar-individual-problem 
-            ((room r2) (room r1) (rescuer t1) (victim v1) (in t1 r1) (in v1 r1))
-            ((main)))
+            ((room r2) (room r1) (rescuer t1) (victim v1) (in t1 r1) (in v1 r2))
+            ((main t1 v1)))
   
-(find-plans 'sar-individual-problem :verbose :long-plans)
+(find-plans 'sar-individual-problem :which :all :verbose :long-plans :plan-tree t)
