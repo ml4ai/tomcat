@@ -60,7 +60,7 @@ public class SARMission extends Mission {
         // Single Room Buildings
         Building singleRoomBuilding1 = new Building(93, 64, 53);
         Building singleRoomBuilding2 = new Building(46, 64, 47);
-        Building singleRoomBuilding3 = new Building(52, 66, 89);
+        Building singleRoomBuilding3 = new Building(52, 67, 89);
 
         //MultiRoom Buildings
         MultiRoomBuilding multiRoomBuilding1 = new MultiRoomBuilding(57, 64, 61);
