@@ -304,7 +304,7 @@ public class SARMission extends Mission {
      * @return Building - An instance of Building which may be either a normal or MultiRoom Building
      */
     private Building getRandomBuilding() {
-        int randomIndex = (int) (Math.random()) * this.availableListOfBuildings.size();
+        int randomIndex = (int) (Math.random() * this.availableListOfBuildings.size());
         return this.availableListOfBuildings.get(randomIndex);
 
     }
