@@ -11,10 +11,10 @@
 ;; provides support for actions typing, equality, disjunctions, quantifiers,
 ;; and conditional-effects
 
-(ql:quickload "shop3")
-(ql:quickload "shop3/plan-grapher")
+(progn (ql:quickload "shop3")
+       (ql:quickload "shop3/plan-grapher"))
+
 (in-package :shop-user)
-(in-package :spg)
 ;(shop-trace :all)
 (defdomain (sar-individual-domain :type pddl-domain :redefine-ok T) (
     (:types human - object ;; Everything, including 'human' inherits from the base 'object' type
@@ -23,8 +23,8 @@
     )
    
     (:predicates (in ?h - human ?r - room)
-                  (triaged ?v - victim)
-                  (checked ?r - room))
+                 (triaged ?v - victim)
+                 (checked ?r - room))
 
     (:action check-room
       :parameters (?t - rescuer ?r - room)
@@ -64,15 +64,17 @@
   )
 )
 
-(defproblem sar-individual-problem 
+(defproblem sar-individual-problem
             ((room r2) (room r1) (rescuer t1) (victim v1) (in t1 r1) (in v1 r2))
             ((main t1 v1)))
-  
-(multiple-value-bind 
-  (plans-found run-time plan-trees final-states) 
-  (find-plans 'sar-individual-problem 
-              :which :all 
-              :verbose :long-plans 
-              :plan-tree t)
-  (cl-dot:print-graph (graph-plan-tree plan-trees))
-)
+
+;; Find plans and graph the first one.
+
+(let ((plan-trees (nth-value 2 
+                             (find-plans 'sar-individual-problem
+                                         :which :all
+                                         :verbose :long-plans
+                                         :plan-tree t))))
+  (cl-dot:dot-graph (spg:graph-plan-tree (first plan-trees))
+                    "graph.pdf"
+                    :format "pdf"))
