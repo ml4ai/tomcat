@@ -1,6 +1,3 @@
-;; If you are using SBCL, you can invoke this from the command line with the
-;; following invocation:
-;;     sbcl --load sar-individual-test.lisp
 ;; Grounded STRIPS-style domains are unsupported within SHOP3.
 ;; SHOP3 very-loosely parses PDDL domains so as to incorporate PDDL constructs
 ;; but does not strictly conform to PDDL-syntax.
@@ -15,8 +12,10 @@
 ;; and conditional-effects
 
 (ql:quickload "shop3")
+(ql:quickload "shop3/plan-grapher")
 (in-package :shop-user)
-;;(shop-trace :all)
+(in-package :spg)
+;(shop-trace :all)
 (defdomain (sar-individual-domain :type pddl-domain :redefine-ok T) (
     (:types human - object ;; Everything, including 'human' inherits from the base 'object' type
             victim rescuer - human ;; The rescuer and the victims are humans.
@@ -69,7 +68,11 @@
             ((room r2) (room r1) (rescuer t1) (victim v1) (in t1 r1) (in v1 r2))
             ((main t1 v1)))
   
-(find-plans 'sar-individual-problem
-            :which :all
-            :verbose :long-plans
-            :plan-tree t)
+(multiple-value-bind 
+  (plans-found run-time plan-trees final-states) 
+  (find-plans 'sar-individual-problem 
+              :which :all 
+              :verbose :long-plans 
+              :plan-tree t)
+  (cl-dot:print-graph (graph-plan-tree plan-trees))
+)
