@@ -1,3 +1,6 @@
+;; If you are using SBCL, you can invoke this from the command line with the
+;; following invocation:
+;;     sbcl --load sar-individual-test.lisp
 ;; Grounded STRIPS-style domains are unsupported within SHOP3.
 ;; SHOP3 very-loosely parses PDDL domains so as to incorporate PDDL constructs
 ;; but does not strictly conform to PDDL-syntax.
@@ -66,4 +69,7 @@
             ((room r2) (room r1) (rescuer t1) (victim v1) (in t1 r1) (in v1 r2))
             ((main t1 v1)))
   
-(find-plans 'sar-individual-problem :which :all :verbose :long-plans :plan-tree t)
+(find-plans 'sar-individual-problem
+            :which :all
+            :verbose :long-plans
+            :plan-tree t)
