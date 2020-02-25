@@ -78,3 +78,4 @@
   (cl-dot:dot-graph (spg:graph-plan-tree (first plan-trees))
                     "graph.pdf"
                     :format "pdf"))
+(cl-user::quit)
