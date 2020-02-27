@@ -42,16 +42,16 @@
       :effect (triaged ?v)
     )
 
-    (:method (main ?t ?v) 
+    (:method (search_and_triage ?t ?v) 
              room-not-checked
              ((not (checked ?r))) 
              (:ordered (:task :immediate !check-room ?t ?r) 
-                       (:task main ?t ?v))
+                       (:task search_and_triage ?t ?v))
 
              room-checked-victim-found 
              (and (checked ?r) (same-room ?t ?v ?r) (not (triaged ?v))) 
              (:ordered (:task :immediate !triage ?t ?v ?r)
-                       (:task main ?t ?v))
+                       (:task search_and_triage ?t ?v))
 
              room-checked-all-triaged
              ((checked ?r))
@@ -67,7 +67,7 @@
 
 (defproblem sar-individual-problem
             ((room r2) (room r1) (rescuer t1) (victim v1) (in t1 r1) (in v1 r1))
-            ((main t1 v1)))
+            ((search_and_triage t1 v1)))
 
 ;; Find plans and graph the first one.
 
