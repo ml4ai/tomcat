@@ -354,7 +354,13 @@ public class SARMission extends Mission {
     @Override
     protected SelfReportContent getSelfReportContent(World world) {
         String id = Long.toString(world.getTotalWorldTime());
-        return SelfReportContent.createFromJson(id, "self_report1.json");
+        SelfReportContent selfReportContent = SelfReportContent.createFromJson(id, "self_report1.json");
+        selfReportContent.setTextPlaceholder(0, Converter.secondsToString(this.getRemainingSeconds(world), false));
+        selfReportContent.setTextPlaceholder(1, String.format("%.2f", MinecraftServerHelper.getFirstPlayer().getHealth()));
+        selfReportContent.setTextPlaceholder(2, String.format("%.2f", MinecraftServerHelper.getFirstPlayer().getMaxHealth()));
+        selfReportContent.setTextPlaceholder(3, Integer.toString(this.numberOfVillagersSaved));
+        selfReportContent.setTextPlaceholder(4, Integer.toString(NUMBER_OF_VILLAGERS));
+        return selfReportContent;
     }
 
     @Override

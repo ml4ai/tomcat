@@ -13,37 +13,30 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
 	private static final int MARGIN = 10;
 	private static final int TEXT_PADDING = 10;
 	private static final int TEXT_HEIGHT = 80;
-	private static final int SMALL_BUTTON_WIDTH = 50;
 	private static final int BUTTON_WIDTH = 100;
 	private static final int BUTTON_HEIGHT = 20;
 	private static final int BACKGROUND_COLOR = 0xEEFFFFFF;
 	private static final int FOREGORUND_COLOR = 0x00000000;
 	private static final int MAX_BUTTONS_PER_ROW = 3;
 	private static final int SKIP_BUTTON_CODE = -1;
-	private static final int OK_BUTTON_CODE = 0;
 	private static final String SKIP_BUTTON_TEXT = "Skip";
 
 	private SelfReportContent content;
 	private int currentQuestion;
 	private boolean shouldPauseGame;
-	private boolean selfReportComplete;
-	private boolean firstTimeSelfReport;
 	private long initialTime;
 	private ArrayList<ScreenListener> listeners;	 
-	private ArrayList<String> preamble;
-	
+
 	/**
 	 * Constructor
 	 * @param content - Content of the screen
 	 * @param shouldPauseGame - Indicates whether the game should be pause or not
 	 */
-	public SelfReportScreen(SelfReportContent content, boolean shouldPauseGame, boolean firstTimeSelfReport) {
+	public SelfReportScreen(SelfReportContent content, boolean shouldPauseGame) {
 		this.content = content;
 		this.currentQuestion = 0;
 		this.listeners = new ArrayList<ScreenListener>();
 		this.shouldPauseGame = shouldPauseGame;
-		this.selfReportComplete = false;
-		this.firstTimeSelfReport = firstTimeSelfReport;		
 	}
 
 	@Override
@@ -66,39 +59,14 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
 	private void drawBackground() {
 		drawRect(MARGIN, MARGIN, this.width - MARGIN, this.height - MARGIN, BACKGROUND_COLOR);
 	}
-	
+
 	/**
-	 * Draws content of the current page (question or final words)
+	 * Draws content of the current page
 	 */
 	private void drawPageContent() {
-		if(this.selfReportComplete) {
-			this.drawLastPage();
-		} else {
-			this.drawCurrentQuestion();
-		}
+		this.drawCurrentQuestion();		
 	}
-	
-	/**
-	 * Draws contents of the last page
-	 */
-	private void drawLastPage() {		
-		this.drawLastPageText();
-		this.drawLastPageButton();
-	}
-	
-	/**
-	 * Draws the last page textual content
-	 */
-	private void drawLastPageText() {
-		this.labelList.clear();
-		GuiLabel guiLabel = this.createGuiLabel();
-		Iterator<String> text = this.content.getSpeechAfterQuestions();
-		while(text.hasNext()) {
-			guiLabel.addLine(text.next());
-		}
-		this.labelList.add(guiLabel);
-	}
-	
+
 	/**
 	 * Creates a new GuiLabel correctly positioned in the screen
 	 * @return
@@ -113,19 +81,7 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
 		guiLabel.setCentered();
 		return guiLabel;
 	}
-	
-	/**
-	 * Draws the last page button
-	 */
-	protected void drawLastPageButton() {
-		this.buttonList.clear();
-		
-		int x = (this.width - SMALL_BUTTON_WIDTH)/2; 
-		int y = this.height - MARGIN - BUTTON_HEIGHT - TEXT_PADDING;
-		GuiButton okButton = new GuiButton(OK_BUTTON_CODE, x, y, SMALL_BUTTON_WIDTH, BUTTON_HEIGHT, "Ok");
-		this.buttonList.add(okButton);			
-	}
-	
+
 	/**
 	 * Draws contents of the current question
 	 */
@@ -142,44 +98,25 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
 	private void drawTextFromQuestion(SelfReportQuestion question) {
 		this.labelList.clear();
 		GuiLabel guiLabel = this.createGuiLabel();
-		
-		this.drawPreamble(guiLabel);		
+
 		Iterator<String> text = question.getText();
 		while(text.hasNext()) {
 			guiLabel.addLine(text.next());
 		}
-		
+
 		this.labelList.add(guiLabel);
 	}
-	
-	/**
-	 * Draws question preamble
-	 */
-	private void drawPreamble(GuiLabel guiLabel) {
-		if(this.currentQuestion == 0) {			
-			Iterator<String> preamble;
-			if (this.firstTimeSelfReport) {			
-				preamble = content.getFirstTimePreamble();
-			} else {			
-				preamble = content.getRecurrentPreamble();
-			}
-			while(preamble.hasNext()) {
-				guiLabel.addLine(preamble.next());
-			}
-			guiLabel.addLine("");
-		}	
-	}
-	
+
 	/**
 	 * Draws buttons on the screen
 	 */
 	private void drawButtonsFromQuestion(SelfReportQuestion question) {
 		this.buttonList.clear();
-		
+
 		int numberOfButtons = question.getNumberOfChoices();
-		int numberOfRows = (int) Math.ceil(numberOfButtons / MAX_BUTTONS_PER_ROW) + 1; // One more extra row for the skip button			
+		int numberOfRows = (int) Math.ceil((float)numberOfButtons / (float)MAX_BUTTONS_PER_ROW) + 1; // One more extra row for the skip button			
 		int y = this.height - MARGIN -  numberOfRows*(MARGIN + BUTTON_HEIGHT);
-		
+
 		Iterator<String> buttonTexts = question.getChoices();
 		ArrayList<String> buttonsInARow = new ArrayList<String>();
 		int numberOfButtonsAdded = 0;
@@ -187,7 +124,7 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
 		while (buttonTexts.hasNext()) {
 			buttonsInARow.add(buttonTexts.next());
 			numberOfButtonsAdded++;
-			
+
 			if(buttonsInARow.size() == MAX_BUTTONS_PER_ROW || numberOfButtonsAdded == numberOfButtons) {
 				this.drawButtonRow(initialButtonCode, y, buttonsInARow);
 				buttonsInARow.clear();
@@ -195,12 +132,12 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
 				initialButtonCode += buttonsInARow.size();
 			}
 		}
-		
+
 		// Add skip button
 		buttonsInARow.add(SKIP_BUTTON_TEXT);
 		this.drawButtonRow(SKIP_BUTTON_CODE, y, buttonsInARow);		
 	}
-	
+
 	/**
 	 * Draws horizontally aligned buttons
 	 */
@@ -210,7 +147,7 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
 		int spaceBetweenButtons = avaliableSpace / (buttonTexts.size() + 1);
 		int x = MARGIN + spaceBetweenButtons;
 		int buttonCode = initialButtonCode;
-		
+
 		for (int i = 0; i < buttonTexts.size(); i++) {
 			String buttonText  = buttonTexts.get(i);
 			GuiButton choiceButton = new GuiButton(buttonCode, x, y, BUTTON_WIDTH, BUTTON_HEIGHT, buttonText);
@@ -221,19 +158,14 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
 	}
 
 	@Override
-	protected void actionPerformed(GuiButton guiButton) {
-		if(guiButton.id == OK_BUTTON_CODE) {
-			this.dismissScreen();
+	protected void actionPerformed(GuiButton guiButton) {		
+		SelfReportQuestion question = this.content.getQuestion(this.currentQuestion);
+		question.setSelectedChoice(guiButton.id);
+		if(this.currentQuestion == this.content.getNumberOfQuestions() - 1) {
+			this.dismissScreen();				
 		} else {
-			SelfReportQuestion question = this.content.getQuestion(this.currentQuestion);
-			question.setSelectedChoice(guiButton.id);
-			
-			if(this.currentQuestion == this.content.getNumberOfQuestions() - 1) {
-				this.selfReportComplete = true;				
-			} else {
-				this.currentQuestion++;
-			}
-		}
+			this.currentQuestion++;
+		}		
 	}
 
 	@Override
@@ -260,7 +192,7 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
 			listener.screenDismissed(this, this.content);
 		}		
 	}	
-	
+
 	/**
 	 * Defines the number of seconds the player took to answer the self-report
 	 */
