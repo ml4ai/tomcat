@@ -61,11 +61,12 @@
     (:- (same-room ?t ?v ?r) (and (different ?t ?v) (in ?t ?r) (in ?v ?r)))
     (:- (same ?x ?x) nil)
     (:- (different ?x ?y) ((eval (not (eq '?x '?y))))) ;(not (same ?x ?y))))
+    ;(:- (all-rooms-checked) )
   )
 )
 
 (defproblem sar-individual-problem
-            ((room r2) (room r1) (rescuer t1) (victim v1) (in t1 r1) (in v1 r2))
+            ((room r2) (room r1) (rescuer t1) (victim v1) (in t1 r1) (in v1 r1))
             ((main t1 v1)))
 
 ;; Find plans and graph the first one.
