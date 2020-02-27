@@ -12,6 +12,7 @@
         {
           "texture": "textures1.png",
           "caption": "Progress Bar",
+          "subcaption": "",
           "originXInTexture": 128,
           "originYInTexture": 32,
           "width": 96,
@@ -30,6 +31,7 @@
         {
           "texture": "textures1.png",
           "caption": "Lever",
+          "subcaption": "",
           "originXInTexture": 32,
           "originYInTexture": 32,
           "width": 32,

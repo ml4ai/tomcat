@@ -12,6 +12,7 @@
         {
           "texture": "textures1.png",
           "caption": "Villager",
+          "subcaption": "",
           "originXInTexture": 160,
           "originYInTexture": 0,
           "width": 32,
@@ -20,6 +21,7 @@
         {
           "texture": "textures1.png",
           "caption": "Zombie",
+          "subcaption": "",
           "originXInTexture": 96,
           "originYInTexture": 0,
           "width": 32,
@@ -28,6 +30,7 @@
         {
           "texture": "textures1.png",
           "caption": "Skeleton",
+          "subcaption": "",
           "originXInTexture": 128,
           "originYInTexture": 0,
           "width": 32,

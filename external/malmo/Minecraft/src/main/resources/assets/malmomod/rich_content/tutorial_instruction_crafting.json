@@ -13,6 +13,7 @@
         {
           "texture": "textures1.png",
           "caption": "Crafting Table",
+          "subcaption": "",
           "originXInTexture": 96,
           "originYInTexture": 128,
           "width": 32,
@@ -21,6 +22,7 @@
         {
         "texture": "textures1.png",
         "caption": "Open",
+        "subcaption": "",
         "originXInTexture": 32,
         "originYInTexture": 0,
         "width": 32,
@@ -42,6 +44,7 @@
         {
           "texture": "textures1.png",
           "caption": "Axe-Shaped Pattern",
+          "subcaption": "",
           "originXInTexture": 0,
           "originYInTexture": 128,
           "width": 96,

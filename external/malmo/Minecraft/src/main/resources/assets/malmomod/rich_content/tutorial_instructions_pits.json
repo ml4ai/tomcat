@@ -11,6 +11,7 @@
         {
           "texture": "textures1.png",
           "caption": "Move",
+          "subcaption": "",
           "originXInTexture": 0,
           "originYInTexture": 64,
           "width": 96,
@@ -19,6 +20,7 @@
         {
           "texture": "textures1.png",
           "caption": "Jump",
+          "subcaption": "",
           "originXInTexture": 96,
           "originYInTexture": 64,
           "width": 160,
@@ -27,6 +29,7 @@
         {
           "texture": "textures1.png",
           "caption": "Turn Around",
+          "subcaption": "",
           "originXInTexture": 64,
           "originYInTexture": 0,
           "width": 32,
@@ -46,6 +49,7 @@
         {
           "texture": "textures1.png",
           "caption": "Water",
+          "subcaption": "",
           "originXInTexture": 0,
           "originYInTexture": 32,
           "width": 32,
@@ -54,6 +58,7 @@
         {
           "texture": "textures1.png",
           "caption": "Lava",
+          "subcaption": "",
           "originXInTexture": 224,
           "originYInTexture": 0,
           "width": 32,
