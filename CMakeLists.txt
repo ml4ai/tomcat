@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.15)
 
-if(EXISTS /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk)
-  set(CMAKE_OSX_SYSROOT  "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk")
+if(EXISTS /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk)
+  set(CMAKE_OSX_SYSROOT  "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk")
+#  set(CMAKE_OSX_SYSROOT  "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk")
 endif()
 
 project(tomcat)

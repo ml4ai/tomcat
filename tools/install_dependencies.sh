@@ -94,14 +94,17 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
           boost \
           libsndfile \
           portaudio \
-          gradle
+          gradle \
+          pkg-config
 
         if [[ ! -z $TRAVIS ]]; then
           # On Travis, we will install lcov to provide code coverage estimates.
           brew install lcov;
           download_and_extract_dlib
         else
-          ./install_dlib_from_source.sh
+	  if [[ ! -f "/usr/local/lib/libdlib.a" ]]; then
+	    ./tools/install_dlib_from_source.sh
+	  fi
         fi;
     else
         echo "No package manager found for $OSTYPE"
@@ -154,7 +157,7 @@ elif [ -x "$(command -v apt-get)" ]; then
       ./tools/install_boost_from_source.sh
     fi
 
-    if [[ ! -f "usr/local/lib/libdlib.a" ]]; then
+    if [[ ! -f "/usr/local/lib/libdlib.a" ]]; then
       ./tools/install_dlib_from_source.sh
     fi
     
