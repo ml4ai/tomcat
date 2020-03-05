@@ -23,6 +23,7 @@ public class MessageScreen extends GUIScreenUndismissableOnEscapeKey {
 		
 	@Override
 	public void initGui() {
+		super.initGui();
 		this.addMessageToTheScreen();
 	}
 	

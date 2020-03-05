@@ -12,6 +12,7 @@
         {
           "texture": "textures1.png",
           "caption": "Attack",
+          "subcaption": "",
           "originXInTexture": 0,
           "originYInTexture": 0,
           "width": 32,

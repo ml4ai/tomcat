@@ -14,7 +14,7 @@ public class RichContentScreen extends GUIScreenUndismissableOnEscapeKey {
 	private static final int TEXT_PADDING = 10;
 	private static final int TEXT_HEIGHT = 80;
 	private static final int CAPTION_VERTICAL_SPACING = 5;
-	private static final int CAPTION_HEIGHT = 10;
+	private static final int CAPTION_HEIGHT = 30;
 	private static final int BUTTON_WIDTH = 50;
 	private static final int BUTTON_HEIGHT = 20;
 	private static final int BACKGROUND_COLOR = 0xEEFFFFFF;
@@ -175,6 +175,7 @@ public class RichContentScreen extends GUIScreenUndismissableOnEscapeKey {
 		GuiLabel guiLabel = new UnshadowedLabel(this.fontRendererObj, 1, x, y, 2*image.getWidth(), CAPTION_HEIGHT, FOREGORUND_COLOR);
 		guiLabel.setCentered();
 		guiLabel.addLine(image.getCaption());
+		guiLabel.addLine(image.getSubcaption());
 		this.labelList.add(guiLabel);
 	}
 

@@ -39,6 +39,9 @@ public class RichContentPage {
 			String textLine = this.text.get(i);
 			this.text.set(i, textLine.replace(placeholder, text));
 		}
+		for(RichContentImage image : this.images) {
+			image.setCaptionPlaceholder(placeholderIndex, text);			
+		}
 	}
 	
 	/**

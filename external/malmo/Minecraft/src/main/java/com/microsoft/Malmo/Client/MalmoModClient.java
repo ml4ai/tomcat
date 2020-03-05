@@ -127,8 +127,9 @@ public class MalmoModClient {
 		this.originalMouseHelper = Minecraft.getMinecraft().mouseHelper;
 		this.mouseHook = new MouseHook();
 		this.mouseHook.isOverriding = true;
-		Minecraft.getMinecraft().mouseHelper = this.mouseHook;
-		setInputType(InputType.AI);
+		// We don't need to temper with the mouse 
+		//Minecraft.getMinecraft().mouseHelper = this.mouseHook;
+		//setInputType(InputType.AI);
 	}
 
 	/**

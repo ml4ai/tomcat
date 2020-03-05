@@ -14,6 +14,7 @@
         {
           "texture": "textures1.png",
           "caption": "1 hit",
+          "subcaption": "",
           "originXInTexture": 128,
           "originYInTexture": 128,
           "width": 32,
@@ -22,6 +23,7 @@
         {
           "texture": "textures1.png",
           "caption": "3 hits",
+          "subcaption": "",
           "originXInTexture": 160,
           "originYInTexture": 128,
           "width": 32,
@@ -30,6 +32,7 @@
         {
           "texture": "textures1.png",
           "caption": "5 hits",
+          "subcaption": "",
           "originXInTexture": 192,
           "originYInTexture": 128,
           "width": 32,
@@ -38,6 +41,7 @@
         {
           "texture": "textures1.png",
           "caption": "Open",
+          "subcaption": "",
           "originXInTexture": 224,
           "originYInTexture": 128,
           "width": 32,

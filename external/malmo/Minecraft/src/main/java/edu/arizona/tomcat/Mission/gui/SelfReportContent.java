@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -13,11 +12,12 @@ import com.microsoft.Malmo.MalmoMod;
 public class SelfReportContent {
 	
 	private String id;
-	private ArrayList<String> firstTimePreamble;
-	private ArrayList<String> recurrentPreamble;
-	private ArrayList<String> speechAfterQuestions;
+	private String filenameRichContentBeforeQuestions;
+	private String filenameRichContentAfterQuestions;
 	private List<SelfReportQuestion> questions;
 	private float durationInSeconds;
+	private RichContent richContentBeforeQuestions;
+	private RichContent richContentAfterQuestions;
 
 	/**
 	 * Constructor
@@ -25,6 +25,8 @@ public class SelfReportContent {
 	public SelfReportContent(String id) {
 		this.id = id;
 		this.questions = new ArrayList<SelfReportQuestion>();
+		this.filenameRichContentBeforeQuestions = null;
+		this.filenameRichContentAfterQuestions = null;
 	}
 
 	/**
@@ -48,7 +50,15 @@ public class SelfReportContent {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 		Gson gson = new Gson();
 		content = gson.fromJson(reader, SelfReportContent.class);
-		content.id = id;		
+		content.id = id;
+		if(content.filenameRichContentBeforeQuestions != null && 
+				!content.filenameRichContentBeforeQuestions.equals("")) {
+			content.richContentBeforeQuestions = RichContent.createFromJson(content.filenameRichContentBeforeQuestions);
+		}
+		if(content.filenameRichContentAfterQuestions != null && 
+				!content.filenameRichContentAfterQuestions.equals("")) {
+			content.richContentAfterQuestions = RichContent.createFromJson(content.filenameRichContentAfterQuestions);
+		}
 		return content;
 	}
 
@@ -60,6 +70,12 @@ public class SelfReportContent {
 	public void setTextPlaceholder(int placeholderIndex, String text) {
 		for(SelfReportQuestion question : this.questions) {
 			question.setTextPlaceholder(placeholderIndex, text);
+		}
+		if(this.richContentBeforeQuestions != null) {
+			this.richContentBeforeQuestions.setTextPlaceholder(placeholderIndex, text);
+		}
+		if(this.richContentAfterQuestions != null) {
+			this.richContentAfterQuestions.setTextPlaceholder(placeholderIndex, text);
 		}
 	}
 
@@ -105,28 +121,19 @@ public class SelfReportContent {
 	}
 	
 	/**
-	 * Gets the preamble text that must show up in the first appearance of a self-report
+	 * Gets rich content that must be shown before the questions 
 	 * @return
 	 */
-	public Iterator<String> getFirstTimePreamble() {
-		return this.firstTimePreamble.iterator();
+	public RichContent getRichContentBeforeQuestions() {
+		return this.richContentBeforeQuestions;
 	}
-
+	
 	/**
-	 * Gets the preamble text that must show up for recurrent self-reports
+	 * Gets rich content that must be shown after the questions 
 	 * @return
 	 */
-	public Iterator<String> getRecurrentPreamble() {
-		return this.recurrentPreamble.iterator();
+	public RichContent getRichContentAfterQuestions() {
+		return this.richContentAfterQuestions;
 	}
-
-	/**
-	 * Gets the text that must show up after the last question was answered
-	 * @return
-	 */
-	public Iterator<String> getSpeechAfterQuestions() {
-		return this.speechAfterQuestions.iterator();
-	}		
-		
 
 }
