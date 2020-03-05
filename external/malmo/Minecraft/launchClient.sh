@@ -68,8 +68,8 @@ fi
 
 # Finally we can launch the Mod, which will load the config file
 while
-    ./gradlew setupDecompWorkspace
-    ./gradlew build
-    ./gradlew runClient
+    ./gradlew setupDecompWorkspace --stacktrace
+    ./gradlew build --stacktrace
+    ./gradlew runClient --stacktrace
     [ $replaceable -gt 0 ]
 do :; done
