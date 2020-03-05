@@ -2,8 +2,8 @@
 
 set -u 
 
-mission_one_time=600
-do_tutorial=1
+mission_one_time=60
+do_tutorial=0
 do_invasion=1
 
 ###############################################################################
@@ -16,18 +16,16 @@ if [ ! -z "$TOMCAT" ]; then
 else 
     # This script should be in a directory 'tools' which should be a subdirectory of
     # the TOMCAT directory. The following uses those assumptions to determine
-    # TOMCAT.
+    # the TOMCAT environment variable.
     #
     called_as_dir=`echo $0 | sed 's#^[^/][^/]*$#./#'`
     called_as_dir=`echo $called_as_dir | sed 's#^\(.*\)/.*$#\1#'`
     pushd "${called_as_dir}" > /dev/null; called_as_dir=`pwd`; popd > /dev/null
     export TOMCAT=`echo $called_as_dir | sed 's#^\./##' | sed 's#^\(.*\)/tools$#\1#'`
-    echo "Script check_minecraft is using inferreed TOMCAT location ${TOMCAT}."
+    echo "Script check_minecraft is using inferred TOMCAT location ${TOMCAT}."
 fi
 
 ###############################################################################
-
-# ${TOMCAT}/tools/install.sh
 
 ${TOMCAT}/tools/check_minecraft.sh
 
@@ -82,6 +80,15 @@ if [[ ${do_invasion} -eq 1 ]]; then
     echo "Running the Zombie invasion mission in ${TOMCAT}."
     echo " "
 
+    #Recording players face through WebCam.
+    ffmpeg -nostdin -f avfoundation -i "default" webcam_video.mpg >&/dev/null &
+    webcam_recording_pid=$!
+
+    #Recording game screen.
+
+    ffmpeg -nostdin -f avfoundation -i "1:none" screen_video.mpg &>/dev/null &
+    screen_recording_pid=$!
+
     try=0
     while [ $try -lt $num_tries ]; do 
         ${TOMCAT}/build/bin/runExperiment --mission 1 --time_limit ${mission_one_time}>& ${zombie_invasion_log} &
@@ -98,7 +105,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
         fi
 
         if [[ ${zombie_invasion_status} -eq 0 ]]; then
-            echo "Zombie invastion mission ended with success status."
+            echo "Zombie invasion mission ended with success status."
             echo " "
             break
         fi 
@@ -106,15 +113,15 @@ if [[ ${do_invasion} -eq 1 ]]; then
         let try+=1 
 
         if [[ $try -lt $num_tries ]]; then 
-            echo "Zombie invastion mission ended with failure status."
+            echo "Zombie invasion mission ended with failure status."
             echo "Killing all Minecraft and Malmo processes that can be found and trying again."
             ${TOMCAT}/tools/kill_minecraft.sh
             ${TOMCAT}/tools/check_minecraft.sh
         fi 
+        kill -2 $webcam_recording_pid
+        kill -2 $screen_recording_pid
     done
 fi
 
 echo "Finished running all sessions in ${TOMCAT}."
 echo " "
-
-
