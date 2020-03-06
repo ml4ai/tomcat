@@ -81,7 +81,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
     echo " "
 
     #Recording players face through WebCam.
-    ffmpeg -nostdin -f avfoundation -i "default" webcam_video.mpg >&/dev/null &
+    ffmpeg -nostdin -f avfoundation -i "0:0" webcam_video.mpg >&/dev/null &
     webcam_recording_pid=$!
 
     #Recording game screen.
