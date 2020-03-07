@@ -33,12 +33,12 @@
 #include <boost/thread/mutex.hpp>
 
 using namespace std;
-using boost::asio, boost::asio::ip::tcp, boost::system;
+using boost::asio::ip::tcp;
 
 #define LOG_COMPONENT Logger::LOG_TCP
 
 namespace malmo {
-  void SendOverTCP(asio::io_service& io_service,
+  void SendOverTCP(boost::asio::io_service& io_service,
                    string address,
                    int port,
                    vector<unsigned char> message,
@@ -49,7 +49,7 @@ namespace malmo {
     try {
       endpoint_iterator = resolver.resolve(query);
     }
-    catch (system::system_error e) {
+    catch (boost::system::system_error e) {
       LOGERROR(LT("Failed to resolve endpoint for "),
                address,
                LT(":"),
@@ -61,9 +61,9 @@ namespace malmo {
 
     tcp::socket socket(io_service);
     try {
-      asio::connect(socket, endpoint_iterator);
+      boost::asio::connect(socket, endpoint_iterator);
     }
-    catch (system::system_error e) {
+    catch (boost::system::system_error e) {
       LOGERROR(LT("Failed to connect to "),
                address,
                LT(":"),
@@ -79,9 +79,9 @@ namespace malmo {
       const int SIZE_HEADER_LENGTH = 4;
       u_long size_header = htonl((u_long)message.size());
       try {
-        asio::write(socket, asio::buffer(&size_header, SIZE_HEADER_LENGTH));
+        boost::asio::write(socket, boost::asio::buffer(&size_header, SIZE_HEADER_LENGTH));
       }
-      catch (system::system_error e) {
+      catch (boost::system::system_error e) {
         LOGERROR(LT("Failed to write header to "),
                  address,
                  LT(":"),
@@ -98,9 +98,9 @@ namespace malmo {
     }
 
     try {
-      asio::write(socket, asio::buffer(message));
+      boost::asio::write(socket, boost::asio::buffer(message));
     }
-    catch (system::system_error e) {
+    catch (boost::system::system_error e) {
       LOGERROR(LT("Failed to write message to "),
                address,
                LT(":"),
@@ -111,7 +111,7 @@ namespace malmo {
     }
   }
 
-  void SendStringOverTCP(asio::io_service& io_service,
+  void SendStringOverTCP(boost::asio::io_service& io_service,
                          string address,
                          int port,
                          string message,
@@ -123,7 +123,7 @@ namespace malmo {
                 withSizeHeader);
   }
 
-  string Rpc::sendStringAndGetShortReply(asio::io_service& io_service,
+  string Rpc::sendStringAndGetShortReply(boost::asio::io_service& io_service,
                                          const string& ip_address,
                                          int port,
                                          const string& message,
@@ -139,12 +139,12 @@ namespace malmo {
     // Set up a deadline timer to close the socket on timeout, aborting any
     // async io.
 
-    asio::deadline_timer deadline(io_service, timeout);
+    boost::asio::deadline_timer deadline(io_service, timeout);
 
-    deadline.async_wait([&](const system::error_code& ec) {
+    deadline.async_wait([&](const boost::system::error_code& ec) {
       if (!ec) {
         LOGERROR(LT("Request/Reply communication timeout."));
-        system::error_code ignored_ec;
+        boost::system::error_code ignored_ec;
         socket.close(ignored_ec);
       }
     });
@@ -156,7 +156,7 @@ namespace malmo {
 
     resolver.async_resolve(
         query,
-        [&](const system::error_code& ec,
+        [&](const boost::system::error_code& ec,
             tcp::resolver::iterator endpoint_iterator) {
           if (ec) {
             LOGERROR(LT("Failed to resolve "),
@@ -169,14 +169,14 @@ namespace malmo {
           }
           else {
             if (endpoint_iterator == tcp::resolver::iterator()) {
-              error_code_sync.signal_error_code(asio::error::fault);
+              error_code_sync.signal_error_code(boost::asio::error::fault);
             }
             else {
               socket.async_connect(
                   endpoint_iterator->endpoint(),
                   boost::bind(&ErrorCodeSync::signal_error_code,
                               &this->error_code_sync,
-                              asio::placeholders::error));
+                              boost::asio::placeholders::error));
             }
           }
         });
@@ -192,7 +192,7 @@ namespace malmo {
                error_code.message());
       throw runtime_error(
           "Could not connect  " +
-          (error_code ? error_code : asio::error::operation_aborted).message());
+          (error_code ? error_code : boost::asio::error::operation_aborted).message());
     }
 
     error_code_sync.init_error_code();
@@ -205,18 +205,18 @@ namespace malmo {
     if (withSizeHeader) {
       u_long size_header = htonl((u_long)message.size());
 
-      asio::async_write(
+      boost::asio::async_write(
           socket,
-          asio::buffer(&size_header, SIZE_HEADER_LENGTH),
-          [&](const system::error_code& ec, size_t transferred) {
+          boost::asio::buffer(&size_header, SIZE_HEADER_LENGTH),
+          [&](const boost::system::error_code& ec, size_t transferred) {
             if (!ec) {
-              asio::async_write(
+              boost::asio::async_write(
                   socket,
-                  asio::buffer(message_vector),
+                  boost::asio::buffer(message_vector),
                   boost::bind(&Rpc::transfer_handler,
                               this,
-                              asio::placeholders::error,
-                              asio::placeholders::bytes_transferred));
+                              boost::asio::placeholders::error,
+                              boost::asio::placeholders::bytes_transferred));
             }
             else {
               transfer_handler(ec, transferred);
@@ -224,12 +224,12 @@ namespace malmo {
           });
     }
     else {
-      asio::async_write(socket,
-                        asio::buffer(message_vector),
+      boost::asio::async_write(socket,
+                        boost::asio::buffer(message_vector),
                         boost::bind(&Rpc::transfer_handler,
                                     this,
-                                    asio::placeholders::error,
-                                    asio::placeholders::bytes_transferred));
+                                    boost::asio::placeholders::error,
+                                    boost::asio::placeholders::bytes_transferred));
     }
 
     error_code = error_code_sync.await_error_code();
@@ -239,11 +239,11 @@ namespace malmo {
 
     error_code_sync.init_error_code();
 
-    asio::async_read(
+    boost::asio::async_read(
         socket,
-        asio::buffer(&size_header, SIZE_HEADER_LENGTH),
-        asio::transfer_exactly(SIZE_HEADER_LENGTH),
-        [&](const system::error_code& ec, size_t transferred) {
+        boost::asio::buffer(&size_header, SIZE_HEADER_LENGTH),
+        boost::asio::transfer_exactly(SIZE_HEADER_LENGTH),
+        [&](const boost::system::error_code& ec, size_t transferred) {
           if (!ec) {
             size_header = ntohl(size_header);
 
@@ -255,17 +255,17 @@ namespace malmo {
                        LT(":"),
                        port,
                        LT(" exceeds maximum allowed."));
-              transfer_handler(asio::error::fault, transferred);
+              transfer_handler(boost::asio::error::fault, transferred);
             }
             else {
-              asio::async_read(
+              boost::asio::async_read(
                   socket,
-                  asio::buffer(data, size_header),
-                  asio::transfer_exactly(size_header),
+                  boost::asio::buffer(data, size_header),
+                  boost::asio::transfer_exactly(size_header),
                   boost::bind(&Rpc::transfer_handler,
                               this,
-                              asio::placeholders::error,
-                              asio::placeholders::bytes_transferred));
+                              boost::asio::placeholders::error,
+                              boost::asio::placeholders::bytes_transferred));
             }
           }
           else {
@@ -291,7 +291,7 @@ namespace malmo {
     return reply;
   }
 
-  void Rpc::transfer_handler(const system::error_code& ec, size_t transferred) {
+  void Rpc::transfer_handler(const boost::system::error_code& ec, size_t transferred) {
     error_code_sync.signal_error_code(ec);
   }
 } // namespace malmo

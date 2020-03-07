@@ -66,7 +66,7 @@ namespace malmo {
   void VideoFrameWriter::open() {
     this->close();
 
-    // Create helpful script:
+    // Create helpful script to extract individual frames from the .mp4 file:
     fs::path fs_path(this->path);
     string ffmpeg_helpfile =
         (fs_path.parent_path() / (fs_path.stem().string() + "_to_pngs.sh"))

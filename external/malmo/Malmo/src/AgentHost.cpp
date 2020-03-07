@@ -301,7 +301,7 @@ namespace malmo {
         boost::make_shared<MissionRecord>(mission_record);
     this->current_role = role;
 
-    listenForMissionControlMessages(
+    this->listenForMissionControlMessages(
         this->current_mission_init->getAgentMissionControlPort());
     // Video producing handlers.
     if (mission.isVideoRequested(this->current_role)) {
@@ -340,8 +340,8 @@ namespace malmo {
                          3,
                          TimestampedVideoFrame::COLOUR_MAP);
     }
-    listenForRewards(this->current_mission_init->getAgentRewardsPort());
-    listenForObservations(
+    this->listenForRewards(this->current_mission_init->getAgentRewardsPort());
+    this->listenForObservations(
         this->current_mission_init->getAgentObservationsPort());
 
     if (this->commands_stream.is_open()) {

@@ -28,6 +28,8 @@
 // Boost:
 #include <boost/asio.hpp>
 
+using namespace std;
+
 namespace malmo {
   TimestampedVideoFrame::TimestampedVideoFrame()
       : width(0), height(0), channels(0), xPos(0), yPos(0), zPos(0), yaw(0),
@@ -58,12 +60,12 @@ namespace malmo {
     const int stride = width * channels;
     switch (transform) {
     case IDENTITY:
-      this->pixels = std::vector<unsigned char>(
+      this->pixels = vector<unsigned char>(
           message.data.begin() + FRAME_HEADER_SIZE, message.data.end());
       break;
 
     case RAW_BMP:
-      this->pixels = std::vector<unsigned char>(
+      this->pixels = vector<unsigned char>(
           message.data.begin() + FRAME_HEADER_SIZE, message.data.end());
       if (channels == 3) {
         // Swap BGR -> RGB:
@@ -76,7 +78,7 @@ namespace malmo {
       break;
 
     case REVERSE_SCANLINE:
-      this->pixels = std::vector<unsigned char>();
+      this->pixels = vector<unsigned char>();
       for (int i = 0, offset = (height - 1) * stride; i < height;
            i++, offset -= stride) {
         auto it = message.data.begin() + offset + FRAME_HEADER_SIZE;
@@ -86,7 +88,7 @@ namespace malmo {
       break;
 
     default:
-      throw std::invalid_argument("Unknown transform");
+      throw invalid_argument("Unknown transform");
     }
   }
 
@@ -99,8 +101,7 @@ namespace malmo {
     // comparison.
   }
 
-  std::ostream& operator<<(std::ostream& os,
-                           const TimestampedVideoFrame& tsvidframe) {
+  ostream& operator<<(ostream& os, const TimestampedVideoFrame& tsvidframe) {
     os << "TimestampedVideoFrame: " << to_simple_string(tsvidframe.timestamp)
        << ", type " << tsvidframe.frametype << ", " << tsvidframe.width << " x "
        << tsvidframe.height << " x " << tsvidframe.channels << ", ("
@@ -109,8 +110,8 @@ namespace malmo {
     return os;
   }
 
-  std::ostream& operator<<(std::ostream& os,
-                           const TimestampedVideoFrame::FrameType& type) {
+  ostream& operator<<(ostream& os,
+                      const TimestampedVideoFrame::FrameType& type) {
     switch (type) {
     case TimestampedVideoFrame::VIDEO:
       os << "video";

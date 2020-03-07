@@ -29,6 +29,7 @@
 #include <boost/bind.hpp>
 
 using namespace std;
+namespace fs = boost::filesystem;
 
 namespace malmo {
   VideoServer::VideoServer(
@@ -136,8 +137,8 @@ namespace malmo {
       frame_dir = "video_frames";
       break;
     }
-    boost::filesystem::path fs_path(path);
-    boost::filesystem::path frame_path = fs_path / frame_dir;
+    fs::path fs_path(path);
+    fs::path frame_path = fs_path / frame_dir;
     this->writers.push_back(BmpFrameWriter::create(
         frame_path.string(),
         filename,
