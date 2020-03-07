@@ -80,13 +80,26 @@ if [[ ${do_invasion} -eq 1 ]]; then
     echo "Running the Zombie invasion mission in ${TOMCAT}."
     echo " "
 
-    #Recording players face through WebCam.
-    ffmpeg -nostdin -f avfoundation -i "0:0" webcam_video.mpg >&/dev/null &
+    # On macOS, we choose the avfoundation format.
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        ffmpeg_fmt=avfoundation
+    else
+        ffmpeg_fmt=video4linux2
+    fi
+        
+    # Recording players face through webcam. On a late 2013 retina MacBook Pro,
+    # we have to specify the framerate explicitly for some reason.
+    if [[ $(sysctl hw.model) == "hw.model: MacBookPro11,3" ]]; then
+        framerate_option="-framerate 30"
+    else
+        framerate_option=""
+    fi
+
+    ffmpeg -y -nostdin -f $ffmpeg_fmt ${framerate_option} -i "0.0" webcam_video.mpg &> /dev/null &
     webcam_recording_pid=$!
 
-    #Recording game screen.
-
-    ffmpeg -nostdin -f avfoundation -i "1:none" screen_video.mpg &>/dev/null &
+    # Recording game screen.
+    ffmpeg -y -nostdin -f $ffmpeg_fmt ${framerate_option} -i "1:none" screen_video.mpg &> /dev/null &
     screen_recording_pid=$!
 
     try=0
@@ -101,7 +114,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
         zombie_invasion_status=$?
 
         if [[ ${zombie_invasion_status} -eq 0 ]]; then
-            zombie_invasion_status=`grep -c 'Error starting mission' ${zombie_invasion_log}`
+            zombie_invasion_status=`grep -c "Error starting mission" ${zombie_invasion_log}`
         fi
 
         if [[ ${zombie_invasion_status} -eq 0 ]]; then
@@ -118,10 +131,11 @@ if [[ ${do_invasion} -eq 1 ]]; then
             ${TOMCAT}/tools/kill_minecraft.sh
             ${TOMCAT}/tools/check_minecraft.sh
         fi 
-        kill -2 $webcam_recording_pid
-        kill -2 $screen_recording_pid
     done
 fi
+
+kill -2 $webcam_recording_pid
+kill -2 $screen_recording_pid
 
 echo "Finished running all sessions in ${TOMCAT}."
 echo " "
