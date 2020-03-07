@@ -80,37 +80,49 @@ if [[ ${do_invasion} -eq 1 ]]; then
     echo "Running the Zombie invasion mission in ${TOMCAT}."
     echo " "
 
-    # On macOS, we choose the avfoundation format.
+    try=0
     if [[ "$OSTYPE" == "darwin"* ]]; then
+      read -r x1 y1 width height <<< `osascript ${TOMCAT}/tools/get_minecraft_window_position_and_size.scpt | sed 's/, / /g'`
+        # On retina displays, we perform the proper scaling.
+        if [[ ! -z $(system_profiler SPDisplaysDataType | grep "Retina") ]]; then
+          x1=$((2 * x1))
+          y1=$((2 * y1))
+          width=$((2 * width))
+          height=$((2 * height))
+        fi
+        # On macOS, we choose the avfoundation format.
         ffmpeg_fmt=avfoundation
+        # On a late 2013 retina MacBook Pro, we have to specify the framerate
+        # explicitly for some unknown reason for the webcam recording.
+        if [[ $(sysctl hw.model) == "hw.model: MacBookPro11,3" ]]; then
+            framerate_option="-framerate 30"
+        else
+            framerate_option=""
+        fi
+    
     else
-        ffmpeg_fmt=video4linux2
-    fi
-        
-    # Recording players face through webcam. On a late 2013 retina MacBook Pro,
-    # we have to specify the framerate explicitly for some reason.
-    if [[ $(sysctl hw.model) == "hw.model: MacBookPro11,3" ]]; then
-        framerate_option="-framerate 30"
-    else
-        framerate_option=""
+      ffmpeg_fmt=video4linux2
+      echo "
+    This script currently only works on MacOS since it relies on AppleScript to get
+    the position and size of the Minecraft window. Equivalent functionality can
+    probably be achieved with the wmctrl tool tool on Linux. Pull requests
+    welcome!"
     fi
 
     ffmpeg -y -nostdin -f $ffmpeg_fmt ${framerate_option} -i "0.0" webcam_video.mpg &> /dev/null &
     webcam_recording_pid=$!
 
-    # Recording game screen.
-    ffmpeg -y -nostdin -f $ffmpeg_fmt ${framerate_option} -i "1:none" screen_video.mpg &> /dev/null &
+    ## Recording game screen.
+    ffmpeg -y -nostdin -f $ffmpeg_fmt -i "1:none" \
+      -vf "crop=$width:$height:$x1:$y1" screen_video.mpg &> /dev/null &
     screen_recording_pid=$!
 
-    try=0
     while [ $try -lt $num_tries ]; do 
         ${TOMCAT}/build/bin/runExperiment --mission 1 --time_limit ${mission_one_time}>& ${zombie_invasion_log} &
         bg_pid=$!
         echo "Running: ${TOMCAT}/build/bin/runExperiment --mission 1 --time_limit ${mission_one_time}"
-        echo "Process is $bg_pid" 
-        echo "Waiting for it"
-        echo " "
-        wait
+        echo "Process corresponding to ./bin/runExperiment is $bg_pid - waiting for it to complete." 
+        wait $bg_pid
         zombie_invasion_status=$?
 
         if [[ ${zombie_invasion_status} -eq 0 ]]; then
@@ -138,4 +150,4 @@ kill -2 $webcam_recording_pid
 kill -2 $screen_recording_pid
 
 echo "Finished running all sessions in ${TOMCAT}."
-echo " "
+exit 0
