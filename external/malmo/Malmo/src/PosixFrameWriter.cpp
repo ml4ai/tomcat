@@ -147,6 +147,7 @@ namespace malmo {
                    to_string(this->bit_rate).c_str(),
                    "-pix_fmt",
                    "yuv420p",
+                   "-copyts",
                    this->path.c_str(),
                    NULL);
       if (ret)
