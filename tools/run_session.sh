@@ -2,6 +2,11 @@
 
 set -u 
 
+# this function returns the date and time in the current timezone.
+timestamp() {
+  date "+%Y_%m_%d_%H_%M_%S"
+}
+
 mission_one_time=60
 do_tutorial=0
 do_invasion=1
@@ -109,18 +114,35 @@ if [[ ${do_invasion} -eq 1 ]]; then
     welcome!"
     fi
 
-    ffmpeg -y -nostdin -f $ffmpeg_fmt ${framerate_option} -i "0.0" webcam_video.mpg &> /dev/null &
+    # Creating an output directory for this session. 
+    output_dir=${TOMCAT}/collected_data/session_`timestamp`
+    mkdir -p ${output_dir}
+    ffmpeg_common_invocation="ffmpeg -y -nostdin -f $ffmpeg_fmt"
+
+    # Recording video of player's face
+    ${ffmpeg_common_invocation} ${framerate_option} -i "0:" ${output_dir}/webcam_video.avi &> /dev/null &
     webcam_recording_pid=$!
 
-    ## Recording game screen.
-    ffmpeg -y -nostdin -f $ffmpeg_fmt -i "1:none" \
-      -vf "crop=$width:$height:$x1:$y1" screen_video.mpg &> /dev/null &
+    # Recording player audio
+    ${ffmpeg_common_invocation} -i ":0" ${output_dir}/player_audio.wav &> /dev/null &
+    audio_recording_pid=$!
+
+    # Recording game screen.
+    ${ffmpeg_common_invocation} -i "1:" -vf "crop=$width:$height:$x1:$y1" ${output_dir}/screen_video.avi &> /dev/null &
     screen_recording_pid=$!
 
+
     while [ $try -lt $num_tries ]; do 
-        ${TOMCAT}/build/bin/runExperiment --mission 1 --time_limit ${mission_one_time}>& ${zombie_invasion_log} &
+        ${TOMCAT}/build/bin/runExperiment \
+          --mission 1 \
+          --time_limit ${mission_one_time} \
+          --record_path "${output_dir}/malmo_data.tgz" \
+          &> ${zombie_invasion_log} &
         bg_pid=$!
-        echo "Running: ${TOMCAT}/build/bin/runExperiment --mission 1 --time_limit ${mission_one_time}"
+        echo "Running: ${TOMCAT}/build/bin/runExperiment \
+          --mission 1 \
+          --time_limit ${mission_one_time} \
+          --record_path ${output_dir}/malmo_data.tgz"
         echo "Process corresponding to ./bin/runExperiment is $bg_pid - waiting for it to complete." 
         wait $bg_pid
         zombie_invasion_status=$?
@@ -147,6 +169,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
 fi
 
 kill -2 $webcam_recording_pid
+kill -2 $audio_recording_pid
 kill -2 $screen_recording_pid
 
 echo "Finished running all sessions in ${TOMCAT}."
