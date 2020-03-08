@@ -14,7 +14,7 @@ do_invasion=1
 # Set the TOMCAT environment variable, assuming that the directory structure
 # mirrors that of the git repository.
 export TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
-export TOMCAT_TMP_DIR="${TOMCAT}/tmp"
+export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
 mkdir -p "${TOMCAT_TMP_DIR}"
 
 ${TOMCAT}/tools/check_minecraft.sh
