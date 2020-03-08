@@ -7,7 +7,7 @@ timestamp() {
     date "+%Y_%m_%d_%H_%M_%S"
 }
 
-mission_one_time=10
+mission_one_time=600
 do_tutorial=0
 do_invasion=1
 
