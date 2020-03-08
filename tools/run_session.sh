@@ -7,17 +7,17 @@ timestamp() {
   date "+%Y_%m_%d_%H_%M_%S"
 }
 
-mission_one_time=60
+mission_one_time=5
 do_tutorial=0
 do_invasion=1
 
 # Set the TOMCAT environment variable, assuming that the directory structure
 # mirrors that of the git repository.
 export TOMCAT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && pwd )"
+export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
 
 ${TOMCAT}/tools/check_minecraft.sh
 
-export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
 mkdir -p "${TOMCAT_TMP_DIR}"
 if [[ $? -ne 0 ]]; then exit 1; fi;
 
@@ -103,7 +103,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
     ffmpeg_common_invocation="ffmpeg -y -nostdin -f $ffmpeg_fmt"
 
     # Recording video of player's face
-    ${ffmpeg_common_invocation} ${framerate_option} -i "0:" ${output_dir}/webcam_video.avi &> /dev/null &
+    ${ffmpeg_common_invocation} ${framerate_option} -i "0:" ${output_dir}/webcam_video.mpg &> /dev/null &
     webcam_recording_pid=$!
 
     # Recording player audio
@@ -111,7 +111,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
     audio_recording_pid=$!
 
     # Recording game screen.
-    ${ffmpeg_common_invocation} -i "1:" -vf "crop=$width:$height:$x1:$y1" ${output_dir}/screen_video.avi &> /dev/null &
+    ${ffmpeg_common_invocation} -i "1:" -vf "crop=$width:$height:$x1:$y1" ${output_dir}/screen_video.mpg &> /dev/null &
     screen_recording_pid=$!
 
 
