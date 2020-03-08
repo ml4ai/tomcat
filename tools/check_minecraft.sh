@@ -2,27 +2,6 @@
 
 set -u 
 
-###############################################################################
-
-# If TOMCAT is set as an enviroment variable, we will respect it. 
-
-declare -x TOMCAT
-if [ ! -z "$TOMCAT" ]; then
-    echo "Script check_minecraft is using requested TOMCAT location ${TOMCAT}."
-else 
-    # This script should be in a directory 'tools' which should be a subdirectory of
-    # the TOMCAT directory. The following uses those assumptions to determine
-    # the TOMCAT environment variable.
-    #
-    called_as_dir=`echo $0 | sed 's#^[^/][^/]*$#./#'`
-    called_as_dir=`echo $called_as_dir | sed 's#^\(.*\)/.*$#\1#'`
-    pushd "${called_as_dir}" > /dev/null; called_as_dir=`pwd`; popd > /dev/null
-    export TOMCAT=`echo $called_as_dir | sed 's#^\./##' | sed 's#^\(.*\)/tools$#\1#'`
-    echo "Script check_minecraft is using inferred TOMCAT location ${TOMCAT}."
-fi
-
-###############################################################################
-
 export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
 mkdir -p "${TOMCAT_TMP_DIR}"
 if [[ $? -ne 0 ]]; then exit 1; fi;

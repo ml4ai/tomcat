@@ -11,26 +11,9 @@ mission_one_time=60
 do_tutorial=0
 do_invasion=1
 
-###############################################################################
-
-# If TOMCAT is set as an enviroment variable, we will respect it. 
-
-declare -x TOMCAT
-if [ ! -z "$TOMCAT" ]; then
-    echo "Script check_minecraft is using requested TOMCAT location ${TOMCAT}."
-else 
-    # This script should be in a directory 'tools' which should be a subdirectory of
-    # the TOMCAT directory. The following uses those assumptions to determine
-    # the TOMCAT environment variable.
-    #
-    called_as_dir=`echo $0 | sed 's#^[^/][^/]*$#./#'`
-    called_as_dir=`echo $called_as_dir | sed 's#^\(.*\)/.*$#\1#'`
-    pushd "${called_as_dir}" > /dev/null; called_as_dir=`pwd`; popd > /dev/null
-    export TOMCAT=`echo $called_as_dir | sed 's#^\./##' | sed 's#^\(.*\)/tools$#\1#'`
-    echo "Script check_minecraft is using inferred TOMCAT location ${TOMCAT}."
-fi
-
-###############################################################################
+# Set the TOMCAT environment variable, assuming that the directory structure
+# mirrors that of the git repository.
+export TOMCAT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && pwd )"
 
 ${TOMCAT}/tools/check_minecraft.sh
 
@@ -53,8 +36,7 @@ if [[ ${do_tutorial} -eq 1 ]]; then
         ${TOMCAT}/build/bin/runExperiment --mission 0 >& ${tutorial_mission_log} &
         bg_pid=$!
         echo "Running: ${TOMCAT}/build/bin/runExperiment --mission 0"
-        echo "Process is $bg_pid" 
-        echo "Waiting for it"
+        echo "Process is $bg_pid - waiting for it"
         wait
         tutorial_mission_status=$?
 
