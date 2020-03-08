@@ -21,3 +21,4 @@ pushd dlib
     if [[ $? -ne 0 ]]; then exit 1; fi;
   popd
 popd
+exit 0

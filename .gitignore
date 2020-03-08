@@ -1,11 +1,6 @@
 # Build directory for CMake
 
 build
-
-# Automatically generated files and directories from example.cpp mission
-mission_records
-*.tgz
-
 *.swp
 
 # IDEs
@@ -79,3 +74,6 @@ data/*
 *.tar.gz
 *.tgz
 *.zip
+
+# Temporary directory for ToMCAT-generated files.
+tmp
