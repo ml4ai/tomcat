@@ -93,4 +93,4 @@ popd > /dev/null
 echo " "
 echo "Finished installing ToMCAT in ${TOMCAT}!"
 echo " "
-
+exit 0

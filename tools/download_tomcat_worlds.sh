@@ -2,7 +2,7 @@
 
 # Script to download Minecraft worlds for ToMCAT
 
-# Kobus says 'set -e' does not make sense if you are checking returns as you
+# Kobus says: 'set -e' does not make sense if you are checking returns as you
 # are doing.
 #
 # set -e
@@ -13,7 +13,7 @@
 
 declare -x TOMCAT
 if [ ! -z "$TOMCAT" ]; then
-    echo "Script check_minecraft is using requested TOMCAT location ${TOMCAT}."
+    echo "Script download_tomcat_worlds is using requested TOMCAT location ${TOMCAT}."
 else 
     # This script should be in a directory 'tools' which should be a subdirectory of
     # the TOMCAT directory. The following uses those assumptions to determine
@@ -40,3 +40,4 @@ popd > /dev/null
 
 echo "ToMCAT worlds download complete."
 echo " "
+exit 0
