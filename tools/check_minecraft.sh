@@ -2,18 +2,14 @@
 
 set -u 
 
-export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
-mkdir -p "${TOMCAT_TMP_DIR}"
-if [[ $? -ne 0 ]]; then exit 1; fi;
- 
 minecraft_log="${TOMCAT_TMP_DIR}/minecraft.log"
 minecraft_launch_pid_file="${TOMCAT_TMP_DIR}/minecraft_launch.pid"
 
 exit_status=1
 num_tries=1
 
-# Likely a bit more robust and easier to debug if we give Minecraft some time to
-# start. However, this is optional.
+# Likely a bit more robust and easier to debug if we give Minecraft some time
+# to start. However, this is optional.
 
 initial_wait=10 
 
