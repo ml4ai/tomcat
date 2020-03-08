@@ -94,6 +94,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
     the position and size of the Minecraft window. Equivalent functionality can
     probably be achieved with the wmctrl tool tool on Linux. Pull requests
     welcome!"
+      exit 1
     fi
 
     # Creating an output directory for this session. 
