@@ -7,8 +7,8 @@ timestamp() {
     date "+%Y_%m_%d_%H_%M_%S"
 }
 
-mission_one_time=600
-do_tutorial=1
+mission_one_time=5
+do_tutorial=0
 do_invasion=1
 
 # Set the TOMCAT environment variable, assuming that the directory structure
@@ -38,17 +38,8 @@ if [[ ${do_invasion} -eq 1 ]]; then
 
     framerate_option=""
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        read -r x1 y1 width height \
-            <<<$(osascript ${TOMCAT}/tools/get_minecraft_window_position_and_size.scpt |
-                sed 's/, / /g')
+       osascript ${TOMCAT}/tools/activate_minecraft_window.scpt
 
-        # On retina displays, we perform the proper scaling.
-        if [[ ! -z $(system_profiler SPDisplaysDataType | grep "Retina") ]]; then
-            x1=$((2 * x1))
-            y1=$((2 * y1))
-            width=$((2 * width))
-            height=$((2 * height))
-        fi
         # On macOS, we choose the avfoundation format.
         ffmpeg_fmt=avfoundation
         # On a late 2013 retina MacBook Pro, we have to specify the framerate
@@ -110,6 +101,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
 
         if [[ ${zombie_invasion_status} -eq 0 ]]; then
             echo "Zombie invasion mission ended with success status."
+            echo "All recorded data is in ${output_dir}"
             echo " "
             break
         fi
