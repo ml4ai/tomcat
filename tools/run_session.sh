@@ -38,17 +38,8 @@ if [[ ${do_invasion} -eq 1 ]]; then
 
     framerate_option=""
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        read -r x1 y1 width height \
-            <<<$(osascript ${TOMCAT}/tools/get_minecraft_window_position_and_size.scpt |
-                sed 's/, / /g')
+       osascript ${TOMCAT}/tools/activate_minecraft_window.scpt
 
-        # On retina displays, we perform the proper scaling.
-        if [[ ! -z $(system_profiler SPDisplaysDataType | grep "Retina") ]]; then
-            x1=$((2 * x1))
-            y1=$((2 * y1))
-            width=$((2 * width))
-            height=$((2 * height))
-        fi
         # On macOS, we choose the avfoundation format.
         ffmpeg_fmt=avfoundation
         # On a late 2013 retina MacBook Pro, we have to specify the framerate
@@ -84,8 +75,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
     # Recording game screen.
     if [[ "$OSTYPE" == "darwin"* ]]; then
         ${ffmpeg_common_invocation} \
-            -i "1:" -vf "crop=$width:$height:$x1:$y1" ${output_dir}/screen_video.mpg \
-            &>/dev/null &
+            -i "1:" -r 30 ${output_dir}/screen_video.mpg &> /dev/null &
         screen_recording_pid=$!
     fi
 
@@ -111,6 +101,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
 
         if [[ ${zombie_invasion_status} -eq 0 ]]; then
             echo "Zombie invasion mission ended with success status."
+            echo "All recorded data is in ${output_dir}"
             echo " "
             break
         fi
