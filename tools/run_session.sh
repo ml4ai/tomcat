@@ -8,7 +8,7 @@ timestamp() {
 }
 
 mission_one_time=600
-do_tutorial=0
+do_tutorial=1
 do_invasion=1
 
 # Set the TOMCAT environment variable, assuming that the directory structure
