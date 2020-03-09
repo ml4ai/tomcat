@@ -3,22 +3,15 @@ Installation
 
 ToMCAT depends on the following: CMake 3.15+, Boost 1.69+, a C++17 compatible
 compiler (tested with GCC 9 and AppleClang 11.0 so far), libfmt, doxygen,
-ffmpeg, OpenCV 4, dlib, Java 8, Gradle, libsndfile, and portaudio.
+ffmpeg, OpenCV 4, dlib, Java 8, and Gradle.
 
-**Note:** On Debian-flavored Linux distros, you will need to install CMake and
-Boost from source, since the versions installed by apt-get are not new enough
-(as of 11/19/2019).
-
-The following commands should work for users that use either MacPorts,
-Homebrew, or apt-get as their package manager. 
+The following commands should install ToMCAT and its dependencies for users
+that use either MacPorts, Homebrew, or apt as their package manager. 
 
 ```bash
 git clone https://github.com/ml4ai/tomcat
 cd tomcat && ./tools/install.sh
 ```
-
-**Also, set the environment variable `TOMCAT` to point to the cloned repository
-on your computer.**
 
 Please make sure your internet connection is active while the `install.sh`
 script is running. Mac users may want to turn off their firewalls.
@@ -33,34 +26,22 @@ Windows support are welcome.
 Running experiments
 -------------------
 
-To launch Minecraft, execute the script (in the `build` directory)
+To run an experiment, run the following command from the `tomcat` directory.
 
-    ./launch_minecraft.sh
+    ./tools/run_session.sh
 
-Then in a separate terminal, run the executable `runExperiment`:
+The data from the experiment will be saved in a folder whose name contains a
+timestamp corresponding to the start of the experiment, of the form
 
-    ./bin/runExperiment --mission <path_to_mission_XML_file>
+    tomcat/data/participant_data/session_<Year>_<Month>_<Day>_<Hour>_<Minute>_<Second>
 
-To run the default tutorial mission, just do:
-
-    ./bin/runExperiment
-
-To run the default search-and-rescue mission with a time limit of 10 minutes, you can just do:
-
-    ./bin/runExperiment --mission 1 --time_limit 600
-
-You can run `./bin/runExperiment --help` to see the other possible options.
-
-For UA researchers gathering speech data (in addition to other Malmo data), do
-the following invocation:
-
-    ./bin/runExperiment --mission 1 --record_all --record_audio --time_limit 600
-
-If any of the following conditions happens, Minecraft needs to be relaunched
-before another mission can be executed:
-
-1. The player dies
-2. The mission ends (either by timeout or by achievement of all the goals)
+This folder will contain four files:
+- `webcam_video.mpg` : A video recording of the player's face taken using the built-in
+  webcam.
+- `screen_video.mpg` : A video recording of the Minecraft playthrough (i.e.
+  what the player sees on their screen)
+- `malmo_data.tgz` : A gzipped tarball containing Malmo data about player's
+  position, nearby entities, etc.
 
 ## For developers
 
