@@ -84,8 +84,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
     # Recording game screen.
     if [[ "$OSTYPE" == "darwin"* ]]; then
         ${ffmpeg_common_invocation} \
-            -i "1:" -vf "crop=$width:$height:$x1:$y1" ${output_dir}/screen_video.mpg \
-            &>/dev/null &
+            -i "1:" -r 30 ${output_dir}/screen_video.mpg &> /dev/null &
         screen_recording_pid=$!
     fi
 
