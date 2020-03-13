@@ -14,6 +14,15 @@
 (progn (ql:quickload "shop3")
        (ql:quickload "shop3/plan-grapher"))
 
+(defun multi-graph (id plans)
+  (if (null plans)
+    'done
+    (progn
+      (cl-dot:dot-graph (spg:graph-plan-tree (car plans))
+                        (format nil "graph~A.pdf" id)
+                        :format "pdf")
+      (multi-graph (+ id 1) (cdr plans)))))
+
 (in-package :shop-user)
 ;(shop-trace :all)
 (defdomain (sar-individual-domain :type pddl-domain :redefine-ok T) (
@@ -26,12 +35,12 @@
     (:predicates (in ?h - human ?r - room)
                  (inside ?h - human ?b - building)
                  (triaged ?v - victim)
-                 (checked ?r - room))
+                 (checked ?t - rescuer ?r - room))
 
     (:action check-room
       :parameters (?t - rescuer ?r - room)
-      :precondition (and (in ?t ?r) (not (checked ?r)))
-      :effect (checked ?r)
+      :precondition (and (in ?t ?r) (not (checked ?t ?r)))
+      :effect (checked ?t ?r)
     )
 
     (:action move-to
@@ -54,21 +63,21 @@
 
     (:method (search_and_triage ?t) 
              room-not-checked
-             (and (in ?t ?r) (not (checked ?r))) 
+             (and (in ?t ?r) (not (checked ?t ?r))) 
              (:ordered (:task :immediate !check-room ?t ?r) 
                        (:task search_and_triage ?t))
 
              room-checked-victim-found 
-             (and (victim ?v) (checked ?r) (same-room ?t ?v ?r) (not (triaged ?v))) 
+             (and (victim ?v) (checked ?t ?r) (same-room ?t ?v ?r) (not (triaged ?v))) 
              (:ordered (:task :immediate !triage ?t ?v ?r)
                        (:task search_and_triage ?t))
 
              all-clear
-             (and (num-of-rooms-checked ?c) (num-of-rooms ?n) (eval (eq '?n '?c)))
+             (and (num-of-rooms-checked ?t ?c) (num-of-rooms ?n) (eval (eq '?n '?c)))
              (:ordered (:task !leave-building ?t ?b))
 
              room-checked-all-triaged
-             (and (checked ?r) (in ?t ?r))
+             (and (checked ?t ?r) (in ?t ?r))
              (:ordered (:task :immediate !move-to ?t ?r ?r2)
                        (:task search_and_triage ?t))
              )
@@ -76,7 +85,7 @@
     (:- (same-room ?t ?v ?r) (and (in ?t ?r) (in ?v ?r)))
     (:- (same ?x ?x) nil)
     (:- (different ?x ?y) ((not (same ?x ?y))))
-    (:- (num-of-rooms-checked ?c) ((setof ?rooms (checked ?rooms) ?ac) (assign ?c (length '?ac))))
+    (:- (num-of-rooms-checked ?t ?c) ((setof ?rooms (checked ?t ?rooms) ?ac) (assign ?c (length '?ac))))
     (:- (num-of-rooms ?n) ((setof ?rooms (room ?rooms) ?b) (assign ?n (length '?b))))
   )
 )
@@ -90,10 +99,8 @@
 
 (let ((plan-trees (nth-value 2 
                              (find-plans 'sar-individual-problem
-                                         :which :first
+                                         :which :all
                                          :verbose :long-plans
                                          :plan-tree t))))
-  (cl-dot:dot-graph (spg:graph-plan-tree (first plan-trees))
-                    "graph.pdf"
-                    :format "pdf"))
+  (cl-user::multi-graph 1 plan-trees)) 
 (cl-user::quit)
