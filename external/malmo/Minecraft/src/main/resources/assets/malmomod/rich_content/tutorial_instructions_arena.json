@@ -12,6 +12,7 @@
         {
           "texture": "textures1.png",
           "caption": "View Point",
+          "subcaption": "",
           "originXInTexture": 96,
           "originYInTexture": 32,
           "width": 32,
@@ -30,6 +31,7 @@
         {
           "texture": "textures1.png",
           "caption": "Gate",
+          "subcaption": "",
           "originXInTexture": 192,
           "originYInTexture": 0,
           "width": 32,
@@ -38,6 +40,7 @@
         {
           "texture": "textures1.png",
           "caption": "Open",
+          "subcaption": "",
           "originXInTexture": 32,
           "originYInTexture": 0,
           "width": 32,

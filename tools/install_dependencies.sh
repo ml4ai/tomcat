@@ -60,11 +60,17 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
             dlib \
             opencv4 \
             openblas \
-            openjdk8 \
             gradle \
             libsndfile \
             portaudio
         if [[ $? -ne 0 ]]; then exit 1; fi;
+
+        # We install Java using a local Portfile, since the upstream openjdk8
+        # port points to Java 1.8.0_242, which is incompatible with Malmo (the
+        # local Portfile points to Java 1.8.0_232.
+        pushd tools/local-ports/openjdk8
+          sudo port install
+        popd
 
         sudo port -N install boost -no_static
         if [[ $? -ne 0 ]]; then exit 1; fi;
@@ -99,8 +105,10 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         if [[ ! -z $TRAVIS ]]; then
           # On Travis, we will install lcov to provide code coverage estimates.
           brew install lcov;
+          download_and_extract_dlib
+        else
+          ./install_dlib_from_source.sh
         fi;
-        download_and_extract_dlib
     else
         echo "No package manager found for $OSTYPE"
         exit 1
@@ -137,7 +145,10 @@ elif [ -x "$(command -v apt-get)" ]; then
         doxygen \
         ffmpeg \
         libopenblas-dev \
-        openjdk-8-jdk \
+        openjdk-8-jre-headless=8u162-b12-1\
+	openjdk-8-jre=8u162-b12-1\
+	openjdk-8-jdk-headless=8u162-b12-1\
+	openjdk-8-jdk=8u162-b12-1\
         portaudio19-dev \
         libsndfile1-dev
     if [[ $? -ne 0 ]]; then exit 1; fi;

@@ -24,9 +24,9 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
 	private SelfReportContent content;
 	private int currentQuestion;
 	private boolean shouldPauseGame;
-	private ArrayList<ScreenListener> listeners;
-	private long initialTime; 
-	
+	private long initialTime;
+	private ArrayList<ScreenListener> listeners;	 
+
 	/**
 	 * Constructor
 	 * @param content - Content of the screen
@@ -49,19 +49,41 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		this.drawBackground();
-		this.drawCurrentQuestion();
+		this.drawPageContent();
 		super.drawScreen(mouseX, mouseY, partialTicks);
 	}
 
 	/**
-	 * Draw screen background
+	 * Draws screen background
 	 */
 	private void drawBackground() {
 		drawRect(MARGIN, MARGIN, this.width - MARGIN, this.height - MARGIN, BACKGROUND_COLOR);
 	}
 
 	/**
-	 * Draw contents of the current question
+	 * Draws content of the current page
+	 */
+	private void drawPageContent() {
+		this.drawCurrentQuestion();		
+	}
+
+	/**
+	 * Creates a new GuiLabel correctly positioned in the screen
+	 * @return
+	 */
+	private GuiLabel createGuiLabel() {
+		int textWidth = this.width - 2*(MARGIN + TEXT_PADDING);
+		int textHeight = TEXT_HEIGHT;
+		int x = MARGIN + TEXT_PADDING;
+		int y = MARGIN + TEXT_PADDING;
+
+		GuiLabel guiLabel = new UnshadowedLabel(this.fontRendererObj, 1, x, y, textWidth, textHeight, FOREGORUND_COLOR);
+		guiLabel.setCentered();
+		return guiLabel;
+	}
+
+	/**
+	 * Draws contents of the current question
 	 */
 	private void drawCurrentQuestion() {		
 		SelfReportQuestion question = this.content.getQuestion(this.currentQuestion);
@@ -70,37 +92,31 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
 	}
 
 	/**
-	 * Draw textual content of a page
+	 * Draws textual content of a page
 	 * @param page - Rich content page
 	 */
 	private void drawTextFromQuestion(SelfReportQuestion question) {
 		this.labelList.clear();
-
-		int textWidth = this.width - 2*(MARGIN + TEXT_PADDING);
-		int textHeight = TEXT_HEIGHT;
-		int x = MARGIN + TEXT_PADDING;
-		int y = MARGIN + TEXT_PADDING;
-
-		GuiLabel guiLabel = new UnshadowedLabel(this.fontRendererObj, 1, x, y, textWidth, textHeight, FOREGORUND_COLOR);
-		guiLabel.setCentered();
+		GuiLabel guiLabel = this.createGuiLabel();
 
 		Iterator<String> text = question.getText();
 		while(text.hasNext()) {
 			guiLabel.addLine(text.next());
 		}
+
 		this.labelList.add(guiLabel);
 	}
-	
+
 	/**
-	 * Draw buttons on the screen
+	 * Draws buttons on the screen
 	 */
-	protected void drawButtonsFromQuestion(SelfReportQuestion question) {
+	private void drawButtonsFromQuestion(SelfReportQuestion question) {
 		this.buttonList.clear();
-		
+
 		int numberOfButtons = question.getNumberOfChoices();
-		int numberOfRows = (int) Math.ceil(numberOfButtons / MAX_BUTTONS_PER_ROW) + 1; // One more extra row for the skip button			
+		int numberOfRows = (int) Math.ceil((float)numberOfButtons / (float)MAX_BUTTONS_PER_ROW) + 1; // One more extra row for the skip button			
 		int y = this.height - MARGIN -  numberOfRows*(MARGIN + BUTTON_HEIGHT);
-		
+
 		Iterator<String> buttonTexts = question.getChoices();
 		ArrayList<String> buttonsInARow = new ArrayList<String>();
 		int numberOfButtonsAdded = 0;
@@ -108,7 +124,7 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
 		while (buttonTexts.hasNext()) {
 			buttonsInARow.add(buttonTexts.next());
 			numberOfButtonsAdded++;
-			
+
 			if(buttonsInARow.size() == MAX_BUTTONS_PER_ROW || numberOfButtonsAdded == numberOfButtons) {
 				this.drawButtonRow(initialButtonCode, y, buttonsInARow);
 				buttonsInARow.clear();
@@ -116,19 +132,22 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
 				initialButtonCode += buttonsInARow.size();
 			}
 		}
-		
+
 		// Add skip button
 		buttonsInARow.add(SKIP_BUTTON_TEXT);
 		this.drawButtonRow(SKIP_BUTTON_CODE, y, buttonsInARow);		
 	}
-	
+
+	/**
+	 * Draws horizontally aligned buttons
+	 */
 	private void drawButtonRow(int initialButtonCode, int y, ArrayList<String> buttonTexts) {
 		int avaliableWidth = this.width - 2*MARGIN;
 		int avaliableSpace = avaliableWidth - buttonTexts.size()*BUTTON_WIDTH;
 		int spaceBetweenButtons = avaliableSpace / (buttonTexts.size() + 1);
 		int x = MARGIN + spaceBetweenButtons;
 		int buttonCode = initialButtonCode;
-		
+
 		for (int i = 0; i < buttonTexts.size(); i++) {
 			String buttonText  = buttonTexts.get(i);
 			GuiButton choiceButton = new GuiButton(buttonCode, x, y, BUTTON_WIDTH, BUTTON_HEIGHT, buttonText);
@@ -139,15 +158,14 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
 	}
 
 	@Override
-	protected void actionPerformed(GuiButton guiButton) {
+	protected void actionPerformed(GuiButton guiButton) {		
 		SelfReportQuestion question = this.content.getQuestion(this.currentQuestion);
 		question.setSelectedChoice(guiButton.id);
-		
 		if(this.currentQuestion == this.content.getNumberOfQuestions() - 1) {
-			this.dismissScreen();
+			this.dismissScreen();				
 		} else {
 			this.currentQuestion++;
-		}
+		}		
 	}
 
 	@Override
@@ -174,7 +192,7 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
 			listener.screenDismissed(this, this.content);
 		}		
 	}	
-	
+
 	/**
 	 * Defines the number of seconds the player took to answer the self-report
 	 */

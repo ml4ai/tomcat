@@ -24,7 +24,6 @@ import edu.arizona.tomcat.Mission.Client.ClientMission;
 import edu.arizona.tomcat.Mission.gui.FeedbackListener;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 import edu.arizona.tomcat.Utils.Converter;
-import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.World.DrawingHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -237,7 +236,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 
 			if(elapsedTime%this.selfReportPromptTimeInSeconds == 0 && this.canShowSelfReport) {
 				SelfReportContent content = this.getSelfReportContent(world);
-				MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(TomcatMessageType.SHOW_SELF_REPORT, new TomcatMessageData(content)), MinecraftServerHelper.getFirstPlayer());
+				MalmoMod.network.sendToAll(new TomcatMessaging.TomcatMessage(TomcatMessageType.SHOW_SELF_REPORT, new TomcatMessageData(content)));
 				this.canShowSelfReport = false;
 			}
 		}
@@ -254,7 +253,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 	 * @return
 	 */
 	protected abstract SelfReportContent getSelfReportContent(World world);
-
+	
 	@Override
 	public void emotionProvided(EmotionHandler.Emotion emotion) {
 		this.currentEmotion = emotion;		
@@ -325,7 +324,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 	}
 
 	public abstract PosAndDirection getPlayersInitialPositionAndDirection(EntityPlayerMP player);
-
+	
 	/**
 	 * Notifies listeners about the mission ending
 	 */
@@ -373,7 +372,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 	 * Get the filename for a given self-report based on some of its info
 	 */
 	private String getSelfReportPath(MissionSelfReport selfReport) {
-		DateFormat dateFormat = new SimpleDateFormat("yyyy_mm_dd_hh_mm_ss");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
 		String path = String.format("%s/%d_%s_%s.json", SELF_REPORT_FOLDER, selfReport.getMissionID(), selfReport.getPlayerID(), 
 				dateFormat.format(selfReport.getMissionStartTime()));
 		return path;

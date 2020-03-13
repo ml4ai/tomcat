@@ -12,8 +12,12 @@ import com.microsoft.Malmo.MalmoMod;
 public class SelfReportContent {
 	
 	private String id;
+	private String filenameRichContentBeforeQuestions;
+	private String filenameRichContentAfterQuestions;
 	private List<SelfReportQuestion> questions;
 	private float durationInSeconds;
+	private RichContent richContentBeforeQuestions;
+	private RichContent richContentAfterQuestions;
 
 	/**
 	 * Constructor
@@ -21,6 +25,8 @@ public class SelfReportContent {
 	public SelfReportContent(String id) {
 		this.id = id;
 		this.questions = new ArrayList<SelfReportQuestion>();
+		this.filenameRichContentBeforeQuestions = null;
+		this.filenameRichContentAfterQuestions = null;
 	}
 
 	/**
@@ -45,6 +51,14 @@ public class SelfReportContent {
 		Gson gson = new Gson();
 		content = gson.fromJson(reader, SelfReportContent.class);
 		content.id = id;
+		if(content.filenameRichContentBeforeQuestions != null && 
+				!content.filenameRichContentBeforeQuestions.equals("")) {
+			content.richContentBeforeQuestions = RichContent.createFromJson(content.filenameRichContentBeforeQuestions);
+		}
+		if(content.filenameRichContentAfterQuestions != null && 
+				!content.filenameRichContentAfterQuestions.equals("")) {
+			content.richContentAfterQuestions = RichContent.createFromJson(content.filenameRichContentAfterQuestions);
+		}
 		return content;
 	}
 
@@ -56,6 +70,12 @@ public class SelfReportContent {
 	public void setTextPlaceholder(int placeholderIndex, String text) {
 		for(SelfReportQuestion question : this.questions) {
 			question.setTextPlaceholder(placeholderIndex, text);
+		}
+		if(this.richContentBeforeQuestions != null) {
+			this.richContentBeforeQuestions.setTextPlaceholder(placeholderIndex, text);
+		}
+		if(this.richContentAfterQuestions != null) {
+			this.richContentAfterQuestions.setTextPlaceholder(placeholderIndex, text);
 		}
 	}
 
@@ -98,8 +118,22 @@ public class SelfReportContent {
 	 */
 	public float getDurationInSeconds() {
 		return durationInSeconds;
-	}		
+	}
 	
+	/**
+	 * Gets rich content that must be shown before the questions 
+	 * @return
+	 */
+	public RichContent getRichContentBeforeQuestions() {
+		return this.richContentBeforeQuestions;
+	}
 	
+	/**
+	 * Gets rich content that must be shown after the questions 
+	 * @return
+	 */
+	public RichContent getRichContentAfterQuestions() {
+		return this.richContentAfterQuestions;
+	}
 
 }

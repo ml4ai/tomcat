@@ -117,7 +117,7 @@ namespace tomcat {
                 />
               </ServerHandlers>
           </ServerSection>
-          <AgentSection mode="Survival">
+          <AgentSection mode="Adventure">
               <Name>Tomcat</Name>
               <AgentStart>
               </AgentStart>

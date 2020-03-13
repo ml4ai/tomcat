@@ -10,6 +10,7 @@ public class RichContentImage {
 
 	private String texture;
 	private String caption;
+	private String subcaption;
 	private int originXInTexture;
 	private int originYInTexture;
 	private int width;
@@ -18,14 +19,17 @@ public class RichContentImage {
 	/**
 	 * Constructor
 	 * @param texture - Name of the file with the texture 256x256
+	 * @param caption - Small text below the image
+	 * @param subcaption - Small text below image's caption
 	 * @param originXIntexture - Origin of the image in the texture in the axis X
 	 * @param originYInTexture - Origin of the image in the texture in the axis Y
 	 * @param width - Width of the image in the texture
 	 * @param height - Height of the image in the texture 
 	 */
-	public RichContentImage(String texture, String caption, int originXIntexture, int originYInTexture, int width, int height) {
+	public RichContentImage(String texture, String caption, String subcaption, int originXIntexture, int originYInTexture, int width, int height) {
 		this.texture = texture;
 		this.caption = caption;
+		this.subcaption = subcaption;
 		this.originXInTexture = originXIntexture;
 		this.originYInTexture = originYInTexture;
 		this.width = width; 
@@ -89,6 +93,25 @@ public class RichContentImage {
 	 */
 	public String getCaption() {
 		return this.caption;
+	}
+	
+	/**
+	 * Retrieves the image subcaption
+	 * @return
+	 */
+	public String getSubcaption() {
+		return this.subcaption;
+	}
+	
+	/**
+	 * Replace a placeholder in the caption by a string
+	 * @param placeholderIndex - Index of the placeholder in the text
+	 * @param text - Text to be replaced
+	 */
+	public void setCaptionPlaceholder(int placeholderIndex, String text) {
+		String placeholder = "{" + placeholderIndex + "}";
+		this.caption = this.caption.replace(placeholder, text);
+		this.subcaption = this.subcaption.replace(placeholder, text);
 	}
 		
 }
