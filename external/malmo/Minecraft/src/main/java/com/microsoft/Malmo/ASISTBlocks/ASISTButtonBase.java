@@ -1,4 +1,4 @@
-package edu.arizona.tomcat.Utils;
+package com.microsoft.Malmo.ASISTBlocks;
 
 import java.util.List;
 import java.util.Random;
@@ -16,6 +16,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
@@ -25,7 +26,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public abstract class SmartButton extends BlockDirectional
+public abstract class ASISTButtonBase extends BlockDirectional
 {
     public static final PropertyBool POWERED = PropertyBool.create("powered");
     protected static final AxisAlignedBB AABB_DOWN_OFF = new AxisAlignedBB(0.3125D, 0.875D, 0.375D, 0.6875D, 1.0D, 0.625D);
@@ -42,7 +43,7 @@ public abstract class SmartButton extends BlockDirectional
     protected static final AxisAlignedBB AABB_EAST_ON = new AxisAlignedBB(0.0D, 0.375D, 0.3125D, 0.0625D, 0.625D, 0.6875D);
     private final boolean wooden;
 
-    protected SmartButton(boolean wooden)
+    protected ASISTButtonBase(boolean wooden)
     {
         super(Material.CIRCUITS);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(POWERED, Boolean.valueOf(false)));

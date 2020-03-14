@@ -22,6 +22,7 @@
 
 package com.microsoft.Malmo;
 
+import com.microsoft.Malmo.ASISTBlocks.ModBlocks;
 import com.microsoft.Malmo.Client.MalmoEnvServer;
 import com.microsoft.Malmo.Client.MalmoModClient;
 import com.microsoft.Malmo.MissionHandlers.AbsoluteMovementCommandsImplementation;
@@ -203,6 +204,7 @@ public class MalmoMod {
 				ObservationFromSystemImplementation.SystemRequestMessage.class,
 				12,
 				Side.SERVER);
+		ModBlocks.registerRenders();
 	}
 
 	@EventHandler
@@ -351,7 +353,7 @@ public class MalmoMod {
 		 * @param messageType
 		 * @param uid a hash code that (more or less) uniquely identifies the
 		 *     targeted listener
-		 * @param message
+		 * @param
 		 */
 		public MalmoMessage(MalmoMessageType messageType,
 				int uid,

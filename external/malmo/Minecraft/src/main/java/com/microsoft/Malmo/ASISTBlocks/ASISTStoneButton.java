@@ -1,17 +1,16 @@
-package edu.arizona.tomcat.Utils;
+package com.microsoft.Malmo.ASISTBlocks;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.BlockButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class SmartStoneButton extends SmartButton
+public class ASISTStoneButton extends ASISTButtonBase
 {
-    protected SmartStoneButton()
+    public ASISTStoneButton()
     {
         super(false);
     }
