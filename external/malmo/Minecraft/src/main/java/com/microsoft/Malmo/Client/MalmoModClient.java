@@ -22,6 +22,7 @@
 
 package com.microsoft.Malmo.Client;
 
+import com.microsoft.Malmo.ASISTBlocks.ModBlocks;
 import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.Utils.CraftingHelper;
 import com.microsoft.Malmo.Utils.ScreenHelper.TextCategory;
@@ -116,6 +117,8 @@ public class MalmoModClient {
 
 	public void init(FMLInitializationEvent event) {
 		// Register for various events:
+		//ModBlocks.registerRenders();
+
 		MinecraftForge.EVENT_BUS.register(this);    
 		GameSettings settings = Minecraft.getMinecraft().gameSettings;
 		TextureHelper.hookIntoRenderPipeline();

@@ -110,6 +110,10 @@ public class MalmoMod {
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
+
+		ModBlocks.init();
+		ModBlocks.register();
+
 		if (!SchemaHelper.testSchemaVersionNumbers(
 				Loader.instance().activeModContainer().getVersion()))
 			throw new RuntimeException(
@@ -204,7 +208,6 @@ public class MalmoMod {
 				ObservationFromSystemImplementation.SystemRequestMessage.class,
 				12,
 				Side.SERVER);
-		ModBlocks.registerRenders();
 	}
 
 	@EventHandler

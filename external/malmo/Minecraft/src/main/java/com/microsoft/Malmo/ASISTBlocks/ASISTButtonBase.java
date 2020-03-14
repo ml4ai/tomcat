@@ -46,6 +46,8 @@ public abstract class ASISTButtonBase extends BlockDirectional
     protected ASISTButtonBase(boolean wooden)
     {
         super(Material.CIRCUITS);
+        setUnlocalizedName("ASISTStoneButton");
+        setRegistryName("MalmoASISTStoneButton");
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(POWERED, Boolean.valueOf(false)));
         this.setTickRandomly(true);
         this.setCreativeTab(CreativeTabs.REDSTONE);
