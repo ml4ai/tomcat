@@ -7,31 +7,11 @@
 # script that is supposed to install things we might need, counting on as little
 # as possible.
 
-# set -x 
+# Set the TOMCAT environment variable, assuming that the directory structure
+# mirrors that of the git repository.
+export TOMCAT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && pwd )"
 
 ###############################################################################
-
-# If TOMCAT is set as an enviroment variable, we will respect it. We do not use
-# the tcsh trick to test this because tcsh might not be installed yet. 
-
-if [ ! -z "$TOMCAT" ]; then
-    echo "Using requested TOMCAT location ${TOMCAT}."
-else 
-    # This script should be in a directory 'tools' which should be a subdirectory of
-    # the TOMCAT directory. The following uses those assumptions to determine
-    # TOMCAT.
-    #
-    called_as_dir=`echo $0 | sed 's#^[^/][^/]*$#./#'`
-    called_as_dir=`echo $called_as_dir | sed 's#^\(.*\)/.*$#\1#'`
-    pushd "${called_as_dir}" > /dev/null; called_as_dir=`pwd`; popd > /dev/null
-    export TOMCAT=`echo $called_as_dir | sed 's#^\./##' | sed 's#^\(.*\)/tools$#\1#'`
-    echo "Using inferred TOMCAT location ${TOMCAT}."
-fi
-
-###############################################################################
-
-# Bug! Interacts badly with cmake!! 
-# declare -x TRAVIS
 
 ${TOMCAT}/tools/install_dependencies.sh
 if [[ $? -ne 0 ]]; then exit 1; fi;
@@ -81,7 +61,7 @@ pushd "${TOMCAT}"
         if [[ $? -ne 0 ]]; then exit 1; fi;
 
         # We skip building Minecraft on Travis since we cannot get an
-        # appropriate version of Java on their MacOS image.
+        # appropriate version of Java on their macOS image.
         if [[ -z $TRAVIS ]]; then
             make -j Minecraft
             if [[ $? -ne 0 ]]; then exit 1; fi;
@@ -93,4 +73,4 @@ popd > /dev/null
 echo " "
 echo "Finished installing ToMCAT in ${TOMCAT}!"
 echo " "
-
+exit 0

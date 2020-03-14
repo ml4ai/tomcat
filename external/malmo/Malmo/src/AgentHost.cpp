@@ -301,12 +301,12 @@ namespace malmo {
         boost::make_shared<MissionRecord>(mission_record);
     this->current_role = role;
 
-    listenForMissionControlMessages(
+    this->listenForMissionControlMessages(
         this->current_mission_init->getAgentMissionControlPort());
     // Video producing handlers.
     if (mission.isVideoRequested(this->current_role)) {
       this->video_server =
-          listenForVideo(this->video_server,
+          this->listenForVideo(this->video_server,
                          this->current_mission_init->getAgentVideoPort(),
                          mission.getVideoWidth(this->current_role),
                          mission.getVideoHeight(this->current_role),
@@ -315,7 +315,7 @@ namespace malmo {
     }
     if (mission.isDepthRequested(this->current_role)) {
       this->depth_server =
-          listenForVideo(this->depth_server,
+          this->listenForVideo(this->depth_server,
                          this->current_mission_init->getAgentDepthPort(),
                          mission.getVideoWidth(this->current_role),
                          mission.getVideoHeight(this->current_role),
@@ -324,7 +324,7 @@ namespace malmo {
     }
     if (mission.isLuminanceRequested(this->current_role)) {
       this->luminance_server =
-          listenForVideo(this->luminance_server,
+          this->listenForVideo(this->luminance_server,
                          this->current_mission_init->getAgentLuminancePort(),
                          mission.getVideoWidth(this->current_role),
                          mission.getVideoHeight(this->current_role),
@@ -333,15 +333,15 @@ namespace malmo {
     }
     if (mission.isColourMapRequested(this->current_role)) {
       this->colourmap_server =
-          listenForVideo(this->colourmap_server,
+          this->listenForVideo(this->colourmap_server,
                          this->current_mission_init->getAgentColourMapPort(),
                          mission.getVideoWidth(this->current_role),
                          mission.getVideoHeight(this->current_role),
                          3,
                          TimestampedVideoFrame::COLOUR_MAP);
     }
-    listenForRewards(this->current_mission_init->getAgentRewardsPort());
-    listenForObservations(
+    this->listenForRewards(this->current_mission_init->getAgentRewardsPort());
+    this->listenForObservations(
         this->current_mission_init->getAgentObservationsPort());
 
     if (this->commands_stream.is_open()) {

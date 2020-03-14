@@ -16,3 +16,4 @@ popd > /dev/null
 
 echo "OpenFace models download complete."
 echo " "
+exit 0
