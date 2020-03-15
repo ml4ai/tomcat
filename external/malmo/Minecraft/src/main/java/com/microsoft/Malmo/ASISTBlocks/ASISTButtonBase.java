@@ -26,8 +26,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public abstract class ASISTButtonBase extends BlockDirectional
-{
+/**
+ * This class defines a new basic button that can write event observations whenever it is pressed by the player. Some deprecated methods
+ * are being overridden in this class, but that seems to be necessary for the block to achieve the same functionality as a normal Minecraft button,
+ * and also for it to be rendered properly inside the world.
+ */
+public abstract class ASISTButtonBase extends BlockDirectional {
     public static final PropertyBool POWERED = PropertyBool.create("powered");
     protected static final AxisAlignedBB AABB_DOWN_OFF = new AxisAlignedBB(0.3125D, 0.875D, 0.375D, 0.6875D, 1.0D, 0.625D);
     protected static final AxisAlignedBB AABB_UP_OFF = new AxisAlignedBB(0.3125D, 0.0D, 0.375D, 0.6875D, 0.125D, 0.625D);
@@ -43,36 +47,67 @@ public abstract class ASISTButtonBase extends BlockDirectional
     protected static final AxisAlignedBB AABB_EAST_ON = new AxisAlignedBB(0.0D, 0.375D, 0.3125D, 0.0625D, 0.625D, 0.6875D);
     private final boolean wooden;
 
-    protected ASISTButtonBase(boolean wooden)
-    {
+    protected ASISTButtonBase(boolean wooden) {
         super(Material.CIRCUITS);
-        setUnlocalizedName("ASISTStoneButton");
-        setRegistryName("MalmoASISTStoneButton");
+        setUnlocalizedName("ASISTButton");
+        setRegistryName("ASISTButton");
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(POWERED, Boolean.valueOf(false)));
         this.setTickRandomly(true);
         this.setCreativeTab(CreativeTabs.REDSTONE);
         this.wooden = wooden;
     }
 
-    public int tickRate(World worldIn)
-    {
+
+    /**
+     * Called when the block is right clicked by a player.
+     */
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        if (state.getValue(POWERED).booleanValue()) {
+            return true;
+        } else {
+            worldIn.setBlockState(pos, state.withProperty(POWERED, Boolean.valueOf(true)), 3);
+            worldIn.markBlockRangeForRenderUpdate(pos, pos);
+            this.playClickSound(playerIn, worldIn, pos);
+            this.notifyNeighbors(worldIn, pos, state.getValue(FACING));
+            worldIn.scheduleUpdate(pos, this, this.tickRate(worldIn));
+            System.out.println("-------------------------> ASIST Observer button was pressed"); //TODO: Change to JSON Output
+            return true;
+        }
+    }
+
+    @Nullable
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+        return NULL_AABB;
+    }
+
+    /**
+     * How many world ticks before ticking
+     */
+    public int tickRate(World worldIn) {
         return this.wooden ? 30 : 20;
+    }
+
+    /**
+     * Used to determine ambient occlusion and culling when rebuilding chunks for render
+     */
+    public boolean isOpaqueCube(IBlockState state) {
+        return false;
+    }
+
+    public boolean isFullCube(IBlockState state) {
+        return false;
     }
 
     /**
      * Check whether this Block can be placed on the given side
      */
-    public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side)
-    {
+    public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side) {
         return canPlaceBlock(worldIn, pos, side.getOpposite());
     }
 
-    public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
-    {
-        for (EnumFacing enumfacing : EnumFacing.values())
-        {
-            if (canPlaceBlock(worldIn, pos, enumfacing))
-            {
+    public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
+        for (EnumFacing enumfacing : EnumFacing.values()) {
+            if (canPlaceBlock(worldIn, pos, enumfacing)) {
                 return true;
             }
         }
@@ -83,45 +118,59 @@ public abstract class ASISTButtonBase extends BlockDirectional
     /**
      * Check whether this block can be placed on the block in the given direction.
      */
-    protected static boolean canPlaceBlock(World worldIn, BlockPos pos, EnumFacing direction)
-    {
+    protected static boolean canPlaceBlock(World worldIn, BlockPos pos, EnumFacing direction) {
         BlockPos blockpos = pos.offset(direction);
         return worldIn.getBlockState(blockpos).isSideSolid(worldIn, blockpos, direction.getOpposite());
     }
 
-    private boolean checkForDrop(World worldIn, BlockPos pos, IBlockState state)
-    {
-        if (this.canPlaceBlockAt(worldIn, pos))
-        {
-            return true;
+    /**
+     * Called by ItemBlocks just before a block is actually set in the world, to allow for adjustments to the
+     * IBlockstate
+     */
+    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+        return canPlaceBlock(worldIn, pos, facing.getOpposite()) ? this.getDefaultState().withProperty(FACING, facing).withProperty(POWERED, Boolean.valueOf(false)) : this.getDefaultState().withProperty(FACING, EnumFacing.DOWN).withProperty(POWERED, Boolean.valueOf(false));
+    }
+
+    /**
+     * Called when a neighboring block was changed and marks that this state should perform any checks during a neighbor
+     * change. Cases may include when redstone power is updated, cactus blocks popping off due to a neighboring solid
+     * block, etc.
+     */
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
+        if (this.checkForDrop(worldIn, pos, state) && !canPlaceBlock(worldIn, pos, state.getValue(FACING).getOpposite())) {
+            this.dropBlockAsItem(worldIn, pos, state, 0);
+            worldIn.setBlockToAir(pos);
         }
-        else
-        {
+    }
+
+    private boolean checkForDrop(World worldIn, BlockPos pos, IBlockState state) {
+        if (this.canPlaceBlockAt(worldIn, pos)) {
+            return true;
+        } else {
             this.dropBlockAsItem(worldIn, pos, state, 0);
             worldIn.setBlockToAir(pos);
             return false;
         }
     }
 
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        EnumFacing enumfacing = state.getValue(FACING);
+        boolean flag = state.getValue(POWERED).booleanValue();
 
-    /**
-     * Called when the block is right clicked by a player.
-     */
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
-    {
-        if (((Boolean)state.getValue(POWERED)).booleanValue())
-        {
-            return true;
-        }
-        else
-        {
-            worldIn.setBlockState(pos, state.withProperty(POWERED, Boolean.valueOf(true)), 3);
-            worldIn.markBlockRangeForRenderUpdate(pos, pos);
-            this.playClickSound(playerIn, worldIn, pos);
-            this.notifyNeighbors(worldIn, pos, (EnumFacing)state.getValue(FACING));
-            worldIn.scheduleUpdate(pos, this, this.tickRate(worldIn));
-            System.out.println("---------------------------------------------> HERE IS THE SMART BUTTON OUTPUT");
-            return true;
+        switch (enumfacing) {
+            case EAST:
+                return flag ? AABB_EAST_ON : AABB_EAST_OFF;
+            case WEST:
+                return flag ? AABB_WEST_ON : AABB_WEST_OFF;
+            case SOUTH:
+                return flag ? AABB_SOUTH_ON : AABB_SOUTH_OFF;
+            case NORTH:
+            default:
+                return flag ? AABB_NORTH_ON : AABB_NORTH_OFF;
+            case UP:
+                return flag ? AABB_UP_ON : AABB_UP_OFF;
+            case DOWN:
+                return flag ? AABB_DOWN_ON : AABB_DOWN_OFF;
         }
     }
 
@@ -132,37 +181,44 @@ public abstract class ASISTButtonBase extends BlockDirectional
     /**
      * Called serverside after this block is replaced with another in Chunk, but before the Tile Entity is updated
      */
-    public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
-    {
-        if (((Boolean)state.getValue(POWERED)).booleanValue())
-        {
-            this.notifyNeighbors(worldIn, pos, (EnumFacing)state.getValue(FACING));
+    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+        if (state.getValue(POWERED).booleanValue()) {
+            this.notifyNeighbors(worldIn, pos, state.getValue(FACING));
         }
 
         super.breakBlock(worldIn, pos, state);
     }
 
+    public int getWeakPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+        return blockState.getValue(POWERED).booleanValue() ? 15 : 0;
+    }
+
+    public int getStrongPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+        return !blockState.getValue(POWERED).booleanValue() ? 0 : (blockState.getValue(FACING) == side ? 15 : 0);
+    }
+
+    /**
+     * Can this block provide power. Only wire currently seems to have this change based on its state.
+     */
+    @Override
+    public boolean canProvidePower(IBlockState state) {
+        return true;
+    }
+
     /**
      * Called randomly when setTickRandomly is set to true (used by e.g. crops to grow, etc.)
      */
-    public void randomTick(World worldIn, BlockPos pos, IBlockState state, Random random)
-    {
+    public void randomTick(World worldIn, BlockPos pos, IBlockState state, Random random) {
     }
 
-    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
-    {
-        if (!worldIn.isRemote)
-        {
-            if (((Boolean)state.getValue(POWERED)).booleanValue())
-            {
-                if (this.wooden)
-                {
+    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
+        if (!worldIn.isRemote) {
+            if (state.getValue(POWERED).booleanValue()) {
+                if (this.wooden) {
                     this.checkPressed(state, worldIn, pos);
-                }
-                else
-                {
+                } else {
                     worldIn.setBlockState(pos, state.withProperty(POWERED, Boolean.valueOf(false)));
-                    this.notifyNeighbors(worldIn, pos, (EnumFacing)state.getValue(FACING));
+                    this.notifyNeighbors(worldIn, pos, state.getValue(FACING));
                     this.playReleaseSound(worldIn, pos);
                     worldIn.markBlockRangeForRenderUpdate(pos, pos);
                 }
@@ -173,63 +229,82 @@ public abstract class ASISTButtonBase extends BlockDirectional
     /**
      * Called When an Entity Collided with the Block
      */
-    public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
-    {
-        if (!worldIn.isRemote)
-        {
-            if (this.wooden)
-            {
-                if (!((Boolean)state.getValue(POWERED)).booleanValue())
-                {
+    public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
+        if (!worldIn.isRemote) {
+            if (this.wooden) {
+                if (!state.getValue(POWERED).booleanValue()) {
                     this.checkPressed(state, worldIn, pos);
                 }
             }
         }
     }
 
-    private void checkPressed(IBlockState p_185616_1_, World p_185616_2_, BlockPos p_185616_3_)
-    {
-        List <? extends Entity > list = p_185616_2_.<Entity>getEntitiesWithinAABB(EntityArrow.class, p_185616_1_.getBoundingBox(p_185616_2_, p_185616_3_).offset(p_185616_3_));
+    private void checkPressed(IBlockState p_185616_1_, World p_185616_2_, BlockPos p_185616_3_) {
+        List<? extends Entity> list = p_185616_2_.<Entity>getEntitiesWithinAABB(EntityArrow.class, p_185616_1_.getBoundingBox(p_185616_2_, p_185616_3_).offset(p_185616_3_));
         boolean flag = !list.isEmpty();
-        boolean flag1 = ((Boolean)p_185616_1_.getValue(POWERED)).booleanValue();
+        boolean flag1 = p_185616_1_.getValue(POWERED).booleanValue();
 
-        if (flag && !flag1)
-        {
+        if (flag && !flag1) {
             p_185616_2_.setBlockState(p_185616_3_, p_185616_1_.withProperty(POWERED, Boolean.valueOf(true)));
-            this.notifyNeighbors(p_185616_2_, p_185616_3_, (EnumFacing)p_185616_1_.getValue(FACING));
+            this.notifyNeighbors(p_185616_2_, p_185616_3_, p_185616_1_.getValue(FACING));
             p_185616_2_.markBlockRangeForRenderUpdate(p_185616_3_, p_185616_3_);
-            this.playClickSound((EntityPlayer)null, p_185616_2_, p_185616_3_);
+            this.playClickSound(null, p_185616_2_, p_185616_3_);
         }
 
-        if (!flag && flag1)
-        {
+        if (!flag && flag1) {
             p_185616_2_.setBlockState(p_185616_3_, p_185616_1_.withProperty(POWERED, Boolean.valueOf(false)));
-            this.notifyNeighbors(p_185616_2_, p_185616_3_, (EnumFacing)p_185616_1_.getValue(FACING));
+            this.notifyNeighbors(p_185616_2_, p_185616_3_, p_185616_1_.getValue(FACING));
             p_185616_2_.markBlockRangeForRenderUpdate(p_185616_3_, p_185616_3_);
             this.playReleaseSound(p_185616_2_, p_185616_3_);
         }
 
-        if (flag)
-        {
+        if (flag) {
             p_185616_2_.scheduleUpdate(new BlockPos(p_185616_3_), this, this.tickRate(p_185616_2_));
         }
     }
 
-    private void notifyNeighbors(World worldIn, BlockPos pos, EnumFacing facing)
-    {
+    private void notifyNeighbors(World worldIn, BlockPos pos, EnumFacing facing) {
         worldIn.notifyNeighborsOfStateChange(pos, this, false);
         worldIn.notifyNeighborsOfStateChange(pos.offset(facing.getOpposite()), this, false);
     }
 
     /**
+     * Convert the given metadata into a BlockState for this Block
+     */
+    public IBlockState getStateFromMeta(int meta) {
+        EnumFacing enumfacing;
+
+        switch (meta & 7) {
+            case 0:
+                enumfacing = EnumFacing.DOWN;
+                break;
+            case 1:
+                enumfacing = EnumFacing.EAST;
+                break;
+            case 2:
+                enumfacing = EnumFacing.WEST;
+                break;
+            case 3:
+                enumfacing = EnumFacing.SOUTH;
+                break;
+            case 4:
+                enumfacing = EnumFacing.NORTH;
+                break;
+            case 5:
+            default:
+                enumfacing = EnumFacing.UP;
+        }
+
+        return this.getDefaultState().withProperty(FACING, enumfacing).withProperty(POWERED, Boolean.valueOf((meta & 8) > 0));
+    }
+
+    /**
      * Convert the BlockState into the correct metadata value
      */
-    public int getMetaFromState(IBlockState state)
-    {
+    public int getMetaFromState(IBlockState state) {
         int i;
 
-        switch ((EnumFacing)state.getValue(FACING))
-        {
+        switch (state.getValue(FACING)) {
             case EAST:
                 i = 1;
                 break;
@@ -250,16 +325,30 @@ public abstract class ASISTButtonBase extends BlockDirectional
                 i = 0;
         }
 
-        if (((Boolean)state.getValue(POWERED)).booleanValue())
-        {
+        if (state.getValue(POWERED).booleanValue()) {
             i |= 8;
         }
 
         return i;
     }
 
-    protected BlockStateContainer createBlockState()
-    {
-        return new BlockStateContainer(this, new IProperty[] {FACING, POWERED});
+    /**
+     * Returns the blockstate with the given rotation from the passed blockstate. If inapplicable, returns the passed
+     * blockstate.
+     */
+    public IBlockState withRotation(IBlockState state, Rotation rot) {
+        return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
+    }
+
+    /**
+     * Returns the blockstate with the given mirror of the passed blockstate. If inapplicable, returns the passed
+     * blockstate.
+     */
+    public IBlockState withMirror(IBlockState state, Mirror mirrorIn) {
+        return state.withRotation(mirrorIn.toRotation(state.getValue(FACING)));
+    }
+
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, FACING, POWERED);
     }
 }
