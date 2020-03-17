@@ -35,12 +35,35 @@
     (:predicates (in ?h - human ?r - room)
                  (inside ?h - human ?b - building)
                  (triaged ?v - victim)
-                 (checked ?t - rescuer ?r - room))
+                 (checked-room ?t - rescuer ?r - room)
+                 (spotted ?t - rescuer ?v - victim ?r - room)
+                 (examined ?t - rescuer ?v - victim)
+                 (examining ?t - rescuer ?v - victim)
+                 (injured ?v - victim)
+    )
 
     (:action check-room
       :parameters (?t - rescuer ?r - room)
-      :precondition (and (in ?t ?r) (not (checked ?t ?r)))
-      :effect (checked ?t ?r)
+      :precondition (and (in ?t ?r) (not (checked-room ?t ?r)))
+      :effect (and (checked-room ?t ?r) (forall (?v - victim) (when (in ?v ?r) (spotted ?t ?v ?r))))
+    )
+    
+    (:action examine-victim
+      :parameters (?t - rescuer ?v - victim)
+      :precondition (and (same-room ?t ?v ?r) (spotted ?t ?v ?r) (not (examined ?t ?v)))
+      :effect (examining ?t ?v)
+    )
+
+    (:action finish-and-goto-next-victim
+      :parameters (?t - rescuer ?current ?next - victim)
+      :precondition (and (same-room ?t ?next ?r) (spotted ?t ?v ?r) (examining ?t ?current) (not (examined ?t ?next)))
+      :effect (and (examined ?t ?current) (examining ?t ?next) (not (examining ?t ?current)))
+    )
+
+    (:action finish-examinations 
+      :parameters (?t - rescuer ?current - victim)
+      :precondition (examining ?t ?current)
+      :effect (and (examined ?t ?current) (not (examining ?t ?current)))
     )
 
     (:action move-to
@@ -50,50 +73,96 @@
     )
 
     (:action triage
-      :parameters (?t - rescuer ?v - victim ?r - room)
-      :precondition (and (same-room ?t ?v ?r) (not (triaged ?v))) 
+      :parameters (?t - rescuer ?v - victim)
+      :precondition (and (same-room ?t ?v ?r) (examining ?t ?v) (not (triaged ?v))) 
       :effect (triaged ?v)
     )
 
     (:action leave-building
-     :parameters (?t - rescuer ?b - building)
-     :precondition (inside ?t ?b)
-     :effect ((not (inside ?t ?b)))
+      :parameters (?t - rescuer ?b - building)
+      :precondition (inside ?t ?b)
+      :effect ((not (inside ?t ?b)))
     )
 
-    (:method (search_and_triage ?t) 
-             room-not-checked
-             (and (in ?t ?r) (not (checked ?t ?r))) 
-             (:ordered (:task :immediate !check-room ?t ?r) 
-                       (:task search_and_triage ?t))
+    (:action enter-building
+      :parameters (?t - rescuer ?b - building ?r - room)
+      :precondition (not (inside ?t ?b))
+      :effect (and (inside ?t ?b) (in ?t ?r))
+    )
 
-             room-checked-victim-found 
-             (and (victim ?v) (checked ?t ?r) (same-room ?t ?v ?r) (not (triaged ?v))) 
-             (:ordered (:task :immediate !triage ?t ?v ?r)
-                       (:task search_and_triage ?t))
+    (:method (enter-building-and-begin-mission ?t ?b ?r)
+             enter-and-begin
+             ()
+             (:ordered (:task !enter-building ?t ?b ?r)
+                       (:task search-room ?t ?r))
 
-             all-clear
-             (and (num-of-rooms-checked ?t ?c) (num-of-rooms ?n) (eval (eq '?n '?c)))
-             (:ordered (:task !leave-building ?t ?b))
+    )
 
-             room-checked-all-triaged
-             (and (checked ?t ?r) (in ?t ?r))
-             (:ordered (:task :immediate !move-to ?t ?r ?r2)
-                       (:task search_and_triage ?t))
-             )
+    (:method (search-room ?t ?r) 
+             room-checked-victims-found
+             (and (victim ?v) (room ?r2) (in ?t ?r) (same-room ?t ?v ?r) (different ?r ?r2) 
+                  (not (checked-room ?t ?r)) (not (checked-room ?t ?r2))) 
+             (:ordered (:task !check-room ?t ?r)
+                       (:task help-victim ?t ?v)
+                       (:task !move-to ?t ?r ?r2)
+                       (:task search-room ?t ?r2))
+
+             room-checked-no-victims 
+             (and (in ?t ?r) (room ?r2) (different ?r ?r2) (not (checked-room ?t ?r)) (not (checked-room ?t ?r2)))
+             (:ordered (:task !check-room ?t ?r)
+                       (:task !move-to ?t ?r ?r2)
+                       (:task search-room ?t ?r2))
+
+             last-room-checked-victims-found
+             (and (victim ?v) (in ?t ?r) (same-room ?t ?v ?r) (not (checked-room ?t ?r)))
+             (:ordered (:task !check-room ?t ?r)
+                       (:task help-victim ?t ?v)
+                       (:task !leave-building ?t ?b))
+
+             last-room-checked-no-victims
+             (and (in ?t ?r) (not (checked-room ?t ?r)))
+             (:ordered (:task !check-room ?t ?r)
+                       (:task !leave-building ?t ?b))
+    )
+
+    (:method (help-victim ?t ?v)
+             examine-injured-victim-and-move-to-next
+             (and (victim ?v2) (spotted ?t ?v ?r) (different ?v ?v2) (spotted ?t ?v2 ?r) (same-room ?t ?v ?r) (same-room ?t ?v2 ?r) 
+                  (injured ?v) (not (examined ?t ?v)) (not (examined ?t ?v2)) (not (triaged ?t ?v)))
+             (:ordered (:task !examine-victim ?t ?v)
+                       (:task !triage ?t ?v)
+                       (:task !finish-and-goto-next-victim ?t ?v ?v2)
+                       (:task help-victim ?t ?v2))
+
+             examine-uninjured-victim-and-move-to-next
+             (and (victim ?v2) (spotted ?t ?v ?r) (different ?v ?v2) (spotted ?t ?v2 ?r) (same-room ?t ?v ?r) (same-room ?t ?v2 ?r)
+                  (not (examined ?t ?v)) (not (examined ?t ?v2)))
+             (:ordered (:task !examine-victim ?t ?v)
+                       (:task !finish-and-goto-next-victim ?t ?v ?v2)
+                       (:task help-victim ?t ?v2))
+
+             examine-last-injured-victim
+             (and (spotted ?t ?v ?r) (same-room ?t ?v ?r) (injured ?v) (not (examined ?t ?v)) (not (triaged ?t ?v)))
+             (:ordered (:task !examine-victim ?t ?v)
+                       (:task !triage ?t ?v)
+                       (:task !finish-examinations ?t ?v))
+
+             examine-last-uninjured-victim
+             (and (spotted ?t ?v ?r) (same-room ?t ?v ?r) (not (examined ?t ?v)))
+             (:ordered (:task !examine-victim ?t ?v)
+                       (:task !finish-examinations ?t ?v))
+    )
 
     (:- (same-room ?t ?v ?r) (and (in ?t ?r) (in ?v ?r)))
     (:- (same ?x ?x) nil)
     (:- (different ?x ?y) ((not (same ?x ?y))))
-    (:- (num-of-rooms-checked ?t ?c) ((setof ?rooms (checked ?t ?rooms) ?ac) (assign ?c (length '?ac))))
-    (:- (num-of-rooms ?n) ((setof ?rooms (room ?rooms) ?b) (assign ?n (length '?b))))
   )
 )
 
 (defproblem sar-individual-problem
-            ((building b) (room r1) (room r2) (rescuer t1) (victim v1) (victim v2) (victim v3) 
-                          (victim v4) (inside t1 b) (in t1 r1) (in v1 r1) (in v2 r1) (in v3 r2) (in v4 r2))
-            ((search_and_triage t1)))
+            ((building b) (room r1) (room r2) (room r3) (rescuer t1) (victim v1) (victim v2) 
+                          (victim v3) (victim v4) (victim v5) (injured v2) (injured v3) (injured v5) (in v1 r1) (in v2 r1) (in v3 r2) (in v4 r2) (in v5 r3))
+            ((enter-building-and-begin-mission t1 b r1)))
 
 ;; Find plans and graph the first one.
 
