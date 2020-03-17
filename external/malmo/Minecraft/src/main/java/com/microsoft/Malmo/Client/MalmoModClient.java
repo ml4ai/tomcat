@@ -117,7 +117,8 @@ public class MalmoModClient {
 
 	public void init(FMLInitializationEvent event) {
 		// Register for various events:
-		//ModBlocks.registerRenders();
+
+		ModBlocks.registerRenders(); // Tells the client to register a model to the block
 
 		MinecraftForge.EVENT_BUS.register(this);    
 		GameSettings settings = Minecraft.getMinecraft().gameSettings;

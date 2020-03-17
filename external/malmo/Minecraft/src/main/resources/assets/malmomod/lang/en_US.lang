@@ -9,5 +9,5 @@ auth.usernames=List of authenticated usernames
 auth.portToUserMappings=Map ports to usernames in format <port>:<username>
 auth.usernameToPasswordMappings=Map usernames to passwords in format <username>:<password>
 
-tile.ASISTButton.name=ASIST Button
+tile.ASIST_Button.name=ASIST Button
 
