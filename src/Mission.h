@@ -47,11 +47,10 @@ namespace tomcat {
             unsigned int time_limit_in_seconds,
             unsigned int self_report_prompt_time_in_seconds,
             int port_number,
-            int frames_per_second,
             bool record_observations,
             bool record_commands,
             bool record_rewards,
-            std::string record_path = "./saved_data.tgz",
+            std::string record_path = "./saved_data.tgz"
             );
 
     /**
@@ -85,19 +84,11 @@ namespace tomcat {
     std::string mission_id_or_path;
     unsigned int time_limit_in_seconds;
     unsigned int self_report_prompt_time_in_seconds;
-    unsigned int video_width;
-    unsigned int video_height;
     int port_number;
-    int frames_per_second;
-    int64_t bit_rate;
-    bool record_video;
     bool record_observations;
-    bool activate_webcam;
-    bool record_audio;
     bool record_commands;
     bool record_rewards;
     std::string record_path = "./saved_data.tgz";
-    std::string audio_record_path = "audio_recording.wav";
     std::vector<std::shared_ptr<LocalAgent>> tomcat_agents;
 
     /**
@@ -109,8 +100,7 @@ namespace tomcat {
      * Retrieves, from a mission id, the folder name where its hand-constructed
      * world is
      */
-    inline static std::unordered_map<int, std::string> id_to_world_folder_map =
-        {
+    inline static std::unordered_map<int, std::string> id_to_world_folder_map = {
             {TUTORIAL, "tutorial"},
             {SAR, "sar"},
     };
@@ -150,10 +140,6 @@ namespace tomcat {
      */
     void observe();
 
-    /**
-     * Clean up processes related to external sensors
-     */
-    void finalize_external_sensors();
   };
 
 } // namespace tomcat

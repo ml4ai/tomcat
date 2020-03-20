@@ -1,6 +1,7 @@
 #include "LocalAgent.h"
 #include "Mission.h"
 #include <ClientPool.h>
+#include <fmt/format.h>
 
 using fmt::print;
 using namespace malmo;

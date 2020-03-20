@@ -2,6 +2,7 @@
 #include "Mission.h"
 #include "utils.h"
 #include <boost/program_options.hpp>
+#include <fmt/format.h>
 #include <string>
 
 using namespace boost::program_options;
@@ -102,11 +103,9 @@ Mission create_mission(variables_map parameters_map) {
                             self_report_prompt_time_in_seconds,
                             port_number,
                             record_observations,
-                            activate_webcam,
                             record_commands,
                             record_rewards,
-                            record_path,
-                            );
+                            record_path);
   return mission;
 }
 

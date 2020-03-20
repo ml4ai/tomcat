@@ -20,16 +20,13 @@ target_link_libraries(
 option(WITH_OPENFACE "Build with OpenFace integration" OFF)
 
 if(WITH_OPENFACE)
-find_package(OpenCV 4.0 REQUIRED COMPONENTS core imgproc calib3d
-             highgui objdetect)
-
-target_link_libraries(
-  tomcat
-  ${OpenCV_LIBS}
-  OpenFace::GazeAnalyser
-  OpenFace::LandmarkDetector
-  OpenFace::Utilities
-)
+  target_link_libraries(
+    tomcat
+    ${OpenCV_LIBS}
+    OpenFace::GazeAnalyser
+    OpenFace::LandmarkDetector
+    OpenFace::Utilities
+  )
 endif()
 
 if(DEFINED ENV{TRAVIS})
