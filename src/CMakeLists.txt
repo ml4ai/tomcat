@@ -4,10 +4,6 @@ add_library(
   utils.cpp
   LocalAgent.h
   LocalAgent.cpp
-  WebcamSensor.h
-  WebcamSensor.cpp
-  Microphone.h
-  Microphone.cpp
   Mission.h
   Mission.cpp
   FileHandler.h
@@ -17,14 +13,24 @@ target_link_libraries(
   tomcat
   Malmo
   ${Boost_LIBRARIES}
+  "z"
+  fmt::fmt
+)
+
+option(WITH_OPENFACE "Build with OpenFace integration" OFF)
+
+if(WITH_OPENFACE)
+find_package(OpenCV 4.0 REQUIRED COMPONENTS core imgproc calib3d
+             highgui objdetect)
+
+target_link_libraries(
+  tomcat
   ${OpenCV_LIBS}
   OpenFace::GazeAnalyser
   OpenFace::LandmarkDetector
   OpenFace::Utilities
-  "z"
-  ${PORTAUDIO_LIBRARIES}
-  ${LIBSNDFILE_LIBRARIES}
-  fmt::fmt)
+)
+endif()
 
 if(DEFINED ENV{TRAVIS})
   option(CODE_COVERAGE "Enable coverage reporting" ON)

@@ -27,21 +27,9 @@ options_description load_options() {
       "Port to control (>=10000)")("activate_webcam,w",
                                    bool_switch()->default_value(false),
                                    "Activate webcam to detect face landmarks.")(
-      "activate_microphone",
-      bool_switch()->default_value(false),
-      "Activate microphone to record audio.")(
-      "audio_record_path",
-      value<string>()->default_value("./audio_recording_" + get_timestamp() +
-                                     ".wav"),
-      "Filepath to save audio recording to.")(
       "record_all",
       bool_switch()->default_value(false),
       "Activate all recordings except bitmaps")(
-      "record_video",
-      bool_switch()->default_value(false),
-      "Activate video recordings")("record_audio",
-                                   bool_switch()->default_value(false),
-                                   "Activate audio recordings")(
       "record_observations",
       bool_switch()->default_value(false),
       "Activate observation recordings")("record_commands",
@@ -49,21 +37,11 @@ options_description load_options() {
                                          "Activate command recordings")(
       "record_rewards",
       bool_switch()->default_value(false),
-      "Activate reward recordings")("video_fps",
-                                    value<unsigned int>()->default_value(20),
-                                    "Frames per second for video recordings")(
-      "video_bit_rate",
-      value<int64_t>()->default_value(400000),
-      "Bit rate for video recordings")(
+      "Activate reward recordings")(
       "record_path",
       value<string>()->default_value("./saved_data_" + get_timestamp() +
                                      ".tgz"),
-      "Path to save Malmo data")("video_width",
-                                 value<unsigned int>()->default_value(640),
-                                 "Width for video recordings")(
-      "video_height",
-      value<unsigned int>()->default_value(480),
-      "Height for video recordings");
+      "Path to save Malmo data");
 
   return options;
 }
@@ -122,19 +100,13 @@ Mission create_mission(variables_map parameters_map) {
   Mission mission = Mission(mission_id_or_path,
                             time_limit_in_seconds,
                             self_report_prompt_time_in_seconds,
-                            video_width,
-                            video_height,
                             port_number,
-                            frames_per_second,
-                            bit_rate,
-                            record_video,
                             record_observations,
                             activate_webcam,
-                            record_audio,
                             record_commands,
                             record_rewards,
                             record_path,
-                            audio_record_path);
+                            );
   return mission;
 }
 

@@ -1,8 +1,6 @@
 #pragma once
 
-#include "Microphone.h"
 #include "MissionSpec.h"
-#include "WebcamSensor.h"
 #include <AgentHost.h>
 #include <boost/filesystem.hpp>
 #include <string>
@@ -39,37 +37,21 @@ namespace tomcat {
      * mission specifications
      * @param time_limit_in_seconds - Duration of the mission in seconds
      * @param self_report_prompt_time_in_seconds - Frequency of self-reports
-     * @param video_width - Width of the screen
-     * @param video_height - Height of the screen
      * @param port_number - Port number to connect with the Minecraft server
-     * @param frames_per_second - Number of frames per seconds when recording
      * video
-     * @param bit_rate - Bit rate when recording video
-     * @param record_video - Flag that activates video recording
      * @param record_observations - Flag that activates observations recording
-     * @param activate_webcam - Flag that activates the webcam
-     * @param record_audio - Flag that activates audio recording
      * @param record_commands - Flag that activates commands recording
      * @param record_rewards - Flag that activates rewards recording
-     * @param record_path - Path where recordings will be saved
-     * @param audio_record_path - Path where the audio will be saved
      */
     Mission(std::string mission_id_or_path,
             unsigned int time_limit_in_seconds,
             unsigned int self_report_prompt_time_in_seconds,
-            unsigned int video_width,
-            unsigned int video_height,
             int port_number,
             int frames_per_second,
-            int64_t bit_rate,
-            bool record_video,
             bool record_observations,
-            bool activate_webcam,
-            bool record_audio,
             bool record_commands,
             bool record_rewards,
             std::string record_path = "./saved_data.tgz",
-            std::string audio_record_path = "audio_recording.wav"
             );
 
     /**
@@ -100,8 +82,6 @@ namespace tomcat {
 
     malmo::MissionSpec mission_spec;
     boost::shared_ptr<malmo::AgentHost> host;
-    boost::shared_ptr<WebcamSensor> webcam;
-    Microphone microphone;
     std::string mission_id_or_path;
     unsigned int time_limit_in_seconds;
     unsigned int self_report_prompt_time_in_seconds;

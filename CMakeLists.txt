@@ -50,13 +50,6 @@ find_package(Boost 1.69
                         thread
              REQUIRED)
 
-find_package(OpenCV 4.0 REQUIRED COMPONENTS core imgproc calib3d
-             highgui objdetect)
-
-find_package(PortAudio)
-find_package(LibSndFile)
-
-
 if(DEFINED ENV{TRAVIS})
   add_subdirectory(external/dlib)
 else()

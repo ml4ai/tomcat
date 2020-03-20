@@ -42,8 +42,6 @@ namespace tomcat {
     this->bit_rate = bit_rate;
     this->record_video = record_video;
     this->record_observations = record_observations;
-    this->activate_webcam = activate_webcam;
-    this->record_audio = record_audio;
     this->record_commands = record_commands;
     this->record_rewards = record_rewards;
     this->record_path = record_path;
@@ -203,36 +201,17 @@ namespace tomcat {
       sleep_for(milliseconds(100));
       worldState = this->host->getWorldState();
     } while (!worldState.has_mission_begun);
-    if (this->record_audio) {
-      this->microphone.set_time_limit_in_seconds(this->time_limit_in_seconds);
-      this->microphone.initialize();
-    }
-    if (this->activate_webcam) {
-      this->webcam = boost::make_shared<WebcamSensor>();
-      this->webcam->initialize();
-    }
   }
 
   void Mission::observe() {
     WorldState worldState;
     do {
       sleep_for(milliseconds(10));
-      if (this->activate_webcam) {
-        this->webcam->get_observation();
-      }
-
       for (auto& tomcat_agent : this->tomcat_agents) {
         tomcat_agent->observe_mission(*this);
       }
       worldState = this->host->getWorldState();
     } while (worldState.is_mission_running);
-  }
-
-  void Mission::finalize_external_sensors() {
-    if (this->record_audio) {
-      this->microphone.set_output_filename(this->audio_record_path);
-      this->microphone.finalize();
-    }
   }
 
   void Mission::send_command(string command) {

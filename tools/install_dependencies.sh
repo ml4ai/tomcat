@@ -61,8 +61,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
             opencv4 \
             openblas \
             gradle \
-            libsndfile \
-            portaudio
         if [[ $? -ne 0 ]]; then exit 1; fi;
 
         # We install Java using a local Portfile, since the upstream openjdk8
@@ -98,8 +96,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
           opencv \
           openblas \
           boost \
-          libsndfile \
-          portaudio \
           gradle
 
         if [[ ! -z $TRAVIS ]]; then
@@ -146,11 +142,9 @@ elif [ -x "$(command -v apt-get)" ]; then
         ffmpeg \
         libopenblas-dev \
         openjdk-8-jre-headless=8u162-b12-1\
-	openjdk-8-jre=8u162-b12-1\
-	openjdk-8-jdk-headless=8u162-b12-1\
-	openjdk-8-jdk=8u162-b12-1\
-        portaudio19-dev \
-        libsndfile1-dev
+        openjdk-8-jre=8u162-b12-1\
+        openjdk-8-jdk-headless=8u162-b12-1\
+        openjdk-8-jdk=8u162-b12-1\
     if [[ $? -ne 0 ]]; then exit 1; fi;
 
     boost_version_header="/usr/local/include/boost/version.hpp"
