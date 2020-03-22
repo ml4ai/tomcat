@@ -47,7 +47,6 @@
 // Local includes
 #include "PAW.h"
 
-
 namespace LandmarkDetector {
   using namespace std;
   //===========================================================================

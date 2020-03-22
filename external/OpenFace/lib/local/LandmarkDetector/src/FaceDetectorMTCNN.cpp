@@ -78,14 +78,14 @@ void openblas_set_num_threads(int num_threads);
 using namespace LandmarkDetector;
 
 // Constructor from model file location
-FaceDetectorMTCNN::FaceDetectorMTCNN(const string &location) {
+FaceDetectorMTCNN::FaceDetectorMTCNN(const string& location) {
   this->Read(location);
 }
 // Copy constructor
-FaceDetectorMTCNN::FaceDetectorMTCNN(const FaceDetectorMTCNN &other)
+FaceDetectorMTCNN::FaceDetectorMTCNN(const FaceDetectorMTCNN& other)
     : PNet(other.PNet), RNet(other.RNet), ONet(other.ONet) {}
 
-CNN::CNN(const CNN &other)
+CNN::CNN(const CNN& other)
     : cnn_layer_types(other.cnn_layer_types),
       cnn_max_pooling_layers(other.cnn_max_pooling_layers),
       cnn_convolutional_layers_bias(other.cnn_convolutional_layers_bias),
@@ -143,7 +143,7 @@ CNN::CNN(const CNN &other)
 }
 
 std::vector<cv::Mat_<float>>
-CNN::Inference(const cv::Mat &input_img, bool direct, bool thread_safe) {
+CNN::Inference(const cv::Mat& input_img, bool direct, bool thread_safe) {
   if (input_img.channels() == 1) {
     cv::cvtColor(input_img, input_img, cv::COLOR_GRAY2BGR);
   }
@@ -258,17 +258,17 @@ CNN::Inference(const cv::Mat &input_img, bool direct, bool thread_safe) {
   return outputs;
 }
 
-void ReadMatBin(std::ifstream &stream, cv::Mat &output_mat) {
+void ReadMatBin(std::ifstream& stream, cv::Mat& output_mat) {
   // Read in the number of rows, columns and the data type
   int row, col, type;
 
-  stream.read((char *)&row, 4);
-  stream.read((char *)&col, 4);
-  stream.read((char *)&type, 4);
+  stream.read((char*)&row, 4);
+  stream.read((char*)&col, 4);
+  stream.read((char*)&type, 4);
 
   output_mat = cv::Mat(row, col, type);
   int size = output_mat.rows * output_mat.cols * output_mat.elemSize();
-  stream.read((char *)output_mat.data, size);
+  stream.read((char*)output_mat.data, size);
 }
 
 void CNN::ClearPrecomp() {
@@ -279,7 +279,7 @@ void CNN::ClearPrecomp() {
   }
 }
 
-void CNN::Read(const string &location) {
+void CNN::Read(const string& location) {
 
   openblas_set_num_threads(1);
 
@@ -290,14 +290,14 @@ void CNN::Read(const string &location) {
     // Reading in CNNs
 
     int network_depth;
-    cnn_stream.read((char *)&network_depth, 4);
+    cnn_stream.read((char*)&network_depth, 4);
 
     cnn_layer_types.resize(network_depth);
 
     for (int layer = 0; layer < network_depth; ++layer) {
 
       int layer_type;
-      cnn_stream.read((char *)&layer_type, 4);
+      cnn_stream.read((char*)&layer_type, 4);
       cnn_layer_types[layer] = layer_type;
 
       // convolutional
@@ -305,11 +305,11 @@ void CNN::Read(const string &location) {
 
         // Read the number of input maps
         int num_in_maps;
-        cnn_stream.read((char *)&num_in_maps, 4);
+        cnn_stream.read((char*)&num_in_maps, 4);
 
         // Read the number of kernels for each input map
         int num_kernels;
-        cnn_stream.read((char *)&num_kernels, 4);
+        cnn_stream.read((char*)&num_kernels, 4);
 
         vector<vector<cv::Mat_<float>>> kernels;
 
@@ -318,7 +318,7 @@ void CNN::Read(const string &location) {
         vector<float> biases;
         for (int k = 0; k < num_kernels; ++k) {
           float bias;
-          cnn_stream.read((char *)&bias, 4);
+          cnn_stream.read((char*)&bias, 4);
           biases.push_back(bias);
         }
 
@@ -388,10 +388,10 @@ void CNN::Read(const string &location) {
       }
       else if (layer_type == 1) {
         int kernel_x, kernel_y, stride_x, stride_y;
-        cnn_stream.read((char *)&kernel_x, 4);
-        cnn_stream.read((char *)&kernel_y, 4);
-        cnn_stream.read((char *)&stride_x, 4);
-        cnn_stream.read((char *)&stride_y, 4);
+        cnn_stream.read((char*)&kernel_x, 4);
+        cnn_stream.read((char*)&kernel_y, 4);
+        cnn_stream.read((char*)&stride_x, 4);
+        cnn_stream.read((char*)&stride_y, 4);
         cnn_max_pooling_layers.push_back(std::tuple<int, int, int, int>(
             kernel_x, kernel_y, stride_x, stride_y));
       }
@@ -420,7 +420,7 @@ void CNN::Read(const string &location) {
 
 //===========================================================================
 // Read in the MTCNN detector
-void FaceDetectorMTCNN::Read(const string &location) {
+void FaceDetectorMTCNN::Read(const string& location) {
 
   cout << "Reading the MTCNN face detector from: " << location << endl;
 
@@ -475,8 +475,8 @@ void FaceDetectorMTCNN::Read(const string &location) {
 // Perform non maximum supression on proposal bounding boxes prioritizing boxes
 // with high score/confidence
 std::vector<int>
-non_maximum_supression(const std::vector<cv::Rect_<float>> &original_bb,
-                       const std::vector<float> &scores,
+non_maximum_supression(const std::vector<cv::Rect_<float>>& original_bb,
+                       const std::vector<float>& scores,
                        float thresh,
                        bool minimum) {
 
@@ -495,14 +495,14 @@ non_maximum_supression(const std::vector<cv::Rect_<float>> &original_bb,
     auto lastElem = --std::end(idxs);
     size_t curr_id = lastElem->second;
 
-    const cv::Rect &rect1 = original_bb[curr_id];
+    const cv::Rect& rect1 = original_bb[curr_id];
 
     idxs.erase(lastElem);
 
     // Iterate through remaining bounding boxes and choose which ones to remove
     for (auto pos = std::begin(idxs); pos != std::end(idxs);) {
       // grab the current rectangle
-      const cv::Rect &rect2 = original_bb[pos->second];
+      const cv::Rect& rect2 = original_bb[pos->second];
 
       float intArea = (rect1 & rect2).area();
       float unionArea;
@@ -530,10 +530,10 @@ non_maximum_supression(const std::vector<cv::Rect_<float>> &original_bb,
 }
 
 // Helper function for selecting a subset of bounding boxes based on indices
-void select_subset(const vector<int> &to_keep,
-                   vector<cv::Rect_<float>> &bounding_boxes,
-                   vector<float> &scores,
-                   vector<cv::Rect_<float>> &corrections) {
+void select_subset(const vector<int>& to_keep,
+                   vector<cv::Rect_<float>>& bounding_boxes,
+                   vector<float>& scores,
+                   vector<cv::Rect_<float>>& corrections) {
   vector<cv::Rect_<float>> bounding_boxes_tmp;
   vector<float> scores_tmp;
   vector<cv::Rect_<float>> corrections_tmp;
@@ -552,11 +552,11 @@ void select_subset(const vector<int> &to_keep,
 // Use the heatmap generated by PNet to generate bounding boxes in the original
 // image space, also generate the correction values and scores of the bounding
 // boxes as well
-void generate_bounding_boxes(vector<cv::Rect_<float>> &o_bounding_boxes,
-                             vector<float> &o_scores,
-                             vector<cv::Rect_<float>> &o_corrections,
-                             const cv::Mat_<float> &heatmap,
-                             const vector<cv::Mat_<float>> &corrections,
+void generate_bounding_boxes(vector<cv::Rect_<float>>& o_bounding_boxes,
+                             vector<float>& o_scores,
+                             vector<cv::Rect_<float>>& o_corrections,
+                             const cv::Mat_<float>& heatmap,
+                             const vector<cv::Mat_<float>>& corrections,
                              float scale,
                              float threshold,
                              int face_support) {
@@ -595,7 +595,7 @@ void generate_bounding_boxes(vector<cv::Rect_<float>> &o_bounding_boxes,
 }
 
 // Converting the bounding boxes to squares
-void rectify(vector<cv::Rect_<float>> &total_bboxes) {
+void rectify(vector<cv::Rect_<float>>& total_bboxes) {
 
   // Apply size and location offsets
   for (size_t i = 0; i < total_bboxes.size(); ++i) {
@@ -615,7 +615,7 @@ void rectify(vector<cv::Rect_<float>> &total_bboxes) {
   }
 }
 
-void apply_correction(vector<cv::Rect_<float>> &total_bboxes,
+void apply_correction(vector<cv::Rect_<float>>& total_bboxes,
                       const vector<cv::Rect_<float>> corrections,
                       bool add1) {
 
@@ -639,9 +639,9 @@ void apply_correction(vector<cv::Rect_<float>> &total_bboxes,
 }
 
 // The actual MTCNN face detection step
-bool FaceDetectorMTCNN::DetectFaces(vector<cv::Rect_<float>> &o_regions,
-                                    const cv::Mat &img_in,
-                                    std::vector<float> &o_confidences,
+bool FaceDetectorMTCNN::DetectFaces(vector<cv::Rect_<float>>& o_regions,
+                                    const cv::Mat& img_in,
+                                    std::vector<float>& o_confidences,
                                     int min_face_size,
                                     float t1,
                                     float t2,

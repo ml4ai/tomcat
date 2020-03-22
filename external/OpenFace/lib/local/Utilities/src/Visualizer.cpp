@@ -35,10 +35,10 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
+#include "Visualizer.h"
 #include "ImageManipulationHelpers.h"
 #include "RotationHelpers.h"
 #include "VisualizationUtils.h"
-#include "Visualizer.h"
 
 #include <iomanip>
 #include <map>
@@ -89,13 +89,17 @@ Visualizer::Visualizer(std::vector<std::string> arguments) {
       this->vis_align = true;
       this->vis_hog = true;
       this->vis_aus = true;
-    } else if (arguments[i].compare("-vis-align") == 0) {
+    }
+    else if (arguments[i].compare("-vis-align") == 0) {
       this->vis_align = true;
-    } else if (arguments[i].compare("-vis-hog") == 0) {
+    }
+    else if (arguments[i].compare("-vis-hog") == 0) {
       this->vis_hog = true;
-    } else if (arguments[i].compare("-vis-track") == 0) {
+    }
+    else if (arguments[i].compare("-vis-track") == 0) {
       this->vis_track = true;
-    } else if (arguments[i].compare("-vis-aus") == 0) {
+    }
+    else if (arguments[i].compare("-vis-aus") == 0) {
       this->vis_aus = true;
     }
   }
@@ -113,7 +117,7 @@ Visualizer::Visualizer(bool vis_track,
 
 // Setting the image on which to draw
 void Visualizer::SetImage(
-    const cv::Mat &canvas, float fx, float fy, float cx, float cy) {
+    const cv::Mat& canvas, float fx, float fy, float cx, float cy) {
   // Convert the image to 8 bit RGB
   captured_image = canvas.clone();
 
@@ -128,22 +132,24 @@ void Visualizer::SetImage(
   action_units_image = cv::Mat();
 }
 
-void Visualizer::SetObservationFaceAlign(const cv::Mat &aligned_face) {
+void Visualizer::SetObservationFaceAlign(const cv::Mat& aligned_face) {
   if (this->aligned_face_image.empty()) {
     this->aligned_face_image = aligned_face;
-  } else {
+  }
+  else {
     cv::vconcat(
         this->aligned_face_image, aligned_face, this->aligned_face_image);
   }
 }
 
-void Visualizer::SetObservationHOG(const cv::Mat_<double> &hog_descriptor,
+void Visualizer::SetObservationHOG(const cv::Mat_<double>& hog_descriptor,
                                    int num_cols,
                                    int num_rows) {
   if (vis_hog) {
     if (this->hog_image.empty()) {
       Visualise_FHOG(hog_descriptor, num_rows, num_cols, this->hog_image);
-    } else {
+    }
+    else {
       cv::Mat tmp_hog;
       Visualise_FHOG(hog_descriptor, num_rows, num_cols, tmp_hog);
       cv::vconcat(this->hog_image, tmp_hog, this->hog_image);
@@ -151,9 +157,9 @@ void Visualizer::SetObservationHOG(const cv::Mat_<double> &hog_descriptor,
   }
 }
 
-void Visualizer::SetObservationLandmarks(const cv::Mat_<float> &landmarks_2D,
+void Visualizer::SetObservationLandmarks(const cv::Mat_<float>& landmarks_2D,
                                          double confidence,
-                                         const cv::Mat_<int> &visibilities) {
+                                         const cv::Mat_<int>& visibilities) {
 
   if (confidence > visualisation_boundary) {
     // Draw 2D landmarks on the image
@@ -186,8 +192,8 @@ void Visualizer::SetObservationLandmarks(const cv::Mat_<float> &landmarks_2D,
                    thickness_2,
                    cv::LINE_AA,
                    draw_shiftbits);
-
-      } else {
+      }
+      else {
         // Draw a fainter point if the landmark is self occluded
         cv::Point featurePoint(
             cvRound(landmarks_2D.at<float>(i) * (double)draw_multiplier),
@@ -218,7 +224,7 @@ void Visualizer::SetObservationLandmarks(const cv::Mat_<float> &landmarks_2D,
   }
 }
 
-void Visualizer::SetObservationPose(const cv::Vec6f &pose, double confidence) {
+void Visualizer::SetObservationPose(const cv::Vec6f& pose, double confidence) {
 
   // Only draw if the reliability is reasonable, the value is slightly ad-hoc
   if (confidence > visualisation_boundary) {
@@ -247,8 +253,8 @@ void Visualizer::SetObservationPose(const cv::Vec6f &pose, double confidence) {
 }
 
 void Visualizer::SetObservationActionUnits(
-    const std::vector<std::pair<std::string, double>> &au_intensities,
-    const std::vector<std::pair<std::string, double>> &au_occurences) {
+    const std::vector<std::pair<std::string, double>>& au_intensities,
+    const std::vector<std::pair<std::string, double>>& au_occurences) {
   if (au_intensities.size() > 0 || au_occurences.size() > 0) {
 
     std::set<std::string> au_names;
@@ -280,7 +286,8 @@ void Visualizer::SetObservationActionUnits(
                   AU_TRACKBAR_LENGTH + MARGIN_X,
                   CV_8UC3,
                   cv::Scalar(255, 255, 255));
-    } else {
+    }
+    else {
       action_units_image.setTo(255);
     }
 
@@ -293,14 +300,16 @@ void Visualizer::SetObservationActionUnits(
       bool occurence = false;
       if (occurences_map.find(au_name) != occurences_map.end()) {
         occurence = occurences_map[au_name] != 0;
-      } else {
+      }
+      else {
         // If we do not have an occurence label, trust the intensity one
         occurence = intensities_map[au_name] > 1;
       }
       double intensity = 0.0;
       if (intensities_map.find(au_name) != intensities_map.end()) {
         intensity = intensities_map[au_name];
-      } else {
+      }
+      else {
         // If we do not have an intensity label, trust the occurence one
         intensity = occurences_map[au_name] == 0 ? 0 : 5;
       }
@@ -310,7 +319,7 @@ void Visualizer::SetObservationActionUnits(
 
     // then, build the graph
     unsigned int idx = 0;
-    for (auto &au : aus) {
+    for (auto& au : aus) {
       std::string name = au.first;
       bool present = au.second.first;
       double intensity = au.second.second;
@@ -351,7 +360,8 @@ void Visualizer::SetObservationActionUnits(
                       offset + AU_TRACKBAR_HEIGHT),
             cv::Scalar(128, 128, 128),
             cv::FILLED);
-      } else {
+      }
+      else {
         cv::putText(action_units_image,
                     "0.00",
                     cv::Point(160, offset + 10),
@@ -368,10 +378,10 @@ void Visualizer::SetObservationActionUnits(
 
 // Eye gaze infomration drawing, first of eye landmarks then of gaze
 void Visualizer::SetObservationGaze(
-    const cv::Point3f &gaze_direction0,
-    const cv::Point3f &gaze_direction1,
-    const std::vector<cv::Point2f> &eye_landmarks2d,
-    const std::vector<cv::Point3f> &eye_landmarks3d,
+    const cv::Point3f& gaze_direction0,
+    const cv::Point3f& gaze_direction1,
+    const std::vector<cv::Point2f>& eye_landmarks2d,
+    const std::vector<cv::Point3f>& eye_landmarks3d,
     double confidence) {
   if (confidence > visualisation_boundary) {
     if (eye_landmarks2d.size() > 0) {

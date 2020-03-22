@@ -4,8 +4,9 @@
 //
 // ACADEMIC OR NON-PROFIT ORGANIZATION NONCOMMERCIAL RESEARCH USE ONLY
 //
-// BY USING OR DOWNLOADING THE SOFTWARE, YOU ARE AGREEING TO THE TERMS OF THIS LICENSE AGREEMENT.  
-// IF YOU DO NOT AGREE WITH THESE TERMS, YOU MAY NOT USE OR DOWNLOAD THE SOFTWARE.
+// BY USING OR DOWNLOADING THE SOFTWARE, YOU ARE AGREEING TO THE TERMS OF THIS
+// LICENSE AGREEMENT. IF YOU DO NOT AGREE WITH THESE TERMS, YOU MAY NOT USE OR
+// DOWNLOAD THE SOFTWARE.
 //
 // License can be found in OpenFace-license.txt
 
@@ -14,21 +15,24 @@
 //       reports and manuals, must cite at least one of the following works:
 //
 //       OpenFace 2.0: Facial Behavior Analysis Toolkit
-//       Tadas Baltrušaitis, Amir Zadeh, Yao Chong Lim, and Louis-Philippe Morency
-//       in IEEE International Conference on Automatic Face and Gesture Recognition, 2018  
+//       Tadas Baltrušaitis, Amir Zadeh, Yao Chong Lim, and Louis-Philippe
+//       Morency in IEEE International Conference on Automatic Face and Gesture
+//       Recognition, 2018
 //
-//       Convolutional experts constrained local model for facial landmark detection.
-//       A. Zadeh, T. Baltrušaitis, and Louis-Philippe Morency,
-//       in Computer Vision and Pattern Recognition Workshops, 2017.    
+//       Convolutional experts constrained local model for facial landmark
+//       detection. A. Zadeh, T. Baltrušaitis, and Louis-Philippe Morency, in
+//       Computer Vision and Pattern Recognition Workshops, 2017.
 //
 //       Rendering of Eyes for Eye-Shape Registration and Gaze Estimation
-//       Erroll Wood, Tadas Baltrušaitis, Xucong Zhang, Yusuke Sugano, Peter Robinson, and Andreas Bulling 
-//       in IEEE International. Conference on Computer Vision (ICCV),  2015 
+//       Erroll Wood, Tadas Baltrušaitis, Xucong Zhang, Yusuke Sugano, Peter
+//       Robinson, and Andreas Bulling in IEEE International. Conference on
+//       Computer Vision (ICCV),  2015
 //
-//       Cross-dataset learning and person-specific normalisation for automatic Action Unit detection
-//       Tadas Baltrušaitis, Marwa Mahmoud, and Peter Robinson 
-//       in Facial Expression Recognition and Analysis Challenge, 
-//       IEEE International Conference on Automatic Face and Gesture Recognition, 2015 
+//       Cross-dataset learning and person-specific normalisation for automatic
+//       Action Unit detection Tadas Baltrušaitis, Marwa Mahmoud, and Peter
+//       Robinson in Facial Expression Recognition and Analysis Challenge, IEEE
+//       International Conference on Automatic Face and Gesture Recognition,
+//       2015
 //
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -41,9 +45,9 @@
 #pragma unmanaged
 
 #undef _M_CEE
-#include <opencv2/opencv.hpp>
-#include <OpenCVWrappers.h>
 #include <LandmarkCoreIncludes.h>
+#include <OpenCVWrappers.h>
+#include <opencv2/opencv.hpp>
 #define _M_CEE
 
 #pragma managed
@@ -54,104 +58,111 @@ using namespace System::Collections::Generic;
 
 namespace FaceDetectorInterop {
 
-	public ref class FaceDetector
-	{
+public
+  ref class FaceDetector {
 
-	private:
-		// Where the face detectors are stored
-		dlib::frontal_face_detector* face_detector_hog;
-		LandmarkDetector::FaceDetectorMTCNN* face_detector_mtcnn;
-		cv::CascadeClassifier* face_detector_haar;
+  private:
+    // Where the face detectors are stored
+    dlib::frontal_face_detector* face_detector_hog;
+    LandmarkDetector::FaceDetectorMTCNN* face_detector_mtcnn;
+    cv::CascadeClassifier* face_detector_haar;
 
-	public:
+  public:
+    // The constructor initializes the dlib face detector
+    FaceDetector(System::String ^ haar_location,
+                 System::String ^ mtcnn_location) {
+      // Initialize all of the detectors (TODO should be done on need only
+      // basis)
+      face_detector_hog =
+          new dlib::frontal_face_detector(dlib::get_frontal_face_detector());
+      face_detector_mtcnn = new LandmarkDetector::FaceDetectorMTCNN(
+          msclr::interop::marshal_as<std::string>(mtcnn_location));
+      face_detector_haar = new cv::CascadeClassifier(
+          msclr::interop::marshal_as<std::string>(haar_location));
+    }
 
-		// The constructor initializes the dlib face detector
-		FaceDetector(System::String^ haar_location, System::String^ mtcnn_location) 
-		{
-			// Initialize all of the detectors (TODO should be done on need only basis)
-			face_detector_hog = new dlib::frontal_face_detector(dlib::get_frontal_face_detector());
-			face_detector_mtcnn = new LandmarkDetector::FaceDetectorMTCNN(msclr::interop::marshal_as<std::string>(mtcnn_location));
-			face_detector_haar = new cv::CascadeClassifier(msclr::interop::marshal_as<std::string>(haar_location));
-		}
+    // Face detection using HOG-SVM classifier
+    void DetectFacesHOG(List<System::Windows::Rect> ^ o_regions,
+                        OpenCVWrappers::RawImage ^ intensity,
+                        List<float> ^ o_confidences) {
+      std::vector<cv::Rect_<float>> regions_ocv;
+      std::vector<float> confidences_std;
 
-		// Face detection using HOG-SVM classifier
-		void DetectFacesHOG(List<System::Windows::Rect>^ o_regions, OpenCVWrappers::RawImage^ intensity, List<float>^ o_confidences)
-		{
-			std::vector<cv::Rect_<float> > regions_ocv;
-			std::vector<float> confidences_std;
+      ::LandmarkDetector::DetectFacesHOG(
+          regions_ocv, intensity->Mat, *face_detector_hog, confidences_std);
 
-			::LandmarkDetector::DetectFacesHOG(regions_ocv, intensity->Mat, *face_detector_hog, confidences_std);
+      o_regions->Clear();
+      o_confidences->Clear();
 
-			o_regions->Clear();
-			o_confidences->Clear();
+      for (size_t i = 0; i < regions_ocv.size(); ++i) {
+        o_regions->Add(System::Windows::Rect(regions_ocv[i].x,
+                                             regions_ocv[i].y,
+                                             regions_ocv[i].width,
+                                             regions_ocv[i].height));
+        o_confidences->Add(confidences_std[i]);
+      }
+    }
 
-			for (size_t i = 0; i < regions_ocv.size(); ++i)
-			{
-				o_regions->Add(System::Windows::Rect(regions_ocv[i].x, regions_ocv[i].y, regions_ocv[i].width, regions_ocv[i].height));
-				o_confidences->Add(confidences_std[i]);
-			}
-		}
-		
-		// Face detection using HOG-SVM classifier
-		void DetectFacesHaar(List<System::Windows::Rect>^ o_regions, OpenCVWrappers::RawImage^ intensity, List<float>^ o_confidences)
-		{
-			
-			std::vector<cv::Rect_<float> > regions_ocv;
+    // Face detection using HOG-SVM classifier
+    void DetectFacesHaar(List<System::Windows::Rect> ^ o_regions,
+                         OpenCVWrappers::RawImage ^ intensity,
+                         List<float> ^ o_confidences) {
 
-			::LandmarkDetector::DetectFaces(regions_ocv, intensity->Mat, *face_detector_haar);
+      std::vector<cv::Rect_<float>> regions_ocv;
 
-			o_regions->Clear();
-			o_confidences->Clear();
+      ::LandmarkDetector::DetectFaces(
+          regions_ocv, intensity->Mat, *face_detector_haar);
 
-			for(size_t i = 0; i < regions_ocv.size(); ++i)
-			{
-				o_regions->Add(System::Windows::Rect(regions_ocv[i].x, regions_ocv[i].y, regions_ocv[i].width, regions_ocv[i].height));
-				// As Haar does not provide confidence, create a fake value
-				o_confidences->Add(1);
-			}
-		}
+      o_regions->Clear();
+      o_confidences->Clear();
 
-		bool IsMTCNNLoaded()
-		{
-			return !face_detector_mtcnn->empty();
-		}
+      for (size_t i = 0; i < regions_ocv.size(); ++i) {
+        o_regions->Add(System::Windows::Rect(regions_ocv[i].x,
+                                             regions_ocv[i].y,
+                                             regions_ocv[i].width,
+                                             regions_ocv[i].height));
+        // As Haar does not provide confidence, create a fake value
+        o_confidences->Add(1);
+      }
+    }
 
-		// Face detection using MTCNN face detector
-		void DetectFacesMTCNN(List<System::Windows::Rect>^ o_regions, OpenCVWrappers::RawImage^ rgb_image, List<float>^ o_confidences)
-		{
-			std::vector<cv::Rect_<float> > regions_ocv;
-			std::vector<float> confidences_std;
+    bool IsMTCNNLoaded() { return !face_detector_mtcnn->empty(); }
 
-			::LandmarkDetector::DetectFacesMTCNN(regions_ocv, rgb_image->Mat, *face_detector_mtcnn, confidences_std);
+    // Face detection using MTCNN face detector
+    void DetectFacesMTCNN(List<System::Windows::Rect> ^ o_regions,
+                          OpenCVWrappers::RawImage ^ rgb_image,
+                          List<float> ^ o_confidences) {
+      std::vector<cv::Rect_<float>> regions_ocv;
+      std::vector<float> confidences_std;
 
-			o_regions->Clear();
-			o_confidences->Clear();
+      ::LandmarkDetector::DetectFacesMTCNN(
+          regions_ocv, rgb_image->Mat, *face_detector_mtcnn, confidences_std);
 
-			for (size_t i = 0; i < regions_ocv.size(); ++i)
-			{
-				o_regions->Add(System::Windows::Rect(regions_ocv[i].x, regions_ocv[i].y, regions_ocv[i].width, regions_ocv[i].height));
-				o_confidences->Add(confidences_std[i]);
-			}
-		}
+      o_regions->Clear();
+      o_confidences->Clear();
 
-		// Finalizer. Definitely called before Garbage Collection,
-		// but not automatically called on explicit Dispose().
-		// May be called multiple times.
-		!FaceDetector()
-		{
-			delete face_detector_hog;
-			delete face_detector_mtcnn;
-			delete face_detector_haar;
-		}
+      for (size_t i = 0; i < regions_ocv.size(); ++i) {
+        o_regions->Add(System::Windows::Rect(regions_ocv[i].x,
+                                             regions_ocv[i].y,
+                                             regions_ocv[i].width,
+                                             regions_ocv[i].height));
+        o_confidences->Add(confidences_std[i]);
+      }
+    }
 
-		// Destructor. Called on explicit Dispose() only.
-		~FaceDetector()
-		{
-			this->!FaceDetector();
-		}
+    // Finalizer. Definitely called before Garbage Collection,
+    // but not automatically called on explicit Dispose().
+    // May be called multiple times.
+    !FaceDetector() {
+      delete face_detector_hog;
+      delete face_detector_mtcnn;
+      delete face_detector_haar;
+    }
 
-	};
+    // Destructor. Called on explicit Dispose() only.
+    ~FaceDetector() { this->!FaceDetector(); }
+  };
 
-}
+} // namespace FaceDetectorInterop
 
 #endif // FACE_DETECTOR_INTEROP_H

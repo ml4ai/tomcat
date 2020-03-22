@@ -4,8 +4,9 @@
 //
 // ACADEMIC OR NON-PROFIT ORGANIZATION NONCOMMERCIAL RESEARCH USE ONLY
 //
-// BY USING OR DOWNLOADING THE SOFTWARE, YOU ARE AGREEING TO THE TERMS OF THIS LICENSE AGREEMENT.  
-// IF YOU DO NOT AGREE WITH THESE TERMS, YOU MAY NOT USE OR DOWNLOAD THE SOFTWARE.
+// BY USING OR DOWNLOADING THE SOFTWARE, YOU ARE AGREEING TO THE TERMS OF THIS
+// LICENSE AGREEMENT. IF YOU DO NOT AGREE WITH THESE TERMS, YOU MAY NOT USE OR
+// DOWNLOAD THE SOFTWARE.
 //
 // License can be found in OpenFace-license.txt
 
@@ -14,21 +15,24 @@
 //       reports and manuals, must cite at least one of the following works:
 //
 //       OpenFace 2.0: Facial Behavior Analysis Toolkit
-//       Tadas Baltrušaitis, Amir Zadeh, Yao Chong Lim, and Louis-Philippe Morency
-//       in IEEE International Conference on Automatic Face and Gesture Recognition, 2018  
+//       Tadas Baltrušaitis, Amir Zadeh, Yao Chong Lim, and Louis-Philippe
+//       Morency in IEEE International Conference on Automatic Face and Gesture
+//       Recognition, 2018
 //
-//       Convolutional experts constrained local model for facial landmark detection.
-//       A. Zadeh, T. Baltrušaitis, and Louis-Philippe Morency,
-//       in Computer Vision and Pattern Recognition Workshops, 2017.    
+//       Convolutional experts constrained local model for facial landmark
+//       detection. A. Zadeh, T. Baltrušaitis, and Louis-Philippe Morency, in
+//       Computer Vision and Pattern Recognition Workshops, 2017.
 //
 //       Rendering of Eyes for Eye-Shape Registration and Gaze Estimation
-//       Erroll Wood, Tadas Baltrušaitis, Xucong Zhang, Yusuke Sugano, Peter Robinson, and Andreas Bulling 
-//       in IEEE International. Conference on Computer Vision (ICCV),  2015 
+//       Erroll Wood, Tadas Baltrušaitis, Xucong Zhang, Yusuke Sugano, Peter
+//       Robinson, and Andreas Bulling in IEEE International. Conference on
+//       Computer Vision (ICCV),  2015
 //
-//       Cross-dataset learning and person-specific normalisation for automatic Action Unit detection
-//       Tadas Baltrušaitis, Marwa Mahmoud, and Peter Robinson 
-//       in Facial Expression Recognition and Analysis Challenge, 
-//       IEEE International Conference on Automatic Face and Gesture Recognition, 2015 
+//       Cross-dataset learning and person-specific normalisation for automatic
+//       Action Unit detection Tadas Baltrušaitis, Marwa Mahmoud, and Peter
+//       Robinson in Facial Expression Recognition and Analysis Challenge, IEEE
+//       International Conference on Automatic Face and Gesture Recognition,
+//       2015
 //
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -45,8 +49,8 @@
 #include <cv.h>
 #include <highgui.h>
 
-#include <opencv2/videoio/videoio.hpp>  // Video write
-#include <opencv2/videoio/videoio_c.h>  // Video write
+#include <opencv2/videoio/videoio.hpp> // Video write
+#include <opencv2/videoio/videoio_c.h> // Video write
 
 #pragma managed
 
@@ -59,194 +63,163 @@ using namespace System::Windows::Media::Imaging;
 
 namespace OpenCVWrappers {
 
-	public ref class RawImage : System::IDisposable
-	{
+public
+  ref class RawImage : System::IDisposable {
 
-	private:
+  private:
+    cv::Mat* mat;
 
-		cv::Mat* mat;
+  public:
+    static int PixelFormatToType(PixelFormat fmt) {
+      if (fmt == PixelFormats::Gray8)
+        return CV_8UC1;
+      else if (fmt == PixelFormats::Bgr24)
+        return CV_8UC3;
+      else if (fmt == PixelFormats::Bgra32)
+        return CV_8UC4;
+      else if (fmt == PixelFormats::Gray32Float)
+        return CV_32FC1;
+      else
+        throw gcnew System::Exception("Unsupported pixel format");
+    }
 
-	public:
+    static PixelFormat TypeToPixelFormat(int type) {
+      switch (type) {
+      case CV_8UC1:
+        return PixelFormats::Gray8;
+      case CV_8UC3:
+        return PixelFormats::Bgr24;
+      case CV_8UC4:
+        return PixelFormats::Bgra32;
+      case CV_32FC1:
+        return PixelFormats::Gray32Float;
+      default:
+        throw gcnew System::Exception("Unsupported image type");
+      }
+    }
 
-		static int PixelFormatToType(PixelFormat fmt)
-		{
-			if (fmt == PixelFormats::Gray8)
-				return CV_8UC1;
-			else if (fmt == PixelFormats::Bgr24)
-				return CV_8UC3;
-			else if (fmt == PixelFormats::Bgra32)
-				return CV_8UC4;
-			else if (fmt == PixelFormats::Gray32Float)
-				return CV_32FC1;
-			else
-				throw gcnew System::Exception("Unsupported pixel format");
-		}
+    RawImage(const cv::Mat& m) { mat = new cv::Mat(m.clone()); }
 
-		static PixelFormat TypeToPixelFormat(int type)
-		{
-			switch (type) {
-			case CV_8UC1:
-				return PixelFormats::Gray8;
-			case CV_8UC3:
-				return PixelFormats::Bgr24;
-			case CV_8UC4:
-				return PixelFormats::Bgra32;
-			case CV_32FC1:
-				return PixelFormats::Gray32Float;
-			default:
-				throw gcnew System::Exception("Unsupported image type");
-			}
-		}
+    void Mirror() { cv::flip(*mat, *mat, 1); }
 
-		RawImage(const cv::Mat& m)
-		{
-			mat = new cv::Mat(m.clone());
-		}
+    // Finalizer. Definitely called before Garbage Collection,
+    // but not automatically called on explicit Dispose().
+    // May be called multiple times.
+    !RawImage() {
+      if (mat) {
+        delete mat;
+        mat = NULL;
+      }
+    }
 
-		void Mirror()
-		{
-			cv::flip(*mat, *mat, 1);
-		}
+    // Destructor. Called on explicit Dispose() only.
+    ~RawImage() { this->!RawImage(); }
 
-		// Finalizer. Definitely called before Garbage Collection,
-		// but not automatically called on explicit Dispose().
-		// May be called multiple times.
-		!RawImage()
-		{
-			if (mat)
-			{
-				delete mat;
-				mat = NULL;
-			}
-		}
+    property int Width {
+      int get() { return mat->cols; }
+    }
 
-		// Destructor. Called on explicit Dispose() only.
-		~RawImage()
-		{
-			this->!RawImage();
-		}
+    property int Height {
+      int get() { return mat->rows; }
+    }
 
-		property int Width
-		{
-			int get()
-			{
-				return mat->cols;
-			}
-		}
+    property int Stride {
 
-		property int Height
-		{
-			int get()
-			{
-				return mat->rows;
-			}
-		}
+      int get() { return (int)mat->step; }
+    }
 
-		property int Stride
-		{
+    property PixelFormat Format {
+      PixelFormat get() { return TypeToPixelFormat(mat->type()); }
+    }
 
-			int get()
-			{
-				return (int) mat->step;
-			}
-		}
+    property cv::Mat& Mat {
+      cv::Mat& get() { return *mat; }
+    }
 
-		property PixelFormat Format
-		{
-			PixelFormat get()
-			{
-				return TypeToPixelFormat(mat->type());
-			}
-		}
+    property bool IsEmpty {
+      bool get() { return !mat || mat->empty(); }
+    }
 
-		property cv::Mat& Mat
-		{
-			cv::Mat& get()
-			{
-				return *mat;
-			}
-		}
+    bool UpdateWriteableBitmap(WriteableBitmap ^ bitmap) {
+      if (bitmap == nullptr || bitmap->PixelWidth != Width ||
+          bitmap->PixelHeight != Height || bitmap->Format != Format)
+        return false;
+      else {
+        if (mat->data == NULL) {
+          cv::Mat zeros(bitmap->PixelHeight,
+                        bitmap->PixelWidth,
+                        PixelFormatToType(bitmap->Format),
+                        0);
+          bitmap->WritePixels(Int32Rect(0, 0, Width, Height),
+                              System::IntPtr(zeros.data),
+                              Stride * Height * (Format.BitsPerPixel / 8),
+                              Stride,
+                              0,
+                              0);
+        }
+        else {
+          bitmap->WritePixels(Int32Rect(0, 0, Width, Height),
+                              System::IntPtr(mat->data),
+                              Stride * Height * (Format.BitsPerPixel / 8),
+                              Stride,
+                              0,
+                              0);
+        }
+        return true;
+      }
+    }
 
-		property bool IsEmpty
-		{
-			bool get()
-			{
-				return !mat || mat->empty();
-			}
-		}
+    WriteableBitmap ^ CreateWriteableBitmap() {
+      return gcnew WriteableBitmap(Width, Height, 72, 72, Format, nullptr);
+    }
+  };
 
-		bool UpdateWriteableBitmap(WriteableBitmap^ bitmap)
-		{
-			if (bitmap == nullptr || bitmap->PixelWidth != Width || bitmap->PixelHeight != Height || bitmap->Format != Format)
-				return false;
-			else {
-				if (mat->data == NULL) {
-					cv::Mat zeros(bitmap->PixelHeight, bitmap->PixelWidth, PixelFormatToType(bitmap->Format), 0);
-					bitmap->WritePixels(Int32Rect(0, 0, Width, Height), System::IntPtr(zeros.data), Stride * Height * (Format.BitsPerPixel / 8), Stride, 0, 0);
-				}
-				else {
-					bitmap->WritePixels(Int32Rect(0, 0, Width, Height), System::IntPtr(mat->data), Stride * Height * (Format.BitsPerPixel / 8), Stride, 0, 0);
-				}
-				return true;
-			}
-		}
+public
+  ref class VideoWriter {
+  private:
+    // OpenCV based video capture for reading from files
+    cv::VideoWriter* vc;
 
-		WriteableBitmap^ CreateWriteableBitmap()
-		{
-			return gcnew WriteableBitmap(Width, Height, 72, 72, Format, nullptr);
-		}
+  public:
+    VideoWriter(System::String ^ location,
+                int width,
+                int height,
+                double fps,
+                bool colour) {
 
-	};
+      msclr::interop::marshal_context context;
+      std::string location_std_string =
+          context.marshal_as<std::string>(location);
 
-	public ref class VideoWriter
-	{
-	private:
-		// OpenCV based video capture for reading from files
-		cv::VideoWriter* vc;
+      vc = new cv::VideoWriter(location_std_string,
+                               CV_FOURCC('D', 'I', 'V', 'X'),
+                               fps,
+                               cv::Size(width, height),
+                               colour);
+    }
 
-	public:
+    // Return success
+    bool Write(RawImage ^ img) {
+      if (vc != nullptr && vc->isOpened()) {
+        vc->write(img->Mat);
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
 
-		VideoWriter(System::String^ location, int width, int height, double fps, bool colour)
-		{
+    // Finalizer. Definitely called before Garbage Collection,
+    // but not automatically called on explicit Dispose().
+    // May be called multiple times.
+    !VideoWriter() {
+      if (vc != nullptr) {
+        vc->~VideoWriter();
+      }
+    }
 
-			msclr::interop::marshal_context context;
-			std::string location_std_string = context.marshal_as<std::string>(location);
+    // Destructor. Called on explicit Dispose() only.
+    ~VideoWriter() { this->!VideoWriter(); }
+  };
 
-			vc = new cv::VideoWriter(location_std_string, CV_FOURCC('D', 'I', 'V', 'X'), fps, cv::Size(width, height), colour);
-
-		}
-
-		// Return success
-		bool Write(RawImage^ img)
-		{
-			if (vc != nullptr && vc->isOpened())
-			{
-				vc->write(img->Mat);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-
-		// Finalizer. Definitely called before Garbage Collection,
-		// but not automatically called on explicit Dispose().
-		// May be called multiple times.
-		!VideoWriter()
-		{
-			if (vc != nullptr)
-			{
-				vc->~VideoWriter();
-			}
-		}
-
-		// Destructor. Called on explicit Dispose() only.
-		~VideoWriter()
-		{
-			this->!VideoWriter();
-		}
-
-	};
-
-}
+} // namespace OpenCVWrappers

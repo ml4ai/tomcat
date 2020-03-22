@@ -316,7 +316,9 @@ bool CLNF::Read_CLNF(string clnf_location) {
       ifstream triangulationFile(location.c_str(), ios_base::in);
 
       if (!triangulationFile.is_open()) {
-        throw std::runtime_error("Could not read the Triangulations module from: " + location + "....");
+        throw std::runtime_error(
+            "Could not read the Triangulations module from: " + location +
+            "....");
       }
 
       LandmarkDetector::SkipComments(triangulationFile);

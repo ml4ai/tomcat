@@ -3,8 +3,9 @@
 //
 // ACADEMIC OR NON-PROFIT ORGANIZATION NONCOMMERCIAL RESEARCH USE ONLY
 //
-// BY USING OR DOWNLOADING THE SOFTWARE, YOU ARE AGREEING TO THE TERMS OF THIS LICENSE AGREEMENT.  
-// IF YOU DO NOT AGREE WITH THESE TERMS, YOU MAY NOT USE OR DOWNLOAD THE SOFTWARE.
+// BY USING OR DOWNLOADING THE SOFTWARE, YOU ARE AGREEING TO THE TERMS OF THIS
+// LICENSE AGREEMENT. IF YOU DO NOT AGREE WITH THESE TERMS, YOU MAY NOT USE OR
+// DOWNLOAD THE SOFTWARE.
 //
 // License can be found in OpenFace-license.txt
 
@@ -13,21 +14,24 @@
 //       reports and manuals, must cite at least one of the following works:
 //
 //       OpenFace 2.0: Facial Behavior Analysis Toolkit
-//       Tadas Baltrušaitis, Amir Zadeh, Yao Chong Lim, and Louis-Philippe Morency
-//       in IEEE International Conference on Automatic Face and Gesture Recognition, 2018  
+//       Tadas Baltrušaitis, Amir Zadeh, Yao Chong Lim, and Louis-Philippe
+//       Morency in IEEE International Conference on Automatic Face and Gesture
+//       Recognition, 2018
 //
-//       Convolutional experts constrained local model for facial landmark detection.
-//       A. Zadeh, T. Baltrušaitis, and Louis-Philippe Morency,
-//       in Computer Vision and Pattern Recognition Workshops, 2017.    
+//       Convolutional experts constrained local model for facial landmark
+//       detection. A. Zadeh, T. Baltrušaitis, and Louis-Philippe Morency, in
+//       Computer Vision and Pattern Recognition Workshops, 2017.
 //
 //       Rendering of Eyes for Eye-Shape Registration and Gaze Estimation
-//       Erroll Wood, Tadas Baltrušaitis, Xucong Zhang, Yusuke Sugano, Peter Robinson, and Andreas Bulling 
-//       in IEEE International. Conference on Computer Vision (ICCV),  2015 
+//       Erroll Wood, Tadas Baltrušaitis, Xucong Zhang, Yusuke Sugano, Peter
+//       Robinson, and Andreas Bulling in IEEE International. Conference on
+//       Computer Vision (ICCV),  2015
 //
-//       Cross-dataset learning and person-specific normalisation for automatic Action Unit detection
-//       Tadas Baltrušaitis, Marwa Mahmoud, and Peter Robinson 
-//       in Facial Expression Recognition and Analysis Challenge, 
-//       IEEE International Conference on Automatic Face and Gesture Recognition, 2015 
+//       Cross-dataset learning and person-specific normalisation for automatic
+//       Action Unit detection Tadas Baltrušaitis, Marwa Mahmoud, and Peter
+//       Robinson in Facial Expression Recognition and Analysis Challenge, IEEE
+//       International Conference on Automatic Face and Gesture Recognition,
+//       2015
 //
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -38,8 +42,8 @@
 // Include all the unmanaged things we need.
 
 #include <opencv2/opencv.hpp>
-#include <vector>
 #include <set>
+#include <vector>
 
 #include <OpenCVWrappers.h>
 
@@ -52,140 +56,125 @@
 
 namespace UtilitiesOF {
 
-	public ref class ReadingFailedException : System::Exception
-	{
-	public:
+public
+  ref class ReadingFailedException : System::Exception {
+  public:
+    ReadingFailedException(System::String ^ message) : Exception(message) {}
+  };
 
-		ReadingFailedException(System::String^ message) : Exception(message) {}
-	};
+public
+  ref class ImageReader {
+  private:
+    // OpenCV based video capture for reading from files
+    Utilities::ImageCapture* m_image_capture;
 
-	public ref class ImageReader
-	{
-	private:
+    OpenCVWrappers::RawImage ^ m_rgb_frame;
+    OpenCVWrappers::RawImage ^ m_gray_frame;
 
-		// OpenCV based video capture for reading from files
-		Utilities::ImageCapture* m_image_capture;
+    bool* m_is_opened;
 
-		OpenCVWrappers::RawImage^ m_rgb_frame;
-		OpenCVWrappers::RawImage^ m_gray_frame;
+  public:
+    // Can provide a directory, or a list of files
+    ImageReader(System::String ^ image_directory,
+                float fx,
+                float fy,
+                float cx,
+                float cy) {
+      m_image_capture = new Utilities::ImageCapture();
+      m_is_opened = new bool;
 
-		bool* m_is_opened;
+      std::string image_dir_std =
+          msclr::interop::marshal_as<std::string>(image_directory);
 
-	public:
+      *m_is_opened =
+          m_image_capture->OpenDirectory(image_dir_std, "", fx, fy, cx, cy);
 
-		// Can provide a directory, or a list of files
-		ImageReader(System::String^ image_directory, float fx, float fy, float cx, float cy)
-		{
-			m_image_capture = new Utilities::ImageCapture();
-			m_is_opened = new bool;
+      if (!*m_is_opened) {
+        throw gcnew ReadingFailedException(
+            "Failed to open a directory or an image");
+      }
+    }
+    // Can provide a directory, or a list of files
+    ImageReader(System::Collections::Generic::List<System::String ^> ^
+                    image_files,
+                float fx,
+                float fy,
+                float cx,
+                float cy) {
+      m_image_capture = new Utilities::ImageCapture();
+      m_is_opened = new bool;
 
-			std::string image_dir_std = msclr::interop::marshal_as<std::string>(image_directory);
+      std::vector<std::string> image_files_std;
 
-			*m_is_opened = m_image_capture->OpenDirectory(image_dir_std, "", fx, fy, cx, cy);
+      for (int i = 0; i < image_files->Count; ++i) {
+        std::string image_file =
+            msclr::interop::marshal_as<std::string>(image_files[i]);
+        image_files_std.push_back(image_file);
+      }
 
-			if (!*m_is_opened)
-			{
-				throw gcnew ReadingFailedException("Failed to open a directory or an image");
-			}
-		}
-		// Can provide a directory, or a list of files
-		ImageReader(System::Collections::Generic::List<System::String^>^ image_files, float fx, float fy, float cx, float cy)
-		{
-			m_image_capture = new Utilities::ImageCapture();
-			m_is_opened = new bool;
+      *m_is_opened =
+          m_image_capture->OpenImageFiles(image_files_std, fx, fy, cx, cy);
 
-			std::vector<std::string> image_files_std;
+      if (!*m_is_opened) {
+        throw gcnew ReadingFailedException(
+            "Failed to open a directory or an image");
+      }
+    }
 
-			for (int i = 0; i < image_files->Count; ++i)
-			{
-				std::string image_file = msclr::interop::marshal_as<std::string>(image_files[i]);
-				image_files_std.push_back(image_file);
+    OpenCVWrappers::RawImage ^
+        GetNextImage() {
+          cv::Mat next_image = m_image_capture->GetNextImage();
 
-			}
+          m_rgb_frame = gcnew OpenCVWrappers::RawImage(next_image);
 
-			*m_is_opened = m_image_capture->OpenImageFiles(image_files_std, fx, fy, cx, cy);
+          if (next_image.empty()) {
+            *m_is_opened = false;
+          }
 
-			if (!*m_is_opened)
-			{
-				throw gcnew ReadingFailedException("Failed to open a directory or an image");
-			}
+          return m_rgb_frame;
+        }
 
-		}
+        System::String
+        ^
+        GetName() {
+          std::string filename = m_image_capture->name;
+          return gcnew System::String(filename.c_str());
+        }
 
-		OpenCVWrappers::RawImage^ GetNextImage()
-		{
-			cv::Mat next_image = m_image_capture->GetNextImage();
+        double GetProgress() {
+      return m_image_capture->GetProgress();
+    }
 
-			m_rgb_frame = gcnew OpenCVWrappers::RawImage(next_image);
+    float GetFx() { return m_image_capture->fx; }
 
-			if (next_image.empty())
-			{
-				*m_is_opened = false;
-			}
+    float GetFy() { return m_image_capture->fy; }
 
-			return m_rgb_frame;
-		}
+    float GetCx() { return m_image_capture->cx; }
 
-		System::String^ GetName()
-		{
-			std::string filename = m_image_capture->name;
-			return gcnew System::String(filename.c_str());
-		}
+    float GetCy() { return m_image_capture->cy; }
 
-		double GetProgress()
-		{
-			return m_image_capture->GetProgress();
-		}
+    bool isOpened() { return *m_is_opened; }
 
-		float GetFx()
-		{
-			return m_image_capture->fx;
-		}
+    OpenCVWrappers::RawImage ^
+        GetCurrentFrameGray() {
+          cv::Mat next_gray_image = m_image_capture->GetGrayFrame();
+          m_gray_frame = gcnew OpenCVWrappers::RawImage(next_gray_image);
 
-		float GetFy()
-		{
-			return m_image_capture->fy;
-		}
+          return m_gray_frame;
+        }
 
-		float GetCx()
-		{
-			return m_image_capture->cx;
-		}
+        // Finalizer. Definitely called before Garbage Collection,
+        // but not automatically called on explicit Dispose().
+        // May be called multiple times.
+        !ImageReader() {
+      delete m_image_capture;
+      delete m_rgb_frame;
+      delete m_gray_frame;
+      delete m_is_opened;
+    }
 
-		float GetCy()
-		{
-			return m_image_capture->cy;
-		}
+    // Destructor. Called on explicit Dispose() only.
+    ~ImageReader() { this->!ImageReader(); }
+  };
 
-		bool isOpened()
-		{
-			return *m_is_opened;
-		}
-
-		OpenCVWrappers::RawImage^ GetCurrentFrameGray() {
-
-			cv::Mat next_gray_image = m_image_capture->GetGrayFrame();
-			m_gray_frame = gcnew OpenCVWrappers::RawImage(next_gray_image);
-
-			return m_gray_frame;
-		}
-
-		// Finalizer. Definitely called before Garbage Collection,
-		// but not automatically called on explicit Dispose().
-		// May be called multiple times.
-		!ImageReader()
-		{
-			delete m_image_capture;
-			delete m_rgb_frame;
-			delete m_gray_frame;
-			delete m_is_opened;
-		}
-
-		// Destructor. Called on explicit Dispose() only.
-		~ImageReader()
-		{
-			this->!ImageReader();
-		}
-	};
-
-}
+} // namespace UtilitiesOF

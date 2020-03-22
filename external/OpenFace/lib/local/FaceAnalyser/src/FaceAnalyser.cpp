@@ -67,7 +67,7 @@ using boost::filesystem::path;
 
 // Constructor from a model file (or a default one if not provided
 FaceAnalyser::FaceAnalyser(
-    const FaceAnalysis::FaceAnalyserParameters &face_analyser_params) {
+    const FaceAnalysis::FaceAnalyserParameters& face_analyser_params) {
   this->Read(face_analyser_params.getModelLoc());
 
   align_mask = face_analyser_params.getAlignMask();
@@ -188,9 +188,9 @@ vector<pair<string, bool>> FaceAnalyser::GetDynamicAUReg() const {
 
 cv::Mat_<int> FaceAnalyser::GetTriangulation() { return triangulation.clone(); }
 
-void FaceAnalyser::GetLatestHOG(cv::Mat_<double> &hog_descriptor,
-                                int &num_rows,
-                                int &num_cols) {
+void FaceAnalyser::GetLatestHOG(cv::Mat_<double>& hog_descriptor,
+                                int& num_rows,
+                                int& num_cols) {
   hog_descriptor = this->hog_desc_frame.clone();
 
   if (!hog_desc_frame.empty()) {
@@ -203,13 +203,13 @@ void FaceAnalyser::GetLatestHOG(cv::Mat_<double> &hog_descriptor,
   }
 }
 
-void FaceAnalyser::GetLatestAlignedFace(cv::Mat &image) {
+void FaceAnalyser::GetLatestAlignedFace(cv::Mat& image) {
   image = this->aligned_face_for_output.clone();
 }
 
-void FaceAnalyser::GetLatestNeutralHOG(cv::Mat_<double> &hog_descriptor,
-                                       int &num_rows,
-                                       int &num_cols) {
+void FaceAnalyser::GetLatestNeutralHOG(cv::Mat_<double>& hog_descriptor,
+                                       int& num_rows,
+                                       int& num_cols) {
   hog_descriptor = this->hog_desc_median;
   if (!hog_desc_median.empty()) {
     num_rows = this->num_hog_rows;
@@ -223,7 +223,7 @@ void FaceAnalyser::GetLatestNeutralHOG(cv::Mat_<double> &hog_descriptor,
 
 // Getting the closest view center based on orientation
 int GetViewId(const vector<cv::Vec3d> orientations_all,
-              const cv::Vec3d &orientation) {
+              const cv::Vec3d& orientation) {
   int id = 0;
 
   double dbest = -1.0;
@@ -242,7 +242,7 @@ int GetViewId(const vector<cv::Vec3d> orientations_all,
 }
 
 void FaceAnalyser::PredictStaticAUsAndComputeFeatures(
-    const cv::Mat &frame, const cv::Mat_<float> &detected_landmarks) {
+    const cv::Mat& frame, const cv::Mat_<float>& detected_landmarks) {
 
   // Extract shape parameters from the detected landmarks
   cv::Vec6f params_global;
@@ -342,8 +342,8 @@ void FaceAnalyser::PredictStaticAUsAndComputeFeatures(
   AU_predictions_class = AU_predictions_occurence;
 }
 
-void FaceAnalyser::AddNextFrame(const cv::Mat &frame,
-                                const cv::Mat_<float> &detected_landmarks,
+void FaceAnalyser::AddNextFrame(const cv::Mat& frame,
+                                const cv::Mat_<float>& detected_landmarks,
                                 bool success,
                                 double timestamp_seconds,
                                 bool online) {
@@ -570,7 +570,7 @@ void FaceAnalyser::AddNextFrame(const cv::Mat &frame,
   timestamps.push_back(timestamp_seconds);
 }
 
-void FaceAnalyser::GetGeomDescriptor(cv::Mat_<double> &geom_desc) {
+void FaceAnalyser::GetGeomDescriptor(cv::Mat_<double>& geom_desc) {
   geom_desc = this->geom_descriptor_frame.clone();
 }
 
@@ -617,10 +617,10 @@ void FaceAnalyser::PostprocessPredictions() {
 }
 
 void FaceAnalyser::ExtractAllPredictionsOfflineReg(
-    vector<pair<string, vector<double>>> &au_predictions,
-    vector<double> &confidences,
-    vector<bool> &successes,
-    vector<double> &timestamps,
+    vector<pair<string, vector<double>>>& au_predictions,
+    vector<double>& confidences,
+    vector<bool>& successes,
+    vector<double>& timestamps,
     bool dynamic) {
   if (dynamic) {
     PostprocessPredictions();
@@ -731,10 +731,10 @@ void FaceAnalyser::ExtractAllPredictionsOfflineReg(
 }
 
 void FaceAnalyser::ExtractAllPredictionsOfflineClass(
-    vector<pair<string, vector<double>>> &au_predictions,
-    vector<double> &confidences,
-    vector<bool> &successes,
-    vector<double> &timestamps,
+    vector<pair<string, vector<double>>>& au_predictions,
+    vector<double>& confidences,
+    vector<bool>& successes,
+    vector<double>& timestamps,
     bool dynamic) {
   if (dynamic) {
     PostprocessPredictions();
@@ -833,10 +833,10 @@ void FaceAnalyser::Reset() {
   frames_tracking_succ = 0;
 }
 
-void FaceAnalyser::UpdateRunningMedian(cv::Mat_<int> &histogram,
-                                       int &hist_count,
-                                       cv::Mat_<double> &median,
-                                       const cv::Mat_<double> &descriptor,
+void FaceAnalyser::UpdateRunningMedian(cv::Mat_<int>& histogram,
+                                       int& hist_count,
+                                       cv::Mat_<double>& median,
+                                       const cv::Mat_<double>& descriptor,
                                        bool update,
                                        int num_bins,
                                        double min_val,
@@ -894,9 +894,9 @@ void FaceAnalyser::UpdateRunningMedian(cv::Mat_<int> &histogram,
   }
 }
 
-void FaceAnalyser::ExtractMedian(cv::Mat_<int> &histogram,
+void FaceAnalyser::ExtractMedian(cv::Mat_<int>& histogram,
                                  int hist_count,
-                                 cv::Mat_<double> &median,
+                                 cv::Mat_<double>& median,
                                  int num_bins,
                                  double min_val,
                                  double max_val) {
@@ -1199,10 +1199,10 @@ void FaceAnalyser::ReadAU(string au_model_location) {
 }
 
 void FaceAnalyser::UpdatePredictionTrack(
-    cv::Mat_<int> &prediction_corr_histogram,
-    int &prediction_correction_count,
-    vector<double> &correction,
-    const vector<pair<string, double>> &predictions,
+    cv::Mat_<int>& prediction_corr_histogram,
+    int& prediction_correction_count,
+    vector<double>& correction,
+    const vector<pair<string, double>>& predictions,
     double ratio,
     int num_bins,
     double min_val,
@@ -1255,9 +1255,9 @@ void FaceAnalyser::UpdatePredictionTrack(
   }
 }
 
-void FaceAnalyser::GetSampleHist(cv::Mat_<int> &prediction_corr_histogram,
+void FaceAnalyser::GetSampleHist(cv::Mat_<int>& prediction_corr_histogram,
                                  int prediction_correction_count,
-                                 vector<double> &sample,
+                                 vector<double>& sample,
                                  double ratio,
                                  int num_bins,
                                  double min_val,
@@ -1286,13 +1286,13 @@ void FaceAnalyser::GetSampleHist(cv::Mat_<int> &prediction_corr_histogram,
   }
 }
 
-void FaceAnalyser::ReadRegressor(string fname, const vector<string> &au_names) {
+void FaceAnalyser::ReadRegressor(string fname, const vector<string>& au_names) {
   ifstream regressor_stream(fname.c_str(), ios::in | ios::binary);
 
   if (regressor_stream.is_open()) {
     // First read the input type
     int regressor_type;
-    regressor_stream.read((char *)&regressor_type, 4);
+    regressor_stream.read((char*)&regressor_type, 4);
 
     if (regressor_type == SVR_appearance_static_linear) {
       AU_SVR_static_appearance_lin_regressors.Read(regressor_stream, au_names);

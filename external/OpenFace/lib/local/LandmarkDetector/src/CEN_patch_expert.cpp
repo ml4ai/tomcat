@@ -54,7 +54,7 @@ using namespace LandmarkDetector;
 
 // Copy constructor	(do not perform a deep copy of data as it is very large,
 // also there is no real need to stor the copies
-CEN_patch_expert::CEN_patch_expert(const CEN_patch_expert &other)
+CEN_patch_expert::CEN_patch_expert(const CEN_patch_expert& other)
     : confidence(other.confidence), width_support(other.width_support),
       height_support(other.height_support) {
 
@@ -67,7 +67,7 @@ CEN_patch_expert::CEN_patch_expert(const CEN_patch_expert &other)
 }
 
 //===========================================================================
-void CEN_patch_expert::Read(ifstream &stream) {
+void CEN_patch_expert::Read(ifstream& stream) {
 
   // Setting up OpenBLAS
   openblas_set_num_threads(1);
@@ -75,19 +75,19 @@ void CEN_patch_expert::Read(ifstream &stream) {
   // Sanity check
   int read_type;
 
-  stream.read((char *)&read_type, 4);
+  stream.read((char*)&read_type, 4);
   assert(read_type == 6);
 
   // the number of neurons for this patch
   int num_layers;
-  stream.read((char *)&width_support, 4);
-  stream.read((char *)&height_support, 4);
-  stream.read((char *)&num_layers, 4);
+  stream.read((char*)&width_support, 4);
+  stream.read((char*)&height_support, 4);
+  stream.read((char*)&num_layers, 4);
 
   if (num_layers == 0) {
     // empty patch due to landmark being invisible at that orientation (or
     // visible through mirroring)
-    stream.read((char *)&confidence, 8);
+    stream.read((char*)&confidence, 8);
     return;
   }
 
@@ -97,7 +97,7 @@ void CEN_patch_expert::Read(ifstream &stream) {
 
   for (int i = 0; i < num_layers; i++) {
     int neuron_type;
-    stream.read((char *)&neuron_type, 4);
+    stream.read((char*)&neuron_type, 4);
     activation_function[i] = neuron_type;
 
     cv::Mat_<double> bias;
@@ -111,11 +111,11 @@ void CEN_patch_expert::Read(ifstream &stream) {
   }
 
   // Read the patch confidence
-  stream.read((char *)&confidence, 8);
+  stream.read((char*)&confidence, 8);
 }
 
 // Contrast normalize the input for response map computation
-void contrastNorm(const cv::Mat_<float> &input, cv::Mat_<float> &output) {
+void contrastNorm(const cv::Mat_<float>& input, cv::Mat_<float>& output) {
 
   const unsigned int num_cols = input.cols;
 
@@ -150,10 +150,10 @@ void contrastNorm(const cv::Mat_<float> &input, cv::Mat_<float> &output) {
   }
 }
 
-void im2colBias(const cv::Mat_<float> &input,
+void im2colBias(const cv::Mat_<float>& input,
                 const unsigned int width,
                 const unsigned int height,
-                cv::Mat_<float> &output) {
+                cv::Mat_<float>& output) {
 
   const unsigned int m = input.rows;
   const unsigned int n = input.cols;
@@ -184,8 +184,8 @@ void im2colBias(const cv::Mat_<float> &input,
 }
 
 //===========================================================================
-void CEN_patch_expert::Response(const cv::Mat_<float> &area_of_interest,
-                                cv::Mat_<float> &response) {
+void CEN_patch_expert::Response(const cv::Mat_<float>& area_of_interest,
+                                cv::Mat_<float>& response) {
 
   int response_height = area_of_interest.rows - height_support + 1;
   int response_width = area_of_interest.cols - width_support + 1;
@@ -202,12 +202,12 @@ void CEN_patch_expert::Response(const cv::Mat_<float> &area_of_interest,
     // We are performing response = weights[layers] * response(t), but in
     // OpenBLAS as that is significantly quicker than OpenCV
     cv::Mat_<float> resp = response;
-    float *m1 = (float *)resp.data;
+    float* m1 = (float*)resp.data;
     cv::Mat_<float> weight = weights[layer];
-    float *m2 = (float *)weight.data;
+    float* m2 = (float*)weight.data;
 
     cv::Mat_<float> resp_blas(weight.rows, resp.cols);
-    float *m3 = (float *)resp_blas.data;
+    float* m3 = (float*)resp_blas.data;
 
     // Perform matrix multiplication in OpenBLAS (fortran call)
     float alpha1 = 1.0;
@@ -237,10 +237,10 @@ void CEN_patch_expert::Response(const cv::Mat_<float> &area_of_interest,
     // Adding the bias (bit ugly, but the fastest way to do this)
     response = resp_blas;
 
-    float *data = (float *)response.data;
+    float* data = (float*)response.data;
     size_t height = response.rows;
     size_t width = response.cols;
-    float *data_b = (float *)biases[layer].data;
+    float* data_b = (float*)biases[layer].data;
     for (size_t y = 0; y < height; ++y) {
       float bias = data_b[y];
       for (size_t x = 0; x < width; ++x) {
@@ -256,7 +256,7 @@ void CEN_patch_expert::Response(const cv::Mat_<float> &area_of_interest,
       size_t resp_size = response.rows * response.cols;
 
       // Iterate over the data directly
-      float *data = (float *)response.data;
+      float* data = (float*)response.data;
 
       for (size_t counter = 0; counter < resp_size; ++counter) {
         float in = *data;
@@ -276,10 +276,10 @@ void CEN_patch_expert::Response(const cv::Mat_<float> &area_of_interest,
 
 // Perform im2col, while at the same time doing contrast normalization and
 // adding a bias term (also skip every other region)
-void im2colBiasSparseContrastNorm(const cv::Mat_<float> &input,
+void im2colBiasSparseContrastNorm(const cv::Mat_<float>& input,
                                   const unsigned int width,
                                   const unsigned int height,
-                                  cv::Mat_<float> &output) {
+                                  cv::Mat_<float>& output) {
   const unsigned int m = input.rows;
   const unsigned int n = input.cols;
 
@@ -307,12 +307,12 @@ void im2colBiasSparseContrastNorm(const cv::Mat_<float> &input,
         continue;
       }
 
-      float *Mo = output.ptr<float>(rowIdx);
+      float* Mo = output.ptr<float>(rowIdx);
 
       float sum = 0;
 
       for (unsigned int yy = 0; yy < height; ++yy) {
-        const float *Mi = input.ptr<float>(i + yy);
+        const float* Mi = input.ptr<float>(i + yy);
         for (unsigned int xx = 0; xx < width; ++xx) {
           int colIdx = xx * height + yy;
           float in = Mi[j + xx];
@@ -353,10 +353,10 @@ void im2colBiasSparseContrastNorm(const cv::Mat_<float> &input,
   }
 }
 
-void im2colBiasSparse(const cv::Mat_<float> &input,
+void im2colBiasSparse(const cv::Mat_<float>& input,
                       const unsigned int width,
                       const unsigned int height,
-                      cv::Mat_<float> &output) {
+                      cv::Mat_<float>& output) {
 
   const unsigned int m = input.rows;
   const unsigned int n = input.cols;
@@ -399,7 +399,7 @@ void im2colBiasSparse(const cv::Mat_<float> &input,
 
 // As the sparse patch expert output with interpolation, this function creates
 // an interpolation matrix
-void LandmarkDetector::interpolationMatrix(cv::Mat_<float> &mapMatrix,
+void LandmarkDetector::interpolationMatrix(cv::Mat_<float>& mapMatrix,
                                            int response_height,
                                            int response_width,
                                            int input_width,
@@ -468,17 +468,17 @@ void LandmarkDetector::interpolationMatrix(cv::Mat_<float> &mapMatrix,
   }
 }
 
-void CEN_patch_expert::ResponseInternal(cv::Mat_<float> &response) {
+void CEN_patch_expert::ResponseInternal(cv::Mat_<float>& response) {
   for (size_t layer = 0; layer < activation_function.size(); ++layer) {
 
     // We are performing response = weights[layers] * response, but in OpenBLAS
     // as that is significantly quicker than OpenCV
     cv::Mat_<float> resp = response;
-    float *m1 = (float *)resp.data;
-    float *m2 = (float *)weights[layer].data;
+    float* m1 = (float*)resp.data;
+    float* m2 = (float*)weights[layer].data;
 
     cv::Mat_<float> resp_blas(weights[layer].rows, resp.cols);
-    float *m3 = (float *)resp_blas.data;
+    float* m3 = (float*)resp_blas.data;
 
     // Perform matrix multiplication in OpenBLAS (fortran call)
     float alpha1 = 1.0;
@@ -513,10 +513,10 @@ void CEN_patch_expert::ResponseInternal(cv::Mat_<float> &response) {
 
     // Adding the bias (bit ugly, but the fastest way to do this), TODO can this
     // bias be incorporated in the above?
-    float *data = (float *)response.data;
+    float* data = (float*)response.data;
     const unsigned height = response.rows;
     const unsigned width = response.cols;
-    float *data_b = (float *)biases[layer].data;
+    float* data_b = (float*)biases[layer].data;
     for (unsigned int y = 0; y < height; ++y) {
       float bias = data_b[y];
       for (unsigned int x = 0; x < width; ++x) {
@@ -532,7 +532,7 @@ void CEN_patch_expert::ResponseInternal(cv::Mat_<float> &response) {
       const unsigned int resp_size = response.rows * response.cols;
 
       // Iterate over the data directly
-      float *data = (float *)response.data;
+      float* data = (float*)response.data;
 
       for (unsigned int counter = 0; counter < resp_size; ++counter) {
         float in = *data;
@@ -548,13 +548,13 @@ void CEN_patch_expert::ResponseInternal(cv::Mat_<float> &response) {
 
 //===========================================================================
 void CEN_patch_expert::ResponseSparse(
-    const cv::Mat_<float> &area_of_interest_left,
-    const cv::Mat_<float> &area_of_interest_right,
-    cv::Mat_<float> &response_left,
-    cv::Mat_<float> &response_right,
-    cv::Mat_<float> &mapMatrix,
-    cv::Mat_<float> &im2col_prealloc_left,
-    cv::Mat_<float> &im2col_prealloc_right) {
+    const cv::Mat_<float>& area_of_interest_left,
+    const cv::Mat_<float>& area_of_interest_right,
+    cv::Mat_<float>& response_left,
+    cv::Mat_<float>& response_right,
+    cv::Mat_<float>& mapMatrix,
+    cv::Mat_<float>& im2col_prealloc_left,
+    cv::Mat_<float>& im2col_prealloc_right) {
   unsigned int response_height = 0;
 
   const bool left_provided = !area_of_interest_left.empty();
