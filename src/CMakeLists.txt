@@ -1,3 +1,4 @@
+file(GLOB tomcat_headers ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 add_library(
   tomcat STATIC
   utils.h
@@ -22,10 +23,7 @@ option(WITH_OPENFACE "Build with OpenFace integration" OFF)
 if(WITH_OPENFACE)
   target_link_libraries(
     tomcat
-    ${OpenCV_LIBS}
-    OpenFace::GazeAnalyser
-    OpenFace::LandmarkDetector
-    OpenFace::Utilities
+    OpenFace
   )
 endif()
 

@@ -41,11 +41,15 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" ST
     add_compile_options("-Wno-deprecated-declarations")
 endif()
 
-# LandmarkDetector library
-add_subdirectory(lib/local/LandmarkDetector)
-# Facial Expression analysis library
-add_subdirectory(lib/local/FaceAnalyser)
-# Gaze estimation library
-add_subdirectory(lib/local/GazeAnalyser)
-# Utilities library
-add_subdirectory(lib/local/Utilities)
+file(GLOB openface_sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/lib/local/*/src/*.cpp)
+file(GLOB openface_headers CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/lib/local/*/include/*.h )
+file(GLOB openface_include_dirs CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/lib/local/*/include)
+
+
+add_library(OpenFace STATIC ${openface_sources} ${openface_headers})
+target_link_libraries(OpenFace ${OpenCV_LIBS} ${Boost_LIBRARIES} dlib::dlib)
+
+target_include_directories(OpenFace PUBLIC ${openface_include_dirs})
+
+install(FILES ${openface_headers} DESTINATION ${CMAKE_INSTALL_PREFIX}/include/OpenFace)
+install(TARGETS OpenFace DESTINATION lib)

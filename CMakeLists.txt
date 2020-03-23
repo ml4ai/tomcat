@@ -58,9 +58,9 @@ endif()
 
 add_subdirectory(external/malmo)
 if(WITH_OPENFACE)
-find_package(OpenCV 4.0 REQUIRED COMPONENTS core imgproc calib3d
-             highgui objdetect)
-add_subdirectory(external/OpenFace)
+  find_package(OpenCV REQUIRED COMPONENTS core imgproc calib3d
+              highgui objdetect)
+  add_subdirectory(external/OpenFace)
 endif()
 
 
