@@ -41,9 +41,9 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" ST
     add_compile_options("-Wno-deprecated-declarations")
 endif()
 
-file(GLOB openface_sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/lib/local/*/src/*.cpp)
-file(GLOB openface_headers CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/lib/local/*/include/*.h )
-file(GLOB openface_include_dirs CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/lib/local/*/include)
+file(GLOB openface_sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/lib/*/src/*.cpp)
+file(GLOB openface_headers CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/lib/*/include/*.h )
+file(GLOB openface_include_dirs CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/lib/*/include)
 
 
 add_library(OpenFace STATIC ${openface_sources} ${openface_headers})
