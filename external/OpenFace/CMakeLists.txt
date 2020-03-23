@@ -16,10 +16,6 @@ endif()
 
 if ( ${OpenBLAS_INCLUDE_FOUND} )
     MESSAGE("  OpenBLAS_INCLUDE: ${OpenBLAS_INCLUDE_DIR}")
-else()
-    MESSAGE(WARNING "OpenBLAS include not found in the system. Using the one vended with OpenFace.")
-	set(OpenBLAS_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/lib/3rdParty/OpenBLAS/include")
-    MESSAGE("  OpenBLAS_INCLUDE: ${OpenBLAS_INCLUDE_DIR}")
 endif()
 
 
