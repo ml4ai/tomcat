@@ -1,9 +1,6 @@
 Installation
 ============
 
-ToMCAT depends on the following: CMake 3.15+, Boost 1.69+, a C++17 compatible
-compiler (tested with GCC 9 and AppleClang 11.0 so far), libfmt, doxygen,
-ffmpeg, OpenCV 4, dlib, Java 8, and Gradle.
 
 The following commands should install ToMCAT and its dependencies for users
 that use either MacPorts, Homebrew, or apt as their package manager. 
@@ -13,11 +10,13 @@ git clone https://github.com/ml4ai/tomcat
 cd tomcat && ./tools/install.sh
 ```
 
+For people using other package managers (such as `yum`), note that ToMCAT
+depends on the following: CMake 3.15+, Boost 1.69+, a C++17 compatible
+compiler (tested with GCC 9 and AppleClang 11.0 so far), libfmt, doxygen,
+ffmpeg, OpenCV 4, dlib, Java 8, and Gradle.
+
 Please make sure your internet connection is active while the `install.sh`
-script is running. Mac users may want to turn off their firewalls.
-The scripts assume that the default shell is bash - if this is not the case for
-you, then you are probably an advanced user, and may want to take a look at the
-shell scripts before running them :).
+script is running. macOS users may want to turn off their firewalls.
 
 We don't officially support Windows right now, but pull requests that add
 Windows support are welcome.
