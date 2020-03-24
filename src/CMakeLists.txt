@@ -18,13 +18,14 @@ target_link_libraries(
   fmt::fmt
 )
 
-option(WITH_OPENFACE "Build with OpenFace integration" OFF)
+option(WITH_WEBCAM_SENSOR "Build with OpenFace integration" ON)
 
-if(WITH_OPENFACE)
+if(WITH_WEBCAM_SENSOR)
   target_link_libraries(
     tomcat
     OpenFace
   )
+  add_executable(webcam WebcamSensor.cpp WebcamSensor.h)
 endif()
 
 if(DEFINED ENV{TRAVIS})
