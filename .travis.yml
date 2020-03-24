@@ -14,7 +14,7 @@ env:
   - TOMCAT=$TRAVIS_BUILD_DIR
 
 script:
-  - cd ${TOMCAT}/build && make -j test
+  - cd ${TOMCAT}/build && make -j && make -j Minecraft
              && ./bin/test --mission ../external/malmo/sample_missions/default_world_1.xml 
              && cd ../
   - cd ${TOMCAT}/build && make docs && cd ../
