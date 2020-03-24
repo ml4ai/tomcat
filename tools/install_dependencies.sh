@@ -20,27 +20,27 @@ download_and_extract_dlib() {
 if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "MacOS detected. Checking for XCode developer kit."
 
-    XCode_sdk_dir="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs"
-    if [[ ! -d "${XCode_sdk_dir}" ]]; then
-        echo "No XCode developer kit found. You need to get this from the app store."
-        exit 1
-    else
-        if [[ ! -e "${XCode_sdk_dir}/MacOSX10.14.sdk" ]]; then
-            if [[ ! -e "${XCode_sdk_dir}/MacOSX.sdk" ]]; then
-                echo "No MacOSX.sdk in ${XCode_sdk_dir}."
-                echo "Possibly MacOS has changed things (again)."
-                exit 1
-            else
-                pushd "${XCode_sdk_dir}" > /dev/null
-                    echo "Linking missing MacOSX10.14.sdk to MacOSX.sdk in ${XCode_sdk_dir}/"
-                    sudo ln -s "MacOSX.sdk" "MacOSX10.14.sdk"
-                    if [[ $? -ne 0 ]]; then exit 1; fi;
-                popd > /dev/null
-            fi
-        fi
-    fi
+    #XCode_sdk_dir="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs"
+    #if [[ ! -d "${XCode_sdk_dir}" ]]; then
+        #echo "No XCode developer kit found. You need to get this from the app store."
+        #exit 1
+    #else
+        #if [[ ! -e "${XCode_sdk_dir}/MacOSX10.14.sdk" ]]; then
+            #if [[ ! -e "${XCode_sdk_dir}/MacOSX.sdk" ]]; then
+                #echo "No MacOSX.sdk in ${XCode_sdk_dir}."
+                #echo "Possibly MacOS has changed things (again)."
+                #exit 1
+            #else
+                #pushd "${XCode_sdk_dir}" > /dev/null
+                    #echo "Linking missing MacOSX10.14.sdk to MacOSX.sdk in ${XCode_sdk_dir}/"
+                    #sudo ln -s "MacOSX.sdk" "MacOSX10.14.sdk"
+                    #if [[ $? -ne 0 ]]; then exit 1; fi;
+                #popd > /dev/null
+            #fi
+        #fi
+    #fi
 
-    echo "Found XCode developer kit."
+    #echo "Found XCode developer kit."
     echo "Checking for MacPorts or Homebrew package managers."
 
     if [ -x "$(command -v port)" ]; then
@@ -60,7 +60,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
             dlib \
             opencv4 \
             openblas \
-            gradle \
+            gradle
         if [[ $? -ne 0 ]]; then exit 1; fi;
 
         # We install Java using a local Portfile, since the upstream openjdk8
@@ -144,7 +144,7 @@ elif [ -x "$(command -v apt-get)" ]; then
         openjdk-8-jre-headless=8u162-b12-1\
         openjdk-8-jre=8u162-b12-1\
         openjdk-8-jdk-headless=8u162-b12-1\
-        openjdk-8-jdk=8u162-b12-1\
+        openjdk-8-jdk=8u162-b12-1
     if [[ $? -ne 0 ]]; then exit 1; fi;
 
     boost_version_header="/usr/local/include/boost/version.hpp"
