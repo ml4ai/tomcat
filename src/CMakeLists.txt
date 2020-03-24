@@ -19,20 +19,6 @@ target_link_libraries(
 )
 
 
-if(WITH_WEBCAM_SENSOR)
-  target_link_libraries(
-    tomcat
-    OpenFace
-  )
-  add_executable(webcam WebcamSensor.cpp WebcamSensor.h)
-  target_include_directories(webcam PUBLIC )
-
-  #target_include_directories(webcam PUBLIC
-    #$<BUILD_INTERFACE:${CMAKE_PROJECT_DIR}/include>
-    #$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include/OpenFace>)
-  target_link_libraries(webcam fmt::fmt OpenFace)
-endif()
-
 if(DEFINED ENV{TRAVIS})
   option(CODE_COVERAGE "Enable coverage reporting" ON)
   message("Compilation occurring on Travis, code coverage reporting on.")

@@ -25,8 +25,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
 
-option(WITH_WEBCAM_SENSOR "Build with OpenFace integration" ON)
-
 set(CMAKE_CXX_FLAGS
     "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
 
@@ -59,15 +57,9 @@ else()
 endif()
 
 add_subdirectory(external/malmo)
-if(WITH_WEBCAM_SENSOR)
-endif()
-
 
 add_subdirectory(src)
-target_include_directories(tomcat
-                           PRIVATE src external/malmo/Malmo/src
-                                   ${OpenFace_INCLUDE_DIRS})
-
+target_include_directories(tomcat PRIVATE src external/malmo/Malmo/src)
 target_include_directories(runExperiment PRIVATE external/malmo/Malmo/src)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/tools/launch_minecraft.sh
@@ -76,11 +68,6 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/tools/launch_minecraft.sh
 option(BUILD_DOCS "Build documentation" OFF)
 if (BUILD_DOCS)
   add_subdirectory(docs)
-endif()
-if(WITH_WEBCAM_SENSOR)
-  find_package(OpenCV REQUIRED COMPONENTS core imgproc calib3d
-              highgui objdetect)
-  add_subdirectory(external/OpenFace)
 endif()
 
 add_subdirectory(tests)
