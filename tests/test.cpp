@@ -25,9 +25,6 @@ options_description load_options() {
       "port,p",
       value<unsigned int>()->default_value(10000),
       "Port to control (>=10000)")(
-      "activate_webcam,w",
-      bool_switch()->default_value(false),
-      "Activate webcam to detect face landmarks? (true=1 or false=0)")(
       "record_all",
       bool_switch()->default_value(false),
       "Activate all recordings except bitmaps")(
@@ -73,14 +70,10 @@ Mission create_mission(variables_map parameters_map) {
   string mission_id_or_path = parameters_map["mission"].as<string>();
   string record_path = parameters_map["record_path"].as<string>();
   unsigned int port_number = parameters_map["port"].as<unsigned int>();
-  unsigned int frames_per_second =
-      parameters_map["video_fps"].as<unsigned int>();
   unsigned int time_limit_in_seconds =
       parameters_map["time_limit"].as<unsigned int>();
   unsigned int self_report_prompt_time_in_seconds =
       parameters_map["self_report"].as<unsigned int>();
-  int64_t bit_rate = parameters_map["video_bit_rate"].as<int64_t>();
-  bool activate_webcam = parameters_map["activate_webcam"].as<bool>();
   bool record_all = parameters_map["record_all"].as<bool>();
   bool record_observations = parameters_map["record_observations"].as<bool>();
   bool record_commands = parameters_map["record_commands"].as<bool>();
