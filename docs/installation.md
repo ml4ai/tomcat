@@ -39,6 +39,7 @@ This folder will contain four files:
   webcam.
 - `screen_video.mpg` : A video recording of the Minecraft playthrough (i.e.
   what the player sees on their screen)
+- `player_audio.wav` : A WAV file containing the audio recording of the player.
 - `malmo_data.tgz` : A gzipped tarball containing Malmo data about player's
   position, nearby entities, etc.
 
