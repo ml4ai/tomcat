@@ -18,7 +18,6 @@ target_link_libraries(
   fmt::fmt
 )
 
-option(WITH_WEBCAM_SENSOR "Build with OpenFace integration" ON)
 
 if(WITH_WEBCAM_SENSOR)
   target_link_libraries(
@@ -26,6 +25,12 @@ if(WITH_WEBCAM_SENSOR)
     OpenFace
   )
   add_executable(webcam WebcamSensor.cpp WebcamSensor.h)
+  target_include_directories(webcam PUBLIC )
+
+  #target_include_directories(webcam PUBLIC
+    #$<BUILD_INTERFACE:${CMAKE_PROJECT_DIR}/include>
+    #$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include/OpenFace>)
+  target_link_libraries(webcam fmt::fmt OpenFace)
 endif()
 
 if(DEFINED ENV{TRAVIS})
@@ -51,16 +56,3 @@ endif()
 
 add_executable(runExperiment runExperiment.cpp)
 target_link_libraries(runExperiment tomcat)
-
-set(BUILD_PYTHON_WRAPPER
-    OFF
-    CACHE BOOL "Build Python wrapper")
-
-if(BUILD_PYTHON_WRAPPER)
-  find_package(pybind11 REQUIRED)
-  add_library(pytomcat MODULE Python_wrapper.cpp)
-  target_link_libraries(pytomcat PRIVATE pybind11::module tomcat)
-  target_include_directories(pytomcat PRIVATE ../external/malmo/Malmo/src)
-  set_target_properties(pytomcat PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}"
-                                            SUFFIX "${PYTHON_MODULE_EXTENSION}")
-endif()

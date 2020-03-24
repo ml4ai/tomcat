@@ -94,3 +94,17 @@ namespace tomcat {
   }
 
 } // namespace tomcat
+
+int main(int argc, char* argv[]){
+  tomcat::WebcamSensor webcam=tomcat::WebcamSensor();
+  std::cout << "FLAG1" << std::endl;
+  webcam.initialize();
+  std::cout << "FLAG2" << std::endl;
+  for(int i=0; i<=100; i++) {
+  std::cout << "FLAG3" << std::endl;
+    webcam.get_observation();
+  std::cout << "FLAG4" << std::endl;
+  }
+  std::cout << "FLAG5" << std::endl;
+  return EXIT_SUCCESS;
+}

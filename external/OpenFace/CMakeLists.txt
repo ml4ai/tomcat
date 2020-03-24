@@ -43,7 +43,7 @@ file(GLOB openface_include_dirs CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/li
 
 
 add_library(OpenFace STATIC ${openface_sources} ${openface_headers})
-target_link_libraries(OpenFace ${OpenCV_LIBS} ${Boost_LIBRARIES} dlib::dlib)
+target_link_libraries(OpenFace PUBLIC ${OpenCV_LIBS} ${Boost_LIBRARIES} dlib::dlib ${OpenBLAS_LIB})
 
 target_include_directories(OpenFace PUBLIC ${openface_include_dirs})
 
