@@ -4,7 +4,8 @@
     {
       "text": [
          "Press the keys W,A,S and D to move, drag your mouse", 
-         "to turn around and press space to jump."
+         "to turn around and press space to jump. To sprint,",
+         "press sprint while moving, or double tap forwards."
       ],
       "images":
       [ 
