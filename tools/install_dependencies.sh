@@ -20,27 +20,27 @@ download_and_extract_dlib() {
 if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "MacOS detected. Checking for XCode developer kit."
 
-    #XCode_sdk_dir="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs"
-    #if [[ ! -d "${XCode_sdk_dir}" ]]; then
-        #echo "No XCode developer kit found. You need to get this from the app store."
-        #exit 1
-    #else
-        #if [[ ! -e "${XCode_sdk_dir}/MacOSX10.14.sdk" ]]; then
-            #if [[ ! -e "${XCode_sdk_dir}/MacOSX.sdk" ]]; then
-                #echo "No MacOSX.sdk in ${XCode_sdk_dir}."
-                #echo "Possibly MacOS has changed things (again)."
-                #exit 1
-            #else
-                #pushd "${XCode_sdk_dir}" > /dev/null
-                    #echo "Linking missing MacOSX10.14.sdk to MacOSX.sdk in ${XCode_sdk_dir}/"
-                    #sudo ln -s "MacOSX.sdk" "MacOSX10.14.sdk"
-                    #if [[ $? -ne 0 ]]; then exit 1; fi;
-                #popd > /dev/null
-            #fi
-        #fi
-    #fi
+    XCode_sdk_dir="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs"
+    if [[ ! -d "${XCode_sdk_dir}" ]]; then
+        echo "No XCode developer kit found. You need to get this from the app store."
+        exit 1
+    else
+        if [[ ! -e "${XCode_sdk_dir}/MacOSX10.14.sdk" ]]; then
+            if [[ ! -e "${XCode_sdk_dir}/MacOSX.sdk" ]]; then
+                echo "No MacOSX.sdk in ${XCode_sdk_dir}."
+                echo "Possibly MacOS has changed things (again)."
+                exit 1
+            else
+                pushd "${XCode_sdk_dir}" > /dev/null
+                    echo "Linking missing MacOSX10.14.sdk to MacOSX.sdk in ${XCode_sdk_dir}/"
+                    sudo ln -s "MacOSX.sdk" "MacOSX10.14.sdk"
+                    if [[ $? -ne 0 ]]; then exit 1; fi;
+                popd > /dev/null
+            fi
+        fi
+    fi
 
-    #echo "Found XCode developer kit."
+    echo "Found XCode developer kit."
     echo "Checking for MacPorts or Homebrew package managers."
 
     if [ -x "$(command -v port)" ]; then
@@ -66,7 +66,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         # We install Java using a local Portfile, since the upstream openjdk8
         # port points to Java 1.8.0_242, which is incompatible with Malmo (the
         # local Portfile points to Java 1.8.0_232.
-        pushd tools/local-ports/openjdk8
+        pushd ${TOMCAT}/tools/local-ports/openjdk8
           sudo port install
         popd
 
@@ -85,8 +85,13 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         # We do not check exit codes for Homebrew installs since `brew install`
         # can return an exit code of 1 when a package is already installed (!!)
 
-        brew tap AdoptOpenJDK/openjdk
-        brew cask install adoptopenjdk8
+        # We install Java using a local Homebrew formula, since the upstream openjdk8
+        # formula points to Java 1.8.0_242, which is incompatible with Malmo (the
+        # local formula points to Java 1.8.0_232).
+
+        pushd ${TOMCAT}/tools/homebrew_formulae > /dev/null
+          brew cask install adoptopenjdk8.rb
+        popd > /dev/null
 
         brew install \
           cmake \
