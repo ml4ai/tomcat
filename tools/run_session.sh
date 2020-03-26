@@ -17,6 +17,12 @@ export TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)
 export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
 mkdir -p "${TOMCAT_TMP_DIR}"
 
+# Trying to set the correct version of Java.
+macports_found=`[ -x "$(command -v port)" ]; echo $?`
+if [[ $macports_found -eq 1 ]]; then
+  export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk8/Contents/Home
+fi
+
 ${TOMCAT}/tools/check_minecraft.sh
 if [[ $? -ne 0 ]]; then exit 1; fi
 
