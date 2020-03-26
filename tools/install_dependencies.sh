@@ -10,11 +10,11 @@ install_macports() {
   local version=2.6.2
   curl -O https://distfiles.macports.org/MacPorts/MacPorts-$version.tar.bz2
   tar xf MacPorts-$version.tar.bz2
-  pushd MacPorts-$version
+  pushd MacPorts-$version > /dev/null
     ./configure
     make -j
     sudo make -j install
-  popd
+  popd > /dev/null
   rm -rf Macports-$version*
 }
 
@@ -22,7 +22,9 @@ install_dependencies_using_macports() {
   echo "'port' executable detected, assuming that MacPorts"\
   "(https://www.macports.org) is installed and is the package manager."
 
-  echo "Installing ToMCAT dependencies using MacPorts."
+  echo "Installing ToMCAT dependencies using MacPorts. If you are prompted for
+  a password, please enter the password you use to install software on your
+  macOS computer."
 
   sudo port selfupdate
   if [[ $? -ne 0 ]]; then exit 1; fi;
@@ -42,9 +44,9 @@ install_dependencies_using_macports() {
   # We install Java using a local Portfile, since the upstream openjdk8
   # port points to Java 1.8.0_242, which is incompatible with Malmo (the
   # local Portfile points to Java 1.8.0_232.
-  pushd ${TOMCAT}/tools/local-ports/openjdk8
+  pushd ${TOMCAT}/tools/local-ports/openjdk8 > /dev/null
     sudo port install
-  popd
+  popd > /dev/null
 }
 
 install_dependencies_using_homebrew() {
