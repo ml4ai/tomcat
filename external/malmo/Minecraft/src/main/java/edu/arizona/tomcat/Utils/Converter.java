@@ -11,93 +11,103 @@ import com.microsoft.Malmo.Utils.TimeHelper;
 import net.minecraft.world.World;
 
 public class Converter {
-	
-	/**
-	 * Calculates the number of world ticks passed since the beginning of the mission
-	 * @param world - Minecraft world
-	 * @param initialTime - Initial time in ticks
-	 * @return
-	 */
-	private static final long getElapsedTime(World world, long initialTime) {
-		long currentWorldTime = world.getTotalWorldTime();
-		return (currentWorldTime - initialTime);
-	} 
-	
-	/**
-	 * Calculates the number of seconds passed since the beginning of the mission
-	 * @param world - Minecraft world
-	 * @param initialTime - Initial time in ticks
-	 * @return
-	 */
-	public static final int getElapsedTimeInSeconds(World world, long initialTime) {
-		long elapsedTime = getElapsedTime(world, initialTime);	
-		return (int) Math.ceil((elapsedTime * TimeHelper.MillisecondsPerWorldTick) / TimeHelper.MillisecondsPerSecond);
-	}
 
-	/**
-	 * Calculates the remaining time in seconds given the initial and current time in ticks
-	 * @param initialTime - Initial time in ticks
-	 * @param timeLimitInSeconds - Time limit in seconds
-	 * @return
-	 */
-	public static final int getRemainingTimeInSeconds(World world, long initialTime, long timeLimitInSeconds) {
-		long elapsedTime = getElapsedTime(world, initialTime);
-		float timeRemainingInMs = timeLimitInSeconds * TimeHelper.MillisecondsPerSecond - (elapsedTime * TimeHelper.MillisecondsPerWorldTick);
-		return (int) Math.ceil(timeRemainingInMs / TimeHelper.MillisecondsPerSecond);
-	}
+  /**
+   * Calculates the number of world ticks passed since the beginning of the
+   * mission
+   * @param world - Minecraft world
+   * @param initialTime - Initial time in ticks
+   * @return
+   */
+  private static final long getElapsedTime(World world, long initialTime) {
+    long currentWorldTime = world.getTotalWorldTime();
+    return (currentWorldTime - initialTime);
+  }
 
-	/**
-	 * Converts seconds to MM:SS
-	 * @param seconds - Number of seconds
-	 * @return
-	 */
-	public static final String secondsToString(long seconds, boolean hideSecondsIfZero) {
-		String time = "";
+  /**
+   * Calculates the number of seconds passed since the beginning of the mission
+   * @param world - Minecraft world
+   * @param initialTime - Initial time in ticks
+   * @return
+   */
+  public static final int getElapsedTimeInSeconds(World world,
+                                                  long initialTime) {
+    long elapsedTime = getElapsedTime(world, initialTime);
+    return (int)Math.ceil((elapsedTime * TimeHelper.MillisecondsPerWorldTick) /
+                          TimeHelper.MillisecondsPerSecond);
+  }
 
-		if(seconds <= 60) {
-			time = Long.toString(seconds) + " seconds";
-		} else {
-			long minutes = seconds / 60;
-			seconds = seconds % 60;
+  /**
+   * Calculates the remaining time in seconds given the initial and current time
+   * in ticks
+   * @param initialTime - Initial time in ticks
+   * @param timeLimitInSeconds - Time limit in seconds
+   * @return
+   */
+  public static final int getRemainingTimeInSeconds(World world,
+                                                    long initialTime,
+                                                    long timeLimitInSeconds) {
+    long elapsedTime = getElapsedTime(world, initialTime);
+    float timeRemainingInMs =
+        timeLimitInSeconds * TimeHelper.MillisecondsPerSecond -
+        (elapsedTime * TimeHelper.MillisecondsPerWorldTick);
+    return (int)Math.ceil(timeRemainingInMs / TimeHelper.MillisecondsPerSecond);
+  }
 
-			if (hideSecondsIfZero && seconds == 0) {
-				time = minutes + " minutes";
-			} else {
-				time = minutes + ":" + String.format("%02d", seconds) + " minutes";
-			}
-		}
+  /**
+   * Converts seconds to MM:SS
+   * @param seconds - Number of seconds
+   * @return
+   */
+  public static final String secondsToString(long seconds,
+                                             boolean hideSecondsIfZero) {
+    String time = "";
 
-		return time;
-	}
+    if (seconds <= 60) {
+      time = Long.toString(seconds) + " seconds";
+    }
+    else {
+      long minutes = seconds / 60;
+      seconds = seconds % 60;
 
-	/**
-	 * Converts a map object to a Json string
-	 * @param map - Dictionary (key, value pairs)
-	 * @return
-	 */
-	public static final String mapToJson(Map<String, String> map) {
-		String string = null;
-		if (map != null) {
-			GsonBuilder jsonMapBuilder = new GsonBuilder();
-			Gson jsonObject = jsonMapBuilder.create();		
-			string = jsonObject.toJson(map);
-		}
-		return string;
-	}
+      if (hideSecondsIfZero && seconds == 0) {
+        time = minutes + " minutes";
+      }
+      else {
+        time = minutes + ":" + String.format("%02d", seconds) + " minutes";
+      }
+    }
 
-	/**
-	 * Converts a Json string to a map object
-	 * @param json - Json string
-	 * @return
-	 */
-	public static final Map<String, String> jsonToMap(String json) {
-		Map<String, String> map = null;
-		if (json != null) {			
-			Gson jsonObject = new Gson();	
-			Type type = new TypeToken<Map<String, String>>(){}.getType();
-			map = jsonObject.fromJson(json, type);			
-		}
-		return map;
-	}
+    return time;
+  }
 
+  /**
+   * Converts a map object to a Json string
+   * @param map - Dictionary (key, value pairs)
+   * @return
+   */
+  public static final String mapToJson(Map<String, String> map) {
+    String string = null;
+    if (map != null) {
+      GsonBuilder jsonMapBuilder = new GsonBuilder();
+      Gson jsonObject = jsonMapBuilder.create();
+      string = jsonObject.toJson(map);
+    }
+    return string;
+  }
+
+  /**
+   * Converts a Json string to a map object
+   * @param json - Json string
+   * @return
+   */
+  public static final Map<String, String> jsonToMap(String json) {
+    Map<String, String> map = null;
+    if (json != null) {
+      Gson jsonObject = new Gson();
+      Type type = new TypeToken<Map<String, String>>() {}.getType();
+      map = jsonObject.fromJson(json, type);
+    }
+    return map;
+  }
 }

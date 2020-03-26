@@ -1464,7 +1464,7 @@ public class ClientStateMachine
       World world = null;
       if (Minecraft.getMinecraft().getIntegratedServer() != null)
         world = Minecraft.getMinecraft().getIntegratedServer().getEntityWorld();
-      
+
       boolean needsNewWorld =
           serverHandlers != null && serverHandlers.worldGenerator != null &&
           serverHandlers.worldGenerator.shouldCreateWorld(currentMissionInit(),
@@ -1505,7 +1505,7 @@ public class ClientStateMachine
                       currentMissionInit);
                 }
                 catch (Exception e) {
-                	System.out.println("--------------------------_Error 2");
+                  System.out.println("--------------------------_Error 2");
                   episodeHasCompletedWithErrors(
                       ClientState.ERROR_INTEGRATED_SERVER_UNREACHABLE,
                       "Could not send MissionInit to our integrated server: " +
@@ -1520,7 +1520,7 @@ public class ClientStateMachine
       else if (!needsNewWorld && !worldCurrentlyExists) {
         // Mission has requested no new world, but there is no current world to
         // play in - this is an error:
-    	  System.out.println("--------------------------_Error 3");
+        System.out.println("--------------------------_Error 3");
         episodeHasCompletedWithErrors(
             ClientState.ERROR_NO_WORLD,
             "We have no world to play in - check that your ServerHandlers section contains a world generator");
@@ -1939,7 +1939,8 @@ public class ClientStateMachine
       ClientStateMachine.this.missionQuitCode = this.quitCode;
       if (errorReport != null) {
         episodeHasCompletedWithErrors(nextState, errorReport);
-      }else {
+      }
+      else {
         episodeHasCompleted(nextState);
       }
     }
@@ -2202,9 +2203,12 @@ public class ClientStateMachine
             "ERROR: TCP messages are not getting through - quitting mission.");
         this.wantsToQuit = true;
         this.quitCode = MalmoMod.AGENT_UNRESPONSIVE_CODE;
-        // This code was included so that a Tomcat mission can display a screen informing that
-        // the mission was interrupted because the connection was lost with the malmo client
-        MalmoMod.instance.getClient().getTomcatClientMission().showScreenConnectionLost();
+        // This code was included so that a Tomcat mission can display a screen
+        // informing that the mission was interrupted because the connection was
+        // lost with the malmo client
+        MalmoMod.instance.getClient()
+            .getTomcatClientMission()
+            .showScreenConnectionLost();
       }
       ls.close();
     }
