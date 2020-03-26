@@ -2,6 +2,7 @@ os:
   #- osx
   - linux
 
+dist: bionic
 #osx_image: xcode11
 
 language: 

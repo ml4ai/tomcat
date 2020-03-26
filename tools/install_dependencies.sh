@@ -159,8 +159,8 @@ elif [ -x "$(command -v apt-get)" ]; then
 
     if [ -x "$(command -v cmake)" ]; then
       cmake_version=`cmake --version | head -n 1 | cut -d ' ' -f 3`
-      cmake_major_version=`$cmake_version | cut -d '.' -f 1`
-      cmake_minor_version=`$cmake_version | cut -d '.' -f 2`
+      cmake_major_version=`echo $cmake_version | cut -d '.' -f 1`
+      cmake_minor_version=`echo $cmake_version | cut -d '.' -f 2`
       echo $cmake_version $cmake_major_version $cmake_minor_version
       if (( $cmake_major_version < 3 )) || (( $cmake_minor_version < 15 )); then
         ./tools/install_cmake_from_source.sh
