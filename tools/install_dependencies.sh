@@ -108,12 +108,14 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
       echo ""
       echo "[INFO]: The directory /Library/Developer was not found, so we"
       echo "assume that the macOS Command Line Tools are not installed."
-      echo "We will install them now. Please rerun this script again after the"
-      echo "installation is complete."
-      echo ""
+      echo "Installing them now..."
       xcode-select --install
       osascript ${TOMCAT}/tools/install_macos_command_line_tools.scpt > /dev/null
-      exit 0
+      while [ ! -d "/Library/Developer" ]; do
+        sleep 1
+      done
+      echo "macOS command line developer tools have been installed."
+      echo ""
     fi
 
     echo "Checking for MacPorts or Homebrew package managers."
