@@ -50,7 +50,7 @@ find_package(Boost
                         thread
              REQUIRED)
 
-if(DEFINED ENV{TRAVIS})
+if(APPLE AND DEFINED ENV{TRAVIS})
   add_subdirectory(external/dlib)
 else()
   find_package(dlib REQUIRED)
