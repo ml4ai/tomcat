@@ -24,67 +24,67 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
  */
 public class ModBlocks {
 
-    public static Block asistButtonBlock;
-    public static Block asistLeverBlock;
+  public static Block asistButtonBlock;
+  public static Block asistLeverBlock;
 
-    /**
-     * This method initializes the new block created.
-     */
-    public static void init() {
-        asistButtonBlock = new BlockAsistButton();
-        asistLeverBlock = new BlockAsistLever();
-    }
+  /**
+   * This method initializes the new block created.
+   */
+  public static void init() {
+    asistButtonBlock = new BlockAsistButton();
+    asistLeverBlock = new BlockAsistLever();
+  }
 
-    /**
-     * This method calls a helper function to register the Minecraft block. You
-     * can call this from outside this class, but for convenience, all the
-     * registration code should be kept within this class
-     */
-    public static void register() {
-        registerBlock(asistButtonBlock);
-        registerBlock(asistLeverBlock);
+  /**
+   * This method calls a helper function to register the Minecraft block. You
+   * can call this from outside this class, but for convenience, all the
+   * registration code should be kept within this class
+   */
+  public static void register() {
+    registerBlock(asistButtonBlock);
+    registerBlock(asistLeverBlock);
 
-        // Add copied lines under this if necessary
-    }
+    // Add copied lines under this if necessary
+  }
 
-    /**
-     * This methdd registers the given block instance in Minecraft. It registers
-     * it as both a block and an item so it will show up in the inventory. DO NOT
-     * use this to register only Items which don't have block counterparts. <p>
-     * All blocks have item counterparts but not all Items have blocks=
-     * counterparts.
-     *
-     * @param block - The block object to be registered.
-     */
-    private static void registerBlock(Block block) {
-        GameRegistry.register(block);
-        ItemBlock item = new ItemBlock(block);
-        item.setRegistryName(block.getRegistryName());
-        GameRegistry.register(item);
-    }
+  /**
+   * This methdd registers the given block instance in Minecraft. It registers
+   * it as both a block and an item so it will show up in the inventory. DO NOT
+   * use this to register only Items which don't have block counterparts. <p>
+   * All blocks have item counterparts but not all Items have blocks=
+   * counterparts.
+   *
+   * @param block - The block object to be registered.
+   */
+  private static void registerBlock(Block block) {
+    GameRegistry.register(block);
+    ItemBlock item = new ItemBlock(block);
+    item.setRegistryName(block.getRegistryName());
+    GameRegistry.register(item);
+  }
 
-    /**
-     * This method is used in the MalmoModClient to ensure that teh client knows
-     * about the block we created and can render it. Remember to add texture JSONs
-     * or this will only show up as a purple and black cube in Minecraft.
-     */
-    public static void registerRenders() {
-        registerRender(asistButtonBlock);
-        registerRender(asistLeverBlock);
+  /**
+   * This method is used in the MalmoModClient to ensure that teh client knows
+   * about the block we created and can render it. Remember to add texture JSONs
+   * or this will only show up as a purple and black cube in Minecraft.
+   */
+  public static void registerRenders() {
+    registerRender(asistButtonBlock);
+    registerRender(asistLeverBlock);
 
-        // Add copied lines under this if necessary
-    }
+    // Add copied lines under this if necessary
+  }
 
-    /**
-     * The actual method that registers the block renders for the block models on
-     * the client side.
-     *
-     * @param block - The block whose model is to be registered.
-     */
-    private static void registerRender(Block block) {
-        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(
-                Item.getItemFromBlock(block),
-                0,
-                new ModelResourceLocation(block.getRegistryName(), "inventory"));
-    }
+  /**
+   * The actual method that registers the block renders for the block models on
+   * the client side.
+   *
+   * @param block - The block whose model is to be registered.
+   */
+  private static void registerRender(Block block) {
+    Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(
+        Item.getItemFromBlock(block),
+        0,
+        new ModelResourceLocation(block.getRegistryName(), "inventory"));
+  }
 }

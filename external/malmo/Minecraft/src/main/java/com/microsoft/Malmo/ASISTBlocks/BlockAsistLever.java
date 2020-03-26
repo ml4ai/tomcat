@@ -1,5 +1,6 @@
 package com.microsoft.Malmo.ASISTBlocks;
 
+import edu.arizona.tomcat.Utils.DiscreteEventsHelper;
 import net.minecraft.block.BlockLever;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -12,7 +13,6 @@ import net.minecraft.world.World;
 import java.util.HashSet;
 import java.util.Set;
 
-
 /**
  * This class defines a new lever that can write event observations
  * whenever it is triggered by the player.
@@ -24,58 +24,64 @@ import java.util.Set;
  */
 public class BlockAsistLever extends BlockLever {
 
-    private static Set<BlockPos> openDoors = new HashSet<BlockPos>();
-    private static int counter = 1;
+  private static Set<BlockPos> openDoors = new HashSet<BlockPos>();
+  private static int counter = 1;
 
-    public BlockAsistLever() {
-        setUnlocalizedName("ASIST_Lever");
-        setRegistryName(
-                "ASIST_Lever"); // The name Minecraft sees. Also used in en_US.lang
+  public BlockAsistLever() {
+    setUnlocalizedName("ASIST_Lever");
+    setRegistryName(
+        "ASIST_Lever"); // The name Minecraft sees. Also used in en_US.lang
 
-        this.setCreativeTab(
-                CreativeTabs.REDSTONE); // shows up in redstone tab in creative mode
+    this.setCreativeTab(
+        CreativeTabs.REDSTONE); // shows up in redstone tab in creative mode
+  }
+
+  /**
+   * Called when the block is right clicked by a player.
+   */
+  @Override
+  public boolean onBlockActivated(World worldIn,
+                                  BlockPos pos,
+                                  IBlockState state,
+                                  EntityPlayer playerIn,
+                                  EnumHand hand,
+                                  EnumFacing facing,
+                                  float hitX,
+                                  float hitY,
+                                  float hitZ) {
+    boolean result = super.onBlockActivated(
+        worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
+
+    DiscreteEventsHelper.printEventOccurence(
+        pos, playerIn, getLeverEvent(pos)); // Used to mark discrete occurence
+    counter++;
+
+    return result;
+  }
+
+  /**
+   * This method decides whether flicking the lever opened or closed the door
+   * associated with it. By default, the first time the lever is flicked, it
+   * assumes a door was opened. <p> The counter helps it count two calls (first
+   * by server and then client) for the same event as one.
+   *
+   * @param pos - The position where the event occurred
+   * @return - A String indicating what happened to the door.
+   */
+  private String getLeverEvent(BlockPos pos) {
+    if (openDoors.contains(pos)) {
+      if (counter % 2 == 0) { // Only update once when called by both server and
+                              // client turn by turn
+        openDoors.remove(pos);
+      }
+      return "Door Closed";
     }
-
-    /**
-     * Called when the block is right clicked by a player.
-     */
-    @Override
-    public boolean onBlockActivated(World worldIn,
-                                    BlockPos pos,
-                                    IBlockState state,
-                                    EntityPlayer playerIn,
-                                    EnumHand hand,
-                                    EnumFacing facing,
-                                    float hitX,
-                                    float hitY,
-                                    float hitZ) {
-        boolean result = super.onBlockActivated(
-                worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
-
-
-        /*
-        This method is called once by the server and once by the client for the same update, so we use a
-        counter to make sure the correct event is measured only once. It ensures we dont get a
-        Door Open and Door Close consecutively on pressing the lever once
-         */
-
-        if (counter % 2 == 0) {
-            DiscreteEventsHelper.printEventOccurence(pos, playerIn, getLeverEvent(pos)); // Used to mark discrete occurence
-        }
-
-        counter++;
-
-        return result;
+    else {
+      if (counter % 2 == 0) { // Only update once when called by both server and
+                              // client turn by turn
+        openDoors.add(pos);
+      }
+      return "Door Opened";
     }
-
-    private String getLeverEvent(BlockPos pos) {
-        if (openDoors.contains(pos)) {
-            openDoors.remove(pos);
-            return "Door Closed";
-        } else {
-            openDoors.add(pos);
-            return "Door Opened";
-        }
-    }
+  }
 }
-
