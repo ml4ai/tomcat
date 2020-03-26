@@ -1,8 +1,8 @@
 os:
-  - osx
+  #- osx
   - linux
 
-osx_image: xcode11
+#osx_image: xcode11
 
 language: 
  - cpp
