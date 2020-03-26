@@ -176,7 +176,7 @@ elif [ -x "$(command -v apt-get)" ]; then
         doxygen \
         ffmpeg \
         libopenblas-dev \
-        libboost-dev \
+        libboost-all-dev \
         libopencv-dev \
         libdlib-dev \
         openjdk-8-jre-headless=8u162-b12-1\
