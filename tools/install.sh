@@ -22,17 +22,17 @@ if [[ ! -z $TRAVIS ]]; then
     echo "Creating virtual environment for tomcat"
     brew unlink python@2
     brew link --overwrite python
-    python3 -m venv tomcat_venv
-    if [[ $? -ne 0 ]]; then exit 1; fi;
-
-    echo "Activating virtual environment for tomcat"
-    source tomcat_venv/bin/activate
-    if [[ $? -ne 0 ]]; then exit 1; fi;
-
-    # Installing Sphinx HTML documentation requirements.
-    pip install exhale recommonmark sphinx-rtd-theme
     if [[ $? -ne 0 ]]; then exit 1; fi;
   fi
+
+  python3 -m venv tomcat_venv
+  if [[ $? -ne 0 ]]; then exit 1; fi;
+
+  echo "Activating virtual environment for tomcat"
+  source tomcat_venv/bin/activate
+  # Installing Sphinx HTML documentation requirements.
+  pip install exhale recommonmark sphinx-rtd-theme
+  if [[ $? -ne 0 ]]; then exit 1; fi;
 fi
 
 
