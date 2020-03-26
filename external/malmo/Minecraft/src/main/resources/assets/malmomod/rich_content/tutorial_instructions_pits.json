@@ -5,8 +5,7 @@
       "text": [
          "Press the keys W,A,S and D to move, drag your mouse", 
          "to turn around and press space to jump. To sprint,",
-         "press W twice and hold, or press Sprint key(press ESC,",
-         "go to options->controls and check out your default Sprint key."
+         "press the W key twice and hold."
       ],
       "images":
       [ 
