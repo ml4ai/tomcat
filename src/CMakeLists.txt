@@ -24,6 +24,7 @@ if(DEFINED ENV{TRAVIS})
   message("Compilation occurring on Travis, code coverage reporting on.")
 endif()
 
+# Todo make code coverage work on Linux as well.
 if(APPLE AND CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
   # Add required flags (GCC & LLVM/Clang)
   message("Building with code coverage")
