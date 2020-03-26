@@ -21,7 +21,8 @@ if [[ ! -z $TRAVIS ]]; then
     brew link --overwrite python
     if [[ $? -ne 0 ]]; then exit 1; fi;
   else
-    sudo apt-get install python3-venv
+    sudo apt-get update
+    sudo apt-get install -y python3-venv
   fi
 
   python3 -m venv tomcat_venv
