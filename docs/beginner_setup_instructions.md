@@ -8,12 +8,6 @@ macOS comes with a built-in terminal application, named 'Terminal'. You
 should be able to search for it using Spotlight Search (which you can bring up
 with `<Cmd>+<Space>`).
 
-## Install XCode, Command Line Tools and MacPorts
-
-Follow the instructions here: https://www.macports.org/install.php to install
-XCode, the macOS command line tools, and MacPorts, which is a software package
-manager for macOS.
-
 ## Installing ToMCAT
 
 Open a new terminal window. By default, the starting directory is your home

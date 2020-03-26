@@ -1,9 +1,92 @@
 #!/bin/bash
 
+# Set the TOMCAT environment variable, assuming that the directory structure
+# mirrors that of the git repository.
+export TOMCAT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && pwd )"
+
 echo "Installing ToMCAT dependencies."
 
-echo "Checking OS."
-# If MacOS, then try MacPorts and Homebrew
+install_macports() {
+  local version=2.6.2
+  curl -O https://distfiles.macports.org/MacPorts/MacPorts-$version.tar.bz2
+  tar xf MacPorts-$version.tar.bz2
+  pushd MacPorts-$version > /dev/null
+    ./configure
+    make -j
+    sudo make -j install
+  popd > /dev/null
+  rm -rf Macports-$version*
+}
+
+install_dependencies_using_macports() {
+  echo "'port' executable detected, assuming that MacPorts"\
+  "(https://www.macports.org) is installed and is the package manager."
+
+  echo "Installing ToMCAT dependencies using MacPorts. If you are prompted for
+  a password, please enter the password you use to install software on your
+  macOS computer."
+
+  sudo port selfupdate
+  if [[ $? -ne 0 ]]; then exit 1; fi;
+
+  sudo port -N install \
+      cmake \
+      libfmt \
+      doxygen \
+      ffmpeg \
+      dlib \
+      opencv4 \
+      openblas \
+      boost \
+      gradle
+  if [[ $? -ne 0 ]]; then exit 1; fi;
+
+  # We install Java using a local Portfile, since the upstream openjdk8
+  # port points to Java 1.8.0_242, which is incompatible with Malmo (the
+  # local Portfile points to Java 1.8.0_232.
+  pushd ${TOMCAT}/tools/local-ports/openjdk8 > /dev/null
+    sudo port install
+  popd > /dev/null
+}
+
+install_dependencies_using_homebrew() {
+  echo "\'brew\' executable detected, assuming that Homebrew"\
+  "\(https://brew.sh\) is installed and is the package manager."
+
+  echo "Installing ToMCAT dependencies using Homebrew."
+
+  brew update
+  if [[ $? -ne 0 ]]; then exit 1; fi;
+
+  # We do not check exit codes for Homebrew installs since `brew install`
+  # can return an exit code of 1 when a package is already installed (!!)
+
+  # We install Java using a local Homebrew formula, since the upstream openjdk8
+  # formula points to Java 1.8.0_242, which is incompatible with Malmo (the
+  # local formula points to Java 1.8.0_232).
+
+  pushd ${TOMCAT}/tools/homebrew_formulae > /dev/null
+    brew cask install adoptopenjdk8.rb
+  popd > /dev/null
+
+  brew install \
+    cmake \
+    fmt \
+    doxygen \
+    ffmpeg \
+    opencv \
+    openblas \
+    boost \
+    gradle
+
+  if [[ ! -z $TRAVIS ]]; then
+    # On Travis, we will install lcov to provide code coverage estimates.
+    brew install lcov;
+    download_and_extract_dlib
+  else
+    ./install_dlib_from_source.sh
+  fi;
+}
 
 download_and_extract_dlib() {
   pushd "${TOMCAT}/external"
@@ -17,101 +100,46 @@ download_and_extract_dlib() {
   popd
 }
 
+echo "Checking OS."
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    echo "MacOS detected. Checking for XCode developer kit."
+    echo "macOS detected. Checking for macOS Command Line Tools."
 
-    XCode_sdk_dir="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs"
-    if [[ ! -d "${XCode_sdk_dir}" ]]; then
-        echo "No XCode developer kit found. You need to get this from the app store."
-        exit 1
-    else
-        if [[ ! -e "${XCode_sdk_dir}/MacOSX10.14.sdk" ]]; then
-            if [[ ! -e "${XCode_sdk_dir}/MacOSX.sdk" ]]; then
-                echo "No MacOSX.sdk in ${XCode_sdk_dir}."
-                echo "Possibly MacOS has changed things (again)."
-                exit 1
-            else
-                pushd "${XCode_sdk_dir}" > /dev/null
-                    echo "Linking missing MacOSX10.14.sdk to MacOSX.sdk in ${XCode_sdk_dir}/"
-                    sudo ln -s "MacOSX.sdk" "MacOSX10.14.sdk"
-                    if [[ $? -ne 0 ]]; then exit 1; fi;
-                popd > /dev/null
-            fi
-        fi
+    if [[ ! -d "/Library/Developer" ]]; then
+      echo ""
+      echo "[INFO]: The directory /Library/Developer was not found, so we"
+      echo "assume that the macOS Command Line Tools are not installed."
+      echo "We will install them now. Please rerun this script again after the"
+      echo "installation is complete."
+      echo ""
+      xcode-select --install
+      osascript ${TOMCAT}/tools/install_macos_command_line_tools.scpt > /dev/null
+      exit 0
     fi
 
-    echo "Found XCode developer kit."
     echo "Checking for MacPorts or Homebrew package managers."
+    macports_found=`[ -x "$(command -v port)" ]; echo $?`
+    homebrew_found=`[ -x "$(command -v brew)" ]; echo $?` 
 
-    if [ -x "$(command -v port)" ]; then
-        echo "'port' executable detected, assuming that MacPorts"\
-        "(https://www.macports.org) is installed and is the package manager."
+    if [[ $macports_found -eq 1 && $homebrew_found -eq 1 ]]; then
+      echo "Neither the MacPorts or Homebrew package managers have been"
+      echo "detected. Proceeding to install MacPorts in the default location"
+      echo "(/opt/local)"
+      install_macports
+      install_dependencies_using_macports
 
-        echo "Installing ToMCAT dependencies using MacPorts."
+    elif [[ $macports_found -eq 0 && $homebrew_found -eq 1 ]]; then
+      install_dependencies_using_macports
 
-        sudo port selfupdate
-        if [[ $? -ne 0 ]]; then exit 1; fi;
+    elif [[ $macports_found -eq 1 && $homebrew_found -eq 0 ]]; then
+      install_dependencies_using_homebrew
 
-        sudo port -N install \
-            cmake \
-            libfmt \
-            doxygen \
-            ffmpeg \
-            dlib \
-            opencv4 \
-            openblas \
-            gradle \
-            libsndfile \
-            portaudio
-        if [[ $? -ne 0 ]]; then exit 1; fi;
-
-        # We install Java using a local Portfile, since the upstream openjdk8
-        # port points to Java 1.8.0_242, which is incompatible with Malmo (the
-        # local Portfile points to Java 1.8.0_232.
-        pushd tools/local-ports/openjdk8
-          sudo port install
-        popd
-
-        sudo port -N install boost -no_static
-        if [[ $? -ne 0 ]]; then exit 1; fi;
-
-    elif [ -x "$(command -v brew)" ]; then
-        echo "\'brew\' executable detected, assuming that Homebrew"\
-        "\(https://brew.sh\) is installed and is the package manager."
-
-        echo "Installing ToMCAT dependencies using Homebrew."
-
-        brew update
-        if [[ $? -ne 0 ]]; then exit 1; fi;
-
-        # We do not check exit codes for Homebrew installs since `brew install`
-        # can return an exit code of 1 when a package is already installed (!!)
-
-        brew tap AdoptOpenJDK/openjdk
-        brew cask install adoptopenjdk8
-
-        brew install \
-          cmake \
-          fmt \
-          doxygen \
-          ffmpeg \
-          opencv \
-          openblas \
-          boost \
-          libsndfile \
-          portaudio \
-          gradle
-
-        if [[ ! -z $TRAVIS ]]; then
-          # On Travis, we will install lcov to provide code coverage estimates.
-          brew install lcov;
-          download_and_extract_dlib
-        else
-          ./install_dlib_from_source.sh
-        fi;
-    else
-        echo "No package manager found for $OSTYPE"
-        exit 1
+    elif [[ $macports_found -eq 0 && $homebrew_found -eq 0 ]]; then
+      echo "Both the MacPorts (https://www.macports.org) and Homebrew"
+      echo "(https://brew.sh) package managers have been found. We assume you"
+      echo "are a power user and can set your PATH environment variable as"
+      echo "needed to switch between the two. We will proceed with installing"
+      echo "the dependencies using MacPorts."
+      install_dependencies_using_macports
     fi
 
 elif [ -x "$(command -v apt-get)" ]; then
@@ -146,16 +174,15 @@ elif [ -x "$(command -v apt-get)" ]; then
         ffmpeg \
         libopenblas-dev \
         openjdk-8-jre-headless=8u162-b12-1\
-	openjdk-8-jre=8u162-b12-1\
-	openjdk-8-jdk-headless=8u162-b12-1\
-	openjdk-8-jdk=8u162-b12-1\
-        portaudio19-dev \
-        libsndfile1-dev
+        openjdk-8-jre=8u162-b12-1\
+        openjdk-8-jdk-headless=8u162-b12-1\
+        openjdk-8-jdk=8u162-b12-1
     if [[ $? -ne 0 ]]; then exit 1; fi;
 
     boost_version_header="/usr/local/include/boost/version.hpp"
     if [[ -f $boost_version_header ]]; then
-      boost_version=`cat $boost_version_header | grep "define BOOST_VERSION " | cut -d' ' -f3`
+      boost_version=`cat $boost_version_header | grep "define BOOST_VERSION "\
+                                               | cut -d' ' -f3`
       if (( $boost_version < 106900 )); then
         ./tools/install_boost_from_source.sh
       fi
@@ -163,7 +190,7 @@ elif [ -x "$(command -v apt-get)" ]; then
       ./tools/install_boost_from_source.sh
     fi
 
-    if [[ ! -f "usr/local/lib/libdlib.a" ]]; then
+    if [[ ! -f "/usr/local/lib/libdlib.a" ]]; then
       ./tools/install_dlib_from_source.sh
     fi
     
@@ -172,7 +199,9 @@ elif [ -x "$(command -v apt-get)" ]; then
     fi
 
 else
-    echo "This is not a Mac and not Ubuntu (at least apt-get is not around). We cannot proceed."
+    echo "This is not a macOS and not a Debian Linux distribution (at least"
+    echo "apt-get is not around). We cannot proceed with the automated
+    installation."
     exit 1
 fi
 

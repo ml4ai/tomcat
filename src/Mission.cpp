@@ -17,37 +17,22 @@ namespace tomcat {
   Mission::Mission(std::string mission_id_or_path,
                    unsigned int time_limit_in_seconds,
                    unsigned int self_report_prompt_time_in_seconds,
-                   unsigned int video_width,
-                   unsigned int video_height,
                    int port_number,
-                   int frames_per_second,
-                   int64_t bit_rate,
-                   bool record_video,
                    bool record_observations,
-                   bool activate_webcam,
-                   bool record_audio,
                    bool record_commands,
                    bool record_rewards,
-                   std::string record_path,
-                   std::string audio_record_path) {
+                   std::string record_path
+                   ) {
 
     this->mission_id_or_path = mission_id_or_path;
     this->time_limit_in_seconds = time_limit_in_seconds;
     this->self_report_prompt_time_in_seconds =
         self_report_prompt_time_in_seconds;
-    this->video_width = video_width;
-    this->video_height = video_height;
     this->port_number = port_number;
-    this->frames_per_second = frames_per_second;
-    this->bit_rate = bit_rate;
-    this->record_video = record_video;
     this->record_observations = record_observations;
-    this->activate_webcam = activate_webcam;
-    this->record_audio = record_audio;
     this->record_commands = record_commands;
     this->record_rewards = record_rewards;
     this->record_path = record_path;
-    this->audio_record_path = audio_record_path;
   }
 
   void Mission::add_listener(std::shared_ptr<LocalAgent> tomcat_agent) {
@@ -59,7 +44,6 @@ namespace tomcat {
     this->connect_to_host();
     this->init_external_sensors();
     this->observe();
-    this->finalize_external_sensors();
   }
 
   void Mission::create_mission_spec() {
@@ -72,10 +56,6 @@ namespace tomcat {
     else {
       string xml = get_world_skeleton_from_xml();
       this->mission_spec = MissionSpec(xml, true);
-    }
-
-    if (this->record_video) {
-      this->mission_spec.requestVideo(this->video_width, this->video_height);
     }
 
     if (this->record_observations) {
@@ -172,10 +152,6 @@ namespace tomcat {
   MissionRecordSpec Mission::get_mission_record_spec() {
     MissionRecordSpec mission_record_spec(this->record_path);
 
-    if (this->record_video) {
-      mission_record_spec.recordMP4(this->frames_per_second, this->bit_rate);
-    }
-
     if (this->record_observations) {
       mission_record_spec.recordObservations();
     }
@@ -203,36 +179,17 @@ namespace tomcat {
       sleep_for(milliseconds(100));
       worldState = this->host->getWorldState();
     } while (!worldState.has_mission_begun);
-    if (this->record_audio) {
-      this->microphone.set_time_limit_in_seconds(this->time_limit_in_seconds);
-      this->microphone.initialize();
-    }
-    if (this->activate_webcam) {
-      this->webcam = boost::make_shared<WebcamSensor>();
-      this->webcam->initialize();
-    }
   }
 
   void Mission::observe() {
     WorldState worldState;
     do {
       sleep_for(milliseconds(10));
-      if (this->activate_webcam) {
-        this->webcam->get_observation();
-      }
-
       for (auto& tomcat_agent : this->tomcat_agents) {
         tomcat_agent->observe_mission(*this);
       }
       worldState = this->host->getWorldState();
     } while (worldState.is_mission_running);
-  }
-
-  void Mission::finalize_external_sensors() {
-    if (this->record_audio) {
-      this->microphone.set_output_filename(this->audio_record_path);
-      this->microphone.finalize();
-    }
   }
 
   void Mission::send_command(string command) {
