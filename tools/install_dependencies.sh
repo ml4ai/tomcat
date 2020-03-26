@@ -150,56 +150,45 @@ elif [ -x "$(command -v apt-get)" ]; then
     echo ""
     echo "Installing dependencies using apt-get"
 
-    sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+    #sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
     sudo apt-get update
     if [[ $? -ne 0 ]]; then exit 1; fi;
 
     # Install a version of CMake more up-to-date than what is available by
     # default for Ubuntu Bionic
 
-    if [ -x "$(command -v cmake)" ]; then
-      cmake_version=`cmake --version | head -n 1 | cut -d ' ' -f 3`
-      cmake_major_version=`echo $cmake_version | cut -d '.' -f 1`
-      cmake_minor_version=`echo $cmake_version | cut -d '.' -f 2`
-      echo $cmake_version $cmake_major_version $cmake_minor_version
-      if (( $cmake_major_version < 3 )) || (( $cmake_minor_version < 15 )); then
-        ./tools/install_cmake_from_source.sh
-      fi
-    else
-      ./tools/install_cmake_from_source.sh
-    fi
+    #if [ -x "$(command -v cmake)" ]; then
+      #cmake_version=`cmake --version | head -n 1 | cut -d ' ' -f 3`
+      #cmake_major_version=`echo $cmake_version | cut -d '.' -f 1`
+      #cmake_minor_version=`echo $cmake_version | cut -d '.' -f 2`
+      #echo $cmake_version $cmake_major_version $cmake_minor_version
+      #if (( $cmake_major_version < 3 )) || (( $cmake_minor_version < 15 )); then
+        #./tools/install_cmake_from_source.sh
+      #fi
+    #else
+      #./tools/install_cmake_from_source.sh
+    #fi
 
     sudo apt-get install -y \
+        cmake \
         gcc-9 \
         libfmt-dev \
         doxygen \
         ffmpeg \
         libopenblas-dev \
+        libboost-dev \
+        libopencv-dev \
+        libdlib-dev \
         openjdk-8-jre-headless=8u162-b12-1\
         openjdk-8-jre=8u162-b12-1\
         openjdk-8-jdk-headless=8u162-b12-1\
         openjdk-8-jdk=8u162-b12-1
     if [[ $? -ne 0 ]]; then exit 1; fi;
 
-    boost_version_header="/usr/local/include/boost/version.hpp"
-    if [[ -f $boost_version_header ]]; then
-      boost_version=`cat $boost_version_header | grep "define BOOST_VERSION "\
-                                               | cut -d' ' -f3`
-      if (( $boost_version < 106900 )); then
-        ./tools/install_boost_from_source.sh
-      fi
-    else
-      ./tools/install_boost_from_source.sh
-    fi
-
-    if [[ ! -f "/usr/local/lib/libdlib.a" ]]; then
-      ./tools/install_dlib_from_source.sh
-    fi
+    #if [[ ! -f "/usr/local/lib/libdlib.a" ]]; then
+      #./tools/install_dlib_from_source.sh
+    #fi
     
-    if [[ ! -d "/usr/local/include/opencv4" ]]; then
-      ./tools/install_opencv_from_source.sh
-    fi
-
 else
     echo "This is not a macOS and not a Debian Linux distribution (at least"
     echo "apt-get is not around). We cannot proceed with the automated
