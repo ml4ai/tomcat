@@ -13,9 +13,6 @@ export TOMCAT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && p
 
 ###############################################################################
 
-${TOMCAT}/tools/install_dependencies.sh
-if [[ $? -ne 0 ]]; then exit 1; fi;
-
 # On Travis, we will create and activate a Python virtual environment
 if [[ ! -z $TRAVIS ]]; then
   if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
@@ -23,6 +20,8 @@ if [[ ! -z $TRAVIS ]]; then
     brew unlink python@2
     brew link --overwrite python
     if [[ $? -ne 0 ]]; then exit 1; fi;
+  else
+    sudo apt-get install python3-venv
   fi
 
   python3 -m venv tomcat_venv
@@ -35,6 +34,8 @@ if [[ ! -z $TRAVIS ]]; then
   if [[ $? -ne 0 ]]; then exit 1; fi;
 fi
 
+${TOMCAT}/tools/install_dependencies.sh
+if [[ $? -ne 0 ]]; then exit 1; fi;
 
 pushd "${TOMCAT}"
     echo "Building ToMCAT in `pwd`"
