@@ -30,3 +30,10 @@ the terminal:
 
     git clone https://github.com/ml4ai/tomcat
     cd tomcat && ./tools/install.sh
+
+You may be presented with a prompt to input a password during the installation,
+in which case enter the password you use to log in to your account (the
+password you use to install any software on your computer). You will not see
+any letters appearing as you type in your password - they will be hidden for
+privacy - so it is fine if it appears blank. Just type in your password
+normally and press the enter/return key on your keyboard.
