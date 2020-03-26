@@ -35,11 +35,6 @@ if [[ ! -z $TRAVIS ]]; then
   fi
 fi
 
-${TOMCAT}/tools/download_tomcat_worlds.sh
-if [[ $? -ne 0 ]]; then exit 1; fi;
-
-${TOMCAT}/tools/download_OpenFace_models.sh
-if [[ $? -ne 0 ]]; then exit 1; fi;
 
 pushd "${TOMCAT}"
     echo "Building ToMCAT in `pwd`"
@@ -69,6 +64,11 @@ pushd "${TOMCAT}"
     popd > /dev/null 
 popd > /dev/null 
 
+${TOMCAT}/tools/download_tomcat_worlds.sh
+if [[ $? -ne 0 ]]; then exit 1; fi;
+
+${TOMCAT}/tools/download_OpenFace_models.sh
+if [[ $? -ne 0 ]]; then exit 1; fi;
 
 echo " "
 echo "Finished installing ToMCAT in ${TOMCAT}!"
