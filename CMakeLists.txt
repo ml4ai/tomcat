@@ -1,4 +1,4 @@
-#cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.10)
 
 #if(EXISTS /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk)
   #set(CMAKE_OSX_SYSROOT  "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk")
