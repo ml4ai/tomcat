@@ -74,20 +74,11 @@ Mission create_mission(variables_map parameters_map) {
   string mission_id_or_path = parameters_map["mission"].as<string>();
   string record_path = parameters_map["record_path"].as<string>();
   unsigned int port_number = parameters_map["port"].as<unsigned int>();
-  unsigned int video_width = parameters_map["video_width"].as<unsigned int>();
-  unsigned int video_height = parameters_map["video_height"].as<unsigned int>();
-  unsigned int frames_per_second =
-      parameters_map["video_fps"].as<unsigned int>();
   unsigned int time_limit_in_seconds =
       parameters_map["time_limit"].as<unsigned int>();
   unsigned int self_report_prompt_time_in_seconds =
       parameters_map["self_report"].as<unsigned int>();
-  int64_t bit_rate = parameters_map["video_bit_rate"].as<int64_t>();
-  bool activate_webcam = parameters_map["activate_webcam"].as<bool>();
   bool record_all = parameters_map["record_all"].as<bool>();
-  bool record_video = parameters_map["record_video"].as<bool>();
-  bool record_audio = parameters_map["record_audio"].as<bool>();
-  string audio_record_path = parameters_map["audio_record_path"].as<string>();
   bool record_observations = parameters_map["record_observations"].as<bool>();
   bool record_commands = parameters_map["record_commands"].as<bool>();
   bool record_rewards = parameters_map["record_rewards"].as<bool>();
