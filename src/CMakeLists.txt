@@ -24,14 +24,14 @@ if(DEFINED ENV{TRAVIS})
   message("Compilation occurring on Travis, code coverage reporting on.")
 endif()
 
-if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+if(APPLE AND CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
   # Add required flags (GCC & LLVM/Clang)
   message("Building with code coverage")
   target_compile_options(
     tomcat
-    PUBLIC -O0 # no optimization
-            -g # generate debug info
-            --coverage # sets all required flags
+    -O0 # no optimization
+    -g # generate debug info
+    --coverage # sets all required flags
   )
   if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.13)
     target_link_options(tomcat PUBLIC --coverage)
