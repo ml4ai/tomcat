@@ -1,4 +1,5 @@
 file(GLOB tomcat_headers ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
+
 add_library(
   tomcat STATIC
   utils.h
@@ -9,6 +10,8 @@ add_library(
   Mission.cpp
   FileHandler.h
   FileHandler.cpp)
+
+target_include_directories(tomcat ${Boost_INCLUDE_DIRS})
 
 target_link_libraries(
   tomcat
