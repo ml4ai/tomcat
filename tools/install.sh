@@ -14,26 +14,6 @@ export TOMCAT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && p
 ###############################################################################
 
 # On Travis, we will create and activate a Python virtual environment
-if [[ ! -z $TRAVIS ]]; then
-  if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-    echo "Creating virtual environment for tomcat"
-    brew unlink python@2
-    brew link --overwrite python
-    if [[ $? -ne 0 ]]; then exit 1; fi;
-  else
-    sudo apt-get update
-    sudo apt-get install -y python3-venv
-  fi
-
-  python3 -m venv tomcat_venv
-  if [[ $? -ne 0 ]]; then exit 1; fi;
-
-  echo "Activating virtual environment for tomcat"
-  source tomcat_venv/bin/activate
-  # Installing Sphinx HTML documentation requirements.
-  pip install exhale recommonmark sphinx-rtd-theme
-  if [[ $? -ne 0 ]]; then exit 1; fi;
-fi
 
 ${TOMCAT}/tools/install_dependencies.sh
 if [[ $? -ne 0 ]]; then exit 1; fi;
@@ -46,12 +26,11 @@ pushd "${TOMCAT}"
     if [[ $? -ne 0 ]]; then exit 1; fi;
 
     pushd build > /dev/null 
-        if [[ ! -z $TRAVIS ]]; then
-            # On Travis, we will build HTML documentation by default.
-            cmake ${TOMCAT} -DBUILD_DOCS=ON
+        if [[ ! -z $GITHUB_ACTIONS ]]; then
+            cmake ${TOMCAT} -DBoost_ARCHITECTURE=-x64\
+                            -DBOOST_ROOT=$BOOST_ROOT_1_69_0\
+                            -DBUILD_DOCS=ON
             if [[ $? -ne 0 ]]; then exit 1; fi;
-        elif [[ ! -z $GITHUB_ACTIONS ]]; then
-            cmake ${TOMCAT} -DBoost_ARCHITECTURE=-x64 -DBOOST_ROOT=$BOOST_ROOT_1_69_0
         else
             cmake ${TOMCAT}
             if [[ $? -ne 0 ]]; then exit 1; fi;
@@ -60,12 +39,7 @@ pushd "${TOMCAT}"
         make -j
         if [[ $? -ne 0 ]]; then exit 1; fi;
 
-        # We skip building Minecraft on Travis since we cannot get an
-        # appropriate version of Java on their macOS image.
-        if [[ -z $TRAVIS ]]; then
-            make -j Minecraft
-            if [[ $? -ne 0 ]]; then exit 1; fi;
-        fi
+        make -j Minecraft
     popd > /dev/null 
 popd > /dev/null 
 

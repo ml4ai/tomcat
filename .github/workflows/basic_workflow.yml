@@ -18,8 +18,21 @@ jobs:
       with:
         java-version: '8.0.232'
 
-    - name: Run a multi-line script
+    - name: Continuous Integration
       run: |
+        sudo apt-get update
+        sudo apt-get install -y python3-venv xvfb
+        python3 -m venv tomcat_venv
+        pip install exhale recommonmark sphinx-rtd-theme
         ./tools/install.sh
-        sudo apt-get install xvfb
         xvfb-run --auto-servernum ./tools/run_session.sh
+
+    - name: Deploy docs
+      uses: peaceiris/actions-gh-pages@v3
+      run: cd build && make docs && cd ..
+      on: pull_request:
+        branches:
+          - master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./build/docs
