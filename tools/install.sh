@@ -38,6 +38,9 @@ fi
 ${TOMCAT}/tools/install_dependencies.sh
 if [[ $? -ne 0 ]]; then exit 1; fi;
 
+
+if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then jdk_switcher use openjdk8; fi
+
 pushd "${TOMCAT}"
     echo "Building ToMCAT in `pwd`"
 
