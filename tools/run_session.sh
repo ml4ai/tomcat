@@ -4,7 +4,7 @@ set -u
 
 # this function returns the date and time in the current timezone.
 timestamp() {
-    date "+%Y_%m_%d_%H_%M_%S"
+  date "+%Y_%m_%d_%H_%M_%S"
 }
 
 if [[ ! -z $GITHUB_ACTIONS ]]; then
@@ -30,8 +30,8 @@ export zombie_invasion_log="${TOMCAT_TMP_DIR}/zombie_invasion.log"
 
 export num_tries=2
 
-if [[ ${do_tutorial} -eq 1 ]]; then
-    ${TOMCAT}/tools/run_tutorial
+if [[ ${do_tutorial} -eq 1 ]];
+    then ${TOMCAT}/tools/run_tutorial
 fi
 
 if [[ ${do_invasion} -eq 1 ]]; then
@@ -43,7 +43,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
 
     framerate_option=""
     if [[ "$OSTYPE" == "darwin"* ]]; then
-       osascript ${TOMCAT}/tools/activate_minecraft_window.scpt
+        osascript ${TOMCAT}/tools/activate_minecraft_window.scpt
 
         # On macOS, we choose the avfoundation format.
         ffmpeg_fmt=avfoundation
@@ -55,10 +55,10 @@ if [[ ${do_invasion} -eq 1 ]]; then
     else
         ffmpeg_fmt=video4linux2
         echo "
-        Screen recording currently only works on MacOS since it relies on AppleScript to get
-        the position and size of the Minecraft window. Equivalent functionality can
-        probably be achieved with the wmctrl tool tool on Linux. Pull requests
-        welcome!"
+        Screen recording currently only works on MacOS since it relies on
+        AppleScript to get the position and size of the Minecraft window.
+        Equivalent functionality can probably be achieved with the wmctrl tool
+        tool on Linux. Pull requests welcome!"
     fi
 
     # Creating an output directory for this session.
@@ -67,15 +67,15 @@ if [[ ${do_invasion} -eq 1 ]]; then
     ffmpeg_common_invocation="ffmpeg -nostdin -f $ffmpeg_fmt"
 
     if [[ -z $GITHUB_ACTIONS ]]; then
-    # Recording video of player's face
-      ${ffmpeg_common_invocation} ${framerate_option} \
-          -i "0:" ${output_dir}/webcam_video.mpg &>/dev/null &
-      webcam_recording_pid=$!
+        # Recording video of player's face
+        ${ffmpeg_common_invocation} ${framerate_option} \
+            -i "0:" ${output_dir}/webcam_video.mpg &>/dev/null &
+        webcam_recording_pid=$!
 
-      # Recording player audio
-      ${ffmpeg_common_invocation} \
-          -i ":0" ${output_dir}/player_audio.wav &>/dev/null &
-      audio_recording_pid=$!
+        # Recording player audio
+        ${ffmpeg_common_invocation} \
+            -i ":0" ${output_dir}/player_audio.wav &>/dev/null &
+        audio_recording_pid=$!
     fi
 
     # Recording game screen.
@@ -86,56 +86,57 @@ if [[ ${do_invasion} -eq 1 ]]; then
     fi
 
     while [ $try -lt $num_tries ]; do
-      if [[ ! -z $GITHUB_ACTIONS ]]; then
-        ${TOMCAT}/build/bin/runExperiment \
-            --mission external/malmo/sample_missions/default_flat_1.xml
+        if [[ ! -z $GITHUB_ACTIONS ]]; then
+            ${TOMCAT}/build/bin/runExperiment \
+            --mission external/malmo/sample_missions/default_flat_1.xml\
             --time_limit ${time_limit} \
             --record_path "${output_dir}/malmo_data.tgz" \
             &>${zombie_invasion_log} &
-        bg_pid=$!
-      else
-        ${TOMCAT}/build/bin/runExperiment \
+            bg_pid=$!
+        else
+            ${TOMCAT}/build/bin/runExperiment \
             --mission 1 \
             --time_limit ${time_limit} \
             --record_path "${output_dir}/malmo_data.tgz" \
             &>${zombie_invasion_log} &
-        bg_pid=$!
-      echo "Running: ${TOMCAT}/build/bin/runExperiment --mission 1"
-      fi
-      echo "Running: ${TOMCAT}/build/bin/runExperiment --mission 1"
-      echo "    --time_limit ${time_limit}"
-      echo "    --record_path ${output_dir}/malmo_data.tgz"
-      echo "Process corresponding to ./bin/runExperiment is $bg_pid"
-      echo "... waiting for it to complete."
-      wait $bg_pid
-      zombie_invasion_status=$?
+            bg_pid=$!
+        fi
+        echo "Running: ${TOMCAT}/build/bin/runExperiment --mission 1"
+        echo "    --time_limit ${time_limit}"
+        echo "    --record_path ${output_dir}/malmo_data.tgz"
+        echo "Process corresponding to ./bin/runExperiment is $bg_pid"
+        echo "... waiting for it to complete."
+        wait $bg_pid
+        zombie_invasion_status=$?
 
-      if [[ ${zombie_invasion_status} -eq 0 ]]; then
-          zombie_invasion_status=$(grep -c "Error starting mission" \
-              ${zombie_invasion_log})
-      fi
+        if [[ ${zombie_invasion_status} -eq 0 ]]; then
+            zombie_invasion_status=$(grep -c "Error starting mission" \
+            ${zombie_invasion_log})
+        fi
 
-      if [[ ${zombie_invasion_status} -eq 0 ]]; then
-          echo "Zombie invasion mission ended with success status."
-          echo "All recorded data is in ${output_dir}"
-          echo " "
-          break
-      fi
+        if [[ ${zombie_invasion_status} -eq 0 ]]; then
+            echo "Zombie invasion mission ended with success status."
+            echo "All recorded data is in ${output_dir}"
+            echo " "
+            break
+        fi
 
-      let try+=1
+        let try+=1
 
-      if [[ $try -lt $num_tries ]]; then
-          echo "Zombie invasion mission ended with failure status."
-          echo "Killing all Minecraft and Malmo processes that can be found and trying again."
-          ${TOMCAT}/tools/kill_minecraft.sh
-          ${TOMCAT}/tools/check_minecraft.sh
-      fi
+        if [[ $try -lt $num_tries ]]; then
+            echo "Zombie invasion mission ended with failure status."
+            echo "Killing all Minecraft and Malmo processes that can be found"
+            echo "and trying again."
+
+            ${TOMCAT}/tools/kill_minecraft.sh
+            ${TOMCAT}/tools/check_minecraft.sh
+        fi
     done
 fi
 
 if [[ -z $GITHUB_ACTIONS ]]; then
-  kill -2 $webcam_recording_pid
-  kill -2 $audio_recording_pid
+    kill -2 $webcam_recording_pid
+    kill -2 $audio_recording_pid
 fi
 
 # For now, screen recording works only on macOS. Need to extend it to Linux as
