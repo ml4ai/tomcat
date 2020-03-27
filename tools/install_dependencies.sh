@@ -175,14 +175,14 @@ elif [ -x "$(command -v apt-get)" ]; then
         libfmt-dev \
         doxygen \
         ffmpeg \
-        #libopenblas-dev \
-        #libboost-all-dev \
-        #libopencv-dev \
-        #libdlib-dev \
         openjdk-8-jre-headless=8u162-b12-1\
         openjdk-8-jre=8u162-b12-1\
         openjdk-8-jdk-headless=8u162-b12-1\
         openjdk-8-jdk=8u162-b12-1
+        #libopenblas-dev \
+        #libboost-all-dev \
+        #libopencv-dev \
+        #libdlib-dev \
     if [[ $? -ne 0 ]]; then exit 1; fi;
 
     sudo update-java-alternatives -s java-1.8.0-openjdk-amd64
