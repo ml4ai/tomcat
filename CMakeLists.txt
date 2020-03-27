@@ -50,12 +50,6 @@ find_package(Boost
                         thread
              REQUIRED)
 
-if(APPLE AND DEFINED ENV{TRAVIS})
-  add_subdirectory(external/dlib)
-else()
-  find_package(dlib REQUIRED)
-endif()
-
 add_subdirectory(external/malmo)
 
 add_subdirectory(src)
