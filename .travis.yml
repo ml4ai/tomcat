@@ -10,8 +10,10 @@ language:
  - python
  - java
 
-install:
+before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then jdk_switcher use openjdk8; fi
+
+install:
   - ./tools/install.sh
 
 env:
