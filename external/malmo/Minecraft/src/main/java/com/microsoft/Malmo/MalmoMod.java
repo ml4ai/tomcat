@@ -40,7 +40,7 @@ import com.microsoft.Malmo.Utils.SchemaHelper;
 import com.microsoft.Malmo.Utils.ScoreHelper;
 import com.microsoft.Malmo.Utils.ScreenHelper;
 import com.microsoft.Malmo.Utils.TCPUtils;
-import edu.arizona.tomcat.Utils.TomcatForgeEventhandler;
+import edu.arizona.tomcat.Utils.TomcatForgeEventHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
@@ -114,7 +114,7 @@ public class MalmoMod {
   public void preInit(FMLPreInitializationEvent event) {
 
     MinecraftForge.EVENT_BUS.register(
-        new TomcatForgeEventhandler()); // Registering this here so it's
+        new TomcatForgeEventHandler()); // Registering this here so it's
                                         // accessible outside missions.
 
     ModBlocks.init();

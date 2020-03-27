@@ -29,6 +29,8 @@ if [[ ${do_tutorial} -eq 1 ]]; then
     ${TOMCAT}/tools/run_tutorial
 fi
 
+rm -f ${TOMCAT}/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
+
 if [[ ${do_invasion} -eq 1 ]]; then
     echo " "
     echo "Running the Zombie invasion mission in ${TOMCAT}."
@@ -124,6 +126,8 @@ kill -2 $audio_recording_pid
 if [[ "$OSTYPE" == "darwin"* ]]; then
     kill -2 $screen_recording_pid
 fi
+
+mv ${TOMCAT}/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json ${output_dir}/discrete_events.json 
 
 echo "Finished running all sessions in ${TOMCAT}."
 exit 0
