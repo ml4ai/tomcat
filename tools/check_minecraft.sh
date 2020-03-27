@@ -46,7 +46,7 @@ while [ $try -lt $num_tries ]; do
     if [[ ${must_launch} -ne 0 ]]; then 
         echo "Script check_minecraft executing: "
         echo "    ${TOMCAT}/tools/wrap_launch_minecraft.sh" 
-        ${TOMCAT}/tools/wrap_launch_minecraft.sh# & 
+        ${TOMCAT}/tools/wrap_launch_minecraft.sh & 
         echo "Waiting for ${initial_wait} seconds to ensure wrap_launch_minecraft has started to launch Minecraft."  
         echo "Minecraft needs more than that time to start, and we want to be sure the log file has been created."
         sleep ${initial_wait}

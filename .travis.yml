@@ -13,7 +13,10 @@ language:
  - python
  - java
 
-install:
+before_script:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3 # give xvfb some time to start
 
 env:
   - TOMCAT=$TRAVIS_BUILD_DIR
@@ -22,7 +25,7 @@ script:
   - ./tools/install.sh
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export JAVA_HOME=$(/usr/libexec/java_home -v"1.8"); fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./tools/run_session.sh; fi
-  #- cd ${TOMCAT}/build && make docs && cd ../
+  - cd ${TOMCAT}/build && make docs && cd ../
 
 
 after_success:
