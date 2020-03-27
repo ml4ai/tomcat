@@ -69,6 +69,3 @@ option(BUILD_DOCS "Build documentation" OFF)
 if (BUILD_DOCS)
   add_subdirectory(docs)
 endif()
-
-add_subdirectory(tests)
-target_include_directories(test PRIVATE src external/malmo/Malmo/src)
