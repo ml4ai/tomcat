@@ -51,7 +51,7 @@ pushd "${TOMCAT}"
             cmake ${TOMCAT} -DBUILD_DOCS=ON
             if [[ $? -ne 0 ]]; then exit 1; fi;
         elif [[ ! -z $GITHUB_ACTIONS ]]; then
-            cmake ${TOMCAT} -DBoost_ARCHITECTURE=-x64
+            cmake ${TOMCAT} -DBoost_ARCHITECTURE=-x64 -DBOOST_ROOT=$BOOST_ROOT_1_69_0
         else
             cmake ${TOMCAT}
             if [[ $? -ne 0 ]]; then exit 1; fi;
