@@ -29,9 +29,6 @@ jobs:
 
     - name: Build docs
       run: cd build && make docs && cd ..
-      on: 
-        pull_request:
-          branches: [ master ]
 
     - name: Deploy docs
       uses: peaceiris/actions-gh-pages@v3
