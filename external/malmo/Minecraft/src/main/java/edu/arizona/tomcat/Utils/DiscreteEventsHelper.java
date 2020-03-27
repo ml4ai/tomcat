@@ -130,7 +130,7 @@ public class DiscreteEventsHelper {
    * Currently, discrete event occurrences are appended onto the same file.
    */
   private static String getDiscreteEventstPath() {
-    String path = DISCRETE_EVENT_REPORTS_FOLDER + "/Discrete_Events.json";
+    String path = DISCRETE_EVENT_REPORTS_FOLDER + "/discrete_events.json";
     return path;
   }
 
