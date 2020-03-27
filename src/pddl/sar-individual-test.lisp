@@ -16,7 +16,7 @@
        (load "util.lisp"))
 
 (in-package :shop-user)
-;(shop-trace :all)
+(shop-trace :plans :operators :states)
 (defdomain (sar-individual-domain :type pddl-domain :redefine-ok T) (
     (:types human ;; Everything, including 'human' inherits from the base 'object' type
             victim rescuer - human ;; The rescuer and the victims are humans.
@@ -73,7 +73,7 @@
     (:action leave-building ;; Rescuer leaves the building
       :parameters (?t - rescuer ?b - building)
       :precondition (inside ?t ?b)
-      :effect ((not (inside ?t ?b)))
+      :effect (not (inside ?t ?b))
     )
 
     (:action enter-building ;; Rescuer enters the building and is assumed to be in the given room
@@ -158,10 +158,8 @@
 
 ;; Find plans and graph the all.
 
-(let ((plan-trees (nth-value 2 
-                             (find-plans 'sar-individual-problem
-                                         :which :all
-                                         :verbose :long-plans
-                                         :plan-tree t))))
-  (cl-user::multi-graph 1 plan-trees)) 
+(let* ((plan-info (multiple-value-list 
+                (find-plans 'sar-individual-problem :which :all :verbose nil :plan-tree t))) 
+       (plan-trees (third plan-info)))
+  (cl-user::multi-graph 1 plan-trees))
 (cl-user::quit)
