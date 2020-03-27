@@ -7,8 +7,13 @@ timestamp() {
     date "+%Y_%m_%d_%H_%M_%S"
 }
 
-mission_one_time=600
-do_tutorial=1
+if [[ ! -z $TRAVIS ]]; then
+  mission_one_time=1
+  do_tutorial=0
+else
+  mission_one_time=600
+  do_tutorial=1
+fi
 do_invasion=1
 
 # Set the TOMCAT environment variable, assuming that the directory structure
@@ -54,7 +59,6 @@ if [[ ${do_invasion} -eq 1 ]]; then
         the position and size of the Minecraft window. Equivalent functionality can
         probably be achieved with the wmctrl tool tool on Linux. Pull requests
         welcome!"
-        exit 1
     fi
 
     # Creating an output directory for this session.
@@ -62,15 +66,17 @@ if [[ ${do_invasion} -eq 1 ]]; then
     mkdir -p ${output_dir}
     ffmpeg_common_invocation="ffmpeg -nostdin -f $ffmpeg_fmt"
 
+    if [[ -z $TRAVIS ]]; then
     # Recording video of player's face
-    ${ffmpeg_common_invocation} ${framerate_option} \
-        -i "0:" ${output_dir}/webcam_video.mpg &>/dev/null &
-    webcam_recording_pid=$!
+      ${ffmpeg_common_invocation} ${framerate_option} \
+          -i "0:" ${output_dir}/webcam_video.mpg &>/dev/null &
+      webcam_recording_pid=$!
 
-    # Recording player audio
-    ${ffmpeg_common_invocation} \
-        -i ":0" ${output_dir}/player_audio.wav &>/dev/null &
-    audio_recording_pid=$!
+      # Recording player audio
+      ${ffmpeg_common_invocation} \
+          -i ":0" ${output_dir}/player_audio.wav &>/dev/null &
+      audio_recording_pid=$!
+    fi
 
     # Recording game screen.
     if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -117,8 +123,10 @@ if [[ ${do_invasion} -eq 1 ]]; then
     done
 fi
 
-kill -2 $webcam_recording_pid
-kill -2 $audio_recording_pid
+if [[ -z $TRAVIS ]]; then
+  kill -2 $webcam_recording_pid
+  kill -2 $audio_recording_pid
+fi
 
 # For now, screen recording works only on macOS. Need to extend it to Linux as
 # well.
