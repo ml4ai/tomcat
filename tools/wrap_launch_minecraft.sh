@@ -39,7 +39,3 @@ else
 fi 
 
 exit ${launch_status}
-
-
-
-

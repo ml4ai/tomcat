@@ -66,7 +66,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
     mkdir -p ${output_dir}
     ffmpeg_common_invocation="ffmpeg -nostdin -f $ffmpeg_fmt"
 
-    if [[ -z $TRAVIS ]]; then
+    if [[ -z $GITHUB_ACTIONS ]]; then
     # Recording video of player's face
       ${ffmpeg_common_invocation} ${framerate_option} \
           -i "0:" ${output_dir}/webcam_video.mpg &>/dev/null &
@@ -123,7 +123,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
     done
 fi
 
-if [[ -z $TRAVIS ]]; then
+if [[ -z $GITHUB_ACTIONS ]]; then
   kill -2 $webcam_recording_pid
   kill -2 $audio_recording_pid
 fi
