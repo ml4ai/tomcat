@@ -8,7 +8,7 @@ fi
 
 RECORD_FILE=$PWD/ffmData/videoTest.mpg
 if [ -f "$RECORD_FILE" ]; then 
-	rm $PWD/ffmData/videoTest.mkv
+	rm $PWD/ffmData/videoTest.mpg
 	echo "file $RECORD_FILE has been removed"
 fi
 
