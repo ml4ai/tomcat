@@ -52,7 +52,7 @@ public class BlockAsistLever extends BlockLever {
     boolean result = super.onBlockActivated(
         worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
 
-    DiscreteEventsHelper.printEventOccurence(
+    DiscreteEventsHelper.printEventOccurrence(
         pos, playerIn, getLeverEvent(pos)); // Used to mark discrete occurence
     counter++;
 

@@ -16,136 +16,146 @@ import java.util.Date;
 import java.util.Map;
 
 /**
- * This class holds static methods to print the discrete events. It writes the output
- * to saves/discrete_events/Discrete_Events.json
+ * This class holds static methods to print the discrete events. It writes the
+ * output to saves/discrete_events/Discrete_Events.json
  */
 public class DiscreteEventsHelper {
 
-    private static final String DISCRETE_EVENT_REPORTS_FOLDER = "saves/discrete_events";
+  private static final String DISCRETE_EVENT_REPORTS_FOLDER =
+      "saves/discrete_events";
+  private static int counter = 0;
 
-    /**
-     * When called, this method will print the occurence of the event to the
-     * terminal. The Blockpos passed is the coordinate at which the event
-     * was triggered, and the playerIn is the player who triggered the event.
-     *
-     * @param pos      - Position of event
-     * @param playerIn -  The player who triggered the event
-     */
-    public static void
-    printEventOccurence(BlockPos pos, EntityPlayer playerIn, String event) {
-        String coordinates = createCoordinateString(pos);
+  /**
+   * When called, this method will print the occurrence of the event to the
+   * terminal. The BlockPos passed is the coordinate at which the event
+   * was triggered, and the playerIn is the player who triggered the event.
+   *
+   * @param pos      - Position of event
+   * @param playerIn -  The player who triggered the event
+   */
+  public static void
+  printEventOccurrence(BlockPos pos, EntityPlayer playerIn, String event) {
+    String coordinates = createCoordinateString(pos);
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-        String dateTime = dateFormat.format(date); // Date and Time
+    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    Date date = new Date();
+    String dateTime = dateFormat.format(date); // Date and Time
 
-        Map<String, String> output = new LinkedTreeMap<String, String>();
+    Map<String, String> output = new LinkedTreeMap<String, String>();
 
-        output.put("Event Type", event);
-        output.put("Event caused by", playerIn.getDisplayNameString());
-        output.put("Event Coordinates", coordinates);
-        output.put("Occurrence Time", dateTime);
+    output.put("Event Type", event);
+    output.put("Event caused by", playerIn.getDisplayNameString());
+    output.put("Event Coordinates", coordinates);
+    output.put("Occurrence Time", dateTime);
 
-        saveDiscreteEventReport(output);
+    saveDiscreteEventReport(output);
+  }
+
+  /**
+   * When called, this method will print the occurrence of an attack event to
+   * the terminal. The details of the attack event consist of who the player was
+   * and who they attacked. The method can figure out whether an attack killed
+   * the enemy.
+   *
+   * @param pos      - Position of event
+   * @param playerIn -  The player who triggered the event
+   */
+  public static void printAttackEventOccurrence(BlockPos pos,
+                                                Entity enemy,
+                                                EntityPlayer playerIn) {
+
+    String playerName = playerIn.getDisplayNameString();
+    String enemyName = enemy.getName();
+
+    String event = playerName + " killed " + enemyName;
+    if (enemy.isEntityAlive()) {
+      event = playerName + " attacked " + enemyName;
     }
 
-    /**
-     * When called, this method will print the occurrence of an attack event to
-     * the terminal. The details of the attack event consist of who the player was
-     * and who they attacked. The method can figure out whether an attack killed
-     * the enemy.
-     *
-     * @param pos      - Position of event
-     * @param playerIn -  The player who triggered the event
-     */
-    public static void
-    printAttackEventOccurence(BlockPos pos, Entity enemy, EntityPlayer playerIn) {
+    String coordinates = createCoordinateString(pos);
 
-        String playerName = playerIn.getDisplayNameString();
-        String enemyName = enemy.getName();
+    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    Date date = new Date();
+    String dateTime = dateFormat.format(date); // Date and Time
 
-        String event = playerName + " killed " + enemyName;
-        if (enemy.isEntityAlive()) {
-            event = playerName + " attacked " + enemyName;
-        }
+    Map<String, String> output = new LinkedTreeMap<String, String>();
 
-        String coordinates = createCoordinateString(pos);
+    output.put("Event Type", event);
+    output.put("Event caused by", playerName);
+    output.put("Event Coordinates", coordinates);
+    output.put("Occurrence Time", dateTime);
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-        String dateTime = dateFormat.format(date); // Date and Time
+    saveDiscreteEventReport(output);
+  }
 
-        Map<String, String> output = new LinkedTreeMap<String, String>();
+  /**
+   * Returns the position information as a String.
+   *
+   * @param pos - The coordinates as a BlockPos
+   * @return A String representation
+   */
+  private static String createCoordinateString(BlockPos pos) {
+    int x = pos.getX(), y = pos.getY(), z = pos.getZ(); // event coordinates
+    String coordinates = "X: " + x + " "
+                         + "Y: " + y + " "
+                         + "Z: " + z;
+    return coordinates;
+  }
 
-        output.put("Event Type", event);
-        output.put("Event caused by", playerName);
-        output.put("Event Coordinates", coordinates);
-        output.put("Occurrence Time", dateTime);
+  /**
+   * Calls the necessary methods to save the discrete event report
+   * passed as a Java Map to the Discrete_Events.json file.
+   *
+   * @param mapReport - The event report
+   */
+  private static void saveDiscreteEventReport(Map<String, String> mapReport) {
+    createDiscreteEventsFolder();
+    String path = getDiscreteEventstPath();
+    writeDiscreteEventsToFile(path, mapReport);
+    counter++;
+  }
 
-        saveDiscreteEventReport(output);
+  /**
+   * Creates discrete_events folder if it doesn't exist already
+   */
+  private static void createDiscreteEventsFolder() {
+    File folder = new File(DISCRETE_EVENT_REPORTS_FOLDER);
+    if (!folder.exists()) {
+      folder.mkdir();
     }
+  }
 
-    /**
-     * Returns the position information as a String.
-     *
-     * @param pos - The coordinates as a BlockPos
-     * @return A String representation
-     */
-    private static String createCoordinateString(BlockPos pos) {
-        int x = pos.getX(), y = pos.getY(), z = pos.getZ(); // event coordinates
-        String coordinates = "X: " + x + " "
-                + "Y: " + y + " "
-                + "Z: " + z;
-        return coordinates;
+  /**
+   * All discrete events are written to the path returned by this method.
+   * Currently, discrete event occurrences are appended onto the same file.
+   */
+  private static String getDiscreteEventstPath() {
+    String path = DISCRETE_EVENT_REPORTS_FOLDER + "/Discrete_Events.json";
+    return path;
+  }
+
+  /**
+   * Writes output to .json file.
+   *
+   * @param path      - The filepath where the event is to be appended.
+   * @param mapReport - The event report.
+   */
+  private static void writeDiscreteEventsToFile(String path,
+                                                Map<String, String> mapReport) {
+    try {
+      if (counter % 2 == 0) {
+        FileWriter fileWriter = new FileWriter(path, true);
+        Gson gson = new GsonBuilder().create();
+        String json = gson.toJson(mapReport) + "\n\n";
+        fileWriter.write(json);
+        fileWriter.close();
+      }
+      else {
+        ;
+      }
     }
-
-    /**
-     * Calls the necessary methods to save the discrete evnt report
-     * passed as a Java Map to the Discrete_Events.json file.
-     *
-     * @param mapReport - The event report
-     */
-    private static void saveDiscreteEventReport(Map<String, String> mapReport) {
-        createDiscreteEventsFolder();
-        String path = getDiscreteEventstPath();
-        writeDiscreteEventsToFile(path, mapReport);
-
+    catch (IOException e) {
+      e.printStackTrace();
     }
-
-    /**
-     * Creates discrete_events folder if it doesn't exist already
-     */
-    private static void createDiscreteEventsFolder() {
-        File folder = new File(DISCRETE_EVENT_REPORTS_FOLDER);
-        if (!folder.exists()) {
-            folder.mkdir();
-        }
-    }
-
-    /**
-     * All discrete events are written to the path returned by this method.
-     * Currently, discrete event occurrences are appended onto the same file.
-     */
-    private static String getDiscreteEventstPath() {
-        String path = DISCRETE_EVENT_REPORTS_FOLDER + "/Discrete_Events.json";
-        return path;
-    }
-
-    /**
-     * Writes output to .json file.
-     *
-     * @param path      - The filepath where the event is to be appended.
-     * @param mapReport - The event report.
-     */
-    private static void writeDiscreteEventsToFile(String path, Map<String, String> mapReport) {
-        try {
-            FileWriter fileWriter = new FileWriter(path, true);
-            Gson gson = new GsonBuilder().create();
-            String json = gson.toJson(mapReport)+"\n\n";
-            fileWriter.write(json);
-            fileWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+  }
 }

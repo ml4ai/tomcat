@@ -6,7 +6,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-public class TomcatForgeEventhandler {
+public class TomcatForgeEventHandler {
 
   /**
    * This event is triggered when the player attacks an enemy. It passes
@@ -24,6 +24,6 @@ public class TomcatForgeEventhandler {
         event.getTarget().posY,
         event.getTarget().posZ); // Event occurrence is location of target
 
-    DiscreteEventsHelper.printAttackEventOccurence(pos, enemy, playerIn);
+    DiscreteEventsHelper.printAttackEventOccurrence(pos, enemy, playerIn);
   }
 }

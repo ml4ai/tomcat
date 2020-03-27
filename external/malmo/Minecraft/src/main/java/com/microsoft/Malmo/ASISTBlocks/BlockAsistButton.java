@@ -61,7 +61,7 @@ public class BlockAsistButton extends BlockButton {
     boolean result = super.onBlockActivated(
         worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
 
-    DiscreteEventsHelper.printEventOccurence(
+    DiscreteEventsHelper.printEventOccurrence(
         pos, playerIn, "Button Pressed"); // Used to mark discrete occurence
 
     return result;
