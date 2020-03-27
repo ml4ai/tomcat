@@ -19,7 +19,7 @@ env:
   - TOMCAT=$TRAVIS_BUILD_DIR
 
 script:
-  - ./tools/install.sh
+  - jdk_switcher use openjdk8 && ./tools/install.sh
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export JAVA_HOME=$(/usr/libexec/java_home -v"1.8"); fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./tools/run_session.sh; fi
   - cd ${TOMCAT}/build && make docs && cd ../
