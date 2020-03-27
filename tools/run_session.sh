@@ -50,11 +50,10 @@ if [[ ${do_invasion} -eq 1 ]]; then
     else
         ffmpeg_fmt=video4linux2
         echo "
-        Screen recording currently only works on MacOS since it relies on AppleScript to get
-        the position and size of the Minecraft window. Equivalent functionality can
-        probably be achieved with the wmctrl tool tool on Linux. Pull requests
-        welcome!"
-        exit 1
+        Screen recording currently only works on MacOS since it relies on
+        AppleScript to bring the Minecraft window to the foreground and make it
+        full screen. Equivalent functionality can probably be achieved with
+        the wmctrl tool tool on Linux. Pull requests welcome!"
     fi
 
     # Creating an output directory for this session.

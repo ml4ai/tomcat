@@ -349,13 +349,13 @@ public class ServerStateMachine extends StateMachine {
     }
     return minit;
   }
-  
+
   /**
    * Dynamically adds an object to determine if the mission must end or not
    * @param handler - Quit producer handler object
    */
   public void addQuitProducer(IWantToQuit handler) {
-	  this.missionHandlers.addQuitProducer(handler);
+    this.missionHandlers.addQuitProducer(handler);
   }
 
   //---------------------------------------------------------------------------------------------------------
@@ -763,7 +763,7 @@ public class ServerStateMachine extends StateMachine {
                 player.posX = pos.getX().doubleValue();
                 player.posY = pos.getY().doubleValue();
                 player.posZ = pos.getZ().doubleValue();
-              } 
+              }
               // And set their game type back now:
               player.setGameType(
                   GameType.getByName(as.getMode().name().toLowerCase()));
@@ -830,16 +830,18 @@ public class ServerStateMachine extends StateMachine {
         // Set their initial position and speed:
         PosAndDirection pos = as.getAgentStart().getPlacement();
         if (pos == null) {
-        	pos  = MalmoMod.instance.getServer().getTomcatServerMission().getPlayersInitialPositionAndDirection(player);
+          pos = MalmoMod.instance.getServer()
+                    .getTomcatServerMission()
+                    .getPlayersInitialPositionAndDirection(player);
         }
-        
+
         player.rotationYaw = pos.getYaw().floatValue();
         player.rotationPitch = pos.getPitch().floatValue();
         player.setPositionAndUpdate(pos.getX().doubleValue(),
-                                      pos.getY().doubleValue(),
-                                      pos.getZ().doubleValue());
+                                    pos.getY().doubleValue(),
+                                    pos.getZ().doubleValue());
         player.onUpdate(); // Needed to force scene to redraw
-         
+
         player.setVelocity(0, 0, 0); // Minimise chance of drift!
 
         // Set their inventory:
@@ -1269,8 +1271,7 @@ public class ServerStateMachine extends StateMachine {
       MalmoMod.safeSendToAll(MalmoMessageType.SERVER_ABORT);
       // And abort ourselves:
       episodeHasCompleted(ServerState.ERROR);
-    }    
-    
+    }
   }
 
   //---------------------------------------------------------------------------------------------------------
@@ -1294,5 +1295,4 @@ public class ServerStateMachine extends StateMachine {
       episodeHasCompleted(ServerState.DORMANT);
     }
   }
-  
 }
