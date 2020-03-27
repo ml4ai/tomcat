@@ -50,6 +50,8 @@ pushd "${TOMCAT}"
             # On Travis, we will build HTML documentation by default.
             cmake ${TOMCAT} -DBUILD_DOCS=ON
             if [[ $? -ne 0 ]]; then exit 1; fi;
+        elif [[ ! -z $GITHUB_ACTIONS ]]; then
+            cmake ${TOMCAT} -DBoost_ARCHITECTURE=-x64
         else
             cmake ${TOMCAT}
             if [[ $? -ne 0 ]]; then exit 1; fi;
