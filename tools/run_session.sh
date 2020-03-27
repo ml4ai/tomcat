@@ -8,10 +8,10 @@ timestamp() {
 }
 
 if [[ ! -z $GITHUB_ACTIONS ]]; then
-  mission_one_time=1
+  time_limit=5
   do_tutorial=0
 else
-  mission_one_time=600
+  time_limit=600
   do_tutorial=1
 fi
 do_invasion=1
@@ -86,40 +86,50 @@ if [[ ${do_invasion} -eq 1 ]]; then
     fi
 
     while [ $try -lt $num_tries ]; do
+      if [[ ! -z $GITHUB_ACTIONS ]]; then
         ${TOMCAT}/build/bin/runExperiment \
-            --mission 1 \
-            --time_limit ${mission_one_time} \
+            --mission external/malmo/sample_missions/default_flat_1.xml
+            --time_limit ${time_limit} \
             --record_path "${output_dir}/malmo_data.tgz" \
             &>${zombie_invasion_log} &
         bg_pid=$!
-        echo "Running: ${TOMCAT}/build/bin/runExperiment --mission 1"
-        echo "    --time_limit ${mission_one_time}"
-        echo "    --record_path ${output_dir}/malmo_data.tgz"
-        echo "Process corresponding to ./bin/runExperiment is $bg_pid"
-        echo "... waiting for it to complete."
-        wait $bg_pid
-        zombie_invasion_status=$?
+      else
+        ${TOMCAT}/build/bin/runExperiment \
+            --mission 1 \
+            --time_limit ${time_limit} \
+            --record_path "${output_dir}/malmo_data.tgz" \
+            &>${zombie_invasion_log} &
+        bg_pid=$!
+      echo "Running: ${TOMCAT}/build/bin/runExperiment --mission 1"
+      fi
+      echo "Running: ${TOMCAT}/build/bin/runExperiment --mission 1"
+      echo "    --time_limit ${time_limit}"
+      echo "    --record_path ${output_dir}/malmo_data.tgz"
+      echo "Process corresponding to ./bin/runExperiment is $bg_pid"
+      echo "... waiting for it to complete."
+      wait $bg_pid
+      zombie_invasion_status=$?
 
-        if [[ ${zombie_invasion_status} -eq 0 ]]; then
-            zombie_invasion_status=$(grep -c "Error starting mission" \
-                ${zombie_invasion_log})
-        fi
+      if [[ ${zombie_invasion_status} -eq 0 ]]; then
+          zombie_invasion_status=$(grep -c "Error starting mission" \
+              ${zombie_invasion_log})
+      fi
 
-        if [[ ${zombie_invasion_status} -eq 0 ]]; then
-            echo "Zombie invasion mission ended with success status."
-            echo "All recorded data is in ${output_dir}"
-            echo " "
-            break
-        fi
+      if [[ ${zombie_invasion_status} -eq 0 ]]; then
+          echo "Zombie invasion mission ended with success status."
+          echo "All recorded data is in ${output_dir}"
+          echo " "
+          break
+      fi
 
-        let try+=1
+      let try+=1
 
-        if [[ $try -lt $num_tries ]]; then
-            echo "Zombie invasion mission ended with failure status."
-            echo "Killing all Minecraft and Malmo processes that can be found and trying again."
-            ${TOMCAT}/tools/kill_minecraft.sh
-            ${TOMCAT}/tools/check_minecraft.sh
-        fi
+      if [[ $try -lt $num_tries ]]; then
+          echo "Zombie invasion mission ended with failure status."
+          echo "Killing all Minecraft and Malmo processes that can be found and trying again."
+          ${TOMCAT}/tools/kill_minecraft.sh
+          ${TOMCAT}/tools/check_minecraft.sh
+      fi
     done
 fi
 
