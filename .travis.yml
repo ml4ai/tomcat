@@ -6,12 +6,12 @@ dist: bionic
 #osx_image: xcode11
 
 services:
-  -xvfb
+  - xvfb
 
 language: 
- - cpp
- - python
- - java
+  - cpp
+  - python
+  - java
 
 jdk: openjdk8
 
