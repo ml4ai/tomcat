@@ -21,8 +21,7 @@ env:
 script:
   - ./tools/install.sh
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export JAVA_HOME=$(/usr/libexec/java_home -v"1.8"); fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ; fi
-  - ./build/bin/test --mission external/malmo/sample_missions/default_world_1.xml 
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./tools/run_session.sh; fi
   - cd ${TOMCAT}/build && make docs && cd ../
 
 
