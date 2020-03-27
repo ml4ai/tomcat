@@ -11,7 +11,7 @@ add_library(
   FileHandler.h
   FileHandler.cpp)
 
-target_include_directories(tomcat ${Boost_INCLUDE_DIRS})
+target_include_directories(tomcat PUBLIC ${Boost_INCLUDE_DIRS})
 
 target_link_libraries(
   tomcat
