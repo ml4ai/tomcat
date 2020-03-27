@@ -9,7 +9,11 @@ minecraft_log="${TOMCAT_TMP_DIR}/minecraft.log"
 
 cd ${TOMCAT}/external/malmo/Minecraft
 echo "Running: launchClient.sh in ${TOMCAT}/external/malmo/Minecraft" 
-./launchClient.sh < /dev/null >& ${minecraft_log} &
+if [[ ! -z $TRAVIS ]]; then
+  xvfb-run ./launchClient.sh >& ${minecraft_log}
+else
+  ./launchClient.sh < /dev/null >& ${minecraft_log} &
+fi
 bg_pid=$!
 echo $bg_pid > ${TOMCAT_TMP_DIR}/minecraft_launch.pid
 echo "Minecraft is starting up in the background."  
