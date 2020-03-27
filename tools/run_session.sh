@@ -7,7 +7,7 @@ timestamp() {
     date "+%Y_%m_%d_%H_%M_%S"
 }
 
-if [[ ! -z $TRAVIS ]]; then
+if [[ ! -z $GITHUB_ACTIONS ]]; then
   mission_one_time=1
   do_tutorial=0
 else

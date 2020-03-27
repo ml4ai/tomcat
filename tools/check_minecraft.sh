@@ -63,7 +63,6 @@ while [ $try -lt $num_tries ]; do
 
         while [ $num_seconds -lt $num_seconds_to_wait ]; do 
             if [[ -e "${minecraft_log}" ]]; then 
-                tail ${minecraft_log}
                 launch_client_failed=`grep -c 'launchClient FAILED' ${minecraft_log}`
                 if [[ ${launch_client_failed} -ne 0 ]]; then 
                     echo 
