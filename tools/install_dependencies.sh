@@ -185,6 +185,7 @@ elif [ -x "$(command -v apt-get)" ]; then
         openjdk-8-jdk=8u162-b12-1
     if [[ $? -ne 0 ]]; then exit 1; fi;
 
+    sudo update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
     #if [[ ! -f "/usr/local/lib/libdlib.a" ]]; then
       #./tools/install_dlib_from_source.sh
     #fi
