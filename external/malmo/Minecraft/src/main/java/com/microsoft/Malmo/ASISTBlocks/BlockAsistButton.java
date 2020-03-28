@@ -1,6 +1,6 @@
 package com.microsoft.Malmo.ASISTBlocks;
 
-import com.google.gson.internal.LinkedTreeMap;
+import edu.arizona.tomcat.Utils.DiscreteEventsHelper;
 import net.minecraft.block.BlockButton;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -13,27 +13,25 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
 
 /**
  * This class defines a new basic button that can write event observations
- * whenever it is pressed by the player. Some deprecated methods are being
- * overridden in this class, but that seems to be necessary for the block to
- * achieve the same functionality as a normal Minecraft button, and also for it
- * to be rendered properly inside the world. <p> The block is a button, so it
+ * whenever it is pressed by the player.
+ * <p>
+ * The block is a button, so it
  * contains special methods that define boundaries such that the player must
  * press within the boundaries to achieve the effect of "pressing" the button.
  * The button may show up as a full cube, but only a part of it can be pressed.
  * This can be made more clear through the use of appropriate textures.
+ * <p>
+ * Technically buttons and doors aren't related, but checking the doors when we
+ * press the button helps us avoid polling for the door at every tick.
  */
 public class BlockAsistButton extends BlockButton {
 
-  protected BlockAsistButton() {
+  public BlockAsistButton() {
     super(false); // Stone button. An unimportant detail necessary for the
-                  // superclass constructor.
+    // superclass constructor.
 
     setUnlocalizedName("ASIST_Button");
     setRegistryName(
@@ -63,46 +61,13 @@ public class BlockAsistButton extends BlockButton {
     boolean result = super.onBlockActivated(
         worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
 
-    printEventOccurence(pos, playerIn); // Used to mark discrete occurence
+    DiscreteEventsHelper.printEventOccurrence(
+        pos, playerIn, "Button Pressed"); // Used to mark discrete occurence
 
     return result;
   }
 
-  /**
-   * When called, this method will print the occurence of a button press to the
-   * terminal. The Blockpos passed is the coordinate at which the button was
-   * pressed, and the playerIn is the player who pressed the button.
-   *
-   * @param pos      - Position of button
-   * @param playerIn -  The player who pressed the button
-   */
-  private void printEventOccurence(BlockPos pos, EntityPlayer playerIn) {
-    int x = pos.getX(), y = pos.getY(), z = pos.getZ(); // button coordinates
-    String coordinates = "X: " + x + " "
-                         + "Y: " + y + " "
-                         + "Z: " + z;
-
-    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-    Date date = new Date();
-    String dateTime = dateFormat.format(date); // Date and Time
-
-    Map<String, String> output = new LinkedTreeMap<String, String>();
-
-    output.put("Event Type", "Button Pressed");
-    output.put("Event caused by", playerIn.getDisplayNameString());
-    output.put("Event Coordinates", coordinates);
-    output.put("Occurence Time", dateTime);
-
-    // The output is placed in a map above. The code below is only for temporary
-    // printing to terminal.
-
-    System.out.println("+---EVENT REPORT---+");
-    for (String key : output.keySet()) {
-      System.out.println(key + ": " + output.get(key));
-    }
-    System.out.println();
-    System.out.println();
-  }
+  // The methods below this simply set some button properties
 
   protected void
   playClickSound(@Nullable EntityPlayer player, World worldIn, BlockPos pos) {

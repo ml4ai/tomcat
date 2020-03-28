@@ -284,10 +284,6 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 	 * @return
 	 */
 	protected int getRemainingSeconds(World world) {
-//		if (this.initialWorldTime == 0) {
-//			this.initialWorldTime = world.getTotalWorldTime();
-//		}
-
 		return Converter.getRemainingTimeInSeconds(
 				world, this.initialWorldTime + this.pausedTime, this.timeLimitInSeconds);
 	}

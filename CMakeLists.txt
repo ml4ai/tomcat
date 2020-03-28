@@ -50,13 +50,6 @@ find_package(Boost 1.69
                         thread
              REQUIRED)
 
-find_package(OpenCV 4.0 REQUIRED COMPONENTS core imgproc calib3d
-             highgui objdetect)
-
-find_package(PortAudio)
-find_package(LibSndFile)
-
-
 if(DEFINED ENV{TRAVIS})
   add_subdirectory(external/dlib)
 else()
@@ -64,14 +57,9 @@ else()
 endif()
 
 add_subdirectory(external/malmo)
-add_subdirectory(external/OpenFace)
-
 
 add_subdirectory(src)
-target_include_directories(tomcat
-                           PRIVATE src external/malmo/Malmo/src
-                                   ${OpenFace_INCLUDE_DIRS})
-
+target_include_directories(tomcat PRIVATE src external/malmo/Malmo/src)
 target_include_directories(runExperiment PRIVATE external/malmo/Malmo/src)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/tools/launch_minecraft.sh

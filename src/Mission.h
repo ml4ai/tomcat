@@ -1,8 +1,6 @@
 #pragma once
 
-#include "Microphone.h"
 #include "MissionSpec.h"
-#include "WebcamSensor.h"
 #include <AgentHost.h>
 #include <boost/filesystem.hpp>
 #include <string>
@@ -39,39 +37,24 @@ namespace tomcat {
      * mission specifications
      * @param time_limit_in_seconds - Duration of the mission in seconds
      * @param self_report_prompt_time_in_seconds - Frequency of self-reports
-     * @param video_width - Width of the screen
-     * @param video_height - Height of the screen
      * @param port_number - Port number to connect with the Minecraft server
-     * @param frames_per_second - Number of frames per seconds when recording
      * video
-     * @param bit_rate - Bit rate when recording video
-     * @param record_video - Flag that activates video recording
      * @param record_observations - Flag that activates observations recording
-     * @param activate_webcam - Flag that activates the webcam
-     * @param record_audio - Flag that activates audio recording
      * @param record_commands - Flag that activates commands recording
      * @param record_rewards - Flag that activates rewards recording
      * @param multiplayer - Flag that indicates a multiplayer mission
      * @param record_path - Path where recordings will be saved
-     * @param audio_record_path - Path where the audio will be saved
+
      */
     Mission(std::string mission_id_or_path,
             unsigned int time_limit_in_seconds,
             unsigned int self_report_prompt_time_in_seconds,
-            unsigned int video_width,
-            unsigned int video_height,
             int port_number,
-            int frames_per_second,
-            int64_t bit_rate,
-            bool record_video,
             bool record_observations,
-            bool activate_webcam,
-            bool record_audio,
             bool record_commands,
             bool record_rewards,
             bool multiplayer,
-            std::string record_path = "./saved_data.tgz",
-            std::string audio_record_path = "audio_recording.wav");
+            std::string record_path = "./saved_data.tgz");
 
     /**
      * Destructor
@@ -103,24 +86,14 @@ namespace tomcat {
     std::string mission_id_or_path;
     unsigned int time_limit_in_seconds;
     unsigned int self_report_prompt_time_in_seconds;
-    unsigned int video_width;
-    unsigned int video_height;
     int port_number;
-    int frames_per_second;
-    int64_t bit_rate;
-    bool record_video;
     bool record_observations;
-    bool activate_webcam;
-    bool record_audio;
     bool record_commands;
     bool record_rewards;
     bool multiplayer;
     std::string record_path = "./saved_data.tgz";
-    std::string audio_record_path = "audio_recording.wav";
     std::shared_ptr<malmo::AgentHost> minecraft_server;
     std::vector<std::shared_ptr<malmo::AgentHost>> minecraft_clients;
-    std::shared_ptr<WebcamSensor> webcam;
-    std::shared_ptr<Microphone> microphone;
     std::shared_ptr<malmo::ClientPool> client_pool;
     std::vector<std::shared_ptr<LocalAgent>> tomcat_agents;
 
@@ -133,8 +106,7 @@ namespace tomcat {
      * Retrieves, from a mission id, the folder name where its hand-constructed
      * world is
      */
-    inline static std::unordered_map<int, std::string> id_to_world_folder_map =
-        {
+    inline static std::unordered_map<int, std::string> id_to_world_folder_map = {
             {TUTORIAL, "tutorial"},
             {SAR, "sar"},
     };
@@ -181,20 +153,11 @@ namespace tomcat {
       void safe_wait_to_start();
 
     /**
-     * Initialize external sensors
-     */
-    void init_external_sensors();
-
-    /**
      * Observe the mission. This method corresponds to the mission main loop and
      * is executed while the mission is running
      */
     void observe();
 
-    /**
-     * Clean up processes related to external sensors
-     */
-    void finalize_external_sensors();
   };
 
 } // namespace tomcat

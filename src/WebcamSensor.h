@@ -19,17 +19,15 @@ namespace tomcat {
       // The modules that are being used for tracking
       this->face_model = LandmarkDetector::CLNF();
       if (!this->face_model.loaded_successfully) {
-        fmt::print("ERROR: Could not load the landmark detector");
+        throw std::runtime_error("Could not load the landmark detector.");
       }
 
       if (!this->face_model.eye_model) {
-        fmt::print("WARNING: no eye model found");
+        throw std::runtime_error("No eye model found");
       }
 
       this->fps_tracker.AddFrame();
       this->sequence_reader.Open(arguments);
-      fmt::print("Device or file opened");
-      fmt::print("Starting tracking");
       this->rgb_image = this->sequence_reader.GetNextFrame();
     };
 

@@ -2,11 +2,12 @@
 #include "Mission.h"
 #include "utils.h"
 #include <boost/program_options.hpp>
+#include <fmt/format.h>
 #include <string>
 
 using namespace boost::program_options;
 using namespace std;
-using fmt::print, tomcat::get_timestamp;
+using fmt::print;
 using namespace fmt::literals;
 using namespace tomcat;
 
@@ -24,24 +25,10 @@ options_description load_options() {
       "Self-report prompt interval time (in seconds).")(
       "port,p",
       value<unsigned int>()->default_value(10000),
-      "Port to control (>=10000)")("activate_webcam,w",
-                                   bool_switch()->default_value(false),
-                                   "Activate webcam to detect face landmarks.")(
-      "activate_microphone",
-      bool_switch()->default_value(false),
-      "Activate microphone to record audio.")(
-      "audio_record_path",
-      value<string>()->default_value("./audio_recording_" + get_timestamp() +
-                                     ".wav"),
-      "Filepath to save audio recording to.")(
+      "Port to control (>=10000)")(
       "record_all",
       bool_switch()->default_value(false),
       "Activate all recordings except bitmaps")(
-      "record_video",
-      bool_switch()->default_value(false),
-      "Activate video recordings")("record_audio",
-                                   bool_switch()->default_value(false),
-                                   "Activate audio recordings")(
       "record_observations",
       bool_switch()->default_value(false),
       "Activate observation recordings")("record_commands",
@@ -55,21 +42,9 @@ options_description load_options() {
       "multiplayer",
       bool_switch()->default_value(false),
       "The mission should run in multiplayer mode")(
-      "video_fps",
-      value<unsigned int>()->default_value(20),
-      "Frames per second for video recordings")(
-      "video_bit_rate",
-      value<int64_t>()->default_value(400000),
-      "Bit rate for video recordings")(
       "record_path",
-      value<string>()->default_value("./saved_data_" + get_timestamp() +
-                                     ".tgz"),
-      "Path to save Malmo data")("video_width",
-                                 value<unsigned int>()->default_value(640),
-                                 "Width for video recordings")(
-      "video_height",
-      value<unsigned int>()->default_value(480),
-      "Height for video recordings");
+      value<string>()->default_value("./saved_data_" + get_timestamp() + ".tgz"),
+      "Path to save Malmo data");
 
   return options;
 }
@@ -101,20 +76,11 @@ Mission create_mission(variables_map parameters_map) {
   string mission_id_or_path = parameters_map["mission"].as<string>();
   string record_path = parameters_map["record_path"].as<string>();
   unsigned int port_number = parameters_map["port"].as<unsigned int>();
-  unsigned int video_width = parameters_map["video_width"].as<unsigned int>();
-  unsigned int video_height = parameters_map["video_height"].as<unsigned int>();
-  unsigned int frames_per_second =
-      parameters_map["video_fps"].as<unsigned int>();
   unsigned int time_limit_in_seconds =
       parameters_map["time_limit"].as<unsigned int>();
   unsigned int self_report_prompt_time_in_seconds =
       parameters_map["self_report"].as<unsigned int>();
-  int64_t bit_rate = parameters_map["video_bit_rate"].as<int64_t>();
-  bool activate_webcam = parameters_map["activate_webcam"].as<bool>();
   bool record_all = parameters_map["record_all"].as<bool>();
-  bool record_video = parameters_map["record_video"].as<bool>();
-  bool record_audio = parameters_map["record_audio"].as<bool>();
-  string audio_record_path = parameters_map["audio_record_path"].as<string>();
   bool record_observations = parameters_map["record_observations"].as<bool>();
   bool record_commands = parameters_map["record_commands"].as<bool>();
   bool record_rewards = parameters_map["record_rewards"].as<bool>();
@@ -129,20 +95,12 @@ Mission create_mission(variables_map parameters_map) {
   Mission mission = Mission(mission_id_or_path,
                             time_limit_in_seconds,
                             self_report_prompt_time_in_seconds,
-                            video_width,
-                            video_height,
                             port_number,
-                            frames_per_second,
-                            bit_rate,
-                            record_video,
                             record_observations,
-                            activate_webcam,
-                            record_audio,
                             record_commands,
                             record_rewards,
                             multiplayer,
-                            record_path,
-                            audio_record_path);
+                            record_path);
   return mission;
 }
 
