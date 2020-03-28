@@ -52,6 +52,12 @@ options_description load_options() {
       "Activate reward recordings")("video_fps",
                                     value<unsigned int>()->default_value(20),
                                     "Frames per second for video recordings")(
+      "multiplayer",
+      bool_switch()->default_value(false),
+      "The mission should run in multiplayer mode")(
+      "video_fps",
+      value<unsigned int>()->default_value(20),
+      "Frames per second for video recordings")(
       "video_bit_rate",
       value<int64_t>()->default_value(400000),
       "Bit rate for video recordings")(
@@ -112,6 +118,7 @@ Mission create_mission(variables_map parameters_map) {
   bool record_observations = parameters_map["record_observations"].as<bool>();
   bool record_commands = parameters_map["record_commands"].as<bool>();
   bool record_rewards = parameters_map["record_rewards"].as<bool>();
+  bool multiplayer = parameters_map["multiplayer"].as<bool>();
 
   if (record_all) {
     record_observations = true;
@@ -133,6 +140,7 @@ Mission create_mission(variables_map parameters_map) {
                             record_audio,
                             record_commands,
                             record_rewards,
+                            multiplayer,
                             record_path,
                             audio_record_path);
   return mission;

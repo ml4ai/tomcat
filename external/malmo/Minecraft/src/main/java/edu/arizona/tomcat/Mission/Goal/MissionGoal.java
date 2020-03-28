@@ -1,10 +1,12 @@
 package edu.arizona.tomcat.Mission.Goal;
 
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
 
 public abstract class MissionGoal {
 
   protected boolean goalAchieved;
+  protected EntityPlayerMP player;
 
   /**
    * Keeps track of the goal progress at each game iteration
@@ -32,4 +34,10 @@ public abstract class MissionGoal {
    * @param world - Minecraft world
    */
   protected abstract void updateGoalStatus(World world);
+  
+  /**
+   * Retrieves the player who accomplished the goal
+   * @return
+   */
+  public EntityPlayerMP getPlayer() { return this.player; }
 }

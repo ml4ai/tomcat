@@ -2,15 +2,14 @@ package edu.arizona.tomcat.Mission;
 
 import java.util.ArrayList;
 
-import com.microsoft.Malmo.MalmoMod;
-
+import edu.arizona.tomcat.Messaging.TomcatClientServerHandler;
 import edu.arizona.tomcat.Messaging.TomcatMessageData;
 import edu.arizona.tomcat.Messaging.TomcatMessaging;
+import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
 import edu.arizona.tomcat.Mission.gui.RichContent;
 import edu.arizona.tomcat.Utils.Converter;
-import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
 
@@ -190,13 +189,18 @@ public class MissionPhase {
       this.status = Status.RUNNING;
     }
     else {
-      TomcatMessageData messageData = new TomcatMessageData(this.instructions);
-      MalmoMod.network.sendTo(
-          new TomcatMessaging.TomcatMessage(
-              TomcatMessageType.SHOW_INSTRUCTIONS_SCREEN, messageData),
-          MinecraftServerHelper.getFirstPlayer());
+      askClientsToShowInstructions();
       this.status = Status.WAITING_FOR_INSTRUCTIONS_DISMISSAL;
     }
+  }
+
+  /**
+   * Asks all the clients to show instructions
+   */
+  private void askClientsToShowInstructions() {
+	TomcatMessageData messageData = new TomcatMessageData(this.instructions);    
+    TomcatMessaging.TomcatMessage message = new TomcatMessage(TomcatMessageType.SHOW_INSTRUCTIONS_SCREEN, messageData);
+	TomcatClientServerHandler.sendMessageToAllClients(message, true);
   }
 
   /**
@@ -254,14 +258,19 @@ public class MissionPhase {
         this.getRemainingSecondsToShowMessageScreen(world);
 
     if (remainingTimeToShowMessageScreen <= 0) {
-      TomcatMessageData messageData = new TomcatMessageData();
-      messageData.setMissionPhaseMessage(this.messageOnCompletion);
-      MalmoMod.network.sendTo(
-          new TomcatMessaging.TomcatMessage(
-              TomcatMessageType.SHOW_MESSAGE_SCREEN, messageData),
-          MinecraftServerHelper.getFirstPlayer());
+      this.askClientsToShowMessageScreen();
       this.status = Status.WAITING_FOR_MESSAGE_DISMISSAL;
     }
+  }
+  
+  /**
+   * Asks the clients to show message screen
+   */
+  private void askClientsToShowMessageScreen() {
+	TomcatMessageData messageData = new TomcatMessageData();
+    messageData.setMissionPhaseMessage(this.messageOnCompletion);
+	TomcatMessaging.TomcatMessage message = new TomcatMessage(TomcatMessageType.SHOW_MESSAGE_SCREEN, messageData);
+	TomcatClientServerHandler.sendMessageToAllClients(message, false);	
   }
 
   private int getRemainingSecondsToShowMessageScreen(World world) {
@@ -285,9 +294,9 @@ public class MissionPhase {
     int remainingSeconds = this.getRemainingTimeToDismissMessageScreen(world);
 
     if (remainingSeconds <= 0) {
-      MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(
-                                  TomcatMessageType.DISMISS_OPEN_SCREEN),
-                              MinecraftServerHelper.getFirstPlayer());
+    	TomcatMessaging.TomcatMessage message = new TomcatMessage(TomcatMessageType.DISMISS_OPEN_SCREEN);
+		TomcatClientServerHandler.sendMessageToAllClients(message, false);	
+		this.handleDismissalOfOpenScreen();
     }
   }
 
@@ -356,7 +365,7 @@ public class MissionPhase {
    * Defines actions to be taken after the currently open screen was dismissed
    * by the client
    */
-  public void openScreenDismissed() {
+  public void handleDismissalOfOpenScreen() {
     switch (this.status) {
     case WAITING_FOR_INSTRUCTIONS_DISMISSAL:
       this.timeOnStatusSet = 0;

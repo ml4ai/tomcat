@@ -2,8 +2,6 @@ package edu.arizona.tomcat.Messaging;
 
 import java.io.IOException;
 
-import com.microsoft.Malmo.MalmoMod;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.IThreadListener;
@@ -26,7 +24,9 @@ public class TomcatMessaging {
     SHOW_SELF_REPORT,
     SELF_REPORT_ANSWERED,
     DISPLAY_INSTRUCTIONS,
-    CONNECTION_ERROR
+    CONNECTION_ERROR,
+    UPDATE_COUNTDOWN,
+    INIT_MISSION
   }
   ;
 
@@ -61,6 +61,7 @@ public class TomcatMessaging {
     public void fromBytes(ByteBuf buf) {
       try {
         this.messageType = TomcatMessageType.values()[buf.readInt()];
+        System.out.println(this.messageType);
         this.data = new TomcatMessageData();
         this.data.readDataFromBuffer(buf);
       }
@@ -102,14 +103,13 @@ public class TomcatMessaging {
     public IMessage onMessage(final TomcatMessage message,
                               final MessageContext ctx) {
       IThreadListener mainThread = null;
-      if (ctx.side == Side.CLIENT) {
+      System.out.println(ctx.side);
+      if (ctx.side == Side.CLIENT) {    	  
         mainThread = Minecraft.getMinecraft();
         mainThread.addScheduledTask(new Runnable() {
           @Override
           public void run() {
-            MalmoMod.instance.getClient()
-                .getTomcatClientMission()
-                .handleMessageFromServer(message);
+        	  TomcatClientServerHandler.handleMessageFromServer(message);        	  
           }
         });
       }
@@ -118,10 +118,8 @@ public class TomcatMessaging {
             (WorldServer)ctx.getServerHandler().playerEntity.getServerWorld();
         mainThread.addScheduledTask(new Runnable() {
           @Override
-          public void run() {
-            MalmoMod.instance.getServer()
-                .getTomcatServerMission()
-                .handleMessageFromClient(message);
+          public void run() {        	  
+        	  TomcatClientServerHandler.handleMessageBackFromClient(ctx.getServerHandler().playerEntity, message);
           }
         });
       }

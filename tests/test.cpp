@@ -41,6 +41,9 @@ options_description load_options() {
             "Activate reward recordings")("video_fps",
                                           value<unsigned int>()->default_value(20),
                                           "Frames per second for video recordings")(
+            "multiplayer",
+            bool_switch()->default_value(false),
+            "The mission should run in multiplayer mode")(
             "video_bit_rate",
             value<int64_t>()->default_value(400000),
             "Bit rate for video recordings")(
@@ -93,6 +96,9 @@ Mission create_mission(variables_map parameters_map) {
     bool record_observations = parameters_map["record_observations"].as<bool>();
     bool record_commands = parameters_map["record_commands"].as<bool>();
     bool record_rewards = parameters_map["record_rewards"].as<bool>();
+    bool multiplayer = parameters_map["multiplayer"].as<bool>();
+
+    std::cout << "Here" <<std::endl;
 
     if (record_all) {
         record_observations = true;
@@ -102,13 +108,16 @@ Mission create_mission(variables_map parameters_map) {
 
     Mission mission = Mission(mission_id_or_path, time_limit_in_seconds, self_report_prompt_time_in_seconds, video_width, video_height,
                               port_number, frames_per_second, bit_rate, record_video, record_observations, activate_webcam,
-                              record_audio, record_commands, record_rewards, record_path);
+                              record_audio, record_commands, record_rewards, multiplayer, record_path);
     return mission;
 }
 
 int main(int argc, const char* argv[]) {
+    std::cout << "Before Loading" << std::endl;
     options_description options = load_options();
+    std::cout << "After Loading" << std::endl;
     variables_map parameters_map = parse_parameters(options, argc, argv);
+    std::cout << "After parsing params" << std::endl;
 
     if(are_parameters_ok(parameters_map, options)){
         Mission mission = create_mission(parameters_map);

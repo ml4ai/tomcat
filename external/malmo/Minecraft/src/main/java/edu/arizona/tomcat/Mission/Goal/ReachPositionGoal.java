@@ -1,6 +1,7 @@
 package edu.arizona.tomcat.Mission.Goal;
 
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
 
 public class ReachPositionGoal extends MissionGoal {
@@ -26,7 +27,13 @@ public class ReachPositionGoal extends MissionGoal {
 
   @Override
   public void updateGoalStatus(World world) {
-    this.goalAchieved = MinecraftServerHelper.getFirstPlayer().getDistanceSq(
-                            this.x, this.y, this.z) < Math.pow(this.range, 2);
+	  for (EntityPlayerMP player : MinecraftServerHelper.getServer().getPlayerList().getPlayers()) {
+		  this.goalAchieved = player.getDistanceSq(this.x, this.y, this.z) < Math.pow(this.range, 2);
+		  
+		  if (this.goalAchieved) {
+	          this.player = player;
+	          break;
+	      }
+	  }
   }
 }

@@ -6,6 +6,7 @@ import com.microsoft.Malmo.Schemas.EntityTypes;
 
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
 
 public class ApproachEntityGoal extends MissionGoal {
@@ -41,9 +42,14 @@ public class ApproachEntityGoal extends MissionGoal {
   public void updateGoalStatus(World world) {
     for (Entity entity : world.getLoadedEntityList()) {
       if (shouldBeChecked(entity)) {
-        this.goalAchieved =
-            MinecraftServerHelper.getFirstPlayer().getDistanceToEntity(entity) <
-            Math.pow(this.distance, 2);
+    	  for (EntityPlayerMP player : MinecraftServerHelper.getServer().getPlayerList().getPlayers()) {
+    		  this.goalAchieved = player.getDistanceToEntity(entity) < Math.pow(this.distance, 2);
+    		  if (this.goalAchieved) {
+    	          this.player = player;
+    	          break;
+    	      }
+    	  }
+        
         if (this.goalAchieved) {
           this.entity = entity;
           break;
@@ -77,4 +83,5 @@ public class ApproachEntityGoal extends MissionGoal {
    * @return
    */
   public Entity getEntity() { return this.entity; }
+  
 }
