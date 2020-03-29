@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# We cannot use '-u' because we need to be able to test if TRAVIS is set. We
-# cannot simply declare TRAVIS and then test if it is NULL, as cmake checks
-# whether TRAVIS is set. If we had confidence that tcsh was installed, then we
+# We cannot use '-u' because we need to be able to test if GITHUB_ACTIONS is set. We
+# cannot simply declare GITHUB_ACTIONS and then test if it is NULL, as cmake checks
+# whether GITHUB_ACTIONS is set. If we had confidence that tcsh was installed, then we
 # could use tcsh to check if the variable was bound, but this is an install
 # script that is supposed to install things we might need, counting on as little
 # as possible.
@@ -16,7 +16,7 @@ export TOMCAT
 
 # On Github Actions, we will create and activate a Python virtual environment
 if [[ -n $GITHUB_ACTIONS ]]; then
-  if [[ "$OSTYPE" == "linux" ]]; then
+  if [ -x "$(command -v apt-get)" ]; then
     sudo apt-get update
     sudo apt-get install -y python3-venv xvfb
     python3 -m venv tomcat_venv
