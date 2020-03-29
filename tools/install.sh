@@ -25,9 +25,9 @@ pushd "${TOMCAT}"
     if [[ $? -ne 0 ]]; then exit 1; fi;
 
     pushd build > /dev/null 
-        if [[ ! -z $GITHUB_ACTIONS ]]; then
+        if [[ -n $GITHUB_ACTIONS ]]; then
             cmake ${TOMCAT} -DBoost_ARCHITECTURE=-x64\
-                            -DBOOST_ROOT=$BOOST_ROOT_1_69_0\
+                            -DBOOST_ROOT=$BOOST_ROOT_1_69_0
             if [[ $? -ne 0 ]]; then exit 1; fi;
         else
             cmake ${TOMCAT}

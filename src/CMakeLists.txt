@@ -22,10 +22,8 @@ target_link_libraries(
 )
 
 
-if(DEFINED ENV{TRAVIS})
-  option(CODE_COVERAGE "Enable coverage reporting" ON)
-  message("Compilation occurring on Travis, code coverage reporting on.")
-endif()
+option(CODE_COVERAGE "Enable coverage reporting" OFF)
+message("Compilation occurring on Travis, code coverage reporting on.")
 
 # Todo make code coverage work on Linux as well.
 if(APPLE AND CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")

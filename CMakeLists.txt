@@ -2,15 +2,6 @@ cmake_minimum_required(VERSION 3.10)
 
 project(tomcat)
 
-if(NOT DEFINED ENV{TRAVIS})
-  # Deal with C++17 warnings on macOS. Ubuntu's DLib available through apt-get
-  # doesn't adhere to the C++17 standard unfortunately.
-  if (APPLE)
-    set(CMAKE_CXX_STANDARD 17)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-  endif()
-endif()
-
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/tools/cmake/")
 
 include(utils)
