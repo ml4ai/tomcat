@@ -154,21 +154,6 @@ elif [ -x "$(command -v apt-get)" ]; then
     sudo apt-get update
     if [[ $? -ne 0 ]]; then exit 1; fi;
 
-    # Install a version of CMake more up-to-date than what is available by
-    # default for Ubuntu Bionic
-
-    #if [ -x "$(command -v cmake)" ]; then
-      #cmake_version=`cmake --version | head -n 1 | cut -d ' ' -f 3`
-      #cmake_major_version=`echo $cmake_version | cut -d '.' -f 1`
-      #cmake_minor_version=`echo $cmake_version | cut -d '.' -f 2`
-      #echo $cmake_version $cmake_major_version $cmake_minor_version
-      #if (( $cmake_major_version < 3 )) || (( $cmake_minor_version < 15 )); then
-        #./tools/install_cmake_from_source.sh
-      #fi
-    #else
-      #./tools/install_cmake_from_source.sh
-    #fi
-
     sudo apt-get install -y \
         cmake \
         gcc-9 \
@@ -179,18 +164,16 @@ elif [ -x "$(command -v apt-get)" ]; then
         openjdk-8-jre=8u162-b12-1\
         openjdk-8-jdk-headless=8u162-b12-1\
         openjdk-8-jdk=8u162-b12-1
-        #libopenblas-dev \
-        #libboost-all-dev \
-        #libopencv-dev \
-        #libdlib-dev \
     if [[ $? -ne 0 ]]; then exit 1; fi;
 
+    if [[ -z "$GITHUB_ACTIONS" ]]; then
+      sudo apt-get install -y libboost-all-dev
+    fi
+
+    # TODO - when OpenFace gets added back, add opencv, openblas, and dlib as
+    # dependencies.
     sudo update-java-alternatives -s java-1.8.0-openjdk-amd64
 
-    #if [[ ! -f "/usr/local/lib/libdlib.a" ]]; then
-      #./tools/install_dlib_from_source.sh
-    #fi
-    
 else
     echo "This is not a macOS and not a Debian Linux distribution (at least"
     echo "apt-get is not around). We cannot proceed with the automated
