@@ -1,15 +1,14 @@
 package com.microsoft.Malmo.MissionHandlers;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
 import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.MalmoMod.IMalmoMessageListener;
 import com.microsoft.Malmo.MalmoMod.MalmoMessageType;
 import com.microsoft.Malmo.Schemas.MissionInit;
 import com.microsoft.Malmo.Schemas.TurnBasedCommands;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class TurnBasedCommandsImplementation
     extends CommandGroup implements IMalmoMessageListener {

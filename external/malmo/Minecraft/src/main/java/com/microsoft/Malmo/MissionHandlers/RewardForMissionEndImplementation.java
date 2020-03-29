@@ -22,13 +22,12 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
-import java.util.Hashtable;
-
 import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.MissionHandlerInterfaces.IRewardProducer;
 import com.microsoft.Malmo.Schemas.MissionEndRewardCase;
 import com.microsoft.Malmo.Schemas.MissionInit;
 import com.microsoft.Malmo.Schemas.RewardForMissionEnd;
+import java.util.Hashtable;
 
 public class RewardForMissionEndImplementation
     extends RewardBase implements IRewardProducer {

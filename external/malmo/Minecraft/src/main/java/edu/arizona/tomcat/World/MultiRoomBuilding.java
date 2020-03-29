@@ -1,9 +1,8 @@
 package edu.arizona.tomcat.World;
 
-import net.minecraft.util.math.BlockPos;
-
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.util.math.BlockPos;
 
 /**
  * This file contains the class MultiRoomBuilding which extends the

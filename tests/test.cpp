@@ -12,35 +12,40 @@ using namespace tomcat;
 
 options_description load_options() {
   options_description options("Allowed options");
-  options.add_options()("help,h", "Executable for running ToMCAT experiments.")(
-      "mission",
-      value<string>()->default_value("0"),
-      "Id or path to mission XML file.\n0: Tutorial\n1: Search and Rescue\n2: "
-      "Item Crafting\n3: Room Escape")("time_limit",
-                                       value<unsigned int>()->default_value(20),
-                                       "Time limit for mission (in seconds).")(
-      "self_report",
-      value<unsigned int>()->default_value(180),
-      "Self-report prompt interval time (in seconds).")(
-      "port,p",
-      value<unsigned int>()->default_value(10000),
-      "Port to control (>=10000)")(
-      "record_all",
-      bool_switch()->default_value(false),
-      "Activate all recordings except bitmaps")(
-      "record_observations",
-      bool_switch()->default_value(false),
-      "Activate observation recordings")("record_commands",
-                                         bool_switch()->default_value(false),
-                                         "Activate command recordings")(
-      "record_rewards",
-      bool_switch()->default_value(false),
-      "Activate reward recordings")(
-      "record_path",
-      value<string>()->default_value("./saved_data.tgz"),
-      "Path to save recordings");
+    options.add_options()("help,h", "Executable for running ToMCAT experiments.")(
+            "mission",
+            value<string>()->default_value("0"),
+            "Id or path to mission XML file.\n0: Tutorial\n1: Zombie Invasion")(
+            "time_limit",
+            value<unsigned int>()->default_value(20),
+            "Time limit for mission (in seconds).")(
+            "self_report",
+            value<unsigned int>()->default_value(180),
+            "Self-report prompt interval time (in seconds).")(
+            "port,p",
+            value<unsigned int>()->default_value(10000),
+            "Port to control (>=10000)")(
+            "record_all",
+            bool_switch()->default_value(false),
+            "Activate all recordings except bitmaps")(
+            "record_observations",
+            bool_switch()->default_value(false),
+            "Activate observation recordings")("record_commands",
+                                               bool_switch()->default_value(false),
+                                               "Activate command recordings")(
+            "record_rewards",
+            bool_switch()->default_value(false),
+            "Activate reward recordings")("video_fps",
+                                          value<unsigned int>()->default_value(20),
+                                          "Frames per second for video recordings")(
+            "multiplayer",
+            bool_switch()->default_value(false),
+            "The mission should run in multiplayer mode")(
+            "record_path",
+            value<string>()->default_value("./saved_data_.tgz"),
+            "Path to save Malmo data");
 
-  return options;
+    return options;
 }
 
 variables_map
@@ -78,6 +83,7 @@ Mission create_mission(variables_map parameters_map) {
   bool record_observations = parameters_map["record_observations"].as<bool>();
   bool record_commands = parameters_map["record_commands"].as<bool>();
   bool record_rewards = parameters_map["record_rewards"].as<bool>();
+    bool multiplayer = parameters_map["multiplayer"].as<bool>();
 
   if (record_all) {
     record_observations = true;
@@ -92,6 +98,7 @@ Mission create_mission(variables_map parameters_map) {
                             record_observations,
                             record_commands,
                             record_rewards,
+                            multiplayer,
                             record_path);
   return mission;
 }

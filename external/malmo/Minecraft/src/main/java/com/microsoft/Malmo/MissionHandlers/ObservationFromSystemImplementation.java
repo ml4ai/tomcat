@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.Schemas.MissionInit;
 import com.microsoft.Malmo.Utils.TimeHelper;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;

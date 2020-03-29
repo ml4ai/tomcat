@@ -22,14 +22,12 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
+import com.microsoft.Malmo.MissionHandlerInterfaces.IWorldDecorator;
+import com.microsoft.Malmo.Schemas.MissionInit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import net.minecraft.world.World;
-
-import com.microsoft.Malmo.MissionHandlerInterfaces.IWorldDecorator;
-import com.microsoft.Malmo.Schemas.MissionInit;
 
 /**
  * Composite class that manages a set of world builders

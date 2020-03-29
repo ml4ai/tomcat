@@ -22,11 +22,10 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import com.microsoft.Malmo.MissionHandlerInterfaces.IRewardProducer;
 import com.microsoft.Malmo.Schemas.MissionInit;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class RewardGroup extends RewardBase implements IRewardProducer {
   private ArrayList<IRewardProducer> producers;

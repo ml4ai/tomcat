@@ -1,6 +1,8 @@
 package com.microsoft.Malmo.ASISTBlocks;
 
 import edu.arizona.tomcat.Utils.DiscreteEventsHelper;
+import java.util.HashSet;
+import java.util.Set;
 import net.minecraft.block.BlockLever;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -9,9 +11,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * This class defines a new lever that can write event observations

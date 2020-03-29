@@ -1,19 +1,13 @@
 package com.microsoft.Malmo.MissionHandlers;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.MissionHandlerInterfaces.IWorldDecorator;
 import com.microsoft.Malmo.Schemas.MissionInit;
 import com.microsoft.Malmo.Schemas.TomcatDecorator;
-
-import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
-import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageHandler;
 import edu.arizona.tomcat.Mission.MissionHandler;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
 
 /**
  * WorldBuilder for the ToMCAT missions.
@@ -39,10 +33,6 @@ public class TomcatDecoratorImplementation
    * Initialize the mission handler object
    */
   private void initMissionHandler() {
-    MalmoMod.network.registerMessage(
-        TomcatMessageHandler.class, TomcatMessage.class, 100, Side.CLIENT);
-    MalmoMod.network.registerMessage(
-        TomcatMessageHandler.class, TomcatMessage.class, 101, Side.SERVER);
     this.missionHandler = new MissionHandler();
     this.missionHandler.setMission(
         this.decorator.getMission().intValue(),

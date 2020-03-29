@@ -22,24 +22,21 @@
 
 package com.microsoft.Malmo.Utils;
 
-import net.minecraftforge.common.config.Configuration;
 import com.microsoft.Malmo.MalmoMod;
-
-import java.io.File;
-import java.util.List;
-import java.util.Date;
-
-import java.util.logging.*;
-import java.util.logging.Level;
-
-import org.apache.commons.lang3.time.DateFormatUtils;
-import javax.xml.bind.JAXBException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import com.microsoft.Malmo.Schemas.AgentSection;
 import com.microsoft.Malmo.Schemas.Mission;
 import com.microsoft.Malmo.Schemas.MissionInit;
 import com.microsoft.Malmo.Schemas.Reward;
+import java.io.File;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.*;
+import java.util.logging.Level;
+import javax.xml.bind.JAXBException;
+import net.minecraftforge.common.config.Configuration;
+import org.apache.commons.lang3.time.DateFormatUtils;
 
 /**
  * Class that helps to centralise optional logging of mission rewards.<br>

@@ -22,14 +22,13 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
+import com.google.gson.JsonObject;
+import com.microsoft.Malmo.Utils.JSONWorldDataHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-
-import com.google.gson.JsonObject;
-import com.microsoft.Malmo.Utils.JSONWorldDataHelper;
 
 /**
  * Simple IObservationProducer object that pings out a whole bunch of data.<br>

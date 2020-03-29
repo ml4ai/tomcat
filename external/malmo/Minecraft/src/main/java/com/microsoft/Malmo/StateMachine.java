@@ -22,12 +22,10 @@
 
 package com.microsoft.Malmo;
 
+import com.microsoft.Malmo.Utils.TCPUtils;
 import java.util.ArrayList;
 import java.util.logging.Level;
-
 import net.minecraftforge.common.MinecraftForge;
-
-import com.microsoft.Malmo.Utils.TCPUtils;
 
 /**
  * Class designed to track and control the state of the mod, especially

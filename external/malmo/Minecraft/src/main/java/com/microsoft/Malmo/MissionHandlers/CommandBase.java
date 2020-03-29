@@ -22,12 +22,11 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.microsoft.Malmo.MissionHandlerInterfaces.ICommandHandler;
 import com.microsoft.Malmo.Schemas.CommandListModifier;
 import com.microsoft.Malmo.Schemas.MissionInit;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Base class for Command handlers - provides XML parsing to build up an

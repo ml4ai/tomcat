@@ -22,22 +22,19 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
-import io.netty.buffer.ByteBuf;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-
 import com.google.gson.JsonObject;
 import com.microsoft.Malmo.Schemas.GridDefinition;
 import com.microsoft.Malmo.Schemas.ObservationFromGrid;
 import com.microsoft.Malmo.Utils.JSONWorldDataHelper;
 import com.microsoft.Malmo.Utils.JSONWorldDataHelper.GridDimensions;
+import io.netty.buffer.ByteBuf;
+import java.util.ArrayList;
+import java.util.List;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 /**
  * IObservationProducer that spits out block types of the cell around the

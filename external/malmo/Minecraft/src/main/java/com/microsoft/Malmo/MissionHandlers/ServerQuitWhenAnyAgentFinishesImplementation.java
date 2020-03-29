@@ -22,14 +22,13 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
-import java.util.Map;
-
 import com.microsoft.Malmo.MalmoMod;
-import com.microsoft.Malmo.MalmoMod.MalmoMessageType;
 import com.microsoft.Malmo.MalmoMod.IMalmoMessageListener;
+import com.microsoft.Malmo.MalmoMod.MalmoMessageType;
 import com.microsoft.Malmo.MissionHandlerInterfaces.IWantToQuit;
 import com.microsoft.Malmo.Schemas.MissionInit;
 import com.microsoft.Malmo.Schemas.ServerQuitWhenAnyAgentFinishes;
+import java.util.Map;
 
 /**
  * Simple quit handler for server that signals a quit as soon as any agent has

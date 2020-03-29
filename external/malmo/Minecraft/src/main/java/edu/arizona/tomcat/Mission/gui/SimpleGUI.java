@@ -1,8 +1,7 @@
 package edu.arizona.tomcat.Mission.gui;
 
-import java.util.ArrayList;
-
 import edu.arizona.tomcat.Emotion.EmotionHandler;
+import java.util.ArrayList;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.client.gui.GuiScreen;

@@ -1,31 +1,28 @@
 package edu.arizona.tomcat.Mission;
 
-import java.math.BigDecimal;
-import java.util.UUID;
-
-import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.Schemas.BlockType;
 import com.microsoft.Malmo.Schemas.EntityTypes;
 import com.microsoft.Malmo.Schemas.ItemType;
 import com.microsoft.Malmo.Schemas.PosAndDirection;
-
+import edu.arizona.tomcat.Messaging.TomcatClientServerHandler;
 import edu.arizona.tomcat.Messaging.TomcatMessageData;
 import edu.arizona.tomcat.Messaging.TomcatMessaging;
+import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
-import edu.arizona.tomcat.Mission.MissionPhase.CompletionStrategy;
-import edu.arizona.tomcat.Mission.Client.ClientMission;
-import edu.arizona.tomcat.Mission.Client.TutorialClientMission;
 import edu.arizona.tomcat.Mission.Goal.ApproachEntityGoal;
 import edu.arizona.tomcat.Mission.Goal.CraftItemGoal;
 import edu.arizona.tomcat.Mission.Goal.KillEntityGoal;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
 import edu.arizona.tomcat.Mission.Goal.ReachPositionGoal;
+import edu.arizona.tomcat.Mission.MissionPhase.CompletionStrategy;
 import edu.arizona.tomcat.Mission.gui.RichContent;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 import edu.arizona.tomcat.Utils.InventoryHandler;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.World.Drawing;
 import edu.arizona.tomcat.World.TomcatEntity;
+import java.math.BigDecimal;
+import java.util.UUID;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
 
@@ -51,6 +48,7 @@ public class TutorialMission extends Mission {
 
   public TutorialMission() {
     super();
+    this.id = ID.TUTORIAL;
     this.viewTime = 0;
     this.shouldSpawnSkeletonInTheArena = false;
     this.shouldSpawnZombieInsideTheBuilding = false;
@@ -58,11 +56,6 @@ public class TutorialMission extends Mission {
     this.skeletonUUID = UUID.randomUUID();
     this.zombieUUID = UUID.randomUUID();
     this.villagerUUID = UUID.randomUUID();
-  }
-
-  @Override
-  protected int getID() {
-    return MissionFactory.TUTORIAL;
   }
 
   @Override
@@ -243,27 +236,23 @@ public class TutorialMission extends Mission {
   private void changePlayerPerspective() {
     if (this.viewTime <= 2 * SECONDS_PER_CAMERA_VIEW) {
       /* viewTime is in seconds. The player stays in each view mode for 1.5
-   seconds. 20 Minecraft ticks equal 1 real second. viewTime is incremented by
-   0.05 till 30 such ticks (1.5 second) have passed for each view */
+seconds. 20 Minecraft ticks equal 1 real second. viewTime is incremented by
+0.05 till 30 such ticks (1.5 second) have passed for each view */
 
       double roundedTime = Math.round(this.viewTime * 100.0) / 100.0;
+      TomcatMessaging.TomcatMessage message =
+          new TomcatMessage(TomcatMessageType.VIEW_CHANGED);
 
       if (roundedTime == 0.00) {
-        MalmoMod.network.sendTo(
-            new TomcatMessaging.TomcatMessage(TomcatMessageType.VIEW_CHANGED),
-            MinecraftServerHelper.getFirstPlayer());
+        TomcatClientServerHandler.sendMessageToAllClients(message, false);
         // third person back view
       }
       else if (roundedTime == SECONDS_PER_CAMERA_VIEW) {
-        MalmoMod.network.sendTo(
-            new TomcatMessaging.TomcatMessage(TomcatMessageType.VIEW_CHANGED),
-            MinecraftServerHelper.getFirstPlayer());
+        TomcatClientServerHandler.sendMessageToAllClients(message, false);
         // third person front view
       }
       else if (roundedTime == 2 * SECONDS_PER_CAMERA_VIEW) {
-        MalmoMod.network.sendTo(
-            new TomcatMessaging.TomcatMessage(TomcatMessageType.VIEW_CHANGED),
-            MinecraftServerHelper.getFirstPlayer());
+        TomcatClientServerHandler.sendMessageToAllClients(message, false);
         // first person view
       }
       this.viewTime += 0.05;
@@ -340,8 +329,11 @@ public class TutorialMission extends Mission {
    */
   private void addMaterialsToUsersInventory(World world) {
     if (this.shouldaddMaterialsToUsersInventory) {
-      InventoryHandler.addBlockToInventory(BlockType.PLANKS, 3);
-      InventoryHandler.addItemToInventory(ItemType.STICK, 2);
+      for (EntityPlayerMP player :
+           MinecraftServerHelper.getServer().getPlayerList().getPlayers()) {
+        InventoryHandler.addBlockToInventory(player, BlockType.PLANKS, 3);
+        InventoryHandler.addItemToInventory(player, ItemType.STICK, 2);
+      }
       this.shouldaddMaterialsToUsersInventory = false;
     }
   }
@@ -350,10 +342,10 @@ public class TutorialMission extends Mission {
   protected void afterLastPhaseCompletion() {
     RichContent content =
         RichContent.createFromJson("tutorial_completion.json");
-    MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(
-                                TomcatMessageType.SHOW_COMPLETION_SCREEN,
-                                new TomcatMessageData(content)),
-                            MinecraftServerHelper.getFirstPlayer());
+    TomcatMessageData messageData = new TomcatMessageData(content);
+    TomcatMessaging.TomcatMessage message = new TomcatMessage(
+        TomcatMessageType.SHOW_COMPLETION_SCREEN, messageData);
+    TomcatClientServerHandler.sendMessageToAllClients(message, false);
     this.notifyAllAboutMissionEnding("0");
   }
 
@@ -366,19 +358,15 @@ public class TutorialMission extends Mission {
 
   private void handleVillagerRescue(World world, ApproachEntityGoal goal) {
     this.addToDeletion(goal.getEntity(), world.getTotalWorldTime());
-    MalmoMod.network.sendTo(
-        new TomcatMessaging.TomcatMessage(TomcatMessageType.VILLAGER_SAVED),
-        MinecraftServerHelper.getFirstPlayer());
+
+    TomcatMessaging.TomcatMessage message =
+        new TomcatMessage(TomcatMessageType.VILLAGER_SAVED);
+    TomcatClientServerHandler.sendMessageToAllClients(message, false);
   }
 
   @Override
   protected void onTimeOut() {
     // There's no timeout in the tutorial mission
-  }
-
-  @Override
-  public ClientMission getClientMissionInstance() {
-    return new TutorialClientMission();
   }
 
   @Override
@@ -419,19 +407,20 @@ public class TutorialMission extends Mission {
   }
 
   @Override
-  protected SelfReportContent getSelfReportContent(World world) {
+  protected SelfReportContent getSelfReportContent(EntityPlayerMP player,
+                                                   World world) {
     return null;
   }
 
   @Override
   protected void onPlayerDeath() {
+    this.cleanup();
     RichContent content =
         RichContent.createFromJson("tutorial_completion_fail.json");
-    MalmoMod.network.sendTo(new TomcatMessaging.TomcatMessage(
-                                TomcatMessageType.SHOW_COMPLETION_SCREEN,
-                                new TomcatMessageData(content)),
-                            MinecraftServerHelper.getFirstPlayer());
+    TomcatMessageData messageData = new TomcatMessageData(content);
+    TomcatMessaging.TomcatMessage message = new TomcatMessage(
+        TomcatMessageType.SHOW_COMPLETION_SCREEN, messageData);
+    TomcatClientServerHandler.sendMessageToAllClients(message, false);
     this.notifyAllAboutMissionEnding("1");
-    this.cleanup();
   }
 }

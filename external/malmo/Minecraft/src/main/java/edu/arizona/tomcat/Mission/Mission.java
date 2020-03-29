@@ -1,5 +1,21 @@
 package edu.arizona.tomcat.Mission;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.microsoft.Malmo.MalmoMod;
+import com.microsoft.Malmo.Schemas.PosAndDirection;
+import edu.arizona.tomcat.Emotion.EmotionHandler;
+import edu.arizona.tomcat.Messaging.TomcatClientServerHandler;
+import edu.arizona.tomcat.Messaging.TomcatMessageData;
+import edu.arizona.tomcat.Messaging.TomcatMessaging;
+import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
+import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
+import edu.arizona.tomcat.Mission.gui.FeedbackListener;
+import edu.arizona.tomcat.Mission.gui.SelfReportContent;
+import edu.arizona.tomcat.Utils.Converter;
+import edu.arizona.tomcat.Utils.MinecraftServerHelper;
+import edu.arizona.tomcat.Utils.MinecraftVanillaAIHandler;
+import edu.arizona.tomcat.World.DrawingHandler;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -9,25 +25,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.microsoft.Malmo.MalmoMod;
-import com.microsoft.Malmo.Schemas.PosAndDirection;
-
-import edu.arizona.tomcat.Emotion.EmotionHandler;
-import edu.arizona.tomcat.Messaging.TomcatMessageData;
-import edu.arizona.tomcat.Messaging.TomcatMessaging;
-import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
-import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
-import edu.arizona.tomcat.Mission.Client.ClientMission;
-import edu.arizona.tomcat.Mission.gui.FeedbackListener;
-import edu.arizona.tomcat.Mission.gui.SelfReportContent;
-import edu.arizona.tomcat.Utils.Converter;
-import edu.arizona.tomcat.World.DrawingHandler;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.monster.EntitySkeleton;
+import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.EntitySelectors;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.CommandEvent;
@@ -37,16 +42,25 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public abstract class Mission implements FeedbackListener, PhaseListener {
 
+  public static enum ID { TUTORIAL, SEARCH_AND_RESCUE }
+  ;
+
   private static final long ENTITY_DELETION_DELAY = 1;
   private static final String SELF_REPORT_FOLDER = "saves/self_reports";
   private HashMap<String, MissionSelfReport> selfReportPerPlayer;
 
+  protected ID id;
   protected static final int REMAINING_SECONDS_ALERT = 30;
   private boolean canShowSelfReport;
+  protected boolean missionPaused;
+  protected boolean worldFrozen;
+  protected boolean missionSentToClients;
   protected int numberOfPhasesCompleted;
   protected long timeLimitInSeconds;
   protected long selfReportPromptTimeInSeconds;
   protected long initialWorldTime;
+  protected long worldTimeOnPause;
+  protected long pausedTime;
   protected DrawingHandler drawingHandler;
   protected EmotionHandler.Emotion currentEmotion;
   protected MissionPhase currentPhase;
@@ -62,6 +76,9 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     this.listeners = new ArrayList<MissionListener>();
     this.selfReportPerPlayer = new HashMap<String, MissionSelfReport>();
     this.canShowSelfReport = false;
+    this.missionPaused = false;
+    this.worldFrozen = false;
+    this.missionSentToClients = false;
     this.entitiesToRemove = new HashMap<Entity, Long>();
     MinecraftForge.EVENT_BUS.register(this);
   }
@@ -91,12 +108,6 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
   protected abstract void onPlayerDeath();
 
   /**
-   * Gets the ID that identifies the type of mission
-   * @return
-   */
-  protected abstract int getID();
-
-  /**
    * Adds listener to be notified upon relevant mission events
    * @param listener - Mission listener object
    */
@@ -116,20 +127,19 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
   public void init(World world) {
     this.numberOfPhasesCompleted = 0;
     this.phases = new ArrayList<MissionPhase>();
+    this.initialWorldTime = world.getTotalWorldTime();
     this.createPhases();
     if (!this.phases.isEmpty()) {
       this.currentPhase = this.phases.get(0);
     }
-    this.initMalmoModClientAndServerMission();
+    this.setServerInfo();
   };
 
   /**
    * Initialize client and server mission objects in the active MalmoMod
    * instance
    */
-  public void initMalmoModClientAndServerMission() {
-    MalmoMod.instance.getClient().setTomcatClientMission(
-        this.getClientMissionInstance());
+  public void setServerInfo() {
     MalmoMod.instance.getServer().setTomcatServerMission(this);
     QuitProducer quitProducerHandler = new QuitProducer();
     this.addListener(quitProducerHandler);
@@ -137,31 +147,106 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
   }
 
   /**
-   * Retrieves a new instance of the mission that should run in the client side
-   * @return
-   */
-  protected abstract ClientMission getClientMissionInstance();
-
-  /**
    * Updates the mission from time to time. This method is called at every tick.
    * @param world - Mission world
    */
   public void update(World world) {
+    // These two initializations need to be here because the clients are not yet
+    // ready in the init method in a multiplayer setting
+    this.initMissionOnClients();
     this.initSelfReports(world);
-    if (this.timeLimitInSeconds > 0) {
-      int remainingSeconds = this.getRemainingSeconds(world);
-
-      if (remainingSeconds >= 0 || this.timeLimitInSeconds == -1) {
-        this.drawingHandler.drawCountdown(remainingSeconds,
-                                          REMAINING_SECONDS_ALERT);
-        this.updateOnRunningState(world);
-      }
-      else {
-        this.onTimeOut();
-      }
+    if (this.missionPaused) {
+      this.freezeWorld(world);
     }
     else {
-      this.updateOnRunningState(world);
+      this.unfreezeWorld(world);
+      if (this.timeLimitInSeconds > 0) {
+        int remainingSeconds = this.getRemainingSeconds(world);
+
+        if (remainingSeconds >= 0 || this.timeLimitInSeconds == -1) {
+          this.askClientsToUpdateCountdown(remainingSeconds);
+          this.updateOnRunningState(world);
+        }
+        else {
+          this.onTimeOut();
+        }
+      }
+      else {
+        this.updateOnRunningState(world);
+      }
+    }
+  }
+
+  /**
+   * Freeze entities to create an effect of pausing the world in a multiplayer
+   * game
+   */
+  private void freezeWorld(World world) {
+    if (!this.worldFrozen) {
+      for (EntityLiving entity :
+           world.getEntities(EntityLiving.class, EntitySelectors.IS_ALIVE)) {
+        if (entity instanceof EntityZombie) {
+          MinecraftVanillaAIHandler.freezeZombie((EntityZombie)entity);
+        }
+        else if (entity instanceof EntitySkeleton) {
+          MinecraftVanillaAIHandler.freezeSkeleton((EntitySkeleton)entity);
+        }
+        else if (entity instanceof EntityVillager) {
+          MinecraftVanillaAIHandler.freezeVillager((EntityVillager)entity);
+        }
+      }
+      this.worldFrozen = true;
+    }
+  }
+
+  /**
+   * Freeze entities to create an effect of pausing the world in a multiplayer
+   * game
+   */
+  private void unfreezeWorld(World world) {
+    if (this.worldFrozen) {
+      for (EntityLiving entity :
+           world.getEntities(EntityLiving.class, EntitySelectors.IS_ALIVE)) {
+        if (entity instanceof EntityZombie) {
+          MinecraftVanillaAIHandler.unfreezeZombie((EntityZombie)entity);
+        }
+        else if (entity instanceof EntitySkeleton) {
+          MinecraftVanillaAIHandler.unfreezeSkeleton((EntitySkeleton)entity);
+        }
+        else if (entity instanceof EntityVillager) {
+          MinecraftVanillaAIHandler.unfreezeVillager((EntityVillager)entity);
+        }
+      }
+      this.worldFrozen = false;
+    }
+  }
+
+  /**
+   * Asks the clients to update the countdown
+   * @param remainingSeconds
+   */
+  private void askClientsToUpdateCountdown(int remainingSeconds) {
+    TomcatMessageData messageData = new TomcatMessageData();
+    messageData.setRemainingSeconds(remainingSeconds);
+    messageData.setRemainingSecondsAlert(REMAINING_SECONDS_ALERT);
+    TomcatMessaging.TomcatMessage message =
+        new TomcatMessage(TomcatMessageType.UPDATE_COUNTDOWN, messageData);
+    TomcatClientServerHandler.sendMessageToAllClients(message, false);
+  }
+
+  /**
+   * Send message to the clients so they can create their ClientMission object
+   */
+  private void initMissionOnClients() {
+    if (!this.missionSentToClients) {
+      for (EntityPlayerMP player : MinecraftServerHelper.getPlayers()) {
+        TomcatMessageData messageData = new TomcatMessageData();
+        messageData.setMissionID(this.id);
+        TomcatMessaging.TomcatMessage message =
+            new TomcatMessage(TomcatMessageType.INIT_MISSION, messageData);
+        TomcatClientServerHandler.sendMessageToClient(player, message, false);
+      }
+      this.missionSentToClients = true;
     }
   }
 
@@ -197,7 +282,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
         Date missionStartTime = new Date();
         for (EntityPlayer player : world.playerEntities) {
           MissionSelfReport selfReport = new MissionSelfReport(
-              this.getID(), missionStartTime, player.getName());
+              this.id.ordinal(), missionStartTime, player.getName());
           this.selfReportPerPlayer.put(player.getName(), selfReport);
         }
       }
@@ -209,12 +294,10 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
    * @return
    */
   protected int getRemainingSeconds(World world) {
-    if (this.initialWorldTime == 0) {
-      this.initialWorldTime = world.getTotalWorldTime();
-    }
-
-    return Converter.getRemainingTimeInSeconds(
-        world, this.initialWorldTime, this.timeLimitInSeconds);
+    return Converter.getRemainingTimeInSeconds(world,
+                                               this.initialWorldTime +
+                                                   this.pausedTime,
+                                               this.timeLimitInSeconds);
   }
 
   /**
@@ -236,8 +319,8 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 
   private void showSelfReportScreen(World world) {
     if (this.hasSelfReport()) {
-      long elapsedTime =
-          Converter.getElapsedTimeInSeconds(world, this.initialWorldTime);
+      long elapsedTime = Converter.getElapsedTimeInSeconds(
+          world, this.initialWorldTime + this.pausedTime);
       if (elapsedTime % this.selfReportPromptTimeInSeconds ==
           this.selfReportPromptTimeInSeconds / 2) {
         // It's been passed enough time since last self-report screen was
@@ -248,10 +331,13 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 
       if (elapsedTime % this.selfReportPromptTimeInSeconds == 0 &&
           this.canShowSelfReport) {
-        SelfReportContent content = this.getSelfReportContent(world);
-        MalmoMod.network.sendToAll(new TomcatMessaging.TomcatMessage(
-            TomcatMessageType.SHOW_SELF_REPORT,
-            new TomcatMessageData(content)));
+        for (EntityPlayerMP player : MinecraftServerHelper.getPlayers()) {
+          SelfReportContent content = this.getSelfReportContent(player, world);
+          TomcatMessage message =
+              new TomcatMessage(TomcatMessageType.SHOW_SELF_REPORT,
+                                new TomcatMessageData(content));
+          TomcatClientServerHandler.sendMessageToClient(player, message, true);
+        }
         this.canShowSelfReport = false;
       }
     }
@@ -267,7 +353,8 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
    * Gets the self-report content (questions and choices) for the mission
    * @return
    */
-  protected abstract SelfReportContent getSelfReportContent(World world);
+  protected abstract SelfReportContent
+  getSelfReportContent(EntityPlayerMP player, World world);
 
   @Override
   public void emotionProvided(EmotionHandler.Emotion emotion) {
@@ -316,19 +403,33 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
   /**
    * Handle message from the client side
    */
-  public void handleMessageFromClient(TomcatMessage message) {
+  public void handleMessageFromClient(EntityPlayerMP player,
+                                      TomcatMessage message) {
     switch (message.getMessageType()) {
     case OPEN_SCREEN_DISMISSED:
-      this.currentPhase.openScreenDismissed();
+      if (TomcatClientServerHandler.haveAllClientsReplied()) {
+        this.unpauseMission();
+        this.currentPhase.handleDismissalOfOpenScreen();
+      }
+      else {
+        this.showWaitingForOthersScreen(player);
+      }
       break;
 
     case SELF_REPORT_ANSWERED:
-      String playerName = message.getMessageData().getPlayerName();
       SelfReportContent content = message.getMessageData().getSelfReport();
-      this.selfReportPerPlayer.get(playerName).addContent(content);
+      this.selfReportPerPlayer.get(player.getName()).addContent(content);
+      if (TomcatClientServerHandler.haveAllClientsReplied()) {
+        this.unpauseMission();
+      }
+      else {
+        this.showWaitingForOthersScreen(player);
+      }
       break;
 
     case DISPLAY_INSTRUCTIONS:
+      // TODO: fix this later so a single player can open the instructions
+      // without affect the others
       this.currentPhase.showInstructions();
 
     case CONNECTION_ERROR:
@@ -337,6 +438,52 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     default:
       break;
     }
+  }
+
+  /**
+   * Does the configurations necessary to resume the mission in the server
+   */
+  private void unpauseMission() {
+    this.dismissWaitingForOthersScreen();
+    this.missionPaused = false;
+    this.pausedTime += (MinecraftServerHelper.getServer()
+                            .getEntityWorld()
+                            .getTotalWorldTime() -
+                        this.worldTimeOnPause);
+  }
+
+  /**
+   * Stores the world time when paused
+   */
+  public void pauseMission() {
+    this.missionPaused = true;
+    this.worldTimeOnPause =
+        MinecraftServerHelper.getServer().getEntityWorld().getTotalWorldTime();
+  }
+
+  /**
+   * Dismisses the message screen that informs the player he should wait for the
+   * others
+   */
+  private void dismissWaitingForOthersScreen() {
+    TomcatMessaging.TomcatMessage message =
+        new TomcatMessage(TomcatMessageType.DISMISS_OPEN_SCREEN);
+    TomcatClientServerHandler.sendMessageToAllClients(message, false);
+  }
+
+  /**
+   * When a player tries to dismiss a screen but others are still with their
+   * screens prompted, show a message a screen saying the player he smust wait
+   * for the others to continue the mission.
+   * @param player
+   */
+  private void showWaitingForOthersScreen(EntityPlayerMP player) {
+    TomcatMessageData messageData = new TomcatMessageData();
+    messageData.setMissionPhaseMessage(
+        "Waiting for other players' confirmation.");
+    TomcatMessaging.TomcatMessage message =
+        new TomcatMessage(TomcatMessageType.SHOW_MESSAGE_SCREEN, messageData);
+    TomcatClientServerHandler.sendMessageToClient(player, message, false);
   }
 
   public abstract PosAndDirection
@@ -388,7 +535,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
    * Get the filename for a given self-report based on some of its info
    */
   private String getSelfReportPath(MissionSelfReport selfReport) {
-    DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+    DateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss_a");
     String path =
         String.format("%s/%d_%s_%s.json",
                       SELF_REPORT_FOLDER,

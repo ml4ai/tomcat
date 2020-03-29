@@ -2,7 +2,6 @@ package edu.arizona.tomcat.World;
 
 import com.microsoft.Malmo.Schemas.BlockType;
 import com.microsoft.Malmo.Schemas.DrawBlock;
-
 import net.minecraft.util.math.BlockPos;
 
 public class TomcatBlock extends CompositeDrawingObject {

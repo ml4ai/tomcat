@@ -1,9 +1,5 @@
 package com.microsoft.Malmo.MissionHandlers;
 
-import java.util.Map;
-
-import net.minecraftforge.common.MinecraftForge;
-
 import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.MalmoMod.IMalmoMessageListener;
 import com.microsoft.Malmo.MalmoMod.MalmoMessageType;
@@ -12,6 +8,8 @@ import com.microsoft.Malmo.MissionHandlerInterfaces.IWantToQuit;
 import com.microsoft.Malmo.Schemas.MissionInit;
 import com.microsoft.Malmo.Schemas.RewardDensityForBuildAndBreak;
 import com.microsoft.Malmo.Schemas.RewardForStructureCopying;
+import java.util.Map;
+import net.minecraftforge.common.MinecraftForge;
 
 public class RewardForStructureCopyingImplementation
     extends RewardBase implements IRewardProducer, IMalmoMessageListener {
