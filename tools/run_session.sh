@@ -34,6 +34,8 @@ if [[ ${do_tutorial} -eq 1 ]];
     then ${TOMCAT}/tools/run_tutorial
 fi
 
+rm -f ${TOMCAT}/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
+
 if [[ ${do_invasion} -eq 1 ]]; then
     echo " "
     echo "Running the Zombie invasion mission in ${TOMCAT}."
@@ -56,9 +58,9 @@ if [[ ${do_invasion} -eq 1 ]]; then
         ffmpeg_fmt=video4linux2
         echo "
         Screen recording currently only works on MacOS since it relies on
-        AppleScript to get the position and size of the Minecraft window.
-        Equivalent functionality can probably be achieved with the wmctrl tool
-        tool on Linux. Pull requests welcome!"
+        AppleScript to bring the Minecraft window to the foreground and make it
+        full screen. Equivalent functionality can probably be achieved with
+        the wmctrl tool tool on Linux. Pull requests welcome!"
     fi
 
     # Creating an output directory for this session.
@@ -144,6 +146,8 @@ fi
 if [[ "$OSTYPE" == "darwin"* ]]; then
     kill -2 $screen_recording_pid
 fi
+
+mv ${TOMCAT}/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json ${output_dir}/discrete_events.json 
 
 echo "Finished running all sessions in ${TOMCAT}."
 exit 0

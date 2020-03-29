@@ -25,11 +25,15 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public class ModBlocks {
 
   public static Block asistButtonBlock;
+  public static Block asistLeverBlock;
 
   /**
    * This method initializes the new block created.
    */
-  public static void init() { asistButtonBlock = new BlockAsistButton(); }
+  public static void init() {
+    asistButtonBlock = new BlockAsistButton();
+    asistLeverBlock = new BlockAsistLever();
+  }
 
   /**
    * This method calls a helper function to register the Minecraft block. You
@@ -38,6 +42,7 @@ public class ModBlocks {
    */
   public static void register() {
     registerBlock(asistButtonBlock);
+    registerBlock(asistLeverBlock);
 
     // Add copied lines under this if necessary
   }
@@ -65,6 +70,7 @@ public class ModBlocks {
    */
   public static void registerRenders() {
     registerRender(asistButtonBlock);
+    registerRender(asistLeverBlock);
 
     // Add copied lines under this if necessary
   }
