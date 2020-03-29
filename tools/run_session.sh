@@ -30,8 +30,8 @@ export zombie_invasion_log="${TOMCAT_TMP_DIR}/zombie_invasion.log"
 
 export num_tries=2
 
-if [[ ${do_tutorial} -eq 1 ]];
-    then ${TOMCAT}/tools/run_tutorial
+if [[ ${do_tutorial} -eq 1 ]]; then 
+  ${TOMCAT}/tools/run_tutorial
 fi
 
 rm -f ${TOMCAT}/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
