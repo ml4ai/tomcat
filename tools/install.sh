@@ -9,12 +9,13 @@
 
 # Set the TOMCAT environment variable, assuming that the directory structure
 # mirrors that of the git repository.
-export TOMCAT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && pwd )"
+TOMCAT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && pwd )"
+export TOMCAT
 
 ###############################################################################
 
-# On Travis, we will create and activate a Python virtual environment
-if [[ ! -z $GITHUB_ACTIONS ]]; then
+# On Github Actions, we will create and activate a Python virtual environment
+if [[ -n $GITHUB_ACTIONS ]]; then
   if [[ "$OSTYPE" == "linux" ]]; then
     sudo apt-get update
     sudo apt-get install -y python3-venv xvfb
