@@ -7,7 +7,7 @@
 
 using namespace boost::program_options;
 using namespace std;
-using fmt::print, tomcat::get_timestamp;
+using fmt::print;
 using namespace fmt::literals;
 using namespace tomcat;
 
@@ -25,12 +25,9 @@ options_description load_options() {
       "Self-report prompt interval time (in seconds).")(
       "port,p",
       value<unsigned int>()->default_value(10000),
-      "Port to control (>=10000)")("activate_webcam,w",
+      "Port to control (>=10000)")("record_all",
                                    bool_switch()->default_value(false),
-                                   "Activate webcam to detect face landmarks.")(
-      "record_all",
-      bool_switch()->default_value(false),
-      "Activate all recordings except bitmaps")(
+                                   "Activate all recordings except bitmaps")(
       "record_observations",
       bool_switch()->default_value(false),
       "Activate observation recordings")("record_commands",
@@ -38,7 +35,12 @@ options_description load_options() {
                                          "Activate command recordings")(
       "record_rewards",
       bool_switch()->default_value(false),
-      "Activate reward recordings")(
+      "Activate reward recordings")("video_fps",
+                                    value<unsigned int>()->default_value(20),
+                                    "Frames per second for video recordings")(
+      "multiplayer",
+      bool_switch()->default_value(false),
+      "The mission should run in multiplayer mode")(
       "record_path",
       value<string>()->default_value("./saved_data_" + get_timestamp() +
                                      ".tgz"),
@@ -82,6 +84,7 @@ Mission create_mission(variables_map parameters_map) {
   bool record_observations = parameters_map["record_observations"].as<bool>();
   bool record_commands = parameters_map["record_commands"].as<bool>();
   bool record_rewards = parameters_map["record_rewards"].as<bool>();
+  bool multiplayer = parameters_map["multiplayer"].as<bool>();
 
   if (record_all) {
     record_observations = true;
@@ -96,6 +99,7 @@ Mission create_mission(variables_map parameters_map) {
                             record_observations,
                             record_commands,
                             record_rewards,
+                            multiplayer,
                             record_path);
   return mission;
 }

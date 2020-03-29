@@ -22,18 +22,16 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.World;
-
 import com.microsoft.Malmo.MissionHandlerInterfaces.IWorldDecorator;
 import com.microsoft.Malmo.Schemas.DrawingDecorator;
 import com.microsoft.Malmo.Schemas.Mission;
 import com.microsoft.Malmo.Schemas.MissionInit;
 import com.microsoft.Malmo.Utils.BlockDrawingHelper;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
 
 /**
  * WorldBuilder that takes the XML drawing instructions from the Mission

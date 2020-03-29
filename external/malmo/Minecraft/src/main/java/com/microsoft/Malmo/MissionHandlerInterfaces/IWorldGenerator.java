@@ -22,9 +22,8 @@
 
 package com.microsoft.Malmo.MissionHandlerInterfaces;
 
-import net.minecraft.world.World;
-
 import com.microsoft.Malmo.Schemas.MissionInit;
+import net.minecraft.world.World;
 
 /**
  * Interface for objects which can determine the world structure for the

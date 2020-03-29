@@ -25,20 +25,17 @@ package com.microsoft.Malmo.MissionHandlers;
 import static org.lwjgl.opengl.GL11.GL_RED;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 
+import com.microsoft.Malmo.MissionHandlerInterfaces.IVideoProducer;
+import com.microsoft.Malmo.Schemas.LuminanceProducer;
+import com.microsoft.Malmo.Schemas.MissionInit;
+import com.microsoft.Malmo.Utils.TextureHelper;
 import java.nio.ByteBuffer;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraftforge.common.MinecraftForge;
-
 import org.lwjgl.opengl.GL11;
-
-import com.microsoft.Malmo.MissionHandlerInterfaces.IVideoProducer;
-import com.microsoft.Malmo.Schemas.LuminanceProducer;
-import com.microsoft.Malmo.Schemas.MissionInit;
-import com.microsoft.Malmo.Utils.TextureHelper;
 
 public class LuminanceProducerImplementation
     extends HandlerBase implements IVideoProducer {

@@ -22,10 +22,13 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
+import com.microsoft.Malmo.MalmoMod;
+import com.microsoft.Malmo.Schemas.MissionInit;
+import com.microsoft.Malmo.Schemas.SimpleCraftCommand;
+import com.microsoft.Malmo.Schemas.SimpleCraftCommands;
+import com.microsoft.Malmo.Utils.CraftingHelper;
 import io.netty.buffer.ByteBuf;
-
 import java.util.List;
-
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -33,12 +36,6 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-
-import com.microsoft.Malmo.MalmoMod;
-import com.microsoft.Malmo.Schemas.MissionInit;
-import com.microsoft.Malmo.Schemas.SimpleCraftCommand;
-import com.microsoft.Malmo.Schemas.SimpleCraftCommands;
-import com.microsoft.Malmo.Utils.CraftingHelper;
 
 public class SimpleCraftCommandsImplementation extends CommandBase {
   private boolean isOverriding;

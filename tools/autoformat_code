@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Usage: ./autoformat_code
+# Note - this script requires GNU Parallel, which can be installed by your OS
+# package manager (e.g. sudo apt-get install -y parallel).
+
+export TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
+
+pushd ${TOMCAT} > /dev/null
+  # Formatting Java code
+  find external/malmo/Minecraft/src/main/java -name *.java\
+    | parallel --bar clang-format -i {}
+
+  # Formatting C++ code
+  find external/malmo/Malmo/src -name *.h -o -name *.cpp\
+    | parallel --bar clang-format -i {}
+
+  find src -name *.h -o -name *.cpp | parallel --bar clang-format -i {}
+popd > /dev/null

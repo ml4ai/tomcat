@@ -22,15 +22,13 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.xml.bind.JAXBException;
-
 import com.microsoft.Malmo.Schemas.Reward;
 import com.microsoft.Malmo.Schemas.Reward.Value;
 import com.microsoft.Malmo.Utils.SchemaHelper;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+import javax.xml.bind.JAXBException;
 
 /**
  * Stores a float reward on multiple dimensions.

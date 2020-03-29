@@ -22,11 +22,14 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
+import com.microsoft.Malmo.MalmoMod;
+import com.microsoft.Malmo.MalmoMod.MalmoMessageType;
+import com.microsoft.Malmo.Schemas.InventoryCommand;
+import com.microsoft.Malmo.Schemas.InventoryCommands;
+import com.microsoft.Malmo.Schemas.MissionInit;
 import io.netty.buffer.ByteBuf;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
@@ -43,12 +46,6 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-
-import com.microsoft.Malmo.MalmoMod;
-import com.microsoft.Malmo.MalmoMod.MalmoMessageType;
-import com.microsoft.Malmo.Schemas.InventoryCommand;
-import com.microsoft.Malmo.Schemas.InventoryCommands;
-import com.microsoft.Malmo.Schemas.MissionInit;
 
 /**
  * Very basic control over inventory. Two commands are required: select and

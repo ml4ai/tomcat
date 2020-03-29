@@ -22,9 +22,19 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import com.microsoft.Malmo.MissionHandlerInterfaces.IObservationProducer;
+import com.microsoft.Malmo.Schemas.DrawBlock;
+import com.microsoft.Malmo.Schemas.DrawItem;
+import com.microsoft.Malmo.Schemas.MissionInit;
+import com.microsoft.Malmo.Schemas.ObservationFromDistance;
+import com.microsoft.Malmo.Schemas.ObservationFromRay;
+import com.microsoft.Malmo.Utils.MinecraftTypeHelper;
 import java.util.ArrayList;
 import java.util.List;
-
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -38,18 +48,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
-import com.microsoft.Malmo.MissionHandlerInterfaces.IObservationProducer;
-import com.microsoft.Malmo.Schemas.DrawBlock;
-import com.microsoft.Malmo.Schemas.DrawItem;
-import com.microsoft.Malmo.Schemas.MissionInit;
-import com.microsoft.Malmo.Schemas.ObservationFromDistance;
-import com.microsoft.Malmo.Schemas.ObservationFromRay;
-import com.microsoft.Malmo.Utils.MinecraftTypeHelper;
 
 public class ObservationFromRayImplementation
     extends HandlerBase implements IObservationProducer {

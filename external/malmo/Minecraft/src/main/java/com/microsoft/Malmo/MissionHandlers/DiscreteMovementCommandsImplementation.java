@@ -22,6 +22,11 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
+import com.microsoft.Malmo.MalmoMod;
+import com.microsoft.Malmo.MissionHandlerInterfaces.ICommandHandler;
+import com.microsoft.Malmo.Schemas.DiscreteMovementCommand;
+import com.microsoft.Malmo.Schemas.DiscreteMovementCommands;
+import com.microsoft.Malmo.Schemas.MissionInit;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -51,12 +56,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
-
-import com.microsoft.Malmo.MalmoMod;
-import com.microsoft.Malmo.MissionHandlerInterfaces.ICommandHandler;
-import com.microsoft.Malmo.Schemas.DiscreteMovementCommand;
-import com.microsoft.Malmo.Schemas.DiscreteMovementCommands;
-import com.microsoft.Malmo.Schemas.MissionInit;
 
 /**
  * Fairly dumb command handler that attempts to move the player one block N,S,E

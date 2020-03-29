@@ -1,9 +1,7 @@
 package edu.arizona.tomcat.Mission.gui;
 
-import java.awt.Point;
-
 import com.microsoft.Malmo.MalmoMod;
-
+import java.awt.Point;
 import net.minecraft.util.ResourceLocation;
 
 public class RichContentImage {

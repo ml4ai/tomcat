@@ -22,13 +22,11 @@
 
 package com.microsoft.Malmo.MissionHandlerInterfaces;
 
+import com.microsoft.Malmo.Schemas.MissionInit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import net.minecraft.world.World;
-
-import com.microsoft.Malmo.Schemas.MissionInit;
 
 /**
  * Interface for objects which can determine the world structure for the
