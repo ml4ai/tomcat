@@ -25,10 +25,9 @@ options_description load_options() {
       "Self-report prompt interval time (in seconds).")(
       "port,p",
       value<unsigned int>()->default_value(10000),
-      "Port to control (>=10000)")(
-      "record_all",
-      bool_switch()->default_value(false),
-      "Activate all recordings except bitmaps")(
+      "Port to control (>=10000)")("record_all",
+                                   bool_switch()->default_value(false),
+                                   "Activate all recordings except bitmaps")(
       "record_observations",
       bool_switch()->default_value(false),
       "Activate observation recordings")("record_commands",
@@ -43,7 +42,8 @@ options_description load_options() {
       bool_switch()->default_value(false),
       "The mission should run in multiplayer mode")(
       "record_path",
-      value<string>()->default_value("./saved_data_" + get_timestamp() + ".tgz"),
+      value<string>()->default_value("./saved_data_" + get_timestamp() +
+                                     ".tgz"),
       "Path to save Malmo data");
 
   return options;

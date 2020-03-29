@@ -183,7 +183,7 @@ public class MalmoModClient {
     //					public void onPressed() {
     //						InputType it =
     //								(inputType !=
-    //InputType.AI) ? InputType.AI : InputType.HUMAN;
+    // InputType.AI) ? InputType.AI : InputType.HUMAN;
     // System.out.println("Toggling control between human and AI
     //- now " + it); setInputType(it); super.onPressed();
     //					}

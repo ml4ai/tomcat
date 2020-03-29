@@ -12,7 +12,11 @@ namespace tomcat {
 
   class TomcatMissionException : public std::exception {
   public:
-    enum ErrorCode { CONNECTION_NOT_ESTABLISHED, TOMCAT_VAR_INEXISTENT, ERROR_STARTING_MISSION };
+    enum ErrorCode {
+      CONNECTION_NOT_ESTABLISHED,
+      TOMCAT_VAR_INEXISTENT,
+      ERROR_STARTING_MISSION
+    };
 
     TomcatMissionException(const std::string& message, ErrorCode error_code)
         : message(message), error_code(error_code) {}
@@ -106,7 +110,8 @@ namespace tomcat {
      * Retrieves, from a mission id, the folder name where its hand-constructed
      * world is
      */
-    inline static std::unordered_map<int, std::string> id_to_world_folder_map = {
+    inline static std::unordered_map<int, std::string> id_to_world_folder_map =
+        {
             {TUTORIAL, "tutorial"},
             {SAR, "sar"},
     };
@@ -147,17 +152,16 @@ namespace tomcat {
      */
     malmo::MissionRecordSpec get_mission_record_spec();
 
-      /**
-       * Wait until all the clients have started the mission
-       */
-      void safe_wait_to_start();
+    /**
+     * Wait until all the clients have started the mission
+     */
+    void safe_wait_to_start();
 
     /**
      * Observe the mission. This method corresponds to the mission main loop and
      * is executed while the mission is running
      */
     void observe();
-
   };
 
 } // namespace tomcat
