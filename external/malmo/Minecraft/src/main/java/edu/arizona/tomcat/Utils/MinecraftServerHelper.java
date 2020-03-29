@@ -1,7 +1,6 @@
 package edu.arizona.tomcat.Utils;
 
 import java.util.List;
-
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;

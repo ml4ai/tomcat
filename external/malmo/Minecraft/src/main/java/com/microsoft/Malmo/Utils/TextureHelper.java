@@ -22,6 +22,7 @@
 
 package com.microsoft.Malmo.Utils;
 
+import com.microsoft.Malmo.MalmoMod;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,7 +30,6 @@ import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.EntityRenderer;
@@ -52,13 +52,10 @@ import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IRenderHandler;
 import net.minecraftforge.fml.common.registry.EntityEntry;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-
-import com.microsoft.Malmo.MalmoMod;
 
 // Helper methods, classes etc which allow us to subvert the Minecraft render
 // pipeline to produce a colourmap image in addition to the normal Minecraft

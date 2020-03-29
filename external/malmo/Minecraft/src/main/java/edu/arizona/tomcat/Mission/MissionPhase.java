@@ -1,7 +1,5 @@
 package edu.arizona.tomcat.Mission;
 
-import java.util.ArrayList;
-
 import edu.arizona.tomcat.Messaging.TomcatClientServerHandler;
 import edu.arizona.tomcat.Messaging.TomcatMessageData;
 import edu.arizona.tomcat.Messaging.TomcatMessaging;
@@ -10,6 +8,7 @@ import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
 import edu.arizona.tomcat.Mission.gui.RichContent;
 import edu.arizona.tomcat.Utils.Converter;
+import java.util.ArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
 
@@ -198,9 +197,10 @@ public class MissionPhase {
    * Asks all the clients to show instructions
    */
   private void askClientsToShowInstructions() {
-	TomcatMessageData messageData = new TomcatMessageData(this.instructions);    
-    TomcatMessaging.TomcatMessage message = new TomcatMessage(TomcatMessageType.SHOW_INSTRUCTIONS_SCREEN, messageData);
-	TomcatClientServerHandler.sendMessageToAllClients(message, true);
+    TomcatMessageData messageData = new TomcatMessageData(this.instructions);
+    TomcatMessaging.TomcatMessage message = new TomcatMessage(
+        TomcatMessageType.SHOW_INSTRUCTIONS_SCREEN, messageData);
+    TomcatClientServerHandler.sendMessageToAllClients(message, true);
   }
 
   /**
@@ -262,15 +262,16 @@ public class MissionPhase {
       this.status = Status.WAITING_FOR_MESSAGE_DISMISSAL;
     }
   }
-  
+
   /**
    * Asks the clients to show message screen
    */
   private void askClientsToShowMessageScreen() {
-	TomcatMessageData messageData = new TomcatMessageData();
+    TomcatMessageData messageData = new TomcatMessageData();
     messageData.setMissionPhaseMessage(this.messageOnCompletion);
-	TomcatMessaging.TomcatMessage message = new TomcatMessage(TomcatMessageType.SHOW_MESSAGE_SCREEN, messageData);
-	TomcatClientServerHandler.sendMessageToAllClients(message, false);	
+    TomcatMessaging.TomcatMessage message =
+        new TomcatMessage(TomcatMessageType.SHOW_MESSAGE_SCREEN, messageData);
+    TomcatClientServerHandler.sendMessageToAllClients(message, false);
   }
 
   private int getRemainingSecondsToShowMessageScreen(World world) {
@@ -294,9 +295,10 @@ public class MissionPhase {
     int remainingSeconds = this.getRemainingTimeToDismissMessageScreen(world);
 
     if (remainingSeconds <= 0) {
-    	TomcatMessaging.TomcatMessage message = new TomcatMessage(TomcatMessageType.DISMISS_OPEN_SCREEN);
-		TomcatClientServerHandler.sendMessageToAllClients(message, false);	
-		this.handleDismissalOfOpenScreen();
+      TomcatMessaging.TomcatMessage message =
+          new TomcatMessage(TomcatMessageType.DISMISS_OPEN_SCREEN);
+      TomcatClientServerHandler.sendMessageToAllClients(message, false);
+      this.handleDismissalOfOpenScreen();
     }
   }
 

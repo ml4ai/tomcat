@@ -6,41 +6,41 @@ import edu.arizona.tomcat.Mission.Client.TutorialClientMission;
 
 public class MissionFactory {
 
-	public static Mission create(int missionID) {
-		Mission mission = null;
-		
-		switch (Mission.ID.values()[missionID]) {
-		case TUTORIAL:
-			mission = new TutorialMission();
-			break;
+  public static Mission create(int missionID) {
+    Mission mission = null;
 
-		case SEARCH_AND_RESCUE:
-			mission = new SARMission();
-			break;
-			
-		default:
-			break;
-		}
+    switch (Mission.ID.values()[missionID]) {
+    case TUTORIAL:
+      mission = new TutorialMission();
+      break;
 
-		return mission;
-	}
+    case SEARCH_AND_RESCUE:
+      mission = new SARMission();
+      break;
 
-	public static ClientMission createClient(int missionID) {
-		ClientMission clientMission = null;
+    default:
+      break;
+    }
 
-		switch (Mission.ID.values()[missionID]) {
-		case TUTORIAL:
-			clientMission = new TutorialClientMission();
-			break;
+    return mission;
+  }
 
-		case SEARCH_AND_RESCUE:
-			clientMission = new SARClientMission();
-			break;
+  public static ClientMission createClient(int missionID) {
+    ClientMission clientMission = null;
 
-		default:
-			break;
-		}
+    switch (Mission.ID.values()[missionID]) {
+    case TUTORIAL:
+      clientMission = new TutorialClientMission();
+      break;
 
-		return clientMission;
-	}
+    case SEARCH_AND_RESCUE:
+      clientMission = new SARClientMission();
+      break;
+
+    default:
+      break;
+    }
+
+    return clientMission;
+  }
 }

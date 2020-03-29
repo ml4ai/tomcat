@@ -34,7 +34,7 @@ public abstract class MissionGoal {
    * @param world - Minecraft world
    */
   protected abstract void updateGoalStatus(World world);
-  
+
   /**
    * Retrieves the player who accomplished the goal
    * @return

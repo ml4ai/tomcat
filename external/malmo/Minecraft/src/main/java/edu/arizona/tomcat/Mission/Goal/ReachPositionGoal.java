@@ -27,13 +27,15 @@ public class ReachPositionGoal extends MissionGoal {
 
   @Override
   public void updateGoalStatus(World world) {
-	  for (EntityPlayerMP player : MinecraftServerHelper.getServer().getPlayerList().getPlayers()) {
-		  this.goalAchieved = player.getDistanceSq(this.x, this.y, this.z) < Math.pow(this.range, 2);
-		  
-		  if (this.goalAchieved) {
-	          this.player = player;
-	          break;
-	      }
-	  }
+    for (EntityPlayerMP player :
+         MinecraftServerHelper.getServer().getPlayerList().getPlayers()) {
+      this.goalAchieved = player.getDistanceSq(this.x, this.y, this.z) <
+                          Math.pow(this.range, 2);
+
+      if (this.goalAchieved) {
+        this.player = player;
+        break;
+      }
+    }
   }
 }

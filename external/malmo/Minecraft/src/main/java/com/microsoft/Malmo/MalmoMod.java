@@ -217,10 +217,12 @@ public class MalmoMod {
         ObservationFromSystemImplementation.SystemRequestMessage.class,
         12,
         Side.SERVER);
-    
+
     // TOMCAT
-    network.registerMessage(TomcatMessageHandler.class, TomcatMessage.class, 100, Side.CLIENT);
-    network.registerMessage(TomcatMessageHandler.class, TomcatMessage.class, 100, Side.SERVER);
+    network.registerMessage(
+        TomcatMessageHandler.class, TomcatMessage.class, 100, Side.CLIENT);
+    network.registerMessage(
+        TomcatMessageHandler.class, TomcatMessage.class, 100, Side.SERVER);
   }
 
   @EventHandler

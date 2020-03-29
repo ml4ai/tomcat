@@ -1,8 +1,7 @@
 package edu.arizona.tomcat.Messaging;
 
-import java.io.IOException;
-
 import io.netty.buffer.ByteBuf;
+import java.io.IOException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.world.WorldServer;
@@ -104,12 +103,12 @@ public class TomcatMessaging {
                               final MessageContext ctx) {
       IThreadListener mainThread = null;
       System.out.println(ctx.side);
-      if (ctx.side == Side.CLIENT) {    	  
+      if (ctx.side == Side.CLIENT) {
         mainThread = Minecraft.getMinecraft();
         mainThread.addScheduledTask(new Runnable() {
           @Override
           public void run() {
-        	  TomcatClientServerHandler.handleMessageFromServer(message);        	  
+            TomcatClientServerHandler.handleMessageFromServer(message);
           }
         });
       }
@@ -118,8 +117,9 @@ public class TomcatMessaging {
             (WorldServer)ctx.getServerHandler().playerEntity.getServerWorld();
         mainThread.addScheduledTask(new Runnable() {
           @Override
-          public void run() {        	  
-        	  TomcatClientServerHandler.handleMessageBackFromClient(ctx.getServerHandler().playerEntity, message);
+          public void run() {
+            TomcatClientServerHandler.handleMessageBackFromClient(
+                ctx.getServerHandler().playerEntity, message);
           }
         });
       }

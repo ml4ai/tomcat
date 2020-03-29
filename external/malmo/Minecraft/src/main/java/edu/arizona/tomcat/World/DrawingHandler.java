@@ -1,16 +1,13 @@
 package edu.arizona.tomcat.World;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import javax.xml.bind.JAXBElement;
-
 import com.microsoft.Malmo.Schemas.DrawObjectType;
 import com.microsoft.Malmo.Schemas.DrawingDecorator;
 import com.microsoft.Malmo.Schemas.ObjectFactory;
 import com.microsoft.Malmo.Utils.BlockDrawingHelper;
-
 import edu.arizona.tomcat.Utils.Converter;
+import java.util.ArrayList;
+import java.util.Iterator;
+import javax.xml.bind.JAXBElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;

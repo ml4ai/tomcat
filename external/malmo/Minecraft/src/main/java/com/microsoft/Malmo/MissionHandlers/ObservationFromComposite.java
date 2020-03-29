@@ -22,13 +22,12 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import com.google.gson.JsonObject;
 import com.microsoft.Malmo.MissionHandlerInterfaces.ICommandHandler;
 import com.microsoft.Malmo.MissionHandlerInterfaces.IObservationProducer;
 import com.microsoft.Malmo.Schemas.MissionInit;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Composite class that concatenates the results from multiple

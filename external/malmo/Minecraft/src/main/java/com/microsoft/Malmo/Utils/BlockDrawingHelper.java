@@ -22,12 +22,6 @@
 
 package com.microsoft.Malmo.Utils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import javax.xml.bind.JAXBElement;
-
 import com.microsoft.Malmo.Schemas.BlockType;
 import com.microsoft.Malmo.Schemas.Colour;
 import com.microsoft.Malmo.Schemas.ContainedObjectType;
@@ -45,7 +39,10 @@ import com.microsoft.Malmo.Schemas.Facing;
 import com.microsoft.Malmo.Schemas.NoteTypes;
 import com.microsoft.Malmo.Schemas.ShapeTypes;
 import com.microsoft.Malmo.Schemas.Variation;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import javax.xml.bind.JAXBElement;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRailBase;
 import net.minecraft.block.properties.IProperty;

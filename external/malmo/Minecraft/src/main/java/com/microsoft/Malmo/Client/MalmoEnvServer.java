@@ -25,22 +25,21 @@ package com.microsoft.Malmo.Client;
 import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.MissionHandlerInterfaces.IWantToQuit;
 import com.microsoft.Malmo.Schemas.MissionInit;
+import com.microsoft.Malmo.Utils.TCPInputPoller;
 import com.microsoft.Malmo.Utils.TCPUtils;
-import net.minecraftforge.common.config.Configuration;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.Hashtable;
-import com.microsoft.Malmo.Utils.TCPInputPoller;
 import java.util.logging.Level;
-
-import java.util.LinkedList;
+import net.minecraftforge.common.config.Configuration;
 
 /**
  * MalmoEnvServer - service supporting OpenAI gym "environment" for multi-agent

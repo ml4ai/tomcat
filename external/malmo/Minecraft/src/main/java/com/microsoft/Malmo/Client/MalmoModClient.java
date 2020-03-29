@@ -27,12 +27,10 @@ import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.Utils.CraftingHelper;
 import com.microsoft.Malmo.Utils.ScreenHelper.TextCategory;
 import com.microsoft.Malmo.Utils.TextureHelper;
-
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
 import edu.arizona.tomcat.Mission.Client.ClientMission;
 import edu.arizona.tomcat.Mission.gui.GUIOverlayVillagersSaved;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import net.minecraft.client.Minecraft;
@@ -178,17 +176,16 @@ public class MalmoModClient {
     //		extraKeys.add(
     //				new InternalKey("key.toggleMalmo",
     //						28,
-    //						"key.categories.malmo") // 28 is the
-    //keycode for enter.
+    //						"key.categories.malmo") // 28 is
+    // the keycode for enter.
     //				{
     //					@Override
     //					public void onPressed() {
     //						InputType it =
-    //								(inputType != InputType.AI) ?
-    //InputType.AI : InputType.HUMAN;
+    //								(inputType !=
+    //InputType.AI) ? InputType.AI : InputType.HUMAN;
     // System.out.println("Toggling control between human and AI
-    //- now " + 								it);
-    //setInputType(it); super.onPressed();
+    //- now " + it); setInputType(it); super.onPressed();
     //					}
     //				});
 

@@ -1,19 +1,17 @@
 package com.microsoft.Malmo.MissionHandlers;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.DamageSource;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
 import com.microsoft.Malmo.MissionHandlerInterfaces.IRewardProducer;
 import com.microsoft.Malmo.Schemas.EntityTypes;
 import com.microsoft.Malmo.Schemas.MissionInit;
 import com.microsoft.Malmo.Schemas.MobWithReward;
 import com.microsoft.Malmo.Schemas.RewardForDamagingEntity;
+import java.util.HashMap;
+import java.util.Map;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.DamageSource;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class RewardForDamagingEntityImplementation
     extends RewardBase implements IRewardProducer {

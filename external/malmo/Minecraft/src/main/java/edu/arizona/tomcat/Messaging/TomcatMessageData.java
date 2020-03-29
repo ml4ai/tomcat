@@ -1,22 +1,27 @@
 package edu.arizona.tomcat.Messaging;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import edu.arizona.tomcat.Mission.Mission;
 import edu.arizona.tomcat.Mission.gui.RichContent;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TomcatMessageData {
 
-  private static enum Key { MISSION_ID, MISSION_PHASE_MESSAGE, PLAYER_NAME, REMAINING_SECONDS, REMAINING_SECONDS_ALERT};
+  private static enum Key {
+    MISSION_ID,
+    MISSION_PHASE_MESSAGE,
+    PLAYER_NAME,
+    REMAINING_SECONDS,
+    REMAINING_SECONDS_ALERT
+  }
+  ;
 
   protected Map<String, String> data;
   protected RichContent richContent;
@@ -129,13 +134,14 @@ public class TomcatMessageData {
   public Mission.ID getMissionID() {
     return Mission.ID.valueOf(this.data.get(Key.MISSION_ID.toString()));
   }
-  
+
   /**
    * Sets the remaining seconds to end
    * @param remainingSeconds - remaining time in seconds for the mission to end
    */
   public void setRemainingSeconds(long remainingSeconds) {
-    this.data.put(Key.REMAINING_SECONDS.toString(), Long.toString(remainingSeconds));
+    this.data.put(Key.REMAINING_SECONDS.toString(),
+                  Long.toString(remainingSeconds));
   }
 
   /**
@@ -145,13 +151,15 @@ public class TomcatMessageData {
   public long getRemainingSeconds() {
     return Long.parseLong(this.data.get(Key.REMAINING_SECONDS.toString()));
   }
-  
+
   /**
    * Sets the remaining seconds alert
-   * @param remainingSecondsAlert - remaining time in seconds from which we should highlight the countdown
+   * @param remainingSecondsAlert - remaining time in seconds from which we
+   *     should highlight the countdown
    */
   public void setRemainingSecondsAlert(long remainingSecondsAlert) {
-    this.data.put(Key.REMAINING_SECONDS_ALERT.toString(), Long.toString(remainingSecondsAlert));
+    this.data.put(Key.REMAINING_SECONDS_ALERT.toString(),
+                  Long.toString(remainingSecondsAlert));
   }
 
   /**
@@ -159,7 +167,8 @@ public class TomcatMessageData {
    * @return
    */
   public long getRemainingSecondsAlert() {
-    return Long.parseLong(this.data.get(Key.REMAINING_SECONDS_ALERT.toString()));
+    return Long.parseLong(
+        this.data.get(Key.REMAINING_SECONDS_ALERT.toString()));
   }
 
   /**

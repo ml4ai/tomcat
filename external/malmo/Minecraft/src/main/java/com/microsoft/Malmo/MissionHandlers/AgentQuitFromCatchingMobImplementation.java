@@ -1,17 +1,15 @@
 package com.microsoft.Malmo.MissionHandlers;
 
-import java.util.List;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.BlockPos;
-
 import com.microsoft.Malmo.MissionHandlerInterfaces.IWantToQuit;
 import com.microsoft.Malmo.Schemas.AgentQuitFromCatchingMob;
 import com.microsoft.Malmo.Schemas.EntityTypes;
 import com.microsoft.Malmo.Schemas.MissionInit;
 import com.microsoft.Malmo.Schemas.MobWithDescription;
+import java.util.List;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.math.BlockPos;
 
 public class AgentQuitFromCatchingMobImplementation
     extends HandlerBase implements IWantToQuit {
