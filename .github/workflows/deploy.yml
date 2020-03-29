@@ -20,6 +20,7 @@ jobs:
         source tomcat_venv/bin/activate
         pip install wheel
         pip install exhale recommonmark sphinx-rtd-theme
+        mkdir build
         cd build
         cmake .. -DBoost_ARCHITECTURE=-x64\
                  -DBOOST_ROOT=$BOOST_ROOT_1_69_0\
