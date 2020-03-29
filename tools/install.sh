@@ -20,10 +20,10 @@ if [[ ! -z $GITHUB_ACTIONS ]]; then
     sudo apt-get install -y python3-venv xvfb
     python3 -m venv tomcat_venv
     source tomcat_venv/bin/activate
+    pip install exhale recommonmark sphinx-rtd-theme
   fi
 fi
 
-pip install exhale recommonmark sphinx-rtd-theme
 
 ${TOMCAT}/tools/install_dependencies.sh
 if [[ $? -ne 0 ]]; then exit 1; fi;
