@@ -14,6 +14,16 @@ export TOMCAT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && p
 ###############################################################################
 
 # On Travis, we will create and activate a Python virtual environment
+if [[ ! -z $GITHUB_ACTIONS ]]; then
+  if [[ "$OSTYPE" == "linux" ]]; then
+    sudo apt-get update
+    sudo apt-get install -y python3-venv xvfb
+    python3 -m venv tomcat_venv
+    source tomcat_venv/bin/activate
+  fi
+fi
+
+pip install exhale recommonmark sphinx-rtd-theme
 
 ${TOMCAT}/tools/install_dependencies.sh
 if [[ $? -ne 0 ]]; then exit 1; fi;
