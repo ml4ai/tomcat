@@ -22,12 +22,3 @@ jobs:
       run: |
         ./tools/install.sh
         xvfb-run --auto-servernum ./tools/run_session.sh
-
-    - name: Build docs
-      run: cd build && make docs && cd ..
-
-    - name: Deploy docs
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./build/docs
