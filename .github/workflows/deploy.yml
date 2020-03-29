@@ -1,0 +1,33 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Deploy website to Github Pages
+
+on:
+  push:
+    branches: [ linux_testing ]
+
+jobs:
+  build:
+    runs-on: [ ubuntu-latest ]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build docs
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3-venv xvfb
+        python3 -m venv tomcat_venv
+        source tomcat_venv/bin/activate
+        pip install exhale recommonmark sphinx-rtd-theme
+        cd build
+        cmake .. -DBoost_ARCHITECTURE=-x64\
+                 -DBOOST_ROOT=$BOOST_ROOT_1_69_0\
+                 -DBUILD_DOCS=ON
+        make docs
+        cd ..
+
+    - name: Deploy docs
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./build/docs

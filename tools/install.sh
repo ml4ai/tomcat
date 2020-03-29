@@ -14,18 +14,6 @@ export TOMCAT
 
 ###############################################################################
 
-# On Github Actions, we will create and activate a Python virtual environment
-if [[ -n $GITHUB_ACTIONS ]]; then
-  if [ -x "$(command -v apt-get)" ]; then
-    sudo apt-get update
-    sudo apt-get install -y python3-venv xvfb
-    python3 -m venv tomcat_venv
-    source tomcat_venv/bin/activate
-    pip install exhale recommonmark sphinx-rtd-theme
-  fi
-fi
-
-
 ${TOMCAT}/tools/install_dependencies.sh
 if [[ $? -ne 0 ]]; then exit 1; fi;
 
@@ -40,7 +28,6 @@ pushd "${TOMCAT}"
         if [[ ! -z $GITHUB_ACTIONS ]]; then
             cmake ${TOMCAT} -DBoost_ARCHITECTURE=-x64\
                             -DBOOST_ROOT=$BOOST_ROOT_1_69_0\
-                            -DBUILD_DOCS=ON
             if [[ $? -ne 0 ]]; then exit 1; fi;
         else
             cmake ${TOMCAT}
