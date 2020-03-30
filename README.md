@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/ml4ai/tomcat/workflows/build_and_test/badge.svg)](https://travis-ci.com/ml4ai/tomcat)
+[![Build Status](https://github.com/ml4ai/tomcat/workflows/Build%20and%20test%20ToMCAT/badge.svg)](https://github.com/ml4ai/tomcat/actions)
 
 ToMCAT
 ======
