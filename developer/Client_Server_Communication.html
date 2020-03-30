@@ -1,0 +1,278 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Message Exchange between Client and Server in Minecraft Forge &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Pre-Built World Loading Tutorial" href="prebuilt_world_loading.html" />
+    <link rel="prev" title="Contributing" href="CONTRIBUTING.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Developer documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="CONTRIBUTING.html">Contributing</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Message Exchange between Client and Server in Minecraft Forge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prebuilt_world_loading.html">Pre-Built World Loading Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cpp_api/index.html">C++ API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lisp.html">LISP Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Developer documentation</a> &raquo;</li>
+        
+      <li>Message Exchange between Client and Server in Minecraft Forge</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/developer/Client_Server_Communication.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="message-exchange-between-client-and-server-in-minecraft-forge">
+<h1>Message Exchange between Client and Server in Minecraft Forge<a class="headerlink" href="#message-exchange-between-client-and-server-in-minecraft-forge" title="Permalink to this headline">¶</a></h1>
+<p>If we need to trigger an action in the client side from the server or
+vice-versa, we need to create two message classes with the following structure:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">InventoryMessage</span> <span class="kd">implements</span> <span class="n">IMessage</span> <span class="p">{</span>
+
+    <span class="kd">public</span> <span class="n">ItemStack</span> <span class="n">itemStack</span><span class="p">;</span> <span class="c1">// Any object(s) that we want to serialize</span>
+		
+	<span class="kd">public</span> <span class="nf">InventoryMessage</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
+
+	<span class="kd">public</span> <span class="nf">InventoryMessage</span><span class="p">(</span><span class="n">ItemStack</span> <span class="n">itemStack</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">this</span><span class="p">.</span><span class="na">itemStack</span> <span class="o">=</span> <span class="n">itemStack</span><span class="p">;</span>
+	<span class="p">}</span>
+
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">fromBytes</span><span class="p">(</span><span class="n">ByteBuf</span> <span class="n">buf</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">this</span><span class="p">.</span><span class="na">itemStack</span> <span class="o">=</span> <span class="n">ByteBufUtils</span><span class="p">.</span><span class="na">readItemStack</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span>			
+	<span class="p">}</span>
+
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">toBytes</span><span class="p">(</span><span class="n">ByteBuf</span> <span class="n">buf</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">ByteBufUtils</span><span class="p">.</span><span class="na">writeItemStack</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="na">itemStack</span><span class="p">);</span>			
+	<span class="p">}</span>				
+
+<span class="p">}</span>
+
+<span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">InventoryMessageHandler</span> <span class="kd">implements</span> <span class="n">IMessageHandler</span><span class="o">&lt;</span><span class="n">InventoryMessage</span><span class="p">,</span> <span class="n">IMessage</span><span class="o">&gt;</span> <span class="p">{</span>
+		
+  <span class="nd">@Override</span>
+  <span class="kd">public</span> <span class="n">IMessage</span> <span class="nf">onMessage</span><span class="p">(</span><span class="kd">final</span> <span class="n">InventoryMessage</span> <span class="n">message</span><span class="p">,</span> <span class="kd">final</span> <span class="n">MessageContext</span> <span class="n">ctx</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">IThreadListener</span> <span class="n">mainThread</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>			
+    <span class="k">if</span> <span class="p">(</span><span class="n">ctx</span><span class="p">.</span><span class="na">side</span> <span class="o">==</span> <span class="n">Side</span><span class="p">.</span><span class="na">CLIENT</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">mainThread</span> <span class="o">=</span> <span class="n">Minecraft</span><span class="p">.</span><span class="na">getMinecraft</span><span class="p">();</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="n">mainThread</span> <span class="o">=</span> <span class="p">(</span><span class="n">WorldServer</span><span class="p">)</span><span class="n">ctx</span><span class="p">.</span><span class="na">getServerHandler</span><span class="p">().</span><span class="na">playerEntity</span><span class="p">.</span><span class="na">world</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">mainThread</span><span class="p">.</span><span class="na">addScheduledTask</span><span class="p">(</span><span class="k">new</span> <span class="n">Runnable</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nd">@Override</span>
+      <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// Do stuff here</span>
+      <span class="p">}</span>
+    <span class="p">});</span>    
+    <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In the message class we store all the information we need to pass from one side
+to the other and in the message handler we put the actions that need to be
+performed in the target side.
+Those classes must be registered so they can be triggered when needed, this can
+be done in the class MalmoMod after other similar registrations with the
+following piece of code:</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// The target side can be SERVER or CLIENT. If we need both, we just register this function twice, onde for each side.</span>
+<span class="n">MalmoMod</span><span class="p">.</span><span class="na">network</span><span class="p">.</span><span class="na">registerMessage</span><span class="p">(</span><span class="n">InventoryMessageHandler</span><span class="p">.</span><span class="na">class</span><span class="p">,</span> <span class="n">InventoryMessage</span><span class="p">.</span><span class="na">class</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Side</span><span class="p">.</span><span class="na">SERVER</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Finally, to send a message from the client to the server we use method
+MalmoMod.network.sendToServer passing the message object as parameter. On the
+other hand, to send a message from the client to the server, we use the method
+MalmoMod.network.sendTo passing the message object and the player (there can be
+more than one player/client in a mutiplayer game).</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="prebuilt_world_loading.html" class="btn btn-neutral float-right" title="Pre-Built World Loading Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="CONTRIBUTING.html" class="btn btn-neutral float-left" title="Contributing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

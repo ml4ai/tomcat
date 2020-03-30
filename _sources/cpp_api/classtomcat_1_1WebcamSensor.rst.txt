@@ -1,0 +1,16 @@
+.. _exhale_class_classtomcat_1_1WebcamSensor:
+
+Class WebcamSensor
+==================
+
+- Defined in :ref:`file_src_WebcamSensor.h`
+
+
+Class Documentation
+-------------------
+
+
+.. doxygenclass:: tomcat::WebcamSensor
+   :members:
+   :protected-members:
+   :undoc-members:

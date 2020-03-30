@@ -1,0 +1,400 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>C++ API &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Namespace boost::program_options" href="namespace_boost__program_options.html" />
+    <link rel="prev" title="Pre-Built World Loading Tutorial" href="../developer/prebuilt_world_loading.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../developer/index.html">Developer documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../developer/CONTRIBUTING.html">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../developer/Client_Server_Communication.html">Message Exchange between Client and Server in Minecraft Forge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../developer/prebuilt_world_loading.html">Pre-Built World Loading Tutorial</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">C++ API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#class-hierarchy">Class Hierarchy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#file-hierarchy">File Hierarchy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#full-api">Full API</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#namespaces">Namespaces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classes-and-structs">Classes and Structs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../developer/lisp.html">LISP Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../developer/index.html">Developer documentation</a> &raquo;</li>
+        
+      <li>C++ API</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/cpp_api/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="c-api">
+<h1>C++ API<a class="headerlink" href="#c-api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="class-hierarchy">
+<h2>Class Hierarchy<a class="headerlink" href="#class-hierarchy" title="Permalink to this headline">¶</a></h2>
+<ul class="treeView" id="class-treeView">
+  <li>
+    <ul class="collapsibleList">
+      <li class="lastChild">Namespace <a href="namespace_tomcat.html#namespace-tomcat">tomcat</a><ul><li>Class <a href="classtomcat_1_1FileHandler.html#exhale-class-classtomcat-1-1FileHandler">FileHandler</a></li><li>Class <a href="classtomcat_1_1LocalAgent.html#exhale-class-classtomcat-1-1LocalAgent">LocalAgent</a></li><li>Class <a href="classtomcat_1_1Mission.html#exhale-class-classtomcat-1-1Mission">Mission</a></li><li>Class <a href="classtomcat_1_1TomcatMissionException.html#exhale-class-classtomcat-1-1TomcatMissionException">TomcatMissionException</a></li><li class="lastChild">Class <a href="classtomcat_1_1WebcamSensor.html#exhale-class-classtomcat-1-1WebcamSensor">WebcamSensor</a></li></ul></li>
+    </ul>
+  </li><!-- only tree view element -->
+</ul><!-- /treeView class-treeView --></div>
+<div class="section" id="file-hierarchy">
+<h2>File Hierarchy<a class="headerlink" href="#file-hierarchy" title="Permalink to this headline">¶</a></h2>
+<ul class="treeView" id="file-treeView">
+  <li>
+    <ul class="collapsibleList">
+      <li class="lastChild">Directory <a href="dir_src.html#dir-src">src</a><ul><li>File <a href="file_src_FileHandler.cpp.html#file-src-FileHandler.cpp">FileHandler.cpp</a></li><li>File <a href="file_src_FileHandler.h.html#file-src-FileHandler.h">FileHandler.h</a></li><li>File <a href="file_src_LocalAgent.cpp.html#file-src-LocalAgent.cpp">LocalAgent.cpp</a></li><li>File <a href="file_src_LocalAgent.h.html#file-src-LocalAgent.h">LocalAgent.h</a></li><li>File <a href="file_src_Mission.cpp.html#file-src-Mission.cpp">Mission.cpp</a></li><li>File <a href="file_src_Mission.h.html#file-src-Mission.h">Mission.h</a></li><li>File <a href="file_src_Python_wrapper.cpp.html#file-src-Python-wrapper.cpp">Python_wrapper.cpp</a></li><li>File <a href="file_src_runExperiment.cpp.html#file-src-runExperiment.cpp">runExperiment.cpp</a></li><li>File <a href="file_src_utils.cpp.html#file-src-utils.cpp">utils.cpp</a></li><li>File <a href="file_src_utils.h.html#file-src-utils.h">utils.h</a></li><li>File <a href="file_src_WebcamSensor.cpp.html#file-src-WebcamSensor.cpp">WebcamSensor.cpp</a></li><li class="lastChild">File <a href="file_src_WebcamSensor.h.html#file-src-WebcamSensor.h">WebcamSensor.h</a></li></ul></li>
+    </ul>
+  </li><!-- only tree view element -->
+</ul><!-- /treeView file-treeView --></div>
+<div class="section" id="full-api">
+<h2>Full API<a class="headerlink" href="#full-api" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="namespaces">
+<h3>Namespaces<a class="headerlink" href="#namespaces" title="Permalink to this headline">¶</a></h3>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="namespace_boost__program_options.html">Namespace boost::program_options</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="namespace_fmt__literals.html">Namespace fmt::literals</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="namespace_malmo.html">Namespace malmo</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="namespace_std.html">Namespace std</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="namespace_std.html#namespaces">Namespaces</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="namespace_std__chrono.html">Namespace std::chrono</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="namespace_std__this_thread.html">Namespace std::this_thread</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="namespace_tomcat.html">Namespace tomcat</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="namespace_tomcat.html#classes">Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="namespace_tomcat.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="classes-and-structs">
+<h3>Classes and Structs<a class="headerlink" href="#classes-and-structs" title="Permalink to this headline">¶</a></h3>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="classtomcat_1_1FileHandler.html">Class FileHandler</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="classtomcat_1_1FileHandler.html#class-documentation">Class Documentation</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="classtomcat_1_1LocalAgent.html">Class LocalAgent</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="classtomcat_1_1LocalAgent.html#class-documentation">Class Documentation</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="classtomcat_1_1Mission.html">Class Mission</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="classtomcat_1_1Mission.html#class-documentation">Class Documentation</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="classtomcat_1_1TomcatMissionException.html">Class TomcatMissionException</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="classtomcat_1_1TomcatMissionException.html#inheritance-relationships">Inheritance Relationships</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="classtomcat_1_1TomcatMissionException.html#base-type">Base Type</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="classtomcat_1_1TomcatMissionException.html#class-documentation">Class Documentation</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="classtomcat_1_1WebcamSensor.html">Class WebcamSensor</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="classtomcat_1_1WebcamSensor.html#class-documentation">Class Documentation</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="function_runExperiment_8cpp_1a9501ceee8084de9223727b590efdc465.html">Function are_parameters_ok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="function_runExperiment_8cpp_1a9501ceee8084de9223727b590efdc465.html#function-documentation">Function Documentation</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="function_runExperiment_8cpp_1a67585f7c8b402e3a0bd288020ef776a2.html">Function create_mission</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="function_runExperiment_8cpp_1a67585f7c8b402e3a0bd288020ef776a2.html#function-documentation">Function Documentation</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="function_runExperiment_8cpp_1a4c30e5933c30c69fe3d583b975a28746.html">Function load_options</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="function_runExperiment_8cpp_1a4c30e5933c30c69fe3d583b975a28746.html#function-documentation">Function Documentation</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="function_runExperiment_8cpp_1ac0f2228420376f4db7e1274f2b41667c.html">Function main</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="function_runExperiment_8cpp_1ac0f2228420376f4db7e1274f2b41667c.html#function-documentation">Function Documentation</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="function_runExperiment_8cpp_1aa732c79c5780d31e5072dba7c547cc2e.html">Function parse_parameters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="function_runExperiment_8cpp_1aa732c79c5780d31e5072dba7c547cc2e.html#function-documentation">Function Documentation</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="function_Python__wrapper_8cpp_1adb856795385767461d388a98e4faa143.html">Function PYBIND11_MODULE</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="function_Python__wrapper_8cpp_1adb856795385767461d388a98e4faa143.html#function-documentation">Function Documentation</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="function_utils_8cpp_1a064ef9f4e2f086296b2169d54ae2f263.html">Function tomcat::get_timestamp</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="function_utils_8cpp_1a064ef9f4e2f086296b2169d54ae2f263.html#function-documentation">Function Documentation</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="namespace_boost__program_options.html" class="btn btn-neutral float-right" title="Namespace boost::program_options" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../developer/prebuilt_world_loading.html" class="btn btn-neutral float-left" title="Pre-Built World Loading Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

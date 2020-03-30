@@ -1,0 +1,29 @@
+
+.. _program_listing_file_src_LocalAgent.h:
+
+Program Listing for File LocalAgent.h
+=====================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_LocalAgent.h>` (``src/LocalAgent.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #pragma once
+   
+   namespace tomcat {
+   
+     class Mission; // Forward declaration to deal with circular dependency
+   
+     class LocalAgent {
+   
+     public:
+       LocalAgent();
+   
+       ~LocalAgent();
+   
+       void observe_mission(Mission& mission);
+     };
+   
+   } // namespace tomcat

@@ -1,0 +1,16 @@
+.. _exhale_class_classtomcat_1_1LocalAgent:
+
+Class LocalAgent
+================
+
+- Defined in :ref:`file_src_LocalAgent.h`
+
+
+Class Documentation
+-------------------
+
+
+.. doxygenclass:: tomcat::LocalAgent
+   :members:
+   :protected-members:
+   :undoc-members:

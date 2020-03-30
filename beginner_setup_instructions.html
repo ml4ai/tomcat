@@ -1,0 +1,234 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Setup instructions for people new to the command line. &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script src="_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/collapsible-lists/css/tree_view.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Setup instructions for people new to the command line.</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/beginner_setup_instructions.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="setup-instructions-for-people-new-to-the-command-line">
+<h1>Setup instructions for people new to the command line.<a class="headerlink" href="#setup-instructions-for-people-new-to-the-command-line" title="Permalink to this headline">¶</a></h1>
+<p>This is a set of instructions for macOS users who are new to the command line.</p>
+<div class="section" id="launching-the-terminal">
+<h2>Launching the terminal<a class="headerlink" href="#launching-the-terminal" title="Permalink to this headline">¶</a></h2>
+<p>macOS comes with a built-in terminal application, named ‘Terminal’. You
+should be able to search for it using Spotlight Search (which you can bring up
+with <code class="docutils literal notranslate"><span class="pre">&lt;Cmd&gt;+&lt;Space&gt;</span></code>).</p>
+</div>
+<div class="section" id="installing-tomcat">
+<h2>Installing ToMCAT<a class="headerlink" href="#installing-tomcat" title="Permalink to this headline">¶</a></h2>
+<p>Open a new terminal window. By default, the starting directory is your home
+directory. If you would like to download and install ToMCAT in another
+directory, change the working directory to that directory using the ‘cd’ (short
+for ‘change directory’) command. If the directory does not exist, you can create
+it using the ‘mkdir’ (short for ‘make directory’) command.</p>
+<p>For example, if you wanted to create a new directory called ‘Research’, and
+change the working directory to it, you would enter the two following commands
+(to execute a command that has been typed into the terminal, press the <code class="docutils literal notranslate"><span class="pre">&lt;Return&gt;</span></code>
+key - in the code chunk below, each line break corresponds to hitting the
+<code class="docutils literal notranslate"><span class="pre">&lt;Return&gt;</span></code> key.)</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="n">Research</span>
+<span class="n">cd</span> <span class="n">Research</span>
+</pre></div>
+</div>
+<p>Once you are in your desired working directory, run the following commands in
+the terminal:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="nl">https</span><span class="p">:</span><span class="c1">//github.com/ml4ai/tomcat</span>
+<span class="n">cd</span> <span class="n">tomcat</span> <span class="o">&amp;&amp;</span> <span class="p">.</span><span class="o">/</span><span class="n">tools</span><span class="o">/</span><span class="n">install</span><span class="p">.</span><span class="n">sh</span>
+</pre></div>
+</div>
+<p>You may be presented with a prompt to input a password during the installation,
+in which case enter the password you use to log in to your account (the
+password you use to install any software on your computer). You will not see
+any letters appearing as you type in your password - they will be hidden for
+privacy - so it is fine if it appears blank. Just type in your password
+normally and press the enter/return key on your keyboard.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+.. _exhale_class_classtomcat_1_1Mission:
+
+Class Mission
+=============
+
+- Defined in :ref:`file_src_Mission.h`
+
+
+Class Documentation
+-------------------
+
+
+.. doxygenclass:: tomcat::Mission
+   :members:
+   :protected-members:
+   :undoc-members:

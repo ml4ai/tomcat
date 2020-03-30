@@ -1,0 +1,300 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Pre-Built World Loading Tutorial &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="C++ API" href="../cpp_api/index.html" />
+    <link rel="prev" title="Message Exchange between Client and Server in Minecraft Forge" href="Client_Server_Communication.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Developer documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="CONTRIBUTING.html">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Client_Server_Communication.html">Message Exchange between Client and Server in Minecraft Forge</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Pre-Built World Loading Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#loading-pre-built-worlds">Loading Pre-Built Worlds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#creating-a-world-to-load">Creating A World to Load</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#final-notes">Final Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../cpp_api/index.html">C++ API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lisp.html">LISP Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Developer documentation</a> &raquo;</li>
+        
+      <li>Pre-Built World Loading Tutorial</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/developer/prebuilt_world_loading.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <p><strong>Author:</strong> Aditya Banerjee <strong>Date:</strong> 2019-12-7</p>
+<div class="section" id="pre-built-world-loading-tutorial">
+<h1>Pre-Built World Loading Tutorial<a class="headerlink" href="#pre-built-world-loading-tutorial" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="loading-pre-built-worlds">
+<h2>Loading Pre-Built Worlds<a class="headerlink" href="#loading-pre-built-worlds" title="Permalink to this headline">¶</a></h2>
+<p><strong>Pre-requisites: Make sure you are able to run Minecraft and the default mission before attempting this tutorial.</strong></p>
+<p><strong>Aim:</strong> To load pre-built Minecraft worlds into the XML missions.</p>
+<p><strong>Purpose:</strong>  The pre-built world can have handmade structures which will help speed up mission development by shifting some load away from the XML. It is easier to build more complex environments by hand than through the XML. It will also allow us to set environment variables and command blocks in the world and control some aspects of the mission.</p>
+<p><strong>Getting Started:</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">sar</span></code>world is expected to be updated often, so the number attached to the name
+will reflect the current version number.<code class="docutils literal notranslate"><span class="pre">x_x_x</span></code> is simply the placeholder to
+represent this number.</p>
+<p>1. Download the <code class="docutils literal notranslate"><span class="pre">sar_x_x_x</span></code> world from this Drive link:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="nl">https</span><span class="p">:</span><span class="c1">//drive.google.com/open?id=19PjgHmUeJmOQ4DS4dAy-4bgax2_TnJRp</span>
+</pre></div>
+</div>
+<p>Save it somewhere convenient and unzip the file.</p>
+<p>Henceforth, <code class="docutils literal notranslate"><span class="pre">sar_x_x_x</span></code> refers to the folder you got from unzipping.</p>
+<p><strong>NOTE</strong> : Ensure the path to which you save this folder has no white spaces.</p>
+<p>Ex:  <code class="docutils literal notranslate"><span class="pre">Documents/folder</span> <span class="pre">name</span></code> is not allowed, but <code class="docutils literal notranslate"><span class="pre">Documents/folder_name</span></code> is allowed</p>
+<p>2. Download the <code class="docutils literal notranslate"><span class="pre">file_gen</span></code> and <code class="docutils literal notranslate"><span class="pre">file_gen_skeleton</span></code> XMLs from this Drive link:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="nl">https</span><span class="p">:</span><span class="c1">//drive.google.com/drive/folders/1sA5F7ifgzglJnxFaeNuXHFwdMjmrpNHB?usp=sharing</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">file_gen</span></code> will serve as a reference for you to use <code class="docutils literal notranslate"><span class="pre">file_gen_skeleton</span></code> to get your pre-built world working.</p>
+<p><strong>DO NOT</strong> save it inside  <code class="docutils literal notranslate"><span class="pre">sar_x_x_x</span></code></p>
+<p>This is because the <em>entire</em> <code class="docutils literal notranslate"><span class="pre">sar_x_x_x</span></code>  folder represents the Minecraft world. It is not meant to hold anything else.</p>
+<p>I saved mine in:
+<code class="docutils literal notranslate"><span class="pre">/home/$USER/Documents/TOMCAT/tomcat/external/malmo/sample_missions</span></code> to keep it with all the other missions</p>
+<p>3.	Open <code class="docutils literal notranslate"><span class="pre">file_gen_skeleton.xml</span></code></p>
+<p>Don’t change the name after we modify it (the next step) for the sake of this tutorial.</p>
+<p>4.	Modifying the XML</p>
+<p>The comments in the XML indicate what needs to be filled in generally, but for
+the tutorial go to the line <code class="docutils literal notranslate"><span class="pre">&lt;FileWorldGenerator</span> <span class="pre">src</span> <span class="pre">=</span> <span class="pre">“”</span> <span class="pre">/&gt;</span></code></p>
+<p>Within the quotes specify the path to which you saved your <code class="docutils literal notranslate"><span class="pre">sar_x_x_x</span></code> folder.</p>
+<p>Again,the <strong>Minecraft world is the whole folder and not just one file inside the folder, so the path should end in:</strong> <code class="docutils literal notranslate"><span class="pre">sar_x_x_x</span></code></p>
+<p>Refer to <code class="docutils literal notranslate"><span class="pre">file_gen.xml</span></code> to see how I specified my path.</p>
+<p><strong>It is important to note here that <code class="docutils literal notranslate"><span class="pre">~</span></code> and <code class="docutils literal notranslate"><span class="pre">$USER</span></code> won’t work as placeholders inside the XML</strong></p>
+<p>The whole path needs to be specified using <code class="docutils literal notranslate"><span class="pre">home/&lt;your</span> <span class="pre">username&gt;</span></code></p>
+<p>5. For now, don’t modify any of the other variables. Simply save the XML.</p>
+<p>6. Launch Minecraft from the build directory in tomcat, and in a separate terminal from inside build</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>run ./bin/runExperiment –mission &lt;Path to the file_gen_skeleton.xml you modified&gt;
+</pre></div>
+</div>
+<p>7.	That’s it! You should be inside the world I built.</p>
+</div>
+<div class="section" id="creating-a-world-to-load">
+<h2>Creating A World to Load<a class="headerlink" href="#creating-a-world-to-load" title="Permalink to this headline">¶</a></h2>
+<p>1.	Simply launch Minecraft from inside the build folder using:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="o">/</span><span class="n">launch_minecraft</span><span class="p">.</span><span class="n">sh</span>
+</pre></div>
+</div>
+<p>2.	Single player →  Create new world</p>
+<p>3.	Name the world anything you want and hit create.</p>
+<p>This next part of the step is optional.</p>
+<p>Select modify if you want it to be flat or use a specific seed for a certain world.
+You can also set the game-play mode to survival or creative.
+These modes are the  only options available during world creation, but spectator and adventure mode are available through in-game commands.</p>
+<p>4.	Just play the game!</p>
+<p>Build monuments, buildings or anything you want.</p>
+<p>You might even experiment with command blocks. For a list of commands and how to use them, refer to this link:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="nl">https</span><span class="p">:</span><span class="c1">//minecraft.gamepedia.com/Commands</span>
+</pre></div>
+</div>
+<p>5.	Once you’re done building, press Esc -&gt;  Save and Quit.</p>
+<p>6. Navigate to <code class="docutils literal notranslate"><span class="pre">tomcat/external/malmo/Minecraft/run/saves/</span></code></p>
+<p>7. Wrapping Up:</p>
+<p>You should see the world you just played on as a folder in this directory.  You can now load this world.</p>
+<p>It is possible to load the world into the XML from this saves directory itself; however it is not recommended.
+Many worlds will be created each time a mission is run, and this directory will become hard to manage.
+It is better to save it elsewhere and then load it in from that path.</p>
+</div>
+<div class="section" id="final-notes">
+<h2>Final Notes<a class="headerlink" href="#final-notes" title="Permalink to this headline">¶</a></h2>
+<p>I intentionally left <code class="docutils literal notranslate"><span class="pre">file_gen_skeleton</span></code> as a very basic XML with no real mission elements. It is meant to serve as a foundation to build missions without needing to change or delete much.
+When you’ve finished going through this documentation, you may add as much as you want to <code class="docutils literal notranslate"><span class="pre">file_gen_skeleton</span></code> to implement your mission. There is no need to follow
+the tutorial’s XML modification restrictions at that time.</p>
+<p>Note however, it is better to set trivial paramaters through in-game commands while playing the world so that the XML can be more streamlined in its implementation of the mission itself. The goal of this endeavour is to move the trivial tasks of building and setting daytime etc. away from the XML.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../cpp_api/index.html" class="btn btn-neutral float-right" title="C++ API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Client_Server_Communication.html" class="btn btn-neutral float-left" title="Message Exchange between Client and Server in Minecraft Forge" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

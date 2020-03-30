@@ -1,0 +1,541 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>LISP Notes &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Installation" href="../installation.html" />
+    <link rel="prev" title="Function tomcat::get_timestamp" href="../cpp_api/function_utils_8cpp_1a064ef9f4e2f086296b2169d54ae2f263.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Developer documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="CONTRIBUTING.html">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Client_Server_Communication.html">Message Exchange between Client and Server in Minecraft Forge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prebuilt_world_loading.html">Pre-Built World Loading Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cpp_api/index.html">C++ API</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">LISP Notes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#get-a-lisp">Get a Lisp</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#steel-bank-common-lisp-sbcl">Steel Bank Common Lisp (SBCL)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#clozure-common-lisp-ccl">Clozure Common Lisp (CCL)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#quicklisp">Quicklisp</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Install</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#lisp-editor">Lisp Editor</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#emacs">Emacs</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#shop3">SHOP3</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Install</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#building-local-shop3-docs-does-not-yet-work">Building local SHOP3 docs (Does not yet work…)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#common-foreign-function-interface-cffi">Common Foreign Function Interface (CFFI)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Developer documentation</a> &raquo;</li>
+        
+      <li>LISP Notes</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/developer/lisp.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="lisp-notes">
+<h1>LISP Notes<a class="headerlink" href="#lisp-notes" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Author: Clayton T. Morrison</p></li>
+<li><p>Created: 2019-05-26</p></li>
+<li><p>Last update: 2019-07-24</p></li>
+</ul>
+<div class="section" id="get-a-lisp">
+<h2>Get a Lisp<a class="headerlink" href="#get-a-lisp" title="Permalink to this headline">¶</a></h2>
+<p>There are several very good free, open-source Common Lisp implementations. Clay
+is most familiar (for modest values of familiar) Clozure Common Lisp (CCL), so
+the focus here will be CCL, but I’ll also note SBCL. It is safe to have both on
+your machine.</p>
+<div class="section" id="steel-bank-common-lisp-sbcl">
+<h3>Steel Bank Common Lisp (SBCL)<a class="headerlink" href="#steel-bank-common-lisp-sbcl" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="http://www.sbcl.org/">http://www.sbcl.org/</a></p>
+<p>You will need SBCL to build the local Shop3 documentation (although Clay is
+still working on getting local doc build to work).</p>
+<div class="section" id="intall">
+<h4>Intall:<a class="headerlink" href="#intall" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>$ brew install sbcl
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="clozure-common-lisp-ccl">
+<h3>Clozure Common Lisp (CCL)<a class="headerlink" href="#clozure-common-lisp-ccl" title="Permalink to this headline">¶</a></h3>
+<p>NOTE: It is NOT recommended that you install via Homebrew/MacPorts.
+Instead, use the following instructions.</p>
+<div class="section" id="install">
+<h4>Install:<a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h4>
+<p>Further build instructions: <a class="reference external" href="https://github.com/Clozure/ccl/issues/150">https://github.com/Clozure/ccl/issues/150</a></p>
+<div class="section" id="get-ccl">
+<h5>(1) Get CCL<a class="headerlink" href="#get-ccl" title="Permalink to this headline">¶</a></h5>
+<p>NOTE: As of 2019-05, a specific CCL release is recommended:<br>
+<code class="docutils literal notranslate"><span class="pre">https://github.com/Clozure/ccl/releases/tag/v1.12-dev.5</span></code></p>
+<p>NOTE: In the following, I’m cloning CCL as <code class="docutils literal notranslate"><span class="pre">ccl-dev</span></code></p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/Clozure/ccl.git ccl-dev
+$ curl -L -O https://github.com/Clozure/ccl/releases/download/v1.12-dev.5/darwinx86.tar.gz
+$ cd ccl-dev
+$ tar xf ../darwinx86.tar.gz
+</pre></div>
+</div>
+</div>
+<div class="section" id="rebuild-the-ccl-lisp-image">
+<h5>(2) Rebuild the CCL Lisp Image<a class="headerlink" href="#rebuild-the-ccl-lisp-image" title="Permalink to this headline">¶</a></h5>
+<p>In CCL, you rebuild the lisp image from within CCL itself.</p>
+<p>There are a couple of ways to launch CCL (both of the following assume you’re in the ccl root (e.g., <code class="docutils literal notranslate"><span class="pre">ccl-dev/</span></code>) directory):</p>
+<ol>
+<li><p>To launch the image directly: <code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">./dx86cl64</span></code></p></li>
+<li><p>To launch from the scripts directory:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>$ cd scripts
+$ ./ccl64  # to launch CCL
+</pre></div>
+</div>
+</li>
+</ol>
+<p>Rebuild the lisp kernel (takes about 30 sec).
+After launching the CCL lisp image, evaluate the following
+(‘<code class="docutils literal notranslate"><span class="pre">?</span></code>’ indicates the lisp REPL prompt) :</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="o">?</span> <span class="p">(</span><span class="n">rebuild</span><span class="o">-</span><span class="nl">ccl</span> <span class="p">:</span><span class="n">full</span> <span class="n">t</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>Optionally build the cocoa application.
+This step is not necessary</p>
+</div></blockquote>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>? (require &#39;cocoa-application)
+</pre></div>
+</div>
+</div>
+<div class="section" id="move-ccl-to-usr-local-src">
+<h5>(3) Move CCL to <code class="docutils literal notranslate"><span class="pre">/usr/local/src</span></code><a class="headerlink" href="#move-ccl-to-usr-local-src" title="Permalink to this headline">¶</a></h5>
+<p>After successfully rebuilding the lisp kernel, I then <em>copied</em> the CCL <code class="docutils literal notranslate"><span class="pre">ccl-dev</span></code> directory to: <code class="docutils literal notranslate"><span class="pre">/usr/local/src/ccl</span></code>.<br>
+I had to create <code class="docutils literal notranslate"><span class="pre">/usr/local/src/</span></code>, including: sudo chown to my username, sudo chgrp to admin:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>$ sudo mkdir /usr/local/src/ccl
+$ sudo chown claytonm /usr/local/src/ccl
+$ sudo chgrp admin /usr/local/src/ccl
+$ cp -R &lt;path-to-repo&gt;/lisp/ccl-dev /usr/local/src/ccl
+</pre></div>
+</div>
+</div>
+<div class="section" id="add-ccl-scripts-to-path">
+<h5>(4) Add ccl/scripts to PATH<a class="headerlink" href="#add-ccl-scripts-to-path" title="Permalink to this headline">¶</a></h5>
+<p>Add to PATH in <code class="docutils literal notranslate"><span class="pre">~/.bash_profile</span></code>:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>export PATH=$PATH&quot;:/usr/local/src/ccl/scripts&quot;
+</pre></div>
+</div>
+<p>After source’ing <code class="docutils literal notranslate"><span class="pre">~/.bash_profile</span></code> or starting a new shell, you should be able
+to access <code class="docutils literal notranslate"><span class="pre">ccl64</span></code> from the command line:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>$ which ccl64
+/usr/local/src/ccl/scripts/ccl64
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="quicklisp">
+<h2>Quicklisp<a class="headerlink" href="#quicklisp" title="Permalink to this headline">¶</a></h2>
+<p>Quicklisp is a lisp package manager.<br>
+<a class="reference external" href="https://www.quicklisp.org/">https://www.quicklisp.org/</a></p>
+<div class="section" id="id1">
+<h3>Install<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>Get quicklisp:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>$ curl -O https://beta.quicklisp.org/quicklisp.lisp
+</pre></div>
+</div>
+<p>Next, launch CCL in the location where you would like your quicklisp repository
+to be maintained. You specify the path of the quicklisp repo root by the
+<code class="docutils literal notranslate"><span class="pre">:path</span></code> argument.  (I chose to launch ccl within my <code class="docutils literal notranslate"><span class="pre">&lt;repo-root&gt;/lisp/</span></code>
+directory, so I only needed to add the <code class="docutils literal notranslate"><span class="pre">quicklisp</span></code> root dir (the name I chose)
+as the <code class="docutils literal notranslate"><span class="pre">:path</span></code> argument.) Evaluate the following within CCL:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>? (load &quot;&lt;path_to&gt;quicklisp.lisp&quot;)
+? (quicklisp-quickstart:install :path &quot;quicklisp&quot;)
+? (ql:add-to-init-file)  # adds lines to ~/.ccl-init.lisp
+</pre></div>
+</div>
+<p>NOTE: Most lisps use some sort of init file facility in order to permit
+configuration and pre-loading. For CCL, one of these files goes in:
+<code class="docutils literal notranslate"><span class="pre">~.ccl-init.lisp</span></code>. The last line of the commands above adds a form to
+<code class="docutils literal notranslate"><span class="pre">~.ccl-init.lisp</span></code> so that quicklisp will automatically be loaded (it’s very
+lightweight) at CCL startup.</p>
+</div>
+</div>
+<div class="section" id="lisp-editor">
+<h2>Lisp Editor<a class="headerlink" href="#lisp-editor" title="Permalink to this headline">¶</a></h2>
+<p>A good editor is essential for lisp dev. It should grok paren matching and
+support canonical lisp formatting
+(<a class="reference external" href="http://wiki.c2.com/?LispIndentation">http://wiki.c2.com/?LispIndentation</a>).</p>
+<p>It is also good to have direct integration with a Lisp REPL with backtrace
+navigation support. One of the most widely used general Lisp integration is the
+Superior Lisp Interaction Mode for Emacs (SLIME:
+<a class="reference external" href="https://common-lisp.net/project/slime/">https://common-lisp.net/project/slime/</a>).</p>
+<p>Some helpful notes about SLIME use:<br>
+<a class="reference external" href="https://common-lisp.net/project/slime/doc/html/Evaluation.html">https://common-lisp.net/project/slime/doc/html/Evaluation.html</a></p>
+<p>The focus here will be on setting up Emacs with SLIME.</p>
+<p>NOTE: I did find there is a rework of slime for Atom, although I have not yet tested it.<br>
+<a class="reference external" href="http://web.mit.edu/sjlevine/www/projects/atom-slime/">http://web.mit.edu/sjlevine/www/projects/atom-slime/</a></p>
+<div class="section" id="emacs">
+<h3>Emacs<a class="headerlink" href="#emacs" title="Permalink to this headline">¶</a></h3>
+<p>If using a mac, highly recommend using Aquamacs.</p>
+<div class="section" id="gnu-emacs">
+<h4>GNU Emacs<a class="headerlink" href="#gnu-emacs" title="Permalink to this headline">¶</a></h4>
+<p><a class="reference external" href="https://www.gnu.org/software/emacs/">https://www.gnu.org/software/emacs/</a></p>
+<p>Although there is a default Emacs on Mac, I recommend installing the latest.<br>
+Install: <code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">brew</span> <span class="pre">install</span> <span class="pre">emacs</span></code></p>
+</div>
+<div class="section" id="aquamacs">
+<h4>Aquamacs<a class="headerlink" href="#aquamacs" title="Permalink to this headline">¶</a></h4>
+<p><a class="reference external" href="http://aquamacs.org/download.shtml">http://aquamacs.org/download.shtml</a></p>
+<p>Setting up Aquamacs theme:<br>
+<a class="reference external" href="https://stackoverflow.com/questions/21988671/how-to-make-aquamacs-color-theme-stick">https://stackoverflow.com/questions/21988671/how-to-make-aquamacs-color-theme-stick</a><br>
+I use (for now) <code class="docutils literal notranslate"><span class="pre">subtle-hacker</span></code> (although not keen on function name color…).<br>
+Aquamacs preferences, where things like theme are set, lives in<br>
+<code class="docutils literal notranslate"><span class="pre">~/Library/Preferences/Aquamacs</span> <span class="pre">Emacs/Preferences.el</span></code></p>
+</div>
+<div class="section" id="set-up-slime-for-emacs">
+<h4>Set up SLIME for Emacs<a class="headerlink" href="#set-up-slime-for-emacs" title="Permalink to this headline">¶</a></h4>
+<p><a class="reference external" href="https://gist.github.com/BlameOmar/9477900">https://gist.github.com/BlameOmar/9477900</a></p>
+<p>If you have already installed quicklisp, then you just need to evaluate the following in ccl:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="o">?</span> <span class="p">(</span><span class="nl">ql</span><span class="p">:</span><span class="n">quickload</span> <span class="s">&quot;quicklisp-slime-helper&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>At the end of installing quicklisp-slime-helper, it will display a message
+explaining what to put in your <code class="docutils literal notranslate"><span class="pre">~/.emacs</span></code>, except this should go where Aquamacs
+puts such things:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="o">~/</span><span class="p">.</span><span class="n">emacs</span><span class="p">.</span><span class="n">d</span><span class="o">/</span><span class="n">init</span><span class="p">.</span><span class="n">el</span>
+</pre></div>
+</div>
+<p>In my setup, I’ve added the following two lines to <code class="docutils literal notranslate"><span class="pre">~/.emacs.d/init.el</span></code>:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">setq</span> <span class="n">inferior</span><span class="o">-</span><span class="n">lisp</span><span class="o">-</span><span class="n">program</span> <span class="s">&quot;/usr/local/src/ccl/scripts/ccl64&quot;</span><span class="p">)</span>
+<span class="p">(</span><span class="n">load</span> <span class="p">(</span><span class="n">expand</span><span class="o">-</span><span class="n">file</span><span class="o">-</span><span class="n">name</span> <span class="s">&quot;~/Documents/repository/lisp/quicklisp/slime-helper.el&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="section" id="optional-emacs-melpa-repo">
+<h5>Optional: Emacs MELPA repo<a class="headerlink" href="#optional-emacs-melpa-repo" title="Permalink to this headline">¶</a></h5>
+<p>There is a commonly used Emacs package manager called MELPA (<a class="reference external" href="https://melpa.org/#/">https://melpa.org/#/</a>).</p>
+<p>I had to work a bit to get this to work with Aquamacs, including working with
+Win from the Aquamacs dev group; here is the issue I followed that provided
+insight:<br>
+<a class="reference external" href="https://github.com/davidswelt/aquamacs-emacs/issues/133">https://github.com/davidswelt/aquamacs-emacs/issues/133</a></p>
+<p>Here’s what I did:</p>
+<p>(1) <code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">brew</span> <span class="pre">install</span> <span class="pre">gnutls</span></code></p>
+<p>(2) Add the following to Aquamacs Preferences.el in
+<code class="docutils literal notranslate"><span class="pre">~/Library/Preferences/Aquamacs</span> <span class="pre">Emacs/</span></code> :</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">setenv</span> <span class="s">&quot;PATH&quot;</span> <span class="p">(</span><span class="n">concat</span> <span class="s">&quot;~/bin.sh:/usr/local/bin:&quot;</span> <span class="p">(</span><span class="n">getenv</span> <span class="s">&quot;PATH&quot;</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>(3) Then you need to add some additional things to <code class="docutils literal notranslate"><span class="pre">~/.emacs.d/init.el</span></code> – My current <code class="docutils literal notranslate"><span class="pre">~/.emacs.d/init.el</span></code> looks like this::</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>(message &quot;&gt;&gt; init.el file load START!&quot;)
+
+(require &#39;tls)
+(with-eval-after-load &#39;tls
+     (push &quot;/private/etc/ssl/cert.pem&quot; gnutls-trustfiles))
+(setq tls-checktrust &#39;ask)
+
+(setq tls-program
+      &#39;(&quot;gnutls-cli -p %p --dh-bits=2048 --ocsp --x509cafile=%t --insecure --priority=&#39;SECURE192:+SECURE128:-VERS-ALL:+VERS-TLS1.2:%%PROFILE_MEDIUM&#39; %h&quot;))
+
+(message &quot;&gt;&gt;&gt;&gt; tls-program: &#39;%s&#39;&quot; tls-program)
+
+(require &#39;package)
+(let* ((no-ssl (and (memq system-type &#39;(windows-nt ms-dos))
+                    (not (gnutls-available-p))))
+       (proto (if no-ssl &quot;http&quot; &quot;https&quot;)))
+  (when no-ssl
+    (warn &quot;\
+Your version of Emacs does not support SSL connections,
+which is unsafe because it allows man-in-the-middle attacks.
+There are two things you can do about this warning:
+1. Install an Emacs version that does support SSL and be safe.
+2. Remove this warning from your init file so you won&#39;t see it again.&quot;))
+  ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
+  (add-to-list &#39;package-archives (cons &quot;melpa&quot; (concat proto &quot;://melpa.org/packages/&quot;)) t)
+  ;;(add-to-list &#39;package-archives (cons &quot;melpa-stable&quot; (concat proto &quot;://stable.melpa.org/packages/&quot;)) t)
+  (when (&lt; emacs-major-version 24)
+    ;; For important compatibility libraries like cl-lib
+    (add-to-list &#39;package-archives (cons &quot;gnu&quot; (concat proto &quot;://elpa.gnu.org/packages/&quot;)))))
+(package-initialize)
+
+
+;;;; slime
+(setq inferior-lisp-program &quot;/usr/local/src/ccl/scripts/ccl64&quot;)
+(load (expand-file-name &quot;~/Documents/repository/lisp/quicklisp/slime-helper.el&quot;))
+
+
+(message &quot;&gt;&gt; init.el file load DONE!&quot;)
+</pre></div>
+</div>
+<p>(4) Finally, refresh the MELPA repo: Launch Aquamacs and execute the following (where <code class="docutils literal notranslate"><span class="pre">M-x</span></code> is “Meta-x” in Emacs parlance; in Aquamacs, the “Meta” key is bound to the <code class="docutils literal notranslate"><span class="pre">control</span></code> key; in gnu emacs (e.g., from the terminal), “Meta” is bound to. the <code class="docutils literal notranslate"><span class="pre">Esc</span></code> key):</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">M</span><span class="o">-</span><span class="n">x</span> <span class="n">package</span><span class="o">-</span><span class="n">refresh</span><span class="o">-</span><span class="n">contents</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="shop3">
+<h2>SHOP3<a class="headerlink" href="#shop3" title="Permalink to this headline">¶</a></h2>
+<p>SHOP3 is the most actively developed version of the SHOP (Simple Hierarchical Ordered Planner).</p>
+<ul class="simple">
+<li><p>Github: <a class="reference external" href="https://github.com/shop-planner/shop3">https://github.com/shop-planner/shop3</a></p></li>
+<li><p>SHOP3 Manual: <a class="reference external" href="https://shop-planner.github.io/">https://shop-planner.github.io/</a></p></li>
+</ul>
+<p>SHOP3 depends on asdf (<a class="reference external" href="https://common-lisp.net/project/asdf/">https://common-lisp.net/project/asdf/</a>).<br>
+In particular, fiveam in the asdf contrib: <code class="docutils literal notranslate"><span class="pre">asdf/contrib/fiveam-asdf</span></code>):<br>
+<a class="reference external" href="https://gitlab.common-lisp.net/asdf/asdf">https://gitlab.common-lisp.net/asdf/asdf</a></p>
+<div class="section" id="id2">
+<h3>Install<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>SHOP3 works with quicklisp (recommended), so clone into your quicklisp repo:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>$ cd to &lt;quicklisp-root&gt;/local-projects/
+$ git clone https://github.com/shop-planner/shop3.git
+$ git clone https://gitlab.common-lisp.net/asdf/asdf.git
+</pre></div>
+</div>
+<p>Then git checkout all of the SHOP3 submodules, which will be placed in <code class="docutils literal notranslate"><span class="pre">shop3/jenkins/ext/</span></code>. In the root of shop3, run:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>$ git submodule update --init --recursive
+</pre></div>
+</div>
+<p>Then, in CCL:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="o">?</span> <span class="p">(</span><span class="nl">ql</span><span class="p">:</span><span class="n">quickload</span> <span class="s">&quot;shop3&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="building-local-shop3-docs-does-not-yet-work">
+<h3>Building local SHOP3 docs (Does not yet work…)<a class="headerlink" href="#building-local-shop3-docs-does-not-yet-work" title="Permalink to this headline">¶</a></h3>
+<p>NOTE: Building Shop3 local docs<br>
+You will need to install SBCL to build the Shop3 docs.<br>
+You will also need to configure ASDF (the lisp build framework).</p>
+<p>NOTES so far on attempting to build docs:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>(1) Install sbcl -- see above
+(2) Put the following in &lt;quicklisp&gt;/local-projects/
+- cl-dot : https://github.com/michaelw/cl-dot&lt;br&gt;
+git clone https://github.com/michaelw/cl-dot.git
+
+(3) Add paths to the root of each of those checkouts to 
+        asdf:*central-registry*
+    of ~/.sbclrc (you may need to create this file)
+    Here&#39;s what my ~/.xbclrc currently contains:
+
+========== START ~/.sbclrc ==========
+(print &quot;&gt;&gt;&gt; Loading ~/.sbclrc&quot;)
+
+(require &quot;asdf&quot;)
+(push &quot;/Users/claytonm/Documents/repository/lisp/quicklisp/local-projects/shop3/shop3/&quot; asdf:*central-registry*)
+(push &quot;/Users/claytonm/Documents/repository/lisp/quicklisp/local-projects/asdf/contrib/fiveam-asdf/&quot; asdf:*central-registry*)
+(push &quot;/Users/claytonm/Documents/repository/lisp/quicklisp/local-projects/shop3/jenkins/ext/iterate/&quot; asdf:*central-registry*)
+(push &quot;/Users/claytonm/Documents/repository/lisp/quicklisp/local-projects/shop3/jenkins/ext/trivial-garbage/&quot; asdf:*central-registry*)
+(push &quot;/Users/claytonm/Documents/repository/lisp/quicklisp/local-projects/shop3/jenkins/ext/alexandria/&quot; asdf:*central-registry*)
+(push &quot;/Users/claytonm/Documents/repository/lisp/quicklisp/local-projects/cl-dot/&quot; asdf:*central-registry*)
+
+(print &quot;&gt;&gt;&gt; DONE loading ~/.sbclrc&quot;)
+========== END ~/.sbclrc ==========
+</pre></div>
+</div>
+<p>… That’s as far as I’ve gotten; <code class="docutils literal notranslate"><span class="pre">$</span> <span class="pre">shop3/docs/make</span></code> currently fails with bunch of doc processing errors.</p>
+<p>Started email convo with Robert Goldman &#64;SIFT on 2019-07-20</p>
+</div>
+</div>
+<div class="section" id="common-foreign-function-interface-cffi">
+<h2>Common Foreign Function Interface (CFFI)<a class="headerlink" href="#common-foreign-function-interface-cffi" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://common-lisp.net/project/cffi/manual/cffi-manual.html">https://common-lisp.net/project/cffi/manual/cffi-manual.html</a></p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../cpp_api/function_utils_8cpp_1a064ef9f4e2f086296b2169d54ae2f263.html" class="btn btn-neutral float-left" title="Function tomcat::get_timestamp" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

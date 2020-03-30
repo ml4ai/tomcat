@@ -1,0 +1,263 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>bugs.txt &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script src="_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/collapsible-lists/css/tree_view.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>bugs.txt</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/KB-notes.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="bugs-txt">
+<h1>bugs.txt<a class="headerlink" href="#bugs-txt" title="Permalink to this headline">¶</a></h1>
+<p>If TOMCAT env var is not set when we do runExperiment, we get an abort. Could we
+check that it is set via the getenv() system call and exit with a better error
+message?</p>
+<p>If we kill runExperiment, then Minecraft is not useable, even though it seems to
+be running. Likely more cleanup in runExperiment and/or dealing with signals 2
+and 15 (and perhaps others—I can help choose which) is needed? To reproduce,
+start the runExperiment, and then do a ctl-c. runExperiment dies, but Minecraft
+still displays the mission.</p>
+<p>If I run two missions in a row without killing Minecraft, I often (always?)
+loose my cursor control. I think this is whenever the mission does not exit
+successfully?</p>
+<p>UPDATE: The timer is forgotten if you die and “respawn”. Also, if you respawn,
+then you cannot affect the villager saved count. So, we need a strategy for what
+to do if we die, and how to clean up. (While I am not sure if I respawned in the
+initial case that I reported on below, but this is the likeliest explanation.)
+PREVIOUS: Once I had the time limit set to 30s and then went wondering
+around in the wrong direction, and the time limit was forgotten. HOWEVER, I
+have not been able to reproduce this.</p>
+<p>When the SRA mission begins, it tells you that you should save the villagers:
+Perhaps remind the player how to do it by adding “by bumping into them”.</p>
+<p>Is it easy to (more significantly) change the appearance of villager who has
+been saved? (Or just make them disappear (beamed up)?</p>
+<p>The crafting instructions (second screen) it should be more clear that you are
+matching the exact pattern shown in the picture. Once they click OK, they will
+not be able to see the pattern. I am guessing the pattern “axe-shaped”, in which
+case, perhaps refer to that—otherwise the pattern seems arbitrary.</p>
+<p>The instruction for opening an iron door should say more explicitly where to
+click. You do not simply click next to it.  You need to click on the brown part.
+Clicking on the gray end does not work. The instruction should be more specific.</p>
+<p>Can we provide a way to restart the specific subtask (i.e., back the previous
+instruction screen)? It is possible to end up wondering around aimlessly, trying
+to remember what it was that you were going to do.</p>
+<p>If run_session fails, it needs to exit with non-zero status. If the issue is
+with malmo, hopefully we can get an error from malmo/Minecraft. I can help hack
+it if needed. Here is an example of failure because Minecraft needs to be
+restarted (but to do so, we need to know that the run failed–right now I have a
+hack for it).
+kobus&#64;alpine:~/projects/ASIST/mission/run_session_try_2/tomcat$ /Volumes/home/kobus/projects/ASIST/mission/run_session_try_2/tomcat/build/bin/runExperiment –mission 0
+Waiting for the mission to start…Error starting mission: Failed to find an
+available client for this mission - tried all (BLAH BLAH BLAH)
+kobus&#64;alpine:~/projects/ASIST/mission/run_session_try_2/tomcat$ echo $?
+0        (I would expect a non-zero value here)</p>
+<p>Original content of KB-notes.txt</p>
+<p>Install</p>
+<p>Run
+Launch should be faster and integrated with running the mission</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">Scripts</span> <span class="n">should</span> <span class="n">be</span> <span class="n">in</span> <span class="n">one</span> <span class="n">place</span> <span class="n">and</span> <span class="n">robust</span> <span class="n">to</span> <span class="n">how</span> <span class="n">they</span> <span class="n">are</span> <span class="n">called</span><span class="p">.</span> 
+
+<span class="n">It</span> <span class="n">is</span> <span class="n">not</span> <span class="n">clear</span> <span class="n">how</span> <span class="n">and</span> <span class="n">when</span> <span class="n">the</span> <span class="n">env</span> <span class="n">var</span> <span class="n">TOMCAT</span> <span class="n">is</span> <span class="n">or</span> <span class="n">should</span> <span class="n">be</span> <span class="n">used</span><span class="p">.</span>
+</pre></div>
+</div>
+<p>Game
+It is not clear that “you” are quite wide and that it is your right arm that
+you see. Getting through a tight passage might be on more thing to do in the
+tutorial mission.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="s">&quot;e&quot;</span> <span class="n">key</span> <span class="o">---</span> <span class="n">I</span> <span class="n">assume</span> <span class="k">for</span> <span class="n">us</span><span class="p">.</span> <span class="n">Easy</span> <span class="n">to</span> <span class="n">hit</span> <span class="n">instead</span> <span class="n">of</span> <span class="s">&quot;w&quot;</span><span class="p">.</span> <span class="n">Any</span> <span class="n">options</span> <span class="n">as</span> <span class="n">to</span>
+<span class="n">how</span> <span class="n">the</span> <span class="n">keys</span> <span class="n">work</span><span class="o">?</span> 
+
+<span class="n">Short</span> <span class="n">delay</span> <span class="n">after</span> <span class="n">success</span><span class="o">?</span> 
+
+<span class="n">Success</span> <span class="k">for</span> <span class="n">seeing</span> <span class="n">creatures</span> <span class="n">is</span> <span class="n">not</span> <span class="n">clear</span><span class="p">.</span> 
+
+<span class="n">What</span> <span class="n">is</span> <span class="n">the</span> <span class="n">amphitheatre</span> <span class="n">is</span> <span class="n">not</span> <span class="n">so</span> <span class="n">clear</span><span class="p">.</span> <span class="n">Gate</span> <span class="n">latch</span> <span class="n">also</span><span class="p">.</span>
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
