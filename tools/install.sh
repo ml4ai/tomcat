@@ -44,7 +44,7 @@ if [[ $? -ne 0 ]]; then exit 1; fi;
 pushd "${TOMCAT}"
     echo "Building ToMCAT in `pwd`"
 
-    rm -rf build
+    /bin/rm -rf build
     mkdir build
     if [[ $? -ne 0 ]]; then exit 1; fi;
 
