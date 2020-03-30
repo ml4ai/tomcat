@@ -2,7 +2,8 @@
 
 # Set the TOMCAT environment variable, assuming that the directory structure
 # mirrors that of the git repository.
-export TOMCAT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && pwd )"
+TOMCAT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && pwd )"
+export TOMCAT
 
 echo "Installing ToMCAT dependencies."
 
