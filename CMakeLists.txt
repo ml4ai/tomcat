@@ -26,7 +26,7 @@ else()
     "-- fmt package not found on system, please install it.  (https://fmt.dev)")
 endif()
 
-find_package(Boost
+find_package(Boost 1.67
              COMPONENTS chrono
                         date_time
                         filesystem
