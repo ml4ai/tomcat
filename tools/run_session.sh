@@ -39,7 +39,9 @@ export zombie_invasion_log="${TOMCAT_TMP_DIR}/zombie_invasion.log"
 
 export num_tries=2
 
-osascript "${TOMCAT}"/tools/activate_minecraft_window.scpt
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  osascript "${TOMCAT}"/tools/activate_minecraft_window.scpt
+fi
 
 if [[ ${do_tutorial} -eq 1 ]]; then 
   "${TOMCAT}"/tools/run_tutorial
