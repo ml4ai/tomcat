@@ -65,7 +65,7 @@ install_dependencies_using_homebrew() {
   # formula points to Java 1.8.0_242, which is incompatible with Malmo (the
   # local formula points to Java 1.8.0_232).
 
-  pushd ${TOMCAT}/tools/homebrew_formulae > /dev/null
+  pushd "${TOMCAT}"/tools/homebrew_formulae > /dev/null
     brew cask install adoptopenjdk8.rb
   popd > /dev/null
 
@@ -79,13 +79,12 @@ install_dependencies_using_homebrew() {
     boost \
     gradle
 
-  if [[ ! -z $TRAVIS ]]; then
-    # On Travis, we will install lcov to provide code coverage estimates.
+  if [[ -n ${GITHUB_ACTIONS} ]]; then
+    # On Github Actions, we will install lcov to provide code coverage estimates.
     brew install lcov;
-    download_and_extract_dlib
-  else
-    ./install_dlib_from_source.sh
   fi;
+
+  #TODO When OpenFace is reintroduced, add dlib installation back here.
 }
 
 download_and_extract_dlib() {
@@ -154,51 +153,25 @@ elif [ -x "$(command -v apt-get)" ]; then
     sudo apt-get update
     if [[ $? -ne 0 ]]; then exit 1; fi;
 
-    # Install a version of CMake more up-to-date than what is available by
-    # default for Ubuntu Bionic
-
-    if [ -x "$(command -v cmake)" ]; then
-      cmake_version=`cmake --version | head -n 1 | cut -d ' ' -f 3`
-      cmake_major_version=`$cmake_version | cut -d '.' -f 1`
-      cmake_minor_version=`$cmake_version | cut -d '.' -f 2`
-      echo $cmake_version $cmake_major_version $cmake_minor_version
-      if (( $cmake_major_version < 3 )) || (( $cmake_minor_version < 15 )); then
-        ./tools/install_cmake_from_source.sh
-      fi
-    else
-      ./tools/install_cmake_from_source.sh
-    fi
-
     sudo apt-get install -y \
+        cmake \
         gcc-9 \
         libfmt-dev \
         doxygen \
         ffmpeg \
-        libopenblas-dev \
         openjdk-8-jre-headless=8u162-b12-1\
         openjdk-8-jre=8u162-b12-1\
         openjdk-8-jdk-headless=8u162-b12-1\
         openjdk-8-jdk=8u162-b12-1
     if [[ $? -ne 0 ]]; then exit 1; fi;
 
-    boost_version_header="/usr/local/include/boost/version.hpp"
-    if [[ -f $boost_version_header ]]; then
-      boost_version=`cat $boost_version_header | grep "define BOOST_VERSION "\
-                                               | cut -d' ' -f3`
-      if (( $boost_version < 106900 )); then
-        ./tools/install_boost_from_source.sh
-      fi
-    else
-      ./tools/install_boost_from_source.sh
+    if [[ -z "$GITHUB_ACTIONS" ]]; then
+      sudo apt-get install -y libboost-all-dev
     fi
 
-    if [[ ! -f "/usr/local/lib/libdlib.a" ]]; then
-      ./tools/install_dlib_from_source.sh
-    fi
-    
-    if [[ ! -d "/usr/local/include/opencv4" ]]; then
-      ./tools/install_opencv_from_source.sh
-    fi
+    # TODO - when OpenFace gets added back, add opencv, openblas, and dlib as
+    # dependencies.
+    sudo update-java-alternatives -s java-1.8.0-openjdk-amd64
 
 else
     echo "This is not a macOS and not a Debian Linux distribution (at least"

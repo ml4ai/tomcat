@@ -1,4 +1,5 @@
 file(GLOB tomcat_headers ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
+
 add_library(
   tomcat STATIC
   utils.h
@@ -10,6 +11,8 @@ add_library(
   FileHandler.h
   FileHandler.cpp)
 
+target_include_directories(tomcat PUBLIC ${Boost_INCLUDE_DIRS})
+
 target_link_libraries(
   tomcat
   Malmo
@@ -19,19 +22,17 @@ target_link_libraries(
 )
 
 
-if(DEFINED ENV{TRAVIS})
-  option(CODE_COVERAGE "Enable coverage reporting" ON)
-  message("Compilation occurring on Travis, code coverage reporting on.")
-endif()
+option(CODE_COVERAGE "Enable coverage reporting" OFF)
 
-if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+# Todo make code coverage work on Linux as well.
+if(APPLE AND CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
   # Add required flags (GCC & LLVM/Clang)
   message("Building with code coverage")
   target_compile_options(
     tomcat
-    PUBLIC -O0 # no optimization
-            -g # generate debug info
-            --coverage # sets all required flags
+    -O0 # no optimization
+    -g # generate debug info
+    --coverage # sets all required flags
   )
   if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.13)
     target_link_options(tomcat PUBLIC --coverage)
