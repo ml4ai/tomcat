@@ -11,9 +11,9 @@ cd tomcat && ./tools/install.sh
 ```
 
 For people using other package managers (such as `yum`), note that ToMCAT
-depends on the following: CMake 3.15+, Boost 1.69+, a C++17 compatible
+depends on the following: CMake 3.12+, Boost 1.65+, a C++17 compatible
 compiler (tested with GCC 9 and AppleClang 11.0 so far), libfmt, doxygen,
-ffmpeg, OpenCV 4, dlib, Java 8, and Gradle.
+ffmpeg, OpenCV, dlib, Java 8, and Gradle.
 
 Please make sure your internet connection is active while the `install.sh`
 script is running. macOS users may want to turn off their firewalls.
