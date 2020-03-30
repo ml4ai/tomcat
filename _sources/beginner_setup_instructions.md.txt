@@ -37,3 +37,9 @@ password you use to install any software on your computer). You will not see
 any letters appearing as you type in your password - they will be hidden for
 privacy - so it is fine if it appears blank. Just type in your password
 normally and press the enter/return key on your keyboard.
+
+When you run the `run_session.sh` script, you might be asked to give the
+terminal permissions to control system events - this is so that the script can
+automatically make the Minecraft window full screen. Additionally, you might be
+asked for permissions to use the microphone and webcam - this is for recording
+audio and video of the player when the mission is running.
