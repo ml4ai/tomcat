@@ -27,7 +27,7 @@ pushd "${TOMCAT}"
 
     # Trying to set the correct version of Java.
     macports_found=`[ -x "$(command -v port)" ]; echo $?`
-    if [[ $macports_found -eq 1 ]]; then
+    if [[ $macports_found -eq 0 ]]; then
       export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk8/Contents/Home
     fi
     pushd build > /dev/null 
