@@ -21,9 +21,15 @@ if [[ $? -ne 0 ]]; then exit 1; fi;
 pushd "${TOMCAT}"
     echo "Building ToMCAT in `pwd`"
 
-    mkdir -p build 
+    /bin/rm -rf build
+    mkdir build
     if [[ $? -ne 0 ]]; then exit 1; fi;
 
+    # Trying to set the correct version of Java.
+    macports_found=`[ -x "$(command -v port)" ]; echo $?`
+    if [[ $macports_found -eq 1 ]]; then
+      export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk8/Contents/Home
+    fi
     pushd build > /dev/null 
         if [[ -n $GITHUB_ACTIONS ]]; then
             cmake ${TOMCAT} -DBoost_ARCHITECTURE=-x64\
