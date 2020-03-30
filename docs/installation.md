@@ -43,6 +43,16 @@ This folder will contain four files:
 - `malmo_data.tgz` : A gzipped tarball containing Malmo data about player's
   position, nearby entities, etc.
 
+
+To interrupt the game and quit at any time, press the `Esc` key, then click on
+the terminal window where you ran the `run_session.sh` script, and then
+interrupt the process with `Ctrl+C`. Then, run the following command to shut
+down Minecraft.
+
+```
+./tools/kill_minecraft.sh
+```
+
 ## For developers
 
 To speed up builds, create a file called gradle.properties and add

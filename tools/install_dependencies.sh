@@ -2,7 +2,8 @@
 
 # Set the TOMCAT environment variable, assuming that the directory structure
 # mirrors that of the git repository.
-export TOMCAT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && pwd )"
+TOMCAT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && pwd )"
+export TOMCAT
 
 echo "Installing ToMCAT dependencies."
 
@@ -15,7 +16,7 @@ install_macports() {
     make -j
     sudo make -j install
   popd > /dev/null
-  rm -rf Macports-$version*
+  /bin/rm -rf Macports-$version*
 }
 
 install_dependencies_using_macports() {
@@ -45,7 +46,7 @@ install_dependencies_using_macports() {
   # port points to Java 1.8.0_242, which is incompatible with Malmo (the
   # local Portfile points to Java 1.8.0_232.
   pushd ${TOMCAT}/tools/local-ports/openjdk8 > /dev/null
-    sudo port install
+    if ! sudo port install; then exit 1; fi
   popd > /dev/null
 }
 
@@ -85,18 +86,6 @@ install_dependencies_using_homebrew() {
   fi;
 
   #TODO When OpenFace is reintroduced, add dlib installation back here.
-}
-
-download_and_extract_dlib() {
-  pushd "${TOMCAT}/external"
-    # We download a specific commit snapshot of dlib from Github that
-    # contains a fix for the latest version of OpenCV that is being
-    # installed by Homebrew.
-    commit_sha=471c3d30e181a40942177a4358aa0496273d2108
-    curl -L https://github.com/davisking/dlib/archive/${commit_sha}.zip -o dlib.zip
-    unzip dlib.zip
-    mv dlib-${commit_sha} dlib
-  popd
 }
 
 echo "Checking OS."

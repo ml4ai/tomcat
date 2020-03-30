@@ -26,6 +26,12 @@ export TOMCAT
 export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
 mkdir -p "${TOMCAT_TMP_DIR}"
 
+# Trying to set the correct version of Java.
+macports_found=`[ -x "$(command -v port)" ]; echo $?`
+if [[ $macports_found -eq 0 ]]; then
+  export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk8/Contents/Home
+fi
+
 if ! "${TOMCAT}"/tools/check_minecraft.sh; then exit 1; fi
 
 export tutorial_mission_log="${TOMCAT_TMP_DIR}/tutorial_mission.log"
@@ -33,11 +39,15 @@ export zombie_invasion_log="${TOMCAT_TMP_DIR}/zombie_invasion.log"
 
 export num_tries=2
 
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  osascript "${TOMCAT}"/tools/activate_minecraft_window.scpt
+fi
+
 if [[ ${do_tutorial} -eq 1 ]]; then 
   "${TOMCAT}"/tools/run_tutorial
 fi
 
-rm -f "${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
+/bin/rm -f "${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
 
 if [[ ${do_invasion} -eq 1 ]]; then
     echo " "
@@ -48,7 +58,6 @@ if [[ ${do_invasion} -eq 1 ]]; then
 
     framerate_option=""
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        osascript "${TOMCAT}"/tools/activate_minecraft_window.scpt
 
         # On macOS, we choose the avfoundation format.
         ffmpeg_fmt=avfoundation
