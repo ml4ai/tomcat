@@ -36,22 +36,21 @@ pushd "${TOMCAT}"
                             -DBOOST_ROOT=$BOOST_ROOT_1_69_0
             if [[ $? -ne 0 ]]; then exit 1; fi;
         else
-            cmake ${TOMCAT}
-            if [[ $? -ne 0 ]]; then exit 1; fi;
+            if ! cmake ${TOMCAT}; then exit 1; fi
         fi;
 
-        make -j
-        if [[ $? -ne 0 ]]; then exit 1; fi;
+        if ! make -j; then exit 1; fi
 
         make -j Minecraft
     popd > /dev/null 
 popd > /dev/null 
 
-${TOMCAT}/tools/download_tomcat_worlds.sh
-if [[ $? -ne 0 ]]; then exit 1; fi;
+if ! ${TOMCAT}/tools/download_tomcat_worlds.sh; then exit 1; fi
 
-#${TOMCAT}/tools/download_OpenFace_models.sh
-#if [[ $? -ne 0 ]]; then exit 1; fi;
+
+if [[ ! -d ${TOMCAT}/data/OpenFace_models ]]; then
+  if ! ${TOMCAT}/tools/download_OpenFace_models.sh; then exit 1; fi
+fi
 
 echo " "
 echo "Finished installing ToMCAT in ${TOMCAT}!"
