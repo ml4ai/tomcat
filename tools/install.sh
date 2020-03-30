@@ -44,7 +44,8 @@ if [[ $? -ne 0 ]]; then exit 1; fi;
 pushd "${TOMCAT}"
     echo "Building ToMCAT in `pwd`"
 
-    mkdir -p build 
+    rm -rf build
+    mkdir build
     if [[ $? -ne 0 ]]; then exit 1; fi;
 
     # Trying to set the correct version of Java.
