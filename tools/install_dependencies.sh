@@ -65,7 +65,7 @@ install_dependencies_using_homebrew() {
   # formula points to Java 1.8.0_242, which is incompatible with Malmo (the
   # local formula points to Java 1.8.0_232).
 
-  pushd ${TOMCAT}/tools/homebrew_formulae > /dev/null
+  pushd "${TOMCAT}"/tools/homebrew_formulae > /dev/null
     brew cask install adoptopenjdk8.rb
   popd > /dev/null
 
@@ -79,13 +79,12 @@ install_dependencies_using_homebrew() {
     boost \
     gradle
 
-  if [[ ! -z $TRAVIS ]]; then
-    # On Travis, we will install lcov to provide code coverage estimates.
+  if [[ -n ${GITHUB_ACTIONS} ]]; then
+    # On Github Actions, we will install lcov to provide code coverage estimates.
     brew install lcov;
-    download_and_extract_dlib
-  else
-    ./install_dlib_from_source.sh
   fi;
+
+  #TODO When OpenFace is reintroduced, add dlib installation back here.
 }
 
 download_and_extract_dlib() {
