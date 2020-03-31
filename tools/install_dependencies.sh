@@ -7,29 +7,6 @@ export TOMCAT
 
 echo "Installing ToMCAT dependencies."
 
-install_macports() {
-  local version=2.6.2
-  curl -O https://distfiles.macports.org/MacPorts/MacPorts-$version.tar.bz2
-  tar xf MacPorts-$version.tar.bz2
-  pushd MacPorts-$version > /dev/null
-    ./configure
-    make -j
-    sudo make -j install
-  popd > /dev/null
-
-  if [[ `echo "$PATH" | grep "/opt/local"` == "" ]]; then
-    echo "export PATH=\"/opt/local/bin:/opt/local/sbin:\$PATH\"" >> ~/.bash_profile
-    export PATH=/opt/local/bin:/opt/local/sbin:"$PATH"
-  fi
-
-  if [[ `echo "$MANPATH" | grep "/opt/local/share/man:"` == "" ]]; then
-    echo "export MANPATH=\"/opt/local/share/man\$MANPATH\"" >> ~/.bash_profile
-    export MANPATH=/opt/local/share/man:"$MANPATH"
-  fi
-
-  /bin/rm -rf Macports-$version*
-}
-
 install_dependencies_using_macports() {
   echo "'port' executable detected, assuming that MacPorts"
   echo "(https://www.macports.org) is installed and is the package manager."
@@ -118,6 +95,10 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     fi
 
     echo "Checking for MacPorts or Homebrew package managers."
+
+    # The line below will prevent MacPorts from being installed again if we had
+    # already installed it from source.
+    export PATH="$PATH:/opt/local/bin:/opt/local/sbin"
     macports_found=`[ -x "$(command -v port)" ]; echo $?`
     homebrew_found=`[ -x "$(command -v brew)" ]; echo $?` 
 
@@ -125,7 +106,8 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
       echo "Neither the MacPorts or Homebrew package managers have been"
       echo "detected. Proceeding to install MacPorts in the default location"
       echo "(/opt/local)"
-      install_macports
+      ${TOMCAT}/tools/install_macports
+
       install_dependencies_using_macports
 
     elif [[ $macports_found -eq 0 && $homebrew_found -eq 1 ]]; then
