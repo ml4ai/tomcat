@@ -17,12 +17,12 @@ install_macports() {
     sudo make -j install
   popd > /dev/null
 
-  if [[ `echo "$PATH" | grep "/opt/local"` == "" ]];
+  if [[ `echo "$PATH" | grep "/opt/local"` == "" ]]; then
     echo "export PATH=\"/opt/local/bin:/opt/local/sbin:\$PATH\"" >> ~/.bash_profile
     export PATH=/opt/local/bin:/opt/local/sbin:"$PATH"
   fi
 
-  if [[ `echo "$MANPATH" | grep "/opt/local/share/man:"` == "" ]];
+  if [[ `echo "$MANPATH" | grep "/opt/local/share/man:"` == "" ]]; then
     echo "export MANPATH=\"/opt/local/share/man\$MANPATH\"" >> ~/.bash_profile
     export MANPATH=/opt/local/share/man:"$MANPATH"
   fi

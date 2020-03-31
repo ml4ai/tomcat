@@ -3,10 +3,10 @@
   [
     {
       "text": [
-        "If you turn around, you will see a crafting table.",
+        "Turn around and find a crafting table.",
         "You can use a crafting table to produce weapons",
-        "by using items in your inventory. Right click the",
-        "table to interact with it."
+        "by using itens in your inventory. To open a",
+        "crafting table, just right-click on it."
       ],
       "images":
       [
@@ -32,69 +32,12 @@
     },
     {
       "text": [
-        "You will now learn how to make an axe to defend yourself, using the",
-        "crafting table."
-      ]
-    },
-    {
-      "text": [
-        "When you right-click the crafting table, you will see the crafting interface",
-        "with a 9x9 grid in the top left, a slot to the right of the 9x9 grid",
-        "a larger grid of items, and a row of slots at the bottom, which is the 'hotbar'",
-        "and is for items you want to access quickly.",
-        "You will see that you have 3 wooden blocks, and 2 sticks in your hotbar.",
-        "You will need to arrange them in the pattern shown below to craft the axe.",
-        "Left-click an inventory slot to grab the blocks in it, then place the grabbed",
-        "blocks in the 9x9 grid slots by right-clicking the slots.",
-        "Once you finish placing the items, in the correct pattern, the axe will show up",
-        "on the screen. Left-click on it to select it, and left-click on the",
-        "left-most slot in your hotbar to place it there.",
-        "Click OK when you are ready."
-      ],
-      "images":
-      [
-        {
-          "texture": "textures1.png",
-          "caption": "Axe-Shaped Pattern",
-          "subcaption": "",
-          "originXInTexture": 0,
-          "originYInTexture": 128,
-          "width": 96,
-          "height": 64
-        }
-      ]
-    },
-    {
-      "text": [
-        "You will see that you have 3 wooden blocks, and 2 sticks in your hotbar.",
-        "You will need to arrange them in the pattern shown below to craft the axe.",
-        "Left-click an inventory slot to grab the blocks in it, then place the grabbed",
-        "blocks in the 9x9 grid slots by right-clicking the slots.",
-        "Once you finish placing the items, in the correct pattern, the axe will show up",
-        "on the screen. Left-click on it to select it, and left-click on the",
-        "left-most slot in your hotbar to place it there.",
-        "Click OK when you are ready."
-      ],
-      "images":
-      [
-        {
-          "texture": "textures1.png",
-          "caption": "Axe-Shaped Pattern",
-          "subcaption": "",
-          "originXInTexture": 0,
-          "originYInTexture": 128,
-          "width": 96,
-          "height": 64
-        }
-      ]
-    },
-    {
-      "text": [
-        "Once you finish placing the items, in the correct pattern, the axe will show up",
-        "on the screen. Left-click on it to select it, and left-click on the",
-        "left-most slot in your hotbar to place it there.",
-        "",
-        "Click OK when you are ready."
+        "Follow the diagram instruction below to craft a wooden axe.",
+        "Right-click on an item from your inventory and drag it to",
+        "the correct slot in the table. Once you finish placing the items",
+        "and the axe shows up on the screen, click on it and drag it to",
+        "the first slot of your main inventory (bottom slots).",
+        "Press OK when you are ready."
       ],
       "images":
       [
