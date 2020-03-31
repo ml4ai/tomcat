@@ -9,8 +9,8 @@ timestamp() {
   date "+%Y_%m_%d_%H_%M_%S"
 }
 
-if [[ -n ${GITHUB_ACTIONS} ]]; then
-  time_limit=5
+if [[ -n "${GITHUB_ACTIONS}" ]]; then
+  time_limit=1
   do_tutorial=0
 else
   time_limit=600
@@ -40,7 +40,7 @@ export zombie_invasion_log="${TOMCAT_TMP_DIR}/zombie_invasion.log"
 export num_tries=2
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  osascript "${TOMCAT}"/tools/activate_minecraft_window.scpt
+  if ! osascript "${TOMCAT}"/tools/activate_minecraft_window.scpt; then exit 1; fi
 fi
 
 if [[ ${do_tutorial} -eq 1 ]]; then 
@@ -56,7 +56,6 @@ if [[ ${do_invasion} -eq 1 ]]; then
 
     try=0
 
-    framerate_option=""
     if [[ "$OSTYPE" == "darwin"* ]]; then
 
         # On macOS, we choose the avfoundation format.
@@ -67,6 +66,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
             framerate_option="-framerate 30"
         fi
     else
+        framerate_option=""
         ffmpeg_fmt=video4linux2
         echo "
         Screen recording currently only works on MacOS since it relies on
@@ -78,24 +78,21 @@ if [[ ${do_invasion} -eq 1 ]]; then
     # Creating an output directory for this session.
     output_dir="${TOMCAT}"/data/participant_data/session_$(timestamp)
     mkdir -p "${output_dir}"
-    ffmpeg_common_invocation="ffmpeg -nostdin -f $ffmpeg_fmt"
+    ffmpeg_common_invocation="ffmpeg  -nostdin -f $ffmpeg_fmt"
 
-    if [[ -z $GITHUB_ACTIONS ]]; then
-        # Recording video of player's face
-        "${ffmpeg_common_invocation}" "${framerate_option}" \
-            -i "0:" "${output_dir}"/webcam_video.mpg &>/dev/null &
+    if [[ -z "$GITHUB_ACTIONS" ]]; then
+        echo "Recording video of player's face using webcam."
+        ${ffmpeg_common_invocation} ${framerate_option} -i "0:" "${output_dir}"/webcam_video.mpg &> /dev/null &
         webcam_recording_pid=$!
 
-        # Recording player audio
-        "${ffmpeg_common_invocation}" \
-            -i ":0" "${output_dir}"/player_audio.wav &>/dev/null &
+        echo "Recording player audio using microphone."
+        ${ffmpeg_common_invocation} -i ":0" "${output_dir}"/player_audio.wav &> /dev/null &
         audio_recording_pid=$!
     fi
 
     # Recording game screen.
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        "${ffmpeg_common_invocation}" \
-            -i "1:" -r 30 "${output_dir}"/screen_video.mpg &> /dev/null &
+        ${ffmpeg_common_invocation} -i "1:" -r 30 "${output_dir}"/screen_video.mpg &> /dev/null &
         screen_recording_pid=$!
     fi
 
@@ -115,6 +112,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
             &>"${zombie_invasion_log}" &
             bg_pid=$!
         fi
+
         echo "Running: ${TOMCAT}/build/bin/runExperiment --mission 1"
         echo "    --time_limit ${time_limit}"
         echo "    --record_path ${output_dir}/malmo_data.tgz"
@@ -148,23 +146,20 @@ if [[ ${do_invasion} -eq 1 ]]; then
     done
 fi
 
-if [[ -z $GITHUB_ACTIONS ]]; then
-    kill -2 $webcam_recording_pid
-    kill -2 $audio_recording_pid
+if [[ -z "$GITHUB_ACTIONS" ]]; then
+    kill $webcam_recording_pid
+    kill $audio_recording_pid
 fi
 
 # For now, screen recording works only on macOS. Need to extend it to Linux as
 # well.
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    kill -2 $screen_recording_pid
+    kill $screen_recording_pid
 fi
 
-# When performing continuous integration with Github Actions, we run a test
-# mission that doesn't produce the JSON file corresponding to discrete actions,
-# So we only move it in a non-Github Actions environment.
-if [[ -z $GITHUB_ACTIONS ]]; then
-  mv "${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json\
-     "${output_dir}"/discrete_events.json
+discrete_actions_file="${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
+if [[ -f "${discrete_actions_file}" ]]; then
+  mv "${discrete_actions_file}" "${output_dir}"/discrete_events.json
 fi
 
 echo "Finished running all sessions in ${TOMCAT}".
