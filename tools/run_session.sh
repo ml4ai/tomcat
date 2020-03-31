@@ -127,7 +127,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
         fi
 
         if [[ ${zombie_invasion_status} -eq 0 ]]; then
-            echo "Zombie invasion mission ended with success status."
+            echo "Zombie invasion mission ended with exit code 0."
             echo "All recorded data is in ${output_dir}"
             echo " "
             break
@@ -136,7 +136,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
         (( try++ ))
 
         if [[ $try -lt $num_tries ]]; then
-            echo "Zombie invasion mission ended with failure status."
+            echo "Zombie invasion mission ended with exit code 1."
             echo "Killing all Minecraft and Malmo processes that can be found"
             echo "and trying again."
 
