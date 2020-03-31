@@ -16,16 +16,27 @@ install_macports() {
     make -j
     sudo make -j install
   popd > /dev/null
+
+  if [[ `echo "$PATH" | grep "/opt/local"` == "" ]]; then
+    echo "export PATH=\"/opt/local/bin:/opt/local/sbin:\$PATH\"" >> ~/.bash_profile
+    export PATH=/opt/local/bin:/opt/local/sbin:"$PATH"
+  fi
+
+  if [[ `echo "$MANPATH" | grep "/opt/local/share/man:"` == "" ]]; then
+    echo "export MANPATH=\"/opt/local/share/man\$MANPATH\"" >> ~/.bash_profile
+    export MANPATH=/opt/local/share/man:"$MANPATH"
+  fi
+
   /bin/rm -rf Macports-$version*
 }
 
 install_dependencies_using_macports() {
-  echo "'port' executable detected, assuming that MacPorts"\
-  "(https://www.macports.org) is installed and is the package manager."
+  echo "'port' executable detected, assuming that MacPorts"
+  echo "(https://www.macports.org) is installed and is the package manager."
 
-  echo "Installing ToMCAT dependencies using MacPorts. If you are prompted for
-  a password, please enter the password you use to install software on your
-  macOS computer."
+  echo "Installing ToMCAT dependencies using MacPorts. If you are prompted for"
+  echo "a password, please enter the password you use to install software on"
+  echo "your macOS computer."
 
   sudo port selfupdate
   if [[ $? -ne 0 ]]; then exit 1; fi;
