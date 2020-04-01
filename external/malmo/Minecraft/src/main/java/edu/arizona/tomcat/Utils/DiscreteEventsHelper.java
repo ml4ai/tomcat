@@ -44,7 +44,7 @@ public class DiscreteEventsHelper {
     Map<String, String> output = new LinkedTreeMap<String, String>();
 
     output.put("Event Type", event);
-    if(playerIn != null) {
+    if (playerIn != null) {
       output.put("Event caused by", playerIn.getDisplayNameString());
     }
     output.put("Event Coordinates", coordinates);
@@ -71,7 +71,8 @@ public class DiscreteEventsHelper {
     String enemyName = enemy.getName();
 
     String event = playerName + " killed " + enemyName;
-    String enemyHealth = "0.0" + "/" + enemy.getMaxHealth();
+    String enemyHealth = "0.0"
+                         + "/" + enemy.getMaxHealth();
     if (enemy.isEntityAlive()) {
       event = playerName + " attacked " + enemyName;
       enemyHealth = enemy.getHealth() + "/" + enemy.getMaxHealth();

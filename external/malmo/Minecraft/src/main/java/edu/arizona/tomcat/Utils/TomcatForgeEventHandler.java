@@ -20,14 +20,14 @@ public class TomcatForgeEventHandler {
     EntityPlayer playerIn = event.getEntityPlayer();
     Entity target = event.getTarget();
 
-    if(target instanceof EntityMob) {
+    if (target instanceof EntityMob) {
 
-      EntityMob enemy = (EntityMob) target;
+      EntityMob enemy = (EntityMob)target;
 
       BlockPos pos = new BlockPos(
-              event.getTarget().posX,
-              event.getTarget().posY,
-              event.getTarget().posZ); // Event occurrence is location of target
+          event.getTarget().posX,
+          event.getTarget().posY,
+          event.getTarget().posZ); // Event occurrence is location of target
 
       DiscreteEventsHelper.printAttackEventOccurrence(pos, enemy, playerIn);
     }

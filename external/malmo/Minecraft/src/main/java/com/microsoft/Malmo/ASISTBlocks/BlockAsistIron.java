@@ -2,38 +2,58 @@ package com.microsoft.Malmo.ASISTBlocks;
 
 import edu.arizona.tomcat.Utils.DiscreteEventsHelper;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockAir;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.IBlockAccess;
 
-public class BlockAsistAir extends BlockAir {
+import java.util.List;
 
-    public BlockAsistAir() {
+/**
+ * This block will be used as the "door" block for the Hit-Controlled doors.
+ * This block will write its event to the file when it is destroyed.
+ * <p>
+ * This block is set to drop nothing when it is destroyed, hence giving the
+ * illusion of vanishing. Replacing this block with the /setblock command
+ * inside Minecraft without the "destroy" add-on will result in no output.
+ * <p>
+ * It will NOT write any output if the player destroys the block by hand because
+ * we don't expect the player to do that.
+ */
+public class BlockAsistIron extends Block {
 
-        setUnlocalizedName("ASIST_Air_Block");
-        setRegistryName(
-                "ASIST_Air_Block"); // The name Minecraft sees. Also used in en_US.lang
+  public BlockAsistIron() {
 
-        this.setCreativeTab(
-                CreativeTabs.REDSTONE); // shows up in redstone tab in creative mode
-    }
+    super(Material.IRON);
+    setUnlocalizedName("ASIST_Iron_Block");
+    setRegistryName(
+        "ASIST_Iron_Block"); // The name Minecraft sees. Also used in en_US.lang
 
-    @Override
-    /**
-     * Called by ItemBlocks after a block is set in the world, to allow post-place logic
-     */
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
-    {
-        DiscreteEventsHelper.printEventOccurrence(
-                pos, null, "Hit-Controlled Door Opened"); // Used to mark discrete occurrence
-    }
+    this.setCreativeTab(
+        CreativeTabs.REDSTONE); // shows up in redstone tab in creative mode
+  }
 
+  @Override
+  /**
+   * This returns a complete list of items dropped from this block.
+   *
+   * @param world The current world
+   * @param pos Block position in world
+   * @param state Current state
+   * @param fortune Breakers fortune level
+   * @return A ArrayList containing all items this block drops
+   */
+  public List<ItemStack>
+  getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+    // Technically a command block destroys this, so we aren't identifying a
+    // player as destroying this block for the sake of the code.
+    DiscreteEventsHelper.printEventOccurrence(
+        pos,
+        null,
+        "Hit-Controlled Door Opened"); // Used to mark discrete occurrence
 
-
+    return new java.util.ArrayList<ItemStack>(); // Drop nothing
+  }
 }
