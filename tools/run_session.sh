@@ -40,7 +40,13 @@ export zombie_invasion_log="${TOMCAT_TMP_DIR}/zombie_invasion.log"
 export num_tries=2
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  if ! osascript "${TOMCAT}"/tools/activate_minecraft_window.scpt; then exit 1; fi
+  if [[ "$TERM_PROGRAM" == "iTerm.app" ]]; then
+    terminal="iTerm"
+  else
+    terminal="Terminal"
+  fi
+  osascript "${TOMCAT}"/tools/activate_minecraft_window.scpt ${terminal}
+  if [[ $? -ne 0 ]]; then exit 1; fi
 fi
 
 if [[ ${do_tutorial} -eq 1 ]]; then 
