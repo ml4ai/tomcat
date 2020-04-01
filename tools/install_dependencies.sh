@@ -141,6 +141,7 @@ elif [ -x "$(command -v apt-get)" ]; then
         libfmt-dev \
         doxygen \
         ffmpeg \
+        wmctrl \
         openjdk-8-jre-headless=8u162-b12-1\
         openjdk-8-jre=8u162-b12-1\
         openjdk-8-jdk-headless=8u162-b12-1\
