@@ -82,7 +82,7 @@
       :effect (and (inside ?t ?b) (in ?t ?r))
     )
 
-    (:method (enter-building-and-begin-mission ?t ?b ?r) ;; Method for entering the building and beginning the mission
+    (:method (enter-building-and-complete-mission ?t ?b ?r) ;; Method for entering the building and doing the mission
              enter-and-begin
              ()
              (:ordered (:task !enter-building ?t ?b ?r)
@@ -154,12 +154,12 @@
 (defproblem sar-individual-problem ;; Example initial state and task
             ((building b) (room r1) (room r2) (room r3) (rescuer t1) (victim v1) (victim v2) 
                           (victim v3) (victim v4) (victim v5) (injured v2) (injured v3) (injured v5) (in v1 r1) (in v2 r1) (in v3 r2) (in v4 r2) (in v5 r3))
-            ((enter-building-and-begin-mission t1 b r1)))
+            ((enter-building-and-complete-mission t1 b r1)))
 
 ;; Find plans and graph the all.
 
 (let* ((plan-info (multiple-value-list 
                 (find-plans 'sar-individual-problem :which :all :verbose nil :plan-tree t))) 
        (plan-trees (third plan-info)))
-  (cl-user::multi-graph 1 plan-trees))
+  (cl-user::multi-graph 0 plan-trees))
 (cl-user::quit)
