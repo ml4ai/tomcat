@@ -13,13 +13,13 @@ import java.util.List;
 
 /**
  * This block will be used as the "door" block for the Hit-Controlled doors.
- * This block will write its event to the file when it is destroyed.
+ * The block will write its event to the file when it is destroyed.
  * <p>
- * This block is set to drop nothing when it is destroyed, hence giving the
+ * It is set to drop nothing when it is destroyed, hence giving the
  * illusion of vanishing. Replacing this block with the /setblock command
  * inside Minecraft without the "destroy" add-on will result in no output.
  * <p>
- * It will NOT write any output if the player destroys the block by hand because
+ * It will also NOT write any output if the player destroys the block by hand because
  * we don't expect the player to do that.
  */
 public class BlockAsistIron extends Block {
@@ -47,6 +47,7 @@ public class BlockAsistIron extends Block {
    */
   public List<ItemStack>
   getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+
     // Technically a command block destroys this, so we aren't identifying a
     // player as destroying this block for the sake of the code.
     DiscreteEventsHelper.printEventOccurrence(
