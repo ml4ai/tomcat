@@ -22,14 +22,13 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-
 import com.microsoft.Malmo.MissionHandlerInterfaces.ICommandHandler;
 import com.microsoft.Malmo.MissionHandlerInterfaces.IWantToQuit;
 import com.microsoft.Malmo.Schemas.MissionInit;
 import com.microsoft.Malmo.Schemas.MissionQuitCommand;
 import com.microsoft.Malmo.Schemas.MissionQuitCommands;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 
 /** Quit command allows for the agent to abort its mission at any time. */
 public class MissionQuitCommandsImplementation

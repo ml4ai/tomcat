@@ -1,17 +1,15 @@
 package com.microsoft.Malmo.MissionHandlers;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.MouseHelper;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.microsoft.Malmo.Client.MalmoModClient;
 import com.microsoft.Malmo.MissionHandlerInterfaces.IObservationProducer;
 import com.microsoft.Malmo.MissionHandlers.CommandForKey.KeyEventListener;
 import com.microsoft.Malmo.Schemas.MissionInit;
+import java.util.ArrayList;
+import java.util.List;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.MouseHelper;
 
 public class ObservationFromHumanImplementation
     extends HandlerBase implements IObservationProducer {

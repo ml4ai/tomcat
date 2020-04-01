@@ -3,8 +3,9 @@
   [
     {
       "text": [
-         "Press the keys W,A,S and D to move, drag your mouse", 
-         "to turn around and press space to jump."
+         "Press the keys W, A, S, D to move, drag your mouse", 
+         "to turn around and press space to jump. To sprint,",
+         "press the W key twice and hold it down."
       ],
       "images":
       [ 
@@ -39,9 +40,9 @@
     },
     {
       "text": [
-         "Approach the lava and water pits to your left.", 
-         "Take care! If you fall into the lava pit, you die.",
-         "If you fall into the water pit, keep pressing space",
+         "Head towards the lava and water pits to your right.", 
+         "Take care! If you fall into the lava pit, you will die.",
+         "If you fall into the water pit, keep pressing <Space>",
          "until you reach the surface."
       ],
       "images":
@@ -69,9 +70,9 @@
     {
       "text": [
          "If you want to see the instructions again during the mission,",
-         "just type the key I.",
+         "just press the I key.",
          "",
-         "Press OK when you are ready."
+         "Click OK when you are ready."
       ],
       "images":
       [

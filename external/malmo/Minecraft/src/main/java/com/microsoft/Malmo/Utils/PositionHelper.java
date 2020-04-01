@@ -22,13 +22,11 @@
 
 package com.microsoft.Malmo.Utils;
 
+import com.microsoft.Malmo.Schemas.Pos;
 import java.util.ArrayList;
 import java.util.List;
-
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.util.math.BlockPos;
-
-import com.microsoft.Malmo.Schemas.Pos;
 
 /**
  * Helper functions for position-related doings.

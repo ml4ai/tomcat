@@ -23,7 +23,6 @@
 package com.microsoft.Malmo;
 
 import java.util.Map;
-
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
 public class OverclockingPlugin implements IFMLLoadingPlugin {

@@ -22,14 +22,12 @@
 
 package com.microsoft.Malmo.Utils;
 
+import com.microsoft.Malmo.MalmoMod;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import com.microsoft.Malmo.MalmoMod;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiMainMenu;

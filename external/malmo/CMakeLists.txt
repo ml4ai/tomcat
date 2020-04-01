@@ -27,10 +27,7 @@ project(Malmo)
 # -------------------- Options --------------------------------
 
 file(STRINGS "VERSION" MALMO_VERSION_FILE)
-string(REPLACE "."
-               ";"
-               MALMO_VERSION_LIST
-               ${MALMO_VERSION_FILE})
+string(REPLACE "." ";" MALMO_VERSION_LIST ${MALMO_VERSION_FILE})
 list(GET MALMO_VERSION_LIST 0 MALMO_VERSION_MAJOR)
 list(GET MALMO_VERSION_LIST 1 MALMO_VERSION_MINOR)
 list(GET MALMO_VERSION_LIST 2 MALMO_VERSION_REVISION)
@@ -42,24 +39,30 @@ message("Configure MALMO_VERSION at ${MALMO_VERSION}")
 # N.B. Check that this version number matches the ones in the schemas.
 
 set(BUILD_MOD_DESC "Specifies whether to build the Malmo Minecraft Mod")
-set(
-  INCLUDE_ALE_DESC
-  "Specifies whether to build Malmo with bindings to the Arcade Learning Environment"
-  )
+set(INCLUDE_ALE_DESC
+    "Specifies whether to build Malmo with bindings to the Arcade Learning Environment"
+)
 set(INCLUDE_JAVA_DESC "Specifies whether to build Malmo with Java bindings")
 set(INCLUDE_PYTHON_DESC "Specifies whether to build Malmo with Python bindings")
-set(STATIC_BOOST_DESC
-    "Specifies whether to link Malmo statically against Boost")
-set(BUILD_MOD ON CACHE BOOL ${BUILD_MOD_DESC})
-set(INCLUDE_ALE OFF CACHE BOOL ${INCLUDE_ALE_DESC})
-set(INCLUDE_JAVA OFF CACHE BOOL ${INCLUDE_JAVA_DESC})
-set(INCLUDE_PYTHON OFF CACHE BOOL ${INCLUDE_PYTHON_DESC})
-set(STATIC_BOOST ON CACHE BOOL ${STATIC_BOOST_DESC})
+set(BUILD_MOD
+    ON
+    CACHE BOOL ${BUILD_MOD_DESC})
+set(INCLUDE_ALE
+    OFF
+    CACHE BOOL ${INCLUDE_ALE_DESC})
+set(INCLUDE_JAVA
+    OFF
+    CACHE BOOL ${INCLUDE_JAVA_DESC})
+set(INCLUDE_PYTHON
+    OFF
+    CACHE BOOL ${INCLUDE_PYTHON_DESC})
 
 if(INCLUDE_PYTHON)
   set(USE_PYTHON_VERSIONS_DESC
       "Specifies which version of Python to build Malmo with Python bindings")
-  set(USE_PYTHON_VERSIONS 3.6 CACHE STRING ${USE_PYTHON_VERSIONS_DESC})
+  set(USE_PYTHON_VERSIONS
+      3.6
+      CACHE STRING ${USE_PYTHON_VERSIONS_DESC})
   set(BOOST_PYTHON_NAME_DESC
       "Specifies which Boost Python module to build Malmo with")
   execute_process(
@@ -87,18 +90,14 @@ elseif(UNIX)
     file(READ /etc/debian_version DEBIAN_VERSION)
     set(SYSTEM_NAME "${SYSTEM_NAME}-${DEBIAN_VERSION}")
   elseif(EXISTS "/etc/os-release")
-    execute_process(COMMAND "sed"
-                            "-ne"
-                            "s/^ID=\"\\?\\([a-z]\\+\\)\"\\?$/\\1/p"
-                            "/etc/os-release"
-                    OUTPUT_VARIABLE OS_RELEASE_ID
-                    OUTPUT_STRIP_TRAILING_WHITESPACE)
-    execute_process(COMMAND "sed"
-                            "-ne"
-                            "s/^VERSION_ID=\"\\?\\([0-9\\.]\\+\\)\"\\?$/\\1/p"
-                            "/etc/os-release"
-                    OUTPUT_VARIABLE OS_RELEASE_VERSION_ID
-                    OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(
+      COMMAND "sed" "-ne" "s/^ID=\"\\?\\([a-z]\\+\\)\"\\?$/\\1/p"
+              "/etc/os-release"
+      OUTPUT_VARIABLE OS_RELEASE_ID OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(
+      COMMAND "sed" "-ne" "s/^VERSION_ID=\"\\?\\([0-9\\.]\\+\\)\"\\?$/\\1/p"
+              "/etc/os-release"
+      OUTPUT_VARIABLE OS_RELEASE_VERSION_ID OUTPUT_STRIP_TRAILING_WHITESPACE)
     set(SYSTEM_NAME "${SYSTEM_NAME}-${OS_RELEASE_ID}-${OS_RELEASE_VERSION_ID}")
   elseif(EXISTS "/etc/redhat-release")
     set(SYSTEM_NAME "${SYSTEM_NAME}-Redhat")
@@ -130,7 +129,7 @@ find_package(Git REQUIRED)
 find_package(ZLIB REQUIRED)
 
 if(INCLUDE_JAVA OR BUILD_MOD)
-  find_package(Java REQUIRED COMPONENTS Runtime Development)
+  find_package(Java 1.8 EXACT REQUIRED COMPONENTS Runtime Development)
 endif()
 
 if(INCLUDE_JAVA)
@@ -144,7 +143,6 @@ if(INCLUDE_PYTHON)
   find_package(PythonLibs ${USE_PYTHON_VERSIONS} REQUIRED)
 endif()
 
-
 if(INCLUDE_ALE)
   find_package(ALE QUIET)
   if(NOT ALE_FOUND)
@@ -153,9 +151,11 @@ if(INCLUDE_ALE)
     message("")
     message(
       " ALE was not found! Build will proceed but without the ALE parts included."
-      )
+    )
     message("")
-    set(INCLUDE_ALE OFF CACHE BOOL ${INCLUDE_ALE_DESC} FORCE)
+    set(INCLUDE_ALE
+        OFF
+        CACHE BOOL ${INCLUDE_ALE_DESC} FORCE)
   endif()
 endif()
 
@@ -185,10 +185,8 @@ else()
   if(WARNINGS_AS_ERRORS)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
   else()
-    set(CMAKE_CXX_FLAGS
-        "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations") # get a lot of
-                                                           # warnings from Boost
-                                                           # about auto_ptr
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations"
+    )# get a lot of warnings from Boost about auto_ptr
   endif()
 endif()
 
@@ -216,8 +214,6 @@ endif()
 
 include(CTest)
 
-set(CMAKE_INSTALL_PREFIX "install") # useful for testing the sample scripts
-
 # -------------------- Walk the subdirectories --------------------
 
 add_subdirectory(Malmo)
@@ -232,14 +228,12 @@ endif()
 # Save a small properties file, so we can easily tell what version of python
 # this was built against, etc.
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/malmo.properties malmo.properties)
-install(FILES ${CMAKE_BINARY_DIR}/malmo.properties DESTINATION .)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/malmo.properties
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/cmake/malmo)
 
 # -------------------- Package ------------------------------------
 if(INCLUDE_ALE)
   set(SYSTEM_NAME "${SYSTEM_NAME}_withALE")
-endif()
-if(STATIC_BOOST)
-  set(SYSTEM_NAME "${SYSTEM_NAME}_withBoost")
 endif()
 set(SYSTEM_NAME "${SYSTEM_NAME}_Python${USE_PYTHON_VERSIONS}")
 set(CPACK_SYSTEM_NAME ${SYSTEM_NAME})

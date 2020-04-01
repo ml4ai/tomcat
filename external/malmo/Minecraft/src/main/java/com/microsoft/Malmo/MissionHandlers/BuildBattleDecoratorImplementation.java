@@ -22,12 +22,20 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
+import com.microsoft.Malmo.MalmoMod;
+import com.microsoft.Malmo.MalmoMod.MalmoMessageType;
+import com.microsoft.Malmo.MissionHandlerInterfaces.IWorldDecorator;
+import com.microsoft.Malmo.Schemas.BuildBattleDecorator;
+import com.microsoft.Malmo.Schemas.DrawBlockBasedObjectType;
+import com.microsoft.Malmo.Schemas.MissionInit;
+import com.microsoft.Malmo.Schemas.UnnamedGridDefinition;
+import com.microsoft.Malmo.Utils.BlockDrawingHelper;
+import com.microsoft.Malmo.Utils.BlockDrawingHelper.XMLBlockState;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.state.IBlockState;
@@ -41,16 +49,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
-import com.microsoft.Malmo.MalmoMod;
-import com.microsoft.Malmo.MalmoMod.MalmoMessageType;
-import com.microsoft.Malmo.MissionHandlerInterfaces.IWorldDecorator;
-import com.microsoft.Malmo.Schemas.BuildBattleDecorator;
-import com.microsoft.Malmo.Schemas.DrawBlockBasedObjectType;
-import com.microsoft.Malmo.Schemas.MissionInit;
-import com.microsoft.Malmo.Schemas.UnnamedGridDefinition;
-import com.microsoft.Malmo.Utils.BlockDrawingHelper;
-import com.microsoft.Malmo.Utils.BlockDrawingHelper.XMLBlockState;
 
 public class BuildBattleDecoratorImplementation
     extends HandlerBase implements IWorldDecorator {

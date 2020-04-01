@@ -1,12 +1,11 @@
 package com.microsoft.Malmo.MissionHandlers;
 
-import java.util.List;
-
 import com.microsoft.Malmo.MissionHandlerInterfaces.ICommandHandler;
 import com.microsoft.Malmo.MissionHandlerInterfaces.IWantToQuit;
 import com.microsoft.Malmo.Schemas.AgentQuitFromReachingCommandQuota;
 import com.microsoft.Malmo.Schemas.CommandQuota;
 import com.microsoft.Malmo.Schemas.MissionInit;
+import java.util.List;
 
 public class AgentQuitFromReachingCommandQuotaImplementation
     extends HandlerBase implements IWantToQuit {

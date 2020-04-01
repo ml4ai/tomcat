@@ -1,11 +1,10 @@
 package com.microsoft.Malmo.MissionHandlers;
 
-import java.util.Map;
-
 import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.MalmoMod.IMalmoMessageListener;
 import com.microsoft.Malmo.MalmoMod.MalmoMessageType;
 import com.microsoft.Malmo.Schemas.MissionInit;
+import java.util.Map;
 
 public class RewardFromTeamImplementation
     extends RewardBase implements IMalmoMessageListener {

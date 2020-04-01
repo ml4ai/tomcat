@@ -79,7 +79,8 @@ namespace malmo {
       const int SIZE_HEADER_LENGTH = 4;
       u_long size_header = htonl((u_long)message.size());
       try {
-        boost::asio::write(socket, boost::asio::buffer(&size_header, SIZE_HEADER_LENGTH));
+        boost::asio::write(
+            socket, boost::asio::buffer(&size_header, SIZE_HEADER_LENGTH));
       }
       catch (boost::system::system_error e) {
         LOGERROR(LT("Failed to write header to "),
@@ -192,7 +193,8 @@ namespace malmo {
                error_code.message());
       throw runtime_error(
           "Could not connect  " +
-          (error_code ? error_code : boost::asio::error::operation_aborted).message());
+          (error_code ? error_code : boost::asio::error::operation_aborted)
+              .message());
     }
 
     error_code_sync.init_error_code();
@@ -224,12 +226,13 @@ namespace malmo {
           });
     }
     else {
-      boost::asio::async_write(socket,
-                        boost::asio::buffer(message_vector),
-                        boost::bind(&Rpc::transfer_handler,
-                                    this,
-                                    boost::asio::placeholders::error,
-                                    boost::asio::placeholders::bytes_transferred));
+      boost::asio::async_write(
+          socket,
+          boost::asio::buffer(message_vector),
+          boost::bind(&Rpc::transfer_handler,
+                      this,
+                      boost::asio::placeholders::error,
+                      boost::asio::placeholders::bytes_transferred));
     }
 
     error_code = error_code_sync.await_error_code();
@@ -291,7 +294,8 @@ namespace malmo {
     return reply;
   }
 
-  void Rpc::transfer_handler(const boost::system::error_code& ec, size_t transferred) {
+  void Rpc::transfer_handler(const boost::system::error_code& ec,
+                             size_t transferred) {
     error_code_sync.signal_error_code(ec);
   }
 } // namespace malmo

@@ -1,8 +1,6 @@
 #pragma once
 
-#include "Microphone.h"
 #include "MissionSpec.h"
-#include "WebcamSensor.h"
 #include <AgentHost.h>
 #include <boost/filesystem.hpp>
 #include <string>
@@ -14,7 +12,11 @@ namespace tomcat {
 
   class TomcatMissionException : public std::exception {
   public:
-    enum ErrorCode { CONNECTION_NOT_ESTABLISHED, TOMCAT_VAR_INEXISTENT };
+    enum ErrorCode {
+      CONNECTION_NOT_ESTABLISHED,
+      TOMCAT_VAR_INEXISTENT,
+      ERROR_STARTING_MISSION
+    };
 
     TomcatMissionException(const std::string& message, ErrorCode error_code)
         : message(message), error_code(error_code) {}
@@ -39,38 +41,24 @@ namespace tomcat {
      * mission specifications
      * @param time_limit_in_seconds - Duration of the mission in seconds
      * @param self_report_prompt_time_in_seconds - Frequency of self-reports
-     * @param video_width - Width of the screen
-     * @param video_height - Height of the screen
      * @param port_number - Port number to connect with the Minecraft server
-     * @param frames_per_second - Number of frames per seconds when recording
      * video
-     * @param bit_rate - Bit rate when recording video
-     * @param record_video - Flag that activates video recording
      * @param record_observations - Flag that activates observations recording
-     * @param activate_webcam - Flag that activates the webcam
-     * @param record_audio - Flag that activates audio recording
      * @param record_commands - Flag that activates commands recording
      * @param record_rewards - Flag that activates rewards recording
+     * @param multiplayer - Flag that indicates a multiplayer mission
      * @param record_path - Path where recordings will be saved
-     * @param audio_record_path - Path where the audio will be saved
+
      */
     Mission(std::string mission_id_or_path,
             unsigned int time_limit_in_seconds,
             unsigned int self_report_prompt_time_in_seconds,
-            unsigned int video_width,
-            unsigned int video_height,
             int port_number,
-            int frames_per_second,
-            int64_t bit_rate,
-            bool record_video,
             bool record_observations,
-            bool activate_webcam,
-            bool record_audio,
             bool record_commands,
             bool record_rewards,
-            std::string record_path = "./saved_data.tgz",
-            std::string audio_record_path = "audio_recording.wav"
-            );
+            bool multiplayer,
+            std::string record_path = "./saved_data.tgz");
 
     /**
      * Destructor
@@ -99,25 +87,18 @@ namespace tomcat {
     enum MissionId { TUTORIAL = 0, SAR = 1 };
 
     malmo::MissionSpec mission_spec;
-    boost::shared_ptr<malmo::AgentHost> host;
-    boost::shared_ptr<WebcamSensor> webcam;
-    Microphone microphone;
     std::string mission_id_or_path;
     unsigned int time_limit_in_seconds;
     unsigned int self_report_prompt_time_in_seconds;
-    unsigned int video_width;
-    unsigned int video_height;
     int port_number;
-    int frames_per_second;
-    int64_t bit_rate;
-    bool record_video;
     bool record_observations;
-    bool activate_webcam;
-    bool record_audio;
     bool record_commands;
     bool record_rewards;
+    bool multiplayer;
     std::string record_path = "./saved_data.tgz";
-    std::string audio_record_path = "audio_recording.wav";
+    std::shared_ptr<malmo::AgentHost> minecraft_server;
+    std::vector<std::shared_ptr<malmo::AgentHost>> minecraft_clients;
+    std::shared_ptr<malmo::ClientPool> client_pool;
     std::vector<std::shared_ptr<LocalAgent>> tomcat_agents;
 
     /**
@@ -136,6 +117,11 @@ namespace tomcat {
     };
 
     /**
+     * Creates a client pool for the server and each client
+     */
+    void create_client_pool();
+
+    /**
      * Retrieves the content of an XML which defines the skeleton of the world
      * for the Search and Rescue mission
      * @return
@@ -143,9 +129,22 @@ namespace tomcat {
     std::string get_world_skeleton_from_xml();
 
     /**
-     * Establish connection with Minecraft host
+     * Creates the collection of AgentSection tags for the clients in the
+     * mission. These tags will be included in the mission spec xml
+     * @return
      */
-    void connect_to_host();
+    std::string create_agent_section_tags();
+
+    /**
+     * Creates AgentHost objects in charge of communicate with the Minecraft
+     * server and clients
+     */
+    void create_agent_hosts();
+
+    /**
+     * Establish connection to a Minecraft host
+     */
+    std::shared_ptr<malmo::AgentHost> connect_to_minecraft(int role);
 
     /**
      * Retrieves a MissionRecordSpec for the mission
@@ -154,26 +153,15 @@ namespace tomcat {
     malmo::MissionRecordSpec get_mission_record_spec();
 
     /**
-     * Retrieves a client pool for the mission
-     * @return
+     * Wait until all the clients have started the mission
      */
-    malmo::ClientPool get_client_pool() const;
-
-    /**
-     * Initialize external sensors
-     */
-    void init_external_sensors();
+    void safe_wait_to_start();
 
     /**
      * Observe the mission. This method corresponds to the mission main loop and
      * is executed while the mission is running
      */
     void observe();
-
-    /**
-     * Clean up processes related to external sensors
-     */
-    void finalize_external_sensors();
   };
 
 } // namespace tomcat

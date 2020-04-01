@@ -22,6 +22,10 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
+import com.microsoft.Malmo.Schemas.ContinuousMovementCommand;
+import com.microsoft.Malmo.Schemas.ContinuousMovementCommands;
+import com.microsoft.Malmo.Schemas.MissionInit;
+import com.microsoft.Malmo.Utils.TimeHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.GameSettings;
@@ -32,11 +36,6 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
-
-import com.microsoft.Malmo.Schemas.ContinuousMovementCommand;
-import com.microsoft.Malmo.Schemas.ContinuousMovementCommands;
-import com.microsoft.Malmo.Schemas.MissionInit;
-import com.microsoft.Malmo.Utils.TimeHelper;
 
 /**
  * Class which overrides movement of the Minecraft player and exposes control

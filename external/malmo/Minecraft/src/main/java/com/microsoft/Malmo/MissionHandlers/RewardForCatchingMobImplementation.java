@@ -1,19 +1,17 @@
 package com.microsoft.Malmo.MissionHandlers;
 
+import com.microsoft.Malmo.Schemas.EntityTypes;
+import com.microsoft.Malmo.Schemas.MissionInit;
+import com.microsoft.Malmo.Schemas.MobWithDescriptionAndReward;
+import com.microsoft.Malmo.Schemas.RewardForCatchingMob;
 import java.util.ArrayList;
 import java.util.List;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import com.microsoft.Malmo.Schemas.EntityTypes;
-import com.microsoft.Malmo.Schemas.MissionInit;
-import com.microsoft.Malmo.Schemas.MobWithDescriptionAndReward;
-import com.microsoft.Malmo.Schemas.RewardForCatchingMob;
 
 public class RewardForCatchingMobImplementation extends RewardBase {
   RewardForCatchingMob rcmparams;

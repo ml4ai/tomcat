@@ -22,11 +22,10 @@
 
 package com.microsoft.Malmo.Utils;
 
-import net.minecraft.world.storage.WorldInfo;
-
 import com.microsoft.Malmo.Schemas.MissionInit;
 import com.microsoft.Malmo.Schemas.ServerInitialConditions;
 import com.microsoft.Malmo.Schemas.ServerSection;
+import net.minecraft.world.storage.WorldInfo;
 
 public class EnvironmentHelper {
   public static void setMissionWeather(MissionInit minit, WorldInfo worldinfo) {

@@ -22,10 +22,12 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
+import com.microsoft.Malmo.MalmoMod;
+import com.microsoft.Malmo.Schemas.AbsoluteMovementCommand;
+import com.microsoft.Malmo.Schemas.AbsoluteMovementCommands;
+import com.microsoft.Malmo.Schemas.MissionInit;
 import io.netty.buffer.ByteBuf;
-
 import java.util.EnumSet;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -38,11 +40,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
-
-import com.microsoft.Malmo.MalmoMod;
-import com.microsoft.Malmo.Schemas.AbsoluteMovementCommand;
-import com.microsoft.Malmo.Schemas.AbsoluteMovementCommands;
-import com.microsoft.Malmo.Schemas.MissionInit;
 
 public class AbsoluteMovementCommandsImplementation extends CommandBase {
   private boolean isOverriding = false;

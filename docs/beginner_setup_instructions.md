@@ -8,12 +8,6 @@ macOS comes with a built-in terminal application, named 'Terminal'. You
 should be able to search for it using Spotlight Search (which you can bring up
 with `<Cmd>+<Space>`).
 
-## Install XCode, Command Line Tools and MacPorts
-
-Follow the instructions here: https://www.macports.org/install.php to install
-XCode, the macOS command line tools, and MacPorts, which is a software package
-manager for macOS.
-
 ## Installing ToMCAT
 
 Open a new terminal window. By default, the starting directory is your home
@@ -36,3 +30,16 @@ the terminal:
 
     git clone https://github.com/ml4ai/tomcat
     cd tomcat && ./tools/install.sh
+
+You may be presented with a prompt to input a password during the installation,
+in which case enter the password you use to log in to your account (the
+password you use to install any software on your computer). You will not see
+any letters appearing as you type in your password - they will be hidden for
+privacy - so it is fine if it appears blank. Just type in your password
+normally and press the enter/return key on your keyboard.
+
+When you run the `run_session.sh` script, you might be asked to give the
+terminal permissions to control system events - this is so that the script can
+automatically make the Minecraft window full screen. Additionally, you might be
+asked for permissions to use the microphone and webcam - this is for recording
+audio and video of the player when the mission is running.

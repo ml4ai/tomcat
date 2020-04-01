@@ -5,6 +5,14 @@
 
 set -e -u 
 
+# Set the TOMCAT environment variable, assuming that the directory structure
+# mirrors that of the git repository.
+TOMCAT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && pwd )"
+export TOMCAT
+
+export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
+mkdir -p "${TOMCAT_TMP_DIR}"
+
 minecraft_log="${TOMCAT_TMP_DIR}/minecraft.log"
 
 cd ${TOMCAT}/external/malmo/Minecraft
@@ -39,7 +47,3 @@ else
 fi 
 
 exit ${launch_status}
-
-
-
-

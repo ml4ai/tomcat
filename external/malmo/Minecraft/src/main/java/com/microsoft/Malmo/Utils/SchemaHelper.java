@@ -22,6 +22,7 @@
 
 package com.microsoft.Malmo.Utils;
 
+import com.microsoft.Malmo.MalmoMod;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -30,7 +31,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
-
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -44,15 +44,12 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import com.microsoft.Malmo.MalmoMod;
 
 /**
  * Helper functions for serialising/deserialising our schema-defined objects.

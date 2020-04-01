@@ -1,5 +1,6 @@
 package com.microsoft.Malmo.Utils;
 
+import com.microsoft.Malmo.MalmoMod;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -12,14 +13,10 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-
+import net.minecraftforge.common.config.Configuration;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
-
-import com.microsoft.Malmo.MalmoMod;
-
-import net.minecraftforge.common.config.Configuration;
 
 public class TCPUtils {
   public enum SeverityLevel {

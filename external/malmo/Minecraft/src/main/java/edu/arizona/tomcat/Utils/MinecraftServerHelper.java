@@ -1,5 +1,6 @@
 package edu.arizona.tomcat.Utils;
 
+import java.util.List;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -15,10 +16,10 @@ public class MinecraftServerHelper {
   }
 
   /**
-   * Retireves the first player of the list of players
+   * Retireves the list of players
    * @return
    */
-  public static EntityPlayerMP getFirstPlayer() {
-    return getServer().getPlayerList().getPlayers().get(0);
+  public static List<EntityPlayerMP> getPlayers() {
+    return getServer().getPlayerList().getPlayers();
   }
 }
