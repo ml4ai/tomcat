@@ -101,6 +101,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
             "${TOMCAT}"/build/bin/runExperiment \
             --mission external/malmo/sample_missions/default_flat_1.xml\
             --time_limit ${time_limit} \
+            --record_observations \
             --record_path "${output_dir}"/malmo_data.tgz \
             &>"${zombie_invasion_log}" &
             bg_pid=$!
@@ -108,6 +109,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
             "${TOMCAT}"/build/bin/runExperiment \
             --mission 1 \
             --time_limit ${time_limit} \
+            --record_observations \
             --record_path "${output_dir}"/malmo_data.tgz \
             &>"${zombie_invasion_log}" &
             bg_pid=$!
@@ -158,9 +160,13 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 fi
 
 discrete_actions_file="${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
+
 if [[ -f "${discrete_actions_file}" ]]; then
   mv "${discrete_actions_file}" "${output_dir}"/discrete_events.json
 fi
+
+# Move the self-reports from the Minecraft folder to the participant data folder
+mv "${TOMCAT}"/external/malmo/Minecraft/run/saves/self_reports/* "${output_dir}"
 
 echo "Finished running all sessions in ${TOMCAT}".
 exit 0
