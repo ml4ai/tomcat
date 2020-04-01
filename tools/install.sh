@@ -26,6 +26,7 @@ pushd "${TOMCAT}"
     if [[ $? -ne 0 ]]; then exit 1; fi;
 
     # Trying to set the correct version of Java.
+    export PATH="$PATH:/opt/local/bin:/opt/local/sbin"
     macports_found=`[ -x "$(command -v port)" ]; echo $?`
     if [[ $macports_found -eq 0 ]]; then
       export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk8/Contents/Home
