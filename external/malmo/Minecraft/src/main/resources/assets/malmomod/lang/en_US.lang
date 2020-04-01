@@ -11,4 +11,5 @@ auth.usernameToPasswordMappings=Map usernames to passwords in format <username>:
 
 tile.ASIST_Button.name=ASIST Button
 tile.ASIST_Lever.name=ASIST Lever
+tile.ASIST_Iron_Block.name=ASIST Iron Block
 

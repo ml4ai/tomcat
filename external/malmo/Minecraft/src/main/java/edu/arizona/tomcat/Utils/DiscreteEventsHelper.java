@@ -3,6 +3,10 @@ package edu.arizona.tomcat.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
+import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.BlockPos;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,9 +14,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.math.BlockPos;
 
 /**
  * This class holds static methods to print the discrete events. It writes the
@@ -43,7 +44,9 @@ public class DiscreteEventsHelper {
     Map<String, String> output = new LinkedTreeMap<String, String>();
 
     output.put("Event Type", event);
-    output.put("Event caused by", playerIn.getDisplayNameString());
+    if (playerIn != null) {
+      output.put("Event caused by", playerIn.getDisplayNameString());
+    }
     output.put("Event Coordinates", coordinates);
     output.put("Occurrence Time", dateTime);
 
@@ -60,15 +63,19 @@ public class DiscreteEventsHelper {
    * @param playerIn -  The player who triggered the event
    */
   public static void printAttackEventOccurrence(BlockPos pos,
-                                                Entity enemy,
+                                                EntityMob enemy,
                                                 EntityPlayer playerIn) {
 
     String playerName = playerIn.getDisplayNameString();
+    String playerHealth = playerIn.getHealth() + "/" + playerIn.getMaxHealth();
     String enemyName = enemy.getName();
 
     String event = playerName + " killed " + enemyName;
+    String enemyHealth = "0.0"
+                         + "/" + enemy.getMaxHealth();
     if (enemy.isEntityAlive()) {
       event = playerName + " attacked " + enemyName;
+      enemyHealth = enemy.getHealth() + "/" + enemy.getMaxHealth();
     }
 
     String coordinates = createCoordinateString(pos);
@@ -80,6 +87,8 @@ public class DiscreteEventsHelper {
     Map<String, String> output = new LinkedTreeMap<String, String>();
 
     output.put("Event Type", event);
+    output.put("Current Enemy Health", enemyHealth);
+    output.put("Current Player Health", playerHealth);
     output.put("Event caused by", playerName);
     output.put("Event Coordinates", coordinates);
     output.put("Occurrence Time", dateTime);
