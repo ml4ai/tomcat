@@ -4,22 +4,14 @@
 # be used after running 'git pull', on the master branch. It downloads the
 # latest tomcat mission worlds and rebuilds tomcat
 #
-# Usage: git pull && ./tools/update_tomcat.sh
+# Usage: ./tools/update_tomcat.sh
 
-./tools/download_tomcat_worlds.sh
+# Set the TOMCAT environment variable, assuming that the directory structure
+# mirrors that of the git repository.
+TOMCAT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && pwd )"
+export TOMCAT
 
-mkdir -p build
-
-parent_dir=`pwd`
-
-pushd build
-    # Kobus says: The above mkdir build suggests that build might not have
-    # existed, which means that this will break. Also, if you are uipdating, it
-    # might be best to rebuild makefiles. So, I am adding a cmake command. 
-    #
-    cmake "${parent_dir}"
-
-    make -j
-    make -j Minecraft
+pushd ${TOMCAT}
+  git pull
+  ${TOMCAT}/tools/install.sh
 popd
-
