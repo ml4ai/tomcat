@@ -40,12 +40,17 @@ export zombie_invasion_log="${TOMCAT_TMP_DIR}/zombie_invasion.log"
 export num_tries=2
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
+
   if [[ "$TERM_PROGRAM" == "iTerm.app" ]]; then
     terminal="iTerm"
   else
     terminal="Terminal"
   fi
   osascript "${TOMCAT}"/tools/activate_minecraft_window.scpt ${terminal}
+  if [[ $? -ne 0 ]]; then exit 1; fi
+
+elif [[ "$OSTYPE" == "linux" ]]; then
+  ${TOMCAT}/tools/activate_minecraft_window.sh
   if [[ $? -ne 0 ]]; then exit 1; fi
 fi
 
@@ -74,11 +79,6 @@ if [[ ${do_invasion} -eq 1 ]]; then
     else
         framerate_option=""
         ffmpeg_fmt=video4linux2
-        echo "
-        Screen recording currently only works on MacOS since it relies on
-        AppleScript to bring the Minecraft window to the foreground and make it
-        full screen. Equivalent functionality can probably be achieved with
-        the wmctrl tool tool on Linux. Pull requests welcome!"
     fi
 
     # Creating an output directory for this session.
@@ -97,10 +97,8 @@ if [[ ${do_invasion} -eq 1 ]]; then
     fi
 
     # Recording game screen.
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        ${ffmpeg_common_invocation} -i "1:" -r 30 "${output_dir}"/screen_video.mpg &> /dev/null &
-        screen_recording_pid=$!
-    fi
+    ${ffmpeg_common_invocation} -i "1:" -r 30 "${output_dir}"/screen_video.mpg &> /dev/null &
+    screen_recording_pid=$!
 
     while [ $try -lt $num_tries ]; do
         if [[ -n "$GITHUB_ACTIONS" ]]; then
@@ -157,11 +155,6 @@ fi
 if [[ -z "$GITHUB_ACTIONS" ]]; then
     kill $webcam_recording_pid
     kill $audio_recording_pid
-fi
-
-# For now, screen recording works only on macOS. Need to extend it to Linux as
-# well.
-if [[ "$OSTYPE" == "darwin"* ]]; then
     kill $screen_recording_pid
 fi
 
