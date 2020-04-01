@@ -135,7 +135,7 @@ elif [ -x "$(command -v apt-get)" ]; then
     sudo apt-get update
     if [[ $? -ne 0 ]]; then exit 1; fi;
 
-    sudo apt-get install -y \
+    sudo apt-get install -y --allow-downgrades\
         cmake \
         gcc-9 \
         libfmt-dev \
