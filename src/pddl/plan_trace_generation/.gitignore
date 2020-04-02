@@ -1,0 +1,4 @@
+# Ignore pdfs, txt, json files outputted from the scripts in this directory
+*.pdf
+*.txt
+*.json
