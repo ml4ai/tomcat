@@ -50,7 +50,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 fi
 
 if [[ ${do_tutorial} -eq 1 ]]; then 
-  "${TOMCAT}"/tools/run_tutorial.sh
+  if ! "${TOMCAT}"/tools/run_tutorial.sh; then exit 1; fi
 fi
 
 /bin/rm -f "${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
