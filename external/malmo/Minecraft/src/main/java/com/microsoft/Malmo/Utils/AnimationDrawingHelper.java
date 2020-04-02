@@ -2,7 +2,6 @@ package com.microsoft.Malmo.Utils;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;

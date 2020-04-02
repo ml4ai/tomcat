@@ -1,6 +1,7 @@
 package com.microsoft.Malmo.ASISTBlocks;
 
 import edu.arizona.tomcat.Utils.DiscreteEventsHelper;
+import javax.annotation.Nullable;
 import net.minecraft.block.BlockButton;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -11,8 +12,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import javax.annotation.Nullable;
 
 /**
  * This class defines a new basic button that can write event observations
@@ -61,7 +60,7 @@ public class BlockAsistButton extends BlockButton {
     boolean result = super.onBlockActivated(
         worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
 
-    DiscreteEventsHelper.printEventOccurence(
+    DiscreteEventsHelper.printEventOccurrence(
         pos, playerIn, "Button Pressed"); // Used to mark discrete occurence
 
     return result;

@@ -1,13 +1,11 @@
 package com.microsoft.Malmo.MissionHandlers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.microsoft.Malmo.Schemas.HumanLevelCommand;
 import com.microsoft.Malmo.Schemas.HumanLevelCommands;
 import com.microsoft.Malmo.Schemas.MissionInit;
 import com.microsoft.Malmo.Utils.TimeHelper;
-
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraftforge.common.MinecraftForge;

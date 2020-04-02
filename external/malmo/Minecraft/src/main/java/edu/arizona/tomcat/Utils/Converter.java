@@ -1,13 +1,11 @@
 package edu.arizona.tomcat.Utils;
 
-import java.lang.reflect.Type;
-import java.util.Map;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.microsoft.Malmo.Utils.TimeHelper;
-
+import java.lang.reflect.Type;
+import java.util.Map;
 import net.minecraft.world.World;
 
 public class Converter {

@@ -22,15 +22,14 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.microsoft.Malmo.MissionHandlerInterfaces.ICommandHandler;
 import com.microsoft.Malmo.MissionHandlerInterfaces.IObservationProducer;
 import com.microsoft.Malmo.Schemas.MissionInit;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * ObservationProducer that returns a JSON array of all the commands acted on

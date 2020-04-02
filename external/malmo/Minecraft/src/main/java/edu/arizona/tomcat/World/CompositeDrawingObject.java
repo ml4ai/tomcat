@@ -1,9 +1,8 @@
 package edu.arizona.tomcat.World;
 
+import com.microsoft.Malmo.Schemas.DrawObjectType;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import com.microsoft.Malmo.Schemas.DrawObjectType;
 
 public abstract class CompositeDrawingObject {
 

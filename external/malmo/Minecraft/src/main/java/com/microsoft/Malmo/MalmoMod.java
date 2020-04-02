@@ -40,7 +40,9 @@ import com.microsoft.Malmo.Utils.SchemaHelper;
 import com.microsoft.Malmo.Utils.ScoreHelper;
 import com.microsoft.Malmo.Utils.ScreenHelper;
 import com.microsoft.Malmo.Utils.TCPUtils;
-import edu.arizona.tomcat.Utils.TomcatForgeEventhandler;
+import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
+import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageHandler;
+import edu.arizona.tomcat.Utils.TomcatForgeEventHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
@@ -114,7 +116,7 @@ public class MalmoMod {
   public void preInit(FMLPreInitializationEvent event) {
 
     MinecraftForge.EVENT_BUS.register(
-        new TomcatForgeEventhandler()); // Registering this here so it's
+        new TomcatForgeEventHandler()); // Registering this here so it's
                                         // accessible outside missions.
 
     ModBlocks.init();
@@ -215,6 +217,12 @@ public class MalmoMod {
         ObservationFromSystemImplementation.SystemRequestMessage.class,
         12,
         Side.SERVER);
+
+    // TOMCAT
+    network.registerMessage(
+        TomcatMessageHandler.class, TomcatMessage.class, 100, Side.CLIENT);
+    network.registerMessage(
+        TomcatMessageHandler.class, TomcatMessage.class, 100, Side.SERVER);
   }
 
   @EventHandler

@@ -22,11 +22,10 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
-import net.minecraft.client.Minecraft;
-
 import com.microsoft.Malmo.MissionHandlerInterfaces.IWantToQuit;
 import com.microsoft.Malmo.Schemas.MissionInit;
 import com.microsoft.Malmo.Utils.TimeHelper;
+import net.minecraft.client.Minecraft;
 
 /**
  * IWantToQuit object that returns true when a certain amount of time has

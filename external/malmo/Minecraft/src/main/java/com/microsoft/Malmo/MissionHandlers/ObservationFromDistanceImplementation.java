@@ -22,15 +22,14 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-
 import com.google.gson.JsonObject;
 import com.microsoft.Malmo.MissionHandlerInterfaces.IObservationProducer;
 import com.microsoft.Malmo.Schemas.MissionInit;
 import com.microsoft.Malmo.Schemas.NamedPoint;
 import com.microsoft.Malmo.Schemas.ObservationFromDistance;
 import com.microsoft.Malmo.Utils.PositionHelper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 
 /**
  * Simple IObservationProducer class that creates a single "distanceFromTarget"

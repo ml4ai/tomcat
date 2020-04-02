@@ -22,19 +22,6 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.bind.DatatypeConverter;
-
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-
 import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.MalmoMod.MalmoMessageType;
 import com.microsoft.Malmo.Schemas.BlockOrItemSpec;
@@ -42,6 +29,15 @@ import com.microsoft.Malmo.Schemas.BlockOrItemSpecWithReward;
 import com.microsoft.Malmo.Schemas.DrawItem;
 import com.microsoft.Malmo.Schemas.Variation;
 import com.microsoft.Malmo.Utils.MinecraftTypeHelper;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import java.util.ArrayList;
+import java.util.List;
+import javax.xml.bind.DatatypeConverter;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 public abstract class RewardForItemBase extends RewardBase {
   List<ItemRewardMatcher> rewardMatchers = new ArrayList<ItemRewardMatcher>();

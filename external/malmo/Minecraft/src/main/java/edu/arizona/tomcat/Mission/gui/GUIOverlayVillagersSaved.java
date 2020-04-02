@@ -1,7 +1,6 @@
 package edu.arizona.tomcat.Mission.gui;
 
 import com.microsoft.Malmo.MalmoMod;
-
 import edu.arizona.tomcat.Mission.Client.SARClientMission;
 import edu.arizona.tomcat.Mission.Client.TutorialClientMission;
 import net.minecraft.client.Minecraft;

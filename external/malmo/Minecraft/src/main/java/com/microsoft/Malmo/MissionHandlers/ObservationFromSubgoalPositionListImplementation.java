@@ -22,14 +22,13 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-
 import com.google.gson.JsonObject;
 import com.microsoft.Malmo.MissionHandlerInterfaces.IObservationProducer;
 import com.microsoft.Malmo.Schemas.MissionInit;
 import com.microsoft.Malmo.Schemas.ObservationFromSubgoalPositionList;
 import com.microsoft.Malmo.Schemas.PointWithToleranceAndDescription;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 
 public class ObservationFromSubgoalPositionListImplementation
     extends HandlerBase implements IObservationProducer {

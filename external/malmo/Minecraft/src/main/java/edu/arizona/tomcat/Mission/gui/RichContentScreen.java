@@ -2,7 +2,6 @@ package edu.arizona.tomcat.Mission.gui;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiLabel;
 

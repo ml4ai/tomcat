@@ -40,7 +40,8 @@ namespace malmo {
     char* tomcat_dir = getenv("TOMCAT");
     if (tomcat_dir == NULL) {
       throw runtime_error("The TOMCAT environment variable has not been set."
-          " Please set it to point to your local copy of the ToMCAT repository");
+                          " Please set it to point to your local copy of the "
+                          "ToMCAT repository");
     }
     path schema_path = path(tomcat_dir) / "external/malmo/Schemas" / name;
     if (!exists(schema_path)) {
