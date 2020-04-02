@@ -50,7 +50,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 fi
 
 if [[ ${do_tutorial} -eq 1 ]]; then 
-  "${TOMCAT}"/tools/run_tutorial
+  if ! "${TOMCAT}"/tools/run_tutorial.sh; then exit 1; fi
 fi
 
 /bin/rm -f "${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
@@ -62,6 +62,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
 
     try=0
 
+    framerate_option=""
     if [[ "$OSTYPE" == "darwin"* ]]; then
 
         # On macOS, we choose the avfoundation format.
@@ -72,7 +73,6 @@ if [[ ${do_invasion} -eq 1 ]]; then
             framerate_option="-framerate 30"
         fi
     else
-        framerate_option=""
         ffmpeg_fmt=video4linux2
         echo "
         Screen recording currently only works on MacOS since it relies on

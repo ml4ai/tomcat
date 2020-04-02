@@ -36,3 +36,4 @@ while [ $try -lt $num_tries ]; do
     fi 
 done
 rm tutorial_saved_data.tgz
+exit 0
