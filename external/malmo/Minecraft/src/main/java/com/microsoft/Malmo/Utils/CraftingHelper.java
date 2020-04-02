@@ -22,6 +22,10 @@
 
 package com.microsoft.Malmo.Utils;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.microsoft.Malmo.MissionHandlers.RewardForCollectingItemImplementation;
+import com.microsoft.Malmo.MissionHandlers.RewardForDiscardingItemImplementation;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -31,12 +35,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.microsoft.Malmo.MissionHandlers.RewardForCollectingItemImplementation;
-import com.microsoft.Malmo.MissionHandlers.RewardForDiscardingItemImplementation;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;

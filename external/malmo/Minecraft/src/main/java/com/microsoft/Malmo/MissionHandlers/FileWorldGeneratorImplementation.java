@@ -22,20 +22,18 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
+import com.microsoft.Malmo.MissionHandlerInterfaces.IWorldGenerator;
+import com.microsoft.Malmo.Schemas.FileWorldGenerator;
+import com.microsoft.Malmo.Schemas.MissionInit;
+import com.microsoft.Malmo.Utils.MapFileHelper;
 import java.io.File;
 import java.util.List;
-
 import net.minecraft.client.AnvilConverterException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.ISaveFormat;
 import net.minecraft.world.storage.WorldSummary;
-
-import com.microsoft.Malmo.MissionHandlerInterfaces.IWorldGenerator;
-import com.microsoft.Malmo.Schemas.FileWorldGenerator;
-import com.microsoft.Malmo.Schemas.MissionInit;
-import com.microsoft.Malmo.Utils.MapFileHelper;
 
 public class FileWorldGeneratorImplementation
     extends HandlerBase implements IWorldGenerator {

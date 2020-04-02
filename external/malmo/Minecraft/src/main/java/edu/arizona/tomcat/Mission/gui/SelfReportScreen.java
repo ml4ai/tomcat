@@ -2,7 +2,6 @@ package edu.arizona.tomcat.Mission.gui;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiLabel;
 
@@ -132,10 +131,10 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
 
       if (buttonsInARow.size() == MAX_BUTTONS_PER_ROW ||
           numberOfButtonsAdded == numberOfButtons) {
-        this.drawButtonRow(initialButtonCode, y, buttonsInARow);
+        initialButtonCode =
+            this.drawButtonRow(initialButtonCode, y, buttonsInARow);
         buttonsInARow.clear();
         y += MARGIN + BUTTON_HEIGHT;
-        initialButtonCode += buttonsInARow.size();
       }
     }
 
@@ -147,7 +146,7 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
   /**
    * Draws horizontally aligned buttons
    */
-  private void
+  private int
   drawButtonRow(int initialButtonCode, int y, ArrayList<String> buttonTexts) {
     int avaliableWidth = this.width - 2 * MARGIN;
     int avaliableSpace = avaliableWidth - buttonTexts.size() * BUTTON_WIDTH;
@@ -163,6 +162,8 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
       x += BUTTON_WIDTH + spaceBetweenButtons;
       buttonCode++;
     }
+
+    return buttonCode;
   }
 
   @Override

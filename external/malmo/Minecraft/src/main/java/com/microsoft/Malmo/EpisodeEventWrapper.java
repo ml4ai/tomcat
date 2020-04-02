@@ -23,7 +23,6 @@
 package com.microsoft.Malmo;
 
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;

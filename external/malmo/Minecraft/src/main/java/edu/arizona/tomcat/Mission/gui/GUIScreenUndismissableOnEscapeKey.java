@@ -1,7 +1,6 @@
 package edu.arizona.tomcat.Mission.gui;
 
 import java.io.IOException;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 

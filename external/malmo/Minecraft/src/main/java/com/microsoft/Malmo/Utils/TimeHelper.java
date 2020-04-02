@@ -23,7 +23,6 @@
 package com.microsoft.Malmo.Utils;
 
 import java.lang.reflect.Field;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.Timer;

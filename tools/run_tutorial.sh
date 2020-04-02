@@ -12,7 +12,7 @@ while [ $try -lt $num_tries ]; do
     bg_pid=$!
     echo "Running: ${TOMCAT}/build/bin/runExperiment --mission 0"
     echo "Process is $bg_pid - waiting for it"
-    wait
+    wait $bg_pid
     tutorial_mission_status=$?
 
     if [[ ${tutorial_mission_status} -eq 0 ]]; then
@@ -36,3 +36,4 @@ while [ $try -lt $num_tries ]; do
     fi 
 done
 rm tutorial_saved_data.tgz
+exit 0

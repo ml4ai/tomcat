@@ -1,9 +1,8 @@
 package edu.arizona.tomcat.Mission;
 
+import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 import java.util.ArrayList;
 import java.util.Date;
-
-import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 
 public class MissionSelfReport {
 

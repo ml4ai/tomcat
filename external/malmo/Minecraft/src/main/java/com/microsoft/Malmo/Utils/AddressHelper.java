@@ -22,12 +22,11 @@
 
 package com.microsoft.Malmo.Utils;
 
+import com.microsoft.Malmo.MalmoMod;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModMetadata;
-
-import com.microsoft.Malmo.MalmoMod;
 
 /**
  * Class that helps to track and centralise our various IP address and port

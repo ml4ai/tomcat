@@ -1,21 +1,26 @@
 package edu.arizona.tomcat.Messaging;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
+import edu.arizona.tomcat.Mission.Mission;
 import edu.arizona.tomcat.Mission.gui.RichContent;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TomcatMessageData {
 
-  private static enum Key { MISSION_PHASE_MESSAGE, PLAYER_NAME }
+  private static enum Key {
+    MISSION_ID,
+    MISSION_PHASE_MESSAGE,
+    PLAYER_NAME,
+    REMAINING_SECONDS,
+    REMAINING_SECONDS_ALERT
+  }
   ;
 
   protected Map<String, String> data;
@@ -115,19 +120,55 @@ public class TomcatMessageData {
   }
 
   /**
-   * Adds the player's name to the data map
-   * @param name - Player's name
+   * Adds the misison id to the data map
+   * @param missionID - Mission ID
    */
-  public void setPlayerName(String name) {
-    this.data.put(Key.PLAYER_NAME.toString(), name);
+  public void setMissionID(Mission.ID id) {
+    this.data.put(Key.MISSION_ID.toString(), id.toString());
   }
 
   /**
-   * Retrieves the player's name from the data map
+   * Retrieves the mission ID from the data map
    * @return
    */
-  public String getPlayerName() {
-    return this.data.get(Key.PLAYER_NAME.toString());
+  public Mission.ID getMissionID() {
+    return Mission.ID.valueOf(this.data.get(Key.MISSION_ID.toString()));
+  }
+
+  /**
+   * Sets the remaining seconds to end
+   * @param remainingSeconds - remaining time in seconds for the mission to end
+   */
+  public void setRemainingSeconds(long remainingSeconds) {
+    this.data.put(Key.REMAINING_SECONDS.toString(),
+                  Long.toString(remainingSeconds));
+  }
+
+  /**
+   * Retrieves the remaining seconds to end
+   * @return
+   */
+  public long getRemainingSeconds() {
+    return Long.parseLong(this.data.get(Key.REMAINING_SECONDS.toString()));
+  }
+
+  /**
+   * Sets the remaining seconds alert
+   * @param remainingSecondsAlert - remaining time in seconds from which we
+   *     should highlight the countdown
+   */
+  public void setRemainingSecondsAlert(long remainingSecondsAlert) {
+    this.data.put(Key.REMAINING_SECONDS_ALERT.toString(),
+                  Long.toString(remainingSecondsAlert));
+  }
+
+  /**
+   * Retrieves the remaining seconds alert
+   * @return
+   */
+  public long getRemainingSecondsAlert() {
+    return Long.parseLong(
+        this.data.get(Key.REMAINING_SECONDS_ALERT.toString()));
   }
 
   /**

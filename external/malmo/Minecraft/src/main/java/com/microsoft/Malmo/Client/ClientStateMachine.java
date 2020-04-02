@@ -59,10 +59,8 @@ import com.microsoft.Malmo.Utils.TCPUtils;
 import com.microsoft.Malmo.Utils.TextureHelper;
 import com.microsoft.Malmo.Utils.TimeHelper;
 import com.mojang.authlib.properties.Property;
-
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
-
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;

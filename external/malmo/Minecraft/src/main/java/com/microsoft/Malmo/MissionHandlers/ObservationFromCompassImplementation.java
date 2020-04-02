@@ -22,15 +22,14 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
+import com.google.gson.JsonObject;
+import com.microsoft.Malmo.MissionHandlerInterfaces.IObservationProducer;
+import com.microsoft.Malmo.Schemas.MissionInit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemCompass;
 import net.minecraft.util.math.BlockPos;
-
-import com.google.gson.JsonObject;
-import com.microsoft.Malmo.MissionHandlerInterfaces.IObservationProducer;
-import com.microsoft.Malmo.Schemas.MissionInit;
 
 /**
  * Creates observations from a compass in the agent's inventory.

@@ -245,7 +245,8 @@ namespace malmo {
     string file_name_in_archive = relpath.normalize().string();
     replace(
         file_name_in_archive.begin(), file_name_in_archive.end(), '\\', '/');
-    LOGINFO(LT("- adding "), filepath.string(), LT(" as "), file_name_in_archive);
+    LOGINFO(
+        LT("- adding "), filepath.string(), LT(" as "), file_name_in_archive);
     archive.putFile(filepath.string().c_str(), file_name_in_archive.c_str());
   }
 

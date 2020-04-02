@@ -1,74 +1,57 @@
 #!/bin/bash
 
-# We cannot use '-u' because we need to be able to test if TRAVIS is set. We
-# cannot simply declare TRAVIS and then test if it is NULL, as cmake checks
-# whether TRAVIS is set. If we had confidence that tcsh was installed, then we
+# We cannot use '-u' because we need to be able to test if GITHUB_ACTIONS is set. We
+# cannot simply declare GITHUB_ACTIONS and then test if it is NULL, as cmake checks
+# whether GITHUB_ACTIONS is set. If we had confidence that tcsh was installed, then we
 # could use tcsh to check if the variable was bound, but this is an install
 # script that is supposed to install things we might need, counting on as little
 # as possible.
 
 # Set the TOMCAT environment variable, assuming that the directory structure
 # mirrors that of the git repository.
-export TOMCAT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && pwd )"
+TOMCAT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && pwd )"
+export TOMCAT
 
 ###############################################################################
 
 ${TOMCAT}/tools/install_dependencies.sh
 if [[ $? -ne 0 ]]; then exit 1; fi;
 
-# On Travis, we will create and activate a Python virtual environment
-if [[ ! -z $TRAVIS ]]; then
-  if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-    echo "Creating virtual environment for tomcat"
-    brew unlink python@2
-    brew link --overwrite python
-    python3 -m venv tomcat_venv
-    if [[ $? -ne 0 ]]; then exit 1; fi;
-
-    echo "Activating virtual environment for tomcat"
-    source tomcat_venv/bin/activate
-    if [[ $? -ne 0 ]]; then exit 1; fi;
-
-    # Installing Sphinx HTML documentation requirements.
-    pip install exhale recommonmark sphinx-rtd-theme
-    if [[ $? -ne 0 ]]; then exit 1; fi;
-  fi
-fi
-
-${TOMCAT}/tools/download_tomcat_worlds.sh
-if [[ $? -ne 0 ]]; then exit 1; fi;
-
-${TOMCAT}/tools/download_OpenFace_models.sh
-if [[ $? -ne 0 ]]; then exit 1; fi;
 
 pushd "${TOMCAT}"
     echo "Building ToMCAT in `pwd`"
 
-    mkdir -p build 
+    /bin/rm -rf build
+    mkdir build
     if [[ $? -ne 0 ]]; then exit 1; fi;
 
+    # Trying to set the correct version of Java.
+    export PATH="$PATH:/opt/local/bin:/opt/local/sbin"
+    macports_found=`[ -x "$(command -v port)" ]; echo $?`
+    if [[ $macports_found -eq 0 ]]; then
+      export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk8/Contents/Home
+    fi
     pushd build > /dev/null 
-        if [[ ! -z $TRAVIS ]]; then
-            # On Travis, we will build HTML documentation by default.
-            cmake ${TOMCAT} -DBUILD_DOCS=ON
+        if [[ -n $GITHUB_ACTIONS ]]; then
+            cmake ${TOMCAT} -DBoost_ARCHITECTURE=-x64\
+                            -DBOOST_ROOT=$BOOST_ROOT_1_69_0
             if [[ $? -ne 0 ]]; then exit 1; fi;
         else
-            cmake ${TOMCAT}
-            if [[ $? -ne 0 ]]; then exit 1; fi;
+            if ! cmake ${TOMCAT}; then exit 1; fi
         fi;
 
-        make -j
-        if [[ $? -ne 0 ]]; then exit 1; fi;
+        if ! make -j; then exit 1; fi
 
-        # We skip building Minecraft on Travis since we cannot get an
-        # appropriate version of Java on their macOS image.
-        if [[ -z $TRAVIS ]]; then
-            make -j Minecraft
-            if [[ $? -ne 0 ]]; then exit 1; fi;
-        fi
+        make -j Minecraft
     popd > /dev/null 
 popd > /dev/null 
 
+if ! ${TOMCAT}/tools/download_tomcat_worlds.sh; then exit 1; fi
+
+
+if [[ ! -d ${TOMCAT}/data/OpenFace_models ]]; then
+  if ! ${TOMCAT}/tools/download_OpenFace_models.sh; then exit 1; fi
+fi
 
 echo " "
 echo "Finished installing ToMCAT in ${TOMCAT}!"

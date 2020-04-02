@@ -22,11 +22,23 @@
 
 package com.microsoft.Malmo.Utils;
 
+import com.microsoft.Malmo.Schemas.BlockType;
+import com.microsoft.Malmo.Schemas.Colour;
+import com.microsoft.Malmo.Schemas.DrawBlock;
+import com.microsoft.Malmo.Schemas.DrawItem;
+import com.microsoft.Malmo.Schemas.EntityTypes;
+import com.microsoft.Malmo.Schemas.Facing;
+import com.microsoft.Malmo.Schemas.FlowerTypes;
+import com.microsoft.Malmo.Schemas.HalfTypes;
+import com.microsoft.Malmo.Schemas.MonsterEggTypes;
+import com.microsoft.Malmo.Schemas.ShapeTypes;
+import com.microsoft.Malmo.Schemas.StoneTypes;
+import com.microsoft.Malmo.Schemas.Variation;
+import com.microsoft.Malmo.Schemas.WoodTypes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockLever.EnumOrientation;
@@ -43,20 +55,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-
-import com.microsoft.Malmo.Schemas.BlockType;
-import com.microsoft.Malmo.Schemas.Colour;
-import com.microsoft.Malmo.Schemas.DrawBlock;
-import com.microsoft.Malmo.Schemas.DrawItem;
-import com.microsoft.Malmo.Schemas.EntityTypes;
-import com.microsoft.Malmo.Schemas.Facing;
-import com.microsoft.Malmo.Schemas.FlowerTypes;
-import com.microsoft.Malmo.Schemas.HalfTypes;
-import com.microsoft.Malmo.Schemas.MonsterEggTypes;
-import com.microsoft.Malmo.Schemas.ShapeTypes;
-import com.microsoft.Malmo.Schemas.StoneTypes;
-import com.microsoft.Malmo.Schemas.Variation;
-import com.microsoft.Malmo.Schemas.WoodTypes;
 
 /**
  *  Utility functions for dealing with Minecraft block types, item types, etc.

@@ -1,13 +1,12 @@
 package edu.arizona.tomcat.Mission.gui;
 
+import com.google.gson.Gson;
+import com.microsoft.Malmo.MalmoMod;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.google.gson.Gson;
-import com.microsoft.Malmo.MalmoMod;
 
 public class RichContent {
 

@@ -22,14 +22,12 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
+import com.microsoft.Malmo.Schemas.MissionInit;
 import java.lang.reflect.Field;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.settings.KeyBindingMap;
-
-import com.microsoft.Malmo.Schemas.MissionInit;
 
 /**
  * KeyBinding subclass which opens up the Minecraft keyhandling to external

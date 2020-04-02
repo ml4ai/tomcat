@@ -1,20 +1,10 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.10)
 
-if(EXISTS /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk)
-  set(CMAKE_OSX_SYSROOT  "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk")
-#  set(CMAKE_OSX_SYSROOT  "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk")
-endif()
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 
 project(tomcat)
-
-if(NOT DEFINED ENV{TRAVIS})
-  # Deal with C++17 warnings on macOS. Ubuntu's DLib available through apt-get
-  # doesn't adhere to the C++17 standard unfortunately.
-  if (APPLE)
-    set(CMAKE_CXX_STANDARD 17)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-  endif()
-endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/tools/cmake/")
 
@@ -40,7 +30,7 @@ else()
     "-- fmt package not found on system, please install it.  (https://fmt.dev)")
 endif()
 
-find_package(Boost 1.69
+find_package(Boost 1.67
              COMPONENTS chrono
                         date_time
                         filesystem
@@ -50,12 +40,6 @@ find_package(Boost 1.69
                         system
                         thread
              REQUIRED)
-
-if(DEFINED ENV{TRAVIS})
-  add_subdirectory(external/dlib)
-else()
-  find_package(dlib REQUIRED)
-endif()
 
 add_subdirectory(external/malmo)
 
@@ -70,6 +54,3 @@ option(BUILD_DOCS "Build documentation" OFF)
 if (BUILD_DOCS)
   add_subdirectory(docs)
 endif()
-
-add_subdirectory(tests)
-target_include_directories(test PRIVATE src external/malmo/Malmo/src)

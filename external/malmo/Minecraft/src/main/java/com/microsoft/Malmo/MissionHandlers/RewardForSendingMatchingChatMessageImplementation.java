@@ -28,7 +28,6 @@ import com.microsoft.Malmo.Schemas.ChatCommand;
 import com.microsoft.Malmo.Schemas.ChatMatchSpec;
 import com.microsoft.Malmo.Schemas.MissionInit;
 import com.microsoft.Malmo.Schemas.RewardForSendingMatchingChatMessage;
-
 import java.util.*;
 import java.util.regex.*;
 

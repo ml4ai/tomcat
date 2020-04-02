@@ -1,11 +1,10 @@
 package edu.arizona.tomcat.World;
 
-import java.math.BigDecimal;
-import java.util.UUID;
-
 import com.microsoft.Malmo.Schemas.DrawEntity;
 import com.microsoft.Malmo.Schemas.EntityTypes;
 import com.microsoft.Malmo.Schemas.SpawnableTypes;
+import java.math.BigDecimal;
+import java.util.UUID;
 
 public class TomcatEntity extends CompositeDrawingObject {
 

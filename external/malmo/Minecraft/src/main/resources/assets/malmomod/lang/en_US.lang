@@ -10,4 +10,6 @@ auth.portToUserMappings=Map ports to usernames in format <port>:<username>
 auth.usernameToPasswordMappings=Map usernames to passwords in format <username>:<password>
 
 tile.ASIST_Button.name=ASIST Button
+tile.ASIST_Lever.name=ASIST Lever
+tile.ASIST_Iron_Block.name=ASIST Iron Block
 

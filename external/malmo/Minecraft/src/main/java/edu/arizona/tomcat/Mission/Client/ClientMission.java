@@ -1,7 +1,6 @@
 package edu.arizona.tomcat.Mission.Client;
 
-import com.microsoft.Malmo.MalmoMod;
-
+import edu.arizona.tomcat.Messaging.TomcatClientServerHandler;
 import edu.arizona.tomcat.Messaging.TomcatMessageData;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
@@ -11,6 +10,7 @@ import edu.arizona.tomcat.Mission.gui.RichContentScreen;
 import edu.arizona.tomcat.Mission.gui.ScreenListener;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 import edu.arizona.tomcat.Mission.gui.SelfReportScreen;
+import edu.arizona.tomcat.World.DrawingHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 
@@ -56,14 +56,19 @@ public abstract class ClientMission implements ScreenListener {
 
     case DISMISS_OPEN_SCREEN:
       Minecraft.getMinecraft().player.closeScreen();
-      MalmoMod.network.sendToServer(
-          new TomcatMessage(TomcatMessageType.OPEN_SCREEN_DISMISSED));
       break;
 
     case SHOW_SELF_REPORT:
       this.currentSelfReport = message.getMessageData().getSelfReport();
       this.handleNextSelfReportScreen();
       break;
+
+    case UPDATE_COUNTDOWN:
+      long remainingSeconds = message.getMessageData().getRemainingSeconds();
+      long remainingSecondsAlert =
+          message.getMessageData().getRemainingSecondsAlert();
+      DrawingHandler.getInstance().drawCountdown(remainingSeconds,
+                                                 remainingSecondsAlert);
 
     default:
       break;
@@ -116,9 +121,9 @@ public abstract class ClientMission implements ScreenListener {
     case SHOWING_SCREEN_AFTER_QUESTIONS:
       this.selfReportPhase = SelfReportPhase.NOT_PROCESSING_SELF_REPORT;
       TomcatMessageData data = new TomcatMessageData(this.currentSelfReport);
-      data.setPlayerName(Minecraft.getMinecraft().player.getName());
-      MalmoMod.network.sendToServer(
-          new TomcatMessage(TomcatMessageType.SELF_REPORT_ANSWERED, data));
+      TomcatMessage message =
+          new TomcatMessage(TomcatMessageType.SELF_REPORT_ANSWERED, data);
+      TomcatClientServerHandler.sendMessageToServer(message);
       break;
 
     default:
@@ -128,8 +133,9 @@ public abstract class ClientMission implements ScreenListener {
   @Override
   public void screenDismissed(GuiScreen screen) {
     if (this.selfReportPhase == SelfReportPhase.NOT_PROCESSING_SELF_REPORT) {
-      MalmoMod.network.sendToServer(
-          new TomcatMessage(TomcatMessageType.OPEN_SCREEN_DISMISSED));
+      TomcatMessage message =
+          new TomcatMessage(TomcatMessageType.OPEN_SCREEN_DISMISSED);
+      TomcatClientServerHandler.sendMessageToServer(message);
     }
     else {
       this.handleNextSelfReportScreen();

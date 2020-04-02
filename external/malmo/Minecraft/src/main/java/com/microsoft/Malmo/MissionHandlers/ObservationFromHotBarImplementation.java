@@ -22,11 +22,10 @@
 
 package com.microsoft.Malmo.MissionHandlers;
 
-import net.minecraft.client.Minecraft;
-
 import com.google.gson.JsonObject;
 import com.microsoft.Malmo.MissionHandlerInterfaces.IObservationProducer;
 import com.microsoft.Malmo.Schemas.MissionInit;
+import net.minecraft.client.Minecraft;
 
 /**
  * Simple IObservationProducer class that returns a list of what is in the

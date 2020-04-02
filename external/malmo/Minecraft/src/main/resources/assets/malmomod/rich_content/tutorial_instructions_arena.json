@@ -4,8 +4,8 @@
     {
       "text": [
          "You can interact with objects by getting close", 
-         "and gazing at them. The cross in the middle of your screen",
-         "shows you where your character is looking at."
+         "and looking at them. The crosshair in the middle of your screen",
+         "shows you which object your character is looking at."
       ],
       "images":
       [ 
@@ -22,9 +22,8 @@
     },
     {
       "text": [
-      	 "To open gates, get close enough and move your mouse",
-         "until your character's is aiming the gate then just",
-         "right-click on it."
+         "To open a gate, get close to it, aim the crosshair at it",
+         "and then right click on it."
       ],
       "images":
       [ 
@@ -53,7 +52,7 @@
       	 "Now find the arena and go to its center.", 
       	 "You will need to open a gate to do that.",
          "",
-         "Press OK when you are ready."
+         "Click OK when you are ready."
       ],
       "images":
       [ 

@@ -1,10 +1,10 @@
 package edu.arizona.tomcat.Mission.Goal;
 
+import com.microsoft.Malmo.Schemas.EntityTypes;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import com.microsoft.Malmo.Schemas.EntityTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 
