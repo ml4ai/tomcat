@@ -3,6 +3,47 @@
 set -u
 
 declare -x GITHUB_ACTIONS=""
+# Set the TOMCAT environment variable, assuming that the directory structure
+# mirrors that of the git repository.
+TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
+export TOMCAT
+
+
+# This function tests whether ffmpeg has access to the webcam. On macOS, the
+# terminal must explicitly be given access to the camera and microphone in
+# order to run programs that record video and audio.
+
+
+framerate_option=""
+if [[ "$OSTYPE" == "darwin"* ]]; then
+
+    # On macOS, we choose the avfoundation format.
+    ffmpeg_fmt=avfoundation
+    # On a late 2013 retina MacBook Pro, we have to specify the framerate
+    # explicitly for some unknown reason for the webcam recording.
+    if [[ $(sysctl hw.model) == "hw.model: MacBookPro11,3" ]]; then
+        framerate_option="-framerate 30"
+    fi
+else
+    ffmpeg_fmt=video4linux2
+fi
+
+ffmpeg_common_invocation="ffmpeg  -nostdin -f $ffmpeg_fmt"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  if [[ "$TERM_PROGRAM" == "iTerm.app" ]]; then
+    terminal="iTerm"
+  else
+    terminal="Terminal"
+  fi
+  echo "Testing terminal access to camera."
+  ffmpeg -ss 0.5 -f avfoundation -i "0" -t 1 webcam_photo.jpg
+  if [[ $? -ne 0 ]]; then
+    echo "Terminal does not have access to camera. Fixing that now."
+    osascript ${TOMCAT}/tools/terminal_camera_access.scpt $terminal
+    exit 1
+  fi
+fi
+
 
 # this function returns the date and time in the current timezone.
 timestamp() {
@@ -14,14 +55,10 @@ if [[ -n "${GITHUB_ACTIONS}" ]]; then
   do_tutorial=0
 else
   time_limit=600
-  do_tutorial=1
+  do_tutorial=0
 fi
 do_invasion=1
 
-# Set the TOMCAT environment variable, assuming that the directory structure
-# mirrors that of the git repository.
-TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
-export TOMCAT
 
 export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
 mkdir -p "${TOMCAT_TMP_DIR}"
@@ -67,29 +104,16 @@ if [[ ${do_invasion} -eq 1 ]]; then
 
     try=0
 
-    framerate_option=""
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-
-        # On macOS, we choose the avfoundation format.
-        ffmpeg_fmt=avfoundation
-        # On a late 2013 retina MacBook Pro, we have to specify the framerate
-        # explicitly for some unknown reason for the webcam recording.
-        if [[ $(sysctl hw.model) == "hw.model: MacBookPro11,3" ]]; then
-            framerate_option="-framerate 30"
-        fi
-    else
-        ffmpeg_fmt=video4linux2
-    fi
 
     # Creating an output directory for this session.
     output_dir="${TOMCAT}"/data/participant_data/session_$(timestamp)
     mkdir -p "${output_dir}"
-    ffmpeg_common_invocation="ffmpeg  -nostdin -f $ffmpeg_fmt"
 
     if [[ -z "$GITHUB_ACTIONS" ]]; then
         echo "Recording video of player's face using webcam."
         ${ffmpeg_common_invocation} ${framerate_option} -i "0:" "${output_dir}"/webcam_video.mpg &> /dev/null &
         webcam_recording_pid=$!
+        if [[ $(pgrep ${webcam_recording_pid}) == "" ]]; then exit 1; fi
 
         echo "Recording player audio using microphone."
         ${ffmpeg_common_invocation} -i ":0" "${output_dir}"/player_audio.wav &> /dev/null &
