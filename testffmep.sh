@@ -30,7 +30,8 @@ while true; do
 		echo "PID to kill: $webcam_recording_pid"
 		echo "ps ax | grep ffmpeg:"
 		ps ax | grep ffmpeg
-		kill -2 $webcam_recording_pid
+#		kill -2 $webcam_recording_pid
+		kill -15 $webcam_recording_pid
 		echo "$webcam_recording_pid is killed"
 		echo "Exit"
 		break
