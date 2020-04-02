@@ -2,7 +2,7 @@
 
 set -u
 
-declare -x GITHUB_ACTIONS
+declare -x GITHUB_ACTIONS=""
 
 # this function returns the date and time in the current timezone.
 timestamp() {
