@@ -1,8 +1,9 @@
 #!/bin/bash
 
+github_actions=$GITHUB_ACTIONS
+
 set -u
 
-declare -x GITHUB_ACTIONS=""
 # Set the TOMCAT environment variable, assuming that the directory structure
 # mirrors that of the git repository.
 TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
@@ -39,7 +40,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   ffmpeg -ss 0.5 -f avfoundation -i "0" -t 1 webcam_photo.jpg
   if [[ $? -ne 0 ]]; then
     echo "Terminal does not have access to camera. Fixing that now."
-    osascript ${TOMCAT}/tools/terminal_camera_access.scpt $terminal
+    if ! osascript ${TOMCAT}/tools/terminal_camera_access.scpt $terminal; then exit 1; fi
     exit 1
   fi
 fi
@@ -50,7 +51,7 @@ timestamp() {
   date "+%Y_%m_%d_%H_%M_%S"
 }
 
-if [[ -n "${GITHUB_ACTIONS}" ]]; then
+if [[ -n "${github_actions}" ]]; then
   time_limit=1
   do_tutorial=0
 else
@@ -109,7 +110,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
     output_dir="${TOMCAT}"/data/participant_data/session_$(timestamp)
     mkdir -p "${output_dir}"
 
-    if [[ -z "$GITHUB_ACTIONS" ]]; then
+    if [[ -z "$github_actions" ]]; then
         echo "Recording video of player's face using webcam."
         ${ffmpeg_common_invocation} ${framerate_option} -i "0:" "${output_dir}"/webcam_video.mpg &> /dev/null &
         webcam_recording_pid=$!
@@ -125,7 +126,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
     screen_recording_pid=$!
 
     while [ $try -lt $num_tries ]; do
-        if [[ -n "$GITHUB_ACTIONS" ]]; then
+        if [[ -n "$github_actions" ]]; then
             "${TOMCAT}"/build/bin/runExperiment \
             --mission external/malmo/sample_missions/default_flat_1.xml\
             --time_limit ${time_limit} \
@@ -176,7 +177,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
     done
 fi
 
-if [[ -z "$GITHUB_ACTIONS" ]]; then
+if [[ -z "$github_actions" ]]; then
     kill $webcam_recording_pid
     kill $audio_recording_pid
     kill $screen_recording_pid
