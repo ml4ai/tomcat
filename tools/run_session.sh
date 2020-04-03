@@ -75,7 +75,7 @@ if [[ -n "${GITHUB_ACTIONS}" ]]; then
   do_tutorial=0
 else
   time_limit=600
-  do_tutorial=0
+  do_tutorial=1
 fi
 do_invasion=1
 
