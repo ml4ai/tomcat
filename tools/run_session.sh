@@ -159,12 +159,9 @@ if [[ ${do_invasion} -eq 1 ]]; then
 		if [[ "$OSTYPE" == "darwin"* ]]; then
           fmt=avfoundation
           input_device=":0"
-	        ffmpeg -f avfoundation -i ":0" "$player_audio" &> /dev/null &
-    	    audio_recording_pid=$!
 		elif [[ "$OSTYPE" == "linux-gnu" ]]; then
           fmt=alsa
           input_device=default
-			ffmpeg -f alsa -i default "$player_audio" &> /dev/null &
 		fi
         ffmpeg -f ${fmt} -i ${input_device} "${output_dir}"/player_audio.wav &> /dev/null &
         audio_recording_pid=$!
