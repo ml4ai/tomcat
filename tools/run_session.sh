@@ -1,27 +1,90 @@
 #!/bin/bash
 
+github_actions=$GITHUB_ACTIONS
+
 set -u
 
-declare -x GITHUB_ACTIONS=""
+# Set the TOMCAT environment variable, assuming that the directory structure
+# mirrors that of the git repository.
+TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
+export TOMCAT
+
+
+# This function tests whether ffmpeg has access to the webcam. On macOS, the
+# terminal must explicitly be given access to the camera and microphone in
+# order to run programs that record video and audio.
+
+
+framerate_option=""
+if [[ "$OSTYPE" == "darwin"* ]]; then
+
+    # On macOS, we choose the avfoundation format.
+    ffmpeg_fmt=avfoundation
+    # On a late 2013 retina MacBook Pro, we have to specify the framerate
+    # explicitly for some unknown reason for the webcam recording.
+    if [[ $(sysctl hw.model) == "hw.model: MacBookPro11,3" ]]; then
+        framerate_option="-framerate 30"
+    fi
+else
+    ffmpeg_fmt=video4linux2
+fi
+
+ffmpeg_common_invocation="ffmpeg  -nostdin -f $ffmpeg_fmt"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  if [[ "$TERM_PROGRAM" == "iTerm.app" ]]; then
+    terminal="iTerm"
+  else
+    terminal="Terminal"
+  fi
+  echo "Testing terminal access to camera."
+  mkdir -p /tmp/${USER}/tomcat
+  /bin/rm -f /tmp/"$USER"/tomcat/test_video.mpg
+  ffmpeg -f avfoundation -i "0:" -t 1 /tmp/${USER}/tomcat/test_video.mpg &>/dev/null
+  if [[ ! -f /tmp/${USER}/test_video ]]; then
+    echo "We were not able to create a test video file, so we assume that"
+    echo "macOS is not allowing the terminal to access the camera."
+    echo "The script will now guide you to set it up."
+    echo ""
+    ${TOMCAT}/tools/terminal_camera_access.scpt $terminal
+    if [[ $? -ne 0 ]]; then exit 1; fi
+  fi
+
+  echo "Testing terminal access to microphone..."
+  /bin/rm -f /tmp/"$USER"/tomcat/test_audio.wav
+  ffmpeg -f avfoundation -i ":0" -t 1 /tmp/"$USER"/tomcat/test_audio.wav &>/dev/null &
+  microphone_test_pid=$!
+  sleep 1
+  if [[ ! -f /tmp/"$USER"/tomcat/test_audio.wav ]]; then
+    echo "We were not able to create a test audio recording, so we assume that"
+    echo "macOS is not allowing the terminal to access the microphone."
+    echo "The script will now guide you to set it up."
+    echo ""
+    # ffmpeg does not exit by itself when you ask it to try to record audio from
+    # the default audio input device and permission is denied by macOS. Thus, we
+    # have to kill it with signal 9
+    kill -9 $microphone_test_pid
+    ${TOMCAT}/tools/terminal_microphone_access.scpt $terminal
+    if [[ $? -ne 0 ]]; then exit 1; fi
+  else
+    /bin/rm -f /tmp/"$USER"/tomcat/test_audio.wav
+  fi
+fi
+
 
 # this function returns the date and time in the current timezone.
 timestamp() {
   date "+%Y_%m_%d_%H_%M_%S"
 }
 
-if [[ -n "${GITHUB_ACTIONS}" ]]; then
+if [[ -n "${github_actions}" ]]; then
   time_limit=1
   do_tutorial=0
 else
   time_limit=600
-  do_tutorial=1
+  do_tutorial=0
 fi
 do_invasion=1
 
-# Set the TOMCAT environment variable, assuming that the directory structure
-# mirrors that of the git repository.
-TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
-export TOMCAT
 
 export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
 mkdir -p "${TOMCAT_TMP_DIR}"
@@ -48,9 +111,10 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   fi
   osascript "${TOMCAT}"/tools/activate_minecraft_window.scpt ${terminal}
   if [[ $? -ne 0 ]]; then exit 1; fi
-
 elif [[ "$OSTYPE" == "linux-gnu" ]]; then
-  ${TOMCAT}/tools/activate_minecraft_window.sh
+  if [[ -z "$github_actions" ]]; then
+    ${TOMCAT}/tools/activate_minecraft_window.sh
+  fi
   if [[ $? -ne 0 ]]; then exit 1; fi
 fi
 
@@ -67,29 +131,16 @@ if [[ ${do_invasion} -eq 1 ]]; then
 
     try=0
 
-    framerate_option=""
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-
-        # On macOS, we choose the avfoundation format.
-        ffmpeg_fmt=avfoundation
-        # On a late 2013 retina MacBook Pro, we have to specify the framerate
-        # explicitly for some unknown reason for the webcam recording.
-        if [[ $(sysctl hw.model) == "hw.model: MacBookPro11,3" ]]; then
-            framerate_option="-framerate 30"
-        fi
-    else
-        ffmpeg_fmt=video4linux2
-    fi
 
     # Creating an output directory for this session.
     output_dir="${TOMCAT}"/data/participant_data/session_$(timestamp)
     mkdir -p "${output_dir}"
-    ffmpeg_common_invocation="ffmpeg  -nostdin -f $ffmpeg_fmt"
 
-    if [[ -z "$GITHUB_ACTIONS" ]]; then
+    if [[ -z "$github_actions" ]]; then
         echo "Recording video of player's face using webcam."
         ${ffmpeg_common_invocation} ${framerate_option} -i "0:" "${output_dir}"/webcam_video.mpg &> /dev/null &
         webcam_recording_pid=$!
+        if [[ $(pgrep ${webcam_recording_pid}) == "" ]]; then exit 1; fi
 
         echo "Recording player audio using microphone."
         ${ffmpeg_common_invocation} -i ":0" "${output_dir}"/player_audio.wav &> /dev/null &
@@ -101,7 +152,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
     screen_recording_pid=$!
 
     while [ $try -lt $num_tries ]; do
-        if [[ -n "$GITHUB_ACTIONS" ]]; then
+        if [[ -n "$github_actions" ]]; then
             "${TOMCAT}"/build/bin/runExperiment \
             --mission external/malmo/sample_missions/default_flat_1.xml\
             --time_limit ${time_limit} \
@@ -152,7 +203,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
     done
 fi
 
-if [[ -z "$GITHUB_ACTIONS" ]]; then
+if [[ -z "$github_actions" ]]; then
     kill $webcam_recording_pid
     kill $audio_recording_pid
     kill $screen_recording_pid

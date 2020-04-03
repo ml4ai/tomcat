@@ -66,10 +66,7 @@ if [[ $kill_all -ne 0 ]]; then
         to_kill="${to_kill} ${ps_tmp}" 
     fi 
 else 
-    declare -x TOMCAT_TMP_DIR
-    if [[ -z "${TOMCAT_TMP_DIR}" ]]; then
-        export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
-    fi 
+    export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
 
     minecraft_launch_pid_file="${TOMCAT_TMP_DIR}/minecraft_launch.pid"
 
