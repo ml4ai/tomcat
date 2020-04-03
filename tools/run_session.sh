@@ -38,7 +38,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   fi
   echo "Testing terminal access to camera."
   mkdir -p /tmp/${USER}/tomcat
-  /bin/rm -f /tmp/${USER}/tomcat/test_video.mpg
+  /bin/rm -f /tmp/"$USER"/tomcat/test_video.mpg
   ffmpeg -f avfoundation -i "0:" -t 1 /tmp/${USER}/tomcat/test_video.mpg &>/dev/null
   if [[ ! -f /tmp/${USER}/test_video ]]; then
     echo "We were not able to create a test video file, so we assume that"
