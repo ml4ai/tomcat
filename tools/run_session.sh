@@ -137,7 +137,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
     # On a Github actions runner, there is no webcam and microphone.
     if [[ -z "$github_actions" ]]; then
         echo "Recording video of player's face using webcam."
-		if [[ "$OSTYPE" == "darwin"* ]]; then
+        if [[ "$OSTYPE" == "darwin"* ]]; then
           fmt=avfoundation
           input_device="0:"
           # On a late 2013 retina MacBook Pro, we have to specify the
@@ -147,22 +147,22 @@ if [[ ${do_invasion} -eq 1 ]]; then
               framerate_option="-framerate 30"
           fi
 
-		elif [[ "$OSTYPE" == "linux-gnu" ]]; then
+        elif [[ "$OSTYPE" == "linux-gnu" ]]; then
           fmt=vfl2
           input_device=/dev/video0
-		fi
+        fi
         ffmpeg -f ${fmt} ${framerate_option} -i ${input_device}\
           "${output_dir}"/webcam_video.mpg &> /dev/null &
         webcam_recording_pid=$!
-		
+        
         echo "Recording player audio using microphone."
-		if [[ "$OSTYPE" == "darwin"* ]]; then
+        if [[ "$OSTYPE" == "darwin"* ]]; then
           fmt=avfoundation
           input_device=":0"
-		elif [[ "$OSTYPE" == "linux-gnu" ]]; then
+        elif [[ "$OSTYPE" == "linux-gnu" ]]; then
           fmt=alsa
           input_device=default
-		fi
+        fi
         ffmpeg -f ${fmt} -i ${input_device} "${output_dir}"/player_audio.wav &> /dev/null &
         audio_recording_pid=$!
     fi
@@ -170,15 +170,15 @@ if [[ ${do_invasion} -eq 1 ]]; then
     # Recording game screen.
     screen_video="${output_dir}"/screen_video.mpg
     if [[ "$OSTYPE" == "darwin"* ]]; then
-		ffmpeg -f avfoundation -i "1:" -r 30 "$screen_video" &> /dev/null &
-	    screen_recording_pid=$!
-	elif [[ "$OSTYPE" == "linux-gnu" ]]; then
-		ffmpeg -nostdin -f x11grab\
+        ffmpeg -f avfoundation -i "1:" -r 30 "$screen_video" &> /dev/null &
+        screen_recording_pid=$!
+    elif [[ "$OSTYPE" == "linux-gnu" ]]; then
+        ffmpeg -nostdin -f x11grab\
           -s $(xdpyinfo | grep dimensions | awk '{print $2;}')\
           -i ":0.0"\
           "$screen_video" &> /dev/null &
-		screen_recording_pid=$!
-	fi
+        screen_recording_pid=$!
+    fi
 
     while [ $try -lt $num_tries ]; do
         if [[ -n "$github_actions" ]]; then
