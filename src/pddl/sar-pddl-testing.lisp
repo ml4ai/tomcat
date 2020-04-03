@@ -2,7 +2,7 @@
 ;; SAR-PDDL TESTING
 ;;;;
 
-#+rpg (progn
+#-rpg (progn
         (asdf:load-system "shop3")
         (asdf:load-system "shop3/plan-grapher")
         (asdf:load-system :fiveam))
