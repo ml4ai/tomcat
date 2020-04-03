@@ -203,4 +203,4 @@
 
 (fiveam:run! 'sar-pddl-testing)
 
-
+(sb-ext:quit)
