@@ -35,6 +35,7 @@
 #include <iostream>
 #include <queue>
 #include <string>
+#include <stack>
 
 namespace malmo {
   class IFrameWriter {
