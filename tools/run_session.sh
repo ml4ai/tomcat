@@ -112,7 +112,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   osascript "${TOMCAT}"/tools/activate_minecraft_window.scpt ${terminal}
   if [[ $? -ne 0 ]]; then exit 1; fi
 elif [[ "$OSTYPE" == "linux-gnu" ]]; then
-  if [[ -z "$GITHUB_ACTIONS" ]]; then
+  if [[ -z "$github_actions" ]]; then
     ${TOMCAT}/tools/activate_minecraft_window.sh
   fi
   if [[ $? -ne 0 ]]; then exit 1; fi
