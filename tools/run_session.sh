@@ -41,8 +41,10 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   /bin/rm -f /tmp/${USER}/tomcat/test_video.mpg
   ffmpeg -f avfoundation -i "0:" -t 1 /tmp/${USER}/tomcat/test_video.mpg &>/dev/null
   if [[ ! -f /tmp/${USER}/test_video ]]; then
-    echo "The terminal does not have access to the webcam."
+    echo "We were not able to create a test video file, so we assume that"
+    echo "macOS is not allowing the terminal to access the camera."
     echo "The script will now guide you to set it up."
+    echo ""
     ${TOMCAT}/tools/terminal_camera_access.scpt $terminal
     if [[ $? -ne 0 ]]; then exit 1; fi
   fi
@@ -53,8 +55,10 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   microphone_test_pid=$!
   sleep 1
   if [[ ! -f /tmp/"$USER"/tomcat/test_audio.wav ]]; then
-    echo "The terminal does not have access to the microphone."
+    echo "We were not able to create a test audio recording, so we assume that"
+    echo "macOS is not allowing the terminal to access the microphone."
     echo "The script will now guide you to set it up."
+    echo ""
     # ffmpeg does not exit by itself when you ask it to try to record audio from
     # the default audio input device and permission is denied by macOS. Thus, we
     # have to kill it with signal 9
