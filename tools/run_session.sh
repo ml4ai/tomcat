@@ -12,19 +12,11 @@ export TOMCAT
 export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
 mkdir -p "${TOMCAT_TMP_DIR}"
 
-# This function tests whether ffmpeg has access to the webcam. On macOS, the
-# terminal must explicitly be given access to the camera and microphone in
-# order to run programs that record video and audio.
-
-
-
 # On some systems, the 'rm' command is aliased to something else. So we take
 # the precaution of explicitly pointing rm to /bin/rm.
 rm=/bin/rm
 
 tools="$TOMCAT"/tools
-
-
 
 # On macOS, we need to test whether the terminal has access to the webcam and
 # microphone.
