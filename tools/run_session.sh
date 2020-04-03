@@ -1,8 +1,8 @@
 #!/bin/bash
 
-github_actions=$GITHUB_ACTIONS
-
+github_actions="$GITHUB_ACTIONS"
 set -u
+export GITHUB_ACTIONS="${github_actions}"
 
 # Set the TOMCAT environment variable, assuming that the directory structure
 # mirrors that of the git repository.
@@ -70,7 +70,7 @@ timestamp() {
   date "+%Y_%m_%d_%H_%M_%S"
 }
 
-if [[ -n "${github_actions}" ]]; then
+if [[ -n "${GITHUB_ACTIONS}" ]]; then
   time_limit=1
   do_tutorial=0
 else
@@ -108,7 +108,7 @@ elif [[ "$OSTYPE" == "linux-gnu" ]]; then
   # wmctrl does not work well with xvfb-run, so we disable full-screening the
   # Minecraft window when running a headless test of this script with a Github
   # Actions runner.
-  if [[ -z "$github_actions" ]]; then
+  if [[ -z "$GITHUB_ACTIONS" ]]; then
     "$tools"/activate_minecraft_window.sh
   fi
   if [[ $? -ne 0 ]]; then exit 1; fi
@@ -135,7 +135,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
     framerate_option=""
 
     # On a Github actions runner, there is no webcam and microphone.
-    if [[ -z "$github_actions" ]]; then
+    if [[ -z "$GITHUB_ACTIONS" ]]; then
         echo "Recording video of player's face using webcam."
         if [[ "$OSTYPE" == "darwin"* ]]; then
           fmt=avfoundation
@@ -181,7 +181,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
     fi
 
     while [ $try -lt $num_tries ]; do
-        if [[ -n "$github_actions" ]]; then
+        if [[ -n "$GITHUB_ACTIONS" ]]; then
             "${TOMCAT}"/build/bin/runExperiment \
             --mission external/malmo/sample_missions/default_flat_1.xml\
             --time_limit ${time_limit} \
@@ -232,7 +232,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
     done
 fi
 
-if [[ -z "$github_actions" ]]; then
+if [[ -z "$GITHUB_ACTIONS" ]]; then
     kill $webcam_recording_pid
     kill $audio_recording_pid
     kill $screen_recording_pid
