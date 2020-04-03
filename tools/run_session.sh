@@ -37,13 +37,29 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     terminal="Terminal"
   fi
   echo "Testing terminal access to camera."
-  #ffmpeg -ss 0.5 -f avfoundation -i "0:" -t 1 webcam_photo.jpg
-  ffmpeg -ss 0.5 -f avfoundation -i ":0" -t 1 audio.wav &>/dev/null
-  if [[ $? -ne 0 ]]; then
-    echo "Terminal does not have access to camera. Fixing that now."
-    osascript ${TOMCAT}/tools/terminal_camera_access.scpt $terminal
-    exit 1
+  mkdir -p /tmp/${USER}/tomcat
+  /bin/rm -f /tmp/${USER}/tomcat/test_video.mpg
+  ffmpeg -f avfoundation -i "0:" -t 1 /tmp/${USER}/tomcat/test_video.mpg &>/dev/null
+  if [[ ! -f /tmp/${USER}/test_video ]]; then
+    echo "The terminal does not have access to the webcam."
+    ${TOMCAT}/tools/terminal_camera_access.scpt $terminal
+    if [[ $? -ne 0 ]]; then exit 1; fi
   fi
+
+  echo "Testing terminal access to microphone..."
+  /bin/rm -f /tmp/"$USER"/tomcat/test_audio.wav
+  ffmpeg -f avfoundation -i ":0" -t 1 /tmp/"$USER"/tomcat/test_audio.wav &>/dev/null &
+  microphone_test_pid=$!
+  sleep 1
+  if [[ ! -f /tmp/"$USER"/tomcat/test_audio.wav ]]; then
+    echo "The terminal does not have access to the microphone."
+    kill -9 $microphone_test_pid
+    ${TOMCAT}/tools/terminal_microphone_access.scpt $terminal
+    if [[ $? -ne 0 ]]; then exit 1; fi
+  else
+    /bin/rm -f /tmp/"$USER"/tomcat/test_audio.wav
+  fi
+
   exit 1
 fi
 
