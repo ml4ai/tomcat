@@ -88,17 +88,32 @@ if [[ ${do_invasion} -eq 1 ]]; then
 
     if [[ -z "$GITHUB_ACTIONS" ]]; then
         echo "Recording video of player's face using webcam."
-        ${ffmpeg_common_invocation} ${framerate_option} -i "0:" "${output_dir}"/webcam_video.mpg &> /dev/null &
-        webcam_recording_pid=$!
-
+		if [[ "$OSTYPE" == "darwin"* ]]; then
+		    ${ffmpeg_common_invocation} ${framerate_option} -i "0:" "${output_dir}"/webcam_video.mpg &> /dev/null &
+        	webcam_recording_pid=$!
+		elif [[ "$OSTYPE" == "linux-gnu" ]]; then
+		    ${ffmpeg_common_invocation} ${framerate_option} -i /dev/video0 "${output_dir}"/webcam_video.mpg &> /dev/null &
+        	webcam_recording_pid=$!
+		fi
+		
         echo "Recording player audio using microphone."
-        ${ffmpeg_common_invocation} -i ":0" "${output_dir}"/player_audio.wav &> /dev/null &
-        audio_recording_pid=$!
+		if [[ "$OSTYPE" == "darwin"* ]]; then
+	        ${ffmpeg_common_invocation} -i ":0" "${output_dir}"/player_audio.wav &> /dev/null &
+    	    audio_recording_pid=$!
+		elif [[ "$OSTYPE" == "linux-gnu" ]]; then
+			ffmpeg -f alsa -i default "${output_dir}"/player_audio.wav &> /dev/null &
+			audio_recording_pid=$!
+		fi
     fi
 
     # Recording game screen.
-    ${ffmpeg_common_invocation} -i "1:" -r 30 "${output_dir}"/screen_video.mpg &> /dev/null &
-    screen_recording_pid=$!
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+		${ffmpeg_common_invocation} -i "1:" -r 30 "${output_dir}"/screen_video.mpg &> /dev/null &
+	    screen_recording_pid=$!
+	elif [[ "$OSTYPE" == "linux-gnu" ]]; then
+		ffmpeg -nostdin -f x11grab -s $(xdpyinfo | grep dimensions | awk '{print $2;}') -i ":0.0" "${output_dir}"/screen_video.mpg &> /dev/null &
+		screen_recording_pid=$!
+	fi
 
     while [ $try -lt $num_tries ]; do
         if [[ -n "$GITHUB_ACTIONS" ]]; then
