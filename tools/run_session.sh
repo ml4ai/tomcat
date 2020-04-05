@@ -40,7 +40,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   mkdir -p /tmp/${USER}/tomcat
   test_video_file=${TOMCAT_TMP_DIR}/test_video.mpg
   $rm -f "$test_video_file" 
-  ffmpeg -f avfoundation $framerate_option -i "0:" -t 1 "$test_video_file" &>/dev/null
+  ffmpeg -nostdin -f avfoundation $framerate_option -i "0:" -t 1 "$test_video_file" &> "$TOMCAT_TMP_DIR"/ffmpeg_webcam.log
   if [[ ! -f "$test_video_file" ]]; then
     echo "We were not able to create a test video file, so we assume that"
     echo "macOS is not allowing the terminal to access the camera."
@@ -53,9 +53,10 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   echo "Testing terminal access to microphone..."
   test_audio_file=${TOMCAT_TMP_DIR}/test_audio.wav
   $rm -f "$test_audio_file"
-  ffmpeg -f avfoundation -i ":0" -t 1 "$test_audio_file" &>/dev/null &
+  ffmpeg -nostdin -f avfoundation -i ":0" -t 1 "$test_audio_file" &>"$TOMCAT_TMP_DIR"/ffmpeg_audio.log &
   microphone_test_pid=$!
   sleep 1
+  exit 1
   if [[ ! -f "$test_audio_file" ]]; then
 
     echo "We were not able to create a test audio recording, so we assume that"
@@ -166,14 +167,14 @@ if [[ ${do_invasion} -eq 1 ]]; then
           fmt=alsa
           input_device=default
         fi
-        ffmpeg -f ${fmt} -i ${input_device} "${output_dir}"/player_audio.wav &> /dev/null &
+        ffmpeg -nostdin -f ${fmt} -i ${input_device} "${output_dir}"/player_audio.wav &> /dev/null &
         audio_recording_pid=$!
     fi
 
     # Recording game screen.
     screen_video="${output_dir}"/screen_video.mpg
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        ffmpeg -f avfoundation -i "1:" -r 30 "$screen_video" &> /dev/null &
+        ffmpeg -nostdin -f avfoundation -i "1:" -r 30 "$screen_video" &> /dev/null &
         screen_recording_pid=$!
     elif [[ "$OSTYPE" == "linux-gnu" ]]; then
         ffmpeg -nostdin -f x11grab\
