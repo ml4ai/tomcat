@@ -18,6 +18,16 @@ rm=/bin/rm
 
 tools="$TOMCAT"/tools
 
+# On MacBook Pros, it seems that we have to specify the framerate explicitly
+# for some unknown reason for the webcam recording.
+framerate_option=""
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  hw_model=$(sysctl hw.model | cut -d' ' -f2)
+  if [[ "$hw_model" == "MacBookPro"* ]]; then
+      framerate_option="-framerate 30"
+  fi
+fi
+
 # On macOS, we need to test whether the terminal has access to the webcam and
 # microphone.
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -30,7 +40,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   mkdir -p /tmp/${USER}/tomcat
   test_video_file=${TOMCAT_TMP_DIR}/test_video.mpg
   $rm -f "$test_video_file" 
-  ffmpeg -f avfoundation -i "0:" -t 1 "$test_video_file" &>/dev/null
+  ffmpeg -f avfoundation $framerate_option -i "0:" -t 1 "$test_video_file" &>/dev/null
   if [[ ! -f "$test_video_file" ]]; then
     echo "We were not able to create a test video file, so we assume that"
     echo "macOS is not allowing the terminal to access the camera."
@@ -132,7 +142,6 @@ if [[ ${do_invasion} -eq 1 ]]; then
     output_dir="${TOMCAT}"/data/participant_data/session_$(timestamp)
     mkdir -p "${output_dir}"
 
-    framerate_option=""
 
     # On a Github actions runner, there is no webcam and microphone.
     if [[ -z "$GITHUB_ACTIONS" ]]; then
@@ -140,12 +149,6 @@ if [[ ${do_invasion} -eq 1 ]]; then
         if [[ "$OSTYPE" == "darwin"* ]]; then
           fmt=avfoundation
           input_device="0:"
-          # On a late 2013 retina MacBook Pro, we have to specify the
-          # framerate explicitly for some unknown reason for the webcam
-          # recording.
-          if [[ $(sysctl hw.model) == "hw.model: MacBookPro11,3" ]]; then
-              framerate_option="-framerate 30"
-          fi
 
         elif [[ "$OSTYPE" == "linux-gnu" ]]; then
           fmt=vfl2
