@@ -2,13 +2,10 @@
 #include "Mission.h"
 #include "utils.h"
 #include <boost/program_options.hpp>
-#include <fmt/format.h>
 #include <string>
 
 using namespace boost::program_options;
 using namespace std;
-using fmt::print;
-using namespace fmt::literals;
 using namespace tomcat;
 
 options_description load_options() {
@@ -35,9 +32,7 @@ options_description load_options() {
                                          "Activate command recordings")(
       "record_rewards",
       bool_switch()->default_value(false),
-      "Activate reward recordings")("video_fps",
-                                    value<unsigned int>()->default_value(20),
-                                    "Frames per second for video recordings")(
+      "Activate reward recordings")(
       "multiplayer",
       bool_switch()->default_value(false),
       "The mission should run in multiplayer mode")(
@@ -116,7 +111,7 @@ int main(int argc, const char* argv[]) {
       mission.start();
     }
     catch (exception& e) {
-      print("Error starting mission: {}", e.what());
+      cerr << "Error starting mission: " <<  e.what();
       return EXIT_FAILURE;
     }
   }
