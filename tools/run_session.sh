@@ -28,6 +28,8 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   fi
 fi
 
+export PATH="$PATH:/opt/local/bin:/opt/local/sbin"
+
 # On macOS, we need to test whether the terminal has access to the webcam and
 # microphone.
 if [[ "$OSTYPE" == "darwin"* ]]; then
