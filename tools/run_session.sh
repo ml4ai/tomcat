@@ -56,7 +56,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   ffmpeg -nostdin -f avfoundation -i ":0" -t 1 "$test_audio_file" &>"$TOMCAT_TMP_DIR"/ffmpeg_audio.log &
   microphone_test_pid=$!
   sleep 1
-  exit 1
   if [[ ! -f "$test_audio_file" ]]; then
 
     echo "We were not able to create a test audio recording, so we assume that"
