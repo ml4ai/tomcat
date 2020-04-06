@@ -149,7 +149,8 @@ elif [ -x "$(command -v apt-get)" ]; then
         openjdk-8-jre-headless=8u162-b12-1\
         openjdk-8-jre=8u162-b12-1\
         openjdk-8-jdk-headless=8u162-b12-1\
-        openjdk-8-jdk=8u162-b12-1
+        openjdk-8-jdk=8u162-b12-1\
+        mosquitto
     if [[ $? -ne 0 ]]; then exit 1; fi;
 
     if [[ -z "$GITHUB_ACTIONS" ]]; then
