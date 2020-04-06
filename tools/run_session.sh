@@ -48,7 +48,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "macOS is not allowing the terminal to access the camera."
     echo "The script will now guide you to set it up."
     echo ""
-    "$tools"/terminal_camera_access.scpt $terminal
+    "$tools"/macos/terminal_camera_access.scpt $terminal
     if [[ $? -ne 0 ]]; then exit 1; fi
   fi
 
@@ -69,7 +69,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     # the default audio input device and permission is denied by macOS. Thus, we
     # have to kill it with signal 9
     kill -9 $microphone_test_pid
-    "$tools"/terminal_microphone_access.scpt $terminal
+    "$tools"/macos/terminal_microphone_access.scpt $terminal
     if [[ $? -ne 0 ]]; then exit 1; fi
   else
     $rm -f "$test_audio_file"
@@ -114,7 +114,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   else
     terminal="Terminal"
   fi
-  "$tools"/activate_minecraft_window.scpt ${terminal}
+  "$tools"/macos/activate_minecraft_window.scpt ${terminal}
   if [[ $? -ne 0 ]]; then exit 1; fi
 elif [[ "$OSTYPE" == "linux-gnu" ]]; then
   # wmctrl does not work well with xvfb-run, so we disable full-screening the

@@ -90,7 +90,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
       echo "assume that the macOS Command Line Tools are not installed."
       echo "Installing them now..."
       xcode-select --install
-      osascript ${TOMCAT}/tools/install_macos_command_line_tools.scpt > /dev/null
+      "${TOMCAT}"/tools/macos/install_command_line_tools.scpt > /dev/null
       while [ ! -d "/Library/Developer" ]; do
         sleep 1
       done
