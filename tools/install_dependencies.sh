@@ -27,7 +27,9 @@ install_dependencies_using_macports() {
       opencv4 \
       openblas \
       boost \
-      gradle
+      gradle \
+      mosquitto \
+      nlohmann-json
   if [[ $? -ne 0 ]]; then exit 1; fi;
 
   # We install Java using a local Portfile, since the upstream openjdk8
@@ -66,7 +68,9 @@ install_dependencies_using_homebrew() {
     opencv \
     openblas \
     boost \
-    gradle
+    gradle \
+    mosquitto \
+    nlohmann-json
 
   if [[ -n ${GITHUB_ACTIONS} ]]; then
     # On Github Actions, we will install lcov to provide code coverage estimates.
@@ -106,7 +110,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
       echo "Neither the MacPorts or Homebrew package managers have been"
       echo "detected. Proceeding to install MacPorts in the default location"
       echo "(/opt/local)"
-      ${TOMCAT}/tools/install_macports
+      ${TOMCAT}/tools/install_from_source/macports.sh
 
       install_dependencies_using_macports
 
