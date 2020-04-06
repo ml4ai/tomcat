@@ -121,7 +121,7 @@ elif [[ "$OSTYPE" == "linux-gnu" ]]; then
   # Minecraft window when running a headless test of this script with a Github
   # Actions runner.
   if [[ -z "$GITHUB_ACTIONS" ]]; then
-    "$tools"/activate_minecraft_window.sh
+    "$tools"/linux/activate_minecraft_window.sh
   fi
   if [[ $? -ne 0 ]]; then exit 1; fi
 fi
