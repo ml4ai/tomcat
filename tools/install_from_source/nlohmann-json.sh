@@ -10,7 +10,7 @@ rm v$version.tar.gz
 pushd json-$version > /dev/null
   mkdir build
   cd build
-  cmake ..
+  cmake .. -DJSON_BuildTests=OFF
   sudo make -j install
 popd > /dev/null
 
