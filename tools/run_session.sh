@@ -18,13 +18,13 @@ rm=/bin/rm
 
 tools="$TOMCAT"/tools
 
-# On MacBook Pros, it seems that we have to specify the framerate explicitly
-# for some unknown reason for the webcam recording.
+# On recent MacBook Pros, it seems that we have to specify the framerate
+# explicitly for some unknown reason for the webcam recording.
 framerate_option=""
 if [[ "$OSTYPE" == "darwin"* ]]; then
   hw_model=$(sysctl hw.model | cut -d' ' -f2)
-  if [[ "$hw_model" == "MacBookPro"* ]]; then
-      framerate_option="-framerate 30"
+  if [[ "$hw_model" == "MacBookPro"* ]] && [[ ! "$hw_model" == "MacBookPro8,1" ]]; then
+    framerate_option="-framerate 30"
   fi
 fi
 
