@@ -89,8 +89,10 @@ namespace tomcat {
   string Mission::get_world_skeleton_from_xml() {
     if (!getenv("TOMCAT")) {
       throw TomcatMissionException(
-          "TOMCAT environment variable does not exist.",
-          TomcatMissionException::TOMCAT_VAR_INEXISTENT);
+          "The TOMCAT environment variable has not been set! Please set it to"
+          "the location of your local copy of the tomcat repository, or use the"
+          "run_session.sh script, which automatically sets it.",
+          TomcatMissionException::TOMCAT_ENV_VAR_NOT_SET);
     }
 
     string agent_section_tags = this->create_agent_section_tags();

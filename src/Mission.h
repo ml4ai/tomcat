@@ -14,7 +14,7 @@ namespace tomcat {
   public:
     enum ErrorCode {
       CONNECTION_NOT_ESTABLISHED,
-      TOMCAT_VAR_INEXISTENT,
+      TOMCAT_ENV_VAR_NOT_SET,
       ERROR_STARTING_MISSION
     };
 
