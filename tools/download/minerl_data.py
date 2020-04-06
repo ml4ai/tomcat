@@ -1,2 +1,2 @@
 import minerl
-minerl.data.download(".") 
+minerl.data.download(".")
