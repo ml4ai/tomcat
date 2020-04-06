@@ -235,7 +235,7 @@ namespace tomcat {
   }
 
   MissionRecordSpec Mission::get_mission_record_spec() {
-    MissionRecordSpec mission_record_spec(this->record_path);
+    MissionRecordSpec mission_record_spec;
 
     if (this->record_observations) {
       mission_record_spec.recordObservations();
@@ -310,7 +310,6 @@ namespace tomcat {
       }
 
       worldState = this->minecraft_server->getWorldState();
-      // worldState = this->minecraft_server->peekWorldState();
       json observation = json::parse(worldState.observations.at(0)->text);
       json header = {};
       string timestamp =
