@@ -1,6 +1,6 @@
-#include "Mission.h"
 #include "FileHandler.h"
 #include "LocalAgent.h"
+#include "Mission.h"
 #include "utils.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem.hpp>
@@ -190,40 +190,41 @@ namespace tomcat {
       catch (MissionException& e) {
         switch (e.getMissionErrorCode()) {
         case malmo::MissionException::MISSION_SERVER_WARMING_UP:
-          print("Server not quite ready yet - waiting...");
+          print(stderr, "Server not quite ready yet - waiting...");
           sleep_for(milliseconds(2000));
           break;
         case malmo::MissionException::MISSION_INSUFFICIENT_CLIENTS_AVAILABLE:
-          print("Not enough available Minecraft instances running.");
+          print(stderr, "Not enough available Minecraft instances running.");
           attempts++;
           if (attempts < max_attempts) {
-            print("Will wait in case they are starting up.",
+            print(stderr, "Will wait in case they are starting up.",
                   max_attempts - attempts,
                   "attempts left.");
             sleep_for(milliseconds(2000));
           }
           break;
         case malmo::MissionException::MISSION_SERVER_NOT_FOUND:
-          print("Server not found - has the mission with role 0 been started "
+          print(stderr,
+                "Server not found - has the mission with role 0 been started "
                 "yet?");
           attempts++;
           if (attempts < max_attempts) {
-            print("Will wait and retry.",
+            print(stderr, "Will wait and retry.",
                   max_attempts - attempts,
                   "attempts left.");
             sleep_for(milliseconds(2000));
           }
           break;
         default:
-          print("Other error", e.getMessage());
-          print("Waiting will not help here - bailing immediately.");
+          print(stderr, "Other error", e.getMessage());
+          print(stderr, "Waiting will not help here - bailing immediately.");
           throw TomcatMissionException(
               "Could not establish connection with the host.",
               TomcatMissionException::CONNECTION_NOT_ESTABLISHED);
         }
 
         if (attempts == max_attempts) {
-          print("All chances used up - bailing now.");
+          print(stderr, "All chances used up - bailing now.");
           throw TomcatMissionException(
               "Could not establish connection with the host.",
               TomcatMissionException::CONNECTION_NOT_ESTABLISHED);
@@ -271,9 +272,9 @@ namespace tomcat {
       for (int i = 0; i < number_of_hosts; i++) {
         WorldState world_state = hosts[i]->peekWorldState();
         if (!world_state.errors.empty()) {
-          print("Errors waiting for mission start:");
+          print(stderr, "Errors waiting for mission start:");
           for (auto& error : world_state.errors) {
-            print(error->text);
+            print(stderr, error->text);
           }
           throw TomcatMissionException(
               "Could not start the mission.",
@@ -291,7 +292,7 @@ namespace tomcat {
     }
 
     if (elapsed_time_in_seconds >= max_seconds_to_start) {
-      print("Timed out waiting for mission to begin. Bailing.");
+      print(stderr, "Timed out waiting for mission to begin. Bailing.");
       throw TomcatMissionException(
           "Timed out waiting for mission to begin.",
           TomcatMissionException::ERROR_STARTING_MISSION);
@@ -309,7 +310,7 @@ namespace tomcat {
         tomcat_agent->observe_mission(*this);
       }
 
-      worldState = this->minecraft_server->getWorldState();
+      worldState = this->minecraft_server->peekWorldState();
       json observation = json::parse(worldState.observations.at(0)->text);
       json header = {};
       string timestamp =
@@ -336,7 +337,7 @@ namespace tomcat {
       message["msg"] = metadata;
       message["data"] = observation;
 
-      cout << message.dump(4) << endl;
+      cout << message.dump() << endl;
 
     } while (worldState.is_mission_running);
   }
