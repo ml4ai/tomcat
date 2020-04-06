@@ -37,8 +37,7 @@ options_description load_options() {
       bool_switch()->default_value(false),
       "The mission should run in multiplayer mode")(
       "record_path",
-      value<string>()->default_value("./saved_data_" + get_timestamp() +
-                                     ".tgz"),
+      value<string>()->default_value("malmo_data.json"),
       "Path to save Malmo data");
 
   return options;
