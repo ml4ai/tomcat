@@ -87,7 +87,7 @@ if [[ -n "${GITHUB_ACTIONS}" ]]; then
   do_tutorial=0
 else
   time_limit=600
-  do_tutorial=1
+  do_tutorial=0
 fi
 do_invasion=1
 
@@ -191,7 +191,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
             --mission external/malmo/sample_missions/default_flat_1.xml\
             --time_limit ${time_limit} \
             --record_observations \
-            --record_path "${output_dir}"/malmo_data.tgz \
+            > "${output_dir}"/malmo_data.json \
             &>"${zombie_invasion_log}" &
             bg_pid=$!
         else
@@ -199,7 +199,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
             --mission 1 \
             --time_limit ${time_limit} \
             --record_observations \
-            --record_path "${output_dir}"/malmo_data.tgz \
+            > "${output_dir}"/malmo_data.json \
             &>"${zombie_invasion_log}" &
             bg_pid=$!
         fi
