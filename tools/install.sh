@@ -46,11 +46,11 @@ pushd "${TOMCAT}"
     popd > /dev/null 
 popd > /dev/null 
 
-if ! ${TOMCAT}/tools/download_tomcat_worlds.sh; then exit 1; fi
+if ! ${TOMCAT}/tools/download/tomcat_worlds.sh; then exit 1; fi
 
 
 if [[ ! -d ${TOMCAT}/data/OpenFace_models ]]; then
-  if ! ${TOMCAT}/tools/download_OpenFace_models.sh; then exit 1; fi
+  if ! ${TOMCAT}/tools/download/OpenFace_models.sh; then exit 1; fi
 fi
 
 echo " "
