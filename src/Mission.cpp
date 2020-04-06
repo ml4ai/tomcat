@@ -1,12 +1,12 @@
 #include "Mission.h"
 #include "FileHandler.h"
 #include "LocalAgent.h"
-#include <boost/filesystem.hpp>
 #include "utils.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/filesystem.hpp>
 #include <fmt/format.h>
-#include <sstream>
 #include <nlohmann/json.hpp>
+#include <sstream>
 
 using namespace malmo;
 using namespace std;
@@ -15,7 +15,7 @@ using fmt::format;
 using fmt::print;
 using namespace std::chrono;
 using namespace std::this_thread;
-using json=nlohmann::json;
+using json = nlohmann::json;
 namespace pt = boost::posix_time;
 
 namespace tomcat {
@@ -299,18 +299,20 @@ namespace tomcat {
   void Mission::observe() {
     WorldState worldState;
     do {
-      // Minecraft normally runs at a fixed rate of 20 ticks per second (https://minecraft.gamepedia.com/Tick),
-      // so we set the sleep duration to 50 ms.
+      // Minecraft normally runs at a fixed rate of 20 ticks per second
+      // (https://minecraft.gamepedia.com/Tick), so we set the sleep duration to
+      // 50 ms.
       sleep_for(milliseconds(50));
       for (auto& tomcat_agent : this->tomcat_agents) {
         tomcat_agent->observe_mission(*this);
       }
 
       worldState = this->minecraft_server->getWorldState();
-      //worldState = this->minecraft_server->peekWorldState();
+      // worldState = this->minecraft_server->peekWorldState();
       json observation = json::parse(worldState.observations.at(0)->text);
-      json header={};
-      string timestamp = pt::to_iso_string(pt::microsec_clock::universal_time()) + "Z";
+      json header = {};
+      string timestamp =
+          pt::to_iso_string(pt::microsec_clock::universal_time()) + "Z";
       header["timestamp"] = timestamp;
       header["message_type"] = "observation";
       header["version"] = "0.2";

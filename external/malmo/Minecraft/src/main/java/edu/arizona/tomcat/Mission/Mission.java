@@ -535,10 +535,9 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
    * Get the filename for a given self-report based on some of its info
    */
   private String getSelfReportPath(MissionSelfReport selfReport) {
-    String path =
-        String.format("%s/self_report_player_%s.json",
-                      SELF_REPORT_FOLDER,                      
-                      selfReport.getPlayerID());
+    String path = String.format("%s/self_report_player_%s.json",
+                                SELF_REPORT_FOLDER,
+                                selfReport.getPlayerID());
     return path;
   }
 

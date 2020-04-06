@@ -111,7 +111,7 @@ int main(int argc, const char* argv[]) {
       mission.start();
     }
     catch (exception& e) {
-      cerr << "Error starting mission: " <<  e.what();
+      cerr << "Error starting mission: " << e.what();
       return EXIT_FAILURE;
     }
   }
