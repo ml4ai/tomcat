@@ -150,22 +150,29 @@ elif [ -x "$(command -v apt-get)" ]; then
         openjdk-8-jre=8u162-b12-1\
         openjdk-8-jdk-headless=8u162-b12-1\
         openjdk-8-jdk=8u162-b12-1\
-        mosquitto\
-        nlohmann-json-dev
+        mosquitto
     if [[ $? -ne 0 ]]; then exit 1; fi;
+
+    # On Ubuntu 18.04, the required version of the nlohmann-json JSON library
+    # is not available using apt-get, so we install from source.
+    if ! "$TOMCAT"/tools/install_from_source/nlohmann-json.sh; then exit 1; fi
 
     if [[ -z "$GITHUB_ACTIONS" ]]; then
       sudo apt-get install -y libboost-all-dev
+      if [[ $? -ne 0 ]]; then exit 1; fi;
     fi
 
     # TODO - when OpenFace gets added back, add opencv, openblas, and dlib as
     # dependencies.
+
     sudo update-java-alternatives -s java-1.8.0-openjdk-amd64
+    if [[ $? -ne 0 ]]; then exit 1; fi;
 
 else
     echo "This is not a macOS and not a Debian Linux distribution (at least"
-    echo "apt-get is not around). We cannot proceed with the automated
-    installation."
+    echo "apt-get is not around). We cannot proceed with the automated"
+    echo "installation. Please consult docs/installation.md for the required"
+    echo "dependencies."
     exit 1
 fi
 
