@@ -19,8 +19,6 @@ import edu.arizona.tomcat.World.DrawingHandler;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -88,7 +86,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     if (!event.getEntity().world.isRemote && event.getEntity() instanceof
                                                  EntityPlayer) {
       event.setCanceled(true);
-      this.onPlayerDeath();
+      this.onPlayerDeath((EntityPlayer)event.getEntity());
     }
   }
 
@@ -105,7 +103,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
   /**
    * Method called after if the player dies
    */
-  protected abstract void onPlayerDeath();
+  protected abstract void onPlayerDeath(EntityPlayer player);
 
   /**
    * Adds listener to be notified upon relevant mission events
@@ -535,10 +533,9 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
    * Get the filename for a given self-report based on some of its info
    */
   private String getSelfReportPath(MissionSelfReport selfReport) {
-    String path =
-        String.format("%s/self_report_player_%s.json",
-                      SELF_REPORT_FOLDER,                      
-                      selfReport.getPlayerID());
+    String path = String.format("%s/self_report_player_%s.json",
+                                SELF_REPORT_FOLDER,
+                                selfReport.getPlayerID());
     return path;
   }
 
