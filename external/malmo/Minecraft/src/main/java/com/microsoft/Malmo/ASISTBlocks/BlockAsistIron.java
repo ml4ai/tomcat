@@ -1,6 +1,7 @@
 package com.microsoft.Malmo.ASISTBlocks;
 
 import edu.arizona.tomcat.Utils.DiscreteEventsHelper;
+import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -8,8 +9,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-
-import java.util.List;
 
 /**
  * This block will be used as the "door" block for the Hit-Controlled doors.
@@ -19,8 +18,8 @@ import java.util.List;
  * illusion of vanishing. Replacing this block with the /setblock command
  * inside Minecraft without the "destroy" add-on will result in no output.
  * <p>
- * It will also NOT write any output if the player destroys the block by hand because
- * we don't expect the player to do that.
+ * It will also NOT write any output if the player destroys the block by hand
+ * because we don't expect the player to do that.
  */
 public class BlockAsistIron extends Block {
 
