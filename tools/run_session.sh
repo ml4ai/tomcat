@@ -153,7 +153,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
           input_device="0:"
 
         elif [[ "$OSTYPE" == "linux-gnu" ]]; then
-          fmt=vfl2
+          fmt=v4l2
           input_device=/dev/video0
         fi
         ffmpeg -f ${fmt} ${framerate_option} -i ${input_device}\
