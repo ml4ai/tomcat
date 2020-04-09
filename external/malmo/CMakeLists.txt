@@ -57,6 +57,17 @@ set(INCLUDE_PYTHON
     OFF
     CACHE BOOL ${INCLUDE_PYTHON_DESC})
 
+find_package(Boost 1.69
+             COMPONENTS chrono
+                        date_time
+                        filesystem
+                        iostreams
+                        program_options
+                        regex
+                        system
+                        thread
+             REQUIRED)
+
 if(INCLUDE_PYTHON)
   set(USE_PYTHON_VERSIONS_DESC
       "Specifies which version of Python to build Malmo with Python bindings")
