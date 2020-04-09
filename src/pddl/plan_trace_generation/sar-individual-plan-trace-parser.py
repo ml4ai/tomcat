@@ -2,6 +2,7 @@
 # PDDL HTN planning domains from shop3. Although there are many general
 # components, this is specifically set-up for
 # sar-individual-plan-trace-version.lisp.
+# Requires python 3.6 or higher due to the usage of f strings.
 
 # Imports
 import json
@@ -246,4 +247,4 @@ def create_plan_traces(
 
 
 if __name__ == "__main__":
-    create_plan_traces(sys.argv[1])
+    create_plan_traces(file_name=sys.argv[1],out_file=sys.argv[2])
