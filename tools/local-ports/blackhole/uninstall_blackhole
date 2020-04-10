@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script to uninstall BlackHole (https://github.com/ExistentialAudio/BlackHole)
-# Usage: ./uninstall
+# Usage: ./uninstall_blackhole
 
 sudo rm -rf /Library/Audio/Plug-Ins/HAL/BlackHole.driver
 sudo launchctl kickstart -kp system/com.apple.audio.coreaudiod
