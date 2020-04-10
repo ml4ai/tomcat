@@ -25,5 +25,5 @@ jobs:
         sudo apt-get install sbcl
         curl -O https://beta.quicklisp.org/quicklisp.lisp
         sbcl --load quicklisp.lisp
-        sbcl --load sar-pddl-testing.lisp
+        sbcl --load ../../src/pddl/sar-pddl-testing.lisp
 
