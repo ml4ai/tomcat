@@ -36,6 +36,10 @@ install_dependencies_using_macports() {
   pushd ${TOMCAT}/tools/local-ports/openjdk8 > /dev/null
     if ! sudo port install; then exit 1; fi
   popd > /dev/null
+
+  pushd ${TOMCAT}/tools/local-ports/blackhole > /dev/null
+    if ! sudo port install; then exit 1; fi
+  popd > /dev/null
 }
 
 install_dependencies_using_homebrew() {
