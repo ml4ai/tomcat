@@ -22,5 +22,5 @@ jobs:
       run: |
         sudo apt-get install sbcl
         curl -O https://beta.quicklisp.org/quicklisp.lisp
-        sbcl --load quicklisp.lisp --eval '(quicklisp-quickstart:install) (ql:quickload :asdf) (ql:quickload cl-dot)'
+        sbcl --load quicklisp.lisp --eval '(progn ((quicklisp-quickstart:install) (ql:add-to-init-file) (ql:quickload :asdf) (ql:quickload cl-dot)))'
         sbcl --load src/pddl/sar-pddl-testing.lisp
