@@ -20,8 +20,8 @@ jobs:
 
     - name: Continuous Integration
       run: |
-              #        ./tools/install.sh
-              #        xvfb-run --auto-servernum ./tools/run_session.sh
+#                     ./tools/install.sh
+#                     xvfb-run --auto-servernum ./tools/run_session.sh
         sudo apt-get install sbcl
         curl -O https://beta.quicklisp.org/quicklisp.lisp
       sbcl --load quicklisp.lisp --eval '(quicklisp-quickstart:install)'
