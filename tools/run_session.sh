@@ -1,8 +1,8 @@
 #!/bin/bash
 
-github_actions=$GITHUB_ACTIONS
-
+github_actions="$GITHUB_ACTIONS"
 set -u
+export GITHUB_ACTIONS="${github_actions}"
 
 # Set the TOMCAT environment variable, assuming that the directory structure
 # mirrors that of the git repository.
@@ -18,62 +18,89 @@ rm=/bin/rm
 
 tools="$TOMCAT"/tools
 
-# On recent MacBook Pros, it seems that we have to specify the framerate
-# explicitly for some unknown reason for the webcam recording.
 framerate_option=""
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  hw_model=$(sysctl hw.model | cut -d' ' -f2)
-  if [[ "$hw_model" == "MacBookPro"* ]] && [[ ! "$hw_model" == "MacBookPro8,1" ]]; then
-    framerate_option="-framerate 30"
-  fi
-fi
 
 export PATH="$PATH:/opt/local/bin:/opt/local/sbin"
 
-# On macOS, we need to test whether the terminal has access to the webcam and
-# microphone.
-if [[ "$OSTYPE" == "darwin"* ]]; then
+test_webcam_macos() {
   if [[ "$TERM_PROGRAM" == "iTerm.app" ]]; then
     terminal="iTerm"
   else
     terminal="Terminal"
   fi
-  echo "Testing terminal access to camera."
   mkdir -p /tmp/${USER}/tomcat
   test_video_file=${TOMCAT_TMP_DIR}/test_video.mpg
   $rm -f "$test_video_file" 
-  ffmpeg -nostdin -f avfoundation $framerate_option -i "0:" -t 1 "$test_video_file" &> "$TOMCAT_TMP_DIR"/ffmpeg_webcam.log
+  ffmpeg_webcam_log="$TOMCAT_TMP_DIR"/ffmpeg_webcam.log
+  ffmpeg -nostdin -f avfoundation $framerate_option -i "0:" -t 1 "$test_video_file" &> "$ffmpeg_webcam_log"
   if [[ ! -f "$test_video_file" ]]; then
-    echo "We were not able to create a test video file, so we assume that"
-    echo "macOS is not allowing the terminal to access the camera."
-    echo "The script will now guide you to set it up."
-    echo ""
-    "$tools"/terminal_camera_access.scpt $terminal
-    if [[ $? -ne 0 ]]; then exit 1; fi
+    camera_access_err=$(cat "$ffmpeg_webcam_log" \
+      | grep "Failed to create AV capture input device: Cannot use FaceTime HD Camera")
+    framerate_err=$(cat "$ffmpeg_webcam_log" \
+      | grep "Selected framerate (29.970030) is not supported by the device")
+    if [[ ! $camera_access_err == "" ]]; then
+      echo "Caught camera access error:" $camera_access_err
+      echo "macOS is not allowing the terminal to access the camera."
+      echo "The script will now guide you to set it up."
+      if ! "$tools"/terminal_camera_access.scpt $terminal; then exit 1; fi
+      test_webcam_macos
+    elif [[ ! $framerate_err == "" ]]; then
+      # On recent MacBook Pros, it seems that we have to specify the framerate
+      # explicitly for some unknown reason for the webcam recording.
+      echo "Caught unsupported framerate error:" $framerate_err
+      echo "We will now set the framerate to 30 going forward."
+      framerate_option="-framerate 30"
+      test_webcam_macos
+    else
+      echo "Unable to capture webcam video - unhandled ffmpeg error."
+      echo "The complete error log is given below."
+      echo ""
+      cat "$ffmpeg_webcam_log"
+      exit 1
+    fi
   fi
+}
 
-  echo "Testing terminal access to microphone..."
-  test_audio_file=${TOMCAT_TMP_DIR}/test_audio.wav
-  $rm -f "$test_audio_file"
-  ffmpeg -nostdin -f avfoundation -i ":0" -t 1 "$test_audio_file" &>"$TOMCAT_TMP_DIR"/ffmpeg_audio.log &
+test_microphone_macos() {
+  test_microphone_file=${TOMCAT_TMP_DIR}/test_microphone.wav
+  $rm -f "$test_microphone_file"
+  ffmpeg_microphone_log="$TOMCAT_TMP_DIR"/ffmpeg_microphone.log
+  ffmpeg -nostdin -f avfoundation -i ":0" -t 1 "$test_microphone_file" &> "$ffmpeg_microphone_log" &
   microphone_test_pid=$!
   sleep 1
-  if [[ ! -f "$test_audio_file" ]]; then
+  if [[ ! -f "$test_microphone_file" ]]; then
 
-    echo "We were not able to create a test audio recording, so we assume that"
-    echo "macOS is not allowing the terminal to access the microphone."
-    echo "The script will now guide you to set it up."
-    echo ""
+    microphone_access_err=$(cat "$ffmpeg_microphone_log" \
+      | grep "Failed to create AV capture input device: Cannot use Built-in Microphone")
 
-    # ffmpeg does not exit by itself when you ask it to try to record audio from
-    # the default audio input device and permission is denied by macOS. Thus, we
-    # have to kill it with signal 9
-    kill -9 $microphone_test_pid
-    "$tools"/terminal_microphone_access.scpt $terminal
-    if [[ $? -ne 0 ]]; then exit 1; fi
-  else
-    $rm -f "$test_audio_file"
+    if [[ ! $microphone_access_err == "" ]]; then
+      echo "macOS is not allowing the terminal to access the microphone."
+      echo "The script will now guide you to set it up."
+      echo ""
+
+      # ffmpeg does not exit by itself when you ask it to try to record audio
+      # from the default audio input device and permission is denied by macOS.
+      # Thus, we have to kill it with signal 9.
+      kill -9 $microphone_test_pid
+      if ! "$tools"/terminal_microphone_access.scpt $terminal; then exit 1; fi
+      test_microphone_macos
+    else
+      echo "Unable to capture microphone audio - unhandled ffmpeg error."
+      echo "The complete error log is given below."
+      echo ""
+      cat "$ffmpeg_microphone_log"
+      exit 1
+    fi
   fi
+}
+
+# On macOS, we need to test whether the terminal has access to the webcam and
+# microphone.
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  echo "Testing terminal access to camera."
+  test_webcam_macos
+  echo "Testing terminal access to microphone..."
+  test_microphone_macos
 fi
 
 
@@ -82,7 +109,7 @@ timestamp() {
   date "+%Y_%m_%d_%H_%M_%S"
 }
 
-if [[ -n "${github_actions}" ]]; then
+if [[ -n "${GITHUB_ACTIONS}" ]]; then
   time_limit=1
   do_tutorial=0
 else
@@ -120,7 +147,7 @@ elif [[ "$OSTYPE" == "linux-gnu" ]]; then
   # wmctrl does not work well with xvfb-run, so we disable full-screening the
   # Minecraft window when running a headless test of this script with a Github
   # Actions runner.
-  if [[ -z "$github_actions" ]]; then
+  if [[ -z "$GITHUB_ACTIONS" ]]; then
     "$tools"/activate_minecraft_window.sh
   fi
   if [[ $? -ne 0 ]]; then exit 1; fi
@@ -146,7 +173,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
 
 
     # On a Github actions runner, there is no webcam and microphone.
-    if [[ -z "$github_actions" ]]; then
+    if [[ -z "$GITHUB_ACTIONS" ]]; then
         echo "Recording video of player's face using webcam."
         if [[ "$OSTYPE" == "darwin"* ]]; then
           fmt=avfoundation
@@ -186,7 +213,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
     fi
 
     while [ $try -lt $num_tries ]; do
-        if [[ -n "$github_actions" ]]; then
+        if [[ -n "$GITHUB_ACTIONS" ]]; then
             "${TOMCAT}"/build/bin/runExperiment \
             --mission external/malmo/sample_missions/default_flat_1.xml\
             --time_limit ${time_limit} \
@@ -237,7 +264,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
     done
 fi
 
-if [[ -z "$github_actions" ]]; then
+if [[ -z "$GITHUB_ACTIONS" ]]; then
     kill $webcam_recording_pid
     kill $audio_recording_pid
     kill $screen_recording_pid
