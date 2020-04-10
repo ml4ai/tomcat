@@ -3,6 +3,7 @@ package edu.arizona.tomcat.Mission;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.microsoft.Malmo.MalmoMod;
+import com.microsoft.Malmo.Schemas.ItemType;
 import com.microsoft.Malmo.Schemas.PosAndDirection;
 import edu.arizona.tomcat.Emotion.EmotionHandler;
 import edu.arizona.tomcat.Messaging.TomcatClientServerHandler;
@@ -13,6 +14,7 @@ import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
 import edu.arizona.tomcat.Mission.gui.FeedbackListener;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 import edu.arizona.tomcat.Utils.Converter;
+import edu.arizona.tomcat.Utils.InventoryHandler;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.Utils.MinecraftVanillaAIHandler;
 import edu.arizona.tomcat.World.DrawingHandler;
@@ -585,4 +587,17 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
   public void addToDeletion(Entity entity, long worldTime) {
     this.entitiesToRemove.put(entity, worldTime);
   }
+
+    /**
+     * Add items to the player's inventory to help them accomplish the mission
+     * goals
+     *
+     * @param type - ItemType of the item to add in inventory
+     */
+    protected void addItemToInventory(ItemType type) {
+        for (EntityPlayerMP player :
+                MinecraftServerHelper.getServer().getPlayerList().getPlayers()) {
+            InventoryHandler.addItemToInventory(player, type, 1);
+        }
+    }
 }
