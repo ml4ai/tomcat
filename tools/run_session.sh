@@ -22,6 +22,19 @@ framerate_option=""
 
 export PATH="$PATH:/opt/local/bin:/opt/local/sbin"
 
+test_system_audio_recording_macos() {
+  blackhole_is_setup=$(ffmpeg -f avfoundation -list_devices true -i "" 2>&1 | grep "\[0\] BlackHole 16ch")
+  if [[ $blackhole_is_setup == "" ]]; then
+    echo "BlackHole system audio recording virtual output device is not set up."
+    echo "We will do it now."
+    if ! "$tools"/activate_system_audio_recording.scpt; then exit 1; fi
+  fi
+
+  # Switching audio output to multi-output device so that we can record system
+  # audio.
+  if ! SwitchAudioSource -s "Multi-Output Device"; then exit 1; fi
+}
+
 test_webcam_macos() {
   if [[ "$TERM_PROGRAM" == "iTerm.app" ]]; then
     terminal="iTerm"
@@ -65,7 +78,7 @@ test_microphone_macos() {
   test_microphone_file=${TOMCAT_TMP_DIR}/test_microphone.wav
   $rm -f "$test_microphone_file"
   ffmpeg_microphone_log="$TOMCAT_TMP_DIR"/ffmpeg_microphone.log
-  ffmpeg -nostdin -f avfoundation -i ":0" -t 1 "$test_microphone_file" &> "$ffmpeg_microphone_log" &
+  ffmpeg -nostdin -f avfoundation -i ":1" -t 1 "$test_microphone_file" &> "$ffmpeg_microphone_log" &
   microphone_test_pid=$!
   sleep 1
   if [[ ! -f "$test_microphone_file" ]]; then
@@ -101,6 +114,8 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   test_webcam_macos
   echo "Testing terminal access to microphone..."
   test_microphone_macos
+  echo "Checking if system audio recording is set up..."
+  test_system_audio_recording_macos
 fi
 
 
@@ -172,7 +187,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
     mkdir -p "${output_dir}"
 
 
-    # On a Github actions runner, there is no webcam and microphone.
+    # On a Github actions runner, there is no webcam, microphone or speaker.
     if [[ -z "$github_actions" ]]; then
         echo "Recording video of player's face using webcam."
         if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -190,13 +205,28 @@ if [[ ${do_invasion} -eq 1 ]]; then
         echo "Recording player audio using microphone."
         if [[ "$OSTYPE" == "darwin"* ]]; then
           fmt=avfoundation
-          input_device=":0"
+          # The default input microphone would normally be ":0", but since we
+          # have installed BlackHole to record system audio, the input device
+          # corresponding to the microphone is ":1".
+          input_device=":1"
         elif [[ "$OSTYPE" == "linux-gnu" ]]; then
           fmt=alsa
           input_device=default
         fi
         ffmpeg -nostdin -f ${fmt} -i ${input_device} "${output_dir}"/player_audio.wav &> /dev/null &
-        audio_recording_pid=$!
+        microphone_recording_pid=$!
+
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+          echo "Recording system audio."
+          fmt=avfoundation
+          input_device=":0"
+          ffmpeg -nostdin -f ${fmt} -i ${input_device} \
+            "${output_dir}"/system_audio.wav &> "$TOMCAT_TMP_DIR"/system_audio_recording.log &
+          system_audio_recording_pid=$!
+        elif [[ "$OSTYPE" == "linux-gnu" ]]; then
+          echo "System audio recording not yet enabled for Linux."
+        fi
+
     fi
 
     # Recording game screen.
@@ -265,10 +295,17 @@ if [[ ${do_invasion} -eq 1 ]]; then
 fi
 
 if [[ -z "$github_actions" ]]; then
-    kill $webcam_recording_pid
-    kill $audio_recording_pid
-    kill $screen_recording_pid
+  kill $webcam_recording_pid
+  kill $microphone_recording_pid
+  kill $screen_recording_pid
+  if [[ "$OSTYPE"  == "darwin"* ]]; then
+    kill $system_audio_recording_pid
+    # Switching the audio output from the multi-output device to the built-in
+    # output.
+    if ! SwitchAudioSource -s "Built-in Output"; then exit 1; fi
+  fi
 fi
+
 
 discrete_actions_file="${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
 

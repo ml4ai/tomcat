@@ -27,12 +27,13 @@ install_dependencies_using_macports() {
       opencv4 \
       openblas \
       boost \
-      gradle
+      gradle \
+      switchaudio-osx
   if [[ $? -ne 0 ]]; then exit 1; fi;
 
   # We install Java using a local Portfile, since the upstream openjdk8
   # port points to Java 1.8.0_242, which is incompatible with Malmo (the
-  # local Portfile points to Java 1.8.0_232.
+  # local Portfile points to Java 1.8.0_232).
   pushd ${TOMCAT}/tools/local-ports/openjdk8 > /dev/null
     if ! sudo port install; then exit 1; fi
   popd > /dev/null
@@ -70,8 +71,10 @@ install_dependencies_using_homebrew() {
     opencv \
     openblas \
     boost \
-    gradle
+    gradle \
+    switchaudio-osx
 
+  brew cask install blackhole
   if [[ -n ${GITHUB_ACTIONS} ]]; then
     # On Github Actions, we will install lcov to provide code coverage estimates.
     brew install lcov;
