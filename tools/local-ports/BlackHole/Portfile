@@ -10,9 +10,10 @@ homepage            https://github.com/ExistentialAudio/BlackHole
 categories          audio
 platforms           darwin
 maintainers         nomaintainer
-license             MIT
+license             GPL-3.0
 
-description         \
+description         macOS virtual audio driver.  
+long_description    \
                     BlackHole is a modern macOS virtual audio driver that \
                     allows applications to pass audio to other applications \
                     with zero additional latency.
@@ -25,6 +26,17 @@ post-activate {
   system "sudo launchctl kickstart -kp system/com.apple.audio.coreaudiod"
 }
 
+# BlackHole violates the mtree layout by placing the driver in
+# /Library/Audio/Plug-Ins/HAL
+destroot.violate_mtree yes
+
 checksums           rmd160  3c1e6747ccc9be81f2fe707b43b6a18e8ebbd651 \
                     sha256  da0ce2754cfb2edcc1e02542e25b5682fc45cc17be0ec256e5183b89e23e5396 \
                     size    5602801
+notes "\
+To fully uninstall BlackHole, you will need to run the following command after
+running 'port uninstall blackhole':
+
+  sudo launchctl kickstart -kp system/com.apple.audio.coreaudiod    
+
+"
