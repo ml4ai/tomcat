@@ -18,12 +18,12 @@ rm=/bin/rm
 
 tools="$TOMCAT"/tools
 
+# A function to handle cleanup when a user interrupts the script with Ctrl+C
 user_interrupt() {
   echo "Detected keyboard interrupt."
   echo "Cleaning up now"
   "$tools"/kill_minecraft.sh
   if [[ "$OSTYPE"  == "darwin"* ]]; then
-    kill $system_audio_recording_pid
     # Switching the audio output from the multi-output device to the built-in
     # output.
     if ! SwitchAudioSource -s "Built-in Output"; then exit 1; fi
@@ -122,6 +122,23 @@ test_microphone_macos() {
   fi
 }
 
+test_screen_recording_macos() {
+  test_screen_video_file=${TOMCAT_TMP_DIR}/test_screen_video.mpg
+  ffmpeg_screen_video_log="$TOMCAT_TMP_DIR"/screen_video_recording.log
+  dimensions=$(xdpyinfo | grep dimensions | awk '{print $2;}')
+  $rm -f "$test_screen_video_file"
+  ffmpeg -nostdin -f avfoundation -i "1:" -t 1 -s $dimensions "$test_screen_video_file" >& "$ffmpeg_screen_video_log" &
+  sleep 1
+  # Check if the test video file exists
+  if [[ ! -f "$test_screen_video_file" || ! $(du -sh "$ffmpeg_screen_video_log" | grep "0B") == ""  ]]; then
+    echo "Unable to capture screen video: unhandled ffmpeg error."
+    echo "The complete error log is given below."
+    echo ""
+    cat "$ffmpeg_screen_video_log"
+    exit 1
+  fi
+}
+
 # On macOS, we need to test whether the terminal has access to the webcam and
 # microphone.
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -131,6 +148,8 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   test_system_audio_recording_macos
   echo "Testing terminal access to microphone..."
   test_microphone_macos
+  echo "Testing screen capture..."
+  test_screen_recording_macos
 fi
 
 
@@ -255,9 +274,10 @@ if [[ ${do_invasion} -eq 1 ]]; then
         input_device=":0.0"
     fi
     ffmpeg -nostdin -f $fmt\
-      -s $dimensions\
       -i $input_device\
-      "$screen_video" &> /dev/null &
+      -s $dimensions\
+      -r 30\
+      "$screen_video" >& "$TOMCAT_TMP_DIR"/screen_video_recording.log &
     screen_recording_pid=$!
 
     while [ $try -lt $num_tries ]; do
