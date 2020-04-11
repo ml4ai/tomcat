@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -393,7 +394,7 @@ public class SARMission extends Mission {
   }
 
   @Override
-  protected void onPlayerDeath() {
+  protected void onPlayerDeath(EntityPlayer plauer) {
     this.onTimeOut();
   }
 }

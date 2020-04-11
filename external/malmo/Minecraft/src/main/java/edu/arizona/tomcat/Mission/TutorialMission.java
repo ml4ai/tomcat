@@ -9,8 +9,8 @@ import edu.arizona.tomcat.Messaging.TomcatMessageData;
 import edu.arizona.tomcat.Messaging.TomcatMessaging;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
+import edu.arizona.tomcat.Mission.Goal.ActivateButtonGoal;
 import edu.arizona.tomcat.Mission.Goal.ApproachEntityGoal;
-import edu.arizona.tomcat.Mission.Goal.CraftItemGoal;
 import edu.arizona.tomcat.Mission.Goal.KillEntityGoal;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
 import edu.arizona.tomcat.Mission.Goal.ReachPositionGoal;
@@ -22,8 +22,12 @@ import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.World.Drawing;
 import edu.arizona.tomcat.World.TomcatEntity;
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class TutorialMission extends Mission {
@@ -36,6 +40,7 @@ public class TutorialMission extends Mission {
   private boolean shouldSpawnZombieInsideTheBuilding;
   private boolean shouldSpawnVillagerInsideTheBuilding;
   private boolean shouldaddMaterialsToUsersInventory;
+  private boolean shouldSpawnExposedEntities;
   private MissionPhase approachPoolsPhase;
   private MissionPhase enterTheArenaPhase;
   private MissionPhase killSkeletonPhase;
@@ -43,6 +48,10 @@ public class TutorialMission extends Mission {
   private UUID skeletonUUID;
   private UUID zombieUUID;
   private UUID villagerUUID;
+  // This variable has to be static because objects are inserted in it in a
+  // method called by a Minecraft event and updating an object variable does not
+  // work.
+  private static Set<EntityPlayer> deadPlayers = new HashSet<EntityPlayer>();
 
   public static final int NUMBER_OF_VILLAGERS = 1;
 
@@ -53,6 +62,7 @@ public class TutorialMission extends Mission {
     this.shouldSpawnSkeletonInTheArena = false;
     this.shouldSpawnZombieInsideTheBuilding = false;
     this.shouldSpawnVillagerInsideTheBuilding = false;
+    this.shouldSpawnExposedEntities = false;
     this.skeletonUUID = UUID.randomUUID();
     this.zombieUUID = UUID.randomUUID();
     this.villagerUUID = UUID.randomUUID();
@@ -66,7 +76,12 @@ public class TutorialMission extends Mission {
   @Override
   protected void createPhases() {
     this.addApproachPoolsPhase();
-    this.addCraftItemPhase();
+    /*
+     * TODO - The crafting phase is going to be commented out until we have
+     * crafting in our main mission. So far, there's no crafting so there's no
+     * need to present this in the tutorial
+     */
+    // this.addCraftItemPhase();
     this.addApproachEntitiesPhase();
     this.addEnterTheArenaPhase();
     this.addKillSkeletonPhase();
@@ -96,20 +111,21 @@ public class TutorialMission extends Mission {
   /**
    * Creates a phase in the mission where the objective is to craft a wooden
    * item in the world
+   * TODO - Uncomment this code when the crafting phase needs to be reactivated
    */
-  private void addCraftItemPhase() {
-    RichContent instructions =
-        RichContent.createFromJson("tutorial_instruction_crafting.json");
-    MissionPhase craftItemPhase = new MissionPhase(instructions,
-                                                   CompletionStrategy.ALL_GOALS,
-                                                   5,
-                                                   true,
-                                                   "Well Done!",
-                                                   0,
-                                                   2);
-    craftItemPhase.addGoal(new CraftItemGoal(ItemType.WOODEN_AXE));
-    this.addPhase(craftItemPhase);
-  }
+  //	private void addCraftItemPhase() {
+  //		RichContent instructions =
+  //				RichContent.createFromJson("tutorial_instruction_crafting.json");
+  //		MissionPhase craftItemPhase = new MissionPhase(instructions,
+  //				CompletionStrategy.ALL_GOALS,
+  //				5,
+  //				true,
+  //				"Well Done!",
+  //				0,
+  //				2);
+  //		craftItemPhase.addGoal(new CraftItemGoal(ItemType.WOODEN_AXE));
+  //		this.addPhase(craftItemPhase);
+  //	}
 
   /**
    * Creates a phase in the mission where the objective is to locate the
@@ -126,7 +142,13 @@ public class TutorialMission extends Mission {
                          "Well Done!",
                          0,
                          2);
-    approachEntitiesPhase.addGoal(new ReachPositionGoal(-615, 4, 1585, 3));
+    // approachEntitiesPhase.addGoal(new ReachPositionGoal(-615, 4, 1585, 3));
+    approachEntitiesPhase.addGoal(
+        new ActivateButtonGoal(new BlockPos(-609, 5, 1586)));
+    approachEntitiesPhase.addGoal(
+        new ActivateButtonGoal(new BlockPos(-609, 5, 1590)));
+    approachEntitiesPhase.addGoal(
+        new ActivateButtonGoal(new BlockPos(-609, 5, 1594)));
     addPhase(approachEntitiesPhase);
   }
 
@@ -225,9 +247,11 @@ public class TutorialMission extends Mission {
   protected void updateScene(World world) {
     this.changePlayerPerspective();
     this.addMaterialsToUsersInventory(world);
+    this.spawnExposedEntities(world);
     this.spawnSkeletonInTheArena(world);
     this.spawnZombieInsideTheBuilding(world);
     this.spawnVillagerInsideTheBuilding(world);
+    this.respawnPlayersAfterDeath();
   }
 
   /**
@@ -256,6 +280,30 @@ seconds. 20 Minecraft ticks equal 1 real second. viewTime is incremented by
         // first person view
       }
       this.viewTime += 0.05;
+    }
+  }
+
+  private void spawnExposedEntities(World world) {
+    if (this.shouldSpawnExposedEntities) {
+      try {
+        Drawing drawing = new Drawing();
+        TomcatEntity skeleton = new TomcatEntity(
+            UUID.randomUUID(), -607, 4, 1592, EntityTypes.SKELETON);
+        TomcatEntity zombie = new TomcatEntity(
+            UUID.randomUUID(), -607, 4, 1588, EntityTypes.ZOMBIE);
+        TomcatEntity villager = new TomcatEntity(
+            UUID.randomUUID(), -607, 4, 1584, EntityTypes.VILLAGER);
+
+        drawing.addObject(skeleton);
+        drawing.addObject(zombie);
+        drawing.addObject(villager);
+        this.drawingHandler.draw(world, drawing);
+      }
+      catch (Exception e) {
+        e.printStackTrace();
+      }
+
+      this.shouldSpawnExposedEntities = false;
     }
   }
 
@@ -381,7 +429,19 @@ seconds. 20 Minecraft ticks equal 1 real second. viewTime is incremented by
       this.shouldSpawnVillagerInsideTheBuilding = true;
     }
     else if (this.currentPhase.equals(this.approachPoolsPhase)) {
-      this.shouldaddMaterialsToUsersInventory = true;
+      /*
+       * TODO - This should be commented out until the crafting phase
+       * reactivated
+       */
+      // this.shouldaddMaterialsToUsersInventory = true;
+
+      /*
+       * TODO - The code below should be moved to a new condition block after
+       * the crafting phase is reactivated, since the entities must be spawned
+       * in the mission after the crafting phase instead of the approaching
+       * pools one.
+       */
+      this.shouldSpawnExposedEntities = true;
     }
   }
 
@@ -413,14 +473,28 @@ seconds. 20 Minecraft ticks equal 1 real second. viewTime is incremented by
   }
 
   @Override
-  protected void onPlayerDeath() {
-    this.cleanup();
-    RichContent content =
-        RichContent.createFromJson("tutorial_completion_fail.json");
-    TomcatMessageData messageData = new TomcatMessageData(content);
-    TomcatMessaging.TomcatMessage message = new TomcatMessage(
-        TomcatMessageType.SHOW_COMPLETION_SCREEN, messageData);
-    TomcatClientServerHandler.sendMessageToAllClients(message, false);
-    this.notifyAllAboutMissionEnding("1");
+  protected void onPlayerDeath(EntityPlayer player) {
+    this.revivePlayer(player);
+  }
+
+  private void revivePlayer(EntityPlayer player) {
+    player.isDead = false;
+    player.setHealth(player.getMaxHealth());
+    deadPlayers.add(player);
+  }
+
+  private void respawnPlayersAfterDeath() {
+    for (Object playerObject : deadPlayers.toArray()) {
+      EntityPlayer player = (EntityPlayer)playerObject;
+
+      player.rotationYaw = 0;
+      player.rotationPitch = 0;
+      player.setPositionAndUpdate(-623, 4, 1584);
+
+      if (player.isBurning()) {
+        player.extinguish();
+      }
+      deadPlayers.remove(player);
+    }
   }
 }

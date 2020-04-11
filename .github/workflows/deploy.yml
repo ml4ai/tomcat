@@ -21,7 +21,7 @@ jobs:
         source tomcat_venv/bin/activate
         pip install sphinx==v2.4.4
         pip install wheel
-        pip install exhale recommonmark sphinx-rtd-theme
+        pip install -r docs/requirements.txt
         pushd docs > /dev/null
           mkdir build
           cd build

@@ -1,0 +1,4 @@
+sphinx
+exhale
+recommonmark
+sphinx-rtd-theme
