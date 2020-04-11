@@ -246,16 +246,19 @@ if [[ ${do_invasion} -eq 1 ]]; then
 
     # Recording game screen.
     screen_video="${output_dir}"/screen_video.mpg
+    dimensions=$(xdpyinfo | grep dimensions | awk '{print $2;}')
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        ffmpeg -nostdin -f avfoundation -i "1:" -r 30 "$screen_video" &> /dev/null &
-        screen_recording_pid=$!
+        fmt=avfoundation
+        input_device="1:"
     elif [[ "$OSTYPE" == "linux-gnu" ]]; then
-        ffmpeg -nostdin -f x11grab\
-          -s $(xdpyinfo | grep dimensions | awk '{print $2;}')\
-          -i ":0.0"\
-          "$screen_video" &> /dev/null &
-        screen_recording_pid=$!
+        fmt=x11grab
+        input_device=":0.0"
     fi
+    ffmpeg -nostdin -f $fmt\
+      -s $dimensions\
+      -i $input_device\
+      "$screen_video" &> /dev/null &
+    screen_recording_pid=$!
 
     while [ $try -lt $num_tries ]; do
         if [[ -n "$GITHUB_ACTIONS" ]]; then
