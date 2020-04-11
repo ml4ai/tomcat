@@ -18,6 +18,15 @@ rm=/bin/rm
 
 tools="$TOMCAT"/tools
 
+user_interrupt() {
+  echo "Detected keyboard interrupt."
+  echo "Cleaning up now"
+  "$tools"/kill_minecraft.sh
+  exit
+}
+
+trap user_interrupt SIGINT
+
 framerate_option=""
 
 export PATH="$PATH:/opt/local/bin:/opt/local/sbin"
@@ -45,7 +54,7 @@ test_webcam_macos() {
   test_video_file=${TOMCAT_TMP_DIR}/test_video.mpg
   $rm -f "$test_video_file" 
   ffmpeg_webcam_log="$TOMCAT_TMP_DIR"/ffmpeg_webcam.log
-  ffmpeg -nostdin -f avfoundation $framerate_option -i "0:" -t 1 "$test_video_file" &> "$ffmpeg_webcam_log"
+  ffmpeg -nostdin -f avfoundation $framerate_option -i "0:" -t 0.1 "$test_video_file" &> "$ffmpeg_webcam_log"
   if [[ ! -f "$test_video_file" ]]; then
     camera_access_err=$(cat "$ffmpeg_webcam_log" \
       | grep "Failed to create AV capture input device: Cannot use FaceTime HD Camera")
@@ -112,10 +121,10 @@ test_microphone_macos() {
 if [[ "$OSTYPE" == "darwin"* ]]; then
   echo "Testing terminal access to camera."
   test_webcam_macos
-  echo "Testing terminal access to microphone..."
-  test_microphone_macos
   echo "Checking if system audio recording is set up..."
   test_system_audio_recording_macos
+  echo "Testing terminal access to microphone..."
+  test_microphone_macos
 fi
 
 
