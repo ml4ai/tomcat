@@ -22,6 +22,12 @@ user_interrupt() {
   echo "Detected keyboard interrupt."
   echo "Cleaning up now"
   "$tools"/kill_minecraft.sh
+  if [[ "$OSTYPE"  == "darwin"* ]]; then
+    kill $system_audio_recording_pid
+    # Switching the audio output from the multi-output device to the built-in
+    # output.
+    if ! SwitchAudioSource -s "Built-in Output"; then exit 1; fi
+  fi
   exit
 }
 
