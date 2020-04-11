@@ -4,7 +4,7 @@
 # be used after running 'git pull', on the master branch. It downloads the
 # latest tomcat mission worlds and rebuilds tomcat
 #
-# Usage: ./tools/update_tomcat.sh
+# Usage: ./tools/update_tomcat
 
 # Set the TOMCAT environment variable, assuming that the directory structure
 # mirrors that of the git repository.
@@ -13,5 +13,5 @@ export TOMCAT
 
 pushd ${TOMCAT}
   git pull
-  ${TOMCAT}/tools/install.sh
+  ${TOMCAT}/tools/install
 popd

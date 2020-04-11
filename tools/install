@@ -14,7 +14,7 @@ export TOMCAT
 
 ###############################################################################
 
-${TOMCAT}/tools/install_dependencies.sh
+${TOMCAT}/tools/install_dependencies
 if [[ $? -ne 0 ]]; then exit 1; fi;
 
 
@@ -41,16 +41,16 @@ pushd "${TOMCAT}"
         fi;
 
         if ! make -j; then exit 1; fi
+        if ! make -j Minecraft; then exit 1; fi
 
-        make -j Minecraft
     popd > /dev/null 
 popd > /dev/null 
 
-if ! ${TOMCAT}/tools/download/tomcat_worlds.sh; then exit 1; fi
+if ! ${TOMCAT}/tools/download/tomcat_worlds; then exit 1; fi
 
 
 if [[ ! -d ${TOMCAT}/data/OpenFace_models ]]; then
-  if ! ${TOMCAT}/tools/download/OpenFace_models.sh; then exit 1; fi
+  if ! ${TOMCAT}/tools/download/OpenFace_models; then exit 1; fi
 fi
 
 echo " "

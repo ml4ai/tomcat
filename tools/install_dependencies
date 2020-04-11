@@ -29,20 +29,25 @@ install_dependencies_using_macports() {
       boost \
       gradle \
       mosquitto \
-      nlohmann-json
+      nlohmann-json \
+      switchaudio-osx
   if [[ $? -ne 0 ]]; then exit 1; fi;
 
   # We install Java using a local Portfile, since the upstream openjdk8
   # port points to Java 1.8.0_242, which is incompatible with Malmo (the
-  # local Portfile points to Java 1.8.0_232.
-  pushd ${TOMCAT}/tools/macos/local-ports/openjdk8 > /dev/null
+  # local Portfile points to Java 1.8.0_232).
+  pushd "$tools"/macos/local-ports/openjdk8 > /dev/null
+    if ! sudo port install; then exit 1; fi
+  popd > /dev/null
+
+  pushd "$tools"/macos/local-ports/BlackHole > /dev/null
     if ! sudo port install; then exit 1; fi
   popd > /dev/null
 }
 
 install_dependencies_using_homebrew() {
-  echo "\'brew\' executable detected, assuming that Homebrew"\
-  "\(https://brew.sh\) is installed and is the package manager."
+  echo "'brew' executable detected, assuming that Homebrew"\
+  "(https://brew) is installed and is the package manager."
 
   echo "Installing ToMCAT dependencies using Homebrew."
 
@@ -70,8 +75,10 @@ install_dependencies_using_homebrew() {
     boost \
     gradle \
     mosquitto \
-    nlohmann-json
+    nlohmann-json \
+    switchaudio-osx
 
+  brew cask install blackhole
   if [[ -n ${GITHUB_ACTIONS} ]]; then
     # On Github Actions, we will install lcov to provide code coverage estimates.
     brew install lcov;
@@ -90,7 +97,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
       echo "assume that the macOS Command Line Tools are not installed."
       echo "Installing them now..."
       xcode-select --install
-      "${TOMCAT}"/tools/macos/install_command_line_tools.scpt > /dev/null
+      "${TOMCAT}"/tools/macos/install_command_line_tools > /dev/null
       while [ ! -d "/Library/Developer" ]; do
         sleep 1
       done
@@ -110,7 +117,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
       echo "Neither the MacPorts or Homebrew package managers have been"
       echo "detected. Proceeding to install MacPorts in the default location"
       echo "(/opt/local)"
-      ${TOMCAT}/tools/install_from_source/macports.sh
+      "$tools"/install_from_source/macports
 
       install_dependencies_using_macports
 
@@ -122,7 +129,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 
     elif [[ $macports_found -eq 0 && $homebrew_found -eq 0 ]]; then
       echo "Both the MacPorts (https://www.macports.org) and Homebrew"
-      echo "(https://brew.sh) package managers have been found. We assume you"
+      echo "(https://brew) package managers have been found. We assume you"
       echo "are a power user and can set your PATH environment variable as"
       echo "needed to switch between the two. We will proceed with installing"
       echo "the dependencies using MacPorts."
@@ -155,7 +162,7 @@ elif [ -x "$(command -v apt-get)" ]; then
 
     # On Ubuntu 18.04, the required version of the nlohmann-json JSON library
     # is not available using apt-get, so we install from source.
-    if ! "$TOMCAT"/tools/install_from_source/nlohmann-json.sh; then exit 1; fi
+    if ! "$TOMCAT"/tools/install_from_source/nlohmann-json; then exit 1; fi
 
     if [[ -z "$GITHUB_ACTIONS" ]]; then
       sudo apt-get install -y libboost-all-dev

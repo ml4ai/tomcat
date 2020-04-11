@@ -2,7 +2,7 @@
 
 # There can be multiple instances of Minecraft running. It is not clear whether
 # we ever want this to happen. By default, this script only kills processes that
-# were started on the most recent call to wrap_launch_minecraft.sh. However, the
+# were started on the most recent call to wrap_launch_minecraft. However, the
 # '-a' argument asks this script to kill every last instance of Minecraft that
 # is owned by the calling user. This is necessarily a bit of a hack because
 # some of the processes resist being killed (so we cannot just kill the
