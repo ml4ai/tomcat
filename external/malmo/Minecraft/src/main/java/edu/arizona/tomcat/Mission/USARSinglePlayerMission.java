@@ -125,6 +125,8 @@ public class USARSinglePlayerMission extends Mission {
     // InventoryHandler.addItemToInventory(ItemType.IRON_SWORD, 1);
   }
 
+  @Override
+  public void goalAchieved(World world, MissionGoal goal) {}
 
   @Override
   public PosAndDirection
@@ -140,6 +142,22 @@ public class USARSinglePlayerMission extends Mission {
   @Override
   protected boolean hasSelfReport() {
     return true;
+  }
+
+  @Override
+  protected SelfReportContent getSelfReportContent(EntityPlayerMP player,
+                                                   World world) {
+    String id = Long.toString(world.getTotalWorldTime());
+    SelfReportContent selfReportContent =
+        SelfReportContent.createFromJson(id, "self_report1.json");
+    selfReportContent.setTextPlaceholder(
+        0, Converter.secondsToString(this.getRemainingSeconds(world), false));
+    selfReportContent.setTextPlaceholder(
+        1, String.format("%.2f", player.getHealth()));
+    selfReportContent.setTextPlaceholder(
+        2, String.format("%.2f", player.getMaxHealth()));
+    return selfReportContent;
+
   }
 
   @Override

@@ -2,6 +2,7 @@ package edu.arizona.tomcat.Mission;
 
 import edu.arizona.tomcat.Mission.Client.ClientMission;
 import edu.arizona.tomcat.Mission.Client.ZombieClientMission;
+import edu.arizona.tomcat.Mission.Client.USARSinglePlayerClientMission;
 import edu.arizona.tomcat.Mission.Client.TutorialClientMission;
 
 public class MissionFactory {

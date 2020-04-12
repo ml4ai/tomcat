@@ -386,10 +386,6 @@ public class ZombieMission extends Mission {
         1, String.format("%.2f", player.getHealth()));
     selfReportContent.setTextPlaceholder(
         2, String.format("%.2f", player.getMaxHealth()));
-    selfReportContent.setTextPlaceholder(
-        3, Integer.toString(this.numberOfVillagersSaved));
-    selfReportContent.setTextPlaceholder(4,
-                                         Integer.toString(NUMBER_OF_VILLAGERS));
     return selfReportContent;
   }
 
