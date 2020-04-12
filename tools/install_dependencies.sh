@@ -28,6 +28,7 @@ install_dependencies_using_macports() {
       openblas \
       boost \
       gradle \
+      blackhole \
       switchaudio-osx
   if [[ $? -ne 0 ]]; then exit 1; fi;
 
@@ -35,10 +36,6 @@ install_dependencies_using_macports() {
   # port points to Java 1.8.0_242, which is incompatible with Malmo (the
   # local Portfile points to Java 1.8.0_232).
   pushd ${TOMCAT}/tools/local-ports/openjdk8 > /dev/null
-    if ! sudo port install; then exit 1; fi
-  popd > /dev/null
-
-  pushd ${TOMCAT}/tools/local-ports/BlackHole > /dev/null
     if ! sudo port install; then exit 1; fi
   popd > /dev/null
 }
