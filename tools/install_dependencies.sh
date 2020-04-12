@@ -38,7 +38,7 @@ install_dependencies_using_macports() {
     if ! sudo port install; then exit 1; fi
   popd > /dev/null
 
-  pushd ${TOMCAT}/tools/local-ports/blackhole > /dev/null
+  pushd ${TOMCAT}/tools/local-ports/BlackHole > /dev/null
     if ! sudo port install; then exit 1; fi
   popd > /dev/null
 }
