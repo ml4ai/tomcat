@@ -84,7 +84,7 @@ namespace tomcat {
     void send_command(std::string command);
 
   private:
-    enum MissionId { TUTORIAL = 0, SAR = 1 };
+    enum MissionId { TUTORIAL = 0, ZOMBIE = 1 , USAR_SINGLEPLAYER = 2};
 
     malmo::MissionSpec mission_spec;
     std::string mission_id_or_path;
@@ -114,7 +114,8 @@ namespace tomcat {
     inline static std::unordered_map<int, std::string> id_to_world_folder_map =
         {
             {TUTORIAL, "tutorial"},
-            {SAR, "sar"},
+            {ZOMBIE, "zombie"},
+            {USAR_SINGLEPLAYER, "Singleplayer"},
     };
 
     /**

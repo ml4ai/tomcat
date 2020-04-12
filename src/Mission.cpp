@@ -3,9 +3,9 @@
 #include "Mission.h"
 #include "utils.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
-#include <boost/filesystem.hpp>
 #include <fmt/format.h>
 #include <nlohmann/json.hpp>
 #include <sstream>
@@ -42,7 +42,7 @@ namespace tomcat {
     this->record_rewards = record_rewards;
     this->multiplayer = multiplayer;
     this->record_path = record_path;
-    this->uuid =boost::uuids::to_string(boost::uuids::uuid());
+    this->uuid = boost::uuids::to_string(boost::uuids::uuid());
   }
 
   void Mission::add_listener(shared_ptr<LocalAgent> tomcat_agent) {
@@ -77,7 +77,7 @@ namespace tomcat {
       this->mission_spec.timeLimitInSeconds(this->time_limit_in_seconds);
     }
     else {
-      string xml = get_world_skeleton_from_xml();
+      string xml = this->get_world_skeleton_from_xml();
       this->mission_spec = MissionSpec(xml, true);
     }
 
@@ -90,8 +90,8 @@ namespace tomcat {
   string Mission::get_world_skeleton_from_xml() {
     if (!getenv("TOMCAT")) {
       throw TomcatMissionException(
-          "The TOMCAT environment variable has not been set! Please set it to"
-          "the location of your local copy of the tomcat repository, or use the"
+          "The TOMCAT environment variable has not been set! Please set it to "
+          "the location of your local copy of the tomcat repository, or use the "
           "run_session.sh script, which automatically sets it.",
           TomcatMissionException::TOMCAT_ENV_VAR_NOT_SET);
     }
@@ -145,6 +145,8 @@ namespace tomcat {
       else {
         agent_name = format("{}:{}", client->ip_address, client->control_port);
       }
+      //For USAR_SINGLEPLAYER mission: <Placement x="-2165" y="52" z="175"/>
+
       ss << format(R"(<AgentSection mode="Adventure">
               <Name>{}</Name>
               <AgentStart>
@@ -318,7 +320,8 @@ namespace tomcat {
         json observation = json::parse(worldState.observations.at(0)->text);
         json header = {};
         string timestamp =
-            pt::to_iso_extended_string(pt::microsec_clock::universal_time()) + "Z";
+            pt::to_iso_extended_string(pt::microsec_clock::universal_time()) +
+            "Z";
         header["timestamp"] = timestamp;
         header["message_type"] = "observation";
         header["version"] = "0.2";
