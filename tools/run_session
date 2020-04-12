@@ -1,8 +1,28 @@
 #!/bin/bash
 
+# =============================================================================
+
+# For some reason, bash is behaving differently on Ubuntu and macOS, so we have
+# to temporarily declaring certain variables to avoid unbound errors on Ubuntu
+# if the user has not explicitly set the variable in their environment.
+# We follow the convention of using lowercase for these temporary variables.
+
+# GITHUB_ACTIONS: Set to true with Github Actions is running the workflow.
+# (https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables)
+
 github_actions="$GITHUB_ACTIONS"
+enable_mqtt="$ENABLE_MQTT"
+
 set -u
+
+# After the set -u command, we export the uppercase versions of the temporary
+# variables, ensuring that the user preferences are respected while avoiding
+# unbound variable errors on Ubuntu.
+
 export GITHUB_ACTIONS="${github_actions}"
+export ENABLE_MQTT="${enable_mqtt}"
+
+# =============================================================================
 
 # Set the TOMCAT environment variable, assuming that the directory structure
 # mirrors that of the git repository.
@@ -28,6 +48,9 @@ user_interrupt() {
     # output.
     if ! SwitchAudioSource -s "Built-in Output"; then exit 1; fi
   fi
+  if (( $ENABLE_MQTT )); then
+    kill $pid_tail_malmo_json_data
+  fi
   exit
 }
 
@@ -49,7 +72,7 @@ export num_tries=2
 if [[ "$OSTYPE" == "darwin"* ]]; then
   "$TOMCAT"/tools/macos/activate_minecraft_window ${terminal}
   if [[ $? -ne 0 ]]; then exit 1; fi
-elif [[ "$OSTYPE" == "linux-gnu" || -z "$GITHUB_ACTIONS" ]]; then
+elif [[ "$OSTYPE" == "linux-gnu" && -z "$GITHUB_ACTIONS" ]]; then
   # wmctrl does not work well with xvfb-run, so we disable full-screening the
   # Minecraft window when running a headless test of this script with a Github
   # Actions runner.
@@ -82,7 +105,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
         ${framerate_option}\
         -i ${ffmpeg_input_device_webcam}\
         "${output_dir}"/webcam_video.mpg &> /dev/null &
-      webcam_recording_pid=$!
+      pid_webcam_recording=$!
       
       echo "Recording player audio using microphone."
       ffmpeg\
@@ -90,7 +113,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
         -f ${ffmpeg_fmt_microphone}\
         -i ${ffmpeg_input_device_microphone}\
         "${output_dir}"/player_audio.wav &> /dev/null &
-      microphone_recording_pid=$!
+      pid_microphone_recording=$!
 
       if [[ "$OSTYPE" == "darwin"* ]]; then
         echo "Recording system audio."
@@ -99,7 +122,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
           -f ${ffmpeg_fmt_system_audio}\
           -i ${ffmpeg_input_device_system_audio}\
           "${output_dir}"/system_audio.wav &> "$TOMCAT_TMP_DIR"/system_audio_recording.log &
-        system_audio_recording_pid=$!
+        pid_system_audio_recording=$!
       elif [[ "$OSTYPE" == "linux-gnu" ]]; then
         echo "System audio recording not yet enabled for Linux."
       fi
@@ -111,28 +134,36 @@ if [[ ${do_invasion} -eq 1 ]]; then
   ffmpeg -nostdin -f ${ffmpeg_fmt_screen_capture}\
     -i ${ffmpeg_input_device_screen_capture}\
     -s $dimensions\
-    "$screen_video" >& "$TOMCAT_TMP_DIR"/screen_video_recording.log &
-  screen_recording_pid=$!
+    "$screen_video" &> "$TOMCAT_TMP_DIR"/screen_video_recording.log &
+  pid_screen_recording=$!
+
+  malmo_json_data="${output_dir}"/malmo_data.json
+  touch "$malmo_json_data"
+
+  if (( $ENABLE_MQTT )); then
+    tail -f -n1 "$malmo_json_data" | mosquitto_pub -t observations/state -l &
+    pid_tail_malmo_json_data=$!
+  fi
 
   while [ $try -lt $num_tries ]; do
     "${TOMCAT}"/build/bin/runExperiment \
       --mission ${mission} \
       --time_limit ${time_limit} \
       --record_observations \
-      > "${output_dir}"/malmo_data.json \
-      &>"${zombie_invasion_log}" &
-    bg_pid=$!
+      &> "${zombie_invasion_log}" \
+      >"${output_dir}"/malmo_data.json &
+    pid_runExperiment=$!
 
     echo "Running ${TOMCAT}/build/bin/runExperiment"
     echo "    --mission ${mission}"
     echo "    --time_limit ${time_limit}"
     echo "    --record_observations"
-    echo "    > "${output_dir}"/malmo_data.json"
-    echo "    &>${zombie_invasion_log} &"
-    echo "Process corresponding to ./bin/runExperiment is $bg_pid"
+    echo "    &> ${zombie_invasion_log}"
+    echo "    > "${output_dir}"/malmo_data.json &"
+    echo "Process ID corresponding to ./bin/runExperiment is $pid_runExperiment"
     echo "... waiting for it to complete."
 
-    wait $bg_pid
+    wait $pid_runExperiment
     zombie_invasion_status=$?
 
     if [[ ${zombie_invasion_status} -eq 0 ]]; then
@@ -161,11 +192,11 @@ if [[ ${do_invasion} -eq 1 ]]; then
 fi
 
 if [[ -z "$GITHUB_ACTIONS" ]]; then
-  kill $webcam_recording_pid
-  kill $microphone_recording_pid
-  kill $screen_recording_pid
+  kill $pid_webcam_recording
+  kill $pid_microphone_recording
+  kill $pid_screen_recording
   if [[ "$OSTYPE"  == "darwin"* ]]; then
-    kill $system_audio_recording_pid
+    kill $pid_system_audio_recording
     # Switching the audio output from the multi-output device to the built-in
     # output.
     if ! SwitchAudioSource -s "Built-in Output"; then exit 1; fi
