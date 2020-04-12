@@ -20,5 +20,5 @@ jobs:
 
     - name: Continuous Integration
       run: |
-        ./tools/install.sh
-        xvfb-run --auto-servernum ./tools/run_session.sh
+        ./tools/install
+        xvfb-run --auto-servernum ./tools/run_session
