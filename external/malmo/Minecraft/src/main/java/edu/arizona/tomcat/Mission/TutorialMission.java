@@ -99,11 +99,11 @@ public class TutorialMission extends Mission {
         RichContent.createFromJson("tutorial_instructions_pits.json");
     this.approachPoolsPhase = new MissionPhase(instructions,
                                                CompletionStrategy.ALL_GOALS,
-                                               5,
+                                               2,
                                                true,
                                                "Well Done!",
                                                0,
-                                               2);
+                                               1);
     this.approachPoolsPhase.addGoal(new ReachPositionGoal(-635, 4, 1582, 2));
     this.addPhase(approachPoolsPhase);
   }
@@ -137,11 +137,11 @@ public class TutorialMission extends Mission {
     MissionPhase approachEntitiesPhase =
         new MissionPhase(instructions,
                          CompletionStrategy.ALL_GOALS,
-                         5,
+                         2,
                          true,
-                         "Well Done!",
+                         "Good job!",
                          0,
-                         2);
+                         1);
     // approachEntitiesPhase.addGoal(new ReachPositionGoal(-615, 4, 1585, 3));
     approachEntitiesPhase.addGoal(
         new ActivateButtonGoal(new BlockPos(-609, 5, 1586)));
@@ -161,11 +161,11 @@ public class TutorialMission extends Mission {
         RichContent.createFromJson("tutorial_instructions_arena.json");
     this.enterTheArenaPhase = new MissionPhase(instructions,
                                                CompletionStrategy.ALL_GOALS,
-                                               10,
+                                               1,
                                                true,
-                                               "Well Done!",
+                                               "Nice work!",
                                                0,
-                                               2);
+                                               1);
     this.enterTheArenaPhase.addGoal(new ReachPositionGoal(-623, 4, 1600, 2));
     this.addPhase(this.enterTheArenaPhase);
   }
@@ -183,7 +183,7 @@ public class TutorialMission extends Mission {
                                               true,
                                               "Well Done!",
                                               0,
-                                              2);
+                                              1);
     this.killSkeletonPhase.addGoal(new KillEntityGoal(this.skeletonUUID));
     this.addPhase(this.killSkeletonPhase);
   }
@@ -199,9 +199,9 @@ public class TutorialMission extends Mission {
                                             CompletionStrategy.ALL_GOALS,
                                             0,
                                             true,
-                                            "Well Done!",
+                                            "Good work!",
                                             0,
-                                            2);
+                                            1);
     this.killZombiePhase.addGoal(new KillEntityGoal(this.zombieUUID));
     this.addPhase(this.killZombiePhase);
   }
@@ -217,7 +217,7 @@ public class TutorialMission extends Mission {
                          CompletionStrategy.ALL_GOALS,
                          0,
                          true,
-                         "Well Done!",
+                         "You saved him!",
                          0,
                          2);
     saveVillagerPhase.addGoal(new ApproachEntityGoal(
@@ -238,7 +238,7 @@ public class TutorialMission extends Mission {
                          true,
                          "Well Done!",
                          0,
-                         2);
+                         1);
     leaveTheBuildingPhase.addGoal(new ReachPositionGoal(-630, 4, 1574, 2));
     addPhase(leaveTheBuildingPhase);
   }

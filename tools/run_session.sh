@@ -206,6 +206,8 @@ if [[ ${do_tutorial} -eq 1 ]]; then
   if ! "$tools"/run_tutorial.sh; then exit 1; fi
 fi
 
+sleep 6
+
 # Get rid of any pre-existing discrete events JSON files.
 $rm -f "${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
 
