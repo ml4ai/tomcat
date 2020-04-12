@@ -132,9 +132,9 @@ public class USARSinglePlayerMission extends Mission {
   public PosAndDirection
   getPlayersInitialPositionAndDirection(EntityPlayerMP player) {
     PosAndDirection positionAndDirection = new PosAndDirection();
-    positionAndDirection.setX(new BigDecimal(22));
-    positionAndDirection.setY(new BigDecimal(64));
-    positionAndDirection.setZ(new BigDecimal(73));
+    positionAndDirection.setX(new BigDecimal(-2165));
+    positionAndDirection.setY(new BigDecimal(52));
+    positionAndDirection.setZ(new BigDecimal(175));
     positionAndDirection.setYaw(new BigDecimal(-90));
     return positionAndDirection;
   }
