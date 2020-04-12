@@ -103,7 +103,7 @@ public class TutorialMission extends Mission {
                                                true,
                                                "Well Done!",
                                                0,
-                                               2);
+                                               1);
     this.approachPoolsPhase.addGoal(new ReachPositionGoal(-635, 4, 1582, 2));
     this.addPhase(approachPoolsPhase);
   }
@@ -165,7 +165,7 @@ public class TutorialMission extends Mission {
                                                true,
                                                "Nice work!",
                                                0,
-                                               2);
+                                               1);
     this.enterTheArenaPhase.addGoal(new ReachPositionGoal(-623, 4, 1600, 2));
     this.addPhase(this.enterTheArenaPhase);
   }
@@ -183,7 +183,7 @@ public class TutorialMission extends Mission {
                                               true,
                                               "Well Done!",
                                               0,
-                                              2);
+                                              1);
     this.killSkeletonPhase.addGoal(new KillEntityGoal(this.skeletonUUID));
     this.addPhase(this.killSkeletonPhase);
   }
@@ -201,7 +201,7 @@ public class TutorialMission extends Mission {
                                             true,
                                             "Good work!",
                                             0,
-                                            2);
+                                            1);
     this.killZombiePhase.addGoal(new KillEntityGoal(this.zombieUUID));
     this.addPhase(this.killZombiePhase);
   }
@@ -238,7 +238,7 @@ public class TutorialMission extends Mission {
                          true,
                          "Well Done!",
                          0,
-                         2);
+                         1);
     leaveTheBuildingPhase.addGoal(new ReachPositionGoal(-630, 4, 1574, 2));
     addPhase(leaveTheBuildingPhase);
   }
