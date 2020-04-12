@@ -19,7 +19,6 @@ jobs:
         sudo apt-get install -y python3-venv doxygen
         python3 -m venv tomcat_venv
         source tomcat_venv/bin/activate
-        pip install sphinx==v2.4.4
         pip install wheel
         pip install -r docs/requirements.txt
         pushd docs > /dev/null
