@@ -86,6 +86,10 @@ if [[ ${do_tutorial} -eq 1 ]]; then
   if ! "$TOMCAT"/tools/run_tutorial; then exit 1; fi
 fi
 
+# We sleep for a few seconds to let the player catch a breath between the
+# tutorial and main missions.
+sleep 6
+
 # Get rid of any pre-existing discrete events JSON files.
 $rm -f "${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
 
