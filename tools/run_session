@@ -10,6 +10,9 @@
 # GITHUB_ACTIONS: Set to true with Github Actions is running the workflow.
 # (https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables)
 
+# ENABLE_MQTT: Set this variable to 1 to enable publishing messages to an MQTT message
+# broker.
+
 github_actions="$GITHUB_ACTIONS"
 enable_mqtt="$ENABLE_MQTT"
 
@@ -49,7 +52,7 @@ user_interrupt() {
     if ! SwitchAudioSource -s "Built-in Output"; then exit 1; fi
   fi
   if (( $ENABLE_MQTT )); then
-    kill $pid_tail_malmo_json_data
+    kill $pid_tail_malmo_data
   fi
   exit
 }
@@ -137,12 +140,12 @@ if [[ ${do_invasion} -eq 1 ]]; then
     "$screen_video" &> "$TOMCAT_TMP_DIR"/screen_video_recording.log &
   pid_screen_recording=$!
 
-  malmo_json_data="${output_dir}"/malmo_data.json
-  touch "$malmo_json_data"
+  malmo_data="${output_dir}"/malmo_data.txt
+  touch "$malmo_data"
 
   if (( $ENABLE_MQTT )); then
-    tail -f -n1 "$malmo_json_data" | mosquitto_pub -t observations/state -l &
-    pid_tail_malmo_json_data=$!
+    tail -f -n1 "$malmo_data" | mosquitto_pub -t observations/state -l &
+    pid_tail_malmo_data=$!
   fi
 
   while [ $try -lt $num_tries ]; do
@@ -151,7 +154,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
       --time_limit ${time_limit} \
       --record_observations \
       &> "${zombie_invasion_log}" \
-      >"${output_dir}"/malmo_data.json &
+      >"$malmo_data" &
     pid_runExperiment=$!
 
     echo "Running ${TOMCAT}/build/bin/runExperiment"
@@ -159,7 +162,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
     echo "    --time_limit ${time_limit}"
     echo "    --record_observations"
     echo "    &> ${zombie_invasion_log}"
-    echo "    > "${output_dir}"/malmo_data.json &"
+    echo "    > ${malmo_data} &"
     echo "Process ID corresponding to ./bin/runExperiment is $pid_runExperiment"
     echo "... waiting for it to complete."
 
