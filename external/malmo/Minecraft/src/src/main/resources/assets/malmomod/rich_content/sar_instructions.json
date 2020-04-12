@@ -1,0 +1,19 @@
+{
+  "pages": 
+  [
+    {
+      "text": 
+      [
+        "Save {0} villagers trapped in the buildings by bumping into them.", 
+        "Take care! You may have to battle some scary creatures on the way.",
+        "You have {1} to accomplish this goal.",
+        "",
+        "Press OK when you are ready to start."
+      ],
+      "images":
+      [ 
+        
+      ]
+    }
+  ]
+}

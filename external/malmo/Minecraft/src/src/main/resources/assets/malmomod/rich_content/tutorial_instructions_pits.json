@@ -1,0 +1,83 @@
+{
+  "pages": 
+  [
+    {
+      "text": [
+         "Press the keys W, A, S, D to move, drag your mouse", 
+         "to turn around and press space to jump. To sprint,",
+         "press the W key twice and hold it down."
+      ],
+      "images":
+      [ 
+        {
+          "texture": "textures1.png",
+          "caption": "Move",
+          "subcaption": "",
+          "originXInTexture": 0,
+          "originYInTexture": 64,
+          "width": 96,
+          "height": 64
+        },
+        {
+          "texture": "textures1.png",
+          "caption": "Jump",
+          "subcaption": "",
+          "originXInTexture": 96,
+          "originYInTexture": 64,
+          "width": 160,
+          "height": 64
+        },
+        {
+          "texture": "textures1.png",
+          "caption": "Turn Around",
+          "subcaption": "",
+          "originXInTexture": 64,
+          "originYInTexture": 0,
+          "width": 32,
+          "height": 32
+        }
+      ]
+    },
+    {
+      "text": [
+         "Head towards the lava and water pits to your right.", 
+         "Take care! If you fall into the lava pit, you will die.",
+         "If you fall into the water pit, keep pressing <Space>",
+         "until you reach the surface."
+      ],
+      "images":
+      [ 
+        {
+          "texture": "textures1.png",
+          "caption": "Water",
+          "subcaption": "",
+          "originXInTexture": 0,
+          "originYInTexture": 32,
+          "width": 32,
+          "height": 32
+        },
+        {
+          "texture": "textures1.png",
+          "caption": "Lava",
+          "subcaption": "",
+          "originXInTexture": 224,
+          "originYInTexture": 0,
+          "width": 32,
+          "height": 32
+        }
+      ]
+    },
+    {
+      "text": [
+         "If you want to see the instructions again during the mission,",
+         "just press the I key.",
+         "",
+         "Click OK when you are ready."
+      ],
+      "images":
+      [
+        
+      ]
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "pages": 
+  [
+    {
+      "text": [
+         "Every time you save a villager, the progress bar in the top-left,", 
+         "corner of your screen is updated.",
+         "Your bar is full because you saved all the villagers in this mission."         
+      ],    
+      "images":
+      [ 
+        {
+          "texture": "textures1.png",
+          "caption": "Progress Bar",
+          "subcaption": "",
+          "originXInTexture": 128,
+          "originYInTexture": 32,
+          "width": 96,
+          "height": 32
+        }
+      ]
+    },
+    {
+      "text": [
+         "Another type of door you may find during a mission is an iron door.",
+         "To open it, right-click on the center of the lever located to the",
+         "left of such door."
+      ],
+      "images":
+      [
+        {
+          "texture": "textures1.png",
+          "caption": "Lever",
+          "subcaption": "",
+          "originXInTexture": 32,
+          "originYInTexture": 32,
+          "width": 32,
+          "height": 32
+        }
+      ]
+    },
+    {
+      "text": [
+      	 "Finally, open the iron door in this room and leave the building to",
+         "complete the tutorial.",
+         "",
+         "Press OK when you are ready."
+      ],
+      "images":
+      [ 
+        
+      ]
+    }
+  ]
+}
