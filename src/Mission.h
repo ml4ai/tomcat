@@ -100,6 +100,7 @@ namespace tomcat {
     std::vector<std::shared_ptr<malmo::AgentHost>> minecraft_clients;
     std::shared_ptr<malmo::ClientPool> client_pool;
     std::vector<std::shared_ptr<LocalAgent>> tomcat_agents;
+    std::string uuid;
 
     /**
      * Creates the MissionSpec object based on the mission Id or XML file
