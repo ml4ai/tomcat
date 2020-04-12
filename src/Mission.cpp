@@ -80,8 +80,6 @@ namespace tomcat {
 
     if (this->record_observations) {
       this->mission_spec.observeRecentCommands();
-      this->mission_spec.observeHotBar();
-      this->mission_spec.observeFullInventory();
       this->mission_spec.observeChat();
     }
   }
@@ -197,7 +195,8 @@ namespace tomcat {
           print(stderr, "Not enough available Minecraft instances running.");
           attempts++;
           if (attempts < max_attempts) {
-            print(stderr, "Will wait in case they are starting up.",
+            print(stderr,
+                  "Will wait in case they are starting up.",
                   max_attempts - attempts,
                   "attempts left.");
             sleep_for(milliseconds(2000));
@@ -209,7 +208,8 @@ namespace tomcat {
                 "yet?");
           attempts++;
           if (attempts < max_attempts) {
-            print(stderr, "Will wait and retry.",
+            print(stderr,
+                  "Will wait and retry.",
                   max_attempts - attempts,
                   "attempts left.");
             sleep_for(milliseconds(2000));
@@ -311,33 +311,35 @@ namespace tomcat {
       }
 
       worldState = this->minecraft_server->peekWorldState();
-      json observation = json::parse(worldState.observations.at(0)->text);
-      json header = {};
-      string timestamp =
-          pt::to_iso_string(pt::microsec_clock::universal_time()) + "Z";
-      header["timestamp"] = timestamp;
-      header["message_type"] = "observation";
-      header["version"] = "0.2";
+      if (worldState.observations.size() != 0) {
+        json observation = json::parse(worldState.observations.at(0)->text);
+        json header = {};
+        string timestamp =
+            pt::to_iso_string(pt::microsec_clock::universal_time()) + "Z";
+        header["timestamp"] = timestamp;
+        header["message_type"] = "observation";
+        header["version"] = "0.2";
 
-      //# Message
-      json metadata = {};
-      metadata["trial_id"] = "experiment_id";
-      metadata["timestamp"] = timestamp;
-      metadata["source"] = "simulator";
-      metadata["sub_type"] = "state";
-      metadata["version"] = "0.2";
+        //# Message
+        json metadata = {};
+        metadata["trial_id"] = "experiment_id";
+        metadata["timestamp"] = timestamp;
+        metadata["source"] = "simulator";
+        metadata["sub_type"] = "state";
+        metadata["version"] = "0.2";
 
-      //# Data
-      json data = {};
-      data["name"] = "tomcat";
-      data["world_time"] = observation["WorldTime"];
-      data["total_time"] = observation["TotalTime"];
-      json message = {};
-      message["header"] = header;
-      message["msg"] = metadata;
-      message["data"] = observation;
+        //# Data
+        json data = {};
+        data["name"] = "tomcat";
+        data["world_time"] = observation["WorldTime"];
+        data["total_time"] = observation["TotalTime"];
+        json message = {};
+        message["header"] = header;
+        message["msg"] = metadata;
+        message["data"] = observation;
 
-      cout << message.dump() << endl;
+        cout << message.dump() << endl;
+      }
 
     } while (worldState.is_mission_running);
   }
