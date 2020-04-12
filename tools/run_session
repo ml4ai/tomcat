@@ -16,7 +16,7 @@ mkdir -p "${TOMCAT_TMP_DIR}"
 # the precaution of explicitly pointing rm to /bin/rm.
 export rm=/bin/rm
 
-"$TOMCAT"/tools/configure_session
+. "$TOMCAT"/tools/configure_session
 
 # A function to handle cleanup when a user interrupts the script with Ctrl+C
 user_interrupt() {
@@ -109,9 +109,8 @@ if [[ ${do_invasion} -eq 1 ]]; then
   echo "Recording player's screen."
   screen_video="${output_dir}"/screen_video.mpg
   ffmpeg -nostdin -f ${ffmpeg_fmt_screen_capture}\
-    -i $ffmpeg_screen_capture_input_device\
+    -i ${ffmpeg_input_device_screen_capture}\
     -s $dimensions\
-    -r 30\
     "$screen_video" >& "$TOMCAT_TMP_DIR"/screen_video_recording.log &
   screen_recording_pid=$!
 
