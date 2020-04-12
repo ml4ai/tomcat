@@ -1,0 +1,78 @@
+#!/bin/bash
+
+set -u
+
+export framerate_option=""
+export dimensions=$(xdpyinfo | grep dimensions | awk '{print $2;}')
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  export PATH="$PATH:/opt/local/bin:/opt/local/sbin"
+  if [[ "$TERM_PROGRAM" == "iTerm.app" ]]; then
+    export terminal="iTerm"
+  else
+    export terminal="Terminal"
+  fi
+
+  # On recent versions of macOS, we need to test whether the terminal has access
+  # to the webcam and microphone.
+
+  export ffmpeg_fmt_webcam=avfoundation
+  export ffmpeg_input_device_webcam="0:"
+
+  # The default input microphone would normally be ":0", but since we
+  # have installed BlackHole to record system audio, the input device
+  # corresponding to the microphone is ":1".
+  export ffmpeg_fmt_microphone=avfoundation
+  export ffmpeg_input_device_microphone=":1"
+
+  export ffmpeg_fmt_screen_capture=avfoundation
+  export ffmpeg_input_device_screen_capture="1:"
+
+  export ffmpeg_fmt_system_audio=avfoundation
+  export ffmpeg_input_device_system_audio=":0"
+
+  echo "Checking if webcam video recording works..."
+  if ! "${TOMCAT}"/tools/macos/test_webcam; then exit 1; fi
+
+  echo "Checking if system audio recording is set up..."
+  if ! "${TOMCAT}"/tools/macos/test_system_audio_recording; then exit 1; fi
+
+  echo "Testing terminal access to microphone..."
+  if ! "${TOMCAT}"/tools/macos/test_microphone; then exit 1; fi
+
+  echo "Testing screen capture..."
+  if ! "${TOMCAT}"/tools/macos/test_screen_recording; then exit 1; fi
+
+  # Trying to set the correct version of Java.
+  macports_found=`[ -x "$(command -v port)" ]; echo $?`
+  if [[ $macports_found -eq 0 ]]; then
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk8/Contents/Home
+  fi
+
+
+elif [[ "$OSTYPE" == "linux-gnu" ]]; then
+  export ffmpeg_fmt_webcam=v4l2
+  export ffmpeg_input_device_webcam=/dev/video0
+
+  export ffmpeg_fmt_microphone=alsa
+  export ffmpeg_input_device_microphone=default
+
+  export ffmpeg_fmt_screen_capture=x11grab
+  export ffmpeg_input_device_screen_capture=":0.0"
+else
+  echo "OSTYPE is not darwin* or linux-gnu."
+  echo "Most likely this operating system is not supported"
+  exit 1
+fi
+
+if [[ -n "${GITHUB_ACTIONS}" ]]; then
+  export time_limit=1
+  export do_tutorial=0
+  export mission=external/malmo/sample_missions/default_flat_1.xml
+else
+  export time_limit=600
+  export do_tutorial=1
+  export mission=1
+fi
+
+export do_invasion=1

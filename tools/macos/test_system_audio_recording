@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -u
+
+# Script to test if system audio recording is enabled.
+
+blackhole_is_setup=$(ffmpeg -f avfoundation -list_devices true -i "" 2>&1 | grep "\[0\] BlackHole 16ch")
+if [[ $blackhole_is_setup == "" ]]; then
+  echo "BlackHole system audio recording virtual output device is not set up."
+  echo "We will do it now."
+  if ! "$TOMCAT"/tools/macos/activate_system_audio_recording; then exit 1; fi
+fi
+
+exit 0
