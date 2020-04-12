@@ -11,4 +11,8 @@ if [[ $blackhole_is_setup == "" ]]; then
   if ! "$TOMCAT"/tools/macos/activate_system_audio_recording; then exit 1; fi
 fi
 
+# Switching the audio output from the multi-output device to the built-in
+# output.
+if ! SwitchAudioSource -s "Multi-Output Device"; then exit 1; fi
+
 exit 0
