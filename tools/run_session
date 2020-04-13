@@ -83,9 +83,11 @@ cleanup() {
   if ! "$TOMCAT"/tools/kill_minecraft; then exit 1; fi
   if [ ! "${GITHUB_ACTIONS:-false}" = "true" ]; then
     if [[ "$OSTYPE"  == "darwin"* ]]; then
-      # Switching the audio output from the multi-output device to the built-in
-      # output.
-      if ! SwitchAudioSource -s "Built-in Output"; then exit 1; fi
+      if (( "${ENABLE_SYSTEM_AUDIO_RECORDING:-1}" )); then
+        # Switching the audio output from the multi-output device to the
+        # built-in output.
+        if ! SwitchAudioSource -s "Built-in Output"; then exit 1; fi
+      fi
     fi
   fi
 
