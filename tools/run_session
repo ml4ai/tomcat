@@ -64,6 +64,7 @@ start_ffmpeg_recording() {
 
 
 cleanup() {
+  pkill "ffmpeg"
   "$TOMCAT"/tools/kill_minecraft
   if [ ! "${GITHUB_ACTIONS:-false}" = "true" ]; then
     if [[ "$OSTYPE"  == "darwin"* ]]; then
