@@ -64,7 +64,7 @@ start_ffmpeg_recording() {
 
 
 cleanup() {
-  #jobs -p | xargs kill
+  "$TOMCAT"/tools/kill_minecraft
   if [ ! "${GITHUB_ACTIONS:-false}" = "true" ]; then
     if [[ "$OSTYPE"  == "darwin"* ]]; then
       # Switching the audio output from the multi-output device to the built-in
@@ -88,7 +88,6 @@ user_interrupt() {
   echo "Detected keyboard interrupt."
   echo "Cleaning up now"
   cleanup
-  "$TOMCAT"/tools/kill_minecraft
   exit
 }
 
