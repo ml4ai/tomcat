@@ -170,8 +170,9 @@
   <span class="k">public</span><span class="o">:</span>
     <span class="k">enum</span> <span class="n">ErrorCode</span> <span class="p">{</span>
       <span class="n">CONNECTION_NOT_ESTABLISHED</span><span class="p">,</span>
-      <span class="n">TOMCAT_VAR_INEXISTENT</span><span class="p">,</span>
-      <span class="n">ERROR_STARTING_MISSION</span>
+      <span class="n">TOMCAT_ENV_VAR_NOT_SET</span><span class="p">,</span>
+      <span class="n">ERROR_STARTING_MISSION</span><span class="p">,</span>
+      <span class="n">WORLD_DIR_NOT_FOUND</span>
     <span class="p">};</span>
 
     <span class="n">TomcatMissionException</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">message</span><span class="p">,</span> <span class="n">ErrorCode</span> <span class="n">error_code</span><span class="p">)</span>
@@ -195,8 +196,7 @@
             <span class="kt">bool</span> <span class="n">record_observations</span><span class="p">,</span>
             <span class="kt">bool</span> <span class="n">record_commands</span><span class="p">,</span>
             <span class="kt">bool</span> <span class="n">record_rewards</span><span class="p">,</span>
-            <span class="kt">bool</span> <span class="n">multiplayer</span><span class="p">,</span>
-            <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">record_path</span> <span class="o">=</span> <span class="s">&quot;./saved_data.tgz&quot;</span><span class="p">);</span>
+            <span class="kt">bool</span> <span class="n">multiplayer</span><span class="p">);</span>
 
     <span class="o">~</span><span class="n">Mission</span><span class="p">(){};</span>
 
@@ -207,7 +207,7 @@
     <span class="kt">void</span> <span class="nf">send_command</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">command</span><span class="p">);</span>
 
   <span class="k">private</span><span class="o">:</span>
-    <span class="k">enum</span> <span class="n">MissionId</span> <span class="p">{</span> <span class="n">TUTORIAL</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">SAR</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">};</span>
+    <span class="k">enum</span> <span class="n">MissionId</span> <span class="p">{</span> <span class="n">TUTORIAL</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ZOMBIE</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">USAR_SINGLEPLAYER</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">};</span>
 
     <span class="n">malmo</span><span class="o">::</span><span class="n">MissionSpec</span> <span class="n">mission_spec</span><span class="p">;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">mission_id_or_path</span><span class="p">;</span>
@@ -218,18 +218,19 @@
     <span class="kt">bool</span> <span class="n">record_commands</span><span class="p">;</span>
     <span class="kt">bool</span> <span class="n">record_rewards</span><span class="p">;</span>
     <span class="kt">bool</span> <span class="n">multiplayer</span><span class="p">;</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">record_path</span> <span class="o">=</span> <span class="s">&quot;./saved_data.tgz&quot;</span><span class="p">;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">malmo</span><span class="o">::</span><span class="n">AgentHost</span><span class="o">&gt;</span> <span class="n">minecraft_server</span><span class="p">;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">malmo</span><span class="o">::</span><span class="n">AgentHost</span><span class="o">&gt;&gt;</span> <span class="n">minecraft_clients</span><span class="p">;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">malmo</span><span class="o">::</span><span class="n">ClientPool</span><span class="o">&gt;</span> <span class="n">client_pool</span><span class="p">;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">LocalAgent</span><span class="o">&gt;&gt;</span> <span class="n">tomcat_agents</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">uuid</span><span class="p">;</span>
 
     <span class="kt">void</span> <span class="nf">create_mission_spec</span><span class="p">();</span>
 
     <span class="kr">inline</span> <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">unordered_map</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">id_to_world_folder_map</span> <span class="o">=</span>
         <span class="p">{</span>
             <span class="p">{</span><span class="n">TUTORIAL</span><span class="p">,</span> <span class="s">&quot;tutorial&quot;</span><span class="p">},</span>
-            <span class="p">{</span><span class="n">SAR</span><span class="p">,</span> <span class="s">&quot;sar&quot;</span><span class="p">},</span>
+            <span class="p">{</span><span class="n">ZOMBIE</span><span class="p">,</span> <span class="s">&quot;zombie&quot;</span><span class="p">},</span>
+            <span class="p">{</span><span class="n">USAR_SINGLEPLAYER</span><span class="p">,</span> <span class="s">&quot;Singleplayer&quot;</span><span class="p">},</span>
     <span class="p">};</span>
 
     <span class="kt">void</span> <span class="nf">create_client_pool</span><span class="p">();</span>

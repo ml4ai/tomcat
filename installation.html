@@ -161,7 +161,7 @@
 <p>The following commands should install ToMCAT and its dependencies for macOS and
 Ubuntu (tested with Ubuntu 18.04) users:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/ml4ai/tomcat
-<span class="nb">cd</span> tomcat <span class="o">&amp;&amp;</span> ./tools/install.sh
+<span class="nb">cd</span> tomcat <span class="o">&amp;&amp;</span> ./tools/install
 </pre></div>
 </div>
 <p>For people using other operating systems, note that ToMCAT
@@ -176,7 +176,7 @@ Windows support are welcome.</p>
 <div class="section" id="running-experiments">
 <h2>Running experiments<a class="headerlink" href="#running-experiments" title="Permalink to this headline">¶</a></h2>
 <p>To run an experiment, run the following command from the <code class="docutils literal notranslate"><span class="pre">tomcat</span></code> directory.</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="o">/</span><span class="n">tools</span><span class="o">/</span><span class="n">run_session</span><span class="p">.</span><span class="n">sh</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="o">/</span><span class="n">tools</span><span class="o">/</span><span class="n">run_session</span>
 </pre></div>
 </div>
 <p>The data from the experiment will be saved in a folder whose name contains a
@@ -184,7 +184,7 @@ timestamp corresponding to the start of the experiment, of the form</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">tomcat</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">participant_data</span><span class="o">/</span><span class="n">session_</span><span class="o">&lt;</span><span class="n">Year</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">Month</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">Day</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">Hour</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">Minute</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">Second</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<p>This folder will contain four files:</p>
+<p>This folder will contain six files:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">webcam_video.mpg</span></code> : A video recording of the player’s face taken using the built-in
 webcam.</p></li>
@@ -198,13 +198,11 @@ such as players interacting with doors, buttons, and levers, or attacking
 monsters.</p></li>
 <li><p>A JSON file with self-report survey responses.</p></li>
 </ul>
+<p>(The self-report survey responses may not be generated if you finish the
+mission too quickly).</p>
 <p>To interrupt the game and quit at any time, press the <code class="docutils literal notranslate"><span class="pre">Esc</span></code> key, then click on
 the terminal window where you ran the <code class="docutils literal notranslate"><span class="pre">run_session.sh</span></code> script, and then
-interrupt the process with <code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code>. Then, run the following command to shut
-down Minecraft.</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="o">/</span><span class="n">tools</span><span class="o">/</span><span class="n">kill_minecraft</span><span class="p">.</span><span class="n">sh</span>
-</pre></div>
-</div>
+interrupt the process with <code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code>.</p>
 </div>
 <div class="section" id="for-developers">
 <h2>For developers<a class="headerlink" href="#for-developers" title="Permalink to this headline">¶</a></h2>

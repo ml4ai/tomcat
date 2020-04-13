@@ -157,18 +157,24 @@
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;Mission.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;FileHandler.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;LocalAgent.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;utils.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;boost/date_time/posix_time/posix_time.hpp&gt;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&lt;boost/filesystem.hpp&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;ctime&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;boost/uuid/uuid.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;boost/uuid/uuid_io.hpp&gt;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&lt;fmt/format.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;nlohmann/json.hpp&gt;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&lt;sstream&gt;</span><span class="cp"></span>
 
 <span class="k">using</span> <span class="k">namespace</span> <span class="n">malmo</span><span class="p">;</span>
 <span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
-<span class="k">using</span> <span class="n">boost</span><span class="o">::</span><span class="n">filesystem</span><span class="o">::</span><span class="n">path</span><span class="p">;</span>
 <span class="k">using</span> <span class="n">fmt</span><span class="o">::</span><span class="n">format</span><span class="p">;</span>
 <span class="k">using</span> <span class="n">fmt</span><span class="o">::</span><span class="n">print</span><span class="p">;</span>
 <span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="p">;</span>
 <span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">this_thread</span><span class="p">;</span>
+<span class="k">using</span> <span class="n">json</span> <span class="o">=</span> <span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span><span class="p">;</span>
+<span class="k">namespace</span> <span class="n">pt</span> <span class="o">=</span> <span class="n">boost</span><span class="o">::</span><span class="n">posix_time</span><span class="p">;</span>
+<span class="k">namespace</span> <span class="n">fs</span> <span class="o">=</span> <span class="n">boost</span><span class="o">::</span><span class="n">filesystem</span><span class="p">;</span>
 
 <span class="k">namespace</span> <span class="n">tomcat</span> <span class="p">{</span>
 
@@ -179,8 +185,7 @@
                    <span class="kt">bool</span> <span class="n">record_observations</span><span class="p">,</span>
                    <span class="kt">bool</span> <span class="n">record_commands</span><span class="p">,</span>
                    <span class="kt">bool</span> <span class="n">record_rewards</span><span class="p">,</span>
-                   <span class="kt">bool</span> <span class="n">multiplayer</span><span class="p">,</span>
-                   <span class="n">string</span> <span class="n">record_path</span><span class="p">)</span> <span class="p">{</span>
+                   <span class="kt">bool</span> <span class="n">multiplayer</span><span class="p">)</span> <span class="p">{</span>
 
     <span class="k">this</span><span class="o">-&gt;</span><span class="n">mission_id_or_path</span> <span class="o">=</span> <span class="n">mission_id_or_path</span><span class="p">;</span>
     <span class="k">this</span><span class="o">-&gt;</span><span class="n">time_limit_in_seconds</span> <span class="o">=</span> <span class="n">time_limit_in_seconds</span><span class="p">;</span>
@@ -191,7 +196,7 @@
     <span class="k">this</span><span class="o">-&gt;</span><span class="n">record_commands</span> <span class="o">=</span> <span class="n">record_commands</span><span class="p">;</span>
     <span class="k">this</span><span class="o">-&gt;</span><span class="n">record_rewards</span> <span class="o">=</span> <span class="n">record_rewards</span><span class="p">;</span>
     <span class="k">this</span><span class="o">-&gt;</span><span class="n">multiplayer</span> <span class="o">=</span> <span class="n">multiplayer</span><span class="p">;</span>
-    <span class="k">this</span><span class="o">-&gt;</span><span class="n">record_path</span> <span class="o">=</span> <span class="n">record_path</span><span class="p">;</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">uuid</span> <span class="o">=</span> <span class="n">boost</span><span class="o">::</span><span class="n">uuids</span><span class="o">::</span><span class="n">to_string</span><span class="p">(</span><span class="n">boost</span><span class="o">::</span><span class="n">uuids</span><span class="o">::</span><span class="n">uuid</span><span class="p">());</span>
   <span class="p">}</span>
 
   <span class="kt">void</span> <span class="n">Mission</span><span class="o">::</span><span class="n">add_listener</span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">LocalAgent</span><span class="o">&gt;</span> <span class="n">tomcat_agent</span><span class="p">)</span> <span class="p">{</span>
@@ -219,21 +224,19 @@
   <span class="p">}</span>
 
   <span class="kt">void</span> <span class="n">Mission</span><span class="o">::</span><span class="n">create_mission_spec</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">path</span> <span class="n">p</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">mission_id_or_path</span><span class="p">);</span>
+    <span class="n">fs</span><span class="o">::</span><span class="n">path</span> <span class="n">p</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">mission_id_or_path</span><span class="p">);</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">extension</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;.xml&quot;</span><span class="p">)</span> <span class="p">{</span>
       <span class="n">string</span> <span class="n">xml</span> <span class="o">=</span> <span class="n">FileHandler</span><span class="o">::</span><span class="n">getFileContent</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">mission_id_or_path</span><span class="p">);</span>
       <span class="k">this</span><span class="o">-&gt;</span><span class="n">mission_spec</span> <span class="o">=</span> <span class="n">MissionSpec</span><span class="p">(</span><span class="n">xml</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span>
       <span class="k">this</span><span class="o">-&gt;</span><span class="n">mission_spec</span><span class="p">.</span><span class="n">timeLimitInSeconds</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">time_limit_in_seconds</span><span class="p">);</span>
     <span class="p">}</span>
     <span class="k">else</span> <span class="p">{</span>
-      <span class="n">string</span> <span class="n">xml</span> <span class="o">=</span> <span class="n">get_world_skeleton_from_xml</span><span class="p">();</span>
+      <span class="n">string</span> <span class="n">xml</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">get_world_skeleton_from_xml</span><span class="p">();</span>
       <span class="k">this</span><span class="o">-&gt;</span><span class="n">mission_spec</span> <span class="o">=</span> <span class="n">MissionSpec</span><span class="p">(</span><span class="n">xml</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">record_observations</span><span class="p">)</span> <span class="p">{</span>
       <span class="k">this</span><span class="o">-&gt;</span><span class="n">mission_spec</span><span class="p">.</span><span class="n">observeRecentCommands</span><span class="p">();</span>
-      <span class="k">this</span><span class="o">-&gt;</span><span class="n">mission_spec</span><span class="p">.</span><span class="n">observeHotBar</span><span class="p">();</span>
-      <span class="k">this</span><span class="o">-&gt;</span><span class="n">mission_spec</span><span class="p">.</span><span class="n">observeFullInventory</span><span class="p">();</span>
       <span class="k">this</span><span class="o">-&gt;</span><span class="n">mission_spec</span><span class="p">.</span><span class="n">observeChat</span><span class="p">();</span>
     <span class="p">}</span>
   <span class="p">}</span>
@@ -241,12 +244,33 @@
   <span class="n">string</span> <span class="n">Mission</span><span class="o">::</span><span class="n">get_world_skeleton_from_xml</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">getenv</span><span class="p">(</span><span class="s">&quot;TOMCAT&quot;</span><span class="p">))</span> <span class="p">{</span>
       <span class="k">throw</span> <span class="n">TomcatMissionException</span><span class="p">(</span>
-          <span class="s">&quot;TOMCAT environment variable does not exist.&quot;</span><span class="p">,</span>
-          <span class="n">TomcatMissionException</span><span class="o">::</span><span class="n">TOMCAT_VAR_INEXISTENT</span><span class="p">);</span>
+          <span class="s">&quot;The TOMCAT environment variable has not been set!</span><span class="se">\n</span><span class="s">&quot;</span>
+          <span class="s">&quot;Please set it to the location of your local copy of the tomcat</span><span class="se">\n</span><span class="s">&quot;</span>
+          <span class="s">&quot;repository, or use the run_session script, which automatically sets &quot;</span>
+          <span class="s">&quot;it.&quot;</span><span class="p">,</span>
+          <span class="n">TomcatMissionException</span><span class="o">::</span><span class="n">TOMCAT_ENV_VAR_NOT_SET</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="n">string</span> <span class="n">agent_section_tags</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">create_agent_section_tags</span><span class="p">();</span>
 
+    <span class="n">string</span> <span class="n">world_dir</span> <span class="o">=</span>
+        <span class="n">Mission</span><span class="o">::</span><span class="n">id_to_world_folder_map</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">stoi</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">mission_id_or_path</span><span class="p">));</span>
+
+    <span class="n">string</span> <span class="n">world_dir_path</span> <span class="o">=</span>
+        <span class="n">format</span><span class="p">(</span><span class="s">&quot;{}data/worlds/{}&quot;</span><span class="p">,</span> <span class="n">getenv</span><span class="p">(</span><span class="s">&quot;TOMCAT&quot;</span><span class="p">),</span> <span class="n">world_dir</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">fs</span><span class="o">::</span><span class="n">exists</span><span class="p">(</span><span class="n">fs</span><span class="o">::</span><span class="n">path</span><span class="p">(</span><span class="n">world_dir_path</span><span class="p">)))</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="n">TomcatMissionException</span><span class="p">(</span>
+          <span class="n">format</span><span class="p">(</span><span class="s">&quot;Requested world directory {} not found.</span><span class="se">\n</span><span class="s">&quot;</span>
+                 <span class="s">&quot;Please download the world files by executing the &quot;</span>
+                 <span class="s">&quot;{}tools/download/tomcat_worlds script.</span><span class="se">\n</span><span class="s">&quot;</span>
+                 <span class="s">&quot;Note: The world file for mission ID 2 (USAR Singleplayer) is &quot;</span>
+                 <span class="s">&quot;currently only available to teams participating in DARPA&#39;s &quot;</span>
+                 <span class="s">&quot;ASIST program.&quot;</span><span class="p">,</span>
+                 <span class="n">world_dir_path</span><span class="p">,</span>
+                 <span class="n">getenv</span><span class="p">(</span><span class="s">&quot;TOMCAT&quot;</span><span class="p">)),</span>
+          <span class="n">TomcatMissionException</span><span class="o">::</span><span class="n">WORLD_DIR_NOT_FOUND</span><span class="p">);</span>
+    <span class="p">}</span>
     <span class="n">string</span> <span class="n">xml</span> <span class="o">=</span> <span class="n">format</span><span class="p">(</span>
         <span class="sa">R</span><span class="s">&quot;</span><span class="dl">(</span><span class="s"></span>
 <span class="s">        &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
@@ -274,7 +298,7 @@
 <span class="s">          {}</span>
 <span class="s">        &lt;/Mission&gt;</span><span class="dl">)</span><span class="s">&quot;</span><span class="p">,</span>
         <span class="n">getenv</span><span class="p">(</span><span class="s">&quot;TOMCAT&quot;</span><span class="p">),</span>
-        <span class="n">Mission</span><span class="o">::</span><span class="n">id_to_world_folder_map</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">stoi</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">mission_id_or_path</span><span class="p">)),</span>
+        <span class="n">world_dir</span><span class="p">,</span>
         <span class="k">this</span><span class="o">-&gt;</span><span class="n">mission_id_or_path</span><span class="p">,</span>
         <span class="k">this</span><span class="o">-&gt;</span><span class="n">time_limit_in_seconds</span><span class="p">,</span>
         <span class="k">this</span><span class="o">-&gt;</span><span class="n">self_report_prompt_time_in_seconds</span><span class="p">,</span>
@@ -294,6 +318,8 @@
       <span class="k">else</span> <span class="p">{</span>
         <span class="n">agent_name</span> <span class="o">=</span> <span class="n">format</span><span class="p">(</span><span class="s">&quot;{}:{}&quot;</span><span class="p">,</span> <span class="n">client</span><span class="o">-&gt;</span><span class="n">ip_address</span><span class="p">,</span> <span class="n">client</span><span class="o">-&gt;</span><span class="n">control_port</span><span class="p">);</span>
       <span class="p">}</span>
+      <span class="c1">// For USAR_SINGLEPLAYER mission: &lt;Placement x=&quot;-2165&quot; y=&quot;52&quot; z=&quot;175&quot;/&gt;</span>
+
       <span class="n">ss</span> <span class="o">&lt;&lt;</span> <span class="n">format</span><span class="p">(</span><span class="sa">R</span><span class="s">&quot;</span><span class="dl">(</span><span class="s">&lt;AgentSection mode=&quot;Adventure&quot;&gt;</span>
 <span class="s">              &lt;Name&gt;{}&lt;/Name&gt;</span>
 <span class="s">              &lt;AgentStart&gt;</span>
@@ -340,40 +366,43 @@
       <span class="k">catch</span> <span class="p">(</span><span class="n">MissionException</span><span class="o">&amp;</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">switch</span> <span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">getMissionErrorCode</span><span class="p">())</span> <span class="p">{</span>
         <span class="k">case</span> <span class="n">malmo</span><span class="o">::</span><span class="n">MissionException</span><span class="o">::</span><span class="nl">MISSION_SERVER_WARMING_UP</span><span class="p">:</span>
-          <span class="n">print</span><span class="p">(</span><span class="s">&quot;Server not quite ready yet - waiting...&quot;</span><span class="p">);</span>
+          <span class="n">print</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;Server not quite ready yet - waiting...&quot;</span><span class="p">);</span>
           <span class="n">sleep_for</span><span class="p">(</span><span class="n">milliseconds</span><span class="p">(</span><span class="mi">2000</span><span class="p">));</span>
           <span class="k">break</span><span class="p">;</span>
         <span class="k">case</span> <span class="n">malmo</span><span class="o">::</span><span class="n">MissionException</span><span class="o">::</span><span class="nl">MISSION_INSUFFICIENT_CLIENTS_AVAILABLE</span><span class="p">:</span>
-          <span class="n">print</span><span class="p">(</span><span class="s">&quot;Not enough available Minecraft instances running.&quot;</span><span class="p">);</span>
+          <span class="n">print</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;Not enough available Minecraft instances running.&quot;</span><span class="p">);</span>
           <span class="n">attempts</span><span class="o">++</span><span class="p">;</span>
           <span class="k">if</span> <span class="p">(</span><span class="n">attempts</span> <span class="o">&lt;</span> <span class="n">max_attempts</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">print</span><span class="p">(</span><span class="s">&quot;Will wait in case they are starting up.&quot;</span><span class="p">,</span>
+            <span class="n">print</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span>
+                  <span class="s">&quot;Will wait in case they are starting up.&quot;</span><span class="p">,</span>
                   <span class="n">max_attempts</span> <span class="o">-</span> <span class="n">attempts</span><span class="p">,</span>
                   <span class="s">&quot;attempts left.&quot;</span><span class="p">);</span>
             <span class="n">sleep_for</span><span class="p">(</span><span class="n">milliseconds</span><span class="p">(</span><span class="mi">2000</span><span class="p">));</span>
           <span class="p">}</span>
           <span class="k">break</span><span class="p">;</span>
         <span class="k">case</span> <span class="n">malmo</span><span class="o">::</span><span class="n">MissionException</span><span class="o">::</span><span class="nl">MISSION_SERVER_NOT_FOUND</span><span class="p">:</span>
-          <span class="n">print</span><span class="p">(</span><span class="s">&quot;Server not found - has the mission with role 0 been started &quot;</span>
+          <span class="n">print</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span>
+                <span class="s">&quot;Server not found - has the mission with role 0 been started &quot;</span>
                 <span class="s">&quot;yet?&quot;</span><span class="p">);</span>
           <span class="n">attempts</span><span class="o">++</span><span class="p">;</span>
           <span class="k">if</span> <span class="p">(</span><span class="n">attempts</span> <span class="o">&lt;</span> <span class="n">max_attempts</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">print</span><span class="p">(</span><span class="s">&quot;Will wait and retry.&quot;</span><span class="p">,</span>
+            <span class="n">print</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span>
+                  <span class="s">&quot;Will wait and retry.&quot;</span><span class="p">,</span>
                   <span class="n">max_attempts</span> <span class="o">-</span> <span class="n">attempts</span><span class="p">,</span>
                   <span class="s">&quot;attempts left.&quot;</span><span class="p">);</span>
             <span class="n">sleep_for</span><span class="p">(</span><span class="n">milliseconds</span><span class="p">(</span><span class="mi">2000</span><span class="p">));</span>
           <span class="p">}</span>
           <span class="k">break</span><span class="p">;</span>
         <span class="k">default</span><span class="o">:</span>
-          <span class="n">print</span><span class="p">(</span><span class="s">&quot;Other error&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">.</span><span class="n">getMessage</span><span class="p">());</span>
-          <span class="n">print</span><span class="p">(</span><span class="s">&quot;Waiting will not help here - bailing immediately.&quot;</span><span class="p">);</span>
+          <span class="n">print</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;Other error&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">.</span><span class="n">getMessage</span><span class="p">());</span>
+          <span class="n">print</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;Waiting will not help here - bailing immediately.&quot;</span><span class="p">);</span>
           <span class="k">throw</span> <span class="nf">TomcatMissionException</span><span class="p">(</span>
               <span class="s">&quot;Could not establish connection with the host.&quot;</span><span class="p">,</span>
               <span class="n">TomcatMissionException</span><span class="o">::</span><span class="n">CONNECTION_NOT_ESTABLISHED</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="n">attempts</span> <span class="o">==</span> <span class="n">max_attempts</span><span class="p">)</span> <span class="p">{</span>
-          <span class="n">print</span><span class="p">(</span><span class="s">&quot;All chances used up - bailing now.&quot;</span><span class="p">);</span>
+          <span class="n">print</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;All chances used up - bailing now.&quot;</span><span class="p">);</span>
           <span class="k">throw</span> <span class="nf">TomcatMissionException</span><span class="p">(</span>
               <span class="s">&quot;Could not establish connection with the host.&quot;</span><span class="p">,</span>
               <span class="n">TomcatMissionException</span><span class="o">::</span><span class="n">CONNECTION_NOT_ESTABLISHED</span><span class="p">);</span>
@@ -385,7 +414,7 @@
   <span class="p">}</span>
 
   <span class="n">MissionRecordSpec</span> <span class="n">Mission</span><span class="o">::</span><span class="n">get_mission_record_spec</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">MissionRecordSpec</span> <span class="n">mission_record_spec</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">record_path</span><span class="p">);</span>
+    <span class="n">MissionRecordSpec</span> <span class="n">mission_record_spec</span><span class="p">;</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">record_observations</span><span class="p">)</span> <span class="p">{</span>
       <span class="n">mission_record_spec</span><span class="p">.</span><span class="n">recordObservations</span><span class="p">();</span>
@@ -421,9 +450,9 @@
       <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">number_of_hosts</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">WorldState</span> <span class="n">world_state</span> <span class="o">=</span> <span class="n">hosts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">peekWorldState</span><span class="p">();</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">world_state</span><span class="p">.</span><span class="n">errors</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
-          <span class="n">print</span><span class="p">(</span><span class="s">&quot;Errors waiting for mission start:&quot;</span><span class="p">);</span>
+          <span class="n">print</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;Errors waiting for mission start:&quot;</span><span class="p">);</span>
           <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">error</span> <span class="p">:</span> <span class="n">world_state</span><span class="p">.</span><span class="n">errors</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">print</span><span class="p">(</span><span class="n">error</span><span class="o">-&gt;</span><span class="n">text</span><span class="p">);</span>
+            <span class="n">print</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="n">error</span><span class="o">-&gt;</span><span class="n">text</span><span class="p">);</span>
           <span class="p">}</span>
           <span class="k">throw</span> <span class="n">TomcatMissionException</span><span class="p">(</span>
               <span class="s">&quot;Could not start the mission.&quot;</span><span class="p">,</span>
@@ -441,7 +470,7 @@
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">elapsed_time_in_seconds</span> <span class="o">&gt;=</span> <span class="n">max_seconds_to_start</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">print</span><span class="p">(</span><span class="s">&quot;Timed out waiting for mission to begin. Bailing.&quot;</span><span class="p">);</span>
+      <span class="n">print</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;Timed out waiting for mission to begin. Bailing.&quot;</span><span class="p">);</span>
       <span class="k">throw</span> <span class="nf">TomcatMissionException</span><span class="p">(</span>
           <span class="s">&quot;Timed out waiting for mission to begin.&quot;</span><span class="p">,</span>
           <span class="n">TomcatMissionException</span><span class="o">::</span><span class="n">ERROR_STARTING_MISSION</span><span class="p">);</span>
@@ -451,12 +480,46 @@
   <span class="kt">void</span> <span class="n">Mission</span><span class="o">::</span><span class="n">observe</span><span class="p">()</span> <span class="p">{</span>
     <span class="n">WorldState</span> <span class="n">worldState</span><span class="p">;</span>
     <span class="k">do</span> <span class="p">{</span>
-      <span class="n">sleep_for</span><span class="p">(</span><span class="n">milliseconds</span><span class="p">(</span><span class="mi">10</span><span class="p">));</span>
+      <span class="c1">// Minecraft normally runs at a fixed rate of 20 ticks per second</span>
+      <span class="c1">// (https://minecraft.gamepedia.com/Tick), so we set the sleep duration to</span>
+      <span class="c1">// 50 ms.</span>
+      <span class="n">sleep_for</span><span class="p">(</span><span class="n">milliseconds</span><span class="p">(</span><span class="mi">50</span><span class="p">));</span>
       <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">tomcat_agent</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">tomcat_agents</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">tomcat_agent</span><span class="o">-&gt;</span><span class="n">observe_mission</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">);</span>
       <span class="p">}</span>
 
-      <span class="n">worldState</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">minecraft_server</span><span class="o">-&gt;</span><span class="n">getWorldState</span><span class="p">();</span>
+      <span class="n">worldState</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">minecraft_server</span><span class="o">-&gt;</span><span class="n">peekWorldState</span><span class="p">();</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">worldState</span><span class="p">.</span><span class="n">observations</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">json</span> <span class="n">observation</span> <span class="o">=</span> <span class="n">json</span><span class="o">::</span><span class="n">parse</span><span class="p">(</span><span class="n">worldState</span><span class="p">.</span><span class="n">observations</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">text</span><span class="p">);</span>
+        <span class="n">json</span> <span class="n">header</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="n">string</span> <span class="n">timestamp</span> <span class="o">=</span>
+            <span class="n">pt</span><span class="o">::</span><span class="n">to_iso_extended_string</span><span class="p">(</span><span class="n">pt</span><span class="o">::</span><span class="n">microsec_clock</span><span class="o">::</span><span class="n">universal_time</span><span class="p">())</span> <span class="o">+</span>
+            <span class="s">&quot;Z&quot;</span><span class="p">;</span>
+        <span class="n">header</span><span class="p">[</span><span class="s">&quot;timestamp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">timestamp</span><span class="p">;</span>
+        <span class="n">header</span><span class="p">[</span><span class="s">&quot;message_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;observation&quot;</span><span class="p">;</span>
+        <span class="n">header</span><span class="p">[</span><span class="s">&quot;version&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;0.2&quot;</span><span class="p">;</span>
+
+        <span class="c1">//# Message</span>
+        <span class="n">json</span> <span class="n">metadata</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="n">metadata</span><span class="p">[</span><span class="s">&quot;trial_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">uuid</span><span class="p">;</span>
+        <span class="n">metadata</span><span class="p">[</span><span class="s">&quot;timestamp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">timestamp</span><span class="p">;</span>
+        <span class="n">metadata</span><span class="p">[</span><span class="s">&quot;source&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;human&quot;</span><span class="p">;</span>
+        <span class="n">metadata</span><span class="p">[</span><span class="s">&quot;sub_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;state&quot;</span><span class="p">;</span>
+        <span class="n">metadata</span><span class="p">[</span><span class="s">&quot;version&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;0.2&quot;</span><span class="p">;</span>
+
+        <span class="c1">//# Data</span>
+        <span class="n">json</span> <span class="n">data</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="n">data</span><span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;tomcat&quot;</span><span class="p">;</span>
+        <span class="n">data</span><span class="p">[</span><span class="s">&quot;world_time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">observation</span><span class="p">[</span><span class="s">&quot;WorldTime&quot;</span><span class="p">];</span>
+        <span class="n">data</span><span class="p">[</span><span class="s">&quot;total_time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">observation</span><span class="p">[</span><span class="s">&quot;TotalTime&quot;</span><span class="p">];</span>
+        <span class="n">json</span> <span class="n">message</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="n">message</span><span class="p">[</span><span class="s">&quot;header&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">header</span><span class="p">;</span>
+        <span class="n">message</span><span class="p">[</span><span class="s">&quot;msg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">;</span>
+        <span class="n">message</span><span class="p">[</span><span class="s">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">observation</span><span class="p">;</span>
+
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">message</span><span class="p">.</span><span class="n">dump</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+      <span class="p">}</span>
+
     <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">worldState</span><span class="p">.</span><span class="n">is_mission_running</span><span class="p">);</span>
   <span class="p">}</span>
 

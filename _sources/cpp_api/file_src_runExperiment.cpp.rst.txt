@@ -35,8 +35,6 @@ Includes
 
 - ``boost/program_options.hpp``
 
-- ``fmt/format.h``
-
 - ``string``
 
 - ``utils.h`` (:ref:`file_src_utils.h`)
@@ -51,8 +49,6 @@ Namespaces
 
 
 - :ref:`namespace_boost__program_options`
-
-- :ref:`namespace_fmt__literals`
 
 
 Functions

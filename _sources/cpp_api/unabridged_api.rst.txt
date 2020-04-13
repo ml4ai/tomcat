@@ -14,11 +14,6 @@ Namespaces
 .. toctree::
    :maxdepth: 5
 
-   namespace_fmt__literals.rst
-
-.. toctree::
-   :maxdepth: 5
-
    namespace_malmo.rst
 
 .. toctree::
@@ -102,9 +97,13 @@ Functions
 .. toctree::
    :maxdepth: 5
 
-   function_Python__wrapper_8cpp_1adb856795385767461d388a98e4faa143.rst
+   function_utils_8cpp_1a064ef9f4e2f086296b2169d54ae2f263.rst
+
+Typedefs
+********
+
 
 .. toctree::
    :maxdepth: 5
 
-   function_utils_8cpp_1a064ef9f4e2f086296b2169d54ae2f263.rst
+   typedef_Mission_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d.rst

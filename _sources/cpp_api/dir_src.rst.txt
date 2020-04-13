@@ -17,7 +17,6 @@ Files
 - :ref:`file_src_LocalAgent.h`
 - :ref:`file_src_Mission.cpp`
 - :ref:`file_src_Mission.h`
-- :ref:`file_src_Python_wrapper.cpp`
 - :ref:`file_src_runExperiment.cpp`
 - :ref:`file_src_utils.cpp`
 - :ref:`file_src_utils.h`

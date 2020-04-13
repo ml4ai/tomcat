@@ -50,11 +50,6 @@ Files
 .. toctree::
    :maxdepth: 5
 
-   file_src_Python_wrapper.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
    file_src_runExperiment.cpp.rst
 
 .. toctree::

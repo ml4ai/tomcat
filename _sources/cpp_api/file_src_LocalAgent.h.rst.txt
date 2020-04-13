@@ -35,8 +35,6 @@ Included By
 
 - :ref:`file_src_Mission.cpp`
 
-- :ref:`file_src_Python_wrapper.cpp`
-
 - :ref:`file_src_runExperiment.cpp`
 
 
