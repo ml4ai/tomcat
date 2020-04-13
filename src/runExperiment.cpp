@@ -13,10 +13,12 @@ options_description load_options() {
   options.add_options()("help,h", "Executable for running ToMCAT experiments.")(
       "mission",
       value<string>()->default_value("0"),
-      "Id or path to mission XML file.\n0: Tutorial\n1: Zombie Invasion")(
-      "time_limit",
-      value<unsigned int>()->default_value(20),
-      "Time limit for mission (in seconds).")(
+      "Mission ID or path to mission XML file.\n"
+      "  0: Tutorial\n"
+      "  1: Zombie Invasion\n"
+      "  2: USAR (Singleplayer)")("time_limit",
+                                value<unsigned int>()->default_value(20),
+                                "Time limit for mission (in seconds).")(
       "self_report",
       value<unsigned int>()->default_value(180),
       "Self-report prompt interval time (in seconds).")(
