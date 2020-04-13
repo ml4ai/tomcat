@@ -8,13 +8,10 @@ import net.minecraftforge.common.MinecraftForge;
 
 public class USARSinglePlayerClientMission extends ClientMission {
 
-  public USARSinglePlayerClientMission() {
-    super();
-  }
+  public USARSinglePlayerClientMission() { super(); }
 
   @Override
   public void handleMessageFromServer(TomcatMessage message) {
     super.handleMessageFromServer(message);
   }
-
 }

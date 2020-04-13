@@ -1,8 +1,8 @@
 package edu.arizona.tomcat.Mission.gui;
 
 import com.microsoft.Malmo.MalmoMod;
-import edu.arizona.tomcat.Mission.Client.ZombieClientMission;
 import edu.arizona.tomcat.Mission.Client.TutorialClientMission;
+import edu.arizona.tomcat.Mission.Client.ZombieClientMission;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.util.ResourceLocation;

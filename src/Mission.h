@@ -83,7 +83,7 @@ namespace tomcat {
     void send_command(std::string command);
 
   private:
-    enum MissionId { TUTORIAL = 0, ZOMBIE = 1 , USAR_SINGLEPLAYER = 2};
+    enum MissionId { TUTORIAL = 0, ZOMBIE = 1, USAR_SINGLEPLAYER = 2 };
 
     malmo::MissionSpec mission_spec;
     std::string mission_id_or_path;

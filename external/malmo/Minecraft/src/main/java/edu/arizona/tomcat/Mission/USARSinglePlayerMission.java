@@ -157,7 +157,6 @@ public class USARSinglePlayerMission extends Mission {
     selfReportContent.setTextPlaceholder(
         2, String.format("%.2f", player.getMaxHealth()));
     return selfReportContent;
-
   }
 
   @Override
