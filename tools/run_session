@@ -169,8 +169,8 @@ if (( ${do_main_mission:-1} )); then
     echo "Process ID corresponding to ./bin/runExperiment is $pid_runExperiment"
     echo "... waiting for it to complete."
 
-    wait $pid_runExperiment
-    main_mission_status=$?
+    wait $pid_runExperiment && main_mission_status=$? || main_mission_status=$?
+    
 
     if [[ ${main_mission_status} -eq 0 ]]; then
       main_mission_status=$(grep -c "Error starting mission" \
