@@ -31,8 +31,8 @@ while [ $try -lt $num_tries ]; do
     if [[ $try -lt $num_tries ]]; then 
         echo "Tutorial mission ended with failure status."
         echo "Killing all Minecraft and Malmo processes that can be found and trying again."
-        ${TOMCAT}/tools/kill_minecraft.sh
-        ${TOMCAT}/tools/check_minecraft.sh
+        ${TOMCAT}/tools/kill_minecraft
+        ${TOMCAT}/tools/check_minecraft
     fi 
 done
 rm tutorial_saved_data.tgz

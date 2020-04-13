@@ -40,7 +40,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public abstract class Mission implements FeedbackListener, PhaseListener {
 
-  public static enum ID { TUTORIAL, SEARCH_AND_RESCUE }
+  public static enum ID { TUTORIAL, ZOMBIE, USAR_SINGLE_PLAYER }
   ;
 
   private static final long ENTITY_DELETION_DELAY = 1;

@@ -1,0 +1,65 @@
+#!/bin/bash
+
+set -u
+
+# Set the TOMCAT environment variable, assuming that the directory structure
+# mirrors that of the git repository.
+TOMCAT="$(cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && pwd)"
+export TOMCAT
+
+###############################################################################
+
+${TOMCAT}/tools/install_dependencies
+if [[ $? -ne 0 ]]; then exit 1; fi
+
+if [ "${GITHUB_ACTIONS:-false}" = "true" ]; then
+  echo "Running on Github Actions"
+fi
+
+pushd "${TOMCAT}"
+    echo "Building ToMCAT in `pwd`"
+
+    /bin/rm -rf build
+    mkdir build
+
+    # Trying to set the correct version of Java.
+    export PATH="$PATH:/opt/local/bin:/opt/local/sbin"
+    macports_found=`[ -x "$(command -v port)" ]; echo $?`
+    if [[ $macports_found -eq 0 ]]; then
+      export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk8/Contents/Home
+    fi
+    pushd build > /dev/null 
+        if [ "${GITHUB_ACTIONS:-false}" = "true" ]; then
+            cmake ${TOMCAT} -DBoost_ARCHITECTURE=-x64\
+                            -DBOOST_ROOT=$BOOST_ROOT_1_69_0
+            if [[ $? -ne 0 ]]; then exit 1; fi
+        else
+            cmake ${TOMCAT}
+            if [[ $? -ne 0 ]]; then exit 1; fi
+        fi;
+
+        make -j
+        if [[ $? -ne 0 ]]; then exit 1; fi
+
+        make -j Minecraft
+        if [[ $? -ne 0 ]]; then exit 1; fi
+
+    popd > /dev/null 
+popd > /dev/null 
+
+${TOMCAT}/tools/download/tomcat_worlds
+if [[ $? -ne 0 ]]; then exit 1; fi
+
+
+# We do not download the OpenFace models on Github Actions VMs.
+if [ "${GITHUB_ACTIONS:-false}" = "false" ]; then
+  if [[ ! -d ${TOMCAT}/data/OpenFace_models ]]; then
+    ${TOMCAT}/tools/download/OpenFace_models
+    if [[ $? -ne 0 ]]; then exit 1; fi
+  fi
+fi
+
+echo " "
+echo "Finished installing ToMCAT in ${TOMCAT}!"
+echo " "
+exit 0

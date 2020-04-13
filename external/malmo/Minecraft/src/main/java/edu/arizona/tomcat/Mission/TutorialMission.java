@@ -134,14 +134,8 @@ public class TutorialMission extends Mission {
   private void addApproachEntitiesPhase() {
     RichContent instructions =
         RichContent.createFromJson("tutorial_instructions_entities.json");
-    MissionPhase approachEntitiesPhase =
-        new MissionPhase(instructions,
-                         CompletionStrategy.ALL_GOALS,
-                         2,
-                         true,
-                         "Good job!",
-                         0,
-                         1);
+    MissionPhase approachEntitiesPhase = new MissionPhase(
+        instructions, CompletionStrategy.ALL_GOALS, 2, true, "Good job!", 0, 1);
     // approachEntitiesPhase.addGoal(new ReachPositionGoal(-615, 4, 1585, 3));
     approachEntitiesPhase.addGoal(
         new ActivateButtonGoal(new BlockPos(-609, 5, 1586)));
