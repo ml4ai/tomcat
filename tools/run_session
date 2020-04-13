@@ -179,6 +179,7 @@ if (( ${do_main_mission:-1} )); then
     echo "... waiting for it to complete."
 
     wait $pid_runExperiment
+    main_mission_status=$?
     
 
     if [[ ${main_mission_status} -eq 0 ]]; then
