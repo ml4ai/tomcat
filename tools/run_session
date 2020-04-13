@@ -194,12 +194,7 @@ if [[ ${do_main_mission} -eq 1 ]]; then
       pid_runExperiment=$!
     fi
 
-    echo "Running ${TOMCAT}/build/bin/runExperiment"
-    echo "    --mission ${mission}"
-    echo "    --time_limit ${time_limit}"
-    echo "    --record_observations"
-    echo "    &> ${main_mission_log}"
-    echo "    > ${malmo_data} &"
+    echo "Running mission ${mission} with time limit ${time_limit} seconds."
     echo "Process ID corresponding to ./bin/runExperiment is $pid_runExperiment"
     echo "... waiting for it to complete."
 
