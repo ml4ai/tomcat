@@ -17,8 +17,8 @@ options_description load_options() {
       "  0: Tutorial\n"
       "  1: Zombie Invasion\n"
       "  2: USAR (Singleplayer)")("time_limit",
-                                value<unsigned int>()->default_value(20),
-                                "Time limit for mission (in seconds).")(
+                                  value<unsigned int>()->default_value(20),
+                                  "Time limit for mission (in seconds).")(
       "self_report",
       value<unsigned int>()->default_value(180),
       "Self-report prompt interval time (in seconds).")(
@@ -34,13 +34,9 @@ options_description load_options() {
                                          "Activate command recordings")(
       "record_rewards",
       bool_switch()->default_value(false),
-      "Activate reward recordings")(
-      "multiplayer",
-      bool_switch()->default_value(false),
-      "The mission should run in multiplayer mode")(
-      "record_path",
-      value<string>()->default_value("malmo_data.json"),
-      "Path to save Malmo data");
+      "Activate reward recordings")("multiplayer",
+                                    bool_switch()->default_value(false),
+                                    "Run mission in multiplayer mode");
 
   return options;
 }
@@ -70,7 +66,6 @@ bool are_parameters_ok(variables_map parameters_map,
 
 Mission create_mission(variables_map parameters_map) {
   string mission_id_or_path = parameters_map["mission"].as<string>();
-  string record_path = parameters_map["record_path"].as<string>();
   unsigned int port_number = parameters_map["port"].as<unsigned int>();
   unsigned int time_limit_in_seconds =
       parameters_map["time_limit"].as<unsigned int>();
@@ -95,8 +90,7 @@ Mission create_mission(variables_map parameters_map) {
                             record_observations,
                             record_commands,
                             record_rewards,
-                            multiplayer,
-                            record_path);
+                            multiplayer);
   return mission;
 }
 

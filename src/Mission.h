@@ -15,7 +15,8 @@ namespace tomcat {
     enum ErrorCode {
       CONNECTION_NOT_ESTABLISHED,
       TOMCAT_ENV_VAR_NOT_SET,
-      ERROR_STARTING_MISSION
+      ERROR_STARTING_MISSION,
+      WORLD_DIR_NOT_FOUND
     };
 
     TomcatMissionException(const std::string& message, ErrorCode error_code)
@@ -47,7 +48,6 @@ namespace tomcat {
      * @param record_commands - Flag that activates commands recording
      * @param record_rewards - Flag that activates rewards recording
      * @param multiplayer - Flag that indicates a multiplayer mission
-     * @param record_path - Path where recordings will be saved
 
      */
     Mission(std::string mission_id_or_path,
@@ -57,8 +57,7 @@ namespace tomcat {
             bool record_observations,
             bool record_commands,
             bool record_rewards,
-            bool multiplayer,
-            std::string record_path = "./saved_data.tgz");
+            bool multiplayer);
 
     /**
      * Destructor
@@ -95,7 +94,6 @@ namespace tomcat {
     bool record_commands;
     bool record_rewards;
     bool multiplayer;
-    std::string record_path = "./saved_data.tgz";
     std::shared_ptr<malmo::AgentHost> minecraft_server;
     std::vector<std::shared_ptr<malmo::AgentHost>> minecraft_clients;
     std::shared_ptr<malmo::ClientPool> client_pool;

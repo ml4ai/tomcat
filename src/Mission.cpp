@@ -1,6 +1,6 @@
+#include "Mission.h"
 #include "FileHandler.h"
 #include "LocalAgent.h"
-#include "Mission.h"
 #include "utils.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem.hpp>
@@ -12,13 +12,13 @@
 
 using namespace malmo;
 using namespace std;
-using boost::filesystem::path;
 using fmt::format;
 using fmt::print;
 using namespace std::chrono;
 using namespace std::this_thread;
 using json = nlohmann::json;
 namespace pt = boost::posix_time;
+namespace fs = boost::filesystem;
 
 namespace tomcat {
 
@@ -29,8 +29,7 @@ namespace tomcat {
                    bool record_observations,
                    bool record_commands,
                    bool record_rewards,
-                   bool multiplayer,
-                   string record_path) {
+                   bool multiplayer) {
 
     this->mission_id_or_path = mission_id_or_path;
     this->time_limit_in_seconds = time_limit_in_seconds;
@@ -41,7 +40,6 @@ namespace tomcat {
     this->record_commands = record_commands;
     this->record_rewards = record_rewards;
     this->multiplayer = multiplayer;
-    this->record_path = record_path;
     this->uuid = boost::uuids::to_string(boost::uuids::uuid());
   }
 
@@ -70,7 +68,7 @@ namespace tomcat {
   }
 
   void Mission::create_mission_spec() {
-    path p(this->mission_id_or_path);
+    fs::path p(this->mission_id_or_path);
     if (p.extension() == ".xml") {
       string xml = FileHandler::getFileContent(this->mission_id_or_path);
       this->mission_spec = MissionSpec(xml, true);
@@ -90,14 +88,33 @@ namespace tomcat {
   string Mission::get_world_skeleton_from_xml() {
     if (!getenv("TOMCAT")) {
       throw TomcatMissionException(
-          "The TOMCAT environment variable has not been set! Please set it to "
-          "the location of your local copy of the tomcat repository, or use the "
-          "run_session.sh script, which automatically sets it.",
+          "The TOMCAT environment variable has not been set!\n"
+          "Please set it to the location of your local copy of the tomcat\n"
+          "repository, or use the run_session script, which automatically sets "
+          "it.",
           TomcatMissionException::TOMCAT_ENV_VAR_NOT_SET);
     }
 
     string agent_section_tags = this->create_agent_section_tags();
 
+    string world_dir =
+        Mission::id_to_world_folder_map.at(stoi(this->mission_id_or_path));
+
+    string world_dir_path =
+        format("{}data/worlds/{}", getenv("TOMCAT"), world_dir);
+
+    if (!fs::exists(fs::path(world_dir_path))) {
+      throw TomcatMissionException(
+          format("Requested world directory {} not found.\n"
+                 "Please download the world files by executing the "
+                 "{}tools/download/tomcat_worlds script.\n"
+                 "Note: The world file for mission ID 2 (USAR Singleplayer) is "
+                 "currently only available to teams participating in DARPA's "
+                 "ASIST program.",
+                 world_dir_path,
+                 getenv("TOMCAT")),
+          TomcatMissionException::WORLD_DIR_NOT_FOUND);
+    }
     string xml = format(
         R"(
         <?xml version="1.0" encoding="UTF-8"?>
@@ -125,7 +142,7 @@ namespace tomcat {
           {}
         </Mission>)",
         getenv("TOMCAT"),
-        Mission::id_to_world_folder_map.at(stoi(this->mission_id_or_path)),
+        world_dir,
         this->mission_id_or_path,
         this->time_limit_in_seconds,
         this->self_report_prompt_time_in_seconds,
@@ -145,7 +162,7 @@ namespace tomcat {
       else {
         agent_name = format("{}:{}", client->ip_address, client->control_port);
       }
-      //For USAR_SINGLEPLAYER mission: <Placement x="-2165" y="52" z="175"/>
+      // For USAR_SINGLEPLAYER mission: <Placement x="-2165" y="52" z="175"/>
 
       ss << format(R"(<AgentSection mode="Adventure">
               <Name>{}</Name>
