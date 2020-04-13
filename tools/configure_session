@@ -68,11 +68,10 @@ fi
 
 if [ "${GITHUB_ACTIONS:-false}" = "true" ]; then
   export time_limit=1
-  export do_tutorial=0
+  export do_tutorial_mission=0
   export mission=external/malmo/sample_missions/default_flat_1.xml
 else
   export time_limit=600
-  export do_tutorial_mission=1
   export mission=1
 fi
 
