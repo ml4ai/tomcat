@@ -104,7 +104,7 @@ trap user_interrupt SIGINT
 if ! "$TOMCAT"/tools/check_minecraft; then exit 1; fi
 
 export tutorial_mission_log="${TOMCAT_TMP_DIR}/tutorial_mission.log"
-export zombie_invasion_log="${TOMCAT_TMP_DIR}/zombie_invasion.log"
+export main_mission_log="${TOMCAT_TMP_DIR}/main_mission.log"
 
 export num_tries=2
 
@@ -118,7 +118,7 @@ elif [[ "$OSTYPE" == "linux-gnu" && -z "$GITHUB_ACTIONS" ]]; then
   if ! "$TOMCAT"/tools/linux/activate_minecraft_window; then exit 1; fi
 fi
 
-if [[ ${do_tutorial} -eq 1 ]]; then 
+if [[ ${do_tutorial_mission} -eq 1 ]]; then 
   if ! "$TOMCAT"/tools/run_tutorial; then exit 1; fi
 fi
 
@@ -129,9 +129,9 @@ sleep 6
 # Get rid of any pre-existing discrete events JSON files.
 $rm -f "${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
 
-if [[ ${do_invasion} -eq 1 ]]; then
+if [[ ${do_main_mission} -eq 1 ]]; then
   echo " "
-  echo "Running the Zombie invasion mission in ${TOMCAT}."
+  echo "Running the main mission in ${TOMCAT}."
   echo " "
 
   try=0
@@ -190,7 +190,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
       --mission ${mission} \
       --time_limit ${time_limit} \
       --record_observations \
-      &> "${zombie_invasion_log}" \
+      &> "${main_mission_log}" \
       >"$malmo_data" &
     pid_runExperiment=$!
 
@@ -198,21 +198,21 @@ if [[ ${do_invasion} -eq 1 ]]; then
     echo "    --mission ${mission}"
     echo "    --time_limit ${time_limit}"
     echo "    --record_observations"
-    echo "    &> ${zombie_invasion_log}"
+    echo "    &> ${main_mission_log}"
     echo "    > ${malmo_data} &"
     echo "Process ID corresponding to ./bin/runExperiment is $pid_runExperiment"
     echo "... waiting for it to complete."
 
     wait $pid_runExperiment
-    zombie_invasion_status=$?
+    main_mission_status=$?
 
-    if [[ ${zombie_invasion_status} -eq 0 ]]; then
-      zombie_invasion_status=$(grep -c "Error starting mission" \
-      "${zombie_invasion_log}")
+    if [[ ${main_mission_status} -eq 0 ]]; then
+      main_mission_status=$(grep -c "Error starting mission" \
+      "${main_mission_log}")
     fi
 
-    if [[ ${zombie_invasion_status} -eq 0 ]]; then
-      echo "Zombie invasion mission ended with exit code 0."
+    if [[ ${main_mission_status} -eq 0 ]]; then
+      echo "Main mission ended with exit code 0."
       echo "All recorded data is in ${output_dir}"
       echo " "
       break
@@ -221,7 +221,7 @@ if [[ ${do_invasion} -eq 1 ]]; then
     (( try++ ))
 
     if [[ $try -lt $num_tries ]]; then
-      echo "Zombie invasion mission ended with exit code 1."
+      echo "Main mission ended with exit code 1."
       echo "Killing all Minecraft and Malmo processes that can be found"
       echo "and trying again."
 

@@ -72,8 +72,8 @@ if [[ -n "${GITHUB_ACTIONS}" ]]; then
   export mission=external/malmo/sample_missions/default_flat_1.xml
 else
   export time_limit=600
-  export do_tutorial=1
+  export do_tutorial_mission=1
   export mission=1
 fi
 
-export do_invasion=1
+export do_main_mission=1
