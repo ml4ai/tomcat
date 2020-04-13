@@ -74,10 +74,6 @@ cleanup() {
     fi
   fi
 
-  if (( $ENABLE_MQTT )); then
-    pkill $pid_tail_malmo_data
-  fi
-
   discrete_actions_file="${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
 
   if [[ -f "${discrete_actions_file}" ]]; then
@@ -178,21 +174,25 @@ if [[ ${do_main_mission} -eq 1 ]]; then
   pid_screen_recording=$!
 
   malmo_data="${output_dir}"/malmo_data.txt
-  touch "$malmo_data"
-
-  if (( $ENABLE_MQTT )); then
-    tail -f -n1 "$malmo_data" | mosquitto_pub -t observations/state -l &
-    pid_tail_malmo_data=$!
-  fi
 
   while [ $try -lt $num_tries ]; do
-    "${TOMCAT}"/build/bin/runExperiment \
-      --mission ${mission} \
-      --time_limit ${time_limit} \
-      --record_observations \
-      &> "${main_mission_log}" \
-      >"$malmo_data" &
-    pid_runExperiment=$!
+    if (( $ENABLE_MQTT )); then
+      "${TOMCAT}"/build/bin/runExperiment \
+        --mission ${mission} \
+        --time_limit ${time_limit} \
+        --record_observations \
+        &> "${main_mission_log}" \
+        | mosquitto_pub -t observations/state -l &
+      pid_runExperiment=$!
+    else
+      "${TOMCAT}"/build/bin/runExperiment \
+        --mission ${mission} \
+        --time_limit ${time_limit} \
+        --record_observations \
+        &> "${main_mission_log}" \
+        > "$malmo_data" &
+      pid_runExperiment=$!
+    fi
 
     echo "Running ${TOMCAT}/build/bin/runExperiment"
     echo "    --mission ${mission}"
