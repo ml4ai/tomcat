@@ -33,6 +33,7 @@ install_dependencies_using_macports() {
       mosquitto \
       nlohmann-json \
       blackhole \
+      xdpyinfo \
       switchaudio-osx
   if [[ $? -ne 0 ]]; then exit 1; fi
 
@@ -77,13 +78,16 @@ install_dependencies_using_homebrew() {
     gradle \
     mosquitto \
     nlohmann-json \
-    switchaudio-osx || true
+    switchaudio-osx
   if [ $? -ne 0 && $? -ne 1 ]; then exit 1; fi
 
-  brew cask install blackhole || true
+  brew cask install xquartz
+  if [ $? -ne 0 && $? -ne 1 ]; then exit 1; fi
+
+  brew cask install blackhole
   if [ "${GITHUB_ACTIONS:-false}" = "true" ]; then
     # On Github Actions, we will install lcov to provide code coverage estimates.
-    brew install lcov || true;
+    brew install lcov;
     if [ $? -ne 0 && $? -ne 1 ]; then exit 1; fi
   fi;
 

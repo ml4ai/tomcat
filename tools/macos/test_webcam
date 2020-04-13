@@ -12,7 +12,7 @@ test_webcam_macos() {
   ffmpeg\
     -nostdin\
     -f ${ffmpeg_fmt_webcam}\
-    $framerate_option\
+    ${framerate_option:-}\
     -i ${ffmpeg_input_device_webcam}\
     -t 0.1\
     "$test_video_file" &> "$ffmpeg_webcam_log"

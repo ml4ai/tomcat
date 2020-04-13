@@ -53,14 +53,19 @@ start_ffmpeg_recording() {
     "${output_dir}"/player_audio.wav &> /dev/null &
 
   if [[ "$OSTYPE" == "darwin"* ]]; then
-    echo "Recording system audio."
-    ffmpeg\
-      -nostdin\
-      -f ${ffmpeg_fmt_system_audio}\
-      -i ${ffmpeg_input_device_system_audio}\
-      "${output_dir}"/system_audio.wav &> "$TOMCAT_TMP_DIR"/system_audio_recording.log &
+    if (( "${ENABLE_SYSTEM_AUDIO_RECORDING:-1}" )); then
+      echo "Recording system audio."
+      ffmpeg\
+        -nostdin\
+        -f ${ffmpeg_fmt_system_audio}\
+        -i ${ffmpeg_input_device_system_audio}\
+        "${output_dir}"/system_audio.wav &> "$TOMCAT_TMP_DIR"/system_audio_recording.log &
+    fi
   elif [[ "$OSTYPE" == "linux-gnu" ]]; then
     echo "System audio recording not yet implemented for Linux."
+  else
+    echo "OS is not detected as macOS or Linux. This script will not work."
+    exit 1
   fi
 
   # Recording game screen.
