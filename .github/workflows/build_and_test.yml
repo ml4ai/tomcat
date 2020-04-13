@@ -25,5 +25,6 @@ jobs:
         else
           echo "Not running on Github Actions"
         fi
+        exit 1
         ./tools/install
         xvfb-run --auto-servernum ./tools/run_session
