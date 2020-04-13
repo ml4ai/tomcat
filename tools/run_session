@@ -6,9 +6,10 @@ set -u
 # GITHUB_ACTIONS: Set to true with Github Actions is running the workflow.
 # (https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables)
 
-# ENABLE_MQTT: Set this variable to 1 to enable publishing messages to an MQTT message
-# broker.
+# ENABLE_MQTT: Set this variable to 1 to enable publishing messages to an MQTT
+#              message broker.
 
+# ENABLE_FFMPEG: Enable recording audio and video using FFMPEG.
 # =============================================================================
 
 
@@ -33,7 +34,8 @@ timestamp() {
 output_dir="${TOMCAT}"/data/participant_data/session_$(timestamp)
 mkdir -p "${output_dir}"
 
-if ! . "$TOMCAT"/tools/configure_session; then exit 1; fi
+. "$TOMCAT"/tools/configure_session
+if [[ $? -ne 0 ]]; then exit 1; fi
 
 start_ffmpeg_recording() {
   echo "Recording video of player's face using webcam."

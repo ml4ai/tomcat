@@ -78,3 +78,4 @@ else
 fi
 
 export do_main_mission=1
+exit 0
