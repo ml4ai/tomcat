@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -Eeuo pipefail
+set -u
 
 # =============================================================================
 # GITHUB_ACTIONS: Set to true with Github Actions is running the workflow.
@@ -33,13 +33,13 @@ timestamp() {
 output_dir="${TOMCAT}"/data/participant_data/session_$(timestamp)
 mkdir -p "${output_dir}"
 
-. "$TOMCAT"/tools/configure_session
+if ! . "$TOMCAT"/tools/configure_session; then exit 1; fi
 
 start_ffmpeg_recording() {
   echo "Recording video of player's face using webcam."
   ffmpeg\
     -f ${ffmpeg_fmt_webcam}\
-    ${framerate_option}\
+    ${framerate_option:-}\
     -i ${ffmpeg_input_device_webcam}\
     "${output_dir}"/webcam_video.mpg &> /dev/null &
   
@@ -73,12 +73,12 @@ start_ffmpeg_recording() {
 
 cleanup() {
   pkill "ffmpeg"
-  "$TOMCAT"/tools/kill_minecraft
+  if ! "$TOMCAT"/tools/kill_minecraft; then exit 1; fi
   if [ ! "${GITHUB_ACTIONS:-false}" = "true" ]; then
     if [[ "$OSTYPE"  == "darwin"* ]]; then
       # Switching the audio output from the multi-output device to the built-in
       # output.
-      SwitchAudioSource -s "Built-in Output"
+      if ! SwitchAudioSource -s "Built-in Output"; then exit 1; fi
     fi
   fi
 
@@ -102,7 +102,7 @@ user_interrupt() {
 
 trap user_interrupt SIGINT
 
-"$TOMCAT"/tools/check_minecraft
+if ! "$TOMCAT"/tools/check_minecraft; then exit 1; fi
 
 export tutorial_mission_log="${TOMCAT_TMP_DIR}/tutorial_mission.log"
 export main_mission_log="${TOMCAT_TMP_DIR}/main_mission.log"
@@ -110,16 +110,19 @@ export main_mission_log="${TOMCAT_TMP_DIR}/main_mission.log"
 export num_tries=2
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  "$TOMCAT"/tools/macos/activate_minecraft_window ${terminal}
+  "$TOMCAT"/tools/macos/activate_minecraft_window ${terminal:-}
+  if [[ $? -ne 0 ]]; then exit 1; fi
 elif [[ "$OSTYPE" == "linux-gnu" && ! "${GITHUB_ACTIONS:-false}" = "true" ]]; then
   # wmctrl does not work well with xvfb-run, so we disable full-screening the
   # Minecraft window when running a headless test of this script with a Github
   # Actions runner.
   "$TOMCAT"/tools/linux/activate_minecraft_window
+  if [[ $? -ne 0 ]]; then exit 1; fi
 fi
 
 if (( "${do_tutorial_mission:-1}" )); then
   "$TOMCAT"/tools/run_tutorial
+  if [[ $? -ne 0 ]]; then exit 1; fi
 fi
 
 # We sleep for a few seconds to let the player catch a breath between the
@@ -173,7 +176,7 @@ if (( ${do_main_mission:-1} )); then
     echo "Process ID corresponding to ./bin/runExperiment is $pid_runExperiment"
     echo "... waiting for it to complete."
 
-    wait $pid_runExperiment && main_mission_status=$? || main_mission_status=$?
+    wait $pid_runExperiment
     
 
     if [[ ${main_mission_status} -eq 0 ]]; then

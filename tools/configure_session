@@ -1,10 +1,8 @@
 #!/bin/bash
 
-set -Eeuo pipefail
+set -u
 
-export framerate_option=""
 export dimensions=$(xdpyinfo | grep dimensions | awk '{print $2;}')
-export terminal=""
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
   export PATH="$PATH:/opt/local/bin:/opt/local/sbin"

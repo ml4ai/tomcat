@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -Eeuo pipefail
+set -u
 
 # Set the TOMCAT environment variable, assuming that the directory structure
 # mirrors that of the git repository.
@@ -10,6 +10,7 @@ export TOMCAT
 ###############################################################################
 
 ${TOMCAT}/tools/install_dependencies
+if [[ $? -ne 0 ]]; then exit 1; fi
 
 if [ "${GITHUB_ACTIONS:-false}" = "true" ]; then
   echo "Running on Github Actions"
@@ -31,21 +32,28 @@ pushd "${TOMCAT}"
         if [ "${GITHUB_ACTIONS:-false}" = "true" ]; then
             cmake ${TOMCAT} -DBoost_ARCHITECTURE=-x64\
                             -DBOOST_ROOT=$BOOST_ROOT_1_69_0
+            if [[ $? -ne 0 ]]; then exit 1; fi
         else
             cmake ${TOMCAT}
+            if [[ $? -ne 0 ]]; then exit 1; fi
         fi;
 
         make -j
+        if [[ $? -ne 0 ]]; then exit 1; fi
+
         make -j Minecraft
+        if [[ $? -ne 0 ]]; then exit 1; fi
 
     popd > /dev/null 
 popd > /dev/null 
 
 ${TOMCAT}/tools/download/tomcat_worlds
+if [[ $? -ne 0 ]]; then exit 1; fi
 
 
 if [[ ! -d ${TOMCAT}/data/OpenFace_models ]]; then
   ${TOMCAT}/tools/download/OpenFace_models
+  if [[ $? -ne 0 ]]; then exit 1; fi
 fi
 
 echo " "
