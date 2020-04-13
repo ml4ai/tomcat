@@ -25,18 +25,20 @@ install_dependencies_using_macports() {
       libfmt \
       doxygen \
       ffmpeg \
-      dlib \
-      opencv4 \
       openblas \
       boost \
       gradle \
       mosquitto \
       nlohmann-json \
-      blackhole \
-      xdpyinfo \
-      switchaudio-osx
+      xdpyinfo
   if [[ $? -ne 0 ]]; then exit 1; fi
 
+
+  # We enable system audio recording ononly on macOS Catalina or above
+  macOS_minor_version=$(sw_vers -productVersion | cut -d '.' -f2)
+  if (( ! $macOS_minor_version < 15 )); then
+      sudo port -N install blackhole switchaudio-osx
+  fi
   # We install Java using a local Portfile, since the upstream openjdk8
   # port points to Java 1.8.0_242, which is incompatible with Malmo (the
   # local Portfile points to Java 1.8.0_232).
@@ -44,6 +46,8 @@ install_dependencies_using_macports() {
     sudo port install
     if [[ $? -ne 0 ]]; then exit 1; fi
   popd > /dev/null
+
+  #TODO When OpenFace is reintroduced, add dlib, opencv, openblas installation back here.
 }
 
 install_dependencies_using_homebrew() {
@@ -72,26 +76,32 @@ install_dependencies_using_homebrew() {
     fmt \
     doxygen \
     ffmpeg \
-    opencv \
-    openblas \
     boost \
     gradle \
     mosquitto \
-    nlohmann-json \
-    switchaudio-osx
+    nlohmann-json
   if [ $? -ne 0 && $? -ne 1 ]; then exit 1; fi
 
   brew cask install xquartz
   if [ $? -ne 0 && $? -ne 1 ]; then exit 1; fi
 
-  brew cask install blackhole
+  # We enable system audio recording ononly on macOS Catalina or above
+  macOS_minor_version=$(sw_vers -productVersion | cut -d '.' -f2)
+  if (( ! $macOS_minor_version < 15 )); then
+    brew cask install blackhole
+    if [ $? -ne 0 && $? -ne 1 ]; then exit 1; fi
+
+    brew install switchaudio-osx
+    if [ $? -ne 0 && $? -ne 1 ]; then exit 1; fi
+  fi
+
   if [ "${GITHUB_ACTIONS:-false}" = "true" ]; then
     # On Github Actions, we will install lcov to provide code coverage estimates.
     brew install lcov;
     if [ $? -ne 0 && $? -ne 1 ]; then exit 1; fi
   fi;
 
-  #TODO When OpenFace is reintroduced, add dlib installation back here.
+  #TODO When OpenFace is reintroduced, add dlib, opencv, openblas installation back here.
 }
 
 echo "Checking OS."
