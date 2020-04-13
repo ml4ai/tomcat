@@ -16,6 +16,7 @@
 github_actions="$GITHUB_ACTIONS"
 enable_mqtt="$ENABLE_MQTT"
 
+
 set -u
 
 # After the set -u command, we export the uppercase versions of the temporary
@@ -26,6 +27,7 @@ export GITHUB_ACTIONS="${github_actions}"
 export ENABLE_MQTT="${enable_mqtt}"
 
 # =============================================================================
+
 
 # Set the TOMCAT environment variable, assuming that the directory structure
 # mirrors that of the git repository.
@@ -41,29 +43,63 @@ export rm=/bin/rm
 
 . "$TOMCAT"/tools/configure_session
 
+# This function returns the date and time in the current timezone.
+timestamp() {
+  date "+%Y_%m_%d_%H_%M_%S"
+}
+
+# Creating an output directory for this session.
+output_dir="${TOMCAT}"/data/participant_data/session_$(timestamp)
+mkdir -p "${output_dir}"
+
+# Declaring a few pid variables:
+
+pid_webcam_recording=""
+pid_microphone_recording=""
+pid_screen_recording=""
+pid_system_audio_recording=""
+pid_tail_malmo_data=""
+
+cleanup() {
+  if [[ -z "$GITHUB_ACTIONS" ]]; then
+    pkill $pid_webcam_recording
+    pkill $pid_microphone_recording
+    pkill $pid_screen_recording
+
+    if [[ "$OSTYPE"  == "darwin"* ]]; then
+      pkill $pid_system_audio_recording
+      # Switching the audio output from the multi-output device to the built-in
+      # output.
+      if ! SwitchAudioSource -s "Built-in Output"; then exit 1; fi
+    fi
+  fi
+
+  if (( $ENABLE_MQTT )); then
+    pkill $pid_tail_malmo_data
+  fi
+
+  discrete_actions_file="${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
+
+  if [[ -f "${discrete_actions_file}" ]]; then
+    mv "${discrete_actions_file}" "${output_dir}"/discrete_events.json
+  fi
+
+  # Move the self-reports from the Minecraft folder to the participant data folder
+  mv "${TOMCAT}"/external/malmo/Minecraft/run/saves/self_reports/*.json "${output_dir}"
+}
+
 # A function to handle cleanup when a user interrupts the script with Ctrl+C
 user_interrupt() {
   echo "Detected keyboard interrupt."
   echo "Cleaning up now"
   "$TOMCAT"/tools/kill_minecraft
-  if [[ "$OSTYPE"  == "darwin"* ]]; then
-    # Switching the audio output from the multi-output device to the built-in
-    # output.
-    if ! SwitchAudioSource -s "Built-in Output"; then exit 1; fi
-  fi
-  if (( $ENABLE_MQTT )); then
-    kill $pid_tail_malmo_data
-  fi
+  cleanup
   exit
 }
 
 trap user_interrupt SIGINT
 
 
-# This function returns the date and time in the current timezone.
-timestamp() {
-  date "+%Y_%m_%d_%H_%M_%S"
-}
 
 if ! "$TOMCAT"/tools/check_minecraft; then exit 1; fi
 
@@ -100,9 +136,6 @@ if [[ ${do_invasion} -eq 1 ]]; then
 
   try=0
 
-  # Creating an output directory for this session.
-  output_dir="${TOMCAT}"/data/participant_data/session_$(timestamp)
-  mkdir -p "${output_dir}"
 
   # On a Github actions runner, there is no webcam, microphone or speaker.
   if [[ -z "$GITHUB_ACTIONS" ]]; then
@@ -198,27 +231,8 @@ if [[ ${do_invasion} -eq 1 ]]; then
   done
 fi
 
-if [[ -z "$GITHUB_ACTIONS" ]]; then
-  kill $pid_webcam_recording
-  kill $pid_microphone_recording
-  kill $pid_screen_recording
-  if [[ "$OSTYPE"  == "darwin"* ]]; then
-    kill $pid_system_audio_recording
-    # Switching the audio output from the multi-output device to the built-in
-    # output.
-    if ! SwitchAudioSource -s "Built-in Output"; then exit 1; fi
-  fi
-fi
 
-
-discrete_actions_file="${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
-
-if [[ -f "${discrete_actions_file}" ]]; then
-  mv "${discrete_actions_file}" "${output_dir}"/discrete_events.json
-fi
-
-# Move the self-reports from the Minecraft folder to the participant data folder
-mv "${TOMCAT}"/external/malmo/Minecraft/run/saves/self_reports/* "${output_dir}"
+cleanup
 
 echo "Finished running all sessions in ${TOMCAT}".
 exit 0
