@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -Eeuo pipefail
+
 # Set the TOMCAT environment variable, assuming that the directory structure
 # mirrors that of the git repository.
 TOMCAT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && pwd )"
@@ -16,7 +18,6 @@ install_dependencies_using_macports() {
   echo "your macOS computer."
 
   sudo port selfupdate
-  if [[ $? -ne 0 ]]; then exit 1; fi;
 
   sudo port -N install \
       cmake \
@@ -32,13 +33,12 @@ install_dependencies_using_macports() {
       nlohmann-json \
       blackhole \
       switchaudio-osx
-  if [[ $? -ne 0 ]]; then exit 1; fi;
 
   # We install Java using a local Portfile, since the upstream openjdk8
   # port points to Java 1.8.0_242, which is incompatible with Malmo (the
   # local Portfile points to Java 1.8.0_232).
   pushd "${TOMCAT}"/tools/macos/local-ports/openjdk8 > /dev/null
-    if ! sudo port install; then exit 1; fi
+    sudo port install
   popd > /dev/null
 }
 
@@ -49,9 +49,8 @@ install_dependencies_using_homebrew() {
   echo "Installing ToMCAT dependencies using Homebrew."
 
   brew update
-  if [[ $? -ne 0 ]]; then exit 1; fi;
 
-  # We do not check exit codes for Homebrew installs since `brew install`
+  # We do not require exit codes for Homebrew installs to be 0 since `brew install`
   # can return an exit code of 1 when a package is already installed (!!)
 
   # We install Java using a local Homebrew formula, since the upstream openjdk8
@@ -59,7 +58,8 @@ install_dependencies_using_homebrew() {
   # local formula points to Java 1.8.0_232).
 
   pushd "${TOMCAT}"/tools/macos/homebrew_formulae > /dev/null
-    brew cask install adoptopenjdk8.rb
+    brew cask install adoptopenjdk8.rb || true
+    if [ $? -ne 0 || $? -ne 1 ]; then exit 1; fi
   popd > /dev/null
 
   brew install \
@@ -73,12 +73,14 @@ install_dependencies_using_homebrew() {
     gradle \
     mosquitto \
     nlohmann-json \
-    switchaudio-osx
+    switchaudio-osx || true
+  if [ $? -ne 0 || $? -ne 1 ]; then exit 1; fi
 
-  brew cask install blackhole
-  if [[ -n ${GITHUB_ACTIONS} ]]; then
+  brew cask install blackhole || true
+  if [ "${GITHUB_ACTIONS:-false}" = "true" ]; then
     # On Github Actions, we will install lcov to provide code coverage estimates.
-    brew install lcov;
+    brew install lcov || true;
+    if [ $? -ne 0 || $? -ne 1 ]; then exit 1; fi
   fi;
 
   #TODO When OpenFace is reintroduced, add dlib installation back here.
@@ -155,15 +157,13 @@ elif [ -x "$(command -v apt-get)" ]; then
         openjdk-8-jdk-headless=8u162-b12-1\
         openjdk-8-jdk=8u162-b12-1\
         mosquitto
-    if [[ $? -ne 0 ]]; then exit 1; fi;
 
     # On Ubuntu 18.04, the required version of the nlohmann-json JSON library
     # is not available using apt-get, so we install from source.
-    if ! "$TOMCAT"/tools/install_from_source/nlohmann-json; then exit 1; fi
+    "$TOMCAT"/tools/install_from_source/nlohmann-json
 
     if [[ -z "$GITHUB_ACTIONS" ]]; then
       sudo apt-get install -y libboost-all-dev
-      if [[ $? -ne 0 ]]; then exit 1; fi;
     fi
 
     # TODO - when OpenFace gets added back, add opencv, openblas, and dlib as
@@ -182,3 +182,4 @@ fi
 
 echo "ToMCAT dependency installation complete."
 echo " "
+exit 0

@@ -1,30 +1,13 @@
 #!/bin/bash
 
+set -Eeuo pipefail
+
 # =============================================================================
-
-# For some reason, bash is behaving differently on Ubuntu and macOS, so we have
-# to temporarily declaring certain variables to avoid unbound errors on Ubuntu
-# if the user has not explicitly set the variable in their environment.
-# We follow the convention of using lowercase for these temporary variables.
-
 # GITHUB_ACTIONS: Set to true with Github Actions is running the workflow.
 # (https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables)
 
 # ENABLE_MQTT: Set this variable to 1 to enable publishing messages to an MQTT message
 # broker.
-
-github_actions="$GITHUB_ACTIONS"
-enable_mqtt="$ENABLE_MQTT"
-
-
-set -u
-
-# After the set -u command, we export the uppercase versions of the temporary
-# variables, ensuring that the user preferences are respected while avoiding
-# unbound variable errors on Ubuntu.
-
-export GITHUB_ACTIONS="${github_actions}"
-export ENABLE_MQTT="${enable_mqtt}"
 
 # =============================================================================
 
@@ -41,8 +24,6 @@ mkdir -p "${TOMCAT_TMP_DIR}"
 # the precaution of explicitly pointing rm to /bin/rm.
 export rm=/bin/rm
 
-. "$TOMCAT"/tools/configure_session
-
 # This function returns the date and time in the current timezone.
 timestamp() {
   date "+%Y_%m_%d_%H_%M_%S"
@@ -52,25 +33,43 @@ timestamp() {
 output_dir="${TOMCAT}"/data/participant_data/session_$(timestamp)
 mkdir -p "${output_dir}"
 
-# Declaring a few pid variables:
+. "$TOMCAT"/tools/configure_session
 
-pid_webcam_recording=""
-pid_microphone_recording=""
-pid_screen_recording=""
-pid_system_audio_recording=""
-pid_tail_malmo_data=""
+start_ffmpeg_recording() {
+  echo "Recording video of player's face using webcam."
+  ffmpeg\
+    -f ${ffmpeg_fmt_webcam}\
+    ${framerate_option}\
+    -i ${ffmpeg_input_device_webcam}\
+    "${output_dir}"/webcam_video.mpg &> /dev/null &
+  
+  echo "Recording player audio using microphone."
+  ffmpeg\
+    -nostdin\
+    -f ${ffmpeg_fmt_microphone}\
+    -i ${ffmpeg_input_device_microphone}\
+    "${output_dir}"/player_audio.wav &> /dev/null &
+
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo "Recording system audio."
+    ffmpeg\
+      -nostdin\
+      -f ${ffmpeg_fmt_system_audio}\
+      -i ${ffmpeg_input_device_system_audio}\
+      "${output_dir}"/system_audio.wav &> "$TOMCAT_TMP_DIR"/system_audio_recording.log &
+  elif [[ "$OSTYPE" == "linux-gnu" ]]; then
+    echo "System audio recording not yet enabled for Linux."
+  fi
+}
+
 
 cleanup() {
-  if [[ -z "$GITHUB_ACTIONS" ]]; then
-    pkill $pid_webcam_recording
-    pkill $pid_microphone_recording
-    pkill $pid_screen_recording
-
+  #jobs -p | xargs kill
+  if [ ! "${GITHUB_ACTIONS:-false}" = "true" ]; then
     if [[ "$OSTYPE"  == "darwin"* ]]; then
-      pkill $pid_system_audio_recording
       # Switching the audio output from the multi-output device to the built-in
       # output.
-      if ! SwitchAudioSource -s "Built-in Output"; then exit 1; fi
+      SwitchAudioSource -s "Built-in Output"
     fi
   fi
 
@@ -88,16 +87,14 @@ cleanup() {
 user_interrupt() {
   echo "Detected keyboard interrupt."
   echo "Cleaning up now"
-  "$TOMCAT"/tools/kill_minecraft
   cleanup
+  "$TOMCAT"/tools/kill_minecraft
   exit
 }
 
 trap user_interrupt SIGINT
 
-
-
-if ! "$TOMCAT"/tools/check_minecraft; then exit 1; fi
+"$TOMCAT"/tools/check_minecraft
 
 export tutorial_mission_log="${TOMCAT_TMP_DIR}/tutorial_mission.log"
 export main_mission_log="${TOMCAT_TMP_DIR}/main_mission.log"
@@ -106,16 +103,15 @@ export num_tries=2
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
   "$TOMCAT"/tools/macos/activate_minecraft_window ${terminal}
-  if [[ $? -ne 0 ]]; then exit 1; fi
-elif [[ "$OSTYPE" == "linux-gnu" && -z "$GITHUB_ACTIONS" ]]; then
+elif [[ "$OSTYPE" == "linux-gnu" && ! "${GITHUB_ACTIONS:-false}" = "true" ]]; then
   # wmctrl does not work well with xvfb-run, so we disable full-screening the
   # Minecraft window when running a headless test of this script with a Github
   # Actions runner.
-  if ! "$TOMCAT"/tools/linux/activate_minecraft_window; then exit 1; fi
+  "$TOMCAT"/tools/linux/activate_minecraft_window
 fi
 
 if [[ ${do_tutorial_mission} -eq 1 ]]; then 
-  if ! "$TOMCAT"/tools/run_tutorial; then exit 1; fi
+  "$TOMCAT"/tools/run_tutorial
 fi
 
 # We sleep for a few seconds to let the player catch a breath between the
@@ -124,6 +120,7 @@ sleep 6
 
 # Get rid of any pre-existing discrete events JSON files.
 $rm -f "${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
+
 
 if [[ ${do_main_mission} -eq 1 ]]; then
   echo " "
@@ -134,34 +131,8 @@ if [[ ${do_main_mission} -eq 1 ]]; then
 
 
   # On a Github actions runner, there is no webcam, microphone or speaker.
-  if [[ -z "$GITHUB_ACTIONS" ]]; then
-      echo "Recording video of player's face using webcam."
-      ffmpeg\
-        -f ${ffmpeg_fmt_webcam}\
-        ${framerate_option}\
-        -i ${ffmpeg_input_device_webcam}\
-        "${output_dir}"/webcam_video.mpg &> /dev/null &
-      pid_webcam_recording=$!
-      
-      echo "Recording player audio using microphone."
-      ffmpeg\
-        -nostdin\
-        -f ${ffmpeg_fmt_microphone}\
-        -i ${ffmpeg_input_device_microphone}\
-        "${output_dir}"/player_audio.wav &> /dev/null &
-      pid_microphone_recording=$!
-
-      if [[ "$OSTYPE" == "darwin"* ]]; then
-        echo "Recording system audio."
-        ffmpeg\
-          -nostdin\
-          -f ${ffmpeg_fmt_system_audio}\
-          -i ${ffmpeg_input_device_system_audio}\
-          "${output_dir}"/system_audio.wav &> "$TOMCAT_TMP_DIR"/system_audio_recording.log &
-        pid_system_audio_recording=$!
-      elif [[ "$OSTYPE" == "linux-gnu" ]]; then
-        echo "System audio recording not yet enabled for Linux."
-      fi
+  if [ ! "${GITHUB_ACTIONS:-false}" = "true" ]; then
+    start_ffmpeg_recording
   fi
 
   # Recording game screen.
@@ -176,7 +147,7 @@ if [[ ${do_main_mission} -eq 1 ]]; then
   malmo_data="${output_dir}"/malmo_data.txt
 
   while [ $try -lt $num_tries ]; do
-    if (( $ENABLE_MQTT )); then
+    if (( "${ENABLE_MQTT:-0}" )); then
       "${TOMCAT}"/build/bin/runExperiment \
         --mission ${mission} \
         --time_limit ${time_limit} \
