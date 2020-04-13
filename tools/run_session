@@ -58,8 +58,16 @@ start_ffmpeg_recording() {
       -i ${ffmpeg_input_device_system_audio}\
       "${output_dir}"/system_audio.wav &> "$TOMCAT_TMP_DIR"/system_audio_recording.log &
   elif [[ "$OSTYPE" == "linux-gnu" ]]; then
-    echo "System audio recording not yet enabled for Linux."
+    echo "System audio recording not yet implemented for Linux."
   fi
+
+  # Recording game screen.
+  echo "Recording player's screen."
+  screen_video="${output_dir}"/screen_video.mpg
+  ffmpeg -nostdin -f ${ffmpeg_fmt_screen_capture}\
+    -i ${ffmpeg_input_device_screen_capture}\
+    -s $dimensions\
+    "$screen_video" &> "$TOMCAT_TMP_DIR"/screen_video_recording.log &
 }
 
 
@@ -132,19 +140,15 @@ if (( ${do_main_mission:-1} )); then
 
   # On a Github actions runner, there is no webcam, microphone or speaker.
   if [ ! "${GITHUB_ACTIONS:-false}" = "true" ]; then
-    start_ffmpeg_recording
+    if (( "${ENABLE_FFMPEG:-1}" )); then
+      start_ffmpeg_recording
+    fi
   fi
 
-  # Recording game screen.
-  echo "Recording player's screen."
-  screen_video="${output_dir}"/screen_video.mpg
-  ffmpeg -nostdin -f ${ffmpeg_fmt_screen_capture}\
-    -i ${ffmpeg_input_device_screen_capture}\
-    -s $dimensions\
-    "$screen_video" &> "$TOMCAT_TMP_DIR"/screen_video_recording.log &
-  pid_screen_recording=$!
 
   malmo_data="${output_dir}"/malmo_data.txt
+
+  mission=${mission:-1}
 
   while [ $try -lt $num_tries ]; do
     if (( "${ENABLE_MQTT:-0}" )); then
@@ -152,7 +156,7 @@ if (( ${do_main_mission:-1} )); then
         --mission ${mission} \
         --time_limit ${time_limit} \
         --record_observations \
-        &> "${main_mission_log}" \
+        2> "${main_mission_log}" \
         | mosquitto_pub -t observations/state -l &
       pid_runExperiment=$!
     else
@@ -160,8 +164,8 @@ if (( ${do_main_mission:-1} )); then
         --mission ${mission} \
         --time_limit ${time_limit} \
         --record_observations \
-        &> "${main_mission_log}" \
-        > "$malmo_data" &
+        2> "${main_mission_log}" \
+        1> "$malmo_data" &
       pid_runExperiment=$!
     fi
 
