@@ -20,12 +20,5 @@ jobs:
 
     - name: Continuous Integration
       run: |
-        echo $GITHUB_ACTIONS
-        if [ "${GITHUB_ACTIONS:-false}" = "true" ]; then
-          echo "Running on Github Actions"
-        else
-          echo "Not running on Github Actions"
-        fi
-        exit 1
         ./tools/install
         xvfb-run --auto-servernum ./tools/run_session
