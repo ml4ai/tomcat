@@ -51,9 +51,12 @@ ${TOMCAT}/tools/download/tomcat_worlds
 if [[ $? -ne 0 ]]; then exit 1; fi
 
 
-if [[ ! -d ${TOMCAT}/data/OpenFace_models ]]; then
-  ${TOMCAT}/tools/download/OpenFace_models
-  if [[ $? -ne 0 ]]; then exit 1; fi
+# We do not download the OpenFace models on Github Actions VMs.
+if [ "${GITHUB_ACTIONS:-false}" = "false" ]; then
+  if [[ ! -d ${TOMCAT}/data/OpenFace_models ]]; then
+    ${TOMCAT}/tools/download/OpenFace_models
+    if [[ $? -ne 0 ]]; then exit 1; fi
+  fi
 fi
 
 echo " "
