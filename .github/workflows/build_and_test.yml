@@ -21,7 +21,7 @@ jobs:
     - name: Continuous Integration
       run: |
         echo $GITHUB_ACTIONS
-        if (( ${GITHUB_ACTIONS:-1} )); then
+        if (( ${GITHUB_ACTIONS:-false} )); then
           echo "Running on Github Actions"
         else
           echo "Not running on Github Actions"
