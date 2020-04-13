@@ -110,7 +110,7 @@ elif [[ "$OSTYPE" == "linux-gnu" && ! "${GITHUB_ACTIONS:-false}" = "true" ]]; th
   "$TOMCAT"/tools/linux/activate_minecraft_window
 fi
 
-if [[ ${do_tutorial_mission} -eq 1 ]]; then 
+if (( "${do_tutorial_mission:-1}" )); then
   "$TOMCAT"/tools/run_tutorial
 fi
 
@@ -122,7 +122,7 @@ sleep 6
 $rm -f "${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
 
 
-if [[ ${do_main_mission} -eq 1 ]]; then
+if (( ${do_main_mission:-1} )); then
   echo " "
   echo "Running the main mission in ${TOMCAT}."
   echo " "

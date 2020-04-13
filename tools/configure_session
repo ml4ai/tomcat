@@ -32,18 +32,19 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   export ffmpeg_fmt_system_audio=avfoundation
   export ffmpeg_input_device_system_audio=":0"
 
-  echo "Checking if webcam video recording works..."
-  if ! "${TOMCAT}"/tools/macos/test_webcam; then exit 1; fi
+  if [ ! "${GITHUB_ACTIONS:-false}" = "true" ]; then
+    echo "Checking if webcam video recording works..."
+    "${TOMCAT}"/tools/macos/test_webcam
 
-  echo "Checking if system audio recording is set up..."
-  if ! "${TOMCAT}"/tools/macos/test_system_audio_recording; then exit 1; fi
+    echo "Checking if system audio recording is set up..."
+    "${TOMCAT}"/tools/macos/test_system_audio_recording
 
-  echo "Testing terminal access to microphone..."
-  if ! "${TOMCAT}"/tools/macos/test_microphone; then exit 1; fi
+    echo "Testing terminal access to microphone..."
+    "${TOMCAT}"/tools/macos/test_microphone
 
-  echo "Testing screen capture..."
-  if ! "${TOMCAT}"/tools/macos/test_screen_recording; then exit 1; fi
-
+    echo "Testing screen capture..."
+    "${TOMCAT}"/tools/macos/test_screen_recording
+  fi
   # Trying to set the correct version of Java.
   macports_found=`[ -x "$(command -v port)" ]; echo $?`
   if [[ $macports_found -eq 0 ]]; then
