@@ -178,7 +178,6 @@ public class SARMission extends Mission {
   @Override
   protected void createPhases() {
     this.createVillagersIDs();
-    addItemToInventory(ItemType.STONE_AXE);
     RichContent instructions =
         RichContent.createFromJson("sar_instructions.json");
     instructions.setTextPlaceholder(0, Integer.toString(NUMBER_OF_VILLAGERS));
@@ -343,7 +342,10 @@ public class SARMission extends Mission {
    * @param world
    */
   private void addItemsToInventory(World world) {
-    // InventoryHandler.addItemToInventory(ItemType.IRON_SWORD, 1);
+    for (EntityPlayerMP player :
+            MinecraftServerHelper.getServer().getPlayerList().getPlayers()){
+      InventoryHandler.addItemToInventory(player, ItemType.STONE_AXE, 1);
+    }
   }
 
   @Override
