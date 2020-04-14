@@ -46,14 +46,14 @@ start_ffmpeg_recording() {
     -f ${ffmpeg_fmt_webcam}\
     ${framerate_option:-}\
     -i ${ffmpeg_input_device_webcam}\
-    "${output_dir}"/webcam_video.mpg &> /dev/null &
+    "${output_dir}"/webcam_video.mpg &> ${TOMCAT_TMP_DIR}/ffmpeg_webcam_main.log &
   
   echo "Recording player audio using microphone."
   ffmpeg\
     -nostdin\
     -f ${ffmpeg_fmt_microphone}\
     -i ${ffmpeg_input_device_microphone}\
-    "${output_dir}"/player_audio.wav &> /dev/null &
+    "${output_dir}"/player_audio.wav &> ${TOMCAT_TMP_DIR}/ffmpeg_microphone_main.log &
 
   if [[ "$OSTYPE" == "darwin"* ]]; then
     if (( "${ENABLE_SYSTEM_AUDIO_RECORDING:-1}" )); then
