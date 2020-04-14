@@ -1,22 +1,22 @@
 package edu.arizona.tomcat.Mission.Client;
 
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
-import edu.arizona.tomcat.Mission.SARMission;
+import edu.arizona.tomcat.Mission.ZombieMission;
 import edu.arizona.tomcat.Mission.gui.GUIOverlayVillagersSaved;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.SoundEvents;
 import net.minecraftforge.common.MinecraftForge;
 
-public class SARClientMission extends ClientMission {
+public class ZombieClientMission extends ClientMission {
 
   private int numberOfSavedVillagers;
 
-  public SARClientMission() {
+  public ZombieClientMission() {
     super();
     // Sets indicator of number of villagers saved to be rerendered by a
     // Minecraft event schema.
     MinecraftForge.EVENT_BUS.register(
-        new GUIOverlayVillagersSaved(SARMission.NUMBER_OF_VILLAGERS));
+        new GUIOverlayVillagersSaved(ZombieMission.NUMBER_OF_VILLAGERS));
   }
 
   @Override

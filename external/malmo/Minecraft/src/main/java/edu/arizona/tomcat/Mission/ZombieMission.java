@@ -32,7 +32,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class SARMission extends Mission {
+public class ZombieMission extends Mission {
 
   public static final int NUMBER_OF_VILLAGERS = 4;
   private static final int MAX_DISTANCE_TO_SAVE_VILLAGER = 1;
@@ -42,22 +42,22 @@ public class SARMission extends Mission {
   private UUID[] villagersIDs;
   private int numberOfVillagersSaved;
 
-  public SARMission() {
+  public ZombieMission() {
     super();
-    this.id = ID.SEARCH_AND_RESCUE;
+    this.id = ID.ZOMBIE;
     this.dynamicInitializationComplete = false;
     this.numberOfVillagersSaved = 0;
-    this.availableListOfBuildings = initBuildingsSAR();
+    this.availableListOfBuildings = initBuildingsZombie();
   }
 
   /**
    * This method will create a List of Buildings which will be used for
-   * the SAR mission. The buildings included in the list are predefined and
+   * the Zombie mission. The buildings included in the list are predefined and
    * contain both Building and MultiRoom Building instances.
    *
-   * @return List<Building> An ArrayList of buildings being used for SAR
+   * @return List<Building> An ArrayList of buildings being used for Zombie
    */
-  private static List<Building> initBuildingsSAR() {
+  private static List<Building> initBuildingsZombie() {
 
     // Single Room Buildings
     Building singleRoomBuilding1 = new Building(93, 64, 53);
@@ -392,10 +392,6 @@ public class SARMission extends Mission {
         1, String.format("%.2f", player.getHealth()));
     selfReportContent.setTextPlaceholder(
         2, String.format("%.2f", player.getMaxHealth()));
-    selfReportContent.setTextPlaceholder(
-        3, Integer.toString(this.numberOfVillagersSaved));
-    selfReportContent.setTextPlaceholder(4,
-                                         Integer.toString(NUMBER_OF_VILLAGERS));
     return selfReportContent;
   }
 

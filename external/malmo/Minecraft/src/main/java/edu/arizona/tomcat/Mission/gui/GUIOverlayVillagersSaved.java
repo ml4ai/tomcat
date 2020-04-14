@@ -1,8 +1,8 @@
 package edu.arizona.tomcat.Mission.gui;
 
 import com.microsoft.Malmo.MalmoMod;
-import edu.arizona.tomcat.Mission.Client.SARClientMission;
 import edu.arizona.tomcat.Mission.Client.TutorialClientMission;
+import edu.arizona.tomcat.Mission.Client.ZombieClientMission;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.util.ResourceLocation;
@@ -29,9 +29,9 @@ public class GUIOverlayVillagersSaved extends Gui {
       int numberOfSavedVillagers = 0;
 
       if (MalmoMod.instance.getClient().getTomcatClientMission() instanceof
-          SARClientMission) {
-        SARClientMission clientMission =
-            (SARClientMission)MalmoMod.instance.getClient()
+          ZombieClientMission) {
+        ZombieClientMission clientMission =
+            (ZombieClientMission)MalmoMod.instance.getClient()
                 .getTomcatClientMission();
         numberOfSavedVillagers = clientMission.getNumberOfSavedVillagers();
       }

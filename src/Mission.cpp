@@ -1,18 +1,24 @@
 #include "Mission.h"
 #include "FileHandler.h"
 #include "LocalAgent.h"
+#include "utils.h"
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem.hpp>
-#include <ctime>
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
 #include <fmt/format.h>
+#include <nlohmann/json.hpp>
 #include <sstream>
 
 using namespace malmo;
 using namespace std;
-using boost::filesystem::path;
 using fmt::format;
 using fmt::print;
 using namespace std::chrono;
 using namespace std::this_thread;
+using json = nlohmann::json;
+namespace pt = boost::posix_time;
+namespace fs = boost::filesystem;
 
 namespace tomcat {
 
@@ -23,8 +29,7 @@ namespace tomcat {
                    bool record_observations,
                    bool record_commands,
                    bool record_rewards,
-                   bool multiplayer,
-                   string record_path) {
+                   bool multiplayer) {
 
     this->mission_id_or_path = mission_id_or_path;
     this->time_limit_in_seconds = time_limit_in_seconds;
@@ -35,7 +40,7 @@ namespace tomcat {
     this->record_commands = record_commands;
     this->record_rewards = record_rewards;
     this->multiplayer = multiplayer;
-    this->record_path = record_path;
+    this->uuid = boost::uuids::to_string(boost::uuids::uuid());
   }
 
   void Mission::add_listener(shared_ptr<LocalAgent> tomcat_agent) {
@@ -63,21 +68,19 @@ namespace tomcat {
   }
 
   void Mission::create_mission_spec() {
-    path p(this->mission_id_or_path);
+    fs::path p(this->mission_id_or_path);
     if (p.extension() == ".xml") {
       string xml = FileHandler::getFileContent(this->mission_id_or_path);
       this->mission_spec = MissionSpec(xml, true);
       this->mission_spec.timeLimitInSeconds(this->time_limit_in_seconds);
     }
     else {
-      string xml = get_world_skeleton_from_xml();
+      string xml = this->get_world_skeleton_from_xml();
       this->mission_spec = MissionSpec(xml, true);
     }
 
     if (this->record_observations) {
       this->mission_spec.observeRecentCommands();
-      this->mission_spec.observeHotBar();
-      this->mission_spec.observeFullInventory();
       this->mission_spec.observeChat();
     }
   }
@@ -85,12 +88,33 @@ namespace tomcat {
   string Mission::get_world_skeleton_from_xml() {
     if (!getenv("TOMCAT")) {
       throw TomcatMissionException(
-          "TOMCAT environment variable does not exist.",
-          TomcatMissionException::TOMCAT_VAR_INEXISTENT);
+          "The TOMCAT environment variable has not been set!\n"
+          "Please set it to the location of your local copy of the tomcat\n"
+          "repository, or use the run_session script, which automatically sets "
+          "it.",
+          TomcatMissionException::TOMCAT_ENV_VAR_NOT_SET);
     }
 
     string agent_section_tags = this->create_agent_section_tags();
 
+    string world_dir =
+        Mission::id_to_world_folder_map.at(stoi(this->mission_id_or_path));
+
+    string world_dir_path =
+        format("{}data/worlds/{}", getenv("TOMCAT"), world_dir);
+
+    if (!fs::exists(fs::path(world_dir_path))) {
+      throw TomcatMissionException(
+          format("Requested world directory {} not found.\n"
+                 "Please download the world files by executing the "
+                 "{}tools/download/tomcat_worlds script.\n"
+                 "Note: The world file for mission ID 2 (USAR Singleplayer) is "
+                 "currently only available to teams participating in DARPA's "
+                 "ASIST program.",
+                 world_dir_path,
+                 getenv("TOMCAT")),
+          TomcatMissionException::WORLD_DIR_NOT_FOUND);
+    }
     string xml = format(
         R"(
         <?xml version="1.0" encoding="UTF-8"?>
@@ -118,7 +142,7 @@ namespace tomcat {
           {}
         </Mission>)",
         getenv("TOMCAT"),
-        Mission::id_to_world_folder_map.at(stoi(this->mission_id_or_path)),
+        world_dir,
         this->mission_id_or_path,
         this->time_limit_in_seconds,
         this->self_report_prompt_time_in_seconds,
@@ -138,6 +162,8 @@ namespace tomcat {
       else {
         agent_name = format("{}:{}", client->ip_address, client->control_port);
       }
+      // For USAR_SINGLEPLAYER mission: <Placement x="-2165" y="52" z="175"/>
+
       ss << format(R"(<AgentSection mode="Adventure">
               <Name>{}</Name>
               <AgentStart>
@@ -184,40 +210,43 @@ namespace tomcat {
       catch (MissionException& e) {
         switch (e.getMissionErrorCode()) {
         case malmo::MissionException::MISSION_SERVER_WARMING_UP:
-          print("Server not quite ready yet - waiting...");
+          print(stderr, "Server not quite ready yet - waiting...");
           sleep_for(milliseconds(2000));
           break;
         case malmo::MissionException::MISSION_INSUFFICIENT_CLIENTS_AVAILABLE:
-          print("Not enough available Minecraft instances running.");
+          print(stderr, "Not enough available Minecraft instances running.");
           attempts++;
           if (attempts < max_attempts) {
-            print("Will wait in case they are starting up.",
+            print(stderr,
+                  "Will wait in case they are starting up.",
                   max_attempts - attempts,
                   "attempts left.");
             sleep_for(milliseconds(2000));
           }
           break;
         case malmo::MissionException::MISSION_SERVER_NOT_FOUND:
-          print("Server not found - has the mission with role 0 been started "
+          print(stderr,
+                "Server not found - has the mission with role 0 been started "
                 "yet?");
           attempts++;
           if (attempts < max_attempts) {
-            print("Will wait and retry.",
+            print(stderr,
+                  "Will wait and retry.",
                   max_attempts - attempts,
                   "attempts left.");
             sleep_for(milliseconds(2000));
           }
           break;
         default:
-          print("Other error", e.getMessage());
-          print("Waiting will not help here - bailing immediately.");
+          print(stderr, "Other error", e.getMessage());
+          print(stderr, "Waiting will not help here - bailing immediately.");
           throw TomcatMissionException(
               "Could not establish connection with the host.",
               TomcatMissionException::CONNECTION_NOT_ESTABLISHED);
         }
 
         if (attempts == max_attempts) {
-          print("All chances used up - bailing now.");
+          print(stderr, "All chances used up - bailing now.");
           throw TomcatMissionException(
               "Could not establish connection with the host.",
               TomcatMissionException::CONNECTION_NOT_ESTABLISHED);
@@ -229,7 +258,7 @@ namespace tomcat {
   }
 
   MissionRecordSpec Mission::get_mission_record_spec() {
-    MissionRecordSpec mission_record_spec(this->record_path);
+    MissionRecordSpec mission_record_spec;
 
     if (this->record_observations) {
       mission_record_spec.recordObservations();
@@ -265,9 +294,9 @@ namespace tomcat {
       for (int i = 0; i < number_of_hosts; i++) {
         WorldState world_state = hosts[i]->peekWorldState();
         if (!world_state.errors.empty()) {
-          print("Errors waiting for mission start:");
+          print(stderr, "Errors waiting for mission start:");
           for (auto& error : world_state.errors) {
-            print(error->text);
+            print(stderr, error->text);
           }
           throw TomcatMissionException(
               "Could not start the mission.",
@@ -285,7 +314,7 @@ namespace tomcat {
     }
 
     if (elapsed_time_in_seconds >= max_seconds_to_start) {
-      print("Timed out waiting for mission to begin. Bailing.");
+      print(stderr, "Timed out waiting for mission to begin. Bailing.");
       throw TomcatMissionException(
           "Timed out waiting for mission to begin.",
           TomcatMissionException::ERROR_STARTING_MISSION);
@@ -295,12 +324,46 @@ namespace tomcat {
   void Mission::observe() {
     WorldState worldState;
     do {
-      sleep_for(milliseconds(10));
+      // Minecraft normally runs at a fixed rate of 20 ticks per second
+      // (https://minecraft.gamepedia.com/Tick), so we set the sleep duration to
+      // 50 ms.
+      sleep_for(milliseconds(50));
       for (auto& tomcat_agent : this->tomcat_agents) {
         tomcat_agent->observe_mission(*this);
       }
 
-      worldState = this->minecraft_server->getWorldState();
+      worldState = this->minecraft_server->peekWorldState();
+      if (worldState.observations.size() != 0) {
+        json observation = json::parse(worldState.observations.at(0)->text);
+        json header = {};
+        string timestamp =
+            pt::to_iso_extended_string(pt::microsec_clock::universal_time()) +
+            "Z";
+        header["timestamp"] = timestamp;
+        header["message_type"] = "observation";
+        header["version"] = "0.2";
+
+        //# Message
+        json metadata = {};
+        metadata["trial_id"] = this->uuid;
+        metadata["timestamp"] = timestamp;
+        metadata["source"] = "human";
+        metadata["sub_type"] = "state";
+        metadata["version"] = "0.2";
+
+        //# Data
+        json data = {};
+        data["name"] = "tomcat";
+        data["world_time"] = observation["WorldTime"];
+        data["total_time"] = observation["TotalTime"];
+        json message = {};
+        message["header"] = header;
+        message["msg"] = metadata;
+        message["data"] = observation;
+
+        cout << message.dump() << endl;
+      }
+
     } while (worldState.is_mission_running);
   }
 

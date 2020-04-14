@@ -45,8 +45,8 @@ while [ $try -lt $num_tries ]; do
 
     if [[ ${must_launch} -ne 0 ]]; then 
         echo "Script check_minecraft executing: "
-        echo "    ${TOMCAT}/tools/wrap_launch_minecraft.sh" 
-        ${TOMCAT}/tools/wrap_launch_minecraft.sh & 
+        echo "    ${TOMCAT}/tools/wrap_launch_minecraft" 
+        ${TOMCAT}/tools/wrap_launch_minecraft & 
         echo "Waiting for ${initial_wait} seconds to ensure wrap_launch_minecraft has started to launch Minecraft."  
         echo "Minecraft needs more than that time to start, and we want to be sure the log file has been created."
         sleep ${initial_wait}
@@ -54,7 +54,7 @@ while [ $try -lt $num_tries ]; do
 
     if [[ ! -e "${minecraft_log}" ]]; then 
         echo "${minecraft_log} does not exist."
-        echo "We expected ${TOMCAT}/tools/wrap_launch_minecraft.sh to have created it."
+        echo "We expected ${TOMCAT}/tools/wrap_launch_minecraft to have created it."
     else 
         have_line=0
         num_seconds=0
@@ -90,7 +90,7 @@ while [ $try -lt $num_tries ]; do
         if [ $have_line -gt 0 ]; then
             echo "Minecraft seems ready for us."
             echo "If it does not work, then run:"
-            echo "    ${TOMCAT}/tools/kill_minecraft.sh"
+            echo "    ${TOMCAT}/tools/kill_minecraft"
             echo "and try again." 
             exit_status=0
             break
@@ -99,7 +99,7 @@ while [ $try -lt $num_tries ]; do
         fi
     fi 
 
-    echo "Script check_minecraft.sh is having trouble verifying a viable Minecraft client."
+    echo "Script check_minecraft is having trouble verifying a viable Minecraft client."
 
     let try+=1 
 
@@ -107,7 +107,7 @@ while [ $try -lt $num_tries ]; do
         echo "Killing all Minecraft and Malmo processes that can be found and trying again."
     fi 
 
-    ${TOMCAT}/tools/kill_minecraft.sh
+    ${TOMCAT}/tools/kill_minecraft
 
 #     sleep 1
 #     /bin/rm -f "${minecraft_log}"

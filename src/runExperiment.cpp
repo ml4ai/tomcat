@@ -2,13 +2,10 @@
 #include "Mission.h"
 #include "utils.h"
 #include <boost/program_options.hpp>
-#include <fmt/format.h>
 #include <string>
 
 using namespace boost::program_options;
 using namespace std;
-using fmt::print;
-using namespace fmt::literals;
 using namespace tomcat;
 
 options_description load_options() {
@@ -16,10 +13,12 @@ options_description load_options() {
   options.add_options()("help,h", "Executable for running ToMCAT experiments.")(
       "mission",
       value<string>()->default_value("0"),
-      "Id or path to mission XML file.\n0: Tutorial\n1: Zombie Invasion")(
-      "time_limit",
-      value<unsigned int>()->default_value(20),
-      "Time limit for mission (in seconds).")(
+      "Mission ID or path to mission XML file.\n"
+      "  0: Tutorial\n"
+      "  1: Zombie Invasion\n"
+      "  2: USAR (Singleplayer)")("time_limit",
+                                  value<unsigned int>()->default_value(20),
+                                  "Time limit for mission (in seconds).")(
       "self_report",
       value<unsigned int>()->default_value(180),
       "Self-report prompt interval time (in seconds).")(
@@ -35,16 +34,9 @@ options_description load_options() {
                                          "Activate command recordings")(
       "record_rewards",
       bool_switch()->default_value(false),
-      "Activate reward recordings")("video_fps",
-                                    value<unsigned int>()->default_value(20),
-                                    "Frames per second for video recordings")(
-      "multiplayer",
-      bool_switch()->default_value(false),
-      "The mission should run in multiplayer mode")(
-      "record_path",
-      value<string>()->default_value("./saved_data_" + get_timestamp() +
-                                     ".tgz"),
-      "Path to save Malmo data");
+      "Activate reward recordings")("multiplayer",
+                                    bool_switch()->default_value(false),
+                                    "Run mission in multiplayer mode");
 
   return options;
 }
@@ -74,7 +66,6 @@ bool are_parameters_ok(variables_map parameters_map,
 
 Mission create_mission(variables_map parameters_map) {
   string mission_id_or_path = parameters_map["mission"].as<string>();
-  string record_path = parameters_map["record_path"].as<string>();
   unsigned int port_number = parameters_map["port"].as<unsigned int>();
   unsigned int time_limit_in_seconds =
       parameters_map["time_limit"].as<unsigned int>();
@@ -99,8 +90,7 @@ Mission create_mission(variables_map parameters_map) {
                             record_observations,
                             record_commands,
                             record_rewards,
-                            multiplayer,
-                            record_path);
+                            multiplayer);
   return mission;
 }
 
@@ -116,7 +106,7 @@ int main(int argc, const char* argv[]) {
       mission.start();
     }
     catch (exception& e) {
-      print("Error starting mission: {}", e.what());
+      cerr << "Error starting mission: " << e.what();
       return EXIT_FAILURE;
     }
   }

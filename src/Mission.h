@@ -14,8 +14,9 @@ namespace tomcat {
   public:
     enum ErrorCode {
       CONNECTION_NOT_ESTABLISHED,
-      TOMCAT_VAR_INEXISTENT,
-      ERROR_STARTING_MISSION
+      TOMCAT_ENV_VAR_NOT_SET,
+      ERROR_STARTING_MISSION,
+      WORLD_DIR_NOT_FOUND
     };
 
     TomcatMissionException(const std::string& message, ErrorCode error_code)
@@ -47,7 +48,6 @@ namespace tomcat {
      * @param record_commands - Flag that activates commands recording
      * @param record_rewards - Flag that activates rewards recording
      * @param multiplayer - Flag that indicates a multiplayer mission
-     * @param record_path - Path where recordings will be saved
 
      */
     Mission(std::string mission_id_or_path,
@@ -57,8 +57,7 @@ namespace tomcat {
             bool record_observations,
             bool record_commands,
             bool record_rewards,
-            bool multiplayer,
-            std::string record_path = "./saved_data.tgz");
+            bool multiplayer);
 
     /**
      * Destructor
@@ -84,7 +83,7 @@ namespace tomcat {
     void send_command(std::string command);
 
   private:
-    enum MissionId { TUTORIAL = 0, SAR = 1 };
+    enum MissionId { TUTORIAL = 0, ZOMBIE = 1, USAR_SINGLEPLAYER = 2 };
 
     malmo::MissionSpec mission_spec;
     std::string mission_id_or_path;
@@ -95,11 +94,11 @@ namespace tomcat {
     bool record_commands;
     bool record_rewards;
     bool multiplayer;
-    std::string record_path = "./saved_data.tgz";
     std::shared_ptr<malmo::AgentHost> minecraft_server;
     std::vector<std::shared_ptr<malmo::AgentHost>> minecraft_clients;
     std::shared_ptr<malmo::ClientPool> client_pool;
     std::vector<std::shared_ptr<LocalAgent>> tomcat_agents;
+    std::string uuid;
 
     /**
      * Creates the MissionSpec object based on the mission Id or XML file
@@ -113,7 +112,8 @@ namespace tomcat {
     inline static std::unordered_map<int, std::string> id_to_world_folder_map =
         {
             {TUTORIAL, "tutorial"},
-            {SAR, "sar"},
+            {ZOMBIE, "zombie"},
+            {USAR_SINGLEPLAYER, "Singleplayer"},
     };
 
     /**

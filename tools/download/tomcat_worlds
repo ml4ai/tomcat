@@ -4,7 +4,7 @@
 
 # Set the TOMCAT environment variable, assuming that the directory structure
 # mirrors that of the git repository.
-export TOMCAT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && pwd )"
+export TOMCAT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../../" >/dev/null 2>&1 && pwd )"
 
 echo "Downloading ToMCAT Minecraft worlds."
 

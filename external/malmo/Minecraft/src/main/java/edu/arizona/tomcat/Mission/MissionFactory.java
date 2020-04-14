@@ -1,8 +1,9 @@
 package edu.arizona.tomcat.Mission;
 
 import edu.arizona.tomcat.Mission.Client.ClientMission;
-import edu.arizona.tomcat.Mission.Client.SARClientMission;
 import edu.arizona.tomcat.Mission.Client.TutorialClientMission;
+import edu.arizona.tomcat.Mission.Client.USARSinglePlayerClientMission;
+import edu.arizona.tomcat.Mission.Client.ZombieClientMission;
 
 public class MissionFactory {
 
@@ -14,8 +15,12 @@ public class MissionFactory {
       mission = new TutorialMission();
       break;
 
-    case SEARCH_AND_RESCUE:
-      mission = new SARMission();
+    case ZOMBIE:
+      mission = new ZombieMission();
+      break;
+
+    case USAR_SINGLE_PLAYER:
+      mission = new USARSinglePlayerMission();
       break;
 
     default:
@@ -33,8 +38,12 @@ public class MissionFactory {
       clientMission = new TutorialClientMission();
       break;
 
-    case SEARCH_AND_RESCUE:
-      clientMission = new SARClientMission();
+    case ZOMBIE:
+      clientMission = new ZombieClientMission();
+      break;
+
+    case USAR_SINGLE_PLAYER:
+      clientMission = new USARSinglePlayerClientMission();
       break;
 
     default:
