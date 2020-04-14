@@ -86,7 +86,7 @@ cleanup() {
       if (( "${ENABLE_SYSTEM_AUDIO_RECORDING:-1}" )); then
         # Switching the audio output from the multi-output device to the
         # built-in output.
-        if ! SwitchAudioSource -s "$original_output_device"; then exit 1; fi
+        if ! SwitchAudioSource -s "${original_output_device:-}"; then exit 1; fi
       fi
     fi
   fi
