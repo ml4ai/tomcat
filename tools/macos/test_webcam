@@ -8,12 +8,12 @@ echo "Testing if we can record video using the webcam."
 test_webcam_macos() {
   test_video_file=${TOMCAT_TMP_DIR}/test_video.mpg
   $rm -f "$test_video_file" 
-  ffmpeg_webcam_log="$TOMCAT_TMP_DIR"/ffmpeg_webcam.log
+  ffmpeg_webcam_log="$TOMCAT_TMP_DIR"/ffmpeg_webcam_test.log
   ffmpeg\
     -nostdin\
-    -f ${ffmpeg_fmt_webcam}\
+    -f ${FFMPEG_FMT_WEBCAM}\
     ${framerate_option:-}\
-    -i ${ffmpeg_input_device_webcam}\
+    -i ${FFMPEG_INPUT_DEVICE_WEBCAM}\
     -t 0.1\
     "$test_video_file" &> "$ffmpeg_webcam_log"
   if [[ ! -f "$test_video_file" ]]; then
@@ -30,9 +30,7 @@ test_webcam_macos() {
     elif [[ ! $framerate_err == "" ]]; then
       # On recent MacBook Pros, it seems that we have to specify the framerate
       # explicitly for some unknown reason for the webcam recording.
-      echo "Caught unsupported framerate error:" $framerate_err
-      echo "We will now set the framerate to 30 going forward."
-      framerate_option="-framerate 30"
+      export FRAMERATE_OPTION="-framerate 30"
       test_webcam_macos
     else
       echo "Unable to capture webcam video - unhandled ffmpeg error."
@@ -43,6 +41,3 @@ test_webcam_macos() {
     fi
   fi
 }
-
-test_webcam_macos
-exit 0

@@ -152,18 +152,19 @@ detect_ci() {
 __test_ffmpeg_recording() {
   if [[ $OSTYPE == "darwin"* ]]; then
     echo "Checking if webcam video recording works..."
-    "${TOMCAT}"/tools/macos/test_webcam
+    . "${TOMCAT}"/tools/macos/test_webcam
+    test_webcam_macos
 
     if (( $ENABLE_SYSTEM_AUDIO_RECORDING )); then
       echo "Checking if system audio recording is set up..."
-      "${TOMCAT}"/tools/macos/test_system_audio_recording
+      if ! "${TOMCAT}"/tools/macos/test_system_audio_recording; then exit 1; fi
     fi
 
     echo "Testing terminal access to microphone..."
-    "${TOMCAT}"/tools/macos/test_microphone
+    if ! "${TOMCAT}"/tools/macos/test_microphone; then exit 1; fi
 
     echo "Testing screen capture..."
-    "${TOMCAT}"/tools/macos/test_screen_recording
+    if ! "${TOMCAT}"/tools/macos/test_screen_recording; then exit 1; fi
   elif [[ $OSTYPE == linux-gnu ]]; then
     echo "Not testing ffmpeg yet on Linux."
   else
@@ -181,5 +182,10 @@ configure_session() {
     __configure_screen_capture
   fi
   __test_ffmpeg_recording
+  if [[ $OSTYPE == "darwin"* ]]; then
+    export ORIGINAL_OUTPUT_DEVICE=$(SwitchAudioSource -c)
+    # Switching the audio output to the multi-output device.
+    if ! SwitchAudioSource -s "Multi-Output Device"; then exit 1; fi
+  fi
   export DO_MAIN_MISSION=1
 }

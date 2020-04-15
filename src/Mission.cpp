@@ -101,13 +101,13 @@ namespace tomcat {
         Mission::id_to_world_folder_map.at(stoi(this->mission_id_or_path));
 
     string world_dir_path =
-        format("{}data/worlds/{}", getenv("TOMCAT"), world_dir);
+        format("{}/data/worlds/{}", getenv("TOMCAT"), world_dir);
 
     if (!fs::exists(fs::path(world_dir_path))) {
       throw TomcatMissionException(
           format("Requested world directory {} not found.\n"
                  "Please download the world files by executing the "
-                 "{}tools/download/tomcat_worlds script.\n"
+                 "{}/tools/download/tomcat_worlds script.\n"
                  "Note: The world file for mission ID 2 (USAR Singleplayer) is "
                  "currently only available to teams participating in DARPA's "
                  "ASIST program.",

@@ -37,14 +37,14 @@ start_ffmpeg_recording() {
     -f ${FFMPEG_FMT_WEBCAM}\
     $framerate_option\
     -i ${FFMPEG_INPUT_DEVICE_WEBCAM}\
-    "${output_dir}"/webcam_video.mpg &> /dev/null &
+    "${output_dir}"/webcam_video.mpg &> ${TOMCAT_TMP_DIR}/ffmpeg_webcam_main.log &
   
   echo "Recording player audio using microphone."
   ffmpeg\
     -nostdin\
     -f ${FFMPEG_FMT_MICROPHONE}\
     -i ${FFMPEG_INPUT_DEVICE_MICROPHONE}\
-    "${output_dir}"/player_audio.wav &> /dev/null &
+    "${output_dir}"/player_audio.wav &> ${TOMCAT_TMP_DIR}/ffmpeg_microphone_main.log &
 
   if (( $ENABLE_SYSTEM_AUDIO_RECORDING )); then
     echo "Recording system audio."
@@ -68,15 +68,12 @@ start_ffmpeg_recording() {
 cleanup() {
   pkill "ffmpeg"
   if ! "$TOMCAT"/tools/kill_minecraft; then exit 1; fi
-  if [ ! "${GITHUB_ACTIONS:-false}" = "true" ]; then
-      if (( $ENABLE_SYSTEM_AUDIO_RECORDING )); then
-        if [[ "$OSTYPE"  == "darwin"* ]]; then
-          # Switching the audio output from the multi-output device to the
-          # built-in output.
-          if ! SwitchAudioSource -s "Built-in Output"; then exit 1; fi
-        fi
-      fi
-    fi
+  if [[ $CI -eq 0  \
+        && $ENABLE_SYSTEM_AUDIO_RECORDING -eq 1 \
+        && "$OSTYPE"  == "darwin"* ]]; then
+    # Switching the audio output from the multi-output device to the
+    # built-in output.
+    if ! SwitchAudioSource -s "$ORIGINAL_OUTPUT_DEVICE"; then exit 1; fi
   fi
 
   discrete_actions_file="${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
@@ -107,19 +104,17 @@ export main_mission_log="${TOMCAT_TMP_DIR}/main_mission.log"
 export num_tries=2
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  "$TOMCAT"/tools/macos/activate_minecraft_window ${terminal:-}
+  "$TOMCAT"/tools/macos/activate_minecraft_window $TERMINAL_PROGRAM
   if [[ $? -ne 0 ]]; then exit 1; fi
-elif [[ "$OSTYPE" == "linux-gnu" && ! "${GITHUB_ACTIONS:-false}" = "true" ]]; then
+elif [[ "$OSTYPE" == "linux-gnu" && $CI -ne 1 ]]; then
   # wmctrl does not work well with xvfb-run, so we disable full-screening the
   # Minecraft window when running a headless test of this script with a Github
   # Actions runner.
-  "$TOMCAT"/tools/linux/activate_minecraft_window
-  if [[ $? -ne 0 ]]; then exit 1; fi
+  if ! "$TOMCAT"/tools/linux/activate_minecraft_window; then exit 1; fi
 fi
 
 if (( "${DO_TUTORIAL_MISSION:-1}" )); then
-  "$TOMCAT"/tools/run_tutorial
-  if [[ $? -ne 0 ]]; then exit 1; fi
+  if ! "$TOMCAT"/tools/run_tutorial; then exit 1; fi
 fi
 
 # We sleep for a few seconds to let the player catch a breath between the
@@ -198,7 +193,6 @@ if (( ${DO_MAIN_MISSION:-1} )); then
     fi
   done
 fi
-
 
 cleanup
 
