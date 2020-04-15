@@ -589,7 +589,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
   }
 
     /**
-     * Add items to the player's inventory to help them accomplish the mission
+     * Add item to the player's inventory to help them accomplish the mission
      * goals
      *
      * @param type - ItemType of the item to add in inventory

@@ -3,7 +3,6 @@
 #include "WebcamSensor.h"
 #include <GazeEstimation.h>
 #include <opencv2/highgui/highgui.hpp>
-#include<opencv2/videoio.hpp>
 
 namespace tomcat {
 
@@ -93,21 +92,5 @@ namespace tomcat {
 
     this->rgb_image = this->sequence_reader.GetNextFrame();
   }
-    VideoCapture capture(0);
-    VideoWriter writer("VideoTest.avi", CV_FOURCC('M', 'J', 'P', 'G'), 25.0, Size(640, 480));
-    Mat frame;
-
-    while (capture.isOpened())
-    {
-       capture >> frame;
-       writer << frame;
-       imshow("video", frame);
-       if (cvWaitKey(20) == 27)
-       {
-           break;
-       }
-     }
-
-
 
 } // namespace tomcat

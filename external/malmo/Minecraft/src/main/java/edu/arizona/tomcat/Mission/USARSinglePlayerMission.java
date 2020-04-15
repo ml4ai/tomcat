@@ -1,6 +1,7 @@
 package edu.arizona.tomcat.Mission;
 
 import com.microsoft.Malmo.Schemas.EntityTypes;
+import com.microsoft.Malmo.Schemas.ItemType;
 import com.microsoft.Malmo.Schemas.PosAndDirection;
 import edu.arizona.tomcat.Messaging.TomcatClientServerHandler;
 import edu.arizona.tomcat.Messaging.TomcatMessageData;
@@ -13,6 +14,7 @@ import edu.arizona.tomcat.Mission.MissionPhase.CompletionStrategy;
 import edu.arizona.tomcat.Mission.gui.RichContent;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 import edu.arizona.tomcat.Utils.Converter;
+import edu.arizona.tomcat.Utils.InventoryHandler;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.World.Building;
 import edu.arizona.tomcat.World.Drawing;
@@ -123,6 +125,10 @@ public class USARSinglePlayerMission extends Mission {
    */
   private void addItemsToInventory(World world) {
     // InventoryHandler.addItemToInventory(ItemType.IRON_SWORD, 1);
+    for (EntityPlayerMP player :
+            MinecraftServerHelper.getServer().getPlayerList().getPlayers()) {
+      InventoryHandler.addItemToInventory(player, ItemType.STONE_AXE, 1);
+    }
   }
 
   @Override
