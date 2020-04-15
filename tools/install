@@ -23,12 +23,12 @@ __build_tomcat() {
 
     # Trying to set the correct version of Java.
     pushd build > /dev/null 
-      if (( $CI )); then
-          cmake ${TOMCAT} -DBoost_ARCHITECTURE=-x64\
-                          -DBOOST_ROOT=$BOOST_ROOT_1_69_0
-          if [[ $? -ne 0 ]]; then exit 1; fi
+      if [[ $CI -eq 1 && $OSTYPE == "linux-gnu" ]]; then
+        cmake ${TOMCAT} -DBoost_ARCHITECTURE=-x64\
+                        -DBOOST_ROOT=$BOOST_ROOT_1_69_0
+        if [[ $? -ne 0 ]]; then exit 1; fi
       else
-          if ! cmake ${TOMCAT}; then exit 1; fi
+        if ! cmake ${TOMCAT}; then exit 1; fi
       fi;
 
       if ! make -j; then exit 1; fi
