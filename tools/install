@@ -43,11 +43,8 @@ __download_tomcat_data() {
 
   # We do not download the OpenFace models when running on a CI runner to save
   # time.
-
-  if (( ! $CI )); then
-    if [[ ! -d ${TOMCAT}/data/OpenFace_models ]]; then
-      if ! ${TOMCAT}/tools/download/OpenFace_models; then exit 1; fi
-    fi
+  if [[ $CI -eq 0 && ! -d ${TOMCAT}/data/OpenFace_models ]]; then
+    if ! ${TOMCAT}/tools/download/OpenFace_models; then exit 1; fi
   fi
 }
 
