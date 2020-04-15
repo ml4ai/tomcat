@@ -35,7 +35,7 @@ start_ffmpeg_recording() {
   echo "Recording video of player's face using webcam."
   ffmpeg\
     -f ${FFMPEG_FMT_WEBCAM}\
-    $framerate_option\
+    ${FRAMERATE_OPTION:-}\
     -i ${FFMPEG_INPUT_DEVICE_WEBCAM}\
     "${output_dir}"/webcam_video.mpg &> ${TOMCAT_TMP_DIR}/ffmpeg_webcam_main.log &
   
