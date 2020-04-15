@@ -125,10 +125,12 @@ __configure_screen_capture() {
 }
 
 __set_java_home() {
-  # Trying to set the correct version of Java.
-  export MACPORTS_FOUND=`[ -x "$(command -v port)" ]; echo $?`
-  if (( $MACPORTS_FOUND )); then
-    export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk8/Contents/Home
+  if [[ $OSTYPE == "darwin"* ]]; then
+    # Trying to set the correct version of Java.
+    export MACPORTS_FOUND=`[ -x "$(command -v port)" ]; echo $?`
+    if (( $MACPORTS_FOUND )); then
+      export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk8/Contents/Home
+    fi
   fi
 }
 
