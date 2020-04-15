@@ -30,9 +30,7 @@ test_webcam_macos() {
     elif [[ ! $framerate_err == "" ]]; then
       # On recent MacBook Pros, it seems that we have to specify the framerate
       # explicitly for some unknown reason for the webcam recording.
-      echo "Caught unsupported framerate error:" $framerate_err
-      echo "We will now set the framerate to 30 going forward."
-      framerate_option="-framerate 30"
+      export framerate_option="-framerate 30"
       test_webcam_macos
     else
       echo "Unable to capture webcam video - unhandled ffmpeg error."
@@ -45,4 +43,3 @@ test_webcam_macos() {
 }
 
 test_webcam_macos
-exit 0
