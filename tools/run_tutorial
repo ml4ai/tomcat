@@ -7,8 +7,7 @@ while [ $try -lt $num_tries ]; do
     echo " "
 
     ${TOMCAT}/build/bin/runExperiment --mission 0 \
-      --record_path=tutorial_saved_data.tgz \
-      >& ${tutorial_mission_log} &
+      2> ${tutorial_mission_log} > /dev/null &
     bg_pid=$!
     echo "Running: ${TOMCAT}/build/bin/runExperiment --mission 0"
     echo "Process is $bg_pid - waiting for it"
