@@ -8,8 +8,8 @@ test_microphone_macos() {
   ffmpeg_microphone_log="$TOMCAT_TMP_DIR"/ffmpeg_microphone.log
   ffmpeg\
     -nostdin\
-    -f ${ffmpeg_fmt_microphone}\
-    -i ${ffmpeg_input_device_microphone}\
+    -f ${FFMPEG_FMT_MICROPHONE}\
+    -i ${FFMPEG_INPUT_DEVICE_MICROPHONE}\
     -t 1\
     "$test_microphone_file" &> "$ffmpeg_microphone_log" &
   microphone_test_pid=$!

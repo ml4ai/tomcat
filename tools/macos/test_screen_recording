@@ -9,10 +9,10 @@ test_screen_recording_macos() {
   $rm -f "$test_screen_video_file"
   ffmpeg\
     -nostdin\
-    -f ${ffmpeg_fmt_screen_capture}\
-    -i ${ffmpeg_input_device_screen_capture}\
+    -f ${FFMPEG_FMT_SCREEN_CAPTURE}\
+    -i ${FFMPEG_INPUT_DEVICE_SCREEN_CAPTURE}\
     -t 1\
-    -s $dimensions\
+    -s $SCREEN_DIMENSIONS\
     "$test_screen_video_file" >& "$ffmpeg_screen_video_log" &
   sleep 1
   # Check if the test video file exists
