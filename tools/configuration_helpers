@@ -30,7 +30,9 @@ detect_os() {
       export ENABLE_SYSTEM_AUDIO_RECORDING=1
       export FFMPEG_FMT_SYSTEM_AUDIO=avfoundation
     fi
-    __detect_terminal_program_macos
+    if (( ! $CI )); then
+      __detect_terminal_program_macos
+    fi
 
   elif [[ "$OSTYPE" == "linux-gnu" ]]; then
     echo "Linux detected."
