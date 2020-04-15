@@ -19,9 +19,11 @@ detect_os() {
   if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "macOS detected."
     export MACOS_MINOR_VERSION=$(sw_vers -productVersion | cut -d '.' -f2)
+
     # We set the path to MacPorts so that users don't necessarily need to mess
     # with their ~/.bash_profile.
     export PATH="$PATH:/opt/local/bin:/opt/local/sbin"
+
     if (( $MACOS_MINOR_VERSION < 15 )); then
       echo "macOS version older than 10.15 (Catalina). "\
            "System audio recording will be disabled."
@@ -30,11 +32,21 @@ detect_os() {
       export ENABLE_SYSTEM_AUDIO_RECORDING=1
       export FFMPEG_FMT_SYSTEM_AUDIO=avfoundation
     fi
+
     if (( ! $CI )); then
-      __detect_terminal_program_macos
+      # In a non-CI environment, we will set the TERMINAL_PROGRAM environment
+      # variable to help with macOS AppleScripts.
+      if [[ $TERM_PROGRAM == iTerm.app ]]; then
+        export TERMINAL_PROGRAM="iTerm"
+      elif [[ $TERM_PROGRAM == Apple_Terminal ]]; then
+        export TERMINAL_PROGRAM="Terminal"
+      fi
     fi
-    # Trying to set the correct version of Java.
+
+    # Checking if MacPorts is present.
     export MACPORTS_FOUND=`[ -x "$(command -v port)" ]; echo $?`
+
+    # Trying to set the correct value of JAVA_HOME.
     if (( $MACPORTS_FOUND )); then
       export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk8/Contents/Home
     fi
@@ -45,14 +57,6 @@ detect_os() {
     echo "OSTYPE is not darwin* or linux-gnu. Most likely this operating "\
          "system is not supported. Exiting now."
     exit 1
-  fi
-}
-
-__detect_terminal_program_macos() {
-  if [[ $TERM_PROGRAM == iTerm.app ]]; then
-    export TERMINAL_PROGRAM="iTerm"
-  elif [[ $TERM_PROGRAM == Apple_Terminal ]]; then
-    export TERMINAL_PROGRAM="Terminal"
   fi
 }
 
@@ -68,7 +72,7 @@ __configure_webcam() {
       echo "The script has detected that you have connected an external "\
            "display with a built-in webcam, setting the ffmpeg webcam input "\
            "device to '1:'."
-      #TODO Have Mihai test this out with his external display.
+      # TODO Have Mihai test this out with his external display.
 
       export FFMPEG_INPUT_DEVICE_WEBCAM="1:"
     else
@@ -187,5 +191,5 @@ configure_session() {
     # Switching the audio output to the multi-output device.
     if ! SwitchAudioSource -s "Multi-Output Device"; then exit 1; fi
   fi
-  export DO_MAIN_MISSION=1
+  export DO_MAIN_MISSION=${DO_MAIN_MISSION:-1}
 }
