@@ -1,0 +1,185 @@
+#!/bin/bash
+
+set -u
+
+# Set the TOMCAT environment variable, assuming that the directory structure
+# mirrors that of the git repository.
+TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
+export TOMCAT
+
+export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
+mkdir -p "${TOMCAT_TMP_DIR}"
+
+# On some systems, the 'rm' command is aliased to something else. So we take
+# the precaution of explicitly pointing rm to /bin/rm.
+export rm=/bin/rm
+
+# Detect the OS, set some useful environment variables.
+detect_os() {
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo "macOS detected."
+    export MACOS_MINOR_VERSION=$(sw_vers -productVersion | cut -d '.' -f2)
+    # We set the path to MacPorts so that users don't necessarily need to mess
+    # with their ~/.bash_profile.
+    export PATH="$PATH:/opt/local/bin:/opt/local/sbin"
+    if (( $MACOS_MINOR_VERSION < 15 )); then
+      echo "macOS version older than 10.15 (Catalina). "\
+           "System audio recording will be disabled."
+      export ENABLE_SYSTEM_AUDIO_RECORDING=0
+    else
+      export ENABLE_SYSTEM_AUDIO_RECORDING=1
+      export FFMPEG_FMT_SYSTEM_AUDIO=avfoundation
+    fi
+    __detect_terminal_program_macos
+
+  elif [[ "$OSTYPE" == "linux-gnu" ]]; then
+    echo "Linux detected."
+  else
+    echo "OSTYPE is not darwin* or linux-gnu. Most likely this operating "\
+         "system is not supported. Exiting now."
+    exit 1
+  fi
+}
+
+__detect_terminal_program_macos() {
+  if [[ $TERM_PROGRAM == iTerm.app ]]; then
+    export TERMINAL_PROGRAM="iTerm"
+  elif [[ $TERM_PROGRAM == Apple_Terminal ]]; then
+    export TERMINAL_PROGRAM="Terminal"
+  fi
+}
+
+# Configure ffmpeg options for the webcam.
+__configure_webcam() {
+  if [[ $OSTYPE == "darwin"* ]]; then
+
+    export FFMPEG_FMT_WEBCAM=avfoundation
+
+    if [[ ! $(ffmpeg -f avfoundation -list_devices true -i "" 2>&1  \
+              | grep "\[1\] FaceTime HD Camera (Display)") == "" ]]; then
+
+      echo "The script has detected that you have connected an external "\
+           "display with a built-in webcam, setting the ffmpeg webcam input "\
+           "device to '1:'."
+      #TODO Have Mihai test this out with his external display.
+
+      export FFMPEG_INPUT_DEVICE_WEBCAM="1:"
+    else
+      export FFMPEG_INPUT_DEVICE_WEBCAM="0:"
+    fi
+  elif [[ "$OSTYPE" == linux-gnu ]]; then
+    export FFMPEG_FMT_WEBCAM=v4l2
+    export FFMPEG_INPUT_DEVICE_WEBCAM=/dev/video0
+  fi
+}
+
+# Configure ffmpeg options for audio recording (microphone and system audio).
+__configure_audio_recording() {
+  if [[ $OSTYPE == "darwin"* ]]; then
+
+    export FFMPEG_FMT_MICROPHONE=avfoundation
+    if [[ ! $(ffmpeg -f avfoundation -list_devices true -i "" 2>&1  \
+              | grep "\[0\] Display Audio") == "" ]]; then
+      echo "The script has detected that you have connected an external "\
+           "display with a built-in microphone, audio recording might not "\
+           "work properly."
+    fi
+
+    if (( $ENABLE_SYSTEM_AUDIO_RECORDING )); then
+      # The default input microphone would normally be ":0", but since we
+      # have installed BlackHole to record system audio, the input device
+      # corresponding to the microphone is ":1".
+      export FFMPEG_INPUT_DEVICE_MICROPHONE=":1"
+      export FFMPEG_INPUT_DEVICE_SYSTEM_AUDIO=":0"
+    else
+      export FFMPEG_INPUT_DEVICE_MICROPHONE=":0"
+    fi
+
+  elif [[ $OSTYPE == linux-gnu ]]; then
+    echo "System audio recording for Linux has not been implemented yet, so "\
+         "we will disable it."
+    export ENABLE_SYSTEM_AUDIO_RECORDING=0
+    export FFMPEG_FMT_MICROPHONE=alsa
+    export FFMPEG_INPUT_DEVICE_MICROPHONE=default
+  else
+    echo "Unsupported OS: " $OSTYPE
+    exit 1
+  fi
+}
+
+__configure_screen_capture() {
+  export SCREEN_DIMENSIONS=$(xdpyinfo | grep dimensions | awk '{print $2;}')
+  if [[ $OSTYPE == "darwin"* ]]; then
+    export FFMPEG_FMT_SCREEN_CAPTURE=avfoundation
+    export FFMPEG_INPUT_DEVICE_SCREEN_CAPTURE=\
+      :$(ffmpeg -f avfoundation -list_devices true -i "" 2>&1  \
+      | grep "Capture screen" \
+      | cut -d '[' -f3 | cut -d ']' -f1)
+  elif [[ $OSTYPE == linux-gnu ]]; then
+    export FFMPEG_FMT_SCREEN_CAPTURE=x11grab
+    export FFMPEG_INPUT_DEVICE_SCREEN_CAPTURE=":0.0"
+  else
+    echo "Unsupported OS:" $OSTYPE
+    exit 1
+  fi
+}
+
+__set_java_home() {
+  # Trying to set the correct version of Java.
+  export MACPORTS_FOUND=`[ -x "$(command -v port)" ]; echo $?`
+  if (( $MACPORTS_FOUND )); then
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk8/Contents/Home
+  fi
+}
+
+detect_ci() {
+  if [[ ${GITHUB_ACTIONS:-false} == true ]]; then
+    export CI=1
+  else
+    export CI=0
+  fi
+  if (( $CI )); then
+    export TIME_LIMIT=1
+    export DO_TUTORIAL_MISSION=0
+    export MISSION=external/malmo/sample_missions/default_flat_1.xml
+    export ENABLE_FFMPEG=0
+  else
+    export ENABLE_FFMPEG=${ENABLE_FFMPEG:-1}
+    export TIME_LIMIT=600
+  fi
+}
+
+__test_ffmpeg_recording() {
+  if [[ $OSTYPE == "darwin"* ]]; then
+    echo "Checking if webcam video recording works..."
+    "${TOMCAT}"/tools/macos/test_webcam
+
+    if (( $ENABLE_SYSTEM_AUDIO_RECORDING )); then
+      echo "Checking if system audio recording is set up..."
+      "${TOMCAT}"/tools/macos/test_system_audio_recording
+    fi
+
+    echo "Testing terminal access to microphone..."
+    "${TOMCAT}"/tools/macos/test_microphone
+
+    echo "Testing screen capture..."
+    "${TOMCAT}"/tools/macos/test_screen_recording
+  elif [[ $OSTYPE == linux-gnu ]]; then
+    echo "Not testing ffmpeg yet on Linux."
+  else
+    echo "Unsupported OS:" $OSTYPE
+    exit 1
+  fi
+}
+
+configure_session() {
+  detect_ci
+  detect_os
+  if (( $ENABLE_FFMPEG )); then
+    __configure_webcam
+    __configure_audio_recording
+    __configure_screen_capture
+  fi
+  __test_ffmpeg_recording
+  export DO_MAIN_MISSION=1
+}
