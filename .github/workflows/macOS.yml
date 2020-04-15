@@ -10,7 +10,7 @@ on:
     branches: [ '*' ]
 
 jobs:
-  build_and_test:
+  build_macos:
     runs-on: [macos-latest]
     if: github.repository == 'ml4ai/tomcat'
     steps:
