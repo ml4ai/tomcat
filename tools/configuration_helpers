@@ -132,6 +132,7 @@ __set_java_home() {
   fi
 }
 
+# Detect whether we are running in a continuous integration environment or not.
 detect_ci() {
   if [[ ${GITHUB_ACTIONS:-false} == true ]]; then
     export CI=1
