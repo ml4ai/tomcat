@@ -96,7 +96,8 @@ __install_dependencies_using_homebrew() {
   #TODO When OpenFace is reintroduced, add dlib, opencv, openblas installation back here.
 }
 
-install_dependencies_using_apt() {
+__install_dependencies_using_apt() {
+
   echo "apt-get executable found. Assuming that you are using a flavor of "\
         "Debian Linux, such as Ubuntu."
   echo ""
