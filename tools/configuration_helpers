@@ -48,9 +48,9 @@ detect_os() {
     export HOMEBREW_FOUND=`[ -x "$(command -v brew)" ]; echo $?` 
 
     # Trying to set the correct value of JAVA_HOME.
-    if (( $MACPORTS_FOUND )); then
+    if [[ $MACPORTS_FOUND -eq 0 ]]; then
       export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk8/Contents/Home
-    elif (( $HOMEBREW_FOUND )); then
+    elif [[ $HOMEBREW_FOUND -eq 0 ]]; then
       export JAVA_HOME=/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk
     fi
 
