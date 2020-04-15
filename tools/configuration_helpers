@@ -45,10 +45,13 @@ detect_os() {
 
     # Checking if MacPorts is present.
     export MACPORTS_FOUND=`[ -x "$(command -v port)" ]; echo $?`
+    export HOMEBREW_FOUND=`[ -x "$(command -v brew)" ]; echo $?` 
 
     # Trying to set the correct value of JAVA_HOME.
     if (( $MACPORTS_FOUND )); then
       export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk8/Contents/Home
+    elif (( $HOMEBREW_FOUND )); then
+      export JAVA_HOME=/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk
     fi
 
   elif [[ "$OSTYPE" == "linux-gnu" ]]; then

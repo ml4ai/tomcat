@@ -161,11 +161,7 @@ __install_dependencies() {
 
       echo "Checking for MacPorts or Homebrew package managers."
 
-      # The line below will prevent MacPorts from being installed again if we
-      # had already installed it from source.
-      homebrew_found=`[ -x "$(command -v brew)" ]; echo $?` 
-
-      if [[ $MACPORTS_FOUND -eq 1 && $homebrew_found -eq 1 ]]; then
+      if [[ $MACPORTS_FOUND -eq 1 && $HOMEBREW_FOUND -eq 1 ]]; then
         echo "Neither the MacPorts or Homebrew package managers have been"
         echo "detected. Proceeding to install MacPorts in the default location"
         echo "(/opt/local)"
@@ -173,13 +169,13 @@ __install_dependencies() {
 
         __install_dependencies_using_macports
 
-      elif [[ $MACPORTS_FOUND -eq 0 && $homebrew_found -eq 1 ]]; then
+      elif [[ $MACPORTS_FOUND -eq 0 && $HOMEBREW_FOUND -eq 1 ]]; then
         __install_dependencies_using_macports
 
-      elif [[ $MACPORTS_FOUND -eq 1 && $homebrew_found -eq 0 ]]; then
+      elif [[ $MACPORTS_FOUND -eq 1 && $HOMEBREW_FOUND -eq 0 ]]; then
         __install_dependencies_using_homebrew
 
-      elif [[ $MACPORTS_FOUND -eq 0 && $homebrew_found -eq 0 ]]; then
+      elif [[ $MACPORTS_FOUND -eq 0 && $HOMEBREW_FOUND -eq 0 ]]; then
         echo "Both the MacPorts (https://www.macports.org) and Homebrew"
         echo "(https://brew) package managers have been found. We assume you"
         echo "are a power user and can set your PATH environment variable as"
