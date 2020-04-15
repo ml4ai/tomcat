@@ -40,7 +40,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 
     if [ ! "${GITHUB_ACTIONS:-false}" = "true" ]; then
       echo "Checking if webcam video recording works..."
-      "${TOMCAT}"/tools/macos/test_webcam
+      . "${TOMCAT}"/tools/macos/test_webcam
 
       if (( "${ENABLE_SYSTEM_AUDIO_RECORDING:-1}" )); then
         echo "Checking if system audio recording is set up..."
