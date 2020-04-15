@@ -22,7 +22,6 @@ __build_tomcat() {
     mkdir build
 
     # Trying to set the correct version of Java.
-    __set_java_home
     pushd build > /dev/null 
       if (( $CI )); then
           cmake ${TOMCAT} -DBoost_ARCHITECTURE=-x64\

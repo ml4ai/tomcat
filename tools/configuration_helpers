@@ -33,6 +33,11 @@ detect_os() {
     if (( ! $CI )); then
       __detect_terminal_program_macos
     fi
+    # Trying to set the correct version of Java.
+    export MACPORTS_FOUND=`[ -x "$(command -v port)" ]; echo $?`
+    if (( $MACPORTS_FOUND )); then
+      export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk8/Contents/Home
+    fi
 
   elif [[ "$OSTYPE" == "linux-gnu" ]]; then
     echo "Linux detected."
@@ -123,16 +128,6 @@ __configure_screen_capture() {
   else
     echo "Unsupported OS:" $OSTYPE
     exit 1
-  fi
-}
-
-__set_java_home() {
-  if [[ $OSTYPE == "darwin"* ]]; then
-    # Trying to set the correct version of Java.
-    export MACPORTS_FOUND=`[ -x "$(command -v port)" ]; echo $?`
-    if (( $MACPORTS_FOUND )); then
-      export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk8/Contents/Home
-    fi
   fi
 }
 
