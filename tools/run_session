@@ -2,14 +2,7 @@
 
 set -u
 
-# =============================================================================
-# GITHUB_ACTIONS: Set to true with Github Actions is running the workflow.
-# (https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables)
 
-# ENABLE_MQTT: Set this variable to 1 to enable publishing messages to an MQTT
-#              message broker.
-
-# ENABLE_FFMPEG: Enable recording audio and video using FFMPEG.
 # =============================================================================
 
 # Set the TOMCAT environment variable, assuming that the directory structure
@@ -20,7 +13,7 @@ export TOMCAT
 . "$TOMCAT"/tools/configuration_helpers
 
 # Start mosquitto message broker if it is not already running.
-if [[ ${ENABLE_MQTT:-0} -eq 1 \
+if [[ $ENABLE_MQTT -eq 1 \
     && ! $(pgrep -l mosquitto | head -n1 | cut -d' ' -f2) == mosquitto ]]; then
     mosquitto &
 fi
@@ -125,7 +118,7 @@ elif [[ "$OSTYPE" == "linux-gnu" && $CI -ne 1 ]]; then
     if ! "$TOMCAT"/tools/linux/activate_minecraft_window; then exit 1; fi
 fi
 
-if (( "${DO_TUTORIAL_MISSION:-1}" )); then
+if (( $DO_TUTORIAL_MISSION )); then
     if ! "$TOMCAT"/tools/run_tutorial; then exit 1; fi
 fi
 
@@ -137,7 +130,7 @@ sleep 6
 $RM -f "${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
 
 
-if (( ${DO_MAIN_MISSION:-1} )); then
+if (( $DO_MAIN_MISSION )); then
     echo " "
     echo "Running the main mission in ${TOMCAT}."
     echo " "
@@ -152,28 +145,23 @@ if (( ${DO_MAIN_MISSION:-1} )); then
 
     malmo_data="${output_dir}"/malmo_data.txt
 
-    mission=${MISSION:-1}
-
     while [ $try -lt $num_tries ]; do
-      if (( "${ENABLE_MQTT:-0}" )); then
-          "${TOMCAT}"/build/bin/runExperiment \
-          --mission ${mission} \
-          --time_limit ${TIME_LIMIT} \
-          --record_observations \
-          2> "${main_mission_log}" \
-          | mosquitto_pub -t observations/state -l &
-          pid_runExperiment=$!
-      else
-        "${TOMCAT}"/build/bin/runExperiment \
-        --mission ${mission} \
-        --time_limit ${TIME_LIMIT} \
-        --record_observations \
-        2> "${main_mission_log}" \
-        1> "$malmo_data" &
-        pid_runExperiment=$!
-      fi
+        runExperiment_args="--mission ${MAIN_MISSION} --time_limit ${TIME_LIMIT} --record_observations"
+        if (( $ENABLE_MQTT )); then
+            "${TOMCAT}"/build/bin/runExperiment \
+            $runExperiment_args\
+            2> "${main_mission_log}" \
+            | mosquitto_pub -t observations/state -l &
+            pid_runExperiment=$!
+        else
+            "${TOMCAT}"/build/bin/runExperiment \
+            $runExperiment_args\
+            2> "${main_mission_log}" \
+            1> "$malmo_data" &
+            pid_runExperiment=$!
+        fi
 
-      echo "Running mission ${mission} with time limit ${TIME_LIMIT} seconds."
+      echo "Running mission ${MAIN_MISSION} with time limit ${TIME_LIMIT} seconds."
       echo "Process ID corresponding to ./bin/runExperiment is $pid_runExperiment"
       echo "... waiting for it to complete."
 

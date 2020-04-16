@@ -14,6 +14,33 @@ mkdir -p "${TOMCAT_TMP_DIR}"
 # the precaution of explicitly pointing rm to /bin/rm.
 export RM=/bin/rm
 
+# =============================================================================
+# User-configurable environment variables
+# =============================================================================
+#
+# Configuration environment variables that intended to allow the user to modify
+# the behaviour of the run_session script by overriding the default values.
+# This function should be called at least one time before any script or
+# function that uses these variables is executed. 1 = true, 0 = false.
+#
+#
+# ENABLE_MQTT: Set this to 1 to enable publishing messages to an MQTT
+#              message broker.
+# ENABLE_FFMPEG: Set this to 0 to disable recording audio and video using FFMPEG.
+# DO_TUTORIAL_MISSION: Set this to 0 to disable the tutorial mission
+# DO_MAIN_MISSION: Set this to 0 to disable the main mission
+# MAIN_MISSION: Set this to 1 for the Zombie invasion mission, and to 2 for the
+#               USAR Singleplayer mission.
+#
+# =============================================================================
+set_local_configuration() {
+    export ENABLE_MQTT=${ENABLE_MQTT:-0}
+    export ENABLE_FFMPEG=${ENABLE_FFMPEG:-1}
+    export DO_TUTORIAL_MISSION=${DO_TUTORIAL_MISSION:-1}
+    export DO_MAIN_MISSION=${DO_MAIN_MISSION:-1}
+    export MAIN_MISSION=${MAIN_MISSION:-1} 
+}
+
 # Detect the OS, set some useful environment variables.
 detect_os() {
     if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -140,6 +167,8 @@ __configure_screen_capture() {
 
 # Detect whether we are running in a continuous integration environment or not.
 detect_ci() {
+    # GITHUB_ACTIONS: Set to true with Github Actions is running the workflow.
+    # (https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables)
     if [[ ${GITHUB_ACTIONS:-false} == true ]]; then
         export CI=1
     else
@@ -151,7 +180,6 @@ detect_ci() {
         export MISSION=external/malmo/sample_missions/default_flat_1.xml
         export ENABLE_FFMPEG=0
     else
-        export ENABLE_FFMPEG=${ENABLE_FFMPEG:-1}
         export TIME_LIMIT=600
     fi
 }
@@ -186,11 +214,14 @@ __test_ffmpeg_recording() {
 configure_session() {
     detect_ci
     detect_os
+    set_local_configuration
     if (( $ENABLE_FFMPEG )); then
         __configure_webcam
         __configure_audio_recording
         __configure_screen_capture
         __test_ffmpeg_recording
+    else
+        export ENABLE_SYSTEM_AUDIO_RECORDING=0
     fi
     if [[ $OSTYPE == "darwin"* ]]; then
         export ORIGINAL_OUTPUT_DEVICE=$(SwitchAudioSource -c)
