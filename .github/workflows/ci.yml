@@ -6,11 +6,16 @@ on:
   push:
     branches: [ '*' ]
   pull_request:
-    branches: [ master ]
+    branches: [ '*' ]
 
 jobs:
-  build_and_test:
-    runs-on: [ubuntu-latest]
+  ci:
+    runs-on: ${{ matrix.os }}
+    if: github.repository == 'ml4ai/tomcat'
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
 
     steps:
     - uses: actions/checkout@v2
@@ -21,4 +26,6 @@ jobs:
     - name: Continuous Integration
       run: |
         ./tools/install
-        xvfb-run --auto-servernum ./tools/run_session
+        if [[ $OSTYPE == "linux-gnu" ]]; then
+          xvfb-run --auto-servernum ./tools/run_session
+        fi
