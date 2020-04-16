@@ -19,6 +19,12 @@ export TOMCAT
 
 . "$TOMCAT"/tools/configuration_helpers
 
+# Start mosquitto message broker if it is not already running.
+if [[ $ENABLE_MQTT -eq 1 && $(pgrep mosquitto) == "" ]]; then
+    mosquitto &
+    export PID_MOSQUITTO=$!
+fi
+
 configure_session
 
 
@@ -26,6 +32,8 @@ configure_session
 timestamp() {
   date "+%Y_%m_%d_%H_%M_%S"
 }
+
+
 
 # Creating an output directory for this session.
 output_dir="${TOMCAT}"/data/participant_data/session_$(timestamp)
@@ -66,7 +74,10 @@ start_ffmpeg_recording() {
 
 
 cleanup() {
-    pkill "ffmpeg"
+    pkill ffmpeg
+    if (( $ENABLE_MQTT )); then
+        kill $PID_MOSQUITTO
+    fi
     if ! "$TOMCAT"/tools/kill_minecraft; then exit 1; fi
     if [[ $CI -eq 0  \
           && $ENABLE_SYSTEM_AUDIO_RECORDING -eq 1 \

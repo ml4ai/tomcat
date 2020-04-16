@@ -190,8 +190,8 @@ configure_session() {
         __configure_webcam
         __configure_audio_recording
         __configure_screen_capture
+        __test_ffmpeg_recording
     fi
-    __test_ffmpeg_recording
     if [[ $OSTYPE == "darwin"* ]]; then
         export ORIGINAL_OUTPUT_DEVICE=$(SwitchAudioSource -c)
         # Switching the audio output to the multi-output device.
