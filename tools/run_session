@@ -32,33 +32,33 @@ output_dir="${TOMCAT}"/data/participant_data/session_$(timestamp)
 mkdir -p "${output_dir}"
 
 start_ffmpeg_recording() {
-  echo "Recording video of player's face using webcam."
-  ffmpeg\
+    echo "Recording video of player's face using webcam."
+    ffmpeg\
     -f ${FFMPEG_FMT_WEBCAM}\
     ${FRAMERATE_OPTION:-}\
     -i ${FFMPEG_INPUT_DEVICE_WEBCAM}\
     "${output_dir}"/webcam_video.mpg &> ${TOMCAT_TMP_DIR}/ffmpeg_webcam_main.log &
-  
-  echo "Recording player audio using microphone."
-  ffmpeg\
+    
+    echo "Recording player audio using microphone."
+    ffmpeg\
     -nostdin\
     -f ${FFMPEG_FMT_MICROPHONE}\
     -i ${FFMPEG_INPUT_DEVICE_MICROPHONE}\
     "${output_dir}"/player_audio.wav &> ${TOMCAT_TMP_DIR}/ffmpeg_microphone_main.log &
 
-  if (( $ENABLE_SYSTEM_AUDIO_RECORDING )); then
-    echo "Recording system audio."
-    ffmpeg\
-      -nostdin\
-      -f ${FFMPEG_FMT_SYSTEM_AUDIO}\
-      -i ${FFMPEG_INPUT_DEVICE_SYSTEM_AUDIO}\
-      "${output_dir}"/system_audio.wav &> "$TOMCAT_TMP_DIR"/system_audio_recording.log &
-  fi
+    if (( $ENABLE_SYSTEM_AUDIO_RECORDING )); then
+        echo "Recording system audio."
+        ffmpeg\
+        -nostdin\
+        -f ${FFMPEG_FMT_SYSTEM_AUDIO}\
+        -i ${FFMPEG_INPUT_DEVICE_SYSTEM_AUDIO}\
+        "${output_dir}"/system_audio.wav &> "$TOMCAT_TMP_DIR"/system_audio_recording.log &
+    fi
 
-  # Recording game screen.
-  echo "Recording player's screen."
-  screen_video="${output_dir}"/screen_video.mpg
-  ffmpeg -nostdin -f ${FFMPEG_FMT_SCREEN_CAPTURE}\
+    # Recording game screen.
+    echo "Recording player's screen."
+    screen_video="${output_dir}"/screen_video.mpg
+    ffmpeg -nostdin -f ${FFMPEG_FMT_SCREEN_CAPTURE}\
     -i ${FFMPEG_INPUT_DEVICE_SCREEN_CAPTURE}\
     -s $SCREEN_DIMENSIONS\
     "$screen_video" &> "$TOMCAT_TMP_DIR"/screen_video_recording.log &
@@ -66,32 +66,32 @@ start_ffmpeg_recording() {
 
 
 cleanup() {
-  pkill "ffmpeg"
-  if ! "$TOMCAT"/tools/kill_minecraft; then exit 1; fi
-  if [[ $CI -eq 0  \
-        && $ENABLE_SYSTEM_AUDIO_RECORDING -eq 1 \
-        && "$OSTYPE"  == "darwin"* ]]; then
-    # Switching the audio output from the multi-output device to the
-    # built-in output.
-    if ! SwitchAudioSource -s "$ORIGINAL_OUTPUT_DEVICE"; then exit 1; fi
-  fi
+    pkill "ffmpeg"
+    if ! "$TOMCAT"/tools/kill_minecraft; then exit 1; fi
+    if [[ $CI -eq 0  \
+          && $ENABLE_SYSTEM_AUDIO_RECORDING -eq 1 \
+          && "$OSTYPE"  == "darwin"* ]]; then
+        # Switching the audio output from the multi-output device to the
+        # built-in output.
+        if ! SwitchAudioSource -s "$ORIGINAL_OUTPUT_DEVICE"; then exit 1; fi
+    fi
 
-  discrete_actions_file="${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
+    discrete_actions_file="${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
 
-  if [[ -f "${discrete_actions_file}" ]]; then
-    mv "${discrete_actions_file}" "${output_dir}"/discrete_events.json
-  fi
+    if [[ -f "${discrete_actions_file}" ]]; then
+        mv "${discrete_actions_file}" "${output_dir}"/discrete_events.json
+    fi
 
-  # Move the self-reports from the Minecraft folder to the participant data folder
-  mv "${TOMCAT}"/external/malmo/Minecraft/run/saves/self_reports/*.json "${output_dir}"
+    # Move the self-reports from the Minecraft folder to the participant data folder
+    mv "${TOMCAT}"/external/malmo/Minecraft/run/saves/self_reports/*.json "${output_dir}"
 }
 
 # A function to handle cleanup when a user interrupts the script with Ctrl+C
 user_interrupt() {
-  echo "Detected keyboard interrupt."
-  echo "Cleaning up now"
-  cleanup
-  exit
+    echo "Detected keyboard interrupt."
+    echo "Cleaning up now"
+    cleanup
+    exit
 }
 
 trap user_interrupt SIGINT
@@ -104,17 +104,18 @@ export main_mission_log="${TOMCAT_TMP_DIR}/main_mission.log"
 export num_tries=2
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  "$TOMCAT"/tools/macos/activate_minecraft_window $TERMINAL_PROGRAM
-  if [[ $? -ne 0 ]]; then exit 1; fi
+    if ! "$TOMCAT"/tools/macos/activate_minecraft_window $TERMINAL_PROGRAM; then
+        exit 1
+    fi
 elif [[ "$OSTYPE" == "linux-gnu" && $CI -ne 1 ]]; then
-  # wmctrl does not work well with xvfb-run, so we disable full-screening the
-  # Minecraft window when running a headless test of this script with a Github
-  # Actions runner.
-  if ! "$TOMCAT"/tools/linux/activate_minecraft_window; then exit 1; fi
+    # wmctrl does not work well with xvfb-run, so we disable full-screening the
+    # Minecraft window when running a headless test of this script with a Github
+    # Actions runner.
+    if ! "$TOMCAT"/tools/linux/activate_minecraft_window; then exit 1; fi
 fi
 
 if (( "${DO_TUTORIAL_MISSION:-1}" )); then
-  if ! "$TOMCAT"/tools/run_tutorial; then exit 1; fi
+    if ! "$TOMCAT"/tools/run_tutorial; then exit 1; fi
 fi
 
 # We sleep for a few seconds to let the player catch a breath between the
@@ -126,72 +127,72 @@ $rm -f "${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_e
 
 
 if (( ${DO_MAIN_MISSION:-1} )); then
-  echo " "
-  echo "Running the main mission in ${TOMCAT}."
-  echo " "
+    echo " "
+    echo "Running the main mission in ${TOMCAT}."
+    echo " "
 
-  try=0
-
-
-  if (( $ENABLE_FFMPEG )); then
-    start_ffmpeg_recording
-  fi
+    try=0
 
 
-  malmo_data="${output_dir}"/malmo_data.txt
+    if (( $ENABLE_FFMPEG )); then
+        start_ffmpeg_recording
+    fi
 
-  mission=${MISSION:-1}
 
-  while [ $try -lt $num_tries ]; do
-    if (( "${ENABLE_MQTT:-0}" )); then
-      "${TOMCAT}"/build/bin/runExperiment \
-        --mission ${mission} \
-        --time_limit ${TIME_LIMIT} \
-        --record_observations \
-        2> "${main_mission_log}" \
-        | mosquitto_pub -t observations/state -l &
-      pid_runExperiment=$!
-    else
-      "${TOMCAT}"/build/bin/runExperiment \
+    malmo_data="${output_dir}"/malmo_data.txt
+
+    mission=${MISSION:-1}
+
+    while [ $try -lt $num_tries ]; do
+      if (( "${ENABLE_MQTT:-0}" )); then
+          "${TOMCAT}"/build/bin/runExperiment \
+          --mission ${mission} \
+          --time_limit ${TIME_LIMIT} \
+          --record_observations \
+          2> "${main_mission_log}" \
+          | mosquitto_pub -t observations/state -l &
+          pid_runExperiment=$!
+      else
+        "${TOMCAT}"/build/bin/runExperiment \
         --mission ${mission} \
         --time_limit ${TIME_LIMIT} \
         --record_observations \
         2> "${main_mission_log}" \
         1> "$malmo_data" &
-      pid_runExperiment=$!
-    fi
+        pid_runExperiment=$!
+      fi
 
-    echo "Running mission ${mission} with time limit ${TIME_LIMIT} seconds."
-    echo "Process ID corresponding to ./bin/runExperiment is $pid_runExperiment"
-    echo "... waiting for it to complete."
+      echo "Running mission ${mission} with time limit ${TIME_LIMIT} seconds."
+      echo "Process ID corresponding to ./bin/runExperiment is $pid_runExperiment"
+      echo "... waiting for it to complete."
 
-    wait $pid_runExperiment
-    main_mission_status=$?
-    
+      wait $pid_runExperiment
+      main_mission_status=$?
+      
 
-    if [[ ${main_mission_status} -eq 0 ]]; then
-      main_mission_status=$(grep -c "Error starting mission" \
-      "${main_mission_log}")
-    fi
+      if [[ ${main_mission_status} -eq 0 ]]; then
+          main_mission_status=$(grep -c "Error starting mission" \
+          "${main_mission_log}")
+      fi
 
-    if [[ ${main_mission_status} -eq 0 ]]; then
-      echo "Main mission ended with exit code 0."
-      echo "All recorded data is in ${output_dir}"
-      echo " "
-      break
-    fi
+      if [[ ${main_mission_status} -eq 0 ]]; then
+          echo "Main mission ended with exit code 0."
+          echo "All recorded data is in ${output_dir}"
+          echo " "
+          break
+      fi
 
-    (( try++ ))
+      (( try++ ))
 
-    if [[ $try -lt $num_tries ]]; then
-      echo "Main mission ended with exit code 1."
-      echo "Killing all Minecraft and Malmo processes that can be found"
-      echo "and trying again."
+      if [[ $try -lt $num_tries ]]; then
+          echo "Main mission ended with exit code 1."
+          echo "Killing all Minecraft and Malmo processes that can be found"
+          echo "and trying again."
 
-      "$TOMCAT"/tools/kill_minecraft
-      "$TOMCAT"/tools/check_minecraft
-    fi
-  done
+          "$TOMCAT"/tools/kill_minecraft
+          "$TOMCAT"/tools/check_minecraft
+      fi
+    done
 fi
 
 cleanup
