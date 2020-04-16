@@ -14,6 +14,7 @@ import edu.arizona.tomcat.Mission.Goal.ApproachEntityGoal;
 import edu.arizona.tomcat.Mission.Goal.KillEntityGoal;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
 import edu.arizona.tomcat.Mission.Goal.ReachPositionGoal;
+import edu.arizona.tomcat.Mission.Goal.StartGoal;
 import edu.arizona.tomcat.Mission.MissionPhase.CompletionStrategy;
 import edu.arizona.tomcat.Mission.gui.RichContent;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
@@ -41,6 +42,9 @@ public class TutorialMission extends Mission {
   private boolean shouldSpawnVillagerInsideTheBuilding;
   private boolean shouldaddMaterialsToUsersInventory;
   private boolean shouldSpawnExposedEntities;
+  
+  private MissionPhase addInstructionsPhase;
+  
   private MissionPhase approachPoolsPhase;
   private MissionPhase enterTheArenaPhase;
   private MissionPhase killSkeletonPhase;
@@ -75,6 +79,11 @@ public class TutorialMission extends Mission {
 
   @Override
   protected void createPhases() {
+	  //add somthing here by Lize
+	  //below
+    this.addInstructionsPhase();
+	    //above
+    
     this.addApproachPoolsPhase();
     /*
      * TODO - The crafting phase is going to be commented out until we have
@@ -90,6 +99,30 @@ public class TutorialMission extends Mission {
     this.addLeaveTheBuildingPhase();
   }
 
+  /**
+   * When the tutorial first pops up, 
+   * it would be helpful to have an orienting screen with general instructions. 
+   * 
+   */
+  private void addInstructionsPhase() {
+	  
+	  RichContent instructions =
+		        RichContent.createFromJson("tutorial_orienting_screen.json");
+	 
+	  this.addInstructionsPhase = new MissionPhase(instructions,
+              CompletionStrategy.ALL_GOALS,
+              2,false,"Let's start!",0,1/2);
+
+	  this.addInstructionsPhase.addGoal(new StartGoal());
+	  this.addPhase(addInstructionsPhase);
+  }
+  
+  
+  
+  
+  
+  
+  
   /**
    * Creates a phase in the mission where the objective is to locate the pools
    * of water and lava in the world
