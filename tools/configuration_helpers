@@ -125,10 +125,10 @@ __configure_screen_capture() {
   export SCREEN_DIMENSIONS=$(xdpyinfo | grep dimensions | awk '{print $2;}')
   if [[ $OSTYPE == "darwin"* ]]; then
     export FFMPEG_FMT_SCREEN_CAPTURE=avfoundation
-    export FFMPEG_INPUT_DEVICE_SCREEN_CAPTURE=\
-      ":$(ffmpeg -f avfoundation -list_devices true -i "" 2>&1  \
+    local index=$(ffmpeg -f avfoundation -list_devices true -i "" 2>&1  \
       | grep "Capture screen" \
-      | cut -d '[' -f3 | cut -d ']' -f1)"
+      | cut -d '[' -f3 | cut -d ']' -f1)
+    export FFMPEG_INPUT_DEVICE_SCREEN_CAPTURE=":${index}"
   elif [[ $OSTYPE == linux-gnu ]]; then
     export FFMPEG_FMT_SCREEN_CAPTURE=x11grab
     export FFMPEG_INPUT_DEVICE_SCREEN_CAPTURE=":0.0"

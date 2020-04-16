@@ -4,15 +4,16 @@ set -u
 
 # Script to test if system audio recording is enabled.
 
-blackhole_is_setup=$(ffmpeg -f avfoundation -list_devices true -i "" 2>&1 \
-                     | grep "\[0\] BlackHole 16ch")
-multi_device_output_is_setup=$(ffmpeg -f avfoundation -list_devices true \
-                               -i "" 2>&1 | grep "Multi-Device Output")
-if [[ $blackhole_is_setup == "" \
-      || "$multi_device_output_is_setup" == "" ]]; then
-  echo "BlackHole system audio recording virtual output device is not set up."
-  echo "We will do it now."
-  if ! "$TOMCAT"/tools/macos/activate_system_audio_recording; then exit 1; fi
+blackhole_is_setup=$(ffmpeg -f avfoundation -list_devices true -i "" 2>&1 | grep "\[0\] BlackHole 16ch")
+multi_output_device_is_setup=
+if [[ ! $blackhole_is_setup == "" ]]; then
+  if [[ $(SwitchAudioSource -a | grep "Multi-Output Device") == "" ]]; then
+    echo "Multi-Output Device is not set up. We will do it now."
+    if ! "$TOMCAT"/tools/macos/activate_system_audio_recording; then exit 1; fi
+  fi
+else
+  echo "BlackHole virtual audio driver is not set up."
+  exit 1
 fi
 
 exit 0
