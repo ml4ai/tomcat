@@ -12,7 +12,7 @@ mkdir -p "${TOMCAT_TMP_DIR}"
 
 # On some systems, the 'rm' command is aliased to something else. So we take
 # the precaution of explicitly pointing rm to /bin/rm.
-export rm=/bin/rm
+export RM=/bin/rm
 
 # Detect the OS, set some useful environment variables.
 detect_os() {
@@ -67,20 +67,20 @@ detect_os() {
 __configure_webcam() {
     if [[ $OSTYPE == "darwin"* ]]; then
 
-      export FFMPEG_FMT_WEBCAM=avfoundation
+        export FFMPEG_FMT_WEBCAM=avfoundation
 
-      if [[ ! $(ffmpeg -f avfoundation -list_devices true -i "" 2>&1  \
-                | grep "\[1\] FaceTime HD Camera (Display)") == "" ]]; then
+        if [[ ! $(ffmpeg -f avfoundation -list_devices true -i "" 2>&1  \
+                    | grep "\[1\] FaceTime HD Camera (Display)") == "" ]]; then
 
-          echo "The script has detected that you have connected an external "\
-               "display with a built-in webcam, setting the ffmpeg webcam input "\
-               "device to '1:'."
-          # TODO Have Mihai test this out with his external display.
+            echo "The script has detected that you have connected an external "\
+                "display with a built-in webcam, setting the ffmpeg webcam input "\
+                "device to '1:'."
+            # TODO Have Mihai test this out with his external display.
 
-          export FFMPEG_INPUT_DEVICE_WEBCAM="1:"
-      else
-          export FFMPEG_INPUT_DEVICE_WEBCAM="0:"
-      fi
+            export FFMPEG_INPUT_DEVICE_WEBCAM="1:"
+        else
+            export FFMPEG_INPUT_DEVICE_WEBCAM="0:"
+        fi
     elif [[ "$OSTYPE" == linux-gnu ]]; then
         export FFMPEG_FMT_WEBCAM=v4l2
         export FFMPEG_INPUT_DEVICE_WEBCAM=/dev/video0
@@ -128,7 +128,7 @@ __configure_screen_capture() {
         local index=$(ffmpeg -f avfoundation -list_devices true -i "" 2>&1  \
                       | grep "Capture screen" \
                       | cut -d '[' -f3 | cut -d ']' -f1)
-        export FFMPEG_INPUT_DEVICE_SCREEN_CAPTURE=":${index}"
+        export FFMPEG_INPUT_DEVICE_SCREEN_CAPTURE="${index}:"
     elif [[ $OSTYPE == linux-gnu ]]; then
         export FFMPEG_FMT_SCREEN_CAPTURE=x11grab
         export FFMPEG_INPUT_DEVICE_SCREEN_CAPTURE=":0.0"
@@ -170,7 +170,8 @@ __test_ffmpeg_recording() {
         fi
 
         echo "Testing terminal access to microphone..."
-        if ! "${TOMCAT}"/tools/macos/test_microphone; then exit 1; fi
+        . "${TOMCAT}"/tools/macos/test_microphone
+        test_microphone_macos
 
         echo "Testing screen capture..."
         if ! "${TOMCAT}"/tools/macos/test_screen_recording; then exit 1; fi

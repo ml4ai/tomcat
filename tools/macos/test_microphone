@@ -4,7 +4,7 @@ set -u
 
 test_microphone_macos() {
   test_microphone_file=${TOMCAT_TMP_DIR}/test_microphone.wav
-  $rm -f "$test_microphone_file"
+  $RM -f "$test_microphone_file"
   ffmpeg_microphone_log="$TOMCAT_TMP_DIR"/ffmpeg_microphone.log
   ffmpeg\
     -nostdin\
@@ -39,6 +39,3 @@ test_microphone_macos() {
     fi
   fi
 }
-
-test_microphone_macos
-exit 0
