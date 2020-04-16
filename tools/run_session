@@ -20,7 +20,7 @@ export TOMCAT
 . "$TOMCAT"/tools/configuration_helpers
 
 # Start mosquitto message broker if it is not already running.
-if [[ ${ENABLE_MQTT:0} -eq 1 \
+if [[ ${ENABLE_MQTT:-0} -eq 1 \
     && ! $(pgrep -l mosquitto | head -n1 | cut -d' ' -f2) == mosquitto ]]; then
     mosquitto &
 fi
