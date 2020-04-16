@@ -308,7 +308,7 @@ seconds. 20 Minecraft ticks equal 1 real second. viewTime is incremented by
   private void spawnSkeletonInTheArena(World world) {
     if (this.shouldSpawnSkeletonInTheArena) {
       try {
-        addItemToInventory(ItemType.STONE_AXE);
+        addItemToInventory(ItemType.STONE_AXE); //give stone axe to player
         Drawing drawing = new Drawing();
         TomcatEntity skeleton = new TomcatEntity(
             this.skeletonUUID, -620, 4, 1596, EntityTypes.SKELETON);
