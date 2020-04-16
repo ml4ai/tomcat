@@ -134,10 +134,7 @@ __install_dependencies_using_apt() {
     # The Github Actions Ubuntu 18.04 VM already has Boost installed, but not
     # all the components we need. So we will use apt-get to install the missing
     # ones.
-    if (( $CI )); then
-        if ! sudo apt-get install -y libboost-all-dev; then exit 1; fi
-        if [[ $? -ne 0 ]]; then exit 1; fi
-    fi
+    if ! sudo apt-get install -y libboost-all-dev; then exit 1; fi
 
     # TODO - when OpenFace gets added back, add opencv, openblas, and dlib as
     # dependencies.

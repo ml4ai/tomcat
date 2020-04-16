@@ -47,7 +47,6 @@ __download_tomcat_data() {
     fi
 }
 
-
 _install_tomcat() {
     if ! ${TOMCAT}/tools/install_dependencies; then exit 1; fi
     __build_tomcat
