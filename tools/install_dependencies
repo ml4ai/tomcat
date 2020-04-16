@@ -185,10 +185,7 @@ elif [ -x "$(command -v apt-get)" ]; then
     "$TOMCAT"/tools/install_from_source/nlohmann-json
     if [[ $? -ne 0 ]]; then exit 1; fi
 
-    if [[ -z "$GITHUB_ACTIONS" ]]; then
-      sudo apt-get install -y libboost-all-dev
-      if [[ $? -ne 0 ]]; then exit 1; fi
-    fi
+    sudo apt-get install -y libboost-all-dev
 
     # TODO - when OpenFace gets added back, add opencv, openblas, and dlib as
     # dependencies.
