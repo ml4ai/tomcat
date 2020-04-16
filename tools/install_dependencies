@@ -80,10 +80,10 @@ install_dependencies_using_homebrew() {
     gradle \
     mosquitto \
     nlohmann-json
-  if [ $? -ne 0 && $? -ne 1 ]; then exit 1; fi
+  if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
 
   brew cask install xquartz
-  if [ $? -ne 0 && $? -ne 1 ]; then exit 1; fi
+  if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
 
   # We enable system audio recording ononly on macOS Catalina or above
   macOS_minor_version=$(sw_vers -productVersion | cut -d '.' -f2)
@@ -98,7 +98,7 @@ install_dependencies_using_homebrew() {
   if [ "${GITHUB_ACTIONS:-false}" = "true" ]; then
     # On Github Actions, we will install lcov to provide code coverage estimates.
     brew install lcov;
-    if [ $? -ne 0 && $? -ne 1 ]; then exit 1; fi
+    if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
   fi;
 
   #TODO When OpenFace is reintroduced, add dlib, opencv, openblas installation back here.
@@ -185,10 +185,7 @@ elif [ -x "$(command -v apt-get)" ]; then
     "$TOMCAT"/tools/install_from_source/nlohmann-json
     if [[ $? -ne 0 ]]; then exit 1; fi
 
-    if [[ -z "$GITHUB_ACTIONS" ]]; then
-      sudo apt-get install -y libboost-all-dev
-      if [[ $? -ne 0 ]]; then exit 1; fi
-    fi
+    sudo apt-get install -y libboost-all-dev
 
     # TODO - when OpenFace gets added back, add opencv, openblas, and dlib as
     # dependencies.
