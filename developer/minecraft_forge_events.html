@@ -1,0 +1,376 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Events available through the Minecraft Forge event bus (for MC v1.11.2) &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="C++ API" href="../cpp_api/index.html" />
+    <link rel="prev" title="Pre-Built World Loading Tutorial" href="prebuilt_world_loading.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Developer documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="CONTRIBUTING.html">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Client_Server_Communication.html">Message Exchange between Client and Server in Minecraft Forge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prebuilt_world_loading.html">Pre-Built World Loading Tutorial</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Events available through the Minecraft Forge event bus (for MC v1.11.2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cpp_api/index.html">C++ API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lisp.html">LISP Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Developer documentation</a> &raquo;</li>
+        
+      <li>Events available through the Minecraft Forge event bus (for MC v1.11.2)</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/developer/minecraft_forge_events.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="events-available-through-the-minecraft-forge-event-bus-for-mc-v1-11-2">
+<h1>Events available through the Minecraft Forge event bus (for MC v1.11.2)<a class="headerlink" href="#events-available-through-the-minecraft-forge-event-bus-for-mc-v1-11-2" title="Permalink to this headline">¶</a></h1>
+<p>This is a list of events that are available to subscribe to on the Minecraft
+Forge event bus. Along with subscribing, we can also handle events as they
+occur - e.g. we can ‘cancel’ events if we want, or trigger other effects.</p>
+<p>Not all events and methods are listed here, just the ones that seem like they
+might be useful to ToMCAT and ASIST.</p>
+<p>The complete JavaDocs (with all the events and their documentation) for this
+version of Forge can be found here:
+https://skmedix.github.io/ForgeJavaDocs/javadoc/forge/1.11.2-13.20.0.2228/</p>
+<ul class="simple">
+<li><p>player:</p>
+<ul>
+<li><p>AchievementEvent: When the player receives an achievement.</p></li>
+<li><p>AnvilRepairEvent: When the player removes a “repaired” item from the Anvil’s Output slot.</p></li>
+<li><p>ArrowLooseEvent: When a player stops using a bow.</p></li>
+<li><p>ArrowNockEvent: When a player begins using a bow.</p></li>
+<li><p>AttackEntityEvent: When a player attacks an Entity (includes players and monsters).</p></li>
+<li><p>BonemealEvent: When a player attempts to use Bonemeal on a block.</p></li>
+<li><p>EntityItemPickupEvent: When a player collides with a EntityItem on the ground.</p></li>
+<li><p>FillBucketEvent: When a player attempts to use a Empty bucket.</p></li>
+<li><p>PlayerDestroyItemEvent: When a player destroys an item.</p></li>
+<li><p>PlayerDropsEvent: When a player dies.</p></li>
+<li><p>PlayerEvent: Whenever an event involving Living entities occurs.</p></li>
+<li><p>PlayerFlyableFallEvent: When a player falls, but is able to fly.</p></li>
+<li><p>PlayerInteractEvent: When a player interacts in some way.</p>
+<ul>
+<li><p>EntityInteractSpecific: When a player [right/left] clicks an entity (when the part of the entity that is clicked is known).</p>
+<ul>
+<li><p>getLocalPos: Returns the local interaction position.</p></li>
+<li><p>getTarget: Returns the target entity.</p></li>
+</ul>
+</li>
+<li><p>EntityInteract: This event is fired on both sides whenever a player right clicks an entity.</p>
+<ul>
+<li><p>getTarget: Returns the target entity.</p></li>
+</ul>
+</li>
+<li><p>[Right/Left]ClickBlock: This event is fired on both sides whenever the player [right/left] clicks while targeting a block.</p>
+<ul>
+<li><p>getHitVec: The hit vector of the click.</p></li>
+<li><p>[get/set]UseBlock</p></li>
+<li><p>[get/set]UseItem</p></li>
+</ul>
+</li>
+<li><p>[Right/Left]ClickItem: When a player [right/left]-clicks an item.</p></li>
+<li><p>[Right/Left]ClickEmpty: When a player [right/left]-clicks an empty space with [an empty hand/any ItemStack].</p>
+<ul>
+<li><p>getHand: The hand involved in this interaction.</p></li>
+<li><p>getItemStack: The itemstack involved in this interaction.</p></li>
+<li><p>getPos:</p>
+<ul>
+<li><p>If the interaction was on an entity, will be a BlockPos centered on the entity.</p></li>
+<li><p>If the interaction was on a block, will be the position of that block.</p></li>
+<li><p>Otherwise, will be a BlockPos centered on the player.</p></li>
+<li><p>Will never be null.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>PlayerPickupXpEvent: This event is called when a player collides with a EntityXPOrb on the ground.</p></li>
+<li><p>PlayerSetSpawnEvent: This event is called before a player’s spawn point is changed.</p></li>
+<li><p>PlayerSleepInBedEvent: When a player sleeps in a bed.</p></li>
+<li><p>PlayerWakeUpEvent: When the player is waking up.</p></li>
+<li><p>SleepingLocationCheckEvent: When game checks, if sleeping player should be still considered “in bed”.</p></li>
+<li><p>UseHoeEvent: When a player attempts to use a Hoe on a block.</p></li>
+</ul>
+</li>
+<li><p>world:</p>
+<ul>
+<li><p>BlockEvent:</p>
+<ul>
+<li><p>HarvestDropsEvent: When a block is about to drop its harvested items.</p></li>
+<li><p>BreakEvent: When an Block is about to be broken by a player</p></li>
+</ul>
+</li>
+<li><p>ExplosionEvent: triggers when an explosion happens in the world.</p></li>
+<li><p>WorldEvent: When an event involving the world occurs</p>
+<ul>
+<li><p>WorldEvent.Load is fired when Minecraft loads a world.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>living</p>
+<ul>
+<li><p>BabyEntitySpawnEvent: Fired just before a baby entity is about to be spawned.</p></li>
+<li><p>EnderTeleportEvent: When an Enderman/Shulker teleports or an ender pearl is used.</p></li>
+<li><p>LivingAttackEvent: When a living Entity is attacked.</p></li>
+<li><p>LivingDeathEvent: When an Entity dies.</p></li>
+<li><p>LivingDropsEvent: When an Entity’s death causes dropped items to appear.</p></li>
+<li><p>LivingEntityUseItemEvent</p>
+<ul>
+<li><p>Start: When a player starts ‘using’ an item, typically when they hold right mouse.</p></li>
+<li><p>Tick: Fired every tick that a player is ‘using’ an item.</p></li>
+<li><p>Stop: Fired after an item has fully finished being used.</p></li>
+</ul>
+</li>
+<li><p>LivingEquipmentChangeEvent: When the Equipment of a Entity changes.</p></li>
+<li><p>LivingEvent: Whenever an event involving Living entities occurs.</p></li>
+<li><p>LivingExperienceDropEvent: When an entity drops experience on its death.</p></li>
+<li><p>LivingFallEvent: When an Entity is set to be falling.</p></li>
+<li><p>LivingHealEvent: When an Entity is set to be healed.</p></li>
+<li><p>LivingHurtEvent: When an Entity is set to be hurt.</p></li>
+<li><p>LivingPackSizeEvent: When the spawning system determines the maximum amount of the selected entity that can spawn at the same time.</p></li>
+<li><p>LivingSetAttackTargetEvent: When an Entity sets a target to attack.</p></li>
+<li><p>LivingSpawnEvent: Fired for any events associated with Living Enttnies spawn status.</p></li>
+<li><p>PotionColorCalculationEvent: Fires after Potion Color Calculation.</p></li>
+<li><p>ZombieEvent: Whenever a zombie is spawned for aid.</p></li>
+</ul>
+</li>
+<li><p>ServerChatEvent: Whenever a C01PacketChatMessage is processed.</p>
+<ul>
+<li><p>username: contains the username of the player sending the chat message.</p></li>
+<li><p>message: contains the message being sent.</p></li>
+<li><p>player: the instance of EntityPlayerMP for the player sending the chat message.</p></li>
+<li><p>component: contains the instance of ChatComponentTranslation for the sent message.- brewing</p></li>
+<li><p>PlayerBrewedPotionEvent: When a player picks up a potion from a brewing stand.</p></li>
+<li><p>PotionBrewEvent</p>
+<ul>
+<li><p>PotionBrewEvent.Pre is fired before vanilla brewing takes place.</p></li>
+<li><p>PotionBrewEvent.Post is fired when a potion is brewed in the brewing stand.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>enchanting</p>
+<ul>
+<li><p>EnchantmentLevelSetEvent: When the enchantment level is set for each of the three potential enchantments in the enchanting table.</p></li>
+</ul>
+</li>
+<li><p>item</p>
+<ul>
+<li><p>ItemEvent: Base class for all EntityItem events</p></li>
+<li><p>ItemExpireEvent: When an EntityItem’s age has reached its maximum lifespan.</p></li>
+<li><p>ItemTossEvent: Whenever a player tosses (Q) an item or drag-n-drops a stack of items outside the inventory GUI screens.</p></li>
+</ul>
+</li>
+<li><p>minecart</p>
+<ul>
+<li><p>MinecartCollisionEvent: When a minecart collides with an Entity.</p></li>
+<li><p>MinecartEvent: Whenever an event involving minecart entities occurs.</p></li>
+<li><p>MinecartInteractEvent: When a player interacts with a minecart.</p></li>
+<li><p>MinecartUpdateEvent: When a minecart is updated.</p></li>
+</ul>
+</li>
+<li><p>EntityEvent: When an event involving any Entity occurs.</p></li>
+<li><p>EntityJoinWorldEvent: When an Entity joins the world.</p></li>
+<li><p>EntityMountEvent: Whenever a entity mounts/dismounts another entity.</p></li>
+<li><p>EntityStruckByLightningEvent: When an Entity is about to be struck by lightening.</p></li>
+<li><p>EntityTravelToDimensionEvent: Fired before an Entity travels to a dimension.</p></li>
+<li><p>PlaySoundAtEntityEvent: Whenever a sound is set to be played at an Entity</p></li>
+<li><p>ThrowableImpactEvent: Fired before an EntityThrowable calls its EntityThrowable.onImpact method.</p></li>
+<li><p>AnvilUpdateEvent:  When a player places items in both the left and right slots of a anvil.</p></li>
+<li><p>AttachCapabilitiesEvent: Whenever an object with Capabilities support {currently TileEntity/Item/Entity)</p></li>
+<li><p>CommandEvent: Whenever a command is scheduled to be executed.</p></li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../cpp_api/index.html" class="btn btn-neutral float-right" title="C++ API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="prebuilt_world_loading.html" class="btn btn-neutral float-left" title="Pre-Built World Loading Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
