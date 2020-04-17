@@ -174,12 +174,25 @@ public class JSONWorldDataHelper {
     json.addProperty("yaw", player.rotationYaw);
   }
 
+  /**
+   * Builds the player motion data to be used as observation signals by the
+   * listener.
+   * @param json a JSON object into which the positional information will be
+   * added.
+   */
+  public static void buildMotionStats(JsonObject json,
+                                        EntityPlayerMP player) {
+    json.addProperty("motion_x", player.motionX);
+    json.addProperty("motion_y", player.motionY);
+    json.addProperty("motion_z", player.motionZ);
+  }
+
   public static void buildEnvironmentStats(JsonObject json,
                                            EntityPlayerMP player) {
-    json.addProperty("WorldTime",
+    json.addProperty("world_time",
                      player.world.getWorldTime()); // Current time in ticks
     json.addProperty(
-        "TotalTime",
+        "total_time",
         player.world.getTotalWorldTime()); // Total time world has been running
   }
   /**

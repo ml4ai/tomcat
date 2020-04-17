@@ -1791,6 +1791,19 @@
     <xs:complexType/>
   </xs:element>
 
+  <xs:element name="ObservationFromASISTParticipant">
+    <xs:annotation>
+      <xs:documentation>
+        When present, the Mod will return several observations:
+
+        * Life statistics: {{{life}}}, {{{name}}}
+        * Position statistics: {{{x}}}, {{{y}}}, {{{z}}}, {{{pitch}}}, {{{yaw}}}
+        * Environment statistics: {{{world_time}}} - current time in ticks, {{{total_time}}} - total world time, unaffected by ServerInitialConditions
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType/>
+  </xs:element>
+
   <xs:element name="ObservationFromFullStats">
     <xs:annotation>
       <xs:documentation>
@@ -1799,7 +1812,7 @@
         * Achievement statistics: {{{DistanceTravelled}}}, {{{TimeAlive}}}, {{{MobsKilled}}}, {{{PlayersKilled}}}, {{{DamageTaken}}}, {{{DamageDealt}}}
         * Life statistics: {{{Life}}}, {{{Score}}}, {{{Food}}}, {{{Air}}}, {{{XP}}}, {{{IsAlive}}}, {{{Name}}}
         * Position statistics: {{{x}}}, {{{y}}}, {{{z}}}, {{{pitch}}}, {{{yaw}}}
-        * Environment statistics: {{{WorldTime}}} - current time in ticks, {{{TotalTime}}} - total world time, unaffected by ServerInitialConditions
+        * Environment statistics: {{{world_time}}} - current time in ticks, {{{total_time}}} - total world time, unaffected by ServerInitialConditions
       </xs:documentation>
     </xs:annotation>
     <xs:complexType/>
