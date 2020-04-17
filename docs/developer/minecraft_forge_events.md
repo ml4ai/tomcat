@@ -14,19 +14,19 @@ https://skmedix.github.io/ForgeJavaDocs/javadoc/forge/1.11.2-13.20.0.2228/
 
 - player:
     - AchievementEvent: When the player receives an achievement.
-    - AnvilRepairEvent: Fired when the player removes a "repaired" item from the Anvil's Output slot.
-    - ArrowLooseEvent: ArrowLooseEvent is fired when a player stops using a bow.
-    - ArrowNockEvent: ArrowNockEvent is fired when a player begins using a bow.
-    - AttackEntityEvent: AttackEntityEvent is fired when a player attacks an Entity (includes players and monsters).
-    - BonemealEvent: This event is called when a player attempts to use Bonemeal on a block.
-    - EntityItemPickupEvent: This event is called when a player collides with a EntityItem on the ground.
-    - FillBucketEvent: This event is fired when a player attempts to use a Empty bucket,
-    - PlayerDestroyItemEvent: PlayerDestroyItemEvent is fired when a player destroys an item.
-    - PlayerDropsEvent: Child class of LivingDropEvent that is fired specifically when a player dies.
-    - PlayerEvent: PlayerEvent is fired whenever an event involving Living entities occurs.
-    - PlayerFlyableFallEvent: Occurs when a player falls, but is able to fly.
-    - PlayerInteractEvent: PlayerInteractEvent is fired when a player interacts in some way.
-        - EntityInteractSpecific: This event is fired on both sides whenever a player right clicks an entity (when the part of the entity that is clicked is known).
+    - AnvilRepairEvent: When the player removes a "repaired" item from the Anvil's Output slot.
+    - ArrowLooseEvent: When a player stops using a bow.
+    - ArrowNockEvent: When a player begins using a bow.
+    - AttackEntityEvent: When a player attacks an Entity (includes players and monsters).
+    - BonemealEvent: When a player attempts to use Bonemeal on a block.
+    - EntityItemPickupEvent: When a player collides with a EntityItem on the ground.
+    - FillBucketEvent: When a player attempts to use a Empty bucket.
+    - PlayerDestroyItemEvent: When a player destroys an item.
+    - PlayerDropsEvent: When a player dies.
+    - PlayerEvent: Whenever an event involving Living entities occurs.
+    - PlayerFlyableFallEvent: When a player falls, but is able to fly.
+    - PlayerInteractEvent: When a player interacts in some way.
+        - EntityInteractSpecific: When a player [right/left] clicks an entity (when the part of the entity that is clicked is known).
             - getLocalPos: Returns the local interaction position.
             - getTarget: Returns the target entity.
         - EntityInteract: This event is fired on both sides whenever a player right clicks an entity.
@@ -35,8 +35,8 @@ https://skmedix.github.io/ForgeJavaDocs/javadoc/forge/1.11.2-13.20.0.2228/
             - getHitVec: The hit vector of the click.
             - [get/set]UseBlock
             - [get/set]UseItem
-        - [Right/Left]ClickItem: Fired when a player [right/left]-clicks an item.
-        - [Right/Left]ClickEmpty: Fired on the client side when a player [right/left]-clicks an empty space with [an empty hand/any ItemStack].
+        - [Right/Left]ClickItem: When a player [right/left]-clicks an item.
+        - [Right/Left]ClickEmpty: When a player [right/left]-clicks an empty space with [an empty hand/any ItemStack].
             - getHand: The hand involved in this interaction.
             - getItemStack: The itemstack involved in this interaction.
             - getPos:
@@ -46,65 +46,65 @@ https://skmedix.github.io/ForgeJavaDocs/javadoc/forge/1.11.2-13.20.0.2228/
                 - Will never be null.
     - PlayerPickupXpEvent: This event is called when a player collides with a EntityXPOrb on the ground.
     - PlayerSetSpawnEvent: This event is called before a player's spawn point is changed.
-    - PlayerSleepInBedEvent: Fired when a player sleeps in a bed.
-    - PlayerWakeUpEvent: Fired when the player is waking up.
-    - SleepingLocationCheckEvent: Fired when game checks, if sleeping player should be still considered "in bed".
-    - UseHoeEvent: Fired when a player attempts to use a Hoe on a block,
+    - PlayerSleepInBedEvent: When a player sleeps in a bed.
+    - PlayerWakeUpEvent: When the player is waking up.
+    - SleepingLocationCheckEvent: When game checks, if sleeping player should be still considered "in bed".
+    - UseHoeEvent: When a player attempts to use a Hoe on a block.
 - world: 
     - BlockEvent: 
-        - HarvestDropsEvent: Fired when a block is about to drop its harvested items.
-        - BreakEvent: Fired when an Block is about to be broken by a player
+        - HarvestDropsEvent: When a block is about to drop its harvested items.
+        - BreakEvent: When an Block is about to be broken by a player
     - ExplosionEvent: triggers when an explosion happens in the world. 
-    - WorldEvent: WorldEvent is fired when an event involving the world occurs
+    - WorldEvent: When an event involving the world occurs
         - WorldEvent.Load is fired when Minecraft loads a world.
 - living
-    - BabyEntitySpawnEvent: BabyEntitySpawnEvent is fired just before a baby entity is about to be spawned.
-    - EnderTeleportEvent: Event for when an Enderman/Shulker teleports or an ender pearl is used.
-    - LivingAttackEvent: LivingAttackEvent is fired when a living Entity is attacked.
-    - LivingDeathEvent: LivingDeathEvent is fired when an Entity dies.
-    - LivingDropsEvent: LivingDropsEvent is fired when an Entity's death causes dropped items to appear.
+    - BabyEntitySpawnEvent: Fired just before a baby entity is about to be spawned.
+    - EnderTeleportEvent: When an Enderman/Shulker teleports or an ender pearl is used.
+    - LivingAttackEvent: When a living Entity is attacked.
+    - LivingDeathEvent: When an Entity dies.
+    - LivingDropsEvent: When an Entity's death causes dropped items to appear.
     - LivingEntityUseItemEvent
-        - Start: Fired when a player starts 'using' an item, typically when they hold right mouse.
+        - Start: When a player starts 'using' an item, typically when they hold right mouse.
         - Tick: Fired every tick that a player is 'using' an item.
         - Stop: Fired after an item has fully finished being used.
-    - LivingEquipmentChangeEvent: Fired when the Equipment of a Entity changes.
-    - LivingEvent: LivingEvent is fired whenever an event involving Living entities occurs.
-    - LivingExperienceDropEvent: Event for when an entity drops experience on its death.
-    - LivingFallEvent: LivingFallEvent is fired when an Entity is set to be falling.
-    - LivingHealEvent: LivingHealEvent is fired when an Entity is set to be healed.
-    - LivingHurtEvent: LivingHurtEvent is fired when an Entity is set to be hurt.
-    - LivingPackSizeEvent: This event is fired when the spawning system determines the maximum amount of the selected entity that can spawn at the same time.
-    - LivingSetAttackTargetEvent: LivingSetAttackTargetEvent is fired when an Entity sets a target to attack.
-    - LivingSpawnEvent: LivingSpawnEvent is fired for any events associated with Living Enttnies spawn status.
+    - LivingEquipmentChangeEvent: When the Equipment of a Entity changes.
+    - LivingEvent: Whenever an event involving Living entities occurs.
+    - LivingExperienceDropEvent: When an entity drops experience on its death.
+    - LivingFallEvent: When an Entity is set to be falling.
+    - LivingHealEvent: When an Entity is set to be healed.
+    - LivingHurtEvent: When an Entity is set to be hurt.
+    - LivingPackSizeEvent: When the spawning system determines the maximum amount of the selected entity that can spawn at the same time.
+    - LivingSetAttackTargetEvent: When an Entity sets a target to attack.
+    - LivingSpawnEvent: Fired for any events associated with Living Enttnies spawn status.
     - PotionColorCalculationEvent: Fires after Potion Color Calculation.
-    - ZombieEvent: ZombieEvent is fired whenever a zombie is spawned for aid.
-- ServerChatEvent: ServerChatEvent is fired whenever a C01PacketChatMessage is processed.
+    - ZombieEvent: Whenever a zombie is spawned for aid.
+- ServerChatEvent: Whenever a C01PacketChatMessage is processed.
     - username: contains the username of the player sending the chat message.
     - message: contains the message being sent.
     - player: the instance of EntityPlayerMP for the player sending the chat message.
     - component: contains the instance of ChatComponentTranslation for the sent message.- brewing
-    - PlayerBrewedPotionEvent: This event is called when a player picks up a potion from a brewing stand.
+    - PlayerBrewedPotionEvent: When a player picks up a potion from a brewing stand.
     - PotionBrewEvent
         - PotionBrewEvent.Pre is fired before vanilla brewing takes place.
         - PotionBrewEvent.Post is fired when a potion is brewed in the brewing stand. 
 - enchanting
-    - EnchantmentLevelSetEvent: Fired when the enchantment level is set for each of the three potential enchantments in the enchanting table.
+    - EnchantmentLevelSetEvent: When the enchantment level is set for each of the three potential enchantments in the enchanting table.
 - item
     - ItemEvent: Base class for all EntityItem events
-    - ItemExpireEvent: Event that is fired when an EntityItem's age has reached its maximum lifespan.
-    - ItemTossEvent: Event that is fired whenever a player tosses (Q) an item or drag-n-drops a stack of items outside the inventory GUI screens.
+    - ItemExpireEvent: When an EntityItem's age has reached its maximum lifespan.
+    - ItemTossEvent: Whenever a player tosses (Q) an item or drag-n-drops a stack of items outside the inventory GUI screens.
 - minecart
-    - MinecartCollisionEvent: MinecartCollisionEvent is fired when a minecart collides with an Entity.
-    - MinecartEvent: MinecartEvent is fired whenever an event involving minecart entities occurs.
-    - MinecartInteractEvent: MinecartInteractEvent is fired when a player interacts with a minecart.
-    - MinecartUpdateEvent: MinecartUpdateEvent is fired when a minecart is updated.
-- EntityEvent: Fired when an event involving any Entity occurs.
-- EntityJoinWorldEvent: Fired when an Entity joins the world.
-- EntityMountEvent: Fired whenever a entity mounts/dismounts another entity.
-- EntityStruckByLightningEvent: Fired when an Entity is about to be struck by lightening.
+    - MinecartCollisionEvent: When a minecart collides with an Entity.
+    - MinecartEvent: Whenever an event involving minecart entities occurs.
+    - MinecartInteractEvent: When a player interacts with a minecart.
+    - MinecartUpdateEvent: When a minecart is updated.
+- EntityEvent: When an event involving any Entity occurs.
+- EntityJoinWorldEvent: When an Entity joins the world.
+- EntityMountEvent: Whenever a entity mounts/dismounts another entity.
+- EntityStruckByLightningEvent: When an Entity is about to be struck by lightening.
 - EntityTravelToDimensionEvent: Fired before an Entity travels to a dimension.
-- PlaySoundAtEntityEvent: Fired whenever a sound is set to be played at an Entity
+- PlaySoundAtEntityEvent: Whenever a sound is set to be played at an Entity
 - ThrowableImpactEvent: Fired before an EntityThrowable calls its EntityThrowable.onImpact method.
-- AnvilUpdateEvent:  AnvilUpdateEvent is fired when a player places items in both the left and right slots of a anvil.
-- AttachCapabilitiesEvent: Fired whenever an object with Capabilities support {currently TileEntity/Item/Entity)
-- CommandEvent: CommandEvent is fired whenever a command is scheduled to be executed. 
+- AnvilUpdateEvent:  When a player places items in both the left and right slots of a anvil.
+- AttachCapabilitiesEvent: Whenever an object with Capabilities support {currently TileEntity/Item/Entity)
+- CommandEvent: Whenever a command is scheduled to be executed. 
