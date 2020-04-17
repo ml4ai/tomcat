@@ -40,7 +40,8 @@ namespace tomcat {
     this->record_commands = record_commands;
     this->record_rewards = record_rewards;
     this->multiplayer = multiplayer;
-    this->uuid = boost::uuids::to_string(boost::uuids::uuid());
+    boost::uuids::uuid u;
+    this->uuid = boost::uuids::to_string(u);
   }
 
   void Mission::add_listener(shared_ptr<LocalAgent> tomcat_agent) {
