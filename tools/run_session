@@ -127,8 +127,9 @@ fi
 # tutorial and main missions.
 sleep 6
 
-# Get rid of any pre-existing discrete events JSON files.
+# Get rid of any pre-existing discrete events and self-reports JSON files.
 $RM -f "${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
+$RM -f "${TOMCAT}"/external/malmo/Minecraft/run/saves/self_reports/*.json
 
 
 if (( $DO_MAIN_MISSION )); then

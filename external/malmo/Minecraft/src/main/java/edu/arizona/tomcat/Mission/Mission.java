@@ -1,7 +1,5 @@
 package edu.arizona.tomcat.Mission;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.Schemas.PosAndDirection;
 import edu.arizona.tomcat.Emotion.EmotionHandler;
@@ -12,15 +10,12 @@ import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
 import edu.arizona.tomcat.Mission.gui.FeedbackListener;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
+import edu.arizona.tomcat.Mission.gui.SelfReportFileHandler;
 import edu.arizona.tomcat.Utils.Converter;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.Utils.MinecraftVanillaAIHandler;
 import edu.arizona.tomcat.World.DrawingHandler;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
 import net.minecraft.entity.Entity;
@@ -42,10 +37,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 
   public static enum ID { TUTORIAL, ZOMBIE, USAR_SINGLE_PLAYER }
   ;
-
   private static final long ENTITY_DELETION_DELAY = 1;
-  private static final String SELF_REPORT_FOLDER = "saves/self_reports";
-  private HashMap<String, MissionSelfReport> selfReportPerPlayer;
 
   protected ID id;
   protected static final int REMAINING_SECONDS_ALERT = 30;
@@ -65,6 +57,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
   protected ArrayList<MissionPhase> phases;
   protected ArrayList<MissionListener> listeners;
   protected HashMap<Entity, Long> entitiesToRemove;
+  protected SelfReportFileHandler selfReportFileHandler;
 
   /**
    * Abstract constructor for initialization of the drawing handler
@@ -72,12 +65,12 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
   protected Mission() {
     this.drawingHandler = DrawingHandler.getInstance();
     this.listeners = new ArrayList<MissionListener>();
-    this.selfReportPerPlayer = new HashMap<String, MissionSelfReport>();
     this.canShowSelfReport = false;
     this.missionPaused = false;
     this.worldFrozen = false;
     this.missionSentToClients = false;
     this.entitiesToRemove = new HashMap<Entity, Long>();
+    SelfReportFileHandler.createSelfReportOutputFolder();
     MinecraftForge.EVENT_BUS.register(this);
   }
 
@@ -152,7 +145,6 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     // These two initializations need to be here because the clients are not yet
     // ready in the init method in a multiplayer setting
     this.initMissionOnClients();
-    this.initSelfReports(world);
     if (this.missionPaused) {
       this.freezeWorld(world);
     }
@@ -271,23 +263,6 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
   }
 
   /**
-   * Create a self-report for each player in the game
-   * @param world - Minecraft world
-   */
-  private void initSelfReports(World world) {
-    if (this.hasSelfReport()) {
-      if (this.selfReportPerPlayer.isEmpty()) {
-        Date missionStartTime = new Date();
-        for (EntityPlayer player : world.playerEntities) {
-          MissionSelfReport selfReport = new MissionSelfReport(
-              this.id.ordinal(), missionStartTime, player.getName());
-          this.selfReportPerPlayer.put(player.getName(), selfReport);
-        }
-      }
-    }
-  }
-
-  /**
    * Retrieves the remaining seconds until the end of the mission
    * @return
    */
@@ -330,7 +305,9 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
       if (elapsedTime % this.selfReportPromptTimeInSeconds == 0 &&
           this.canShowSelfReport) {
         for (EntityPlayerMP player : MinecraftServerHelper.getPlayers()) {
+          String timestamp = Converter.getCurrentTimestamp();
           SelfReportContent content = this.getSelfReportContent(player, world);
+          content.setInitialTimestamp(timestamp);
           TomcatMessage message =
               new TomcatMessage(TomcatMessageType.SHOW_SELF_REPORT,
                                 new TomcatMessageData(content));
@@ -416,7 +393,11 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 
     case SELF_REPORT_ANSWERED:
       SelfReportContent content = message.getMessageData().getSelfReport();
-      this.selfReportPerPlayer.get(player.getName()).addContent(content);
+      MissionSelfReport missionSelfReport = new MissionSelfReport(
+          this.id.ordinal(), player.getName(), content.getInitialTimestamp());
+      missionSelfReport.setVersion(content.getVersion());
+      missionSelfReport.setResponses(content.getResponses());
+      SelfReportFileHandler.writeSelfReport(missionSelfReport);
       if (TomcatClientServerHandler.haveAllClientsReplied()) {
         this.unpauseMission();
       }
@@ -501,62 +482,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
    * ends. This method must be called by the subclasses upon the end of the
    * mission.
    */
-  protected void cleanup() { this.saveSelfReports(); }
-
-  /**
-   * Save self-report content to a file
-   * @param selfReportContent - Content of the self-report
-   */
-  private void saveSelfReports() {
-    if (this.hasSelfReport()) {
-      this.createSelfReportsFolder();
-      for (MissionSelfReport selfReport : this.selfReportPerPlayer.values()) {
-        if (selfReport.hasContent()) {
-          String path = this.getSelfReportPath(selfReport);
-          this.writeSelfReportToFile(path, selfReport);
-        }
-      }
-    }
-  }
-
-  /**
-   * Creates self-reports folder if it doesn't exist already
-   */
-  private void createSelfReportsFolder() {
-    File folder = new File(SELF_REPORT_FOLDER);
-    if (!folder.exists()) {
-      folder.mkdir();
-    }
-  }
-
-  /**
-   * Get the filename for a given self-report based on some of its info
-   */
-  private String getSelfReportPath(MissionSelfReport selfReport) {
-    String path = String.format("%s/self_report_player_%s.json",
-                                SELF_REPORT_FOLDER,
-                                selfReport.getPlayerID());
-    return path;
-  }
-
-  /**
-   * Write all self-reports from a player in a mission to a file
-   * @param path - Filename of the self-report file
-   * @param selfReport - Self-report object
-   */
-  private void writeSelfReportToFile(String path,
-                                     MissionSelfReport selfReport) {
-    try {
-      FileWriter fileWriter = new FileWriter(path);
-      Gson gson = new GsonBuilder().create();
-      String json = gson.toJson(selfReport);
-      fileWriter.write(json);
-      fileWriter.close();
-    }
-    catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
+  protected void cleanup() {}
 
   /**
    * Defines the duration of the mission in seconds
