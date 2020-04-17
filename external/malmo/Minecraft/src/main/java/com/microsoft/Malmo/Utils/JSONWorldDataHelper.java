@@ -167,11 +167,11 @@ public class JSONWorldDataHelper {
    */
   public static void buildPositionStats(JsonObject json,
                                         EntityPlayerMP player) {
-    json.addProperty("XPos", player.posX);
-    json.addProperty("YPos", player.posY);
-    json.addProperty("ZPos", player.posZ);
-    json.addProperty("Pitch", player.rotationPitch);
-    json.addProperty("Yaw", player.rotationYaw);
+    json.addProperty("x", player.posX);
+    json.addProperty("y", player.posY);
+    json.addProperty("z", player.posZ);
+    json.addProperty("pitch", player.rotationPitch);
+    json.addProperty("yaw", player.rotationYaw);
   }
 
   public static void buildEnvironmentStats(JsonObject json,
