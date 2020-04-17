@@ -34,7 +34,6 @@ timestamp() {
 output_dir="${TOMCAT}"/data/participant_data/session_$(timestamp)
 mkdir -p "${output_dir}"
 
-
 export original_output_device=$(SwitchAudioSource -c)
 
 . "$TOMCAT"/tools/configure_session
@@ -141,8 +140,9 @@ fi
 # tutorial and main missions.
 sleep 6
 
-# Get rid of any pre-existing discrete events JSON files.
+# Get rid of any pre-existing discrete events and self-reports JSON files.
 $rm -f "${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
+$rm -f "${TOMCAT}"/external/malmo/Minecraft/run/saves/self_reports/*.json
 
 
 if (( ${do_main_mission:-1} )); then
