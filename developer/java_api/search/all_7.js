@@ -9,6 +9,6 @@ var searchData=
   ['handlestatuswaitingformessagedismissal',['handleStatusWaitingForMessageDismissal',['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1MissionPhase.html#a41805f5cc8d2e70e4a31093ae91174ee',1,'edu::arizona::tomcat::Mission::MissionPhase']]],
   ['handlestatuswaitingtostart',['handleStatusWaitingToStart',['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1MissionPhase.html#ab485510ed1e1ff01e1202e6f22f3ee43',1,'edu::arizona::tomcat::Mission::MissionPhase']]],
   ['hasbeenachieved',['hasBeenAchieved',['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1Goal_1_1MissionGoal.html#ac468747f27b7ec5efe3263eabc8d6840',1,'edu::arizona::tomcat::Mission::Goal::MissionGoal']]],
-  ['hascontent',['hasContent',['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1MissionSelfReport.html#a6500718624c6ad6da4d8bcefff10bfbd',1,'edu::arizona::tomcat::Mission::MissionSelfReport']]],
+  ['hasresponses',['hasResponses',['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1MissionSelfReport.html#a0b898f4c7091ff9105cea41017d5c0d8',1,'edu::arizona::tomcat::Mission::MissionSelfReport']]],
   ['hasselfreport',['hasSelfReport',['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1Mission.html#a4b8172f146c08f04f63d51e6697d6cd0',1,'edu::arizona::tomcat::Mission::Mission']]]
 ];
