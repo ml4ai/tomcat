@@ -1798,7 +1798,7 @@
 
         * Achievement statistics: {{{DistanceTravelled}}}, {{{TimeAlive}}}, {{{MobsKilled}}}, {{{PlayersKilled}}}, {{{DamageTaken}}}, {{{DamageDealt}}}
         * Life statistics: {{{Life}}}, {{{Score}}}, {{{Food}}}, {{{Air}}}, {{{XP}}}, {{{IsAlive}}}, {{{Name}}}
-        * Position statistics: {{{XPos}}}, {{{YPos}}}, {{{ZPos}}}, {{{Pitch}}}, {{{Yaw}}}
+        * Position statistics: {{{x}}}, {{{y}}}, {{{z}}}, {{{pitch}}}, {{{yaw}}}
         * Environment statistics: {{{WorldTime}}} - current time in ticks, {{{TotalTime}}} - total world time, unaffected by ServerInitialConditions
       </xs:documentation>
     </xs:annotation>
