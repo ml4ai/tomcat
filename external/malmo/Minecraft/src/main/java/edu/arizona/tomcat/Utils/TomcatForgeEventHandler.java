@@ -29,7 +29,7 @@ public class TomcatForgeEventHandler {
           event.getTarget().posY,
           event.getTarget().posZ); // Event occurrence is location of target
 
-      DiscreteEventsHelper.printAttackEventOccurrence(pos, enemy, playerIn);
+      DiscreteEventsHelper.writeAttackEvent(pos, enemy, playerIn);
     }
   }
 }

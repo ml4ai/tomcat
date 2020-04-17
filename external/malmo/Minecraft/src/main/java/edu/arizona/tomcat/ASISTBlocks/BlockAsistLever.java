@@ -51,36 +51,10 @@ public class BlockAsistLever extends BlockLever {
     boolean result = super.onBlockActivated(
         worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
 
-    DiscreteEventsHelper.printEventOccurrence(
-        pos, playerIn, getLeverEvent(pos)); // Used to mark discrete occurence
+    DiscreteEventsHelper.writeBlockEvent(
+        pos, playerIn, "lever_flipped"); // Used to mark discrete occurrence
     counter++;
 
     return result;
-  }
-
-  /**
-   * This method decides whether flicking the lever opened or closed the door
-   * associated with it. By default, the first time the lever is flicked, it
-   * assumes a door was opened. <p> The counter helps it count two calls (first
-   * by server and then client) for the same event as one.
-   *
-   * @param pos - The position where the event occurred
-   * @return - A String indicating what happened to the door.
-   */
-  private String getLeverEvent(BlockPos pos) {
-    if (openDoors.contains(pos)) {
-      if (counter % 2 == 0) { // Only update once when called by both server and
-                              // client turn by turn
-        openDoors.remove(pos);
-      }
-      return "Door Closed";
-    }
-    else {
-      if (counter % 2 == 0) { // Only update once when called by both server and
-                              // client turn by turn
-        openDoors.add(pos);
-      }
-      return "Door Opened";
-    }
   }
 }
