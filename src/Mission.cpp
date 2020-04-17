@@ -169,7 +169,7 @@ namespace tomcat {
               <AgentStart>
               </AgentStart>
               <AgentHandlers>
-                <ObservationFromFullStats/>
+                <ObservationFromASISTParticipant/>
                 <ContinuousMovementCommands turnSpeedDegs="840">
                     <ModifierList type="deny-list">
                       <command>strafe</command>
@@ -354,8 +354,6 @@ namespace tomcat {
         //# Data
         json data = {};
         data["name"] = "tomcat";
-        data["world_time"] = observation["WorldTime"];
-        data["total_time"] = observation["TotalTime"];
         json message = {};
         message["header"] = header;
         message["msg"] = metadata;
