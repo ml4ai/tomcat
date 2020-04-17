@@ -1,4 +1,4 @@
-package com.microsoft.Malmo.ASISTBlocks;
+package edu.arizona.tomcat.ASISTBlocks;
 
 import edu.arizona.tomcat.Utils.DiscreteEventsHelper;
 import java.util.HashSet;

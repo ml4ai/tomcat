@@ -22,7 +22,7 @@
 
 package com.microsoft.Malmo;
 
-import com.microsoft.Malmo.ASISTBlocks.ModBlocks;
+import edu.arizona.tomcat.ASISTBlocks.ModBlocks;
 import com.microsoft.Malmo.Client.MalmoEnvServer;
 import com.microsoft.Malmo.Client.MalmoModClient;
 import com.microsoft.Malmo.MissionHandlers.AbsoluteMovementCommandsImplementation;
