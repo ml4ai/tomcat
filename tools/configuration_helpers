@@ -7,11 +7,21 @@ set -u
 TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
 export TOMCAT
 
+# Kobus. It is a bit confusing that next few lines set enviroment variables,
+# followed by a function that sets more of them. But it is fine for now. 
+
 export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
 mkdir -p "${TOMCAT_TMP_DIR}"
 
+# Kobus says that this would only be true for a sloppy .bashrc, but it is
+# possible that it could occur, but we have not seen it yet (the example you are
+# thinking of was Emily using tcsh interactively inherting my .tcshrc file).
+# Nonetheless changing "rm" is common. But why not change it to
+#   '/bin/rm -rf'
+#
 # On some systems, the 'rm' command is aliased to something else. So we take
 # the precaution of explicitly pointing rm to /bin/rm.
+#
 export RM=/bin/rm
 
 # =============================================================================
@@ -29,16 +39,39 @@ export RM=/bin/rm
 # ENABLE_FFMPEG: Set this to 0 to disable recording audio and video using FFMPEG.
 # DO_TUTORIAL_MISSION: Set this to 0 to disable the tutorial mission
 # DO_MAIN_MISSION: Set this to 0 to disable the main mission
+#
+# Kobus says that we might want a better name for this one. 
 # MAIN_MISSION: Set this to 1 for the Zombie invasion mission, and to 2 for the
 #               USAR Singleplayer mission.
 #
+# Kobus, adding a few more: The ones that are plausible to have conflicts with
+# someones development environment get the prefix TOMCAT. 
+#
+# TOMCAT_DEBUG_LEVEL: Set this to 1 or more to get geaky output. 
+# TOMCAT_DEBUG_ECHO:  If TOMCAT_DEBUG_LEVEL is more than 0, this is an echo.
+# TOMCAT_FULL_SCREEN: Defaults to true.
+# DEFAULT_MAIN_MISSION_TIME: Allows for short missions for testing. 
+# RECYCLE_MINECRAFT: 0 for never, 1 for main mission, 2 for multiple runs.
+#
 # =============================================================================
+
 set_local_configuration() {
+    export TOMCAT_DEBUG_LEVEL=${TOMCAT_DEBUG_LEVEL:-0}
+
+    if [[ ${TOMCAT_DEBUG_LEVEL} -gt 0 ]]; then
+        export TOMCAT_DEBUG_ECHO="echo "
+    else
+        TOMCAT_DEBUG_ECHO=": "
+    fi 
+
     export ENABLE_MQTT=${ENABLE_MQTT:-0}
     export ENABLE_FFMPEG=${ENABLE_FFMPEG:-1}
     export DO_TUTORIAL_MISSION=${DO_TUTORIAL_MISSION:-1}
     export DO_MAIN_MISSION=${DO_MAIN_MISSION:-1}
     export MAIN_MISSION=${MAIN_MISSION:-1} 
+    export TOMCAT_FULL_SCREEN=${TOMCAT_FULL_SCREEN:-1}
+    export RECYCLE_MINECRAFT=${RECYCLE_MINECRAFT:-1}
+    export DEFAULT_MAIN_MISSION_TIME=${DEFAULT_MAIN_MISSION_TIME:-600} 
 }
 
 # Detect the OS, set some useful environment variables.
@@ -165,6 +198,7 @@ __configure_screen_capture() {
     fi
 }
 
+# Kobus: set_local_configuration() needs to be called before this one. 
 # Detect whether we are running in a continuous integration environment or not.
 detect_ci() {
     # GITHUB_ACTIONS: Set to true with Github Actions is running the workflow.
@@ -180,7 +214,7 @@ detect_ci() {
         export MISSION=external/malmo/sample_missions/default_flat_1.xml
         export ENABLE_FFMPEG=0
     else
-        export TIME_LIMIT=600
+        export TIME_LIMIT=${DEFAULT_MAIN_MISSION_TIME}
     fi
 }
 
@@ -198,9 +232,15 @@ __test_ffmpeg_recording() {
         fi
 
         echo "Testing terminal access to microphone..."
-        . "${TOMCAT}"/tools/macos/test_microphone
+
+        # Kobus changing '.' to source, as it is more readable IMHO. 
+        source "${TOMCAT}"/tools/macos/test_microphone
         test_microphone_macos
 
+        # Kobus says this does not work on my dual display, although it works
+        # with either case alone. Obviously a corner case, but worth noting in
+        # case it points us to a more robust solution.
+        
         echo "Testing screen capture..."
         if ! "${TOMCAT}"/tools/macos/test_screen_recording; then exit 1; fi
     elif [[ $OSTYPE == linux-gnu ]]; then
@@ -212,9 +252,10 @@ __test_ffmpeg_recording() {
 }
 
 configure_session() {
+    # Kobus, putting set_local_configuration first. 
+    set_local_configuration
     detect_ci
     detect_os
-    set_local_configuration
     if (( $ENABLE_FFMPEG )); then
         __configure_webcam
         __configure_audio_recording
@@ -223,10 +264,14 @@ configure_session() {
     else
         export ENABLE_SYSTEM_AUDIO_RECORDING=0
     fi
-    if [[ $OSTYPE == "darwin"* ]]; then
-        export ORIGINAL_OUTPUT_DEVICE=$(SwitchAudioSource -c)
-        # Switching the audio output to the multi-output device.
-        if ! SwitchAudioSource -s "Multi-Output Device"; then exit 1; fi
+
+    if [[ ${ENABLE_SYSTEM_AUDIO_RECORDING} -eq 1 ]]; then
+        if [[ $OSTYPE == "darwin"* ]]; then
+            export ORIGINAL_OUTPUT_DEVICE=$(SwitchAudioSource -c)
+            # Switching the audio output to the multi-output device.
+            if ! SwitchAudioSource -s "Multi-Output Device"; then exit 1; fi
+        fi
     fi
+
     export DO_MAIN_MISSION=${DO_MAIN_MISSION:-1}
 }
