@@ -1,0 +1,56 @@
+#!/bin/bash 
+
+set -u 
+
+pid_needing_minecraft=$1
+wrap_launch_pid_file="${TOMCAT_TMP_DIR}/wrap_launch.pid"
+wrap_launch_gone=1
+wrap_client_gone=0
+
+if [[ -e "${wrap_launch_pid_file}" ]]; then 
+    wrap_launch_pid=`cat "${wrap_launch_pid_file}"` 
+    if [[ $? -eq 0 ]]; then
+        wrap_launch_gone=0
+    fi  
+fi 
+
+sleep 1 
+
+echo "Script kill_me_if_no_minecraft is watching ${pid_needing_minecraft}" 
+
+while [[ 1 ]]; do 
+    # We live until the process we are watching dies. 
+    
+    ps ${pid_needing_minecraft} >& /dev/null 
+    if [[ $? -ne 0 ]]; then break; fi 
+
+    if [[ $wrap_launch_gone -eq 0 ]]; then
+        ps ${wrap_launch_pid} >& /dev/null 
+
+        if [[ $? -ne 0 ]]; then
+            echo "Minecraft launch process is no longer around." 
+            wrap_launch_gone=1
+        fi
+    fi 
+
+    if [[  $wrap_launch_gone -eq 1 ]]; then
+        ps ${pid_needing_minecraft} >& /dev/null 
+
+        if [[ $? -eq 0 ]]; then
+            # Two seconds to finish cleaning up! 
+            sleep 2 
+        fi 
+
+        ps ${pid_needing_minecraft} >& /dev/null 
+
+        if [[ $? -eq 0 ]]; then
+            echo "Script kill_me_if_no_minecraft is killing ${pid_needing_minecraft}"
+            kill -15 ${pid_needing_minecraft} >& /dev/null
+            sleep 2 
+            kill -9 ${pid_needing_minecraft} >& /dev/null
+        fi 
+    fi
+
+    sleep 1
+done 
+    
