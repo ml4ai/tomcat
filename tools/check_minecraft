@@ -6,7 +6,7 @@ minecraft_log="${TOMCAT_TMP_DIR}/minecraft.log"
 minecraft_launch_pid_file="${TOMCAT_TMP_DIR}/minecraft_launch.pid"
 
 exit_status=1
-num_tries=1
+num_tries=2
 
 # Likely a bit more robust and easier to debug if we give Minecraft some time
 # to start. However, this is optional.
@@ -79,9 +79,7 @@ while [ $try -lt $num_tries ]; do
             fi 
 
             sleep 1
-
             let num_seconds+=1
-
             echo -e -n "\r${num_seconds}/${num_seconds_to_wait}"
         done 
 
@@ -92,7 +90,26 @@ while [ $try -lt $num_tries ]; do
             echo "If it does not work, then run:"
             echo "    ${TOMCAT}/tools/kill_minecraft"
             echo "and try again." 
+
             exit_status=0
+
+            if [[ ${TOMCAT_FULL_SCREEN} -eq 0 ]]; then
+                ${TOMCAT_DEBUG_ECHO} "Skipping full screen due to TOMCAT_FULL_SCREEN=0"
+            elif [[ "$OSTYPE" == "darwin"* ]]; then
+                if ! "$TOMCAT"/tools/macos/activate_minecraft_window $TERMINAL_PROGRAM; then
+                    echo "Unable to go into full screen mode."
+                    exit_status=1
+                fi
+            elif [[ "$OSTYPE" == "linux-gnu" && $CI -ne 1 ]]; then
+                # wmctrl does not work well with xvfb-run, so we disable full-screening the
+                # Minecraft window when running a headless test of this script with a Github
+                # Actions runner.
+                if ! "$TOMCAT"/tools/linux/activate_minecraft_window; then 
+                    echo "Unable to go into full screen mode."
+                    exit_status=1
+                fi
+            fi
+
             break
         elif [[ $num_seconds -eq $num_seconds_to_wait ]]; then
             echo "Checking Minecraft timed out after ${num_seconds_to_wait}."
@@ -100,7 +117,6 @@ while [ $try -lt $num_tries ]; do
     fi 
 
     echo "Script check_minecraft is having trouble verifying a viable Minecraft client."
-
     let try+=1 
 
     if [[ $try -lt $num_tries ]]; then 
