@@ -31,7 +31,6 @@ timestamp() {
   date "+%Y_%m_%d_%H_%M_%S"
 }
 
-
 # Creating an output directory for this session.
 output_dir="${TOMCAT}"/data/participant_data/session_$(timestamp)
 mkdir -p "${output_dir}"
@@ -69,45 +68,58 @@ start_ffmpeg_recording() {
     "$screen_video" &> "$TOMCAT_TMP_DIR"/screen_video_recording.log &
 }
 
-
 # Kobus suggests that since this is your cleanup script, you should not simply
 # die of part of does not fail. I have left the one for SwitchAudioSource alone,
 # for now, but it seems that you want 
 #
 cleanup() {
+    cleanup_status=0 
+
+    echo "Script run_session is cleaning up." 
+
     pkill ffmpeg
     if (( $ENABLE_MQTT )); then
         pkill mosquitto
     fi
 
-    # Kobus: How it was. 
-    # if ! "$TOMCAT"/tools/kill_minecraft; then exit 1; fi
-
     if [[ ${RECYCLE_MINECRAFT} -lt 2 ]]; then
-        "$TOMCAT"/tools/kill_minecraft
+        if ! "${TOMCAT}/tools/kill_minecraft"; then cleanup_status=1; fi
     fi 
 
     if [[ $CI -eq 0  \
           && $ENABLE_SYSTEM_AUDIO_RECORDING -eq 1 \
           && "$OSTYPE"  == "darwin"* ]]; then
         
-        # Kobus: It seems to me that if this fails you want to tell the user
-        # that something went wrong with their audio, and also you do not want
-        # to stop cleaning up other things. 
+        # Kobus. We need an error message here. I have added one, but I am not
+        # positive it is what we want. Also, we do not exit, as we need to do
+        # more cleanup.
         #
         # Switching the audio output from the multi-output device to the
         # built-in output.
-        if ! SwitchAudioSource -s "$ORIGINAL_OUTPUT_DEVICE"; then exit 1; fi
+
+        if ! SwitchAudioSource -s "$ORIGINAL_OUTPUT_DEVICE"; then 
+            echo " "
+            echo "Failed to switch audio back to what it was before run_session."
+            echo " "
+            cleanup_status=1
+        fi
     fi
 
-    discrete_actions_file="${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
+    discrete_actions_file="${save_dir}/discrete_events/discrete_events.json"
 
     if [[ -f "${discrete_actions_file}" ]]; then
-        mv "${discrete_actions_file}" "${output_dir}"/discrete_events.json
+        if ! mv "${discrete_actions_file}" "${output_dir}"; then cleanup_status=1; fi
     fi
 
-    # Move the self-reports from the Minecraft folder to the participant data folder
-    mv "${TOMCAT}"/external/malmo/Minecraft/run/saves/self_reports/*.json "${output_dir}"
+    have_self_reports=`ls ${save_dir}/self_reports | grep -c '.json'`
+    if [[ ${have_self_reports} -ne 0 ]]; then 
+        # Move the self-reports from the Minecraft folder to the participant data folder
+        if ! mv "${save_dir}/self_reports/*.json" "${output_dir}"; then cleanup_status=1; fi
+    else 
+        ${TOMCAT_DEBUG_ECHO} "No self reports to move."
+    fi 
+
+    exit ${cleanup_status}
 }
 
 # A function to handle cleanup when a user interrupts the script with Ctrl+C
@@ -115,36 +127,33 @@ user_interrupt() {
     echo "Detected keyboard interrupt."
     echo "Cleaning up now"
     cleanup
-    exit
+    exit 1
 }
 
-trap user_interrupt SIGINT
+trap user_interrupt SIGINT SIGTERM
 
-if ! "$TOMCAT"/tools/check_minecraft; then exit 1; fi
+# Kobus. Moved this to run_tutorial
+# if ! "$TOMCAT"/tools/check_minecraft; then exit 1; fi
 
-export tutorial_mission_log="${TOMCAT_TMP_DIR}/tutorial_mission.log"
-export main_mission_log="${TOMCAT_TMP_DIR}/main_mission.log"
+# Kobus. Moved this to run_tutorial
+# export tutorial_mission_log="${TOMCAT_TMP_DIR}/tutorial_mission.log"
 
-export num_tries=2
+# These do not need to be exported. Tutorial can have its own num_tried. 
+# Moving them lower down. Such settings should either be at the top (if we
+# change them often) or close to where they are needed. 
+#
+# export main_mission_log="${TOMCAT_TMP_DIR}/main_mission.log"
+# export num_tries=2
 
-# Kobus. If we kill a full screen tutorial mission, the invasion is not
-# necessarily full screen. A bit of corner case, but documenting it. 
-
-if [[ ${TOMCAT_FULL_SCREEN} -eq 0 ]]; then
-    ${TOMCAT_DEBUG_ECHO} "Skipping full screen due to TOMCAT_FULL_SCREEN=0"
-elif [[ "$OSTYPE" == "darwin"* ]]; then
-    if ! "$TOMCAT"/tools/macos/activate_minecraft_window $TERMINAL_PROGRAM; then
-        exit 1
-    fi
-elif [[ "$OSTYPE" == "linux-gnu" && $CI -ne 1 ]]; then
-    # wmctrl does not work well with xvfb-run, so we disable full-screening the
-    # Minecraft window when running a headless test of this script with a Github
-    # Actions runner.
-    if ! "$TOMCAT"/tools/linux/activate_minecraft_window; then exit 1; fi
-fi
+# Kobus. Moved full screen to check_minecraft
 
 if (( $DO_TUTORIAL_MISSION )); then
-    if ! "$TOMCAT"/tools/run_tutorial; then exit 1; fi
+    echo TOMCAT_DEBUG_ECHO: $TOMCAT_DEBUG_ECHO
+    if ! "$TOMCAT"/tools/run_tutorial; then 
+        echo "Tutorial mission failed. Cleaning up and dying."
+        cleanup
+        exit 1;
+    fi
 
     # Kobus: This was after the end of this block, but that does not make sense. 
     # 
@@ -155,15 +164,25 @@ if (( $DO_TUTORIAL_MISSION )); then
     if [[ ${RECYCLE_MINECRAFT} -lt 1 ]]; then
         "$TOMCAT"/tools/kill_minecraft
     fi 
+else 
+    ${TOMCAT_DEBUG_ECHO} "Skipping tutorial because DO_TUTORIAL_MISSION=0" 
 fi
 
+save_dir="${TOMCAT}/external/malmo/Minecraft/run/saves"
 
 # Get rid of any pre-existing discrete events and self-reports JSON files.
-$RM -f "${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
-$RM -f "${TOMCAT}"/external/malmo/Minecraft/run/saves/self_reports/*.json
-
+$RM -f "${save_dir}/discrete_events/discrete_events.json"
+$RM -f "${save_dir}/self_reports/*.json"
 
 if (( $DO_MAIN_MISSION )); then
+    main_mission_log="${TOMCAT_TMP_DIR}/main_mission.log"
+
+    # Kobus. Other mechanisms are in place that now mean we might not want to do
+    # a second try. So, lets test with num_tries=1, and if this works out, we
+    # can clean the loop. 
+    #
+    num_tries=1
+
     echo " "
     echo "Running the main mission in ${TOMCAT}."
     echo " "
@@ -177,6 +196,14 @@ if (( $DO_MAIN_MISSION )); then
     malmo_data="${output_dir}"/malmo_data.txt
 
     while [ $try -lt $num_tries ]; do
+        "${TOMCAT}"/tools/check_minecraft
+
+        if [[ $? -ne 0 ]]; then
+            echo "Main mission cannot find or create a viable Minecraft process."
+            cleanup
+            exit 1  
+        fi 
+
         runExperiment_args="--mission ${MAIN_MISSION} --time_limit ${TIME_LIMIT} --record_observations"
         if (( $ENABLE_MQTT )); then
             "${TOMCAT}"/build/bin/runExperiment \
@@ -192,43 +219,45 @@ if (( $DO_MAIN_MISSION )); then
             pid_runExperiment=$!
         fi
 
-      echo "Running mission ${MAIN_MISSION} with time limit ${TIME_LIMIT} seconds."
-      echo "Process ID corresponding to ./bin/runExperiment is $pid_runExperiment"
-      echo "... waiting for it to complete."
+        echo "Running mission ${MAIN_MISSION} with time limit ${TIME_LIMIT} seconds."
+        echo "Process ID corresponding to ./bin/runExperiment is $pid_runExperiment"
+        echo "... waiting for it to complete."
 
-      # Set up a background job to kill the mission if Minecraft dies.
-      ${TOMCAT}/tools/kill_me_if_no_minecraft $pid_runExperiment < /dev/null & 
+        # Set up a background job to kill the mission if Minecraft dies.
+        ${TOMCAT}/tools/kill_me_if_no_minecraft $pid_runExperiment < /dev/null & 
 
-      wait $pid_runExperiment
-      main_mission_status=$?
-      
+        wait $pid_runExperiment
+        main_mission_status=$?
 
-      if [[ ${main_mission_status} -eq 0 ]]; then
-          main_mission_status=$(grep -c "Error starting mission" \
-          "${main_mission_log}")
-      fi
+        if [[ ${main_mission_status} -eq 0 ]]; then
+            main_mission_status=$(grep -c "Error starting mission" "${main_mission_log}")
+        fi
 
-      if [[ ${main_mission_status} -eq 0 ]]; then
-          echo "Main mission ended with exit code 0."
-          echo "All recorded data is in ${output_dir}"
-          echo " "
-          break
-      fi
+        if [[ ${main_mission_status} -eq 0 ]]; then
+            echo "Main mission ended with exit code 0."
+            echo "All recorded data is in ${output_dir}"
+            echo " "
+            break
+        fi
 
-      (( try++ ))
+        (( try++ ))
 
-      if [[ $try -lt $num_tries ]]; then
-          echo "Main mission ended with exit code 1."
-          echo "Killing all Minecraft and Malmo processes that can be found"
-          echo "and trying again."
+        if [[ $try -lt $num_tries ]]; then
+            echo "Main mission ended with exit code 1."
+            echo "Killing all Minecraft and Malmo processes that can be found"
+            echo "and trying again."
 
-          "$TOMCAT"/tools/kill_minecraft
-          "$TOMCAT"/tools/check_minecraft
-      fi
+            "${TOMCAT}"/tools/kill_minecraft
+        fi
     done
 fi
 
+echo "Finished running all sessions in ${TOMCAT}."
+echo "Doing our final cleanup."
+
+# If we are here, then we do not have any errors. Probably will need to upgrade
+# at some point to possibly get here even with errors. But right now, if we have
+# an error above, we call cleanup and exit. 
+#
 cleanup
 
-echo "Finished running all sessions in ${TOMCAT}".
-exit 0
