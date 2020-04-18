@@ -2,8 +2,15 @@
 
 # Set the TOMCAT environment variable, assuming that the directory structure
 # mirrors that of the git repository.
+<<<<<<< Updated upstream
 TOMCAT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && pwd )"
 export TOMCAT
+=======
+
+export debian_version="/etc/debian_version"
+
+export TOMCAT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && pwd )"
+>>>>>>> Stashed changes
 
 echo "Installing ToMCAT dependencies."
 
@@ -125,7 +132,22 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
       install_dependencies_using_macports
     fi
 
-elif [ -x "$(command -v apt-get)" ]; then
+elif [ -e "$debian_version" ]; then
+	echo "debain detected!"
+#	sudo apt-get update
+	if [[ $? -ne 0 ]]; then exit 1; fi;
+#  sudo apt-get install -y \
+#       gcc-9 \
+#       libfmt-dev \
+#       doxygen \
+#       ffmpeg \
+#       libopenblas-dev \
+#       openjdk-8-jre-headless=8u162-b12-1\
+#       openjdk-8-jre=8u162-b12-1\
+#       openjdk-8-jdk-headless=8u162-b12-1\
+#       openjdk-8-jdk=8u162-b12-1	
+
+elif [ -x "$(command -v apt-aget)" ]; then
     echo "apt-get executable found. Assuming that you are using a flavor of"\
     "Debian Linux, such as Ubuntu."
     echo ""

@@ -4,6 +4,8 @@
 
 set -e
 
+if [[ ! -e ${TOMCAT}/data/OpenFace_models.tgz ]]; then 
+
 echo "Downloading OpenFace models."
 
 pushd ${TOMCAT}/data > /dev/null 
@@ -14,6 +16,10 @@ pushd ${TOMCAT}/data > /dev/null
     if [[ $? -ne 0 ]]; then exit 1; fi;
 popd > /dev/null
 
-echo "OpenFace models download complete."
-echo " "
+else 
+	echo "OpenFace models download complete."
+	echo " "
+
+fi;
+
 exit 0
