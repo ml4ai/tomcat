@@ -2,7 +2,6 @@
 
 set -u
 
-
 # =============================================================================
 
 # Set the TOMCAT environment variable, assuming that the directory structure
@@ -10,9 +9,12 @@ set -u
 TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
 export TOMCAT
 
-. "$TOMCAT"/tools/configuration_helpers
+# Kobus changing '.' to source, as it is more readable IMHO. 
+source "$TOMCAT"/tools/configuration_helpers
 
 configure_session
+
+# If the above fails, we do not get here. 
 
 # Start mosquitto message broker if it is not already running.
 if [[ $ENABLE_MQTT -eq 1 \
@@ -21,6 +23,8 @@ if [[ $ENABLE_MQTT -eq 1 \
 fi
 
 
+# Kobus, since you pushing function into configuration_helpers, perhaps a
+# similar styple for run_session_helpers? Worth considering. 
 
 # This function returns the date and time in the current timezone.
 timestamp() {
@@ -66,15 +70,31 @@ start_ffmpeg_recording() {
 }
 
 
+# Kobus suggests that since this is your cleanup script, you should not simply
+# die of part of does not fail. I have left the one for SwitchAudioSource alone,
+# for now, but it seems that you want 
+#
 cleanup() {
     pkill ffmpeg
     if (( $ENABLE_MQTT )); then
         pkill mosquitto
     fi
-    if ! "$TOMCAT"/tools/kill_minecraft; then exit 1; fi
+
+    # Kobus: How it was. 
+    # if ! "$TOMCAT"/tools/kill_minecraft; then exit 1; fi
+
+    if [[ ${RECYCLE_MINECRAFT} -lt 2 ]]; then
+        "$TOMCAT"/tools/kill_minecraft
+    fi 
+
     if [[ $CI -eq 0  \
           && $ENABLE_SYSTEM_AUDIO_RECORDING -eq 1 \
           && "$OSTYPE"  == "darwin"* ]]; then
+        
+        # Kobus: It seems to me that if this fails you want to tell the user
+        # that something went wrong with their audio, and also you do not want
+        # to stop cleaning up other things. 
+        #
         # Switching the audio output from the multi-output device to the
         # built-in output.
         if ! SwitchAudioSource -s "$ORIGINAL_OUTPUT_DEVICE"; then exit 1; fi
@@ -107,7 +127,12 @@ export main_mission_log="${TOMCAT_TMP_DIR}/main_mission.log"
 
 export num_tries=2
 
-if [[ "$OSTYPE" == "darwin"* ]]; then
+# Kobus. If we kill a full screen tutorial mission, the invasion is not
+# necessarily full screen. A bit of corner case, but documenting it. 
+
+if [[ ${TOMCAT_FULL_SCREEN} -eq 0 ]]; then
+    ${TOMCAT_DEBUG_ECHO} "Skipping full screen due to TOMCAT_FULL_SCREEN=0"
+elif [[ "$OSTYPE" == "darwin"* ]]; then
     if ! "$TOMCAT"/tools/macos/activate_minecraft_window $TERMINAL_PROGRAM; then
         exit 1
     fi
@@ -120,11 +145,18 @@ fi
 
 if (( $DO_TUTORIAL_MISSION )); then
     if ! "$TOMCAT"/tools/run_tutorial; then exit 1; fi
+
+    # Kobus: This was after the end of this block, but that does not make sense. 
+    # 
+    # We sleep for a few seconds to let the player catch a breath between the
+    # tutorial and main missions.
+    sleep 6
+
+    if [[ ${RECYCLE_MINECRAFT} -lt 1 ]]; then
+        "$TOMCAT"/tools/kill_minecraft
+    fi 
 fi
 
-# We sleep for a few seconds to let the player catch a breath between the
-# tutorial and main missions.
-sleep 6
 
 # Get rid of any pre-existing discrete events and self-reports JSON files.
 $RM -f "${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
@@ -138,11 +170,9 @@ if (( $DO_MAIN_MISSION )); then
 
     try=0
 
-
     if (( $ENABLE_FFMPEG )); then
         start_ffmpeg_recording
     fi
-
 
     malmo_data="${output_dir}"/malmo_data.txt
 
@@ -165,6 +195,9 @@ if (( $DO_MAIN_MISSION )); then
       echo "Running mission ${MAIN_MISSION} with time limit ${TIME_LIMIT} seconds."
       echo "Process ID corresponding to ./bin/runExperiment is $pid_runExperiment"
       echo "... waiting for it to complete."
+
+      # Set up a background job to kill the mission if Minecraft dies.
+      ${TOMCAT}/tools/kill_me_if_no_minecraft $pid_runExperiment < /dev/null & 
 
       wait $pid_runExperiment
       main_mission_status=$?
