@@ -59,9 +59,9 @@ set_local_configuration() {
     export TOMCAT_DEBUG_LEVEL=${TOMCAT_DEBUG_LEVEL:-0}
 
     if [[ ${TOMCAT_DEBUG_LEVEL} -gt 0 ]]; then
-        export TOMCAT_DEBUG_ECHO="echo "
+        export TOMCAT_DEBUG_ECHO="echo DEBUG: "
     else
-        TOMCAT_DEBUG_ECHO=": "
+        export TOMCAT_DEBUG_ECHO=": "
     fi 
 
     export ENABLE_MQTT=${ENABLE_MQTT:-0}
