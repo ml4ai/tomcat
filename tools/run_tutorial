@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Default is to exit with failure. 
+exit_status=1 
+
 try=0
 while [ $try -lt $num_tries ]; do 
     echo " "
@@ -11,6 +14,10 @@ while [ $try -lt $num_tries ]; do
     bg_pid=$!
     echo "Running: ${TOMCAT}/build/bin/runExperiment --mission 0"
     echo "Process is $bg_pid - waiting for it"
+
+    # Set up a background job to kill the mission if Minecraft dies.
+    ${TOMCAT}/tools/kill_me_if_no_minecraft $bg_pid < /dev/null & 
+
     wait $bg_pid
     tutorial_mission_status=$?
 
@@ -20,6 +27,7 @@ while [ $try -lt $num_tries ]; do
 
 
     if [[ ${tutorial_mission_status} -eq 0 ]]; then
+        exit_status=0 
         echo "Tutorial mission ended with success status."
         echo " "
         break
@@ -34,5 +42,6 @@ while [ $try -lt $num_tries ]; do
         ${TOMCAT}/tools/check_minecraft
     fi 
 done
-rm tutorial_saved_data.tgz
-exit 0
+${RM} tutorial_saved_data.tgz
+exit ${exit_status}
+
