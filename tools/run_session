@@ -10,7 +10,6 @@ TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
 export TOMCAT
 save_dir="${TOMCAT}/external/malmo/Minecraft/run/saves"
 
-# Kobus changing '.' to source, as it is more readable IMHO. 
 source "$TOMCAT"/tools/configuration_helpers
 
 configure_session
@@ -22,9 +21,6 @@ if [[ ! $(pgrep -l mosquitto | head -n1 | cut -d' ' -f2) == mosquitto ]]; then
     mosquitto &
 fi
 
-
-# Kobus, since you pushing function into configuration_helpers, perhaps a
-# similar styple for run_session_helpers? Worth considering. 
 
 # This function returns the date and time in the current timezone.
 timestamp() {
