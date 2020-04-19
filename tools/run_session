@@ -162,8 +162,8 @@ do_mission() {
     malmo_data="$mission_output_dir"/malmo_data.txt
 
     # Get rid of any pre-existing discrete events and self-reports JSON files.
-    $RM -f "${save_dir}/discrete_events/discrete_events.json"
-    $RM -f "${save_dir}/self_reports/*.json"
+    $RM "${save_dir}/discrete_events/discrete_events.json"
+    $RM "${save_dir}/self_reports/*.json"
 
     # Kobus: Other mechanisms are in place that now mean we might not want to do
     # a second try. So, let's test with num_tries=1, and if this works out, we

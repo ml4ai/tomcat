@@ -6,7 +6,7 @@ set -u
 test_screen_recording_macos() {
   test_screen_video_file=${TOMCAT_TMP_DIR}/test_screen_video.mpg
   ffmpeg_screen_video_log="$TOMCAT_TMP_DIR"/screen_video_recording.log
-  $RM -f "$test_screen_video_file"
+  $RM "$test_screen_video_file"
   ffmpeg\
     -nostdin\
     -f ${FFMPEG_FMT_SCREEN_CAPTURE}\

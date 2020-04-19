@@ -7,7 +7,7 @@ set -u
 echo "Testing if we can record video using the webcam."
 test_webcam_macos() {
     test_video_file=${TOMCAT_TMP_DIR}/test_webcam_video.mpg
-    $RM -f "$test_video_file"
+    $RM "$test_video_file"
     ffmpeg_webcam_log="$TOMCAT_TMP_DIR"/ffmpeg_webcam_test.log
     ffmpeg\
         -nostdin\
