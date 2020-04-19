@@ -32,9 +32,7 @@ public class ModBlocks {
   /**
    * This method initializes the new block created.
    */
-  public static void init() {
-    MOD_BLOCKS.add(new BlockAsistIron());
-  }
+  public static void init() { MOD_BLOCKS.add(new BlockAsistIron()); }
 
   /**
    * This method calls a helper function to register the Minecraft block. You
@@ -42,7 +40,7 @@ public class ModBlocks {
    * registration code should be kept within this class
    */
   public static void register() {
-    for(Block block : MOD_BLOCKS){
+    for (Block block : MOD_BLOCKS) {
       registerBlock(block);
     }
   }
@@ -69,7 +67,7 @@ public class ModBlocks {
    * or this will only show up as a purple and black cube in Minecraft.
    */
   public static void registerRenders() {
-    for(Block block : MOD_BLOCKS){
+    for (Block block : MOD_BLOCKS) {
       registerRender(block);
     }
   }

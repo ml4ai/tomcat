@@ -1,7 +1,6 @@
 package edu.arizona.tomcat.Utils;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,21 +38,19 @@ public class TomcatForgeEventHandler {
   }
 
   @SubscribeEvent
-  public void blockEvent(PlayerInteractEvent event){
-    if(event.getClass() == PlayerInteractEvent.RightClickBlock.class){
+  public void blockEvent(PlayerInteractEvent event) {
+    if (event.getClass() == PlayerInteractEvent.RightClickBlock.class) {
       World world = event.getWorld();
       BlockPos pos = event.getPos();
       Block block = world.getBlockState(pos).getBlock();
       EntityPlayer playerIn = event.getEntityPlayer();
-      if(block.equals(Blocks.STONE_BUTTON)){
+      if (block.equals(Blocks.STONE_BUTTON)) {
 
-        DiscreteEventsHelper.writeBlockEvent(
-                pos, playerIn, "button_pressed");
-      } else if(block.equals(Blocks.LEVER)){
-        DiscreteEventsHelper.writeBlockEvent(
-                pos, playerIn, "lever_flipped");
+        DiscreteEventsHelper.writeBlockEvent(pos, playerIn, "button_pressed");
+      }
+      else if (block.equals(Blocks.LEVER)) {
+        DiscreteEventsHelper.writeBlockEvent(pos, playerIn, "lever_flipped");
       }
     }
-
   }
 }

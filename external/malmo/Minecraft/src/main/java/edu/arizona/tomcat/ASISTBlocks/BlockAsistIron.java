@@ -52,7 +52,7 @@ public class BlockAsistIron extends Block {
     // player as destroying this block for the sake of the code.
     DiscreteEventsHelper.writeBlockEvent(
         pos,
-            null,
+        null,
         "door_opened"); // Used to mark discrete occurrence
 
     return new java.util.ArrayList<ItemStack>(); // Drop nothing

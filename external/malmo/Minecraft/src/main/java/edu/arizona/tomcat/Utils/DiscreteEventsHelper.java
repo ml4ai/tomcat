@@ -1,19 +1,13 @@
 package edu.arizona.tomcat.Utils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.internal.LinkedTreeMap;
-import java.io.File;
-import java.io.FileWriter;
+import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.BlockPos;
+
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
-
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.math.BlockPos;
 
 /**
  * This class holds static methods to print the discrete events. It writes the
@@ -25,17 +19,18 @@ public class DiscreteEventsHelper {
       "saves/discrete_events";
   private static int counter = 0;
 
-  public static void createDiscreteEventsOutputFolder(){
+  public static void createDiscreteEventsOutputFolder() {
     OutputDataHandler.createFolder(DISCRETE_EVENT_REPORTS_FOLDER);
   }
 
   private static void writeJSONOutput(String filename, Object discreteEvent) {
-    if(counter %2==0) {
+    if (counter % 2 == 0) {
       createDiscreteEventsOutputFolder();
       try {
         OutputDataHandler.appendToJsonFile(
-                DISCRETE_EVENT_REPORTS_FOLDER, filename, discreteEvent);
-      } catch (IOException e) {
+            DISCRETE_EVENT_REPORTS_FOLDER, filename, discreteEvent);
+      }
+      catch (IOException e) {
         e.printStackTrace();
       }
     }
@@ -59,12 +54,13 @@ public class DiscreteEventsHelper {
     String timestamp = dateFormat.format(date); // Date and Time
     String coordinates = createCoordinateString(pos);
     String playerName = "";
-    if(playerIn != null) {
+    if (playerIn != null) {
       playerName = playerIn.getDisplayNameString();
     }
 
-    BlockDiscreteEvent event = new BlockDiscreteEvent(eventName, timestamp, coordinates);
-    writeJSONOutput(getFilename(playerName),event);
+    BlockDiscreteEvent event =
+        new BlockDiscreteEvent(eventName, timestamp, coordinates);
+    writeJSONOutput(getFilename(playerName), event);
   }
 
   /**
@@ -76,16 +72,15 @@ public class DiscreteEventsHelper {
    * @param pos      - Position of event
    * @param playerIn -  The player who triggered the event
    */
-  public static void writeAttackEvent(BlockPos pos,
-                                                EntityMob enemy,
-                                                EntityPlayer playerIn) {
+  public static void
+  writeAttackEvent(BlockPos pos, EntityMob enemy, EntityPlayer playerIn) {
 
     // Player and Enemy Info
     String playerName = playerIn.getDisplayNameString();
     String playerHealth = playerIn.getHealth() + "/" + playerIn.getMaxHealth();
     String enemyName = enemy.getName();
     String enemyHealth = "0.0"
-            + "/" + enemy.getMaxHealth();
+                         + "/" + enemy.getMaxHealth();
 
     String eventName = "enemy_killed";
 
@@ -94,7 +89,6 @@ public class DiscreteEventsHelper {
       enemyHealth = enemy.getHealth() + "/" + enemy.getMaxHealth();
     }
 
-
     // Logistics Info
     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     Date date = new Date();
@@ -102,15 +96,19 @@ public class DiscreteEventsHelper {
     String timestamp = dateFormat.format(date); // Date and Time
     String coordinates = createCoordinateString(pos);
 
-    AttackDiscreteEvent event = new AttackDiscreteEvent(eventName, timestamp, coordinates, playerHealth, enemyName, enemyHealth);
+    AttackDiscreteEvent event = new AttackDiscreteEvent(eventName,
+                                                        timestamp,
+                                                        coordinates,
+                                                        playerHealth,
+                                                        enemyName,
+                                                        enemyHealth);
 
-    writeJSONOutput(getFilename(playerName),event);
-
+    writeJSONOutput(getFilename(playerName), event);
   }
 
-  private static String getFilename(String playerName){
-    String filename = String.format("discrete_events_player_%s.json",
-            playerName);
+  private static String getFilename(String playerName) {
+    String filename =
+        String.format("discrete_events_player_%s.json", playerName);
     return filename;
   }
 
@@ -127,5 +125,4 @@ public class DiscreteEventsHelper {
                          + "Z: " + z;
     return coordinates;
   }
-
 }
