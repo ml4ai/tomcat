@@ -39,6 +39,7 @@ start_ffmpeg_recording() {
     -f ${FFMPEG_FMT_WEBCAM}\
     ${FRAMERATE_OPTION:-}\
     -i ${FFMPEG_INPUT_DEVICE_WEBCAM}\
+    -r 30\
     "${output_dir}"/webcam_video.mpg\
     &> ${TOMCAT_TMP_DIR}/ffmpeg_webcam_"$mission".log &
     
@@ -170,9 +171,6 @@ do_mission() {
     num_tries=1
     try=0
 
-    if (( ENABLE_FFMPEG )); then
-        start_ffmpeg_recording "$CURRENT_MISSION"  "$mission_output_dir"
-    fi
 
     while [ $try -lt $num_tries ]; do
         if ! "${TOMCAT}"/tools/check_minecraft; then
@@ -187,6 +185,9 @@ do_mission() {
             runExperiment_args="${runExperiment_args} --time_limit ${TIME_LIMIT}"
         fi
 
+        if (( ENABLE_FFMPEG )); then
+            start_ffmpeg_recording "$CURRENT_MISSION"  "$mission_output_dir"
+        fi
         # Publish the Malmo observation messages to the message bus on the
         # topic observations/state.
         "${TOMCAT}"/build/bin/runExperiment\

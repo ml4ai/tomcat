@@ -6,38 +6,45 @@ set -u
 
 echo "Testing if we can record video using the webcam."
 test_webcam_macos() {
-  test_video_file=${TOMCAT_TMP_DIR}/test_video.mpg
-  $RM -f "$test_video_file" 
-  ffmpeg_webcam_log="$TOMCAT_TMP_DIR"/ffmpeg_webcam_test.log
-  ffmpeg\
-    -nostdin\
-    -f ${FFMPEG_FMT_WEBCAM}\
-    ${FRAMERATE_OPTION:-}\
-    -i ${FFMPEG_INPUT_DEVICE_WEBCAM}\
-    -t 0.1\
-    "$test_video_file" &> "$ffmpeg_webcam_log"
-  if [[ ! -f "$test_video_file" ]]; then
-    camera_access_err=$(cat "$ffmpeg_webcam_log" \
-      | grep "Failed to create AV capture input device: Cannot use FaceTime HD Camera")
-    framerate_err=$(cat "$ffmpeg_webcam_log" \
-      | grep "Selected framerate (29.970030) is not supported by the device")
-    if [[ ! $camera_access_err == "" ]]; then
-      echo "Caught camera access error:" $camera_access_err
-      echo "macOS is not allowing the terminal to access the camera."
-      echo "The script will now guide you to set it up."
-      if ! "$TOMCAT"/tools/macos/terminal_camera_access $terminal; then exit 1; fi
-      test_webcam_macos
-    elif [[ ! $framerate_err == "" ]]; then
-      # On recent MacBook Pros, it seems that we have to specify the framerate
-      # explicitly for some unknown reason for the webcam recording.
-      export FRAMERATE_OPTION="-framerate 30"
-      test_webcam_macos
-    else
-      echo "Unable to capture webcam video - unhandled ffmpeg error."
-      echo "The complete error log is given below."
-      echo ""
-      cat "$ffmpeg_webcam_log"
-      exit 1
+    test_video_file=${TOMCAT_TMP_DIR}/test_webcam_video.mpg
+    $RM -f "$test_video_file"
+    ffmpeg_webcam_log="$TOMCAT_TMP_DIR"/ffmpeg_webcam_test.log
+    ffmpeg\
+        -nostdin\
+        -f ${FFMPEG_FMT_WEBCAM}\
+        ${FRAMERATE_OPTION:-}\
+        -i ${FFMPEG_INPUT_DEVICE_WEBCAM}\
+        -t 0.1\
+        -r 30\
+        "$test_video_file" &> "$ffmpeg_webcam_log"
+    if [[ ! -f "$test_video_file" || ! $(du -sh "$test_video_file" | grep "0B") == "" ]]; then
+        camera_access_err=$(cat "$ffmpeg_webcam_log" \
+        | grep "Failed to create AV capture input device: Cannot use FaceTime HD Camera")
+        framerate_err=$(cat "$ffmpeg_webcam_log" \
+        | grep "Selected framerate (29.970030) is not supported by the device")
+        if [[ ! $camera_access_err == "" ]]; then
+            echo "Caught camera access error:" $camera_access_err
+            echo "macOS is not allowing the terminal to access the camera."
+            echo "The script will now guide you to set it up."
+        if ! "$TOMCAT"/tools/macos/terminal_camera_access $terminal; then
+            echo "Could not set up camera access for the terminal."
+            exit 1
+        fi
+        test_webcam_macos
+        elif [[ ! $framerate_err == "" ]]; then
+            # On recent MacBook Pros, it seems that we have to specify the framerate
+            # explicitly for some unknown reason for the webcam recording.
+            export FRAMERATE_OPTION="-framerate 30"
+            test_webcam_macos
+        #elif [[ ! $(du -sh "$test_video_file" | grep "0B") == "" ]]; then
+            #export FRAMERATE_OPTION=""
+            #test_webcam_macos
+        else
+            echo "Unable to capture webcam video - unhandled ffmpeg error."
+            echo "The complete error log is given below."
+            echo ""
+            cat "$ffmpeg_webcam_log"
+            exit 1
+        fi
     fi
-  fi
 }
