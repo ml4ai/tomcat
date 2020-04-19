@@ -73,16 +73,19 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a5239b9d88f6941e5c3220940cc1b5231"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1DiscreteEventsHelper.html#a5239b9d88f6941e5c3220940cc1b5231">printEventOccurrence</a> (BlockPos pos, EntityPlayer playerIn, String event)</td></tr>
-<tr class="separator:a5239b9d88f6941e5c3220940cc1b5231"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7e667c0c0e93504c3d7aba15a07760d9"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1DiscreteEventsHelper.html#a7e667c0c0e93504c3d7aba15a07760d9">printAttackEventOccurrence</a> (BlockPos pos, EntityMob enemy, EntityPlayer playerIn)</td></tr>
-<tr class="separator:a7e667c0c0e93504c3d7aba15a07760d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a333c1a82b19310510a1664916a717055"><td class="memItemLeft" align="right" valign="top"><a id="a333c1a82b19310510a1664916a717055"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>createDiscreteEventsOutputFolder</b> ()</td></tr>
+<tr class="separator:a333c1a82b19310510a1664916a717055"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24379f41bcbc5cc1b94d03793bdf4807"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1DiscreteEventsHelper.html#a24379f41bcbc5cc1b94d03793bdf4807">writeBlockEvent</a> (BlockPos pos, EntityPlayer playerIn, String eventName)</td></tr>
+<tr class="separator:a24379f41bcbc5cc1b94d03793bdf4807"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a798689686f48e831182f8d9dbf4a6e05"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1DiscreteEventsHelper.html#a798689686f48e831182f8d9dbf4a6e05">writeAttackEvent</a> (BlockPos pos, EntityMob enemy, EntityPlayer playerIn)</td></tr>
+<tr class="separator:a798689686f48e831182f8d9dbf4a6e05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This class holds static methods to print the discrete events. It writes the output to saves/discrete_events/Discrete_Events.json </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a7e667c0c0e93504c3d7aba15a07760d9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7e667c0c0e93504c3d7aba15a07760d9">&#9670;&nbsp;</a></span>printAttackEventOccurrence()</h2>
+<a id="a798689686f48e831182f8d9dbf4a6e05"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a798689686f48e831182f8d9dbf4a6e05">&#9670;&nbsp;</a></span>writeAttackEvent()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -91,7 +94,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static void edu.arizona.tomcat.Utils.DiscreteEventsHelper.printAttackEventOccurrence </td>
+          <td class="memname">static void edu.arizona.tomcat.Utils.DiscreteEventsHelper.writeAttackEvent </td>
           <td>(</td>
           <td class="paramtype">BlockPos&#160;</td>
           <td class="paramname"><em>pos</em>, </td>
@@ -131,8 +134,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a5239b9d88f6941e5c3220940cc1b5231"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5239b9d88f6941e5c3220940cc1b5231">&#9670;&nbsp;</a></span>printEventOccurrence()</h2>
+<a id="a24379f41bcbc5cc1b94d03793bdf4807"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a24379f41bcbc5cc1b94d03793bdf4807">&#9670;&nbsp;</a></span>writeBlockEvent()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -141,7 +144,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static void edu.arizona.tomcat.Utils.DiscreteEventsHelper.printEventOccurrence </td>
+          <td class="memname">static void edu.arizona.tomcat.Utils.DiscreteEventsHelper.writeBlockEvent </td>
           <td>(</td>
           <td class="paramtype">BlockPos&#160;</td>
           <td class="paramname"><em>pos</em>, </td>
@@ -156,7 +159,7 @@ Static Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">String&#160;</td>
-          <td class="paramname"><em>event</em>&#160;</td>
+          <td class="paramname"><em>eventName</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
