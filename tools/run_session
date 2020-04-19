@@ -203,7 +203,6 @@ do_mission() {
         if [[ $MISSION_ID -gt 0 ]]; then
             echo "Time limit set to ${TIME_LIMIT}."
         fi
-        j
         echo "Process ID corresponding to ./bin/runExperiment is"\
              "$pid_runExperiment ... waiting for it to complete."
 
