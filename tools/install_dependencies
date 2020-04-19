@@ -34,7 +34,7 @@ __install_dependencies_using_macports() {
 
 
     # We enable system audio recording ononly on macOS Catalina or above
-    if (( $ENABLE_SYSTEM_AUDIO_RECORDING )); then
+    if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
         if ! sudo port -N install blackhole switchaudio-osx; then exit 1; fi
     fi
     # We install Java using a local Portfile, since the upstream openjdk8
@@ -84,7 +84,7 @@ __install_dependencies_using_homebrew() {
     if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
 
     # We enable system audio recording ononly on macOS Catalina or above
-    if (( $ENABLE_SYSTEM_AUDIO_RECORDING )); then
+    if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
         brew cask install blackhole
         if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
 
@@ -92,7 +92,7 @@ __install_dependencies_using_homebrew() {
         if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
     fi
 
-    if (( $CI )); then
+    if (( CI )); then
       # On a CI runner, we will install lcov to provide code coverage estimates.
       brew install lcov;
       if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
@@ -111,7 +111,6 @@ __install_dependencies_using_apt() {
     if ! sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; then exit 1; fi
 
     if ! sudo apt-get update; then exit 1; fi
-    if [[ $? -ne 0 ]]; then exit 1; fi;
 
     sudo apt-get install -y --allow-downgrades\
         cmake \

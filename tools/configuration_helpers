@@ -13,16 +13,11 @@ export TOMCAT
 export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
 mkdir -p "${TOMCAT_TMP_DIR}"
 
-# Kobus says that this would only be true for a sloppy .bashrc, but it is
-# possible that it could occur, but we have not seen it yet (the example you are
-# thinking of was Emily using tcsh interactively inherting my .tcshrc file).
-# Nonetheless changing "rm" is common. But why not change it to
-#   '/bin/rm -rf'
-#
 # On some systems, the 'rm' command is aliased to something else. So we take
-# the precaution of explicitly pointing rm to /bin/rm.
-#
-export RM=/bin/rm
+# the precaution of explicitly pointing rm to /bin/rm, and add the '-rf' flags
+# for convenvience.
+
+export RM="/bin/rm -rf"
 
 # =============================================================================
 # User-configurable environment variables
@@ -34,18 +29,16 @@ export RM=/bin/rm
 # function that uses these variables is executed. 1 = true, 0 = false.
 #
 #
-# ENABLE_MQTT: Set this to 1 to enable publishing messages to an MQTT
-#              message broker.
 # ENABLE_FFMPEG: Set this to 0 to disable recording audio and video using FFMPEG.
-# DO_TUTORIAL_MISSION: Set this to 0 to disable the tutorial mission
-# DO_MAIN_MISSION: Set this to 0 to disable the main mission
+# DO_TUTORIAL_MISSION: Set this to 0 to disable the tutorial mission.
+# DO_MAIN_MISSION: Set this to 0 to disable the main mission.
 #
 # Kobus says that we might want a better name for this one. 
 # MAIN_MISSION: Set this to 1 for the Zombie invasion mission, and to 2 for the
 #               USAR Singleplayer mission.
 #
-# Kobus, adding a few more: The ones that are plausible to have conflicts with
-# someones development environment get the prefix TOMCAT. 
+# We prefix a select few environment variables that could potentially conflict
+# with someone's development environment with 'TOMCAT_'.
 #
 # TOMCAT_DEBUG_LEVEL: Set this to 1 or more to get geaky output. 
 # TOMCAT_DEBUG_ECHO:  If TOMCAT_DEBUG_LEVEL is more than 0, this is an echo.
@@ -64,7 +57,6 @@ set_local_configuration() {
         export TOMCAT_DEBUG_ECHO=": "
     fi 
 
-    export ENABLE_MQTT=${ENABLE_MQTT:-0}
     export ENABLE_FFMPEG=${ENABLE_FFMPEG:-1}
     export DO_TUTORIAL_MISSION=${DO_TUTORIAL_MISSION:-1}
     export DO_MAIN_MISSION=${DO_MAIN_MISSION:-1}
@@ -84,7 +76,7 @@ detect_os() {
         # mess with their ~/.bash_profile.
         export PATH="$PATH:/opt/local/bin:/opt/local/sbin"
 
-        if (( $MACOS_MINOR_VERSION < 15 )); then
+        if (( MACOS_MINOR_VERSION < 15 )); then
             echo "macOS version older than 10.15 (Catalina). "\
                 "System audio recording will be disabled."
             export ENABLE_SYSTEM_AUDIO_RECORDING=0
@@ -159,7 +151,7 @@ __configure_audio_recording() {
                  "work properly."
         fi
 
-        if (( $ENABLE_SYSTEM_AUDIO_RECORDING )); then
+        if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
             # The default input microphone would normally be ":0", but since we
             # have installed BlackHole to record system audio, the input device
             # corresponding to the microphone is ":1".
@@ -208,7 +200,7 @@ detect_ci() {
     else
         export CI=0
     fi
-    if (( $CI )); then
+    if (( CI )); then
         export TIME_LIMIT=1
         export DO_TUTORIAL_MISSION=0
         export MISSION=external/malmo/sample_missions/default_flat_1.xml
@@ -224,7 +216,7 @@ __test_ffmpeg_recording() {
         . "${TOMCAT}"/tools/macos/test_webcam
         test_webcam_macos
 
-        if (( $ENABLE_SYSTEM_AUDIO_RECORDING )); then
+        if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
             echo "Checking if system audio recording is set up..."
             if ! "${TOMCAT}"/tools/macos/test_system_audio_recording; then 
               exit 1;
@@ -256,7 +248,7 @@ configure_session() {
     set_local_configuration
     detect_ci
     detect_os
-    if (( $ENABLE_FFMPEG )); then
+    if (( ENABLE_FFMPEG )); then
         __configure_webcam
         __configure_audio_recording
         __configure_screen_capture
@@ -268,8 +260,15 @@ configure_session() {
     if [[ ${ENABLE_SYSTEM_AUDIO_RECORDING} -eq 1 ]]; then
         if [[ $OSTYPE == "darwin"* ]]; then
             export ORIGINAL_OUTPUT_DEVICE=$(SwitchAudioSource -c)
-            # Switching the audio output to the multi-output device.
-            if ! SwitchAudioSource -s "Multi-Output Device"; then exit 1; fi
+            if [[ ! $ORIGINAL_OUTPUT_DEVICE == "Multi-Output Device" ]]; then
+                # Switching the audio output to the multi-output device if it
+                # is not already active.
+                if ! SwitchAudioSource -s "Multi-Output Device"; then
+                    echo "Failed to switch audio source to Multi-Output Device."
+                    echo "System audio recording will not work. Exiting now."
+                    exit 1
+                fi
+            fi
         fi
     fi
 
