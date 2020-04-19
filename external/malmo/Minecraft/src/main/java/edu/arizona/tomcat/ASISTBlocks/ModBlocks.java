@@ -33,8 +33,6 @@ public class ModBlocks {
    * This method initializes the new block created.
    */
   public static void init() {
-    MOD_BLOCKS.add( new BlockAsistButton());
-    MOD_BLOCKS.add( new BlockAsistLever());
     MOD_BLOCKS.add(new BlockAsistIron());
   }
 

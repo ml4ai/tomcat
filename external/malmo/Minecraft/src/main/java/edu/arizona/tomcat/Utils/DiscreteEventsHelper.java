@@ -64,7 +64,7 @@ public class DiscreteEventsHelper {
     }
 
     BlockDiscreteEvent event = new BlockDiscreteEvent(eventName, timestamp, coordinates);
-    writeJSONOutput(playerName,event);
+    writeJSONOutput(getFilename(playerName),event);
   }
 
   /**
@@ -103,8 +103,15 @@ public class DiscreteEventsHelper {
     String coordinates = createCoordinateString(pos);
 
     AttackDiscreteEvent event = new AttackDiscreteEvent(eventName, timestamp, coordinates, playerHealth, enemyName, enemyHealth);
-    writeJSONOutput(playerName,event);
 
+    writeJSONOutput(getFilename(playerName),event);
+
+  }
+
+  private static String getFilename(String playerName){
+    String filename = String.format("discrete_events_player_%s.json",
+            playerName);
+    return filename;
   }
 
   /**
