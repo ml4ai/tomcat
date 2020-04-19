@@ -7,18 +7,6 @@ set -u
 TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
 export TOMCAT
 
-# Kobus. It is a bit confusing that next few lines set enviroment variables,
-# followed by a function that sets more of them. But it is fine for now. 
-
-export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
-mkdir -p "${TOMCAT_TMP_DIR}"
-
-# On some systems, the 'rm' command is aliased to something else. So we take
-# the precaution of explicitly pointing rm to /bin/rm, and add the '-rf' flags
-# for convenvience.
-
-export RM="/bin/rm -rf"
-
 # =============================================================================
 # User-configurable environment variables
 # =============================================================================
@@ -64,6 +52,16 @@ set_local_configuration() {
     export TOMCAT_FULL_SCREEN=${TOMCAT_FULL_SCREEN:-1}
     export RECYCLE_MINECRAFT=${RECYCLE_MINECRAFT:-1}
     export DEFAULT_MAIN_MISSION_TIME=${DEFAULT_MAIN_MISSION_TIME:-600} 
+
+
+    export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
+    mkdir -p "${TOMCAT_TMP_DIR}"
+
+    # On some systems, the 'rm' command is aliased to something else. So we take
+    # the precaution of explicitly pointing rm to /bin/rm, and add the '-rf' flags
+    # for convenvience.
+
+    export RM="/bin/rm -rf"
 }
 
 # Detect the OS, set some useful environment variables.
@@ -225,7 +223,6 @@ __test_ffmpeg_recording() {
 
         echo "Testing terminal access to microphone..."
 
-        # Kobus changing '.' to source, as it is more readable IMHO. 
         source "${TOMCAT}"/tools/macos/test_microphone
         test_microphone_macos
 
@@ -244,7 +241,6 @@ __test_ffmpeg_recording() {
 }
 
 configure_session() {
-    # Kobus, putting set_local_configuration first. 
     set_local_configuration
     detect_ci
     detect_os
