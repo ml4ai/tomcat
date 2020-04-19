@@ -59,7 +59,7 @@ set_local_configuration() {
 
     # On some systems, the 'rm' command is aliased to something else. So we take
     # the precaution of explicitly pointing rm to /bin/rm, and add the '-rf' flags
-    # for convenvience.
+    # for convenience.
 
     export RM="/bin/rm -rf"
 }
