@@ -3,14 +3,40 @@
   [
     {
       "text": [
+        "",
 		"Welcome to the Zombie Invasion! ",
 		"",
 		"First, you will be guided through a tutorial ",
 		"",
-		"and then you will play the actual game. ",
+		"and then you will play the mission. ",
 		"",
 		"The tutorial is about to begin."],
       "images":[]
+    },
+    {
+      "text": [
+         "During the tutorial you will be given specific tasks to accomplish. ",
+         "",
+         "You will know you have succeeded when you are told 'well done'.",
+         "",
+         "Click OK when you are ready."
+      ],
+      "images":
+      [
+        
+      ]
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
   ]
 }
+
+
+
