@@ -11,7 +11,9 @@
 		"and then you will play the mission. ",
 		"",
 		"The tutorial is about to begin."],
-      "images":[]
+      "images":
+      [
+      ]
     },
     {
       "text": [
@@ -23,20 +25,7 @@
       ],
       "images":
       [
-        
       ]
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
   ]
 }
-
-
-

@@ -79,11 +79,7 @@ public class TutorialMission extends Mission {
 
   @Override
   protected void createPhases() {
-	  //add somthing here by Lize
-	  //below
     this.addInstructionsPhase();
-	    //above
-    
     this.addApproachPoolsPhase();
     /*
      * TODO - The crafting phase is going to be commented out until we have
@@ -101,28 +97,18 @@ public class TutorialMission extends Mission {
 
   /**
    * When the tutorial first pops up, 
-   * it would be helpful to have an orienting screen with general instructions. 
-   * 
+   * it would be helpful to have an orienting screen with general instructions.  
    */
   private void addInstructionsPhase() {
-	  
 	  RichContent instructions =
 		        RichContent.createFromJson("tutorial_orienting_screen.json");
-	 
 	  this.addInstructionsPhase = new MissionPhase(instructions,
               CompletionStrategy.ALL_GOALS,
               2,false,"Let's start!",0,1/2);
-
 	  this.addInstructionsPhase.addGoal(new StartGoal());
 	  this.addPhase(addInstructionsPhase);
   }
-  
-  
-  
-  
-  
-  
-  
+
   /**
    * Creates a phase in the mission where the objective is to locate the pools
    * of water and lava in the world
