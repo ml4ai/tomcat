@@ -13,10 +13,11 @@
 
 (progn (ql:quickload "shop3")
        (ql:quickload "shop3/plan-grapher")
-       (load "util.lisp"))
+       (load "util.lisp")
+       (setf s-paths (load-shortest-paths "shortest_path_test.json")))
 
 (in-package :shop-user)
-(shop-trace :plans :operators :states)
+;;(shop-trace :plans :operators :states)
 (defdomain (sar-individual-domain :type pddl-domain :redefine-ok T) (
     (:types human ;; Everything, including 'human' inherits from the base 'object' type
             victim rescuer - human ;; The rescuer and the victims are humans.
@@ -62,6 +63,7 @@
       :parameters (?t - rescuer ?source ?destination - room)
       :precondition (and (in ?t ?source) (not (in ?t ?destination)))
       :effect (and (in ?t ?destination) (not (in ?t ?source)))
+      :cost (cl-user::shortest-path-cost cl-user::s-paths '?source '?destination)
     )
 
     (:action triage ;; Rescuer triages a victim, they must be currently examining the victim to do so
@@ -152,14 +154,14 @@
 )
 
 (defproblem sar-individual-problem ;; Example initial state and task
-            ((building b) (room r1) (room r2) (room r3) (rescuer t1) (victim v1) (victim v2) 
-                          (victim v3) (victim v4) (victim v5) (injured v2) (injured v3) (injured v5) (in v1 r1) (in v2 r1) (in v3 r2) (in v4 r2) (in v5 r3))
-            ((enter-building-and-complete-mission t1 b r1)))
+            ((building b) (room r-1) (room r-2) (room r-3) (rescuer t1) (victim v1) (victim v2) 
+                          (victim v3) (victim v4) (victim v5) (injured v2) (injured v3) (injured v5) (in v1 r-1) (in v2 r-1) (in v3 r-2) (in v4 r-2) (in v5 r-3))
+            ((enter-building-and-complete-mission t1 b r-1)))
 
 ;; Find plans and graph the all.
 
 (let* ((plan-info (multiple-value-list 
-                (find-plans 'sar-individual-problem :which :all :verbose nil :plan-tree t))) 
+                (find-plans 'sar-individual-problem :which :all :optimize-cost t :verbose :plans :plan-tree t))) 
        (plan-trees (third plan-info)))
   (cl-user::multi-graph 0 plan-trees))
 (cl-user::quit)
