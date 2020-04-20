@@ -8,5 +8,6 @@ Developer documentation
    CONTRIBUTING
    Client_Server_Communication
    prebuilt_world_loading
+   minecraft_forge_events
    ../cpp_api/index
    lisp

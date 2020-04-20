@@ -5,7 +5,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.microsoft.Malmo.Utils.TimeHelper;
 import java.lang.reflect.Type;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
+import java.util.TimeZone;
 import net.minecraft.world.World;
 
 public class Converter {
@@ -107,5 +111,18 @@ public class Converter {
       map = jsonObject.fromJson(json, type);
     }
     return map;
+  }
+
+  /**
+   * Retrieves the current time in ISO-8601 extended format
+   * @return
+   */
+  public static String getCurrentTimestamp() {
+    TimeZone timeZone = TimeZone.getTimeZone("UTC");
+    DateFormat dateFormat = new SimpleDateFormat(
+        "yyyy-MM-dd'T'HH:mm'Z'"); // Quoted "Z" to indicate UTC, no timezone
+                                  // offset
+    dateFormat.setTimeZone(timeZone);
+    return dateFormat.format(new Date());
   }
 }

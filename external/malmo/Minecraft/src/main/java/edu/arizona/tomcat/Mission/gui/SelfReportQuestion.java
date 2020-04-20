@@ -8,7 +8,7 @@ public class SelfReportQuestion {
 
   private ArrayList<String> text;
   private ArrayList<String> choices;
-  private Integer selectedChoice;
+  private SelfReportSingleResponse response;
 
   /**
    * Constructor
@@ -51,16 +51,16 @@ public class SelfReportQuestion {
   public Iterator<String> getChoices() { return this.choices.iterator(); }
 
   /**
-   * Gets the choice selected by the player
+   * Retrieves the player's response to the question
    * @return
    */
-  public Integer getSelectedChoice() { return selectedChoice; }
+  public SelfReportSingleResponse getResponse() { return response; }
 
   /**
-   * Defines the choice selected by the player
-   * @param selectedChoice
+   * Sets player's response to the question
+   * @param response
    */
-  public void setSelectedChoice(Integer selectedChoice) {
-    this.selectedChoice = selectedChoice;
+  public void setResponse(SelfReportSingleResponse response) {
+    this.response = response;
   }
 }
