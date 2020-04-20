@@ -29,5 +29,6 @@ var searchData=
   ['showinstructions',['showInstructions',['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1MissionPhase.html#a180086d37ba4144bcdcf603a494f299a',1,'edu::arizona::tomcat::Mission::MissionPhase']]],
   ['showscreenconnectionlost',['showScreenConnectionLost',['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1Client_1_1ClientMission.html#ae31a208c206be1e04c503c3d24ce2c2b',1,'edu::arizona::tomcat::Mission::Client::ClientMission']]],
   ['simplegui',['SimpleGUI',['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1gui_1_1SimpleGUI.html',1,'edu.arizona.tomcat.Mission.gui.SimpleGUI'],['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1gui_1_1SimpleGUI.html#a0876013c1685e0a2d886dd1f2dcfdea2',1,'edu.arizona.tomcat.Mission.gui.SimpleGUI.SimpleGUI()']]],
-  ['stairs',['Stairs',['../classedu_1_1arizona_1_1tomcat_1_1World_1_1Stairs.html',1,'edu.arizona.tomcat.World.Stairs'],['../classedu_1_1arizona_1_1tomcat_1_1World_1_1Stairs.html#aacaa3744a25d1cb0469a89b075b51d6b',1,'edu.arizona.tomcat.World.Stairs.Stairs()']]]
+  ['stairs',['Stairs',['../classedu_1_1arizona_1_1tomcat_1_1World_1_1Stairs.html',1,'edu.arizona.tomcat.World.Stairs'],['../classedu_1_1arizona_1_1tomcat_1_1World_1_1Stairs.html#aacaa3744a25d1cb0469a89b075b51d6b',1,'edu.arizona.tomcat.World.Stairs.Stairs()']]],
+  ['startgoal',['StartGoal',['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1Goal_1_1StartGoal.html',1,'edu::arizona::tomcat::Mission::Goal']]]
 ];
