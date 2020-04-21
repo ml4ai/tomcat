@@ -30,33 +30,11 @@ timestamp() {
   date "+%Y_%m_%d_%H_%M_%S"
 }
 
-
-
-
-#SALENA TEST uuid for linux and mac (Lower case)
-
-
 # Creating an output directory for this session.
 output_dir="${TOMCAT}"/data/participant_data/session_$(uuidgen | tr '[:upper:]'
 '[:lower:]')
 
-
-
 mkdir -p "${output_dir}"
-
-
-
-
-#End Salena Test for uuid in Linux
-
-
-
-
-
-
-
-
-
 
 export original_output_device=$(SwitchAudioSource -c)
 
