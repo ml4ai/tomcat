@@ -50,10 +50,10 @@ public class BlockAsistIron extends Block {
 
     // Technically a command block destroys this, so we aren't identifying a
     // player as destroying this block for the sake of the code.
-    DiscreteEventsHelper.writeBlockEvent(
-        pos,
-        null,
-        "door_opened"); // Used to mark discrete occurrence
+    //DiscreteEventsHelper.writeBlockEvent(
+        //pos,
+        //null,
+        //"door_opened"); // Used to mark discrete occurrence
 
     return new java.util.ArrayList<ItemStack>(); // Drop nothing
   }
