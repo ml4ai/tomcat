@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import edu.arizona.tomcat.Messaging.MqttService;
 
-public class TomcatForgeEventHandler {
+public class ForgeEventHandler {
 
   // MQTT service
   private MqttService mqttService = MqttService.getInstance();
