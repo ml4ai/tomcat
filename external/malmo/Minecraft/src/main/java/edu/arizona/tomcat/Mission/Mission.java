@@ -13,6 +13,7 @@ import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 import edu.arizona.tomcat.Mission.gui.SelfReportFileHandler;
 import edu.arizona.tomcat.Utils.Converter;
 import edu.arizona.tomcat.Utils.DiscreteEventsHelper;
+import edu.arizona.tomcat.Utils.AttackDiscreteEvent;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.Utils.MinecraftVanillaAIHandler;
 import edu.arizona.tomcat.World.DrawingHandler;
@@ -34,7 +35,33 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import com.google.gson.JsonObject;
+import com.google.gson.Gson;
+
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
+
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+
 public abstract class Mission implements FeedbackListener, PhaseListener {
+
+  // MQTT client
+
+  private MemoryPersistence persistence;
+  private MqttClient mqttClient;
+  private MqttConnectOptions mqttConnectOptions;
+  
 
   public static enum ID { TUTORIAL, ZOMBIE, USAR_SINGLE_PLAYER }
   ;
@@ -74,6 +101,72 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     SelfReportFileHandler.createSelfReportOutputFolder();
     DiscreteEventsHelper.createDiscreteEventsOutputFolder();
     MinecraftForge.EVENT_BUS.register(this);
+    try {
+      this.persistence = new MemoryPersistence();
+      this.mqttClient = new MqttClient("tcp://127.0.0.1:1883", "TomcatClient", persistence);
+      this.mqttConnectOptions = new MqttConnectOptions();
+      this.mqttConnectOptions.setCleanSession(true);
+      this.mqttClient.connect(mqttConnectOptions);
+    } catch(MqttException me) {
+        System.out.println("reason "+me.getReasonCode());
+        System.out.println("msg "+me.getMessage());
+        System.out.println("loc "+me.getLocalizedMessage());
+        System.out.println("cause "+me.getCause());
+        System.out.println("excep "+me);
+    }
+  }
+
+  /**
+   * This event is triggered when the player attacks an enemy. It passes
+   * specific event information to the helper method that prints the output.
+   *
+   * @param event - The event triggered. In this case the AttackEntityEvent
+   */
+  @SubscribeEvent
+  public void attackEnemyTwo(AttackEntityEvent event) {
+    EntityPlayer playerIn = event.getEntityPlayer();
+    Entity target = event.getTarget();
+
+    if (target instanceof EntityMob) {
+
+      EntityMob enemy = (EntityMob)target;
+
+      BlockPos pos = new BlockPos(
+          event.getTarget().posX,
+          event.getTarget().posY,
+          event.getTarget().posZ); // Event occurrence is location of target
+    String playerName = playerIn.getDisplayNameString();
+    String playerHealth = playerIn.getHealth() + "/" + playerIn.getMaxHealth();
+    String enemyName = enemy.getName();
+    String enemyHealth = "0.0"
+                         + "/" + enemy.getMaxHealth();
+
+    String eventName = "enemy_killed";
+
+    if (enemy.isEntityAlive()) {
+      eventName = "enemy_attacked";
+      enemyHealth = enemy.getHealth() + "/" + enemy.getMaxHealth();
+    }
+
+    // Logistics Info
+    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    Date date = new Date();
+
+    String timestamp = dateFormat.format(date); // Date and Time
+
+      Gson gson = new Gson();
+      MqttMessage message = new MqttMessage(gson.toJson(event).getBytes());
+      message.setQos(2);
+      try {
+        mqttClient.publish("observations/events", message);
+      } catch (MqttException me) {
+        System.out.println("reason "+me.getReasonCode());
+        System.out.println("msg "+me.getMessage());
+        System.out.println("loc "+me.getLocalizedMessage());
+        System.out.println("cause "+me.getCause());
+        System.out.println("excep "+me);
+      }
+    }
   }
 
   @SubscribeEvent
