@@ -196,7 +196,8 @@
     <span class="k">this</span><span class="o">-&gt;</span><span class="n">record_commands</span> <span class="o">=</span> <span class="n">record_commands</span><span class="p">;</span>
     <span class="k">this</span><span class="o">-&gt;</span><span class="n">record_rewards</span> <span class="o">=</span> <span class="n">record_rewards</span><span class="p">;</span>
     <span class="k">this</span><span class="o">-&gt;</span><span class="n">multiplayer</span> <span class="o">=</span> <span class="n">multiplayer</span><span class="p">;</span>
-    <span class="k">this</span><span class="o">-&gt;</span><span class="n">uuid</span> <span class="o">=</span> <span class="n">boost</span><span class="o">::</span><span class="n">uuids</span><span class="o">::</span><span class="n">to_string</span><span class="p">(</span><span class="n">boost</span><span class="o">::</span><span class="n">uuids</span><span class="o">::</span><span class="n">uuid</span><span class="p">());</span>
+    <span class="n">boost</span><span class="o">::</span><span class="n">uuids</span><span class="o">::</span><span class="n">uuid</span> <span class="n">u</span><span class="p">;</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">uuid</span> <span class="o">=</span> <span class="n">boost</span><span class="o">::</span><span class="n">uuids</span><span class="o">::</span><span class="n">to_string</span><span class="p">(</span><span class="n">u</span><span class="p">);</span>
   <span class="p">}</span>
 
   <span class="kt">void</span> <span class="n">Mission</span><span class="o">::</span><span class="n">add_listener</span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">LocalAgent</span><span class="o">&gt;</span> <span class="n">tomcat_agent</span><span class="p">)</span> <span class="p">{</span>
@@ -325,7 +326,7 @@
 <span class="s">              &lt;AgentStart&gt;</span>
 <span class="s">              &lt;/AgentStart&gt;</span>
 <span class="s">              &lt;AgentHandlers&gt;</span>
-<span class="s">                &lt;ObservationFromFullStats/&gt;</span>
+<span class="s">                &lt;ObservationFromASISTParticipant/&gt;</span>
 <span class="s">                &lt;ContinuousMovementCommands turnSpeedDegs=&quot;840&quot;&gt;</span>
 <span class="s">                    &lt;ModifierList type=&quot;deny-list&quot;&gt;</span>
 <span class="s">                      &lt;command&gt;strafe&lt;/command&gt;</span>
@@ -510,8 +511,6 @@
         <span class="c1">//# Data</span>
         <span class="n">json</span> <span class="n">data</span> <span class="o">=</span> <span class="p">{};</span>
         <span class="n">data</span><span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;tomcat&quot;</span><span class="p">;</span>
-        <span class="n">data</span><span class="p">[</span><span class="s">&quot;world_time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">observation</span><span class="p">[</span><span class="s">&quot;WorldTime&quot;</span><span class="p">];</span>
-        <span class="n">data</span><span class="p">[</span><span class="s">&quot;total_time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">observation</span><span class="p">[</span><span class="s">&quot;TotalTime&quot;</span><span class="p">];</span>
         <span class="n">json</span> <span class="n">message</span> <span class="o">=</span> <span class="p">{};</span>
         <span class="n">message</span><span class="p">[</span><span class="s">&quot;header&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">header</span><span class="p">;</span>
         <span class="n">message</span><span class="p">[</span><span class="s">&quot;msg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">;</span>
