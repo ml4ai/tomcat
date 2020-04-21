@@ -160,6 +160,8 @@ Protected Member Functions</h2></td></tr>
 <tr class="separator:a0e1f8a0354177610e3b8a7e99bc31c6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae3648fe8c05534feaa1386d25be8c90f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Mission_1_1Mission.html#ae3648fe8c05534feaa1386d25be8c90f">cleanup</a> ()</td></tr>
 <tr class="separator:ae3648fe8c05534feaa1386d25be8c90f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82576df293a0170fc10c4053ed6b22fb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Mission_1_1Mission.html#a82576df293a0170fc10c4053ed6b22fb">addItemToInventory</a> (ItemType type)</td></tr>
+<tr class="separator:a82576df293a0170fc10c4053ed6b22fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -249,6 +251,39 @@ static final int&#160;</td><td class="memItemRight" valign="bottom"><b>REMAINING
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a82576df293a0170fc10c4053ed6b22fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a82576df293a0170fc10c4053ed6b22fb">&#9670;&nbsp;</a></span>addItemToInventory()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void edu.arizona.tomcat.Mission.Mission.addItemToInventory </td>
+          <td>(</td>
+          <td class="paramtype">ItemType&#160;</td>
+          <td class="paramname"><em>type</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Add item to the player's inventory to help them accomplish the mission goals</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">type</td><td>- ItemType of the item to add in inventory </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a656465ddc056b468d5d74a9603198e11"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a656465ddc056b468d5d74a9603198e11">&#9670;&nbsp;</a></span>addListener()</h2>
 
@@ -349,7 +384,7 @@ static final int&#160;</td><td class="memItemRight" valign="bottom"><b>REMAINING
 <p>Adds an entity to be deleted after certain amount of time </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">entity</td><td>- Entity to be removed </td></tr>
-    <tr><td class="paramname">delayInSeconds</td><td>- Time (in seconds) to wait until removing the entity </td></tr>
+    <tr><td class="paramname">worldTime</td><td>- Time (in seconds) to wait until removing the entity </td></tr>
   </table>
   </dd>
 </dl>
