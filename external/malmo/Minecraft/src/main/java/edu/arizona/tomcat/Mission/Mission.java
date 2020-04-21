@@ -1,5 +1,7 @@
 package edu.arizona.tomcat.Mission;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.Schemas.PosAndDirection;
 import edu.arizona.tomcat.Emotion.EmotionHandler;
@@ -11,43 +13,36 @@ import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
 import edu.arizona.tomcat.Mission.gui.FeedbackListener;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 import edu.arizona.tomcat.Mission.gui.SelfReportFileHandler;
+import edu.arizona.tomcat.Utils.AttackDiscreteEvent;
 import edu.arizona.tomcat.Utils.Converter;
 import edu.arizona.tomcat.Utils.DiscreteEventsHelper;
-import edu.arizona.tomcat.Utils.AttackDiscreteEvent;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.Utils.MinecraftVanillaAIHandler;
 import edu.arizona.tomcat.World.DrawingHandler;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EntitySelectors;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
-import com.google.gson.JsonObject;
-import com.google.gson.Gson;
-
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.event.entity.player.AttackEntityEvent;
-
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -58,10 +53,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 
   // MQTT client
 
-  private MemoryPersistence persistence;
   private MqttClient mqttClient;
-  private MqttConnectOptions mqttConnectOptions;
-  
 
   public static enum ID { TUTORIAL, ZOMBIE, USAR_SINGLE_PLAYER }
   ;
@@ -102,17 +94,19 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     DiscreteEventsHelper.createDiscreteEventsOutputFolder();
     MinecraftForge.EVENT_BUS.register(this);
     try {
-      this.persistence = new MemoryPersistence();
-      this.mqttClient = new MqttClient("tcp://127.0.0.1:1883", "TomcatClient", persistence);
-      this.mqttConnectOptions = new MqttConnectOptions();
-      this.mqttConnectOptions.setCleanSession(true);
+      MemoryPersistence persistence = new MemoryPersistence();
+      MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
+      this.mqttClient =
+          new MqttClient("tcp://127.0.0.1:1883", "TomcatClient", persistence);
+      mqttConnectOptions.setCleanSession(true);
       this.mqttClient.connect(mqttConnectOptions);
-    } catch(MqttException me) {
-        System.out.println("reason "+me.getReasonCode());
-        System.out.println("msg "+me.getMessage());
-        System.out.println("loc "+me.getLocalizedMessage());
-        System.out.println("cause "+me.getCause());
-        System.out.println("excep "+me);
+    }
+    catch (MqttException me) {
+      System.out.println("reason " + me.getReasonCode());
+      System.out.println("msg " + me.getMessage());
+      System.out.println("loc " + me.getLocalizedMessage());
+      System.out.println("cause " + me.getCause());
+      System.out.println("excep " + me);
     }
   }
 
@@ -135,6 +129,8 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
           event.getTarget().posX,
           event.getTarget().posY,
           event.getTarget().posZ); // Event occurrence is location of target
+
+    // Player and Enemy Info
     String playerName = playerIn.getDisplayNameString();
     String playerHealth = playerIn.getHealth() + "/" + playerIn.getMaxHealth();
     String enemyName = enemy.getName();
@@ -153,18 +149,32 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     Date date = new Date();
 
     String timestamp = dateFormat.format(date); // Date and Time
+    int x = pos.getX(), y = pos.getY(), z = pos.getZ(); // event coordinates
+    String coordinates = "X: " + x + " "
+                         + "Y: " + y + " "
+                         + "Z: " + z;
 
+
+    AttackDiscreteEvent evt = new AttackDiscreteEvent(eventName,
+                                                      timestamp,
+                                                      coordinates,
+                                                      playerHealth,
+                                                      enemyName,
+                                                      enemyHealth);
+
+  
       Gson gson = new Gson();
-      MqttMessage message = new MqttMessage(gson.toJson(event).getBytes());
+      MqttMessage message = new MqttMessage(gson.toJson(evt).getBytes());
       message.setQos(2);
       try {
         mqttClient.publish("observations/events", message);
-      } catch (MqttException me) {
-        System.out.println("reason "+me.getReasonCode());
-        System.out.println("msg "+me.getMessage());
-        System.out.println("loc "+me.getLocalizedMessage());
-        System.out.println("cause "+me.getCause());
-        System.out.println("excep "+me);
+      }
+      catch (MqttException me) {
+        System.out.println("reason " + me.getReasonCode());
+        System.out.println("msg " + me.getMessage());
+        System.out.println("loc " + me.getLocalizedMessage());
+        System.out.println("cause " + me.getCause());
+        System.out.println("excep " + me);
       }
     }
   }
