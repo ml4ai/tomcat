@@ -1,19 +1,9 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.10)
 
-if(EXISTS /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk)
-  set(CMAKE_OSX_SYSROOT  "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk")
-endif()
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(tomcat)
-
-if(NOT DEFINED ENV{TRAVIS})
-  # Deal with C++17 warnings on macOS. Ubuntu's DLib available through apt-get
-  # doesn't adhere to the C++17 standard unfortunately.
-  if (APPLE)
-    set(CMAKE_CXX_STANDARD 17)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-  endif()
-endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/tools/cmake/")
 
@@ -50,37 +40,16 @@ find_package(Boost 1.69
                         thread
              REQUIRED)
 
-find_package(OpenCV 4.0 REQUIRED COMPONENTS core imgproc calib3d
-             highgui objdetect)
-
-find_package(PortAudio)
-find_package(LibSndFile)
-
-
-if(DEFINED ENV{TRAVIS})
-  add_subdirectory(external/dlib)
-else()
-  find_package(dlib REQUIRED)
-endif()
-
 add_subdirectory(external/malmo)
-add_subdirectory(external/OpenFace)
-
 
 add_subdirectory(src)
-target_include_directories(tomcat
-                           PRIVATE src external/malmo/Malmo/src
-                                   ${OpenFace_INCLUDE_DIRS})
-
+target_include_directories(tomcat PRIVATE src external/malmo/Malmo/src)
 target_include_directories(runExperiment PRIVATE external/malmo/Malmo/src)
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/tools/launch_minecraft.sh
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/tools/launch_minecraft
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 option(BUILD_DOCS "Build documentation" OFF)
 if (BUILD_DOCS)
   add_subdirectory(docs)
 endif()
-
-add_subdirectory(tests)
-target_include_directories(test PRIVATE src external/malmo/Malmo/src)
