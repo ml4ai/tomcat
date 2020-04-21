@@ -109,10 +109,6 @@ public class USARSinglePlayerMission extends Mission {
    */
   private void addItemsToInventory(World world) {
     // InventoryHandler.addItemToInventory(ItemType.IRON_SWORD, 1);
-    for (EntityPlayerMP player :
-            MinecraftServerHelper.getServer().getPlayerList().getPlayers()) {
-      InventoryHandler.addItemToInventory(player, ItemType.STONE_AXE, 1);
-    }
   }
 
   @Override
