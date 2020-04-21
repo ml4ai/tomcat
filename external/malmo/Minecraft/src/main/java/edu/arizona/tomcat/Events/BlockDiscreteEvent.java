@@ -1,6 +1,6 @@
-package edu.arizona.tomcat.events;
+package edu.arizona.tomcat.Events;
 
-import edu.arizona.tomcat.events.Event;
+import edu.arizona.tomcat.Events.Event;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.entity.player.EntityPlayer;
@@ -47,4 +47,18 @@ public class BlockDiscreteEvent extends Event {
       this.coordinates = coordinates;
     }
   }
+
+  /** Secondary constructor, for use with the BlockAsistIron class. */
+  public BlockDiscreteEvent(BlockPos pos, String eventName) {
+      this.eventName = eventName;
+      DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+      Date date = new Date();
+      this.timestamp = dateFormat.format(date); // Date and Time
+      int x = pos.getX(), y = pos.getY(), z = pos.getZ(); // event coordinates
+      this.coordinates = "X: " + x + " "
+                          + "Y: " + y + " "
+                          + "Z: " + z;
+
+  }
+
 }

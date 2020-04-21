@@ -7,16 +7,17 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import java.io.IOException;
-import edu.arizona.tomcat.events.Event;
+import edu.arizona.tomcat.Events.Event;
 
-/** A class to provide a convenient interface to the Eclipse Paho MQTT client
- * library. */
+/** A singleton class to provide a convenient interface to the Eclipse Paho
+ * MQTT client library. */
 public class MqttService {
 
   private MqttClient client;
   private Gson gson = new Gson();
+  private static MqttService instance = null;
 
-  public MqttService() {
+  private MqttService() {
     try {
       MemoryPersistence persistence = new MemoryPersistence();
       MqttConnectOptions connectOptions = new MqttConnectOptions();
@@ -33,6 +34,12 @@ public class MqttService {
       System.err.println("cause " + me.getCause());
       System.err.println("excep " + me);
     }
+  }
+  public static MqttService getInstance() {
+      if (instance == null) {
+          instance = new MqttService();
+      }
+      return instance;
   }
 
   public void publish(Event event, String topic) {

@@ -3,7 +3,7 @@ package edu.arizona.tomcat.Utils;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
-import edu.arizona.tomcat.events.AttackDiscreteEvent;
+import edu.arizona.tomcat.Events.AttackDiscreteEvent;
 
 import java.io.IOException;
 import java.text.DateFormat;
