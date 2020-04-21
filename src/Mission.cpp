@@ -40,7 +40,8 @@ namespace tomcat {
     this->record_commands = record_commands;
     this->record_rewards = record_rewards;
     this->multiplayer = multiplayer;
-    this->uuid = boost::uuids::to_string(boost::uuids::uuid());
+    boost::uuids::uuid u;
+    this->uuid = boost::uuids::to_string(u);
   }
 
   void Mission::add_listener(shared_ptr<LocalAgent> tomcat_agent) {
@@ -169,7 +170,7 @@ namespace tomcat {
               <AgentStart>
               </AgentStart>
               <AgentHandlers>
-                <ObservationFromFullStats/>
+                <ObservationFromASISTParticipant/>
                 <ContinuousMovementCommands turnSpeedDegs="840">
                     <ModifierList type="deny-list">
                       <command>strafe</command>
@@ -354,8 +355,6 @@ namespace tomcat {
         //# Data
         json data = {};
         data["name"] = "tomcat";
-        data["world_time"] = observation["WorldTime"];
-        data["total_time"] = observation["TotalTime"];
         json message = {};
         message["header"] = header;
         message["msg"] = metadata;

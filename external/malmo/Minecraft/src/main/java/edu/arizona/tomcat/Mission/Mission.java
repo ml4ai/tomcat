@@ -1,6 +1,6 @@
 package edu.arizona.tomcat.Mission;
-
 import com.microsoft.Malmo.MalmoMod;
+import com.microsoft.Malmo.Schemas.ItemType;
 import com.microsoft.Malmo.Schemas.PosAndDirection;
 import edu.arizona.tomcat.Emotion.EmotionHandler;
 import edu.arizona.tomcat.Messaging.TomcatClientServerHandler;
@@ -11,9 +11,7 @@ import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
 import edu.arizona.tomcat.Mission.gui.FeedbackListener;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 import edu.arizona.tomcat.Mission.gui.SelfReportFileHandler;
-import edu.arizona.tomcat.Utils.Converter;
-import edu.arizona.tomcat.Utils.MinecraftServerHelper;
-import edu.arizona.tomcat.Utils.MinecraftVanillaAIHandler;
+import edu.arizona.tomcat.Utils.*;
 import edu.arizona.tomcat.World.DrawingHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,6 +69,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     this.missionSentToClients = false;
     this.entitiesToRemove = new HashMap<Entity, Long>();
     SelfReportFileHandler.createSelfReportOutputFolder();
+    DiscreteEventsHelper.createDiscreteEventsOutputFolder();
     MinecraftForge.EVENT_BUS.register(this);
   }
 
@@ -506,9 +505,22 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
   /**
    * Adds an entity to be deleted after certain amount of time
    * @param entity - Entity to be removed
-   * @param delayInSeconds - Time (in seconds) to wait until removing the entity
+   * @param worldTime - Time (in seconds) to wait until removing the entity
    */
   public void addToDeletion(Entity entity, long worldTime) {
     this.entitiesToRemove.put(entity, worldTime);
   }
+
+    /**
+     * Add item to the player's inventory to help them accomplish the mission
+     * goals
+     *
+     * @param type - ItemType of the item to add in inventory
+     */
+    protected void addItemToInventory(ItemType type) {
+        for (EntityPlayerMP player :
+                MinecraftServerHelper.getServer().getPlayerList().getPlayers()) {
+            InventoryHandler.addItemToInventory(player, type, 1);
+        }
+    }
 }

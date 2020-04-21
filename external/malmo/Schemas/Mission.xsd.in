@@ -362,6 +362,7 @@
             <xs:element ref="ObservationFromHuman" minOccurs="0"/>
             <xs:element ref="ObservationFromSystem" minOccurs="0"/>
             <xs:element ref="ObservationFromCompass" minOccurs="0"/>
+            <xs:element ref="ObservationFromASISTParticipant" minOccurs="0"/>
 
             <xs:element ref="VideoProducer" minOccurs="0"/>
             <xs:element ref="DepthProducer" minOccurs="0"/>

@@ -14,6 +14,7 @@ import edu.arizona.tomcat.Mission.Goal.ApproachEntityGoal;
 import edu.arizona.tomcat.Mission.Goal.KillEntityGoal;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
 import edu.arizona.tomcat.Mission.Goal.ReachPositionGoal;
+import edu.arizona.tomcat.Mission.Goal.StartGoal;
 import edu.arizona.tomcat.Mission.MissionPhase.CompletionStrategy;
 import edu.arizona.tomcat.Mission.gui.RichContent;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
@@ -41,6 +42,9 @@ public class TutorialMission extends Mission {
   private boolean shouldSpawnVillagerInsideTheBuilding;
   private boolean shouldaddMaterialsToUsersInventory;
   private boolean shouldSpawnExposedEntities;
+  
+  private MissionPhase addInstructionsPhase;
+  
   private MissionPhase approachPoolsPhase;
   private MissionPhase enterTheArenaPhase;
   private MissionPhase killSkeletonPhase;
@@ -75,6 +79,7 @@ public class TutorialMission extends Mission {
 
   @Override
   protected void createPhases() {
+    this.addInstructionsPhase();
     this.addApproachPoolsPhase();
     /*
      * TODO - The crafting phase is going to be commented out until we have
@@ -88,6 +93,20 @@ public class TutorialMission extends Mission {
     this.addKillZombiePhase();
     this.addSaveVillagerPhase();
     this.addLeaveTheBuildingPhase();
+  }
+
+  /**
+   * When the tutorial first pops up, 
+   * it would be helpful to have an orienting screen with general instructions.  
+   */
+  private void addInstructionsPhase() {
+	  RichContent instructions =
+		        RichContent.createFromJson("tutorial_orienting_screen.json");
+	  this.addInstructionsPhase = new MissionPhase(instructions,
+              CompletionStrategy.ALL_GOALS,
+              2,false,"Let's start!",0,1/2);
+	  this.addInstructionsPhase.addGoal(new StartGoal());
+	  this.addPhase(addInstructionsPhase);
   }
 
   /**
@@ -308,6 +327,7 @@ seconds. 20 Minecraft ticks equal 1 real second. viewTime is incremented by
   private void spawnSkeletonInTheArena(World world) {
     if (this.shouldSpawnSkeletonInTheArena) {
       try {
+        addItemToInventory(ItemType.STONE_AXE); //give stone axe to player
         Drawing drawing = new Drawing();
         TomcatEntity skeleton = new TomcatEntity(
             this.skeletonUUID, -620, 4, 1596, EntityTypes.SKELETON);
