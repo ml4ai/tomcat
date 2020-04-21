@@ -7,7 +7,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import java.io.IOException;
-import edu.arizona.tomcat.events.Event;
+import edu.arizona.tomcat.Events.Event;
 
 /** A class to provide a convenient interface to the Eclipse Paho MQTT client
  * library. */

@@ -1,8 +1,8 @@
 package edu.arizona.tomcat.Utils;
 
 import net.minecraft.world.World;
-import edu.arizona.tomcat.events.AttackDiscreteEvent;
-import edu.arizona.tomcat.events.BlockDiscreteEvent;
+import edu.arizona.tomcat.Events.AttackDiscreteEvent;
+import edu.arizona.tomcat.Events.BlockDiscreteEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;

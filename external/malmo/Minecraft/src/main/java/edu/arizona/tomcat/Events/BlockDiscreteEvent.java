@@ -1,6 +1,6 @@
-package edu.arizona.tomcat.events;
+package edu.arizona.tomcat.Events;
 
-import edu.arizona.tomcat.events.Event;
+import edu.arizona.tomcat.Events.Event;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.entity.player.EntityPlayer;

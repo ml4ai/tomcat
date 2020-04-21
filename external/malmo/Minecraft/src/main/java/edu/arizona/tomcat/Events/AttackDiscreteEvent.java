@@ -1,5 +1,5 @@
-package edu.arizona.tomcat.events;
-import edu.arizona.tomcat.events.Event;
+package edu.arizona.tomcat.Events;
+import edu.arizona.tomcat.Events.Event;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.monster.EntityMob;
