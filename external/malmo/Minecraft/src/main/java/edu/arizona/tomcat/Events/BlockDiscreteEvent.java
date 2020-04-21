@@ -47,4 +47,17 @@ public class BlockDiscreteEvent extends Event {
       this.coordinates = coordinates;
     }
   }
+
+  public BlockDiscreteEvent(BlockPos pos, String eventName) {
+      this.eventName = eventName;
+      DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+      Date date = new Date();
+      this.timestamp = dateFormat.format(date); // Date and Time
+      int x = pos.getX(), y = pos.getY(), z = pos.getZ(); // event coordinates
+      this.coordinates = "X: " + x + " "
+                          + "Y: " + y + " "
+                          + "Z: " + z;
+
+  }
+
 }
