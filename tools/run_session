@@ -166,7 +166,7 @@ do_mission() {
 
         runExperiment_args="--mission ${CURRENT_MISSION} --record_observations"
 
-        if [[ $MISSION_ID -gt 0 ]]; then
+        if [[ $CURRENT_MISSION -gt 0 ]]; then
             runExperiment_args="${runExperiment_args} --time_limit ${TIME_LIMIT}"
         fi
 
@@ -185,7 +185,7 @@ do_mission() {
         # redirect the output to a file.
         mosquitto_sub -t observations/state > "$malmo_data" &
 
-        if [[ $MISSION_ID -gt 0 ]]; then
+        if [[ $CURRENT_MISSION -gt 0 ]]; then
             echo "Time limit set to ${TIME_LIMIT}."
         fi
         echo "Process ID corresponding to ./bin/runExperiment is"\
@@ -204,7 +204,7 @@ do_mission() {
         if [[ ${mission_status} -eq 0 ]]; then
             cleanup_discrete_actions_and_self_reports
             pkill mosquitto_sub
-            echo "Mission ${MISSION_ID} ended with exit code 0."
+            echo "Mission ${CURRENT_MISSION} ended with exit code 0."
             echo "All recorded data is in ${MISSION_OUTPUT_DIR}"
             echo " "
             break
@@ -213,7 +213,7 @@ do_mission() {
         (( try++ ))
 
         if [[ $try -lt $num_tries ]]; then
-            echo "Mission ${MISSION_ID} ended with exit code 1."
+            echo "Mission ${CURRENT_MISSION} ended with exit code 1."
             echo "Killing all Minecraft and Malmo processes that can be found"
             echo "and trying again."
 
