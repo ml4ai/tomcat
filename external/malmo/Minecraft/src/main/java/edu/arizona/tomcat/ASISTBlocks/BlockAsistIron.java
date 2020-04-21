@@ -1,5 +1,6 @@
 package edu.arizona.tomcat.ASISTBlocks;
 
+import edu.arizona.tomcat.Events.BlockDiscreteEvent;
 import edu.arizona.tomcat.Utils.DiscreteEventsHelper;
 import java.util.List;
 import net.minecraft.block.Block;
@@ -10,6 +11,10 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 /**
  * This block will be used as the "door" block for the Hit-Controlled doors.
@@ -47,6 +52,19 @@ public class BlockAsistIron extends Block {
    */
   public List<ItemStack>
   getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+
+    Block block = world.getBlockState(pos).getBlock();
+    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    Date date = new Date();
+
+    String timestamp = dateFormat.format(date); // Date and Time
+    int x = pos.getX(), y = pos.getY(), z = pos.getZ(); // event coordinates
+    String coordinates = "X: " + x + " "
+                        + "Y: " + y + " "
+                        + "Z: " + z;
+
+    String playerName = "";
+
 
     // Technically a command block destroys this, so we aren't identifying a
     // player as destroying this block for the sake of the code.

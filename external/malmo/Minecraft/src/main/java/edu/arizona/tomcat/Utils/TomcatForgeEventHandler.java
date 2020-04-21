@@ -11,7 +11,7 @@ import edu.arizona.tomcat.Messaging.MqttService;
 public class TomcatForgeEventHandler {
 
   // MQTT service
-  private MqttService mqttService = new MqttService();
+  private MqttService mqttService = MqttService.getInstance();
   /**
    * This event is triggered when the player attacks an enemy. It passes
    * specific event information to the helper method that prints the output.
