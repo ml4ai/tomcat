@@ -10,30 +10,27 @@ import java.util.List;
 
 public class SelfReportContent {
 
-  private String id;
+  private String version;
   private String filenameRichContentBeforeQuestions;
   private String filenameRichContentAfterQuestions;
+  private String initialTimestamp;
   private List<SelfReportQuestion> questions;
-  private float durationInSeconds;
   private RichContent richContentBeforeQuestions;
   private RichContent richContentAfterQuestions;
 
   /**
    * Constructor
    */
-  public SelfReportContent(String id) {
-    this.id = id;
+  public SelfReportContent(String version) {
+    this.version = version;
     this.questions = new ArrayList<SelfReportQuestion>();
-    this.filenameRichContentBeforeQuestions = null;
-    this.filenameRichContentAfterQuestions = null;
   }
 
   /**
    * Add a new question to a self-report
    * @param page
    */
-  public void addQuestion(String id, SelfReportQuestion question) {
-    this.id = id;
+  public void addQuestion(SelfReportQuestion question) {
     this.questions.add(question);
   }
 
@@ -42,7 +39,7 @@ public class SelfReportContent {
    * @param json - Json file with self-report questions
    * @return
    */
-  public static SelfReportContent createFromJson(String id, String filename) {
+  public static SelfReportContent createFromJson(String filename) {
     SelfReportContent content = null;
     String path = "assets/" + MalmoMod.MODID + "/self_report/" + filename;
     InputStream inputStream =
@@ -51,7 +48,6 @@ public class SelfReportContent {
         new BufferedReader(new InputStreamReader(inputStream));
     Gson gson = new Gson();
     content = gson.fromJson(reader, SelfReportContent.class);
-    content.id = id;
     if (content.filenameRichContentBeforeQuestions != null &&
         !content.filenameRichContentBeforeQuestions.equals("")) {
       content.richContentBeforeQuestions = RichContent.createFromJson(
@@ -99,24 +95,10 @@ public class SelfReportContent {
   public int getNumberOfQuestions() { return this.questions.size(); }
 
   /**
-   * Defines the number of seconds the player took to complete the self-report
-   * @param durationInSeconds - duration in seconds
-   */
-  public void setDurationInSeconds(float durationInSeconds) {
-    this.durationInSeconds = durationInSeconds;
-  }
-
-  /**
-   * Gets the ID of the self-report
+   * Gets the version of the self-report
    * @return
    */
-  public String getId() { return id; }
-
-  /**
-   * Gets the number of seconds the player took to complete the self-report
-   * @return
-   */
-  public float getDurationInSeconds() { return durationInSeconds; }
+  public String getVersion() { return version; }
 
   /**
    * Gets rich content that must be shown before the questions
@@ -132,5 +114,31 @@ public class SelfReportContent {
    */
   public RichContent getRichContentAfterQuestions() {
     return this.richContentAfterQuestions;
+  }
+
+  /**
+   * Retrieves responses to the self-report questions
+   * @return
+   */
+  public SelfReportResponses getResponses() {
+    SelfReportResponses responses = new SelfReportResponses();
+    for (SelfReportQuestion question : this.questions) {
+      responses.addResponse(question.getResponse());
+    }
+    return responses;
+  }
+
+  /**
+   * Gets the timestamp set when the self-report was presented to the player
+   * @return
+   */
+  public String getInitialTimestamp() { return initialTimestamp; }
+
+  /**
+   * Sets the timestamp when the self-report was presented to the player
+   * @param initialTimestamp
+   */
+  public void setInitialTimestamp(String initialTimestamp) {
+    this.initialTimestamp = initialTimestamp;
   }
 }

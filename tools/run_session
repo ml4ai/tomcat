@@ -34,7 +34,6 @@ timestamp() {
 output_dir="${TOMCAT}"/data/participant_data/session_$(timestamp)
 mkdir -p "${output_dir}"
 
-
 export original_output_device=$(SwitchAudioSource -c)
 
 . "$TOMCAT"/tools/configure_session
@@ -82,7 +81,8 @@ start_ffmpeg_recording() {
 
 
 cleanup() {
-  pkill "ffmpeg"
+  pkill ffmpeg
+  pkill runExperiment
   if ! "$TOMCAT"/tools/kill_minecraft; then exit 1; fi
   if [ ! "${GITHUB_ACTIONS:-false}" = "true" ]; then
     if [[ "$OSTYPE"  == "darwin"* ]]; then
@@ -141,8 +141,9 @@ fi
 # tutorial and main missions.
 sleep 6
 
-# Get rid of any pre-existing discrete events JSON files.
+# Get rid of any pre-existing discrete events and self-reports JSON files.
 $rm -f "${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
+$rm -f "${TOMCAT}"/external/malmo/Minecraft/run/saves/self_reports/*.json
 
 
 if (( ${do_main_mission:-1} )); then

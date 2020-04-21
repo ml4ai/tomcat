@@ -383,15 +383,18 @@ public class ZombieMission extends Mission {
   @Override
   protected SelfReportContent getSelfReportContent(EntityPlayerMP player,
                                                    World world) {
-    String id = Long.toString(world.getTotalWorldTime());
     SelfReportContent selfReportContent =
-        SelfReportContent.createFromJson(id, "self_report1.json");
+        SelfReportContent.createFromJson("self_report1.json");
     selfReportContent.setTextPlaceholder(
         0, Converter.secondsToString(this.getRemainingSeconds(world), false));
     selfReportContent.setTextPlaceholder(
         1, String.format("%.2f", player.getHealth()));
     selfReportContent.setTextPlaceholder(
         2, String.format("%.2f", player.getMaxHealth()));
+    selfReportContent.setTextPlaceholder(
+        3, Integer.toString(this.numberOfVillagersSaved));
+    selfReportContent.setTextPlaceholder(4,
+                                         Integer.toString(NUMBER_OF_VILLAGERS));
     return selfReportContent;
   }
 
