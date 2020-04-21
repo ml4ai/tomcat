@@ -89,16 +89,6 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     }
   }
 
-  @SubscribeEvent(priority = EventPriority.HIGHEST)
-  public void CommandEvents(CommandEvent evt) {
-    System.out.println("================>COMMAND");
-    System.out.println(evt.getSender().getName());
-    System.out.println(evt.getCommand().getName());
-    if (evt.getSender() instanceof EntityPlayer) {
-      System.out.println("============>Player sent event");
-    }
-  }
-
   /**
    * Method called after if the player dies
    */
