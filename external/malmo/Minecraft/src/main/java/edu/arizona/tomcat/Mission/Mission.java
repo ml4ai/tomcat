@@ -437,8 +437,8 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
   }
 
   /**
-   * Dismisses the message screen that informs the player he should wait for the
-   * others
+   * Dismisses the message screen that informs the player that they should wait
+   * for the others.
    */
   private void dismissWaitingForOthersScreen() {
     TomcatMessaging.TomcatMessage message =
@@ -448,7 +448,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 
   /**
    * When a player tries to dismiss a screen but others are still with their
-   * screens prompted, show a message a screen saying the player he smust wait
+   * screens prompted, show a message a screen saying the player they must wait
    * for the others to continue the mission.
    * @param player
    */
