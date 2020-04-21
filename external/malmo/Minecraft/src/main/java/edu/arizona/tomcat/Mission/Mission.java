@@ -1,10 +1,9 @@
 package edu.arizona.tomcat.Mission;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.Schemas.PosAndDirection;
 import edu.arizona.tomcat.Emotion.EmotionHandler;
+import edu.arizona.tomcat.Messaging.MqttService;
 import edu.arizona.tomcat.Messaging.TomcatClientServerHandler;
 import edu.arizona.tomcat.Messaging.TomcatMessageData;
 import edu.arizona.tomcat.Messaging.TomcatMessaging;
@@ -13,7 +12,7 @@ import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
 import edu.arizona.tomcat.Mission.gui.FeedbackListener;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 import edu.arizona.tomcat.Mission.gui.SelfReportFileHandler;
-import edu.arizona.tomcat.Utils.AttackDiscreteEvent;
+import edu.arizona.tomcat.events.AttackDiscreteEvent;
 import edu.arizona.tomcat.Utils.Converter;
 import edu.arizona.tomcat.Utils.DiscreteEventsHelper;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
@@ -43,17 +42,13 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+
 
 public abstract class Mission implements FeedbackListener, PhaseListener {
 
-  // MQTT client
+  // MQTT service
+  private MqttService mqttService = new MqttService();
 
-  private MqttClient mqttClient;
 
   public static enum ID { TUTORIAL, ZOMBIE, USAR_SINGLE_PLAYER }
   ;
@@ -93,21 +88,6 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     SelfReportFileHandler.createSelfReportOutputFolder();
     DiscreteEventsHelper.createDiscreteEventsOutputFolder();
     MinecraftForge.EVENT_BUS.register(this);
-    try {
-      MemoryPersistence persistence = new MemoryPersistence();
-      MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
-      this.mqttClient =
-          new MqttClient("tcp://127.0.0.1:1883", "TomcatClient", persistence);
-      mqttConnectOptions.setCleanSession(true);
-      this.mqttClient.connect(mqttConnectOptions);
-    }
-    catch (MqttException me) {
-      System.out.println("reason " + me.getReasonCode());
-      System.out.println("msg " + me.getMessage());
-      System.out.println("loc " + me.getLocalizedMessage());
-      System.out.println("cause " + me.getCause());
-      System.out.println("excep " + me);
-    }
   }
 
   /**
@@ -162,20 +142,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
                                                       enemyName,
                                                       enemyHealth);
 
-  
-      Gson gson = new Gson();
-      MqttMessage message = new MqttMessage(gson.toJson(evt).getBytes());
-      message.setQos(2);
-      try {
-        mqttClient.publish("observations/events", message);
-      }
-      catch (MqttException me) {
-        System.out.println("reason " + me.getReasonCode());
-        System.out.println("msg " + me.getMessage());
-        System.out.println("loc " + me.getLocalizedMessage());
-        System.out.println("cause " + me.getCause());
-        System.out.println("excep " + me);
-      }
+    this.mqttService.publish(evt, "observations/state");
     }
   }
 

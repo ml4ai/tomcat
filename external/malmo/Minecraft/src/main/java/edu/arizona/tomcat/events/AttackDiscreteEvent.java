@@ -1,6 +1,7 @@
-package edu.arizona.tomcat.Utils;
+package edu.arizona.tomcat.events;
+import edu.arizona.tomcat.events.Event;
 
-public class AttackDiscreteEvent {
+public class AttackDiscreteEvent extends Event {
 
   private String eventName;
   private String timestamp;
