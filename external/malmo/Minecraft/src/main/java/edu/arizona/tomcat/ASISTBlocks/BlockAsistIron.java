@@ -11,6 +11,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import edu.arizona.tomcat.Messaging.MqttService;
 
 import java.util.Date;
 import java.text.DateFormat;
@@ -28,6 +29,9 @@ import java.text.SimpleDateFormat;
  * because we don't expect the player to do that.
  */
 public class BlockAsistIron extends Block {
+
+  // MQTT service
+  private MqttService mqttService = MqttService.getInstance();
 
   public BlockAsistIron() {
 
@@ -48,30 +52,15 @@ public class BlockAsistIron extends Block {
    * @param pos Block position in world
    * @param state Current state
    * @param fortune Breakers fortune level
-   * @return A ArrayList containing all items this block drops
+   * @return An ArrayList containing all items this block drops
    */
   public List<ItemStack>
   getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
 
-    Block block = world.getBlockState(pos).getBlock();
-    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-    Date date = new Date();
-
-    String timestamp = dateFormat.format(date); // Date and Time
-    int x = pos.getX(), y = pos.getY(), z = pos.getZ(); // event coordinates
-    String coordinates = "X: " + x + " "
-                        + "Y: " + y + " "
-                        + "Z: " + z;
-
-    String playerName = "";
-
-
     // Technically a command block destroys this, so we aren't identifying a
     // player as destroying this block for the sake of the code.
-    //DiscreteEventsHelper.writeBlockEvent(
-        //pos,
-        //null,
-        //"door_opened"); // Used to mark discrete occurrence
+    BlockDiscreteEvent evt = new BlockDiscreteEvent(pos, "door_opened"); 
+    this.mqttService.publish(evt, "observations/events");
 
     return new java.util.ArrayList<ItemStack>(); // Drop nothing
   }

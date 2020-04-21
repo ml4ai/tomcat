@@ -48,6 +48,7 @@ public class BlockDiscreteEvent extends Event {
     }
   }
 
+  /** Secondary constructor, for use with the BlockAsistIron class. */
   public BlockDiscreteEvent(BlockPos pos, String eventName) {
       this.eventName = eventName;
       DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
