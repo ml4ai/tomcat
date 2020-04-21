@@ -12,6 +12,7 @@ import edu.arizona.tomcat.Mission.gui.FeedbackListener;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 import edu.arizona.tomcat.Mission.gui.SelfReportFileHandler;
 import edu.arizona.tomcat.Utils.Converter;
+import edu.arizona.tomcat.Utils.DiscreteEventsHelper;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.Utils.MinecraftVanillaAIHandler;
 import edu.arizona.tomcat.World.DrawingHandler;
@@ -71,6 +72,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     this.missionSentToClients = false;
     this.entitiesToRemove = new HashMap<Entity, Long>();
     SelfReportFileHandler.createSelfReportOutputFolder();
+    DiscreteEventsHelper.createDiscreteEventsOutputFolder();
     MinecraftForge.EVENT_BUS.register(this);
   }
 

@@ -1,10 +1,11 @@
-package com.microsoft.Malmo.ASISTBlocks;
+package edu.arizona.tomcat.ASISTBlocks;
 
 import edu.arizona.tomcat.Utils.DiscreteEventsHelper;
 import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -49,10 +50,10 @@ public class BlockAsistIron extends Block {
 
     // Technically a command block destroys this, so we aren't identifying a
     // player as destroying this block for the sake of the code.
-    DiscreteEventsHelper.printEventOccurrence(
+    DiscreteEventsHelper.writeBlockEvent(
         pos,
         null,
-        "Hit-Controlled Door Opened"); // Used to mark discrete occurrence
+        "door_opened"); // Used to mark discrete occurrence
 
     return new java.util.ArrayList<ItemStack>(); // Drop nothing
   }

@@ -22,7 +22,7 @@
 
 package com.microsoft.Malmo;
 
-import com.microsoft.Malmo.ASISTBlocks.ModBlocks;
+import edu.arizona.tomcat.ASISTBlocks.ModBlocks;
 import com.microsoft.Malmo.Client.MalmoEnvServer;
 import com.microsoft.Malmo.Client.MalmoModClient;
 import com.microsoft.Malmo.MissionHandlers.AbsoluteMovementCommandsImplementation;
@@ -30,6 +30,7 @@ import com.microsoft.Malmo.MissionHandlers.DiscreteMovementCommandsImplementatio
 import com.microsoft.Malmo.MissionHandlers.InventoryCommandsImplementation;
 import com.microsoft.Malmo.MissionHandlers.ObservationFromFullInventoryImplementation;
 import com.microsoft.Malmo.MissionHandlers.ObservationFromFullStatsImplementation;
+import com.microsoft.Malmo.MissionHandlers.ObservationFromASISTParticipantImplementation;
 import com.microsoft.Malmo.MissionHandlers.ObservationFromGridImplementation;
 import com.microsoft.Malmo.MissionHandlers.ObservationFromSystemImplementation;
 import com.microsoft.Malmo.MissionHandlers.SimpleCraftCommandsImplementation;
@@ -216,6 +217,12 @@ public class MalmoMod {
         ObservationFromSystemImplementation.SystemRequestMessageHandler.class,
         ObservationFromSystemImplementation.SystemRequestMessage.class,
         12,
+        Side.SERVER);
+    network.registerMessage(
+        ObservationFromASISTParticipantImplementation.ASISTParticipantRequestMessageHandler
+            .class,
+        ObservationFromASISTParticipantImplementation.ASISTParticipantRequestMessage.class,
+        13,
         Side.SERVER);
 
     // TOMCAT

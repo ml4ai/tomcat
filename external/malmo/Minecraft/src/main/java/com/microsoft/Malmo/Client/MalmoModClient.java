@@ -22,7 +22,7 @@
 
 package com.microsoft.Malmo.Client;
 
-import com.microsoft.Malmo.ASISTBlocks.ModBlocks;
+import edu.arizona.tomcat.ASISTBlocks.ModBlocks;
 import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.Utils.CraftingHelper;
 import com.microsoft.Malmo.Utils.ScreenHelper.TextCategory;
@@ -30,7 +30,7 @@ import com.microsoft.Malmo.Utils.TextureHelper;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
 import edu.arizona.tomcat.Mission.Client.ClientMission;
-import edu.arizona.tomcat.Mission.gui.GUIOverlayVillagersSaved;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import net.minecraft.client.Minecraft;
