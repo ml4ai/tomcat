@@ -32,24 +32,22 @@ session_output_dir="${TOMCAT}"/data/participant_data/session_$(timestamp)
 mkdir -p "${session_output_dir}"
 
 start_ffmpeg_recording() {
-    local mission="$1"
-    local output_dir="$2"
     echo "Recording video of player's face using webcam."
     ffmpeg\
     -f ${FFMPEG_FMT_WEBCAM}\
     ${FRAMERATE_OPTION:-}\
     -i ${FFMPEG_INPUT_DEVICE_WEBCAM}\
     -r 30\
-    "${output_dir}"/webcam_video.mpg\
-    &> ${TOMCAT_TMP_DIR}/ffmpeg_webcam_"$mission".log &
+    "${MISSION_OUTPUT_DIR}"/webcam_video.mpg\
+    &> ${TOMCAT_TMP_DIR}/ffmpeg_webcam_mission_"$CURRENT_MISSION".log &
     
     echo "Recording player audio using microphone."
     ffmpeg\
     -nostdin\
     -f ${FFMPEG_FMT_MICROPHONE}\
     -i ${FFMPEG_INPUT_DEVICE_MICROPHONE}\
-    "${output_dir}"/player_audio.wav\
-    &> ${TOMCAT_TMP_DIR}/ffmpeg_microphone_"$mission".log &
+    "${MISSION_OUTPUT_DIR}"/player_audio.wav\
+    &> ${TOMCAT_TMP_DIR}/ffmpeg_microphone_mission_"$CURRENT_MISSION".log &
 
     if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
         echo "Recording system audio."
@@ -57,25 +55,24 @@ start_ffmpeg_recording() {
         -nostdin\
         -f ${FFMPEG_FMT_SYSTEM_AUDIO}\
         -i ${FFMPEG_INPUT_DEVICE_SYSTEM_AUDIO}\
-        "${output_dir}"/system_audio.wav\
-        &> "$TOMCAT_TMP_DIR"/system_audio_recording_"$mission".log &
+        "${MISSION_OUTPUT_DIR}"/system_audio.wav\
+        &> "$TOMCAT_TMP_DIR"/system_audio_recording_mission_"$CURRENT_MISSION".log &
     fi
 
     # Recording game screen.
     echo "Recording player's screen."
-    screen_video="${output_dir}"/screen_video.mpg
+    screen_video="${MISSION_OUTPUT_DIR}"/screen_video.mpg
     ffmpeg -nostdin -f ${FFMPEG_FMT_SCREEN_CAPTURE}\
     -i ${FFMPEG_INPUT_DEVICE_SCREEN_CAPTURE}\
     -s $SCREEN_DIMENSIONS\
-    "$screen_video" &> "$TOMCAT_TMP_DIR"/screen_video_recording_"$mission".log &
+    "$screen_video" &> "$TOMCAT_TMP_DIR"/screen_video_recording_mission_"$CURRENT_MISSION".log &
 }
 
 cleanup_discrete_actions_and_self_reports() {
     discrete_actions_file="${save_dir}/discrete_events/discrete_events.json"
 
-    local output_dir="${session_output_dir}"/"$CURRENT_MISSION"
     if [[ -f "${discrete_actions_file}" ]]; then
-        if ! mv "${discrete_actions_file}" "$output_dir"; then
+        if ! mv "${discrete_actions_file}" "$MISSION_OUTPUT_DIR"; then
             cleanup_status=1
         fi
     fi
@@ -84,7 +81,7 @@ cleanup_discrete_actions_and_self_reports() {
     if [[ ${have_self_reports} -ne 0 ]]; then
         # Move the self-reports from the Minecraft folder to the participant
         # data folder.
-        if ! mv "${save_dir}/self_reports/*.json" "$output_dir"; then
+        if ! mv "${save_dir}/self_reports/*.json" "$MISSION_OUTPUT_DIR"; then
             cleanup_status=1
         fi
     else
@@ -92,10 +89,7 @@ cleanup_discrete_actions_and_self_reports() {
     fi
 }
 
-# Kobus suggests that since this is your cleanup script, you should not simply
-# die of part of does not fail. I have left the one for SwitchAudioSource alone,
-# for now, but it seems that you want 
-#
+# Function to cleanup things on exit or keyboard interrupt.
 cleanup() {
     cleanup_status=0 
 
@@ -143,23 +137,14 @@ trap user_interrupt SIGINT SIGTERM
 
 
 do_mission() {
-    MISSION_ID="$1"
-    if [[ $MISSION_ID -eq 0 ]]; then
-        export CURRENT_MISSION="tutorial"
-    elif [[ $MISSION_ID -eq 1 || $MISSION_ID -eq 2 ]]; then
-        export CURRENT_MISSION="main"
-    else
-        echo "Mission ID must be 0 (Tutorial), 1 (Zombie Invasion), or 2"\
-             "(USAR Singleplayer)."
-        exit 1
-    fi
+    export CURRENT_MISSION="$1"
     echo " "
-    echo "Running the ${CURRENT_MISSION} mission in ${TOMCAT}."
+    echo "Running mission ${CURRENT_MISSION} in ${TOMCAT}."
     echo " "
-    mission_log="$TOMCAT_TMP_DIR"/"$CURRENT_MISSION"_mission.log
-    mission_output_dir="${session_output_dir}"/"$CURRENT_MISSION"
-    mkdir -p "$mission_output_dir"
-    malmo_data="$mission_output_dir"/malmo_data.txt
+    mission_log="$TOMCAT_TMP_DIR"/mission_"$CURRENT_MISSION".log
+    export MISSION_OUTPUT_DIR="${session_output_dir}"/mission_"$CURRENT_MISSION"
+    mkdir -p "$MISSION_OUTPUT_DIR"
+    malmo_data="$MISSION_OUTPUT_DIR"/malmo_data.txt
 
     # Get rid of any pre-existing discrete events and self-reports JSON files.
     $RM "${save_dir}/discrete_events/discrete_events.json"
@@ -179,14 +164,14 @@ do_mission() {
             exit 1  
         fi 
 
-        runExperiment_args="--mission ${MISSION_ID} --record_observations"
+        runExperiment_args="--mission ${CURRENT_MISSION} --record_observations"
 
         if [[ $MISSION_ID -gt 0 ]]; then
             runExperiment_args="${runExperiment_args} --time_limit ${TIME_LIMIT}"
         fi
 
         if (( ENABLE_FFMPEG )); then
-            start_ffmpeg_recording "$CURRENT_MISSION"  "$mission_output_dir"
+            start_ffmpeg_recording
         fi
         # Publish the Malmo observation messages to the message bus on the
         # topic observations/state.
@@ -200,7 +185,6 @@ do_mission() {
         # redirect the output to a file.
         mosquitto_sub -t observations/state > "$malmo_data" &
 
-        echo "Running mission ${MISSION_ID}."
         if [[ $MISSION_ID -gt 0 ]]; then
             echo "Time limit set to ${TIME_LIMIT}."
         fi
@@ -221,7 +205,7 @@ do_mission() {
             cleanup_discrete_actions_and_self_reports
             pkill mosquitto_sub
             echo "Mission ${MISSION_ID} ended with exit code 0."
-            echo "All recorded data is in ${mission_output_dir}"
+            echo "All recorded data is in ${MISSION_OUTPUT_DIR}"
             echo " "
             break
         fi
