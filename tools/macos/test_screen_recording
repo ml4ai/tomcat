@@ -16,7 +16,7 @@ test_screen_recording_macos() {
     "$test_screen_video_file" >& "$ffmpeg_screen_video_log" &
   sleep 1
   # Check if the test video file exists
-  if [[ ! -f "$test_screen_video_file" || ! $(du -sh "$ffmpeg_screen_video_file" | grep "0B") == ""  ]]; then
+  if [[ ! -f "$test_screen_video_file" || ! $(du -sh "$test_screen_video_file" | grep "0B") == ""  ]]; then
     echo "Unable to capture screen video: unhandled ffmpeg error."
     echo "The complete error log is given below."
     echo ""
