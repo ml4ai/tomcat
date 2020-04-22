@@ -68,27 +68,6 @@ start_ffmpeg_recording() {
     "$screen_video" &> "$TOMCAT_TMP_DIR"/screen_video_recording_mission_"$CURRENT_MISSION".log &
 }
 
-cleanup_discrete_actions_and_self_reports() {
-    discrete_actions_file="${save_dir}/discrete_events/discrete_events.json"
-
-    if [[ -f "${discrete_actions_file}" ]]; then
-        if ! mv "${discrete_actions_file}" "$MISSION_OUTPUT_DIR"; then
-            cleanup_status=1
-        fi
-    fi
-
-    have_self_reports=$(ls ${save_dir}/self_reports | grep -c '.json')
-    if [[ ${have_self_reports} -ne 0 ]]; then
-        # Move the self-reports from the Minecraft folder to the participant
-        # data folder.
-        if ! mv "${save_dir}/self_reports/*.json" "$MISSION_OUTPUT_DIR"; then
-            cleanup_status=1
-        fi
-    else
-        ${TOMCAT_DEBUG_ECHO} "No self reports to move."
-    fi
-}
-
 # Function to cleanup things on exit or keyboard interrupt.
 cleanup() {
     cleanup_status=0 
@@ -119,7 +98,6 @@ cleanup() {
         fi
     fi
 
-    cleanup_discrete_actions_and_self_reports
     exit ${cleanup_status}
 }
 
@@ -147,10 +125,6 @@ do_mission() {
     malmo_data="$MISSION_OUTPUT_DIR"/malmo_data.txt
     event_data="$MISSION_OUTPUT_DIR"/events.txt
     self_report_data="$MISSION_OUTPUT_DIR"/self_reports.txt
-
-    # Get rid of any pre-existing discrete events and self-reports JSON files.
-    $RM "${save_dir}/discrete_events/discrete_events.json"
-    $RM "${save_dir}/self_reports/*.json"
 
     # Kobus: Other mechanisms are in place that now mean we might not want to do
     # a second try. So, let's test with num_tries=1, and if this works out, we
@@ -209,7 +183,6 @@ do_mission() {
         fi
 
         if [[ ${mission_status} -eq 0 ]]; then
-            cleanup_discrete_actions_and_self_reports
             kill $pid_observations_state
             kill $pid_observations_events
             kill $pid_observations_self_reports
