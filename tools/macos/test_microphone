@@ -13,7 +13,7 @@ test_microphone_macos() {
     -t 1\
     "$test_microphone_file" &> "$ffmpeg_microphone_log" &
   microphone_test_pid=$!
-  sleep 1
+  sleep 3
   if [[ ! -f "$test_microphone_file" ]]; then
 
     microphone_access_err=$(cat "$ffmpeg_microphone_log" \
