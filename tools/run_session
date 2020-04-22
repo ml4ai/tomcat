@@ -145,6 +145,8 @@ do_mission() {
     export MISSION_OUTPUT_DIR="${session_output_dir}"/mission_"$CURRENT_MISSION"
     mkdir -p "$MISSION_OUTPUT_DIR"
     malmo_data="$MISSION_OUTPUT_DIR"/malmo_data.txt
+    event_data="$MISSION_OUTPUT_DIR"/events.txt
+    self_report_data="$MISSION_OUTPUT_DIR"/self_reports.txt
 
     # Get rid of any pre-existing discrete events and self-reports JSON files.
     $RM "${save_dir}/discrete_events/discrete_events.json"
@@ -184,6 +186,11 @@ do_mission() {
         # Subscribe to the observations/state topic on the message bus and
         # redirect the output to a file.
         mosquitto_sub -t observations/state > "$malmo_data" &
+        pid_observations_state=$!
+        mosquitto_sub -t observations/events > "$event_data" &
+        pid_observations_events=$!
+        mosquitto_sub -t observations/self_reports > "$self_report_data" &
+        pid_observations_self_reports=$!
 
         if [[ $CURRENT_MISSION -gt 0 ]]; then
             echo "Time limit set to ${TIME_LIMIT}."
@@ -203,7 +210,9 @@ do_mission() {
 
         if [[ ${mission_status} -eq 0 ]]; then
             cleanup_discrete_actions_and_self_reports
-            pkill mosquitto_sub
+            kill $pid_observations_state
+            kill $pid_observations_events
+            kill $pid_observations_self_reports
             echo "Mission ${CURRENT_MISSION} ended with exit code 0."
             echo "All recorded data is in ${MISSION_OUTPUT_DIR}"
             echo " "
