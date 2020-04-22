@@ -1,8 +1,8 @@
 package edu.arizona.tomcat.Utils;
 
 import net.minecraft.world.World;
-import edu.arizona.tomcat.Events.AttackDiscreteEvent;
-import edu.arizona.tomcat.Events.BlockDiscreteEvent;
+import edu.arizona.tomcat.Events.AttackEvent;
+import edu.arizona.tomcat.Events.BlockEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -20,13 +20,13 @@ public class ForgeEventHandler {
    */
   @SubscribeEvent
   public void attackEnemy(AttackEntityEvent event) {
-      AttackDiscreteEvent evt = new AttackDiscreteEvent(event);
+      AttackEvent evt = new AttackEvent(event);
       this.mqttService.publish(evt, "observations/events");
   }
 
   @SubscribeEvent
   public void blockEvent(PlayerInteractEvent event) {
-      BlockDiscreteEvent evt = new BlockDiscreteEvent(event);
+      BlockEvent evt = new BlockEvent(event);
       this.mqttService.publish(evt, "observations/events");
   }
 }

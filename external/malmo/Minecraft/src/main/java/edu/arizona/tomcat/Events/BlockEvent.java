@@ -11,12 +11,12 @@ import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-public class BlockDiscreteEvent extends Event {
+public class BlockEvent extends Event {
   private String eventName;
   private String timestamp;
   private String coordinates;
 
-  public BlockDiscreteEvent(PlayerInteractEvent event) {
+  public BlockEvent(PlayerInteractEvent event) {
     if (event.getClass() == PlayerInteractEvent.RightClickBlock.class) {
       World world = event.getWorld();
       BlockPos pos = event.getPos();
@@ -49,7 +49,7 @@ public class BlockDiscreteEvent extends Event {
   }
 
   /** Secondary constructor, for use with the BlockAsistIron class. */
-  public BlockDiscreteEvent(BlockPos pos, String eventName) {
+  public BlockEvent(BlockPos pos, String eventName) {
       this.eventName = eventName;
       DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
       Date date = new Date();

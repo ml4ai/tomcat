@@ -1,6 +1,6 @@
 package edu.arizona.tomcat.ASISTBlocks;
 
-import edu.arizona.tomcat.Events.BlockDiscreteEvent;
+import edu.arizona.tomcat.Events.BlockEvent;
 import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -58,7 +58,7 @@ public class BlockAsistIron extends Block {
 
     // Technically a command block destroys this, so we aren't identifying a
     // player as destroying this block for the sake of the code.
-    BlockDiscreteEvent evt = new BlockDiscreteEvent(pos, "door_opened"); 
+    BlockEvent evt = new BlockEvent(pos, "door_opened"); 
     this.mqttService.publish(evt, "observations/events");
 
     return new java.util.ArrayList<ItemStack>(); // Drop nothing

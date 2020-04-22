@@ -9,7 +9,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class AttackDiscreteEvent extends Event {
+public class AttackEvent extends Event {
 
   private String eventName;
   private String timestamp;
@@ -18,7 +18,7 @@ public class AttackDiscreteEvent extends Event {
   private String enemyName;
   private String enemyHealth;
 
-  public AttackDiscreteEvent(AttackEntityEvent event) {
+  public AttackEvent(AttackEntityEvent event) {
     EntityPlayer playerIn = event.getEntityPlayer();
     Entity target = event.getTarget();
 
