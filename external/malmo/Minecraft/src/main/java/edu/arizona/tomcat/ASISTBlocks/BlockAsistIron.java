@@ -1,7 +1,6 @@
 package edu.arizona.tomcat.ASISTBlocks;
 
 import edu.arizona.tomcat.Events.BlockDiscreteEvent;
-import edu.arizona.tomcat.Utils.DiscreteEventsHelper;
 import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
