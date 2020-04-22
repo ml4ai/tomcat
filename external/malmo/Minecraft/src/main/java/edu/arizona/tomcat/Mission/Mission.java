@@ -8,9 +8,9 @@ import edu.arizona.tomcat.Messaging.TomcatMessageData;
 import edu.arizona.tomcat.Messaging.TomcatMessaging;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
+import edu.arizona.tomcat.Messaging.MqttService;
 import edu.arizona.tomcat.Mission.gui.FeedbackListener;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
-import edu.arizona.tomcat.Mission.gui.SelfReportFileHandler;
 import edu.arizona.tomcat.Utils.*;
 import edu.arizona.tomcat.World.DrawingHandler;
 import java.io.IOException;
@@ -41,6 +41,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
   ;
   private static final long ENTITY_DELETION_DELAY = 1;
 
+  private MqttService mqttService = MqttService.getInstance();
   protected ID id;
   protected static final int REMAINING_SECONDS_ALERT = 30;
   private boolean canShowSelfReport;
@@ -59,7 +60,6 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
   protected ArrayList<MissionPhase> phases;
   protected ArrayList<MissionListener> listeners;
   protected HashMap<Entity, Long> entitiesToRemove;
-  protected SelfReportFileHandler selfReportFileHandler;
 
   /**
    * Abstract constructor for initialization of the drawing handler
@@ -72,8 +72,6 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     this.worldFrozen = false;
     this.missionSentToClients = false;
     this.entitiesToRemove = new HashMap<Entity, Long>();
-    SelfReportFileHandler.createSelfReportOutputFolder();
-    DiscreteEventsHelper.createDiscreteEventsOutputFolder();
     MinecraftForge.EVENT_BUS.register(this);
   }
 
@@ -390,7 +388,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
           this.id.ordinal(), player.getName(), content.getInitialTimestamp());
       missionSelfReport.setVersion(content.getVersion());
       missionSelfReport.setResponses(content.getResponses());
-      SelfReportFileHandler.writeSelfReport(missionSelfReport);
+      mqttService.publish(missionSelfReport, "observations/self_reports");
       if (TomcatClientServerHandler.haveAllClientsReplied()) {
         this.unpauseMission();
       }

@@ -1,20 +1,21 @@
 package edu.arizona.tomcat.Messaging;
 
 import com.google.gson.Gson;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.GsonBuilder;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import java.io.IOException;
-import edu.arizona.tomcat.Events.Event;
 
 /** A singleton class to provide a convenient interface to the Eclipse Paho
  * MQTT client library. */
 public class MqttService {
 
   private MqttClient client;
-  private Gson gson = new Gson();
+  private Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
   private static MqttService instance = null;
 
   private MqttService() {
@@ -22,7 +23,7 @@ public class MqttService {
       MemoryPersistence persistence = new MemoryPersistence();
       MqttConnectOptions connectOptions = new MqttConnectOptions();
       this.client =
-          new MqttClient("tcp://127.0.0.1:1883", "TomcatClient", persistence);
+        new MqttClient("tcp://127.0.0.1:1883", "TomcatClient", persistence);
       connectOptions.setCleanSession(true);
       this.client.connect(connectOptions);
     }
@@ -36,15 +37,15 @@ public class MqttService {
     }
   }
   public static MqttService getInstance() {
-      if (instance == null) {
-          instance = new MqttService();
-      }
-      return instance;
+    if (instance == null) {
+      instance = new MqttService();
+    }
+    return instance;
   }
 
-  public void publish(Event event, String topic) {
+  public void publish(Object object, String topic) {
     try {
-      MqttMessage message = new MqttMessage(gson.toJson(event).getBytes());
+      MqttMessage message = new MqttMessage(gson.toJson(object).getBytes());
       message.setQos(2);
       this.client.publish(topic, message);
     }
