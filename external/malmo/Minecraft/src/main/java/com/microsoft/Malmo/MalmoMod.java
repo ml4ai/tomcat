@@ -43,7 +43,7 @@ import com.microsoft.Malmo.Utils.ScreenHelper;
 import com.microsoft.Malmo.Utils.TCPUtils;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageHandler;
-import edu.arizona.tomcat.Utils.ForgeEventHandler;
+import edu.arizona.tomcat.Events.ForgeEventHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
