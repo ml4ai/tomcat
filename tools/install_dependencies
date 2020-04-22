@@ -28,8 +28,7 @@ __install_dependencies_using_macports() {
         boost \
         gradle \
         mosquitto \
-        nlohmann-json \
-        xdpyinfo
+        nlohmann-json
     if [[ $? -ne 0 ]]; then exit 1; fi
 
 
@@ -78,9 +77,6 @@ __install_dependencies_using_homebrew() {
       gradle \
       mosquitto \
       nlohmann-json
-    if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
-
-    brew cask install xquartz
     if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
 
     # We enable system audio recording ononly on macOS Catalina or above
