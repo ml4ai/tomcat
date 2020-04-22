@@ -1,4 +1,4 @@
-package edu.arizona.tomcat.Utils;
+package edu.arizona.tomcat.Events;
 
 import net.minecraft.world.World;
 import edu.arizona.tomcat.Events.AttackEvent;
