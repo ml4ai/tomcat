@@ -34,8 +34,11 @@ timestamp() {
 output_dir="${TOMCAT}"/data/participant_data/session_$(uuidgen | tr '[:upper:]'
 '[:lower:]')
 
+<<<<<<< HEAD
 mkdir -p "${output_dir}"
 
+=======
+>>>>>>> 49f8521a04553f3fd73089d5803c71e0071ff604
 export original_output_device=$(SwitchAudioSource -c)
 
 . "$TOMCAT"/tools/configure_session
@@ -142,8 +145,9 @@ fi
 # tutorial and main missions.
 sleep 6
 
-# Get rid of any pre-existing discrete events JSON files.
+# Get rid of any pre-existing discrete events and self-reports JSON files.
 $rm -f "${TOMCAT}"/external/malmo/Minecraft/run/saves/discrete_events/discrete_events.json
+$rm -f "${TOMCAT}"/external/malmo/Minecraft/run/saves/self_reports/*.json
 
 
 if (( ${do_main_mission:-1} )); then

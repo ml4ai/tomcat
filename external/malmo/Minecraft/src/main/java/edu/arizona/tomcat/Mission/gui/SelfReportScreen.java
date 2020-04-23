@@ -10,7 +10,7 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
   private static final int MARGIN = 10;
   private static final int TEXT_PADDING = 10;
   private static final int TEXT_HEIGHT = 80;
-  private static final int BUTTON_WIDTH = 100;
+  private static final int BUTTON_WIDTH = 110;
   private static final int BUTTON_HEIGHT = 20;
   private static final int BACKGROUND_COLOR = 0xEEFFFFFF;
   private static final int FOREGORUND_COLOR = 0x00000000;
@@ -19,6 +19,7 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
   private static final String SKIP_BUTTON_TEXT = "Skip";
 
   private SelfReportContent content;
+  private int previousQuestion;
   private int currentQuestion;
   private boolean shouldPauseGame;
   private long initialTime;
@@ -31,6 +32,7 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
    */
   public SelfReportScreen(SelfReportContent content, boolean shouldPauseGame) {
     this.content = content;
+    this.previousQuestion = -1;
     this.currentQuestion = 0;
     this.listeners = new ArrayList<ScreenListener>();
     this.shouldPauseGame = shouldPauseGame;
@@ -39,9 +41,6 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
   @Override
   public void initGui() {
     super.initGui();
-    // We take the system time instead of the world time because the game is
-    // paused when the self-report screen is prompted
-    this.initialTime = System.currentTimeMillis();
   }
 
   @Override
@@ -91,6 +90,18 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
         this.content.getQuestion(this.currentQuestion);
     this.drawTextFromQuestion(question);
     this.drawButtonsFromQuestion(question);
+
+    // This method is called continuously by Minecraft, that's why we need the
+    // if statement below
+    if (this.currentQuestion != this.previousQuestion) {
+      /* We take the system time instead of the world time because the game is
+       * paused when the self-report screen is prompted.
+       * We'll use this to compute the number of seconds the player took to
+       * answer the current question.
+       */
+      this.initialTime = System.currentTimeMillis();
+      this.previousQuestion = this.currentQuestion;
+    }
   }
 
   /**
@@ -170,7 +181,9 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
   protected void actionPerformed(GuiButton guiButton) {
     SelfReportQuestion question =
         this.content.getQuestion(this.currentQuestion);
-    question.setSelectedChoice(guiButton.id);
+    SelfReportSingleResponse response =
+        new SelfReportSingleResponse(guiButton.id, this.getDuration());
+    question.setResponse(response);
     if (this.currentQuestion == this.content.getNumberOfQuestions() - 1) {
       this.dismissScreen();
     }
@@ -198,7 +211,6 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
    * @param buttonType - Type of the button pressed
    */
   public void dismissScreen() {
-    this.setSelfReportDuration();
     this.mc.player.closeScreen();
     for (ScreenListener listener : this.listeners) {
       listener.screenDismissed(this, this.content);
@@ -206,11 +218,11 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
   }
 
   /**
-   * Defines the number of seconds the player took to answer the self-report
+   * Defines the number of seconds the player took to answer a question
    */
-  private void setSelfReportDuration() {
+  private float getDuration() {
     long finalTime = System.currentTimeMillis();
     float duration = (finalTime - this.initialTime) / 1000;
-    this.content.setDurationInSeconds(duration);
+    return duration;
   }
 }

@@ -1,4 +1,4 @@
-package com.microsoft.Malmo.ASISTBlocks;
+package edu.arizona.tomcat.ASISTBlocks;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -6,6 +6,9 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This file registers all the blocks we want to register for our mod. To
@@ -24,18 +27,12 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
  */
 public class ModBlocks {
 
-  public static Block asistButtonBlock;
-  public static Block asistLeverBlock;
-  public static Block asistIronBlock;
+  public static List<Block> MOD_BLOCKS = new ArrayList<Block>();
 
   /**
    * This method initializes the new block created.
    */
-  public static void init() {
-    asistButtonBlock = new BlockAsistButton();
-    asistLeverBlock = new BlockAsistLever();
-    asistIronBlock = new BlockAsistIron();
-  }
+  public static void init() { MOD_BLOCKS.add(new BlockAsistIron()); }
 
   /**
    * This method calls a helper function to register the Minecraft block. You
@@ -43,15 +40,13 @@ public class ModBlocks {
    * registration code should be kept within this class
    */
   public static void register() {
-    registerBlock(asistButtonBlock);
-    registerBlock(asistLeverBlock);
-    registerBlock(asistIronBlock);
-
-    // Add copied lines under this if necessary
+    for (Block block : MOD_BLOCKS) {
+      registerBlock(block);
+    }
   }
 
   /**
-   * This methdd registers the given block instance in Minecraft. It registers
+   * This method registers the given block instance in Minecraft. It registers
    * it as both a block and an item so it will show up in the inventory. DO NOT
    * use this to register only Items which don't have block counterparts. <p>
    * All blocks have item counterparts but not all Items have blocks=
@@ -72,11 +67,9 @@ public class ModBlocks {
    * or this will only show up as a purple and black cube in Minecraft.
    */
   public static void registerRenders() {
-    registerRender(asistButtonBlock);
-    registerRender(asistLeverBlock);
-    registerRender(asistIronBlock);
-
-    // Add copied lines under this if necessary
+    for (Block block : MOD_BLOCKS) {
+      registerRender(block);
+    }
   }
 
   /**

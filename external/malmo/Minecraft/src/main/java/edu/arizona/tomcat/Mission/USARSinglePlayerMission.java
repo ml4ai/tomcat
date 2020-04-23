@@ -1,36 +1,24 @@
 package edu.arizona.tomcat.Mission;
 
-import com.microsoft.Malmo.Schemas.EntityTypes;
 import com.microsoft.Malmo.Schemas.PosAndDirection;
 import edu.arizona.tomcat.Messaging.TomcatClientServerHandler;
 import edu.arizona.tomcat.Messaging.TomcatMessageData;
 import edu.arizona.tomcat.Messaging.TomcatMessaging;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
-import edu.arizona.tomcat.Mission.Goal.ApproachEntityGoal;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
-import edu.arizona.tomcat.Mission.MissionPhase.CompletionStrategy;
 import edu.arizona.tomcat.Mission.gui.RichContent;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 import edu.arizona.tomcat.Utils.Converter;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
-import edu.arizona.tomcat.World.Building;
-import edu.arizona.tomcat.World.Drawing;
-import edu.arizona.tomcat.World.MultiRoomBuilding;
-import edu.arizona.tomcat.World.TomcatEntity;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class USARSinglePlayerMission extends Mission {
 
-  private List<Building> availableListOfBuildings;
   private boolean dynamicInitializationComplete;
   private int numberOfVillagersSaved;
 
@@ -93,10 +81,7 @@ public class USARSinglePlayerMission extends Mission {
   }
 
   @Override
-  protected void createPhases() {
-    RichContent instructions =
-        RichContent.createFromJson("sar_instructions.json");
-  }
+  protected void createPhases() {}
 
   @Override
   protected void updateScene(World world) {
@@ -147,9 +132,8 @@ public class USARSinglePlayerMission extends Mission {
   @Override
   protected SelfReportContent getSelfReportContent(EntityPlayerMP player,
                                                    World world) {
-    String id = Long.toString(world.getTotalWorldTime());
     SelfReportContent selfReportContent =
-        SelfReportContent.createFromJson(id, "self_report1.json");
+        SelfReportContent.createFromJson("self_report1.json");
     selfReportContent.setTextPlaceholder(
         0, Converter.secondsToString(this.getRemainingSeconds(world), false));
     selfReportContent.setTextPlaceholder(
