@@ -35,43 +35,43 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  */
 public class ObservationFromASISTParticipantImplementation
     extends ObservationFromServer {
-  public static class ASISTParticipantRequestMessage
-      extends ObservationFromServer.ObservationRequestMessage {
-    @Override
-    void restoreState(ByteBuf buf) {
-      // Nothing to do - no context needed.
+    public static class ASISTParticipantRequestMessage
+        extends ObservationFromServer.ObservationRequestMessage {
+        @Override
+        void restoreState(ByteBuf buf) {
+            // Nothing to do - no context needed.
+        }
+
+        @Override
+        void persistState(ByteBuf buf) {
+            // Nothing to do - no context needed.
+        }
+    }
+
+    public static class ASISTParticipantRequestMessageHandler
+        extends ObservationFromServer.ObservationRequestMessageHandler
+        implements IMessageHandler<ASISTParticipantRequestMessage, IMessage> {
+        @Override
+        void buildJson(JsonObject json,
+                       EntityPlayerMP player,
+                       ObservationRequestMessage message) {
+            JSONWorldDataHelper.buildPositionStats(json, player);
+            JSONWorldDataHelper.buildMotionStats(json, player);
+            json.addProperty("life", player.getHealth());
+            json.addProperty("id", player.getCachedUniqueIdString());
+            json.addProperty("name", player.getName());
+            JSONWorldDataHelper.buildEnvironmentStats(json, player);
+        }
+
+        @Override
+        public IMessage onMessage(ASISTParticipantRequestMessage message,
+                                  MessageContext ctx) {
+            return processMessage(message, ctx);
+        }
     }
 
     @Override
-    void persistState(ByteBuf buf) {
-      // Nothing to do - no context needed.
+    public ObservationRequestMessage createObservationRequestMessage() {
+        return new ASISTParticipantRequestMessage();
     }
-  }
-
-  public static class ASISTParticipantRequestMessageHandler
-      extends ObservationFromServer.ObservationRequestMessageHandler
-      implements IMessageHandler<ASISTParticipantRequestMessage, IMessage> {
-    @Override
-    void buildJson(JsonObject json,
-                   EntityPlayerMP player,
-                   ObservationRequestMessage message) {
-      JSONWorldDataHelper.buildPositionStats(json, player);
-      JSONWorldDataHelper.buildMotionStats(json, player);
-      json.addProperty("life", player.getHealth());
-      json.addProperty("id", player.getCachedUniqueIdString());
-      json.addProperty("name", player.getName());
-      JSONWorldDataHelper.buildEnvironmentStats(json, player);
-    }
-
-    @Override
-    public IMessage onMessage(ASISTParticipantRequestMessage message,
-                              MessageContext ctx) {
-      return processMessage(message, ctx);
-    }
-  }
-
-  @Override
-  public ObservationRequestMessage createObservationRequestMessage() {
-    return new ASISTParticipantRequestMessage();
-  }
 }

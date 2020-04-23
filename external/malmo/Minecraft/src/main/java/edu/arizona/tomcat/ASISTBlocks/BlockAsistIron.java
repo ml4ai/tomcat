@@ -2,6 +2,7 @@ package edu.arizona.tomcat.ASISTBlocks;
 
 import edu.arizona.tomcat.Events.IronDoorOpened;
 import edu.arizona.tomcat.Messaging.MqttService;
+import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -9,8 +10,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-
-import java.util.List;
 
 /**
  * This block will be used as the "door" block for the Hit-Controlled doors.
@@ -25,38 +24,39 @@ import java.util.List;
  */
 public class BlockAsistIron extends Block {
 
-  // MQTT service
-  private MqttService mqttService = MqttService.getInstance();
+    // MQTT service
+    private MqttService mqttService = MqttService.getInstance();
 
-  public BlockAsistIron() {
+    public BlockAsistIron() {
 
-    super(Material.IRON);
-    setUnlocalizedName("ASIST_Iron_Block");
+        super(Material.IRON);
+        setUnlocalizedName("ASIST_Iron_Block");
 
-    // The name Minecraft sees. Also used in en_US.lang
-    setRegistryName("ASIST_Iron_Block"); 
+        // The name Minecraft sees. Also used in en_US.lang
+        setRegistryName("ASIST_Iron_Block");
 
-    // Shows up in the redstone tab in creative mode
-    this.setCreativeTab(CreativeTabs.REDSTONE); 
-  }
+        // Shows up in the redstone tab in creative mode
+        this.setCreativeTab(CreativeTabs.REDSTONE);
+    }
 
-  @Override
-  /**
-   * This returns a complete list of items dropped from this block.
-   *
-   * @param world The current world
-   * @param pos Block position in world
-   * @param state Current state
-   * @param fortune Breakers fortune level
-   * @return An ArrayList containing all items this block drops
-   */
-  public List<ItemStack>
-  getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+    @Override
+    /**
+     * This returns a complete list of items dropped from this block.
+     *
+     * @param world The current world
+     * @param pos Block position in world
+     * @param state Current state
+     * @param fortune Breakers fortune level
+     * @return An ArrayList containing all items this block drops
+     */
+    public List<ItemStack>
+    getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
 
-    // Technically a command block destroys this, so we aren't identifying a
-    // player as destroying this block for the sake of the code.
-    this.mqttService.publish(new IronDoorOpened(pos), "observations/events/iron_door_opened");
+        // Technically a command block destroys this, so we aren't identifying a
+        // player as destroying this block for the sake of the code.
+        this.mqttService.publish(new IronDoorOpened(pos),
+                                 "observations/events/iron_door_opened");
 
-    return new java.util.ArrayList<ItemStack>(); // Drop nothing
-  }
+        return new java.util.ArrayList<ItemStack>(); // Drop nothing
+    }
 }

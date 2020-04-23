@@ -38,100 +38,100 @@ import java.util.HashMap;
  * MissionInit that you want otherwise.)
  */
 public class QuitFromComposite extends HandlerBase implements IWantToQuit {
-  String quitCode = "";
+    String quitCode = "";
 
-  public enum CombineMode {
+    public enum CombineMode {
+        /**
+         * doIWantToQuit only returns true if all the child IWantToQuit objects
+         * return true.
+         */
+        Combine_AND,
+        /**
+         * doIWantToQuit returns true if any of the child IWantToQuit objects
+         * return true.
+         */
+        Combine_OR
+    }
+
+    private ArrayList<IWantToQuit> quitters;
+    private CombineMode mode = CombineMode.Combine_OR; // OR by default.
+
     /**
-     * doIWantToQuit only returns true if all the child IWantToQuit objects
-     * return true.
+     * Add another IWantToQuit object to the children.
+     *
+     * @param quitter the IWantToQuit object.
      */
-    Combine_AND,
+    public void addQuitter(IWantToQuit quitter) {
+        if (this.quitters == null) {
+            this.quitters = new ArrayList<IWantToQuit>();
+        }
+        this.quitters.add(quitter);
+    }
+
     /**
-     * doIWantToQuit returns true if any of the child IWantToQuit objects return
-     * true.
+     * Change the way the child quitters impact the overall decision on whether
+     * or not to quit.
+     *
+     * @param mode either AND or OR.
      */
-    Combine_OR
-  }
+    public void setCombineMode(CombineMode mode) { this.mode = mode; }
 
-  private ArrayList<IWantToQuit> quitters;
-  private CombineMode mode = CombineMode.Combine_OR; // OR by default.
-
-  /**
-   * Add another IWantToQuit object to the children.
-   *
-   * @param quitter the IWantToQuit object.
-   */
-  public void addQuitter(IWantToQuit quitter) {
-    if (this.quitters == null) {
-      this.quitters = new ArrayList<IWantToQuit>();
+    @Override
+    public boolean doIWantToQuit(MissionInit missionInit) {
+        if (this.quitters == null) {
+            return false;
+        }
+        boolean result = (this.mode == CombineMode.Combine_AND) ? true : false;
+        for (IWantToQuit quitter : this.quitters) {
+            boolean wantsToQuit = quitter.doIWantToQuit(missionInit);
+            if (wantsToQuit)
+                addQuitCode(quitter.getOutcome());
+            if (this.mode == CombineMode.Combine_AND) {
+                result &= wantsToQuit;
+            }
+            else {
+                result |= wantsToQuit;
+            }
+        }
+        return result;
     }
-    this.quitters.add(quitter);
-  }
 
-  /**
-   * Change the way the child quitters impact the overall decision on whether or
-   * not to quit.
-   *
-   * @param mode either AND or OR.
-   */
-  public void setCombineMode(CombineMode mode) { this.mode = mode; }
-
-  @Override
-  public boolean doIWantToQuit(MissionInit missionInit) {
-    if (this.quitters == null) {
-      return false;
+    private void addQuitCode(String qc) {
+        if (qc == null || qc.isEmpty())
+            return;
+        if (this.quitCode == null || this.quitCode.isEmpty())
+            this.quitCode = qc;
+        else
+            this.quitCode += ";" + qc;
     }
-    boolean result = (this.mode == CombineMode.Combine_AND) ? true : false;
-    for (IWantToQuit quitter : this.quitters) {
-      boolean wantsToQuit = quitter.doIWantToQuit(missionInit);
-      if (wantsToQuit)
-        addQuitCode(quitter.getOutcome());
-      if (this.mode == CombineMode.Combine_AND) {
-        result &= wantsToQuit;
-      }
-      else {
-        result |= wantsToQuit;
-      }
+
+    @Override
+    public void prepare(MissionInit missionInit) {
+        for (IWantToQuit quitter : this.quitters)
+            quitter.prepare(missionInit);
     }
-    return result;
-  }
 
-  private void addQuitCode(String qc) {
-    if (qc == null || qc.isEmpty())
-      return;
-    if (this.quitCode == null || this.quitCode.isEmpty())
-      this.quitCode = qc;
-    else
-      this.quitCode += ";" + qc;
-  }
-
-  @Override
-  public void prepare(MissionInit missionInit) {
-    for (IWantToQuit quitter : this.quitters)
-      quitter.prepare(missionInit);
-  }
-
-  @Override
-  public void cleanup() {
-    for (IWantToQuit quitter : this.quitters)
-      quitter.cleanup();
-  }
-
-  @Override
-  public void appendExtraServerInformation(HashMap<String, String> map) {
-    for (IWantToQuit quitter : this.quitters) {
-      if (quitter instanceof HandlerBase)
-        ((HandlerBase)quitter).appendExtraServerInformation(map);
+    @Override
+    public void cleanup() {
+        for (IWantToQuit quitter : this.quitters)
+            quitter.cleanup();
     }
-  }
 
-  @Override
-  public String getOutcome() {
-    return this.quitCode;
-  }
+    @Override
+    public void appendExtraServerInformation(HashMap<String, String> map) {
+        for (IWantToQuit quitter : this.quitters) {
+            if (quitter instanceof HandlerBase)
+                ((HandlerBase)quitter).appendExtraServerInformation(map);
+        }
+    }
 
-  public boolean isFixed() {
-    return false; // Return true to stop MissionBehaviour from adding new
-                  // handlers to this group.
-  }
+    @Override
+    public String getOutcome() {
+        return this.quitCode;
+    }
+
+    public boolean isFixed() {
+        return false; // Return true to stop MissionBehaviour from adding new
+                      // handlers to this group.
+    }
 }

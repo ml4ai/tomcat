@@ -36,84 +36,85 @@
 #include <vector>
 
 namespace malmo {
-  //! A TCP server that receives video frames of a size specified beforehand and
-  //! can optionally persist to file.
-  class VideoServer : ServerScope {
-  public:
-    VideoServer(boost::asio::io_service& io_service,
-                int port,
-                short width,
-                short height,
-                short channels,
-                TimestampedVideoFrame::FrameType frametype,
-                const boost::function<void(const TimestampedVideoFrame message)>
-                    handle_frame);
+    //! A TCP server that receives video frames of a size specified beforehand
+    //! and can optionally persist to file.
+    class VideoServer : ServerScope {
+      public:
+        VideoServer(
+            boost::asio::io_service& io_service,
+            int port,
+            short width,
+            short height,
+            short channels,
+            TimestampedVideoFrame::FrameType frametype,
+            const boost::function<void(const TimestampedVideoFrame message)>
+                handle_frame);
 
-    //! Request that the video is saved in an mp4 file. Call before either
-    //! startInBackground() or startRecording().
-    VideoServer& recordMP4(std::string path,
-                           int frames_per_second,
-                           int64_t bit_rate,
-                           bool drop_input_frames);
+        //! Request that the video is saved in an mp4 file. Call before either
+        //! startInBackground() or startRecording().
+        VideoServer& recordMP4(std::string path,
+                               int frames_per_second,
+                               int64_t bit_rate,
+                               bool drop_input_frames);
 
-    //! Request that each frame of the video is saved in an individual file.
-    //! Call before either startInBackground() or startRecording().
-    VideoServer& recordBmps(std::string path);
+        //! Request that each frame of the video is saved in an individual file.
+        //! Call before either startInBackground() or startRecording().
+        VideoServer& recordBmps(std::string path);
 
-    //! Gets the port this server is listening on.
-    //! \returns The port this server is listening on.
-    int getPort() const;
+        //! Gets the port this server is listening on.
+        //! \returns The port this server is listening on.
+        int getPort() const;
 
-    //! Gets the width of the video.
-    //! \returns The width of the video in pixels.
-    short getWidth() const;
+        //! Gets the width of the video.
+        //! \returns The width of the video in pixels.
+        short getWidth() const;
 
-    //! Gets the height of the video.
-    //! \returns The height of the video in pixels.
-    short getHeight() const;
+        //! Gets the height of the video.
+        //! \returns The height of the video in pixels.
+        short getHeight() const;
 
-    //! Gets the number of channels in the video. e.g. 3 for RGB, 4 for RGBA.
-    //! \returns The number of channels in the video.
-    short getChannels() const;
+        //! Gets the number of channels in the video. e.g. 3 for RGB, 4 for
+        //! RGBA. \returns The number of channels in the video.
+        short getChannels() const;
 
-    TimestampedVideoFrame::FrameType getFrameType() const;
+        TimestampedVideoFrame::FrameType getFrameType() const;
 
-    //! Stop recording the data being received by the server.
-    void stopRecording();
+        //! Stop recording the data being received by the server.
+        void stopRecording();
 
-    //! Start recording the data being received by the server.
-    void startRecording();
+        //! Start recording the data being received by the server.
+        void startRecording();
 
-    //! Starts the video server.
-    void start(boost::shared_ptr<VideoServer>& scope);
+        //! Starts the video server.
+        void start(boost::shared_ptr<VideoServer>& scope);
 
-    std::size_t receivedFrames() const { return this->received_frames; }
-    std::size_t writtenFrames() const { return this->written_frames; }
-    std::size_t queuedFrames() const { return this->queued_frames; }
+        std::size_t receivedFrames() const { return this->received_frames; }
+        std::size_t writtenFrames() const { return this->written_frames; }
+        std::size_t queuedFrames() const { return this->queued_frames; }
 
-    void close();
+        void close();
 
-    virtual void release();
+        virtual void release();
 
-  private:
-    boost::shared_ptr<VideoServer> scope;
+      private:
+        boost::shared_ptr<VideoServer> scope;
 
-    void handleMessage(const TimestampedUnsignedCharVector message);
+        void handleMessage(const TimestampedUnsignedCharVector message);
 
-    boost::function<void(const TimestampedVideoFrame message)> handle_frame;
-    short width;
-    short height;
-    short channels;
-    TimestampedVideoFrame::Transform transform;
-    TimestampedVideoFrame::FrameType frametype;
-    boost::shared_ptr<TCPServer> server;
-    boost::asio::io_service& io_service;
-    int port;
-    std::vector<std::unique_ptr<IFrameWriter>> writers;
+        boost::function<void(const TimestampedVideoFrame message)> handle_frame;
+        short width;
+        short height;
+        short channels;
+        TimestampedVideoFrame::Transform transform;
+        TimestampedVideoFrame::FrameType frametype;
+        boost::shared_ptr<TCPServer> server;
+        boost::asio::io_service& io_service;
+        int port;
+        std::vector<std::unique_ptr<IFrameWriter>> writers;
 
-    // diagnostics:
-    std::size_t received_frames;
-    std::size_t queued_frames;
-    std::size_t written_frames;
-  };
+        // diagnostics:
+        std::size_t received_frames;
+        std::size_t queued_frames;
+        std::size_t written_frames;
+    };
 } // namespace malmo

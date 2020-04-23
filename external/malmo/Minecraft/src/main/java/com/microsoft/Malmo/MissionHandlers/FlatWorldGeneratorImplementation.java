@@ -36,61 +36,62 @@ import net.minecraft.world.storage.WorldInfo;
 
 public class FlatWorldGeneratorImplementation
     extends HandlerBase implements IWorldGenerator {
-  FlatWorldGenerator fwparams;
+    FlatWorldGenerator fwparams;
 
-  @Override
-  public boolean parseParameters(Object params) {
-    if (params == null || !(params instanceof FlatWorldGenerator))
-      return false;
+    @Override
+    public boolean parseParameters(Object params) {
+        if (params == null || !(params instanceof FlatWorldGenerator))
+            return false;
 
-    this.fwparams = (FlatWorldGenerator)params;
-    return true;
-  }
+        this.fwparams = (FlatWorldGenerator)params;
+        return true;
+    }
 
-  @Override
-  public boolean createWorld(MissionInit missionInit) {
-    long seed = DefaultWorldGeneratorImplementation.getWorldSeedFromString(
-        this.fwparams.getSeed());
-    WorldSettings worldsettings = new WorldSettings(
-        seed, GameType.SURVIVAL, false, false, WorldType.FLAT);
-    // This call to setWorldName allows us to specify the layers of our world,
-    // and also the features that will be created. This website provides a handy
-    // way to generate these strings:
-    // http://chunkbase.com/apps/superflat-generator
-    worldsettings.setGeneratorOptions(this.fwparams.getGeneratorString());
-    worldsettings.enableCommands(); // Enables cheat commands.
-    // Create a filename for this map - we use the time stamp to make sure it is
-    // different from other worlds, otherwise no new world will be created, it
-    // will simply load the old one.
-    return MapFileHelper.createAndLaunchWorld(
-        worldsettings, this.fwparams.isDestroyAfterUse());
-  }
+    @Override
+    public boolean createWorld(MissionInit missionInit) {
+        long seed = DefaultWorldGeneratorImplementation.getWorldSeedFromString(
+            this.fwparams.getSeed());
+        WorldSettings worldsettings = new WorldSettings(
+            seed, GameType.SURVIVAL, false, false, WorldType.FLAT);
+        // This call to setWorldName allows us to specify the layers of our
+        // world, and also the features that will be created. This website
+        // provides a handy way to generate these strings:
+        // http://chunkbase.com/apps/superflat-generator
+        worldsettings.setGeneratorOptions(this.fwparams.getGeneratorString());
+        worldsettings.enableCommands(); // Enables cheat commands.
+        // Create a filename for this map - we use the time stamp to make sure
+        // it is different from other worlds, otherwise no new world will be
+        // created, it will simply load the old one.
+        return MapFileHelper.createAndLaunchWorld(
+            worldsettings, this.fwparams.isDestroyAfterUse());
+    }
 
-  @Override
-  public boolean shouldCreateWorld(MissionInit missionInit, World world) {
-    if (this.fwparams != null && this.fwparams.isForceReset())
-      return true;
+    @Override
+    public boolean shouldCreateWorld(MissionInit missionInit, World world) {
+        if (this.fwparams != null && this.fwparams.isForceReset())
+            return true;
 
-    if (Minecraft.getMinecraft().world == null || world == null)
-      return true; // Definitely need to create a world if there isn't one in
-                   // existence!
+        if (Minecraft.getMinecraft().world == null || world == null)
+            return true; // Definitely need to create a world if there isn't one
+                         // in existence!
 
-    WorldInfo worldInfo = world.getWorldInfo();
-    if (worldInfo == null)
-      return true;
+        WorldInfo worldInfo = world.getWorldInfo();
+        if (worldInfo == null)
+            return true;
 
-    String genOptions = worldInfo.getGeneratorOptions();
-    if (genOptions == null)
-      return true;
+        String genOptions = worldInfo.getGeneratorOptions();
+        if (genOptions == null)
+            return true;
 
-    if (!genOptions.equals(this.fwparams.getGeneratorString()))
-      return true; // Generation doesn't match, so recreate.
+        if (!genOptions.equals(this.fwparams.getGeneratorString()))
+            return true; // Generation doesn't match, so recreate.
 
-    return false;
-  }
+        return false;
+    }
 
-  @Override
-  public String getErrorDetails() {
-    return ""; // Currently no error exit points, so never anything to report.
-  }
+    @Override
+    public String getErrorDetails() {
+        return ""; // Currently no error exit points, so never anything to
+                   // report.
+    }
 }

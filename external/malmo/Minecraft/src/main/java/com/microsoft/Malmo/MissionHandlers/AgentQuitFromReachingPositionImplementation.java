@@ -39,43 +39,45 @@ import net.minecraft.client.entity.EntityPlayerSP;
  */
 public class AgentQuitFromReachingPositionImplementation
     extends HandlerBase implements IWantToQuit {
-  AgentQuitFromReachingPosition qrpparams;
-  String quitCode = "";
+    AgentQuitFromReachingPosition qrpparams;
+    String quitCode = "";
 
-  @Override
-  public boolean parseParameters(Object params) {
-    if (params == null || !(params instanceof AgentQuitFromReachingPosition))
-      return false;
+    @Override
+    public boolean parseParameters(Object params) {
+        if (params == null ||
+            !(params instanceof AgentQuitFromReachingPosition))
+            return false;
 
-    this.qrpparams = (AgentQuitFromReachingPosition)params;
-    return true;
-  }
-
-  @Override
-  public boolean doIWantToQuit(MissionInit missionInit) {
-    if (missionInit == null || this.qrpparams == null)
-      return false;
-
-    EntityPlayerSP player = Minecraft.getMinecraft().player;
-    for (PointWithToleranceAndDescription goal : this.qrpparams.getMarker()) {
-      float distance =
-          PositionHelper.calcDistanceFromPlayerToPosition(player, goal);
-      if (distance <= goal.getTolerance().floatValue()) {
-        this.quitCode = goal.getDescription();
+        this.qrpparams = (AgentQuitFromReachingPosition)params;
         return true;
-      }
     }
-    return false;
-  }
 
-  @Override
-  public void prepare(MissionInit missionInit) {}
+    @Override
+    public boolean doIWantToQuit(MissionInit missionInit) {
+        if (missionInit == null || this.qrpparams == null)
+            return false;
 
-  @Override
-  public void cleanup() {}
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        for (PointWithToleranceAndDescription goal :
+             this.qrpparams.getMarker()) {
+            float distance =
+                PositionHelper.calcDistanceFromPlayerToPosition(player, goal);
+            if (distance <= goal.getTolerance().floatValue()) {
+                this.quitCode = goal.getDescription();
+                return true;
+            }
+        }
+        return false;
+    }
 
-  @Override
-  public String getOutcome() {
-    return this.quitCode;
-  }
+    @Override
+    public void prepare(MissionInit missionInit) {}
+
+    @Override
+    public void cleanup() {}
+
+    @Override
+    public String getOutcome() {
+        return this.quitCode;
+    }
 }

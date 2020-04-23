@@ -33,73 +33,73 @@ import net.minecraft.client.entity.EntityPlayerSP;
 /** Quit command allows for the agent to abort its mission at any time. */
 public class MissionQuitCommandsImplementation
     extends CommandBase implements ICommandHandler {
-  private boolean isOverriding;
-  private boolean iWantToQuit;
-  protected MissionQuitCommands quitcomParams;
+    private boolean isOverriding;
+    private boolean iWantToQuit;
+    protected MissionQuitCommands quitcomParams;
 
-  @Override
-  protected boolean
-  onExecute(String verb, String parameter, MissionInit missionInit) {
-    EntityPlayerSP player = Minecraft.getMinecraft().player;
-    if (player == null) {
-      return false;
+    @Override
+    protected boolean
+    onExecute(String verb, String parameter, MissionInit missionInit) {
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        if (player == null) {
+            return false;
+        }
+
+        if (!verb.equalsIgnoreCase(MissionQuitCommand.QUIT.value())) {
+            return false;
+        }
+
+        player.sendChatMessage("Quitting mission");
+        this.iWantToQuit = true;
+        return true;
     }
 
-    if (!verb.equalsIgnoreCase(MissionQuitCommand.QUIT.value())) {
-      return false;
+    @Override
+    public boolean parseParameters(Object params) {
+        if (params == null || !(params instanceof MissionQuitCommands))
+            return false;
+
+        this.quitcomParams = (MissionQuitCommands)params;
+        setUpAllowAndDenyLists(this.quitcomParams.getModifierList());
+        return true;
     }
 
-    player.sendChatMessage("Quitting mission");
-    this.iWantToQuit = true;
-    return true;
-  }
+    // ------------- ICommandHandler methods -----------
+    @Override
+    public void install(MissionInit missionInit) {
+        // In order to trigger the end of the mission, we need to hook into the
+        // quit handlers.
+        MissionBehaviour mb = parentBehaviour();
+        mb.addQuitProducer(new IWantToQuit() {
+            @Override
+            public void prepare(MissionInit missionInit) {}
 
-  @Override
-  public boolean parseParameters(Object params) {
-    if (params == null || !(params instanceof MissionQuitCommands))
-      return false;
+            @Override
+            public String getOutcome() {
+                return MissionQuitCommandsImplementation.this.quitcomParams
+                    .getQuitDescription();
+            }
 
-    this.quitcomParams = (MissionQuitCommands)params;
-    setUpAllowAndDenyLists(this.quitcomParams.getModifierList());
-    return true;
-  }
+            @Override
+            public boolean doIWantToQuit(MissionInit missionInit) {
+                return MissionQuitCommandsImplementation.this.iWantToQuit;
+            }
 
-  // ------------- ICommandHandler methods -----------
-  @Override
-  public void install(MissionInit missionInit) {
-    // In order to trigger the end of the mission, we need to hook into the quit
-    // handlers.
-    MissionBehaviour mb = parentBehaviour();
-    mb.addQuitProducer(new IWantToQuit() {
-      @Override
-      public void prepare(MissionInit missionInit) {}
+            @Override
+            public void cleanup() {}
+        });
+    }
 
-      @Override
-      public String getOutcome() {
-        return MissionQuitCommandsImplementation.this.quitcomParams
-            .getQuitDescription();
-      }
+    @Override
+    public void deinstall(MissionInit missionInit) {}
 
-      @Override
-      public boolean doIWantToQuit(MissionInit missionInit) {
-        return MissionQuitCommandsImplementation.this.iWantToQuit;
-      }
+    @Override
+    public boolean isOverriding() {
+        return this.isOverriding;
+    }
 
-      @Override
-      public void cleanup() {}
-    });
-  }
-
-  @Override
-  public void deinstall(MissionInit missionInit) {}
-
-  @Override
-  public boolean isOverriding() {
-    return this.isOverriding;
-  }
-
-  @Override
-  public void setOverriding(boolean b) {
-    this.isOverriding = b;
-  }
+    @Override
+    public void setOverriding(boolean b) {
+        this.isOverriding = b;
+    }
 }

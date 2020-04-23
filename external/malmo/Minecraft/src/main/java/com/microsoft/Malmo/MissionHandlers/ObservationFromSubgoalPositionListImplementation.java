@@ -32,79 +32,84 @@ import net.minecraft.client.entity.EntityPlayerSP;
 
 public class ObservationFromSubgoalPositionListImplementation
     extends HandlerBase implements IObservationProducer {
-  private int subgoalIndex = 0;
-  private ObservationFromSubgoalPositionList positions;
+    private int subgoalIndex = 0;
+    private ObservationFromSubgoalPositionList positions;
 
-  @Override
-  public boolean parseParameters(Object params) {
-    if (params == null ||
-        !(params instanceof ObservationFromSubgoalPositionList))
-      return false;
+    @Override
+    public boolean parseParameters(Object params) {
+        if (params == null ||
+            !(params instanceof ObservationFromSubgoalPositionList))
+            return false;
 
-    this.positions = (ObservationFromSubgoalPositionList)params;
-    return true;
-  }
-
-  @Override
-  public void writeObservationsToJSON(JsonObject json,
-                                      MissionInit missionInit) {
-    int nTargets = this.positions.getPoint().size();
-    boolean foundNextPoint = false;
-    double targetx = 0;
-    double targetz = 0;
-    EntityPlayerSP player = Minecraft.getMinecraft().player;
-    if (player == null)
-      return; // Nothing we can do.
-
-    double sourcex = player.posX;
-    double sourcez = player.posZ;
-
-    while (this.subgoalIndex < nTargets && !foundNextPoint) {
-      targetx =
-          this.positions.getPoint().get(this.subgoalIndex).getX().doubleValue();
-      targetz =
-          this.positions.getPoint().get(this.subgoalIndex).getZ().doubleValue();
-      double tol = this.positions.getPoint()
-                       .get(this.subgoalIndex)
-                       .getTolerance()
-                       .doubleValue();
-
-      if (Math.abs(targetx - sourcex) + Math.abs(targetz - sourcez) < tol)
-        this.subgoalIndex++;
-      else
-        foundNextPoint = true;
+        this.positions = (ObservationFromSubgoalPositionList)params;
+        return true;
     }
 
-    if (!foundNextPoint)
-      return; // Finished.
+    @Override
+    public void writeObservationsToJSON(JsonObject json,
+                                        MissionInit missionInit) {
+        int nTargets = this.positions.getPoint().size();
+        boolean foundNextPoint = false;
+        double targetx = 0;
+        double targetz = 0;
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        if (player == null)
+            return; // Nothing we can do.
 
-    // Calculate which way we need to turn in order to point towards the target:
-    double dx = (targetx - sourcex);
-    double dz = (targetz - sourcez);
-    double targetYaw = (Math.atan2(dz, dx) * 180.0 / Math.PI) - 90;
-    double sourceYaw = player.rotationYaw;
-    // Find shortest angular distance between the two yaws, preserving sign:
-    double difference = targetYaw - sourceYaw;
-    while (difference < -180)
-      difference += 360;
-    while (difference > 180)
-      difference -= 360;
-    // Normalise:
-    difference /= 180.0;
-    json.addProperty("yawDelta", difference);
-    PointWithToleranceAndDescription point =
-        this.positions.getPoint().get(this.subgoalIndex);
-    JsonObject pointElement = new JsonObject();
-    pointElement.addProperty("XPos", point.getX().doubleValue());
-    pointElement.addProperty("YPos", point.getY().doubleValue());
-    pointElement.addProperty("ZPos", point.getZ().doubleValue());
-    pointElement.addProperty("description", point.getDescription());
-    json.add("nextSubgoal", pointElement);
-  }
+        double sourcex = player.posX;
+        double sourcez = player.posZ;
 
-  @Override
-  public void prepare(MissionInit missionInit) {}
+        while (this.subgoalIndex < nTargets && !foundNextPoint) {
+            targetx = this.positions.getPoint()
+                          .get(this.subgoalIndex)
+                          .getX()
+                          .doubleValue();
+            targetz = this.positions.getPoint()
+                          .get(this.subgoalIndex)
+                          .getZ()
+                          .doubleValue();
+            double tol = this.positions.getPoint()
+                             .get(this.subgoalIndex)
+                             .getTolerance()
+                             .doubleValue();
 
-  @Override
-  public void cleanup() {}
+            if (Math.abs(targetx - sourcex) + Math.abs(targetz - sourcez) < tol)
+                this.subgoalIndex++;
+            else
+                foundNextPoint = true;
+        }
+
+        if (!foundNextPoint)
+            return; // Finished.
+
+        // Calculate which way we need to turn in order to point towards the
+        // target:
+        double dx = (targetx - sourcex);
+        double dz = (targetz - sourcez);
+        double targetYaw = (Math.atan2(dz, dx) * 180.0 / Math.PI) - 90;
+        double sourceYaw = player.rotationYaw;
+        // Find shortest angular distance between the two yaws, preserving sign:
+        double difference = targetYaw - sourceYaw;
+        while (difference < -180)
+            difference += 360;
+        while (difference > 180)
+            difference -= 360;
+        // Normalise:
+        difference /= 180.0;
+        json.addProperty("yawDelta", difference);
+        PointWithToleranceAndDescription point =
+            this.positions.getPoint().get(this.subgoalIndex);
+        JsonObject pointElement = new JsonObject();
+        pointElement.addProperty("XPos", point.getX().doubleValue());
+        pointElement.addProperty("YPos", point.getY().doubleValue());
+        pointElement.addProperty("ZPos", point.getZ().doubleValue());
+        pointElement.addProperty("description", point.getDescription());
+        json.add("nextSubgoal", pointElement);
+    }
+
+    @Override
+    public void prepare(MissionInit missionInit) {}
+
+    @Override
+    public void cleanup() {}
 }

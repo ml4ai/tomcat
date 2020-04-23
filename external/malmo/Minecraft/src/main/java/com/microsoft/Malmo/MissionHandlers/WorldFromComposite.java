@@ -33,71 +33,71 @@ import net.minecraft.world.World;
  * Composite class that manages a set of world builders
  */
 public class WorldFromComposite extends HandlerBase implements IWorldDecorator {
-  private ArrayList<IWorldDecorator> builders =
-      new ArrayList<IWorldDecorator>();
+    private ArrayList<IWorldDecorator> builders =
+        new ArrayList<IWorldDecorator>();
 
-  public void addBuilder(IWorldDecorator builder) {
-    this.builders.add(builder);
-  }
-
-  @Override
-  public void buildOnWorld(MissionInit missionInit, World world)
-      throws DecoratorException {
-    for (IWorldDecorator builder : this.builders) {
-      builder.buildOnWorld(missionInit, world);
+    public void addBuilder(IWorldDecorator builder) {
+        this.builders.add(builder);
     }
-  }
 
-  @Override
-  public void update(World world) {
-    for (IWorldDecorator builder : this.builders) {
-      builder.update(world);
+    @Override
+    public void buildOnWorld(MissionInit missionInit, World world)
+        throws DecoratorException {
+        for (IWorldDecorator builder : this.builders) {
+            builder.buildOnWorld(missionInit, world);
+        }
     }
-  }
 
-  @Override
-  public boolean getExtraAgentHandlersAndData(List<Object> handlers,
-                                              Map<String, String> data) {
-    boolean added = false;
-    for (IWorldDecorator builder : this.builders) {
-      added |= builder.getExtraAgentHandlersAndData(handlers, data);
+    @Override
+    public void update(World world) {
+        for (IWorldDecorator builder : this.builders) {
+            builder.update(world);
+        }
     }
-    return added;
-  }
 
-  @Override
-  public void prepare(MissionInit missionInit) {
-    for (IWorldDecorator builder : this.builders) {
-      builder.prepare(missionInit);
+    @Override
+    public boolean getExtraAgentHandlersAndData(List<Object> handlers,
+                                                Map<String, String> data) {
+        boolean added = false;
+        for (IWorldDecorator builder : this.builders) {
+            added |= builder.getExtraAgentHandlersAndData(handlers, data);
+        }
+        return added;
     }
-  }
 
-  @Override
-  public void cleanup() {
-    for (IWorldDecorator builder : this.builders) {
-      builder.cleanup();
+    @Override
+    public void prepare(MissionInit missionInit) {
+        for (IWorldDecorator builder : this.builders) {
+            builder.prepare(missionInit);
+        }
     }
-  }
 
-  @Override
-  public boolean targetedUpdate(String nextAgentName) {
-    for (IWorldDecorator builder : this.builders) {
-      if (builder.targetedUpdate(nextAgentName))
-        return true;
+    @Override
+    public void cleanup() {
+        for (IWorldDecorator builder : this.builders) {
+            builder.cleanup();
+        }
     }
-    return false;
-  }
 
-  @Override
-  public void getTurnParticipants(ArrayList<String> participants,
-                                  ArrayList<Integer> participantSlots) {
-    for (IWorldDecorator builder : this.builders) {
-      builder.getTurnParticipants(participants, participantSlots);
+    @Override
+    public boolean targetedUpdate(String nextAgentName) {
+        for (IWorldDecorator builder : this.builders) {
+            if (builder.targetedUpdate(nextAgentName))
+                return true;
+        }
+        return false;
     }
-  }
 
-  public boolean isFixed() {
-    return false; // Return true to stop MissionBehaviour from adding new
-                  // handlers to this group.
-  }
+    @Override
+    public void getTurnParticipants(ArrayList<String> participants,
+                                    ArrayList<Integer> participantSlots) {
+        for (IWorldDecorator builder : this.builders) {
+            builder.getTurnParticipants(participants, participantSlots);
+        }
+    }
+
+    public boolean isFixed() {
+        return false; // Return true to stop MissionBehaviour from adding new
+                      // handlers to this group.
+    }
 }

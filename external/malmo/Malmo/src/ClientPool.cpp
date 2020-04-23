@@ -27,19 +27,19 @@
 #include <sstream>
 
 namespace malmo {
-  void ClientPool::add(const ClientInfo& client_info) {
-    this->clients.push_back(boost::make_shared<ClientInfo>(client_info));
-  }
-
-  std::ostream& operator<<(std::ostream& os, const ClientPool& cp) {
-    os << "ClientPool";
-    if (cp.clients.size())
-      os << ":";
-    else
-      os << " (empty)";
-    for (auto ci : cp.clients) {
-      os << "\n    " << *ci;
+    void ClientPool::add(const ClientInfo& client_info) {
+        this->clients.push_back(boost::make_shared<ClientInfo>(client_info));
     }
-    return os;
-  }
+
+    std::ostream& operator<<(std::ostream& os, const ClientPool& cp) {
+        os << "ClientPool";
+        if (cp.clients.size())
+            os << ":";
+        else
+            os << " (empty)";
+        for (auto ci : cp.clients) {
+            os << "\n    " << *ci;
+        }
+        return os;
+    }
 } // namespace malmo
