@@ -32,47 +32,47 @@ import net.minecraft.client.entity.EntityPlayerSP;
 /** Chat commands allow the players to broadcast text messages. */
 public class ChatCommandsImplementation
     extends CommandBase implements ICommandHandler {
-  private boolean isOverriding;
+    private boolean isOverriding;
 
-  @Override
-  protected boolean
-  onExecute(String verb, String parameter, MissionInit missionInit) {
-    EntityPlayerSP player = Minecraft.getMinecraft().player;
-    if (player == null) {
-      return false;
+    @Override
+    protected boolean
+    onExecute(String verb, String parameter, MissionInit missionInit) {
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        if (player == null) {
+            return false;
+        }
+
+        if (!verb.equalsIgnoreCase(ChatCommand.CHAT.value())) {
+            return false;
+        }
+
+        player.sendChatMessage(parameter);
+        return true;
     }
 
-    if (!verb.equalsIgnoreCase(ChatCommand.CHAT.value())) {
-      return false;
+    @Override
+    public boolean parseParameters(Object params) {
+        if (params == null || !(params instanceof ChatCommands))
+            return false;
+
+        ChatCommands cparams = (ChatCommands)params;
+        setUpAllowAndDenyLists(cparams.getModifierList());
+        return true;
     }
 
-    player.sendChatMessage(parameter);
-    return true;
-  }
+    @Override
+    public void install(MissionInit missionInit) {}
 
-  @Override
-  public boolean parseParameters(Object params) {
-    if (params == null || !(params instanceof ChatCommands))
-      return false;
+    @Override
+    public void deinstall(MissionInit missionInit) {}
 
-    ChatCommands cparams = (ChatCommands)params;
-    setUpAllowAndDenyLists(cparams.getModifierList());
-    return true;
-  }
+    @Override
+    public boolean isOverriding() {
+        return this.isOverriding;
+    }
 
-  @Override
-  public void install(MissionInit missionInit) {}
-
-  @Override
-  public void deinstall(MissionInit missionInit) {}
-
-  @Override
-  public boolean isOverriding() {
-    return this.isOverriding;
-  }
-
-  @Override
-  public void setOverriding(boolean b) {
-    this.isOverriding = b;
-  }
+    @Override
+    public void setOverriding(boolean b) {
+        this.isOverriding = b;
+    }
 }

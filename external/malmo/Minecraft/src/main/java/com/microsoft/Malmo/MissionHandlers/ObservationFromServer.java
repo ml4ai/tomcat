@@ -65,162 +65,175 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public abstract class ObservationFromServer
     extends HandlerBase implements IMalmoMessageListener, IObservationProducer {
-  private String latestJsonStats = "";
-  private boolean missionIsRunning = false;
+    private String latestJsonStats = "";
+    private boolean missionIsRunning = false;
 
-  ObservationFromServer() {
-    // Register for client ticks so we can keep requesting stats.
-    MinecraftForge.EVENT_BUS.register(this);
-  }
-
-  @SubscribeEvent
-  public void onClientTick(TickEvent.ClientTickEvent ev) {
-    if (this.missionIsRunning) {
-      // Use the client tick to fire messages to the server to request
-      // up-to-date stats. We can then use those stats to fire back to the agent
-      // in writeObservationsToJSON.
-      ObservationRequestMessage message = createObservationRequestMessage();
-      // To make sure only the intended listener receives this message, set the
-      // id now:
-      message.id = System.identityHashCode(this);
-      MalmoMod.network.sendToServer(message);
+    ObservationFromServer() {
+        // Register for client ticks so we can keep requesting stats.
+        MinecraftForge.EVENT_BUS.register(this);
     }
-  }
 
-  @Override
-  public void prepare(MissionInit missionInit) {
-    this.missionIsRunning = true; // Will start us asking the server for stats.
-    MalmoMod.MalmoMessageHandler.registerForMessage(
-        this, MalmoMessageType.SERVER_OBSERVATIONSREADY);
-  }
-
-  @Override
-  public void cleanup() {
-    this.missionIsRunning = false; // Stop asking for stats.
-    MalmoMod.MalmoMessageHandler.deregisterForMessage(
-        this, MalmoMessageType.SERVER_OBSERVATIONSREADY);
-  }
-
-  @Override
-  public void writeObservationsToJSON(JsonObject json,
-                                      MissionInit missionInit) {
-    String jsonstring = "";
-    synchronized (this.latestJsonStats) { jsonstring = this.latestJsonStats; }
-    if (jsonstring.length() > 2) // "{}" is the empty JSON string.
-    {
-      // Parse the string into json:
-      JsonParser parser = new JsonParser();
-      JsonElement root = parser.parse(jsonstring);
-      // Now copy the children of root into the provided json object:
-      if (root.isJsonObject()) {
-        JsonObject rootObj = root.getAsJsonObject();
-        for (Map.Entry<String, JsonElement> entry : rootObj.entrySet()) {
-          json.add(entry.getKey(), entry.getValue());
+    @SubscribeEvent
+    public void onClientTick(TickEvent.ClientTickEvent ev) {
+        if (this.missionIsRunning) {
+            // Use the client tick to fire messages to the server to request
+            // up-to-date stats. We can then use those stats to fire back to the
+            // agent in writeObservationsToJSON.
+            ObservationRequestMessage message =
+                createObservationRequestMessage();
+            // To make sure only the intended listener receives this message,
+            // set the id now:
+            message.id = System.identityHashCode(this);
+            MalmoMod.network.sendToServer(message);
         }
-      }
-    }
-  }
-
-  @Override
-  public void onMessage(MalmoMessageType messageType,
-                        Map<String, String> data) {
-    if (data != null) {
-      synchronized (this.latestJsonStats) {
-        this.latestJsonStats = data.get("json");
-        if (this.latestJsonStats == null) // Shouldn't happen, but if it does
-          this.latestJsonStats = ""; // we don't want to allow a null value.
-        onReturnedData(data);
-      }
-    }
-  }
-
-  /**
-   * Override this to act on any extra data returned by the server.<br>
-   * @param data
-   */
-  protected void onReturnedData(Map<String, String> data) {}
-
-  public abstract ObservationRequestMessage createObservationRequestMessage();
-
-  /**
-   * Tiny message class for requesting observational data from the server.<br>
-   * Contains just an id string, used to map the request to the object which can
-   * fulfil it. Subclasses of ObservationFromServer should subclass this to
-   * include all the state which is required to process their request.
-   */
-  public abstract static class ObservationRequestMessage implements IMessage {
-    /** Identifier of the listener that will be responding to this request.*/
-    private int id = 0;
-
-    public ObservationRequestMessage() {}
-
-    public ObservationRequestMessage(int id) { this.id = id; }
-
-    @Override
-    public final void fromBytes(ByteBuf buf) {
-
-      this.id = buf.readInt();
-      restoreState(buf);
     }
 
     @Override
-    public final void toBytes(ByteBuf buf) {
-      // Subclasses MUST call this
-      buf.writeInt(this.id);
-      persistState(buf);
+    public void prepare(MissionInit missionInit) {
+        this.missionIsRunning =
+            true; // Will start us asking the server for stats.
+        MalmoMod.MalmoMessageHandler.registerForMessage(
+            this, MalmoMessageType.SERVER_OBSERVATIONSREADY);
     }
 
-    abstract void restoreState(ByteBuf buf);
-    abstract void persistState(ByteBuf buf);
+    @Override
+    public void cleanup() {
+        this.missionIsRunning = false; // Stop asking for stats.
+        MalmoMod.MalmoMessageHandler.deregisterForMessage(
+            this, MalmoMessageType.SERVER_OBSERVATIONSREADY);
+    }
+
+    @Override
+    public void writeObservationsToJSON(JsonObject json,
+                                        MissionInit missionInit) {
+        String jsonstring = "";
+        synchronized (this.latestJsonStats) {
+            jsonstring = this.latestJsonStats;
+        }
+        if (jsonstring.length() > 2) // "{}" is the empty JSON string.
+        {
+            // Parse the string into json:
+            JsonParser parser = new JsonParser();
+            JsonElement root = parser.parse(jsonstring);
+            // Now copy the children of root into the provided json object:
+            if (root.isJsonObject()) {
+                JsonObject rootObj = root.getAsJsonObject();
+                for (Map.Entry<String, JsonElement> entry :
+                     rootObj.entrySet()) {
+                    json.add(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onMessage(MalmoMessageType messageType,
+                          Map<String, String> data) {
+        if (data != null) {
+            synchronized (this.latestJsonStats) {
+                this.latestJsonStats = data.get("json");
+                if (this.latestJsonStats ==
+                    null) // Shouldn't happen, but if it does
+                    this.latestJsonStats =
+                        ""; // we don't want to allow a null value.
+                onReturnedData(data);
+            }
+        }
+    }
 
     /**
-     * Override this if you want to return some extra data back to the client
-     * thread.<br> Any objects created MUST be serialisable, as they are
-     * returned by serialising/deserialising the map.
+     * Override this to act on any extra data returned by the server.<br>
+     * @param data
      */
-    public void addReturnData(Map<String, String> returnData) {}
-  }
+    protected void onReturnedData(Map<String, String> data) {}
 
-  /**
-   * Simple handler to process the request message.<br>
-   * REMEMBER that all this code exists on the server-side (it might not even
-   * have been compiled on the client side). Any state required must be passed
-   * through the message.
-   */
-  public abstract static class ObservationRequestMessageHandler {
-    public ObservationRequestMessageHandler() {}
+    public abstract ObservationRequestMessage createObservationRequestMessage();
 
-    /** IMPORTANT: Call this from the onMessage method in the subclass. */
-    public IMessage processMessage(ObservationRequestMessage message,
-                                   MessageContext ctx) {
-      IThreadListener mainThread =
-          (WorldServer)ctx.getServerHandler().playerEntity.world;
-      final EntityPlayerMP player = ctx.getServerHandler().playerEntity;
-      final ObservationRequestMessage mess = message;
-      mainThread.addScheduledTask(new Runnable() {
+    /**
+     * Tiny message class for requesting observational data from the server.<br>
+     * Contains just an id string, used to map the request to the object which
+     * can fulfil it. Subclasses of ObservationFromServer should subclass this
+     * to include all the state which is required to process their request.
+     */
+    public abstract static class ObservationRequestMessage implements IMessage {
+        /**
+         * Identifier of the listener that will be responding to this
+         * request.
+         */
+        private int id = 0;
+
+        public ObservationRequestMessage() {}
+
+        public ObservationRequestMessage(int id) { this.id = id; }
+
         @Override
-        public void run() {
-          JsonObject json = new JsonObject();
-          buildJson(json, player, mess);
-          // Send this message back again now we've filled in the json stats.
-          Map<String, String> returnData = new HashMap<String, String>();
-          returnData.put("json", json.toString());
-          mess.addReturnData(returnData);
-          MalmoMod.network.sendTo(new MalmoMod.MalmoMessage(
-                                      MalmoMessageType.SERVER_OBSERVATIONSREADY,
-                                      mess.id,
-                                      returnData),
-                                  player);
+        public final void fromBytes(ByteBuf buf) {
+
+            this.id = buf.readInt();
+            restoreState(buf);
         }
-      });
-      return null; // no response in this case
+
+        @Override
+        public final void toBytes(ByteBuf buf) {
+            // Subclasses MUST call this
+            buf.writeInt(this.id);
+            persistState(buf);
+        }
+
+        abstract void restoreState(ByteBuf buf);
+        abstract void persistState(ByteBuf buf);
+
+        /**
+         * Override this if you want to return some extra data back to the
+         * client thread.<br> Any objects created MUST be serialisable, as they
+         * are returned by serialising/deserialising the map.
+         */
+        public void addReturnData(Map<String, String> returnData) {}
     }
 
     /**
-     * Build the JSON observation that has been requested by the message.
+     * Simple handler to process the request message.<br>
+     * REMEMBER that all this code exists on the server-side (it might not even
+     * have been compiled on the client side). Any state required must be passed
+     * through the message.
      */
-    abstract void buildJson(JsonObject json,
-                            EntityPlayerMP player,
-                            ObservationRequestMessage message);
-  }
+    public abstract static class ObservationRequestMessageHandler {
+        public ObservationRequestMessageHandler() {}
+
+        /** IMPORTANT: Call this from the onMessage method in the subclass. */
+        public IMessage processMessage(ObservationRequestMessage message,
+                                       MessageContext ctx) {
+            IThreadListener mainThread =
+                (WorldServer)ctx.getServerHandler().playerEntity.world;
+            final EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+            final ObservationRequestMessage mess = message;
+            mainThread.addScheduledTask(new Runnable() {
+                @Override
+                public void run() {
+                    JsonObject json = new JsonObject();
+                    buildJson(json, player, mess);
+                    // Send this message back again now we've filled in the json
+                    // stats.
+                    Map<String, String> returnData =
+                        new HashMap<String, String>();
+                    returnData.put("json", json.toString());
+                    mess.addReturnData(returnData);
+                    MalmoMod.network.sendTo(
+                        new MalmoMod.MalmoMessage(
+                            MalmoMessageType.SERVER_OBSERVATIONSREADY,
+                            mess.id,
+                            returnData),
+                        player);
+                }
+            });
+            return null; // no response in this case
+        }
+
+        /**
+         * Build the JSON observation that has been requested by the message.
+         */
+        abstract void buildJson(JsonObject json,
+                                EntityPlayerMP player,
+                                ObservationRequestMessage message);
+    }
 }

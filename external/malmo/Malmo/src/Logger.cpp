@@ -23,5 +23,5 @@
 #include "Logger.h"
 
 namespace malmo {
-  std::atomic<int> LoggerLifetimeTracker::object_count{0};
+    std::atomic<int> LoggerLifetimeTracker::object_count{0};
 }

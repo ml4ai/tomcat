@@ -27,23 +27,24 @@
 #include <boost/thread.hpp>
 
 namespace malmo {
-  //! Synchronized error code that can be waited on.
-  class ErrorCodeSync {
-  public:
-    //! Initialize error code with boost::asio::error::would_block.
-    void init_error_code();
+    //! Synchronized error code that can be waited on.
+    class ErrorCodeSync {
+      public:
+        //! Initialize error code with boost::asio::error::would_block.
+        void init_error_code();
 
-    //! Wait for error code update other than boost::asio::error::would_block.
-    const boost::system::error_code await_error_code();
+        //! Wait for error code update other than
+        //! boost::asio::error::would_block.
+        const boost::system::error_code await_error_code();
 
-    //! Update error code and signal any waiting threads.
-    //! \param ec The error code to record before signaling any waiting threads.
-    void signal_error_code(const boost::system::error_code& ec);
+        //! Update error code and signal any waiting threads.
+        //! \param ec The error code to record before signaling any waiting threads.
+        void signal_error_code(const boost::system::error_code& ec);
 
-  private:
-    boost::condition_variable cond;
-    boost::mutex mutex;
-    boost::system::error_code error_code;
-  };
+      private:
+        boost::condition_variable cond;
+        boost::mutex mutex;
+        boost::system::error_code error_code;
+    };
 } // namespace malmo
 #endif

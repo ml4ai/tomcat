@@ -43,202 +43,209 @@ import net.minecraft.util.math.BlockPos;
  * or somewhere else in the world. Call this on the Server side only.
  */
 public class JSONWorldDataHelper {
-  /**
-   * Simple class to hold the dimensions of the environment
-   * that we want to return in the World Data.<br>
-   * Min and max define an inclusive range, where the player's feet are situated
-   * at (0,0,0) if absoluteCoords=false.
-   */
-  static public class GridDimensions {
-    public int xMin;
-    public int xMax;
-    public int yMin;
-    public int yMax;
-    public int zMin;
-    public int zMax;
-    public boolean absoluteCoords;
-
     /**
-     * Default constructor asks for an environment just big enough to contain
-     * the player and one block all around him.
+     * Simple class to hold the dimensions of the environment
+     * that we want to return in the World Data.<br>
+     * Min and max define an inclusive range, where the player's feet are
+     * situated at (0,0,0) if absoluteCoords=false.
      */
-    public GridDimensions() {
-      this.xMin = -1;
-      this.xMax = 1;
-      this.zMin = -1;
-      this.zMax = 1;
-      this.yMin = -1;
-      this.yMax = 2;
-      this.absoluteCoords = false;
-    }
+    static public class GridDimensions {
+        public int xMin;
+        public int xMax;
+        public int yMin;
+        public int yMax;
+        public int zMin;
+        public int zMax;
+        public boolean absoluteCoords;
 
-    /**
-     * Convenient constructor - effectively specifies the margin around the
-     * player<br> Passing (1,1,1) will have the same effect as the default
-     * constructor.
-     * @param xMargin number of blocks to the left and right of the player
-     * @param yMargin number of blocks above and below player
-     * @param zMargin number of blocks in front of and behind player
-     */
-    public GridDimensions(int xMargin, int yMargin, int zMargin) {
-      this.xMin = -xMargin;
-      this.xMax = xMargin;
-      this.yMin = -yMargin;
-      this.yMax = yMargin + 1; // +1 because the player is two blocks tall.
-      this.zMin = -zMargin;
-      this.zMax = zMargin;
-      this.absoluteCoords = false;
-    }
-
-    /**
-     * Convenient constructor for the case where all that is required is the
-     * flat patch of ground<br> around the player's feet.
-     * @param xMargin number of blocks around the player in the x-axis
-     * @param zMargin number of blocks around the player in the z-axis
-     */
-    public GridDimensions(int xMargin, int zMargin) {
-      this.xMin = -xMargin;
-      this.xMax = xMargin;
-      this.yMin = -1;
-      this.yMax = -1; // Flat patch of ground at the player's feet.
-      this.zMin = -zMargin;
-      this.zMax = zMargin;
-      this.absoluteCoords = false;
-    }
-  };
-
-  /**
-   * Builds the basic achievement world data to be used as observation signals
-   * by the listener.
-   * @param json a JSON object into which the achievement stats will be added.
-   */
-  public static void buildAchievementStats(JsonObject json,
-                                           EntityPlayerMP player) {
-    StatisticsManagerServer sfw = player.getStatFile();
-    json.addProperty(
-        "DistanceTravelled",
-        sfw.readStat((StatBase)StatList.WALK_ONE_CM) +
-            sfw.readStat((StatBase)StatList.SWIM_ONE_CM) +
-            sfw.readStat((StatBase)StatList.DIVE_ONE_CM) +
-            sfw.readStat(
-                (StatBase)StatList.FALL_ONE_CM)); // TODO: there are many other
-                                                  // ways of moving!
-    json.addProperty("TimeAlive",
-                     sfw.readStat((StatBase)StatList.TIME_SINCE_DEATH));
-    json.addProperty("MobsKilled", sfw.readStat((StatBase)StatList.MOB_KILLS));
-    json.addProperty("PlayersKilled",
-                     sfw.readStat((StatBase)StatList.PLAYER_KILLS));
-    json.addProperty("DamageTaken",
-                     sfw.readStat((StatBase)StatList.DAMAGE_TAKEN));
-    json.addProperty("DamageDealt",
-                     sfw.readStat((StatBase)StatList.DAMAGE_DEALT));
-
-    /* Other potential reinforcement signals that may be worth researching:
-    json.addProperty("BlocksDestroyed",
-    sfw.readStat((StatBase)StatList.objectBreakStats) - but objectBreakStats is
-    an array of 32000 StatBase objects - indexed by block type.);
-    json.addProperty("Blocked", ev.player.isMovementBlocked()) - but
-    isMovementBlocker() is a protected method (can get round this with
-    reflection)
-    */
-  }
-
-  /**
-   * Builds the basic life world data to be used as observation signals by the
-   * listener.
-   * @param json a JSON object into which the life stats will be added.
-   */
-  public static void buildLifeStats(JsonObject json, EntityPlayerMP player) {
-    json.addProperty("Life", player.getHealth());
-    json.addProperty("Score",
-                     player.getScore()); // Might always be the same as XP?
-    json.addProperty("Food", player.getFoodStats().getFoodLevel());
-    json.addProperty("XP", player.experienceTotal);
-    json.addProperty("IsAlive", !player.isDead);
-    json.addProperty("Air", player.getAir());
-    json.addProperty("Name", player.getName());
-  }
-
-  /**
-   * Builds the player position data to be used as observation signals by the
-   * listener.
-   * @param json a JSON object into which the positional information will be
-   * added.
-   */
-  public static void buildPositionStats(JsonObject json,
-                                        EntityPlayerMP player) {
-    json.addProperty("x", player.posX);
-    json.addProperty("y", player.posY);
-    json.addProperty("z", player.posZ);
-    json.addProperty("pitch", player.rotationPitch);
-    json.addProperty("yaw", player.rotationYaw);
-  }
-
-  /**
-   * Builds the player motion data to be used as observation signals by the
-   * listener.
-   * @param json a JSON object into which the positional information will be
-   * added.
-   */
-  public static void buildMotionStats(JsonObject json,
-                                        EntityPlayerMP player) {
-    json.addProperty("motion_x", player.motionX);
-    json.addProperty("motion_y", player.motionY);
-    json.addProperty("motion_z", player.motionZ);
-  }
-
-  public static void buildEnvironmentStats(JsonObject json,
-                                           EntityPlayerMP player) {
-    json.addProperty("world_time",
-                     player.world.getWorldTime()); // Current time in ticks
-    json.addProperty(
-        "total_time",
-        player.world.getTotalWorldTime()); // Total time world has been running
-  }
-  /**
-   * Build a signal for the cubic block grid centred on the player.<br>
-   * Default is 3x3x4. (One cube all around the player.)<br>
-   * Blocks are returned as a 1D array, in order
-   * along the x, then z, then y axes.<br>
-   * Data will be returned in an array called "Cells"
-   * @param json a JSON object into which the info for the object under the
-   * mouse will be added.
-   * @param environmentDimensions object which specifies the required dimensions
-   * of the grid to be returned.
-   * @param jsonName name to use for identifying the returned JSON array.
-   */
-  public static void buildGridData(JsonObject json,
-                                   GridDimensions environmentDimensions,
-                                   EntityPlayerMP player,
-                                   String jsonName) {
-    if (player == null || json == null)
-      return;
-
-    JsonArray arr = new JsonArray();
-    BlockPos pos = new BlockPos(player.posX, player.posY, player.posZ);
-    for (int y = environmentDimensions.yMin; y <= environmentDimensions.yMax;
-         y++) {
-      for (int z = environmentDimensions.zMin; z <= environmentDimensions.zMax;
-           z++) {
-        for (int x = environmentDimensions.xMin;
-             x <= environmentDimensions.xMax;
-             x++) {
-          BlockPos p;
-          if (environmentDimensions.absoluteCoords)
-            p = new BlockPos(x, y, z);
-          else
-            p = pos.add(x, y, z);
-          String name = "";
-          IBlockState state = player.world.getBlockState(p);
-          Object blockName = Block.REGISTRY.getNameForObject(state.getBlock());
-          if (blockName instanceof ResourceLocation) {
-            name = ((ResourceLocation)blockName).getResourcePath();
-          }
-          JsonElement element = new JsonPrimitive(name);
-          arr.add(element);
+        /**
+         * Default constructor asks for an environment just big enough to
+         * contain the player and one block all around him.
+         */
+        public GridDimensions() {
+            this.xMin = -1;
+            this.xMax = 1;
+            this.zMin = -1;
+            this.zMax = 1;
+            this.yMin = -1;
+            this.yMax = 2;
+            this.absoluteCoords = false;
         }
-      }
+
+        /**
+         * Convenient constructor - effectively specifies the margin around the
+         * player<br> Passing (1,1,1) will have the same effect as the default
+         * constructor.
+         * @param xMargin number of blocks to the left and right of the player
+         * @param yMargin number of blocks above and below player
+         * @param zMargin number of blocks in front of and behind player
+         */
+        public GridDimensions(int xMargin, int yMargin, int zMargin) {
+            this.xMin = -xMargin;
+            this.xMax = xMargin;
+            this.yMin = -yMargin;
+            this.yMax =
+                yMargin + 1; // +1 because the player is two blocks tall.
+            this.zMin = -zMargin;
+            this.zMax = zMargin;
+            this.absoluteCoords = false;
+        }
+
+        /**
+         * Convenient constructor for the case where all that is required is the
+         * flat patch of ground<br> around the player's feet.
+         * @param xMargin number of blocks around the player in the x-axis
+         * @param zMargin number of blocks around the player in the z-axis
+         */
+        public GridDimensions(int xMargin, int zMargin) {
+            this.xMin = -xMargin;
+            this.xMax = xMargin;
+            this.yMin = -1;
+            this.yMax = -1; // Flat patch of ground at the player's feet.
+            this.zMin = -zMargin;
+            this.zMax = zMargin;
+            this.absoluteCoords = false;
+        }
+    };
+
+    /**
+     * Builds the basic achievement world data to be used as observation signals
+     * by the listener.
+     * @param json a JSON object into which the achievement stats will be added.
+     */
+    public static void buildAchievementStats(JsonObject json,
+                                             EntityPlayerMP player) {
+        StatisticsManagerServer sfw = player.getStatFile();
+        json.addProperty(
+            "DistanceTravelled",
+            sfw.readStat((StatBase)StatList.WALK_ONE_CM) +
+                sfw.readStat((StatBase)StatList.SWIM_ONE_CM) +
+                sfw.readStat((StatBase)StatList.DIVE_ONE_CM) +
+                sfw.readStat(
+                    (StatBase)StatList.FALL_ONE_CM)); // TODO: there are many
+                                                      // other ways of moving!
+        json.addProperty("TimeAlive",
+                         sfw.readStat((StatBase)StatList.TIME_SINCE_DEATH));
+        json.addProperty("MobsKilled",
+                         sfw.readStat((StatBase)StatList.MOB_KILLS));
+        json.addProperty("PlayersKilled",
+                         sfw.readStat((StatBase)StatList.PLAYER_KILLS));
+        json.addProperty("DamageTaken",
+                         sfw.readStat((StatBase)StatList.DAMAGE_TAKEN));
+        json.addProperty("DamageDealt",
+                         sfw.readStat((StatBase)StatList.DAMAGE_DEALT));
+
+        /* Other potential reinforcement signals that may be worth researching:
+        json.addProperty("BlocksDestroyed",
+        sfw.readStat((StatBase)StatList.objectBreakStats) - but objectBreakStats
+        is an array of 32000 StatBase objects - indexed by block type.);
+        json.addProperty("Blocked", ev.player.isMovementBlocked()) - but
+        isMovementBlocker() is a protected method (can get round this with
+        reflection)
+        */
     }
-    json.add(jsonName, arr);
-  }
+
+    /**
+     * Builds the basic life world data to be used as observation signals by the
+     * listener.
+     * @param json a JSON object into which the life stats will be added.
+     */
+    public static void buildLifeStats(JsonObject json, EntityPlayerMP player) {
+        json.addProperty("Life", player.getHealth());
+        json.addProperty("Score",
+                         player.getScore()); // Might always be the same as XP?
+        json.addProperty("Food", player.getFoodStats().getFoodLevel());
+        json.addProperty("XP", player.experienceTotal);
+        json.addProperty("IsAlive", !player.isDead);
+        json.addProperty("Air", player.getAir());
+        json.addProperty("Name", player.getName());
+    }
+
+    /**
+     * Builds the player position data to be used as observation signals by the
+     * listener.
+     * @param json a JSON object into which the positional information will be
+     * added.
+     */
+    public static void buildPositionStats(JsonObject json,
+                                          EntityPlayerMP player) {
+        json.addProperty("x", player.posX);
+        json.addProperty("y", player.posY);
+        json.addProperty("z", player.posZ);
+        json.addProperty("pitch", player.rotationPitch);
+        json.addProperty("yaw", player.rotationYaw);
+    }
+
+    /**
+     * Builds the player motion data to be used as observation signals by the
+     * listener.
+     * @param json a JSON object into which the positional information will be
+     * added.
+     */
+    public static void buildMotionStats(JsonObject json,
+                                        EntityPlayerMP player) {
+        json.addProperty("motion_x", player.motionX);
+        json.addProperty("motion_y", player.motionY);
+        json.addProperty("motion_z", player.motionZ);
+    }
+
+    public static void buildEnvironmentStats(JsonObject json,
+                                             EntityPlayerMP player) {
+        json.addProperty("world_time",
+                         player.world.getWorldTime()); // Current time in ticks
+        json.addProperty(
+            "total_time",
+            player.world
+                .getTotalWorldTime()); // Total time world has been running
+    }
+    /**
+     * Build a signal for the cubic block grid centred on the player.<br>
+     * Default is 3x3x4. (One cube all around the player.)<br>
+     * Blocks are returned as a 1D array, in order
+     * along the x, then z, then y axes.<br>
+     * Data will be returned in an array called "Cells"
+     * @param json a JSON object into which the info for the object under the
+     * mouse will be added.
+     * @param environmentDimensions object which specifies the required
+     *     dimensions
+     * of the grid to be returned.
+     * @param jsonName name to use for identifying the returned JSON array.
+     */
+    public static void buildGridData(JsonObject json,
+                                     GridDimensions environmentDimensions,
+                                     EntityPlayerMP player,
+                                     String jsonName) {
+        if (player == null || json == null)
+            return;
+
+        JsonArray arr = new JsonArray();
+        BlockPos pos = new BlockPos(player.posX, player.posY, player.posZ);
+        for (int y = environmentDimensions.yMin;
+             y <= environmentDimensions.yMax;
+             y++) {
+            for (int z = environmentDimensions.zMin;
+                 z <= environmentDimensions.zMax;
+                 z++) {
+                for (int x = environmentDimensions.xMin;
+                     x <= environmentDimensions.xMax;
+                     x++) {
+                    BlockPos p;
+                    if (environmentDimensions.absoluteCoords)
+                        p = new BlockPos(x, y, z);
+                    else
+                        p = pos.add(x, y, z);
+                    String name = "";
+                    IBlockState state = player.world.getBlockState(p);
+                    Object blockName =
+                        Block.REGISTRY.getNameForObject(state.getBlock());
+                    if (blockName instanceof ResourceLocation) {
+                        name = ((ResourceLocation)blockName).getResourcePath();
+                    }
+                    JsonElement element = new JsonPrimitive(name);
+                    arr.add(element);
+                }
+            }
+        }
+        json.add(jsonName, arr);
+    }
 }

@@ -16,40 +16,40 @@ import com.microsoft.Malmo.Schemas.MissionInit;
  */
 public class ObservationFromTurnSchedulerImplementation
     extends HandlerBase implements IObservationProducer {
-  private int turn = 0;
-  private String key = "";
-  private boolean isOurTurn = false;
+    private int turn = 0;
+    private String key = "";
+    private boolean isOurTurn = false;
 
-  @Override
-  public void writeObservationsToJSON(JsonObject json,
-                                      MissionInit missionInit) {
-    synchronized (this) {
-      if (this.isOurTurn) {
-        json.addProperty("turn_number", this.turn);
-        json.addProperty("turn_key", this.key);
-      }
+    @Override
+    public void writeObservationsToJSON(JsonObject json,
+                                        MissionInit missionInit) {
+        synchronized (this) {
+            if (this.isOurTurn) {
+                json.addProperty("turn_number", this.turn);
+                json.addProperty("turn_key", this.key);
+            }
+        }
     }
-  }
 
-  @Override
-  public void prepare(MissionInit missionInit) {}
+    @Override
+    public void prepare(MissionInit missionInit) {}
 
-  @Override
-  public void cleanup() {}
+    @Override
+    public void cleanup() {}
 
-  public void setKeyAndIncrement(String newkey) {
-    synchronized (this) {
-      this.key = newkey;
-      this.turn++;
-      this.isOurTurn = true;
+    public void setKeyAndIncrement(String newkey) {
+        synchronized (this) {
+            this.key = newkey;
+            this.turn++;
+            this.isOurTurn = true;
+        }
     }
-  }
 
-  public boolean matchesKey(String key) {
-    return this.isOurTurn && key.equals(this.key);
-  }
+    public boolean matchesKey(String key) {
+        return this.isOurTurn && key.equals(this.key);
+    }
 
-  public void turnUsed() {
-    synchronized (this) { this.isOurTurn = false; }
-  }
+    public void turnUsed() {
+        synchronized (this) { this.isOurTurn = false; }
+    }
 }

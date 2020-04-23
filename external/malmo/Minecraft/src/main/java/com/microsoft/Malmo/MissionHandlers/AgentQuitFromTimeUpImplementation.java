@@ -36,47 +36,47 @@ import net.minecraft.util.text.TextFormatting;
  */
 
 public class AgentQuitFromTimeUpImplementation extends QuitFromTimeUpBase {
-  private String quitCode = "";
+    private String quitCode = "";
 
-  @Override
-  public boolean parseParameters(Object params) {
-    if (params == null || !(params instanceof AgentQuitFromTimeUp))
-      return false;
+    @Override
+    public boolean parseParameters(Object params) {
+        if (params == null || !(params instanceof AgentQuitFromTimeUp))
+            return false;
 
-    AgentQuitFromTimeUp qtuparams = (AgentQuitFromTimeUp)params;
-    setTimeLimitMs(qtuparams.getTimeLimitMs().intValue());
-    this.quitCode = qtuparams.getDescription();
-    return true;
-  }
+        AgentQuitFromTimeUp qtuparams = (AgentQuitFromTimeUp)params;
+        setTimeLimitMs(qtuparams.getTimeLimitMs().intValue());
+        this.quitCode = qtuparams.getDescription();
+        return true;
+    }
 
-  @Override
-  protected long getWorldTime() {
-    return Minecraft.getMinecraft().world.getTotalWorldTime();
-  }
+    @Override
+    protected long getWorldTime() {
+        return Minecraft.getMinecraft().world.getTotalWorldTime();
+    }
 
-  @Override
-  protected void drawCountDown(int secondsRemaining) {
-    TextComponentString text =
-        new TextComponentString("" + secondsRemaining + "...");
-    Style style = new Style();
-    style.setBold(true);
-    if (secondsRemaining <= 5)
-      style.setColor(TextFormatting.RED);
+    @Override
+    protected void drawCountDown(int secondsRemaining) {
+        TextComponentString text =
+            new TextComponentString("" + secondsRemaining + "...");
+        Style style = new Style();
+        style.setBold(true);
+        if (secondsRemaining <= 5)
+            style.setColor(TextFormatting.RED);
 
-    text.setStyle(style);
-    Minecraft.getMinecraft()
-        .ingameGUI.getChatGUI()
-        .printChatMessageWithOptionalDeletion(text, 1);
-  }
+        text.setStyle(style);
+        Minecraft.getMinecraft()
+            .ingameGUI.getChatGUI()
+            .printChatMessageWithOptionalDeletion(text, 1);
+    }
 
-  @Override
-  public void prepare(MissionInit missionInit) {}
+    @Override
+    public void prepare(MissionInit missionInit) {}
 
-  @Override
-  public void cleanup() {}
+    @Override
+    public void cleanup() {}
 
-  @Override
-  public String getOutcome() {
-    return this.quitCode;
-  }
+    @Override
+    public String getOutcome() {
+        return this.quitCode;
+    }
 }
