@@ -230,7 +230,7 @@ public class TutorialMission extends Mission {
                          CompletionStrategy.ALL_GOALS,
                          0,
                          true,
-                         "You saved him!",
+                         "You saved them!",
                          0,
                          2);
     saveVillagerPhase.addGoal(new ApproachEntityGoal(
