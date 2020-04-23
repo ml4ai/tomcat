@@ -1,8 +1,8 @@
 package edu.arizona.tomcat.Events;
 
 import net.minecraft.world.World;
-import edu.arizona.tomcat.Events.AttackEvent;
-import edu.arizona.tomcat.Events.BlockEvent;
+import edu.arizona.tomcat.Events.MobAttacked;
+import edu.arizona.tomcat.Events.BlockInteraction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
@@ -30,13 +30,13 @@ public class ForgeEventHandler {
   public void attackEnemy(AttackEntityEvent event) {
       Entity target = event.getTarget();
       if (target instanceof EntityMob) {
-        this.mqttService.publish(new AttackEvent(event), "observations/events");
+        this.mqttService.publish(new MobAttacked(event), "observations/events/attack_mob");
       }
   }
 
   @SubscribeEvent
   public void blockEvent(PlayerInteractEvent.RightClickBlock event) {
-      this.mqttService.publish(event, "observations/events");
+      this.mqttService.publish(new BlockInteraction(event), "observations/events/block_interaction");
   }
 
 }

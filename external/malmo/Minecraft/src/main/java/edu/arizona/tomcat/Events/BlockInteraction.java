@@ -12,24 +12,18 @@ import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-public class BlockEvent extends Event {
-  private String eventType = "block";
+public class BlockInteraction extends Event {
   private String playerName = null;
   private Position blockPosition;
   private String blockType = "";
 
   /** A constructor for general block interaction events. */
-  public BlockEvent(PlayerInteractEvent event) {
+  public BlockInteraction(PlayerInteractEvent.RightClickBlock event) {
+    this.eventType = "block_interaction";
     World world = event.getWorld();
     BlockPos pos = event.getPos();
     this.playerName = event.getEntityPlayer().getDisplayNameString();
     this.blockPosition = new Position(pos);
     this.blockType = world.getBlockState(pos).getBlock().getClass().getName();
-  }
-
-  /** Secondary constructor, for use with the BlockAsistIron class. */
-  public BlockEvent(BlockPos pos, String eventName) {
-    this.blockPosition = new Position(pos);
-    this.eventType = "asist_iron_door_opened";
   }
 }

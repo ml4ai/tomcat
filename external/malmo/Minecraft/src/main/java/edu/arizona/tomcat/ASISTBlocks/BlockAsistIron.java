@@ -1,6 +1,6 @@
 package edu.arizona.tomcat.ASISTBlocks;
 
-import edu.arizona.tomcat.Events.BlockEvent;
+import edu.arizona.tomcat.Events.IronDoorOpened;
 import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -36,11 +36,12 @@ public class BlockAsistIron extends Block {
 
     super(Material.IRON);
     setUnlocalizedName("ASIST_Iron_Block");
-    setRegistryName(
-        "ASIST_Iron_Block"); // The name Minecraft sees. Also used in en_US.lang
+    //
+    // The name Minecraft sees. Also used in en_US.lang
+    setRegistryName("ASIST_Iron_Block"); 
 
-    this.setCreativeTab(
-        CreativeTabs.REDSTONE); // shows up in redstone tab in creative mode
+    // Shows up in the redstone tab in creative mode
+    this.setCreativeTab(CreativeTabs.REDSTONE); 
   }
 
   @Override
@@ -58,8 +59,7 @@ public class BlockAsistIron extends Block {
 
     // Technically a command block destroys this, so we aren't identifying a
     // player as destroying this block for the sake of the code.
-    BlockEvent evt = new BlockEvent(pos, "door_opened"); 
-    this.mqttService.publish(evt, "observations/events");
+    this.mqttService.publish(new IronDoorOpened(pos), "observations/events/iron_door_opened");
 
     return new java.util.ArrayList<ItemStack>(); // Drop nothing
   }

@@ -10,27 +10,28 @@ import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
-public class AttackEvent extends Event {
+public class MobAttacked extends Event {
 
   private String targetName;
   private Position targetPosition;
   private Velocity targetVelocity;
   private String playerName;
   private String targetType;
+  private UUID targetId;
 
-  // Adarsh: I think these are the health values of the player and target
-  // *after* the attack, but I am not sure. TODO Confirm this.
+  // Note: targetHealth is the health BEFORE the attack event.
   private double targetHealth;
 
-  public AttackEvent(AttackEntityEvent event) {
+  public MobAttacked(AttackEntityEvent event) {
     EntityMob target = (EntityMob)event.getTarget();
-    this.eventType = "attack";
+    this.eventType = "attack_mob";
     EntityPlayer player = event.getEntityPlayer();
     this.playerName = player.getDisplayNameString();
-    this.targetName = target.getName();
+    this.targetType = target.getName();
+    this.targetId = target.getUniqueID();
     this.targetHealth = target.getHealth();
-    this.targetType = target.getClass().getName();
     this.targetPosition = new Position(target);
     this.targetVelocity = new Velocity(target);
   }
