@@ -32,7 +32,7 @@ public class BlockAsistIron extends Block {
 
     super(Material.IRON);
     setUnlocalizedName("ASIST_Iron_Block");
-    //
+
     // The name Minecraft sees. Also used in en_US.lang
     setRegistryName("ASIST_Iron_Block"); 
 

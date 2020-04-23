@@ -14,16 +14,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ForgeEventHandler {
 
   private FMLCommonHandler fmlCommonHandler = FMLCommonHandler.instance();
-  // MQTT service
+
+  /** Instance of the MqttService singleton to use for publishing messages. */
   private MqttService mqttService = MqttService.getInstance();
-  /**
-   * This event is triggered when the player attacks an enemy. It passes
-   * specific event information to the helper method that prints the output.
-   *
-   * @param event - The event triggered. In this case the AttackEntityEvent
-   */
+
+  /** Handle AttackEntityEvent events from Forge event bus, publish events to
+   * MQTT message bus with type 'mob_attacked'. */
   @SubscribeEvent
-  public void onEvent(AttackEntityEvent event) {
+  public void handle(AttackEntityEvent event) {
     // We use this technique to avoid double counting events due to the
     // integrated server nature of Malmo.
     if (this.fmlCommonHandler.getEffectiveSide() == Side.CLIENT) {
@@ -34,8 +32,10 @@ public class ForgeEventHandler {
     }
   }
 
+  /** Handle events from Forge event bus triggered by players right-clicking a
+   * block, publish events to MQTT message bus with type 'block_interaction'. */
   @SubscribeEvent
-  public void onEvent(PlayerInteractEvent.RightClickBlock event) {
+  public void handle(PlayerInteractEvent.RightClickBlock event) {
     // We use this technique (event.getWorld().isRemote() to avoid double
     // counting events due to the integrated server nature of Malmo.
     if (!event.getWorld().isRemote) {
@@ -43,8 +43,13 @@ public class ForgeEventHandler {
     }
   }
 
+  /** Handle events from Forge event bus triggered by living entities dying
+   * (players, mobs), publish events to MQTT message bus with type
+   * 'entity_death'. [Note: This event does not seem to fire when a player is
+   * killed by falling into a lava pit.]
+   */
   @SubscribeEvent
-  public void onEvent(LivingDeathEvent event) {
+  public void handle(LivingDeathEvent event) {
     // We use this technique to avoid double counting events due to the
     // integrated server nature of Malmo.
     if (this.fmlCommonHandler.getEffectiveSide() == Side.CLIENT) {
