@@ -2,7 +2,12 @@
   "pages": 
   [
     {
-      "text": ["Congratulations!", "", "You successfully completed the tutorial and are now prepared for the mission.", "The mission world will now be loaded."],
+      "text": [
+          "Congratulations!",
+          "",
+          "You successfully completed the tutorial!",
+          "The mission world will now be loaded."
+      ],
       "images": []
     }
   ]
