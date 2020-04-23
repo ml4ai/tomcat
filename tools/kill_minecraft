@@ -128,9 +128,4 @@ fi
 
 # TODO? 
 # Possibly we cleanup log files and the like, perhaps moving them to a
-# timestampped place. 
-
-
-
-
-
+# timestamped place. 
