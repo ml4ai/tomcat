@@ -23,8 +23,13 @@
 
 set -u 
 
-to_kill=""
+# This gets us TOMCAT_TMP_DIR
+source "$TOMCAT"/tools/configuration_helpers
 
+# This gets things like TOMCAT_DEBUG_LEVEL
+set_local_configuration
+
+to_kill=""
 
 kill_all=0
 bad_invocation=0
@@ -66,8 +71,6 @@ if [[ $kill_all -ne 0 ]]; then
         to_kill="${to_kill} ${ps_tmp}" 
     fi 
 else 
-    export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
-
     minecraft_launch_pid_file="${TOMCAT_TMP_DIR}/minecraft_launch.pid"
 
     if [[ -e "${minecraft_launch_pid_file}" ]]; then 
@@ -123,6 +126,6 @@ if [[ -n "${to_kill}" ]]; then
     done 
 fi
 
-
-
-
+# TODO? 
+# Possibly we cleanup log files and the like, perhaps moving them to a
+# timestamped place. 

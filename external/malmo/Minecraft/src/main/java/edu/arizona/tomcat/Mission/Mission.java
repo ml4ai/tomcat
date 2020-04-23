@@ -1,8 +1,10 @@
 package edu.arizona.tomcat.Mission;
+
 import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.Schemas.ItemType;
 import com.microsoft.Malmo.Schemas.PosAndDirection;
 import edu.arizona.tomcat.Emotion.EmotionHandler;
+import edu.arizona.tomcat.Messaging.MqttService;
 import edu.arizona.tomcat.Messaging.TomcatClientServerHandler;
 import edu.arizona.tomcat.Messaging.TomcatMessageData;
 import edu.arizona.tomcat.Messaging.TomcatMessaging;
@@ -10,12 +12,8 @@ import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
 import edu.arizona.tomcat.Mission.gui.FeedbackListener;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
-import edu.arizona.tomcat.Mission.gui.SelfReportFileHandler;
 import edu.arizona.tomcat.Utils.*;
 import edu.arizona.tomcat.World.DrawingHandler;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntitySkeleton;
@@ -26,10 +24,14 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import edu.arizona.tomcat.Events.EntityDeath;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
+
 
 public abstract class Mission implements FeedbackListener, PhaseListener {
 
@@ -37,6 +39,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
   ;
   private static final long ENTITY_DELETION_DELAY = 1;
 
+  private MqttService mqttService = MqttService.getInstance();
   protected ID id;
   protected static final int REMAINING_SECONDS_ALERT = 30;
   private boolean canShowSelfReport;
@@ -55,7 +58,6 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
   protected ArrayList<MissionPhase> phases;
   protected ArrayList<MissionListener> listeners;
   protected HashMap<Entity, Long> entitiesToRemove;
-  protected SelfReportFileHandler selfReportFileHandler;
 
   /**
    * Abstract constructor for initialization of the drawing handler
@@ -68,8 +70,6 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     this.worldFrozen = false;
     this.missionSentToClients = false;
     this.entitiesToRemove = new HashMap<Entity, Long>();
-    SelfReportFileHandler.createSelfReportOutputFolder();
-    DiscreteEventsHelper.createDiscreteEventsOutputFolder();
     MinecraftForge.EVENT_BUS.register(this);
   }
 
@@ -77,18 +77,11 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
   public void PlayerDeath(LivingDeathEvent event) {
     if (!event.getEntity().world.isRemote && event.getEntity() instanceof
                                                  EntityPlayer) {
+      // We explicitly publish the message to the message bus here since it
+      // player deaths are handled different from mob deaths.
+      this.mqttService.publish(new EntityDeath(event), "observations/events/entity_death");
       event.setCanceled(true);
       this.onPlayerDeath((EntityPlayer)event.getEntity());
-    }
-  }
-
-  @SubscribeEvent(priority = EventPriority.HIGHEST)
-  public void CommandEvents(CommandEvent evt) {
-    System.out.println("================>COMMAND");
-    System.out.println(evt.getSender().getName());
-    System.out.println(evt.getCommand().getName());
-    if (evt.getSender() instanceof EntityPlayer) {
-      System.out.println("============>Player sent event");
     }
   }
 
@@ -304,7 +297,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
       if (elapsedTime % this.selfReportPromptTimeInSeconds == 0 &&
           this.canShowSelfReport) {
         for (EntityPlayerMP player : MinecraftServerHelper.getPlayers()) {
-          String timestamp = Converter.getCurrentTimestamp();
+          String timestamp = TimeStamper.getTimeStamp();
           SelfReportContent content = this.getSelfReportContent(player, world);
           content.setInitialTimestamp(timestamp);
           TomcatMessage message =
@@ -396,7 +389,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
           this.id.ordinal(), player.getName(), content.getInitialTimestamp());
       missionSelfReport.setVersion(content.getVersion());
       missionSelfReport.setResponses(content.getResponses());
-      SelfReportFileHandler.writeSelfReport(missionSelfReport);
+      mqttService.publish(missionSelfReport, "observations/self_reports");
       if (TomcatClientServerHandler.haveAllClientsReplied()) {
         this.unpauseMission();
       }
@@ -440,8 +433,8 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
   }
 
   /**
-   * Dismisses the message screen that informs the player he should wait for the
-   * others
+   * Dismisses the message screen that informs the player that they should wait
+   * for the others.
    */
   private void dismissWaitingForOthersScreen() {
     TomcatMessaging.TomcatMessage message =
@@ -451,7 +444,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 
   /**
    * When a player tries to dismiss a screen but others are still with their
-   * screens prompted, show a message a screen saying the player he smust wait
+   * screens prompted, show a message a screen saying the player they must wait
    * for the others to continue the mission.
    * @param player
    */

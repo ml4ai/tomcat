@@ -3,9 +3,7 @@
 -- Script to set up system audio recording using BlackHole.
 -- Tested using macOS Catalina.
 
-tell application "Audio MIDI Setup"
-  activate
-end tell
+tell application "Audio MIDI Setup" to activate
 
 tell application "System Events" to tell application process "Audio MIDI Setup"
   tell splitter group 1 of window "Audio Devices"
