@@ -22,7 +22,6 @@ public class ForgeEventHandler {
    *
    * @param event - The event triggered. In this case the AttackEntityEvent
    */
-  @SideOnly(Side.CLIENT)
   @SubscribeEvent
   public void onEvent(AttackEntityEvent event) {
     // We use this technique to avoid double counting events due to the
@@ -44,7 +43,6 @@ public class ForgeEventHandler {
     }
   }
 
-  @SideOnly(Side.CLIENT)
   @SubscribeEvent
   public void onEvent(LivingDeathEvent event) {
     // We use this technique to avoid double counting events due to the
