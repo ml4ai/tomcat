@@ -58,4 +58,20 @@ public class MqttService {
       System.err.println("excep " + me);
     }
   }
+  public void publish(String msg, String topic) {
+    try {
+      MqttMessage message = new MqttMessage(msg.getBytes());
+      message.setQos(2);
+      this.client.publish(topic, message);
+    }
+    catch (MqttException me) {
+      System.err.println("MqttException:");
+      System.err.println("reason " + me.getReasonCode());
+      System.err.println("msg " + me.getMessage());
+      System.err.println("loc " + me.getLocalizedMessage());
+      System.err.println("cause " + me.getCause());
+      System.err.println("excep " + me);
+    }
+  }
+
 }

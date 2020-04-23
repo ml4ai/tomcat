@@ -296,7 +296,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
       if (elapsedTime % this.selfReportPromptTimeInSeconds == 0 &&
           this.canShowSelfReport) {
         for (EntityPlayerMP player : MinecraftServerHelper.getPlayers()) {
-          String timestamp = Converter.getCurrentTimestamp();
+          String timestamp = TimeStamper.getTimeStamp();
           SelfReportContent content = this.getSelfReportContent(player, world);
           content.setInitialTimestamp(timestamp);
           TomcatMessage message =
