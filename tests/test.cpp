@@ -94,6 +94,7 @@ Mission create_mission(variables_map parameters_map) {
   Mission mission = Mission(mission_id_or_path,
                             time_limit_in_seconds,
                             self_report_prompt_time_in_seconds,
+                            0,
                             port_number,
                             record_observations,
                             record_commands,

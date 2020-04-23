@@ -4,7 +4,9 @@ import com.microsoft.Malmo.Schemas.BlockType;
 import com.microsoft.Malmo.Schemas.ItemType;
 import com.microsoft.Malmo.Utils.MinecraftTypeHelper;
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -20,6 +22,17 @@ public class InventoryHandler {
     Item item = MinecraftTypeHelper.ParseItemType(type.value(), false);
     ItemStack itemStack = new ItemStack(item, quantity);
     player.inventory.addItemStackToInventory(itemStack);
+  }
+  
+  /**
+   * Places an item on an entity's main hand
+   * @param type - Item type
+   */
+  public static void
+  addItemToMainHand(Entity entity, ItemType type) {
+    Item item = MinecraftTypeHelper.ParseItemType(type.value(), false);
+    ItemStack itemStack = new ItemStack(item, 1);
+    entity.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, itemStack);
   }
 
   /**

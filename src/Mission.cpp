@@ -25,6 +25,7 @@ namespace tomcat {
   Mission::Mission(string mission_id_or_path,
                    unsigned int time_limit_in_seconds,
                    unsigned int self_report_prompt_time_in_seconds,
+                   unsigned int level_of_difficulty,
                    int port_number,
                    bool record_observations,
                    bool record_commands,
@@ -35,6 +36,7 @@ namespace tomcat {
     this->time_limit_in_seconds = time_limit_in_seconds;
     this->self_report_prompt_time_in_seconds =
         self_report_prompt_time_in_seconds;
+    this->level_of_difficulty = level_of_difficulty;
     this->port_number = port_number;
     this->record_observations = record_observations;
     this->record_commands = record_commands;
@@ -130,23 +132,24 @@ namespace tomcat {
               </ServerInitialConditions>
               <ServerHandlers>
                 <FileWorldGenerator
-                  src="{}/data/worlds/{}"
+                  src="{}"
                   forceReset="true"
                 />
                 <TomcatDecorator
                   mission="{}"
                   timeLimitInSeconds="{}"
                   selfReportPromptTimeInSeconds="{}"
+                  levelOfDifficulty="{}"
                 />
               </ServerHandlers>
           </ServerSection>
           {}
         </Mission>)",
-        getenv("TOMCAT"),
-        world_dir,
+        world_dir_path,
         this->mission_id_or_path,
         this->time_limit_in_seconds,
         this->self_report_prompt_time_in_seconds,
+        this->level_of_difficulty,
         agent_section_tags);
 
     return xml;

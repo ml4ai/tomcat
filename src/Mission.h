@@ -53,6 +53,7 @@ namespace tomcat {
     Mission(std::string mission_id_or_path,
             unsigned int time_limit_in_seconds,
             unsigned int self_report_prompt_time_in_seconds,
+            unsigned int level_of_difficulty,
             int port_number,
             bool record_observations,
             bool record_commands,
@@ -89,6 +90,7 @@ namespace tomcat {
     std::string mission_id_or_path;
     unsigned int time_limit_in_seconds;
     unsigned int self_report_prompt_time_in_seconds;
+    unsigned int level_of_difficulty;
     int port_number;
     bool record_observations;
     bool record_commands;
