@@ -26,7 +26,7 @@ public class MobAttacked extends Event {
 
   public MobAttacked(AttackEntityEvent event) {
     EntityMob target = (EntityMob)event.getTarget();
-    this.eventType = "attack_mob";
+    this.eventType = "mob_attacked";
     EntityPlayer player = event.getEntityPlayer();
     this.playerName = player.getDisplayNameString();
     this.targetType = target.getName();

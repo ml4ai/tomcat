@@ -161,7 +161,7 @@ do_mission() {
         # redirect the output to a file.
         mosquitto_sub -t observations/state > "$malmo_data" &
         pid_observations_state=$!
-        mosquitto_sub -t observations/events > "$event_data" &
+        mosquitto_sub -t "observations/events/#" > "$event_data" &
         pid_observations_events=$!
         mosquitto_sub -t observations/self_reports > "$self_report_data" &
         pid_observations_self_reports=$!

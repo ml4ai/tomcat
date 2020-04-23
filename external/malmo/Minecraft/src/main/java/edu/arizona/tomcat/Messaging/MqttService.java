@@ -18,6 +18,14 @@ public class MqttService {
   private Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
   private static MqttService instance = null;
 
+  private void printException(MqttException me) {
+    System.err.println("MqttException:");
+    System.err.println("reason " + me.getReasonCode());
+    System.err.println("msg " + me.getMessage());
+    System.err.println("loc " + me.getLocalizedMessage());
+    System.err.println("cause " + me.getCause());
+    System.err.println("excep " + me);
+  }
   private MqttService() {
     try {
       MemoryPersistence persistence = new MemoryPersistence();
@@ -28,14 +36,10 @@ public class MqttService {
       this.client.connect(connectOptions);
     }
     catch (MqttException me) {
-      System.err.println("MqttException:");
-      System.err.println("reason " + me.getReasonCode());
-      System.err.println("msg " + me.getMessage());
-      System.err.println("loc " + me.getLocalizedMessage());
-      System.err.println("cause " + me.getCause());
-      System.err.println("excep " + me);
+      this.printException(me);
     }
   }
+
   public static MqttService getInstance() {
     if (instance == null) {
       instance = new MqttService();
@@ -44,20 +48,9 @@ public class MqttService {
   }
 
   public void publish(Object object, String topic) {
-    try {
-      MqttMessage message = new MqttMessage(gson.toJson(object).getBytes());
-      message.setQos(2);
-      this.client.publish(topic, message);
-    }
-    catch (MqttException me) {
-      System.err.println("MqttException:");
-      System.err.println("reason " + me.getReasonCode());
-      System.err.println("msg " + me.getMessage());
-      System.err.println("loc " + me.getLocalizedMessage());
-      System.err.println("cause " + me.getCause());
-      System.err.println("excep " + me);
-    }
+    this.publish(gson.toJson(object), topic);
   }
+
   public void publish(String msg, String topic) {
     try {
       MqttMessage message = new MqttMessage(msg.getBytes());
@@ -65,12 +58,7 @@ public class MqttService {
       this.client.publish(topic, message);
     }
     catch (MqttException me) {
-      System.err.println("MqttException:");
-      System.err.println("reason " + me.getReasonCode());
-      System.err.println("msg " + me.getMessage());
-      System.err.println("loc " + me.getLocalizedMessage());
-      System.err.println("cause " + me.getCause());
-      System.err.println("excep " + me);
+      this.printException(me);
     }
   }
 
