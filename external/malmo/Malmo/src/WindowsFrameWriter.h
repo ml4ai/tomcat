@@ -37,34 +37,35 @@
 #include <windows.h>
 
 namespace malmo {
-  class WindowsFrameWriter : public VideoFrameWriter {
-  public:
-    WindowsFrameWriter(std::string path,
-                       std::string info_filename,
-                       short width,
-                       short height,
-                       int frames_per_second,
-                       int64_t bit_rate = 400000,
-                       int channels = 3,
-                       bool drop_input_frames = false);
-    ~WindowsFrameWriter();
-    void open() override;
-    void close() override;
+    class WindowsFrameWriter : public VideoFrameWriter {
+      public:
+        WindowsFrameWriter(std::string path,
+                           std::string info_filename,
+                           short width,
+                           short height,
+                           int frames_per_second,
+                           int64_t bit_rate = 400000,
+                           int channels = 3,
+                           bool drop_input_frames = false);
+        ~WindowsFrameWriter();
+        void open() override;
+        void close() override;
 
-  private:
-    void doWrite(char* rgb, int width, int height, int frame_index) override;
-    void runFFMPEG();
-    std::string search_path();
+      private:
+        void
+        doWrite(char* rgb, int width, int height, int frame_index) override;
+        void runFFMPEG();
+        std::string search_path();
 
-    int64_t bit_rate;
-    std::string ffmpeg_path;
+        int64_t bit_rate;
+        std::string ffmpeg_path;
 
-    boost::thread ffmpeg_thread;
+        boost::thread ffmpeg_thread;
 
-    HANDLE g_hChildStd_IN_Rd;
-    HANDLE g_hChildStd_IN_Wr;
-    HANDLE g_hChildStd_OUT_Wr;
-  };
+        HANDLE g_hChildStd_IN_Rd;
+        HANDLE g_hChildStd_IN_Wr;
+        HANDLE g_hChildStd_OUT_Wr;
+    };
 } // namespace malmo
 
 #endif

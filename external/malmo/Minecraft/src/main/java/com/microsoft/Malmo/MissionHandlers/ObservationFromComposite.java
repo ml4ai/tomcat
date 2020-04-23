@@ -35,55 +35,55 @@ import java.util.HashMap;
  */
 public class ObservationFromComposite
     extends HandlerBase implements IObservationProducer {
-  private ArrayList<IObservationProducer> producers;
+    private ArrayList<IObservationProducer> producers;
 
-  /**
-   * Add another ObservationProducer object.<br>
-   *
-   * @param producer the observation producing object to add to the mix.
-   */
-  public void addObservationProducer(IObservationProducer producer) {
-    if (this.producers == null) {
-      this.producers = new ArrayList<IObservationProducer>();
+    /**
+     * Add another ObservationProducer object.<br>
+     *
+     * @param producer the observation producing object to add to the mix.
+     */
+    public void addObservationProducer(IObservationProducer producer) {
+        if (this.producers == null) {
+            this.producers = new ArrayList<IObservationProducer>();
+        }
+        this.producers.add(producer);
     }
-    this.producers.add(producer);
-  }
 
-  @Override
-  public void writeObservationsToJSON(JsonObject json,
-                                      MissionInit missionInit) {
-    if (this.producers == null)
-      return;
+    @Override
+    public void writeObservationsToJSON(JsonObject json,
+                                        MissionInit missionInit) {
+        if (this.producers == null)
+            return;
 
-    for (IObservationProducer producer : this.producers) {
-      producer.writeObservationsToJSON(json, missionInit);
+        for (IObservationProducer producer : this.producers) {
+            producer.writeObservationsToJSON(json, missionInit);
+        }
     }
-  }
 
-  @Override
-  public void prepare(MissionInit missionInit) {
-    for (IObservationProducer producer : this.producers) {
-      producer.prepare(missionInit);
+    @Override
+    public void prepare(MissionInit missionInit) {
+        for (IObservationProducer producer : this.producers) {
+            producer.prepare(missionInit);
+        }
     }
-  }
 
-  @Override
-  public void cleanup() {
-    for (IObservationProducer producer : this.producers) {
-      producer.cleanup();
+    @Override
+    public void cleanup() {
+        for (IObservationProducer producer : this.producers) {
+            producer.cleanup();
+        }
     }
-  }
 
-  @Override
-  public void appendExtraServerInformation(HashMap<String, String> map) {
-    for (IObservationProducer producer : this.producers) {
-      if (producer instanceof HandlerBase)
-        ((HandlerBase)producer).appendExtraServerInformation(map);
+    @Override
+    public void appendExtraServerInformation(HashMap<String, String> map) {
+        for (IObservationProducer producer : this.producers) {
+            if (producer instanceof HandlerBase)
+                ((HandlerBase)producer).appendExtraServerInformation(map);
+        }
     }
-  }
 
-  public boolean isFixed() {
-    return false; // Return true to stop MissionBehaviour from adding new
-                  // handlers to this group.
-  }
+    public boolean isFixed() {
+        return false; // Return true to stop MissionBehaviour from adding new
+                      // handlers to this group.
+    }
 }

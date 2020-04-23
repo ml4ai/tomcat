@@ -36,66 +36,66 @@ import net.minecraft.world.WorldType;
 
 public class DefaultWorldGeneratorImplementation
     extends HandlerBase implements IWorldGenerator {
-  DefaultWorldGenerator dwparams;
+    DefaultWorldGenerator dwparams;
 
-  @Override
-  public boolean parseParameters(Object params) {
-    if (params == null || !(params instanceof DefaultWorldGenerator))
-      return false;
+    @Override
+    public boolean parseParameters(Object params) {
+        if (params == null || !(params instanceof DefaultWorldGenerator))
+            return false;
 
-    this.dwparams = (DefaultWorldGenerator)params;
-    return true;
-  }
-
-  public static long getWorldSeedFromString(String seedString) {
-    // This seed logic mirrors the Minecraft code in
-    // GuiCreateWorld.actionPerformed:
-    long seed = (new Random()).nextLong();
-    if (seedString != null && !seedString.isEmpty()) {
-      try {
-        long i = Long.parseLong(seedString);
-        if (i != 0L)
-          seed = i;
-      }
-      catch (NumberFormatException numberformatexception) {
-        seed = (long)seedString.hashCode();
-      }
+        this.dwparams = (DefaultWorldGenerator)params;
+        return true;
     }
-    return seed;
-  }
 
-  @Override
-  public boolean createWorld(MissionInit missionInit) {
-    long seed = getWorldSeedFromString(this.dwparams.getSeed());
-    WorldType.WORLD_TYPES[0].onGUICreateWorldPress();
-    WorldSettings worldsettings = new WorldSettings(
-        seed, GameType.SURVIVAL, true, false, WorldType.WORLD_TYPES[0]);
-    worldsettings.enableCommands();
-    // Create a filename for this map - we use the time stamp to make sure it is
-    // different from other worlds, otherwise no new world will be created, it
-    // will simply load the old one.
-    return MapFileHelper.createAndLaunchWorld(
-        worldsettings, this.dwparams.isDestroyAfterUse());
-  }
+    public static long getWorldSeedFromString(String seedString) {
+        // This seed logic mirrors the Minecraft code in
+        // GuiCreateWorld.actionPerformed:
+        long seed = (new Random()).nextLong();
+        if (seedString != null && !seedString.isEmpty()) {
+            try {
+                long i = Long.parseLong(seedString);
+                if (i != 0L)
+                    seed = i;
+            }
+            catch (NumberFormatException numberformatexception) {
+                seed = (long)seedString.hashCode();
+            }
+        }
+        return seed;
+    }
 
-  @Override
-  public boolean shouldCreateWorld(MissionInit missionInit, World world) {
-    if (this.dwparams != null && this.dwparams.isForceReset())
-      return true;
+    @Override
+    public boolean createWorld(MissionInit missionInit) {
+        long seed = getWorldSeedFromString(this.dwparams.getSeed());
+        WorldType.WORLD_TYPES[0].onGUICreateWorldPress();
+        WorldSettings worldsettings = new WorldSettings(
+            seed, GameType.SURVIVAL, true, false, WorldType.WORLD_TYPES[0]);
+        worldsettings.enableCommands();
+        // Create a filename for this map - we use the time stamp to make sure
+        // it is different from other worlds, otherwise no new world will be
+        // created, it will simply load the old one.
+        return MapFileHelper.createAndLaunchWorld(
+            worldsettings, this.dwparams.isDestroyAfterUse());
+    }
 
-    if (Minecraft.getMinecraft().world == null || world == null)
-      return true; // Definitely need to create a world if there isn't one in
-                   // existence!
+    @Override
+    public boolean shouldCreateWorld(MissionInit missionInit, World world) {
+        if (this.dwparams != null && this.dwparams.isForceReset())
+            return true;
 
-    String genOptions = world.getWorldInfo().getGeneratorOptions();
-    if (genOptions != null && !genOptions.isEmpty())
-      return true; // Default world has no generator options.
+        if (Minecraft.getMinecraft().world == null || world == null)
+            return true; // Definitely need to create a world if there isn't one
+                         // in existence!
 
-    return false;
-  }
+        String genOptions = world.getWorldInfo().getGeneratorOptions();
+        if (genOptions != null && !genOptions.isEmpty())
+            return true; // Default world has no generator options.
 
-  @Override
-  public String getErrorDetails() {
-    return ""; // Don't currently have any error exit points.
-  }
+        return false;
+    }
+
+    @Override
+    public String getErrorDetails() {
+        return ""; // Don't currently have any error exit points.
+    }
 }

@@ -36,17 +36,19 @@ namespace fs = boost::filesystem;
 using fs::path, fs::exists;
 
 namespace malmo {
-  string FindSchemaFile(const string& name) {
-    char* tomcat_dir = getenv("TOMCAT");
-    if (tomcat_dir == NULL) {
-      throw runtime_error("The TOMCAT environment variable has not been set."
-                          " Please set it to point to your local copy of the "
-                          "ToMCAT repository");
+    string FindSchemaFile(const string& name) {
+        char* tomcat_dir = getenv("TOMCAT");
+        if (tomcat_dir == NULL) {
+            throw runtime_error(
+                "The TOMCAT environment variable has not been set."
+                " Please set it to point to your local copy of the "
+                "ToMCAT repository");
+        }
+        path schema_path = path(tomcat_dir) / "external/malmo/Schemas" / name;
+        if (!exists(schema_path)) {
+            throw runtime_error("Schema file " + schema_path.string() +
+                                "not found!");
+        }
+        return schema_path.string();
     }
-    path schema_path = path(tomcat_dir) / "external/malmo/Schemas" / name;
-    if (!exists(schema_path)) {
-      throw runtime_error("Schema file " + schema_path.string() + "not found!");
-    }
-    return schema_path.string();
-  }
 } // namespace malmo

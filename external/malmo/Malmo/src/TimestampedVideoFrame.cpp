@@ -31,110 +31,114 @@
 using namespace std;
 
 namespace malmo {
-  TimestampedVideoFrame::TimestampedVideoFrame()
-      : width(0), height(0), channels(0), xPos(0), yPos(0), zPos(0), yaw(0),
-        pitch(0), frametype(VIDEO) {}
+    TimestampedVideoFrame::TimestampedVideoFrame()
+        : width(0), height(0), channels(0), xPos(0), yPos(0), zPos(0), yaw(0),
+          pitch(0), frametype(VIDEO) {}
 
-  TimestampedVideoFrame::TimestampedVideoFrame(
-      short width,
-      short height,
-      short channels,
-      TimestampedUnsignedCharVector& message,
-      Transform transform,
-      FrameType frametype)
-      : timestamp(message.timestamp), width(width), height(height),
-        channels(channels), frametype(frametype), xPos(0), yPos(0), zPos(0),
-        yaw(0), pitch(0) {
-    // First extract the positional information from the header:
-    uint32_t* pInt = reinterpret_cast<uint32_t*>(&(message.data[0]));
-    this->xPos = ntoh_float(*pInt);
-    pInt++;
-    this->yPos = ntoh_float(*pInt);
-    pInt++;
-    this->zPos = ntoh_float(*pInt);
-    pInt++;
-    this->yaw = ntoh_float(*pInt);
-    pInt++;
-    this->pitch = ntoh_float(*pInt);
+    TimestampedVideoFrame::TimestampedVideoFrame(
+        short width,
+        short height,
+        short channels,
+        TimestampedUnsignedCharVector& message,
+        Transform transform,
+        FrameType frametype)
+        : timestamp(message.timestamp), width(width), height(height),
+          channels(channels), frametype(frametype), xPos(0), yPos(0), zPos(0),
+          yaw(0), pitch(0) {
+        // First extract the positional information from the header:
+        uint32_t* pInt = reinterpret_cast<uint32_t*>(&(message.data[0]));
+        this->xPos = ntoh_float(*pInt);
+        pInt++;
+        this->yPos = ntoh_float(*pInt);
+        pInt++;
+        this->zPos = ntoh_float(*pInt);
+        pInt++;
+        this->yaw = ntoh_float(*pInt);
+        pInt++;
+        this->pitch = ntoh_float(*pInt);
 
-    const int stride = width * channels;
-    switch (transform) {
-    case IDENTITY:
-      this->pixels = vector<unsigned char>(
-          message.data.begin() + FRAME_HEADER_SIZE, message.data.end());
-      break;
+        const int stride = width * channels;
+        switch (transform) {
+        case IDENTITY:
+            this->pixels = vector<unsigned char>(
+                message.data.begin() + FRAME_HEADER_SIZE, message.data.end());
+            break;
 
-    case RAW_BMP:
-      this->pixels = vector<unsigned char>(
-          message.data.begin() + FRAME_HEADER_SIZE, message.data.end());
-      if (channels == 3) {
-        // Swap BGR -> RGB:
-        for (int i = 0; i < this->pixels.size(); i += 3) {
-          char t = this->pixels[i];
-          this->pixels[i] = this->pixels[i + 2];
-          this->pixels[i + 2] = t;
+        case RAW_BMP:
+            this->pixels = vector<unsigned char>(
+                message.data.begin() + FRAME_HEADER_SIZE, message.data.end());
+            if (channels == 3) {
+                // Swap BGR -> RGB:
+                for (int i = 0; i < this->pixels.size(); i += 3) {
+                    char t = this->pixels[i];
+                    this->pixels[i] = this->pixels[i + 2];
+                    this->pixels[i + 2] = t;
+                }
+            }
+            break;
+
+        case REVERSE_SCANLINE:
+            this->pixels = vector<unsigned char>();
+            for (int i = 0, offset = (height - 1) * stride; i < height;
+                 i++, offset -= stride) {
+                auto it = message.data.begin() + offset + FRAME_HEADER_SIZE;
+                this->pixels.insert(this->pixels.end(), it, it + stride);
+            }
+
+            break;
+
+        default:
+            throw invalid_argument("Unknown transform");
         }
-      }
-      break;
-
-    case REVERSE_SCANLINE:
-      this->pixels = vector<unsigned char>();
-      for (int i = 0, offset = (height - 1) * stride; i < height;
-           i++, offset -= stride) {
-        auto it = message.data.begin() + offset + FRAME_HEADER_SIZE;
-        this->pixels.insert(this->pixels.end(), it, it + stride);
-      }
-
-      break;
-
-    default:
-      throw invalid_argument("Unknown transform");
     }
-  }
 
-  bool
-  TimestampedVideoFrame::operator==(const TimestampedVideoFrame& other) const {
-    return this->frametype == other.frametype && this->width == other.width &&
-           this->height == other.height && this->channels == other.channels &&
-           this->timestamp == other.timestamp && this->pixels == other.pixels;
-    // Not much point in comparing pos, pitch and yaw - covered by the pixel
-    // comparison.
-  }
-
-  ostream& operator<<(ostream& os, const TimestampedVideoFrame& tsvidframe) {
-    os << "TimestampedVideoFrame: " << to_simple_string(tsvidframe.timestamp)
-       << ", type " << tsvidframe.frametype << ", " << tsvidframe.width << " x "
-       << tsvidframe.height << " x " << tsvidframe.channels << ", ("
-       << tsvidframe.xPos << "," << tsvidframe.yPos << "," << tsvidframe.zPos
-       << " - yaw:" << tsvidframe.yaw << ", pitch:" << tsvidframe.pitch << ")";
-    return os;
-  }
-
-  ostream& operator<<(ostream& os,
-                      const TimestampedVideoFrame::FrameType& type) {
-    switch (type) {
-    case TimestampedVideoFrame::VIDEO:
-      os << "video";
-      break;
-    case TimestampedVideoFrame::DEPTH_MAP:
-      os << "depth";
-      break;
-    case TimestampedVideoFrame::LUMINANCE:
-      os << "luminance";
-      break;
-    case TimestampedVideoFrame::COLOUR_MAP:
-      os << "colourmap";
-      break;
-    default:
-      break;
+    bool TimestampedVideoFrame::operator==(
+        const TimestampedVideoFrame& other) const {
+        return this->frametype == other.frametype &&
+               this->width == other.width && this->height == other.height &&
+               this->channels == other.channels &&
+               this->timestamp == other.timestamp &&
+               this->pixels == other.pixels;
+        // Not much point in comparing pos, pitch and yaw - covered by the pixel
+        // comparison.
     }
-    return os;
-  }
 
-  float TimestampedVideoFrame::ntoh_float(uint32_t value) const {
-    uint32_t temp = ntohl(value);
-    float ret;
-    *((uint32_t*)&ret) = temp;
-    return ret;
-  }
+    ostream& operator<<(ostream& os, const TimestampedVideoFrame& tsvidframe) {
+        os << "TimestampedVideoFrame: "
+           << to_simple_string(tsvidframe.timestamp) << ", type "
+           << tsvidframe.frametype << ", " << tsvidframe.width << " x "
+           << tsvidframe.height << " x " << tsvidframe.channels << ", ("
+           << tsvidframe.xPos << "," << tsvidframe.yPos << ","
+           << tsvidframe.zPos << " - yaw:" << tsvidframe.yaw
+           << ", pitch:" << tsvidframe.pitch << ")";
+        return os;
+    }
+
+    ostream& operator<<(ostream& os,
+                        const TimestampedVideoFrame::FrameType& type) {
+        switch (type) {
+        case TimestampedVideoFrame::VIDEO:
+            os << "video";
+            break;
+        case TimestampedVideoFrame::DEPTH_MAP:
+            os << "depth";
+            break;
+        case TimestampedVideoFrame::LUMINANCE:
+            os << "luminance";
+            break;
+        case TimestampedVideoFrame::COLOUR_MAP:
+            os << "colourmap";
+            break;
+        default:
+            break;
+        }
+        return os;
+    }
+
+    float TimestampedVideoFrame::ntoh_float(uint32_t value) const {
+        uint32_t temp = ntohl(value);
+        float ret;
+        *((uint32_t*)&ret) = temp;
+        return ret;
+    }
 } // namespace malmo

@@ -28,56 +28,56 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class RewardGroup extends RewardBase implements IRewardProducer {
-  private ArrayList<IRewardProducer> producers;
+    private ArrayList<IRewardProducer> producers;
 
-  /**
-   * Add another RewardProducer object.<br>
-   *
-   * @param producer
-   *            the reward producing object to add to the mix.
-   */
-  public void addRewardProducer(IRewardProducer producer) {
-    if (this.producers == null) {
-      this.producers = new ArrayList<IRewardProducer>();
+    /**
+     * Add another RewardProducer object.<br>
+     *
+     * @param producer
+     *            the reward producing object to add to the mix.
+     */
+    public void addRewardProducer(IRewardProducer producer) {
+        if (this.producers == null) {
+            this.producers = new ArrayList<IRewardProducer>();
+        }
+        this.producers.add(producer);
     }
-    this.producers.add(producer);
-  }
 
-  @Override
-  public void getReward(MissionInit missionInit,
-                        MultidimensionalReward reward) {
-    if (this.producers != null) {
-      for (IRewardProducer rp : this.producers)
-        rp.getReward(missionInit, reward);
+    @Override
+    public void getReward(MissionInit missionInit,
+                          MultidimensionalReward reward) {
+        if (this.producers != null) {
+            for (IRewardProducer rp : this.producers)
+                rp.getReward(missionInit, reward);
+        }
     }
-  }
 
-  @Override
-  public void prepare(MissionInit missionInit) {
-    if (this.producers != null) {
-      for (IRewardProducer rp : this.producers)
-        rp.prepare(missionInit);
+    @Override
+    public void prepare(MissionInit missionInit) {
+        if (this.producers != null) {
+            for (IRewardProducer rp : this.producers)
+                rp.prepare(missionInit);
+        }
     }
-  }
 
-  @Override
-  public void cleanup() {
-    if (this.producers != null) {
-      for (IRewardProducer rp : this.producers)
-        rp.cleanup();
+    @Override
+    public void cleanup() {
+        if (this.producers != null) {
+            for (IRewardProducer rp : this.producers)
+                rp.cleanup();
+        }
     }
-  }
 
-  @Override
-  public void appendExtraServerInformation(HashMap<String, String> map) {
-    for (IRewardProducer rp : this.producers) {
-      if (rp instanceof HandlerBase)
-        ((HandlerBase)rp).appendExtraServerInformation(map);
+    @Override
+    public void appendExtraServerInformation(HashMap<String, String> map) {
+        for (IRewardProducer rp : this.producers) {
+            if (rp instanceof HandlerBase)
+                ((HandlerBase)rp).appendExtraServerInformation(map);
+        }
     }
-  }
 
-  public boolean isFixed() {
-    return false; // Return true to stop MissionBehaviour from adding new
-                  // handlers to this group.
-  }
+    public boolean isFixed() {
+        return false; // Return true to stop MissionBehaviour from adding new
+                      // handlers to this group.
+    }
 }

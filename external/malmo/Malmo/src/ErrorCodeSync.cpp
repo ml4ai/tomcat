@@ -29,22 +29,22 @@
 
 namespace malmo {
 
-  void ErrorCodeSync::init_error_code() {
-    boost::unique_lock<boost::mutex> lk(mutex);
-    error_code = boost::asio::error::would_block;
-  }
-
-  const boost::system::error_code ErrorCodeSync::await_error_code() {
-    boost::unique_lock<boost::mutex> lk(mutex);
-    while (error_code == boost::asio::error::would_block) {
-      cond.wait(lk);
+    void ErrorCodeSync::init_error_code() {
+        boost::unique_lock<boost::mutex> lk(mutex);
+        error_code = boost::asio::error::would_block;
     }
-    return error_code;
-  }
 
-  void ErrorCodeSync::signal_error_code(const boost::system::error_code& ec) {
-    boost::unique_lock<boost::mutex> lk(mutex);
-    error_code = ec;
-    cond.notify_one();
-  }
+    const boost::system::error_code ErrorCodeSync::await_error_code() {
+        boost::unique_lock<boost::mutex> lk(mutex);
+        while (error_code == boost::asio::error::would_block) {
+            cond.wait(lk);
+        }
+        return error_code;
+    }
+
+    void ErrorCodeSync::signal_error_code(const boost::system::error_code& ec) {
+        boost::unique_lock<boost::mutex> lk(mutex);
+        error_code = ec;
+        cond.notify_one();
+    }
 } // namespace malmo

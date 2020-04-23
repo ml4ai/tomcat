@@ -28,25 +28,27 @@ import com.microsoft.Malmo.Schemas.ServerSection;
 import net.minecraft.world.storage.WorldInfo;
 
 public class EnvironmentHelper {
-  public static void setMissionWeather(MissionInit minit, WorldInfo worldinfo) {
-    ServerSection ss = minit.getMission().getServerSection();
-    ServerInitialConditions sic =
-        (ss != null) ? ss.getServerInitialConditions() : null;
-    if (sic != null && sic.getWeather() != null &&
-        !sic.getWeather().equalsIgnoreCase("normal")) {
-      int maxtime =
-          1000000 * 20; // Max allowed by Minecraft's own Weather Command.
-      int cleartime =
-          (sic.getWeather().equalsIgnoreCase("clear")) ? maxtime : 0;
-      int raintime = (sic.getWeather().equalsIgnoreCase("rain")) ? maxtime : 0;
-      int thundertime =
-          (sic.getWeather().equalsIgnoreCase("thunder")) ? maxtime : 0;
+    public static void setMissionWeather(MissionInit minit,
+                                         WorldInfo worldinfo) {
+        ServerSection ss = minit.getMission().getServerSection();
+        ServerInitialConditions sic =
+            (ss != null) ? ss.getServerInitialConditions() : null;
+        if (sic != null && sic.getWeather() != null &&
+            !sic.getWeather().equalsIgnoreCase("normal")) {
+            int maxtime =
+                1000000 * 20; // Max allowed by Minecraft's own Weather Command.
+            int cleartime =
+                (sic.getWeather().equalsIgnoreCase("clear")) ? maxtime : 0;
+            int raintime =
+                (sic.getWeather().equalsIgnoreCase("rain")) ? maxtime : 0;
+            int thundertime =
+                (sic.getWeather().equalsIgnoreCase("thunder")) ? maxtime : 0;
 
-      worldinfo.setCleanWeatherTime(cleartime);
-      worldinfo.setRainTime(raintime);
-      worldinfo.setThunderTime(thundertime);
-      worldinfo.setRaining(raintime + thundertime > 0);
-      worldinfo.setThundering(thundertime > 0);
+            worldinfo.setCleanWeatherTime(cleartime);
+            worldinfo.setRainTime(raintime);
+            worldinfo.setThunderTime(thundertime);
+            worldinfo.setRaining(raintime + thundertime > 0);
+            worldinfo.setThundering(thundertime > 0);
+        }
     }
-  }
 }
