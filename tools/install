@@ -9,7 +9,8 @@ export TOMCAT
 
 ###############################################################################
 
-. ${TOMCAT}/tools/configuration_helpers
+source ${TOMCAT}/tools/configuration_helpers
+set_local_configuration
 
 detect_ci
 detect_os
