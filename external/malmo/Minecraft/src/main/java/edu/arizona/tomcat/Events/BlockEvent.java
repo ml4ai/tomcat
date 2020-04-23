@@ -16,7 +16,7 @@ public class BlockEvent extends Event {
   private String eventType = "block";
   private String playerName = null;
   private Position blockPosition;
-  private Class blockType = null;
+  private String blockType = "";
 
   /** A constructor for general block interaction events. */
   public BlockEvent(PlayerInteractEvent event) {
@@ -24,7 +24,7 @@ public class BlockEvent extends Event {
     BlockPos pos = event.getPos();
     this.playerName = event.getEntityPlayer().getDisplayNameString();
     this.blockPosition = new Position(pos);
-    this.blockType = world.getBlockState(pos).getBlock().getClass();
+    this.blockType = world.getBlockState(pos).getBlock().getClass().getName();
   }
 
   /** Secondary constructor, for use with the BlockAsistIron class. */
