@@ -37,7 +37,7 @@ public class ForgeEventHandler {
   public void onEvent(AttackEntityEvent event) {
     // We use this technique to avoid double counting events due to the
     // integrated server nature of Malmo.
-    if (this.fmlCommonHandler.getEffectiveSide() == Side.SERVER) {
+    if (this.fmlCommonHandler.getEffectiveSide() == Side.CLIENT) {
       Entity target = event.getTarget();
       if (target instanceof EntityMob) {
         this.mqttService.publish(new MobAttacked(event), "observations/events/mob_attacked");
@@ -49,7 +49,7 @@ public class ForgeEventHandler {
   public void onEvent(PlayerInteractEvent.RightClickBlock event) {
     // We use this technique (event.getWorld().isRemote() to avoid double
     // counting events due to the integrated server nature of Malmo.
-    if (event.getWorld().isRemote) {
+    if (!event.getWorld().isRemote) {
       this.mqttService.publish(new BlockInteraction(event), "observations/events/block_interaction");
     }
   }
@@ -59,7 +59,7 @@ public class ForgeEventHandler {
   public void onEvent(LivingDeathEvent event) {
     // We use this technique to avoid double counting events due to the
     // integrated server nature of Malmo.
-    if (this.fmlCommonHandler.getEffectiveSide() == Side.SERVER) {
+    if (this.fmlCommonHandler.getEffectiveSide() == Side.CLIENT) {
       this.mqttService.publish(new EntityDeath(event), "observations/events/entity_death");
     }
   }
