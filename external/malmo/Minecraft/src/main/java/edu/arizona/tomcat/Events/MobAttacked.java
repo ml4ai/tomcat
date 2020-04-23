@@ -10,14 +10,18 @@ import java.util.UUID;
 
 public class MobAttacked extends Event {
 
-  private String targetName;
+  /** The position of the target mob involved in the event. */
   private Position targetPosition;
+  /** The velocity of the target mob involved in the event. */
   private Velocity targetVelocity;
+  /** The name of the player involved in the event. */
   private String playerName;
+  /** The type of the target mob (for example Skeleton, Zombie, etc.) */
   private String targetType;
+  /** The unique ID of the target mob. */
   private UUID targetId;
 
-  // Note: targetHealth is the health BEFORE the attack event.
+  /** The health of the target *before* the event. */
   private double targetHealth;
 
   public MobAttacked(AttackEntityEvent event) {
