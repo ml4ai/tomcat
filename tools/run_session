@@ -28,6 +28,8 @@ timestamp() {
 }
 
 # Creating an output directory for this session.
+# On macOS, uuidgen produces uppercase UUIDs, so we pipe the output through tr
+# to get uniform behaviour on macOS and Linux.
 session_output_dir="${TOMCAT}"/data/participant_data/$(uuidgen | tr '[:upper:]' '[:lower:]')
 mkdir -p "${session_output_dir}"
 
