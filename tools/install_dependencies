@@ -119,7 +119,8 @@ __install_dependencies_using_apt() {
         openjdk-8-jre=8u162-b12-1\
         openjdk-8-jdk-headless=8u162-b12-1\
         openjdk-8-jdk=8u162-b12-1\
-        mosquitto
+        mosquitto\
+        mosquitto-clients
     if [[ $? -ne 0 ]]; then exit 1; fi
 
     # On Ubuntu 18.04, the required version of the nlohmann-json JSON library
