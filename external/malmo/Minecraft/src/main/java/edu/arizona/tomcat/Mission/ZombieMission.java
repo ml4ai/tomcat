@@ -1,6 +1,5 @@
 package edu.arizona.tomcat.Mission;
 
-import com.microsoft.Malmo.Schemas.BlockType;
 import com.microsoft.Malmo.Schemas.EntityTypes;
 import com.microsoft.Malmo.Schemas.ItemType;
 import com.microsoft.Malmo.Schemas.PosAndDirection;
@@ -21,16 +20,17 @@ import edu.arizona.tomcat.World.Building;
 import edu.arizona.tomcat.World.Drawing;
 import edu.arizona.tomcat.World.MultiRoomBuilding;
 import edu.arizona.tomcat.World.TomcatEntity;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 public class ZombieMission extends Mission {
 

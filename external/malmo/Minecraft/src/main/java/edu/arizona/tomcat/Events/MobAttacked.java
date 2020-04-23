@@ -1,15 +1,11 @@
 package edu.arizona.tomcat.Events;
 
-import edu.arizona.tomcat.Events.Event;
-import edu.arizona.tomcat.World.*;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import edu.arizona.tomcat.World.Position;
+import edu.arizona.tomcat.World.Velocity;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+
 import java.util.UUID;
 
 public class MobAttacked extends Event {

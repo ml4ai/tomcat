@@ -1,5 +1,5 @@
 package edu.arizona.tomcat.Mission;
-import com.microsoft.Malmo.Schemas.ItemType;
+
 import com.microsoft.Malmo.Schemas.PosAndDirection;
 import edu.arizona.tomcat.Messaging.TomcatClientServerHandler;
 import edu.arizona.tomcat.Messaging.TomcatMessageData;
@@ -10,13 +10,13 @@ import edu.arizona.tomcat.Mission.Goal.MissionGoal;
 import edu.arizona.tomcat.Mission.gui.RichContent;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 import edu.arizona.tomcat.Utils.Converter;
-import edu.arizona.tomcat.Utils.InventoryHandler;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
-import java.math.BigDecimal;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
+
+import java.math.BigDecimal;
 
 public class USARSinglePlayerMission extends Mission {
 

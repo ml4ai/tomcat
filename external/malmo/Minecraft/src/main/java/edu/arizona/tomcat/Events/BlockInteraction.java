@@ -1,16 +1,9 @@
 package edu.arizona.tomcat.Events;
 
-import edu.arizona.tomcat.Events.Event;
 import edu.arizona.tomcat.World.Position;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraft.world.World;
-import java.util.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 public class BlockInteraction extends Event {
   private String playerName = null;

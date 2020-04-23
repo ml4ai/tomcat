@@ -1,14 +1,13 @@
 package edu.arizona.tomcat.Messaging;
 
-import com.google.gson.Gson;
 import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import java.io.IOException;
 
 /** A singleton class to provide a convenient interface to the Eclipse Paho
  * MQTT client library. */

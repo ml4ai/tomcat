@@ -1,20 +1,16 @@
 package edu.arizona.tomcat.ASISTBlocks;
 
 import edu.arizona.tomcat.Events.IronDoorOpened;
-import java.util.List;
+import edu.arizona.tomcat.Messaging.MqttService;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import edu.arizona.tomcat.Messaging.MqttService;
 
-import java.util.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.util.List;
 
 /**
  * This block will be used as the "door" block for the Hit-Controlled doors.
