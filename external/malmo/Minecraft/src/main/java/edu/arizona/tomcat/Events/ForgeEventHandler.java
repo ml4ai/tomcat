@@ -57,8 +57,7 @@ public class ForgeEventHandler {
 
   /** Handle events from Forge event bus triggered by living entities dying
    * (players, mobs), publish events to MQTT message bus with type
-   * 'entity_death'. [Note: This event does not seem to fire when a player is
-   * killed by falling into a lava pit.]
+   * 'entity_death'. 
    */
   @SubscribeEvent
   public void handle(LivingDeathEvent event) {

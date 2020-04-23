@@ -26,6 +26,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import edu.arizona.tomcat.Events.EntityDeath;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,6 +77,9 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
   public void PlayerDeath(LivingDeathEvent event) {
     if (!event.getEntity().world.isRemote && event.getEntity() instanceof
                                                  EntityPlayer) {
+      // We explicitly publish the message to the message bus here since it
+      // player deaths are handled different from mob deaths.
+      this.mqttService.publish(new EntityDeath(event), "observations/events/entity_death");
       event.setCanceled(true);
       this.onPlayerDeath((EntityPlayer)event.getEntity());
     }

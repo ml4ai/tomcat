@@ -29,7 +29,7 @@ public class MobAttacked extends Event {
     this.eventType = "mob_attacked";
     EntityPlayer player = event.getEntityPlayer();
     this.playerName = player.getDisplayNameString();
-    this.targetType = target.getName();
+    this.targetType = target.getClass().getName();
     this.targetId = target.getUniqueID();
     this.targetHealth = target.getHealth();
     this.targetPosition = new Position(target);
