@@ -29,6 +29,9 @@ public class MqttService {
     try {
       MemoryPersistence persistence = new MemoryPersistence();
       MqttConnectOptions connectOptions = new MqttConnectOptions();
+      // Note: We are currently hard-coding the port number to the default
+      // (1883), but we may want to change this to be settable by the end-user
+      // later.
       this.client =
         new MqttClient("tcp://127.0.0.1:1883", "TomcatClient", persistence);
       connectOptions.setCleanSession(true);
