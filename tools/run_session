@@ -31,14 +31,9 @@ timestamp() {
 }
 
 # Creating an output directory for this session.
-output_dir="${TOMCAT}"/data/participant_data/session_$(uuidgen | tr '[:upper:]'
-'[:lower:]')
-
-<<<<<<< HEAD
+output_dir="${TOMCAT}"/data/participant_data/session_$(uuidgen | tr '[:upper:]' '[:lower:]')
 mkdir -p "${output_dir}"
 
-=======
->>>>>>> 49f8521a04553f3fd73089d5803c71e0071ff604
 export original_output_device=$(SwitchAudioSource -c)
 
 . "$TOMCAT"/tools/configure_session
