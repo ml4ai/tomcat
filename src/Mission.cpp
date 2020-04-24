@@ -29,7 +29,8 @@ namespace tomcat {
                      bool record_observations,
                      bool record_commands,
                      bool record_rewards,
-                     bool multiplayer) {
+                     bool multiplayer,
+					 string uuid) {
 
         this->mission_id_or_path = mission_id_or_path;
         this->time_limit_in_seconds = time_limit_in_seconds;
@@ -39,9 +40,13 @@ namespace tomcat {
         this->record_observations = record_observations;
         this->record_commands = record_commands;
         this->record_rewards = record_rewards;
-        this->multiplayer = multiplayer;
-        boost::uuids::uuid u;
-        this->uuid = boost::uuids::to_string(u);
+        this->multiplayer = multiplayer;		
+		if (uuid.compare("0") == 0){
+        	boost::uuids::uuid u;
+        	this->uuid = boost::uuids::to_string(u);
+		} else {
+			this->uuid = uuid;
+		}
     }
 
     void Mission::add_listener(shared_ptr<LocalAgent> tomcat_agent) {

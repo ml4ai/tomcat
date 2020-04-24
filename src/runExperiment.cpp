@@ -37,7 +37,10 @@ options_description load_options() {
         bool_switch()->default_value(false),
         "Activate reward recordings")("multiplayer",
                                       bool_switch()->default_value(false),
-                                      "Run mission in multiplayer mode");
+                                      "Run mission in multiplayer mode")(
+        "uuid",
+        value<string>()->default_value("0"),
+        "Accept the UUID of a session as a runtime parameter.");
 
     return options;
 }
@@ -77,7 +80,7 @@ Mission create_mission(variables_map parameters_map) {
     bool record_commands = parameters_map["record_commands"].as<bool>();
     bool record_rewards = parameters_map["record_rewards"].as<bool>();
     bool multiplayer = parameters_map["multiplayer"].as<bool>();
-
+    string uuid = parameters_map["uuid"].as<string>();
     if (record_all) {
         record_observations = true;
         record_commands = true;
@@ -91,7 +94,8 @@ Mission create_mission(variables_map parameters_map) {
                               record_observations,
                               record_commands,
                               record_rewards,
-                              multiplayer);
+                              multiplayer,
+							  uuid);
     return mission;
 }
 

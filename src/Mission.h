@@ -50,7 +50,7 @@ namespace tomcat {
          * @param record_commands - Flag that activates commands recording
          * @param record_rewards - Flag that activates rewards recording
          * @param multiplayer - Flag that indicates a multiplayer mission
-
+         * @param uuid - 
          */
         Mission(std::string mission_id_or_path,
                 unsigned int time_limit_in_seconds,
@@ -59,7 +59,8 @@ namespace tomcat {
                 bool record_observations,
                 bool record_commands,
                 bool record_rewards,
-                bool multiplayer);
+                bool multiplayer,
+			    std::string uuid);
 
         /**
          * Destructor
