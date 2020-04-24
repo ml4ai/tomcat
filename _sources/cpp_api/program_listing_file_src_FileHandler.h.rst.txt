@@ -16,9 +16,9 @@ Program Listing for File FileHandler.h
    
    namespace tomcat {
    
-     class FileHandler {
-     public:
-       static std::string getFileContent(std::string filename);
-     };
+       class FileHandler {
+         public:
+           static std::string getFileContent(std::string filename);
+       };
    
    } // namespace tomcat

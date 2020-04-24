@@ -14,16 +14,16 @@ Program Listing for File LocalAgent.h
    
    namespace tomcat {
    
-     class Mission; // Forward declaration to deal with circular dependency
+       class Mission; // Forward declaration to deal with circular dependency
    
-     class LocalAgent {
+       class LocalAgent {
    
-     public:
-       LocalAgent();
+         public:
+           LocalAgent();
    
-       ~LocalAgent();
+           ~LocalAgent();
    
-       void observe_mission(Mission& mission);
-     };
+           void observe_mission(Mission& mission);
+       };
    
    } // namespace tomcat

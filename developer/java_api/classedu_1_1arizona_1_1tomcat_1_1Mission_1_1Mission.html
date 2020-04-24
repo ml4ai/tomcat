@@ -90,6 +90,8 @@ Inheritance diagram for edu.arizona.tomcat.Mission.Mission:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><b>DIFFICULTY</b></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><b>ID</b></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -98,9 +100,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aa508f6697eb5ab867ed1c0f95005ac97"><td class="memItemLeft" align="right" valign="top"><a id="aa508f6697eb5ab867ed1c0f95005ac97"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>PlayerDeath</b> (LivingDeathEvent event)</td></tr>
 <tr class="separator:aa508f6697eb5ab867ed1c0f95005ac97"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afcd7d02040a7e91b602969e219e401ea"><td class="memItemLeft" align="right" valign="top"><a id="afcd7d02040a7e91b602969e219e401ea"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>CommandEvents</b> (CommandEvent evt)</td></tr>
-<tr class="separator:afcd7d02040a7e91b602969e219e401ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a656465ddc056b468d5d74a9603198e11"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Mission_1_1Mission.html#a656465ddc056b468d5d74a9603198e11">addListener</a> (<a class="el" href="interfaceedu_1_1arizona_1_1tomcat_1_1Mission_1_1MissionListener.html">MissionListener</a> listener)</td></tr>
 <tr class="separator:a656465ddc056b468d5d74a9603198e11"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af771ef1867d2b7158ca6f881fa32ed3c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Mission_1_1Mission.html#af771ef1867d2b7158ca6f881fa32ed3c">init</a> (World world)</td></tr>
@@ -122,12 +121,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>CommandEvents</b> (Co
 <tr class="memitem:ad9f0c1b15785ecdb891c248ee4bdaf34"><td class="memItemLeft" align="right" valign="top"><a id="ad9f0c1b15785ecdb891c248ee4bdaf34"></a>
 abstract PosAndDirection&#160;</td><td class="memItemRight" valign="bottom"><b>getPlayersInitialPositionAndDirection</b> (EntityPlayerMP player)</td></tr>
 <tr class="separator:ad9f0c1b15785ecdb891c248ee4bdaf34"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab931f3a37550b87f58c41d391076b27e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Mission_1_1Mission.html#ab931f3a37550b87f58c41d391076b27e">addToDeletion</a> (Entity entity, long worldTime)</td></tr>
+<tr class="separator:ab931f3a37550b87f58c41d391076b27e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3c5f1846e3431abc803d5bb94feb1e0e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Mission_1_1Mission.html#a3c5f1846e3431abc803d5bb94feb1e0e">setTimeLimitInSeconds</a> (long timeLimitInSeconds)</td></tr>
 <tr class="separator:a3c5f1846e3431abc803d5bb94feb1e0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae01b16884fd531676bc50526b37b1828"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Mission_1_1Mission.html#ae01b16884fd531676bc50526b37b1828">setSelfReportPromptTimeInSeconds</a> (long selfReportPromptTimeInSeconds)</td></tr>
 <tr class="separator:ae01b16884fd531676bc50526b37b1828"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab931f3a37550b87f58c41d391076b27e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Mission_1_1Mission.html#ab931f3a37550b87f58c41d391076b27e">addToDeletion</a> (Entity entity, long worldTime)</td></tr>
-<tr class="separator:ab931f3a37550b87f58c41d391076b27e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34daa0e52abd798c1dcf8f494b0b9328"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Mission_1_1Mission.html#a34daa0e52abd798c1dcf8f494b0b9328">setLevelOfDifficulty</a> (int levelOfDifficulty)</td></tr>
+<tr class="separator:a34daa0e52abd798c1dcf8f494b0b9328"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_interfaceedu_1_1arizona_1_1tomcat_1_1Mission_1_1PhaseListener"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_interfaceedu_1_1arizona_1_1tomcat_1_1Mission_1_1PhaseListener')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="interfaceedu_1_1arizona_1_1tomcat_1_1Mission_1_1PhaseListener.html">edu.arizona.tomcat.Mission.PhaseListener</a></td></tr>
 <tr class="memitem:a0c8c8b12b3b150cf144d0f4b2ebd4895 inherit pub_methods_interfaceedu_1_1arizona_1_1tomcat_1_1Mission_1_1PhaseListener"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfaceedu_1_1arizona_1_1tomcat_1_1Mission_1_1PhaseListener.html#a0c8c8b12b3b150cf144d0f4b2ebd4895">goalAchieved</a> (World world, <a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Mission_1_1Goal_1_1MissionGoal.html">MissionGoal</a> goal)</td></tr>
 <tr class="separator:a0c8c8b12b3b150cf144d0f4b2ebd4895 inherit pub_methods_interfaceedu_1_1arizona_1_1tomcat_1_1Mission_1_1PhaseListener"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -160,8 +161,6 @@ Protected Member Functions</h2></td></tr>
 <tr class="separator:a0e1f8a0354177610e3b8a7e99bc31c6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae3648fe8c05534feaa1386d25be8c90f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Mission_1_1Mission.html#ae3648fe8c05534feaa1386d25be8c90f">cleanup</a> ()</td></tr>
 <tr class="separator:ae3648fe8c05534feaa1386d25be8c90f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a82576df293a0170fc10c4053ed6b22fb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Mission_1_1Mission.html#a82576df293a0170fc10c4053ed6b22fb">addItemToInventory</a> (ItemType type)</td></tr>
-<tr class="separator:a82576df293a0170fc10c4053ed6b22fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -195,6 +194,9 @@ long&#160;</td><td class="memItemRight" valign="bottom"><b>worldTimeOnPause</b><
 <tr class="memitem:a2b9700779adb568a3ca6fb60b846611c"><td class="memItemLeft" align="right" valign="top"><a id="a2b9700779adb568a3ca6fb60b846611c"></a>
 long&#160;</td><td class="memItemRight" valign="bottom"><b>pausedTime</b></td></tr>
 <tr class="separator:a2b9700779adb568a3ca6fb60b846611c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad7cc22c19e289468074dacd195624c9"><td class="memItemLeft" align="right" valign="top"><a id="aad7cc22c19e289468074dacd195624c9"></a>
+DIFFICULTY&#160;</td><td class="memItemRight" valign="bottom"><b>levelOfDifficulty</b></td></tr>
+<tr class="separator:aad7cc22c19e289468074dacd195624c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4fe8dccbd69d20af9d9e5e554f5571d0"><td class="memItemLeft" align="right" valign="top"><a id="a4fe8dccbd69d20af9d9e5e554f5571d0"></a>
 <a class="el" href="classedu_1_1arizona_1_1tomcat_1_1World_1_1DrawingHandler.html">DrawingHandler</a>&#160;</td><td class="memItemRight" valign="bottom"><b>drawingHandler</b></td></tr>
 <tr class="separator:a4fe8dccbd69d20af9d9e5e554f5571d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -213,9 +215,9 @@ ArrayList&lt; <a class="el" href="interfaceedu_1_1arizona_1_1tomcat_1_1Mission_1
 <tr class="memitem:a8d1c7f4c87871bbf09f4e7500b429703"><td class="memItemLeft" align="right" valign="top"><a id="a8d1c7f4c87871bbf09f4e7500b429703"></a>
 HashMap&lt; Entity, Long &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>entitiesToRemove</b></td></tr>
 <tr class="separator:a8d1c7f4c87871bbf09f4e7500b429703"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc559b89c7839ccd822ac9b6e6e04b51"><td class="memItemLeft" align="right" valign="top"><a id="acc559b89c7839ccd822ac9b6e6e04b51"></a>
-<a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Mission_1_1gui_1_1SelfReportFileHandler.html">SelfReportFileHandler</a>&#160;</td><td class="memItemRight" valign="bottom"><b>selfReportFileHandler</b></td></tr>
-<tr class="separator:acc559b89c7839ccd822ac9b6e6e04b51"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1220b7ebe1b33d8c9431d7b069fa4bec"><td class="memItemLeft" align="right" valign="top"><a id="a1220b7ebe1b33d8c9431d7b069fa4bec"></a>
+<a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Mission_1_1MissionInitializer.html">MissionInitializer</a>&#160;</td><td class="memItemRight" valign="bottom"><b>initializer</b></td></tr>
+<tr class="separator:a1220b7ebe1b33d8c9431d7b069fa4bec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-attribs"></a>
 Static Protected Attributes</h2></td></tr>
@@ -251,39 +253,6 @@ static final int&#160;</td><td class="memItemRight" valign="bottom"><b>REMAINING
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a82576df293a0170fc10c4053ed6b22fb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a82576df293a0170fc10c4053ed6b22fb">&#9670;&nbsp;</a></span>addItemToInventory()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void edu.arizona.tomcat.Mission.Mission.addItemToInventory </td>
-          <td>(</td>
-          <td class="paramtype">ItemType&#160;</td>
-          <td class="paramname"><em>type</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Add item to the player's inventory to help them accomplish the mission goals</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">type</td><td>- ItemType of the item to add in inventory </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a id="a656465ddc056b468d5d74a9603198e11"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a656465ddc056b468d5d74a9603198e11">&#9670;&nbsp;</a></span>addListener()</h2>
 
@@ -381,7 +350,7 @@ static final int&#160;</td><td class="memItemRight" valign="bottom"><b>REMAINING
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Adds an entity to be deleted after certain amount of time </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Adds an entity to be deleted after a certain amount of time. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">entity</td><td>- Entity to be removed </td></tr>
     <tr><td class="paramname">worldTime</td><td>- Time (in seconds) to wait until removing the entity </td></tr>
@@ -819,6 +788,38 @@ static final int&#160;</td><td class="memItemRight" valign="bottom"><b>REMAINING
 <p>Notifies listeners about the phase completion </p>
 
 <p>Implements <a class="el" href="interfaceedu_1_1arizona_1_1tomcat_1_1Mission_1_1PhaseListener.html#a98061cd8357fddade16a52a9d8074b3c">edu.arizona.tomcat.Mission.PhaseListener</a>.</p>
+
+</div>
+</div>
+<a id="a34daa0e52abd798c1dcf8f494b0b9328"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a34daa0e52abd798c1dcf8f494b0b9328">&#9670;&nbsp;</a></span>setLevelOfDifficulty()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void edu.arizona.tomcat.Mission.Mission.setLevelOfDifficulty </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>levelOfDifficulty</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Defines the time interval to wait until prompting a self-report screen to the player </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">selfReportPromptTimeInSeconds</td><td>- Time to wait until show a self-report screen </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

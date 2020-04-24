@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tomcat_docs: edu.arizona.tomcat.Utils.BlockDiscreteEvent Class Reference</title>
+<title>tomcat_docs: edu.arizona.tomcat.Messaging.MqttService Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -59,26 +59,38 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>edu</b></li><li class="navelem"><b>arizona</b></li><li class="navelem"><b>tomcat</b></li><li class="navelem"><b>Utils</b></li><li class="navelem"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1BlockDiscreteEvent.html">BlockDiscreteEvent</a></li>  </ul>
+<li class="navelem"><b>edu</b></li><li class="navelem"><b>arizona</b></li><li class="navelem"><b>tomcat</b></li><li class="navelem"><b>Messaging</b></li><li class="navelem"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Messaging_1_1MqttService.html">MqttService</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1BlockDiscreteEvent-members.html">List of all members</a>  </div>
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="classedu_1_1arizona_1_1tomcat_1_1Messaging_1_1MqttService-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">edu.arizona.tomcat.Utils.BlockDiscreteEvent Class Reference</div>  </div>
+<div class="title">edu.arizona.tomcat.Messaging.MqttService Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a4678f0a463be496c816c834031db8786"><td class="memItemLeft" align="right" valign="top"><a id="a4678f0a463be496c816c834031db8786"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>BlockDiscreteEvent</b> (String eventName, String timestamp, String coordinates)</td></tr>
-<tr class="separator:a4678f0a463be496c816c834031db8786"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7fd7056f1bfb959bca94656844e33b19"><td class="memItemLeft" align="right" valign="top"><a id="a7fd7056f1bfb959bca94656844e33b19"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>publish</b> (Object object, String topic)</td></tr>
+<tr class="separator:a7fd7056f1bfb959bca94656844e33b19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae89ae441f8d1a5898254f7ae3c36b1ca"><td class="memItemLeft" align="right" valign="top"><a id="ae89ae441f8d1a5898254f7ae3c36b1ca"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>publish</b> (String msg, String topic)</td></tr>
+<tr class="separator:ae89ae441f8d1a5898254f7ae3c36b1ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:aad51c4cd151b8ecd5e4ae863e804b45e"><td class="memItemLeft" align="right" valign="top"><a id="aad51c4cd151b8ecd5e4ae863e804b45e"></a>
+static <a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Messaging_1_1MqttService.html">MqttService</a>&#160;</td><td class="memItemRight" valign="bottom"><b>getInstance</b> ()</td></tr>
+<tr class="separator:aad51c4cd151b8ecd5e4ae863e804b45e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
-<li>/home/runner/work/tomcat/tomcat/external/malmo/Minecraft/src/main/java/edu/arizona/tomcat/Utils/BlockDiscreteEvent.java</li>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>A singleton class to provide a convenient interface to the Eclipse Paho MQTT client library. </p>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
+<li>/home/runner/work/tomcat/tomcat/external/malmo/Minecraft/src/main/java/edu/arizona/tomcat/Messaging/MqttService.java</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

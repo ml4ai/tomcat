@@ -162,92 +162,92 @@
 
 <span class="k">namespace</span> <span class="n">tomcat</span> <span class="p">{</span>
 
-  <span class="kt">void</span> <span class="n">WebcamSensor</span><span class="o">::</span><span class="n">get_observation</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">using</span> <span class="n">cv</span><span class="o">::</span><span class="n">Point3f</span><span class="p">;</span>
-    <span class="k">using</span> <span class="n">cv</span><span class="o">::</span><span class="n">Vec6d</span><span class="p">;</span>
-    <span class="k">using</span> <span class="n">GazeAnalysis</span><span class="o">::</span><span class="n">EstimateGaze</span><span class="p">;</span>
-    <span class="k">using</span> <span class="n">LandmarkDetector</span><span class="o">::</span><span class="n">Calculate3DEyeLandmarks</span><span class="p">;</span>
-    <span class="k">using</span> <span class="n">LandmarkDetector</span><span class="o">::</span><span class="n">CalculateAllEyeLandmarks</span><span class="p">;</span>
-    <span class="k">using</span> <span class="n">LandmarkDetector</span><span class="o">::</span><span class="n">DetectLandmarksInVideo</span><span class="p">;</span>
-    <span class="k">using</span> <span class="n">LandmarkDetector</span><span class="o">::</span><span class="n">FaceModelParameters</span><span class="p">;</span>
-    <span class="k">using</span> <span class="n">LandmarkDetector</span><span class="o">::</span><span class="n">GetPose</span><span class="p">;</span>
+    <span class="kt">void</span> <span class="n">WebcamSensor</span><span class="o">::</span><span class="n">get_observation</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">using</span> <span class="n">cv</span><span class="o">::</span><span class="n">Point3f</span><span class="p">;</span>
+        <span class="k">using</span> <span class="n">cv</span><span class="o">::</span><span class="n">Vec6d</span><span class="p">;</span>
+        <span class="k">using</span> <span class="n">GazeAnalysis</span><span class="o">::</span><span class="n">EstimateGaze</span><span class="p">;</span>
+        <span class="k">using</span> <span class="n">LandmarkDetector</span><span class="o">::</span><span class="n">Calculate3DEyeLandmarks</span><span class="p">;</span>
+        <span class="k">using</span> <span class="n">LandmarkDetector</span><span class="o">::</span><span class="n">CalculateAllEyeLandmarks</span><span class="p">;</span>
+        <span class="k">using</span> <span class="n">LandmarkDetector</span><span class="o">::</span><span class="n">DetectLandmarksInVideo</span><span class="p">;</span>
+        <span class="k">using</span> <span class="n">LandmarkDetector</span><span class="o">::</span><span class="n">FaceModelParameters</span><span class="p">;</span>
+        <span class="k">using</span> <span class="n">LandmarkDetector</span><span class="o">::</span><span class="n">GetPose</span><span class="p">;</span>
 
-    <span class="c1">// Reading the images</span>
-    <span class="k">this</span><span class="o">-&gt;</span><span class="n">grayscale_image</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">GetGrayFrame</span><span class="p">();</span>
+        <span class="c1">// Reading the images</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">grayscale_image</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">GetGrayFrame</span><span class="p">();</span>
 
-    <span class="c1">// The actual facial landmark detection / tracking</span>
-    <span class="kt">bool</span> <span class="n">detection_success</span> <span class="o">=</span> <span class="n">DetectLandmarksInVideo</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">rgb_image</span><span class="p">,</span>
-                                                    <span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">,</span>
-                                                    <span class="k">this</span><span class="o">-&gt;</span><span class="n">det_parameters</span><span class="p">,</span>
-                                                    <span class="k">this</span><span class="o">-&gt;</span><span class="n">grayscale_image</span><span class="p">);</span>
+        <span class="c1">// The actual facial landmark detection / tracking</span>
+        <span class="kt">bool</span> <span class="n">detection_success</span> <span class="o">=</span> <span class="n">DetectLandmarksInVideo</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">rgb_image</span><span class="p">,</span>
+                                                        <span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">,</span>
+                                                        <span class="k">this</span><span class="o">-&gt;</span><span class="n">det_parameters</span><span class="p">,</span>
+                                                        <span class="k">this</span><span class="o">-&gt;</span><span class="n">grayscale_image</span><span class="p">);</span>
 
-    <span class="c1">// Gaze tracking, absolute gaze direction</span>
-    <span class="n">Point3f</span> <span class="nf">gazeDirection0</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
-    <span class="n">Point3f</span> <span class="nf">gazeDirection1</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+        <span class="c1">// Gaze tracking, absolute gaze direction</span>
+        <span class="n">Point3f</span> <span class="nf">gazeDirection0</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+        <span class="n">Point3f</span> <span class="nf">gazeDirection1</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
 
-    <span class="c1">// If tracking succeeded and we have an eye model, estimate gaze</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">detection_success</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">.</span><span class="n">eye_model</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// If tracking succeeded and we have an eye model, estimate gaze</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">detection_success</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">.</span><span class="n">eye_model</span><span class="p">)</span> <span class="p">{</span>
 
-      <span class="n">EstimateGaze</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">,</span>
-                   <span class="n">gazeDirection0</span><span class="p">,</span>
-                   <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">fx</span><span class="p">,</span>
-                   <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">fy</span><span class="p">,</span>
-                   <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">cx</span><span class="p">,</span>
-                   <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">cy</span><span class="p">,</span>
-                   <span class="nb">true</span><span class="p">);</span>
+            <span class="n">EstimateGaze</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">,</span>
+                         <span class="n">gazeDirection0</span><span class="p">,</span>
+                         <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">fx</span><span class="p">,</span>
+                         <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">fy</span><span class="p">,</span>
+                         <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">cx</span><span class="p">,</span>
+                         <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">cy</span><span class="p">,</span>
+                         <span class="nb">true</span><span class="p">);</span>
 
-      <span class="n">EstimateGaze</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">,</span>
-                   <span class="n">gazeDirection1</span><span class="p">,</span>
-                   <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">fx</span><span class="p">,</span>
-                   <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">fy</span><span class="p">,</span>
-                   <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">cx</span><span class="p">,</span>
-                   <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">cy</span><span class="p">,</span>
-                   <span class="nb">false</span><span class="p">);</span>
-    <span class="p">}</span>
+            <span class="n">EstimateGaze</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">,</span>
+                         <span class="n">gazeDirection1</span><span class="p">,</span>
+                         <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">fx</span><span class="p">,</span>
+                         <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">fy</span><span class="p">,</span>
+                         <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">cx</span><span class="p">,</span>
+                         <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">cy</span><span class="p">,</span>
+                         <span class="nb">false</span><span class="p">);</span>
+        <span class="p">}</span>
 
-    <span class="c1">// Work out the pose of the head from the tracked model</span>
-    <span class="n">Vec6d</span> <span class="n">pose_estimate</span> <span class="o">=</span> <span class="n">GetPose</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">,</span>
+        <span class="c1">// Work out the pose of the head from the tracked model</span>
+        <span class="n">Vec6d</span> <span class="n">pose_estimate</span> <span class="o">=</span> <span class="n">GetPose</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">,</span>
+                                      <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">fx</span><span class="p">,</span>
+                                      <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">fy</span><span class="p">,</span>
+                                      <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">cx</span><span class="p">,</span>
+                                      <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">cy</span><span class="p">);</span>
+
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">fps_tracker</span><span class="p">.</span><span class="n">AddFrame</span><span class="p">();</span>
+        <span class="c1">// Displaying the tracking visualizations</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">visualizer</span><span class="p">.</span><span class="n">SetImage</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">rgb_image</span><span class="p">,</span>
                                   <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">fx</span><span class="p">,</span>
                                   <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">fy</span><span class="p">,</span>
                                   <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">cx</span><span class="p">,</span>
                                   <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">cy</span><span class="p">);</span>
 
-    <span class="k">this</span><span class="o">-&gt;</span><span class="n">fps_tracker</span><span class="p">.</span><span class="n">AddFrame</span><span class="p">();</span>
-    <span class="c1">// Displaying the tracking visualizations</span>
-    <span class="k">this</span><span class="o">-&gt;</span><span class="n">visualizer</span><span class="p">.</span><span class="n">SetImage</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">rgb_image</span><span class="p">,</span>
-                              <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">fx</span><span class="p">,</span>
-                              <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">fy</span><span class="p">,</span>
-                              <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">cx</span><span class="p">,</span>
-                              <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">cy</span><span class="p">);</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">visualizer</span><span class="p">.</span><span class="n">SetObservationLandmarks</span><span class="p">(</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">.</span><span class="n">detected_landmarks</span><span class="p">,</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">.</span><span class="n">detection_certainty</span><span class="p">,</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">.</span><span class="n">GetVisibilities</span><span class="p">());</span>
 
-    <span class="k">this</span><span class="o">-&gt;</span><span class="n">visualizer</span><span class="p">.</span><span class="n">SetObservationLandmarks</span><span class="p">(</span>
-        <span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">.</span><span class="n">detected_landmarks</span><span class="p">,</span>
-        <span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">.</span><span class="n">detection_certainty</span><span class="p">,</span>
-        <span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">.</span><span class="n">GetVisibilities</span><span class="p">());</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">visualizer</span><span class="p">.</span><span class="n">SetObservationPose</span><span class="p">(</span>
+            <span class="n">pose_estimate</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">.</span><span class="n">detection_certainty</span><span class="p">);</span>
 
-    <span class="k">this</span><span class="o">-&gt;</span><span class="n">visualizer</span><span class="p">.</span><span class="n">SetObservationPose</span><span class="p">(</span><span class="n">pose_estimate</span><span class="p">,</span>
-                                        <span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">.</span><span class="n">detection_certainty</span><span class="p">);</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">visualizer</span><span class="p">.</span><span class="n">SetObservationGaze</span><span class="p">(</span>
+            <span class="n">gazeDirection0</span><span class="p">,</span>
+            <span class="n">gazeDirection1</span><span class="p">,</span>
+            <span class="n">CalculateAllEyeLandmarks</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">),</span>
+            <span class="n">Calculate3DEyeLandmarks</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">,</span>
+                                    <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">fx</span><span class="p">,</span>
+                                    <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">fy</span><span class="p">,</span>
+                                    <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">cx</span><span class="p">,</span>
+                                    <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">cy</span><span class="p">),</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">.</span><span class="n">detection_certainty</span><span class="p">);</span>
 
-    <span class="k">this</span><span class="o">-&gt;</span><span class="n">visualizer</span><span class="p">.</span><span class="n">SetObservationGaze</span><span class="p">(</span>
-        <span class="n">gazeDirection0</span><span class="p">,</span>
-        <span class="n">gazeDirection1</span><span class="p">,</span>
-        <span class="n">CalculateAllEyeLandmarks</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">),</span>
-        <span class="n">Calculate3DEyeLandmarks</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">,</span>
-                                <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">fx</span><span class="p">,</span>
-                                <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">fy</span><span class="p">,</span>
-                                <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">cx</span><span class="p">,</span>
-                                <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">cy</span><span class="p">),</span>
-        <span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">.</span><span class="n">detection_certainty</span><span class="p">);</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">visualizer</span><span class="p">.</span><span class="n">SetFps</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">fps_tracker</span><span class="p">.</span><span class="n">GetFPS</span><span class="p">());</span>
 
-    <span class="k">this</span><span class="o">-&gt;</span><span class="n">visualizer</span><span class="p">.</span><span class="n">SetFps</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">fps_tracker</span><span class="p">.</span><span class="n">GetFPS</span><span class="p">());</span>
+        <span class="kt">char</span> <span class="n">character_press</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">visualizer</span><span class="p">.</span><span class="n">ShowObservation</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">character_press</span> <span class="o">==</span> <span class="sc">&#39;r&#39;</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">.</span><span class="n">Reset</span><span class="p">();</span>
+        <span class="p">}</span>
 
-    <span class="kt">char</span> <span class="n">character_press</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">visualizer</span><span class="p">.</span><span class="n">ShowObservation</span><span class="p">();</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">character_press</span> <span class="o">==</span> <span class="sc">&#39;r&#39;</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">.</span><span class="n">Reset</span><span class="p">();</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">rgb_image</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">GetNextFrame</span><span class="p">();</span>
     <span class="p">}</span>
-
-    <span class="k">this</span><span class="o">-&gt;</span><span class="n">rgb_image</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">sequence_reader</span><span class="p">.</span><span class="n">GetNextFrame</span><span class="p">();</span>
-  <span class="p">}</span>
 
 <span class="p">}</span> <span class="c1">// namespace tomcat</span>
 </pre></div>

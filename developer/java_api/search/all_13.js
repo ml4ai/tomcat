@@ -9,6 +9,7 @@ var searchData=
   ['updategoalstatus',['updateGoalStatus',['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1Goal_1_1MissionGoal.html#a0be920a3d628cbf7e7be72dc6259cd42',1,'edu::arizona::tomcat::Mission::Goal::MissionGoal']]],
   ['updatemission',['updateMission',['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1MissionHandler.html#a05130efcb1188d3b99ce47189eeeb04c',1,'edu::arizona::tomcat::Mission::MissionHandler']]],
   ['updatescene',['updateScene',['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1Mission.html#ab8b7cbcae4b913f3e5c26589fdc09044',1,'edu::arizona::tomcat::Mission::Mission']]],
+  ['updateworlduponinit',['updateWorldUponInit',['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1MissionInitializer.html#adb1aa4aeefd6ca57672b25a0b9efa916',1,'edu::arizona::tomcat::Mission::MissionInitializer']]],
   ['usarsingleplayerclientmission',['USARSinglePlayerClientMission',['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1Client_1_1USARSinglePlayerClientMission.html',1,'edu::arizona::tomcat::Mission::Client']]],
   ['usarsingleplayermission',['USARSinglePlayerMission',['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1USARSinglePlayerMission.html',1,'edu::arizona::tomcat::Mission']]]
 ];

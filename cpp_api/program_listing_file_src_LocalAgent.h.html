@@ -158,17 +158,17 @@
 
 <span class="k">namespace</span> <span class="n">tomcat</span> <span class="p">{</span>
 
-  <span class="k">class</span> <span class="nc">Mission</span><span class="p">;</span> <span class="c1">// Forward declaration to deal with circular dependency</span>
+    <span class="k">class</span> <span class="nc">Mission</span><span class="p">;</span> <span class="c1">// Forward declaration to deal with circular dependency</span>
 
-  <span class="k">class</span> <span class="nc">LocalAgent</span> <span class="p">{</span>
+    <span class="k">class</span> <span class="nc">LocalAgent</span> <span class="p">{</span>
 
-  <span class="k">public</span><span class="o">:</span>
-    <span class="n">LocalAgent</span><span class="p">();</span>
+      <span class="k">public</span><span class="o">:</span>
+        <span class="n">LocalAgent</span><span class="p">();</span>
 
-    <span class="o">~</span><span class="n">LocalAgent</span><span class="p">();</span>
+        <span class="o">~</span><span class="n">LocalAgent</span><span class="p">();</span>
 
-    <span class="kt">void</span> <span class="nf">observe_mission</span><span class="p">(</span><span class="n">Mission</span><span class="o">&amp;</span> <span class="n">mission</span><span class="p">);</span>
-  <span class="p">};</span>
+        <span class="kt">void</span> <span class="nf">observe_mission</span><span class="p">(</span><span class="n">Mission</span><span class="o">&amp;</span> <span class="n">mission</span><span class="p">);</span>
+    <span class="p">};</span>
 
 <span class="p">}</span> <span class="c1">// namespace tomcat</span>
 </pre></div>
