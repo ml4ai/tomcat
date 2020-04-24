@@ -1,7 +1,6 @@
 package edu.arizona.tomcat.Mission;
 
 import com.microsoft.Malmo.MalmoMod;
-import com.microsoft.Malmo.Schemas.ItemType;
 import com.microsoft.Malmo.Schemas.PosAndDirection;
 import edu.arizona.tomcat.Emotion.EmotionHandler;
 import edu.arizona.tomcat.Events.EntityDeath;
@@ -13,7 +12,10 @@ import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
 import edu.arizona.tomcat.Mission.gui.FeedbackListener;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
-import edu.arizona.tomcat.Utils.*;
+import edu.arizona.tomcat.Utils.Converter;
+import edu.arizona.tomcat.Utils.MinecraftServerHelper;
+import edu.arizona.tomcat.Utils.MinecraftVanillaAIHandler;
+import edu.arizona.tomcat.Utils.TimeStamper;
 import edu.arizona.tomcat.World.DrawingHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,9 +37,12 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 
     public static enum ID { TUTORIAL, ZOMBIE, USAR_SINGLE_PLAYER }
     ;
+    public static enum DIFFICULTY { EASY, MEDIUM, HARD }
+    ;
+
     private static final long ENTITY_DELETION_DELAY = 1;
 
-    private MqttService mqttService = MqttService.getInstance();
+    private MqttService mqttService;
     protected ID id;
     protected static final int REMAINING_SECONDS_ALERT = 30;
     private boolean canShowSelfReport;
@@ -50,17 +55,20 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     protected long initialWorldTime;
     protected long worldTimeOnPause;
     protected long pausedTime;
+    protected DIFFICULTY levelOfDifficulty;
     protected DrawingHandler drawingHandler;
     protected EmotionHandler.Emotion currentEmotion;
     protected MissionPhase currentPhase;
     protected ArrayList<MissionPhase> phases;
     protected ArrayList<MissionListener> listeners;
     protected HashMap<Entity, Long> entitiesToRemove;
+    protected MissionInitializer initializer;
 
     /**
      * Abstract constructor for initialization of the drawing handler
      */
     protected Mission() {
+        this.mqttService = MqttService.getInstance();
         this.drawingHandler = DrawingHandler.getInstance();
         this.listeners = new ArrayList<MissionListener>();
         this.canShowSelfReport = false;
@@ -107,6 +115,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
      * @param world - Mission world
      */
     public void init(World world) {
+        this.initializer = new MissionInitializer();
         this.numberOfPhasesCompleted = 0;
         this.phases = new ArrayList<MissionPhase>();
         this.initialWorldTime = world.getTotalWorldTime();
@@ -449,8 +458,8 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     }
 
     /**
-     * Dismisses the message screen that informs the player that they should
-     * wait for the others.
+     * Dismisses the message screen that informs the player they should wait
+     * for the others.
      */
     private void dismissWaitingForOthersScreen() {
         TomcatMessaging.TomcatMessage message =
@@ -486,6 +495,15 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     }
 
     /**
+     * Adds an entity to be deleted after a certain amount of time.
+     * @param entity - Entity to be removed
+     * @param worldTime - Time (in seconds) to wait until removing the entity
+     */
+    public void addToDeletion(Entity entity, long worldTime) {
+        this.entitiesToRemove.put(entity, worldTime);
+    }
+
+    /**
      * Save files and other pending stuff that should be flushed when the
      * mission ends. This method must be called by the subclasses upon the end
      * of the mission.
@@ -512,24 +530,20 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     }
 
     /**
-     * Adds an entity to be deleted after certain amount of time
-     * @param entity - Entity to be removed
-     * @param worldTime - Time (in seconds) to wait until removing the entity
+     * Defines the time interval to wait until prompting a self-report screen to
+     * the player
+     * @param selfReportPromptTimeInSeconds - Time to wait until show a
+     * self-report screen
      */
-    public void addToDeletion(Entity entity, long worldTime) {
-        this.entitiesToRemove.put(entity, worldTime);
-    }
-
-    /**
-     * Add item to the player's inventory to help them accomplish the mission
-     * goals
-     *
-     * @param type - ItemType of the item to add in inventory
-     */
-    protected void addItemToInventory(ItemType type) {
-        for (EntityPlayerMP player :
-             MinecraftServerHelper.getServer().getPlayerList().getPlayers()) {
-            InventoryHandler.addItemToInventory(player, type, 1);
+    public void setLevelOfDifficulty(int levelOfDifficulty) {
+        if (levelOfDifficulty <= 3) {
+            this.levelOfDifficulty = DIFFICULTY.EASY;
+        }
+        else if (levelOfDifficulty <= 5) {
+            this.levelOfDifficulty = DIFFICULTY.MEDIUM;
+        }
+        else {
+            this.levelOfDifficulty = DIFFICULTY.HARD;
         }
     }
 }
