@@ -95,7 +95,7 @@ Mission create_mission(variables_map parameters_map) {
                               record_commands,
                               record_rewards,
                               multiplayer,
-							  uuid);
+                              uuid);
     return mission;
 }
 
