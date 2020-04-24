@@ -536,7 +536,13 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 	 */
 	public void
 	setLevelOfDifficulty(int levelOfDifficulty) {
-		this.levelOfDifficulty = DIFFICULTY.values()[levelOfDifficulty];
+		if (levelOfDifficulty <= 3) {
+			this.levelOfDifficulty = DIFFICULTY.EASY;
+		} else if (levelOfDifficulty <= 5) {
+			this.levelOfDifficulty = DIFFICULTY.MEDIUM;
+		} else {
+			this.levelOfDifficulty = DIFFICULTY.HARD;
+		}
 	}
 
 

@@ -18,11 +18,11 @@ options_description load_options() {
       "  1: Zombie Invasion\n"
       "  2: USAR (Singleplayer)")(
           "level",
-          value<unsigned int>()->default_value(0),
+          value<unsigned int>()->default_value(5),
           "Level of difficulty.\n"
-          "  0: Easy\n"
-          "  1: Medium\n"
-          "  2: Hard")("time_limit",
+          "  3: Easy\n"
+          "  5: Medium\n"
+          "  7: Hard")("time_limit",
                                   value<unsigned int>()->default_value(20),
                                   "Time limit for mission (in seconds).")(
       "self_report",
