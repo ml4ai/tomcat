@@ -17,9 +17,15 @@ options_description load_options() {
         "Mission ID or path to mission XML file.\n"
         "  0: Tutorial\n"
         "  1: Zombie Invasion\n"
-        "  2: USAR (Singleplayer)")("time_limit",
-                                    value<unsigned int>()->default_value(20),
-                                    "Time limit for mission (in seconds).")(
+        "  2: USAR (Singleplayer)")("level",
+                                    value<unsigned int>()->default_value(5),
+                                    "Level of difficulty.\n"
+                                    "  3: Easy\n"
+                                    "  5: Medium\n"
+                                    "  7: Hard")(
+        "time_limit",
+        value<unsigned int>()->default_value(20),
+        "Time limit for mission (in seconds).")(
         "self_report",
         value<unsigned int>()->default_value(180),
         "Self-report prompt interval time (in seconds).")(
@@ -75,6 +81,8 @@ Mission create_mission(variables_map parameters_map) {
         parameters_map["time_limit"].as<unsigned int>();
     unsigned int self_report_prompt_time_in_seconds =
         parameters_map["self_report"].as<unsigned int>();
+    unsigned int level_of_difficulty =
+        parameters_map["level"].as<unsigned int>();
     bool record_all = parameters_map["record_all"].as<bool>();
     bool record_observations = parameters_map["record_observations"].as<bool>();
     bool record_commands = parameters_map["record_commands"].as<bool>();
@@ -90,6 +98,7 @@ Mission create_mission(variables_map parameters_map) {
     Mission mission = Mission(mission_id_or_path,
                               time_limit_in_seconds,
                               self_report_prompt_time_in_seconds,
+                              level_of_difficulty,
                               port_number,
                               record_observations,
                               record_commands,
