@@ -22,53 +22,54 @@ namespace fs = boost::filesystem;
 
 namespace tomcat {
 
-  Mission::Mission(string mission_id_or_path,
-                   unsigned int time_limit_in_seconds,
-                   unsigned int self_report_prompt_time_in_seconds,
-                   unsigned int level_of_difficulty,
-                   int port_number,
-                   bool record_observations,
-                   bool record_commands,
-                   bool record_rewards,
-                   bool multiplayer) {
+    Mission::Mission(string mission_id_or_path,
+                     unsigned int time_limit_in_seconds,
+                     unsigned int self_report_prompt_time_in_seconds,
+                     unsigned int level_of_difficulty,
+                     int port_number,
+                     bool record_observations,
+                     bool record_commands,
+                     bool record_rewards,
+                     bool multiplayer) {
 
-    this->mission_id_or_path = mission_id_or_path;
-    this->time_limit_in_seconds = time_limit_in_seconds;
-    this->self_report_prompt_time_in_seconds =
-        self_report_prompt_time_in_seconds;
-    this->level_of_difficulty = level_of_difficulty;
-    this->port_number = port_number;
-    this->record_observations = record_observations;
-    this->record_commands = record_commands;
-    this->record_rewards = record_rewards;
-    this->multiplayer = multiplayer;
-    boost::uuids::uuid u;
-    this->uuid = boost::uuids::to_string(u);
-  }
+        this->mission_id_or_path = mission_id_or_path;
+        this->time_limit_in_seconds = time_limit_in_seconds;
+        this->self_report_prompt_time_in_seconds =
+            self_report_prompt_time_in_seconds;
+        this->level_of_difficulty = level_of_difficulty;
+        this->port_number = port_number;
+        this->record_observations = record_observations;
+        this->record_commands = record_commands;
+        this->record_rewards = record_rewards;
+        this->multiplayer = multiplayer;
+        boost::uuids::uuid u;
+        this->uuid = boost::uuids::to_string(u);
+    }
 
-  void Mission::add_listener(shared_ptr<LocalAgent> tomcat_agent) {
-    this->tomcat_agents.push_back(tomcat_agent);
-  }
+    void Mission::add_listener(shared_ptr<LocalAgent> tomcat_agent) {
+        this->tomcat_agents.push_back(tomcat_agent);
+    }
 
-  void Mission::start() {
-    this->create_client_pool();
-    this->create_mission_spec();
-    this->create_agent_hosts();
-    this->safe_wait_to_start();
-    this->observe();
-  }
+    void Mission::start() {
+        this->create_client_pool();
+        this->create_mission_spec();
+        this->create_agent_hosts();
+        this->safe_wait_to_start();
+        this->observe();
+    }
 
-  void Mission::create_client_pool() {
-      this->client_pool = make_shared<ClientPool>();
-      this->client_pool->add(ClientInfo("127.0.0.1", this->port_number));
+    void Mission::create_client_pool() {
+        this->client_pool = make_shared<ClientPool>();
+        this->client_pool->add(ClientInfo("127.0.0.1", this->port_number));
 
-      if (this->multiplayer) {
-          // Add each one of the clients in the multiplayer mission
-          // This is hardcoded but needs to be moved to a config file at some point
-          this->client_pool->add(ClientInfo("127.0.0.1", 10001));
-          this->client_pool->add(ClientInfo("127.0.0.1", 10002));
-      }
-  }
+        if (this->multiplayer) {
+            // Add each one of the clients in the multiplayer mission
+            // This is hardcoded but needs to be moved to a config file at some
+            // point
+            this->client_pool->add(ClientInfo("127.0.0.1", 10001));
+            this->client_pool->add(ClientInfo("127.0.0.1", 10002));
+        }
+    }
 
     void Mission::create_mission_spec() {
         fs::path p(this->mission_id_or_path);
@@ -149,30 +150,33 @@ namespace tomcat {
           </ServerSection>
           {}
         </Mission>)",
-        world_dir_path,
-        this->mission_id_or_path,
-        this->time_limit_in_seconds,
-        this->self_report_prompt_time_in_seconds,
-        this->level_of_difficulty,
-        agent_section_tags);
+            world_dir_path,
+            this->mission_id_or_path,
+            this->time_limit_in_seconds,
+            this->self_report_prompt_time_in_seconds,
+            this->level_of_difficulty,
+            agent_section_tags);
 
-    return xml;
-  }
+        return xml;
+    }
 
-  string Mission::create_agent_section_tags() {
-    stringstream ss;
-    string agent_name;
+    string Mission::create_agent_section_tags() {
+        stringstream ss;
+        string agent_name;
 
-    for (boost::shared_ptr<ClientInfo> client : this->client_pool->clients) {
-      if (agent_name.empty()) {
-        agent_name = "tomcat";
-      }
-      else {
-        agent_name = format("{}:{}", client->ip_address, client->control_port);
-      }
-      // For USAR_SINGLEPLAYER mission: <Placement x="-2165" y="52" z="175"/>
+        for (boost::shared_ptr<ClientInfo> client :
+             this->client_pool->clients) {
+            if (agent_name.empty()) {
+                agent_name = "tomcat";
+            }
+            else {
+                agent_name =
+                    format("{}:{}", client->ip_address, client->control_port);
+            }
+            // For USAR_SINGLEPLAYER mission: <Placement x="-2165" y="52"
+            // z="175"/>
 
-      ss << format(R"(<AgentSection mode="Adventure">
+            ss << format(R"(<AgentSection mode="Adventure">
               <Name>{}</Name>
               <AgentStart>
               </AgentStart>

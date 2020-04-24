@@ -86,8 +86,7 @@ public class MalmoModClient {
          * Ungrabs the mouse cursor so it can be moved and set it to the center
          * of the screen
          */
-        public void
-        ungrabMouseCursor() {
+        public void ungrabMouseCursor() {
             // Vanilla Minecraft calls
             // Mouse.setCursorPosition(Display.getWidth() / 2,
             // Display.getHeight() / 2) at this point... but it's seriously
@@ -177,8 +176,8 @@ public class MalmoModClient {
         //		extraKeys.add(
         //				new InternalKey("key.toggleMalmo",
         //						28,
-        //						"key.categories.malmo") // 28
-        //is
+        //						"key.categories.malmo") //
+        //28 is
         // the keycode for enter.
         //				{
         //					@Override

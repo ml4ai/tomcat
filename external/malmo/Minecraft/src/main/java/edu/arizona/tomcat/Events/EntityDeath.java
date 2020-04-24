@@ -1,7 +1,6 @@
 package edu.arizona.tomcat.Events;
 
 import java.util.UUID;
-
 import net.minecraft.entity.Entity;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 

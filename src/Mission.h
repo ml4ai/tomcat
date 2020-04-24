@@ -33,77 +33,79 @@ namespace tomcat {
 
     /**
      * The Mission interface represents an abstract Minecraft mission
-    */
+     */
     class Mission {
-    public:
-    /**
-     * Constructor
-     * @param mission_id_or_path - Mission ID or path to an xml file with the
-     * mission specifications
-     * @param time_limit_in_seconds - Duration of the mission in seconds
-     * @param self_report_prompt_time_in_seconds - Frequency of self-reports
-     * @param port_number - Port number to connect with the Minecraft server
-     * video
-     * @param record_observations - Flag that activates observations recording
-     * @param record_commands - Flag that activates commands recording
-     * @param record_rewards - Flag that activates rewards recording
-     * @param multiplayer - Flag that indicates a multiplayer mission
+      public:
+        /**
+         * Constructor
+         * @param mission_id_or_path - Mission ID or path to an xml file with
+         the
+         * mission specifications
+         * @param time_limit_in_seconds - Duration of the mission in seconds
+         * @param self_report_prompt_time_in_seconds - Frequency of self-reports
+         * @param port_number - Port number to connect with the Minecraft server
+         * video
+         * @param record_observations - Flag that activates observations
+         recording
+         * @param record_commands - Flag that activates commands recording
+         * @param record_rewards - Flag that activates rewards recording
+         * @param multiplayer - Flag that indicates a multiplayer mission
 
-     */
-    Mission(std::string mission_id_or_path,
-            unsigned int time_limit_in_seconds,
-            unsigned int self_report_prompt_time_in_seconds,
-            unsigned int level_of_difficulty,
-            int port_number,
-            bool record_observations,
-            bool record_commands,
-            bool record_rewards,
-            bool multiplayer);
-
-    /**
-     * Destructor
-     */
-    ~Mission(){};
-
-    /**
-     * Adds a Tomcat agent as a listener of the mission
-     * @param tomcat_agent - Tomcat agent
-     */
-    void add_listener(std::shared_ptr<LocalAgent> tomcat_agent);
-
-    /**
-     * Starts the mission
-     * @return
-     */
-    void start();
-
-    /**
-     * Sends command to the host
-     * @param command - Command to be executed
-     */
-    void send_command(std::string command);
-
-  private:
-    enum MissionId { TUTORIAL = 0, ZOMBIE = 1, USAR_SINGLEPLAYER = 2 };
-
-    malmo::MissionSpec mission_spec;
-    std::string mission_id_or_path;
-    unsigned int time_limit_in_seconds;
-    unsigned int self_report_prompt_time_in_seconds;
-    unsigned int level_of_difficulty;
-    int port_number;
-    bool record_observations;
-    bool record_commands;
-    bool record_rewards;
-    bool multiplayer;
-    std::shared_ptr<malmo::AgentHost> minecraft_server;
-    std::vector<std::shared_ptr<malmo::AgentHost>> minecraft_clients;
-    std::shared_ptr<malmo::ClientPool> client_pool;
-    std::vector<std::shared_ptr<LocalAgent>> tomcat_agents;
-    std::string uuid;
+         */
+        Mission(std::string mission_id_or_path,
+                unsigned int time_limit_in_seconds,
+                unsigned int self_report_prompt_time_in_seconds,
+                unsigned int level_of_difficulty,
+                int port_number,
+                bool record_observations,
+                bool record_commands,
+                bool record_rewards,
+                bool multiplayer);
 
         /**
-        * Creates the MissionSpec object based on the mission Id or XML file
+         * Destructor
+         */
+        ~Mission(){};
+
+        /**
+         * Adds a Tomcat agent as a listener of the mission
+         * @param tomcat_agent - Tomcat agent
+         */
+        void add_listener(std::shared_ptr<LocalAgent> tomcat_agent);
+
+        /**
+         * Starts the mission
+         * @return
+         */
+        void start();
+
+        /**
+         * Sends command to the host
+         * @param command - Command to be executed
+         */
+        void send_command(std::string command);
+
+      private:
+        enum MissionId { TUTORIAL = 0, ZOMBIE = 1, USAR_SINGLEPLAYER = 2 };
+
+        malmo::MissionSpec mission_spec;
+        std::string mission_id_or_path;
+        unsigned int time_limit_in_seconds;
+        unsigned int self_report_prompt_time_in_seconds;
+        unsigned int level_of_difficulty;
+        int port_number;
+        bool record_observations;
+        bool record_commands;
+        bool record_rewards;
+        bool multiplayer;
+        std::shared_ptr<malmo::AgentHost> minecraft_server;
+        std::vector<std::shared_ptr<malmo::AgentHost>> minecraft_clients;
+        std::shared_ptr<malmo::ClientPool> client_pool;
+        std::vector<std::shared_ptr<LocalAgent>> tomcat_agents;
+        std::string uuid;
+
+        /**
+         * Creates the MissionSpec object based on the mission Id or XML file
          */
         void create_mission_spec();
 

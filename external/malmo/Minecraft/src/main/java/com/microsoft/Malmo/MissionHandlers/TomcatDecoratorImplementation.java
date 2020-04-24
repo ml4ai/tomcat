@@ -29,17 +29,17 @@ public class TomcatDecoratorImplementation
         return true;
     }
 
-  /**
-   * Initialize the mission handler object
-   */
-  private void initMissionHandler() {
-    this.missionHandler = new MissionHandler();
-    this.missionHandler.setMission(
-        this.decorator.getMission().intValue(),
-        this.decorator.getTimeLimitInSeconds().intValue(),
-        this.decorator.getSelfReportPromptTimeInSeconds().intValue(),
-        this.decorator.getLevelOfDifficulty().intValue());
-  }
+    /**
+     * Initialize the mission handler object
+     */
+    private void initMissionHandler() {
+        this.missionHandler = new MissionHandler();
+        this.missionHandler.setMission(
+            this.decorator.getMission().intValue(),
+            this.decorator.getTimeLimitInSeconds().intValue(),
+            this.decorator.getSelfReportPromptTimeInSeconds().intValue(),
+            this.decorator.getLevelOfDifficulty().intValue());
+    }
 
     @Override
     public void buildOnWorld(MissionInit missionInit, World world) {

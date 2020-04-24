@@ -1,9 +1,8 @@
 package edu.arizona.tomcat.ASISTBlocks;
 
-import java.util.List;
-
 import edu.arizona.tomcat.Events.IronDoorOpened;
 import edu.arizona.tomcat.Messaging.MqttService;
+import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
