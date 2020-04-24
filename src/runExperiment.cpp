@@ -40,7 +40,7 @@ options_description load_options() {
                                       "Run mission in multiplayer mode")(
         "uuid",
         value<string>()->default_value("0"),
-        "Accept the UUID of a session as a runtime parameter.");
+        "If provided, set the UUID of the session at runtime.");
 
     return options;
 }

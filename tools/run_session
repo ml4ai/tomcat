@@ -30,7 +30,8 @@ timestamp() {
 # Creating an output directory for this session.
 # On macOS, uuidgen produces uppercase UUIDs, so we pipe the output through tr
 # to get uniform behaviour on macOS and Linux.
-session_output_dir="${TOMCAT}"/data/participant_data/$(uuidgen | tr '[:upper:]' '[:lower:]')
+session_uuid=$(uuidgen | tr '[:upper:]' '[:lower:]')
+session_output_dir="${TOMCAT}"/data/participant_data/"$session_uuid"
 mkdir -p "${session_output_dir}"
 
 start_ffmpeg_recording() {
@@ -142,7 +143,7 @@ do_mission() {
             exit 1  
         fi 
 
-        runExperiment_args="--mission ${CURRENT_MISSION} --record_observations"
+        runExperiment_args="--mission ${CURRENT_MISSION} --record_observations --uuid ${session_uuid}"
 
         if [[ $CURRENT_MISSION -gt 0 ]]; then
             runExperiment_args="${runExperiment_args} --time_limit ${TIME_LIMIT}"
