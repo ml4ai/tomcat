@@ -287,10 +287,10 @@ public class TutorialMission extends Mission {
      */
     private void changePlayerPerspective() {
         if (this.viewTime <= 2 * SECONDS_PER_CAMERA_VIEW) {
-            /* viewTime is in seconds. The player stays in each view mode
-            for 1.5 seconds. 20 Minecraft ticks equal 1 real second. viewTime is
-            incremented by
-            0.05 till 30 such ticks (1.5 second) have passed for each view */
+            /* viewTime is in seconds. The player stays in each view mode for
+             * 1.5 seconds. 20 Minecraft ticks equal 1 real second. viewTime is
+             * incremented by 0.05 till 30 such ticks (1.5 second) have passed
+             * for each view. */
 
             double roundedTime = Math.round(this.viewTime * 100.0) / 100.0;
             TomcatMessaging.TomcatMessage message =

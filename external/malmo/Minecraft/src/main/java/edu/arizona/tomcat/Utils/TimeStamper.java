@@ -12,9 +12,9 @@ public class TimeStamper {
      */
     public static String getTimeStamp() {
         TimeZone timeZone = TimeZone.getTimeZone("UTC");
-        DateFormat dateFormat = new SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ss:SSS'Z'"); // Quoted "Z" to indicate UTC, no
-        // timezone offset
+        // Quoted "Z" to indicate UTC, no timezone offset.
+        DateFormat dateFormat =
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss:SSS'Z'");
         dateFormat.setTimeZone(timeZone);
         return dateFormat.format(new Date());
     }
