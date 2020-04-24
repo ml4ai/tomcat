@@ -42,9 +42,7 @@ public class TutorialMission extends Mission {
 	private boolean shouldSpawnVillagerInsideTheBuilding;
 	private boolean shouldaddMaterialsToUsersInventory;
 	private boolean shouldSpawnExposedEntities;
-
 	private MissionPhase addInstructionsPhase;
-
 	private MissionPhase approachPoolsPhase;
 	private MissionPhase enterTheArenaPhase;
 	private MissionPhase killSkeletonPhase;
@@ -118,7 +116,7 @@ public class TutorialMission extends Mission {
 				RichContent.createFromJson("tutorial_instructions_pits.json");
 		this.approachPoolsPhase = new MissionPhase(instructions,
 				CompletionStrategy.ALL_GOALS,
-				2,
+				3,
 				true,
 				"Well Done!",
 				0,
@@ -274,8 +272,8 @@ public class TutorialMission extends Mission {
 	private void changePlayerPerspective() {
 		if (this.viewTime <= 2 * SECONDS_PER_CAMERA_VIEW) {
 			/* viewTime is in seconds. The player stays in each view mode for 1.5
-seconds. 20 Minecraft ticks equal 1 real second. viewTime is incremented by
-0.05 till 30 such ticks (1.5 second) have passed for each view */
+			seconds. 20 Minecraft ticks equal 1 real second. viewTime is incremented by
+			0.05 till 30 such ticks (1.5 second) have passed for each view */
 
 			double roundedTime = Math.round(this.viewTime * 100.0) / 100.0;
 			TomcatMessaging.TomcatMessage message =
@@ -328,7 +326,7 @@ seconds. 20 Minecraft ticks equal 1 real second. viewTime is incremented by
 	private void spawnSkeletonInTheArena(World world) {
 		if (this.shouldSpawnSkeletonInTheArena) {
 			try {
-				addItemToInventory(ItemType.STONE_AXE); //give stone axe to player
+				this.equipPlayers();
 				Drawing drawing = new Drawing();
 				TomcatEntity skeleton = new TomcatEntity(
 						this.skeletonUUID, -620, 4, 1596, EntityTypes.SKELETON);
@@ -339,6 +337,16 @@ seconds. 20 Minecraft ticks equal 1 real second. viewTime is incremented by
 				e.printStackTrace();
 			}
 			this.shouldSpawnSkeletonInTheArena = false;
+		}
+	}
+	
+	/**
+	 * Give an axe to the player(s)
+	 */
+	private void equipPlayers() {
+		for (EntityPlayerMP player :
+			MinecraftServerHelper.getPlayers()) {
+			InventoryHandler.addItemToMainHand(player, ItemType.STONE_AXE);
 		}
 	}
 

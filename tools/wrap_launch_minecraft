@@ -3,7 +3,7 @@
 # We cannot call this directly because we need TOMCAT and TOMCAT_TMP_DIR. If we
 # want to do this, then we need to arrange for setting those vars. 
 
-set -e -u 
+set -u 
 
 # Set the TOMCAT environment variable, assuming that the directory structure
 # mirrors that of the git repository.
@@ -16,6 +16,9 @@ mkdir -p "${TOMCAT_TMP_DIR}"
 minecraft_log="${TOMCAT_TMP_DIR}/minecraft.log"
 
 cd ${TOMCAT}/external/malmo/Minecraft
+
+echo $$ > "${TOMCAT_TMP_DIR}/wrap_launch.pid"
+
 echo "Running: launchClient.sh in ${TOMCAT}/external/malmo/Minecraft" 
 ./launchClient.sh < /dev/null >& ${minecraft_log} &
 bg_pid=$!

@@ -1,8 +1,8 @@
 package edu.arizona.tomcat.Mission;
+
 import java.math.BigDecimal;
 
 import com.microsoft.Malmo.Schemas.PosAndDirection;
-
 import edu.arizona.tomcat.Messaging.TomcatClientServerHandler;
 import edu.arizona.tomcat.Messaging.TomcatMessageData;
 import edu.arizona.tomcat.Messaging.TomcatMessaging;
@@ -20,13 +20,11 @@ import net.minecraft.world.World;
 
 public class USARSinglePlayerMission extends Mission {
 
-  private boolean dynamicInitializationComplete;
   private int numberOfVillagersSaved;
 
   public USARSinglePlayerMission() {
     super();
     this.id = ID.USAR_SINGLE_PLAYER;
-    this.dynamicInitializationComplete = false;
   }
 
   /**
@@ -86,29 +84,7 @@ public class USARSinglePlayerMission extends Mission {
 
   @Override
   protected void updateScene(World world) {
-    this.doDynamicInitialization(world);
-  }
-
-  /**
-   * Perform dynamic initializations in the mission
-   *
-   * @param world - Minecraft world
-   */
-  private void doDynamicInitialization(World world) {
-    if (!this.dynamicInitializationComplete) {
-      this.addItemsToInventory(world);
-      this.dynamicInitializationComplete = true;
-    }
-  }
-
-  /**
-   * Add items to the player's inventory to help them accomplish the mission
-   * goals
-   *
-   * @param world
-   */
-  private void addItemsToInventory(World world) {
-    // InventoryHandler.addItemToInventory(ItemType.IRON_SWORD, 1);
+    this.initializer.init(world);
   }
 
   @Override

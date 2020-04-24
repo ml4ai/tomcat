@@ -9,57 +9,54 @@ export TOMCAT
 
 ###############################################################################
 
-${TOMCAT}/tools/install_dependencies
-if [[ $? -ne 0 ]]; then exit 1; fi
+source ${TOMCAT}/tools/configuration_helpers
+set_local_configuration
 
-if [ "${GITHUB_ACTIONS:-false}" = "true" ]; then
-  echo "Running on Github Actions"
-fi
+detect_ci
+detect_os
 
-pushd "${TOMCAT}"
-    echo "Building ToMCAT in `pwd`"
+__build_tomcat() {
+    pushd "${TOMCAT}"
+        echo "Building ToMCAT in `pwd`"
 
-    /bin/rm -rf build
-    mkdir build
+        /bin/rm -rf build
+        mkdir build
 
-    # Trying to set the correct version of Java.
-    export PATH="$PATH:/opt/local/bin:/opt/local/sbin"
-    macports_found=`[ -x "$(command -v port)" ]; echo $?`
-    if [[ $macports_found -eq 0 ]]; then
-      export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk8/Contents/Home
-    fi
-    pushd build > /dev/null 
-        if [[ "${GITHUB_ACTIONS:-false}" = "true"  && "$OSTYPE" == "linux-gnu" ]]; then
-            cmake ${TOMCAT} -DBoost_ARCHITECTURE=-x64\
-                            -DBOOST_ROOT=$BOOST_ROOT_1_69_0
-            if [[ $? -ne 0 ]]; then exit 1; fi
-        else
-            cmake ${TOMCAT}
-            if [[ $? -ne 0 ]]; then exit 1; fi
-        fi;
+        # Trying to set the correct version of Java.
+        pushd build > /dev/null 
+            if [[ $CI -eq 1 && $OSTYPE == "linux-gnu" ]]; then
+                cmake ${TOMCAT} -DBoost_ARCHITECTURE=-x64\
+                                -DBOOST_ROOT=$BOOST_ROOT_1_69_0
+                if [[ $? -ne 0 ]]; then exit 1; fi
+            else
+                if ! cmake ${TOMCAT}; then exit 1; fi
+            fi;
 
-        make -j
-        if [[ $? -ne 0 ]]; then exit 1; fi
-
-        make -j Minecraft
-        if [[ $? -ne 0 ]]; then exit 1; fi
-
+            if ! make -j; then exit 1; fi
+            if ! make -j Minecraft; then exit 1; fi
+        popd > /dev/null 
     popd > /dev/null 
-popd > /dev/null 
+}
 
-${TOMCAT}/tools/download/tomcat_worlds
-if [[ $? -ne 0 ]]; then exit 1; fi
+__download_tomcat_data() {
+    if ! ${TOMCAT}/tools/download/tomcat_worlds; then exit 1; fi
 
+    # We do not download the OpenFace models when running on a CI runner to save
+    # time.
+    if [[ $CI -eq 0 && ! -d ${TOMCAT}/data/OpenFace_models ]]; then
+        if ! ${TOMCAT}/tools/download/OpenFace_models; then exit 1; fi
+    fi
+}
 
-# We do not download the OpenFace models on Github Actions VMs.
-if [ "${GITHUB_ACTIONS:-false}" = "false" ]; then
-  if [[ ! -d ${TOMCAT}/data/OpenFace_models ]]; then
-    ${TOMCAT}/tools/download/OpenFace_models
-    if [[ $? -ne 0 ]]; then exit 1; fi
-  fi
-fi
+_install_tomcat() {
+    if ! ${TOMCAT}/tools/install_dependencies; then exit 1; fi
+    __build_tomcat
+    __download_tomcat_data
 
-echo " "
-echo "Finished installing ToMCAT in ${TOMCAT}!"
-echo " "
+    echo " "
+    echo "Finished installing ToMCAT in ${TOMCAT}!"
+    echo " "
+}
+
+_install_tomcat
 exit 0
