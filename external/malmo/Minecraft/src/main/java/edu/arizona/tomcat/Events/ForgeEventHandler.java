@@ -17,19 +17,18 @@ public class ForgeEventHandler {
     /** Instance of the MqttService singleton to use for publishing messages. */
     private MqttService mqttService = MqttService.getInstance();
 
-    /*
-  Malmo uses an integrated server rather than a dedicated server, meaning
-  that events will be fired twice and thus published twice if we are not
-  careful.
-
-  To overcome this, we will check the value of the isRemote attribute of the
-  World whenever the World object is available from the event using the
-  getWorld() method, and fall back to thread analysis using FMLCommonHandler
-  when the world is not available.
-
-  Note: I have chosen to publish the client-side events whenever possible,
-  in the hopes that this will make the timestamps more accurate. - Adarsh
-     */
+    /* Malmo uses an integrated server rather than a dedicated server, meaning
+     * that events will be fired twice and thus published twice if we are not
+     * careful.
+     *
+     * To overcome this, we will check the value of the isRemote attribute of
+     * the World whenever the World object is available from the event using
+     * the getWorld() method, and fall back to thread analysis using
+     * FMLCommonHandler when the world is not available.
+     *
+     * Note: I have chosen to publish the client-side events whenever possible,
+     * in the hopes that this will make the timestamps more accurate. - Adarsh
+     * */
 
     /**
      * Handle AttackEntityEvent events from Forge event bus, publish events to

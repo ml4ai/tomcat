@@ -170,27 +170,6 @@ public class MalmoModClient {
     private void setUpExtraKeys(GameSettings settings) {
         // Create extra key bindings here and pass them to the KeyManager.
         ArrayList<InternalKey> extraKeys = new ArrayList<InternalKey>();
-        // Create a key binding to toggle between player and Malmo control:
-        // The code below was commented out because we don't need the AI mode
-        // for the Tomcat missions
-        //		extraKeys.add(
-        //				new InternalKey("key.toggleMalmo",
-        //						28,
-        //						"key.categories.malmo") //
-        //28 is
-        // the keycode for enter.
-        //				{
-        //					@Override
-        //					public void onPressed() {
-        //						InputType it =
-        //								(inputType
-        //!=
-        // InputType.AI) ? InputType.AI : InputType.HUMAN;
-        // System.out.println("Toggling control between human and AI
-        //- now " + it); setInputType(it); super.onPressed();
-        //					}
-        //				});
-
         extraKeys.add(
             new InternalKey("key.handyTestHook", 22, "key.categories.malmo") {
                 @Override
@@ -232,15 +211,4 @@ public class MalmoModClient {
     public void setTomcatClientMission(ClientMission tomcatClientMission) {
         this.tomcatClientMission = tomcatClientMission;
     }
-
-    /*
-  @SideOnly(Side.CLIENT)
-  @SubscribeEvent
-  public void onEvent(GuiOpenEvent event)
-  {
-  if (event.getGui() instanceof GuiIngameModOptions)
-  {
-      event.setGui(new MalmoModGuiOptions.MalmoModGuiScreen(null));
-  }
-  }*/
 }
