@@ -458,8 +458,8 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     }
 
     /**
-     * Dismisses the message screen that informs the player he should wait for
-     * the others
+     * Dismisses the message screen that informs the player they should wait
+     * for the others.
      */
     private void dismissWaitingForOthersScreen() {
         TomcatMessaging.TomcatMessage message =
@@ -469,7 +469,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 
     /**
      * When a player tries to dismiss a screen but others are still with their
-     * screens prompted, show a message a screen saying the player he smust wait
+     * screens prompted, show a message a screen saying the player they must wait
      * for the others to continue the mission.
      * @param player
      */
@@ -495,7 +495,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     }
 
     /**
-     * Adds an entity to be deleted after certain amount of time
+     * Adds an entity to be deleted after a certain amount of time.
      * @param entity - Entity to be removed
      * @param worldTime - Time (in seconds) to wait until removing the entity
      */
