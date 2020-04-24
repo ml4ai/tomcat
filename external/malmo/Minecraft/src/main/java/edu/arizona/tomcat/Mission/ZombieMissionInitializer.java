@@ -14,6 +14,7 @@ import com.microsoft.Malmo.Schemas.ItemType;
 import edu.arizona.tomcat.Mission.Mission.DIFFICULTY;
 import edu.arizona.tomcat.Utils.InventoryHandler;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
+import edu.arizona.tomcat.World.Building;
 import edu.arizona.tomcat.World.Drawing;
 import edu.arizona.tomcat.World.DrawingHandler;
 import edu.arizona.tomcat.World.TomcatEntity;
