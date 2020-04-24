@@ -8,34 +8,34 @@
 
 namespace tomcat {
 
-  class LocalAgent; // Forward declaration to deal with circular dependency
+    class LocalAgent; // Forward declaration to deal with circular dependency
 
-  class TomcatMissionException : public std::exception {
-  public:
-    enum ErrorCode {
-      CONNECTION_NOT_ESTABLISHED,
-      TOMCAT_ENV_VAR_NOT_SET,
-      ERROR_STARTING_MISSION,
-      WORLD_DIR_NOT_FOUND
+    class TomcatMissionException : public std::exception {
+      public:
+        enum ErrorCode {
+            CONNECTION_NOT_ESTABLISHED,
+            TOMCAT_ENV_VAR_NOT_SET,
+            ERROR_STARTING_MISSION,
+            WORLD_DIR_NOT_FOUND
+        };
+
+        TomcatMissionException(const std::string& message, ErrorCode error_code)
+            : message(message), error_code(error_code) {}
+        ~TomcatMissionException() throw() {}
+        ErrorCode get_error_code() const { return this->error_code; }
+        std::string get_message() const { return this->message; }
+        const char* what() const throw() { return this->message.c_str(); }
+
+      private:
+        std::string message;
+        ErrorCode error_code;
     };
 
-    TomcatMissionException(const std::string& message, ErrorCode error_code)
-        : message(message), error_code(error_code) {}
-    ~TomcatMissionException() throw() {}
-    ErrorCode get_error_code() const { return this->error_code; }
-    std::string get_message() const { return this->message; }
-    const char* what() const throw() { return this->message.c_str(); }
-
-  private:
-    std::string message;
-    ErrorCode error_code;
-  };
-
-  /**
-   * The Mission interface represents an abstract Minecraft mission
-   */
-  class Mission {
-  public:
+    /**
+     * The Mission interface represents an abstract Minecraft mission
+    */
+    class Mission {
+    public:
     /**
      * Constructor
      * @param mission_id_or_path - Mission ID or path to an xml file with the
@@ -102,68 +102,68 @@ namespace tomcat {
     std::vector<std::shared_ptr<LocalAgent>> tomcat_agents;
     std::string uuid;
 
-    /**
-     * Creates the MissionSpec object based on the mission Id or XML file
-     */
-    void create_mission_spec();
+        /**
+        * Creates the MissionSpec object based on the mission Id or XML file
+         */
+        void create_mission_spec();
 
-    /**
-     * Retrieves, from a mission id, the folder name where its hand-constructed
-     * world is
-     */
-    inline static std::unordered_map<int, std::string> id_to_world_folder_map =
-        {
-            {TUTORIAL, "tutorial"},
-            {ZOMBIE, "zombie"},
-            {USAR_SINGLEPLAYER, "Singleplayer"},
+        /**
+         * Retrieves, from a mission id, the folder name where its
+         * hand-constructed world is
+         */
+        inline static std::unordered_map<int, std::string>
+            id_to_world_folder_map = {
+                {TUTORIAL, "tutorial"},
+                {ZOMBIE, "zombie"},
+                {USAR_SINGLEPLAYER, "Singleplayer"},
+        };
+
+        /**
+         * Creates a client pool for the server and each client
+         */
+        void create_client_pool();
+
+        /**
+         * Retrieves the content of an XML which defines the skeleton of the
+         * world for the Search and Rescue mission
+         * @return
+         */
+        std::string get_world_skeleton_from_xml();
+
+        /**
+         * Creates the collection of AgentSection tags for the clients in the
+         * mission. These tags will be included in the mission spec xml
+         * @return
+         */
+        std::string create_agent_section_tags();
+
+        /**
+         * Creates AgentHost objects in charge of communicate with the Minecraft
+         * server and clients
+         */
+        void create_agent_hosts();
+
+        /**
+         * Establish connection to a Minecraft host
+         */
+        std::shared_ptr<malmo::AgentHost> connect_to_minecraft(int role);
+
+        /**
+         * Retrieves a MissionRecordSpec for the mission
+         * @return
+         */
+        malmo::MissionRecordSpec get_mission_record_spec();
+
+        /**
+         * Wait until all the clients have started the mission
+         */
+        void safe_wait_to_start();
+
+        /**
+         * Observe the mission. This method corresponds to the mission main loop
+         * and is executed while the mission is running
+         */
+        void observe();
     };
-
-    /**
-     * Creates a client pool for the server and each client
-     */
-    void create_client_pool();
-
-    /**
-     * Retrieves the content of an XML which defines the skeleton of the world
-     * for the Search and Rescue mission
-     * @return
-     */
-    std::string get_world_skeleton_from_xml();
-
-    /**
-     * Creates the collection of AgentSection tags for the clients in the
-     * mission. These tags will be included in the mission spec xml
-     * @return
-     */
-    std::string create_agent_section_tags();
-
-    /**
-     * Creates AgentHost objects in charge of communicate with the Minecraft
-     * server and clients
-     */
-    void create_agent_hosts();
-
-    /**
-     * Establish connection to a Minecraft host
-     */
-    std::shared_ptr<malmo::AgentHost> connect_to_minecraft(int role);
-
-    /**
-     * Retrieves a MissionRecordSpec for the mission
-     * @return
-     */
-    malmo::MissionRecordSpec get_mission_record_spec();
-
-    /**
-     * Wait until all the clients have started the mission
-     */
-    void safe_wait_to_start();
-
-    /**
-     * Observe the mission. This method corresponds to the mission main loop and
-     * is executed while the mission is running
-     */
-    void observe();
-  };
 
 } // namespace tomcat

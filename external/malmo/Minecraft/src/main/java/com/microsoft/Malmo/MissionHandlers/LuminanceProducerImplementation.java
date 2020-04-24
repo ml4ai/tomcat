@@ -39,65 +39,66 @@ import org.lwjgl.opengl.GL11;
 
 public class LuminanceProducerImplementation
     extends HandlerBase implements IVideoProducer {
-  private LuminanceProducer lumParams;
-  private Framebuffer fbo;
-  static private int shaderID = -1;
+    private LuminanceProducer lumParams;
+    private Framebuffer fbo;
+    static private int shaderID = -1;
 
-  @Override
-  public boolean parseParameters(Object params) {
-    MinecraftForge.EVENT_BUS.register(this);
+    @Override
+    public boolean parseParameters(Object params) {
+        MinecraftForge.EVENT_BUS.register(this);
 
-    if (params == null || !(params instanceof LuminanceProducer))
-      return false;
-    this.lumParams = (LuminanceProducer)params;
+        if (params == null || !(params instanceof LuminanceProducer))
+            return false;
+        this.lumParams = (LuminanceProducer)params;
 
-    if (shaderID == -1)
-      shaderID = TextureHelper.createProgram("lum");
-    return true;
-  }
+        if (shaderID == -1)
+            shaderID = TextureHelper.createProgram("lum");
+        return true;
+    }
 
-  @Override
-  public VideoType getVideoType() {
-    return VideoType.LUMINANCE;
-  }
+    @Override
+    public VideoType getVideoType() {
+        return VideoType.LUMINANCE;
+    }
 
-  @Override
-  public int getWidth() {
-    return this.lumParams.getWidth();
-  }
+    @Override
+    public int getWidth() {
+        return this.lumParams.getWidth();
+    }
 
-  @Override
-  public int getHeight() {
-    return this.lumParams.getHeight();
-  }
+    @Override
+    public int getHeight() {
+        return this.lumParams.getHeight();
+    }
 
-  public int getRequiredBufferSize() {
-    return this.getWidth() * this.getHeight();
-  }
+    public int getRequiredBufferSize() {
+        return this.getWidth() * this.getHeight();
+    }
 
-  @Override
-  public void getFrame(MissionInit missionInit, ByteBuffer buffer) {
-    final int width = getWidth();
-    final int height = getHeight();
+    @Override
+    public void getFrame(MissionInit missionInit, ByteBuffer buffer) {
+        final int width = getWidth();
+        final int height = getHeight();
 
-    // Render the Minecraft frame into our own FBO, at the desired size:
-    OpenGlHelper.glUseProgram(shaderID);
-    this.fbo.bindFramebuffer(true);
-    Minecraft.getMinecraft().getFramebuffer().framebufferRenderExt(
-        width, height, true);
-    GlStateManager.bindTexture(this.fbo.framebufferTexture);
-    GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL_RED, GL_UNSIGNED_BYTE, buffer);
-    this.fbo.unbindFramebuffer();
-    OpenGlHelper.glUseProgram(0);
-  }
+        // Render the Minecraft frame into our own FBO, at the desired size:
+        OpenGlHelper.glUseProgram(shaderID);
+        this.fbo.bindFramebuffer(true);
+        Minecraft.getMinecraft().getFramebuffer().framebufferRenderExt(
+            width, height, true);
+        GlStateManager.bindTexture(this.fbo.framebufferTexture);
+        GL11.glGetTexImage(
+            GL11.GL_TEXTURE_2D, 0, GL_RED, GL_UNSIGNED_BYTE, buffer);
+        this.fbo.unbindFramebuffer();
+        OpenGlHelper.glUseProgram(0);
+    }
 
-  @Override
-  public void prepare(MissionInit missionInit) {
-    this.fbo = new Framebuffer(this.getWidth(), this.getHeight(), true);
-  }
+    @Override
+    public void prepare(MissionInit missionInit) {
+        this.fbo = new Framebuffer(this.getWidth(), this.getHeight(), true);
+    }
 
-  @Override
-  public void cleanup() {
-    this.fbo.deleteFramebuffer(); // Must do this or we leak resources.
-  }
+    @Override
+    public void cleanup() {
+        this.fbo.deleteFramebuffer(); // Must do this or we leak resources.
+    }
 }

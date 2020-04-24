@@ -43,31 +43,30 @@ options_description load_options() {
       "Activate reward recordings")("multiplayer",
                                     bool_switch()->default_value(false),
                                     "Run mission in multiplayer mode");
-
-  return options;
+    return options;
 }
 
 variables_map
 parse_parameters(options_description options, int argc, const char* argv[]) {
-  variables_map parameters_map;
-  store(parse_command_line(argc, argv, options), parameters_map);
-  notify(parameters_map);
+    variables_map parameters_map;
+    store(parse_command_line(argc, argv, options), parameters_map);
+    notify(parameters_map);
 
-  return parameters_map;
+    return parameters_map;
 }
 
 bool are_parameters_ok(variables_map parameters_map,
                        options_description options) {
-  if (parameters_map.count("help")) {
-    cout << options << endl;
-    return false;
-  }
-  else if (!parameters_map.count("mission")) {
-    cout << options << endl;
-    return false;
-  }
+    if (parameters_map.count("help")) {
+        cout << options << endl;
+        return false;
+    }
+    else if (!parameters_map.count("mission")) {
+        cout << options << endl;
+        return false;
+    }
 
-  return true;
+    return true;
 }
 
 Mission create_mission(variables_map parameters_map) {
@@ -104,24 +103,25 @@ Mission create_mission(variables_map parameters_map) {
 }
 
 int main(int argc, const char* argv[]) {
-  options_description options = load_options();
-  variables_map parameters_map = parse_parameters(options, argc, argv);
+    options_description options = load_options();
+    variables_map parameters_map = parse_parameters(options, argc, argv);
 
-  if (are_parameters_ok(parameters_map, options)) {
-    Mission mission = create_mission(parameters_map);
-    try {
-      std::shared_ptr<LocalAgent> tomcat_agent = std::make_shared<LocalAgent>();
-      mission.add_listener(tomcat_agent);
-      mission.start();
+    if (are_parameters_ok(parameters_map, options)) {
+        Mission mission = create_mission(parameters_map);
+        try {
+            std::shared_ptr<LocalAgent> tomcat_agent =
+                std::make_shared<LocalAgent>();
+            mission.add_listener(tomcat_agent);
+            mission.start();
+        }
+        catch (exception& e) {
+            cerr << "Error starting mission: " << e.what();
+            return EXIT_FAILURE;
+        }
     }
-    catch (exception& e) {
-      cerr << "Error starting mission: " << e.what();
-      return EXIT_FAILURE;
+    else {
+        return EXIT_FAILURE;
     }
-  }
-  else {
-    return EXIT_FAILURE;
-  }
 
-  return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

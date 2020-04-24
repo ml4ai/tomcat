@@ -37,116 +37,123 @@ import net.minecraft.world.storage.WorldSummary;
 
 public class FileWorldGeneratorImplementation
     extends HandlerBase implements IWorldGenerator {
-  String mapFilename;
-  FileWorldGenerator fwparams;
-  String errorDetails;
+    String mapFilename;
+    FileWorldGenerator fwparams;
+    String errorDetails;
 
-  @Override
-  public boolean parseParameters(Object params) {
-    if (params == null || !(params instanceof FileWorldGenerator))
-      return false;
+    @Override
+    public boolean parseParameters(Object params) {
+        if (params == null || !(params instanceof FileWorldGenerator))
+            return false;
 
-    this.fwparams = (FileWorldGenerator)params;
-    this.mapFilename = fwparams.getSrc();
-    return true;
-  }
-
-  @Override
-  public boolean createWorld(MissionInit missionInit) {
-    if (this.mapFilename == null || this.mapFilename.length() == 0) {
-      this.errorDetails = "No basemap URI provided - check your Mission XML.";
-      return false;
-    }
-    File mapSource = new File(this.mapFilename);
-    if (!mapSource.exists()) {
-      this.errorDetails =
-          "Basemap file " + this.mapFilename +
-          " was not found - check your Mission XML and ensure the file exists on the Minecraft client machine.";
-      return false;
-    }
-    if (!mapSource.isDirectory()) {
-      this.errorDetails =
-          "Basemap location " + this.mapFilename +
-          " needs to be a folder. Check the path in your Mission XML.";
-      return false;
-    }
-    File mapCopy = MapFileHelper.copyMapFiles(
-        mapSource, this.fwparams.isDestroyAfterUse());
-    if (mapCopy == null) {
-      this.errorDetails =
-          "Unable to copy " + this.mapFilename + " - is the hard drive full?";
-      return false;
-    }
-    if (!Minecraft.getMinecraft().getSaveLoader().canLoadWorld(
-            mapCopy.getName())) {
-      this.errorDetails = "Minecraft is unable to load " + this.mapFilename +
-                          " - is it a valid saved world?";
-      return false;
+        this.fwparams = (FileWorldGenerator)params;
+        this.mapFilename = fwparams.getSrc();
+        return true;
     }
 
-    ISaveFormat isaveformat = Minecraft.getMinecraft().getSaveLoader();
-    List<WorldSummary> worldlist;
-    try {
-      worldlist = isaveformat.getSaveList();
+    @Override
+    public boolean createWorld(MissionInit missionInit) {
+        if (this.mapFilename == null || this.mapFilename.length() == 0) {
+            this.errorDetails =
+                "No basemap URI provided - check your Mission XML.";
+            return false;
+        }
+        File mapSource = new File(this.mapFilename);
+        if (!mapSource.exists()) {
+            this.errorDetails =
+                "Basemap file " + this.mapFilename +
+                " was not found - check your Mission XML and ensure the file exists on the Minecraft client machine.";
+            return false;
+        }
+        if (!mapSource.isDirectory()) {
+            this.errorDetails =
+                "Basemap location " + this.mapFilename +
+                " needs to be a folder. Check the path in your Mission XML.";
+            return false;
+        }
+        File mapCopy = MapFileHelper.copyMapFiles(
+            mapSource, this.fwparams.isDestroyAfterUse());
+        if (mapCopy == null) {
+            this.errorDetails = "Unable to copy " + this.mapFilename +
+                                " - is the hard drive full?";
+            return false;
+        }
+        if (!Minecraft.getMinecraft().getSaveLoader().canLoadWorld(
+                mapCopy.getName())) {
+            this.errorDetails = "Minecraft is unable to load " +
+                                this.mapFilename +
+                                " - is it a valid saved world?";
+            return false;
+        }
+
+        ISaveFormat isaveformat = Minecraft.getMinecraft().getSaveLoader();
+        List<WorldSummary> worldlist;
+        try {
+            worldlist = isaveformat.getSaveList();
+        }
+        catch (AnvilConverterException anvilconverterexception) {
+            this.errorDetails = "Minecraft couldn't rebuild saved world list.";
+            return false;
+        }
+
+        WorldSummary newWorld = null;
+        for (WorldSummary ws : worldlist) {
+            if (ws.getFileName().equals(mapCopy.getName()))
+                newWorld = ws;
+        }
+        if (newWorld == null) {
+            this.errorDetails = "Minecraft could not find the copied world.";
+            return false;
+        }
+
+        net.minecraftforge.fml.client.FMLClientHandler.instance()
+            .tryLoadExistingWorld(null, newWorld);
+        IntegratedServer server =
+            Minecraft.getMinecraft().getIntegratedServer();
+        String worldName = (server != null) ? server.getWorldName() : null;
+        if (worldName == null || !worldName.equals(newWorld.getDisplayName())) {
+            this.errorDetails = "Minecraft could not load " + this.mapFilename +
+                                " - is it a valid saved world?";
+            return false;
+        }
+        MapFileHelper.cleanupTemporaryWorlds(
+            mapCopy.getName()); // Now we are safely running a new file, we can
+                                // attempt to clean up old ones.
+        return true;
     }
-    catch (AnvilConverterException anvilconverterexception) {
-      this.errorDetails = "Minecraft couldn't rebuild saved world list.";
-      return false;
+
+    @Override
+    public boolean shouldCreateWorld(MissionInit missionInit, World world) {
+        if (this.fwparams != null && this.fwparams.isForceReset())
+            return true;
+
+        if (world == null)
+            return true; // There is no world, so we definitely need to create
+                         // one.
+
+        String name =
+            (world != null) ? world.getWorldInfo().getWorldName() : "";
+        // Extract the name from the path (need to cope with backslashes or
+        // forward slashes.)
+        String mapfile =
+            (this.mapFilename == null)
+                ? ""
+                : this.mapFilename; // Makes no sense to have an empty filename,
+                                    // but createWorld will deal with it
+                                    // graciously.
+        String[] parts = mapfile.split("[\\\\/]");
+        if (name.length() > 0 &&
+            parts[parts.length - 1].equalsIgnoreCase(name) &&
+            Minecraft.getMinecraft().world != null)
+            return false; // We don't check whether the game modes match - it's
+                          // up to the server state machine to sort that out.
+
+        return true; // There's no world, or the world is different to the
+                     // basemap file, so create.
     }
 
-    WorldSummary newWorld = null;
-    for (WorldSummary ws : worldlist) {
-      if (ws.getFileName().equals(mapCopy.getName()))
-        newWorld = ws;
+    @Override
+    public String getErrorDetails() {
+        return this.errorDetails;
     }
-    if (newWorld == null) {
-      this.errorDetails = "Minecraft could not find the copied world.";
-      return false;
-    }
-
-    net.minecraftforge.fml.client.FMLClientHandler.instance()
-        .tryLoadExistingWorld(null, newWorld);
-    IntegratedServer server = Minecraft.getMinecraft().getIntegratedServer();
-    String worldName = (server != null) ? server.getWorldName() : null;
-    if (worldName == null || !worldName.equals(newWorld.getDisplayName())) {
-      this.errorDetails = "Minecraft could not load " + this.mapFilename +
-                          " - is it a valid saved world?";
-      return false;
-    }
-    MapFileHelper.cleanupTemporaryWorlds(
-        mapCopy.getName()); // Now we are safely running a new file, we can
-                            // attempt to clean up old ones.
-    return true;
-  }
-
-  @Override
-  public boolean shouldCreateWorld(MissionInit missionInit, World world) {
-    if (this.fwparams != null && this.fwparams.isForceReset())
-      return true;
-
-    if (world == null)
-      return true; // There is no world, so we definitely need to create one.
-
-    String name = (world != null) ? world.getWorldInfo().getWorldName() : "";
-    // Extract the name from the path (need to cope with backslashes or forward
-    // slashes.)
-    String mapfile =
-        (this.mapFilename == null)
-            ? ""
-            : this.mapFilename; // Makes no sense to have an empty filename, but
-                                // createWorld will deal with it graciously.
-    String[] parts = mapfile.split("[\\\\/]");
-    if (name.length() > 0 && parts[parts.length - 1].equalsIgnoreCase(name) &&
-        Minecraft.getMinecraft().world != null)
-      return false; // We don't check whether the game modes match - it's up to
-                    // the server state machine to sort that out.
-
-    return true; // There's no world, or the world is different to the basemap
-                 // file, so create.
-  }
-
-  @Override
-  public String getErrorDetails() {
-    return this.errorDetails;
-  }
 }

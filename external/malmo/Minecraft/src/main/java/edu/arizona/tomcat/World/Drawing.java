@@ -5,34 +5,34 @@ import java.util.Iterator;
 
 public class Drawing {
 
-  private ArrayList<CompositeDrawingObject> objects;
+    private ArrayList<CompositeDrawingObject> objects;
 
-  /**
-   * Constructor
-   */
-  public Drawing() { this.objects = new ArrayList<CompositeDrawingObject>(); }
+    /**
+     * Constructor
+     */
+    public Drawing() { this.objects = new ArrayList<CompositeDrawingObject>(); }
 
-  /**
-   * List of objects in the drawing
-   * @return
-   */
-  public Iterator<CompositeDrawingObject> getObjects() {
-    return this.objects.iterator();
-  }
+    /**
+     * List of objects in the drawing
+     * @return
+     */
+    public Iterator<CompositeDrawingObject> getObjects() {
+        return this.objects.iterator();
+    }
 
-  /**
-   * Adds a new object to the drawing
-   * @param object
-   */
-  public void addObject(CompositeDrawingObject object) {
-    this.objects.add(object);
-  }
+    /**
+     * Adds a new object to the drawing
+     * @param object
+     */
+    public void addObject(CompositeDrawingObject object) {
+        this.objects.add(object);
+    }
 
-  /**
-   * Removes an object to the drawing
-   * @param object
-   */
-  public void removeObject(CompositeDrawingObject object) {
-    this.objects.remove(object);
-  }
+    /**
+     * Removes an object to the drawing
+     * @param object
+     */
+    public void removeObject(CompositeDrawingObject object) {
+        this.objects.remove(object);
+    }
 }

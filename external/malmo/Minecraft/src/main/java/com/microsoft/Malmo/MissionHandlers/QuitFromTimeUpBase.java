@@ -35,38 +35,38 @@ import net.minecraft.client.Minecraft;
 
 public abstract class QuitFromTimeUpBase
     extends HandlerBase implements IWantToQuit {
-  private long initialWorldTime = 0;
-  private float timelimitms;
-  private int countdownSeconds;
+    private long initialWorldTime = 0;
+    private float timelimitms;
+    private int countdownSeconds;
 
-  abstract protected long getWorldTime();
-  abstract protected void drawCountDown(int secondsRemaining);
+    abstract protected long getWorldTime();
+    abstract protected void drawCountDown(int secondsRemaining);
 
-  protected void setTimeLimitMs(float limit) { this.timelimitms = limit; }
+    protected void setTimeLimitMs(float limit) { this.timelimitms = limit; }
 
-  @Override
-  public boolean doIWantToQuit(MissionInit missionInit) {
-    if (missionInit == null || missionInit.getMission() == null ||
-        Minecraft.getMinecraft().world == null)
-      return false;
+    @Override
+    public boolean doIWantToQuit(MissionInit missionInit) {
+        if (missionInit == null || missionInit.getMission() == null ||
+            Minecraft.getMinecraft().world == null)
+            return false;
 
-    // Initialise our start-of-mission time:
-    if (this.initialWorldTime == 0)
-      this.initialWorldTime = getWorldTime();
+        // Initialise our start-of-mission time:
+        if (this.initialWorldTime == 0)
+            this.initialWorldTime = getWorldTime();
 
-    long currentWorldTime = getWorldTime();
-    long timeElapsedInWorldTicks = currentWorldTime - this.initialWorldTime;
-    float timeRemainingInMs =
-        this.timelimitms -
-        (timeElapsedInWorldTicks * TimeHelper.MillisecondsPerWorldTick);
-    int timeRemainingInSeconds =
-        (int)Math.ceil(timeRemainingInMs / TimeHelper.MillisecondsPerSecond);
-    if (timeRemainingInSeconds != this.countdownSeconds) {
-      this.countdownSeconds = timeRemainingInSeconds;
-      drawCountDown(this.countdownSeconds);
+        long currentWorldTime = getWorldTime();
+        long timeElapsedInWorldTicks = currentWorldTime - this.initialWorldTime;
+        float timeRemainingInMs =
+            this.timelimitms -
+            (timeElapsedInWorldTicks * TimeHelper.MillisecondsPerWorldTick);
+        int timeRemainingInSeconds = (int)Math.ceil(
+            timeRemainingInMs / TimeHelper.MillisecondsPerSecond);
+        if (timeRemainingInSeconds != this.countdownSeconds) {
+            this.countdownSeconds = timeRemainingInSeconds;
+            drawCountDown(this.countdownSeconds);
+        }
+        if (timeRemainingInMs <= 0)
+            return true;
+        return false;
     }
-    if (timeRemainingInMs <= 0)
-      return true;
-    return false;
-  }
 }

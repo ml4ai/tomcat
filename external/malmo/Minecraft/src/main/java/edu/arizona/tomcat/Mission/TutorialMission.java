@@ -339,7 +339,7 @@ public class TutorialMission extends Mission {
 			this.shouldSpawnSkeletonInTheArena = false;
 		}
 	}
-	
+
 	/**
 	 * Give an axe to the player(s)
 	 */
@@ -520,4 +520,5 @@ public class TutorialMission extends Mission {
 			deadPlayers.remove(player);
 		}
 	}
+
 }

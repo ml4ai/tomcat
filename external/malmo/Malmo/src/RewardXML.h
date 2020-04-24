@@ -31,28 +31,28 @@
 #include <boost/property_tree/ptree.hpp>
 
 namespace malmo {
-  class TimestampedReward;
+    class TimestampedReward;
 
-  class RewardXML {
-  public:
-    RewardXML() {}
-    RewardXML(std::string xml_text);
+    class RewardXML {
+      public:
+        RewardXML() {}
+        RewardXML(std::string xml_text);
 
-    std::string toXml() const;
+        std::string toXml() const;
 
-    void parse_rewards(std::string xml_text);
-    void parse_rewards(boost::property_tree::ptree& reward);
-    void add_rewards(boost::property_tree::ptree& reward) const;
+        void parse_rewards(std::string xml_text);
+        void parse_rewards(boost::property_tree::ptree& reward);
+        void add_rewards(boost::property_tree::ptree& reward) const;
 
-    size_t size() const { return reward_values.size(); }
+        size_t size() const { return reward_values.size(); }
 
-    friend class TimestampedReward;
-    friend std::ostream& operator<<(std::ostream& os,
-                                    const TimestampedReward& tsf);
+        friend class TimestampedReward;
+        friend std::ostream& operator<<(std::ostream& os,
+                                        const TimestampedReward& tsf);
 
-  private:
-    std::map<int, double> reward_values;
-  };
+      private:
+        std::map<int, double> reward_values;
+    };
 } // namespace malmo
 
 #endif

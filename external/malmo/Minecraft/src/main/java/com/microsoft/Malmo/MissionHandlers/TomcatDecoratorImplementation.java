@@ -14,20 +14,20 @@ import net.minecraft.world.World;
  */
 public class TomcatDecoratorImplementation
     extends HandlerBase implements IWorldDecorator {
-  TomcatDecorator decorator;
-  MissionHandler missionHandler;
+    TomcatDecorator decorator;
+    MissionHandler missionHandler;
 
-  @Override
-  public boolean parseParameters(Object params) {
-    if (params == null || !(params instanceof TomcatDecorator)) {
-      return false;
+    @Override
+    public boolean parseParameters(Object params) {
+        if (params == null || !(params instanceof TomcatDecorator)) {
+            return false;
+        }
+
+        this.decorator = (TomcatDecorator)params;
+        this.initMissionHandler();
+
+        return true;
     }
-
-    this.decorator = (TomcatDecorator)params;
-    this.initMissionHandler();
-
-    return true;
-  }
 
   /**
    * Initialize the mission handler object
@@ -41,36 +41,36 @@ public class TomcatDecoratorImplementation
         this.decorator.getLevelOfDifficulty().intValue());
   }
 
-  @Override
-  public void buildOnWorld(MissionInit missionInit, World world) {
-    this.missionHandler.initMission(world);
-  }
+    @Override
+    public void buildOnWorld(MissionInit missionInit, World world) {
+        this.missionHandler.initMission(world);
+    }
 
-  @Override
-  public void update(World world) {
-    this.missionHandler.updateMission(world);
-  }
+    @Override
+    public void update(World world) {
+        this.missionHandler.updateMission(world);
+    }
 
-  @Override
-  public boolean getExtraAgentHandlersAndData(List<Object> handlers,
-                                              Map<String, String> data) {
-    return false;
-  }
+    @Override
+    public boolean getExtraAgentHandlersAndData(List<Object> handlers,
+                                                Map<String, String> data) {
+        return false;
+    }
 
-  @Override
-  public void prepare(MissionInit missionInit) {}
+    @Override
+    public void prepare(MissionInit missionInit) {}
 
-  @Override
-  public void cleanup() {}
+    @Override
+    public void cleanup() {}
 
-  @Override
-  public boolean targetedUpdate(String nextAgentName) {
-    return false; // Does nothing.
-  }
+    @Override
+    public boolean targetedUpdate(String nextAgentName) {
+        return false; // Does nothing.
+    }
 
-  @Override
-  public void getTurnParticipants(ArrayList<String> participants,
-                                  ArrayList<Integer> participantSlots) {
-    // Does nothing.
-  }
+    @Override
+    public void getTurnParticipants(ArrayList<String> participants,
+                                    ArrayList<Integer> participantSlots) {
+        // Does nothing.
+    }
 }

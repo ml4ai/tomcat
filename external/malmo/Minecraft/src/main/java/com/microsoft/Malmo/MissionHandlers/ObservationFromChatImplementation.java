@@ -37,72 +37,72 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class ObservationFromChatImplementation
     extends HandlerBase implements IObservationProducer {
-  private static final String TITLE_TYPE = "Title";
-  private static final String SUBTITLE_TYPE = "Subtitle";
-  private static final String CHAT_TYPE = "Chat";
+    private static final String TITLE_TYPE = "Title";
+    private static final String SUBTITLE_TYPE = "Subtitle";
+    private static final String CHAT_TYPE = "Chat";
 
-  private class ChatMessage {
-    public String messageType;
-    public String messageContent;
-    public ChatMessage(String messageType, String messageContent) {
-      this.messageType = messageType;
-      this.messageContent = messageContent;
-    }
-  }
-
-  private ArrayList<ChatMessage> chatMessagesReceived =
-      new ArrayList<ChatMessage>();
-
-  @Override
-  public void writeObservationsToJSON(JsonObject json,
-                                      MissionInit missionInit) {
-    if (!this.chatMessagesReceived.isEmpty()) {
-      HashMap<String, ArrayList<String>> lists =
-          new HashMap<String, ArrayList<String>>();
-      for (ChatMessage message : this.chatMessagesReceived) {
-        ArrayList<String> arr = lists.get(message.messageType);
-        if (arr == null) {
-          arr = new ArrayList<String>();
-          lists.put(message.messageType, arr);
+    private class ChatMessage {
+        public String messageType;
+        public String messageContent;
+        public ChatMessage(String messageType, String messageContent) {
+            this.messageType = messageType;
+            this.messageContent = messageContent;
         }
-        arr.add(message.messageContent);
-      }
-      for (String key : lists.keySet()) {
-        JsonArray jarr = new JsonArray();
-        for (String message : lists.get(key)) {
-          jarr.add(new JsonPrimitive(message));
-        }
-        json.add(key, jarr);
-      }
-      this.chatMessagesReceived.clear();
     }
-  }
 
-  @Override
-  public void prepare(MissionInit missionInit) {
-    MinecraftForge.EVENT_BUS.register(this);
-  }
+    private ArrayList<ChatMessage> chatMessagesReceived =
+        new ArrayList<ChatMessage>();
 
-  @Override
-  public void cleanup() {
-    MinecraftForge.EVENT_BUS.unregister(this);
-  }
+    @Override
+    public void writeObservationsToJSON(JsonObject json,
+                                        MissionInit missionInit) {
+        if (!this.chatMessagesReceived.isEmpty()) {
+            HashMap<String, ArrayList<String>> lists =
+                new HashMap<String, ArrayList<String>>();
+            for (ChatMessage message : this.chatMessagesReceived) {
+                ArrayList<String> arr = lists.get(message.messageType);
+                if (arr == null) {
+                    arr = new ArrayList<String>();
+                    lists.put(message.messageType, arr);
+                }
+                arr.add(message.messageContent);
+            }
+            for (String key : lists.keySet()) {
+                JsonArray jarr = new JsonArray();
+                for (String message : lists.get(key)) {
+                    jarr.add(new JsonPrimitive(message));
+                }
+                json.add(key, jarr);
+            }
+            this.chatMessagesReceived.clear();
+        }
+    }
 
-  @SubscribeEvent
-  public void onTitleChange(ScreenHelper.TitleChangeEvent event) {
-    if (event.title != null)
-      this.chatMessagesReceived.add(new ChatMessage(
-          TITLE_TYPE,
-          TextFormatting.getTextWithoutFormattingCodes(event.title)));
-    if (event.subtitle != null)
-      this.chatMessagesReceived.add(new ChatMessage(
-          SUBTITLE_TYPE,
-          TextFormatting.getTextWithoutFormattingCodes(event.subtitle)));
-  }
+    @Override
+    public void prepare(MissionInit missionInit) {
+        MinecraftForge.EVENT_BUS.register(this);
+    }
 
-  @SubscribeEvent
-  public void onEvent(ClientChatReceivedEvent event) {
-    this.chatMessagesReceived.add(
-        new ChatMessage(CHAT_TYPE, event.getMessage().getUnformattedText()));
-  }
+    @Override
+    public void cleanup() {
+        MinecraftForge.EVENT_BUS.unregister(this);
+    }
+
+    @SubscribeEvent
+    public void onTitleChange(ScreenHelper.TitleChangeEvent event) {
+        if (event.title != null)
+            this.chatMessagesReceived.add(new ChatMessage(
+                TITLE_TYPE,
+                TextFormatting.getTextWithoutFormattingCodes(event.title)));
+        if (event.subtitle != null)
+            this.chatMessagesReceived.add(new ChatMessage(
+                SUBTITLE_TYPE,
+                TextFormatting.getTextWithoutFormattingCodes(event.subtitle)));
+    }
+
+    @SubscribeEvent
+    public void onEvent(ClientChatReceivedEvent event) {
+        this.chatMessagesReceived.add(new ChatMessage(
+            CHAT_TYPE, event.getMessage().getUnformattedText()));
+    }
 }

@@ -1,10 +1,9 @@
 package edu.arizona.tomcat.Mission;
 
+
 import java.math.BigDecimal;
 import java.util.UUID;
-
 import com.microsoft.Malmo.Schemas.PosAndDirection;
-
 import edu.arizona.tomcat.Messaging.TomcatClientServerHandler;
 import edu.arizona.tomcat.Messaging.TomcatMessageData;
 import edu.arizona.tomcat.Messaging.TomcatMessaging;
@@ -23,6 +22,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
 
 public class ZombieMission extends Mission {
+
 
 	public static final int NUMBER_OF_VILLAGERS = 4;
 	private static final int MAX_DISTANCE_TO_SAVE_VILLAGER = 1;
@@ -170,4 +170,5 @@ public class ZombieMission extends Mission {
 	protected void onPlayerDeath(EntityPlayer plauer) {
 		this.onTimeOut();
 	}
+
 }

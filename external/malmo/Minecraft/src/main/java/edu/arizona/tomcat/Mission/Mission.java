@@ -3,7 +3,6 @@ package edu.arizona.tomcat.Mission;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
-
 import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.Schemas.PosAndDirection;
 
@@ -17,10 +16,12 @@ import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
 import edu.arizona.tomcat.Mission.gui.FeedbackListener;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
+
 import edu.arizona.tomcat.Utils.Converter;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.Utils.MinecraftVanillaAIHandler;
 import edu.arizona.tomcat.Utils.TimeStamper;
+
 import edu.arizona.tomcat.World.DrawingHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -42,7 +43,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 	public static enum DIFFICULTY {EASY, MEDIUM, HARD};
 
 	private static final long ENTITY_DELETION_DELAY = 1;
-	
+
 	private MqttService mqttService;
 	protected ID id;
 	protected static final int REMAINING_SECONDS_ALERT = 30;
@@ -85,9 +86,9 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 		if (!event.getEntity().world.isRemote && event.getEntity() instanceof
 				EntityPlayer) {
 			// We explicitly publish the message to the message bus here since
-            // it player deaths are handled different from mob deaths.
-            this.mqttService.publish(new EntityDeath(event),
-                                     "observations/events/entity_death");
+			// it player deaths are handled different from mob deaths.
+			this.mqttService.publish(new EntityDeath(event),
+					"observations/events/entity_death");
 			event.setCanceled(true);
 			this.onPlayerDeath((EntityPlayer)event.getEntity());
 		}
@@ -529,4 +530,5 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 			this.levelOfDifficulty = DIFFICULTY.HARD;
 		}
 	}
+
 }
