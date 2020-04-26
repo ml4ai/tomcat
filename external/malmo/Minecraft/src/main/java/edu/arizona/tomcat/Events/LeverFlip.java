@@ -1,19 +1,19 @@
 package edu.arizona.tomcat.Events;
 
-import edu.arizona.tomcat.World.Position;
-import edu.arizona.tomcat.Events.BlockInteraction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.BlockLever;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraft.block.Block;
 
 public class LeverFlip extends BlockInteraction {
-    /** A constructor for general block interaction events. */
-    private PropertyBool powered;
 
-    protected LeverFlip(PlayerInteractEvent.RightClickBlock event) {
+    /** Returns true if the lever is powered, false otherwise. */
+    private Boolean powered;
+
+    /** A constructor for lever flipping events. */
+    public LeverFlip(PlayerInteractEvent.RightClickBlock event) {
         super(event);
         this.eventType = this.getClass().getName();
-        this.powered = this.block.blockState.getValue(POWERED).booleanValue();
+        this.powered = this.getBlock(event).getBlockState().getBaseState().getValue(BlockLever.POWERED);
     }
 }
