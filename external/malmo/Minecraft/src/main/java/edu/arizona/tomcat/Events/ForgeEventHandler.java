@@ -5,9 +5,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.block.BlockLever;
+import net.minecraft.block.BlockDoor;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -57,7 +59,7 @@ public class ForgeEventHandler {
 
     /**
      * Handle events from Forge event bus triggered by players right-clicking a
-     * block, publish events to MQTT message bus with type 'block_interaction'.
+     * block, publish events to MQTT message bus.
      */
     @SubscribeEvent
     public void handle(PlayerInteractEvent.RightClickBlock event) {
@@ -65,12 +67,40 @@ public class ForgeEventHandler {
             Block block = this.getBlock(event);
             if (block instanceof BlockLever) {
                 this.mqttService.publish(new LeverFlip(event),
-                        "observations/events/block_interaction/lever_flip");
+                        "observations/events/player_interactions/right_clicks/blocks/lever");
             }
+            else if (block instanceof BlockDoor) {
+                this.mqttService.publish(new DoorInteraction(event),
+                        "observations/events/player_interactions/right_clicks/blocks/door");
+            }
+
             else {
                 this.mqttService.publish(new BlockInteraction(event),
-                                         "observations/events/block_interaction");
+                                         "observations/events/player_interactions/right_clicks/blocks");
             }
+        }
+    }
+
+    /**
+     * Handle events from Forge event bus triggered by players left-clicking a
+     * block, publish events to MQTT message bus.
+     */
+    @SubscribeEvent
+    public void handle(PlayerInteractEvent.LeftClickBlock event) {
+        if (!event.getWorld().isRemote) {
+            this.mqttService.publish(new BlockInteraction(event),
+                                     "observations/events/player_interactions/left_clicks/blocks");
+        }
+    }
+
+    /**
+     * Handle events from Forge event bus triggered by players breaking blocks.
+     */
+    @SubscribeEvent
+    public void handle(BlockEvent.BreakEvent event) {
+        if (!event.getWorld().isRemote) {
+            this.mqttService.publish(new BlockBreakEvent(event),
+                                     "observations/events/player_interactions/break_events/blocks");
         }
     }
 
