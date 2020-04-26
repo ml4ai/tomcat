@@ -12,7 +12,7 @@ public class BlockBreakEvent extends Event {
     private String blockType;
     private String blockMaterial;
 
-    /** A constructor for general block interaction events. */
+    /** A constructor for general block breaking events. */
     public BlockBreakEvent(BlockEvent.BreakEvent event) {
         this.playerName = event.getPlayer().getDisplayNameString();
         BlockPos pos = event.getPos();
