@@ -7,7 +7,7 @@ import net.minecraft.block.Block;
 
 public class DoorInteraction extends BlockInteraction {
 
-    /** Returns true if the lever was originally on (prior to the player
+    /** Returns true if the door was originally open (prior to the player
      * right-clicking it), and false otherwise. */
     private Boolean wasOpen;
 
