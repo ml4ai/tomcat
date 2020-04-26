@@ -9,6 +9,5 @@ public class IronDoorOpened extends Event {
     /** Constructor for use with the BlockAsistIron class. */
     public IronDoorOpened(BlockPos pos) {
         this.doorPosition = new Position(pos);
-        this.eventType = "iron_door_opened";
     }
 }
