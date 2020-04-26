@@ -10,21 +10,14 @@ public class BlockBreakEvent extends Event {
     private String playerName;
     private Position blockPosition;
     private String blockType;
-
-    protected IBlockState getBlockState(BlockEvent.BreakEvent event) {
-        return event.getWorld().getBlockState(event.getPos());
-    }
-
-    protected Block getBlock(BlockEvent.BreakEvent event) {
-        return this.getBlockState(event).getBlock();
-    }
-
+    private String blockMaterial;
 
     /** A constructor for general block interaction events. */
     public BlockBreakEvent(BlockEvent.BreakEvent event) {
         this.playerName = event.getPlayer().getDisplayNameString();
         BlockPos pos = event.getPos();
         this.blockPosition = new Position(pos);
-        this.blockType = this.getBlock(event).getClass().getName();
+        this.blockType = event.getState().getBlock().getClass().getName();
+        this.blockMaterial = event.getState().getBlock().getRegistryName().toString();
     }
 }
