@@ -12,9 +12,11 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraft.util.EnumHand;
 
 public class ForgeEventHandler {
 
@@ -22,6 +24,17 @@ public class ForgeEventHandler {
 
     private Block getBlock(PlayerInteractEvent.RightClickBlock event) {
         return event.getWorld().getBlockState(event.getPos()).getBlock();
+    }
+
+    private static ForgeEventHandler instance = null;
+    private ForgeEventHandler() {
+        MinecraftForge.EVENT_BUS.register(this);
+    }
+    public static ForgeEventHandler getInstance() {
+        if (instance == null) {
+            instance = new ForgeEventHandler();
+        }
+        return instance;
     }
 
     /** Instance of the MqttService singleton to use for publishing messages. */
@@ -63,7 +76,7 @@ public class ForgeEventHandler {
      */
     @SubscribeEvent
     public void handle(PlayerInteractEvent.RightClickBlock event) {
-        if (!event.getWorld().isRemote) {
+        if (event.getSide() == Side.CLIENT && event.getHand() == EnumHand.MAIN_HAND) {
             Block block = this.getBlock(event);
             if (block instanceof BlockLever) {
                 this.mqttService.publish(new LeverFlip(event),
@@ -87,7 +100,7 @@ public class ForgeEventHandler {
      */
     @SubscribeEvent
     public void handle(PlayerInteractEvent.LeftClickBlock event) {
-        if (!event.getWorld().isRemote) {
+        if (event.getSide() == Side.CLIENT && event.getHand() == EnumHand.MAIN_HAND) {
             this.mqttService.publish(new BlockInteraction(event),
                                      "observations/events/player_interactions/left_clicks/blocks");
         }

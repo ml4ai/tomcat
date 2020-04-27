@@ -12,6 +12,7 @@ public class BlockInteraction extends Event {
     private Position blockPosition;
     private String blockType;
     private String blockMaterial;
+    private String clickType;
 
     protected IBlockState getBlockState(PlayerInteractEvent event) {
         return event.getWorld().getBlockState(event.getPos());
@@ -21,8 +22,6 @@ public class BlockInteraction extends Event {
         return this.getBlockState(event).getBlock();
     }
 
-
-
     /** A constructor for general block interaction events. */
     public BlockInteraction(PlayerInteractEvent event) {
         this.playerName = event.getEntityPlayer().getDisplayNameString();
@@ -30,5 +29,6 @@ public class BlockInteraction extends Event {
         this.blockPosition = new Position(pos);
         this.blockType = this.getBlock(event).getClass().getName();
         this.blockMaterial = this.getBlock(event).getRegistryName().toString();
+        this.clickType = (event instanceof PlayerInteractEvent.RightClickBlock)?"right":"left";
     }
 }
