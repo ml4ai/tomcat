@@ -4,6 +4,7 @@ import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.Schemas.PosAndDirection;
 import edu.arizona.tomcat.Emotion.EmotionHandler;
 import edu.arizona.tomcat.Events.EntityDeath;
+import edu.arizona.tomcat.Events.ForgeEventHandler;
 import edu.arizona.tomcat.Messaging.MqttService;
 import edu.arizona.tomcat.Messaging.TomcatClientServerHandler;
 import edu.arizona.tomcat.Messaging.TomcatMessageData;
@@ -63,6 +64,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     protected ArrayList<MissionListener> listeners;
     protected HashMap<Entity, Long> entitiesToRemove;
     protected MissionInitializer initializer;
+    private ForgeEventHandler forgeEventHandler = ForgeEventHandler.getInstance();
 
     /**
      * Abstract constructor for initialization of the drawing handler
