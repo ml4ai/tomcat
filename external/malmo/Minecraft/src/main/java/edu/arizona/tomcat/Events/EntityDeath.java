@@ -11,8 +11,6 @@ public class EntityDeath extends Event {
     private UUID entityId;
 
     public EntityDeath(LivingDeathEvent event) {
-        this.eventType = "entity_death";
-
         Entity entity = event.getEntity();
         this.entityId = entity.getUniqueID();
         this.entityName = entity.getName();
