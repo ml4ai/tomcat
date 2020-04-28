@@ -1,22 +1,22 @@
 package edu.arizona.tomcat.Events;
 
 import edu.arizona.tomcat.Messaging.MqttService;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockDoor;
+import net.minecraft.block.BlockLever;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.block.BlockLever;
-import net.minecraft.block.BlockDoor;
-import net.minecraft.block.Block;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraft.util.EnumHand;
 
 public class ForgeEventHandler {
 
@@ -27,9 +27,7 @@ public class ForgeEventHandler {
     }
 
     private static ForgeEventHandler instance = null;
-    private ForgeEventHandler() {
-        MinecraftForge.EVENT_BUS.register(this);
-    }
+    private ForgeEventHandler() { MinecraftForge.EVENT_BUS.register(this); }
     public static ForgeEventHandler getInstance() {
         if (instance == null) {
             instance = new ForgeEventHandler();
@@ -44,10 +42,9 @@ public class ForgeEventHandler {
      * that events will be fired twice and thus published twice if we are not
      * careful.
      *
-     * To overcome this, we will check the value of the isRemote attribute of
-     * the World whenever the World object is available from the event using
-     * the getWorld() method, and fall back to thread analysis using
-     * FMLCommonHandler when the world is not available.
+     * To overcome this, we will use the getSide() method of the event if it is
+     * available, and fall back to thread analysis using FMLCommonHandler when
+     * it is not.
      *
      * Note: I have chosen to publish the client-side events whenever possible,
      * in the hopes that this will make the timestamps more accurate. - Adarsh
@@ -71,25 +68,48 @@ public class ForgeEventHandler {
     }
 
     /**
+     * Handle EntityInteract events from Forge event bus.
+     */
+    @SubscribeEvent
+    public void handle(PlayerInteractEvent.EntityInteract event) {
+        // We use this technique to avoid double counting events due to the
+        // integrated server nature of Malmo.
+        if (event.getSide() == Side.CLIENT) {
+            this.mqttService.publish(
+                new EntityInteraction(event),
+                "observations/events/player_interactions/entity_interactions");
+        }
+    }
+
+    /**
      * Handle events from Forge event bus triggered by players right-clicking a
      * block, publish events to MQTT message bus.
      */
     @SubscribeEvent
     public void handle(PlayerInteractEvent.RightClickBlock event) {
-        if (event.getSide() == Side.CLIENT && event.getHand() == EnumHand.MAIN_HAND) {
+        // RightClickBlock events that don't produce a result (i.e.
+        // right-clicking things that are not doors, levers, etc.) result in
+        // two events firing per right click - one for each hand. To avoid
+        // duplication, we only publish the events corresponding to the main
+        // hand.
+        if (event.getSide() == Side.CLIENT &&
+            event.getHand() == EnumHand.MAIN_HAND) {
             Block block = this.getBlock(event);
             if (block instanceof BlockLever) {
-                this.mqttService.publish(new LeverFlip(event),
-                        "observations/events/player_interactions/right_clicks/blocks/lever");
+                this.mqttService.publish(
+                    new LeverFlip(event),
+                    "observations/events/player_interactions/blocks/lever");
             }
             else if (block instanceof BlockDoor) {
-                this.mqttService.publish(new DoorInteraction(event),
-                        "observations/events/player_interactions/right_clicks/blocks/door");
+                this.mqttService.publish(
+                    new DoorInteraction(event),
+                    "observations/events/player_interactions/blocks/door");
             }
 
             else {
-                this.mqttService.publish(new BlockInteraction(event),
-                                         "observations/events/player_interactions/right_clicks/blocks");
+                this.mqttService.publish(
+                    new BlockInteraction(event),
+                    "observations/events/player_interactions/blocks");
             }
         }
     }
@@ -100,9 +120,11 @@ public class ForgeEventHandler {
      */
     @SubscribeEvent
     public void handle(PlayerInteractEvent.LeftClickBlock event) {
-        if (event.getSide() == Side.CLIENT && event.getHand() == EnumHand.MAIN_HAND) {
-            this.mqttService.publish(new BlockInteraction(event),
-                                     "observations/events/player_interactions/left_clicks/blocks");
+        if (event.getSide() == Side.CLIENT &&
+            event.getHand() == EnumHand.MAIN_HAND) {
+            this.mqttService.publish(
+                new BlockInteraction(event),
+                "observations/events/player_interactions/left_clicks/blocks");
         }
     }
 
@@ -112,8 +134,9 @@ public class ForgeEventHandler {
     @SubscribeEvent
     public void handle(BlockEvent.BreakEvent event) {
         if (!event.getWorld().isRemote) {
-            this.mqttService.publish(new BlockBreakEvent(event),
-                                     "observations/events/player_interactions/break_events/blocks");
+            this.mqttService.publish(
+                new BlockBreakEvent(event),
+                "observations/events/player_interactions/break_events/blocks");
         }
     }
 

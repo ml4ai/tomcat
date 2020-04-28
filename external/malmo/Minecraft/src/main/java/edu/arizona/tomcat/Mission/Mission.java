@@ -64,7 +64,8 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     protected ArrayList<MissionListener> listeners;
     protected HashMap<Entity, Long> entitiesToRemove;
     protected MissionInitializer initializer;
-    private ForgeEventHandler forgeEventHandler = ForgeEventHandler.getInstance();
+    private ForgeEventHandler forgeEventHandler =
+        ForgeEventHandler.getInstance();
 
     /**
      * Abstract constructor for initialization of the drawing handler

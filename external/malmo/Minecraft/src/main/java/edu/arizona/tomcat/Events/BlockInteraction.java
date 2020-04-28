@@ -1,11 +1,11 @@
 package edu.arizona.tomcat.Events;
 
 import edu.arizona.tomcat.World.Position;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.block.state.IBlockState;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraft.block.material.MapColor;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.MapColor;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 public class BlockInteraction extends Event {
     private String playerName;
@@ -13,6 +13,7 @@ public class BlockInteraction extends Event {
     private String blockType;
     private String blockMaterial;
     private String clickType;
+    private String itemHeld;
 
     protected IBlockState getBlockState(PlayerInteractEvent event) {
         return event.getWorld().getBlockState(event.getPos());
@@ -29,6 +30,9 @@ public class BlockInteraction extends Event {
         this.blockPosition = new Position(pos);
         this.blockType = this.getBlock(event).getClass().getName();
         this.blockMaterial = this.getBlock(event).getRegistryName().toString();
-        this.clickType = (event instanceof PlayerInteractEvent.RightClickBlock)?"right":"left";
+        this.clickType = (event instanceof PlayerInteractEvent.RightClickBlock)
+                             ? "right"
+                             : "left";
+        this.itemHeld = event.getItemStack().getDisplayName();
     }
 }
