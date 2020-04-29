@@ -31,12 +31,14 @@ timestamp() {
 }
 
 session_uuid=$(uuidgen | tr '[:upper:]' '[:lower:]')
+if [[ $? -ne 0 ]]; then exit 1; fi
 
 # Creating an output directory for this session.
 output_dir="${TOMCAT}"/data/participant_data/"$session_uuid"
 mkdir -p "${output_dir}"
 
 "$TOMCAT"/tools/generate_session_metadata "$session_uuid" > "$session_output_dir"/metadata.json
+if [[ $? -ne 0 ]]; then exit 1; fi
 
 export original_output_device=$(SwitchAudioSource -c)
 
