@@ -1,0 +1,24 @@
+#!/usr/bin/env python
+
+# This program takes a UUID as a command-line argument and prints out a JSON
+# object to standard output. The object contains the following information:
+#   session_id: The UUID of the session
+#   timestamp: A timestamp corresponding to the timestamp of the session
+#   player_id: A unique ID corresponding to the player.
+
+import os
+import sys
+import json
+from datetime import datetime
+
+# Return current local date and time in ISO-8601 format.
+datetime = datetime.now()
+timestamp = datetime.isoformat()
+
+metadata = {
+    "session_id": sys.argv[1],  # Get UUID from command line argument
+    "timestamp": timestamp,
+    "player_id": os.getenv("USER"),
+}
+
+print(json.dumps(metadata, indent=4))  # Serialize metadata
