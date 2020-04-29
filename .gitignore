@@ -77,3 +77,7 @@ data/*
 
 # Temporary directory for ToMCAT-generated files.
 tmp
+
+# Media files
+*.mpg
+*.wav

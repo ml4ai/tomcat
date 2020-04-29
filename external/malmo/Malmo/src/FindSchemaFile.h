@@ -26,9 +26,9 @@
 
 namespace malmo {
 
-  const std::string xml_namespace("http://ProjectMalmo.microsoft.com");
+    const std::string xml_namespace("http://ProjectMalmo.microsoft.com");
 
-  // Use the TOMCAT environment variable, if set, to find a .xsd file.
-  // If not found, throw an exception.
-  std::string FindSchemaFile(const std::string& name);
+    // Use the TOMCAT environment variable, if set, to find a .xsd file.
+    // If not found, throw an exception.
+    std::string FindSchemaFile(const std::string& name);
 } // namespace malmo

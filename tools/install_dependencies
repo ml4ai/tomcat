@@ -4,167 +4,109 @@ set -u
 
 # Set the TOMCAT environment variable, assuming that the directory structure
 # mirrors that of the git repository.
-TOMCAT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" >/dev/null 2>&1 && pwd )"
+TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
 export TOMCAT
 
 echo "Installing ToMCAT dependencies."
 
-install_dependencies_using_macports() {
-  echo "'port' executable detected, assuming that MacPorts"
-  echo "(https://www.macports.org) is installed and is the package manager."
+__install_dependencies_using_macports() {
+    echo "'port' executable detected, assuming that MacPorts"
+    echo "(https://www.macports.org) is installed and is the package manager."
 
-  echo "Installing ToMCAT dependencies using MacPorts. If you are prompted for"
-  echo "a password, please enter the password you use to install software on"
-  echo "your macOS computer."
+    echo "Installing ToMCAT dependencies using MacPorts. If you are prompted for"
+    echo "a password, please enter the password you use to install software on"
+    echo "your macOS computer."
 
-  sudo port selfupdate
-  if [[ $? -ne 0 ]]; then exit 1; fi
+    if ! sudo port selfupdate; then exit 1; fi
 
-  sudo port -N install \
+    sudo port -N install \
+        cmake \
+        libfmt \
+        doxygen \
+        ffmpeg \
+        openblas \
+        boost \
+        gradle \
+        mosquitto \
+        nlohmann-json
+    if [[ $? -ne 0 ]]; then exit 1; fi
+
+
+    # We enable system audio recording ononly on macOS Catalina or above
+    if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
+        if ! sudo port -N install blackhole switchaudio-osx; then exit 1; fi
+    fi
+    # We install Java using a local Portfile, since the upstream openjdk8
+    # port points to Java 1.8.0_242, which is incompatible with Malmo (the
+    # local Portfile points to Java 1.8.0_232).
+    pushd "${TOMCAT}"/tools/macos/local-ports/openjdk8 > /dev/null
+      if ! sudo port install; then exit 1; fi
+    popd > /dev/null
+
+    # TODO When OpenFace is reintroduced, add dlib, opencv, openblas installation
+    # back here.
+}
+
+__install_dependencies_using_homebrew() {
+    echo "'brew' executable detected, assuming that Homebrew"\
+    "(https://brew) is installed and is the package manager."
+
+    echo "Installing ToMCAT dependencies using Homebrew."
+
+    if ! brew update; then exit 1; fi
+
+    # We do not require exit codes for Homebrew installs to be 0 since `brew
+    # install` can return an exit code of 1 when a package is already installed
+    # (!!)
+
+    # We install Java using a local Homebrew formula, since the upstream openjdk8
+    # formula points to Java 1.8.0_242, which is incompatible with Malmo (the
+    # local formula points to Java 1.8.0_232).
+
+    pushd "$TOMCAT"/tools/macos/homebrew_formulae > /dev/null
+        brew cask install adoptopenjdk8.rb
+        if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
+    popd > /dev/null
+
+    brew install \
       cmake \
-      libfmt \
+      fmt \
       doxygen \
       ffmpeg \
-      openblas \
       boost \
       gradle \
       mosquitto \
-      nlohmann-json \
-      xdpyinfo
-  if [[ $? -ne 0 ]]; then exit 1; fi
-
-
-  # We enable system audio recording ononly on macOS Catalina or above
-  macOS_minor_version=$(sw_vers -productVersion | cut -d '.' -f2)
-  if (( ! $macOS_minor_version < 15 )); then
-      sudo port -N install blackhole switchaudio-osx
-  fi
-  # We install Java using a local Portfile, since the upstream openjdk8
-  # port points to Java 1.8.0_242, which is incompatible with Malmo (the
-  # local Portfile points to Java 1.8.0_232).
-  pushd "${TOMCAT}"/tools/macos/local-ports/openjdk8 > /dev/null
-    sudo port install
-    if [[ $? -ne 0 ]]; then exit 1; fi
-  popd > /dev/null
-
-  #TODO When OpenFace is reintroduced, add dlib, opencv, openblas installation back here.
-}
-
-install_dependencies_using_homebrew() {
-  echo "'brew' executable detected, assuming that Homebrew"\
-  "(https://brew) is installed and is the package manager."
-
-  echo "Installing ToMCAT dependencies using Homebrew."
-
-  brew update
-  if [[ $? -ne 0 ]]; then exit 1; fi
-
-  # We do not require exit codes for Homebrew installs to be 0 since `brew install`
-  # can return an exit code of 1 when a package is already installed (!!)
-
-  # We install Java using a local Homebrew formula, since the upstream openjdk8
-  # formula points to Java 1.8.0_242, which is incompatible with Malmo (the
-  # local formula points to Java 1.8.0_232).
-
-  pushd "${TOMCAT}"/tools/macos/homebrew_formulae > /dev/null
-    brew cask install adoptopenjdk8.rb
-    if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
-  popd > /dev/null
-
-  brew install \
-    cmake \
-    fmt \
-    doxygen \
-    ffmpeg \
-    boost \
-    gradle \
-    mosquitto \
-    nlohmann-json
-  if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
-
-  brew cask install xquartz
-  if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
-
-  # We enable system audio recording ononly on macOS Catalina or above
-  macOS_minor_version=$(sw_vers -productVersion | cut -d '.' -f2)
-  if (( ! $macOS_minor_version < 15 )); then
-    brew cask install blackhole
+      nlohmann-json
     if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
 
-    brew install switchaudio-osx
-    if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
-  fi
+    # We enable system audio recording ononly on macOS Catalina or above
+    if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
+        brew cask install blackhole
+        if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
 
-  if [ "${GITHUB_ACTIONS:-false}" = "true" ]; then
-    # On Github Actions, we will install lcov to provide code coverage estimates.
-    brew install lcov;
-    if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
-  fi;
-
-  #TODO When OpenFace is reintroduced, add dlib, opencv, openblas installation back here.
-}
-
-echo "Checking OS."
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    echo "macOS detected. Checking for macOS Command Line Tools."
-
-    if [[ ! -d "/Library/Developer" ]]; then
-      echo ""
-      echo "[INFO]: The directory /Library/Developer was not found, so we"
-      echo "assume that the macOS Command Line Tools are not installed."
-      echo "Installing them now..."
-      xcode-select --install
-      "${TOMCAT}"/tools/macos/install_command_line_tools > /dev/null
-
-      while [ ! -d "/Library/Developer" ]; do
-        sleep 1
-      done
-      echo "macOS command line developer tools have been installed."
-      echo ""
+        brew install switchaudio-osx
+        if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
     fi
 
-    echo "Checking for MacPorts or Homebrew package managers."
+    if (( CI )); then
+      # On a CI runner, we will install lcov to provide code coverage estimates.
+      brew install lcov;
+      if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
+    fi;
 
-    # The line below will prevent MacPorts from being installed again if we had
-    # already installed it from source.
-    export PATH="$PATH:/opt/local/bin:/opt/local/sbin"
-    macports_found=`[ -x "$(command -v port)" ]; echo $?`
-    homebrew_found=`[ -x "$(command -v brew)" ]; echo $?` 
+    # TODO When OpenFace is reintroduced, add dlib, opencv, openblas
+    # installation back here.
+}
 
-    if [[ $macports_found -eq 1 && $homebrew_found -eq 1 ]]; then
-      echo "Neither the MacPorts or Homebrew package managers have been"
-      echo "detected. Proceeding to install MacPorts in the default location"
-      echo "(/opt/local)"
-      "${TOMCAT}"/tools/install_from_source/macports
-      if [[ $? -ne 0 ]]; then exit 1; fi
-
-      install_dependencies_using_macports
-
-    elif [[ $macports_found -eq 0 && $homebrew_found -eq 1 ]]; then
-      install_dependencies_using_macports
-
-    elif [[ $macports_found -eq 1 && $homebrew_found -eq 0 ]]; then
-      install_dependencies_using_homebrew
-
-    elif [[ $macports_found -eq 0 && $homebrew_found -eq 0 ]]; then
-      echo "Both the MacPorts (https://www.macports.org) and Homebrew"
-      echo "(https://brew) package managers have been found. We assume you"
-      echo "are a power user and can set your PATH environment variable as"
-      echo "needed to switch between the two. We will proceed with installing"
-      echo "the dependencies using MacPorts."
-      install_dependencies_using_macports
-    fi
-
-elif [ -x "$(command -v apt-get)" ]; then
-    echo "apt-get executable found. Assuming that you are using a flavor of"\
-    "Debian Linux, such as Ubuntu."
+__install_dependencies_using_apt() {
+    echo "apt-get executable found. Assuming that you are using a flavor of "\
+          "Debian Linux, such as Ubuntu."
     echo ""
     echo "Installing dependencies using apt-get"
 
-    sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-    if [[ $? -ne 0 ]]; then exit 1; fi
-    sudo apt-get update
-    if [[ $? -ne 0 ]]; then exit 1; fi;
+    if ! sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; then exit 1; fi
+
+    if ! sudo apt-get update; then exit 1; fi
 
     sudo apt-get install -y --allow-downgrades\
         cmake \
@@ -177,30 +119,86 @@ elif [ -x "$(command -v apt-get)" ]; then
         openjdk-8-jre=8u162-b12-1\
         openjdk-8-jdk-headless=8u162-b12-1\
         openjdk-8-jdk=8u162-b12-1\
-        mosquitto
+        mosquitto\
+        mosquitto-clients
     if [[ $? -ne 0 ]]; then exit 1; fi
 
     # On Ubuntu 18.04, the required version of the nlohmann-json JSON library
     # is not available using apt-get, so we install from source.
-    "$TOMCAT"/tools/install_from_source/nlohmann-json
-    if [[ $? -ne 0 ]]; then exit 1; fi
+    if ! "$TOMCAT"/tools/install_from_source/nlohmann-json; then exit 1; fi
 
-    sudo apt-get install -y libboost-all-dev
+    # The Github Actions Ubuntu 18.04 VM already has Boost installed, but not
+    # all the components we need. So we will use apt-get to install the missing
+    # ones.
+    if ! sudo apt-get install -y libboost-all-dev; then exit 1; fi
 
     # TODO - when OpenFace gets added back, add opencv, openblas, and dlib as
     # dependencies.
 
-    sudo update-java-alternatives -s java-1.8.0-openjdk-amd64
-    if [[ $? -ne 0 ]]; then exit 1; fi;
+    if ! sudo update-java-alternatives -s java-1.8.0-openjdk-amd64; then
+      exit 1;
+    fi
+}
 
-else
-    echo "This is not a macOS and not a Debian Linux distribution (at least"
-    echo "apt-get is not around). We cannot proceed with the automated"
-    echo "installation. Please consult docs/installation.md for the required"
-    echo "dependencies."
-    exit 1
-fi
+__install_dependencies() {
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        echo "macOS detected. Checking for macOS Command Line Tools."
 
-echo "ToMCAT dependency installation complete."
-echo " "
+        if [[ ! -d "/Library/Developer" ]]; then
+            echo ""
+            echo "[INFO]: The directory /Library/Developer was not found, so "\
+                 "we assume that the macOS Command Line Tools are not installed."
+            echo "Installing them now..."
+            xcode-select --install
+            "${TOMCAT}"/tools/macos/install_command_line_tools > /dev/null
+
+            while [[ ! -d "/Library/Developer" ]]; do
+                sleep 1
+            done
+            echo "macOS command line developer tools have been installed."
+            echo ""
+        fi
+
+        echo "Checking for MacPorts or Homebrew package managers."
+
+        if [[ $MACPORTS_FOUND -eq 1 && $HOMEBREW_FOUND -eq 1 ]]; then
+            echo "Neither the MacPorts or Homebrew package managers have been "\
+                 "detected. Proceeding to install MacPorts in the default "\
+                 "location (/opt/local)"
+            if ! "${TOMCAT}"/tools/install_from_source/macports; then exit 1; fi
+
+            __install_dependencies_using_macports
+
+        elif [[ $MACPORTS_FOUND -eq 0 && $HOMEBREW_FOUND -eq 1 ]]; then
+            __install_dependencies_using_macports
+
+        elif [[ $MACPORTS_FOUND -eq 1 && $HOMEBREW_FOUND -eq 0 ]]; then
+            __install_dependencies_using_homebrew
+
+        elif [[ $MACPORTS_FOUND -eq 0 && $HOMEBREW_FOUND -eq 0 ]]; then
+            echo "Both the MacPorts (https://www.macports.org) and Homebrew"
+            echo "(https://brew) package managers have been found. We assume you"
+            echo "are a power user and can set your PATH environment variable as"
+            echo "needed to switch between the two. We will proceed with installing"
+            echo "the dependencies using MacPorts."
+            __install_dependencies_using_macports
+        fi
+
+    elif [ -x "$(command -v apt-get)" ]; then
+        __install_dependencies_using_apt
+
+    else
+        echo "This is not a macOS and not a Debian Linux distribution (at least"
+        echo "apt-get is not around). We cannot proceed with the automated"
+        echo "installation. Please consult docs/installation.md for the required"
+        echo "dependencies."
+        exit 1
+    fi
+
+    echo "ToMCAT dependency installation complete."
+    echo " "
+}
+
+__install_dependencies
+
 exit 0

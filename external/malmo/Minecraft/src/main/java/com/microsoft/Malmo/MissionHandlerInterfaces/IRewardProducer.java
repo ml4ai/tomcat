@@ -31,23 +31,24 @@ import com.microsoft.Malmo.Schemas.MissionInit;
  */
 public interface IRewardProducer {
 
-  /**
-   * Get the reward value for the current Minecraft state.
-   *
-   * @param missionInit
-   *            the MissionInit object for the currently running mission,
-   *            which may contain parameters for the reward requirements.
-   * @param reward
-   *            the reward structure being constructed.
-   */
-  public void getReward(MissionInit missionInit, MultidimensionalReward reward);
+    /**
+     * Get the reward value for the current Minecraft state.
+     *
+     * @param missionInit
+     *            the MissionInit object for the currently running mission,
+     *            which may contain parameters for the reward requirements.
+     * @param reward
+     *            the reward structure being constructed.
+     */
+    public void getReward(MissionInit missionInit,
+                          MultidimensionalReward reward);
 
-  /**
-   * Called once before the mission starts - use for any necessary
-   * initialisation.
-   */
-  public void prepare(MissionInit missionInit);
+    /**
+     * Called once before the mission starts - use for any necessary
+     * initialisation.
+     */
+    public void prepare(MissionInit missionInit);
 
-  /** Called once after the mission ends - use for any necessary cleanup. */
-  public void cleanup();
+    /** Called once after the mission ends - use for any necessary cleanup. */
+    public void cleanup();
 }

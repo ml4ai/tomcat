@@ -48,100 +48,100 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class BiomeGeneratorImplementation
     extends HandlerBase implements IWorldGenerator {
 
-  BiomeGenerator bparams;
+    BiomeGenerator bparams;
 
-  // Register the event with the Forge Bus
-  public BiomeGeneratorImplementation() {
-    MinecraftForge.TERRAIN_GEN_BUS.register(this);
-  }
+    // Register the event with the Forge Bus
+    public BiomeGeneratorImplementation() {
+        MinecraftForge.TERRAIN_GEN_BUS.register(this);
+    }
 
-  /**
-   * Keeps a constant biome given an id number
-   *
-   * @author Cayden Codel, Carnegie Mellon University Some contributions from
-   *         teamrtg with the LonelyBiome mod
-   *
-   */
-  private class GenLayerConstant extends GenLayer {
-    private final int value;
+    /**
+     * Keeps a constant biome given an id number
+     *
+     * @author Cayden Codel, Carnegie Mellon University Some contributions from
+     *         teamrtg with the LonelyBiome mod
+     *
+     */
+    private class GenLayerConstant extends GenLayer {
+        private final int value;
 
-    public GenLayerConstant(int value) {
-      super(0L);
-      this.value = value;
+        public GenLayerConstant(int value) {
+            super(0L);
+            this.value = value;
+        }
+
+        @Override
+        public int[] getInts(int par1, int par2, int par3, int par4) {
+            int[] aint2 = IntCache.getIntCache(par3 * par4);
+
+            for (int i = 0; i < aint2.length; i++) {
+                aint2[i] = value;
+            }
+
+            return aint2;
+        }
+    }
+
+    // Make sure that the biome is one type with an event on biome gen
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onBiomeGenInit(WorldTypeEvent.InitBiomeGens event) {
+        // Negative one is flag value for normal world gen
+        if (bparams.getBiome() == -1)
+            return;
+        GenLayer[] replacement = new GenLayer[2];
+        replacement[0] = new GenLayerConstant(bparams.getBiome());
+        replacement[1] = replacement[0];
+        event.setNewBiomeGens(replacement);
     }
 
     @Override
-    public int[] getInts(int par1, int par2, int par3, int par4) {
-      int[] aint2 = IntCache.getIntCache(par3 * par4);
+    public boolean parseParameters(Object params) {
+        if (params == null || !(params instanceof BiomeGenerator))
+            return false;
 
-      for (int i = 0; i < aint2.length; i++) {
-        aint2[i] = value;
-      }
-
-      return aint2;
+        this.bparams = (BiomeGenerator)params;
+        return true;
     }
-  }
 
-  // Make sure that the biome is one type with an event on biome gen
-  @SubscribeEvent(priority = EventPriority.LOWEST)
-  public void onBiomeGenInit(WorldTypeEvent.InitBiomeGens event) {
-    // Negative one is flag value for normal world gen
-    if (bparams.getBiome() == -1)
-      return;
-    GenLayer[] replacement = new GenLayer[2];
-    replacement[0] = new GenLayerConstant(bparams.getBiome());
-    replacement[1] = replacement[0];
-    event.setNewBiomeGens(replacement);
-  }
+    public static long getWorldSeedFromString() {
+        // This seed logic mirrors the Minecraft code in
+        // GuiCreateWorld.actionPerformed:
+        long seed = (new Random()).nextLong();
+        return seed;
+    }
 
-  @Override
-  public boolean parseParameters(Object params) {
-    if (params == null || !(params instanceof BiomeGenerator))
-      return false;
+    @Override
+    public boolean createWorld(MissionInit missionInit) {
+        long seed = getWorldSeedFromString();
+        WorldType.WORLD_TYPES[0].onGUICreateWorldPress();
+        WorldSettings worldsettings = new WorldSettings(
+            seed, GameType.SURVIVAL, true, false, WorldType.WORLD_TYPES[0]);
+        worldsettings.enableCommands();
+        // Create a filename for this map - we use the time stamp to make sure
+        // it is different from other worlds, otherwise no new world
+        // will be created, it will simply load the old one.
+        return MapFileHelper.createAndLaunchWorld(
+            worldsettings, this.bparams.isDestroyAfterUse());
+    }
 
-    this.bparams = (BiomeGenerator)params;
-    return true;
-  }
+    @Override
+    public boolean shouldCreateWorld(MissionInit missionInit, World world) {
+        if (this.bparams != null && this.bparams.isForceReset())
+            return true;
 
-  public static long getWorldSeedFromString() {
-    // This seed logic mirrors the Minecraft code in
-    // GuiCreateWorld.actionPerformed:
-    long seed = (new Random()).nextLong();
-    return seed;
-  }
+        if (Minecraft.getMinecraft().world == null || world == null)
+            return true; // Definitely need to create a world if there isn't one
+                         // in existence!
 
-  @Override
-  public boolean createWorld(MissionInit missionInit) {
-    long seed = getWorldSeedFromString();
-    WorldType.WORLD_TYPES[0].onGUICreateWorldPress();
-    WorldSettings worldsettings = new WorldSettings(
-        seed, GameType.SURVIVAL, true, false, WorldType.WORLD_TYPES[0]);
-    worldsettings.enableCommands();
-    // Create a filename for this map - we use the time stamp to make sure
-    // it is different from other worlds, otherwise no new world
-    // will be created, it will simply load the old one.
-    return MapFileHelper.createAndLaunchWorld(worldsettings,
-                                              this.bparams.isDestroyAfterUse());
-  }
+        String genOptions = world.getWorldInfo().getGeneratorOptions();
+        if (genOptions != null && !genOptions.isEmpty())
+            return true; // Biome generator has no generator options.
 
-  @Override
-  public boolean shouldCreateWorld(MissionInit missionInit, World world) {
-    if (this.bparams != null && this.bparams.isForceReset())
-      return true;
+        return false;
+    }
 
-    if (Minecraft.getMinecraft().world == null || world == null)
-      return true; // Definitely need to create a world if there isn't one
-                   // in existence!
-
-    String genOptions = world.getWorldInfo().getGeneratorOptions();
-    if (genOptions != null && !genOptions.isEmpty())
-      return true; // Biome generator has no generator options.
-
-    return false;
-  }
-
-  @Override
-  public String getErrorDetails() {
-    return ""; // Don't currently have any error exit points.
-  }
+    @Override
+    public String getErrorDetails() {
+        return ""; // Don't currently have any error exit points.
+    }
 }

@@ -40,48 +40,48 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
  */
 
 public class ServerQuitFromTimeUpImplementation extends QuitFromTimeUpBase {
-  private String quitCode = "";
+    private String quitCode = "";
 
-  @Override
-  public boolean parseParameters(Object params) {
-    if (params == null || !(params instanceof ServerQuitFromTimeUp))
-      return false;
+    @Override
+    public boolean parseParameters(Object params) {
+        if (params == null || !(params instanceof ServerQuitFromTimeUp))
+            return false;
 
-    ServerQuitFromTimeUp qtuparams = (ServerQuitFromTimeUp)params;
-    setTimeLimitMs(qtuparams.getTimeLimitMs().intValue());
-    this.quitCode = qtuparams.getDescription();
-    return true;
-  }
+        ServerQuitFromTimeUp qtuparams = (ServerQuitFromTimeUp)params;
+        setTimeLimitMs(qtuparams.getTimeLimitMs().intValue());
+        this.quitCode = qtuparams.getDescription();
+        return true;
+    }
 
-  @Override
-  protected long getWorldTime() {
-    World world = null;
-    MinecraftServer server =
-        FMLCommonHandler.instance().getMinecraftServerInstance();
-    world = server.getEntityWorld();
-    return (world != null) ? world.getTotalWorldTime() : 0;
-  }
+    @Override
+    protected long getWorldTime() {
+        World world = null;
+        MinecraftServer server =
+            FMLCommonHandler.instance().getMinecraftServerInstance();
+        world = server.getEntityWorld();
+        return (world != null) ? world.getTotalWorldTime() : 0;
+    }
 
-  @Override
-  protected void drawCountDown(int secondsRemaining) {
-    Map<String, String> data = new HashMap<String, String>();
+    @Override
+    protected void drawCountDown(int secondsRemaining) {
+        Map<String, String> data = new HashMap<String, String>();
 
-    String text = TextFormatting.BOLD + "" + secondsRemaining + "...";
-    if (secondsRemaining <= 5)
-      text = TextFormatting.RED + text;
+        String text = TextFormatting.BOLD + "" + secondsRemaining + "...";
+        if (secondsRemaining <= 5)
+            text = TextFormatting.RED + text;
 
-    data.put("chat", text);
-    MalmoMod.safeSendToAll(MalmoMessageType.SERVER_TEXT, data);
-  }
+        data.put("chat", text);
+        MalmoMod.safeSendToAll(MalmoMessageType.SERVER_TEXT, data);
+    }
 
-  @Override
-  public void prepare(MissionInit missionInit) {}
+    @Override
+    public void prepare(MissionInit missionInit) {}
 
-  @Override
-  public void cleanup() {}
+    @Override
+    public void cleanup() {}
 
-  @Override
-  public String getOutcome() {
-    return this.quitCode;
-  }
+    @Override
+    public String getOutcome() {
+        return this.quitCode;
+    }
 }

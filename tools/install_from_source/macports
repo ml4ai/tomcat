@@ -14,3 +14,4 @@ install_macports() {
 }
 
 install_macports
+exit 0

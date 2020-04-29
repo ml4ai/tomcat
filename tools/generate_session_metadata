@@ -12,8 +12,7 @@ import json
 from datetime import datetime
 
 # Return current local date and time in ISO-8601 format.
-datetime = datetime.now()
-timestamp = datetime.isoformat()
+timestamp = datetime.now().isoformat()
 
 metadata = {
     "session_id": sys.argv[1],  # Get UUID from command line argument

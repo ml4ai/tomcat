@@ -38,83 +38,84 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class SimpleCraftCommandsImplementation extends CommandBase {
-  private boolean isOverriding;
+    private boolean isOverriding;
 
-  public static class CraftMessage implements IMessage {
-    String parameters;
-    public CraftMessage() {}
+    public static class CraftMessage implements IMessage {
+        String parameters;
+        public CraftMessage() {}
 
-    public CraftMessage(String parameters) { this.parameters = parameters; }
+        public CraftMessage(String parameters) { this.parameters = parameters; }
 
-    @Override
-    public void fromBytes(ByteBuf buf) {
-      this.parameters = ByteBufUtils.readUTF8String(buf);
+        @Override
+        public void fromBytes(ByteBuf buf) {
+            this.parameters = ByteBufUtils.readUTF8String(buf);
+        }
+
+        @Override
+        public void toBytes(ByteBuf buf) {
+            ByteBufUtils.writeUTF8String(buf, this.parameters);
+        }
+    }
+
+    public static class CraftMessageHandler
+        implements IMessageHandler<CraftMessage, IMessage> {
+        @Override
+        public IMessage onMessage(CraftMessage message, MessageContext ctx) {
+            EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+            // Try crafting recipes first:
+            List<IRecipe> matching_recipes =
+                CraftingHelper.getRecipesForRequestedOutput(message.parameters);
+            for (IRecipe recipe : matching_recipes) {
+                if (CraftingHelper.attemptCrafting(player, recipe))
+                    return null;
+            }
+            // Now try furnace recipes:
+            ItemStack input =
+                CraftingHelper.getSmeltingRecipeForRequestedOutput(
+                    message.parameters);
+            if (input != null) {
+                if (CraftingHelper.attemptSmelting(player, input))
+                    return null;
+            }
+            return null;
+        }
     }
 
     @Override
-    public void toBytes(ByteBuf buf) {
-      ByteBufUtils.writeUTF8String(buf, this.parameters);
+    protected boolean
+    onExecute(String verb, String parameter, MissionInit missionInit) {
+        if (verb.equalsIgnoreCase(SimpleCraftCommand.CRAFT.value())) {
+            MalmoMod.network.sendToServer(new CraftMessage(parameter));
+            return true;
+        }
+        return false;
     }
-  }
 
-  public static class CraftMessageHandler
-      implements IMessageHandler<CraftMessage, IMessage> {
     @Override
-    public IMessage onMessage(CraftMessage message, MessageContext ctx) {
-      EntityPlayerMP player = ctx.getServerHandler().playerEntity;
-      // Try crafting recipes first:
-      List<IRecipe> matching_recipes =
-          CraftingHelper.getRecipesForRequestedOutput(message.parameters);
-      for (IRecipe recipe : matching_recipes) {
-        if (CraftingHelper.attemptCrafting(player, recipe))
-          return null;
-      }
-      // Now try furnace recipes:
-      ItemStack input = CraftingHelper.getSmeltingRecipeForRequestedOutput(
-          message.parameters);
-      if (input != null) {
-        if (CraftingHelper.attemptSmelting(player, input))
-          return null;
-      }
-      return null;
+    public boolean parseParameters(Object params) {
+        if (params == null || !(params instanceof SimpleCraftCommands))
+            return false;
+
+        SimpleCraftCommands cparams = (SimpleCraftCommands)params;
+        setUpAllowAndDenyLists(cparams.getModifierList());
+        return true;
     }
-  }
 
-  @Override
-  protected boolean
-  onExecute(String verb, String parameter, MissionInit missionInit) {
-    if (verb.equalsIgnoreCase(SimpleCraftCommand.CRAFT.value())) {
-      MalmoMod.network.sendToServer(new CraftMessage(parameter));
-      return true;
+    @Override
+    public void install(MissionInit missionInit) {
+        CraftingHelper.reset();
     }
-    return false;
-  }
 
-  @Override
-  public boolean parseParameters(Object params) {
-    if (params == null || !(params instanceof SimpleCraftCommands))
-      return false;
+    @Override
+    public void deinstall(MissionInit missionInit) {}
 
-    SimpleCraftCommands cparams = (SimpleCraftCommands)params;
-    setUpAllowAndDenyLists(cparams.getModifierList());
-    return true;
-  }
+    @Override
+    public boolean isOverriding() {
+        return this.isOverriding;
+    }
 
-  @Override
-  public void install(MissionInit missionInit) {
-    CraftingHelper.reset();
-  }
-
-  @Override
-  public void deinstall(MissionInit missionInit) {}
-
-  @Override
-  public boolean isOverriding() {
-    return this.isOverriding;
-  }
-
-  @Override
-  public void setOverriding(boolean b) {
-    this.isOverriding = b;
-  }
+    @Override
+    public void setOverriding(boolean b) {
+        this.isOverriding = b;
+    }
 }

@@ -33,22 +33,22 @@
 #include <string>
 
 namespace malmo {
-  //! A string with an attached timestamp saying when it was collected.
-  struct TimestampedString {
-    //! The timestamp.
-    boost::posix_time::ptime timestamp;
+    //! A string with an attached timestamp saying when it was collected.
+    struct TimestampedString {
+        //! The timestamp.
+        boost::posix_time::ptime timestamp;
 
-    //! The string.
-    std::string text;
+        //! The string.
+        std::string text;
 
-    TimestampedString(const TimestampedUnsignedCharVector& message);
-    TimestampedString(const boost::posix_time::ptime& timestamp,
-                      const std::string& text);
+        TimestampedString(const TimestampedUnsignedCharVector& message);
+        TimestampedString(const boost::posix_time::ptime& timestamp,
+                          const std::string& text);
 
-    bool operator==(const TimestampedString& other) const;
-    friend std::ostream& operator<<(std::ostream& os,
-                                    const TimestampedString& tss);
-  };
+        bool operator==(const TimestampedString& other) const;
+        friend std::ostream& operator<<(std::ostream& os,
+                                        const TimestampedString& tss);
+    };
 } // namespace malmo
 
 #endif

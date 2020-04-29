@@ -30,59 +30,60 @@
 #include <boost/function.hpp>
 
 namespace malmo {
-  class ServerScope {
-  public:
-    virtual void release() = 0;
-  };
+    class ServerScope {
+      public:
+        virtual void release() = 0;
+    };
 
-  //! A TCP server that calls a function you provide when a message is received.
-  class TCPServer {
-  public:
-    //! Constructs a TCP server but doesn't start it.
-    //! \param port The number of the port to connect to.
-    //! \param callback The function to call when a message arrives.
-    TCPServer(
-        boost::asio::io_service& io_service,
-        int port,
-        boost::function<void(const TimestampedUnsignedCharVector)> callback,
-        const std::string& log_name);
+    //! A TCP server that calls a function you provide when a message is
+    //! received.
+    class TCPServer {
+      public:
+        //! Constructs a TCP server but doesn't start it.
+        //! \param port The number of the port to connect to.
+        //! \param callback The function to call when a message arrives.
+        TCPServer(
+            boost::asio::io_service& io_service,
+            int port,
+            boost::function<void(const TimestampedUnsignedCharVector)> callback,
+            const std::string& log_name);
 
-    void confirmWithFixedReply(std::string reply);
-    void expectSizeHeader(bool expect_size_header);
+        void confirmWithFixedReply(std::string reply);
+        void expectSizeHeader(bool expect_size_header);
 
-    //! Starts the TCP server.
-    void start(ServerScope* scope);
+        //! Starts the TCP server.
+        void start(ServerScope* scope);
 
-    //! Gets the port this server is listening on.
-    //! \returns The port this server is listening on.
-    int getPort() const;
+        //! Gets the port this server is listening on.
+        //! \returns The port this server is listening on.
+        int getPort() const;
 
-    void close();
+        void close();
 
-  private:
-    virtual void startAccept();
+      private:
+        virtual void startAccept();
 
-    void handleAccept(const boost::system::error_code& error);
+        void handleAccept(const boost::system::error_code& error);
 
-    void bindToPort(boost::asio::io_service& io_service, int port);
-    void bindToRandomPortInRange(boost::asio::io_service& io_service,
-                                 int port_min,
-                                 int port_max);
+        void bindToPort(boost::asio::io_service& io_service, int port);
+        void bindToRandomPortInRange(boost::asio::io_service& io_service,
+                                     int port_min,
+                                     int port_max);
 
-    boost::shared_ptr<boost::asio::ip::tcp::acceptor> acceptor;
+        boost::shared_ptr<boost::asio::ip::tcp::acceptor> acceptor;
 
-    boost::function<void(const TimestampedUnsignedCharVector)>
-        onMessageReceived;
+        boost::function<void(const TimestampedUnsignedCharVector)>
+            onMessageReceived;
 
-    boost::shared_ptr<TCPConnection> connection;
-    bool confirm_with_fixed_reply;
-    std::string fixed_reply;
-    bool expect_size_header;
-    std::string log_name;
+        boost::shared_ptr<TCPConnection> connection;
+        bool confirm_with_fixed_reply;
+        std::string fixed_reply;
+        bool expect_size_header;
+        std::string log_name;
 
-    bool closing = false;
-    ServerScope* scope = nullptr;
-  };
+        bool closing = false;
+        ServerScope* scope = nullptr;
+    };
 } // namespace malmo
 
 #endif
