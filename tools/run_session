@@ -150,7 +150,10 @@ do_mission() {
             exit 1  
         fi 
 
-        runExperiment_args="--mission ${CURRENT_MISSION} --record_observations --uuid ${session_uuid}"
+        runExperiment_args="--mission ${CURRENT_MISSION}\
+                            --record_observations\
+                            --uuid ${session_uuid}\
+                            --self_report ${SELF_REPORT_INTERVAL}"
 
         if [[ $CURRENT_MISSION -gt 0 ]]; then
             runExperiment_args="${runExperiment_args} --time_limit ${TIME_LIMIT}"
