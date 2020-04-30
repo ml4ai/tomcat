@@ -199,19 +199,23 @@ do_mission() {
             echo "Mission ${CURRENT_MISSION} ended with exit code 0."
             echo "All recorded data is in ${MISSION_OUTPUT_DIR}"
             echo " "
-            common_files=("discrete_events.json" "malmo_data.txt" "player_audio.wav" "screen_video.mpg" "system_audio.wav" "webcam_video.mpg")
-            cur_dir="${MISSION_OUTPUT_DIR}/"
+            common_files=("events.txt" "malmo_data.txt")
+            if (( ENABLE_FFMPEG )); then
+                common_files+=("player_audio.wav" "screen_video.mpg" "webcam_video.mpg")
+                if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
+                    common_files+=("system_audio.wav")
+                fi
+            fi
             echo "checking files from ${MISSION_OUTPUT_DIR}..."
-            for file in ${common_files[@]}
-                do
-                    if [ -f "${cur_dir}${file}" ];then
-                        file_size=$(ls -l "${cur_dir}${file}" | awk '{print $5}')
-                        if [[ ${file_size} -eq 0 ]];then
-                            echo "${file} from Mission ${CURRENT_MISSION}: size is 0"
-                        fi
-                    else
-                        echo "${file} from Mission ${CURRENT_MISSION}: does not exist"
+            for file in ${common_files[@]}; do
+                if [ -f "${MISSION_OUTPUT_DIR}/${file}" ]; then
+                    file_size=$(ls -l "${MISSION_OUTPUT_DIR}/${file}" | awk '{print $5}')
+                    if [[ ${file_size} -eq 0 ]]; then
+                        echo "WARNING: ${file} from Mission ${CURRENT_MISSION}: size is 0"
                     fi
+                else
+                    echo "WARNING: ${file} from Mission ${CURRENT_MISSION}: does not exist"
+                fi
             done
             echo -e '\n'
             break
