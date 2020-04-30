@@ -42,6 +42,10 @@ public class ZombieMission extends Mission {
             this.levelOfDifficulty, this.villagersIds, this.drawingHandler);
     }
 
+    public int getNumberOfVillagersSaved(){
+        return this.numberOfVillagersSaved;
+    }
+
     @Override
     protected void beforePhaseTrasition() {
         // No action to be taken

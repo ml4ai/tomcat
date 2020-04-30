@@ -3,6 +3,7 @@ package com.microsoft.Malmo.MissionHandlers;
 import com.microsoft.Malmo.MissionHandlerInterfaces.IWorldDecorator;
 import com.microsoft.Malmo.Schemas.MissionInit;
 import com.microsoft.Malmo.Schemas.TomcatDecorator;
+import edu.arizona.tomcat.Events.ForgeEventHandler;
 import edu.arizona.tomcat.Mission.MissionHandler;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,8 @@ public class TomcatDecoratorImplementation
     extends HandlerBase implements IWorldDecorator {
     TomcatDecorator decorator;
     MissionHandler missionHandler;
+
+    private ForgeEventHandler eventHandler = new ForgeEventHandler();
 
     @Override
     public boolean parseParameters(Object params) {
@@ -48,6 +51,7 @@ public class TomcatDecoratorImplementation
 
     @Override
     public void update(World world) {
+        this.eventHandler.updateExtraEvents();
         this.missionHandler.updateMission(world);
     }
 
