@@ -192,6 +192,21 @@ do_mission() {
             echo "Mission ${CURRENT_MISSION} ended with exit code 0."
             echo "All recorded data is in ${MISSION_OUTPUT_DIR}"
             echo " "
+            common_files=("discrete_events.json" "malmo_data.txt" "player_audio.wav" "screen_video.mpg" "system_audio.wav" "webcam_video.mpg")
+            cur_dir="${MISSION_OUTPUT_DIR}/"
+            echo "checking files from ${MISSION_OUTPUT_DIR}..."
+            for file in ${common_files[@]}
+                do
+                    if [ -f "${cur_dir}${file}" ];then
+                        file_size=$(ls -l "${cur_dir}${file}" | awk '{print $5}')
+                        if [[ ${file_size} -eq 0 ]];then
+                            echo "${file} from Mission ${CURRENT_MISSION}: size is 0"
+                        fi
+                    else
+                        echo "${file} from Mission ${CURRENT_MISSION}: does not exist"
+                    fi
+            done
+            echo -e '\n'
             break
         fi
 
@@ -223,29 +238,6 @@ if [[ $DO_TUTORIAL_MISSION -eq 1 && $DO_MAIN_MISSION -eq 1 ]]; then
 fi
 
 if (( DO_MAIN_MISSION )); then do_mission ${MAIN_MISSION}; fi
-
-echo -e '\n'
-echo "checking if the required files were produced..."
-common_files=("discrete_events.json" "malmo_data.txt" "player_audio.wav" "screen_video.mpg" "system_audio.wav" "webcam_video.mpg")
-dirs_names=("mission_0" "mission_1")
-
-for dir_name in ${dirs_names[@]}
-    do
-        cur_dir="${session_output_dir}/${dir_name}/"
-        echo "checking files from ${dir_name}..."
-        for file in ${common_files[@]}
-            do
-                if [ -f "${cur_dir}${file}" ];then
-                    file_size=$(ls -l "${cur_dir}${file}" | awk '{print $5}')
-                    if [[ ${file_size} -eq 0 ]];then
-                        echo "${file} from ${dir_name} : size is 0"
-                    fi
-                else
-                    echo "${file} from ${dir_name}: does not exist"
-                fi
-        done
-        echo -e '\n'
-done
 
 echo "Finished running all sessions in ${TOMCAT}."
 echo "Doing our final cleanup."
