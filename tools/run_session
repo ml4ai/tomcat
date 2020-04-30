@@ -27,12 +27,19 @@ timestamp() {
   date "+%Y_%m_%d_%H_%M_%S"
 }
 
-# Creating an output directory for this session.
 # On macOS, uuidgen produces uppercase UUIDs, so we pipe the output through tr
 # to get uniform behaviour on macOS and Linux.
 session_uuid=$(uuidgen | tr '[:upper:]' '[:lower:]')
+if [[ $? -ne 0 ]]; then exit 1; fi
+
+# Creating an output directory for this session.
 session_output_dir="${TOMCAT}"/data/participant_data/"$session_uuid"
 mkdir -p "${session_output_dir}"
+
+# Generate metadata file for the session
+"$TOMCAT"/tools/generate_session_metadata "$session_uuid" > "$session_output_dir"/metadata.json
+if [[ $? -ne 0 ]]; then exit 1; fi
+
 
 start_ffmpeg_recording() {
     echo "Recording video of player's face using webcam."
