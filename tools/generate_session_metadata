@@ -16,7 +16,7 @@ timestamp = datetime.now().isoformat()
 
 metadata = {
     "session_id": sys.argv[1],  # Get UUID from command line argument
-    "timestamp": timestamp,
+    "timestamp": timestamp+"Z",
     "player_id": os.getenv("USER"),
 }
 
