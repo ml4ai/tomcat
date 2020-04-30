@@ -199,6 +199,25 @@ do_mission() {
             echo "Mission ${CURRENT_MISSION} ended with exit code 0."
             echo "All recorded data is in ${MISSION_OUTPUT_DIR}"
             echo " "
+            common_files=("events.txt" "malmo_data.txt")
+            if (( ENABLE_FFMPEG )); then
+                common_files+=("player_audio.wav" "screen_video.mpg" "webcam_video.mpg")
+                if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
+                    common_files+=("system_audio.wav")
+                fi
+            fi
+            echo "checking files from ${MISSION_OUTPUT_DIR}..."
+            for file in ${common_files[@]}; do
+                if [ -f "${MISSION_OUTPUT_DIR}/${file}" ]; then
+                    file_size=$(ls -l "${MISSION_OUTPUT_DIR}/${file}" | awk '{print $5}')
+                    if [[ ${file_size} -eq 0 ]]; then
+                        echo "WARNING: ${file} from Mission ${CURRENT_MISSION}: size is 0"
+                    fi
+                else
+                    echo "WARNING: ${file} from Mission ${CURRENT_MISSION}: does not exist"
+                fi
+            done
+            echo -e '\n'
             break
         fi
 
@@ -230,7 +249,6 @@ if [[ $DO_TUTORIAL_MISSION -eq 1 && $DO_MAIN_MISSION -eq 1 ]]; then
 fi
 
 if (( DO_MAIN_MISSION )); then do_mission ${MAIN_MISSION}; fi
-
 
 echo "Finished running all sessions in ${TOMCAT}."
 echo "Doing our final cleanup."
