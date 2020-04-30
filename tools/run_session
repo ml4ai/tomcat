@@ -8,7 +8,6 @@ set -u
 # mirrors that of the git repository.
 TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
 export TOMCAT
-save_dir="${TOMCAT}/external/malmo/Minecraft/run/saves"
 
 source "$TOMCAT"/tools/configuration_helpers
 
@@ -21,11 +20,6 @@ if [[ ! $(pgrep -l mosquitto | head -n1 | cut -d' ' -f2) == mosquitto ]]; then
     mosquitto &
 fi
 
-
-# This function returns the date and time in the current timezone.
-timestamp() {
-  date "+%Y_%m_%d_%H_%M_%S"
-}
 
 # Creating an output directory for this session.
 # On macOS, uuidgen produces uppercase UUIDs, so we pipe the output through tr
