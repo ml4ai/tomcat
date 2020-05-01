@@ -13,7 +13,8 @@ using namespace tomcat;
 // get more complex. For example, if we want to ensure that ToMCAT environment
 // variables are prefixed with TOMCAT_.
 string mapper(string env_var) {
-    return env_var;
+    set<string> valid_vars = {"self_report_interval", "difficulty"};
+    return in(valid_vars, env_var)?env_var:"";
 }
 
 options_description load_options() {
