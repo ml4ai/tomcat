@@ -64,6 +64,14 @@ set_local_configuration() {
     # DEFAULT_MAIN_MISSION_TIME: Set the self report time interval in seconds.
     export SELF_REPORT_INTERVAL=${SELF_REPORT_INTERVAL:-180}
 
+    # DIFFICULTY: Set the difficulty level.
+    # Options: 3 (easy), 5 (medium), 7 (hard.)
+    export DIFFICULTY=${DIFFICULTY:-5}
+    if [[ $DIFFICULTY -ne 3 && $DIFFICULTY -ne 5 && $DIFFICULTY -ne 7 ]]; then
+        echo "Difficulty level set to invalid value: $DIFFICULTY."
+        echo "Value must be 3, 5, or 7. Difficulty level will be set to the default (5)."
+        export DIFFICULTY=5
+    fi
 
     export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
     mkdir -p "${TOMCAT_TMP_DIR}"
