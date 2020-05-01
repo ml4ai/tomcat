@@ -8,6 +8,14 @@ using namespace boost::program_options;
 using namespace std;
 using namespace tomcat;
 
+// Function to deal with program options specified as environment variables.
+// Right now this function is an identity mapping, but in the future it might
+// get more complex. For example, if we want to ensure that ToMCAT environment
+// variables are prefixed with TOMCAT_.
+string mapper(string env_var) {
+    return env_var;
+}
+
 options_description load_options() {
     options_description options("Allowed options");
     options.add_options()("help,h",
@@ -53,11 +61,12 @@ options_description load_options() {
 
 variables_map
 parse_parameters(options_description options, int argc, const char* argv[]) {
-    variables_map parameters_map;
-    store(parse_command_line(argc, argv, options), parameters_map);
-    notify(parameters_map);
+    variables_map vm;
+    store(parse_command_line(argc, argv, options), vm);
+    store(parse_environment(options, boost::function1<string, string>(mapper)), vm);
+    notify(vm);
 
-    return parameters_map;
+    return vm;
 }
 
 bool are_parameters_ok(variables_map parameters_map,
