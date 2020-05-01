@@ -34,7 +34,7 @@ options_description load_options() {
         "time_limit",
         value<unsigned int>()->default_value(20),
         "Time limit for mission (in seconds).")(
-        "self_report",
+        "self_report_interval",
         value<unsigned int>()->default_value(180),
         "Self-report prompt interval time (in seconds).")(
         "port,p",
@@ -89,7 +89,7 @@ Mission create_mission(variables_map parameters_map) {
     unsigned int time_limit_in_seconds =
         parameters_map["time_limit"].as<unsigned int>();
     unsigned int self_report_prompt_time_in_seconds =
-        parameters_map["self_report"].as<unsigned int>();
+        parameters_map["self_report_interval"].as<unsigned int>();
     unsigned int level_of_difficulty =
         parameters_map["difficulty"].as<unsigned int>();
     bool record_all = parameters_map["record_all"].as<bool>();
