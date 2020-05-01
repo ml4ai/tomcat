@@ -27,12 +27,19 @@ timestamp() {
   date "+%Y_%m_%d_%H_%M_%S"
 }
 
-# Creating an output directory for this session.
 # On macOS, uuidgen produces uppercase UUIDs, so we pipe the output through tr
 # to get uniform behaviour on macOS and Linux.
 session_uuid=$(uuidgen | tr '[:upper:]' '[:lower:]')
+if [[ $? -ne 0 ]]; then exit 1; fi
+
+# Creating an output directory for this session.
 session_output_dir="${TOMCAT}"/data/participant_data/"$session_uuid"
 mkdir -p "${session_output_dir}"
+
+# Generate metadata file for the session
+"$TOMCAT"/tools/generate_session_metadata "$session_uuid" > "$session_output_dir"/metadata.json
+if [[ $? -ne 0 ]]; then exit 1; fi
+
 
 start_ffmpeg_recording() {
     echo "Recording video of player's face using webcam."
@@ -144,7 +151,10 @@ do_mission() {
             exit 1  
         fi 
 
-        runExperiment_args="--mission ${CURRENT_MISSION} --record_observations --uuid ${session_uuid}"
+        runExperiment_args="--mission ${CURRENT_MISSION}\
+                            --record_observations\
+                            --uuid ${session_uuid}\
+                            --self_report ${SELF_REPORT_INTERVAL}"
 
         if [[ $CURRENT_MISSION -gt 0 ]]; then
             runExperiment_args="${runExperiment_args} --time_limit ${TIME_LIMIT}"
@@ -195,6 +205,25 @@ do_mission() {
             echo "Mission ${CURRENT_MISSION} ended with exit code 0."
             echo "All recorded data is in ${MISSION_OUTPUT_DIR}"
             echo " "
+            common_files=("events.txt" "malmo_data.txt")
+            if (( ENABLE_FFMPEG )); then
+                common_files+=("player_audio.wav" "screen_video.mpg" "webcam_video.mpg")
+                if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
+                    common_files+=("system_audio.wav")
+                fi
+            fi
+            echo "checking files from ${MISSION_OUTPUT_DIR}..."
+            for file in ${common_files[@]}; do
+                if [ -f "${MISSION_OUTPUT_DIR}/${file}" ]; then
+                    file_size=$(ls -l "${MISSION_OUTPUT_DIR}/${file}" | awk '{print $5}')
+                    if [[ ${file_size} -eq 0 ]]; then
+                        echo "WARNING: ${file} from Mission ${CURRENT_MISSION}: size is 0"
+                    fi
+                else
+                    echo "WARNING: ${file} from Mission ${CURRENT_MISSION}: does not exist"
+                fi
+            done
+            echo -e '\n'
             break
         fi
 
@@ -226,7 +255,6 @@ if [[ $DO_TUTORIAL_MISSION -eq 1 && $DO_MAIN_MISSION -eq 1 ]]; then
 fi
 
 if (( DO_MAIN_MISSION )); then do_mission ${MAIN_MISSION}; fi
-
 
 echo "Finished running all sessions in ${TOMCAT}."
 echo "Doing our final cleanup."

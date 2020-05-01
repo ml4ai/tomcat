@@ -41,7 +41,6 @@ import com.microsoft.Malmo.Utils.ScoreHelper;
 import com.microsoft.Malmo.Utils.ScreenHelper;
 import com.microsoft.Malmo.Utils.TCPUtils;
 import edu.arizona.tomcat.ASISTBlocks.ModBlocks;
-import edu.arizona.tomcat.Events.ForgeEventHandler;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageHandler;
 import io.netty.buffer.ByteBuf;
@@ -115,11 +114,6 @@ public class MalmoMod {
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-
-        MinecraftForge.EVENT_BUS.register(
-            new ForgeEventHandler()); // Registering this here so it's
-                                      // accessible outside missions.
-
         ModBlocks.init();
         ModBlocks.register(); // Tells Minecraft about our blocks when it's
                               // loading up

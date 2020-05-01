@@ -19,13 +19,13 @@ public class MobAttacked extends Event {
     private String targetType;
     /** The unique ID of the target mob. */
     private UUID targetId;
+    private String itemHeld;
 
     /** The health of the target *before* the event. */
     private double targetHealth;
 
     public MobAttacked(AttackEntityEvent event) {
         EntityMob target = (EntityMob)event.getTarget();
-        this.eventType = "mob_attacked";
         EntityPlayer player = event.getEntityPlayer();
         this.playerName = player.getDisplayNameString();
         this.targetType = target.getClass().getName();
@@ -33,5 +33,7 @@ public class MobAttacked extends Event {
         this.targetHealth = target.getHealth();
         this.targetPosition = new Position(target);
         this.targetVelocity = new Velocity(target);
+        this.itemHeld =
+            player.getHeldItemMainhand().getDisplayName();
     }
 }
