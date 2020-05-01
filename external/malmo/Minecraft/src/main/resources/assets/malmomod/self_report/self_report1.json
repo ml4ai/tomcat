@@ -74,84 +74,24 @@
     {
       "text": [
          "How much are you trying to avoid getting hurt or killed",
-         "by the creatures?"
+         "by the monsters?"
       ],
       "choices":
       [
         "Not at all",
         "Somewhat",
-        "Very"
+        "A lot"
       ]
     },
     {
       "text": [
-         "How much are you trying to attack and kill the creatures?"
+         "How much are you trying to attack and kill the monsters?"
       ],
       "choices":
       [
         "Not at all",
         "Somewhat",
-        "Very"
-      ]
-    },
-    {
-      "text": [
-         "How calm/relaxed are you feeling right now?",
-         "Please select one of the following options:."
-      ],
-      "choices":
-      [
-        "Not at all",
-        "Somewhat",
-        "Very"
-      ]
-    },
-    {
-      "text": [
-         "How calm/relaxed are you feeling right now?",
-         "Please select one of the following options:."
-      ],
-      "choices":
-      [
-        "Not at all",
-        "Somewhat",
-        "Very"
-      ]
-    },
-    {
-      "text": [
-         "How anxious/stressed are you feeling right now?",
-         "Please select one of the following options:."
-      ],
-      "choices":
-      [
-        "Not at all",
-        "Somewhat",
-        "Very"
-      ]
-    },
-    {
-      "text": [
-         "How frustrated/annoyed are you feeling right now?",
-         "Please select one of the following options:."
-      ],
-      "choices":
-      [
-        "Not at all",
-        "Somewhat",
-        "Very"
-      ]
-    },
-    {
-      "text": [
-         "How bored/disengaged are you feeling right now?",
-         "Please select one of the following options:."
-      ],
-      "choices":
-      [
-        "Not at all",
-        "Somewhat",
-        "Very"
+        "A lot"
       ]
     },
     {
@@ -168,7 +108,7 @@
     },
     {
       "text": [
-         "How happy/content are you feeling right now?",
+         "How calm/relaxed are you feeling right now?",
          "Please select one of the following options:."
       ],
       "choices":
@@ -180,19 +120,7 @@
     },
     {
       "text": [
-         "How confident/proud are you feeling right now?",
-         "Please select one of the following options:."
-      ],
-      "choices":
-      [
-        "Not at all",
-        "Somewhat",
-        "Very"
-      ]
-    },
-    {
-      "text": [
-         "How amused are you feeling right now?",
+         "How bored/disengaged are you feeling right now?",
          "Please select one of the following options:."
       ],
       "choices":
