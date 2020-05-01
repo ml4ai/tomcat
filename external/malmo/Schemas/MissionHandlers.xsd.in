@@ -2023,7 +2023,17 @@
     </xs:annotation>
     <xs:complexType/>
   </xs:element>
-  
+
+  <xs:element name="TomcatObservationFromChat">
+    <xs:annotation>
+      <xs:documentation>
+        Similar to the vanilla malmo's ObservationFromChat but data is published to the
+        message bus by the Minecraft clients instead of being send via TCP.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType/>
+  </xs:element>
+
   <xs:element name="ObservationFromCompass">
       <xs:annotation>
          <xs:documentation>
