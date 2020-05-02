@@ -188,7 +188,6 @@ namespace tomcat {
               </AgentStart>
               <AgentHandlers>
                 <ObservationFromASISTParticipant/>
-                <TomcatObservationFromChat/>
                 <ContinuousMovementCommands turnSpeedDegs="840">
                     <ModifierList type="deny-list">
                       <command>strafe</command>
