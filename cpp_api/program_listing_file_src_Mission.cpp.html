@@ -378,7 +378,7 @@
                                    <span class="o">*</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">client_pool</span><span class="p">.</span><span class="n">get</span><span class="p">(),</span>
                                    <span class="n">mission_record_spec</span><span class="p">,</span>
                                    <span class="n">role</span><span class="p">,</span>
-                                   <span class="s">&quot;tomcat&quot;</span><span class="p">);</span>
+                                   <span class="k">this</span><span class="o">-&gt;</span><span class="n">uuid</span><span class="p">);</span>
                 <span class="n">connected</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
             <span class="p">}</span>
             <span class="k">catch</span> <span class="p">(</span><span class="n">MissionException</span><span class="o">&amp;</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
@@ -512,36 +512,6 @@
             <span class="p">}</span>
 
             <span class="n">worldState</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">minecraft_server</span><span class="o">-&gt;</span><span class="n">peekWorldState</span><span class="p">();</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">worldState</span><span class="p">.</span><span class="n">observations</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                <span class="n">json</span> <span class="n">observation</span> <span class="o">=</span>
-                    <span class="n">json</span><span class="o">::</span><span class="n">parse</span><span class="p">(</span><span class="n">worldState</span><span class="p">.</span><span class="n">observations</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">text</span><span class="p">);</span>
-                <span class="n">json</span> <span class="n">header</span> <span class="o">=</span> <span class="p">{};</span>
-                <span class="n">string</span> <span class="n">timestamp</span> <span class="o">=</span> <span class="n">pt</span><span class="o">::</span><span class="n">to_iso_extended_string</span><span class="p">(</span>
-                                       <span class="n">pt</span><span class="o">::</span><span class="n">microsec_clock</span><span class="o">::</span><span class="n">universal_time</span><span class="p">())</span> <span class="o">+</span>
-                                   <span class="s">&quot;Z&quot;</span><span class="p">;</span>
-                <span class="n">header</span><span class="p">[</span><span class="s">&quot;timestamp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">timestamp</span><span class="p">;</span>
-                <span class="n">header</span><span class="p">[</span><span class="s">&quot;message_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;observation&quot;</span><span class="p">;</span>
-                <span class="n">header</span><span class="p">[</span><span class="s">&quot;version&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;0.2&quot;</span><span class="p">;</span>
-
-                <span class="c1">//# Message</span>
-                <span class="n">json</span> <span class="n">metadata</span> <span class="o">=</span> <span class="p">{};</span>
-                <span class="n">metadata</span><span class="p">[</span><span class="s">&quot;trial_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">uuid</span><span class="p">;</span>
-                <span class="n">metadata</span><span class="p">[</span><span class="s">&quot;timestamp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">timestamp</span><span class="p">;</span>
-                <span class="n">metadata</span><span class="p">[</span><span class="s">&quot;source&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;human&quot;</span><span class="p">;</span>
-                <span class="n">metadata</span><span class="p">[</span><span class="s">&quot;sub_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;state&quot;</span><span class="p">;</span>
-                <span class="n">metadata</span><span class="p">[</span><span class="s">&quot;version&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;0.2&quot;</span><span class="p">;</span>
-
-                <span class="c1">//# Data</span>
-                <span class="n">json</span> <span class="n">data</span> <span class="o">=</span> <span class="p">{};</span>
-                <span class="n">data</span><span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;tomcat&quot;</span><span class="p">;</span>
-                <span class="n">json</span> <span class="n">message</span> <span class="o">=</span> <span class="p">{};</span>
-                <span class="n">message</span><span class="p">[</span><span class="s">&quot;header&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">header</span><span class="p">;</span>
-                <span class="n">message</span><span class="p">[</span><span class="s">&quot;msg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">;</span>
-                <span class="n">message</span><span class="p">[</span><span class="s">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">observation</span><span class="p">;</span>
-
-                <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">message</span><span class="p">.</span><span class="n">dump</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
-            <span class="p">}</span>
-
         <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">worldState</span><span class="p">.</span><span class="n">is_mission_running</span><span class="p">);</span>
     <span class="p">}</span>
 

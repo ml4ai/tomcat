@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['chat',['Chat',['../classedu_1_1arizona_1_1tomcat_1_1Events_1_1Chat.html',1,'edu::arizona::tomcat::Events']]],
   ['checkitemtoinventory',['checkItemToInventory',['../classedu_1_1arizona_1_1tomcat_1_1Utils_1_1InventoryHandler.html#a10dfa8d3e9b373a29d40e3524b2e1601',1,'edu::arizona::tomcat::Utils::InventoryHandler']]],
   ['cleanup',['cleanup',['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1Mission.html#ae3648fe8c05534feaa1386d25be8c90f',1,'edu::arizona::tomcat::Mission::Mission']]],
   ['clientmission',['ClientMission',['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1Client_1_1ClientMission.html',1,'edu::arizona::tomcat::Mission::Client']]],
