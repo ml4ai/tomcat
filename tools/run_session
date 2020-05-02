@@ -127,6 +127,7 @@ do_mission() {
     export MISSION_OUTPUT_DIR="${session_output_dir}"/mission_"$CURRENT_MISSION"
     mkdir -p "$MISSION_OUTPUT_DIR"
     malmo_data="$MISSION_OUTPUT_DIR"/malmo_data.txt
+    chat_data="$MISSION_OUTPUT_DIR"/chat.txt
     event_data="$MISSION_OUTPUT_DIR"/events.txt
     self_report_data="$MISSION_OUTPUT_DIR"/self_reports.txt
 
@@ -159,14 +160,15 @@ do_mission() {
         # topic observations/state.
         "${TOMCAT}"/build/bin/runExperiment\
         $runExperiment_args\
-        2> "${mission_log}"\
-        | mosquitto_pub -t observations/state -l &
+        2> "${mission_log}" &
         pid_runExperiment=$!
 
         # Subscribe to the observations/state topic on the message bus and
         # redirect the output to a file.
         mosquitto_sub -t observations/state > "$malmo_data" &
         pid_observations_state=$!
+        mosquitto_sub -t observations/chat > "$chat_data" &
+        pid_observations_chat=$!
         mosquitto_sub -t "observations/events/#" > "$event_data" &
         pid_observations_events=$!
         mosquitto_sub -t observations/self_reports > "$self_report_data" &
@@ -190,6 +192,7 @@ do_mission() {
 
         if [[ ${mission_status} -eq 0 ]]; then
             kill $pid_observations_state
+            kill $pid_observations_chat
             kill $pid_observations_events
             kill $pid_observations_self_reports
             echo "Mission ${CURRENT_MISSION} ended with exit code 0."
