@@ -42,7 +42,7 @@ public class ZombieMission extends Mission {
             this.levelOfDifficulty, this.villagersIds, this.drawingHandler);
     }
 
-    public int getNumberOfVillagersSaved(){
+    public int getNumberOfVillagersSaved() {
         return this.numberOfVillagersSaved;
     }
 

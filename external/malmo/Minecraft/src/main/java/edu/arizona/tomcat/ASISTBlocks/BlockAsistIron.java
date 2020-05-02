@@ -54,8 +54,9 @@ public class BlockAsistIron extends Block {
 
         // Technically a command block destroys this, so we aren't identifying a
         // player as destroying this block for the sake of the code.
-        this.mqttService.publish(new HitControlledDoorOpened(pos),
-                                 "observations/events/hit_controlled_door_opened");
+        this.mqttService.publish(
+            new HitControlledDoorOpened(pos),
+            "observations/events/hit_controlled_door_opened");
 
         return new java.util.ArrayList<ItemStack>(); // Drop nothing
     }

@@ -35,9 +35,7 @@ public class ForgeEventHandler {
 
     private static ForgeEventHandler instance = null;
 
-    private ForgeEventHandler() {
-        MinecraftForge.EVENT_BUS.register(this);
-    }
+    private ForgeEventHandler() { MinecraftForge.EVENT_BUS.register(this); }
 
     public static ForgeEventHandler getInstance() {
         if (instance == null) {
@@ -50,39 +48,46 @@ public class ForgeEventHandler {
      * This method checks for extra events at every tick.
      */
     public void updateExtraEvents() {
-        Mission mission = MalmoMod.instance.getServer().getTomcatServerMission();
+        Mission mission =
+            MalmoMod.instance.getServer().getTomcatServerMission();
         if (mission != null) {
             this.checkVillagerSavedEvent(mission);
         }
-
     }
 
-
     /**
-     * Called by checkExtraEvents at every tick to see if a villager has been saved in the given mission
+     * Called by checkExtraEvents at every tick to see if a villager has been
+     * saved in the given mission
      *
      * @param mission - The current mission
      */
     private void checkVillagerSavedEvent(Mission mission) {
         if (mission instanceof ZombieMission) {
 
-            ZombieMission zombieMission = (ZombieMission) mission;
-            // If the number of villagers saved has gone up, then a villager was saved. Checking this avoids having to check the loadedEntityList unnecessarily
-            boolean villagerSaved = zombieMission.getNumberOfVillagersSaved() - this.zombieMissionVillagersSaved > 0;
+            ZombieMission zombieMission = (ZombieMission)mission;
+            // If the number of villagers saved has gone up, then a villager was
+            // saved. Checking this avoids having to check the loadedEntityList
+            // unnecessarily
+            boolean villagerSaved = zombieMission.getNumberOfVillagersSaved() -
+                                        this.zombieMissionVillagersSaved >
+                                    0;
 
             if (villagerSaved) {
                 this.zombieMissionVillagersSaved += 1;
-                World world = MinecraftServerHelper.getServer().getEntityWorld();
+                World world =
+                    MinecraftServerHelper.getServer().getEntityWorld();
 
                 for (Entity entity : world.getLoadedEntityList()) {
                     if (entity instanceof EntityVillager) {
-                        for (EntityPlayerMP player : MinecraftServerHelper.getServer()
-                                .getPlayerList()
-                                .getPlayers()) {
-                            if (player.getDistanceToEntity(entity) <= ZombieMission.MAX_DISTANCE_TO_SAVE_VILLAGER) {
+                        for (EntityPlayerMP player :
+                             MinecraftServerHelper.getServer()
+                                 .getPlayerList()
+                                 .getPlayers()) {
+                            if (player.getDistanceToEntity(entity) <=
+                                ZombieMission.MAX_DISTANCE_TO_SAVE_VILLAGER) {
                                 this.mqttService.publish(
-                                        new VillagerSaved(entity),
-                                        "observations/events/player_interactions/villager_saved");
+                                    new VillagerSaved(entity),
+                                    "observations/events/player_interactions/villager_saved");
                             }
                         }
                     }
@@ -120,7 +125,7 @@ public class ForgeEventHandler {
             Entity target = event.getTarget();
             if (target instanceof EntityMob) {
                 this.mqttService.publish(new MobAttacked(event),
-                        "observations/events/mob_attacked");
+                                         "observations/events/mob_attacked");
             }
         }
     }
@@ -134,8 +139,8 @@ public class ForgeEventHandler {
         // integrated server nature of Malmo.
         if (event.getSide() == Side.CLIENT) {
             this.mqttService.publish(
-                    new EntityInteraction(event),
-                    "observations/events/player_interactions/entity_interactions");
+                new EntityInteraction(event),
+                "observations/events/player_interactions/entity_interactions");
         }
     }
 
@@ -151,20 +156,22 @@ public class ForgeEventHandler {
         // duplication, we only publish the events corresponding to the main
         // hand.
         if (event.getSide() == Side.CLIENT &&
-                event.getHand() == EnumHand.MAIN_HAND) {
+            event.getHand() == EnumHand.MAIN_HAND) {
             Block block = this.getBlock(event);
             if (block instanceof BlockLever) {
                 this.mqttService.publish(
-                        new LeverFlip(event),
-                        "observations/events/player_interactions/blocks/lever");
-            } else if (block instanceof BlockDoor) {
+                    new LeverFlip(event),
+                    "observations/events/player_interactions/blocks/lever");
+            }
+            else if (block instanceof BlockDoor) {
                 this.mqttService.publish(
-                        new DoorInteraction(event),
-                        "observations/events/player_interactions/blocks/door");
-            } else {
+                    new DoorInteraction(event),
+                    "observations/events/player_interactions/blocks/door");
+            }
+            else {
                 this.mqttService.publish(
-                        new BlockInteraction(event),
-                        "observations/events/player_interactions/blocks");
+                    new BlockInteraction(event),
+                    "observations/events/player_interactions/blocks");
             }
         }
     }
@@ -176,10 +183,10 @@ public class ForgeEventHandler {
     @SubscribeEvent
     public void handle(PlayerInteractEvent.LeftClickBlock event) {
         if (event.getSide() == Side.CLIENT &&
-                event.getHand() == EnumHand.MAIN_HAND) {
+            event.getHand() == EnumHand.MAIN_HAND) {
             this.mqttService.publish(
-                    new BlockInteraction(event),
-                    "observations/events/player_interactions/left_clicks/blocks");
+                new BlockInteraction(event),
+                "observations/events/player_interactions/left_clicks/blocks");
         }
     }
 
@@ -190,8 +197,8 @@ public class ForgeEventHandler {
     public void handle(BlockEvent.BreakEvent event) {
         if (!event.getWorld().isRemote) {
             this.mqttService.publish(
-                    new BlockBreakEvent(event),
-                    "observations/events/player_interactions/break_events/blocks");
+                new BlockBreakEvent(event),
+                "observations/events/player_interactions/break_events/blocks");
         }
     }
 
@@ -204,7 +211,7 @@ public class ForgeEventHandler {
     public void handle(LivingDeathEvent event) {
         if (this.fmlCommonHandler.getEffectiveSide() == Side.CLIENT) {
             this.mqttService.publish(new EntityDeath(event),
-                    "observations/events/entity_death");
+                                     "observations/events/entity_death");
         }
     }
 

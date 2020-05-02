@@ -11,7 +11,7 @@ public class VillagerSaved extends Event {
     Position villagerPos;
 
     public VillagerSaved(Entity villager) {
-        
+
         this.villagerID = villager.getUniqueID();
         this.villagerPos = new Position(villager);
     }
