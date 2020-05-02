@@ -59,6 +59,8 @@ import com.microsoft.Malmo.Utils.TCPUtils;
 import com.microsoft.Malmo.Utils.TextureHelper;
 import com.microsoft.Malmo.Utils.TimeHelper;
 import com.mojang.authlib.properties.Property;
+
+import edu.arizona.tomcat.Messaging.MqttService;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessage;
 import edu.arizona.tomcat.Messaging.TomcatMessaging.TomcatMessageType;
 import java.io.DataOutputStream;
@@ -2226,7 +2228,7 @@ public class ClientStateMachine
                 cac != null) // An empty json string will be "{}" (length 2) -
                              // don't send these.
             {
-                if (AddressHelper.getMissionControlPort() == 0) {
+            	if (AddressHelper.getMissionControlPort() == 0) {
                     if (envServer != null) {
                         envServer.observation(data);
                     }

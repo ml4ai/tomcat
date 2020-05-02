@@ -222,7 +222,7 @@ namespace tomcat {
                                    *this->client_pool.get(),
                                    mission_record_spec,
                                    role,
-                                   "tomcat");
+                                   this->uuid);
                 connected = true;
             }
             catch (MissionException& e) {
@@ -356,36 +356,6 @@ namespace tomcat {
             }
 
             worldState = this->minecraft_server->peekWorldState();
-            if (worldState.observations.size() != 0) {
-                json observation =
-                    json::parse(worldState.observations.at(0)->text);
-                json header = {};
-                string timestamp = pt::to_iso_extended_string(
-                                       pt::microsec_clock::universal_time()) +
-                                   "Z";
-                header["timestamp"] = timestamp;
-                header["message_type"] = "observation";
-                header["version"] = "0.2";
-
-                //# Message
-                json metadata = {};
-                metadata["trial_id"] = this->uuid;
-                metadata["timestamp"] = timestamp;
-                metadata["source"] = "human";
-                metadata["sub_type"] = "state";
-                metadata["version"] = "0.2";
-
-                //# Data
-                json data = {};
-                data["name"] = "tomcat";
-                json message = {};
-                message["header"] = header;
-                message["msg"] = metadata;
-                message["data"] = observation;
-
-                cout << message.dump() << endl;
-            }
-
         } while (worldState.is_mission_running);
     }
 
