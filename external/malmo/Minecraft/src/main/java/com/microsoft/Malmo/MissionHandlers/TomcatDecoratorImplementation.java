@@ -18,7 +18,7 @@ public class TomcatDecoratorImplementation
     TomcatDecorator decorator;
     MissionHandler missionHandler;
 
-    private ForgeEventHandler eventHandler = new ForgeEventHandler();
+    private ForgeEventHandler eventHandler = ForgeEventHandler.getInstance();
 
     @Override
     public boolean parseParameters(Object params) {

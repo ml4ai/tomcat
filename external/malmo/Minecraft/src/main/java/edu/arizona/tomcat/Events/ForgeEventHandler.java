@@ -4,12 +4,16 @@ import com.microsoft.Malmo.MalmoMod;
 import edu.arizona.tomcat.Messaging.MqttService;
 import edu.arizona.tomcat.Mission.Mission;
 import edu.arizona.tomcat.Mission.ZombieMission;
+import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockLever;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumHand;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -31,7 +35,7 @@ public class ForgeEventHandler {
 
     private static ForgeEventHandler instance = null;
 
-    public ForgeEventHandler() {
+    private ForgeEventHandler() {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -44,19 +48,35 @@ public class ForgeEventHandler {
 
     public void updateExtraEvents() {
         Mission mission = MalmoMod.instance.getServer().getTomcatServerMission();
+        checkVillagerSavedEvent(mission);
 
+    }
+
+
+    private void checkVillagerSavedEvent(Mission mission) {
         if (mission instanceof ZombieMission) {
+
             ZombieMission zombieMission = (ZombieMission) mission;
             boolean villagerSaved = zombieMission.getNumberOfVillagersSaved() - this.zombieMissionVillagersSaved > 0;
+
             if (villagerSaved) {
                 this.zombieMissionVillagersSaved += 1;
-                this.mqttService.publish(
-                        new VillagerSaved(),
-                        "observations/events/player_interactions/villager");
-            } else {
-                ;
-            }
+                World world = MinecraftServerHelper.getServer().getEntityWorld();
 
+                for (Entity entity : world.getLoadedEntityList()) {
+                    if (entity instanceof EntityVillager) {
+                        for (EntityPlayerMP player : MinecraftServerHelper.getServer()
+                                .getPlayerList()
+                                .getPlayers()) {
+                            if (player.getDistanceToEntity(entity) <= ZombieMission.MAX_DISTANCE_TO_SAVE_VILLAGER) {
+                                this.mqttService.publish(
+                                        new VillagerSaved(entity),
+                                        "observations/events/player_interactions/villager_saved");
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -176,14 +196,14 @@ public class ForgeEventHandler {
                     "observations/events/entity_death");
         }
     }
-    
+
     /**
      * Handle events from Forge event bus triggered by living entities dying
      * (players, mobs), publish events to MQTT message bus with type
      * 'entity_death'.
      */
     @SubscribeEvent
-    public void handle(ServerChatEvent event) {        
-    	this.mqttService.publish(new Chat(event), "observations/chat");
+    public void handle(ServerChatEvent event) {
+        this.mqttService.publish(new Chat(event), "observations/chat");
     }
 }

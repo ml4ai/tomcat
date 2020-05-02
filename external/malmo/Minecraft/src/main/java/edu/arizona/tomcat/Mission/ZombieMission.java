@@ -23,7 +23,7 @@ import net.minecraft.world.World;
 public class ZombieMission extends Mission {
 
     public static final int NUMBER_OF_VILLAGERS = 4;
-    private static final int MAX_DISTANCE_TO_SAVE_VILLAGER = 1;
+    public static final int MAX_DISTANCE_TO_SAVE_VILLAGER = 1;
 
     private UUID[] villagersIds;
     private int numberOfVillagersSaved;
