@@ -11,6 +11,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -174,5 +175,15 @@ public class ForgeEventHandler {
             this.mqttService.publish(new EntityDeath(event),
                     "observations/events/entity_death");
         }
+    }
+    
+    /**
+     * Handle events from Forge event bus triggered by living entities dying
+     * (players, mobs), publish events to MQTT message bus with type
+     * 'entity_death'.
+     */
+    @SubscribeEvent
+    public void handle(ServerChatEvent event) {        
+    	this.mqttService.publish(new Chat(event), "observations/chat");
     }
 }
