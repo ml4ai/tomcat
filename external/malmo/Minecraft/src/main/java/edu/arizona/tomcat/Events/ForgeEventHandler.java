@@ -46,17 +46,28 @@ public class ForgeEventHandler {
         return instance;
     }
 
+    /**
+     * This method checks for extra events at every tick.
+     */
     public void updateExtraEvents() {
         Mission mission = MalmoMod.instance.getServer().getTomcatServerMission();
-        checkVillagerSavedEvent(mission);
+        if (mission != null) {
+            this.checkVillagerSavedEvent(mission);
+        }
 
     }
 
 
+    /**
+     * Called by checkExtraEvents at every tick to see if a villager has been saved in the given mission
+     *
+     * @param mission - The current mission
+     */
     private void checkVillagerSavedEvent(Mission mission) {
         if (mission instanceof ZombieMission) {
 
             ZombieMission zombieMission = (ZombieMission) mission;
+            // If the number of villagers saved has gone up, then a villager was saved. Checking this avoids having to check the loadedEntityList unnecessarily
             boolean villagerSaved = zombieMission.getNumberOfVillagersSaved() - this.zombieMissionVillagersSaved > 0;
 
             if (villagerSaved) {
