@@ -96,38 +96,16 @@
     },
     {
       "text": [
-         "How excited/energized are you feeling right now?",
-         "Please select one of the following options:."
+         "Which of the following emotions are you feeling most strongly?"
       ],
       "choices":
       [
-        "Not at all",
-        "Somewhat",
-        "Very"
-      ]
-    },
-    {
-      "text": [
-         "How calm/relaxed are you feeling right now?",
-         "Please select one of the following options:."
-      ],
-      "choices":
-      [
-        "Not at all",
-        "Somewhat",
-        "Very"
-      ]
-    },
-    {
-      "text": [
-         "How bored/disengaged are you feeling right now?",
-         "Please select one of the following options:."
-      ],
-      "choices":
-      [
-        "Not at all",
-        "Somewhat",
-        "Very"
+        "Calm/Relaxed",
+        "Anxious/Stressed",
+        "Excited/Energized",
+        "Bored/Disengaged",
+        "Frustrated/Annoyed",
+        "Happy/Amused"
       ]
     }
   ]
