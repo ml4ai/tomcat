@@ -52,3 +52,12 @@ Namespaces
 
 - :ref:`namespace_tomcat`
 
+
+Functions
+---------
+
+
+- :ref:`exhale_function_utils_8h_1a97a69eb875c2e5b7f80a069611a7cc5c`
+
+- :ref:`exhale_function_utils_8h_1ab55ff1cc063128c1e8ab3e3c8af2d5aa`
+

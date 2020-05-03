@@ -92,12 +92,27 @@ Functions
 .. toctree::
    :maxdepth: 5
 
+   function_runExperiment_8cpp_1a4c7aa67e53816957235574e13064f20f.rst
+
+.. toctree::
+   :maxdepth: 5
+
    function_runExperiment_8cpp_1aa732c79c5780d31e5072dba7c547cc2e.rst
 
 .. toctree::
    :maxdepth: 5
 
+   function_utils_8h_1a97a69eb875c2e5b7f80a069611a7cc5c.rst
+
+.. toctree::
+   :maxdepth: 5
+
    function_utils_8cpp_1a064ef9f4e2f086296b2169d54ae2f263.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   function_utils_8h_1ab55ff1cc063128c1e8ab3e3c8af2d5aa.rst
 
 Typedefs
 ********

@@ -20,6 +20,15 @@ Program Listing for File runExperiment.cpp
    using namespace std;
    using namespace tomcat;
    
+   // Function to deal with program options specified as environment variables.
+   // Right now this function is an identity mapping, but in the future it might
+   // get more complex. For example, if we want to ensure that ToMCAT environment
+   // variables are prefixed with TOMCAT_.
+   string mapper(string env_var) {
+       set<string> valid_vars = {"self_report_interval", "difficulty"};
+       return in(valid_vars, env_var)?env_var:"";
+   }
+   
    options_description load_options() {
        options_description options("Allowed options");
        options.add_options()("help,h",
@@ -29,7 +38,7 @@ Program Listing for File runExperiment.cpp
            "Mission ID or path to mission XML file.\n"
            "  0: Tutorial\n"
            "  1: Zombie Invasion\n"
-           "  2: USAR (Singleplayer)")("level",
+           "  2: USAR (Singleplayer)")("difficulty",
                                        value<unsigned int>()->default_value(5),
                                        "Level of difficulty.\n"
                                        "  3: Easy\n"
@@ -38,7 +47,7 @@ Program Listing for File runExperiment.cpp
            "time_limit",
            value<unsigned int>()->default_value(20),
            "Time limit for mission (in seconds).")(
-           "self_report",
+           "self_report_interval",
            value<unsigned int>()->default_value(180),
            "Self-report prompt interval time (in seconds).")(
            "port,p",
@@ -65,11 +74,12 @@ Program Listing for File runExperiment.cpp
    
    variables_map
    parse_parameters(options_description options, int argc, const char* argv[]) {
-       variables_map parameters_map;
-       store(parse_command_line(argc, argv, options), parameters_map);
-       notify(parameters_map);
+       variables_map vm;
+       store(parse_command_line(argc, argv, options), vm);
+       store(parse_environment(options, boost::function1<string, string>(mapper)), vm);
+       notify(vm);
    
-       return parameters_map;
+       return vm;
    }
    
    bool are_parameters_ok(variables_map parameters_map,
@@ -92,9 +102,9 @@ Program Listing for File runExperiment.cpp
        unsigned int time_limit_in_seconds =
            parameters_map["time_limit"].as<unsigned int>();
        unsigned int self_report_prompt_time_in_seconds =
-           parameters_map["self_report"].as<unsigned int>();
+           parameters_map["self_report_interval"].as<unsigned int>();
        unsigned int level_of_difficulty =
-           parameters_map["level"].as<unsigned int>();
+           parameters_map["difficulty"].as<unsigned int>();
        bool record_all = parameters_map["record_all"].as<bool>();
        bool record_observations = parameters_map["record_observations"].as<bool>();
        bool record_commands = parameters_map["record_commands"].as<bool>();

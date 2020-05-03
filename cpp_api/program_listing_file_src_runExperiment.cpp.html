@@ -164,6 +164,15 @@
 <span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
 <span class="k">using</span> <span class="k">namespace</span> <span class="n">tomcat</span><span class="p">;</span>
 
+<span class="c1">// Function to deal with program options specified as environment variables.</span>
+<span class="c1">// Right now this function is an identity mapping, but in the future it might</span>
+<span class="c1">// get more complex. For example, if we want to ensure that ToMCAT environment</span>
+<span class="c1">// variables are prefixed with TOMCAT_.</span>
+<span class="n">string</span> <span class="nf">mapper</span><span class="p">(</span><span class="n">string</span> <span class="n">env_var</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">set</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">valid_vars</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;self_report_interval&quot;</span><span class="p">,</span> <span class="s">&quot;difficulty&quot;</span><span class="p">};</span>
+    <span class="k">return</span> <span class="n">in</span><span class="p">(</span><span class="n">valid_vars</span><span class="p">,</span> <span class="n">env_var</span><span class="p">)</span><span class="o">?</span><span class="nl">env_var</span><span class="p">:</span><span class="s">&quot;&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+
 <span class="n">options_description</span> <span class="nf">load_options</span><span class="p">()</span> <span class="p">{</span>
     <span class="n">options_description</span> <span class="n">options</span><span class="p">(</span><span class="s">&quot;Allowed options&quot;</span><span class="p">);</span>
     <span class="n">options</span><span class="p">.</span><span class="n">add_options</span><span class="p">()(</span><span class="s">&quot;help,h&quot;</span><span class="p">,</span>
@@ -173,7 +182,7 @@
         <span class="s">&quot;Mission ID or path to mission XML file.</span><span class="se">\n</span><span class="s">&quot;</span>
         <span class="s">&quot;  0: Tutorial</span><span class="se">\n</span><span class="s">&quot;</span>
         <span class="s">&quot;  1: Zombie Invasion</span><span class="se">\n</span><span class="s">&quot;</span>
-        <span class="s">&quot;  2: USAR (Singleplayer)&quot;</span><span class="p">)(</span><span class="s">&quot;level&quot;</span><span class="p">,</span>
+        <span class="s">&quot;  2: USAR (Singleplayer)&quot;</span><span class="p">)(</span><span class="s">&quot;difficulty&quot;</span><span class="p">,</span>
                                     <span class="n">value</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="o">&gt;</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">default_value</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span>
                                     <span class="s">&quot;Level of difficulty.</span><span class="se">\n</span><span class="s">&quot;</span>
                                     <span class="s">&quot;  3: Easy</span><span class="se">\n</span><span class="s">&quot;</span>
@@ -182,7 +191,7 @@
         <span class="s">&quot;time_limit&quot;</span><span class="p">,</span>
         <span class="n">value</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="o">&gt;</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">default_value</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span>
         <span class="s">&quot;Time limit for mission (in seconds).&quot;</span><span class="p">)(</span>
-        <span class="s">&quot;self_report&quot;</span><span class="p">,</span>
+        <span class="s">&quot;self_report_interval&quot;</span><span class="p">,</span>
         <span class="n">value</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="o">&gt;</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">default_value</span><span class="p">(</span><span class="mi">180</span><span class="p">),</span>
         <span class="s">&quot;Self-report prompt interval time (in seconds).&quot;</span><span class="p">)(</span>
         <span class="s">&quot;port,p&quot;</span><span class="p">,</span>
@@ -209,11 +218,12 @@
 
 <span class="n">variables_map</span>
 <span class="nf">parse_parameters</span><span class="p">(</span><span class="n">options_description</span> <span class="n">options</span><span class="p">,</span> <span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
-    <span class="n">variables_map</span> <span class="n">parameters_map</span><span class="p">;</span>
-    <span class="n">store</span><span class="p">(</span><span class="n">parse_command_line</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span> <span class="n">parameters_map</span><span class="p">);</span>
-    <span class="n">notify</span><span class="p">(</span><span class="n">parameters_map</span><span class="p">);</span>
+    <span class="n">variables_map</span> <span class="n">vm</span><span class="p">;</span>
+    <span class="n">store</span><span class="p">(</span><span class="n">parse_command_line</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span> <span class="n">vm</span><span class="p">);</span>
+    <span class="n">store</span><span class="p">(</span><span class="n">parse_environment</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">boost</span><span class="o">::</span><span class="n">function1</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span> <span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mapper</span><span class="p">)),</span> <span class="n">vm</span><span class="p">);</span>
+    <span class="n">notify</span><span class="p">(</span><span class="n">vm</span><span class="p">);</span>
 
-    <span class="k">return</span> <span class="n">parameters_map</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">vm</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="kt">bool</span> <span class="nf">are_parameters_ok</span><span class="p">(</span><span class="n">variables_map</span> <span class="n">parameters_map</span><span class="p">,</span>
@@ -236,9 +246,9 @@
     <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">time_limit_in_seconds</span> <span class="o">=</span>
         <span class="n">parameters_map</span><span class="p">[</span><span class="s">&quot;time_limit&quot;</span><span class="p">].</span><span class="n">as</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="o">&gt;</span><span class="p">();</span>
     <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">self_report_prompt_time_in_seconds</span> <span class="o">=</span>
-        <span class="n">parameters_map</span><span class="p">[</span><span class="s">&quot;self_report&quot;</span><span class="p">].</span><span class="n">as</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="o">&gt;</span><span class="p">();</span>
+        <span class="n">parameters_map</span><span class="p">[</span><span class="s">&quot;self_report_interval&quot;</span><span class="p">].</span><span class="n">as</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="o">&gt;</span><span class="p">();</span>
     <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">level_of_difficulty</span> <span class="o">=</span>
-        <span class="n">parameters_map</span><span class="p">[</span><span class="s">&quot;level&quot;</span><span class="p">].</span><span class="n">as</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="o">&gt;</span><span class="p">();</span>
+        <span class="n">parameters_map</span><span class="p">[</span><span class="s">&quot;difficulty&quot;</span><span class="p">].</span><span class="n">as</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="o">&gt;</span><span class="p">();</span>
     <span class="kt">bool</span> <span class="n">record_all</span> <span class="o">=</span> <span class="n">parameters_map</span><span class="p">[</span><span class="s">&quot;record_all&quot;</span><span class="p">].</span><span class="n">as</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="p">();</span>
     <span class="kt">bool</span> <span class="n">record_observations</span> <span class="o">=</span> <span class="n">parameters_map</span><span class="p">[</span><span class="s">&quot;record_observations&quot;</span><span class="p">].</span><span class="n">as</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="p">();</span>
     <span class="kt">bool</span> <span class="n">record_commands</span> <span class="o">=</span> <span class="n">parameters_map</span><span class="p">[</span><span class="s">&quot;record_commands&quot;</span><span class="p">].</span><span class="n">as</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="p">();</span>
