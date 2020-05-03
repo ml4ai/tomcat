@@ -16,44 +16,50 @@ export TOMCAT
 # This function should be called at least one time before any script or
 # function that uses these variables is executed. 1 = true, 0 = false.
 #
-#
-# ENABLE_FFMPEG: Set this to 0 to disable recording audio and video using FFMPEG.
-# DO_TUTORIAL_MISSION: Set this to 0 to disable the tutorial mission.
-# DO_MAIN_MISSION: Set this to 0 to disable the main mission.
-#
-# Kobus says that we might want a better name for this one. 
-# MAIN_MISSION: Set this to 1 for the Zombie invasion mission, and to 2 for the
-#               USAR Singleplayer mission.
-#
 # We prefix a select few environment variables that could potentially conflict
 # with someone's development environment with 'TOMCAT_'.
-#
-# TOMCAT_DEBUG_LEVEL: Set this to 1 or more to get geaky output. 
-# TOMCAT_DEBUG_ECHO:  If TOMCAT_DEBUG_LEVEL is more than 0, this is an echo.
-# TOMCAT_FULL_SCREEN: Defaults to true.
-# DEFAULT_MAIN_MISSION_TIME: Allows for short missions for testing. 
-# RECYCLE_MINECRAFT: 0 for never, 1 for main mission, 2 for multiple runs.
-#
 # =============================================================================
 
 set_local_configuration() {
+    # TOMCAT_DEBUG_LEVEL: Set this to 1 or more to get geaky output. 
     export TOMCAT_DEBUG_LEVEL=${TOMCAT_DEBUG_LEVEL:-0}
 
+    # TOMCAT_DEBUG_ECHO:  If TOMCAT_DEBUG_LEVEL is more than 0, this is an echo.
     if [[ ${TOMCAT_DEBUG_LEVEL} -gt 0 ]]; then
         export TOMCAT_DEBUG_ECHO="echo DEBUG: "
     else
         export TOMCAT_DEBUG_ECHO=": "
     fi 
 
+    # ENABLE_FFMPEG: Enable recording audio and video of player's face,
+    # player's speech, player's screen, and system audio. Defaults to true.
     export ENABLE_FFMPEG=${ENABLE_FFMPEG:-1}
-    export DO_TUTORIAL_MISSION=${DO_TUTORIAL_MISSION:-1}
-    export DO_MAIN_MISSION=${DO_MAIN_MISSION:-1}
-    export MAIN_MISSION=${MAIN_MISSION:-1} 
-    export TOMCAT_FULL_SCREEN=${TOMCAT_FULL_SCREEN:-1}
-    export RECYCLE_MINECRAFT=${RECYCLE_MINECRAFT:-1}
-    export DEFAULT_MAIN_MISSION_TIME=${DEFAULT_MAIN_MISSION_TIME:-600} 
-    export SELF_REPORT_INTERVAL=${SELF_REPORT_INTERVAL:-180}
 
+    # MAIN_MISSION: Set this to 1 for the Zombie invasion mission, and to 2 for the
+    #               USAR Singleplayer mission.
+    export MAIN_MISSION=${MAIN_MISSION:-1} 
+
+    # If the main mission ID is set to 2 (USAR Singleplayer), then disable the
+    # tutorial mission, since it is a tutorial for the Zombie invasion mission.
+    if [[ $MAIN_MISSION -eq 2 ]]; then
+        export DO_TUTORIAL_MISSION=0
+    else
+        # Otherwise, enable the tutorial mission by default.
+        export DO_TUTORIAL_MISSION=${DO_TUTORIAL_MISSION:-1}
+    fi
+
+
+    # Enable main mission. Defaults to true.
+    export DO_MAIN_MISSION=${DO_MAIN_MISSION:-1}
+
+    # Run Minecraft in full-screen mode. Defaults to true.
+    export TOMCAT_FULL_SCREEN=${TOMCAT_FULL_SCREEN:-1}
+
+    # RECYCLE_MINECRAFT: 0 for never, 1 for main mission, 2 for multiple runs.
+    export RECYCLE_MINECRAFT=${RECYCLE_MINECRAFT:-1}
+
+    # DEFAULT_MAIN_MISSION_TIME: Allows for short missions for testing. 
+    export DEFAULT_MAIN_MISSION_TIME=${DEFAULT_MAIN_MISSION_TIME:-600} 
 
     export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
     mkdir -p "${TOMCAT_TMP_DIR}"

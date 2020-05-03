@@ -1,5 +1,5 @@
 {
-  "version": "1.0",
+  "version": "1.1",
   "filenameRichContentBeforeQuestions": "progress_before_self_report.json",
   "filenameRichContentAfterQuestions": "final_words_after_self_report.json",
   "questions":
@@ -74,45 +74,24 @@
     {
       "text": [
          "How much are you trying to avoid getting hurt or killed",
-         "by the creatures?"
+         "by the monsters?"
       ],
       "choices":
       [
         "Not at all",
         "Somewhat",
-        "Very"
+        "A lot"
       ]
     },
     {
       "text": [
-         "How much are you trying to attack and kill the creatures?"
+         "How much are you trying to attack and kill the monsters?"
       ],
       "choices":
       [
         "Not at all",
         "Somewhat",
-        "Very"
-      ]
-    },
-    {
-      "text": [
-         "Which of the following emotions are you feeling most strongly",
-         "right now? Please indicate one."
-      ],
-      "choices":
-      [
-        "Calm/Relaxed",
-        "Anxious/Stressed",
-        "Sad/Depressed",
-        "Guilty/Ashamed",
-        "Frustrated/Annoyed",
-        "Bored/Disengaged",
-        "Lonely/Ignored",
-        "Excited/Energized",
-        "Happy/Content",
-        "Confident/Proud",
-        "Friendly",
-        "Amused"
+        "A lot"
       ]
     }
   ]
