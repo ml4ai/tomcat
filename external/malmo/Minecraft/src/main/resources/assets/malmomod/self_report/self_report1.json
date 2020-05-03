@@ -93,20 +93,6 @@
         "Somewhat",
         "A lot"
       ]
-    },
-    {
-      "text": [
-         "Which of the following emotions are you feeling most strongly?"
-      ],
-      "choices":
-      [
-        "Calm/Relaxed",
-        "Anxious/Stressed",
-        "Excited/Energized",
-        "Bored/Disengaged",
-        "Frustrated/Annoyed",
-        "Happy/Amused"
-      ]
     }
   ]
 }
