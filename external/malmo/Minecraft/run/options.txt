@@ -6,14 +6,14 @@ gamma:0.0
 saturation:0.0
 renderDistance:8
 guiScale:0
-particles:2
+particles:0
 bobView:true
 anaglyph3d:false
 maxFps:120
 fboEnable:true
 difficulty:2
-fancyGraphics:false
-ao:0
+fancyGraphics:true
+ao:2
 renderClouds:true
 resourcePacks:["tomcat"]
 incompatibleResourcePacks:["tomcat"]
