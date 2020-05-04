@@ -228,7 +228,7 @@ public class ForgeEventHandler {
     @SubscribeEvent
     public void handle(CommandEvent event) {
         if (event.getCommand().getName().equals("tellraw") && event.getParameters()[1].contains("woof")) {
-            this.mqttService.publish(new DogBarkEvent(event), "observations/commands");
+            this.mqttService.publish(new DogBarkEvent(event), "observations/events/dog_barks");
         }
     }
 }
