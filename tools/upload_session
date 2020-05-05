@@ -41,7 +41,7 @@ data_upload(){
     popd > /dev/null
 
     curl_log="$TOMCAT_TMP_DIR"/vision_data_upload.log
-    if [[ ! -f "${session_folder}.zip" ]]; then
+    if [[ -f "${session_folder}.zip" ]]; then
         echo "Zip file created. Proceeding with data upload."
         echo "Uploading data to vision server."
     else
