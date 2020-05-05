@@ -261,7 +261,7 @@ if [[ $DO_MAIN_MISSION -eq 1 && $ENABLE_FILE_UPLOAD -eq 1 ]]; then
         if ! "$TOMCAT"/tools/upload_session "$session_uuid"; then 
             echo "Data upload failed."
             echo "You can try uploading the session later by running:"
-            echo "    ./tools/upload_session ${session_id}"
+            echo "    ./tools/upload_session ${session_uuid}"
         fi
     else
         echo "No .netrc file was detected in the ${TOMCAT} directory, so we "\
