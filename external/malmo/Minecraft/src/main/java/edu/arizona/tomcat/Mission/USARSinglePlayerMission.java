@@ -129,14 +129,7 @@ public class USARSinglePlayerMission extends Mission {
     protected SelfReportContent getSelfReportContent(EntityPlayerMP player,
                                                      World world) {
         SelfReportContent selfReportContent =
-            SelfReportContent.createFromJson("self_report1.json");
-        selfReportContent.setTextPlaceholder(
-            0,
-            Converter.secondsToString(this.getRemainingSeconds(world), false));
-        selfReportContent.setTextPlaceholder(
-            1, String.format("%.2f", player.getHealth()));
-        selfReportContent.setTextPlaceholder(
-            2, String.format("%.2f", player.getMaxHealth()));
+            SelfReportContent.createFromJson("self_report_usar.json");
         return selfReportContent;
     }
 
