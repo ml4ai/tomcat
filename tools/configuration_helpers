@@ -36,7 +36,7 @@ set_local_configuration() {
     export ENABLE_FFMPEG=${ENABLE_FFMPEG:-1}
 
     # ENABLE_FILE_UPLOAD: Enable uploading player's data on to vision server.
-	# Defaults to true.
+    # Defaults to true.
     export ENABLE_FILE_UPLOAD=${ENABLE_FILE_UPLOAD:-1}
 
     # MAIN_MISSION: Set this to 1 for the Zombie invasion mission, and to 2 for the
@@ -217,7 +217,7 @@ detect_ci() {
         export DO_TUTORIAL_MISSION=0
         export MISSION=external/malmo/sample_missions/default_flat_1.xml
         export ENABLE_FFMPEG=0
-		export ENABLE_FILE_UPLOAD=0
+        export ENABLE_FILE_UPLOAD=0
     else
         export TIME_LIMIT=${DEFAULT_MAIN_MISSION_TIME}
     fi

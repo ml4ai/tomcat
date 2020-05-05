@@ -100,9 +100,9 @@ data_upload(){
     curl --netrc-file $auth_file -F "inputfile=@${session_output_dir}.zip" $web_address \
     &> "$TOMCAT_TMP_DIR"/vision_data_upload.log &
     
-	curl_process_id=$!
+    curl_process_id=$!
     echo "Uploading data to vision server.Check log file for details."
-	
+    
 }
 
 # Function to cleanup things on exit or keyboard interrupt.
@@ -285,7 +285,7 @@ if (( DO_MAIN_MISSION )); then do_mission ${MAIN_MISSION}; fi
 # Main mission has been completed. 
 # Call data_upload() if DO_MAIN_MISSION and ENABLE_DATA_UPLOAD are set to 1.
 if [[ $DO_MAIN_MISSION -eq 1 && $ENABLE_FILE_UPLOAD -eq 1 ]]; then
-	data_upload
+    data_upload
 fi
 
 echo "Uploading participant data to vision server."
