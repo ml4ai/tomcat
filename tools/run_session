@@ -30,7 +30,7 @@ session_output_dir="${TOMCAT}"/data/participant_data/"$session_uuid"
 mkdir -p "${session_output_dir}"
 
 # Generate metadata file for the session
-"$TOMCAT"/tools/generate_session_metadata "$session_uuid" > "$session_output_dir"/metadata.json
+"$TOMCAT"/tools/generate_session_metadata "$session_uuid" "$PLAYER_ID" > "$session_output_dir"/metadata.json
 if [[ $? -ne 0 ]]; then exit 1; fi
 
 

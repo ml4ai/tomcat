@@ -61,6 +61,11 @@ set_local_configuration() {
     # DEFAULT_MAIN_MISSION_TIME: Allows for short missions for testing. 
     export DEFAULT_MAIN_MISSION_TIME=${DEFAULT_MAIN_MISSION_TIME:-600} 
 
+    # PLAYER_ID - the id of the player who is running the mission. Defaults to
+    # the value stored in the USER environment variable.
+    export PLAYER_ID=${PLAYER_ID:-$USER}
+
+
     export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
     mkdir -p "${TOMCAT_TMP_DIR}"
 
