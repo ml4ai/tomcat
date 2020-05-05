@@ -48,7 +48,7 @@ data_upload(){
     curl --netrc-file "$auth_file" -F "inputfile=@${session_output_dir}.zip"\
         "$web_address" &> "$curl_log"
     if [[ $? -ne 0 ]]; then
-        echo "The curl command to upload the data to the vision server "\
+        echo "The curl command to upload the data to the vision server "
         echo "failed. See ${curl_log} for details."
         exit 1
     fi
