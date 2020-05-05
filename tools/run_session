@@ -66,11 +66,44 @@ start_ffmpeg_recording() {
     echo "Recording player's screen."
     screen_video="${MISSION_OUTPUT_DIR}"/screen_video.mpg
     ffmpeg -nostdin -f ${FFMPEG_FMT_SCREEN_CAPTURE}\
-    -i ${FFMPEG_INPUT_DEVICE_SCREEN_CAPTURE}\
     -s $SCREEN_DIMENSIONS\
+    -i ${FFMPEG_INPUT_DEVICE_SCREEN_CAPTURE}\
     "$screen_video" &> "$TOMCAT_TMP_DIR"/screen_video_recording_mission_"$CURRENT_MISSION".log &
 }
 
+
+# Function to upload user data to vision server
+data_upload(){
+
+    # Authentication file 
+    auth_file="${TOMCAT}/.netrc"
+    web_address="http://vision.cs.arizona.edu/~tomcat/upload_file.php"
+    participant_data_folder="${TOMCAT}/data/participant_data"
+
+    echo "Beginning data upload to vision server."
+
+    echo "Compressing session folder: $session_output_dir"
+    echo "This may take a minute ..."
+
+    # To maintain the directory structure and to keep it simple, 
+    # we cd into participant folder and return back.
+    cd $participant_data_folder
+    zip -q -r "${session_uuid}.zip" $session_uuid
+    cd -
+    if [ -f "${session_output_dir}.zip" ]; then
+        echo "Zip file created. Proceeding with data upload."
+    else
+        echo "Error: Failed to create zip file. Data upload failed."
+        return
+    fi
+
+    curl --netrc-file $auth_file -F "inputfile=@${session_output_dir}.zip" $web_address \
+    &> "$TOMCAT_TMP_DIR"/vision_data_upload.log &
+    
+	curl_process_id=$!
+    echo "Uploading data to vision server.Check log file for details."
+	
+}
 
 # Function to cleanup things on exit or keyboard interrupt.
 cleanup() {
@@ -249,6 +282,13 @@ fi
 
 if (( DO_MAIN_MISSION )); then do_mission ${MAIN_MISSION}; fi
 
+# Main mission has been completed. 
+# Call data_upload() if DO_MAIN_MISSION and ENABLE_DATA_UPLOAD are set to 1.
+if [[ $DO_MAIN_MISSION -eq 1 && $ENABLE_FILE_UPLOAD -eq 1 ]]; then
+	data_upload
+fi
+
+echo "Uploading participant data to vision server."
 echo "Finished running all sessions in ${TOMCAT}."
 echo "Doing our final cleanup."
 
