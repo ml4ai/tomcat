@@ -258,7 +258,7 @@ if [[ $DO_MAIN_MISSION -eq 1 && $ENABLE_FILE_UPLOAD -eq 1 ]]; then
         echo "We assume that you are a member of the UA team, have run a"
         echo "session and want your session data uploaded to the vision server."
         echo "We will now attempt to do that."
-        if ! "$TOMCAT"/tools/data_upload "$session_uuid"; then 
+        if ! "$TOMCAT"/tools/upload_session "$session_uuid"; then 
             echo "Data upload failed."
             echo "You can try uploading the session later by running:"
             echo "    ./tools/upload_session ${session_id}"
