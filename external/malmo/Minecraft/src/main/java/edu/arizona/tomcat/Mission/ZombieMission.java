@@ -156,7 +156,7 @@ public class ZombieMission extends Mission {
     protected SelfReportContent getSelfReportContent(EntityPlayerMP player,
                                                      World world) {
         SelfReportContent selfReportContent =
-            SelfReportContent.createFromJson("self_report1.json");
+            SelfReportContent.createFromJson("self_report_zombie.json");
         selfReportContent.setTextPlaceholder(
             0,
             Converter.secondsToString(this.getRemainingSeconds(world), false));
