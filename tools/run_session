@@ -72,38 +72,6 @@ start_ffmpeg_recording() {
 }
 
 
-# Function to upload user data to vision server
-data_upload(){
-
-    # Authentication file 
-    auth_file="${TOMCAT}/.netrc"
-    web_address="http://vision.cs.arizona.edu/~tomcat/upload_file.php"
-    participant_data_folder="${TOMCAT}/data/participant_data"
-
-    echo "Beginning data upload to vision server."
-
-    echo "Compressing session folder: $session_output_dir"
-    echo "This may take a minute ..."
-
-    # To maintain the directory structure and to keep it simple, 
-    # we cd into participant folder and return back.
-    cd $participant_data_folder
-    zip -q -r "${session_uuid}.zip" $session_uuid
-    cd -
-    if [ -f "${session_output_dir}.zip" ]; then
-        echo "Zip file created. Proceeding with data upload."
-    else
-        echo "Error: Failed to create zip file. Data upload failed."
-        return
-    fi
-
-    curl --netrc-file $auth_file -F "inputfile=@${session_output_dir}.zip" $web_address \
-    &> "$TOMCAT_TMP_DIR"/vision_data_upload.log &
-    
-    curl_process_id=$!
-    echo "Uploading data to vision server.Check log file for details."
-    
-}
 
 # Function to cleanup things on exit or keyboard interrupt.
 cleanup() {
@@ -231,7 +199,7 @@ do_mission() {
             echo "Mission ${CURRENT_MISSION} ended with exit code 0."
             echo "All recorded data is in ${MISSION_OUTPUT_DIR}"
             echo " "
-            common_files=("events.txt" "malmo_data.txt")
+            common_files=("events.txt" "malmo_data.txt" "chat.txt" "self_reports.txt")
             if (( ENABLE_FFMPEG )); then
                 common_files+=("player_audio.wav" "screen_video.mpg" "webcam_video.mpg")
                 if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
@@ -243,7 +211,7 @@ do_mission() {
                 if [ -f "${MISSION_OUTPUT_DIR}/${file}" ]; then
                     file_size=$(ls -l "${MISSION_OUTPUT_DIR}/${file}" | awk '{print $5}')
                     if [[ ${file_size} -eq 0 ]]; then
-                        echo "WARNING: ${file} from Mission ${CURRENT_MISSION}: size is 0"
+                        echo "WARNING: ${file} from Mission ${CURRENT_MISSION}: size is 0 bytes"
                     fi
                 else
                     echo "WARNING: ${file} from Mission ${CURRENT_MISSION}: does not exist"
@@ -285,10 +253,24 @@ if (( DO_MAIN_MISSION )); then do_mission ${MAIN_MISSION}; fi
 # Main mission has been completed. 
 # Call data_upload() if DO_MAIN_MISSION and ENABLE_DATA_UPLOAD are set to 1.
 if [[ $DO_MAIN_MISSION -eq 1 && $ENABLE_FILE_UPLOAD -eq 1 ]]; then
-    data_upload
+    if [[ -f "${TOMCAT}/.netrc" ]]; then
+        echo "Detected .netrc file in the ${TOMCAT} directory."
+        echo "We assume that you are a member of the UA team, have run a"
+        echo "session and want your session data uploaded to the vision server."
+        echo "We will now attempt to do that."
+        if ! "$TOMCAT"/tools/data_upload "$session_uuid"; then 
+            echo "Data upload failed."
+            echo "You can try uploading the session later by running:"
+            echo "    ./tools/upload_session ${session_id}"
+        fi
+    else
+        echo "No .netrc file was detected in the ${TOMCAT} directory, so we "\
+             "will not attempt to automatically upload the data. "\
+             "If you are a UArizona team member, please email "\
+             "[tomcat-support at list dot arizona dot edu] to obtain one."
+    fi
 fi
 
-echo "Uploading participant data to vision server."
 echo "Finished running all sessions in ${TOMCAT}."
 echo "Doing our final cleanup."
 
