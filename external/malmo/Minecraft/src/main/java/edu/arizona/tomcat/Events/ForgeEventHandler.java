@@ -23,6 +23,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.event.CommandEvent;
 
 public class ForgeEventHandler {
 
@@ -216,12 +217,18 @@ public class ForgeEventHandler {
     }
 
     /**
-     * Handle events from Forge event bus triggered by living entities dying
-     * (players, mobs), publish events to MQTT message bus with type
-     * 'entity_death'.
+     * Handle events from Forge event bus triggered by chat messages.
      */
     @SubscribeEvent
     public void handle(ServerChatEvent event) {
         this.mqttService.publish(new Chat(event), "observations/chat");
+    }
+
+    /** Command event handler */
+    @SubscribeEvent
+    public void handle(CommandEvent event) {
+        if (event.getCommand().getName().equals("tellraw") && event.getParameters()[1].contains("woof")) {
+            this.mqttService.publish(new DogBarkEvent(event), "observations/events/dog_barks");
+        }
     }
 }

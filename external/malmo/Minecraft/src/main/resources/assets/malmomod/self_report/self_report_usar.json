@@ -1,7 +1,7 @@
 {
-  "version": "1.1",
-  "filenameRichContentBeforeQuestions": "progress_before_self_report.json",
-  "filenameRichContentAfterQuestions": "final_words_after_self_report.json",
+  "version": "0.1",
+  "filenameRichContentBeforeQuestions": "progress_before_self_report_usar.json",
+  "filenameRichContentAfterQuestions": "final_words_after_self_report_usar.json",
   "questions":
   [
     {
@@ -69,29 +69,6 @@
         "Not at all excited",
         "Somewhat excited",
         "Very excited"
-      ]
-    },
-    {
-      "text": [
-         "How much are you trying to avoid getting hurt or killed",
-         "by the monsters?"
-      ],
-      "choices":
-      [
-        "Not at all",
-        "Somewhat",
-        "A lot"
-      ]
-    },
-    {
-      "text": [
-         "How much are you trying to attack and kill the monsters?"
-      ],
-      "choices":
-      [
-        "Not at all",
-        "Somewhat",
-        "A lot"
       ]
     }
   ]

@@ -225,7 +225,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
      * Asks the clients to update the countdown
      * @param remainingSeconds
      */
-    private void askClientsToUpdateCountdown(int remainingSeconds) {
+    protected void askClientsToUpdateCountdown(int remainingSeconds) {
         TomcatMessageData messageData = new TomcatMessageData();
         messageData.setRemainingSeconds(remainingSeconds);
         messageData.setRemainingSecondsAlert(REMAINING_SECONDS_ALERT);
