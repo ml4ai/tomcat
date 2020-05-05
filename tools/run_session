@@ -65,10 +65,20 @@ start_ffmpeg_recording() {
     # Recording game screen.
     echo "Recording player's screen."
     screen_video="${MISSION_OUTPUT_DIR}"/screen_video.mpg
-    ffmpeg -nostdin -f ${FFMPEG_FMT_SCREEN_CAPTURE}\
-    -s $SCREEN_DIMENSIONS\
-    -i ${FFMPEG_INPUT_DEVICE_SCREEN_CAPTURE}\
-    "$screen_video" &> "$TOMCAT_TMP_DIR"/screen_video_recording_mission_"$CURRENT_MISSION".log &
+
+    # On macOS, the -i option must be given before the -s option, and on Ubuntu
+    # it's the other way around.
+    if [[ "$OSTYPE"  == "darwin"* ]]; then
+        ffmpeg -nostdin -f ${FFMPEG_FMT_SCREEN_CAPTURE}\
+        -i ${FFMPEG_INPUT_DEVICE_SCREEN_CAPTURE}\
+        -s $SCREEN_DIMENSIONS\
+        "$screen_video" &> "$TOMCAT_TMP_DIR"/screen_video_recording_mission_"$CURRENT_MISSION".log &
+    else
+        ffmpeg -nostdin -f ${FFMPEG_FMT_SCREEN_CAPTURE}\
+        -s $SCREEN_DIMENSIONS\
+        -i ${FFMPEG_INPUT_DEVICE_SCREEN_CAPTURE}\
+        "$screen_video" &> "$TOMCAT_TMP_DIR"/screen_video_recording_mission_"$CURRENT_MISSION".log &
+    fi
 }
 
 
