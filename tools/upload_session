@@ -41,7 +41,7 @@ data_upload(){
     popd > /dev/null
 
     curl_log="$TOMCAT_TMP_DIR"/vision_data_upload.log
-    if [[ ! -f "${session_output_dir}.zip" ]]; then
+    if [[ ! -f "${session_folder}.zip" ]]; then
         echo "Zip file created. Proceeding with data upload."
         echo "Uploading data to vision server."
     else
@@ -49,7 +49,7 @@ data_upload(){
         exit 1
     fi
 
-    curl --netrc-file "$auth_file" -F "inputfile=@${session_output_dir}.zip"\
+    curl --netrc-file "$auth_file" -F "inputfile=@${session_folder}.zip"\
         "$web_address" &> "$curl_log"
     if [[ $? -ne 0 ]]; then
         echo "The curl command to upload the data to the vision server "
