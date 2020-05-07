@@ -17,7 +17,9 @@ configure_session
 
 # Start mosquitto message broker if it is not already running.
 if [[ ! $(pgrep -l mosquitto | head -n1 | cut -d' ' -f2) == mosquitto ]]; then
-    mosquitto &
+    echo "The mosquitto message broker does not seem to be running, so we "\
+         "will start it now."
+    mosquitto &> ${TOMCAT_TMP_DIR}/mosquitto.log &
 fi
 
 # On macOS, uuidgen produces uppercase UUIDs, so we pipe the output through tr
@@ -35,7 +37,6 @@ if [[ $? -ne 0 ]]; then exit 1; fi
 
 
 start_av_recording() {
-    echo "Recording video of player's face using webcam."
     ffmpeg\
     -f ${FFMPEG_FMT_WEBCAM}\
     ${FRAMERATE_OPTION:-}\
@@ -43,14 +44,16 @@ start_av_recording() {
     -r 30\
     "${MISSION_OUTPUT_DIR}"/webcam_video.mpg\
     &> ${TOMCAT_TMP_DIR}/ffmpeg_webcam_mission_"$CURRENT_MISSION".log &
+    pid_webcam_recording=$!
+    echo "Recording video of player's face using webcam. Process ID = ${pid_webcam_recording}"
     
-    echo "Recording player audio using microphone."
     ffmpeg\
     -nostdin\
     -f ${FFMPEG_FMT_MICROPHONE}\
     -i ${FFMPEG_INPUT_DEVICE_MICROPHONE}\
     "${MISSION_OUTPUT_DIR}"/player_audio.wav\
     &> ${TOMCAT_TMP_DIR}/ffmpeg_microphone_mission_"$CURRENT_MISSION".log &
+    pid_microphone_recording=$!
 
     if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
         if [[ $OSTYPE == linux-gnu ]]; then
@@ -62,6 +65,7 @@ start_av_recording() {
             # Calling pacat command.
             pacat --record -d ${ALSA_OUTPUT_MONITOR} \
             > "${MISSION_OUTPUT_DIR}"/system_audio.raw &
+            pid_system_audio_recording=$!
         else
             echo "Recording system audio."
             ffmpeg\
@@ -70,11 +74,12 @@ start_av_recording() {
             -i ${FFMPEG_INPUT_DEVICE_SYSTEM_AUDIO}\
             "${MISSION_OUTPUT_DIR}"/system_audio.wav\
             &> "$TOMCAT_TMP_DIR"/system_audio_recording_mission_"$CURRENT_MISSION".log &
+            pid_system_audio_recording=$!
         fi
     fi
+    echo "Recording player audio using microphone. Process ID = ${pid_microphone_recording}"
 
     # Recording game screen.
-    echo "Recording player's screen."
     screen_video="${MISSION_OUTPUT_DIR}"/screen_video.mpg
 
     # On macOS, the -i option must be given before the -s option, and on Ubuntu
@@ -84,25 +89,46 @@ start_av_recording() {
         -i ${FFMPEG_INPUT_DEVICE_SCREEN_CAPTURE}\
         -s $SCREEN_DIMENSIONS\
         "$screen_video" &> "$TOMCAT_TMP_DIR"/screen_video_recording_mission_"$CURRENT_MISSION".log &
+        pid_screen_recording=$!
     else
         ffmpeg -nostdin -f ${FFMPEG_FMT_SCREEN_CAPTURE}\
         -s $SCREEN_DIMENSIONS\
         -i ${FFMPEG_INPUT_DEVICE_SCREEN_CAPTURE}\
         "$screen_video" &> "$TOMCAT_TMP_DIR"/screen_video_recording_mission_"$CURRENT_MISSION".log &
+        pid_screen_recording=$!
     fi
+    echo "Recording player's screen. Process ID = ${pid_screen_recording}"
 }
 
 
 
 # Function to cleanup things on exit or keyboard interrupt.
-cleanup() {
+session_cleanup() {
     cleanup_status=0 
+    if [[ ${RECYCLE_MINECRAFT} -lt 2 ]]; then
+        if ! "${TOMCAT}/tools/kill_minecraft"; then cleanup_status=1; fi
+    fi
 
-    echo "Script run_session is cleaning up." 
+    if [[ $ENABLE_SYSTEM_AUDIO_RECORDING -eq 1 && $CI -eq 0 && "$OSTYPE"  == "darwin"* ]]; then  
+        # Switching the audio output from the multi-output device to the
+        # built-in output.
+        if ! SwitchAudioSource -s "$ORIGINAL_OUTPUT_DEVICE"; then
+            echo " "
+            echo "Failed to switch audio output device back to what it was"\
+                "before run_session (${ORIGINAL_OUTPUT_DEVICE})."
+            echo " "
+            cleanup_status=1
+        fi
+    fi
+    exit ${cleanup_status}
+}
+
+mission_cleanup() {
+    echo "Cleaning up ffmpeg/pacat and mosquitto_sub processes." 
 
     if (( ENABLE_FFMPEG )); then 
         pkill ffmpeg
-        if [[ $ENABLE_SYSTEM_AUDIO_RECORDING -eq 1 && $OSTYPE == linux-gnu ]]; then
+        if [[ $ENABLE_SYSTEM_AUDIO_RECORDING -eq 1 &&  $OSTYPE == linux-gnu ]]; then
             pkill pacat
             ffmpeg -f s16le -ar 44100 -ac 2 -i \
             "${MISSION_OUTPUT_DIR}"/system_audio.raw \
@@ -113,26 +139,41 @@ cleanup() {
     # Kill any remaining mosquitto, mosquitto_sub, and mosquitto_pub processes
     pkill mosquitto_sub
 
-    if [[ ${RECYCLE_MINECRAFT} -lt 2 ]]; then
-        if ! "${TOMCAT}/tools/kill_minecraft"; then cleanup_status=1; fi
+    echo "Checking output files..."
+
+    files_to_check=("events.txt" "malmo_data.txt" "chat.txt" "self_reports.txt")
+
+    if (( ENABLE_FFMPEG )); then
+        files_to_check+=("player_audio.wav" "screen_video.mpg" "webcam_video.mpg")
     fi
 
-    if [[ $CI -eq 0  \
-          && $ENABLE_SYSTEM_AUDIO_RECORDING -eq 1 \
-          && "$OSTYPE"  == "darwin"* ]]; then
-        
-        # Switching the audio output from the multi-output device to the
-        # built-in output.
-        if ! SwitchAudioSource -s "$ORIGINAL_OUTPUT_DEVICE"; then
-            echo " "
-            echo "Failed to switch audio output device back to what it was"\
-                 "before run_session (${ORIGINAL_OUTPUT_DEVICE})."
-            echo " "
-            cleanup_status=1
+    if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
+        files_to_check+=("system_audio.wav")
+    fi
+
+    echo "Checking files produced in ${MISSION_OUTPUT_DIR}..."
+
+    for file in ${files_to_check[@]}; do
+        if [[ -f "${MISSION_OUTPUT_DIR}/${file}" ]]; then
+            file_size=$(ls -l "${MISSION_OUTPUT_DIR}/${file}" | awk '{print $5}')
+            if [[ ${file_size} -eq 0 ]]; then
+                echo "WARNING: ${file} from Mission ${CURRENT_MISSION}: size is 0 bytes"
+                if [[ $file == self_reports.txt ]]; then
+                    echo "This is not necessarily an error - you might just "\
+                         "have finished the mission before you reached the "\
+                         "self-report point."
+                elif [[ $file == chat.txt ]]; then
+                    echo "This is not necessarily an error - you might just "\
+                         "not have sent or received any chat messages during "\
+                         "the mission."
+                fi
+            fi
+        else
+            echo "WARNING: ${file} from Mission ${CURRENT_MISSION}: does not exist"
         fi
-    fi
+    done
 
-    exit ${cleanup_status}
+    echo -e '\n'
 }
 
 
@@ -140,8 +181,8 @@ cleanup() {
 user_interrupt() {
     echo "Detected keyboard interrupt."
     echo "Cleaning up now"
-    cleanup
-    exit 1
+    mission_cleanup
+    session_cleanup
 }
 
 
@@ -229,30 +270,9 @@ do_mission() {
             echo "Mission ${CURRENT_MISSION} ended with exit code 0."
             echo "All recorded data is in ${MISSION_OUTPUT_DIR}"
             echo " "
-            common_files=("events.txt" "malmo_data.txt" "chat.txt" "self_reports.txt")
 
-            if (( ENABLE_FFMPEG )); then
-                pkill ffmpeg
-                common_files+=("player_audio.wav" "screen_video.mpg" "webcam_video.mpg")
-            fi
+            mission_cleanup
 
-            if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
-                pkill pacat
-                common_files+=("system_audio.wav")
-            fi
-
-            echo "checking files from ${MISSION_OUTPUT_DIR}..."
-            for file in ${common_files[@]}; do
-                if [ -f "${MISSION_OUTPUT_DIR}/${file}" ]; then
-                    file_size=$(ls -l "${MISSION_OUTPUT_DIR}/${file}" | awk '{print $5}')
-                    if [[ ${file_size} -eq 0 ]]; then
-                        echo "WARNING: ${file} from Mission ${CURRENT_MISSION}: size is 0 bytes"
-                    fi
-                else
-                    echo "WARNING: ${file} from Mission ${CURRENT_MISSION}: does not exist"
-                fi
-            done
-            echo -e '\n'
             break
         fi
 
@@ -313,4 +333,4 @@ echo "Doing our final cleanup."
 # at some point to possibly get here even with errors. But right now, if we have
 # an error above, we call cleanup and exit. 
 
-cleanup
+session_cleanup
