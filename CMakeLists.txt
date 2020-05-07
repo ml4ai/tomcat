@@ -43,6 +43,13 @@ find_package(Boost 1.69
 add_subdirectory(external/malmo)
 
 add_subdirectory(src)
+find_package(dlib REQUIRED)
+find_package(OpenCV REQUIRED)
+include_directories(${OpenCV_INCLUDE_DIRS})
+add_subdirectory(external/OpenFace)
+add_executable(landmark src/faceLandmarkDetection.cpp)
+target_include_directories(landmark PUBLIC ${OPENCV_INCLUDE_DIRS} ${openface_include_dirs})
+target_link_libraries(landmark ${OPENCV_LIBS} OpenFace)
 target_include_directories(tomcat PRIVATE src external/malmo/Malmo/src)
 target_include_directories(runExperiment PRIVATE external/malmo/Malmo/src)
 

@@ -6,6 +6,7 @@
 #include <SequenceCapture.h>
 #include <VisualizationUtils.h>
 #include <Visualizer.h>
+#include <GazeEstimation.h>
 
 namespace tomcat {
 
@@ -34,7 +35,7 @@ namespace tomcat {
     void get_observation();
 
   private:
-    std::vector<std::string> arguments = {"-device", "0"};
+    std::vector<std::string> arguments = {"-device", "0","-au_static"};
     Utilities::Visualizer visualizer;
     cv::Mat rgb_image;
     Utilities::SequenceCapture sequence_reader;

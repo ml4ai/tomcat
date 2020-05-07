@@ -39,7 +39,7 @@
 
 // System includes
 #include <vector>
-
+#include <GazeEstimation.h>
 // OpenCV includes
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>

@@ -51,7 +51,7 @@ namespace FaceAnalysis {
   using namespace std;
   using boost::filesystem::path;
 
-  path OpenFace_models_dir = path(getenv("TOMCAT")) / "data/OpenFace_models";
+  static path OpenFace_models_dir = path(getenv("TOMCAT")) / "data/OpenFace_models";
 
   class FaceAnalyserParameters {
   public:

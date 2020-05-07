@@ -168,6 +168,8 @@ bool SequenceCapture::Open(std::vector<std::string>& arguments) {
 
   // Based on what was read in open the sequence
   if (device != -1) {
+      std::cout<< device;
+      std::cout<<"Device value\n";
     return OpenWebcam(device, cam_width, cam_height, fx, fy, cx, cy);
   }
   if (!input_video_file.empty()) {

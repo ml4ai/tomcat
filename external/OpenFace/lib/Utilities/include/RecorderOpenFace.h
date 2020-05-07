@@ -104,7 +104,12 @@ namespace Utilities {
     void SetObservationActionUnits(
         const std::vector<std::pair<std::string, double>>& au_intensities,
         const std::vector<std::pair<std::string, double>>& au_occurences);
-
+      vector<std::pair<std::string, double>> get_au_intensities(){
+          return au_intensities;
+      }
+      vector<std::pair<std::string, double>> get_au_occurences(){
+          return au_occurences;
+      }
     // Gaze related observations
     void SetObservationGaze(const cv::Point3f& gazeDirection0,
                             const cv::Point3f& gazeDirection1,
