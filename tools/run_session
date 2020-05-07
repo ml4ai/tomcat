@@ -22,15 +22,15 @@ fi
 
 # On macOS, uuidgen produces uppercase UUIDs, so we pipe the output through tr
 # to get uniform behaviour on macOS and Linux.
-session_uuid=$(uuidgen | tr '[:upper:]' '[:lower:]')
+SESSION_UUID=$(uuidgen | tr '[:upper:]' '[:lower:]')
 if [[ $? -ne 0 ]]; then exit 1; fi
 
 # Creating an output directory for this session.
-session_output_dir="${TOMCAT}"/data/participant_data/"$session_uuid"
-mkdir -p "${session_output_dir}"
+SESSION_OUTPUT_DIR="${TOMCAT}"/data/participant_data/"$SESSION_UUID"
+mkdir -p "${SESSION_OUTPUT_DIR}"
 
 # Generate metadata file for the session
-"$TOMCAT"/tools/generate_session_metadata "$session_uuid" "$PLAYER_ID" > "$session_output_dir"/metadata.json
+"$TOMCAT"/tools/generate_session_metadata "$SESSION_UUID" "$PLAYER_ID" > "$SESSION_OUTPUT_DIR"/metadata.json
 if [[ $? -ne 0 ]]; then exit 1; fi
 
 
@@ -154,7 +154,7 @@ do_mission() {
     echo "Running mission ${CURRENT_MISSION} in ${TOMCAT}."
     echo " "
     mission_log="$TOMCAT_TMP_DIR"/mission_"$CURRENT_MISSION".log
-    export MISSION_OUTPUT_DIR="${session_output_dir}"/mission_"$CURRENT_MISSION"
+    export MISSION_OUTPUT_DIR="${SESSION_OUTPUT_DIR}"/mission_"$CURRENT_MISSION"
     mkdir -p "$MISSION_OUTPUT_DIR"
     malmo_data="$MISSION_OUTPUT_DIR"/malmo_data.txt
     chat_data="$MISSION_OUTPUT_DIR"/chat.txt
@@ -177,7 +177,7 @@ do_mission() {
 
         runExperiment_args="--mission ${CURRENT_MISSION}\
                             --record_observations\
-                            --uuid ${session_uuid}"
+                            --uuid ${SESSION_UUID}"
 
         if [[ $CURRENT_MISSION -gt 0 ]]; then
             runExperiment_args="${runExperiment_args} --time_limit ${TIME_LIMIT}"
@@ -293,10 +293,10 @@ if [[ $DO_MAIN_MISSION -eq 1 && $ENABLE_FILE_UPLOAD -eq 1 ]]; then
         echo "We assume that you are a member of the UA team, have run a"
         echo "session and want your session data uploaded to the vision server."
         echo "We will now attempt to do that."
-        if ! "$TOMCAT"/tools/upload_session "$session_uuid"; then 
+        if ! "$TOMCAT"/tools/upload_session "$SESSION_UUID"; then 
             echo "Data upload failed."
             echo "You can try uploading the session later by running:"
-            echo "    ./tools/upload_session ${session_uuid}"
+            echo "    ./tools/upload_session ${SESSION_UUID}"
         fi
     else
         echo "No .netrc file was detected in the ${TOMCAT} directory, so we "\
