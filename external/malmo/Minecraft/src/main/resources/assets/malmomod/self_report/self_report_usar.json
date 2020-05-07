@@ -1,7 +1,7 @@
 {
-  "version": "1.0",
-  "filenameRichContentBeforeQuestions": "progress_before_self_report.json",
-  "filenameRichContentAfterQuestions": "final_words_after_self_report.json",
+  "version": "0.1",
+  "filenameRichContentBeforeQuestions": "progress_before_self_report_usar.json",
+  "filenameRichContentAfterQuestions": "final_words_after_self_report_usar.json",
   "questions":
   [
     {
@@ -69,50 +69,6 @@
         "Not at all excited",
         "Somewhat excited",
         "Very excited"
-      ]
-    },
-    {
-      "text": [
-         "How much are you trying to avoid getting hurt or killed",
-         "by the creatures?"
-      ],
-      "choices":
-      [
-        "Not at all",
-        "Somewhat",
-        "Very"
-      ]
-    },
-    {
-      "text": [
-         "How much are you trying to attack and kill the creatures?"
-      ],
-      "choices":
-      [
-        "Not at all",
-        "Somewhat",
-        "Very"
-      ]
-    },
-    {
-      "text": [
-         "Which of the following emotions are you feeling most strongly",
-         "right now? Please indicate one."
-      ],
-      "choices":
-      [
-        "Calm/Relaxed",
-        "Anxious/Stressed",
-        "Sad/Depressed",
-        "Guilty/Ashamed",
-        "Frustrated/Annoyed",
-        "Bored/Disengaged",
-        "Lonely/Ignored",
-        "Excited/Energized",
-        "Happy/Content",
-        "Confident/Proud",
-        "Friendly",
-        "Amused"
       ]
     }
   ]

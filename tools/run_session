@@ -8,7 +8,6 @@ set -u
 # mirrors that of the git repository.
 TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
 export TOMCAT
-save_dir="${TOMCAT}/external/malmo/Minecraft/run/saves"
 
 source "$TOMCAT"/tools/configuration_helpers
 
@@ -21,12 +20,6 @@ if [[ ! $(pgrep -l mosquitto | head -n1 | cut -d' ' -f2) == mosquitto ]]; then
     mosquitto &
 fi
 
-
-# This function returns the date and time in the current timezone.
-timestamp() {
-  date "+%Y_%m_%d_%H_%M_%S"
-}
-
 # On macOS, uuidgen produces uppercase UUIDs, so we pipe the output through tr
 # to get uniform behaviour on macOS and Linux.
 session_uuid=$(uuidgen | tr '[:upper:]' '[:lower:]')
@@ -37,7 +30,7 @@ session_output_dir="${TOMCAT}"/data/participant_data/"$session_uuid"
 mkdir -p "${session_output_dir}"
 
 # Generate metadata file for the session
-"$TOMCAT"/tools/generate_session_metadata "$session_uuid" > "$session_output_dir"/metadata.json
+"$TOMCAT"/tools/generate_session_metadata "$session_uuid" "$PLAYER_ID" > "$session_output_dir"/metadata.json
 if [[ $? -ne 0 ]]; then exit 1; fi
 
 
@@ -77,6 +70,7 @@ start_ffmpeg_recording() {
     -s $SCREEN_DIMENSIONS\
     "$screen_video" &> "$TOMCAT_TMP_DIR"/screen_video_recording_mission_"$CURRENT_MISSION".log &
 }
+
 
 # Function to cleanup things on exit or keyboard interrupt.
 cleanup() {
@@ -120,8 +114,8 @@ user_interrupt() {
     exit 1
 }
 
-trap user_interrupt SIGINT SIGTERM
 
+trap user_interrupt SIGINT SIGTERM
 
 
 do_mission() {
@@ -153,8 +147,7 @@ do_mission() {
 
         runExperiment_args="--mission ${CURRENT_MISSION}\
                             --record_observations\
-                            --uuid ${session_uuid}\
-                            --self_report ${SELF_REPORT_INTERVAL}"
+                            --uuid ${session_uuid}"
 
         if [[ $CURRENT_MISSION -gt 0 ]]; then
             runExperiment_args="${runExperiment_args} --time_limit ${TIME_LIMIT}"

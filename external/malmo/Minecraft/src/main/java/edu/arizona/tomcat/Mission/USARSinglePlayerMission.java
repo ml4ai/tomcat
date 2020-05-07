@@ -45,6 +45,26 @@ public class USARSinglePlayerMission extends Mission {
         // No action to be taken
     }
 
+    /**
+     * Asks the clients to update the countdown
+     * @param remainingSeconds
+     */
+    @Override
+    protected void askClientsToUpdateCountdown(int remainingSeconds) {
+        // NOOP
+    }
+
+    /**
+     * Defines the duration of the mission in seconds
+     * @param timeLimitInSeconds - Time in seconds until the end of the mission
+     */
+    public void setTimeLimitInSeconds(long timeLimitInSeconds) {
+        // For the USAR Singleplayer mission we set the time limit to 900
+        // seconds.
+        this.timeLimitInSeconds = -1;
+    }
+
+
     @Override
     protected void afterLastPhaseCompletion() {
         this.cleanup();
@@ -109,14 +129,7 @@ public class USARSinglePlayerMission extends Mission {
     protected SelfReportContent getSelfReportContent(EntityPlayerMP player,
                                                      World world) {
         SelfReportContent selfReportContent =
-            SelfReportContent.createFromJson("self_report1.json");
-        selfReportContent.setTextPlaceholder(
-            0,
-            Converter.secondsToString(this.getRemainingSeconds(world), false));
-        selfReportContent.setTextPlaceholder(
-            1, String.format("%.2f", player.getHealth()));
-        selfReportContent.setTextPlaceholder(
-            2, String.format("%.2f", player.getMaxHealth()));
+            SelfReportContent.createFromJson("self_report_usar.json");
         return selfReportContent;
     }
 
