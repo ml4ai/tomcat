@@ -63,8 +63,8 @@ start_av_recording() {
             export ALSA_OUTPUT_MONITOR=`pacmd list-sources | \
             awk '/name:/ && /monitor/ {print $2 }'|sed 's/[<,>]//g'`
             # Calling pacat command.
-            pacat --record -d ${ALSA_OUTPUT_MONITOR} \
-            > "${MISSION_OUTPUT_DIR}"/system_audio.raw &
+            pacat --record --file-format=wav -d ${ALSA_OUTPUT_MONITOR} \
+            > "${MISSION_OUTPUT_DIR}"/system_audio.wav &
             pid_system_audio_recording=$!
         else
             echo "Recording system audio."
@@ -132,9 +132,6 @@ mission_cleanup() {
         pkill ffmpeg
         if [[ $ENABLE_SYSTEM_AUDIO_RECORDING -eq 1 &&  $OSTYPE == linux-gnu ]]; then
             pkill pacat
-            ffmpeg -f s16le -ar 44100 -ac 2 -i \
-            "${MISSION_OUTPUT_DIR}"/system_audio.raw \
-            "${MISSION_OUTPUT_DIR}"/system_audio.wav
         fi
     fi
 
