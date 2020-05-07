@@ -81,3 +81,6 @@ tmp
 # Media files
 *.mpg
 *.wav
+
+# We add the netrc file here so that it doesn't accidentally get committed.
+netrc

@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+# Script to upload user data to the vision server.
+set -u 
+
+# Set the TOMCAT environment variable, assuming that the directory structure
+# mirrors that of the git repository.
+TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
+export TOMCAT
+
+export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
+mkdir -p "${TOMCAT_TMP_DIR}"
+
+
+data_upload(){
+
+    local session_id=$1
+    # Authentication file 
+    local auth_file="${TOMCAT}/netrc"
+    local web_address="http://vision.cs.arizona.edu/~tomcat/upload_file.php"
+    local participant_data_folder="${TOMCAT}/data/participant_data"
+    local session_folder="${participant_data_folder}/${session_id}"
+
+    echo "Beginning data upload to vision server."
+
+
+    # To maintain the directory structure and keep it simple, we cd into the
+    # participant data folder and return back.
+    pushd "$participant_data_folder" > /dev/null
+        if [[ ! -f "${session_folder}.zip" ]]; then
+            echo "Compressing session folder: ${session_folder}"
+            echo "This may take a minute ..."
+            if ! zip -q -r "${session_id}.zip" "$session_id"; then
+                echo "Creation of zip file failed. Exiting now."
+                exit 1
+            fi
+        else
+            echo "${session_folder}.zip already exists!"
+            echo "We will attempt to upload it now."
+        fi
+    popd > /dev/null
+
+    curl_log="$TOMCAT_TMP_DIR"/vision_data_upload.log
+    if [[ -f "${session_folder}.zip" ]]; then
+        echo "Zip file created. Proceeding with data upload."
+        echo "Uploading data to vision server."
+    else
+        echo "Error: Failed to create zip file."
+        exit 1
+    fi
+
+    curl --netrc-file "$auth_file" -F "inputfile=@${session_folder}.zip"\
+        "$web_address" &> "$curl_log"
+    if [[ $? -ne 0 ]]; then
+        echo "The curl command to upload the data to the vision server "\
+             "failed. See ${curl_log} for details."
+        exit 1
+    else
+        echo "Data successfully uploaded to vision. You can access it at "\
+             "http://vision.cs.arizona.edu/~tomcat/index.php"
+    fi
+}
+
+data_upload $1
+
+exit 0

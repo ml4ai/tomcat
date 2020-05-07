@@ -35,6 +35,10 @@ set_local_configuration() {
     # player's speech, player's screen, and system audio. Defaults to true.
     export ENABLE_FFMPEG=${ENABLE_FFMPEG:-1}
 
+    # ENABLE_FILE_UPLOAD: Enable uploading player's data on to vision server.
+    # Defaults to true.
+    export ENABLE_FILE_UPLOAD=${ENABLE_FILE_UPLOAD:-0}
+
     # MAIN_MISSION: Set this to 1 for the Zombie invasion mission, and to 2 for the
     #               USAR Singleplayer mission.
     export MAIN_MISSION=${MAIN_MISSION:-1} 
@@ -47,7 +51,6 @@ set_local_configuration() {
         # Otherwise, enable the tutorial mission by default.
         export DO_TUTORIAL_MISSION=${DO_TUTORIAL_MISSION:-1}
     fi
-
 
     # Enable main mission. Defaults to true.
     export DO_MAIN_MISSION=${DO_MAIN_MISSION:-1}
@@ -172,9 +175,8 @@ __configure_audio_recording() {
         fi
 
     elif [[ $OSTYPE == linux-gnu ]]; then
-        echo "System audio recording for Linux has not been implemented yet, so "\
-             "we will disable it."
-        export ENABLE_SYSTEM_AUDIO_RECORDING=0
+        echo "System audio recording for Linux using pacat."
+        export ENABLE_SYSTEM_AUDIO_RECORDING=1
         export FFMPEG_FMT_MICROPHONE=alsa
         export FFMPEG_INPUT_DEVICE_MICROPHONE=default
     else
@@ -219,6 +221,7 @@ detect_ci() {
         export DO_TUTORIAL_MISSION=0
         export MISSION=external/malmo/sample_missions/default_flat_1.xml
         export ENABLE_FFMPEG=0
+        export ENABLE_FILE_UPLOAD=0
     else
         export TIME_LIMIT=${DEFAULT_MAIN_MISSION_TIME}
     fi
