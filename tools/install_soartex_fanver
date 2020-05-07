@@ -20,7 +20,9 @@ pushd "$TOMCAT" > /dev/null
         # We run 'git checkout .' to restore the textures that were originally from
         # the Soartex public domain texture collection, for cleaner diffs.
         git checkout .
+        echo "Removing Soartex_Fanver directory..."
         rm -rf Soartex_Fanver
+        echo "Soartex Fanver textures installation successfully completed."
     else
         echo "Could not find the folder Soartex_Fanver in ${TOMCAT}!"
         echo "Please download the resource pack by visiting https://www.curseforge.com/minecraft/texture-packs/soartex-fanver-vanilla/download/2371741 in your web browser."
