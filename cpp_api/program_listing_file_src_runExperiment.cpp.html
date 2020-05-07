@@ -170,7 +170,7 @@
 <span class="c1">// variables are prefixed with TOMCAT_.</span>
 <span class="n">string</span> <span class="nf">mapper</span><span class="p">(</span><span class="n">string</span> <span class="n">env_var</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">set</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">valid_vars</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;self_report_interval&quot;</span><span class="p">,</span> <span class="s">&quot;difficulty&quot;</span><span class="p">};</span>
-    <span class="k">return</span> <span class="n">in</span><span class="p">(</span><span class="n">valid_vars</span><span class="p">,</span> <span class="n">env_var</span><span class="p">)</span><span class="o">?</span><span class="nl">env_var</span><span class="p">:</span><span class="s">&quot;&quot;</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">in</span><span class="p">(</span><span class="n">valid_vars</span><span class="p">,</span> <span class="n">env_var</span><span class="p">)</span> <span class="o">?</span> <span class="nl">env_var</span> <span class="p">:</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="n">options_description</span> <span class="nf">load_options</span><span class="p">()</span> <span class="p">{</span>
@@ -220,7 +220,8 @@
 <span class="nf">parse_parameters</span><span class="p">(</span><span class="n">options_description</span> <span class="n">options</span><span class="p">,</span> <span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
     <span class="n">variables_map</span> <span class="n">vm</span><span class="p">;</span>
     <span class="n">store</span><span class="p">(</span><span class="n">parse_command_line</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">options</span><span class="p">),</span> <span class="n">vm</span><span class="p">);</span>
-    <span class="n">store</span><span class="p">(</span><span class="n">parse_environment</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">boost</span><span class="o">::</span><span class="n">function1</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span> <span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mapper</span><span class="p">)),</span> <span class="n">vm</span><span class="p">);</span>
+    <span class="n">store</span><span class="p">(</span><span class="n">parse_environment</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">boost</span><span class="o">::</span><span class="n">function1</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span> <span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="n">mapper</span><span class="p">)),</span>
+          <span class="n">vm</span><span class="p">);</span>
     <span class="n">notify</span><span class="p">(</span><span class="n">vm</span><span class="p">);</span>
 
     <span class="k">return</span> <span class="n">vm</span><span class="p">;</span>
