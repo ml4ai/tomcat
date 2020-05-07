@@ -432,6 +432,7 @@ public class TutorialMission extends Mission {
 
     @Override
     protected void afterLastPhaseCompletion() {
+        super.afterLastPhaseCompletion();
         RichContent content =
             RichContent.createFromJson("tutorial_completion.json");
         TomcatMessageData messageData = new TomcatMessageData(content);

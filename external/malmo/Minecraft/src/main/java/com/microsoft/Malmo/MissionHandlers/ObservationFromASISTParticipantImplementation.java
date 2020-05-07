@@ -25,7 +25,6 @@ package com.microsoft.Malmo.MissionHandlers;
 import com.google.gson.JsonObject;
 import com.microsoft.Malmo.Schemas.MissionInit;
 import com.microsoft.Malmo.Utils.JSONWorldDataHelper;
-
 import edu.arizona.tomcat.Messaging.MqttService;
 import edu.arizona.tomcat.Utils.TimeStamper;
 import io.netty.buffer.ByteBuf;
@@ -39,76 +38,78 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  * Simple IObservationProducer object that pings out a whole bunch of data.<br>
  */
 public class ObservationFromASISTParticipantImplementation
-extends ObservationFromServer {
-	public static class ASISTParticipantRequestMessage
-	extends ObservationFromServer.ObservationRequestMessage {
-		@Override
-		void restoreState(ByteBuf buf) {
-			// Nothing to do - no context needed.
-		}
+    extends ObservationFromServer {
+    public static class ASISTParticipantRequestMessage
+        extends ObservationFromServer.ObservationRequestMessage {
+        @Override
+        void restoreState(ByteBuf buf) {
+            // Nothing to do - no context needed.
+        }
 
-		@Override
-		void persistState(ByteBuf buf) {
-			// Nothing to do - no context needed.
-		}
-	}
+        @Override
+        void persistState(ByteBuf buf) {
+            // Nothing to do - no context needed.
+        }
+    }
 
-	@Override
-	public void writeObservationsToJSON(JsonObject json,
-			MissionInit missionInit) {
-		
-		JsonObject data = new JsonObject();
-		super.writeObservationsToJSON(data, missionInit);
-		
-		if (data != null && data.toString().length() > 2) {
-			String timestamp = TimeStamper.getTimeStamp();
-			JsonObject header = new JsonObject();
-			header.addProperty("timestamp", timestamp);
-			header.addProperty("message_type", "observation");
-			header.addProperty("version", "0.2");
+    @Override
+    public void writeObservationsToJSON(JsonObject json,
+                                        MissionInit missionInit) {
 
-			JsonObject metadata = new JsonObject();
-			metadata.addProperty("trial_id", missionInit.getExperimentUID());
-			metadata.addProperty("timestamp", timestamp);
-			metadata.addProperty("source", "human");
-			metadata.addProperty("sub_type", "state");
-			metadata.addProperty("version", "0.2");
+        JsonObject data = new JsonObject();
+        super.writeObservationsToJSON(data, missionInit);
 
-			JsonObject message = new JsonObject();    	
-			message.addProperty("name", Minecraft.getMinecraft().player.getName());
-			message.add("header", header);
-			message.add("msg", metadata);
-			message.add("data", data);
+        if (data != null && data.toString().length() > 2) {
+            String timestamp = TimeStamper.getTimeStamp();
+            JsonObject header = new JsonObject();
+            header.addProperty("timestamp", timestamp);
+            header.addProperty("message_type", "observation");
+            header.addProperty("version", "0.2");
 
-			MqttService.getInstance().publish(message.toString(), "observations/state");
-		}
-	}
+            JsonObject metadata = new JsonObject();
+            metadata.addProperty("trial_id", missionInit.getExperimentUID());
+            metadata.addProperty("timestamp", timestamp);
+            metadata.addProperty("source", "human");
+            metadata.addProperty("sub_type", "state");
+            metadata.addProperty("version", "0.2");
 
-	public static class ASISTParticipantRequestMessageHandler
-	extends ObservationFromServer.ObservationRequestMessageHandler
-	implements IMessageHandler<ASISTParticipantRequestMessage, IMessage> {
-		@Override
-		void buildJson(JsonObject json,
-				EntityPlayerMP player,
-				ObservationRequestMessage message) {
+            JsonObject message = new JsonObject();
+            message.addProperty("name",
+                                Minecraft.getMinecraft().player.getName());
+            message.add("header", header);
+            message.add("msg", metadata);
+            message.add("data", data);
 
-			JSONWorldDataHelper.buildPositionStats(json, player);
-			JSONWorldDataHelper.buildMotionStats(json, player);
-			json.addProperty("life", player.getHealth());
-			json.addProperty("id", player.getCachedUniqueIdString());
-			json.addProperty("name", player.getName());
-			JSONWorldDataHelper.buildEnvironmentStats(json, player);			
-		}
+            MqttService.getInstance().publish(message.toString(),
+                                              "observations/state");
+        }
+    }
 
-		@Override
-		public IMessage onMessage(ASISTParticipantRequestMessage message,
-				MessageContext ctx) {
-			return processMessage(message, ctx);
-		}
-	}
+    public static class ASISTParticipantRequestMessageHandler
+        extends ObservationFromServer.ObservationRequestMessageHandler
+        implements IMessageHandler<ASISTParticipantRequestMessage, IMessage> {
+        @Override
+        void buildJson(JsonObject json,
+                       EntityPlayerMP player,
+                       ObservationRequestMessage message) {
 
-	@Override
-	public ObservationRequestMessage createObservationRequestMessage() {
-		return new ASISTParticipantRequestMessage();
-	}
+            JSONWorldDataHelper.buildPositionStats(json, player);
+            JSONWorldDataHelper.buildMotionStats(json, player);
+            json.addProperty("life", player.getHealth());
+            json.addProperty("id", player.getCachedUniqueIdString());
+            json.addProperty("name", player.getName());
+            JSONWorldDataHelper.buildEnvironmentStats(json, player);
+        }
+
+        @Override
+        public IMessage onMessage(ASISTParticipantRequestMessage message,
+                                  MessageContext ctx) {
+            return processMessage(message, ctx);
+        }
+    }
+
+    @Override
+    public ObservationRequestMessage createObservationRequestMessage() {
+        return new ASISTParticipantRequestMessage();
+    }
 }

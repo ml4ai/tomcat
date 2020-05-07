@@ -10,4 +10,7 @@ public class USARSinglePlayerClientMission extends ClientMission {
     public void handleMessageFromServer(TomcatMessage message) {
         super.handleMessageFromServer(message);
     }
+
+    @Override
+    public void cleanup() {}
 }

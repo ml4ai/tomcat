@@ -8,6 +8,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class GUIOverlayVillagersSaved extends Gui {
@@ -18,9 +19,27 @@ public class GUIOverlayVillagersSaved extends Gui {
     private final static int TEXTURE_HEIGHT = 8;
 
     private int totalNumberOfVillagers;
+    private static GUIOverlayVillagersSaved instance;
 
-    public GUIOverlayVillagersSaved(int totalNumberOfVillagers) {
-        this.totalNumberOfVillagers = totalNumberOfVillagers;
+    private GUIOverlayVillagersSaved() {}
+
+    /**
+     * Register to be a listener of a Minecraft event
+     * @param totalNumberOfVillagers - Total numbers of villagers to be saved
+     */
+    public static void register(int totalNumberOfVillagers) {
+        if (instance == null) {
+            instance = new GUIOverlayVillagersSaved();
+        }
+        instance.totalNumberOfVillagers = totalNumberOfVillagers;
+        MinecraftForge.EVENT_BUS.register(instance);
+    }
+
+    /**
+     * Unregister as a listener from a Minecraft event
+     */
+    public static void unregister() {
+        MinecraftForge.EVENT_BUS.unregister(instance);
     }
 
     @SubscribeEvent

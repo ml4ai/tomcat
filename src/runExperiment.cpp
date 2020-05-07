@@ -14,7 +14,7 @@ using namespace tomcat;
 // variables are prefixed with TOMCAT_.
 string mapper(string env_var) {
     set<string> valid_vars = {"self_report_interval", "difficulty"};
-    return in(valid_vars, env_var)?env_var:"";
+    return in(valid_vars, env_var) ? env_var : "";
 }
 
 options_description load_options() {
@@ -64,7 +64,8 @@ variables_map
 parse_parameters(options_description options, int argc, const char* argv[]) {
     variables_map vm;
     store(parse_command_line(argc, argv, options), vm);
-    store(parse_environment(options, boost::function1<string, string>(mapper)), vm);
+    store(parse_environment(options, boost::function1<string, string>(mapper)),
+          vm);
     notify(vm);
 
     return vm;
