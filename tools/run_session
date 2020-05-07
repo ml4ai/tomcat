@@ -104,6 +104,9 @@ cleanup() {
         pkill ffmpeg
         if [[ $ENABLE_SYSTEM_AUDIO_RECORDING -eq 1 && $OSTYPE == linux-gnu ]]; then
             pkill pacat
+			ffmpeg -f s16le -ar 44100 -ac 2 -i \
+			"${MISSION_OUTPUT_DIR}"/system_audio.raw \
+			"${MISSION_OUTPUT_DIR}"/system_audio.wav
         fi
     fi
 
@@ -276,6 +279,9 @@ if [[ $DO_TUTORIAL_MISSION -eq 1 && $DO_MAIN_MISSION -eq 1 ]]; then
         pkill ffmpeg
         if [[ $ENABLE_SYSTEM_AUDIO_RECORDING -eq 1 && $OSTYPE == linux-gnu ]]; then
             pkill pacat
+			ffmpeg -f s16le -ar 44100 -ac 2 -i \
+			"${MISSION_OUTPUT_DIR}"/system_audio.raw \
+			"${MISSION_OUTPUT_DIR}"/system_audio.wav
         fi
     fi
     # We sleep for a few seconds to let the player catch a breath between the
