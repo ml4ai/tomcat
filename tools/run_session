@@ -34,7 +34,7 @@ mkdir -p "${session_output_dir}"
 if [[ $? -ne 0 ]]; then exit 1; fi
 
 
-start_ffmpeg_recording() {
+start_av_recording() {
     echo "Recording video of player's face using webcam."
     ffmpeg\
     -f ${FFMPEG_FMT_WEBCAM}\
@@ -184,8 +184,9 @@ do_mission() {
         fi
 
         if (( ENABLE_FFMPEG )); then
-            start_ffmpeg_recording
+            start_av_recording
         fi
+
         # Publish the Malmo observation messages to the message bus on the
         # topic observations/state.
         "${TOMCAT}"/build/bin/runExperiment\
@@ -229,12 +230,17 @@ do_mission() {
             echo "All recorded data is in ${MISSION_OUTPUT_DIR}"
             echo " "
             common_files=("events.txt" "malmo_data.txt" "chat.txt" "self_reports.txt")
+
             if (( ENABLE_FFMPEG )); then
+                pkill ffmpeg
                 common_files+=("player_audio.wav" "screen_video.mpg" "webcam_video.mpg")
-                if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
-                    common_files+=("system_audio.wav")
-                fi
             fi
+
+            if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
+                pkill pacat
+                common_files+=("system_audio.wav")
+            fi
+
             echo "checking files from ${MISSION_OUTPUT_DIR}..."
             for file in ${common_files[@]}; do
                 if [ -f "${MISSION_OUTPUT_DIR}/${file}" ]; then
@@ -272,18 +278,6 @@ else
 fi
 
 if [[ $DO_TUTORIAL_MISSION -eq 1 && $DO_MAIN_MISSION -eq 1 ]]; then
-    # If we are doing both tutorial and main missions,
-    # we need to kill ffmpeg and pcat processes before starting main mission.
-    #TODO: Also kill pacat for linux system audio.
-    if (( ENABLE_FFMPEG )); then 
-        pkill ffmpeg
-        if [[ $ENABLE_SYSTEM_AUDIO_RECORDING -eq 1 && $OSTYPE == linux-gnu ]]; then
-            pkill pacat
-            ffmpeg -f s16le -ar 44100 -ac 2 -i \
-            "${MISSION_OUTPUT_DIR}"/system_audio.raw \
-            "${MISSION_OUTPUT_DIR}"/system_audio.wav
-        fi
-    fi
     # We sleep for a few seconds to let the player catch a breath between the
     # tutorial and main missions.
     sleep 6
