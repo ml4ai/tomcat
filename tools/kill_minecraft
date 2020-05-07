@@ -19,7 +19,7 @@
 # TODO: Again, we do not have enough use cases, but the killing of gradle
 # daemons might be something we prefer to do selectively. 
 #
-# TODO: This script likely does not work on linux (UNTESTED)
+# TODO: This script likely does not work on Linux (UNTESTED)
 
 set -u 
 
@@ -80,7 +80,7 @@ else
         ps ${launch_pid} >& /dev/null
         if [[ $? -eq 0 ]]; then 
             # Linux often provides a way to get the process tree (e.g., using
-            # the -H argument), but Mac OS does not. Rather than get more
+            # the -H argument), but macOS does not. Rather than get more
             # packages, and reason about variations, we will build our own tree,
             # with the knowledge that it will only be children and grand
             # children. 
@@ -112,7 +112,8 @@ if [[ -n "${to_kill}" ]]; then
             kill -15 ${proc}
             sleep 1 
         else 
-            echo "Process ${proc} no longer exists." 
+            echo "Process ${proc} no longer exists, since we have already "\
+                 "killed it."
         fi 
     done 
 

@@ -106,7 +106,10 @@ start_av_recording() {
 session_cleanup() {
     cleanup_status=0 
     if [[ ${RECYCLE_MINECRAFT} -lt 2 ]]; then
-        if ! "${TOMCAT}/tools/kill_minecraft"; then cleanup_status=1; fi
+        if ! "${TOMCAT}/tools/kill_minecraft"; then
+            echo "Failed to kill Minecraft."
+            exit 1
+        fi
     fi
 
     if [[ $ENABLE_SYSTEM_AUDIO_RECORDING -eq 1 && $CI -eq 0 && "$OSTYPE"  == "darwin"* ]]; then  
@@ -117,10 +120,9 @@ session_cleanup() {
             echo "Failed to switch audio output device back to what it was"\
                 "before run_session (${ORIGINAL_OUTPUT_DEVICE})."
             echo " "
-            cleanup_status=1
+            exit 1
         fi
     fi
-    exit ${cleanup_status}
 }
 
 mission_cleanup() {
@@ -238,13 +240,9 @@ do_mission() {
         # Subscribe to the observations/state topic on the message bus and
         # redirect the output to a file.
         mosquitto_sub -t observations/state > "$malmo_data" &
-        pid_observations_state=$!
         mosquitto_sub -t observations/chat > "$chat_data" &
-        pid_observations_chat=$!
         mosquitto_sub -t "observations/events/#" > "$event_data" &
-        pid_observations_events=$!
         mosquitto_sub -t observations/self_reports > "$self_report_data" &
-        pid_observations_self_reports=$!
 
         if [[ $CURRENT_MISSION -gt 0 ]]; then
             echo "Time limit set to ${TIME_LIMIT}."
@@ -263,16 +261,10 @@ do_mission() {
         fi
 
         if [[ ${mission_status} -eq 0 ]]; then
-            kill $pid_observations_state
-            kill $pid_observations_chat
-            kill $pid_observations_events
-            kill $pid_observations_self_reports
+            mission_cleanup
             echo "Mission ${CURRENT_MISSION} ended with exit code 0."
             echo "All recorded data is in ${MISSION_OUTPUT_DIR}"
             echo " "
-
-            mission_cleanup
-
             break
         fi
 
@@ -305,6 +297,14 @@ fi
 
 if (( DO_MAIN_MISSION )); then do_mission ${MAIN_MISSION}; fi
 
+
+echo "Finished running all sessions in ${TOMCAT}."
+echo "Doing our final cleanup."
+
+# If we are here, then we do not have any errors.
+
+session_cleanup
+
 # Main mission has been completed. 
 # Call data_upload() if DO_MAIN_MISSION and ENABLE_DATA_UPLOAD are set to 1.
 if [[ $DO_MAIN_MISSION -eq 1 && $ENABLE_FILE_UPLOAD -eq 1 ]]; then
@@ -326,11 +326,6 @@ if [[ $DO_MAIN_MISSION -eq 1 && $ENABLE_FILE_UPLOAD -eq 1 ]]; then
     fi
 fi
 
-echo "Finished running all sessions in ${TOMCAT}."
-echo "Doing our final cleanup."
+echo "Session successfully completed. Thank you!"
 
-# If we are here, then we do not have any errors. Probably will need to upgrade
-# at some point to possibly get here even with errors. But right now, if we have
-# an error above, we call cleanup and exit. 
-
-session_cleanup
+exit 0
