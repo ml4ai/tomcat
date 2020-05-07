@@ -64,7 +64,6 @@ public class USARSinglePlayerMission extends Mission {
         this.timeLimitInSeconds = -1;
     }
 
-
     @Override
     protected void afterLastPhaseCompletion() {
         this.cleanup();

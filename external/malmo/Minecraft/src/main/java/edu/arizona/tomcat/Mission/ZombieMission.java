@@ -53,7 +53,7 @@ public class ZombieMission extends Mission {
 
     @Override
     protected void afterLastPhaseCompletion() {
-        this.cleanup();
+        super.afterLastPhaseCompletion();
         this.removeAllEntities();
         RichContent content = RichContent.createFromJson("sar_completion.json");
         content.setTextPlaceholder(
@@ -67,7 +67,7 @@ public class ZombieMission extends Mission {
 
     @Override
     protected void onTimeOut() {
-        this.cleanup();
+        super.onTimeOut();
         this.removeAllEntities();
         RichContent content = RichContent.createFromJson("sar_completion.json");
         content.setTextPlaceholder(

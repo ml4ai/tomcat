@@ -2,7 +2,6 @@ package edu.arizona.tomcat.Mission.gui;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiLabel;
 
@@ -20,7 +19,7 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
     private static final int BACK_BUTTON_CODE = -2;
     private static final String SKIP_BUTTON_TEXT = "Skip";
     private static final String BACK_BUTTON_TEXT = "Back";
-    
+
     private SelfReportContent content;
     private int previousQuestion;
     private int currentQuestion;
@@ -101,19 +100,19 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
             this.content.getQuestion(this.currentQuestion);
         this.drawTextFromQuestion(question);
         this.drawButtonsFromQuestion(question);
-        
+
         int avaliableWidth = this.width - 2 * MARGIN;
         int avaliableSpace = avaliableWidth - 3 * BUTTON_WIDTH;
         int spaceBetweenButtons = avaliableSpace / 4;
         int x = MARGIN + spaceBetweenButtons;
         int y = this.height - 2 * MARGIN - BUTTON_HEIGHT;
         this.buttonPrevious = new GuiButton(BACK_BUTTON_CODE,
-                x,
-                y,
-                BUTTON_WIDTH,
-                BUTTON_HEIGHT,
-                BACK_BUTTON_TEXT);
-        
+                                            x,
+                                            y,
+                                            BUTTON_WIDTH,
+                                            BUTTON_HEIGHT,
+                                            BACK_BUTTON_TEXT);
+
         // This method is called continuously by Minecraft, that's why we need
         // the if statement below
         if (this.currentQuestion != this.previousQuestion) {
@@ -125,13 +124,12 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
             this.initialTime = System.currentTimeMillis();
             this.previousQuestion = this.currentQuestion;
         }
-        
+
         if (this.content.getNumberOfQuestions() > 1) {
             this.buttonList.add(this.buttonPrevious);
         }
-        
+
         this.handleButtonsActivation();
-        
     }
 
     /**
@@ -143,7 +141,7 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
             this.buttonPrevious.enabled = false;
         }
     }
-     
+
     /**
      * Draws textual content of a page
      * @param page - Rich content page
@@ -219,23 +217,24 @@ public class SelfReportScreen extends GUIScreenUndismissableOnEscapeKey {
 
     @Override
     protected void actionPerformed(GuiButton guiButton) {
-    	if (guiButton.id == BACK_BUTTON_CODE) {
-    		this.currentQuestion = Math.max(0, this.currentQuestion - 1);
+        if (guiButton.id == BACK_BUTTON_CODE) {
+            this.currentQuestion = Math.max(0, this.currentQuestion - 1);
             this.handleButtonsActivation();
-    	}
-    	else {
-	        SelfReportQuestion question =
-	            this.content.getQuestion(this.currentQuestion);
-	        SelfReportSingleResponse response =
-	            new SelfReportSingleResponse(guiButton.id, this.getDuration());
-	        question.setResponse(response);
-	        if (this.currentQuestion == this.content.getNumberOfQuestions() - 1) {
-	            this.dismissScreen();
-	        }
-	        else {
-	            this.currentQuestion++;
-	        }
-    	}
+        }
+        else {
+            SelfReportQuestion question =
+                this.content.getQuestion(this.currentQuestion);
+            SelfReportSingleResponse response =
+                new SelfReportSingleResponse(guiButton.id, this.getDuration());
+            question.setResponse(response);
+            if (this.currentQuestion ==
+                this.content.getNumberOfQuestions() - 1) {
+                this.dismissScreen();
+            }
+            else {
+                this.currentQuestion++;
+            }
+        }
     }
 
     @Override

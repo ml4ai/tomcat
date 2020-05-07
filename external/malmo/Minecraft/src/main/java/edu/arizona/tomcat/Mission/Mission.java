@@ -98,7 +98,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     /**
      * Method called after if the player dies
      */
-    protected abstract void onPlayerDeath(EntityPlayer player);
+    protected void onPlayerDeath(EntityPlayer player) { this.cleanup(); }
 
     /**
      * Adds listener to be notified upon relevant mission events
@@ -384,12 +384,12 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     /**
      * Method called after the last phase of the mission is completed.
      */
-    protected abstract void afterLastPhaseCompletion();
+    protected void afterLastPhaseCompletion() { this.cleanup(); }
 
     /**
      * Method called after the the total time for the mission has passed.
      */
-    protected abstract void onTimeOut();
+    protected void onTimeOut() { this.cleanup(); };
 
     /**
      * Handle message from the client side
@@ -507,11 +507,23 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     }
 
     /**
-     * Save files and other pending stuff that should be flushed when the
-     * mission ends. This method must be called by the subclasses upon the end
-     * of the mission.
+     * Save files, unregister events and other pending stuff that should be done
+     * when the mission ends.
      */
-    protected void cleanup() {}
+    protected void cleanup() {
+        this.cleanupClients();
+        ForgeEventHandler.unregister();
+        MinecraftForge.EVENT_BUS.unregister(this);
+    }
+
+    /**
+     * Asks client missions to cleanup
+     */
+    private void cleanupClients() {
+        TomcatMessaging.TomcatMessage message =
+            new TomcatMessage(TomcatMessageType.CLEAN_UP);
+        TomcatClientServerHandler.sendMessageToAllClients(message, false);
+    }
 
     /**
      * Defines the duration of the mission in seconds

@@ -33,7 +33,6 @@ public class MobAttacked extends Event {
         this.targetHealth = target.getHealth();
         this.targetPosition = new Position(target);
         this.targetVelocity = new Velocity(target);
-        this.itemHeld =
-            player.getHeldItemMainhand().getDisplayName();
+        this.itemHeld = player.getHeldItemMainhand().getDisplayName();
     }
 }
