@@ -1,9 +1,8 @@
 package edu.arizona.tomcat.Events;
 
 import edu.arizona.tomcat.World.Position;
-import net.minecraft.entity.Entity;
-
 import java.util.UUID;
+import net.minecraft.entity.Entity;
 
 public class VillagerSaved extends Event {
 

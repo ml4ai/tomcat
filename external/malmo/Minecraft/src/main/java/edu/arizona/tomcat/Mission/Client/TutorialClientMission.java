@@ -16,7 +16,7 @@ public class TutorialClientMission extends ClientMission {
         super();
         // Sets indicator of number of villagers saved to be rerendered by a
         // Minecraft event schema.
-        GUIOverlayVillagersSaved.register(TutorialMission.NUMBER_OF_VILLAGERS);        
+        GUIOverlayVillagersSaved.register(TutorialMission.NUMBER_OF_VILLAGERS);
     }
 
     @Override
@@ -78,9 +78,9 @@ public class TutorialClientMission extends ClientMission {
         Minecraft.getMinecraft().gameSettings.thirdPersonView =
             nextCameraPerspective.ordinal();
     }
-    
+
     @Override
-    public void cleanup() {   
-    	GUIOverlayVillagersSaved.unregister();
+    public void cleanup() {
+        GUIOverlayVillagersSaved.unregister();
     }
 }

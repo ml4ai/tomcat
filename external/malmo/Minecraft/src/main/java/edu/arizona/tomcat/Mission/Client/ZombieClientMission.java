@@ -44,9 +44,9 @@ public class ZombieClientMission extends ClientMission {
     public int getNumberOfSavedVillagers() {
         return this.numberOfSavedVillagers;
     }
-    
+
     @Override
     public void cleanup() {
-    	GUIOverlayVillagersSaved.unregister();
+        GUIOverlayVillagersSaved.unregister();
     }
 }

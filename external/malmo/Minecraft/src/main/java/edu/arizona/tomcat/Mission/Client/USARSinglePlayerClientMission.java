@@ -11,8 +11,6 @@ public class USARSinglePlayerClientMission extends ClientMission {
         super.handleMessageFromServer(message);
     }
 
-	@Override
-	public void cleanup() {
-				
-	}
+    @Override
+    public void cleanup() {}
 }

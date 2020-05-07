@@ -1,12 +1,7 @@
 package edu.arizona.tomcat.Mission;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
-
 import com.microsoft.Malmo.MalmoMod;
 import com.microsoft.Malmo.Schemas.PosAndDirection;
-
 import edu.arizona.tomcat.Emotion.EmotionHandler;
 import edu.arizona.tomcat.Events.EntityDeath;
 import edu.arizona.tomcat.Events.ForgeEventHandler;
@@ -23,6 +18,9 @@ import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.Utils.MinecraftVanillaAIHandler;
 import edu.arizona.tomcat.Utils.TimeStamper;
 import edu.arizona.tomcat.World.DrawingHandler;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntitySkeleton;
@@ -100,9 +98,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     /**
      * Method called after if the player dies
      */
-    protected void onPlayerDeath(EntityPlayer player) {
-    	this.cleanup();
-    }
+    protected void onPlayerDeath(EntityPlayer player) { this.cleanup(); }
 
     /**
      * Adds listener to be notified upon relevant mission events
@@ -388,16 +384,12 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     /**
      * Method called after the last phase of the mission is completed.
      */
-    protected void afterLastPhaseCompletion() {
-    	this.cleanup();
-    }
+    protected void afterLastPhaseCompletion() { this.cleanup(); }
 
     /**
      * Method called after the the total time for the mission has passed.
      */
-    protected void onTimeOut() {
-    	this.cleanup();
-    };
+    protected void onTimeOut() { this.cleanup(); };
 
     /**
      * Handle message from the client side
@@ -515,21 +507,21 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     }
 
     /**
-     * Save files, unregister events and other pending stuff that should be done when the
-     * mission ends.
+     * Save files, unregister events and other pending stuff that should be done
+     * when the mission ends.
      */
     protected void cleanup() {
-    	this.cleanupClients();
-    	ForgeEventHandler.unregister();
-    	MinecraftForge.EVENT_BUS.unregister(this);    	
+        this.cleanupClients();
+        ForgeEventHandler.unregister();
+        MinecraftForge.EVENT_BUS.unregister(this);
     }
-    
+
     /**
      * Asks client missions to cleanup
      */
     private void cleanupClients() {
-    	TomcatMessaging.TomcatMessage message = new TomcatMessage(
-            TomcatMessageType.CLEAN_UP);
+        TomcatMessaging.TomcatMessage message =
+            new TomcatMessage(TomcatMessageType.CLEAN_UP);
         TomcatClientServerHandler.sendMessageToAllClients(message, false);
     }
 

@@ -71,11 +71,11 @@ public abstract class ClientMission implements ScreenListener {
             DrawingHandler.getInstance().drawCountdown(remainingSeconds,
                                                        remainingSecondsAlert);
             break;
-            
+
         case CLEAN_UP:
-        	this.cleanup();
-        	
-        	break;
+            this.cleanup();
+
+            break;
 
         default:
             break;
@@ -170,7 +170,7 @@ public abstract class ClientMission implements ScreenListener {
         Minecraft.getMinecraft().displayGuiScreen(
             new RichContentScreen(content, false, false));
     }
-    
+
     /**
      * Performs any configuration needed when the mission finishes
      */

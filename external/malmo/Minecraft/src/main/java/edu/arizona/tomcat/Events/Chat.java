@@ -8,9 +8,9 @@ public class Chat extends Event {
     private String playerName;
     /** The message typed in the chat box */
     private String message;
-    
+
     public Chat(ServerChatEvent event) {
-    	this.playerName = event.getPlayer().getName();
-    	this.message = event.getMessage();
+        this.playerName = event.getPlayer().getName();
+        this.message = event.getMessage();
     }
 }

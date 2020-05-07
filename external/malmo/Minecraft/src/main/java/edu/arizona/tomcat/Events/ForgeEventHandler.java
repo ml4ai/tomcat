@@ -15,6 +15,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -23,7 +24,6 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.event.CommandEvent;
 
 public class ForgeEventHandler {
 
@@ -35,7 +35,7 @@ public class ForgeEventHandler {
     }
 
     private static ForgeEventHandler instance = null;
-    private ForgeEventHandler() { }
+    private ForgeEventHandler() {}
 
     public static ForgeEventHandler getInstance() {
         if (instance == null) {
@@ -44,13 +44,13 @@ public class ForgeEventHandler {
         }
         return instance;
     }
-    
+
     /**
      * Unregister as a listener to Minecraft events
      */
     public static void unregister() {
-    	MinecraftForge.EVENT_BUS.unregister(instance);
-    	instance = null;
+        MinecraftForge.EVENT_BUS.unregister(instance);
+        instance = null;
     }
 
     /**
@@ -235,8 +235,10 @@ public class ForgeEventHandler {
     /** Command event handler */
     @SubscribeEvent
     public void handle(CommandEvent event) {
-        if (event.getCommand().getName().equals("tellraw") && event.getParameters()[1].contains("woof")) {
-            this.mqttService.publish(new DogBarkEvent(event), "observations/events/dog_barks");
+        if (event.getCommand().getName().equals("tellraw") &&
+            event.getParameters()[1].contains("woof")) {
+            this.mqttService.publish(new DogBarkEvent(event),
+                                     "observations/events/dog_barks");
         }
     }
 }
