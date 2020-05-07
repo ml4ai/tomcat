@@ -37,7 +37,7 @@ set_local_configuration() {
 
     # ENABLE_FILE_UPLOAD: Enable uploading player's data on to vision server.
     # Defaults to true.
-    export ENABLE_FILE_UPLOAD=${ENABLE_FILE_UPLOAD:-1}
+    export ENABLE_FILE_UPLOAD=${ENABLE_FILE_UPLOAD:-0}
 
     # MAIN_MISSION: Set this to 1 for the Zombie invasion mission, and to 2 for the
     #               USAR Singleplayer mission.
