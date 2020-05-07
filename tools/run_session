@@ -17,7 +17,7 @@ configure_session
 
 # Start mosquitto message broker if it is not already running.
 if [[ ! $(pgrep -l mosquitto | head -n1 | cut -d' ' -f2) == mosquitto ]]; then
-    mosquitto &
+	mosquitto &
 fi
 
 # On macOS, uuidgen produces uppercase UUIDs, so we pipe the output through tr
@@ -35,94 +35,110 @@ if [[ $? -ne 0 ]]; then exit 1; fi
 
 
 start_ffmpeg_recording() {
-    echo "Recording video of player's face using webcam."
-    ffmpeg\
-    -f ${FFMPEG_FMT_WEBCAM}\
-    ${FRAMERATE_OPTION:-}\
-    -i ${FFMPEG_INPUT_DEVICE_WEBCAM}\
-    -r 30\
-    "${MISSION_OUTPUT_DIR}"/webcam_video.mpg\
-    &> ${TOMCAT_TMP_DIR}/ffmpeg_webcam_mission_"$CURRENT_MISSION".log &
-    
-    echo "Recording player audio using microphone."
-    ffmpeg\
-    -nostdin\
-    -f ${FFMPEG_FMT_MICROPHONE}\
-    -i ${FFMPEG_INPUT_DEVICE_MICROPHONE}\
-    "${MISSION_OUTPUT_DIR}"/player_audio.wav\
-    &> ${TOMCAT_TMP_DIR}/ffmpeg_microphone_mission_"$CURRENT_MISSION".log &
+	echo "Recording video of player's face using webcam."
+	ffmpeg\
+	-f ${FFMPEG_FMT_WEBCAM}\
+	${FRAMERATE_OPTION:-}\
+	-i ${FFMPEG_INPUT_DEVICE_WEBCAM}\
+	-r 30\
+	"${MISSION_OUTPUT_DIR}"/webcam_video.mpg\
+	&> ${TOMCAT_TMP_DIR}/ffmpeg_webcam_mission_"$CURRENT_MISSION".log &
+	
+	echo "Recording player audio using microphone."
+	ffmpeg\
+	-nostdin\
+	-f ${FFMPEG_FMT_MICROPHONE}\
+	-i ${FFMPEG_INPUT_DEVICE_MICROPHONE}\
+	"${MISSION_OUTPUT_DIR}"/player_audio.wav\
+	&> ${TOMCAT_TMP_DIR}/ffmpeg_microphone_mission_"$CURRENT_MISSION".log &
 
-    if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
-        echo "Recording system audio."
-        ffmpeg\
-        -nostdin\
-        -f ${FFMPEG_FMT_SYSTEM_AUDIO}\
-        -i ${FFMPEG_INPUT_DEVICE_SYSTEM_AUDIO}\
-        "${MISSION_OUTPUT_DIR}"/system_audio.wav\
-        &> "$TOMCAT_TMP_DIR"/system_audio_recording_mission_"$CURRENT_MISSION".log &
-    fi
+	if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
+		if [[ $OSTYPE == linux-gnu ]]; then
+			echo "Recording system audio for Linux."
+			# For Linux system audio recording, we will use pacat.
+			# We need to extract the alsa output monitor.
+			export ALSA_OUTPUT_MONITOR=`pacmd list-sources | \
+			awk '/name:/ && /monitor/ {print $2 }'|sed 's/[<,>]//g'`
+			# Calling pacat command.
+			pacat --record -d ${ALSA_OUTPUT_MONITOR} \
+			> "${MISSION_OUTPUT_DIR}"/system_audio.raw &
+		else
+			echo "Recording system audio."
+			ffmpeg\
+			-nostdin\
+			-f ${FFMPEG_FMT_SYSTEM_AUDIO}\
+			-i ${FFMPEG_INPUT_DEVICE_SYSTEM_AUDIO}\
+			"${MISSION_OUTPUT_DIR}"/system_audio.wav\
+			&> "$TOMCAT_TMP_DIR"/system_audio_recording_mission_"$CURRENT_MISSION".log &
+		fi
+	fi
 
-    # Recording game screen.
-    echo "Recording player's screen."
-    screen_video="${MISSION_OUTPUT_DIR}"/screen_video.mpg
+	# Recording game screen.
+	echo "Recording player's screen."
+	screen_video="${MISSION_OUTPUT_DIR}"/screen_video.mpg
 
-    # On macOS, the -i option must be given before the -s option, and on Ubuntu
-    # it's the other way around.
-    if [[ "$OSTYPE"  == "darwin"* ]]; then
-        ffmpeg -nostdin -f ${FFMPEG_FMT_SCREEN_CAPTURE}\
-        -i ${FFMPEG_INPUT_DEVICE_SCREEN_CAPTURE}\
-        -s $SCREEN_DIMENSIONS\
-        "$screen_video" &> "$TOMCAT_TMP_DIR"/screen_video_recording_mission_"$CURRENT_MISSION".log &
-    else
-        ffmpeg -nostdin -f ${FFMPEG_FMT_SCREEN_CAPTURE}\
-        -s $SCREEN_DIMENSIONS\
-        -i ${FFMPEG_INPUT_DEVICE_SCREEN_CAPTURE}\
-        "$screen_video" &> "$TOMCAT_TMP_DIR"/screen_video_recording_mission_"$CURRENT_MISSION".log &
-    fi
+	# On macOS, the -i option must be given before the -s option, and on Ubuntu
+	# it's the other way around.
+	if [[ "$OSTYPE"  == "darwin"* ]]; then
+		ffmpeg -nostdin -f ${FFMPEG_FMT_SCREEN_CAPTURE}\
+		-i ${FFMPEG_INPUT_DEVICE_SCREEN_CAPTURE}\
+		-s $SCREEN_DIMENSIONS\
+		"$screen_video" &> "$TOMCAT_TMP_DIR"/screen_video_recording_mission_"$CURRENT_MISSION".log &
+	else
+		ffmpeg -nostdin -f ${FFMPEG_FMT_SCREEN_CAPTURE}\
+		-s $SCREEN_DIMENSIONS\
+		-i ${FFMPEG_INPUT_DEVICE_SCREEN_CAPTURE}\
+		"$screen_video" &> "$TOMCAT_TMP_DIR"/screen_video_recording_mission_"$CURRENT_MISSION".log &
+	fi
 }
 
 
 
 # Function to cleanup things on exit or keyboard interrupt.
 cleanup() {
-    cleanup_status=0 
+	cleanup_status=0 
 
-    echo "Script run_session is cleaning up." 
+	echo "Script run_session is cleaning up." 
 
-    if (( ENABLE_FFMPEG )); then pkill ffmpeg; fi
+	if (( ENABLE_FFMPEG )); then 
+		pkill ffmpeg
+		if [[ $ENABLE_SYSTEM_AUDIO_RECORDING -eq 1 && $OSTYPE == linux-gnu ]]; then
+			pkill pacat
+		fi
+	fi
 
-    # Kill any remaining mosquitto, mosquitto_sub, and mosquitto_pub processes
-    pkill mosquitto
+	# Kill any remaining mosquitto, mosquitto_sub, and mosquitto_pub processes
+	pkill mosquitto_sub
 
-    if [[ ${RECYCLE_MINECRAFT} -lt 2 ]]; then
-        if ! "${TOMCAT}/tools/kill_minecraft"; then cleanup_status=1; fi
-    fi
+	if [[ ${RECYCLE_MINECRAFT} -lt 2 ]]; then
+		if ! "${TOMCAT}/tools/kill_minecraft"; then cleanup_status=1; fi
+	fi
 
-    if [[ $CI -eq 0  \
-          && $ENABLE_SYSTEM_AUDIO_RECORDING -eq 1 \
-          && "$OSTYPE"  == "darwin"* ]]; then
-        
-        # Switching the audio output from the multi-output device to the
-        # built-in output.
-        if ! SwitchAudioSource -s "$ORIGINAL_OUTPUT_DEVICE"; then
-            echo " "
-            echo "Failed to switch audio output device back to what it was"\
-                 "before run_session (${ORIGINAL_OUTPUT_DEVICE})."
-            echo " "
-            cleanup_status=1
-        fi
-    fi
+	if [[ $CI -eq 0  \
+		  && $ENABLE_SYSTEM_AUDIO_RECORDING -eq 1 \
+		  && "$OSTYPE"	== "darwin"* ]]; then
+		
+		# Switching the audio output from the multi-output device to the
+		# built-in output.
+		if ! SwitchAudioSource -s "$ORIGINAL_OUTPUT_DEVICE"; then
+			echo " "
+			echo "Failed to switch audio output device back to what it was"\
+				 "before run_session (${ORIGINAL_OUTPUT_DEVICE})."
+			echo " "
+			cleanup_status=1
+		fi
+	fi
 
-    exit ${cleanup_status}
+	exit ${cleanup_status}
 }
 
 
 # A function to handle cleanup when a user interrupts the script with Ctrl+C
 user_interrupt() {
-    echo "Detected keyboard interrupt."
-    echo "Cleaning up now"
-    cleanup
-    exit 1
+	echo "Detected keyboard interrupt."
+	echo "Cleaning up now"
+	cleanup
+	exit 1
 }
 
 
@@ -130,132 +146,141 @@ trap user_interrupt SIGINT SIGTERM
 
 
 do_mission() {
-    export CURRENT_MISSION="$1"
-    echo " "
-    echo "Running mission ${CURRENT_MISSION} in ${TOMCAT}."
-    echo " "
-    mission_log="$TOMCAT_TMP_DIR"/mission_"$CURRENT_MISSION".log
-    export MISSION_OUTPUT_DIR="${session_output_dir}"/mission_"$CURRENT_MISSION"
-    mkdir -p "$MISSION_OUTPUT_DIR"
-    malmo_data="$MISSION_OUTPUT_DIR"/malmo_data.txt
-    chat_data="$MISSION_OUTPUT_DIR"/chat.txt
-    event_data="$MISSION_OUTPUT_DIR"/events.txt
-    self_report_data="$MISSION_OUTPUT_DIR"/self_reports.txt
+	export CURRENT_MISSION="$1"
+	echo " "
+	echo "Running mission ${CURRENT_MISSION} in ${TOMCAT}."
+	echo " "
+	mission_log="$TOMCAT_TMP_DIR"/mission_"$CURRENT_MISSION".log
+	export MISSION_OUTPUT_DIR="${session_output_dir}"/mission_"$CURRENT_MISSION"
+	mkdir -p "$MISSION_OUTPUT_DIR"
+	malmo_data="$MISSION_OUTPUT_DIR"/malmo_data.txt
+	chat_data="$MISSION_OUTPUT_DIR"/chat.txt
+	event_data="$MISSION_OUTPUT_DIR"/events.txt
+	self_report_data="$MISSION_OUTPUT_DIR"/self_reports.txt
 
-    # Kobus: Other mechanisms are in place that now mean we might not want to do
-    # a second try. So, let's test with num_tries=1, and if this works out, we
-    # can clean the loop. 
-    num_tries=1
-    try=0
+	# Kobus: Other mechanisms are in place that now mean we might not want to do
+	# a second try. So, let's test with num_tries=1, and if this works out, we
+	# can clean the loop. 
+	num_tries=1
+	try=0
 
 
-    while [ $try -lt $num_tries ]; do
-        if ! "${TOMCAT}"/tools/check_minecraft; then
-            echo "Main mission cannot find or create a viable Minecraft process."
-            cleanup
-            exit 1  
-        fi 
+	while [ $try -lt $num_tries ]; do
+		if ! "${TOMCAT}"/tools/check_minecraft; then
+			echo "Main mission cannot find or create a viable Minecraft process."
+			cleanup
+			exit 1	
+		fi 
 
-        runExperiment_args="--mission ${CURRENT_MISSION}\
-                            --record_observations\
-                            --uuid ${session_uuid}"
+		runExperiment_args="--mission ${CURRENT_MISSION}\
+							--record_observations\
+							--uuid ${session_uuid}"
 
-        if [[ $CURRENT_MISSION -gt 0 ]]; then
-            runExperiment_args="${runExperiment_args} --time_limit ${TIME_LIMIT}"
-        fi
+		if [[ $CURRENT_MISSION -gt 0 ]]; then
+			runExperiment_args="${runExperiment_args} --time_limit ${TIME_LIMIT}"
+		fi
 
-        if (( ENABLE_FFMPEG )); then
-            start_ffmpeg_recording
-        fi
-        # Publish the Malmo observation messages to the message bus on the
-        # topic observations/state.
-        "${TOMCAT}"/build/bin/runExperiment\
-        $runExperiment_args\
-        2> "${mission_log}" &
-        pid_runExperiment=$!
+		if (( ENABLE_FFMPEG )); then
+			start_ffmpeg_recording
+		fi
+		# Publish the Malmo observation messages to the message bus on the
+		# topic observations/state.
+		"${TOMCAT}"/build/bin/runExperiment\
+		$runExperiment_args\
+		2> "${mission_log}" &
+		pid_runExperiment=$!
 
-        # Subscribe to the observations/state topic on the message bus and
-        # redirect the output to a file.
-        mosquitto_sub -t observations/state > "$malmo_data" &
-        pid_observations_state=$!
-        mosquitto_sub -t observations/chat > "$chat_data" &
-        pid_observations_chat=$!
-        mosquitto_sub -t "observations/events/#" > "$event_data" &
-        pid_observations_events=$!
-        mosquitto_sub -t observations/self_reports > "$self_report_data" &
-        pid_observations_self_reports=$!
+		# Subscribe to the observations/state topic on the message bus and
+		# redirect the output to a file.
+		mosquitto_sub -t observations/state > "$malmo_data" &
+		pid_observations_state=$!
+		mosquitto_sub -t observations/chat > "$chat_data" &
+		pid_observations_chat=$!
+		mosquitto_sub -t "observations/events/#" > "$event_data" &
+		pid_observations_events=$!
+		mosquitto_sub -t observations/self_reports > "$self_report_data" &
+		pid_observations_self_reports=$!
 
-        if [[ $CURRENT_MISSION -gt 0 ]]; then
-            echo "Time limit set to ${TIME_LIMIT}."
-        fi
-        echo "Process ID corresponding to ./bin/runExperiment is"\
-             "$pid_runExperiment ... waiting for it to complete."
+		if [[ $CURRENT_MISSION -gt 0 ]]; then
+			echo "Time limit set to ${TIME_LIMIT}."
+		fi
+		echo "Process ID corresponding to ./bin/runExperiment is"\
+			 "$pid_runExperiment ... waiting for it to complete."
 
-        # Set up a background job to kill the mission if Minecraft dies.
-        ${TOMCAT}/tools/kill_me_if_no_minecraft $pid_runExperiment < /dev/null & 
+		# Set up a background job to kill the mission if Minecraft dies.
+		${TOMCAT}/tools/kill_me_if_no_minecraft $pid_runExperiment < /dev/null & 
 
-        wait $pid_runExperiment
-        mission_status=$?
+		wait $pid_runExperiment
+		mission_status=$?
 
-        if [[ ${mission_status} -eq 0 ]]; then
-            mission_status=$(grep -c "Error starting mission" "${mission_log}")
-        fi
+		if [[ ${mission_status} -eq 0 ]]; then
+			mission_status=$(grep -c "Error starting mission" "${mission_log}")
+		fi
 
-        if [[ ${mission_status} -eq 0 ]]; then
-            kill $pid_observations_state
-            kill $pid_observations_chat
-            kill $pid_observations_events
-            kill $pid_observations_self_reports
-            echo "Mission ${CURRENT_MISSION} ended with exit code 0."
-            echo "All recorded data is in ${MISSION_OUTPUT_DIR}"
-            echo " "
-            common_files=("events.txt" "malmo_data.txt" "chat.txt" "self_reports.txt")
-            if (( ENABLE_FFMPEG )); then
-                common_files+=("player_audio.wav" "screen_video.mpg" "webcam_video.mpg")
-                if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
-                    common_files+=("system_audio.wav")
-                fi
-            fi
-            echo "checking files from ${MISSION_OUTPUT_DIR}..."
-            for file in ${common_files[@]}; do
-                if [ -f "${MISSION_OUTPUT_DIR}/${file}" ]; then
-                    file_size=$(ls -l "${MISSION_OUTPUT_DIR}/${file}" | awk '{print $5}')
-                    if [[ ${file_size} -eq 0 ]]; then
-                        echo "WARNING: ${file} from Mission ${CURRENT_MISSION}: size is 0 bytes"
-                    fi
-                else
-                    echo "WARNING: ${file} from Mission ${CURRENT_MISSION}: does not exist"
-                fi
-            done
-            echo -e '\n'
-            break
-        fi
+		if [[ ${mission_status} -eq 0 ]]; then
+			kill $pid_observations_state
+			kill $pid_observations_chat
+			kill $pid_observations_events
+			kill $pid_observations_self_reports
+			echo "Mission ${CURRENT_MISSION} ended with exit code 0."
+			echo "All recorded data is in ${MISSION_OUTPUT_DIR}"
+			echo " "
+			common_files=("events.txt" "malmo_data.txt" "chat.txt" "self_reports.txt")
+			if (( ENABLE_FFMPEG )); then
+				common_files+=("player_audio.wav" "screen_video.mpg" "webcam_video.mpg")
+				if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
+					common_files+=("system_audio.wav")
+				fi
+			fi
+			echo "checking files from ${MISSION_OUTPUT_DIR}..."
+			for file in ${common_files[@]}; do
+				if [ -f "${MISSION_OUTPUT_DIR}/${file}" ]; then
+					file_size=$(ls -l "${MISSION_OUTPUT_DIR}/${file}" | awk '{print $5}')
+					if [[ ${file_size} -eq 0 ]]; then
+						echo "WARNING: ${file} from Mission ${CURRENT_MISSION}: size is 0 bytes"
+					fi
+				else
+					echo "WARNING: ${file} from Mission ${CURRENT_MISSION}: does not exist"
+				fi
+			done
+			echo -e '\n'
+			break
+		fi
 
-        (( try++ ))
+		(( try++ ))
 
-        if [[ $try -lt $num_tries ]]; then
-            echo "Mission ${CURRENT_MISSION} ended with exit code 1."
-            echo "Killing all Minecraft and Malmo processes that can be found"
-            echo "and trying again."
+		if [[ $try -lt $num_tries ]]; then
+			echo "Mission ${CURRENT_MISSION} ended with exit code 1."
+			echo "Killing all Minecraft and Malmo processes that can be found"
+			echo "and trying again."
 
-            if [[ ${RECYCLE_MINECRAFT} -lt 1 ]]; then
-                "$TOMCAT"/tools/kill_minecraft
-            fi 
-        fi
-    done
+			if [[ ${RECYCLE_MINECRAFT} -lt 1 ]]; then
+				"$TOMCAT"/tools/kill_minecraft
+			fi 
+		fi
+	done
 }
 
 echo TOMCAT_DEBUG_ECHO: $TOMCAT_DEBUG_ECHO
 if (( DO_TUTORIAL_MISSION )); then
-    do_mission 0
+	do_mission 0
 else
-    ${TOMCAT_DEBUG_ECHO} "Skipping tutorial because DO_TUTORIAL_MISSION=0"
+	${TOMCAT_DEBUG_ECHO} "Skipping tutorial because DO_TUTORIAL_MISSION=0"
 fi
 
 if [[ $DO_TUTORIAL_MISSION -eq 1 && $DO_MAIN_MISSION -eq 1 ]]; then
-    # We sleep for a few seconds to let the player catch a breath between the
-    # tutorial and main missions.
-    sleep 6
+	# If we are doing both tutorial and main missions,
+	# we need to kill ffmpeg and pcat processes before starting main mission.
+	#TODO: Also kill pacat for linux system audio.
+	if (( ENABLE_FFMPEG )); then 
+		pkill ffmpeg
+		if [[ $ENABLE_SYSTEM_AUDIO_RECORDING -eq 1 && $OSTYPE == linux-gnu ]]; then
+			pkill pacat
+		fi
+	fi
+	# We sleep for a few seconds to let the player catch a breath between the
+	# tutorial and main missions.
+	sleep 6
 fi
 
 if (( DO_MAIN_MISSION )); then do_mission ${MAIN_MISSION}; fi
@@ -263,22 +288,22 @@ if (( DO_MAIN_MISSION )); then do_mission ${MAIN_MISSION}; fi
 # Main mission has been completed. 
 # Call data_upload() if DO_MAIN_MISSION and ENABLE_DATA_UPLOAD are set to 1.
 if [[ $DO_MAIN_MISSION -eq 1 && $ENABLE_FILE_UPLOAD -eq 1 ]]; then
-    if [[ -f "${TOMCAT}/.netrc" ]]; then
-        echo "Detected .netrc file in the ${TOMCAT} directory."
-        echo "We assume that you are a member of the UA team, have run a"
-        echo "session and want your session data uploaded to the vision server."
-        echo "We will now attempt to do that."
-        if ! "$TOMCAT"/tools/upload_session "$session_uuid"; then 
-            echo "Data upload failed."
-            echo "You can try uploading the session later by running:"
-            echo "    ./tools/upload_session ${session_uuid}"
-        fi
-    else
-        echo "No .netrc file was detected in the ${TOMCAT} directory, so we "\
-             "will not attempt to automatically upload the data. "\
-             "If you are a UArizona team member, please email "\
-             "[tomcat-support at list dot arizona dot edu] to obtain one."
-    fi
+	if [[ -f "${TOMCAT}/.netrc" ]]; then
+		echo "Detected .netrc file in the ${TOMCAT} directory."
+		echo "We assume that you are a member of the UA team, have run a"
+		echo "session and want your session data uploaded to the vision server."
+		echo "We will now attempt to do that."
+		if ! "$TOMCAT"/tools/upload_session "$session_uuid"; then 
+			echo "Data upload failed."
+			echo "You can try uploading the session later by running:"
+			echo "	  ./tools/upload_session ${session_uuid}"
+		fi
+	else
+		echo "No .netrc file was detected in the ${TOMCAT} directory, so we "\
+			 "will not attempt to automatically upload the data. "\
+			 "If you are a UArizona team member, please email "\
+			 "[tomcat-support at list dot arizona dot edu] to obtain one."
+	fi
 fi
 
 echo "Finished running all sessions in ${TOMCAT}."
