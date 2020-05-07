@@ -52,11 +52,13 @@ data_upload(){
     curl --netrc-file "$auth_file" -F "inputfile=@${session_folder}.zip"\
         "$web_address" &> "$curl_log"
     if [[ $? -ne 0 ]]; then
-        echo "The curl command to upload the data to the vision server "
-        echo "failed. See ${curl_log} for details."
+        echo "The curl command to upload the data to the vision server "\
+             "failed. See ${curl_log} for details."
         exit 1
+    else
+        echo "Data successfully uploaded to vision. You can access it at "\
+             "http://vision.cs.arizona.edu/~tomcat/index.php"
     fi
-
 }
 
 data_upload $1
