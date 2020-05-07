@@ -16,7 +16,7 @@ data_upload(){
 
     local session_id=$1
     # Authentication file 
-    local auth_file="${TOMCAT}/.netrc"
+    local auth_file="${TOMCAT}/netrc"
     local web_address="http://vision.cs.arizona.edu/~tomcat/upload_file.php"
     local participant_data_folder="${TOMCAT}/data/participant_data"
     local session_folder="${participant_data_folder}/${session_id}"
