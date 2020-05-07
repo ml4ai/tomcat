@@ -5,7 +5,6 @@ import edu.arizona.tomcat.Mission.TutorialMission;
 import edu.arizona.tomcat.Mission.gui.GUIOverlayVillagersSaved;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.SoundEvents;
-import net.minecraftforge.common.MinecraftForge;
 
 public class TutorialClientMission extends ClientMission {
 
@@ -17,8 +16,7 @@ public class TutorialClientMission extends ClientMission {
         super();
         // Sets indicator of number of villagers saved to be rerendered by a
         // Minecraft event schema.
-        MinecraftForge.EVENT_BUS.register(
-            new GUIOverlayVillagersSaved(TutorialMission.NUMBER_OF_VILLAGERS));
+        GUIOverlayVillagersSaved.register(TutorialMission.NUMBER_OF_VILLAGERS);        
     }
 
     @Override
@@ -79,5 +77,10 @@ public class TutorialClientMission extends ClientMission {
 
         Minecraft.getMinecraft().gameSettings.thirdPersonView =
             nextCameraPerspective.ordinal();
+    }
+    
+    @Override
+    public void cleanup() {   
+    	GUIOverlayVillagersSaved.unregister();
     }
 }

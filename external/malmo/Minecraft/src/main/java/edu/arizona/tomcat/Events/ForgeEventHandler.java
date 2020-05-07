@@ -26,12 +26,21 @@ public class ForgeEventHandler {
     }
 
     private static ForgeEventHandler instance = null;
-    private ForgeEventHandler() { MinecraftForge.EVENT_BUS.register(this); }
+    private ForgeEventHandler() { }
     public static ForgeEventHandler getInstance() {
         if (instance == null) {
             instance = new ForgeEventHandler();
+            MinecraftForge.EVENT_BUS.register(instance);
         }
         return instance;
+    }
+    
+    /**
+     * Unregister as a listener to Minecraft events
+     */
+    public static void unregister() {
+    	MinecraftForge.EVENT_BUS.unregister(instance);
+    	instance = null;
     }
 
     /** Instance of the MqttService singleton to use for publishing messages. */

@@ -25,7 +25,8 @@ public class TomcatMessaging {
         DISPLAY_INSTRUCTIONS,
         CONNECTION_ERROR,
         UPDATE_COUNTDOWN,
-        INIT_MISSION
+        INIT_MISSION,
+        CLEAN_UP
     }
     ;
 

@@ -5,7 +5,6 @@ import edu.arizona.tomcat.Mission.ZombieMission;
 import edu.arizona.tomcat.Mission.gui.GUIOverlayVillagersSaved;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.SoundEvents;
-import net.minecraftforge.common.MinecraftForge;
 
 public class ZombieClientMission extends ClientMission {
 
@@ -15,8 +14,7 @@ public class ZombieClientMission extends ClientMission {
         super();
         // Sets indicator of number of villagers saved to be rerendered by a
         // Minecraft event schema.
-        MinecraftForge.EVENT_BUS.register(
-            new GUIOverlayVillagersSaved(ZombieMission.NUMBER_OF_VILLAGERS));
+        GUIOverlayVillagersSaved.register(ZombieMission.NUMBER_OF_VILLAGERS);
     }
 
     @Override
@@ -45,5 +43,10 @@ public class ZombieClientMission extends ClientMission {
      */
     public int getNumberOfSavedVillagers() {
         return this.numberOfSavedVillagers;
+    }
+    
+    @Override
+    public void cleanup() {
+    	GUIOverlayVillagersSaved.unregister();
     }
 }
