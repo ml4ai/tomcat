@@ -112,8 +112,7 @@ if [[ -n "${to_kill}" ]]; then
             kill -15 ${proc}
             sleep 1 
         else 
-            echo "Process ${proc} no longer exists, since we have already "\
-                 "killed it."
+            echo "Process ${proc} no longer exists, so we don't need to kill it."
         fi 
     done 
 
