@@ -8,5 +8,11 @@ TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
 export TOMCAT
 
 pushd "$TOMCAT"/data/worlds > /dev/null
+    if [[ -f Singleplayer.tgz.gz ]]; then
+        echo "Found a file named Singleplayer.tgz.gz. "\
+             "Ubuntu appends .gz to .tgz files downloaded from Google Drive. "\
+             "We will now rename it to Singleplayer.tgz"
+        mv Singleplayer.tgz.gz Singleplayer.tgz
+    fi
     tar -xzf Singleplayer.tgz
 popd > /dev/null
