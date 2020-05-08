@@ -128,7 +128,7 @@ public class TutorialMission extends Mission {
                                                    0,
                                                    1);
         this.approachPoolsPhase.addGoal(
-            new ReachPositionGoal(-635, 4, 1582, 2));
+            new ReachPositionGoal(-635, 4, 1580, 2));
         this.addPhase(approachPoolsPhase);
     }
 
