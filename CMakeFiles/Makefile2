@@ -108,8 +108,8 @@ developer/java_api/clean: developer/java_api/CMakeFiles/java_apidocs.dir/clean
 # Target rules for target CMakeFiles/docs.dir
 
 # All Build rule for target.
-CMakeFiles/docs.dir/all: CMakeFiles/sphinx.dir/all
 CMakeFiles/docs.dir/all: developer/java_api/CMakeFiles/java_apidocs.dir/all
+CMakeFiles/docs.dir/all: CMakeFiles/sphinx.dir/all
 	$(MAKE) -f CMakeFiles/docs.dir/build.make CMakeFiles/docs.dir/depend
 	$(MAKE) -f CMakeFiles/docs.dir/build.make CMakeFiles/docs.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/runner/work/tomcat/tomcat/docs/build/CMakeFiles --progress-num= "Built target docs"
