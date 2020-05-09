@@ -1,12 +1,12 @@
 openapi: 3.0.0
 
 info:
-  title: ASIST Message spec
-  description: ASIST Message spec
+  title: ToMCAT Message Spec
+  description: ToMCAT Message Spec
   version: "0.1"
 
 paths:
-  /observations/events/player/door:
+  /observations/events/player_interactions/blocks/door:
     subscribe:
       responses:
         200:
@@ -15,7 +15,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/DoorEvent'
 
-  /observations/events/player/lever:
+  /observations/events/player_interactions/blocks/lever:
     subscribe:
       responses:
         200:
@@ -24,57 +24,65 @@ paths:
               schema:
                 $ref: '#/components/schemas/LeverEvent'
 
+  /observations/events/player_interactions/left_clicks/blocks:
+    subscribe:
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoorEvent'
+
+  /observations/events/player_interactions/break_events/blocks:
+    subscribe:
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoorEvent'
+
+  /observations/events/entity_death:
+    subscribe:
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoorEvent'
+
+  /observations/chat:
+    subscribe:
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoorEvent'
+
+  /observations/events/dog_barks:
+    subscribe:
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoorEvent'
+
 
 components:
-
   schemas:
-    CommonHeader:
-      title: CommonHeader
-      description: >
-        header desc
-      required:
-        - published
-        - version
-        - message_type
-      properties:
-        published:
-          type: string
-          format: date-time
-        version:
-          type: string
-          example: "0.4"
-        message_type:
-          type: enum
-          enum:
-            - "event"
-            - "agent"
     
-    Msg:
-      title: Msg
-      properties:
-        version:
-          type: string
-          example: "0.4"
-        trial_id:
-          type: string
-          format: uuid
-        sub_type:
-          type: string
-          example: "Event:Lever"
           
-    Message:
-      allOf: 
-      - $ref: '#/components/schemas/Msg'
-      title: Message
-      description: >
-        message desc
+    BlockInteraction:
       properties:
-        header:
-          $ref: '#/components/schemas/CommonHeader'
-        msg:
-          $ref: '#/components/schemas/CommonHeader'
+        player_name:
+          type: string
+        block_position:
+          $ref: '#/components/schemas/Position'
+        block_material:
+          type: string
 
-          
     Position:
       description: "Position vector"
       properties:
