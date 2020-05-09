@@ -31,76 +31,79 @@ import java.util.Hashtable;
 
 public class RewardForMissionEndImplementation
     extends RewardBase implements IRewardProducer {
-  private RewardForMissionEnd params = null;
+    private RewardForMissionEnd params = null;
 
-  @Override
-  public boolean parseParameters(Object params) {
-    if (params == null || !(params instanceof RewardForMissionEnd))
-      return false;
+    @Override
+    public boolean parseParameters(Object params) {
+        if (params == null || !(params instanceof RewardForMissionEnd))
+            return false;
 
-    this.params = (RewardForMissionEnd)params;
-    return true;
-  }
-
-  @Override
-  public void getReward(MissionInit missionInit,
-                        MultidimensionalReward reward) {
-    super.getReward(missionInit, reward);
-    try {
-      Hashtable<String, Object> properties =
-          MalmoMod.getPropertiesForCurrentThread();
-      if (properties.containsKey("QuitCode")) {
-        float reward_value = parseQuitCode((String)properties.get("QuitCode"));
-        reward.add(this.params.getDimension(), reward_value);
-      }
+        this.params = (RewardForMissionEnd)params;
+        return true;
     }
-    catch (Exception e) {
-    }
-  }
 
-  @Override
-  public void prepare(MissionInit missionInit) {
-    super.prepare(missionInit);
-    // Make sure we start with a clean slate:
-    try {
-      if (MalmoMod.getPropertiesForCurrentThread().containsKey("QuitCode"))
-        MalmoMod.getPropertiesForCurrentThread().remove("QuitCode");
-    }
-    catch (Exception e) {
-      System.out.println("Failed to get properties.");
-    }
-  }
-
-  @Override
-  public void cleanup() {
-    super.cleanup();
-  }
-
-  private float parseQuitCode(String qc) {
-    float reward = 0;
-    if (qc != null && !qc.isEmpty() && this.params != null) {
-      String[] codes = qc.split(";");
-      for (String s : codes) {
-        for (MissionEndRewardCase merc : this.params.getReward()) {
-          if (merc.getDescription().equalsIgnoreCase(s)) {
-            float this_reward = merc.getReward().floatValue();
-            float adjusted_reward =
-                adjustAndDistributeReward(this_reward,
-                                          this.params.getDimension(),
-                                          merc.getDistribution());
-            reward += adjusted_reward;
-          }
+    @Override
+    public void getReward(MissionInit missionInit,
+                          MultidimensionalReward reward) {
+        super.getReward(missionInit, reward);
+        try {
+            Hashtable<String, Object> properties =
+                MalmoMod.getPropertiesForCurrentThread();
+            if (properties.containsKey("QuitCode")) {
+                float reward_value =
+                    parseQuitCode((String)properties.get("QuitCode"));
+                reward.add(this.params.getDimension(), reward_value);
+            }
         }
-        if (s.equals(MalmoMod.AGENT_DEAD_QUIT_CODE)) {
-          float this_reward = this.params.getRewardForDeath().floatValue();
-          float adjusted_reward = adjustAndDistributeReward(
-              this_reward,
-              this.params.getDimension(),
-              this.params.getRewardForDeathDistribution());
-          reward += adjusted_reward;
+        catch (Exception e) {
         }
-      }
     }
-    return reward;
-  }
+
+    @Override
+    public void prepare(MissionInit missionInit) {
+        super.prepare(missionInit);
+        // Make sure we start with a clean slate:
+        try {
+            if (MalmoMod.getPropertiesForCurrentThread().containsKey(
+                    "QuitCode"))
+                MalmoMod.getPropertiesForCurrentThread().remove("QuitCode");
+        }
+        catch (Exception e) {
+            System.out.println("Failed to get properties.");
+        }
+    }
+
+    @Override
+    public void cleanup() {
+        super.cleanup();
+    }
+
+    private float parseQuitCode(String qc) {
+        float reward = 0;
+        if (qc != null && !qc.isEmpty() && this.params != null) {
+            String[] codes = qc.split(";");
+            for (String s : codes) {
+                for (MissionEndRewardCase merc : this.params.getReward()) {
+                    if (merc.getDescription().equalsIgnoreCase(s)) {
+                        float this_reward = merc.getReward().floatValue();
+                        float adjusted_reward = adjustAndDistributeReward(
+                            this_reward,
+                            this.params.getDimension(),
+                            merc.getDistribution());
+                        reward += adjusted_reward;
+                    }
+                }
+                if (s.equals(MalmoMod.AGENT_DEAD_QUIT_CODE)) {
+                    float this_reward =
+                        this.params.getRewardForDeath().floatValue();
+                    float adjusted_reward = adjustAndDistributeReward(
+                        this_reward,
+                        this.params.getDimension(),
+                        this.params.getRewardForDeathDistribution());
+                    reward += adjusted_reward;
+                }
+            }
+        }
+        return reward;
+    }
 }

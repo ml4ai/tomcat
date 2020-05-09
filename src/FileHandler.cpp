@@ -7,12 +7,12 @@ using namespace std;
 
 namespace tomcat {
 
-  string FileHandler::getFileContent(string filename) {
-    ifstream inputFile(filename);
-    stringstream stringStream;
-    stringStream << inputFile.rdbuf();
-    inputFile.close();
-    return stringStream.str();
-  }
+    string FileHandler::getFileContent(string filename) {
+        ifstream inputFile(filename);
+        stringstream stringStream;
+        stringStream << inputFile.rdbuf();
+        inputFile.close();
+        return stringStream.str();
+    }
 
 } // namespace tomcat

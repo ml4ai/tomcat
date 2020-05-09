@@ -33,74 +33,75 @@ import com.microsoft.Malmo.Schemas.RewardForSendingCommand;
  */
 public class RewardForSendingCommandImplementation
     extends RewardBase implements IRewardProducer {
-  protected float rewardPerCommand;
-  protected Integer commandTally = 0;
-  private RewardForSendingCommand params;
+    protected float rewardPerCommand;
+    protected Integer commandTally = 0;
+    private RewardForSendingCommand params;
 
-  @Override
-  public boolean parseParameters(Object params) {
-    super.parseParameters(params);
-    if (params == null || !(params instanceof RewardForSendingCommand))
-      return false;
+    @Override
+    public boolean parseParameters(Object params) {
+        super.parseParameters(params);
+        if (params == null || !(params instanceof RewardForSendingCommand))
+            return false;
 
-    this.params = (RewardForSendingCommand)params;
-    this.rewardPerCommand = this.params.getReward().floatValue();
-    return true;
-  }
-
-  @Override
-  public void prepare(MissionInit missionInit) {
-    super.prepare(missionInit);
-    // We need to see the commands as they come in, so we can calculate the
-    // reward.
-    // To do this we create our own command handler and insert it at the
-    // root of the command chain.
-    // This is also how the ObservationFromRecentCommands handler works.
-    // It's slightly dirty behaviour, but it's cleaner than the other
-    // options!
-    MissionBehaviour mb = parentBehaviour();
-    ICommandHandler oldch = mb.commandHandler;
-    CommandGroup newch = new CommandGroup() {
-      protected boolean onExecute(
-          String verb, String parameter, MissionInit missionInit) {
-        // See if this command gets handled by the legitimate handlers:
-        boolean handled = super.onExecute(verb, parameter, missionInit);
-        if (handled) // Yes, so record it:
-        {
-          synchronized (
-              RewardForSendingCommandImplementation.this.commandTally) {
-            RewardForSendingCommandImplementation.this.commandTally++;
-          }
-        }
-        return handled;
-      }
-    };
-
-    newch.setOverriding((oldch != null) ? oldch.isOverriding() : true);
-    if (oldch != null)
-      newch.addCommandHandler(oldch);
-    mb.commandHandler = newch;
-  }
-
-  @Override
-  public void cleanup() {
-    super.cleanup();
-  }
-
-  @Override
-  public void getReward(MissionInit missionInit,
-                        MultidimensionalReward reward) {
-    super.getReward(missionInit, reward);
-    synchronized (RewardForSendingCommandImplementation.this.commandTally) {
-      if (this.commandTally > 0) {
-        float reward_value = this.rewardPerCommand * this.commandTally;
-        float adjusted_reward =
-            adjustAndDistributeReward(reward_value,
-                                      this.params.getDimension(),
-                                      this.params.getDistribution());
-        reward.add(this.params.getDimension(), adjusted_reward);
-        this.commandTally = 0;
-      }
+        this.params = (RewardForSendingCommand)params;
+        this.rewardPerCommand = this.params.getReward().floatValue();
+        return true;
     }
-  }
+
+    @Override
+    public void prepare(MissionInit missionInit) {
+        super.prepare(missionInit);
+        // We need to see the commands as they come in, so we can calculate the
+        // reward.
+        // To do this we create our own command handler and insert it at the
+        // root of the command chain.
+        // This is also how the ObservationFromRecentCommands handler works.
+        // It's slightly dirty behaviour, but it's cleaner than the other
+        // options!
+        MissionBehaviour mb = parentBehaviour();
+        ICommandHandler oldch = mb.commandHandler;
+        CommandGroup newch = new CommandGroup() {
+            protected boolean onExecute(
+                String verb, String parameter, MissionInit missionInit) {
+                // See if this command gets handled by the legitimate handlers:
+                boolean handled = super.onExecute(verb, parameter, missionInit);
+                if (handled) // Yes, so record it:
+                {
+                    synchronized (RewardForSendingCommandImplementation.this
+                                      .commandTally) {
+                        RewardForSendingCommandImplementation.this
+                            .commandTally++;
+                    }
+                }
+                return handled;
+            }
+        };
+
+        newch.setOverriding((oldch != null) ? oldch.isOverriding() : true);
+        if (oldch != null)
+            newch.addCommandHandler(oldch);
+        mb.commandHandler = newch;
+    }
+
+    @Override
+    public void cleanup() {
+        super.cleanup();
+    }
+
+    @Override
+    public void getReward(MissionInit missionInit,
+                          MultidimensionalReward reward) {
+        super.getReward(missionInit, reward);
+        synchronized (RewardForSendingCommandImplementation.this.commandTally) {
+            if (this.commandTally > 0) {
+                float reward_value = this.rewardPerCommand * this.commandTally;
+                float adjusted_reward =
+                    adjustAndDistributeReward(reward_value,
+                                              this.params.getDimension(),
+                                              this.params.getDistribution());
+                reward.add(this.params.getDimension(), adjusted_reward);
+                this.commandTally = 0;
+            }
+        }
+    }
 }

@@ -30,21 +30,21 @@
 #include <vector>
 
 namespace malmo {
-  //! An array of unsigned chars with an attached timestamp saying when it was
-  //! collected.
-  struct TimestampedUnsignedCharVector {
-    //! The timestamp.
-    boost::posix_time::ptime timestamp;
+    //! An array of unsigned chars with an attached timestamp saying when it was
+    //! collected.
+    struct TimestampedUnsignedCharVector {
+        //! The timestamp.
+        boost::posix_time::ptime timestamp;
 
-    //! The array of unsigned char values.
-    std::vector<unsigned char> data;
+        //! The array of unsigned char values.
+        std::vector<unsigned char> data;
 
-    TimestampedUnsignedCharVector(boost::posix_time::ptime timestamp,
-                                  std::vector<unsigned char> data)
-        : timestamp(timestamp), data(data) {}
+        TimestampedUnsignedCharVector(boost::posix_time::ptime timestamp,
+                                      std::vector<unsigned char> data)
+            : timestamp(timestamp), data(data) {}
 
-    TimestampedUnsignedCharVector() {}
-  };
+        TimestampedUnsignedCharVector() {}
+    };
 } // namespace malmo
 
 #endif

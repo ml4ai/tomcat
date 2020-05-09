@@ -38,51 +38,52 @@
 #include <string>
 
 namespace malmo {
-  //! A TCP server that receives strings and can optionally persist to file.
-  class StringServer : ServerScope {
-  public:
-    //! Constructs a string server on a specified port.
-    StringServer(
-        boost::asio::io_service& io_service,
-        int port,
-        const boost::function<void(const TimestampedString string_message)>
-            handle_string,
-        const std::string& log_name);
+    //! A TCP server that receives strings and can optionally persist to file.
+    class StringServer : ServerScope {
+      public:
+        //! Constructs a string server on a specified port.
+        StringServer(
+            boost::asio::io_service& io_service,
+            int port,
+            const boost::function<void(const TimestampedString string_message)>
+                handle_string,
+            const std::string& log_name);
 
-    StringServer& record(std::string path);
+        StringServer& record(std::string path);
 
-    StringServer& confirmWithFixedReply(std::string reply);
+        StringServer& confirmWithFixedReply(std::string reply);
 
-    StringServer& expectSizeHeader(bool expect_size_header);
+        StringServer& expectSizeHeader(bool expect_size_header);
 
-    int getPort() const;
+        int getPort() const;
 
-    //! Stop recording the data being received by the server.
-    void stopRecording();
+        //! Stop recording the data being received by the server.
+        void stopRecording();
 
-    void recordMessage(const TimestampedString message);
+        void recordMessage(const TimestampedString message);
 
-    //! Starts the string server.
+        //! Starts the string server.
 
-    void start(boost::shared_ptr<StringServer>& scope);
+        void start(boost::shared_ptr<StringServer>& scope);
 
-    virtual void release();
+        virtual void release();
 
-    void close();
+        void close();
 
-  private:
-    void handleMessage(const TimestampedUnsignedCharVector message);
+      private:
+        void handleMessage(const TimestampedUnsignedCharVector message);
 
-    boost::function<void(const TimestampedString string_message)> handle_string;
-    boost::asio::io_service& io_service;
-    int port;
-    const std::string log_name;
-    boost::shared_ptr<TCPServer> server;
-    std::ofstream writer;
-    boost::mutex write_mutex;
+        boost::function<void(const TimestampedString string_message)>
+            handle_string;
+        boost::asio::io_service& io_service;
+        int port;
+        const std::string log_name;
+        boost::shared_ptr<TCPServer> server;
+        std::ofstream writer;
+        boost::mutex write_mutex;
 
-    boost::shared_ptr<StringServer> scope = nullptr;
-  };
+        boost::shared_ptr<StringServer> scope = nullptr;
+    };
 } // namespace malmo
 
 #endif

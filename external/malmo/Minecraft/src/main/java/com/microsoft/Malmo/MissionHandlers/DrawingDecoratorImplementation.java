@@ -39,54 +39,55 @@ import net.minecraft.world.World;
  */
 public class DrawingDecoratorImplementation
     extends HandlerBase implements IWorldDecorator {
-  DrawingDecorator drawing = null;
+    DrawingDecorator drawing = null;
 
-  @Override
-  public boolean parseParameters(Object params) {
-    if (params == null || !(params instanceof DrawingDecorator))
-      return false;
+    @Override
+    public boolean parseParameters(Object params) {
+        if (params == null || !(params instanceof DrawingDecorator))
+            return false;
 
-    this.drawing = (DrawingDecorator)params;
-    return true;
-  }
-
-  @Override
-  public void buildOnWorld(MissionInit missionInit, World world) {
-    Mission mission = missionInit.getMission();
-    if (mission != null) {
-      try {
-        BlockDrawingHelper drawContext = new BlockDrawingHelper();
-        drawContext.Draw(this.drawing, world);
-      }
-      catch (Exception e) {
-        System.out.println("Error drawing into the world: " + e.getMessage());
-      }
+        this.drawing = (DrawingDecorator)params;
+        return true;
     }
-  }
 
-  @Override
-  public void update(World world) {}
+    @Override
+    public void buildOnWorld(MissionInit missionInit, World world) {
+        Mission mission = missionInit.getMission();
+        if (mission != null) {
+            try {
+                BlockDrawingHelper drawContext = new BlockDrawingHelper();
+                drawContext.Draw(this.drawing, world);
+            }
+            catch (Exception e) {
+                System.out.println("Error drawing into the world: " +
+                                   e.getMessage());
+            }
+        }
+    }
 
-  @Override
-  public boolean getExtraAgentHandlersAndData(List<Object> handlers,
-                                              Map<String, String> data) {
-    return false;
-  }
+    @Override
+    public void update(World world) {}
 
-  @Override
-  public void prepare(MissionInit missionInit) {}
+    @Override
+    public boolean getExtraAgentHandlersAndData(List<Object> handlers,
+                                                Map<String, String> data) {
+        return false;
+    }
 
-  @Override
-  public void cleanup() {}
+    @Override
+    public void prepare(MissionInit missionInit) {}
 
-  @Override
-  public boolean targetedUpdate(String nextAgentName) {
-    return false; // Does nothing.
-  }
+    @Override
+    public void cleanup() {}
 
-  @Override
-  public void getTurnParticipants(ArrayList<String> participants,
-                                  ArrayList<Integer> participantSlots) {
-    // Does nothing.
-  }
+    @Override
+    public boolean targetedUpdate(String nextAgentName) {
+        return false; // Does nothing.
+    }
+
+    @Override
+    public void getTurnParticipants(ArrayList<String> participants,
+                                    ArrayList<Integer> participantSlots) {
+        // Does nothing.
+    }
 }

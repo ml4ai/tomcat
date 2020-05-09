@@ -38,49 +38,49 @@
 #include <string>
 
 namespace malmo {
-  class BmpFrameWriter : public IFrameWriter {
-  public:
-    BmpFrameWriter(std::string path,
-                   std::string frame_info_filename,
-                   bool saveInNumpyFormat);
-    virtual ~BmpFrameWriter();
-    virtual void open();
-    virtual void close();
+    class BmpFrameWriter : public IFrameWriter {
+      public:
+        BmpFrameWriter(std::string path,
+                       std::string frame_info_filename,
+                       bool saveInNumpyFormat);
+        virtual ~BmpFrameWriter();
+        virtual void open();
+        virtual void close();
 
-    virtual bool write(TimestampedVideoFrame frame);
-    virtual bool isOpen() const;
-    virtual size_t getFrameWriteCount() const {
-      return frames_actually_written;
-    }
+        virtual bool write(TimestampedVideoFrame frame);
+        virtual bool isOpen() const;
+        virtual size_t getFrameWriteCount() const {
+            return frames_actually_written;
+        }
 
-    static std::unique_ptr<BmpFrameWriter>
-    create(std::string path,
-           std::string frame_info_filename,
-           bool saveInNumpyFormat);
+        static std::unique_ptr<BmpFrameWriter>
+        create(std::string path,
+               std::string frame_info_filename,
+               bool saveInNumpyFormat);
 
-  protected:
-    std::string path;
-    bool is_open;
-    bool is_numpy_format;
+      protected:
+        std::string path;
+        bool is_open;
+        bool is_numpy_format;
 
-  private:
-    void writeFrames();
+      private:
+        void writeFrames();
 
-    boost::posix_time::ptime start_time;
-    boost::posix_time::ptime last_timestamp;
-    boost::posix_time::time_duration frame_duration;
-    std::ofstream frame_info_stream;
-    boost::filesystem::path frame_info_path;
-    boost::filesystem::path frames_path;
-    int frame_index;
-    int frames_actually_written = 0;
+        boost::posix_time::ptime start_time;
+        boost::posix_time::ptime last_timestamp;
+        boost::posix_time::time_duration frame_duration;
+        std::ofstream frame_info_stream;
+        boost::filesystem::path frame_info_path;
+        boost::filesystem::path frames_path;
+        int frame_index;
+        int frames_actually_written = 0;
 
-    std::queue<TimestampedVideoFrame> frame_buffer;
-    boost::mutex write_mutex;
-    boost::mutex frame_buffer_mutex;
-    boost::mutex frames_available_mutex;
-    boost::condition_variable frames_available_cond;
-    bool frames_available;
-    boost::thread frame_writer_thread;
-  };
+        std::queue<TimestampedVideoFrame> frame_buffer;
+        boost::mutex write_mutex;
+        boost::mutex frame_buffer_mutex;
+        boost::mutex frames_available_mutex;
+        boost::condition_variable frames_available_cond;
+        bool frames_available;
+        boost::thread frame_writer_thread;
+    };
 } // namespace malmo

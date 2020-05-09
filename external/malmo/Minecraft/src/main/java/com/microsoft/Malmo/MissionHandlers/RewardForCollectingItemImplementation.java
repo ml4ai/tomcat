@@ -43,81 +43,81 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 public class RewardForCollectingItemImplementation extends RewardForItemBase
     implements IRewardProducer, IMalmoMessageListener {
-  private RewardForCollectingItem params;
+    private RewardForCollectingItem params;
 
-  @Override
-  public void onMessage(MalmoMessageType messageType,
-                        Map<String, String> data) {
-    String bufstring = data.get("message");
-    ByteBuf buf =
-        Unpooled.copiedBuffer(DatatypeConverter.parseBase64Binary(bufstring));
-    ItemStack itemStack = ByteBufUtils.readItemStack(buf);
-    if (itemStack != null && itemStack.getItem() != null) {
-      accumulateReward(this.params.getDimension(), itemStack);
+    @Override
+    public void onMessage(MalmoMessageType messageType,
+                          Map<String, String> data) {
+        String bufstring = data.get("message");
+        ByteBuf buf = Unpooled.copiedBuffer(
+            DatatypeConverter.parseBase64Binary(bufstring));
+        ItemStack itemStack = ByteBufUtils.readItemStack(buf);
+        if (itemStack != null && itemStack.getItem() != null) {
+            accumulateReward(this.params.getDimension(), itemStack);
+        }
+        else {
+            System.out.println(
+                "Error - couldn't understand the itemstack we received.");
+        }
     }
-    else {
-      System.out.println(
-          "Error - couldn't understand the itemstack we received.");
+
+    public static class GainItemEvent extends Event {
+        public final ItemStack stack;
+
+        public GainItemEvent(ItemStack stack) { this.stack = stack; }
     }
-  }
 
-  public static class GainItemEvent extends Event {
-    public final ItemStack stack;
+    @Override
+    public boolean parseParameters(Object params) {
+        if (params == null || !(params instanceof RewardForCollectingItem))
+            return false;
 
-    public GainItemEvent(ItemStack stack) { this.stack = stack; }
-  }
+        // Build up a map of rewards per item:
+        this.params = (RewardForCollectingItem)params;
+        for (BlockOrItemSpecWithReward is : this.params.getItem())
+            addItemSpecToRewardStructure(is);
 
-  @Override
-  public boolean parseParameters(Object params) {
-    if (params == null || !(params instanceof RewardForCollectingItem))
-      return false;
-
-    // Build up a map of rewards per item:
-    this.params = (RewardForCollectingItem)params;
-    for (BlockOrItemSpecWithReward is : this.params.getItem())
-      addItemSpecToRewardStructure(is);
-
-    return true;
-  }
-
-  @SubscribeEvent
-  public void onGainItem(GainItemEvent event) {
-    if (event.stack != null) {
-      accumulateReward(this.params.getDimension(), event.stack);
+        return true;
     }
-  }
 
-  @SubscribeEvent
-  public void onPickupItem(EntityItemPickupEvent event) {
-    if (event.getItem() != null && event.getEntityPlayer() instanceof
-                                       EntityPlayerMP) {
-      // This event is received on the server side, so we need to pass it to the
-      // client.
-      sendItemStackToClient((EntityPlayerMP)event.getEntityPlayer(),
-                            MalmoMessageType.SERVER_COLLECTITEM,
-                            event.getItem().getEntityItem());
+    @SubscribeEvent
+    public void onGainItem(GainItemEvent event) {
+        if (event.stack != null) {
+            accumulateReward(this.params.getDimension(), event.stack);
+        }
     }
-  }
 
-  @Override
-  public void prepare(MissionInit missionInit) {
-    super.prepare(missionInit);
-    MinecraftForge.EVENT_BUS.register(this);
-    MalmoMod.MalmoMessageHandler.registerForMessage(
-        this, MalmoMessageType.SERVER_COLLECTITEM);
-  }
+    @SubscribeEvent
+    public void onPickupItem(EntityItemPickupEvent event) {
+        if (event.getItem() != null && event.getEntityPlayer() instanceof
+                                           EntityPlayerMP) {
+            // This event is received on the server side, so we need to pass it
+            // to the client.
+            sendItemStackToClient((EntityPlayerMP)event.getEntityPlayer(),
+                                  MalmoMessageType.SERVER_COLLECTITEM,
+                                  event.getItem().getEntityItem());
+        }
+    }
 
-  @Override
-  public void getReward(MissionInit missionInit,
-                        MultidimensionalReward reward) {
-    super.getReward(missionInit, reward);
-  }
+    @Override
+    public void prepare(MissionInit missionInit) {
+        super.prepare(missionInit);
+        MinecraftForge.EVENT_BUS.register(this);
+        MalmoMod.MalmoMessageHandler.registerForMessage(
+            this, MalmoMessageType.SERVER_COLLECTITEM);
+    }
 
-  @Override
-  public void cleanup() {
-    super.cleanup();
-    MinecraftForge.EVENT_BUS.unregister(this);
-    MalmoMod.MalmoMessageHandler.deregisterForMessage(
-        this, MalmoMessageType.SERVER_COLLECTITEM);
-  }
+    @Override
+    public void getReward(MissionInit missionInit,
+                          MultidimensionalReward reward) {
+        super.getReward(missionInit, reward);
+    }
+
+    @Override
+    public void cleanup() {
+        super.cleanup();
+        MinecraftForge.EVENT_BUS.unregister(this);
+        MalmoMod.MalmoMessageHandler.deregisterForMessage(
+            this, MalmoMessageType.SERVER_COLLECTITEM);
+    }
 }

@@ -38,60 +38,65 @@ import net.minecraft.client.Minecraft;
  */
 public class RewardForReachingPositionImplementation
     extends RewardBase implements IRewardProducer {
-  Pos targetPos;
-  float reward;
-  float tolerance;
-  boolean oneShot;
-  boolean fired = false;
-  List<PointWithReward> rewardPoints;
-  private RewardForReachingPosition params;
+    Pos targetPos;
+    float reward;
+    float tolerance;
+    boolean oneShot;
+    boolean fired = false;
+    List<PointWithReward> rewardPoints;
+    private RewardForReachingPosition params;
 
-  @Override
-  public boolean parseParameters(Object params) {
-    super.parseParameters(params);
-    if (params == null || !(params instanceof RewardForReachingPosition))
-      return false;
+    @Override
+    public boolean parseParameters(Object params) {
+        super.parseParameters(params);
+        if (params == null || !(params instanceof RewardForReachingPosition))
+            return false;
 
-    this.params = (RewardForReachingPosition)params;
-    this.rewardPoints = this.params.getMarker();
-    return true;
-  }
-
-  @Override
-  public void getReward(MissionInit missionInit,
-                        MultidimensionalReward reward) {
-    super.getReward(missionInit, reward);
-    if (missionInit == null || Minecraft.getMinecraft().player == null)
-      return;
-
-    if (this.rewardPoints != null) {
-      Iterator<PointWithReward> goalIterator = this.rewardPoints.iterator();
-      while (goalIterator.hasNext()) {
-        PointWithReward goal = goalIterator.next();
-        boolean oneShot = goal.isOneshot();
-        float reward_value = goal.getReward().floatValue();
-        float tolerance = goal.getTolerance().floatValue();
-
-        float distance = PositionHelper.calcDistanceFromPlayerToPosition(
-            Minecraft.getMinecraft().player, goal);
-        if (distance <= tolerance) {
-          float adjusted_reward = adjustAndDistributeReward(
-              reward_value, this.params.getDimension(), goal.getDistribution());
-          reward.add(this.params.getDimension(), adjusted_reward);
-          if (oneShot)
-            goalIterator.remove(); // Safe to do this via an iterator.
-        }
-      }
+        this.params = (RewardForReachingPosition)params;
+        this.rewardPoints = this.params.getMarker();
+        return true;
     }
-  }
 
-  @Override
-  public void prepare(MissionInit missionInit) {
-    super.prepare(missionInit);
-  }
+    @Override
+    public void getReward(MissionInit missionInit,
+                          MultidimensionalReward reward) {
+        super.getReward(missionInit, reward);
+        if (missionInit == null || Minecraft.getMinecraft().player == null)
+            return;
 
-  @Override
-  public void cleanup() {
-    super.cleanup();
-  }
+        if (this.rewardPoints != null) {
+            Iterator<PointWithReward> goalIterator =
+                this.rewardPoints.iterator();
+            while (goalIterator.hasNext()) {
+                PointWithReward goal = goalIterator.next();
+                boolean oneShot = goal.isOneshot();
+                float reward_value = goal.getReward().floatValue();
+                float tolerance = goal.getTolerance().floatValue();
+
+                float distance =
+                    PositionHelper.calcDistanceFromPlayerToPosition(
+                        Minecraft.getMinecraft().player, goal);
+                if (distance <= tolerance) {
+                    float adjusted_reward =
+                        adjustAndDistributeReward(reward_value,
+                                                  this.params.getDimension(),
+                                                  goal.getDistribution());
+                    reward.add(this.params.getDimension(), adjusted_reward);
+                    if (oneShot)
+                        goalIterator
+                            .remove(); // Safe to do this via an iterator.
+                }
+            }
+        }
+    }
+
+    @Override
+    public void prepare(MissionInit missionInit) {
+        super.prepare(missionInit);
+    }
+
+    @Override
+    public void cleanup() {
+        super.cleanup();
+    }
 }

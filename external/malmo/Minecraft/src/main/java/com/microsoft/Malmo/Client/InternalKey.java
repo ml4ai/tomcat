@@ -34,30 +34,30 @@ import net.minecraft.client.settings.KeyBinding;
  * by the KeyManager class.
  */
 public class InternalKey extends KeyBinding {
-  /**
-   * Create a KeyBinding object for the specified key, keycode and
-   * category.<br>
-   * @param description see Minecraft KeyBinding class
-   * @param keyCode see Minecraft KeyBinding class
-   * @param category see Minecraft KeyBinding class
-   */
-  public InternalKey(String description, int keyCode, String category) {
-    super(description, keyCode, category);
-  }
+    /**
+     * Create a KeyBinding object for the specified key, keycode and
+     * category.<br>
+     * @param description see Minecraft KeyBinding class
+     * @param keyCode see Minecraft KeyBinding class
+     * @param category see Minecraft KeyBinding class
+     */
+    public InternalKey(String description, int keyCode, String category) {
+        super(description, keyCode, category);
+    }
 
-  /**
-   * Method which can be overriden by extra keybindings.<br>
-   * This method is NOT called by the normal Minecraft game code - so don't
-   * expect to be able to hook code in to normal game keys via this method.<br>
-   * Rather, this method is called directly by the Mod code.
-   */
-  public void onPressed() {}
+    /**
+     * Method which can be overriden by extra keybindings.<br>
+     * This method is NOT called by the normal Minecraft game code - so don't
+     * expect to be able to hook code in to normal game keys via this
+     * method.<br> Rather, this method is called directly by the Mod code.
+     */
+    public void onPressed() {}
 
-  /**
-   * Method which can be overriden by extra keybindings.<br>
-   * This method is NOT called by the normal Minecraft game code - so don't
-   * expect to be able to hook code in to normal game keys via this method.<br>
-   * Rather, this method is called directly by the Mod code.
-   */
-  public void onKeyDown() {}
+    /**
+     * Method which can be overriden by extra keybindings.<br>
+     * This method is NOT called by the normal Minecraft game code - so don't
+     * expect to be able to hook code in to normal game keys via this
+     * method.<br> Rather, this method is called directly by the Mod code.
+     */
+    public void onKeyDown() {}
 };

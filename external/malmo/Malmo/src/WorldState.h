@@ -32,72 +32,75 @@
 #include <vector>
 
 namespace malmo {
-  //! Represents the state of the game world at a moment in time.
-  struct WorldState {
-    WorldState();
+    //! Represents the state of the game world at a moment in time.
+    struct WorldState {
+        WorldState();
 
-    //! Resets the world state to be empty, with no mission running.
-    void clear();
+        //! Resets the world state to be empty, with no mission running.
+        void clear();
 
-    //! Specifies whether the mission had begun when this world state was taken
-    //! (whether or not it has since finished).
-    bool has_mission_begun;
+        //! Specifies whether the mission had begun when this world state was
+        //! taken (whether or not it has since finished).
+        bool has_mission_begun;
 
-    //! Specifies whether the mission was still running at the moment this world
-    //! state was taken.
-    bool is_mission_running;
+        //! Specifies whether the mission was still running at the moment this
+        //! world state was taken.
+        bool is_mission_running;
 
-    //! Contains the number of video frames that have been received since the
-    //! last time the world state was taken.
-    /*! May differ from the number of video frames that are stored, depending on
-     * the video frames policy that was used. \see video_frames
-     */
-    int number_of_video_frames_since_last_state;
+        //! Contains the number of video frames that have been received since
+        //! the last time the world state was taken.
+        /*! May differ from the number of video frames that are stored,
+         * depending on the video frames policy that was used. \see video_frames
+         */
+        int number_of_video_frames_since_last_state;
 
-    //! Contains the number of rewards that have been received since the last
-    //! time the world state was taken.
-    /*! May differ from the number of rewards that are stored, depending on the
-     * rewards policy that was used. \see rewards
-     */
-    int number_of_rewards_since_last_state;
+        //! Contains the number of rewards that have been received since the
+        //! last time the world state was taken.
+        /*! May differ from the number of rewards that are stored, depending on
+         * the rewards policy that was used. \see rewards
+         */
+        int number_of_rewards_since_last_state;
 
-    //! Contains the number of observations that have been received since the
-    //! last time the world state was taken.
-    /*! May differ from the number of observations that are stored, depending on
-     * the observations policy that was used. \see observations
-     */
-    int number_of_observations_since_last_state;
+        //! Contains the number of observations that have been received since
+        //! the last time the world state was taken.
+        /*! May differ from the number of observations that are stored,
+         * depending on the observations policy that was used. \see observations
+         */
+        int number_of_observations_since_last_state;
 
-    //! Contains the timestamped video frames that are stored in this world
-    //! state.
-    /*! May differ from the number of video frames that were received, depending
-     * on the video policy that was used. \see AgentHost::setVideoPolicy
-     */
-    std::vector<boost::shared_ptr<TimestampedVideoFrame>> video_frames;
+        //! Contains the timestamped video frames that are stored in this world
+        //! state.
+        /*! May differ from the number of video frames that were received,
+         * depending on the video policy that was used. \see
+         * AgentHost::setVideoPolicy
+         */
+        std::vector<boost::shared_ptr<TimestampedVideoFrame>> video_frames;
 
-    //! Contains the timestamped rewards that are stored in this world state.
-    /*! May differ from the number of rewards that were received, depending on
-     * the rewards policy that was used. \see AgentHost::setRewardsPolicy
-     */
-    std::vector<boost::shared_ptr<TimestampedReward>> rewards;
+        //! Contains the timestamped rewards that are stored in this world
+        //! state.
+        /*! May differ from the number of rewards that were received, depending
+         * on the rewards policy that was used. \see AgentHost::setRewardsPolicy
+         */
+        std::vector<boost::shared_ptr<TimestampedReward>> rewards;
 
-    //! Contains the timestamped observations that are stored in this world
-    //! state.
-    /*! May differ from the number of observations that were received, depending
-     * on the observations policy that was used.
-     * \see AgentHost::setObservationsPolicy
-     */
-    std::vector<boost::shared_ptr<TimestampedString>> observations;
+        //! Contains the timestamped observations that are stored in this world
+        //! state.
+        /*! May differ from the number of observations that were received,
+         * depending on the observations policy that was used.
+         * \see AgentHost::setObservationsPolicy
+         */
+        std::vector<boost::shared_ptr<TimestampedString>> observations;
 
-    //! Contains the timestamped mission control messages that are stored in
-    //! this world state.
-    std::vector<boost::shared_ptr<TimestampedString>> mission_control_messages;
+        //! Contains the timestamped mission control messages that are stored in
+        //! this world state.
+        std::vector<boost::shared_ptr<TimestampedString>>
+            mission_control_messages;
 
-    //! If there are errors in receiving the messages then we log them here.
-    std::vector<boost::shared_ptr<TimestampedString>> errors;
+        //! If there are errors in receiving the messages then we log them here.
+        std::vector<boost::shared_ptr<TimestampedString>> errors;
 
-    friend std::ostream& operator<<(std::ostream& os, const WorldState& ws);
-  };
+        friend std::ostream& operator<<(std::ostream& os, const WorldState& ws);
+    };
 } // namespace malmo
 
 #endif

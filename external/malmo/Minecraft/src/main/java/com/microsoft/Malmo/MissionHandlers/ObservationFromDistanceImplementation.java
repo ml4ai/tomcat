@@ -38,36 +38,36 @@ import net.minecraft.client.entity.EntityPlayerSP;
  */
 public class ObservationFromDistanceImplementation
     extends HandlerBase implements IObservationProducer {
-  private ObservationFromDistance odparams;
+    private ObservationFromDistance odparams;
 
-  @Override
-  public boolean parseParameters(Object params) {
-    if (params == null || !(params instanceof ObservationFromDistance))
-      return false;
+    @Override
+    public boolean parseParameters(Object params) {
+        if (params == null || !(params instanceof ObservationFromDistance))
+            return false;
 
-    this.odparams = (ObservationFromDistance)params;
-    return true;
-  }
-
-  @Override
-  public void writeObservationsToJSON(JsonObject json,
-                                      MissionInit missionInit) {
-    for (NamedPoint marker : odparams.getMarker()) {
-      EntityPlayerSP player = Minecraft.getMinecraft().player;
-      json.addProperty(
-          "distanceFrom" + makeSafe(marker.getName()),
-          PositionHelper.calcDistanceFromPlayerToPosition(player, marker));
+        this.odparams = (ObservationFromDistance)params;
+        return true;
     }
-  }
 
-  private String makeSafe(String raw) {
-    // Hopefully the string won't be too crazy, since the XSD:Name type will
-    // disallow bonkers characters. Just trim any whitespace.
-    return raw.trim();
-  }
-  @Override
-  public void prepare(MissionInit missionInit) {}
+    @Override
+    public void writeObservationsToJSON(JsonObject json,
+                                        MissionInit missionInit) {
+        for (NamedPoint marker : odparams.getMarker()) {
+            EntityPlayerSP player = Minecraft.getMinecraft().player;
+            json.addProperty("distanceFrom" + makeSafe(marker.getName()),
+                             PositionHelper.calcDistanceFromPlayerToPosition(
+                                 player, marker));
+        }
+    }
 
-  @Override
-  public void cleanup() {}
+    private String makeSafe(String raw) {
+        // Hopefully the string won't be too crazy, since the XSD:Name type will
+        // disallow bonkers characters. Just trim any whitespace.
+        return raw.trim();
+    }
+    @Override
+    public void prepare(MissionInit missionInit) {}
+
+    @Override
+    public void cleanup() {}
 }

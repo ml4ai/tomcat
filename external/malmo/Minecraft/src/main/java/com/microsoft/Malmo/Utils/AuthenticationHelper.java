@@ -28,52 +28,52 @@ import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.Session;
 
 public class AuthenticationHelper {
-  public static boolean setPlayerName(Session currentSession,
-                                      String newPlayerName) {
-    if (currentSession.getUsername().equals(newPlayerName))
-      return true;
+    public static boolean setPlayerName(Session currentSession,
+                                        String newPlayerName) {
+        if (currentSession.getUsername().equals(newPlayerName))
+            return true;
 
-    // Create new session object:
-    Session newSession =
-        new Session(newPlayerName,
-                    currentSession.getPlayerID(),
-                    currentSession.getToken(),
-                    "mojang" /*currentSession.getSessionType().toString()*/);
-    newSession.setProperties(
-        new com.mojang.authlib.properties
-            .PropertyMap()); // Prevents calls to the session service to get
-                             // profile properties
-    return setSession(newSession);
-  }
+        // Create new session object:
+        Session newSession = new Session(
+            newPlayerName,
+            currentSession.getPlayerID(),
+            currentSession.getToken(),
+            "mojang" /*currentSession.getSessionType().toString()*/);
+        newSession.setProperties(
+            new com.mojang.authlib.properties
+                .PropertyMap()); // Prevents calls to the session service to get
+                                 // profile properties
+        return setSession(newSession);
+    }
 
-  private static boolean setSession(Session newSession) {
-    // Are we in the dev environment or deployed?
-    boolean devEnv =
-        (Boolean)Launch.blackboard.get("fml.deobfuscatedEnvironment");
-    // We need to know, because the member name will either be obfuscated or
-    // not.
-    String sessionMemberName = devEnv ? "session" : "field_71449_j";
-    // NOTE: obfuscated name may need updating if Forge changes - search for
-    // "session" in Malmo\Minecraft\build\tasklogs\retromapSources.log
-    Field session;
-    try {
-      session = Minecraft.class.getDeclaredField(sessionMemberName);
-      session.setAccessible(true);
-      session.set(Minecraft.getMinecraft(), newSession);
-      return true;
+    private static boolean setSession(Session newSession) {
+        // Are we in the dev environment or deployed?
+        boolean devEnv =
+            (Boolean)Launch.blackboard.get("fml.deobfuscatedEnvironment");
+        // We need to know, because the member name will either be obfuscated or
+        // not.
+        String sessionMemberName = devEnv ? "session" : "field_71449_j";
+        // NOTE: obfuscated name may need updating if Forge changes - search for
+        // "session" in Malmo\Minecraft\build\tasklogs\retromapSources.log
+        Field session;
+        try {
+            session = Minecraft.class.getDeclaredField(sessionMemberName);
+            session.setAccessible(true);
+            session.set(Minecraft.getMinecraft(), newSession);
+            return true;
+        }
+        catch (SecurityException e) {
+            e.printStackTrace();
+        }
+        catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+        catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
-    catch (SecurityException e) {
-      e.printStackTrace();
-    }
-    catch (IllegalAccessException e) {
-      e.printStackTrace();
-    }
-    catch (IllegalArgumentException e) {
-      e.printStackTrace();
-    }
-    catch (NoSuchFieldException e) {
-      e.printStackTrace();
-    }
-    return false;
-  }
 }

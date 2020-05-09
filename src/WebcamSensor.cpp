@@ -94,6 +94,7 @@ namespace tomcat {
                                   this->sequence_reader.cx,
                                   this->sequence_reader.cy);
 
+
     this->fps_tracker.AddFrame();
     // Displaying the tracking visualizations
     this->visualizer.SetImage(this->rgb_image,

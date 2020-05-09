@@ -32,14 +32,14 @@ import com.microsoft.Malmo.IState;
  * MissionStateTracker.getStateEpisodeForState().
  */
 public enum ServerState implements IState {
-  WAITING_FOR_MOD_READY,
-  DORMANT,
-  BUILDING_WORLD,
-  WAITING_FOR_AGENTS_TO_ASSEMBLE,
-  RUNNING,
-  MISSION_ENDED,
-  MISSION_ABORTED,
-  WAITING_FOR_AGENTS_TO_QUIT,
-  ERROR,
-  CLEAN_UP
+    WAITING_FOR_MOD_READY,
+    DORMANT,
+    BUILDING_WORLD,
+    WAITING_FOR_AGENTS_TO_ASSEMBLE,
+    RUNNING,
+    MISSION_ENDED,
+    MISSION_ABORTED,
+    WAITING_FOR_AGENTS_TO_QUIT,
+    ERROR,
+    CLEAN_UP
 }

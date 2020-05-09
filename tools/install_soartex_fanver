@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+# This is a convenience script for correctly installing the Soartex Fanver
+# texture pack for nicer visuals in Minecraft.
+# To use this script, first download the texture pack by visiting
+# https://www.curseforge.com/minecraft/texture-packs/soartex-fanver-vanilla/download/2371741
+# in your web browser and placing the downloaded folder in the tomcat root
+# directory, then run this script.
+
+# Set the TOMCAT environment variable, assuming that the directory structure
+# mirrors that of the git repository.
+TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
+export TOMCAT
+
+pushd "$TOMCAT" > /dev/null
+    if [[ -d Soartex_Fanver ]]; then
+        cp -r Soartex_Fanver/assets\
+            external/malmo/Minecraft/run/resourcepacks/tomcat/assets
+
+        # We run 'git checkout .' to restore the textures that were originally from
+        # the Soartex public domain texture collection, for cleaner diffs.
+        git checkout .
+        echo "Removing Soartex_Fanver directory..."
+        rm -rf Soartex_Fanver
+        echo "Soartex Fanver textures installation successfully completed."
+    else
+        echo "Could not find the folder Soartex_Fanver in ${TOMCAT}!"
+        echo "Please download the resource pack by visiting https://www.curseforge.com/minecraft/texture-packs/soartex-fanver-vanilla/download/2371741 in your web browser."
+    fi
+popd > /dev/null

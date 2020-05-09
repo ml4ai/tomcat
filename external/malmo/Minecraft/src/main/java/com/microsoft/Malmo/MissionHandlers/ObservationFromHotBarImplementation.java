@@ -33,16 +33,16 @@ import net.minecraft.client.Minecraft;
  */
 public class ObservationFromHotBarImplementation
     extends HandlerBase implements IObservationProducer {
-  @Override
-  public void prepare(MissionInit missionInit) {}
+    @Override
+    public void prepare(MissionInit missionInit) {}
 
-  @Override
-  public void cleanup() {}
+    @Override
+    public void cleanup() {}
 
-  @Override
-  public void writeObservationsToJSON(JsonObject json,
-                                      MissionInit missionInit) {
-    ObservationFromFullInventoryImplementation.getInventoryJSON(
-        json, "Hotbar_", Minecraft.getMinecraft().player.inventory, 9);
-  }
+    @Override
+    public void writeObservationsToJSON(JsonObject json,
+                                        MissionInit missionInit) {
+        ObservationFromFullInventoryImplementation.getInventoryJSON(
+            json, "Hotbar_", Minecraft.getMinecraft().player.inventory, 9);
+    }
 }

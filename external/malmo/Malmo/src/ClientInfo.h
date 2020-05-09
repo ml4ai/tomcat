@@ -27,47 +27,47 @@
 #include <string>
 
 namespace malmo {
-  enum {
-    default_client_mission_control_port =
-        10000 //!< The default client mission control port
-  };
+    enum {
+        default_client_mission_control_port =
+            10000 //!< The default client mission control port
+    };
 
-  //! Structure containing information about a simulation client's address and
-  //! port
-  struct ClientInfo {
-    //! Constructs an empty ClientInfo struct.
-    ClientInfo();
+    //! Structure containing information about a simulation client's address and
+    //! port
+    struct ClientInfo {
+        //! Constructs an empty ClientInfo struct.
+        ClientInfo();
 
-    //! Constructs a ClientInfo at the specified address listening on the
-    //! default port. \param ip_address The IP address of the client
-    ClientInfo(const std::string& ip_address);
+        //! Constructs a ClientInfo at the specified address listening on the
+        //! default port. \param ip_address The IP address of the client
+        ClientInfo(const std::string& ip_address);
 
-    //! Constructs a ClientInfo at the specified address listening on the
-    //! specified port. \param ip_address The IP address of the client.
-    //! \param control_port The number of the client mission control port.
-    ClientInfo(const std::string& ip_address, int control_port);
+        //! Constructs a ClientInfo at the specified address listening on the
+        //! specified port. \param ip_address The IP address of the client.
+        //! \param control_port The number of the client mission control port.
+        ClientInfo(const std::string& ip_address, int control_port);
 
-    //! Constructs a ClientInfo at the specified address listening on the
-    //! specified port. \param ip_address The IP address of the client.
-    //! \param control_port The number of the client mission control port.
-    //! \param command_port The number of the client mission command port.
-    ClientInfo(const std::string& ip_address,
-               int control_port,
-               int command_port);
+        //! Constructs a ClientInfo at the specified address listening on the
+        //! specified port. \param ip_address The IP address of the client.
+        //! \param control_port The number of the client mission control port.
+        //! \param command_port The number of the client mission command port.
+        ClientInfo(const std::string& ip_address,
+                   int control_port,
+                   int command_port);
 
-    //! The IP address of the client.
-    std::string ip_address;
+        //! The IP address of the client.
+        std::string ip_address;
 
-    //! The control port of the client. Defaults to the default client mission
-    //! control port.
-    int control_port;
+        //! The control port of the client. Defaults to the default client
+        //! mission control port.
+        int control_port;
 
-    //! The command port of the client. Default of 0 causes client to
-    //! dynamically allocate one.
-    int command_port;
+        //! The command port of the client. Default of 0 causes client to
+        //! dynamically allocate one.
+        int command_port;
 
-    friend std::ostream& operator<<(std::ostream& os, const ClientInfo& ci);
-  };
+        friend std::ostream& operator<<(std::ostream& os, const ClientInfo& ci);
+    };
 } // namespace malmo
 
 #endif
