@@ -1,0 +1,150 @@
+openapi: 3.0.0
+
+info:
+  title: ASIST Message spec
+  description: ASIST Message spec
+  version: "0.1"
+
+paths:
+  /observations/events/player/door:
+    subscribe:
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoorEvent'
+
+  /observations/events/player/lever:
+    subscribe:
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeverEvent'
+
+
+components:
+
+  schemas:
+    CommonHeader:
+      title: CommonHeader
+      description: >
+        header desc
+      required:
+        - published
+        - version
+        - message_type
+      properties:
+        published:
+          type: string
+          format: date-time
+        version:
+          type: string
+          example: "0.4"
+        message_type:
+          type: enum
+          enum:
+            - "event"
+            - "agent"
+    
+    Msg:
+      title: Msg
+      properties:
+        version:
+          type: string
+          example: "0.4"
+        trial_id:
+          type: string
+          format: uuid
+        sub_type:
+          type: string
+          example: "Event:Lever"
+          
+    Message:
+      allOf: 
+      - $ref: '#/components/schemas/Msg'
+      title: Message
+      description: >
+        message desc
+      properties:
+        header:
+          $ref: '#/components/schemas/CommonHeader'
+        msg:
+          $ref: '#/components/schemas/CommonHeader'
+
+          
+    Position:
+      description: "Position vector"
+      properties:
+        x:
+          type: integer
+        y:
+          type: integer
+        z:
+          type: integer
+          
+    Velocity:
+      description: "Velocity vector"
+      properties:
+        x:
+          type: number
+        y:
+          type: number
+        z:
+          type: number
+
+    Event:
+      properties:
+        header:
+          $ref: '#/components/schemas/CommonHeader'
+        msg:
+          $ref: '#/components/schemas/Msg'
+
+    DoorEvent:
+      allOf:
+      - $ref: '#/components/schemas/Event'
+      properties:
+        data:
+          $ref: '#/components/schemas/DoorEventData'
+
+    LeverEvent:
+      allOf:
+      - $ref: '#/components/schemas/Event'
+      properties:
+        data:
+          $ref: '#/components/schemas/LeverEventData'
+
+    DoorEventData:
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        player_name:
+          type: string
+          example: "Aptiminer1"
+        was_open:
+          type: boolean
+        door_position:
+          $ref: '#/components/schemas/Position'
+      description: "Door event."
+
+    LeverEventData:
+      properties:
+        timestamp:
+          format: date-time
+        player_name:
+          type: string
+          example: "tomcat"
+        was_powered:
+          type: boolean
+        lever_position:
+          $ref: '#/components/schemas/Position'
+      description: "Lever event."
+
+    EventType:
+      type: string
+      enum:
+        - "Event:Lever"
+        - "Event: Door"
