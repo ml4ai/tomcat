@@ -1,46 +1,55 @@
 package edu.arizona.tomcat.Mission;
 
 import edu.arizona.tomcat.Mission.Client.ClientMission;
-import edu.arizona.tomcat.Mission.Client.SARClientMission;
 import edu.arizona.tomcat.Mission.Client.TutorialClientMission;
+import edu.arizona.tomcat.Mission.Client.USARSinglePlayerClientMission;
+import edu.arizona.tomcat.Mission.Client.ZombieClientMission;
 
 public class MissionFactory {
 
-  public static Mission create(int missionID) {
-    Mission mission = null;
+    public static Mission create(int missionID) {
+        Mission mission = null;
 
-    switch (Mission.ID.values()[missionID]) {
-    case TUTORIAL:
-      mission = new TutorialMission();
-      break;
+        switch (Mission.ID.values()[missionID]) {
+        case TUTORIAL:
+            mission = new TutorialMission();
+            break;
 
-    case SEARCH_AND_RESCUE:
-      mission = new SARMission();
-      break;
+        case ZOMBIE:
+            mission = new ZombieMission();
+            break;
 
-    default:
-      break;
+        case USAR_SINGLE_PLAYER:
+            mission = new USARSinglePlayerMission();
+            break;
+
+        default:
+            break;
+        }
+
+        return mission;
     }
 
-    return mission;
-  }
+    public static ClientMission createClient(int missionID) {
+        ClientMission clientMission = null;
 
-  public static ClientMission createClient(int missionID) {
-    ClientMission clientMission = null;
+        switch (Mission.ID.values()[missionID]) {
+        case TUTORIAL:
+            clientMission = new TutorialClientMission();
+            break;
 
-    switch (Mission.ID.values()[missionID]) {
-    case TUTORIAL:
-      clientMission = new TutorialClientMission();
-      break;
+        case ZOMBIE:
+            clientMission = new ZombieClientMission();
+            break;
 
-    case SEARCH_AND_RESCUE:
-      clientMission = new SARClientMission();
-      break;
+        case USAR_SINGLE_PLAYER:
+            clientMission = new USARSinglePlayerClientMission();
+            break;
 
-    default:
-      break;
+        default:
+            break;
+        }
+
+        return clientMission;
     }
-
-    return clientMission;
-  }
 }

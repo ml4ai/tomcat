@@ -30,28 +30,29 @@ import com.microsoft.Malmo.Schemas.ContinuousMovementCommands;
  * standard robot-style navigation, and the mouse-suppression.
  */
 public class ContinuousMovementCommandsImplementation extends CommandGroup {
-  public ContinuousMovementCommandsImplementation() {
-    setShareParametersWithChildren(
-        true); // Pass our parameter block on to the following children:
-    this.addCommandHandler(new CommandForAttackAndUseImplementation());
-    this.addCommandHandler(
-        new CommandForWheeledRobotNavigationImplementation());
-  }
+    public ContinuousMovementCommandsImplementation() {
+        setShareParametersWithChildren(
+            true); // Pass our parameter block on to the following children:
+        this.addCommandHandler(new CommandForAttackAndUseImplementation());
+        this.addCommandHandler(
+            new CommandForWheeledRobotNavigationImplementation());
+    }
 
-  @Override
-  public boolean parseParameters(Object params) {
-    super.parseParameters(params);
+    @Override
+    public boolean parseParameters(Object params) {
+        super.parseParameters(params);
 
-    if (params == null || !(params instanceof ContinuousMovementCommands))
-      return false;
+        if (params == null || !(params instanceof ContinuousMovementCommands))
+            return false;
 
-    ContinuousMovementCommands cmparams = (ContinuousMovementCommands)params;
-    setUpAllowAndDenyLists(cmparams.getModifierList());
-    return true;
-  }
+        ContinuousMovementCommands cmparams =
+            (ContinuousMovementCommands)params;
+        setUpAllowAndDenyLists(cmparams.getModifierList());
+        return true;
+    }
 
-  @Override
-  public boolean isFixed() {
-    return true;
-  }
+    @Override
+    public boolean isFixed() {
+        return true;
+    }
 }

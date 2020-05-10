@@ -32,62 +32,63 @@
 #include "RewardXML.h"
 
 namespace malmo {
-  //! A map of int:double storing a value on each dimension, with an attached
-  //! timestamp saying when it was collected.
-  class TimestampedReward {
-  public:
-    //! Constructs an empty reward.
-    TimestampedReward();
+    //! A map of int:double storing a value on each dimension, with an attached
+    //! timestamp saying when it was collected.
+    class TimestampedReward {
+      public:
+        //! Constructs an empty reward.
+        TimestampedReward();
 
-    //! Constructs from a single reward float (assumes default dimension of 0)
-    TimestampedReward(float reward);
+        //! Constructs from a single reward float (assumes default dimension of
+        //! 0)
+        TimestampedReward(float reward);
 
-    //! Constructs from an XML string.
-    TimestampedReward& createFromXML(boost::posix_time::ptime timestamp,
-                                     std::string xml_string);
+        //! Constructs from an XML string.
+        TimestampedReward& createFromXML(boost::posix_time::ptime timestamp,
+                                         std::string xml_string);
 
-    //! Constructs from a simple string.
-    TimestampedReward&
-    createFromSimpleString(boost::posix_time::ptime timestamp,
-                           std::string simple_string);
+        //! Constructs from a simple string.
+        TimestampedReward&
+        createFromSimpleString(boost::posix_time::ptime timestamp,
+                               std::string simple_string);
 
-    //! Constructs from an XML node element.
-    TimestampedReward(boost::posix_time::ptime timestamp,
-                      const RewardXML& reward);
+        //! Constructs from an XML node element.
+        TimestampedReward(boost::posix_time::ptime timestamp,
+                          const RewardXML& reward);
 
-    //! Formats as an XML string.
-    //! \param prettyPrint If true, add indentation and newlines to the XML to make it more readable.
-    //! \returns The reward as an XML string.
-    std::string getAsXML(bool prettyPrint) const;
+        //! Formats as an XML string.
+        //! \param prettyPrint If true, add indentation and newlines to the XML to make it more readable.
+        //! \returns The reward as an XML string.
+        std::string getAsXML(bool prettyPrint) const;
 
-    //! Formats as a simple string.
-    //! \returns The reward in simple string form.
-    std::string getAsSimpleString() const;
+        //! Formats as a simple string.
+        //! \returns The reward in simple string form.
+        std::string getAsSimpleString() const;
 
-    //! The timestamp.
-    boost::posix_time::ptime timestamp;
+        //! The timestamp.
+        boost::posix_time::ptime timestamp;
 
-    //! Returns whether a reward value is stored on the specified dimension.
-    bool hasValueOnDimension(int dimension) const;
+        //! Returns whether a reward value is stored on the specified dimension.
+        bool hasValueOnDimension(int dimension) const;
 
-    //! Returns the reward value stored on the specified dimension.
-    double getValueOnDimension(int dimension) const;
+        //! Returns the reward value stored on the specified dimension.
+        double getValueOnDimension(int dimension) const;
 
-    //! Returns the reward value stored on dimension zero. By default the reward
-    //! producers store their output here.
-    double getValue() const;
+        //! Returns the reward value stored on dimension zero. By default the
+        //! reward producers store their output here.
+        double getValue() const;
 
-    //! Merge the specified reward structure into this one, adding rewards that
-    //! are on the same dimension.
-    void add(const TimestampedReward& other);
+        //! Merge the specified reward structure into this one, adding rewards
+        //! that are on the same dimension.
+        void add(const TimestampedReward& other);
 
-    //! Stream a readable version, for casual inspection.
-    friend std::ostream& operator<<(std::ostream& os,
-                                    const TimestampedReward& tsf);
+        //! Stream a readable version, for casual inspection.
+        friend std::ostream& operator<<(std::ostream& os,
+                                        const TimestampedReward& tsf);
 
-  private:
-    RewardXML reward;
-  };
+      private:
+        RewardXML reward;
+    };
 } // namespace malmo
 
 #endif

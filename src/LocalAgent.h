@@ -2,30 +2,30 @@
 
 namespace tomcat {
 
-  class Mission; // Forward declaration to deal with circular dependency
-
-  /**
-   * The LocalAgent class is a template for ToMCAT agents that accompany human
-   * players.
-   */
-  class LocalAgent {
-
-  public:
-    /**
-     * Constructor
-     * */
-    LocalAgent();
+    class Mission; // Forward declaration to deal with circular dependency
 
     /**
-     * Destructor
-     * */
-    ~LocalAgent();
-
-    /**
-     * Method called by a mission main loop
-     * @param mission - Tomcat mission
+     * The LocalAgent class is a template for ToMCAT agents that accompany human
+     * players.
      */
-    void observe_mission(Mission& mission);
-  };
+    class LocalAgent {
+
+      public:
+        /**
+         * Constructor
+         * */
+        LocalAgent();
+
+        /**
+         * Destructor
+         * */
+        ~LocalAgent();
+
+        /**
+         * Method called by a mission main loop
+         * @param mission - Tomcat mission
+         */
+        void observe_mission(Mission& mission);
+    };
 
 } // namespace tomcat

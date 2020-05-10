@@ -34,77 +34,80 @@
 #include <fstream>
 #include <iostream>
 #include <queue>
+#include <stack>
 #include <string>
 
 namespace malmo {
-  class IFrameWriter {
-  public:
-    IFrameWriter() {}
-    virtual ~IFrameWriter() {}
-    virtual void open() = 0;
-    virtual void close() = 0;
-    virtual bool write(TimestampedVideoFrame frame) = 0;
-    virtual bool isOpen() const = 0;
-    virtual size_t getFrameWriteCount() const = 0;
-  };
+    class IFrameWriter {
+      public:
+        IFrameWriter() {}
+        virtual ~IFrameWriter() {}
+        virtual void open() = 0;
+        virtual void close() = 0;
+        virtual bool write(TimestampedVideoFrame frame) = 0;
+        virtual bool isOpen() const = 0;
+        virtual size_t getFrameWriteCount() const = 0;
+    };
 
-  class VideoFrameWriter : public IFrameWriter {
-  public:
-    VideoFrameWriter(std::string path,
-                     std::string info_filename,
-                     short width,
-                     short height,
-                     int frames_per_second,
-                     int channels,
-                     bool drop_input_frames);
-    virtual ~VideoFrameWriter();
-    virtual void open();
-    virtual void close();
+    class VideoFrameWriter : public IFrameWriter {
+      public:
+        VideoFrameWriter(std::string path,
+                         std::string info_filename,
+                         short width,
+                         short height,
+                         int frames_per_second,
+                         int channels,
+                         bool drop_input_frames);
+        virtual ~VideoFrameWriter();
+        virtual void open();
+        virtual void close();
 
-    virtual bool write(TimestampedVideoFrame frame);
-    virtual bool isOpen() const;
-    virtual size_t getFrameWriteCount() const {
-      return frames_actually_written;
-    }
+        virtual bool write(TimestampedVideoFrame frame);
+        virtual bool isOpen() const;
+        virtual size_t getFrameWriteCount() const {
+            return frames_actually_written;
+        }
 
-    static std::unique_ptr<VideoFrameWriter> create(std::string path,
-                                                    std::string info_filename,
-                                                    short width,
-                                                    short height,
-                                                    int frames_per_second,
-                                                    int64_t bit_rate,
-                                                    int channels,
-                                                    bool drop_input_frames);
+        static std::unique_ptr<VideoFrameWriter>
+        create(std::string path,
+               std::string info_filename,
+               short width,
+               short height,
+               int frames_per_second,
+               int64_t bit_rate,
+               int channels,
+               bool drop_input_frames);
 
-  protected:
-    virtual void doWrite(char* rgb, int width, int height, int frame_index) = 0;
+      protected:
+        virtual void
+        doWrite(char* rgb, int width, int height, int frame_index) = 0;
 
-    std::string path;
-    short width;
-    short height;
-    int frames_per_second;
-    bool drop_input_frames;
-    int channels;
-    bool is_open;
+        std::string path;
+        short width;
+        short height;
+        int frames_per_second;
+        bool drop_input_frames;
+        int channels;
+        bool is_open;
 
-  private:
-    void writeFrames();
-    void writeSingleFrame(const TimestampedVideoFrame& frame, int count);
+      private:
+        void writeFrames();
+        void writeSingleFrame(const TimestampedVideoFrame& frame, int count);
 
-    boost::posix_time::ptime start_time;
-    boost::posix_time::ptime last_timestamp;
-    boost::posix_time::time_duration frame_duration;
-    std::ofstream frame_info_stream;
-    boost::filesystem::path frame_info_path;
-    int frame_index;
-    int frames_actually_written = 0;
+        boost::posix_time::ptime start_time;
+        boost::posix_time::ptime last_timestamp;
+        boost::posix_time::time_duration frame_duration;
+        std::ofstream frame_info_stream;
+        boost::filesystem::path frame_info_path;
+        int frame_index;
+        int frames_actually_written = 0;
 
-    std::queue<TimestampedVideoFrame> frame_buffer;
-    boost::mutex write_mutex;
-    boost::mutex frame_buffer_mutex;
-    boost::mutex frames_available_mutex;
-    boost::condition_variable frames_available_cond;
-    bool frames_available;
-    boost::thread frame_writer_thread;
-  };
+        std::queue<TimestampedVideoFrame> frame_buffer;
+        boost::mutex write_mutex;
+        boost::mutex frame_buffer_mutex;
+        boost::mutex frames_available_mutex;
+        boost::condition_variable frames_available_cond;
+        bool frames_available;
+        boost::thread frame_writer_thread;
+    };
 } // namespace malmo

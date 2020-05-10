@@ -3,6 +3,7 @@
   [
     {
       "text": [
+         "You have now been given a stone axe to use in battle.", 
          "When battling creatures, aim at them and left-click to attack.", 
          "Skeletons and zombies burn under the sun so you can also try",
          "to push them outside a covered space."
@@ -24,7 +25,7 @@
       "text": [
       	 "Now be prepared to battle and kill the skeleton behind you.",
          "",
-         "Press OK when you are ready."
+         "Click OK when you are ready."
       ],
       "images":
       [ 

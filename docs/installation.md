@@ -7,11 +7,11 @@ Ubuntu (tested with Ubuntu 18.04) users:
 
 ```bash
 git clone https://github.com/ml4ai/tomcat
-cd tomcat && ./tools/install.sh
+cd tomcat && ./tools/install
 ```
 
 For people using other operating systems, note that ToMCAT
-depends on the following: CMake 3.12+, Boost 1.65+, a C++17 compatible
+depends on the following: CMake 3.12+, Boost 1.69+, a C++17 compatible
 compiler (tested with GCC 9 and AppleClang 11.0 so far), libfmt, doxygen,
 ffmpeg, OpenCV, dlib, Java 8, and Gradle. You can inspect the script
 `tools/install_dependencies.sh` to see what exactly is being installed and how.
@@ -28,14 +28,14 @@ Running experiments
 
 To run an experiment, run the following command from the `tomcat` directory.
 
-    ./tools/run_session.sh
+    ./tools/run_session
 
 The data from the experiment will be saved in a folder whose name contains a
 timestamp corresponding to the start of the experiment, of the form
 
     tomcat/data/participant_data/session_<Year>_<Month>_<Day>_<Hour>_<Minute>_<Second>
 
-This folder will contain four files:
+This folder will contain six files:
 - `webcam_video.mpg` : A video recording of the player's face taken using the built-in
   webcam.
 - `screen_video.mpg` : A video recording of the Minecraft playthrough (i.e.
@@ -48,15 +48,12 @@ This folder will contain four files:
   monsters.
 - A JSON file with self-report survey responses.
 
+(The self-report survey responses may not be generated if you finish the
+mission too quickly).
 
 To interrupt the game and quit at any time, press the `Esc` key, then click on
 the terminal window where you ran the `run_session.sh` script, and then
-interrupt the process with `Ctrl+C`. Then, run the following command to shut
-down Minecraft.
-
-```
-./tools/kill_minecraft.sh
-```
+interrupt the process with `Ctrl+C`.
 
 ## For developers
 

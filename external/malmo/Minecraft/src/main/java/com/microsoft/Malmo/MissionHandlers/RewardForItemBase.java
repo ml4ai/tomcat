@@ -40,94 +40,99 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 public abstract class RewardForItemBase extends RewardBase {
-  List<ItemRewardMatcher> rewardMatchers = new ArrayList<ItemRewardMatcher>();
+    List<ItemRewardMatcher> rewardMatchers = new ArrayList<ItemRewardMatcher>();
 
-  public static class ItemMatcher {
-    List<String> allowedItemTypes = new ArrayList<String>();
-    BlockOrItemSpec matchSpec;
+    public static class ItemMatcher {
+        List<String> allowedItemTypes = new ArrayList<String>();
+        BlockOrItemSpec matchSpec;
 
-    ItemMatcher(BlockOrItemSpec spec) {
-      this.matchSpec = spec;
+        ItemMatcher(BlockOrItemSpec spec) {
+            this.matchSpec = spec;
 
-      for (String itemType : spec.getType()) {
-        Item item = MinecraftTypeHelper.ParseItemType(itemType, true);
-        if (item != null)
-          this.allowedItemTypes.add(item.getUnlocalizedName());
-      }
-    }
+            for (String itemType : spec.getType()) {
+                Item item = MinecraftTypeHelper.ParseItemType(itemType, true);
+                if (item != null)
+                    this.allowedItemTypes.add(item.getUnlocalizedName());
+            }
+        }
 
-    boolean matches(ItemStack stack) {
-      String item = stack.getItem().getUnlocalizedName();
-      if (!this.allowedItemTypes.contains(item))
-        return false;
+        boolean matches(ItemStack stack) {
+            String item = stack.getItem().getUnlocalizedName();
+            if (!this.allowedItemTypes.contains(item))
+                return false;
 
-      // Our item type matches, but we may need to compare block attributes too:
-      DrawItem di = MinecraftTypeHelper.getDrawItemFromItemStack(stack);
-      if (this.matchSpec.getColour() != null &&
-          !this.matchSpec.getColour()
-               .isEmpty()) // We have a colour list, so check colour matches:
-      {
-        if (di.getColour() == null)
-          return false; // The item we are matching against has no colour
-                        // attribute.
-        if (!this.matchSpec.getColour().contains(di.getColour()))
-          return false; // The item we are matching against is the wrong colour.
-      }
-      if (this.matchSpec.getVariant() != null &&
-          !this.matchSpec.getVariant()
-               .isEmpty()) // We have a variant list, so check variant matches@:
-      {
-        if (di.getVariant() == null)
-          return false; // The item we are matching against has no variant
-                        // attribute.
-        for (Variation v : this.matchSpec.getVariant()) {
-          if (v.getValue().equals(di.getVariant().getValue()))
+            // Our item type matches, but we may need to compare block
+            // attributes too:
+            DrawItem di = MinecraftTypeHelper.getDrawItemFromItemStack(stack);
+            if (this.matchSpec.getColour() != null &&
+                !this.matchSpec.getColour()
+                     .isEmpty()) // We have a colour list, so check colour
+                                 // matches:
+            {
+                if (di.getColour() == null)
+                    return false; // The item we are matching against has no
+                                  // colour attribute.
+                if (!this.matchSpec.getColour().contains(di.getColour()))
+                    return false; // The item we are matching against is the
+                                  // wrong colour.
+            }
+            if (this.matchSpec.getVariant() != null &&
+                !this.matchSpec.getVariant()
+                     .isEmpty()) // We have a variant list, so check variant
+                                 // matches@:
+            {
+                if (di.getVariant() == null)
+                    return false; // The item we are matching against has no
+                                  // variant attribute.
+                for (Variation v : this.matchSpec.getVariant()) {
+                    if (v.getValue().equals(di.getVariant().getValue()))
+                        return true;
+                }
+                return false; // The item we are matching against is the wrong
+                              // variant.
+            }
             return true;
         }
-        return false; // The item we are matching against is the wrong variant.
-      }
-      return true;
-    }
-  }
-
-  public class ItemRewardMatcher extends ItemMatcher {
-    float reward;
-    String distribution;
-
-    ItemRewardMatcher(BlockOrItemSpecWithReward spec) {
-      super(spec);
-      this.reward = spec.getReward().floatValue();
-      this.distribution = spec.getDistribution();
     }
 
-    float reward() { return this.reward; }
+    public class ItemRewardMatcher extends ItemMatcher {
+        float reward;
+        String distribution;
 
-    String distribution() { return this.distribution; }
-  }
+        ItemRewardMatcher(BlockOrItemSpecWithReward spec) {
+            super(spec);
+            this.reward = spec.getReward().floatValue();
+            this.distribution = spec.getDistribution();
+        }
 
-  protected void addItemSpecToRewardStructure(BlockOrItemSpecWithReward is) {
-    this.rewardMatchers.add(new ItemRewardMatcher(is));
-  }
+        float reward() { return this.reward; }
 
-  protected void accumulateReward(int dimension, ItemStack stack) {
-    for (ItemRewardMatcher matcher : this.rewardMatchers) {
-      if (matcher.matches(stack)) {
-        addAndShareCachedReward(dimension,
-                                stack.getCount() * matcher.reward(),
-                                matcher.distribution());
-      }
+        String distribution() { return this.distribution; }
     }
-  }
 
-  protected static void sendItemStackToClient(EntityPlayerMP player,
-                                              MalmoMessageType message,
-                                              ItemStack is) {
-    ByteBuf buf = Unpooled.buffer();
-    ByteBufUtils.writeItemStack(buf, is);
-    byte[] bytes = new byte[buf.readableBytes()];
-    buf.getBytes(0, bytes);
-    String data = DatatypeConverter.printBase64Binary(bytes);
-    MalmoMod.MalmoMessage msg = new MalmoMod.MalmoMessage(message, data);
-    MalmoMod.network.sendTo(msg, player);
-  }
+    protected void addItemSpecToRewardStructure(BlockOrItemSpecWithReward is) {
+        this.rewardMatchers.add(new ItemRewardMatcher(is));
+    }
+
+    protected void accumulateReward(int dimension, ItemStack stack) {
+        for (ItemRewardMatcher matcher : this.rewardMatchers) {
+            if (matcher.matches(stack)) {
+                addAndShareCachedReward(dimension,
+                                        stack.getCount() * matcher.reward(),
+                                        matcher.distribution());
+            }
+        }
+    }
+
+    protected static void sendItemStackToClient(EntityPlayerMP player,
+                                                MalmoMessageType message,
+                                                ItemStack is) {
+        ByteBuf buf = Unpooled.buffer();
+        ByteBufUtils.writeItemStack(buf, is);
+        byte[] bytes = new byte[buf.readableBytes()];
+        buf.getBytes(0, bytes);
+        String data = DatatypeConverter.printBase64Binary(bytes);
+        MalmoMod.MalmoMessage msg = new MalmoMod.MalmoMessage(message, data);
+        MalmoMod.network.sendTo(msg, player);
+    }
 }

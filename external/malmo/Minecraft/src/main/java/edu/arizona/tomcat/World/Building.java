@@ -1,70 +1,87 @@
 package edu.arizona.tomcat.World;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import net.minecraft.util.math.BlockPos;
 
-/**
- * This file contains the Building class which can be instantiated to represent
- * a single room building in Minecraft. At the time it is created, the instance
- * must be given the location of the building x,y,z as integers.
- * <p>
- * Since the building only has a single room, the passed parameters will be the
- * coordinates of that single room (the inside to be specific).
- * <p>
- * This single room is also called the main room.
- */
 public class Building {
 
-  private BlockPos mainRoomCoordinates;
-  private boolean mainRoomFilled;
+    private ArrayList<BlockPos> roomsCoordinates;
+    private ArrayList<Boolean> occupation;
 
-  /**
-   * This constructor requires the x,y and z coordinates of the room of the
-   * building.
-   *
-   * @param x - The x coordinate of the building as an integer
-   * @param y - The y coordinate of the building as an integer
-   * @param z - The z coordinate of the building as an integer
-   */
-  public Building(int x, int y, int z) {
-    this.mainRoomCoordinates = new BlockPos(x, y, z);
-    this.mainRoomFilled = false;
-  }
+    /**
+     * This constructor requires the x,y and z coordinates of the main room of
+     * the building.
+     *
+     * @param x - The x coordinate of the room as an integer
+     * @param y - The y coordinate of the room as an integer
+     * @param z - The z coordinate of the room as an integer
+     */
+    public Building(int x, int y, int z) {
+        this.roomsCoordinates = new ArrayList<BlockPos>();
+        this.occupation = new ArrayList<Boolean>();
+        this.roomsCoordinates.add(new BlockPos(x, y, z));
+        this.occupation.add(false);
+    }
 
-  /**
-   * This method will return coordinates of the main room as a a
-   * BlockPos object.
-   *
-   * @return BlockPos - Three point coordinate of the main room
-   */
-  public BlockPos getMainRoomCoordinates() { return this.mainRoomCoordinates; }
+    /**
+     * Indicates whether it's a single-room building or not
+     * @return
+     */
+    public boolean isSingleRoom() { return this.roomsCoordinates.size() == 1; }
 
-  /**
-   * This method will designate the main room as a
-   * filled room.
-   */
-  public void fillMainRoom() { this.mainRoomFilled = true; }
+    /**
+     * Add a new room to the building
+     * @param x - The x coordinate of the room as an integer
+     * @param y - The y coordinate of the room as an integer
+     * @param z - The z coordinate of the rrom as an integer
+     */
+    public void addRoom(int x, int y, int z) {
+        this.roomsCoordinates.add(new BlockPos(x, y, z));
+        this.occupation.add(false);
+    }
 
-  /**
-   * This method is meant to be overridden. When it is called from an extended
-   * class it will fill the indicated room, otherwise if it is called from an
-   * instance of Building, it simply marks the main room as filled.
-   *
-   * @param coordinate - BlockPos coordinates of room to be filled
-   */
-  public void markRoomAsFilled(BlockPos coordinate) { this.fillMainRoom(); }
+    /**
+     * Marks room as occupied
+     * @param room
+     */
+    public void setRoomOccupied(int room) { this.occupation.set(room, true); }
 
-  /**
-   * This method will designate the main room as an empty
-   * room.
-   */
-  public void emptyMainRoom() { this.mainRoomFilled = false; }
+    /**
+     * Retrieves the coordinates of all the rooms
+     * @return
+     */
+    public Iterator<BlockPos> getRooms() {
+        return this.roomsCoordinates.iterator();
+    }
 
-  /**
-   * This method will return true if the main room is designated as full, and it
-   * will return false if the room is empty.
-   *
-   * @return boolean - true or false depending on if the main room is filled or
-   * not.
-   */
-  public boolean mainRoomIsFilled() { return this.mainRoomFilled; }
+    /**
+     * Retrieves the coordinates of all the unoccupied rooms
+     * @return
+     */
+    public Iterator<BlockPos> getUnoccupiedRooms() {
+        ArrayList<BlockPos> unoccupiedRooms = new ArrayList<BlockPos>();
+
+        for (int i = 0; i < this.roomsCoordinates.size(); i++) {
+            if (!this.occupation.get(i)) {
+                unoccupiedRooms.add(this.roomsCoordinates.get(i));
+            }
+        }
+
+        return unoccupiedRooms.iterator();
+    }
+
+    /**
+     * Retrieves the coordinates of a room
+     * @return
+     */
+    public BlockPos getRoomCoordinates(int room) {
+        return this.roomsCoordinates.get(room);
+    }
+
+    /**
+     * Retrieves the number of rooms in the building
+     * @return
+     */
+    public int getNumberOfRooms() { return this.roomsCoordinates.size(); }
 }

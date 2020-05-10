@@ -30,21 +30,21 @@ import net.minecraft.client.entity.EntityPlayerSP;
 
 public class ObservationFromDiscreteCellImplementation
     extends HandlerBase implements IObservationProducer {
-  @Override
-  public void writeObservationsToJSON(JsonObject json,
-                                      MissionInit missionInit) {
-    // Return a string that is unique for every cell on the x/z plane (ignores
-    // y)
-    EntityPlayerSP player = Minecraft.getMinecraft().player;
-    // getPosition() rounds to int.
-    int x = player.getPosition().getX();
-    int z = player.getPosition().getZ();
-    json.addProperty("cell", "(" + x + "," + z + ")");
-  }
+    @Override
+    public void writeObservationsToJSON(JsonObject json,
+                                        MissionInit missionInit) {
+        // Return a string that is unique for every cell on the x/z plane
+        // (ignores y)
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        // getPosition() rounds to int.
+        int x = player.getPosition().getX();
+        int z = player.getPosition().getZ();
+        json.addProperty("cell", "(" + x + "," + z + ")");
+    }
 
-  @Override
-  public void prepare(MissionInit missionInit) {}
+    @Override
+    public void prepare(MissionInit missionInit) {}
 
-  @Override
-  public void cleanup() {}
+    @Override
+    public void cleanup() {}
 }
