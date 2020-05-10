@@ -82,7 +82,6 @@ paths:
 components:
   schemas:
     
-          
     Position:
       description: "Position vector"
       properties:
@@ -105,32 +104,17 @@ components:
 
     Event:
       properties:
-        header:
-          $ref: '#/components/schemas/CommonHeader'
-        msg:
-          $ref: '#/components/schemas/Msg'
+        timestamp:
+          type: string
+          format: date-time
         event_type:
           type: string
 
     DoorEvent:
       allOf:
-      - $ref: '#/components/schemas/Event'
+        - $ref: '#/components/schemas/Event'
+        - type: object
       properties:
-        data:
-          $ref: '#/components/schemas/DoorEventData'
-
-    LeverEvent:
-      allOf:
-      - $ref: '#/components/schemas/Event'
-      properties:
-        data:
-          $ref: '#/components/schemas/LeverEventData'
-
-    DoorEventData:
-      properties:
-        timestamp:
-          type: string
-          format: date-time
         player_name:
           type: string
           example: "Aptiminer1"
@@ -140,30 +124,33 @@ components:
           $ref: '#/components/schemas/Position'
       description: "Door event."
 
-    LeverEventData:
+    LeverEvent:
+      allOf:
+      - $ref: '#/components/schemas/Event'
       properties:
-        timestamp:
-          format: date-time
-        player_name:
+        event_type:
           type: string
-          example: "tomcat"
+          enum:
+            - "lever"
+        player_name:
+          $ref: '#/components/schemas/PlayerName'
         was_powered:
           type: boolean
         lever_position:
           $ref: '#/components/schemas/Position'
       description: "Lever event."
 
+
     BlockInteraction:
-      allOf:
-      - $ref: '#/components/schemas/Event'
       properties:
+        allOf:
+        - $ref: '#/components/schemas/Event'
         player_name:
           type: string
         block_position:
           $ref: '#/components/schemas/Position'
         block_material:
-          type: string
-          example: minecraft:grass
+          $ref: '#/components/schemas/BlockMaterial'
         click_type:
           $ref: '#/components/schemas/ClickType'
         item_held:
@@ -173,7 +160,51 @@ components:
       type: string
       enum:
         - "Event:Lever"
-        - "Event: Door"
+        - "Event:Door"
+
+    PlayerName:
+      type: string
+      example: tomcat
+
+    BlockMaterial:
+      type: string
+      enum:
+        - minecraft:air
+        - minecraft:anvil
+        - minecraft:barrier
+        - minecraft:cactus
+        - minecraft:cake
+        - minecraft:carpet
+        - minecraft:circuits
+        - minecraft:clay
+        - minecraft:cloth
+        - minecraft:coral
+        - minecraft:crafted_snow
+        - minecraft:dragon_egg
+        - minecraft:fire
+        - minecraft:glass
+        - minecraft:gourd
+        - minecraft:grass
+        - minecraft:ground
+        - minecraft:ice
+        - minecraft:iron
+        - minecraft:lava
+        - minecraft:leaves
+        - minecraft:packed_ice
+        - minecraft:piston
+        - minecraft:plants
+        - minecraft:portal
+        - minecraft:redstone_light
+        - minecraft:rock
+        - minecraft:sand
+        - minecraft:snow
+        - minecraft:sponge
+        - minecraft:structure_void
+        - minecraft:tnt
+        - minecraft:vine
+        - minecraft:water
+        - minecraft:web
+        - minecraft:wood
 
     ClickType:
       type: string
