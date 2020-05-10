@@ -15,6 +15,24 @@ paths:
               schema:
                 $ref: '#/components/schemas/StateObservation'
 
+  /observations/events/player_interactions/entity_interactions:
+    subscribe:
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityInteraction'
+
+  /observations/events/player_interactions/villager_saved:
+    subscribe:
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VillagerSaved'
+
   /observations/events/player_interactions/blocks/door:
     subscribe:
       responses:
@@ -42,23 +60,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/GenericBlockInteraction'
 
-  /observations/events/player_interactions/left_clicks/blocks:
+  /observations/events/player_interactions/blocks/break:
     subscribe:
       responses:
         200:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DoorInteraction'
-
-  /observations/events/player_interactions/break_events/blocks:
-    subscribe:
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DoorInteraction'
+                $ref: '#/components/schemas/BlockBreakEvent'
 
   /observations/events/mob_attacked:
     subscribe:
@@ -85,7 +94,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DoorInteraction'
+                $ref: '#/components/schemas/Chat'
 
   /observations/events/dog_barks:
     subscribe:
@@ -138,20 +147,75 @@ components:
         item_held:
           $ref: '#/components/schemas/Item'
 
-    BlockInteraction:
+    EntityInteraction:
       allOf:
       - $ref: '#/components/schemas/PlayerInteraction'
       properties:
         event_type:
           type: string
           enum:
-            - edu.arizona.tomcat.Events.BlockInteraction
+            - edu.arizona.tomcat.Events.EntityInteraction
+        target_id:
+          type: string
+          format: uuid
+        target_position:
+          $ref: '#/components/schemas/Position'
+        target_velocity:
+          $ref: '#/components/schemas/Velocity'
+        target_type:
+          $ref: '#/components/schemas/EntityType'
+      description: "Entity interaction" 
+
+    MobAttacked:
+      allOf:
+      - $ref: '#/components/schemas/EntityInteraction'
+      properties:
+        target_health:
+          type: number
+        event_type:
+          type: string
+          enum:
+            - edu.arizona.tomcat.Events.MobAttacked
+      description: "Mob attack event."
+
+    BlockBreakEvent:
+      allOf:
+      - $ref: '#/components/schemas/PlayerInteraction'
+      - $ref: '#/components/schemas/BlockProperties'
+      properties:
+        event_type:
+          type: string
+          enum:
+            - edu.arizona.tomcat.Events.BlockBreakEvent
+
+    BlockProperties:
+      properties:
         block_position:
           $ref: '#/components/schemas/Position'
         block_material:
           $ref: '#/components/schemas/BlockMaterial'
+
+    BlockInteraction:
+      allOf:
+      - $ref: '#/components/schemas/PlayerInteraction'
+      - $ref: '#/components/schemas/BlockProperties'
+      properties:
+        event_type:
+          type: string
+          enum:
+            - edu.arizona.tomcat.Events.BlockInteraction
         click_type:
           $ref: '#/components/schemas/ClickType'
+
+    VillagerSaved:
+      allOf:
+        - $ref: '#/components/schemas/Event'
+      properties:
+        villager_id:
+          type: string
+          format: uuid
+        villager_pos:
+          $ref: '#/components/schemas/Position'
 
     DoorInteraction:
       allOf:
@@ -211,26 +275,6 @@ components:
           type: boolean
       description: "Generic block interaction event."
 
-    MobAttacked:
-      allOf:
-      - $ref: '#/components/schemas/PlayerInteraction'
-      properties:
-        target_id:
-          type: string
-          format: uuid
-        target_position:
-          $ref: '#/components/schemas/Position'
-        target_velocity:
-          $ref: '#/components/schemas/Velocity'
-        target_type:
-          $ref: '#/components/schemas/EntityType'
-        target_health:
-          type: number
-        event_type:
-          type: string
-          enum:
-            - edu.arizona.tomcat.Events.MobAttacked
-      description: "Lever event."
 
     EntityDeath:
       allOf:
@@ -333,6 +377,19 @@ components:
               type: number
               example: 20.0
 
+    Chat:
+      allOf:
+      - $ref: '#/components/schemas/Event'
+      properties:
+        player_name:
+          $ref: '#/components/schemas/PlayerName'
+        message:
+          type: string
+          example: "Hello world!"
+        event_type:
+          type: string
+          enum:
+            - edu.arizona.tomcat.Events.Chat
 
 
     BlockMaterial:
@@ -356,6 +413,7 @@ components:
       examples:
         - net.minecraft.entity.monster.EntitySkeleton
         - net.minecraft.entity.monster.EntityZombie
+        - net.minecraft.entity.passive.EntityWolf
 
     ClickType:
       type: string
