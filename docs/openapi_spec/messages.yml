@@ -6,6 +6,15 @@ info:
   version: "0.1"
 
 paths:
+  /observations/state:
+    subscribe:
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StateObservation'
+
   /observations/events/player_interactions/blocks/door:
     subscribe:
       responses:
@@ -13,7 +22,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DoorEvent'
+                $ref: '#/components/schemas/DoorInteraction'
 
   /observations/events/player_interactions/blocks/lever:
     subscribe:
@@ -31,7 +40,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BlockInteraction'
+                $ref: '#/components/schemas/GenericBlockInteraction'
 
   /observations/events/player_interactions/left_clicks/blocks:
     subscribe:
@@ -40,7 +49,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DoorEvent'
+                $ref: '#/components/schemas/DoorInteraction'
 
   /observations/events/player_interactions/break_events/blocks:
     subscribe:
@@ -49,7 +58,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DoorEvent'
+                $ref: '#/components/schemas/DoorInteraction'
+
+  /observations/events/mob_attacked:
+    subscribe:
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MobAttacked'
 
   /observations/events/entity_death:
     subscribe:
@@ -58,7 +76,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DoorEvent'
+                $ref: '#/components/schemas/EntityDeath'
 
   /observations/chat:
     subscribe:
@@ -67,7 +85,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DoorEvent'
+                $ref: '#/components/schemas/DoorInteraction'
 
   /observations/events/dog_barks:
     subscribe:
@@ -76,7 +94,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DoorEvent'
+                $ref: '#/components/schemas/DogBarkEvent'
 
 
 components:
@@ -87,10 +105,13 @@ components:
       properties:
         x:
           type: integer
+          example: 10
         y:
           type: integer
+          example: 20
         z:
           type: integer
+          example: 30
           
     Velocity:
       description: "Velocity vector"
@@ -107,54 +128,129 @@ components:
         timestamp:
           type: string
           format: date-time
-        event_type:
-          type: string
 
-    DoorEvent:
+    PlayerInteraction:
       allOf:
         - $ref: '#/components/schemas/Event'
-        - type: object
       properties:
-        player_name:
-          type: string
-          example: "Aptiminer1"
-        was_open:
-          type: boolean
-        door_position:
-          $ref: '#/components/schemas/Position'
-      description: "Door event."
-
-    LeverEvent:
-      allOf:
-      - $ref: '#/components/schemas/Event'
-      properties:
-        event_type:
-          type: string
-          enum:
-            - "lever"
         player_name:
           $ref: '#/components/schemas/PlayerName'
-        was_powered:
-          type: boolean
-        lever_position:
-          $ref: '#/components/schemas/Position'
-      description: "Lever event."
-
+        item_held:
+          $ref: '#/components/schemas/Item'
 
     BlockInteraction:
+      allOf:
+      - $ref: '#/components/schemas/PlayerInteraction'
       properties:
-        allOf:
-        - $ref: '#/components/schemas/Event'
-        player_name:
+        event_type:
           type: string
+          enum: edu.arizona.tomcat.Events.BlockInteraction
         block_position:
           $ref: '#/components/schemas/Position'
         block_material:
           $ref: '#/components/schemas/BlockMaterial'
         click_type:
           $ref: '#/components/schemas/ClickType'
-        item_held:
+
+    DoorInteraction:
+      allOf:
+        - $ref: '#/components/schemas/BlockInteraction'
+      properties:
+        block_material:
           type: string
+          enum: minecraft:wooden_door
+        block_type:
+          type: string
+          enum: net.minecraft.block.BlockDoor
+        event_type:
+          type: string
+          enum: edu.arizona.tomcat.Events.DoorInteraction
+        was_open:
+          type: boolean
+      description: "Door event."
+
+    LeverEvent:
+      allOf:
+      - $ref: '#/components/schemas/BlockInteraction'
+      properties:
+        block_material:
+          type: string
+          enum: minecraft:lever
+        block_type:
+          type: string
+          enum: net.minecraft.block.BlockLever
+        event_type:
+          type: string
+          enum: edu.arizona.tomcat.Events.LeverFlip
+        was_powered:
+          type: boolean
+      description: "Lever event."
+
+
+    GenericBlockInteraction:
+      allOf:
+      - $ref: '#/components/schemas/BlockInteraction'
+      properties:
+        block_material:
+          type: string
+          $ref: '#/components/schemas/BlockMaterial'
+        block_type:
+          $ref: '#/components/schemas/BlockType'
+        event_type:
+          type: string
+          enum: edu.arizona.tomcat.Events.BlockInteraction
+        was_powered:
+          type: boolean
+      description: "Generic block interaction event."
+
+    MobAttacked:
+      allOf:
+      - $ref: '#/components/schemas/PlayerInteraction'
+      properties:
+        target_id:
+          type: string
+          format: uuid
+        target_position:
+          $ref: '#/components/schemas/Position'
+        target_velocity:
+          $ref: '#/components/schemas/Velocity'
+        target_type:
+          $ref: '#/components/schemas/EntityType'
+        target_health:
+          type: number
+        event_type:
+          type: string
+          enum: edu.arizona.tomcat.Events.MobAttacked
+      description: "Lever event."
+
+    EntityDeath:
+      allOf:
+        - $ref: '#/components/schemas/Event'
+      properties:
+        entity_type:
+          $ref: '#/components/schemas/EntityType'
+        entity_name:
+          type: string
+          example: Zombie
+        entity_id:
+          type: string
+          format: uuid
+        event_type:
+          type: string
+          enum: edu.arizona.tomcat.Events.EntityDeath
+      
+    DogBarkEvent:
+      allOf:
+      - $ref: '#/components/schemas/Event'
+      properties:
+        number_of_barks:
+          type: integer
+          enum:
+            - 1
+            - 2
+        event_type:
+          type: string
+          enum: edu.arizona.tomcat.Events.DogBarkEvent
 
     EventType:
       type: string
@@ -166,9 +262,75 @@ components:
       type: string
       example: tomcat
 
+    BlockType:
+      type: string
+      example: net.minecraft.block.BlockAir
+
+    StateObservation:
+      properties:
+        name:
+          $ref: '#/components/schemas/PlayerName'
+        header:
+          properties:
+            timestamp:
+              type: string
+              format: date-time
+            message_type:
+              type: string
+              enum: observation
+            version:
+              type: string
+              example: "0.2"
+        msg:
+          properties:
+            trial_id:
+              type: string
+              format: uuid
+            timestamp:
+              type: string
+              format: date-time
+            source:
+              type: string
+              example: human
+            sub_type:
+              type: string
+              enum: state
+        data:
+          properties:
+            x:
+              type: number
+            y:
+              type: number
+            z:
+              type: number
+            motion_x:
+              type: number
+            motion_y:
+              type: number
+            motion_z:
+              type: number
+            pitch:
+              type: number
+            yaw:
+              type: number
+            world_time:
+              type: integer
+            total_time:
+              type: integer
+            id:
+              type: string
+              format: uuid
+            name:
+              $ref: '#/components/schemas/PlayerName'
+            life:
+              type: number
+              example: 20.0
+
+
+
     BlockMaterial:
       type: string
-      enum:
+      examples:
         - minecraft:air
         - minecraft:anvil
         - minecraft:barrier
@@ -183,6 +345,7 @@ components:
         - minecraft:dragon_egg
         - minecraft:fire
         - minecraft:glass
+        - minecraft:gold_block
         - minecraft:gourd
         - minecraft:grass
         - minecraft:ground
@@ -199,12 +362,23 @@ components:
         - minecraft:sand
         - minecraft:snow
         - minecraft:sponge
+        - minecraft:stone_button
         - minecraft:structure_void
         - minecraft:tnt
         - minecraft:vine
         - minecraft:water
         - minecraft:web
         - minecraft:wood
+
+    Item:
+      type: string
+      example: Stone Axe
+
+    EntityType:
+      type: string
+      examples:
+        - net.minecraft.entity.monster.EntitySkeleton
+        - net.minecraft.entity.monster.EntityZombie
 
     ClickType:
       type: string
