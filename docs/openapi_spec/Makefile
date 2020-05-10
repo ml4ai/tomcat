@@ -1,2 +1,2 @@
 all:
-	python swagger-yaml-to-html.py messages.yml spec.html
+	python swagger-yaml-to-html.py spec.yml spec.html
