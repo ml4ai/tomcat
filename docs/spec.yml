@@ -41,7 +41,7 @@ paths:
   /observations/events/player_interactions/villager_saved:
     subscribe:
       tags:
-      - Common Events
+      - Zombie Invasion Events
       responses:
         200:
           content:
@@ -52,7 +52,7 @@ paths:
   /observations/events/player_interactions/blocks/door:
     subscribe:
       tags:
-      - Zombie Invasion Events
+      - Common Events
       responses:
         200:
           content:
