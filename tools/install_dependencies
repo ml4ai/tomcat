@@ -28,7 +28,10 @@ __install_dependencies_using_macports() {
         boost \
         gradle \
         mosquitto \
-        nlohmann-json
+        nlohmann-json \
+        dlib \
+        opencv4 \
+        openblas
     if [[ $? -ne 0 ]]; then exit 1; fi
 
 
@@ -76,7 +79,10 @@ __install_dependencies_using_homebrew() {
       boost \
       gradle \
       mosquitto \
-      nlohmann-json
+      nlohmann-json \
+      dlib \
+      opencv4 \
+      openblas
     if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
 
     # We enable system audio recording ononly on macOS Catalina or above
@@ -121,7 +127,10 @@ __install_dependencies_using_apt() {
         openjdk-8-jdk=8u162-b12-1\
         mosquitto\
         mosquitto-clients\
-        curl
+        curl \
+        libdlib-dev \
+        libopencv-dev \
+        libopenblas-dev
     if [[ $? -ne 0 ]]; then exit 1; fi
 
     # On Ubuntu 18.04, the required version of the nlohmann-json JSON library
