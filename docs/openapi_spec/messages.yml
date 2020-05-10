@@ -144,7 +144,8 @@ components:
       properties:
         event_type:
           type: string
-          enum: edu.arizona.tomcat.Events.BlockInteraction
+          enum:
+            - edu.arizona.tomcat.Events.BlockInteraction
         block_position:
           $ref: '#/components/schemas/Position'
         block_material:
@@ -158,13 +159,16 @@ components:
       properties:
         block_material:
           type: string
-          enum: minecraft:wooden_door
+          examples:
+            - minecraft:wooden_door
         block_type:
           type: string
-          enum: net.minecraft.block.BlockDoor
+          enum:
+            - net.minecraft.block.BlockDoor
         event_type:
           type: string
-          enum: edu.arizona.tomcat.Events.DoorInteraction
+          enum:
+            - edu.arizona.tomcat.Events.DoorInteraction
         was_open:
           type: boolean
       description: "Door event."
@@ -175,13 +179,16 @@ components:
       properties:
         block_material:
           type: string
-          enum: minecraft:lever
+          enum:
+            - minecraft:lever
         block_type:
           type: string
-          enum: net.minecraft.block.BlockLever
+          enum:
+            - net.minecraft.block.BlockLever
         event_type:
           type: string
-          enum: edu.arizona.tomcat.Events.LeverFlip
+          enum:
+            - edu.arizona.tomcat.Events.LeverFlip
         was_powered:
           type: boolean
       description: "Lever event."
@@ -198,7 +205,8 @@ components:
           $ref: '#/components/schemas/BlockType'
         event_type:
           type: string
-          enum: edu.arizona.tomcat.Events.BlockInteraction
+          enum:
+            - edu.arizona.tomcat.Events.BlockInteraction
         was_powered:
           type: boolean
       description: "Generic block interaction event."
@@ -220,7 +228,8 @@ components:
           type: number
         event_type:
           type: string
-          enum: edu.arizona.tomcat.Events.MobAttacked
+          enum:
+            - edu.arizona.tomcat.Events.MobAttacked
       description: "Lever event."
 
     EntityDeath:
@@ -237,7 +246,8 @@ components:
           format: uuid
         event_type:
           type: string
-          enum: edu.arizona.tomcat.Events.EntityDeath
+          enum:
+            - edu.arizona.tomcat.Events.EntityDeath
       
     DogBarkEvent:
       allOf:
@@ -250,13 +260,8 @@ components:
             - 2
         event_type:
           type: string
-          enum: edu.arizona.tomcat.Events.DogBarkEvent
-
-    EventType:
-      type: string
-      enum:
-        - "Event:Lever"
-        - "Event:Door"
+          enum:
+            - edu.arizona.tomcat.Events.DogBarkEvent
 
     PlayerName:
       type: string
@@ -277,7 +282,8 @@ components:
               format: date-time
             message_type:
               type: string
-              enum: observation
+              enum:
+                - observation
             version:
               type: string
               example: "0.2"
@@ -294,7 +300,8 @@ components:
               example: human
             sub_type:
               type: string
-              enum: state
+              enum:
+                - state
         data:
           properties:
             x:
