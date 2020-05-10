@@ -6,16 +6,20 @@ info:
   version: "0.1"
 
 tags:
-- name: Event
-  description: Discrete events that occur during the mission.
-- name: Observation
+- name: Common Events
+  description: Events common to all missions.
+- name: Observations
   description: Data from physical and virtual sensors that take measurements at regular intervals.
+- name: Zombie Invasion Events
+  description: Events from the Zombie Invasion mission.
+- name: USAR Events
+  description: Events from the Urban Search-and-Rescue mission.
 
 paths:
   /observations/state:
     subscribe:
       tags:
-      - Observation
+      - Observations
       responses:
         200:
           content:
@@ -26,7 +30,7 @@ paths:
   /observations/events/player_interactions/entity_interactions:
     subscribe:
       tags:
-      - Event
+      - Common Events
       responses:
         200:
           content:
@@ -37,7 +41,7 @@ paths:
   /observations/events/player_interactions/villager_saved:
     subscribe:
       tags:
-      - Event
+      - Common Events
       responses:
         200:
           content:
@@ -48,7 +52,7 @@ paths:
   /observations/events/player_interactions/blocks/door:
     subscribe:
       tags:
-      - Event
+      - Zombie Invasion Events
       responses:
         200:
           content:
@@ -59,7 +63,7 @@ paths:
   /observations/events/player_interactions/blocks/lever:
     subscribe:
       tags:
-      - Event
+      - Common Events
       responses:
         200:
           content:
@@ -70,7 +74,7 @@ paths:
   /observations/events/player_interactions/blocks/general:
     subscribe:
       tags:
-      - Event
+      - Common Events
       responses:
         200:
           content:
@@ -81,7 +85,7 @@ paths:
   /observations/events/player_interactions/blocks/break:
     subscribe:
       tags:
-      - Event
+      - Common Events
       responses:
         200:
           content:
@@ -92,7 +96,7 @@ paths:
   /observations/events/mob_attacked:
     subscribe:
       tags:
-      - Event
+      - Common Events
       responses:
         200:
           content:
@@ -103,7 +107,7 @@ paths:
   /observations/events/entity_death:
     subscribe:
       tags:
-      - Event
+      - Common Events
       responses:
         200:
           content:
@@ -114,7 +118,7 @@ paths:
   /observations/chat:
     subscribe:
       tags:
-      - Event
+      - Common Events
       responses:
         200:
           content:
@@ -125,7 +129,7 @@ paths:
   /observations/events/dog_barks:
     subscribe:
       tags:
-      - Event
+      - USAR Events
       responses:
         200:
           content:
