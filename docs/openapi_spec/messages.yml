@@ -24,6 +24,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/LeverEvent'
 
+  /observations/events/player_interactions/blocks/general:
+    subscribe:
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlockInteraction'
+
   /observations/events/player_interactions/left_clicks/blocks:
     subscribe:
       responses:
@@ -74,15 +83,6 @@ components:
   schemas:
     
           
-    BlockInteraction:
-      properties:
-        player_name:
-          type: string
-        block_position:
-          $ref: '#/components/schemas/Position'
-        block_material:
-          type: string
-
     Position:
       description: "Position vector"
       properties:
@@ -109,6 +109,8 @@ components:
           $ref: '#/components/schemas/CommonHeader'
         msg:
           $ref: '#/components/schemas/Msg'
+        event_type:
+          type: string
 
     DoorEvent:
       allOf:
@@ -151,8 +153,30 @@ components:
           $ref: '#/components/schemas/Position'
       description: "Lever event."
 
+    BlockInteraction:
+      allOf:
+      - $ref: '#/components/schemas/Event'
+      properties:
+        player_name:
+          type: string
+        block_position:
+          $ref: '#/components/schemas/Position'
+        block_material:
+          type: string
+          example: minecraft:grass
+        click_type:
+          $ref: '#/components/schemas/ClickType'
+        item_held:
+          type: string
+
     EventType:
       type: string
       enum:
         - "Event:Lever"
         - "Event: Door"
+
+    ClickType:
+      type: string
+      enum:
+        - right
+        - left

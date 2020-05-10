@@ -180,7 +180,7 @@ public class ForgeEventHandler {
             else {
                 this.mqttService.publish(
                     new BlockInteraction(event),
-                    "observations/events/player_interactions/blocks");
+                    "observations/events/player_interactions/blocks/general");
             }
         }
     }
