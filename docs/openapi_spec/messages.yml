@@ -447,3 +447,18 @@ components:
       enum:
         - right
         - left
+    
+    SessionMetadata:
+      tags:
+      - Metadata
+      properties:
+        session_id:
+          type: string
+          format: uuid
+        timestamp:
+          type: string
+          format: date-time
+        player_id:
+          type: string
+          format: uuid
+
