@@ -339,42 +339,12 @@ components:
       type: string
       examples:
         - minecraft:air
-        - minecraft:anvil
         - minecraft:barrier
-        - minecraft:cactus
-        - minecraft:cake
-        - minecraft:carpet
-        - minecraft:circuits
         - minecraft:clay
-        - minecraft:cloth
-        - minecraft:coral
-        - minecraft:crafted_snow
-        - minecraft:dragon_egg
-        - minecraft:fire
         - minecraft:glass
         - minecraft:gold_block
-        - minecraft:gourd
         - minecraft:grass
-        - minecraft:ground
-        - minecraft:ice
-        - minecraft:iron
-        - minecraft:lava
-        - minecraft:leaves
-        - minecraft:packed_ice
-        - minecraft:piston
-        - minecraft:plants
-        - minecraft:portal
-        - minecraft:redstone_light
-        - minecraft:rock
-        - minecraft:sand
-        - minecraft:snow
-        - minecraft:sponge
         - minecraft:stone_button
-        - minecraft:structure_void
-        - minecraft:tnt
-        - minecraft:vine
-        - minecraft:water
-        - minecraft:web
         - minecraft:wood
 
     Item:
