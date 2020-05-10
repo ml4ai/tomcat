@@ -5,9 +5,17 @@ info:
   description: ToMCAT Message Spec
   version: "0.1"
 
+tags:
+- name: Event
+  description: Discrete events that occur during the mission.
+- name: Observation
+  description: Data from physical and virtual sensors that take measurements at regular intervals.
+
 paths:
   /observations/state:
     subscribe:
+      tags:
+      - Observation
       responses:
         200:
           content:
@@ -17,6 +25,8 @@ paths:
 
   /observations/events/player_interactions/entity_interactions:
     subscribe:
+      tags:
+      - Event
       responses:
         200:
           content:
@@ -26,6 +36,8 @@ paths:
 
   /observations/events/player_interactions/villager_saved:
     subscribe:
+      tags:
+      - Event
       responses:
         200:
           content:
@@ -35,6 +47,8 @@ paths:
 
   /observations/events/player_interactions/blocks/door:
     subscribe:
+      tags:
+      - Event
       responses:
         200:
           content:
@@ -44,6 +58,8 @@ paths:
 
   /observations/events/player_interactions/blocks/lever:
     subscribe:
+      tags:
+      - Event
       responses:
         200:
           content:
@@ -53,6 +69,8 @@ paths:
 
   /observations/events/player_interactions/blocks/general:
     subscribe:
+      tags:
+      - Event
       responses:
         200:
           content:
@@ -62,6 +80,8 @@ paths:
 
   /observations/events/player_interactions/blocks/break:
     subscribe:
+      tags:
+      - Event
       responses:
         200:
           content:
@@ -71,6 +91,8 @@ paths:
 
   /observations/events/mob_attacked:
     subscribe:
+      tags:
+      - Event
       responses:
         200:
           content:
@@ -80,6 +102,8 @@ paths:
 
   /observations/events/entity_death:
     subscribe:
+      tags:
+      - Event
       responses:
         200:
           content:
@@ -89,6 +113,8 @@ paths:
 
   /observations/chat:
     subscribe:
+      tags:
+      - Event
       responses:
         200:
           content:
@@ -98,6 +124,8 @@ paths:
 
   /observations/events/dog_barks:
     subscribe:
+      tags:
+      - Event
       responses:
         200:
           content:
@@ -108,7 +136,6 @@ paths:
 
 components:
   schemas:
-    
     Position:
       description: "Position vector"
       properties:
