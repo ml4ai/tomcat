@@ -112,12 +112,10 @@ detect_os() {
         export MACPORTS_FOUND=`[ -x "$(command -v port)" ]; echo $?`
         export HOMEBREW_FOUND=`[ -x "$(command -v brew)" ]; echo $?`
 
-        # Trying to set the correct value of JAVA_HOME.
-        if [[ $MACPORTS_FOUND -eq 0 ]]; then
-            export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk8/Contents/Home
-        elif [[ $HOMEBREW_FOUND -eq 0 && $CI -eq 0 ]]; then
-            export JAVA_HOME=/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk
-        fi
+        # We download OpenJDK 1.8.0_232-b09 since the later versions of OpenJDK
+        # 1.8 do not work with malmo, and we don't want to deal with different
+        # operating systems, package managers, etc.
+        export JAVA_HOME="$TOMCAT"/external/jdk8u232-b09/Contents/Home
 
     elif [[ "$OSTYPE" == "linux-gnu" ]]; then
         echo "Linux detected."

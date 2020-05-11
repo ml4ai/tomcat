@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+set -u
+# Set the TOMCAT environment variable, assuming that the directory structure
+# mirrors that of the git repository.
+TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
+export TOMCAT
+
+if [[ ! -d "$TOMCAT/external/jdk8u232-b09" ]]; then
+    pushd "$TOMCAT"/external
+        # Download JDK
+        echo "Downloading OpenJDK8 1.8.0_232-b09 from AdoptOpenJDK's release archive."
+        if [[ $OSTYPE == "darwin"* ]]; then
+            osname=mac
+        else
+            osname=linux
+        fi
+        filename=OpenJDK8U-jdk_x64_${osname}_hotspot_8u232b09.tar.gz
+        if ! curl -LO https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u232-b09/$filename; then
+            echo "Failed to download OpenJDK."
+            exit 1
+        fi
+        tar -xzf $filename
+        echo "Removing ${filename}."
+        rm $filename
+        echo "OpenJDK 1.8.0_232-b09 downloaded to ${TOMCAT}/external/jdk8u232-b09"
+    popd
+fi
+
+exit 0
