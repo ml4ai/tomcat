@@ -100,10 +100,30 @@ start_av_recording() {
     echo "Recording player's screen. Process ID = ${pid_screen_recording}"
 }
 
+# On macOS, it was discovered that quitting Minecraft with Cmd+Q does not send
+# a normal signal like SIGINT or SIGTERM, instead it sends an 'Apple Event'
+# (https://superuser.com/questions/480259/what-signals-does-os-x-send-for-the-quit-and-force-quit-commands)
+# The result was that the user_interrupt() function was not triggered by Cmd+Q.
+# For this reason, we call this function, kill_av_recording_and_mosquitto_sub
+# in both the mission_cleanup and the session_cleanup functions.
+kill_av_recording_and_mosquitto_sub() {
+    echo "Cleaning up ffmpeg/pacat and mosquitto_sub processes." 
+
+    if (( ENABLE_FFMPEG )); then 
+        pkill ffmpeg
+        if [[ $ENABLE_SYSTEM_AUDIO_RECORDING -eq 1 &&  $OSTYPE == linux-gnu ]]; then
+            pkill pacat
+        fi
+    fi
+
+    # Kill any remaining mosquitto, mosquitto_sub, and mosquitto_pub processes
+    pkill mosquitto_sub
+}
 
 
 # Function to cleanup things on exit or keyboard interrupt.
 session_cleanup() {
+    kill_av_recording_and_mosquitto_sub
     cleanup_status=0 
     if [[ ${RECYCLE_MINECRAFT} -lt 2 ]]; then
         if ! "${TOMCAT}/tools/kill_minecraft"; then
@@ -125,19 +145,10 @@ session_cleanup() {
     fi
 }
 
+
 mission_cleanup() {
-    echo "Cleaning up ffmpeg/pacat and mosquitto_sub processes." 
 
-    if (( ENABLE_FFMPEG )); then 
-        pkill ffmpeg
-        if [[ $ENABLE_SYSTEM_AUDIO_RECORDING -eq 1 &&  $OSTYPE == linux-gnu ]]; then
-            pkill pacat
-        fi
-    fi
-
-    # Kill any remaining mosquitto, mosquitto_sub, and mosquitto_pub processes
-    pkill mosquitto_sub
-
+    kill_av_recording_and_mosquitto_sub
     echo "Checking output files..."
 
     files_to_check=("events.txt" "malmo_data.txt" "chat.txt" "self_reports.txt")
