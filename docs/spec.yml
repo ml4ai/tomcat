@@ -137,6 +137,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/DogBarkEvent'
 
+  /observations/events/hit_controlled_door_opened:
+    subscribe:
+      tags:
+      - Zombie Invasion Events
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HitControlledDoorOpenedEvent'
+
 
 components:
   schemas:
@@ -422,6 +433,12 @@ components:
           enum:
             - edu.arizona.tomcat.Events.Chat
 
+    HitControlledDoorOpenedEvent:
+      allOf:
+      - $ref: '#/components/schemas/Event'
+      properties:
+        door_position:
+          $ref: '#/components/schemas/Position'
 
     BlockMaterial:
       type: string
