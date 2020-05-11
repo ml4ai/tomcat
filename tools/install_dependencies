@@ -100,10 +100,6 @@ __install_dependencies_using_apt() {
         doxygen \
         ffmpeg \
         wmctrl \
-        openjdk-8-jre-headless=8u162-b12-1\
-        openjdk-8-jre=8u162-b12-1\
-        openjdk-8-jdk-headless=8u162-b12-1\
-        openjdk-8-jdk=8u162-b12-1\
         mosquitto\
         mosquitto-clients\
         curl
@@ -120,10 +116,6 @@ __install_dependencies_using_apt() {
 
     # TODO - when OpenFace gets added back, add opencv, openblas, and dlib as
     # dependencies.
-
-    if ! sudo update-java-alternatives -s java-1.8.0-openjdk-amd64; then
-      exit 1;
-    fi
 }
 
 __install_dependencies() {
