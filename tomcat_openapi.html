@@ -1,0 +1,285 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Data models and message bus topics &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script src="_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/collapsible-lists/css/tree_view.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" />
+    <link rel="prev" title="LISP Notes" href="developer/lisp.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Data models and message bus topics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#topics-and-models">Topics and models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#colophon">Colophon</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Data models and message bus topics</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/tomcat_openapi.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="data-models-and-message-bus-topics">
+<h1>Data models and message bus topics<a class="headerlink" href="#data-models-and-message-bus-topics" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>We document here the message bus topics and the data models associated with
+ToMCAT. An implicit design decision that we make is that each ‘leaf’ in the
+topic hierarchy corresponds to a unique schema. So if you subscribe to all the
+messages at a non-leaf level in the hierarchy, you will get messages
+corresponding to all the leaves under that level.</p>
+<p>We also provide the data models and example JSON output for data that is not
+necessarily published to the message bus - for example, the <code class="docutils literal notranslate"><span class="pre">SessionMetadata</span></code>
+model describes the format of the file <code class="docutils literal notranslate"><span class="pre">metadata.json</span></code> that is written to
+each session data directory produced by the <code class="docutils literal notranslate"><span class="pre">run_session</span></code> script.</p>
+</div>
+<div class="section" id="topics-and-models">
+<h2>Topics and models<a class="headerlink" href="#topics-and-models" title="Permalink to this headline">¶</a></h2>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Source+Code+Pro:300,600|Titillium+Web:400,600,700" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="_static/swagger-ui/swagger-ui.css" >
+  <style>
+    html
+    {
+      box-sizing: border-box;
+      overflow: -moz-scrollbars-vertical;
+      overflow-y: scroll;
+    }
+    *,
+    *:before,
+    *:after
+    {
+      box-sizing: inherit;
+    }
+
+    body {
+      margin:0;
+      background: #fafafa;
+    }
+  </style>
+
+<div id="swagger-ui"></div>
+<script src="_static/swagger-ui/swagger-ui-bundle.js"> </script>
+<script src="_static/swagger-ui/swagger-ui-standalone-preset.js"> </script>
+<script>
+    window.onload = function() {
+
+    // Build a system
+    var spec = {"openapi": "3.0.0", "info": {"title": "ToMCAT Data Models and Message Topics", "description": "A formal specification of data models and message bus topics associated with ToMCAT.", "version": "0.1"}, "tags": [{"name": "Common Events", "description": "Events common to all missions."}, {"name": "Observations", "description": "Data from physical and virtual sensors that take measurements at regular intervals."}, {"name": "Zombie Invasion Events", "description": "Events from the Zombie Invasion mission."}, {"name": "USAR Events", "description": "Events from the Urban Search-and-Rescue mission."}], "paths": {"/observations/state": {"subscribe": {"tags": ["Observations"], "responses": {"200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/StateObservation"}}}}}}}, "/observations/events/player_interactions/entity_interactions": {"subscribe": {"tags": ["Common Events"], "responses": {"200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/EntityInteraction"}}}}}}}, "/observations/events/player_interactions/villager_saved": {"subscribe": {"tags": ["Zombie Invasion Events"], "responses": {"200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/VillagerSaved"}}}}}}}, "/observations/events/player_interactions/blocks/door": {"subscribe": {"tags": ["Common Events"], "responses": {"200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/DoorInteraction"}}}}}}}, "/observations/events/player_interactions/blocks/lever": {"subscribe": {"tags": ["Common Events"], "responses": {"200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/LeverEvent"}}}}}}}, "/observations/events/player_interactions/blocks/general": {"subscribe": {"tags": ["Common Events"], "responses": {"200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/GenericBlockInteraction"}}}}}}}, "/observations/events/player_interactions/blocks/break": {"subscribe": {"tags": ["Common Events"], "responses": {"200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/BlockBreakEvent"}}}}}}}, "/observations/events/mob_attacked": {"subscribe": {"tags": ["Common Events"], "responses": {"200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/MobAttacked"}}}}}}}, "/observations/events/entity_death": {"subscribe": {"tags": ["Common Events"], "responses": {"200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/EntityDeath"}}}}}}}, "/observations/chat": {"subscribe": {"tags": ["Common Events"], "responses": {"200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Chat"}}}}}}}, "/observations/events/dog_barks": {"subscribe": {"tags": ["USAR Events"], "responses": {"200": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/DogBarkEvent"}}}}}}}}, "components": {"schemas": {"Position": {"description": "Position vector", "properties": {"x": {"type": "integer", "example": 10}, "y": {"type": "integer", "example": 20}, "z": {"type": "integer", "example": 30}}}, "Velocity": {"description": "Velocity vector", "properties": {"x": {"type": "number"}, "y": {"type": "number"}, "z": {"type": "number"}}}, "Event": {"properties": {"timestamp": {"type": "string", "format": "date-time"}}}, "PlayerInteraction": {"allOf": [{"$ref": "#/components/schemas/Event"}], "properties": {"player_name": {"$ref": "#/components/schemas/PlayerName"}, "item_held": {"$ref": "#/components/schemas/Item"}}}, "EntityInteraction": {"allOf": [{"$ref": "#/components/schemas/PlayerInteraction"}], "properties": {"event_type": {"type": "string", "enum": ["edu.arizona.tomcat.Events.EntityInteraction"]}, "target_id": {"type": "string", "format": "uuid"}, "target_position": {"$ref": "#/components/schemas/Position"}, "target_velocity": {"$ref": "#/components/schemas/Velocity"}, "target_type": {"$ref": "#/components/schemas/EntityType"}}, "description": "Entity interaction"}, "MobAttacked": {"allOf": [{"$ref": "#/components/schemas/EntityInteraction"}], "properties": {"target_health": {"type": "number"}, "event_type": {"type": "string", "enum": ["edu.arizona.tomcat.Events.MobAttacked"]}}, "description": "Mob attack event."}, "BlockBreakEvent": {"allOf": [{"$ref": "#/components/schemas/PlayerInteraction"}, {"$ref": "#/components/schemas/BlockProperties"}], "properties": {"event_type": {"type": "string", "enum": ["edu.arizona.tomcat.Events.BlockBreakEvent"]}}}, "BlockProperties": {"properties": {"block_position": {"$ref": "#/components/schemas/Position"}, "block_material": {"$ref": "#/components/schemas/BlockMaterial"}}}, "BlockInteraction": {"allOf": [{"$ref": "#/components/schemas/PlayerInteraction"}, {"$ref": "#/components/schemas/BlockProperties"}], "properties": {"event_type": {"type": "string", "enum": ["edu.arizona.tomcat.Events.BlockInteraction"]}, "click_type": {"$ref": "#/components/schemas/ClickType"}}}, "VillagerSaved": {"allOf": [{"$ref": "#/components/schemas/Event"}], "properties": {"villager_id": {"type": "string", "format": "uuid"}, "villager_pos": {"$ref": "#/components/schemas/Position"}}}, "DoorInteraction": {"allOf": [{"$ref": "#/components/schemas/BlockInteraction"}], "properties": {"block_material": {"type": "string", "examples": ["minecraft:wooden_door"]}, "block_type": {"type": "string", "enum": ["net.minecraft.block.BlockDoor"]}, "event_type": {"type": "string", "enum": ["edu.arizona.tomcat.Events.DoorInteraction"]}, "was_open": {"type": "boolean"}}, "description": "Door event."}, "LeverEvent": {"allOf": [{"$ref": "#/components/schemas/BlockInteraction"}], "properties": {"block_material": {"type": "string", "enum": ["minecraft:lever"]}, "block_type": {"type": "string", "enum": ["net.minecraft.block.BlockLever"]}, "event_type": {"type": "string", "enum": ["edu.arizona.tomcat.Events.LeverFlip"]}, "was_powered": {"type": "boolean"}}, "description": "Lever event."}, "GenericBlockInteraction": {"allOf": [{"$ref": "#/components/schemas/BlockInteraction"}], "properties": {"block_material": {"type": "string", "$ref": "#/components/schemas/BlockMaterial"}, "block_type": {"$ref": "#/components/schemas/BlockType"}, "event_type": {"type": "string", "enum": ["edu.arizona.tomcat.Events.BlockInteraction"]}, "was_powered": {"type": "boolean"}}, "description": "Generic block interaction event."}, "EntityDeath": {"allOf": [{"$ref": "#/components/schemas/Event"}], "properties": {"entity_type": {"$ref": "#/components/schemas/EntityType"}, "entity_name": {"type": "string", "example": "Zombie"}, "entity_id": {"type": "string", "format": "uuid"}, "event_type": {"type": "string", "enum": ["edu.arizona.tomcat.Events.EntityDeath"]}}}, "DogBarkEvent": {"allOf": [{"$ref": "#/components/schemas/Event"}], "properties": {"number_of_barks": {"type": "integer", "enum": [1, 2]}, "event_type": {"type": "string", "enum": ["edu.arizona.tomcat.Events.DogBarkEvent"]}}}, "PlayerName": {"type": "string", "example": "tomcat"}, "BlockType": {"type": "string", "example": "net.minecraft.block.BlockAir"}, "StateObservation": {"properties": {"name": {"$ref": "#/components/schemas/PlayerName"}, "header": {"properties": {"timestamp": {"type": "string", "format": "date-time"}, "message_type": {"type": "string", "enum": ["observation"]}, "version": {"type": "string", "example": "0.2"}}}, "msg": {"properties": {"trial_id": {"type": "string", "format": "uuid"}, "timestamp": {"type": "string", "format": "date-time"}, "source": {"type": "string", "example": "human"}, "sub_type": {"type": "string", "enum": ["state"]}}}, "data": {"properties": {"x": {"type": "number"}, "y": {"type": "number"}, "z": {"type": "number"}, "motion_x": {"type": "number"}, "motion_y": {"type": "number"}, "motion_z": {"type": "number"}, "pitch": {"type": "number"}, "yaw": {"type": "number"}, "world_time": {"type": "integer"}, "total_time": {"type": "integer"}, "id": {"type": "string", "format": "uuid"}, "name": {"$ref": "#/components/schemas/PlayerName"}, "life": {"type": "number", "example": 20.0}}}}}, "Chat": {"allOf": [{"$ref": "#/components/schemas/Event"}], "properties": {"player_name": {"$ref": "#/components/schemas/PlayerName"}, "message": {"type": "string", "example": "Hello world!"}, "event_type": {"type": "string", "enum": ["edu.arizona.tomcat.Events.Chat"]}}}, "BlockMaterial": {"type": "string", "examples": ["minecraft:air", "minecraft:barrier", "minecraft:clay", "minecraft:glass", "minecraft:gold_block", "minecraft:grass", "minecraft:stone_button", "minecraft:wood"]}, "Item": {"type": "string", "example": "Stone Axe"}, "EntityType": {"type": "string", "examples": ["net.minecraft.entity.monster.EntitySkeleton", "net.minecraft.entity.monster.EntityZombie", "net.minecraft.entity.passive.EntityWolf"]}, "ClickType": {"type": "string", "enum": ["right", "left"]}, "SessionMetadata": {"tags": ["Metadata"], "properties": {"session_id": {"type": "string", "format": "uuid"}, "timestamp": {"type": "string", "format": "date-time"}, "player_id": {"type": "string", "format": "uuid"}}}}}};
+    const ui = SwaggerUIBundle({
+        spec: spec,
+        dom_id: '#swagger-ui',
+        deepLinking: true,
+        presets: [
+            SwaggerUIBundle.presets.apis,
+            SwaggerUIStandalonePreset
+        ],
+        plugins: [
+            SwaggerUIBundle.plugins.DownloadUrl
+        ],
+        layout: "StandaloneLayout"
+    })
+
+    window.ui = ui
+    }
+</script>
+</div>
+<div class="section" id="colophon">
+<h2>Colophon<a class="headerlink" href="#colophon" title="Permalink to this headline">¶</a></h2>
+<p>The documentation for the topics and the data models above was generated using
+a version of the <a class="reference external" href="https://generator.swagger.io">Swagger UI generator</a> that was
+modified to align better with the notion of publishing/subscribing using a
+message bus.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="developer/lisp.html" class="btn btn-neutral float-left" title="LISP Notes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

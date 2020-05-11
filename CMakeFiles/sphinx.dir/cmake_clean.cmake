@@ -1,4 +1,5 @@
 file(REMOVE_RECURSE
+  "../spec.html"
   "CMakeFiles/sphinx"
   "index.html"
 )

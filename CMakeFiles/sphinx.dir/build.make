@@ -74,12 +74,19 @@ CMakeFiles/sphinx: index.html
 
 
 index.html: ../index.rst
+index.html: ../spec.html
 index.html: ../conf.py
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/runner/work/tomcat/tomcat/docs/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating documentation with Sphinx"
 	/home/runner/work/tomcat/tomcat/tomcat_venv/bin/sphinx-build -b html /home/runner/work/tomcat/tomcat/docs /home/runner/work/tomcat/tomcat/docs/build
 
+../spec.html: ../spec.yml
+../spec.html: ../spec.yml
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/runner/work/tomcat/tomcat/docs/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating OpenAPI-like spec"
+	python /home/runner/work/tomcat/tomcat/docs/swagger-yaml-to-html.py /home/runner/work/tomcat/tomcat/docs/spec.yml /home/runner/work/tomcat/tomcat/docs/spec.html
+
 sphinx: CMakeFiles/sphinx
 sphinx: index.html
+sphinx: ../spec.html
 sphinx: CMakeFiles/sphinx.dir/build.make
 
 .PHONY : sphinx
