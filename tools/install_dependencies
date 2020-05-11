@@ -148,6 +148,8 @@ __install_dependencies() {
             __install_dependencies_using_macports
 
         elif [[ $MACPORTS_FOUND -eq 0 && $HOMEBREW_FOUND -eq 1 ]]; then
+            echo "Both Homebrew and MacPorts package managers have been found."
+            echo "Proceeding to install dependencies using MacPorts."
             __install_dependencies_using_macports
 
         elif [[ $MACPORTS_FOUND -eq 1 && $HOMEBREW_FOUND -eq 0 ]]; then
