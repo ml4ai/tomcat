@@ -36,12 +36,6 @@ __install_dependencies_using_macports() {
     if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
         if ! sudo port -N install blackhole switchaudio-osx; then exit 1; fi
     fi
-    # We install Java using a local Portfile, since the upstream openjdk8
-    # port points to Java 1.8.0_242, which is incompatible with Malmo (the
-    # local Portfile points to Java 1.8.0_232).
-    pushd "${TOMCAT}"/tools/macos/local-ports/openjdk8 > /dev/null
-      if ! sudo port install; then exit 1; fi
-    popd > /dev/null
 
     # TODO When OpenFace is reintroduced, add dlib, opencv, openblas installation
     # back here.
@@ -58,15 +52,6 @@ __install_dependencies_using_homebrew() {
     # We do not require exit codes for Homebrew installs to be 0 since `brew
     # install` can return an exit code of 1 when a package is already installed
     # (!!)
-
-    # We install Java using a local Homebrew formula, since the upstream openjdk8
-    # formula points to Java 1.8.0_242, which is incompatible with Malmo (the
-    # local formula points to Java 1.8.0_232).
-
-    pushd "$TOMCAT"/tools/macos/homebrew_formulae > /dev/null
-        brew cask install adoptopenjdk8.rb
-        if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
-    popd > /dev/null
 
     brew install \
       cmake \
@@ -115,10 +100,6 @@ __install_dependencies_using_apt() {
         doxygen \
         ffmpeg \
         wmctrl \
-        openjdk-8-jre-headless=8u162-b12-1\
-        openjdk-8-jre=8u162-b12-1\
-        openjdk-8-jdk-headless=8u162-b12-1\
-        openjdk-8-jdk=8u162-b12-1\
         mosquitto\
         mosquitto-clients\
         curl
@@ -135,10 +116,6 @@ __install_dependencies_using_apt() {
 
     # TODO - when OpenFace gets added back, add opencv, openblas, and dlib as
     # dependencies.
-
-    if ! sudo update-java-alternatives -s java-1.8.0-openjdk-amd64; then
-      exit 1;
-    fi
 }
 
 __install_dependencies() {

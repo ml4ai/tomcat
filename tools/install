@@ -15,6 +15,11 @@ set_local_configuration
 detect_ci
 detect_os
 
+if ! "$TOMCAT"/tools/download_openjdk8; then
+    echo "Failed to download OpenJDK 1.8.0_232-b09."
+    exit 1
+fi
+
 __build_tomcat() {
     pushd "${TOMCAT}"
         echo "Building ToMCAT in `pwd`"
@@ -22,7 +27,6 @@ __build_tomcat() {
         /bin/rm -rf build
         mkdir build
 
-        # Trying to set the correct version of Java.
         pushd build > /dev/null 
             if [[ $CI -eq 1 && $OSTYPE == "linux-gnu" ]]; then
                 cmake ${TOMCAT} -DBoost_ARCHITECTURE=-x64\
