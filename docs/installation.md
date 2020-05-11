@@ -33,27 +33,43 @@ To run an experiment, run the following command from the `tomcat` directory.
 The data from the experiment will be saved in a folder whose name contains a
 timestamp corresponding to the start of the experiment, of the form
 
-    tomcat/data/participant_data/session_<Year>_<Month>_<Day>_<Hour>_<Minute>_<Second>
+    tomcat/data/participant_data/<session_id>
 
-This folder will contain six files:
-- `webcam_video.mpg` : A video recording of the player's face taken using the built-in
-  webcam.
-- `screen_video.mpg` : A video recording of the Minecraft playthrough (i.e.
-  what the player sees on their screen)
-- `player_audio.wav` : A WAV file containing the audio recording of the player.
-- `malmo_data.tgz` : A gzipped tarball containing Malmo data about player's
-  position, nearby entities, etc.
-- `discrete_events.json`: A JSON file containing timestamped discrete events
-  such as players interacting with doors, buttons, and levers, or attacking
-  monsters.
-- A JSON file with self-report survey responses.
+where `<session_id>` is a UUID.
 
-(The self-report survey responses may not be generated if you finish the
-mission too quickly).
+This folder will contain the following files:
+- `metadata.json`: A JSON file containing metadata about the session.
+- Folders corresponding to the missions run in the session, of the form
+  `mission_N`, where `N` is some identifier (e.g. `mission_0`, `mission_1`,
+  etc.).
+- Each folder `mission_N` will have the following files:
+    - `webcam_video.mpg` : A video recording of the player's face taken using the built-in
+    webcam.
+    - `screen_video.mpg` : A video recording of the Minecraft playthrough (i.e.
+    what the player sees on their screen)
+    - `player_audio.wav` : A WAV file containing the audio recording of the player.
+    - `system_audio.wav` : A WAV file containing a recording of the sound
+      output produced by the computer. This will not be produced on macOS
+      computers running macOS Mojave or older.
+    - `malmo_data.txt` : A file containing timestamped observations of the player's
+    state (position, velocity, health, pitch, yaw, etc.)
+    - `events.txt`: A file containing timestamped discrete event data
+    such as players interacting with doors, buttons, and levers, or attacking
+    monsters.
+    - `chat.txt`: A  file containing timestamped chat event data.
+      Can be empty if there were no chats sent.
+    - `self_reports.txt`: A JSON file with self-report survey responses. Can be
+      empty if the player exits the game before answering the self-report
+      questions.
+
+The format for the event and observation data can be found
+[here](https://ml4ai.github.io/tomcat/tomcat_openapi).
 
 To interrupt the game and quit at any time, press the `Esc` key, then click on
 the terminal window where you ran the `run_session.sh` script, and then
-interrupt the process with `Ctrl+C`.
+interrupt the process with `Ctrl+C`. You can also quit the game by closing the
+Minecraft window.
+
 
 ## For developers
 
