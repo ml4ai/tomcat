@@ -15,7 +15,7 @@ export TOMCAT
 pushd "$TOMCAT" > /dev/null
     if [[ -d Soartex_Fanver ]]; then
         cp -r Soartex_Fanver/assets\
-            external/malmo/Minecraft/run/resourcepacks/tomcat/assets
+            external/malmo/Minecraft/run/resourcepacks/tomcat
 
         # We run 'git checkout .' to restore the textures that were originally from
         # the Soartex public domain texture collection, for cleaner diffs.
