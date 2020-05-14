@@ -18,14 +18,19 @@ The ToMCAT team (so far!):
 
 **Graduate Students:**
 - Savannah Boyd
+- Chinmai Basavaraj
 - Loren Champlin
 - John Culnan
 - Harry Go
 - Ashley Kuelz
+- Peter Lovett
 - Paulo Soares
 - Manujinda Wathugala
+- Salena Ashton
 
 **Undergraduates:**
 - Aditya Banerjee
 - Lize Chen
 - Jiangfeng Li
+- Da Long
+- Runnan Zhou
