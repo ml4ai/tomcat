@@ -24,10 +24,11 @@ pushd "$TOMCAT" > /dev/null
     echo "Downloading the Soartex Fanver textures..."
     echo ""
 
-    curl --netrc-file "$TOMCAT"/netrc\
-    http://vision.cs.arizona.edu/~tomcat/Soartex_Fanver.tar.gz --output data/Soartex_Fanver.tar.gz
+    curl -O --netrc-file "$TOMCAT"/netrc\
+    http://vision.cs.arizona.edu/~tomcat/Soartex_Fanver.tar.gz
     if [[ $? -ne 0 ]]; then exit 1; fi
 
+    echo "Extracting files..."
     if ! tar -xzf Soartex_Fanver.tar.gz; then exit 1; fi
 
     echo "Resetting folder ${TOMCAT}/external/malmo/Minecraft/run/resourcepacks/tomcat..."
