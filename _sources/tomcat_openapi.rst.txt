@@ -14,6 +14,8 @@ necessarily published to the message bus - for example, the ``SessionMetadata``
 model describes the format of the file ``metadata.json`` that is written to 
 each session data directory produced by the ``run_session`` script. 
 
+The structured documentation below was auto-generated from `this YAML file`_.
+
 Topics and models
 -----------------
 
@@ -28,3 +30,4 @@ modified to align better with the notion of publishing/subscribing using a
 message bus.
 
 .. _Swagger UI generator: https://generator.swagger.io
+.. _this YAML file`: https://github.com/ml4ai/tomcat/blob/master/docs/spec.yml
