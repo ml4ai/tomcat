@@ -7,24 +7,45 @@
 # in your web browser and placing the downloaded folder in the tomcat root
 # directory, then run this script.
 
+set -u 
+
 # Set the TOMCAT environment variable, assuming that the directory structure
 # mirrors that of the git repository.
 TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
 export TOMCAT
 
 pushd "$TOMCAT" > /dev/null
-    if [[ -d Soartex_Fanver ]]; then
-        cp -r Soartex_Fanver/assets\
-            external/malmo/Minecraft/run/resourcepacks/tomcat
-
-        # We run 'git checkout .' to restore the textures that were originally from
-        # the Soartex public domain texture collection, for cleaner diffs.
-        git checkout .
-        echo "Removing Soartex_Fanver directory..."
-        rm -rf Soartex_Fanver
-        echo "Soartex Fanver textures installation successfully completed."
-    else
-        echo "Could not find the folder Soartex_Fanver in ${TOMCAT}!"
-        echo "Please download the resource pack by visiting https://www.curseforge.com/minecraft/texture-packs/soartex-fanver-vanilla/download/2371741 in your web browser."
+    if [[ ! -f netrc ]]; then
+        echo "netrc file not found! We cannot download the Soartex_Fanver "\
+             "textures."
+        exit 1
     fi
+
+    echo "Downloading the Soartex Fanver textures..."
+    echo ""
+
+    curl -O --netrc-file "$TOMCAT"/netrc\
+    http://vision.cs.arizona.edu/~tomcat/Soartex_Fanver.tar.gz
+    if [[ $? -ne 0 ]]; then exit 1; fi
+
+    echo "Extracting files..."
+    if ! tar -xzf Soartex_Fanver.tar.gz; then exit 1; fi
+
+    echo "Resetting folder ${TOMCAT}/external/malmo/Minecraft/run/resourcepacks/tomcat..."
+    rm -rf external/malmo/Minecraft/run/resourcepacks/tomcat
+    git checkout external/malmo/Minecraft/run/resourcepacks/tomcat
+
+    echo "Copying assets..."
+    cp -r Soartex_Fanver/assets\
+        external/malmo/Minecraft/run/resourcepacks/tomcat
+
+    # We run 'git checkout' to restore Zombie invasion-specific textures.
+    git checkout external/malmo/Minecraft/run/resourcepacks/tomcat
+
+    echo "Removing Soartex_Fanver directory..."
+    rm -rf Soartex_Fanver
+    echo "Soartex Fanver textures installation successfully completed."
+
 popd > /dev/null
+
+exit 0
