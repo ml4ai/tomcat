@@ -26,12 +26,11 @@ Windows support are welcome.
 Running experiments
 -------------------
 
-To run an experiment, run the following command from the `tomcat` directory.
+To run an experimental session, run the following command from the `tomcat` directory.
 
     ./tools/run_session
 
-The data from the experiment will be saved in a folder whose name contains a
-timestamp corresponding to the start of the experiment, of the form
+The data from the session will be saved in the folder:
 
     tomcat/data/participant_data/<session_id>
 
