@@ -39,8 +39,8 @@ pushd "$TOMCAT" > /dev/null
     cp -r Soartex_Fanver/assets\
         external/malmo/Minecraft/run/resourcepacks/tomcat
 
-    # We run 'git checkout .' to restore Zombie invasion-specific textures.
-    # the Soartex public domain texture collection, for cleaner diffs.
+    # We run 'git checkout' to restore Zombie invasion-specific textures.
+    git checkout external/malmo/Minecraft/run/resourcepacks/tomcat
 
     echo "Removing Soartex_Fanver directory..."
     rm -rf Soartex_Fanver
