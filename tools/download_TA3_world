@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+set -u
+
+# Script to extract the Singleplayer mission world
+
+# Set the TOMCAT environment variable, assuming that the directory structure
+# mirrors that of the git repository.
+TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
+export TOMCAT
+
+pushd "$TOMCAT" > /dev/null
+    if [[ ! -f netrc ]]; then
+        echo "netrc file not found! We cannot download the TA3 mission world "\
+             "from the vision server."
+        exit 1
+    fi
+
+    echo "Downloading USAR mission world from vision server..."
+    echo ""
+    curl --netrc-file "$TOMCAT"/netrc\
+    http://vision.cs.arizona.edu/~tomcat/Singleplayer.tgz\
+    -o "$TOMCAT"/data/worlds/Singleplayer.tgz
+    if [[ $? -ne 0 ]]; then
+        echo "Failed to download USAR mission world! Exiting now."
+        exit 1
+    fi
+
+    pushd data/worlds > /dev/null
+        echo "Decompressing and extracting files..."
+        if ! tar -xzf Singleplayer.tgz; then exit 1; fi
+        echo "Cleaning up..."
+        rm Singleplayer.tgz
+    popd > /dev/null
+popd > /dev/null
+echo "Succesfully downloaded USAR (single-player) mission world."
+
+exit 0

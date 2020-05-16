@@ -180,7 +180,7 @@ public class ForgeEventHandler {
             else {
                 this.mqttService.publish(
                     new BlockInteraction(event),
-                    "observations/events/player_interactions/blocks");
+                    "observations/events/player_interactions/blocks/general");
             }
         }
     }
@@ -195,7 +195,7 @@ public class ForgeEventHandler {
             event.getHand() == EnumHand.MAIN_HAND) {
             this.mqttService.publish(
                 new BlockInteraction(event),
-                "observations/events/player_interactions/left_clicks/blocks");
+                "observations/events/player_interactions/blocks/general");
         }
     }
 
@@ -207,7 +207,7 @@ public class ForgeEventHandler {
         if (!event.getWorld().isRemote) {
             this.mqttService.publish(
                 new BlockBreakEvent(event),
-                "observations/events/player_interactions/break_events/blocks");
+                "observations/events/player_interactions/blocks/break");
         }
     }
 

@@ -37,6 +37,7 @@ Social Intelligence for Successful Teams (ASIST) program.
    team
    become_a_participant
    developer/index
+   tomcat_openapi
    installation
    CONTRIBUTING
 

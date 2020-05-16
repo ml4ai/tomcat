@@ -1,31 +1,9 @@
 {
-  "version": "0.1",
+  "version": "0.12",
   "filenameRichContentBeforeQuestions": "progress_before_self_report_usar.json",
   "filenameRichContentAfterQuestions": "final_words_after_self_report_usar.json",
   "questions":
   [
-    {
-      "text": [
-        "How positive are you feeling about the agent right now?"
-      ],
-      "choices":
-      [ 
-        "Not at all positive",
-        "Somewhat positive",
-        "Very positive"
-      ]
-    },
-    {
-      "text": [
-         "How negative are you feeling about the agent right now?"
-      ],
-      "choices":
-      [
-        "Not at all negative",
-        "Somewhat negative",
-        "Very negative"
-      ]
-    },
     {
       "text": [
          "How positive are you feeling about the mission right now?"
@@ -57,18 +35,6 @@
         "Not at all worried",
         "Somewhat worried",
         "Very worried"
-      ]
-    },
-    {
-      "text": [
-         "How excited are you about the possibility of winning the",
-         "top-scoring award?"
-      ],
-      "choices":
-      [
-        "Not at all excited",
-        "Somewhat excited",
-        "Very excited"
       ]
     }
   ]
