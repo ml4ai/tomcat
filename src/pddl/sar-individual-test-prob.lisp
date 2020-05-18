@@ -127,4 +127,4 @@
              (in v29 r-216-a))
             ((enter-building-and-complete-mission t1 b lobby)))
 
-(find-plans 'sar-individual-problem :which :first :optimize-cost t :verbose :plans :plan-tree nil)
+(find-plans 'sar-individual-problem :which :first :optimize-cost nil :verbose :plans :plan-tree nil)

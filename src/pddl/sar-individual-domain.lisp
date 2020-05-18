@@ -16,7 +16,7 @@
        (setf s-paths (load-shortest-paths "sar_shortest_path_lengths.json")))
 
 (in-package :shop-user)
-;;(shop-trace :plans :operators :states)
+;;(shop-trace :all)
 (defdomain (sar-individual-domain :type pddl-domain :redefine-ok T) (
     (:types human ;; Everything, including 'human' inherits from the base 'object' type
             victim rescuer - human ;; The rescuer and the victims are humans.
@@ -27,35 +27,37 @@
     (:predicates (in ?h - human ?r - room) ;; Indicates which room a human (rescuer, victim, etc) is inside
                  (inside ?h - rescuer ?b - building) ;; Indicates that the rescuer is in the building
                  (triaged ?v - victim) ;; Indicates that a victim has been triaged
-                 (checked-room ?t - rescuer ?r - room) ;; Indicates that a rescuer has checked a room
+                 (searched ?t - rescuer ?r - room) ;; Indicates that a rescuer has checked a room
+                 (searching ?t - rescuer ?r - room)
                  (spotted ?t - rescuer ?v - victim ?r - room) ;; Indicates that a rescuer has spotted the victim in a specific room
                  (examined ?t - rescuer ?v - victim) ;; Indicates that a rescuer has examined a victim
                  (examining ?t - rescuer ?v - victim) ;; Indicates that a rescuer is in the process of examining a victim
                  (injured ?v - victim) ;; Indicates that a victim is injured (to the point of needing triage) 
+                 (victims-cleared ?t - rescuer ?r - room)
     )
 
-    (:action check-room ;; Rescuer checks the room, any victims in the room are "spotted" 
+    (:action start-searching ;; Rescuer checks the room, any victims in the room are "spotted" 
       :parameters (?t - rescuer ?r - room)
-      :precondition (and (in ?t ?r) (not (checked-room ?t ?r)))
-      :effect (and (checked-room ?t ?r) (forall (?v - victim) (when (in ?v ?r) (spotted ?t ?v ?r))))
+      :precondition (and (in ?t ?r) (not (searched ?t ?r)))
+      :effect (searching ?t ?r) 
+    )
+
+    (:action finish-searching
+      :parameters (?t - rescuer ?r - room)
+      :precondition (and (in ?t ?r) (searching ?t ?r))
+      :effect (and (searched ?t ?r) (not (searching ?t ?r)))
     )
     
-    (:action examine-victim ;; Rescuer begins examining the victim
+    (:action start-examining-victim ;; Rescuer begins examining the victim
       :parameters (?t - rescuer ?v - victim)
-      :precondition (and (same-room ?t ?v ?r) (spotted ?t ?v ?r) (not (examined ?t ?v)))
+      :precondition (and (spotted ?t ?v ?r) (not (examined ?t ?v)))
       :effect (examining ?t ?v)
     )
 
-    (:action finish-and-goto-next-victim ;; Rescuer finishs examining the current victim and moves to the next
-      :parameters (?t - rescuer ?current ?next - victim)
-      :precondition (and (same-room ?t ?next ?r) (spotted ?t ?v ?r) (examining ?t ?current) (not (examined ?t ?next)))
-      :effect (and (examined ?t ?current) (examining ?t ?next) (not (examining ?t ?current)))
-    )
-
-    (:action finish-examinations ;; Rescuer finishs examining the last victim in a room
-      :parameters (?t - rescuer ?current - victim)
-      :precondition (examining ?t ?current)
-      :effect (and (examined ?t ?current) (not (examining ?t ?current)))
+    (:action finish-examining-victim ;; Rescuer finishs examining the current victim and moves to the next
+      :parameters (?t - rescuer ?v - victim)
+      :precondition (and (spotted ?t ?v ?r) (examining ?t ?v))
+      :effect (and (examined ?t ?v) (not (examining ?t ?v)))
     )
 
     (:action move-to ;; Rescuer moves to another room
@@ -67,7 +69,7 @@
 
     (:action triage ;; Rescuer triages a victim, they must be currently examining the victim to do so
       :parameters (?t - rescuer ?v - victim)
-      :precondition (and (same-room ?t ?v ?r) (examining ?t ?v) (not (triaged ?v))) 
+      :precondition (and (in ?t ?r) (examining ?t ?v) (not (triaged ?v))) 
       :effect (triaged ?v)
     )
 
@@ -83,70 +85,94 @@
       :effect (and (inside ?t ?b) (in ?t ?r))
     )
 
+    (:operator (!!assert ?fact) 
+               (())
+               (())
+               (?fact)
+               0
+    )
+
+    (:operator (!!delete ?fact) 
+               (())
+               (?fact)
+               (())
+               0
+    )
+
+
     (:method (enter-building-and-complete-mission ?t ?b ?r) ;; Method for entering the building and doing the mission
              enter-and-begin
              ()
              (:ordered (:task !enter-building ?t ?b ?r)
+                       (:task explore ?t ?r))
+
+    )
+
+    (:method (explore ?t ?r) ;; Method for searching a room and determining what needs to be done to move on
+             current-room-unchecked ;; Branch for checking a room with victims inside
+             (and (in ?t ?r) (not (searched ?t ?r))) 
+             (:ordered (:task search-room ?t ?r)
+                       (:task explore ?t ?r))
+
+             victims-in-room
+             (and (in ?t ?r) (not (victims-cleared ?t ?r)))
+             (:ordered (:task help-victims ?t ?r)
+                       (:task explore ?t ?r))
+
+             current-room-checked-and-cleared ;; Branch for checking a room with no victims
+             (and (in ?t ?r) (room ?r2) (different ?r ?r2) (not (searched ?t ?r2)))
+             (:ordered (:task !move-to ?t ?r ?r2)
+                       (:task explore ?t ?r2))
+
+             checked-all-rooms ;; Branch for checking the last room with victims inside
+             (in ?t ?r)
+             (:ordered (:task !leave-building ?t ?b))
+
+    )
+
+    (:method (search-room ?t ?r)
+             searching-victim-found
+             (and (in ?t ?r) (:external and (victim ?v) (in ?v ?r)) (not (spotted ?t ?v ?r)) (not (searching ?t ?r)))
+             (:ordered (:task !start-searching ?t ?r)
+                       (:task !!assert (spotted ?t ?v ?r))
                        (:task search-room ?t ?r))
 
+             searching-more-victims-found
+             (and (in ?t ?r) (:external and (victim ?v) (in ?v ?r)) (not (spotted ?t ?v ?r)))
+             (:ordered (:task !!assert (spotted ?t ?v ?r))
+                       (:task search-room ?t ?r))
+
+             all-victims-found
+             (and (in ?t ?r) (spotted ?t ?v ?r))
+             (:ordered (:task !finish-searching ?t ?r))
+
+             no-victims-found
+             (in ?t ?r)
+             (:ordered (:task !start-searching ?t ?r)
+                       (:task !finish-searching ?t ?r)
+                       (:task !!assert (victims-cleared ?t ?r)))
     )
 
-    (:method (search-room ?t ?r) ;; Method for searching a room and determining what needs to be done to move on
-             room-checked-victims-found ;; Branch for checking a room with victims inside
-             (and (victim ?v) (room ?r2) (in ?t ?r) (same-room ?t ?v ?r) (different ?r ?r2) 
-                  (not (checked-room ?t ?r)) (not (checked-room ?t ?r2))) 
-             (:ordered (:task !check-room ?t ?r)
-                       (:task help-victim ?t ?v)
-                       (:task !move-to ?t ?r ?r2)
-                       (:task search-room ?t ?r2))
-
-             room-checked-no-victims ;; Branch for checking a room with no victims
-             (and (in ?t ?r) (room ?r2) (different ?r ?r2) (not (checked-room ?t ?r)) (not (checked-room ?t ?r2)))
-             (:ordered (:task !check-room ?t ?r)
-                       (:task !move-to ?t ?r ?r2)
-                       (:task search-room ?t ?r2))
-
-             last-room-checked-victims-found ;; Branch for checking the last room with victims inside
-             (and (victim ?v) (in ?t ?r) (same-room ?t ?v ?r) (not (checked-room ?t ?r)))
-             (:ordered (:task !check-room ?t ?r)
-                       (:task help-victim ?t ?v)
-                       (:task !leave-building ?t ?b))
-
-             last-room-checked-no-victims ;; Branch for checking the last room with no victims inside
-             (and (in ?t ?r) (not (checked-room ?t ?r)))
-             (:ordered (:task !check-room ?t ?r)
-                       (:task !leave-building ?t ?b))
-    )
-
-    (:method (help-victim ?t ?v) ;; Method for examining and triaging victims
-             examine-injured-victim-and-move-to-next ;; Branch for examining an injured victim and triaging them
-             (and (victim ?v2) (spotted ?t ?v ?r) (different ?v ?v2) (spotted ?t ?v2 ?r) (same-room ?t ?v ?r) (same-room ?t ?v2 ?r) 
-                  (injured ?v) (not (examined ?t ?v)) (not (examined ?t ?v2)) (not (triaged ?t ?v)))
-             (:ordered (:task !examine-victim ?t ?v)
+    (:method (help-victims ?t ?r) ;; Method for examining and triaging victims
+             examine-injured-victim ;; Branch for examining an injured victim and triaging them
+             (and (in ?t ?r) (spotted ?t ?v ?r) (:external injured ?v) (not (examined ?t ?v)))
+             (:ordered (:task !start-examining-victim ?t ?v)
                        (:task !triage ?t ?v)
-                       (:task !finish-and-goto-next-victim ?t ?v ?v2)
-                       (:task help-victim ?t ?v2))
+                       (:task !finish-examining-victim ?t ?v)
+                       (:task help-victims ?t ?r))
 
-             examine-uninjured-victim-and-move-to-next ;; Branch for examining an uninjured victim
-             (and (victim ?v2) (spotted ?t ?v ?r) (different ?v ?v2) (spotted ?t ?v2 ?r) (same-room ?t ?v ?r) (same-room ?t ?v2 ?r)
-                  (not (examined ?t ?v)) (not (examined ?t ?v2)))
-             (:ordered (:task !examine-victim ?t ?v)
-                       (:task !finish-and-goto-next-victim ?t ?v ?v2)
-                       (:task help-victim ?t ?v2))
+             examine-uninjured-victim ;; Branch for examining an uninjured victim
+             (and (in ?t ?r) (spotted ?t ?v ?r) (not (examined ?t ?v)))
+             (:ordered (:task !start-examining-victim ?t ?v)
+                       (:task !finish-examining-victim ?t ?v)
+                       (:task help-victims ?t ?r))
 
-             examine-last-injured-victim ;; Branch for examining and triaging the last injured victim in the room
-             (and (spotted ?t ?v ?r) (same-room ?t ?v ?r) (injured ?v) (not (examined ?t ?v)) (not (triaged ?t ?v)))
-             (:ordered (:task !examine-victim ?t ?v)
-                       (:task !triage ?t ?v)
-                       (:task !finish-examinations ?t ?v))
+             no-more-victims-to-examine ;; Branch for examining and triaging the last injured victim in the room
+             (in ?t ?r)
+             (:ordered (:task !!assert (victims-cleared ?t ?r)))
 
-             examine-last-uninjured-victim ;; Branch for examining the last uninjured victim in the room
-             (and (spotted ?t ?v ?r) (same-room ?t ?v ?r) (not (examined ?t ?v)))
-             (:ordered (:task !examine-victim ?t ?v)
-                       (:task !finish-examinations ?t ?v))
     )
 
-    (:- (same-room ?t ?v ?r) (and (in ?t ?r) (in ?v ?r))) ;; Axiom that determines that two humans are in the same room, should be used with "different" axoim
     (:- (same ?x ?x) nil) ;; Helper axiom for "different" axoim
     (:- (different ?x ?y) ((not (same ?x ?y)))) ;; Axiom that determines that two variables contain different values. 
   )
