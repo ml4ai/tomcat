@@ -89,4 +89,4 @@ netrc
 model/.venv
 model/.ipynb_checkpoints/
 *__pycache__
-
+*.ipynb
