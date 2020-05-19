@@ -84,3 +84,9 @@ tmp
 
 # We add the netrc file here so that it doesn't accidentally get committed.
 netrc
+
+# Ignore hidden files and folder in the ToMCAT model
+model/.venv
+model/.ipynb_checkpoints/
+*__pycache__
+*.ipynb
