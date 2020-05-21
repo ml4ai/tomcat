@@ -24,7 +24,7 @@
   (equal (symbol-name x) (symbol-name y)))
 
 ;; Load json file of shortest path costs
-(defun load-shortest-paths (filename)
+(defun load-json-database (filename)
   (with-open-file (s (make-pathname :name filename) :direction :input)
     (json:decode-json s)))
 
@@ -33,3 +33,12 @@
   (rest (assoc-if #'(lambda(x) (symbol-equals-keyword x loc-y)) 
                   (rest (assoc-if #'(lambda(x) (symbol-equals-keyword x loc-x)) 
                                   var)))))
+
+(defun check-for-victim (query)
+  (let* ((vic-db (load-json-database "sar_victim_status.json"))
+         (v-list (remove-if #'(lambda(x) (not (equalp (cdr (second x)) (symbol-name (fourth query))))) vic-db)))
+    (loop for i in v-list
+          collect (list (list (shopunif::make-binding (first i) (list 'victim (first i))))))))
+
+(defun check-victim-status (query)
+  nil)
