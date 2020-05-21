@@ -1,0 +1,118 @@
+{
+    "v-1": {
+        "loc": "womens",
+        "injured": true
+    },
+    "v-2": {
+        "loc": "lobby",
+        "injured": true
+    },
+    "v-3": {
+        "loc": "mens",
+        "injured": true
+    },
+    "v-4": {
+        "loc": "e-1",
+        "injured": true
+    },
+    "v-5": {
+        "loc": "e-2",
+        "injured": true
+    },
+    "v-6": {
+        "loc": "upper-left-hallway",
+        "injured": true
+    },
+    "v-7": {
+        "loc": "r-j",
+        "injured": true
+    },
+    "v-8": {
+        "loc": "r-201",
+        "injured": true
+    },
+    "v-9": {
+        "loc": "r-201",
+        "injured": true
+    },
+    "v-10": {
+        "loc": "r-203",
+        "injured": true
+    },
+    "v-11": {
+        "loc": "r-205",
+        "injured": true
+    },
+    "v-12": {
+        "loc": "r-208-b",
+        "injured": true
+    },
+    "v-13": {
+        "loc": "r-207",
+        "injured": true
+    },
+    "v-14": {
+        "loc": "r-207",
+        "injured": true
+    },
+    "v-15": {
+        "loc": "r-207",
+        "injured": true
+    },
+    "v-16": {
+        "loc": "r-210",
+        "injured": true
+    },
+    "v-17": {
+        "loc": "r-210",
+        "injured": true
+    },
+    "v-18": {
+        "loc": "r-215",
+        "injured": true
+    },
+    "v-19": {
+        "loc": "r-215",
+        "injured": true
+    },
+    "v-20": {
+        "loc": "r-220",
+        "injured": true
+    },
+    "v-21": {
+        "loc": "r-220",
+        "injured": true
+    },
+    "v-22": {
+        "loc": "r-213",
+        "injured": true
+    },
+    "v-23": {
+        "loc": "r-213",
+        "injured": true
+    },
+    "v-24": {
+        "loc": "r-218",
+        "injured": true
+    },
+    "v-25": {
+        "loc": "r-211",
+        "injured": true
+    },
+    "v-26": {
+        "loc": "r-211",
+        "injured": true
+    },
+    "v-27": {
+        "loc": "r-216-b",
+        "injured": true
+    },
+    "v-28": {
+        "loc": "r-209",
+        "injured": true
+    },
+    "v-29": {
+        "loc": "r-216-a",
+        "injured": true
+    }
+}
