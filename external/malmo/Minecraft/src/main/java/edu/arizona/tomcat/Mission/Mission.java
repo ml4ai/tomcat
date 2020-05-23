@@ -16,7 +16,7 @@ import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 import edu.arizona.tomcat.Utils.Converter;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.Utils.MinecraftVanillaAIHandler;
-import edu.arizona.tomcat.Utils.TimeStamper;
+import java.time.Clock;
 import edu.arizona.tomcat.World.DrawingHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -319,7 +319,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
                 this.canShowSelfReport) {
                 for (EntityPlayerMP player :
                      MinecraftServerHelper.getPlayers()) {
-                    String timestamp = TimeStamper.getTimeStamp();
+                    String timestamp = Clock.systemUTC().instant().toString();
                     SelfReportContent content =
                         this.getSelfReportContent(player, world);
                     content.setInitialTimestamp(timestamp);
