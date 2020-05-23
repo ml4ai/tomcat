@@ -29,9 +29,41 @@ as the C++ API and links to the Java API and other ToMCAT components.
 The ToMCAT project is funded by a 4-year, $7.5M DARPA grant as part of the Artificial
 Social Intelligence for Successful Teams (ASIST) program.
 
+The images below show a few example screenshots from our inaugural 'mission',
+the Zombie Invasion.
+
+.. raw:: html
+
+  <table style="width:100%; text-align:center;">
+    <tr>
+      <td>
+        <img src="http://vanga.sista.arizona.edu/tomcat/data/screenshots/compound_entrance.png"/>
+      </td>
+      <td>
+        <img src="http://vanga.sista.arizona.edu/tomcat/data/screenshots/zombie_indoors.png"/>
+      </td>
+    </tr>
+    <tr>
+      <td> (i) Entrance to the besieged village </td>
+      <td> (ii) Fighting a zombie </td>
+    </tr>
+    <tr>
+      <td>
+        <img src="http://vanga.sista.arizona.edu/tomcat/data/screenshots/self_report_progress.png"/>
+      </td>
+      <td>
+        <img src="http://vanga.sista.arizona.edu/tomcat/data/screenshots/mission_affect.png"/>
+      </td>
+    </tr>
+    <tr>
+      <td> (iii) Player's progress in the mission</td>
+      <td> (iv) Self-report: affect towards the mission.</td>
+    </tr>
+  </table>
+  <br>
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents:
 
    team
@@ -39,6 +71,7 @@ Social Intelligence for Successful Teams (ASIST) program.
    developer/index
    tomcat_openapi
    installation
+   usage
    CONTRIBUTING
 
 We are also building some Java components to extend Minecraft and Project Malmo

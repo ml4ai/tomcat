@@ -4,7 +4,6 @@ find_package(nlohmann_json REQUIRED)
 add_library(
   tomcat STATIC
   ${tomcat_headers}
-  utils.cpp
   LocalAgent.cpp
   Mission.cpp
   FileHandler.cpp)
