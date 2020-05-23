@@ -36,9 +36,10 @@
 
 (defun check-for-victim (query)
   (let* ((vic-db (load-json-database "sar_victim_status.json"))
-         (v-list (remove-if #'(lambda(x) (not (equalp (cdr (second x)) (symbol-name (fourth query))))) vic-db)))
+         (v-list (remove-if #'(lambda(x) (not (equalp (cdr (second x)) (symbol-name query)))) vic-db)))
     (loop for i in v-list
-          collect (list (list (shopunif::make-binding (first i) (list 'victim (first i))))))))
+          collect (first i))))
 
-(defun check-victim-status (query)
-  nil)
+(defun is-injured (query)
+  (let ((vic-db (load-json-database "sar_victim_status.json")))
+    (rest (third (assoc query vic-db)))))

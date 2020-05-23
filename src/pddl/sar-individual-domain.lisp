@@ -17,13 +17,6 @@
 
 (in-package :shop-user)
 
-(defun external-access-hook (query)
-  (if (equal 'SPOTTED (first (second query))) 
-    (cl-user::check-for-victim (second query)) 
-    (if (equal 'INJURED (first (second query)))
-      (cl-user::check-victim-status (second query))
-      nil)))
-
 ;;(shop-trace :all)
 (defdomain (sar-individual-domain :type pddl-domain :redefine-ok T) (
     (:types human ;; Everything, including 'human' inherits from the base 'object' type
@@ -119,8 +112,8 @@
     (:method (explore ?t ?r) ;; Method for searching a room and determining what needs to be done to move on
              current-room-unchecked ;; Branch for checking a room with victims inside
              (and (in ?t ?r) (not (searched ?t ?r))) 
-             (:ordered (:task search-room ?t ?r))
-                       ;;(:task explore ?t ?r))
+             (:ordered (:task search-room ?t ?r)
+                       (:task explore ?t ?r))
 
              victims-in-room
              (and (in ?t ?r) (not (victims-cleared ?t ?r)))
@@ -140,16 +133,16 @@
 
     (:method (search-room ?t ?r)
              searching-victim-found
-             (and (in ?t ?r) (:external spotted ?t ?v ?r) (assign ?vic 'v-1) (eval (write '?vic)) (not (searching ?t ?r)))
-             (:ordered (:task !start-searching ?t ?r))
-                       ;;(:task !!assert (victim ?v))
-                       ;;(:task !!assert (spotted ?t ?v ?r))
-                       ;;(:task search-room ?t ?r))
+             (and (in ?t ?r) (assign* ?v (cl-user::check-for-victim '?r)) (not (spotted ?t ?v ?r)) (not (searching ?t ?r)))
+             (:ordered (:task !start-searching ?t ?r)
+                       (:task !!assert (victim ?v))
+                       (:task !!assert (spotted ?t ?v ?r))
+                       (:task search-room ?t ?r))
 
              searching-more-victims-found
-             (and (in ?t ?r) (:external spotted ?t ?v ?r))
-             (:ordered ;;(:task !!assert (victim ?v))
-                       ;;(:task !!assert (spotted ?t ?v ?r))
+             (and (in ?t ?r) (assign* ?v (cl-user::check-for-victim '?r)) (not (spotted ?t ?v ?r)))
+             (:ordered (:task !!assert (victim ?v))
+                       (:task !!assert (spotted ?t ?v ?r))
                        (:task search-room ?t ?r))
 
              all-victims-found
@@ -165,7 +158,7 @@
 
     (:method (help-victims ?t ?r) ;; Method for examining and triaging victims
              examine-injured-victim ;; Branch for examining an injured victim and triaging them
-             (and (in ?t ?r) (spotted ?t ?v ?r) (:external injured ?v) (not (examined ?t ?v)))
+             (and (in ?t ?r) (spotted ?t ?v ?r) (eval (cl-user::is-injured '?v)) (not (examined ?t ?v)))
              (:ordered (:task !start-examining-victim ?t ?v)
                        (:task !triage ?t ?v)
                        (:task !finish-examining-victim ?t ?v)
