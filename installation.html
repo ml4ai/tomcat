@@ -38,6 +38,7 @@
   <link rel="stylesheet" href="_static/collapsible-lists/css/tree_view.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Usage" href="usage.html" />
     <link rel="prev" title="Data models and message bus topics" href="tomcat_openapi.html" /> 
 </head>
 
@@ -89,10 +90,10 @@
 <li class="toctree-l1"><a class="reference internal" href="developer/index.html">Developer documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tomcat_openapi.html">Data models and message bus topics</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#running-experiments">Running experiments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#for-developers">For developers</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 </ul>
 
             
@@ -174,53 +175,6 @@ ffmpeg, OpenCV, dlib, Java 8, and Gradle. You can inspect the script
 script is running. macOS users may want to turn off their firewalls.</p>
 <p>We don’t officially support Windows right now, but pull requests that add
 Windows support are welcome.</p>
-<div class="section" id="running-experiments">
-<h2>Running experiments<a class="headerlink" href="#running-experiments" title="Permalink to this headline">¶</a></h2>
-<p>To run an experimental session, run the following command from the <code class="docutils literal notranslate"><span class="pre">tomcat</span></code> directory.</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="o">/</span><span class="n">tools</span><span class="o">/</span><span class="n">run_session</span>
-</pre></div>
-</div>
-<p>The data from the session will be saved in the folder:</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">tomcat</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">participant_data</span><span class="o">/&lt;</span><span class="n">session_id</span><span class="o">&gt;</span>
-</pre></div>
-</div>
-<p>where <code class="docutils literal notranslate"><span class="pre">&lt;session_id&gt;</span></code> is a UUID.</p>
-<p>This folder will contain the following files:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">metadata.json</span></code>: A JSON file containing metadata about the session.</p></li>
-<li><p>Folders corresponding to the missions run in the session, of the form
-<code class="docutils literal notranslate"><span class="pre">mission_N</span></code>, where <code class="docutils literal notranslate"><span class="pre">N</span></code> is some identifier (e.g. <code class="docutils literal notranslate"><span class="pre">mission_0</span></code>, <code class="docutils literal notranslate"><span class="pre">mission_1</span></code>,
-etc.).</p></li>
-<li><p>Each folder <code class="docutils literal notranslate"><span class="pre">mission_N</span></code> will have the following files:</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">webcam_video.mpg</span></code> : A video recording of the player’s face taken using the built-in
-webcam.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">screen_video.mpg</span></code> : A video recording of the Minecraft playthrough (i.e.
-what the player sees on their screen)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">player_audio.wav</span></code> : A WAV file containing the audio recording of the player.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">system_audio.wav</span></code> : A WAV file containing a recording of the sound
-output produced by the computer. This will not be produced on macOS
-computers running macOS Mojave or older.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">malmo_data.txt</span></code> : A file containing timestamped observations of the player’s
-state (position, velocity, health, pitch, yaw, etc.)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">events.txt</span></code>: A file containing timestamped discrete event data
-such as players interacting with doors, buttons, and levers, or attacking
-monsters.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">chat.txt</span></code>: A  file containing timestamped chat event data.
-Can be empty if there were no chats sent.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">self_reports.txt</span></code>: A JSON file with self-report survey responses. Can be
-empty if the player exits the game before answering the self-report
-questions.</p></li>
-</ul>
-</li>
-</ul>
-<p>The format for the event and observation data can be found
-<a class="reference external" href="https://ml4ai.github.io/tomcat/tomcat_openapi">here</a>.</p>
-<p>To interrupt the game and quit at any time, press the <code class="docutils literal notranslate"><span class="pre">Esc</span></code> key, then click on
-the terminal window where you ran the <code class="docutils literal notranslate"><span class="pre">run_session.sh</span></code> script, and then
-interrupt the process with <code class="docutils literal notranslate"><span class="pre">Ctrl+C</span></code>. You can also quit the game by closing the
-Minecraft window.</p>
-</div>
 <div class="section" id="for-developers">
 <h2>For developers<a class="headerlink" href="#for-developers" title="Permalink to this headline">¶</a></h2>
 <p>To speed up builds, create a file called gradle.properties and add
@@ -238,6 +192,8 @@ Minecraft window.</p>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="usage.html" class="btn btn-neutral float-right" title="Usage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="tomcat_openapi.html" class="btn btn-neutral float-left" title="Data models and message bus topics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

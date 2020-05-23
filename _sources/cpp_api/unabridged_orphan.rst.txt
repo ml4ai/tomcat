@@ -55,11 +55,6 @@ Files
 .. toctree::
    :maxdepth: 5
 
-   file_src_utils.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
    file_src_utils.h.rst
 
 .. toctree::

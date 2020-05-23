@@ -26,6 +26,4 @@ Program Listing for File utils.h
            return in(container, key) ? container[key] : default_value;
        }
    
-       std::string get_timestamp();
-   
    } // namespace tomcat

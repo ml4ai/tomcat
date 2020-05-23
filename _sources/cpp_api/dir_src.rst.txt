@@ -18,7 +18,6 @@ Files
 - :ref:`file_src_Mission.cpp`
 - :ref:`file_src_Mission.h`
 - :ref:`file_src_runExperiment.cpp`
-- :ref:`file_src_utils.cpp`
 - :ref:`file_src_utils.h`
 - :ref:`file_src_WebcamSensor.cpp`
 - :ref:`file_src_WebcamSensor.h`
