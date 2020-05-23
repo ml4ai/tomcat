@@ -1,7 +1,6 @@
 var searchData=
 [
   ['tomcat_20java_20api_20documentation',['ToMCAT Java API documentation',['../index.html',1,'']]],
-  ['timestamper',['TimeStamper',['../classedu_1_1arizona_1_1tomcat_1_1Utils_1_1TimeStamper.html',1,'edu::arizona::tomcat::Utils']]],
   ['tomcatblock',['TomcatBlock',['../classedu_1_1arizona_1_1tomcat_1_1World_1_1TomcatBlock.html',1,'edu.arizona.tomcat.World.TomcatBlock'],['../classedu_1_1arizona_1_1tomcat_1_1World_1_1TomcatBlock.html#a3cf435a6eb513c13ec5740ff2d089760',1,'edu.arizona.tomcat.World.TomcatBlock.TomcatBlock()']]],
   ['tomcatclientserverhandler',['TomcatClientServerHandler',['../classedu_1_1arizona_1_1tomcat_1_1Messaging_1_1TomcatClientServerHandler.html',1,'edu::arizona::tomcat::Messaging']]],
   ['tomcatentity',['TomcatEntity',['../classedu_1_1arizona_1_1tomcat_1_1World_1_1TomcatEntity.html',1,'edu.arizona.tomcat.World.TomcatEntity'],['../classedu_1_1arizona_1_1tomcat_1_1World_1_1TomcatEntity.html#a821a64ead3db6615deb41e688fccde87',1,'edu.arizona.tomcat.World.TomcatEntity.TomcatEntity(UUID uniqueId, int x, int y, int z, EntityTypes type)'],['../classedu_1_1arizona_1_1tomcat_1_1World_1_1TomcatEntity.html#a266d1f289beac1734e4b9a1b2a1cfab4',1,'edu.arizona.tomcat.World.TomcatEntity.TomcatEntity(int x, int y, int z, EntityTypes type)']]],
