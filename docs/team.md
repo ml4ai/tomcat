@@ -9,7 +9,7 @@ The ToMCAT team (so far!):
 
 - [Kobus Barnard](http://kobus.ca)
 - [Emily Butler](https://cals.arizona.edu/fcs/faculty/emily_butler)
-- [Clayton Morrison](http://w3.sista.arizona.edu/~clayton/)
+- [Clayton Morrison](https://ml4ai.github.io/people/clayton/)
 - [Rebecca Sharp](https://scholar.google.com/citations?user=IZlAzi0AAAAJ&hl=en&oi=ao)
 - [Mihai Surdeanu](http://surdeanu.info/mihai/)
 - [Marco Antonio Valenzuela-Escarcega](https://scholar.google.com/citations?user=uU2UhGIAAAAJ&hl=en)
@@ -17,6 +17,7 @@ The ToMCAT team (so far!):
 **Research Programmer:** [Paul Hein](https://pauldhein.github.io)
 
 **Graduate Students:**
+- Salena Ashton
 - Savannah Boyd
 - Chinmai Basavaraj
 - Loren Champlin
@@ -26,7 +27,6 @@ The ToMCAT team (so far!):
 - Peter Lovett
 - Paulo Soares
 - Manujinda Wathugala
-- Salena Ashton
 
 **Undergraduates:**
 - Aditya Banerjee
