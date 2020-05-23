@@ -30,7 +30,7 @@
           "texture": "textures1.png",
           "caption": "Villagers Saved",
           "subcaption": "{3}/{4}",
-          "originXInTexture": 96,
+          "originXInTexture": 160,
           "originYInTexture": 0,
           "width": 32,
           "height": 32
