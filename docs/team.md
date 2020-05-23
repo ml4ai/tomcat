@@ -14,8 +14,6 @@ The ToMCAT team (so far!):
 - [Mihai Surdeanu](http://surdeanu.info/mihai/)
 - [Marco Antonio Valenzuela-Escarcega](https://scholar.google.com/citations?user=uU2UhGIAAAAJ&hl=en)
 
-**Research Programmer:** [Paul Hein](https://pauldhein.github.io)
-
 **Graduate Students:**
 - Salena Ashton
 - Savannah Boyd
@@ -24,6 +22,7 @@ The ToMCAT team (so far!):
 - John Culnan
 - Harry Go
 - Ashley Kuelz
+- Meghavarshini Krishnaswamy
 - Peter Lovett
 - Paulo Soares
 - Manujinda Wathugala
