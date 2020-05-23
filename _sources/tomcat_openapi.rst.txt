@@ -30,4 +30,4 @@ modified to align better with the notion of publishing/subscribing using a
 message bus.
 
 .. _Swagger UI generator: https://generator.swagger.io
-.. _this YAML file`: https://github.com/ml4ai/tomcat/blob/master/docs/spec.yml
+.. _this YAML file: https://github.com/ml4ai/tomcat/blob/master/docs/spec.yml
