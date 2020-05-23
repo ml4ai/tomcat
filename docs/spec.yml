@@ -93,6 +93,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/BlockBreakEvent'
 
+  /observations/events/player_interactions/item_pickup:
+    subscribe:
+      tags:
+      - Common Events
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemPickedUpEvent'
+
   /observations/events/mob_attacked:
     subscribe:
       tags:
@@ -317,6 +328,48 @@ components:
           type: boolean
       description: "Generic block interaction event."
 
+    ItemPickedUpEvent:
+      allOf:
+      - $ref: '#/components/schemas/Event'
+      properties:
+        item:
+          type: string
+          example: item.item.potion 
+        player_name:
+          $ref: '#/components/schemas/PlayerName'
+        event_type:
+          type: string
+          enum:
+            - edu.arizona.tomcat.Events.ItemPickedUp
+      description: "Event corresponding to a player picking up an item"
+
+
+    ItemStack:
+      properties:
+        item:
+          type: string
+          example: item.potion
+        count:
+          type: int
+
+    EquipmentChangeEvent:
+      allOf:
+      - $ref: '#/components/schemas/Event'
+      properties:
+        from:
+          $ref: '#/components/schemas/ItemStack'
+        to:
+          $ref: '#/components/schemas/ItemStack'
+        slot:
+          type: string
+          example: MAINHAND
+        event_type:
+          type: string
+          enum:
+            - edu.arizona.tomcat.Events.EquipmentChange
+        entity_name:
+          type: string
+          example: tomcat
 
     EntityDeath:
       allOf:
