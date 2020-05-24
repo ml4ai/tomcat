@@ -9,17 +9,17 @@ class PGMMetadata:
         self.edges = set()
         self.cpds = set()
     
-    def add_node(self, node):
-        self.nodes.add(node)
+    def add_node(self, node_metadata):
+        self.nodes.add(node_metadata)
         
-    def add_nodes_from(self, nodes):
-        self.nodes.update(nodes)
+    def add_nodes_from(self, nodes_metadata):
+        self.nodes.update(nodes_metadata)
         
-    def add_edge(self, edge):
-        self.edges.add(edge)
+    def add_edge(self, edge_metadata):
+        self.edges.add(edge_metadata)
         
-    def add_edges_from(self, edges):
-        self.edges.update(edges)
+    def add_edges_from(self, edges_metadata):
+        self.edges.update(edges_metadata)
         
     def add_cpds_from(self, cpds):
         self.cpds.update(cpds)

@@ -1,5 +1,6 @@
 import numpy as np
 from ..distribution import Distribution
+from base.node import Node
 
 class Multinomial(Distribution):
 
@@ -11,35 +12,52 @@ class Multinomial(Distribution):
         self.probabilities = np.array(probabilities)
 
     def sample(self):
-        return np.random.choice(range(len(self.probabilities)), p=self.probabilities)
+        probabilities = self.get_probabilities()
 
-    def get_probability(self, states):
+        return np.random.choice(range(len(probabilities)), p=probabilities)
+
+    def get_probabilities(self):
         """
-        Retrieves the probability of a given state. If multiple states are informed, the probability is zero
-        since only one can occur at a time.
+        Retrieves the probabilities. 
         """
-        if isinstance(states, list) and len(states) > 1:
-            return 0
+        
+        return [probability.assignment if isinstance(probability, Node)
+                else probability
+                for probability in self.probabilities]  
+
+    def get_probability(self, state):
+        """
+        Retrieves the probability of a given state. 
+        """
+        
+        if isinstance(self.probabilities[state], Node):
+            return self.probabilities[state].assignment
         else:
-            return self.probabilities[states]
+            return self.probabilities[state]
+
+    def __str__(self):
+        return 'Mult({})'.format(self.probabilities)
+
+    def __repr__(self):
+        return self.__str__()
 
     def __add__(self, pmf): 
         if isinstance(pmf, Multinomial):
-            return self.probabilities + pmf.probabilities 
+            return self.get_probabilities() + pmf.get_probabilities() 
         else:
-            return self.probabilities + pmf
+            return self.get_probabilities() + pmf
 
     def __mul__(self, pmf): 
         if isinstance(pmf, Multinomial):
-            return self.probabilities * pmf.probabilities 
+            return self.get_probabilities() * pmf.get_probabilities() 
         else:
-            return self.probabilities * pmf
+            return self.get_probabilities() * pmf
 
     def __floordiv__(self, pmf): 
         if isinstance(pmf, Multinomial):
-            return self.probabilities / pmf.probabilities 
+            return self.get_probabilities() / pmf.get_probabilities() 
         else:
-            return self.probabilities / pmf
+            return self.get_probabilities() / pmf
 
     def __truediv__(self, pmf):
-        return self.__floordiv__(pmf) 
+        return self.__floordiv__(pmf)  

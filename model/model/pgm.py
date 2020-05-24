@@ -1,6 +1,5 @@
 import networkx as nx
 from base.node import Node
-from base.edge import Edge
 from .pgm_metadata import PGMMetadata
 
 class PGM(nx.DiGraph):
@@ -33,39 +32,41 @@ class PGM(nx.DiGraph):
         nodes_in_previous_time_slice = []
         
         for t in range(self.time_slices):
-            nodes_in_time_slice = [node for node in self.metadata.nodes 
-                                    if (node.time_slice <= t and node.repeatable) 
-                                    or ( not node.repeatable and node.time_slice == t)]
+            nodes_in_time_slice = [node for node in self.metadata.nodes
+                                    if (node.first_time_slice <= t and node.repeatable) 
+                                    or ( not node.repeatable and node.first_time_slice == t)]
 
-            edges_in_time_slice = [edge for edge in self.metadata.edges 
+            graph_nodes = [((node_metadata.label, t), {'data':Node(node_metadata,t)}) for node_metadata in nodes_in_time_slice]
+
+            edges_in_time_slice = [edge for edge in self.metadata.edges
                                     if not edge.forward_in_time 
                                     and edge.has_both_nodes_in(nodes_in_time_slice)]            
 
-            edges_between_time_slices = [edge for edge in self.metadata.edges 
+            edges_between_time_slices = [edge for edge in self.metadata.edges
                                           if edge.forward_in_time 
                                           and edge.has_node_in(nodes_in_previous_time_slice)]
 
-            extendable_nodes = [node for node in self.metadata.nodes if (node.time_slice <= t and node.extendable)]                       
-            edges_for_extended_nodes = [edge for edge in self.metadata.edges if edge.has_node_in(extendable_nodes)]                                          
-            
-            nodes_ids = [((node.label, t), {'cardinality':node.cardinality, 'state_names':node.state_names}) 
-                          for node in nodes_in_time_slice]
+            extendable_nodes = [node for node in self.metadata.nodes
+                                if (node.first_time_slice <= t and node.extendable)]                       
 
-            edges_in_time_slice_ids = [[(edge.node_from.label, t), (edge.node_to.label, t)] 
+            edges_for_extended_nodes = [edge for edge in self.metadata.edges
+                                        if edge.has_node_in(extendable_nodes)]                                          
+            
+            graph_edges_in_time_slice = [[(edge.node_from.label, t), (edge.node_to.label, t)] 
                                         for edge in edges_in_time_slice]
 
-            edges_between_time_slice_ids = [[(edge.node_from.label, t-1), (edge.node_to.label, t)] 
+            graph_edges_between_time_slice = [[(edge.node_from.label, t-1), (edge.node_to.label, t)] 
                                              for edge in edges_between_time_slices]
             
-            edges_for_extended_nodes_ids = [[(edge.node_from.label, edge.node_from.time_slice), (edge.node_to.label, t)]
+            graph_edges_for_extended_nodes = [[(edge.node_from.label, edge.node_from.time_slice), (edge.node_to.label, t)]
                                              if edge.node_from.extendable 
                                              else 
                                              [(edge.node_from.label, t), (edge.node_to.label, edge.node_to.time_slice)]
                                              for edge in edges_for_extended_nodes]           
 
-            edges_ids = edges_in_time_slice_ids + edges_between_time_slice_ids + edges_for_extended_nodes_ids
+            graph_edges = graph_edges_in_time_slice + graph_edges_between_time_slice + graph_edges_for_extended_nodes
             
-            self.add_nodes_from(nodes_ids)
-            self.add_edges_from(edges_ids)
+            self.add_nodes_from(graph_nodes)
+            self.add_edges_from(graph_edges)
             
             nodes_in_previous_time_slice = nodes_in_time_slice  

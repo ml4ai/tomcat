@@ -10,43 +10,40 @@ class AncestralSampling:
     """
     
     def __init__(self, pgm):
-        self.pgm = pgm
+        self.pgm = copy.deepcopy(pgm)
     
     def sample(self, number_of_samples=1, observations={}):
-        model = copy.deepcopy(self.pgm)
         samples = []
         
         for s in range(number_of_samples):
-            nx.set_node_attributes(model, -1, 'assigned_state')
-
             sample = {}
 
             for node, assignment in observations.items():
-                model.nodes[node]['assigned_state'] = assignment
+                self.pgm.nodes[node]['data'].assignment = assignment
             
-            for t in range(model.time_slices):            
-                nodes_in_time_slice = [node for node in nx.topological_sort(model) if node[1] == t]
+            for t in range(self.pgm.time_slices):            
+                nodes_in_time_slice = [node for node in nx.topological_sort(self.pgm) if node[1] == t]
                 
                 for node in nodes_in_time_slice:
                     if node in observations.keys():                        
                         assignment = observations[node] 
 
                     else:
-                        parent_nodes = [parent_node for parent_node in model.predecessors(node)]           
+                        parent_nodes = [parent_node for parent_node in self.pgm.predecessors(node)]           
                         parent_labels = [parent_node[0] for parent_node in parent_nodes]
-                        cpd = [cpd for cpd in model.metadata.cpds 
+                        cpd = [cpd for cpd in self.pgm.metadata.cpds 
                                 if cpd.node.label == node[0] 
                                 and set([parent_node.label for parent_node in cpd.parent_nodes]) == set(parent_labels)][0]
                         
-                        parent_assignments = {parent_node[0]: model.nodes(data=True)[parent_node]['assigned_state'] 
+                        parent_assignments = {parent_node[0]: self.pgm.nodes(data=True)[parent_node]['data'].assignment 
                                                for parent_node in parent_nodes}
                         distribution = cpd.get_distribution(observations=parent_assignments)
                         
                         assignment = distribution.sample()
-                        model.nodes(data=True)[node]['assigned_state'] = assignment
+                        self.pgm.nodes(data=True)[node]['data'].assignment = assignment
                     
                     try:
-                        sample[node] = (assignment, model.nodes(data=True)[node]['state_names'].get(assignment, assignment))
+                        sample[node] = (assignment, self.pgm.nodes(data=True)[node]['data'].metadata.state_names.get(assignment, assignment))
                     except:
                         sample[node] = (assignment, assignment)
 

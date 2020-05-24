@@ -1,4 +1,4 @@
-from base.node import Node
+from base.node_metadata import NodeMetadata
 import numpy as np
 
 class CPD:
@@ -39,14 +39,14 @@ class CPD:
 
         Parameters
         ----------
-        node: main node
-        parent_nodes: parent nodes of the main node for which the conditional probability is being defined
+        node: main node metadata
+        parent_nodes: metadada of the parent nodes of the main node for which the conditional probability is being defined
         values: list containing the distribution for each combination of states between the main node and its parents
         """
-        if not isinstance(node, Node):
+        if not isinstance(node, NodeMetadata):
             raise TypeError('The main node has to be an instance of the class Node')
 
-        if not all(isinstance(parent_node, Node) for parent_node in parent_nodes):
+        if not all(isinstance(parent_node, NodeMetadata) for parent_node in parent_nodes):
             raise TypeError('All the parent nodes have to be instances of the class Node')    
 
         self.node = node

@@ -1,6 +1,5 @@
-from .distribution import Distribution
+from ..distribution import Distribution
 from scipy.stats import norm, multivariate_normal
-import numpy as np
 
 class Gaussian(Distribution):
 
@@ -10,15 +9,15 @@ class Gaussian(Distribution):
 
     def __init__(self, means, covariance):
         if isinstance(means, list) and len(means) > 1:
-            self.d = multivariate_normal(means, covariance)                         
+            self.normal = multivariate_normal(means, covariance)                         
         else:
-            self.d = norm(means, covariance)             
+            self.normal = norm(means, covariance)             
 
     def sample(self):
-        return self.d.rvs()
+        return self.normal.rvs()
 
     def get_probability(self, states):
         """
         Retrieves the joint density of a given set of states
         """
-        return self.d.pdf(states)
+        return self.normal.pdf(states)
