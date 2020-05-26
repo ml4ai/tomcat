@@ -4,7 +4,7 @@ class Node:
     Class that represents a concrete node in a PGM. 
     """
     
-    def __init__(self, metadata, time_slice):
+    def __init__(self, metadata, time_slice=0):
         """
         Constructor
 
@@ -16,6 +16,10 @@ class Node:
         self.metadata = metadata
         self.time_slice = time_slice
         self.assignment = None
+        self.cpd = None
+
+    def get_id(self):
+        return (self.metadata.label, self.time_slice)
     
     def __str__(self):
         return '({},{})'.format(self.metadata.label, self.time_slice)

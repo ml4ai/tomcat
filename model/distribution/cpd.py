@@ -29,7 +29,7 @@ class CPD:
     |gradeC |0.6  |  0.6 |  0.6  | 0.6  |0.6 | 0.6  |
     +-------+-----+------+-------+------+----+------+
     
-    distribution = Multinomial([0.2, 0.2, 0.6])
+    distribution = Multinomial([0.2, 0.2])
     values = [distribution, distribution, distribution, distribution, distribution, distribution] 
     """
     
@@ -51,6 +51,8 @@ class CPD:
 
         self.node = node
         self.parent_nodes = parent_nodes
+        # Check if the distributions depend on node assignments and if true, check whether the node is a parent 
+        # of the main node
         self.set_values(values)
         
     def set_values(self, values):
@@ -94,6 +96,11 @@ class CPD:
                 indices.append(slice(None))
         
         return self.values[tuple(indices)] 
+
+    def replace_parameter_node(self, nodes):
+        for distribution in self.values.flatten():
+            for node in nodes:
+                distribution.replace_parameter_node(node)
     
     def __str__(self):
         parent_labels = sorted(self.parent_nodes, key=lambda p: repr(p))
