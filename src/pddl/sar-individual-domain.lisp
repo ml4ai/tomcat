@@ -17,7 +17,12 @@
 
 (in-package :shop-user)
 
-;;(shop-trace :all)
+(defun trace-query-hook (type item additional-information state-atoms)
+                  (print type)
+                  (print item)
+                  (print state-atoms))
+
+(shop-trace :operators)
 (defdomain (sar-individual-domain :type pddl-domain :redefine-ok T) (
     (:types human ;; Everything, including 'human' inherits from the base 'object' type
             victim rescuer - human ;; The rescuer and the victims are humans.
