@@ -1,11 +1,7 @@
 package edu.arizona.tomcat.Events;
-import edu.arizona.tomcat.Utils.TimeStamper;
+import java.time.Clock;
 
 public class Event {
-    private String eventType;
-    private String timestamp;
-    public Event() {
-        this.eventType = this.getClass().getName();
-        this.timestamp = TimeStamper.getTimeStamp();
-    }
+    private String eventType = this.getClass().getName();
+    private String timestamp = Clock.systemUTC().instant().toString();
 }
