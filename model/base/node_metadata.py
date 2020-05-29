@@ -4,7 +4,7 @@ class NodeMetadata:
     Class that represents metadata of a node in a PGM. 
     """
     
-    def __init__(self, label, first_time_slice=0, repeatable=False, extendable=False, cardinality=None, state_names={}, data_node=True):
+    def __init__(self, label, first_time_slice=0, repeatable=False, extendable=False, cardinality=1, dimensionality=1, state_names={}, data_node=True):
         """
         Constructor
 
@@ -17,6 +17,7 @@ class NodeMetadata:
         extendable: the node shows up only once in the extended model (in the assigned time slice) and 
                     connects to other repeatable nodes in successive time slices according to the edges defined
         cardinality: number of discrete states a node may have
+        dimensionality: dimension of a sample of this node
         state_names: names of the discrete states a node may have                 
         data_note: indicates whether this is a data node or a parameter node
         """
@@ -28,7 +29,8 @@ class NodeMetadata:
         self.first_time_slice = first_time_slice
         self.repeatable = repeatable
         self.extendable = extendable
-        self.cardinality = cardinality    
+        self.cardinality = cardinality
+        self.dimensionality = dimensionality
         self.state_names = state_names
         self.data_note = data_node
     

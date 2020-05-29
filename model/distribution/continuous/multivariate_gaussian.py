@@ -1,5 +1,5 @@
-from ..distribution import Distribution
-from scipy.stats import norm, multivariate_normal
+from distribution.distribution import Distribution
+from scipy.stats import multivariate_normal
 from base.node import Node
 import numpy as np
 
@@ -9,28 +9,30 @@ class MultivariateGaussian(Distribution):
     Class that represents a Multivariate Gaussian distribution
     """
 
-    def __init__(self, means, covariance=[], variances=[], transformations_mean=[], transformations_variance=[]):
+    def __init__(self, means, covariance=[], variances=[], f_means=[], f_variances=[]):
         self.means = means
         self.covariance = covariance
         self.variances = variances
+        self.f_means = f_means
+        self.f_variances = f_variances
 
         if covariance != [] and variances != []:
             raise TypeError('Either covariance or variances has to be empty')
 
-        if transformations_mean == []:
-            self.transformations_mean = [lambda x: x for _ in self.means]
+        if isinstance(self.means, Node):
+            dimensionality = self.means.metadata.dimensionality
         else:
-            self.transformations_mean = transformations_mean
+            dimensionality = len(self.means)
 
-        if transformations_variance == []:
-            self.transformations_variance = [lambda x: x for _ in self.variances]       
-        else:
-            self.transformations_variance = transformations_variance
+        if self.f_means == []:
+            self.f_mean = [lambda x: x]*dimensionality
+
+        if self.f_variances == []:
+            self.f_variances = [lambda x: x]*self.dimensionality
 
     def sample(self):
         means, covariance = self.get_concrete_parameters()
-        normal = multivariate_normal(means, covariance)                         
-        return normal.rvs()
+        return multivariate_normal(means, covariance).rvs()
 
     def get_concrete_parameters(self):
         """
@@ -40,17 +42,17 @@ class MultivariateGaussian(Distribution):
         means = []        
         for i, mean in enumerate(self.means):
             if isinstance(mean, Node):
-                means.append(self.transformations_mean[i](mean.assignment))
+                means.append(self.f_mean[i](mean.assignment))
             else:
-                means.append(self.transformations_mean[i](mean))
+                means.append(self.f_mean[i](mean))
 
         if self.covariance == []:
             variances = []
             for i, variance in enumerate(self.variances):
                 if isinstance(variance, Node):
-                    variances.append(self.transformations_variance[i](variance.assignment))
+                    variances.append(self.f_variances[i](variance.assignment))
                 else:
-                    variances.append(self.transformations_variance[i](variance))
+                    variances.append(self.f_variances[i](variance))
 
             dim = len(variances)
             covariance = np.zeros([dim, dim])
@@ -65,9 +67,7 @@ class MultivariateGaussian(Distribution):
         Retrieves the joint density of a given set of states
         """
         means, covariance = self.get_concrete_parameters()
-        normal = multivariate_normal(means, covariance)      
-        print(means, covariance)                      
-        return normal.pdf(states)
+        return multivariate_normal(means, covariance).pdf(states)
 
     def replace_parameter_node(self, node):
         """
@@ -82,7 +82,7 @@ class MultivariateGaussian(Distribution):
                 self.variances[i] = node
 
     def __str__(self):
-        if self.covariance = []:
+        if self.covariance == []:
             return 'MultGaussian({};{})'.format(self.means, self.variances)
         else:
             return 'MultGaussian({};{})'.format(self.means, self.covariance)

@@ -1,4 +1,4 @@
-from ..distribution import Distribution
+from distribution.distribution import Distribution
 from scipy.stats import norm
 from base.node import Node
 
@@ -8,16 +8,15 @@ class Gaussian(Distribution):
     Class that represents a Gaussian distribution 
     """
 
-    def __init__(self, mean, variance, transformation_mean=lambda x: x, transformation_variance=lambda x: x):
+    def __init__(self, mean, variance, f_mean=lambda x: x, f_variance=lambda x: x):
         self.mean = mean
         self.variance = variance     
-        self.transformation_mean = transformation_mean
-        self.transformation_variance = transformation_variance    
+        self.f_mean = f_mean
+        self.f_variance = f_variance
 
     def sample(self):
         mean, variance = self.get_concrete_parameters()
-        normal = norm(mean, variance)             
-        return normal.rvs()
+        return norm(mean, variance).rvs()
 
     def get_concrete_parameters(self):
         """
@@ -25,14 +24,14 @@ class Gaussian(Distribution):
         """
         
         if isinstance(self.mean, Node):
-            mean = self.transformation_mean(self.mean.assignment)
+            mean = self.f_mean(self.mean.assignment)
         else:
-            mean = self.transformation_mean(self.mean)
+            mean = self.f_mean(self.mean)
 
         if isinstance(self.variance, Node):
-            variance = self.transformation_variance(self.variance.assignment)
+            variance = self.f_variance(self.variance.assignment)
         else:
-            variance = self.transformation_variance(self.variance)
+            variance = self.f_variance(self.variance)
 
         # print('{};{}'.format(mean, variance))
         return mean, variance
@@ -42,8 +41,7 @@ class Gaussian(Distribution):
         Retrieves the joint density of a given set of states
         """
         mean, variance = self.get_concrete_parameters()
-        normal = norm(mean, variance)          
-        return normal.pdf(states)
+        return norm(mean, variance).pdf(states)
 
     def replace_parameter_node(self, node):
         """

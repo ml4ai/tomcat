@@ -84,6 +84,3 @@ class PGM(nx.DiGraph):
                              and set(cpd.parent_nodes) == set(parents_metadata)]
             node.cpd = copy.deepcopy(cpds_for_node[0])         
             node.cpd.replace_parameter_node(parent_nodes)
-
-            
-            

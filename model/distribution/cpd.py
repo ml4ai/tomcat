@@ -1,5 +1,6 @@
 from base.node_metadata import NodeMetadata
 import numpy as np
+import pandas as pd
 
 class CPD:
 
@@ -63,11 +64,18 @@ class CPD:
         This will make indexing easier.
         """
 
-        parents_cardinalities = [parent_node.cardinality for parent_node in self.parent_nodes]
+        parents_cardinalities = [parent_node.cardinality for parent_node
+                                 in self.parent_nodes if parent_node.cardinality != 1]
         cardinalities = tuple(parents_cardinalities)
-        self.values = np.reshape(values, cardinalities)
+        if cardinalities == ():
+            if isinstance(values, list):
+                self.values = np.array(values)
+            else:
+                self.values = np.array([values])
+        else:
+            self.values = np.reshape(values, cardinalities)
     
-    def get_distribution(self, observations={}):        
+    def get_distribution(self, observations=pd.Series([], dtype='object')):
         """
         Retrieves the distribution of the main node given observations of some or all of its parents
         
@@ -90,12 +98,20 @@ class CPD:
         indices = []
         
         for i, parent_node in enumerate(self.parent_nodes):
-            if parent_node.label in observations.keys():
-                indices.append(observations[parent_node.label])
-            else:
-                indices.append(slice(None))
-        
-        return self.values[tuple(indices)] 
+            if parent_node.cardinality != 1:
+                if parent_node.label in observations.index:
+                    indices.append(int(observations[parent_node.label]))
+                else:
+                    indices.append(slice(None))
+
+        distributions = self.values[tuple(indices)]
+        # if isinstance(distributions, np.ndarray) and distributions.shape == (1,):
+        #     return distributions[0]
+        # else:
+        if not isinstance(distributions, np.ndarray):
+            distributions = np.array([distributions])
+
+        return distributions
 
     def replace_parameter_node(self, nodes):
         for distribution in self.values.flatten():
