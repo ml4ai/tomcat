@@ -66,7 +66,7 @@
       :effect (and (examined ?t ?v) (not (examining ?t ?v)))
     )
 
-    (:action move-to ;; Rescuer moves to another room
+    (:action move ;; Rescuer moves to another room
       :parameters (?t - rescuer ?source ?destination - room)
       :precondition (and (in ?t ?source) (not (in ?t ?destination)))
       :effect (and (in ?t ?destination) (not (in ?t ?source)))
@@ -115,36 +115,36 @@
     )
 
     (:method (explore ?t ?r) ;; Method for searching a room and determining what needs to be done to move on
-             current-room-unchecked ;; Branch for checking a room with victims inside
+             room-unsearched ;; Branch for checking a room with victims inside
              (and (in ?t ?r) (not (searched ?t ?r))) 
              (:ordered (:task search-room ?t ?r)
                        (:task explore ?t ?r))
 
-             victims-in-room
+             victims-found-in-room
              (and (in ?t ?r) (not (victims-cleared ?t ?r)))
              (:ordered (:task help-victims ?t ?r)
                        (:task explore ?t ?r))
 
-             current-room-checked-and-cleared ;; Branch for checking a room with no victims
+             room-searched-and-cleared ;; Branch for checking a room with no victims
              (and (in ?t ?r) (room ?r2) (different ?r ?r2) (not (searched ?t ?r2)))
-             (:ordered (:task !move-to ?t ?r ?r2)
+             (:ordered (:task !move ?t ?r ?r2)
                        (:task explore ?t ?r2))
 
-             checked-all-rooms ;; Branch for checking the last room with victims inside
+             all-rooms-searched ;; Branch for checking the last room with victims inside
              (in ?t ?r)
              (:ordered (:task !leave-building ?t ?b))
 
     )
 
     (:method (search-room ?t ?r)
-             searching-victim-found
+             initial-victim-found
              (and (in ?t ?r) (assign* ?v (cl-user::check-for-victim '?r)) (not (spotted ?t ?v ?r)) (not (searching ?t ?r)))
              (:ordered (:task !start-searching ?t ?r)
                        (:task !!assert (victim ?v))
                        (:task !!assert (spotted ?t ?v ?r))
                        (:task search-room ?t ?r))
 
-             searching-more-victims-found
+             another-victim-found
              (and (in ?t ?r) (assign* ?v (cl-user::check-for-victim '?r)) (not (spotted ?t ?v ?r)))
              (:ordered (:task !!assert (victim ?v))
                        (:task !!assert (spotted ?t ?v ?r))
