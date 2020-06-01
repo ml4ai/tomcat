@@ -1,0 +1,11 @@
+Q1: echo .[!.]* means match any file which name is start with . but the file name should not in ".".
+
+Q2: The difference is, the second one specified that the filename should not in "." but the first one didn't specify it.
+
+Q3: This means match any filename which is belong to the "upper" class.
+
+Q4:aA1b aA2b aB3b aB4b
+
+Q5:n=1;while [n -le 50]; do ((++n)); done ;echo name=Subject-$n
+
+Q6: export PATH=/home/tomcat/build/bin :$PATH
