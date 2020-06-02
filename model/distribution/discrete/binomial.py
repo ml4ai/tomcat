@@ -49,14 +49,21 @@ class Binomial(Distribution):
         if isinstance(self.p, Node) and self.p.metadata == node.metadata:
             self.p = node
 
-    def mult(self, other_distribution, state, self_state):
+    def mult(self, other_distribution, states_counts, self_state):
         f_ps = self.f_ps.copy()
         f_p = f_ps[self_state]
-        p = other_distribution.get_probability(state)
+        p = 1
+        for state, occurences in states_counts.items():
+            p *= other_distribution.get_probability(state)
+            p = p**occurences
         f_ps[self_state] = lambda x : f_p(x)*p
 
         composite_distribution = Binomial(self.p, f_ps)
         return composite_distribution
+
+    def add(self, other_binomial):
+        probabilities = self.get_concrete_probabilities() + other_binomial.get_concrete_probabilities()
+        return Binomial(probabilities)
 
     def __str__(self):
         if isinstance(self.p, Node):

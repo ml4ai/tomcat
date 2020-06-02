@@ -3,8 +3,8 @@ from distribution.discrete.multinomial import Multinomial
 from scipy.stats import dirichlet
 from base.node import Node
 
-class Dirichlet(Distribution):
 
+class Dirichlet(Distribution):
     """
     Class that represents a Dirichlet distribution
     """
@@ -19,7 +19,7 @@ class Dirichlet(Distribution):
             dimensionality = len(self.alphas)
 
         if self.f_alphas == []:
-            self.f_alphas = [lambda x: x]*dimensionality
+            self.f_alphas = [lambda x: x] * dimensionality
 
     def sample(self):
         alphas = self.get_concrete_parameters()
@@ -44,14 +44,24 @@ class Dirichlet(Distribution):
         alphas = self.get_concrete_parameters()
         return dirichlet(alphas).pdf(states)
 
-    def mult(self, other_distribution, state, self_state=None):
+    def mult(self, other_distribution, states_counts, self_state=None):
         if isinstance(other_distribution, Multinomial):
             if isinstance(other_distribution.probabilities, Node):
                 if any(d == self for d in other_distribution.probabilities.cpd.values):
                     f_alphas = self.f_alphas.copy()
-                    f_alpha = f_alphas[state]
-                    f_alphas[state] = lambda x : f_alpha(x) + 1
-                    composite_distribution = Dirichlet(self.alphas.copy(), f_alphas)
+
+                    # todo - python only replaces the variables upon calling the function so I don't know how to
+                    #        use lambda for this case. I'll change the alpha directly to move on since I don't
+                    #        need to apply any function to a Dirichlet at this point
+
+                    # for state, occurences in states_counts.items():
+                    #     f_alpha = f_alphas[state]
+                    #     f_alphas[state] = (lambda f: (lambda o: lambda x: (f(x) + o))(occurences))(f_alpha)
+                    alphas = self.alphas.copy()
+                    for state, occurences in states_counts.items():
+                        alphas[state] += occurences
+
+                    composite_distribution = Dirichlet(alphas, f_alphas)
                 else:
                     raise TypeError(
                         'There no dependency between {} and the parameters of {}'.format(self, other_distribution))
@@ -65,7 +75,7 @@ class Dirichlet(Distribution):
         return composite_distribution
 
     def __str__(self):
-        return 'Dirichlet({})'.format(self.alphas)
+        return '[a]Dirichlet({})\n[c]Dirichlet({})'.format(self.alphas, self.get_concrete_parameters())
 
     def __repr__(self):
         return self.__str__()
@@ -101,7 +111,7 @@ class Dirichlet(Distribution):
         d2 = pgm.nodes(data='data')[('n', 0)].cpd.get_distribution()
         d3 = d1.mult(d2, 2)
 
-        samples = np.array([[0,0, 0]])
+        samples = np.array([[0, 0, 0]])
 
         for i in range(100):
             samples = np.append(samples, [d3.sample()], axis=0)

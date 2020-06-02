@@ -68,7 +68,8 @@ class PGM(nx.DiGraph):
                                              for edge in edges_for_extended_nodes]           
 
             graph_edges = graph_edges_in_time_slice + graph_edges_between_time_slice + graph_edges_for_extended_nodes
-            
+
+            graph_nodes.sort()
             self.add_nodes_from(graph_nodes)
             self.add_edges_from(graph_edges)
 

@@ -44,12 +44,20 @@ class Beta(Distribution):
         a, b = self.get_concrete_parameters()
         return beta(a, b).pdf(state)
 
-    def mult(self, other_distribution, state, self_state=None):
+    def mult(self, other_distribution, states_counts, self_state=None):
         if isinstance(other_distribution, Binomial):
             if isinstance(other_distribution.p, Node):
                 if any(d == self for d in other_distribution.p.cpd.values):
-                    f_a = lambda x : self.f_a(x) + state
-                    f_b = lambda x: self.f_b(x) + 1 - state
+                    occurences_0 = 0
+                    if 0 in states_counts.index:
+                        occurences_0 = states_counts[0]
+
+                    occurences_1 = 0
+                    if 1 in states_counts.index:
+                        occurences_1 = states_counts[1]
+
+                    f_a = lambda x : self.f_a(x) + occurences_1
+                    f_b = lambda x: self.f_b(x) + occurences_0
                     composite_distribution = Beta(self.a, self.b, f_a, f_b)
                 else:
                     raise TypeError(

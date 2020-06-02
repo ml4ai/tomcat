@@ -50,14 +50,21 @@ class Multinomial(Distribution):
         if isinstance(self.probabilities, Node) and self.probabilities.metadata == node.metadata:
             self.probabilities = node
 
-    def mult(self, other_distribution, state, self_state):
+    def mult(self, other_distribution, states_counts, self_state):
         f_probabilities = self.f_probabilities.copy()
         f_probability = f_probabilities[self_state]
-        p = other_distribution.get_probability(state)
+        p = 1
+        for state, occurences in states_counts.items():
+            p *= other_distribution.get_probability(state)
+            p = p ** occurences
         f_probabilities[self_state] = lambda x : f_probability(x)*p
 
         composite_distribution = Multinomial(self.probabilities, f_probabilities)
         return composite_distribution
+
+    def add(self, other_multinomial):
+        probabilities = self.get_concrete_probabilities() + other_multinomial.get_concrete_probabilities()
+        return Multinomial(probabilities)
 
     def __str__(self):
         return 'Mult({})'.format(self.probabilities)
