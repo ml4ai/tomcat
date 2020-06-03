@@ -8,40 +8,43 @@ class Multinomial(Distribution):
     Class that represents a Multinomial distribution
     """
 
-    def __init__(self, probabilities, f_probabilities=[]):
+    def __init__(self, probabilities):
         self.probabilities = probabilities
-        self.f_probabilities = f_probabilities
-
-        if isinstance(self.probabilities, Node):
-            self.dimensionality = self.probabilities.metadata.dimensionality
-        else:
-            self.dimensionality = len(self.probabilities)
-
-        if self.f_probabilities == []:
-            self.f_probabilities = [lambda x : x]*self.dimensionality
 
     def sample(self):
         probabilities = self.get_concrete_probabilities()
         return np.random.choice(range(len(probabilities)), p=probabilities)
 
-    def get_concrete_probabilities(self):
+    def get_concrete_probabilities(self, normalize=True):
         """
         Retrieves the probabilities. 
         """
 
         if isinstance(self.probabilities, Node):
-            probabilities = [self.f_probabilities[i](probability) for i, probability in enumerate(self.probabilities.assignment)]
+            probabilities = self.probabilities.assignment
         else:
-            probabilities = [self.f_probabilities[i](probability) for i, probability in enumerate(self.probabilities)]
+            probabilities = self.probabilities
 
-        probabilities = probabilities / np.sum(probabilities)
+        if normalize:
+            probabilities /= np.sum(probabilities)
         return probabilities
 
-    def get_probability(self, state):
+    def get_probability(self, category_frequencies):
         """
         Retrieves the probability of a given state. 
         """
-        return self.get_concrete_probabilities()[int(state)]
+        probabilities = self.get_concrete_probabilities()
+        probability = None
+        for category, frequency in category_frequencies.iteritems():
+            if probability == None:
+                probability = probabilities[category]**frequency
+            else:
+                probability *= probabilities[category] ** frequency
+
+        if probability == None:
+            probability = 0
+
+        return probability
 
     def replace_parameter_node(self, node):
         """
@@ -50,24 +53,24 @@ class Multinomial(Distribution):
         if isinstance(self.probabilities, Node) and self.probabilities.metadata == node.metadata:
             self.probabilities = node
 
-    def mult(self, other_distribution, states_counts, self_state):
-        f_probabilities = self.f_probabilities.copy()
-        f_probability = f_probabilities[self_state]
-        p = 1
-        for state, occurences in states_counts.items():
-            p *= other_distribution.get_probability(state)
-            p = p ** occurences
-        f_probabilities[self_state] = lambda x : f_probability(x)*p
+    def mult(self, other_distribution):
+        if isinstance(other_distribution, list):
+            probabilities = np.array(other_distribution)
+        elif isinstance(other_distribution, Multinomial):
+            probabilities = other_distribution.get_concrete_probabilities(normalize=False)
+        else:
+            raise TypeError('Cannot multiply a Multinomial distribution by {}.'.format(other_distribution))
 
-        composite_distribution = Multinomial(self.probabilities, f_probabilities)
-        return composite_distribution
+        return Multinomial(self.get_concrete_probabilities(normalize=False) * probabilities)
 
-    def add(self, other_multinomial):
-        probabilities = self.get_concrete_probabilities() + other_multinomial.get_concrete_probabilities()
-        return Multinomial(probabilities)
+    def power(self, exponent):
+        return Multinomial(self.get_concrete_probabilities(normalize=False) ** exponent)
+
+    def conjugate(self, other_distribution, category_frequencies):
+        raise TypeError('Conjugacy not implemented for Multinomial distributions.')
 
     def __str__(self):
-        return 'Mult({})'.format(self.probabilities)
+        return 'Multinomial({})'.format(self.probabilities)
 
     def __repr__(self):
         return self.__str__()

@@ -50,17 +50,17 @@ def build_pgm(complete_generative_model=False):
     cpds = []
     if complete_generative_model:
         # Priors
-        prior_d = NodeMetadata(NodeLabel.PRIOR_D)
-        prior_i = NodeMetadata(NodeLabel.PRIOR_I)
-        prior_s_i0 = NodeMetadata(NodeLabel.PRIOR_S_I0)
-        prior_s_i1 = NodeMetadata(NodeLabel.PRIOR_S_I1)
-        prior_l_g0 = NodeMetadata(NodeLabel.PRIOR_L_G0)
-        prior_l_g1 = NodeMetadata(NodeLabel.PRIOR_L_G1)
-        prior_l_g2 = NodeMetadata(NodeLabel.PRIOR_L_G2)
-        prior_g_d0i0 = NodeMetadata(NodeLabel.PRIOR_G_D0I0, dimensionality=3)
-        prior_g_d0i1 = NodeMetadata(NodeLabel.PRIOR_G_D0I1, dimensionality=3)
-        prior_g_d1i0 = NodeMetadata(NodeLabel.PRIOR_G_D1I0, dimensionality=3)
-        prior_g_d1i1 = NodeMetadata(NodeLabel.PRIOR_G_D1I1, dimensionality=3)
+        prior_d = NodeMetadata(NodeLabel.PRIOR_D, prior=True)
+        prior_i = NodeMetadata(NodeLabel.PRIOR_I, prior=True)
+        prior_s_i0 = NodeMetadata(NodeLabel.PRIOR_S_I0, prior=True)
+        prior_s_i1 = NodeMetadata(NodeLabel.PRIOR_S_I1, prior=True)
+        prior_l_g0 = NodeMetadata(NodeLabel.PRIOR_L_G0, prior=True)
+        prior_l_g1 = NodeMetadata(NodeLabel.PRIOR_L_G1, prior=True)
+        prior_l_g2 = NodeMetadata(NodeLabel.PRIOR_L_G2, prior=True)
+        prior_g_d0i0 = NodeMetadata(NodeLabel.PRIOR_G_D0I0, prior=True)
+        prior_g_d0i1 = NodeMetadata(NodeLabel.PRIOR_G_D0I1, prior=True)
+        prior_g_d1i0 = NodeMetadata(NodeLabel.PRIOR_G_D1I0, prior=True)
+        prior_g_d1i1 = NodeMetadata(NodeLabel.PRIOR_G_D1I1, prior=True)
         nodes += [prior_d, prior_i, prior_s_i0, prior_s_i1, prior_l_g0, prior_l_g1, prior_l_g2, prior_g_d0i0,
                   prior_g_d0i1, prior_g_d1i0, prior_g_d1i1]
 

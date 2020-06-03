@@ -9,18 +9,14 @@ class Binomial(Distribution):
     Class that represents a Binomial distribution
     """
 
-    def __init__(self, p, f_ps=[]):
-        self.p = p   
-        self.f_ps = f_ps
-
-        if f_ps == []:
-            self.f_ps = [lambda x : x]*2
+    def __init__(self, p):
+        self.p = p
 
     def sample(self):
         probabilities = self.get_concrete_probabilities()
         return np.random.choice([0,1], p=probabilities)
 
-    def get_concrete_probabilities(self):
+    def get_concrete_probabilities(self, normalize=True):
         if isinstance(self.p, Node):
             probabilities = self.p.assignment
         else:
@@ -32,15 +28,23 @@ class Binomial(Distribution):
         if len(probabilities) == 1:
             probabilities.insert(0, 1 - probabilities[-1])
 
-        probabilities = [self.f_ps[i](p) for i, p in enumerate(probabilities)]
-        probabilities = probabilities / np.sum(probabilities)
+        if normalize:
+            probabilities /= np.sum(probabilities)
         return probabilities
 
-    def get_probability(self, state):
-        """
-        Retrieves the probability of a given state.
-        """
-        return self.get_concrete_probabilities()[int(state)]
+    def get_probability(self, category_frequencies):
+        probabilities = self.get_concrete_probabilities()
+        probability = None
+        for category, frequency in category_frequencies.iteritems():
+            if probability == None:
+                probability = probabilities[category] ** frequency
+            else:
+                probability *= probabilities[category] ** frequency
+
+        if probability == None:
+            probability = 0
+
+        return probability
 
     def replace_parameter_node(self, node):
         """
@@ -49,27 +53,27 @@ class Binomial(Distribution):
         if isinstance(self.p, Node) and self.p.metadata == node.metadata:
             self.p = node
 
-    def mult(self, other_distribution, states_counts, self_state):
-        f_ps = self.f_ps.copy()
-        f_p = f_ps[self_state]
-        p = 1
-        for state, occurences in states_counts.items():
-            p *= other_distribution.get_probability(state)
-            p = p**occurences
-        f_ps[self_state] = lambda x : f_p(x)*p
+    def mult(self, other_distribution):
+        if isinstance(other_distribution, list):
+            probabilities = np.array(other_distribution)
+        elif isinstance(other_distribution, Binomial):
+            probabilities = other_distribution.get_concrete_probabilities(normalize=False)
+        else:
+            raise TypeError('Cannot multiply a Binomial distribution by {}.'.format(other_distribution))
 
-        composite_distribution = Binomial(self.p, f_ps)
-        return composite_distribution
+        return Binomial(self.get_concrete_probabilities(normalize=False) * probabilities)
 
-    def add(self, other_binomial):
-        probabilities = self.get_concrete_probabilities() + other_binomial.get_concrete_probabilities()
-        return Binomial(probabilities)
+    def power(self, exponent):
+        return Binomial(self.get_concrete_probabilities(normalize=False) ** exponent)
 
     def __str__(self):
         if isinstance(self.p, Node):
             return 'Binomial([1-{} {}])'.format(self.p, self.p)
         else:
-            return 'Binomial({})'.format(self.probabilities)
+            return 'Binomial({})'.format(self.get_concrete_probabilities(normalize=False))
+
+    def conjugate(self, other_distribution, category_frequencies):
+        raise TypeError('Conjugacy not implemented for Binomial distributions.')
 
     def __repr__(self):
         return self.__str__()

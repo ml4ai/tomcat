@@ -9,17 +9,8 @@ class Dirichlet(Distribution):
     Class that represents a Dirichlet distribution
     """
 
-    def __init__(self, alphas, f_alphas=[]):
+    def __init__(self, alphas):
         self.alphas = alphas
-        self.f_alphas = f_alphas
-
-        if isinstance(self.alphas, Node):
-            dimensionality = self.alphas.metadata.cardinality
-        else:
-            dimensionality = len(self.alphas)
-
-        if self.f_alphas == []:
-            self.f_alphas = [lambda x: x] * dimensionality
 
     def sample(self):
         alphas = self.get_concrete_parameters()
@@ -31,51 +22,42 @@ class Dirichlet(Distribution):
         """
 
         if isinstance(self.alphas, Node):
-            alphas = [self.f_alphas[i](alpha) for i, alpha in enumerate(self.alphas.assignment)]
+            alphas = self.alphas.assignment
         else:
-            alphas = [self.f_alphas[i](alpha) for i, alpha in enumerate(self.alphas)]
+            alphas = self.alphas
 
         return alphas
 
-    def get_probability(self, states):
+    def get_probability(self, category_frequencies):
         """
-        Retrieves the joint density of a given set of states
+        Retrieves the density of a given state
         """
         alphas = self.get_concrete_parameters()
-        return dirichlet(alphas).pdf(states)
+        density = 1
+        for category, frequency in category_frequencies.iteritems():
+            density *= dirichlet(alphas).pdf(category)**frequency
 
-    def mult(self, other_distribution, states_counts, self_state=None):
+        return density
+
+    def mult(self, other_distribution):
+        raise TypeError('Multiplication not yet implemented for Dirichlet distributions.')
+
+    def power(self, exponent):
+        raise TypeError('Power not yet implemented for Dirichlet distributions.')
+
+    def conjugate(self, other_distribution, category_frequencies):
         if isinstance(other_distribution, Multinomial):
-            if isinstance(other_distribution.probabilities, Node):
-                if any(d == self for d in other_distribution.probabilities.cpd.values):
-                    f_alphas = self.f_alphas.copy()
-
-                    # todo - python only replaces the variables upon calling the function so I don't know how to
-                    #        use lambda for this case. I'll change the alpha directly to move on since I don't
-                    #        need to apply any function to a Dirichlet at this point
-
-                    # for state, occurences in states_counts.items():
-                    #     f_alpha = f_alphas[state]
-                    #     f_alphas[state] = (lambda f: (lambda o: lambda x: (f(x) + o))(occurences))(f_alpha)
-                    alphas = self.alphas.copy()
-                    for state, occurences in states_counts.items():
-                        alphas[state] += occurences
-
-                    composite_distribution = Dirichlet(alphas, f_alphas)
-                else:
-                    raise TypeError(
-                        'There no dependency between {} and the parameters of {}'.format(self, other_distribution))
-            else:
-                raise TypeError(
-                    'There no dependency between {} and the parameters of {}'.format(self, other_distribution))
+            parameters = self.get_concrete_parameters()
+            for category, frequency in category_frequencies.iteritems():
+                parameters[category] += frequency
+            conjugate = Dirichlet(parameters)
         else:
-            raise TypeError(
-                'Not compatible distributions. {} and {} are not conjugates.'.format(self, other_distribution))
+            raise TypeError('Conjugacy for Dirichlet only implemented with Multinomial.')
 
-        return composite_distribution
+        return conjugate
 
     def __str__(self):
-        return '[a]Dirichlet({})\n[c]Dirichlet({})'.format(self.alphas, self.get_concrete_parameters())
+        return 'Dirichlet({})'.format(self.alphas)
 
     def __repr__(self):
         return self.__str__()
