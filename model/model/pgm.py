@@ -103,8 +103,16 @@ class PGM(nx.DiGraph):
     def get_node(self, node_id):
         return self.nodes(data='data')[node_id]
 
-    def get_parent_nodes_of(self, node):
-        return [self.get_node(parent_node_id) for parent_node_id in self.predecessors(node.get_id())]
+    def get_parent_nodes_of(self, node, include_parameter_nodes=False):
+        if include_parameter_nodes:
+            return [self.get_node(parent_node_id) for parent_node_id in self.predecessors(node.get_id())]
+        else:
+            return [self.get_node(parent_node_id) for parent_node_id in self.predecessors(node.get_id()) if
+                    not self.get_node(parent_node_id).metadata.parameter]
 
-    def get_parent_nodes_id_of(self, node):
-        return [parent_node_id for parent_node_id in self.predecessors(node.get_id())]
+    def get_parent_nodes_id_of(self, node, include_parameter_nodes=False):
+        if include_parameter_nodes:
+            return [parent_node_id for parent_node_id in self.predecessors(node.get_id())]
+        else:
+            return [parent_node_id for parent_node_id in self.predecessors(node.get_id()) if
+                    not self.get_node(parent_node_id).metadata.parameter]

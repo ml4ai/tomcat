@@ -22,7 +22,10 @@ class NodeMetadata:
         """
 
         if repeatable and constant:
-            raise TypeError('A node cannot be repeatable and constant at the same time')
+            raise TypeError('A node cannot be repeatable and constant at the same time.')
+
+        if parameter and not constant:
+            raise TypeError('Parameter nodes have to be constant.')
 
         self.label = label
         self.first_time_slice = first_time_slice

@@ -51,17 +51,18 @@ class Binomial(Distribution):
 
         return normalized_probabilities
 
-    def get_probability(self, category_frequencies):
-        probabilities = self.get_concrete_probabilities()
-        probability = None
-        for category, frequency in category_frequencies.iteritems():
-            if probability == None:
-                probability = probabilities[category] ** frequency
-            else:
-                probability *= probabilities[category] ** frequency
+    def get_probability(self, category_frequencies, log_transform=False):
+        if category_frequencies.empty:
+            return 0
+        else:
+            probabilities = self.get_concrete_probabilities(log_transform=log_transform)
+            probability = 0 if log_transform else 1
 
-        if probability == None:
-            probability = 0
+            for category, frequency in category_frequencies.iteritems():
+                if log_transform:
+                    probability += probabilities[category] * frequency
+                else:
+                    probability *= probabilities[category] ** frequency
 
         return probability
 
@@ -72,9 +73,12 @@ class Binomial(Distribution):
         if isinstance(self.p, Node) and self.p.metadata == node.metadata:
             self.p = node
 
-    def mult(self, other_distribution):
+    def mult(self, other_distribution, in_log_scale=False):
         if isinstance(other_distribution, list):
-            log_probabilities = np.log(np.array(other_distribution))
+            if in_log_scale:
+                log_probabilities = np.array(other_distribution)
+            else:
+                log_probabilities = np.log(np.array(other_distribution))
         elif isinstance(other_distribution, Binomial):
             log_probabilities = other_distribution.get_concrete_probabilities(normalize=False, log_transform=True)
         else:
@@ -87,14 +91,17 @@ class Binomial(Distribution):
         log_probabilities = self.get_concrete_probabilities(normalize=False, log_transform=True) * exponent
         return Binomial(log_probabilities, in_log_scale=True)
 
+    def conjugate(self, other_distribution, category_frequencies):
+        raise TypeError('Conjugacy not implemented for Binomial distributions.')
+
+    def depends_on(self, node):
+        return self.p == node
+
     def __str__(self):
         if isinstance(self.p, Node):
             return 'Binomial([1-{} {}])'.format(self.p, self.p)
         else:
             return 'Binomial({})'.format(self.get_concrete_probabilities(normalize=False))
-
-    def conjugate(self, other_distribution, category_frequencies):
-        raise TypeError('Conjugacy not implemented for Binomial distributions.')
 
     def __repr__(self):
         return self.__str__()

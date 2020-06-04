@@ -20,13 +20,13 @@ class GibbsSampling:
         latent_nodes = [node for node in self.pgm.get_nodes() if node.get_id() not in observations.columns]
 
         for i in range(number_of_samples + burn_in_periods):
-            for node in latent_nodes:
+            for latent_node in latent_nodes:
                 # print('\nNode: {}'.format(node))
                 # #print('\nCurrent Assignment: {}'.format(node.assignment))
-                posterior = self.get_posterior(node, pd.DataFrame(sample))
+                posterior = self.get_posterior(latent_node, pd.DataFrame(sample))
                 assignment = posterior.sample()
-                node.assignment = assignment
-                sample[node.get_id()] = assignment
+                latent_node.assignment = assignment
+                sample[latent_node.get_id()] = assignment
 
 
             if i >= burn_in_periods:
@@ -42,35 +42,42 @@ class GibbsSampling:
             node = self.pgm.get_node(node_id)
             node.assignment = assignment
 
-    def get_posterior(self, main_node, data_and_samples):
+    def get_posterior(self, latent_node, data_and_samples):
         posterior = None
-        # todo - remove parameters from the set of parents
-        parents_assignments = self.get_parents_assignments_and_counts(main_node, data_and_samples=data_and_samples)
+        parents_assignments = self.get_parents_assignments_and_counts(latent_node, data_and_samples=data_and_samples)
 
         for parents_assignment in parents_assignments:
             # Since it's guaranteed we are passing the whole set of parents, this will return just one distribution
             # and we can access it directly from the first index of the array
-            # P(main_node | parents)
+            # P(latent_node | parents)
             main_node_distribution = \
-                main_node.cpd.get_distribution(self.remove_time_slice_indicator(parents_assignment['assignment']))[0]
+                latent_node.cpd.get_distribution(self.remove_time_slice_indicator(parents_assignment['assignment']))[0]
             # The parent_assignment_frequency here will only be different than 1 if we are dealing
             # with a constant node outside a plate that is not a parameter node and is a child of nodes
             # inside a plate. This speeds up the process by not looping over each data point
             # but instead using the frequencies
-            if posterior == None:
-                posterior = main_node_distribution.power(parents_assignment['frequency'])
+
+            if latent_node.metadata.parameter:
+                # todo - implement mult and power for linear distributions in case it's needed and get rid of
+                #  this piece of code maintaining the contents of the else
+                # Parents_assignments has only one occurrence since parameter nodes have no parents
+                posterior = main_node_distribution
             else:
-                posterior = posterior.mult(main_node_distribution.power(parents_assignment['frequency']))
+                if posterior == None:
+                    posterior = main_node_distribution.power(parents_assignment['frequency'])
+                else:
+                    posterior = posterior.mult(main_node_distribution.power(parents_assignment['frequency']))
 
             child_nodes = [self.pgm.nodes(data='data')[child_node] for child_node in
-                           self.pgm.successors(main_node.get_id())]
+                           self.pgm.successors(latent_node.get_id())]
 
             for child_node in child_nodes:
                 # Get assignments for the parents of the child node, including the child assignment but excluding
-                # main_node which happens to be one of the parents of the child node
+                # latent_node which happens to be one of the parents of the child node
+                exclusions = [] if latent_node.metadata.parameter else [latent_node.get_id()]
                 child_parents_assignments = self.get_parents_assignments_and_counts(child_node,
                                                                                     data_and_samples=data_and_samples,
-                                                                                    exclusions=[main_node.get_id()])
+                                                                                    exclusions=exclusions)
 
                 for child_parents_assignment in child_parents_assignments:
                     child_assignment_frequency = self.get_node_frequency(child_node,
@@ -78,33 +85,39 @@ class GibbsSampling:
                                                                          data_and_samples)
 
                     # Since one the parents of the child node is not included in this list, a set of distributions
-                    # will be returned. One for each possible value of the excluded parent node (main_node)
+                    # will be returned. One for each possible value of the excluded parent node (latent_node)
                     child_distributions = child_node.cpd.get_distribution(
                         self.remove_time_slice_indicator(child_parents_assignment['assignment']))
 
-                    probabilities_from_child_distribution = []
-                    for child_distribution in child_distributions:
-                        if main_node.metadata.parameter:
-                            if child_distribution.depends_on(main_node):
-                                # this code is executed only once per child because if we are dealing with a parameter,
-                                # there will be just one element in child_distributions
-                                posterior = posterior.conjugate(child_distribution, child_assignment_frequency)
-                            else:
-                                # This can only happen if we are sampling a parameter that is not the one assigned for
-                                # the current assignment of parents.
-                                pass
+                    if latent_node.metadata.parameter:
+                        # if we are dealing with a parameter, there will be just one element in child_distributions:
+                        # the prior
+                        child_distribution = child_distributions[0]
+                        if child_distribution.depends_on(latent_node):
+                            # As soon as we find the child parent's assignment that matches the latent node
+                            # we can leave the loop
+                            posterior = posterior.conjugate(child_distribution, child_assignment_frequency)
+                            break
                         else:
+                            pass
+                            # This can only happen if we are sampling a parameter that is not the one assigned for
+                            # the current assignment of parents.
+                    else:
+                        probabilities_from_child_distribution = []
+                        for child_distribution in child_distributions:
                             # The child_assignment_frequency here will only be different than 1 if we are dealing
                             # with a constant node outside a plate that is not a parameter node and is linked to
                             # nodes inside a plate. This speeds up the process by not looping over each data point
                             # but instead using the frequencies. (E.g. node Q in the ToMCAT model)
                             probabilities_from_child_distribution.append(
-                                child_distribution.get_probability(child_assignment_frequency))
+                                child_distribution.get_probability(child_assignment_frequency, log_transform=True))
 
-                    posterior = posterior.mult(probabilities_from_child_distribution)
+                        posterior = posterior.mult(probabilities_from_child_distribution, in_log_scale=True)
+
+        return posterior
 
     def get_parents_assignments_and_counts(self, node, data_and_samples=pd.DataFrame(), exclusions=[]):
-        parent_ids = self.pgm.get_parent_nodes_id_of(node)
+        parent_ids = self.pgm.get_parent_nodes_id_of(node) # Only parents that are not parameters
 
         # Create a slice of the data_and_samples just with the parents
         if parent_ids != []:
@@ -115,19 +128,19 @@ class GibbsSampling:
         # Exclude parent nodes if requested
         data_and_samples_from_parents.drop(exclusions, axis=1, inplace=True)
 
-        # Remove duplicates and creates a new column with the frequency of such duplicates
-        data_and_samples_from_parents = data_and_samples_from_parents.groupby(
-            data_and_samples_from_parents.columns.values.tolist()).size().reset_index()
-
-        # For each row, create a dictionary containing the assignments and frequency as separate keys
-        assignments_and_counts = []
-        frequency_column = data_and_samples_from_parents.columns[-1]
-        for _, series in data_and_samples_from_parents.iterrows():
-            assignments_and_counts.append(
-                {'assignment': series.drop(frequency_column), 'frequency': series[frequency_column]})
-
-        if assignments_and_counts == []:
+        if data_and_samples_from_parents.empty:
             assignments_and_counts = [{'assignment': pd.Series([], dtype='object'), 'frequency': 1}]
+        else:
+            # Remove duplicates and creates a new column with the frequency of such duplicates
+            data_and_samples_from_parents = data_and_samples_from_parents.groupby(
+                data_and_samples_from_parents.columns.values.tolist()).size().reset_index()
+
+            # For each row, create a dictionary containing the assignments and frequency as separate keys
+            assignments_and_counts = []
+            frequency_column = data_and_samples_from_parents.columns[-1]
+            for _, series in data_and_samples_from_parents.iterrows():
+                assignments_and_counts.append(
+                    {'assignment': series.drop(frequency_column), 'frequency': series[frequency_column]})
 
         return assignments_and_counts
 
@@ -139,7 +152,7 @@ class GibbsSampling:
             return assignment.droplevel(1)
 
     def get_node_frequency(self, node, query, data_and_samples):
-        data_and_samples_given_query = data_and_samples.loc[np.all(data_and_samples[list(query)] == pd.Series(query), axis=1)]
+        data_and_samples_given_query = data_and_samples.loc[np.all(data_and_samples[query.index] == pd.Series(query), axis=1)]
         frequencies = data_and_samples_given_query[node.get_id()].value_counts()
 
         return frequencies

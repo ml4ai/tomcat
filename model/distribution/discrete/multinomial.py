@@ -49,20 +49,22 @@ class Multinomial(Distribution):
         return normalized_probabilities
 
 
-    def get_probability(self, category_frequencies):
+    def get_probability(self, category_frequencies, log_transform=False):
         """
         Retrieves the probability of a given state. 
         """
-        probabilities = self.get_concrete_probabilities()
-        probability = None
-        for category, frequency in category_frequencies.iteritems():
-            if probability == None:
-                probability = probabilities[category] ** frequency
-            else:
-                probability *= probabilities[category] ** frequency
 
-        if probability == None:
-            probability = 0
+        if category_frequencies.empty:
+            return 0
+        else:
+            probabilities = self.get_concrete_probabilities(log_transform=log_transform)
+            probability = 0 if log_transform else 1
+
+            for category, frequency in category_frequencies.iteritems():
+                if log_transform:
+                    probability += probabilities[category] * frequency
+                else:
+                    probability *= probabilities[category] ** frequency
 
         return probability
 
@@ -73,9 +75,12 @@ class Multinomial(Distribution):
         if isinstance(self.probabilities, Node) and self.probabilities.metadata == node.metadata:
             self.probabilities = node
 
-    def mult(self, other_distribution):
+    def mult(self, other_distribution, in_log_scale=False):
         if isinstance(other_distribution, list):
-            log_probabilities = np.log(np.array(other_distribution))
+            if in_log_scale:
+                log_probabilities = np.array(other_distribution)
+            else:
+                log_probabilities = np.log(np.array(other_distribution))
         elif isinstance(other_distribution, Multinomial):
             log_probabilities = other_distribution.get_concrete_probabilities(normalize=False, log_transform=True)
         else:
@@ -90,6 +95,9 @@ class Multinomial(Distribution):
 
     def conjugate(self, other_distribution, category_frequencies):
         raise TypeError('Conjugacy not implemented for Multinomial distributions.')
+
+    def depends_on(self, node):
+        return self.probabilities == node
 
     def __str__(self):
         return 'Multinomial({})'.format(self.probabilities)

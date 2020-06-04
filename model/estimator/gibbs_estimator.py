@@ -39,7 +39,12 @@ class GibbsEstimator(GibbsSampling):
                     # Constant nodes are out of the nodes in the data plate. They only have one sample
                     # per all data points
                     posterior = self.get_posterior(latent_node, data_and_samples)
-                    assignment = pd.Series({0: posterior.sample()}).repeat(number_of_data_points).reset_index(drop=True)
+                    sampled_value = posterior.sample()
+                    assignment = pd.Series({0: sampled_value}).repeat(number_of_data_points).reset_index(drop=True)
+
+                    if latent_node.metadata.parameter:
+                        sample[latent_node.get_id()] = sampled_value
+                        latent_node.assignment = sampled_value
                 else:
                     assignments = []
                     for _, data_point in data_and_samples.iterrows():
@@ -51,17 +56,13 @@ class GibbsEstimator(GibbsSampling):
                 # we got for each data point
                 data_and_samples[latent_node.get_id()] = assignment
 
-                if latent_node.metadata.parameter:
-                    sample[latent_node.get_id()] = assignment
-                    latent_node.assignment = assignment
-
             if i >= burn_in_periods:
                 print('Sample {}'.format(i - burn_in_periods + 1))
                 samples.append(sample)
             else:
                 print('Burn-in Sample {}'.format(i + 1))
 
-        return samples
+        return pd.DataFrame(samples)
 
     def get_initial_estimates(self, data):
         """

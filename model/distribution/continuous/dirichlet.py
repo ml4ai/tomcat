@@ -2,6 +2,7 @@ from distribution.distribution import Distribution
 from distribution.discrete.multinomial import Multinomial
 from scipy.stats import dirichlet
 from base.node import Node
+import numpy as np
 
 
 class Dirichlet(Distribution):
@@ -28,14 +29,22 @@ class Dirichlet(Distribution):
 
         return alphas
 
-    def get_probability(self, category_frequencies):
+    def get_probability(self, values_and_frequencies, log_transform=False):
         """
         Retrieves the density of a given state
         """
-        alphas = self.get_concrete_parameters()
-        density = 1
-        for category, frequency in category_frequencies.iteritems():
-            density *= dirichlet(alphas).pdf(category)**frequency
+
+        if values_and_frequencies.empty:
+            return 0
+        else:
+            alphas = self.get_concrete_parameters()
+            density = 0 if log_transform else 1
+
+            for category, frequency in values_and_frequencies.iteritems():
+                if log_transform:
+                    density *= dirichlet(alphas).pdf(category) ** frequency
+                else:
+                    density += np.log(dirichlet(alphas).pdf(category)) * frequency
 
         return density
 
@@ -55,6 +64,9 @@ class Dirichlet(Distribution):
             raise TypeError('Conjugacy for Dirichlet only implemented with Multinomial.')
 
         return conjugate
+
+    def depends_on(self, node):
+        return self.alphas == node
 
     def __str__(self):
         return 'Dirichlet({})'.format(self.alphas)

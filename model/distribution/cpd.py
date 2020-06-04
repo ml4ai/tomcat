@@ -65,7 +65,7 @@ class CPD:
         """
 
         parents_cardinalities = [parent_node.cardinality for parent_node
-                                 in self.parent_nodes if parent_node.cardinality != 1]
+                                 in self.parent_nodes if not parent_node.parameter]
         cardinalities = tuple(parents_cardinalities)
         if cardinalities == ():
             if isinstance(values, list):
@@ -98,7 +98,7 @@ class CPD:
         indices = []
         
         for i, parent_node in enumerate(self.parent_nodes):
-            if parent_node.cardinality != 1:
+            if not parent_node.parameter:
                 if parent_node.label in observations.index:
                     indices.append(int(observations[parent_node.label]))
                 else:

@@ -13,8 +13,10 @@ from sampling.gibbs_sampling import GibbsSampling
 from sampling.ancestral_sampling import AncestralSampling
 import pandas as pd
 import toy_problems.student_network as student
+import time
 
 from base.node import Node
+
 
 # def build_simple_pgm():
 #     d = NodeMetadata('d', cardinality=2, state_names={0: 'easy', 1: 'hard'})
@@ -128,19 +130,38 @@ def generate_synthetic_data(pgm_metadata, time_slices, number_of_samples):
     samples = sampling.sample(number_of_samples)
     return samples
 
+
 if __name__ == '__main__':
     random.seed(42)
     np.random.seed(42)
-    # pgm = build_simple_pgm()
-    # estimate_g_from_gibbs_sampling(pgm)
-    # pgm = build_complete_pgm()
-    # nx.draw_shell(pgm, with_labels=True)
-    # plt.show()
-    # estimate_g_from_gibbs_sampling(pgm)
-    pgm_metadata = student.build_pgm()
-    samples = generate_synthetic_data(pgm_metadata, 1, 500)
-    samples.to_csv('student_500.csv'.format())
-    samples.drop(('g',0), axis=1, inplace=True)
 
-    parameter_estimation = student.estimate_parameters_from_samples(samples, 50, 500)
+    number_of_samples = 500;
+
+    # Generate a bunch of data to work with
+    pgm_metadata = student.build_pgm()
+
+    print("Generating data...")
+    start = time.process_time()
+    samples = generate_synthetic_data(pgm_metadata, 1, number_of_samples)
+    samples.to_csv('student_{}.csv'.format(number_of_samples))
+    end = time.process_time()
+    elapsed_time = end - start
+    print("Processing time: {} seconds".format(elapsed_time))
+
+    # Estimate the parameters using the complete data
+    print("Estimating parameters on complete data...")
+    start = time.process_time()
+    parameter_estimation = student.estimate_parameters_from_samples(samples, int(number_of_samples / 10), number_of_samples)
+    parameter_estimation.to_csv('student_param_estimation_500.csv'.format())
+    end = time.process_time()
+    elapsed_time = end - start
+    print("Processing time: {} seconds".format(elapsed_time))
+
+    # Estimate the parameters using the data excluding g
+    samples.drop([('g',0)], axis=1, inplace=True)
+    start = time.process_time()
+    parameter_estimation = student.estimate_parameters_from_samples(samples, int(number_of_samples / 10), number_of_samples)
     parameter_estimation.to_csv('student_param_estimation_no_g_500_500.csv'.format())
+    end = time.process_time()
+    elapsed_time = end - start
+    print("Processing time: {} seconds".format(elapsed_time))

@@ -1,8 +1,8 @@
 from distribution.distribution import Distribution
 from scipy.stats import beta
+import numpy as np
 from base.node import Node
 from distribution.discrete.binomial import Binomial
-import copy
 
 
 class Beta(Distribution):
@@ -35,14 +35,22 @@ class Beta(Distribution):
 
         return a, b
 
-    def get_probability(self, category_frequencies):
+    def get_probability(self, values_and_frequencies, log_transform=False):
         """
         Retrieves the density of a given state
         """
-        a, b = self.get_concrete_parameters()
-        density = 1
-        for category, frequency in category_frequencies.iteritems():
-            density *= beta(a, b).pdf(category)**frequency
+
+        if values_and_frequencies.empty:
+            return 0
+        else:
+            a, b = self.get_concrete_parameters()
+            density = 0 if log_transform else 1
+
+            for category, frequency in values_and_frequencies.iteritems():
+                if log_transform:
+                    density += np.log(beta(a, b).pdf(category)) * frequency
+                else:
+                    density *= beta(a, b).pdf(category) ** frequency
 
         return density
 
@@ -54,14 +62,17 @@ class Beta(Distribution):
 
     def conjugate(self, other_distribution, category_frequencies):
         if isinstance(other_distribution, Binomial):
-            parameters = self.get_concrete_parameters()
+            parameters = list(self.get_concrete_parameters())
             for category, frequency in category_frequencies.iteritems():
-                parameters[category] += frequency
-            conjugate = Beta(parameters)
+                parameters[1 - category] += frequency
+            conjugate = Beta(*parameters)
         else:
             raise TypeError('Conjugacy for Beta only implemented with Binomial.')
 
         return conjugate
+
+    def depends_on(self, node):
+        return self.a == node or self.b == node
 
     def __str__(self):
         return 'Beta({};{})'.format(self.a, self.b)
