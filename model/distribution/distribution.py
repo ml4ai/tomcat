@@ -1,8 +1,12 @@
+import numpy as np
+
 class Distribution:
 
     """
     Class that represents an abstract definition of a distribution
     """
+
+    DIGITS_PRECISION = -16 * np.log(10)
     
     def sample(self):
         """

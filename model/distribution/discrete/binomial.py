@@ -9,14 +9,15 @@ class Binomial(Distribution):
     Class that represents a Binomial distribution
     """
 
-    def __init__(self, p):
+    def __init__(self, p, in_log_scale=False):
         self.p = p
+        self.in_log_scale = in_log_scale
 
     def sample(self):
         probabilities = self.get_concrete_probabilities()
         return np.random.choice([0,1], p=probabilities)
 
-    def get_concrete_probabilities(self, normalize=True):
+    def get_concrete_probabilities(self, normalize=True, log_transform=False):
         if isinstance(self.p, Node):
             probabilities = self.p.assignment
         else:
@@ -28,9 +29,27 @@ class Binomial(Distribution):
         if len(probabilities) == 1:
             probabilities.insert(0, 1 - probabilities[-1])
 
+        if not self.in_log_scale:
+            probabilities = np.log(probabilities)
+
         if normalize:
-            probabilities /= np.sum(probabilities)
+            probabilities = self.normalize(probabilities)
+            probabilities = np.log(probabilities)
+
+        if not log_transform:
+            probabilities = np.exp(probabilities)
+
         return probabilities
+
+    def normalize(self, log_probabilities):
+        precision = Distribution.DIGITS_PRECISION - np.log(len(log_probabilities))
+        max_value = np.max(log_probabilities)
+        log_normalized_probabilities = log_probabilities - max_value
+        log_normalized_probabilities = [0 if log_prob < precision else log_prob for log_prob in log_normalized_probabilities]
+        normalized_probabilities = np.exp(log_normalized_probabilities)
+        normalized_probabilities /= np.sum(normalized_probabilities)
+
+        return normalized_probabilities
 
     def get_probability(self, category_frequencies):
         probabilities = self.get_concrete_probabilities()
@@ -55,16 +74,18 @@ class Binomial(Distribution):
 
     def mult(self, other_distribution):
         if isinstance(other_distribution, list):
-            probabilities = np.array(other_distribution)
+            log_probabilities = np.log(np.array(other_distribution))
         elif isinstance(other_distribution, Binomial):
-            probabilities = other_distribution.get_concrete_probabilities(normalize=False)
+            log_probabilities = other_distribution.get_concrete_probabilities(normalize=False, log_transform=True)
         else:
             raise TypeError('Cannot multiply a Binomial distribution by {}.'.format(other_distribution))
 
-        return Binomial(self.get_concrete_probabilities(normalize=False) * probabilities)
+        log_probabilities = self.get_concrete_probabilities(normalize=False, log_transform=True) + log_probabilities
+        return Binomial(log_probabilities, in_log_scale=True)
 
     def power(self, exponent):
-        return Binomial(self.get_concrete_probabilities(normalize=False) ** exponent)
+        log_probabilities = self.get_concrete_probabilities(normalize=False, log_transform=True) * exponent
+        return Binomial(log_probabilities, in_log_scale=True)
 
     def __str__(self):
         if isinstance(self.p, Node):

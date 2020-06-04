@@ -8,14 +8,15 @@ class Multinomial(Distribution):
     Class that represents a Multinomial distribution
     """
 
-    def __init__(self, probabilities):
+    def __init__(self, probabilities, in_log_scale=False):
         self.probabilities = probabilities
+        self.in_log_scale = in_log_scale
 
     def sample(self):
         probabilities = self.get_concrete_probabilities()
         return np.random.choice(range(len(probabilities)), p=probabilities)
 
-    def get_concrete_probabilities(self, normalize=True):
+    def get_concrete_probabilities(self, normalize=True, log_transform=False):
         """
         Retrieves the probabilities. 
         """
@@ -25,9 +26,28 @@ class Multinomial(Distribution):
         else:
             probabilities = self.probabilities
 
+        if not self.in_log_scale:
+            probabilities = np.log(probabilities)
+
         if normalize:
-            probabilities /= np.sum(probabilities)
+            probabilities = self.normalize(probabilities)
+            probabilities = np.log(probabilities)
+
+        if not log_transform:
+            probabilities = np.exp(probabilities)
+
         return probabilities
+
+    def normalize(self, log_probabilities):
+        precision = Distribution.DIGITS_PRECISION - np.log(len(log_probabilities))
+        max_value = np.max(log_probabilities)
+        log_normalized_probabilities = log_probabilities - max_value
+        log_normalized_probabilities = [0 if log_prob < precision else log_prob for log_prob in log_normalized_probabilities]
+        normalized_probabilities = np.exp(log_normalized_probabilities)
+        normalized_probabilities /= np.sum(normalized_probabilities)
+
+        return normalized_probabilities
+
 
     def get_probability(self, category_frequencies):
         """
@@ -37,7 +57,7 @@ class Multinomial(Distribution):
         probability = None
         for category, frequency in category_frequencies.iteritems():
             if probability == None:
-                probability = probabilities[category]**frequency
+                probability = probabilities[category] ** frequency
             else:
                 probability *= probabilities[category] ** frequency
 
@@ -55,16 +75,18 @@ class Multinomial(Distribution):
 
     def mult(self, other_distribution):
         if isinstance(other_distribution, list):
-            probabilities = np.array(other_distribution)
+            log_probabilities = np.log(np.array(other_distribution))
         elif isinstance(other_distribution, Multinomial):
-            probabilities = other_distribution.get_concrete_probabilities(normalize=False)
+            log_probabilities = other_distribution.get_concrete_probabilities(normalize=False, log_transform=True)
         else:
             raise TypeError('Cannot multiply a Multinomial distribution by {}.'.format(other_distribution))
 
-        return Multinomial(self.get_concrete_probabilities(normalize=False) * probabilities)
+        log_probabilities = self.get_concrete_probabilities(normalize=False, log_transform=True) + log_probabilities
+        return Multinomial(log_probabilities, in_log_scale=True)
 
     def power(self, exponent):
-        return Multinomial(self.get_concrete_probabilities(normalize=False) ** exponent)
+        log_probabilities = self.get_concrete_probabilities(normalize=False, log_transform=True) * exponent
+        return Multinomial(log_probabilities, in_log_scale=True)
 
     def conjugate(self, other_distribution, category_frequencies):
         raise TypeError('Conjugacy not implemented for Multinomial distributions.')

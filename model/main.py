@@ -125,7 +125,7 @@ def generate_synthetic_data(pgm_metadata, time_slices, number_of_samples):
     pgm = PGM(pgm_metadata, time_slices)
 
     sampling = AncestralSampling(pgm)
-    samples, _ = sampling.sample(number_of_samples)
+    samples = sampling.sample(number_of_samples)
     return samples
 
 if __name__ == '__main__':

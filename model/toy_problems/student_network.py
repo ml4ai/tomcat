@@ -8,11 +8,8 @@ from distribution.cpd import CPD
 from model.pgm_metadata import PGMMetadata
 from base.node import Node
 from model.pgm import PGM
-from sampling.gibbs_sampling import GibbsSampling
-import numpy as np
+from estimator.gibbs_estimator import GibbsEstimator
 import pandas as pd
-import shlex
-
 
 class NodeLabel:
     D = 'd'
@@ -50,17 +47,17 @@ def build_pgm(complete_generative_model=False):
     cpds = []
     if complete_generative_model:
         # Priors
-        prior_d = NodeMetadata(NodeLabel.PRIOR_D, prior=True)
-        prior_i = NodeMetadata(NodeLabel.PRIOR_I, prior=True)
-        prior_s_i0 = NodeMetadata(NodeLabel.PRIOR_S_I0, prior=True)
-        prior_s_i1 = NodeMetadata(NodeLabel.PRIOR_S_I1, prior=True)
-        prior_l_g0 = NodeMetadata(NodeLabel.PRIOR_L_G0, prior=True)
-        prior_l_g1 = NodeMetadata(NodeLabel.PRIOR_L_G1, prior=True)
-        prior_l_g2 = NodeMetadata(NodeLabel.PRIOR_L_G2, prior=True)
-        prior_g_d0i0 = NodeMetadata(NodeLabel.PRIOR_G_D0I0, prior=True)
-        prior_g_d0i1 = NodeMetadata(NodeLabel.PRIOR_G_D0I1, prior=True)
-        prior_g_d1i0 = NodeMetadata(NodeLabel.PRIOR_G_D1I0, prior=True)
-        prior_g_d1i1 = NodeMetadata(NodeLabel.PRIOR_G_D1I1, prior=True)
+        prior_d = NodeMetadata(NodeLabel.PRIOR_D, parameter=True, constant=True)
+        prior_i = NodeMetadata(NodeLabel.PRIOR_I, parameter=True, constant=True)
+        prior_s_i0 = NodeMetadata(NodeLabel.PRIOR_S_I0, parameter=True, constant=True)
+        prior_s_i1 = NodeMetadata(NodeLabel.PRIOR_S_I1, parameter=True, constant=True)
+        prior_l_g0 = NodeMetadata(NodeLabel.PRIOR_L_G0, parameter=True, constant=True)
+        prior_l_g1 = NodeMetadata(NodeLabel.PRIOR_L_G1, parameter=True, constant=True)
+        prior_l_g2 = NodeMetadata(NodeLabel.PRIOR_L_G2, parameter=True, constant=True)
+        prior_g_d0i0 = NodeMetadata(NodeLabel.PRIOR_G_D0I0, parameter=True, constant=True)
+        prior_g_d0i1 = NodeMetadata(NodeLabel.PRIOR_G_D0I1, parameter=True, constant=True)
+        prior_g_d1i0 = NodeMetadata(NodeLabel.PRIOR_G_D1I0, parameter=True, constant=True)
+        prior_g_d1i1 = NodeMetadata(NodeLabel.PRIOR_G_D1I1, parameter=True, constant=True)
         nodes += [prior_d, prior_i, prior_s_i0, prior_s_i1, prior_l_g0, prior_l_g1, prior_l_g2, prior_g_d0i0,
                   prior_g_d0i1, prior_g_d1i0, prior_g_d1i1]
 
@@ -115,20 +112,14 @@ def build_pgm(complete_generative_model=False):
 
     return metadata
 
-
 def estimate_parameters_from_samples(samples, burn_in_periods, number_of_samples):
     pgm = PGM(build_pgm(True), 1)
-    sampling = GibbsSampling(pgm)
-    parameter_samples, _ = sampling.sample(number_of_samples, burn_in_periods, samples)
+    estimator = GibbsEstimator(pgm)
+    parameter_samples = estimator.estimate_parameters(samples, number_of_samples, burn_in_periods)
     parameter_samples.to_csv('tmp.csv')
 
     parameter_estimation = parameter_samples.mean()
     parameter_estimation.index = pd.MultiIndex.from_tuples(parameter_estimation.index)
     parameter_estimation = parameter_estimation.droplevel(1)  # Remove time slice indication
-
-    parameter_nodes = [NodeLabel.PRIOR_D, NodeLabel.PRIOR_I, NodeLabel.PRIOR_S_I0, NodeLabel.PRIOR_S_I1,
-                       NodeLabel.PRIOR_G_D0I0, NodeLabel.PRIOR_G_D0I1, NodeLabel.PRIOR_G_D1I0, NodeLabel.PRIOR_G_D1I1,
-                       NodeLabel.PRIOR_L_G0, NodeLabel.PRIOR_L_G1, NodeLabel.PRIOR_L_G2]
-    parameter_estimation = parameter_estimation.loc[parameter_nodes]
 
     return parameter_estimation

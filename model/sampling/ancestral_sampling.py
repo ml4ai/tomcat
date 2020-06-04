@@ -9,10 +9,9 @@ class AncestralSampling:
     """
     def __init__(self, pgm):
         self.pgm = copy.deepcopy(pgm)
-    
+
     def sample(self, number_of_samples=1, observations=pd.Series([], dtype='object')):
         samples = []
-        labeled_samples = []
 
         for s in range(number_of_samples):
             sample = {}
@@ -26,7 +25,7 @@ class AncestralSampling:
                 
                 for node in nodes_in_time_slice:
                     if node.get_id() in observations.index:
-                        assignment = observations[node.get_id()] 
+                        assignment = observations[node.get_id()]
 
                     else:
                         parent_assignments = pd.Series({parent_id[0]:sample[parent_id] for parent_id in self.pgm.predecessors(node.get_id())})
@@ -35,12 +34,7 @@ class AncestralSampling:
                         node.assignment = assignment
                     
                     sample[node.get_id()] = assignment
-                    if node.metadata.state_names != {} and assignment in node.metadata.state_names.keys():
-                        labeled_sample[node.get_id()] = node.metadata.state_names[assignment]
-                    else:
-                        labeled_sample[node.get_id()] = assignment
 
             samples.append(sample.copy())
-            labeled_samples.append(labeled_sample.copy())
 
-        return pd.DataFrame(samples), pd.DataFrame(labeled_samples)
+        return pd.DataFrame(samples)
