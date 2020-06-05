@@ -116,3 +116,71 @@ class PGM(nx.DiGraph):
         else:
             return [parent_node_id for parent_node_id in self.predecessors(node.get_id()) if
                     not self.get_node(parent_node_id).metadata.parameter]
+
+    def get_child_nodes_of(self, node, include_parameter_nodes=False):
+        return [self.get_node(child_node_id) for child_node_id in self.successors(node.get_id())]
+
+    def get_child_nodes_of(self, node, include_parameter_nodes=False):
+        if include_parameter_nodes:
+            return [self.get_node(child_node_id) for child_node_id in self.successors(node.get_id())]
+        else:
+            return [self.get_node(child_node_id) for child_node_id in self.successors(node.get_id()) if
+                    not self.get_node(child_node_id).metadata.parameter]
+
+    def get_child_nodes_id_of(self, node, include_parameter_nodes=False):
+        if include_parameter_nodes:
+            return [child_node_id for child_node_id in self.successors(node.get_id())]
+        else:
+            return [child_node_id for child_node_id in self.successors(node.get_id()) if
+                    not self.get_node(child_node_id).metadata.parameter]
+
+    def get_markov_blanket(self, node):
+        markov_blanket = set()
+        markov_blanket.update(set(self.get_parent_nodes_of(node)))
+        for child_node in self.get_child_nodes_of(node):
+            markov_blanket.add(child_node)
+            markov_blanket.update(set(self.get_parent_nodes_of(child_node)))
+        markov_blanket.remove(node)
+
+        return markov_blanket
+
+    def get_markov_blanket_ids(self, node):
+        return self.get_ids_for(self.get_markov_blanket(node))
+
+    def get_ids_for(self, nodes):
+        return [node.get_id() for node in nodes]
+
+    def fill_parameters(self, parameter_values):
+        """
+        This function replaces node assignments in the distributions from the CPDS by actual values
+        """
+        for node in self.get_nodes():
+            if node.metadata.parameter:
+                self.remove_node(node.get_id())
+            else:
+                for distribution in node.cpd.get_distributions():
+                    distribution.fill_parameters(parameter_values)
+                for cpd in self.metadata.cpds:
+                    for distribution in cpd.get_distributions():
+                        distribution.fill_parameters(parameter_values)
+
+    def remove_node(self, n):
+        self.remove_node_from_metadata(self.get_node(n))
+        super().remove_node(n)
+
+    def remove_node_from_metadata(self, node):
+        # Remove node
+        self.metadata.nodes.remove(node.metadata)
+
+        # Remove cpd for the node
+        for cpd in list(self.metadata.cpds):
+            if cpd.node == node.metadata:
+                self.metadata.cpds.remove(cpd)
+            else:
+                if node.get_id() in cpd.parent_nodes:
+                    cpd.parent_nodes.remove(node.get_id())
+
+        # Remove edges
+        for edge in list(self.metadata.edges):
+            if edge.node_from == node.metadata or edge.node_to == node.metadata:
+                self.metadata.edges.remove(edge)

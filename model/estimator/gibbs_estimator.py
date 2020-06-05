@@ -47,9 +47,19 @@ class GibbsEstimator(GibbsSampling):
                         latent_node.assignment = sampled_value
                 else:
                     assignments = []
+                    markov_blanket_ids = list(self.pgm.get_markov_blanket_ids(latent_node))
+                    posterior_by_mb_assignments = {}
                     for _, data_point in data_and_samples.iterrows():
-                        posterior = self.get_posterior(latent_node, pd.DataFrame(data_point).transpose())
+                        # Uniquely identify a the MB nodes and their assignment as a string
+                        markov_blanket_assignments_key = '{}'.format(data_point[markov_blanket_ids].to_dict())
+                        if markov_blanket_assignments_key in posterior_by_mb_assignments:
+                            posterior = posterior_by_mb_assignments[markov_blanket_assignments_key]
+                        else:
+                            posterior = self.get_posterior(latent_node, pd.DataFrame(data_point).transpose())
+                            posterior_by_mb_assignments[markov_blanket_assignments_key] = posterior
+
                         assignments.append(posterior.sample())
+
                     assignment = pd.Series(assignments)
 
                 # Update the columns of the sampled values for this latent node with the samples

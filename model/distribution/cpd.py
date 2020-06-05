@@ -117,6 +117,9 @@ class CPD:
         for distribution in self.values.flatten():
             for node in nodes:
                 distribution.replace_parameter_node(node)
+
+    def get_distributions(self):
+        return self.values.flatten()
     
     def __str__(self):
         parent_labels = sorted(self.parent_nodes, key=lambda p: repr(p))

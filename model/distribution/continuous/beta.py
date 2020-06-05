@@ -74,6 +74,16 @@ class Beta(Distribution):
     def depends_on(self, node):
         return self.a == node or self.b == node
 
+    def fill_parameters(self, parameter_values):
+        """
+        This function replaces node assignment in the distribution by actual values
+        """
+        if isinstance(self.a, Node) and self.a.metadata.label in parameter_values.index:
+            self.a = parameter_values[self.a.metadata.label]
+
+        if isinstance(self.b, Node) and self.b.metadata.label in parameter_values.index:
+            self.b = parameter_values[self.b.metadata.label]
+
     def __str__(self):
         return 'Beta({};{})'.format(self.a, self.b)
 

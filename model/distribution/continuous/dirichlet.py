@@ -3,7 +3,7 @@ from distribution.discrete.multinomial import Multinomial
 from scipy.stats import dirichlet
 from base.node import Node
 import numpy as np
-
+import shlex
 
 class Dirichlet(Distribution):
     """
@@ -67,6 +67,13 @@ class Dirichlet(Distribution):
 
     def depends_on(self, node):
         return self.alphas == node
+
+    def fill_parameters(self, parameter_values):
+        """
+        This function replaces node assignment in the distribution by actual values
+        """
+        if isinstance(self.alphas, Node) and self.alphas.metadata.label in parameter_values.index:
+            self.alphas = parameter_values[self.alphas.metadata.label]
 
     def __str__(self):
         return 'Dirichlet({})'.format(self.alphas)

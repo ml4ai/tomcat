@@ -97,9 +97,16 @@ class Binomial(Distribution):
     def depends_on(self, node):
         return self.p == node
 
+    def fill_parameters(self, parameter_values):
+        """
+        This function replaces node assignment in the distribution by actual values
+        """
+        if isinstance(self.p, Node) and self.p.metadata.label in parameter_values.index:
+            self.p = parameter_values[self.p.metadata.label]
+
     def __str__(self):
         if isinstance(self.p, Node):
-            return 'Binomial([1-{} {}])'.format(self.p, self.p)
+            return 'Binomial([1-{}, {}])'.format(self.p, self.p)
         else:
             return 'Binomial({})'.format(self.get_concrete_probabilities(normalize=False))
 

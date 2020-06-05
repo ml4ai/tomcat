@@ -1,6 +1,7 @@
 import numpy as np
 from distribution.distribution import Distribution
 from base.node import Node
+import shlex
 
 class Multinomial(Distribution):
 
@@ -98,6 +99,13 @@ class Multinomial(Distribution):
 
     def depends_on(self, node):
         return self.probabilities == node
+
+    def fill_parameters(self, parameter_values):
+        """
+        This function replaces node assignment in the distribution by actual values
+        """
+        if isinstance(self.probabilities, Node) and self.probabilities.metadata.label in parameter_values.index:
+            self.probabilities = parameter_values[self.probabilities.metadata.label]
 
     def __str__(self):
         return 'Multinomial({})'.format(self.probabilities)

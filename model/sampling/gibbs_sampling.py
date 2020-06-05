@@ -68,8 +68,7 @@ class GibbsSampling:
                 else:
                     posterior = posterior.mult(main_node_distribution.power(parents_assignment['frequency']))
 
-            child_nodes = [self.pgm.nodes(data='data')[child_node] for child_node in
-                           self.pgm.successors(latent_node.get_id())]
+            child_nodes = self.pgm.get_child_nodes_of(latent_node)
 
             for child_node in child_nodes:
                 # Get assignments for the parents of the child node, including the child assignment but excluding
