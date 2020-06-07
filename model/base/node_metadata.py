@@ -4,7 +4,7 @@ class NodeMetadata:
     Class that represents metadata of a node in a PGM. 
     """
     
-    def __init__(self, label, first_time_slice=0, repeatable=False, constant=False, cardinality=1, state_names={}, parameter=False):
+    def __init__(self, label, first_time_slice=0, repeatable=False, constant=False, cardinality=1, state_names={}, parameter=False, prior=False):
         """
         Constructor
 
@@ -19,6 +19,7 @@ class NodeMetadata:
         cardinality: number of discrete states a node may have
         state_names: names of the discrete states a node may have                 
         parameter: indicates whether this represents a parameter of another node's distribution
+        prior: indicates whether a node is a prior on other node's distribution
         """
 
         if repeatable and constant:
@@ -34,6 +35,7 @@ class NodeMetadata:
         self.cardinality = cardinality
         self.state_names = state_names
         self.parameter = parameter
+        self.prior = prior
     
     def __str__(self):
         return '{}'.format(self.label)

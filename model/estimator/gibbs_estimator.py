@@ -2,6 +2,7 @@ from sampling.ancestral_sampling import AncestralSampling
 from sampling.gibbs_sampling import GibbsSampling
 import copy
 import pandas as pd
+from tqdm import tqdm
 
 
 class GibbsEstimator(GibbsSampling):
@@ -9,7 +10,15 @@ class GibbsEstimator(GibbsSampling):
     def __init__(self, pgm):
         self.pgm = copy.deepcopy(pgm)
 
-    def estimate_parameters(self, data, number_of_samples=500, burn_in_periods=100):
+    def estimate_parameters_from(self, pgm, data, burn_in_periods, number_of_samples):
+        parameter_samples = self.sample_parameters(data, number_of_samples, burn_in_periods)
+        parameter_estimation = parameter_samples.mean()
+        parameter_estimation.index = pd.MultiIndex.from_tuples(parameter_estimation.index)
+        parameter_estimation = parameter_estimation.droplevel(1)
+
+        return parameter_estimation
+
+    def sample_parameters(self, data, number_of_samples=500, burn_in_periods=100):
         if data.empty:
             raise TypeError('Data is mandatory for parameter estimation')
 
@@ -31,48 +40,49 @@ class GibbsEstimator(GibbsSampling):
         # Nodes we have to iterate over in the gibbs sampling, that is, the ones not observed in data
         latent_nodes = [node for node in self.pgm.get_nodes() if node.get_id() not in data.columns]
 
-        number_of_data_points = len(data.index)
+        for _ in tqdm(range(burn_in_periods), desc="Burn-in"):
+            sample, data_and_samples = self.get_single_sample_estimate(latent_nodes, data_and_samples, sample)
 
-        for i in range(number_of_samples + burn_in_periods):
-            for latent_node in latent_nodes:
-                if latent_node.metadata.constant:
-                    # Constant nodes are out of the nodes in the data plate. They only have one sample
-                    # per all data points
-                    posterior = self.get_posterior(latent_node, data_and_samples)
-                    sampled_value = posterior.sample()
-                    assignment = pd.Series({0: sampled_value}).repeat(number_of_data_points).reset_index(drop=True)
-
-                    if latent_node.metadata.parameter:
-                        sample[latent_node.get_id()] = sampled_value
-                        latent_node.assignment = sampled_value
-                else:
-                    assignments = []
-                    markov_blanket_ids = list(self.pgm.get_markov_blanket_ids(latent_node))
-                    posterior_by_mb_assignments = {}
-                    for _, data_point in data_and_samples.iterrows():
-                        # Uniquely identify a the MB nodes and their assignment as a string
-                        markov_blanket_assignments_key = '{}'.format(data_point[markov_blanket_ids].to_dict())
-                        if markov_blanket_assignments_key in posterior_by_mb_assignments:
-                            posterior = posterior_by_mb_assignments[markov_blanket_assignments_key]
-                        else:
-                            posterior = self.get_posterior(latent_node, pd.DataFrame(data_point).transpose())
-                            posterior_by_mb_assignments[markov_blanket_assignments_key] = posterior
-
-                        assignments.append(posterior.sample())
-
-                    assignment = pd.Series(assignments)
-
-                # Update the columns of the sampled values for this latent node with the samples
-                # we got for each data point
-                data_and_samples[latent_node.get_id()] = assignment
-
-            if i >= burn_in_periods:
-                print('Sample {}'.format(i - burn_in_periods + 1))
-                samples.append(sample)
-            else:
-                print('Burn-in Sample {}'.format(i + 1))
+        for _ in tqdm(range(number_of_samples), desc="Samples"):
+            sample, data_and_samples = self.get_single_sample_estimate(latent_nodes, data_and_samples, sample)
+            samples.append(sample)
 
         return pd.DataFrame(samples)
+
+    def get_single_sample_estimate(self, latent_nodes, data_and_samples, last_sample):
+        for latent_node in latent_nodes:
+            if latent_node.metadata.constant:
+                # Constant nodes are out of the nodes in the data plate. They only have one sample
+                # per all data points
+                posterior = self.get_posterior(latent_node, data_and_samples)
+                sampled_value = posterior.sample()
+                assignment = pd.Series({0: sampled_value}).repeat(len(data_and_samples.index)).reset_index(drop=True)
+
+                if latent_node.metadata.parameter:
+                    last_sample[latent_node.get_id()] = sampled_value
+                    latent_node.assignment = sampled_value
+            else:
+                assignments = []
+                markov_blanket_ids = list(self.pgm.get_markov_blanket_ids(latent_node))
+                posterior_by_mb_assignments = {}
+                for _, data_point in data_and_samples.iterrows():
+                    # Uniquely identify a the MB nodes and their assignment as a string
+                    markov_blanket_assignments_key = '{}'.format(data_point[markov_blanket_ids].to_dict())
+                    if markov_blanket_assignments_key in posterior_by_mb_assignments:
+                        posterior = posterior_by_mb_assignments[markov_blanket_assignments_key]
+                    else:
+                        posterior = self.get_posterior(latent_node, pd.DataFrame(data_point).transpose())
+                        posterior_by_mb_assignments[markov_blanket_assignments_key] = posterior
+
+                    assignments.append(posterior.sample())
+
+                assignment = pd.Series(assignments)
+
+            # Update the columns of the sampled values for this latent node with the samples
+            # we got for each data point
+            data_and_samples[latent_node.get_id()] = assignment
+
+        return last_sample, data_and_samples
 
     def get_initial_estimates(self, data):
         """

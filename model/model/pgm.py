@@ -50,11 +50,11 @@ class PGM(nx.DiGraph):
                                          and edge.has_node_in(nodes_in_previous_time_slice)]
 
             constant_nodes = [node for node in self.metadata.nodes
-                              if (node.first_time_slice <= t and node.constant)]
+                              if (node.first_time_slice <= t and node.constant and not node.prior)]
 
             edges_for_constant_nodes = [edge for edge in self.metadata.edges
                                         if edge.has_node_in(constant_nodes)
-                                        and edge.has_node_in(graph_nodes)]
+                                        and edge.has_node_in(nodes_in_time_slice)]
 
             graph_edges_in_time_slice = [[(edge.node_from.label, t), (edge.node_to.label, t)]
                                          for edge in edges_in_time_slice]
@@ -64,7 +64,7 @@ class PGM(nx.DiGraph):
 
             graph_edges_for_constant_nodes = [
                 [(edge.node_from.label, edge.node_from.first_time_slice), (edge.node_to.label, t)]
-                if edge.node_from.extendable
+                if edge.node_from.constant
                 else
                 [(edge.node_from.label, t), (edge.node_to.label, edge.node_to.time_slice)]
                 for edge in edges_for_constant_nodes]
@@ -78,13 +78,14 @@ class PGM(nx.DiGraph):
             nodes_in_previous_time_slice = nodes_in_time_slice
 
     def assign_cpds(self):
-        for node_id, node in self.nodes(data='data'):
-            parent_nodes = [self.nodes(data='data')[parent_node_id]
-                            for parent_node_id in self.predecessors(node_id)]
+        for node in self.get_nodes():
+            parent_nodes = self.get_parent_nodes_of(node, include_parameter_nodes=True)
             parents_metadata = [parent_node.metadata for parent_node in parent_nodes]
             cpds_for_node = [cpd for cpd in self.metadata.cpds
                              if cpd.node == node.metadata
                              and set(cpd.parent_nodes) == set(parents_metadata)]
+            if node.get_id() == ('sensor_a',1):
+                print(node)
             node.cpd = copy.deepcopy(cpds_for_node[0])
             node.cpd.replace_parameter_node(parent_nodes)
 
@@ -156,31 +157,41 @@ class PGM(nx.DiGraph):
         """
         for node in self.get_nodes():
             if node.metadata.parameter:
-                self.remove_node(node.get_id())
+                if node.metadata.label in parameter_values.index:
+                    self.remove_node(node.get_id())
             else:
                 for distribution in node.cpd.get_distributions():
                     distribution.fill_parameters(parameter_values)
-                for cpd in self.metadata.cpds:
-                    for distribution in cpd.get_distributions():
-                        distribution.fill_parameters(parameter_values)
+                self.remove_parameter_nodes_from_cpd_for(node, parameter_values.index)
 
-    def remove_node(self, n):
-        self.remove_node_from_metadata(self.get_node(n))
-        super().remove_node(n)
+        self.metadata.fill_parameters(parameter_values)
 
-    def remove_node_from_metadata(self, node):
-        # Remove node
-        self.metadata.nodes.remove(node.metadata)
+    def remove_parameter_nodes_from_cpd_for(self, node, parameter_nodes_id):
+        for parent_metadata in node.cpd.parent_nodes.copy():
+            if parent_metadata.label in parameter_nodes_id:
+                node.cpd.parent_nodes.remove(parent_metadata)
 
-        # Remove cpd for the node
-        for cpd in list(self.metadata.cpds):
-            if cpd.node == node.metadata:
-                self.metadata.cpds.remove(cpd)
-            else:
-                if node.get_id() in cpd.parent_nodes:
-                    cpd.parent_nodes.remove(node.get_id())
+                # for cpd in self.metadata.cpds:
+                #     for distribution in cpd.get_distributions():
+                #         distribution.fill_parameters(parameter_values)
 
-        # Remove edges
-        for edge in list(self.metadata.edges):
-            if edge.node_from == node.metadata or edge.node_to == node.metadata:
-                self.metadata.edges.remove(edge)
+    # def remove_node(self, n):
+    #     self.remove_node_from_metadata(self.get_node(n))
+    #     super().remove_node(n)
+
+    # def remove_node_from_metadata(self, node):
+    #     # Remove node
+    #     self.metadata.nodes.remove(node.metadata)
+    #
+    #     # Remove cpd for the node
+    #     for cpd in list(self.metadata.cpds):
+    #         if cpd.node == node.metadata:
+    #             self.metadata.cpds.remove(cpd)
+    #         else:
+    #             if node.get_id() in cpd.parent_nodes:
+    #                 cpd.parent_nodes.remove(node.get_id())
+    #
+    #     # Remove edges
+    #     for edge in list(self.metadata.edges):
+    #         if edge.node_from == node.metadata or edge.node_to == node.metadata:
+    #             self.metadata.edges.remove(edge)

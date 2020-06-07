@@ -1,6 +1,7 @@
 import networkx as nx
 import copy
 import pandas as pd
+from tqdm import tqdm
 
 class AncestralSampling:   
 
@@ -13,7 +14,7 @@ class AncestralSampling:
     def sample(self, number_of_samples=1, observations=pd.Series([], dtype='object')):
         samples = []
 
-        for s in range(number_of_samples):
+        for _ in tqdm(range(number_of_samples), desc="Samples", disable=(number_of_samples==1)):
             sample = {}
             labeled_sample = {}
 

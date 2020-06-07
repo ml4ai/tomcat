@@ -7,6 +7,7 @@ class Distribution:
     """
 
     DIGITS_PRECISION = -16 * np.log(10)
+    LOG_0 = 10**-16
     
     def sample(self):
         """

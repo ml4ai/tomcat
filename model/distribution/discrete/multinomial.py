@@ -28,6 +28,7 @@ class Multinomial(Distribution):
             probabilities = self.probabilities
 
         if not self.in_log_scale:
+            probabilities = [Distribution.LOG_0 if p==0 else p for p in probabilities]
             probabilities = np.log(probabilities)
 
         if normalize:

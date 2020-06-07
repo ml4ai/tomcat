@@ -29,7 +29,6 @@ class NodeLabel:
     PRIOR_G_D1I0 = 'prior_g_d1i0'
     PRIOR_G_D1I1 = 'prior_g_d1i1'
 
-
 def build_pgm(complete_generative_model=False):
     d = NodeMetadata(NodeLabel.D, cardinality=2, state_names={0: 'easy', 1: 'hard'})
     i = NodeMetadata(NodeLabel.I, cardinality=2, state_names={0: 'dumb', 1: 'smart'})
@@ -47,17 +46,17 @@ def build_pgm(complete_generative_model=False):
     cpds = []
     if complete_generative_model:
         # Priors
-        prior_d = NodeMetadata(NodeLabel.PRIOR_D, parameter=True, constant=True)
-        prior_i = NodeMetadata(NodeLabel.PRIOR_I, parameter=True, constant=True)
-        prior_s_i0 = NodeMetadata(NodeLabel.PRIOR_S_I0, parameter=True, constant=True)
-        prior_s_i1 = NodeMetadata(NodeLabel.PRIOR_S_I1, parameter=True, constant=True)
-        prior_l_g0 = NodeMetadata(NodeLabel.PRIOR_L_G0, parameter=True, constant=True)
-        prior_l_g1 = NodeMetadata(NodeLabel.PRIOR_L_G1, parameter=True, constant=True)
-        prior_l_g2 = NodeMetadata(NodeLabel.PRIOR_L_G2, parameter=True, constant=True)
-        prior_g_d0i0 = NodeMetadata(NodeLabel.PRIOR_G_D0I0, parameter=True, constant=True)
-        prior_g_d0i1 = NodeMetadata(NodeLabel.PRIOR_G_D0I1, parameter=True, constant=True)
-        prior_g_d1i0 = NodeMetadata(NodeLabel.PRIOR_G_D1I0, parameter=True, constant=True)
-        prior_g_d1i1 = NodeMetadata(NodeLabel.PRIOR_G_D1I1, parameter=True, constant=True)
+        prior_d = NodeMetadata(NodeLabel.PRIOR_D, parameter=True, constant=True, prior=True)
+        prior_i = NodeMetadata(NodeLabel.PRIOR_I, parameter=True, constant=True, prior=True)
+        prior_s_i0 = NodeMetadata(NodeLabel.PRIOR_S_I0, parameter=True, constant=True, prior=True)
+        prior_s_i1 = NodeMetadata(NodeLabel.PRIOR_S_I1, parameter=True, constant=True, prior=True)
+        prior_l_g0 = NodeMetadata(NodeLabel.PRIOR_L_G0, parameter=True, constant=True, prior=True)
+        prior_l_g1 = NodeMetadata(NodeLabel.PRIOR_L_G1, parameter=True, constant=True, prior=True)
+        prior_l_g2 = NodeMetadata(NodeLabel.PRIOR_L_G2, parameter=True, constant=True, prior=True)
+        prior_g_d0i0 = NodeMetadata(NodeLabel.PRIOR_G_D0I0, parameter=True, constant=True, prior=True)
+        prior_g_d0i1 = NodeMetadata(NodeLabel.PRIOR_G_D0I1, parameter=True, constant=True, prior=True)
+        prior_g_d1i0 = NodeMetadata(NodeLabel.PRIOR_G_D1I0, parameter=True, constant=True, prior=True)
+        prior_g_d1i1 = NodeMetadata(NodeLabel.PRIOR_G_D1I1, parameter=True, constant=True, prior=True)
         nodes += [prior_d, prior_i, prior_s_i0, prior_s_i1, prior_l_g0, prior_l_g1, prior_l_g2, prior_g_d0i0,
                   prior_g_d0i1, prior_g_d1i0, prior_g_d1i1]
 
@@ -79,12 +78,12 @@ def build_pgm(complete_generative_model=False):
         cpds.append(CPD(prior_i, [], [Beta(1, 1)]))
         cpds.append(CPD(prior_s_i0, [], [Beta(1, 1)]))
         cpds.append(CPD(prior_s_i1, [], [Beta(1, 1)]))
-        cpds.append(CPD(prior_l_g0, [], [Beta(1, 1)]))
-        cpds.append(CPD(prior_l_g1, [], [Beta(1, 1)]))
-        cpds.append(CPD(prior_l_g2, [], [Beta(1, 1)]))
+        cpds.append(CPD(prior_l_g0, [], [Beta(3, 1)]))
+        cpds.append(CPD(prior_l_g1, [], [Beta(2, 1)]))
+        cpds.append(CPD(prior_l_g2, [], [Beta(1, 3)]))
         cpds.append(CPD(prior_g_d0i0, [], [Dirichlet([1, 1, 1])]))
-        cpds.append(CPD(prior_g_d0i1, [], [Dirichlet([1, 1, 1])]))
-        cpds.append(CPD(prior_g_d1i0, [], [Dirichlet([1, 1, 1])]))
+        cpds.append(CPD(prior_g_d0i1, [], [Dirichlet([5, 3, 1])]))
+        cpds.append(CPD(prior_g_d1i0, [], [Dirichlet([1, 3, 5])]))
         cpds.append(CPD(prior_g_d1i1, [], [Dirichlet([1, 1, 1])]))
 
         cpds.append(CPD(d, [prior_d], [Binomial(Node(prior_d))]))
@@ -112,14 +111,7 @@ def build_pgm(complete_generative_model=False):
 
     return metadata
 
-def estimate_parameters_from_samples(samples, burn_in_periods, number_of_samples):
+def estimate_parameters_from(data, burn_in_periods, number_of_samples):
     pgm = PGM(build_pgm(True), 1)
     estimator = GibbsEstimator(pgm)
-    parameter_samples = estimator.estimate_parameters(samples, number_of_samples, burn_in_periods)
-    parameter_samples.to_csv('tmp.csv')
-
-    parameter_estimation = parameter_samples.mean()
-    parameter_estimation.index = pd.MultiIndex.from_tuples(parameter_estimation.index)
-    parameter_estimation = parameter_estimation.droplevel(1)  # Remove time slice indication
-
-    return parameter_estimation
+    return estimator.estimate_parameters_from(pgm, data, burn_in_periods, number_of_samples)

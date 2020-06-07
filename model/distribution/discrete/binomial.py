@@ -23,13 +23,14 @@ class Binomial(Distribution):
         else:
             probabilities = self.p
 
-        if not isinstance(probabilities, list):
+        if not isinstance(probabilities, list) and not isinstance(probabilities, np.ndarray):
             probabilities = [probabilities]
 
         if len(probabilities) == 1:
             probabilities.insert(0, 1 - probabilities[-1])
 
         if not self.in_log_scale:
+            probabilities = [Distribution.LOG_0 if p == 0 else p for p in probabilities]
             probabilities = np.log(probabilities)
 
         if normalize:

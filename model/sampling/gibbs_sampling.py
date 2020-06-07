@@ -2,6 +2,7 @@ from .ancestral_sampling import AncestralSampling
 import copy
 import pandas as pd
 import numpy as np
+from tqdm import tqdm
 
 class GibbsSampling:
 
@@ -12,30 +13,30 @@ class GibbsSampling:
         samples = []
 
         # Initial sample
-        sample = AncestralSampling(self.pgm).sample(observations=observations)
+        sample = AncestralSampling(self.pgm).sample(observations=observations).iloc[0]
 
         self.assign_values_to_nodes(sample)
 
         # Nodes we have to iterate over in the gibbs sampling, that is, the ones not observed in data
-        latent_nodes = [node for node in self.pgm.get_nodes() if node.get_id() not in observations.columns]
+        latent_nodes = [node for node in self.pgm.get_nodes() if node.get_id() not in observations.index]
 
-        for i in range(number_of_samples + burn_in_periods):
-            for latent_node in latent_nodes:
-                # print('\nNode: {}'.format(node))
-                # #print('\nCurrent Assignment: {}'.format(node.assignment))
-                posterior = self.get_posterior(latent_node, pd.DataFrame(sample))
-                assignment = posterior.sample()
-                latent_node.assignment = assignment
-                sample[latent_node.get_id()] = assignment
+        for i in tqdm(range(burn_in_periods), desc="Burn-in"):
+            sample = self.get_single_sample_from_posterior(latent_nodes, sample)
 
-
-            if i >= burn_in_periods:
-                print('Sample {}'.format(i - burn_in_periods + 1))
-                samples.append(sample.copy())
-            else:
-                print('Burn-in Sample {}'.format(i + 1))
+        for i in tqdm(range(number_of_samples), desc="Samples"):
+            sample = self.get_single_sample_from_posterior(latent_nodes, sample)
+            samples.append(sample.copy())
 
         return pd.DataFrame(samples)
+
+    def get_single_sample_from_posterior(self, latent_nodes, last_sample):
+        for latent_node in latent_nodes:
+            posterior = self.get_posterior(latent_node, pd.DataFrame(last_sample).transpose())
+            assignment = posterior.sample()
+            latent_node.assignment = assignment
+            last_sample[latent_node.get_id()] = assignment
+
+        return last_sample
 
     def assign_values_to_nodes(self, assignments):
         for node_id, assignment in assignments.items():
