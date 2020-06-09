@@ -42,4 +42,32 @@
 
 (defun is-injured (query)
   (let ((vic-db (load-json-database "sar_victim_status.json")))
-    (rest (third (assoc query vic-db)))))
+    (or (equal "severe" (rest (third (assoc query vic-db)))) (equal "mild" (rest (third (assoc query vic-db)))))))
+
+;; See if list of symbols are equal by name alone (regardless of package)
+(defun equall (l1 l2)
+  (cond
+    ((and (null l1) (null l2)) t)
+    ((symbol-equals-keyword (car l1) (car l2)) (equall (cdr l1) (cdr l2)))
+    (t nil)))
+
+
+;; member function that works on lists of lists
+(defun memberl (x l)
+   (cond
+      ((null l) ())
+      ((equall (car l) x) l)
+      (t (memberl x (cdr l)))))
+
+;; treats lists as sets and checks to see if first argument is subset of the
+;; other 
+(defun subset-of (l1 l2) 
+   (cond 
+      ((null l1) t) 
+      ((memberl (car l1) l2) (subset-of (cdr l1) l2)) 
+      (t ())))
+
+;; checks to see if the first argument contains the same elements as the second
+;; argument regardless of order. 
+(defun equal-lists (l1 l2)
+   (and (subset-of l1 l2) (subset-of l2 l1)))
