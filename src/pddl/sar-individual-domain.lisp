@@ -13,16 +13,13 @@
 
 (progn (ql:quickload "shop3")
        (load "util.lisp")
-       (setf s-paths (load-json-database "sar_shortest_path_lengths.json")))
+       (load "sar-individual-goals.lisp")
+       (defvar *s-paths* (load-json-database "sar_shortest_path_lengths.json"))
+       (defvar shop-user::*goal* (get-goal)))
 
 (in-package :shop-user)
 
-(defun trace-query-hook (type item additional-information state-atoms)
-                  (print type)
-                  (print item)
-                  (print state-atoms))
-
-(shop-trace :operators)
+;; (shop-trace :operators)
 (defdomain (sar-individual-domain :type pddl-domain :redefine-ok T) (
     (:types human ;; Everything, including 'human' inherits from the base 'object' type
             victim rescuer - human ;; The rescuer and the victims are humans.
@@ -70,7 +67,7 @@
       :parameters (?t - rescuer ?source ?destination - room)
       :precondition (and (in ?t ?source) (not (in ?t ?destination)))
       :effect (and (in ?t ?destination) (not (in ?t ?source)))
-      :cost (+ 1 (cl-user::shortest-path-cost cl-user::s-paths '?source '?destination))
+      :cost (+ 1 (cl-user::shortest-path-cost cl-user::*s-paths* '?source '?destination))
     )
 
     (:action triage ;; Rescuer triages a victim, they must be currently examining the victim to do so
@@ -107,6 +104,10 @@
 
 
     (:method (enter-building-and-complete-mission ?t ?b ?r) ;; Method for entering the building and doing the mission
+             check-goal-state
+             (eval (cl-user::equal-lists *goal* (state-atoms *current-state*)))
+             ()
+
              enter-and-begin
              ()
              (:ordered (:task !enter-building ?t ?b ?r)
@@ -115,6 +116,10 @@
     )
 
     (:method (explore ?t ?r) ;; Method for searching a room and determining what needs to be done to move on
+             check-goal-state
+             (eval (cl-user::equal-lists *goal* (state-atoms *current-state*)))
+             ()
+
              room-unsearched ;; Branch for checking a room with victims inside
              (and (in ?t ?r) (not (searched ?t ?r))) 
              (:ordered (:task search-room ?t ?r)
@@ -137,6 +142,10 @@
     )
 
     (:method (search-room ?t ?r)
+             check-goal-state
+             (eval (cl-user::equal-lists *goal* (state-atoms *current-state*)))
+             ()
+
              initial-victim-found
              (and (in ?t ?r) (assign* ?v (cl-user::check-for-victim '?r)) (not (spotted ?t ?v ?r)) (not (searching ?t ?r)))
              (:ordered (:task !start-searching ?t ?r)
@@ -162,6 +171,10 @@
     )
 
     (:method (help-victims ?t ?r) ;; Method for examining and triaging victims
+             check-goal-state
+             (eval (cl-user::equal-lists *goal* (state-atoms *current-state*)))
+             ()
+
              examine-injured-victim ;; Branch for examining an injured victim and triaging them
              (and (in ?t ?r) (spotted ?t ?v ?r) (eval (cl-user::is-injured '?v)) (not (examined ?t ?v)))
              (:ordered (:task !start-examining-victim ?t ?v)
