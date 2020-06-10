@@ -84,8 +84,7 @@ class PGM(nx.DiGraph):
             cpds_for_node = [cpd for cpd in self.metadata.cpds
                              if cpd.node == node.metadata
                              and set(cpd.parent_nodes) == set(parents_metadata)]
-            if node.get_id() == ('sensor_a',1):
-                print(node)
+
             node.cpd = copy.deepcopy(cpds_for_node[0])
             node.cpd.replace_parameter_node(parent_nodes)
 

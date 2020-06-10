@@ -16,7 +16,6 @@ import toy_problems.student_network as student
 import toy_problems.traveler as traveler
 import time
 import shlex
-from inference.data_query import ApproximateInference
 
 from base.node import Node
 
@@ -93,17 +92,17 @@ def run_traveler_experiment():
     np.random.seed(42)
 
     NUM_DATA_POINTS = 1000;
-    NUM_SAMPLES = 1500;
-    BURN_IN = 150;
+    NUM_SAMPLES = 1000;
+    BURN_IN = 100;
 
     DATA_FILEPATH = 'data/traveler_net_data_{}dp.csv'.format(NUM_DATA_POINTS)
-    DATA_FILEPATH_FROM_PAR_NO_G = 'data/traveler_net_data_{}dp_{}s_no_g.csv'.format(NUM_DATA_POINTS, NUM_SAMPLES)
+    DATA_FILEPATH_FROM_PAR_NO_CITY = 'data/traveler_net_data_{}dp_{}s_no_city.csv'.format(NUM_DATA_POINTS, NUM_SAMPLES)
     PARAMETERS_FILEPATH_FULL = 'data/traveler_net_params_{}dp_{}s_full.csv'.format(NUM_DATA_POINTS, NUM_SAMPLES)
-    PARAMETERS_FILEPATH_NO_G = 'data/traveler_net_params_{}dp_{}s_no_g.csv'.format(NUM_DATA_POINTS, NUM_SAMPLES)
+    PARAMETERS_FILEPATH_NO_CITY = 'data/traveler_net_params_{}dp_{}s_no_city.csv'.format(NUM_DATA_POINTS, NUM_SAMPLES)
     INFERENCE1_FILEPATH = 'data/traveler_net_inference1_{}dp_{}s.csv'.format(NUM_DATA_POINTS, NUM_SAMPLES)
 
     # Generate a bunch of data to work with
-    traveler_network = PGM(traveler.build_pgm(), 11)
+    traveler_network = PGM(traveler.build_pgm(), 5)
 
     sampling = GibbsSampling(traveler_network)
     # observations = pd.Series(
@@ -133,20 +132,20 @@ def run_traveler_experiment():
 
     # print("Generating synthetic data")
     # generate_synthetic_data(traveler_network, NUM_DATA_POINTS, DATA_FILEPATH)
-
-    data = read_data_from_file(DATA_FILEPATH)
-    print("Estimating parameters with full observation")
-    estimate_traveler_net_parameters(data, PARAMETERS_FILEPATH_FULL, BURN_IN, NUM_SAMPLES)
-    #
+    # #
+    # data = read_data_from_file(DATA_FILEPATH)
+    # print("Estimating parameters with full observation")
+    # estimate_traveler_net_parameters(data, PARAMETERS_FILEPATH_FULL, BURN_IN, NUM_SAMPLES)
+    # #
     # print("Estimating parameters with city hidden")
-    # data.drop([(traveler.NodeLabel.CITY, t) for t in range(11)], axis=1, inplace=True)
-    # estimate_traveler_net_parameters(data, PARAMETERS_FILEPATH_NO_G, BURN_IN, NUM_SAMPLES)
+    # data.drop([(traveler.NodeLabel.CITY, t) for t in range(5)], axis=1, inplace=True)
+    # estimate_traveler_net_parameters(data, PARAMETERS_FILEPATH_NO_CITY, BURN_IN, NUM_SAMPLES)
     #
-    # parameters = read_parameters_from_file(PARAMETERS_FILEPATH_NO_G)
-    # traveler_network.fill_parameters(parameters)
-    #
-    # print("Generating synthetic data for parameters estimated with G hidden")
-    # generate_synthetic_data(traveler_network, NUM_DATA_POINTS, DATA_FILEPATH_FROM_PAR_NO_G)
+    parameters = read_parameters_from_file(PARAMETERS_FILEPATH_NO_CITY)
+    traveler_network.fill_parameters(parameters)
+
+    print("Generating synthetic data for parameters estimated with City hidden")
+    generate_synthetic_data(traveler_network, NUM_DATA_POINTS, DATA_FILEPATH_FROM_PAR_NO_CITY)
 
 
 if __name__ == '__main__':
