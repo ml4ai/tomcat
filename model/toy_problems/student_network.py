@@ -30,11 +30,11 @@ class NodeLabel:
     PRIOR_G_D1I1 = 'prior_g_d1i1'
 
 def build_pgm(complete_generative_model=False):
-    d = NodeMetadata(NodeLabel.D, cardinality=2, state_names={0: 'easy', 1: 'hard'})
-    i = NodeMetadata(NodeLabel.I, cardinality=2, state_names={0: 'dumb', 1: 'smart'})
-    g = NodeMetadata(NodeLabel.G, cardinality=3, state_names={0: 'A', 1: 'B', 2: 'C'})
-    s = NodeMetadata(NodeLabel.S, cardinality=2, state_names={0: 'Low', 1: 'High'})
-    l = NodeMetadata(NodeLabel.L, cardinality=2, state_names={0: 'Bad', 1: 'Good'})
+    d = NodeMetadata(NodeLabel.D, cardinality=2, state_names=['easy', 'hard'])
+    i = NodeMetadata(NodeLabel.I, cardinality=2, state_names=['dumb', 'smart'])
+    g = NodeMetadata(NodeLabel.G, cardinality=3, state_names=['A', 'B', 'C'])
+    s = NodeMetadata(NodeLabel.S, cardinality=2, state_names=['Low', 'High'])
+    l = NodeMetadata(NodeLabel.L, cardinality=2, state_names=['Bad', 'Good'])
     nodes = [d, i, g, s, l]
 
     edges = []

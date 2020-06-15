@@ -4,7 +4,7 @@ class NodeMetadata:
     Class that represents metadata of a node in a PGM. 
     """
     
-    def __init__(self, label, first_time_slice=0, repeatable=False, constant=False, cardinality=1, state_names={}, parameter=False, prior=False):
+    def __init__(self, label, first_time_slice=0, repeatable=False, constant=False, cardinality=1, state_names=[], parameter=False, prior=False):
         """
         Constructor
 

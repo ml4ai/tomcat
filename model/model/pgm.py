@@ -2,6 +2,7 @@ import networkx as nx
 from base.node import Node
 from .pgm_metadata import PGMMetadata
 import copy
+from tqdm import tqdm
 
 
 class PGM(nx.DiGraph):
@@ -27,49 +28,85 @@ class PGM(nx.DiGraph):
         super().__init__()
         self.metadata = metadata
         self.time_slices = time_slices
+        print('1')
         self.build_graph()
+        print('2')
         self.assign_cpds()
 
     def build_graph(self):
         nodes_in_previous_time_slice = []
 
         for t in range(self.time_slices):
-            nodes_in_time_slice = [node for node in self.metadata.nodes
-                                   if (node.first_time_slice <= t and node.repeatable)
-                                   or (not node.repeatable and node.first_time_slice == t)]
+            nodes_in_time_slice = []
+            graph_nodes = []
+            constant_nodes = []
 
-            graph_nodes = [((node_metadata.label, t), {'data': Node(node_metadata, t)}) for node_metadata in
-                           nodes_in_time_slice]
+            for node_metadata in tqdm(self.metadata.nodes, desc='Creating Nodes (t = {})'.format(t)):
+                if (node_metadata.first_time_slice <= t and node_metadata.repeatable) or (
+                        not node_metadata.repeatable and node_metadata.first_time_slice == t):
+                    nodes_in_time_slice.append(node_metadata)
+                    graph_node = ((node_metadata.label, t), {'data': Node(node_metadata, t)})
+                    graph_nodes.append(graph_node)
+                elif node_metadata.first_time_slice <= t and node_metadata.constant and not node_metadata.prior:
+                    constant_nodes.append(node_metadata)
 
-            edges_in_time_slice = [edge for edge in self.metadata.edges
-                                   if not edge.forward_in_time
-                                   and edge.has_both_nodes_in(nodes_in_time_slice)]
+            # nodes_in_time_slice = [node for node in self.metadata.nodes
+            #                        if (node.first_time_slice <= t and node.repeatable)
+            #                        or (not node.repeatable and node.first_time_slice == t)]
 
-            edges_between_time_slices = [edge for edge in self.metadata.edges
-                                         if edge.forward_in_time
-                                         and edge.has_node_in(nodes_in_previous_time_slice)]
+            # graph_nodes = [((node_metadata.label, t), {'data': Node(node_metadata, t)}) for node_metadata in
+            #                nodes_in_time_slice]
 
-            constant_nodes = [node for node in self.metadata.nodes
-                              if (node.first_time_slice <= t and node.constant and not node.prior)]
+            graph_edges = []
+            for edge in tqdm(self.metadata.edges, desc='Creating Edges (t = {})'.format(t)):
+                graph_edge = None
+                if not edge.forward_in_time and edge.has_both_nodes_in(nodes_in_time_slice):
+                    # Edges in the same time slice
+                    graph_edge = [(edge.node_from.label, t), (edge.node_to.label, t)]
 
-            edges_for_constant_nodes = [edge for edge in self.metadata.edges
-                                        if edge.has_node_in(constant_nodes)
-                                        and edge.has_node_in(nodes_in_time_slice)]
+                elif edge.forward_in_time and edge.has_node_in(nodes_in_previous_time_slice):
+                    # Edges between time slices
+                    graph_edge = [(edge.node_from.label, t - 1), (edge.node_to.label, t)]
 
-            graph_edges_in_time_slice = [[(edge.node_from.label, t), (edge.node_to.label, t)]
-                                         for edge in edges_in_time_slice]
+                elif edge.has_node_in(constant_nodes) and edge.has_node_in(nodes_in_time_slice):
+                    # Edges from constant nodes
+                    if edge.node_from.constant:
+                        graph_edge = [(edge.node_from.label, edge.node_from.first_time_slice), (edge.node_to.label, t)]
+                    else:
+                        graph_edge = [(edge.node_from.label, t), (edge.node_to.label, edge.node_to.first_time_slice)]
 
-            graph_edges_between_time_slice = [[(edge.node_from.label, t - 1), (edge.node_to.label, t)]
-                                              for edge in edges_between_time_slices]
+                if graph_edge != None:
+                    graph_edges.append(graph_edge)
 
-            graph_edges_for_constant_nodes = [
-                [(edge.node_from.label, edge.node_from.first_time_slice), (edge.node_to.label, t)]
-                if edge.node_from.constant
-                else
-                [(edge.node_from.label, t), (edge.node_to.label, edge.node_to.time_slice)]
-                for edge in edges_for_constant_nodes]
+            # edges_in_time_slice = [edge for edge in self.metadata.edges
+            #                        if not edge.forward_in_time
+            #                        and edge.has_both_nodes_in(nodes_in_time_slice)]
+            #
+            # edges_between_time_slices = [edge for edge in self.metadata.edges
+            #                              if edge.forward_in_time
+            #                              and edge.has_node_in(nodes_in_previous_time_slice)]
 
-            graph_edges = graph_edges_in_time_slice + graph_edges_between_time_slice + graph_edges_for_constant_nodes
+            # constant_nodes = [node for node in self.metadata.nodes
+            #                   if (node.first_time_slice <= t and node.constant and not node.prior)]
+
+            # edges_for_constant_nodes = [edge for edge in self.metadata.edges
+            #                             if edge.has_node_in(constant_nodes)
+            #                             and edge.has_node_in(nodes_in_time_slice)]
+
+            # graph_edges_in_time_slice = [[(edge.node_from.label, t), (edge.node_to.label, t)]
+            #                              for edge in edges_in_time_slice]
+
+            # graph_edges_between_time_slice = [[(edge.node_from.label, t - 1), (edge.node_to.label, t)]
+            #                                   for edge in edges_between_time_slices]
+
+            # graph_edges_for_constant_nodes = [
+            #     [(edge.node_from.label, edge.node_from.first_time_slice), (edge.node_to.label, t)]
+            #     if edge.node_from.constant
+            #     else
+            #     [(edge.node_from.label, t), (edge.node_to.label, edge.node_to.time_slice)]
+            #     for edge in edges_for_constant_nodes]
+            #
+            # graph_edges = graph_edges_in_time_slice + graph_edges_between_time_slice + graph_edges_for_constant_nodes
 
             graph_nodes.sort()
             self.add_nodes_from(graph_nodes)
