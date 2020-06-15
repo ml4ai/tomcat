@@ -4,7 +4,8 @@
 
 (in-package :shop-user)
 (defproblem sar-individual-problem ;; Example initial state and task
-            ((building b) 
+            ((building b)
+             (goal sar-individual-example-goal.txt)
              (room lobby) 
              (room mens) 
              (room womens)
