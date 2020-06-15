@@ -4,6 +4,17 @@
        (ql:quickload "shop3/plan-grapher")
        (ql:quickload "cl-json"))
 
+(defun bulk-copy (infile outfile)
+  (with-open-file (instream infile :direction :input :element-type '(unsigned-byte 8)
+                            :if-does-not-exist nil)
+    (when instream
+      (with-open-file (outstream outfile :direction :output :element-type '(unsigned-byte 8)
+                                 :if-exists :supersede)
+        (let ((buffer (make-array 8192 :element-type '(unsigned-byte 8))))
+          (loop for bytes-read = (read-sequence buffer instream)
+                while (plusp bytes-read)
+                do (write-sequence buffer outstream :end bytes-read)))))))
+
 ;; This takes a starting id and a list of plans and graphs each one and assigns
 ;; it an id (incrementing by 1 from the starting id). The graphs are saved as
 ;; pdfs in the current directory.
@@ -71,3 +82,10 @@
 ;; argument regardless of order. 
 (defun equal-lists (l1 l2)
    (and (subset-of l1 l2) (subset-of l2 l1)))
+
+(defun compare-with-goal (current-state goal)
+  (equal-lists current-state (with-open-file 
+                               (s (make-pathname :name 
+                                                 (string-downcase 
+                                                   (symbol-name goal))) :direction :input) 
+                               (read s))))
