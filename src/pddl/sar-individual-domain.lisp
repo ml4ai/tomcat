@@ -13,18 +13,17 @@
 
 (progn (ql:quickload "shop3")
        (load "util.lisp")
-       (load "sar-individual-goals.lisp")
-       (defvar *s-paths* (load-json-database "sar_shortest_path_lengths.json"))
-       (defvar shop-user::*goal* (get-goal)))
+       (defvar *s-paths* (load-json-database "sar_shortest_path_lengths.json")))
 
 (in-package :shop-user)
 
-;; (shop-trace :operators)
+;;(shop-trace :states :operators)
 (defdomain (sar-individual-domain :type pddl-domain :redefine-ok T) (
     (:types human ;; Everything, including 'human' inherits from the base 'object' type
             victim rescuer - human ;; The rescuer and the victims are humans.
             room ;; Rooms (includes elevators and bathrooms)
             building ;; Building (contains rooms)
+            goal
     )
    
     (:predicates (in ?h - human ?r - room) ;; Indicates which room a human (rescuer, victim, etc) is inside
@@ -33,8 +32,7 @@
                  (searched ?t - rescuer ?r - room) ;; Indicates that a rescuer has checked a room
                  (searching ?t - rescuer ?r - room)
                  (spotted ?t - rescuer ?v - victim ?r - room) ;; Indicates that a rescuer has spotted the victim in a specific room
-                 (examined ?t - rescuer ?v - victim) ;; Indicates that a rescuer has examined a victim
-                 (examining ?t - rescuer ?v - victim) ;; Indicates that a rescuer is in the process of examining a victim
+                 (triaging ?t - rescuer ?v - victim) ;; Indicates that a rescuer is in the process of examining a victim
                  (injured ?v - victim) ;; Indicates that a victim is injured (to the point of needing triage) 
                  (victims-cleared ?t - rescuer ?r - room)
     )
@@ -51,16 +49,16 @@
       :effect (and (searched ?t ?r) (not (searching ?t ?r)))
     )
     
-    (:action start-examining-victim ;; Rescuer begins examining the victim
+    (:action start-triaging-victim ;; Rescuer begins examining the victim
       :parameters (?t - rescuer ?v - victim)
-      :precondition (and (spotted ?t ?v ?r) (not (examined ?t ?v)))
-      :effect (examining ?t ?v)
+      :precondition (and (spotted ?t ?v ?r) (not (triaged ?v)) (not (triaging ?t ?v)))
+      :effect (triaging ?t ?v)
     )
 
-    (:action finish-examining-victim ;; Rescuer finishs examining the current victim and moves to the next
+    (:action finish-triaging-victim ;; Rescuer finishs examining the current victim and moves to the next
       :parameters (?t - rescuer ?v - victim)
-      :precondition (and (spotted ?t ?v ?r) (examining ?t ?v))
-      :effect (and (examined ?t ?v) (not (examining ?t ?v)))
+      :precondition (and (spotted ?t ?v ?r) (triaging ?t ?v))
+      :effect (and (triaged ?v) (not (triaging ?t ?v)))
     )
 
     (:action move ;; Rescuer moves to another room
@@ -68,12 +66,6 @@
       :precondition (and (in ?t ?source) (not (in ?t ?destination)))
       :effect (and (in ?t ?destination) (not (in ?t ?source)))
       :cost (+ 1 (cl-user::shortest-path-cost cl-user::*s-paths* '?source '?destination))
-    )
-
-    (:action triage ;; Rescuer triages a victim, they must be currently examining the victim to do so
-      :parameters (?t - rescuer ?v - victim)
-      :precondition (and (in ?t ?r) (examining ?t ?v) (not (triaged ?v))) 
-      :effect (triaged ?v)
     )
 
     (:action leave-building ;; Rescuer leaves the building
@@ -105,7 +97,7 @@
 
     (:method (enter-building-and-complete-mission ?t ?b ?r) ;; Method for entering the building and doing the mission
              check-goal-state
-             (eval (cl-user::equal-lists *goal* (state-atoms *current-state*)))
+             (and (goal ?g) (eval (cl-user::compare-with-goal (state-atoms *current-state*) '?g)))
              ()
 
              enter-and-begin
@@ -117,7 +109,7 @@
 
     (:method (explore ?t ?r) ;; Method for searching a room and determining what needs to be done to move on
              check-goal-state
-             (eval (cl-user::equal-lists *goal* (state-atoms *current-state*)))
+             (and (goal ?g) (eval (cl-user::compare-with-goal (state-atoms *current-state*) '?g)))
              ()
 
              room-unsearched ;; Branch for checking a room with victims inside
@@ -143,7 +135,7 @@
 
     (:method (search-room ?t ?r)
              check-goal-state
-             (eval (cl-user::equal-lists *goal* (state-atoms *current-state*)))
+             (and (goal ?g) (eval (cl-user::compare-with-goal (state-atoms *current-state*) '?g)))
              ()
 
              initial-victim-found
@@ -172,23 +164,16 @@
 
     (:method (help-victims ?t ?r) ;; Method for examining and triaging victims
              check-goal-state
-             (eval (cl-user::equal-lists *goal* (state-atoms *current-state*)))
+             (and (goal ?g) (eval (cl-user::compare-with-goal (state-atoms *current-state*) '?g)))
              ()
 
-             examine-injured-victim ;; Branch for examining an injured victim and triaging them
-             (and (in ?t ?r) (spotted ?t ?v ?r) (eval (cl-user::is-injured '?v)) (not (examined ?t ?v)))
-             (:ordered (:task !start-examining-victim ?t ?v)
-                       (:task !triage ?t ?v)
-                       (:task !finish-examining-victim ?t ?v)
+             triage-injured-victim ;; Branch for examining an injured victim and triaging them
+             (and (in ?t ?r) (spotted ?t ?v ?r) (eval (cl-user::is-injured '?v)) (not (triaged ?v)))
+             (:ordered (:task !start-triaging-victim ?t ?v)
+                       (:task !finish-triaging-victim ?t ?v)
                        (:task help-victims ?t ?r))
 
-             examine-uninjured-victim ;; Branch for examining an uninjured victim
-             (and (in ?t ?r) (spotted ?t ?v ?r) (not (examined ?t ?v)))
-             (:ordered (:task !start-examining-victim ?t ?v)
-                       (:task !finish-examining-victim ?t ?v)
-                       (:task help-victims ?t ?r))
-
-             no-more-victims-to-examine ;; Branch for examining and triaging the last injured victim in the room
+             no-more-victims-to-triage ;; Branch for examining and triaging the last injured victim in the room
              (in ?t ?r)
              (:ordered (:task !!assert (victims-cleared ?t ?r)))
 
