@@ -1,13 +1,18 @@
-# Transform data we collected to a format compatible with the testbed
 import json
 import os
-from shutil import copyfile, move
+from shutil import move
 import pandas as pd
 import datetime
 from tqdm import tqdm
+import shlex
+
+"""
+This script transforms the data collected in our internal experiments to the testbed format.
+It also transforms the testbed formatted data to facilitate the usage of this data in our model.
+"""
 
 WORLD_TICK_PER_SECONDS = 20
-MISSION_TIME_IN_SECONDS = 900
+MISSION_TIME_IN_SECONDS = 600
 ROOMS = ['aw', 'as', 'achl', 'ach', 'alha', 'arha', 'alhb', 'arhb', 'awb', 'amb', 'ae1', 'ae2', 'ar201', 'ar203',
          'ar205', 'ar207', 'ajc', 'ar208', 'ar210', 'ar209', 'ar211', 'ar213', 'ar215', 'ar216', 'ar218', 'ar220']
 ROOM_LOCATIONS = {'aw': {'x1': -2188.7, 'y1': 174.3, 'x2': -2182.3, 'y2': 180.7},
@@ -68,11 +73,9 @@ YELLOW_VICTIMS = {(-2148, 180): 0,  # ae2
                   (-2134, 192): 6,  # ar216
                   }
 
-
 def get_room_index_by_player_position(x, y):
     room_id = get_room_by_player_position(x, y)
     return ROOMS.index(room_id)
-
 
 def get_room_by_player_position(x, y):
     epsilon = 1  # Variance of 1 block
@@ -81,6 +84,20 @@ def get_room_by_player_position(x, y):
             'y2'] + epsilon:
             return room
 
+def read_evidence_data_from_file(filepath):
+    data = pd.read_csv(filepath, index_col=0)
+    data.columns = [eval(column) for column in data.columns]
+    return data
+
+def read_parameters_from_file(filepath):
+    parameter_values = pd.read_csv(filepath, index_col=0).transpose().iloc[0]
+    for node_id in parameter_values.index:
+        value = [float(v) for v in shlex.split(parameter_values[node_id].strip('[]'))]
+        if len(value) == 1:
+            value = value[0]
+        parameter_values[node_id] = value
+
+    return parameter_values
 
 class InternalDataAdapter:
 
@@ -177,7 +194,6 @@ class InternalDataAdapter:
                         testbed_message['data']['timestamp'] = timestamp
 
                         out_obs_file.write(json.dumps(testbed_message) + '\n')
-
 
 class TestbedDataAdapter:
     OBSERVATIONS_FILENAME = 'observations.txt'
@@ -312,10 +328,9 @@ class TestbedDataAdapter:
         # Override previous event file with the new one
         move(event_temp_file, event_file)
 
-
 if __name__ == '__main__':
-    internal_data_folder = '../data/cleaned_data_deidentified'
-    testbed_folder = '../data/testbed'
+    internal_data_folder = '../data/input/cleaned_data_deidentified'
+    testbed_folder = '../data/input/testbed'
 
     internal_data_adapter = InternalDataAdapter(internal_data_folder)
     internal_data_adapter.convert_to_testbed_format(testbed_folder)

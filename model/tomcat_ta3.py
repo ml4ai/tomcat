@@ -12,7 +12,7 @@ from base.node import Node
 from model.pgm import PGM
 from estimator.gibbs_estimator import GibbsEstimator
 import numpy as np
-import adaptor.tomcat_data_adapter as data_adapter
+import adapter.data_adapter as data_adapter
 import pandas as pd
 from tqdm import tqdm
 import os
