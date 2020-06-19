@@ -12,7 +12,7 @@ It also transforms the testbed formatted data to facilitate the usage of this da
 """
 
 WORLD_TICK_PER_SECONDS = 20
-MISSION_TIME_IN_SECONDS = 600
+MISSION_TIME_IN_SECONDS = 900
 ROOMS = ['aw', 'as', 'achl', 'ach', 'alha', 'arha', 'alhb', 'arhb', 'awb', 'amb', 'ae1', 'ae2', 'ar201', 'ar203',
          'ar205', 'ar207', 'ajc', 'ar208', 'ar210', 'ar209', 'ar211', 'ar213', 'ar215', 'ar216', 'ar218', 'ar220']
 ROOM_LOCATIONS = {'aw': {'x1': -2188.7, 'y1': 174.3, 'x2': -2182.3, 'y2': 180.7},
