@@ -207,8 +207,42 @@ class TestbedDataAdapter:
     def adapt(self):
         self.constrain_observations_to_mission_time()
         self.extract_room_entrance_events_from_observations()
-        # self.extract_victims_distance_from_observations()
         self.add_world_tick_to_events()
+
+    def format_raw(self):
+        raw_folder = '{}/raw/'.format(self.testbed_data_folder)
+        for experiment_data_file in tqdm(os.listdir(raw_folder), desc='Formatting raw data'):
+            if os.path.isdir(raw_folder + experiment_data_file):
+                continue
+
+            experiment_folder = raw_folder + experiment_data_file.replace('.json', '')
+            if not os.path.isdir(experiment_folder):
+                os.mkdir(experiment_folder)
+
+            data_filepath = raw_folder + experiment_data_file
+            with open(data_filepath, 'r') as input_file:
+                with open('{}/{}'.format(experiment_folder, TestbedDataAdapter.OBSERVATIONS_FILENAME),
+                              'w') as out_obs_file:
+                    with open('{}/{}'.format(experiment_folder, TestbedDataAdapter.LEVER_EVENT_FILENAME),
+                              'w') as out_lever_file:
+                        with open('{}/{}'.format(experiment_folder, TestbedDataAdapter.ROOM_EVENT_FILENAME),
+                                  'w') as out_room_file:
+                            with open('{}/{}'.format(experiment_folder, TestbedDataAdapter.TRIAGE_EVENT_FILENAME),
+                                      'w') as out_triage_file:
+                                for json_obj in input_file:
+                                    if json_obj.strip():
+                                        message = json.loads(json_obj)
+
+                                        if message['header']['message_type'] == 'event':
+                                            if message['msg']['sub_type'] == 'Event:Triage':
+                                                out_triage_file.write(json.dumps(message) + '\n')
+                                            elif message['msg']['sub_type'] == 'Event:location':
+                                                out_room_file.write(json.dumps(message) + '\n')
+                                            elif message['msg']['sub_type'] == 'Event:Lever':
+                                                out_lever_file.write(json.dumps(message) + '\n')
+                                        elif message['header']['message_type'] == 'observation':
+                                            if message['msg']['sub_type'] == 'state':
+                                                out_obs_file.write(json.dumps(message) + '\n')
 
     def constrain_observations_to_mission_time(self):
         """
@@ -329,11 +363,12 @@ class TestbedDataAdapter:
         move(event_temp_file, event_file)
 
 if __name__ == '__main__':
-    internal_data_folder = '../data/input/cleaned_data_deidentified'
-    testbed_folder = '../data/input/testbed'
+    # internal_data_folder = '../data/input/cleaned_data_deidentified'
+    testbed_folder = '../data/experiments/asist'
 
-    internal_data_adapter = InternalDataAdapter(internal_data_folder)
-    internal_data_adapter.convert_to_testbed_format(testbed_folder)
+    # internal_data_adapter = InternalDataAdapter(internal_data_folder)
+    # internal_data_adapter.convert_to_testbed_format(testbed_folder)
 
     testbed_data_adapter = TestbedDataAdapter(testbed_folder)
-    testbed_data_adapter.adapt()
+    testbed_data_adapter.format_raw()
+    # testbed_data_adapter.adapt()

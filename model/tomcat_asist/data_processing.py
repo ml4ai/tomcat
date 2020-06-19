@@ -110,13 +110,18 @@ class DataProcessing():
             triaging_yellow = False
             while triage_event_counter < len(triage_events) and triage_events[triage_event_counter]['header'][
                 'total_time'] <= initial_time + t * data_adapter.WORLD_TICK_PER_SECONDS:
-                victim_x = triage_events[triage_event_counter]['data']['victim_x']
-                victim_y = triage_events[triage_event_counter]['data']['victim_z']
-                if (victim_x, victim_y) in data_adapter.GREEN_VICTIMS.keys():
+                if triage_events[triage_event_counter]['data']['color'] == 'Green':
                     triaging_green = True
-                elif (victim_x, victim_y) in data_adapter.YELLOW_VICTIMS.keys():
+                else:
                     triaging_yellow = True
-                triage_event_counter += 1
+
+                # victim_x = triage_events[triage_event_counter]['data']['victim_x']
+                # victim_y = triage_events[triage_event_counter]['data']['victim_z']
+                # if (victim_x, victim_y) in data_adapter.GREEN_VICTIMS.keys():
+                #     triaging_green = True
+                # elif (victim_x, victim_y) in data_adapter.YELLOW_VICTIMS.keys():
+                #     triaging_yellow = True
+                # triage_event_counter += 1
 
             player_x = most_recent_observation['data']['x']
             player_y = most_recent_observation['data']['z']

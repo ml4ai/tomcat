@@ -265,13 +265,13 @@ class ModelBuilder:
                     posteriors_sigma_dy[v][states_sample[d][t]] += [1 / 2, evidence_set.dy_evidence[v][d][t] / 2]
 
         # Sample parameters
-        ini = time.time()
+        # ini = time.time()
         distributions.theta_s, distributions.pi_lt, distributions.sigma_dg, distributions.sigma_dy = self.sample_parameters(
             evidence_set, parameter_priors, states_sample)
-        print("Time to sample parameters: {} seconds".format(time.time() - ini))
-        ini = time.time()
+        # print("Time to sample parameters: {} seconds".format(time.time() - ini))
+        # ini = time.time()
         self.sample_states(evidence_set, distributions, states_sample)
-        print("Time to sample states: {} seconds".format(time.time() - ini))
+        # print("Time to sample states: {} seconds".format(time.time() - ini))
 
         return distributions, states_sample
 
@@ -406,7 +406,7 @@ class ModelBuilder:
             theta_s_sampled[state] = dirichlet(theta_s_priors[state]).rvs()[0]
 
         for d in range(number_of_data_points):
-            sample = self.sample_states_over_time(theta_s_sampled, time_slices)
+            sample = self.sample_states_over_time(theta_s_sampled, time_slices - 1)
             state_samples[d] = sample
             # state_samples[d][0] = 0
             # for t in range(1, time_slices):
@@ -416,23 +416,24 @@ class ModelBuilder:
         return state_samples
 
     def sample_states_over_time(self, theta_s, time_slices):
-        states_sample = np.zeros(time_slices, dtype=np.int)
+        states_sample = np.zeros(time_slices + 1, dtype=np.int)
 
-        for t in range(1, time_slices):
+        for t in range(1, time_slices + 1):
             states_sample[t] = np.random.choice(NUMBER_OF_STATES, p=theta_s[states_sample[t - 1]])
 
         return states_sample
 
     def predict(self, distributions, evidence_set, time_slice_to_predict, number_of_samples, burn_in):
         mini_evidence_set = self.truncate_evidence_set(evidence_set, time_slice_to_predict)
-        prediction_sample = self.get_initial_samples_for_prediction(distributions, time_slice_to_predict)
+        prediction_sample = self.get_initial_samples_for_prediction(distributions, time_slice_to_predict,
+                                                                    evidence_set.number_of_data_points)
 
         lt_samples = np.zeros((evidence_set.number_of_data_points, number_of_samples), dtype=np.int)
         rm_samples = np.zeros((evidence_set.number_of_data_points, number_of_samples), dtype=np.int)
         tg_samples = np.zeros((evidence_set.number_of_data_points, number_of_samples), dtype=np.int)
         ty_samples = np.zeros((evidence_set.number_of_data_points, number_of_samples), dtype=np.int)
-        dg_samples = np.zeros((evidence_set.number_of_data_points, number_of_samples, NUMBER_OF_GREEN_VICTIMS))
-        dy_samples = np.zeros((evidence_set.number_of_data_points, number_of_samples, NUMBER_OF_YELLOW_VICTIMS))
+        dg_samples = np.zeros((NUMBER_OF_GREEN_VICTIMS, evidence_set.number_of_data_points, number_of_samples))
+        dy_samples = np.zeros((NUMBER_OF_YELLOW_VICTIMS, evidence_set.number_of_data_points, number_of_samples))
 
         for _ in range(burn_in):
             prediction_sample = self.sample_for_prediction(distributions, mini_evidence_set, time_slice_to_predict,
@@ -445,8 +446,8 @@ class ModelBuilder:
             rm_samples[:, i] = prediction_sample.last_time_slice_rm_sample
             tg_samples[:, i] = prediction_sample.last_time_slice_tg_sample
             ty_samples[:, i] = prediction_sample.last_time_slice_ty_sample
-            dg_samples[:, i] = prediction_sample.last_time_slice_dg_sample
-            dy_samples[:, i] = prediction_sample.last_time_slice_dy_sample
+            dg_samples[:, :, i] = prediction_sample.last_time_slice_dg_sample
+            dy_samples[:, :, i] = prediction_sample.last_time_slice_dy_sample
 
         return lt_samples, rm_samples, tg_samples, ty_samples, dg_samples, dy_samples
 
@@ -458,45 +459,65 @@ class ModelBuilder:
         mini_evidence_set.dg_evidence[:, :, time_slice_to_predict] = prediction_sample.last_time_slice_dg_sample
         mini_evidence_set.dy_evidence[:, :, time_slice_to_predict] = prediction_sample.last_time_slice_dy_sample
 
+        ini = time.time()
         prediction_sample.states_sample = self.sample_states(mini_evidence_set, distributions,
-                                                             prediction_sample.states_sample)
-        lt_sample, rm_sample, tg_sample, ty_sample, dg_sample, dy_sample = self.sample_observable_nodes_at(
-            time_slice_to_predict,
-            distributions, prediction_sample.states_sample)
-        prediction_sample.lt_sample = lt_sample
-        prediction_sample.rm_sample = rm_sample
-        prediction_sample.tg_sample = tg_sample
-        prediction_sample.ty_sample = ty_sample
-        prediction_sample.dg_sample = dg_sample
-        prediction_sample.dy_sample = dy_sample
+                                                            prediction_sample.states_sample)
+        print('States: {} seconds'.format(time.time() - ini))
+
+        ini = time.time()
+        for d in range(mini_evidence_set.number_of_data_points):
+            lt_sample, rm_sample, tg_sample, ty_sample, dg_sample, dy_sample = self.sample_observable_nodes_at(
+                time_slice_to_predict,
+                distributions, prediction_sample.states_sample[d])
+
+            prediction_sample.last_time_slice_lt_sample[d] = lt_sample
+            prediction_sample.last_time_slice_rm_sample[d] = rm_sample
+            prediction_sample.last_time_slice_tg_sample[d] = tg_sample
+            prediction_sample.last_time_slice_ty_sample[d] = ty_sample
+            prediction_sample.last_time_slice_dg_sample[:,d] = dg_sample
+            prediction_sample.last_time_slice_dy_sample[:,d] = dy_sample
+        print('Observables: {} seconds'.format(time.time() - ini))
 
         return prediction_sample
 
-    def get_initial_samples_for_prediction(self, distributions, time_slices):
-        states_sample = self.sample_states_over_time(distributions.theta_s, time_slices+1)
-        lt_sample, rm_sample, tg_sample, ty_sample, dg_sample, dy_sample = self.sample_observable_nodes_at(time_slices,
-                                                                                                           distributions,
-                                                                                                           states_sample)
+    def get_initial_samples_for_prediction(self, distributions, time_slices, number_of_data_points):
+        states_samples = np.zeros((number_of_data_points, time_slices + 1), dtype=np.int)
+        lt_samples = np.zeros(number_of_data_points, dtype=np.int)
+        rm_samples = np.zeros(number_of_data_points, dtype=np.int)
+        tg_samples = np.zeros(number_of_data_points, dtype=np.int)
+        ty_samples = np.zeros(number_of_data_points, dtype=np.int)
+        dg_samples = np.zeros((NUMBER_OF_GREEN_VICTIMS, number_of_data_points))
+        dy_samples = np.zeros((NUMBER_OF_YELLOW_VICTIMS, number_of_data_points))
 
-        return PredictionSample(states_sample, lt_sample, rm_sample, tg_sample, ty_sample, dg_sample, dy_sample)
+        for d in range(number_of_data_points):
+            states_samples[d] = self.sample_states_over_time(distributions.theta_s, time_slices)
+            lt_samples[d], rm_samples[d], tg_samples[d], ty_samples[d], dg_samples[:, d], dy_samples[:,
+                                                                                          d] = self.sample_observable_nodes_at(
+                time_slices,
+                distributions,
+                states_samples[d])
+
+        return PredictionSample(states_samples, lt_samples, rm_samples, tg_samples, ty_samples,
+                                dg_samples.reshape(NUMBER_OF_GREEN_VICTIMS, number_of_data_points),
+                                dy_samples.reshape((NUMBER_OF_YELLOW_VICTIMS, number_of_data_points)))
 
     def sample_observable_nodes_at(self, time_slice, distributions, states_sample):
         lt_sample = np.random.choice(2, p=distributions.pi_lt[states_sample[time_slice]])
         rm_sample = np.random.choice(NUMBER_OF_ROOMS, p=distributions.theta_rm[states_sample[time_slice]])
         tg_sample = np.random.choice(2, p=distributions.pi_tg[states_sample[time_slice]])
         ty_sample = np.random.choice(2, p=distributions.pi_ty[states_sample[time_slice]])
-        dg_sample = np.abs(norm(0, distributions.sigma_dg[:, states_sample[time_slice]]).rvs())
-        dy_sample = np.abs(norm(0, distributions.sigma_dy[:, states_sample[time_slice]]).rvs())
+        dg_sample = np.abs(norm(0, distributions.sigma_dg[:, states_sample[time_slice]]).rvs()).flatten()
+        dy_sample = np.abs(norm(0, distributions.sigma_dy[:, states_sample[time_slice]]).rvs()).flatten()
 
         return lt_sample, rm_sample, tg_sample, ty_sample, dg_sample, dy_sample
 
     def truncate_evidence_set(self, evidence_set, last_time_slice):
-        lt_evidence = evidence_set.lt_evidence.copy()[:, 0:last_time_slice+1]
-        rm_evidence = evidence_set.rm_evidence.copy()[:, 0:last_time_slice+1]
-        tg_evidence = evidence_set.tg_evidence.copy()[:, 0:last_time_slice+1]
-        ty_evidence = evidence_set.ty_evidence.copy()[:, 0:last_time_slice+1]
-        dg_evidence = evidence_set.dg_evidence.copy()[:, :, 0:last_time_slice+1]
-        dy_evidence = evidence_set.dy_evidence.copy()[:, :, 0:last_time_slice+1]
+        lt_evidence = evidence_set.lt_evidence.copy()[:, 0:last_time_slice + 1]
+        rm_evidence = evidence_set.rm_evidence.copy()[:, 0:last_time_slice + 1]
+        tg_evidence = evidence_set.tg_evidence.copy()[:, 0:last_time_slice + 1]
+        ty_evidence = evidence_set.ty_evidence.copy()[:, 0:last_time_slice + 1]
+        dg_evidence = evidence_set.dg_evidence.copy()[:, :, 0:last_time_slice + 1]
+        dy_evidence = evidence_set.dy_evidence.copy()[:, :, 0:last_time_slice + 1]
 
         return data_processing.EvidenceDataSet(lt_evidence, rm_evidence, tg_evidence, ty_evidence, dg_evidence,
                                                dy_evidence)
@@ -528,12 +549,12 @@ class Experimentation:
         rm_samples = np.zeros((validation_set.number_of_data_points, number_of_samples, validation_set.time_slices - 2))
         tg_samples = np.zeros((validation_set.number_of_data_points, number_of_samples, validation_set.time_slices - 2))
         ty_samples = np.zeros((validation_set.number_of_data_points, number_of_samples, validation_set.time_slices - 2))
-        dg_samples = np.zeros((validation_set.number_of_data_points, NUMBER_OF_GREEN_VICTIMS, number_of_samples,
+        dg_samples = np.zeros((NUMBER_OF_GREEN_VICTIMS, validation_set.number_of_data_points, number_of_samples,
                                validation_set.time_slices - 2))
-        dy_samples = np.zeros((validation_set.number_of_data_points, NUMBER_OF_YELLOW_VICTIMS, number_of_samples,
+        dy_samples = np.zeros((NUMBER_OF_YELLOW_VICTIMS, validation_set.number_of_data_points, number_of_samples,
                                validation_set.time_slices - 2))
 
-        for t in range(2, validation_set.time_slices):
+        for t in tqdm(range(2, validation_set.time_slices), desc='Predicting overtime'):
             lt_samples[:, :, t], rm_samples[:, :, t], tg_samples[:, :, t], ty_samples[:, :, t], dg_samples[:, :, :,
                                                                                                 t], dy_samples[:, :, :,
                                                                                                     t] = self.model_builder.predict(
@@ -563,24 +584,20 @@ if __name__ == '__main__':
     BURN_IN = 1
 
     experimentation = Experimentation()
-    # experimentation.estimate_parameters_on_full_data('data/evidence/internal', 'data/parameters/internal', 4, 0)
+    experimentation.estimate_parameters_on_full_data('data/evidence/internal', 'data/parameters/internal', 2000, 200)
 
-    dp = data_processing.DataProcessing()
-    evidence_set = dp.load_evidence_set('data/evidence/internal')
-    distributions = Distributions()
-
-    filename_suffix = 'full_data_6dp_4s_0bi'
-    distributions.theta_s = dp.load_theta_s('data/parameters/internal', filename_suffix)
-    distributions.pi_lt = dp.load_pi_lt('data/parameters/internal', filename_suffix)
-    distributions.sigma_dg = dp.load_sigma_dg('data/parameters/internal', filename_suffix)
-    distributions.sigma_dy = dp.load_sigma_dy('data/parameters/internal', filename_suffix)
-
-    experimentation.predict_over_time(distributions, evidence_set, NUMBER_OF_SAMPLES, BURN_IN,
-                                      'data/predictions/internal', 0)
-
-
-
-
+    # dp = data_processing.DataProcessing()
+    # evidence_set = dp.load_evidence_set('data/evidence/internal')
+    # distributions = Distributions()
+    #
+    # filename_suffix = 'full_data_6dp_4s_0bi'
+    # distributions.theta_s = dp.load_theta_s('data/parameters/internal', filename_suffix)
+    # distributions.pi_lt = dp.load_pi_lt('data/parameters/internal', filename_suffix)
+    # distributions.sigma_dg = dp.load_sigma_dg('data/parameters/internal', filename_suffix)
+    # distributions.sigma_dy = dp.load_sigma_dy('data/parameters/internal', filename_suffix)
+    #
+    # experimentation.predict_over_time(distributions, evidence_set, NUMBER_OF_SAMPLES, BURN_IN,
+    #                                   'data/predictions/internal', 0)
 
     # processing = DataProcessing()
     # processing.convert_experiments_data_to_evidence('data/experiments/internal/formatted', 'data/evidence/internal/')
