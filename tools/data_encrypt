@@ -1,0 +1,142 @@
+#!/bin/bash
+
+# Script to encrypt user data before uploadng it to the vision server.
+# Script can be called independently ./data_encrypt <session_folder>
+
+# In a generic scenario, this script will be called from upload_session script,
+# before uploading data to the vision server.
+
+set -u 
+
+# Set the TOMCAT environment variable, assuming that the directory structure
+# mirrors that of the git repository.
+TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
+export TOMCAT
+
+export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
+mkdir -p "${TOMCAT_TMP_DIR}"
+
+data_encrypt(){
+
+	local session_id=$1
+	local participant_data_folder="${TOMCAT}/data/participant_data"
+    local session_folder="${participant_data_folder}/${session_id}"
+	# Public Key for Encryption.
+	local pub_key="${TOMCAT}/rsa_public.pem"
+	local openssl_log="${TOMCAT_TMP_DIR}/data_encryption.log"
+
+	# Check if the session_folder is already encrypted. If yes,
+	# return and proceed with upload_session.
+	if [[ -f "${session_folder}_encrypted.zip" ]];then
+		echo "${session_id} folder is already encrypted."
+		echo "Proceed with data upload."
+		exit 0
+	fi
+	
+	echo "Beginning data encryption."
+	
+	if [[ ! -f $pub_key ]];then
+		echo "Encryption Error: Unable to find public key." 
+		exit 1
+	fi
+
+	# Before encrypting, the participant session folder needs to be
+	# compressed into a zip file. Check is this has been done.
+
+	# To maintain the directory structure and keep it simple, we cd into the
+    # participant data folder and return back.
+    pushd "$participant_data_folder" > /dev/null
+        if [[ ! -f "${session_folder}.zip" ]]; then
+            echo "Compressing session folder: ${session_folder}"
+            echo "This may take a minute ..."
+            if ! zip -q -r "${session_id}.zip" "$session_id"; then
+                echo "Creation of zip file failed. Exiting now."
+                exit 1
+            fi
+        fi
+    popd > /dev/null
+
+	local aes_key="${participant_data_folder}/${session_id}_key"
+
+	# Create a 64-bit random hex key for symmetric encryption using AES-256
+	openssl rand -hex 64 > ${aes_key} 2> ${openssl_log}
+
+	# Check the exit status and report error is not 0.
+	if [[ $? -ne 0 ]]; then 
+		echo "AES Key Generation Error."
+		echo "Check log file ${openssl_log} for more details."
+		exit 1 
+	fi
+
+	# We check to see if the AES Key is generated and that it is not empty.
+	# Write the output to a log file.
+	if [[ ! -s $aes_key ]];then
+		echo "Encryption Error: Unable to find AES key."
+		exit 1
+	fi
+
+	# Encrypt participant session folder session_id.zip with aes_key
+	# using AES-256 encryption algorithm.
+	
+	openssl enc -aes-256-cbc -iter 1000 -salt -in ${session_folder}.zip \
+		 -out ${session_folder}.zip.enc -pass file:${aes_key} > /dev/null 2>${openssl_log}
+
+	# Check if the enc file is created. If not exit.
+
+	if [[ -f "${session_folder}.zip.enc" ]]; then
+		echo "${session_id} successfully encrypted using AES-256."
+		# Removing ${session_folder}.zip file
+		#rm "${session_folder}.zip"
+	else
+		echo "Encryption Error: Session folder encryption using AES-256 failed."
+		echo "Check log file ${openssl_log} for more details."
+		exit 1 
+	fi
+
+	# Encrypt the AES random key using public key provided.
+	openssl rsautl -encrypt -inkey ${pub_key} -pubin -in ${aes_key} \
+		 -out ${aes_key}.enc > /dev/null 2> ${openssl_log}
+
+	# Check if the enc AES kile file is created. If not exit.
+	if [[ ! -f "${aes_key}.enc" ]]; then
+		echo "Encryption Error: AES key encryption using RSA failed."
+		echo "Check log file ${openssl_log} for more details."
+		exit 1 
+	fi
+
+    # After data encryption, we will obtain 2 .enc files.
+    # session_id.zip.enc file and session_id_key.enc file
+    # We zip these two files together under session_folder_encrypted.zip file,
+    # and send the files using curl to vision server.
+
+    # Encrypted files. Defining realtive pathnames, since I will
+	# do a cd into participant data folder later.
+    local enc_session_folder="${session_id}.zip.enc"
+    local enc_aes_key="${session_id}_key.enc"
+    local enc_zip_file="${session_id}_encrypted.zip"
+
+    # To maintain the directory structure and keep it simple, we cd into the
+    # participant data folder and return back.
+    pushd "$participant_data_folder" > /dev/null
+
+        echo "Packing encrypted session folder and AES Key into zip file:${enc_zip_file}"
+        echo "This may take a minute ..."
+        if ! zip -q -r "${enc_zip_file}" "${enc_session_folder}" \
+            "${enc_aes_key}"; then
+                echo "Creation of zip file failed. Exiting now."
+                exit 1
+        fi
+
+        if [[ -f "${enc_zip_file}" ]]; then
+            echo "Encrypted zip file created: ${enc_zip_file}"
+		    echo "Removing ${enc_session_folder} and ${enc_aes_key}"
+		    rm "${enc_session_folder}" "${enc_aes_key}"
+	    else
+            echo "${enc_zip_file} creation failed!"
+  		    exit 1
+        fi
+    popd > /dev/null
+}
+
+data_encrypt $1
+exit 0
