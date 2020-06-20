@@ -10,6 +10,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
+/** A class to handle messaging between Malmo/Minecraft components using TCP */
 public class TomcatMessaging {
 
     public enum TomcatMessageType {

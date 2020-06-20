@@ -26,7 +26,7 @@ import com.google.gson.JsonObject;
 import com.microsoft.Malmo.Schemas.MissionInit;
 import com.microsoft.Malmo.Utils.JSONWorldDataHelper;
 import edu.arizona.tomcat.Messaging.MqttService;
-import edu.arizona.tomcat.Utils.TimeStamper;
+import java.time.Clock;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -60,7 +60,7 @@ public class ObservationFromASISTParticipantImplementation
         super.writeObservationsToJSON(data, missionInit);
 
         if (data != null && data.toString().length() > 2) {
-            String timestamp = TimeStamper.getTimeStamp();
+            String timestamp = Clock.systemUTC().instant().toString();
             JsonObject header = new JsonObject();
             header.addProperty("timestamp", timestamp);
             header.addProperty("message_type", "observation");

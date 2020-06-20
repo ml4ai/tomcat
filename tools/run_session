@@ -19,7 +19,20 @@ configure_session
 if [[ ! $(pgrep -l mosquitto | head -n1 | cut -d' ' -f2) == mosquitto ]]; then
     echo "The mosquitto message broker does not seem to be running, so we "\
          "will start it now."
-    mosquitto &> ${TOMCAT_TMP_DIR}/mosquitto.log &
+    if [[ $OSTYPE == "darwin"* && $MACPORTS_FOUND -eq 1 ]]; then
+        # If we get to this branch, we assume that MacPorts is not installed,
+        # and the package manager is Homebrew. A Homebrew install of mosquitto
+        # doesn't allow us to start mosquitto by just typing 'mosquitto' -
+        # instead, we would have to do 'brew services start mosquitto'. To get
+        # around the need to do this and just invoke the mosquitto executable
+        # in the background, we give the full path to the mosquitto executable
+        # under the Homebrew prefix.
+        MOSQUITTO=$(brew --prefix)/sbin/mosquitto 
+    else
+        MOSQUITTO=mosquitto
+    fi
+
+    "$MOSQUITTO" &> ${TOMCAT_TMP_DIR}/mosquitto.log &
 fi
 
 # On macOS, uuidgen produces uppercase UUIDs, so we pipe the output through tr
