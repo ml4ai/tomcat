@@ -4,7 +4,6 @@ from tqdm import tqdm
 import adapter.data_adapter as data_adapter
 import json
 
-
 class EvidenceDataSet():
 
     def __init__(self, lt_evidence, rm_evidence, tg_evidence, ty_evidence, dg_evidence, dy_evidence):
@@ -115,6 +114,8 @@ class DataProcessing():
                 else:
                     triaging_yellow = True
 
+                triage_event_counter += 1
+
                 # victim_x = triage_events[triage_event_counter]['data']['victim_x']
                 # victim_y = triage_events[triage_event_counter]['data']['victim_z']
                 # if (victim_x, victim_y) in data_adapter.GREEN_VICTIMS.keys():
@@ -179,15 +180,15 @@ class DataProcessing():
     def save_evidence_set(self, evidence_folder, evidence_set):
         np.save(self.get_evidence_filepath(evidence_folder, DataProcessing.LT_EVIDENCE_FILENAME),
                 evidence_set.lt_evidence)
-        np.save(self.get_evidence_filepath(evidence_folder, DataProcessing.LT_EVIDENCE_FILENAME),
+        np.save(self.get_evidence_filepath(evidence_folder, DataProcessing.RM_EVIDENCE_FILENAME),
                 evidence_set.rm_evidence)
-        np.save(self.get_evidence_filepath(evidence_folder, DataProcessing.LT_EVIDENCE_FILENAME),
+        np.save(self.get_evidence_filepath(evidence_folder, DataProcessing.TG_EVIDENCE_FILENAME),
                 evidence_set.tg_evidence)
-        np.save(self.get_evidence_filepath(evidence_folder, DataProcessing.LT_EVIDENCE_FILENAME),
+        np.save(self.get_evidence_filepath(evidence_folder, DataProcessing.TY_EVIDENCE_FILENAME),
                 evidence_set.ty_evidence)
-        np.save(self.get_evidence_filepath(evidence_folder, DataProcessing.LT_EVIDENCE_FILENAME),
+        np.save(self.get_evidence_filepath(evidence_folder, DataProcessing.DG_EVIDENCE_FILENAME),
                 evidence_set.dg_evidence)
-        np.save(self.get_evidence_filepath(evidence_folder, DataProcessing.LT_EVIDENCE_FILENAME),
+        np.save(self.get_evidence_filepath(evidence_folder, DataProcessing.DY_EVIDENCE_FILENAME),
                 evidence_set.dy_evidence)
 
     def load_evidence_set(self, evidence_folder):
@@ -319,3 +320,10 @@ class DataProcessing():
 
     def get_predictions_filepath(self, predictions_folder, predictions_filename, filename_suffix):
         return '{}/{}_{}.npy'.format(predictions_folder, predictions_filename, filename_suffix)
+
+if __name__ == '__main__':
+    EXPERIMENTS_DATA_FOLDER = '../data/experiments/internal/formatted'
+    EVIDENCE_OUTPUT_FOLDER = '../data/evidence/internal/'
+
+    data_processing = DataProcessing()
+    data_processing.convert_experiments_data_to_evidence(EXPERIMENTS_DATA_FOLDER, EVIDENCE_OUTPUT_FOLDER)

@@ -99,6 +99,17 @@ def read_parameters_from_file(filepath):
 
     return parameter_values
 
+def format_timestamp(timestamp):
+    try:
+        formatted_timestamp = datetime.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S:%fZ')
+    except ValueError:
+        try:
+            formatted_timestamp = datetime.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%fZ')
+        except ValueError:
+            formatted_timestamp = datetime.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%SZ')
+
+    return datetime.datetime.strftime(formatted_timestamp, '%Y-%m-%dT%H:%M:%S.%fZ')
+
 class InternalDataAdapter:
 
     def __init__(self, internal_data_folder):
@@ -128,13 +139,13 @@ class InternalDataAdapter:
                         if json_obj.strip():
                             event = json.loads(json_obj)
                             testbed_message = {}
-                            testbed_message['header'] = {'timestamp': self.__format_timestamp(event['timestamp']),
+                            testbed_message['header'] = {'timestamp': format_timestamp(event['timestamp']),
                                                          'message_type': 'event',
                                                          'version': 'na'}
 
                             if event['event_type'] == 'edu.arizona.tomcat.Events.LeverFlip':
                                 testbed_message['msg'] = {'experiment_id': 'na', 'trial_id': 'na',
-                                                          'timestamp': self.__format_timestamp(event['timestamp']),
+                                                          'timestamp': format_timestamp(event['timestamp']),
                                                           'source': 'simulator', 'sub_type': 'Event:Lever',
                                                           'version': 'na'}
                                 testbed_message['data'] = {'playername': event['player_name'],
@@ -151,27 +162,22 @@ class InternalDataAdapter:
                                                                                                               'block_material'] == 'minecraft:gold_block'):
 
                                 testbed_message['msg'] = {'experiment_id': 'na', 'trial_id': 'na',
-                                                          'timestamp': self.__format_timestamp(event['timestamp']),
+                                                          'timestamp': format_timestamp(event['timestamp']),
                                                           'source': 'simulator', 'sub_type': 'Event:Triage',
                                                           'version': 'na'}
+                                if event['block_material'] == 'minecraft:prismarine':
+                                    color = 'Green'
+                                else:
+                                    color = 'Yellow'
+
                                 testbed_message['data'] = {'playername': event['player_name'],
                                                            'triage_state': 'IN_PROGRESS',
+                                                           'color': color,
                                                            'victim_x': event['block_position']['x'],
                                                            'victim_y': event['block_position']['y'],
                                                            'victim_z': event['block_position']['z']}
 
                                 triage_file.write(json.dumps(testbed_message) + '\n')
-
-    def __format_timestamp(self, timestamp):
-        try:
-            formatted_timestamp = datetime.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S:%fZ')
-        except ValueError:
-            try:
-                formatted_timestamp = datetime.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%fZ')
-            except ValueError:
-                formatted_timestamp = datetime.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%SZ')
-
-        return datetime.datetime.strftime(formatted_timestamp, '%Y-%m-%dT%H:%M:%S.%fZ')
 
     def __convert_observations(self, output_folder, observations_file):
         """
@@ -185,7 +191,7 @@ class InternalDataAdapter:
                         observation = json.loads(json_obj)
 
                         testbed_message = {}
-                        timestamp = self.__format_timestamp(observation['header']['timestamp'])
+                        timestamp = format_timestamp(observation['header']['timestamp'])
                         testbed_message['header'] = observation['header']
                         testbed_message['header']['timestamp'] = timestamp
                         testbed_message['msg'] = observation['msg']
@@ -209,17 +215,16 @@ class TestbedDataAdapter:
         self.extract_room_entrance_events_from_observations()
         self.add_world_tick_to_events()
 
-    def format_raw(self):
-        raw_folder = '{}/raw/'.format(self.testbed_data_folder)
-        for experiment_data_file in tqdm(os.listdir(raw_folder), desc='Formatting raw data'):
-            if os.path.isdir(raw_folder + experiment_data_file):
+    def split_data_into_folders(self, original_folder):
+        for experiment_data_file in tqdm(os.listdir(original_folder), desc='Formatting raw data'):
+            if os.path.isdir(original_folder + '/' + experiment_data_file):
                 continue
 
-            experiment_folder = raw_folder + experiment_data_file.replace('.json', '')
+            experiment_folder = self.testbed_data_folder + '/' + experiment_data_file.replace('.json', '')
             if not os.path.isdir(experiment_folder):
                 os.mkdir(experiment_folder)
 
-            data_filepath = raw_folder + experiment_data_file
+            data_filepath = original_folder + '/' + experiment_data_file
             with open(data_filepath, 'r') as input_file:
                 with open('{}/{}'.format(experiment_folder, TestbedDataAdapter.OBSERVATIONS_FILENAME),
                               'w') as out_obs_file:
@@ -264,17 +269,18 @@ class TestbedDataAdapter:
                     for json_obj in input_file:
                         observation = json.loads(json_obj)
                         room = get_room_by_player_position(observation['data']['x'], observation['data']['z'])
-                        if room == 'aw' and current_room != 'aw':
-                            break
-                        elif initial_time != None and observation['data'][
-                            'total_time'] - initial_time > WORLD_TICK_PER_SECONDS * MISSION_TIME_IN_SECONDS:
-                            break
-                        elif room != 'aw':
-                            if initial_time == None:
-                                initial_time = observation['data']['total_time']
-                            temp_out_file.write(json.dumps(observation) + '\n')
+                        if room != None:
+                            if room == 'aw' and current_room != 'aw':
+                                break
+                            elif initial_time != None and observation['data'][
+                                'total_time'] - initial_time > WORLD_TICK_PER_SECONDS * MISSION_TIME_IN_SECONDS:
+                                break
+                            elif room != 'aw':
+                                if initial_time == None:
+                                    initial_time = observation['data']['total_time']
+                                temp_out_file.write(json.dumps(observation) + '\n')
 
-                        current_room = room
+                            current_room = room
 
             # Override previous observations file with the new one
             move(observations_temp_file, observations_file)
@@ -324,6 +330,7 @@ class TestbedDataAdapter:
             self.__add_world_tick_to_event(experiment_folder, TestbedDataAdapter.TRIAGE_EVENT_FILENAME, times_df)
 
     def __get_observations_time_as_dataframe(self, experiment_folder):
+        print(experiment_folder)
         testbed_experiment_folder = '{}/{}'.format(self.testbed_data_folder, experiment_folder)
         observations_file = '{}/observations.txt'.format(testbed_experiment_folder, experiment_folder)
         observation_times = []
@@ -331,8 +338,8 @@ class TestbedDataAdapter:
             for json_obj in input_file:
                 observation = json.loads(json_obj)
                 observation_time = {}
-                timestamp = datetime.datetime.strptime(observation['header']['timestamp'], '%Y-%m-%dT%H:%M:%S.%fZ')
-                observation_time['timestamp'] = observation['header']['timestamp']
+                timestamp = format_timestamp(observation['header']['timestamp'])
+                observation_time['timestamp'] = timestamp
                 observation_time['total_time'] = observation['data']['total_time']
                 observation_times.append(observation_time)
 
@@ -353,7 +360,7 @@ class TestbedDataAdapter:
             with open(event_temp_file, 'w') as temp_out_file:
                 for json_obj in input_file:
                     event = json.loads(json_obj)
-                    event_timestamp = datetime.datetime.strptime(event['header']['timestamp'], '%Y-%m-%dT%H:%M:%S.%fZ')
+                    event_timestamp = datetime.datetime.strptime(format_timestamp(event['header']['timestamp']), '%Y-%m-%dT%H:%M:%S.%fZ')
                     event['header']['total_time'] = int(
                         times_df.iloc[times_df.index.get_loc(event_timestamp, method='nearest')]['total_time'])
 
@@ -363,12 +370,7 @@ class TestbedDataAdapter:
         move(event_temp_file, event_file)
 
 if __name__ == '__main__':
-    # internal_data_folder = '../data/input/cleaned_data_deidentified'
-    testbed_folder = '../data/experiments/asist'
-
-    # internal_data_adapter = InternalDataAdapter(internal_data_folder)
-    # internal_data_adapter.convert_to_testbed_format(testbed_folder)
-
-    testbed_data_adapter = TestbedDataAdapter(testbed_folder)
-    testbed_data_adapter.format_raw()
-    # testbed_data_adapter.adapt()
+    # Split the files into folders
+    testbed_data_adapter = TestbedDataAdapter('../data/experiments/asist/formatted')
+    testbed_data_adapter.split_data_into_folders('../data/experiments/asist/raw')
+    testbed_data_adapter.adapt()

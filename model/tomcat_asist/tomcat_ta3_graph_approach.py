@@ -684,7 +684,7 @@ if __name__ == '__main__':
     evidence_set = model_data_builder.collect_evidence_from_experiments()
     evidence_set.to_csv(EVIDENCE_DATA_FILEPATH)
 
-    PARAMETERS_FILEPATH = '../data/output/parameter_estimation/tomcat_ta3'
+    PARAMETERS_FILEPATH = '../data/toy/parameter_estimation/tomcat_ta3'
     NUMBER_OF_SAMPLES = 1000
     BURN_IN = 100
 

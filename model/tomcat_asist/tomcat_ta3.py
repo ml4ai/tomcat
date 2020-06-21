@@ -4,12 +4,18 @@ from tqdm import tqdm
 import adapter.data_adapter as data_adapter
 import tomcat_asist.data_processing as data_processing
 import time
+from sklearn.model_selection import KFold
 
 NUMBER_OF_STATES = 115
 NUMBER_OF_ROOMS = len(data_adapter.ROOMS) - 1  # Removing Waiting Room from the list
 NUMBER_OF_GREEN_VICTIMS = len(data_adapter.GREEN_VICTIMS)
 NUMBER_OF_YELLOW_VICTIMS = len(data_adapter.YELLOW_VICTIMS)
 ZERO = 10 ** -16
+
+
+def log(values):
+    values[values == 0] = ZERO
+    return np.log(values)
 
 
 class FixedModelDistributions:
@@ -145,17 +151,17 @@ class FixedModelDistributions:
 
         return priors
 
-    def get_sigma_priors(self):
-        return np.ones((NUMBER_OF_STATES, 2))
+    # def get_sigma_priors(self):
+    #     return np.ones((NUMBER_OF_STATES, 2))
 
 
 class ParameterPriors:
 
-    def __init__(self, theta_s_priors, pi_lt_priors, sigma_dg_priors, sigma_dy_priors):
+    def __init__(self, theta_s_priors, pi_lt_priors):
         self.theta_s_priors = theta_s_priors
         self.pi_lt_priors = pi_lt_priors
-        self.sigma_dg_priors = sigma_dg_priors
-        self.sigma_dy_priors = sigma_dy_priors
+        # self.sigma_dg_priors = sigma_dg_priors
+        # self.sigma_dy_priors = sigma_dy_priors
 
 
 class Distributions:
@@ -170,40 +176,20 @@ class Distributions:
         # Trainable distributions
         self.theta_s = theta_s
         self.pi_lt = pi_lt
-        self.sigma_dg = sigma_dg
-        self.sigma_dy = sigma_dy
-
-
-class PredictionSample:
-
-    def __init__(self, states_sample, last_time_slice_lt_sample, last_time_slice_rm_sample, last_time_slice_tg_sample,
-                 last_time_slice_ty_sample, last_time_slice_dg_sample, last_time_slice_dy_sample):
-        self.states_sample = states_sample
-        self.last_time_slice_lt_sample = last_time_slice_lt_sample
-        self.last_time_slice_rm_sample = last_time_slice_rm_sample
-        self.last_time_slice_tg_sample = last_time_slice_tg_sample
-        self.last_time_slice_ty_sample = last_time_slice_ty_sample
-        self.last_time_slice_dg_sample = last_time_slice_dg_sample
-        self.last_time_slice_dy_sample = last_time_slice_dy_sample
+        # self.sigma_dg = sigma_dg
+        # self.sigma_dy = sigma_dy
 
 
 class ModelBuilder:
 
     def estimate_parameters(self, evidence_set, number_of_samples, burn_in):
-        # lt_evidence = evidence_set.lt_evidence
-        # rm_evidence = evidence_set.rm_evidence
-        # tg_evidence = evidence_set.tg_evidence
-        # ty_evidence = evidence_set.ty_evidence
-        # dg_evidence = evidence_set.dg_evidence
-        # dy_evidence = evidence_set.dy_evidence
-
         parameter_priors = self.get_parameter_priors()
 
         # Create tensors to store the samples
         theta_s_samples = np.zeros((number_of_samples, NUMBER_OF_STATES, NUMBER_OF_STATES))
         pi_lt_samples = np.zeros((number_of_samples, NUMBER_OF_STATES, 2))
-        sigma_dg_samples = np.zeros((number_of_samples, NUMBER_OF_GREEN_VICTIMS, NUMBER_OF_STATES, 1))
-        sigma_dy_samples = np.zeros((number_of_samples, NUMBER_OF_YELLOW_VICTIMS, NUMBER_OF_STATES, 1))
+        # sigma_dg_samples = np.zeros((number_of_samples, NUMBER_OF_GREEN_VICTIMS, NUMBER_OF_STATES, 1))
+        # sigma_dy_samples = np.zeros((number_of_samples, NUMBER_OF_YELLOW_VICTIMS, NUMBER_OF_STATES, 1))
 
         # Start by sampling State_t using simple ancestral sampling
         states_sample = self.get_initial_states_sample_from_parameters_priors(parameter_priors.theta_s_priors,
@@ -219,13 +205,13 @@ class ModelBuilder:
 
             theta_s_samples[i] = distributions.theta_s
             pi_lt_samples[i] = distributions.pi_lt
-            sigma_dg_samples[i] = distributions.sigma_dg
-            sigma_dy_samples[i] = distributions.sigma_dy
+            # sigma_dg_samples[i] = distributions.sigma_dg
+            # sigma_dy_samples[i] = distributions.sigma_dy
 
         distributions.theta_s = np.mean(theta_s_samples, axis=0)
         distributions.pi_lt = np.mean(pi_lt_samples, axis=0)
-        distributions.sigma_dg = np.mean(sigma_dg_samples, axis=0)
-        distributions.sigma_dy = np.mean(sigma_dy_samples, axis=0)
+        # distributions.sigma_dg = np.mean(sigma_dg_samples, axis=0)
+        # distributions.sigma_dy = np.mean(sigma_dy_samples, axis=0)
 
         return distributions
 
@@ -233,41 +219,53 @@ class ModelBuilder:
         fixed_model_distributions = FixedModelDistributions()
         theta_s_priors = fixed_model_distributions.get_theta_s_priors()  # P(theta_s|state = s) one per row
         pi_lt_priors = fixed_model_distributions.get_pi_lt_priors()  # P(pi_lt|state = s) one per row
-        sigma_dg_priors = np.zeros((NUMBER_OF_GREEN_VICTIMS, NUMBER_OF_STATES, 2))
-        for v in range(NUMBER_OF_GREEN_VICTIMS):
-            sigma_dg_priors[
-                v] = fixed_model_distributions.get_sigma_priors()  # for victim v: P(sigma_dg|state = s) one per row
-        sigma_dy_priors = np.zeros((NUMBER_OF_YELLOW_VICTIMS, NUMBER_OF_STATES, 2))
-        for v in range(NUMBER_OF_YELLOW_VICTIMS):
-            sigma_dy_priors[
-                v] = fixed_model_distributions.get_sigma_priors()  # for victim v: P(sigma_dg|state = s) one per row
+        # sigma_dg_priors = np.zeros((NUMBER_OF_GREEN_VICTIMS, NUMBER_OF_STATES, 2))
+        # for v in range(NUMBER_OF_GREEN_VICTIMS):
+        #     sigma_dg_priors[
+        #         v] = fixed_model_distributions.get_sigma_priors()  # for victim v: P(sigma_dg|state = s) one per row
+        # sigma_dy_priors = np.zeros((NUMBER_OF_YELLOW_VICTIMS, NUMBER_OF_STATES, 2))
+        # for v in range(NUMBER_OF_YELLOW_VICTIMS):
+        #     sigma_dy_priors[
+        #         v] = fixed_model_distributions.get_sigma_priors()  # for victim v: P(sigma_dg|state = s) one per row
 
-        return ParameterPriors(theta_s_priors, pi_lt_priors, sigma_dg_priors, sigma_dy_priors)
+        return ParameterPriors(theta_s_priors, pi_lt_priors)
+
+    def get_initial_states_sample_from_parameters_priors(self, theta_s_priors, number_of_data_points, time_slices):
+        state_samples = np.zeros((number_of_data_points, time_slices), dtype=np.int)
+        theta_s_sampled = np.zeros((NUMBER_OF_STATES, NUMBER_OF_STATES))
+        for state in range(NUMBER_OF_STATES):
+            theta_s_sampled[state] = dirichlet(theta_s_priors[state]).rvs()[0]
+
+        for d in range(number_of_data_points):
+            sample = self.sample_states_over_time(theta_s_sampled, time_slices - 1)
+            state_samples[d] = sample
+
+        return state_samples
 
     def sample(self, evidence_set, parameter_priors, distributions, states_sample):
         posteriors_theta_s = parameter_priors.theta_s_priors
         posteriors_pi_lt = parameter_priors.pi_lt_priors
-        posteriors_sigma_dg = np.zeros((NUMBER_OF_GREEN_VICTIMS, NUMBER_OF_STATES, 2))
-        for v in range(NUMBER_OF_GREEN_VICTIMS):
-            posteriors_sigma_dg[v] = parameter_priors.sigma_dg_priors[v]
-        posteriors_sigma_dy = np.zeros((NUMBER_OF_YELLOW_VICTIMS, NUMBER_OF_STATES, 2))
-        for v in range(NUMBER_OF_YELLOW_VICTIMS):
-            posteriors_sigma_dy[v] = parameter_priors.sigma_dy_priors[v]
+        # posteriors_sigma_dg = np.zeros((NUMBER_OF_GREEN_VICTIMS, NUMBER_OF_STATES, 2))
+        # for v in range(NUMBER_OF_GREEN_VICTIMS):
+        #     posteriors_sigma_dg[v] = parameter_priors.sigma_dg_priors[v]
+        # posteriors_sigma_dy = np.zeros((NUMBER_OF_YELLOW_VICTIMS, NUMBER_OF_STATES, 2))
+        # for v in range(NUMBER_OF_YELLOW_VICTIMS):
+        #     posteriors_sigma_dy[v] = parameter_priors.sigma_dy_priors[v]
 
         for t in range(1, evidence_set.time_slices):
             for d in range(evidence_set.number_of_data_points):
                 # Incrementing the prior parameters
                 posteriors_theta_s[states_sample[d][t - 1]][states_sample[d][t]] += 1
                 posteriors_pi_lt[states_sample[d][t]][1 - evidence_set.lt_evidence[d][t]] += 1
-                for v in range(NUMBER_OF_GREEN_VICTIMS):
-                    posteriors_sigma_dg[v][states_sample[d][t]] += [1 / 2, evidence_set.dg_evidence[v][d][t] / 2]
-                for v in range(NUMBER_OF_YELLOW_VICTIMS):
-                    posteriors_sigma_dy[v][states_sample[d][t]] += [1 / 2, evidence_set.dy_evidence[v][d][t] / 2]
+                # for v in range(NUMBER_OF_GREEN_VICTIMS):
+                #     posteriors_sigma_dg[v][states_sample[d][t]] += [1 / 2, evidence_set.dg_evidence[v][d][t] / 2]
+                # for v in range(NUMBER_OF_YELLOW_VICTIMS):
+                #     posteriors_sigma_dy[v][states_sample[d][t]] += [1 / 2, evidence_set.dy_evidence[v][d][t] / 2]
 
         # Sample parameters
         # ini = time.time()
-        distributions.theta_s, distributions.pi_lt, distributions.sigma_dg, distributions.sigma_dy = self.sample_parameters(
-            evidence_set, parameter_priors, states_sample)
+        distributions.theta_s, distributions.pi_lt = self.sample_parameters(evidence_set, parameter_priors,
+                                                                            states_sample)
         # print("Time to sample parameters: {} seconds".format(time.time() - ini))
         # ini = time.time()
         self.sample_states(evidence_set, distributions, states_sample)
@@ -275,78 +273,32 @@ class ModelBuilder:
 
         return distributions, states_sample
 
-        # theta_s_sample = np.zeros((NUMBER_OF_STATES, NUMBER_OF_STATES))
-        # pi_lt_sample = np.zeros((NUMBER_OF_STATES, 2))
-        # sigma_dg_sample = np.zeros((NUMBER_OF_GREEN_VICTIMS, NUMBER_OF_STATES, 1))
-        # sigma_dy_sample = np.zeros((NUMBER_OF_YELLOW_VICTIMS, NUMBER_OF_STATES, 1))
-        #
-        # for state in range(NUMBER_OF_STATES):
-        #     sample = dirichlet(posteriors_theta_s[state]).rvs()[0]
-        #     theta_s_sample[state] = sample
-        #
-        #     sample = beta(*posteriors_pi_lt[state]).rvs()
-        #     pi_lt_sample[state] = [1 - sample, sample]
-        #
-        #     for v in range(NUMBER_OF_GREEN_VICTIMS):
-        #         sample = invgamma(*posteriors_sigma_dg[v][state]).rvs()
-        #         sigma_dg_sample[v][state] = sample
-        #
-        #     for v in range(NUMBER_OF_YELLOW_VICTIMS):
-        #         sample = invgamma(*posteriors_sigma_dy[v][state]).rvs()
-        #         sigma_dy_sample[v][state] = sample
-
-        # Sample State
-        # posterior_state = np.zeros((number_of_data_points, NUMBER_OF_STATES))
-        # for t in range(1, time_slices):
-        #     posterior_state += self.log(theta_s_sample[states_sample[:, t - 1]]) + self.log(
-        #         pi_lt_sample[:, lt_evidence[:, t]]).T + self.log(
-        #         theta_rm[:, rm_evidence[:, t]]).T + self.log(
-        #         pi_tg[:, tg_evidence[:, t]]).T + self.log(pi_ty[:, ty_evidence[:, t]].T)
-        #
-        #     for v in range(NUMBER_OF_GREEN_VICTIMS):
-        #         gaussian = norm(0, sigma_dg_sample[v].flatten())
-        #         pdfs = gaussian.pdf([[distance] for distance in dg_evidence[v][:, t]])
-        #         posterior_state += self.log(pdfs)
-        #
-        #     for v in range(NUMBER_OF_YELLOW_VICTIMS):
-        #         gaussian = norm(0, sigma_dy_sample[v].flatten())
-        #         pdfs = gaussian.pdf([[distance] for distance in dy_evidence[v][:, t]])
-        #         posterior_state += self.log(pdfs)
-        #
-        #     max_value_per_row = np.max(posterior_state, axis=1)[:, np.newaxis]
-        #     posterior_state -= max_value_per_row
-        #     posterior_state = np.exp(posterior_state)
-        #     posterior_state /= np.sum(posterior_state, axis=1)[:, np.newaxis]
-        #
-        #     for d, posterior in enumerate(posterior_state):
-        #         states_sample[d, t] = np.random.choice(NUMBER_OF_STATES, p=posterior)
-
     def sample_parameters(self, evidence_set, parameter_priors, state_sample):
         # Preprocessing to sample parameters faster
         posteriors_theta_s = parameter_priors.theta_s_priors
         posteriors_pi_lt = parameter_priors.pi_lt_priors
-        posteriors_sigma_dg = np.zeros((NUMBER_OF_GREEN_VICTIMS, NUMBER_OF_STATES, 2))
-        for v in range(NUMBER_OF_GREEN_VICTIMS):
-            posteriors_sigma_dg[v] = parameter_priors.sigma_dg_priors[v]
-        posteriors_sigma_dy = np.zeros((NUMBER_OF_YELLOW_VICTIMS, NUMBER_OF_STATES, 2))
-        for v in range(NUMBER_OF_YELLOW_VICTIMS):
-            posteriors_sigma_dy[v] = parameter_priors.sigma_dy_priors[v]
+        # posteriors_sigma_dg = np.zeros((NUMBER_OF_GREEN_VICTIMS, NUMBER_OF_STATES, 2))
+        # for v in range(NUMBER_OF_GREEN_VICTIMS):
+        #     posteriors_sigma_dg[v] = parameter_priors.sigma_dg_priors[v]
+        # posteriors_sigma_dy = np.zeros((NUMBER_OF_YELLOW_VICTIMS, NUMBER_OF_STATES, 2))
+        # for v in range(NUMBER_OF_YELLOW_VICTIMS):
+        #     posteriors_sigma_dy[v] = parameter_priors.sigma_dy_priors[v]
 
         for t in range(1, evidence_set.time_slices):
             for d in range(evidence_set.number_of_data_points):
                 # Incrementing the prior parameters
                 posteriors_theta_s[state_sample[d][t - 1]][state_sample[d][t]] += 1
                 posteriors_pi_lt[state_sample[d][t]][1 - evidence_set.lt_evidence[d][t]] += 1
-                for v in range(NUMBER_OF_GREEN_VICTIMS):
-                    posteriors_sigma_dg[v][state_sample[d][t]] += [1 / 2, evidence_set.dg_evidence[v][d][t] / 2]
-                for v in range(NUMBER_OF_YELLOW_VICTIMS):
-                    posteriors_sigma_dy[v][state_sample[d][t]] += [1 / 2, evidence_set.dy_evidence[v][d][t] / 2]
+                # for v in range(NUMBER_OF_GREEN_VICTIMS):
+                #     posteriors_sigma_dg[v][state_sample[d][t]] += [1 / 2, evidence_set.dg_evidence[v][d][t] / 2]
+                # for v in range(NUMBER_OF_YELLOW_VICTIMS):
+                #     posteriors_sigma_dy[v][state_sample[d][t]] += [1 / 2, evidence_set.dy_evidence[v][d][t] / 2]
 
         # Sample parameters
         theta_s_sample = np.zeros((NUMBER_OF_STATES, NUMBER_OF_STATES))
         pi_lt_sample = np.zeros((NUMBER_OF_STATES, 2))
-        sigma_dg_sample = np.zeros((NUMBER_OF_GREEN_VICTIMS, NUMBER_OF_STATES, 1))
-        sigma_dy_sample = np.zeros((NUMBER_OF_YELLOW_VICTIMS, NUMBER_OF_STATES, 1))
+        # sigma_dg_sample = np.zeros((NUMBER_OF_GREEN_VICTIMS, NUMBER_OF_STATES, 1))
+        # sigma_dy_sample = np.zeros((NUMBER_OF_YELLOW_VICTIMS, NUMBER_OF_STATES, 1))
 
         for state in range(NUMBER_OF_STATES):
             sample = dirichlet(posteriors_theta_s[state]).rvs()[0]
@@ -355,35 +307,35 @@ class ModelBuilder:
             sample = beta(*posteriors_pi_lt[state]).rvs()
             pi_lt_sample[state] = [1 - sample, sample]
 
-            for v in range(NUMBER_OF_GREEN_VICTIMS):
-                sample = invgamma(*posteriors_sigma_dg[v][state]).rvs()
-                sigma_dg_sample[v][state] = sample
+            # for v in range(NUMBER_OF_GREEN_VICTIMS):
+            #     sample = invgamma(*posteriors_sigma_dg[v][state]).rvs()
+            #     sigma_dg_sample[v][state] = sample
+            #
+            # for v in range(NUMBER_OF_YELLOW_VICTIMS):
+            #     sample = invgamma(*posteriors_sigma_dy[v][state]).rvs()
+            #     sigma_dy_sample[v][state] = sample
 
-            for v in range(NUMBER_OF_YELLOW_VICTIMS):
-                sample = invgamma(*posteriors_sigma_dy[v][state]).rvs()
-                sigma_dy_sample[v][state] = sample
-
-        return theta_s_sample, pi_lt_sample, sigma_dg_sample, sigma_dy_sample
+        return theta_s_sample, pi_lt_sample  # , sigma_dg_sample, sigma_dy_sample
 
     def sample_states(self, evidence_set, distributions, states_sample):
         posterior_state = np.zeros((evidence_set.number_of_data_points, NUMBER_OF_STATES))
 
         for t in range(1, evidence_set.time_slices):
-            posterior_state += self.log(distributions.theta_s[states_sample[:, t - 1]]) + self.log(
-                distributions.pi_lt[:, evidence_set.lt_evidence[:, t]]).T + self.log(
-                distributions.theta_rm[:, evidence_set.rm_evidence[:, t]]).T + self.log(
-                distributions.pi_tg[:, evidence_set.tg_evidence[:, t]]).T + self.log(
+            posterior_state += log(distributions.theta_s[states_sample[:, t - 1]]) + log(
+                distributions.pi_lt[:, evidence_set.lt_evidence[:, t]]).T + log(
+                distributions.theta_rm[:, evidence_set.rm_evidence[:, t]]).T + log(
+                distributions.pi_tg[:, evidence_set.tg_evidence[:, t]]).T + log(
                 distributions.pi_ty[:, evidence_set.ty_evidence[:, t]].T)
 
-            for v in range(NUMBER_OF_GREEN_VICTIMS):
-                gaussian = norm(0, distributions.sigma_dg[v].flatten())
-                pdfs = gaussian.pdf([[distance] for distance in evidence_set.dg_evidence[v][:, t]])
-                posterior_state += self.log(pdfs)
-
-            for v in range(NUMBER_OF_YELLOW_VICTIMS):
-                gaussian = norm(0, distributions.sigma_dy[v].flatten())
-                pdfs = gaussian.pdf([[distance] for distance in evidence_set.dy_evidence[v][:, t]])
-                posterior_state += self.log(pdfs)
+            # for v in range(NUMBER_OF_GREEN_VICTIMS):
+            #     gaussian = norm(0, distributions.sigma_dg[v].flatten())
+            #     pdfs = gaussian.pdf([[distance] for distance in evidence_set.dg_evidence[v][:, t]])
+            #     posterior_state += log(pdfs)
+            #
+            # for v in range(NUMBER_OF_YELLOW_VICTIMS):
+            #     gaussian = norm(0, distributions.sigma_dy[v].flatten())
+            #     pdfs = gaussian.pdf([[distance] for distance in evidence_set.dy_evidence[v][:, t]])
+            #     posterior_state += log(pdfs)
 
             max_value_per_row = np.max(posterior_state, axis=1)[:, np.newaxis]
             posterior_state -= max_value_per_row
@@ -395,26 +347,6 @@ class ModelBuilder:
 
         return states_sample
 
-    def log(self, values):
-        values[values == 0] = ZERO
-        return np.log(values)
-
-    def get_initial_states_sample_from_parameters_priors(self, theta_s_priors, number_of_data_points, time_slices):
-        state_samples = np.zeros((number_of_data_points, time_slices), dtype=np.int)
-        theta_s_sampled = np.zeros((NUMBER_OF_STATES, NUMBER_OF_STATES))
-        for state in range(NUMBER_OF_STATES):
-            theta_s_sampled[state] = dirichlet(theta_s_priors[state]).rvs()[0]
-
-        for d in range(number_of_data_points):
-            sample = self.sample_states_over_time(theta_s_sampled, time_slices - 1)
-            state_samples[d] = sample
-            # state_samples[d][0] = 0
-            # for t in range(1, time_slices):
-            #     state = np.random.choice(NUMBER_OF_STATES, p=theta_s_sampled[state_samples[d][t - 1]])
-            #     state_samples[d][t] = state
-
-        return state_samples
-
     def sample_states_over_time(self, theta_s, time_slices):
         states_sample = np.zeros(time_slices + 1, dtype=np.int)
 
@@ -423,104 +355,105 @@ class ModelBuilder:
 
         return states_sample
 
-    def predict(self, distributions, evidence_set, time_slice_to_predict, number_of_samples, burn_in):
-        mini_evidence_set = self.truncate_evidence_set(evidence_set, time_slice_to_predict)
-        prediction_sample = self.get_initial_samples_for_prediction(distributions, time_slice_to_predict,
-                                                                    evidence_set.number_of_data_points)
+    def get_triaging_marginals_over_time(self, distributions, evidence_set):
+        """
+        Sum product algorithm to compute the marginals of the observable nodes over time
+        """
+        # lt_last_term = np.stack([np.sum(distributions.theta_s * distributions.pi_lt[:, col], axis=1) for col in
+        #                          range(distributions.pi_lt.shape[1])])
+        # rm_last_term = np.stack([np.sum(distributions.theta_s * distributions.theta_rm[:, col], axis=1) for col in
+        #                          range(distributions.theta_rm.shape[1])])
+        tg_marginals = np.zeros(
+            (evidence_set.number_of_data_points, evidence_set.time_slices - 1, distributions.pi_tg.shape[1]))
+        ty_marginals = np.zeros(
+            (evidence_set.number_of_data_points, evidence_set.time_slices - 1, distributions.pi_ty.shape[1]))
 
-        lt_samples = np.zeros((evidence_set.number_of_data_points, number_of_samples), dtype=np.int)
-        rm_samples = np.zeros((evidence_set.number_of_data_points, number_of_samples), dtype=np.int)
-        tg_samples = np.zeros((evidence_set.number_of_data_points, number_of_samples), dtype=np.int)
-        ty_samples = np.zeros((evidence_set.number_of_data_points, number_of_samples), dtype=np.int)
-        dg_samples = np.zeros((NUMBER_OF_GREEN_VICTIMS, evidence_set.number_of_data_points, number_of_samples))
-        dy_samples = np.zeros((NUMBER_OF_YELLOW_VICTIMS, evidence_set.number_of_data_points, number_of_samples))
+        tg_last_term = np.stack([np.sum(distributions.theta_s * distributions.pi_tg[:, col], axis=1) for col in
+                                 range(distributions.pi_tg.shape[1])])
+        ty_last_term = np.stack([np.sum(distributions.theta_s * distributions.pi_ty[:, col], axis=1) for col in
+                                 range(distributions.pi_ty.shape[1])])
 
-        for _ in range(burn_in):
-            prediction_sample = self.sample_for_prediction(distributions, mini_evidence_set, time_slice_to_predict,
-                                                           prediction_sample)
+        for d in tqdm(range(evidence_set.number_of_data_points), 'Computing Marginals'):
+            lt_evidence = evidence_set.lt_evidence[d]
+            rm_evidence = evidence_set.rm_evidence[d]
+            tg_evidence = evidence_set.tg_evidence[d]
+            ty_evidence = evidence_set.ty_evidence[d]
 
-        for i in range(number_of_samples):
-            prediction_sample = self.sample_for_prediction(distributions, mini_evidence_set, time_slice_to_predict,
-                                                           prediction_sample)
-            lt_samples[:, i] = prediction_sample.last_time_slice_lt_sample
-            rm_samples[:, i] = prediction_sample.last_time_slice_rm_sample
-            tg_samples[:, i] = prediction_sample.last_time_slice_tg_sample
-            ty_samples[:, i] = prediction_sample.last_time_slice_ty_sample
-            dg_samples[:, :, i] = prediction_sample.last_time_slice_dg_sample
-            dy_samples[:, :, i] = prediction_sample.last_time_slice_dy_sample
+            # lt_marginals = np.zeros((evidence_set.time_slices - 1, distributions.pi_lt.shape[1]))
+            # rm_marginals = np.zeros((evidence_set.time_slices - 1, distributions.theta_rm.shape[1]))
 
-        return lt_samples, rm_samples, tg_samples, ty_samples, dg_samples, dy_samples
+            partials = self.get_partials(distributions, lt_evidence, rm_evidence, tg_evidence, ty_evidence)
 
-    def sample_for_prediction(self, distributions, mini_evidence_set, time_slice_to_predict, prediction_sample):
-        mini_evidence_set.lt_evidence[:, time_slice_to_predict] = prediction_sample.last_time_slice_lt_sample
-        mini_evidence_set.rm_evidence[:, time_slice_to_predict] = prediction_sample.last_time_slice_rm_sample
-        mini_evidence_set.tg_evidence[:, time_slice_to_predict] = prediction_sample.last_time_slice_tg_sample
-        mini_evidence_set.ty_evidence[:, time_slice_to_predict] = prediction_sample.last_time_slice_ty_sample
-        mini_evidence_set.dg_evidence[:, :, time_slice_to_predict] = prediction_sample.last_time_slice_dg_sample
-        mini_evidence_set.dy_evidence[:, :, time_slice_to_predict] = prediction_sample.last_time_slice_dy_sample
+            tg_marginals[d, 0:2, :] = self.get_two_first_marginals(partials, distributions.theta_s, distributions.pi_tg,
+                                                                   tg_last_term)
+            ty_marginals[d, 0:2, :] = self.get_two_first_marginals(partials, distributions.theta_s, distributions.pi_ty,
+                                                                   ty_last_term)
 
-        ini = time.time()
-        prediction_sample.states_sample = self.sample_states(mini_evidence_set, distributions,
-                                                            prediction_sample.states_sample)
-        print('States: {} seconds'.format(time.time() - ini))
+            for t in range(2, evidence_set.time_slices - 1):
+                tg_tmp = tg_last_term.copy()
+                ty_tmp = ty_last_term.copy()
+                for j in range(t - 1, 0, -1):
+                    tg_tmp = np.stack(
+                        [np.sum(partials[j] * tg_tmp[row], axis=1) for row in range(distributions.pi_tg.shape[1])])
+                    tg_tmp /= np.sum(tg_tmp, axis=0)
 
-        ini = time.time()
-        for d in range(mini_evidence_set.number_of_data_points):
-            lt_sample, rm_sample, tg_sample, ty_sample, dg_sample, dy_sample = self.sample_observable_nodes_at(
-                time_slice_to_predict,
-                distributions, prediction_sample.states_sample[d])
+                    ty_tmp = np.stack(
+                        [np.sum(partials[j] * ty_tmp[row], axis=1) for row in range(distributions.pi_tg.shape[1])])
+                    ty_tmp /= np.sum(ty_tmp, axis=0)
 
-            prediction_sample.last_time_slice_lt_sample[d] = lt_sample
-            prediction_sample.last_time_slice_rm_sample[d] = rm_sample
-            prediction_sample.last_time_slice_tg_sample[d] = tg_sample
-            prediction_sample.last_time_slice_ty_sample[d] = ty_sample
-            prediction_sample.last_time_slice_dg_sample[:,d] = dg_sample
-            prediction_sample.last_time_slice_dy_sample[:,d] = dy_sample
-        print('Observables: {} seconds'.format(time.time() - ini))
+                tg_marginals[d, t] = np.sum(partials[0] * tg_tmp, axis=1)
+                tg_marginals[d, t] /= np.sum(tg_marginals[d, t])
 
-        return prediction_sample
+                ty_marginals[d, t] = np.sum(partials[0] * ty_tmp, axis=1)
+                ty_marginals[d, t] /= np.sum(ty_marginals[d, t])
 
-    def get_initial_samples_for_prediction(self, distributions, time_slices, number_of_data_points):
-        states_samples = np.zeros((number_of_data_points, time_slices + 1), dtype=np.int)
-        lt_samples = np.zeros(number_of_data_points, dtype=np.int)
-        rm_samples = np.zeros(number_of_data_points, dtype=np.int)
-        tg_samples = np.zeros(number_of_data_points, dtype=np.int)
-        ty_samples = np.zeros(number_of_data_points, dtype=np.int)
-        dg_samples = np.zeros((NUMBER_OF_GREEN_VICTIMS, number_of_data_points))
-        dy_samples = np.zeros((NUMBER_OF_YELLOW_VICTIMS, number_of_data_points))
+        return tg_marginals, ty_marginals
 
-        for d in range(number_of_data_points):
-            states_samples[d] = self.sample_states_over_time(distributions.theta_s, time_slices)
-            lt_samples[d], rm_samples[d], tg_samples[d], ty_samples[d], dg_samples[:, d], dy_samples[:,
-                                                                                          d] = self.sample_observable_nodes_at(
-                time_slices,
-                distributions,
-                states_samples[d])
+    def get_partials(self, distributions, lt_evidence, rm_evidence, tg_evidence, ty_evidence):
+        partials = []
 
-        return PredictionSample(states_samples, lt_samples, rm_samples, tg_samples, ty_samples,
-                                dg_samples.reshape(NUMBER_OF_GREEN_VICTIMS, number_of_data_points),
-                                dy_samples.reshape((NUMBER_OF_YELLOW_VICTIMS, number_of_data_points)))
+        lt = distributions.pi_lt[:, lt_evidence[1]]
+        rm = distributions.theta_rm[:, lt_evidence[1]]
+        tg = distributions.pi_tg[:, lt_evidence[1]]
+        ty = distributions.pi_ty[:, lt_evidence[1]]
+        partial = log(distributions.theta_s[0]) + log(lt) + log(rm) + log(tg) + log(ty)
+        partial -= np.max(partial)
+        partial = np.exp(partial)
+        partials.append(partial / np.sum(partial))
 
-    def sample_observable_nodes_at(self, time_slice, distributions, states_sample):
-        lt_sample = np.random.choice(2, p=distributions.pi_lt[states_sample[time_slice]])
-        rm_sample = np.random.choice(NUMBER_OF_ROOMS, p=distributions.theta_rm[states_sample[time_slice]])
-        tg_sample = np.random.choice(2, p=distributions.pi_tg[states_sample[time_slice]])
-        ty_sample = np.random.choice(2, p=distributions.pi_ty[states_sample[time_slice]])
-        dg_sample = np.abs(norm(0, distributions.sigma_dg[:, states_sample[time_slice]]).rvs()).flatten()
-        dy_sample = np.abs(norm(0, distributions.sigma_dy[:, states_sample[time_slice]]).rvs()).flatten()
+        for t in range(2, evidence_set.time_slices):
+            lt = distributions.pi_lt[:, lt_evidence[t]]
+            rm = distributions.theta_rm[:, lt_evidence[t]]
+            tg = distributions.pi_tg[:, lt_evidence[t]]
+            ty = distributions.pi_ty[:, lt_evidence[t]]
+            partial = log(distributions.theta_s) + log(lt) + log(rm) + log(tg) + log(ty)
+            partial -= np.max(partial, axis=1).reshape(-1, 1)
+            partial = np.exp(partial)
+            partials.append(partial / np.sum(partial, axis=1).reshape(-1, 1))
 
-        return lt_sample, rm_sample, tg_sample, ty_sample, dg_sample, dy_sample
+        return partials
 
-    def truncate_evidence_set(self, evidence_set, last_time_slice):
-        lt_evidence = evidence_set.lt_evidence.copy()[:, 0:last_time_slice + 1]
-        rm_evidence = evidence_set.rm_evidence.copy()[:, 0:last_time_slice + 1]
-        tg_evidence = evidence_set.tg_evidence.copy()[:, 0:last_time_slice + 1]
-        ty_evidence = evidence_set.ty_evidence.copy()[:, 0:last_time_slice + 1]
-        dg_evidence = evidence_set.dg_evidence.copy()[:, :, 0:last_time_slice + 1]
-        dy_evidence = evidence_set.dy_evidence.copy()[:, :, 0:last_time_slice + 1]
+    def get_two_first_marginals(self, partials, transition_matrix, emission_matrix, last_term):
+        marginals = np.zeros((2, emission_matrix.shape[1]))
+        marginals[0] = np.sum(transition_matrix[0] * emission_matrix.T, axis=1)
+        marginals[0] /= np.sum(marginals[0])
+        marginals[1] = np.sum(partials[0] * last_term, axis=1)
+        marginals[1] /= np.sum(marginals[1])
 
-        return data_processing.EvidenceDataSet(lt_evidence, rm_evidence, tg_evidence, ty_evidence, dg_evidence,
-                                               dy_evidence)
+        return marginals
+
+    def get_triaging_normalized_frequencies(self, evidence_set):
+        tg_frequencies = np.stack(
+            [np.sum(1 - evidence_set.tg_evidence[:, 1:], axis=0), np.sum(evidence_set.tg_evidence[:, 1:], axis=0)],
+            axis=1)
+        tg_frequencies = tg_frequencies / np.sum(tg_frequencies, axis=1).reshape(-1, 1)
+
+        ty_frequencies = np.stack(
+            [np.sum(1 - evidence_set.ty_evidence[:, 1:], axis=0), np.sum(evidence_set.ty_evidence[:, 1:], axis=0)],
+            axis=1)
+        ty_frequencies = ty_frequencies / np.sum(ty_frequencies, axis=1).reshape(-1, 1)
+
+        return tg_frequencies, ty_frequencies
 
 
 class Experimentation:
@@ -537,89 +470,189 @@ class Experimentation:
                                                            burn_in)
         dp.save_theta_s(parameters_folder, distributions.theta_s, filename_suffix)
         dp.save_pi_lt(parameters_folder, distributions.pi_lt, filename_suffix)
-        dp.save_sigma_dg(parameters_folder, distributions.sigma_dg, filename_suffix)
-        dp.save_sigma_dy(parameters_folder, distributions.sigma_dy, filename_suffix)
+        # dp.save_sigma_dg(parameters_folder, distributions.sigma_dg, filename_suffix)
+        # dp.save_sigma_dy(parameters_folder, distributions.sigma_dy, filename_suffix)
 
-    def estimate_parameters_from_cv(self, evidence_folder, number_of_samples, burn_in, parameters_folder, k):
-        # Cross Validation
-        pass
+    def fit_and_evaluate(self, evidence_set, number_of_samples, burn_in, number_of_folds, evaluation_folder):
+        folds = self.shuffle_and_split_data(evidence_set, number_of_folds)
 
-    def predict_over_time(self, distributions, validation_set, number_of_samples, burn_in, predictions_folder, id):
-        lt_samples = np.zeros((validation_set.number_of_data_points, number_of_samples, validation_set.time_slices - 2))
-        rm_samples = np.zeros((validation_set.number_of_data_points, number_of_samples, validation_set.time_slices - 2))
-        tg_samples = np.zeros((validation_set.number_of_data_points, number_of_samples, validation_set.time_slices - 2))
-        ty_samples = np.zeros((validation_set.number_of_data_points, number_of_samples, validation_set.time_slices - 2))
-        dg_samples = np.zeros((NUMBER_OF_GREEN_VICTIMS, validation_set.number_of_data_points, number_of_samples,
-                               validation_set.time_slices - 2))
-        dy_samples = np.zeros((NUMBER_OF_YELLOW_VICTIMS, validation_set.number_of_data_points, number_of_samples,
-                               validation_set.time_slices - 2))
+        tg_baseline_log_losses = []
+        ty_baseline_log_losses = []
+        tg_model_log_losses = []
+        ty_model_log_losses = []
 
-        for t in tqdm(range(2, validation_set.time_slices), desc='Predicting overtime'):
-            lt_samples[:, :, t], rm_samples[:, :, t], tg_samples[:, :, t], ty_samples[:, :, t], dg_samples[:, :, :,
-                                                                                                t], dy_samples[:, :, :,
-                                                                                                    t] = self.model_builder.predict(
-                distributions, validation_set, t, number_of_samples, burn_in)
+        for training_set, test_set in folds:
+            distributions = self.model_builder.estimate_parameters(training_set, number_of_samples, burn_in)
+            tg_marginals, ty_marginals = self.model_builder.get_triaging_marginals_over_time(distributions, test_set)
+            tg_baseline_frequencies, ty_baseline_frequencies = self.model_builder.get_triaging_normalized_frequencies(
+                training_set)
 
-        filename_suffix = '{}dp_{}s_{}_{}bi'.format(validation_set.number_of_data_points, number_of_samples, burn_in,
-                                                    id)
-        data_processing.DataProcessing().save_predictions(predictions_folder, filename_suffix, lt_samples, rm_samples,
-                                                          tg_samples, ty_samples, dg_samples, dy_samples)
+            tg_baseline_log_loss, ty_baseline_log_loss = self.compute_accuracy_for_triaging(tg_baseline_frequencies,
+                                                                                            ty_baseline_frequencies,
+                                                                                            test_set)
+            tg_model_log_loss, ty_model_log_loss = self.compute_accuracy_for_triaging(tg_marginals, ty_marginals,
+                                                                                      test_set)
 
-    def compute_accuracy_for_triaging(self, tg_predictions, ty_predictions, validation_set):
-        pass
+            tg_baseline_log_losses.append(tg_baseline_log_loss)
+            ty_baseline_log_losses.append(ty_baseline_log_loss)
+            tg_model_log_losses.append(tg_model_log_loss)
+            ty_model_log_losses.append(ty_model_log_loss)
+
+        baseline_filename_suffix = 'baseline_{}dp_{}s_{}bi_{}f'.format(evidence_set.number_of_data_points,
+                                                                       number_of_samples, burn_in, number_of_folds)
+        filepath = '{}/{}.txt'.format(evaluation_folder, baseline_filename_suffix)
+        combined_log_loss = np.array([tg_baseline_log_losses, ty_baseline_log_losses])
+        np.savetxt(filepath, combined_log_loss)
+
+        model_filename_suffix = 'model_{}dp_{}s_{}bi_{}f'.format(evidence_set.number_of_data_points,
+                                                                 number_of_samples, burn_in, number_of_folds)
+        filepath = '{}/{}.txt'.format(evaluation_folder, model_filename_suffix)
+        combined_log_loss = np.array([tg_model_log_losses, ty_model_log_losses])
+        np.savetxt(filepath, combined_log_loss)
+
+        print('TG')
+        print('Baseline: {}'.format(np.mean(tg_baseline_log_loss)))
+        print('Model: {}'.format(np.mean(tg_model_log_loss)))
+
+        print('TY')
+        print('Baseline: {}'.format(np.mean(ty_baseline_log_loss)))
+        print('Model: {}'.format(np.mean(ty_model_log_loss)))
+
+    def shuffle_and_split_data(self, evidence_set, number_of_folds):
+        full_data = np.hstack(
+            [evidence_set.lt_evidence, evidence_set.rm_evidence, evidence_set.tg_evidence, evidence_set.ty_evidence])
+        kf = KFold(number_of_folds, shuffle=True)
+
+        folds = []
+
+        for train_index, test_index in kf.split(full_data):
+            lt_train = full_data[train_index, 0:evidence_set.time_slices]
+            lt_test = full_data[test_index, 0:evidence_set.time_slices]
+
+            rm_train = full_data[train_index, evidence_set.time_slices:2 * evidence_set.time_slices]
+            rm_test = full_data[test_index, evidence_set.time_slices:2 * evidence_set.time_slices]
+
+            tg_train = full_data[train_index, 2 * evidence_set.time_slices:3 * evidence_set.time_slices]
+            tg_test = full_data[test_index, 2 * evidence_set.time_slices:3 * evidence_set.time_slices]
+
+            ty_train = full_data[train_index, 3 * evidence_set.time_slices:4 * evidence_set.time_slices]
+            ty_test = full_data[test_index, 3 * evidence_set.time_slices:4 * evidence_set.time_slices]
+
+            train_set = data_processing.EvidenceDataSet(lt_train, rm_train, tg_train, ty_train, None, None)
+            test_set = data_processing.EvidenceDataSet(lt_test, rm_test, tg_test, ty_test, None, None)
+            folds.append((train_set, test_set))
+
+        return folds
+
+    def compute_accuracy_for_triaging(self, tg_marginals, ty_marginals, validation_set):
         """
         We only want to compute the accuracy for TG and TY at this point
         """
+        tg_log_loss = 0
+        ty_log_loss = 0
+
         # ylog(p(y)) + (1-y)log(1-p(y))
-        # for d in range(validation_set.number_of_data_points):
-        #     samples_over_time = pd.DataFrame(tg_predictions[d])
-        #
-        # for t in range(2, validation_set.time_slices - 1):
-        #     predictions = self.model_builder.predict(distributions, validation_set, t, number_of_samples, burn_in)
-        #     # Diff between predictions.tg and validation_set.tg_evidence[t+1]
+        for d in range(validation_set.number_of_data_points):
+            if len(tg_marginals.shape) == 3:
+                tg_log_loss += self.get_log_loss(validation_set.tg_evidence[d], tg_marginals[d])
+                ty_log_loss += self.get_log_loss(validation_set.ty_evidence[d], ty_marginals[d])
+            else:
+                tg_log_loss += self.get_log_loss(validation_set.tg_evidence[d], tg_marginals)
+                ty_log_loss += self.get_log_loss(validation_set.ty_evidence[d], ty_marginals)
+
+        return tg_log_loss / evidence_set.number_of_data_points, ty_log_loss / evidence_set.number_of_data_points
+
+    def get_log_loss(self, evidence, marginals):
+        log_marginals = log(marginals)
+        skip_first_evidence = evidence[1:]
+        return -np.mean(skip_first_evidence * log_marginals[:, 1] + (1 - skip_first_evidence) * log_marginals[:, 0])
+
+
+def predict_with_sum_product():
+    T = np.array([[0.3, 0.4, 0.3], [0.2, 0.5, 0.3], [0.1, 0.4, 0.5]])
+    Ea = np.array([[0.2, 0.8], [0.3, 0.7], [0.1, 0.9]])
+    Eb = np.array([[0.5, 0.5], [0.1, 0.9], [0.4, 0.6]])
+
+    evidence_a = [-1, 0, 1, 1, 1, 0, 0, 0]
+    evidence_b = [-1, 1, 1, 0, 0, 1, 1, 0]
+
+    times = 8
+
+    probs = np.zeros((times - 1, 2))
+    partials = []
+    p = np.array(T[0] * Ea[:, evidence_a[1]] * Eb[:, evidence_b[1]])
+    partials.append(p / np.sum(p))
+    for i in range(2, times):
+        p = T * Ea[:, evidence_a[i]] * Eb[:, evidence_b[i]]
+        partials.append(p / np.sum(p, axis=1).reshape(-1, 1))
+
+    temp = np.stack([np.sum(T * Ea[:, col], axis=1) for col in range(Ea.shape[1])])
+
+    probs[0] = np.sum(T[0] * Ea.T, axis=1)
+    probs[0] /= np.sum(probs[0])
+    probs[1] = np.sum(partials[0] * temp, axis=1)
+    probs[1] /= np.sum(probs[1])
+
+    for t in range(2, times - 1):
+        temp2 = temp.copy()
+        for j in range(t - 1, 0, -1):
+            temp2 = np.stack([np.sum(partials[j] * temp2[row], axis=1) for row in range(Ea.shape[1])])
+            temp2 /= np.sum(temp2, axis=0)
+        probs[t] = np.sum(partials[0] * temp2, axis=1)
+        probs[t] /= np.sum(probs[t])
+
+    print(probs)
+
+    # partials.append(T[0] * Ea.T)
+    # partials.append(T[0] * Ea[:,evidence_a[1]] * Eb[:,evidence_b[1]])
+    # partials.append(np.sum(np.stack([np.sum(T * Ea[:,evidence_a[2]] * Eb[:,evidence_b[2]] * Ea[:,col], axis=1) for col in range(Ea.shape[1])], axis=1)))
+    #
+    # temp = np.stack([np.sum(T * Ea[:,col], axis=1) for col in range(Ea.shape[1])])
+    #
+    # print(np.sum(partials[0], axis=1))
+    # print(np.sum(partials[1]*temp, axis=1))
+    # print(partials[2])
+    # print(np.sum(partials[2] * temp, axis=1))
+
+    # for t in range(1,3):
+    #     if t-1 == 0:
+    #         prob = np.sum(partials[t-1], axis=1)
+    #         print(prob)
+    #     else:
+    #         prob = np.sum(partials[t-1]*temp, axis=1)
+    #         print(prob)
+    #         # partials.append(T[0] * Ea[:,evidence_a[t-1]] * Eb[:,evidence_b[t-1]])
+    #         # prob = np.sum
+
+    # pred_a1 = np.sum(T[0][:, np.newaxis] * Ea, axis=0)
+    # print(T[0] * Ea[:,evidence_a[0]] * Eb[:,evidence_b[0]])
+    # print(np.stack([np.sum(T * Ea[:,col], axis=1) for col in range(Ea.shape[1])]))
+    # print(T[0] * Ea[:,evidence_a[0]] * Eb[:,evidence_b[0]] * np.stack([np.sum(T * Ea[:,col], axis=1) for col in range(Ea.shape[1])]))
+    # pred_a2 = np.sum(T[0] * Ea[:,evidence_a[1]] * Eb[:,evidence_b[1]] * np.stack([np.sum(T * Ea[:,col], axis=1) for col in range(Ea.shape[1])]), axis=1)
+    # print(pred_a2)
+    # print(pred_a2/np.sum(pred_a2))
+
+    # pred_a3 = np.sum(T[0] * Ea[:,evidence_a[0]] * Eb[:,evidence_b[0]] * np.sum(T * Ea[:,evidence_a[1]] * Eb[:,evidence_b[1]] * np.stack([np.sum(T * Ea[:,col], axis=1) for col in range(Ea.shape[1])]), axis=1))
+    partials = []
+    # partials[0] = T[0] * Ea[:,evidence_a[0]] * Eb[:,evidence_b[0]]
+
+    # for t in range(1,5):
+    #     partials[t] =
+    #
+    #     print(T[0] * Ea[:,evidence_a[0]] * Eb[:,evidence_b[0]])
+    # print(T * Ea[:,evidence_a[1]] * Eb[:,evidence_b[1]])
+    # print(np.stack([np.sum(T * Ea[:,col], axis=1) for col in range(Ea.shape[1])], axis=1))
 
 
 if __name__ == '__main__':
-    NUMBER_OF_SAMPLES = 3
-    BURN_IN = 1
+    NUMBER_OF_SAMPLES = 10
+    BURN_IN = 0
+
+    predict_with_sum_product()
 
     experimentation = Experimentation()
-    experimentation.estimate_parameters_on_full_data('data/evidence/internal', 'data/parameters/internal', 2000, 200)
+    # experimentation.estimate_parameters_on_full_data('data/evidence/internal', 'data/parameters/internal', NUMBER_OF_SAMPLES, BURN_IN)
 
-    # dp = data_processing.DataProcessing()
-    # evidence_set = dp.load_evidence_set('data/evidence/internal')
-    # distributions = Distributions()
-    #
-    # filename_suffix = 'full_data_6dp_4s_0bi'
-    # distributions.theta_s = dp.load_theta_s('data/parameters/internal', filename_suffix)
-    # distributions.pi_lt = dp.load_pi_lt('data/parameters/internal', filename_suffix)
-    # distributions.sigma_dg = dp.load_sigma_dg('data/parameters/internal', filename_suffix)
-    # distributions.sigma_dy = dp.load_sigma_dy('data/parameters/internal', filename_suffix)
-    #
-    # experimentation.predict_over_time(distributions, evidence_set, NUMBER_OF_SAMPLES, BURN_IN,
-    #                                   'data/predictions/internal', 0)
-
-    # processing = DataProcessing()
-    # processing.convert_experiments_data_to_evidence('data/experiments/internal/formatted', 'data/evidence/internal/')
-
-    # np.random.seed(42)
-    # random.seed(42)
-    # builder = ModelBuilder()
-    # builder.estimate_parameters('data/evidence/internal', 'data/parameters/internal', 100, 100)
-
-    # processing = DataProcessing()
-    # theta_s = processing.load_theta_s('data/parameters/internal', NUMBER_OF_DATA_POINTS, NUMBER_OF_SAMPLES, BURN_IN)
-    # pi_lt = processing.load_pi_lt('data/parameters/internal', NUMBER_OF_DATA_POINTS, NUMBER_OF_SAMPLES, BURN_IN)
-    # sigma_dg = processing.load_sigma_dg('data/parameters/internal', NUMBER_OF_DATA_POINTS, NUMBER_OF_SAMPLES, BURN_IN)
-    # sigma_dy = processing.load_sigma_dy('data/parameters/internal', NUMBER_OF_DATA_POINTS, NUMBER_OF_SAMPLES, BURN_IN)
-    #
-    # print('Stop')
-    #
-    # self.data_processing.save_theta_s(parameters_folder, estimated_theta_s, number_of_data_points,
-    #                                   number_of_samples, burn_in)
-    # self.data_processing.save_pi_lt(parameters_folder, estimated_pi_lt, number_of_data_points, number_of_samples,
-    #                                 burn_in)
-    # self.data_processing.save_sigma_dg(parameters_folder, estimated_sigma_dg, number_of_data_points,
-    #                                    number_of_samples, burn_in)
-    # self.data_processing.save_sigma_dy(parameters_folder, estimated_sigma_dy, number_of_data_points,
-    #                                    number_of_samples, burn_in)
+    dp = data_processing.DataProcessing()
+    evidence_set = dp.load_evidence_set('data/evidence/internal')
+    experimentation.fit_and_evaluate(evidence_set, NUMBER_OF_SAMPLES, BURN_IN, 3, 'data/evaluation/internal')
