@@ -37,7 +37,7 @@ class AABB:
         Returns:
             Pos: Bottom right coordinates
         """
-        return self._bottom_right
+        return copy.deepcopy(self._bottom_right)
 
     def get_material(self):
         return self._material

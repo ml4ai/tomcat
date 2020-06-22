@@ -113,22 +113,33 @@ class World:
                                       grid_world_mm_dd_yyyy_hh_mm_ss.JSON
         """
         output_dict = dict()
-        for aabb in self._aabb_list:
-            key = "AABB " + str(aabb.get_id())
-            value = "{} {} {}".format(str(aabb.get_top_left()), str(
-                aabb.get_bottom_right()), aabb.get_material())
-            output_dict[key] = value
 
-        j_object = json.dumps(output_dict)
+        output_dict["aabb_list"] = list()
+        output_dict["block_list"] = list()
+
+        for aabb in self._aabb_list:
+            cur_aabb = dict()
+            cur_aabb["id"] = str(aabb.get_id())
+
+            cur_aabb["x1"] = str(aabb.get_top_left().get_x())
+            cur_aabb["y1"] = str(aabb.get_top_left().get_y())
+            cur_aabb["z1"] = str(aabb.get_top_left().get_z())
+
+            cur_aabb["x2"] = str(aabb.get_bottom_right().get_x())
+            cur_aabb["y2"] = str(aabb.get_bottom_right().get_y())
+            cur_aabb["z2"] = str(aabb.get_bottom_right().get_z())
+
+            cur_aabb["material"] = aabb.get_material()
+
+            output_dict["aabb_list"].append(cur_aabb)
 
         if filename is None:
             now = datetime.now()
             filename = "grid_world" + \
-                str(now.strftime("_%d_%m_%Y_%H_%M_%S")) + ".JSON"
+                str(now.strftime("_%d_%m_%Y_%H_%M_%S")) + ".json"
 
-        JSON_file = open(filename, "w")
-        JSON_file.write(j_object)
-        JSON_file.close()
+        with open(filename, "w") as file_out:
+            json.dump(output_dict, file_out, indent=4)
 
 
 
@@ -151,5 +162,5 @@ class World:
 # Each AABB is of size 10 and is separated by 15 units from the adjacent AABBs
 world = World()
 world.generate_N_AABB_grid(2, 15)
-# world.debug_print_AABB(2)
+#world.debug_print_AABB(2)
 world.to_JSON()
