@@ -1,6 +1,7 @@
 from pos import Pos
 from aabb import AABB
 from block import Block
+import random
 import json
 from datetime import datetime
 
@@ -38,6 +39,24 @@ class World:
             block (Block): The block to add
         """
         self._block_list.append(block)
+    
+
+    def get_random_victim(self, pos):
+        """
+        This method gets a random victim. Maybe this method should be moved outside this class?
+
+        Args:
+            pos (Pos): The position at which to create the victim block
+
+        Returns:
+            Block: The victim block
+        """
+        randInt = random.randint(1,2)
+        if randInt == 1:
+            victim = Block("victim", pos, "prismarine")
+        else:
+            victim = Block("victim", pos, "gold")
+        return victim
 
 
 
@@ -98,8 +117,39 @@ class World:
             self.add_AABB(cur_aabb)
             prev_aabb = cur_aabb  # Add the AABB to the list of AABB and set the previous value = current so the next AABB can be built at the correct relative position
 
+    def generate_blocks(self):
+        for aabb in self._aabb_list:
+            middle_x = aabb.get_top_left().get_x() + (aabb.get_bottom_right().get_x() - aabb.get_top_left().get_x())//2
+            middle_z = aabb.get_top_left().get_z() + (aabb.get_bottom_right().get_z() - aabb.get_top_left().get_z())//2
+            middle = Pos(middle_x, 0 , middle_z)
+            
+            top_edge_mid = aabb.get_top_left()
+            top_edge_mid.set_x(middle_x)
+            top_edge_mid.set_y(0)
+
+            bottom_edge_mid = aabb.get_bottom_right()
+            bottom_edge_mid.set_x(middle_x)
+            bottom_edge_mid.set_y(0)
+
+            left_edge_mid = aabb.get_top_left()
+            left_edge_mid.set_z(middle_z)
+            left_edge_mid.set_y(0)
+
+            right_edge_mid = aabb.get_bottom_right()
+            right_edge_mid.set_z(middle_z)
+            right_edge_mid.set_y(0)
+
+            top_door = Block("door", top_edge_mid, "oak")
+            bottom_door = Block("door", bottom_edge_mid, "oak")
+            left_door = Block("door", left_edge_mid, "oak")
+            right_door = Block("door", right_edge_mid, "oak")
+            victim = self.get_random_victim(middle)
+
+            self._block_list.extend([top_door, bottom_door, left_door, right_door])
+            self._block_list.append(victim)
 
 
+    
     def to_JSON(self, filename=None):
         """
         Creates a JSON from the World object where each AABB has an entry in an output dictionary such that they key value pairs are:
@@ -132,6 +182,15 @@ class World:
             cur_aabb["material"] = aabb.get_material()
 
             output_dict["aabb_list"].append(cur_aabb)
+        
+        for block in self._block_list:
+            cur_block = dict()
+            cur_block["name"] = block.get_name()
+            cur_block["x"] = block.get_x()
+            cur_block["y"] = block.get_y()
+            cur_block["z"] = block.get_z()
+            cur_block["material"] = block.get_material()
+            output_dict["block_list"].append(cur_block)
 
         if filename is None:
             now = datetime.now()
@@ -142,25 +201,9 @@ class World:
             json.dump(output_dict, file_out, indent=4)
 
 
-
-    def debug_print_AABB(self, N):
-        """
-        A debug print function to see if the AABB were added correctly. You have to correctly specify the grid size.
-
-        Args:
-            N ([int]): The number of AABB in each axis. This should match what was given to the generator.
-        """
-
-        for i in range(len(self._aabb_list)):
-            if ((i + 1) % N) == 0:
-                print(str(self._aabb_list[i]))
-            else:
-                print(str(self._aabb_list[i]), end="\t")
-
-
 # Sample code which creates a world, initializes it to a grid of size 2x2
 # Each AABB is of size 10 and is separated by 15 units from the adjacent AABBs
-world = World()
-world.generate_N_AABB_grid(2, 15)
-#world.debug_print_AABB(2)
-world.to_JSON()
+not_a_boring_world = World()
+not_a_boring_world.generate_N_AABB_grid(2, 15)
+not_a_boring_world.generate_blocks()
+not_a_boring_world.to_JSON()
