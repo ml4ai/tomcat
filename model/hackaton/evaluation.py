@@ -116,8 +116,8 @@ def get_log_loss(evidence, probabilities):
     return -np.mean(skip_first_evidence * log_marginals[:, 1] + (1 - skip_first_evidence) * log_marginals[:, 0])
 
 if __name__ == '__main__':
-    NUMBER_OF_SAMPLES = 2
-    BURN_IN = 1
+    NUMBER_OF_SAMPLES = 5000
+    BURN_IN = 500
     K = 4
 
     np.random.seed(42)
