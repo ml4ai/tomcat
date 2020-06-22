@@ -306,6 +306,12 @@ def load_evidence_set(evidence_folder):
 if __name__ == '__main__':
     TIME_GAP = 1
     TIME_SLICES = 600
+    convert_experiments_data_to_evidence_set('../data/experiments/asist/formatted/singleplayer',
+                                             '../data/evidence/asist/sparky', MissionMap.SINGLEPLAYER, TIME_GAP,
+                                             TIME_SLICES)
     convert_experiments_data_to_evidence_set('../data/experiments/asist/formatted/sparky',
                                              '../data/evidence/asist/sparky', MissionMap.SPARKY, TIME_GAP,
+                                             TIME_SLICES)
+    convert_experiments_data_to_evidence_set('../data/experiments/asist/formatted/falcon',
+                                             '../data/evidence/asist/sparky', MissionMap.FALCON, TIME_GAP,
                                              TIME_SLICES)
