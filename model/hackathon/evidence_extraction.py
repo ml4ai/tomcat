@@ -2,7 +2,7 @@ import os
 from tqdm import tqdm
 import numpy as np
 import json
-from hackaton import ta3_data_adapter as ta3_data_adapter
+from hackathon import ta3_data_adapter as ta3_data_adapter
 import datetime
 from enum import Enum
 

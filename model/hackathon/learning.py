@@ -2,7 +2,7 @@ import numpy as np
 from tqdm import tqdm
 import copy
 from scipy.stats import dirichlet, beta
-from hackaton import utils as utils
+from hackathon import utils as utils
 
 
 class ParameterLearning:

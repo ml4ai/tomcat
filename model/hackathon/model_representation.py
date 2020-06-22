@@ -1,4 +1,4 @@
-from hackaton import evidence_extraction as evidence_extraction, utils as utils
+from hackathon import evidence_extraction as evidence_extraction, utils as utils
 import numpy as np
 
 

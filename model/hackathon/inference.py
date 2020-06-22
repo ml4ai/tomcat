@@ -1,6 +1,6 @@
 import numpy as np
 from tqdm import tqdm
-from hackaton import utils as utils
+from hackathon import utils as utils
 
 
 class ModelInference():

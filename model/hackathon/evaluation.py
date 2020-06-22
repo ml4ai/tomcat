@@ -1,10 +1,10 @@
 import numpy as np
 from sklearn.model_selection import KFold
-from hackaton.evidence_extraction import EvidenceSet, MissionMap, load_evidence_set
-from hackaton.learning import ParameterLearning
-from hackaton.inference import ModelInference
-from hackaton import utils as utils
-from hackaton.model_representation import Model
+from hackathon.evidence_extraction import EvidenceSet, MissionMap, load_evidence_set
+from hackathon.learning import ParameterLearning
+from hackathon.inference import ModelInference
+from hackathon import utils as utils
+from hackathon.model_representation import Model
 import random
 
 def fit_and_evaluate(original_model, evidence_set, number_of_samples, burn_in, number_of_folds):
