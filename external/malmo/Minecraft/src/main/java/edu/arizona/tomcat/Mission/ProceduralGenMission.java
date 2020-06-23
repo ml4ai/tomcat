@@ -1,5 +1,7 @@
 package edu.arizona.tomcat.Mission;
 
+import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 import com.microsoft.Malmo.Schemas.PosAndDirection;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
@@ -11,7 +13,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Map;
 
 public class ProceduralGenMission extends Mission {
 
@@ -25,14 +32,21 @@ public class ProceduralGenMission extends Mission {
 
     private void buildStructures(World world) {
         if (this.shouldBuild == true) {
+            Map<String, ArrayList<LinkedTreeMap<String, String>>> blueprint = this.getBlueprintFromJSON("out.json");
+            for (LinkedTreeMap<String, String> AABB : blueprint.get("aabb_list")) {
+                int x1 = Integer.parseInt(AABB.get("x1"));
+                int y1 = Integer.parseInt(AABB.get("y1"));
+                int z1 = Integer.parseInt(AABB.get("z1"));
 
-            BlockPos pos1 = new BlockPos(0, 0, 0);
-            BlockPos pos2 = new BlockPos(5, 5, 5);
-            this.placeAABB(world, pos1, pos2, false);
+                int x2 = Integer.parseInt(AABB.get("x2"));
+                int y2 = Integer.parseInt(AABB.get("y2"));
+                int z2 = Integer.parseInt(AABB.get("z2"));
 
-            pos1 = new BlockPos(10, 0, 0);
-            pos2 = new BlockPos(15, 5, 5);
-            this.placeAABB(world, pos1, pos2, true);
+                BlockPos topLeft = new BlockPos(x1, y1, z1);
+                BlockPos bottomRight = new BlockPos(x2, y2, z2);
+                this.placeAABB(world, topLeft, bottomRight, true);
+
+            }
 
             this.shouldBuild = false;
         } else {
@@ -51,19 +65,30 @@ public class ProceduralGenMission extends Mission {
                     if (isHollow) {
                         if (x == x1 || x == x2 || z == z1 || z == z2) {
                             BlockPos pos = new BlockPos(x, 4 + y, z);
-                            world.setBlockState(pos, Blocks.DIAMOND_BLOCK.getDefaultState());
+                            world.setBlockState(pos, Blocks.PLANKS.getDefaultState());
                         }
-                    }else{
+                    } else {
                         BlockPos pos = new BlockPos(x, 4 + y, z);
-                        world.setBlockState(pos, Blocks.DIAMOND_BLOCK.getDefaultState());
+                        world.setBlockState(pos, Blocks.PLANKS.getDefaultState());
                     }
                 }
             }
         }
     }
 
-    private void parseJSON(){
-        // TODO Implement this
+    private Map<String, ArrayList<LinkedTreeMap<String, String>>> getBlueprintFromJSON(String filename) {
+        String path = filename;
+
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(path));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        Gson gson = new Gson();
+        Map<String, ArrayList<LinkedTreeMap<String, String>>> blueprint = gson.fromJson(reader, Map.class);
+        return blueprint;
 
     }
 
