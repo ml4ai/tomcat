@@ -1,0 +1,54 @@
+#!/usr/bin/env python
+
+# A simple Python script to replay messages from a TA3 experiment to the message bus.
+import sys
+import json
+import argparse
+import subprocess as sp
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("input", help="The messages file to replay to the bus")
+    parser.add_argument(
+        "-p",
+        "--port",
+        type=int,
+        help="Port that the mosquitto message broker is running on.",
+        default=1883,
+    )
+    args = parser.parse_args()
+    timestamp = ""
+    with open(args.input, "r") as f:
+        for line in f:
+            data = json.loads(line)
+            new_timestamp = data["@timestamp"]
+            print(new_timestamp, timestamp)
+            if new_timestamp < timestamp:
+                print("causality violated!")
+            timestamp = new_timestamp
+            for key in ("message", "@timestamp", "@version", "host"):
+                del data[key]
+            topic = data.pop("topic")
+            try:
+                sp.run(
+                    [
+                        "mosquitto_pub",
+                        "-p",
+                        str(args.port),
+                        "-t",
+                        topic,
+                        "-m",
+                        json.dumps(data),
+                    ],
+                    check=True,
+                    capture_output=True,
+                )
+            except sp.CalledProcessError as e:
+                print(
+                    "Call to mosquitto_pub exited with return code "
+                    + str(e.returncode)
+                    + ".",
+                    "Please check if the mosquitto broker is up and running on port",
+                    str(args.port),
+                )
+                break
