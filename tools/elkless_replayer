@@ -1,0 +1,77 @@
+#!/usr/bin/env python3
+
+""" ELKless Replayer is a simple program to replay messages from a file
+containing messages collected during a TA3 experimental trial and dumped from
+an Elasticsearch database.
+
+For each line in the input file, it extracts the JSON-serialized message and
+the topic it was published to, and republishes the message to the same
+topic."""
+
+# To see the command line arguments and invocation pattern, run
+#     ./elkless_replayer -h
+
+import sys
+import json
+import argparse
+import subprocess as sp
+
+if __name__ == "__main__":
+    try:
+        sp.run(
+            ["command", "-v", "mosquitto_pub"], check=True, capture_output=True
+        )
+    except sp.CalledProcessError as e:
+        sys.exit(
+            "Could not find the mosquitto_pub client executable - "
+            "please make sure it is installed."
+        )
+
+    # Argument parsing
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("input", help="The messages file to replay to the bus")
+    parser.add_argument(
+        "-p",
+        "--port",
+        type=int,
+        help="Port that the mosquitto message broker is running on.",
+        default=1883,
+    )
+    args = parser.parse_args()
+
+    # Open the input file, parse each line in it as a JSON-serialized object.
+    with open(args.input, "r") as f:
+        for line in f:
+            data = json.loads(line)
+            # Delete keys that were not in the original message, for more
+            # faithful replaying.
+            for key in ("message", "@timestamp", "@version", "host"):
+                del data[key]
+
+            # Get the topic to publish the message to.
+            topic = data.pop("topic")
+
+            # Publish the message to the given topic.
+            try:
+                sp.run(
+                    [
+                        "mosquitto_pub",
+                        "-p",
+                        str(args.port),
+                        "-t",
+                        topic,
+                        "-m",
+                        json.dumps(data),
+                    ],
+                    check=True,
+                    capture_output=True,
+                )
+            except sp.CalledProcessError as e:
+                sys.exit(
+                    "Call to mosquitto_pub exited with return code "
+                    + str(e.returncode)
+                    + ".\n"
+                    + "Please check if the mosquitto broker is up and running on port "
+                    + str(args.port)
+                    + "."
+                )
