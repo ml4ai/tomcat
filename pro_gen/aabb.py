@@ -19,6 +19,12 @@ class AABB:
         self._material = material.lower()
 
     def get_id(self):
+        """
+        This method returns the id associated with the AABB.
+
+        Returns:
+            int: The AABB id.
+        """
         return self._aabb_id
 
     def get_top_left(self):
@@ -26,7 +32,7 @@ class AABB:
         Returns a copy of the Pos object for the top left.
 
         Returns:
-            Pos: Top left coordinates
+            Pos: Top left coordinates. It is a copy of the Pos object so aliasing isn't an issue.
         """
         return copy.deepcopy(self._top_left)
 
@@ -35,11 +41,17 @@ class AABB:
         Returns a copy of the Pos object for the bottom right.
 
         Returns:
-            Pos: Bottom right coordinates
+            Pos: Bottom right coordinates. It is a copy of the Pos object so aliasing isn't an issue.
         """
         return copy.deepcopy(self._bottom_right)
 
     def get_material(self):
+        """
+        Returns the material the AABB is build out of
+
+        Returns:
+            str: The material the AABB is built of.
+        """
         return self._material
 
     def __str__(self):
@@ -77,7 +89,7 @@ class AABB:
 
     def __hash__(self):
         """
-        It hashes to the id.
+        It hashes to the id. TODO: Use the top left coordinates in hash generation here before creating graph representation.
 
         Returns:
             int: The AABB id
