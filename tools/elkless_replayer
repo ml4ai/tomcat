@@ -41,8 +41,8 @@ if __name__ == "__main__":
 
     # Open the input file, parse each line in it as a JSON-serialized object.
     with open(args.input, "r") as f:
-        for line in f:
-            data = json.loads(line)
+        messages = [json.loads(line) for line in f]
+        for data in sorted(messages, key = lambda x: x["@timestamp"]):
             # Delete keys that were not in the original message, for more
             # faithful replaying.
             for key in ("message", "@timestamp", "@version", "host"):
