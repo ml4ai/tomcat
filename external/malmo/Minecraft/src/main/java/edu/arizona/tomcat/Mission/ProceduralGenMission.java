@@ -12,7 +12,7 @@ public class ProceduralGenMission extends Mission {
 
     public ProceduralGenMission() {
         super();
-        this.id = ID.TUTORIAL;
+        this.id = ID.PROCEDURAL;
     }
 
     @Override
@@ -57,12 +57,12 @@ public class ProceduralGenMission extends Mission {
     }
 
     @Override
-    protected void beforePhaseTrasition() {
+    public void goalAchieved(World world, MissionGoal goal) {
 
     }
 
     @Override
-    public void goalAchieved(World world, MissionGoal goal) {
-
+    protected void onPlayerDeath(EntityPlayer player) {
+        this.onTimeOut();
     }
 }
