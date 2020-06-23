@@ -3,6 +3,7 @@ package edu.arizona.tomcat.Mission;
 import com.microsoft.Malmo.Schemas.PosAndDirection;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
 
@@ -24,6 +25,11 @@ public class ProceduralGenMission extends Mission {
         super.init(world);
     }
 
+
+    @Override
+    protected void beforePhaseTrasition() {
+        // No action to be taken
+    }
 
     @Override
     protected void updateScene(World world) {
