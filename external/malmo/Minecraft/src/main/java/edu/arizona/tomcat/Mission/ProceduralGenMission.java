@@ -62,7 +62,7 @@ public class ProceduralGenMission extends Mission {
                 this.placeAABB(world, topLeft, bottomRight, material, true);
             }
 
-
+            // Extract information and use it to place blocks
             for (LinkedTreeMap<String, String> block : blueprint.get("block_list")) {
                 int x = Integer.parseInt(block.get("x"));
                 int y = 4 + Integer.parseInt(block.get("y")); // Above the AABB floor
@@ -112,10 +112,19 @@ public class ProceduralGenMission extends Mission {
         }
     }
 
+    /**
+     * This method places the block given to it based on the aterial and name
+     *
+     * @param world    - The world in which the block is to be placed
+     * @param pos      - The position to place it in. In case of a door this is the position of the bottom.
+     * @param name     - The name of the block. Not the same as the material of the block.
+     * @param material - The material of the block.
+     */
     private void placeBlock(World world, BlockPos pos, String name, String material) {
         if (name.equals("door")) {
+            // Doors are special adn we need to place a bottom and top half
             world.setBlockState(pos, this.getBlockState("door_bottom"));
-            BlockPos topPos = new BlockPos(pos.getX(), pos.getY()+1, pos.getZ());
+            BlockPos topPos = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
             world.setBlockState(topPos, this.getBlockState("door_top"));
         } else {
             world.setBlockState(pos, this.getBlockState(material));
