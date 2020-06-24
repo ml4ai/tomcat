@@ -13,7 +13,7 @@ class ProceduralGenerator:
     This class represents a procedural generator.
     """
 
-    def generate_grid_world(self, N, sep, AABB_size, filename = None):
+    def generate_grid_world(self, N, sep, AABB_size, filename=None):
         """
         This method uses the procedural generation objectto create a grid world and output the generated world to a JSON file.
 
@@ -24,10 +24,9 @@ class ProceduralGenerator:
             filename (str, optional): The name of the output JSON. Defaults to grid_world_mm_dd_yyyy_hh_mm_ss.json in current directory.
         """
         world = World()
-        world = self._generate_N_AABB_grid(world,N,sep,AABB_size)
+        world = self._generate_N_AABB_grid(world, N, sep, AABB_size)
         world = self._generate_blocks(world)
         world.to_JSON(filename)
-
 
     def get_random_victim(self, pos):
         """
@@ -39,15 +38,14 @@ class ProceduralGenerator:
         Returns:
             Block: The victim block
         """
-        randInt = random.randint(1,2)
+        randInt = random.randint(1, 2)
         if randInt == 1:
             victim = Block("victim", pos, "prismarine")
         else:
             victim = Block("victim", pos, "gold")
         return victim
 
-
-    def _generate_N_AABB_grid(self, world,  N, sep, AABB_size):
+    def _generate_N_AABB_grid(self, world, N, sep, AABB_size):
         """
         This method initializes this World into a grid of NxN AABB structures such that each AABB is a cube of size = AABB_size.
         In the grid the separation between two adjacent AABBs along the cardinal directions are equal to the number of separation units specified.
@@ -82,10 +80,8 @@ class ProceduralGenerator:
                 # Again, only Z changes so we can calculate the top_right of
                 # the AABB using the bottom left
                 bottom_right = Pos(
-                    AABB_size,
-                    AABB_size,
-                    top_left.get_z() +
-                    AABB_size)
+                    AABB_size, AABB_size, top_left.get_z() + AABB_size
+                )
 
                 cur_aabb = AABB(id_ctr, top_left, bottom_right)
 
@@ -107,10 +103,24 @@ class ProceduralGenerator:
 
     def _generate_blocks(self, world):
         for aabb in world._aabb_list:
-            middle_x = aabb.get_top_left().get_x() + (aabb.get_bottom_right().get_x() - aabb.get_top_left().get_x())//2
-            middle_z = aabb.get_top_left().get_z() + (aabb.get_bottom_right().get_z() - aabb.get_top_left().get_z())//2
-            middle = Pos(middle_x, 0 , middle_z)
-            
+            middle_x = (
+                aabb.get_top_left().get_x()
+                + (
+                    aabb.get_bottom_right().get_x()
+                    - aabb.get_top_left().get_x()
+                )
+                // 2
+            )
+            middle_z = (
+                aabb.get_top_left().get_z()
+                + (
+                    aabb.get_bottom_right().get_z()
+                    - aabb.get_top_left().get_z()
+                )
+                // 2
+            )
+            middle = Pos(middle_x, 0, middle_z)
+
             top_edge_mid = aabb.get_top_left()
             top_edge_mid.set_x(middle_x)
             top_edge_mid.set_y(0)  # Door in the middle of top edge
@@ -130,12 +140,19 @@ class ProceduralGenerator:
             top_door = Block("door", top_edge_mid, "oak_door")
             bottom_door = Block("door", bottom_edge_mid, "oak_door")
             left_door = Block("door", left_edge_mid, "oak_door")
-            right_door = Block("door", right_edge_mid, "oak_door")  # Doors are wooden
-            victim = self.get_random_victim(middle)  # Add a victim in every AABB
+            right_door = Block(
+                "door", right_edge_mid, "oak_door"
+            )  # Doors are wooden
+            victim = self.get_random_victim(
+                middle
+            )  # Add a victim in every AABB
 
-            world._block_list.extend([top_door, bottom_door, left_door, right_door])
+            world._block_list.extend(
+                [top_door, bottom_door, left_door, right_door]
+            )
             world._block_list.append(victim)
         return world
+
 
 def main():
     """
@@ -154,15 +171,16 @@ def main():
         sep = 10
         AABB_size = 10  # Default values
         filename = "../external/malmo/Minecraft/run/procedural.json"
-        
+
         if len(args) >= 2:
             N = (int)(args[1])
         if len(args) >= 3:
-            sep = (int) (args[2])
+            sep = (int)(args[2])
         if len(args) == 4:
-            AABB_size = (int) (args[3])
+            AABB_size = (int)(args[3])
 
         generator.generate_grid_world(N, sep, AABB_size, filename)
+
 
 if __name__ == "__main__":
     main()

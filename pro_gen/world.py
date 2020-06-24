@@ -34,7 +34,7 @@ class World:
             block (Block): The block to add
         """
         self._block_list.append(block)
-       
+
     def to_JSON(self, filename=None):
         """
         Creates a JSON from the World object where the the aabb_list and block_list id are a list of dictionaries for each aabb and block.
@@ -80,16 +80,19 @@ class World:
 
         self._add_AABB_dict_to_output(output_dict)
         self._add_blocks_dict_to_output(output_dict)
-    
+
         # Write the output to file
         if filename is None:
             now = datetime.now()
-            filename = "grid_world" + \
-                str(now.strftime("_%d_%m_%Y_%H_%M_%S")) + ".json"
+            filename = (
+                "grid_world"
+                + str(now.strftime("_%d_%m_%Y_%H_%M_%S"))
+                + ".json"
+            )
 
         with open(filename, "w") as file_out:
             json.dump(output_dict, file_out, indent=4)
-    
+
     def _add_AABB_dict_to_output(self, output_dict):
         """
         This function adds all the AABBs the world knows about as dictionary objects to the output dictionary's
@@ -113,7 +116,7 @@ class World:
             cur_aabb["material"] = aabb.get_material()
 
             output_dict["aabb_list"].append(cur_aabb)
-    
+
     def _add_blocks_dict_to_output(self, output_dict):
         """
         This function adds all the blocks the world knows about as dictionary objects to the output dictionary's

@@ -2,7 +2,6 @@ import copy
 
 
 class AABB:
-
     def __init__(self, aabb_id, top_left, bottom_right, material="planks"):
         """
         Constructor to initialize the AABB.
@@ -66,9 +65,11 @@ class AABB:
             str: The string representation
         """
         return "{}: {} {} {}".format(
-            self._aabb_id, str(
-                self._top_left), str(
-                self._bottom_right), self._material)
+            self._aabb_id,
+            str(self._top_left),
+            str(self._bottom_right),
+            self._material,
+        )
 
     def __eq__(self, other):
         """
@@ -82,8 +83,11 @@ class AABB:
             boolean: True or False if equal or not
         """
         if isinstance(other, AABB):
-            return self.get_id() == other.get_id() or self.get_top_left(
-            ) == other.get_top_left() or self.get_bottom_right() == other.get_bottom_right()
+            return (
+                self.get_id() == other.get_id()
+                or self.get_top_left() == other.get_top_left()
+                or self.get_bottom_right() == other.get_bottom_right()
+            )
         else:
             return False
 
