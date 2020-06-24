@@ -69,7 +69,7 @@ class World:
 
         Args:
             filename (str, optional): Name of the file to store output the JSON to. If nothing is given the filename will be:
-                                      grid_world_mm_dd_yyyy_hh_mm_ss.json
+                                      grid_world_mm_dd_yyyy_hh_mm_ss.json in current directory
         """
 
         # Add output to a dictionary
@@ -126,9 +126,9 @@ class World:
             cur_block = dict()
             cur_block["name"] = block.get_name()
 
-            cur_block["x"] = block.get_x()
-            cur_block["y"] = block.get_y()
-            cur_block["z"] = block.get_z()
+            cur_block["x"] = str(block.get_x())
+            cur_block["y"] = str(block.get_y())
+            cur_block["z"] = str(block.get_z())
 
             cur_block["material"] = block.get_material()
 

@@ -3,7 +3,7 @@ import copy
 
 class AABB:
 
-    def __init__(self, aabb_id, top_left, bottom_right, material="wood"):
+    def __init__(self, aabb_id, top_left, bottom_right, material="planks"):
         """
         Constructor to initialize the AABB.
 
