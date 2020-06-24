@@ -1,5 +1,6 @@
 import copy
-
+import random
+from pos import Pos
 
 class AABB:
     def __init__(self, aabb_id, top_left, bottom_right, material="planks"):
@@ -53,6 +54,76 @@ class AABB:
         """
         return self._material
 
+    
+    def get_random_pos_at_base(self, positive_x_offset = 1, positive_z_offset=1, negative_x_offset=1, negative_z_offset=1):
+        
+        # Calculate start and end with offset considered.
+        start_x = self._top_left.get_x()+ positive_x_offset
+        start_z = self._top_left.get_z()+ positive_z_offset
+
+        end_x = self._bottom_right.get_x()- negative_x_offset
+        end_z = self._bottom_right.get_z()- negative_z_offset
+
+        rand_x = random.randint(start_x,end_x)
+        rand_z = random.randint(start_z, end_z)
+
+        return Pos(rand_x, 0, rand_z)
+
+    def get_midpoint_x(self):
+        middle_x = (
+                self.get_top_left().get_x()
+                + (
+                    self.get_bottom_right().get_x()
+                    - self.get_top_left().get_x()
+                )
+                // 2
+            )
+        return middle_x
+
+    def get_midpoint_z(self):
+        middle_z = (
+            self.get_top_left().get_z()
+            + (
+                self.get_bottom_right().get_z()
+                - self.get_top_left().get_z()
+            )
+            // 2
+        )
+        return middle_z
+    
+    def get_midpoint_y(self):
+        middle_y = (
+            self.get_top_left().get_y()
+            + (
+                self.get_bottom_right().get_y()
+                - self.get_top_left().get_y()
+            )
+            // 2
+        )
+        return middle_y
+
+    def get_edges_at_base(self):
+        middle_x = self.get_midpoint_x()
+        middle_z = self.get_midpoint_z()
+
+        top_edge_mid = self.get_top_left()
+        top_edge_mid.set_x(middle_x)
+        top_edge_mid.set_y(0)  # Middle of top edge
+
+        bottom_edge_mid = self.get_bottom_right()
+        bottom_edge_mid.set_x(middle_x)
+        bottom_edge_mid.set_y(0)  # Middle of bottom edge
+
+        left_edge_mid = self.get_top_left()
+        left_edge_mid.set_z(middle_z)
+        left_edge_mid.set_y(0)  # Middle of left edge
+
+        right_edge_mid = self.get_bottom_right()
+        right_edge_mid.set_z(middle_z)
+        right_edge_mid.set_y(0)  # Middle of right edge
+
+        return top_edge_mid,right_edge_mid,bottom_edge_mid,left_edge_mid
+    
     def __str__(self):
         """
         Returns a string representation of the AABB object which looks like:
