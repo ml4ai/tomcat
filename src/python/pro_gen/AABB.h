@@ -1,3 +1,4 @@
+#pragma once
 #include "Pos.h"
 #include <string>
 using namespace std;

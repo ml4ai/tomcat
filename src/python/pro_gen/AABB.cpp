@@ -34,3 +34,5 @@ int AABB::getMidpointZ(){
    int mid_z = ((this -> topLeft).getZ()+ ((this -> bottomRight).getZ() - (this -> topLeft).getZ())/2);
    return mid_z;
 }
+
+AABB::~AABB(){}
