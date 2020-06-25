@@ -28,7 +28,7 @@ class ProceduralGenerator:
         world = self._generate_blocks(world)
         world.to_JSON(filename)
 
-    def get_random_victim(self, pos, green_bias = 0.5):
+    def get_random_victim(self, pos, green_bias=0.5):
         """
         This method gets a random victim. Maybe this method should be moved outside this class?
 
@@ -105,40 +105,41 @@ class ProceduralGenerator:
         return world
 
     def _generate_blocks(self, world):
-        for aabb in world._aabb_list:   
+        for aabb in world._aabb_list:
             self._gen_all_doors_in_aabb(world, aabb)
-            self._gen_victim_in_aabb(world,aabb)
-     
+            self._gen_victim_in_aabb(world, aabb)
 
         return world
 
     def _gen_victim_in_aabb(self, world, aabb):
         # offset by 2 in all directions
-        rand_pos = aabb.get_random_pos_at_base(2,2,2,2)
-        
+        rand_pos = aabb.get_random_pos_at_base(2, 2, 2, 2)
+
         # Add victims to random positions in roos. Randomise the rooms to which victims are added (50% in this case)
-        rand= random.randint(0, 100)
+        rand = random.randint(0, 100)
         if rand <= 75:
-            victim = self.get_random_victim(rand_pos, green_bias = 0.60)
+            victim = self.get_random_victim(rand_pos, green_bias=0.60)
             world._block_list.append(victim)
         else:
             pass
-    
+
     def _gen_all_doors_in_aabb(self, world, aabb):
         edges = aabb.get_edges_at_base()
         top_edge_mid = edges[0]
         right_edge_mid = edges[1]
         bottom_edge_mid = edges[2]
-        left_edge_mid = edges[3]  # All of these are at y = 0 ad we want it that way for the doors
+        left_edge_mid = edges[
+            3
+        ]  # All of these are at y = 0 ad we want it that way for the doors
 
         top_door = Block("door", top_edge_mid, "oak_door")
         bottom_door = Block("door", bottom_edge_mid, "oak_door")
         left_door = Block("door", left_edge_mid, "oak_door")
-        right_door = Block("door", right_edge_mid, "oak_door")  
+        right_door = Block("door", right_edge_mid, "oak_door")
 
         world._block_list.extend(
-                [top_door, bottom_door, left_door, right_door]
-                )
+            [top_door, bottom_door, left_door, right_door]
+        )
 
 
 def main():
