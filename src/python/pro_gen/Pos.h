@@ -14,7 +14,7 @@ class Pos{
         void setY(int);
         void setZ(int);
         Pos(int, int, int);
-        Pos();
+        Pos (const Pos & other); 
         ~Pos();
 
     

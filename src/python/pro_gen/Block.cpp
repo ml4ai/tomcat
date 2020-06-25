@@ -3,12 +3,7 @@
 
 using namespace std;
 
-Block::Block(string name, string material, Pos pos1){
-    this -> name = name;
-    this -> material = material;
-    this -> pos = pos1;
-
-}
+Block::Block(string blockName, string blockMaterial, Pos blockPos): name(blockName), material(blockMaterial), pos(blockPos){}
 
 string Block::getName(){
     return this -> name;
@@ -18,23 +13,16 @@ string Block::getMaterial(){
     return this -> material;
 }
 
-int Block::getBlockX(){
+int Block::getX(){
     return this -> pos.getX();
 }
 
-int Block::getBlockY(){
+int Block::getY(){
     return this -> pos.getY();
 }
 
-int Block::getBlockZ(){
+int Block::getZ(){
     return this -> pos.getZ();
 }
 
 Block::~Block(){}
-
-int main(){
-    Pos pos(10,20,30);
-    Block block("door", "oak_door", pos);
-    cout << block.getMaterial() << endl;
-    return 0;
-}

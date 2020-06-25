@@ -6,10 +6,10 @@ Pos::Pos(int x, int y, int z){
     this -> z = z;
 }
 
-Pos::Pos(void){
-    this -> x =0;
-    this -> y =0;
-    this -> z =0;
+Pos::Pos (const Pos & other){
+    this -> x = other.x;
+    this -> y =  other.y;
+    this -> z = other.z;
 }
 
 int Pos::getX(){return this -> x;}

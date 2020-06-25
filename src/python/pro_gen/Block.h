@@ -12,9 +12,9 @@ class Block{
     public:
         string getName();
         string getMaterial();
-        int getBlockX();
-        int getBlockY();
-        int getBlockZ();
+        int getX();
+        int getY();
+        int getZ();
         Block(string, string, Pos);
         ~Block();
 
