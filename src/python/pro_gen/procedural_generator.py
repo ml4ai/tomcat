@@ -158,7 +158,7 @@ def main():
         generator = ProceduralGenerator()
         sep = 0
         AABB_size = 10  # Default values
-        filename = "../external/malmo/Minecraft/run/procedural.json"
+        filename = "../../../external/malmo/Minecraft/run/procedural.json"
 
         if len(args) >= 2:
             N = (int)(args[1])
