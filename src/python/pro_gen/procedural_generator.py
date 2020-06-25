@@ -15,13 +15,15 @@ class ProceduralGenerator:
 
     def generate_grid_world(self, N, sep, AABB_size, filename=None):
         """
-        This method uses the procedural generation objectto create a grid world and output the generated world to a JSON file.
+        This method uses the procedural generation objectto create a grid world
+        and output the generated world to a JSON file.
 
         Args:
             N (int): The number of AABB on each axis of the grid world
             sep (int, optional): The separation between AABB on the grid in cardinal directions.
             AABB_size (int, optional): The size of the cubic AABB.
-            filename (str, optional): The name of the output JSON. Defaults to grid_world_mm_dd_yyyy_hh_mm_ss.json in current directory.
+            filename (str, optional): The name of the output JSON. Defaults to
+            grid_world_mm_dd_yyyy_hh_mm_ss.json in current directory.
         """
         world = World()
         world = self._generate_N_AABB_grid(world, N, sep, AABB_size)
@@ -30,11 +32,13 @@ class ProceduralGenerator:
 
     def get_random_victim(self, pos, green_bias=0.5):
         """
-        This method gets a random victim. Maybe this method should be moved outside this class?
+        This method gets a random victim. Maybe this method should be moved
+        outside this class?
 
         Args:
             pos (Pos): The position at which to create the victim block
-            green_bias (float): Enter a value between 0 and 1 for the percentage of victims that should be green. Defaults to 0.5.
+            green_bias (float): Enter a value between 0 and 1 for the
+                percentage of victims that should be green. Defaults to 0.5.
 
         Returns:
             Block: The victim block
@@ -50,9 +54,11 @@ class ProceduralGenerator:
 
     def _generate_N_AABB_grid(self, world, N, sep, AABB_size):
         """
-        This method initializes this World into a grid of NxN AABB structures such that each AABB is a cube of size = AABB_size.
-        In the grid the separation between two adjacent AABBs along the cardinal directions are equal to the number of separation units specified.
-        The AABB material defaults to wood.
+        This method initializes this World into a grid of NxN AABB structures
+        such that each AABB is a cube of size = AABB_size.  In the grid the
+        separation between two adjacent AABBs along the cardinal directions are
+        equal to the number of separation units specified.  The AABB material
+        defaults to wood.
 
         Args:
             N (int): The number of AABB along each axis
@@ -74,9 +80,10 @@ class ProceduralGenerator:
             cur_aabb = None
             id_ctr += 1
             if (id_ctr - 1) % N == 0:
-                # If a row is complete, then stage coordinates to create a room directly below the last AABB in the first columnv
-                # Only Z needs to be changed in the X-Z plane to paralelly
-                # shift "down"
+                # If a row is complete, then stage coordinates to create a room
+                # directly below the last AABB in the first columnv Only Z
+                # needs to be changed in the X-Z plane to paralelly shift
+                # "down"
                 top_left = Pos(1, 0, 1)
                 top_left.set_z(prev_aabb.get_bottom_right().get_z() + sep)
 
@@ -101,7 +108,10 @@ class ProceduralGenerator:
                 cur_aabb = AABB(id_ctr, top_left, bottom_right)
 
             world.add_AABB(cur_aabb)
-            prev_aabb = cur_aabb  # Add the AABB to the list of AABB and set the previous value = current so the next AABB can be built at the correct relative position
+            # Add the AABB to the list of AABB and set the previous value =
+            # current so the next AABB can be built at the correct relative
+            # position
+            prev_aabb = cur_aabb
         return world
 
     def _generate_blocks(self, world):
@@ -144,12 +154,14 @@ class ProceduralGenerator:
 
 def main():
     """
-    This function accepts arguments from the command line and uses them to procedurally generate the world. The generated json is saved
-    in ../external/malmo/Minecraft/run/procedural.json
+    This function accepts arguments from the command line and uses them to
+    procedurally generate the world. The generated json is saved
+    in ../../../external/malmo/Minecraft/run/procedural.json
 
-    This file savng behvaior overrides the normal default of a timestamped file being generated in the current working directory.
+    This file savng behvaior overrides the normal default of a timestamped file
+    being generated in the current working directory.
 
-    N is a required argument but separation and AABB size are optional. 
+    N is a required argument but separation and AABB size are optional.
     """
     args = sys.argv
     if len(args) > 4 or len(args) < 2:
