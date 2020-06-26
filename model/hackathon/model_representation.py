@@ -14,11 +14,13 @@ class CPDTables:
         self.theta_s = theta_s
         self.pi_lt = pi_lt
 
+
 class ParameterPriors:
 
     def __init__(self, theta_s_priors, pi_lt_priors):
         self.theta_s_priors = theta_s_priors
         self.pi_lt_priors = pi_lt_priors
+
 
 class Model:
 
@@ -33,8 +35,8 @@ class Model:
             self.number_of_states = 116
             self.number_of_hallways = 8
         else:
-            pass
-            # Implement this for the Falcon map
+            self.number_of_states = 166
+            self.number_of_hallways = 10
 
         self.cpd_tables = CPDTables(None, None, self.get_theta_rm(), self.get_pi_tg(), self.get_pi_ty())
         self.parameter_priors = ParameterPriors(self.get_theta_s_priors(), self.get_pi_lt_priors())
@@ -72,7 +74,7 @@ class Model:
         """
         pi_tg = np.array([[1, utils.ZERO]]).repeat(self.number_of_states, axis=0)
         # Dark and light room triaging of green victims
-        pi_tg[(self.number_of_hallways+1):self.number_of_states:3] = [utils.ZERO, 1]
+        pi_tg[(self.number_of_hallways + 1):self.number_of_states:3] = [utils.ZERO, 1]
 
         return pi_tg
 
@@ -83,7 +85,7 @@ class Model:
         """
         pi_ty = np.array([[1, utils.ZERO]]).repeat(self.number_of_states, axis=0)
         # Dark and light room triaging of yellow victims
-        pi_ty[(self.number_of_hallways+2):self.number_of_states:3] = [utils.ZERO, 1]
+        pi_ty[(self.number_of_hallways + 2):self.number_of_states:3] = [utils.ZERO, 1]
         return pi_ty
 
     def get_pi_lt_priors(self):
@@ -201,13 +203,13 @@ class Model:
         priors = np.zeros((self.number_of_states, self.number_of_states))
 
         priors[0] = self.one_hot_encode(self.number_of_states, [0, 1, 2])
-        priors[1] = self.one_hot_encode(self.number_of_states, [range(4), range(8, 32, 3)])
+        priors[1] = self.one_hot_encode(self.number_of_states, [range(6), range(8, 32, 3)])
         priors[2] = self.one_hot_encode(self.number_of_states, [range(3), range(8, 20, 3)])
         priors[3] = self.one_hot_encode(self.number_of_states, [1, 3, 4, 5, range(56, 98, 3)])
 
         priors[4] = self.one_hot_encode(self.number_of_states,
-                                        [3, 6, range(14, 20, 3), range(32, 38, 3), range(56, 62, 3)])
-        priors[5] = self.one_hot_encode(self.number_of_states, [3, 5, 7, range(74, 80, 3), range(98, 104, 3)])
+                                        [1, 3, 6, range(14, 20, 3), range(32, 38, 3), range(56, 62, 3)])
+        priors[5] = self.one_hot_encode(self.number_of_states, [1, 3, 5, 7, range(74, 80, 3), range(98, 104, 3)])
         priors[6] = self.one_hot_encode(self.number_of_states, [4, 6, range(32, 56, 3)])
         priors[7] = self.one_hot_encode(self.number_of_states, [5, 7, range(98, 116, 3)])
 
@@ -244,4 +246,50 @@ class Model:
         return priors
 
     def get_theta_s_priors_for_falcon_map(self):
-        return []
+        priors = np.zeros((self.number_of_states, self.number_of_states))
+
+        priors[0] = self.one_hot_encode(self.number_of_states, [range(4)])
+        priors[1] = self.one_hot_encode(self.number_of_states, [range(3)])
+        priors[2] = self.one_hot_encode(self.number_of_states, [1, 2, range(118, 124, 3)])
+        priors[3] = self.one_hot_encode(self.number_of_states, [0, 3, 4, range(10, 16, 3)])
+
+        priors[4] = self.one_hot_encode(self.number_of_states, [3, 4, 5, range(124, 130, 3)])
+        priors[5] = self.one_hot_encode(self.number_of_states, [4, 5, 6, 8, 9, range(10, 52, 3), range(124, 166, 3)])
+        priors[6] = self.one_hot_encode(self.number_of_states,
+                                        [5, 7, range(46, 52, 3), range(58, 70, 3), range(160, 166, 3)])
+        priors[7] = self.one_hot_encode(self.number_of_states, [6, 7, 8, 9, range(64, 166, 3)])
+        priors[8] = self.one_hot_encode(self.number_of_states, [5, 7, 8, range(124, 148, 3)])
+        priors[9] = self.one_hot_encode(self.number_of_states, [5, 7, 9, range(148, 166, 3)])
+
+        # P(theta_s | s_t-1 = state_some_room)
+        priors[10:16] = self.__get_theta_s_prior_per_room_state(10, [range(16, 22, 3)], [3, 5])
+        priors[16:22] = self.__get_theta_s_prior_per_room_state(16, [range(10, 16, 3), range(22, 28, 3)], [5])
+        priors[22:28] = self.__get_theta_s_prior_per_room_state(22, [range(16, 22, 3), range(28, 34, 3)], [5])
+        priors[28:34] = self.__get_theta_s_prior_per_room_state(28, [range(22, 28, 3), range(34, 40, 3)], [5])
+        priors[34:40] = self.__get_theta_s_prior_per_room_state(34, [range(28, 34, 3), range(40, 46, 3)], [5])
+        priors[40:46] = self.__get_theta_s_prior_per_room_state(40,
+                                                                [range(34, 40, 3), range(46, 52, 3), range(62, 68, 3)],
+                                                                [5])
+        priors[46:52] = self.__get_theta_s_prior_per_room_state(46,
+                                                                [range(40, 46, 3), range(52, 64, 3)], [5, 6])
+        priors[52:58] = self.__get_theta_s_prior_per_room_state(52, [range(46, 52, 3)], [])
+        priors[58:64] = self.__get_theta_s_prior_per_room_state(58, [range(46, 52, 3), range(64, 70, 3)], [6])
+        priors[64:70] = self.__get_theta_s_prior_per_room_state(64, [range(58, 64, 3)], [6, 7])
+        priors[70:76] = self.__get_theta_s_prior_per_room_state(70, [range(76, 82, 3)], [7])
+        priors[76:82] = self.__get_theta_s_prior_per_room_state(76, [range(70, 76, 3), range(82, 88, 3)], [7])
+        priors[82:88] = self.__get_theta_s_prior_per_room_state(82, [range(76, 82, 3), range(88, 94, 3)], [7])
+        priors[88:94] = self.__get_theta_s_prior_per_room_state(88, [range(82, 88, 3), range(94, 100, 3)], [7])
+        priors[94:100] = self.__get_theta_s_prior_per_room_state(94, [range(88, 94, 3), range(100, 106, 3)], [7])
+        priors[100:106] = self.__get_theta_s_prior_per_room_state(100, [range(94, 100, 3), range(106, 112, 3)], [7])
+        priors[106:112] = self.__get_theta_s_prior_per_room_state(106, [range(100, 112, 3), range(112, 118, 3)], [7])
+        priors[112:118] = self.__get_theta_s_prior_per_room_state(112, [range(106, 112, 3), range(118, 124, 3)], [7])
+        priors[118:124] = self.__get_theta_s_prior_per_room_state(118, [range(112, 118, 3)], [2, 7])
+        priors[124:130] = self.__get_theta_s_prior_per_room_state(124, [], [4, 5, 7, 8])
+        priors[130:136] = self.__get_theta_s_prior_per_room_state(130, [range(136, 142, 3), range(148, 154, 3)], [5, 8])
+        priors[136:142] = self.__get_theta_s_prior_per_room_state(136, [range(130, 136, 3), range(142, 160, 3)], [8])
+        priors[142:148] = self.__get_theta_s_prior_per_room_state(142, [range(136, 142, 3), range(154, 160, 3)], [7, 8])
+        priors[148:154] = self.__get_theta_s_prior_per_room_state(148, [range(130, 142, 3), range(154, 160, 3)], [5, 7, 9])
+        priors[154:160] = self.__get_theta_s_prior_per_room_state(154, [range(136, 154, 3), range(104, 110, 3)], [7, 9])
+        priors[160:166] = self.__get_theta_s_prior_per_room_state(160, [], [5, 6, 7, 9])
+
+        return priors

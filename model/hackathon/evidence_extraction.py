@@ -3,8 +3,9 @@ from tqdm import tqdm
 import numpy as np
 import json
 from hackathon import ta3_data_adapter as ta3_data_adapter
+from hackathon.ta3_data_adapter import  MissionMap
 import datetime
-from enum import Enum
+from hackathon.utils import to_datetime, read_data_from_file
 
 # Observable nodes
 LT_EVIDENCE_FILENAME = 'lights'
@@ -24,16 +25,9 @@ SINGLEPLAYER_AREA_ORDER = ['as', 'achl', 'ach', 'alha', 'arha', 'alhb', 'arhb', 
                            'ar216', 'ar218', 'ar220']
 SPARKY_AREA_ORDER = ['sr', 'chl', 'chlb', 'ch', 'lh1', 'rh1', 'lh2', 'rh2', 'wb', 'mb', 'e1', 'e2', 'r201', 'r203',
                      'r205', 'r207', 'jc', 'r208', 'r210', 'r209', 'r211', 'r213', 'r215', 'r216', 'r218', 'r220']
-FALCON_AREA_ORDER = []
-
-
-# todo - define an order for the areas in the Falcon map
-
-class MissionMap(Enum):
-    SINGLEPLAYER = 0
-    SPARKY = 1
-    FALCON = 2
-
+FALCON_AREA_ORDER = ['ew', 'fy1', 'fy2', 'el', 'lh1', 'lh2', 'cht', 'rh', 'chb', 'chm', 'so', 'br', 'es1', 'es2',
+                     'kcoe', 'kco1', 'kco2', 'tkt', 'r101', 'r102', 'r103', 'r104', 'r105', 'r106', 'r107', 'r109',
+                     'r109', 'r110', 'r111', 'cf', 'jc', 'mb', 'wb', 'acr', 'mkcr', 'hcr']
 
 class EvidenceSet():
     """
@@ -67,6 +61,9 @@ def convert_experiments_data_to_evidence_set(experiments_folder, evidence_set_fo
 
     for experiment_id in tqdm(os.listdir(experiments_folder), desc='Extracting evidence set from data',
                               disable=not show_progress):
+        if experiment_id.startswith('.'):
+            continue
+
         lt, rm, tg, ty = get_evidence_from_experiment(os.path.join(experiments_folder, experiment_id), mission_map_id,
                                                       time_gap, time_slices)
         lt_evidence_set.append(lt)
@@ -92,8 +89,8 @@ def get_evidence_from_experiment(experiment_folder, mission_map_id, time_gap, ti
     triage_events = read_data_from_file(os.path.join(experiment_folder, ta3_data_adapter.TRIAGE_FILENAME))
 
     areas = get_list_of_areas(mission_map_id)
-    area_lit = get_initial_area_lit_map(mission_map_id)
-    current_time_slice = get_mission_start_timestamp(experiment_folder, mission_map_id)
+    area_lit = get_initial_light_area_map(mission_map_id)
+    current_time_slice = get_mission_start_timestamp(experiment_folder)
 
     # most_recent_observation = observations[0]
     area_index = 0
@@ -111,8 +108,9 @@ def get_evidence_from_experiment(experiment_folder, mission_map_id, time_gap, ti
     ty_evidence = np.zeros(time_slices, dtype=np.int)
 
     for t in range(time_slices):
-        while to_datetime(observations[observation_counter]['header']['timestamp']) <= current_time_slice:
-            # todo - so far we don't neex to extract information from the observations. Later this will be necessary.
+        while observation_counter < len(observations) and to_datetime(
+                observations[observation_counter]['header']['timestamp']) <= current_time_slice:
+            # todo - so far we don't need to extract information from the observations. Later this will be necessary.
             #  However, keep this loop to check whether the mission was executed completely. There will be an error
             #  when there's no observations to read but the number of time slices is still small
             # most_recent_observation = observations[observation_counter]
@@ -156,38 +154,28 @@ def get_evidence_from_experiment(experiment_folder, mission_map_id, time_gap, ti
 
     return lt_evidence, rm_evidence, tg_evidence, ty_evidence
 
-
-def read_data_from_file(filepath):
+def get_initial_light_area_map(mission_map_id):
     """
-    This function reads data from the testbed saved into a file
+    This function returns the initial mapping for the areas that are light when the mission starts
     """
-    data = []
-    with open(filepath, 'r') as file:
-        for json_obj in file:
-            data.append(json.loads(json_obj))
-
-    return data
-
-
-def get_initial_area_lit_map(mission_map_id):
-    """
-    This function returns the initial mapping for the areas that are lit when the mission starts
-    """
-    area_lit = []
+    light_areas = []
 
     if mission_map_id == MissionMap.SINGLEPLAYER:
-        area_lit = [False] * get_number_of_areas(mission_map_id)
-        area_lit[0] = True  # staging room
-        area_lit[2:11] = [True] * 9  # These rooms are always lit
+        light_areas = [False] * get_number_of_areas(mission_map_id)
+        light_areas[0] = True  # staging room
+        light_areas[2:11] = [True] * 9  # These rooms are always light
     elif mission_map_id == MissionMap.SPARKY:
-        area_lit = [False] * get_number_of_areas(mission_map_id)
-        area_lit[0] = True  # staging room
-        area_lit[3:12] = [True] * 9  # These rooms are always lit
-    else:
-        pass
-        # todo - fill this for the Falcon map later
+        light_areas = [False] * get_number_of_areas(mission_map_id)
+        light_areas[0] = True  # staging room
+        light_areas[3:12] = [True] * 9  # These rooms are always light
+    elif mission_map_id == MissionMap.FALCON:
+        light_areas = [False] * get_number_of_areas(mission_map_id)
+        light_areas[0:10] = [True] * 10  # Hallways and external areas are always light
+        light_areas[10:12] = [True, True]  # Open break area and security office don't have a light switch
+        light_areas[29] = True  # The computer farms doesn't have a light switch
+        light_areas[31:33] = [True, True]  # The bathrooms don't have a light switch
 
-    return area_lit
+    return light_areas
 
 
 def get_number_of_areas(mission_map_id):
@@ -198,36 +186,21 @@ def get_number_of_areas(mission_map_id):
         return len(SINGLEPLAYER_AREA_ORDER)
     elif mission_map_id == MissionMap.SPARKY:
         return len(SPARKY_AREA_ORDER)
-    else:
+    elif mission_map_id == MissionMap.FALCON:
         return len(FALCON_AREA_ORDER)
 
+    return 0
 
-def get_mission_start_timestamp(experiment_folder, mission_map_id):
+def get_mission_start_timestamp(experiment_folder):
     """
     This function checks the timestamp when the player left the starting area which is when the mission effectively
     starts
     """
-    room_event_filename = os.path.join(experiment_folder, ta3_data_adapter.ROOM_FILENAME)
-    with open(room_event_filename) as room_event_file:
-        for event in room_event_file:
-            event_json = json.loads(event)
+    metadata_filepath = os.path.join(experiment_folder, ta3_data_adapter.METADATA_FILENAME)
+    with open(metadata_filepath, 'r') as metadata_file:
+        metadata = json.load(metadata_file)
 
-            if 'entered_area_id' in event_json['data'].keys():
-                if event_json['data']['entered_area_id'] == get_initial_area(mission_map_id):
-                    return to_datetime(event_json['header']['timestamp'])
-
-
-def get_initial_area(mission_map_id):
-    """
-    This function retrieves the id of the initial area the player is in according to the mission maps
-    """
-    if mission_map_id == MissionMap.SINGLEPLAYER:
-        return SINGLEPLAYER_AREA_ORDER[0]
-    elif mission_map_id == MissionMap.SPARKY:
-        return SPARKY_AREA_ORDER[0]
-    else:
-        return FALCON_AREA_ORDER[0]
-
+    return to_datetime(metadata['start_time'])
 
 def get_list_of_areas(mission_map_id):
     """
@@ -237,37 +210,10 @@ def get_list_of_areas(mission_map_id):
         return SINGLEPLAYER_AREA_ORDER
     elif mission_map_id == MissionMap.SPARKY:
         return SPARKY_AREA_ORDER
-    else:
+    elif mission_map_id == MissionMap.FALCON:
         return FALCON_AREA_ORDER
 
-
-# def get_list_of_areas(mission_map_id):
-#     """
-#     This function retrieves the list of areas from a mission maps file config
-#     """
-#     areas = {}
-#     if mission_map_id == MissionMap.SINGLEPLAYER:
-#         map_filepath = '../data/maps/singleplayer.json'
-#         areas = {id:{} for id in SINGLEPLAYER_AREA_ORDER}
-#     elif mission_map_id == MissionMap.SPARKY:
-#         map_filepath = '../data/maps/sparky.json'
-#         areas = {id: {} for id in SPARKY_AREA_ORDER}
-#     else:
-#         map_filepath = '../data/maps/falcon.json'
-#         areas = {id: {} for id in FALCON_AREA_ORDER}
-#
-#     with open(map_filepath, 'r') as input_map_file:
-#         map = json.load(input_map_file)
-#
-#     for area in map['areas']:
-#         if area['id'] in areas.keys():
-#             areas[area['id']] = {'x1': area['x1'], 'y1': area['y1'], 'x2': area['x2'], 'y2': area['y2']}
-#
-#     return areas
-
-def to_datetime(timestamp_string):
-    return datetime.datetime.strptime(timestamp_string, '%Y-%m-%dT%H:%M:%S.%fZ')
-
+    return None
 
 def get_area_by_player_position(areas, x, y):
     """
@@ -284,6 +230,7 @@ def save_evidence_set(destiny_folder, filename, evidence_set):
     This function saves an evidence set to a file
     """
     np.savetxt(get_evidence_file_absolute_path(destiny_folder, filename), evidence_set, fmt='%i')
+
 
 def get_evidence_file_absolute_path(destiny_folder, filename):
     """
@@ -303,15 +250,16 @@ def load_evidence_set(evidence_folder):
 
     return EvidenceSet(lt_evidence_set, rm_evidence_set, tg_evidence_set, ty_evidence_set)
 
+
 if __name__ == '__main__':
     TIME_GAP = 1
     TIME_SLICES = 600
-    convert_experiments_data_to_evidence_set('../data/experiments/asist/formatted/singleplayer',
-                                             '../data/evidence/asist/sparky', MissionMap.SINGLEPLAYER, TIME_GAP,
-                                             TIME_SLICES)
+    # convert_experiments_data_to_evidence_set('../data/experiments/asist/formatted/singleplayer',
+    #                                          '../data/evidence/asist/singleplayer', MissionMap.SINGLEPLAYER, TIME_GAP,
+    #                                          TIME_SLICES)
     convert_experiments_data_to_evidence_set('../data/experiments/asist/formatted/sparky',
                                              '../data/evidence/asist/sparky', MissionMap.SPARKY, TIME_GAP,
                                              TIME_SLICES)
-    convert_experiments_data_to_evidence_set('../data/experiments/asist/formatted/falcon',
-                                             '../data/evidence/asist/sparky', MissionMap.FALCON, TIME_GAP,
-                                             TIME_SLICES)
+    # convert_experiments_data_to_evidence_set('../data/experiments/asist/formatted/falcon',
+    #                                          '../data/evidence/asist/falcon', MissionMap.FALCON, TIME_GAP,
+    #                                          TIME_SLICES)
