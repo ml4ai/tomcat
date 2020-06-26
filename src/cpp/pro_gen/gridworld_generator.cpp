@@ -4,6 +4,8 @@
 #include <boost/random/uniform_int_distribution.hpp>
 #include <iostream>
 
+boost::random::mt19937 gen;
+
 void generateAABBGrid(
     World * worldptr, int N, int sep, int AABB_size, string  material) {
     int idCtr = 1;
@@ -42,13 +44,12 @@ void generateAABBGrid(
 
 void generateVictimInAABB(World * worldptr, AABB * aabb) {
     Pos randPos((*aabb).getRandomPosAtBase(2, 2, 2, 2));
-    boost::random::mt19937 gen;
     boost::random::uniform_int_distribution<> dist(1, 100);
     int randInteger = dist(gen);
 
     if (randInteger <= 75) {
         ProceduralGenerator pgen;
-        Block victim = pgen.getRandomVictim(&randPos, 0.60);
+        Block victim = pgen.getRandomVictim(&randPos, 0.60, &gen);
         (*worldptr).addBlock(&victim);
     }
     else {
