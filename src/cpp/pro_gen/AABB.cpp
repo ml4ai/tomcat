@@ -4,22 +4,20 @@
 
 using namespace std;
 
-AABB::AABB(int AABBid, string AABBmaterial, Pos topLeftPos, Pos bottomRightPos)
-    : id(AABBid), material(AABBmaterial), topLeft(topLeftPos),
-      bottomRight(bottomRightPos) {}
+AABB::AABB(int AABBid, string AABBmaterial, Pos *topLeftPos, Pos *bottomRightPos)
+    : id(AABBid), material(AABBmaterial), topLeft(*topLeftPos),
+      bottomRight(*bottomRightPos) {}
 
 int AABB::getID() { return this->id; }
 
 string AABB::getMaterial() { return this->material; }
 
 Pos AABB::getTopLeft() {
-    Pos copy(this->topLeft);
-    return copy;
+    return this -> topLeft;
 }
 
 Pos AABB::getBottomRight() {
-    Pos copy(this->bottomRight);
-    return copy;
+    return this -> bottomRight;
 }
 
 int AABB::getMidpointX() {

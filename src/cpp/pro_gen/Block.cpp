@@ -3,8 +3,8 @@
 
 using namespace std;
 
-Block::Block(string blockName, string blockMaterial, Pos blockPos)
-    : name(blockName), material(blockMaterial), pos(blockPos) {}
+Block::Block(string blockName, string blockMaterial, Pos *blockPos)
+    : name(blockName), material(blockMaterial), pos(*blockPos) {}
 
 string Block::getName() { return this->name; }
 

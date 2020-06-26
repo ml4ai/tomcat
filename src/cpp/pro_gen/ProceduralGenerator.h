@@ -6,7 +6,7 @@ using namespace std;
 class ProceduralGenerator{
 
     public:
-        Block getRandomVictim(Pos, double);
+        Block getRandomVictim(Pos *, double);
         ProceduralGenerator();
         ~ProceduralGenerator();
 };

@@ -4,7 +4,7 @@
 
 ProceduralGenerator::ProceduralGenerator(){}
 
-Block ProceduralGenerator::getRandomVictim(Pos pos, double greenBias){
+Block ProceduralGenerator::getRandomVictim(Pos *pos, double greenBias){
     boost::random::mt19937 gen;
     boost::random::uniform_int_distribution<> dist(1, 100);
     double greenProbability = greenBias * 100;

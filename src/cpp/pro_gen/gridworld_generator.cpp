@@ -10,8 +10,8 @@ void generateAABBGrid(
     Pos topLeft(1, 0, 1);
     Pos bottomRight(AABB_size, AABB_size, AABB_size);
 
-    AABB prevAABB(idCtr, material, topLeft, bottomRight);
-    (*worldptr).addAABB(prevAABB);
+    AABB prevAABB(idCtr, material, &topLeft, &bottomRight);
+    (*worldptr).addAABB(&prevAABB);
 
     while (idCtr <= (N * N - 1)) {
         idCtr++;
@@ -22,8 +22,8 @@ void generateAABBGrid(
 
             Pos newBottomRight(
                 AABB_size, AABB_size, newTopLeft.getZ() + AABB_size);
-            AABB curAABB(idCtr, material, newTopLeft, newBottomRight);
-            (*worldptr).addAABB(curAABB);
+            AABB curAABB(idCtr, material, &newTopLeft, &newBottomRight);
+            (*worldptr).addAABB(&curAABB);
             prevAABB = curAABB;
         }
         else {
@@ -33,8 +33,8 @@ void generateAABBGrid(
             Pos newBottomRight = prevAABB.getBottomRight();
             newBottomRight.setX(newTopLeft.getX() + AABB_size);
 
-            AABB curAABB(idCtr, material, newTopLeft, newBottomRight);
-            (*worldptr).addAABB(curAABB);
+            AABB curAABB(idCtr, material, &newTopLeft, &newBottomRight);
+            (*worldptr).addAABB(&curAABB);
             prevAABB = curAABB;
         }
     }
@@ -48,8 +48,8 @@ void generateVictimInAABB(World * worldptr, AABB * aabb) {
 
     if (randInteger <= 75) {
         ProceduralGenerator pgen;
-        Block victim = pgen.getRandomVictim(randPos, 0.60);
-        (*worldptr).addBlock(victim);
+        Block victim = pgen.getRandomVictim(&randPos, 0.60);
+        (*worldptr).addBlock(&victim);
     }
     else {
         ;
@@ -93,15 +93,15 @@ void generateAllDoorsInAABB(World *worldptr, AABB *aabb) {
     Pos bottomEdgeMid = edges.at(2);
     Pos leftEdgeMid = edges.at(3);
 
-    Block topDoor("door", "oak_door", topEdgeMid);
-    Block bottomDoor("door", "oak_door", bottomEdgeMid);
-    Block leftDoor("door", "oak_door", leftEdgeMid);
-    Block rightDoor("door", "oak_door", rightEdgeMid);
+    Block topDoor("door", "oak_door", &topEdgeMid);
+    Block bottomDoor("door", "oak_door", &bottomEdgeMid);
+    Block leftDoor("door", "oak_door", &leftEdgeMid);
+    Block rightDoor("door", "oak_door", &rightEdgeMid);
 
-    (*worldptr).addBlock(topDoor);
-    (*worldptr).addBlock(rightDoor);
-    (*worldptr).addBlock(leftDoor);
-    (*worldptr).addBlock(rightDoor);
+    (*worldptr).addBlock(&topDoor);
+    (*worldptr).addBlock(&rightDoor);
+    (*worldptr).addBlock(&leftDoor);
+    (*worldptr).addBlock(&rightDoor);
 }
 
 void generateBlocks(World * worldptr) {
@@ -121,8 +121,9 @@ World generateGridWorld(
 }
 
 int main() {
-    World world = generateGridWorld(2,0,10,"planks", "procedural.json");
+    World world = generateGridWorld(1000,0,10,"planks", "procedural.json");
     cout << world.getAABBList().at(0).getTopLeft().getX() << endl;
     cout << world.getAABBList().at(3).getTopLeft().getX() << endl;
+    cout << world.getAABBList().at(1).getBottomRight().getX() << endl;
     return 0;
 }

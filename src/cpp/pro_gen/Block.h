@@ -5,8 +5,8 @@
 class Block {
 
   private:
-      std::string name;
-      std::string material;
+    std::string name;
+    std::string material;
     Pos pos;
 
   public:
@@ -15,6 +15,6 @@ class Block {
     int getX();
     int getY();
     int getZ();
-    Block(std::string, std::string, Pos);
+    Block(std::string, std::string, Pos *);
     ~Block();
 };
