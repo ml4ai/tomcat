@@ -62,11 +62,11 @@ vector<Pos> getAABBEdgeMidpointAtBase(AABB * aabb) {
     int midZ = (*aabb).getMidpointZ();
     int base = (*aabb).getTopLeft().getY();
 
-    Pos topEdgeMid = (*aabb).getTopLeft();
+    Pos topEdgeMid((*aabb).getTopLeft());
     topEdgeMid.setX(midX);
     topEdgeMid.setY(base);
 
-    Pos bottomEdgeMid = (*aabb).getBottomRight();
+    Pos bottomEdgeMid((*aabb).getBottomRight());
     bottomEdgeMid.setX(midX);
     bottomEdgeMid.setY(base);
 
@@ -78,7 +78,7 @@ vector<Pos> getAABBEdgeMidpointAtBase(AABB * aabb) {
     rightEdgeMid.setZ(midZ);
     rightEdgeMid.setY(base);
 
-    vector<Pos> midEdgesAtBase(4);
+    vector<Pos> midEdgesAtBase;
     midEdgesAtBase.push_back(topEdgeMid);
     midEdgesAtBase.push_back(rightEdgeMid);
     midEdgesAtBase.push_back(bottomEdgeMid);
@@ -89,10 +89,10 @@ vector<Pos> getAABBEdgeMidpointAtBase(AABB * aabb) {
 
 void generateAllDoorsInAABB(World *worldptr, AABB *aabb) {
     vector<Pos> edges = getAABBEdgeMidpointAtBase(aabb);
-    Pos topEdgeMid = edges.at(0);
-    Pos rightEdgeMid = edges.at(1);
-    Pos bottomEdgeMid = edges.at(2);
-    Pos leftEdgeMid = edges.at(3);
+    Pos topEdgeMid(edges.at(0));
+    Pos rightEdgeMid(edges.at(1));
+    Pos bottomEdgeMid(edges.at(2));
+    Pos leftEdgeMid(edges.at(3));
 
     Block topDoor("door", "oak_door", &topEdgeMid);
     Block bottomDoor("door", "oak_door", &bottomEdgeMid);
@@ -122,8 +122,11 @@ World generateGridWorld(
 }
 
 int main() {
-    World world = generateGridWorld(4,0,10,"planks", "procedural.json");
-    cout << world.toString() << endl;
+    cout << "Generating gridworld..." << endl;
+    World world = generateGridWorld(200,0,10,"planks", "procedural.json");
+    cout << "Writing to file..." << endl;
+    string jsonout = world.toJSON();
+    cout << "Done" << endl;
 
     return 0;
 }
