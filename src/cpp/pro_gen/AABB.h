@@ -19,7 +19,7 @@ class AABB {
     int getMidpointX();
     int getMidpointY();
     int getMidpointZ();
-    Pos getRandomPosAtBase();
+    Pos getRandomPosAtBase(int, int, int, int);
     AABB(int, string, Pos, Pos);
     ~AABB();
 };
