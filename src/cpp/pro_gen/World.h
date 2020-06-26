@@ -1,20 +1,20 @@
 #pragma once
+
 #include "AABB.h"
 #include "Block.h"
 #include <nlohmann/json.hpp>
-using namespace std;
 
 class World {
   private:
-    vector<AABB> aabbList;
-    vector<Block> blockList;
+      std::vector<AABB> aabbList;
+      std::vector<Block> blockList;
 
   public:
     void addAABB(AABB);
     void addBlock(Block);
-    void toJSON(string);
-    vector<AABB> getAABBList();
-    vector<Block> getBlockList();
+    void toJSON(std::string);
+    std::vector<AABB> getAABBList();
+    std::vector<Block> getBlockList();
     World();
     ~World();
 };

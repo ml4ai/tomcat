@@ -1,6 +1,8 @@
 #include "World.h"
 #include <iostream>
 
+using namespace std;
+
 World::World() {}
 
 void World::addAABB(AABB aabb) { (this->aabbList).push_back(aabb); }

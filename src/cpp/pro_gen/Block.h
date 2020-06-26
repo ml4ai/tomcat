@@ -2,20 +2,19 @@
 #include "Pos.h"
 #include <string>
 
-using namespace std;
 class Block {
 
   private:
-    string name;
-    string material;
+      std::string name;
+      std::string material;
     Pos pos;
 
   public:
-    string getName();
-    string getMaterial();
+    std::string getName();
+    std::string getMaterial();
     int getX();
     int getY();
     int getZ();
-    Block(string, string, Pos);
+    Block(std::string, std::string, Pos);
     ~Block();
 };
