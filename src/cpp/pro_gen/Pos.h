@@ -1,5 +1,5 @@
 #pragma once
-using namespace std;
+
 class Pos {
 
   private:
@@ -14,6 +14,7 @@ class Pos {
     void setX(int);
     void setY(int);
     void setZ(int);
+    Pos();
     Pos(int, int, int);
     Pos(const Pos& other);
     ~Pos();

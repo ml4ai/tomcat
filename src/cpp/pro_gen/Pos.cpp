@@ -1,16 +1,10 @@
 #include "Pos.h"
 
-Pos::Pos(int x, int y, int z) {
-    this->x = x;
-    this->y = y;
-    this->z = z;
-}
+Pos::Pos() {}
 
-Pos::Pos(const Pos& other) {
-    this->x = other.x;
-    this->y = other.y;
-    this->z = other.z;
-}
+Pos::Pos(int x, int y, int z) : x{x}, y{y}, z{z} {}
+
+Pos::Pos(const Pos& other) : x{other.x}, y{other.y}, z{other.z} {}
 
 int Pos::getX() { return this->x; }
 int Pos::getY() { return this->y; }

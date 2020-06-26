@@ -2,6 +2,8 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 
+using namespace std;
+
 AABB::AABB(int AABBid, string AABBmaterial, Pos topLeftPos, Pos bottomRightPos)
     : id(AABBid), material(AABBmaterial), topLeft(topLeftPos),
       bottomRight(bottomRightPos) {}

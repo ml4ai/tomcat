@@ -1,25 +1,25 @@
 #pragma once
+
 #include "Pos.h"
 #include <string>
-using namespace std;
 
 class AABB {
 
   private:
     int id;
-    string material;
+    std::string material;
     Pos topLeft;
     Pos bottomRight;
 
   public:
     int getID();
-    string getMaterial();
+    std::string getMaterial();
     Pos getTopLeft();
     Pos getBottomRight();
     int getMidpointX();
     int getMidpointY();
     int getMidpointZ();
     Pos getRandomPosAtBase(int, int, int, int);
-    AABB(int, string, Pos, Pos);
+    AABB(int, std::string, Pos, Pos);
     ~AABB();
 };
