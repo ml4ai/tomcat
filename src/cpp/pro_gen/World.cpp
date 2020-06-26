@@ -1,3 +1,7 @@
+/**
+ * @file World.cpp
+ * @brief This file implements the methods in the World class.
+ */
 #include "World.h"
 #include <iostream>
 #include <string>
@@ -5,16 +9,37 @@
 using namespace std;
 using json = nlohmann::json;
 
+/**
+ * @brief Construct a new World:: World object
+ *
+ */
 World::World() {}
 
+/**
+ * @brief Add an AABB to the vector of AABB held inside the world
+ *
+ * @param aabb Address of the AABB to add
+ */
 void World::addAABB(AABB* aabb) { (this->aabbList).push_back(*aabb); }
 
+/**
+ * @brief Add a Block to the vector of Block held inside the world
+ *
+ * @param aabb Address of the Block to add
+ */
 void World::addBlock(Block* block) { (this->blockList).push_back(*block); }
 
+/**
+ * @brief Converts the world into a JSON representation with
+ * each entry indented by 4 and returns the string representation of it.
+ *
+ * @return string The JSON as a string
+ */
 string World::toJSON() {
     vector<map<string, string>> aabb_map_list;
     vector<map<string, string>> block_map_list;
 
+    // Add AABBs to the JSON list
     for (auto aabb : this->aabbList) {
         map<string, string> m;
         m["id"] = to_string(aabb.getID());
@@ -30,6 +55,7 @@ string World::toJSON() {
         aabb_map_list.push_back(m);
     }
 
+    // Add Blocks to the JSON List
     for (auto block : this->blockList) {
         map<string, string> m;
         m["name"] = block.getName();
@@ -46,21 +72,21 @@ string World::toJSON() {
     return j.dump(4);
 }
 
+/**
+ * @brief Returns a pointer to the vector that holds the AABBs
+ *
+ * @return vector<AABB>* The AABB list
+ */
 vector<AABB>* World::getAABBList() { return &(this->aabbList); }
 
+/**
+ * @brief Returns a pointer to the vector that holds the Blocks
+ *
+ * @return vector<Block>* The Block list
+ */
 vector<Block>* World::getBlockList() { return &(this->blockList); }
 
-string World::toString() {
-    string retval = "AABB List:\n\n";
-    for (auto aabb : this->aabbList) {
-        retval += aabb.toString() + "\n";
-    }
-
-    retval += "\nBlock List:\n\n";
-    for (auto block : this->blockList) {
-        retval += block.toString() + "\n";
-    }
-    return retval;
-}
-
+/**
+ * @brief Destroy the World:: World object
+ */
 World::~World() {}

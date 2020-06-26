@@ -1,6 +1,15 @@
+/**
+ * @brief This file defines the members and methods
+ * implemented as part of the Pos class
+ *
+ */
 #pragma once
 #include <string>
 
+/**
+ * @brief This class represents a 3D coordinate
+ *
+ */
 class Pos {
 
   private:

@@ -1,3 +1,8 @@
+/**
+ * @brief This file defines the members and methods
+ * implemented as part of the World class
+ *
+ */
 #pragma once
 
 #include "AABB.h"
@@ -5,6 +10,11 @@
 #include <nlohmann/json.hpp>
 #include <string>
 
+/**
+ * @brief This class represents a Minecraft world as a
+ * list of axis aligned bounding boxes and blocks
+ *
+ */
 class World {
   private:
     std::vector<AABB> aabbList;

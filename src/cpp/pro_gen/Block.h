@@ -1,7 +1,16 @@
+/**
+ * @brief This file defines the members and methods
+ * implemented as part of the Block class
+ *
+ */
 #pragma once
 #include "Pos.h"
 #include <string>
 
+/**
+ * @brief This class represents a Minecraft block
+ *
+ */
 class Block {
 
   private:
