@@ -4,17 +4,15 @@
 #include <nlohmann/json.hpp>
 using namespace std;
 
-class World{
-    private:
-        vector<AABB> aabbList;
-        vector<Block> blockList;
-        
-    
-    public:
-        void addAABB(AABB);
-        void addBlock(Block);
-        void toJSON(string);
-        World();
-        ~World();
+class World {
+  private:
+    vector<AABB> aabbList;
+    vector<Block> blockList;
 
+  public:
+    void addAABB(AABB);
+    void addBlock(Block);
+    void toJSON(string);
+    World();
+    ~World();
 };
