@@ -2,6 +2,8 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 
+ProceduralGenerator::ProceduralGenerator(){}
+
 Block ProceduralGenerator::getRandomVictim(Pos pos, double greenBias){
     boost::random::mt19937 gen;
     boost::random::uniform_int_distribution<> dist(1, 100);
@@ -17,3 +19,5 @@ Block ProceduralGenerator::getRandomVictim(Pos pos, double greenBias){
     }
 
 }
+
+ProceduralGenerator::~ProceduralGenerator(){}

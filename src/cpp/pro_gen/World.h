@@ -13,6 +13,8 @@ class World {
     void addAABB(AABB);
     void addBlock(Block);
     void toJSON(string);
+    vector<AABB> getAABBList();
+    vector<Block> getBlockList();
     World();
     ~World();
 };

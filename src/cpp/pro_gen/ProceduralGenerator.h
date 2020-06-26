@@ -7,4 +7,6 @@ class ProceduralGenerator{
 
     public:
         Block getRandomVictim(Pos, double);
+        ProceduralGenerator();
+        ~ProceduralGenerator();
 };
