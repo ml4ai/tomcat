@@ -56,6 +56,7 @@ World generateVictimInAABB(World world, AABB aabb) {
     else {
         ;
     }
+    return world;
 }
 
 vector<Pos> getAABBEdgeMidpointAtBase(AABB aabb) {
@@ -126,14 +127,7 @@ World generateGridWorld(
 }
 
 int main() {
-    Pos pos1(0, 0, 0);
-    Pos pos2(10, 10, 10);
-    Block block("door", "oak_door", pos1);
-    AABB aabb(1, "planks", pos1, pos2);
-    cout << block.getX() << endl;
-    cout << aabb.getID() << endl;
-    cout << aabb.getMaterial() << endl;
-    cout << aabb.getTopLeft().getZ() << endl;
-    cout << aabb.getBottomRight().getZ() << endl;
+    World world;
+    world = generateGridWorld(200,0,10,"planks", "procedural.json");
     return 0;
 }
