@@ -1,0 +1,27 @@
+
+.. _program_listing_file_src_cpp_pro_gen_ProceduralGenerator.h:
+
+Program Listing for File ProceduralGenerator.h
+==============================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_cpp_pro_gen_ProceduralGenerator.h>` (``src/cpp/pro_gen/ProceduralGenerator.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   
+   #pragma once
+   #include "Block.h"
+   #include "Pos.h"
+   #include <boost/random/mersenne_twister.hpp>
+   #include <boost/random/uniform_int_distribution.hpp>
+   using namespace std;
+   
+   class ProceduralGenerator {
+   
+     public:
+       Block getRandomVictim(Pos*, double, boost::random::mt19937*);
+       ProceduralGenerator();
+       ~ProceduralGenerator();
+   };

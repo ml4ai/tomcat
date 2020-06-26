@@ -1,0 +1,16 @@
+.. _exhale_class_classProceduralGenerator:
+
+Class ProceduralGenerator
+=========================
+
+- Defined in :ref:`file_src_cpp_pro_gen_ProceduralGenerator.h`
+
+
+Class Documentation
+-------------------
+
+
+.. doxygenclass:: ProceduralGenerator
+   :members:
+   :protected-members:
+   :undoc-members:

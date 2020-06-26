@@ -1,0 +1,84 @@
+
+.. _file_src_cpp_pro_gen_gridworld_generator.cpp:
+
+File gridworld_generator.cpp
+============================
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp_pro_gen>` (``src/cpp/pro_gen``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+
+Defines an algorithm and script to generate the JSON representing an N x N gridworld of cubic :ref:`exhale_class_classAABB` with options to specify the separation between :ref:`exhale_class_classAABB` in the cardinal direction and the size of the :ref:`exhale_class_classAABB`. The generated file is saved to Minecraft/run/procedural.json. 
+ 
+
+.. contents:: Contents
+   :local:
+   :backlinks: none
+
+Definition (``src/cpp/pro_gen/gridworld_generator.cpp``)
+--------------------------------------------------------
+
+
+.. toctree::
+   :maxdepth: 1
+
+   program_listing_file_src_cpp_pro_gen_gridworld_generator.cpp.rst
+
+
+
+Detailed Description
+--------------------
+
+The size N must be provided while running this script. Separation defaults to 0. AABB_size defaults to 10 
+
+
+
+Includes
+--------
+
+
+- ``ProceduralGenerator.h`` (:ref:`file_src_cpp_pro_gen_ProceduralGenerator.h`)
+
+- ``World.h`` (:ref:`file_src_cpp_pro_gen_World.h`)
+
+- ``boost/program_options.hpp``
+
+- ``boost/random/mersenne_twister.hpp``
+
+- ``boost/random/uniform_int_distribution.hpp``
+
+- ``fstream``
+
+- ``iostream``
+
+
+
+
+
+
+Functions
+---------
+
+
+- :ref:`exhale_function_gridworld__generator_8cpp_1a6ff53ba64c7ba660d8da7c6c6bb7d6f5`
+
+- :ref:`exhale_function_gridworld__generator_8cpp_1a77117ab345269c16d43b6d8902d298a0`
+
+- :ref:`exhale_function_gridworld__generator_8cpp_1a8f61934188597a683fb2e8c0d6e5362a`
+
+- :ref:`exhale_function_gridworld__generator_8cpp_1a76f1407d407980d1c1e08317853ffa71`
+
+- :ref:`exhale_function_gridworld__generator_8cpp_1a88689dc51c89129ed3744c16df15759b`
+
+- :ref:`exhale_function_gridworld__generator_8cpp_1ac0ea95804a1e827b5cc5755ffb034b11`
+
+- :ref:`exhale_function_gridworld__generator_8cpp_1a0ddf1224851353fc92bfbff6f499fa97`
+
+
+Variables
+---------
+
+
+- :ref:`exhale_variable_gridworld__generator_8cpp_1a415bcc363b3978ea725276876c700d7b`
+

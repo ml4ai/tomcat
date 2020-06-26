@@ -1,0 +1,264 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>File gridworld_generator.cpp &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tomcat_openapi.html">Data models and message bus topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>File gridworld_generator.cpp</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/cpp_api/file_src_cpp_pro_gen_gridworld_generator.cpp.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="file-gridworld-generator-cpp">
+<span id="file-src-cpp-pro-gen-gridworld-generator-cpp"></span><h1>File gridworld_generator.cpp<a class="headerlink" href="#file-gridworld-generator-cpp" title="Permalink to this headline">¶</a></h1>
+<p>↰ <a class="reference internal" href="dir_src_cpp_pro_gen.html#dir-src-cpp-pro-gen"><span class="std std-ref">Parent directory</span></a> (<code class="docutils literal notranslate"><span class="pre">src/cpp/pro_gen</span></code>)</p>
+<p>Defines an algorithm and script to generate the JSON representing an N x N gridworld of cubic <a class="reference internal" href="classAABB.html#exhale-class-classaabb"><span class="std std-ref">Class AABB</span></a> with options to specify the separation between <a class="reference internal" href="classAABB.html#exhale-class-classaabb"><span class="std std-ref">Class AABB</span></a> in the cardinal direction and the size of the <a class="reference internal" href="classAABB.html#exhale-class-classaabb"><span class="std std-ref">Class AABB</span></a>. The generated file is saved to Minecraft/run/procedural.json.</p>
+<div class="contents local topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#definition-src-cpp-pro-gen-gridworld-generator-cpp" id="id1">Definition (<code class="docutils literal notranslate"><span class="pre">src/cpp/pro_gen/gridworld_generator.cpp</span></code>)</a></p></li>
+<li><p><a class="reference internal" href="#detailed-description" id="id2">Detailed Description</a></p></li>
+<li><p><a class="reference internal" href="#includes" id="id3">Includes</a></p></li>
+<li><p><a class="reference internal" href="#functions" id="id4">Functions</a></p></li>
+<li><p><a class="reference internal" href="#variables" id="id5">Variables</a></p></li>
+</ul>
+</div>
+<div class="section" id="definition-src-cpp-pro-gen-gridworld-generator-cpp">
+<h2>Definition (<code class="docutils literal notranslate"><span class="pre">src/cpp/pro_gen/gridworld_generator.cpp</span></code>)<a class="headerlink" href="#definition-src-cpp-pro-gen-gridworld-generator-cpp" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="program_listing_file_src_cpp_pro_gen_gridworld_generator.cpp.html">Program Listing for File gridworld_generator.cpp</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="detailed-description">
+<h2>Detailed Description<a class="headerlink" href="#detailed-description" title="Permalink to this headline">¶</a></h2>
+<p>The size N must be provided while running this script. Separation defaults to 0. AABB_size defaults to 10</p>
+</div>
+<div class="section" id="includes">
+<h2>Includes<a class="headerlink" href="#includes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ProceduralGenerator.h</span></code> (<a class="reference internal" href="file_src_cpp_pro_gen_ProceduralGenerator.h.html#file-src-cpp-pro-gen-proceduralgenerator-h"><span class="std std-ref">File ProceduralGenerator.h</span></a>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">World.h</span></code> (<a class="reference internal" href="file_src_cpp_pro_gen_World.h.html#file-src-cpp-pro-gen-world-h"><span class="std std-ref">File World.h</span></a>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">boost/program_options.hpp</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">boost/random/mersenne_twister.hpp</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">boost/random/uniform_int_distribution.hpp</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fstream</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">iostream</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="function_gridworld__generator_8cpp_1a6ff53ba64c7ba660d8da7c6c6bb7d6f5.html#exhale-function-gridworld-generator-8cpp-1a6ff53ba64c7ba660d8da7c6c6bb7d6f5"><span class="std std-ref">Function generateAABBGrid</span></a></p></li>
+<li><p><a class="reference internal" href="function_gridworld__generator_8cpp_1a77117ab345269c16d43b6d8902d298a0.html#exhale-function-gridworld-generator-8cpp-1a77117ab345269c16d43b6d8902d298a0"><span class="std std-ref">Function generateAllDoorsInAABB</span></a></p></li>
+<li><p><a class="reference internal" href="function_gridworld__generator_8cpp_1a8f61934188597a683fb2e8c0d6e5362a.html#exhale-function-gridworld-generator-8cpp-1a8f61934188597a683fb2e8c0d6e5362a"><span class="std std-ref">Function generateBlocks</span></a></p></li>
+<li><p><a class="reference internal" href="function_gridworld__generator_8cpp_1a76f1407d407980d1c1e08317853ffa71.html#exhale-function-gridworld-generator-8cpp-1a76f1407d407980d1c1e08317853ffa71"><span class="std std-ref">Function generateGridWorld</span></a></p></li>
+<li><p><a class="reference internal" href="function_gridworld__generator_8cpp_1a88689dc51c89129ed3744c16df15759b.html#exhale-function-gridworld-generator-8cpp-1a88689dc51c89129ed3744c16df15759b"><span class="std std-ref">Function generateVictimInAABB</span></a></p></li>
+<li><p><a class="reference internal" href="function_gridworld__generator_8cpp_1ac0ea95804a1e827b5cc5755ffb034b11.html#exhale-function-gridworld-generator-8cpp-1ac0ea95804a1e827b5cc5755ffb034b11"><span class="std std-ref">Function getAABBEdgeMidpointAtBase</span></a></p></li>
+<li><p><a class="reference internal" href="function_gridworld__generator_8cpp_1a0ddf1224851353fc92bfbff6f499fa97.html#exhale-function-gridworld-generator-8cpp-1a0ddf1224851353fc92bfbff6f499fa97"><span class="std std-ref">Function main(int, char *)</span></a></p></li>
+</ul>
+</div>
+<div class="section" id="variables">
+<h2>Variables<a class="headerlink" href="#variables" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="variable_gridworld__generator_8cpp_1a415bcc363b3978ea725276876c700d7b.html#exhale-variable-gridworld-generator-8cpp-1a415bcc363b3978ea725276876c700d7b"><span class="std std-ref">Variable gen</span></a></p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

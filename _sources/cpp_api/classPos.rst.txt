@@ -1,0 +1,16 @@
+.. _exhale_class_classPos:
+
+Class Pos
+=========
+
+- Defined in :ref:`file_src_cpp_pro_gen_Pos.h`
+
+
+Class Documentation
+-------------------
+
+
+.. doxygenclass:: Pos
+   :members:
+   :protected-members:
+   :undoc-members:

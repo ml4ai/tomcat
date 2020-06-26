@@ -1,7 +1,7 @@
 .. _exhale_function_runExperiment_8cpp_1ac0f2228420376f4db7e1274f2b41667c:
 
-Function main
-=============
+Function main(int, const char \*)
+=================================
 
 - Defined in :ref:`file_src_cpp_runExperiment.cpp`
 

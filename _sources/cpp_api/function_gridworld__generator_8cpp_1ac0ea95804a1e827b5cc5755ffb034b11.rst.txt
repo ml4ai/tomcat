@@ -1,0 +1,13 @@
+.. _exhale_function_gridworld__generator_8cpp_1ac0ea95804a1e827b5cc5755ffb034b11:
+
+Function getAABBEdgeMidpointAtBase
+==================================
+
+- Defined in :ref:`file_src_cpp_pro_gen_gridworld_generator.cpp`
+
+
+Function Documentation
+----------------------
+
+
+.. doxygenfunction:: getAABBEdgeMidpointAtBase(AABB *)

@@ -1,0 +1,39 @@
+
+.. _program_listing_file_src_cpp_pro_gen_AABB.h:
+
+Program Listing for File AABB.h
+===============================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_cpp_pro_gen_AABB.h>` (``src/cpp/pro_gen/AABB.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   
+   #pragma once
+   
+   #include "Pos.h"
+   #include <string>
+   
+   class AABB {
+   
+     private:
+       int id;
+       std::string material;
+       Pos topLeft;
+       Pos bottomRight;
+   
+     public:
+       int getID();
+       std::string getMaterial();
+       Pos getTopLeft();
+       Pos getBottomRight();
+       int getMidpointX();
+       int getMidpointY();
+       int getMidpointZ();
+       Pos getRandomPosAtBase(int, int, int, int);
+       std::string toString();
+       AABB(int, std::string, Pos*, Pos*);
+       ~AABB();
+   };
