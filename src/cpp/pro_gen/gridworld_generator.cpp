@@ -4,14 +4,14 @@
 #include <boost/random/uniform_int_distribution.hpp>
 #include <iostream>
 
-World generateAABBGrid(
-    World world, int N, int sep, int AABB_size, string material) {
+void generateAABBGrid(
+    World * worldptr, int N, int sep, int AABB_size, string  material) {
     int idCtr = 1;
     Pos topLeft(1, 0, 1);
     Pos bottomRight(AABB_size, AABB_size, AABB_size);
 
     AABB prevAABB(idCtr, material, topLeft, bottomRight);
-    world.addAABB(prevAABB);
+    (*worldptr).addAABB(prevAABB);
 
     while (idCtr <= (N * N - 1)) {
         idCtr++;
@@ -23,7 +23,7 @@ World generateAABBGrid(
             Pos newBottomRight(
                 AABB_size, AABB_size, newTopLeft.getZ() + AABB_size);
             AABB curAABB(idCtr, material, newTopLeft, newBottomRight);
-            world.addAABB(curAABB);
+            (*worldptr).addAABB(curAABB);
             prevAABB = curAABB;
         }
         else {
@@ -34,16 +34,14 @@ World generateAABBGrid(
             newBottomRight.setX(newTopLeft.getX() + AABB_size);
 
             AABB curAABB(idCtr, material, newTopLeft, newBottomRight);
-            world.addAABB(curAABB);
+            (*worldptr).addAABB(curAABB);
             prevAABB = curAABB;
         }
     }
-
-    return world;
 }
 
-World generateVictimInAABB(World world, AABB aabb) {
-    Pos randPos(aabb.getRandomPosAtBase(2, 2, 2, 2));
+void generateVictimInAABB(World * worldptr, AABB * aabb) {
+    Pos randPos((*aabb).getRandomPosAtBase(2, 2, 2, 2));
     boost::random::mt19937 gen;
     boost::random::uniform_int_distribution<> dist(1, 100);
     int randInteger = dist(gen);
@@ -51,32 +49,31 @@ World generateVictimInAABB(World world, AABB aabb) {
     if (randInteger <= 75) {
         ProceduralGenerator pgen;
         Block victim = pgen.getRandomVictim(randPos, 0.60);
-        world.addBlock(victim);
+        (*worldptr).addBlock(victim);
     }
     else {
         ;
     }
-    return world;
 }
 
-vector<Pos> getAABBEdgeMidpointAtBase(AABB aabb) {
-    int midX = aabb.getMidpointX();
-    int midZ = aabb.getMidpointZ();
-    int base = aabb.getTopLeft().getY();
+vector<Pos> getAABBEdgeMidpointAtBase(AABB * aabb) {
+    int midX = (*aabb).getMidpointX();
+    int midZ = (*aabb).getMidpointZ();
+    int base = (*aabb).getTopLeft().getY();
 
-    Pos topEdgeMid = aabb.getTopLeft();
+    Pos topEdgeMid = (*aabb).getTopLeft();
     topEdgeMid.setX(midX);
     topEdgeMid.setY(base);
 
-    Pos bottomEdgeMid = aabb.getBottomRight();
+    Pos bottomEdgeMid = (*aabb).getBottomRight();
     bottomEdgeMid.setX(midX);
     bottomEdgeMid.setY(base);
 
-    Pos leftEdgeMid(aabb.getTopLeft());
+    Pos leftEdgeMid((*aabb).getTopLeft());
     leftEdgeMid.setZ(midZ);
     leftEdgeMid.setY(base);
 
-    Pos rightEdgeMid(aabb.getBottomRight());
+    Pos rightEdgeMid((*aabb).getBottomRight());
     rightEdgeMid.setZ(midZ);
     rightEdgeMid.setY(base);
 
@@ -89,7 +86,7 @@ vector<Pos> getAABBEdgeMidpointAtBase(AABB aabb) {
     return midEdgesAtBase;
 }
 
-World generateAllDoorsInAABB(World world, AABB aabb) {
+void generateAllDoorsInAABB(World *worldptr, AABB *aabb) {
     vector<Pos> edges = getAABBEdgeMidpointAtBase(aabb);
     Pos topEdgeMid = edges.at(0);
     Pos rightEdgeMid = edges.at(1);
@@ -101,33 +98,31 @@ World generateAllDoorsInAABB(World world, AABB aabb) {
     Block leftDoor("door", "oak_door", leftEdgeMid);
     Block rightDoor("door", "oak_door", rightEdgeMid);
 
-    world.addBlock(topDoor);
-    world.addBlock(rightDoor);
-    world.addBlock(leftDoor);
-    world.addBlock(rightDoor);
-
-    return world;
+    (*worldptr).addBlock(topDoor);
+    (*worldptr).addBlock(rightDoor);
+    (*worldptr).addBlock(leftDoor);
+    (*worldptr).addBlock(rightDoor);
 }
 
-World generateBlocks(World world) {
-    for (auto& aabb : world.getAABBList()) {
-        world = generateAllDoorsInAABB(world, aabb);
-        world = generateVictimInAABB(world, aabb);
+void generateBlocks(World * worldptr) {
+    for (auto& aabb : (*worldptr).getAABBList()) {
+        generateAllDoorsInAABB(worldptr, &aabb);
+        generateVictimInAABB(worldptr, &aabb);
     }
 
-    return world;
 }
 
 World generateGridWorld(
     int N, int sep, int AABB_size, string AABB_material, string filename) {
     World world;
-    world = generateAABBGrid(world, N, sep, AABB_size, AABB_material);
-    world = generateBlocks(world);
+    generateAABBGrid(&world, N, sep, AABB_size, AABB_material);
+    generateBlocks(&world);
     return world;
 }
 
 int main() {
-    World world;
-    world = generateGridWorld(200,0,10,"planks", "procedural.json");
+    World world = generateGridWorld(2,0,10,"planks", "procedural.json");
+    cout << world.getAABBList().at(0).getTopLeft().getX() << endl;
+    cout << world.getAABBList().at(3).getTopLeft().getX() << endl;
     return 0;
 }
