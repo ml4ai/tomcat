@@ -16,6 +16,6 @@ class Block {
     int getY();
     int getZ();
     std::string toString();
-    Block(std::string, std::string, Pos *);
+    Block(std::string, std::string, Pos*);
     ~Block();
 };

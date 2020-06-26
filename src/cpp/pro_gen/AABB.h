@@ -21,6 +21,6 @@ class AABB {
     int getMidpointZ();
     Pos getRandomPosAtBase(int, int, int, int);
     std::string toString();
-    AABB(int, std::string, Pos *, Pos *);
+    AABB(int, std::string, Pos*, Pos*);
     ~AABB();
 };

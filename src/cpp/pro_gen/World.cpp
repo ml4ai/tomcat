@@ -1,21 +1,21 @@
 #include "World.h"
-#include <string>
 #include <iostream>
+#include <string>
 
 using namespace std;
 using json = nlohmann::json;
 
 World::World() {}
 
-void World::addAABB(AABB *aabb) { (this->aabbList).push_back(*aabb); }
+void World::addAABB(AABB* aabb) { (this->aabbList).push_back(*aabb); }
 
-void World::addBlock(Block *block) { (this->blockList).push_back(*block); }
+void World::addBlock(Block* block) { (this->blockList).push_back(*block); }
 
 string World::toJSON() {
-    vector<map<string,string>> aabb_map_list;
-    vector<map<string,string>> block_map_list;
+    vector<map<string, string>> aabb_map_list;
+    vector<map<string, string>> block_map_list;
 
-    for(auto aabb: this ->aabbList){
+    for (auto aabb : this->aabbList) {
         map<string, string> m;
         m["id"] = to_string(aabb.getID());
 
@@ -30,7 +30,7 @@ string World::toJSON() {
         aabb_map_list.push_back(m);
     }
 
-    for(auto block : this->blockList){
+    for (auto block : this->blockList) {
         map<string, string> m;
         m["name"] = block.getName();
         m["x"] = to_string(block.getX());
@@ -44,29 +44,23 @@ string World::toJSON() {
     j["aabb_list"] = aabb_map_list;
     j["block_list"] = block_map_list;
     return j.dump(4);
-
 }
 
-vector<AABB> * World::getAABBList(){
-    return &(this -> aabbList);
-}
+vector<AABB>* World::getAABBList() { return &(this->aabbList); }
 
-vector<Block> * World::getBlockList(){
-    return &(this -> blockList);
-}
+vector<Block>* World::getBlockList() { return &(this->blockList); }
 
-string World::toString(){
+string World::toString() {
     string retval = "AABB List:\n\n";
-    for(auto aabb : this->aabbList){
+    for (auto aabb : this->aabbList) {
         retval += aabb.toString() + "\n";
     }
 
     retval += "\nBlock List:\n\n";
-    for(auto block : this->blockList){
+    for (auto block : this->blockList) {
         retval += block.toString() + "\n";
     }
     return retval;
 }
 
-
-World::~World(){}
+World::~World() {}
