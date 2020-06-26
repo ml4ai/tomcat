@@ -105,7 +105,7 @@ void generateAllDoorsInAABB(World *worldptr, AABB *aabb) {
 }
 
 void generateBlocks(World * worldptr) {
-    for (auto& aabb : (*worldptr).getAABBList()) {
+    for (auto& aabb : *((*worldptr).getAABBList())) {
         generateAllDoorsInAABB(worldptr, &aabb);
         generateVictimInAABB(worldptr, &aabb);
     }
@@ -122,8 +122,8 @@ World generateGridWorld(
 
 int main() {
     World world = generateGridWorld(1000,0,10,"planks", "procedural.json");
-    cout << world.getAABBList().at(0).getTopLeft().getX() << endl;
-    cout << world.getAABBList().at(3).getTopLeft().getX() << endl;
-    cout << world.getAABBList().at(1).getBottomRight().getX() << endl;
+    cout << (*(world.getAABBList())).at(0).getTopLeft().getX() << endl;
+    cout << (*(world.getAABBList())).at(3).getTopLeft().getX() << endl;
+    cout << (*(world.getAABBList())).at(1).getBottomRight().getX() << endl;
     return 0;
 }

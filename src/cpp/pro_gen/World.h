@@ -13,8 +13,8 @@ class World {
     void addAABB(AABB *);
     void addBlock(Block *);
     void toJSON(std::string);
-    std::vector<AABB> getAABBList();
-    std::vector<Block> getBlockList();
+    std::vector<AABB> * getAABBList();
+    std::vector<Block> * getBlockList();
     World();
     ~World();
 };

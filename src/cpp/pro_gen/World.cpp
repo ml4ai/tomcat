@@ -13,12 +13,12 @@ void World::toJSON(string filename) {
     cout << "TODO: toJSON isn't imlemented yet." << endl;
 }
 
-vector<AABB> World::getAABBList(){
-    return this -> aabbList;
+vector<AABB> * World::getAABBList(){
+    return &(this -> aabbList);
 }
 
-vector<Block> World::getBlockList(){
-    return this -> blockList;
+vector<Block> * World::getBlockList(){
+    return &(this -> blockList);
 }
 
 
