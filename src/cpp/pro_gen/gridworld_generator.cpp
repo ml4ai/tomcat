@@ -121,9 +121,8 @@ World generateGridWorld(
 }
 
 int main() {
-    World world = generateGridWorld(1000,0,10,"planks", "procedural.json");
-    cout << (*(world.getAABBList())).at(0).getTopLeft().getX() << endl;
-    cout << (*(world.getAABBList())).at(3).getTopLeft().getX() << endl;
-    cout << (*(world.getAABBList())).at(1).getBottomRight().getX() << endl;
+    World world = generateGridWorld(4,0,10,"planks", "procedural.json");
+    cout << world.toString() << endl;
+
     return 0;
 }

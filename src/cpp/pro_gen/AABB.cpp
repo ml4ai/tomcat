@@ -1,4 +1,5 @@
 #include "AABB.h"
+#include <string>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 
@@ -57,8 +58,13 @@ Pos AABB::getRandomPosAtBase(int offsetPosX =1, int offsetNegX=1, int offsetPosZ
     Pos pos(randX, base, randZ);
 
     return pos;
+}
 
+string AABB::toString(){
+    string retval = "ID: " + to_string(this -> id) + "\n" + "Material: " + this -> material + "\n" + 
+    "Top Left: " + (this ->topLeft).toString() + "Bottom Right: " + (this ->bottomRight).toString();
 
+    return retval;
 }
 
 AABB::~AABB() {}

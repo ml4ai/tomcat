@@ -2,6 +2,7 @@
 
 #include "AABB.h"
 #include "Block.h"
+#include <string>
 #include <nlohmann/json.hpp>
 
 class World {
@@ -15,6 +16,7 @@ class World {
     void toJSON(std::string);
     std::vector<AABB> * getAABBList();
     std::vector<Block> * getBlockList();
+    std::string toString();
     World();
     ~World();
 };

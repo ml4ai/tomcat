@@ -1,5 +1,6 @@
 #include "Block.h"
 #include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -15,5 +16,11 @@ int Block::getX() { return this->pos.getX(); }
 int Block::getY() { return this->pos.getY(); }
 
 int Block::getZ() { return this->pos.getZ(); }
+
+string Block::toString(){
+    string retval = "Name: " + this->name + "\n" + "Material: " + this->material + "\n" + "Pos: " + (this->pos).toString();
+    return retval;
+
+}
 
 Block::~Block() {}

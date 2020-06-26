@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 class Pos {
 
@@ -14,6 +15,7 @@ class Pos {
     void setX(int);
     void setY(int);
     void setZ(int);
+    std::string toString();
     Pos();
     Pos(int, int, int);
     Pos(const Pos& other);

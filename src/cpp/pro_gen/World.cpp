@@ -1,4 +1,5 @@
 #include "World.h"
+#include <string>
 #include <iostream>
 
 using namespace std;
@@ -19,6 +20,19 @@ vector<AABB> * World::getAABBList(){
 
 vector<Block> * World::getBlockList(){
     return &(this -> blockList);
+}
+
+string World::toString(){
+    string retval = "AABB List:\n\n";
+    for(auto aabb : this->aabbList){
+        retval += aabb.toString() + "\n";
+    }
+
+    retval += "\nBlock List:\n\n";
+    for(auto block : this->blockList){
+        retval += block.toString() + "\n";
+    }
+    return retval;
 }
 
 
