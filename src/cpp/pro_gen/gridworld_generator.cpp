@@ -1,10 +1,14 @@
 #include "ProceduralGenerator.h"
 #include "World.h"
+#include <boost/program_options.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
+#include <fstream>
 #include <iostream>
 
+using namespace std;
 boost::random::mt19937 gen;
+namespace po = boost::program_options;
 
 void generateAABBGrid(
     World * worldptr, int N, int sep, int AABB_size, string  material) {
@@ -114,19 +118,52 @@ void generateBlocks(World * worldptr) {
 }
 
 World generateGridWorld(
-    int N, int sep, int AABB_size, string AABB_material, string filename) {
+    int N, int sep, int AABB_size, string AABB_material) {
     World world;
     generateAABBGrid(&world, N, sep, AABB_size, AABB_material);
     generateBlocks(&world);
     return world;
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+    int N;
+    int sep = 0;
+    int AABB_size = 10;
+
+    po::options_description desc("Allowed options");
+    desc.add_options()
+            ("help", "produce help message")
+            ("N", po::value<int>(), "The number of AABB on an axis. Grid generated is N*N.")
+            ("sep", po::value<int>(), "The separation between AABB in the cardinal directions. Defaults to 0.")
+            ("aabb_size", po::value<int>(), "The size of the cubic AABB. Defaults to 10.")
+        ;
+
+    po::variables_map vm;
+    po::store(po::command_line_parser(argc, argv).options(desc).run(), vm);
+    po::notify(vm);
+
+    if (!vm.count("N")){
+        cout << "No grid size specified." << endl;
+        return 1;
+    }else{
+        N = vm["N"].as<int>();
+    }
+
+    if(vm.count("sep")){
+        sep = vm["sep"].as<int>();
+    }
+
+    if(vm.count("aabb_size")){
+        AABB_size = vm["aabb_size"].as<int>();
+    }
+
     cout << "Generating gridworld..." << endl;
-    World world = generateGridWorld(200,0,10,"planks", "procedural.json");
+    World world = generateGridWorld(N,sep,AABB_size, "planks");
     cout << "Writing to file..." << endl;
-    string jsonout = world.toJSON();
-    cout << "Done" << endl;
+    ofstream outputFile("../../../../external/malmo/Minecraft/run/procedural.json", ios::out);
+    outputFile << world.toJSON();
+    outputFile.close();
+    cout << "Done. The generated file is in Minecraft/run/" << endl;
 
     return 0;
 }
