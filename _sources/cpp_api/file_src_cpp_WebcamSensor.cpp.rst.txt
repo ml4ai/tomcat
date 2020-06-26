@@ -1,0 +1,50 @@
+
+.. _file_src_cpp_WebcamSensor.cpp:
+
+File WebcamSensor.cpp
+=====================
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp>` (``src/cpp``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. contents:: Contents
+   :local:
+   :backlinks: none
+
+Definition (``src/cpp/WebcamSensor.cpp``)
+-----------------------------------------
+
+
+.. toctree::
+   :maxdepth: 1
+
+   program_listing_file_src_cpp_WebcamSensor.cpp.rst
+
+
+
+
+
+Includes
+--------
+
+
+- ``GazeEstimation.h``
+
+- ``WebcamSensor.h`` (:ref:`file_src_cpp_WebcamSensor.h`)
+
+- ``fmt/format.h``
+
+- ``opencv2/highgui/highgui.hpp``
+
+
+
+
+
+
+Namespaces
+----------
+
+
+- :ref:`namespace_tomcat`
+

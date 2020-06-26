@@ -1,0 +1,65 @@
+
+.. _file_src_cpp_WebcamSensor.h:
+
+File WebcamSensor.h
+===================
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp>` (``src/cpp``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. contents:: Contents
+   :local:
+   :backlinks: none
+
+Definition (``src/cpp/WebcamSensor.h``)
+---------------------------------------
+
+
+.. toctree::
+   :maxdepth: 1
+
+   program_listing_file_src_cpp_WebcamSensor.h.rst
+
+
+
+
+
+Includes
+--------
+
+
+- ``LandmarkCoreIncludes.h``
+
+- ``SequenceCapture.h``
+
+- ``VisualizationUtils.h``
+
+- ``Visualizer.h``
+
+- ``fmt/format.h``
+
+
+
+Included By
+-----------
+
+
+- :ref:`file_src_cpp_WebcamSensor.cpp`
+
+
+
+
+Namespaces
+----------
+
+
+- :ref:`namespace_tomcat`
+
+
+Classes
+-------
+
+
+- :ref:`exhale_class_classtomcat_1_1WebcamSensor`
+

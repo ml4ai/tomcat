@@ -1,0 +1,33 @@
+
+.. _program_listing_file_src_cpp_LocalAgent.cpp:
+
+Program Listing for File LocalAgent.cpp
+=======================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_cpp_LocalAgent.cpp>` (``src/cpp/LocalAgent.cpp``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #include "LocalAgent.h"
+   #include "Mission.h"
+   #include <ClientPool.h>
+   #include <fmt/format.h>
+   
+   using fmt::print;
+   using namespace malmo;
+   using namespace std;
+   using namespace std::this_thread;
+   using namespace std::chrono;
+   
+   namespace tomcat {
+   
+       LocalAgent::LocalAgent() {}
+       LocalAgent::~LocalAgent() {}
+   
+       void LocalAgent::observe_mission(Mission& mission) {
+           // Model will be developed here
+       }
+   
+   } // namespace tomcat

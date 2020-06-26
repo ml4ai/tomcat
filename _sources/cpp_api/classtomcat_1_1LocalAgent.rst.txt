@@ -3,7 +3,7 @@
 Class LocalAgent
 ================
 
-- Defined in :ref:`file_src_LocalAgent.h`
+- Defined in :ref:`file_src_cpp_LocalAgent.h`
 
 
 Class Documentation

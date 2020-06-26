@@ -3,7 +3,7 @@
 Class WebcamSensor
 ==================
 
-- Defined in :ref:`file_src_WebcamSensor.h`
+- Defined in :ref:`file_src_cpp_WebcamSensor.h`
 
 
 Class Documentation

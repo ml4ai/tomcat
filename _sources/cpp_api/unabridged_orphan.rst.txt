@@ -13,6 +13,11 @@ Directories
 
    dir_src.rst
 
+.. toctree::
+   :maxdepth: 5
+
+   dir_src_cpp.rst
+
 Files
 *****
 
@@ -20,49 +25,49 @@ Files
 .. toctree::
    :maxdepth: 5
 
-   file_src_FileHandler.cpp.rst
+   file_src_cpp_FileHandler.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file_src_FileHandler.h.rst
+   file_src_cpp_FileHandler.h.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file_src_LocalAgent.cpp.rst
+   file_src_cpp_LocalAgent.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file_src_LocalAgent.h.rst
+   file_src_cpp_LocalAgent.h.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file_src_Mission.cpp.rst
+   file_src_cpp_Mission.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file_src_Mission.h.rst
+   file_src_cpp_Mission.h.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file_src_runExperiment.cpp.rst
+   file_src_cpp_runExperiment.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file_src_utils.h.rst
+   file_src_cpp_utils.h.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file_src_WebcamSensor.cpp.rst
+   file_src_cpp_WebcamSensor.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file_src_WebcamSensor.h.rst
+   file_src_cpp_WebcamSensor.h.rst

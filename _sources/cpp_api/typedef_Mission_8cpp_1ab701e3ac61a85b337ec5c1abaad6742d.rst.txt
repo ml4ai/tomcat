@@ -3,7 +3,7 @@
 Typedef json
 ============
 
-- Defined in :ref:`file_src_Mission.cpp`
+- Defined in :ref:`file_src_cpp_Mission.cpp`
 
 
 Typedef Documentation

@@ -1,0 +1,30 @@
+
+.. _program_listing_file_src_cpp_FileHandler.cpp:
+
+Program Listing for File FileHandler.cpp
+========================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_cpp_FileHandler.cpp>` (``src/cpp/FileHandler.cpp``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #include "FileHandler.h"
+   #include <fstream>
+   #include <iostream>
+   #include <sstream>
+   
+   using namespace std;
+   
+   namespace tomcat {
+   
+       string FileHandler::getFileContent(string filename) {
+           ifstream inputFile(filename);
+           stringstream stringStream;
+           stringStream << inputFile.rdbuf();
+           inputFile.close();
+           return stringStream.str();
+       }
+   
+   } // namespace tomcat
