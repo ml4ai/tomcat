@@ -39,17 +39,19 @@ set_local_configuration() {
     # Defaults to true.
     export ENABLE_FILE_UPLOAD=${ENABLE_FILE_UPLOAD:-0}
 
-    # MAIN_MISSION: Set this to 1 for the Zombie invasion mission, and to 2 for the
-    #               USAR Singleplayer mission.
+    # MAIN_MISSION: Set this to 1 for the Zombie invasion mission,
+    #                           2 for the USAR Singleplayer mission, and
+    #                           3 for a procedurally generated mission.
     export MAIN_MISSION=${MAIN_MISSION:-1} 
 
-    # If the main mission ID is set to 2 (USAR Singleplayer), then disable the
-    # tutorial mission, since it is a tutorial for the Zombie invasion mission.
-    if [[ $MAIN_MISSION -eq 2 ]]; then
-        export DO_TUTORIAL_MISSION=0
-    else
-        # Otherwise, enable the tutorial mission by default.
+    # If the main mission ID is set to 1 (USAR Singleplayer), then enable the
+    # tutorial mission by default, since it is a tutorial for the Zombie
+    # invasion mission.
+    if [[ $MAIN_MISSION -eq 1 ]]; then
+        # Enable the tutorial mission by default.
         export DO_TUTORIAL_MISSION=${DO_TUTORIAL_MISSION:-1}
+    else
+        export DO_TUTORIAL_MISSION=0
     fi
 
     # Enable main mission. Defaults to true.
@@ -114,16 +116,16 @@ detect_os() {
 
         # We download OpenJDK 1.8.0_232-b09 since the later versions of OpenJDK
         # 1.8 do not work with malmo, and we don't want to deal with different
-        # operating systems, package managers, etc.
         export JAVA_HOME="$TOMCAT"/external/jdk8u232-b09/Contents/Home
-
     elif [[ "$OSTYPE" == "linux-gnu" ]]; then
         echo "Linux detected."
-    else
+        export JAVA_HOME="$TOMCAT"/external/jdk8u232-b09/
+      else
         echo "OSTYPE is not darwin* or linux-gnu. Most likely this operating "\
              "system is not supported. Exiting now."
         exit 1
     fi
+
 }
 
 # Configure ffmpeg options for the webcam.

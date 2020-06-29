@@ -1,2 +1,12 @@
-#/usr/bin/bash
-cd ../external/malmo/Minecraft && ./launchClient.sh
+#!/usr/bin/env bash
+
+# Set the TOMCAT environment variable, assuming that the directory structure
+# mirrors that of the git repository.
+TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
+export TOMCAT
+
+
+export JAVA_HOME="$TOMCAT"/external/jdk8u232-b09/Contents/Home
+
+cd "$TOMCAT"/external/malmo/Minecraft
+./launchClient.sh

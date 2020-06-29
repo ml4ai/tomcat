@@ -48,6 +48,9 @@ coverage.info
 
 # MacOS filesystem
 .DS_Store
+mission_records
+tools/macos/local-ports
+tools/mission_records
 
 # Extras
 external/malmo/Minecraft/.classpath
