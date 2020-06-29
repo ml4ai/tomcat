@@ -40,13 +40,18 @@
     (:action start-searching ;; Rescuer checks the room, any victims in the room are "spotted" 
       :parameters (?t - rescuer ?r - room)
       :precondition (and (in ?t ?r) (not (searched ?t ?r)))
-      :effect (and (searching ?t ?r) (forall (eval (cl-user::check-for-victim)) (and (victim ?v) (spotted ?t ?v ?r)))) 
+      :effect (and (searching ?t ?r) 
+                   (forall (eval (cl-user::check-for-victim '?r .5)) 
+                           (and (victim ?v) (spotted ?t ?v ?r) 
+                                (when (eval cl-user::severely-injured ?v) (severe-injuries ?v))))) 
     )
 
     (:action continue-searching ;; Rescuer checks the room, any victims in the room are "spotted" 
       :parameters (?t - rescuer ?r - room)
       :precondition (and (in ?t ?r) (searching ?t ?r))
-      :effect (forall (eval (cl-user::check-for-victim)) (and (victim ?v) (spotted ?t ?v ?r))) 
+      :effect (forall (eval (cl-user::check-for-victim '?r .5)) 
+                      (and (victim ?v) (spotted ?t ?v ?r) 
+                           (when (eval cl-user::severely-injured ?v) (severe-injuries ?v)))) 
     )
 
     (:action done-searching
@@ -78,7 +83,6 @@
       :parameters (?t - rescuer ?source ?destination - room)
       :precondition (and (in ?t ?source) (not (in ?t ?destination)))
       :effect (and (in ?t ?destination) (not (in ?t ?source)))
-      :cost (+ 1 (cl-user::shortest-path-cost cl-user::*s-paths* '?source '?destination))
     )
 
     (:action leave ;; Rescuer leaves the building
@@ -137,7 +141,7 @@
              (:task !start-searching ?t ?r)
 
              continue-searching
-             (and (searching ?t ?r) (eval (cl-user::still-searching)))
+             (and (searching ?t ?r) (how-many-found ?t ?r ?c) (eval (cl-user::still-searching '?c)))
              (:task !continue-searching ?t ?r)
 
              finish-searching
@@ -152,7 +156,7 @@
              (:task !start-triaging-victim ?t ?v)
 
              finish-triaging
-             (and (triaging ?t ?v) (eval (cl-user::triage-succesful)))
+             (and (triaging ?t ?v) (eval (cl-user::triage-succesful .9)))
              (:task !finish-triaging-victim ?t ?v)
 
              stop-triaging
@@ -163,5 +167,6 @@
 
     (:- (same ?x ?x) nil) ;; Helper axiom for "different" axoim
     (:- (different ?x ?y) ((not (same ?x ?y)))) ;; Axiom that determines that two variables contain different values. 
+    (:- (how-many-found ?t ?r ?c) (and (setof ?v (spotted ?t ?r ?v) ?vs) (assign ?c (eval (length '?vs))))) 
   )
 )

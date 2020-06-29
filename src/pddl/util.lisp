@@ -45,15 +45,19 @@
                   (rest (assoc-if #'(lambda(x) (symbol-equals-keyword x loc-x)) 
                                   var)))))
 
-(defun check-for-victim (query)
+(defun check-for-victim (query prob)
   (let* ((vic-db (load-json-database "sar_victim_status.json"))
          (v-list (remove-if #'(lambda(x) (not (equalp (cdr (second x)) (symbol-name query)))) vic-db)))
-    (loop for i in v-list
+    (loop for i in v-list when (< (random 1.0) prob)
           collect (first i))))
 
-(defun is-injured (query)
+(defun severely-injured (query)
   (let ((vic-db (load-json-database "sar_victim_status.json")))
-    (or (equal "severe" (rest (third (assoc query vic-db)))) (equal "mild" (rest (third (assoc query vic-db)))))))
+    (equal "severe" (rest (third (assoc query vic-db))))))
+
+(defun still-searching (c)
+  (< (random 1.0) 
+     (if (= c 0) 0.5 (* .6 (/ 1.0 c)))))
 
 ;; See if list of symbols are equal by name alone (regardless of package)
 (defun equall (l1 l2)
