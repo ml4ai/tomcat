@@ -26,8 +26,10 @@ options_description load_options() {
         "Mission ID or path to mission XML file.\n"
         "  0: Tutorial\n"
         "  1: Zombie Invasion\n"
-        "  2: USAR (Singleplayer)")("difficulty",
-                                    value<unsigned int>()->default_value(5),
+        "  2: USAR (Singleplayer)\n"
+        "  3: Procedurally generated mission"
+        )
+        ("difficulty", value<unsigned int>()->default_value(5),
                                     "Level of difficulty.\n"
                                     "  3: Easy\n"
                                     "  5: Medium\n"

@@ -26,15 +26,6 @@ public class USARSinglePlayerMission extends Mission {
         this.id = ID.USAR_SINGLE_PLAYER;
     }
 
-    /**
-     * From a Building object his method will pick
-     * out a random room and return its coordinates in the form of a BlockPos
-     * object. <p> If the Building has only one room, just the main room
-     * coordinates will be returned since that is the only option.
-     *
-     * @param building - Any Building object
-     * @return BlockPos - Coordinates of the random room
-     */
     @Override
     public void init(World world) {
         super.init(world);
