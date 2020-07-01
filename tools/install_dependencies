@@ -100,9 +100,10 @@ __install_dependencies_using_apt() {
         doxygen \
         ffmpeg \
         wmctrl \
-        mosquitto\
-        mosquitto-clients\
-        curl
+        mosquitto \
+        mosquitto-clients \
+        curl \
+        zlib1g-dev
     if [[ $? -ne 0 ]]; then exit 1; fi
 
     local ubuntu_major_version=$(lsb_release -d | cut -d " " -f2 \
@@ -124,7 +125,7 @@ __install_dependencies_using_apt() {
         # ones.
         if ! sudo apt-get install -y libboost-all-dev; then exit 1; fi
     else
-        if ! "$TOMCAT"/tools/install_from_source/boost; then 
+        if ! "$TOMCAT"/tools/install_from_source/boost; then
             echo "Failed to install Boost from source. Exiting now."
             exit 1
         fi
