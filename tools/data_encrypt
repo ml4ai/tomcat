@@ -109,7 +109,7 @@ data_encrypt(){
     # We zip these two files together under session_folder_encrypted.zip file,
     # and send the files using curl to vision server.
 
-    # Encrypted files. Defining realtive pathnames, since I will
+    # Encrypted files. Defining relative pathnames, since I will
     # do a cd into participant data folder later.
     local enc_session_folder="${session_id}.zip.enc"
     local enc_aes_key="${session_id}_key.enc"
@@ -119,7 +119,7 @@ data_encrypt(){
     # participant data folder and return back.
     pushd "$participant_data_folder" > /dev/null
 
-        echo "Packing encrypted session folder and AES Key into zip file:${enc_zip_file}"
+        echo "Packing encrypted session folder and AES Key into zip file: ${enc_zip_file}"
         echo "This may take a minute ..."
         if ! zip -q -r "${enc_zip_file}" "${enc_session_folder}" \
             "${enc_aes_key}"; then

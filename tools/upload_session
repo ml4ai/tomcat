@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Script to upload user data to the vision server.
-set -u 
+set -u
 
 # Set the TOMCAT environment variable, assuming that the directory structure
 # mirrors that of the git repository.
@@ -14,7 +14,7 @@ mkdir -p "${TOMCAT_TMP_DIR}"
 data_upload(){
 
     local session_id=$1
-    # Authentication file 
+    # Authentication file
     local auth_file="${TOMCAT}/netrc"
     local web_address="http://vision.cs.arizona.edu/~tomcat/upload_file.php"
     local participant_data_folder="${TOMCAT}/data/participant_data"
@@ -27,7 +27,7 @@ data_upload(){
     pushd "$participant_data_folder" > /dev/null
 
         if [[ ! -f "${session_id}.zip" ]]; then
-            echo "Compressing encrypted session folder: ${session_id}"
+            echo "Compressing session folder: ${session_id}"
             echo "This may take a minute ..."
             if ! zip -q -r "${session_id}.zip" "${session_id}"; then
                 echo "Creation of zip file failed. Exiting now."
@@ -40,30 +40,37 @@ data_upload(){
     popd > /dev/null
 
 	# We can set an excryption flag and make this conditional.
-	# if DATA_ENCRYPT; then ....
-	if ! "$TOMCAT"/tools/data_encrypt "$session_id"; then 
-		echo "Data encryption failed. Exiting now."
-		exit 1
-	fi
+	# if ENCRYPT_DATA; then ....
+    if (( ${ENCRYPT_DATA:-0} )); then
+        if ! "$TOMCAT"/tools/data_encrypt "$session_id"; then
+            echo "Data encryption failed. Exiting now."
+            exit 1
+        fi
+        # After data encryption script completes, we will obtain
+        # encrypted zip file. ${session_folder}_encrypted.zip
+        local zip_file="${session_folder}_encrypted.zip"
+    else
+        local zip_file="${session_folder}.zip"
+    fi
 
-	# After data encryption script completes, we will obtain 
-	# encrypted zip file. ${session_folder}_encrypted.zip
-
-	local enc_zip_file="${session_folder}_encrypted.zip"
 
     echo "Beginning data upload to vision server."
 
     curl_log="$TOMCAT_TMP_DIR"/vision_data_upload.log
 
-    if [[ -f "${enc_zip_file}" ]]; then
-        echo "Encrypted zip file created. Proceeding with data upload."
-		echo "Uploading data to vision server. This may take a few mins ..."
+    if [[ -f "${zip_file}" ]]; then
+        if (( ${ENCRYPT_DATA:-0} )); then
+            echo "Encrypted zip file created. Proceeding with data upload."
+        else
+            echo "Zip file created. Proceeding with data upload."
+        fi
+		echo "Uploading data to vision server. This may take a few minutes..."
     else
         echo "Error: Failed to create encrypted file."
         exit 1
     fi
 
-    curl --netrc-file "$auth_file" -F "inputfile=@${session_folder}_encrypted.zip"\
+    curl --netrc-file "$auth_file" -F "inputfile=@${zip_file}"\
         "$web_address" &> "$curl_log"
     if [[ $? -ne 0 ]]; then
         echo "The curl command to upload the data to the vision server "\
@@ -78,4 +85,4 @@ data_upload(){
 data_upload $1
 exit 0
 # NOTE: Should include a cleanup script to handle errors and interrupts.
-# Clean up should take care of cleaning random keys and intermittent files generated.
+# Clean up should take care of cleaning random keys and intermediate files generated.
