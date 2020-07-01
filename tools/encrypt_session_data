@@ -22,7 +22,7 @@ encrypt_session_data(){
     local participant_data_folder="${TOMCAT}/data/participant_data"
     local session_folder="${participant_data_folder}/${session_id}"
     # Public Key for Encryption.
-    local pub_key="${TOMCAT}/rsa_public.pem"
+    local pub_key="${TOMCAT}/conf/rsa_public.pem"
     local openssl_log="${TOMCAT_TMP_DIR}/data_encryption.log"
 
     # Check if the session_folder is already encrypted. If yes,
