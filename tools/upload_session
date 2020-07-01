@@ -66,7 +66,7 @@ data_upload(){
         fi
 		echo "Uploading data to vision server. This may take a few minutes..."
     else
-        echo "Error: Failed to create encrypted file."
+        echo "Error: Failed to create zip file."
         exit 1
     fi
 
