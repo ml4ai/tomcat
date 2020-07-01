@@ -103,7 +103,7 @@ __install_dependencies_using_apt() {
         mosquitto\
         mosquitto-clients\
         curl\
-		openssl
+        openssl
     if [[ $? -ne 0 ]]; then exit 1; fi
 
     # On Ubuntu 18.04, the required version of the nlohmann-json JSON library
