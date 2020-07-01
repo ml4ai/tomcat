@@ -47,7 +47,7 @@ useNativeTransport:true
 entityShadows:true
 mainHand:right
 attackIndicator:1
-showSubtitles:true
+showSubtitles:false
 realmsNotifications:true
 enableWeakAttacks:false
 autoJump:false
@@ -84,8 +84,8 @@ key_key.hotbar.9:10
 key_key.handyTestHook:22
 key_key.displayInstructions:23
 soundCategory_master:1.0
-soundCategory_music:0.09859155
-soundCategory_record:0.8239437
+soundCategory_music:1.0
+soundCategory_record:1.0
 soundCategory_weather:1.0
 soundCategory_block:1.0
 soundCategory_hostile:1.0
