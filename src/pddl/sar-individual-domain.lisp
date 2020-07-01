@@ -12,22 +12,21 @@
 ;; and conditional-effects
 
 (progn (ql:quickload "shop3")
-       (load "util.lisp")
-       (defvar *s-paths* (load-json-database "sar_shortest_path_lengths.json")))
+       (load "util.lisp"))
 
 (in-package :shop-user)
 
-;;(shop-trace :states :operators)
+(shop-trace :all)
 (defdomain (sar-individual-domain :type pddl-domain :redefine-ok T) (
     (:types human ;; Everything, including 'human' inherits from the base 'object' type
             victim rescuer - human ;; The rescuer and the victims are humans.
             room ;; Rooms (includes elevators and bathrooms)
             building ;; Building (contains rooms)
             goal
+            strategy
     )
    
     (:predicates (in ?h - human ?r - room) ;; Indicates which room a human (rescuer, victim, etc) is inside
-                 (inside ?h - rescuer ?b - building) ;; Indicates that the rescuer is in the building
                  (triaged ?v - victim) ;; Indicates that a victim has been triaged
                  (searched ?t - rescuer ?r - room) ;; Indicates that a rescuer has checked a room
                  (searching ?t - rescuer ?r - room)
@@ -39,19 +38,21 @@
 
     (:action start-searching ;; Rescuer checks the room, any victims in the room are "spotted" 
       :parameters (?t - rescuer ?r - room)
-      :precondition (and (in ?t ?r) (not (searched ?t ?r)))
+      :precondition (and (in ?t ?r) (not (searched ?t ?r)) 
+                         (assign ?vs (cl-user::check-for-victim '?r .5)))
       :effect (and (searching ?t ?r) 
-                   (forall (eval (cl-user::check-for-victim '?r .5)) 
+                   (forall ?vs
                            (and (victim ?v) (spotted ?t ?v ?r) 
-                                (when (eval cl-user::severely-injured ?v) (severe-injuries ?v))))) 
+                                (when (eval (cl-user::severely-injured ?v)) (severe-injuries ?v))))) 
     )
 
     (:action continue-searching ;; Rescuer checks the room, any victims in the room are "spotted" 
       :parameters (?t - rescuer ?r - room)
-      :precondition (and (in ?t ?r) (searching ?t ?r))
-      :effect (forall (eval (cl-user::check-for-victim '?r .5)) 
+      :precondition (and (in ?t ?r) (searching ?t ?r) (not (searched ?t ?r)) 
+                         (assign ?vs (cl-user::check-for-victim '?r .5)))
+      :effect (forall ?vs 
                       (and (victim ?v) (spotted ?t ?v ?r) 
-                           (when (eval cl-user::severely-injured ?v) (severe-injuries ?v)))) 
+                           (when (eval (cl-user::severely-injured ?v)) (severe-injuries ?v)))) 
     )
 
     (:action done-searching
@@ -108,12 +109,12 @@
 
     (:method (perform-next-mission-task ?t ?r) ;; Method for examining and triaging victims
              search-A ;; Search strategy where agent stops searching to treat any victims currently found
-             (and (not (triaging ?t ?_)) (strategy A) (not searched ?t ?r) 
+             (and (not (triaging ?t ?_)) (strategy A) (not (searched ?t ?r)) 
                   (or (not (spotted ?t ?v ?r)) (and (spotted ?t ?v ?r) (triaged ?v))))
              (:task search ?t ?r)
 
              search-B ;; Search strategy where agent only stops to treat gold victims.
-             (and (not (triaging ?t ?_)) (strategy B) (not searched ?t ?r) 
+             (and (not (triaging ?t ?_)) (strategy B) (not (searched ?t ?r)) 
                   (or (not (spotted ?t ?v ?r)) (and (spotted ?t ?v ?r) 
                                                     (or (triaged ?v) (not (severe-injuries ?v))))))
              (:task search ?t ?r)

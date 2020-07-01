@@ -59,6 +59,9 @@
   (< (random 1.0) 
      (if (= c 0) 0.5 (* .6 (/ 1.0 c)))))
 
+(defun triage-successful (prob)
+  (< (random 1.0) prob))
+
 ;; See if list of symbols are equal by name alone (regardless of package)
 (defun equall (l1 l2)
   (cond

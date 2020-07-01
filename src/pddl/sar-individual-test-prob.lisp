@@ -5,7 +5,6 @@
 (in-package :shop-user)
 (defproblem sar-individual-problem ;; Example initial state and task
             ((building b)
-             (goal sar-individual-example-goal.txt)
              (room lobby) 
              (room mens) 
              (room womens)
@@ -38,7 +37,9 @@
              (room r-218)
              (room r-215)
              (room r-220)
-             (rescuer t1))
-            ((enter-building-and-complete-mission t1 b lobby)))
+             (rescuer t1)
+             (strategy A)
+             (in t1 r-201))
+            ((perform-next-mission-task t1 r-201)))
 
 (find-plans 'sar-individual-problem :which :first :optimize-cost nil :verbose :plans :plan-tree nil)
