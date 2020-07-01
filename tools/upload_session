@@ -42,7 +42,7 @@ data_upload(){
 	# We can set an excryption flag and make this conditional.
 	# if ENCRYPT_DATA; then ....
     if (( ${ENCRYPT_DATA:-0} )); then
-        if ! "$TOMCAT"/tools/data_encrypt "$session_id"; then
+        if ! "$TOMCAT"/tools/encrypt_session_data "$session_id"; then
             echo "Data encryption failed. Exiting now."
             exit 1
         fi

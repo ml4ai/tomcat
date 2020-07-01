@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script to encrypt user data before uploadng it to the vision server.
-# Script can be called independently ./data_encrypt <session_folder>
+# Script can be called independently ./encrypt_session_data <session_folder>
 
 # In a generic scenario, this script will be called from upload_session script,
 # before uploading data to the vision server.
@@ -16,7 +16,7 @@ export TOMCAT
 export TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
 mkdir -p "${TOMCAT_TMP_DIR}"
 
-data_encrypt(){
+encrypt_session_data(){
 
     local session_id=$1
     local participant_data_folder="${TOMCAT}/data/participant_data"
@@ -138,5 +138,5 @@ data_encrypt(){
     popd > /dev/null
 }
 
-data_encrypt $1
+encrypt_session_data $1
 exit 0
