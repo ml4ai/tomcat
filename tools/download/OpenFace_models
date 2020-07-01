@@ -4,8 +4,6 @@
 
 set -e
 
-if [[ ! -e ${TOMCAT}/data/OpenFace_models.tgz ]]; then 
-
 echo "Downloading OpenFace models."
 
 TOMCAT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../../" >/dev/null 2>&1 && pwd )"
@@ -19,10 +17,6 @@ pushd ${TOMCAT}/data > /dev/null
     if [[ $? -ne 0 ]]; then exit 1; fi;
 popd > /dev/null
 
-else 
-	echo "OpenFace models download complete."
-	echo " "
-
-fi;
-
+echo "OpenFace models download complete."
+echo " "
 exit 0
