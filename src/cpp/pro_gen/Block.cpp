@@ -54,16 +54,8 @@ int Block::getY() { return this->pos.getY(); }
  */
 int Block::getZ() { return this->pos.getZ(); }
 
-/**
- * @brief Gets a string representation of the various
- * fields and values stores in an instance
- *
- * @return string The string representation
- */
-string Block::toString() {
-    string retval = "Name: " + this->name + "\n" +
-                    "Material: " + this->material + "\n" +
-                    "Pos: " + (this->pos).toString();
+string Block::toTSV(){
+    string retval = (this -> material) + "\t" + (this->pos).toTSV();
     return retval;
 }
 

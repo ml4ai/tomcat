@@ -251,6 +251,7 @@ int main(int argc, char* argv[]) {
     outputFile.close();
     cout << "Done. The generated file is in Minecraft/run/procedural.json"
          << endl;
+    cout << world.toTSV() << endl;
 
     return 0;
 }

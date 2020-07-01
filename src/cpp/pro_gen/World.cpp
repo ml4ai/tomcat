@@ -29,6 +29,20 @@ void World::addAABB(AABB* aabb) { (this->aabbList).push_back(*aabb); }
  */
 void World::addBlock(Block* block) { (this->blockList).push_back(*block); }
 
+string World::toTSV(){
+    string retval = "";
+
+    for(auto aabb : (this -> aabbList)){
+        retval += aabb.toTSV();
+    }
+
+    for(auto block : (this ->blockList)){
+        retval += block.toTSV();
+    }
+
+    return retval;
+}
+
 /**
  * @brief Converts the world into a JSON representation with
  * each entry indented by 4 and returns the string representation of it.

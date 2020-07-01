@@ -24,7 +24,7 @@ class Pos {
     void setX(int);
     void setY(int);
     void setZ(int);
-    std::string toString();
+    std::string toTSV();
     Pos();
     Pos(int, int, int);
     Pos(const Pos& other);

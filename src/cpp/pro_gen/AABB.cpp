@@ -131,17 +131,29 @@ Pos AABB::getRandomPosAtBase(int offsetPosX = 1,
     return pos;
 }
 
+void AABB::addBlock(Block * block){
+    (this ->blockList).push_back(*block);
+}
+
 /**
  * @brief Gets a string representation of the various
  * fields and values stores in an instance
  *
  * @return string The string representation
  */
-string AABB::toString() {
-    string retval = "ID: " + to_string(this->id) + "\n" +
-                    "Material: " + this->material + "\n" +
-                    "Top Left: " + (this->topLeft).toString() +
-                    "Bottom Right: " + (this->bottomRight).toString();
+string AABB::toTSV() {
+    string retval = "";
+    for(int x = (this->topLeft).getX(); x <= (this->bottomRight).getX(); x++){
+        for(int y = (this->topLeft).getY(); y <= (this->bottomRight).getY(); y++){
+            for(int z = (this->topLeft).getZ(); z <= (this->bottomRight).getZ(); z++){
+                retval += (this->material) + "\t" + to_string(x) + "\t"+  to_string(y) + "\t" + to_string(z) + "\n";
+            }
+        }
+    }
+
+    for(auto block : (this ->blockList)){
+        retval += block.toTSV();
+    }
 
     return retval;
 }

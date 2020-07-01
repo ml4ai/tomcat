@@ -24,7 +24,7 @@ class Block {
     int getX();
     int getY();
     int getZ();
-    std::string toString();
+    std::string toTSV();
     Block(std::string, std::string, Pos*);
     ~Block();
 };

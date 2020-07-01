@@ -78,9 +78,9 @@ void Pos::setZ(int z) { this->z = z; }
  *
  * @return string The string representation
  */
-string Pos::toString() {
-    string retval = "(" + to_string(this->x) + "," + to_string(this->y) + "," +
-                    to_string(this->z) + ")\n";
+string Pos::toTSV() {
+    string retval = to_string(this->x) + "\t" + to_string(this->y) + "\t" +
+                    to_string(this->z) + "\n";
     return retval;
 }
 

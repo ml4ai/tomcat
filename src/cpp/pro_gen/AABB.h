@@ -5,8 +5,9 @@
  */
 #pragma once
 
-#include "Pos.h"
+#include "Block.h"
 #include <string>
+#include <vector>
 
 /**
  * @brief This class represents an Axis Aligned Bounding Box
@@ -20,6 +21,7 @@ class AABB {
     std::string material;
     Pos topLeft;
     Pos bottomRight;
+    std::vector<Block> blockList;
 
   public:
     int getID();
@@ -30,7 +32,8 @@ class AABB {
     int getMidpointY();
     int getMidpointZ();
     Pos getRandomPosAtBase(int, int, int, int);
-    std::string toString();
+    void addBlock(Block *);
+    std::string toTSV();
     AABB(int, std::string, Pos*, Pos*);
     ~AABB();
 };
