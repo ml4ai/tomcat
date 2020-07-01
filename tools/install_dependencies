@@ -105,9 +105,18 @@ __install_dependencies_using_apt() {
         curl
     if [[ $? -ne 0 ]]; then exit 1; fi
 
-    # On Ubuntu 18.04, the required version of the nlohmann-json JSON library
-    # is not available using apt-get, so we install from source.
-    if ! "$TOMCAT"/tools/install_from_source/nlohmann-json; then exit 1; fi
+    local ubuntu_major_version=$(lsb_release -d | cut -d " " -f2 \
+                                                | cut -d "." -f1)
+    if [[ $ubuntu_major_version -le 18 ]]; then
+        # On Ubuntu 18.04 and lower, the required version of the nlohmann-json
+        # library is not available using apt-get, so we install from source.
+        if ! "$TOMCAT"/tools/install_from_source/nlohmann-json; then
+            echo "Failed to install nlohmann-json from source. Exiting now."
+            exit 1
+        fi
+    else
+        sudo apt install nlohmann-json3-dev
+    fi
 
     if (( CI )); then
         # The Github Actions Ubuntu 18.04 VM already has Boost installed, but not
