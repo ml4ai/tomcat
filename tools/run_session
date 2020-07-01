@@ -13,7 +13,7 @@ source "$TOMCAT"/tools/configuration_helpers
 
 configure_session
 
-# If the above fails, we do not get here. 
+# If the above fails, we do not get here.
 
 # Start mosquitto message broker if it is not already running.
 if [[ ! $(pgrep -l mosquitto | head -n1 | cut -d' ' -f2) == mosquitto ]]; then
@@ -27,7 +27,7 @@ if [[ ! $(pgrep -l mosquitto | head -n1 | cut -d' ' -f2) == mosquitto ]]; then
         # around the need to do this and just invoke the mosquitto executable
         # in the background, we give the full path to the mosquitto executable
         # under the Homebrew prefix.
-        MOSQUITTO=$(brew --prefix)/sbin/mosquitto 
+        MOSQUITTO=$(brew --prefix)/sbin/mosquitto
     else
         MOSQUITTO=mosquitto
     fi
@@ -59,7 +59,7 @@ start_av_recording() {
     &> ${TOMCAT_TMP_DIR}/ffmpeg_webcam_mission_"$CURRENT_MISSION".log &
     pid_webcam_recording=$!
     echo "Recording video of player's face using webcam. Process ID = ${pid_webcam_recording}"
-    
+
     ffmpeg\
     -nostdin\
     -f ${FFMPEG_FMT_MICROPHONE}\
@@ -120,9 +120,9 @@ start_av_recording() {
 # For this reason, we call this function, kill_av_recording_and_mosquitto_sub
 # in both the mission_cleanup and the session_cleanup functions.
 kill_av_recording_and_mosquitto_sub() {
-    echo "Cleaning up ffmpeg/pacat and mosquitto_sub processes." 
+    echo "Cleaning up ffmpeg/pacat and mosquitto_sub processes."
 
-    if (( ENABLE_FFMPEG )); then 
+    if (( ENABLE_FFMPEG )); then
         pkill ffmpeg
         if [[ $ENABLE_SYSTEM_AUDIO_RECORDING -eq 1 &&  $OSTYPE == linux-gnu ]]; then
             pkill pacat
@@ -137,7 +137,7 @@ kill_av_recording_and_mosquitto_sub() {
 # Function to cleanup things on exit or keyboard interrupt.
 session_cleanup() {
     kill_av_recording_and_mosquitto_sub
-    cleanup_status=0 
+    cleanup_status=0
     if [[ ${RECYCLE_MINECRAFT} -lt 2 ]]; then
         if ! "${TOMCAT}/tools/kill_minecraft"; then
             echo "Failed to kill Minecraft."
@@ -145,7 +145,7 @@ session_cleanup() {
         fi
     fi
 
-    if [[ $ENABLE_SYSTEM_AUDIO_RECORDING -eq 1 && $CI -eq 0 && "$OSTYPE"  == "darwin"* ]]; then  
+    if [[ $ENABLE_SYSTEM_AUDIO_RECORDING -eq 1 && $CI -eq 0 && "$OSTYPE"  == "darwin"* ]]; then
         # Switching the audio output from the multi-output device to the
         # built-in output.
         if ! SwitchAudioSource -s "$ORIGINAL_OUTPUT_DEVICE"; then
@@ -227,7 +227,7 @@ do_mission() {
 
     # Kobus: Other mechanisms are in place that now mean we might not want to do
     # a second try. So, let's test with num_tries=1, and if this works out, we
-    # can clean the loop. 
+    # can clean the loop.
     num_tries=1
     try=0
 
@@ -236,8 +236,8 @@ do_mission() {
         if ! "${TOMCAT}"/tools/check_minecraft; then
             echo "Main mission cannot find or create a viable Minecraft process."
             cleanup
-            exit 1  
-        fi 
+            exit 1
+        fi
 
         runExperiment_args="--mission ${CURRENT_MISSION}\
                             --record_observations\
@@ -272,7 +272,7 @@ do_mission() {
              "$pid_runExperiment ... waiting for it to complete."
 
         # Set up a background job to kill the mission if Minecraft dies.
-        ${TOMCAT}/tools/kill_me_if_no_minecraft $pid_runExperiment < /dev/null & 
+        ${TOMCAT}/tools/kill_me_if_no_minecraft $pid_runExperiment < /dev/null &
 
         wait $pid_runExperiment
         mission_status=$?
@@ -298,7 +298,7 @@ do_mission() {
 
             if [[ ${RECYCLE_MINECRAFT} -lt 1 ]]; then
                 "$TOMCAT"/tools/kill_minecraft
-            fi 
+            fi
         fi
     done
 }
@@ -326,15 +326,16 @@ echo "Doing our final cleanup."
 
 session_cleanup
 
-# Main mission has been completed. 
+NETRC="$TOMCAT"/conf/netrc
+# Main mission has been completed.
 # Call data_upload() if DO_MAIN_MISSION and ENABLE_DATA_UPLOAD are set to 1.
 if [[ $DO_MAIN_MISSION -eq 1 && $ENABLE_FILE_UPLOAD -eq 1 ]]; then
-    if [[ -f "${TOMCAT}/netrc" ]]; then
+    if [[ -f "${NETRC}" ]]; then
         echo "Detected netrc file in the ${TOMCAT} directory."
         echo "We assume that you are a member of the UA team, have run a"
         echo "session and want your session data uploaded to the vision server."
         echo "We will now attempt to do that."
-        if ! "$TOMCAT"/tools/upload_session "$SESSION_UUID"; then 
+        if ! "$TOMCAT"/tools/upload_session "$SESSION_UUID"; then
             echo "Data upload failed."
             echo "You can try uploading the session later by running:"
             echo "    ./tools/upload_session ${SESSION_UUID}"

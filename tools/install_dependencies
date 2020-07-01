@@ -9,6 +9,7 @@ export TOMCAT
 
 echo "Installing ToMCAT dependencies."
 
+COMMON_MACOS_DEPS="cmake boost doxygen ffmpeg gradle mosquitto nlohmann-json openssl"
 __install_dependencies_using_macports() {
     echo "'port' executable detected, assuming that MacPorts"
     echo "(https://www.macports.org) is installed and is the package manager."
@@ -19,18 +20,13 @@ __install_dependencies_using_macports() {
 
     if ! sudo port selfupdate; then exit 1; fi
 
-    sudo port -N install \
-        cmake \
-        libfmt \
-        doxygen \
-        ffmpeg \
-        openblas \
-        boost \
-        gradle \
-        mosquitto \
-        nlohmann-json
-    if [[ $? -ne 0 ]]; then exit 1; fi
-
+    local macports_deps="libfmt openblas"
+    for dep in $COMMON_MACOS_DEPS $macports_deps; do
+        if ! sudo port -N install $dep; then
+            echo "Unable to install $dep using MacPorts. Exiting."
+            exit 1
+        fi
+    done
 
     # We enable system audio recording ononly on macOS Catalina or above
     if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
@@ -49,20 +45,19 @@ __install_dependencies_using_homebrew() {
 
     if ! brew update; then exit 1; fi
 
-    # We do not require exit codes for Homebrew installs to be 0 since `brew
-    # install` can return an exit code of 1 when a package is already installed
-    # (!!)
 
-    brew install \
-      cmake \
-      fmt \
-      doxygen \
-      ffmpeg \
-      boost \
-      gradle \
-      mosquitto \
-      nlohmann-json
-    if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
+    local homebrew_deps="fmt"
+    for dep in $COMMON_MACOS_DEPS $homebrew_deps; do
+        brew install $dep
+        # We do not require exit codes for Homebrew installs to be 0 since
+        # `brew install` can return an exit code of 1 when a package is already
+        # installed (!!)
+
+        if [[ $? -ne 0 && $? -ne 1 ]]; then
+            echo "Unable to install $dep using Homebrew, exiting now."
+            exit 1
+        fi
+    done
 
     # We enable system audio recording ononly on macOS Catalina or above
     if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
@@ -102,7 +97,8 @@ __install_dependencies_using_apt() {
         wmctrl \
         mosquitto\
         mosquitto-clients\
-        curl
+        curl\
+        openssl
     if [[ $? -ne 0 ]]; then exit 1; fi
 
     # On Ubuntu 18.04, the required version of the nlohmann-json JSON library
