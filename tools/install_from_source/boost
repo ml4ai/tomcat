@@ -1,18 +1,68 @@
 #!/bin/bash
 
-# Install Boost from source
+set -u
 
-boost_minor_version=71
-curl -LO\
-  https://dl.bintray.com/boostorg/release/1."${boost_minor_version}".0/source/boost_1_"${boost_minor_version}"_0.tar.gz
-if [[ $? -ne 0 ]]; then exit 1; fi;
-tar xfz boost_1_"${boost_minor_version}"_0.tar.gz
-if [[ $? -ne 0 ]]; then exit 1; fi;
-pushd boost_1_"${boost_minor_version}"_0
-  ./bootstrap.sh
-  if [[ $? -ne 0 ]]; then exit 1; fi;
-  sudo ./b2 install
-  if [[ $? -ne 0 ]]; then exit 1; fi;
-popd
-/bin/rm -rf boost_1_"${boost_minor_version}"_0*
+# Install Boost from source
+install_boost_from_source() {
+    local boost_minor_version=$1
+    curl -LO\
+    https://dl.bintray.com/boostorg/release/1."${boost_minor_version}".0/source/boost_1_"${boost_minor_version}"_0.tar.gz
+    if [[ $? -ne 0 ]]; then 
+        echo "Unable to download the boost source distribution - the curl command failed."
+        exit 1
+    fi
+    if ! tar xfz boost_1_"${boost_minor_version}"_0.tar.gz; then
+        echo "Unable to extract Boost sources - the tar command failed."
+        exit 1
+    fi
+    pushd boost_1_"${boost_minor_version}"_0
+    if ! ./bootstrap.sh; then
+        echo "./bootstrap.sh step failed. Exiting now."
+        exit 1
+    fi
+    if ! sudo ./b2 install; then
+        echo "sudo ./b2 install step failed. Exiting now."
+        exit 1
+    fi
+    popd
+    /bin/rm -rf boost_1_"${boost_minor_version}"_0*
+}
+
+
+# Malmo requires Boost 1.69 or higher.
+BOOST_MINOR_VERSION_REQUIRED=69
+
+# On Linux machines, the Boost version header is usually found here.
+BOOST_VERSION_HEADER="/usr/local/include/boost/version.hpp"
+
+# Latest minor version of Boost available at the time this script was last
+# updated (2020/07/01).
+BOOST_MINOR_VERSION_LATEST=73
+
+# Check if the header file exists at the specified location
+if [[ -f $BOOST_VERSION_HEADER ]]; then
+    echo "Boost version header file found at ${BOOST_VERSION_HEADER}."
+
+    # Get the Boost version number
+    BOOST_VERSION=$(cat $BOOST_VERSION_HEADER | grep "define BOOST_VERSION " | cut -d' ' -f3)
+
+    # Get the minor version number
+    BOOST_MINOR_VERSION_INSTALLED=$(( $BOOST_VERSION / 100 % 1000 ))
+
+    # If the minor version number installed is less than the minor version
+    # required, then we install Boost from source. 
+    if [[ $BOOST_MINOR_VERSION_INSTALLED -le $BOOST_MINOR_VERSION_REQUIRED ]]; then
+        echo "Detected Boost version 1.${BOOST_MINOR_VERSION_INSTALLED}."
+        echo "This is less than the minimum version required "\
+             "(1.${BOOST_MINOR_VERSION_REQUIRED})."
+        echo "We will now proceed to install Boost version 1.${BOOST_MINOR_VERSION_LATEST} from source."
+        install_boost_from_source ${BOOST_MINOR_VERSION_LATEST}
+    fi
+else
+    echo "Did not find the Boost version header file at ${BOOST_VERSION_HEADER}."
+    echo "We assume that Boost is not installed on this machine, so we will"\
+         "install it now."
+    install_boost_from_source ${BOOST_MINOR_VERSION_LATEST}
+fi
+
 exit 0
