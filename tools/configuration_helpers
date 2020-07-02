@@ -39,16 +39,10 @@ set_local_configuration() {
     # Defaults to true.
     export ENABLE_FILE_UPLOAD=${ENABLE_FILE_UPLOAD:-0}
 
-<<<<<<< HEAD
-    # MAIN_MISSION: Set this to 1 for the Zombie invasion mission, and to 2 for the
-    #               USAR Singleplayer mission.
-    export MAIN_MISSION=${MAIN_MISSION:-1}
-=======
     # MAIN_MISSION: Set this to 1 for the Zombie invasion mission,
     #                           2 for the USAR Singleplayer mission, and
     #                           3 for a procedurally generated mission.
-    export MAIN_MISSION=${MAIN_MISSION:-1} 
->>>>>>> a5ea3d1088dd508ae7beadf76239ab7177a5ab07
+    export MAIN_MISSION=${MAIN_MISSION:-1}
 
     # If the main mission ID is set to 1 (USAR Singleplayer), then enable the
     # tutorial mission by default, since it is a tutorial for the Zombie
