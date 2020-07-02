@@ -44,6 +44,10 @@ public class WorldReader {
           int z= Integer.parseInt(blockEntry[2]);
           BlockPos pos = new BlockPos(x,y,z);
 
+          if(this.map.containsKey(pos)){
+              this.map.remove(pos);
+          } // When duplicate coordinates are encountered we remove and re-add so iteration order is correct
+
           String material = blockEntry[3];
           if (material.equals("door")) {
                 // Doors are special adn we need to place a bottom and top half
@@ -52,6 +56,7 @@ public class WorldReader {
                 BlockPos topPos = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
                 IBlockState doorTop = this.getBlockState("door_top");
 
+                this.map.remove(topPos); // For a door we need to remove and re add the block above the current as well
                 this.map.put(pos,doorBottom);
                 this.map.put(topPos,doorTop);
           }else {

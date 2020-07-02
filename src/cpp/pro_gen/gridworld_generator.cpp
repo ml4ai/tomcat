@@ -86,7 +86,8 @@ void generateAABBGrid(
  * @param aabb The AABB within which the victim is to ve generated
  */
 void generateVictimInAABB(World* worldptr, AABB* aabb) {
-    Pos randPos((*aabb).getRandomPosAtBase(2, 2, 2, 2));
+    Pos randPos((*aabb).getRandomPosAtBase(&gen, 2, 2, 2, 2));
+    randPos.setY(randPos.getY()+1);
     boost::random::uniform_int_distribution<> dist(1, 100);
     int randInteger = dist(gen);
 

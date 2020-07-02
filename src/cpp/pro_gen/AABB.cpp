@@ -109,7 +109,7 @@ int AABB::getMidpointZ() {
  * Defaults to 1
  * @return Pos
  */
-Pos AABB::getRandomPosAtBase(int offsetPosX = 1,
+Pos AABB::getRandomPosAtBase(boost::random::mt19937* gen, int offsetPosX = 1,
                              int offsetNegX = 1,
                              int offsetPosZ = 1,
                              int offsetNegZ = 1) {
@@ -120,12 +120,11 @@ Pos AABB::getRandomPosAtBase(int offsetPosX = 1,
     int endX = (this->bottomRight).getX() - offsetNegX;
     int endZ = (this->bottomRight).getZ() - offsetNegZ;
 
-    boost::random::mt19937 gen;
     boost::random::uniform_int_distribution<> randXGen(startX, endX);
     boost::random::uniform_int_distribution<> randZGen(startZ, endZ);
 
-    int randX = randXGen(gen);
-    int randZ = randZGen(gen);
+    int randX = randXGen(*gen);
+    int randZ = randZGen(*gen);
 
     int base = (this->topLeft).getY();
     Pos pos(randX, base, randZ);

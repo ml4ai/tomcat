@@ -8,6 +8,8 @@
 #include "Block.h"
 #include <string>
 #include <vector>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/uniform_int_distribution.hpp>
 
 /**
  * @brief This class represents an Axis Aligned Bounding Box
@@ -33,7 +35,7 @@ class AABB {
     int getMidpointX();
     int getMidpointY();
     int getMidpointZ();
-    Pos getRandomPosAtBase(int, int, int, int);
+    Pos getRandomPosAtBase(boost::random::mt19937*, int, int, int, int);
     void addBlock(Block *);
     std::string toTSV();
     AABB(int, std::string, Pos*, Pos*, bool, bool);
