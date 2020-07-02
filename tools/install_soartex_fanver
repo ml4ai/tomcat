@@ -7,16 +7,19 @@
 # in your web browser and placing the downloaded folder in the tomcat root
 # directory, then run this script.
 
-set -u 
+set -u
 
 # Set the TOMCAT environment variable, assuming that the directory structure
 # mirrors that of the git repository.
 TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
 export TOMCAT
 
+# Location of the netrc file
+NETRC="$TOMCAT"/conf/netrc
+
 pushd "$TOMCAT" > /dev/null
-    if [[ ! -f netrc ]]; then
-        echo "netrc file not found! We cannot download the Soartex_Fanver "\
+    if [[ ! -f ${NETRC} ]]; then
+        echo "${NETRC} not found! We cannot download the Soartex_Fanver "\
              "textures."
         exit 1
     fi
@@ -24,7 +27,7 @@ pushd "$TOMCAT" > /dev/null
     echo "Downloading the Soartex Fanver textures..."
     echo ""
 
-    curl -O --netrc-file "$TOMCAT"/netrc\
+    curl -O --netrc-file ${NETRC}\
     http://vision.cs.arizona.edu/~tomcat/Soartex_Fanver.tar.gz
     if [[ $? -ne 0 ]]; then exit 1; fi
 

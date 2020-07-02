@@ -9,16 +9,18 @@ set -u
 TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
 export TOMCAT
 
+NETRC=${TOMCAT}/conf/netrc
+
 pushd "$TOMCAT" > /dev/null
-    if [[ ! -f netrc ]]; then
-        echo "netrc file not found! We cannot download the TA3 mission world "\
+    if [[ ! -f ${NETRC} ]]; then
+        echo "${NETRC} not found! We cannot download the TA3 mission world "\
              "from the vision server."
         exit 1
     fi
 
     echo "Downloading USAR mission world from vision server..."
     echo ""
-    curl --netrc-file "$TOMCAT"/netrc\
+    curl --netrc-file ${NETRC}\
     http://vision.cs.arizona.edu/~tomcat/Singleplayer.tgz\
     -o "$TOMCAT"/data/worlds/Singleplayer.tgz
     if [[ $? -ne 0 ]]; then
