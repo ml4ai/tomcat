@@ -48,7 +48,7 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 
 add_subdirectory(external/malmo)
 add_subdirectory(external/OpenFace)
-add_subdirectory(src)
+add_subdirectory(src/cpp)
 
 target_include_directories(tomcat PRIVATE src external/malmo/Malmo/src)
 target_include_directories(runExperiment PRIVATE external/malmo/Malmo/src)

@@ -1,9 +1,5 @@
 file(GLOB tomcat_headers CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 
-set(JSON_BuildTests
-    OFF
-    CACHE INTERNAL "")
-
 find_package(nlohmann_json REQUIRED)
 add_library(tomcat STATIC ${tomcat_headers} LocalAgent.cpp Mission.cpp
                           FileHandler.cpp)
