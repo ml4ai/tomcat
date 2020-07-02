@@ -44,12 +44,6 @@ find_package(
 find_package(dlib REQUIRED)
 find_package(OpenCV REQUIRED)
 
-# At least with MacPorts and the opencv4 port, we need a call to
-# find_package(ade).
-if(APPLE)
-    find_package(ade REQUIRED)
-endif()
-
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 add_subdirectory(external/malmo)
