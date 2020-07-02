@@ -11,14 +11,12 @@ void signalHandler(int signum){
 }
 
 int main(){
-    
+
     //register signal SIGTERM and signal handler.
     WebcamSensor camsensor;
     camsensor.initialize();
-    signal(SIGTERM,signalHandler);
+    signal(SIGTERM, signalHandler);
     while (1){
-    	camsensor.get_observation();
+        camsensor.get_observation();
     }
 }
-
-

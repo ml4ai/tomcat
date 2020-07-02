@@ -29,19 +29,21 @@ else()
     "-- fmt package not found on system, please install it.  (https://fmt.dev)")
 endif()
 
-find_package(Boost 1.69
-             COMPONENTS chrono
-                        date_time
-                        filesystem
-                        iostreams
-                        program_options
-                        regex
-                        system
-                        thread
+find_package(
+  Boost 1.69
+  COMPONENTS chrono
+             date_time
+             filesystem
+             iostreams
+             program_options
+             regex
+             system
+             thread
              REQUIRED)
-             
+
 find_package(dlib REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(ade REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 add_subdirectory(external/malmo)
@@ -51,14 +53,10 @@ add_subdirectory(src)
 target_include_directories(tomcat PRIVATE src external/malmo/Malmo/src)
 target_include_directories(runExperiment PRIVATE external/malmo/Malmo/src)
 
-add_executable(landmark src/faceLandmarkDetection.cpp)
-target_include_directories(landmark PUBLIC ${OPENCV_INCLUDE_DIRS} ${openface_include_dirs})
-target_link_libraries(landmark ${OPENCV_LIBS} OpenFace)
-
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/tools/launch_minecraft
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 option(BUILD_DOCS "Build documentation" OFF)
-if (BUILD_DOCS)
+if(BUILD_DOCS)
   add_subdirectory(docs)
 endif()

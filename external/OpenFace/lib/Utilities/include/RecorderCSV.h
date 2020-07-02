@@ -48,81 +48,81 @@
 
 namespace Utilities {
 
-  //===========================================================================
-  /**
-  A class for recording CSV file from OpenFace
-  */
-  class RecorderCSV {
+    //===========================================================================
+    /**
+    A class for recording CSV file from OpenFace
+    */
+    class RecorderCSV {
 
-  public:
-    // The constructor for the recorder, need to specify if we are recording a
-    // sequence or not
-    RecorderCSV();
+      public:
+        // The constructor for the recorder, need to specify if we are recording
+        // a sequence or not
+        RecorderCSV();
 
-    // Opening the file and preparing the header for it
-    bool Open(std::string output_file_name,
-              bool is_sequence,
-              bool output_2D_landmarks,
-              bool output_3D_landmarks,
-              bool output_model_params,
-              bool output_pose,
-              bool output_AUs,
-              bool output_gaze,
-              int num_face_landmarks,
-              int num_model_modes,
-              int num_eye_landmarks,
-              const std::vector<std::string>& au_names_class,
-              const std::vector<std::string>& au_names_reg);
+        // Opening the file and preparing the header for it
+        bool Open(std::string output_file_name,
+                  bool is_sequence,
+                  bool output_2D_landmarks,
+                  bool output_3D_landmarks,
+                  bool output_model_params,
+                  bool output_pose,
+                  bool output_AUs,
+                  bool output_gaze,
+                  int num_face_landmarks,
+                  int num_model_modes,
+                  int num_eye_landmarks,
+                  const std::vector<std::string>& au_names_class,
+                  const std::vector<std::string>& au_names_reg);
 
-    bool isOpen() const { return output_file.is_open(); }
+        bool isOpen() const { return output_file.is_open(); }
 
-    // Closing the file and cleaning up
-    void Close();
+        // Closing the file and cleaning up
+        void Close();
 
-    void
-    WriteLine(int face_id,
-              int frame_num,
-              double time_stamp,
-              bool landmark_detection_success,
-              double landmark_confidence,
-              const cv::Mat_<float>& landmarks_2D,
-              const cv::Mat_<float>& landmarks_3D,
-              const cv::Mat_<float>& pdm_model_params,
-              const cv::Vec6f& rigid_shape_params,
-              cv::Vec6f& pose_estimate,
-              const cv::Point3f& gazeDirection0,
-              const cv::Point3f& gazeDirection1,
-              const cv::Vec2f& gaze_angle,
-              const std::vector<cv::Point2f>& eye_landmarks2d,
-              const std::vector<cv::Point3f>& eye_landmarks3d,
-              const std::vector<std::pair<std::string, double>>& au_intensities,
-              const std::vector<std::pair<std::string, double>>& au_occurences);
+        void WriteLine(
+            int face_id,
+            int frame_num,
+            double time_stamp,
+            bool landmark_detection_success,
+            double landmark_confidence,
+            const cv::Mat_<float>& landmarks_2D,
+            const cv::Mat_<float>& landmarks_3D,
+            const cv::Mat_<float>& pdm_model_params,
+            const cv::Vec6f& rigid_shape_params,
+            cv::Vec6f& pose_estimate,
+            const cv::Point3f& gazeDirection0,
+            const cv::Point3f& gazeDirection1,
+            const cv::Vec2f& gaze_angle,
+            const std::vector<cv::Point2f>& eye_landmarks2d,
+            const std::vector<cv::Point3f>& eye_landmarks3d,
+            const std::vector<std::pair<std::string, double>>& au_intensities,
+            const std::vector<std::pair<std::string, double>>& au_occurences);
 
-  private:
-    // Blocking copy and move, as it doesn't make sense to read to write to the
-    // same file
-    RecorderCSV& operator=(const RecorderCSV& other);
-    RecorderCSV& operator=(const RecorderCSV&& other);
-    RecorderCSV(const RecorderCSV&& other);
-    RecorderCSV(const RecorderCSV& other);
+      private:
+        // Blocking copy and move, as it doesn't make sense to read to write to
+        // the same file
+        RecorderCSV& operator=(const RecorderCSV& other);
+        RecorderCSV& operator=(const RecorderCSV&& other);
+        RecorderCSV(const RecorderCSV&& other);
+        RecorderCSV(const RecorderCSV& other);
 
-    // The actual output file stream that will be written
-    std::ofstream output_file;
+        // The actual output file stream that will be written
+        std::ofstream output_file;
 
-    // If we are recording results from a sequence each row refers to a frame,
-    // if we are recording an image each row is a face
-    bool is_sequence;
+        // If we are recording results from a sequence each row refers to a
+        // frame, if we are recording an image each row is a face
+        bool is_sequence;
 
-    // Keep track of what we are recording
-    bool output_2D_landmarks;
-    bool output_3D_landmarks;
-    bool output_model_params;
-    bool output_pose;
-    bool output_AUs;
-    bool output_gaze;
+        // Keep track of what we are recording
+        bool output_2D_landmarks;
+        bool output_3D_landmarks;
+        bool output_model_params;
+        bool output_pose;
+        bool output_AUs;
+        bool output_gaze;
 
-    std::vector<std::string> au_names_class;
-    std::vector<std::string> au_names_reg;
-  };
+        std::vector<std::string> au_names_class;
+        std::vector<std::string> au_names_reg;
+    };
 } // namespace Utilities
 #endif // RECORDER_CSV_H

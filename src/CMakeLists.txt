@@ -1,35 +1,27 @@
-
 file(GLOB tomcat_headers CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
-set(JSON_BuildTests OFF CACHE INTERNAL "")
+
+set(JSON_BuildTests
+    OFF
+    CACHE INTERNAL "")
 
 find_package(nlohmann_json REQUIRED)
-add_library(
-  tomcat STATIC
-  ${tomcat_headers}
-  LocalAgent.cpp
-  Mission.cpp
-  FileHandler.cpp)
+add_library(tomcat STATIC ${tomcat_headers} LocalAgent.cpp Mission.cpp
+                          FileHandler.cpp)
 
 target_include_directories(tomcat PUBLIC ${Boost_INCLUDE_DIRS})
 
-target_link_libraries(
-  tomcat
-  Malmo
-  ${Boost_LIBRARIES}
-  "z"
-  fmt::fmt
-)
-
+target_link_libraries(tomcat Malmo ${Boost_LIBRARIES} "z" fmt::fmt)
 
 option(CODE_COVERAGE "Enable coverage reporting" OFF)
 
 # Todo make code coverage work on Linux as well.
-if(APPLE AND CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+if(APPLE
+   AND CODE_COVERAGE
+   AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
   # Add required flags (GCC & LLVM/Clang)
   message("Building with code coverage")
   target_compile_options(
-    tomcat
-    -O0 # no optimization
+    tomcat -O0 # no optimization
     -g # generate debug info
     --coverage # sets all required flags
   )
@@ -40,11 +32,9 @@ if(APPLE AND CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
   endif()
 endif()
 
-set(CMAKE_BUILD_TYPE Debug)
-
-add_executable(ausensor AUSensor.cpp WebcamSensor.cpp)
-target_link_libraries(ausensor PUBLIC OpenFace nlohmann_json::nlohmann_json)
+add_executable(ausensor WebcamSensor.cpp AUSensor.cpp)
 target_include_directories(ausensor PUBLIC ${openface_include_dirs})
+target_link_libraries(ausensor PUBLIC OpenFace nlohmann_json::nlohmann_json "ade")
 
 add_executable(runExperiment runExperiment.cpp)
 target_link_libraries(runExperiment tomcat)
