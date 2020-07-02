@@ -15,9 +15,9 @@ int main(){
     //register signal SIGTERM and signal handler.
     WebcamSensor camsensor;
     camsensor.initialize();
+    signal(SIGTERM,signalHandler);
     while (1){
-    	signal(SIGTERM,signalHandler);
-        camsensor.get_observation();
+    	camsensor.get_observation();
     }
 }
 
