@@ -46,10 +46,14 @@ find_package(OpenCV REQUIRED)
 find_package(ade REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
+<<<<<<< HEAD
 add_subdirectory(external/malmo)
 add_subdirectory(external/OpenFace)
 add_subdirectory(src)
 
+=======
+add_subdirectory(src/cpp)
+>>>>>>> a5ea3d1088dd508ae7beadf76239ab7177a5ab07
 target_include_directories(tomcat PRIVATE src external/malmo/Malmo/src)
 target_include_directories(runExperiment PRIVATE external/malmo/Malmo/src)
 

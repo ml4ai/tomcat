@@ -1,0 +1,118 @@
+{
+    "v-1": {
+        "loc": "womens",
+        "injuries": "severe"
+    },
+    "v-2": {
+        "loc": "mens",
+        "injuries": "mild"
+    },
+    "v-3": {
+        "loc": "mens",
+        "injuries": "severe"
+    },
+    "v-4": {
+        "loc": "e-1",
+        "injuries": "severe" 
+    },
+    "v-5": {
+        "loc": "e-2",
+        "injuries": "severe" 
+    },
+    "v-6": {
+        "loc": "upper-left-hallway",
+        "injuries": "severe"
+    },
+    "v-7": {
+        "loc": "r-j",
+        "injuries": "mild"
+    },
+    "v-8": {
+        "loc": "r-201",
+        "injuries": "severe"
+    },
+    "v-9": {
+        "loc": "r-201",
+        "injuries": "mild"
+    },
+    "v-10": {
+        "loc": "r-203",
+        "injuries": "mild"
+    },
+    "v-11": {
+        "loc": "r-205",
+        "injuries": "severe" 
+    },
+    "v-12": {
+        "loc": "r-208-b",
+        "injuries": "mild"
+    },
+    "v-13": {
+        "loc": "r-207",
+        "injuries": "mild"
+    },
+    "v-14": {
+        "loc": "r-207",
+        "injuries": "severe"
+    },
+    "v-15": {
+        "loc": "r-207",
+        "injuries": "severe"
+    },
+    "v-16": {
+        "loc": "r-210",
+        "injuries": "mild"
+    },
+    "v-17": {
+        "loc": "r-210",
+        "injuries": "mild"
+    },
+    "v-18": {
+        "loc": "r-215",
+        "injuries": "mild"
+    },
+    "v-19": {
+        "loc": "r-215",
+        "injuries": "severe"
+    },
+    "v-20": {
+        "loc": "r-220",
+        "injuries": "severe"
+    },
+    "v-21": {
+        "loc": "r-220",
+        "injuries": "severe"
+    },
+    "v-22": {
+        "loc": "r-213",
+        "injuries": "mild"
+    },
+    "v-23": {
+        "loc": "r-213",
+        "injuries": "severe"
+    },
+    "v-24": {
+        "loc": "r-218",
+        "injuries": "mild"
+    },
+    "v-25": {
+        "loc": "r-218",
+        "injuries": "mild"
+    },
+    "v-26": {
+        "loc": "r-211",
+        "injuries": "severe"
+    },
+    "v-27": {
+        "loc": "r-216-b",
+        "injuries": "severe"
+    },
+    "v-28": {
+        "loc": "r-209",
+        "injuries": "severe"
+    },
+    "v-29": {
+        "loc": "r-216-a",
+        "injuries": "severe"
+    }
+}

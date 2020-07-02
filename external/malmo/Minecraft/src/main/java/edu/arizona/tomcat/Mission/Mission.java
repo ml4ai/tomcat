@@ -36,7 +36,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public abstract class Mission implements FeedbackListener, PhaseListener {
 
-    public static enum ID { TUTORIAL, ZOMBIE, USAR_SINGLE_PLAYER }
+    public static enum ID { TUTORIAL, ZOMBIE, USAR_SINGLE_PLAYER, PROCEDURAL }
     ;
     public static enum DIFFICULTY { EASY, MEDIUM, HARD }
     ;
