@@ -10,6 +10,7 @@
  * AABB_size defaults to 10
  */
 
+#include "LavaPit.h"
 #include "ProceduralGenerator.h"
 #include "World.h"
 #include <boost/program_options.hpp>
@@ -39,10 +40,10 @@ void generateAABBGrid(
 
     // Add the first one
     int idCtr = 1;
-    Pos topLeft(1, 3, 1);
-    Pos bottomRight(AABB_size, 3 + AABB_size, AABB_size);
+    Pos tL(1, 3, 1);
+    Pos bR(AABB_size, 3 + AABB_size, AABB_size);
 
-    AABB prevAABB(idCtr, material, &topLeft, &bottomRight, true, false);
+    AABB prevAABB(idCtr, material, &tL, &bR, true, false);
     (*worldptr).addAABB(&prevAABB);
 
     // Use relative coordinates for the "previous" AABB to generate the rest at
@@ -53,53 +54,56 @@ void generateAABBGrid(
         if ((idCtr - 1) % N == 0) {
             // Condition for when a row in the grid is complete and we move onto
             // the next one
-            Pos newTopLeft(1, 3, 1);
-            newTopLeft.setZ(prevAABB.getBottomRight().getZ() + sep);
+            Pos topLeft(1, 3, 1);
+            topLeft.setZ(prevAABB.getBottomRight().getZ() + sep);
 
-            Pos newBottomRight(
-                AABB_size, 3 + AABB_size, newTopLeft.getZ() + AABB_size);
-            AABB curAABB(
-                idCtr, material, &newTopLeft, &newBottomRight, true, false);
-            (*worldptr).addAABB(&curAABB);
+            Pos bottomRight(
+                AABB_size, 3 + AABB_size, topLeft.getZ() + AABB_size);
+
+            AABB curAABB(idCtr, material, &topLeft, &bottomRight, true, false);
+
+            if (idCtr % 2 == 0) {
+                Pos newBottomRight(bottomRight);
+                newBottomRight.setY(topLeft.getY());
+
+                LavaPit lavaPit(
+                    idCtr, "lava", &topLeft, &newBottomRight, false, true);
+                lavaPit.generateLava();
+
+                (*worldptr).addAABB(&lavaPit);
+            }
+            else {
+
+                (*worldptr).addAABB(&curAABB);
+            }
             prevAABB = curAABB;
         }
         else {
             // Condition for the next AABB in the current row
-            Pos newTopLeft = prevAABB.getTopLeft();
-            newTopLeft.setX(prevAABB.getBottomRight().getX() + sep);
+            Pos topLeft = prevAABB.getTopLeft();
+            topLeft.setX(prevAABB.getBottomRight().getX() + sep);
 
-            Pos newBottomRight = prevAABB.getBottomRight();
-            newBottomRight.setX(newTopLeft.getX() + AABB_size);
+            Pos bottomRight = prevAABB.getBottomRight();
+            bottomRight.setX(topLeft.getX() + AABB_size);
 
-            AABB curAABB(
-                idCtr, material, &newTopLeft, &newBottomRight, true, false);
-            (*worldptr).addAABB(&curAABB);
+            AABB curAABB(idCtr, material, &topLeft, &bottomRight, true, false);
+
+            if (idCtr % 2 == 0) {
+                Pos newBottomRight(bottomRight);
+                newBottomRight.setY(topLeft.getY());
+
+                LavaPit lavaPit(
+                    idCtr, "lava", &topLeft, &newBottomRight, false, true);
+                lavaPit.generateLava();
+
+                (*worldptr).addAABB(&lavaPit);
+            }
+            else {
+
+                (*worldptr).addAABB(&curAABB);
+            }
             prevAABB = curAABB;
         }
-    }
-}
-
-/**
- * @brief Adds a random victim to the world's list of blocks such that the
- * victim is in a random position inside the given AABB. The addition of victims
- * is random so this function won't add a victim every time it is called
- *
- * @param worldptr The world that needs to know about this victim
- * @param aabb The AABB within which the victim is to ve generated
- */
-void generateVictimInAABB(World* worldptr, AABB* aabb) {
-    Pos randPos((*aabb).getRandomPosAtBase(&gen, 2, 2, 2, 2));
-    randPos.setY(randPos.getY() + 1);
-    boost::random::uniform_int_distribution<> dist(1, 100);
-    int randInteger = dist(gen);
-
-    if (randInteger <= 75) {
-        ProceduralGenerator pgen;
-        Block victim = pgen.getRandomVictim(&randPos, 0.60, &gen);
-        (*worldptr).addBlock(&victim);
-    }
-    else {
-        ;
     }
 }
 
@@ -178,9 +182,10 @@ void generateAllDoorsInAABB(World* worldptr, AABB* aabb) {
  * @param worldptr The world in which everything is to be added
  */
 void generateBlocks(World* worldptr) {
-    for (auto& aabb : *((*worldptr).getAABBList())) {
-        generateAllDoorsInAABB(worldptr, &aabb);
-        generateVictimInAABB(worldptr, &aabb);
+    for (auto aabb : *((*worldptr).getAABBList())) {
+        if (strcmp(aabb.getMaterial().c_str(), "lava") != 0) {
+            generateAllDoorsInAABB(worldptr, &aabb);
+        }
     }
 }
 
@@ -202,47 +207,9 @@ World generateGridWorld(int N, int sep, int AABB_size, string AABB_material) {
 }
 
 int main(int argc, char* argv[]) {
-    int N;
-    int sep = 0;        // Separation defaults to 0
+    int N = 3;
+    int sep = 30;       // Separation defaults to 0
     int AABB_size = 10; // Size defaults to 10
-
-    // Handle options
-    po::options_description desc("Allowed options");
-    desc.add_options()("help", "produce help message")(
-        "N",
-        po::value<int>(),
-        "The number of AABB on an axis. Grid generated is N*N.")(
-        "sep",
-        po::value<int>(),
-        "The separation between AABB in the cardinal directions. Defaults to "
-        "0.")("aabb_size",
-              po::value<int>(),
-              "The size of the cubic AABB. Defaults to 10.");
-
-    po::variables_map vm;
-    po::store(po::command_line_parser(argc, argv).options(desc).run(), vm);
-    po::notify(vm);
-
-    if (vm.count("help")) {
-        cout << desc << endl;
-        return 0;
-    }
-
-    if (!vm.count("N")) {
-        cout << "No grid size specified." << endl;
-        return 1;
-    }
-    else {
-        N = vm["N"].as<int>();
-    }
-
-    if (vm.count("sep")) {
-        sep = vm["sep"].as<int>();
-    }
-
-    if (vm.count("aabb_size")) {
-        AABB_size = vm["aabb_size"].as<int>();
-    }
 
     // Process input and generate output
     cout << "Generating gridworld..." << endl;

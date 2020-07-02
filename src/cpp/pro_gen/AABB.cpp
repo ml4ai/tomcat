@@ -58,6 +58,14 @@ Pos AABB::getTopLeft() { return this->topLeft; }
  */
 Pos AABB::getBottomRight() { return this->bottomRight; }
 
+void AABB::setTopLeft(Pos *topLeft){
+    this->topLeft = *topLeft;
+}
+
+void AABB::setBottomRight(Pos * bottomRight){
+    this->bottomRight = *bottomRight;
+}
+
 /**
  * @brief Get the midpoint X value calculated between
  * the top left and bottom right x values
@@ -109,7 +117,8 @@ int AABB::getMidpointZ() {
  * Defaults to 1
  * @return Pos
  */
-Pos AABB::getRandomPosAtBase(boost::random::mt19937* gen, int offsetPosX = 1,
+Pos AABB::getRandomPosAtBase(boost::random::mt19937* gen,
+                             int offsetPosX = 1,
                              int offsetNegX = 1,
                              int offsetPosZ = 1,
                              int offsetNegZ = 1) {
@@ -155,7 +164,8 @@ string AABB::toTSV() {
                         x < (this->bottomRight).getX() &&
                         z > (this->topLeft).getZ() &&
                         z < (this->bottomRight).getZ()) {
-                        if (y != (this->topLeft).getY() && y != (this->bottomRight).getY()) {
+                        if (y != (this->topLeft).getY() &&
+                            y != (this->bottomRight).getY()) {
                             addCurrent = false;
                         }
                     }

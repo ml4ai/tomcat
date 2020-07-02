@@ -32,6 +32,8 @@ class AABB {
     std::string getMaterial();
     Pos getTopLeft();
     Pos getBottomRight();
+    void setTopLeft(Pos *);
+    void setBottomRight(Pos *);
     int getMidpointX();
     int getMidpointY();
     int getMidpointZ();

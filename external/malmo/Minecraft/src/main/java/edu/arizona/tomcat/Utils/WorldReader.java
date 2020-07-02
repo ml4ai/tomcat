@@ -77,7 +77,10 @@ public class WorldReader {
             return Blocks.DARK_OAK_DOOR.getStateFromMeta(9);
         } else if (material.equals("door_bottom")) {
             return Blocks.DARK_OAK_DOOR.getStateFromMeta(0);
-        } else if (material.equals("air")) {
+        } else if(material.equals("lava")){
+            return Blocks.LAVA.getDefaultState();
+        }
+        else if (material.equals("air")) {
             return Blocks.AIR.getDefaultState();
         } else {
             return Blocks.QUARTZ_BLOCK.getDefaultState();  // For unknown block
