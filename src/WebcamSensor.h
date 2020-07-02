@@ -35,29 +35,16 @@ namespace tomcat {
 
         void get_observation();
 
-      private:
-        std::vector<std::string> arguments = {"-device", "0"};
-        Utilities::Visualizer visualizer;
-        cv::Mat rgb_image;
-        Utilities::SequenceCapture sequence_reader;
-        LandmarkDetector::CLNF face_model;
-        LandmarkDetector::FaceModelParameters det_parameters;
-        Utilities::FpsTracker fps_tracker;
-        cv::Mat_<uchar> grayscale_image;
+	  private:
+    	std::vector<std::string> arguments = {"-device", "0", "-au_static"};
+    	Utilities::Visualizer visualizer;
+    	cv::Mat rgb_image;
+    	Utilities::SequenceCapture sequence_reader;
+    	LandmarkDetector::CLNF face_model;
+    	LandmarkDetector::FaceModelParameters det_parameters;
+    	Utilities::FpsTracker fps_tracker;
+    	cv::Mat_<uchar> grayscale_image;
+    
     };
-
-
-    void get_observation();
-
-  private:
-    std::vector<std::string> arguments = {"-device", "0","-au_static"};
-    Utilities::Visualizer visualizer;
-    cv::Mat rgb_image;
-    Utilities::SequenceCapture sequence_reader;
-    LandmarkDetector::CLNF face_model;
-    LandmarkDetector::FaceModelParameters det_parameters;
-    Utilities::FpsTracker fps_tracker;
-    cv::Mat_<uchar> grayscale_image;
-  };
-
+    
 } // namespace tomcat
