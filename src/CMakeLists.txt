@@ -39,9 +39,12 @@ if(APPLE AND CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_link_libraries(tomcat PUBLIC --coverage)
   endif()
 endif()
+
 set(CMAKE_BUILD_TYPE Debug)
+
 add_executable(ausensor AUSensor.cpp WebcamSensor.cpp)
 target_link_libraries(ausensor PUBLIC OpenFace nlohmann_json::nlohmann_json)
 target_include_directories(ausensor PUBLIC ${openface_include_dirs})
+
 add_executable(runExperiment runExperiment.cpp)
 target_link_libraries(runExperiment tomcat)
