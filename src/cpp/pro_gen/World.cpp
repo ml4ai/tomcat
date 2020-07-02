@@ -37,7 +37,7 @@ string World::toTSV(){
     }
 
     for(auto block : (this ->blockList)){
-        retval += block.toTSV();
+        retval += block.toTSV() + "\n";
     }
 
     return retval;

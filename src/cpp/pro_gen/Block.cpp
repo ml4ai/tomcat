@@ -55,7 +55,7 @@ int Block::getY() { return this->pos.getY(); }
 int Block::getZ() { return this->pos.getZ(); }
 
 string Block::toTSV(){
-    string retval = (this -> material) + "\t" + (this->pos).toTSV();
+    string retval =  (this->pos).toTSV() + "\t" + (this -> material);
     return retval;
 }
 

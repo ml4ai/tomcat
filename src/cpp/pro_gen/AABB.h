@@ -21,6 +21,8 @@ class AABB {
     std::string material;
     Pos topLeft;
     Pos bottomRight;
+    bool isHollow;
+    bool hasRoof;
     std::vector<Block> blockList;
 
   public:
@@ -34,6 +36,6 @@ class AABB {
     Pos getRandomPosAtBase(int, int, int, int);
     void addBlock(Block *);
     std::string toTSV();
-    AABB(int, std::string, Pos*, Pos*);
+    AABB(int, std::string, Pos*, Pos*, bool, bool);
     ~AABB();
 };

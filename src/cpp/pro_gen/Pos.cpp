@@ -80,7 +80,7 @@ void Pos::setZ(int z) { this->z = z; }
  */
 string Pos::toTSV() {
     string retval = to_string(this->x) + "\t" + to_string(this->y) + "\t" +
-                    to_string(this->z) + "\n";
+                    to_string(this->z);
     return retval;
 }
 

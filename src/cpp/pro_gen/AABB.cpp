@@ -19,12 +19,14 @@ using namespace std;
  * @param bottomRightPos The coordinates of the bottom right of the AABB from
  * the top view of the X-Z plane. Y coordinate should be maximum here.
  */
-AABB::AABB(int AABBid,
-           string AABBmaterial,
-           Pos* topLeftPos,
-           Pos* bottomRightPos)
-    : id(AABBid), material(AABBmaterial), topLeft(*topLeftPos),
-      bottomRight(*bottomRightPos) {}
+AABB::AABB(int id,
+           string material,
+           Pos* topLeft,
+           Pos* bottomRight,
+           bool isHollow,
+           bool hasRoof)
+    : id{id}, material{material}, topLeft{*topLeft},
+      bottomRight{*bottomRight}, isHollow{isHollow}, hasRoof{hasRoof} {}
 
 /**
  * @brief Get the AABB's id
@@ -131,9 +133,7 @@ Pos AABB::getRandomPosAtBase(int offsetPosX = 1,
     return pos;
 }
 
-void AABB::addBlock(Block * block){
-    (this ->blockList).push_back(*block);
-}
+void AABB::addBlock(Block* block) { (this->blockList).push_back(*block); }
 
 /**
  * @brief Gets a string representation of the various
@@ -143,16 +143,41 @@ void AABB::addBlock(Block * block){
  */
 string AABB::toTSV() {
     string retval = "";
-    for(int x = (this->topLeft).getX(); x <= (this->bottomRight).getX(); x++){
-        for(int y = (this->topLeft).getY(); y <= (this->bottomRight).getY(); y++){
-            for(int z = (this->topLeft).getZ(); z <= (this->bottomRight).getZ(); z++){
-                retval += (this->material) + "\t" + to_string(x) + "\t"+  to_string(y) + "\t" + to_string(z) + "\n";
+    for (int x = (this->topLeft).getX(); x <= (this->bottomRight).getX(); x++) {
+        for (int y = (this->topLeft).getY(); y <= (this->bottomRight).getY();
+             y++) {
+            for (int z = (this->topLeft).getZ();
+                 z <= (this->bottomRight).getZ();
+                 z++) {
+                bool addCurrent = true;
+
+                if (isHollow) {
+                    if (x > (this->topLeft).getX() &&
+                        x < (this->bottomRight).getX() &&
+                        z > (this->topLeft).getZ() &&
+                        z < (this->bottomRight).getZ()) {
+                        if (y != (this->topLeft).getY() && y != (this->bottomRight).getY()) {
+                            addCurrent = false;
+                        }
+                    }
+                }
+
+                if (!hasRoof) {
+                    if (y == (this->bottomRight).getY()) {
+                        addCurrent = false;
+                    }
+                }
+
+                if (addCurrent) {
+                    retval += to_string(x) + "\t" + to_string(y) + "\t" +
+                              to_string(z) + "\t" + (this->material) + "\n";
+                }
             }
         }
     }
 
-    for(auto block : (this ->blockList)){
-        retval += block.toTSV();
+    for (auto block : (this->blockList)) {
+        retval += block.toTSV() + "\n";
     }
 
     return retval;

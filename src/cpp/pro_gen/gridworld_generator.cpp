@@ -39,10 +39,10 @@ void generateAABBGrid(
 
     // Add the first one
     int idCtr = 1;
-    Pos topLeft(1, 0, 1);
-    Pos bottomRight(AABB_size, AABB_size, AABB_size);
+    Pos topLeft(1, 3, 1);
+    Pos bottomRight(AABB_size, 3+AABB_size, AABB_size);
 
-    AABB prevAABB(idCtr, material, &topLeft, &bottomRight);
+    AABB prevAABB(idCtr, material, &topLeft, &bottomRight, true, false);
     (*worldptr).addAABB(&prevAABB);
 
     // Use relative coordinates for the "previous" AABB to generate the rest at
@@ -53,12 +53,12 @@ void generateAABBGrid(
         if ((idCtr - 1) % N == 0) {
             // Condition for when a row in the grid is complete and we move onto
             // the next one
-            Pos newTopLeft(1, 0, 1);
+            Pos newTopLeft(1, 3, 1);
             newTopLeft.setZ(prevAABB.getBottomRight().getZ() + sep);
 
             Pos newBottomRight(
-                AABB_size, AABB_size, newTopLeft.getZ() + AABB_size);
-            AABB curAABB(idCtr, material, &newTopLeft, &newBottomRight);
+                AABB_size, 3+AABB_size, newTopLeft.getZ() + AABB_size);
+            AABB curAABB(idCtr, material, &newTopLeft, &newBottomRight, true, false);
             (*worldptr).addAABB(&curAABB);
             prevAABB = curAABB;
         }
@@ -70,7 +70,7 @@ void generateAABBGrid(
             Pos newBottomRight = prevAABB.getBottomRight();
             newBottomRight.setX(newTopLeft.getX() + AABB_size);
 
-            AABB curAABB(idCtr, material, &newTopLeft, &newBottomRight);
+            AABB curAABB(idCtr, material, &newTopLeft, &newBottomRight, true, false);
             (*worldptr).addAABB(&curAABB);
             prevAABB = curAABB;
         }
@@ -112,7 +112,7 @@ void generateVictimInAABB(World* worldptr, AABB* aabb) {
 vector<Pos> getAABBEdgeMidpointAtBase(AABB* aabb) {
     int midX = (*aabb).getMidpointX();
     int midZ = (*aabb).getMidpointZ();
-    int base = (*aabb).getTopLeft().getY();
+    int base = (*aabb).getTopLeft().getY()+1;
 
     Pos topEdgeMid((*aabb).getTopLeft());
     topEdgeMid.setX(midX);
@@ -155,15 +155,16 @@ void generateAllDoorsInAABB(World* worldptr, AABB* aabb) {
     Pos bottomEdgeMid(edges.at(2));
     Pos leftEdgeMid(edges.at(3));
 
+
     // Use the coordinates to create door blocks
-    Block topDoor("door", "oak_door", &topEdgeMid);
-    Block bottomDoor("door", "oak_door", &bottomEdgeMid);
-    Block leftDoor("door", "oak_door", &leftEdgeMid);
-    Block rightDoor("door", "oak_door", &rightEdgeMid);
+    Block topDoor("door", "door", &topEdgeMid);
+    Block bottomDoor("door", "door", &bottomEdgeMid);
+    Block leftDoor("door", "door", &leftEdgeMid);
+    Block rightDoor("door", "door", &rightEdgeMid);
 
     // Tell the world to keep track of the blocks
     (*worldptr).addBlock(&topDoor);
-    (*worldptr).addBlock(&rightDoor);
+    (*worldptr).addBlock(&bottomDoor);
     (*worldptr).addBlock(&leftDoor);
     (*worldptr).addBlock(&rightDoor);
 }
@@ -245,13 +246,21 @@ int main(int argc, char* argv[]) {
     cout << "Generating gridworld..." << endl;
     World world = generateGridWorld(N, sep, AABB_size, "planks");
     cout << "Writing to file..." << endl;
-    ofstream outputFile(
+
+    // Write JSON
+    ofstream outputJSON(
         "../../../../external/malmo/Minecraft/run/procedural.json", ios::out);
-    outputFile << world.toJSON();
-    outputFile.close();
-    cout << "Done. The generated file is in Minecraft/run/procedural.json"
+    outputJSON << world.toJSON();
+    outputJSON.close();
+
+    //Write TSV
+    ofstream outputTSV(
+        "../../../../external/malmo/Minecraft/run/procedural.tsv", ios::out);
+    outputTSV << world.toTSV();
+    outputTSV.close();
+
+    cout << "Done. The generated files are in Minecraft/run/procedural.json and Minecraft/run/procedural.tsv"
          << endl;
-    cout << world.toTSV() << endl;
 
     return 0;
 }
