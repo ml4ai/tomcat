@@ -30,7 +30,7 @@ if __name__ == "__main__":
         "-m",
         "--host",
         help="Host that the mosquitto message broker is running on.",
-        default='localhost',
+        default="localhost",
     )
     parser.add_argument(
         "-p",
@@ -50,12 +50,16 @@ if __name__ == "__main__":
             try:
                 jline = json.loads(line)
             except:
-                print('bad json line of len: {}, {}'.format(len(line), line))
+                print("Bad json line of len: {}, {}".format(len(line), line))
             if jline is not None:
                 messages.append(jline)
 
-        sorted_messages = sorted(messages, key=lambda x: parse(x['header']['timestamp']))
-        print('publishing message count {}'.format(len(sorted_messages)))
+        sorted_messages = sorted(
+            messages, key=lambda x: parse(x["header"]["timestamp"])
+        )
+
+        print("Publishing message count {}".format(len(sorted_messages)))
+
         # pub_via_shell(sorted_messages)
         mqttc.connect(args.host, port=args.port)
 
