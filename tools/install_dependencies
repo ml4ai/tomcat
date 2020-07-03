@@ -95,15 +95,44 @@ __install_dependencies_using_apt() {
         mosquitto \
         mosquitto-clients \
         curl \
-        libopencv-dev \
         libopenblas-dev \
         openssl
     if [[ $? -ne 0 ]]; then exit 1; fi
 
-    # On Ubuntu 18.04, the required version of the nlohmann-json JSON library
-    # is not available using apt-get, so we install from source.
-    if ! "$TOMCAT"/tools/install_from_source/nlohmann-json; then exit 1; fi
-    if ! "$TOMCAT"/tools/install_from_source/dlib; then exit 1; fi
+    # On Ubuntu 18.04 and older, the required version of the nlohmann-json JSON
+    # library is not available using apt-get, so we install from source.
+    if [[ $DISTRO == ubuntu && $DISTRO_MAJOR_VERSION -le 19 ]]; then
+        if ! "$TOMCAT"/tools/install_from_source/nlohmann-json; then
+            echo "Failed to install nlohmann-json from source."
+            exit 1
+        fi
+    else
+        if ! sudo apt install -y nlohmann-json3-dev; then
+            echo "Failed to install nlohmann-json3-dev using apt."
+            exit 1
+        fi
+    fi
+
+    if ! "$TOMCAT"/tools/install_from_source/dlib; then
+        echo "Failed to install dlib from source."
+        exit 1
+    fi
+
+    # We require a version of OpenCV that is newer than what is available via
+    # apt on Ubuntu 18.04 as of 2020/07/03. So we check the version of Ubuntu,
+    # and install OpenCV from source if the major version of Ubuntu is less
+    # than 20 (since OpenCV 4 is available via apt on Ubuntu Focal.
+    if [[ $DISTRO == ubuntu && $DISTRO_MAJOR_VERSION -ge 20 ]]; then
+        if ! sudo apt install -y libopencv-dev; then
+            echo "Failed to install libopencv-dev using apt."
+            exit 1
+        fi
+    else
+        if ! "$TOMCAT"/tools/install_from_source/opencv; then
+            echo "Failed to install OpenCV from source."
+            exit 1
+        fi
+    fi
 
     # The Github Actions Ubuntu 18.04 VM already has Boost installed, but not
     # all the components we need. So we will use apt-get to install the missing
