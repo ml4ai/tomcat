@@ -95,7 +95,6 @@ __install_dependencies_using_apt() {
         mosquitto \
         mosquitto-clients \
         curl \
-        libdlib-dev \
         libopencv-dev \
         libopenblas-dev \
         openssl
@@ -104,6 +103,7 @@ __install_dependencies_using_apt() {
     # On Ubuntu 18.04, the required version of the nlohmann-json JSON library
     # is not available using apt-get, so we install from source.
     if ! "$TOMCAT"/tools/install_from_source/nlohmann-json; then exit 1; fi
+    if ! "$TOMCAT"/tools/install_from_source/dlib; then exit 1; fi
 
     # The Github Actions Ubuntu 18.04 VM already has Boost installed, but not
     # all the components we need. So we will use apt-get to install the missing
