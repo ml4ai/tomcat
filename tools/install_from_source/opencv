@@ -8,7 +8,7 @@ OPENCV_VERSION=4.3.0
 
 install_opencv_from_source() {
     local version=$1
-    curl -O https://github.com/opencv/opencv/archive/$version.tar.gz
+    curl -LO https://github.com/opencv/opencv/archive/$version.tar.gz
     if [[ $? -ne 0 ]]; then exit 1; fi;
     tar xfz $version.tar.gz
     if [[ $? -ne 0 ]]; then exit 1; fi;
