@@ -121,8 +121,20 @@ detect_os() {
         export JAVA_HOME="$TOMCAT"/external/jdk8u232-b09/Contents/Home
     elif [[ "$OSTYPE" == "linux-gnu" ]]; then
         echo "Linux detected."
+        if [[ ! -f /etc/os-release ]]; then
+            echo "The file /etc/os-release could not be found. This means that"
+            " we cannot determine the Linux distro and version. Exiting now."
+            exit 1
+        else
+            export DISTRO=$(grep 'ID=' /etc/os-release \
+                            | tr -d '"' | head -n1 | cut -d '=' -f2)
+            export DISTRO_MAJOR_VERSION=$(grep 'VERSION_ID=' /etc/os-release \
+                                          | tr -d '"' \
+                                          | cut -d '=' -f2 \
+                                          | cut -d '.' -f1)
+        fi
         export JAVA_HOME="$TOMCAT"/external/jdk8u232-b09/
-      else
+    else
         echo "OSTYPE is not darwin* or linux-gnu. Most likely this operating "\
              "system is not supported. Exiting now."
         exit 1
