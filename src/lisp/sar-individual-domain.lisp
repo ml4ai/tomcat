@@ -16,7 +16,7 @@
 
 (in-package :shop-user)
 
-(shop-trace :all)
+;;(shop-trace :all)
 (defdomain (sar-individual-domain :type pddl-domain :redefine-ok T) (
     (:types human ;; Everything, including 'human' inherits from the base 'object' type
             victim rescuer - human ;; The rescuer and the victims are humans.
@@ -38,21 +38,14 @@
 
     (:action start-searching ;; Rescuer checks the room, any victims in the room are "spotted" 
       :parameters (?t - rescuer ?r - room)
-      :precondition (and (in ?t ?r) (not (searched ?t ?r)) 
-                         (assign ?vs (cl-user::check-for-victim '?r .5)))
-      :effect (and (searching ?t ?r) 
-                   (forall ?vs
-                           (and (victim ?v) (spotted ?t ?v ?r) 
-                                (when (eval (cl-user::severely-injured ?v)) (severe-injuries ?v))))) 
+      :precondition (and (in ?t ?r) (not (searched ?t ?r))) 
+      :effect (and (searching ?t ?r)) 
     )
 
     (:action continue-searching ;; Rescuer checks the room, any victims in the room are "spotted" 
       :parameters (?t - rescuer ?r - room)
-      :precondition (and (in ?t ?r) (searching ?t ?r) (not (searched ?t ?r)) 
-                         (assign ?vs (cl-user::check-for-victim '?r .5)))
-      :effect (forall ?vs 
-                      (and (victim ?v) (spotted ?t ?v ?r) 
-                           (when (eval (cl-user::severely-injured ?v)) (severe-injuries ?v)))) 
+      :precondition (and (in ?t ?r) (searching ?t ?r) (not (searched ?t ?r))) 
+      :effect ()
     )
 
     (:action done-searching
@@ -139,15 +132,18 @@
     (:method (search ?t ?r)
              start-searching
              (and (not (searching ?t ?r)))
-             (:task !start-searching ?t ?r)
+             ((:task !start-searching ?t ?r)
+             (:task percept-victims ?t ?r))
 
              continue-searching
              (and (searching ?t ?r) (how-many-found ?t ?r ?c) (eval (cl-user::still-searching '?c)))
-             (:task !continue-searching ?t ?r)
+             ((:task !continue-searching ?t ?r)
+              (:task percept-victims ?t ?r))
 
              finish-searching
              (searching ?t ?r)
-             (:ordered (!continue-searching ?t ?r)
+             (:ordered (:task !continue-searching ?t ?r)
+                       (:task percept-victims ?t ?r)
                        (!done-searching ?t ?r))
     )
 
@@ -164,6 +160,27 @@
              (triaging ?t ?v)
              (:task !stop-triaging-victim ?t ?v)
 
+    )
+
+    (:method (percept-victims ?t ?r) ;;Utility method
+             spotted-severely-injured-victim
+             (and (in ?t ?r) (assign* ?v (cl-user::check-for-victim '?r)) 
+                  (eval (cl-user::severely-injured '?v)) (not (spotted ?t ?v ?r)) (eval (cl-user::found-victim .5)))
+             (:ordered (:task !!assert (victim ?v))
+                       (:task !!assert (spotted ?t ?v ?r))
+                       (:task !!assert (severe-injuries ?v))
+                       (:task percept-victims ?t ?r))
+
+             spotted-injured-victim
+             (and (in ?t ?r) (assign* ?v (cl-user::check-for-victim '?r)) (not (eval (cl-user::severely-injured '?v))) (not (spotted ?t ?v ?r))
+                  (eval (cl-user::found-victim .5)))
+             (:ordered (:task !!assert (victim ?v))
+                       (:task !!assert (spotted ?t ?v ?r))
+                       (:task percept-victims ?t ?r))
+
+             no-victims-spotted
+             ()
+             ()
     )
 
     (:- (same ?x ?x) nil) ;; Helper axiom for "different" axoim
