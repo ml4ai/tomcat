@@ -20,12 +20,13 @@ using namespace std;
  * the top view of the X-Z plane. Y coordinate should be maximum here.
  */
 AABB::AABB(int id,
+           string type,
            string material,
            Pos* topLeft,
            Pos* bottomRight,
            bool isHollow,
            bool hasRoof)
-    : id{id}, material{material}, topLeft{*topLeft},
+    : id{id}, type{type}, material{material}, topLeft{*topLeft},
       bottomRight{*bottomRight}, isHollow{isHollow}, hasRoof{hasRoof} {}
 
 /**
@@ -41,6 +42,8 @@ int AABB::getID() { return this->id; }
  * @return string The material name
  */
 string AABB::getMaterial() { return this->material; }
+
+string AABB::getType() { return this->type; }
 
 /**
  * @brief Returns a copy of the Pos object used to represent
@@ -58,11 +61,9 @@ Pos AABB::getTopLeft() { return this->topLeft; }
  */
 Pos AABB::getBottomRight() { return this->bottomRight; }
 
-void AABB::setTopLeft(Pos *topLeft){
-    this->topLeft = *topLeft;
-}
+void AABB::setTopLeft(Pos* topLeft) { this->topLeft = *topLeft; }
 
-void AABB::setBottomRight(Pos * bottomRight){
+void AABB::setBottomRight(Pos* bottomRight) {
     this->bottomRight = *bottomRight;
 }
 
@@ -118,10 +119,10 @@ int AABB::getMidpointZ() {
  * @return Pos
  */
 Pos AABB::getRandomPosAtBase(boost::random::mt19937* gen,
-                             int offsetPosX = 1,
-                             int offsetNegX = 1,
-                             int offsetPosZ = 1,
-                             int offsetNegZ = 1) {
+                             int offsetPosX,
+                             int offsetNegX,
+                             int offsetPosZ,
+                             int offsetNegZ) {
 
     int startX = (this->topLeft).getX() + offsetPosX;
     int startZ = (this->topLeft).getZ() + offsetPosZ;
@@ -141,7 +142,39 @@ Pos AABB::getRandomPosAtBase(boost::random::mt19937* gen,
     return pos;
 }
 
+vector<Block>* AABB::getBlockList() { return &(this->blockList); }
+
 void AABB::addBlock(Block* block) { (this->blockList).push_back(*block); }
+
+vector<Pos> AABB::getEdgeMidpointAtBase() {
+    int midX = this->getMidpointX();
+    int midZ = this->getMidpointZ();
+    int base = this->getTopLeft().getY();
+
+    Pos topEdgeMid(this->getTopLeft());
+    topEdgeMid.setX(midX);
+    topEdgeMid.setY(base);
+
+    Pos bottomEdgeMid(this->getBottomRight());
+    bottomEdgeMid.setX(midX);
+    bottomEdgeMid.setY(base);
+
+    Pos leftEdgeMid(this->getTopLeft());
+    leftEdgeMid.setZ(midZ);
+    leftEdgeMid.setY(base);
+
+    Pos rightEdgeMid(this->getBottomRight());
+    rightEdgeMid.setZ(midZ);
+    rightEdgeMid.setY(base);
+
+    vector<Pos> midEdgesAtBase;
+    midEdgesAtBase.push_back(topEdgeMid);
+    midEdgesAtBase.push_back(rightEdgeMid);
+    midEdgesAtBase.push_back(bottomEdgeMid);
+    midEdgesAtBase.push_back(leftEdgeMid);
+
+    return midEdgesAtBase;
+}
 
 /**
  * @brief Gets a string representation of the various

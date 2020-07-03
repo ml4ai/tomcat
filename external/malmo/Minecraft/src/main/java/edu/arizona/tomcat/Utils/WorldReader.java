@@ -11,19 +11,19 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class WorldReader {
-   private Map<BlockPos, IBlockState> map;
+    private Map<BlockPos, IBlockState> map;
 
-    public WorldReader(String filename){
+    public WorldReader(String filename) {
 
         this.map = new LinkedHashMap<BlockPos, IBlockState>();
         this.initMap(filename);
     }
 
-    public Map<BlockPos, IBlockState> getMap(){
+    public Map<BlockPos, IBlockState> getMap() {
         return this.map;
     }
 
-    private void initMap(String filename){
+    private void initMap(String filename) {
 
         // Read file
         Scanner file = null;
@@ -35,21 +35,21 @@ public class WorldReader {
         }
 
         // Use file
-        while(file.hasNextLine()){
-          String line = file.nextLine();
-          String[] blockEntry = line.split("\t");
+        while (file.hasNextLine()) {
+            String line = file.nextLine();
+            String[] blockEntry = line.split("\t");
 
-          int x= Integer.parseInt(blockEntry[0]);
-          int y= Integer.parseInt(blockEntry[1]);
-          int z= Integer.parseInt(blockEntry[2]);
-          BlockPos pos = new BlockPos(x,y,z);
+            int x = Integer.parseInt(blockEntry[0]);
+            int y = Integer.parseInt(blockEntry[1]);
+            int z = Integer.parseInt(blockEntry[2]);
+            BlockPos pos = new BlockPos(x, y, z);
 
-          if(this.map.containsKey(pos)){
-              this.map.remove(pos);
-          } // When duplicate coordinates are encountered we remove and re-add so iteration order is correct
+            if (this.map.containsKey(pos)) {
+                this.map.remove(pos);
+            } // When duplicate coordinates are encountered we remove and re-add so iteration order is correct
 
-          String material = blockEntry[3];
-          if (material.equals("door")) {
+            String material = blockEntry[3];
+            if (material.equals("door")) {
                 // Doors are special adn we need to place a bottom and top half
                 IBlockState doorBottom = this.getBlockState("door_bottom");
 
@@ -57,12 +57,12 @@ public class WorldReader {
                 IBlockState doorTop = this.getBlockState("door_top");
 
                 this.map.remove(topPos); // For a door we need to remove and re add the block above the current as well
-                this.map.put(pos,doorBottom);
-                this.map.put(topPos,doorTop);
-          }else {
+                this.map.put(pos, doorBottom);
+                this.map.put(topPos, doorTop);
+            } else {
                 IBlockState state = getBlockState(material);
                 this.map.put(pos, state);
-          }
+            }
         }
     }
 
@@ -77,10 +77,13 @@ public class WorldReader {
             return Blocks.DARK_OAK_DOOR.getStateFromMeta(9);
         } else if (material.equals("door_bottom")) {
             return Blocks.DARK_OAK_DOOR.getStateFromMeta(0);
-        } else if(material.equals("lava")){
+        } else if (material.equals("lava")) {
             return Blocks.LAVA.getDefaultState();
-        }
-        else if (material.equals("air")) {
+        } else if (material.equals("water")) {
+            return Blocks.WATER.getDefaultState();
+        } else if (material.equals("grass")) {
+            return Blocks.GRASS.getDefaultState();
+        } else if (material.equals("air")) {
             return Blocks.AIR.getDefaultState();
         } else {
             return Blocks.QUARTZ_BLOCK.getDefaultState();  // For unknown block

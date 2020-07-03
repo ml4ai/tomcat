@@ -72,6 +72,12 @@ void Pos::setY(int y) { this->y = y; }
  */
 void Pos::setZ(int z) { this->z = z; }
 
+void Pos::shiftX(int shift) { this->x += shift; }
+
+void Pos::shiftY(int shift) { this->y += shift; }
+
+void Pos::shiftZ(int shift) { this->z += shift; }
+
 /**
  * @brief Gets a string representation of the various
  * fields and values stores in an instance

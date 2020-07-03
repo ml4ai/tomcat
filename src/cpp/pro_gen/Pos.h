@@ -24,6 +24,9 @@ class Pos {
     void setX(int);
     void setY(int);
     void setZ(int);
+    void shiftX(int);
+    void shiftY(int);
+    void shiftZ(int);
     std::string toTSV();
     Pos();
     Pos(int, int, int);

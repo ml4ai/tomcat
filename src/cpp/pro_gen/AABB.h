@@ -6,10 +6,10 @@
 #pragma once
 
 #include "Block.h"
-#include <string>
-#include <vector>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
+#include <string>
+#include <vector>
 
 /**
  * @brief This class represents an Axis Aligned Bounding Box
@@ -21,6 +21,7 @@ class AABB {
   private:
     int id;
     std::string material;
+    std::string type;
     Pos topLeft;
     Pos bottomRight;
     bool isHollow;
@@ -30,16 +31,29 @@ class AABB {
   public:
     int getID();
     std::string getMaterial();
+    std::string getType();
     Pos getTopLeft();
     Pos getBottomRight();
-    void setTopLeft(Pos *);
-    void setBottomRight(Pos *);
+    std::vector<Block>* getBlockList();
     int getMidpointX();
     int getMidpointY();
     int getMidpointZ();
-    Pos getRandomPosAtBase(boost::random::mt19937*, int, int, int, int);
-    void addBlock(Block *);
+    Pos getRandomPosAtBase(boost::random::mt19937*,
+                           int offsetPosX = 1,
+                           int offsetNegX = 1,
+                           int offsetPosZ = 1,
+                           int offsetNegZ = 1);
+    std::vector<Pos> getEdgeMidpointAtBase();
+    void setTopLeft(Pos*);
+    void setBottomRight(Pos*);
+    void addBlock(Block*);
     std::string toTSV();
-    AABB(int, std::string, Pos*, Pos*, bool, bool);
+    AABB(int,
+         std::string,
+         std::string,
+         Pos*,
+         Pos*,
+         bool isHollow = true,
+         bool hasRoof = false);
     ~AABB();
 };

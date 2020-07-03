@@ -42,7 +42,7 @@ void generateAABBGrid(
     Pos topLeft(1, 3, 1);
     Pos bottomRight(AABB_size, 3 + AABB_size, AABB_size);
 
-    AABB prevAABB(idCtr, material, &topLeft, &bottomRight, true, false);
+    AABB prevAABB(idCtr, "room", material, &topLeft, &bottomRight, true, false);
     (*worldptr).addAABB(&prevAABB);
 
     // Use relative coordinates for the "previous" AABB to generate the rest at
@@ -59,7 +59,7 @@ void generateAABBGrid(
             Pos newBottomRight(
                 AABB_size, 3 + AABB_size, newTopLeft.getZ() + AABB_size);
             AABB curAABB(
-                idCtr, material, &newTopLeft, &newBottomRight, true, false);
+                idCtr, "room", material, &newTopLeft, &newBottomRight, true, false);
             (*worldptr).addAABB(&curAABB);
             prevAABB = curAABB;
         }
@@ -72,7 +72,7 @@ void generateAABBGrid(
             newBottomRight.setX(newTopLeft.getX() + AABB_size);
 
             AABB curAABB(
-                idCtr, material, &newTopLeft, &newBottomRight, true, false);
+                idCtr,"room", material, &newTopLeft, &newBottomRight, true, false);
             (*worldptr).addAABB(&curAABB);
             prevAABB = curAABB;
         }
