@@ -103,7 +103,8 @@ __install_dependencies_using_apt() {
         mosquitto \
         mosquitto-clients \
         curl \
-        zlib1g-dev
+        zlib1g-dev \
+        libbz2-dev
     if [[ $? -ne 0 ]]; then exit 1; fi
 
     local ubuntu_major_version=$(lsb_release -d | cut -d " " -f2 \
