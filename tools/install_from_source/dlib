@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -u
+
 # Install DLib from source
 
 install_dlib_from_source() {
@@ -9,7 +11,7 @@ install_dlib_from_source() {
             exit 1
         fi
         if ! unzip -qq dlib.zip; then exit 1; fi
-        mv dlib-${commit_sha} dlib
+        mv dlib-${version} dlib
         pushd dlib
             mkdir build
             pushd build
