@@ -90,23 +90,23 @@ void generateAABBGrid(
 }
 
 /**
- * @brief Adds a random victim to the world's list of blocks such that the
+ * @brief Adds a random victim to the aabb's list of blocks such that the
  * victim is in a random position inside the given AABB. The addition of victims
  * is random so this function won't add a victim every time it is called
  *
- * @param worldptr The world that needs to know about this victim
  * @param aabb The AABB within which the victim is to ve generated
  */
-void generateVictimInAABB(World* worldptr, AABB* aabb) {
+void generateVictimInAABB(AABB* aabb) {
     Pos randPos((*aabb).getRandomPosAtBase(&gen, 2, 2, 2, 2));
     randPos.setY(randPos.getY() + 1);
+
     boost::random::uniform_int_distribution<> dist(1, 100);
     int randInteger = dist(gen);
 
     if (randInteger <= 75) {
         ProceduralGenerator pgen;
         Block victim = pgen.getRandomVictim(&randPos, 0.60, &gen);
-        (*worldptr).addBlock(&victim);
+        (*aabb).addBlock(&victim);
     }
     else {
         ;
@@ -114,59 +114,24 @@ void generateVictimInAABB(World* worldptr, AABB* aabb) {
 }
 
 /**
- * @brief Gets the midpoint of each edge of the given AABB such that the Y
- * coordinate of each edge coordinate returned is equal to the Y of the base of
- * the AABB
+ * @brief Generates all 4 doors for the given AABB to keep track of.
  *
- * @param aabb The AABB whose edge midpoints are to be found
- * @return vector<Pos> The list of size 4 containing the top,right,bottom and
- * left edge midpoints respectively
- */
-vector<Pos> getAABBEdgeMidpointAtBase(AABB* aabb) {
-    int midX = (*aabb).getMidpointX();
-    int midZ = (*aabb).getMidpointZ();
-    int base = (*aabb).getTopLeft().getY() + 1;
-
-    Pos topEdgeMid((*aabb).getTopLeft());
-    topEdgeMid.setX(midX);
-    topEdgeMid.setY(base);
-
-    Pos bottomEdgeMid((*aabb).getBottomRight());
-    bottomEdgeMid.setX(midX);
-    bottomEdgeMid.setY(base);
-
-    Pos leftEdgeMid((*aabb).getTopLeft());
-    leftEdgeMid.setZ(midZ);
-    leftEdgeMid.setY(base);
-
-    Pos rightEdgeMid((*aabb).getBottomRight());
-    rightEdgeMid.setZ(midZ);
-    rightEdgeMid.setY(base);
-
-    vector<Pos> midEdgesAtBase;
-    midEdgesAtBase.push_back(topEdgeMid);
-    midEdgesAtBase.push_back(rightEdgeMid);
-    midEdgesAtBase.push_back(bottomEdgeMid);
-    midEdgesAtBase.push_back(leftEdgeMid);
-
-    return midEdgesAtBase;
-}
-
-/**
- * @brief Generates all 4 doors for the given AABB and adds those blocks to the
- * list that the given world must keep track of
- *
- * @param worldptr The world in which doors are to be added
  * @param aabb The AABB whose doors are to be generated
  */
-void generateAllDoorsInAABB(World* worldptr, AABB* aabb) {
+void generateAllDoorsInAABB(AABB* aabb) {
     // Get edge midpoints for the AABB because that is where the doors will be
     // placed
-    vector<Pos> edges = getAABBEdgeMidpointAtBase(aabb);
+    vector<Pos> edges = (*aabb).getEdgeMidpointAtBase();
     Pos topEdgeMid(edges.at(0));
     Pos rightEdgeMid(edges.at(1));
     Pos bottomEdgeMid(edges.at(2));
     Pos leftEdgeMid(edges.at(3));
+
+    // Since points are at base we want them to be at base + 1
+    topEdgeMid.shiftY(1);
+    bottomEdgeMid.shiftY(1);
+    leftEdgeMid.shiftY(1);
+    rightEdgeMid.shiftY(1);
 
     // Use the coordinates to create door blocks
     Block topDoor("door", &topEdgeMid);
@@ -174,11 +139,11 @@ void generateAllDoorsInAABB(World* worldptr, AABB* aabb) {
     Block leftDoor("door", &leftEdgeMid);
     Block rightDoor("door", &rightEdgeMid);
 
-    // Tell the world to keep track of the blocks
-    (*worldptr).addBlock(&topDoor);
-    (*worldptr).addBlock(&bottomDoor);
-    (*worldptr).addBlock(&leftDoor);
-    (*worldptr).addBlock(&rightDoor);
+    // Add it to the AABB's doors
+    (*aabb).addBlock(&topDoor);
+    (*aabb).addBlock(&bottomDoor);
+    (*aabb).addBlock(&leftDoor);
+    (*aabb).addBlock(&rightDoor);
 }
 
 /**
@@ -189,8 +154,8 @@ void generateAllDoorsInAABB(World* worldptr, AABB* aabb) {
  */
 void generateBlocks(World* worldptr) {
     for (auto& aabb : *((*worldptr).getAABBList())) {
-        generateAllDoorsInAABB(worldptr, &aabb);
-        generateVictimInAABB(worldptr, &aabb);
+        generateAllDoorsInAABB(&aabb);
+        generateVictimInAABB(&aabb);
     }
 }
 
