@@ -232,14 +232,14 @@ vector<Pos> AABB::getEdgeMidpointAtBase() {
  * @param offsetNegZ How far away from the top wall should the position be.
  * Defaults to 0
  */
-void AABB::generateBox(string type,
-                       string material,
+void AABB::generateBox(string material,
                        int offsetPosX,
                        int offsetNegX,
                        int offsetPosY,
                        int offsetNegY,
                        int offsetPosZ,
-                       int offsetNegZ) {
+                       int offsetNegZ,
+                       string type) {
 
     int startX = this->getTopLeft().getX() + offsetPosX;
     int startY = this->getTopLeft().getY() + offsetPosY;
@@ -254,7 +254,7 @@ void AABB::generateBox(string type,
 
             for (int z = startZ; z <= endZ; z++) {
                 Pos pos(x, y, z);
-                Block block(type, material, &pos);
+                Block block(material, &pos, type);
                 this->addBlock(&block);
             }
         }
@@ -283,7 +283,6 @@ void AABB::generateBox(string type,
  * Defaults to 0
  */
 void AABB::addRandomBlocks(int n,
-                           string type,
                            string material,
                            boost::random::mt19937* gen,
                            int offsetPosX,
@@ -291,7 +290,8 @@ void AABB::addRandomBlocks(int n,
                            int offsetPosY,
                            int offsetNegY,
                            int offsetPosZ,
-                           int offsetNegZ) {
+                           int offsetNegZ,
+                           string type) {
 
     int startX = this->getTopLeft().getX() + offsetPosX;
     int startY = this->getTopLeft().getY() + offsetPosY;
@@ -310,7 +310,7 @@ void AABB::addRandomBlocks(int n,
         int y = randY(*gen);
         int z = randZ(*gen);
         Pos pos(x, y, z);
-        Block block(type, material, &pos);
+        Block block(material, &pos, type);
         this->addBlock(&block);
         n--;
     }

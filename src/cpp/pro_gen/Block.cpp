@@ -16,7 +16,7 @@ using namespace std;
  * @param blockMaterial The material the block is made of
  * @param blockPos The position of the block in the Minecraft world
  */
-Block::Block(string blockType, string blockMaterial, Pos* blockPos)
+Block::Block(string blockMaterial, Pos* blockPos, string blockType)
     : type(blockType), material(blockMaterial), pos(*blockPos) {}
 
 /**

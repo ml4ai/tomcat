@@ -25,6 +25,6 @@ class Block {
     int getY();
     int getZ();
     std::string toTSV();
-    Block(std::string, std::string, Pos*);
+    Block(std::string, Pos*, std::string type = "normal");
     ~Block();
 };

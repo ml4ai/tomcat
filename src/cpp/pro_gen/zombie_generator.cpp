@@ -69,8 +69,7 @@ AABB chooseZombieworldAABB(int idCtr, Pos* topLeft, Pos* bottomRight) {
                 &newBottomRight); // Start by creating a pit of grass which is
                                   // simply an AABB filled with grass
 
-            waterPit.generateBox("normal",
-                                 "water",
+            waterPit.generateBox("water",
                                  3,
                                  3,
                                  1,
@@ -79,20 +78,19 @@ AABB chooseZombieworldAABB(int idCtr, Pos* topLeft, Pos* bottomRight) {
                                  3); // Add a box of water to it
 
             // Randomly add other blocks to give the effect of randomization
-            waterPit.addRandomBlocks(
-                30, "normal", "sand", &gen, 0, 1, 2, 0, 1, 0);
-            waterPit.addRandomBlocks(
-                20, "normal", "water", &gen, 0, 0, 2, 0, 0, 0);
+            waterPit.addRandomBlocks(30, "sand", &gen, 0, 1, 2, 0, 1, 0);
+            waterPit.addRandomBlocks(20, "water", &gen, 0, 0, 2, 0, 0, 0);
             return waterPit;
         }
         else {
             Pit lavaPit(idCtr, "grass", topLeft, &newBottomRight);
-            lavaPit.generateBox("normal", "lava", 3, 2, 0, 0, 1, 3);
+            lavaPit.generateBox("lava", 3, 2, 0, 0, 1, 3);
+            lavaPit.addRandomBlocks(10, "grass", &gen, 1, 1, 0, 0, 1, 1);
             lavaPit.addRandomBlocks(
-                10, "normal", "grass", &gen, 1, 1, 0, 0, 1, 1);
-            lavaPit.addRandomBlocks(30, "normal", "cobblestone", &gen);
-            lavaPit.addRandomBlocks(
-                10, "fluid", "lava", &gen, 1, 0, 0, 0, 1, 1);
+                30,
+                "cobblestone",
+                &gen); // Example showing use of all default values
+            lavaPit.addRandomBlocks(10, "lava", &gen, 1, 0, 0, 0, 1, 1);
             return lavaPit;
         };
     }
@@ -197,10 +195,10 @@ void generateAllDoorsInAABB(AABB* aabb) {
     rightEdgeMid.shiftY(1);
 
     // Use the coordinates to create door blocks
-    Block topDoor("door", "door", &topEdgeMid);
-    Block bottomDoor("door", "door", &bottomEdgeMid);
-    Block leftDoor("door", "door", &leftEdgeMid);
-    Block rightDoor("door", "door", &rightEdgeMid);
+    Block topDoor("door", &topEdgeMid);
+    Block bottomDoor("door", &bottomEdgeMid);
+    Block leftDoor("door", &leftEdgeMid);
+    Block rightDoor("door", &rightEdgeMid);
 
     // Add it to the AABB's doors
     (*aabb).addBlock(&topDoor);

@@ -58,8 +58,13 @@ void generateAABBGrid(
 
             Pos newBottomRight(
                 AABB_size, 3 + AABB_size, newTopLeft.getZ() + AABB_size);
-            AABB curAABB(
-                idCtr, "room", material, &newTopLeft, &newBottomRight, true, false);
+            AABB curAABB(idCtr,
+                         "room",
+                         material,
+                         &newTopLeft,
+                         &newBottomRight,
+                         true,
+                         false);
             (*worldptr).addAABB(&curAABB);
             prevAABB = curAABB;
         }
@@ -71,8 +76,13 @@ void generateAABBGrid(
             Pos newBottomRight = prevAABB.getBottomRight();
             newBottomRight.setX(newTopLeft.getX() + AABB_size);
 
-            AABB curAABB(
-                idCtr,"room", material, &newTopLeft, &newBottomRight, true, false);
+            AABB curAABB(idCtr,
+                         "room",
+                         material,
+                         &newTopLeft,
+                         &newBottomRight,
+                         true,
+                         false);
             (*worldptr).addAABB(&curAABB);
             prevAABB = curAABB;
         }
@@ -159,10 +169,10 @@ void generateAllDoorsInAABB(World* worldptr, AABB* aabb) {
     Pos leftEdgeMid(edges.at(3));
 
     // Use the coordinates to create door blocks
-    Block topDoor("door", "door", &topEdgeMid);
-    Block bottomDoor("door", "door", &bottomEdgeMid);
-    Block leftDoor("door", "door", &leftEdgeMid);
-    Block rightDoor("door", "door", &rightEdgeMid);
+    Block topDoor("door", &topEdgeMid);
+    Block bottomDoor("door", &bottomEdgeMid);
+    Block leftDoor("door", &leftEdgeMid);
+    Block rightDoor("door", &rightEdgeMid);
 
     // Tell the world to keep track of the blocks
     (*worldptr).addBlock(&topDoor);
