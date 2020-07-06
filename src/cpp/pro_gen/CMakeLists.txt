@@ -23,5 +23,5 @@ add_library(progen STATIC ${pro_gen_headers} Pos.cpp AABB.cpp World.cpp
 target_link_libraries(progen ${Boost_LIBRARIES} nlohmann_json::nlohmann_json)
 add_executable(gridworld_generator gridworld_generator.cpp)
 target_link_libraries(gridworld_generator progen)
-add_executable(zombie_generator zombie_generator.cpp)
-target_link_libraries(zombie_generator progen)
+add_executable(zombieworld_generator zombieworld_generator.cpp)
+target_link_libraries(zombieworld_generator progen)
