@@ -220,6 +220,60 @@ void generateBlocks(World* worldptr) {
     }
 }
 
+void generateBoundingWalls(World* world) {
+    AABB firstAABB = (*(*world).getAABBList()).front();
+    AABB lastAABB = (*(*world).getAABBList()).back();
+
+    // Create boundary
+    Pos boundaryTopLeft(firstAABB.getTopLeft());
+    boundaryTopLeft.shiftX(-4);
+    boundaryTopLeft.shiftY(-3);
+    boundaryTopLeft.shiftZ(-4);
+
+    Pos boundaryBottomRight(lastAABB.getBottomRight());
+    boundaryBottomRight.shiftX(4);
+    boundaryBottomRight.shiftZ(4);
+
+    AABB boundingBox(
+        0, "boundary", "cobblestone", &boundaryTopLeft, &boundaryBottomRight);
+    (*world).addAABB(&boundingBox);
+
+    // Create Internal Separator 1
+    Pos separator1BottomRight(boundaryBottomRight);
+    separator1BottomRight.shiftX(-20);
+
+    Pos separator1TopLeft(separator1BottomRight);
+    separator1TopLeft.shiftZ(-50);
+    separator1TopLeft.setY(boundaryTopLeft.getY());
+
+    AABB separatorWall(-1,
+                       "wall",
+                       "cobblestone",
+                       &separator1TopLeft,
+                       &separator1BottomRight,
+                       false);
+    separatorWall.generateBox("fence", 0, 0, 3, 3, 1, 1);
+
+    (*world).addAABB(&separatorWall);
+
+    // Create Internal Separator 2
+    Pos separator2BottomRight(separator1TopLeft);
+    separator2BottomRight.setY(separator1BottomRight.getY());
+
+    Pos separator2TopLeft(separator2BottomRight);
+    separator2TopLeft.shiftX(-25);
+    separator2TopLeft.setY(boundaryTopLeft.getY());
+
+    AABB separatorWall2(-2,
+                        "wall",
+                        "cobblestone",
+                        &separator2TopLeft,
+                        &separator2BottomRight,
+                        false);
+    separatorWall2.generateBox("fence", 1, 1, 3, 3, 0, 0);
+    (*world).addAABB(&separatorWall2);
+}
+
 /**
  * @brief Generate the zombie mision world
  *
@@ -234,6 +288,7 @@ World generateZombieWorld() {
     World world;
     generateAABBGrid(&world, N, sep, AABB_size, AABB_material);
     generateBlocks(&world);
+    generateBoundingWalls(&world);
     return world;
 }
 

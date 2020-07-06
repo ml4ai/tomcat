@@ -87,6 +87,8 @@ public class WorldReader {
             return Blocks.SAND.getDefaultState();
         } else if (material.equals("cobblestone")) {
             return Blocks.COBBLESTONE.getDefaultState();
+        }else if (material.equals("fence")) {
+            return Blocks.NETHER_BRICK_FENCE.getDefaultState();
         } else if (material.equals("air")) {
             return Blocks.AIR.getDefaultState();
         } else {
