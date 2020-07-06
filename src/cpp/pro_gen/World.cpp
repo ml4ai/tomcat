@@ -29,14 +29,14 @@ void World::addAABB(AABB* aabb) { (this->aabbList).push_back(*aabb); }
  */
 void World::addBlock(Block* block) { (this->blockList).push_back(*block); }
 
-string World::toTSV(){
+string World::toTSV() {
     string retval = "";
 
-    for(auto aabb : (this -> aabbList)){
+    for (auto aabb : (this->aabbList)) {
         retval += aabb.toTSV();
     }
 
-    for(auto block : (this ->blockList)){
+    for (auto block : (this->blockList)) {
         retval += block.toTSV() + "\n";
     }
 
@@ -72,7 +72,7 @@ string World::toJSON() {
     // Add Blocks to the JSON List
     for (auto block : this->blockList) {
         map<string, string> m;
-        m["name"] = block.getName();
+        m["type"] = block.getType();
         m["x"] = to_string(block.getX());
         m["y"] = to_string(block.getY());
         m["z"] = to_string(block.getZ());

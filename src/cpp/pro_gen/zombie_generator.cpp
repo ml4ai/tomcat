@@ -11,7 +11,6 @@
  */
 
 #include "Pit.h"
-#include "ProceduralGenerator.h"
 #include "World.h"
 #include <boost/program_options.hpp>
 #include <boost/random/mersenne_twister.hpp>
@@ -20,32 +19,80 @@
 #include <iostream>
 
 using namespace std;
-boost::random::mt19937 gen;
+boost::random::mt19937 gen; // Global randomness object
 namespace po = boost::program_options;
 
+/**
+ * @brief Randomly choose and return an AABB. Sincce this is specific to the
+ * zombie world, the function will return a standard room when idCtr is not
+ * divisible by 2, but if idCtr is divisible by 2, it will return a subclass of
+ * AABB which is a Pit.
+ *
+ * @param idCtr The id counter which notes the id to assign the new AABB
+ * @param topLeft The top left value for the new AABB. A modified value may be
+ * used in case of Pit.
+ * @param bottomRight The bottom right value for the new AABB. A modified value
+ * may be used in case of Pit.
+ * @return AABB The AABB object
+ */
 AABB chooseZombieworldAABB(int idCtr, Pos* topLeft, Pos* bottomRight) {
     if (idCtr % 2 == 0) {
         Pos newBottomRight(*bottomRight);
-        newBottomRight.setY((*topLeft).getY());
+        newBottomRight.setY(
+            (*topLeft).getY()); // We are adding a Pit so we want the AABB to be
+                                // much flatter
 
         boost::random::uniform_int_distribution<> dist(1, 100);
         int rand = dist(gen);
+
+        // Choose between an air, water or lava pit
         if (rand <= 25) {
             Pos newTopLeft(*topLeft);
-            newTopLeft.shiftY(1);
-            newBottomRight.shiftY(1);
 
-            AABB curr(idCtr, "room", "air", &newTopLeft, &newBottomRight);
-            return curr;
+            newTopLeft.shiftY(1);
+            newBottomRight.shiftY(
+                1); // Move both above ground level for an air pit which achives
+                    // the effect of an empty plot
+
+            Pit airPit(idCtr, "air", &newTopLeft, &newBottomRight);
+            return airPit;
         }
-        else if (rand > 25 && rand <= 90) {
-            Pit waterPit(idCtr, "grass", topLeft, &newBottomRight);
-            waterPit.generateFluidSquareAtBase("water", 2, 2, 2, 2);
+        else if (rand > 25 && rand <= 75) {
+            Pos newTopLeft(*topLeft);
+            newTopLeft.shiftY(-2); // In this case I'm chosing to offset the
+                                   // base Y by -2 so we have a deeper water pit
+
+            Pit waterPit(
+                idCtr,
+                "grass",
+                &newTopLeft,
+                &newBottomRight); // Start by creating a pit of grass which is
+                                  // simply an AABB filled with grass
+
+            waterPit.generateBox("normal",
+                                 "water",
+                                 3,
+                                 3,
+                                 1,
+                                 0,
+                                 3,
+                                 3); // Add a box of water to it
+
+            // Randomly add other blocks to give the effect of randomization
+            waterPit.addRandomBlocks(
+                30, "normal", "sand", &gen, 0, 1, 2, 0, 1, 0);
+            waterPit.addRandomBlocks(
+                20, "normal", "water", &gen, 0, 0, 2, 0, 0, 0);
             return waterPit;
         }
         else {
             Pit lavaPit(idCtr, "grass", topLeft, &newBottomRight);
-            lavaPit.generateFluidSquareAtBase("lava", 2, 2, 2, 2);
+            lavaPit.generateBox("normal", "lava", 3, 2, 0, 0, 1, 3);
+            lavaPit.addRandomBlocks(
+                10, "normal", "grass", &gen, 1, 1, 0, 0, 1, 1);
+            lavaPit.addRandomBlocks(30, "normal", "cobblestone", &gen);
+            lavaPit.addRandomBlocks(
+                10, "fluid", "lava", &gen, 1, 0, 0, 0, 1, 1);
             return lavaPit;
         };
     }
@@ -56,6 +103,15 @@ AABB chooseZombieworldAABB(int idCtr, Pos* topLeft, Pos* bottomRight) {
     }
 }
 
+/**
+ * @brief Generate the basic AABB grid for the zombie world
+ *
+ * @param worldptr The world where the AABB is to be added
+ * @param N The number of AABB on each axis
+ * @param sep The separation between AABB in the cardinal directions
+ * @param AABB_size The size of each cubic AABB
+ * @param material The material of each AABB
+ */
 void generateAABBGrid(
     World* worldptr, int N, int sep, int AABB_size, string material) {
 
@@ -75,32 +131,56 @@ void generateAABBGrid(
         if ((idCtr - 1) % N == 0) {
             // Condition for when a row in the grid is complete and we move onto
             // the next one
+
             Pos topLeft(1, 3, 1);
             topLeft.setZ(prevBottomRight.getZ() + sep);
             Pos bottomRight(
                 AABB_size, 3 + AABB_size, topLeft.getZ() + AABB_size);
 
-            AABB curAABB = chooseZombieworldAABB(idCtr, &topLeft, &bottomRight);
+            AABB curAABB = chooseZombieworldAABB(
+                idCtr,
+                &topLeft,
+                &bottomRight); // Choose the AABB to add. DOESN'T change topLeft
+                               // and bottomRIght
             (*worldptr).addAABB(&curAABB);
+
             prevTopLeft = topLeft;
-            prevBottomRight = bottomRight;
+            prevBottomRight =
+                bottomRight; // Set as if prev AABB was a room for consistency.
+                             // Direct result of the fact that choosing an AABB
+                             // doesn't change the coordinates
         }
         else {
             // Condition for the next AABB in the current row
+
             Pos topLeft(prevTopLeft);
             topLeft.setX(prevBottomRight.getX() + sep);
 
             Pos bottomRight(prevBottomRight);
             bottomRight.setX(topLeft.getX() + AABB_size);
 
-            AABB curAABB = chooseZombieworldAABB(idCtr, &topLeft, &bottomRight);
+            AABB curAABB = chooseZombieworldAABB(
+                idCtr,
+                &topLeft,
+                &bottomRight); // Choose the AABB to add. DOESN'T change topLeft
+                               // and bottomRIght
             (*worldptr).addAABB(&curAABB);
+
             prevTopLeft = topLeft;
-            prevBottomRight = bottomRight;
+            prevBottomRight =
+                bottomRight; // Set as if prev AABB was a room for consistency.
+                             // Direct result of the fact that choosing an AABB
+                             // doesn't change the coordinates
         }
     }
 }
 
+/**
+ * @brief Generate all 4 doors for an AABB. Door blocks are added to the AABB
+ * object.
+ *
+ * @param aabb The AABB for which doors are to be generated.
+ */
 void generateAllDoorsInAABB(AABB* aabb) {
     // Get edge midpoints for the AABB because that is where the doors will be
     // placed
@@ -129,6 +209,11 @@ void generateAllDoorsInAABB(AABB* aabb) {
     (*aabb).addBlock(&rightDoor);
 }
 
+/**
+ * @brief Generate special blocks related to the world and each AABB
+ *
+ * @param worldptr The world where blocks must be placed
+ */
 void generateBlocks(World* worldptr) {
     for (auto& aabb : *(*worldptr).getAABBList()) {
         if (strcmp(aabb.getType().c_str(), "pit") != 0) {
@@ -137,21 +222,32 @@ void generateBlocks(World* worldptr) {
     }
 }
 
-World generateGridWorld(int N, int sep, int AABB_size, string AABB_material) {
+/**
+ * @brief Generate the zombie mision world
+ *
+ * @return World The generated world object representing the zombie mission
+ */
+World generateZombieWorld() {
+    int N = 3;
+    int sep = 15;
+    int AABB_size = 10;
+    string AABB_material = "planks";
+
     World world;
     generateAABBGrid(&world, N, sep, AABB_size, AABB_material);
     generateBlocks(&world);
     return world;
 }
 
-int main(int argc, char* argv[]) {
-    int N = 3;
-    int sep = 15;
-    int AABB_size = 10;
+/**
+ * @brief Directive method to create the world and write the JSON and TSV output
+ * to file.
+ */
+int main() {
 
     // Process input and generate output
     cout << "Generating gridworld..." << endl;
-    World world = generateGridWorld(N, sep, AABB_size, "planks");
+    World world = generateZombieWorld();
     cout << "Writing to file..." << endl;
 
     // Write JSON

@@ -72,17 +72,32 @@ void Pos::setY(int y) { this->y = y; }
  */
 void Pos::setZ(int z) { this->z = z; }
 
+/**
+ * @brief Shift the x value by a given amount
+ *
+ * @param shift The amount to shift by which may be positive or negative
+ */
 void Pos::shiftX(int shift) { this->x += shift; }
 
+/**
+ * @brief Shift the y value by a given amount
+ *
+ * @param shift The amount to shift by which may be positive or negative
+ */
 void Pos::shiftY(int shift) { this->y += shift; }
 
+/**
+ * @brief Shift the z value by a given amount
+ *
+ * @param shift The amount to shift by which may be positive or negative
+ */
 void Pos::shiftZ(int shift) { this->z += shift; }
 
 /**
  * @brief Gets a string representation of the various
- * fields and values stores in an instance
+ * fields and values stores in an instance as a TSV
  *
- * @return string The string representation
+ * @return string The TSV representation
  */
 string Pos::toTSV() {
     string retval = to_string(this->x) + "\t" + to_string(this->y) + "\t" +

@@ -11,20 +11,20 @@ using namespace std;
 /**
  * @brief Construct a new Block:: Block object
  *
- * @param blockName The semantic name for this block which is not the same as
+ * @param blockType The semantic name for this block which is not the same as
  * its material
  * @param blockMaterial The material the block is made of
  * @param blockPos The position of the block in the Minecraft world
  */
-Block::Block(string blockName, string blockMaterial, Pos* blockPos)
-    : name(blockName), material(blockMaterial), pos(*blockPos) {}
+Block::Block(string blockType, string blockMaterial, Pos* blockPos)
+    : type(blockType), material(blockMaterial), pos(*blockPos) {}
 
 /**
  * @brief Get the name of the block
  *
  * @return string The block's name
  */
-string Block::getName() { return this->name; }
+string Block::getType() { return this->type; }
 
 /**
  * @brief Get the material of the block
@@ -54,8 +54,14 @@ int Block::getY() { return this->pos.getY(); }
  */
 int Block::getZ() { return this->pos.getZ(); }
 
-string Block::toTSV(){
-    string retval =  (this->pos).toTSV() + "\t" + (this -> material);
+/**
+ * @brief Gets a string representation of the various
+ * fields and values stores in an instance as a TSV
+ *
+ * @return string The TSV representation
+ */
+string Block::toTSV() {
+    string retval = (this->pos).toTSV() + "\t" + (this->material);
     return retval;
 }
 

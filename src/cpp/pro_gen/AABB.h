@@ -47,6 +47,24 @@ class AABB {
     void setTopLeft(Pos*);
     void setBottomRight(Pos*);
     void addBlock(Block*);
+    void generateBox(std::string,
+                     std::string,
+                     int offsetPosX = 0,
+                     int offsetNegX = 0,
+                     int offsetPosY = 0,
+                     int offsetNegY = 0,
+                     int offsetPosZ = 0,
+                     int offsetNegZ = 0);
+    void addRandomBlocks(int,
+                         std::string,
+                         std::string,
+                         boost::random::mt19937*,
+                         int offsetPosX = 0,
+                         int offsetNegX = 0,
+                         int offsetPosY = 0,
+                         int offsetNegY = 0,
+                         int offsetPosZ = 0,
+                         int offsetNegZ = 0);
     std::string toTSV();
     AABB(int,
          std::string,

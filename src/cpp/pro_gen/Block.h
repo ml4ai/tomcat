@@ -14,12 +14,12 @@
 class Block {
 
   private:
-    std::string name;
+    std::string type;
     std::string material;
     Pos pos;
 
   public:
-    std::string getName();
+    std::string getType();
     std::string getMaterial();
     int getX();
     int getY();

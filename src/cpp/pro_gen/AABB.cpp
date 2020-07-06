@@ -13,6 +13,7 @@ using namespace std;
  * @brief Construct a new AABB::AABB object
  *
  * @param AABBid The id associated with this AABB
+ * @param type A semantic name describing the type and/or purpose of the AABB
  * @param AABBmaterial The material this AABB is built out of
  * @param topLeftPos The coordinates of the top left of the AABB from the top
  * view of the X-Z plane. Y coordinate should be lowest here.
@@ -43,6 +44,11 @@ int AABB::getID() { return this->id; }
  */
 string AABB::getMaterial() { return this->material; }
 
+/**
+ * @brief Get the AABB type
+ *
+ * @return string The type
+ */
 string AABB::getType() { return this->type; }
 
 /**
@@ -61,8 +67,18 @@ Pos AABB::getTopLeft() { return this->topLeft; }
  */
 Pos AABB::getBottomRight() { return this->bottomRight; }
 
+/**
+ * @brief Set the top left coordinate of the AABB
+ *
+ * @param topLeft Pointer to the pos object top left is to be set to
+ */
 void AABB::setTopLeft(Pos* topLeft) { this->topLeft = *topLeft; }
 
+/**
+ * @brief Set the bottom right coordinate of the AABB
+ *
+ * @param topLeft Pointer to the pos object bottom right is to be set to
+ */
 void AABB::setBottomRight(Pos* bottomRight) {
     this->bottomRight = *bottomRight;
 }
@@ -108,6 +124,7 @@ int AABB::getMidpointZ() {
  * the y coordinate of the returned value is set to
  * the top left y value which is considered the base
  *
+ * @param gen The boost generation object to generate the distributions
  * @param offsetPosX How far away from the left wall should the position be.
  * Defaults to 1
  * @param offsetNegX How far away from the right wall should the position be.
@@ -142,10 +159,30 @@ Pos AABB::getRandomPosAtBase(boost::random::mt19937* gen,
     return pos;
 }
 
+/**
+ * @brief Get the block list specific to this AABB
+ *
+ * @return vector<Block>* The reference to the block list
+ */
 vector<Block>* AABB::getBlockList() { return &(this->blockList); }
 
+/**
+ * @brief Add a specific block for this AABB to keep track of. Ideally this
+ * should be related to the AABB. No checks are implicitly performed within this
+ * method.
+ *
+ * @param block Pointer to the block to be added
+ */
 void AABB::addBlock(Block* block) { (this->blockList).push_back(*block); }
 
+/**
+ * @brief Get a list of the positions of the edge midpoints for this AABB. The Y
+ * value for all these Pos objects is equal to the Y value of the AABB's top
+ * left field which is considered the base.
+ *
+ * @return vector<Pos> The list of coordinates as: top, right, bottom and left
+ * edge midpoints.
+ */
 vector<Pos> AABB::getEdgeMidpointAtBase() {
     int midX = this->getMidpointX();
     int midZ = this->getMidpointZ();
@@ -177,10 +214,113 @@ vector<Pos> AABB::getEdgeMidpointAtBase() {
 }
 
 /**
- * @brief Gets a string representation of the various
- * fields and values stores in an instance
+ * @brief Generate a box made of s specific material inside the AABB with the
+ * ability to specify offsets.
  *
- * @return string The string representation
+ * @param type The semantic name to give the block
+ * @param material The material to make this box out of
+ * @param offsetPosX How far away from the left wall should the position be.
+ * Defaults to 0
+ * @param offsetNegX How far away from the right wall should the position be.
+ * Defaults to 0
+ * @param offsetPosY How far away from the left wall should the position be.
+ * Defaults to 0
+ * @param offsetNegY How far away from the right wall should the position be.
+ * Defaults to 0
+ * @param offsetPosZ How far away from the bottom wall should the position be.
+ * Defaults to 0
+ * @param offsetNegZ How far away from the top wall should the position be.
+ * Defaults to 0
+ */
+void AABB::generateBox(string type,
+                       string material,
+                       int offsetPosX,
+                       int offsetNegX,
+                       int offsetPosY,
+                       int offsetNegY,
+                       int offsetPosZ,
+                       int offsetNegZ) {
+
+    int startX = this->getTopLeft().getX() + offsetPosX;
+    int startY = this->getTopLeft().getY() + offsetPosY;
+    int startZ = this->getTopLeft().getZ() + offsetPosZ;
+
+    int endX = this->getBottomRight().getX() - offsetNegX;
+    int endY = this->getBottomRight().getY() - offsetNegY;
+    int endZ = this->getBottomRight().getZ() - offsetNegZ;
+
+    for (int x = startX; x <= endX; x++) {
+        for (int y = startY; y <= endY; y++) {
+
+            for (int z = startZ; z <= endZ; z++) {
+                Pos pos(x, y, z);
+                Block block(type, material, &pos);
+                this->addBlock(&block);
+            }
+        }
+    }
+}
+
+/**
+ * @brief Add n random blocks of the given type and material inside the AABB
+ * within the offset parameters
+ *
+ * @param n The number of blocks to add
+ * @param type The semantic name to give this block
+ * @param material The block'smaterial type
+ * @param gen THe boost generation object to generate distributions from
+ * @param offsetPosX How far away from the left wall should the position be.
+ * Defaults to 0
+ * @param offsetNegX How far away from the right wall should the position be.
+ * Defaults to 0
+ * @param offsetPosY How far away from the left wall should the position be.
+ * Defaults to 0
+ * @param offsetNegY How far away from the right wall should the position be.
+ * Defaults to 0
+ * @param offsetPosZ How far away from the bottom wall should the position be.
+ * Defaults to 0
+ * @param offsetNegZ How far away from the top wall should the position be.
+ * Defaults to 0
+ */
+void AABB::addRandomBlocks(int n,
+                           string type,
+                           string material,
+                           boost::random::mt19937* gen,
+                           int offsetPosX,
+                           int offsetNegX,
+                           int offsetPosY,
+                           int offsetNegY,
+                           int offsetPosZ,
+                           int offsetNegZ) {
+
+    int startX = this->getTopLeft().getX() + offsetPosX;
+    int startY = this->getTopLeft().getY() + offsetPosY;
+    int startZ = this->getTopLeft().getZ() + offsetPosZ;
+
+    int endX = this->getBottomRight().getX() - offsetNegX;
+    int endY = this->getBottomRight().getY() - offsetNegY;
+    int endZ = this->getBottomRight().getZ() - offsetNegZ;
+
+    while (n > 0) {
+        boost::random::uniform_int_distribution<> randX(startX, endX);
+        boost::random::uniform_int_distribution<> randY(startY, endY);
+        boost::random::uniform_int_distribution<> randZ(startZ, endZ);
+
+        int x = randX(*gen);
+        int y = randY(*gen);
+        int z = randZ(*gen);
+        Pos pos(x, y, z);
+        Block block(type, material, &pos);
+        this->addBlock(&block);
+        n--;
+    }
+}
+
+/**
+ * @brief Gets a string representation of the various
+ * fields and values stores in an instance as a TSV.
+ *
+ * @return string The TSV representation
  */
 string AABB::toTSV() {
     string retval = "";
