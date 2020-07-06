@@ -436,7 +436,7 @@ void CNN::Read(const string& location) {
 // Read in the MTCNN detector
 void FaceDetectorMTCNN::Read(const string& location) {
 
-    cout << "Reading the MTCNN face detector from: " << location << endl;
+    // cout << "Reading the MTCNN face detector from: " << location << endl;
 
     ifstream locations(location.c_str(), ios_base::in);
     if (!locations.is_open()) {
@@ -472,15 +472,15 @@ void FaceDetectorMTCNN::Read(const string& location) {
         // append to root
         location = (root / location).string();
         if (module.compare("PNet") == 0) {
-            cout << "Reading the PNet module from: " << location << endl;
+            // cout << "Reading the PNet module from: " << location << endl;
             PNet.Read(location);
         }
         else if (module.compare("RNet") == 0) {
-            cout << "Reading the RNet module from: " << location << endl;
+            // cout << "Reading the RNet module from: " << location << endl;
             RNet.Read(location);
         }
         else if (module.compare("ONet") == 0) {
-            cout << "Reading the ONet module from: " << location << endl;
+            // cout << "Reading the ONet module from: " << location << endl;
             ONet.Read(location);
         }
     }

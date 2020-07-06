@@ -93,7 +93,7 @@ namespace FaceAnalysis {
             path OpenFace_models_dir = path(getenv("OPENFACE_MODELS_DIR"));
 
             string model_type = this->dynamic ? "dynamic" : "static";
-            path model_path = OpenFace_models_dir / ("AU_Predictors/main_" +
+            path model_path = OpenFace_models_dir / ("AU_predictors/main_" +
                                                      model_type + "_svms.txt");
             if (!exists(model_path)) {
                 throw runtime_error(

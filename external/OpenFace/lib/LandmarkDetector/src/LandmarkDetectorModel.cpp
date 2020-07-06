@@ -364,8 +364,8 @@ bool CLNF::Read_CLNF(string clnf_location) {
 
 void CLNF::Read(string main_location) {
 
-    cout << "Reading the landmark detector/tracker from: " << main_location
-         << endl;
+    //cout << "Reading the landmark detector/tracker from: " << main_location
+    //     << endl;
 
     ifstream locations(main_location.c_str(), ios_base::in);
     if (!locations.is_open()) {
@@ -405,8 +405,8 @@ void CLNF::Read(string main_location) {
         // append to root
         location = (root / location).string();
         if (module.compare("LandmarkDetector") == 0) {
-            cout << "Reading the landmark detector module from: " << location
-                 << endl;
+            //cout << "Reading the landmark detector module from: " << location
+            //     << endl;
 
             // The CLNF module includes the PDM and the patch experts
             bool read_success = Read_CLNF(location);
@@ -419,7 +419,7 @@ void CLNF::Read(string main_location) {
         else if (module.compare("LandmarkDetector_part") == 0) {
             string part_name;
             lineStream >> part_name;
-            cout << "Reading part based module...." << part_name << endl;
+            // cout << "Reading part based module...." << part_name << endl;
 
             vector<pair<int, int>> mappings;
             while (!lineStream.eof()) {
@@ -544,12 +544,12 @@ void CLNF::Read(string main_location) {
 
             this->hierarchical_params.push_back(params);
 
-            cout << "Done" << endl;
+            // cout << "Done" << endl;
         }
         else if (module.compare("DetectionValidator") == 0) {
-            cout << "Reading the landmark validation module....";
+            // cout << "Reading the landmark validation module....";
             landmark_validator.Read(location);
-            cout << "Done" << endl;
+            // cout << "Done" << endl;
         }
     }
 

@@ -1104,7 +1104,7 @@ vector<pair<string, double>> FaceAnalyser::GetCurrentAUsCombined() const {
 void FaceAnalyser::Read(string model_loc) {
     // Reading in the modules for AU recognition
 
-    cout << "Reading the AU analysis module from: " << model_loc << endl;
+    // cout << "Reading the AU analysis module from: " << model_loc << endl;
 
     ifstream locations(model_loc.c_str(), ios_base::in);
     if (!locations.is_open()) {
@@ -1140,23 +1140,23 @@ void FaceAnalyser::Read(string model_loc) {
         location = (root / location).string();
         if (module.compare("AUPredictor") == 0) {
             // The AU predictors
-            cout << "Reading the AU predictors from: " << location;
+            // cout << "Reading the AU predictors from: " << location;
             ReadAU(location);
-            cout << "... Done" << endl;
+            // cout << "... Done" << endl;
         }
         else if (module.compare("PDM") == 0) {
-            cout << "Reading the PDM from: " << location;
+            // cout << "Reading the PDM from: " << location;
             pdm = LandmarkDetector::PDM();
             pdm.Read(location);
-            cout << "... Done" << endl;
+            // cout << "... Done" << endl;
         }
         else if (module.compare("Triangulation") == 0) {
-            cout << "Reading the triangulation from:" << location;
+            // cout << "Reading the triangulation from:" << location;
             // The triangulation used for masking out the non-face parts of
             // aligned image
             ifstream triangulation_file(location);
             ReadMat(triangulation_file, triangulation);
-            cout << "... Done" << endl;
+            // cout << "... Done" << endl;
         }
     }
 }

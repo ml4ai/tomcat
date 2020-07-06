@@ -50,12 +50,12 @@ namespace tomcat {
         Point3f gazeDirection0(0, 0, -1);
         Point3f gazeDirection1(0, 0, -1);
 
-        //.face analysis
+        // Face analysis
         FaceAnalysis::FaceAnalyserParameters face_analysis_params(
             this->arguments);
         FaceAnalysis::FaceAnalyser face_analyser(face_analysis_params);
 
-        //.RecorderOpenFaceParameters
+        // Recorder open face parameters
         Utilities::RecorderOpenFaceParameters recording_params(
             this->arguments,
             true,
@@ -66,7 +66,7 @@ namespace tomcat {
             this->sequence_reader.cy,
             this->sequence_reader.fps);
 
-        // .Create open_face_rec
+        // Create open_face_rec
         Utilities::RecorderOpenFace open_face_rec(
             this->sequence_reader.name, recording_params, this->arguments);
 
@@ -90,12 +90,12 @@ namespace tomcat {
                          false);
         }
 
-        // .Do face alignment
+        // Do face alignment
         cv::Mat sim_warped_img;
         cv::Mat_<double> hog_descriptor;
         int num_hog_rows = 0, num_hog_cols = 0;
 
-        // .Perform AU detection and HOG feature extraction, as this can be
+        // Perform AU detection and HOG feature extraction, as this can be
         // expensive only compute it if needed by output or visualization
         if (recording_params.outputAlignedFaces() ||
             recording_params.outputHOG() || recording_params.outputAUs() ||
@@ -118,7 +118,9 @@ namespace tomcat {
                                       this->sequence_reader.cx,
                                       this->sequence_reader.cy);
 
+        // Keeping track of fps
         this->fps_tracker.AddFrame();
+        
         // Displaying the tracking visualizations
         this->visualizer.SetImage(this->rgb_image,
                                   this->sequence_reader.fx,
@@ -126,7 +128,7 @@ namespace tomcat {
                                   this->sequence_reader.cx,
                                   this->sequence_reader.cy);
 
-        //.
+        
         this->visualizer.SetObservationFaceAlign(sim_warped_img);
         this->visualizer.SetObservationHOG(
             hog_descriptor, num_hog_rows, num_hog_cols);
@@ -156,6 +158,7 @@ namespace tomcat {
 
         this->visualizer.SetFps(this->fps_tracker.GetFPS());
 
+        // Detect key press 
         char character_press = this->visualizer.ShowObservation();
         if (character_press == 'r') {
             this->face_model.Reset();
@@ -174,15 +177,21 @@ namespace tomcat {
         open_face_rec.SetObservationActionUnits(
             face_analyser.GetCurrentAUsReg(),
             face_analyser.GetCurrentAUsClass());
+        open_face_rec.SetObservationTimestamp(
+        	this->sequence_reader.time_stamp);
 
-        this->rgb_image = this->sequence_reader.GetNextFrame();
-
-        cout << "Postprocessing the Action Unit predictions" << endl;
         json j;
-        j = {{"au_intensities", open_face_rec.get_au_intensities()},
-             {"au_occurences", open_face_rec.get_au_occurences()}};
-
-        //. Reset the models for the next video
+        j = {
+        		{"timestamp", open_face_rec.get_timestamp()},
+        		{"au_intensities", open_face_rec.get_au_intensities()},
+             	{"au_occurences", open_face_rec.get_au_occurences()}
+        	};
+        std::cout << j.dump(4) << std::endl;
+        
+        // Grabbing the next frame in the sequence
+        this->rgb_image = this->sequence_reader.GetNextFrame();
+        
+        // Reset the models for the next video
         face_analyser.Reset();
         face_model.Reset();
     }

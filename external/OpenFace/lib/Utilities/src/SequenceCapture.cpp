@@ -168,8 +168,8 @@ bool SequenceCapture::Open(std::vector<std::string>& arguments) {
 
     // Based on what was read in open the sequence
     if (device != -1) {
-        std::cout << device;
-        std::cout << "Device value\n";
+        // std::cout << device;
+        // std::cout << "Device value\n";
         return OpenWebcam(device, cam_width, cam_height, fx, fy, cx, cy);
     }
     if (!input_video_file.empty()) {
@@ -208,14 +208,14 @@ bool SequenceCapture::OpenWebcam(int device,
                                  float fy,
                                  float cx,
                                  float cy) {
-    INFO_STREAM("Attempting to read from webcam: " << device);
+    // INFO_STREAM("Attempting to read from webcam: " << device);
 
     no_input_specified = false;
     frame_num = 0;
     time_stamp = 0;
 
     if (device < 0) {
-        std::cout << "Specify a valid device" << std::endl;
+        // std::cout << "Specify a valid device" << std::endl;
         return false;
     }
 

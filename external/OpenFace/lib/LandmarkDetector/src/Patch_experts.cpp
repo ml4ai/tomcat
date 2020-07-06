@@ -474,8 +474,8 @@ bool Patch_experts::Read(vector<string> intensity_svr_expert_locations,
     // Reading in SVR intensity patch experts for each scales it is defined in
     for (int scale = 0; scale < num_intensity_svr; ++scale) {
         string location = intensity_svr_expert_locations[scale];
-        cout << "Reading the intensity SVR patch experts from: " << location
-             << "....";
+        // cout << "Reading the intensity SVR patch experts from: " << location
+        //      << "....";
         bool success_read = Read_SVR_patch_experts(location,
                                                    centers[scale],
                                                    visibilities[scale],
@@ -499,8 +499,8 @@ bool Patch_experts::Read(vector<string> intensity_svr_expert_locations,
 
     for (int scale = 0; scale < num_intensity_ccnf; ++scale) {
         string location = intensity_ccnf_expert_locations[scale];
-        cout << "Reading the intensity CCNF patch experts from: " << location
-             << "....";
+        // cout << "Reading the intensity CCNF patch experts from: " << location
+        //      << "....";
         bool success_read =
             Read_CCNF_patch_experts(location,
                                     centers[scale],
@@ -530,8 +530,8 @@ bool Patch_experts::Read(vector<string> intensity_svr_expert_locations,
 
     for (int scale = 0; scale < num_intensity_cen; ++scale) {
         string location = intensity_cen_expert_locations[scale];
-        cout << "Reading the intensity CEN patch experts from: " << location
-             << "....";
+        // cout << "Reading the intensity CEN patch experts from: " << location
+        //      << "....";
         bool success_read = Read_CEN_patch_experts(location,
                                                    centers[scale],
                                                    visibilities[scale],
@@ -635,7 +635,7 @@ bool Patch_experts::Read_SVR_patch_experts(
             }
         }
 
-        cout << "Done" << endl;
+        // cout << "Done" << endl;
         return true;
     }
     else {
@@ -719,7 +719,7 @@ bool Patch_experts::Read_CCNF_patch_experts(
                 patches[i][j].Read(patchesFile, windows, sigma_components);
             }
         }
-        cout << "Done" << endl;
+        // cout << "Done" << endl;
         return true;
     }
     else {
@@ -778,7 +778,7 @@ bool Patch_experts::Read_CEN_patch_experts(
                 patches[i][j].Read(patchesFile);
             }
         }
-        cout << "Done" << endl;
+        // cout << "Done" << endl;
         return true;
     }
     else {

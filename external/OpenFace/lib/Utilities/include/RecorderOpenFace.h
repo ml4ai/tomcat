@@ -82,6 +82,9 @@ namespace Utilities {
 
         // Required observations for video/image-sequence
         void SetObservationTimestamp(double timestamp);
+        double get_timestamp() {
+        	return timestamp;
+        }
 
         // Required observations for video/image-sequence
         void SetObservationFrameNumber(int frame_number);
