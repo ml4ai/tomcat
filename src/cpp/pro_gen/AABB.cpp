@@ -9,123 +9,50 @@
 
 using namespace std;
 
-/**
- * @brief Construct a new AABB::AABB object
- *
- * @param AABBid The id associated with this AABB
- * @param type A semantic name describing the type and/or purpose of the AABB
- * @param AABBmaterial The material this AABB is built out of
- * @param topLeftPos The coordinates of the top left of the AABB from the top
- * view of the X-Z plane. Y coordinate should be lowest here.
- * @param bottomRightPos The coordinates of the bottom right of the AABB from
- * the top view of the X-Z plane. Y coordinate should be maximum here.
- */
 AABB::AABB(int id,
            string type,
            string material,
            Pos* topLeft,
            Pos* bottomRight,
-           bool isHollow,
-           bool hasRoof)
+           bool isHollow = true,
+           bool hasRoo = false)
     : id{id}, type{type}, material{material}, topLeft{*topLeft},
       bottomRight{*bottomRight}, isHollow{isHollow}, hasRoof{hasRoof} {}
 
-/**
- * @brief Get the AABB's id
- *
- * @return int The id
- */
 int AABB::getID() { return this->id; }
 
-/**
- * @brief Get the AABB's material
- *
- * @return string The material name
- */
 string AABB::getMaterial() { return this->material; }
 
-/**
- * @brief Get the AABB type
- *
- * @return string The type
- */
 string AABB::getType() { return this->type; }
 
-/**
- * @brief Returns a copy of the Pos object used to represent
- * the top left of the AABB from the top view of the X-Z plane
- *
- * @return Pos The copy of the top left coordinate
- */
 Pos AABB::getTopLeft() { return this->topLeft; }
 
-/**
- * @brief Returns a copy of the Pos object used to represent
- * the bottom right of the AABB from the top view of the X-Z plane
- *
- * @return Pos The copy of the bottom right coordinate
- */
 Pos AABB::getBottomRight() { return this->bottomRight; }
 
-/**
- * @brief Set the top left coordinate of the AABB
- *
- * @param topLeft Pointer to the pos object top left is to be set to
- */
 void AABB::setTopLeft(Pos* topLeft) { this->topLeft = *topLeft; }
 
-/**
- * @brief Set the bottom right coordinate of the AABB
- *
- * @param topLeft Pointer to the pos object bottom right is to be set to
- */
 void AABB::setBottomRight(Pos* bottomRight) {
     this->bottomRight = *bottomRight;
 }
 
-/**
- * @brief Get the midpoint X value calculated between
- * the top left and bottom right x values
- *
- * @return int The midpoint X coordinate
- */
 int AABB::getMidpointX() {
     int mid_x = ((this->topLeft).getX() +
                  ((this->bottomRight).getX() - (this->topLeft).getX()) / 2);
     return mid_x;
 }
 
-/**
- * @brief Get the midpoint Y value calculated between
- * the top left and bottom right y values
- *
- * @return int The midpoint Y coordinate
- */
 int AABB::getMidpointY() {
     int mid_y = ((this->topLeft).getY() +
                  ((this->bottomRight).getY() - (this->topLeft).getY()) / 2);
     return mid_y;
 }
 
-/**
- * @brief Get the midpoint Z value calculated between
- * the top left and bottom right z values
- *
- * @return int The midpoint Z coordinate
- */
 int AABB::getMidpointZ() {
     int mid_z = ((this->topLeft).getZ() +
                  ((this->bottomRight).getZ() - (this->topLeft).getZ()) / 2);
     return mid_z;
 }
 
-/**
- * @brief Checks to see if two AABBs overlapp on any of the axes
- *
- * @param other The AABB to compare to
- * @return true When the AABBs do overlap
- * @return false When the AABBs don't overlap
- */
 bool AABB::isOverlapping(AABB* other) {
     int xRange = (this->bottomRight.getX()) - (this->topLeft.getX());
     int yRange = (this->bottomRight.getY()) - (this->topLeft.getY());
@@ -142,22 +69,6 @@ bool AABB::isOverlapping(AABB* other) {
     }
 }
 
-/**
- * @brief Gets a random position in the AABB such that
- * the y coordinate of the returned value is set to
- * the top left y value which is considered the base
- *
- * @param gen The boost generation object to generate the distributions
- * @param offsetPosX How far away from the left wall should the position be.
- * Defaults to 1
- * @param offsetNegX How far away from the right wall should the position be.
- * Defaults to 1
- * @param offsetPosZ How far away from the bottom wall should the position be.
- * Defaults to 1
- * @param offsetNegZ How far away from the top wall should the position be.
- * Defaults to 1
- * @return Pos
- */
 Pos AABB::getRandomPosAtBase(boost::random::mt19937* gen,
                              int offsetPosX,
                              int offsetNegX,
@@ -182,30 +93,10 @@ Pos AABB::getRandomPosAtBase(boost::random::mt19937* gen,
     return pos;
 }
 
-/**
- * @brief Get the block list specific to this AABB
- *
- * @return vector<Block>* The reference to the block list
- */
 vector<Block>* AABB::getBlockList() { return &(this->blockList); }
 
-/**
- * @brief Add a specific block for this AABB to keep track of. Ideally this
- * should be related to the AABB. No checks are implicitly performed within this
- * method.
- *
- * @param block Pointer to the block to be added
- */
 void AABB::addBlock(Block* block) { (this->blockList).push_back(*block); }
 
-/**
- * @brief Get a list of the positions of the edge midpoints for this AABB. The Y
- * value for all these Pos objects is equal to the Y value of the AABB's top
- * left field which is considered the base.
- *
- * @return vector<Pos> The list of coordinates as: top, right, bottom and left
- * edge midpoints.
- */
 vector<Pos> AABB::getEdgeMidpointAtBase() {
     int midX = this->getMidpointX();
     int midZ = this->getMidpointZ();
@@ -236,25 +127,6 @@ vector<Pos> AABB::getEdgeMidpointAtBase() {
     return midEdgesAtBase;
 }
 
-/**
- * @brief Generate a box made of s specific material inside the AABB with the
- * ability to specify offsets.
- *
- * @param type The semantic name to give the block
- * @param material The material to make this box out of
- * @param offsetPosX How far away from the left wall should the position be.
- * Defaults to 0
- * @param offsetNegX How far away from the right wall should the position be.
- * Defaults to 0
- * @param offsetPosY How far away from the left wall should the position be.
- * Defaults to 0
- * @param offsetNegY How far away from the right wall should the position be.
- * Defaults to 0
- * @param offsetPosZ How far away from the bottom wall should the position be.
- * Defaults to 0
- * @param offsetNegZ How far away from the top wall should the position be.
- * Defaults to 0
- */
 void AABB::generateBox(string material,
                        int offsetPosX,
                        int offsetNegX,
@@ -284,27 +156,6 @@ void AABB::generateBox(string material,
     }
 }
 
-/**
- * @brief Add n random blocks of the given type and material inside the AABB
- * within the offset parameters
- *
- * @param n The number of blocks to add
- * @param type The semantic name to give this block
- * @param material The block'smaterial type
- * @param gen THe boost generation object to generate distributions from
- * @param offsetPosX How far away from the left wall should the position be.
- * Defaults to 0
- * @param offsetNegX How far away from the right wall should the position be.
- * Defaults to 0
- * @param offsetPosY How far away from the left wall should the position be.
- * Defaults to 0
- * @param offsetNegY How far away from the right wall should the position be.
- * Defaults to 0
- * @param offsetPosZ How far away from the bottom wall should the position be.
- * Defaults to 0
- * @param offsetNegZ How far away from the top wall should the position be.
- * Defaults to 0
- */
 void AABB::addRandomBlocks(int n,
                            string material,
                            boost::random::mt19937* gen,
@@ -339,12 +190,6 @@ void AABB::addRandomBlocks(int n,
     }
 }
 
-/**
- * @brief Gets a string representation of the various
- * fields and values stores in an instance as a TSV.
- *
- * @return string The TSV representation
- */
 string AABB::toTSV() {
     string retval = "";
     for (int x = (this->topLeft).getX(); x <= (this->bottomRight).getX(); x++) {
@@ -388,7 +233,4 @@ string AABB::toTSV() {
     return retval;
 }
 
-/**
- * @brief Destroy the AABB::AABB object
- */
 AABB::~AABB() {}

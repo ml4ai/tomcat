@@ -9,7 +9,6 @@
 
 /**
  * @brief This class represents a Minecraft block
- *
  */
 class Block {
 
@@ -19,12 +18,63 @@ class Block {
     Pos pos;
 
   public:
+    /**
+     * @brief Get the name of the block
+     *
+     * @return string The block's name
+     */
     std::string getType();
+
+    /**
+     * @brief Get the material of the block
+     *
+     * @return string The block's material
+     */
     std::string getMaterial();
+
+    /**
+     * @brief Get the X coordinate of the block
+     *
+     * @return int The x coordinate
+     */
     int getX();
+
+    /**
+     * @brief Get the Y coordinate of the block
+     *
+     * @return int The y coordinate
+     */
     int getY();
+
+    /**
+     * @brief Get the Z coordinate of the block
+     *
+     * @return int The z coordinate
+     */
     int getZ();
+
+    /**
+     * @brief Gets a string representation of the various
+     * fields and values stores in an instance as a TSV
+     *
+     * @return string The TSV representation
+     */
     std::string toTSV();
-    Block(std::string, Pos*, std::string type = "normal");
+
+    /**
+     * @brief Construct a new Block:: Block object
+     *
+     * @param blockMaterial The material the block is made of
+     * @param blockPos The position of the block in the Minecraft world
+     * @param type The semantic name for this block which is not the same as
+     * its material. Defaults to "normal".
+     */
+    Block(std::string blockMaterial,
+          Pos* blockPos,
+          std::string type = "normal");
+
+    /**
+     * @brief Destroy the Block:: Block object
+     */
     ~Block();
 };
