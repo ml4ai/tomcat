@@ -13,14 +13,28 @@
 #include "ProceduralGenerator.h"
 #include "World.h"
 #include <boost/program_options.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
 #include <fstream>
 #include <iostream>
+#include <random>
 
 using namespace std;
-boost::random::mt19937 gen;
+random_device r;
+mt19937_64 gen(r());
 namespace po = boost::program_options;
+
+Block getRandomVictim(Pos* pos, double greenBias) {
+    uniform_int_distribution<> dist(1, 100);
+    double greenProbability = greenBias * 100;
+    int randomInt = dist(gen);
+    if (randomInt <= greenProbability) {
+        Block block("prismarine", pos, "victim");
+        return block;
+    }
+    else {
+        Block block("gold", pos, "victim");
+        return block;
+    }
+}
 
 /**
  * @brief Generate N^2 AABB and place them in the given world such that there
@@ -100,12 +114,11 @@ void generateVictimInAABB(AABB* aabb) {
     Pos randPos((*aabb).getRandomPosAtBase(&gen, 2, 2, 2, 2));
     randPos.setY(randPos.getY() + 1);
 
-    boost::random::uniform_int_distribution<> dist(1, 100);
+    uniform_int_distribution<> dist(1, 100);
     int randInteger = dist(gen);
 
     if (randInteger <= 75) {
-        ProceduralGenerator pgen;
-        Block victim = pgen.getRandomVictim(&randPos, 0.60, &gen);
+        Block victim = getRandomVictim(&randPos, 0.60);
         (*aabb).addBlock(&victim);
     }
     else {

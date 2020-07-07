@@ -5,8 +5,7 @@
 #pragma once
 
 #include "Block.h"
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
+#include <random>
 #include <string>
 #include <vector>
 
@@ -111,7 +110,7 @@ class AABB {
      * Defaults to 1
      * @return Pos
      */
-    Pos getRandomPosAtBase(boost::random::mt19937* gen,
+    Pos getRandomPosAtBase(std::mt19937_64* gen,
                            int offsetPosX = 1,
                            int offsetNegX = 1,
                            int offsetPosZ = 1,
@@ -211,7 +210,7 @@ class AABB {
 
     void addRandomBlocks(int n,
                          std::string material,
-                         boost::random::mt19937* gen,
+                         std::mt19937_64* gen,
                          int offsetPosX = 0,
                          int offsetNegX = 0,
                          int offsetPosY = 0,

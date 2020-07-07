@@ -3,8 +3,6 @@
  * @brief This file implements the methods in the AABB class.
  */
 #include "AABB.h"
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
 #include <string>
 
 using namespace std;
@@ -49,7 +47,7 @@ int AABB::getMidpointZ() {
     return mid_z;
 }
 
-Pos AABB::getRandomPosAtBase(boost::random::mt19937* gen,
+Pos AABB::getRandomPosAtBase(mt19937_64* gen,
                              int offsetPosX,
                              int offsetNegX,
                              int offsetPosZ,
@@ -61,8 +59,8 @@ Pos AABB::getRandomPosAtBase(boost::random::mt19937* gen,
     int endX = (this->bottomRight).getX() - offsetNegX;
     int endZ = (this->bottomRight).getZ() - offsetNegZ;
 
-    boost::random::uniform_int_distribution<> randXGen(startX, endX);
-    boost::random::uniform_int_distribution<> randZGen(startZ, endZ);
+    uniform_int_distribution<> randXGen(startX, endX);
+    uniform_int_distribution<> randZGen(startZ, endZ);
 
     int randX = randXGen(*gen);
     int randZ = randZGen(*gen);
@@ -158,7 +156,7 @@ void AABB::generateBox(string material,
 
 void AABB::addRandomBlocks(int n,
                            string material,
-                           boost::random::mt19937* gen,
+                           mt19937_64* gen,
                            int offsetPosX,
                            int offsetNegX,
                            int offsetPosY,
@@ -176,9 +174,9 @@ void AABB::addRandomBlocks(int n,
     int endZ = this->getBottomRight().getZ() - offsetNegZ;
 
     while (n > 0) {
-        boost::random::uniform_int_distribution<> randX(startX, endX);
-        boost::random::uniform_int_distribution<> randY(startY, endY);
-        boost::random::uniform_int_distribution<> randZ(startZ, endZ);
+        uniform_int_distribution<> randX(startX, endX);
+        uniform_int_distribution<> randY(startY, endY);
+        uniform_int_distribution<> randZ(startZ, endZ);
 
         int x = randX(*gen);
         int y = randY(*gen);
