@@ -64,12 +64,12 @@ class World {
     std::string toJSON();
 
     /**
-     * @brief Construct a new World:: World object
+     * @brief Construct a new World object
      */
     World();
 
     /**
-     * @brief Destroy the World:: World object
+     * @brief Destroy the World object
      */
     ~World();
 };

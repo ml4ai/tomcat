@@ -88,12 +88,12 @@ class Pos {
     std::string toTSV();
 
     /**
-     * @brief Construct a new Pos:: Pos object
+     * @brief Construct a new Pos object
      */
     Pos();
 
     /**
-     * @brief Construct a new Pos:: Pos object
+     * @brief Construct a new Pos object
      *
      * @param x The x coordinate
      * @param y The y coordinate
@@ -102,7 +102,7 @@ class Pos {
     Pos(int x, int y, int z);
 
     /**
-     * @brief Construct a new Pos:: Pos object as a copy
+     * @brief Construct a new Pos object as a copy
      * of the given Pos object
      *
      * @param other The object whose fields are to be copied
@@ -110,7 +110,7 @@ class Pos {
     Pos(const Pos& other);
 
     /**
-     * @brief Destroy the Pos:: Pos object
+     * @brief Destroy the Pos object
      */
     ~Pos();
 };

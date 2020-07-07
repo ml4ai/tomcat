@@ -18,12 +18,12 @@ class ProceduralGenerator {
 
   public:
     /**
-     * @brief Construct a new Procedural Generator:: Procedural Generator object
+     * @brief Construct a new Procedural Generator object
      */
     ProceduralGenerator();
 
     /**
-     * @brief Destroy the Procedural Generator:: Procedural Generator object
+     * @brief Destroy the Procedural Generator object
      */
     ~ProceduralGenerator();
 };

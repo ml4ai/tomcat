@@ -61,7 +61,7 @@ class Block {
     std::string toTSV();
 
     /**
-     * @brief Construct a new Block:: Block object
+     * @brief Construct a new Block object
      *
      * @param material The material the block is made of
      * @param pos The position of the block in the Minecraft world
@@ -71,7 +71,7 @@ class Block {
     Block(std::string material, Pos* pos, std::string type = "normal");
 
     /**
-     * @brief Destroy the Block:: Block object
+     * @brief Destroy the Block object
      */
     ~Block();
 };

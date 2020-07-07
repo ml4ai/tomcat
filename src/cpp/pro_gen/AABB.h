@@ -228,7 +228,7 @@ class AABB {
     std::string toTSV();
 
     /**
-     * @brief Construct a new AABB::AABB object
+     * @brief Construct a new AABB object
      *
      * @param id The id associated with this AABB
      * @param type A semantic name describing the type and/or purpose of the
@@ -252,7 +252,7 @@ class AABB {
          bool hasRoof = false);
 
     /**
-     * @brief Destroy the AABB::AABB object
+     * @brief Destroy the AABB object
      */
     ~AABB();
 };
