@@ -4,8 +4,7 @@
        (setf *random-state* (make-random-state t)))
 
 (in-package :shop-user)
-(defvar *sar-state* '((building b) 
-                          (room lobby) 
+(defvar *sar-state* '((room lobby) 
                           (room mens) 
                           (room womens) 
                           (room e-1) 
@@ -37,16 +36,29 @@
                           (room r-218) 
                           (room r-215) 
                           (room r-220) 
-                          (rescuer t1) 
-                          (strategy A) 
+                          (rescuer t1)  
                           (in t1 lobby)))
 
-(defvar *sar-task* '((perform-next-mission-task t1 lobby)))
+(defvar *sar-task* '((perform-next-task-that-prioritizes-yellow-victims t1 lobby)))
 
-(defvar *same-room* t)
+(defvar *mission-ongoing* t)
 
 (make-problem 'sar-individual-problem *sar-state* *sar-task*)
 
-(loop while *same-room* 
-      (let ((current-plan (multiple-value-list (find-plans 'sar-individual-problem :which :first :optimize-cost nil :verbose nil :plan-tree t))))
-        ((setf *sar-state* ))
+(with-open-file 
+  (outstream "sar-plan-trees.txt" :direction :output :if-exists :supersede) 
+  (format outstream "~a~%" 
+          (loop while *mission-ongoing* collect 
+                (let ((current-plan (multiple-value-list 
+                                      (find-plans 'sar-individual-problem :which :first :optimize-cost nil :verbose nil :plan-tree t)))) 
+                  (setf *sar-state* (state-atoms (first (fourth current-plan)))) 
+                  (if (eql '!move (first (first (first (first current-plan))))) 
+                    (setf *sar-task* (list (list 'perform-next-task-that-prioritizes-yellow-victims 
+                                                 (second (first (first (first current-plan)))) 
+                                                 (fourth (first (first (first current-plan)))))))) 
+                (if (eql '!leave (first (first (first (first current-plan))))) 
+                  (setf *mission-ongoing* nil))
+                (make-problem 'sar-individual-problem *sar-state* *sar-task*) 
+                (third current-plan)))))
+
+;;(print (eql '!move (first (first (first (first (multiple-value-list (find-plans 'sar-individual-problem :which :first :optimize-cost nil :verbose nil :plan-tree t))))))))

@@ -2,7 +2,9 @@
 
 (progn (ql:quickload "shop3")
        (ql:quickload "shop3/plan-grapher")
-       (ql:quickload "cl-json"))
+       (ql:quickload "cl-json")
+       (ql:quickload "queues")
+       (require :queues.simple-queue))
 
 (defun bulk-copy (infile outfile)
   (with-open-file (instream infile :direction :input :element-type '(unsigned-byte 8)
@@ -105,3 +107,14 @@
                                                  (string-downcase 
                                                    (symbol-name goal))) :direction :input) 
                                (read s))))
+
+(defun create-room-queue (filename)
+  (queue-up-list (with-open-file 
+                   (s (make-pathname :name filename) :direction :input) 
+                   (read s))))
+
+
+(defun queue-up-list (lst)
+  (let ((q (queues::make-queue ':simple-queue)))
+    (loop for x in lst do (queues::qpush q x))
+     q))

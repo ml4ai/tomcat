@@ -12,18 +12,18 @@
 ;; and conditional-effects
 
 (progn (ql:quickload "shop3")
-       (load "util.lisp"))
+       (load "util.lisp")
+       (defvar shop-user::qroom (create-room-queue "sar-room-list.txt")))
 
 (in-package :shop-user)
 
-;;(shop-trace :all)
+;;(shop-trace :methods)
 (defdomain (sar-individual-domain :type pddl-domain :redefine-ok T) (
     (:types human ;; Everything, including 'human' inherits from the base 'object' type
             victim rescuer - human ;; The rescuer and the victims are humans.
             room ;; Rooms (includes elevators and bathrooms)
             building ;; Building (contains rooms)
             goal
-            strategy
     )
    
     (:predicates (in ?h - human ?r - room) ;; Indicates which room a human (rescuer, victim, etc) is inside
@@ -99,29 +99,40 @@
                0
     )
 
-
-    (:method (perform-next-mission-task ?t ?r) ;; Method for examining and triaging victims
-             search-A ;; Search strategy where agent stops searching to treat any victims currently found
-             (and (not (triaging ?t ?_)) (strategy A) (not (searched ?t ?r)) 
+    (:method (perform-next-task-without-victim-priority ?t ?r) ;; Method for examining and triaging victims
+             search ;; Search strategy where agent stops searching to treat any victims currently found
+             (and (not (triaging ?t ?_)) (not (searched ?t ?r)) 
                   (or (not (spotted ?t ?v ?r)) (and (spotted ?t ?v ?r) (triaged ?v))))
              (:task search ?t ?r)
 
-             search-B ;; Search strategy where agent only stops to treat gold victims.
-             (and (not (triaging ?t ?_)) (strategy B) (not (searched ?t ?r)) 
+             triage
+             (or (triaging ?t ?v) (and (spotted ?t ?v ?r) (not (triaged ?v))))
+             (:task triage ?t ?v)
+
+             move
+             (and (assign ?room (queues::qpop qroom)) (room ?r2) (different ?r ?r2) (eval (cl-user::symbol-equals-keyword '?room '?r2))) 
+             (:task !move ?t ?r ?r2)
+
+             leave
+             ()
+             (:task !leave ?t ?r)
+    )
+
+
+
+    (:method (perform-next-task-that-prioritizes-yellow-victims ?t ?r) ;; Method for examining and triaging victims
+             search ;; Search strategy where agent only stops to treat gold victims.
+             (and (not (triaging ?t ?_)) (not (searched ?t ?r)) 
                   (or (not (spotted ?t ?v ?r)) (and (spotted ?t ?v ?r) 
                                                     (or (triaged ?v) (not (severe-injuries ?v))))))
              (:task search ?t ?r)
 
-             triage-A
-             (and (strategy A) (or (triaging ?t ?v) (and (spotted ?t ?v ?r) (not (triaged ?v)))))
-             (:task triage ?t ?v)
-
-             triage-B
-             (and (strategy B) (or (triaging ?t ?v) (and (spotted ?t ?v ?r) (not (triaged ?v)) (severe-injuries ?v))))
+             triage
+             (or (triaging ?t ?v) (and (spotted ?t ?v ?r) (not (triaged ?v)) (severe-injuries ?v)))
              (:task triage ?t ?v)
 
              move
-             (next-location ?r2)
+             (and (assign ?room (queues::qpop qroom)) (room ?r2) (different ?r ?r2) (eval (cl-user::symbol-equals-keyword '?room '?r2)))
              (:task !move ?t ?r ?r2)
 
              leave
@@ -133,17 +144,17 @@
              start-searching
              (and (not (searching ?t ?r)))
              ((:task !start-searching ?t ?r)
-             (:task percept-victims ?t ?r))
+             (:task util-percept-victims ?t ?r))
 
              continue-searching
              (and (searching ?t ?r) (how-many-found ?t ?r ?c) (eval (cl-user::still-searching '?c)))
              ((:task !continue-searching ?t ?r)
-              (:task percept-victims ?t ?r))
+              (:task util-percept-victims ?t ?r))
 
              finish-searching
              (searching ?t ?r)
              (:ordered (:task !continue-searching ?t ?r)
-                       (:task percept-victims ?t ?r)
+                       (:task util-percept-victims ?t ?r)
                        (!done-searching ?t ?r))
     )
 
@@ -153,7 +164,7 @@
              (:task !start-triaging-victim ?t ?v)
 
              finish-triaging
-             (and (triaging ?t ?v) (eval (cl-user::triage-succesful .9)))
+             (and (triaging ?t ?v) (eval (cl-user::triage-successful .9)))
              (:task !finish-triaging-victim ?t ?v)
 
              stop-triaging
@@ -162,21 +173,21 @@
 
     )
 
-    (:method (percept-victims ?t ?r) ;;Utility method
+    (:method (util-percept-victims ?t ?r) ;;Utility method
              spotted-severely-injured-victim
              (and (in ?t ?r) (assign* ?v (cl-user::check-for-victim '?r)) 
                   (eval (cl-user::severely-injured '?v)) (not (spotted ?t ?v ?r)) (eval (cl-user::found-victim .5)))
              (:ordered (:task !!assert (victim ?v))
                        (:task !!assert (spotted ?t ?v ?r))
                        (:task !!assert (severe-injuries ?v))
-                       (:task percept-victims ?t ?r))
+                       (:task util-percept-victims ?t ?r))
 
              spotted-injured-victim
              (and (in ?t ?r) (assign* ?v (cl-user::check-for-victim '?r)) (not (eval (cl-user::severely-injured '?v))) (not (spotted ?t ?v ?r))
                   (eval (cl-user::found-victim .5)))
              (:ordered (:task !!assert (victim ?v))
                        (:task !!assert (spotted ?t ?v ?r))
-                       (:task percept-victims ?t ?r))
+                       (:task util-percept-victims ?t ?r))
 
              no-victims-spotted
              ()
