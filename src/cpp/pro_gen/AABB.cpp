@@ -120,6 +120,29 @@ int AABB::getMidpointZ() {
 }
 
 /**
+ * @brief Checks to see if two AABBs overlapp on any of the axes
+ *
+ * @param other The AABB to compare to
+ * @return true When the AABBs do overlap
+ * @return false When the AABBs don't overlap
+ */
+bool AABB::isOverlapping(AABB* other) {
+    int xRange = (this->bottomRight.getX()) - (this->topLeft.getX());
+    int yRange = (this->bottomRight.getY()) - (this->topLeft.getY());
+    int zRange = (this->bottomRight.getZ()) - (this->topLeft.getZ());
+
+    if ((abs(other->topLeft.getX() - this->topLeft.getX()) < xRange) ||
+        (abs(other->topLeft.getY() - this->topLeft.getY()) < yRange) ||
+        (abs(other->topLeft.getZ() - this->topLeft.getZ()) < zRange)) {
+
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+/**
  * @brief Gets a random position in the AABB such that
  * the y coordinate of the returned value is set to
  * the top left y value which is considered the base

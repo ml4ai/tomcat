@@ -47,6 +47,7 @@ class AABB {
     void setTopLeft(Pos*);
     void setBottomRight(Pos*);
     void addBlock(Block*);
+    bool isOverlapping(AABB *);
     void generateBox(std::string,
                      int offsetPosX = 0,
                      int offsetNegX = 0,
