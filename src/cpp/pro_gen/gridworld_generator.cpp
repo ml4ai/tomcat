@@ -193,6 +193,11 @@ int main(int argc, char* argv[]) {
     int N;
     int sep = 0;        // Separation defaults to 0
     int AABB_size = 10; // Size defaults to 10
+    string jsonPath =
+        "../../../../external/malmo/Minecraft/run/procedural.json";
+    string tsvPath =
+        "../../../../external/malmo/Minecraft/run/procedural.tsv"; // Default
+                                                                   // locations
 
     // Handle options
     po::options_description desc("Allowed options");
@@ -205,7 +210,15 @@ int main(int argc, char* argv[]) {
         "The separation between AABB in the cardinal directions. Defaults to "
         "0.")("aabb_size",
               po::value<int>(),
-              "The size of the cubic AABB. Defaults to 10.");
+              "The size of the cubic AABB. Defaults to 10.")(
+        "json_path",
+        po::value<std::string>(),
+        "Specify where to save the JSON file with filename an extension. "
+        "Defaults to procedural.json in Minecraft/run/")(
+        "tsv_path",
+        po::value<std::string>(),
+        "Specify where to save the TSV file with filename an extension. "
+        "Defaults to procedural.tsv in Minecraft/run/");
 
     po::variables_map vm;
     po::store(po::command_line_parser(argc, argv).options(desc).run(), vm);
@@ -232,20 +245,26 @@ int main(int argc, char* argv[]) {
         AABB_size = vm["aabb_size"].as<int>();
     }
 
+    if (vm.count("json_path")) {
+        jsonPath = vm["json_path"].as<std::string>();
+    }
+
+    if (vm.count("tsv_path")) {
+        tsvPath = vm["tsv_path"].as<std::string>();
+    }
+
     // Process input and generate output
     cout << "Generating gridworld..." << endl;
     World world = generateGridWorld(N, sep, AABB_size, "planks");
     cout << "Writing to file..." << endl;
 
     // Write JSON
-    ofstream outputJSON(
-        "../../../../external/malmo/Minecraft/run/procedural.json", ios::out);
+    ofstream outputJSON(jsonPath, ios::out);
     outputJSON << world.toJSON();
     outputJSON.close();
 
     // Write TSV
-    ofstream outputTSV(
-        "../../../../external/malmo/Minecraft/run/procedural.tsv", ios::out);
+    ofstream outputTSV(tsvPath, ios::out);
     outputTSV << world.toTSV();
     outputTSV.close();
 
