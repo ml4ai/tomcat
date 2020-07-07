@@ -296,7 +296,42 @@ World generateZombieWorld() {
  * @brief Directive method to create the world and write the JSON and TSV output
  * to file.
  */
-int main() {
+int main(int argc, char* argv[]) {
+
+    string jsonPath =
+        "../../../../external/malmo/Minecraft/run/procedural.json";
+    string tsvPath =
+        "../../../../external/malmo/Minecraft/run/procedural.tsv"; // Default
+                                                                   // locations
+
+    // Handle options
+    po::options_description desc("Allowed options");
+    desc.add_options()("help", "produce help message")(
+        "json_path",
+        po::value<std::string>(),
+        "Specify where to save the JSON file with filename an extension. "
+        "Defaults to procedural.json in Minecraft/run/")(
+        "tsv_path",
+        po::value<std::string>(),
+        "Specify where to save the TSV file with filename an extension. "
+        "Defaults to procedural.tsv in Minecraft/run/");
+
+    po::variables_map vm;
+    po::store(po::command_line_parser(argc, argv).options(desc).run(), vm);
+    po::notify(vm);
+
+    if (vm.count("help")) {
+        cout << desc << endl;
+        return 0;
+    }
+
+    if (vm.count("json_path")) {
+        jsonPath = vm["json_path"].as<std::string>();
+    }
+
+    if (vm.count("tsv_path")) {
+        tsvPath = vm["tsv_path"].as<std::string>();
+    }
 
     // Process input and generate output
     cout << "Generating gridworld..." << endl;
@@ -304,14 +339,12 @@ int main() {
     cout << "Writing to file..." << endl;
 
     // Write JSON
-    ofstream outputJSON(
-        "../../../../external/malmo/Minecraft/run/procedural.json", ios::out);
+    ofstream outputJSON(jsonPath, ios::out);
     outputJSON << world.toJSON();
     outputJSON.close();
 
     // Write TSV
-    ofstream outputTSV(
-        "../../../../external/malmo/Minecraft/run/procedural.tsv", ios::out);
+    ofstream outputTSV(tsvPath, ios::out);
     outputTSV << world.toTSV();
     outputTSV.close();
 
