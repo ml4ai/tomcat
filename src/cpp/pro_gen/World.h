@@ -23,10 +23,10 @@ class World {
   public:
     void addAABB(AABB*);
     void addBlock(Block*);
-    std::string toJSON();
     std::vector<AABB>* getAABBList();
     std::vector<Block>* getBlockList();
-    std::string toString();
+    std::string toTSV();
+    std::string toJSON();
     World();
     ~World();
 };

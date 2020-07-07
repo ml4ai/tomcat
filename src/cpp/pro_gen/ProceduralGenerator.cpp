@@ -31,11 +31,11 @@ Block ProceduralGenerator::getRandomVictim(Pos* pos,
     double greenProbability = greenBias * 100;
     int randomInt = dist(*gen);
     if (randomInt <= greenProbability) {
-        Block block("victim", "prismarine", pos);
+        Block block("prismarine", pos, "victim");
         return block;
     }
     else {
-        Block block("victim", "gold", pos);
+        Block block("gold", pos, "victim");
         return block;
     }
 }
