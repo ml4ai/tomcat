@@ -3,7 +3,6 @@
  * @brief This file implements the methods in the AABB class.
  */
 #include "AABB.h"
-#include <string>
 
 using namespace std;
 

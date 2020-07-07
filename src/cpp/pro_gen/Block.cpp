@@ -3,7 +3,6 @@
  * @brief This file implements the methods in the Block class.
  */
 #include "Block.h"
-#include <string>
 
 using namespace std;
 
