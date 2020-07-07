@@ -11,6 +11,10 @@ using json = nlohmann::json;
 
 World::World() {}
 
+vector<AABB>* World::getAABBList() { return &(this->aabbList); }
+
+vector<Block>* World::getBlockList() { return &(this->blockList); }
+
 void World::addAABB(AABB* aabb) { (this->aabbList).push_back(*aabb); }
 
 void World::addBlock(Block* block) { (this->blockList).push_back(*block); }
@@ -77,9 +81,5 @@ string World::toJSON() {
     j["block_list"] = json_block_list;
     return j.dump(4);
 }
-
-vector<AABB>* World::getAABBList() { return &(this->aabbList); }
-
-vector<Block>* World::getBlockList() { return &(this->blockList); }
 
 World::~World() {}

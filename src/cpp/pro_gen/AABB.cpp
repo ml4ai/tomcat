@@ -14,8 +14,8 @@ AABB::AABB(int id,
            string material,
            Pos* topLeft,
            Pos* bottomRight,
-           bool isHollow = true,
-           bool hasRoo = false)
+           bool isHollow,
+           bool hasRoof)
     : id{id}, type{type}, material{material}, topLeft{*topLeft},
       bottomRight{*bottomRight}, isHollow{isHollow}, hasRoof{hasRoof} {}
 
@@ -29,11 +29,7 @@ Pos AABB::getTopLeft() { return this->topLeft; }
 
 Pos AABB::getBottomRight() { return this->bottomRight; }
 
-void AABB::setTopLeft(Pos* topLeft) { this->topLeft = *topLeft; }
-
-void AABB::setBottomRight(Pos* bottomRight) {
-    this->bottomRight = *bottomRight;
-}
+vector<Block>* AABB::getBlockList() { return &(this->blockList); }
 
 int AABB::getMidpointX() {
     int mid_x = ((this->topLeft).getX() +
@@ -51,22 +47,6 @@ int AABB::getMidpointZ() {
     int mid_z = ((this->topLeft).getZ() +
                  ((this->bottomRight).getZ() - (this->topLeft).getZ()) / 2);
     return mid_z;
-}
-
-bool AABB::isOverlapping(AABB* other) {
-    int xRange = (this->bottomRight.getX()) - (this->topLeft.getX());
-    int yRange = (this->bottomRight.getY()) - (this->topLeft.getY());
-    int zRange = (this->bottomRight.getZ()) - (this->topLeft.getZ());
-
-    if ((abs(other->topLeft.getX() - this->topLeft.getX()) < xRange) ||
-        (abs(other->topLeft.getY() - this->topLeft.getY()) < yRange) ||
-        (abs(other->topLeft.getZ() - this->topLeft.getZ()) < zRange)) {
-
-        return true;
-    }
-    else {
-        return false;
-    }
 }
 
 Pos AABB::getRandomPosAtBase(boost::random::mt19937* gen,
@@ -92,10 +72,6 @@ Pos AABB::getRandomPosAtBase(boost::random::mt19937* gen,
 
     return pos;
 }
-
-vector<Block>* AABB::getBlockList() { return &(this->blockList); }
-
-void AABB::addBlock(Block* block) { (this->blockList).push_back(*block); }
 
 vector<Pos> AABB::getEdgeMidpointAtBase() {
     int midX = this->getMidpointX();
@@ -125,6 +101,30 @@ vector<Pos> AABB::getEdgeMidpointAtBase() {
     midEdgesAtBase.push_back(leftEdgeMid);
 
     return midEdgesAtBase;
+}
+
+void AABB::setTopLeft(Pos* topLeft) { this->topLeft = *topLeft; }
+
+void AABB::setBottomRight(Pos* bottomRight) {
+    this->bottomRight = *bottomRight;
+}
+
+void AABB::addBlock(Block* block) { (this->blockList).push_back(*block); }
+
+bool AABB::isOverlapping(AABB* other) {
+    int xRange = (this->bottomRight.getX()) - (this->topLeft.getX());
+    int yRange = (this->bottomRight.getY()) - (this->topLeft.getY());
+    int zRange = (this->bottomRight.getZ()) - (this->topLeft.getZ());
+
+    if ((abs(other->topLeft.getX() - this->topLeft.getX()) < xRange) ||
+        (abs(other->topLeft.getY() - this->topLeft.getY()) < yRange) ||
+        (abs(other->topLeft.getZ() - this->topLeft.getZ()) < zRange)) {
+
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 void AABB::generateBox(string material,
