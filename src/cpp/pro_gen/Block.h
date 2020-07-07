@@ -1,7 +1,6 @@
 /**
  * @brief This file defines the members and methods
  * implemented as part of the Block class
- *
  */
 #pragma once
 #include "Pos.h"
@@ -19,9 +18,9 @@ class Block {
 
   public:
     /**
-     * @brief Get the name of the block
+     * @brief Get the type of the block
      *
-     * @return string The block's name
+     * @return string The block's type
      */
     std::string getType();
 
@@ -64,14 +63,12 @@ class Block {
     /**
      * @brief Construct a new Block:: Block object
      *
-     * @param blockMaterial The material the block is made of
-     * @param blockPos The position of the block in the Minecraft world
-     * @param type The semantic name for this block which is not the same as
+     * @param material The material the block is made of
+     * @param pos The position of the block in the Minecraft world
+     * @param type The semantic type for this block which is not the same as
      * its material. Defaults to "normal".
      */
-    Block(std::string blockMaterial,
-          Pos* blockPos,
-          std::string type = "normal");
+    Block(std::string material, Pos* pos, std::string type = "normal");
 
     /**
      * @brief Destroy the Block:: Block object

@@ -1,7 +1,6 @@
 /**
  * @brief This file defines the members and methods
  * implemented as part of the World class
- *
  */
 #pragma once
 
@@ -44,9 +43,9 @@ class World {
     /**
      * @brief Add a Block to the vector of Block held inside the world
      *
-     * @param aabb Address of the Block to add
+     * @param block Address of the Block to add
      */
-    void addBlock(Block* aabb);
+    void addBlock(Block* block);
 
     /**
      * @brief Gets a string representation of the various

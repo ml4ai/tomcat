@@ -1,7 +1,6 @@
 /**
  * @brief This file defines the members and methods
  * implemented as part of the AABB class
- *
  */
 #pragma once
 
@@ -138,7 +137,7 @@ class AABB {
     /**
      * @brief Set the bottom right coordinate of the AABB
      *
-     * @param topLeft Pointer to the pos object bottom right is to be set to
+     * @param bottomRight Pointer to the pos object bottom right is to be set to
      */
     void setBottomRight(Pos* bottomRight);
 
@@ -232,14 +231,18 @@ class AABB {
     /**
      * @brief Construct a new AABB::AABB object
      *
-     * @param AABBid The id associated with this AABB
+     * @param id The id associated with this AABB
      * @param type A semantic name describing the type and/or purpose of the
      * AABB
-     * @param AABBmaterial The material this AABB is built out of
-     * @param topLeftPos The coordinates of the top left of the AABB from the
+     * @param material The material this AABB is built out of
+     * @param topLeft The coordinates of the top left of the AABB from the
      * top view of the X-Z plane. Y coordinate should be lowest here.
-     * @param bottomRightPos The coordinates of the bottom right of the AABB
+     * @param bottomRight The coordinates of the bottom right of the AABB
      * from the top view of the X-Z plane. Y coordinate should be maximum here.
+     * @param isHollow Specify wether the AABB should be hollow or not. Defaults
+     * to true.
+     * @param hasRoof specify wether the AABB should have a roof or not.
+     * Defaults to false.
      */
     AABB(int id,
          std::string type,

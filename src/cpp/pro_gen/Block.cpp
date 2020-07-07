@@ -3,13 +3,12 @@
  * @brief This file implements the methods in the Block class.
  */
 #include "Block.h"
-#include <iostream>
 #include <string>
 
 using namespace std;
 
-Block::Block(string blockMaterial, Pos* blockPos, string blockType)
-    : type(blockType), material(blockMaterial), pos(*blockPos) {}
+Block::Block(string material, Pos* pos, string type)
+    : type(type), material(material), pos(*pos) {}
 
 string Block::getType() { return this->type; }
 

@@ -1,7 +1,6 @@
 /**
  * @brief This file defines the members and methods
  * implemented as part of the Pos class
- *
  */
 #pragma once
 #include <string>
@@ -34,7 +33,7 @@ class Pos {
     /**
      * @brief Get the Z coordinate of this object
      *
-     * @return int The x coordinate
+     * @return int The z coordinate
      */
     int getZ();
 

@@ -3,7 +3,6 @@
  * @brief This file implements the methods in the World class.
  */
 #include "World.h"
-#include <iostream>
 #include <string>
 
 using namespace std;
