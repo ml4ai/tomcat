@@ -37,8 +37,6 @@ Included By
 -----------
 
 
-- :ref:`file_src_cpp_pro_gen_AABB.h`
-
 - :ref:`file_src_cpp_pro_gen_Block.h`
 
 - :ref:`file_src_cpp_pro_gen_ProceduralGenerator.h`

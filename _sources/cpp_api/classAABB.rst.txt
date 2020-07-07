@@ -6,6 +6,15 @@ Class AABB
 - Defined in :ref:`file_src_cpp_pro_gen_AABB.h`
 
 
+Inheritance Relationships
+-------------------------
+
+Derived Type
+************
+
+- ``public Pit`` (:ref:`exhale_class_classPit`)
+
+
 Class Documentation
 -------------------
 

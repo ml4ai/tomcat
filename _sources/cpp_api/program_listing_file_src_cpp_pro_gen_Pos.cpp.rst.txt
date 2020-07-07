@@ -33,9 +33,15 @@ Program Listing for File Pos.cpp
    
    void Pos::setZ(int z) { this->z = z; }
    
-   string Pos::toString() {
-       string retval = "(" + to_string(this->x) + "," + to_string(this->y) + "," +
-                       to_string(this->z) + ")\n";
+   void Pos::shiftX(int shift) { this->x += shift; }
+   
+   void Pos::shiftY(int shift) { this->y += shift; }
+   
+   void Pos::shiftZ(int shift) { this->z += shift; }
+   
+   string Pos::toTSV() {
+       string retval = to_string(this->x) + "\t" + to_string(this->y) + "\t" +
+                       to_string(this->z);
        return retval;
    }
    

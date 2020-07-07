@@ -63,15 +63,13 @@ Functions
 
 - :ref:`exhale_function_gridworld__generator_8cpp_1a6ff53ba64c7ba660d8da7c6c6bb7d6f5`
 
-- :ref:`exhale_function_gridworld__generator_8cpp_1a77117ab345269c16d43b6d8902d298a0`
+- :ref:`exhale_function_gridworld__generator_8cpp_1abc5d7e9e30c9b6dfba4e461e43de8192`
 
 - :ref:`exhale_function_gridworld__generator_8cpp_1a8f61934188597a683fb2e8c0d6e5362a`
 
 - :ref:`exhale_function_gridworld__generator_8cpp_1a76f1407d407980d1c1e08317853ffa71`
 
-- :ref:`exhale_function_gridworld__generator_8cpp_1a88689dc51c89129ed3744c16df15759b`
-
-- :ref:`exhale_function_gridworld__generator_8cpp_1ac0ea95804a1e827b5cc5755ffb034b11`
+- :ref:`exhale_function_gridworld__generator_8cpp_1ad051c283404c51a78dffe9b77ca49726`
 
 - :ref:`exhale_function_gridworld__generator_8cpp_1a0ddf1224851353fc92bfbff6f499fa97`
 

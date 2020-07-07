@@ -20,11 +20,14 @@ Files
 - :ref:`file_src_cpp_pro_gen_Block.cpp`
 - :ref:`file_src_cpp_pro_gen_Block.h`
 - :ref:`file_src_cpp_pro_gen_gridworld_generator.cpp`
+- :ref:`file_src_cpp_pro_gen_Pit.cpp`
+- :ref:`file_src_cpp_pro_gen_Pit.h`
 - :ref:`file_src_cpp_pro_gen_Pos.cpp`
 - :ref:`file_src_cpp_pro_gen_Pos.h`
 - :ref:`file_src_cpp_pro_gen_ProceduralGenerator.cpp`
 - :ref:`file_src_cpp_pro_gen_ProceduralGenerator.h`
 - :ref:`file_src_cpp_pro_gen_World.cpp`
 - :ref:`file_src_cpp_pro_gen_World.h`
+- :ref:`file_src_cpp_pro_gen_zombieworld_generator.cpp`
 
 

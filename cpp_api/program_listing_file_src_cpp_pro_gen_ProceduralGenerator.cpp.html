@@ -172,11 +172,11 @@
     <span class="kt">double</span> <span class="n">greenProbability</span> <span class="o">=</span> <span class="n">greenBias</span> <span class="o">*</span> <span class="mi">100</span><span class="p">;</span>
     <span class="kt">int</span> <span class="n">randomInt</span> <span class="o">=</span> <span class="n">dist</span><span class="p">(</span><span class="o">*</span><span class="n">gen</span><span class="p">);</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">randomInt</span> <span class="o">&lt;=</span> <span class="n">greenProbability</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">Block</span> <span class="n">block</span><span class="p">(</span><span class="s">&quot;victim&quot;</span><span class="p">,</span> <span class="s">&quot;prismarine&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="p">);</span>
+        <span class="n">Block</span> <span class="n">block</span><span class="p">(</span><span class="s">&quot;prismarine&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="s">&quot;victim&quot;</span><span class="p">);</span>
         <span class="k">return</span> <span class="n">block</span><span class="p">;</span>
     <span class="p">}</span>
     <span class="k">else</span> <span class="p">{</span>
-        <span class="n">Block</span> <span class="n">block</span><span class="p">(</span><span class="s">&quot;victim&quot;</span><span class="p">,</span> <span class="s">&quot;gold&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="p">);</span>
+        <span class="n">Block</span> <span class="n">block</span><span class="p">(</span><span class="s">&quot;gold&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="s">&quot;victim&quot;</span><span class="p">);</span>
         <span class="k">return</span> <span class="n">block</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">}</span>

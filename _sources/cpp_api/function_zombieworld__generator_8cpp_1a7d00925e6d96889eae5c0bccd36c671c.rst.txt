@@ -1,0 +1,13 @@
+.. _exhale_function_zombieworld__generator_8cpp_1a7d00925e6d96889eae5c0bccd36c671c:
+
+Function generateBoundingWalls
+==============================
+
+- Defined in :ref:`file_src_cpp_pro_gen_zombieworld_generator.cpp`
+
+
+Function Documentation
+----------------------
+
+
+.. doxygenfunction:: generateBoundingWalls(World *)

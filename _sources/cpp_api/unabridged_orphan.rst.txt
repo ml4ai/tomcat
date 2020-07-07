@@ -85,6 +85,16 @@ Files
 .. toctree::
    :maxdepth: 5
 
+   file_src_cpp_pro_gen_Pit.cpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file_src_cpp_pro_gen_Pit.h.rst
+
+.. toctree::
+   :maxdepth: 5
+
    file_src_cpp_pro_gen_Pos.cpp.rst
 
 .. toctree::
@@ -131,3 +141,8 @@ Files
    :maxdepth: 5
 
    file_src_cpp_pro_gen_World.h.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file_src_cpp_pro_gen_zombieworld_generator.cpp.rst

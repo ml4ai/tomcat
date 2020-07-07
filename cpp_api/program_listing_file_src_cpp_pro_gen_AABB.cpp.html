@@ -166,20 +166,31 @@
 
 <span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
 
-<span class="n">AABB</span><span class="o">::</span><span class="n">AABB</span><span class="p">(</span><span class="kt">int</span> <span class="n">AABBid</span><span class="p">,</span>
-           <span class="n">string</span> <span class="n">AABBmaterial</span><span class="p">,</span>
-           <span class="n">Pos</span><span class="o">*</span> <span class="n">topLeftPos</span><span class="p">,</span>
-           <span class="n">Pos</span><span class="o">*</span> <span class="n">bottomRightPos</span><span class="p">)</span>
-    <span class="o">:</span> <span class="n">id</span><span class="p">(</span><span class="n">AABBid</span><span class="p">),</span> <span class="n">material</span><span class="p">(</span><span class="n">AABBmaterial</span><span class="p">),</span> <span class="n">topLeft</span><span class="p">(</span><span class="o">*</span><span class="n">topLeftPos</span><span class="p">),</span>
-      <span class="n">bottomRight</span><span class="p">(</span><span class="o">*</span><span class="n">bottomRightPos</span><span class="p">)</span> <span class="p">{}</span>
+<span class="n">AABB</span><span class="o">::</span><span class="n">AABB</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span>
+           <span class="n">string</span> <span class="n">type</span><span class="p">,</span>
+           <span class="n">string</span> <span class="n">material</span><span class="p">,</span>
+           <span class="n">Pos</span><span class="o">*</span> <span class="n">topLeft</span><span class="p">,</span>
+           <span class="n">Pos</span><span class="o">*</span> <span class="n">bottomRight</span><span class="p">,</span>
+           <span class="kt">bool</span> <span class="n">isHollow</span><span class="p">,</span>
+           <span class="kt">bool</span> <span class="n">hasRoof</span><span class="p">)</span>
+    <span class="o">:</span> <span class="n">id</span><span class="p">{</span><span class="n">id</span><span class="p">},</span> <span class="n">type</span><span class="p">{</span><span class="n">type</span><span class="p">},</span> <span class="n">material</span><span class="p">{</span><span class="n">material</span><span class="p">},</span> <span class="n">topLeft</span><span class="p">{</span><span class="o">*</span><span class="n">topLeft</span><span class="p">},</span>
+      <span class="n">bottomRight</span><span class="p">{</span><span class="o">*</span><span class="n">bottomRight</span><span class="p">},</span> <span class="n">isHollow</span><span class="p">{</span><span class="n">isHollow</span><span class="p">},</span> <span class="n">hasRoof</span><span class="p">{</span><span class="n">hasRoof</span><span class="p">}</span> <span class="p">{}</span>
 
 <span class="kt">int</span> <span class="n">AABB</span><span class="o">::</span><span class="n">getID</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">id</span><span class="p">;</span> <span class="p">}</span>
 
 <span class="n">string</span> <span class="n">AABB</span><span class="o">::</span><span class="n">getMaterial</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">material</span><span class="p">;</span> <span class="p">}</span>
 
+<span class="n">string</span> <span class="n">AABB</span><span class="o">::</span><span class="n">getType</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">type</span><span class="p">;</span> <span class="p">}</span>
+
 <span class="n">Pos</span> <span class="n">AABB</span><span class="o">::</span><span class="n">getTopLeft</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">topLeft</span><span class="p">;</span> <span class="p">}</span>
 
 <span class="n">Pos</span> <span class="n">AABB</span><span class="o">::</span><span class="n">getBottomRight</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">bottomRight</span><span class="p">;</span> <span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">AABB</span><span class="o">::</span><span class="n">setTopLeft</span><span class="p">(</span><span class="n">Pos</span><span class="o">*</span> <span class="n">topLeft</span><span class="p">)</span> <span class="p">{</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">topLeft</span> <span class="o">=</span> <span class="o">*</span><span class="n">topLeft</span><span class="p">;</span> <span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">AABB</span><span class="o">::</span><span class="n">setBottomRight</span><span class="p">(</span><span class="n">Pos</span><span class="o">*</span> <span class="n">bottomRight</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">bottomRight</span> <span class="o">=</span> <span class="o">*</span><span class="n">bottomRight</span><span class="p">;</span>
+<span class="p">}</span>
 
 <span class="kt">int</span> <span class="n">AABB</span><span class="o">::</span><span class="n">getMidpointX</span><span class="p">()</span> <span class="p">{</span>
     <span class="kt">int</span> <span class="n">mid_x</span> <span class="o">=</span> <span class="p">((</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">topLeft</span><span class="p">).</span><span class="n">getX</span><span class="p">()</span> <span class="o">+</span>
@@ -199,10 +210,27 @@
     <span class="k">return</span> <span class="n">mid_z</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="n">Pos</span> <span class="n">AABB</span><span class="o">::</span><span class="n">getRandomPosAtBase</span><span class="p">(</span><span class="kt">int</span> <span class="n">offsetPosX</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-                             <span class="kt">int</span> <span class="n">offsetNegX</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-                             <span class="kt">int</span> <span class="n">offsetPosZ</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-                             <span class="kt">int</span> <span class="n">offsetNegZ</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+<span class="kt">bool</span> <span class="n">AABB</span><span class="o">::</span><span class="n">isOverlapping</span><span class="p">(</span><span class="n">AABB</span><span class="o">*</span> <span class="n">other</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">xRange</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">bottomRight</span><span class="p">.</span><span class="n">getX</span><span class="p">())</span> <span class="o">-</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">topLeft</span><span class="p">.</span><span class="n">getX</span><span class="p">());</span>
+    <span class="kt">int</span> <span class="n">yRange</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">bottomRight</span><span class="p">.</span><span class="n">getY</span><span class="p">())</span> <span class="o">-</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">topLeft</span><span class="p">.</span><span class="n">getY</span><span class="p">());</span>
+    <span class="kt">int</span> <span class="n">zRange</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">bottomRight</span><span class="p">.</span><span class="n">getZ</span><span class="p">())</span> <span class="o">-</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">topLeft</span><span class="p">.</span><span class="n">getZ</span><span class="p">());</span>
+
+    <span class="k">if</span> <span class="p">((</span><span class="n">abs</span><span class="p">(</span><span class="n">other</span><span class="o">-&gt;</span><span class="n">topLeft</span><span class="p">.</span><span class="n">getX</span><span class="p">()</span> <span class="o">-</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">topLeft</span><span class="p">.</span><span class="n">getX</span><span class="p">())</span> <span class="o">&lt;</span> <span class="n">xRange</span><span class="p">)</span> <span class="o">||</span>
+        <span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">other</span><span class="o">-&gt;</span><span class="n">topLeft</span><span class="p">.</span><span class="n">getY</span><span class="p">()</span> <span class="o">-</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">topLeft</span><span class="p">.</span><span class="n">getY</span><span class="p">())</span> <span class="o">&lt;</span> <span class="n">yRange</span><span class="p">)</span> <span class="o">||</span>
+        <span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">other</span><span class="o">-&gt;</span><span class="n">topLeft</span><span class="p">.</span><span class="n">getZ</span><span class="p">()</span> <span class="o">-</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">topLeft</span><span class="p">.</span><span class="n">getZ</span><span class="p">())</span> <span class="o">&lt;</span> <span class="n">zRange</span><span class="p">))</span> <span class="p">{</span>
+
+        <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">Pos</span> <span class="n">AABB</span><span class="o">::</span><span class="n">getRandomPosAtBase</span><span class="p">(</span><span class="n">boost</span><span class="o">::</span><span class="n">random</span><span class="o">::</span><span class="n">mt19937</span><span class="o">*</span> <span class="n">gen</span><span class="p">,</span>
+                             <span class="kt">int</span> <span class="n">offsetPosX</span><span class="p">,</span>
+                             <span class="kt">int</span> <span class="n">offsetNegX</span><span class="p">,</span>
+                             <span class="kt">int</span> <span class="n">offsetPosZ</span><span class="p">,</span>
+                             <span class="kt">int</span> <span class="n">offsetNegZ</span><span class="p">)</span> <span class="p">{</span>
 
     <span class="kt">int</span> <span class="n">startX</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">topLeft</span><span class="p">).</span><span class="n">getX</span><span class="p">()</span> <span class="o">+</span> <span class="n">offsetPosX</span><span class="p">;</span>
     <span class="kt">int</span> <span class="n">startZ</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">topLeft</span><span class="p">).</span><span class="n">getZ</span><span class="p">()</span> <span class="o">+</span> <span class="n">offsetPosZ</span><span class="p">;</span>
@@ -210,12 +238,11 @@
     <span class="kt">int</span> <span class="n">endX</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">bottomRight</span><span class="p">).</span><span class="n">getX</span><span class="p">()</span> <span class="o">-</span> <span class="n">offsetNegX</span><span class="p">;</span>
     <span class="kt">int</span> <span class="n">endZ</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">bottomRight</span><span class="p">).</span><span class="n">getZ</span><span class="p">()</span> <span class="o">-</span> <span class="n">offsetNegZ</span><span class="p">;</span>
 
-    <span class="n">boost</span><span class="o">::</span><span class="n">random</span><span class="o">::</span><span class="n">mt19937</span> <span class="n">gen</span><span class="p">;</span>
     <span class="n">boost</span><span class="o">::</span><span class="n">random</span><span class="o">::</span><span class="n">uniform_int_distribution</span><span class="o">&lt;&gt;</span> <span class="n">randXGen</span><span class="p">(</span><span class="n">startX</span><span class="p">,</span> <span class="n">endX</span><span class="p">);</span>
     <span class="n">boost</span><span class="o">::</span><span class="n">random</span><span class="o">::</span><span class="n">uniform_int_distribution</span><span class="o">&lt;&gt;</span> <span class="n">randZGen</span><span class="p">(</span><span class="n">startZ</span><span class="p">,</span> <span class="n">endZ</span><span class="p">);</span>
 
-    <span class="kt">int</span> <span class="n">randX</span> <span class="o">=</span> <span class="n">randXGen</span><span class="p">(</span><span class="n">gen</span><span class="p">);</span>
-    <span class="kt">int</span> <span class="n">randZ</span> <span class="o">=</span> <span class="n">randZGen</span><span class="p">(</span><span class="n">gen</span><span class="p">);</span>
+    <span class="kt">int</span> <span class="n">randX</span> <span class="o">=</span> <span class="n">randXGen</span><span class="p">(</span><span class="o">*</span><span class="n">gen</span><span class="p">);</span>
+    <span class="kt">int</span> <span class="n">randZ</span> <span class="o">=</span> <span class="n">randZGen</span><span class="p">(</span><span class="o">*</span><span class="n">gen</span><span class="p">);</span>
 
     <span class="kt">int</span> <span class="n">base</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">topLeft</span><span class="p">).</span><span class="n">getY</span><span class="p">();</span>
     <span class="n">Pos</span> <span class="nf">pos</span><span class="p">(</span><span class="n">randX</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">randZ</span><span class="p">);</span>
@@ -223,11 +250,142 @@
     <span class="k">return</span> <span class="n">pos</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="n">string</span> <span class="n">AABB</span><span class="o">::</span><span class="n">toString</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">string</span> <span class="n">retval</span> <span class="o">=</span> <span class="s">&quot;ID: &quot;</span> <span class="o">+</span> <span class="n">to_string</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">+</span>
-                    <span class="s">&quot;Material: &quot;</span> <span class="o">+</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">material</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">+</span>
-                    <span class="s">&quot;Top Left: &quot;</span> <span class="o">+</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">topLeft</span><span class="p">).</span><span class="n">toString</span><span class="p">()</span> <span class="o">+</span>
-                    <span class="s">&quot;Bottom Right: &quot;</span> <span class="o">+</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">bottomRight</span><span class="p">).</span><span class="n">toString</span><span class="p">();</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">Block</span><span class="o">&gt;*</span> <span class="n">AABB</span><span class="o">::</span><span class="n">getBlockList</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="o">&amp;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">blockList</span><span class="p">);</span> <span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">AABB</span><span class="o">::</span><span class="n">addBlock</span><span class="p">(</span><span class="n">Block</span><span class="o">*</span> <span class="n">block</span><span class="p">)</span> <span class="p">{</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">blockList</span><span class="p">).</span><span class="n">push_back</span><span class="p">(</span><span class="o">*</span><span class="n">block</span><span class="p">);</span> <span class="p">}</span>
+
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">Pos</span><span class="o">&gt;</span> <span class="n">AABB</span><span class="o">::</span><span class="n">getEdgeMidpointAtBase</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">midX</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getMidpointX</span><span class="p">();</span>
+    <span class="kt">int</span> <span class="n">midZ</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getMidpointZ</span><span class="p">();</span>
+    <span class="kt">int</span> <span class="n">base</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getTopLeft</span><span class="p">().</span><span class="n">getY</span><span class="p">();</span>
+
+    <span class="n">Pos</span> <span class="nf">topEdgeMid</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getTopLeft</span><span class="p">());</span>
+    <span class="n">topEdgeMid</span><span class="p">.</span><span class="n">setX</span><span class="p">(</span><span class="n">midX</span><span class="p">);</span>
+    <span class="n">topEdgeMid</span><span class="p">.</span><span class="n">setY</span><span class="p">(</span><span class="n">base</span><span class="p">);</span>
+
+    <span class="n">Pos</span> <span class="nf">bottomEdgeMid</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getBottomRight</span><span class="p">());</span>
+    <span class="n">bottomEdgeMid</span><span class="p">.</span><span class="n">setX</span><span class="p">(</span><span class="n">midX</span><span class="p">);</span>
+    <span class="n">bottomEdgeMid</span><span class="p">.</span><span class="n">setY</span><span class="p">(</span><span class="n">base</span><span class="p">);</span>
+
+    <span class="n">Pos</span> <span class="nf">leftEdgeMid</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getTopLeft</span><span class="p">());</span>
+    <span class="n">leftEdgeMid</span><span class="p">.</span><span class="n">setZ</span><span class="p">(</span><span class="n">midZ</span><span class="p">);</span>
+    <span class="n">leftEdgeMid</span><span class="p">.</span><span class="n">setY</span><span class="p">(</span><span class="n">base</span><span class="p">);</span>
+
+    <span class="n">Pos</span> <span class="nf">rightEdgeMid</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getBottomRight</span><span class="p">());</span>
+    <span class="n">rightEdgeMid</span><span class="p">.</span><span class="n">setZ</span><span class="p">(</span><span class="n">midZ</span><span class="p">);</span>
+    <span class="n">rightEdgeMid</span><span class="p">.</span><span class="n">setY</span><span class="p">(</span><span class="n">base</span><span class="p">);</span>
+
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Pos</span><span class="o">&gt;</span> <span class="n">midEdgesAtBase</span><span class="p">;</span>
+    <span class="n">midEdgesAtBase</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">topEdgeMid</span><span class="p">);</span>
+    <span class="n">midEdgesAtBase</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">rightEdgeMid</span><span class="p">);</span>
+    <span class="n">midEdgesAtBase</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">bottomEdgeMid</span><span class="p">);</span>
+    <span class="n">midEdgesAtBase</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">leftEdgeMid</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="n">midEdgesAtBase</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">AABB</span><span class="o">::</span><span class="n">generateBox</span><span class="p">(</span><span class="n">string</span> <span class="n">material</span><span class="p">,</span>
+                       <span class="kt">int</span> <span class="n">offsetPosX</span><span class="p">,</span>
+                       <span class="kt">int</span> <span class="n">offsetNegX</span><span class="p">,</span>
+                       <span class="kt">int</span> <span class="n">offsetPosY</span><span class="p">,</span>
+                       <span class="kt">int</span> <span class="n">offsetNegY</span><span class="p">,</span>
+                       <span class="kt">int</span> <span class="n">offsetPosZ</span><span class="p">,</span>
+                       <span class="kt">int</span> <span class="n">offsetNegZ</span><span class="p">,</span>
+                       <span class="n">string</span> <span class="n">type</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="kt">int</span> <span class="n">startX</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getTopLeft</span><span class="p">().</span><span class="n">getX</span><span class="p">()</span> <span class="o">+</span> <span class="n">offsetPosX</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">startY</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getTopLeft</span><span class="p">().</span><span class="n">getY</span><span class="p">()</span> <span class="o">+</span> <span class="n">offsetPosY</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">startZ</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getTopLeft</span><span class="p">().</span><span class="n">getZ</span><span class="p">()</span> <span class="o">+</span> <span class="n">offsetPosZ</span><span class="p">;</span>
+
+    <span class="kt">int</span> <span class="n">endX</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getBottomRight</span><span class="p">().</span><span class="n">getX</span><span class="p">()</span> <span class="o">-</span> <span class="n">offsetNegX</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">endY</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getBottomRight</span><span class="p">().</span><span class="n">getY</span><span class="p">()</span> <span class="o">-</span> <span class="n">offsetNegY</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">endZ</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getBottomRight</span><span class="p">().</span><span class="n">getZ</span><span class="p">()</span> <span class="o">-</span> <span class="n">offsetNegZ</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="n">startX</span><span class="p">;</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">endX</span><span class="p">;</span> <span class="n">x</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="n">startY</span><span class="p">;</span> <span class="n">y</span> <span class="o">&lt;=</span> <span class="n">endY</span><span class="p">;</span> <span class="n">y</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">z</span> <span class="o">=</span> <span class="n">startZ</span><span class="p">;</span> <span class="n">z</span> <span class="o">&lt;=</span> <span class="n">endZ</span><span class="p">;</span> <span class="n">z</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">Pos</span> <span class="n">pos</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">);</span>
+                <span class="n">Block</span> <span class="nf">block</span><span class="p">(</span><span class="n">material</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pos</span><span class="p">,</span> <span class="n">type</span><span class="p">);</span>
+                <span class="k">this</span><span class="o">-&gt;</span><span class="n">addBlock</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">AABB</span><span class="o">::</span><span class="n">addRandomBlocks</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">,</span>
+                           <span class="n">string</span> <span class="n">material</span><span class="p">,</span>
+                           <span class="n">boost</span><span class="o">::</span><span class="n">random</span><span class="o">::</span><span class="n">mt19937</span><span class="o">*</span> <span class="n">gen</span><span class="p">,</span>
+                           <span class="kt">int</span> <span class="n">offsetPosX</span><span class="p">,</span>
+                           <span class="kt">int</span> <span class="n">offsetNegX</span><span class="p">,</span>
+                           <span class="kt">int</span> <span class="n">offsetPosY</span><span class="p">,</span>
+                           <span class="kt">int</span> <span class="n">offsetNegY</span><span class="p">,</span>
+                           <span class="kt">int</span> <span class="n">offsetPosZ</span><span class="p">,</span>
+                           <span class="kt">int</span> <span class="n">offsetNegZ</span><span class="p">,</span>
+                           <span class="n">string</span> <span class="n">type</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="kt">int</span> <span class="n">startX</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getTopLeft</span><span class="p">().</span><span class="n">getX</span><span class="p">()</span> <span class="o">+</span> <span class="n">offsetPosX</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">startY</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getTopLeft</span><span class="p">().</span><span class="n">getY</span><span class="p">()</span> <span class="o">+</span> <span class="n">offsetPosY</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">startZ</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getTopLeft</span><span class="p">().</span><span class="n">getZ</span><span class="p">()</span> <span class="o">+</span> <span class="n">offsetPosZ</span><span class="p">;</span>
+
+    <span class="kt">int</span> <span class="n">endX</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getBottomRight</span><span class="p">().</span><span class="n">getX</span><span class="p">()</span> <span class="o">-</span> <span class="n">offsetNegX</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">endY</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getBottomRight</span><span class="p">().</span><span class="n">getY</span><span class="p">()</span> <span class="o">-</span> <span class="n">offsetNegY</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">endZ</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getBottomRight</span><span class="p">().</span><span class="n">getZ</span><span class="p">()</span> <span class="o">-</span> <span class="n">offsetNegZ</span><span class="p">;</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">boost</span><span class="o">::</span><span class="n">random</span><span class="o">::</span><span class="n">uniform_int_distribution</span><span class="o">&lt;&gt;</span> <span class="n">randX</span><span class="p">(</span><span class="n">startX</span><span class="p">,</span> <span class="n">endX</span><span class="p">);</span>
+        <span class="n">boost</span><span class="o">::</span><span class="n">random</span><span class="o">::</span><span class="n">uniform_int_distribution</span><span class="o">&lt;&gt;</span> <span class="n">randY</span><span class="p">(</span><span class="n">startY</span><span class="p">,</span> <span class="n">endY</span><span class="p">);</span>
+        <span class="n">boost</span><span class="o">::</span><span class="n">random</span><span class="o">::</span><span class="n">uniform_int_distribution</span><span class="o">&lt;&gt;</span> <span class="n">randZ</span><span class="p">(</span><span class="n">startZ</span><span class="p">,</span> <span class="n">endZ</span><span class="p">);</span>
+
+        <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="n">randX</span><span class="p">(</span><span class="o">*</span><span class="n">gen</span><span class="p">);</span>
+        <span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="n">randY</span><span class="p">(</span><span class="o">*</span><span class="n">gen</span><span class="p">);</span>
+        <span class="kt">int</span> <span class="n">z</span> <span class="o">=</span> <span class="n">randZ</span><span class="p">(</span><span class="o">*</span><span class="n">gen</span><span class="p">);</span>
+        <span class="n">Pos</span> <span class="nf">pos</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">);</span>
+        <span class="n">Block</span> <span class="nf">block</span><span class="p">(</span><span class="n">material</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pos</span><span class="p">,</span> <span class="n">type</span><span class="p">);</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">addBlock</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">);</span>
+        <span class="n">n</span><span class="o">--</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">string</span> <span class="n">AABB</span><span class="o">::</span><span class="n">toTSV</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">string</span> <span class="n">retval</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">topLeft</span><span class="p">).</span><span class="n">getX</span><span class="p">();</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">bottomRight</span><span class="p">).</span><span class="n">getX</span><span class="p">();</span> <span class="n">x</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">topLeft</span><span class="p">).</span><span class="n">getY</span><span class="p">();</span> <span class="n">y</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">bottomRight</span><span class="p">).</span><span class="n">getY</span><span class="p">();</span>
+             <span class="n">y</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">topLeft</span><span class="p">).</span><span class="n">getZ</span><span class="p">();</span>
+                 <span class="n">z</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">bottomRight</span><span class="p">).</span><span class="n">getZ</span><span class="p">();</span>
+                 <span class="n">z</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kt">bool</span> <span class="n">addCurrent</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="n">isHollow</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">topLeft</span><span class="p">).</span><span class="n">getX</span><span class="p">()</span> <span class="o">&amp;&amp;</span>
+                        <span class="n">x</span> <span class="o">&lt;</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">bottomRight</span><span class="p">).</span><span class="n">getX</span><span class="p">()</span> <span class="o">&amp;&amp;</span>
+                        <span class="n">z</span> <span class="o">&gt;</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">topLeft</span><span class="p">).</span><span class="n">getZ</span><span class="p">()</span> <span class="o">&amp;&amp;</span>
+                        <span class="n">z</span> <span class="o">&lt;</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">bottomRight</span><span class="p">).</span><span class="n">getZ</span><span class="p">())</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">y</span> <span class="o">!=</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">topLeft</span><span class="p">).</span><span class="n">getY</span><span class="p">()</span> <span class="o">&amp;&amp;</span>
+                            <span class="n">y</span> <span class="o">!=</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">bottomRight</span><span class="p">).</span><span class="n">getY</span><span class="p">())</span> <span class="p">{</span>
+                            <span class="n">addCurrent</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">hasRoof</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">y</span> <span class="o">==</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">bottomRight</span><span class="p">).</span><span class="n">getY</span><span class="p">())</span> <span class="p">{</span>
+                        <span class="n">addCurrent</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="n">addCurrent</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">retval</span> <span class="o">+=</span> <span class="n">to_string</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span> <span class="o">+</span> <span class="n">to_string</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span> <span class="o">+</span>
+                              <span class="n">to_string</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">material</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="nl">block</span> <span class="p">:</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">blockList</span><span class="p">))</span> <span class="p">{</span>
+        <span class="n">retval</span> <span class="o">+=</span> <span class="n">block</span><span class="p">.</span><span class="n">toTSV</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
 
     <span class="k">return</span> <span class="n">retval</span><span class="p">;</span>
 <span class="p">}</span>

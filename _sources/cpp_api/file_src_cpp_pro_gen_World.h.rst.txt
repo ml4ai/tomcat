@@ -47,6 +47,8 @@ Included By
 
 - :ref:`file_src_cpp_pro_gen_World.cpp`
 
+- :ref:`file_src_cpp_pro_gen_zombieworld_generator.cpp`
+
 
 
 

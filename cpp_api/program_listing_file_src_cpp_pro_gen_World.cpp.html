@@ -172,40 +172,66 @@
 
 <span class="kt">void</span> <span class="n">World</span><span class="o">::</span><span class="n">addBlock</span><span class="p">(</span><span class="n">Block</span><span class="o">*</span> <span class="n">block</span><span class="p">)</span> <span class="p">{</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">blockList</span><span class="p">).</span><span class="n">push_back</span><span class="p">(</span><span class="o">*</span><span class="n">block</span><span class="p">);</span> <span class="p">}</span>
 
+<span class="n">string</span> <span class="n">World</span><span class="o">::</span><span class="n">toTSV</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">string</span> <span class="n">retval</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="nl">aabb</span> <span class="p">:</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">aabbList</span><span class="p">))</span> <span class="p">{</span>
+        <span class="n">retval</span> <span class="o">+=</span> <span class="n">aabb</span><span class="p">.</span><span class="n">toTSV</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="nl">block</span> <span class="p">:</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">blockList</span><span class="p">))</span> <span class="p">{</span>
+        <span class="n">retval</span> <span class="o">+=</span> <span class="n">block</span><span class="p">.</span><span class="n">toTSV</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">retval</span><span class="p">;</span>
+<span class="p">}</span>
+
 <span class="n">string</span> <span class="n">World</span><span class="o">::</span><span class="n">toJSON</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">vector</span><span class="o">&lt;</span><span class="n">map</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span> <span class="n">string</span><span class="o">&gt;&gt;</span> <span class="n">aabb_map_list</span><span class="p">;</span>
-    <span class="n">vector</span><span class="o">&lt;</span><span class="n">map</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span> <span class="n">string</span><span class="o">&gt;&gt;</span> <span class="n">block_map_list</span><span class="p">;</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">json</span><span class="o">&gt;</span> <span class="n">json_aabb_list</span><span class="p">;</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">json</span><span class="o">&gt;</span> <span class="n">json_block_list</span><span class="p">;</span>
 
     <span class="c1">// Add AABBs to the JSON list</span>
     <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="nl">aabb</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">aabbList</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">map</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span> <span class="n">string</span><span class="o">&gt;</span> <span class="n">m</span><span class="p">;</span>
-        <span class="n">m</span><span class="p">[</span><span class="s">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span><span class="n">aabb</span><span class="p">.</span><span class="n">getID</span><span class="p">());</span>
+        <span class="n">json</span> <span class="n">aabb_json</span><span class="p">;</span>
+        <span class="n">aabb_json</span><span class="p">[</span><span class="s">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span><span class="n">aabb</span><span class="p">.</span><span class="n">getID</span><span class="p">());</span>
 
-        <span class="n">m</span><span class="p">[</span><span class="s">&quot;x1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span><span class="n">aabb</span><span class="p">.</span><span class="n">getTopLeft</span><span class="p">().</span><span class="n">getX</span><span class="p">());</span>
-        <span class="n">m</span><span class="p">[</span><span class="s">&quot;y1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span><span class="n">aabb</span><span class="p">.</span><span class="n">getTopLeft</span><span class="p">().</span><span class="n">getY</span><span class="p">());</span>
-        <span class="n">m</span><span class="p">[</span><span class="s">&quot;z1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span><span class="n">aabb</span><span class="p">.</span><span class="n">getTopLeft</span><span class="p">().</span><span class="n">getZ</span><span class="p">());</span>
+        <span class="n">aabb_json</span><span class="p">[</span><span class="s">&quot;x1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span><span class="n">aabb</span><span class="p">.</span><span class="n">getTopLeft</span><span class="p">().</span><span class="n">getX</span><span class="p">());</span>
+        <span class="n">aabb_json</span><span class="p">[</span><span class="s">&quot;y1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span><span class="n">aabb</span><span class="p">.</span><span class="n">getTopLeft</span><span class="p">().</span><span class="n">getY</span><span class="p">());</span>
+        <span class="n">aabb_json</span><span class="p">[</span><span class="s">&quot;z1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span><span class="n">aabb</span><span class="p">.</span><span class="n">getTopLeft</span><span class="p">().</span><span class="n">getZ</span><span class="p">());</span>
 
-        <span class="n">m</span><span class="p">[</span><span class="s">&quot;x2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span><span class="n">aabb</span><span class="p">.</span><span class="n">getBottomRight</span><span class="p">().</span><span class="n">getX</span><span class="p">());</span>
-        <span class="n">m</span><span class="p">[</span><span class="s">&quot;y2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span><span class="n">aabb</span><span class="p">.</span><span class="n">getBottomRight</span><span class="p">().</span><span class="n">getY</span><span class="p">());</span>
-        <span class="n">m</span><span class="p">[</span><span class="s">&quot;z2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span><span class="n">aabb</span><span class="p">.</span><span class="n">getBottomRight</span><span class="p">().</span><span class="n">getZ</span><span class="p">());</span>
-        <span class="n">m</span><span class="p">[</span><span class="s">&quot;material&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">aabb</span><span class="p">.</span><span class="n">getMaterial</span><span class="p">();</span>
-        <span class="n">aabb_map_list</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
+        <span class="n">aabb_json</span><span class="p">[</span><span class="s">&quot;x2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span><span class="n">aabb</span><span class="p">.</span><span class="n">getBottomRight</span><span class="p">().</span><span class="n">getX</span><span class="p">());</span>
+        <span class="n">aabb_json</span><span class="p">[</span><span class="s">&quot;y2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span><span class="n">aabb</span><span class="p">.</span><span class="n">getBottomRight</span><span class="p">().</span><span class="n">getY</span><span class="p">());</span>
+        <span class="n">aabb_json</span><span class="p">[</span><span class="s">&quot;z2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span><span class="n">aabb</span><span class="p">.</span><span class="n">getBottomRight</span><span class="p">().</span><span class="n">getZ</span><span class="p">());</span>
+        <span class="n">aabb_json</span><span class="p">[</span><span class="s">&quot;material&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">aabb</span><span class="p">.</span><span class="n">getMaterial</span><span class="p">();</span>
+
+        <span class="n">vector</span><span class="o">&lt;</span><span class="n">json</span><span class="o">&gt;</span> <span class="n">aabb_block_list_json</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="nl">block</span> <span class="p">:</span> <span class="o">*</span><span class="p">(</span><span class="n">aabb</span><span class="p">.</span><span class="n">getBlockList</span><span class="p">()))</span> <span class="p">{</span>
+            <span class="n">json</span> <span class="n">block_json</span><span class="p">;</span>
+            <span class="n">block_json</span><span class="p">[</span><span class="s">&quot;type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span><span class="p">.</span><span class="n">getType</span><span class="p">();</span>
+            <span class="n">block_json</span><span class="p">[</span><span class="s">&quot;x&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span><span class="n">block</span><span class="p">.</span><span class="n">getX</span><span class="p">());</span>
+            <span class="n">block_json</span><span class="p">[</span><span class="s">&quot;y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span><span class="n">block</span><span class="p">.</span><span class="n">getY</span><span class="p">());</span>
+            <span class="n">block_json</span><span class="p">[</span><span class="s">&quot;z&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span><span class="n">block</span><span class="p">.</span><span class="n">getZ</span><span class="p">());</span>
+            <span class="n">block_json</span><span class="p">[</span><span class="s">&quot;material&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span><span class="p">.</span><span class="n">getMaterial</span><span class="p">();</span>
+            <span class="n">aabb_block_list_json</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">block_json</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="n">aabb_json</span><span class="p">[</span><span class="s">&quot;block_list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">aabb_block_list_json</span><span class="p">;</span>
+        <span class="n">json_aabb_list</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">aabb_json</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="c1">// Add Blocks to the JSON List</span>
     <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="nl">block</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">blockList</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">map</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span> <span class="n">string</span><span class="o">&gt;</span> <span class="n">m</span><span class="p">;</span>
-        <span class="n">m</span><span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span><span class="p">.</span><span class="n">getName</span><span class="p">();</span>
-        <span class="n">m</span><span class="p">[</span><span class="s">&quot;x&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span><span class="n">block</span><span class="p">.</span><span class="n">getX</span><span class="p">());</span>
-        <span class="n">m</span><span class="p">[</span><span class="s">&quot;y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span><span class="n">block</span><span class="p">.</span><span class="n">getY</span><span class="p">());</span>
-        <span class="n">m</span><span class="p">[</span><span class="s">&quot;z&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span><span class="n">block</span><span class="p">.</span><span class="n">getZ</span><span class="p">());</span>
-        <span class="n">m</span><span class="p">[</span><span class="s">&quot;material&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span><span class="p">.</span><span class="n">getMaterial</span><span class="p">();</span>
-        <span class="n">block_map_list</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
+        <span class="n">json</span> <span class="n">block_json</span><span class="p">;</span>
+        <span class="n">block_json</span><span class="p">[</span><span class="s">&quot;type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span><span class="p">.</span><span class="n">getType</span><span class="p">();</span>
+        <span class="n">block_json</span><span class="p">[</span><span class="s">&quot;x&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span><span class="n">block</span><span class="p">.</span><span class="n">getX</span><span class="p">());</span>
+        <span class="n">block_json</span><span class="p">[</span><span class="s">&quot;y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span><span class="n">block</span><span class="p">.</span><span class="n">getY</span><span class="p">());</span>
+        <span class="n">block_json</span><span class="p">[</span><span class="s">&quot;z&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span><span class="n">block</span><span class="p">.</span><span class="n">getZ</span><span class="p">());</span>
+        <span class="n">block_json</span><span class="p">[</span><span class="s">&quot;material&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">block</span><span class="p">.</span><span class="n">getMaterial</span><span class="p">();</span>
+        <span class="n">json_block_list</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">block_json</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="n">json</span> <span class="n">j</span><span class="p">;</span>
-    <span class="n">j</span><span class="p">[</span><span class="s">&quot;aabb_list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">aabb_map_list</span><span class="p">;</span>
-    <span class="n">j</span><span class="p">[</span><span class="s">&quot;block_list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">block_map_list</span><span class="p">;</span>
+    <span class="n">j</span><span class="p">[</span><span class="s">&quot;aabb_list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json_aabb_list</span><span class="p">;</span>
+    <span class="n">j</span><span class="p">[</span><span class="s">&quot;block_list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json_block_list</span><span class="p">;</span>
     <span class="k">return</span> <span class="n">j</span><span class="p">.</span><span class="n">dump</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
 <span class="p">}</span>
 
