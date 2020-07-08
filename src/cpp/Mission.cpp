@@ -66,14 +66,13 @@ namespace tomcat {
 
     void Mission::create_client_pool() {
         this->client_pool = make_shared<ClientPool>();
-        this->client_pool->add(ClientInfo("127.0.0.1", this->port_number));
+        this->client_pool->add(ClientInfo("192.168.1.112", this->port_number));
 
         if (this->multiplayer) {
             // Add each one of the clients in the multiplayer mission
             // This is hardcoded but needs to be moved to a config file at some
             // point
-            this->client_pool->add(ClientInfo("127.0.0.1", 10001));
-            this->client_pool->add(ClientInfo("127.0.0.1", 10002));
+            this->client_pool->add(ClientInfo("192.168.1.133", 10001));
         }
     }
 
@@ -177,7 +176,7 @@ namespace tomcat {
             }
             else {
                 agent_name =
-                    format("{}:{}", client->ip_address, client->control_port);
+                    client->ip_address;
             }
             // For USAR_SINGLEPLAYER mission: <Placement x="-2165" y="52"
             // z="175"/>
