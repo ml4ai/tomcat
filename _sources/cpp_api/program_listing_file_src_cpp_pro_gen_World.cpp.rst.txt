@@ -12,13 +12,15 @@ Program Listing for File World.cpp
 
    
    #include "World.h"
-   #include <iostream>
-   #include <string>
    
    using namespace std;
    using json = nlohmann::json;
    
    World::World() {}
+   
+   vector<AABB>* World::getAABBList() { return &(this->aabbList); }
+   
+   vector<Block>* World::getBlockList() { return &(this->blockList); }
    
    void World::addAABB(AABB* aabb) { (this->aabbList).push_back(*aabb); }
    
@@ -86,9 +88,5 @@ Program Listing for File World.cpp
        j["block_list"] = json_block_list;
        return j.dump(4);
    }
-   
-   vector<AABB>* World::getAABBList() { return &(this->aabbList); }
-   
-   vector<Block>* World::getBlockList() { return &(this->blockList); }
    
    World::~World() {}

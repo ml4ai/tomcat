@@ -14,8 +14,7 @@ Program Listing for File AABB.h
    #pragma once
    
    #include "Block.h"
-   #include <boost/random/mersenne_twister.hpp>
-   #include <boost/random/uniform_int_distribution.hpp>
+   #include <random>
    #include <string>
    #include <vector>
    
@@ -33,25 +32,40 @@ Program Listing for File AABB.h
    
      public:
        int getID();
+   
        std::string getMaterial();
+   
        std::string getType();
+   
        Pos getTopLeft();
+   
        Pos getBottomRight();
+   
        std::vector<Block>* getBlockList();
+   
        int getMidpointX();
+   
        int getMidpointY();
+   
        int getMidpointZ();
-       Pos getRandomPosAtBase(boost::random::mt19937*,
+   
+       Pos getRandomPosAtBase(std::mt19937_64* gen,
                               int offsetPosX = 1,
                               int offsetNegX = 1,
                               int offsetPosZ = 1,
                               int offsetNegZ = 1);
+   
        std::vector<Pos> getEdgeMidpointAtBase();
-       void setTopLeft(Pos*);
-       void setBottomRight(Pos*);
-       void addBlock(Block*);
-       bool isOverlapping(AABB *);
-       void generateBox(std::string,
+   
+       void setTopLeft(Pos* topLeft);
+   
+       void setBottomRight(Pos* bottomRight);
+   
+       void addBlock(Block* block);
+   
+       bool isOverlapping(AABB* other);
+   
+       void generateBox(std::string material,
                         int offsetPosX = 0,
                         int offsetNegX = 0,
                         int offsetPosY = 0,
@@ -59,9 +73,10 @@ Program Listing for File AABB.h
                         int offsetPosZ = 0,
                         int offsetNegZ = 0,
                         std::string type = "normal");
-       void addRandomBlocks(int,
-                            std::string,
-                            boost::random::mt19937*,
+   
+       void addRandomBlocks(int n,
+                            std::string material,
+                            std::mt19937_64* gen,
                             int offsetPosX = 0,
                             int offsetNegX = 0,
                             int offsetPosY = 0,
@@ -69,13 +84,16 @@ Program Listing for File AABB.h
                             int offsetPosZ = 0,
                             int offsetNegZ = 0,
                             std::string type = "normal");
+   
        std::string toTSV();
-       AABB(int,
-            std::string,
-            std::string,
-            Pos*,
-            Pos*,
+   
+       AABB(int id,
+            std::string type,
+            std::string material,
+            Pos* topLeft,
+            Pos* bottomRight,
             bool isHollow = true,
             bool hasRoof = false);
+   
        ~AABB();
    };

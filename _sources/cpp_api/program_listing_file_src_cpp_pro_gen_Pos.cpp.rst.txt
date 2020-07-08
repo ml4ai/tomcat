@@ -12,7 +12,6 @@ Program Listing for File Pos.cpp
 
    
    #include "Pos.h"
-   #include <string>
    using namespace std;
    
    Pos::Pos() {}

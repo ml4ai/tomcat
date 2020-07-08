@@ -172,12 +172,19 @@
 
   <span class="k">public</span><span class="o">:</span>
     <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">getType</span><span class="p">();</span>
+
     <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">getMaterial</span><span class="p">();</span>
+
     <span class="kt">int</span> <span class="nf">getX</span><span class="p">();</span>
+
     <span class="kt">int</span> <span class="nf">getY</span><span class="p">();</span>
+
     <span class="kt">int</span> <span class="nf">getZ</span><span class="p">();</span>
+
     <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">toTSV</span><span class="p">();</span>
-    <span class="n">Block</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span> <span class="n">Pos</span><span class="o">*</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">type</span> <span class="o">=</span> <span class="s">&quot;normal&quot;</span><span class="p">);</span>
+
+    <span class="n">Block</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">material</span><span class="p">,</span> <span class="n">Pos</span><span class="o">*</span> <span class="n">pos</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">type</span> <span class="o">=</span> <span class="s">&quot;normal&quot;</span><span class="p">);</span>
+
     <span class="o">~</span><span class="n">Block</span><span class="p">();</span>
 <span class="p">};</span>
 </pre></div>

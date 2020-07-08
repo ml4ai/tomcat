@@ -160,26 +160,8 @@
 <span id="program-listing-file-src-cpp-pro-gen-proceduralgenerator-cpp"></span><h1>Program Listing for File ProceduralGenerator.cpp<a class="headerlink" href="#program-listing-for-file-proceduralgenerator-cpp" title="Permalink to this headline">¶</a></h1>
 <p>↰ <a class="reference internal" href="file_src_cpp_pro_gen_ProceduralGenerator.cpp.html#file-src-cpp-pro-gen-proceduralgenerator-cpp"><span class="std std-ref">Return to documentation for file</span></a> (<code class="docutils literal notranslate"><span class="pre">src/cpp/pro_gen/ProceduralGenerator.cpp</span></code>)</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;ProceduralGenerator.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;boost/random/mersenne_twister.hpp&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;boost/random/uniform_int_distribution.hpp&gt;</span><span class="cp"></span>
 
 <span class="n">ProceduralGenerator</span><span class="o">::</span><span class="n">ProceduralGenerator</span><span class="p">()</span> <span class="p">{}</span>
-
-<span class="n">Block</span> <span class="n">ProceduralGenerator</span><span class="o">::</span><span class="n">getRandomVictim</span><span class="p">(</span><span class="n">Pos</span><span class="o">*</span> <span class="n">pos</span><span class="p">,</span>
-                                           <span class="kt">double</span> <span class="n">greenBias</span><span class="p">,</span>
-                                           <span class="n">boost</span><span class="o">::</span><span class="n">random</span><span class="o">::</span><span class="n">mt19937</span><span class="o">*</span> <span class="n">gen</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">boost</span><span class="o">::</span><span class="n">random</span><span class="o">::</span><span class="n">uniform_int_distribution</span><span class="o">&lt;&gt;</span> <span class="n">dist</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
-    <span class="kt">double</span> <span class="n">greenProbability</span> <span class="o">=</span> <span class="n">greenBias</span> <span class="o">*</span> <span class="mi">100</span><span class="p">;</span>
-    <span class="kt">int</span> <span class="n">randomInt</span> <span class="o">=</span> <span class="n">dist</span><span class="p">(</span><span class="o">*</span><span class="n">gen</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">randomInt</span> <span class="o">&lt;=</span> <span class="n">greenProbability</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">Block</span> <span class="n">block</span><span class="p">(</span><span class="s">&quot;prismarine&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="s">&quot;victim&quot;</span><span class="p">);</span>
-        <span class="k">return</span> <span class="n">block</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">else</span> <span class="p">{</span>
-        <span class="n">Block</span> <span class="n">block</span><span class="p">(</span><span class="s">&quot;gold&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="s">&quot;victim&quot;</span><span class="p">);</span>
-        <span class="k">return</span> <span class="n">block</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
 
 <span class="n">ProceduralGenerator</span><span class="o">::~</span><span class="n">ProceduralGenerator</span><span class="p">()</span> <span class="p">{}</span>
 </pre></div>

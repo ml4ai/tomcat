@@ -162,13 +162,14 @@
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;Pit.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;World.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&lt;boost/program_options.hpp&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;boost/random/mersenne_twister.hpp&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;boost/random/uniform_int_distribution.hpp&gt;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&lt;fstream&gt;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;random&gt;</span><span class="cp"></span>
 
 <span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
-<span class="n">boost</span><span class="o">::</span><span class="n">random</span><span class="o">::</span><span class="n">mt19937</span> <span class="n">gen</span><span class="p">;</span> <span class="c1">// Global randomness object</span>
+
+<span class="n">random_device</span> <span class="n">r</span><span class="p">;</span>
+<span class="n">mt19937_64</span> <span class="nf">gen</span><span class="p">(</span><span class="n">r</span><span class="p">());</span>
 <span class="k">namespace</span> <span class="n">po</span> <span class="o">=</span> <span class="n">boost</span><span class="o">::</span><span class="n">program_options</span><span class="p">;</span>
 
 <span class="n">AABB</span> <span class="nf">chooseZombieworldAABB</span><span class="p">(</span><span class="kt">int</span> <span class="n">idCtr</span><span class="p">,</span> <span class="n">Pos</span><span class="o">*</span> <span class="n">topLeft</span><span class="p">,</span> <span class="n">Pos</span><span class="o">*</span> <span class="n">bottomRight</span><span class="p">)</span> <span class="p">{</span>
@@ -178,7 +179,7 @@
             <span class="p">(</span><span class="o">*</span><span class="n">topLeft</span><span class="p">).</span><span class="n">getY</span><span class="p">());</span> <span class="c1">// We are adding a Pit so we want the AABB to be</span>
                                 <span class="c1">// much flatter</span>
 
-        <span class="n">boost</span><span class="o">::</span><span class="n">random</span><span class="o">::</span><span class="n">uniform_int_distribution</span><span class="o">&lt;&gt;</span> <span class="n">dist</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
+        <span class="n">uniform_int_distribution</span><span class="o">&lt;&gt;</span> <span class="n">dist</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
         <span class="kt">int</span> <span class="n">rand</span> <span class="o">=</span> <span class="n">dist</span><span class="p">(</span><span class="n">gen</span><span class="p">);</span>
 
         <span class="c1">// Choose between an air, water or lava pit</span>

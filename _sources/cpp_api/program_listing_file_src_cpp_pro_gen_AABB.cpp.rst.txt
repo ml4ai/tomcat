@@ -12,9 +12,6 @@ Program Listing for File AABB.cpp
 
    
    #include "AABB.h"
-   #include <boost/random/mersenne_twister.hpp>
-   #include <boost/random/uniform_int_distribution.hpp>
-   #include <string>
    
    using namespace std;
    
@@ -38,11 +35,7 @@ Program Listing for File AABB.cpp
    
    Pos AABB::getBottomRight() { return this->bottomRight; }
    
-   void AABB::setTopLeft(Pos* topLeft) { this->topLeft = *topLeft; }
-   
-   void AABB::setBottomRight(Pos* bottomRight) {
-       this->bottomRight = *bottomRight;
-   }
+   vector<Block>* AABB::getBlockList() { return &(this->blockList); }
    
    int AABB::getMidpointX() {
        int mid_x = ((this->topLeft).getX() +
@@ -62,23 +55,7 @@ Program Listing for File AABB.cpp
        return mid_z;
    }
    
-   bool AABB::isOverlapping(AABB* other) {
-       int xRange = (this->bottomRight.getX()) - (this->topLeft.getX());
-       int yRange = (this->bottomRight.getY()) - (this->topLeft.getY());
-       int zRange = (this->bottomRight.getZ()) - (this->topLeft.getZ());
-   
-       if ((abs(other->topLeft.getX() - this->topLeft.getX()) < xRange) ||
-           (abs(other->topLeft.getY() - this->topLeft.getY()) < yRange) ||
-           (abs(other->topLeft.getZ() - this->topLeft.getZ()) < zRange)) {
-   
-           return true;
-       }
-       else {
-           return false;
-       }
-   }
-   
-   Pos AABB::getRandomPosAtBase(boost::random::mt19937* gen,
+   Pos AABB::getRandomPosAtBase(mt19937_64* gen,
                                 int offsetPosX,
                                 int offsetNegX,
                                 int offsetPosZ,
@@ -90,8 +67,8 @@ Program Listing for File AABB.cpp
        int endX = (this->bottomRight).getX() - offsetNegX;
        int endZ = (this->bottomRight).getZ() - offsetNegZ;
    
-       boost::random::uniform_int_distribution<> randXGen(startX, endX);
-       boost::random::uniform_int_distribution<> randZGen(startZ, endZ);
+       uniform_int_distribution<> randXGen(startX, endX);
+       uniform_int_distribution<> randZGen(startZ, endZ);
    
        int randX = randXGen(*gen);
        int randZ = randZGen(*gen);
@@ -101,10 +78,6 @@ Program Listing for File AABB.cpp
    
        return pos;
    }
-   
-   vector<Block>* AABB::getBlockList() { return &(this->blockList); }
-   
-   void AABB::addBlock(Block* block) { (this->blockList).push_back(*block); }
    
    vector<Pos> AABB::getEdgeMidpointAtBase() {
        int midX = this->getMidpointX();
@@ -134,6 +107,30 @@ Program Listing for File AABB.cpp
        midEdgesAtBase.push_back(leftEdgeMid);
    
        return midEdgesAtBase;
+   }
+   
+   void AABB::setTopLeft(Pos* topLeft) { this->topLeft = *topLeft; }
+   
+   void AABB::setBottomRight(Pos* bottomRight) {
+       this->bottomRight = *bottomRight;
+   }
+   
+   void AABB::addBlock(Block* block) { (this->blockList).push_back(*block); }
+   
+   bool AABB::isOverlapping(AABB* other) {
+       int xRange = (this->bottomRight.getX()) - (this->topLeft.getX());
+       int yRange = (this->bottomRight.getY()) - (this->topLeft.getY());
+       int zRange = (this->bottomRight.getZ()) - (this->topLeft.getZ());
+   
+       if ((abs(other->topLeft.getX() - this->topLeft.getX()) < xRange) ||
+           (abs(other->topLeft.getY() - this->topLeft.getY()) < yRange) ||
+           (abs(other->topLeft.getZ() - this->topLeft.getZ()) < zRange)) {
+   
+           return true;
+       }
+       else {
+           return false;
+       }
    }
    
    void AABB::generateBox(string material,
@@ -167,7 +164,7 @@ Program Listing for File AABB.cpp
    
    void AABB::addRandomBlocks(int n,
                               string material,
-                              boost::random::mt19937* gen,
+                              mt19937_64* gen,
                               int offsetPosX,
                               int offsetNegX,
                               int offsetPosY,
@@ -185,9 +182,9 @@ Program Listing for File AABB.cpp
        int endZ = this->getBottomRight().getZ() - offsetNegZ;
    
        while (n > 0) {
-           boost::random::uniform_int_distribution<> randX(startX, endX);
-           boost::random::uniform_int_distribution<> randY(startY, endY);
-           boost::random::uniform_int_distribution<> randZ(startZ, endZ);
+           uniform_int_distribution<> randX(startX, endX);
+           uniform_int_distribution<> randY(startY, endY);
+           uniform_int_distribution<> randZ(startZ, endZ);
    
            int x = randX(*gen);
            int y = randY(*gen);

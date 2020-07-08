@@ -172,13 +172,20 @@
     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Block</span><span class="o">&gt;</span> <span class="n">blockList</span><span class="p">;</span>
 
   <span class="k">public</span><span class="o">:</span>
-    <span class="kt">void</span> <span class="n">addAABB</span><span class="p">(</span><span class="n">AABB</span><span class="o">*</span><span class="p">);</span>
-    <span class="kt">void</span> <span class="nf">addBlock</span><span class="p">(</span><span class="n">Block</span><span class="o">*</span><span class="p">);</span>
     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">AABB</span><span class="o">&gt;*</span> <span class="n">getAABBList</span><span class="p">();</span>
+
     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Block</span><span class="o">&gt;*</span> <span class="n">getBlockList</span><span class="p">();</span>
+
+    <span class="kt">void</span> <span class="nf">addAABB</span><span class="p">(</span><span class="n">AABB</span><span class="o">*</span> <span class="n">aabb</span><span class="p">);</span>
+
+    <span class="kt">void</span> <span class="nf">addBlock</span><span class="p">(</span><span class="n">Block</span><span class="o">*</span> <span class="n">block</span><span class="p">);</span>
+
     <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">toTSV</span><span class="p">();</span>
+
     <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">toJSON</span><span class="p">();</span>
+
     <span class="n">World</span><span class="p">();</span>
+
     <span class="o">~</span><span class="n">World</span><span class="p">();</span>
 <span class="p">};</span>
 </pre></div>

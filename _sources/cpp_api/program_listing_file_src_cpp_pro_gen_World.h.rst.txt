@@ -24,12 +24,19 @@ Program Listing for File World.h
        std::vector<Block> blockList;
    
      public:
-       void addAABB(AABB*);
-       void addBlock(Block*);
        std::vector<AABB>* getAABBList();
+   
        std::vector<Block>* getBlockList();
+   
+       void addAABB(AABB* aabb);
+   
+       void addBlock(Block* block);
+   
        std::string toTSV();
+   
        std::string toJSON();
+   
        World();
+   
        ~World();
    };

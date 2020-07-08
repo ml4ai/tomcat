@@ -117,6 +117,16 @@ Functions
 .. toctree::
    :maxdepth: 5
 
+   function_gridworld__generator_8cpp_1a2f5ec5e3bba2dd4dc4754bcd3b12b04a.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   function_zombieworld__generator_8cpp_1a2f5ec5e3bba2dd4dc4754bcd3b12b04a.rst
+
+.. toctree::
+   :maxdepth: 5
+
    function_gridworld__generator_8cpp_1a6ff53ba64c7ba660d8da7c6c6bb7d6f5.rst
 
 .. toctree::
@@ -167,6 +177,11 @@ Functions
 .. toctree::
    :maxdepth: 5
 
+   function_gridworld__generator_8cpp_1a9bc77d6fa511b886d22f5affd9a9710b.rst
+
+.. toctree::
+   :maxdepth: 5
+
    function_runExperiment_8cpp_1a4c30e5933c30c69fe3d583b975a28746.rst
 
 .. toctree::
@@ -211,12 +226,12 @@ Variables
 .. toctree::
    :maxdepth: 5
 
-   variable_gridworld__generator_8cpp_1a415bcc363b3978ea725276876c700d7b.rst
+   variable_gridworld__generator_8cpp_1a127898187b6d6d91b8dd14344b2f13e0.rst
 
 .. toctree::
    :maxdepth: 5
 
-   variable_zombieworld__generator_8cpp_1a415bcc363b3978ea725276876c700d7b.rst
+   variable_zombieworld__generator_8cpp_1a127898187b6d6d91b8dd14344b2f13e0.rst
 
 Typedefs
 ********

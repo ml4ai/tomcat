@@ -23,17 +23,30 @@ Program Listing for File Pos.h
    
      public:
        int getX();
+   
        int getY();
+   
        int getZ();
-       void setX(int);
-       void setY(int);
-       void setZ(int);
-       void shiftX(int);
-       void shiftY(int);
-       void shiftZ(int);
+   
+       void setX(int x);
+   
+       void setY(int y);
+   
+       void setZ(int z);
+   
+       void shiftX(int shift);
+   
+       void shiftY(int shift);
+   
+       void shiftZ(int shift);
+   
        std::string toTSV();
+   
        Pos();
-       Pos(int, int, int);
+   
+       Pos(int x, int y, int z);
+   
        Pos(const Pos& other);
+   
        ~Pos();
    };

@@ -1,0 +1,13 @@
+.. _exhale_function_gridworld__generator_8cpp_1a9bc77d6fa511b886d22f5affd9a9710b:
+
+Function getRandomVictim
+========================
+
+- Defined in :ref:`file_src_cpp_pro_gen_gridworld_generator.cpp`
+
+
+Function Documentation
+----------------------
+
+
+.. doxygenfunction:: getRandomVictim(Pos *, double)

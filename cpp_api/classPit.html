@@ -181,22 +181,30 @@
 <dl class="cpp class">
 <dt id="_CPPv43Pit">
 <span id="_CPPv33Pit"></span><span id="_CPPv23Pit"></span><span id="Pit"></span><span class="target" id="classPit"></span><em class="property">class </em><code class="sig-name descname">Pit</code> : <em class="property">public</em> <a class="reference internal" href="classAABB.html#_CPPv44AABB" title="AABB">AABB</a><a class="headerlink" href="#_CPPv43Pit" title="Permalink to this definition">¶</a><br /></dt>
-<dd><div class="breathe-sectiondef docutils container">
+<dd><p>This class represents a special <a class="reference internal" href="classAABB.html#classAABB"><span class="std std-ref">AABB</span></a> of type = “pit”. It is not hollow and is treated as having a roof. </p>
+<div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Public Functions</p>
 <dl class="cpp function">
-<dt id="_CPPv4N3Pit12generateLavaEv">
-<span id="_CPPv3N3Pit12generateLavaEv"></span><span id="_CPPv2N3Pit12generateLavaEv"></span><span id="Pit::generateLava"></span><span class="target" id="classPit_1a22abfcca6068b7d5c07b72b2a6cab833"></span>void <code class="sig-name descname">generateLava</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N3Pit12generateLavaEv" title="Permalink to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
 <dt id="_CPPv4N3Pit3PitEiNSt6stringEP3PosP3Pos">
-<span id="_CPPv3N3Pit3PitEiNSt6stringEP3PosP3Pos"></span><span id="_CPPv2N3Pit3PitEiNSt6stringEP3PosP3Pos"></span><span id="Pit::Pit__i.ss.PosP.PosP"></span><span class="target" id="classPit_1aabbda6dac74f6455c5759773f4933ae4"></span><code class="sig-name descname">Pit</code><span class="sig-paren">(</span>int, std::string, <a class="reference internal" href="classPos.html#_CPPv43Pos" title="Pos">Pos</a>*, <a class="reference internal" href="classPos.html#_CPPv43Pos" title="Pos">Pos</a>*<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N3Pit3PitEiNSt6stringEP3PosP3Pos" title="Permalink to this definition">¶</a><br /></dt>
-<dd></dd></dl>
+<span id="_CPPv3N3Pit3PitEiNSt6stringEP3PosP3Pos"></span><span id="_CPPv2N3Pit3PitEiNSt6stringEP3PosP3Pos"></span><span id="Pit::Pit__i.ss.PosP.PosP"></span><span class="target" id="classPit_1aa3dc2e80bd39e4d0693dbbff4ad8557a"></span><code class="sig-name descname">Pit</code><span class="sig-paren">(</span>int <em>id</em>, std::string <em>material</em>, <a class="reference internal" href="classPos.html#_CPPv43Pos" title="Pos">Pos</a> *<em>topLeft</em>, <a class="reference internal" href="classPos.html#_CPPv43Pos" title="Pos">Pos</a> *<em>bottomRight</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N3Pit3PitEiNSt6stringEP3PosP3Pos" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Construct a new <a class="reference internal" href="#classPit"><span class="std std-ref">Pit</span></a> object. </p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">id</span></code>: The id to assign this <a class="reference internal" href="#classPit"><span class="std std-ref">Pit</span></a> <a class="reference internal" href="classAABB.html#classAABB"><span class="std std-ref">AABB</span></a> </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">material</span></code>: The base material the <a class="reference internal" href="#classPit"><span class="std std-ref">Pit</span></a> is made of </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">topLeft</span></code>: The coordinates of the top left of the <a class="reference internal" href="classAABB.html#classAABB"><span class="std std-ref">AABB</span></a> from the top view of the X-Z plane. Y coordinate should be lowest here. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bottomRight</span></code>: The coordinates of the bottom right of the <a class="reference internal" href="classAABB.html#classAABB"><span class="std std-ref">AABB</span></a> from the top view of the X-Z plane. Y coordinate should be maximum here. </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv4N3PitD0Ev">
 <span id="_CPPv3N3PitD0Ev"></span><span id="_CPPv2N3PitD0Ev"></span><span id="Pit::~Pit"></span><span class="target" id="classPit_1a357bf2671cb34981d3e1c8b7f486d3bc"></span><code class="sig-name descname">~Pit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N3PitD0Ev" title="Permalink to this definition">¶</a><br /></dt>
-<dd></dd></dl>
+<dd><p>Destroy the <a class="reference internal" href="#classPit"><span class="std std-ref">Pit</span></a> object. </p>
+</dd></dl>
 
 </div>
 </dd></dl>

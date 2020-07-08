@@ -17,8 +17,7 @@ Program Listing for File Pit.h
    class Pit : public AABB {
    
      public:
-       void generateLava();
-       Pit(int, std::string, Pos*, Pos*);
+       Pit(int id, std::string material, Pos* topLeft, Pos* bottomRight);
    
        ~Pit();
    };

@@ -179,9 +179,9 @@
 <dl class="cpp function">
 <dt id="_CPPv4N5Block7getTypeEv">
 <span id="_CPPv3N5Block7getTypeEv"></span><span id="_CPPv2N5Block7getTypeEv"></span><span id="Block::getType"></span><span class="target" id="classBlock_1a8d89c35b33b297adb6b6dc9e6021f988"></span>std::string <code class="sig-name descname">getType</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Block7getTypeEv" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Get the name of the block. </p>
+<dd><p>Get the type of the block. </p>
 <p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>string The block’s name </p>
+<dt><strong>Return</strong></dt><dd><p>string The block’s type </p>
 </dd>
 </dl>
 </p>
@@ -244,13 +244,13 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N5Block5BlockENSt6stringEP3PosNSt6stringE">
-<span id="_CPPv3N5Block5BlockENSt6stringEP3PosNSt6stringE"></span><span id="_CPPv2N5Block5BlockENSt6stringEP3PosNSt6stringE"></span><span id="Block::Block__ss.PosP.ss"></span><span class="target" id="classBlock_1a9dcc4157e4829c2ffdc51ff19492d470"></span><code class="sig-name descname">Block</code><span class="sig-paren">(</span>std::string, <a class="reference internal" href="classPos.html#_CPPv43Pos" title="Pos">Pos</a>*, std::string <em>type</em> = &quot;normal&quot;<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Block5BlockENSt6stringEP3PosNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Construct a new <a class="reference internal" href="#classBlock"><span class="std std-ref">Block</span></a>:: <a class="reference internal" href="#classBlock"><span class="std std-ref">Block</span></a> object. </p>
+<span id="_CPPv3N5Block5BlockENSt6stringEP3PosNSt6stringE"></span><span id="_CPPv2N5Block5BlockENSt6stringEP3PosNSt6stringE"></span><span id="Block::Block__ss.PosP.ss"></span><span class="target" id="classBlock_1aaf164819f779e85338a1a341ba93720f"></span><code class="sig-name descname">Block</code><span class="sig-paren">(</span>std::string <em>material</em>, <a class="reference internal" href="classPos.html#_CPPv43Pos" title="Pos">Pos</a> *<em>pos</em>, std::string <em>type</em> = &quot;normal&quot;<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Block5BlockENSt6stringEP3PosNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Construct a new <a class="reference internal" href="#classBlock"><span class="std std-ref">Block</span></a> object. </p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">blockType</span></code>: The semantic name for this block which is not the same as its material </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">blockMaterial</span></code>: The material the block is made of </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">blockPos</span></code>: The position of the block in the Minecraft world </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">material</span></code>: The material the block is made of </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pos</span></code>: The position of the block in the Minecraft world </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: The semantic type for this block which is not the same as its material. Defaults to “normal”. </p></li>
 </ul>
 </dd>
 </dl>
@@ -260,7 +260,7 @@
 <dl class="cpp function">
 <dt id="_CPPv4N5BlockD0Ev">
 <span id="_CPPv3N5BlockD0Ev"></span><span id="_CPPv2N5BlockD0Ev"></span><span id="Block::~Block"></span><span class="target" id="classBlock_1a19d1bd0e1cef6a865ed2745a2e648405"></span><code class="sig-name descname">~Block</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5BlockD0Ev" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Destroy the <a class="reference internal" href="#classBlock"><span class="std std-ref">Block</span></a>:: <a class="reference internal" href="#classBlock"><span class="std std-ref">Block</span></a> object. </p>
+<dd><p>Destroy the <a class="reference internal" href="#classBlock"><span class="std std-ref">Block</span></a> object. </p>
 </dd></dl>
 
 </div>

@@ -24,11 +24,18 @@ Program Listing for File Block.h
    
      public:
        std::string getType();
+   
        std::string getMaterial();
+   
        int getX();
+   
        int getY();
+   
        int getZ();
+   
        std::string toTSV();
-       Block(std::string, Pos*, std::string type = "normal");
+   
+       Block(std::string material, Pos* pos, std::string type = "normal");
+   
        ~Block();
    };
