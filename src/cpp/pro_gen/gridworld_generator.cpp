@@ -13,14 +13,28 @@
 #include "ProceduralGenerator.h"
 #include "World.h"
 #include <boost/program_options.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
 #include <fstream>
 #include <iostream>
+#include <random>
 
 using namespace std;
-boost::random::mt19937 gen;
+random_device r;
+mt19937_64 gen(r());
 namespace po = boost::program_options;
+
+Block getRandomVictim(Pos* pos, double greenBias) {
+    uniform_int_distribution<> dist(1, 100);
+    double greenProbability = greenBias * 100;
+    int randomInt = dist(gen);
+    if (randomInt <= greenProbability) {
+        Block block("prismarine", pos, "victim");
+        return block;
+    }
+    else {
+        Block block("gold", pos, "victim");
+        return block;
+    }
+}
 
 /**
  * @brief Generate N^2 AABB and place them in the given world such that there
@@ -100,12 +114,11 @@ void generateVictimInAABB(AABB* aabb) {
     Pos randPos((*aabb).getRandomPosAtBase(&gen, 2, 2, 2, 2));
     randPos.setY(randPos.getY() + 1);
 
-    boost::random::uniform_int_distribution<> dist(1, 100);
+    uniform_int_distribution<> dist(1, 100);
     int randInteger = dist(gen);
 
     if (randInteger <= 75) {
-        ProceduralGenerator pgen;
-        Block victim = pgen.getRandomVictim(&randPos, 0.60, &gen);
+        Block victim = getRandomVictim(&randPos, 0.60);
         (*aabb).addBlock(&victim);
     }
     else {
@@ -180,6 +193,11 @@ int main(int argc, char* argv[]) {
     int N;
     int sep = 0;        // Separation defaults to 0
     int AABB_size = 10; // Size defaults to 10
+    string jsonPath =
+        "../../../../external/malmo/Minecraft/run/procedural.json";
+    string tsvPath =
+        "../../../../external/malmo/Minecraft/run/procedural.tsv"; // Default
+                                                                   // locations
 
     // Handle options
     po::options_description desc("Allowed options");
@@ -192,7 +210,15 @@ int main(int argc, char* argv[]) {
         "The separation between AABB in the cardinal directions. Defaults to "
         "0.")("aabb_size",
               po::value<int>(),
-              "The size of the cubic AABB. Defaults to 10.");
+              "The size of the cubic AABB. Defaults to 10.")(
+        "json_path",
+        po::value<std::string>(),
+        "Specify where to save the JSON file with filename an extension. "
+        "Defaults to procedural.json in Minecraft/run/")(
+        "tsv_path",
+        po::value<std::string>(),
+        "Specify where to save the TSV file with filename an extension. "
+        "Defaults to procedural.tsv in Minecraft/run/");
 
     po::variables_map vm;
     po::store(po::command_line_parser(argc, argv).options(desc).run(), vm);
@@ -219,20 +245,26 @@ int main(int argc, char* argv[]) {
         AABB_size = vm["aabb_size"].as<int>();
     }
 
+    if (vm.count("json_path")) {
+        jsonPath = vm["json_path"].as<std::string>();
+    }
+
+    if (vm.count("tsv_path")) {
+        tsvPath = vm["tsv_path"].as<std::string>();
+    }
+
     // Process input and generate output
     cout << "Generating gridworld..." << endl;
     World world = generateGridWorld(N, sep, AABB_size, "planks");
     cout << "Writing to file..." << endl;
 
     // Write JSON
-    ofstream outputJSON(
-        "../../../../external/malmo/Minecraft/run/procedural.json", ios::out);
+    ofstream outputJSON(jsonPath, ios::out);
     outputJSON << world.toJSON();
     outputJSON.close();
 
     // Write TSV
-    ofstream outputTSV(
-        "../../../../external/malmo/Minecraft/run/procedural.tsv", ios::out);
+    ofstream outputTSV(tsvPath, ios::out);
     outputTSV << world.toTSV();
     outputTSV.close();
 
