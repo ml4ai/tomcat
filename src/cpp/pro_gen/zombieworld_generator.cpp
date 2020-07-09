@@ -215,16 +215,16 @@ void generateAllDoorsInAABB(AABB* aabb) {
  * @param worldptr The world where blocks must be placed
  */
 void generateBlocks(World* worldptr) {
-    for (auto& aabb : *(*worldptr).getAABBList()) {
-        if (strcmp(aabb.getType().c_str(), "pit") != 0) {
-            generateAllDoorsInAABB(&aabb);
+    for (auto aabb : *(*worldptr).getAABBList()) {
+        if (strcmp((*aabb).getType().c_str(), "pit") != 0) {
+            generateAllDoorsInAABB(aabb);
         }
     }
 }
 
 void generateBoundingWalls(World* world) {
-    AABB firstAABB = (*(*world).getAABBList()).front();
-    AABB lastAABB = (*(*world).getAABBList()).back();
+    AABB firstAABB = *(*(*world).getAABBList()).front();
+    AABB lastAABB = *(*(*world).getAABBList()).back();
 
     // Create boundary
     Pos boundaryTopLeft(firstAABB.getTopLeft());
@@ -282,7 +282,7 @@ void generateBoundingWalls(World* world) {
  * @return World The generated world object representing the zombie mission
  */
 World generateZombieWorld() {
-    /*int N = 3;
+    int N = 3;
     int sep = 15;
     int AABB_size = 10;
     string AABB_material = "planks";
@@ -291,19 +291,19 @@ World generateZombieWorld() {
     generateAABBGrid(&world, N, sep, AABB_size, AABB_material);
     generateBlocks(&world);
     generateBoundingWalls(&world);
-    return world;*/
+    return world;
 
-    World world;
+    /*World world;
     Group g(1);
-    AABB one(2,"room", "planks", new Pos(1,3,1), new Pos(4,7,4));
-    AABB two(3, "room", "cobblestone", new Pos(5,3,5), new Pos(8,7,8));
+    AABB one(2, "room", "planks", new Pos(1, 3, 1), new Pos(4, 7, 4));
+    AABB two(3, "room", "cobblestone", new Pos(5, 3, 5), new Pos(8, 7, 8));
 
     g.addAABB(&one);
     g.addAABB(&two);
 
     world.addAABB(&g);
 
-    return world;
+    return world;*/
 }
 
 /**

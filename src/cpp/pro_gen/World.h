@@ -15,7 +15,7 @@
  */
 class World {
   private:
-    std::vector<AABB> aabbList;
+    std::vector<AABB*> aabbList;
     std::vector<Block> blockList;
 
   public:
@@ -24,7 +24,7 @@ class World {
      *
      * @return vector<AABB>* The AABB list
      */
-    std::vector<AABB>* getAABBList();
+    std::vector<AABB*>* getAABBList();
 
     /**
      * @brief Returns a pointer to the vector that holds the Blocks
