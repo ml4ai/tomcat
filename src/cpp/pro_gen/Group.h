@@ -9,6 +9,7 @@ class Group : public AABB{
 
     public:
         void addAABB(AABB * aabb);
+        std::string toTSV();
         Group(int id);
         
 

@@ -10,6 +10,7 @@
  * AABB_size defaults to 10
  */
 
+#include "Group.h"
 #include "Pit.h"
 #include "World.h"
 #include <boost/program_options.hpp>
@@ -281,7 +282,7 @@ void generateBoundingWalls(World* world) {
  * @return World The generated world object representing the zombie mission
  */
 World generateZombieWorld() {
-    int N = 3;
+    /*int N = 3;
     int sep = 15;
     int AABB_size = 10;
     string AABB_material = "planks";
@@ -290,6 +291,18 @@ World generateZombieWorld() {
     generateAABBGrid(&world, N, sep, AABB_size, AABB_material);
     generateBlocks(&world);
     generateBoundingWalls(&world);
+    return world;*/
+
+    World world;
+    Group g(1);
+    AABB one(2,"room", "planks", new Pos(1,3,1), new Pos(4,7,4));
+    AABB two(3, "room", "cobblestone", new Pos(5,3,5), new Pos(8,7,8));
+
+    g.addAABB(&one);
+    g.addAABB(&two);
+
+    world.addAABB(&g);
+
     return world;
 }
 
@@ -340,9 +353,9 @@ int main(int argc, char* argv[]) {
     cout << "Writing to file..." << endl;
 
     // Write JSON
-    ofstream outputJSON(jsonPath, ios::out);
+    /*ofstream outputJSON(jsonPath, ios::out);
     outputJSON << world.toJSON();
-    outputJSON.close();
+    outputJSON.close();*/
 
     // Write TSV
     ofstream outputTSV(tsvPath, ios::out);
