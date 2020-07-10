@@ -95,20 +95,38 @@ __install_dependencies_using_apt() {
         doxygen \
         ffmpeg \
         wmctrl \
-        mosquitto\
-        mosquitto-clients\
-        curl\
-        openssl
+        mosquitto \
+        mosquitto-clients \
+        curl \
+        openssl \
+        zlib1g-dev \
+        libbz2-dev
     if [[ $? -ne 0 ]]; then exit 1; fi
 
-    # On Ubuntu 18.04, the required version of the nlohmann-json JSON library
-    # is not available using apt-get, so we install from source.
-    if ! "$TOMCAT"/tools/install_from_source/nlohmann-json; then exit 1; fi
+    local ubuntu_major_version=$(lsb_release -d | cut -d " " -f2 \
+                                                | cut -d "." -f1)
+    if [[ $ubuntu_major_version -le 18 ]]; then
+        # On Ubuntu 18.04 and lower, the required version of the nlohmann-json
+        # library is not available using apt-get, so we install from source.
+        if ! "$TOMCAT"/tools/install_from_source/nlohmann-json; then
+            echo "Failed to install nlohmann-json from source. Exiting now."
+            exit 1
+        fi
+    else
+        sudo apt install nlohmann-json3-dev
+    fi
 
-    # The Github Actions Ubuntu 18.04 VM already has Boost installed, but not
-    # all the components we need. So we will use apt-get to install the missing
-    # ones.
-    if ! sudo apt-get install -y libboost-all-dev; then exit 1; fi
+    if (( CI )); then
+        # The Github Actions Ubuntu 18.04 VM already has Boost installed, but not
+        # all the components we need. So we will use apt-get to install the missing
+        # ones.
+        if ! sudo apt-get install -y libboost-all-dev; then exit 1; fi
+    else
+        if ! "$TOMCAT"/tools/install_from_source/boost; then
+            echo "Failed to install Boost from source. Exiting now."
+            exit 1
+        fi
+    fi
 
     # TODO - when OpenFace gets added back, add opencv, openblas, and dlib as
     # dependencies.
