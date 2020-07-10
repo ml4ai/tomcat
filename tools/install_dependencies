@@ -88,7 +88,7 @@ __install_dependencies_using_apt() {
 
     if ! sudo apt-get update; then exit 1; fi
 
-    if sudo apt-get install -y --allow-downgrades\
+    sudo apt-get install -y --allow-downgrades\
         cmake \
         gcc-9 \
         libfmt-dev \
