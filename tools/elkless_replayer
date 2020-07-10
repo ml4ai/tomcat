@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# Author: Adarsh Pyarelal (adarsh@arizona.edu)
+
 """ ELKless Replayer is a simple program to replay messages from a file
 containing messages collected during a TA3 experimental trial and dumped from
 an Elasticsearch database.
@@ -12,26 +14,24 @@ topic."""
 # To see the command line arguments and invocation pattern, run
 #     ./elkless_replayer -h
 
-import sys
 import json
 from dateutil.parser import parse
 import argparse
-import subprocess as sp
+import paho.mqtt.client as mqtt
+
+mqttc = mqtt.Client()
 
 if __name__ == "__main__":
-    try:
-        sp.run(
-            ["command", "-v", "mosquitto_pub"], check=True, capture_output=True
-        )
-    except sp.CalledProcessError as e:
-        sys.exit(
-            "Could not find the mosquitto_pub client executable - "
-            "please make sure it is installed."
-        )
 
     # Argument parsing
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("input", help="The messages file to replay to the bus")
+    parser.add_argument(
+        "-m",
+        "--host",
+        help="Host that the mosquitto message broker is running on.",
+        default="localhost",
+    )
     parser.add_argument(
         "-p",
         "--port",
@@ -43,39 +43,35 @@ if __name__ == "__main__":
 
     # Open the input file, parse each line in it as a JSON-serialized object.
     with open(args.input, "r") as f:
-        messages = [json.loads(line) for line in f]
-        for data in sorted(
-            messages, key=lambda x: parse(x["@timestamp"])
-        ):
+        messages = []
+        for line in f:
+            # print(line)
+            jline = None
+            try:
+                jline = json.loads(line)
+            except:
+                print("Bad json line of len: {}, {}".format(len(line), line))
+            if jline is not None:
+                messages.append(jline)
+
+        sorted_messages = sorted(
+            messages, key=lambda x: parse(x["header"]["timestamp"])
+        )
+
+        print("Publishing message count {}".format(len(sorted_messages)))
+
+        # pub_via_shell(sorted_messages)
+        mqttc.connect(args.host, port=args.port)
+
+        for data in sorted_messages:
             # Delete keys that were not in the original message, for more
             # faithful replaying.
             for key in ("message", "@timestamp", "@version", "host"):
-                del data[key]
+                if key in data:
+                    del data[key]
 
             # Get the topic to publish the message to.
             topic = data.pop("topic")
-
-            # Publish the message to the given topic.
-            try:
-                sp.run(
-                    [
-                        "mosquitto_pub",
-                        "-p",
-                        str(args.port),
-                        "-t",
-                        topic,
-                        "-m",
-                        json.dumps(data),
-                    ],
-                    check=True,
-                    capture_output=True,
-                )
-            except sp.CalledProcessError as e:
-                sys.exit(
-                    "Call to mosquitto_pub exited with return code "
-                    + str(e.returncode)
-                    + ".\n"
-                    + "Please check if the mosquitto broker is up and running on port "
-                    + str(args.port)
-                    + "."
-                )
+            mqttc.publish(topic, json.dumps(data))
+        mqttc.loop(timeout=1.0)
+        # Now we should have really pushed all the messages.

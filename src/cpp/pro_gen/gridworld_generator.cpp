@@ -13,14 +13,28 @@
 #include "ProceduralGenerator.h"
 #include "World.h"
 #include <boost/program_options.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
 #include <fstream>
 #include <iostream>
+#include <random>
 
 using namespace std;
-boost::random::mt19937 gen;
+random_device r;
+mt19937_64 gen(r());
 namespace po = boost::program_options;
+
+Block getRandomVictim(Pos* pos, double greenBias) {
+    uniform_int_distribution<> dist(1, 100);
+    double greenProbability = greenBias * 100;
+    int randomInt = dist(gen);
+    if (randomInt <= greenProbability) {
+        Block block("prismarine", pos, "victim");
+        return block;
+    }
+    else {
+        Block block("gold", pos, "victim");
+        return block;
+    }
+}
 
 /**
  * @brief Generate N^2 AABB and place them in the given world such that there
@@ -39,10 +53,10 @@ void generateAABBGrid(
 
     // Add the first one
     int idCtr = 1;
-    Pos topLeft(1, 0, 1);
-    Pos bottomRight(AABB_size, AABB_size, AABB_size);
+    Pos topLeft(1, 3, 1);
+    Pos bottomRight(AABB_size, 3 + AABB_size, AABB_size);
 
-    AABB prevAABB(idCtr, material, &topLeft, &bottomRight);
+    AABB prevAABB(idCtr, "room", material, &topLeft, &bottomRight, true, false);
     (*worldptr).addAABB(&prevAABB);
 
     // Use relative coordinates for the "previous" AABB to generate the rest at
@@ -53,12 +67,18 @@ void generateAABBGrid(
         if ((idCtr - 1) % N == 0) {
             // Condition for when a row in the grid is complete and we move onto
             // the next one
-            Pos newTopLeft(1, 0, 1);
+            Pos newTopLeft(1, 3, 1);
             newTopLeft.setZ(prevAABB.getBottomRight().getZ() + sep);
 
             Pos newBottomRight(
-                AABB_size, AABB_size, newTopLeft.getZ() + AABB_size);
-            AABB curAABB(idCtr, material, &newTopLeft, &newBottomRight);
+                AABB_size, 3 + AABB_size, newTopLeft.getZ() + AABB_size);
+            AABB curAABB(idCtr,
+                         "room",
+                         material,
+                         &newTopLeft,
+                         &newBottomRight,
+                         true,
+                         false);
             (*worldptr).addAABB(&curAABB);
             prevAABB = curAABB;
         }
@@ -70,7 +90,13 @@ void generateAABBGrid(
             Pos newBottomRight = prevAABB.getBottomRight();
             newBottomRight.setX(newTopLeft.getX() + AABB_size);
 
-            AABB curAABB(idCtr, material, &newTopLeft, &newBottomRight);
+            AABB curAABB(idCtr,
+                         "room",
+                         material,
+                         &newTopLeft,
+                         &newBottomRight,
+                         true,
+                         false);
             (*worldptr).addAABB(&curAABB);
             prevAABB = curAABB;
         }
@@ -78,22 +104,22 @@ void generateAABBGrid(
 }
 
 /**
- * @brief Adds a random victim to the world's list of blocks such that the
+ * @brief Adds a random victim to the aabb's list of blocks such that the
  * victim is in a random position inside the given AABB. The addition of victims
  * is random so this function won't add a victim every time it is called
  *
- * @param worldptr The world that needs to know about this victim
  * @param aabb The AABB within which the victim is to ve generated
  */
-void generateVictimInAABB(World* worldptr, AABB* aabb) {
-    Pos randPos((*aabb).getRandomPosAtBase(2, 2, 2, 2));
-    boost::random::uniform_int_distribution<> dist(1, 100);
+void generateVictimInAABB(AABB* aabb) {
+    Pos randPos((*aabb).getRandomPosAtBase(&gen, 2, 2, 2, 2));
+    randPos.setY(randPos.getY() + 1);
+
+    uniform_int_distribution<> dist(1, 100);
     int randInteger = dist(gen);
 
     if (randInteger <= 75) {
-        ProceduralGenerator pgen;
-        Block victim = pgen.getRandomVictim(&randPos, 0.60, &gen);
-        (*worldptr).addBlock(&victim);
+        Block victim = getRandomVictim(&randPos, 0.60);
+        (*aabb).addBlock(&victim);
     }
     else {
         ;
@@ -101,71 +127,36 @@ void generateVictimInAABB(World* worldptr, AABB* aabb) {
 }
 
 /**
- * @brief Gets the midpoint of each edge of the given AABB such that the Y
- * coordinate of each edge coordinate returned is equal to the Y of the base of
- * the AABB
+ * @brief Generates all 4 doors for the given AABB to keep track of.
  *
- * @param aabb The AABB whose edge midpoints are to be found
- * @return vector<Pos> The list of size 4 containing the top,right,bottom and
- * left edge midpoints respectively
- */
-vector<Pos> getAABBEdgeMidpointAtBase(AABB* aabb) {
-    int midX = (*aabb).getMidpointX();
-    int midZ = (*aabb).getMidpointZ();
-    int base = (*aabb).getTopLeft().getY();
-
-    Pos topEdgeMid((*aabb).getTopLeft());
-    topEdgeMid.setX(midX);
-    topEdgeMid.setY(base);
-
-    Pos bottomEdgeMid((*aabb).getBottomRight());
-    bottomEdgeMid.setX(midX);
-    bottomEdgeMid.setY(base);
-
-    Pos leftEdgeMid((*aabb).getTopLeft());
-    leftEdgeMid.setZ(midZ);
-    leftEdgeMid.setY(base);
-
-    Pos rightEdgeMid((*aabb).getBottomRight());
-    rightEdgeMid.setZ(midZ);
-    rightEdgeMid.setY(base);
-
-    vector<Pos> midEdgesAtBase;
-    midEdgesAtBase.push_back(topEdgeMid);
-    midEdgesAtBase.push_back(rightEdgeMid);
-    midEdgesAtBase.push_back(bottomEdgeMid);
-    midEdgesAtBase.push_back(leftEdgeMid);
-
-    return midEdgesAtBase;
-}
-
-/**
- * @brief Generates all 4 doors for the given AABB and adds those blocks to the
- * list that the given world must keep track of
- *
- * @param worldptr The world in which doors are to be added
  * @param aabb The AABB whose doors are to be generated
  */
-void generateAllDoorsInAABB(World* worldptr, AABB* aabb) {
+void generateAllDoorsInAABB(AABB* aabb) {
     // Get edge midpoints for the AABB because that is where the doors will be
     // placed
-    vector<Pos> edges = getAABBEdgeMidpointAtBase(aabb);
+    vector<Pos> edges = (*aabb).getEdgeMidpointAtBase();
     Pos topEdgeMid(edges.at(0));
     Pos rightEdgeMid(edges.at(1));
     Pos bottomEdgeMid(edges.at(2));
     Pos leftEdgeMid(edges.at(3));
 
-    // Use the coordinates to create door blocks
-    Block topDoor("door", "oak_door", &topEdgeMid);
-    Block bottomDoor("door", "oak_door", &bottomEdgeMid);
-    Block leftDoor("door", "oak_door", &leftEdgeMid);
-    Block rightDoor("door", "oak_door", &rightEdgeMid);
+    // Since points are at base we want them to be at base + 1
+    topEdgeMid.shiftY(1);
+    bottomEdgeMid.shiftY(1);
+    leftEdgeMid.shiftY(1);
+    rightEdgeMid.shiftY(1);
 
-    // Tell the world to keep track of the blocks
-    (*worldptr).addBlock(&topDoor);
-    (*worldptr).addBlock(&rightDoor);
-    (*worldptr).addBlock(&leftDoor);
-    (*worldptr).addBlock(&rightDoor);
+    // Use the coordinates to create door blocks
+    Block topDoor("door", &topEdgeMid);
+    Block bottomDoor("door", &bottomEdgeMid);
+    Block leftDoor("door", &leftEdgeMid);
+    Block rightDoor("door", &rightEdgeMid);
+
+    // Add it to the AABB's doors
+    (*aabb).addBlock(&topDoor);
+    (*aabb).addBlock(&bottomDoor);
+    (*aabb).addBlock(&leftDoor);
+    (*aabb).addBlock(&rightDoor);
 }
 
 /**
@@ -176,8 +167,8 @@ void generateAllDoorsInAABB(World* worldptr, AABB* aabb) {
  */
 void generateBlocks(World* worldptr) {
     for (auto& aabb : *((*worldptr).getAABBList())) {
-        generateAllDoorsInAABB(worldptr, &aabb);
-        generateVictimInAABB(worldptr, &aabb);
+        generateAllDoorsInAABB(&aabb);
+        generateVictimInAABB(&aabb);
     }
 }
 
@@ -202,6 +193,11 @@ int main(int argc, char* argv[]) {
     int N;
     int sep = 0;        // Separation defaults to 0
     int AABB_size = 10; // Size defaults to 10
+    string jsonPath =
+        "../../../../external/malmo/Minecraft/run/procedural.json";
+    string tsvPath =
+        "../../../../external/malmo/Minecraft/run/procedural.tsv"; // Default
+                                                                   // locations
 
     // Handle options
     po::options_description desc("Allowed options");
@@ -214,7 +210,15 @@ int main(int argc, char* argv[]) {
         "The separation between AABB in the cardinal directions. Defaults to "
         "0.")("aabb_size",
               po::value<int>(),
-              "The size of the cubic AABB. Defaults to 10.");
+              "The size of the cubic AABB. Defaults to 10.")(
+        "json_path",
+        po::value<std::string>(),
+        "Specify where to save the JSON file with filename an extension. "
+        "Defaults to procedural.json in Minecraft/run/")(
+        "tsv_path",
+        po::value<std::string>(),
+        "Specify where to save the TSV file with filename an extension. "
+        "Defaults to procedural.tsv in Minecraft/run/");
 
     po::variables_map vm;
     po::store(po::command_line_parser(argc, argv).options(desc).run(), vm);
@@ -241,15 +245,31 @@ int main(int argc, char* argv[]) {
         AABB_size = vm["aabb_size"].as<int>();
     }
 
+    if (vm.count("json_path")) {
+        jsonPath = vm["json_path"].as<std::string>();
+    }
+
+    if (vm.count("tsv_path")) {
+        tsvPath = vm["tsv_path"].as<std::string>();
+    }
+
     // Process input and generate output
     cout << "Generating gridworld..." << endl;
     World world = generateGridWorld(N, sep, AABB_size, "planks");
     cout << "Writing to file..." << endl;
-    ofstream outputFile(
-        "../../../../external/malmo/Minecraft/run/procedural.json", ios::out);
-    outputFile << world.toJSON();
-    outputFile.close();
-    cout << "Done. The generated file is in Minecraft/run/procedural.json"
+
+    // Write JSON
+    ofstream outputJSON(jsonPath, ios::out);
+    outputJSON << world.toJSON();
+    outputJSON.close();
+
+    // Write TSV
+    ofstream outputTSV(tsvPath, ios::out);
+    outputTSV << world.toTSV();
+    outputTSV.close();
+
+    cout << "Done. The generated files are in Minecraft/run/procedural.json "
+            "and Minecraft/run/procedural.tsv"
          << endl;
 
     return 0;
