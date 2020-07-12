@@ -17,11 +17,13 @@ timestamp = datetime.utcnow().isoformat() + "Z"
 
 player_id = sys.argv[2]
 player_id_hashed = hashlib.sha256(player_id.encode()).hexdigest()
+time_limit = "$TOMCAT/tools/run_session/${TIME_LIMIT}"
 
 metadata = {
     "session_id": sys.argv[1],  # Get UUID from command line argument
     "timestamp": timestamp+"Z",
     "player_id": player_id_hashed
+    "time_limit": time_limit
 }
 
 print(json.dumps(metadata, indent=4))  # Serialize metadata

@@ -40,12 +40,23 @@ fi
 SESSION_UUID=$(uuidgen | tr '[:upper:]' '[:lower:]')
 if [[ $? -ne 0 ]]; then exit 1; fi
 
+#PRINT STATEMENTS TO DELETE 
+echo "$SESSION_UUID is session id"
+sleep 2
+echo "$PLAYER_ID is player id before hashed"
+sleep 2
+echo "$TIME_LIMIT is time limit from run_session"
+sleep 1
+
+
+
 # Creating an output directory for this session.
 SESSION_OUTPUT_DIR="${TOMCAT}"/data/participant_data/"$SESSION_UUID"
 mkdir -p "${SESSION_OUTPUT_DIR}"
 
 # Generate metadata file for the session
-"$TOMCAT"/tools/generate_session_metadata "$SESSION_UUID" "$PLAYER_ID" > "$SESSION_OUTPUT_DIR"/metadata.json
+"$TOMCAT"/tools/generate_session_metadata "$SESSION_UUID" "$PLAYER_ID"\
+  "$TIME_LIMIT" > "$SESSION_OUTPUT_DIR"/metadata.json
 if [[ $? -ne 0 ]]; then exit 1; fi
 
 
