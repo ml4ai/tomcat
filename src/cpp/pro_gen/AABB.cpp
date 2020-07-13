@@ -3,6 +3,7 @@
  * @brief This file implements the methods in the AABB class.
  */
 #include "AABB.h"
+#include <iostream>
 
 using namespace std;
 
@@ -141,11 +142,9 @@ void AABB::generateBox(string material,
 
     for (int x = startX; x <= endX; x++) {
         for (int y = startY; y <= endY; y++) {
-
             for (int z = startZ; z <= endZ; z++) {
                 Pos pos(x, y, z);
-                Block block(material, pos, type);
-                this->addBlock(block);
+                this->addBlock(*(new Block(material, pos, type)));
             }
         }
     }
@@ -179,13 +178,13 @@ void AABB::addRandomBlocks(int n,
         int y = randY(gen);
         int z = randZ(gen);
         Pos pos(x, y, z);
-        Block block(material, pos, type);
-        this->addBlock(block);
+        this->addBlock(*(new Block(material, pos, type)));
         n--;
     }
 }
 
 string AABB::toTSV() {
+
     string retval = "";
     for (int x = (this->topLeft).getX(); x <= (this->bottomRight).getX(); x++) {
         for (int y = (this->topLeft).getY(); y <= (this->bottomRight).getY();

@@ -25,10 +25,10 @@ mt19937_64 gen(r());
 namespace po = boost::program_options;
 
 void addGroupOfAABB(World& worldptr,
-                    int& idCtr,
+                    int idCtr,
                     Pos& firstTopLeft,
                     Pos& firstBottomRight) {
-    worldptr.addAABB(*(new Group(idCtr++)));
+    worldptr.addAABB(*(new Group(idCtr)));
     Group* g = dynamic_cast<Group*>((worldptr.getAABBList()).back());
 
     (*g).addAABB(
@@ -106,7 +106,7 @@ void chooseZombieworldAABB(World& worldptr,
         }
         else {
             worldptr.addAABB(
-                *(new Pit(idCtr, "grass", topLeft, newBottomRight)));
+                *(new Pit(idCtr, "sand", topLeft, newBottomRight)));
             AABB* lavaPit = worldptr.getAABBList().back();
             (*lavaPit).generateBox("lava", 3, 2, 0, 0, 1, 3);
             (*lavaPit).addRandomBlocks(10, "grass", gen, 1, 1, 0, 0, 1, 1);
