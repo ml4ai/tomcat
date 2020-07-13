@@ -14,9 +14,7 @@ vector<AABB*>* World::getAABBList() { return &(this->aabbList); }
 
 vector<Block>* World::getBlockList() { return &(this->blockList); }
 
-void World::addAABB(AABB* aabb) {
-    (this->aabbList).push_back(aabb);
-}
+void World::addAABB(AABB* aabb) { (this->aabbList).push_back(aabb); }
 
 void World::addBlock(Block* block) { (this->blockList).push_back(*block); }
 

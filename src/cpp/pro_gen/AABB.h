@@ -225,7 +225,7 @@ class AABB {
      *
      * @return string The TSV representation
      */
-    std::string toTSV();
+    std::string virtual toTSV();
 
     /**
      * @brief Construct a new AABB object
@@ -254,5 +254,5 @@ class AABB {
     /**
      * @brief Destroy the AABB object
      */
-    ~AABB();
+    virtual ~AABB();
 };
