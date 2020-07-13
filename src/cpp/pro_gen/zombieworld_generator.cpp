@@ -25,7 +25,7 @@ mt19937_64 gen(r());
 namespace po = boost::program_options;
 
 /**
- * @brief Randomly choose and return an AABB. Sincce this is specific to the
+ * @brief Randomly choose and return an AABB. Since this is specific to the
  * zombie world, the function will return a standard room when idCtr is not
  * divisible by 2, but if idCtr is divisible by 2, it will return a subclass of
  * AABB which is a Pit.
@@ -312,23 +312,17 @@ World generateZombieWorld() {
  */
 int main(int argc, char* argv[]) {
 
-    string jsonPath =
-        "../../../../external/malmo/Minecraft/run/procedural.json";
-    string tsvPath =
-        "../../../../external/malmo/Minecraft/run/procedural.tsv"; // Default
-                                                                   // locations
+    string jsonPath, tsvPath;
 
     // Handle options
     po::options_description desc("Allowed options");
-    desc.add_options()("help", "produce help message")(
+    desc.add_options()("help,h", "produce help message")(
         "json_path",
-        po::value<std::string>(),
-        "Specify where to save the JSON file with filename an extension. "
-        "Defaults to procedural.json in Minecraft/run/")(
+        po::value<string>()->default_value("procedural.json"),
+        "Specify where to save the JSON file with filename and extension.")(
         "tsv_path",
-        po::value<std::string>(),
-        "Specify where to save the TSV file with filename an extension. "
-        "Defaults to procedural.tsv in Minecraft/run/");
+        po::value<string>()->default_value("procedural.tsv"),
+        "Specify where to save the TSV file with filename an extension.");
 
     po::variables_map vm;
     po::store(po::command_line_parser(argc, argv).options(desc).run(), vm);
@@ -340,11 +334,11 @@ int main(int argc, char* argv[]) {
     }
 
     if (vm.count("json_path")) {
-        jsonPath = vm["json_path"].as<std::string>();
+        jsonPath = vm["json_path"].as<string>();
     }
 
     if (vm.count("tsv_path")) {
-        tsvPath = vm["tsv_path"].as<std::string>();
+        tsvPath = vm["tsv_path"].as<string>();
     }
 
     // Process input and generate output
