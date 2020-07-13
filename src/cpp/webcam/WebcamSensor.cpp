@@ -211,7 +211,7 @@ namespace tomcat {
         	vector<pair<string, double>> AU_reg, AU_class;
         	AU_reg = face_analyser.GetCurrentAUsReg();
         	AU_class = 	face_analyser.GetCurrentAUsClass();
-        	cout << AU_reg[0].first << endl;
+        	
         	json output;
         	
         	// TODO: Implement an iterator instead of manual
