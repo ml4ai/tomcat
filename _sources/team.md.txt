@@ -33,7 +33,7 @@ Current
 **Undergraduates:**
 - [Aditya Banerjee](https://github.com/Adi-UA)
 - [Da Long](https://github.com/dl932)
-- [Shreeya Jain](https://github.com/shreeyajain)
+- [Shreeya Jain](https://www.linkedin.com/in/shreeya-jain-0b4438122)
 - [Liam Wilson](https://github.com/wilsonliam)
 
 Project Alumni
