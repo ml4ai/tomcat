@@ -3,10 +3,10 @@
 using namespace std;
 
 Group::Group(int id)
-    : AABB(id, "group", "air", new Pos(), new Pos(), true, false) {}
+    : AABB(id, "group", "air", *(new Pos()), *(new Pos()), true, false) {}
 
-void Group::addAABB(AABB* aabb) {
-    this->aabbList.push_back(*aabb);
+void Group::addAABB(AABB& aabb) {
+    this->aabbList.push_back(aabb);
     this->recalculateGroupBoundaries();
 }
 
@@ -58,8 +58,8 @@ void Group::recalculateGroupBoundaries() {
     Pos newTopLeft(minX, minY, minZ);
     Pos newBottomRight(maxX, maxY, maxZ);
 
-    this->setTopLeft(&newTopLeft);
-    this->setBottomRight(&newBottomRight);
+    this->setTopLeft(newTopLeft);
+    this->setBottomRight(newBottomRight);
 }
 
 string Group::toTSV() {

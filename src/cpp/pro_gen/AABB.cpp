@@ -9,12 +9,12 @@ using namespace std;
 AABB::AABB(int id,
            string type,
            string material,
-           Pos* topLeft,
-           Pos* bottomRight,
+           Pos& topLeft,
+           Pos& bottomRight,
            bool isHollow,
            bool hasRoof)
-    : id{id}, type{type}, material{material}, topLeft{*topLeft},
-      bottomRight{*bottomRight}, isHollow{isHollow}, hasRoof{hasRoof} {}
+    : id{id}, type{type}, material{material}, topLeft{topLeft},
+      bottomRight{bottomRight}, isHollow{isHollow}, hasRoof{hasRoof} {}
 
 int AABB::getID() { return this->id; }
 
@@ -26,7 +26,7 @@ Pos AABB::getTopLeft() { return this->topLeft; }
 
 Pos AABB::getBottomRight() { return this->bottomRight; }
 
-vector<Block>* AABB::getBlockList() { return &(this->blockList); }
+vector<Block*>& AABB::getBlockList() { return (this->blockList); }
 
 int AABB::getMidpointX() {
     int mid_x = ((this->topLeft).getX() +
@@ -46,7 +46,7 @@ int AABB::getMidpointZ() {
     return mid_z;
 }
 
-Pos AABB::getRandomPosAtBase(mt19937_64* gen,
+Pos AABB::getRandomPosAtBase(mt19937_64& gen,
                              int offsetPosX,
                              int offsetNegX,
                              int offsetPosZ,
@@ -61,8 +61,8 @@ Pos AABB::getRandomPosAtBase(mt19937_64* gen,
     uniform_int_distribution<> randXGen(startX, endX);
     uniform_int_distribution<> randZGen(startZ, endZ);
 
-    int randX = randXGen(*gen);
-    int randZ = randZGen(*gen);
+    int randX = randXGen(gen);
+    int randZ = randZGen(gen);
 
     int base = (this->topLeft).getY();
     Pos pos(randX, base, randZ);
@@ -100,22 +100,20 @@ vector<Pos> AABB::getEdgeMidpointAtBase() {
     return midEdgesAtBase;
 }
 
-void AABB::setTopLeft(Pos* topLeft) { this->topLeft = *topLeft; }
+void AABB::setTopLeft(Pos& topLeft) { this->topLeft = topLeft; }
 
-void AABB::setBottomRight(Pos* bottomRight) {
-    this->bottomRight = *bottomRight;
-}
+void AABB::setBottomRight(Pos& bottomRight) { this->bottomRight = bottomRight; }
 
-void AABB::addBlock(Block* block) { (this->blockList).push_back(*block); }
+void AABB::addBlock(Block& block) { (this->blockList).push_back(&block); }
 
-bool AABB::isOverlapping(AABB* other) {
+bool AABB::isOverlapping(AABB& other) {
     int xRange = (this->bottomRight.getX()) - (this->topLeft.getX());
     int yRange = (this->bottomRight.getY()) - (this->topLeft.getY());
     int zRange = (this->bottomRight.getZ()) - (this->topLeft.getZ());
 
-    if ((abs(other->topLeft.getX() - this->topLeft.getX()) < xRange) ||
-        (abs(other->topLeft.getY() - this->topLeft.getY()) < yRange) ||
-        (abs(other->topLeft.getZ() - this->topLeft.getZ()) < zRange)) {
+    if ((abs(other.topLeft.getX() - this->topLeft.getX()) < xRange) ||
+        (abs(other.topLeft.getY() - this->topLeft.getY()) < yRange) ||
+        (abs(other.topLeft.getZ() - this->topLeft.getZ()) < zRange)) {
 
         return true;
     }
@@ -146,8 +144,8 @@ void AABB::generateBox(string material,
 
             for (int z = startZ; z <= endZ; z++) {
                 Pos pos(x, y, z);
-                Block block(material, &pos, type);
-                this->addBlock(&block);
+                Block block(material, pos, type);
+                this->addBlock(block);
             }
         }
     }
@@ -155,7 +153,7 @@ void AABB::generateBox(string material,
 
 void AABB::addRandomBlocks(int n,
                            string material,
-                           mt19937_64* gen,
+                           mt19937_64& gen,
                            int offsetPosX,
                            int offsetNegX,
                            int offsetPosY,
@@ -177,12 +175,12 @@ void AABB::addRandomBlocks(int n,
         uniform_int_distribution<> randY(startY, endY);
         uniform_int_distribution<> randZ(startZ, endZ);
 
-        int x = randX(*gen);
-        int y = randY(*gen);
-        int z = randZ(*gen);
+        int x = randX(gen);
+        int y = randY(gen);
+        int z = randZ(gen);
         Pos pos(x, y, z);
-        Block block(material, &pos, type);
-        this->addBlock(&block);
+        Block block(material, pos, type);
+        this->addBlock(block);
         n--;
     }
 }
@@ -223,8 +221,8 @@ string AABB::toTSV() {
         }
     }
 
-    for (auto block : (this->blockList)) {
-        retval += block.toTSV() + "\n";
+    for (auto& block : (this->blockList)) {
+        retval += (*block).toTSV() + "\n";
     }
 
     return retval;

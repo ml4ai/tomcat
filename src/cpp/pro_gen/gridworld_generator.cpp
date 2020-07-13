@@ -22,17 +22,15 @@ random_device r;
 mt19937_64 gen(r());
 namespace po = boost::program_options;
 
-Block getRandomVictim(Pos* pos, double greenBias) {
+void addRandomVictim(AABB& aabb, Pos& pos, double greenBias) {
     uniform_int_distribution<> dist(1, 100);
     double greenProbability = greenBias * 100;
     int randomInt = dist(gen);
     if (randomInt <= greenProbability) {
-        Block block("prismarine", pos, "victim");
-        return block;
+        aabb.addBlock(*(new Block("prismarine", pos, "victim")));
     }
     else {
-        Block block("gold", pos, "victim");
-        return block;
+        aabb.addBlock(*(new Block("gold", pos, "victim")));
     }
 }
 
@@ -49,16 +47,16 @@ Block getRandomVictim(Pos* pos, double greenBias) {
  * @param material The material of each AABB
  */
 void generateAABBGrid(
-    World* worldptr, int N, int sep, int AABB_size, string material) {
+    World& worldptr, int N, int sep, int AABB_size, string material) {
 
     // Add the first one
     int idCtr = 1;
     Pos topLeft(1, 3, 1);
     Pos bottomRight(AABB_size, 3 + AABB_size, AABB_size);
 
-    (*worldptr).addAABB(
-        new AABB(idCtr, "room", material, &topLeft, &bottomRight, true, false));
-    AABB prevAABB = *(*(*worldptr).getAABBList()).back();
+    worldptr.addAABB(*(
+        new AABB(idCtr, "room", material, topLeft, bottomRight, true, false)));
+    AABB prevAABB = *(worldptr.getAABBList().back());
 
     // Use relative coordinates for the "previous" AABB to generate the rest at
     // each step
@@ -73,14 +71,15 @@ void generateAABBGrid(
 
             Pos newBottomRight(
                 AABB_size, 3 + AABB_size, newTopLeft.getZ() + AABB_size);
-            (*worldptr).addAABB(new AABB(idCtr,
-                                         "room",
-                                         material,
-                                         &newTopLeft,
-                                         &newBottomRight,
-                                         true,
-                                         false));
-            prevAABB = *(*(*worldptr).getAABBList()).back();
+            worldptr.addAABB(*(new AABB(idCtr,
+                                        "room",
+                                        material,
+                                        newTopLeft,
+                                        newBottomRight,
+                                        true,
+                                        false)));
+            prevAABB = *(worldptr.getAABBList().back());
+            ;
         }
         else {
             // Condition for the next AABB in the current row
@@ -90,14 +89,14 @@ void generateAABBGrid(
             Pos newBottomRight = prevAABB.getBottomRight();
             newBottomRight.setX(newTopLeft.getX() + AABB_size);
 
-            (*worldptr).addAABB(new AABB(idCtr,
-                                         "room",
-                                         material,
-                                         &newTopLeft,
-                                         &newBottomRight,
-                                         true,
-                                         false));
-            prevAABB = *(*(*worldptr).getAABBList()).back();
+            worldptr.addAABB(*(new AABB(idCtr,
+                                        "room",
+                                        material,
+                                        newTopLeft,
+                                        newBottomRight,
+                                        true,
+                                        false)));
+            prevAABB = *(worldptr.getAABBList().back());
         }
     }
 }
@@ -109,16 +108,15 @@ void generateAABBGrid(
  *
  * @param aabb The AABB within which the victim is to ve generated
  */
-void generateVictimInAABB(AABB* aabb) {
-    Pos randPos((*aabb).getRandomPosAtBase(&gen, 2, 2, 2, 2));
+void generateVictimInAABB(AABB& aabb) {
+    Pos randPos(aabb.getRandomPosAtBase(gen, 2, 2, 2, 2));
     randPos.setY(randPos.getY() + 1);
 
     uniform_int_distribution<> dist(1, 100);
     int randInteger = dist(gen);
 
     if (randInteger <= 75) {
-        Block victim = getRandomVictim(&randPos, 0.60);
-        (*aabb).addBlock(&victim);
+        addRandomVictim(aabb, randPos, 0.60);
     }
     else {
         ;
@@ -130,10 +128,10 @@ void generateVictimInAABB(AABB* aabb) {
  *
  * @param aabb The AABB whose doors are to be generated
  */
-void generateAllDoorsInAABB(AABB* aabb) {
+void generateAllDoorsInAABB(AABB& aabb) {
     // Get edge midpoints for the AABB because that is where the doors will be
     // placed
-    vector<Pos> edges = (*aabb).getEdgeMidpointAtBase();
+    vector<Pos> edges = aabb.getEdgeMidpointAtBase();
     Pos topEdgeMid(edges.at(0));
     Pos rightEdgeMid(edges.at(1));
     Pos bottomEdgeMid(edges.at(2));
@@ -145,17 +143,11 @@ void generateAllDoorsInAABB(AABB* aabb) {
     leftEdgeMid.shiftY(1);
     rightEdgeMid.shiftY(1);
 
-    // Use the coordinates to create door blocks
-    Block topDoor("door", &topEdgeMid);
-    Block bottomDoor("door", &bottomEdgeMid);
-    Block leftDoor("door", &leftEdgeMid);
-    Block rightDoor("door", &rightEdgeMid);
-
     // Add it to the AABB's doors
-    (*aabb).addBlock(&topDoor);
-    (*aabb).addBlock(&bottomDoor);
-    (*aabb).addBlock(&leftDoor);
-    (*aabb).addBlock(&rightDoor);
+    aabb.addBlock(*(new Block("door", topEdgeMid)));
+    aabb.addBlock(*(new Block("door", bottomEdgeMid)));
+    aabb.addBlock(*(new Block("door", leftEdgeMid)));
+    aabb.addBlock(*(new Block("door", rightEdgeMid)));
 }
 
 /**
@@ -164,10 +156,10 @@ void generateAllDoorsInAABB(AABB* aabb) {
  *
  * @param worldptr The world in which everything is to be added
  */
-void generateBlocks(World* worldptr) {
-    for (auto & aabb : *((*worldptr).getAABBList())) {
-        generateAllDoorsInAABB(aabb);
-        generateVictimInAABB(aabb);
+void generateBlocks(World& worldptr) {
+    for (auto& aabb : worldptr.getAABBList()) {
+        generateAllDoorsInAABB(*aabb);
+        generateVictimInAABB(*aabb);
     }
 }
 
@@ -183,8 +175,8 @@ void generateBlocks(World* worldptr) {
  */
 World generateGridWorld(int N, int sep, int AABB_size, string AABB_material) {
     World world;
-    generateAABBGrid(&world, N, sep, AABB_size, AABB_material);
-    generateBlocks(&world);
+    generateAABBGrid(world, N, sep, AABB_size, AABB_material);
+    generateBlocks(world);
     return world;
 }
 

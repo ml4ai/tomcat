@@ -23,7 +23,7 @@ class AABB {
     Pos bottomRight;
     bool isHollow;
     bool hasRoof;
-    std::vector<Block> blockList;
+    std::vector<Block *> blockList;
 
   public:
     /**
@@ -68,7 +68,7 @@ class AABB {
      *
      * @return vector<Block>* The reference to the block list
      */
-    std::vector<Block>* getBlockList();
+    std::vector<Block *>& getBlockList();
 
     /**
      * @brief Get the midpoint X value calculated between
@@ -110,7 +110,7 @@ class AABB {
      * Defaults to 1
      * @return Pos
      */
-    Pos getRandomPosAtBase(std::mt19937_64* gen,
+    Pos getRandomPosAtBase(std::mt19937_64& gen,
                            int offsetPosX = 1,
                            int offsetNegX = 1,
                            int offsetPosZ = 1,
@@ -131,14 +131,14 @@ class AABB {
      *
      * @param topLeft Pointer to the pos object top left is to be set to
      */
-    void setTopLeft(Pos* topLeft);
+    void setTopLeft(Pos& topLeft);
 
     /**
      * @brief Set the bottom right coordinate of the AABB
      *
      * @param bottomRight Pointer to the pos object bottom right is to be set to
      */
-    void setBottomRight(Pos* bottomRight);
+    void setBottomRight(Pos& bottomRight);
 
     /**
      * @brief Add a specific block for this AABB to keep track of. Ideally this
@@ -147,7 +147,7 @@ class AABB {
      *
      * @param block Pointer to the block to be added
      */
-    void addBlock(Block* block);
+    void addBlock(Block& block);
 
     /**
      * @brief Checks to see if two AABBs overlapp on any of the axes
@@ -156,7 +156,7 @@ class AABB {
      * @return true When the AABBs do overlap
      * @return false When the AABBs don't overlap
      */
-    bool isOverlapping(AABB* other);
+    bool virtual isOverlapping(AABB& other);
 
     /**
      * @brief Generate a box made of s specific material inside the AABB with
@@ -210,7 +210,7 @@ class AABB {
 
     void addRandomBlocks(int n,
                          std::string material,
-                         std::mt19937_64* gen,
+                         std::mt19937_64& gen,
                          int offsetPosX = 0,
                          int offsetNegX = 0,
                          int offsetPosY = 0,
@@ -246,8 +246,8 @@ class AABB {
     AABB(int id,
          std::string type,
          std::string material,
-         Pos* topLeft,
-         Pos* bottomRight,
+         Pos& topLeft,
+         Pos& bottomRight,
          bool isHollow = true,
          bool hasRoof = false);
 

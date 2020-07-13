@@ -8,7 +8,7 @@ class Group : public AABB{
         void recalculateGroupBoundaries();
 
     public:
-        void addAABB(AABB * aabb);
+        void addAABB(AABB & aabb);
         std::string toTSV();
         Group(int id);
         
