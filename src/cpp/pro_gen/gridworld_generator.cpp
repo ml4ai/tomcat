@@ -56,8 +56,9 @@ void generateAABBGrid(
     Pos topLeft(1, 3, 1);
     Pos bottomRight(AABB_size, 3 + AABB_size, AABB_size);
 
-    AABB prevAABB(idCtr, "room", material, &topLeft, &bottomRight, true, false);
-    (*worldptr).addAABB(&prevAABB);
+    (*worldptr).addAABB(
+        new AABB(idCtr, "room", material, &topLeft, &bottomRight, true, false));
+    AABB prevAABB = *(*(*worldptr).getAABBList()).back();
 
     // Use relative coordinates for the "previous" AABB to generate the rest at
     // each step
@@ -72,15 +73,14 @@ void generateAABBGrid(
 
             Pos newBottomRight(
                 AABB_size, 3 + AABB_size, newTopLeft.getZ() + AABB_size);
-            AABB curAABB(idCtr,
-                         "room",
-                         material,
-                         &newTopLeft,
-                         &newBottomRight,
-                         true,
-                         false);
-            (*worldptr).addAABB(&curAABB);
-            prevAABB = curAABB;
+            (*worldptr).addAABB(new AABB(idCtr,
+                                         "room",
+                                         material,
+                                         &newTopLeft,
+                                         &newBottomRight,
+                                         true,
+                                         false));
+            prevAABB = *(*(*worldptr).getAABBList()).back();
         }
         else {
             // Condition for the next AABB in the current row
@@ -90,15 +90,14 @@ void generateAABBGrid(
             Pos newBottomRight = prevAABB.getBottomRight();
             newBottomRight.setX(newTopLeft.getX() + AABB_size);
 
-            AABB curAABB(idCtr,
-                         "room",
-                         material,
-                         &newTopLeft,
-                         &newBottomRight,
-                         true,
-                         false);
-            (*worldptr).addAABB(&curAABB);
-            prevAABB = curAABB;
+            (*worldptr).addAABB(new AABB(idCtr,
+                                         "room",
+                                         material,
+                                         &newTopLeft,
+                                         &newBottomRight,
+                                         true,
+                                         false));
+            prevAABB = *(*(*worldptr).getAABBList()).back();
         }
     }
 }
