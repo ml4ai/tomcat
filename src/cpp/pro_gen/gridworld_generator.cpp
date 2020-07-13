@@ -165,7 +165,7 @@ void generateAllDoorsInAABB(AABB* aabb) {
  * @param worldptr The world in which everything is to be added
  */
 void generateBlocks(World* worldptr) {
-    for (auto aabb : *((*worldptr).getAABBList())) {
+    for (auto & aabb : *((*worldptr).getAABBList())) {
         generateAllDoorsInAABB(aabb);
         generateVictimInAABB(aabb);
     }
