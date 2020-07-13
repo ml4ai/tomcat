@@ -3,7 +3,6 @@
  * @brief This file implements the methods in the World class.
  */
 #include "World.h"
-#include "Group.h"
 #include <iostream>
 
 using namespace std;
@@ -23,13 +22,7 @@ string World::toTSV() {
     string retval = "";
 
     for (auto aabb : (this->aabbList)) {
-        Group* g = dynamic_cast<Group*>(aabb);
-        if (g) {
-            retval += (*g).toTSV();
-        }
-        else {
-            retval += (*aabb).toTSV();
-        }
+        retval += (*aabb).toTSV();
     }
 
     for (auto block : (this->blockList)) {
