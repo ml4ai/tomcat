@@ -316,6 +316,15 @@ if [[ $DO_TUTORIAL_MISSION -eq 1 && $DO_MAIN_MISSION -eq 1 ]]; then
     sleep 6
 fi
 
+# If the main mission is 3 (i.e. procedural generation) then we run the
+# generator before starting the mission.
+if [[ $MAIN_MISSION -eq 3 ]]; then
+    "$TOMCAT"/build/bin/zombieworld_generator\
+        --json_path "$TOMCAT"/external/malmo/Minecraft/run/procedural.json\
+        --tsv_path "$TOMCAT"/external/malmo/Minecraft/run/procedural.tsv
+fi
+
+
 if (( DO_MAIN_MISSION )); then do_mission ${MAIN_MISSION}; fi
 
 
