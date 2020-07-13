@@ -189,26 +189,135 @@ namespace tomcat {
         	         // using FHOG
         	open_face_rec.SetObservationVisualization(
         	    this->visualizer.GetVisImage());
+        	open_face_rec.SetObservationTimestamp(
+        		this->sequence_reader.time_stamp);
+        	open_face_rec.SetObservationFrameNumber(
+        		this->sequence_reader.GetFrameNumber());
         	open_face_rec.SetObservationActionUnits(
         	    face_analyser.GetCurrentAUsReg(),
         	    face_analyser.GetCurrentAUsClass());
-        	open_face_rec.SetObservationTimestamp(
-        		this->sequence_reader.time_stamp);
+        	open_face_rec.SetObservationGaze(
+        		gazeDirection0, 
+        		gazeDirection1, 
+        		gazeAngle, 
+        		CalculateAllEyeLandmarks(this->face_model),
+        		Calculate3DEyeLandmarks(
+        				this->face_model,
+        				this->sequence_reader.fx, 
+        				this->sequence_reader.fy, 
+        				this->sequence_reader.cx, 
+        				this->sequence_reader.cy));
+        	        	
+        	vector<pair<string, double>> AU_reg, AU_class;
+        	AU_reg = face_analyser.GetCurrentAUsReg();
+        	AU_class = 	face_analyser.GetCurrentAUsClass();
+        	cout << AU_reg[0].first << endl;
+        	json output;
+        	
+        	// TODO: Implement an iterator instead of manual
+        	output = {
+        				{"timestamp", this->sequence_reader.time_stamp},
+        				{"frame", this->sequence_reader.GetFrameNumber()},
+        				{
+        					"action_units", {
+        						AU_reg[0].first, {
+        							{"intensity", AU_reg[0].second},
+        							{"occurence", AU_class[0].second}
+        						},
+        						AU_reg[1].first, {
+        							{"intensity", AU_reg[1].second},
+        							{"occurence", AU_class[1].second}
+        						},
+        						AU_reg[2].first, {
+        							{"intensity", AU_reg[2].second},
+        							{"occurence", AU_class[2].second}
+        						},
+        						AU_reg[3].first, {
+        							{"intensity", AU_reg[3].second},
+        							{"occurence", AU_class[3].second}
+        						},
+        						AU_reg[4].first, {
+        							{"intensity", AU_reg[4].second},
+        							{"occurence", AU_class[4].second}
+        						},
+        						AU_reg[5].first, {
+        							{"intensity", AU_reg[5].second},
+        							{"occurence", AU_class[5].second}
+        						},
+        						AU_reg[6].first, {
+        							{"intensity", AU_reg[6].second},
+        							{"occurence", AU_class[6].second}
+        						},
+        						AU_reg[7].first, {
+        							{"intensity", AU_reg[7].second},
+        							{"occurence", AU_class[7].second}
+        						},
+        						AU_reg[8].first, {
+        							{"intensity", AU_reg[8].second},
+        							{"occurence", AU_class[8].second}
+        						},
+        						AU_reg[9].first, {
+        							{"intensity", AU_reg[9].second},
+        							{"occurence", AU_class[9].second}
+        						},
+        						AU_reg[10].first, {
+        							{"intensity", AU_reg[10].second},
+        							{"occurence", AU_class[10].second}
+        						},
+        						AU_reg[11].first, {
+        							{"intensity", AU_reg[11].second},
+        							{"occurence", AU_class[11].second}
+        						},
+        						AU_reg[12].first, {
+        							{"intensity", AU_reg[12].second},
+        							{"occurence", AU_class[12].second}
+        						},
+        						AU_reg[13].first, {
+        							{"intensity", AU_reg[13].second},
+        							{"occurence", AU_class[13].second}
+        						},
+        						AU_reg[14].first, {
+        							{"intensity", AU_reg[14].second},
+        							{"occurence", AU_class[14].second}
+        						},
+        						AU_reg[15].first, {
+        							{"intensity", AU_reg[15].second},
+        							{"occurence", AU_class[15].second}
+        						},
+        						AU_reg[16].first, {
+        							{"intensity", AU_reg[16].second},
+        							{"occurence", AU_class[16].second}
+        						},
+        					}
+        				},
+        				{
+        					"gaze", {
+        						"eye_0", {
+        							{"x", gazeDirection0.x},
+        							{"y", gazeDirection0.y},
+        							{"z", gazeDirection0.z}
+        						},
+        						"eye_1", {
+        							{"x", gazeDirection1.x},
+        							{"y", gazeDirection1.y},
+        							{"z", gazeDirection1.z}
+        						},
+        						"gaze_angle", {
+        							{"x", gazeAngle[0]},
+        							{"y", gazeAngle[1]}
+        						}
+        					}
+        				}		
+        			};
         		
-        	json j;
-        	j = {
-        			{"timestamp", open_face_rec.get_timestamp()},
-        			{"au_intensities", open_face_rec.get_au_intensities()},
-           		 	{"au_occurences", open_face_rec.get_au_occurences()}
-        		};
-        	std::cout << j.dump(4) << std::endl;
+        	std::cout << output.dump(4) << std::endl;
         		
         	// Grabbing the next frame in the sequence
         	this->rgb_image = this->sequence_reader.GetNextFrame();
         	
 		}
 
-          
+        
         open_face_rec.Close();
         this->sequence_reader.Close();
 
