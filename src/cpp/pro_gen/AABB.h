@@ -254,5 +254,5 @@ class AABB {
     /**
      * @brief Destroy the AABB object
      */
-    ~AABB();
+    virtual ~AABB();
 };

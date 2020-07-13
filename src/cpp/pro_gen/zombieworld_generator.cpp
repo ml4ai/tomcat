@@ -37,7 +37,10 @@ namespace po = boost::program_options;
  * may be used in case of Pit.
  * @return AABB The AABB object
  */
-AABB chooseZombieworldAABB(int idCtr, Pos* topLeft, Pos* bottomRight) {
+void chooseZombieworldAABB(World* worldptr,
+                           int idCtr,
+                           Pos* topLeft,
+                           Pos* bottomRight) {
     if (idCtr % 2 == 0) {
         Pos newBottomRight(*bottomRight);
         newBottomRight.setY(
@@ -56,50 +59,48 @@ AABB chooseZombieworldAABB(int idCtr, Pos* topLeft, Pos* bottomRight) {
                 1); // Move both above ground level for an air pit which achives
                     // the effect of an empty plot
 
-            Pit airPit(idCtr, "air", &newTopLeft, &newBottomRight);
-            return airPit;
+            (*worldptr).addAABB(
+                new Pit(idCtr, "air", &newTopLeft, &newBottomRight));
         }
+
         else if (rand > 25 && rand <= 75) {
             Pos newTopLeft(*topLeft);
             newTopLeft.shiftY(-2); // In this case I'm chosing to offset the
                                    // base Y by -2 so we have a deeper water pit
 
-            Pit waterPit(
-                idCtr,
-                "grass",
-                &newTopLeft,
-                &newBottomRight); // Start by creating a pit of grass which is
-                                  // simply an AABB filled with grass
+            (*worldptr).addAABB(
+                new Pit(idCtr, "grass", &newTopLeft, &newBottomRight));
 
-            waterPit.generateBox("water",
+            /*waterPit.generateBox("water",
                                  3,
                                  3,
                                  1,
                                  0,
                                  3,
-                                 3); // Add a box of water to it
+                                 3); // Add a box of water to it*/
 
             // Randomly add other blocks to give the effect of randomization
-            waterPit.addRandomBlocks(30, "sand", &gen, 0, 1, 2, 0, 1, 0);
-            waterPit.addRandomBlocks(20, "water", &gen, 0, 0, 2, 0, 0, 0);
-            return waterPit;
+            // waterPit.addRandomBlocks(30, "sand", &gen, 0, 1, 2, 0, 1, 0);
+            // waterPit.addRandomBlocks(20, "water", &gen, 0, 0, 2, 0, 0,
+            // 0);
         }
         else {
-            Pit lavaPit(idCtr, "grass", topLeft, &newBottomRight);
-            lavaPit.generateBox("lava", 3, 2, 0, 0, 1, 3);
+            (*worldptr).addAABB(
+                new Pit(idCtr, "grass", topLeft, &newBottomRight));
+            /*lavaPit.generateBox("lava", 3, 2, 0, 0, 1, 3);
             lavaPit.addRandomBlocks(10, "grass", &gen, 1, 1, 0, 0, 1, 1);
             lavaPit.addRandomBlocks(
                 30,
                 "cobblestone",
                 &gen); // Example showing use of all default values
-            lavaPit.addRandomBlocks(10, "lava", &gen, 1, 0, 0, 0, 1, 1);
-            return lavaPit;
-        };
+            lavaPit.addRandomBlocks(10, "lava", &gen, 1, 0, 0, 0, 1, 1);*/
+        }
     }
 
     else {
-        AABB aabb(idCtr, "room", "planks", topLeft, bottomRight);
-        return aabb;
+
+        (*worldptr).addAABB(
+            new AABB(idCtr, "room", "planks", topLeft, bottomRight));
     }
 }
 
@@ -120,35 +121,36 @@ void generateAABBGrid(
     Pos prevTopLeft(1, 3, 1);
     Pos prevBottomRight(AABB_size, 3 + AABB_size, AABB_size);
 
-    AABB prevAABB(idCtr, "room", material, &prevTopLeft, &prevBottomRight);
-    (*worldptr).addAABB(&prevAABB);
+    (*worldptr).addAABB(
+        new AABB(idCtr, "room", material, &prevTopLeft, &prevBottomRight));
+    AABB prevAABB = *(*(*worldptr).getAABBList()).back();
 
-    // Use relative coordinates for the "previous" AABB to generate the rest at
-    // each step
+    // Use relative coordinates for the "previous" AABB to generate the rest
+    // at each step
     while (idCtr <= (N * N - 1)) {
         idCtr++;
 
         if ((idCtr - 1) % N == 0) {
-            // Condition for when a row in the grid is complete and we move onto
-            // the next one
+            // Condition for when a row in the grid is complete and we move
+            // onto the next one
 
             Pos topLeft(1, 3, 1);
             topLeft.setZ(prevBottomRight.getZ() + sep);
             Pos bottomRight(
                 AABB_size, 3 + AABB_size, topLeft.getZ() + AABB_size);
 
-            AABB curAABB = chooseZombieworldAABB(
+            chooseZombieworldAABB(
+                worldptr,
                 idCtr,
                 &topLeft,
-                &bottomRight); // Choose the AABB to add. DOESN'T change topLeft
-                               // and bottomRIght
-            (*worldptr).addAABB(&curAABB);
+                &bottomRight); // Choose the AABB to add. DOESN'T change
+                               // topLeft and bottomRight
 
             prevTopLeft = topLeft;
-            prevBottomRight =
-                bottomRight; // Set as if prev AABB was a room for consistency.
-                             // Direct result of the fact that choosing an AABB
-                             // doesn't change the coordinates
+            prevBottomRight = bottomRight; // Set as if prev AABB was a room for
+                                           // consistency. Direct result of the
+                                           // fact that choosing an AABB doesn't
+                                           // change the coordinates
         }
         else {
             // Condition for the next AABB in the current row
@@ -159,31 +161,31 @@ void generateAABBGrid(
             Pos bottomRight(prevBottomRight);
             bottomRight.setX(topLeft.getX() + AABB_size);
 
-            AABB curAABB = chooseZombieworldAABB(
+            chooseZombieworldAABB(
+                worldptr,
                 idCtr,
                 &topLeft,
-                &bottomRight); // Choose the AABB to add. DOESN'T change topLeft
-                               // and bottomRIght
-            (*worldptr).addAABB(&curAABB);
+                &bottomRight); // Choose the AABB to add. DOESN'T change
+                               // topLeft and bottomRIght
 
             prevTopLeft = topLeft;
-            prevBottomRight =
-                bottomRight; // Set as if prev AABB was a room for consistency.
-                             // Direct result of the fact that choosing an AABB
-                             // doesn't change the coordinates
+            prevBottomRight = bottomRight; // Set as if prev AABB was a room for
+                                           // consistency. Direct result of the
+                                           // fact that choosing an AABB doesn't
+                                           // change the coordinates
         }
     }
 }
 
 /**
- * @brief Generate all 4 doors for an AABB. Door blocks are added to the AABB
- * object.
+ * @brief Generate all 4 doors for an AABB. Door blocks are added to the
+ * AABB object.
  *
  * @param aabb The AABB for which doors are to be generated.
  */
 void generateAllDoorsInAABB(AABB* aabb) {
-    // Get edge midpoints for the AABB because that is where the doors will be
-    // placed
+    // Get edge midpoints for the AABB because that is where the doors will
+    // be placed
     vector<Pos> edges = (*aabb).getEdgeMidpointAtBase();
     Pos topEdgeMid(edges.at(0));
     Pos rightEdgeMid(edges.at(1));
@@ -282,7 +284,7 @@ void generateBoundingWalls(World* world) {
  * @return World The generated world object representing the zombie mission
  */
 World generateZombieWorld() {
-    int N = 3;
+    /*int N = 3;
     int sep = 15;
     int AABB_size = 10;
     string AABB_material = "planks";
@@ -291,24 +293,25 @@ World generateZombieWorld() {
     generateAABBGrid(&world, N, sep, AABB_size, AABB_material);
     generateBlocks(&world);
     generateBoundingWalls(&world);
-    return world;
-
-    /*World world;
-    Group g(1);
-    AABB one(2, "room", "planks", new Pos(1, 3, 1), new Pos(4, 7, 4));
-    AABB two(3, "room", "cobblestone", new Pos(5, 3, 5), new Pos(8, 7, 8));
-
-    g.addAABB(&one);
-    g.addAABB(&two);
-
-    world.addAABB(&g);
-
     return world;*/
+
+    World world;
+
+    world.addAABB(new Group(1));
+    AABB* parent = (*(world).getAABBList()).back();
+    Group* g = dynamic_cast<Group*>(parent);
+
+    (*g).addAABB(
+        new AABB(2, "room", "planks", new Pos(1, 3, 1), new Pos(4, 7, 4)));
+    (*g).addAABB(
+        new AABB(3, "room", "cobblestone", new Pos(5, 3, 5), new Pos(8, 7, 8)));
+
+    return world;
 }
 
 /**
- * @brief Directive method to create the world and write the JSON and TSV output
- * to file.
+ * @brief Directive method to create the world and write the JSON and TSV
+ * output to file.
  */
 int main(int argc, char* argv[]) {
 
@@ -342,7 +345,7 @@ int main(int argc, char* argv[]) {
     }
 
     // Process input and generate output
-    cout << "Generating gridworld..." << endl;
+    cout << "Generating zombieworld..." << endl;
     World world = generateZombieWorld();
     cout << "Writing to file..." << endl;
 

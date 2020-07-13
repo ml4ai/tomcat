@@ -3,6 +3,7 @@
  * @brief This file implements the methods in the World class.
  */
 #include "World.h"
+#include "Group.h"
 #include <iostream>
 
 using namespace std;
@@ -14,9 +15,7 @@ vector<AABB*>* World::getAABBList() { return &(this->aabbList); }
 
 vector<Block>* World::getBlockList() { return &(this->blockList); }
 
-void World::addAABB(AABB* aabb) {
-    (this->aabbList).push_back(aabb);
-}
+void World::addAABB(AABB* aabb) { (this->aabbList).push_back(aabb); }
 
 void World::addBlock(Block* block) { (this->blockList).push_back(*block); }
 
@@ -24,7 +23,13 @@ string World::toTSV() {
     string retval = "";
 
     for (auto aabb : (this->aabbList)) {
-        retval += (*aabb).toTSV();
+        Group* g = dynamic_cast<Group*>(aabb);
+        if (g) {
+            retval += (*g).toTSV();
+        }
+        else {
+            retval += (*aabb).toTSV();
+        }
     }
 
     for (auto block : (this->blockList)) {
