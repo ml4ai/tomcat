@@ -40,3 +40,10 @@ Project Alumni
 --------------
 
 Undergraduates: Lize Chen, Jiangfeng Li, Runnan Zhou, Matsuura
+
+Work with us
+------------
+
+We are looking for talented undergraduates, graduate students, postdocs and
+research programmers to join our team. Please email `adarsh[at]arizona[dot]edu`
+for more information.
