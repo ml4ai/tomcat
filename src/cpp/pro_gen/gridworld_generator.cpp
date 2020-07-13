@@ -189,35 +189,27 @@ World generateGridWorld(int N, int sep, int AABB_size, string AABB_material) {
 }
 
 int main(int argc, char* argv[]) {
-    int N;
-    int sep = 0;        // Separation defaults to 0
-    int AABB_size = 10; // Size defaults to 10
-    string jsonPath =
-        "../../../../external/malmo/Minecraft/run/procedural.json";
-    string tsvPath =
-        "../../../../external/malmo/Minecraft/run/procedural.tsv"; // Default
-                                                                   // locations
+    int N, sep, AABB_size;
+    string jsonPath, tsvPath;
 
     // Handle options
     po::options_description desc("Allowed options");
-    desc.add_options()("help", "produce help message")(
+    desc.add_options()("help,h", "produce help message")(
         "N",
-        po::value<int>(),
+        po::value<int>(&N)->default_value(1),
         "The number of AABB on an axis. Grid generated is N*N.")(
         "sep",
-        po::value<int>(),
-        "The separation between AABB in the cardinal directions. Defaults to "
-        "0.")("aabb_size",
-              po::value<int>(),
-              "The size of the cubic AABB. Defaults to 10.")(
+        po::value<int>(&sep)->default_value(0),
+        "The separation between AABB in the cardinal directions.")(
+        "aabb_size",
+        po::value<int>(&AABB_size)->default_value(10),
+        "The size of the cubic AABB.")(
         "json_path",
-        po::value<std::string>(),
-        "Specify where to save the JSON file with filename an extension. "
-        "Defaults to procedural.json in Minecraft/run/")(
+        po::value<string>(&jsonPath)->default_value("procedural.json"),
+        "Specify where to save the JSON file with filename an extension.")(
         "tsv_path",
-        po::value<std::string>(),
-        "Specify where to save the TSV file with filename an extension. "
-        "Defaults to procedural.tsv in Minecraft/run/");
+        po::value<string>(&tsvPath)->default_value("procedural.tsv"),
+        "Specify where to save the TSV file with filename an extension.");
 
     po::variables_map vm;
     po::store(po::command_line_parser(argc, argv).options(desc).run(), vm);
@@ -226,30 +218,6 @@ int main(int argc, char* argv[]) {
     if (vm.count("help")) {
         cout << desc << endl;
         return 0;
-    }
-
-    if (!vm.count("N")) {
-        cout << "No grid size specified." << endl;
-        return 1;
-    }
-    else {
-        N = vm["N"].as<int>();
-    }
-
-    if (vm.count("sep")) {
-        sep = vm["sep"].as<int>();
-    }
-
-    if (vm.count("aabb_size")) {
-        AABB_size = vm["aabb_size"].as<int>();
-    }
-
-    if (vm.count("json_path")) {
-        jsonPath = vm["json_path"].as<std::string>();
-    }
-
-    if (vm.count("tsv_path")) {
-        tsvPath = vm["tsv_path"].as<std::string>();
     }
 
     // Process input and generate output
@@ -267,8 +235,7 @@ int main(int argc, char* argv[]) {
     outputTSV << world.toTSV();
     outputTSV.close();
 
-    cout << "Done. The generated files are in Minecraft/run/procedural.json "
-            "and Minecraft/run/procedural.tsv"
+    cout << "Done. The generated files are " << jsonPath << " and " << tsvPath
          << endl;
 
     return 0;
