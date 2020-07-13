@@ -18,7 +18,7 @@ Current
 - [Marco Antonio Valenzuela-Escarcega](https://scholar.google.com/citations?user=uU2UhGIAAAAJ&hl=en)
 
 **Graduate Students:**
-- [Salena Ashton](https://github.com/paulosoaresua)
+- [Salena Ashton](https://github.com/SalenaAshton)
 - [Savannah Boyd](https://cals.arizona.edu/fcs/grad/savannah_boyd)
 - [Chinmai Basavaraj](https://www.cs.arizona.edu/person/chinmai-basavaraj-0)
 - [Loren Champlin](https://ischool.arizona.edu/people/loren-champlin)
