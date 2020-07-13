@@ -3,6 +3,9 @@ Team
 
 The ToMCAT team (so far!):
 
+Current
+-------
+
 **PI**: [Adarsh Pyarelal](http://adarsh.cc)
 
 **co-PIs**:
@@ -15,21 +18,25 @@ The ToMCAT team (so far!):
 - [Marco Antonio Valenzuela-Escarcega](https://scholar.google.com/citations?user=uU2UhGIAAAAJ&hl=en)
 
 **Graduate Students:**
-- Salena Ashton
-- Savannah Boyd
-- Chinmai Basavaraj
-- Loren Champlin
-- John Culnan
-- Harry Go
-- Ashley Kuelz
-- Meghavarshini Krishnaswamy
-- Peter Lovett
-- Paulo Soares
-- Manujinda Wathugala
+- [Salena Ashton](https://github.com/paulosoaresua)
+- [Savannah Boyd](https://cals.arizona.edu/fcs/grad/savannah_boyd)
+- [Chinmai Basavaraj](https://www.cs.arizona.edu/person/chinmai-basavaraj-0)
+- [Loren Champlin](https://ischool.arizona.edu/people/loren-champlin)
+- [John Culnan](https://linguistics.arizona.edu/user/john-culnan)
+- [Harry Go](https://cals.arizona.edu/fcs/grad/go_keunjae)
+- [Ashley Kuelz](https://cals.arizona.edu/fcs/grad/ashley_kuelz)
+- [Meghavarshini Krishnaswamy](https://linguistics.arizona.edu/user/meghavarshini-krishnaswamy)
+- [Peter Lovett](https://www.cs.arizona.edu/person/peter-lovett)
+- [Paulo Soares](https://www.cs.arizona.edu/person/paulo-soares)
+- [Manujinda Wathugala](https://www.cs.arizona.edu/person/manujinda-wathugala)
 
 **Undergraduates:**
-- Aditya Banerjee
-- Lize Chen
-- Jiangfeng Li
-- Da Long
-- Runnan Zhou
+- [Aditya Banerjee](https://github.com/Adi-UA)
+- [Da Long](https://github.com/dl932)
+- [Shreeya Jain](https://github.com/shreeyajain)
+- [Liam Wilson](https://github.com/wilsonliam)
+
+Project Alumni
+--------------
+
+Undergraduates: Lize Chen, Jiangfeng Li, Runnan Zhou, Matsuura
