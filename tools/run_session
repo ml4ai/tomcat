@@ -42,10 +42,9 @@ if [[ $? -ne 0 ]]; then exit 1; fi
 
 #PRINT STATEMENTS TO DELETE 
 echo "$SESSION_UUID is session id"
-sleep 2
 echo "$PLAYER_ID is player id before hashed"
-sleep 2
 echo "$TIME_LIMIT is time limit from run_session"
+echo "$DEFAULT_MAIN_MISSION_TIME is default main mission time"
 sleep 1
 
 
@@ -56,7 +55,7 @@ mkdir -p "${SESSION_OUTPUT_DIR}"
 
 # Generate metadata file for the session
 "$TOMCAT"/tools/generate_session_metadata "$SESSION_UUID" "$PLAYER_ID"\
-  "$TIME_LIMIT" > "$SESSION_OUTPUT_DIR"/metadata.json
+  "$DEFAULT_MAIN_MISSION_TIME" > "$SESSION_OUTPUT_DIR"/metadata.json
 if [[ $? -ne 0 ]]; then exit 1; fi
 
 
@@ -278,6 +277,7 @@ do_mission() {
 
         if [[ $CURRENT_MISSION -gt 0 ]]; then
             echo "Time limit set to ${TIME_LIMIT}."
+            export TIME_LIMIT="$TIME_LIMIT"
         fi
         echo "Process ID corresponding to ./bin/runExperiment is"\
              "$pid_runExperiment ... waiting for it to complete."
