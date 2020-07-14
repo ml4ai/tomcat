@@ -1,10 +1,11 @@
 (progn (ql:quickload "shop3")
        (load "util.lisp")
+       (bulk-copy "sar-room-list-original.txt" "sar-room-list.txt")
        (load "sar-individual-domain.lisp")
        (setf *random-state* (make-random-state t)))
 
 (in-package :shop-user)
-(defvar *sar-state* '((room lobby) 
+(defparameter *sar-state* '((room lobby) 
                           (room mens) 
                           (room womens) 
                           (room e-1) 
@@ -39,11 +40,11 @@
                           (rescuer t1)  
                           (in t1 lobby)))
 
-(defvar *task-type* 'perform-next-task-that-prioritizes-yellow-victims)
+(defparameter *task-type* 'perform-next-task-that-prioritizes-yellow-victims)
 
-(defvar *sar-task* (list (list *task-type* 't1 'lobby)))
+(defparameter *sar-task* (list (list *task-type* 't1 'lobby)))
 
-(defvar *mission-ongoing* t)
+(defparameter *mission-ongoing* t)
 
 (make-problem 'sar-individual-problem *sar-state* *sar-task*)
 
@@ -54,11 +55,17 @@
                 (first (let ((current-plan (multiple-value-list 
                                       (find-plans 'sar-individual-problem :which :first :optimize-cost nil :verbose nil :plan-tree t)))) 
                   (setf *sar-state* (state-atoms (first (fourth current-plan)))) 
+                  (if (eql '!change-strategy (first (first (first (first current-plan)))))
+                    (progn 
+                      (setf *task-type* 'perform-next-task-without-victim-priority)
+                      (setf *sar-task* (list (list *task-type*
+                                                   (second (first *sar-task*))
+                                                   (third (first *sar-task*)))))))
                   (if (eql '!move (first (first (first (first current-plan))))) 
                     (setf *sar-task* (list (list *task-type* 
                                                  (second (first (first (first current-plan)))) 
                                                  (fourth (first (first (first current-plan)))))))) 
-                (if (eql '!leave (first (first (first (first current-plan))))) 
+                (if (eql '!end-mission (first (first (first (first current-plan))))) 
                   (setf *mission-ongoing* nil))
                 (make-problem 'sar-individual-problem *sar-state* *sar-task*) 
                 (third current-plan))))))))
