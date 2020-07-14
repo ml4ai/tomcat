@@ -67,6 +67,15 @@
 (defun found-victim (prob)
   (< (random 1.0) prob))
 
+(defun triage-cost (victim success)
+  (if (severely-injured victim)
+    (if success
+      15
+      (random 15))
+    (if success
+      8
+      (random 8))))
+
 (defun nshuffle (sequence)
   (loop for i from (length sequence) downto 2
         do (rotatef (elt sequence (random i))
@@ -118,3 +127,33 @@
   (let ((q (queues::make-queue ':simple-queue)))
     (loop for x in lst do (queues::qpush q x))
      q))
+
+(defun load-object-from-file (filename)
+  (with-open-file
+    (s (make-pathname :name filename) :direction :input)
+    (read s)))
+
+(defun get-next-room (current-room room-list)
+  (first (cdr (member-if #'(lambda (x) (symbol-equals-keyword x current-room)) room-list))))
+
+(defun add-to-room-list (roomname filename)
+  (let ((v (with-open-file (instream filename :direction :input
+                                     :if-does-not-exist nil)
+             (if (not instream)
+               (list roomname)
+               (append (read instream) (list roomname))))))
+    (with-open-file (outstream filename :direction :output
+                               :if-exists :supersede)
+      (format outstream "~a~%" v))
+    t))
+
+(defun remove-from-room-list (roomname filename)
+  (let ((v (with-open-file (instream filename :direction :input
+                                     :if-does-not-exist nil)
+             (if (not instream)
+               (list roomname)
+               (remove roomname (read instream))))))
+    (with-open-file (outstream filename :direction :output
+                               :if-exists :supersede)
+      (format outstream "~a~%" v))
+    t))
