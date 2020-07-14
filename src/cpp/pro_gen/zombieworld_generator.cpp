@@ -13,13 +13,14 @@
 #include "Pit.h"
 #include "World.h"
 #include <boost/program_options.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
 #include <fstream>
 #include <iostream>
+#include <random>
 
 using namespace std;
-boost::random::mt19937 gen; // Global randomness object
+
+random_device r;
+mt19937_64 gen(r());
 namespace po = boost::program_options;
 
 /**
@@ -42,7 +43,7 @@ AABB chooseZombieworldAABB(int idCtr, Pos* topLeft, Pos* bottomRight) {
             (*topLeft).getY()); // We are adding a Pit so we want the AABB to be
                                 // much flatter
 
-        boost::random::uniform_int_distribution<> dist(1, 100);
+        uniform_int_distribution<> dist(1, 100);
         int rand = dist(gen);
 
         // Choose between an air, water or lava pit

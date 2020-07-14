@@ -3,30 +3,18 @@
  * @brief This file implements the methods in the World class.
  */
 #include "World.h"
-#include <iostream>
-#include <string>
 
 using namespace std;
 using json = nlohmann::json;
 
-/**
- * @brief Construct a new World:: World object
- *
- */
 World::World() {}
 
-/**
- * @brief Add an AABB to the vector of AABB held inside the world
- *
- * @param aabb Address of the AABB to add
- */
+vector<AABB>* World::getAABBList() { return &(this->aabbList); }
+
+vector<Block>* World::getBlockList() { return &(this->blockList); }
+
 void World::addAABB(AABB* aabb) { (this->aabbList).push_back(*aabb); }
 
-/**
- * @brief Add a Block to the vector of Block held inside the world
- *
- * @param aabb Address of the Block to add
- */
 void World::addBlock(Block* block) { (this->blockList).push_back(*block); }
 
 string World::toTSV() {
@@ -43,12 +31,6 @@ string World::toTSV() {
     return retval;
 }
 
-/**
- * @brief Converts the world into a JSON representation with
- * each entry indented by 4 and returns the string representation of it.
- *
- * @return string The JSON as a string
- */
 string World::toJSON() {
     vector<json> json_aabb_list;
     vector<json> json_block_list;
@@ -98,21 +80,4 @@ string World::toJSON() {
     return j.dump(4);
 }
 
-/**
- * @brief Returns a pointer to the vector that holds the AABBs
- *
- * @return vector<AABB>* The AABB list
- */
-vector<AABB>* World::getAABBList() { return &(this->aabbList); }
-
-/**
- * @brief Returns a pointer to the vector that holds the Blocks
- *
- * @return vector<Block>* The Block list
- */
-vector<Block>* World::getBlockList() { return &(this->blockList); }
-
-/**
- * @brief Destroy the World:: World object
- */
 World::~World() {}
