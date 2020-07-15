@@ -4,11 +4,13 @@
 #include <LandmarkCoreIncludes.h>
 #include <RecorderOpenFace.h>
 #include <opencv2/highgui/highgui.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/date_time/posix_time/posix_time_duration.hpp>
+#include <boost/date_time/time_facet.hpp>
 #include <nlohmann/json.hpp>
 #include "include/nlohmann/fifo_map.hpp"
 
 typedef vector<pair<string, double>> au_vector;
-
 
 using namespace std;
 using namespace nlohmann;
@@ -46,6 +48,9 @@ namespace tomcat {
         using LandmarkDetector::DetectLandmarksInVideo;
         using LandmarkDetector::FaceModelParameters;
         using LandmarkDetector::GetPose;
+        
+        // Start time for facesensor
+        boost::posix_time::ptime t_start(boost::posix_time::microsec_clock::universal_time());
         
         // Load facial feature extractor and AU analyser
         FaceAnalysis::FaceAnalyserParameters face_analysis_params(
@@ -187,62 +192,22 @@ namespace tomcat {
 				break;
 			}
 
-       		// Setting up the recorder output
-        	open_face_rec.SetObservationHOG(
-        	    detection_success,
-        	    hog_descriptor,
-        	    num_hog_rows,
-        	    num_hog_cols,
-        	    31); // The number of channels in HOG is fixed at the moment, as
-        	         // using FHOG
-        	
-        	open_face_rec.SetObservationVisualization(
-        	    this->visualizer.GetVisImage());
-        	
-        	open_face_rec.SetObservationLandmarks(
-        		this->face_model.detected_landmarks,
-        		this->face_model.GetShape(
-        			this->sequence_reader.fx, 
-        			this->sequence_reader.fy, 
-        			this->sequence_reader.cx, 
-        			this->sequence_reader.cy),
-				this->face_model.params_global, 
-				this->face_model.params_local, 
-				this->face_model.detection_certainty, 
-				detection_success);
-        	
-        	open_face_rec.SetObservationTimestamp(
-        		this->sequence_reader.time_stamp);
-        	
-        	open_face_rec.SetObservationFrameNumber(
-        		this->sequence_reader.GetFrameNumber());
-        	
-        	open_face_rec.SetObservationActionUnits(
-        	    face_analyser.GetCurrentAUsReg(),
-        	    face_analyser.GetCurrentAUsClass());
-        	
-        	open_face_rec.SetObservationGaze(
-        		gazeDirection0, 
-        		gazeDirection1, 
-        		gazeAngle, 
-        		CalculateAllEyeLandmarks(this->face_model),
-        		Calculate3DEyeLandmarks(
-        				this->face_model,
-        				this->sequence_reader.fx, 
-        				this->sequence_reader.fy, 
-        				this->sequence_reader.cx, 
-        				this->sequence_reader.cy));
-        	        	
+       		 
         	// Json output		
         	modified_json output;
         	
+        	int micro_timestamp = int(this->sequence_reader.time_stamp * pow(10,6));
+        	t_start += boost::posix_time::microseconds(micro_timestamp);
+        	string str_timestamp = to_iso_extended_string(t_start);
+        	str_timestamp.push_back('Z');
+			
         	// Header block
-        	output["header"]["timestamp"] = this->sequence_reader.time_stamp;
+        	output["header"]["timestamp"] = str_timestamp;
         	output["header"]["message_type"] = "observation";
         	output["header"]["version"] = "0.1";
         	
         	// Message block
-        	output["msg"]["timestamp"] = this->sequence_reader.time_stamp;
+        	output["msg"]["timestamp"] = str_timestamp;
         	output["msg"]["source"] = "facesensor";
         	output["msg"]["sub_type"] = "state";
         	output["msg"]["version"] = "0.1";
@@ -285,7 +250,6 @@ namespace tomcat {
 		}
 
         
-        open_face_rec.Close();
         this->sequence_reader.Close();
 
         // Reset the models for the next video
