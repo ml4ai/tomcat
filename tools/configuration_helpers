@@ -66,6 +66,11 @@ set_local_configuration() {
     # DEFAULT_MAIN_MISSION_TIME: Allows for short missions for testing. 
     export DEFAULT_MAIN_MISSION_TIME=${DEFAULT_MAIN_MISSION_TIME:-600} 
 
+    # DIFFICULTY: Level of difficulty for mission. 3 for easy.
+    #                                              5 for medium.
+    #                                              7 for hard.
+    export DIFFICULTY=${DIFFICULTY:-5}
+
     # PLAYER_ID - the id of the player who is running the mission. Defaults to
     # the value stored in the USER environment variable.
     export PLAYER_ID=${PLAYER_ID:-$USER}
