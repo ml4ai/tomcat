@@ -3,9 +3,9 @@
 #include <GazeEstimation.h>
 #include <LandmarkCoreIncludes.h>
 #include <RecorderOpenFace.h>
-#include <nlohmann/json.hpp>
-#include "include/fifo_map.hpp"
 #include <opencv2/highgui/highgui.hpp>
+#include <nlohmann/json.hpp>
+#include "include/nlohmann/fifo_map.hpp"
 
 typedef vector<pair<string, double>> au_vector;
 
