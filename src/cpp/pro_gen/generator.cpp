@@ -1,4 +1,9 @@
+#include "GridworldGenerator.h"
 #include "ZombieworldGenerator.h"
+#include <boost/program_options.hpp>
+#include <fstream>
+#include <iostream>
+
 using namespace std;
 namespace po = boost::program_options;
 
@@ -39,8 +44,8 @@ int main(int argc, char* argv[]) {
 
     // Process input and generate output
     cout << "Generating zombieworld..." << endl;
-    ZombieWorldGenerator zwg(20);
-    World&  world = zwg.getWorld();
+    GridworldGenerator gridworldGenerator(10, 0, 10);
+    World& world = gridworldGenerator.getWorld();
     cout << "Writing to file..." << endl;
 
     // Write JSON

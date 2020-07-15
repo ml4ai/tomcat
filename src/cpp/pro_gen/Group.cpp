@@ -1,5 +1,4 @@
 #include "Group.h"
-#include <iostream>
 using namespace std;
 
 Group::Group(int id)

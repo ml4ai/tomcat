@@ -3,8 +3,6 @@
  * @brief This file implements the methods in the World class.
  */
 #include "World.h"
-#include <iostream>
-
 using namespace std;
 using json = nlohmann::json;
 

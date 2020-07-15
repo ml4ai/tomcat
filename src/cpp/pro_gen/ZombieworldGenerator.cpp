@@ -1,5 +1,4 @@
 #include "ZombieworldGenerator.h"
-
 using namespace std;
 
 void ZombieWorldGenerator::addGroupOfAABB(int idCtr,
@@ -224,3 +223,5 @@ ZombieWorldGenerator::ZombieWorldGenerator(int seed) {
     this->generateBlocks();
     this->generateBoundingWalls();
 }
+
+ZombieWorldGenerator::~ZombieWorldGenerator() {}

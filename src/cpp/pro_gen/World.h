@@ -3,11 +3,8 @@
  * implemented as part of the World class
  */
 #pragma once
-
 #include "AABB.h"
-#include "Block.h"
 #include <nlohmann/json.hpp>
-#include <string>
 
 /**
  * @brief This class represents a Minecraft world as a

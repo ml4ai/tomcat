@@ -4,7 +4,6 @@
  */
 #pragma once
 #include "Pos.h"
-#include <string>
 
 /**
  * @brief This class represents a Minecraft block

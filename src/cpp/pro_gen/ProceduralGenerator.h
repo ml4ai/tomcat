@@ -5,7 +5,6 @@
  */
 #pragma once
 #include "World.h"
-#include <random>
 
 /**
  * @brief This class represents a Procedural Generator
@@ -32,5 +31,5 @@ class ProceduralGenerator {
     /**
      * @brief Destroy the Procedural Generator object
      */
-    ~ProceduralGenerator();
+    virtual ~ProceduralGenerator();
 };

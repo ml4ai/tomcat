@@ -1,9 +1,6 @@
 #include "Group.h"
 #include "Pit.h"
 #include "ProceduralGenerator.h"
-#include <boost/program_options.hpp>
-#include <fstream>
-#include <iostream>
 
 class ZombieWorldGenerator : public ProceduralGenerator {
   private:
@@ -18,4 +15,5 @@ class ZombieWorldGenerator : public ProceduralGenerator {
 
   public:
     ZombieWorldGenerator(int seed = 1);
+    ~ZombieWorldGenerator();
 };
