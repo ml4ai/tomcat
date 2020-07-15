@@ -44,7 +44,6 @@ if [[ $? -ne 0 ]]; then exit 1; fi
 echo "$SESSION_UUID is session id"
 echo "$PLAYER_ID is player id before hashed"
 echo "$TIME_LIMIT is time limit from run_session"
-echo "$DEFAULT_MAIN_MISSION_TIME is default main mission time"
 sleep 1
 
 
@@ -55,7 +54,7 @@ mkdir -p "${SESSION_OUTPUT_DIR}"
 
 # Generate metadata file for the session
 "$TOMCAT"/tools/generate_session_metadata "$SESSION_UUID" "$PLAYER_ID"\
-  "$DEFAULT_MAIN_MISSION_TIME" > "$SESSION_OUTPUT_DIR"/metadata.json
+  "$TIME_LIMIT" "$DIFFICULTY"> "$SESSION_OUTPUT_DIR"/metadata.json
 if [[ $? -ne 0 ]]; then exit 1; fi
 
 
@@ -85,8 +84,7 @@ start_av_recording() {
             # We need to extract the alsa output monitor.
             export ALSA_OUTPUT_MONITOR=`pacmd list-sources | \
             awk '/name:/ && /monitor/ {print $2 }'|sed 's/[<,>]//g'`
-            # Calling pacat command.
-            pacat --record --file-format=wav -d ${ALSA_OUTPUT_MONITOR} \
+            # Calling pacat command.            pacat --record --file-format=wav -d ${ALSA_OUTPUT_MONITOR} \
             > "${MISSION_OUTPUT_DIR}"/system_audio.wav &
             pid_system_audio_recording=$!
         else
@@ -248,13 +246,14 @@ do_mission() {
             cleanup
             exit 1
         fi
-
         runExperiment_args="--mission ${CURRENT_MISSION}\
                             --record_observations\
                             --uuid ${SESSION_UUID}"
 
         if [[ $CURRENT_MISSION -gt 0 ]]; then
-            runExperiment_args="${runExperiment_args} --time_limit ${TIME_LIMIT}"
+            runExperiment_args="${runExperiment_args} --time_limit ${TIME_LIMIT}\
+                                --level_of_difficulty ${DIFFICULTY}"
+            export DIFFICULTY="${DIFFICULTY}"
         fi
 
         if (( ENABLE_FFMPEG )); then
@@ -277,7 +276,6 @@ do_mission() {
 
         if [[ $CURRENT_MISSION -gt 0 ]]; then
             echo "Time limit set to ${TIME_LIMIT}."
-            export TIME_LIMIT="$TIME_LIMIT"
         fi
         echo "Process ID corresponding to ./bin/runExperiment is"\
              "$pid_runExperiment ... waiting for it to complete."
