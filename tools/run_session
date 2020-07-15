@@ -35,18 +35,9 @@ if [[ ! $(pgrep -l mosquitto | head -n1 | cut -d' ' -f2) == mosquitto ]]; then
     "$MOSQUITTO" &> ${TOMCAT_TMP_DIR}/mosquitto.log &
 fi
 
-# On macOS, uuidgen produces uppercase UUIDs, so we pipe the output through tr
-# to get uniform behaviour on macOS and Linux.
+# UUIDs: uniform behaviour on macOS and Linux.
 SESSION_UUID=$(uuidgen | tr '[:upper:]' '[:lower:]')
 if [[ $? -ne 0 ]]; then exit 1; fi
-
-#PRINT STATEMENTS TO DELETE 
-echo "$SESSION_UUID is session id"
-echo "$PLAYER_ID is player id before hashed"
-echo "$TIME_LIMIT is time limit from run_session"
-sleep 1
-
-
 
 # Creating an output directory for this session.
 SESSION_OUTPUT_DIR="${TOMCAT}"/data/participant_data/"$SESSION_UUID"
@@ -54,7 +45,8 @@ mkdir -p "${SESSION_OUTPUT_DIR}"
 
 # Generate metadata file for the session
 "$TOMCAT"/tools/generate_session_metadata "$SESSION_UUID" "$PLAYER_ID"\
-  "$TIME_LIMIT" "$DIFFICULTY"> "$SESSION_OUTPUT_DIR"/metadata.json
+  "$TIME_LIMIT" "$DIFFICULTY" > "$SESSION_OUTPUT_DIR"/metadata.json
+
 if [[ $? -ne 0 ]]; then exit 1; fi
 
 
@@ -246,14 +238,15 @@ do_mission() {
             cleanup
             exit 1
         fi
+
         runExperiment_args="--mission ${CURRENT_MISSION}\
                             --record_observations\
                             --uuid ${SESSION_UUID}"
 
         if [[ $CURRENT_MISSION -gt 0 ]]; then
-            runExperiment_args="${runExperiment_args} --time_limit ${TIME_LIMIT}\
-                                --level_of_difficulty ${DIFFICULTY}"
-            export DIFFICULTY="${DIFFICULTY}"
+            runExperiment_args="${runExperiment_args} --time_limit ${TIME_LIMIT}"
+#            runExperiment_args="${runExperiment_args} --level_of_difficulty ${DIFFICULTY}"
+ #           export DIFFICULTY="${DIFFICULTY}"
         fi
 
         if (( ENABLE_FFMPEG )); then
