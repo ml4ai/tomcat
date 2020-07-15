@@ -227,4 +227,26 @@ string AABB::toTSV() {
     return retval;
 }
 
+void AABB::generateAllDoorsInAABB() {
+    // Get edge midpoints for the AABB because that is where the doors will
+    // be placed
+    vector<Pos> edges = this->getEdgeMidpointAtBase();
+    Pos topEdgeMid(edges.at(0));
+    Pos rightEdgeMid(edges.at(1));
+    Pos bottomEdgeMid(edges.at(2));
+    Pos leftEdgeMid(edges.at(3));
+
+    // Since points are at base we want them to be at base + 1
+    topEdgeMid.shiftY(1);
+    bottomEdgeMid.shiftY(1);
+    leftEdgeMid.shiftY(1);
+    rightEdgeMid.shiftY(1);
+
+    // Add it to the AABB's doors
+    this->addBlock(*(new Block("door", topEdgeMid)));
+    this->addBlock(*(new Block("door", bottomEdgeMid)));
+    this->addBlock(*(new Block("door", leftEdgeMid)));
+    this->addBlock(*(new Block("door", rightEdgeMid)));
+}
+
 AABB::~AABB() {}

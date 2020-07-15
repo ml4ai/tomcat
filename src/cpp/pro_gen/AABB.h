@@ -23,7 +23,7 @@ class AABB {
     Pos bottomRight;
     bool isHollow;
     bool hasRoof;
-    std::vector<Block *> blockList;
+    std::vector<Block*> blockList;
 
   public:
     /**
@@ -68,7 +68,7 @@ class AABB {
      *
      * @return vector<Block>* The reference to the block list
      */
-    std::vector<Block *>& getBlockList();
+    std::vector<Block*>& getBlockList();
 
     /**
      * @brief Get the midpoint X value calculated between
@@ -218,6 +218,14 @@ class AABB {
                          int offsetPosZ = 0,
                          int offsetNegZ = 0,
                          std::string type = "normal");
+
+    /**
+     * @brief Generate all 4 doors for an AABB. Door blocks are added to the
+     * AABB object.
+     *
+     * @param aabb The AABB for which doors are to be generated.
+     */
+    void generateAllDoorsInAABB();
 
     /**
      * @brief Gets a string representation of the various

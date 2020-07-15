@@ -4,10 +4,8 @@
  *
  */
 #pragma once
-#include "Block.h"
-#include "Pos.h"
+#include "World.h"
 #include <random>
-using namespace std;
 
 /**
  * @brief This class represents a Procedural Generator
@@ -16,7 +14,16 @@ using namespace std;
  */
 class ProceduralGenerator {
 
+  private:
+    std::mt19937_64 gen;
+    World world;
+
   public:
+
+    World & getWorld();
+    std::mt19937_64 & getRandom();
+    void setRandom(int seed);
+
     /**
      * @brief Construct a new Procedural Generator object
      */
