@@ -65,15 +65,29 @@ namespace tomcat {
     }
 
     void Mission::create_client_pool() {
-        this->client_pool = make_shared<ClientPool>();
-        this->client_pool->add(ClientInfo("192.168.1.112", this->port_number));
 
-        if (this->multiplayer) {
-            // Add each one of the clients in the multiplayer mission
-            // This is hardcoded but needs to be moved to a config file at some
-            // point
-            this->client_pool->add(ClientInfo("192.168.1.133", 10001));
-        }
+
+        std::ifstream i("test.json");
+        json j;
+        i >> j;
+
+        this->client_pool = make_shared<ClientPool>();
+        this->client_pool->add(ClientInfo(j["server"]["ip_address"], this->port_number));
+
+            if (this->multiplayer) {
+                // Add each one of the clients in the multiplayer mission
+                // This is hardcoded but needs to be moved to a config file at some
+                // point
+                int number_of_clients = j["number_of_clients"];
+                for(int i=1; i<=number_of_clients; i++){
+                    string player = "player";
+                    stringstream ss;
+                    ss << player << i;
+                    this->client_pool->add(ClientInfo(j[ss.str()], 10001));
+                }
+            }
+
+
     }
 
     void Mission::create_mission_spec() {
