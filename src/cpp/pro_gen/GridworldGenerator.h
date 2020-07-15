@@ -14,6 +14,6 @@ class GridworldGenerator : public ProceduralGenerator {
     void generateGridWorld();
 
   public:
-    GridworldGenerator(int N, int separation, int AABB_size);
+    GridworldGenerator(int N, int separation, int AABB_size, int seed = 1);
     ~GridworldGenerator();
 };
