@@ -15,7 +15,7 @@ import pandas as pd
 
 
 def fit_and_evaluate(
-    original_model, evidence_set, number_of_samples, burn_in, number_of_folds, taus
+    original_model, evidence_set, number_of_samples, burn_in, number_of_folds, horizons
 ):
     """
     This function fits and evaluates the model using k-fold cross validation. For each fold, the training set is
@@ -28,15 +28,15 @@ def fit_and_evaluate(
     folds = shuffle_and_split_data(evidence_set, number_of_folds)
     learning = ParameterLearning(original_model)
 
-    tg_baseline_log_losses = [[] for _ in range(len(taus))]
-    ty_baseline_log_losses = [[] for _ in range(len(taus))]
-    tg_baseline_confusion_matrices = [[] for _ in range(len(taus))]
-    ty_baseline_confusion_matrices = [[] for _ in range(len(taus))]
+    tg_baseline_log_losses = [[] for _ in range(len(horizons))]
+    ty_baseline_log_losses = [[] for _ in range(len(horizons))]
+    tg_baseline_confusion_matrices = [[] for _ in range(len(horizons))]
+    ty_baseline_confusion_matrices = [[] for _ in range(len(horizons))]
 
-    tg_model_log_losses = [[] for _ in range(len(taus))]
-    ty_model_log_losses = [[] for _ in range(len(taus))]
-    tg_model_confusion_matrices = [[] for _ in range(len(taus))]
-    ty_model_confusion_matrices = [[] for _ in range(len(taus))]
+    tg_model_log_losses = [[] for _ in range(len(horizons))]
+    ty_model_log_losses = [[] for _ in range(len(horizons))]
+    tg_model_confusion_matrices = [[] for _ in range(len(horizons))]
+    ty_model_confusion_matrices = [[] for _ in range(len(horizons))]
 
     for training_set, test_set in folds:
         trained_model = learning.estimate_parameters(
@@ -44,12 +44,12 @@ def fit_and_evaluate(
         )
         inference = ModelInference(trained_model)
 
-        for i, tau in enumerate(taus):
+        for i, h in enumerate(horizons):
 
             (
                 tg_baseline_frequencies,
                 ty_baseline_frequencies,
-            ) = inference.get_triaging_normalized_frequencies(training_set, tau)
+            ) = inference.get_triaging_normalized_frequencies(training_set, h)
 
             (
                 tg_baseline_ll,
@@ -57,7 +57,7 @@ def fit_and_evaluate(
                 tg_baseline_cm,
                 ty_baseline_cm,
             ) = compute_accuracy_for_triaging(
-                tg_baseline_frequencies, ty_baseline_frequencies, test_set, tau
+                tg_baseline_frequencies, ty_baseline_frequencies, test_set, h
             )
             tg_baseline_log_losses[i].append(tg_baseline_ll)
             ty_baseline_log_losses[i].append(ty_baseline_ll)
@@ -67,13 +67,13 @@ def fit_and_evaluate(
             (
                 tg_marginals,
                 ty_marginals,
-            ) = inference.get_triaging_marginals_over_time(test_set, tau)
+            ) = inference.get_triaging_marginals_over_time(test_set, h)
             (
                 tg_model_ll,
                 ty_model_ll,
                 tg_model_cm,
                 ty_model_cm,
-            ) = compute_accuracy_for_triaging(tg_marginals, ty_marginals, test_set, tau)
+            ) = compute_accuracy_for_triaging(tg_marginals, ty_marginals, test_set, h)
             tg_model_log_losses[i].append(tg_model_ll)
             ty_model_log_losses[i].append(ty_model_ll)
             tg_model_confusion_matrices[i].append(tg_model_cm)
@@ -88,6 +88,7 @@ def fit_and_evaluate(
         ty_model_log_losses,
         tg_model_confusion_matrices,
         ty_model_confusion_matrices,
+        horizons
     )
 
 def shuffle_and_split_data(evidence_set, number_of_folds):
@@ -144,7 +145,7 @@ def shuffle_and_split_data(evidence_set, number_of_folds):
 
 
 def compute_accuracy_for_triaging(
-    tg_probabilities, ty_probabilities, test_set, tau=1
+    tg_probabilities, ty_probabilities, test_set, h=1
 ):
     """
     We only want to compute the accuracy for TG and TY at this point
@@ -155,7 +156,7 @@ def compute_accuracy_for_triaging(
     confusion_matrix_ty = np.zeros((2, 2))
 
     for d in range(test_set.number_of_data_points):
-        if len(tg_probabilities.shape) == 3:
+        if len(tg_probabilities.shape) > 1:
             tg_data_point_probabilities = tg_probabilities[d]
             ty_data_point_probabilities = ty_probabilities[d]
         else:
@@ -165,14 +166,14 @@ def compute_accuracy_for_triaging(
         tg_evidence = test_set.tg_evidence[d][1:]
         ty_evidence = test_set.ty_evidence[d][1:]
 
-        agg_tg_evidence = np.zeros(len(tg_evidence)-tau+1, dtype=np.int)
-        agg_ty_evidence = np.zeros(len(tg_evidence)-tau+1, dtype=np.int)
-        for i in range(len(tg_evidence)-tau+1):
+        agg_tg_evidence = np.zeros(len(tg_evidence) - h + 1, dtype=np.int)
+        agg_ty_evidence = np.zeros(len(tg_evidence) - h + 1, dtype=np.int)
+        for i in range(len(tg_evidence) - h + 1):
             agg_tg_evidence[i] = tg_evidence[i]
             agg_ty_evidence[i] = ty_evidence[i]
-            for j in range(tau-1):
-                agg_tg_evidence[i] = agg_tg_evidence[i] & tg_evidence[i + j + 1]
-                agg_ty_evidence[i] = agg_ty_evidence[i] & ty_evidence[i + j + 1]
+            for j in range(h - 1):
+                agg_tg_evidence[i] = agg_tg_evidence[i] | tg_evidence[i + j + 1]
+                agg_ty_evidence[i] = agg_ty_evidence[i] | ty_evidence[i + j + 1]
                 if agg_tg_evidence[i] & agg_ty_evidence[i]:
                     break
 
@@ -184,11 +185,11 @@ def compute_accuracy_for_triaging(
 
         confusion_matrix_tg += confusion_matrix(
             agg_tg_evidence,
-            np.where(tg_data_point_probabilities[:, 1] > 0.5, 1, 0),
+            np.where(tg_data_point_probabilities > 0.5, 1, 0),
         )
         confusion_matrix_ty += confusion_matrix(
             agg_ty_evidence,
-            np.where(ty_data_point_probabilities[:, 1] > 0.5, 1, 0),
+            np.where(ty_data_point_probabilities > 0.5, 1, 0),
         )
 
     return tg_log_loss, ty_log_loss, confusion_matrix_tg, confusion_matrix_ty
@@ -198,9 +199,8 @@ def get_log_loss(evidence, probabilities):
     """
     This function computes the log loss between probabilities and real observed values
     """
-    log_marginals = utils.log(probabilities)
     return -np.mean(
-        evidence * log_marginals[:, 1] + (1 - evidence) * log_marginals[:, 0]
+        evidence * utils.log(probabilities) + (1 - evidence) * (utils.log(1-probabilities))
     )
 
 
@@ -214,10 +214,9 @@ def get_f1_score(confusion_matrix):
 
     return 2 * precision * recall / (precision + recall)
 
-def print_results(tg_baseline_ll, ty_baseline_ll, tg_baseline_cm, ty_baseline_cm, tg_model_ll, ty_model_ll, tg_model_cm, ty_model_cm,):
-    tau = len(tg_baseline_ll)
-    for i in range(tau):
-        print('Tau = {}'.format(i+1))
+def print_results(tg_baseline_ll, ty_baseline_ll, tg_baseline_cm, ty_baseline_cm, tg_model_ll, ty_model_ll, tg_model_cm, ty_model_cm, horizons):
+    for i, h in enumerate(horizons):
+        print('h = {}'.format(h))
         print('')
 
         agg_tg_baseline_cm = np.sum(tg_baseline_cm[i], axis=0)
@@ -230,6 +229,10 @@ def print_results(tg_baseline_ll, ty_baseline_ll, tg_baseline_cm, ty_baseline_cm
         print('Log-loss')
         print('{:.4f} {:.4f}'.format(np.mean(tg_baseline_ll[i]), np.mean(ty_baseline_ll[i])))
         print('')
+        print('Confusion Matrix')
+        print(agg_tg_baseline_cm)
+        print(agg_ty_baseline_cm)
+        print('')
         print('F1 Score')
         print('{:.4f} {:.4f}'.format(get_f1_score(agg_tg_baseline_cm), get_f1_score(agg_ty_baseline_cm)))
 
@@ -239,8 +242,14 @@ def print_results(tg_baseline_ll, ty_baseline_ll, tg_baseline_cm, ty_baseline_cm
         print('Log-loss')
         print('{:.4f} {:.4f}'.format(np.mean(tg_model_ll[i]), np.mean(ty_model_ll[i])))
         print('')
+        print('Confusion Matrix')
+        print(agg_tg_baseline_cm)
+        print(agg_ty_baseline_cm)
         print('F1 Score')
         print('{:.4f} {:.4f}'.format(get_f1_score(agg_tg_model_cm), get_f1_score(agg_ty_model_cm)))
+
+        print('########################')
+        print('########################')
 
 def toy_data():
     evidence_set = load_evidence_set("../data/evidence/toy")
@@ -259,19 +268,43 @@ def toy_data():
     model = Model()
     model.init_from_cpds(cpds)
     inference = ModelInference(model)
-    tg_marginals, ty_marginals = inference.get_triaging_marginals_over_time(evidence_set)
-    print(tg_marginals)
-    print(ty_marginals)
+    tg_marginals_bl, ty_marginals_bl = inference.get_triaging_normalized_frequencies(evidence_set, h=3)
+    tg_marginals, ty_marginals = inference.get_triaging_marginals_over_time(evidence_set, h=3)
+
+    # tg_bl_ll = [[]]
+    # ty_bl_ll = [[]]
+    # tg_bl_cm = [[]]
+    # ty_bl_cm = [[]]
+    # tg_ll = [[]]
+    # ty_ll = [[]]
+    # tg_cm = [[]]
+    # ty_cm = [[]]
+    #
+    # (tg_bl_ll[0],
+    # ty_bl_ll[0],
+    # tg_bl_cm[0],
+    # ty_bl_cm[0]) = compute_accuracy_for_triaging(tg_marginals_bl, ty_marginals_bl, evidence_set, h=3)
+    # (tg_ll[0],
+    #  ty_ll[0],
+    #  tg_cm[0],
+    #  ty_cm[0]) = compute_accuracy_for_triaging(tg_marginals, ty_marginals, evidence_set, h=3)
+    # print_results(tg_bl_ll, ty_bl_ll, tg_bl_cm, ty_bl_cm, tg_ll, ty_ll, tg_cm, ty_cm)
 
 if __name__ == "__main__":
     # toy_data()
-    NUMBER_OF_SAMPLES = 1
-    BURN_IN = 0
-    K = 5
+    NUMBER_OF_SAMPLES = 5000
+    BURN_IN = 500
+
+    np.random.seed(42)
+    random.seed(42)
+    model = Model()
+    model.init_from_mission_map(MissionMap.SPARKY)
+    evidence_set = load_evidence_set("../data/evidence/asist/sparky")
+    fit_and_evaluate(model, evidence_set, NUMBER_OF_SAMPLES, BURN_IN, 6, [1, 3, 5])
 
     np.random.seed(42)
     random.seed(42)
     model = Model()
     model.init_from_mission_map(MissionMap.FALCON)
     evidence_set = load_evidence_set("../data/evidence/asist/falcon")
-    fit_and_evaluate(model, evidence_set, NUMBER_OF_SAMPLES, BURN_IN, K, [1,3,5])
+    fit_and_evaluate(model, evidence_set, NUMBER_OF_SAMPLES, BURN_IN, 5, [1, 3, 5])
