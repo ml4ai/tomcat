@@ -4,10 +4,19 @@
 #include <LandmarkCoreIncludes.h>
 #include <RecorderOpenFace.h>
 #include <nlohmann/json.hpp>
+#include "include/fifo_map.hpp"
 #include <opencv2/highgui/highgui.hpp>
 
-using json = nlohmann::json;
+typedef vector<pair<string, double>> au_vector;
+
+
 using namespace std;
+using namespace nlohmann;
+
+
+template<class K, class V, class dummy_compare, class A>
+using modified_fifo_map = fifo_map<K, V, fifo_map_compare<K>, A>;
+using modified_json = basic_json<modified_fifo_map>;
 
 namespace tomcat {
 
@@ -76,8 +85,7 @@ namespace tomcat {
         	Point3f gazeDirection0(0, 0, 0);
         	Point3f gazeDirection1(0, 0, 0);
         	Vec2d gazeAngle(0, 0);
-
-        
+        	
 
         	// If tracking succeeded and we have an eye model, estimate gaze
         	if (detection_success && this->face_model.eye_model) {
@@ -187,15 +195,32 @@ namespace tomcat {
         	    num_hog_cols,
         	    31); // The number of channels in HOG is fixed at the moment, as
         	         // using FHOG
+        	
         	open_face_rec.SetObservationVisualization(
         	    this->visualizer.GetVisImage());
+        	
+        	open_face_rec.SetObservationLandmarks(
+        		this->face_model.detected_landmarks,
+        		this->face_model.GetShape(
+        			this->sequence_reader.fx, 
+        			this->sequence_reader.fy, 
+        			this->sequence_reader.cx, 
+        			this->sequence_reader.cy),
+				this->face_model.params_global, 
+				this->face_model.params_local, 
+				this->face_model.detection_certainty, 
+				detection_success);
+        	
         	open_face_rec.SetObservationTimestamp(
         		this->sequence_reader.time_stamp);
+        	
         	open_face_rec.SetObservationFrameNumber(
         		this->sequence_reader.GetFrameNumber());
+        	
         	open_face_rec.SetObservationActionUnits(
         	    face_analyser.GetCurrentAUsReg(),
         	    face_analyser.GetCurrentAUsClass());
+        	
         	open_face_rec.SetObservationGaze(
         		gazeDirection0, 
         		gazeDirection1, 
@@ -208,108 +233,50 @@ namespace tomcat {
         				this->sequence_reader.cx, 
         				this->sequence_reader.cy));
         	        	
+        	// Json output		
+        	modified_json output;
+        	
+        	// Header block
+        	output["header"]["timestamp"] = this->sequence_reader.time_stamp;
+        	output["header"]["message_type"] = "observation";
+        	output["header"]["version"] = "0.1";
+        	
+        	// Message block
+        	output["msg"]["timestamp"] = this->sequence_reader.time_stamp;
+        	output["msg"]["source"] = "facesensor";
+        	output["msg"]["sub_type"] = "state";
+        	output["msg"]["version"] = "0.1";
+        	
+        	// Data block
+        	std::stringstream ss;
+			ss << std::fixed << std::setprecision(5) << this->face_model.detection_certainty;
+        	output["data"]["landmark_detection_confidence"] = ss.str();
+        	output["data"]["landmark_detection_success"] = detection_success;
+        	output["data"]["frame"] = this->sequence_reader.GetFrameNumber();
+        	
         	vector<pair<string, double>> AU_reg, AU_class;
         	AU_reg = face_analyser.GetCurrentAUsReg();
         	AU_class = 	face_analyser.GetCurrentAUsClass();
+        	sort(AU_reg.begin(), AU_reg.end()); 
+        	sort(AU_class.begin(), AU_class.end()); 
+        	au_vector::iterator it_reg, it_class;
+        	for (it_class = AU_class.begin(); it_class != AU_class.end(); ++it_class) {
+        		output["data"]["action_units"][it_class->first]["occurence"] = it_class->second;
+        	}
+        	for (it_reg = AU_reg.begin(); it_reg != AU_reg.end(); ++it_reg) {
+        		output["data"]["action_units"][it_reg->first]["intensity"] = it_reg->second;
+        	}
         	
-        	json output;
+        	output["data"]["gaze"]["eye_0"]["x"] = gazeDirection0.x;
+        	output["data"]["gaze"]["eye_0"]["y"] = gazeDirection0.y;
+        	output["data"]["gaze"]["eye_0"]["z"] = gazeDirection0.z;
+        	output["data"]["gaze"]["eye_1"]["x"] = gazeDirection1.x;
+        	output["data"]["gaze"]["eye_1"]["y"] = gazeDirection1.y;
+        	output["data"]["gaze"]["eye_1"]["z"] = gazeDirection1.z;
+        	output["data"]["gaze"]["gaze_angle"]["x"] = gazeAngle[0];
+        	output["data"]["gaze"]["gaze_angle"]["y"] = gazeAngle[1];
+
         	
-        	// TODO: Implement an iterator instead of manual
-        	output = {
-        				{"timestamp", this->sequence_reader.time_stamp},
-        				{"frame", this->sequence_reader.GetFrameNumber()},
-        				{
-        					"action_units", {
-        						AU_reg[0].first, {
-        							{"intensity", AU_reg[0].second},
-        							{"occurence", AU_class[0].second}
-        						},
-        						AU_reg[1].first, {
-        							{"intensity", AU_reg[1].second},
-        							{"occurence", AU_class[1].second}
-        						},
-        						AU_reg[2].first, {
-        							{"intensity", AU_reg[2].second},
-        							{"occurence", AU_class[2].second}
-        						},
-        						AU_reg[3].first, {
-        							{"intensity", AU_reg[3].second},
-        							{"occurence", AU_class[3].second}
-        						},
-        						AU_reg[4].first, {
-        							{"intensity", AU_reg[4].second},
-        							{"occurence", AU_class[4].second}
-        						},
-        						AU_reg[5].first, {
-        							{"intensity", AU_reg[5].second},
-        							{"occurence", AU_class[5].second}
-        						},
-        						AU_reg[6].first, {
-        							{"intensity", AU_reg[6].second},
-        							{"occurence", AU_class[6].second}
-        						},
-        						AU_reg[7].first, {
-        							{"intensity", AU_reg[7].second},
-        							{"occurence", AU_class[7].second}
-        						},
-        						AU_reg[8].first, {
-        							{"intensity", AU_reg[8].second},
-        							{"occurence", AU_class[8].second}
-        						},
-        						AU_reg[9].first, {
-        							{"intensity", AU_reg[9].second},
-        							{"occurence", AU_class[9].second}
-        						},
-        						AU_reg[10].first, {
-        							{"intensity", AU_reg[10].second},
-        							{"occurence", AU_class[10].second}
-        						},
-        						AU_reg[11].first, {
-        							{"intensity", AU_reg[11].second},
-        							{"occurence", AU_class[11].second}
-        						},
-        						AU_reg[12].first, {
-        							{"intensity", AU_reg[12].second},
-        							{"occurence", AU_class[12].second}
-        						},
-        						AU_reg[13].first, {
-        							{"intensity", AU_reg[13].second},
-        							{"occurence", AU_class[13].second}
-        						},
-        						AU_reg[14].first, {
-        							{"intensity", AU_reg[14].second},
-        							{"occurence", AU_class[14].second}
-        						},
-        						AU_reg[15].first, {
-        							{"intensity", AU_reg[15].second},
-        							{"occurence", AU_class[15].second}
-        						},
-        						AU_reg[16].first, {
-        							{"intensity", AU_reg[16].second},
-        							{"occurence", AU_class[16].second}
-        						},
-        					}
-        				},
-        				{
-        					"gaze", {
-        						"eye_0", {
-        							{"x", gazeDirection0.x},
-        							{"y", gazeDirection0.y},
-        							{"z", gazeDirection0.z}
-        						},
-        						"eye_1", {
-        							{"x", gazeDirection1.x},
-        							{"y", gazeDirection1.y},
-        							{"z", gazeDirection1.z}
-        						},
-        						"gaze_angle", {
-        							{"x", gazeAngle[0]},
-        							{"y", gazeAngle[1]}
-        						}
-        					}
-        				}		
-        			};
-        		
         	std::cout << output.dump(4) << std::endl;
         		
         	// Grabbing the next frame in the sequence
