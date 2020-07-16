@@ -251,6 +251,31 @@ def print_results(tg_baseline_ll, ty_baseline_ll, tg_baseline_cm, ty_baseline_cm
         print('########################')
         print('########################')
 
+    print('TG')
+    print('Baseline')
+    print('1->3')
+    print((np.sum(tg_baseline_cm[1], axis=0) - np.sum(tg_baseline_cm[0], axis=0)) / np.sum(tg_baseline_cm[0], axis=0))
+    print('3->5')
+    print((np.sum(tg_baseline_cm[2], axis=0) - np.sum(tg_baseline_cm[1], axis=0)) / np.sum(tg_baseline_cm[1], axis=0))
+    print('Model')
+    print('1->3')
+    print((np.sum(tg_model_cm[1], axis=0) - np.sum(tg_model_cm[0], axis=0)) / np.sum(tg_model_cm[0], axis=0))
+    print('3->5')
+    print((np.sum(tg_model_cm[2], axis=0) - np.sum(tg_model_cm[1], axis=0)) / np.sum(tg_model_cm[1], axis=0))
+
+    print('TY')
+    print('Baseline')
+    print('1->3')
+    print((np.sum(ty_baseline_cm[1], axis=0) - np.sum(ty_baseline_cm[0], axis=0)) / np.sum(ty_baseline_cm[0], axis=0))
+    print('3->5')
+    print((np.sum(ty_baseline_cm[2], axis=0) - np.sum(ty_baseline_cm[1], axis=0)) / np.sum(ty_baseline_cm[1], axis=0))
+    print('Model')
+    print('1->3')
+    print((np.sum(ty_model_cm[1], axis=0) - np.sum(ty_model_cm[0], axis=0)) / np.sum(ty_model_cm[0], axis=0))
+    print('3->5')
+    print((np.sum(ty_model_cm[2], axis=0) - np.sum(ty_model_cm[1], axis=0)) / np.sum(ty_model_cm[1], axis=0))
+
+
 def toy_data():
     evidence_set = load_evidence_set("../data/evidence/toy")
     evidence_set.lt_evidence -= 1
