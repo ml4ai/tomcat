@@ -70,6 +70,9 @@ set_local_configuration() {
     #                                              5 for medium.
     #                                              7 for hard.
     export DIFFICULTY=${DIFFICULTY:-5}
+    
+    runExperiment_args="--level_of_difficulty=${DIFFICULTY}"
+
 
     # PLAYER_ID - the id of the player who is running the mission. Defaults to
     # the value stored in the USER environment variable.

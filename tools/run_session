@@ -34,7 +34,8 @@ if [[ ! $(pgrep -l mosquitto | head -n1 | cut -d' ' -f2) == mosquitto ]]; then
     "$MOSQUITTO" &> ${TOMCAT_TMP_DIR}/mosquitto.log &
 fi
 
-# UUIDs: uniform behaviour on macOS and Linux.
+#On macos, uuidgen roduces uppercase UUIDS, so we pipe the output 
+    # through tr to get univormbehavior on macOS and Linux.
 SESSION_UUID=$(uuidgen | tr '[:upper:]' '[:lower:]')
 if [[ $? -ne 0 ]]; then exit 1; fi
 
@@ -75,7 +76,9 @@ start_av_recording() {
             # We need to extract the alsa output monitor.
             export ALSA_OUTPUT_MONITOR=`pacmd list-sources | \
             awk '/name:/ && /monitor/ {print $2 }'|sed 's/[<,>]//g'`
-            # Calling pacat command.            pacat --record --file-format=wav -d ${ALSA_OUTPUT_MONITOR} \
+
+            # Calling pacat command.            
+            pacat --record --file-format=wav -d ${ALSA_OUTPUT_MONITOR} \
             > "${MISSION_OUTPUT_DIR}"/system_audio.wav &
             pid_system_audio_recording=$!
         else
@@ -198,7 +201,6 @@ mission_cleanup() {
     echo -e '\n'
 }
 
-world_dir
 # A function to handle cleanup when a user interrupts the script with Ctrl+C
 user_interrupt() {
     echo "Detected keyboard interrupt."
@@ -206,7 +208,6 @@ user_interrupt() {
     mission_cleanup
     session_cleanup
 }
-
 
 trap user_interrupt SIGINT SIGTERM
 
