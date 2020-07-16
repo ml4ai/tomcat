@@ -5,8 +5,25 @@ Group::Group(int id)
     : AABB(id, "group", "air", *(new Pos()), *(new Pos()), true, false) {}
 
 void Group::addAABB(AABB& aabb) {
-    this->aabbList.push_back(aabb);
+    this->aabbList.push_back(&aabb);
     this->recalculateGroupBoundaries();
+}
+
+void Group::generateAllDoorsInAABB() {
+    for (auto& aabb : this->aabbList) {
+        (*aabb).generateAllDoorsInAABB();
+    }
+}
+
+vector<AABB*>& Group::getAABBList() { return this->aabbList; }
+
+AABB* Group::getAABB(int id) {
+    for (auto& aabb : this->aabbList) {
+        if ((*aabb).getID() == id) {
+            return aabb;
+        }
+    }
+    return nullptr;
 }
 
 void Group::recalculateGroupBoundaries() {
@@ -15,12 +32,12 @@ void Group::recalculateGroupBoundaries() {
     int maxX, maxY, maxZ;
     bool isFirst = true;
 
-    for (AABB& aabb : this->aabbList) {
+    for (auto& aabb : this->aabbList) {
 
-        Pos topLeft = aabb.getTopLeft();
+        Pos topLeft = (*aabb).getTopLeft();
         int x1 = topLeft.getX(), y1 = topLeft.getY(), z1 = topLeft.getZ();
 
-        Pos bottomRight = aabb.getBottomRight();
+        Pos bottomRight = (*aabb).getBottomRight();
         int x2 = bottomRight.getX(), y2 = bottomRight.getY(),
             z2 = bottomRight.getZ();
 
@@ -63,8 +80,13 @@ void Group::recalculateGroupBoundaries() {
 
 string Group::toTSV() {
     string retval = "";
-    for (AABB& aabb : this->aabbList) {
-        retval += aabb.toTSV();
+
+    for (auto& aabb : this->aabbList) {
+        retval += (*aabb).toTSV();
+    }
+
+    for (auto& block : (this->getBlockList())) {
+        retval += (*block).toTSV() + "\n";
     }
 
     return retval;

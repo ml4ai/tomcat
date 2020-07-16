@@ -44,8 +44,8 @@ int main(int argc, char* argv[]) {
 
     // Process input and generate output
     cout << "Generating zombieworld..." << endl;
-    GridworldGenerator gridworldGenerator(10, 0, 10);
-    World& world = gridworldGenerator.getWorld();
+    ZombieWorldGenerator zombiegen(12319);
+    World& world = zombiegen.getWorld();
     cout << "Writing to file..." << endl;
 
     // Write JSON

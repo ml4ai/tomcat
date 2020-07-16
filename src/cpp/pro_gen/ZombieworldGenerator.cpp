@@ -1,6 +1,26 @@
 #include "ZombieworldGenerator.h"
 using namespace std;
 
+void ZombieWorldGenerator::addLevers() {
+    for (auto& aabb : this->getWorld().getAABBList()) {
+        Group* g = dynamic_cast<Group*>(aabb);
+
+        if (g) {
+            AABB* aabbTwo = (*g).getAABB(2);
+
+            if (aabbTwo != nullptr) {
+
+                Pos topEdgeMidpoint = (*aabbTwo).getEdgeMidpointAtBase().at(0);
+                topEdgeMidpoint.shiftY(2);
+                topEdgeMidpoint.shiftX(-1);
+                topEdgeMidpoint.shiftZ(-1);
+
+                (*g).addBlock(*(new Block("lever", topEdgeMidpoint)));
+            }
+        }
+    }
+}
+
 void ZombieWorldGenerator::addGroupOfAABB(int idCtr,
                                           Pos& firstTopLeft,
                                           Pos& firstBottomRight) {
@@ -10,19 +30,27 @@ void ZombieWorldGenerator::addGroupOfAABB(int idCtr,
 
     Group* g = dynamic_cast<Group*>((world.getAABBList()).back());
 
-    (*g).addAABB(
-        *(new AABB(idCtr, "room", "planks", firstTopLeft, firstBottomRight)));
+    (*g).addAABB(*(new AABB(
+        1, "room", "planks", firstTopLeft, firstBottomRight, true, true)));
 
-    Pos secondTopLeft(firstTopLeft);
-    secondTopLeft.shiftX(2);
-    secondTopLeft.shiftZ(2);
+    if (!(idCtr == 1 || idCtr == 7 || idCtr == 9)) {
 
-    Pos secondBottomRight(firstBottomRight);
-    secondBottomRight.shiftX(2);
-    secondBottomRight.shiftZ(2);
+        Pos secondTopLeft(firstTopLeft);
+        secondTopLeft.shiftX(3);
+        secondTopLeft.shiftZ(9);
 
-    (*g).addAABB(
-        *(new AABB(idCtr, "room", "planks", secondTopLeft, secondBottomRight)));
+        Pos secondBottomRight(firstBottomRight);
+        secondBottomRight.shiftX(3);
+        secondBottomRight.shiftZ(9);
+
+        (*g).addAABB(*(new AABB(2,
+                                "room",
+                                "planks",
+                                secondTopLeft,
+                                secondBottomRight,
+                                true,
+                                true)));
+    }
 }
 
 void ZombieWorldGenerator::chooseZombieworldAABB(int idCtr,
@@ -99,7 +127,7 @@ void ZombieWorldGenerator::generateAABBGrid() {
     // Add the first one
     int idCtr = 1;
     Pos prevTopLeft(1, 3, 1);
-    Pos prevBottomRight(AABB_size, 3 + AABB_size, AABB_size);
+    Pos prevBottomRight(AABB_size, 3 + AABB_size / 2, AABB_size);
 
     this->addGroupOfAABB(idCtr, prevTopLeft, prevBottomRight);
 
@@ -115,7 +143,7 @@ void ZombieWorldGenerator::generateAABBGrid() {
             Pos topLeft(1, 3, 1);
             topLeft.setZ(prevBottomRight.getZ() + sep);
             Pos bottomRight(
-                AABB_size, 3 + AABB_size, topLeft.getZ() + AABB_size);
+                AABB_size, 3 + AABB_size / 2, topLeft.getZ() + AABB_size - 1);
 
             chooseZombieworldAABB(
                 idCtr,
@@ -136,7 +164,7 @@ void ZombieWorldGenerator::generateAABBGrid() {
             topLeft.setX(prevBottomRight.getX() + sep);
 
             Pos bottomRight(prevBottomRight);
-            bottomRight.setX(topLeft.getX() + AABB_size);
+            bottomRight.setX(topLeft.getX() + AABB_size - 1);
 
             chooseZombieworldAABB(
                 idCtr,
@@ -153,14 +181,24 @@ void ZombieWorldGenerator::generateAABBGrid() {
     }
 }
 
-void ZombieWorldGenerator::generateBlocks() {
+void ZombieWorldGenerator::decorate() {
     World& world = this->getWorld();
 
+    // Add doors and lights
     for (auto& aabb : world.getAABBList()) {
         if (strcmp((*aabb).getType().c_str(), "pit") != 0) {
             (*aabb).generateAllDoorsInAABB();
+
+            Group* g = dynamic_cast<Group*>(aabb);
+            if (g) {
+                for (auto& aabbInGroup : (*g).getAABBList())
+                    (*aabbInGroup).generateBox("glowstone", 2, 2, 5, 0, 2, 2);
+            }
         }
     }
+
+    // Add levers
+    this->addLevers();
 }
 
 void ZombieWorldGenerator::generateBoundingWalls() {
@@ -171,11 +209,12 @@ void ZombieWorldGenerator::generateBoundingWalls() {
     // Create boundary
     Pos boundaryTopLeft((*firstAABB).getTopLeft());
     boundaryTopLeft.shiftX(-4);
-    boundaryTopLeft.shiftY(-3);
+    boundaryTopLeft.setY(-3);
     boundaryTopLeft.shiftZ(-4);
 
     Pos boundaryBottomRight((*lastAABB).getBottomRight());
     boundaryBottomRight.shiftX(4);
+    boundaryBottomRight.setY(13);
     boundaryBottomRight.shiftZ(4);
 
     world.addAABB(*(new AABB(
@@ -197,7 +236,7 @@ void ZombieWorldGenerator::generateBoundingWalls() {
                              false)));
 
     AABB* separatorWall1 = world.getAABBList().back();
-    (*separatorWall1).generateBox("fence", 0, 0, 3, 3, 1, 1);
+    (*separatorWall1).generateBox("fence", 0, 0, 3, 2, 1, 1);
 
     // Create Internal Separator 2
     Pos separator2BottomRight(separator1TopLeft);
@@ -214,13 +253,13 @@ void ZombieWorldGenerator::generateBoundingWalls() {
                              separator2BottomRight,
                              false)));
     AABB* separatorWall2 = world.getAABBList().back();
-    (*separatorWall2).generateBox("fence", 1, 1, 3, 3, 0, 0);
+    (*separatorWall2).generateBox("fence", 1, 1, 3, 2, 0, 0);
 }
 
 ZombieWorldGenerator::ZombieWorldGenerator(int seed) {
     this->setRandom(seed);
     this->generateAABBGrid();
-    this->generateBlocks();
+    this->decorate();
     this->generateBoundingWalls();
 }
 

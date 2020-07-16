@@ -10,8 +10,10 @@ class ZombieWorldGenerator : public ProceduralGenerator {
     void addGroupOfAABB(int idCtr, Pos& firstTopLeft, Pos& firstBottomRight);
     void chooseZombieworldAABB(int idCtr, Pos& topLeft, Pos& bottomRight);
     void generateAABBGrid();
-    void generateBlocks();
     void generateBoundingWalls();
+    void decorate();
+    void addLevers();
+    void addLights(AABB&);
 
   public:
     ZombieWorldGenerator(int seed = 1);

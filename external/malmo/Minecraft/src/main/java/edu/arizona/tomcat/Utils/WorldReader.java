@@ -89,7 +89,11 @@ public class WorldReader {
             return Blocks.COBBLESTONE.getDefaultState();
         }else if (material.equals("fence")) {
             return Blocks.NETHER_BRICK_FENCE.getDefaultState();
-        } else if (material.equals("air")) {
+        }else if (material.equals("lever")) {
+            return Blocks.LEVER.getDefaultState();
+        }else if (material.equals("glowstone")) {
+            return Blocks.GLOWSTONE.getDefaultState();
+        }else if (material.equals("air")) {
             return Blocks.AIR.getDefaultState();
         } else {
             return Blocks.QUARTZ_BLOCK.getDefaultState();  // For unknown block

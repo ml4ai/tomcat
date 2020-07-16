@@ -224,7 +224,7 @@ class AABB {
      *
      * @param aabb The AABB for which doors are to be generated.
      */
-    void generateAllDoorsInAABB();
+    void virtual generateAllDoorsInAABB();
 
     /**
      * @brief Gets a string representation of the various
