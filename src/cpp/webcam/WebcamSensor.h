@@ -13,7 +13,7 @@ namespace tomcat {
               det_parameters(this->arguments) {
         }
 
-        void initialize();
+        void initialize(std::string exp, std::string trial, std::string pname);
         void get_observation();
 
       private:
@@ -25,6 +25,9 @@ namespace tomcat {
         LandmarkDetector::FaceModelParameters det_parameters;
         Utilities::FpsTracker fps_tracker;
         cv::Mat_<uchar> grayscale_image;
+        std::string exp_id;
+        std::string trial_id;
+        std::string playername;
     };
 
 } // namespace tomcat

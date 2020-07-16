@@ -10,10 +10,10 @@
 #include <nlohmann/json.hpp>
 #include "include/nlohmann/fifo_map.hpp"
 
-typedef vector<pair<string, double>> au_vector;
-
 using namespace std;
 using namespace nlohmann;
+
+typedef vector<pair<string, double>> au_vector;
 
 
 template<class K, class V, class dummy_compare, class A>
@@ -22,7 +22,13 @@ using modified_json = basic_json<modified_fifo_map>;
 
 namespace tomcat {
 
-    void WebcamSensor::initialize() {
+    void WebcamSensor::initialize(string exp, string trial, string pname) {
+        // Initialize the experiment ID, trial ID and player name
+        this->exp_id = exp;
+        this->trial_id = trial;
+        this->playername = pname;
+        
+        
         // The modules that are being used for tracking
         this->face_model = LandmarkDetector::CLNF();
         if (!this->face_model.loaded_successfully) {
@@ -38,6 +44,7 @@ namespace tomcat {
     };
 
     void WebcamSensor::get_observation() {
+        using cv::Point2f;
         using cv::Point3f;
         using cv::Vec6d;
         using cv::Vec2d;
@@ -68,12 +75,8 @@ namespace tomcat {
             this->sequence_reader.cy,
             this->sequence_reader.fps);
 
-        // Create open_face_rec
-        Utilities::RecorderOpenFace open_face_rec(
-            this->sequence_reader.name, recording_params, this->arguments);
-            
-            
-		this->rgb_image = this->sequence_reader.GetNextFrame(); 
+        
+        this->rgb_image = this->sequence_reader.GetNextFrame(); 
 		
 		while (!this->rgb_image.empty()) {
 		            
@@ -90,7 +93,7 @@ namespace tomcat {
         	Point3f gazeDirection0(0, 0, 0);
         	Point3f gazeDirection1(0, 0, 0);
         	Vec2d gazeAngle(0, 0);
-        	
+        	        	
 
         	// If tracking succeeded and we have an eye model, estimate gaze
         	if (detection_success && this->face_model.eye_model) {
@@ -132,8 +135,7 @@ namespace tomcat {
                     	                   this->sequence_reader.time_stamp,
                     	                   this->sequence_reader.IsWebcam());
             	face_analyser.GetLatestAlignedFace(sim_warped_img);
-            	face_analyser.GetLatestHOG(
-                	hog_descriptor, num_hog_rows, num_hog_cols);
+            	face_analyser.GetLatestHOG(hog_descriptor, num_hog_rows, num_hog_cols);
         	}
 
         	// Work out the pose of the head from the tracked model
@@ -207,26 +209,28 @@ namespace tomcat {
         	output["header"]["version"] = "0.1";
         	
         	// Message block
+        	output["msg"]["experiment_id"] = this->exp_id;
+        	output["msg"]["trial_id"] = this->trial_id;
         	output["msg"]["timestamp"] = str_timestamp;
         	output["msg"]["source"] = "facesensor";
         	output["msg"]["sub_type"] = "state";
         	output["msg"]["version"] = "0.1";
         	
         	// Data block
+        	output["data"]["playername"] = this->playername;
         	std::stringstream ss;
 			ss << std::fixed << std::setprecision(5) << this->face_model.detection_certainty;
         	output["data"]["landmark_detection_confidence"] = ss.str();
         	output["data"]["landmark_detection_success"] = detection_success;
         	output["data"]["frame"] = this->sequence_reader.GetFrameNumber();
         	
-        	vector<pair<string, double>> AU_reg, AU_class;
-        	AU_reg = face_analyser.GetCurrentAUsReg();
-        	AU_class = 	face_analyser.GetCurrentAUsClass();
+        	vector<pair<string, double>> AU_reg = face_analyser.GetCurrentAUsReg();
+        	vector<pair<string, double>> AU_class = face_analyser.GetCurrentAUsClass();
         	sort(AU_reg.begin(), AU_reg.end()); 
         	sort(AU_class.begin(), AU_class.end()); 
         	au_vector::iterator it_reg, it_class;
         	for (it_class = AU_class.begin(); it_class != AU_class.end(); ++it_class) {
-        		output["data"]["action_units"][it_class->first]["occurence"] = it_class->second;
+        		output["data"]["action_units"][it_class->first]["occurrence"] = it_class->second;
         	}
         	for (it_reg = AU_reg.begin(); it_reg != AU_reg.end(); ++it_reg) {
         		output["data"]["action_units"][it_reg->first]["intensity"] = it_reg->second;
@@ -240,7 +244,56 @@ namespace tomcat {
         	output["data"]["gaze"]["eye_1"]["z"] = gazeDirection1.z;
         	output["data"]["gaze"]["gaze_angle"]["x"] = gazeAngle[0];
         	output["data"]["gaze"]["gaze_angle"]["y"] = gazeAngle[1];
-
+        	
+        	vector<Point2f> eye_landmarks2d = CalculateAllEyeLandmarks(this->face_model);
+        	vector<Point3f> eye_landmarks3d = Calculate3DEyeLandmarks(this->face_model,
+    	                                		this->sequence_reader.fx,
+    	                                		this->sequence_reader.fy,
+    	                                		this->sequence_reader.cx,
+    	                                		this->sequence_reader.cy);
+			for (int i = 0; i < eye_landmarks2d.size(); i++) {
+				string x = "x_";
+				std::ostringstream ostr;
+				ostr << i;
+				x.append(ostr.str());
+				output["data"]["gaze"]["eye_lmk2d"][x] = eye_landmarks2d[i].x;
+        	}
+        	for (int i = 0; i < eye_landmarks2d.size(); i++) {
+				string y = "y_";
+				std::ostringstream ostr;
+				ostr << i;
+				y.append(ostr.str());
+				output["data"]["gaze"]["eye_lmk2d"][y] = eye_landmarks2d[i].y;
+        	}
+        	for (int i = 0; i < eye_landmarks3d.size(); i++) {
+				string x = "X_";
+				std::ostringstream ostr;
+				ostr << i;
+				x.append(ostr.str());
+				output["data"]["gaze"]["eye_lmk3d"][x] = eye_landmarks3d[i].x;
+        	}
+        	for (int i = 0; i < eye_landmarks3d.size(); i++) {
+				string y = "Y_";
+				std::ostringstream ostr;
+				ostr << i;
+				y.append(ostr.str());
+				output["data"]["gaze"]["eye_lmk3d"][y] = eye_landmarks3d[i].y;
+        	}
+        	for (int i = 0; i < eye_landmarks3d.size(); i++) {
+				string z = "Z_";
+				std::ostringstream ostr;
+				ostr << i;
+				z.append(ostr.str());
+				output["data"]["gaze"]["eye_lmk3d"][z] = eye_landmarks3d[i].z;
+        	}
+        	
+        	output["data"]["pose"]["Tx"] = pose_estimate[0];
+        	output["data"]["pose"]["Ty"] = pose_estimate[1];
+        	output["data"]["pose"]["Tz"] = pose_estimate[2];
+        	output["data"]["pose"]["Rx"] = pose_estimate[3];
+        	output["data"]["pose"]["Ry"] = pose_estimate[4];
+        	output["data"]["pose"]["Rz"] = pose_estimate[5];
+        	
         	
         	std::cout << output.dump(4) << std::endl;
         		
@@ -249,7 +302,6 @@ namespace tomcat {
         	
 		}
 
-        
         this->sequence_reader.Close();
 
         // Reset the models for the next video
