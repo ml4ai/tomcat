@@ -91,7 +91,15 @@ detect_os() {
 
         # We set the path to MacPorts so that users don't necessarily need to
         # mess with their ~/.bash_profile.
-        export PATH="$PATH:/opt/local/bin:/opt/local/sbin"
+        # Setting the environment variable IGNORE_MACPORTS to be 1 disables
+        # this (useful for testing and debugging Homebrew-related errors on
+        # machines that have both Homebrew and MacPorts.
+        if (( ${IGNORE_MACPORTS:-0} )); then
+            echo "IGNORE_MACPORTS is set to 1, so we will ignore the existing"\
+                 "MacPorts installation and proceed with Homebrew."
+        else
+            export PATH="$PATH:/opt/local/bin:/opt/local/sbin"
+        fi
 
         if (( MACOS_MINOR_VERSION < 15 )); then
             echo "macOS version older than 10.15 (Catalina). "\
