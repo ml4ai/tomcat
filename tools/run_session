@@ -34,8 +34,8 @@ if [[ ! $(pgrep -l mosquitto | head -n1 | cut -d' ' -f2) == mosquitto ]]; then
     "$MOSQUITTO" &> ${TOMCAT_TMP_DIR}/mosquitto.log &
 fi
 
-#On macos, uuidgen produces uppercase UUIDS, so we pipe the output 
-    #through tr to get uniform behavior on macOS and Linux.
+# On macOS, uuidgen produces uppercase UUIDS, so we pipe the output
+# through 'tr' to get uniform behavior on macOS and Linux.
 SESSION_UUID=$(uuidgen | tr '[:upper:]' '[:lower:]')
 if [[ $? -ne 0 ]]; then exit 1; fi
 
@@ -77,7 +77,7 @@ start_av_recording() {
             export ALSA_OUTPUT_MONITOR=`pacmd list-sources | \
             awk '/name:/ && /monitor/ {print $2 }'|sed 's/[<,>]//g'`
 
-            # Calling pacat command.            
+            # Calling pacat command.
             pacat --record --file-format=wav -d ${ALSA_OUTPUT_MONITOR} \
             > "${MISSION_OUTPUT_DIR}"/system_audio.wav &
             pid_system_audio_recording=$!
@@ -246,7 +246,7 @@ do_mission() {
         if [[ $CURRENT_MISSION -gt 0 ]]; then
             runExperiment_args="${runExperiment_args}\
                                 --time_limit ${TIME_LIMIT}\
-                                --level_of_difficulty ${DIFFICULTY}" 
+                                --level_of_difficulty ${DIFFICULTY}"
         fi
 
         if (( ENABLE_FFMPEG )); then
