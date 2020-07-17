@@ -43,10 +43,17 @@ if [[ $? -ne 0 ]]; then exit 1; fi
 SESSION_OUTPUT_DIR="${TOMCAT}"/data/participant_data/"$SESSION_UUID"
 mkdir -p "${SESSION_OUTPUT_DIR}"
 
-# Generate metadata file for the session
-"$TOMCAT"/tools/generate_session_metadata "$SESSION_UUID" "$PLAYER_ID"\
-  "$TIME_LIMIT" "$DIFFICULTY" > "$SESSION_OUTPUT_DIR"/metadata.json
+SPEC_VERSION=$("$TOMCAT"/build/bin/getSpecVersion --spec "$TOMCAT"/docs/spec.yml)
 
+# Generate metadata file for the session
+"$TOMCAT"/tools/generate_session_metadata\
+    "$SESSION_UUID"\
+    "$PLAYER_ID"\
+    "$TIME_LIMIT"\
+    "$DIFFICULTY"\
+    "$SPEC_VERSION" > "$SESSION_OUTPUT_DIR"/metadata.json
+
+cat "$SESSION_OUTPUT_DIR"/metadata.json
 if [[ $? -ne 0 ]]; then exit 1; fi
 
 
