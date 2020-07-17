@@ -1,4 +1,8 @@
+// As of 2020-07-17, the binary package libyaml-cpp-dev on Ubuntu 18.04 suffers
+// from a bug where the <boost/next_prior.hpp> header is not included in
+// <yaml-cpp/yaml.h>. For this reason, we include it explicitly below.
 #include <boost/next_prior.hpp>
+
 #include <iostream>
 #include <yaml-cpp/yaml.h>
 #include <boost/program_options.hpp>
