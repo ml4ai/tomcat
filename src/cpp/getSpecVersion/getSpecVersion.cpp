@@ -1,3 +1,4 @@
+#include <boost/next_prior.hpp>
 #include <iostream>
 #include <yaml-cpp/yaml.h>
 #include <boost/program_options.hpp>
