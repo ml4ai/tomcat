@@ -36,7 +36,7 @@ set_local_configuration() {
     export ENABLE_FFMPEG=${ENABLE_FFMPEG:-1}
 
     # ENABLE_FILE_UPLOAD: Enable uploading player's data on to vision server.
-    # Defaults to true.
+    # Defaults to false.
     export ENABLE_FILE_UPLOAD=${ENABLE_FILE_UPLOAD:-0}
 
     # MAIN_MISSION: Set this to 1 for the Zombie invasion mission,
@@ -65,6 +65,12 @@ set_local_configuration() {
 
     # DEFAULT_MAIN_MISSION_TIME: Allows for short missions for testing.
     export DEFAULT_MAIN_MISSION_TIME=${DEFAULT_MAIN_MISSION_TIME:-600}
+
+    # DIFFICULTY: Level of difficulty for mission. 3 for easy.
+    #                                              5 for medium.
+    #                                              7 for hard.
+    export DIFFICULTY=${DIFFICULTY:-5}
+
 
     # PLAYER_ID - the id of the player who is running the mission. Defaults to
     # the value stored in the USER environment variable.
