@@ -1,7 +1,12 @@
 #include <iostream>
 #include <csignal>
+#include <string>
 #include "WebcamSensor.h"
+
+// Boost includes
 #include <boost/program_options.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
 
 using namespace std;
 using namespace tomcat;
@@ -10,7 +15,7 @@ namespace po = boost::program_options;
 
 int main(int ac, char* av[]) 
 {
-	string exp_id, trial_id, playername;
+	string exp_id, trial_id, playername, of_dir;
 	// Boost command line options
 	try {
 	
@@ -20,6 +25,7 @@ int main(int ac, char* av[])
 			("exp_id", po::value<string>(&exp_id)->default_value("null"), "set experiment ID")
 			("trial_id", po::value<string>(&trial_id)->default_value("null"), "set trial ID")
 			("playername", po::value<string>(&playername)->default_value("null"), "set playername")
+			("mloc", po::value<string>(&of_dir), "set OpenFace models directory")
 		;
 		
 		po::variables_map vm;
@@ -31,8 +37,24 @@ int main(int ac, char* av[])
     		return 0;
 		}
 		
+		if (getenv("OPENFACE_MODELS_DIR") != NULL) {
+			if (vm.count("mloc")) {
+				char *path = &of_dir[0];
+				setenv("OPENFACE_MODELS_DIR", path, 1);
+			}
+		}
+		else {
+			if (vm.count("mloc")) {
+				char *path = &of_dir[0];
+				setenv("OPENFACE_MODELS_DIR", path, 0);
+			}
+			else {
+				throw runtime_error("OPENFACE_MODELS_DIR is not set. Use the --mloc flag or set the environment variable to point to the directory containing the OpenFace models. Exiting now.");
+			}
+		}
+		
 	}
-	catch(exception& e) {
+	catch(exception const& e) {
         cerr << "error: " << e.what() << endl;
         return 1;
     }
@@ -40,8 +62,7 @@ int main(int ac, char* av[])
         cerr << "Exception of unknown type!" << endl;
     }
 		
-	
-    WebcamSensor camsensor;
+	WebcamSensor camsensor;
     camsensor.initialize(exp_id, trial_id, playername);
     camsensor.get_observation();
     

@@ -28,7 +28,6 @@ namespace tomcat {
         this->trial_id = trial;
         this->playername = pname;
         
-        
         // The modules that are being used for tracking
         this->face_model = LandmarkDetector::CLNF();
         if (!this->face_model.loaded_successfully) {
@@ -60,8 +59,7 @@ namespace tomcat {
         boost::posix_time::ptime t_start(boost::posix_time::microsec_clock::universal_time());
         
         // Load facial feature extractor and AU analyser
-        FaceAnalysis::FaceAnalyserParameters face_analysis_params(
-            this->arguments);
+        FaceAnalysis::FaceAnalyserParameters face_analysis_params(this->arguments);
         FaceAnalysis::FaceAnalyser face_analyser(face_analysis_params);
         
         // Recorder open face parameters
@@ -75,7 +73,6 @@ namespace tomcat {
             this->sequence_reader.cy,
             this->sequence_reader.fps);
 
-        
         this->rgb_image = this->sequence_reader.GetNextFrame(); 
 		
 		while (!this->rgb_image.empty()) {
@@ -123,8 +120,9 @@ namespace tomcat {
 	        cv::Mat_<double> hog_descriptor;
 	        int num_hog_rows = 0, num_hog_cols = 0;
 
-        	// Perform AU detection and HOG feature extraction, as this can be
-        	// expensive only compute it if needed by output or visualization
+        	
+        	// Perform AU detection and HOG feature extraction
+        	// Note: As this can be expensive, only compute it if needed by output or visualization
         	if (recording_params.outputAlignedFaces() ||
             recording_params.outputHOG() || recording_params.outputAUs() ||
             this->visualizer.vis_align || this->visualizer.vis_hog ||
@@ -137,6 +135,7 @@ namespace tomcat {
             	face_analyser.GetLatestAlignedFace(sim_warped_img);
             	face_analyser.GetLatestHOG(hog_descriptor, num_hog_rows, num_hog_cols);
         	}
+        	
 
         	// Work out the pose of the head from the tracked model
         	Vec6d pose_estimate = GetPose(this->face_model,
@@ -155,8 +154,7 @@ namespace tomcat {
             	                      this->sequence_reader.cx,
             	                      this->sequence_reader.cy);
 
-        
-        	this->visualizer.SetObservationFaceAlign(sim_warped_img);
+		    this->visualizer.SetObservationFaceAlign(sim_warped_img);
         	this->visualizer.SetObservationHOG(
             	hog_descriptor, num_hog_rows, num_hog_cols);
 
@@ -299,8 +297,7 @@ namespace tomcat {
         		
         	// Grabbing the next frame in the sequence
         	this->rgb_image = this->sequence_reader.GetNextFrame();
-        	
-		}
+        }
 
         this->sequence_reader.Close();
 
