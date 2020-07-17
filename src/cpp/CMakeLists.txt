@@ -40,3 +40,6 @@ endif()
 
 add_executable(runExperiment runExperiment.cpp)
 target_link_libraries(runExperiment tomcat)
+
+# Procedural generation module.
+add_subdirectory(pro_gen)

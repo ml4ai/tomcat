@@ -21,7 +21,7 @@ export TOMCAT
 # =============================================================================
 
 set_local_configuration() {
-    # TOMCAT_DEBUG_LEVEL: Set this to 1 or more to get geaky output. 
+    # TOMCAT_DEBUG_LEVEL: Set this to 1 or more to get geeky output.
     export TOMCAT_DEBUG_LEVEL=${TOMCAT_DEBUG_LEVEL:-0}
 
     # TOMCAT_DEBUG_ECHO:  If TOMCAT_DEBUG_LEVEL is more than 0, this is an echo.
@@ -29,7 +29,7 @@ set_local_configuration() {
         export TOMCAT_DEBUG_ECHO="echo DEBUG: "
     else
         export TOMCAT_DEBUG_ECHO=": "
-    fi 
+    fi
 
     # ENABLE_FFMPEG: Enable recording audio and video of player's face,
     # player's speech, player's screen, and system audio. Defaults to true.
@@ -42,13 +42,13 @@ set_local_configuration() {
     # MAIN_MISSION: Set this to 1 for the Zombie invasion mission,
     #                           2 for the USAR Singleplayer mission, and
     #                           3 for a procedurally generated mission.
-    export MAIN_MISSION=${MAIN_MISSION:-1} 
+    export MAIN_MISSION=${MAIN_MISSION:-1}
 
     # If the main mission ID is set to 1 (USAR Singleplayer), then enable the
     # tutorial mission by default, since it is a tutorial for the Zombie
     # invasion mission.
     if [[ $MAIN_MISSION -eq 1 ]]; then
-        # Enable the tutorial mission by default.
+        # Enable the tutorial mission by default for the Zombie invasion.
         export DO_TUTORIAL_MISSION=${DO_TUTORIAL_MISSION:-1}
     else
         export DO_TUTORIAL_MISSION=0
@@ -63,8 +63,8 @@ set_local_configuration() {
     # RECYCLE_MINECRAFT: 0 for never, 1 for main mission, 2 for multiple runs.
     export RECYCLE_MINECRAFT=${RECYCLE_MINECRAFT:-1}
 
-    # DEFAULT_MAIN_MISSION_TIME: Allows for short missions for testing. 
-    export DEFAULT_MAIN_MISSION_TIME=${DEFAULT_MAIN_MISSION_TIME:-600} 
+    # DEFAULT_MAIN_MISSION_TIME: Allows for short missions for testing.
+    export DEFAULT_MAIN_MISSION_TIME=${DEFAULT_MAIN_MISSION_TIME:-600}
 
     # PLAYER_ID - the id of the player who is running the mission. Defaults to
     # the value stored in the USER environment variable.
@@ -206,7 +206,7 @@ __configure_screen_capture() {
     fi
 }
 
-# Kobus: set_local_configuration() needs to be called before this one. 
+# Kobus: set_local_configuration() needs to be called before this one.
 # Detect whether we are running in a continuous integration environment or not.
 detect_ci() {
     # GITHUB_ACTIONS: Set to true with Github Actions is running the workflow.
@@ -235,7 +235,7 @@ __test_ffmpeg_recording() {
 
         if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
             echo "Checking if system audio recording is set up..."
-            if ! "${TOMCAT}"/tools/macos/test_system_audio_recording; then 
+            if ! "${TOMCAT}"/tools/macos/test_system_audio_recording; then
               exit 1;
             fi
         fi
@@ -248,7 +248,7 @@ __test_ffmpeg_recording() {
         # Kobus says this does not work on my dual display, although it works
         # with either case alone. Obviously a corner case, but worth noting in
         # case it points us to a more robust solution.
-        
+
         echo "Testing screen capture..."
         if ! "${TOMCAT}"/tools/macos/test_screen_recording; then exit 1; fi
     elif [[ $OSTYPE == linux-gnu ]]; then

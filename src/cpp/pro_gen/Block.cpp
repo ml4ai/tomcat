@@ -6,8 +6,8 @@
 
 using namespace std;
 
-Block::Block(string material, Pos* pos, string type)
-    : type(type), material(material), pos(*pos) {}
+Block::Block(string material, Pos& pos, string type)
+    : type(type), material(material), pos(pos) {}
 
 string Block::getType() { return this->type; }
 

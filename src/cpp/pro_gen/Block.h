@@ -4,7 +4,6 @@
  */
 #pragma once
 #include "Pos.h"
-#include <string>
 
 /**
  * @brief This class represents a Minecraft block
@@ -58,7 +57,7 @@ class Block {
      *
      * @return string The TSV representation
      */
-    std::string toTSV();
+    std::string virtual toTSV();
 
     /**
      * @brief Construct a new Block object
@@ -68,10 +67,10 @@ class Block {
      * @param type The semantic type for this block which is not the same as
      * its material. Defaults to "normal".
      */
-    Block(std::string material, Pos* pos, std::string type = "normal");
+    Block(std::string material, Pos& pos, std::string type = "normal");
 
     /**
      * @brief Destroy the Block object
      */
-    ~Block();
+    virtual ~Block();
 };
