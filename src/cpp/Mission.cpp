@@ -67,37 +67,29 @@ namespace tomcat {
     }
 
     void Mission::create_client_pool() {
-        std::ifstream clients_json("/Users/macforlong/tomcat/src/cpp/test.json");
-        json clients_info = json::parse(clients_json);
-
-        json server_object = clients_info["server_ip_address"];
-        string server_ip_address=clients_info["server_ip_address"]["ip"].get<std::string>();
-
-        int server_port=clients_info["server_ip_address"]["port"].get<int>();
 
         this->client_pool = make_shared<ClientPool>();
-        this->client_pool->add(ClientInfo(server_ip_address, server_port));
+        this->client_pool->add(ClientInfo("127.0.0.1", this->port_number));
 
             if (this->multiplayer) {
+                std::ifstream clients_json("/Users/macforlong/tomcat/src/cpp/multiplayer_config.json");
+                json clients_info = json::parse(clients_json);
+                string server_ip_address=clients_info["server"]["address"].get<std::string>();
+                int server_port=clients_info["server"]["port"].get<int>();
+                
                 // Add each one of the clients in the multiplayer mission
                 // This is hardcoded but needs to be moved to a config file at some
                 // point
-                json client_object = clients_info["client_ip_address"];
-                int number_of_avaiable_clients = clients_info["number_of_avaiable_clients"].get<int>();
-                std::cout << "Number of clients to be connected: " << number_of_avaiable_clients << std::endl;
+                json client_object = clients_info["clients"];
+                std::cout << "Number of clients to be connected: " << client_object.size() << std::endl;
                 string client_ip_address;
                 int client_port;
-                int current_clients=0;
 
-                for (auto it = client_object.begin(); it != client_object.end(); ++it)
+                for (auto it = client_object.begin(); it != client_object.end(); it++)
                 {
-                    if (current_clients==number_of_avaiable_clients) {
-                        break;
-                    }
-                    client_ip_address = it.value()["ip"].get<std::string>();
+                    client_ip_address = it.value()["address"].get<std::string>();
                     client_port = it.value()["port"].get<int>();
                     this->client_pool->add(ClientInfo(client_ip_address, client_port));
-                    current_clients++;
                 }
             }
     }
