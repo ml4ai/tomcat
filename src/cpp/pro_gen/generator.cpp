@@ -103,6 +103,10 @@ int main(int argc, char* argv[]) {
         World& world = gridGen.getWorld();
         writeToFile(jsonPath, tsvPath, world);
     }
+    else {
+        cout << "You choice is invalid" << endl;
+        return 1;
+    }
 
     cout << "Done. The generated files are in " << jsonPath << " and "
          << tsvPath << endl;
