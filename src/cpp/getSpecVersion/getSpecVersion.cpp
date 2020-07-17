@@ -1,11 +1,11 @@
 #include <iostream>
 #include <yaml-cpp/yaml.h>
 #include <boost/program_options.hpp>
-#include <filesystem>
+#include <boost/filesystem.hpp>
 
 using namespace std;
 namespace po = boost::program_options;
-namespace fs = std::filesystem;
+namespace fs = boost::filesystem;
 
 int main(int argc, char* argv[]) {
     po::options_description desc("getSpecVersion options");
