@@ -21,7 +21,7 @@ export TOMCAT
 # =============================================================================
 
 set_local_configuration() {
-    # TOMCAT_DEBUG_LEVEL: Set this to 1 or more to get geaky output.
+    # TOMCAT_DEBUG_LEVEL: Set this to 1 or more to get geeky output.
     export TOMCAT_DEBUG_LEVEL=${TOMCAT_DEBUG_LEVEL:-0}
 
     # TOMCAT_DEBUG_ECHO:  If TOMCAT_DEBUG_LEVEL is more than 0, this is an echo.
@@ -48,7 +48,7 @@ set_local_configuration() {
     # tutorial mission by default, since it is a tutorial for the Zombie
     # invasion mission.
     if [[ $MAIN_MISSION -eq 1 ]]; then
-        # Enable the tutorial mission by default.
+        # Enable the tutorial mission by default for the Zombie invasion.
         export DO_TUTORIAL_MISSION=${DO_TUTORIAL_MISSION:-1}
     else
         export DO_TUTORIAL_MISSION=0
@@ -70,7 +70,7 @@ set_local_configuration() {
     #                                              5 for medium.
     #                                              7 for hard.
     export DIFFICULTY=${DIFFICULTY:-5}
-    
+
 
     # PLAYER_ID - the id of the player who is running the mission. Defaults to
     # the value stored in the USER environment variable.

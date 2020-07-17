@@ -437,12 +437,12 @@ if __name__ == "__main__":
     #                                          '../data/evidence/asist/singleplayer', MissionMap.SINGLEPLAYER, TIME_GAP,
     #                                          TIME_SLICES)
     convert_experiments_data_to_evidence_set(
-        "../data/experiments/asist/formatted/sparky",
-        "../data/evidence/asist/sparky",
-        MissionMap.SPARKY,
+        "../data/experiments/asist/formatted/falcon",
+        "../data/evidence/asist/falcon",
+        MissionMap.FALCON,
         TIME_GAP,
         TIME_SLICES,
     )
-    # convert_experiments_data_to_evidence_set('../data/experiments/asist/formatted/falcon',
-    #                                          '../data/evidence/asist/falcon', MissionMap.FALCON, TIME_GAP,
-    #                                          TIME_SLICES)
+    convert_experiments_data_to_evidence_set('../data/experiments/asist/formatted/falcon',
+                                             '../data/evidence/asist/falcon', MissionMap.FALCON, TIME_GAP,
+                                             TIME_SLICES)

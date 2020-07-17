@@ -10,19 +10,39 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+/**
+ * This class can be used to read a TSV file representing a world. The TSV entries are read into a hash map of
+ * coordinates and the block at those coordinates.
+ */
 public class WorldReader {
     private Map<BlockPos, IBlockState> map;
 
+    /**
+     * Constructor for this object. The instance creates the hash map at the time of initialization.
+     *
+     * @param filename The TSV file. Must be in Minecraft/run/
+     */
     public WorldReader(String filename) {
 
         this.map = new LinkedHashMap<BlockPos, IBlockState>();
         this.initMap(filename);
     }
 
+    /**
+     * Get the map this WorldReader object uses to keep track of all the blocks in the world read from file.
+     *
+     * @return The map of coordinates and the block at those coordinates. The block to be placed is represented as the IBlockState object used
+     * for the block type in its default state,
+     */
     public Map<BlockPos, IBlockState> getMap() {
         return this.map;
     }
 
+    /**
+     * This method is use to create the map representation of the world from the TSV file.
+     *
+     * @param filename The TSV file. Must be in Minecraft/run/
+     */
     private void initMap(String filename) {
 
         // Read file
@@ -66,6 +86,12 @@ public class WorldReader {
         }
     }
 
+    /**
+     * Returns the block state relevant to the input string.
+     *
+     * @param material The material whose block state representation is required.
+     * @return The block state. Only default states are returned. The default block is Quartz.
+     */
     private IBlockState getBlockState(String material) {
         if (material.equals("planks")) {
             return Blocks.PLANKS.getDefaultState();
@@ -89,7 +115,11 @@ public class WorldReader {
             return Blocks.COBBLESTONE.getDefaultState();
         }else if (material.equals("fence")) {
             return Blocks.NETHER_BRICK_FENCE.getDefaultState();
-        } else if (material.equals("air")) {
+        }else if (material.equals("lever")) {
+            return Blocks.LEVER.getDefaultState();
+        }else if (material.equals("glowstone")) {
+            return Blocks.GLOWSTONE.getDefaultState();
+        }else if (material.equals("air")) {
             return Blocks.AIR.getDefaultState();
         } else {
             return Blocks.QUARTZ_BLOCK.getDefaultState();  // For unknown block

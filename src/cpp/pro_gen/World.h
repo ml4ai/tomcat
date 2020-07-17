@@ -3,11 +3,8 @@
  * implemented as part of the World class
  */
 #pragma once
-
 #include "AABB.h"
-#include "Block.h"
 #include <nlohmann/json.hpp>
-#include <string>
 
 /**
  * @brief This class represents a Minecraft world as a
@@ -15,37 +12,37 @@
  */
 class World {
   private:
-    std::vector<AABB> aabbList;
-    std::vector<Block> blockList;
+    std::vector<AABB*> aabbList;
+    std::vector<Block*> blockList;
 
   public:
     /**
-     * @brief Returns a pointer to the vector that holds the AABBs
+     * @brief Returns the vector that holds the AABBs
      *
-     * @return vector<AABB>* The AABB list
+     * @return vector<AABB>& The AABB list
      */
-    std::vector<AABB>* getAABBList();
+    std::vector<AABB*>& getAABBList();
 
     /**
-     * @brief Returns a pointer to the vector that holds the Blocks
+     * @brief Returns the vector that holds the Blocks
      *
-     * @return vector<Block>* The Block list
+     * @return vector<Block>& The Block list
      */
-    std::vector<Block>* getBlockList();
+    std::vector<Block*>& getBlockList();
 
     /**
      * @brief Add an AABB to the vector of AABB held inside the world
      *
-     * @param aabb Address of the AABB to add
+     * @param aabb The AABB to add
      */
-    void addAABB(AABB* aabb);
+    void addAABB(AABB& aabb);
 
     /**
      * @brief Add a Block to the vector of Block held inside the world
      *
-     * @param block Address of the Block to add
+     * @param block The Block to add
      */
-    void addBlock(Block* block);
+    void addBlock(Block& block);
 
     /**
      * @brief Gets a string representation of the various
@@ -53,7 +50,7 @@ class World {
      *
      * @return string The TSV representation
      */
-    std::string toTSV();
+    std::string virtual toTSV();
 
     /**
      * @brief Converts the world into a JSON representation with
@@ -61,7 +58,7 @@ class World {
      *
      * @return string The JSON as a string
      */
-    std::string toJSON();
+    std::string virtual toJSON();
 
     /**
      * @brief Construct a new World object
@@ -71,5 +68,5 @@ class World {
     /**
      * @brief Destroy the World object
      */
-    ~World();
+    virtual ~World();
 };

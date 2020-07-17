@@ -24,8 +24,12 @@ class ParameterPriors:
 
 
 class Model:
-    def __init__(self, mission_map_id):
-        self.mimission_map_id = mission_map_id
+    def init_from_cpds(self, cpds):
+        self.number_of_states = cpds.theta_s.shape[0]
+        self.cpd_tables = cpds
+
+    def init_from_mission_map(self, mission_map_id):
+        self.mission_map_id = mission_map_id
         self.number_of_rooms = evidence_extraction.get_number_of_areas(
             mission_map_id
         )
@@ -36,7 +40,7 @@ class Model:
         elif mission_map_id == evidence_extraction.MissionMap.SPARKY:
             self.number_of_states = 116
             self.number_of_hallways = 8
-        else:
+        elif mission_map_id == evidence_extraction.MissionMap.FALCON:
             self.number_of_states = 166
             self.number_of_hallways = 10
 
@@ -139,11 +143,11 @@ class Model:
         This method returns a matrix with the priors for each one of the theta_s nodes in the model
         """
         if (
-            self.mimission_map_id
+            self.mission_map_id
             == evidence_extraction.MissionMap.SINGLEPLAYER
         ):
             return self.get_theta_s_priors_for_singleplayer_map()
-        elif self.mimission_map_id == evidence_extraction.MissionMap.SPARKY:
+        elif self.mission_map_id == evidence_extraction.MissionMap.SPARKY:
             return self.get_theta_s_priors_for_sparky_map()
         else:
             return self.get_theta_s_priors_for_falcon_map()
