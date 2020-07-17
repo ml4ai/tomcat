@@ -20,7 +20,7 @@ player_id_hashed = hashlib.sha256(player_id.encode()).hexdigest()
 
 metadata = {
     "session_id": sys.argv[1],  # Get UUID from command line argument
-    "timestamp": timestamp+"Z",
+    "timestamp": timestamp,
     "player_id": player_id_hashed
 }
 
