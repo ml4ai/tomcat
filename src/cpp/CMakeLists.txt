@@ -41,7 +41,4 @@ endif()
 add_executable(runExperiment runExperiment.cpp)
 target_link_libraries(runExperiment tomcat)
 
-find_package(yaml-cpp REQUIRED)
-add_executable(getSpecVersion getSpecVersion.cpp)
-target_include_directories(getSpecVersion PRIVATE ${YAML_CPP_INCLUDE_DIR})
-target_link_libraries(getSpecVersion yaml-cpp)
+add_subdirectory(getSpecVersion)
