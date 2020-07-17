@@ -30,9 +30,10 @@ public class ProceduralGenMission extends Mission {
     }
 
     /**
-     * This method uses the blueprint to generate the structures for the world. Structures includes the AABB and individual blocks in the blueprint.
+     * This grabs the TSV blueprint from the procedural.tsv file and uses a WorldReader object to parse it. It then
+     * uses the resulting hashmap to place all the blocks at the right places.
      *
-     * @param world - The world in which structures are to be generated
+     * @param world The world in whcih the blocks are to be placed.
      */
     private void buildStructures(World world) {
         if (this.shouldBuild == true) {
