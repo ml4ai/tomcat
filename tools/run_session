@@ -34,8 +34,8 @@ if [[ ! $(pgrep -l mosquitto | head -n1 | cut -d' ' -f2) == mosquitto ]]; then
     "$MOSQUITTO" &> ${TOMCAT_TMP_DIR}/mosquitto.log &
 fi
 
-#On macos, uuidgen roduces uppercase UUIDS, so we pipe the output 
-    # through tr to get univormbehavior on macOS and Linux.
+#On macos, uuidgen produces uppercase UUIDS, so we pipe the output 
+    #through tr to get uniform behavior on macOS and Linux.
 SESSION_UUID=$(uuidgen | tr '[:upper:]' '[:lower:]')
 if [[ $? -ne 0 ]]; then exit 1; fi
 
@@ -244,7 +244,9 @@ do_mission() {
                             --uuid ${SESSION_UUID}"
 
         if [[ $CURRENT_MISSION -gt 0 ]]; then
-            runExperiment_args="${runExperiment_args} --time_limit ${TIME_LIMIT}"
+            runExperiment_args="${runExperiment_args}\
+                                --time_limit ${TIME_LIMIT}\
+                                --level_of_difficulty ${DIFFICULTY}" 
         fi
 
         if (( ENABLE_FFMPEG )); then

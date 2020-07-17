@@ -21,9 +21,6 @@ time_limit = sys.argv[3]
 level_of_difficulty = sys.argv[4]
 
 
-
-#Salena: start on difficulty. Error states line 21 out of range.
-# See lines 250s in run_session
 metadata = {
     "session_id": sys.argv[1],  # Get UUID from command line argument
     "timestamp": timestamp+"Z",
@@ -31,6 +28,5 @@ metadata = {
     "time_limit": time_limit,
     "level_of_difficulty": level_of_difficulty
     }
-
 
 print(json.dumps(metadata, indent=4))  # Serialize metadata
