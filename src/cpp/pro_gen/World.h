@@ -17,30 +17,30 @@ class World {
 
   public:
     /**
-     * @brief Returns a pointer to the vector that holds the AABBs
+     * @brief Returns the vector that holds the AABBs
      *
-     * @return vector<AABB>* The AABB list
+     * @return vector<AABB>& The AABB list
      */
     std::vector<AABB*>& getAABBList();
 
     /**
-     * @brief Returns a pointer to the vector that holds the Blocks
+     * @brief Returns the vector that holds the Blocks
      *
-     * @return vector<Block>* The Block list
+     * @return vector<Block>& The Block list
      */
     std::vector<Block*>& getBlockList();
 
     /**
      * @brief Add an AABB to the vector of AABB held inside the world
      *
-     * @param aabb Address of the AABB to add
+     * @param aabb The AABB to add
      */
     void addAABB(AABB& aabb);
 
     /**
      * @brief Add a Block to the vector of Block held inside the world
      *
-     * @param block Address of the Block to add
+     * @param block The Block to add
      */
     void addBlock(Block& block);
 
