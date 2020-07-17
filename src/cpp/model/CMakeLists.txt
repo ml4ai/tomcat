@@ -31,8 +31,10 @@ add_library(tomcat_model_libs
         NodeMetadata.cpp
         ConstantNumericNode.cpp
         ConstantVectorNode.cpp
-        DiscreteCPD.cpp
-        RandomVariableNumericNode.cpp)
+        RandomVariableNumericNode.cpp
+        CategoricalCPD.cpp
+        GaussianCPD.cpp
+        DirichletCPD.cpp)
 
 add_executable(TomcatModel main.cpp)
 target_link_libraries(TomcatModel PUBLIC tomcat_model_libs ${Boost_LIBRARIES} Eigen3::Eigen)

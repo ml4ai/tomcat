@@ -11,12 +11,12 @@ namespace tomcat {
     namespace model {
 
         /*
-         * A discrete CPD consists of a table containing the probabilities
+         * A categorical CPD consists of a table containing the probabilities
          * p(column | row). The number of rows is given by the product of the
          * cardinalities of the parent nodes of the node that is sampled from
          * this CPD. Each row represents a combination of possible assignments
          * of the parent nodes ordered in ascending order with respect to the
-         * binary basis.
+         * binary basis. A categorical CPD is used for discrete probabilities.
          *
          * For instance,
          *
@@ -26,8 +26,8 @@ namespace tomcat {
          *
          * Suppose A, B and C have cardinalities 2, 3 and 4 respectively.
          *
-         * Let p(c|a,b) be p(C = c | A = a, B = b). A DiscreteCPD for C will be
-         * as follows,
+         * Let p(c|a,b) be p(C = c | A = a, B = b). A CategoricalCPD for C will
+         * be as follows,
          * _____________________________________________________
          * |///| C |     0    |     1    |     2    |     3    |
          * |---------------------------------------------------|
@@ -46,32 +46,34 @@ namespace tomcat {
          * | 1 | 2 | p(0|1,2) | p(1|1,2) | p(2|1,2) | p(3|1,2) |
          * |---------------------------------------------------|
          */
-        class DiscreteCPD : public CPD<double> {
+        class CategoricalCPD : public CPD<Eigen::MatrixXd> {
           private:
             std::vector<std::unique_ptr<Node<std::vector<double>>>> cpd_table;
 
           public:
-            DiscreteCPD(std::vector<std::string> parent_node_label_order,
-                        std::vector<std::unique_ptr<Node<std::vector<double>>>>
-                            cpd_table)
-                : CPD<double>(std::move(parent_node_label_order)),
+            CategoricalCPD(
+                std::vector<std::string> parent_node_label_order,
+                std::vector<std::unique_ptr<Node<std::vector<double>>>>
+                    cpd_table)
+                : CPD<Eigen::MatrixXd>(std::move(parent_node_label_order)),
                   cpd_table(std::move(cpd_table)) {}
 
             /*
              * Transform a table of probabilities to a list of constant vector
              * nodes to keep static and node dependent CPDs compatible.
              */
-            DiscreteCPD(std::vector<std::string> parent_node_label_order,
-                        Eigen::MatrixXd& cpd_table);
+            CategoricalCPD(std::vector<std::string> parent_node_label_order,
+                           Eigen::MatrixXd& cpd_table);
 
             // There's no copy constructor because the table is formed by a
             // vector of unique pointers. There will not be a shared CPD anyway.
-            DiscreteCPD(DiscreteCPD&& cpd)
-                : CPD<double>(std::move(cpd.parent_node_label_order)),
+            CategoricalCPD(CategoricalCPD&& cpd)
+                : CPD<Eigen::MatrixXd>(std::move(cpd.parent_node_label_order)),
                   cpd_table(std::move(cpd.cpd_table)) {}
-            ~DiscreteCPD() {}
 
-            double sample() const override;
+            ~CategoricalCPD() {}
+
+            Eigen::MatrixXd sample() const override;
 
             void print(std::ostream& os) const override;
         };

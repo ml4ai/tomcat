@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DiscreteCPD.h"
+#include "CategoricalCPD.h"
 #include "Node.h"
 #include "NodeMetadata.h"
 #include <memory>
@@ -14,25 +14,26 @@ namespace tomcat {
          * 1D number.
          */
 
-        class RandomVariableNumericNode : public Node<double> {
+        class RandomVariableNumericNode : public Node<Eigen::MatrixXd> {
           private:
             std::shared_ptr<NodeMetadata> metadata;
-            std::unique_ptr<CPD<double>> cpd;
+            std::unique_ptr<CPD<Eigen::MatrixXd>> cpd;
             int time_step;
 
           public:
             RandomVariableNumericNode(std::shared_ptr<NodeMetadata> metadata,
-                                      std::unique_ptr<CPD<double>> cpd,
+                                      std::unique_ptr<CPD<Eigen::MatrixXd>> cpd,
                                       int time_step = 0)
                 : metadata(std::move(metadata)), cpd(std::move(cpd)),
                   time_step(time_step) {}
+
             ~RandomVariableNumericNode() {}
 
             /*
              * Return the numeric value sampled from the distribution of the
              * node given it's parents.
              */
-            double sample() const override;
+            Eigen::MatrixXd sample() const override;
 
             void print(std::ostream& os) const override;
 
@@ -40,7 +41,9 @@ namespace tomcat {
             const std::shared_ptr<NodeMetadata>& get_metadata() const {
                 return metadata;
             }
-            const std::unique_ptr<CPD<double>>& get_cpd() const { return cpd; }
+
+            const std::unique_ptr<CPD<Eigen::MatrixXd>>& get_cpd() const { return cpd; }
+
             int get_time_step() const { return time_step; }
         };
 

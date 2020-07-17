@@ -1,8 +1,8 @@
 #pragma once
 
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
 
 namespace tomcat {
     namespace model {
@@ -41,8 +41,7 @@ namespace tomcat {
                                  bool time_crossing);
 
             friend std::ostream& operator<<(std::ostream& os,
-                                     const NodeMetadata& metadata);
-
+                                            const NodeMetadata& metadata);
         };
 
         /* This struct represents a link between a child and a parent node. This

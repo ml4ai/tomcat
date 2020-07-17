@@ -5,7 +5,7 @@ namespace tomcat {
 
         double ConstantNumericNode::sample() const { return this->value; }
 
-        void ConstantNumericNode::print(std::ostream &os) const {
+        void ConstantNumericNode::print(std::ostream& os) const {
             os << "Constant(" << value << ")";
         }
 

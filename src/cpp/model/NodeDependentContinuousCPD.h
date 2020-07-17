@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ContinuousCPD.h"
+#include "GaussianCPD.h"
 #include <vector>
 #include "Node.h"
 

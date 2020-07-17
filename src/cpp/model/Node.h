@@ -1,18 +1,19 @@
 #pragma once
 
 #include "NodeMetadata.h"
-#include <ostream>
+#include <iostream>
 
 namespace tomcat {
     namespace model {
 
         /*
-         * A node in a Dynamic Bayes Net (DBN). The type T must encode the type
-         * of value this node encodes, i.e., the type of a sample of this node.
+         * A node in a Dynamic Bayes Net (DBN). T must be the type of a sample
+         * from this node.
          */
         template <typename T> class Node {
           public:
             Node() {}
+
             virtual ~Node() {}
 
             /*

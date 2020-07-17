@@ -1,7 +1,7 @@
 #pragma once
 
-#include <iostream>
 #include "Node.h"
+#include <iostream>
 
 namespace tomcat {
     namespace model {
@@ -25,7 +25,6 @@ namespace tomcat {
             double sample() const override;
 
             void print(std::ostream& os) const override;
-
         };
 
     } // namespace model

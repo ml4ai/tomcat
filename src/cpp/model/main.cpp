@@ -1,10 +1,14 @@
-#include "ConstantNumericNode.h"
-#include "ConstantVectorNode.h"
-#include "DiscreteCPD.h"
-#include "NodeMetadata.h"
-#include "RandomVariableNumericNode.h"
 #include <eigen3/Eigen/Dense>
 #include <iostream>
+#include <boost/random.hpp>
+#include <boost/math/distributions/normal.hpp>
+#include "CategoricalCPD.h"
+#include "ConstantNumericNode.h"
+#include "ConstantVectorNode.h"
+#include "NodeMetadata.h"
+#include "RandomVariableNumericNode.h"
+#include "GaussianCPD.h"
+#include "DirichletCPD.h"
 
 using namespace Eigen;
 using namespace tomcat::model;
@@ -26,17 +30,23 @@ class B {
     // This is ambiguous with the two below
     B(A a) : a(std::move(a)) { std::cout << "New B with A" << std::endl; }
     // This yields one copy
-    //B(A& a) : a(a) { std::cout << "New B with A&" << std::endl; }
+    // B(A& a) : a(a) { std::cout << "New B with A&" << std::endl; }
     // This yields one move
-    //B(A&& a) : a(std::move(a)) { std::cout << "New B with A&&" << std::endl; }
+    // B(A&& a) : a(std::move(a)) { std::cout << "New B with A&&" << std::endl;
+    // }
     void print() const { std::cout << "I am B" << std::endl; }
 };
 
 int main() {
-        MatrixXd m(2, 2);
+    VectorXd  v(2);
+    v(0) = 1;
+    v(1) = 2;
+    std::cout << v << std::endl;
+
+    MatrixXd m(2, 2);
     m(0, 0) = 3;
     m(1, 0) = 2.5;
-    m(0, 1) = -1;
+    m(0, 1) = 1;
     m(1, 1) = m(1, 0) + m(0, 1);
     std::cout << m << std::endl;
 
@@ -70,17 +80,28 @@ int main() {
 
     // Testing CPDs
     std::vector<std::string> order{"A", "B", "C"};
-    DiscreteCPD constant_cpd(std::move(order), m);
+    CategoricalCPD constant_cpd(order, m);
     std::cout << constant_cpd << std::endl;
 
-    // Testing RV nodes
-    std::shared_ptr<NodeMetadata> metadata = std::make_shared<NodeMetadata>(metadata3);
-    std::unique_ptr<DiscreteCPD> cpd = std::make_unique<DiscreteCPD>(std::move(constant_cpd));
+    GaussianCPD gaussian_cpd(order, m);
+    std::cout << gaussian_cpd << std::endl;
+    Eigen::VectorXd sample = gaussian_cpd.sample();
+    std::cout << sample << std::endl;
 
-    RandomVariableNumericNode rv_node1(
-        std::move(metadata),
-        std::move(cpd));
+    DirichletCPD dirichlet_cpd(order, m);
+    std::cout << dirichlet_cpd << std::endl;
+    Eigen::MatrixXd sample2 = dirichlet_cpd.sample();
+    std::cout << sample2 << std::endl;
+
+    // Testing RV nodes
+    std::shared_ptr<NodeMetadata> metadata =
+        std::make_shared<NodeMetadata>(metadata3);
+    std::unique_ptr<CategoricalCPD> cpd =
+        std::make_unique<CategoricalCPD>(std::move(constant_cpd));
+
+    RandomVariableNumericNode rv_node1(std::move(metadata), std::move(cpd));
     std::cout << rv_node1 << std::endl;
     std::cout << *rv_node1.get_metadata() << std::endl;
     std::cout << *rv_node1.get_cpd() << std::endl;
+
 }

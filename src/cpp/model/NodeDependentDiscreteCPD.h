@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DiscreteCPD.h"
+#include "CategoricalCPD.h"
 #include "Node.h"
 
 namespace tomcat {
@@ -25,7 +25,7 @@ namespace tomcat {
          * \theta_{ab} is sampled from a Dirichlet distribution with 3
          * parameters.
          *
-         * A DiscreteCPD for C will be as follows,
+         * A CategoricalCPD for C will be as follows,
          * _______________________________________
          * |///| C |    0    |    1    |    2    |
          * |-------------------------------------|
@@ -47,7 +47,7 @@ namespace tomcat {
          */
 
 //        template <typename T>
-//        class NodeDependentDiscreteCPD : public DiscreteCPD {
+//        class NodeDependentDiscreteCPD : public CategoricalCPD {
 //
 //            std::vector<Node<T>> probability_dependency_table;
 //

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <vector>
-#include <iostream>
 #include "Node.h"
+#include <iostream>
+#include <vector>
 
 namespace tomcat {
     namespace model {
@@ -12,7 +12,8 @@ namespace tomcat {
             std::vector<double> values;
 
           public:
-            ConstantVectorNode(std::vector<double> values) : values(std::move(values)) {}
+            ConstantVectorNode(std::vector<double> values)
+                : values(std::move(values)) {}
             ~ConstantVectorNode() {}
 
             /*
@@ -21,8 +22,6 @@ namespace tomcat {
             std::vector<double> sample() const override;
 
             void print(std::ostream& os) const override;
-
-
         };
 
     } // namespace model
