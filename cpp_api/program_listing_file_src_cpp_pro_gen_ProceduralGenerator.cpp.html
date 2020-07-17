@@ -160,8 +160,18 @@
 <span id="program-listing-file-src-cpp-pro-gen-proceduralgenerator-cpp"></span><h1>Program Listing for File ProceduralGenerator.cpp<a class="headerlink" href="#program-listing-for-file-proceduralgenerator-cpp" title="Permalink to this headline">¶</a></h1>
 <p>↰ <a class="reference internal" href="file_src_cpp_pro_gen_ProceduralGenerator.cpp.html#file-src-cpp-pro-gen-proceduralgenerator-cpp"><span class="std std-ref">Return to documentation for file</span></a> (<code class="docutils literal notranslate"><span class="pre">src/cpp/pro_gen/ProceduralGenerator.cpp</span></code>)</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;ProceduralGenerator.h&quot;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
 
 <span class="n">ProceduralGenerator</span><span class="o">::</span><span class="n">ProceduralGenerator</span><span class="p">()</span> <span class="p">{}</span>
+
+<span class="n">World</span><span class="o">&amp;</span> <span class="n">ProceduralGenerator</span><span class="o">::</span><span class="n">getWorld</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">world</span><span class="p">;</span> <span class="p">}</span>
+
+<span class="n">mt19937_64</span><span class="o">&amp;</span> <span class="n">ProceduralGenerator</span><span class="o">::</span><span class="n">getRandom</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">gen</span><span class="p">;</span> <span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">ProceduralGenerator</span><span class="o">::</span><span class="n">setRandom</span><span class="p">(</span><span class="kt">int</span> <span class="n">seed</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">mt19937_64</span> <span class="n">newGen</span><span class="p">(</span><span class="n">seed</span><span class="p">);</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">gen</span> <span class="o">=</span> <span class="n">newGen</span><span class="p">;</span>
+<span class="p">}</span>
 
 <span class="n">ProceduralGenerator</span><span class="o">::~</span><span class="n">ProceduralGenerator</span><span class="p">()</span> <span class="p">{}</span>
 </pre></div>

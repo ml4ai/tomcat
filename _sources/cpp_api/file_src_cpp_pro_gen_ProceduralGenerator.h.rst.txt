@@ -29,11 +29,7 @@ Includes
 --------
 
 
-- ``Block.h`` (:ref:`file_src_cpp_pro_gen_Block.h`)
-
-- ``Pos.h`` (:ref:`file_src_cpp_pro_gen_Pos.h`)
-
-- ``random``
+- ``World.h`` (:ref:`file_src_cpp_pro_gen_World.h`)
 
 
 
@@ -41,7 +37,9 @@ Included By
 -----------
 
 
-- :ref:`file_src_cpp_pro_gen_gridworld_generator.cpp`
+- :ref:`file_src_cpp_pro_gen_GridworldGenerator.h`
+
+- :ref:`file_src_cpp_pro_gen_ZombieworldGenerator.h`
 
 - :ref:`file_src_cpp_pro_gen_ProceduralGenerator.cpp`
 

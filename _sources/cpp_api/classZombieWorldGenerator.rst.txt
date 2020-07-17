@@ -1,0 +1,25 @@
+.. _exhale_class_classZombieWorldGenerator:
+
+Class ZombieWorldGenerator
+==========================
+
+- Defined in :ref:`file_src_cpp_pro_gen_ZombieworldGenerator.h`
+
+
+Inheritance Relationships
+-------------------------
+
+Base Type
+*********
+
+- ``public ProceduralGenerator`` (:ref:`exhale_class_classProceduralGenerator`)
+
+
+Class Documentation
+-------------------
+
+
+.. doxygenclass:: ZombieWorldGenerator
+   :members:
+   :protected-members:
+   :undoc-members:

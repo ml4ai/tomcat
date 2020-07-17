@@ -9,9 +9,10 @@ Class AABB
 Inheritance Relationships
 -------------------------
 
-Derived Type
-************
+Derived Types
+*************
 
+- ``public Group`` (:ref:`exhale_class_classGroup`)
 - ``public Pit`` (:ref:`exhale_class_classPit`)
 
 

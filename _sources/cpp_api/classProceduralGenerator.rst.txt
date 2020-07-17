@@ -6,6 +6,16 @@ Class ProceduralGenerator
 - Defined in :ref:`file_src_cpp_pro_gen_ProceduralGenerator.h`
 
 
+Inheritance Relationships
+-------------------------
+
+Derived Types
+*************
+
+- ``public GridworldGenerator`` (:ref:`exhale_class_classGridworldGenerator`)
+- ``public ZombieWorldGenerator`` (:ref:`exhale_class_classZombieWorldGenerator`)
+
+
 Class Documentation
 -------------------
 

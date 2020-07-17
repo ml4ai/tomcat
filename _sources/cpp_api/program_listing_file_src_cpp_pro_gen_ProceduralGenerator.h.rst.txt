@@ -12,15 +12,22 @@ Program Listing for File ProceduralGenerator.h
 
    
    #pragma once
-   #include "Block.h"
-   #include "Pos.h"
-   #include <random>
-   using namespace std;
+   #include "World.h"
    
    class ProceduralGenerator {
    
+     private:
+       std::mt19937_64 gen;
+       World world;
+   
      public:
+       World& getWorld();
+   
+       std::mt19937_64& getRandom();
+   
+       void setRandom(int seed);
+   
        ProceduralGenerator();
    
-       ~ProceduralGenerator();
+       virtual ~ProceduralGenerator();
    };

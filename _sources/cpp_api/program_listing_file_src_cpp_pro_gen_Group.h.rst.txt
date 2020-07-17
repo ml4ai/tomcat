@@ -1,0 +1,34 @@
+
+.. _program_listing_file_src_cpp_pro_gen_Group.h:
+
+Program Listing for File Group.h
+================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_cpp_pro_gen_Group.h>` (``src/cpp/pro_gen/Group.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #pragma once
+   #include "AABB.h"
+   
+   class Group : public AABB {
+   
+     private:
+       std::vector<AABB*> aabbList;
+       void recalculateGroupBoundaries();
+   
+     public:
+       void addAABB(AABB& aabb);
+   
+       void generateAllDoorsInAABB();
+   
+       std::vector<AABB*>& getAABBList();
+   
+       AABB* getAABB(int id);
+   
+       std::string toTSV();
+   
+       Group(int id);
+   };

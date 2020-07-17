@@ -12,12 +12,11 @@ Program Listing for File Pit.h
 
    #pragma once
    #include "AABB.h"
-   #include <string.h>
    
    class Pit : public AABB {
    
      public:
-       Pit(int id, std::string material, Pos* topLeft, Pos* bottomRight);
+       Pit(int id, std::string material, Pos& topLeft, Pos& bottomRight);
    
        ~Pit();
    };

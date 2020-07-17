@@ -53,6 +53,16 @@ Classes and Structs
 .. toctree::
    :maxdepth: 5
 
+   classGridworldGenerator.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   classGroup.rst
+
+.. toctree::
+   :maxdepth: 5
+
    classPit.rst
 
 .. toctree::
@@ -95,6 +105,11 @@ Classes and Structs
 
    classWorld.rst
 
+.. toctree::
+   :maxdepth: 5
+
+   classZombieWorldGenerator.rst
+
 Functions
 *********
 
@@ -107,77 +122,7 @@ Functions
 .. toctree::
    :maxdepth: 5
 
-   function_zombieworld__generator_8cpp_1a70b0714f8a3606795267c1151db576a6.rst
-
-.. toctree::
-   :maxdepth: 5
-
    function_runExperiment_8cpp_1a67585f7c8b402e3a0bd288020ef776a2.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   function_gridworld__generator_8cpp_1a2f5ec5e3bba2dd4dc4754bcd3b12b04a.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   function_zombieworld__generator_8cpp_1a2f5ec5e3bba2dd4dc4754bcd3b12b04a.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   function_gridworld__generator_8cpp_1a6ff53ba64c7ba660d8da7c6c6bb7d6f5.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   function_zombieworld__generator_8cpp_1a6ff53ba64c7ba660d8da7c6c6bb7d6f5.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   function_gridworld__generator_8cpp_1abc5d7e9e30c9b6dfba4e461e43de8192.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   function_zombieworld__generator_8cpp_1abc5d7e9e30c9b6dfba4e461e43de8192.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   function_gridworld__generator_8cpp_1a8f61934188597a683fb2e8c0d6e5362a.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   function_zombieworld__generator_8cpp_1a8f61934188597a683fb2e8c0d6e5362a.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   function_zombieworld__generator_8cpp_1a7d00925e6d96889eae5c0bccd36c671c.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   function_gridworld__generator_8cpp_1a76f1407d407980d1c1e08317853ffa71.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   function_gridworld__generator_8cpp_1ad051c283404c51a78dffe9b77ca49726.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   function_zombieworld__generator_8cpp_1ab52ea715be90995f5046acd24052f7b7.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   function_gridworld__generator_8cpp_1a9bc77d6fa511b886d22f5affd9a9710b.rst
 
 .. toctree::
    :maxdepth: 5
@@ -187,12 +132,7 @@ Functions
 .. toctree::
    :maxdepth: 5
 
-   function_gridworld__generator_8cpp_1a0ddf1224851353fc92bfbff6f499fa97.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   function_zombieworld__generator_8cpp_1a0ddf1224851353fc92bfbff6f499fa97.rst
+   function_generator_8cpp_1a0ddf1224851353fc92bfbff6f499fa97.rst
 
 .. toctree::
    :maxdepth: 5
@@ -219,19 +159,10 @@ Functions
 
    function_utils_8h_1ab55ff1cc063128c1e8ab3e3c8af2d5aa.rst
 
-Variables
-*********
-
-
 .. toctree::
    :maxdepth: 5
 
-   variable_gridworld__generator_8cpp_1a127898187b6d6d91b8dd14344b2f13e0.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   variable_zombieworld__generator_8cpp_1a127898187b6d6d91b8dd14344b2f13e0.rst
+   function_generator_8cpp_1a1b0dc54f9d0172c17152bc1022903b00.rst
 
 Typedefs
 ********

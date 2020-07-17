@@ -12,18 +12,17 @@ Program Listing for File AABB.cpp
 
    
    #include "AABB.h"
-   
    using namespace std;
    
    AABB::AABB(int id,
               string type,
               string material,
-              Pos* topLeft,
-              Pos* bottomRight,
+              Pos& topLeft,
+              Pos& bottomRight,
               bool isHollow,
               bool hasRoof)
-       : id{id}, type{type}, material{material}, topLeft{*topLeft},
-         bottomRight{*bottomRight}, isHollow{isHollow}, hasRoof{hasRoof} {}
+       : id{id}, type{type}, material{material}, topLeft{topLeft},
+         bottomRight{bottomRight}, isHollow{isHollow}, hasRoof{hasRoof} {}
    
    int AABB::getID() { return this->id; }
    
@@ -35,7 +34,7 @@ Program Listing for File AABB.cpp
    
    Pos AABB::getBottomRight() { return this->bottomRight; }
    
-   vector<Block>* AABB::getBlockList() { return &(this->blockList); }
+   vector<Block*>& AABB::getBlockList() { return (this->blockList); }
    
    int AABB::getMidpointX() {
        int mid_x = ((this->topLeft).getX() +
@@ -55,7 +54,7 @@ Program Listing for File AABB.cpp
        return mid_z;
    }
    
-   Pos AABB::getRandomPosAtBase(mt19937_64* gen,
+   Pos AABB::getRandomPosAtBase(mt19937_64& gen,
                                 int offsetPosX,
                                 int offsetNegX,
                                 int offsetPosZ,
@@ -70,8 +69,8 @@ Program Listing for File AABB.cpp
        uniform_int_distribution<> randXGen(startX, endX);
        uniform_int_distribution<> randZGen(startZ, endZ);
    
-       int randX = randXGen(*gen);
-       int randZ = randZGen(*gen);
+       int randX = randXGen(gen);
+       int randZ = randZGen(gen);
    
        int base = (this->topLeft).getY();
        Pos pos(randX, base, randZ);
@@ -109,22 +108,20 @@ Program Listing for File AABB.cpp
        return midEdgesAtBase;
    }
    
-   void AABB::setTopLeft(Pos* topLeft) { this->topLeft = *topLeft; }
+   void AABB::setTopLeft(Pos& topLeft) { this->topLeft = topLeft; }
    
-   void AABB::setBottomRight(Pos* bottomRight) {
-       this->bottomRight = *bottomRight;
-   }
+   void AABB::setBottomRight(Pos& bottomRight) { this->bottomRight = bottomRight; }
    
-   void AABB::addBlock(Block* block) { (this->blockList).push_back(*block); }
+   void AABB::addBlock(Block& block) { (this->blockList).push_back(&block); }
    
-   bool AABB::isOverlapping(AABB* other) {
+   bool AABB::isOverlapping(AABB& other) {
        int xRange = (this->bottomRight.getX()) - (this->topLeft.getX());
        int yRange = (this->bottomRight.getY()) - (this->topLeft.getY());
        int zRange = (this->bottomRight.getZ()) - (this->topLeft.getZ());
    
-       if ((abs(other->topLeft.getX() - this->topLeft.getX()) < xRange) ||
-           (abs(other->topLeft.getY() - this->topLeft.getY()) < yRange) ||
-           (abs(other->topLeft.getZ() - this->topLeft.getZ()) < zRange)) {
+       if ((abs(other.topLeft.getX() - this->topLeft.getX()) < xRange) ||
+           (abs(other.topLeft.getY() - this->topLeft.getY()) < yRange) ||
+           (abs(other.topLeft.getZ() - this->topLeft.getZ()) < zRange)) {
    
            return true;
        }
@@ -152,11 +149,9 @@ Program Listing for File AABB.cpp
    
        for (int x = startX; x <= endX; x++) {
            for (int y = startY; y <= endY; y++) {
-   
                for (int z = startZ; z <= endZ; z++) {
                    Pos pos(x, y, z);
-                   Block block(material, &pos, type);
-                   this->addBlock(&block);
+                   this->addBlock(*(new Block(material, pos, type)));
                }
            }
        }
@@ -164,7 +159,7 @@ Program Listing for File AABB.cpp
    
    void AABB::addRandomBlocks(int n,
                               string material,
-                              mt19937_64* gen,
+                              mt19937_64& gen,
                               int offsetPosX,
                               int offsetNegX,
                               int offsetPosY,
@@ -186,17 +181,17 @@ Program Listing for File AABB.cpp
            uniform_int_distribution<> randY(startY, endY);
            uniform_int_distribution<> randZ(startZ, endZ);
    
-           int x = randX(*gen);
-           int y = randY(*gen);
-           int z = randZ(*gen);
+           int x = randX(gen);
+           int y = randY(gen);
+           int z = randZ(gen);
            Pos pos(x, y, z);
-           Block block(material, &pos, type);
-           this->addBlock(&block);
+           this->addBlock(*(new Block(material, pos, type)));
            n--;
        }
    }
    
    string AABB::toTSV() {
+   
        string retval = "";
        for (int x = (this->topLeft).getX(); x <= (this->bottomRight).getX(); x++) {
            for (int y = (this->topLeft).getY(); y <= (this->bottomRight).getY();
@@ -232,11 +227,33 @@ Program Listing for File AABB.cpp
            }
        }
    
-       for (auto block : (this->blockList)) {
-           retval += block.toTSV() + "\n";
+       for (auto& block : (this->blockList)) {
+           retval += (*block).toTSV() + "\n";
        }
    
        return retval;
+   }
+   
+   void AABB::generateAllDoorsInAABB() {
+       // Get edge midpoints for the AABB because that is where the doors will
+       // be placed
+       vector<Pos> edges = this->getEdgeMidpointAtBase();
+       Pos topEdgeMid(edges.at(0));
+       Pos rightEdgeMid(edges.at(1));
+       Pos bottomEdgeMid(edges.at(2));
+       Pos leftEdgeMid(edges.at(3));
+   
+       // Since points are at base we want them to be at base + 1
+       topEdgeMid.shiftY(1);
+       bottomEdgeMid.shiftY(1);
+       leftEdgeMid.shiftY(1);
+       rightEdgeMid.shiftY(1);
+   
+       // Add it to the AABB's doors
+       this->addBlock(*(new Block("door", topEdgeMid)));
+       this->addBlock(*(new Block("door", bottomEdgeMid)));
+       this->addBlock(*(new Block("door", leftEdgeMid)));
+       this->addBlock(*(new Block("door", rightEdgeMid)));
    }
    
    AABB::~AABB() {}

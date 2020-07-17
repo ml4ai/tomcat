@@ -60,7 +60,27 @@ Files
 .. toctree::
    :maxdepth: 5
 
-   file_src_cpp_pro_gen_gridworld_generator.cpp.rst
+   file_src_cpp_pro_gen_generator.cpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file_src_cpp_pro_gen_GridworldGenerator.cpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file_src_cpp_pro_gen_GridworldGenerator.h.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file_src_cpp_pro_gen_Group.cpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file_src_cpp_pro_gen_Group.h.rst
 
 .. toctree::
    :maxdepth: 5
@@ -145,4 +165,9 @@ Files
 .. toctree::
    :maxdepth: 5
 
-   file_src_cpp_pro_gen_zombieworld_generator.cpp.rst
+   file_src_cpp_pro_gen_ZombieworldGenerator.cpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file_src_cpp_pro_gen_ZombieworldGenerator.h.rst

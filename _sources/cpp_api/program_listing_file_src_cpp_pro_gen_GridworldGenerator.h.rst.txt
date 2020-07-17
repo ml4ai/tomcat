@@ -1,0 +1,34 @@
+
+.. _program_listing_file_src_cpp_pro_gen_GridworldGenerator.h:
+
+Program Listing for File GridworldGenerator.h
+=============================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_cpp_pro_gen_GridworldGenerator.h>` (``src/cpp/pro_gen/GridworldGenerator.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #pragma once
+   #include "ProceduralGenerator.h"
+   
+   class GridworldGenerator : public ProceduralGenerator {
+   
+     private:
+       int N;
+       int sep;
+       int AABB_size;
+       void addRandomVictim(AABB& aabb, Pos& pos, double greenBias);
+   
+       void generateAABBGrid();
+   
+       void generateVictimInAABB(AABB& aabb);
+   
+       void generateBlocks();
+   
+     public:
+       GridworldGenerator(int N, int separation, int AABB_size, int seed = 1);
+   
+       ~GridworldGenerator();
+   };

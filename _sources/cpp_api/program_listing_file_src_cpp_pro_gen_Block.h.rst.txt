@@ -13,7 +13,6 @@ Program Listing for File Block.h
    
    #pragma once
    #include "Pos.h"
-   #include <string>
    
    class Block {
    
@@ -33,9 +32,9 @@ Program Listing for File Block.h
    
        int getZ();
    
-       std::string toTSV();
+       std::string virtual toTSV();
    
-       Block(std::string material, Pos* pos, std::string type = "normal");
+       Block(std::string material, Pos& pos, std::string type = "normal");
    
-       ~Block();
+       virtual ~Block();
    };

@@ -161,7 +161,6 @@
 <p>↰ <a class="reference internal" href="file_src_cpp_pro_gen_Block.h.html#file-src-cpp-pro-gen-block-h"><span class="std std-ref">Return to documentation for file</span></a> (<code class="docutils literal notranslate"><span class="pre">src/cpp/pro_gen/Block.h</span></code>)</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
 <span class="cp">#include</span> <span class="cpf">&quot;Pos.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
 
 <span class="k">class</span> <span class="nc">Block</span> <span class="p">{</span>
 
@@ -181,11 +180,11 @@
 
     <span class="kt">int</span> <span class="nf">getZ</span><span class="p">();</span>
 
-    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">toTSV</span><span class="p">();</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="k">virtual</span> <span class="n">toTSV</span><span class="p">();</span>
 
-    <span class="n">Block</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">material</span><span class="p">,</span> <span class="n">Pos</span><span class="o">*</span> <span class="n">pos</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">type</span> <span class="o">=</span> <span class="s">&quot;normal&quot;</span><span class="p">);</span>
+    <span class="n">Block</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">material</span><span class="p">,</span> <span class="n">Pos</span><span class="o">&amp;</span> <span class="n">pos</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">type</span> <span class="o">=</span> <span class="s">&quot;normal&quot;</span><span class="p">);</span>
 
-    <span class="o">~</span><span class="n">Block</span><span class="p">();</span>
+    <span class="k">virtual</span> <span class="o">~</span><span class="n">Block</span><span class="p">();</span>
 <span class="p">};</span>
 </pre></div>
 </div>

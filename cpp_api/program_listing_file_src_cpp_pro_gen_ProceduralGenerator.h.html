@@ -160,17 +160,24 @@
 <span id="program-listing-file-src-cpp-pro-gen-proceduralgenerator-h"></span><h1>Program Listing for File ProceduralGenerator.h<a class="headerlink" href="#program-listing-for-file-proceduralgenerator-h" title="Permalink to this headline">¶</a></h1>
 <p>↰ <a class="reference internal" href="file_src_cpp_pro_gen_ProceduralGenerator.h.html#file-src-cpp-pro-gen-proceduralgenerator-h"><span class="std std-ref">Return to documentation for file</span></a> (<code class="docutils literal notranslate"><span class="pre">src/cpp/pro_gen/ProceduralGenerator.h</span></code>)</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
-<span class="cp">#include</span> <span class="cpf">&quot;Block.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&quot;Pos.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;random&gt;</span><span class="cp"></span>
-<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="cp">#include</span> <span class="cpf">&quot;World.h&quot;</span><span class="cp"></span>
 
 <span class="k">class</span> <span class="nc">ProceduralGenerator</span> <span class="p">{</span>
 
+  <span class="k">private</span><span class="o">:</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">mt19937_64</span> <span class="n">gen</span><span class="p">;</span>
+    <span class="n">World</span> <span class="n">world</span><span class="p">;</span>
+
   <span class="k">public</span><span class="o">:</span>
+    <span class="n">World</span><span class="o">&amp;</span> <span class="n">getWorld</span><span class="p">();</span>
+
+    <span class="n">std</span><span class="o">::</span><span class="n">mt19937_64</span><span class="o">&amp;</span> <span class="n">getRandom</span><span class="p">();</span>
+
+    <span class="kt">void</span> <span class="nf">setRandom</span><span class="p">(</span><span class="kt">int</span> <span class="n">seed</span><span class="p">);</span>
+
     <span class="n">ProceduralGenerator</span><span class="p">();</span>
 
-    <span class="o">~</span><span class="n">ProceduralGenerator</span><span class="p">();</span>
+    <span class="k">virtual</span> <span class="o">~</span><span class="n">ProceduralGenerator</span><span class="p">();</span>
 <span class="p">};</span>
 </pre></div>
 </div>

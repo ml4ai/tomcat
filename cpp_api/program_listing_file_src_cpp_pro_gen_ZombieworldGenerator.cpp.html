@@ -1,0 +1,479 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Program Listing for File ZombieworldGenerator.cpp &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tomcat_openapi.html">Data models and message bus topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Program Listing for File ZombieworldGenerator.cpp</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/cpp_api/program_listing_file_src_cpp_pro_gen_ZombieworldGenerator.cpp.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="program-listing-for-file-zombieworldgenerator-cpp">
+<span id="program-listing-file-src-cpp-pro-gen-zombieworldgenerator-cpp"></span><h1>Program Listing for File ZombieworldGenerator.cpp<a class="headerlink" href="#program-listing-for-file-zombieworldgenerator-cpp" title="Permalink to this headline">¶</a></h1>
+<p>↰ <a class="reference internal" href="file_src_cpp_pro_gen_ZombieworldGenerator.cpp.html#file-src-cpp-pro-gen-zombieworldgenerator-cpp"><span class="std std-ref">Return to documentation for file</span></a> (<code class="docutils literal notranslate"><span class="pre">src/cpp/pro_gen/ZombieworldGenerator.cpp</span></code>)</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;ZombieworldGenerator.h&quot;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="n">ZombieWorldGenerator</span><span class="o">::</span><span class="n">addLevers</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">aabb</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getWorld</span><span class="p">().</span><span class="n">getAABBList</span><span class="p">())</span> <span class="p">{</span>
+        <span class="n">Group</span><span class="o">*</span> <span class="n">g</span> <span class="o">=</span> <span class="k">dynamic_cast</span><span class="o">&lt;</span><span class="n">Group</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">aabb</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">AABB</span><span class="o">*</span> <span class="n">aabbTwo</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="n">g</span><span class="p">).</span><span class="n">getAABB</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">aabbTwo</span> <span class="o">!=</span> <span class="k">nullptr</span><span class="p">)</span> <span class="p">{</span>
+
+                <span class="n">Pos</span> <span class="n">topEdgeMidpoint</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="n">aabbTwo</span><span class="p">).</span><span class="n">getEdgeMidpointAtBase</span><span class="p">().</span><span class="n">at</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+                <span class="n">topEdgeMidpoint</span><span class="p">.</span><span class="n">shiftY</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+                <span class="n">topEdgeMidpoint</span><span class="p">.</span><span class="n">shiftX</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+                <span class="n">topEdgeMidpoint</span><span class="p">.</span><span class="n">shiftZ</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+
+                <span class="p">(</span><span class="o">*</span><span class="n">g</span><span class="p">).</span><span class="n">addBlock</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="k">new</span> <span class="n">Block</span><span class="p">(</span><span class="s">&quot;lever&quot;</span><span class="p">,</span> <span class="n">topEdgeMidpoint</span><span class="p">)));</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">ZombieWorldGenerator</span><span class="o">::</span><span class="n">addGroupOfAABB</span><span class="p">(</span><span class="kt">int</span> <span class="n">idCtr</span><span class="p">,</span>
+                                          <span class="n">Pos</span><span class="o">&amp;</span> <span class="n">firstTopLeft</span><span class="p">,</span>
+                                          <span class="n">Pos</span><span class="o">&amp;</span> <span class="n">firstBottomRight</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="n">World</span><span class="o">&amp;</span> <span class="n">world</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getWorld</span><span class="p">();</span>
+    <span class="n">world</span><span class="p">.</span><span class="n">addAABB</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="k">new</span> <span class="n">Group</span><span class="p">(</span><span class="n">idCtr</span><span class="p">)));</span>
+
+    <span class="n">Group</span><span class="o">*</span> <span class="n">g</span> <span class="o">=</span> <span class="k">dynamic_cast</span><span class="o">&lt;</span><span class="n">Group</span><span class="o">*&gt;</span><span class="p">((</span><span class="n">world</span><span class="p">.</span><span class="n">getAABBList</span><span class="p">()).</span><span class="n">back</span><span class="p">());</span>
+
+    <span class="p">(</span><span class="o">*</span><span class="n">g</span><span class="p">).</span><span class="n">addAABB</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="k">new</span> <span class="n">AABB</span><span class="p">(</span>
+        <span class="mi">1</span><span class="p">,</span> <span class="s">&quot;room&quot;</span><span class="p">,</span> <span class="s">&quot;planks&quot;</span><span class="p">,</span> <span class="n">firstTopLeft</span><span class="p">,</span> <span class="n">firstBottomRight</span><span class="p">,</span> <span class="nb">true</span><span class="p">,</span> <span class="nb">true</span><span class="p">)));</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">idCtr</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">||</span> <span class="n">idCtr</span> <span class="o">==</span> <span class="mi">7</span> <span class="o">||</span> <span class="n">idCtr</span> <span class="o">==</span> <span class="mi">9</span><span class="p">))</span> <span class="p">{</span>
+
+        <span class="n">Pos</span> <span class="n">secondTopLeft</span><span class="p">(</span><span class="n">firstTopLeft</span><span class="p">);</span>
+        <span class="n">secondTopLeft</span><span class="p">.</span><span class="n">shiftX</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+        <span class="n">secondTopLeft</span><span class="p">.</span><span class="n">shiftZ</span><span class="p">(</span><span class="mi">9</span><span class="p">);</span>
+
+        <span class="n">Pos</span> <span class="nf">secondBottomRight</span><span class="p">(</span><span class="n">firstBottomRight</span><span class="p">);</span>
+        <span class="n">secondBottomRight</span><span class="p">.</span><span class="n">shiftX</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+        <span class="n">secondBottomRight</span><span class="p">.</span><span class="n">shiftZ</span><span class="p">(</span><span class="mi">9</span><span class="p">);</span>
+
+        <span class="p">(</span><span class="o">*</span><span class="n">g</span><span class="p">).</span><span class="n">addAABB</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="k">new</span> <span class="n">AABB</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span>
+                                <span class="s">&quot;room&quot;</span><span class="p">,</span>
+                                <span class="s">&quot;planks&quot;</span><span class="p">,</span>
+                                <span class="n">secondTopLeft</span><span class="p">,</span>
+                                <span class="n">secondBottomRight</span><span class="p">,</span>
+                                <span class="nb">true</span><span class="p">,</span>
+                                <span class="nb">true</span><span class="p">)));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">ZombieWorldGenerator</span><span class="o">::</span><span class="n">chooseZombieworldAABB</span><span class="p">(</span><span class="kt">int</span> <span class="n">idCtr</span><span class="p">,</span>
+                                                 <span class="n">Pos</span><span class="o">&amp;</span> <span class="n">topLeft</span><span class="p">,</span>
+                                                 <span class="n">Pos</span><span class="o">&amp;</span> <span class="n">bottomRight</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="n">World</span><span class="o">&amp;</span> <span class="n">world</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getWorld</span><span class="p">();</span>
+    <span class="n">mt19937_64</span><span class="o">&amp;</span> <span class="n">gen</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getRandom</span><span class="p">();</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">idCtr</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Pos</span> <span class="n">newBottomRight</span><span class="p">(</span><span class="n">bottomRight</span><span class="p">);</span>
+        <span class="n">newBottomRight</span><span class="p">.</span><span class="n">setY</span><span class="p">(</span><span class="n">topLeft</span><span class="p">.</span><span class="n">getY</span><span class="p">());</span> <span class="c1">// We are adding a Pit so we want</span>
+                                             <span class="c1">// the AABB to be much flatter</span>
+
+        <span class="n">uniform_int_distribution</span><span class="o">&lt;&gt;</span> <span class="n">dist</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
+        <span class="kt">int</span> <span class="n">rand</span> <span class="o">=</span> <span class="n">dist</span><span class="p">(</span><span class="n">gen</span><span class="p">);</span>
+
+        <span class="c1">// Choose between an air, water or lava pit</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">rand</span> <span class="o">&lt;=</span> <span class="mi">25</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">Pos</span> <span class="n">newTopLeft</span><span class="p">(</span><span class="n">topLeft</span><span class="p">);</span>
+
+            <span class="n">newTopLeft</span><span class="p">.</span><span class="n">shiftY</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+            <span class="n">newBottomRight</span><span class="p">.</span><span class="n">shiftY</span><span class="p">(</span>
+                <span class="mi">1</span><span class="p">);</span> <span class="c1">// Move both above ground level for an air pit which achives</span>
+                    <span class="c1">// the effect of an empty plot</span>
+
+            <span class="n">world</span><span class="p">.</span><span class="n">addAABB</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="k">new</span> <span class="n">Pit</span><span class="p">(</span><span class="n">idCtr</span><span class="p">,</span> <span class="s">&quot;air&quot;</span><span class="p">,</span> <span class="n">newTopLeft</span><span class="p">,</span> <span class="n">newBottomRight</span><span class="p">)));</span>
+        <span class="p">}</span>
+
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">rand</span> <span class="o">&gt;</span> <span class="mi">25</span> <span class="o">&amp;&amp;</span> <span class="n">rand</span> <span class="o">&lt;=</span> <span class="mi">75</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">Pos</span> <span class="n">newTopLeft</span><span class="p">(</span><span class="n">topLeft</span><span class="p">);</span>
+            <span class="n">newTopLeft</span><span class="p">.</span><span class="n">shiftY</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">);</span> <span class="c1">// In this case I&#39;m chosing to offset the</span>
+                                   <span class="c1">// base Y by -2 so we have a deeper water pit</span>
+
+            <span class="n">world</span><span class="p">.</span><span class="n">addAABB</span><span class="p">(</span>
+                <span class="o">*</span><span class="p">(</span><span class="k">new</span> <span class="n">Pit</span><span class="p">(</span><span class="n">idCtr</span><span class="p">,</span> <span class="s">&quot;sand&quot;</span><span class="p">,</span> <span class="n">newTopLeft</span><span class="p">,</span> <span class="n">newBottomRight</span><span class="p">)));</span>
+            <span class="n">AABB</span><span class="o">*</span> <span class="n">waterPit</span> <span class="o">=</span> <span class="p">(</span><span class="n">world</span><span class="p">.</span><span class="n">getAABBList</span><span class="p">()).</span><span class="n">back</span><span class="p">();</span>
+
+            <span class="p">(</span><span class="o">*</span><span class="n">waterPit</span><span class="p">).</span><span class="n">generateBox</span><span class="p">(</span><span class="s">&quot;water&quot;</span><span class="p">,</span>
+                                    <span class="mi">3</span><span class="p">,</span>
+                                    <span class="mi">3</span><span class="p">,</span>
+                                    <span class="mi">1</span><span class="p">,</span>
+                                    <span class="mi">0</span><span class="p">,</span>
+                                    <span class="mi">3</span><span class="p">,</span>
+                                    <span class="mi">3</span><span class="p">);</span> <span class="c1">// Add a box of water to it</span>
+
+            <span class="c1">// Randomly add other blocks to give the effect of randomization</span>
+            <span class="p">(</span><span class="o">*</span><span class="n">waterPit</span><span class="p">).</span><span class="n">addRandomBlocks</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="s">&quot;grass&quot;</span><span class="p">,</span> <span class="n">gen</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+            <span class="p">(</span><span class="o">*</span><span class="n">waterPit</span><span class="p">).</span><span class="n">addRandomBlocks</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="s">&quot;water&quot;</span><span class="p">,</span> <span class="n">gen</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="n">world</span><span class="p">.</span><span class="n">addAABB</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="k">new</span> <span class="n">Pit</span><span class="p">(</span><span class="n">idCtr</span><span class="p">,</span> <span class="s">&quot;grass&quot;</span><span class="p">,</span> <span class="n">topLeft</span><span class="p">,</span> <span class="n">newBottomRight</span><span class="p">)));</span>
+            <span class="n">AABB</span><span class="o">*</span> <span class="n">lavaPit</span> <span class="o">=</span> <span class="n">world</span><span class="p">.</span><span class="n">getAABBList</span><span class="p">().</span><span class="n">back</span><span class="p">();</span>
+            <span class="p">(</span><span class="o">*</span><span class="n">lavaPit</span><span class="p">).</span><span class="n">generateBox</span><span class="p">(</span><span class="s">&quot;lava&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+            <span class="p">(</span><span class="o">*</span><span class="n">lavaPit</span><span class="p">).</span><span class="n">addRandomBlocks</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s">&quot;grass&quot;</span><span class="p">,</span> <span class="n">gen</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+            <span class="p">(</span><span class="o">*</span><span class="n">lavaPit</span><span class="p">).</span><span class="n">addRandomBlocks</span><span class="p">(</span>
+                <span class="mi">30</span><span class="p">,</span>
+                <span class="s">&quot;cobblestone&quot;</span><span class="p">,</span>
+                <span class="n">gen</span><span class="p">);</span> <span class="c1">// Example showing use of all default values</span>
+            <span class="p">(</span><span class="o">*</span><span class="n">lavaPit</span><span class="p">).</span><span class="n">addRandomBlocks</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s">&quot;lava&quot;</span><span class="p">,</span> <span class="n">gen</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">else</span> <span class="p">{</span>
+
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">addGroupOfAABB</span><span class="p">(</span><span class="n">idCtr</span><span class="p">,</span> <span class="n">topLeft</span><span class="p">,</span> <span class="n">bottomRight</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">ZombieWorldGenerator</span><span class="o">::</span><span class="n">generateAABBGrid</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">World</span><span class="o">&amp;</span> <span class="n">world</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getWorld</span><span class="p">();</span>
+    <span class="n">mt19937_64</span><span class="o">&amp;</span> <span class="n">gen</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getRandom</span><span class="p">();</span>
+
+    <span class="c1">// Add the first one</span>
+    <span class="kt">int</span> <span class="n">idCtr</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="n">Pos</span> <span class="nf">prevTopLeft</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="n">Pos</span> <span class="nf">prevBottomRight</span><span class="p">(</span><span class="n">AABB_size</span><span class="p">,</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">AABB_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">AABB_size</span><span class="p">);</span>
+
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">addGroupOfAABB</span><span class="p">(</span><span class="n">idCtr</span><span class="p">,</span> <span class="n">prevTopLeft</span><span class="p">,</span> <span class="n">prevBottomRight</span><span class="p">);</span>
+
+    <span class="c1">// Use relative coordinates for the &quot;previous&quot; AABB to generate the rest</span>
+    <span class="c1">// at each step</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">idCtr</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">N</span> <span class="o">*</span> <span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="p">{</span>
+        <span class="n">idCtr</span><span class="o">++</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="p">((</span><span class="n">idCtr</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">N</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Condition for when a row in the grid is complete and we move</span>
+            <span class="c1">// onto the next one</span>
+
+            <span class="n">Pos</span> <span class="n">topLeft</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+            <span class="n">topLeft</span><span class="p">.</span><span class="n">setZ</span><span class="p">(</span><span class="n">prevBottomRight</span><span class="p">.</span><span class="n">getZ</span><span class="p">()</span> <span class="o">+</span> <span class="n">sep</span><span class="p">);</span>
+            <span class="n">Pos</span> <span class="nf">bottomRight</span><span class="p">(</span>
+                <span class="n">AABB_size</span><span class="p">,</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">AABB_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">topLeft</span><span class="p">.</span><span class="n">getZ</span><span class="p">()</span> <span class="o">+</span> <span class="n">AABB_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+
+            <span class="n">chooseZombieworldAABB</span><span class="p">(</span>
+                <span class="n">idCtr</span><span class="p">,</span>
+                <span class="n">topLeft</span><span class="p">,</span>
+                <span class="n">bottomRight</span><span class="p">);</span> <span class="c1">// Choose the AABB to add. DOESN&#39;T change</span>
+                              <span class="c1">// topLeft and bottomRight</span>
+
+            <span class="n">prevTopLeft</span> <span class="o">=</span> <span class="n">topLeft</span><span class="p">;</span>
+            <span class="n">prevBottomRight</span> <span class="o">=</span> <span class="n">bottomRight</span><span class="p">;</span> <span class="c1">// Set as if prev AABB was a room for</span>
+                                           <span class="c1">// consistency. Direct result of the</span>
+                                           <span class="c1">// fact that choosing an AABB doesn&#39;t</span>
+                                           <span class="c1">// change the coordinates</span>
+        <span class="p">}</span>
+        <span class="k">else</span> <span class="p">{</span>
+            <span class="c1">// Condition for the next AABB in the current row</span>
+
+            <span class="n">Pos</span> <span class="n">topLeft</span><span class="p">(</span><span class="n">prevTopLeft</span><span class="p">);</span>
+            <span class="n">topLeft</span><span class="p">.</span><span class="n">setX</span><span class="p">(</span><span class="n">prevBottomRight</span><span class="p">.</span><span class="n">getX</span><span class="p">()</span> <span class="o">+</span> <span class="n">sep</span><span class="p">);</span>
+
+            <span class="n">Pos</span> <span class="nf">bottomRight</span><span class="p">(</span><span class="n">prevBottomRight</span><span class="p">);</span>
+            <span class="n">bottomRight</span><span class="p">.</span><span class="n">setX</span><span class="p">(</span><span class="n">topLeft</span><span class="p">.</span><span class="n">getX</span><span class="p">()</span> <span class="o">+</span> <span class="n">AABB_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+
+            <span class="n">chooseZombieworldAABB</span><span class="p">(</span>
+                <span class="n">idCtr</span><span class="p">,</span>
+                <span class="n">topLeft</span><span class="p">,</span>
+                <span class="n">bottomRight</span><span class="p">);</span> <span class="c1">// Choose the AABB to add. DOESN&#39;T change</span>
+                              <span class="c1">// topLeft and bottomRIght</span>
+
+            <span class="n">prevTopLeft</span> <span class="o">=</span> <span class="n">topLeft</span><span class="p">;</span>
+            <span class="n">prevBottomRight</span> <span class="o">=</span> <span class="n">bottomRight</span><span class="p">;</span> <span class="c1">// Set as if prev AABB was a room for</span>
+                                           <span class="c1">// consistency. Direct result of the</span>
+                                           <span class="c1">// fact that choosing an AABB doesn&#39;t</span>
+                                           <span class="c1">// change the coordinates</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">ZombieWorldGenerator</span><span class="o">::</span><span class="n">decorate</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">World</span><span class="o">&amp;</span> <span class="n">world</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getWorld</span><span class="p">();</span>
+
+    <span class="c1">// Add doors and lights</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">aabb</span> <span class="p">:</span> <span class="n">world</span><span class="p">.</span><span class="n">getAABBList</span><span class="p">())</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">strcmp</span><span class="p">((</span><span class="o">*</span><span class="n">aabb</span><span class="p">).</span><span class="n">getType</span><span class="p">().</span><span class="n">c_str</span><span class="p">(),</span> <span class="s">&quot;pit&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="p">(</span><span class="o">*</span><span class="n">aabb</span><span class="p">).</span><span class="n">generateAllDoorsInAABB</span><span class="p">();</span>
+
+            <span class="n">Group</span><span class="o">*</span> <span class="n">g</span> <span class="o">=</span> <span class="k">dynamic_cast</span><span class="o">&lt;</span><span class="n">Group</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">aabb</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">aabbInGroup</span> <span class="p">:</span> <span class="p">(</span><span class="o">*</span><span class="n">g</span><span class="p">).</span><span class="n">getAABBList</span><span class="p">())</span>
+                    <span class="p">(</span><span class="o">*</span><span class="n">aabbInGroup</span><span class="p">).</span><span class="n">generateBox</span><span class="p">(</span><span class="s">&quot;glowstone&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Add levers</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">addLevers</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">ZombieWorldGenerator</span><span class="o">::</span><span class="n">generateBoundingWalls</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">World</span><span class="o">&amp;</span> <span class="n">world</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getWorld</span><span class="p">();</span>
+    <span class="n">AABB</span><span class="o">*</span> <span class="n">firstAABB</span> <span class="o">=</span> <span class="n">world</span><span class="p">.</span><span class="n">getAABBList</span><span class="p">().</span><span class="n">front</span><span class="p">();</span>
+    <span class="n">AABB</span><span class="o">*</span> <span class="n">lastAABB</span> <span class="o">=</span> <span class="n">world</span><span class="p">.</span><span class="n">getAABBList</span><span class="p">().</span><span class="n">back</span><span class="p">();</span>
+
+    <span class="c1">// Create boundary</span>
+    <span class="n">Pos</span> <span class="nf">boundaryTopLeft</span><span class="p">((</span><span class="o">*</span><span class="n">firstAABB</span><span class="p">).</span><span class="n">getTopLeft</span><span class="p">());</span>
+    <span class="n">boundaryTopLeft</span><span class="p">.</span><span class="n">shiftX</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">);</span>
+    <span class="n">boundaryTopLeft</span><span class="p">.</span><span class="n">setY</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">);</span>
+    <span class="n">boundaryTopLeft</span><span class="p">.</span><span class="n">shiftZ</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">);</span>
+
+    <span class="n">Pos</span> <span class="nf">boundaryBottomRight</span><span class="p">((</span><span class="o">*</span><span class="n">lastAABB</span><span class="p">).</span><span class="n">getBottomRight</span><span class="p">());</span>
+    <span class="n">boundaryBottomRight</span><span class="p">.</span><span class="n">shiftX</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+    <span class="n">boundaryBottomRight</span><span class="p">.</span><span class="n">setY</span><span class="p">(</span><span class="mi">13</span><span class="p">);</span>
+    <span class="n">boundaryBottomRight</span><span class="p">.</span><span class="n">shiftZ</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+
+    <span class="n">world</span><span class="p">.</span><span class="n">addAABB</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="k">new</span> <span class="n">AABB</span><span class="p">(</span>
+        <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;boundary&quot;</span><span class="p">,</span> <span class="s">&quot;cobblestone&quot;</span><span class="p">,</span> <span class="n">boundaryTopLeft</span><span class="p">,</span> <span class="n">boundaryBottomRight</span><span class="p">)));</span>
+
+    <span class="c1">// Create Internal Separator 1</span>
+    <span class="n">Pos</span> <span class="nf">separator1BottomRight</span><span class="p">(</span><span class="n">boundaryBottomRight</span><span class="p">);</span>
+    <span class="n">separator1BottomRight</span><span class="p">.</span><span class="n">shiftX</span><span class="p">(</span><span class="o">-</span><span class="mi">20</span><span class="p">);</span>
+
+    <span class="n">Pos</span> <span class="nf">separator1TopLeft</span><span class="p">(</span><span class="n">separator1BottomRight</span><span class="p">);</span>
+    <span class="n">separator1TopLeft</span><span class="p">.</span><span class="n">shiftZ</span><span class="p">(</span><span class="o">-</span><span class="mi">50</span><span class="p">);</span>
+    <span class="n">separator1TopLeft</span><span class="p">.</span><span class="n">setY</span><span class="p">(</span><span class="n">boundaryTopLeft</span><span class="p">.</span><span class="n">getY</span><span class="p">());</span>
+
+    <span class="n">world</span><span class="p">.</span><span class="n">addAABB</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="k">new</span> <span class="n">AABB</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                             <span class="s">&quot;wall&quot;</span><span class="p">,</span>
+                             <span class="s">&quot;cobblestone&quot;</span><span class="p">,</span>
+                             <span class="n">separator1TopLeft</span><span class="p">,</span>
+                             <span class="n">separator1BottomRight</span><span class="p">,</span>
+                             <span class="nb">false</span><span class="p">)));</span>
+
+    <span class="n">AABB</span><span class="o">*</span> <span class="n">separatorWall1</span> <span class="o">=</span> <span class="n">world</span><span class="p">.</span><span class="n">getAABBList</span><span class="p">().</span><span class="n">back</span><span class="p">();</span>
+    <span class="p">(</span><span class="o">*</span><span class="n">separatorWall1</span><span class="p">).</span><span class="n">generateBox</span><span class="p">(</span><span class="s">&quot;fence&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+
+    <span class="c1">// Create Internal Separator 2</span>
+    <span class="n">Pos</span> <span class="nf">separator2BottomRight</span><span class="p">(</span><span class="n">separator1TopLeft</span><span class="p">);</span>
+    <span class="n">separator2BottomRight</span><span class="p">.</span><span class="n">setY</span><span class="p">(</span><span class="n">separator1BottomRight</span><span class="p">.</span><span class="n">getY</span><span class="p">());</span>
+
+    <span class="n">Pos</span> <span class="nf">separator2TopLeft</span><span class="p">(</span><span class="n">separator2BottomRight</span><span class="p">);</span>
+    <span class="n">separator2TopLeft</span><span class="p">.</span><span class="n">shiftX</span><span class="p">(</span><span class="o">-</span><span class="mi">25</span><span class="p">);</span>
+    <span class="n">separator2TopLeft</span><span class="p">.</span><span class="n">setY</span><span class="p">(</span><span class="n">boundaryTopLeft</span><span class="p">.</span><span class="n">getY</span><span class="p">());</span>
+
+    <span class="n">world</span><span class="p">.</span><span class="n">addAABB</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="k">new</span> <span class="n">AABB</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span>
+                             <span class="s">&quot;wall&quot;</span><span class="p">,</span>
+                             <span class="s">&quot;cobblestone&quot;</span><span class="p">,</span>
+                             <span class="n">separator2TopLeft</span><span class="p">,</span>
+                             <span class="n">separator2BottomRight</span><span class="p">,</span>
+                             <span class="nb">false</span><span class="p">)));</span>
+    <span class="n">AABB</span><span class="o">*</span> <span class="n">separatorWall2</span> <span class="o">=</span> <span class="n">world</span><span class="p">.</span><span class="n">getAABBList</span><span class="p">().</span><span class="n">back</span><span class="p">();</span>
+    <span class="p">(</span><span class="o">*</span><span class="n">separatorWall2</span><span class="p">).</span><span class="n">generateBox</span><span class="p">(</span><span class="s">&quot;fence&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">ZombieWorldGenerator</span><span class="o">::</span><span class="n">ZombieWorldGenerator</span><span class="p">(</span><span class="kt">int</span> <span class="n">seed</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">setRandom</span><span class="p">(</span><span class="n">seed</span><span class="p">);</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">generateAABBGrid</span><span class="p">();</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">decorate</span><span class="p">();</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">generateBoundingWalls</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="n">ZombieWorldGenerator</span><span class="o">::~</span><span class="n">ZombieWorldGenerator</span><span class="p">()</span> <span class="p">{}</span>
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -169,9 +169,10 @@
 </ul>
 <div class="section" id="inheritance-relationships">
 <h2>Inheritance Relationships<a class="headerlink" href="#inheritance-relationships" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="derived-type">
-<h3>Derived Type<a class="headerlink" href="#derived-type" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="derived-types">
+<h3>Derived Types<a class="headerlink" href="#derived-types" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">public</span> <span class="pre">Group</span></code> (<a class="reference internal" href="classGroup.html#exhale-class-classgroup"><span class="std std-ref">Class Group</span></a>)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">public</span> <span class="pre">Pit</span></code> (<a class="reference internal" href="classPit.html#exhale-class-classpit"><span class="std std-ref">Class Pit</span></a>)</p></li>
 </ul>
 </div>
@@ -183,7 +184,7 @@
 <span id="_CPPv34AABB"></span><span id="_CPPv24AABB"></span><span id="AABB"></span><span class="target" id="classAABB"></span><em class="property">class </em><code class="sig-name descname">AABB</code><a class="headerlink" href="#_CPPv44AABB" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>This file defines the members and methods implemented as part of the <a class="reference internal" href="#classAABB"><span class="std std-ref">AABB</span></a> class. </p>
 <p>This class represents an Axis Aligned Bounding Box as seen from the top-view of the Minecraft X-Z plane. </p>
-<p>Subclassed by <a class="reference internal" href="classPit.html#classPit"><span class="std std-ref">Pit</span></a></p>
+<p>Subclassed by <a class="reference internal" href="classGroup.html#classGroup"><span class="std std-ref">Group</span></a>, <a class="reference internal" href="classPit.html#classPit"><span class="std std-ref">Pit</span></a></p>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Public Functions</p>
 <dl class="cpp function">
@@ -243,10 +244,10 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N4AABB12getBlockListEv">
-<span id="_CPPv3N4AABB12getBlockListEv"></span><span id="_CPPv2N4AABB12getBlockListEv"></span><span id="AABB::getBlockList"></span><span class="target" id="classAABB_1ad4861a210f6dd4f24a384d68f1772061"></span>std::vector&lt;<a class="reference internal" href="classBlock.html#_CPPv45Block" title="Block">Block</a>&gt; *<code class="sig-name descname">getBlockList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4AABB12getBlockListEv" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N4AABB12getBlockListEv"></span><span id="_CPPv2N4AABB12getBlockListEv"></span><span id="AABB::getBlockList"></span><span class="target" id="classAABB_1a8a085b03f29e5b56154067dcdec7d4a5"></span>std::vector&lt;<a class="reference internal" href="classBlock.html#_CPPv45Block" title="Block">Block</a>*&gt; &amp;<code class="sig-name descname">getBlockList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4AABB12getBlockListEv" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Get the block list specific to this <a class="reference internal" href="#classAABB"><span class="std std-ref">AABB</span></a>. </p>
 <p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>vector&lt;Block&gt;* The reference to the block list </p>
+<dt><strong>Return</strong></dt><dd><p>vector&lt;Block*&gt;&amp; The reference to the block list </p>
 </dd>
 </dl>
 </p>
@@ -286,8 +287,8 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4N4AABB18getRandomPosAtBaseEPNSt10mt19937_64Eiiii">
-<span id="_CPPv3N4AABB18getRandomPosAtBaseEPNSt10mt19937_64Eiiii"></span><span id="_CPPv2N4AABB18getRandomPosAtBaseEPNSt10mt19937_64Eiiii"></span><span id="AABB::getRandomPosAtBase__std::mt19937_64P.i.i.i.i"></span><span class="target" id="classAABB_1ad841f8eb9bcdd59bcdd3f31ead43fbca"></span><a class="reference internal" href="classPos.html#_CPPv43Pos" title="Pos">Pos</a> <code class="sig-name descname">getRandomPosAtBase</code><span class="sig-paren">(</span>std::mt19937_64 *<em>gen</em>, int <em>offsetPosX</em> = 1, int <em>offsetNegX</em> = 1, int <em>offsetPosZ</em> = 1, int <em>offsetNegZ</em> = 1<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4AABB18getRandomPosAtBaseEPNSt10mt19937_64Eiiii" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4N4AABB18getRandomPosAtBaseERNSt10mt19937_64Eiiii">
+<span id="_CPPv3N4AABB18getRandomPosAtBaseERNSt10mt19937_64Eiiii"></span><span id="_CPPv2N4AABB18getRandomPosAtBaseERNSt10mt19937_64Eiiii"></span><span id="AABB::getRandomPosAtBase__std::mt19937_64R.i.i.i.i"></span><span class="target" id="classAABB_1ae40ad9ebd7264acfa25592eeb4d5ae3b"></span><a class="reference internal" href="classPos.html#_CPPv43Pos" title="Pos">Pos</a> <code class="sig-name descname">getRandomPosAtBase</code><span class="sig-paren">(</span>std::mt19937_64 &amp;<em>gen</em>, int <em>offsetPosX</em> = 1, int <em>offsetNegX</em> = 1, int <em>offsetPosZ</em> = 1, int <em>offsetNegZ</em> = 1<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4AABB18getRandomPosAtBaseERNSt10mt19937_64Eiiii" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Gets a random position in the <a class="reference internal" href="#classAABB"><span class="std std-ref">AABB</span></a> such that the y coordinate of the returned value is set to the top left y value which is considered the base. </p>
 <p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p><a class="reference internal" href="classPos.html#classPos"><span class="std std-ref">Pos</span></a> </p>
@@ -316,12 +317,12 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4N4AABB10setTopLeftEP3Pos">
-<span id="_CPPv3N4AABB10setTopLeftEP3Pos"></span><span id="_CPPv2N4AABB10setTopLeftEP3Pos"></span><span id="AABB::setTopLeft__PosP"></span><span class="target" id="classAABB_1a2691860ac41ad12403d357a135b8daed"></span>void <code class="sig-name descname">setTopLeft</code><span class="sig-paren">(</span><a class="reference internal" href="classPos.html#_CPPv43Pos" title="Pos">Pos</a> *<em>topLeft</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4AABB10setTopLeftEP3Pos" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4N4AABB10setTopLeftER3Pos">
+<span id="_CPPv3N4AABB10setTopLeftER3Pos"></span><span id="_CPPv2N4AABB10setTopLeftER3Pos"></span><span id="AABB::setTopLeft__PosR"></span><span class="target" id="classAABB_1a6cf546178fafea27a459a39dd21e1b42"></span>void <code class="sig-name descname">setTopLeft</code><span class="sig-paren">(</span><a class="reference internal" href="classPos.html#_CPPv43Pos" title="Pos">Pos</a> &amp;<em>topLeft</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4AABB10setTopLeftER3Pos" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Set the top left coordinate of the <a class="reference internal" href="#classAABB"><span class="std std-ref">AABB</span></a>. </p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">topLeft</span></code>: Pointer to the pos object top left is to be set to </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">topLeft</span></code>: <a class="reference internal" href="classPos.html#classPos"><span class="std std-ref">Pos</span></a> object top left is to be set to </p></li>
 </ul>
 </dd>
 </dl>
@@ -329,12 +330,12 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4N4AABB14setBottomRightEP3Pos">
-<span id="_CPPv3N4AABB14setBottomRightEP3Pos"></span><span id="_CPPv2N4AABB14setBottomRightEP3Pos"></span><span id="AABB::setBottomRight__PosP"></span><span class="target" id="classAABB_1a221f7285c709152c99b45c9b2eac84f0"></span>void <code class="sig-name descname">setBottomRight</code><span class="sig-paren">(</span><a class="reference internal" href="classPos.html#_CPPv43Pos" title="Pos">Pos</a> *<em>bottomRight</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4AABB14setBottomRightEP3Pos" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4N4AABB14setBottomRightER3Pos">
+<span id="_CPPv3N4AABB14setBottomRightER3Pos"></span><span id="_CPPv2N4AABB14setBottomRightER3Pos"></span><span id="AABB::setBottomRight__PosR"></span><span class="target" id="classAABB_1a2f6c24ca4b57a1bd1768184a4b9d836e"></span>void <code class="sig-name descname">setBottomRight</code><span class="sig-paren">(</span><a class="reference internal" href="classPos.html#_CPPv43Pos" title="Pos">Pos</a> &amp;<em>bottomRight</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4AABB14setBottomRightER3Pos" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Set the bottom right coordinate of the <a class="reference internal" href="#classAABB"><span class="std std-ref">AABB</span></a>. </p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">bottomRight</span></code>: Pointer to the pos object bottom right is to be set to </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bottomRight</span></code>: <a class="reference internal" href="classPos.html#classPos"><span class="std std-ref">Pos</span></a> object bottom right is to be set to </p></li>
 </ul>
 </dd>
 </dl>
@@ -342,12 +343,12 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4N4AABB8addBlockEP5Block">
-<span id="_CPPv3N4AABB8addBlockEP5Block"></span><span id="_CPPv2N4AABB8addBlockEP5Block"></span><span id="AABB::addBlock__BlockP"></span><span class="target" id="classAABB_1a874f87f24deaa4bea3d34b04218a961a"></span>void <code class="sig-name descname">addBlock</code><span class="sig-paren">(</span><a class="reference internal" href="classBlock.html#_CPPv45Block" title="Block">Block</a> *<em>block</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4AABB8addBlockEP5Block" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4N4AABB8addBlockER5Block">
+<span id="_CPPv3N4AABB8addBlockER5Block"></span><span id="_CPPv2N4AABB8addBlockER5Block"></span><span id="AABB::addBlock__BlockR"></span><span class="target" id="classAABB_1a78955d956037e6380ab5f404a75157ee"></span>void <code class="sig-name descname">addBlock</code><span class="sig-paren">(</span><a class="reference internal" href="classBlock.html#_CPPv45Block" title="Block">Block</a> &amp;<em>block</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4AABB8addBlockER5Block" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Add a specific block for this <a class="reference internal" href="#classAABB"><span class="std std-ref">AABB</span></a> to keep track of. Ideally this should be related to the <a class="reference internal" href="#classAABB"><span class="std std-ref">AABB</span></a>. No checks are implicitly performed within this method. </p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">block</span></code>: Pointer to the block to be added </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">block</span></code>: <a class="reference internal" href="classBlock.html#classBlock"><span class="std std-ref">Block</span></a> to be added </p></li>
 </ul>
 </dd>
 </dl>
@@ -355,8 +356,8 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4N4AABB13isOverlappingEP4AABB">
-<span id="_CPPv3N4AABB13isOverlappingEP4AABB"></span><span id="_CPPv2N4AABB13isOverlappingEP4AABB"></span><span id="AABB::isOverlapping__AABBP"></span><span class="target" id="classAABB_1afc4ea3da96fddb001dec03fd880cef25"></span>bool <code class="sig-name descname">isOverlapping</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv44AABB" title="AABB">AABB</a> *<em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4AABB13isOverlappingEP4AABB" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4N4AABB13isOverlappingER4AABB">
+<span id="_CPPv3N4AABB13isOverlappingER4AABB"></span><span id="_CPPv2N4AABB13isOverlappingER4AABB"></span><span id="AABB::isOverlapping__AABBR"></span><span class="target" id="classAABB_1a2b0cb5617e29f0809b4df003aea43ed2"></span>bool <code class="sig-name descname">isOverlapping</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv44AABB" title="AABB">AABB</a> &amp;<em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4AABB13isOverlappingER4AABB" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Checks to see if two AABBs overlapp on any of the axes. </p>
 <p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p>true When the AABBs do overlap </p>
@@ -392,8 +393,8 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4N4AABB15addRandomBlocksEiNSt6stringEPNSt10mt19937_64EiiiiiiNSt6stringE">
-<span id="_CPPv3N4AABB15addRandomBlocksEiNSt6stringEPNSt10mt19937_64EiiiiiiNSt6stringE"></span><span id="_CPPv2N4AABB15addRandomBlocksEiNSt6stringEPNSt10mt19937_64EiiiiiiNSt6stringE"></span><span id="AABB::addRandomBlocks__i.ss.std::mt19937_64P.i.i.i.i.i.i.ss"></span><span class="target" id="classAABB_1ac7d274af601791b2bf84d5843d564059"></span>void <code class="sig-name descname">addRandomBlocks</code><span class="sig-paren">(</span>int <em>n</em>, std::string <em>material</em>, std::mt19937_64 *<em>gen</em>, int <em>offsetPosX</em> = 0, int <em>offsetNegX</em> = 0, int <em>offsetPosY</em> = 0, int <em>offsetNegY</em> = 0, int <em>offsetPosZ</em> = 0, int <em>offsetNegZ</em> = 0, std::string <em>type</em> = &quot;normal&quot;<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4AABB15addRandomBlocksEiNSt6stringEPNSt10mt19937_64EiiiiiiNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4N4AABB15addRandomBlocksEiNSt6stringERNSt10mt19937_64EiiiiiiNSt6stringE">
+<span id="_CPPv3N4AABB15addRandomBlocksEiNSt6stringERNSt10mt19937_64EiiiiiiNSt6stringE"></span><span id="_CPPv2N4AABB15addRandomBlocksEiNSt6stringERNSt10mt19937_64EiiiiiiNSt6stringE"></span><span id="AABB::addRandomBlocks__i.ss.std::mt19937_64R.i.i.i.i.i.i.ss"></span><span class="target" id="classAABB_1a4433c2eadc06eabeaa9be1e58658b34f"></span>void <code class="sig-name descname">addRandomBlocks</code><span class="sig-paren">(</span>int <em>n</em>, std::string <em>material</em>, std::mt19937_64 &amp;<em>gen</em>, int <em>offsetPosX</em> = 0, int <em>offsetNegX</em> = 0, int <em>offsetPosY</em> = 0, int <em>offsetNegY</em> = 0, int <em>offsetPosZ</em> = 0, int <em>offsetNegZ</em> = 0, std::string <em>type</em> = &quot;normal&quot;<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4AABB15addRandomBlocksEiNSt6stringERNSt10mt19937_64EiiiiiiNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Add n random blocks of the given type and material inside the <a class="reference internal" href="#classAABB"><span class="std std-ref">AABB</span></a> within the offset parameters. </p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
@@ -414,6 +415,19 @@
 </dd></dl>
 
 <dl class="cpp function">
+<dt id="_CPPv4N4AABB22generateAllDoorsInAABBEv">
+<span id="_CPPv3N4AABB22generateAllDoorsInAABBEv"></span><span id="_CPPv2N4AABB22generateAllDoorsInAABBEv"></span><span id="AABB::generateAllDoorsInAABB"></span><span class="target" id="classAABB_1ad28a0b26a87a54340e777523c9959054"></span>void <code class="sig-name descname">generateAllDoorsInAABB</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4AABB22generateAllDoorsInAABBEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Generate all 4 doors for an <a class="reference internal" href="#classAABB"><span class="std std-ref">AABB</span></a>. Door blocks are added to the <a class="reference internal" href="#classAABB"><span class="std std-ref">AABB</span></a> object. </p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">aabb</span></code>: The <a class="reference internal" href="#classAABB"><span class="std std-ref">AABB</span></a> for which doors are to be generated. </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
 <dt id="_CPPv4N4AABB5toTSVEv">
 <span id="_CPPv3N4AABB5toTSVEv"></span><span id="_CPPv2N4AABB5toTSVEv"></span><span id="AABB::toTSV"></span><span class="target" id="classAABB_1a0581b2f88ef806c67bbd4a2b2a237ceb"></span>std::string <code class="sig-name descname">toTSV</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4AABB5toTSVEv" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Gets a string representation of the various fields and values stores in an instance as a TSV. </p>
@@ -425,8 +439,8 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4N4AABB4AABBEiNSt6stringENSt6stringEP3PosP3Posbb">
-<span id="_CPPv3N4AABB4AABBEiNSt6stringENSt6stringEP3PosP3Posbb"></span><span id="_CPPv2N4AABB4AABBEiNSt6stringENSt6stringEP3PosP3Posbb"></span><span id="AABB::AABB__i.ss.ss.PosP.PosP.b.b"></span><span class="target" id="classAABB_1a1e332089ea8a16d5db1536e1c42d626c"></span><code class="sig-name descname">AABB</code><span class="sig-paren">(</span>int <em>id</em>, std::string <em>type</em>, std::string <em>material</em>, <a class="reference internal" href="classPos.html#_CPPv43Pos" title="Pos">Pos</a> *<em>topLeft</em>, <a class="reference internal" href="classPos.html#_CPPv43Pos" title="Pos">Pos</a> *<em>bottomRight</em>, bool <em>isHollow</em> = true, bool <em>hasRoof</em> = false<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4AABB4AABBEiNSt6stringENSt6stringEP3PosP3Posbb" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4N4AABB4AABBEiNSt6stringENSt6stringER3PosR3Posbb">
+<span id="_CPPv3N4AABB4AABBEiNSt6stringENSt6stringER3PosR3Posbb"></span><span id="_CPPv2N4AABB4AABBEiNSt6stringENSt6stringER3PosR3Posbb"></span><span id="AABB::AABB__i.ss.ss.PosR.PosR.b.b"></span><span class="target" id="classAABB_1aa935f464c2d962a58b0229361633e58a"></span><code class="sig-name descname">AABB</code><span class="sig-paren">(</span>int <em>id</em>, std::string <em>type</em>, std::string <em>material</em>, <a class="reference internal" href="classPos.html#_CPPv43Pos" title="Pos">Pos</a> &amp;<em>topLeft</em>, <a class="reference internal" href="classPos.html#_CPPv43Pos" title="Pos">Pos</a> &amp;<em>bottomRight</em>, bool <em>isHollow</em> = true, bool <em>hasRoof</em> = false<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4AABB4AABBEiNSt6stringENSt6stringER3PosR3Posbb" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Construct a new <a class="reference internal" href="#classAABB"><span class="std std-ref">AABB</span></a> object. </p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">

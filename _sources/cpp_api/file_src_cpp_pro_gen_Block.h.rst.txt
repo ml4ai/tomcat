@@ -31,8 +31,6 @@ Includes
 
 - ``Pos.h`` (:ref:`file_src_cpp_pro_gen_Pos.h`)
 
-- ``string``
-
 
 
 Included By
@@ -42,10 +40,6 @@ Included By
 - :ref:`file_src_cpp_pro_gen_AABB.h`
 
 - :ref:`file_src_cpp_pro_gen_Block.cpp`
-
-- :ref:`file_src_cpp_pro_gen_ProceduralGenerator.h`
-
-- :ref:`file_src_cpp_pro_gen_World.h`
 
 
 

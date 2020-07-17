@@ -167,14 +167,61 @@
 <ul class="simple">
 <li><p>Defined in <a class="reference internal" href="file_src_cpp_pro_gen_ProceduralGenerator.h.html#file-src-cpp-pro-gen-proceduralgenerator-h"><span class="std std-ref">File ProceduralGenerator.h</span></a></p></li>
 </ul>
+<div class="section" id="inheritance-relationships">
+<h2>Inheritance Relationships<a class="headerlink" href="#inheritance-relationships" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="derived-types">
+<h3>Derived Types<a class="headerlink" href="#derived-types" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">public</span> <span class="pre">GridworldGenerator</span></code> (<a class="reference internal" href="classGridworldGenerator.html#exhale-class-classgridworldgenerator"><span class="std std-ref">Class GridworldGenerator</span></a>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">public</span> <span class="pre">ZombieWorldGenerator</span></code> (<a class="reference internal" href="classZombieWorldGenerator.html#exhale-class-classzombieworldgenerator"><span class="std std-ref">Class ZombieWorldGenerator</span></a>)</p></li>
+</ul>
+</div>
+</div>
 <div class="section" id="class-documentation">
 <h2>Class Documentation<a class="headerlink" href="#class-documentation" title="Permalink to this headline">¶</a></h2>
 <dl class="cpp class">
 <dt id="_CPPv419ProceduralGenerator">
 <span id="_CPPv319ProceduralGenerator"></span><span id="_CPPv219ProceduralGenerator"></span><span id="ProceduralGenerator"></span><span class="target" id="classProceduralGenerator"></span><em class="property">class </em><code class="sig-name descname">ProceduralGenerator</code><a class="headerlink" href="#_CPPv419ProceduralGenerator" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>This class represents a Procedural Generator which is meant to serve as a library of general methods that can be used for specific map generating algorithms. </p>
+<dd><p>This file defines the members and methods implemented as part of the Procedural Generator class. </p>
+<p>This class represents a Procedural Generator which is meant to serve as a library of general methods that can be used for specific map generating algorithms </p>
+<p>Subclassed by <a class="reference internal" href="classGridworldGenerator.html#classGridworldGenerator"><span class="std std-ref">GridworldGenerator</span></a>, <a class="reference internal" href="classZombieWorldGenerator.html#classZombieWorldGenerator"><span class="std std-ref">ZombieWorldGenerator</span></a></p>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Public Functions</p>
+<dl class="cpp function">
+<dt id="_CPPv4N19ProceduralGenerator8getWorldEv">
+<span id="_CPPv3N19ProceduralGenerator8getWorldEv"></span><span id="_CPPv2N19ProceduralGenerator8getWorldEv"></span><span id="ProceduralGenerator::getWorld"></span><span class="target" id="classProceduralGenerator_1a8931ac8fbddf290bfce9d101b773f39b"></span><a class="reference internal" href="classWorld.html#_CPPv45World" title="World">World</a> &amp;<code class="sig-name descname">getWorld</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19ProceduralGenerator8getWorldEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the <a class="reference internal" href="classWorld.html#classWorld"><span class="std std-ref">World</span></a> object this generator keeprs track of. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><a class="reference internal" href="classWorld.html#classWorld"><span class="std std-ref">World</span></a>&amp; Reference to the relevant world </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N19ProceduralGenerator9getRandomEv">
+<span id="_CPPv3N19ProceduralGenerator9getRandomEv"></span><span id="_CPPv2N19ProceduralGenerator9getRandomEv"></span><span id="ProceduralGenerator::getRandom"></span><span class="target" id="classProceduralGenerator_1a71cf32949cb8651c741549e484ce2b02"></span>std::mt19937_64 &amp;<code class="sig-name descname">getRandom</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19ProceduralGenerator9getRandomEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the random object used by this generator. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>std::mt19937_64&amp; The random object </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N19ProceduralGenerator9setRandomEi">
+<span id="_CPPv3N19ProceduralGenerator9setRandomEi"></span><span id="_CPPv2N19ProceduralGenerator9setRandomEi"></span><span id="ProceduralGenerator::setRandom__i"></span><span class="target" id="classProceduralGenerator_1ad2060b76eb13ff539ea887d6ad1cf59a"></span>void <code class="sig-name descname">setRandom</code><span class="sig-paren">(</span>int <em>seed</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19ProceduralGenerator9setRandomEi" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set the seed the random object used by this class is initialized with. </p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">seed</span></code>: The seed to use. </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
 <dl class="cpp function">
 <dt id="_CPPv4N19ProceduralGenerator19ProceduralGeneratorEv">
 <span id="_CPPv3N19ProceduralGenerator19ProceduralGeneratorEv"></span><span id="_CPPv2N19ProceduralGenerator19ProceduralGeneratorEv"></span><span id="ProceduralGenerator::ProceduralGenerator"></span><span class="target" id="classProceduralGenerator_1aeb88f3ce2cdf3651097e2504f77e7469"></span><code class="sig-name descname">ProceduralGenerator</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N19ProceduralGenerator19ProceduralGeneratorEv" title="Permalink to this definition">¶</a><br /></dt>

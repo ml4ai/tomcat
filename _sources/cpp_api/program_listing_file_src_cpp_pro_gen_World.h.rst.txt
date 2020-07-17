@@ -12,31 +12,28 @@ Program Listing for File World.h
 
    
    #pragma once
-   
    #include "AABB.h"
-   #include "Block.h"
    #include <nlohmann/json.hpp>
-   #include <string>
    
    class World {
      private:
-       std::vector<AABB> aabbList;
-       std::vector<Block> blockList;
+       std::vector<AABB*> aabbList;
+       std::vector<Block*> blockList;
    
      public:
-       std::vector<AABB>* getAABBList();
+       std::vector<AABB*>& getAABBList();
    
-       std::vector<Block>* getBlockList();
+       std::vector<Block*>& getBlockList();
    
-       void addAABB(AABB* aabb);
+       void addAABB(AABB& aabb);
    
-       void addBlock(Block* block);
+       void addBlock(Block& block);
    
-       std::string toTSV();
+       std::string virtual toTSV();
    
-       std::string toJSON();
+       std::string virtual toJSON();
    
        World();
    
-       ~World();
+       virtual ~World();
    };

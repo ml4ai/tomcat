@@ -73,13 +73,75 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0814cc52223132fa18c1bb6775198739"><td class="memItemLeft" align="right" valign="top"><a id="a0814cc52223132fa18c1bb6775198739"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>WorldReader</b> (String filename)</td></tr>
+<tr class="memitem:a0814cc52223132fa18c1bb6775198739"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldReader.html#a0814cc52223132fa18c1bb6775198739">WorldReader</a> (String filename)</td></tr>
 <tr class="separator:a0814cc52223132fa18c1bb6775198739"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a64a9040e54fa8c5db597f15b687f8bde"><td class="memItemLeft" align="right" valign="top"><a id="a64a9040e54fa8c5db597f15b687f8bde"></a>
-Map&lt; BlockPos, IBlockState &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>getMap</b> ()</td></tr>
+<tr class="memitem:a64a9040e54fa8c5db597f15b687f8bde"><td class="memItemLeft" align="right" valign="top">Map&lt; BlockPos, IBlockState &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldReader.html#a64a9040e54fa8c5db597f15b687f8bde">getMap</a> ()</td></tr>
 <tr class="separator:a64a9040e54fa8c5db597f15b687f8bde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>This class can be used to read a TSV file representing a world. The TSV entries are read into a hash map of coordinates and the block at those coordinates. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a0814cc52223132fa18c1bb6775198739"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0814cc52223132fa18c1bb6775198739">&#9670;&nbsp;</a></span>WorldReader()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">edu.arizona.tomcat.Utils.WorldReader.WorldReader </td>
+          <td>(</td>
+          <td class="paramtype">String&#160;</td>
+          <td class="paramname"><em>filename</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Constructor for this object. The instance creates the hash map at the time of initialization.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">filename</td><td>The TSV file. Must be in Minecraft/run/ </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a64a9040e54fa8c5db597f15b687f8bde"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a64a9040e54fa8c5db597f15b687f8bde">&#9670;&nbsp;</a></span>getMap()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Map&lt;BlockPos, IBlockState&gt; edu.arizona.tomcat.Utils.WorldReader.getMap </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the map this <a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldReader.html">WorldReader</a> object uses to keep track of all the blocks in the world read from file.</p>
+<dl class="section return"><dt>Returns</dt><dd>The map of coordinates and the block at those coordinates. The block to be placed is represented as the IBlockState object used for the block type in its default state, </dd></dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>/home/runner/work/tomcat/tomcat/external/malmo/Minecraft/src/main/java/edu/arizona/tomcat/Utils/WorldReader.java</li>
 </ul>

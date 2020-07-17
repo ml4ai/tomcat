@@ -33,8 +33,6 @@ Includes
 
 - ``random``
 
-- ``string``
-
 - ``vector``
 
 
@@ -46,6 +44,8 @@ Included By
 - :ref:`file_src_cpp_pro_gen_AABB.cpp`
 
 - :ref:`file_src_cpp_pro_gen_World.h`
+
+- :ref:`file_src_cpp_pro_gen_Group.h`
 
 - :ref:`file_src_cpp_pro_gen_Pit.h`
 
