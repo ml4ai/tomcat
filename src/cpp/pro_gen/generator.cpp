@@ -7,6 +7,13 @@
 using namespace std;
 namespace po = boost::program_options;
 
+/**
+ * @brief Writes the world's JSON and TSV output to the given filepaths.
+ *
+ * @param jsonPath Path to store json
+ * @param tsvPath Path to store tsv
+ * @param world world that needs to be stored.
+ */
 void writeToFile(string jsonPath, string tsvPath, World& world) {
     cout << "Writing to file..." << endl;
 
