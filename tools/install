@@ -30,11 +30,11 @@ __build_tomcat() {
         pushd build > /dev/null
             if (( $CI )); then
                 if [[ $OSTYPE == "linux-gnu" ]]; then
-                    # On Github actions, the runner Ubuntu 18.04 has Boost 1.69
-                    # installed, we set BOOST_ROOT=$BOOST_ROOT_1_69_0 to build
+                    # On Github actions, the runner Ubuntu 18.04 has Boost 1.73
+                    # installed, we set BOOST_ROOT=$BOOST_ROOT_1_73_0 to build
                     # tomcat with this version.
                     if [[ $DISTRO_MAJOR_VERSION -le 18 ]]; then
-                        cmake ${TOMCAT} -DBOOST_ROOT=$BOOST_ROOT_1_69_0
+                        cmake ${TOMCAT} -DBOOST_ROOT=$BOOST_ROOT_1_73_0
                         if [[ $? -ne 0 ]]; then exit 1; fi
                     fi
                 else
