@@ -34,11 +34,7 @@ __build_tomcat() {
                     # installed, we set BOOST_ROOT=$BOOST_ROOT_1_69_0 to build
                     # tomcat with this version.
                     if [[ $DISTRO_MAJOR_VERSION -le 18 ]]; then
-                        cmake ${TOMCAT} -DBoost_ARCHITECTURE=-x64\
-                                        -DBOOST_ROOT=$BOOST_ROOT_1_69_0
-                        if [[ $? -ne 0 ]]; then exit 1; fi
-                    else
-                        cmake ${TOMCAT} -DBoost_ARCHITECTURE=-x64
+                        cmake ${TOMCAT} -DBOOST_ROOT=$BOOST_ROOT_1_69_0
                         if [[ $? -ne 0 ]]; then exit 1; fi
                     fi
                 else
@@ -47,10 +43,9 @@ __build_tomcat() {
                     # do with XCode and the Command Line Tools not playing
                     # nicely together. The line below is a fix for this issue.
                     sudo xcode-select -s /Library/Developer/CommandLineTools
+                    if ! cmake ${TOMCAT}; then exit 1; fi
                 fi
-            else
-                if ! cmake ${TOMCAT}; then exit 1; fi
-            fi;
+            fi
 
             if ! make -j; then exit 1; fi
             if ! make -j Minecraft; then exit 1; fi
