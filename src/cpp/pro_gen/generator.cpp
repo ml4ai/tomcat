@@ -36,24 +36,18 @@ int main(int argc, char* argv[]) {
         "gen_type",
         po::value<int>()->default_value(0),
         "Choose the type of world to generate.\nZombieworld = 0\nGridworld = "
-        "1")(
-        "help_zombieworld",
-        "Show required and optional arguments when generating a Zombieworld.")(
-        "help_gridworld",
-        "Show required and optional arguments when generating a Gridworld.")(
+        "1")("help_gridworld",
+             "Show additional arguments specific to Gridworld.")(
         "json_path",
         po::value<string>()->default_value("procedural.json"),
         "Specify where to save the JSON file with filename and extension.")(
         "tsv_path",
         po::value<string>()->default_value("procedural.tsv"),
-        "Specify where to save the TSV file with filename and extension.");
-
-    po::options_description zombieWorldOptions(
-        "Allowed options for the Zombieworld generator");
-    zombieWorldOptions.add_options()("seed",
-                                     po::value<int>()->default_value(12319),
-                                     "The seed used to initialize the random "
-                                     "object used within the generator.");
+        "Specify where to save the TSV file with filename and extension.")(
+        "seed",
+        po::value<int>()->default_value(0),
+        "The seed used to initialize the random "
+        "object used within the generator.");
 
     po::options_description gridWorldOptions(
         "Allowed options for the Gridworld generator");
@@ -65,14 +59,10 @@ int main(int argc, char* argv[]) {
         "The separation between AABB in the cardinal directions.")(
         "AABB_size",
         po::value<int>()->default_value(10),
-        "The size of the cubic AABB used.")(
-        "seed",
-        po::value<int>()->default_value(12319),
-        "The seed used to initialize the random "
-        "object used within the generator.");
+        "The size of the cubic AABB used.");
 
     po::options_description all("Allowed options");
-    all.add(general).add(zombieWorldOptions).add(gridWorldOptions);
+    all.add(general).add(gridWorldOptions);
 
     po::variables_map vm;
     po::store(po::command_line_parser(argc, argv).options(all).run(), vm);
@@ -80,10 +70,6 @@ int main(int argc, char* argv[]) {
 
     if (vm.count("help")) {
         cout << general << endl;
-        return 0;
-    }
-    if (vm.count("help_zombieworld")) {
-        cout << zombieWorldOptions << endl;
         return 0;
     }
     if (vm.count("help_gridworld")) {

@@ -86,7 +86,7 @@ void ZombieWorldGenerator::chooseZombieworldAABB(int idCtr,
                                    // base Y by -2 so we have a deeper water pit
 
             world.addAABB(
-                *(new Pit(idCtr, "grass", newTopLeft, newBottomRight)));
+                *(new Pit(idCtr, "sand", newTopLeft, newBottomRight)));
             AABB* waterPit = (world.getAABBList()).back();
 
             (*waterPit).generateBox("water",
@@ -98,8 +98,8 @@ void ZombieWorldGenerator::chooseZombieworldAABB(int idCtr,
                                     3); // Add a box of water to it
 
             // Randomly add other blocks to give the effect of randomization
-            (*waterPit).addRandomBlocks(30, "sand", gen, 0, 1, 2, 0, 1, 0);
-            (*waterPit).addRandomBlocks(20, "water", gen, 0, 0, 2, 0, 0, 0);
+            (*waterPit).addRandomBlocks(20, "grass", gen, 0, 0, 1, 0, 0, 0);
+            (*waterPit).addRandomBlocks(40, "water", gen, 1, 1, 2, 0, 0, 0);
         }
         else {
             world.addAABB(*(new Pit(idCtr, "grass", topLeft, newBottomRight)));
