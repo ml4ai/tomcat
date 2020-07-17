@@ -69,7 +69,6 @@ namespace tomcat {
     void Mission::create_client_pool() {
 
         if (!this->multiplayer) {
-
             this->client_pool = make_shared<ClientPool>();
             this->client_pool->add(ClientInfo("127.0.0.1", this->port_number));
         }
@@ -78,11 +77,8 @@ namespace tomcat {
                 json clients_info = json::parse(clients_json);
                 string server_ip_address=clients_info["server"]["address"].get<std::string>();
                 int server_port=clients_info["server"]["port"].get<int>();
-
+                this->client_pool = make_shared<ClientPool>();
                 this->client_pool->add(ClientInfo(server_ip_address, server_port));
-                // Add each one of the clients in the multiplayer mission
-                // This is hardcoded but needs to be moved to a config file at some
-                // point
                 json client_object = clients_info["clients"];
                 std::cout << "Number of clients to be connected: " << client_object.size() << std::endl;
                 string client_ip_address;
