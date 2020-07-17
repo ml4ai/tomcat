@@ -41,7 +41,7 @@ message("Configure MALMO_VERSION at ${MALMO_VERSION}")
 set(BUILD_MOD_DESC "Specifies whether to build the Malmo Minecraft Mod")
 set(INCLUDE_ALE_DESC
     "Specifies whether to build Malmo with bindings to the Arcade Learning Environment"
-    )
+)
 set(INCLUDE_JAVA_DESC "Specifies whether to build Malmo with Java bindings")
 set(INCLUDE_PYTHON_DESC "Specifies whether to build Malmo with Python bindings")
 set(BUILD_MOD
@@ -57,30 +57,31 @@ set(INCLUDE_PYTHON
     OFF
     CACHE BOOL ${INCLUDE_PYTHON_DESC})
 
-find_package(Boost 1.69
-    COMPONENTS chrono
-    date_time
-    filesystem
-    iostreams
-    program_options
-    regex
-    system
-    thread
-    REQUIRED)
+find_package(
+  Boost 1.69
+  COMPONENTS chrono
+             date_time
+             filesystem
+             iostreams
+             program_options
+             regex
+             system
+             thread
+  REQUIRED)
 
 if(INCLUDE_PYTHON)
-    set(USE_PYTHON_VERSIONS_DESC
-        "Specifies which version of Python to build Malmo with Python bindings")
-    set(USE_PYTHON_VERSIONS
-        3.6
-        CACHE STRING ${USE_PYTHON_VERSIONS_DESC})
-    set(BOOST_PYTHON_NAME_DESC
-        "Specifies which Boost Python module to build Malmo with")
-    execute_process(
-        COMMAND
-        python3 -c
-        "import sys; print('python' + str(sys.version_info[0]) + str(sys.version_info[1]), end='')"
-        OUTPUT_VARIABLE BOOST_PYTHON_NAME)
+  set(USE_PYTHON_VERSIONS_DESC
+      "Specifies which version of Python to build Malmo with Python bindings")
+  set(USE_PYTHON_VERSIONS
+      3.6
+      CACHE STRING ${USE_PYTHON_VERSIONS_DESC})
+  set(BOOST_PYTHON_NAME_DESC
+      "Specifies which Boost Python module to build Malmo with")
+  execute_process(
+    COMMAND
+      python3 -c
+      "import sys; print('python' + str(sys.version_info[0]) + str(sys.version_info[1]), end='')"
+    OUTPUT_VARIABLE BOOST_PYTHON_NAME)
 endif()
 
 set(WARNINGS_AS_ERRORS OFF)
@@ -88,38 +89,38 @@ set(WARNINGS_AS_ERRORS OFF)
 # ------------------- Detect the system -----------------------
 
 if(APPLE)
-    set(SYSTEM_NAME "Mac")
+  set(SYSTEM_NAME "Mac")
 elseif(UNIX)
-    set(SYSTEM_NAME "Linux")
-    execute_process(COMMAND lsb_release -is OUTPUT_VARIABLE LSB_ID)
-    execute_process(COMMAND lsb_release -rs OUTPUT_VARIABLE LSB_RELEASE)
-    if(LSB_ID AND LSB_RELEASE)
-        string(STRIP "${LSB_ID}" LSB_ID)
-        string(STRIP "${LSB_RELEASE}" LSB_RELEASE)
-        set(SYSTEM_NAME "${SYSTEM_NAME}-${LSB_ID}-${LSB_RELEASE}")
-    elseif(EXISTS "/etc/debian_version")
-        file(READ /etc/debian_version DEBIAN_VERSION)
-        set(SYSTEM_NAME "${SYSTEM_NAME}-${DEBIAN_VERSION}")
-    elseif(EXISTS "/etc/os-release")
-        execute_process(
-            COMMAND "sed" "-ne" "s/^ID=\"\\?\\([a-z]\\+\\)\"\\?$/\\1/p"
-            "/etc/os-release"
-            OUTPUT_VARIABLE OS_RELEASE_ID OUTPUT_STRIP_TRAILING_WHITESPACE)
-        execute_process(
-            COMMAND "sed" "-ne" "s/^VERSION_ID=\"\\?\\([0-9\\.]\\+\\)\"\\?$/\\1/p"
-            "/etc/os-release"
-            OUTPUT_VARIABLE OS_RELEASE_VERSION_ID OUTPUT_STRIP_TRAILING_WHITESPACE)
-        set(SYSTEM_NAME "${SYSTEM_NAME}-${OS_RELEASE_ID}-${OS_RELEASE_VERSION_ID}")
-    elseif(EXISTS "/etc/redhat-release")
-        set(SYSTEM_NAME "${SYSTEM_NAME}-Redhat")
-    endif()
+  set(SYSTEM_NAME "Linux")
+  execute_process(COMMAND lsb_release -is OUTPUT_VARIABLE LSB_ID)
+  execute_process(COMMAND lsb_release -rs OUTPUT_VARIABLE LSB_RELEASE)
+  if(LSB_ID AND LSB_RELEASE)
+    string(STRIP "${LSB_ID}" LSB_ID)
+    string(STRIP "${LSB_RELEASE}" LSB_RELEASE)
+    set(SYSTEM_NAME "${SYSTEM_NAME}-${LSB_ID}-${LSB_RELEASE}")
+  elseif(EXISTS "/etc/debian_version")
+    file(READ /etc/debian_version DEBIAN_VERSION)
+    set(SYSTEM_NAME "${SYSTEM_NAME}-${DEBIAN_VERSION}")
+  elseif(EXISTS "/etc/os-release")
+    execute_process(
+      COMMAND "sed" "-ne" "s/^ID=\"\\?\\([a-z]\\+\\)\"\\?$/\\1/p"
+              "/etc/os-release"
+      OUTPUT_VARIABLE OS_RELEASE_ID OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(
+      COMMAND "sed" "-ne" "s/^VERSION_ID=\"\\?\\([0-9\\.]\\+\\)\"\\?$/\\1/p"
+              "/etc/os-release"
+      OUTPUT_VARIABLE OS_RELEASE_VERSION_ID OUTPUT_STRIP_TRAILING_WHITESPACE)
+    set(SYSTEM_NAME "${SYSTEM_NAME}-${OS_RELEASE_ID}-${OS_RELEASE_VERSION_ID}")
+  elseif(EXISTS "/etc/redhat-release")
+    set(SYSTEM_NAME "${SYSTEM_NAME}-Redhat")
+  endif()
 elseif(WIN32)
-    set(SYSTEM_NAME "Windows")
+  set(SYSTEM_NAME "Windows")
 endif()
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    set(SYSTEM_NAME "${SYSTEM_NAME}-64bit")
+  set(SYSTEM_NAME "${SYSTEM_NAME}-64bit")
 else()
-    set(SYSTEM_NAME "${SYSTEM_NAME}-32bit")
+  set(SYSTEM_NAME "${SYSTEM_NAME}-32bit")
 endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -129,113 +130,113 @@ find_package(Threads REQUIRED)
 
 # suggested install paths - see readme.md
 if(NOT WIN32)
-    set(ALE_ROOT_DIR ~/ALE)
+  set(ALE_ROOT_DIR ~/ALE)
 endif()
 
 if(BUILD_DOCUMENTATION)
-    find_package(Doxygen REQUIRED)
+  find_package(Doxygen REQUIRED)
 endif()
 
 find_package(Git REQUIRED)
 find_package(ZLIB REQUIRED)
 
 if(INCLUDE_JAVA OR BUILD_MOD)
-    if(JAVA_HOME)
-        message("JAVA_HOME set to ${JAVA_HOME}")
-    else()
-        if(DEFINED ENV{JAVA_HOME})
-            message("JAVA_HOME set to $ENV{JAVA_HOME} using environment variable.")
-        endif()
+  if(JAVA_HOME)
+    message("JAVA_HOME set to ${JAVA_HOME}")
+  else()
+    if(DEFINED ENV{JAVA_HOME})
+      message("JAVA_HOME set to $ENV{JAVA_HOME} using environment variable.")
     endif()
+  endif()
 
-    find_package(Java 1.8 EXACT REQUIRED COMPONENTS Runtime Development)
+  find_package(Java 1.8 EXACT REQUIRED COMPONENTS Runtime Development)
 
-    if(${Java_FOUND})
-        message("Found Java.")
-        message("    Version : ${Java_VERSION_STRING}")
-        message("    Runtime : ${Java_JAVA_EXECUTABLE}")
-        message("    Compiler: ${Java_JAVAC_EXECUTABLE}")
-    endif()
+  if(${Java_FOUND})
+    message("Found Java.")
+    message("    Version : ${Java_VERSION_STRING}")
+    message("    Runtime : ${Java_JAVA_EXECUTABLE}")
+    message("    Compiler: ${Java_JAVAC_EXECUTABLE}")
+  endif()
 endif()
 
 if(INCLUDE_JAVA)
-    find_package(JNI REQUIRED)
-    find_package(SWIG REQUIRED)
+  find_package(JNI REQUIRED)
+  find_package(SWIG REQUIRED)
 endif()
 
 if(INCLUDE_PYTHON)
-    set(Python_ADDITIONAL_VERSIONS ${USE_PYTHON_VERSIONS})
-    find_package(PythonInterp ${USE_PYTHON_VERSIONS} REQUIRED)
-    find_package(PythonLibs ${USE_PYTHON_VERSIONS} REQUIRED)
+  set(Python_ADDITIONAL_VERSIONS ${USE_PYTHON_VERSIONS})
+  find_package(PythonInterp ${USE_PYTHON_VERSIONS} REQUIRED)
+  find_package(PythonLibs ${USE_PYTHON_VERSIONS} REQUIRED)
 endif()
 
 if(INCLUDE_ALE)
-    find_package(ALE QUIET)
-    if(NOT ALE_FOUND)
-        message("")
-        message(" ====   WARNING: ====")
-        message("")
-        message(
-            " ALE was not found! Build will proceed but without the ALE parts included."
-            )
-        message("")
-        set(INCLUDE_ALE
-            OFF
-            CACHE BOOL ${INCLUDE_ALE_DESC} FORCE)
-    endif()
+  find_package(ALE QUIET)
+  if(NOT ALE_FOUND)
+    message("")
+    message(" ====   WARNING: ====")
+    message("")
+    message(
+      " ALE was not found! Build will proceed but without the ALE parts included."
+    )
+    message("")
+    set(INCLUDE_ALE
+        OFF
+        CACHE BOOL ${INCLUDE_ALE_DESC} FORCE)
+  endif()
 endif()
 
 # -------------------- Build settings -----------------------------
 
 # use C++11
 if(CMAKE_VERSION VERSION_LESS "3.1")
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        set(CMAKE_CXX_FLAGS "--std=gnu++11 ${CMAKE_CXX_FLAGS}")
-    endif()
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set(CMAKE_CXX_FLAGS "--std=gnu++11 ${CMAKE_CXX_FLAGS}")
+  endif()
 else()
-    set(CMAKE_CXX_STANDARD 11)
+  set(CMAKE_CXX_STANDARD 11)
 endif()
 
 if(MSVC)
-    set(MALMO_PYTHON_DIR ${CMAKE_BINARY_DIR}/Malmo/src/PythonWrapper/$<CONFIG>)
-    if(WARNINGS_AS_ERRORS)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /WX")
-    endif()
-    # set the Windows target version to WinXP or later
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_WIN32_WINNT=0x0501")
-    set(CMAKE_CXX_FLAGS
-        "${CMAKE_CXX_FLAGS} -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS")
+  set(MALMO_PYTHON_DIR ${CMAKE_BINARY_DIR}/Malmo/src/PythonWrapper/$<CONFIG>)
+  if(WARNINGS_AS_ERRORS)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /WX")
+  endif()
+  # set the Windows target version to WinXP or later
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_WIN32_WINNT=0x0501")
+  set(CMAKE_CXX_FLAGS
+      "${CMAKE_CXX_FLAGS} -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS")
 else()
-    set(MALMO_PYTHON_DIR ${CMAKE_BINARY_DIR}/Malmo/src/PythonWrapper)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-    if(WARNINGS_AS_ERRORS)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
-    else()
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations"
-            )# get a lot of warnings from Boost about auto_ptr
-    endif()
+  set(MALMO_PYTHON_DIR ${CMAKE_BINARY_DIR}/Malmo/src/PythonWrapper)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+  if(WARNINGS_AS_ERRORS)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
+  else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations"
+    )# get a lot of warnings from Boost about auto_ptr
+  endif()
 endif()
 
 if(APPLE)
-    add_definitions(-DAPPLE)
-    set(CMAKE_MACOSX_RPATH ON)
+  add_definitions(-DAPPLE)
+  set(CMAKE_MACOSX_RPATH ON)
 endif()
 
 # -------------------- Testing ------------------------------------
 
 set(BUILDNAME ${CMAKE_SYSTEM}) # including version numbers
 if(MSVC)
-    set(BUILDNAME "${BUILDNAME}_MSVC")
+  set(BUILDNAME "${BUILDNAME}_MSVC")
 elseif(CMAKE_COMPILER_IS_GNUCXX)
-    set(BUILDNAME "${BUILDNAME}_gcc")
+  set(BUILDNAME "${BUILDNAME}_gcc")
 else()
-    set(BUILDNAME "${BUILDNAME}_${CMAKE_CXX_COMPILER}")
+  set(BUILDNAME "${BUILDNAME}_${CMAKE_CXX_COMPILER}")
 endif()
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    set(BUILDNAME "${BUILDNAME}_64bit")
+  set(BUILDNAME "${BUILDNAME}_64bit")
 else()
-    set(BUILDNAME "${BUILDNAME}_32bit")
+  set(BUILDNAME "${BUILDNAME}_32bit")
 endif()
 
 include(CTest)
@@ -244,22 +245,22 @@ include(CTest)
 
 add_subdirectory(Malmo)
 if(BUILD_MOD)
-    add_subdirectory(Minecraft EXCLUDE_FROM_ALL)
+  add_subdirectory(Minecraft EXCLUDE_FROM_ALL)
 endif()
 add_subdirectory(Schemas)
 if(INCLUDE_ALE)
-    add_subdirectory(ALE_ROMS)
+  add_subdirectory(ALE_ROMS)
 endif()
 
 # Save a small properties file, so we can easily tell what version of python
 # this was built against, etc.
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/malmo.properties malmo.properties)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/malmo.properties
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/cmake/malmo)
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/cmake/malmo)
 
 # -------------------- Package ------------------------------------
 if(INCLUDE_ALE)
-    set(SYSTEM_NAME "${SYSTEM_NAME}_withALE")
+  set(SYSTEM_NAME "${SYSTEM_NAME}_withALE")
 endif()
 set(SYSTEM_NAME "${SYSTEM_NAME}_Python${USE_PYTHON_VERSIONS}")
 set(CPACK_SYSTEM_NAME ${SYSTEM_NAME})
