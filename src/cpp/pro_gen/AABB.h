@@ -65,7 +65,7 @@ class AABB {
     /**
      * @brief Get the block list specific to this AABB
      *
-     * @return vector<Block>* The reference to the block list
+     * @return vector<Block*>& The reference to the block list
      */
     std::vector<Block*>& getBlockList();
 
@@ -109,7 +109,7 @@ class AABB {
      * Defaults to 1
      * @return Pos
      */
-    Pos getRandomPosAtBase(std::mt19937_64& gen,
+    Pos virtual getRandomPosAtBase(std::mt19937_64& gen,
                            int offsetPosX = 1,
                            int offsetNegX = 1,
                            int offsetPosZ = 1,
@@ -123,19 +123,19 @@ class AABB {
      * @return vector<Pos> The list of coordinates as: top, right, bottom and
      * left edge midpoints.
      */
-    std::vector<Pos> getEdgeMidpointAtBase();
+    std::vector<Pos> virtual getEdgeMidpointAtBase();
 
     /**
      * @brief Set the top left coordinate of the AABB
      *
-     * @param topLeft Pointer to the pos object top left is to be set to
+     * @param topLeft Pos object top left is to be set to
      */
     void setTopLeft(Pos& topLeft);
 
     /**
      * @brief Set the bottom right coordinate of the AABB
      *
-     * @param bottomRight Pointer to the pos object bottom right is to be set to
+     * @param bottomRight Pos object bottom right is to be set to
      */
     void setBottomRight(Pos& bottomRight);
 
@@ -144,7 +144,7 @@ class AABB {
      * should be related to the AABB. No checks are implicitly performed within
      * this method.
      *
-     * @param block Pointer to the block to be added
+     * @param block Block to be added
      */
     void addBlock(Block& block);
 
@@ -176,7 +176,7 @@ class AABB {
      * Defaults to 0
      * @param type The semantic name to give the block. Defaults to "normal".
      */
-    void generateBox(std::string material,
+    void virtual generateBox(std::string material,
                      int offsetPosX = 0,
                      int offsetNegX = 0,
                      int offsetPosY = 0,
@@ -207,7 +207,7 @@ class AABB {
      * @param type The semantic name to give this block. Defaults to "normal".
      */
 
-    void addRandomBlocks(int n,
+    void virtual addRandomBlocks(int n,
                          std::string material,
                          std::mt19937_64& gen,
                          int offsetPosX = 0,

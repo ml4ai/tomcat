@@ -18,9 +18,26 @@ class ProceduralGenerator {
     World world;
 
   public:
+    /**
+     * @brief Get the World object this generator keeprs track of.
+     *
+     * @return World& Reference to the relevant world
+     */
+    World& getWorld();
 
-    World & getWorld();
-    std::mt19937_64 & getRandom();
+    /**
+     * @brief Get the random object used by this generator
+     *
+     * @return std::mt19937_64& The random object
+     */
+    std::mt19937_64& getRandom();
+
+    /**
+     * @brief Set the seed the random object used by this class is
+     * initialized with.
+     *
+     * @param seed The seed to use.
+     */
     void setRandom(int seed);
 
     /**
