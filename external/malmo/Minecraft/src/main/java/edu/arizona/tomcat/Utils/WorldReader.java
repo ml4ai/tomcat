@@ -89,7 +89,7 @@ public class WorldReader {
     /**
      * Returns the block state relevant to the input string.
      *
-     * @param material he material whose block state representation is required.
+     * @param material The material whose block state representation is required.
      * @return The block state. Only default states are returned. The default block is Quartz.
      */
     private IBlockState getBlockState(String material) {
