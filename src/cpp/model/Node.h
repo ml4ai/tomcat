@@ -17,9 +17,9 @@ namespace tomcat {
             virtual ~Node() {}
 
             /*
-             * Sample from the node's distribution.
+             * Return the value currently assigned to the node.
              */
-            virtual T sample() const = 0;
+            virtual T get_assignment() const = 0;
 
             virtual void print(std::ostream& os) const {}
 

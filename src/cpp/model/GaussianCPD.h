@@ -83,7 +83,7 @@ namespace tomcat {
 
             ~GaussianCPD() {}
 
-            Eigen::MatrixXd sample() const override;
+            Eigen::MatrixXd sample(std::shared_ptr<gsl_rng> generator) const override;
 
             void print(std::ostream& os) const override;
         };

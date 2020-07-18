@@ -3,7 +3,9 @@
 namespace tomcat {
     namespace model {
 
-        double ConstantNumericNode::sample() const { return this->value; }
+        double ConstantNumericNode::get_assignment() const {
+            return this->value;
+        }
 
         void ConstantNumericNode::print(std::ostream& os) const {
             os << "Constant(" << value << ")";

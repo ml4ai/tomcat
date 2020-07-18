@@ -4,9 +4,8 @@
 namespace tomcat {
     namespace model {
 
-        // todo - Sample from a distribution
-        Eigen::MatrixXd RandomVariableNumericNode::sample() const {
-            return Eigen::MatrixXd();
+        double RandomVariableNumericNode::get_assignment() const {
+            return this->assignment;
         }
 
         void RandomVariableNumericNode::print(std::ostream& os) const {

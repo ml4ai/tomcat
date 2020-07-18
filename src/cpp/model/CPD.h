@@ -1,6 +1,9 @@
 #pragma once
 
 #include <vector>
+#include <boost/random.hpp>
+#include <gsl/gsl_rng.h>
+#include <gsl/gsl_randist.h>
 
 namespace tomcat {
     namespace model {
@@ -18,13 +21,14 @@ namespace tomcat {
             // assignment.
             std::vector<std::string> parent_node_label_order;
 
+
           public:
             CPD(std::vector<std::string> parent_node_label_order)
                 : parent_node_label_order(std::move(parent_node_label_order)) {}
 
             virtual ~CPD() {}
 
-            virtual T sample() const = 0;
+            virtual T sample(std::shared_ptr<gsl_rng> generator) const = 0;
 
             virtual void print(std::ostream& os) const {}
 

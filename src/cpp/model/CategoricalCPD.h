@@ -48,15 +48,16 @@ namespace tomcat {
          */
         class CategoricalCPD : public CPD<Eigen::MatrixXd> {
           private:
-            std::vector<std::unique_ptr<Node<std::vector<double>>>> cpd_table;
+            std::vector<std::unique_ptr<Node<Eigen::VectorXd>>>
+                probability_table;
 
           public:
             CategoricalCPD(
                 std::vector<std::string> parent_node_label_order,
-                std::vector<std::unique_ptr<Node<std::vector<double>>>>
+                std::vector<std::unique_ptr<Node<Eigen::VectorXd>>>
                     cpd_table)
                 : CPD<Eigen::MatrixXd>(std::move(parent_node_label_order)),
-                  cpd_table(std::move(cpd_table)) {}
+                  probability_table(std::move(cpd_table)) {}
 
             /*
              * Transform a table of probabilities to a list of constant vector
@@ -69,11 +70,11 @@ namespace tomcat {
             // vector of unique pointers. There will not be a shared CPD anyway.
             CategoricalCPD(CategoricalCPD&& cpd)
                 : CPD<Eigen::MatrixXd>(std::move(cpd.parent_node_label_order)),
-                  cpd_table(std::move(cpd.cpd_table)) {}
+                  probability_table(std::move(cpd.probability_table)) {}
 
             ~CategoricalCPD() {}
 
-            Eigen::MatrixXd sample() const override;
+            Eigen::MatrixXd sample(std::shared_ptr<gsl_rng> generator) const override;
 
             void print(std::ostream& os) const override;
         };

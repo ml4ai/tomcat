@@ -19,10 +19,7 @@ namespace tomcat {
             ConstantNumericNode(double value) : value(value) {}
             ~ConstantNumericNode() {}
 
-            /*
-             * Return the numeric value stored in the node.
-             */
-            double sample() const override;
+            double get_assignment() const override;
 
             void print(std::ostream& os) const override;
         };

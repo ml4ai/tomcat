@@ -14,11 +14,12 @@ namespace tomcat {
          * 1D number.
          */
 
-        class RandomVariableNumericNode : public Node<Eigen::MatrixXd> {
+        class RandomVariableNumericNode : public Node<double> {
           private:
             std::shared_ptr<NodeMetadata> metadata;
             std::unique_ptr<CPD<Eigen::MatrixXd>> cpd;
             int time_step;
+            double assignment;
 
           public:
             RandomVariableNumericNode(std::shared_ptr<NodeMetadata> metadata,
@@ -29,22 +30,29 @@ namespace tomcat {
 
             ~RandomVariableNumericNode() {}
 
-            /*
-             * Return the numeric value sampled from the distribution of the
-             * node given it's parents.
-             */
-            Eigen::MatrixXd sample() const override;
+            double get_assignment() const override;
 
             void print(std::ostream& os) const override;
 
-            // Getters and Setters
+            // Getters
             const std::shared_ptr<NodeMetadata>& get_metadata() const {
                 return metadata;
             }
 
-            const std::unique_ptr<CPD<Eigen::MatrixXd>>& get_cpd() const { return cpd; }
+            const std::unique_ptr<CPD<Eigen::MatrixXd>>& get_cpd() const {
+                return cpd;
+            }
 
             int get_time_step() const { return time_step; }
+
+            // Setters
+            void set_time_step(int time_step) {
+                RandomVariableNumericNode::time_step = time_step;
+            }
+
+            void set_assignment(double assignment) {
+                RandomVariableNumericNode::assignment = assignment;
+            }
         };
 
     } // namespace model

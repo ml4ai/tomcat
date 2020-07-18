@@ -9,6 +9,8 @@
 #include "RandomVariableNumericNode.h"
 #include "GaussianCPD.h"
 #include "DirichletCPD.h"
+#include <gsl/gsl_randist.h>
+#include <gsl/gsl_rng.h>
 
 using namespace Eigen;
 using namespace tomcat::model;
@@ -38,16 +40,32 @@ class B {
 };
 
 int main() {
+    //gsl_rng* gen = gsl_rng_alloc(gsl_rng_mt19937);
+    std::shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+    gsl_rng_set(gen.get(), time(0));
+    unsigned int k = gsl_ran_poisson (gen.get(), 3);
+    std::cout << k << std::endl;
+
     VectorXd  v(2);
-    v(0) = 1;
-    v(1) = 2;
+    v << 0.54, 0.46;
     std::cout << v << std::endl;
 
+    double* theta = new double[2];
+    double* alpha = v.data();
+    gsl_ran_dirichlet(gen.get(), 2, alpha, theta);
+    for(int i = 0; i < 2; i++) {
+        std::cout << theta[i] << " ";
+    }
+    std::cout << std::endl;
+
+    VectorXd v2 = Map<VectorXd>(theta, 2);
+    std::cout << v2 << std::endl;
+
     MatrixXd m(2, 2);
-    m(0, 0) = 3;
-    m(1, 0) = 2.5;
-    m(0, 1) = 1;
-    m(1, 1) = m(1, 0) + m(0, 1);
+    m(0, 0) = 0.3;
+    m(1, 0) = 0.8;
+    m(0, 1) = 1 - m(0, 0);
+    m(1, 1) = 1 - m(1, 0);
     std::cout << m << std::endl;
 
     // Testing node metadata
@@ -73,31 +91,33 @@ int main() {
 
     // Testing constant nodes
     ConstantNumericNode node1(2);
-    ConstantVectorNode node2({0.2, 0.3, 0.5});
+    ConstantVectorNode node2(v);
 
     std::cout << node1 << std::endl;
     std::cout << node2 << std::endl;
 
     // Testing CPDs
     std::vector<std::string> order{"A", "B", "C"};
-    CategoricalCPD constant_cpd(order, m);
-    std::cout << constant_cpd << std::endl;
+    CategoricalCPD categorical_cpd(order, m);
+    std::cout << categorical_cpd << std::endl;
+    Eigen::VectorXd sample = categorical_cpd.sample(gen);
+    std::cout << sample << std::endl;
 
     GaussianCPD gaussian_cpd(order, m);
     std::cout << gaussian_cpd << std::endl;
-    Eigen::VectorXd sample = gaussian_cpd.sample();
+    sample = gaussian_cpd.sample(gen);
     std::cout << sample << std::endl;
 
     DirichletCPD dirichlet_cpd(order, m);
     std::cout << dirichlet_cpd << std::endl;
-    Eigen::MatrixXd sample2 = dirichlet_cpd.sample();
+    Eigen::MatrixXd sample2 = dirichlet_cpd.sample(gen);
     std::cout << sample2 << std::endl;
 
     // Testing RV nodes
     std::shared_ptr<NodeMetadata> metadata =
         std::make_shared<NodeMetadata>(metadata3);
     std::unique_ptr<CategoricalCPD> cpd =
-        std::make_unique<CategoricalCPD>(std::move(constant_cpd));
+        std::make_unique<CategoricalCPD>(std::move(categorical_cpd));
 
     RandomVariableNumericNode rv_node1(std::move(metadata), std::move(cpd));
     std::cout << rv_node1 << std::endl;

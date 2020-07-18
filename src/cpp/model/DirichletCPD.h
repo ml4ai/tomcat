@@ -50,12 +50,11 @@ namespace tomcat {
 
         class DirichletCPD : public CPD<Eigen::MatrixXd> {
           private:
-            std::vector<std::unique_ptr<Node<std::vector<double>>>>
-                parameter_table;
+            std::vector<std::unique_ptr<Node<Eigen::VectorXd>>> parameter_table;
 
           public:
             DirichletCPD(std::vector<std::string> parent_node_label_order,
-                         std::vector<std::unique_ptr<Node<std::vector<double>>>>
+                         std::vector<std::unique_ptr<Node<Eigen::VectorXd>>>
                              parameter_table)
                 : CPD<Eigen::MatrixXd>(std::move(parent_node_label_order)),
                   parameter_table(std::move(parameter_table)) {}
@@ -65,7 +64,7 @@ namespace tomcat {
              * vector nodes to keep static and node dependent CPDs compatible.
              */
             DirichletCPD(std::vector<std::string> parent_node_label_order,
-                        Eigen::MatrixXd& parameter_table);
+                         Eigen::MatrixXd& parameter_table);
 
             // There's no copy constructor because the table is formed by a
             // vector of unique pointers. There will not be a shared CPD anyway.
@@ -75,7 +74,7 @@ namespace tomcat {
 
             ~DirichletCPD() {}
 
-            Eigen::MatrixXd sample() const override;
+            Eigen::MatrixXd sample(std::shared_ptr<gsl_rng> generator) const override;
 
             void print(std::ostream& os) const override;
         };

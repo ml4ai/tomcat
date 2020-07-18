@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # External dependencies
 find_package(Eigen3 REQUIRED NO_MODULE)
+find_package(GSL REQUIRED)
 find_package(Boost 1.69
         COMPONENTS chrono
         date_time
@@ -37,6 +38,4 @@ add_library(tomcat_model_libs
         DirichletCPD.cpp)
 
 add_executable(TomcatModel main.cpp)
-target_link_libraries(TomcatModel PUBLIC tomcat_model_libs ${Boost_LIBRARIES} Eigen3::Eigen)
-
-
+target_link_libraries(TomcatModel PUBLIC tomcat_model_libs ${Boost_LIBRARIES} Eigen3::Eigen GSL::gsl GSL::gslcblas)

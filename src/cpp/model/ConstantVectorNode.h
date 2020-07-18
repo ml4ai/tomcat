@@ -3,23 +3,21 @@
 #include "Node.h"
 #include <iostream>
 #include <vector>
+#include <eigen3/Eigen/Dense>
 
 namespace tomcat {
     namespace model {
 
-        class ConstantVectorNode : public Node<std::vector<double>> {
+        class ConstantVectorNode : public Node<Eigen::VectorXd> {
           private:
-            std::vector<double> values;
+            Eigen::VectorXd values;
 
           public:
-            ConstantVectorNode(std::vector<double> values)
+            ConstantVectorNode(Eigen::VectorXd values)
                 : values(std::move(values)) {}
             ~ConstantVectorNode() {}
 
-            /*
-             * Return the vector of numeric values stored in this node
-             */
-            std::vector<double> sample() const override;
+            Eigen::VectorXd get_assignment() const override;
 
             void print(std::ostream& os) const override;
         };
