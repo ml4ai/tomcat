@@ -253,7 +253,7 @@ do_mission() {
         if [[ $CURRENT_MISSION -gt 0 ]]; then
             runExperiment_args="${runExperiment_args}\
                                 --time_limit ${TIME_LIMIT}\
-                                --level_of_difficulty ${DIFFICULTY}"
+                                --difficulty ${DIFFICULTY}"
         fi
 
         if (( ENABLE_FFMPEG )); then
