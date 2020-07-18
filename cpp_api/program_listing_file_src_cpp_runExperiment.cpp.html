@@ -188,16 +188,15 @@
         <span class="s">&quot;  0: Tutorial</span><span class="se">\n</span><span class="s">&quot;</span>
         <span class="s">&quot;  1: Zombie Invasion</span><span class="se">\n</span><span class="s">&quot;</span>
         <span class="s">&quot;  2: USAR (Singleplayer)</span><span class="se">\n</span><span class="s">&quot;</span>
-        <span class="s">&quot;  3: Procedurally generated mission&quot;</span>
-        <span class="p">)</span>
-        <span class="p">(</span><span class="s">&quot;difficulty&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="o">&gt;</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">default_value</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span>
-                                    <span class="s">&quot;Level of difficulty.</span><span class="se">\n</span><span class="s">&quot;</span>
-                                    <span class="s">&quot;  3: Easy</span><span class="se">\n</span><span class="s">&quot;</span>
-                                    <span class="s">&quot;  5: Medium</span><span class="se">\n</span><span class="s">&quot;</span>
-                                    <span class="s">&quot;  7: Hard&quot;</span><span class="p">)(</span>
-        <span class="s">&quot;time_limit&quot;</span><span class="p">,</span>
-        <span class="n">value</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="o">&gt;</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">default_value</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span>
-        <span class="s">&quot;Time limit for mission (in seconds).&quot;</span><span class="p">)(</span>
+        <span class="s">&quot;  3: Procedurally generated mission&quot;</span><span class="p">)(</span>
+        <span class="s">&quot;difficulty&quot;</span><span class="p">,</span>
+        <span class="n">value</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="o">&gt;</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">default_value</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span>
+        <span class="s">&quot;Level of difficulty.</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;  3: Easy</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;  5: Medium</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="s">&quot;  7: Hard&quot;</span><span class="p">)(</span><span class="s">&quot;time_limit&quot;</span><span class="p">,</span>
+                     <span class="n">value</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="o">&gt;</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">default_value</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span>
+                     <span class="s">&quot;Time limit for mission (in seconds).&quot;</span><span class="p">)(</span>
         <span class="s">&quot;self_report_interval&quot;</span><span class="p">,</span>
         <span class="n">value</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="o">&gt;</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">default_value</span><span class="p">(</span><span class="mi">180</span><span class="p">),</span>
         <span class="s">&quot;Self-report prompt interval time (in seconds).&quot;</span><span class="p">)(</span>
@@ -289,8 +288,7 @@
     <span class="k">if</span> <span class="p">(</span><span class="n">are_parameters_ok</span><span class="p">(</span><span class="n">parameters_map</span><span class="p">,</span> <span class="n">options</span><span class="p">))</span> <span class="p">{</span>
         <span class="n">Mission</span> <span class="n">mission</span> <span class="o">=</span> <span class="n">create_mission</span><span class="p">(</span><span class="n">parameters_map</span><span class="p">);</span>
         <span class="k">try</span> <span class="p">{</span>
-            <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">LocalAgent</span><span class="o">&gt;</span> <span class="n">tomcat_agent</span> <span class="o">=</span>
-                <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">LocalAgent</span><span class="o">&gt;</span><span class="p">();</span>
+            <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">LocalAgent</span><span class="o">&gt;</span> <span class="n">tomcat_agent</span> <span class="o">=</span> <span class="n">make_shared</span><span class="o">&lt;</span><span class="n">LocalAgent</span><span class="o">&gt;</span><span class="p">();</span>
             <span class="n">mission</span><span class="p">.</span><span class="n">add_listener</span><span class="p">(</span><span class="n">tomcat_agent</span><span class="p">);</span>
             <span class="n">mission</span><span class="p">.</span><span class="n">start</span><span class="p">();</span>
         <span class="p">}</span>
