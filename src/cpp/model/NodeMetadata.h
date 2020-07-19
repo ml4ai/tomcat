@@ -10,7 +10,7 @@ namespace tomcat {
         // Defined in the end of this file.
         struct ParentLink;
 
-        /* A node metadata contains information about the representation of a
+        /** A node metadata contains information about the representation of a
          * node in a Dynamic Bayes Net (DBN) and its connections in the unrolled
          * version of such DBN over time.
          */
@@ -29,14 +29,23 @@ namespace tomcat {
             // one for each time step from initial_time_step on, and each one of
             // these replicas will be linked to the corresponding replicas of
             // the dependencies of this node over time. On the other hand, a
-            // repeatable node has only one copy of itself in an unrolled DBN.
-            // This single instance is linked to all timed instances of its
+            // non repeatable node has only one copy of itself in an unrolled
+            // DBN. This single instance is linked to all timed instances of its
             // dependents.
             bool repeatable;
 
             // List of parents of the node and their relative time step.
             std::vector<ParentLink> parent_links;
 
+            /**
+             * Add a new parent link to the list of parent links of the node
+             * defined by the metadata
+             *
+             * @param parent_node_metadata: metadata of the parent node
+             * @param time_crossing - flag indicating whether the parent node is
+             *  in the previous or in the same time step as the node defined by
+             *  the metadata
+             */
             void add_parent_link(const NodeMetadata& parent_node_metadata,
                                  bool time_crossing);
 
@@ -44,9 +53,9 @@ namespace tomcat {
                                             const NodeMetadata& metadata);
         };
 
-        /* This struct represents a link between a child and a parent node. This
-         * link is an abstraction as it identifies a parent node only by its
-         * label but it will be transformed in a concrete edge in the
+        /** This struct represents how a node should be linked to a given parent
+         * node. This link is an abstraction as it identifies a parent node only
+         * by its metadata. This will be transformed in a concrete edge in the
          * unrolled DBN.
          */
         struct ParentLink {

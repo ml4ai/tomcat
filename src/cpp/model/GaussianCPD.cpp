@@ -8,7 +8,7 @@ namespace tomcat {
         GaussianCPD::GaussianCPD(
             std::vector<std::string> parent_node_label_order,
             Eigen::MatrixXd& parameter_table)
-            : CPD<Eigen::MatrixXd>(std::move(parent_node_label_order)) {
+            : CPD(std::move(parent_node_label_order)) {
 
             for (int row = 0; row < parameter_table.rows(); row++) {
                 double mean = parameter_table(row, 0);

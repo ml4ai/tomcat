@@ -7,7 +7,7 @@ namespace tomcat {
         CategoricalCPD::CategoricalCPD(
             std::vector<std::string> parent_node_label_order,
             Eigen::MatrixXd& cpd_table)
-            : CPD<Eigen::MatrixXd>(std::move(parent_node_label_order)) {
+            : CPD(std::move(parent_node_label_order)) {
 
             for (int row = 0; row < cpd_table.rows(); row++) {
                 Eigen::VectorXd probabilities(cpd_table.cols());
