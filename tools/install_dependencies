@@ -43,7 +43,7 @@ __install_dependencies_using_homebrew() {
 
     echo "Installing ToMCAT dependencies using Homebrew."
 
-    if ! brew update; then exit 1; fi
+    if ! brew update --verbose; then exit 1; fi
 
     local homebrew_deps="fmt opencv"
     for dep in $COMMON_MACOS_DEPS $homebrew_deps; do
