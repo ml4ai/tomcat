@@ -22,11 +22,12 @@ using modified_json = basic_json<modified_fifo_map>;
 
 namespace tomcat {
 
-    void WebcamSensor::initialize(string exp, string trial, string pname) {
+    void WebcamSensor::initialize(string exp, string trial, string pname, bool ind) {
         // Initialize the experiment ID, trial ID and player name
         this->exp_id = exp;
         this->trial_id = trial;
         this->playername = pname;
+        this->indent = ind;
         
         // The modules that are being used for tracking
         this->face_model = LandmarkDetector::CLNF();
@@ -292,8 +293,11 @@ namespace tomcat {
         	output["data"]["pose"]["Ry"] = pose_estimate[4];
         	output["data"]["pose"]["Rz"] = pose_estimate[5];
         	
-        	
-        	std::cout << output.dump(4) << std::endl;
+        	// Only indent if the user specifies through command line option --indent
+        	if (this->indent)
+        		std::cout << output.dump(4) << std::endl;
+        	else
+        		std::cout << output.dump() << std::endl;
         		
         	// Grabbing the next frame in the sequence
         	this->rgb_image = this->sequence_reader.GetNextFrame();

@@ -13,7 +13,7 @@ namespace tomcat {
               det_parameters(this->arguments) {
         }
 
-        void initialize(std::string exp, std::string trial, std::string pname);
+        void initialize(std::string exp, std::string trial, std::string pname, bool ind);
         void get_observation();
 
       private:
@@ -28,6 +28,7 @@ namespace tomcat {
         std::string exp_id;
         std::string trial_id;
         std::string playername;
+        bool indent;
     };
 
 } // namespace tomcat

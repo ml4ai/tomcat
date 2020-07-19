@@ -16,6 +16,7 @@ namespace po = boost::program_options;
 int main(int ac, char* av[]) 
 {
 	string exp_id, trial_id, playername, of_dir;
+	bool indent;
 	// Boost command line options
 	try {
 	
@@ -26,6 +27,7 @@ int main(int ac, char* av[])
 			("trial_id", po::value<string>(&trial_id)->default_value("null"), "set trial ID")
 			("playername", po::value<string>(&playername)->default_value("null"), "set playername")
 			("mloc", po::value<string>(&of_dir), "set OpenFace models directory")
+			("indent", po::value<bool>(&indent)->default_value(false), "set indentation")
 		;
 		
 		po::variables_map vm;
@@ -63,7 +65,7 @@ int main(int ac, char* av[])
     }
 		
 	WebcamSensor camsensor;
-    camsensor.initialize(exp_id, trial_id, playername);
+    camsensor.initialize(exp_id, trial_id, playername, indent);
     camsensor.get_observation();
     
     return 0;
