@@ -1,5 +1,4 @@
 #include "CategoricalCPD.h"
-#include "ConstantVectorNode.h"
 
 namespace tomcat {
     namespace model {
@@ -9,6 +8,8 @@ namespace tomcat {
             Eigen::MatrixXd& cpd_table)
             : CPD(std::move(parent_node_label_order)) {
 
+            typedef Node<Eigen::VectorXd> VectorNode;
+
             for (int row = 0; row < cpd_table.rows(); row++) {
                 Eigen::VectorXd probabilities(cpd_table.cols());
 
@@ -16,9 +17,9 @@ namespace tomcat {
                     probabilities(col) = cpd_table(row, col);
                 }
 
-                ConstantVectorNode probabilities_node(std::move(probabilities));
-                std::unique_ptr<ConstantVectorNode> probabilities_ptr =
-                    std::make_unique<ConstantVectorNode>(
+                VectorNode probabilities_node(std::move(probabilities));
+                std::unique_ptr<VectorNode> probabilities_ptr =
+                    std::make_unique<VectorNode>(
                         std::move(probabilities_node));
                 this->probability_table.push_back(std::move(probabilities_ptr));
             }
@@ -28,18 +29,20 @@ namespace tomcat {
         CategoricalCPD::sample(std::shared_ptr<gsl_rng> generator) const {
             Eigen::VectorXd samples(this->probability_table.size());
 
-           for (int i = 0; i < this->probability_table.size(); i++) {
-               double* probabilities =
-                   this->probability_table[i]->get_assignment().data();
+            for (int i = 0; i < this->probability_table.size(); i++) {
+                double* probabilities =
+                    static_cast<Eigen::VectorXd>(
+                        this->probability_table[i]->get_assignment())
+                        .data();
 
-               unsigned int* sample_ptr = new unsigned int[1];
-               gsl_ran_multinomial(generator.get(),
-                                   this->probability_table.size(),
-                                   1,
-                                   probabilities,
-                                   sample_ptr);
-               samples(i) = sample_ptr[0];
-               delete[] sample_ptr;
+                unsigned int* sample_ptr = new unsigned int[1];
+                gsl_ran_multinomial(generator.get(),
+                                    this->probability_table.size(),
+                                    1,
+                                    probabilities,
+                                    sample_ptr);
+                samples(i) = sample_ptr[0];
+                delete[] sample_ptr;
             }
 
             return samples;

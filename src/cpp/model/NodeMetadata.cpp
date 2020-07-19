@@ -29,7 +29,7 @@ namespace tomcat {
                     os << link.parent_node_metadata.label;
                     os << ", ";
                     os << link.time_crossing;
-                    os << "  )\n";
+                    os << ")\n";
                 }
                 os << " ]\n";
             }

@@ -1,5 +1,4 @@
 #include "DirichletCPD.h"
-#include "ConstantVectorNode.h"
 
 namespace tomcat {
     namespace model {
@@ -9,6 +8,8 @@ namespace tomcat {
             Eigen::MatrixXd& parameter_table)
             : CPD(std::move(parent_node_label_order)) {
 
+            typedef Node<Eigen::VectorXd> VectorNode;
+
             for (int row = 0; row < parameter_table.rows(); row++) {
                 Eigen::VectorXd alpha(parameter_table.cols());
 
@@ -16,9 +17,9 @@ namespace tomcat {
                     alpha(col) = parameter_table(row, col);
                 }
 
-                ConstantVectorNode alpha_node(std::move(alpha));
-                std::unique_ptr<ConstantVectorNode> alpha_ptr =
-                    std::make_unique<ConstantVectorNode>(std::move(alpha_node));
+                VectorNode alpha_node(std::move(alpha));
+                std::unique_ptr<VectorNode> alpha_ptr =
+                    std::make_unique<VectorNode>(std::move(alpha_node));
                 this->parameter_table.push_back(std::move(alpha_ptr));
             }
         }
@@ -31,8 +32,9 @@ namespace tomcat {
 
             double* sample_ptr = new double[rows * cols];
             for (int i = 0; i < this->parameter_table.size(); i++) {
-                double* alpha =
-                    this->parameter_table[i]->get_assignment().data();
+                double* alpha = static_cast<Eigen::VectorXd>(
+                                    this->parameter_table[i]->get_assignment())
+                                    .data();
 
                 gsl_ran_dirichlet(generator.get(),
                                   this->parameter_table.size(),

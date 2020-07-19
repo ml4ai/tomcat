@@ -1,12 +1,8 @@
 #include <eigen3/Eigen/Dense>
 #include <iostream>
-#include <boost/random.hpp>
-#include <boost/math/distributions/normal.hpp>
 #include "CategoricalCPD.h"
-#include "ConstantNumericNode.h"
-#include "ConstantVectorNode.h"
 #include "NodeMetadata.h"
-#include "RandomVariableNumericNode.h"
+#include "RandomVariableNode.h"
 #include "GaussianCPD.h"
 #include "DirichletCPD.h"
 #include <gsl/gsl_randist.h>
@@ -90,8 +86,11 @@ int main() {
     std::cout << metadata3 << std::endl;
 
     // Testing constant nodes
-    ConstantNumericNode node1(2);
-    ConstantVectorNode node2(v);
+    typedef Node<double> ConstantNode;
+    typedef Node<Eigen::VectorXd> VectorNode;
+
+    ConstantNode node1(2);
+    VectorNode node2(v);
 
     std::cout << node1 << std::endl;
     std::cout << node2 << std::endl;
@@ -118,10 +117,14 @@ int main() {
         std::make_shared<NodeMetadata>(metadata3);
     std::unique_ptr<CategoricalCPD> cpd =
         std::make_unique<CategoricalCPD>(std::move(categorical_cpd));
+    std::unique_ptr<DirichletCPD> cpd2 =
+        std::make_unique<DirichletCPD>(std::move(dirichlet_cpd));
 
-    RandomVariableNumericNode rv_node1(std::move(metadata), std::move(cpd));
+    RandomVariableNode<double> rv_node1(metadata, std::move(cpd));
     std::cout << rv_node1 << std::endl;
-    std::cout << *rv_node1.get_metadata() << std::endl;
-    std::cout << *rv_node1.get_cpd() << std::endl;
+
+    RandomVariableNode<Eigen::VectorXd> rv_node2(metadata, std::move(cpd2));
+    rv_node2.set_assignment(v);
+    std::cout << rv_node2 << std::endl;
 
 }

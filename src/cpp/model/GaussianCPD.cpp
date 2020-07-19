@@ -1,6 +1,4 @@
 #include "GaussianCPD.h"
-#include "ConstantNumericNode.h"
-#include <boost/math/distributions/normal.hpp>
 
 namespace tomcat {
     namespace model {
@@ -10,16 +8,19 @@ namespace tomcat {
             Eigen::MatrixXd& parameter_table)
             : CPD(std::move(parent_node_label_order)) {
 
+            typedef Node<double> NumericNode;
+
             for (int row = 0; row < parameter_table.rows(); row++) {
                 double mean = parameter_table(row, 0);
-                ConstantNumericNode mean_node(mean);
-                std::unique_ptr<ConstantNumericNode> mean_ptr =
-                    std::make_unique<ConstantNumericNode>(std::move(mean_node));
+
+                NumericNode mean_node(mean);
+                std::unique_ptr<NumericNode> mean_ptr =
+                    std::make_unique<NumericNode>(std::move(mean_node));
 
                 double variance = parameter_table(row, 1);
-                ConstantNumericNode variance_node(variance);
-                std::unique_ptr<ConstantNumericNode> variance_ptr =
-                    std::make_unique<ConstantNumericNode>(
+                NumericNode variance_node(variance);
+                std::unique_ptr<NumericNode> variance_ptr =
+                    std::make_unique<NumericNode>(
                         std::move(variance_node));
 
                 GaussianParameters parameters(std::move(mean_ptr),
