@@ -11,6 +11,7 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include <dirent.h>
 
 using namespace malmo;
 using namespace std;
@@ -67,17 +68,15 @@ namespace tomcat {
     }
 
     void Mission::create_client_pool() {
-
+        this->client_pool = make_shared<ClientPool>();
         if (!this->multiplayer) {
-            this->client_pool = make_shared<ClientPool>();
             this->client_pool->add(ClientInfo("127.0.0.1", this->port_number));
         }
         else{
-                std::ifstream clients_json("/Users/macforlong/tomcat/src/cpp/multiplayer_config.json");
+                std::ifstream clients_json("../conf/multiplayer_config.json");
                 json clients_info = json::parse(clients_json);
                 string server_ip_address=clients_info["server"]["address"].get<std::string>();
                 int server_port=clients_info["server"]["port"].get<int>();
-                this->client_pool = make_shared<ClientPool>();
                 this->client_pool->add(ClientInfo(server_ip_address, server_port));
                 json client_object = clients_info["clients"];
                 std::cout << "Number of clients to be connected: " << client_object.size() << std::endl;
