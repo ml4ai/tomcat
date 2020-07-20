@@ -73,17 +73,19 @@ namespace tomcat {
             this->client_pool->add(ClientInfo("127.0.0.1", this->port_number));
         }
         else{
-                std::ifstream clients_json("../conf/multiplayer_config.json");
-                json clients_info = json::parse(clients_json);
-                string server_ip_address=clients_info["server"]["address"].get<std::string>();
-                int server_port=clients_info["server"]["port"].get<int>();
-                this->client_pool->add(ClientInfo(server_ip_address, server_port));
-                json client_object = clients_info["clients"];
-                std::cout << "Number of clients to be connected: " << client_object.size() << std::endl;
-                string client_ip_address;
-                int client_port;
-
-                for (auto it = client_object.begin(); it != client_object.end(); it++)
+            string multiplayer_config_path =
+                format("{}/conf/multiplayer_config.json", getenv("TOMCAT"));
+            std::ifstream clients_json(multiplayer_config_path);
+            json clients_info = json::parse(clients_json);
+            string server_ip_address=clients_info["server"]["address"].get<std::string>();
+            int server_port=clients_info["server"]["port"].get<int>();
+            this->client_pool->add(ClientInfo(server_ip_address, server_port));
+            json client_object = clients_info["clients"];
+            std::cout << "Number of clients to be connected: " << client_object.size() << std::endl;
+            string client_ip_address;
+            int client_port;
+            
+            for (auto it = client_object.begin(); it != client_object.end(); it++)
                 {
                     client_ip_address = it.value()["address"].get<std::string>();
                     client_port = it.value()["port"].get<int>();
