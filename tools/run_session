@@ -53,7 +53,6 @@ SPEC_VERSION=$("$TOMCAT"/build/bin/getSpecVersion --spec "$TOMCAT"/docs/spec.yml
     "$DIFFICULTY"\
     "$SPEC_VERSION" > "$SESSION_OUTPUT_DIR"/metadata.json
 
-cat "$SESSION_OUTPUT_DIR"/metadata.json
 if [[ $? -ne 0 ]]; then exit 1; fi
 
 
