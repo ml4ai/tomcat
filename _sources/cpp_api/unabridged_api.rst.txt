@@ -132,6 +132,11 @@ Functions
 .. toctree::
    :maxdepth: 5
 
+   function_getSpecVersion_8cpp_1a0ddf1224851353fc92bfbff6f499fa97.rst
+
+.. toctree::
+   :maxdepth: 5
+
    function_generator_8cpp_1a0ddf1224851353fc92bfbff6f499fa97.rst
 
 .. toctree::

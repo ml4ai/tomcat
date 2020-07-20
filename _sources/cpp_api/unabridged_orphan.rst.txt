@@ -21,6 +21,11 @@ Directories
 .. toctree::
    :maxdepth: 5
 
+   dir_src_cpp_getSpecVersion.rst
+
+.. toctree::
+   :maxdepth: 5
+
    dir_src_cpp_pro_gen.rst
 
 Files
@@ -61,6 +66,11 @@ Files
    :maxdepth: 5
 
    file_src_cpp_pro_gen_generator.cpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file_src_cpp_getSpecVersion_getSpecVersion.cpp.rst
 
 .. toctree::
    :maxdepth: 5

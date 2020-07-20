@@ -1,0 +1,20 @@
+.. _dir_src_cpp_getSpecVersion:
+
+
+Directory getSpecVersion
+========================
+
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp>` (``src/cpp``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+*Directory path:* ``src/cpp/getSpecVersion``
+
+
+Files
+-----
+
+- :ref:`file_src_cpp_getSpecVersion_getSpecVersion.cpp`
+
+
