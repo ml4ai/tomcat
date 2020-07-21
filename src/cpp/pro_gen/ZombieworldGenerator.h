@@ -1,5 +1,5 @@
 #include "Group.h"
-#include "Pit.h"
+#include "ZombieworldPit.h"
 #include "ProceduralGenerator.h"
 
 class ZombieWorldGenerator : public ProceduralGenerator {

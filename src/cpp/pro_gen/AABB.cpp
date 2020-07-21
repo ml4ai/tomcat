@@ -103,6 +103,8 @@ void AABB::setTopLeft(Pos& topLeft) { this->topLeft = topLeft; }
 
 void AABB::setBottomRight(Pos& bottomRight) { this->bottomRight = bottomRight; }
 
+void AABB::setMaterial(string material) { this->material = material; };
+
 void AABB::addBlock(Block& block) { (this->blockList).push_back(&block); }
 
 bool AABB::isOverlapping(AABB& other) {

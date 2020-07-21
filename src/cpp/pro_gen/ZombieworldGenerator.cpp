@@ -61,56 +61,21 @@ void ZombieWorldGenerator::chooseZombieworldAABB(int idCtr,
     mt19937_64& gen = this->getRandom();
 
     if (idCtr % 2 == 0) {
-        Pos newBottomRight(bottomRight);
-        newBottomRight.setY(topLeft.getY()); // We are adding a Pit so we want
-                                             // the AABB to be much flatter
-
+        Pos newTopLeft(topLeft);
+        newTopLeft.shiftY(-2);
         uniform_int_distribution<> dist(1, 100);
         int rand = dist(gen);
 
         // Choose between an air, water or lava pit
         if (rand <= 25) {
-            Pos newTopLeft(topLeft);
-
-            newTopLeft.shiftY(1);
-            newBottomRight.shiftY(
-                1); // Move both above ground level for an air pit which achives
-                    // the effect of an empty plot
-
-            world.addAABB(*(new Pit(idCtr, "air", newTopLeft, newBottomRight)));
+            world.addAABB(*(new ZombieworldPit(idCtr, topLeft, "air")));
         }
 
         else if (rand > 25 && rand <= 75) {
-            Pos newTopLeft(topLeft);
-            newTopLeft.shiftY(-2); // In this case I'm chosing to offset the
-                                   // base Y by -2 so we have a deeper water pit
-
-            world.addAABB(
-                *(new Pit(idCtr, "sand", newTopLeft, newBottomRight)));
-            AABB* waterPit = (world.getAABBList()).back();
-
-            (*waterPit).generateBox("water",
-                                    3,
-                                    3,
-                                    1,
-                                    0,
-                                    3,
-                                    3); // Add a box of water to it
-
-            // Randomly add other blocks to give the effect of randomization
-            (*waterPit).addRandomBlocks(20, "grass", gen, 0, 0, 1, 0, 0, 0);
-            (*waterPit).addRandomBlocks(40, "water", gen, 1, 1, 2, 0, 0, 0);
+            world.addAABB(*(new ZombieworldPit(idCtr, newTopLeft, "water")));
         }
         else {
-            world.addAABB(*(new Pit(idCtr, "grass", topLeft, newBottomRight)));
-            AABB* lavaPit = world.getAABBList().back();
-            (*lavaPit).generateBox("lava", 3, 2, 0, 0, 1, 3);
-            (*lavaPit).addRandomBlocks(10, "grass", gen, 1, 1, 0, 0, 1, 1);
-            (*lavaPit).addRandomBlocks(
-                30,
-                "cobblestone",
-                gen); // Example showing use of all default values
-            (*lavaPit).addRandomBlocks(10, "lava", gen, 1, 0, 0, 0, 1, 1);
+            world.addAABB(*(new ZombieworldPit(idCtr, newTopLeft, "lava")));
         }
     }
 

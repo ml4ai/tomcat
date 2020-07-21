@@ -5,7 +5,14 @@
  * @brief This class represents a special AABB of type = "pit". It is not hollow
  * and is treated as having a roof.
  */
-class Pit : public AABB {
+class ZombieworldPit : public AABB {
+
+  private:
+    std::mt19937_64 gen;
+    std::string fluid;
+    void decorateWater();
+    void decorateLava();
+
 
   public:
     /**
@@ -18,10 +25,10 @@ class Pit : public AABB {
      * @param bottomRight The coordinates of the bottom right of the AABB
      * from the top view of the X-Z plane. Y coordinate should be maximum here.
      */
-    Pit(int id, std::string material, Pos& topLeft, Pos& bottomRight);
+    ZombieworldPit(int id,  Pos& topLeft, std::string fluid);
 
     /**
      * @brief Destroy the Pit object
      */
-    ~Pit();
+    ~ZombieworldPit();
 };
