@@ -16,5 +16,9 @@ namespace tomcat {
                 os << "Node([" << this->assignment.transpose() << "])";
             }
         }
+
+        std::unique_ptr<Node> Node::clone() const {
+            return std::make_unique<Node>(*this);
+        }
     } // namespace model
 } // namespace tomcat

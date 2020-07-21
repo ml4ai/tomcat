@@ -19,7 +19,7 @@ namespace tomcat {
           private:
             Graph graph;
             //std::unordered_map<std::string, int> name_to_id;
-            std::vector<Node> nodes;
+            std::vector<std::unique_ptr<Node>> nodes;
 
           public:
             DynamicBayesNet() {
@@ -31,13 +31,13 @@ namespace tomcat {
             }
             ~DynamicBayesNet() {}
 
-            void add_node(Node node) {
+            void add_node(std::unique_ptr<Node> node) {
                 this->nodes.push_back(std::move(node));
             }
 
             void unroll() {
                 for (auto& node : this->nodes) {
-                    std::cout << node << std::endl;
+                    std::cout << *node << std::endl;
                 }
             }
         };

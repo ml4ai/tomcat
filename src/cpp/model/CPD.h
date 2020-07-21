@@ -27,6 +27,7 @@ namespace tomcat {
             std::vector<std::string> parent_node_label_order;
 
           public:
+            CPD() {}
             /**
              * Abstract representation of a Conditional Probability Distribution
              *
@@ -38,6 +39,27 @@ namespace tomcat {
 
             virtual ~CPD() {}
 
+            // Copy constructor and assignment should be deleted to avoid
+            // implicit slicing and loss of polymorphic behaviour in the
+            // subclasses. To deep copy, the clone method must be used.
+            CPD(const CPD&) = delete;
+            CPD& operator=(const CPD&) = delete;
+
+            CPD(CPD&& cpd) = default;
+            CPD& operator=(CPD&& cpd) = default;
+
+            friend std::ostream& operator<<(std::ostream& os, const CPD& cpd) {
+                cpd.print(os);
+                return os;
+            };
+
+            /**
+             * Print a short description of the distribution.
+             *
+             * @param os: output stream
+             */
+            virtual void print(std::ostream& os) const {}
+
             /**
              * Draw a sample from each distribution of the CPD table.
              *
@@ -48,16 +70,11 @@ namespace tomcat {
             sample(std::shared_ptr<gsl_rng> generator) const = 0;
 
             /**
-             * Print a short description of the distribution.
+             * Clone CPD
              *
-             * @param os: output stream
+             * @return pointer to the new CPD
              */
-            virtual void print(std::ostream& os) const {}
-
-            friend std::ostream& operator<<(std::ostream& os, const CPD& cpd) {
-                cpd.print(os);
-                return os;
-            };
+            virtual std::unique_ptr<CPD> clone() const = 0;
         };
 
     } // namespace model

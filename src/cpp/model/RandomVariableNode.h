@@ -44,21 +44,28 @@ namespace tomcat {
 
             ~RandomVariableNode() {}
 
-            /**
-             * Copy constructor
-             * @param node: node to be moved
-             */
-            RandomVariableNode(RandomVariableNode& node)
-                : metadata(node.metadata), cpd(std::move(node.cpd)),
+            RandomVariableNode(const RandomVariableNode& node)
+                : metadata(node.metadata), cpd(node.cpd->clone()),
                   time_step(node.time_step), Node(node) {}
+            RandomVariableNode& operator=(const RandomVariableNode& node) {
+                this->metadata = node.metadata;
+                this->cpd = node.cpd->clone();
+                this->time_step = node.time_step;
+                this->assignment = node.assignment;
+                return *this;
+            }
+            RandomVariableNode(RandomVariableNode&&) = default;
+            RandomVariableNode& operator=(RandomVariableNode&&) = default;
 
             /**
              * Move constructor
              * @param node: node to be moved
              */
-            RandomVariableNode(RandomVariableNode&& node)
-                : metadata(std::move(node.metadata)), cpd(std::move(node.cpd)),
-                  time_step(node.time_step), Node(std::move(node)) {}
+            //            RandomVariableNode(RandomVariableNode&& node)
+            //                : metadata(std::move(node.metadata)),
+            //                cpd(std::move(node.cpd)),
+            //                  time_step(node.time_step), Node(std::move(node))
+            //                  {}
 
             /**
              * Print a short description of the node.
@@ -66,6 +73,13 @@ namespace tomcat {
              * @param os: output stream
              */
             void print(std::ostream& os) const override;
+
+            /**
+             * Clone node
+             *
+             * @return pointer to the new node
+             */
+            std::unique_ptr<Node> clone() const override;
 
             /**
              * Set assignment from a single numeric value if samples from this
@@ -88,6 +102,8 @@ namespace tomcat {
             void set_assignment(Eigen::VectorXd assignment) {
                 this->assignment = std::move(assignment);
             }
+
+            void test() override { std::cout << "Test RV"; };
         };
 
     } // namespace model

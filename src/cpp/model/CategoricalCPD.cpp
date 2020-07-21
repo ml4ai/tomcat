@@ -15,7 +15,8 @@ namespace tomcat {
                     probabilities(col) = cpd_table(row, col);
                 }
 
-                Node probabilities_node(std::move(probabilities));
+                std::unique_ptr<Node> probabilities_node =
+                    std::make_unique<Node>(std::move(probabilities));
                 this->probability_table.push_back(
                     std::move(probabilities_node));
             }
@@ -27,7 +28,7 @@ namespace tomcat {
 
             for (int i = 0; i < this->probability_table.size(); i++) {
                 const double* probabilities =
-                    this->probability_table[i].get_assignment().data();
+                    this->probability_table[i]->get_assignment().data();
 
                 unsigned int* sample_ptr = new unsigned int[1];
                 gsl_ran_multinomial(generator.get(),
@@ -45,9 +46,13 @@ namespace tomcat {
         void CategoricalCPD::print(std::ostream& os) const {
             os << "Categorical CPD: {\n";
             for (auto& probabilities : this->probability_table) {
-                os << " " << probabilities << "\n";
+                os << " " << *probabilities << "\n";
             }
             os << "}";
+        }
+
+        std::unique_ptr<CPD> CategoricalCPD::clone() const {
+            return std::make_unique<CategoricalCPD>(*this);
         }
 
     } // namespace model

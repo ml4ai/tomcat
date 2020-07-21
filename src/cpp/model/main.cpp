@@ -128,13 +128,10 @@ int main() {
     rv_node2.set_assignment(v);
     std::cout << rv_node2 << std::endl;
 
-    Node rv_node3 = static_cast<RandomVariableNode>(rv_node2);
-    std::cout << rv_node3 << std::endl;
-
     DynamicBayesNet dbn;
-    dbn.add_node(node1);
-    dbn.add_node(node2);
-    dbn.add_node(std::move(rv_node2));
+    dbn.add_node(std::make_unique<Node>(node1)); // Copy node1
+    dbn.add_node(std::make_unique<Node>(node2));
+    dbn.add_node(std::make_unique<RandomVariableNode>(rv_node2));
     dbn.unroll();
 
 

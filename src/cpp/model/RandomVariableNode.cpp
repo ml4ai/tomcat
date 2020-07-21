@@ -32,5 +32,9 @@ namespace tomcat {
             }
         }
 
+        std::unique_ptr<Node> RandomVariableNode::clone() const {
+            return std::make_unique<RandomVariableNode>(*this);
+        }
+
     } // namespace model
 } // namespace tomcat

@@ -45,35 +45,56 @@ namespace tomcat {
          */
         class ContinuousCPD : public CPD {
           protected:
-            std::vector<std::vector<Node>> parameter_table;
+            std::vector<std::vector<std::unique_ptr<Node>>> parameter_table;
 
           public:
+            ContinuousCPD() {}
             ContinuousCPD(std::vector<std::string> parent_node_label_order)
                 : CPD(std::move(parent_node_label_order)) {}
 
-            /**
-             * Transform a table of numeric values for \f$\phi\f$ to a list of
-             * constant vector nodes to keep static and node dependent CPDs
-             * compatible.
-             *
-             * @param parent_node_label_order: evaluation order of the parent
-             * nodes assignment for correct table indexing
-             * @param parameter_table: matrix containing constant numerical
-             * values for \f$\phi\f$
-             */
-            virtual void init_from_matrix(Eigen::MatrixXd& parameter_table) = 0;
-
-            /**
-             * Move constructor. There's no copy constructor because the cpd
-             * table is internally stored as a vector of unique pointers as
-             * CPD's specific distributions won't be shared among nodes.
-             *
-             * @param cpd: continuous CPD for copy
-             */
-            ContinuousCPD(ContinuousCPD&& cpd)
-                : CPD(std::move(cpd.parent_node_label_order)) {}
-
             ~ContinuousCPD() {}
+
+            // Copy constructor and assignment should be deleted to avoid
+            // implicit slicing and loss of polymorphic behaviour in the
+            // subclasses. To deep copy, the clone method must be used.
+            ContinuousCPD(const ContinuousCPD&) = delete;
+            ContinuousCPD& operator=(const ContinuousCPD&) = delete;
+
+            ContinuousCPD(ContinuousCPD&& cpd) = default;
+            ContinuousCPD& operator=(ContinuousCPD&& cpd) = default;
+
+            /**
+             * Copy members of a continuous CPD.
+             *
+             * @param cpd: continuous CPD
+             */
+            void copy_from_cpd(const ContinuousCPD& cpd) {
+                this->parent_node_label_order = cpd.parent_node_label_order;
+
+                // Clone each node in the copied cpd to the parameter table of
+                // this object.
+                this->parameter_table.reserve(cpd.parameter_table.size());
+                for (const auto& source_parameters : cpd.parameter_table) {
+                    std::vector<std::unique_ptr<Node>> target_parameters;
+                    target_parameters.reserve(source_parameters.size());
+                    for (const auto& source_parameter : source_parameters) {
+                        target_parameters.push_back(source_parameter->clone());
+                    }
+                    this->parameter_table.push_back(std::move(target_parameters));
+                }
+            }
+
+            //            ContinuousCPD(ContinuousCPD&& cpd)
+            //                : CPD(std::move(cpd.parent_node_label_order)),
+            //                  parameter_table(std::move(cpd.parameter_table))
+            //                  {}
+            //
+            //            ContinuousCPD& operator=(ContinuousCPD&& cpd) {
+            //                this->parent_node_label_order =
+            //                std::move(cpd.parent_node_label_order);
+            //                this->parameter_table =
+            //                std::move(cpd.parameter_table);
+            //            };
 
             /**
              * Sample a vector for each combination of parent nodes' assignments
@@ -94,6 +115,25 @@ namespace tomcat {
              * @param os: output stream
              */
             virtual void print(std::ostream& os) const override = 0;
+
+            /**
+             * Clone CPD
+             *
+             * @return pointer to the new CPD
+             */
+            virtual std::unique_ptr<CPD> clone() const override = 0;
+
+            /**
+             * Transform a table of numeric values for \f$\phi\f$ to a list of
+             * constant vector nodes to keep static and node dependent CPDs
+             * compatible.
+             *
+             * @param parent_node_label_order: evaluation order of the parent
+             * nodes assignment for correct table indexing
+             * @param parameter_table: matrix containing constant numerical
+             * values for \f$\phi\f$
+             */
+            virtual void init_from_matrix(Eigen::MatrixXd& parameter_table) = 0;
         };
 
     } // namespace model

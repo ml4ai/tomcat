@@ -51,6 +51,20 @@ namespace tomcat {
           private:
             int alpha_size;
 
+            //            /**
+            //             * Copy constructor.
+            //             *
+            //             * @param cpd: dirichlet CPD to copy
+            //             */
+            //            DirichletCPD(DirichletCPD& cpd) : ContinuousCPD(cpd)
+            //            {}
+            //
+            //            /**
+            //             * Move constructor.
+            //             *
+            //             * @param cpd: dirichlet CPD to move
+            //             */
+
           public:
             /**
              * Store a list of node dependent parameters.
@@ -61,7 +75,7 @@ namespace tomcat {
              * determined by other nodes' assignments
              */
             DirichletCPD(std::vector<std::string> parent_node_label_order,
-                         std::vector<Node> parameter_table);
+                         std::vector<std::unique_ptr<Node>> parameter_table);
 
             /**
              * Create a dirichlet distribution from a matrix of parameter
@@ -75,16 +89,22 @@ namespace tomcat {
             DirichletCPD(std::vector<std::string> parent_node_label_order,
                          Eigen::MatrixXd& parameter_values);
 
-            /**
-             * Move constructor. There's no copy constructor because the cpd
-             * table is internally stored as a vector of unique pointers as
-             * CPD's specific distributions won't be shared among nodes.
-             *
-             * @param cpd: dirichlet CPD for copy
-             */
-            DirichletCPD(DirichletCPD&& cpd) : ContinuousCPD(std::move(cpd)) {}
-
             ~DirichletCPD() {}
+
+            DirichletCPD(const DirichletCPD& cpd) {
+                this->copy_from_cpd(cpd);
+            }
+            DirichletCPD& operator=(const DirichletCPD& cpd) {
+                this->copy_from_cpd(cpd);
+                return *this;
+            };
+
+            DirichletCPD(DirichletCPD&& cpd) = default;
+            DirichletCPD& operator=(DirichletCPD&& cpd) = default;
+
+
+            //            DirichletCPD(DirichletCPD&& cpd) :
+            //            ContinuousCPD(std::move(cpd)) {}
 
             /**
              * Transform a table of numeric values for \f$\alpha\f$ to a list of
@@ -116,6 +136,13 @@ namespace tomcat {
              * @param os: output stream
              */
             void print(std::ostream& os) const override;
+
+            /**
+             * Clone CPD
+             *
+             * @return pointer to the new CPD
+             */
+            std::unique_ptr<CPD> clone() const override;
         };
 
     } // namespace model

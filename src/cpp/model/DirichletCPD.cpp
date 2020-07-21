@@ -4,12 +4,13 @@ namespace tomcat {
     namespace model {
         DirichletCPD::DirichletCPD(
             std::vector<std::string> parent_node_label_order,
-            std::vector<Node> parameter_table)
+            std::vector<std::unique_ptr<Node>> parameter_table)
             : ContinuousCPD(std::move(parent_node_label_order)) {
 
             // Each node contains the parameter vector alpha.
             for (int i = 0; i < parameter_table.size(); i++) {
-                std::vector<Node> parameters = {parameter_table[i]};
+                std::vector<std::unique_ptr<Node>> parameters;
+                parameters.push_back(std::move(parameter_table[i]->clone()));
                 this->parameter_table.push_back(std::move(parameters));
             }
         }
@@ -27,7 +28,9 @@ namespace tomcat {
 
             for (int row = 0; row < parameter_values.rows(); row++) {
                 Eigen::VectorXd alpha = parameter_values.row(row);
-                std::vector<Node> alpha_vector = {Node(alpha)};
+                std::vector<std::unique_ptr<Node>> alpha_vector;
+                alpha_vector.push_back(
+                    std::move(std::make_unique<Node>(Node(alpha))));
                 this->parameter_table.push_back(std::move(alpha_vector));
             }
         }
@@ -39,7 +42,7 @@ namespace tomcat {
 
             for (int i = 0; i < rows; i++) {
                 const double* alpha =
-                    this->parameter_table[i][0].get_assignment().data();
+                    this->parameter_table[i][0]->get_assignment().data();
 
                 gsl_ran_dirichlet(generator.get(),
                                   this->parameter_table.size(),
@@ -61,9 +64,13 @@ namespace tomcat {
         void DirichletCPD::print(std::ostream& os) const {
             os << "Dirichlet CPD: {\n";
             for (auto& alpha : this->parameter_table) {
-                os << " " << alpha[0] << "\n";
+                os << " " << *alpha[0] << "\n";
             }
             os << "}";
+        }
+
+        std::unique_ptr<CPD> DirichletCPD::clone() const {
+            return std::make_unique<DirichletCPD>(*this);
         }
 
     } // namespace model

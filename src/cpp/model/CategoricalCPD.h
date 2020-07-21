@@ -46,7 +46,7 @@ namespace tomcat {
          */
         class CategoricalCPD : public CPD {
           private:
-            std::vector<Node> probability_table;
+            std::vector<std::unique_ptr<Node>> probability_table;
 
           public:
             /**
@@ -58,7 +58,7 @@ namespace tomcat {
              * nodes' assignments
              */
             CategoricalCPD(std::vector<std::string> parent_node_label_order,
-                           std::vector<Node> cpd_table)
+                           std::vector<std::unique_ptr<Node>> cpd_table)
                 : CPD(std::move(parent_node_label_order)),
                   probability_table(std::move(cpd_table)) {}
 
@@ -74,18 +74,53 @@ namespace tomcat {
             CategoricalCPD(std::vector<std::string> parent_node_label_order,
                            Eigen::MatrixXd& cpd_table);
 
-            /**
-             * Move constructor. There's no copy constructor because the cpd
-             * table is internally stored as a vector of unique pointers as
-             * CPD's specific distributions won't be shared among nodes.
-             *
-             * @param cpd: categorical CPD for copy
-             */
-            CategoricalCPD(CategoricalCPD&& cpd)
-                : CPD(std::move(cpd.parent_node_label_order)),
-                  probability_table(std::move(cpd.probability_table)) {}
+            //            /**
+            //             * Copy constructor.
+            //             *
+            //             * @param cpd: categorical CPD to copy
+            //             */
+            //            CategoricalCPD(CategoricalCPD& cpd)
+            //                : CPD(cpd.parent_node_label_order),
+            //                  probability_table(cpd.probability_table) {}
+            //
+            //            /**
+            //             * Move constructor.
+            //             *
+            //             * @param cpd: categorical CPD to move
+            //             */
+            //            CategoricalCPD(CategoricalCPD&& cpd)
+            //                : CPD(std::move(cpd.parent_node_label_order)),
+            //                  probability_table(std::move(cpd.probability_table))
+            //                  {}
 
             ~CategoricalCPD() {}
+
+            CategoricalCPD(const CategoricalCPD& cpd) {
+                this->copy_from_cpd(cpd);
+            };
+            CategoricalCPD& operator=(const CategoricalCPD& cpd) {
+                this->copy_from_cpd(cpd);
+                return *this;
+            };
+            CategoricalCPD(CategoricalCPD&& cpd) = default;
+            CategoricalCPD& operator=(CategoricalCPD&& cpd) = default;
+
+            /**
+             * Copy members of a categorical CPD.
+             *
+             * @param cpd: categorical CPD
+             */
+            void copy_from_cpd(const CategoricalCPD& cpd) {
+                this->parent_node_label_order = cpd.parent_node_label_order;
+
+                // Clone each node in the copied cpd to the probability table of
+                // this object.
+                this->probability_table.reserve(cpd.probability_table.size());
+                for (const auto& source_probabilities : cpd.probability_table) {
+                    this->probability_table.push_back(
+                        source_probabilities->clone());
+                }
+            }
 
             /**
              * Sample a numeric value for each combination of parent nodes'
@@ -105,6 +140,13 @@ namespace tomcat {
              * @param os: output stream
              */
             void print(std::ostream& os) const override;
+
+            /**
+             * Clone CPD
+             *
+             * @return pointer to the new CPD
+             */
+            std::unique_ptr<CPD> clone() const override;
         };
 
     } // namespace model

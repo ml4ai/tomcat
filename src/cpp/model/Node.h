@@ -20,32 +20,41 @@ namespace tomcat {
             /**
              * Create a constant node with a numerical value assigned.
              *
-             * @param value - node's constant assignment
+             * @param value: node's constant assignment
              */
             Node(double value);
 
             /**
              * Create a constant node with a multidimensional value assigned.
              *
-             * @param values - node's constant assignment
+             * @param values: node's constant assignment
              */
             Node(Eigen::VectorXd values)
                 : assignment(std::move(values)) {}
             virtual ~Node() {}
 
-            /**
-             * Copy constructor
-             *
-             * @param node: node to be copied
-             */
-            Node(const Node& node) : assignment(node.assignment) {}
+            // Copy constructor and assignment should be deleted to avoid
+            // implicit slicing and loss of polymorphic behaviour in the
+            // subclasses. To deep copy, the clone method must be used.
+            Node(const Node&) = default;
+            Node& operator=(const Node&) = default;
+
+            Node(Node&&) = default;
+            Node& operator=(Node&&) = default;
+
 
             /**
              * Move constructor
              *
              * @param node: node to be moved
              */
-            Node(Node&& node) : assignment(std::move(node.assignment)) {}
+            //Node(Node&& node) : assignment(std::move(node.assignment)) {}
+
+            friend std::ostream& operator<<(std::ostream& os,
+                                            const Node& node) {
+                node.print(os);
+                return os;
+            };
 
             /**
              * Print a short description of the node.
@@ -54,14 +63,19 @@ namespace tomcat {
              */
             virtual void print(std::ostream& os) const;
 
-            friend std::ostream& operator<<(std::ostream& os,
-                                            const Node& node) {
-                node.print(os);
-                return os;
-            };
+            /**
+             * Clone node
+             *
+             * @return pointer to the new node
+             */
+            virtual std::unique_ptr<Node> clone() const;
 
             // Getters
             const Eigen::VectorXd& get_assignment() const { return assignment; }
+
+            virtual void test() {
+                std::cout << "Test Base";
+            };
 
         };
 

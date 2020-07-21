@@ -14,10 +14,13 @@ namespace tomcat {
          * Parameters of a univariate gaussian distribution.
          */
         struct GaussianParameters {
-            Node mean;
-            Node variance;
+            std::unique_ptr<Node> mean;
+            std::unique_ptr<Node> variance;
 
-            GaussianParameters(Node mean, Node variance)
+            GaussianParameters(std::unique_ptr<Node> mean, std::unique_ptr<Node> variance)
+                : mean(mean->clone()), variance(variance->clone()) {}
+
+            GaussianParameters(std::unique_ptr<Node>&& mean, std::unique_ptr<Node>&& variance)
                 : mean(std::move(mean)), variance(std::move(variance)) {}
         };
 
@@ -83,16 +86,31 @@ namespace tomcat {
             GaussianCPD(std::vector<std::string> parent_node_label_order,
                         Eigen::MatrixXd& parameter_values);
 
-            /**
-             * Move constructor. There's no copy constructor because the cpd
-             * table is internally stored as a vector of unique pointers as
-             * CPD's specific distributions won't be shared among nodes.
-             *
-             * @param cpd: gaussian CPD for copy
-             */
-            GaussianCPD(GaussianCPD&& cpd) : ContinuousCPD(std::move(cpd)) {}
+//            /**
+//             * Copy constructor.
+//             *
+//             * @param cpd: gaussian CPD to copy
+//             */
+//            GaussianCPD(GaussianCPD& cpd) : ContinuousCPD(cpd) {}
+//
+//            /**
+//             * Move constructor.
+//             *
+//             * @param cpd: gaussian CPD to move
+//             */
+//            GaussianCPD(GaussianCPD&& cpd) : ContinuousCPD(std::move(cpd)) {}
 
             ~GaussianCPD() {}
+
+            GaussianCPD(const GaussianCPD& cpd) {
+                this->copy_from_cpd(cpd);
+            }
+            GaussianCPD& operator=(const GaussianCPD& cpd) {
+                this->copy_from_cpd(cpd);
+                return *this;
+            };
+            GaussianCPD(GaussianCPD&& cpd) = default;
+            GaussianCPD& operator=(GaussianCPD&& cpd) = default;
 
             /**
              * Transform a table of numeric values for mean and variance to
@@ -123,6 +141,13 @@ namespace tomcat {
              * @param os: output stream
              */
             void print(std::ostream& os) const override;
+
+            /**
+             * Clone CPD
+             *
+             * @return pointer to the new CPD
+             */
+            std::unique_ptr<CPD> clone() const override;
         };
 
     } // namespace model
