@@ -41,18 +41,18 @@ int main(int argc, char* argv[]) {
     po::options_description general("Allowed options");
     general.add_options()("help,h", "Show program options")(
         "gen_type",
-        po::value<int>()->default_value(0),
+        po::value<int>(&choice)->default_value(0),
         "Choose the type of world to generate.\nZombieworld = 0\nGridworld = "
         "1")("help_gridworld",
              "Show additional arguments specific to Gridworld.")(
         "json_path",
-        po::value<string>()->default_value("procedural.json"),
+        po::value<string>(&jsonPath)->default_value("procedural.json"),
         "Specify where to save the JSON file with filename and extension.")(
         "tsv_path",
-        po::value<string>()->default_value("procedural.tsv"),
+        po::value<string>(&tsvPath)->default_value("procedural.tsv"),
         "Specify where to save the TSV file with filename and extension.")(
         "seed",
-        po::value<int>()->default_value(0),
+        po::value<int>(&seed)->default_value(0),
         "The seed used to initialize the random "
         "object used within the generator.");
 
@@ -83,11 +83,6 @@ int main(int argc, char* argv[]) {
         cout << gridWorldOptions << endl;
         return 0;
     }
-
-    choice = vm["gen_type"].as<int>();
-    seed = vm["seed"].as<int>();
-    jsonPath = vm["json_path"].as<string>();
-    tsvPath = vm["tsv_path"].as<string>();
 
     cout << "Generating world..." << endl;
     if (choice == 0) {
