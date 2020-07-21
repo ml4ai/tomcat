@@ -3,6 +3,9 @@
  * @brief This file implements the methods in the World class.
  */
 #include "World.h"
+#include <iostream>
+#include <fstream>
+
 using namespace std;
 using json = nlohmann::json;
 
@@ -19,12 +22,12 @@ void World::addBlock(Block& block) { (this->blockList).push_back(&block); }
 string World::toTSV() {
     string retval = "";
 
-    for (auto& aabb : (this->aabbList)) {
-        retval += (*aabb).toTSV();
+    for (auto aabb : (this->aabbList)) {
+        retval += aabb->toTSV();
     }
 
     for (auto& block : (this->blockList)) {
-        retval += (*block).toTSV() + "\n";
+        retval += block->toTSV() + "\n";
     }
 
     return retval;
@@ -77,6 +80,20 @@ string World::toJSON() {
     j["aabb_list"] = json_aabb_list;
     j["block_list"] = json_block_list;
     return j.dump(4);
+}
+
+void World::writeToFile(string jsonPath, string tsvPath) {
+    cout << "Writing to file..." << endl;
+
+    // Write JSON
+    ofstream outputJSON(jsonPath, ios::out);
+    outputJSON << this->toJSON();
+    outputJSON.close();
+
+    // Write TSV
+    ofstream outputTSV(tsvPath, ios::out);
+    outputTSV << this->toTSV();
+    outputTSV.close();
 }
 
 World::~World() {}
