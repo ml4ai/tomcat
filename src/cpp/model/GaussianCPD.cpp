@@ -5,26 +5,30 @@ namespace tomcat {
 
         GaussianCPD::GaussianCPD(
             std::vector<std::string> parent_node_label_order,
-            Eigen::MatrixXd& parameter_table)
-            : CPD(std::move(parent_node_label_order)) {
+            std::vector<GaussianParameters> parameter_table)
+            : ContinuousCPD(std::move(parent_node_label_order)) {
 
-            typedef Node<double> NumericNode;
+            for (int i = 0; i < parameter_table.size(); i++) {
+                std::vector<Node> parameters = {parameter_table[i].mean,
+                                                parameter_table[i].variance};
+                this->parameter_table.push_back(std::move(parameters));
+            }
+        }
 
-            for (int row = 0; row < parameter_table.rows(); row++) {
-                double mean = parameter_table(row, 0);
+        GaussianCPD::GaussianCPD(
+            std::vector<std::string> parent_node_label_order,
+            Eigen::MatrixXd& parameter_values)
+            : ContinuousCPD(std::move(parent_node_label_order)) {
 
-                NumericNode mean_node(mean);
-                std::unique_ptr<NumericNode> mean_ptr =
-                    std::make_unique<NumericNode>(std::move(mean_node));
+            this->init_from_matrix(parameter_values);
+        }
 
-                double variance = parameter_table(row, 1);
-                NumericNode variance_node(variance);
-                std::unique_ptr<NumericNode> variance_ptr =
-                    std::make_unique<NumericNode>(
-                        std::move(variance_node));
+        void GaussianCPD::init_from_matrix(Eigen::MatrixXd& parameter_values) {
+            for (int row = 0; row < parameter_values.rows(); row++) {
+                double mean = parameter_values(row, PARAMETER_INDEX::mean);
+                double variance = parameter_values(row, PARAMETER_INDEX::variance);
 
-                GaussianParameters parameters(std::move(mean_ptr),
-                                              std::move(variance_ptr));
+                std::vector<Node> parameters = {Node(mean), Node(variance)};
                 this->parameter_table.push_back(std::move(parameters));
             }
         }
@@ -34,9 +38,9 @@ namespace tomcat {
             Eigen::VectorXd samples(this->parameter_table.size());
 
             for (int i = 0; i < this->parameter_table.size(); i++) {
-                double mean = this->parameter_table[i].mean->get_assignment();
+                double mean = this->parameter_table[i][0].get_assignment()(0);
                 double variance =
-                    this->parameter_table[i].variance->get_assignment();
+                    this->parameter_table[i][1].get_assignment()(0);
                 double sample =
                     mean + gsl_ran_gaussian(generator.get(), variance);
                 samples(i) = sample;
@@ -48,8 +52,8 @@ namespace tomcat {
         void GaussianCPD::print(std::ostream& os) const {
             os << "Gaussian CPD: {\n";
             for (auto& parameters : this->parameter_table) {
-                os << " Gaussian(" << *(parameters.mean) << ","
-                   << *(parameters.variance) << ")"
+                os << " Gaussian(" << parameters[PARAMETER_INDEX::mean] << ","
+                   << parameters[PARAMETER_INDEX::variance] << ")"
                    << "\n";
             }
             os << "}";

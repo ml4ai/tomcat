@@ -35,9 +35,12 @@ add_library(tomcat_model_libs
         STATIC
         ${tomcat_model_headers}
         NodeMetadata.cpp
+        Node.cpp
+        RandomVariableNode.cpp
         CategoricalCPD.cpp
         GaussianCPD.cpp
-        DirichletCPD.cpp)
+        DirichletCPD.cpp
+        DynamicBayesNet.cpp)
 
 add_executable(TomcatModel main.cpp)
 target_link_libraries(TomcatModel PUBLIC tomcat_model_libs ${Boost_LIBRARIES} Eigen3::Eigen GSL::gsl GSL::gslcblas)

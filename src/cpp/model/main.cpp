@@ -1,12 +1,16 @@
-#include <eigen3/Eigen/Dense>
-#include <iostream>
 #include "CategoricalCPD.h"
-#include "NodeMetadata.h"
-#include "RandomVariableNode.h"
-#include "GaussianCPD.h"
 #include "DirichletCPD.h"
+#include "DynamicBayesNet.h"
+#include "GaussianCPD.h"
+#include "NodeMetadata.h"
+#include "Node.h"
+#include "RandomVariableNode.h"
+#include <eigen3/Eigen/Dense>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
+#include <iostream>
+#include <memory>
+#include <variant>
 
 using namespace Eigen;
 using namespace tomcat::model;
@@ -36,20 +40,20 @@ class B {
 };
 
 int main() {
-    //gsl_rng* gen = gsl_rng_alloc(gsl_rng_mt19937);
+    // gsl_rng* gen = gsl_rng_alloc(gsl_rng_mt19937);
     std::shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
     gsl_rng_set(gen.get(), time(0));
-    unsigned int k = gsl_ran_poisson (gen.get(), 3);
+    unsigned int k = gsl_ran_poisson(gen.get(), 3);
     std::cout << k << std::endl;
 
-    VectorXd  v(2);
+    VectorXd v(2);
     v << 0.54, 0.46;
     std::cout << v << std::endl;
 
     double* theta = new double[2];
     double* alpha = v.data();
     gsl_ran_dirichlet(gen.get(), 2, alpha, theta);
-    for(int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2; i++) {
         std::cout << theta[i] << " ";
     }
     std::cout << std::endl;
@@ -86,11 +90,8 @@ int main() {
     std::cout << metadata3 << std::endl;
 
     // Testing constant nodes
-    typedef Node<double> ConstantNode;
-    typedef Node<Eigen::VectorXd> VectorNode;
-
-    ConstantNode node1(2);
-    VectorNode node2(v);
+    Node node1(2);
+    Node node2(v);
 
     std::cout << node1 << std::endl;
     std::cout << node2 << std::endl;
@@ -115,16 +116,33 @@ int main() {
     // Testing RV nodes
     std::shared_ptr<NodeMetadata> metadata =
         std::make_shared<NodeMetadata>(metadata3);
-    std::unique_ptr<CategoricalCPD> cpd =
+    std::unique_ptr<CategoricalCPD> cat_cpd_ptr =
         std::make_unique<CategoricalCPD>(std::move(categorical_cpd));
-    std::unique_ptr<DirichletCPD> cpd2 =
+    std::unique_ptr<DirichletCPD> dir_cpd_ptr =
         std::make_unique<DirichletCPD>(std::move(dirichlet_cpd));
 
-    RandomVariableNode<double> rv_node1(metadata, std::move(cpd));
+    RandomVariableNode rv_node1(metadata, std::move(cat_cpd_ptr));
     std::cout << rv_node1 << std::endl;
 
-    RandomVariableNode<Eigen::VectorXd> rv_node2(metadata, std::move(cpd2));
+    RandomVariableNode rv_node2(metadata, std::move(dir_cpd_ptr));
     rv_node2.set_assignment(v);
     std::cout << rv_node2 << std::endl;
 
+    Node rv_node3 = static_cast<RandomVariableNode>(rv_node2);
+    std::cout << rv_node3 << std::endl;
+
+    DynamicBayesNet dbn;
+    dbn.add_node(node1);
+    dbn.add_node(node2);
+    dbn.add_node(std::move(rv_node2));
+    dbn.unroll();
+
+
+
+//    std::vector<std::variant<A*, B*>> multi_vec;
+//    std::variant<A*, B*> var1 (new A());
+//    multi_vec.push_back(var1);
+
+
+    //multi_vec.push_back(B());
 }

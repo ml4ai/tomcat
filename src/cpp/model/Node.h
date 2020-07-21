@@ -1,55 +1,68 @@
 #pragma once
 
 #include "NodeMetadata.h"
+#include <eigen3/Eigen/Dense>
 #include <iostream>
-#include <type_traits>
 
 namespace tomcat {
     namespace model {
 
         /**
-         * A node in a Dynamic Bayes Net (DBN). T must be the type of assignment
-         * of the node.
+         * A node in a Dynamic Bayes Net (DBN).
          */
-        template <typename T> class Node {
+        class Node {
           protected:
-            T assignment;
+            Eigen::VectorXd assignment;
 
           public:
             Node() {}
-            Node(T assignment) : assignment(std::move(assignment)) {}
+
+            /**
+             * Create a constant node with a numerical value assigned.
+             *
+             * @param value - node's constant assignment
+             */
+            Node(double value);
+
+            /**
+             * Create a constant node with a multidimensional value assigned.
+             *
+             * @param values - node's constant assignment
+             */
+            Node(Eigen::VectorXd values)
+                : assignment(std::move(values)) {}
             virtual ~Node() {}
+
+            /**
+             * Copy constructor
+             *
+             * @param node: node to be copied
+             */
+            Node(const Node& node) : assignment(node.assignment) {}
+
+            /**
+             * Move constructor
+             *
+             * @param node: node to be moved
+             */
+            Node(Node&& node) : assignment(std::move(node.assignment)) {}
 
             /**
              * Print a short description of the node.
              *
              * @param os: output stream
              */
-            virtual void print(std::ostream& os) const {
-                // This is not a good design but this differentiation between
-                // types is only needed for log purposes so far. If there are
-                // other specialized behaviours between the different types in
-                // the future, subclasses will be created and this method
-                // implemented in each one of them.
-                if constexpr (std::is_same<T, Eigen::VectorXd>::value) {
-                    os << "Node(["
-                       << static_cast<Eigen::VectorXd>(this->assignment)
-                              .transpose()
-                       << "])";
-                }
-                else {
-                    os << "Node(" << this->assignment << ")";
-                }
-            }
+            virtual void print(std::ostream& os) const;
 
             friend std::ostream& operator<<(std::ostream& os,
-                                            const Node<T>& node) {
+                                            const Node& node) {
                 node.print(os);
                 return os;
             };
 
             // Getters
-            const T& get_assignment() const { return assignment; }
+            const Eigen::VectorXd& get_assignment() const { return assignment; }
+
         };
 
     } // namespace model

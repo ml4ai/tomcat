@@ -8,8 +8,6 @@ namespace tomcat {
             Eigen::MatrixXd& cpd_table)
             : CPD(std::move(parent_node_label_order)) {
 
-            typedef Node<Eigen::VectorXd> VectorNode;
-
             for (int row = 0; row < cpd_table.rows(); row++) {
                 Eigen::VectorXd probabilities(cpd_table.cols());
 
@@ -17,11 +15,9 @@ namespace tomcat {
                     probabilities(col) = cpd_table(row, col);
                 }
 
-                VectorNode probabilities_node(std::move(probabilities));
-                std::unique_ptr<VectorNode> probabilities_ptr =
-                    std::make_unique<VectorNode>(
-                        std::move(probabilities_node));
-                this->probability_table.push_back(std::move(probabilities_ptr));
+                Node probabilities_node(std::move(probabilities));
+                this->probability_table.push_back(
+                    std::move(probabilities_node));
             }
         }
 
@@ -30,10 +26,8 @@ namespace tomcat {
             Eigen::VectorXd samples(this->probability_table.size());
 
             for (int i = 0; i < this->probability_table.size(); i++) {
-                double* probabilities =
-                    static_cast<Eigen::VectorXd>(
-                        this->probability_table[i]->get_assignment())
-                        .data();
+                const double* probabilities =
+                    this->probability_table[i].get_assignment().data();
 
                 unsigned int* sample_ptr = new unsigned int[1];
                 gsl_ran_multinomial(generator.get(),
@@ -51,7 +45,7 @@ namespace tomcat {
         void CategoricalCPD::print(std::ostream& os) const {
             os << "Categorical CPD: {\n";
             for (auto& probabilities : this->probability_table) {
-                os << " " << *probabilities << "\n";
+                os << " " << probabilities << "\n";
             }
             os << "}";
         }

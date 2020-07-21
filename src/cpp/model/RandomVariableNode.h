@@ -14,7 +14,7 @@ namespace tomcat {
          * assignment of this node can change as we sample from it's posterior
          * distribution over the other nodes' assignments in the unrolled DBN.
          */
-        template <typename T> class RandomVariableNode : public Node<T> {
+        class RandomVariableNode : public Node {
           protected:
             // Metadata is a shared pointer because each timed instance of a
             // node in the unrolled DBN will share the same metadata.
@@ -27,7 +27,6 @@ namespace tomcat {
             std::unique_ptr<CPD> cpd;
 
             int time_step;
-            T assignment;
 
           public:
             /**
@@ -42,44 +41,39 @@ namespace tomcat {
                                int time_step = 0)
                 : metadata(std::move(metadata)), cpd(std::move(cpd)),
                   time_step(time_step) {}
-            virtual ~RandomVariableNode() {}
+
+            ~RandomVariableNode() {}
 
             /**
-             * Return the node's assignment.
-             *
-             * @return value currently assigned to the node
+             * Copy constructor
+             * @param node: node to be moved
              */
-            T get_assignment() const { return this->assignment; };
+            RandomVariableNode(RandomVariableNode& node)
+                : metadata(node.metadata), cpd(std::move(node.cpd)),
+                  time_step(node.time_step), Node(node) {}
+
+            /**
+             * Move constructor
+             * @param node: node to be moved
+             */
+            RandomVariableNode(RandomVariableNode&& node)
+                : metadata(std::move(node.metadata)), cpd(std::move(node.cpd)),
+                  time_step(node.time_step), Node(std::move(node)) {}
 
             /**
              * Print a short description of the node.
              *
              * @param os: output stream
              */
-            void print(std::ostream& os) const {
-                // This is not a good design but this differentiation between
-                // types is only needed for log purposes so far. If there are
-                // other specialized behaviours between the different types in
-                // the future, subclasses will be created and this method
-                // implemented in each one of them.
-                if constexpr (std::is_same<T, Eigen::VectorXd>::value) {
-                    os << "RV(" << this->metadata->label;
-                    os << ", ";
-                    os << this->time_step;
-                    os << ", [";
-                    os << static_cast<Eigen::VectorXd>(this->assignment)
-                           .transpose();
-                    os << "])";
-                }
-                else {
-                    os << "RV(" << this->metadata->label;
-                    os << ", ";
-                    os << this->time_step;
-                    os << ", ";
-                    os << this->assignment;
-                    os << ")";
-                }
-            };
+            void print(std::ostream& os) const override;
+
+            /**
+             * Set assignment from a single numeric value if samples from this
+             * node is 1-dimensional.
+             *
+             * @param assignment - numeric value
+             */
+            void set_assignment(double assignment);
 
             // Getters
             const std::shared_ptr<NodeMetadata>& get_metadata() const {
@@ -91,7 +85,7 @@ namespace tomcat {
             int get_time_step() const { return time_step; }
 
             // Setters
-            void set_assignment(T assignment) {
+            void set_assignment(Eigen::VectorXd assignment) {
                 this->assignment = std::move(assignment);
             }
         };

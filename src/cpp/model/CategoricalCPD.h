@@ -46,8 +46,7 @@ namespace tomcat {
          */
         class CategoricalCPD : public CPD {
           private:
-            std::vector<std::unique_ptr<Node<Eigen::VectorXd>>>
-                probability_table;
+            std::vector<Node> probability_table;
 
           public:
             /**
@@ -58,9 +57,8 @@ namespace tomcat {
              * @param cpd_table: list of probabilities determined other by
              * nodes' assignments
              */
-            CategoricalCPD(
-                std::vector<std::string> parent_node_label_order,
-                std::vector<std::unique_ptr<Node<Eigen::VectorXd>>> cpd_table)
+            CategoricalCPD(std::vector<std::string> parent_node_label_order,
+                           std::vector<Node> cpd_table)
                 : CPD(std::move(parent_node_label_order)),
                   probability_table(std::move(cpd_table)) {}
 

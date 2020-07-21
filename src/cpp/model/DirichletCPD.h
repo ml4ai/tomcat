@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CPD.h"
+#include "ContinuousCPD.h"
 #include "Node.h"
 #include <iostream>
 #include <memory>
@@ -47,9 +47,9 @@ namespace tomcat {
          * |------------------------------------|
          */
 
-        class DirichletCPD : public CPD {
+        class DirichletCPD : public ContinuousCPD {
           private:
-            std::vector<std::unique_ptr<Node<Eigen::VectorXd>>> parameter_table;
+            int alpha_size;
 
           public:
             /**
@@ -61,23 +61,19 @@ namespace tomcat {
              * determined by other nodes' assignments
              */
             DirichletCPD(std::vector<std::string> parent_node_label_order,
-                         std::vector<std::unique_ptr<Node<Eigen::VectorXd>>>
-                             parameter_table)
-                : CPD(std::move(parent_node_label_order)),
-                  parameter_table(std::move(parameter_table)) {}
+                         std::vector<Node> parameter_table);
 
             /**
-             * Transform a table of numeric values for \f$\alpha\f$ to a list of
-             * constant vector nodes to keep static and node dependent CPDs
-             * compatible.
+             * Create a dirichlet distribution from a matrix of parameter
+             * values.
              *
              * @param parent_node_label_order: evaluation order of the parent
              * nodes assignment for correct table indexing
-             * @param parameter_table: matrix containing constant numerical
+             * @param parameter_values: matrix containing constant numerical
              * values for \f$\alpha\f$
              */
             DirichletCPD(std::vector<std::string> parent_node_label_order,
-                         Eigen::MatrixXd& parameter_table);
+                         Eigen::MatrixXd& parameter_values);
 
             /**
              * Move constructor. There's no copy constructor because the cpd
@@ -86,11 +82,20 @@ namespace tomcat {
              *
              * @param cpd: dirichlet CPD for copy
              */
-            DirichletCPD(DirichletCPD&& cpd)
-                : CPD(std::move(cpd.parent_node_label_order)),
-                  parameter_table(std::move(cpd.parameter_table)) {}
+            DirichletCPD(DirichletCPD&& cpd) : ContinuousCPD(std::move(cpd)) {}
 
             ~DirichletCPD() {}
+
+            /**
+             * Transform a table of numeric values for \f$\alpha\f$ to a list of
+             * constant vector nodes to keep static and node dependent CPDs
+             * compatible.
+             *
+             * @param parameter_table: matrix containing constant numerical
+             * values for \f$\alpha\f$
+             */
+            virtual void
+            init_from_matrix(Eigen::MatrixXd& parameter_values) override;
 
             /**
              * Sample a vector for each combination of parent nodes' assignments
