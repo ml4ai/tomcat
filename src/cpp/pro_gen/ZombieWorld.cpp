@@ -54,7 +54,7 @@ void ZombieWorld::generateAABBGrid() {
             Pos bottomRight(
                 AABB_size, 3 + AABB_size / 2, topLeft.getZ() + AABB_size - 1);
 
-            chooseZombieworldAABB(
+            this->chooseZombieworldAABB(
                 idCtr,
                 topLeft,
                 bottomRight); // Choose the AABB to add. DOESN'T change
@@ -75,7 +75,7 @@ void ZombieWorld::generateAABBGrid() {
             Pos bottomRight(prevBottomRight);
             bottomRight.setX(topLeft.getX() + AABB_size - 1);
 
-            chooseZombieworldAABB(
+            this->chooseZombieworldAABB(
                 idCtr,
                 topLeft,
                 bottomRight); // Choose the AABB to add. DOESN'T change
