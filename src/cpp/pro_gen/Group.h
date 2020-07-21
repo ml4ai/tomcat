@@ -53,5 +53,5 @@ class Group : public AABB {
     /**
      * @brief Destroy the Group object
      */
-    ~Group();
+    virtual ~Group();
 };

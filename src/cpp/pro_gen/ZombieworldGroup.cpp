@@ -12,6 +12,7 @@ void ZombieworldGroup::decorate(Pos& firstTopLeft, Pos& firstBottomRight) {
     this->createAABB(firstTopLeft, firstBottomRight);
     this->generateAllDoorsInAABB();
     this->addLights();
+    this->addLevers();
 }
 
 void ZombieworldGroup::addLights() {
