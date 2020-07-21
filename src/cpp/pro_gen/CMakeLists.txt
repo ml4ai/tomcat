@@ -19,7 +19,7 @@ find_package(nlohmann_json REQUIRED)
 file(GLOB pro_gen_headers CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 file(GLOB pro_gen_sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 add_library(progen STATIC ${pro_gen_headers} Pos.cpp AABB.cpp World.cpp
-    Block.cpp ProceduralGenerator.cpp ZombieworldPit.cpp Group.cpp ZombieworldGenerator.cpp GridworldGenerator.cpp)
+    Block.cpp Group.cpp ProceduralGenerator.cpp ZombieworldPit.cpp ZombieworldGroup.cpp ZombieworldGenerator.cpp GridworldGenerator.cpp)
 target_link_libraries(progen ${Boost_LIBRARIES} nlohmann_json::nlohmann_json)
 add_executable(generator generator.cpp)
 target_link_libraries(generator progen)

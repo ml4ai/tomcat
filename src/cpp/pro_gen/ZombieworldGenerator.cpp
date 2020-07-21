@@ -1,58 +1,6 @@
 #include "ZombieworldGenerator.h"
 using namespace std;
 
-void ZombieWorldGenerator::addLevers() {
-    for (auto& aabb : this->getWorld().getAABBList()) {
-        Group* g = dynamic_cast<Group*>(aabb);
-
-        if (g) {
-            AABB* aabbTwo = (*g).getAABB(2);
-
-            if (aabbTwo != nullptr) {
-
-                Pos topEdgeMidpoint = (*aabbTwo).getEdgeMidpointAtBase().at(0);
-                topEdgeMidpoint.shiftY(2);
-                topEdgeMidpoint.shiftX(-1);
-                topEdgeMidpoint.shiftZ(-1);
-
-                (*g).addBlock(*(new Block("lever", topEdgeMidpoint)));
-            }
-        }
-    }
-}
-
-void ZombieWorldGenerator::addGroupOfAABB(int idCtr,
-                                          Pos& firstTopLeft,
-                                          Pos& firstBottomRight) {
-
-    World& world = this->getWorld();
-    world.addAABB(*(new Group(idCtr)));
-
-    Group* g = dynamic_cast<Group*>((world.getAABBList()).back());
-
-    (*g).addAABB(*(new AABB(
-        1, "room", "planks", firstTopLeft, firstBottomRight, true, true)));
-
-    if (!(idCtr == 1 || idCtr == 7 || idCtr == 9)) {
-
-        Pos secondTopLeft(firstTopLeft);
-        secondTopLeft.shiftX(3);
-        secondTopLeft.shiftZ(9);
-
-        Pos secondBottomRight(firstBottomRight);
-        secondBottomRight.shiftX(3);
-        secondBottomRight.shiftZ(9);
-
-        (*g).addAABB(*(new AABB(2,
-                                "room",
-                                "planks",
-                                secondTopLeft,
-                                secondBottomRight,
-                                true,
-                                true)));
-    }
-}
-
 void ZombieWorldGenerator::chooseZombieworldAABB(int idCtr,
                                                  Pos& topLeft,
                                                  Pos& bottomRight) {
@@ -78,10 +26,8 @@ void ZombieWorldGenerator::chooseZombieworldAABB(int idCtr,
             world.addAABB(*(new ZombieworldPit(idCtr, newTopLeft, "lava")));
         }
     }
-
     else {
-
-        this->addGroupOfAABB(idCtr, topLeft, bottomRight);
+        world.addAABB(*(new ZombieworldGroup(idCtr, topLeft, bottomRight)));
     }
 }
 
@@ -94,7 +40,7 @@ void ZombieWorldGenerator::generateAABBGrid() {
     Pos prevTopLeft(1, 3, 1);
     Pos prevBottomRight(AABB_size, 3 + AABB_size / 2, AABB_size);
 
-    this->addGroupOfAABB(idCtr, prevTopLeft, prevBottomRight);
+    world.addAABB(*(new ZombieworldGroup(idCtr, prevTopLeft, prevBottomRight)));
 
     // Use relative coordinates for the "previous" AABB to generate the rest
     // at each step
@@ -144,26 +90,6 @@ void ZombieWorldGenerator::generateAABBGrid() {
                                            // change the coordinates
         }
     }
-}
-
-void ZombieWorldGenerator::decorate() {
-    World& world = this->getWorld();
-
-    // Add doors and lights
-    for (auto& aabb : world.getAABBList()) {
-        if (strcmp((*aabb).getType().c_str(), "pit") != 0) {
-            (*aabb).generateAllDoorsInAABB();
-
-            Group* g = dynamic_cast<Group*>(aabb);
-            if (g) {
-                for (auto& aabbInGroup : (*g).getAABBList())
-                    (*aabbInGroup).generateBox("glowstone", 2, 2, 5, 0, 2, 2);
-            }
-        }
-    }
-
-    // Add levers
-    this->addLevers();
 }
 
 void ZombieWorldGenerator::generateBoundingWalls() {
@@ -224,7 +150,6 @@ void ZombieWorldGenerator::generateBoundingWalls() {
 ZombieWorldGenerator::ZombieWorldGenerator(int seed) {
     this->setRandom(seed);
     this->generateAABBGrid();
-    this->decorate();
     this->generateBoundingWalls();
 }
 

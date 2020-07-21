@@ -91,3 +91,5 @@ string Group::toTSV() {
 
     return retval;
 }
+
+Group::~Group() {}

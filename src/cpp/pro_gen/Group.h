@@ -49,4 +49,9 @@ class Group : public AABB {
      * @param id The id to give the Group object.
      */
     Group(int id);
+
+    /**
+     * @brief Destroy the Group object
+     */
+    ~Group();
 };
