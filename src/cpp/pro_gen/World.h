@@ -63,11 +63,11 @@ class World {
     std::string virtual toJSON();
 
     /**
-    * @brief Writes the world's JSON and TSV output to the given filepaths.
-    *
-    * @param jsonPath Path to store json
-    * @param tsvPath Path to store tsv
-    */
+     * @brief Writes the world's JSON and TSV output to the given filepaths.
+     *
+     * @param jsonPath Path to store json
+     * @param tsvPath Path to store tsv
+     */
     void writeToFile(std::string jsonPath, std::string tsvPath);
 
     /**

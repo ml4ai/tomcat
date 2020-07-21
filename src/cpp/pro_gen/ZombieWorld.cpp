@@ -2,8 +2,8 @@
 using namespace std;
 
 void ZombieWorld::chooseZombieworldAABB(int idCtr,
-                                                 Pos& topLeft,
-                                                 Pos& bottomRight) {
+                                        Pos& topLeft,
+                                        Pos& bottomRight) {
 
     mt19937_64& gen = this->getRandom();
 
@@ -117,11 +117,11 @@ void ZombieWorld::generateBoundingWalls() {
     separator1TopLeft.setY(boundaryTopLeft.getY());
 
     this->addAABB(AABB(-1,
-                             "wall",
-                             "cobblestone",
-                             separator1TopLeft,
-                             separator1BottomRight,
-                             false));
+                       "wall",
+                       "cobblestone",
+                       separator1TopLeft,
+                       separator1BottomRight,
+                       false));
 
     AABB separatorWall1 = this->getAABBList().back();
     separatorWall1.generateBox("fence", 0, 0, 3, 2, 1, 1);
@@ -135,11 +135,11 @@ void ZombieWorld::generateBoundingWalls() {
     separator2TopLeft.setY(boundaryTopLeft.getY());
 
     this->addAABB(AABB(-2,
-                             "wall",
-                             "cobblestone",
-                             separator2TopLeft,
-                             separator2BottomRight,
-                             false));
+                       "wall",
+                       "cobblestone",
+                       separator2TopLeft,
+                       separator2BottomRight,
+                       false));
     AABB separatorWall2 = this->getAABBList().back();
     separatorWall2.generateBox("fence", 1, 1, 3, 2, 0, 0);
 }

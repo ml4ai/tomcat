@@ -35,7 +35,6 @@ class ZombieWorld : public World {
      */
     void generateBoundingWalls();
 
-
   public:
     /**
      * @brief Construct a new Zombie World Generator object with the internal

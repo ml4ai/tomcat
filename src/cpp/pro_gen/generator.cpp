@@ -7,7 +7,6 @@
 using namespace std;
 namespace po = boost::program_options;
 
-
 /**
  * @brief Directive method to create the world and write the JSON and TSV
  * output to file.

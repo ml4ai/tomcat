@@ -1,9 +1,7 @@
 #include "GridWorld.h"
 using namespace std;
 
-void GridWorld::addRandomVictim(AABB& aabb,
-                                         Pos& pos,
-                                         double greenBias) {
+void GridWorld::addRandomVictim(AABB& aabb, Pos& pos, double greenBias) {
 
     mt19937_64& gen = this->getRandom();
 
@@ -28,7 +26,8 @@ void GridWorld::generateAABBGrid() {
     Pos topLeft(1, 3, 1);
     Pos bottomRight(AABB_size, 3 + AABB_size, AABB_size);
 
-    this->addAABB(AABB(idCtr, "room", material, topLeft, bottomRight, true, false));
+    this->addAABB(
+        AABB(idCtr, "room", material, topLeft, bottomRight, true, false));
     AABB prevAABB = this->getAABBList().back();
 
     // Use relative coordinates for the "previous" AABB to generate the rest at
@@ -45,12 +44,12 @@ void GridWorld::generateAABBGrid() {
             Pos newBottomRight(
                 AABB_size, 3 + AABB_size, newTopLeft.getZ() + AABB_size);
             this->addAABB(AABB(idCtr,
-                                     "room",
-                                     material,
-                                     newTopLeft,
-                                     newBottomRight,
-                                     true,
-                                     false));
+                               "room",
+                               material,
+                               newTopLeft,
+                               newBottomRight,
+                               true,
+                               false));
             prevAABB = this->getAABBList().back();
         }
         else {
@@ -62,12 +61,12 @@ void GridWorld::generateAABBGrid() {
             newBottomRight.setX(newTopLeft.getX() + AABB_size);
 
             this->addAABB(AABB(idCtr,
-                                     "room",
-                                     material,
-                                     newTopLeft,
-                                     newBottomRight,
-                                     true,
-                                     false));
+                               "room",
+                               material,
+                               newTopLeft,
+                               newBottomRight,
+                               true,
+                               false));
             prevAABB = this->getAABBList().back();
         }
     }
@@ -98,10 +97,7 @@ void GridWorld::generateBlocks() {
     }
 }
 
-GridWorld::GridWorld(int N,
-                                       int separation,
-                                       int AABB_size,
-                                       int seed) {
+GridWorld::GridWorld(int N, int separation, int AABB_size, int seed) {
     this->setRandom(seed);
     this->N = N;
     this->sep = separation;
