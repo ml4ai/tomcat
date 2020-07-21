@@ -1,4 +1,5 @@
 #pragma once
+
 #include "AABB.h"
 
 class Group : public AABB {

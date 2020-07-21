@@ -3,6 +3,7 @@
  * implemented as part of the World class
  */
 #pragma once
+
 #include "AABB.h"
 #include <nlohmann/json.hpp>
 
