@@ -11,10 +11,10 @@ void GridWorld::addRandomVictim(AABB& aabb,
     double greenProbability = greenBias * 100;
     int randomInt = dist(gen);
     if (randomInt <= greenProbability) {
-        aabb.addBlock(*(new Block("prismarine", pos, "victim")));
+        aabb.addBlock(Block("prismarine", pos, "victim"));
     }
     else {
-        aabb.addBlock(*(new Block("gold", pos, "victim")));
+        aabb.addBlock(Block("gold", pos, "victim"));
     }
 }
 
@@ -28,9 +28,8 @@ void GridWorld::generateAABBGrid() {
     Pos topLeft(1, 3, 1);
     Pos bottomRight(AABB_size, 3 + AABB_size, AABB_size);
 
-    this->addAABB(*(
-        new AABB(idCtr, "room", material, topLeft, bottomRight, true, false)));
-    AABB prevAABB = *(this->getAABBList().back());
+    this->addAABB(AABB(idCtr, "room", material, topLeft, bottomRight, true, false));
+    AABB prevAABB = this->getAABBList().back();
 
     // Use relative coordinates for the "previous" AABB to generate the rest at
     // each step
@@ -45,15 +44,14 @@ void GridWorld::generateAABBGrid() {
 
             Pos newBottomRight(
                 AABB_size, 3 + AABB_size, newTopLeft.getZ() + AABB_size);
-            this->addAABB(*(new AABB(idCtr,
+            this->addAABB(AABB(idCtr,
                                      "room",
                                      material,
                                      newTopLeft,
                                      newBottomRight,
                                      true,
-                                     false)));
-            prevAABB = *(this->getAABBList().back());
-            ;
+                                     false));
+            prevAABB = this->getAABBList().back();
         }
         else {
             // Condition for the next AABB in the current row
@@ -63,14 +61,14 @@ void GridWorld::generateAABBGrid() {
             Pos newBottomRight = prevAABB.getBottomRight();
             newBottomRight.setX(newTopLeft.getX() + AABB_size);
 
-            this->addAABB(*(new AABB(idCtr,
+            this->addAABB(AABB(idCtr,
                                      "room",
                                      material,
                                      newTopLeft,
                                      newBottomRight,
                                      true,
-                                     false)));
-            prevAABB = *(this->getAABBList().back());
+                                     false));
+            prevAABB = this->getAABBList().back();
         }
     }
 }
@@ -95,8 +93,8 @@ void GridWorld::generateVictimInAABB(AABB& aabb) {
 void GridWorld::generateBlocks() {
 
     for (auto& aabb : this->getAABBList()) {
-        (*aabb).generateAllDoorsInAABB();
-        generateVictimInAABB(*aabb);
+        aabb.generateAllDoorsInAABB();
+        generateVictimInAABB(aabb);
     }
 }
 

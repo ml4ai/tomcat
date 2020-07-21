@@ -15,18 +15,18 @@ void ZombieWorld::chooseZombieworldAABB(int idCtr,
 
         // Choose between an air, water or lava pit
         if (rand <= 25) {
-            this->addAABB(*(new ZombieworldPit(idCtr, topLeft, "air")));
+            this->addAABB(ZombieworldPit(idCtr, topLeft, "air"));
         }
 
         else if (rand > 25 && rand <= 75) {
-            this->addAABB(*(new ZombieworldPit(idCtr, newTopLeft, "water")));
+            this->addAABB(ZombieworldPit(idCtr, newTopLeft, "water"));
         }
         else {
-            this->addAABB(*(new ZombieworldPit(idCtr, newTopLeft, "lava")));
+            this->addAABB(ZombieworldPit(idCtr, newTopLeft, "lava"));
         }
     }
     else {
-        this->addAABB(*(new ZombieworldGroup(idCtr, topLeft, bottomRight)));
+        this->addAABB(ZombieworldGroup(idCtr, topLeft, bottomRight));
     }
 }
 
@@ -38,7 +38,7 @@ void ZombieWorld::generateAABBGrid() {
     Pos prevTopLeft(1, 3, 1);
     Pos prevBottomRight(AABB_size, 3 + AABB_size / 2, AABB_size);
 
-    this->addAABB(*(new ZombieworldGroup(idCtr, prevTopLeft, prevBottomRight)));
+    this->addAABB(ZombieworldGroup(idCtr, prevTopLeft, prevBottomRight));
 
     // Use relative coordinates for the "previous" AABB to generate the rest
     // at each step
@@ -91,22 +91,22 @@ void ZombieWorld::generateAABBGrid() {
 }
 
 void ZombieWorld::generateBoundingWalls() {
-    AABB* firstAABB = this->getAABBList().front();
-    AABB* lastAABB = this->getAABBList().back();
+    AABB firstAABB = this->getAABBList().front();
+    AABB lastAABB = this->getAABBList().back();
 
     // Create boundary
-    Pos boundaryTopLeft((*firstAABB).getTopLeft());
+    Pos boundaryTopLeft(firstAABB.getTopLeft());
     boundaryTopLeft.shiftX(-4);
     boundaryTopLeft.setY(-3);
     boundaryTopLeft.shiftZ(-4);
 
-    Pos boundaryBottomRight((*lastAABB).getBottomRight());
+    Pos boundaryBottomRight(lastAABB.getBottomRight());
     boundaryBottomRight.shiftX(4);
     boundaryBottomRight.setY(13);
     boundaryBottomRight.shiftZ(4);
 
-    this->addAABB(*(new AABB(
-        0, "boundary", "cobblestone", boundaryTopLeft, boundaryBottomRight)));
+    this->addAABB(AABB(
+        0, "boundary", "cobblestone", boundaryTopLeft, boundaryBottomRight));
 
     // Create Internal Separator 1
     Pos separator1BottomRight(boundaryBottomRight);
@@ -116,15 +116,15 @@ void ZombieWorld::generateBoundingWalls() {
     separator1TopLeft.shiftZ(-50);
     separator1TopLeft.setY(boundaryTopLeft.getY());
 
-    this->addAABB(*(new AABB(-1,
+    this->addAABB(AABB(-1,
                              "wall",
                              "cobblestone",
                              separator1TopLeft,
                              separator1BottomRight,
-                             false)));
+                             false));
 
-    AABB* separatorWall1 = this->getAABBList().back();
-    (*separatorWall1).generateBox("fence", 0, 0, 3, 2, 1, 1);
+    AABB separatorWall1 = this->getAABBList().back();
+    separatorWall1.generateBox("fence", 0, 0, 3, 2, 1, 1);
 
     // Create Internal Separator 2
     Pos separator2BottomRight(separator1TopLeft);
@@ -134,14 +134,14 @@ void ZombieWorld::generateBoundingWalls() {
     separator2TopLeft.shiftX(-25);
     separator2TopLeft.setY(boundaryTopLeft.getY());
 
-    this->addAABB(*(new AABB(-2,
+    this->addAABB(AABB(-2,
                              "wall",
                              "cobblestone",
                              separator2TopLeft,
                              separator2BottomRight,
-                             false)));
-    AABB* separatorWall2 = this->getAABBList().back();
-    (*separatorWall2).generateBox("fence", 1, 1, 3, 2, 0, 0);
+                             false));
+    AABB separatorWall2 = this->getAABBList().back();
+    separatorWall2.generateBox("fence", 1, 1, 3, 2, 0, 0);
 }
 
 ZombieWorld::ZombieWorld(int seed) {
