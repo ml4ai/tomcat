@@ -1,4 +1,4 @@
-#include "Gridworld.h"
+#include "GridWorld.h"
 #include "ZombieWorld.h"
 #include <boost/program_options.hpp>
 #include <fstream>
