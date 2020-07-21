@@ -11,7 +11,7 @@ void Group::addAABB(AABB& aabb) {
 
 void Group::generateAllDoorsInAABB() {
     for (auto& aabb : this->aabbList) {
-        (*aabb).generateAllDoorsInAABB();
+        aabb->generateAllDoorsInAABB();
     }
 }
 
@@ -81,12 +81,12 @@ void Group::recalculateGroupBoundaries() {
 string Group::toTSV() {
     string retval = "";
 
-    for (auto& aabb : this->aabbList) {
-        retval += (*aabb).toTSV();
+    for (auto aabb : this->aabbList) {
+        retval += aabb->toTSV();
     }
 
-    for (auto& block : (this->getBlockList())) {
-        retval += (*block).toTSV() + "\n";
+    for (auto block : (this->getBlockList())) {
+        retval += block.toTSV() + "\n";
     }
 
     return retval;

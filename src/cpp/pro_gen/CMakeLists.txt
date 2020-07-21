@@ -27,11 +27,10 @@ add_library(
   World.cpp
   Block.cpp
   Group.cpp
-  ProceduralGenerator.cpp
   ZombieworldPit.cpp
   ZombieworldGroup.cpp
-  ZombieworldGenerator.cpp
-  GridworldGenerator.cpp)
+  ZombieWorld.cpp
+  GridWorld.cpp)
 target_link_libraries(progen ${Boost_LIBRARIES} nlohmann_json::nlohmann_json)
 add_executable(generator generator.cpp)
 target_link_libraries(generator progen)

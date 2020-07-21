@@ -3,6 +3,7 @@
  * implemented as part of the Pos class
  */
 #pragma once
+
 #include <string>
 
 /**

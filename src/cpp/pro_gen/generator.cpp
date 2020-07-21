@@ -1,32 +1,11 @@
-#include "GridworldGenerator.h"
-#include "ZombieworldGenerator.h"
+#include "GridWorld.h"
+#include "ZombieWorld.h"
 #include <boost/program_options.hpp>
 #include <fstream>
 #include <iostream>
 
 using namespace std;
 namespace po = boost::program_options;
-
-/**
- * @brief Writes the world's JSON and TSV output to the given filepaths.
- *
- * @param jsonPath Path to store json
- * @param tsvPath Path to store tsv
- * @param world world that needs to be stored.
- */
-void writeToFile(string jsonPath, string tsvPath, World& world) {
-    cout << "Writing to file..." << endl;
-
-    // Write JSON
-    ofstream outputJSON(jsonPath, ios::out);
-    outputJSON << world.toJSON();
-    outputJSON.close();
-
-    // Write TSV
-    ofstream outputTSV(tsvPath, ios::out);
-    outputTSV << world.toTSV();
-    outputTSV.close();
-}
 
 /**
  * @brief Directive method to create the world and write the JSON and TSV
@@ -86,17 +65,15 @@ int main(int argc, char* argv[]) {
 
     cout << "Generating world..." << endl;
     if (choice == 0) {
-        ZombieWorldGenerator zombieGen(seed);
-        World& world = zombieGen.getWorld();
-        writeToFile(jsonPath, tsvPath, world);
+        ZombieWorld world(seed);
+        world.writeToFile(jsonPath, tsvPath);
     }
     else if (choice == 1) {
         int N = vm["N"].as<int>();
         int sep = vm["sep"].as<int>();
         int AABB_size = vm["AABB_size"].as<int>();
-        GridworldGenerator gridGen(N, sep, AABB_size, seed);
-        World& world = gridGen.getWorld();
-        writeToFile(jsonPath, tsvPath, world);
+        GridWorld world(N, sep, AABB_size, seed);
+        world.writeToFile(jsonPath, tsvPath);
     }
     else {
         cout << "You choice is invalid" << endl;

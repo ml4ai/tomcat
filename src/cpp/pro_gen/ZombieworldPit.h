@@ -13,7 +13,6 @@ class ZombieworldPit : public AABB {
     void decorateWater();
     void decorateLava();
 
-
   public:
     /**
      * @brief Construct a new Pit object
@@ -25,7 +24,7 @@ class ZombieworldPit : public AABB {
      * @param bottomRight The coordinates of the bottom right of the AABB
      * from the top view of the X-Z plane. Y coordinate should be maximum here.
      */
-    ZombieworldPit(int id,  Pos& topLeft, std::string fluid);
+    ZombieworldPit(int id, Pos& topLeft, std::string fluid);
 
     /**
      * @brief Destroy the Pit object
