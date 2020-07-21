@@ -1,11 +1,10 @@
-#include "ZombieworldGenerator.h"
+#include "ZombieWorld.h"
 using namespace std;
 
-void ZombieWorldGenerator::chooseZombieworldAABB(int idCtr,
+void ZombieWorld::chooseZombieworldAABB(int idCtr,
                                                  Pos& topLeft,
                                                  Pos& bottomRight) {
 
-    World& world = this->getWorld();
     mt19937_64& gen = this->getRandom();
 
     if (idCtr % 2 == 0) {
@@ -16,23 +15,22 @@ void ZombieWorldGenerator::chooseZombieworldAABB(int idCtr,
 
         // Choose between an air, water or lava pit
         if (rand <= 25) {
-            world.addAABB(*(new ZombieworldPit(idCtr, topLeft, "air")));
+            this->addAABB(*(new ZombieworldPit(idCtr, topLeft, "air")));
         }
 
         else if (rand > 25 && rand <= 75) {
-            world.addAABB(*(new ZombieworldPit(idCtr, newTopLeft, "water")));
+            this->addAABB(*(new ZombieworldPit(idCtr, newTopLeft, "water")));
         }
         else {
-            world.addAABB(*(new ZombieworldPit(idCtr, newTopLeft, "lava")));
+            this->addAABB(*(new ZombieworldPit(idCtr, newTopLeft, "lava")));
         }
     }
     else {
-        world.addAABB(*(new ZombieworldGroup(idCtr, topLeft, bottomRight)));
+        this->addAABB(*(new ZombieworldGroup(idCtr, topLeft, bottomRight)));
     }
 }
 
-void ZombieWorldGenerator::generateAABBGrid() {
-    World& world = this->getWorld();
+void ZombieWorld::generateAABBGrid() {
     mt19937_64& gen = this->getRandom();
 
     // Add the first one
@@ -40,7 +38,7 @@ void ZombieWorldGenerator::generateAABBGrid() {
     Pos prevTopLeft(1, 3, 1);
     Pos prevBottomRight(AABB_size, 3 + AABB_size / 2, AABB_size);
 
-    world.addAABB(*(new ZombieworldGroup(idCtr, prevTopLeft, prevBottomRight)));
+    this->addAABB(*(new ZombieworldGroup(idCtr, prevTopLeft, prevBottomRight)));
 
     // Use relative coordinates for the "previous" AABB to generate the rest
     // at each step
@@ -92,10 +90,9 @@ void ZombieWorldGenerator::generateAABBGrid() {
     }
 }
 
-void ZombieWorldGenerator::generateBoundingWalls() {
-    World& world = this->getWorld();
-    AABB* firstAABB = world.getAABBList().front();
-    AABB* lastAABB = world.getAABBList().back();
+void ZombieWorld::generateBoundingWalls() {
+    AABB* firstAABB = this->getAABBList().front();
+    AABB* lastAABB = this->getAABBList().back();
 
     // Create boundary
     Pos boundaryTopLeft((*firstAABB).getTopLeft());
@@ -108,7 +105,7 @@ void ZombieWorldGenerator::generateBoundingWalls() {
     boundaryBottomRight.setY(13);
     boundaryBottomRight.shiftZ(4);
 
-    world.addAABB(*(new AABB(
+    this->addAABB(*(new AABB(
         0, "boundary", "cobblestone", boundaryTopLeft, boundaryBottomRight)));
 
     // Create Internal Separator 1
@@ -119,14 +116,14 @@ void ZombieWorldGenerator::generateBoundingWalls() {
     separator1TopLeft.shiftZ(-50);
     separator1TopLeft.setY(boundaryTopLeft.getY());
 
-    world.addAABB(*(new AABB(-1,
+    this->addAABB(*(new AABB(-1,
                              "wall",
                              "cobblestone",
                              separator1TopLeft,
                              separator1BottomRight,
                              false)));
 
-    AABB* separatorWall1 = world.getAABBList().back();
+    AABB* separatorWall1 = this->getAABBList().back();
     (*separatorWall1).generateBox("fence", 0, 0, 3, 2, 1, 1);
 
     // Create Internal Separator 2
@@ -137,20 +134,20 @@ void ZombieWorldGenerator::generateBoundingWalls() {
     separator2TopLeft.shiftX(-25);
     separator2TopLeft.setY(boundaryTopLeft.getY());
 
-    world.addAABB(*(new AABB(-2,
+    this->addAABB(*(new AABB(-2,
                              "wall",
                              "cobblestone",
                              separator2TopLeft,
                              separator2BottomRight,
                              false)));
-    AABB* separatorWall2 = world.getAABBList().back();
+    AABB* separatorWall2 = this->getAABBList().back();
     (*separatorWall2).generateBox("fence", 1, 1, 3, 2, 0, 0);
 }
 
-ZombieWorldGenerator::ZombieWorldGenerator(int seed) {
+ZombieWorld::ZombieWorld(int seed) {
     this->setRandom(seed);
     this->generateAABBGrid();
     this->generateBoundingWalls();
 }
 
-ZombieWorldGenerator::~ZombieWorldGenerator() {}
+ZombieWorld::~ZombieWorld() {}

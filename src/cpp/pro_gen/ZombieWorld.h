@@ -1,9 +1,10 @@
 #pragma once
+
+#include "World.h"
 #include "ZombieworldGroup.h"
 #include "ZombieworldPit.h"
-#include "ProceduralGenerator.h"
 
-class ZombieWorldGenerator : public ProceduralGenerator {
+class ZombieWorld : public World {
   private:
     int N = 3;
     int sep = 15;
@@ -42,10 +43,10 @@ class ZombieWorldGenerator : public ProceduralGenerator {
      *
      * @param seed The seed to use for randomness.
      */
-    ZombieWorldGenerator(int seed = 1);
+    ZombieWorld(int seed = 1);
 
     /**
      * @brief Destroy the Zombie World Generator object
      */
-    ~ZombieWorldGenerator();
+    ~ZombieWorld();
 };

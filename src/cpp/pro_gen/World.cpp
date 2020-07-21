@@ -11,6 +11,13 @@ using json = nlohmann::json;
 
 World::World() {}
 
+mt19937_64& World::getRandom() { return this->gen; }
+
+void World::setRandom(int seed) {
+    mt19937_64 newGen(seed);
+    this->gen = newGen;
+}
+
 vector<AABB*>& World::getAABBList() { return (this->aabbList); }
 
 vector<Block*>& World::getBlockList() { return (this->blockList); }

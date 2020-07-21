@@ -13,6 +13,7 @@
  */
 class World {
   private:
+    std::mt19937_64 gen;
     std::vector<AABB*> aabbList;
     std::vector<Block*> blockList;
 
@@ -73,6 +74,21 @@ class World {
      * @brief Construct a new World object
      */
     World();
+
+    /**
+     * @brief Get the random object used by this generator
+     *
+     * @return std::mt19937_64& The random object
+     */
+    std::mt19937_64& getRandom();
+
+    /**
+     * @brief Set the seed the random object used by this class is
+     * initialized with.
+     *
+     * @param seed The seed to use.
+     */
+    void setRandom(int seed);
 
     /**
      * @brief Destroy the World object

@@ -1,5 +1,5 @@
-#include "GridworldGenerator.h"
-#include "ZombieworldGenerator.h"
+#include "Gridworld.h"
+#include "ZombieWorld.h"
 #include <boost/program_options.hpp>
 #include <fstream>
 #include <iostream>
@@ -66,16 +66,14 @@ int main(int argc, char* argv[]) {
 
     cout << "Generating world..." << endl;
     if (choice == 0) {
-        ZombieWorldGenerator zombieGen(seed);
-        World& world = zombieGen.getWorld();
+        ZombieWorld world(seed);
         world.writeToFile(jsonPath, tsvPath);
     }
     else if (choice == 1) {
         int N = vm["N"].as<int>();
         int sep = vm["sep"].as<int>();
         int AABB_size = vm["AABB_size"].as<int>();
-        GridworldGenerator gridGen(N, sep, AABB_size, seed);
-        World& world = gridGen.getWorld();
+        GridWorld world(N, sep, AABB_size, seed);
         world.writeToFile(jsonPath, tsvPath);
     }
     else {

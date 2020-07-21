@@ -1,7 +1,7 @@
-#include "GridworldGenerator.h"
+#include "GridWorld.h"
 using namespace std;
 
-void GridworldGenerator::addRandomVictim(AABB& aabb,
+void GridWorld::addRandomVictim(AABB& aabb,
                                          Pos& pos,
                                          double greenBias) {
 
@@ -18,9 +18,8 @@ void GridworldGenerator::addRandomVictim(AABB& aabb,
     }
 }
 
-void GridworldGenerator::generateAABBGrid() {
+void GridWorld::generateAABBGrid() {
 
-    World& world = this->getWorld();
     mt19937_64& gen = this->getRandom();
 
     // Add the first one
@@ -29,9 +28,9 @@ void GridworldGenerator::generateAABBGrid() {
     Pos topLeft(1, 3, 1);
     Pos bottomRight(AABB_size, 3 + AABB_size, AABB_size);
 
-    world.addAABB(*(
+    this->addAABB(*(
         new AABB(idCtr, "room", material, topLeft, bottomRight, true, false)));
-    AABB prevAABB = *(world.getAABBList().back());
+    AABB prevAABB = *(this->getAABBList().back());
 
     // Use relative coordinates for the "previous" AABB to generate the rest at
     // each step
@@ -46,14 +45,14 @@ void GridworldGenerator::generateAABBGrid() {
 
             Pos newBottomRight(
                 AABB_size, 3 + AABB_size, newTopLeft.getZ() + AABB_size);
-            world.addAABB(*(new AABB(idCtr,
+            this->addAABB(*(new AABB(idCtr,
                                      "room",
                                      material,
                                      newTopLeft,
                                      newBottomRight,
                                      true,
                                      false)));
-            prevAABB = *(world.getAABBList().back());
+            prevAABB = *(this->getAABBList().back());
             ;
         }
         else {
@@ -64,19 +63,19 @@ void GridworldGenerator::generateAABBGrid() {
             Pos newBottomRight = prevAABB.getBottomRight();
             newBottomRight.setX(newTopLeft.getX() + AABB_size);
 
-            world.addAABB(*(new AABB(idCtr,
+            this->addAABB(*(new AABB(idCtr,
                                      "room",
                                      material,
                                      newTopLeft,
                                      newBottomRight,
                                      true,
                                      false)));
-            prevAABB = *(world.getAABBList().back());
+            prevAABB = *(this->getAABBList().back());
         }
     }
 }
 
-void GridworldGenerator::generateVictimInAABB(AABB& aabb) {
+void GridWorld::generateVictimInAABB(AABB& aabb) {
     mt19937_64& gen = this->getRandom();
 
     Pos randPos(aabb.getRandomPosAtBase(gen, 2, 2, 2, 2));
@@ -93,17 +92,15 @@ void GridworldGenerator::generateVictimInAABB(AABB& aabb) {
     }
 }
 
-void GridworldGenerator::generateBlocks() {
+void GridWorld::generateBlocks() {
 
-    World& world = this->getWorld();
-
-    for (auto& aabb : world.getAABBList()) {
+    for (auto& aabb : this->getAABBList()) {
         (*aabb).generateAllDoorsInAABB();
         generateVictimInAABB(*aabb);
     }
 }
 
-GridworldGenerator::GridworldGenerator(int N,
+GridWorld::GridWorld(int N,
                                        int separation,
                                        int AABB_size,
                                        int seed) {
@@ -116,4 +113,4 @@ GridworldGenerator::GridworldGenerator(int N,
     this->generateBlocks();
 }
 
-GridworldGenerator::~GridworldGenerator() {}
+GridWorld::~GridWorld() {}
