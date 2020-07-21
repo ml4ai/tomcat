@@ -1,4 +1,5 @@
 #include "ZombieworldGroup.h"
+
 using namespace std;
 
 ZombieworldGroup::ZombieworldGroup(int id,
@@ -59,3 +60,5 @@ void ZombieworldGroup::addLevers() {
         this->addBlock(*(new Block("lever", topEdgeMidpoint)));
     }
 }
+
+ZombieworldGroup::~ZombieworldGroup() {}
