@@ -46,7 +46,7 @@ namespace tomcat {
          */
         class CategoricalCPD : public CPD {
           private:
-            std::vector<std::unique_ptr<Node>> probability_table;
+            std::vector<std::shared_ptr<Node>> probability_table;
 
           public:
             /**
@@ -58,7 +58,7 @@ namespace tomcat {
              * nodes' assignments
              */
             CategoricalCPD(std::vector<std::string> parent_node_label_order,
-                           std::vector<std::unique_ptr<Node>> cpd_table)
+                           std::vector<std::shared_ptr<Node>> cpd_table)
                 : CPD(std::move(parent_node_label_order)),
                   probability_table(std::move(cpd_table)) {}
 
@@ -73,25 +73,6 @@ namespace tomcat {
              */
             CategoricalCPD(std::vector<std::string> parent_node_label_order,
                            Eigen::MatrixXd& cpd_table);
-
-            //            /**
-            //             * Copy constructor.
-            //             *
-            //             * @param cpd: categorical CPD to copy
-            //             */
-            //            CategoricalCPD(CategoricalCPD& cpd)
-            //                : CPD(cpd.parent_node_label_order),
-            //                  probability_table(cpd.probability_table) {}
-            //
-            //            /**
-            //             * Move constructor.
-            //             *
-            //             * @param cpd: categorical CPD to move
-            //             */
-            //            CategoricalCPD(CategoricalCPD&& cpd)
-            //                : CPD(std::move(cpd.parent_node_label_order)),
-            //                  probability_table(std::move(cpd.probability_table))
-            //                  {}
 
             ~CategoricalCPD() {}
 
@@ -134,19 +115,11 @@ namespace tomcat {
             Eigen::MatrixXd
             sample(std::shared_ptr<gsl_rng> generator) const override;
 
-            /**
-             * Print a short description of the distribution.
-             *
-             * @param os: output stream
-             */
             void print(std::ostream& os) const override;
 
-            /**
-             * Clone CPD
-             *
-             * @return pointer to the new CPD
-             */
             std::unique_ptr<CPD> clone() const override;
+
+            virtual void update_dependencies() override;
         };
 
     } // namespace model

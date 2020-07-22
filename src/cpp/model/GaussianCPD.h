@@ -14,13 +14,13 @@ namespace tomcat {
          * Parameters of a univariate gaussian distribution.
          */
         struct GaussianParameters {
-            std::unique_ptr<Node> mean;
-            std::unique_ptr<Node> variance;
+            std::shared_ptr<Node> mean;
+            std::shared_ptr<Node> variance;
 
-            GaussianParameters(std::unique_ptr<Node> mean, std::unique_ptr<Node> variance)
-                : mean(mean->clone()), variance(variance->clone()) {}
+            GaussianParameters(std::shared_ptr<Node> mean, std::shared_ptr<Node> variance)
+                : mean(mean), variance(variance) {}
 
-            GaussianParameters(std::unique_ptr<Node>&& mean, std::unique_ptr<Node>&& variance)
+            GaussianParameters(std::shared_ptr<Node>&& mean, std::shared_ptr<Node>&& variance)
                 : mean(std::move(mean)), variance(std::move(variance)) {}
         };
 
@@ -85,20 +85,6 @@ namespace tomcat {
              */
             GaussianCPD(std::vector<std::string> parent_node_label_order,
                         Eigen::MatrixXd& parameter_values);
-
-//            /**
-//             * Copy constructor.
-//             *
-//             * @param cpd: gaussian CPD to copy
-//             */
-//            GaussianCPD(GaussianCPD& cpd) : ContinuousCPD(cpd) {}
-//
-//            /**
-//             * Move constructor.
-//             *
-//             * @param cpd: gaussian CPD to move
-//             */
-//            GaussianCPD(GaussianCPD&& cpd) : ContinuousCPD(std::move(cpd)) {}
 
             ~GaussianCPD() {}
 

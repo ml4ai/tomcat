@@ -4,13 +4,13 @@ namespace tomcat {
     namespace model {
         DirichletCPD::DirichletCPD(
             std::vector<std::string> parent_node_label_order,
-            std::vector<std::unique_ptr<Node>> parameter_table)
+            std::vector<std::shared_ptr<Node>> parameter_table)
             : ContinuousCPD(std::move(parent_node_label_order)) {
 
             // Each node contains the parameter vector alpha.
             for (int i = 0; i < parameter_table.size(); i++) {
-                std::vector<std::unique_ptr<Node>> parameters;
-                parameters.push_back(std::move(parameter_table[i]->clone()));
+                std::vector<std::shared_ptr<Node>> parameters;
+                parameters.push_back(parameter_table[i]);
                 this->parameter_table.push_back(std::move(parameters));
             }
         }
@@ -28,9 +28,8 @@ namespace tomcat {
 
             for (int row = 0; row < parameter_values.rows(); row++) {
                 Eigen::VectorXd alpha = parameter_values.row(row);
-                std::vector<std::unique_ptr<Node>> alpha_vector;
-                alpha_vector.push_back(
-                    std::move(std::make_unique<Node>(Node(alpha))));
+                std::vector<std::shared_ptr<Node>> alpha_vector;
+                alpha_vector.push_back(std::make_shared<Node>(Node(alpha)));
                 this->parameter_table.push_back(std::move(alpha_vector));
             }
         }

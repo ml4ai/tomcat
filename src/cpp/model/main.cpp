@@ -2,8 +2,8 @@
 #include "DirichletCPD.h"
 #include "DynamicBayesNet.h"
 #include "GaussianCPD.h"
-#include "NodeMetadata.h"
 #include "Node.h"
+#include "NodeMetadata.h"
 #include "RandomVariableNode.h"
 #include <eigen3/Eigen/Dense>
 #include <gsl/gsl_randist.h>
@@ -81,13 +81,7 @@ int main() {
     metadata2.repeatable = true;
     metadata2.cardinality = 2;
 
-    NodeMetadata metadata3 = metadata2;
-    metadata3.label = "StateC";
-    metadata3.add_parent_link(metadata1, true);
-    metadata3.add_parent_link(metadata2, false);
-
     std::cout << metadata2 << std::endl;
-    std::cout << metadata3 << std::endl;
 
     // Testing constant nodes
     Node node1(2);
@@ -114,32 +108,35 @@ int main() {
     std::cout << sample2 << std::endl;
 
     // Testing RV nodes
-    std::shared_ptr<NodeMetadata> metadata =
-        std::make_shared<NodeMetadata>(metadata3);
-    std::unique_ptr<CategoricalCPD> cat_cpd_ptr =
-        std::make_unique<CategoricalCPD>(std::move(categorical_cpd));
-    std::unique_ptr<DirichletCPD> dir_cpd_ptr =
-        std::make_unique<DirichletCPD>(std::move(dirichlet_cpd));
+    RandomVariableNode param_node1(
+        std::make_shared<NodeMetadata>(metadata1),
+        std::make_unique<CategoricalCPD>(categorical_cpd));
+    std::cout << param_node1 << std::endl;
 
-    RandomVariableNode rv_node1(metadata, std::move(cat_cpd_ptr));
-    std::cout << rv_node1 << std::endl;
+    RandomVariableNode param_node2(
+        std::make_shared<NodeMetadata>(metadata2),
+        std::make_unique<CategoricalCPD>(categorical_cpd));
+    std::cout << param_node2 << std::endl;
 
-    RandomVariableNode rv_node2(metadata, std::move(dir_cpd_ptr));
-    rv_node2.set_assignment(v);
-    std::cout << rv_node2 << std::endl;
+    NodeMetadata metadata3 = metadata2;
+    metadata3.label = "StateC";
+    metadata3.add_parent_link(std::make_shared<RandomVariableNode>(param_node1), true);
+    metadata3.add_parent_link(std::make_shared<RandomVariableNode>(param_node2), false);
+
+    RandomVariableNode data_node1(
+        std::make_shared<NodeMetadata>(metadata3),
+        std::make_unique<CategoricalCPD>(categorical_cpd));
+    std::cout << data_node1 << std::endl;
 
     DynamicBayesNet dbn;
-    dbn.add_node(std::make_unique<Node>(node1)); // Copy node1
-    dbn.add_node(std::make_unique<Node>(node2));
-    dbn.add_node(std::make_unique<RandomVariableNode>(rv_node2));
-    dbn.unroll();
+    dbn.add_node(std::make_unique<RandomVariableNode>(param_node1));
+    dbn.add_node(std::make_unique<RandomVariableNode>(param_node2));
+    dbn.add_node(std::make_unique<RandomVariableNode>(data_node1));
+    dbn.unroll(3);
 
+    //    std::vector<std::variant<A*, B*>> multi_vec;
+    //    std::variant<A*, B*> var1 (new A());
+    //    multi_vec.push_back(var1);
 
-
-//    std::vector<std::variant<A*, B*>> multi_vec;
-//    std::variant<A*, B*> var1 (new A());
-//    multi_vec.push_back(var1);
-
-
-    //multi_vec.push_back(B());
+    // multi_vec.push_back(B());
 }

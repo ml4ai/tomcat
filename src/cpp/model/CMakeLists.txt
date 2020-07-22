@@ -25,6 +25,9 @@ find_package(Boost 1.69
         thread
         REQUIRED)
 
+# FMT is a library used for formatting.
+find_package(FMT REQUIRED)
+
 include_directories(${Boost_INCLUDE_DIR})
 
 # Header files inside model folder
@@ -38,9 +41,10 @@ add_library(tomcat_model_libs
         Node.cpp
         RandomVariableNode.cpp
         CategoricalCPD.cpp
+        ContinuousCPD.cpp
         GaussianCPD.cpp
         DirichletCPD.cpp
         DynamicBayesNet.cpp)
 
 add_executable(TomcatModel main.cpp)
-target_link_libraries(TomcatModel PUBLIC tomcat_model_libs ${Boost_LIBRARIES} Eigen3::Eigen GSL::gsl GSL::gslcblas)
+target_link_libraries(TomcatModel PUBLIC tomcat_model_libs ${Boost_LIBRARIES} Eigen3::Eigen GSL::gsl GSL::gslcblas fmt::fmt)

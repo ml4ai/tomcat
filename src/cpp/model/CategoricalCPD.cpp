@@ -15,8 +15,8 @@ namespace tomcat {
                     probabilities(col) = cpd_table(row, col);
                 }
 
-                std::unique_ptr<Node> probabilities_node =
-                    std::make_unique<Node>(std::move(probabilities));
+                std::shared_ptr<Node> probabilities_node =
+                    std::make_shared<Node>(std::move(probabilities));
                 this->probability_table.push_back(
                     std::move(probabilities_node));
             }
@@ -53,6 +53,10 @@ namespace tomcat {
 
         std::unique_ptr<CPD> CategoricalCPD::clone() const {
             return std::make_unique<CategoricalCPD>(*this);
+        }
+
+        void CategoricalCPD::update_dependencies() {
+            // todo
         }
 
     } // namespace model

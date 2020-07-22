@@ -29,8 +29,7 @@ namespace tomcat {
              *
              * @param values: node's constant assignment
              */
-            Node(Eigen::VectorXd values)
-                : assignment(std::move(values)) {}
+            Node(Eigen::VectorXd values) : assignment(std::move(values)) {}
             virtual ~Node() {}
 
             // Copy constructor and assignment should be deleted to avoid
@@ -42,13 +41,12 @@ namespace tomcat {
             Node(Node&&) = default;
             Node& operator=(Node&&) = default;
 
-
             /**
              * Move constructor
              *
              * @param node: node to be moved
              */
-            //Node(Node&& node) : assignment(std::move(node.assignment)) {}
+            // Node(Node&& node) : assignment(std::move(node.assignment)) {}
 
             friend std::ostream& operator<<(std::ostream& os,
                                             const Node& node) {
@@ -64,19 +62,29 @@ namespace tomcat {
             virtual void print(std::ostream& os) const;
 
             /**
+             * Return a short description of the node.
+             */
+            virtual std::string get_description() const;
+
+            /**
              * Clone node
              *
              * @return pointer to the new node
              */
             virtual std::unique_ptr<Node> clone() const;
 
+            /**
+             * Return node description. An instance of Node is considered a
+             * constant node and, therefore, time agnostic.
+             *
+             * @return node description
+             */
+            virtual std::string get_timed_name() const;
+
+            // --------------------------------------------------------
             // Getters
+            // --------------------------------------------------------
             const Eigen::VectorXd& get_assignment() const { return assignment; }
-
-            virtual void test() {
-                std::cout << "Test Base";
-            };
-
         };
 
     } // namespace model

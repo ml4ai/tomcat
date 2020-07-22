@@ -9,12 +9,12 @@ namespace tomcat {
             : ContinuousCPD(std::move(parent_node_label_order)) {
 
             for (int i = 0; i < parameter_table.size(); i++) {
-                std::vector<std::unique_ptr<Node>> parameters;
+                std::vector<std::shared_ptr<Node>> parameters;
                 parameters.reserve(2);
                 parameters.push_back(
-                    std::move(parameter_table[i].mean->clone()));
+                    std::move(parameter_table[i].mean));
                 parameters.push_back(
-                    std::move(parameter_table[i].variance->clone()));
+                    std::move(parameter_table[i].variance));
                 this->parameter_table.push_back(std::move(parameters));
             }
         }
@@ -33,12 +33,10 @@ namespace tomcat {
                 double variance =
                     parameter_values(row, PARAMETER_INDEX::variance);
 
-                std::vector<std::unique_ptr<Node>> parameters;
+                std::vector<std::shared_ptr<Node>> parameters;
                 parameters.reserve(2);
-                parameters.push_back(
-                    std::move(std::make_unique<Node>(Node(mean))));
-                parameters.push_back(
-                    std::move(std::make_unique<Node>(Node(variance))));
+                parameters.push_back(std::make_shared<Node>(Node(mean)));
+                parameters.push_back(std::make_shared<Node>(Node(variance)));
                 this->parameter_table.push_back(std::move(parameters));
             }
         }

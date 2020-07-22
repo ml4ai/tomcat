@@ -45,7 +45,7 @@ namespace tomcat {
          */
         class ContinuousCPD : public CPD {
           protected:
-            std::vector<std::vector<std::unique_ptr<Node>>> parameter_table;
+            std::vector<std::vector<std::shared_ptr<Node>>> parameter_table;
 
           public:
             ContinuousCPD() {}
@@ -68,33 +68,7 @@ namespace tomcat {
              *
              * @param cpd: continuous CPD
              */
-            void copy_from_cpd(const ContinuousCPD& cpd) {
-                this->parent_node_label_order = cpd.parent_node_label_order;
-
-                // Clone each node in the copied cpd to the parameter table of
-                // this object.
-                this->parameter_table.reserve(cpd.parameter_table.size());
-                for (const auto& source_parameters : cpd.parameter_table) {
-                    std::vector<std::unique_ptr<Node>> target_parameters;
-                    target_parameters.reserve(source_parameters.size());
-                    for (const auto& source_parameter : source_parameters) {
-                        target_parameters.push_back(source_parameter->clone());
-                    }
-                    this->parameter_table.push_back(std::move(target_parameters));
-                }
-            }
-
-            //            ContinuousCPD(ContinuousCPD&& cpd)
-            //                : CPD(std::move(cpd.parent_node_label_order)),
-            //                  parameter_table(std::move(cpd.parameter_table))
-            //                  {}
-            //
-            //            ContinuousCPD& operator=(ContinuousCPD&& cpd) {
-            //                this->parent_node_label_order =
-            //                std::move(cpd.parent_node_label_order);
-            //                this->parameter_table =
-            //                std::move(cpd.parameter_table);
-            //            };
+            void copy_from_cpd(const ContinuousCPD& cpd);
 
             /**
              * Sample a vector for each combination of parent nodes' assignments
@@ -109,18 +83,8 @@ namespace tomcat {
             virtual Eigen::MatrixXd
             sample(std::shared_ptr<gsl_rng> generator) const override = 0;
 
-            /**
-             * Print a short description of the distribution.
-             *
-             * @param os: output stream
-             */
             virtual void print(std::ostream& os) const override = 0;
 
-            /**
-             * Clone CPD
-             *
-             * @return pointer to the new CPD
-             */
             virtual std::unique_ptr<CPD> clone() const override = 0;
 
             /**
@@ -134,6 +98,8 @@ namespace tomcat {
              * values for \f$\phi\f$
              */
             virtual void init_from_matrix(Eigen::MatrixXd& parameter_table) = 0;
+
+            virtual void update_dependencies() override;
         };
 
     } // namespace model

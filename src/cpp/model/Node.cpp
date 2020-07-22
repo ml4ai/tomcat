@@ -1,4 +1,6 @@
 #include "Node.h"
+#include <fmt/format.h>
+#include <sstream>
 
 namespace tomcat {
     namespace model {
@@ -9,16 +11,30 @@ namespace tomcat {
         }
 
         void Node::print(std::ostream& os) const {
+            os << this->get_description();
+        }
+
+        std::string Node::get_description() const {
             if (this->assignment.size() == 1) {
-                os << "Node(" << this->assignment << ")";
+                std::stringstream assignment_string;
+                assignment_string << this->assignment;
+
+                return fmt::format("Node({})", assignment_string.str());
             }
             else {
-                os << "Node([" << this->assignment.transpose() << "])";
+                std::stringstream assignment_string;
+                assignment_string << this->assignment.transpose();
+
+                return fmt::format("Node([{}])", assignment_string.str());
             }
         }
 
         std::unique_ptr<Node> Node::clone() const {
             return std::make_unique<Node>(*this);
+        }
+
+        std::string Node::get_timed_name() const {
+            return this->get_description();
         }
     } // namespace model
 } // namespace tomcat

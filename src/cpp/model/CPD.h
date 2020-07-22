@@ -75,6 +75,15 @@ namespace tomcat {
              * @return pointer to the new CPD
              */
             virtual std::unique_ptr<CPD> clone() const = 0;
+
+            /**
+             * Replace parameter nodes in a node dependent CPD by the correct
+             * replica of the node in the unrolled DBN.
+             *
+             * @param name_to_node: map between a parameter node timed name and
+             * it's node object in an unrolled DBN
+             */
+            virtual void update_dependencies() = 0;
         };
 
     } // namespace model

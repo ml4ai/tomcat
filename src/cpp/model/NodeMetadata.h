@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -9,6 +10,9 @@ namespace tomcat {
 
         // Defined in the end of this file.
         struct ParentLink;
+
+        // Defined in a proper file; Cyclic reference.
+        class RandomVariableNode;
 
         /** A node metadata contains information about the representation of a
          * node in a Dynamic Bayes Net (DBN) and its connections in the unrolled
@@ -34,8 +38,23 @@ namespace tomcat {
             // dependents.
             bool repeatable;
 
+            // Whether a sample of the node is used as parameters of other
+            // nodes's distribution
+            bool parameter;
+
             // List of parents of the node and their relative time step.
             std::vector<ParentLink> parent_links;
+
+            // Number of parent nodes that are parameter nodes. This variable is
+            // kept to improve efficiency whenever the list of parameters
+            // parents of a node is requested.
+            int num_parameter_parents;
+
+            NodeMetadata() { this->num_parameter_parents = 0; }
+            NodeMetadata(int num_parents) {
+                this->num_parameter_parents = 0;
+                this->parent_links.reserve(num_parents);
+            }
 
             /**
              * Add a new parent link to the list of parent links of the node
@@ -44,10 +63,13 @@ namespace tomcat {
              * @param parent_node_metadata: metadata of the parent node
              * @param time_crossing - flag indicating whether the parent node is
              *  in the previous or in the same time step as the node defined by
-             *  the metadata
+             *  the metadata. If the parent node is a parameter node, the
+             *  time_crossing value is irrelevant as parameter nodes are time
+             *  agnostic (they don't have replicas over time steps).
              */
-            void add_parent_link(const NodeMetadata& parent_node_metadata,
-                                 bool time_crossing);
+            void
+            add_parent_link(std::shared_ptr<RandomVariableNode> parent_node,
+                            bool time_crossing);
 
             friend std::ostream& operator<<(std::ostream& os,
                                             const NodeMetadata& metadata);
@@ -60,7 +82,7 @@ namespace tomcat {
          */
         struct ParentLink {
 
-            NodeMetadata parent_node_metadata;
+            std::shared_ptr<RandomVariableNode> parent_node;
 
             // Edges crossing time indicate a dependency with the parent node
             // from a previous time step from where a concrete timed instance of

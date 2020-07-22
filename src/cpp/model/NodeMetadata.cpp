@@ -1,14 +1,19 @@
 #include "NodeMetadata.h"
+#include "RandomVariableNode.h"
 
 namespace tomcat {
     namespace model {
 
         // Convenience method to insert a parent link
         void
-        NodeMetadata::add_parent_link(const NodeMetadata& parent_node_metadata,
+        NodeMetadata::add_parent_link(std::shared_ptr<RandomVariableNode> parent_node,
                                       bool time_crossing) {
 
-            ParentLink link{parent_node_metadata, time_crossing};
+            if (parent_node->get_metadata()->parameter) {
+                this->num_parameter_parents += 1;
+            }
+
+            ParentLink link{parent_node, time_crossing};
             this->parent_links.push_back(link);
         }
 
@@ -26,7 +31,7 @@ namespace tomcat {
 
                 for (auto& link : metadata.parent_links) {
                     os << "  (";
-                    os << link.parent_node_metadata.label;
+                    os << link.parent_node->get_metadata()->label;
                     os << ", ";
                     os << link.time_crossing;
                     os << ")\n";

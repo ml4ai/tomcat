@@ -75,7 +75,7 @@ namespace tomcat {
              * determined by other nodes' assignments
              */
             DirichletCPD(std::vector<std::string> parent_node_label_order,
-                         std::vector<std::unique_ptr<Node>> parameter_table);
+                         std::vector<std::shared_ptr<Node>> parameter_table);
 
             /**
              * Create a dirichlet distribution from a matrix of parameter
