@@ -3,6 +3,7 @@ from hackathon import (
     utils as utils,
 )
 import numpy as np
+import os
 
 
 class CPDTables:
@@ -26,6 +27,7 @@ class ParameterPriors:
 class Model:
     def init_from_cpds(self, cpds):
         self.number_of_states = cpds.theta_s.shape[0]
+        self.number_of_rooms = cpds.theta_rm.shape[1]
         self.cpd_tables = cpds
 
     def init_from_mission_map(self, mission_map_id):
@@ -117,7 +119,7 @@ class Model:
 
     def get_pi_lt_priors(self):
         """
-        This method returns a matrix with the priors for each one of the pi_lt nodes in the model
+        This method returns a matrix with the priors for each one of the pi_lt nodes in the models
         """
         priors = np.zeros((self.number_of_states, 2))
 
@@ -140,7 +142,7 @@ class Model:
 
     def get_theta_s_priors(self):
         """
-        This method returns a matrix with the priors for each one of the theta_s nodes in the model
+        This method returns a matrix with the priors for each one of the theta_s nodes in the models
         """
         if (
             self.mission_map_id
@@ -500,3 +502,30 @@ class Model:
         )
 
         return priors
+
+    def save(self, folder):
+        """
+        Save models parameters
+        """
+        if not os.path.isdir(folder):
+            os.makedirs(folder, exist_ok=True)
+
+        np.savetxt(os.path.join(folder, 'theta_s'), self.cpd_tables.theta_s)
+        np.savetxt(os.path.join(folder, 'pi_lt'), self.cpd_tables.pi_lt)
+        np.savetxt(os.path.join(folder, 'theta_rm'), self.cpd_tables.theta_rm)
+        np.savetxt(os.path.join(folder, 'pi_tg'), self.cpd_tables.pi_tg)
+        np.savetxt(os.path.join(folder, 'pi_ty'), self.cpd_tables.pi_ty)
+
+    def load(self, folder):
+        """
+        Load models parameters
+        """
+
+        theta_s = np.loadtxt(os.path.join(folder, 'theta_s'))
+        pi_lt = np.loadtxt(os.path.join(folder, 'pi_lt'))
+        theta_rm = np.loadtxt(os.path.join(folder, 'theta_rm'))
+        pi_tg = np.loadtxt(os.path.join(folder, 'pi_tg'))
+        pi_ty = np.loadtxt(os.path.join(folder, 'pi_ty'))
+
+        self.init_from_cpds(CPDTables(theta_s, pi_lt, theta_rm, pi_tg, pi_ty))
+

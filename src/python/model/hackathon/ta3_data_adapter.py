@@ -198,7 +198,7 @@ def extract_room_events_from_observations(
                 areas, observation["data"]["x"], observation["data"]["z"]
             )
             if new_area_id != previous_area_id and new_area_id != None:
-                # This is a simplified json content with only the fields relevant for the evaluation of the model
+                # This is a simplified json content with only the fields relevant for the evaluation of the models
                 area_event_message = {}
                 area_event_message["host"] = observation["host"]
                 area_event_message[

@@ -42,16 +42,16 @@ class ModelInference:
             log_powers_rho_tg[i] = log_powers_rho_tg[i - 1] + utils.log(1 - self.model.cpd_tables.pi_tg[:,x])
             log_powers_rho_ty[i] = log_powers_rho_ty[i - 1] + utils.log(1 - self.model.cpd_tables.pi_ty[:,x])
 
-        # log_pi_lt = utils.log(self.model.cpd_tables.pi_lt)
-        # log_pi_tg = utils.log(self.model.cpd_tables.pi_tg)
-        # log_pi_ty = utils.log(self.model.cpd_tables.pi_ty)
-        # log_theta_rm = utils.log(self.model.cpd_tables.theta_rm)
+        # log_pi_lt = utils.log(self.models.cpd_tables.pi_lt)
+        # log_pi_tg = utils.log(self.models.cpd_tables.pi_tg)
+        # log_pi_ty = utils.log(self.models.cpd_tables.pi_ty)
+        # log_theta_rm = utils.log(self.models.cpd_tables.theta_rm)
         #
         # union_matrix = np.eye(num_states)
-        # agg_theta_s = self.model.cpd_tables.theta_s.copy()
+        # agg_theta_s = self.models.cpd_tables.theta_s.copy()
         # for i in range(1,tau):
         #     union_matrix += agg_theta_s
-        #     agg_theta_s = np.dot(agg_theta_s, self.model.cpd_tables.theta_s)
+        #     agg_theta_s = np.dot(agg_theta_s, self.models.cpd_tables.theta_s)
         # union_matrix /= np.sum(union_matrix, axis=1).reshape(-1, 1)
 
         # Marginals are computed individually for each data points in the data set
@@ -99,11 +99,11 @@ class ModelInference:
                         self.model.cpd_tables.theta_rm[:, rm] * np.dot(alpha, self.model.cpd_tables.theta_s)
                 alpha = alpha / sum(alpha)
 
-                # tmp = utils.log(np.dot(alpha, self.model.cpd_tables.theta_s))
+                # tmp = utils.log(np.dot(alpha, self.models.cpd_tables.theta_s))
                 # alpha = utils.normalize_log_array(
                 #     log_pi_lt[:, lt] + log_pi_tg[:, tg] + log_pi_ty[:, ty] + log_theta_rm[:, rm] + tmp)
-                # tg_marginals[d, t - 2, :] = np.sum(np.dot(union_matrix, self.model.cpd_tables.pi_tg) * np.exp(tmp.reshape(-1, 1)), 0)
-                # ty_marginals[d, t - 2, :] = np.sum(np.dot(union_matrix, self.model.cpd_tables.pi_ty) * np.exp(tmp.reshape(-1, 1)), 0)
+                # tg_marginals[d, t - 2, :] = np.sum(np.dot(union_matrix, self.models.cpd_tables.pi_tg) * np.exp(tmp.reshape(-1, 1)), 0)
+                # ty_marginals[d, t - 2, :] = np.sum(np.dot(union_matrix, self.models.cpd_tables.pi_ty) * np.exp(tmp.reshape(-1, 1)), 0)
 
         return tg_marginals, ty_marginals
 

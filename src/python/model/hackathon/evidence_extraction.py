@@ -117,7 +117,7 @@ FALCON_AREA_ORDER = [
 
 class EvidenceSet:
     """
-    This class stores evidence data for the observable nodes used in the model
+    This class stores evidence data for the observable nodes used in the models
     """
 
     def __init__(self, lt_evidence, rm_evidence, tg_evidence, ty_evidence):
@@ -142,7 +142,7 @@ def convert_experiments_data_to_evidence_set(
     show_progress=True,
 ):
     """
-    This function converts the raw data from the testbed to a format that can be handled by the ToMCAT model.
+    This function converts the raw data from the testbed to a format that can be handled by the ToMCAT models.
     Each row is composed by observations from a complete mission and each column represents the time step when
     that observation took place.
     """
@@ -170,16 +170,16 @@ def convert_experiments_data_to_evidence_set(
         tg_evidence_set.append(tg)
         ty_evidence_set.append(ty)
 
-    save_evidence_set(
+    save_individual_evidence_set(
         evidence_set_folder, LT_EVIDENCE_FILENAME, lt_evidence_set
     )
-    save_evidence_set(
+    save_individual_evidence_set(
         evidence_set_folder, RM_EVIDENCE_FILENAME, rm_evidence_set
     )
-    save_evidence_set(
+    save_individual_evidence_set(
         evidence_set_folder, TG_EVIDENCE_FILENAME, tg_evidence_set
     )
-    save_evidence_set(
+    save_individual_evidence_set(
         evidence_set_folder, TY_EVIDENCE_FILENAME, ty_evidence_set
     )
 
@@ -386,7 +386,7 @@ def get_area_by_player_position(areas, x, y):
             return i, area["id"]
 
 
-def save_evidence_set(destiny_folder, filename, evidence_set):
+def save_individual_evidence_set(destiny_folder, filename, evidence_set):
     """
     This function saves an evidence set to a file
     """
@@ -396,6 +396,22 @@ def save_evidence_set(destiny_folder, filename, evidence_set):
         fmt="%i",
     )
 
+def save_evidence_set(destiny_folder, evidence_set):
+    if not os.path.isdir(destiny_folder):
+        os.mkdir(destiny_folder)
+
+    save_individual_evidence_set(
+        destiny_folder, LT_EVIDENCE_FILENAME, evidence_set.lt_evidence
+    )
+    save_individual_evidence_set(
+        destiny_folder, RM_EVIDENCE_FILENAME, evidence_set.rm_evidence
+    )
+    save_individual_evidence_set(
+        destiny_folder, TG_EVIDENCE_FILENAME, evidence_set.tg_evidence
+    )
+    save_individual_evidence_set(
+        destiny_folder, TY_EVIDENCE_FILENAME, evidence_set.ty_evidence
+    )
 
 def get_evidence_file_absolute_path(destiny_folder, filename):
     """
