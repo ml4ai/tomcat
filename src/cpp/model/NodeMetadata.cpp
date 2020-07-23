@@ -5,12 +5,16 @@ namespace tomcat {
     namespace model {
 
         // Convenience method to insert a parent link
-        void
-        NodeMetadata::add_parent_link(std::shared_ptr<RandomVariableNode> parent_node,
-                                      bool time_crossing) {
+        void NodeMetadata::add_parent_link(
+            std::shared_ptr<RandomVariableNode> parent_node,
+            bool time_crossing) {
 
             if (parent_node->get_metadata()->parameter) {
                 this->num_parameter_parents += 1;
+
+                this->any_parameter_parents_repeatable =
+                    this->any_parameter_parents_repeatable ||
+                    parent_node->get_metadata()->repeatable;
             }
 
             ParentLink link{parent_node, time_crossing};

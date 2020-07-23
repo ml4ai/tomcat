@@ -50,8 +50,18 @@ namespace tomcat {
             // parents of a node is requested.
             int num_parameter_parents;
 
-            NodeMetadata() { this->num_parameter_parents = 0; }
+            // Indicates whether any of the parents that are parameter nodes
+            // are repeatable. Storing this variable as parent links are added
+            // will improve performance as this information need to be accessed
+            // when the DBN is being unrolled.
+            bool any_parameter_parents_repeatable;
+
+            NodeMetadata() {
+                this->any_parameter_parents_repeatable = false;
+                this->num_parameter_parents = 0;
+            }
             NodeMetadata(int num_parents) {
+                this->any_parameter_parents_repeatable = false;
                 this->num_parameter_parents = 0;
                 this->parent_links.reserve(num_parents);
             }

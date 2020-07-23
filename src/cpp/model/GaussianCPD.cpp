@@ -1,4 +1,5 @@
 #include "GaussianCPD.h"
+#include "ConstantNode.h"
 
 namespace tomcat {
     namespace model {
@@ -11,10 +12,8 @@ namespace tomcat {
             for (int i = 0; i < parameter_table.size(); i++) {
                 std::vector<std::shared_ptr<Node>> parameters;
                 parameters.reserve(2);
-                parameters.push_back(
-                    std::move(parameter_table[i].mean));
-                parameters.push_back(
-                    std::move(parameter_table[i].variance));
+                parameters.push_back(std::move(parameter_table[i].mean));
+                parameters.push_back(std::move(parameter_table[i].variance));
                 this->parameter_table.push_back(std::move(parameters));
             }
         }
@@ -35,8 +34,10 @@ namespace tomcat {
 
                 std::vector<std::shared_ptr<Node>> parameters;
                 parameters.reserve(2);
-                parameters.push_back(std::make_shared<Node>(Node(mean)));
-                parameters.push_back(std::make_shared<Node>(Node(variance)));
+                parameters.push_back(
+                    std::make_shared<ConstantNode>(ConstantNode(mean)));
+                parameters.push_back(
+                    std::make_shared<ConstantNode>(ConstantNode(variance)));
                 this->parameter_table.push_back(std::move(parameters));
             }
         }

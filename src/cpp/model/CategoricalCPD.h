@@ -91,17 +91,7 @@ namespace tomcat {
              *
              * @param cpd: categorical CPD
              */
-            void copy_from_cpd(const CategoricalCPD& cpd) {
-                this->parent_node_label_order = cpd.parent_node_label_order;
-
-                // Clone each node in the copied cpd to the probability table of
-                // this object.
-                this->probability_table.reserve(cpd.probability_table.size());
-                for (const auto& source_probabilities : cpd.probability_table) {
-                    this->probability_table.push_back(
-                        source_probabilities->clone());
-                }
-            }
+            void copy_from_cpd(const CategoricalCPD& cpd);
 
             /**
              * Sample a numeric value for each combination of parent nodes'
@@ -119,7 +109,8 @@ namespace tomcat {
 
             std::unique_ptr<CPD> clone() const override;
 
-            virtual void update_dependencies() override;
+            virtual void update_dependencies(NodeMap& parameter_nodes_map,
+                                             int time_step) override;
         };
 
     } // namespace model

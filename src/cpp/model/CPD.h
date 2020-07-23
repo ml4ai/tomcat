@@ -1,8 +1,10 @@
 #pragma once
 
+#include "Node.h"
 #include <eigen3/Eigen/Dense>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
+#include <unordered_map>
 #include <vector>
 
 namespace tomcat {
@@ -20,6 +22,9 @@ namespace tomcat {
          */
         class CPD {
           protected:
+            typedef std::unordered_map<std::string, std::shared_ptr<Node>>
+                NodeMap;
+
             // It defines the order of the parent nodes in the cartesian
             // product of their possible assignments. It's necessary to know
             // this order for correctly index a distribution given a parent
@@ -82,8 +87,11 @@ namespace tomcat {
              *
              * @param name_to_node: map between a parameter node timed name and
              * it's node object in an unrolled DBN
+             * @param time_step: time step of the node that owns the CPD in the
+             * unrolled DBN
              */
-            virtual void update_dependencies() = 0;
+            virtual void update_dependencies(NodeMap& parameter_nodes_map,
+                                             int time_step) = 0;
         };
 
     } // namespace model

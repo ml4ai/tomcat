@@ -1,4 +1,6 @@
 #include "CategoricalCPD.h"
+#include "ConstantNode.h"
+#include <string>
 
 namespace tomcat {
     namespace model {
@@ -16,9 +18,21 @@ namespace tomcat {
                 }
 
                 std::shared_ptr<Node> probabilities_node =
-                    std::make_shared<Node>(std::move(probabilities));
+                    std::make_shared<ConstantNode>(std::move(probabilities));
                 this->probability_table.push_back(
                     std::move(probabilities_node));
+            }
+        }
+
+        void CategoricalCPD::copy_from_cpd(const CategoricalCPD& cpd) {
+            this->parent_node_label_order = cpd.parent_node_label_order;
+
+            // Clone each node in the copied cpd to the probability table of
+            // this object.
+            this->probability_table.reserve(cpd.probability_table.size());
+            for (const auto& source_probabilities : cpd.probability_table) {
+                std::unique_ptr<Node> node = source_probabilities->clone();
+                this->probability_table.push_back(std::move(node));
             }
         }
 
@@ -55,8 +69,29 @@ namespace tomcat {
             return std::make_unique<CategoricalCPD>(*this);
         }
 
-        void CategoricalCPD::update_dependencies() {
-            // todo
+        void
+        CategoricalCPD::update_dependencies(NodeMap& parameter_nodes_map,
+                                            int time_step) {
+
+            for (int i = 0; i < this->probability_table.size(); i++) {
+                std::string parameter_timed_name;
+                if (this->probability_table[i]->get_metadata()->repeatable) {
+                    parameter_timed_name =
+                        this->probability_table[i]->get_timed_name(time_step);
+                }
+                else {
+                    parameter_timed_name =
+                        this->probability_table[i]->get_timed_name(
+                            this->probability_table[i]
+                                ->get_metadata()
+                                ->initial_time_step);
+                }
+
+                if (parameter_nodes_map.count(parameter_timed_name) > 0) {
+                    this->probability_table[i] =
+                        parameter_nodes_map[parameter_timed_name];
+                }
+            }
         }
 
     } // namespace model

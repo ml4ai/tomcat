@@ -6,6 +6,13 @@
 namespace tomcat {
     namespace model {
 
+        void RandomVariableNode::copy_from_node(const RandomVariableNode &node)  {
+            this->metadata = node.metadata;
+            this->cpd = node.cpd;
+            this->time_step = node.time_step;
+            this->assignment = node.assignment;
+        }
+
         void RandomVariableNode::print(std::ostream& os) const {
             os << this->get_description();
         }
@@ -46,6 +53,7 @@ namespace tomcat {
             return std::make_unique<RandomVariableNode>(*this);
         }
 
+        // todo - check if I can remove this
         std::vector<std::shared_ptr<RandomVariableNode>>
         RandomVariableNode::get_parameter_parents() const {
             std::vector<std::shared_ptr<RandomVariableNode>> parameter_parents;
@@ -61,7 +69,11 @@ namespace tomcat {
         }
 
         std::string RandomVariableNode::get_timed_name() const {
-            return fmt::format("({},{})", metadata->label, this->time_step);
+            return this->get_timed_name(this->time_step);
+        }
+
+        std::string RandomVariableNode::get_timed_name(int time_step) const {
+            return fmt::format("({},{})", metadata->label, time_step);
         }
 
     } // namespace model

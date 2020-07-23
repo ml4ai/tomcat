@@ -16,47 +16,63 @@ namespace tomcat {
         };
 
         class DynamicBayesNet {
+          private:
             typedef boost::adjacency_list<boost::vecS,
                                           boost::vecS,
                                           boost::directedS,
                                           VertexData>
                 Graph;
 
-          private:
+            typedef std::unordered_map<std::string, std::shared_ptr<Node>>
+                NodeMap;
+            typedef std::unordered_map<std::string, std::shared_ptr<CPD>>
+                CPDMap;
+            typedef std::unordered_map<std::string, int> IDMap;
+
             Graph graph;
-            std::unordered_map<std::string, int> name_to_id;
+            IDMap name_to_id;
             // The actual nodes which will be stored as vertex data will be
             // replicas of the nodes in this list. The original list is
             // preserved to allow multiple calls of the unrolled method based on
             // the original set of nodes.
             //
-            // Parameter nodes are nodes which samples are used as parameters of
-            // other nodes' distributions.
+            // Templates of the parameter node are nodes which samples are used
+            // as parameters of other nodes' distributions.
             //
-            // Data nodes are the latent and
+            // Templates of data nodes are the latent and
             // observable nodes in the DBN that are not parameter nodes.
-            std::vector<std::unique_ptr<RandomVariableNode>> data_nodes;
-            std::vector<std::unique_ptr<RandomVariableNode>> parameter_nodes;
+            //
+            // Those templates will be used to create concrete instances of
+            // nodes  over time, which will be stored in the vertices of the
+            // unrolled graph.
+            std::vector<std::unique_ptr<RandomVariableNode>>
+                data_node_templates;
+            std::vector<std::unique_ptr<RandomVariableNode>>
+                parameter_node_templates;
 
             /**
-             * Create vertices from a list of nodes.
+             * Create vertices from a list of data nodes.
+             *
+             * @param time_steps: number of tim steps to unroll
              */
-            void create_vertices_from_nodes(
-                const std::vector<std::unique_ptr<RandomVariableNode>>& nodes,
-                int time_steps);
+            NodeMap create_vertices_from_parameter_nodes(int time_steps);
+
+            /**
+             * Create vertices from a list of parameter nodes. This method
+             * assumes create_vertices_from_parameter_nodes was called first as
+             * the data nodes will need to update their CPD's with the parameter
+             * nodes already created and stored in vertices of the graph.
+             *
+             * @param time_steps: number of tim steps to unroll
+             */
+            void create_vertices_from_data_nodes(int time_steps,
+                                                 NodeMap& parameter_nodes_map);
 
             VertexData
             add_vertex(const std::unique_ptr<RandomVariableNode>& node,
                        int time_step);
 
-            /**
-             * Replace parameter nodes in a node dependent CPD by the correct
-             * replica of the node in the unrolled DBN.
-             *
-             * @param vertex_data: vertex data with the node which CPD has to be
-             * updated
-             */
-            void update_cpd_dependencies(VertexData& vertex_data);
+            void add_edges();
 
           public:
             DynamicBayesNet() {}

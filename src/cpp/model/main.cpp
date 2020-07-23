@@ -4,6 +4,7 @@
 #include "GaussianCPD.h"
 #include "Node.h"
 #include "NodeMetadata.h"
+#include "ConstantNode.h"
 #include "RandomVariableNode.h"
 #include <eigen3/Eigen/Dense>
 #include <gsl/gsl_randist.h>
@@ -84,8 +85,8 @@ int main() {
     std::cout << metadata2 << std::endl;
 
     // Testing constant nodes
-    Node node1(2);
-    Node node2(v);
+    ConstantNode node1(2);
+    ConstantNode node2(v, "v");
 
     std::cout << node1 << std::endl;
     std::cout << node2 << std::endl;

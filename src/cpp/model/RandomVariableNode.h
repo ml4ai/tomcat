@@ -16,19 +16,13 @@ namespace tomcat {
          */
         class RandomVariableNode : public Node {
           protected:
-            // Metadata is a shared pointer because each timed instance of a
-            // node in the unrolled DBN will share the same metadata.
-            std::shared_ptr<NodeMetadata> metadata;
-
-            // CPD is a unique pointer because it's an abstract class and each
-            // node should have it's own CPD even if they are instances
-            // generated from the same metadata. This is necessary because a CPD
-            // of a node can depend on other nodes' assignment.
-            std::unique_ptr<CPD> cpd;
+            // CPD is a shared pointer because a multiple nodes can have a CPD
+            // that depend on the same set of parameters.
+            std::shared_ptr<CPD> cpd;
 
             // Time step where the node is drawn in the unrolled DBN. This
             // variable will be assigned when this node is created as a vertex
-            // in an urolled DBN.
+            // in an unrolled DBN.
             int time_step;
 
           public:
@@ -40,25 +34,29 @@ namespace tomcat {
              * @param time_step: node's time step in the unrolled DBN
              */
             RandomVariableNode(std::shared_ptr<NodeMetadata> metadata,
-                               std::unique_ptr<CPD> cpd,
+                               std::shared_ptr<CPD> cpd,
                                int time_step = 0)
-                : metadata(std::move(metadata)), cpd(std::move(cpd)),
+                : Node(std::move(metadata)), cpd(std::move(cpd)),
                   time_step(time_step) {}
 
             ~RandomVariableNode() {}
 
-            RandomVariableNode(const RandomVariableNode& node)
-                : metadata(node.metadata), cpd(node.cpd->clone()),
-                  time_step(node.time_step), Node(node) {}
+            RandomVariableNode(const RandomVariableNode& node) {
+                this->copy_from_node(node);
+            }
             RandomVariableNode& operator=(const RandomVariableNode& node) {
-                this->metadata = node.metadata;
-                this->cpd = node.cpd->clone();
-                this->time_step = node.time_step;
-                this->assignment = node.assignment;
+                this->copy_from_node(node);
                 return *this;
             }
             RandomVariableNode(RandomVariableNode&&) = default;
             RandomVariableNode& operator=(RandomVariableNode&&) = default;
+
+            /**
+             * Copy members of a random variable node.
+             *
+             * @param cpd: continuous CPD
+             */
+            void copy_from_node(const RandomVariableNode& node);
 
             /**
              * Print a short description of the node.
@@ -101,16 +99,20 @@ namespace tomcat {
              *
              * @return node name in the unrolled DBN
              */
-            std::string get_timed_name() const override ;
+            std::string get_timed_name() const override;
+
+            /**
+             * Return the node name formed by it's label and an arbitrary
+             * time_step
+             *
+             * @return node name in the unrolled DBN
+             */
+            std::string get_timed_name(int time_step) const override;
 
             // --------------------------------------------------------
             // Getters
             // --------------------------------------------------------
-            const std::shared_ptr<NodeMetadata>& get_metadata() const {
-                return metadata;
-            }
-
-            const std::unique_ptr<CPD>& get_cpd() const { return cpd; }
+            const std::shared_ptr<CPD>& get_cpd() const { return cpd; }
 
             int get_time_step() const { return time_step; }
 
@@ -121,8 +123,10 @@ namespace tomcat {
                 this->assignment = std::move(assignment);
             }
 
-            void set_time_step(int time_step) {
-                this->time_step = time_step;
+            void set_time_step(int time_step) { this->time_step = time_step; }
+
+            void set_cpd(std::shared_ptr<CPD> cpd) {
+                RandomVariableNode::cpd = std::move(cpd);
             }
         };
 

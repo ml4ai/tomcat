@@ -1,4 +1,5 @@
 #include "DirichletCPD.h"
+#include "ConstantNode.h"
 
 namespace tomcat {
     namespace model {
@@ -29,7 +30,7 @@ namespace tomcat {
             for (int row = 0; row < parameter_values.rows(); row++) {
                 Eigen::VectorXd alpha = parameter_values.row(row);
                 std::vector<std::shared_ptr<Node>> alpha_vector;
-                alpha_vector.push_back(std::make_shared<Node>(Node(alpha)));
+                alpha_vector.push_back(std::make_shared<ConstantNode>(ConstantNode(alpha)));
                 this->parameter_table.push_back(std::move(alpha_vector));
             }
         }

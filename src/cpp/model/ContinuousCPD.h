@@ -99,7 +99,8 @@ namespace tomcat {
              */
             virtual void init_from_matrix(Eigen::MatrixXd& parameter_table) = 0;
 
-            virtual void update_dependencies() override;
+            virtual void
+            update_dependencies(NodeMap& parameter_nodes_map, int time_step) override;
         };
 
     } // namespace model

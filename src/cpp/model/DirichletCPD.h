@@ -51,20 +51,6 @@ namespace tomcat {
           private:
             int alpha_size;
 
-            //            /**
-            //             * Copy constructor.
-            //             *
-            //             * @param cpd: dirichlet CPD to copy
-            //             */
-            //            DirichletCPD(DirichletCPD& cpd) : ContinuousCPD(cpd)
-            //            {}
-            //
-            //            /**
-            //             * Move constructor.
-            //             *
-            //             * @param cpd: dirichlet CPD to move
-            //             */
-
           public:
             /**
              * Store a list of node dependent parameters.
@@ -102,9 +88,6 @@ namespace tomcat {
             DirichletCPD(DirichletCPD&& cpd) = default;
             DirichletCPD& operator=(DirichletCPD&& cpd) = default;
 
-
-            //            DirichletCPD(DirichletCPD&& cpd) :
-            //            ContinuousCPD(std::move(cpd)) {}
 
             /**
              * Transform a table of numeric values for \f$\alpha\f$ to a list of
