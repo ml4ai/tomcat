@@ -5,6 +5,10 @@
 #   session_id: The UUID of the session
 #   timestamp: A timestamp corresponding to the timestamp of the session
 #   player_id: A unique ID corresponding to the player.
+#   level_of_difficulty: The level of difficulty of the mission (only if
+#   MAIN_MISSION=1)
+#   spec_version: The version of the spec corresponding to the format of the
+#   messages.
 
 import os
 import sys
@@ -12,16 +16,19 @@ import json
 import hashlib
 from datetime import datetime
 
-# Return UTC date and time in ISO-8601 format.
-timestamp = datetime.utcnow().isoformat()[:-3] + "Z"
+if __name__ == "__main__":
+    # Return UTC date and time in ISO-8601 format.
+    timestamp = datetime.utcnow().isoformat() + "Z"
+    player_id = sys.argv[2]
+    player_id_hashed = hashlib.sha256(player_id.encode()).hexdigest()
 
-player_id = sys.argv[2]
-player_id_hashed = hashlib.sha256(player_id.encode()).hexdigest()
+    metadata = {
+        "session_id": sys.argv[1],  # Get UUID from command line argument
+        "timestamp": timestamp
+        "player_id": player_id_hashed,
+        "time_limit": sys.argv[3],
+        "level_of_difficulty": sys.argv[4],
+        "spec_version": sys.argv[5],
+    }
 
-metadata = {
-    "session_id": sys.argv[1],  # Get UUID from command line argument
-    "timestamp": timestamp,
-    "player_id": player_id_hashed
-}
-
-print(json.dumps(metadata, indent=4))  # Serialize metadata
+    print(json.dumps(metadata, indent=4))  # Serialize metadata

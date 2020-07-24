@@ -546,4 +546,6 @@ components:
         player_id:
           type: string
           format: uuid
+        time_limit: integer
+        level_of_difficulty: integer
 

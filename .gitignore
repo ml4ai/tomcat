@@ -78,6 +78,13 @@ data/*
 *.tgz
 *.zip
 
+# Misc
+src/pddl/#sar-individual-domain.pddl#  
+src/pddl/#sar-individual-domain.shop#
+src/pddl/sar-individual-domain.shop
+.ipynb_checkpoints
+__pycache__
+
 # Temporary directory for ToMCAT-generated files.
 tmp
 

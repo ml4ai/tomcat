@@ -27,16 +27,15 @@ options_description load_options() {
         "  0: Tutorial\n"
         "  1: Zombie Invasion\n"
         "  2: USAR (Singleplayer)\n"
-        "  3: Procedurally generated mission"
-        )
-        ("difficulty", value<unsigned int>()->default_value(5),
-                                    "Level of difficulty.\n"
-                                    "  3: Easy\n"
-                                    "  5: Medium\n"
-                                    "  7: Hard")(
-        "time_limit",
-        value<unsigned int>()->default_value(20),
-        "Time limit for mission (in seconds).")(
+        "  3: Procedurally generated mission")(
+        "difficulty",
+        value<unsigned int>()->default_value(5),
+        "Level of difficulty.\n"
+        "  3: Easy\n"
+        "  5: Medium\n"
+        "  7: Hard")("time_limit",
+                     value<unsigned int>()->default_value(20),
+                     "Time limit for mission (in seconds).")(
         "self_report_interval",
         value<unsigned int>()->default_value(180),
         "Self-report prompt interval time (in seconds).")(
@@ -128,8 +127,7 @@ int main(int argc, const char* argv[]) {
     if (are_parameters_ok(parameters_map, options)) {
         Mission mission = create_mission(parameters_map);
         try {
-            std::shared_ptr<LocalAgent> tomcat_agent =
-                std::make_shared<LocalAgent>();
+            shared_ptr<LocalAgent> tomcat_agent = make_shared<LocalAgent>();
             mission.add_listener(tomcat_agent);
             mission.start();
         }
