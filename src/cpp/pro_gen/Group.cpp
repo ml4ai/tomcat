@@ -86,7 +86,7 @@ string Group::toTSV() {
     }
 
     for (auto block : (this->getBlockList())) {
-        retval += block.toTSV() + "\n";
+        retval += (*block).toTSV() + "\n";
     }
 
     return retval;

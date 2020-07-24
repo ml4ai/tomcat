@@ -22,7 +22,7 @@ class AABB {
     Pos bottomRight;
     bool isHollow;
     bool hasRoof;
-    std::vector<Block> blockList;
+    std::vector<Block*> blockList;
 
   public:
     /**
@@ -67,7 +67,7 @@ class AABB {
      *
      * @return The reference to the block list
      */
-    std::vector<Block>& getBlockList();
+    std::vector<Block*>& getBlockList();
 
     /**
      * @brief Get the midpoint X value calculated between
@@ -153,7 +153,7 @@ class AABB {
      *
      * @param block Block to be added
      */
-    void addBlock(const Block& block);
+    void addBlock(Block& block);
 
     /**
      * @brief Checks to see if two AABBs overlapp on any of the axes

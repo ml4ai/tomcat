@@ -5,8 +5,9 @@
 TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
 export TOMCAT
 
+source "$TOMCAT"/tools/configuration_helpers
 
-export JAVA_HOME="$TOMCAT"/external/jdk8u232-b09/Contents/Home
+configure_session
 
 cd "$TOMCAT"/external/malmo/Minecraft
 ./launchClient.sh

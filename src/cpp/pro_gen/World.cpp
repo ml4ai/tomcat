@@ -18,23 +18,23 @@ void World::setRandom(int seed) {
     this->gen = newGen;
 }
 
-vector<AABB>& World::getAABBList() { return (this->aabbList); }
+vector<AABB*>& World::getAABBList() { return (this->aabbList); }
 
-vector<Block>& World::getBlockList() { return (this->blockList); }
+vector<Block*>& World::getBlockList() { return (this->blockList); }
 
-void World::addAABB(const AABB& aabb) { (this->aabbList).push_back(aabb); }
+void World::addAABB(AABB& aabb) { (this->aabbList).push_back(&aabb); }
 
-void World::addBlock(const Block& block) { (this->blockList).push_back(block); }
+void World::addBlock(Block& block) { (this->blockList).push_back(&block); }
 
 string World::toTSV() {
     string retval = "";
 
     for (auto aabb : (this->aabbList)) {
-        retval += aabb.toTSV();
+        retval += (*aabb).toTSV();
     }
 
     for (auto& block : (this->blockList)) {
-        retval += block.toTSV() + "\n";
+        retval += (*block).toTSV() + "\n";
     }
 
     return retval;
@@ -45,7 +45,8 @@ string World::toJSON() {
     vector<json> json_block_list;
 
     // Add AABBs to the JSON list
-    for (auto& aabb : this->aabbList) {
+    for (auto& aabbPtr : this->aabbList) {
+        AABB aabb = *aabbPtr;
         json aabb_json;
         aabb_json["id"] = to_string(aabb.getID());
 
@@ -59,7 +60,8 @@ string World::toJSON() {
         aabb_json["material"] = aabb.getMaterial();
 
         vector<json> aabb_block_list_json;
-        for (auto& block : aabb.getBlockList()) {
+        for (auto& blockPtr : aabb.getBlockList()) {
+            Block block = *blockPtr;
             json block_json;
             block_json["type"] = block.getType();
             block_json["x"] = to_string(block.getX());
@@ -73,7 +75,8 @@ string World::toJSON() {
     }
 
     // Add Blocks to the JSON List
-    for (auto& block : this->blockList) {
+    for (auto& blockPtr : this->blockList) {
+        Block block = *blockPtr;
         json block_json;
         block_json["type"] = block.getType();
         block_json["x"] = to_string(block.getX());

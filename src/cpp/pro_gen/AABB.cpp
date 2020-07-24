@@ -25,7 +25,7 @@ Pos AABB::getTopLeft() { return this->topLeft; }
 
 Pos AABB::getBottomRight() { return this->bottomRight; }
 
-vector<Block>& AABB::getBlockList() { return (this->blockList); }
+vector<Block*>& AABB::getBlockList() { return (this->blockList); }
 
 int AABB::getMidpointX() {
     int mid_x = ((this->topLeft).getX() +
@@ -105,7 +105,7 @@ void AABB::setBottomRight(Pos& bottomRight) { this->bottomRight = bottomRight; }
 
 void AABB::setMaterial(string material) { this->material = material; };
 
-void AABB::addBlock(const Block& block) { (this->blockList).push_back(block); }
+void AABB::addBlock(Block& block) { (this->blockList).push_back(&block); }
 
 bool AABB::isOverlapping(AABB& other) {
     int xRange = (this->bottomRight.getX()) - (this->topLeft.getX());
@@ -144,7 +144,7 @@ void AABB::generateBox(string material,
         for (int y = startY; y <= endY; y++) {
             for (int z = startZ; z <= endZ; z++) {
                 Pos pos(x, y, z);
-                this->addBlock(Block(material, pos, type));
+                this->addBlock(*(new Block(material, pos, type)));
             }
         }
     }
@@ -178,7 +178,7 @@ void AABB::addRandomBlocks(int n,
         int y = randY(gen);
         int z = randZ(gen);
         Pos pos(x, y, z);
-        this->addBlock(Block(material, pos, type));
+        this->addBlock(*(new Block(material, pos, type)));
         n--;
     }
 }
@@ -221,7 +221,7 @@ string AABB::toTSV() {
     }
 
     for (auto& block : (this->blockList)) {
-        retval += block.toTSV() + "\n";
+        retval += (*block).toTSV() + "\n";
     }
 
     return retval;
@@ -243,10 +243,10 @@ void AABB::generateAllDoorsInAABB() {
     rightEdgeMid.shiftY(1);
 
     // Add it to the AABB's doors
-    this->addBlock(Block("door", topEdgeMid));
-    this->addBlock(Block("door", bottomEdgeMid));
-    this->addBlock(Block("door", leftEdgeMid));
-    this->addBlock(Block("door", rightEdgeMid));
+    this->addBlock(*(new Block("door", topEdgeMid)));
+    this->addBlock(*(new Block("door", bottomEdgeMid)));
+    this->addBlock(*(new Block("door", leftEdgeMid)));
+    this->addBlock(*(new Block("door", rightEdgeMid)));
 }
 
 AABB::~AABB() {}
