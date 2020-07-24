@@ -50,13 +50,15 @@ namespace tomcat {
 
             /**
              * Return a short description of the node.
+             *
+             * @return Node's description
              */
             virtual std::string get_description() const = 0;
 
             /**
              * Clone node
              *
-             * @return pointer to the new node
+             * @return Pointer to the new node
              */
             virtual std::unique_ptr<Node> clone() const = 0;
 
@@ -64,14 +66,14 @@ namespace tomcat {
              * Return node description. An instance of Node is considered a
              * constant node and, therefore, time agnostic.
              *
-             * @return node description
+             * @return Node description
              */
             virtual std::string get_timed_name() const = 0;
 
             /**
              * Return node description for an arbitrary time step.
              *
-             * @return node's description for an arbitrary time step
+             * @return Node's description for an arbitrary time step
              */
             virtual std::string get_timed_name(int time_step) const = 0;
 

@@ -5,25 +5,6 @@
 namespace tomcat {
     namespace model {
 
-        CategoricalCPD::CategoricalCPD(
-            std::vector<std::string> parent_node_label_order,
-            Eigen::MatrixXd& cpd_table)
-            : CPD(std::move(parent_node_label_order)) {
-
-            for (int row = 0; row < cpd_table.rows(); row++) {
-                Eigen::VectorXd probabilities(cpd_table.cols());
-
-                for (int col = 0; col < cpd_table.cols(); col++) {
-                    probabilities(col) = cpd_table(row, col);
-                }
-
-                std::shared_ptr<Node> probabilities_node =
-                    std::make_shared<ConstantNode>(std::move(probabilities));
-                this->probability_table.push_back(
-                    std::move(probabilities_node));
-            }
-        }
-
         void CategoricalCPD::copy_from_cpd(const CategoricalCPD& cpd) {
             this->parent_node_label_order = cpd.parent_node_label_order;
 
@@ -33,6 +14,21 @@ namespace tomcat {
             for (const auto& source_probabilities : cpd.probability_table) {
                 std::unique_ptr<Node> node = source_probabilities->clone();
                 this->probability_table.push_back(std::move(node));
+            }
+        }
+
+        void CategoricalCPD::init_from_matrix(const Eigen::MatrixXd& matrix) {
+            for (int row = 0; row < matrix.rows(); row++) {
+                Eigen::VectorXd probabilities(matrix.cols());
+
+                for (int col = 0; col < matrix.cols(); col++) {
+                    probabilities(col) = matrix(row, col);
+                }
+
+                std::shared_ptr<Node> probabilities_node =
+                    std::make_shared<ConstantNode>(std::move(probabilities));
+                this->probability_table.push_back(
+                    std::move(probabilities_node));
             }
         }
 
@@ -69,22 +65,21 @@ namespace tomcat {
             return std::make_unique<CategoricalCPD>(*this);
         }
 
-        void
-        CategoricalCPD::update_dependencies(NodeMap& parameter_nodes_map,
-                                            int time_step) {
+        void CategoricalCPD::update_dependencies(NodeMap& parameter_nodes_map,
+                                                 int time_step) {
 
             for (int i = 0; i < this->probability_table.size(); i++) {
                 std::string parameter_timed_name;
-                if (this->probability_table[i]->get_metadata()->repeatable) {
+                NodeMetadata* metadata =
+                    this->probability_table[i]->get_metadata().get();
+                if (metadata->repeatable) {
                     parameter_timed_name =
                         this->probability_table[i]->get_timed_name(time_step);
                 }
                 else {
                     parameter_timed_name =
                         this->probability_table[i]->get_timed_name(
-                            this->probability_table[i]
-                                ->get_metadata()
-                                ->initial_time_step);
+                            metadata->initial_time_step);
                 }
 
                 if (parameter_nodes_map.count(parameter_timed_name) > 0) {
@@ -92,6 +87,7 @@ namespace tomcat {
                         parameter_nodes_map[parameter_timed_name];
                 }
             }
+            this->updated = true;
         }
 
     } // namespace model

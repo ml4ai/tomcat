@@ -51,6 +51,27 @@ namespace tomcat {
           private:
             int alpha_size;
 
+            /**
+             * Store the parameter table in the CPD
+             *
+             * @param parameter_table: vector of node shared pointers
+             */
+            void init_from_table(
+                std::vector<std::shared_ptr<Node>>& parameter_table);
+
+          protected:
+
+            /**
+             * Transform a table of numeric values for \f$\alpha\f$ to a list of
+             * constant vector nodes to keep static and node dependent CPDs
+             * compatible.
+             *
+             * @param matrix: matrix containing constant numerical
+             * values for \f$\alpha\f$
+             */
+            virtual void
+            init_from_matrix(const Eigen::MatrixXd& matrix) override;
+
           public:
             /**
              * Store a list of node dependent parameters.
@@ -60,8 +81,19 @@ namespace tomcat {
              * @param parameter_table: list of parameter vector \f$\alpha\f$
              * determined by other nodes' assignments
              */
-            DirichletCPD(std::vector<std::string> parent_node_label_order,
-                         std::vector<std::shared_ptr<Node>> parameter_table);
+            DirichletCPD(std::vector<std::string>& parent_node_label_order,
+                         std::vector<std::shared_ptr<Node>>& parameter_table)
+                : ContinuousCPD(parent_node_label_order) {
+
+                this->init_from_table(parameter_table);
+            }
+
+            DirichletCPD(std::vector<std::string>&& parent_node_label_order,
+                         std::vector<std::shared_ptr<Node>>&& parameter_table)
+                : ContinuousCPD(std::move(parent_node_label_order)) {
+
+                this->init_from_table(parameter_table);
+            }
 
             /**
              * Create a dirichlet distribution from a matrix of parameter
@@ -72,14 +104,22 @@ namespace tomcat {
              * @param parameter_values: matrix containing constant numerical
              * values for \f$\alpha\f$
              */
-            DirichletCPD(std::vector<std::string> parent_node_label_order,
-                         Eigen::MatrixXd& parameter_values);
+            DirichletCPD(std::vector<std::string>& parent_node_label_order,
+                         const Eigen::MatrixXd& parameter_values)
+                : ContinuousCPD(parent_node_label_order) {
+
+                this->init_from_matrix(parameter_values);
+            }
+            DirichletCPD(std::vector<std::string>&& parent_node_label_order,
+                         const Eigen::MatrixXd&& parameter_values)
+                : ContinuousCPD(std::move(parent_node_label_order)) {
+
+                this->init_from_matrix(parameter_values);
+            }
 
             ~DirichletCPD() {}
 
-            DirichletCPD(const DirichletCPD& cpd) {
-                this->copy_from_cpd(cpd);
-            }
+            DirichletCPD(const DirichletCPD& cpd) { this->copy_from_cpd(cpd); }
             DirichletCPD& operator=(const DirichletCPD& cpd) {
                 this->copy_from_cpd(cpd);
                 return *this;
@@ -88,21 +128,9 @@ namespace tomcat {
             DirichletCPD(DirichletCPD&& cpd) = default;
             DirichletCPD& operator=(DirichletCPD&& cpd) = default;
 
-
             /**
-             * Transform a table of numeric values for \f$\alpha\f$ to a list of
-             * constant vector nodes to keep static and node dependent CPDs
-             * compatible.
-             *
-             * @param parameter_table: matrix containing constant numerical
-             * values for \f$\alpha\f$
-             */
-            virtual void
-            init_from_matrix(Eigen::MatrixXd& parameter_values) override;
-
-            /**
-             * Sample a vector for each combination of parent nodes' assignments
-             * (each row of the cpd table).
+             * Sample a vector for each combination of parent nodes'
+             * assignments (each row of the cpd table).
              *
              * @param generator: random number generator
              * @return matrix of sampled values. Each row contains a vector
@@ -113,18 +141,8 @@ namespace tomcat {
             Eigen::MatrixXd
             sample(std::shared_ptr<gsl_rng> generator) const override;
 
-            /**
-             * Print a short description of the distribution.
-             *
-             * @param os: output stream
-             */
             void print(std::ostream& os) const override;
 
-            /**
-             * Clone CPD
-             *
-             * @return pointer to the new CPD
-             */
             std::unique_ptr<CPD> clone() const override;
         };
 

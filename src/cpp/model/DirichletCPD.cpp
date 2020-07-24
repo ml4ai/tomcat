@@ -3,11 +3,8 @@
 
 namespace tomcat {
     namespace model {
-        DirichletCPD::DirichletCPD(
-            std::vector<std::string> parent_node_label_order,
-            std::vector<std::shared_ptr<Node>> parameter_table)
-            : ContinuousCPD(std::move(parent_node_label_order)) {
-
+        void DirichletCPD::init_from_table(
+            std::vector<std::shared_ptr<Node>>& parameter_table) {
             // Each node contains the parameter vector alpha.
             for (int i = 0; i < parameter_table.size(); i++) {
                 std::vector<std::shared_ptr<Node>> parameters;
@@ -16,21 +13,15 @@ namespace tomcat {
             }
         }
 
-        DirichletCPD::DirichletCPD(
-            std::vector<std::string> parent_node_label_order,
-            Eigen::MatrixXd& parameter_values)
-            : ContinuousCPD(std::move(parent_node_label_order)) {
+        void DirichletCPD::init_from_matrix(
+            const Eigen::MatrixXd& matrix) {
+            this->alpha_size = matrix.cols();
 
-            this->init_from_matrix(parameter_values);
-        }
-
-        void DirichletCPD::init_from_matrix(Eigen::MatrixXd& parameter_values) {
-            this->alpha_size = parameter_values.cols();
-
-            for (int row = 0; row < parameter_values.rows(); row++) {
-                Eigen::VectorXd alpha = parameter_values.row(row);
+            for (int row = 0; row < matrix.rows(); row++) {
+                Eigen::VectorXd alpha = matrix.row(row);
                 std::vector<std::shared_ptr<Node>> alpha_vector;
-                alpha_vector.push_back(std::make_shared<ConstantNode>(ConstantNode(alpha)));
+                alpha_vector.push_back(
+                    std::make_shared<ConstantNode>(ConstantNode(alpha)));
                 this->parameter_table.push_back(std::move(alpha_vector));
             }
         }

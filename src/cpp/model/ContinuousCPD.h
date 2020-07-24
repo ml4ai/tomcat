@@ -47,9 +47,34 @@ namespace tomcat {
           protected:
             std::vector<std::vector<std::shared_ptr<Node>>> parameter_table;
 
+            /**
+             * Transform a table of numeric values for \f$\phi\f$ to a list of
+             * constant vector nodes to keep static and node dependent CPDs
+             * compatible.
+             *
+             * @param parent_node_label_order: evaluation order of the parent
+             * nodes assignment for correct table indexing
+             * @param parameter_table: matrix containing constant numerical
+             * values for \f$\phi\f$
+             */
+            virtual void init_from_matrix(const Eigen::MatrixXd& parameter_table) = 0;
+
           public:
+            /**
+             * Create an abstract representation of a Continuous Conditional
+             * Probability Distribution
+             *
+             * @param parent_node_label_order: evaluation order of the parent
+             * nodes assignment for correct table indexing
+             */
             ContinuousCPD() {}
-            ContinuousCPD(std::vector<std::string> parent_node_label_order)
+
+            explicit ContinuousCPD(
+                std::vector<std::string>& parent_node_label_order)
+                : CPD(parent_node_label_order) {}
+
+            explicit ContinuousCPD(
+                std::vector<std::string>&& parent_node_label_order)
                 : CPD(std::move(parent_node_label_order)) {}
 
             ~ContinuousCPD() {}
@@ -87,20 +112,8 @@ namespace tomcat {
 
             virtual std::unique_ptr<CPD> clone() const override = 0;
 
-            /**
-             * Transform a table of numeric values for \f$\phi\f$ to a list of
-             * constant vector nodes to keep static and node dependent CPDs
-             * compatible.
-             *
-             * @param parent_node_label_order: evaluation order of the parent
-             * nodes assignment for correct table indexing
-             * @param parameter_table: matrix containing constant numerical
-             * values for \f$\phi\f$
-             */
-            virtual void init_from_matrix(Eigen::MatrixXd& parameter_table) = 0;
-
-            virtual void
-            update_dependencies(NodeMap& parameter_nodes_map, int time_step) override;
+            virtual void update_dependencies(NodeMap& parameter_nodes_map,
+                                             int time_step) override;
         };
 
     } // namespace model

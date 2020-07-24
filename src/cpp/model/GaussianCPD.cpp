@@ -3,11 +3,8 @@
 
 namespace tomcat {
     namespace model {
-
-        GaussianCPD::GaussianCPD(
-            std::vector<std::string> parent_node_label_order,
-            std::vector<GaussianParameters> parameter_table)
-            : ContinuousCPD(std::move(parent_node_label_order)) {
+        void GaussianCPD::init_from_table(
+            std::vector<GaussianParameters>& parameter_table) {
 
             for (int i = 0; i < parameter_table.size(); i++) {
                 std::vector<std::shared_ptr<Node>> parameters;
@@ -18,19 +15,12 @@ namespace tomcat {
             }
         }
 
-        GaussianCPD::GaussianCPD(
-            std::vector<std::string> parent_node_label_order,
-            Eigen::MatrixXd& parameter_values)
-            : ContinuousCPD(std::move(parent_node_label_order)) {
-
-            this->init_from_matrix(parameter_values);
-        }
-
-        void GaussianCPD::init_from_matrix(Eigen::MatrixXd& parameter_values) {
-            for (int row = 0; row < parameter_values.rows(); row++) {
-                double mean = parameter_values(row, PARAMETER_INDEX::mean);
+        void
+        GaussianCPD::init_from_matrix(const Eigen::MatrixXd& matrix) {
+            for (int row = 0; row < matrix.rows(); row++) {
+                double mean = matrix(row, PARAMETER_INDEX::mean);
                 double variance =
-                    parameter_values(row, PARAMETER_INDEX::variance);
+                    matrix(row, PARAMETER_INDEX::variance);
 
                 std::vector<std::shared_ptr<Node>> parameters;
                 parameters.reserve(2);

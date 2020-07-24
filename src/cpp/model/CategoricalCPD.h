@@ -48,6 +48,21 @@ namespace tomcat {
           private:
             std::vector<std::shared_ptr<Node>> probability_table;
 
+            /**
+             * Copy members of a categorical CPD.
+             *
+             * @param cpd: categorical CPD
+             */
+            void copy_from_cpd(const CategoricalCPD& cpd);
+
+            /**
+             * Fill the probability table from a matrix of constant
+             * probabilities.
+             *
+             * @param matrix: matrix of constant probabilities
+             */
+            void init_from_matrix(const Eigen::MatrixXd& matrix);
+
           public:
             /**
              * Store a list of node dependent discrete distributions.
@@ -57,8 +72,12 @@ namespace tomcat {
              * @param cpd_table: list of probabilities determined other by
              * nodes' assignments
              */
-            CategoricalCPD(std::vector<std::string> parent_node_label_order,
-                           std::vector<std::shared_ptr<Node>> cpd_table)
+            CategoricalCPD(std::vector<std::string>& parent_node_label_order,
+                           std::vector<std::shared_ptr<Node>>& cpd_table)
+                : CPD(parent_node_label_order), probability_table(cpd_table) {}
+
+            CategoricalCPD(std::vector<std::string>&& parent_node_label_order,
+                           std::vector<std::shared_ptr<Node>>&& cpd_table)
                 : CPD(std::move(parent_node_label_order)),
                   probability_table(std::move(cpd_table)) {}
 
@@ -71,8 +90,17 @@ namespace tomcat {
              * @param cpd_table: matrix containing constant numerical
              * probabilities
              */
-            CategoricalCPD(std::vector<std::string> parent_node_label_order,
-                           Eigen::MatrixXd& cpd_table);
+            CategoricalCPD(std::vector<std::string>& parent_node_label_order,
+                           const Eigen::MatrixXd& cpd_table)
+                : CPD(parent_node_label_order) {
+                this->init_from_matrix(cpd_table);
+            }
+
+            CategoricalCPD(std::vector<std::string>&& parent_node_label_order,
+                           const Eigen::MatrixXd& cpd_table)
+                : CPD(std::move(parent_node_label_order)) {
+                this->init_from_matrix(cpd_table);
+            }
 
             ~CategoricalCPD() {}
 
@@ -87,18 +115,11 @@ namespace tomcat {
             CategoricalCPD& operator=(CategoricalCPD&& cpd) = default;
 
             /**
-             * Copy members of a categorical CPD.
-             *
-             * @param cpd: categorical CPD
-             */
-            void copy_from_cpd(const CategoricalCPD& cpd);
-
-            /**
              * Sample a numeric value for each combination of parent nodes'
              * assignments (each row of the cpd table).
              *
              * @param generator: random number generator
-             * @return vector of sampled values. Each index contains a number
+             * @return Vector of sampled values. Each index contains a number
              *  sampled from a categorical distribution defined by each row of
              *  the cpd table.
              */

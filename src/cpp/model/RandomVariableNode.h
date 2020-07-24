@@ -15,6 +15,14 @@ namespace tomcat {
          * distribution over the other nodes' assignments in the unrolled DBN.
          */
         class RandomVariableNode : public Node {
+          private:
+            /**
+             * Copy members of a random variable node.
+             *
+             * @param cpd: continuous CPD
+             */
+            void copy_from_node(const RandomVariableNode& node);
+
           protected:
             // CPD is a shared pointer because a multiple nodes can have a CPD
             // that depend on the same set of parameters.
@@ -33,8 +41,12 @@ namespace tomcat {
              * @param cpd: node's conditional probability distribution
              * @param time_step: node's time step in the unrolled DBN
              */
-            RandomVariableNode(std::shared_ptr<NodeMetadata> metadata,
-                               std::shared_ptr<CPD> cpd,
+            RandomVariableNode(std::shared_ptr<NodeMetadata>& metadata,
+                               std::shared_ptr<CPD>& cpd,
+                               int time_step = 0)
+                : Node(metadata), cpd(cpd), time_step(time_step) {}
+            RandomVariableNode(std::shared_ptr<NodeMetadata>&& metadata,
+                               std::shared_ptr<CPD>&& cpd,
                                int time_step = 0)
                 : Node(std::move(metadata)), cpd(std::move(cpd)),
                   time_step(time_step) {}
@@ -52,25 +64,6 @@ namespace tomcat {
             RandomVariableNode& operator=(RandomVariableNode&&) = default;
 
             /**
-             * Copy members of a random variable node.
-             *
-             * @param cpd: continuous CPD
-             */
-            void copy_from_node(const RandomVariableNode& node);
-
-            /**
-             * Print a short description of the node.
-             *
-             * @param os: output stream
-             */
-            void print(std::ostream& os) const override;
-
-            /**
-             * Return a short description of the node.
-             */
-            std::string get_description() const override;
-
-            /**
              * Set assignment from a single numeric value if samples from this
              * node is 1-dimensional.
              *
@@ -78,36 +71,16 @@ namespace tomcat {
              */
             void set_assignment(double assignment);
 
-            /**
-             * Clone node
-             *
-             * @return pointer to the new node
-             */
+            void print(std::ostream& os) const override;
+
+            std::string get_description() const override;
+
             std::unique_ptr<Node> clone() const override;
 
-            /**
-             * Return the list of parent nodes that are parameter nodes.
-             *
-             * @return parameter nodes
-             */
-            std::vector<std::shared_ptr<RandomVariableNode>>
-            get_parameter_parents() const;
-
-            /**
-             * Return the node name formed by it's label and time_step in the
-             * unrolled DBN.
-             *
-             * @return node name in the unrolled DBN
-             */
             std::string get_timed_name() const override;
 
-            /**
-             * Return the node name formed by it's label and an arbitrary
-             * time_step
-             *
-             * @return node name in the unrolled DBN
-             */
             std::string get_timed_name(int time_step) const override;
+
 
             // --------------------------------------------------------
             // Getters

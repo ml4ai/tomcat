@@ -1,10 +1,10 @@
 #include "CategoricalCPD.h"
+#include "ConstantNode.h"
 #include "DirichletCPD.h"
 #include "DynamicBayesNet.h"
 #include "GaussianCPD.h"
 #include "Node.h"
 #include "NodeMetadata.h"
-#include "ConstantNode.h"
 #include "RandomVariableNode.h"
 #include <eigen3/Eigen/Dense>
 #include <gsl/gsl_randist.h>
@@ -21,6 +21,8 @@ class A {
     A() { std::cout << "New A" << std::endl; }
     A(A& a) { std::cout << "Copying A" << std::endl; }
     A(A&& a) { std::cout << "Moving A" << std::endl; }
+
+    void print() { std::cout << "I am A" << std::endl; }
 };
 
 class B {
@@ -29,18 +31,25 @@ class B {
 
   public:
     B() { std::cout << "New B without A" << std::endl; }
-    // This yields two moves
-    // This is ambiguous with the two below
-    B(A a) : a(std::move(a)) { std::cout << "New B with A" << std::endl; }
-    // This yields one copy
-    // B(A& a) : a(a) { std::cout << "New B with A&" << std::endl; }
-    // This yields one move
-    // B(A&& a) : a(std::move(a)) { std::cout << "New B with A&&" << std::endl;
-    // }
-    void print() const { std::cout << "I am B" << std::endl; }
+    B(A& a) : a(a) {
+        std::cout << "New B with A&" << std::endl;
+        print(a);
+    }
+    B(A&& a) : a(std::move(a)) {
+        std::cout << "New B with A&&" << std::endl;
+        print(a);
+    }
+    void print(A& a) const { a.print(); }
 };
 
 int main() {
+//      A a;
+//      B b(std::move(a));
+//
+//      std::shared_ptr<A> a_ptr = std::make_shared<A>();
+//      A a_ref = *a_ptr;
+//      b.print(a_ref);
+
     // gsl_rng* gen = gsl_rng_alloc(gsl_rng_mt19937);
     std::shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
     gsl_rng_set(gen.get(), time(0));
@@ -121,8 +130,10 @@ int main() {
 
     NodeMetadata metadata3 = metadata2;
     metadata3.label = "StateC";
-    metadata3.add_parent_link(std::make_shared<RandomVariableNode>(param_node1), true);
-    metadata3.add_parent_link(std::make_shared<RandomVariableNode>(param_node2), false);
+    metadata3.add_parent_link(std::make_shared<RandomVariableNode>(param_node1),
+                              true);
+    metadata3.add_parent_link(std::make_shared<RandomVariableNode>(param_node2),
+                              false);
 
     RandomVariableNode data_node1(
         std::make_shared<NodeMetadata>(metadata3),
@@ -130,10 +141,10 @@ int main() {
     std::cout << data_node1 << std::endl;
 
     DynamicBayesNet dbn;
-    dbn.add_node(std::make_unique<RandomVariableNode>(param_node1));
-    dbn.add_node(std::make_unique<RandomVariableNode>(param_node2));
-    dbn.add_node(std::make_unique<RandomVariableNode>(data_node1));
-    dbn.unroll(3);
+    dbn.add_node(param_node1);
+    dbn.add_node(param_node2);
+    dbn.add_node(data_node1);
+    // dbn.unroll(3);
 
     //    std::vector<std::variant<A*, B*>> multi_vec;
     //    std::variant<A*, B*> var1 (new A());

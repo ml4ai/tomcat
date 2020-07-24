@@ -31,10 +31,14 @@ namespace tomcat {
             // assignment.
             std::vector<std::string> parent_node_label_order;
 
+            // Indicates whether the CPD is updated with the correct instances
+            // of the nodes it depends on
+            bool updated;
+
           public:
             CPD() {}
             /**
-             * Abstract representation of a Conditional Probability Distribution
+             * Create an abstract representation of a Conditional Probability Distribution
              *
              * @param parent_node_label_order: evaluation order of the parent
              * nodes assignment for correct table indexing
@@ -92,6 +96,15 @@ namespace tomcat {
              */
             virtual void update_dependencies(NodeMap& parameter_nodes_map,
                                              int time_step) = 0;
+
+            void reset_updated() {
+                this->updated = false;
+            }
+
+            bool is_updated() const {
+                return this->updated;
+            }
+
         };
 
     } // namespace model

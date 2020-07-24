@@ -13,9 +13,9 @@ namespace tomcat {
             for (int i = 0; i < this->parameter_table.size(); i++) {
                 for (int j = 0; j < this->parameter_table[i].size(); j++) {
                     std::string parameter_timed_name;
-                    if (this->parameter_table[i][j]
-                            ->get_metadata()
-                            ->repeatable) {
+                    NodeMetadata* metadata =
+                        this->parameter_table[i][j]->get_metadata().get();
+                    if (metadata->repeatable) {
                         parameter_timed_name =
                             this->parameter_table[i][j]->get_timed_name(
                                 time_step);
@@ -23,17 +23,17 @@ namespace tomcat {
                     else {
                         parameter_timed_name =
                             this->parameter_table[i][j]->get_timed_name(
-                                this->parameter_table[i][j]
-                                    ->get_metadata()
-                                    ->initial_time_step);
+                                metadata->initial_time_step);
                     }
 
                     if (parameter_nodes_map.count(parameter_timed_name) > 0) {
                         this->parameter_table[i][j] =
                             parameter_nodes_map[parameter_timed_name];
                     }
+                    delete metadata;
                 }
             }
+            this->updated = true;
         }
 
     } // namespace model

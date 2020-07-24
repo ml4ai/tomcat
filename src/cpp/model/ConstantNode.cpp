@@ -11,7 +11,7 @@ namespace tomcat {
             this->create_default_metadata(label);
         }
 
-        void ConstantNode::create_default_metadata(std::string label) {
+        void ConstantNode::create_default_metadata(std::string& label) {
             this->metadata = std::make_shared<NodeMetadata>(NodeMetadata());
             this->metadata->label = label;
             this->metadata->repeatable = false;

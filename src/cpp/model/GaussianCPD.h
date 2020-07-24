@@ -17,10 +17,12 @@ namespace tomcat {
             std::shared_ptr<Node> mean;
             std::shared_ptr<Node> variance;
 
-            GaussianParameters(std::shared_ptr<Node> mean, std::shared_ptr<Node> variance)
+            GaussianParameters(std::shared_ptr<Node> mean,
+                               std::shared_ptr<Node> variance)
                 : mean(mean), variance(variance) {}
 
-            GaussianParameters(std::shared_ptr<Node>&& mean, std::shared_ptr<Node>&& variance)
+            GaussianParameters(std::shared_ptr<Node>&& mean,
+                               std::shared_ptr<Node>&& variance)
                 : mean(std::move(mean)), variance(std::move(variance)) {}
         };
 
@@ -62,6 +64,27 @@ namespace tomcat {
          * |--------------------------------------------|
          */
         class GaussianCPD : public ContinuousCPD {
+          private:
+            /**
+             * Store the parameter table in the CPD
+             *
+             * @param parameter_table: vector of gaussian parameters
+             */
+            void
+            init_from_table(std::vector<GaussianParameters>& parameter_table);
+
+          protected:
+            /**
+             * Transform a table of numeric values for mean and variance to
+             * constant numeric nodes to keep static and node dependent CPDs
+             * compatible.
+             *
+             * @param matrix: matrix containing constant numerical
+             * values for mean and variance
+             */
+            virtual void
+            init_from_matrix(const Eigen::MatrixXd& matrix) override;
+
           public:
             /**
              * Store a list of node dependent parameters.
@@ -71,8 +94,18 @@ namespace tomcat {
              * @param parameter_table: list of gaussian parameters determined by
              * other nodes' assignments
              */
-            GaussianCPD(std::vector<std::string> parent_node_label_order,
-                        std::vector<GaussianParameters> parameter_table);
+            GaussianCPD(std::vector<std::string>& parent_node_label_order,
+                        std::vector<GaussianParameters>& parameter_table)
+                : ContinuousCPD(parent_node_label_order) {
+
+                this->init_from_table(parameter_table);
+            }
+            GaussianCPD(std::vector<std::string>&& parent_node_label_order,
+                        std::vector<GaussianParameters>&& parameter_table)
+                : ContinuousCPD(std::move(parent_node_label_order)) {
+
+                this->init_from_table(parameter_table);
+            }
 
             /**
              * Create a gaussian distribution from a matrix of parameter
@@ -80,34 +113,31 @@ namespace tomcat {
              *
              * @param parent_node_label_order: evaluation order of the parent
              * nodes assignment for correct table indexing
-             * @param parameter_table: matrix containing constant numerical
+             * @param parameter_values: matrix containing constant numerical
              * values for mean and variance
              */
-            GaussianCPD(std::vector<std::string> parent_node_label_order,
-                        Eigen::MatrixXd& parameter_values);
+            GaussianCPD(std::vector<std::string>& parent_node_label_order,
+                        Eigen::MatrixXd& parameter_values)
+                : ContinuousCPD(parent_node_label_order) {
+
+                this->init_from_matrix(parameter_values);
+            }
+            GaussianCPD(std::vector<std::string>&& parent_node_label_order,
+                        Eigen::MatrixXd&& parameter_values)
+                : ContinuousCPD(std::move(parent_node_label_order)) {
+
+                this->init_from_matrix(parameter_values);
+            }
 
             ~GaussianCPD() {}
 
-            GaussianCPD(const GaussianCPD& cpd) {
-                this->copy_from_cpd(cpd);
-            }
+            GaussianCPD(const GaussianCPD& cpd) { this->copy_from_cpd(cpd); }
             GaussianCPD& operator=(const GaussianCPD& cpd) {
                 this->copy_from_cpd(cpd);
                 return *this;
             };
             GaussianCPD(GaussianCPD&& cpd) = default;
             GaussianCPD& operator=(GaussianCPD&& cpd) = default;
-
-            /**
-             * Transform a table of numeric values for mean and variance to
-             * constant numeric nodes to keep static and node dependent CPDs
-             * compatible.
-             *
-             * @param parameter_table: matrix containing constant numerical
-             * values for mean and variance
-             */
-            virtual void
-            init_from_matrix(Eigen::MatrixXd& parameter_values) override;
 
             /**
              * Sample a numeric value for each combination of parent nodes'

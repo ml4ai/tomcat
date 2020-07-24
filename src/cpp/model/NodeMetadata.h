@@ -19,6 +19,7 @@ namespace tomcat {
          * version of such DBN over time.
          */
         struct NodeMetadata {
+          public:
             // Unique identifier of a node in a DBN.
             std::string label;
 
@@ -42,27 +43,11 @@ namespace tomcat {
             // nodes's distribution
             bool parameter;
 
-            // List of parents of the node and their relative time step.
-            std::vector<ParentLink> parent_links;
-
-            // Number of parent nodes that are parameter nodes. This variable is
-            // kept to improve efficiency whenever the list of parameters
-            // parents of a node is requested.
-            int num_parameter_parents;
-
-            // Indicates whether any of the parents that are parameter nodes
-            // are repeatable. Storing this variable as parent links are added
-            // will improve performance as this information need to be accessed
-            // when the DBN is being unrolled.
-            bool any_parameter_parents_repeatable;
-
             NodeMetadata() {
-                this->any_parameter_parents_repeatable = false;
-                this->num_parameter_parents = 0;
+                this->parameter_parents = false;
             }
             NodeMetadata(int num_parents) {
-                this->any_parameter_parents_repeatable = false;
-                this->num_parameter_parents = 0;
+                this->parameter_parents = false;
                 this->parent_links.reserve(num_parents);
             }
 
@@ -83,6 +68,23 @@ namespace tomcat {
 
             friend std::ostream& operator<<(std::ostream& os,
                                             const NodeMetadata& metadata);
+
+            // --------------------------------------------------------
+            // Getters
+            // --------------------------------------------------------
+            const std::vector<ParentLink>& get_parent_links() const {
+                return parent_links;
+            }
+            bool has_parameter_parents() const { return parameter_parents; }
+
+          private:
+            // List of parents of the node and their relative time step.
+            std::vector<ParentLink> parent_links;
+            // Indicates whether the node that owns this metadata has any
+            // parameter node as a parent. This variable is determined by the
+            // parent links added to the metadata.
+            bool parameter_parents;
+
         };
 
         /** This struct represents how a node should be linked to a given parent

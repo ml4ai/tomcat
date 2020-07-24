@@ -12,6 +12,8 @@ namespace tomcat {
     namespace model {
 
         struct VertexData {
+            // This needs to be a shared pointer because some of the nodes can
+            // be parameter nodes sharable among some CPDs
             std::shared_ptr<RandomVariableNode> node;
         };
 
@@ -31,67 +33,57 @@ namespace tomcat {
 
             Graph graph;
             IDMap name_to_id;
-            // The actual nodes which will be stored as vertex data will be
-            // replicas of the nodes in this list. The original list is
-            // preserved to allow multiple calls of the unrolled method based on
-            // the original set of nodes.
+
+            // Node templates will be used to create concrete instances of
+            // nodes over time, which will be stored in the vertices of the
+            // unrolled DBN.
             //
-            // Templates of the parameter node are nodes which samples are used
-            // as parameters of other nodes' distributions.
-            //
-            // Templates of data nodes are the latent and
-            // observable nodes in the DBN that are not parameter nodes.
-            //
-            // Those templates will be used to create concrete instances of
-            // nodes  over time, which will be stored in the vertices of the
-            // unrolled graph.
-            std::vector<std::unique_ptr<RandomVariableNode>>
-                data_node_templates;
-            std::vector<std::unique_ptr<RandomVariableNode>>
-                parameter_node_templates;
+            // The original list is preserved to allow multiple calls of the
+            // unrolled method based on the original set of nodes.
+            std::vector<RandomVariableNode> node_templates;
+
+            // If unrolled, the number of time steps the DBN was unrolled in
+            int time_steps;
 
             /**
-             * Create vertices from a list of data nodes.
+             * Create vertices from a list of nodes.
              *
-             * @param time_steps: number of tim steps to unroll
+             * @return Map between parameter nodes' name and content. This map
+             * will be used for updating the node dependent CPDs with concrete
+             * instances of the parameter nodes created in this method.
              */
-            NodeMap create_vertices_from_parameter_nodes(int time_steps);
+            NodeMap create_vertices_from_nodes();
 
-            /**
-             * Create vertices from a list of parameter nodes. This method
-             * assumes create_vertices_from_parameter_nodes was called first as
-             * the data nodes will need to update their CPD's with the parameter
-             * nodes already created and stored in vertices of the graph.
-             *
-             * @param time_steps: number of tim steps to unroll
-             */
-            void create_vertices_from_data_nodes(int time_steps,
-                                                 NodeMap& parameter_nodes_map);
+            // todo - document these methods
+            VertexData add_vertex(const RandomVariableNode& node,
+                                  int time_step);
 
-            VertexData
-            add_vertex(const std::unique_ptr<RandomVariableNode>& node,
-                       int time_step);
+            void create_edges();
 
-            void add_edges();
+            void add_edge(const RandomVariableNode& source_node,
+                          const RandomVariableNode& target_node,
+                          int target_time_step);
+
+            void update_cpds(NodeMap& parameter_nodes_map);
 
           public:
             DynamicBayesNet() {}
-            DynamicBayesNet(int num_data_nodes, int num_parameter_nodes);
+            DynamicBayesNet(int num_nodes);
             ~DynamicBayesNet() {}
 
             /**
-             * Store node in the DBN as a copy of the argument
+             * Store copy of the node in the DBN
              *
-             * @param node: node to be copied and stored in the DBN
+             * @param node: node to be stored in the DBN
              */
-            void add_node(std::unique_ptr<RandomVariableNode>& node);
+            void add_node(RandomVariableNode& node);
 
             /**
-             * Move node's reference to the DBN
+             * Move the node to the DBN
              *
-             * @param node: node to be moved to the DBN
+             * @param node: node to be stored in the DBN
              */
-            void add_node(std::unique_ptr<RandomVariableNode>&& node);
+            void add_node(RandomVariableNode&& node);
 
             /**
              * Create vertices and edges by replicating nodes over time and
@@ -99,6 +91,8 @@ namespace tomcat {
              * metadata.
              */
             void unroll(int time_steps);
+
+            void check();
         };
 
     } // namespace model

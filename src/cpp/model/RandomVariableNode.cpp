@@ -53,21 +53,6 @@ namespace tomcat {
             return std::make_unique<RandomVariableNode>(*this);
         }
 
-        // todo - check if I can remove this
-        std::vector<std::shared_ptr<RandomVariableNode>>
-        RandomVariableNode::get_parameter_parents() const {
-            std::vector<std::shared_ptr<RandomVariableNode>> parameter_parents;
-            parameter_parents.reserve(this->metadata->num_parameter_parents);
-
-            for (const auto& parent_link : this->metadata->parent_links) {
-                if (parent_link.parent_node->metadata->parameter) {
-                    parameter_parents.push_back(parent_link.parent_node);
-                }
-            }
-
-            return parameter_parents;
-        }
-
         std::string RandomVariableNode::get_timed_name() const {
             return this->get_timed_name(this->time_step);
         }
