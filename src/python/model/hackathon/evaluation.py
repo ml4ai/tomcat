@@ -14,10 +14,10 @@ import random
 from sklearn.metrics import f1_score, accuracy_score, log_loss, confusion_matrix
 from hackathon.sampling import AncestralSampling
 import pandas as pd
-
+import math
 
 def fit_and_evaluate(
-    original_model, evidence_set, number_of_samples, burn_in, number_of_folds, horizons
+    original_model, evidence_set, number_of_samples, burn_in, number_of_folds, horizons, model_root_folder
 ):
     """
     This function fits and evaluates the models using k-fold cross validation. For each fold, the training set is
@@ -48,10 +48,15 @@ def fit_and_evaluate(
     tg_model_conf_matrices = [[] for _ in range(len(horizons))]
     ty_model_conf_matrices = [[] for _ in range(len(horizons))]
 
-    for training_set, test_set in folds:
-        trained_model = learning.estimate_parameters(
-            training_set, number_of_samples, burn_in
-        )
+    for fold, (training_set, test_set) in enumerate(folds):
+        trained_model = original_model
+        model_folder = "{}/{}s{}b_fold_{}".format(model_root_folder, NUMBER_OF_SAMPLES, BURN_IN, fold)
+        if not trained_model.load(model_folder):
+            trained_model = learning.estimate_parameters(
+                training_set, number_of_samples, burn_in
+            )
+            trained_model.save(model_folder)
+
         inference = ModelInference(trained_model)
 
         for i, h in enumerate(horizons):
@@ -240,43 +245,27 @@ def compute_accuracy_for_triaging(
 
     return tg_log_loss, ty_log_loss, tg_f1_score, ty_f1_score, tg_accuracy, ty_accuracy, tg_conf_matrix, ty_conf_matrix
 
-
-# def get_log_loss(evidence, probabilities):
-#     """
-#     This function computes the log loss between probabilities and real observed values
-#     """
-#     return -np.mean(
-#         evidence * utils.log(probabilities) + (1 - evidence) * (utils.log(1-probabilities))
-#     )
-#
-#
-# def get_f1_score(confusion_matrix):
-#     if confusion_matrix[1, 1] + confusion_matrix[0, 1] == 0:
-#         precision = 0
-#     else:
-#         precision = confusion_matrix[1, 1] / (
-#             confusion_matrix[1, 1] + confusion_matrix[0, 1]
-#         )
-#
-#     if confusion_matrix[1, 1] + confusion_matrix[1, 0]:
-#         recall = 0
-#     else:
-#         recall = confusion_matrix[1, 1] / (
-#                 confusion_matrix[1, 1] + confusion_matrix[1, 0]
-#         )
-#
-#     return 2 * precision * recall / (precision + recall)
-
-# def get_accuracy(confusion_matrix):
-#     return confusion_matrix[1, 1] / (confusion_matrix[0, 0] + confusion_matrix[1, 1])
-
 def print_metrics(log_losses, f1_scores, accuracies):
-    print('Log-loss')
-    print('{:.2f} +- {:.4f}'.format(np.mean(log_losses), np.std(log_losses)/len(log_losses)))
-    print('F1 Score')
-    print('{:.2f} +- {:.4f}'.format(np.mean(f1_scores), np.std(f1_scores)/len(f1_scores)))
-    print('Accuracy')
-    print('{:.2f} +- {:.4f}'.format(np.mean(accuracies), np.std(accuracies)/len(accuracies)))
+    print('Log-loss | F1 Score | Accuracy')
+    print('${:.2f} \pm {:.4f}$'.format(np.mean(log_losses), np.std(log_losses)/len(log_losses)))
+    print('${:.2f} \pm {:.4f}$'.format(np.mean(f1_scores), np.std(f1_scores)/len(f1_scores)))
+    print('${:.2f} \pm {:.4f}$'.format(np.mean(accuracies), np.std(accuracies)/len(accuracies)))
+
+def format_rate(rate, error):
+    if math.isnan(rate) or math.isnan(error):
+        return '--'
+    else:
+        return '${}\\% \pm {}\\%$'.format(int(rate), int(error))
+
+def print_rate_change(matrices_1, matrices_2):
+    rates = (np.array(matrices_2) - np.array(matrices_1)) / np.array(matrices_1)
+    means = np.mean(rates, axis=0) * 100
+    errors = 100 * np.std(rates, axis=0) / np.sqrt(rates.shape[0])
+
+    print('TN & {}'.format(format_rate(means[0, 0], errors[0, 0])))
+    print('TP & {}'.format(format_rate(means[1, 1], errors[1, 1])))
+    print('FN & {}'.format(format_rate(means[1, 0], errors[1, 0])))
+    print('FP & {}'.format(format_rate(means[0, 1], errors[0, 1])))
 
 def print_results(tg_baseline_ll, ty_baseline_ll, tg_baseline_f1, ty_baseline_f1, tg_baseline_acc, ty_baseline_acc, tg_baseline_cm, ty_baseline_cm, tg_model_ll, ty_model_ll, tg_model_f1, ty_model_f1, tg_model_acc, ty_model_acc, tg_model_cm, ty_model_cm, horizons):
     for i, h in enumerate(horizons):
@@ -284,52 +273,77 @@ def print_results(tg_baseline_ll, ty_baseline_ll, tg_baseline_f1, ty_baseline_f1
         print('===============================')
 
         print('--------')
-        print('Baseline')
-        print('--------')
         print('TG')
+        print('--------')
+        print('Baseline')
         print_metrics(tg_baseline_ll[i], tg_baseline_f1[i], tg_baseline_acc[i])
         print('')
-        print('TY')
-        print_metrics(ty_baseline_ll[i], ty_baseline_f1[i], ty_baseline_acc[i])
+        print('Model')
+        print_metrics(tg_model_ll[i], tg_model_f1[i], tg_model_acc[i])
 
         print('--------')
-        print('Model')
-        print('--------')
-        print('TG')
-        print_metrics(tg_model_ll[i], tg_model_f1[i], tg_model_acc[i])
-        print('')
         print('TY')
+        print('--------')
+        print('Baseline')
+        print_metrics(ty_baseline_ll[i], ty_baseline_f1[i], ty_baseline_acc[i])
+        print('')
+        print('Model')
         print_metrics(ty_model_ll[i], ty_model_f1[i], ty_model_acc[i])
 
         print('===============================')
 
-    print('')
+    print('---------')
     print('VARIATION')
     print('---------')
-
     print('TG')
-    print('Baseline')
-    print('1->3')
-    print((np.sum(tg_baseline_cm[1], axis=0) - np.sum(tg_baseline_cm[0], axis=0)) / np.sum(tg_baseline_cm[0], axis=0))
-    print('3->5')
-    print((np.sum(tg_baseline_cm[2], axis=0) - np.sum(tg_baseline_cm[1], axis=0)) / np.sum(tg_baseline_cm[1], axis=0))
-    print('Model')
-    print('1->3')
-    print((np.sum(tg_model_cm[1], axis=0) - np.sum(tg_model_cm[0], axis=0)) / np.sum(tg_model_cm[0], axis=0))
-    print('3->5')
-    print((np.sum(tg_model_cm[2], axis=0) - np.sum(tg_model_cm[1], axis=0)) / np.sum(tg_model_cm[1], axis=0))
-
+    print('--------')
+    for i in range(1, len(horizons)):
+        print('')
+        print('{} -> {}'.format(horizons[i-1], horizons[i]))
+        print('')
+        print('Baseline')
+        print_rate_change(tg_baseline_cm[i-1], tg_baseline_cm[i])
+        print('')
+        print('Model')
+        print_rate_change(tg_model_cm[i - 1], tg_model_cm[i])
+    print('---------')
     print('TY')
-    print('Baseline')
-    print('1->3')
-    print((np.sum(ty_baseline_cm[1], axis=0) - np.sum(ty_baseline_cm[0], axis=0)) / np.sum(ty_baseline_cm[0], axis=0))
-    print('3->5')
-    print((np.sum(ty_baseline_cm[2], axis=0) - np.sum(ty_baseline_cm[1], axis=0)) / np.sum(ty_baseline_cm[1], axis=0))
-    print('Model')
-    print('1->3')
-    print((np.sum(ty_model_cm[1], axis=0) - np.sum(ty_model_cm[0], axis=0)) / np.sum(ty_model_cm[0], axis=0))
-    print('3->5')
-    print((np.sum(ty_model_cm[2], axis=0) - np.sum(ty_model_cm[1], axis=0)) / np.sum(ty_model_cm[1], axis=0))
+    print('--------')
+    for i in range(1, len(horizons)):
+        print('')
+        print('{} -> {}'.format(horizons[i - 1], horizons[i]))
+        print('')
+        print('Baseline')
+        print_rate_change(ty_baseline_cm[i - 1], ty_baseline_cm[i])
+        print('')
+        print('Model')
+        print_rate_change(ty_model_cm[i - 1], ty_model_cm[i])
+
+    #
+    # print('TG')
+    # print('Baseline')
+    # print('1->3')
+    #
+    # print((np.mean(tg_baseline_cm[1], axis=0) - np.sum(tg_baseline_cm[0], axis=0)) / np.sum(tg_baseline_cm[0], axis=0))
+    # print('3->5')
+    # print((np.mean(tg_baseline_cm[2], axis=0) - np.sum(tg_baseline_cm[1], axis=0)) / np.sum(tg_baseline_cm[1], axis=0))
+    # print('Model')
+    # print('1->3')
+    # print((np.sum(tg_model_cm[1], axis=0) - np.sum(tg_model_cm[0], axis=0)) / np.sum(tg_model_cm[0], axis=0))
+    # print('3->5')
+    # print((np.sum(tg_model_cm[2], axis=0) - np.sum(tg_model_cm[1], axis=0)) / np.sum(tg_model_cm[1], axis=0))
+    #
+    # print('TY')
+    # print('Baseline')
+    # print('1->3')
+    # print((np.sum(ty_baseline_cm[1], axis=0) - np.sum(ty_baseline_cm[0], axis=0)) / np.sum(ty_baseline_cm[0], axis=0))
+    # print('3->5')
+    # print((np.sum(ty_baseline_cm[2], axis=0) - np.sum(ty_baseline_cm[1], axis=0)) / np.sum(ty_baseline_cm[1], axis=0))
+    # print('Model')
+    # print('1->3')
+    # print((np.sum(ty_model_cm[1], axis=0) - np.sum(ty_model_cm[0], axis=0)) / np.sum(ty_model_cm[0], axis=0))
+    # print('3->5')
+    # print((np.sum(ty_model_cm[2], axis=0) - np.sum(ty_model_cm[1], axis=0)) / np.sum(ty_model_cm[1], axis=0))
 
 
 def toy_data():
@@ -349,35 +363,15 @@ def toy_data():
     model = Model()
     model.init_from_cpds(cpds)
     model.save('../data/parameters/toy')
-    #inference = ModelInference(models)
-    #tg_marginals_bl, ty_marginals_bl = inference.get_triaging_normalized_frequencies(evidence_set, h=3)
-    #tg_marginals, ty_marginals = inference.get_triaging_marginals_over_time(evidence_set, h=3)
-
-    # tg_bl_ll = [[]]
-    # ty_bl_ll = [[]]
-    # tg_bl_cm = [[]]
-    # ty_bl_cm = [[]]
-    # tg_ll = [[]]
-    # ty_ll = [[]]
-    # tg_cm = [[]]
-    # ty_cm = [[]]
-    #
-    # (tg_bl_ll[0],
-    # ty_bl_ll[0],
-    # tg_bl_cm[0],
-    # ty_bl_cm[0]) = compute_accuracy_for_triaging(tg_marginals_bl, ty_marginals_bl, evidence_set, h=3)
-    # (tg_ll[0],
-    #  ty_ll[0],
-    #  tg_cm[0],
-    #  ty_cm[0]) = compute_accuracy_for_triaging(tg_marginals, ty_marginals, evidence_set, h=3)
-    # print_results(tg_bl_ll, ty_bl_ll, tg_bl_cm, ty_bl_cm, tg_ll, ty_ll, tg_cm, ty_cm)
 
 if __name__ == "__main__":
     #toy_data()
 
     NUMBER_OF_SAMPLES = 5000
     BURN_IN = 500
+    H = [1, 3, 5, 10, 15, 30]
     map_names = ['sparky', 'falcon']
+
 
     # print('*************************')
     # print('GENERATING SYNTHETIC DATA')
@@ -422,7 +416,7 @@ if __name__ == "__main__":
     evidence_set.rm_evidence = evidence_set.rm_evidence[:6, :]
     evidence_set.tg_evidence = evidence_set.tg_evidence[:6, :]
     evidence_set.ty_evidence = evidence_set.ty_evidence[:6, :]
-    fit_and_evaluate(models, evidence_set, NUMBER_OF_SAMPLES, BURN_IN, 6, [1, 3, 5])
+    fit_and_evaluate(models, evidence_set, NUMBER_OF_SAMPLES, BURN_IN, 6, H, "../data/models/synthetic_sparky")
 
     print('****************************')
     print('PERFORMANCE SYNTHETIC FALCON')
@@ -439,7 +433,7 @@ if __name__ == "__main__":
     evidence_set.rm_evidence = evidence_set.rm_evidence[:5, :]
     evidence_set.tg_evidence = evidence_set.tg_evidence[:5, :]
     evidence_set.ty_evidence = evidence_set.ty_evidence[:5, :]
-    fit_and_evaluate(models, evidence_set, NUMBER_OF_SAMPLES, BURN_IN, 5, [1, 3, 5])
+    fit_and_evaluate(models, evidence_set, NUMBER_OF_SAMPLES, BURN_IN, 5, H, "../data/models/synthetic_falcon")
 
     print('******************')
     print('PERFORMANCE SPARKY')
@@ -450,7 +444,7 @@ if __name__ == "__main__":
     models = Model()
     models.init_from_mission_map(MissionMap.SPARKY)
     evidence_set = load_evidence_set("../data/evidence/asist/sparky")
-    fit_and_evaluate(models, evidence_set, NUMBER_OF_SAMPLES, BURN_IN, 6, [1, 3, 5])
+    fit_and_evaluate(models, evidence_set, NUMBER_OF_SAMPLES, BURN_IN, 6, H, "../data/models/sparky")
 
     print('******************')
     print('PERFORMANCE FALCON')
@@ -461,4 +455,4 @@ if __name__ == "__main__":
     models = Model()
     models.init_from_mission_map(MissionMap.FALCON)
     evidence_set = load_evidence_set("../data/evidence/asist/falcon")
-    fit_and_evaluate(models, evidence_set, NUMBER_OF_SAMPLES, BURN_IN, 5, [1, 3, 5])
+    fit_and_evaluate(models, evidence_set, NUMBER_OF_SAMPLES, BURN_IN, 5, H, "../data/models/falcon")

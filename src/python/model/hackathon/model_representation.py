@@ -520,12 +520,21 @@ class Model:
         """
         Load models parameters
         """
+        if (os.path.exists(os.path.join(folder, 'theta_s'))
+            and os.path.exists(os.path.join(folder, 'pi_lt'))
+            and os.path.exists(os.path.join(folder, 'theta_rm'))
+            and os.path.exists(os.path.join(folder, 'pi_tg'))
+            and os.path.exists(os.path.join(folder, 'pi_ty'))):
 
-        theta_s = np.loadtxt(os.path.join(folder, 'theta_s'))
-        pi_lt = np.loadtxt(os.path.join(folder, 'pi_lt'))
-        theta_rm = np.loadtxt(os.path.join(folder, 'theta_rm'))
-        pi_tg = np.loadtxt(os.path.join(folder, 'pi_tg'))
-        pi_ty = np.loadtxt(os.path.join(folder, 'pi_ty'))
+            theta_s = np.loadtxt(os.path.join(folder, 'theta_s'))
+            pi_lt = np.loadtxt(os.path.join(folder, 'pi_lt'))
+            theta_rm = np.loadtxt(os.path.join(folder, 'theta_rm'))
+            pi_tg = np.loadtxt(os.path.join(folder, 'pi_tg'))
+            pi_ty = np.loadtxt(os.path.join(folder, 'pi_ty'))
 
-        self.init_from_cpds(CPDTables(theta_s, pi_lt, theta_rm, pi_tg, pi_ty))
+            self.init_from_cpds(CPDTables(theta_s, pi_lt, theta_rm, pi_tg, pi_ty))
 
+            return True
+
+        else:
+            return False
