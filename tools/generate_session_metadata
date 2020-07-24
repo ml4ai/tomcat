@@ -24,7 +24,7 @@ if __name__ == "__main__":
 
     metadata = {
         "session_id": sys.argv[1],  # Get UUID from command line argument
-        "timestamp": timestamp
+        "timestamp": timestamp,
         "player_id": player_id_hashed,
         "time_limit": sys.argv[3],
         "level_of_difficulty": sys.argv[4],
