@@ -16,6 +16,7 @@ class World {
     std::mt19937_64 gen;
     std::vector<AABB*> aabbList;
     std::vector<Block*> blockList;
+    std::vector<Entity*> entityList;
 
   public:
     /**
@@ -32,12 +33,16 @@ class World {
      */
     std::vector<Block*>& getBlockList();
 
+    std::vector<Entity*>& getEntityList();
+
     /**
      * @brief Add an AABB to the vector of AABB held inside the world
      *
      * @param aabb The AABB to add
      */
     void addAABB(AABB& aabb);
+
+    void addEntity(Entity& entity);
 
     /**
      * @brief Add a Block to the vector of Block held inside the world

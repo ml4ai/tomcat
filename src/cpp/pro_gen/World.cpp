@@ -22,9 +22,13 @@ vector<AABB*>& World::getAABBList() { return (this->aabbList); }
 
 vector<Block*>& World::getBlockList() { return (this->blockList); }
 
+vector<Entity*>& World::getEntityList() { return this->entityList; }
+
 void World::addAABB(AABB& aabb) { (this->aabbList).push_back(&aabb); }
 
 void World::addBlock(Block& block) { (this->blockList).push_back(&block); }
+
+void World::addEntity(Entity& entity) { this->entityList.push_back(&entity); }
 
 string World::toTSV() {
     string retval = "";

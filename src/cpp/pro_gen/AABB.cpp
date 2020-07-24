@@ -27,6 +27,8 @@ Pos AABB::getBottomRight() { return this->bottomRight; }
 
 vector<Block*>& AABB::getBlockList() { return (this->blockList); }
 
+vector<Entity*>& AABB::getEntityList() { return this->entityList; }
+
 int AABB::getMidpointX() {
     int mid_x = ((this->topLeft).getX() +
                  ((this->bottomRight).getX() - (this->topLeft).getX()) / 2);
@@ -106,6 +108,8 @@ void AABB::setBottomRight(Pos& bottomRight) { this->bottomRight = bottomRight; }
 void AABB::setMaterial(string material) { this->material = material; };
 
 void AABB::addBlock(Block& block) { (this->blockList).push_back(&block); }
+
+void AABB::addEntity(Entity& entity) { this->entityList.push_back(&entity); }
 
 bool AABB::isOverlapping(AABB& other) {
     int xRange = (this->bottomRight.getX()) - (this->topLeft.getX());

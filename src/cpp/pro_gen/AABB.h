@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Block.h"
+#include "Entity.h"
 #include <random>
 #include <vector>
 
@@ -23,6 +24,7 @@ class AABB {
     bool isHollow;
     bool hasRoof;
     std::vector<Block*> blockList;
+    std::vector<Entity*> entityList;
 
   public:
     /**
@@ -68,6 +70,8 @@ class AABB {
      * @return The reference to the block list
      */
     std::vector<Block*>& getBlockList();
+
+    std::vector<Entity*>& getEntityList();
 
     /**
      * @brief Get the midpoint X value calculated between
@@ -154,6 +158,8 @@ class AABB {
      * @param block Block to be added
      */
     void addBlock(Block& block);
+
+    void addEntity(Entity& entity);
 
     /**
      * @brief Checks to see if two AABBs overlapp on any of the axes
