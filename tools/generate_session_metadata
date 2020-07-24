@@ -13,7 +13,7 @@ import hashlib
 from datetime import datetime
 
 # Return UTC date and time in ISO-8601 format.
-timestamp = datetime.utcnow().isoformat() + "Z"
+timestamp = datetime.utcnow().isoformat()[:-3] + "Z"
 
 player_id = sys.argv[2]
 player_id_hashed = hashlib.sha256(player_id.encode()).hexdigest()
