@@ -25,6 +25,7 @@ MQTTC = mqtt.Client()
 
 PUBLISHED_COUNT = 0
 
+
 def incr_publish_count(_client, _userdata, _mid):
     global PUBLISHED_COUNT
     PUBLISHED_COUNT += 1
@@ -51,6 +52,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Open the input file, parse each line in it as a JSON-serialized object.
+    print("Collecting messages...")
     with open(args.input, "r") as f:
         messages = []
         for line in f:
@@ -62,11 +64,12 @@ if __name__ == "__main__":
             if jline is not None:
                 messages.append(jline)
 
+        print("Sorting messages...")
         sorted_messages = sorted(
             messages, key=lambda x: parse(x["header"]["timestamp"])
         )
 
-        print(f"Publishing message count {len(sorted_messages)}")
+        print(f"Publishing {len(sorted_messages)} messages...")
 
         MQTTC.connect(args.host, port=args.port)
         MQTTC.on_publish = incr_publish_count
@@ -88,5 +91,9 @@ if __name__ == "__main__":
         # Now we should have really pushed all the messages.
 
         if PUBLISHED_COUNT != len(sorted_messages):
-            print(f'ERROR: PUBLISHED {PUBLISHED_COUNT} messages')
-            print(f'       should have been {len(sorted_messages)}')
+            print(
+                f"ERROR: Failed to publish {len(sorted_messages) - PUBLISHED_COUNT}",
+                f"out of {len(sorted_messages)} messages."
+            )
+        else:
+            print(f"Successfully published all messages from {args.input}.")
