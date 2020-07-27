@@ -1,6 +1,5 @@
 #pragma once
 #include "AABB.h"
-#include <string.h>
 
 /**
  * @brief This class represents a special AABB of type = "pit". It is not hollow
@@ -19,7 +18,7 @@ class Pit : public AABB {
      * @param bottomRight The coordinates of the bottom right of the AABB
      * from the top view of the X-Z plane. Y coordinate should be maximum here.
      */
-    Pit(int id, std::string material, Pos* topLeft, Pos* bottomRight);
+    Pit(int id, std::string material, Pos& topLeft, Pos& bottomRight);
 
     /**
      * @brief Destroy the Pit object

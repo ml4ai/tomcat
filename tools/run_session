@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -u
 
 # =============================================================================
@@ -35,8 +34,8 @@ if [[ ! $(pgrep -l mosquitto | head -n1 | cut -d' ' -f2) == mosquitto ]]; then
     "$MOSQUITTO" &> ${TOMCAT_TMP_DIR}/mosquitto.log &
 fi
 
-# On macOS, uuidgen produces uppercase UUIDs, so we pipe the output through tr
-# to get uniform behaviour on macOS and Linux.
+# On macOS, uuidgen produces uppercase UUIDS, so we pipe the output
+# through 'tr' to get uniform behavior on macOS and Linux.
 SESSION_UUID=$(uuidgen | tr '[:upper:]' '[:lower:]')
 if [[ $? -ne 0 ]]; then exit 1; fi
 
@@ -44,8 +43,16 @@ if [[ $? -ne 0 ]]; then exit 1; fi
 SESSION_OUTPUT_DIR="${TOMCAT}"/data/participant_data/"$SESSION_UUID"
 mkdir -p "${SESSION_OUTPUT_DIR}"
 
+SPEC_VERSION=$("$TOMCAT"/build/bin/getSpecVersion --spec "$TOMCAT"/docs/spec.yml)
+
 # Generate metadata file for the session
-"$TOMCAT"/tools/generate_session_metadata "$SESSION_UUID" "$PLAYER_ID" > "$SESSION_OUTPUT_DIR"/metadata.json
+"$TOMCAT"/tools/generate_session_metadata\
+    "$SESSION_UUID"\
+    "$PLAYER_ID"\
+    "$TIME_LIMIT"\
+    "$DIFFICULTY"\
+    "$SPEC_VERSION" > "$SESSION_OUTPUT_DIR"/metadata.json
+
 if [[ $? -ne 0 ]]; then exit 1; fi
 
 
@@ -75,6 +82,7 @@ start_av_recording() {
             # We need to extract the alsa output monitor.
             export ALSA_OUTPUT_MONITOR=`pacmd list-sources | \
             awk '/name:/ && /monitor/ {print $2 }'|sed 's/[<,>]//g'`
+
             # Calling pacat command.
             pacat --record --file-format=wav -d ${ALSA_OUTPUT_MONITOR} \
             > "${MISSION_OUTPUT_DIR}"/system_audio.wav &
@@ -199,7 +207,6 @@ mission_cleanup() {
     echo -e '\n'
 }
 
-
 # A function to handle cleanup when a user interrupts the script with Ctrl+C
 user_interrupt() {
     echo "Detected keyboard interrupt."
@@ -207,7 +214,6 @@ user_interrupt() {
     mission_cleanup
     session_cleanup
 }
-
 
 trap user_interrupt SIGINT SIGTERM
 
@@ -244,7 +250,9 @@ do_mission() {
                             --uuid ${SESSION_UUID}"
 
         if [[ $CURRENT_MISSION -gt 0 ]]; then
-            runExperiment_args="${runExperiment_args} --time_limit ${TIME_LIMIT}"
+            runExperiment_args="${runExperiment_args}\
+                                --time_limit ${TIME_LIMIT}\
+                                --difficulty ${DIFFICULTY}"
         fi
 
         if (( ENABLE_FFMPEG )); then
@@ -315,6 +323,16 @@ if [[ $DO_TUTORIAL_MISSION -eq 1 && $DO_MAIN_MISSION -eq 1 ]]; then
     # tutorial and main missions.
     sleep 6
 fi
+
+# If the main mission is 3 (i.e. procedural generation) then we run the
+# generator before starting the mission.
+if [[ $MAIN_MISSION -eq 3 ]]; then
+    "$TOMCAT"/build/bin/generator\
+        --gen_type 0\
+        --json_path "$TOMCAT"/external/malmo/Minecraft/run/procedural.json\
+        --tsv_path "$TOMCAT"/external/malmo/Minecraft/run/procedural.tsv
+fi
+
 
 if (( DO_MAIN_MISSION )); then do_mission ${MAIN_MISSION}; fi
 
