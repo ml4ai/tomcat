@@ -9,7 +9,7 @@ export TOMCAT
 
 echo "Installing ToMCAT dependencies."
 
-COMMON_MACOS_DEPS="cmake boost doxygen ffmpeg gradle mosquitto nlohmann-json openssl"
+COMMON_MACOS_DEPS="cmake boost doxygen ffmpeg gradle mosquitto nlohmann-json openssl yaml-cpp"
 __install_dependencies_using_macports() {
     echo "'port' executable detected, assuming that MacPorts"
     echo "(https://www.macports.org) is installed and is the package manager."
@@ -100,7 +100,8 @@ __install_dependencies_using_apt() {
         curl \
         openssl \
         zlib1g-dev \
-        libbz2-dev
+        libbz2-dev \
+        libyaml-cpp-dev
     if [[ $? -ne 0 ]]; then exit 1; fi
 
     local ubuntu_major_version=$(lsb_release -d | cut -d " " -f2 \

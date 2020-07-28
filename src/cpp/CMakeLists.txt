@@ -41,5 +41,8 @@ endif()
 add_executable(runExperiment runExperiment.cpp)
 target_link_libraries(runExperiment tomcat)
 
+# Executable to extract the version number from the spec YAML file.
+add_subdirectory(getSpecVersion)
+
 # Procedural generation module.
 add_subdirectory(pro_gen)
