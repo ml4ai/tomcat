@@ -1,5 +1,6 @@
 #pragma once
 #include "Pos.h"
+#include <nlohmann/json.hpp>
 
 class Entity {
 
@@ -9,10 +10,15 @@ class Entity {
 
   public:
     std::string getType();
-    Pos& getPos();
+    int getX();
+    int getY();
+    int getZ();
+    void setX(int x);
+    void setY(int y);
+    void setZ(int z);
     void setType(std::string type);
-    void setPos(Pos& pos);
-    std::string toTSV();
+    nlohmann::json virtual toJSON();
+    std::string virtual toTSV();
     Entity(std::string type, Pos& pos);
     virtual ~Entity();
 };

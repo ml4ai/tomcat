@@ -52,6 +52,12 @@ class Block {
      */
     int getZ();
 
+    void setX(int x);
+
+    void setY(int y);
+
+    void setZ(int z);
+
     nlohmann::json virtual toJSON();
 
     /**

@@ -33,12 +33,16 @@ void World::addEntity(Entity& entity) { this->entityList.push_back(&entity); }
 string World::toTSV() {
     string retval = "";
 
-    for (auto aabb : (this->aabbList)) {
-        retval += (*aabb).toTSV();
+    for (auto aabbPtr : (this->aabbList)) {
+        retval += (*aabbPtr).toTSV();
     }
 
-    for (auto& block : (this->blockList)) {
-        retval += (*block).toTSV() + "\n";
+    for (auto& blockPtr : (this->blockList)) {
+        retval += (*blockPtr).toTSV() + "\n";
+    }
+
+    for (auto& entityPtr : (this->entityList)) {
+        retval += (*entityPtr).toTSV() + "\n";
     }
 
     return retval;
@@ -47,6 +51,7 @@ string World::toTSV() {
 string World::toJSON() {
     vector<json> json_aabb_list;
     vector<json> json_block_list;
+    vector<json> json_entity_list;
 
     // Add AABBs to the JSON list
     for (auto& aabbPtr : this->aabbList) {
@@ -60,9 +65,15 @@ string World::toJSON() {
         json_block_list.push_back(block_json);
     }
 
+    for (auto& entityPtr : this->blockList) {
+        json entity_json = (*entityPtr).toJSON();
+        json_entity_list.push_back(entity_json);
+    }
+
     json j;
     j["aabb_list"] = json_aabb_list;
     j["block_list"] = json_block_list;
+    j["entity_list"] = json_entity_list;
     return j.dump(4);
 }
 

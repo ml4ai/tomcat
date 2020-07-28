@@ -20,6 +20,12 @@ int Block::getY() { return this->pos.getY(); }
 
 int Block::getZ() { return this->pos.getZ(); }
 
+void Block::setX(int x) { this->pos.setX(x); }
+
+void Block::setY(int y) { this->pos.setY(y); }
+
+void Block::setZ(int z) { this->pos.setZ(z); }
+
 json Block::toJSON() {
     json block_json;
     block_json["type"] = this->getType();

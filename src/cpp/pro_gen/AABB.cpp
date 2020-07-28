@@ -206,7 +206,15 @@ json AABB::toJSON() {
         json block_json = (*blockPtr).toJSON();
         aabb_block_list_json.push_back(block_json);
     }
+
+    vector<json> aabb_entity_list_json;
+    for (auto& entityPtr : this->getEntityList()) {
+        json entity_json = (*entityPtr).toJSON();
+        aabb_entity_list_json.push_back(entity_json);
+    }
+
     aabb_json["block_list"] = aabb_block_list_json;
+    aabb_json["entity_list"] = aabb_entity_list_json;
     return aabb_json;
 }
 
@@ -247,8 +255,12 @@ string AABB::toTSV() {
         }
     }
 
-    for (auto& block : (this->blockList)) {
-        retval += (*block).toTSV() + "\n";
+    for (auto& blockPtr : (this->blockList)) {
+        retval += (*blockPtr).toTSV() + "\n";
+    }
+
+    for (auto& entityPtr : (this->entityList)) {
+        retval += (*entityPtr).toTSV() + "\n";
     }
 
     return retval;
