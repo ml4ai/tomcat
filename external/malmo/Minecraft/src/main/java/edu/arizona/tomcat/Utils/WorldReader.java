@@ -119,14 +119,6 @@ public class WorldReader {
             return Blocks.LEVER.getDefaultState();
         }else if (material.equals("glowstone")) {
             return Blocks.GLOWSTONE.getDefaultState();
-        }else if (material.equals("gravel")) {
-            return Blocks.GRAVEL.getDefaultState();
-        }else if (material.equals("tree")) {
-            return Blocks.SAPLING.getDefaultState();
-        }else if (material.equals("mushroom")) {
-            return Blocks.RED_MUSHROOM.getDefaultState();
-        }else if (material.equals("waterlily")) {
-            return Blocks.WATERLILY.getDefaultState();
         }else if (material.equals("air")) {
             return Blocks.AIR.getDefaultState();
         } else {
