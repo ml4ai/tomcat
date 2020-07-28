@@ -239,6 +239,8 @@ class AABB {
      */
     void virtual generateAllDoorsInAABB();
 
+    nlohmann::json virtual toJSON();
+
     /**
      * @brief Gets a string representation of the various
      * fields and values stores in an instance as a TSV.

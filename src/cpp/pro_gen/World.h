@@ -5,7 +5,6 @@
 #pragma once
 
 #include "AABB.h"
-#include <nlohmann/json.hpp>
 
 /**
  * @brief This class represents a Minecraft world as a

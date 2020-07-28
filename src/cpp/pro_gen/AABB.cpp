@@ -4,6 +4,7 @@
  */
 #include "AABB.h"
 using namespace std;
+using json = nlohmann::json;
 
 AABB::AABB(int id,
            string type,
@@ -185,6 +186,28 @@ void AABB::addRandomBlocks(int n,
         this->addBlock(*(new Block(material, pos, type)));
         n--;
     }
+}
+
+json AABB::toJSON() {
+    json aabb_json;
+    aabb_json["id"] = to_string(this->getID());
+
+    aabb_json["x1"] = to_string(this->getTopLeft().getX());
+    aabb_json["y1"] = to_string(this->getTopLeft().getY());
+    aabb_json["z1"] = to_string(this->getTopLeft().getZ());
+
+    aabb_json["x2"] = to_string(this->getBottomRight().getX());
+    aabb_json["y2"] = to_string(this->getBottomRight().getY());
+    aabb_json["z2"] = to_string(this->getBottomRight().getZ());
+    aabb_json["material"] = this->getMaterial();
+
+    vector<json> aabb_block_list_json;
+    for (auto& blockPtr : this->getBlockList()) {
+        json block_json = (*blockPtr).toJSON();
+        aabb_block_list_json.push_back(block_json);
+    }
+    aabb_json["block_list"] = aabb_block_list_json;
+    return aabb_json;
 }
 
 string AABB::toTSV() {

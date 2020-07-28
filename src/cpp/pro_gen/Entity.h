@@ -12,6 +12,7 @@ class Entity {
     Pos& getPos();
     void setType(std::string type);
     void setPos(Pos& pos);
+    std::string toTSV();
     Entity(std::string type, Pos& pos);
     virtual ~Entity();
 };

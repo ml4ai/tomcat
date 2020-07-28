@@ -4,6 +4,7 @@
  */
 #pragma once
 #include "Pos.h"
+#include <nlohmann/json.hpp>
 
 /**
  * @brief This class represents a Minecraft block
@@ -50,6 +51,8 @@ class Block {
      * @return int The z coordinate
      */
     int getZ();
+
+    nlohmann::json virtual toJSON();
 
     /**
      * @brief Gets a string representation of the various
