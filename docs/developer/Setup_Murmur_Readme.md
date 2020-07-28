@@ -15,6 +15,12 @@
 This can be changed <br>
 [This is all that was required on a Mac laptop for server setup]
 
+### Sources:
+[https://wiki.mumble.info/wiki/Murmurguide](https://wiki.mumble.info/wiki/Murmurguide)
+[https://wiki.mumble.info/wiki/Running_Murmur
+](https://wiki.mumble.info/wiki/Running_Murmur)
+
+
 ***Some additional steps that may be required: <br>***
 To set/change the password on the Linux static server, run <br> 
 	`murmur.x86 -ini <path to configuration file> -supw <password> [srv]`	
