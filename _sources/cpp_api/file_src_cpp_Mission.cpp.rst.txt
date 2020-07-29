@@ -43,7 +43,13 @@ Includes
 
 - ``boost/uuid/uuid_io.hpp``
 
+- ``dirent.h``
+
 - ``fmt/format.h``
+
+- ``fstream``
+
+- ``iostream``
 
 - ``nlohmann/json.hpp``
 
