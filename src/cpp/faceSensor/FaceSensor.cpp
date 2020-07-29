@@ -14,7 +14,7 @@ namespace po = boost::program_options;
 
 int main(int ac, char* av[]) {
     string exp_id, trial_id, playername, of_dir, file_path;
-    bool indent, visual;
+    bool indent, visualize;
     // Boost command line options
     try {
 
@@ -33,7 +33,7 @@ int main(int ac, char* av[]) {
             po::bool_switch(&indent)->default_value(false),
             "Indent output JSON by four spaces")(
             "visualize",
-            po::bool_switch(&visual)->default_value(false),
+            po::bool_switch(&visualize)->default_value(false),
             "Enable visualization")(
             "file,f",
             po::value<string>(&file_path),
@@ -75,7 +75,7 @@ int main(int ac, char* av[]) {
 
     WebcamSensor camsensor;
     camsensor.initialize(
-        exp_id, trial_id, playername, indent, visual, file_path);
+        exp_id, trial_id, playername, indent, visualize, file_path);
     camsensor.get_observation();
 
     return 0;
