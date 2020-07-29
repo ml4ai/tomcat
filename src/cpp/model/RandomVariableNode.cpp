@@ -25,7 +25,7 @@ namespace tomcat {
                 assignment_string << this->assignment;
 
                 return fmt::format("RV({}, {}, {})",
-                                   this->metadata->label,
+                                   this->metadata->get_label(),
                                    this->time_step,
                                    assignment_string.str());
             }
@@ -34,7 +34,7 @@ namespace tomcat {
                 assignment_string << this->assignment.transpose();
 
                 return fmt::format("RV({}, {}, [{}])",
-                                   this->metadata->label,
+                                   this->metadata->get_label(),
                                    this->time_step,
                                    assignment_string.str());
             }
@@ -58,7 +58,7 @@ namespace tomcat {
         }
 
         std::string RandomVariableNode::get_timed_name(int time_step) const {
-            return fmt::format("({},{})", metadata->label, time_step);
+            return fmt::format("({},{})", metadata->get_label(), time_step);
         }
 
     } // namespace model

@@ -12,10 +12,9 @@ namespace tomcat {
         }
 
         void ConstantNode::create_default_metadata(std::string& label) {
-            this->metadata = std::make_shared<NodeMetadata>(NodeMetadata());
-            this->metadata->label = label;
-            this->metadata->repeatable = false;
-            this->metadata->parameter = true;
+            NodeMetadata metadata =
+                NodeMetadata::create_single_time_link_metadata(label, 0, true);
+            this->metadata = std::make_shared<NodeMetadata>(std::move(metadata));
         }
 
         void ConstantNode::print(std::ostream& os) const {
@@ -27,13 +26,17 @@ namespace tomcat {
                 std::stringstream assignment_string;
                 assignment_string << this->assignment;
 
-                return fmt::format("Constant({}, {})", this->metadata->label, assignment_string.str());
+                return fmt::format("Constant({}, {})",
+                                   this->metadata->get_label(),
+                                   assignment_string.str());
             }
             else {
                 std::stringstream assignment_string;
                 assignment_string << this->assignment.transpose();
 
-                return fmt::format("Constant({}, [{}])", this->metadata->label, assignment_string.str());
+                return fmt::format("Constant({}, [{}])",
+                                   this->metadata->get_label(),
+                                   assignment_string.str());
             }
         }
 
@@ -42,11 +45,11 @@ namespace tomcat {
         }
 
         std::string ConstantNode::get_timed_name() const {
-            return this->metadata->label;
+            return this->metadata->get_label();
         }
 
         std::string ConstantNode::get_timed_name(int time_step) const {
-            return this->metadata->label;
+            return this->metadata->get_label();
         }
     } // namespace model
 } // namespace tomcat

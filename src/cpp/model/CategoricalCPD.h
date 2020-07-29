@@ -97,7 +97,7 @@ namespace tomcat {
             }
 
             CategoricalCPD(std::vector<std::string>&& parent_node_label_order,
-                           const Eigen::MatrixXd& cpd_table)
+                           const Eigen::MatrixXd&& cpd_table)
                 : CPD(std::move(parent_node_label_order)) {
                 this->init_from_matrix(cpd_table);
             }

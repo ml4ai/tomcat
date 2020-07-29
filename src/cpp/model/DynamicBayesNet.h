@@ -40,6 +40,8 @@ namespace tomcat {
             //
             // The original list is preserved to allow multiple calls of the
             // unrolled method based on the original set of nodes.
+            // todo - change to set to forbid adding the same node multiple
+            // times
             std::vector<RandomVariableNode> node_templates;
 
             // If unrolled, the number of time steps the DBN was unrolled in
@@ -62,6 +64,7 @@ namespace tomcat {
 
             void add_edge(const RandomVariableNode& source_node,
                           const RandomVariableNode& target_node,
+                          bool time_crossing,
                           int target_time_step);
 
             void update_cpds(NodeMap& parameter_nodes_map);
@@ -89,10 +92,22 @@ namespace tomcat {
              * Create vertices and edges by replicating nodes over time and
              * linking them according to the list of original nodes and their
              * metadata.
+             *
+             * @param time_steps: number of time steps to unroll
+             * @param force: whether the DBN should be forced to unroll again
+             * even if it was previously unrolled over the same number of time
+             * steps. This is useful if more nodes were added to the DBN.
              */
-            void unroll(int time_steps);
+            void unroll(int time_steps, bool force);
 
             void check();
+
+            // --------------------------------------------------------
+            // Getters
+            // --------------------------------------------------------
+            const std::vector<RandomVariableNode>& get_nodes() const {
+                return node_templates;
+            }
         };
 
     } // namespace model

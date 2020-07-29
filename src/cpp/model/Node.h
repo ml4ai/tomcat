@@ -26,6 +26,7 @@ namespace tomcat {
             Node(Eigen::VectorXd values)
                 : assignment(std::move(values))  {
             }
+            virtual ~Node() {}
             // Copy constructor and assignment should be deleted to avoid
             // implicit slicing and loss of polymorphic behaviour in the
             // subclasses. To deep copy, the clone method must be used.

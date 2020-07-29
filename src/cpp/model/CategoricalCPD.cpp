@@ -72,14 +72,14 @@ namespace tomcat {
                 std::string parameter_timed_name;
                 NodeMetadata* metadata =
                     this->probability_table[i]->get_metadata().get();
-                if (metadata->repeatable) {
+                if (metadata->is_replicable()) {
                     parameter_timed_name =
                         this->probability_table[i]->get_timed_name(time_step);
                 }
                 else {
                     parameter_timed_name =
                         this->probability_table[i]->get_timed_name(
-                            metadata->initial_time_step);
+                            metadata->get_initial_time_step());
                 }
 
                 if (parameter_nodes_map.count(parameter_timed_name) > 0) {

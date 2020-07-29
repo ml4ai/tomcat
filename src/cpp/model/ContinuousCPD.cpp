@@ -15,7 +15,7 @@ namespace tomcat {
                     std::string parameter_timed_name;
                     NodeMetadata* metadata =
                         this->parameter_table[i][j]->get_metadata().get();
-                    if (metadata->repeatable) {
+                    if (metadata->is_replicable()) {
                         parameter_timed_name =
                             this->parameter_table[i][j]->get_timed_name(
                                 time_step);
@@ -23,7 +23,7 @@ namespace tomcat {
                     else {
                         parameter_timed_name =
                             this->parameter_table[i][j]->get_timed_name(
-                                metadata->initial_time_step);
+                                metadata->get_initial_time_step());
                     }
 
                     if (parameter_nodes_map.count(parameter_timed_name) > 0) {
