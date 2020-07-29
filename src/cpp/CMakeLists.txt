@@ -8,8 +8,7 @@ target_include_directories(tomcat PUBLIC ${Boost_INCLUDE_DIRS})
 
 target_link_libraries(tomcat Malmo ${Boost_LIBRARIES} "z" fmt::fmt)
 
-option(CODE_COVERAGE "Enable coverage reporting" OFF)
-
+option(CODE_COVERAGE "Enable coverage reporting" OFF) 
 # Todo make code coverage work on Linux as well.
 if(APPLE
    AND CODE_COVERAGE
@@ -32,9 +31,6 @@ add_executable(runExperiment runExperiment.cpp)
 target_link_libraries(runExperiment tomcat)
 
 # Add facesensor to build.
-
-option(BUILD_FACESENSOR "Enable building of the facesensor executable" ON)
-
 if(BUILD_FACESENSOR)
   add_subdirectory(faceSensor)
 endif()
