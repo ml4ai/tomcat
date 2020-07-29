@@ -35,8 +35,8 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "SequenceCapture.h"
 #include "ImageManipulationHelpers.h"
+#include "SequenceCapture.h"
 
 #include <iostream>
 
@@ -52,15 +52,17 @@
 #include <chrono>
 #include <ctime>
 
+using namespace std;
 using namespace Utilities;
+namespace fs = boost::filesystem;
 
-#define INFO_STREAM(stream) std::cout << stream << std::endl
+#define INFO_STREAM(stream) cout << stream << endl
 
-#define WARN_STREAM(stream) std::cout << "Warning: " << stream << std::endl
+#define WARN_STREAM(stream) cerr << "Warning: " << stream << endl
 
-#define ERROR_STREAM(stream) std::cout << "Error: " << stream << std::endl
+#define ERROR_STREAM(stream) cerr << "Error: " << stream << endl
 
-bool SequenceCapture::Open(std::vector<std::string>& arguments) {
+bool SequenceCapture::Open(vector<string>& arguments) {
 
     // Consuming the input arguments
     bool* valid = new bool[arguments.size()];
@@ -70,14 +72,13 @@ bool SequenceCapture::Open(std::vector<std::string>& arguments) {
     }
 
     // Some default values
-    std::string input_root = "";
+    string input_root = "";
     fx = -1;
     fy = -1;
     cx = -1;
     cy = -1;
 
-    std::string separator =
-        std::string(1, boost::filesystem::path::preferred_separator);
+    string separator = string(1, fs::path::preferred_separator);
 
     // First check if there is a root argument (so that videos and input
     // directories could be defined more easily)
@@ -92,8 +93,8 @@ bool SequenceCapture::Open(std::vector<std::string>& arguments) {
         }
     }
 
-    std::string input_video_file;
-    std::string input_sequence_directory;
+    string input_video_file;
+    string input_sequence_directory;
     int device = -1;
     int cam_width = 640;
     int cam_height = 480;
@@ -116,41 +117,41 @@ bool SequenceCapture::Open(std::vector<std::string>& arguments) {
             file_found = true;
         }
         else if (arguments[i].compare("-fx") == 0) {
-            std::stringstream data(arguments[i + 1]);
+            stringstream data(arguments[i + 1]);
             data >> fx;
             i++;
         }
         else if (arguments[i].compare("-fy") == 0) {
-            std::stringstream data(arguments[i + 1]);
+            stringstream data(arguments[i + 1]);
             data >> fy;
             i++;
         }
         else if (arguments[i].compare("-cx") == 0) {
-            std::stringstream data(arguments[i + 1]);
+            stringstream data(arguments[i + 1]);
             data >> cx;
             i++;
         }
         else if (arguments[i].compare("-cy") == 0) {
-            std::stringstream data(arguments[i + 1]);
+            stringstream data(arguments[i + 1]);
             data >> cy;
             i++;
         }
         else if (arguments[i].compare("-device") == 0) {
-            std::stringstream data(arguments[i + 1]);
+            stringstream data(arguments[i + 1]);
             data >> device;
             valid[i] = false;
             valid[i + 1] = false;
             i++;
         }
         else if (arguments[i].compare("-cam_width") == 0) {
-            std::stringstream data(arguments[i + 1]);
+            stringstream data(arguments[i + 1]);
             data >> cam_width;
             valid[i] = false;
             valid[i + 1] = false;
             i++;
         }
         else if (arguments[i].compare("-cam_height") == 0) {
-            std::stringstream data(arguments[i + 1]);
+            stringstream data(arguments[i + 1]);
             data >> cam_height;
             valid[i] = false;
             valid[i + 1] = false;
@@ -168,8 +169,8 @@ bool SequenceCapture::Open(std::vector<std::string>& arguments) {
 
     // Based on what was read in open the sequence
     if (device != -1) {
-        // std::cout << device;
-        // std::cout << "Device value\n";
+        // cout << device;
+        // cout << "Device value\n";
         return OpenWebcam(device, cam_width, cam_height, fx, fy, cx, cy);
     }
     if (!input_video_file.empty()) {
@@ -187,7 +188,7 @@ bool SequenceCapture::Open(std::vector<std::string>& arguments) {
 
 // Get current date/time, format is YYYY-MM-DD.HH:mm, useful for saving data
 // from webcam
-const std::string currentDateTime() {
+const string currentDateTime() {
 
     time_t rawtime;
     struct tm* timeinfo;
@@ -215,7 +216,7 @@ bool SequenceCapture::OpenWebcam(int device,
     time_stamp = 0;
 
     if (device < 0) {
-        // std::cout << "Specify a valid device" << std::endl;
+        // cout << "Specify a valid device" << endl;
         return false;
     }
 
@@ -235,14 +236,12 @@ bool SequenceCapture::OpenWebcam(int device,
     this->frame_height = (int)capture.get(cv::CAP_PROP_FRAME_HEIGHT);
 
     if (!capture.isOpened()) {
-        std::cout << "Failed to open the webcam" << std::endl;
+        cout << "Failed to open the webcam" << endl;
         return false;
     }
     if (frame_width != image_width || frame_height != image_height) {
-        std::cout << "Failed to open the webcam with desired resolution"
-                  << std::endl;
-        std::cout << "Defaulting to " << frame_width << "x" << frame_height
-                  << std::endl;
+        cout << "Failed to open the webcam with desired resolution" << endl;
+        cout << "Defaulting to " << frame_width << "x" << frame_height << endl;
     }
 
     this->fps = capture.get(cv::CAP_PROP_FPS);
@@ -254,7 +253,7 @@ bool SequenceCapture::OpenWebcam(int device,
     }
 
     SetCameraIntrinsics(fx, fy, cx, cy);
-    std::string time = currentDateTime();
+    string time = currentDateTime();
     this->name = "webcam_" + time;
 
     start_time = cv::getTickCount();
@@ -284,8 +283,7 @@ void SequenceCapture::Close() {
 SequenceCapture::~SequenceCapture() { Close(); }
 
 bool SequenceCapture::OpenVideoFile(
-    std::string video_file, float fx, float fy, float cx, float cy) {
-    INFO_STREAM("Attempting to read from file: " << video_file);
+    string video_file, float fx, float fy, float cx, float cy) {
 
     no_input_specified = false;
     frame_num = 0;
@@ -297,8 +295,8 @@ bool SequenceCapture::OpenVideoFile(
     capture.open(video_file);
 
     if (!capture.isOpened()) {
-        std::cout << "Failed to open the video file at location: " << video_file
-                  << std::endl;
+        cerr << "Failed to open the video file at location: " << video_file
+             << endl;
         return false;
     }
 
@@ -323,13 +321,13 @@ bool SequenceCapture::OpenVideoFile(
     this->name = video_file;
     capturing = true;
 
-    capture_thread = std::thread(&SequenceCapture::CaptureThread, this);
+    capture_thread = thread(&SequenceCapture::CaptureThread, this);
 
     return true;
 }
 
 bool SequenceCapture::OpenImageSequence(
-    std::string directory, float fx, float fy, float cx, float cy) {
+    string directory, float fx, float fy, float cx, float cy) {
     INFO_STREAM("Attempting to read from directory: " << directory);
 
     no_input_specified = false;
@@ -338,25 +336,24 @@ bool SequenceCapture::OpenImageSequence(
 
     image_files.clear();
 
-    boost::filesystem::path image_directory(directory);
+    fs::path image_directory(directory);
 
-    if (!boost::filesystem::exists(image_directory)) {
-        std::cout << "Provided directory does not exist: " << directory
-                  << std::endl;
+    if (!fs::exists(image_directory)) {
+        cerr << "Provided directory does not exist: " << directory << endl;
         return false;
     }
 
-    std::vector<boost::filesystem::path> file_in_directory;
-    copy(boost::filesystem::directory_iterator(image_directory),
-         boost::filesystem::directory_iterator(),
+    vector<fs::path> file_in_directory;
+    copy(fs::directory_iterator(image_directory),
+         fs::directory_iterator(),
          back_inserter(file_in_directory));
 
     // Sort the images in the directory first
     sort(file_in_directory.begin(), file_in_directory.end());
 
-    std::vector<std::string> curr_dir_files;
+    vector<string> curr_dir_files;
 
-    for (std::vector<boost::filesystem::path>::const_iterator file_iterator(
+    for (vector<fs::path>::const_iterator file_iterator(
              file_in_directory.begin());
          file_iterator != file_in_directory.end();
          ++file_iterator) {
@@ -372,8 +369,7 @@ bool SequenceCapture::OpenImageSequence(
     image_files = curr_dir_files;
 
     if (image_files.empty()) {
-        std::cout << "No images found in the directory: " << directory
-                  << std::endl;
+        cerr << "No images found in the directory: " << directory << endl;
         return false;
     }
 
@@ -394,7 +390,7 @@ bool SequenceCapture::OpenImageSequence(
     vid_length = image_files.size();
     capturing = true;
 
-    capture_thread = std::thread(&SequenceCapture::CaptureThread, this);
+    capture_thread = thread(&SequenceCapture::CaptureThread, this);
 
     return true;
 }
@@ -469,19 +465,19 @@ void SequenceCapture::CaptureThread() {
         ConvertToGrayscale_8bit(tmp_frame, tmp_gray_frame);
 
         capture_queue.push(
-            std::make_tuple(timestamp_curr, tmp_frame, tmp_gray_frame));
+            make_tuple(timestamp_curr, tmp_frame, tmp_gray_frame));
     }
 }
 
 cv::Mat SequenceCapture::GetNextFrame() {
     if (!is_webcam) {
-        std::tuple<double, cv::Mat, cv::Mat_<uchar>> data;
+        tuple<double, cv::Mat, cv::Mat_<uchar>> data;
 
         data = capture_queue.pop();
 
-        time_stamp = std::get<0>(data);
-        latest_frame = std::get<1>(data);
-        latest_gray_frame = std::get<2>(data);
+        time_stamp = get<0>(data);
+        latest_frame = get<1>(data);
+        latest_gray_frame = get<2>(data);
     }
     else {
         // Webcam does not use the threaded interface

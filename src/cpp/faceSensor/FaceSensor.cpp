@@ -19,29 +19,25 @@ int main(int ac, char* av[]) {
     try {
 
         po::options_description desc("Allowed options");
-        desc.add_options()
-            ("help,h", "produce help message")
-            ("exp_id",
-            po::value<string>(&exp_id)->default_value("null"),
-            "set experiment ID")
-            ("trial_id",
-            po::value<string>(&trial_id)->default_value("null"),
-            "set trial ID")
-            ("playername",
-            po::value<string>(&playername)->default_value("null"),
-            "set playername")
-            ("mloc",
-            po::value<string>(&of_dir),
-            "set OpenFace models directory")
-            ("indent",
-            po::value<bool>(&indent)->default_value(false),
-            "set indentation (true/false)")
-            ("visual",
-            po::value<bool>(&visual)->default_value(false),
-            "set visualization (true/false)")
-            ("file,f",
-            po::value<string>(&file_path)->default_value("null"),
-            "specify the input video file");
+        desc.add_options()("help,h", "Show this help message")(
+            "exp_id",
+            po::value<string>(&exp_id)->default_value(""),
+            "Set experiment ID")(
+            "trial_id",
+            po::value<string>(&trial_id)->default_value(""),
+            "set trial ID")("playername",
+                            po::value<string>(&playername)->default_value(""),
+                            "Set player name")(
+            "mloc", po::value<string>(&of_dir), "Set OpenFace models directory")(
+            "indent",
+            po::bool_switch(&indent)->default_value(false),
+            "Indent output JSON by four spaces")(
+            "visualize",
+            po::bool_switch(&visual)->default_value(false),
+            "Enable visualization")(
+            "file,f",
+            po::value<string>(&file_path),
+            "Specify an input video file");
 
         po::variables_map vm;
         po::store(po::parse_command_line(ac, av, desc), vm);
@@ -78,7 +74,8 @@ int main(int ac, char* av[]) {
     }
 
     WebcamSensor camsensor;
-    camsensor.initialize(exp_id, trial_id, playername, indent, visual, file_path);
+    camsensor.initialize(
+        exp_id, trial_id, playername, indent, visual, file_path);
     camsensor.get_observation();
 
     return 0;
