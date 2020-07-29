@@ -2,11 +2,9 @@ package edu.arizona.tomcat.Mission.Client;
 
 import edu.arizona.tomcat.Messaging.TomcatMessaging;
 
-public class ProceduralGenClientMission extends ClientMission{
+public class ProceduralGenClientMission extends ClientMission {
 
-    public ProceduralGenClientMission() {
-        super();
-    }
+    public ProceduralGenClientMission() { super(); }
 
     @Override
     public void handleMessageFromServer(TomcatMessaging.TomcatMessage message) {
@@ -14,6 +12,5 @@ public class ProceduralGenClientMission extends ClientMission{
     }
 
     @Override
-    public void cleanup() {
-    }
+    public void cleanup() {}
 }

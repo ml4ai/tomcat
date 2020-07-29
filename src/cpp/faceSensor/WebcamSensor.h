@@ -10,10 +10,12 @@ namespace tomcat {
       public:
         WebcamSensor()
             : visualizer(true, false, false, false),
-              det_parameters(this->arguments) {
-        }
+              det_parameters(this->arguments) {}
 
-        void initialize(std::string exp, std::string trial, std::string pname, bool ind);
+        void initialize(std::string exp,
+                        std::string trial,
+                        std::string pname,
+                        bool ind);
         void get_observation();
 
       private:

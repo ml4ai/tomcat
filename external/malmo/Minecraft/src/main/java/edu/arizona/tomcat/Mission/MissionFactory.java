@@ -8,24 +8,24 @@ public class MissionFactory {
         Mission mission = null;
 
         switch (Mission.ID.values()[missionID]) {
-            case TUTORIAL:
-                mission = new TutorialMission();
-                break;
+        case TUTORIAL:
+            mission = new TutorialMission();
+            break;
 
-            case ZOMBIE:
-                mission = new ZombieMission();
-                break;
+        case ZOMBIE:
+            mission = new ZombieMission();
+            break;
 
-            case USAR_SINGLE_PLAYER:
-                mission = new USARSinglePlayerMission();
-                break;
+        case USAR_SINGLE_PLAYER:
+            mission = new USARSinglePlayerMission();
+            break;
 
-            case PROCEDURAL:
-                mission = new ProceduralGenMission();
-                break;
+        case PROCEDURAL:
+            mission = new ProceduralGenMission();
+            break;
 
-            default:
-                break;
+        default:
+            break;
         }
 
         return mission;
@@ -35,24 +35,24 @@ public class MissionFactory {
         ClientMission clientMission = null;
 
         switch (Mission.ID.values()[missionID]) {
-            case TUTORIAL:
-                clientMission = new TutorialClientMission();
-                break;
+        case TUTORIAL:
+            clientMission = new TutorialClientMission();
+            break;
 
-            case ZOMBIE:
-                clientMission = new ZombieClientMission();
-                break;
+        case ZOMBIE:
+            clientMission = new ZombieClientMission();
+            break;
 
-            case USAR_SINGLE_PLAYER:
-                clientMission = new USARSinglePlayerClientMission();
-                break;
+        case USAR_SINGLE_PLAYER:
+            clientMission = new USARSinglePlayerClientMission();
+            break;
 
-            case PROCEDURAL:
-                clientMission = new ProceduralGenClientMission();
-                break;
+        case PROCEDURAL:
+            clientMission = new ProceduralGenClientMission();
+            break;
 
-            default:
-                break;
+        default:
+            break;
         }
 
         return clientMission;

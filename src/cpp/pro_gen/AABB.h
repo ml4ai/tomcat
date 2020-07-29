@@ -110,10 +110,10 @@ class AABB {
      * @return Pos
      */
     Pos virtual getRandomPosAtBase(std::mt19937_64& gen,
-                           int offsetPosX = 1,
-                           int offsetNegX = 1,
-                           int offsetPosZ = 1,
-                           int offsetNegZ = 1);
+                                   int offsetPosX = 1,
+                                   int offsetNegX = 1,
+                                   int offsetPosZ = 1,
+                                   int offsetNegZ = 1);
 
     /**
      * @brief Get a list of the positions of the edge midpoints for this AABB.
@@ -177,13 +177,13 @@ class AABB {
      * @param type The semantic name to give the block. Defaults to "normal".
      */
     void virtual generateBox(std::string material,
-                     int offsetPosX = 0,
-                     int offsetNegX = 0,
-                     int offsetPosY = 0,
-                     int offsetNegY = 0,
-                     int offsetPosZ = 0,
-                     int offsetNegZ = 0,
-                     std::string type = "normal");
+                             int offsetPosX = 0,
+                             int offsetNegX = 0,
+                             int offsetPosY = 0,
+                             int offsetNegY = 0,
+                             int offsetPosZ = 0,
+                             int offsetNegZ = 0,
+                             std::string type = "normal");
 
     /**
      * @brief Add n random blocks of the given type and material inside the AABB
@@ -208,15 +208,15 @@ class AABB {
      */
 
     void virtual addRandomBlocks(int n,
-                         std::string material,
-                         std::mt19937_64& gen,
-                         int offsetPosX = 0,
-                         int offsetNegX = 0,
-                         int offsetPosY = 0,
-                         int offsetNegY = 0,
-                         int offsetPosZ = 0,
-                         int offsetNegZ = 0,
-                         std::string type = "normal");
+                                 std::string material,
+                                 std::mt19937_64& gen,
+                                 int offsetPosX = 0,
+                                 int offsetNegX = 0,
+                                 int offsetPosY = 0,
+                                 int offsetNegY = 0,
+                                 int offsetPosZ = 0,
+                                 int offsetNegZ = 0,
+                                 std::string type = "normal");
 
     /**
      * @brief Generate all 4 doors for an AABB. Door blocks are added to the
