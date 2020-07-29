@@ -32,9 +32,6 @@ __install_dependencies_using_macports() {
     if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
         if ! sudo port -N install blackhole switchaudio-osx; then exit 1; fi
     fi
-
-    # TODO When OpenFace is reintroduced, add dlib, opencv, openblas installation
-    # back here.
 }
 
 __install_dependencies_using_homebrew() {
@@ -104,38 +101,40 @@ __install_dependencies_using_apt() {
 
     # On Ubuntu 18.04 and older, the required version of the nlohmann-json JSON
     # library is not available using apt-get, so we install from source.
-    if [[ $DISTRO == ubuntu && $DISTRO_MAJOR_VERSION -le 19 ]]; then
+    if [[ $DISTRO == ubuntu && $DISTRO_MAJOR_VERSION -le 18 ]]; then
         if ! "$TOMCAT"/tools/install_from_source/nlohmann-json; then
             echo "Failed to install nlohmann-json from source."
             exit 1
         fi
+        # We do not install dlib from source on the Github Actions Ubuntu 18.04
+        # runner, since this causes timeouts.
+        if (( CI )); then
+            # The Github Actions Ubuntu 18.04 VM already has Boost installed, but not
+            # all the components we need. So we will use apt-get to install the missing
+            # ones.
+            if ! sudo apt-get install -y libboost-all-dev; then exit 1; fi
+        else
+            if ! "$TOMCAT"/tools/install_from_source/boost; then
+                echo "Failed to install Boost from source. Exiting now."
+                exit 1
+            fi
+
+            if ! "$TOMCAT"/tools/install_from_source/dlib; then
+                echo "Failed to install dlib from source."
+                exit 1
+            fi
+        fi
+
     else
         if ! sudo apt install -y nlohmann-json3-dev; then
             echo "Failed to install nlohmann-json3-dev using apt."
             exit 1
         fi
-    fi
-
-    if ! "$TOMCAT"/tools/install_from_source/dlib; then
-        echo "Failed to install dlib from source."
-        exit 1
-    fi
-
-    if ! sudo apt install -y libopencv-dev; then
-        echo "Failed to install libopencv-dev using apt."
-        exit 1
-    fi
-
-    if (( CI )); then
-        # The Github Actions Ubuntu 18.04 VM already has Boost installed, but not
-        # all the components we need. So we will use apt-get to install the missing
-        # ones.
-        if ! sudo apt-get install -y libboost-all-dev; then exit 1; fi
-    else
-        if ! "$TOMCAT"/tools/install_from_source/boost; then
-            echo "Failed to install Boost from source. Exiting now."
+        if ! sudo apt install -y libopencv-dev; then
+            echo "Failed to install libopencv-dev using apt."
             exit 1
         fi
+
     fi
 }
 

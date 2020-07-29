@@ -42,8 +42,14 @@ find_package(
              REQUIRED)
 
 
+option(BUILD_FACESENSOR "Enable building of the facesensor executable" ON)
+
 add_subdirectory(external/malmo)
-add_subdirectory(external/OpenFace)
+
+if(BUILD_FACESENSOR)
+    add_subdirectory(external/OpenFace)
+endif()
+
 add_subdirectory(src/cpp)
 
 target_include_directories(tomcat PRIVATE src external/malmo/Malmo/src)

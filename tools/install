@@ -33,8 +33,13 @@ __build_tomcat() {
                     # On Github actions, the runner Ubuntu 18.04 has Boost 1.69
                     # installed, we set BOOST_ROOT=$BOOST_ROOT_1_69_0 to build
                     # tomcat with this version.
+                    # We also disable the building of the facesensor executable
+                    # on Ubuntu 18.04 as building it properly on 18.04 would
+                    # require building OpenCV and and Dlib from source, which
+                    # causes timeouts.
                     if [[ $DISTRO_MAJOR_VERSION -le 18 ]]; then
-                        cmake ${TOMCAT} -DBOOST_ROOT=$BOOST_ROOT_1_69_0
+                        cmake ${TOMCAT} -DBOOST_ROOT=$BOOST_ROOT_1_69_0\
+                                        -DBUILD_FACESENSOR=OFF
                         if [[ $? -ne 0 ]]; then exit 1; fi
                     fi
                 else
