@@ -5,18 +5,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
                       "${PROJECT_SOURCE_DIR}/cmake/modules/")
 
-# make sure we'll use OpenBLAS only: there's a header file naming difference
+# Make sure we'll use OpenBLAS only: there's a header file naming difference
 # between different implementations; so OpenFace wants OpenBLAS;
 find_package(OpenBLAS REQUIRED)
-if(${OpenBLAS_FOUND})
-  message("OpenBLAS information:")
-  message("  OpenBLAS_LIBRARIES: ${OpenBLAS_LIB}")
-else()
+if(NOT ${OpenBLAS_FOUND})
   message(FATAL_ERROR "OpenBLAS not found in the system.")
-endif()
-
-if(${OpenBLAS_INCLUDE_FOUND})
-  message("  OpenBLAS_INCLUDE: ${OpenBLAS_INCLUDE_DIR}")
 endif()
 
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
@@ -46,8 +39,7 @@ file(GLOB openface_include_dirs CONFIGURE_DEPENDS
 
 find_package(dlib REQUIRED)
 find_package(OpenCV REQUIRED)
-message("OpenCV Libs: ${OpenCV_LIBS}")
-message("OpenBLAS Lib: ${OpenBLAS_LIB}")
+message(STATUS "OpenCV Libs: ${OpenCV_LIBS}")
 add_library(OpenFace STATIC ${openface_sources} ${openface_headers})
 target_link_libraries(
   OpenFace
