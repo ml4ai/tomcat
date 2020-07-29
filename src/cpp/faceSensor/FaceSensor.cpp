@@ -36,7 +36,7 @@ int main(int ac, char* av[]) {
             po::bool_switch(&visualize)->default_value(false),
             "Enable visualization")(
             "file,f",
-            po::value<string>(&file_path),
+            po::value<string>(&file_path)->default_value("null"),
             "Specify an input video file");
 
         po::variables_map vm;

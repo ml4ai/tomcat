@@ -42,7 +42,7 @@ namespace tomcat {
         if (!this->face_model.eye_model) {
             throw runtime_error("No eye model found");
         }
-        
+
         this->fps_tracker.AddFrame();
     };
 
@@ -64,7 +64,7 @@ namespace tomcat {
         FaceAnalysis::FaceAnalyserParameters face_analysis_params(
             this->arguments);
         FaceAnalysis::FaceAnalyser face_analyser(face_analysis_params);
-        
+
         this->sequence_reader.Open(arguments);
 
         // Recorder open face parameters
@@ -270,45 +270,23 @@ namespace tomcat {
                                         this->sequence_reader.fy,
                                         this->sequence_reader.cx,
                                         this->sequence_reader.cy);
-            for (int i = 0; i < eye_landmarks2d.size(); i++) {
-                string x = "x_";
-                ostringstream ostr;
-                ostr << i;
-                x.append(ostr.str());
-                output["data"]["gaze"]["eye_landmarks"]["2D"][x] =
-                    eye_landmarks2d[i].x;
+
+            output["data"]["gaze"]["eye_landmarks"]["2D"]["x"] = {};
+            output["data"]["gaze"]["eye_landmarks"]["2D"]["y"] = {};
+
+            output["data"]["gaze"]["eye_landmarks"]["3D"]["x"] = {};
+            output["data"]["gaze"]["eye_landmarks"]["3D"]["y"] = {};
+            output["data"]["gaze"]["eye_landmarks"]["3D"]["z"] = {};
+
+            for (auto& landmark : eye_landmarks2d) {
+                output["data"]["gaze"]["eye_landmarks"]["2D"]["x"].push_back(landmark.x);
+                output["data"]["gaze"]["eye_landmarks"]["2D"]["y"].push_back(landmark.y);
             }
-            for (int i = 0; i < eye_landmarks2d.size(); i++) {
-                string y = "y_";
-                ostringstream ostr;
-                ostr << i;
-                y.append(ostr.str());
-                output["data"]["gaze"]["eye_landmarks"]["2D"][y] =
-                    eye_landmarks2d[i].y;
-            }
-            for (int i = 0; i < eye_landmarks3d.size(); i++) {
-                string x = "X_";
-                ostringstream ostr;
-                ostr << i;
-                x.append(ostr.str());
-                output["data"]["gaze"]["eye_landmarks"]["3D"][x] =
-                    eye_landmarks3d[i].x;
-            }
-            for (int i = 0; i < eye_landmarks3d.size(); i++) {
-                string y = "Y_";
-                ostringstream ostr;
-                ostr << i;
-                y.append(ostr.str());
-                output["data"]["gaze"]["eye_landmarks"]["3D"][y] =
-                    eye_landmarks3d[i].y;
-            }
-            for (int i = 0; i < eye_landmarks3d.size(); i++) {
-                string z = "Z_";
-                ostringstream ostr;
-                ostr << i;
-                z.append(ostr.str());
-                output["data"]["gaze"]["eye_landmarks"]["3D"][z] =
-                    eye_landmarks3d[i].z;
+
+            for (auto& landmark : eye_landmarks3d) {
+                output["data"]["gaze"]["eye_landmarks"]["3D"]["x"].push_back(landmark.x);
+                output["data"]["gaze"]["eye_landmarks"]["3D"]["y"].push_back(landmark.y);
+                output["data"]["gaze"]["eye_landmarks"]["3D"]["z"].push_back(landmark.z);
             }
 
             output["data"]["pose"] = {{"location",
