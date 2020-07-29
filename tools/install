@@ -42,7 +42,7 @@ __build_tomcat() {
                                         -DBUILD_FACESENSOR=OFF
                         if [[ $? -ne 0 ]]; then exit 1; fi
                     else
-                        cmake ${TOMCAT} -DBOOST_ROOT=$BOOST_ROOT_1_69_0
+                        cmake ${TOMCAT}
                         if [[ $? -ne 0 ]]; then exit 1; fi
                     fi
                 else
