@@ -41,10 +41,6 @@ find_package(
              thread
              REQUIRED)
 
-find_package(dlib REQUIRED)
-find_package(OpenCV REQUIRED)
-
-include_directories(${OpenCV_INCLUDE_DIRS})
 
 add_subdirectory(external/malmo)
 add_subdirectory(external/OpenFace)

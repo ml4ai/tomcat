@@ -31,9 +31,14 @@ endif()
 add_executable(runExperiment runExperiment.cpp)
 target_link_libraries(runExperiment tomcat)
 
-# Add webcam sensor(s) to build.
-# TODO - make this optional based on a flag.
-add_subdirectory(webcam)
+# Add facesensor to build.
+
+option(BUILD_FACESENSOR "Enable building of the facesensor executable" ON)
+
+if(BUILD_FACESENSOR)
+  add_subdirectory(faceSensor)
+endif()
+
 
 # Executable to extract the version number from the spec YAML file.
 add_subdirectory(getSpecVersion)
