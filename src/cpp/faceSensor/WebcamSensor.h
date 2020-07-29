@@ -16,6 +16,7 @@ namespace tomcat {
                         std::string trial,
                         std::string pname,
                         bool ind,
+                        bool vis,
                         std::string file_path);
         void get_observation();
 
@@ -32,6 +33,7 @@ namespace tomcat {
         std::string trial_id;
         std::string playername;
         bool indent;
+        bool visual;
     };
 
 } // namespace tomcat

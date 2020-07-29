@@ -17,12 +17,13 @@ typedef vector<pair<string, double>> au_vector;
 namespace tomcat {
 
     void
-    WebcamSensor::initialize(string exp, string trial, string pname, bool ind, string file_path) {
+    WebcamSensor::initialize(string exp, string trial, string pname, bool ind, bool vis, string file_path) {
         // Initialize the experiment ID, trial ID and player name
         this->exp_id = exp;
         this->trial_id = trial;
         this->playername = pname;
         this->indent = ind;
+        this->visual = vis;
         if (file_path.compare("null") != 0) {
             this->arguments.insert(this->arguments.begin(), file_path);
             this->arguments.insert(this->arguments.begin(), "-f");
@@ -151,49 +152,51 @@ namespace tomcat {
             // Keeping track of fps
             this->fps_tracker.AddFrame();
 
-            // Displaying the tracking visualizations
-            this->visualizer.SetImage(this->rgb_image,
-                                      this->sequence_reader.fx,
-                                      this->sequence_reader.fy,
-                                      this->sequence_reader.cx,
-                                      this->sequence_reader.cy);
+            // Displaying the tracking visualizations if visualization is set
+            if (this->visual) {
+                this->visualizer.SetImage(this->rgb_image,
+                                          this->sequence_reader.fx,
+                                          this->sequence_reader.fy,
+                                          this->sequence_reader.cx,
+                                          this->sequence_reader.cy);
 
-            this->visualizer.SetObservationFaceAlign(sim_warped_img);
-            this->visualizer.SetObservationHOG(
-                hog_descriptor, num_hog_rows, num_hog_cols);
+                this->visualizer.SetObservationFaceAlign(sim_warped_img);
+                this->visualizer.SetObservationHOG(
+                    hog_descriptor, num_hog_rows, num_hog_cols);
 
-            this->visualizer.SetObservationLandmarks(
-                this->face_model.detected_landmarks,
-                this->face_model.detection_certainty,
-                this->face_model.GetVisibilities());
+                this->visualizer.SetObservationLandmarks(
+                    this->face_model.detected_landmarks,
+                    this->face_model.detection_certainty,
+                    this->face_model.GetVisibilities());
 
-            this->visualizer.SetObservationPose(
-                pose_estimate, this->face_model.detection_certainty);
+                this->visualizer.SetObservationPose(
+                    pose_estimate, this->face_model.detection_certainty);
 
-            this->visualizer.SetObservationGaze(
-                gazeDirection0,
-                gazeDirection1,
-                CalculateAllEyeLandmarks(this->face_model),
-                Calculate3DEyeLandmarks(this->face_model,
-                                        this->sequence_reader.fx,
-                                        this->sequence_reader.fy,
-                                        this->sequence_reader.cx,
-                                        this->sequence_reader.cy),
-                this->face_model.detection_certainty);
+                this->visualizer.SetObservationGaze(
+                    gazeDirection0,
+                    gazeDirection1,
+                    CalculateAllEyeLandmarks(this->face_model),
+                    Calculate3DEyeLandmarks(this->face_model,
+                                            this->sequence_reader.fx,
+                                            this->sequence_reader.fy,
+                                            this->sequence_reader.cx,
+                                            this->sequence_reader.cy),
+                    this->face_model.detection_certainty);
 
-            this->visualizer.SetObservationActionUnits(
-                face_analyser.GetCurrentAUsReg(),
-                face_analyser.GetCurrentAUsClass());
+                this->visualizer.SetObservationActionUnits(
+                    face_analyser.GetCurrentAUsReg(),
+                    face_analyser.GetCurrentAUsClass());
 
-            this->visualizer.SetFps(this->fps_tracker.GetFPS());
+                this->visualizer.SetFps(this->fps_tracker.GetFPS());
 
-            // Detect key press
-            char character_press = this->visualizer.ShowObservation();
-            if (character_press == 'r') {
-                this->face_model.Reset();
-            }
-            else if (character_press == 'q') {
-                break;
+                // Detect key press
+                char character_press = this->visualizer.ShowObservation();
+                if (character_press == 'r') {
+                    this->face_model.Reset();
+                }
+                else if (character_press == 'q' || character_press == 'Q') {
+                    break;
+                }
             }
 
             // JSON output
