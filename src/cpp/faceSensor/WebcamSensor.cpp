@@ -1,5 +1,4 @@
 #include "WebcamSensor.h"
-#include "include/nlohmann/fifo_map.hpp"
 #include <FaceAnalyser.h>
 #include <GazeEstimation.h>
 #include <LandmarkCoreIncludes.h>
@@ -14,10 +13,6 @@ using namespace std;
 using namespace nlohmann;
 
 typedef vector<pair<string, double>> au_vector;
-
-template <class K, class V, class dummy_compare, class A>
-using modified_fifo_map = fifo_map<K, V, fifo_map_compare<K>, A>;
-using modified_json = basic_json<modified_fifo_map>;
 
 namespace tomcat {
 
@@ -193,7 +188,7 @@ namespace tomcat {
             }
 
             // JSON output
-            modified_json output;
+            json output;
 
             int micro_timestamp =
                 int(this->sequence_reader.time_stamp * pow(10, 6));
@@ -226,10 +221,8 @@ namespace tomcat {
                 {"landmark_detection_success", detection_success},
                 {"frame", this->sequence_reader.GetFrameNumber()}};
 
-            vector<pair<string, double>> AU_reg =
-                face_analyser.GetCurrentAUsReg();
-            vector<pair<string, double>> AU_class =
-                face_analyser.GetCurrentAUsClass();
+            au_vector AU_reg = face_analyser.GetCurrentAUsReg();
+            au_vector AU_class = face_analyser.GetCurrentAUsClass();
             sort(AU_reg.begin(), AU_reg.end());
             sort(AU_class.begin(), AU_class.end());
             for (auto& [AU, occurrence] : AU_class) {
@@ -270,35 +263,40 @@ namespace tomcat {
                 ostringstream ostr;
                 ostr << i;
                 x.append(ostr.str());
-                output["data"]["gaze"]["eye_landmarks"]["2D"][x] = eye_landmarks2d[i].x;
+                output["data"]["gaze"]["eye_landmarks"]["2D"][x] =
+                    eye_landmarks2d[i].x;
             }
             for (int i = 0; i < eye_landmarks2d.size(); i++) {
                 string y = "y_";
                 ostringstream ostr;
                 ostr << i;
                 y.append(ostr.str());
-                output["data"]["gaze"]["eye_landmarks"]["2D"][y] = eye_landmarks2d[i].y;
+                output["data"]["gaze"]["eye_landmarks"]["2D"][y] =
+                    eye_landmarks2d[i].y;
             }
             for (int i = 0; i < eye_landmarks3d.size(); i++) {
                 string x = "X_";
                 ostringstream ostr;
                 ostr << i;
                 x.append(ostr.str());
-                output["data"]["gaze"]["eye_landmarks"]["3D"][x] = eye_landmarks3d[i].x;
+                output["data"]["gaze"]["eye_landmarks"]["3D"][x] =
+                    eye_landmarks3d[i].x;
             }
             for (int i = 0; i < eye_landmarks3d.size(); i++) {
                 string y = "Y_";
                 ostringstream ostr;
                 ostr << i;
                 y.append(ostr.str());
-                output["data"]["gaze"]["eye_landmarks"]["3D"][y] = eye_landmarks3d[i].y;
+                output["data"]["gaze"]["eye_landmarks"]["3D"][y] =
+                    eye_landmarks3d[i].y;
             }
             for (int i = 0; i < eye_landmarks3d.size(); i++) {
                 string z = "Z_";
                 ostringstream ostr;
                 ostr << i;
                 z.append(ostr.str());
-                output["data"]["gaze"]["eye_landmarks"]["3D"][z] = eye_landmarks3d[i].z;
+                output["data"]["gaze"]["eye_landmarks"]["3D"][z] =
+                    eye_landmarks3d[i].z;
             }
 
             output["data"]["pose"] = {{"location",
