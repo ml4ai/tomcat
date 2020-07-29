@@ -34,3 +34,9 @@ target_link_libraries(runExperiment tomcat)
 # Add webcam sensor(s) to build.
 # TODO - make this optional based on a flag.
 add_subdirectory(webcam)
+
+# Executable to extract the version number from the spec YAML file.
+add_subdirectory(getSpecVersion)
+
+# Procedural generation module.
+add_subdirectory(pro_gen)
