@@ -21,7 +21,7 @@ class MissionMap(Enum):
 
 
 def split_data_files_into_folders(
-    input_folder, output_folder, show_progress=True
+        input_folder, output_folder, show_progress=True
 ):
     """
     This function reads the data file and divides its content in separate files: observations, triage events,
@@ -29,12 +29,12 @@ def split_data_files_into_folders(
     Since the data can be unordered, the contents are reordered by timestamp before being saved.
     """
     for experiment_data_file in tqdm(
-        os.listdir(input_folder),
-        desc="Splitting files into folders",
-        disable=not show_progress,
+            os.listdir(input_folder),
+            desc="Splitting files into folders",
+            disable=not show_progress,
     ):
         if os.path.isdir(
-            os.path.join(input_folder, experiment_data_file)
+                os.path.join(input_folder, experiment_data_file)
         ) or experiment_data_file.startswith("."):
             continue
 
@@ -52,7 +52,7 @@ def split_data_files_into_folders(
         mission_start_time = None
         metadata = []
         with open(
-            os.path.join(input_folder, experiment_data_file), "r"
+                os.path.join(input_folder, experiment_data_file), "r"
         ) as input_file:
             for data_point in input_file:
                 if data_point.strip():
@@ -69,11 +69,11 @@ def split_data_files_into_folders(
                         elif message["msg"]["sub_type"] == "Event:Lever":
                             lever_events.append(message)
                         elif (
-                            message["msg"]["sub_type"] == "Event:MissionState"
+                                message["msg"]["sub_type"] == "Event:MissionState"
                         ):
                             if (
-                                message["data"]["mission_state"].upper()
-                                == "START"
+                                    message["data"]["mission_state"].upper()
+                                    == "START"
                             ):
                                 mission_start_time = to_datetime(
                                     message["header"]["timestamp"]
@@ -172,12 +172,12 @@ def write_dataset_to_file(dataset, destiny_filepath):
 
 
 def extract_room_events_from_observations(
-    formatted_experiment_data_folder, mission_map_id, show_progress=True
+        formatted_experiment_data_folder, mission_map_id, show_progress=True
 ):
     for experiment_folder in tqdm(
-        os.listdir(formatted_experiment_data_folder),
-        desc="Extracting room entrance events from observations",
-        disable=not show_progress,
+            os.listdir(formatted_experiment_data_folder),
+            desc="Extracting room entrance events from observations",
+            disable=not show_progress,
     ):
         if experiment_folder.startswith("."):
             continue
@@ -262,8 +262,8 @@ def get_list_of_areas(mission_map_id):
 def get_area_id_by_players_position(areas, player_x, player_y):
     for area in areas:
         if (
-            area["x1"] <= player_x <= area["x2"]
-            and area["y1"] <= player_y <= area["y2"]
+                area["x1"] <= player_x <= area["x2"]
+                and area["y1"] <= player_y <= area["y2"]
         ):
             return area["id"]
 
@@ -271,14 +271,14 @@ def get_area_id_by_players_position(areas, player_x, player_y):
 
 
 if __name__ == "__main__":
-    # split_data_files_into_folders('../data/experiments/asist/raw/singleplayer',
-    #                               '../data/experiments/asist/formatted/singleplayer')
+    split_data_files_into_folders('../data/experiments/asist/raw/singleplayer',
+                                  '../data/experiments/asist/formatted/singleplayer')
     split_data_files_into_folders(
-        "../data/experiments/asist/raw/sparky",
-        "../data/experiments/asist/formatted/sparky",
-    )
-    # split_data_files_into_folders('../data/experiments/asist/raw/falcon', '../data/experiments/asist/formatted/falcon')
+        '../data/experiments/asist/raw/sparky',
+        '../data/experiments/asist/formatted/sparky')
+
+    split_data_files_into_folders('../data/experiments/asist/raw/falcon', '../data/experiments/asist/formatted/falcon')
 
     # The Falcon map has inconsistencies in the room event data so, while this is not fixed, these
     # events will be extracted from the observations of the player's positions in the following method
-    # extract_room_events_from_observations('../data/experiments/asist/formatted/falcon', MissionMap.FALCON)
+    extract_room_events_from_observations('../data/experiments/asist/formatted/falcon', MissionMap.FALCON)

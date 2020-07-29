@@ -44,11 +44,11 @@ file(GLOB openface_headers CONFIGURE_DEPENDS
 file(GLOB openface_include_dirs CONFIGURE_DEPENDS
      ${CMAKE_CURRENT_SOURCE_DIR}/lib/*/include)
 
+find_package(dlib REQUIRED)
+find_package(OpenCV REQUIRED)
 message("OpenCV Libs: ${OpenCV_LIBS}")
 message("OpenBLAS Lib: ${OpenBLAS_LIB}")
 add_library(OpenFace STATIC ${openface_sources} ${openface_headers})
-# target_link_libraries(OpenFace PRIVATE ${OpenCV_LIBS} ${Boost_LIBRARIES}
-# dlib::dlib ${OpenBLAS_LIB})
 target_link_libraries(
   OpenFace
   PRIVATE opencv_core
@@ -61,7 +61,8 @@ target_link_libraries(
           ${OpenBLAS_LIB})
 
 target_include_directories(OpenFace PUBLIC ${openface_include_dirs}
-                                           ${OpenBLAS_INCLUDE_DIR})
+                                           ${OpenBLAS_INCLUDE_DIR}
+                                           ${OpenCV_INCLUDE_DIRS})
 
 install(FILES ${openface_headers}
         DESTINATION ${CMAKE_INSTALL_PREFIX}/include/OpenFace)

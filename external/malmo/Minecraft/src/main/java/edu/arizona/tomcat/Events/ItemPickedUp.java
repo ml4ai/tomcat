@@ -1,6 +1,6 @@
 package edu.arizona.tomcat.Events;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemPickupEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemPickupEvent;
 
 public class ItemPickedUp extends Event {
     private String playerName;

@@ -9,7 +9,7 @@ export TOMCAT
 
 echo "Installing ToMCAT dependencies."
 
-COMMON_MACOS_DEPS="cmake boost doxygen ffmpeg gradle mosquitto nlohmann-json openssl dlib openblas"
+COMMON_MACOS_DEPS="cmake boost doxygen ffmpeg gradle mosquitto nlohmann-json openssl yaml-cpp dlib openblas"
 __install_dependencies_using_macports() {
     echo "'port' executable detected, assuming that MacPorts"
     echo "(https://www.macports.org) is installed and is the package manager."
@@ -96,7 +96,10 @@ __install_dependencies_using_apt() {
         mosquitto-clients \
         curl \
         libopenblas-dev \
-        openssl
+        openssl \
+        zlib1g-dev \
+        libbz2-dev \
+        libyaml-cpp-dev
     if [[ $? -ne 0 ]]; then exit 1; fi
 
     # On Ubuntu 18.04 and older, the required version of the nlohmann-json JSON
@@ -123,13 +126,17 @@ __install_dependencies_using_apt() {
         exit 1
     fi
 
-    # The Github Actions Ubuntu 18.04 VM already has Boost installed, but not
-    # all the components we need. So we will use apt-get to install the missing
-    # ones.
-    if ! sudo apt-get install -y libboost-all-dev; then exit 1; fi
-
-    # TODO - when OpenFace gets added back, add opencv, openblas, and dlib as
-    # dependencies.
+    if (( CI )); then
+        # The Github Actions Ubuntu 18.04 VM already has Boost installed, but not
+        # all the components we need. So we will use apt-get to install the missing
+        # ones.
+        if ! sudo apt-get install -y libboost-all-dev; then exit 1; fi
+    else
+        if ! "$TOMCAT"/tools/install_from_source/boost; then
+            echo "Failed to install Boost from source. Exiting now."
+            exit 1
+        fi
+    fi
 }
 
 __install_dependencies() {
