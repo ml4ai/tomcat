@@ -114,22 +114,20 @@ __install_dependencies_using_apt() {
                 exit 1
             fi
 
-            if ! "$TOMCAT"/tools/install_from_source/dlib; then
-                echo "Failed to install dlib from source."
-                exit 1
-            fi
         fi
-
     else
         if ! sudo apt install -y nlohmann-json3-dev; then
             echo "Failed to install nlohmann-json3-dev using apt."
             exit 1
         fi
 
-        if ! sudo apt install -y libdlib-dev; then
-            echo "Failed to install libdlib-dev using apt."
+        # The versions of dlib available using apt are not compatible with
+        # OpenCV 4, so we install the latest version from master.
+        if ! "$TOMCAT"/tools/install_from_source/dlib; then
+            echo "Failed to install dlib from source."
             exit 1
         fi
+
 
         if ! sudo apt install -y libopencv-dev; then
             echo "Failed to install libopencv-dev using apt."

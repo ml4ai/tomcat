@@ -19,8 +19,13 @@ install_dlib_from_source() {
                 if ! cmake --build . --config Release; then
                     exit 1
                 fi
-                if ! make -j2; then exit 1; fi
-                if ! sudo make install; then exit 1; fi
+                if [[ $OSTYPE == "linux-gnu" ]]; then
+                    if ! make -j $(nproc); then exit 1; fi
+                    if ! sudo make -j $(nproc) install; then exit 1; fi
+                else
+                    if ! make -j; then exit 1; fi
+                    if ! sudo make -j install; then exit 1; fi
+                fi
             popd
         popd
         /bin/rm -rf dlib*
