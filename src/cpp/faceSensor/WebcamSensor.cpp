@@ -17,12 +17,20 @@ typedef vector<pair<string, double>> au_vector;
 namespace tomcat {
 
     void
-    WebcamSensor::initialize(string exp, string trial, string pname, bool ind) {
+    WebcamSensor::initialize(string exp, string trial, string pname, bool ind, string file_path) {
         // Initialize the experiment ID, trial ID and player name
         this->exp_id = exp;
         this->trial_id = trial;
         this->playername = pname;
         this->indent = ind;
+        if (file_path.compare("null") != 0) {
+            this->arguments.insert(this->arguments.begin(), file_path);
+            this->arguments.insert(this->arguments.begin(), "-f");
+        }
+        else {
+            this->arguments.insert(this->arguments.begin(), "0");
+            this->arguments.insert(this->arguments.begin(), "-device");
+        }
 
         // The modules that are being used for tracking
         this->face_model = LandmarkDetector::CLNF();
@@ -33,9 +41,8 @@ namespace tomcat {
         if (!this->face_model.eye_model) {
             throw runtime_error("No eye model found");
         }
-
+        
         this->fps_tracker.AddFrame();
-        this->sequence_reader.Open(arguments);
     };
 
     void WebcamSensor::get_observation() {
@@ -56,6 +63,8 @@ namespace tomcat {
         FaceAnalysis::FaceAnalyserParameters face_analysis_params(
             this->arguments);
         FaceAnalysis::FaceAnalyser face_analyser(face_analysis_params);
+        
+        this->sequence_reader.Open(arguments);
 
         // Recorder open face parameters
         Utilities::RecorderOpenFaceParameters recording_params(

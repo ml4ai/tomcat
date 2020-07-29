@@ -15,11 +15,12 @@ namespace tomcat {
         void initialize(std::string exp,
                         std::string trial,
                         std::string pname,
-                        bool ind);
+                        bool ind,
+                        std::string file_path);
         void get_observation();
 
       private:
-        std::vector<std::string> arguments = {"-device", "0", "-au_static"};
+        std::vector<std::string> arguments = {"-au_static"};
         Utilities::Visualizer visualizer;
         cv::Mat rgb_image;
         Utilities::SequenceCapture sequence_reader;

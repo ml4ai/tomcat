@@ -13,27 +13,32 @@ using namespace tomcat;
 namespace po = boost::program_options;
 
 int main(int ac, char* av[]) {
-    string exp_id, trial_id, playername, of_dir;
+    string exp_id, trial_id, playername, of_dir, file_path;
     bool indent;
     // Boost command line options
     try {
 
         po::options_description desc("Allowed options");
-        desc.add_options()("help,h", "produce help message")(
-            "exp_id",
+        desc.add_options()
+            ("help,h", "produce help message")
+            ("exp_id",
             po::value<string>(&exp_id)->default_value("null"),
-            "set experiment ID")(
-            "trial_id",
+            "set experiment ID")
+            ("trial_id",
             po::value<string>(&trial_id)->default_value("null"),
-            "set trial ID")(
-            "playername",
+            "set trial ID")
+            ("playername",
             po::value<string>(&playername)->default_value("null"),
-            "set playername")("mloc",
-                              po::value<string>(&of_dir),
-                              "set OpenFace models directory")(
-            "indent",
+            "set playername")
+            ("mloc",
+            po::value<string>(&of_dir),
+            "set OpenFace models directory")
+            ("indent",
             po::value<bool>(&indent)->default_value(false),
-            "set indentation (true/false)");
+            "set indentation (true/false)")
+            ("file,f",
+            po::value<string>(&file_path)->default_value("null"),
+            "specify the input video file");
 
         po::variables_map vm;
         po::store(po::parse_command_line(ac, av, desc), vm);
@@ -70,7 +75,7 @@ int main(int ac, char* av[]) {
     }
 
     WebcamSensor camsensor;
-    camsensor.initialize(exp_id, trial_id, playername, indent);
+    camsensor.initialize(exp_id, trial_id, playername, indent, file_path);
     camsensor.get_observation();
 
     return 0;
