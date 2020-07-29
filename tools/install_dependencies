@@ -125,6 +125,12 @@ __install_dependencies_using_apt() {
             echo "Failed to install nlohmann-json3-dev using apt."
             exit 1
         fi
+
+        if ! sudo apt install -y libdlib-dev; then
+            echo "Failed to install libdlib-dev using apt."
+            exit 1
+        fi
+
         if ! sudo apt install -y libopencv-dev; then
             echo "Failed to install libopencv-dev using apt."
             exit 1
