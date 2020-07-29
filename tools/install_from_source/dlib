@@ -19,7 +19,7 @@ install_dlib_from_source() {
                 if ! cmake --build . --config Release; then
                     exit 1
                 fi
-                if ! make -j8; then exit 1; fi
+                if ! make -j2; then exit 1; fi
                 if ! sudo make install; then exit 1; fi
             popd
         popd
