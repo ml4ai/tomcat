@@ -109,8 +109,6 @@ __install_dependencies_using_apt() {
         # We do not install dlib from source on the Github Actions Ubuntu 18.04
         # runner, since this causes timeouts.
         if (( CI )); then
-        else
-
             if ! "$TOMCAT"/tools/install_from_source/boost; then
                 echo "Failed to install Boost from source. Exiting now."
                 exit 1
