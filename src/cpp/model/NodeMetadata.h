@@ -52,6 +52,9 @@ namespace tomcat {
             //  to a node
             int cardinality;
 
+            // Dimensionality of a sample from the node.
+            int sample_size;
+
             // List of parents of the node and their relative time step.
             std::vector<ParentLink> parent_links;
             // Indicates whether the node that owns this metadata has any
@@ -129,6 +132,7 @@ namespace tomcat {
             bool has_replicable_parameter_parent() const {
                 return replicable_parameter_parent;
             }
+            int get_sample_size() const { return sample_size; }
         };
 
         /** This struct represents how a node should be linked to a given parent

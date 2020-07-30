@@ -32,25 +32,35 @@ namespace tomcat {
             }
         }
 
-        Eigen::MatrixXd
-        CategoricalCPD::sample(std::shared_ptr<gsl_rng> generator) const {
+        Eigen::MatrixXd CategoricalCPD::sample(
+            std::shared_ptr<gsl_rng> random_generator) const {
             Eigen::VectorXd samples(this->probability_table.size());
 
             for (int i = 0; i < this->probability_table.size(); i++) {
-                const double* probabilities =
-                    this->probability_table[i]->get_assignment().data();
-
-                unsigned int* sample_ptr = new unsigned int[1];
-                gsl_ran_multinomial(generator.get(),
-                                    this->probability_table.size(),
-                                    1,
-                                    probabilities,
-                                    sample_ptr);
-                samples(i) = sample_ptr[0];
-                delete[] sample_ptr;
+                samples(i) = this->sample(random_generator, i)(0);
             }
 
             return samples;
+        }
+
+        Eigen::VectorXd
+        CategoricalCPD::sample(std::shared_ptr<gsl_rng> random_generator,
+                               int index) const {
+            Eigen::VectorXd sample_vector(1);
+
+            const double* probabilities =
+                this->probability_table[index]->get_assignment().data();
+
+            unsigned int* sample_ptr = new unsigned int[1];
+            gsl_ran_multinomial(random_generator.get(),
+                                this->probability_table.size(),
+                                1,
+                                probabilities,
+                                sample_ptr);
+            sample_vector(0) = sample_ptr[0];
+            delete[] sample_ptr;
+
+            return sample_vector;
         }
 
         void CategoricalCPD::print(std::ostream& os) const {

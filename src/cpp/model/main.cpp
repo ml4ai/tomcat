@@ -12,6 +12,7 @@
 #include <iostream>
 #include <memory>
 #include <variant>
+#include "AncestralSampler.h"
 
 using namespace Eigen;
 using namespace tomcat::model;
@@ -43,12 +44,12 @@ class B {
 };
 
 int main() {
-    //      A a;
-    //      B b(std::move(a));
+          A a;
+          B b(std::move(a));
     //
-    //      std::shared_ptr<A> a_ptr = std::make_shared<A>();
+          std::shared_ptr<A> a_ptr = std::make_shared<A>();
     //      A a_ref = *a_ptr;
-    //      b.print(a_ref);
+          b.print(*a_ptr);
 
     // gsl_rng* gen = gsl_rng_alloc(gsl_rng_mt19937);
     //    std::shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
@@ -155,8 +156,7 @@ int main() {
     // Creation of a simple DBN to test
     // Parameters
     NodeMetadata state_prior_metadata =
-        NodeMetadata::create_single_time_link_metadata(
-            "ThetaS2", 0, true);
+        NodeMetadata::create_single_time_link_metadata("PriorS", 0, true);
 
     NodeMetadata theta_s0_metadata =
         NodeMetadata::create_multiple_time_link_metadata(
@@ -208,7 +208,7 @@ int main() {
         std::make_shared<DirichletCPD>(prior_theta_s2_cpd);
 
     RandomVariableNode prior_state_node(state_prior_metadata_ptr,
-                                     prior_state_prior_cpd_ptr);
+                                        prior_state_prior_cpd_ptr);
 
     RandomVariableNode theta_s0_node(theta_s0_metadata_ptr,
                                      prior_theta_s0_cpd_ptr);
@@ -244,7 +244,6 @@ int main() {
         {"A", "B", "C"},
         {theta_s0_node_ptr, theta_s1_node_ptr, theta_s2_node_ptr});
 
-
     std::shared_ptr<CPD> state_cpd_ptr =
         std::make_shared<CategoricalCPD>(state_cpd);
 
@@ -259,8 +258,7 @@ int main() {
     state_metadata_ptr->add_parent_link(theta_s2_node_ptr, true);
 
     NodeMetadata tg_metadata =
-        NodeMetadata::create_multiple_time_link_metadata(
-            "TG", 1, true, false);
+        NodeMetadata::create_multiple_time_link_metadata("TG", 1, true, false);
     tg_metadata.add_parent_link(state_node_ptr, false);
 
     Eigen::MatrixXd tg_emission_matrix(3, 2);
@@ -271,8 +269,7 @@ int main() {
                                std::make_shared<CategoricalCPD>(tg_cpd));
 
     NodeMetadata ty_metadata =
-        NodeMetadata::create_multiple_time_link_metadata(
-            "TY", 1, true, false);
+        NodeMetadata::create_multiple_time_link_metadata("TY", 1, true, false);
     ty_metadata.add_parent_link(state_node_ptr, false);
 
     Eigen::MatrixXd ty_emission_matrix(3, 2);
@@ -283,16 +280,27 @@ int main() {
                                std::make_shared<CategoricalCPD>(ty_cpd));
 
     DynamicBayesNet dbn(3);
-    dbn.add_node(std::move(state_node));
-    dbn.add_node(std::move(tg_node));
-    dbn.add_node(std::move(ty_node));
-    dbn.add_node(std::move(prior_state_node));
-    dbn.add_node(std::move(theta_s0_node));
-    dbn.add_node(std::move(theta_s1_node));
-    dbn.add_node(std::move(theta_s2_node));
+    dbn.add_node_template(std::move(state_node));
+    dbn.add_node_template(std::move(tg_node));
+    dbn.add_node_template(std::move(ty_node));
+    dbn.add_node_template(std::move(prior_state_node));
+    dbn.add_node_template(std::move(theta_s0_node));
+    dbn.add_node_template(std::move(theta_s1_node));
+    dbn.add_node_template(std::move(theta_s2_node));
 
     dbn.unroll(3, false);
 
+    std::vector<std::shared_ptr<RandomVariableNode>> nodes =
+        dbn.get_nodes_topological_order();
 
+    for (const auto& node : nodes) {
+        std::cout << *node << std::endl;
+    }
+
+    std::shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+    AncestralSampler sampler(dbn, gen);
+    sampler.sample(5, 3);
+
+    std::cout << sampler.get_samples("State");
 
 }

@@ -118,13 +118,16 @@ namespace tomcat {
              * Sample a numeric value for each combination of parent nodes'
              * assignments (each row of the cpd table).
              *
-             * @param generator: random number generator
+             * @param random_generator: random number random_generator
              * @return Vector of sampled values. Each index contains a number
              *  sampled from a categorical distribution defined by each row of
              *  the cpd table.
              */
             Eigen::MatrixXd
-            sample(std::shared_ptr<gsl_rng> generator) const override;
+            sample(std::shared_ptr<gsl_rng> random_generator) const override;
+
+            Eigen::VectorXd sample(std::shared_ptr<gsl_rng> random_generator,
+                                   int index) const override;
 
             void print(std::ostream& os) const override;
 

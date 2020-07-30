@@ -48,6 +48,13 @@ namespace tomcat {
             std::vector<std::vector<std::shared_ptr<Node>>> parameter_table;
 
             /**
+             * Copy members of a continuous CPD.
+             *
+             * @param cpd: continuous CPD
+             */
+            void copy_from_cpd(const ContinuousCPD& cpd);
+
+            /**
              * Transform a table of numeric values for \f$\phi\f$ to a list of
              * constant vector nodes to keep static and node dependent CPDs
              * compatible.
@@ -89,24 +96,17 @@ namespace tomcat {
             ContinuousCPD& operator=(ContinuousCPD&& cpd) = default;
 
             /**
-             * Copy members of a continuous CPD.
-             *
-             * @param cpd: continuous CPD
-             */
-            void copy_from_cpd(const ContinuousCPD& cpd);
-
-            /**
              * Sample a vector for each combination of parent nodes' assignments
              * (each row of the cpd table).
              *
-             * @param generator: random number generator
+             * @param random_generator: random number random_generator
              * @return matrix of sampled values. Each row contains a vector
              *  \f$\theta\f$ sampled from a continuous distribution with
              *  parameter vector \f$\phi\f$ defined in each row of the
              *  parameter table.
              */
             virtual Eigen::MatrixXd
-            sample(std::shared_ptr<gsl_rng> generator) const override = 0;
+            sample(std::shared_ptr<gsl_rng> random_generator) const override = 0;
 
             virtual void print(std::ostream& os) const override = 0;
 

@@ -7,14 +7,15 @@ namespace tomcat {
             std::vector<std::shared_ptr<Node>>& parameter_table) {
             // Each node contains the parameter vector alpha.
             for (int i = 0; i < parameter_table.size(); i++) {
+                this->alpha_size =
+                    parameter_table[i]->get_metadata()->get_sample_size();
                 std::vector<std::shared_ptr<Node>> parameters;
                 parameters.push_back(parameter_table[i]);
                 this->parameter_table.push_back(std::move(parameters));
             }
         }
 
-        void DirichletCPD::init_from_matrix(
-            const Eigen::MatrixXd& matrix) {
+        void DirichletCPD::init_from_matrix(const Eigen::MatrixXd& matrix) {
             this->alpha_size = matrix.cols();
 
             for (int row = 0; row < matrix.rows(); row++) {
@@ -27,18 +28,14 @@ namespace tomcat {
         }
 
         Eigen::MatrixXd
-        DirichletCPD::sample(std::shared_ptr<gsl_rng> generator) const {
+        DirichletCPD::sample(std::shared_ptr<gsl_rng> random_generator) const {
             int rows = this->parameter_table.size();
             double* sample_ptr = new double[rows * this->alpha_size];
 
             for (int i = 0; i < rows; i++) {
-                const double* alpha =
-                    this->parameter_table[i][0]->get_assignment().data();
-
-                gsl_ran_dirichlet(generator.get(),
-                                  this->parameter_table.size(),
-                                  alpha,
-                                  sample_ptr);
+                Eigen::VectorXd sample_vector =
+                    this->sample(random_generator, i);
+                sample_ptr = sample_vector.data();
                 sample_ptr += this->alpha_size;
             }
 
@@ -50,6 +47,24 @@ namespace tomcat {
                                      Eigen::RowMajor>>
                 samples(sample_ptr, rows, this->alpha_size);
             return samples;
+        }
+
+        Eigen::VectorXd
+        DirichletCPD::sample(std::shared_ptr<gsl_rng> random_generator,
+                             int index) const {
+            double* sample_ptr = new double[this->alpha_size];
+
+            const double* alpha =
+                this->parameter_table[index][0]->get_assignment().data();
+
+            gsl_ran_dirichlet(random_generator.get(),
+                              this->alpha_size,
+                              alpha,
+                              sample_ptr);
+
+            Eigen::Map<Eigen::VectorXd> sample(sample_ptr, this->alpha_size);
+
+            return sample;
         }
 
         void DirichletCPD::print(std::ostream& os) const {

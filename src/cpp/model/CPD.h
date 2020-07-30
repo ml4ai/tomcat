@@ -38,7 +38,8 @@ namespace tomcat {
           public:
             CPD() {}
             /**
-             * Create an abstract representation of a Conditional Probability Distribution
+             * Create an abstract representation of a Conditional Probability
+             * Distribution
              *
              * @param parent_node_label_order: evaluation order of the parent
              * nodes assignment for correct table indexing
@@ -72,11 +73,25 @@ namespace tomcat {
             /**
              * Draw a sample from each distribution of the CPD table.
              *
-             * @param generator: random number generator
+             * @param random_generator: random number random_generator
+             *
              * @return matrix or vector with the samples
              */
             virtual Eigen::MatrixXd
-            sample(std::shared_ptr<gsl_rng> generator) const = 0;
+            sample(std::shared_ptr<gsl_rng> random_generator) const = 0;
+
+            /**
+             * Draw a sample from each distribution of the CPD table.
+             *
+             * @param random_generator: random number random_generator
+             * @param index: row of the CPD table containing the distribution to
+             * be sampled from
+             *
+             * @return matrix or vector with the samples
+             */
+            virtual Eigen::VectorXd
+            sample(std::shared_ptr<gsl_rng> random_generator,
+                   int index) const = 0;
 
             /**
              * Clone CPD
@@ -97,14 +112,17 @@ namespace tomcat {
             virtual void update_dependencies(NodeMap& parameter_nodes_map,
                                              int time_step) = 0;
 
-            void reset_updated() {
-                this->updated = false;
-            }
+            void reset_updated() { this->updated = false; }
 
-            bool is_updated() const {
-                return this->updated;
-            }
+            bool is_updated() const { return this->updated; }
 
+            // --------------------------------------------------------
+            // Getters
+            // --------------------------------------------------------
+            const std::vector<std::string>&
+            get_parent_node_label_order() const {
+                return parent_node_label_order;
+            }
         };
 
     } // namespace model

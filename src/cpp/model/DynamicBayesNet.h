@@ -19,9 +19,12 @@ namespace tomcat {
 
         class DynamicBayesNet {
           private:
+            // The graph is defined as bidirectional to improve accessing the
+            // list of parents and children of a vertex, however, only
+            // single-direction edges will be created in reality.
             typedef boost::adjacency_list<boost::vecS,
                                           boost::vecS,
-                                          boost::directedS,
+                                          boost::bidirectionalS,
                                           VertexData>
                 Graph;
 
@@ -79,14 +82,14 @@ namespace tomcat {
              *
              * @param node: node to be stored in the DBN
              */
-            void add_node(RandomVariableNode& node);
+            void add_node_template(RandomVariableNode& node);
 
             /**
              * Move the node to the DBN
              *
              * @param node: node to be stored in the DBN
              */
-            void add_node(RandomVariableNode&& node);
+            void add_node_template(RandomVariableNode&& node);
 
             /**
              * Create vertices and edges by replicating nodes over time and
@@ -101,6 +104,13 @@ namespace tomcat {
             void unroll(int time_steps, bool force);
 
             void check();
+
+            std::vector<std::shared_ptr<RandomVariableNode>>
+            get_nodes_topological_order() const;
+
+            std::vector<std::shared_ptr<RandomVariableNode>>
+            get_parent_nodes_of(const RandomVariableNode& node,
+                                bool exclude_parameters) const;
 
             // --------------------------------------------------------
             // Getters

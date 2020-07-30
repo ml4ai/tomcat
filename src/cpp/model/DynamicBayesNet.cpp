@@ -1,5 +1,6 @@
 #include "DynamicBayesNet.h"
 #include "CPD.h"
+#include <boost/graph/topological_sort.hpp>
 #include <fmt/core.h>
 
 namespace tomcat {
@@ -149,12 +150,10 @@ namespace tomcat {
             }
 
             if (parent_time_step >= 0) {
-                int source_vertex_id =
-                    this->name_to_id[source_node.get_timed_name(
-                        parent_time_step)];
-                int target_vertex_id =
-                    this->name_to_id[target_node.get_timed_name(
-                        target_time_step)];
+                int source_vertex_id = this->name_to_id.at(
+                    source_node.get_timed_name(parent_time_step));
+                int target_vertex_id = this->name_to_id.at(
+                    target_node.get_timed_name(target_time_step));
                 boost::add_edge(
                     source_vertex_id, target_vertex_id, this->graph);
             }
@@ -170,10 +169,10 @@ namespace tomcat {
                         for (int t = metadata->get_initial_time_step();
                              t < this->time_steps;
                              t++) {
-                            VertexData vertex_data =
-                                this->graph
-                                    [this->name_to_id[node_template
-                                                          .get_timed_name(t)]];
+
+                            int vertex_id = this->name_to_id.at(
+                                node_template.get_timed_name(t));
+                            VertexData vertex_data = this->graph[vertex_id];
                             if (!vertex_data.node->get_cpd()->is_updated()) {
                                 vertex_data.node->get_cpd()
                                     ->update_dependencies(parameter_nodes_map,
@@ -192,19 +191,15 @@ namespace tomcat {
             }
         }
 
-        void DynamicBayesNet::check() {
-            // todo
-        }
-
         DynamicBayesNet::DynamicBayesNet(int num_nodes) {
             this->node_templates.reserve(num_nodes);
         }
 
-        void DynamicBayesNet::add_node(RandomVariableNode& node) {
+        void DynamicBayesNet::add_node_template(RandomVariableNode& node) {
             this->node_templates.push_back(node);
         }
 
-        void DynamicBayesNet::add_node(RandomVariableNode&& node) {
+        void DynamicBayesNet::add_node_template(RandomVariableNode&& node) {
             this->node_templates.push_back(std::move(node));
         }
 
@@ -222,6 +217,50 @@ namespace tomcat {
                     std::cout << *edge << std::endl;
                 }
             }
+        }
+
+        void DynamicBayesNet::check() {
+            // todo
+        }
+
+        std::vector<std::shared_ptr<RandomVariableNode>>
+        DynamicBayesNet::get_nodes_topological_order() const {
+            std::vector<int> vertex_ids;
+            boost::topological_sort(this->graph,
+                                    std::back_inserter(vertex_ids));
+
+            std::vector<std::shared_ptr<RandomVariableNode>> nodes(
+                vertex_ids.size());
+            int i = vertex_ids.size();
+
+            for (int vertex_id : vertex_ids) {
+                nodes[--i] = this->graph[vertex_id].node;
+            }
+
+            return nodes;
+        }
+
+        std::vector<std::shared_ptr<RandomVariableNode>>
+        DynamicBayesNet::get_parent_nodes_of(const RandomVariableNode& node,
+                                             bool exclude_parameters) const {
+
+            int vertex_id = this->name_to_id.at(node.get_timed_name());
+            std::vector<std::shared_ptr<RandomVariableNode>> parent_nodes;
+
+            Graph::in_edge_iterator in_begin, in_end;
+            boost::tie(in_begin, in_end) = in_edges(vertex_id, this->graph);
+            while (in_begin != in_end) {
+                int parent_vertex_id = source(*in_begin, graph);
+                if (!this->graph[parent_vertex_id]
+                         .node->get_metadata()
+                         ->is_parameter() ||
+                    !exclude_parameters) {
+                    parent_nodes.push_back(this->graph[parent_vertex_id].node);
+                }
+                in_begin++;
+            }
+
+            return parent_nodes;
         }
 
     } // namespace model

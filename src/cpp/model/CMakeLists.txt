@@ -44,7 +44,9 @@ add_library(tomcat_model_libs
         ContinuousCPD.cpp
         GaussianCPD.cpp
         DirichletCPD.cpp
-        DynamicBayesNet.cpp)
+        DynamicBayesNet.cpp
+        Sampler.cpp
+        AncestralSampler.cpp)
 
 add_executable(TomcatModel main.cpp)
 target_link_libraries(TomcatModel PUBLIC tomcat_model_libs ${Boost_LIBRARIES} Eigen3::Eigen GSL::gsl GSL::gslcblas fmt::fmt)

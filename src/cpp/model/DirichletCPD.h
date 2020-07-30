@@ -60,7 +60,6 @@ namespace tomcat {
                 std::vector<std::shared_ptr<Node>>& parameter_table);
 
           protected:
-
             /**
              * Transform a table of numeric values for \f$\alpha\f$ to a list of
              * constant vector nodes to keep static and node dependent CPDs
@@ -69,8 +68,7 @@ namespace tomcat {
              * @param matrix: matrix containing constant numerical
              * values for \f$\alpha\f$
              */
-            virtual void
-            init_from_matrix(const Eigen::MatrixXd& matrix) override;
+            void init_from_matrix(const Eigen::MatrixXd& matrix) override;
 
           public:
             /**
@@ -119,9 +117,13 @@ namespace tomcat {
 
             ~DirichletCPD() {}
 
-            DirichletCPD(const DirichletCPD& cpd) { this->copy_from_cpd(cpd); }
+            DirichletCPD(const DirichletCPD& cpd) {
+                this->copy_from_cpd(cpd);
+                this->alpha_size = cpd.alpha_size;
+            }
             DirichletCPD& operator=(const DirichletCPD& cpd) {
                 this->copy_from_cpd(cpd);
+                this->alpha_size = cpd.alpha_size;
                 return *this;
             };
 
@@ -132,14 +134,17 @@ namespace tomcat {
              * Sample a vector for each combination of parent nodes'
              * assignments (each row of the cpd table).
              *
-             * @param generator: random number generator
+             * @param random_generator: random number random_generator
              * @return matrix of sampled values. Each row contains a vector
              *  \f$\theta\f$ sampled from a dirichlet distribution with
              *  parameter vector \f$\alpha\f$ defined in each row of the
              *  parameter table.
              */
             Eigen::MatrixXd
-            sample(std::shared_ptr<gsl_rng> generator) const override;
+            sample(std::shared_ptr<gsl_rng> random_generator) const override;
+
+            Eigen::VectorXd sample(std::shared_ptr<gsl_rng> random_generator,
+                                   int index) const override;
 
             void print(std::ostream& os) const override;
 
