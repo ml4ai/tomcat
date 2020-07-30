@@ -80,8 +80,8 @@ start_av_recording() {
             echo "Recording system audio for Linux."
             # For Linux system audio recording, we will use pacat.
             # We need to extract the alsa output monitor.
-            export ALSA_OUTPUT_MONITOR=`pacmd list-sources | \
-            awk '/name:/ && /monitor/ {print $2 }'|sed 's/[<,>]//g'`
+            export ALSA_OUTPUT_MONITOR=$(pacmd list-sources | \
+                awk '/name:/ && /monitor/ {print $2 }'|sed 's/[<,>]//g')
 
             # Calling pacat command.
             pacat --record --file-format=wav -d ${ALSA_OUTPUT_MONITOR} \
