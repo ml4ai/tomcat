@@ -4,6 +4,9 @@ import com.microsoft.Malmo.Schemas.PosAndDirection;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 import edu.arizona.tomcat.Utils.WorldReader;
+import edu.arizona.tomcat.World.Drawing;
+import edu.arizona.tomcat.World.DrawingHandler;
+import edu.arizona.tomcat.World.TomcatEntity;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -15,10 +18,12 @@ import java.util.Map;
 
 public class ProceduralGenMission extends Mission {
 
-    public boolean shouldBuild;
+    private boolean shouldBuild;
+
 
     public ProceduralGenMission() {
         super();
+        this.drawingHandler = DrawingHandler.getInstance();
         this.id = ID.PROCEDURAL;
         this.shouldBuild = true;
     }
@@ -39,11 +44,24 @@ public class ProceduralGenMission extends Mission {
         if (this.shouldBuild == true) {
             // Grab map representing world
             WorldReader worldReader = new WorldReader("procedural.tsv");
-            Map<BlockPos, IBlockState> worldMap = worldReader.getMap();
+            Drawing drawing = new Drawing();
+            Map<BlockPos, IBlockState> worldMap = worldReader.getBlocksMap();
+            Map<BlockPos, TomcatEntity> entityMap = worldReader.getEntityMap();
 
             // Place blocks
             for(Map.Entry<BlockPos, IBlockState> entry : worldMap.entrySet()){
                 world.setBlockState(entry.getKey(), entry.getValue());
+            }
+
+            for(Map.Entry<BlockPos,TomcatEntity> entry : entityMap.entrySet()){
+                drawing.addObject(entry.getValue());
+                System.out.println("-------->FAIL 2");
+            }
+            try {
+                this.drawingHandler.draw(world, drawing);
+            } catch (Exception e) {
+                System.out.println("-------->FAIL 3");
+                e.printStackTrace();
             }
 
             this.shouldBuild = false;

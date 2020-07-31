@@ -1,5 +1,7 @@
 package edu.arizona.tomcat.Utils;
 
+import com.microsoft.Malmo.Schemas.EntityTypes;
+import edu.arizona.tomcat.World.TomcatEntity;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -9,13 +11,15 @@ import java.io.FileNotFoundException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.UUID;
 
 /**
  * This class can be used to read a TSV file representing a world. The TSV entries are read into a hash map of
  * coordinates and the block at those coordinates.
  */
 public class WorldReader {
-    private Map<BlockPos, IBlockState> map;
+    private Map<BlockPos, IBlockState> blockMap;
+    private Map<BlockPos, TomcatEntity> entityMap;
 
     /**
      * Constructor for this object. The instance creates the hash map at the time of initialization.
@@ -24,7 +28,8 @@ public class WorldReader {
      */
     public WorldReader(String filename) {
 
-        this.map = new LinkedHashMap<BlockPos, IBlockState>();
+        this.blockMap = new LinkedHashMap<BlockPos, IBlockState>();
+        this.entityMap = new LinkedHashMap<BlockPos, TomcatEntity>();
         this.initMap(filename);
     }
 
@@ -34,8 +39,12 @@ public class WorldReader {
      * @return The map of coordinates and the block at those coordinates. The block to be placed is represented as the IBlockState object used
      * for the block type in its default state,
      */
-    public Map<BlockPos, IBlockState> getMap() {
-        return this.map;
+    public Map<BlockPos, IBlockState> getBlocksMap() {
+        return this.blockMap;
+    }
+
+    public Map<BlockPos, TomcatEntity> getEntityMap() {
+        return this.entityMap;
     }
 
     /**
@@ -64,8 +73,8 @@ public class WorldReader {
             int z = Integer.parseInt(blockEntry[2]);
             BlockPos pos = new BlockPos(x, y, z);
 
-            if (this.map.containsKey(pos)) {
-                this.map.remove(pos);
+            if (this.blockMap.containsKey(pos)) {
+                this.blockMap.remove(pos);
             } // When duplicate coordinates are encountered we remove and re-add so iteration order is correct
 
             String material = blockEntry[3];
@@ -76,12 +85,19 @@ public class WorldReader {
                 BlockPos topPos = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
                 IBlockState doorTop = this.getBlockState("door_top");
 
-                this.map.remove(topPos); // For a door we need to remove and re add the block above the current as well
-                this.map.put(pos, doorBottom);
-                this.map.put(topPos, doorTop);
-            } else {
+                this.blockMap.remove(topPos); // For a door we need to remove and re add the block above the current as well
+                this.blockMap.put(pos, doorBottom);
+                this.blockMap.put(topPos, doorTop);
+            } else if(material.equals(("entity"))) {
+                TomcatEntity entity =
+                        new TomcatEntity(UUID.randomUUID(), x, y, z, EntityTypes.VILLAGER);
+                this.entityMap.put(pos, entity);
+                System.out.println("-------->FAIL 1");
+            }
+            else
+             {
                 IBlockState state = getBlockState(material);
-                this.map.put(pos, state);
+                this.blockMap.put(pos, state);
             }
         }
     }

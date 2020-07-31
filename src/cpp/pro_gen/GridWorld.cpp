@@ -94,6 +94,10 @@ void GridWorld::generateBlocks() {
     for (auto& aabb : this->getAABBList()) {
         (*aabb).generateAllDoorsInAABB();
         generateVictimInAABB(*aabb);
+        Pos pos = (*aabb).getRandomPosAtBase(this->getRandom(), 1, 1, 1, 1);
+        pos.shiftY(2);
+
+        (*aabb).addEntity(*(new Entity("zombie", pos)));
     }
 }
 
