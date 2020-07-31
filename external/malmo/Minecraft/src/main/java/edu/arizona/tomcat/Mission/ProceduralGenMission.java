@@ -7,14 +7,15 @@ import edu.arizona.tomcat.Utils.WorldReader;
 import edu.arizona.tomcat.World.Drawing;
 import edu.arizona.tomcat.World.DrawingHandler;
 import edu.arizona.tomcat.World.TomcatEntity;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 public class ProceduralGenMission extends Mission {
 
@@ -59,14 +60,12 @@ public class ProceduralGenMission extends Mission {
 
             try {
                 this.drawingHandler.draw(world, drawing);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
             this.shouldBuild = false;
-        }
-        else {
+        } else {
             return;
         }
     }

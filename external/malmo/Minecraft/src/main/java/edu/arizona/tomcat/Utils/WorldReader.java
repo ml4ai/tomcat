@@ -2,12 +2,13 @@ package edu.arizona.tomcat.Utils;
 
 import com.microsoft.Malmo.Schemas.EntityTypes;
 import edu.arizona.tomcat.World.TomcatEntity;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.*;
 
 /**
  * This class can be used to read a TSV file representing a world. The TSV
@@ -36,12 +37,21 @@ public class WorldReader {
      * in the world read from file.
      *
      * @return The map of coordinates and the block at those coordinates. The
-     *     block to be placed is represented as the IBlockState object used
+     * block to be placed is represented as the IBlockState object used
      * for the block type in its default state,
      */
-    public Map<BlockPos, IBlockState> getBlocksMap() { return this.blockMap; }
+    public Map<BlockPos, IBlockState> getBlocksMap() {
+        return this.blockMap;
+    }
 
-    public List<TomcatEntity> getEntityList() { return this.entityList; }
+    /**
+     * Get the list of entities in the world
+     *
+     * @return The list of TomcatEntity objects
+     */
+    public List<TomcatEntity> getEntityList() {
+        return this.entityList;
+    }
 
     /**
      * This method is use to create the map representation of the world from the
@@ -56,8 +66,7 @@ public class WorldReader {
 
         try {
             file = new Scanner((new File(filename)));
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
@@ -73,11 +82,13 @@ public class WorldReader {
             String objectType = entry[3];
 
             if (objectType.equals("block")) {
+                // Do stuff with block entries
+
                 String material = entry[4];
                 if (this.blockMap.containsKey(pos)) {
                     this.blockMap.remove(pos);
                 } // When duplicate coordinates are encountered we remove and
-                  // re-add so iteration order is correct
+                // re-add so iteration order is correct
 
                 if (material.equals("door")) {
                     // Doors are special adn we need to place a bottom and top
@@ -85,43 +96,50 @@ public class WorldReader {
                     IBlockState doorBottom = this.getBlockState("door_bottom");
 
                     BlockPos topPos =
-                        new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
+                            new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
                     IBlockState doorTop = this.getBlockState("door_top");
 
                     this.blockMap.remove(
-                        topPos); // For a door we need to remove and re add the
-                                 // block above the current as well
+                            topPos); // For a door we need to remove and re add the
+                    // block above the current as well
                     this.blockMap.put(pos, doorBottom);
                     this.blockMap.put(topPos, doorTop);
-                }
-                else {
+                } else {
                     IBlockState state = getBlockState(material);
                     this.blockMap.put(pos, state);
                 }
-            }
-            else if (objectType.equals("entity")) {
+            } else if (objectType.equals("entity")) {
+                // Do stuff with entity entries
+
                 String type = entry[4];
                 TomcatEntity entity = this.getTomcatEntity(x, y, z, type);
                 this.entityList.add(entity);
-            }
-            else {
+            } else {
                 ;
             }
         }
     }
 
+    /**
+     * Get the right TomcatEntity based on the type given. The UUID assigned is random and the entity is
+     * placed at the given coordinates
+     *
+     * @param x    X coordinate of entity
+     * @param y    Y coordinate of entity
+     * @param z    Z coordinate of entity
+     * @param type The type of entity
+     * @return The generated TomcatEntity object
+     */
     private TomcatEntity getTomcatEntity(int x, int y, int z, String type) {
         if (type.equals("zombie")) {
             return new TomcatEntity(
-                UUID.randomUUID(), x, y, z, EntityTypes.ZOMBIE);
-        }
-        else if (type.equals("skeleton")) {
+                    UUID.randomUUID(), x, y, z, EntityTypes.ZOMBIE);
+        } else if (type.equals("skeleton")) {
             return new TomcatEntity(
-                UUID.randomUUID(), x, y, z, EntityTypes.SKELETON);
-        }
-        else {
+                    UUID.randomUUID(), x, y, z, EntityTypes.SKELETON);
+        } else {
             return new TomcatEntity(
-                UUID.randomUUID(), x, y, z, EntityTypes.VILLAGER);
+                    UUID.randomUUID(), x, y, z, EntityTypes.VILLAGER);
         }
     }
 
@@ -129,54 +147,40 @@ public class WorldReader {
      * Returns the block state relevant to the input string.
      *
      * @param material The material whose block state representation is
-     *     required.
+     *                 required.
      * @return The block state. Only default states are returned. The default
-     *     block is Quartz.
+     * block is Quartz.
      */
     private IBlockState getBlockState(String material) {
         if (material.equals("planks")) {
             return Blocks.PLANKS.getDefaultState();
-        }
-        else if (material.equals("prismarine")) {
+        } else if (material.equals("prismarine")) {
             return Blocks.PRISMARINE.getDefaultState();
-        }
-        else if (material.equals("gold")) {
+        } else if (material.equals("gold")) {
             return Blocks.GOLD_BLOCK.getDefaultState();
-        }
-        else if (material.equals("door_top")) {
+        } else if (material.equals("door_top")) {
             return Blocks.DARK_OAK_DOOR.getStateFromMeta(9);
-        }
-        else if (material.equals("door_bottom")) {
+        } else if (material.equals("door_bottom")) {
             return Blocks.DARK_OAK_DOOR.getStateFromMeta(0);
-        }
-        else if (material.equals("lava")) {
+        } else if (material.equals("lava")) {
             return Blocks.LAVA.getDefaultState();
-        }
-        else if (material.equals("water")) {
+        } else if (material.equals("water")) {
             return Blocks.WATER.getDefaultState();
-        }
-        else if (material.equals("grass")) {
+        } else if (material.equals("grass")) {
             return Blocks.GRASS.getDefaultState();
-        }
-        else if (material.equals("sand")) {
+        } else if (material.equals("sand")) {
             return Blocks.SAND.getDefaultState();
-        }
-        else if (material.equals("cobblestone")) {
+        } else if (material.equals("cobblestone")) {
             return Blocks.COBBLESTONE.getDefaultState();
-        }
-        else if (material.equals("fence")) {
+        } else if (material.equals("fence")) {
             return Blocks.NETHER_BRICK_FENCE.getDefaultState();
-        }
-        else if (material.equals("lever")) {
+        } else if (material.equals("lever")) {
             return Blocks.LEVER.getDefaultState();
-        }
-        else if (material.equals("glowstone")) {
+        } else if (material.equals("glowstone")) {
             return Blocks.GLOWSTONE.getDefaultState();
-        }
-        else if (material.equals("air")) {
+        } else if (material.equals("air")) {
             return Blocks.AIR.getDefaultState();
-        }
-        else {
+        } else {
             return Blocks.QUARTZ_BLOCK.getDefaultState(); // For unknown block
         }
     }
