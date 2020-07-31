@@ -249,7 +249,8 @@ string AABB::toTSV() {
 
                 if (addCurrent) {
                     retval += to_string(x) + "\t" + to_string(y) + "\t" +
-                              to_string(z) + "\t" + (this->material) + "\n";
+                              to_string(z) + "\t" + "block" + "\t" +
+                              (this->material) + "\n";
                 }
             }
         }

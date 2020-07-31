@@ -8,10 +8,7 @@ import net.minecraft.util.math.BlockPos;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * This class can be used to read a TSV file representing a world. The TSV entries are read into a hash map of
@@ -19,7 +16,7 @@ import java.util.UUID;
  */
 public class WorldReader {
     private Map<BlockPos, IBlockState> blockMap;
-    private Map<BlockPos, TomcatEntity> entityMap;
+    private List<TomcatEntity> entityList;
 
     /**
      * Constructor for this object. The instance creates the hash map at the time of initialization.
@@ -29,7 +26,7 @@ public class WorldReader {
     public WorldReader(String filename) {
 
         this.blockMap = new LinkedHashMap<BlockPos, IBlockState>();
-        this.entityMap = new LinkedHashMap<BlockPos, TomcatEntity>();
+        this.entityList = new ArrayList<TomcatEntity>();
         this.initMap(filename);
     }
 
@@ -43,8 +40,8 @@ public class WorldReader {
         return this.blockMap;
     }
 
-    public Map<BlockPos, TomcatEntity> getEntityMap() {
-        return this.entityMap;
+    public List<TomcatEntity> getEntityList() {
+        return this.entityList;
     }
 
     /**
@@ -66,39 +63,51 @@ public class WorldReader {
         // Use file
         while (file.hasNextLine()) {
             String line = file.nextLine();
-            String[] blockEntry = line.split("\t");
+            String[] entry = line.split("\t");
 
-            int x = Integer.parseInt(blockEntry[0]);
-            int y = Integer.parseInt(blockEntry[1]);
-            int z = Integer.parseInt(blockEntry[2]);
+            int x = Integer.parseInt(entry[0]);
+            int y = Integer.parseInt(entry[1]);
+            int z = Integer.parseInt(entry[2]);
             BlockPos pos = new BlockPos(x, y, z);
+            String objectType = entry[3];
 
-            if (this.blockMap.containsKey(pos)) {
-                this.blockMap.remove(pos);
-            } // When duplicate coordinates are encountered we remove and re-add so iteration order is correct
+            if (objectType.equals("block")) {
+                String material = entry[4];
+                if (this.blockMap.containsKey(pos)) {
+                    this.blockMap.remove(pos);
+                } // When duplicate coordinates are encountered we remove and re-add so iteration order is correct
 
-            String material = blockEntry[3];
-            if (material.equals("door")) {
-                // Doors are special adn we need to place a bottom and top half
-                IBlockState doorBottom = this.getBlockState("door_bottom");
+                if (material.equals("door")) {
+                    // Doors are special adn we need to place a bottom and top half
+                    IBlockState doorBottom = this.getBlockState("door_bottom");
 
-                BlockPos topPos = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
-                IBlockState doorTop = this.getBlockState("door_top");
+                    BlockPos topPos = new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
+                    IBlockState doorTop = this.getBlockState("door_top");
 
-                this.blockMap.remove(topPos); // For a door we need to remove and re add the block above the current as well
-                this.blockMap.put(pos, doorBottom);
-                this.blockMap.put(topPos, doorTop);
-            } else if(material.equals(("entity"))) {
-                TomcatEntity entity =
-                        new TomcatEntity(UUID.randomUUID(), x, y, z, EntityTypes.VILLAGER);
-                this.entityMap.put(pos, entity);
-                System.out.println("-------->FAIL 1");
+                    this.blockMap.remove(topPos); // For a door we need to remove and re add the block above the current as well
+                    this.blockMap.put(pos, doorBottom);
+                    this.blockMap.put(topPos, doorTop);
+                } else {
+                    IBlockState state = getBlockState(material);
+                    this.blockMap.put(pos, state);
+                }
+            } else if (objectType.equals("entity")) {
+                String type = entry[4];
+                TomcatEntity entity = this.getTomcatEntity(x, y, z, type);
+                this.entityList.add(entity);
+            } else {
+                ;
             }
-            else
-             {
-                IBlockState state = getBlockState(material);
-                this.blockMap.put(pos, state);
-            }
+        }
+    }
+
+    private TomcatEntity getTomcatEntity(int x, int y, int z, String type) {
+        if (type.equals("zombie")) {
+            return new TomcatEntity(UUID.randomUUID(), x, y, z, EntityTypes.ZOMBIE);
+        } else if (type.equals("skeleton")) {
+            return new TomcatEntity(UUID.randomUUID(), x, y, z, EntityTypes.SKELETON);
+        } else {
+            return new TomcatEntity(UUID.randomUUID(), x, y, z, EntityTypes.VILLAGER);
         }
     }
 
@@ -129,13 +138,13 @@ public class WorldReader {
             return Blocks.SAND.getDefaultState();
         } else if (material.equals("cobblestone")) {
             return Blocks.COBBLESTONE.getDefaultState();
-        }else if (material.equals("fence")) {
+        } else if (material.equals("fence")) {
             return Blocks.NETHER_BRICK_FENCE.getDefaultState();
-        }else if (material.equals("lever")) {
+        } else if (material.equals("lever")) {
             return Blocks.LEVER.getDefaultState();
-        }else if (material.equals("glowstone")) {
+        } else if (material.equals("glowstone")) {
             return Blocks.GLOWSTONE.getDefaultState();
-        }else if (material.equals("air")) {
+        } else if (material.equals("air")) {
             return Blocks.AIR.getDefaultState();
         } else {
             return Blocks.QUARTZ_BLOCK.getDefaultState();  // For unknown block

@@ -14,6 +14,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 public class ProceduralGenMission extends Mission {
@@ -46,21 +47,20 @@ public class ProceduralGenMission extends Mission {
             WorldReader worldReader = new WorldReader("procedural.tsv");
             Drawing drawing = new Drawing();
             Map<BlockPos, IBlockState> worldMap = worldReader.getBlocksMap();
-            Map<BlockPos, TomcatEntity> entityMap = worldReader.getEntityMap();
+            List<TomcatEntity> entityList = worldReader.getEntityList();
 
             // Place blocks
-            for(Map.Entry<BlockPos, IBlockState> entry : worldMap.entrySet()){
+            for (Map.Entry<BlockPos, IBlockState> entry : worldMap.entrySet()) {
                 world.setBlockState(entry.getKey(), entry.getValue());
             }
 
-            for(Map.Entry<BlockPos,TomcatEntity> entry : entityMap.entrySet()){
-                drawing.addObject(entry.getValue());
-                System.out.println("-------->FAIL 2");
+            for (TomcatEntity entity : entityList) {
+                drawing.addObject(entity);
             }
+
             try {
                 this.drawingHandler.draw(world, drawing);
             } catch (Exception e) {
-                System.out.println("-------->FAIL 3");
                 e.printStackTrace();
             }
 
