@@ -256,4 +256,15 @@ public class ForgeEventHandler {
     public void handle(LivingEquipmentChangeEvent event) {
         this.mqttService.publish(new EquipmentChange(event), "observations/events/player_interactions/equipment_change");
     }
+
+    /** SoundPlayingEvent handler */
+    @SubscribeEvent
+    public void handle(PlaySoundAtEntityEvent event) {
+        if(event.getSound().equals(SoundEvents.ENTITY_ZOMBIE_AMBIENT)||
+            event.getSound().equals(SoundEvents.ENTITY_VILLAGER_AMBIENT)||
+            event.getSound().equals(SoundEvents.ENTITY_SKELETON_AMBIENT)){
+            this.mqttService.publish(new SoundPlayingEvent(event),
+                                     "observations/events/villager_zombie_skeleton_sounds");
+        }
+    }
 }
