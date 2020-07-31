@@ -154,19 +154,11 @@ namespace tomcat {
             Eigen::VectorXd
             sample(std::shared_ptr<gsl_rng> random_generator, int index) const override;
 
-            /**
-             * Print a short description of the distribution.
-             *
-             * @param os: output stream
-             */
             void print(std::ostream& os) const override;
 
-            /**
-             * Clone CPD
-             *
-             * @return pointer to the new CPD
-             */
             std::unique_ptr<CPD> clone() const override;
+
+            std::shared_ptr<CPD> clone_shared() const override;
         };
 
     } // namespace model

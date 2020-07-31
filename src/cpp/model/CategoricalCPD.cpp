@@ -7,14 +7,7 @@ namespace tomcat {
 
         void CategoricalCPD::copy_from_cpd(const CategoricalCPD& cpd) {
             this->parent_node_label_order = cpd.parent_node_label_order;
-
-            // Clone each node in the copied cpd to the probability table of
-            // this object.
-            this->probability_table.reserve(cpd.probability_table.size());
-            for (const auto& source_probabilities : cpd.probability_table) {
-                std::unique_ptr<Node> node = source_probabilities->clone();
-                this->probability_table.push_back(std::move(node));
-            }
+            this->probability_table = cpd.probability_table;
         }
 
         void CategoricalCPD::init_from_matrix(const Eigen::MatrixXd& matrix) {
@@ -43,21 +36,29 @@ namespace tomcat {
             return samples;
         }
 
+        static unsigned int get_sample_index(const unsigned int* sample_array,
+                                             size_t array_size) {
+            return std::distance(
+                sample_array,
+                std::find(sample_array, sample_array + array_size, 1));
+        }
+
         Eigen::VectorXd
         CategoricalCPD::sample(std::shared_ptr<gsl_rng> random_generator,
                                int index) const {
-            Eigen::VectorXd sample_vector(1);
-
+            int k = this->probability_table[index]
+                        ->get_metadata()
+                        ->get_sample_size();
             const double* probabilities =
                 this->probability_table[index]->get_assignment().data();
 
-            unsigned int* sample_ptr = new unsigned int[1];
-            gsl_ran_multinomial(random_generator.get(),
-                                this->probability_table.size(),
-                                1,
-                                probabilities,
-                                sample_ptr);
-            sample_vector(0) = sample_ptr[0];
+            unsigned int* sample_ptr = new unsigned int[k];
+            gsl_ran_multinomial(
+                random_generator.get(), k, 1, probabilities, sample_ptr);
+
+            Eigen::VectorXd sample_vector(1);
+            sample_vector(0) = get_sample_index(sample_ptr, k);
+
             delete[] sample_ptr;
 
             return sample_vector;
@@ -73,6 +74,10 @@ namespace tomcat {
 
         std::unique_ptr<CPD> CategoricalCPD::clone() const {
             return std::make_unique<CategoricalCPD>(*this);
+        }
+
+        std::shared_ptr<CPD> CategoricalCPD::clone_shared() const {
+            return std::make_shared<CategoricalCPD>(*this);
         }
 
         void CategoricalCPD::update_dependencies(NodeMap& parameter_nodes_map,

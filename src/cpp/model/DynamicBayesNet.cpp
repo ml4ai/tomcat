@@ -45,10 +45,16 @@ namespace tomcat {
             int vertex_id = boost::add_vertex(this->graph);
 
             VertexData data;
-            // todo - check if the cpd and metadata are still shared
             data.node = std::make_shared<RandomVariableNode>(node);
             data.node->set_time_step(time_step);
-            data.node->get_cpd()->reset_updated();
+            data.node->reset_cpds_updated_status();
+
+            if (data.node->get_metadata()->has_replicable_parameter_parent()) {
+                // If a node has parameter nodes that are replicable, its
+                // replicas do not share the same CPD's and therefore it cannot
+                // use the CPD pointer inherited from its template.
+                data.node->clone_cpds();
+            }
 
             // Save mapping between the vertice id and it's name.
             this->name_to_id[data.node->get_timed_name()] = vertex_id;
@@ -159,6 +165,18 @@ namespace tomcat {
             }
         }
 
+        std::vector<std::string>
+        DynamicBayesNet::get_parent_labels_of(const RandomVariableNode& node) {
+            std::vector<std::string> parent_labels;
+            for (const auto& parent_node :
+                 this->get_parent_nodes_of(node, true)) {
+                parent_labels.push_back(
+                    parent_node->get_metadata()->get_label());
+            }
+
+            return parent_labels;
+        }
+
         void DynamicBayesNet::update_cpds(NodeMap& parameter_nodes_map) {
             for (const auto& node_template : this->node_templates) {
                 const std::shared_ptr<NodeMetadata> metadata =
@@ -173,19 +191,40 @@ namespace tomcat {
                             int vertex_id = this->name_to_id.at(
                                 node_template.get_timed_name(t));
                             VertexData vertex_data = this->graph[vertex_id];
-                            if (!vertex_data.node->get_cpd()->is_updated()) {
-                                vertex_data.node->get_cpd()
-                                    ->update_dependencies(parameter_nodes_map,
-                                                          t);
-                            }
+                            vertex_data.node->update_cpd_dependencies(
+                                parameter_nodes_map, t);
+
+                            //                            std::shared_ptr<CPD>
+                            //                            cpd =
+                            //                                vertex_data.node->get_cpd_for(
+                            //                                    this->get_parent_labels_of(
+                            //                                        *(vertex_data.node)));
+                            //
+                            //                            if
+                            //                            (!cpd->is_updated()) {
+                            //                                cpd->update_dependencies(parameter_nodes_map,
+                            //                                                         t);
+                            //                            }
                         }
                     }
                     else {
-                        if (!node_template.get_cpd()->is_updated()) {
-                            node_template.get_cpd()->update_dependencies(
-                                parameter_nodes_map,
-                                node_template.get_time_step());
-                        }
+                        int t = node_template.get_metadata()
+                                    ->get_initial_time_step();
+                        int vertex_id = this->name_to_id.at(
+                            node_template.get_timed_name(t));
+                        VertexData vertex_data = this->graph[vertex_id];
+                        vertex_data.node->update_cpd_dependencies(
+                            parameter_nodes_map, t);
+
+                        //                        std::shared_ptr<CPD> cpd =
+                        //                            vertex_data.node->get_cpd_for(
+                        //                                this->get_parent_labels_of(
+                        //                                    *(vertex_data.node)));
+                        //
+                        //                        if (!cpd->is_updated()) {
+                        //                            cpd->update_dependencies(parameter_nodes_map,
+                        //                            t);
+                        //                        }
                     }
                 }
             }
@@ -261,6 +300,14 @@ namespace tomcat {
             }
 
             return parent_nodes;
+        }
+
+        void DynamicBayesNet::save_to_folder(const std::string& output_directory) const {
+            // todo
+        }
+
+        void DynamicBayesNet::load_from_folder(const std::string& input_directory) {
+            // todo
         }
 
     } // namespace model

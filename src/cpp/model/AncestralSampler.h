@@ -14,7 +14,6 @@ namespace tomcat {
         class AncestralSampler : public Sampler {
 
           private:
-
             /**
              * Assign the values provided in the data to the corresponding
              * nodes.
@@ -26,16 +25,17 @@ namespace tomcat {
                                 int datapoint_index);
 
             /**
-             * Retrieve the row of the node's CPD table corresponding to its
+             * Find the row of the node's CPD table corresponding to its
              * parents' assignments, i.e. the index of the the distribution of
-             * the node given it's parents' assignments.
+             * the node given it's parents' assignments and sample from that
+             * distribution.
              *
              * @param node: random variable node
-             * @return Index of the node's distribution given its parents'
+             * @return Sample from the node's distribution given its parents'
              * assignments
              */
-            int get_distribution_index_given_parents_for(
-                const RandomVariableNode& node) const;
+            Eigen::VectorXd
+            get_sample_given_parents_for(const RandomVariableNode& node) const;
 
           public:
             AncestralSampler(DynamicBayesNet model,

@@ -8,12 +8,12 @@ namespace tomcat {
         ConstantNode::ConstantNode(double value, std::string label) {
             this->assignment = Eigen::VectorXd(1);
             this->assignment(0) = value;
-            this->create_default_metadata(label);
+            this->create_default_metadata(label, 1);
         }
 
-        void ConstantNode::create_default_metadata(std::string& label) {
+        void ConstantNode::create_default_metadata(std::string& label, int sample_size) {
             NodeMetadata metadata =
-                NodeMetadata::create_single_time_link_metadata(label, 0, true);
+                NodeMetadata::create_single_time_link_metadata(label, 0, true, sample_size, 1);
             this->metadata = std::make_shared<NodeMetadata>(std::move(metadata));
         }
 

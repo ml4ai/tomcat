@@ -79,5 +79,9 @@ namespace tomcat {
             return std::make_unique<DirichletCPD>(*this);
         }
 
+        std::shared_ptr<CPD> DirichletCPD::clone_shared() const {
+            return std::make_shared<DirichletCPD>(*this);
+        }
+
     } // namespace model
 } // namespace tomcat

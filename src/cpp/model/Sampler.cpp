@@ -45,8 +45,12 @@ namespace tomcat {
         void Sampler::init_samples_matrix(int num_samples, int time_steps) {
             for (const auto& node_label : this->latent_node_labels) {
                 this->node_to_samples[node_label] =
-                    Eigen::MatrixXd(num_samples, time_steps);
+                    Eigen::MatrixXd::Constant(num_samples, time_steps, -1);
             }
+        }
+
+        void Sampler::save_to_folder(const std::string& output_folder) const {
+            // todo
         }
 
     } // namespace model

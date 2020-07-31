@@ -94,17 +94,24 @@ namespace tomcat {
                    int index) const = 0;
 
             /**
-             * Clone CPD
+             * Create a new unique pointer from a concrete instance of a CPD.
              *
              * @return pointer to the new CPD
              */
             virtual std::unique_ptr<CPD> clone() const = 0;
 
             /**
+             * Create a new shared pointer from a concrete instance of a CPD.
+             *
+             * @return pointer to the new CPD
+             */
+            virtual std::shared_ptr<CPD> clone_shared() const = 0;
+
+            /**
              * Replace parameter nodes in a node dependent CPD by the correct
              * replica of the node in the unrolled DBN.
              *
-             * @param name_to_node: map between a parameter node timed name and
+             * @param parameter_nodes_map: map between a parameter node timed name and
              * it's node object in an unrolled DBN
              * @param time_step: time step of the node that owns the CPD in the
              * unrolled DBN

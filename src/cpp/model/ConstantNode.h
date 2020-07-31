@@ -12,8 +12,9 @@ namespace tomcat {
              * Create default metadata for constant nodes.
              *
              * @param label: node's label
+             * @param sample_size: dimensionality of the value stored in the node
              */
-            void create_default_metadata(std::string& label);
+            void create_default_metadata(std::string& label, int sample_size);
 
           public:
             /**
@@ -31,13 +32,13 @@ namespace tomcat {
             ConstantNode(Eigen::VectorXd& values,
                          std::string label = "unlabeled")
                 : Node(values) {
-                this->create_default_metadata(label);
+                this->create_default_metadata(label, this->assignment.size());
             }
 
             ConstantNode(Eigen::VectorXd&& values,
                          std::string label = "unlabeled")
                 : Node(std::move(values)) {
-                this->create_default_metadata(label);
+                this->create_default_metadata(label, this->assignment.size());
             }
             ~ConstantNode() {}
 

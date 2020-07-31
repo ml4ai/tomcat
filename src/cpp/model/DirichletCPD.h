@@ -149,6 +149,8 @@ namespace tomcat {
             void print(std::ostream& os) const override;
 
             std::unique_ptr<CPD> clone() const override;
+
+            std::shared_ptr<CPD> clone_shared() const override;
         };
 
     } // namespace model

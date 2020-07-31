@@ -70,5 +70,9 @@ namespace tomcat {
             return std::make_unique<GaussianCPD>(*this);
         }
 
+        std::shared_ptr<CPD> GaussianCPD::clone_shared() const {
+            return std::make_shared<GaussianCPD>(*this);
+        }
+
     } // namespace model
 } // namespace tomcat

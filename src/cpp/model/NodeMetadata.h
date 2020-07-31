@@ -8,9 +8,6 @@
 namespace tomcat {
     namespace model {
 
-        // todo - I need an attribute to represent a parameter that only shows
-        //  up in one time step: a prior
-
         // Defined in the end of this file.
         struct ParentLink;
 
@@ -46,14 +43,14 @@ namespace tomcat {
             // children in only one time step of the unrolled DBN.
             bool single_time_link;
 
+            // Dimensionality of a sample from the node.
+            int sample_size;
+
             // Number of possible assignments if the node is sampled from a
             // discrete distribution and 0 otherwise.
             // todo - use this to check whether the cpd is valid when adding it
             //  to a node
             int cardinality;
-
-            // Dimensionality of a sample from the node.
-            int sample_size;
 
             // List of parents of the node and their relative time step.
             std::vector<ParentLink> parent_links;
@@ -78,24 +75,78 @@ namespace tomcat {
                          int initial_time_step,
                          bool replicable,
                          bool parameter,
-                         bool single_time_link)
+                         bool single_time_link,
+                         int sample_size,
+                         int cardinality)
                 : label(label), initial_time_step(initial_time_step),
                   replicable(replicable), parameter(parameter),
-                  single_time_link(single_time_link) {}
+                  single_time_link(single_time_link), sample_size(sample_size),
+                  cardinality(cardinality) {}
 
           public:
+            /**
+             * Create an instance of NodeMetadata for a node that shows up or
+             * has connections crossing multiple time steps.
+             *
+             * @param label: node label
+             * @param initial_time_step: first time step the node shows up in
+             * the unrolled DBN
+             * @param replicable: whether the node shows up in successive time
+             * steps after its first appearance in the unrolled DBN
+             * @param parameter: whether the node is a parameter node in which
+             * its assignment determines other node(s) distribution parameters
+             * @param sample_size: the dimensionality of a sample from the node
+             * @param cardinality: the number of possible assignments the node
+             * can take if it's sampled from a discrete distribution. Otherwise,
+             * the cardinality should be set to 0.
+             *
+             * @return Valid instance of a metadata object for the node
+             */
             static NodeMetadata
             create_multiple_time_link_metadata(std::string label,
                                                int initial_time_step,
                                                bool replicable,
-                                               bool parameter) {
-                return NodeMetadata(
-                    label, initial_time_step, replicable, parameter, false);
+                                               bool parameter,
+                                               int sample_size,
+                                               int cardinality = 0) {
+                return NodeMetadata(label,
+                                    initial_time_step,
+                                    replicable,
+                                    parameter,
+                                    false,
+                                    sample_size,
+                                    cardinality);
             }
 
-            static NodeMetadata create_single_time_link_metadata(
-                std::string label, int time_step, bool parameter) {
-                return NodeMetadata(label, time_step, false, parameter, true);
+            /**
+             * Create an instance of NodeMetadata for a node that shows up once
+             * and has connections in a single time step only.
+             *
+             * @param label: node label
+             * @param time_step: unique time step the node shows up in
+             * the unrolled DBN
+             * @param parameter: whether the node is a parameter node in which
+             * its assignment determines other node(s) distribution parameters
+             * @param sample_size: the dimensionality of a sample from the node
+             * @param cardinality: the number of possible assignments the node
+             * can take if it's sampled from a discrete distribution. Otherwise,
+             * the cardinality should be set to 0.
+             *
+             * @return Valid instance of a metadata object for the node
+             */
+            static NodeMetadata
+            create_single_time_link_metadata(std::string label,
+                                             int time_step,
+                                             bool parameter,
+                                             int sample_size,
+                                             int cardinality = 0) {
+                return NodeMetadata(label,
+                                    time_step,
+                                    false,
+                                    parameter,
+                                    true,
+                                    sample_size,
+                                    cardinality);
             }
 
             /**

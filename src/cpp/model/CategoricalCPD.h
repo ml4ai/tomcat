@@ -133,6 +133,8 @@ namespace tomcat {
 
             std::unique_ptr<CPD> clone() const override;
 
+            std::shared_ptr<CPD> clone_shared() const override;
+
             virtual void update_dependencies(NodeMap& parameter_nodes_map,
                                              int time_step) override;
         };

@@ -8,7 +8,7 @@ namespace tomcat {
             std::shared_ptr<RandomVariableNode> parent_node,
             bool time_crossing) {
             // todo - 1. error if parent node is a parameter node and time
-            // crossing
+            //  crossing
             //  is true. 2. Parameter cannot be replicable if child nodes are
             //  not
 

@@ -19,10 +19,12 @@ namespace tomcat {
             }
         }
 
-        int AncestralSampler::get_distribution_index_given_parents_for(
+        Eigen::VectorXd AncestralSampler::get_sample_given_parents_for(
             const RandomVariableNode& node) const {
             std::vector<std::shared_ptr<RandomVariableNode>> parent_nodes =
                 this->model.get_parent_nodes_of(node, true);
+            std::vector<std::string> parent_labels;
+            parent_labels.reserve(parent_nodes.size());
 
             // Make it easy to access the parent node's content by it's label
             std::unordered_map<std::string, std::shared_ptr<RandomVariableNode>>
@@ -30,8 +32,9 @@ namespace tomcat {
             for (const auto& parent_node : parent_nodes) {
                 // Moving the reference because there's no need to keep it in
                 // the parent_nodes vector beyond this point
-                labels_to_nodes[parent_node->get_metadata()->get_label()] =
-                    std::move(parent_node);
+                std::string label = parent_node->get_metadata()->get_label();
+                parent_labels.push_back(label);
+                labels_to_nodes[label] = std::move(parent_node);
             }
 
             // Use the order defined in the node's CPD to calculate the index
@@ -39,8 +42,9 @@ namespace tomcat {
             // cardinalities and assignments.
             int least_significant_cum_cardinality = 1;
             int distribution_index = 0;
+            std::shared_ptr<CPD> cpd = node.get_cpd_for(parent_labels);
             std::vector<std::string> sorted_parent_labels =
-                node.get_cpd()->get_parent_node_label_order();
+                cpd->get_parent_node_label_order();
 
             // Iterate in reverse order
             for (auto parent_label_ptr = sorted_parent_labels.rbegin();
@@ -58,7 +62,7 @@ namespace tomcat {
                     parent_node->get_metadata()->get_cardinality();
             }
 
-            return distribution_index;
+            return cpd->sample(this->random_generator, distribution_index);
         }
 
         void AncestralSampler::sample(int num_samples, int time_steps) {
@@ -74,21 +78,17 @@ namespace tomcat {
                     if (exists(node->get_metadata()->get_label(),
                                this->latent_node_labels)) {
 
-                        int distribution_index =
-                            this->get_distribution_index_given_parents_for(
-                                *node);
-
-                        Eigen::VectorXd assignment = node->get_cpd()->sample(
-                            this->random_generator, distribution_index);
+                        Eigen::VectorXd assignment =
+                            this->get_sample_given_parents_for(*node);
 
                         node->set_assignment(assignment);
 
                         // todo - fix for multidimensional sample size (e.g.
-                        // samples
-                        //  from a parameter with dirichlet prior)
+                        //  samples from a parameter with dirichlet prior)
                         this->node_to_samples.at(
                             node->get_metadata()->get_label())(
                             s, node->get_time_step()) =
+
                             static_cast<int>(assignment(0));
                     }
                     else {

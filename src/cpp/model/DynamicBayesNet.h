@@ -44,7 +44,7 @@ namespace tomcat {
             // The original list is preserved to allow multiple calls of the
             // unrolled method based on the original set of nodes.
             // todo - change to set to forbid adding the same node multiple
-            // times
+            //  times
             std::vector<RandomVariableNode> node_templates;
 
             // If unrolled, the number of time steps the DBN was unrolled in
@@ -111,6 +111,29 @@ namespace tomcat {
             std::vector<std::shared_ptr<RandomVariableNode>>
             get_parent_nodes_of(const RandomVariableNode& node,
                                 bool exclude_parameters) const;
+
+            std::vector<std::string>
+            get_parent_labels_of(const RandomVariableNode& node);
+
+            /**
+             * Save model's parameter values
+             *
+             * @param output_folder: folder where the parameter values must be
+             * saved
+             */
+            void save_to_folder(const std::string& output_folder) const;
+
+            /**
+             * Load model's parameter assignments from files previously saved in
+             * a specific folder. The actual parameter nodes will be excluded
+             * from the model and the CPD's that depend on them will be updated
+             * with constant nodes with values determined by the content of the
+             * files processed.
+             *
+             * @param input_folder: folder where the files with the parameters'
+             * values are saved
+             */
+            void load_from_folder(const std::string& input_folder);
 
             // --------------------------------------------------------
             // Getters

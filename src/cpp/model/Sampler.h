@@ -99,6 +99,12 @@ namespace tomcat {
             get_samples(const std::string& node_label) const;
 
             /**
+             * Save generated samples to files in a specific folder.
+             * @param output_folder: folder where the files should be saved
+             */
+            void save_to_folder(const std::string& output_folder) const;
+
+            /**
              * Generate samples for the latent nodes
              *
              * @param num_samples: number of samples to generate
