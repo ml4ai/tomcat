@@ -71,3 +71,59 @@ to add some code to the C++ side as well.
   `src/cpp/runExperiment.cpp` with a short description of `ExampleMission`.
 - Add a line to the comments in `tools/configuration_helpers` describing the
   `MAIN_MISSION` environment variable about `ExampleMission`.
+
+Defining event handlers
+-----------------------
+
+Given that you are implementing a custom mission, it's likely that there are
+certain in-game events that you will want to (i) record for downstream
+analysis, (ii) trigger other in-game events, or both.
+
+Events are recorded using JSON messages published to an MQTT message bus. In
+order to ensure valid JSON and reduce duplication of code, we define Java
+classes for the different types of events and use the
+[Gson](https://github.com/google/gson) library to automatically serialize
+instances of those classes to JSON. The inheritance hierarchy of the classes
+helps us avoid code duplication for event types that are related by
+hypernymy/hyponymy, and thus share certain data fields.
+
+The event classes reside in the
+`external/malmo/Minecraft/src/main/java/edu/arizona/tomcat/Events` folder. All
+event classes inherit from the `Event` class, which has only two basic
+attributes that are shared by all events: `eventType` and `timestamp`.
+
+In order to implement a new type of event, create a new Java class that
+inherits from `edu.arizona.tomcat.Event`. The event should define private data
+members that will be serialized by Gson. The constructor of the event may or
+may not take an argument. Most of the implement event classes take one
+argument, i.e. one of the event types that are published by
+[Forge](https://files.minecraftforge.net). The [Forge API
+documentation](https://skmedix.github.io/ForgeJavaDocs/javadoc/forge/1.11.2-13.20.0.2228/)
+contains descriptions of all the possible events that can be subscribed to, as
+well as the descriptions of the block and entity types involved in the event.
+
+Once you've created the event class, you can implement a handler for the event
+in either your mission class (e.g. in `ExampleMission.java`), or in the
+`ForgeEventHandler.java` class. Most events that have been implemented so far
+are handled in the `ForgeEventHandler` class, which is then utilized in the
+actual `*Mission.java` class files, since they are fairly general and not
+specific to a particular mission.
+
+For an example of handling a mission-specific event, see the `PlayerDeath`
+handler method in `Mission.java`. For examples of non mission-specific event
+handlers, see the `ForgeEventHandler` class.
+
+If you are implementing an event that needs to be published to the message bus
+(this is most likely the case), then you'll need to use the
+[`edu.arizona.tomcat.Messaging.MqttService`](https://ml4ai.github.io/tomcat/developer/java_api/classedu_1_1arizona_1_1tomcat_1_1Messaging_1_1MqttService.html) singleton class. The class has an
+overloaded method, `publish`, which can publish either an object or a string -
+in the case of an object, it is automatically serialized to Gson. The `publish`
+method also takes a second string-type argument, which is the topic that the
+message corresponding to the event should be published to. You can see the
+currently implemented topics and message data models
+[here](https://ml4ai.github.io/tomcat/tomcat_openapi.html).
+
+If you add an event that corresponds to a published message, you'll also need
+to add the message schema and topic for that event to `docs/spec.yml`,
+following the pattern of the other messages and topics that are already in
+there.
