@@ -37,7 +37,8 @@ json Block::toJSON() {
 }
 
 string Block::toTSV() {
-    string retval = (this->pos).toTSV() + "\t" + "block" + "\t" + (this->material);
+    string retval =
+        (this->pos).toTSV() + "\t" + "block" + "\t" + (this->material);
     return retval;
 }
 

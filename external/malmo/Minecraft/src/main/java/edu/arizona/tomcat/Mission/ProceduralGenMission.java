@@ -7,20 +7,18 @@ import edu.arizona.tomcat.Utils.WorldReader;
 import edu.arizona.tomcat.World.Drawing;
 import edu.arizona.tomcat.World.DrawingHandler;
 import edu.arizona.tomcat.World.TomcatEntity;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-
 public class ProceduralGenMission extends Mission {
 
     private boolean shouldBuild;
-
 
     public ProceduralGenMission() {
         super();
@@ -36,8 +34,9 @@ public class ProceduralGenMission extends Mission {
     }
 
     /**
-     * This grabs the TSV blueprint from the procedural.tsv file and uses a WorldReader object to parse it. It then
-     * uses the resulting hashmap to place all the blocks at the right places.
+     * This grabs the TSV blueprint from the procedural.tsv file and uses a
+     * WorldReader object to parse it. It then uses the resulting hashmap to
+     * place all the blocks at the right places.
      *
      * @param world The world in whcih the blocks are to be placed.
      */
@@ -60,16 +59,16 @@ public class ProceduralGenMission extends Mission {
 
             try {
                 this.drawingHandler.draw(world, drawing);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 e.printStackTrace();
             }
 
             this.shouldBuild = false;
-
-        } else {
+        }
+        else {
             return;
         }
-
     }
 
     @Override
@@ -81,7 +80,6 @@ public class ProceduralGenMission extends Mission {
     public void init(World world) {
         super.init(world);
     }
-
 
     @Override
     protected void beforePhaseTrasition() {
