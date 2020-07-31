@@ -27,6 +27,8 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
+import net.minecraft.init.SoundEvents;
 
 public class ForgeEventHandler {
 
