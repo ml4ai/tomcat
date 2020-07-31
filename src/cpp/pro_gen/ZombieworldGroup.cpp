@@ -14,6 +14,21 @@ void ZombieworldGroup::decorate(Pos& firstTopLeft, Pos& firstBottomRight) {
     this->generateAllDoorsInAABB();
     this->addLights();
     this->addLevers();
+    this->addEntities();
+}
+
+void ZombieworldGroup::addEntities(){
+        AABB* aabbTwo = this->getAABB(2);
+
+    if (aabbTwo != nullptr) {
+
+        Pos topEdgeMidpoint = (*aabbTwo).getEdgeMidpointAtBase().at(0);
+        topEdgeMidpoint.shiftY(2);
+        topEdgeMidpoint.shiftX(-1);
+        topEdgeMidpoint.shiftZ(-1);
+
+        this->addBlock(*(new Block("lever", topEdgeMidpoint)));
+    }
 }
 
 void ZombieworldGroup::addLights() {

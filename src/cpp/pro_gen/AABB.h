@@ -97,6 +97,10 @@ class AABB {
      */
     int getMidpointZ();
 
+    int getSizeX();
+    int getSizeY();
+    int getSizeZ();
+
     /**
      * @brief Gets a random position in the AABB such that
      * the y coordinate of the returned value is set to
@@ -113,9 +117,11 @@ class AABB {
      * Defaults to 1
      * @return Pos
      */
-    Pos virtual getRandomPosAtBase(std::mt19937_64& gen,
+    Pos virtual getRandomPos(std::mt19937_64& gen,
                                    int offsetPosX = 1,
                                    int offsetNegX = 1,
+                                   int offsetPosY = 1,
+                                   int offsetNegY = 1,
                                    int offsetPosZ = 1,
                                    int offsetNegZ = 1);
 

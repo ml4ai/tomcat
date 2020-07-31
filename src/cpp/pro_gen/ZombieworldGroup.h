@@ -7,6 +7,7 @@ class ZombieworldGroup : public Group {
     void createAABB(Pos& firstTopLeft, Pos& firstBottomRight);
     void addLights();
     void addLevers();
+    void addEntities();
     void decorate(Pos& firstTopLeft, Pos& firstBottomRight);
 
   public:

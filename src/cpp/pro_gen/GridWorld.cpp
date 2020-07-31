@@ -74,9 +74,8 @@ void GridWorld::generateAABBGrid() {
 
 void GridWorld::generateVictimInAABB(AABB& aabb) {
     mt19937_64& gen = this->getRandom();
-
-    Pos randPos(aabb.getRandomPosAtBase(gen, 2, 2, 2, 2));
-    randPos.setY(randPos.getY() + 1);
+    int sizeY = aabb.getSizeY() - 1;
+    Pos randPos(aabb.getRandomPos(gen, 2, 2, 1, sizeY, 2, 2));
 
     uniform_int_distribution<> dist(1, 100);
     int randInteger = dist(gen);
@@ -94,10 +93,6 @@ void GridWorld::generateBlocks() {
     for (auto& aabb : this->getAABBList()) {
         (*aabb).generateAllDoorsInAABB();
         generateVictimInAABB(*aabb);
-        Pos pos = (*aabb).getRandomPosAtBase(this->getRandom(), 1, 1, 1, 1);
-        pos.shiftY(2);
-
-        (*aabb).addEntity(*(new Entity("zombie", pos)));
     }
 }
 

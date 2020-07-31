@@ -48,26 +48,43 @@ int AABB::getMidpointZ() {
     return mid_z;
 }
 
-Pos AABB::getRandomPosAtBase(mt19937_64& gen,
-                             int offsetPosX,
-                             int offsetNegX,
-                             int offsetPosZ,
-                             int offsetNegZ) {
+int AABB::getSizeX() {
+    return (this->bottomRight.getX() - this->topLeft.getX());
+}
+
+int AABB::getSizeY() {
+    return (this->bottomRight.getY() - this->topLeft.getY());
+}
+
+int AABB::getSizeZ() {
+    return (this->bottomRight.getY() - this->topLeft.getY());
+}
+
+Pos AABB::getRandomPos(mt19937_64& gen,
+                       int offsetPosX,
+                       int offsetNegX,
+                       int offsetPosY,
+                       int offsetNegY,
+                       int offsetPosZ,
+                       int offsetNegZ) {
 
     int startX = (this->topLeft).getX() + offsetPosX;
+    int startY = (this->topLeft).getY() + offsetPosY;
     int startZ = (this->topLeft).getZ() + offsetPosZ;
 
     int endX = (this->bottomRight).getX() - offsetNegX;
+    int endY = (this->bottomRight).getY() - offsetNegY;
     int endZ = (this->bottomRight).getZ() - offsetNegZ;
 
     uniform_int_distribution<> randXGen(startX, endX);
+    uniform_int_distribution<> randYGen(startY, endY);
     uniform_int_distribution<> randZGen(startZ, endZ);
 
     int randX = randXGen(gen);
+    int randY = randYGen(gen);
     int randZ = randZGen(gen);
 
-    int base = (this->topLeft).getY();
-    Pos pos(randX, base, randZ);
+    Pos pos(randX, randY, randZ);
 
     return pos;
 }
