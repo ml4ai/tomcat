@@ -71,6 +71,11 @@ class AABB {
      */
     std::vector<Block*>& getBlockList();
 
+    /**
+     * @brief Get the entity list specific to this AABB
+     *
+     * @return The reference to the entity list
+     */
     std::vector<Entity*>& getEntityList();
 
     /**
@@ -97,33 +102,52 @@ class AABB {
      */
     int getMidpointZ();
 
+    /**
+     * @brief Get the difference of the extreme x coordinates for this AABB
+     *
+     * @return int The difference
+     */
     int getSizeX();
+
+    /**
+     * @brief Get the difference of the extreme y coordinates for this AABB
+     *
+     * @return int The difference
+     */
     int getSizeY();
+
+    /**
+     * @brief Get the difference of the extreme z coordinates for this AABB
+     *
+     * @return int The difference
+     */
     int getSizeZ();
 
     /**
-     * @brief Gets a random position in the AABB such that
-     * the y coordinate of the returned value is set to
-     * the top left y value which is considered the base
+     * @brief Get a random position in the AABB within the given offsets
      *
-     * @param gen The boost generation object to generate the distributions
+     * @param gen THe boost generation object to generate distributions from
      * @param offsetPosX How far away from the left wall should the position be.
-     * Defaults to 1
+     * Defaults to 0
      * @param offsetNegX How far away from the right wall should the position
-     * be. Defaults to 1
+     * be. Defaults to 0
+     * @param offsetPosY How far away from the left wall should the position be.
+     * Defaults to 0
+     * @param offsetNegY How far away from the right wall should the position
+     * be. Defaults to 0
      * @param offsetPosZ How far away from the bottom wall should the position
-     * be. Defaults to 1
+     * be. Defaults to 0
      * @param offsetNegZ How far away from the top wall should the position be.
-     * Defaults to 1
-     * @return Pos
+     * Defaults to 0
+     * @return Pos The random position
      */
     Pos virtual getRandomPos(std::mt19937_64& gen,
-                                   int offsetPosX = 1,
-                                   int offsetNegX = 1,
-                                   int offsetPosY = 1,
-                                   int offsetNegY = 1,
-                                   int offsetPosZ = 1,
-                                   int offsetNegZ = 1);
+                             int offsetPosX = 0,
+                             int offsetNegX = 0,
+                             int offsetPosY = 0,
+                             int offsetNegY = 0,
+                             int offsetPosZ = 0,
+                             int offsetNegZ = 0);
 
     /**
      * @brief Get a list of the positions of the edge midpoints for this AABB.
@@ -165,6 +189,13 @@ class AABB {
      */
     void addBlock(Block& block);
 
+    /**
+     * @brief Add a specific entity for this AABB to keep track of. Ideally this
+     * should be related to the AABB. No checks are implicitly performed within
+     * this method.
+     *
+     * @param entity Entity to be added
+     */
     void addEntity(Entity& entity);
 
     /**
@@ -225,7 +256,6 @@ class AABB {
      * Defaults to 0
      * @param type The semantic name to give this block. Defaults to "normal".
      */
-
     void virtual addRandomBlocks(int n,
                                  std::string material,
                                  std::mt19937_64& gen,
@@ -245,11 +275,17 @@ class AABB {
      */
     void virtual generateAllDoorsInAABB();
 
+    /**
+     * @brief Gets the JSON representation of the various
+     * fields and values stored in an instance
+     *
+     * @return nlohmann::json The JSON representation
+     */
     nlohmann::json virtual toJSON();
 
     /**
      * @brief Gets a string representation of the various
-     * fields and values stores in an instance as a TSV.
+     * fields and values stored in an instance as a TSV.
      *
      * @return string The TSV representation
      */

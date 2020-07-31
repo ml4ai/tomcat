@@ -54,6 +54,19 @@ string Entity::getType() { return this->type; }
 
 void Entity::setType(string type) { this->type = type; }
 
+void Entity::setAllEquipment(vector<int>& equipment) {
+    if (equipment.size() == 5) {
+        this->setHelmet(equipment.at(0));
+        this->setChestplate(equipment.at(1));
+        this->setLeggings(equipment.at(2));
+        this->setBoots(equipment.at(3));
+        this->setWeapon(equipment.at(4));
+    }
+    else {
+        ;
+    }
+}
+
 json Entity::toJSON() {
     json entity_json;
     entity_json["type"] = this->getType();

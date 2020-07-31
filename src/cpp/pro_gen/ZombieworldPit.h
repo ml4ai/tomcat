@@ -10,7 +10,17 @@ class ZombieworldPit : public AABB {
   private:
     std::mt19937_64 gen;
     std::string fluid;
+
+    /**
+     * @brief If the pit is to be made of water this is called to generate the
+     * water body.
+     */
     void decorateWater();
+
+    /**
+     * @brief If the pit is to be made of lava this is called to generate the
+     * lava body.
+     */
     void decorateLava();
 
   public:

@@ -32,6 +32,11 @@ class World {
      */
     std::vector<Block*>& getBlockList();
 
+    /**
+     * @brief Returns the Entity vector for this World
+     *
+     * @return std::vector<Entity*>&  The Entity list
+     */
     std::vector<Entity*>& getEntityList();
 
     /**
@@ -41,6 +46,11 @@ class World {
      */
     void addAABB(AABB& aabb);
 
+    /**
+     * @brief Add an Entity for this world to keep track of
+     *
+     * @param entity The Entity object
+     */
     void addEntity(Entity& entity);
 
     /**
