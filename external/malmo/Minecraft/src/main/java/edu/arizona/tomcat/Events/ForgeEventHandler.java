@@ -32,18 +32,26 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.Map;
 import com.google.gson.Gson;
+import java.util.List;
 
 public class ForgeEventHandler {
 
     private FMLCommonHandler fmlCommonHandler = FMLCommonHandler.instance();
     private int zombieMissionVillagersSaved = 0;
+    
+    private boolean devMode = false;
+    private List<?> whitelist = null;
 
     private Block getBlock(PlayerInteractEvent.RightClickBlock event) {
         return event.getWorld().getBlockState(event.getPos()).getBlock();
     }
 
     private static ForgeEventHandler instance = null;
-    private ForgeEventHandler() {}
+    private ForgeEventHandler() {
+        Map<?,?> devMap = readDevModeJson();
+        this.devMode = getDevMode(devMap);
+        this.whitelist = getWhitelist(devMap);
+    }
 
     public static ForgeEventHandler getInstance() {
         if (instance == null) {
@@ -75,23 +83,58 @@ public class ForgeEventHandler {
 
     /**
      * This method reads the devmode json config and returns whether devmode
-     * should be enabled or disabled for CommandEvent handling purposes
+     * should be enabled or disabled for CommandEvent handling purposes along
+     * with a whitelist of allowed commands outside of developer mode (eg those
+     * within command blocks.)
+     *
+     * @return devMap - the Map version of the JSON config.
      */
-    public static boolean readDevModeFromJson() {
+    private static Map<?,?> readDevModeJson() {
         Gson gson = new Gson();
         Reader reader = null;
+        Map<?,?> devMap = null;
 
         try {
             reader = Files.newBufferedReader(Paths.get("devmode.json"));
-            Map<String, Boolean> devmode = gson.fromJson(reader, Map.class);
+            devMap = gson.fromJson(reader, Map.class);
             reader.close();
-            System.out.println("Devmode status read as: " + devmode.get("devmode").toString());
-            return devmode.get("devmode");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        System.out.println("Devmode read failed; default to false.");
-        return false;
+
+        return devMap;
+    }
+
+    /**
+     * Helper function to pull the whitelisted commands from the devmap created
+     * from the developer mode JSON
+     *
+     * @param devMap - the Map version of the JSON config file.
+     */ 
+    private static List<?> getWhitelist(Map<?,?> devMap) {
+        List<?> list = null;
+
+        if (devMap.get("whitelist") instanceof List<?>) {
+            list = (List<?>) devMap.get("whitelist");
+        }
+
+        return list;
+    }
+
+    /**
+     * Helper function to pull the boolean devmode (enabled or disabled) from
+     * the devmap created from the developer mode JSON. 
+     *
+     * @param devMap - the Map version of the JSON config file
+     */
+    private static boolean getDevMode(Map<?,?> devMap) {
+        boolean devmode = false;
+
+        if (devMap.get("devmode") instanceof Boolean) {
+            devmode = (Boolean) devMap.get("devmode");
+        }
+
+        return devmode;
     }
     
     /**
@@ -269,10 +312,12 @@ public class ForgeEventHandler {
      */
     @SubscribeEvent
     public void handle(CommandEvent event) {
-        if (!readDevModeFromJson()) {
-            // whitelisting events would be done here
-            if (event.isCancelable()) {
-                event.setCanceled(true);
+        if (!devMode) {
+            String commandName = event.getCommand().getName();
+            if (!whitelist.contains(commandName)) {
+                if (event.isCancelable()) {
+                    event.setCanceled(true);
+                }
             }
         }
     }

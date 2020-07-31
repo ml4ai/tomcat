@@ -1,3 +1,4 @@
 {
-    "devmode" : false
+    "devmode" : false,
+    "whitelist" : ["setblock","fill"]
 }
