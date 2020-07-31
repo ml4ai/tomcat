@@ -77,17 +77,21 @@ public class ForgeEventHandler {
      * This method reads the devmode json config and returns whether devmode
      * should be enabled or disabled for CommandEvent handling purposes
      */
-    private boolean readDevModeFromJson() {
+    public static boolean readDevModeFromJson() {
         Gson gson = new Gson();
         Reader reader = null;
 
         try {
-            reader = Files.newBufferedReader(Paths.get("../../../../../../../run/devmode.json"));
+            reader = Files.newBufferedReader(Paths.get("devmode.json"));
+            Map<String, Boolean> devmode = gson.fromJson(reader, Map.class);
+            reader.close();
+            System.out.println("Devmode status read as: " + devmode.get("devmode").toString());
+            return devmode.get("devmode");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        Map<String, Boolean> devmode = gson.fromJson(reader, Map.class);
-        return devmode.get("devmode");
+        System.out.println("Devmode read failed; default to false.");
+        return false;
     }
     
     /**
