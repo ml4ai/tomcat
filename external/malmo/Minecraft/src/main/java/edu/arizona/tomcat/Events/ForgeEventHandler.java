@@ -27,6 +27,11 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import java.nio.file.Paths;
+import java.io.*;
+import java.nio.file.Files;
+import java.util.Map;
+import com.google.gson.Gson;
 
 public class ForgeEventHandler {
 
@@ -67,6 +72,24 @@ public class ForgeEventHandler {
         }
     }
 
+
+    /**
+     * This method reads the devmode json config and returns whether devmode
+     * should be enabled or disabled for CommandEvent handling purposes
+     */
+    private boolean readDevModeFromJson() {
+        Gson gson = new Gson();
+        Reader reader = null;
+
+        try {
+            reader = Files.newBufferedReader(Paths.get("../../../../../../../run/devmode.json"));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        Map<String, Boolean> devmode = gson.fromJson(reader, Map.class);
+        return devmode.get("devmode");
+    }
+    
     /**
      * Called by checkExtraEvents at every tick to see if a villager has been
      * saved in the given mission
@@ -235,13 +258,18 @@ public class ForgeEventHandler {
         this.mqttService.publish(new Chat(event), "observations/chat");
     }
 
-    /** Command event handler */
+    /** Command event handler
+     * 
+     *  Currently, just handles turning dev mode on/off; all commands are
+     *  enabled in dev mode and all are disabled out of dev mode.
+     */
     @SubscribeEvent
     public void handle(CommandEvent event) {
-        if (event.getCommand().getName().equals("tellraw") &&
-            event.getParameters()[1].contains("woof")) {
-            this.mqttService.publish(new DogBarkEvent(event),
-                                     "observations/events/dog_barks");
+        if (!readDevModeFromJson()) {
+            // whitelisting events would be done here
+            if (event.isCancelable()) {
+                event.setCanceled(true);
+            }
         }
     }
 
