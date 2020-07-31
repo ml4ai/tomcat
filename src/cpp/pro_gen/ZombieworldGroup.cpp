@@ -17,18 +17,20 @@ void ZombieworldGroup::decorate(Pos& firstTopLeft, Pos& firstBottomRight) {
     this->addEntities();
 }
 
-void ZombieworldGroup::addEntities(){
-        AABB* aabbTwo = this->getAABB(2);
+void ZombieworldGroup::addEntities() {
+    AABB* aabbTwo = this->getAABB(2);
 
     if (aabbTwo != nullptr) {
 
-        Pos topEdgeMidpoint = (*aabbTwo).getEdgeMidpointAtBase().at(0);
-        topEdgeMidpoint.shiftY(2);
-        topEdgeMidpoint.shiftX(-1);
-        topEdgeMidpoint.shiftZ(-1);
-
-        this->addBlock(*(new Block("lever", topEdgeMidpoint)));
+        int sizeY = (*aabbTwo).getSizeY() - 1;
+        Pos randomPos = (*aabbTwo).getRandomPos(this->gen, 1, 1, sizeY, 1, 1);
+        (*aabbTwo).addEntity(*(new Entity("villager", randomPos)));
     }
+
+    AABB* aabbOne = this->getAABB(1); // 1 sub AABB definitely exists
+    int sizeY = (*aabbOne).getSizeY() - 1;
+    Pos randomPos = (*aabbOne).getRandomPos(this->gen, 1, 1, sizeY, 1, 1);
+    (*aabbOne).addEntity(*(new Entity("zombie", randomPos)));
 }
 
 void ZombieworldGroup::addLights() {
