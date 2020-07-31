@@ -1,0 +1,362 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Guide to developing ToMCAT missions &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Message Exchange between Client and Server in Minecraft Forge" href="Client_Server_Communication.html" />
+    <link rel="prev" title="Contributing" href="CONTRIBUTING.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Developer documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="CONTRIBUTING.html">Contributing</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Guide to developing ToMCAT missions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#building-the-environment">Building the environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setting-up-the-mission-skeleton">Setting up the mission skeleton</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#java">Java</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#c">C++</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#defining-event-handlers">Defining event handlers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Client_Server_Communication.html">Message Exchange between Client and Server in Minecraft Forge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prebuilt_world_loading.html">Pre-Built World Loading Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="minecraft_forge_events.html">Events available through the Minecraft Forge event bus (for MC v1.11.2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cpp_api/index.html">C++ API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lisp.html">LISP Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tomcat_openapi.html">Data models and message bus topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Developer documentation</a> &raquo;</li>
+        
+      <li>Guide to developing ToMCAT missions</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/developer/missions.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="guide-to-developing-tomcat-missions">
+<h1>Guide to developing ToMCAT missions<a class="headerlink" href="#guide-to-developing-tomcat-missions" title="Permalink to this headline">¶</a></h1>
+<p>ToMCAT aims to provide a flexible framework for studying human-machine
+teaming in the virtual world of Minecraft. It provides an API for constructing
+various scenarios in Minecraft that can act as focused tests of specific
+aspects of human-machine teaming as well as machine social intelligence.
+Following the parlance of <a class="reference external" href="https://github.com/microsoft/malmo">Project Malmo</a>,
+(the platform we build upon), we term these scenarios as ‘missions’.</p>
+<p>In this section, we will go over how to design and implement a ToMCAT mission.
+All file and directory paths are relative to the root of the <code class="docutils literal notranslate"><span class="pre">ml4ai/tomcat</span></code>
+repo.</p>
+<div class="section" id="building-the-environment">
+<h2>Building the environment<a class="headerlink" href="#building-the-environment" title="Permalink to this headline">¶</a></h2>
+<p>You have a couple of options when it comes to setting up the mission
+environment.</p>
+<ul class="simple">
+<li><p>The first is to use a <a class="reference external" href="https://minecraft.gamepedia.com/Tutorials/Menu_screen#Creating_a_New_World">manually-designed and
+built</a>
+(by yourself or someone else) world. Then, specify the full path to the world
+folder and the starting position of the human player in the <code class="docutils literal notranslate"><span class="pre">src</span></code> attribute
+<code class="docutils literal notranslate"><span class="pre">Mission.ServerSection.ServerHandlers.FileWorldGenerator</span></code> section of a
+Malmo-style XML specification. See <code class="docutils literal notranslate"><span class="pre">conf/xml_mission_specs/file_world.xml</span></code>
+for an example of this approach.</p></li>
+<li><p>The other option is to use ToMCAT’s <code class="docutils literal notranslate"><span class="pre">pro_gen</span></code> procedural generation module
+(see <code class="docutils literal notranslate"><span class="pre">src/cpp/pro_gen</span></code> for the source code and <code class="docutils literal notranslate"><span class="pre">tools/run_session</span></code> for
+example usage) to have more control over the generated mission environment.
+In an experiment context, it is usually desirable to have parametric control
+over the experimental conditions and stochasticity, both of which can be
+achieved with procedural generation.</p></li>
+</ul>
+</div>
+<div class="section" id="setting-up-the-mission-skeleton">
+<h2>Setting up the mission skeleton<a class="headerlink" href="#setting-up-the-mission-skeleton" title="Permalink to this headline">¶</a></h2>
+<p>After building the mission environment as described above, the next step is to
+define the mission behavior, - for example, the mission time limit, the
+behaviour of mobs, and handling in-game events of interest.</p>
+<div class="section" id="java">
+<h3>Java<a class="headerlink" href="#java" title="Permalink to this headline">¶</a></h3>
+<p>On the Java side, we will create some scaffolding code in the folder
+<code class="docutils literal notranslate"><span class="pre">external/malmo/Minecraft/src/main/java/edu/arizona/tomcat/Mission</span></code>.</p>
+<p>To create a new mission called do the following steps outlined below. We’ll
+call this mission <code class="docutils literal notranslate"><span class="pre">ExampleMission</span></code>, and all the filepaths specified will be
+under the <code class="docutils literal notranslate"><span class="pre">external/malmo/Minecraft/src/main/java/edu/arizona/tomcat/Mission</span></code>
+folder. We will not go into all the details of the classes, but will point the
+reader to the other missions in that directory (e.g. <code class="docutils literal notranslate"><span class="pre">TutorialMission</span></code>,
+<code class="docutils literal notranslate"><span class="pre">ZombieMission</span></code>, <code class="docutils literal notranslate"><span class="pre">ProceduralGenMission</span></code>) as examples to follow.</p>
+<ul class="simple">
+<li><p>Add a class called <code class="docutils literal notranslate"><span class="pre">ExampleMission.java</span></code>. Specify the player’s initial
+position in the <code class="docutils literal notranslate"><span class="pre">getPlayersInitialPositionAndDirection</span></code> method.</p></li>
+<li><p>Add a member to the <code class="docutils literal notranslate"><span class="pre">ID</span></code> enum in <code class="docutils literal notranslate"><span class="pre">Mission.java</span></code> for the example mission.</p></li>
+<li><p>Add a case in the switch statements for the <code class="docutils literal notranslate"><span class="pre">create</span></code> and <code class="docutils literal notranslate"><span class="pre">createClient</span></code>
+methods in <code class="docutils literal notranslate"><span class="pre">MissionFactory.java</span></code> for the example mission.</p></li>
+<li><p>Create a class <code class="docutils literal notranslate"><span class="pre">Client/ExampleClientMission.java</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="c">
+<h3>C++<a class="headerlink" href="#c" title="Permalink to this headline">¶</a></h3>
+<p>If you want to be able to run the mission using the <code class="docutils literal notranslate"><span class="pre">tools/run_session</span></code> script
+in order to automatically set up A/V recording and the message bus, you’ll need
+to add some code to the C++ side as well.</p>
+<ul class="simple">
+<li><p>In <code class="docutils literal notranslate"><span class="pre">src/cpp/Mission.h</span></code>:</p>
+<ul>
+<li><p>Add a member to the MissionId enum.</p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">id_to_world_folder_map</span></code> with the location of the world folder under
+<code class="docutils literal notranslate"><span class="pre">data/worlds</span></code>.</p></li>
+</ul>
+</li>
+<li><p>Update the description of the <code class="docutils literal notranslate"><span class="pre">--mission</span></code> command-line argument
+<code class="docutils literal notranslate"><span class="pre">src/cpp/runExperiment.cpp</span></code> with a short description of <code class="docutils literal notranslate"><span class="pre">ExampleMission</span></code>.</p></li>
+<li><p>Add a line to the comments in <code class="docutils literal notranslate"><span class="pre">tools/configuration_helpers</span></code> describing the
+<code class="docutils literal notranslate"><span class="pre">MAIN_MISSION</span></code> environment variable about <code class="docutils literal notranslate"><span class="pre">ExampleMission</span></code>.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="defining-event-handlers">
+<h2>Defining event handlers<a class="headerlink" href="#defining-event-handlers" title="Permalink to this headline">¶</a></h2>
+<p>Given that you are implementing a custom mission, it’s likely that there are
+certain in-game events that you will want to (i) record for downstream
+analysis, (ii) trigger other in-game events, or both.</p>
+<p>Events are recorded using JSON messages published to an MQTT message bus. In
+order to ensure valid JSON and reduce duplication of code, we define Java
+classes for the different types of events and use the
+<a class="reference external" href="https://github.com/google/gson">Gson</a> library to automatically serialize
+instances of those classes to JSON. The inheritance hierarchy of the classes
+helps us avoid code duplication for event types that are related by
+hypernymy/hyponymy, and thus share certain data fields.</p>
+<p>The event classes reside in the
+<code class="docutils literal notranslate"><span class="pre">external/malmo/Minecraft/src/main/java/edu/arizona/tomcat/Events</span></code> folder. All
+event classes inherit from the <code class="docutils literal notranslate"><span class="pre">Event</span></code> class, which has only two basic
+attributes that are shared by all events: <code class="docutils literal notranslate"><span class="pre">eventType</span></code> and <code class="docutils literal notranslate"><span class="pre">timestamp</span></code>.</p>
+<p>In order to implement a new type of event, create a new Java class that
+inherits from <code class="docutils literal notranslate"><span class="pre">edu.arizona.tomcat.Event</span></code>. The event should define private data
+members that will be serialized by Gson. The constructor of the event may or
+may not take an argument. Most of the implement event classes take one
+argument, i.e. one of the event types that are published by
+<a class="reference external" href="https://files.minecraftforge.net">Forge</a>. The <a class="reference external" href="https://skmedix.github.io/ForgeJavaDocs/javadoc/forge/1.11.2-13.20.0.2228/">Forge API
+documentation</a>
+contains descriptions of all the possible events that can be subscribed to, as
+well as the descriptions of the block and entity types involved in the event.</p>
+<p>Once you’ve created the event class, you can implement a handler for the event
+in either your mission class (e.g. in <code class="docutils literal notranslate"><span class="pre">ExampleMission.java</span></code>), or in the
+<code class="docutils literal notranslate"><span class="pre">ForgeEventHandler.java</span></code> class. Most events that have been implemented so far
+are handled in the <code class="docutils literal notranslate"><span class="pre">ForgeEventHandler</span></code> class, which is then utilized in the
+actual <code class="docutils literal notranslate"><span class="pre">*Mission.java</span></code> class files, since they are fairly general and not
+specific to a particular mission.</p>
+<p>For an example of handling a mission-specific event, see the <code class="docutils literal notranslate"><span class="pre">PlayerDeath</span></code>
+handler method in <code class="docutils literal notranslate"><span class="pre">Mission.java</span></code>. For examples of non mission-specific event
+handlers, see the <code class="docutils literal notranslate"><span class="pre">ForgeEventHandler</span></code> class.</p>
+<p>If you are implementing an event that needs to be published to the message bus
+(this is most likely the case), then you’ll need to use the
+<a class="reference external" href="https://ml4ai.github.io/tomcat/developer/java_api/classedu_1_1arizona_1_1tomcat_1_1Messaging_1_1MqttService.html"><code class="docutils literal notranslate"><span class="pre">edu.arizona.tomcat.Messaging.MqttService</span></code></a> singleton class. The class has an
+overloaded method, <code class="docutils literal notranslate"><span class="pre">publish</span></code>, which can publish either an object or a string -
+in the case of an object, it is automatically serialized to Gson. The <code class="docutils literal notranslate"><span class="pre">publish</span></code>
+method also takes a second string-type argument, which is the topic that the
+message corresponding to the event should be published to. You can see the
+currently implemented topics and message data models
+<a class="reference external" href="https://ml4ai.github.io/tomcat/tomcat_openapi.html">here</a>.</p>
+<p>If you add an event that corresponds to a published message, you’ll also need
+to add the message schema and topic for that event to <code class="docutils literal notranslate"><span class="pre">docs/spec.yml</span></code>,
+following the pattern of the other messages and topics that are already in
+there.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Client_Server_Communication.html" class="btn btn-neutral float-right" title="Message Exchange between Client and Server in Minecraft Forge" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="CONTRIBUTING.html" class="btn btn-neutral float-left" title="Contributing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
