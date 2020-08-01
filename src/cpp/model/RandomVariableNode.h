@@ -65,7 +65,7 @@ namespace tomcat {
 
             std::string get_timed_name() const override;
 
-            //std::string get_timed_name(int time_step) const override;
+            // std::string get_timed_name(int time_step) const override;
 
             /**
              * Adds a CPD to the list of CPDs of the node.
@@ -80,16 +80,6 @@ namespace tomcat {
              * @param cpd: CPD
              */
             void add_cpd(std::shared_ptr<CPD>&& cpd);
-
-            /**
-             * Returns the node's CPD associated to a set of parents.
-             *
-             * @param parent_labels: labels of the parents of the node
-             *
-             * @return node's CPD related to the parents informed
-             */
-            std::shared_ptr<CPD>
-            get_cpd_for(const std::vector<std::string>& parent_labels) const;
 
             /**
              * Marks the CPDs of the node as not updated.
@@ -122,6 +112,18 @@ namespace tomcat {
              * @param assignment: numeric value
              */
             void set_assignment(double assignment);
+
+            /**
+             * Generate a sample from this node's CPD given its parents
+             * assignments.
+             *
+             * @param model: DBN where the timed instance node was created
+             * @return A sample from the node's CPD.
+             */
+            Eigen::VectorXd
+            sample(std::shared_ptr<gsl_rng> random_generator,
+                   const std::vector<std::shared_ptr<RandomVariableNode>>&
+                       parent_nodes) const;
 
             // -----------------------------------------------------------------
             // Getters & Setters
@@ -165,6 +167,16 @@ namespace tomcat {
              * @param cpd: continuous CPD
              */
             void copy_from_node(const RandomVariableNode& node);
+
+            /**
+             * Returns the node's CPD associated to a set of parents.
+             *
+             * @param parent_labels: labels of the parents of the node
+             *
+             * @return node's CPD related to the parents informed
+             */
+            std::shared_ptr<CPD>
+            get_cpd_for(const std::vector<std::string>& parent_labels) const;
 
             /**
              * Sorts a list of labels and concatenate them into a string

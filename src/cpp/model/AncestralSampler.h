@@ -55,17 +55,6 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
-             * Samples a value from a given node's CPD given its parents
-             * assignments.
-             *
-             * @param node: random variable node to sample from
-             * @return Sample from the node's distribution given its parents'
-             * assignments.
-             */
-            Eigen::VectorXd
-            get_sample_given_parents_for(const RandomVariableNode& node) const;
-
-            /**
              * Assigns a value from a given data point (row in the data matrix)
              * to its corresponding node in the unrolled DBN. Each node in the
              * unrolled DBN has a time step assigned to it, which determines the

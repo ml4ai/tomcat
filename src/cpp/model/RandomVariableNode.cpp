@@ -148,6 +148,29 @@ namespace tomcat {
             }
         }
 
+        Eigen::VectorXd
+        RandomVariableNode::sample(std::shared_ptr<gsl_rng> random_generator,
+                                   const std::vector<std::shared_ptr<RandomVariableNode>>&
+                                   parent_nodes) const {
+            std::vector<std::string> parent_labels;
+            parent_labels.reserve(parent_nodes.size());
+
+            // This mapping will make it easy to access the parent node's object
+            // by it's label
+            Node::NodeMap labels_to_nodes;
+            for (const auto& parent_node : parent_nodes) {
+                std::string label = parent_node->get_metadata()->get_label();
+                parent_labels.push_back(label);
+                // Moving the reference because there's no need to keep it in
+                // the parent_nodes vector beyond this point
+                labels_to_nodes[label] = std::move(parent_node);
+            }
+
+            std::shared_ptr<CPD> cpd = this->get_cpd_for(parent_labels);
+
+            return cpd->sample(random_generator, labels_to_nodes);
+        }
+
         // ---------------------------------------------------------------------
         // Getters & Setters
         // ---------------------------------------------------------------------

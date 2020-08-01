@@ -46,9 +46,13 @@ namespace tomcat {
                     if (exists(node->get_metadata()->get_label(),
                                this->latent_node_labels)) {
 
+                        // TODO - The 2 instructions below can possibly be moved
+                        //  to the Sampler class. Check if Gibbs will use it.
+                        const std::vector<std::shared_ptr<RandomVariableNode>>&
+                            parent_nodes =
+                                this->model.get_parent_nodes_of(*node, true);
                         Eigen::VectorXd assignment =
-                            this->get_sample_given_parents_for(*node);
-
+                            node->sample(this->random_generator, parent_nodes);
                         node->set_assignment(assignment);
 
                         // TODO - fix for multidimensional sample size (e.g.
@@ -64,30 +68,6 @@ namespace tomcat {
                     }
                 }
             }
-        }
-
-        // TODO - Move this to the RV Node Class
-        Eigen::VectorXd AncestralSampler::get_sample_given_parents_for(
-            const RandomVariableNode& node) const {
-            std::vector<std::shared_ptr<RandomVariableNode>> parent_nodes =
-                this->model.get_parent_nodes_of(node, true);
-            std::vector<std::string> parent_labels;
-            parent_labels.reserve(parent_nodes.size());
-
-            // This mapping will make it easy to access the parent node's object
-            // by it's label
-            Node::NodeMap labels_to_nodes;
-            for (const auto& parent_node : parent_nodes) {
-                std::string label = parent_node->get_metadata()->get_label();
-                parent_labels.push_back(label);
-                // Moving the reference because there's no need to keep it in
-                // the parent_nodes vector beyond this point
-                labels_to_nodes[label] = std::move(parent_node);
-            }
-
-            std::shared_ptr<CPD> cpd = node.get_cpd_for(parent_labels);
-
-            return cpd->sample(this->random_generator, labels_to_nodes);
         }
 
         void AncestralSampler::assign_data_to_node(
