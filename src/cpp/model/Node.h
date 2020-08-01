@@ -1,8 +1,10 @@
 #pragma once
 
-#include "NodeMetadata.h"
+#include <unordered_map>
+
 #include <eigen3/Eigen/Dense>
-#include <iostream>
+
+#include "NodeMetadata.h"
 
 namespace tomcat {
     namespace model {
@@ -11,81 +13,123 @@ namespace tomcat {
          * A node in a Dynamic Bayes Net (DBN).
          */
         class Node {
+          public:
+            //------------------------------------------------------------------
+            // Types, Enums & Constants
+            //------------------------------------------------------------------
+            typedef std::unordered_map<std::string,
+                std::shared_ptr<Node>>
+                NodeMap;
+
+            //------------------------------------------------------------------
+            // Constructors & Destructor
+            //------------------------------------------------------------------
+
+            /**
+             * Creates an abstract representation of a node.
+             */
+            Node();
+
+            /**
+             * Creates an abstract representation of a node with associated
+             * metadata.
+             *
+             * @param metadata: node's metadata
+             */
+            Node(std::shared_ptr<NodeMetadata> metadata);
+
+            virtual ~Node();
+
+            //------------------------------------------------------------------
+            // Copy & Move constructors/assignments
+            //------------------------------------------------------------------
+
+            // Copy constructor and assignment should be deleted to avoid
+            // implicit slicing and loss of polymorphic behaviour in the
+            // subclasses. To deep copy, the clone method must be used.
+            Node(const Node&) = delete;
+
+            Node& operator=(const Node&) = delete;
+
+            Node(Node&&) = default;
+
+            Node& operator=(Node&&) = default;
+
+            //------------------------------------------------------------------
+            // Operator overload
+            //------------------------------------------------------------------
+            friend std::ostream& operator<<(std::ostream& os, const Node& node);
+
+            //------------------------------------------------------------------
+            // Member functions
+            //------------------------------------------------------------------
+
+            /**
+             * Prints a short description of the node.
+             *
+             * @param os: output stream
+             */
+            void print(std::ostream& os) const;
+
+            //------------------------------------------------------------------
+            // Pure virtual functions
+            //------------------------------------------------------------------
+
+            /**
+             * Creates a new unique pointer from a concrete instance of a node.
+             *
+             * @return pointer to the new node
+             */
+            virtual std::unique_ptr<Node> clone() const = 0;
+
+            /**
+             * Returns the node's unique id in an unrolled DBN. This id is a
+             * combination of the node's label and the time step where the timed
+             * instance node was placed in the unrolled DBN. If the node was not
+             * added to a DBN or this was not yet unrolled, the time step of the
+             * node is its default value.
+             *
+             * @return Timed-instance node's description in an unrolled DBN.
+             */
+            virtual std::string get_timed_name() const = 0;
+
+            /**
+             * Returns the node's unique id in an unrolled DBN for an arbitrary
+             * time step.
+             *
+             * @return Node's description in an unrolled DBN for an arbitrary
+             * time step.
+             */
+            //virtual std::string get_timed_name(int time_step) const = 0;
+
+            // --------------------------------------------------------
+            // Getters & Setters
+            // --------------------------------------------------------
+            const std::shared_ptr<NodeMetadata>& get_metadata() const;
+
+            const Eigen::VectorXd& get_assignment() const;
+
           protected:
+            //------------------------------------------------------------------
+            // Pure virtual functions
+            //------------------------------------------------------------------
+
+            /**
+             * Returns a short description of the node.
+             *
+             * @return Node's description.
+             */
+            virtual std::string get_description() const = 0;
+
+            //------------------------------------------------------------------
+            // Data members
+            //------------------------------------------------------------------
+
             // Metadata is a shared pointer because each timed instance of a
             // node in the unrolled DBN will share the same metadata.
             std::shared_ptr<NodeMetadata> metadata;
 
             Eigen::VectorXd assignment;
-
-          public:
-            Node() {}
-            Node(std::shared_ptr<NodeMetadata> metadata)
-                : metadata(std::move(metadata))  {
-            }
-            Node(Eigen::VectorXd values)
-                : assignment(std::move(values))  {
-            }
-            virtual ~Node() {}
-            // Copy constructor and assignment should be deleted to avoid
-            // implicit slicing and loss of polymorphic behaviour in the
-            // subclasses. To deep copy, the clone method must be used.
-            Node(const Node&) = delete;
-            Node& operator=(const Node&) = delete;
-
-            Node(Node&&) = default;
-            Node& operator=(Node&&) = default;
-
-            friend std::ostream& operator<<(std::ostream& os,
-                                            const Node& node) {
-                node.print(os);
-                return os;
-            };
-
-            /**
-             * Print a short description of the node.
-             *
-             * @param os: output stream
-             */
-            virtual void print(std::ostream& os) const = 0;
-
-            /**
-             * Return a short description of the node.
-             *
-             * @return Node's description
-             */
-            virtual std::string get_description() const = 0;
-
-            /**
-             * Clone node
-             *
-             * @return Pointer to the new node
-             */
-            virtual std::unique_ptr<Node> clone() const = 0;
-
-            /**
-             * Return node description. An instance of Node is considered a
-             * constant node and, therefore, time agnostic.
-             *
-             * @return Node description
-             */
-            virtual std::string get_timed_name() const = 0;
-
-            /**
-             * Return node description for an arbitrary time step.
-             *
-             * @return Node's description for an arbitrary time step
-             */
-            virtual std::string get_timed_name(int time_step) const = 0;
-
-            // --------------------------------------------------------
-            // Getters
-            // --------------------------------------------------------
-            const std::shared_ptr<NodeMetadata>& get_metadata() const {
-                return metadata;
-            }
-
-            const Eigen::VectorXd& get_assignment() const { return assignment; }
         };
 
     } // namespace model

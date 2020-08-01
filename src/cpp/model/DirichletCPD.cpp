@@ -1,14 +1,71 @@
 #include "DirichletCPD.h"
+
 #include "ConstantNode.h"
 
 namespace tomcat {
     namespace model {
+        //----------------------------------------------------------------------
+        // Definitions
+        //----------------------------------------------------------------------
+
+        // No definitions in this file
+
+        //----------------------------------------------------------------------
+        // Constructors & Destructor
+        //----------------------------------------------------------------------
+        DirichletCPD::DirichletCPD(
+            std::vector<std::string>& parent_node_label_order,
+            std::vector<std::shared_ptr<Node>>& parameter_table)
+            : ContinuousCPD(parent_node_label_order) {
+
+            this->init_from_table(parameter_table);
+        }
+
+        DirichletCPD::DirichletCPD(
+            std::vector<std::string>&& parent_node_label_order,
+            std::vector<std::shared_ptr<Node>>&& parameter_table)
+            : ContinuousCPD(std::move(parent_node_label_order)) {
+
+            this->init_from_table(parameter_table);
+        }
+
+        DirichletCPD::DirichletCPD(
+            std::vector<std::string>& parent_node_label_order,
+            const Eigen::MatrixXd& parameter_values)
+            : ContinuousCPD(parent_node_label_order) {
+
+            this->init_from_matrix(parameter_values);
+        }
+
+        DirichletCPD::DirichletCPD(
+            std::vector<std::string>&& parent_node_label_order,
+            const Eigen::MatrixXd&& parameter_values)
+            : ContinuousCPD(std::move(parent_node_label_order)) {
+
+            this->init_from_matrix(parameter_values);
+        }
+
+        DirichletCPD::~DirichletCPD() {}
+
+        //----------------------------------------------------------------------
+        // Copy & Move constructors/assignments
+        //----------------------------------------------------------------------
+        DirichletCPD::DirichletCPD(const DirichletCPD& cpd) {
+            this->copy_from_cpd(cpd);
+        }
+
+        DirichletCPD& DirichletCPD::operator=(const DirichletCPD& cpd) {
+            this->copy_from_cpd(cpd);
+            return *this;
+        }
+
+        //----------------------------------------------------------------------
+        // Member functions
+        //----------------------------------------------------------------------
         void DirichletCPD::init_from_table(
             std::vector<std::shared_ptr<Node>>& parameter_table) {
             // Each node contains the parameter vector alpha.
             for (int i = 0; i < parameter_table.size(); i++) {
-                this->alpha_size =
-                    parameter_table[i]->get_metadata()->get_sample_size();
                 std::vector<std::shared_ptr<Node>> parameters;
                 parameters.push_back(parameter_table[i]);
                 this->parameter_table.push_back(std::move(parameters));
@@ -16,8 +73,6 @@ namespace tomcat {
         }
 
         void DirichletCPD::init_from_matrix(const Eigen::MatrixXd& matrix) {
-            this->alpha_size = matrix.cols();
-
             for (int row = 0; row < matrix.rows(); row++) {
                 Eigen::VectorXd alpha = matrix.row(row);
                 std::vector<std::shared_ptr<Node>> alpha_vector;
@@ -27,52 +82,22 @@ namespace tomcat {
             }
         }
 
-        Eigen::MatrixXd
-        DirichletCPD::sample(std::shared_ptr<gsl_rng> random_generator) const {
-            int rows = this->parameter_table.size();
-            double* sample_ptr = new double[rows * this->alpha_size];
-
-            for (int i = 0; i < rows; i++) {
-                Eigen::VectorXd sample_vector =
-                    this->sample(random_generator, i);
-                sample_ptr = sample_vector.data();
-                sample_ptr += this->alpha_size;
-            }
-
-            sample_ptr -= rows * this->alpha_size;
-
-            Eigen::Map<Eigen::Matrix<double,
-                                     Eigen::Dynamic,
-                                     Eigen::Dynamic,
-                                     Eigen::RowMajor>>
-                samples(sample_ptr, rows, this->alpha_size);
-            return samples;
-        }
-
-        Eigen::VectorXd
-        DirichletCPD::sample(std::shared_ptr<gsl_rng> random_generator,
-                             int index) const {
-            double* sample_ptr = new double[this->alpha_size];
+        Eigen::VectorXd DirichletCPD::sample_from_table_row(
+            std::shared_ptr<gsl_rng> random_generator, int table_row) const {
+            int alpha_size = this->parameter_table[table_row][0]
+                                 ->get_metadata()
+                                 ->get_sample_size();
+            double* sample_ptr = new double[alpha_size];
 
             const double* alpha =
-                this->parameter_table[index][0]->get_assignment().data();
+                this->parameter_table[table_row][0]->get_assignment().data();
 
-            gsl_ran_dirichlet(random_generator.get(),
-                              this->alpha_size,
-                              alpha,
-                              sample_ptr);
+            gsl_ran_dirichlet(
+                random_generator.get(), alpha_size, alpha, sample_ptr);
 
-            Eigen::Map<Eigen::VectorXd> sample(sample_ptr, this->alpha_size);
+            Eigen::Map<Eigen::VectorXd> sample(sample_ptr, alpha_size);
 
             return sample;
-        }
-
-        void DirichletCPD::print(std::ostream& os) const {
-            os << "Dirichlet CPD: {\n";
-            for (auto& alpha : this->parameter_table) {
-                os << " " << *alpha[0] << "\n";
-            }
-            os << "}";
         }
 
         std::unique_ptr<CPD> DirichletCPD::clone() const {
@@ -82,6 +107,24 @@ namespace tomcat {
         std::shared_ptr<CPD> DirichletCPD::clone_shared() const {
             return std::make_shared<DirichletCPD>(*this);
         }
+
+        std::string DirichletCPD::get_description() const {
+            std::stringstream ss;
+
+            ss << "Dirichlet CPD: {\n";
+            for (auto& alpha : this->parameter_table) {
+                ss << " " << *alpha[0] << "\n";
+            }
+            ss << "}";
+
+            return ss.str();
+        }
+
+        //----------------------------------------------------------------------
+        // Remove definitions
+        //----------------------------------------------------------------------
+
+        // No definitions in this file
 
     } // namespace model
 } // namespace tomcat

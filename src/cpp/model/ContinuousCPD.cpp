@@ -3,12 +3,31 @@
 namespace tomcat {
     namespace model {
 
-        void ContinuousCPD::copy_from_cpd(const ContinuousCPD& cpd) {
-            this->parent_node_label_order = cpd.parent_node_label_order;
-            this->parameter_table = cpd.parameter_table;
-        }
+        //----------------------------------------------------------------------
+        // Definitions
+        //----------------------------------------------------------------------
 
-        void ContinuousCPD::update_dependencies(NodeMap& parameter_nodes_map,
+        // No definitions in this file
+
+        //----------------------------------------------------------------------
+        // Constructors & Destructor
+        //----------------------------------------------------------------------
+        ContinuousCPD::ContinuousCPD() {}
+
+        ContinuousCPD::ContinuousCPD(
+            std::vector<std::string>& parent_node_label_order)
+        : CPD(parent_node_label_order) {}
+
+        ContinuousCPD::ContinuousCPD(
+            std::vector<std::string>&& parent_node_label_order)
+        : CPD(std::move(parent_node_label_order)) {}
+
+        ContinuousCPD::~ContinuousCPD() {}
+
+        //----------------------------------------------------------------------
+        // Member functions
+        //----------------------------------------------------------------------
+        void ContinuousCPD::update_dependencies(Node::NodeMap& parameter_nodes_map,
                                                 int time_step) {
             for (int i = 0; i < this->parameter_table.size(); i++) {
                 for (int j = 0; j < this->parameter_table[i].size(); j++) {
@@ -17,12 +36,12 @@ namespace tomcat {
                         this->parameter_table[i][j]->get_metadata().get();
                     if (metadata->is_replicable()) {
                         parameter_timed_name =
-                            this->parameter_table[i][j]->get_timed_name(
+                            metadata->get_timed_name(
                                 time_step);
                     }
                     else {
                         parameter_timed_name =
-                            this->parameter_table[i][j]->get_timed_name(
+                            metadata->get_timed_name(
                                 metadata->get_initial_time_step());
                     }
 
@@ -35,6 +54,17 @@ namespace tomcat {
             }
             this->updated = true;
         }
+
+        void ContinuousCPD::copy_from_cpd(const ContinuousCPD& cpd) {
+            this->parent_node_label_order = cpd.parent_node_label_order;
+            this->parameter_table = cpd.parameter_table;
+        }
+
+        //----------------------------------------------------------------------
+        // Remove definitions
+        //----------------------------------------------------------------------
+
+        // No definitions in this file
 
     } // namespace model
 } // namespace tomcat

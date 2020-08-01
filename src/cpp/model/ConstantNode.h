@@ -4,64 +4,77 @@ namespace tomcat {
     namespace model {
 
         /**
-         * A node in a Dynamic Bayes Net (DBN).
+         * A node with constant numerical values assigned to it.
          */
         class ConstantNode : public Node {
-          private:
-            /**
-             * Create default metadata for constant nodes.
-             *
-             * @param label: node's label
-             * @param sample_size: dimensionality of the value stored in the node
-             */
-            void create_default_metadata(std::string& label, int sample_size);
-
           public:
+            //------------------------------------------------------------------
+            // Constructors & Destructor
+            //------------------------------------------------------------------
+
             /**
-             * Create a constant node with a numerical value assigned.
+             * Creates a constant node with a numerical value assigned to it.
              *
-             * @param value: node's constant assignment
+             * @param value: node's numerical assignment
+             * @param label: node's label
              */
             ConstantNode(double value, std::string label = "unlabeled");
 
             /**
-             * Create a constant node with a multidimensional value assigned.
+             * Creates a constant node with a multidimensional value assigned to it.
              *
              * @param values: node's constant assignment
+             * * @param label: node's label
              */
             ConstantNode(Eigen::VectorXd& values,
-                         std::string label = "unlabeled")
-                : Node(values) {
-                this->create_default_metadata(label, this->assignment.size());
-            }
+                         std::string label = "unlabeled");
 
+            /**
+             * Creates a constant node with a multidimensional value assigned to it.
+             *
+             * @param values: node's constant assignment
+             * * @param label: node's label
+             */
             ConstantNode(Eigen::VectorXd&& values,
-                         std::string label = "unlabeled")
-                : Node(std::move(values)) {
-                this->create_default_metadata(label, this->assignment.size());
-            }
-            ~ConstantNode() {}
+                         std::string label = "unlabeled");
 
-            ConstantNode(const ConstantNode& node) {
-                this->assignment = node.assignment;
-            };
-            ConstantNode& operator=(const ConstantNode& node) {
-                this->assignment = node.assignment;
-                return *this;
-            };
+            ~ConstantNode();
+
+            //------------------------------------------------------------------
+            // Copy & Move constructors/assignments
+            //------------------------------------------------------------------
+            ConstantNode(const ConstantNode& node);
+
+            ConstantNode& operator=(const ConstantNode& node);
 
             ConstantNode(ConstantNode&&) = default;
+
             ConstantNode& operator=(ConstantNode&&) = default;
 
-            void print(std::ostream& os) const override;
+            //------------------------------------------------------------------
+            // Member functions
+            //------------------------------------------------------------------
+            std::unique_ptr<Node> clone() const override;
 
             std::string get_description() const override;
 
-            std::unique_ptr<Node> clone() const override;
-
             std::string get_timed_name() const override;
 
-            std::string get_timed_name(int time_step) const override;
+            //std::string get_timed_name(int time_step) const override;
+
+          private:
+            //------------------------------------------------------------------
+            // Member functions
+            //------------------------------------------------------------------
+
+            /**
+             * Creates a default metadata for a constant node.
+             *
+             * @param label: node's label
+             * @param sample_size: dimensionality of the value stored in the node.
+             */
+            void create_default_metadata(std::string& label, int sample_size);
+
         };
 
     } // namespace model

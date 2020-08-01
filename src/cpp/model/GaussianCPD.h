@@ -1,14 +1,13 @@
 #pragma once
 
 #include "ContinuousCPD.h"
-#include "Node.h"
-#include <iostream>
-#include <memory>
 
 namespace tomcat {
     namespace model {
 
-        enum PARAMETER_INDEX { mean, variance };
+        //------------------------------------------------------------------
+        // Structs
+        //------------------------------------------------------------------
 
         /**
          * Parameters of a univariate gaussian distribution.
@@ -64,18 +63,111 @@ namespace tomcat {
          * |--------------------------------------------|
          */
         class GaussianCPD : public ContinuousCPD {
-          private:
+          public:
+            //------------------------------------------------------------------
+            // Types, Enums & Constants
+            //------------------------------------------------------------------
+            enum PARAMETER_INDEX { mean, variance };
+
+            //------------------------------------------------------------------
+            // Constructors & Destructor
+            //------------------------------------------------------------------
+
             /**
-             * Store the parameter table in the CPD
+             * Creates an instance of a Gaussian CPD comprised by a list of
+             * node dependent parameters.
              *
-             * @param parameter_table: vector of gaussian parameters
+             * @param parent_node_label_order: evaluation order of the parent
+             * nodes' assignments for correct table indexing
+             * @param parameter_table: list of two parameter nodes which
+             * assignments determine the two parameters of the distribution:
+             * mean and variance.
              */
-            void
-            init_from_table(std::vector<GaussianParameters>& parameter_table);
+            GaussianCPD(std::vector<std::string>& parent_node_label_order,
+                        std::vector<GaussianParameters>& parameter_table);
+
+            /**
+             * Creates an instance of a Gaussian CPD comprised by a list of
+             * node dependent parameters.
+             *
+             * @param parent_node_label_order: evaluation order of the parent
+             * nodes' assignments for correct table indexing
+             * @param parameter_table: list of two parameter nodes which
+             * assignments determine the two parameters of the distribution:
+             * mean and variance.
+             */
+            GaussianCPD(std::vector<std::string>&& parent_node_label_order,
+                        std::vector<GaussianParameters>&& parameter_table);
+
+            /**
+             * Creates an instance of a Gaussian CPD table by transforming a
+             * table of parameter values to a list of constant vector nodes to
+             * keep static and node dependent CPDs compatible.
+             *
+             * @param parent_node_label_order: evaluation order of the parent
+             * nodes' assignments for correct table indexing
+             * @param cpd_table: 2-columns matrix containing constant numerical
+             * values for mean and variance
+             */
+            GaussianCPD(std::vector<std::string>& parent_node_label_order,
+                        Eigen::MatrixXd& parameter_values);
+
+            /**
+             * Creates an instance of a Gaussian CPD table by transforming a
+             * table of parameter values to a list of constant vector nodes to
+             * keep static and node dependent CPDs compatible.
+             *
+             * @param parent_node_label_order: evaluation order of the parent
+             * nodes' assignments for correct table indexing
+             * @param cpd_table: 2-columns matrix containing constant numerical
+             * values for mean and variance
+             */
+            GaussianCPD(std::vector<std::string>&& parent_node_label_order,
+                        Eigen::MatrixXd&& parameter_values);
+
+            ~GaussianCPD();
+
+            //------------------------------------------------------------------
+            // Copy & Move constructors/assignments
+            //------------------------------------------------------------------
+            GaussianCPD(const GaussianCPD& cpd);
+
+            GaussianCPD& operator=(const GaussianCPD& cpd);
+
+            GaussianCPD(GaussianCPD&& cpd) = default;
+
+            GaussianCPD& operator=(GaussianCPD&& cpd) = default;
+
+            //------------------------------------------------------------------
+            // Member functions
+            //------------------------------------------------------------------
+            std::unique_ptr<CPD> clone() const override;
+
+            std::shared_ptr<CPD> clone_shared() const override;
+
+            std::string get_description() const override;
 
           protected:
+            //------------------------------------------------------------------
+            // Member functions
+            //------------------------------------------------------------------
+
             /**
-             * Transform a table of numeric values for mean and variance to
+             * Samples a value from a Gaussian distribution comprised by the
+             * mean and variance assigned to the nodes in the a specific row of
+             * the parameter table.
+             *
+             * @param random_generator: random number generator
+             * @param table_row: row of the parameter table containing the
+             * nodes that store the mean and the variance of the distribution
+             * @return Value sampled from a Gaussian distribution
+             */
+            virtual Eigen::VectorXd
+            sample_from_table_row(std::shared_ptr<gsl_rng> random_generator,
+                                  int table_row) const override;
+
+            /**
+             * Transforms a table of numeric values for mean and variance to
              * constant numeric nodes to keep static and node dependent CPDs
              * compatible.
              *
@@ -85,80 +177,21 @@ namespace tomcat {
             virtual void
             init_from_matrix(const Eigen::MatrixXd& matrix) override;
 
-          public:
-            /**
-             * Store a list of node dependent parameters.
-             *
-             * @param parent_node_label_order: evaluation order of the parent
-             * nodes assignment for correct table indexing
-             * @param parameter_table: list of gaussian parameters determined by
-             * other nodes' assignments
-             */
-            GaussianCPD(std::vector<std::string>& parent_node_label_order,
-                        std::vector<GaussianParameters>& parameter_table)
-                : ContinuousCPD(parent_node_label_order) {
-
-                this->init_from_table(parameter_table);
-            }
-            GaussianCPD(std::vector<std::string>&& parent_node_label_order,
-                        std::vector<GaussianParameters>&& parameter_table)
-                : ContinuousCPD(std::move(parent_node_label_order)) {
-
-                this->init_from_table(parameter_table);
-            }
+          private:
+            //------------------------------------------------------------------
+            // Member functions
+            //------------------------------------------------------------------
 
             /**
-             * Create a gaussian distribution from a matrix of parameter
-             * values.
+             * Stores the parameter table in the CPD. It transforms the mean and
+             * variance from a Gaussian parameter struct into a list of nodes
+             * and adds it to the parameter table to comply with the format of
+             * this data member.
              *
-             * @param parent_node_label_order: evaluation order of the parent
-             * nodes assignment for correct table indexing
-             * @param parameter_values: matrix containing constant numerical
-             * values for mean and variance
+             * @param parameter_table: vector of gaussian parameters
              */
-            GaussianCPD(std::vector<std::string>& parent_node_label_order,
-                        Eigen::MatrixXd& parameter_values)
-                : ContinuousCPD(parent_node_label_order) {
-
-                this->init_from_matrix(parameter_values);
-            }
-            GaussianCPD(std::vector<std::string>&& parent_node_label_order,
-                        Eigen::MatrixXd&& parameter_values)
-                : ContinuousCPD(std::move(parent_node_label_order)) {
-
-                this->init_from_matrix(parameter_values);
-            }
-
-            ~GaussianCPD() {}
-
-            GaussianCPD(const GaussianCPD& cpd) { this->copy_from_cpd(cpd); }
-            GaussianCPD& operator=(const GaussianCPD& cpd) {
-                this->copy_from_cpd(cpd);
-                return *this;
-            };
-            GaussianCPD(GaussianCPD&& cpd) = default;
-            GaussianCPD& operator=(GaussianCPD&& cpd) = default;
-
-            /**
-             * Sample a numeric value for each combination of parent nodes'
-             * assignments (each row of the cpd table).
-             *
-             * @param random_generator: random number random_generator
-             * @return vector of sampled values. Each index contains a number
-             *  sampled from gaussian distribution with mean and variance
-             *  defined in each row of the parameter table.
-             */
-            Eigen::MatrixXd
-            sample(std::shared_ptr<gsl_rng> random_generator) const override;
-
-            Eigen::VectorXd
-            sample(std::shared_ptr<gsl_rng> random_generator, int index) const override;
-
-            void print(std::ostream& os) const override;
-
-            std::unique_ptr<CPD> clone() const override;
-
-            std::shared_ptr<CPD> clone_shared() const override;
+            void
+            init_from_table(std::vector<GaussianParameters>& parameter_table);
         };
 
     } // namespace model

@@ -1,9 +1,6 @@
 #pragma once
 
 #include "CPD.h"
-#include "Node.h"
-#include <iostream>
-#include <memory>
 
 namespace tomcat {
     namespace model {
@@ -12,9 +9,9 @@ namespace tomcat {
          * A Continuous CPD consists of a table containing the
          * parameters of the continuous distribution of the node that is sampled
          * from this CPD given its parents's assignments. The number of rows is
-         * given by the product of the cardinalities of the parent nodes of such
-         * node. Each row represents a combination of possible assignments of
-         * the parent nodes ordered with respect to the binary basis.
+         * given by the product of the cardinalities of those parent nodes. Each
+         * row represents a combination of their possible assignments ordered
+         * with respect to the binary basis.
          *
          * For instance,
          *
@@ -24,7 +21,7 @@ namespace tomcat {
          *
          * Suppose A, B have cardinalities 2, 3 respectively and C is sampled
          * from an arbitrary continuous distribution with parameter vector
-         * \f$\phi\f$ of size 3.
+         * \f$\phi\f$.
          *
          * A ContinuousCPD for C will be as follows,
          * |------------------------------------|
@@ -44,78 +41,109 @@ namespace tomcat {
          * |------------------------------------|
          */
         class ContinuousCPD : public CPD {
-          protected:
-            std::vector<std::vector<std::shared_ptr<Node>>> parameter_table;
+          public:
+            //------------------------------------------------------------------
+            // Constructors & Destructor
+            //------------------------------------------------------------------
 
             /**
-             * Copy members of a continuous CPD.
+             * Creates an abstract representation of a Continuous CPD.
+             */
+            ContinuousCPD();
+
+            /**
+             * Creates an abstract representation of a Continuous CPD. This
+             * constructor is marked as explicit because it takes only one
+             * parameter what makes it easier to be implicitly instantiated.
+             * Explicit instantiation is preferred to avoid hard to catch
+             * errors.
+             *
+             * @param parent_node_label_order: evaluation order of the parent
+             * nodes assignment for correct table indexing
+             */
+            explicit ContinuousCPD(
+                std::vector<std::string>& parent_node_label_order);
+
+            /**
+             * Creates an abstract representation of a Continuous CPD. This
+             * constructor is marked as explicit because it takes only one
+             * parameter what makes it easier to be implicitly instantiated.
+             * Explicit instantiation is preferred to avoid hard to catch
+             * errors.
+             *
+             * @param parent_node_label_order: evaluation order of the parent
+             * nodes assignment for correct table indexing
+             */
+            explicit ContinuousCPD(
+                std::vector<std::string>&& parent_node_label_order);
+
+            virtual ~ContinuousCPD();
+
+            //------------------------------------------------------------------
+            // Copy & Move constructors/assignments
+            //------------------------------------------------------------------
+
+            // Copy constructor and assignment should be deleted to avoid
+            // implicit slicing and loss of polymorphic behaviour in the
+            // subclasses. For deep copy, the clone method must be used.
+            ContinuousCPD(const ContinuousCPD&) = delete;
+
+            ContinuousCPD& operator=(const ContinuousCPD&) = delete;
+
+            ContinuousCPD(ContinuousCPD&& cpd) = default;
+
+            ContinuousCPD& operator=(ContinuousCPD&& cpd) = default;
+
+            //------------------------------------------------------------------
+            // Member functions
+            //------------------------------------------------------------------
+            virtual void update_dependencies(Node::NodeMap& parameter_nodes_map,
+                                             int time_step) override;
+
+          protected:
+            //------------------------------------------------------------------
+            // Member functions
+            //------------------------------------------------------------------
+
+            /**
+             * Samples a value from a continuous distribution comprised by the
+             * parameter vector \f$\phi\f$.
+             *
+             * @param random_generator: random number generator
+             * @param table_row: row of the parameter table containing the
+             * node that stores the vector \f$\phi\f$
+             * @return Vector of sampled values. Each row contains a vector
+             * \f$\theta\f$ sampled from a continuous distribution with
+             * parameter vector \f$\phi\f$ defined in each row of the parameter
+             * table.
+             */
+//            virtual Eigen::VectorXd
+//            sample_from_table_row(std::shared_ptr<gsl_rng> random_generator,
+//                                  int table_row) const = 0;
+
+            /**
+             * Copy data members of a continuous CPD.
              *
              * @param cpd: continuous CPD
              */
             void copy_from_cpd(const ContinuousCPD& cpd);
 
-            /**
-             * Transform a table of numeric values for \f$\phi\f$ to a list of
-             * constant vector nodes to keep static and node dependent CPDs
-             * compatible.
-             *
-             * @param parent_node_label_order: evaluation order of the parent
-             * nodes assignment for correct table indexing
-             * @param parameter_table: matrix containing constant numerical
-             * values for \f$\phi\f$
-             */
-            virtual void init_from_matrix(const Eigen::MatrixXd& parameter_table) = 0;
-
-          public:
-            /**
-             * Create an abstract representation of a Continuous Conditional
-             * Probability Distribution
-             *
-             * @param parent_node_label_order: evaluation order of the parent
-             * nodes assignment for correct table indexing
-             */
-            ContinuousCPD() {}
-
-            explicit ContinuousCPD(
-                std::vector<std::string>& parent_node_label_order)
-                : CPD(parent_node_label_order) {}
-
-            explicit ContinuousCPD(
-                std::vector<std::string>&& parent_node_label_order)
-                : CPD(std::move(parent_node_label_order)) {}
-
-            ~ContinuousCPD() {}
-
-            // Copy constructor and assignment should be deleted to avoid
-            // implicit slicing and loss of polymorphic behaviour in the
-            // subclasses. To deep copy, the clone method must be used.
-            ContinuousCPD(const ContinuousCPD&) = delete;
-            ContinuousCPD& operator=(const ContinuousCPD&) = delete;
-
-            ContinuousCPD(ContinuousCPD&& cpd) = default;
-            ContinuousCPD& operator=(ContinuousCPD&& cpd) = default;
+            //------------------------------------------------------------------
+            // Pure virtual functions
+            //------------------------------------------------------------------
 
             /**
-             * Sample a vector for each combination of parent nodes' assignments
-             * (each row of the cpd table).
+             * Fills the probability table with constant nodes created from a
+             * matrix of numeric values for \f$\phi\f$.
              *
-             * @param random_generator: random number random_generator
-             * @return matrix of sampled values. Each row contains a vector
-             *  \f$\theta\f$ sampled from a continuous distribution with
-             *  parameter vector \f$\phi\f$ defined in each row of the
-             *  parameter table.
+             * @param matrix: matrix of values for \f$\phi\f$
              */
-            virtual Eigen::MatrixXd
-            sample(std::shared_ptr<gsl_rng> random_generator) const override = 0;
+            virtual void init_from_matrix(const Eigen::MatrixXd& matrix) = 0;
 
-            virtual void print(std::ostream& os) const override = 0;
-
-            virtual std::unique_ptr<CPD> clone() const override = 0;
-
-            virtual std::shared_ptr<CPD> clone_shared() const override = 0;
-
-            virtual void update_dependencies(NodeMap& parameter_nodes_map,
-                                             int time_step) override;
+            //------------------------------------------------------------------
+            // Data members
+            //------------------------------------------------------------------
+            std::vector<std::vector<std::shared_ptr<Node>>> parameter_table;
         };
 
     } // namespace model

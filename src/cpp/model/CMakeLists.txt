@@ -38,8 +38,10 @@ add_library(tomcat_model_libs
         STATIC
         ${tomcat_model_headers}
         NodeMetadata.cpp
+        Node.cpp
         ConstantNode.cpp
         RandomVariableNode.cpp
+        CPD.cpp
         CategoricalCPD.cpp
         ContinuousCPD.cpp
         GaussianCPD.cpp

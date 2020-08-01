@@ -1,25 +1,72 @@
 #include "ConstantNode.h"
+
 #include <fmt/format.h>
-#include <sstream>
 
 namespace tomcat {
     namespace model {
+        //----------------------------------------------------------------------
+        // Definitions
+        //----------------------------------------------------------------------
 
+        // No definitions in this file
+
+        //----------------------------------------------------------------------
+        // Constructors & Destructor
+        //----------------------------------------------------------------------
         ConstantNode::ConstantNode(double value, std::string label) {
             this->assignment = Eigen::VectorXd(1);
             this->assignment(0) = value;
             this->create_default_metadata(label, 1);
         }
 
-        void ConstantNode::create_default_metadata(std::string& label, int sample_size) {
-            NodeMetadata metadata =
-                NodeMetadata::create_single_time_link_metadata(label, 0, true, sample_size, 1);
-            this->metadata = std::make_shared<NodeMetadata>(std::move(metadata));
+        ConstantNode::ConstantNode(Eigen::VectorXd& values, std::string label) {
+            this->assignment = values;
+            this->create_default_metadata(label, this->assignment.size());
         }
 
-        void ConstantNode::print(std::ostream& os) const {
-            os << this->get_description();
+        ConstantNode::ConstantNode(Eigen::VectorXd&& values,
+                                   std::string label) {
+            this->assignment = std::move(values);
+            this->create_default_metadata(label, this->assignment.size());
         }
+
+        ConstantNode::~ConstantNode() {}
+
+        //----------------------------------------------------------------------
+        // Copy & Move constructors/assignments
+        //----------------------------------------------------------------------
+        ConstantNode::ConstantNode(const ConstantNode& node) {
+            this->assignment = node.assignment;
+        }
+
+        ConstantNode& ConstantNode::operator=(const ConstantNode& node) {
+            this->assignment = node.assignment;
+            return *this;
+        }
+
+        //----------------------------------------------------------------------
+        // Member functions
+        //----------------------------------------------------------------------
+        void ConstantNode::create_default_metadata(std::string& label,
+                                                   int sample_size) {
+            NodeMetadata metadata =
+                NodeMetadata::create_single_time_link_metadata(
+                    label, 0, true, sample_size, 1);
+            this->metadata =
+                std::make_shared<NodeMetadata>(std::move(metadata));
+        }
+
+        std::unique_ptr<Node> ConstantNode::clone() const {
+            return std::make_unique<ConstantNode>(*this);
+        }
+
+        std::string ConstantNode::get_timed_name() const {
+            return this->metadata->get_label();
+        }
+
+//        std::string ConstantNode::get_timed_name(int time_step) const {
+//            return this->metadata->get_label();
+//        }
 
         std::string ConstantNode::get_description() const {
             if (this->assignment.size() == 1) {
@@ -40,16 +87,11 @@ namespace tomcat {
             }
         }
 
-        std::unique_ptr<Node> ConstantNode::clone() const {
-            return std::make_unique<ConstantNode>(*this);
-        }
+        //----------------------------------------------------------------------
+        // Remove definitions
+        //----------------------------------------------------------------------
 
-        std::string ConstantNode::get_timed_name() const {
-            return this->metadata->get_label();
-        }
+        // No definitions in this file
 
-        std::string ConstantNode::get_timed_name(int time_step) const {
-            return this->metadata->get_label();
-        }
     } // namespace model
 } // namespace tomcat

@@ -269,15 +269,15 @@ int main() {
 
     std::shared_ptr<RandomVariableNode> state_node_ptr =
         std::make_shared<RandomVariableNode>(state_node);
-    state_metadata_ptr->add_parent_link(state_node_ptr, true);
-    state_metadata_ptr->add_parent_link(prior_state_node_ptr, false);
-//    state_metadata_ptr->add_parent_link(theta_s0_node_ptr, true);
-//    state_metadata_ptr->add_parent_link(theta_s1_node_ptr, true);
-//    state_metadata_ptr->add_parent_link(theta_s2_node_ptr, true);
+    state_metadata_ptr->add_parent_link(state_metadata_ptr, true);
+    state_metadata_ptr->add_parent_link(state_prior_metadata_ptr, false);
+//    state_metadata_ptr->add_parent_link(theta_s0_metadata_ptr, true);
+//    state_metadata_ptr->add_parent_link(theta_s1_metadata_ptr, true);
+//    state_metadata_ptr->add_parent_link(theta_s2_metadata_ptr, true);
 
     NodeMetadata tg_metadata = NodeMetadata::create_multiple_time_link_metadata(
         "TG", 1, true, false, 1, 2);
-    tg_metadata.add_parent_link(state_node_ptr, false);
+    tg_metadata.add_parent_link(state_metadata_ptr, false);
 
     Eigen::MatrixXd tg_emission_matrix(3, 2);
     tg_emission_matrix << 1, 0, 0, 1, 0.5, 0.5;
@@ -288,7 +288,7 @@ int main() {
 
     NodeMetadata ty_metadata = NodeMetadata::create_multiple_time_link_metadata(
         "TY", 1, true, false, 1, 2);
-    ty_metadata.add_parent_link(state_node_ptr, false);
+    ty_metadata.add_parent_link(state_metadata_ptr, false);
 
     Eigen::MatrixXd ty_emission_matrix(3, 2);
     ty_emission_matrix << 0, 1, 1, 0, 0.5, 0.5;
