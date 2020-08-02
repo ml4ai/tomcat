@@ -1,5 +1,8 @@
 #include "Sampler.h"
 
+#include <filesystem>
+#include <fstream>
+
 #include <fmt/format.h>
 
 namespace tomcat {
@@ -47,7 +50,19 @@ namespace tomcat {
 
         void Sampler::save_samples_to_folder(
             const std::string& output_folder) const {
-            // TODO
+
+            std::filesystem::path folder(output_folder);
+
+            for (const auto& mapping : this->node_to_samples) {
+                std::filesystem::path filename(mapping.first + ".txt");
+                std::filesystem::path filepath = folder / filename;
+
+                std::ofstream file(filepath);
+                if (file.is_open()) {
+                    file << mapping.second;
+                    file.close();
+                }
+            }
         }
 
         void Sampler::check_data(int num_samples) const {

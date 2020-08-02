@@ -1,5 +1,8 @@
 #include "DynamicBayesNet.h"
 
+#include <filesystem>
+#include <fstream>
+
 #include <boost/graph/topological_sort.hpp>
 
 namespace tomcat {
@@ -35,10 +38,9 @@ namespace tomcat {
         void DynamicBayesNet::unroll(int time_steps, bool force) {
             if (time_steps != this->time_steps || force) {
                 this->time_steps = time_steps;
-                RandomVariableNode::NodeMap parameter_nodes_map =
-                    this->create_vertices_from_nodes();
+                this->create_vertices_from_nodes();
                 this->create_edges();
-                this->update_cpds(parameter_nodes_map);
+                this->update_cpds();
 
                 for (auto edge = boost::edges(this->graph).first;
                      edge != boost::edges(this->graph).second;
@@ -48,11 +50,8 @@ namespace tomcat {
             }
         }
 
-        RandomVariableNode::NodeMap
+        void
         DynamicBayesNet::create_vertices_from_nodes() {
-
-            RandomVariableNode::NodeMap parameter_nodes_map;
-
             for (const auto& node : this->node_templates) {
                 const std::shared_ptr<NodeMetadata> metadata =
                     node.get_metadata();
@@ -63,7 +62,7 @@ namespace tomcat {
 
                         VertexData vertex_data = this->add_vertex(node, t);
                         if (vertex_data.node->get_metadata()->is_parameter()) {
-                            parameter_nodes_map[vertex_data.node
+                            this->parameter_nodes_map[vertex_data.node
                                                     ->get_timed_name()] =
                                 vertex_data.node;
                         }
@@ -73,14 +72,12 @@ namespace tomcat {
                     VertexData vertex_data = this->add_vertex(
                         node, metadata->get_initial_time_step());
                     if (vertex_data.node->get_metadata()->is_parameter()) {
-                        parameter_nodes_map[vertex_data.node
+                        this->parameter_nodes_map[vertex_data.node
                                                 ->get_timed_name()] =
                             vertex_data.node;
                     }
                 }
             }
-
-            return parameter_nodes_map;
         }
 
         VertexData
@@ -208,8 +205,7 @@ namespace tomcat {
             }
         }
 
-        void DynamicBayesNet::update_cpds(
-            RandomVariableNode::NodeMap& parameter_nodes_map) {
+        void DynamicBayesNet::update_cpds() {
             for (const auto& node_template : this->node_templates) {
                 const std::shared_ptr<NodeMetadata> metadata =
                     node_template.get_metadata();
@@ -225,7 +221,7 @@ namespace tomcat {
                                     t));
                             VertexData vertex_data = this->graph[vertex_id];
                             vertex_data.node->update_cpd_dependencies(
-                                parameter_nodes_map, t);
+                                this->parameter_nodes_map, t);
                         }
                     }
                     else {
@@ -235,7 +231,7 @@ namespace tomcat {
                             node_template.get_metadata()->get_timed_name(t));
                         VertexData vertex_data = this->graph[vertex_id];
                         vertex_data.node->update_cpd_dependencies(
-                            parameter_nodes_map, t);
+                            this->parameter_nodes_map, t);
                     }
                 }
             }
@@ -287,8 +283,20 @@ namespace tomcat {
         }
 
         void DynamicBayesNet::save_to_folder(
-            const std::string& output_directory) const {
-            // TODO
+            const std::string& output_folder) const {
+
+            std::filesystem::path folder(output_folder);
+
+            for (const auto& mapping : this->parameter_nodes_map) {
+                std::filesystem::path filename(mapping.first + ".txt");
+                std::filesystem::path filepath = folder / filename;
+
+                std::ofstream file(filepath);
+                if (file.is_open()) {
+                    file << mapping.second->get_assignment();
+                    file.close();
+                }
+            }
         }
 
         void

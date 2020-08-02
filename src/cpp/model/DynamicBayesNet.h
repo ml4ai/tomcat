@@ -47,6 +47,10 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Copy & Move constructors/assignments
             //------------------------------------------------------------------
+
+            // TODO - reevaluate if the default copy is enough. I guess that
+            //  sampling from a DBN is changing the assignments of the nodes in
+            //  the original DBN passed to the sampler.
             DynamicBayesNet(const DynamicBayesNet&) = default;
 
             DynamicBayesNet& operator=(const DynamicBayesNet&) = default;
@@ -157,32 +161,13 @@ namespace tomcat {
             typedef std::unordered_map<std::string, int> IDMap;
 
             //------------------------------------------------------------------
-            // Data members
+            // Member functions
             //------------------------------------------------------------------
-            Graph graph;
-            IDMap name_to_id;
-
-            // Node templates will be used to create concrete instances of
-            // nodes over time (timed node instances/objects), which will be
-            // stored in the vertices of the unrolled DBN.
-            //
-            // The original list is preserved to allow multiple calls of the
-            // unrolled method based on the original set of nodes.
-            // TODO - change to a set to forbid adding the same node multiple
-            //  times
-            std::vector<RandomVariableNode> node_templates;
-
-            // If unrolled, the number of time steps the DBN was unrolled into
-            int time_steps;
 
             /**
              * Creates vertices from a list of node templates.
-             *
-             * @return Mapping between parameter node's names and contents. This
-             * mapping will be used for updating node dependent CPDs with
-             * concrete timed instances of the parameter nodes they depend on.
              */
-            RandomVariableNode::NodeMap create_vertices_from_nodes();
+            void create_vertices_from_nodes();
 
             /**
              * Creates a vertex in the graph and stores a node timed instance in
@@ -219,11 +204,31 @@ namespace tomcat {
             /**
              * Replaces node objects in the CPDs that depend on other nodes with
              * their concrete timed instance replica in the unrolled DBN.
-             *
-             * @param parameter_nodes_map: Mapping between a timed instance
-             * parameter node's label and its node object.
              */
-            void update_cpds(RandomVariableNode::NodeMap& parameter_nodes_map);
+            void update_cpds();
+
+            //------------------------------------------------------------------
+            // Data members
+            //------------------------------------------------------------------
+            Graph graph;
+            IDMap name_to_id;
+
+            // Mapping between a timed instance parameter node's label and its
+            // node object.
+            Node::NodeMap parameter_nodes_map;
+
+            // Node templates will be used to create concrete instances of
+            // nodes over time (timed node instances/objects), which will be
+            // stored in the vertices of the unrolled DBN.
+            //
+            // The original list is preserved to allow multiple calls of the
+            // unrolled method based on the original set of nodes.
+            // TODO - change to a set to forbid adding the same node multiple
+            //  times
+            std::vector<RandomVariableNode> node_templates;
+
+            // If unrolled, the number of time steps the DBN was unrolled into
+            int time_steps;
         };
 
     } // namespace model

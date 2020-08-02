@@ -8,10 +8,13 @@
 #include "NodeMetadata.h"
 #include "RandomVariableNode.h"
 #include <eigen3/Eigen/Dense>
+#include <filesystem>
+#include <fstream>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
 #include <iostream>
 #include <memory>
+#include <unistd.h>
 #include <variant>
 
 using namespace Eigen;
@@ -271,9 +274,9 @@ int main() {
         std::make_shared<RandomVariableNode>(state_node);
     state_metadata_ptr->add_parent_link(state_metadata_ptr, true);
     state_metadata_ptr->add_parent_link(state_prior_metadata_ptr, false);
-//    state_metadata_ptr->add_parent_link(theta_s0_metadata_ptr, true);
-//    state_metadata_ptr->add_parent_link(theta_s1_metadata_ptr, true);
-//    state_metadata_ptr->add_parent_link(theta_s2_metadata_ptr, true);
+    //    state_metadata_ptr->add_parent_link(theta_s0_metadata_ptr, true);
+    //    state_metadata_ptr->add_parent_link(theta_s1_metadata_ptr, true);
+    //    state_metadata_ptr->add_parent_link(theta_s2_metadata_ptr, true);
 
     NodeMetadata tg_metadata = NodeMetadata::create_multiple_time_link_metadata(
         "TG", 1, true, false, 1, 2);
@@ -302,9 +305,9 @@ int main() {
     dbn.add_node_template(std::move(tg_node));
     dbn.add_node_template(std::move(ty_node));
     dbn.add_node_template(std::move(prior_state_node));
-//    dbn.add_node_template(std::move(theta_s0_node));
-//    dbn.add_node_template(std::move(theta_s1_node));
-//    dbn.add_node_template(std::move(theta_s2_node));
+    //    dbn.add_node_template(std::move(theta_s0_node));
+    //    dbn.add_node_template(std::move(theta_s1_node));
+    //    dbn.add_node_template(std::move(theta_s2_node));
 
     dbn.unroll(3, false);
 
@@ -318,6 +321,7 @@ int main() {
     std::shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
     AncestralSampler sampler(dbn, gen);
     sampler.sample(5, 10);
+    sampler.sample(5, 10);
 
     std::cout << "States" << std::endl;
     std::cout << sampler.get_samples("State") << std::endl;
@@ -325,4 +329,26 @@ int main() {
     std::cout << sampler.get_samples("TG") << std::endl;
     std::cout << "TYs" << std::endl;
     std::cout << sampler.get_samples("TY") << std::endl;
+
+    sampler.save_samples_to_folder("../../data/samples");
+
+    Eigen::VectorXd prior(3);
+    prior << 0.5, 0.2, 0.3;
+    prior_state_node_ptr->set_assignment(prior);
+    dbn.save_to_folder("../../data/model");
+//
+//    char buff[FILENAME_MAX]; // create string buffer to hold path
+//    getcwd(buff, FILENAME_MAX);
+//    std::filesystem::path current_dir = buff;
+//
+//    std::filesystem::path folder = current_dir.parent_path().parent_path() /
+//                                   std::filesystem::path("data/samples");
+//
+//    std::filesystem::path filepath = folder / std::filesystem::path("test.txt");
+//
+//    std::cout << filepath;
+//    std::ofstream file("../../data/samples/test2.txt");
+//    std::cout << "Writing into a file";
+//    file << "Teste Maior";
+//    file.close();
 }
