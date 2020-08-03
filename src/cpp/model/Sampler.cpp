@@ -1,9 +1,8 @@
 #include "Sampler.h"
 
-#include <filesystem>
-#include <fstream>
-
 #include <fmt/format.h>
+
+#include "FileHandler.h"
 
 namespace tomcat {
     namespace model {
@@ -51,17 +50,10 @@ namespace tomcat {
         void Sampler::save_samples_to_folder(
             const std::string& output_folder) const {
 
-            std::filesystem::path folder(output_folder);
-
             for (const auto& mapping : this->node_to_samples) {
-                std::filesystem::path filename(mapping.first + ".txt");
-                std::filesystem::path filepath = folder / filename;
-
-                std::ofstream file(filepath);
-                if (file.is_open()) {
-                    file << mapping.second;
-                    file.close();
-                }
+                std::string filename = mapping.first + ".txt";
+                std::string filepath = get_filepath(output_folder, filename);
+                save_matrix_to_file(filepath, mapping.second);
             }
         }
 

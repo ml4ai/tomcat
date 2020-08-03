@@ -120,11 +120,5 @@ namespace tomcat {
             return ss.str();
         }
 
-        //----------------------------------------------------------------------
-        // Remove definitions
-        //----------------------------------------------------------------------
-
-        // No definitions in this file
-
     } // namespace model
 } // namespace tomcat

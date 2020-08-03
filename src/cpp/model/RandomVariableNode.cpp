@@ -171,6 +171,12 @@ namespace tomcat {
             return cpd->sample(random_generator, labels_to_nodes);
         }
 
+        void RandomVariableNode::replace_cpd_parameter_by_value(const std::string& parameter_timed_name, Eigen::VectorXd value) {
+            for (const auto& mapping : this->cpds) {
+
+            }
+        }
+
         // ---------------------------------------------------------------------
         // Getters & Setters
         // ---------------------------------------------------------------------
@@ -183,11 +189,6 @@ namespace tomcat {
         void RandomVariableNode::set_assignment(Eigen::VectorXd assignment) {
             this->assignment = std::move(assignment);
         }
-
-        //----------------------------------------------------------------------
-        // Remove definitions
-        //----------------------------------------------------------------------
-#undef exists
 
     } // namespace model
 } // namespace tomcat

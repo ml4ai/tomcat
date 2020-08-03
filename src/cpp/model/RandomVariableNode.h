@@ -125,6 +125,16 @@ namespace tomcat {
                    const std::vector<std::shared_ptr<RandomVariableNode>>&
                        parent_nodes) const;
 
+            /**
+             * Replaces a parameter node in the node's CPDs by a constant value.
+             *
+             * @param parameter_timed_name: parameter node's timed name
+             * @param value: fixed parameters of a distribution encoded by the
+             * parameter node
+             */
+            void replace_cpd_parameter_by_value(
+                const std::string& parameter_timed_name, Eigen::VectorXd value);
+
             // -----------------------------------------------------------------
             // Getters & Setters
             // -----------------------------------------------------------------

@@ -60,11 +60,5 @@ namespace tomcat {
             this->parameter_table = cpd.parameter_table;
         }
 
-        //----------------------------------------------------------------------
-        // Remove definitions
-        //----------------------------------------------------------------------
-
-        // No definitions in this file
-
     } // namespace model
 } // namespace tomcat

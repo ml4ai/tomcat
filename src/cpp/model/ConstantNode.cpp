@@ -64,10 +64,6 @@ namespace tomcat {
             return this->metadata->get_label();
         }
 
-//        std::string ConstantNode::get_timed_name(int time_step) const {
-//            return this->metadata->get_label();
-//        }
-
         std::string ConstantNode::get_description() const {
             if (this->assignment.size() == 1) {
                 std::stringstream assignment_string;
@@ -86,12 +82,6 @@ namespace tomcat {
                                    assignment_string.str());
             }
         }
-
-        //----------------------------------------------------------------------
-        // Remove definitions
-        //----------------------------------------------------------------------
-
-        // No definitions in this file
 
     } // namespace model
 } // namespace tomcat

@@ -132,11 +132,5 @@ namespace tomcat {
 
         int NodeMetadata::get_sample_size() const { return sample_size; }
 
-        //----------------------------------------------------------------------
-        // Remove definitions
-        //----------------------------------------------------------------------
-
-        // No definitions in this file
-
     } // namespace model
 } // namespace tomcat

@@ -91,10 +91,5 @@ namespace tomcat {
             return std::make_unique<AncestralSampler>(*this);
         }
 
-        //----------------------------------------------------------------------
-        // Remove definitions
-        //----------------------------------------------------------------------
-#undef exists
-
     } // namespace model
 } // namespace tomcat

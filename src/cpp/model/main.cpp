@@ -331,11 +331,8 @@ int main() {
     std::cout << sampler.get_samples("TY") << std::endl;
 
     sampler.save_samples_to_folder("../../data/samples");
-
-    Eigen::VectorXd prior(3);
-    prior << 0.5, 0.2, 0.3;
-    prior_state_node_ptr->set_assignment(prior);
     dbn.save_to_folder("../../data/model");
+    dbn.load_from_folder("../../data/model");
 //
 //    char buff[FILENAME_MAX]; // create string buffer to hold path
 //    getcwd(buff, FILENAME_MAX);

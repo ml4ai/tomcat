@@ -43,11 +43,5 @@ namespace tomcat {
 
         const Eigen::VectorXd& Node::get_assignment() const { return assignment; }
 
-        //----------------------------------------------------------------------
-        // Remove definitions
-        //----------------------------------------------------------------------
-
-        // No definitions in this file
-
     } // namespace model
 } // namespace tomcat

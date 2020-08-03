@@ -81,11 +81,5 @@ namespace tomcat {
             return parent_node_label_order;
         }
 
-        //----------------------------------------------------------------------
-        // Remove definitions
-        //----------------------------------------------------------------------
-
-        // No definitions in this file
-
     } // namespace model
 } // namespace tomcat

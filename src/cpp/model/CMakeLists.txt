@@ -48,7 +48,8 @@ add_library(tomcat_model_libs
         DirichletCPD.cpp
         DynamicBayesNet.cpp
         Sampler.cpp
-        AncestralSampler.cpp)
+        AncestralSampler.cpp
+        FileHandler.cpp)
 
 # Todo make code coverage work on Linux as well.
 if(APPLE AND CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")

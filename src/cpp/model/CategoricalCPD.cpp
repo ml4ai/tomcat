@@ -141,11 +141,5 @@ namespace tomcat {
                 std::find(sample_array, sample_array + array_size, 1));
         }
 
-        //----------------------------------------------------------------------
-        // Remove definitions
-        //----------------------------------------------------------------------
-
-        // No definitions in this file
-
     } // namespace model
 } // namespace tomcat

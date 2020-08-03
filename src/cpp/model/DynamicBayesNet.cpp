@@ -1,9 +1,9 @@
 #include "DynamicBayesNet.h"
 
-#include <filesystem>
-#include <fstream>
-
 #include <boost/graph/topological_sort.hpp>
+
+#include "ConstantNode.h"
+#include "FileHandler.h"
 
 namespace tomcat {
     namespace model {
@@ -50,8 +50,7 @@ namespace tomcat {
             }
         }
 
-        void
-        DynamicBayesNet::create_vertices_from_nodes() {
+        void DynamicBayesNet::create_vertices_from_nodes() {
             for (const auto& node : this->node_templates) {
                 const std::shared_ptr<NodeMetadata> metadata =
                     node.get_metadata();
@@ -63,7 +62,7 @@ namespace tomcat {
                         VertexData vertex_data = this->add_vertex(node, t);
                         if (vertex_data.node->get_metadata()->is_parameter()) {
                             this->parameter_nodes_map[vertex_data.node
-                                                    ->get_timed_name()] =
+                                                          ->get_timed_name()] =
                                 vertex_data.node;
                         }
                     }
@@ -73,7 +72,7 @@ namespace tomcat {
                         node, metadata->get_initial_time_step());
                     if (vertex_data.node->get_metadata()->is_parameter()) {
                         this->parameter_nodes_map[vertex_data.node
-                                                ->get_timed_name()] =
+                                                      ->get_timed_name()] =
                             vertex_data.node;
                     }
                 }
@@ -288,20 +287,41 @@ namespace tomcat {
             std::filesystem::path folder(output_folder);
 
             for (const auto& mapping : this->parameter_nodes_map) {
-                std::filesystem::path filename(mapping.first + ".txt");
-                std::filesystem::path filepath = folder / filename;
-
-                std::ofstream file(filepath);
-                if (file.is_open()) {
-                    file << mapping.second->get_assignment();
-                    file.close();
-                }
+                std::string filename = mapping.first + ".txt";
+                std::string filepath = get_filepath(output_folder, filename);
+                save_matrix_to_file(filepath, mapping.second->get_assignment());
             }
         }
 
         void
-        DynamicBayesNet::load_from_folder(const std::string& input_directory) {
-            // TODO
+        DynamicBayesNet::load_from_folder(const std::string& input_folder) {
+            for (const auto& file :
+                 std::filesystem::directory_iterator(input_folder)) {
+
+                std::string filename = file.path().filename();
+                std::string filepath = get_filepath(input_folder, filename);
+                std::string parameter_timed_name = remove_extension(filename);
+                Eigen::VectorXd assignment = read_matrix_from_file(filepath);
+
+                // Set loaded vector as assignment of the corresponding
+                // parameter node.
+                std::shared_ptr<Node> parameter_node =
+                    this->parameter_nodes_map.at(parameter_timed_name);
+                dynamic_cast<RandomVariableNode*>(parameter_node.get())
+                    ->set_assignment(assignment);
+
+                // Removing the parameter node from the vertex will make the
+                // assignment of such node to be permanent as it's not part of
+                // the graph anymore and won't be retrieved by any sampling
+                // sampling process.
+                int vertex_id = this->name_to_id.at(parameter_timed_name);
+                boost::remove_vertex(vertex_id, this->graph);
+
+                // Not required but since it's not part of the graph anymore, it
+                // can be removed from auxiliary structures.
+                this->name_to_id.erase(parameter_timed_name);
+                this->parameter_nodes_map.erase(parameter_timed_name);
+            }
         }
 
         //------------------------------------------------------------------
