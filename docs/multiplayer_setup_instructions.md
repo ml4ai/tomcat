@@ -38,7 +38,7 @@ numbers need to be consistent with the ones in the configuration file as well.
 After the server and all the client instances are ready, run this command on
 the server side to start your mission:
 
-    ./build/bin/runExperiment --mission 1 --multiplayer
+    ./build/bin/runMission --mission 1 --multiplayer
 
 The `--mission` flag specifies the mission to launch and the `--multiplayer`
 flag will treat the mission as a multiplayer one.

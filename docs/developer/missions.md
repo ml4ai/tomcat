@@ -68,7 +68,7 @@ to add some code to the C++ side as well.
   - Update `id_to_world_folder_map` with the location of the world folder under
     `data/worlds`.
 - Update the description of the `--mission` command-line argument
-  `src/cpp/runExperiment.cpp` with a short description of `ExampleMission`.
+  `src/cpp/runMission.cpp` with a short description of `ExampleMission`.
 - Add a line to the comments in `tools/configuration_helpers` describing the
   `MAIN_MISSION` environment variable about `ExampleMission`.
 

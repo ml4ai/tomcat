@@ -15,16 +15,16 @@
 
 The `sar`world is expected to be updated often, so the number attached to the name
 will reflect the current version number.`x_x_x` is simply the placeholder to
-represent this number. 
+represent this number.
 
-1\. Download the `sar_x_x_x` world from this Drive link: 
+1\. Download the `sar_x_x_x` world from this Drive link:
 
     https://drive.google.com/open?id=19PjgHmUeJmOQ4DS4dAy-4bgax2_TnJRp
 
-Save it somewhere convenient and unzip the file. 
+Save it somewhere convenient and unzip the file.
 
 Henceforth, `sar_x_x_x` refers to the folder you got from unzipping.
-	
+
 **NOTE** : Ensure the path to which you save this folder has no white spaces.
 
 Ex:  `Documents/folder name` is not allowed, but `Documents/folder_name` is allowed
@@ -40,7 +40,7 @@ Ex:  `Documents/folder name` is not allowed, but `Documents/folder_name` is allo
 
 This is because the _entire_ `sar_x_x_x`  folder represents the Minecraft world. It is not meant to hold anything else.
 
-I saved mine in: 
+I saved mine in:
 `/home/$USER/Documents/TOMCAT/tomcat/external/malmo/sample_missions` to keep it with all the other missions
 
 
@@ -57,8 +57,8 @@ the tutorial go to the line `<FileWorldGenerator src = “” />`
 Within the quotes specify the path to which you saved your `sar_x_x_x` folder.
 
 Again,the **Minecraft world is the whole folder and not just one file inside the folder, so the path should end in:** `sar_x_x_x`
-	
-Refer to `file_gen.xml` to see how I specified my path. 
+
+Refer to `file_gen.xml` to see how I specified my path.
 
 **It is important to note here that `~` and `$USER` won't work as placeholders inside the XML**
 
@@ -69,8 +69,8 @@ The whole path needs to be specified using `home/<your username>`
 
 
 6\. Launch Minecraft from the build directory in tomcat, and in a separate terminal from inside build
-    
-    run ./bin/runExperiment –mission <Path to the file_gen_skeleton.xml you modified>
+
+    run ./bin/runMission –mission <Path to the file_gen_skeleton.xml you modified>
 
 
 7\.	That’s it! You should be inside the world I built.
@@ -88,7 +88,7 @@ The whole path needs to be specified using `home/<your username>`
 
 3\.	Name the world anything you want and hit create.
 
-This next part of the step is optional. 
+This next part of the step is optional.
 
 Select modify if you want it to be flat or use a specific seed for a certain world.
 You can also set the game-play mode to survival or creative.
@@ -112,9 +112,9 @@ You might even experiment with command blocks. For a list of commands and how to
 
 7\. Wrapping Up:
 
-You should see the world you just played on as a folder in this directory.  You can now load this world. 
+You should see the world you just played on as a folder in this directory.  You can now load this world.
 
-It is possible to load the world into the XML from this saves directory itself; however it is not recommended. 
+It is possible to load the world into the XML from this saves directory itself; however it is not recommended.
 Many worlds will be created each time a mission is run, and this directory will become hard to manage.
 It is better to save it elsewhere and then load it in from that path.
 
