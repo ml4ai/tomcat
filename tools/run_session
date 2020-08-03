@@ -248,7 +248,7 @@ do_mission() {
     pid_runMission=$!
 
     # Subscribe to topics on the message bus and redirect the output to a file.
-    mosquitto_sub -q2 -t "observations/#"> "$messages" &
+    mosquitto_sub -q 2 -t "observations/#"> "$messages" &
 
     if [[ $CURRENT_MISSION -gt 0 ]]; then
         echo "Time limit set to ${TIME_LIMIT}."
