@@ -5,7 +5,7 @@ file(GLOB tomcat_headers CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 file(GLOB tomcat_sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 
 find_package(nlohmann_json REQUIRED)
-find_package(FMT 6 REQUIRED)
+find_package(FMT REQUIRED)
 
 add_executable(
   runMission ${tomcat_sources}
