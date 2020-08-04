@@ -26,4 +26,3 @@ that it can help future developers.
 
 The API for the Java component of ToMCAT can be found here: `Java API
 <java_api/index.html>`_
-
