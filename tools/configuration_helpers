@@ -94,6 +94,8 @@ set_local_configuration() {
     # for convenience.
 
     export RM="/bin/rm -rf"
+
+    export OPENFACE_MODELS_DIR=${OPENFACE_MODELS_DIR:-"$TOMCAT"/data/OpenFace_models}
 }
 
 # Detect the OS, set some useful environment variables.
@@ -104,7 +106,15 @@ detect_os() {
 
         # We set the path to MacPorts so that users don't necessarily need to
         # mess with their ~/.bash_profile.
-        export PATH="$PATH:/opt/local/bin:/opt/local/sbin"
+        # Setting the environment variable IGNORE_MACPORTS to be 1 disables
+        # this (useful for testing and debugging Homebrew-related errors on
+        # machines that have both Homebrew and MacPorts.
+        if (( ${IGNORE_MACPORTS:-0} )); then
+            echo "IGNORE_MACPORTS is set to 1, so we will ignore the existing"\
+                 "MacPorts installation and proceed with Homebrew."
+        else
+            export PATH="$PATH:/opt/local/bin:/opt/local/sbin"
+        fi
 
         if (( MACOS_MINOR_VERSION < 15 )); then
             echo "macOS version older than 10.15 (Catalina). "\
@@ -134,8 +144,20 @@ detect_os() {
         export JAVA_HOME="$TOMCAT"/external/jdk8u232-b09/Contents/Home
     elif [[ "$OSTYPE" == "linux-gnu" ]]; then
         echo "Linux detected."
+        if [[ ! -f /etc/os-release ]]; then
+            echo "The file /etc/os-release could not be found. This means that"
+            " we cannot determine the Linux distro and version. Exiting now."
+            exit 1
+        else
+            export DISTRO=$(grep 'ID=' /etc/os-release \
+                            | tr -d '"' | head -n1 | cut -d '=' -f2)
+            export DISTRO_MAJOR_VERSION=$(grep 'VERSION_ID=' /etc/os-release \
+                                          | tr -d '"' \
+                                          | cut -d '=' -f2 \
+                                          | cut -d '.' -f1)
+        fi
         export JAVA_HOME="$TOMCAT"/external/jdk8u232-b09/
-      else
+    else
         echo "OSTYPE is not darwin* or linux-gnu. Most likely this operating "\
              "system is not supported. Exiting now."
         exit 1

@@ -9,7 +9,7 @@ export TOMCAT
 
 echo "Installing ToMCAT dependencies."
 
-COMMON_MACOS_DEPS="cmake boost doxygen ffmpeg gradle mosquitto nlohmann-json openssl yaml-cpp"
+COMMON_MACOS_DEPS="cmake boost doxygen ffmpeg gradle mosquitto nlohmann-json openssl yaml-cpp dlib openblas"
 __install_dependencies_using_macports() {
     echo "'port' executable detected, assuming that MacPorts"
     echo "(https://www.macports.org) is installed and is the package manager."
@@ -20,7 +20,7 @@ __install_dependencies_using_macports() {
 
     if ! sudo port selfupdate; then exit 1; fi
 
-    local macports_deps="libfmt openblas"
+    local macports_deps="libfmt opencv4"
     for dep in $COMMON_MACOS_DEPS $macports_deps; do
         if ! sudo port -N install $dep; then
             echo "Unable to install $dep using MacPorts. Exiting."
@@ -32,9 +32,6 @@ __install_dependencies_using_macports() {
     if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
         if ! sudo port -N install blackhole switchaudio-osx; then exit 1; fi
     fi
-
-    # TODO When OpenFace is reintroduced, add dlib, opencv, openblas installation
-    # back here.
 }
 
 __install_dependencies_using_homebrew() {
@@ -43,10 +40,9 @@ __install_dependencies_using_homebrew() {
 
     echo "Installing ToMCAT dependencies using Homebrew."
 
-    if ! brew update; then exit 1; fi
+    if ! brew update --verbose; then exit 1; fi
 
-
-    local homebrew_deps="fmt"
+    local homebrew_deps="fmt opencv"
     for dep in $COMMON_MACOS_DEPS $homebrew_deps; do
         brew install $dep
         # We do not require exit codes for Homebrew installs to be 0 since
@@ -74,8 +70,6 @@ __install_dependencies_using_homebrew() {
       if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
     fi;
 
-    # TODO When OpenFace is reintroduced, add dlib, opencv, openblas
-    # installation back here.
 }
 
 __install_dependencies_using_apt() {
@@ -98,39 +92,54 @@ __install_dependencies_using_apt() {
         mosquitto \
         mosquitto-clients \
         curl \
+        libopenblas-dev \
         openssl \
         zlib1g-dev \
         libbz2-dev \
         libyaml-cpp-dev
     if [[ $? -ne 0 ]]; then exit 1; fi
 
-    local ubuntu_major_version=$(lsb_release -d | cut -d " " -f2 \
-                                                | cut -d "." -f1)
-    if [[ $ubuntu_major_version -le 18 ]]; then
-        # On Ubuntu 18.04 and lower, the required version of the nlohmann-json
-        # library is not available using apt-get, so we install from source.
+    # On Ubuntu 18.04 and older, the required version of the nlohmann-json JSON
+    # library is not available using apt-get, so we install from source.
+    if [[ $DISTRO == ubuntu && $DISTRO_MAJOR_VERSION -le 18 ]]; then
         if ! "$TOMCAT"/tools/install_from_source/nlohmann-json; then
-            echo "Failed to install nlohmann-json from source. Exiting now."
+            echo "Failed to install nlohmann-json from source."
             exit 1
         fi
-    else
-        sudo apt install nlohmann-json3-dev
-    fi
+        # We do not install dlib from source on the Github Actions Ubuntu 18.04
+        # runner, since this causes timeouts.
+        if (( CI )); then
+            if ! "$TOMCAT"/tools/install_from_source/boost; then
+                echo "Failed to install Boost from source. Exiting now."
+                exit 1
+            fi
 
-    if (( CI )); then
+        fi
+    else
+        if ! sudo apt install -y nlohmann-json3-dev; then
+            echo "Failed to install nlohmann-json3-dev using apt."
+            exit 1
+        fi
+
+        # The versions of dlib available using apt are not compatible with
+        # OpenCV 4, so we install the latest version from master.
+        if ! "$TOMCAT"/tools/install_from_source/dlib; then
+            echo "Failed to install dlib from source."
+            exit 1
+        fi
+
+
+        if ! sudo apt install -y libopencv-dev; then
+            echo "Failed to install libopencv-dev using apt."
+            exit 1
+        fi
+
         # The Github Actions Ubuntu 18.04 VM already has Boost installed, but not
         # all the components we need. So we will use apt-get to install the missing
         # ones.
         if ! sudo apt-get install -y libboost-all-dev; then exit 1; fi
-    else
-        if ! "$TOMCAT"/tools/install_from_source/boost; then
-            echo "Failed to install Boost from source. Exiting now."
-            exit 1
-        fi
-    fi
 
-    # TODO - when OpenFace gets added back, add opencv, openblas, and dlib as
-    # dependencies.
+    fi
 }
 
 __install_dependencies() {

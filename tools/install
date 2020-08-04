@@ -27,19 +27,43 @@ __build_tomcat() {
         /bin/rm -rf build
         mkdir build
 
-        pushd build > /dev/null 
-            if [[ $CI -eq 1 && $OSTYPE == "linux-gnu" ]]; then
-                cmake ${TOMCAT} -DBoost_ARCHITECTURE=-x64\
-                                -DBOOST_ROOT=$BOOST_ROOT_1_69_0
-                if [[ $? -ne 0 ]]; then exit 1; fi
-            else
-                if ! cmake ${TOMCAT}; then exit 1; fi
-            fi;
+        pushd build > /dev/null
+            if (( CI )); then
+                if [[ $OSTYPE == "linux-gnu" ]]; then
+                    # On Github actions, the runner Ubuntu 18.04 has Boost 1.69
+                    # installed, we set BOOST_ROOT=$BOOST_ROOT_1_69_0 to build
+                    # tomcat with this version.
+                    # We also disable the building of the facesensor executable
+                    # on Ubuntu 18.04 as building it properly on 18.04 would
+                    # require building OpenCV and and Dlib from source, which
+                    # causes timeouts.
+                    if [[ $DISTRO_MAJOR_VERSION -le 18 ]]; then
+                        cmake ${TOMCAT} -DBOOST_ROOT=$BOOST_ROOT_1_69_0\
+                                        -DBUILD_FACESENSOR=OFF
+                        if [[ $? -ne 0 ]]; then exit 1; fi
+                    else
+                        cmake ${TOMCAT}
+                        if [[ $? -ne 0 ]]; then exit 1; fi
+                    fi
+                else
+                    # On the macOS Github Actions runner, there is a problem
+                    # with building against OpenCV with Homebrew - something to
+                    # do with XCode and the Command Line Tools not playing
+                    # nicely together. The line below is a fix for this issue.
+                    sudo xcode-select -s /Library/Developer/CommandLineTools
+                    if ! cmake ${TOMCAT}; then exit 1; fi
+                fi
+            fi
 
-            if ! make -j; then exit 1; fi
-            if ! make -j Minecraft; then exit 1; fi
-        popd > /dev/null 
-    popd > /dev/null 
+            if [[ $OSTYPE == "linux-gnu" ]]; then
+                    if ! make -j $(nproc); then exit 1; fi
+                    if ! make -j $(nproc) Minecraft; then exit 1; fi
+            else
+                if ! make -j; then exit 1; fi
+                if ! make -j Minecraft; then exit 1; fi
+            fi
+        popd > /dev/null
+    popd > /dev/null
 }
 
 __download_tomcat_data() {

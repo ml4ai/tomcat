@@ -48,72 +48,73 @@
 #include "PAW.h"
 
 namespace LandmarkDetector {
-  using namespace std;
-  //===========================================================================
-  //
-  // Checking if landmark detection was successful using a CNN
-  // Using multiple validators trained add different views
-  // The regressor outputs 1 for ideal alignment and 0 for worst alignment
-  //===========================================================================
-  class DetectionValidator {
+    using namespace std;
+    //===========================================================================
+    //
+    // Checking if landmark detection was successful using a CNN
+    // Using multiple validators trained add different views
+    // The regressor outputs 1 for ideal alignment and 0 for worst alignment
+    //===========================================================================
+    class DetectionValidator {
 
-  public:
-    // The orientations of each of the landmark detection validator
-    vector<cv::Vec3d> orientations;
+      public:
+        // The orientations of each of the landmark detection validator
+        vector<cv::Vec3d> orientations;
 
-    // Piecewise affine warps to the reference shape (per orientation)
-    vector<PAW> paws;
+        // Piecewise affine warps to the reference shape (per orientation)
+        vector<PAW> paws;
 
-    //==========================================
-    // Convolutional Neural Network
+        //==========================================
+        // Convolutional Neural Network
 
-    // CNN layers for each view
-    // view -> layer
-    vector<vector<vector<vector<cv::Mat_<float>>>>> cnn_convolutional_layers;
-    vector<vector<cv::Mat_<float>>> cnn_convolutional_layers_weights;
-    vector<vector<cv::Mat_<float>>> cnn_convolutional_layers_im2col_precomp;
+        // CNN layers for each view
+        // view -> layer
+        vector<vector<vector<vector<cv::Mat_<float>>>>>
+            cnn_convolutional_layers;
+        vector<vector<cv::Mat_<float>>> cnn_convolutional_layers_weights;
+        vector<vector<cv::Mat_<float>>> cnn_convolutional_layers_im2col_precomp;
 
-    vector<vector<int>> cnn_subsampling_layers;
-    vector<vector<cv::Mat_<float>>> cnn_fully_connected_layers_weights;
-    vector<vector<cv::Mat_<float>>> cnn_fully_connected_layers_biases;
-    // NEW CNN: 0 - convolutional, 1 - max pooling (2x2 stride 2), 2 - fully
-    // connected, 3 - relu, 4 - sigmoid
-    vector<vector<int>> cnn_layer_types;
+        vector<vector<int>> cnn_subsampling_layers;
+        vector<vector<cv::Mat_<float>>> cnn_fully_connected_layers_weights;
+        vector<vector<cv::Mat_<float>>> cnn_fully_connected_layers_biases;
+        // NEW CNN: 0 - convolutional, 1 - max pooling (2x2 stride 2), 2 - fully
+        // connected, 3 - relu, 4 - sigmoid
+        vector<vector<int>> cnn_layer_types;
 
-    //==========================================
+        //==========================================
 
-    // Normalisation for face validation
-    vector<cv::Mat_<float>> mean_images;
-    vector<cv::Mat_<float>> standard_deviations;
+        // Normalisation for face validation
+        vector<cv::Mat_<float>> mean_images;
+        vector<cv::Mat_<float>> standard_deviations;
 
-    // Default constructor
-    DetectionValidator() { ; }
+        // Default constructor
+        DetectionValidator() { ; }
 
-    // Copy constructor
-    DetectionValidator(const DetectionValidator& other);
+        // Copy constructor
+        DetectionValidator(const DetectionValidator& other);
 
-    // Given an image, orientation and detected landmarks output the result of
-    // the appropriate regressor
-    float Check(const cv::Vec3d& orientation,
-                const cv::Mat_<uchar>& intensity_img,
-                cv::Mat_<float>& detected_landmarks);
+        // Given an image, orientation and detected landmarks output the result
+        // of the appropriate regressor
+        float Check(const cv::Vec3d& orientation,
+                    const cv::Mat_<uchar>& intensity_img,
+                    cv::Mat_<float>& detected_landmarks);
 
-    // Reading in the model
-    void Read(string location);
+        // Reading in the model
+        void Read(string location);
 
-    // Getting the closest view center based on orientation
-    int GetViewId(const cv::Vec3d& orientation) const;
+        // Getting the closest view center based on orientation
+        int GetViewId(const cv::Vec3d& orientation) const;
 
-  private:
-    // The actual regressor application on the image
+      private:
+        // The actual regressor application on the image
 
-    // Convolutional Neural Network
-    double CheckCNN(const cv::Mat_<float>& warped_img, int view_id);
+        // Convolutional Neural Network
+        double CheckCNN(const cv::Mat_<float>& warped_img, int view_id);
 
-    // A normalisation helper
-    void NormaliseWarpedToVector(const cv::Mat_<float>& warped_img,
-                                 cv::Mat_<float>& feature_vec,
-                                 int view_id);
-  };
+        // A normalisation helper
+        void NormaliseWarpedToVector(const cv::Mat_<float>& warped_img,
+                                     cv::Mat_<float>& feature_vec,
+                                     int view_id);
+    };
 
 } // namespace LandmarkDetector

@@ -1,6 +1,6 @@
+#include "Mission.h"
 #include "FileHandler.h"
 #include "LocalAgent.h"
-#include "Mission.h"
 #include "utils.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem.hpp>

@@ -30,64 +30,64 @@
 #include <thread>
 
 template <typename T> class ConcurrentQueue {
-public:
-  T pop() {
-    std::unique_lock<std::mutex> mlock(mutex_);
-    while (queue_.empty()) {
-      cond_empty_.wait(mlock);
+  public:
+    T pop() {
+        std::unique_lock<std::mutex> mlock(mutex_);
+        while (queue_.empty()) {
+            cond_empty_.wait(mlock);
+        }
+        auto val = queue_.front();
+        queue_.pop();
+        mlock.unlock();
+        cond_full_.notify_one();
+        return val;
     }
-    auto val = queue_.front();
-    queue_.pop();
-    mlock.unlock();
-    cond_full_.notify_one();
-    return val;
-  }
 
-  void pop(T& item) {
-    std::unique_lock<std::mutex> mlock(mutex_);
-    while (queue_.empty()) {
-      cond_empty_.wait(mlock);
+    void pop(T& item) {
+        std::unique_lock<std::mutex> mlock(mutex_);
+        while (queue_.empty()) {
+            cond_empty_.wait(mlock);
+        }
+        item = queue_.front();
+        queue_.pop();
+        mlock.unlock();
+        cond_full_.notify_one();
     }
-    item = queue_.front();
-    queue_.pop();
-    mlock.unlock();
-    cond_full_.notify_one();
-  }
 
-  void push(const T& item) {
-    std::unique_lock<std::mutex> mlock(mutex_);
+    void push(const T& item) {
+        std::unique_lock<std::mutex> mlock(mutex_);
 
-    while (capacity_ > 0 && queue_.size() >= capacity_) {
-      cond_full_.wait(mlock);
+        while (capacity_ > 0 && queue_.size() >= capacity_) {
+            cond_full_.wait(mlock);
+        }
+        queue_.push(item);
+        mlock.unlock();
+        cond_empty_.notify_one();
     }
-    queue_.push(item);
-    mlock.unlock();
-    cond_empty_.notify_one();
-  }
 
-  void set_capacity(int capacity) {
-    std::unique_lock<std::mutex> mlock(mutex_);
-    capacity_ = capacity;
-  }
+    void set_capacity(int capacity) {
+        std::unique_lock<std::mutex> mlock(mutex_);
+        capacity_ = capacity;
+    }
 
-  bool empty() {
-    std::unique_lock<std::mutex> mlock(mutex_);
-    return queue_.empty();
-  }
+    bool empty() {
+        std::unique_lock<std::mutex> mlock(mutex_);
+        return queue_.empty();
+    }
 
-  ConcurrentQueue() = default;
-  ConcurrentQueue(const ConcurrentQueue&) = delete; // disable copying
-  ConcurrentQueue&
-  operator=(const ConcurrentQueue&) = delete; // disable assignment
+    ConcurrentQueue() = default;
+    ConcurrentQueue(const ConcurrentQueue&) = delete; // disable copying
+    ConcurrentQueue&
+    operator=(const ConcurrentQueue&) = delete; // disable assignment
 
-private:
-  std::queue<T> queue_;
-  std::mutex mutex_;
-  std::condition_variable cond_empty_;
-  std::condition_variable cond_full_;
-  // If capacity greater than one, the queue will block on push if there are too
-  // many elements in it
-  int capacity_ = 0;
+  private:
+    std::queue<T> queue_;
+    std::mutex mutex_;
+    std::condition_variable cond_empty_;
+    std::condition_variable cond_full_;
+    // If capacity greater than one, the queue will block on push if there are
+    // too many elements in it
+    int capacity_ = 0;
 };
 
 #endif

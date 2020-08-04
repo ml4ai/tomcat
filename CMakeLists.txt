@@ -29,20 +29,29 @@ else()
     "-- fmt package not found on system, please install it.  (https://fmt.dev)")
 endif()
 
-find_package(Boost 1.69
-             COMPONENTS chrono
-                        date_time
-                        filesystem
-                        iostreams
-                        program_options
-                        regex
-                        system
-                        thread
+find_package(
+  Boost 1.69
+  COMPONENTS chrono
+             date_time
+             filesystem
+             iostreams
+             program_options
+             regex
+             system
+             thread
              REQUIRED)
+
+
+option(BUILD_FACESENSOR "Enable building of the facesensor executable" ON)
 
 add_subdirectory(external/malmo)
 
+if(BUILD_FACESENSOR)
+    add_subdirectory(external/OpenFace)
+endif()
+
 add_subdirectory(src/cpp)
+
 target_include_directories(tomcat PRIVATE src external/malmo/Malmo/src)
 target_include_directories(runExperiment PRIVATE external/malmo/Malmo/src)
 
@@ -50,6 +59,6 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/tools/launch_minecraft
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 option(BUILD_DOCS "Build documentation" OFF)
-if (BUILD_DOCS)
+if(BUILD_DOCS)
   add_subdirectory(docs)
 endif()
