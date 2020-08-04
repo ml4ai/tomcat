@@ -106,27 +106,13 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
-             * Samples a value from a continuous distribution comprised by the
-             * parameter vector \f$\phi\f$.
-             *
-             * @param random_generator: random number generator
-             * @param table_row: row of the parameter table containing the
-             * node that stores the vector \f$\phi\f$
-             * @return Vector of sampled values. Each row contains a vector
-             * \f$\theta\f$ sampled from a continuous distribution with
-             * parameter vector \f$\phi\f$ defined in each row of the parameter
-             * table.
-             */
-//            virtual Eigen::VectorXd
-//            sample_from_table_row(std::shared_ptr<gsl_rng> random_generator,
-//                                  int table_row) const = 0;
-
-            /**
              * Copy data members of a continuous CPD.
              *
              * @param cpd: continuous CPD
              */
             void copy_from_cpd(const ContinuousCPD& cpd);
+
+            void clone_nodes() override;
 
             //------------------------------------------------------------------
             // Pure virtual functions

@@ -105,11 +105,10 @@ namespace tomcat {
         }
 
         std::unique_ptr<CPD> GaussianCPD::clone() const {
-            return std::make_unique<GaussianCPD>(*this);
-        }
-
-        std::shared_ptr<CPD> GaussianCPD::clone_shared() const {
-            return std::make_shared<GaussianCPD>(*this);
+            std::unique_ptr<GaussianCPD> new_cpd =
+                std::make_unique<GaussianCPD>(*this);
+            new_cpd->clone_nodes();
+            return new_cpd;
         }
 
         std::string GaussianCPD::get_description() const {

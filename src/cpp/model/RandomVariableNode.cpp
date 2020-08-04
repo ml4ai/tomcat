@@ -73,7 +73,10 @@ namespace tomcat {
         }
 
         std::unique_ptr<Node> RandomVariableNode::clone() const {
-            return std::make_unique<RandomVariableNode>(*this);
+            std::unique_ptr<RandomVariableNode> new_node = std::make_unique<RandomVariableNode>(*this);
+            new_node->metadata = std::make_shared<NodeMetadata>(*this->metadata);
+            new_node->clone_cpds();
+            return new_node;
         }
 
         std::string RandomVariableNode::get_timed_name() const {
@@ -135,7 +138,7 @@ namespace tomcat {
 
         void RandomVariableNode::clone_cpds() {
             for (auto& mapping : this->cpds) {
-                mapping.second = mapping.second->clone_shared();
+                mapping.second = mapping.second->clone();
             }
         }
 

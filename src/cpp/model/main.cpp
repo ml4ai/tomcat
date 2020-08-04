@@ -301,15 +301,21 @@ int main() {
     ty_node.add_cpd(std::make_shared<CategoricalCPD>(ty_cpd));
 
     DynamicBayesNet dbn(3);
-    dbn.add_node_template(std::move(state_node));
-    dbn.add_node_template(std::move(tg_node));
-    dbn.add_node_template(std::move(ty_node));
-    dbn.add_node_template(std::move(prior_state_node));
+    dbn.add_node_template(state_node);
+    dbn.add_node_template(tg_node);
+    dbn.add_node_template(ty_node);
+    dbn.add_node_template(prior_state_node);
     //    dbn.add_node_template(std::move(theta_s0_node));
     //    dbn.add_node_template(std::move(theta_s1_node));
     //    dbn.add_node_template(std::move(theta_s2_node));
 
     dbn.unroll(3, false);
+
+    Node::NodeMap param_map;
+    Eigen::VectorXd temp(3);
+    temp << 0.000001, 0.000001, 1;
+    param_map["(PriorS,0)"] = std::make_shared<ConstantNode>(ConstantNode(temp));
+    prior_state_cpd_ptr->update_dependencies(param_map, 0);
 
     std::vector<std::shared_ptr<RandomVariableNode>> nodes =
         dbn.get_nodes_topological_order();
@@ -321,7 +327,7 @@ int main() {
     std::shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
     AncestralSampler sampler(dbn, gen);
     sampler.sample(5, 10);
-    sampler.sample(5, 10);
+//    sampler.sample(5, 10);
 
     std::cout << "States" << std::endl;
     std::cout << sampler.get_samples("State") << std::endl;

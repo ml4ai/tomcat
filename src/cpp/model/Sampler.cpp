@@ -83,5 +83,15 @@ namespace tomcat {
             }
         }
 
+        void Sampler::update_assignment_from_sample(
+            std::shared_ptr<RandomVariableNode> node) {
+            const std::vector<std::shared_ptr<RandomVariableNode>>&
+                parent_nodes =
+                this->model.get_parent_nodes_of(*node, true);
+            Eigen::VectorXd assignment =
+                node->sample(this->random_generator, parent_nodes);
+            node->set_assignment(assignment);
+        }
+
     } // namespace model
 } // namespace tomcat

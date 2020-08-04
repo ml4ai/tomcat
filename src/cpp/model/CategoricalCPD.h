@@ -121,8 +121,6 @@ namespace tomcat {
 
             std::unique_ptr<CPD> clone() const override;
 
-            std::shared_ptr<CPD> clone_shared() const override;
-
             std::string get_description() const override;
 
           protected:
@@ -142,6 +140,8 @@ namespace tomcat {
             virtual Eigen::VectorXd
             sample_from_table_row(std::shared_ptr<gsl_rng> random_generator,
                                   int table_row) const override;
+
+            void clone_nodes() override;
 
           private:
             //------------------------------------------------------------------

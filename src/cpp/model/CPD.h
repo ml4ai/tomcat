@@ -126,17 +126,6 @@ namespace tomcat {
              */
             virtual std::unique_ptr<CPD> clone() const = 0;
 
-            /**
-             * Creates a shared pointer from a concrete instance of a CPD. This
-             * function is needed because nodes may need to clone their CPDs and
-             * creating a shared pointer from the unique_pointer version of this
-             * function (function clone) would need to check the actual CPD
-             * class instantiated, leading to a complex code.
-             *
-             * @return shared pointer to the new CPD
-             */
-            virtual std::shared_ptr<CPD> clone_shared() const = 0;
-
             //------------------------------------------------------------------
             // Getters & Setters
             //------------------------------------------------------------------
@@ -169,6 +158,11 @@ namespace tomcat {
              * @return CPD's description.
              */
             virtual std::string get_description() const = 0;
+
+            /**
+             * Clones the nodes the CPD depends on.
+             */
+            virtual void clone_nodes() = 0;
 
             //------------------------------------------------------------------
             // Data members

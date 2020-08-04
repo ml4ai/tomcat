@@ -101,11 +101,10 @@ namespace tomcat {
         }
 
         std::unique_ptr<CPD> DirichletCPD::clone() const {
-            return std::make_unique<DirichletCPD>(*this);
-        }
-
-        std::shared_ptr<CPD> DirichletCPD::clone_shared() const {
-            return std::make_shared<DirichletCPD>(*this);
+            std::unique_ptr<DirichletCPD> new_cpd =
+                std::make_unique<DirichletCPD>(*this);
+            new_cpd->clone_nodes();
+            return new_cpd;
         }
 
         std::string DirichletCPD::get_description() const {

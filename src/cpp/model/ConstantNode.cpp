@@ -36,10 +36,12 @@ namespace tomcat {
         // Copy & Move constructors/assignments
         //----------------------------------------------------------------------
         ConstantNode::ConstantNode(const ConstantNode& node) {
+            this->metadata = node.metadata;
             this->assignment = node.assignment;
         }
 
         ConstantNode& ConstantNode::operator=(const ConstantNode& node) {
+            this->metadata = node.metadata;
             this->assignment = node.assignment;
             return *this;
         }
@@ -57,7 +59,11 @@ namespace tomcat {
         }
 
         std::unique_ptr<Node> ConstantNode::clone() const {
-            return std::make_unique<ConstantNode>(*this);
+            std::unique_ptr<ConstantNode> new_node =
+                std::make_unique<ConstantNode>(*this);
+            new_node->metadata =
+                std::make_shared<NodeMetadata>(*this->metadata);
+            return new_node;
         }
 
         std::string ConstantNode::get_timed_name() const {

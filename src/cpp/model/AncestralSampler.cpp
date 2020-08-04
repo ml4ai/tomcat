@@ -42,18 +42,11 @@ namespace tomcat {
             this->init_samples_matrix(num_samples, time_steps);
 
             for (int s = 0; s < num_samples; s++) {
-                for (const auto& node : nodes) {
+                for (auto& node : nodes) {
                     if (exists(node->get_metadata()->get_label(),
                                this->latent_node_labels)) {
 
-                        // TODO - The 2 instructions below can possibly be moved
-                        //  to the Sampler class. Check if Gibbs will use it.
-                        const std::vector<std::shared_ptr<RandomVariableNode>>&
-                            parent_nodes =
-                                this->model.get_parent_nodes_of(*node, true);
-                        Eigen::VectorXd assignment =
-                            node->sample(this->random_generator, parent_nodes);
-                        node->set_assignment(assignment);
+                        this->update_assignment_from_sample(node);
 
                         // TODO - fix for multidimensional sample size (e.g.
                         //  samples from a parameter with dirichlet prior)
@@ -61,7 +54,7 @@ namespace tomcat {
                             node->get_metadata()->get_label())(
                             s, node->get_time_step()) =
 
-                            static_cast<int>(assignment(0));
+                            static_cast<int>(node->get_assignment()(0));
                     }
                     else {
                         this->assign_data_to_node(node, s);

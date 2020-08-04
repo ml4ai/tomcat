@@ -25,14 +25,34 @@ namespace tomcat {
         DynamicBayesNet::~DynamicBayesNet() {}
 
         //----------------------------------------------------------------------
-        // Member functions
+        // Copy & Move constructors/assignments
         //----------------------------------------------------------------------
-        void DynamicBayesNet::add_node_template(RandomVariableNode& node) {
-            this->node_templates.push_back(node);
+        DynamicBayesNet::DynamicBayesNet(const DynamicBayesNet& dbn) {
+            this->copy_from_dbn(dbn);
         }
 
-        void DynamicBayesNet::add_node_template(RandomVariableNode&& node) {
-            this->node_templates.push_back(std::move(node));
+        DynamicBayesNet&
+        DynamicBayesNet::operator=(const DynamicBayesNet& dbn) {
+            this->copy_from_dbn(dbn);
+            return *this;
+        }
+
+        //----------------------------------------------------------------------
+        // Member functions
+        //----------------------------------------------------------------------
+        void DynamicBayesNet::copy_from_dbn(const DynamicBayesNet& dbn) {
+            // Call the add_node_template function to create a deep copy of the
+            // nodes objects.
+            for (const auto& node_template : dbn.node_templates) {
+                this->add_node_template(node_template);
+            }
+        }
+
+        void
+        DynamicBayesNet::add_node_template(const RandomVariableNode& node) {
+            RandomVariableNode cloned_node =
+                *(dynamic_cast<RandomVariableNode*>(node.clone().get()));
+            this->node_templates.push_back(cloned_node);
         }
 
         void DynamicBayesNet::unroll(int time_steps, bool force) {

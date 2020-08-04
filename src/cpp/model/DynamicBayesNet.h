@@ -47,13 +47,9 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Copy & Move constructors/assignments
             //------------------------------------------------------------------
+            DynamicBayesNet(const DynamicBayesNet& dbn);
 
-            // TODO - reevaluate if the default copy is enough. I guess that
-            //  sampling from a DBN is changing the assignments of the nodes in
-            //  the original DBN passed to the sampler.
-            DynamicBayesNet(const DynamicBayesNet&) = default;
-
-            DynamicBayesNet& operator=(const DynamicBayesNet&) = default;
+            DynamicBayesNet& operator=(const DynamicBayesNet& dbn);
 
             DynamicBayesNet(DynamicBayesNet&&) = default;
 
@@ -64,18 +60,17 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
-             * Adds node to the DBN as a template.
+             * Adds node to the DBN as a template. This function adds a deep
+             * copy of the node to the list of templates by cloning the node so
+             * that CPDs and nodes they depend on are also cloned. After
+             * unrolling the DBN some timed instance nodes may share the same
+             * CPD with some of the node templates so it's necessary to have
+             * exclusive copies of these objects in the DBN to avoid conflict
+             * with other processes.
              *
              * @param node: node to be stored in the DBN as a template
              */
-            void add_node_template(RandomVariableNode& node);
-
-            /**
-             * Adds node to the DBN as a template.
-             *
-             * @param node: node to be stored in the DBN as a template
-             */
-            void add_node_template(RandomVariableNode&& node);
+            void add_node_template(const RandomVariableNode& node);
 
             /**
              * Unrolls the DBN into time steps if nor previously unrolled into
@@ -163,6 +158,15 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
+
+            /**
+             * Creates a new DBN based on a shallow copy of another DBN. If the
+             * DBN to be copied from is unrolled, the objects created in this
+             * process are not copied to the new instance.
+             *
+             * @param dbn: Dynamic Bayes Net
+             */
+            void copy_from_dbn(const DynamicBayesNet& dbn);
 
             /**
              * Creates vertices from a list of node templates.

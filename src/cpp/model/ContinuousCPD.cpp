@@ -60,5 +60,13 @@ namespace tomcat {
             this->parameter_table = cpd.parameter_table;
         }
 
+        void ContinuousCPD::clone_nodes() {
+            for (auto& nodes : this->parameter_table) {
+                for (auto& node : nodes) {
+                    node = node->clone();
+                }
+            }
+        }
+
     } // namespace model
 } // namespace tomcat

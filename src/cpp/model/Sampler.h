@@ -117,13 +117,13 @@ namespace tomcat {
 
             /**
              * Check whether the number of data points is consistent with the
-             * number of samples. If there's a single data point, then it's values over time
-             * are going to be considered in all the samples generated. If
-             * there are as many data points as the number of samples requested,
-             * then for each new sample, a new data point will be considered.
-             * Otherwise, samples cannot be generated as it's impossible to tell
-             * how the data points should be broadcasted or associated to each
-             * one of the samples to be generated.
+             * number of samples. If there's a single data point, then it's
+             * values over time are going to be considered in all the samples
+             * generated. If there are as many data points as the number of
+             * samples requested, then for each new sample, a new data point
+             * will be considered. Otherwise, samples cannot be generated as
+             * it's impossible to tell how the data points should be broadcasted
+             * or associated to each one of the samples to be generated.
              *
              * @param num_samples: number of samples to be generated
              */
@@ -139,6 +139,15 @@ namespace tomcat {
              * unrolled into
              */
             void init_samples_matrix(int num_samples, int time_steps);
+
+            /**
+             * Samples a value from a node's CPD and set it as the node's
+             * assignment.
+             *
+             * @param node: Random variable node
+             */
+            void update_assignment_from_sample(
+                std::shared_ptr<RandomVariableNode> node);
         };
     } // namespace model
 } // namespace tomcat

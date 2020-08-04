@@ -69,21 +69,21 @@ namespace tomcat {
             this->probability_table = cpd.probability_table;
         }
 
-        void CategoricalCPD::update_dependencies(
-            Node::NodeMap& parameter_nodes_map, int time_step) {
+        void
+        CategoricalCPD::update_dependencies(Node::NodeMap& parameter_nodes_map,
+                                            int time_step) {
 
             for (int i = 0; i < this->probability_table.size(); i++) {
+
                 std::string parameter_timed_name;
                 const NodeMetadata* metadata =
                     this->probability_table[i]->get_metadata().get();
                 if (metadata->is_replicable()) {
-                    parameter_timed_name =
-                        metadata->get_timed_name(time_step);
+                    parameter_timed_name = metadata->get_timed_name(time_step);
                 }
                 else {
-                    parameter_timed_name =
-                        metadata->get_timed_name(
-                            metadata->get_initial_time_step());
+                    parameter_timed_name = metadata->get_timed_name(
+                        metadata->get_initial_time_step());
                 }
 
                 if (parameter_nodes_map.count(parameter_timed_name) > 0) {
@@ -95,11 +95,16 @@ namespace tomcat {
         }
 
         std::unique_ptr<CPD> CategoricalCPD::clone() const {
-            return std::make_unique<CategoricalCPD>(*this);
+            std::unique_ptr<CategoricalCPD> new_cpd =
+                std::make_unique<CategoricalCPD>(*this);
+            new_cpd->clone_nodes();
+            return new_cpd;
         }
 
-        std::shared_ptr<CPD> CategoricalCPD::clone_shared() const {
-            return std::make_shared<CategoricalCPD>(*this);
+        void CategoricalCPD::clone_nodes() {
+            for (auto& node : this->probability_table) {
+                node = node->clone();
+            }
         }
 
         std::string CategoricalCPD::get_description() const {

@@ -143,8 +143,6 @@ namespace tomcat {
             //------------------------------------------------------------------
             std::unique_ptr<CPD> clone() const override;
 
-            std::shared_ptr<CPD> clone_shared() const override;
-
             std::string get_description() const override;
 
           protected:
