@@ -49,11 +49,9 @@ background with the default settings by invoking:::
 
     mosquitto &
 
-
 If you used Homebrew, you can do:::
 
     $(brew --prefix)/sbin/mosquitto &
-
 
 Ubuntu
 ^^^^^^
@@ -61,6 +59,22 @@ Ubuntu
 If you're on Ubuntu, Mosquitto will automatically start up as a background
 service after installation, so you don't need to start it up manually.
 
+
+Message topics and topic hierarchies
+------------------------------------
+
+Message brokers route messages to/from client applications based on the topics
+that the applications published/subscribed to. Topics follow a hierarchical
+pattern, with levels in the hierarchy separated by slashes (``/``). For
+example, consider the topics shown below (a subset of the `topics`_
+implemented in ToMCAT).
+
+- ``observations/events/entity_death``
+- ``observations/events/mob_attacked``
+
+If a client application subscribed to ``observations/events/#``, they would
+receive the messages from both the ``observations/events/entity_death`` and
+``observations/events/mob_attacked`` topics.
 
 Publishing/subscribing
 ----------------------
@@ -73,3 +87,4 @@ Using a client library
 
 .. _other ways: https://www.enterpriseintegrationpatterns.com/patterns/messaging/IntegrationStylesIntro.html
 .. _mosquitto: https://mosquitto.org
+.. _topics: ../tomcat_openapi.html
