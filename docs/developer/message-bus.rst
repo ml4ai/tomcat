@@ -15,8 +15,13 @@ It might be useful to visualize the bus as a hierarchical collection of
 'streams' of data, called 'topics'. The data on the bus is in the form of
 'messages', which are usually in a lightweight machine-readable plain text
 format (in our case, we use JSON messages). Client applications can then
-'subscribe' and 'publish' to specific topics, dealing with only a subset of the
-information. 
+'subscribe' and 'publish' to specific topics, thus having to deal with only a
+subset of the information on the bus rather than all of it.
+
+A message *broker* is a program that serves to handle the flow of messages,
+routing them as necessary between the publishers and subscribers. It enables
+asynchronicity by storing messages on a topic until all the subscribers who
+have subscribed to the topic have received them.
 
 - What is a message broker?
 - How do we use one in ToMCAT?
