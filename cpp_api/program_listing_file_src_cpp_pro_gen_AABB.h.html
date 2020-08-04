@@ -197,10 +197,10 @@
     <span class="kt">int</span> <span class="nf">getMidpointZ</span><span class="p">();</span>
 
     <span class="n">Pos</span> <span class="k">virtual</span> <span class="nf">getRandomPosAtBase</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">mt19937_64</span><span class="o">&amp;</span> <span class="n">gen</span><span class="p">,</span>
-                           <span class="kt">int</span> <span class="n">offsetPosX</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-                           <span class="kt">int</span> <span class="n">offsetNegX</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-                           <span class="kt">int</span> <span class="n">offsetPosZ</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-                           <span class="kt">int</span> <span class="n">offsetNegZ</span> <span class="o">=</span> <span class="mi">1</span><span class="p">);</span>
+                                   <span class="kt">int</span> <span class="n">offsetPosX</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                                   <span class="kt">int</span> <span class="n">offsetNegX</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                                   <span class="kt">int</span> <span class="n">offsetPosZ</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                                   <span class="kt">int</span> <span class="n">offsetNegZ</span> <span class="o">=</span> <span class="mi">1</span><span class="p">);</span>
 
     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Pos</span><span class="o">&gt;</span> <span class="k">virtual</span> <span class="n">getEdgeMidpointAtBase</span><span class="p">();</span>
 
@@ -213,24 +213,24 @@
     <span class="kt">bool</span> <span class="k">virtual</span> <span class="nf">isOverlapping</span><span class="p">(</span><span class="n">AABB</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">);</span>
 
     <span class="kt">void</span> <span class="k">virtual</span> <span class="nf">generateBox</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">material</span><span class="p">,</span>
-                     <span class="kt">int</span> <span class="n">offsetPosX</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-                     <span class="kt">int</span> <span class="n">offsetNegX</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-                     <span class="kt">int</span> <span class="n">offsetPosY</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-                     <span class="kt">int</span> <span class="n">offsetNegY</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-                     <span class="kt">int</span> <span class="n">offsetPosZ</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-                     <span class="kt">int</span> <span class="n">offsetNegZ</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-                     <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">type</span> <span class="o">=</span> <span class="s">&quot;normal&quot;</span><span class="p">);</span>
+                             <span class="kt">int</span> <span class="n">offsetPosX</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                             <span class="kt">int</span> <span class="n">offsetNegX</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                             <span class="kt">int</span> <span class="n">offsetPosY</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                             <span class="kt">int</span> <span class="n">offsetNegY</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                             <span class="kt">int</span> <span class="n">offsetPosZ</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                             <span class="kt">int</span> <span class="n">offsetNegZ</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                             <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">type</span> <span class="o">=</span> <span class="s">&quot;normal&quot;</span><span class="p">);</span>
 
     <span class="kt">void</span> <span class="k">virtual</span> <span class="nf">addRandomBlocks</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">,</span>
-                         <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">material</span><span class="p">,</span>
-                         <span class="n">std</span><span class="o">::</span><span class="n">mt19937_64</span><span class="o">&amp;</span> <span class="n">gen</span><span class="p">,</span>
-                         <span class="kt">int</span> <span class="n">offsetPosX</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-                         <span class="kt">int</span> <span class="n">offsetNegX</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-                         <span class="kt">int</span> <span class="n">offsetPosY</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-                         <span class="kt">int</span> <span class="n">offsetNegY</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-                         <span class="kt">int</span> <span class="n">offsetPosZ</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-                         <span class="kt">int</span> <span class="n">offsetNegZ</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-                         <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">type</span> <span class="o">=</span> <span class="s">&quot;normal&quot;</span><span class="p">);</span>
+                                 <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">material</span><span class="p">,</span>
+                                 <span class="n">std</span><span class="o">::</span><span class="n">mt19937_64</span><span class="o">&amp;</span> <span class="n">gen</span><span class="p">,</span>
+                                 <span class="kt">int</span> <span class="n">offsetPosX</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                                 <span class="kt">int</span> <span class="n">offsetNegX</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                                 <span class="kt">int</span> <span class="n">offsetPosY</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                                 <span class="kt">int</span> <span class="n">offsetNegY</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                                 <span class="kt">int</span> <span class="n">offsetPosZ</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                                 <span class="kt">int</span> <span class="n">offsetNegZ</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                                 <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">type</span> <span class="o">=</span> <span class="s">&quot;normal&quot;</span><span class="p">);</span>
 
     <span class="kt">void</span> <span class="k">virtual</span> <span class="nf">generateAllDoorsInAABB</span><span class="p">();</span>
 

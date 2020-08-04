@@ -21,6 +21,11 @@ Directories
 .. toctree::
    :maxdepth: 5
 
+   dir_src_cpp_faceSensor.rst
+
+.. toctree::
+   :maxdepth: 5
+
    dir_src_cpp_getSpecVersion.rst
 
 .. toctree::
@@ -51,6 +56,11 @@ Files
    :maxdepth: 5
 
    file_src_cpp_pro_gen_Block.h.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file_src_cpp_faceSensor_FaceSensor.cpp.rst
 
 .. toctree::
    :maxdepth: 5
@@ -145,6 +155,11 @@ Files
 .. toctree::
    :maxdepth: 5
 
+   file_src_cpp_faceSensor_README.md.rst
+
+.. toctree::
+   :maxdepth: 5
+
    file_src_cpp_runExperiment.cpp.rst
 
 .. toctree::
@@ -155,12 +170,12 @@ Files
 .. toctree::
    :maxdepth: 5
 
-   file_src_cpp_WebcamSensor.cpp.rst
+   file_src_cpp_faceSensor_WebcamSensor.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file_src_cpp_WebcamSensor.h.rst
+   file_src_cpp_faceSensor_WebcamSensor.h.rst
 
 .. toctree::
    :maxdepth: 5

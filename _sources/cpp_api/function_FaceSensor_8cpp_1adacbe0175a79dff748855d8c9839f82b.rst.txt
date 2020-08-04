@@ -1,0 +1,13 @@
+.. _exhale_function_FaceSensor_8cpp_1adacbe0175a79dff748855d8c9839f82b:
+
+Function main(int, char \*)
+===========================
+
+- Defined in :ref:`file_src_cpp_faceSensor_FaceSensor.cpp`
+
+
+Function Documentation
+----------------------
+
+
+.. doxygenfunction:: main(int, char *)

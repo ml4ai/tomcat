@@ -1,10 +1,10 @@
 
-.. _file_src_cpp_WebcamSensor.h:
+.. _file_src_cpp_faceSensor_WebcamSensor.h:
 
 File WebcamSensor.h
 ===================
 
-|exhale_lsh| :ref:`Parent directory <dir_src_cpp>` (``src/cpp``)
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp_faceSensor>` (``src/cpp/faceSensor``)
 
 .. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
 
@@ -12,14 +12,14 @@ File WebcamSensor.h
    :local:
    :backlinks: none
 
-Definition (``src/cpp/WebcamSensor.h``)
----------------------------------------
+Definition (``src/cpp/faceSensor/WebcamSensor.h``)
+--------------------------------------------------
 
 
 .. toctree::
    :maxdepth: 1
 
-   program_listing_file_src_cpp_WebcamSensor.h.rst
+   program_listing_file_src_cpp_faceSensor_WebcamSensor.h.rst
 
 
 
@@ -29,15 +29,11 @@ Includes
 --------
 
 
-- ``LandmarkCoreIncludes.h``
-
 - ``SequenceCapture.h``
 
 - ``VisualizationUtils.h``
 
 - ``Visualizer.h``
-
-- ``fmt/format.h``
 
 
 
@@ -45,7 +41,9 @@ Included By
 -----------
 
 
-- :ref:`file_src_cpp_WebcamSensor.cpp`
+- :ref:`file_src_cpp_faceSensor_FaceSensor.cpp`
+
+- :ref:`file_src_cpp_faceSensor_WebcamSensor.cpp`
 
 
 

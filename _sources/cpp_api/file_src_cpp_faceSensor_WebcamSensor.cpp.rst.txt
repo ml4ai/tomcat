@@ -1,0 +1,71 @@
+
+.. _file_src_cpp_faceSensor_WebcamSensor.cpp:
+
+File WebcamSensor.cpp
+=====================
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp_faceSensor>` (``src/cpp/faceSensor``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. contents:: Contents
+   :local:
+   :backlinks: none
+
+Definition (``src/cpp/faceSensor/WebcamSensor.cpp``)
+----------------------------------------------------
+
+
+.. toctree::
+   :maxdepth: 1
+
+   program_listing_file_src_cpp_faceSensor_WebcamSensor.cpp.rst
+
+
+
+
+
+Includes
+--------
+
+
+- ``FaceAnalyser.h``
+
+- ``GazeEstimation.h``
+
+- ``LandmarkCoreIncludes.h``
+
+- ``RecorderOpenFace.h``
+
+- ``WebcamSensor.h`` (:ref:`file_src_cpp_faceSensor_WebcamSensor.h`)
+
+- ``boost/date_time/posix_time/posix_time.hpp``
+
+- ``boost/date_time/posix_time/posix_time_duration.hpp``
+
+- ``boost/date_time/time_facet.hpp``
+
+- ``nlohmann/json.hpp``
+
+- ``opencv2/highgui/highgui.hpp``
+
+
+
+
+
+
+Namespaces
+----------
+
+
+- :ref:`namespace_nlohmann`
+
+- :ref:`namespace_tomcat`
+
+
+Typedefs
+--------
+
+
+- :ref:`exhale_typedef_WebcamSensor_8cpp_1a003fd4ac64eccf271f42243a2e99434e`
+

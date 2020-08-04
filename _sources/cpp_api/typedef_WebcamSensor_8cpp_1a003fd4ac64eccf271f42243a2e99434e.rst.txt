@@ -1,0 +1,13 @@
+.. _exhale_typedef_WebcamSensor_8cpp_1a003fd4ac64eccf271f42243a2e99434e:
+
+Typedef au_vector
+=================
+
+- Defined in :ref:`file_src_cpp_faceSensor_WebcamSensor.cpp`
+
+
+Typedef Documentation
+---------------------
+
+
+.. doxygentypedef:: au_vector

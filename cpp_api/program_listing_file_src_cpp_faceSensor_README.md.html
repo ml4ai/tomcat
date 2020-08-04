@@ -1,0 +1,447 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Program Listing for File README.md &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tomcat_openapi.html">Data models and message bus topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Program Listing for File README.md</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/cpp_api/program_listing_file_src_cpp_faceSensor_README.md.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="program-listing-for-file-readme-md">
+<span id="program-listing-file-src-cpp-facesensor-readme-md"></span><h1>Program Listing for File README.md<a class="headerlink" href="#program-listing-for-file-readme-md" title="Permalink to this headline">¶</a></h1>
+<p>↰ <a class="reference internal" href="file_src_cpp_faceSensor_README.md.html#file-src-cpp-facesensor-readme-md"><span class="std std-ref">Return to documentation for file</span></a> (<code class="docutils literal notranslate"><span class="pre">src/cpp/faceSensor/README.md</span></code>)</p>
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span># Executable for Face Analysis
+
+**Prerequisites**
+
+Install ToMCAT and its dependencies using the following commands:
+
+```bash
+git clone https://github.com/ml4ai/tomcat
+cd tomcat &amp;&amp; ./tools/install
+```
+
+For more information, visit: https://ml4ai.github.io/tomcat/installation.html
+
+## Description
+
+The `faceSensor` executable uses the [OpenFace library](https://github.com/TadasBaltrusaitis/OpenFace) for facial
+action unit recognition, face landmark detection, eye-gaze estimation and head pose estimation. The executable can process
+input webcam live as well as video or image files from the disk.
+
+## Instructions
+
+Navigate to the `build/` directory in the tomcat root directory and execute:
+
+```
+cmake ..
+make -j faceSensor
+./bin/faceSensor
+```
+This will start processing the webcam live feed and output the facial features to the standard output in JSON format.
+
+#### Command Line Arguments
+
+One way of interacting with the `faceSensor` executable is through the following command line arguments:
+
+```
+  -h [ --help ]             Show this help message
+  --exp_id arg              Set experiment ID
+  --trial_id arg            Set trial ID
+  --playername arg          Set player name
+  --mloc arg                Set OpenFace models directory
+  --indent                  Indent output JSON by four spaces (default false)
+  --visualize               Enable visualization (default false)
+  -f [ --file ] arg (=null) Specify an input video/image file
+```
+
+**NOTE:** When the `--visualize` flag is set to true, the executable also outputs the visualization of facial landmarks,
+head pose and eye gaze tracking. To exit visualization and stop the processing of webcam/video, press the letter *q* or *Q*.
+
+#### Example Usage
+
+If you want to extract the facial features from **webcam** feed, set the experiment ID as `563e4567-e89b-12d3-a456-426655440000`
+and set the trial ID as `123e4567-e89b-12d3-a456-426655440000`, execute the following command on the command line:
+
+```
+./bin/faceSensor --exp_id 563e4567-e89b-12d3-a456-426655440000 --trial_id 123e4567-e89b-12d3-a456-426655440000
+```
+
+If you want to extract the facial features from a **video** file in the location `~/Downloads/video.mp4`, set the player name
+as `Aptiminer1` and enable visualization, execute the following command on the command line:
+
+```
+./bin/faceSensor -f ~/Downloads/video.mp4 --playername Aptiminer1 --visualize
+```
+
+If you want to extract the facial features from an **image** file in the location `~/Downloads/image.jpg`, set the OpenFace
+models directory as `~/git_repos/tomcat/data/OpenFace_models` and enable indentation of JSON output by four spaces, execute
+the following command on the command line:
+
+```
+./bin/faceSensor -f ~/Downloads/image.jpg --mloc ~/git_repos/tomcat/data/OpenFace_models --indent
+```
+
+## Output Format
+
+The `faceSensor` executable uses the `nlohmann-json` library to output the action units, eye landmarks, gaze estimation
+and pose estimation values. The following is an example JSON message with indentation enabled:
+
+```
+{
+    &quot;data&quot;: {
+        &quot;action_units&quot;: {
+            &quot;AU01&quot;: {
+                &quot;intensity&quot;: 1.5039452395072457,
+                &quot;occurrence&quot;: 1.0
+            },
+            &quot;AU02&quot;: {
+                &quot;intensity&quot;: 0.7107745056044891,
+                &quot;occurrence&quot;: 1.0
+            },
+            ...
+        },
+        &quot;frame&quot;: 1,
+        &quot;gaze&quot;: {
+            &quot;eye_0&quot;: {
+                &quot;x&quot;: -0.02601720206439495,
+                &quot;y&quot;: 0.2048162817955017,
+                &quot;z&quot;: -0.97845458984375
+            },
+            &quot;eye_1&quot;: {
+                &quot;x&quot;: -0.1461271494626999,
+                &quot;y&quot;: 0.2099267840385437,
+                &quot;z&quot;: -0.9667355418205261
+            },
+            &quot;eye_landmarks&quot;: {
+                &quot;2D&quot;: {
+                    &quot;x&quot;: [
+                        297.0760498046875,
+                        300.1932067871094,
+                        ...
+                    ],
+                    &quot;y&quot;: [
+                        210.02487182617188,
+                        202.84886169433594,
+                        ...
+                    ]
+                },
+                &quot;3D&quot;: {
+                    &quot;x&quot;: [
+                        -13.506591796875,
+                        -11.667745590209961,
+                        ...
+                    ],
+                    &quot;y&quot;: [
+                        -17.661083221435547,
+                        -21.884918212890625,
+                        ...
+                    ],
+                    &quot;z&quot;: [
+                        294.59564208984375,
+                        294.53900146484375,
+                        ...
+                    ]
+                }
+            },
+            &quot;gaze_angle&quot;: {
+                &quot;x&quot;: -0.088267482817173,
+                &quot;y&quot;: 0.21006907522678375
+            }
+        },
+        &quot;landmark_detection_confidence&quot;: &quot;0.97500&quot;,
+        &quot;landmark_detection_success&quot;: true,
+        &quot;playername&quot;: &quot;Aptiminer1&quot;,
+        &quot;pose&quot;: {
+            &quot;location&quot;: {
+                &quot;x&quot;: 21.459043502807617,
+                &quot;y&quot;: 16.071529388427734,
+                &quot;z&quot;: 367.04388427734375
+            },
+            &quot;rotation&quot;: {
+                &quot;x&quot;: 0.11796540021896362,
+                &quot;y&quot;: 0.036553021520376205,
+                &quot;z&quot;: 0.0021826198790222406
+            }
+        }
+    },
+    &quot;header&quot;: {
+        &quot;message_type&quot;: &quot;observation&quot;,
+        &quot;timestamp&quot;: &quot;2020-08-01T12:25:47.626987Z&quot;,
+        &quot;version&quot;: &quot;0.1&quot;
+    },
+    &quot;msg&quot;: {
+        &quot;experiment_id&quot;: &quot;563e4567-e89b-12d3-a456-426655440000&quot;,
+        &quot;source&quot;: &quot;faceSensor&quot;,
+        &quot;sub_type&quot;: &quot;state&quot;,
+        &quot;timestamp&quot;: &quot;2020-08-01T12:25:47.626987Z&quot;,
+        &quot;trial_id&quot;: &quot;123e4567-e89b-12d3-a456-426655440000&quot;,
+        &quot;version&quot;: &quot;0.1&quot;
+    }
+}
+```
+
+**NOTE:** This output is in accordance with output of the OpenFace executables (see https://github.com/TadasBaltrusaitis/OpenFace/wiki/Output-Format)
+
+The explanation of each element in the `data` block is given below:
+
+**`action_units`**
+
+The sensor can detect the **intensity** (value ranges from 0 to 5) of 17 action units:
+
+`AU01_r, AU02_r, AU04_r, AU05_r, AU06_r, AU07_r, AU09_r, AU10_r, AU12_r, AU14_r, AU15_r, AU17_r, AU20_r, AU23_r, AU25_r, AU26_r,
+AU45_r`
+
+And the **occurrence** (0 represents absent, 1 represents present) of 18 action units:
+
+`AU01_c, AU02_c, AU04_c, AU05_c, AU06_c, AU07_c, AU09_c, AU10_c, AU12_c, AU14_c, AU15_c, AU17_c, AU20_c, AU23_c, AU25_c, AU26_c,
+AU28_c, AU45_c`
+
+`frame` specifies the number of the frame (in case of sequences, ie, webcam and videos)
+
+**`gaze`**
+
+`eye_0` specifies the eye gaze direction vector (`xyz` coordinates) for the leftmost eye in the frame
+
+`eye_1` specifies the eye gaze direction vector (`xyz` coordinates) for the rightmost eye in the frame
+
+`2D` specifies the location of 2D eye region landmarks in pixels (`x_0, ... x_55, y_0, ... y_55` coordinates)
+
+`3D` specifies the location of 3D eye region landmarks in millimeters (`x_0, ... x_55, y_0, ... y_55, z_0, ... z_55` coordinates)
+
+`gaze_angle` specifies the eye gaze direction in radians (`xy` coordinates`) averaged for both the eyes
+
+`landmark_detection_confidence` specifies how confident the tracker is in the current landmark detection estimate
+
+`landmark_detection_success` specifies if tracking was successful
+
+`playername` specifies the name of player
+
+**`pose`**
+
+`location` specifies the location of the head in millimeters (`xyz` coordinates) with respect to camera
+
+`rotation` specifies the rotation of the head in radians (`xyz` coordinates) with camera being the origin
+
+The explanation of each element in the `header` block is given below:
+
+`message_type` specifies the type of output message
+
+`timestamp` specifies the time of execution in ISO 8601 format
+
+`version` specifies the version of faceSensor
+
+The explanation of each element in the `msg` block is given below:
+
+`experiment_id` specifies the experiment ID
+
+`source` specifies the source of output message
+
+`sub_type` specifies the sub-type of output message
+
+`timestamp` specifies the time of execution in ISO 8601 format
+
+`trial_id` specifies the trial ID
+
+`version` specifies the version of faceSensor
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

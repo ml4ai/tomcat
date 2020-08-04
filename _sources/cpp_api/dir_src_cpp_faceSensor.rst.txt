@@ -1,0 +1,23 @@
+.. _dir_src_cpp_faceSensor:
+
+
+Directory faceSensor
+====================
+
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp>` (``src/cpp``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+*Directory path:* ``src/cpp/faceSensor``
+
+
+Files
+-----
+
+- :ref:`file_src_cpp_faceSensor_FaceSensor.cpp`
+- :ref:`file_src_cpp_faceSensor_README.md`
+- :ref:`file_src_cpp_faceSensor_WebcamSensor.cpp`
+- :ref:`file_src_cpp_faceSensor_WebcamSensor.h`
+
+

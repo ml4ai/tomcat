@@ -19,6 +19,11 @@ Namespaces
 .. toctree::
    :maxdepth: 5
 
+   namespace_nlohmann.rst
+
+.. toctree::
+   :maxdepth: 5
+
    namespace_std.rst
 
 .. toctree::
@@ -132,6 +137,11 @@ Functions
 .. toctree::
    :maxdepth: 5
 
+   function_FaceSensor_8cpp_1adacbe0175a79dff748855d8c9839f82b.rst
+
+.. toctree::
+   :maxdepth: 5
+
    function_getSpecVersion_8cpp_1a0ddf1224851353fc92bfbff6f499fa97.rst
 
 .. toctree::
@@ -172,6 +182,11 @@ Functions
 Typedefs
 ********
 
+
+.. toctree::
+   :maxdepth: 5
+
+   typedef_WebcamSensor_8cpp_1a003fd4ac64eccf271f42243a2e99434e.rst
 
 .. toctree::
    :maxdepth: 5
