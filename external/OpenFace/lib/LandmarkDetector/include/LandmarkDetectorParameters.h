@@ -44,87 +44,87 @@
 #include <vector>
 
 namespace LandmarkDetector {
-  using boost::filesystem::path;
+    using boost::filesystem::path;
 
-  class FaceModelParameters {
+    class FaceModelParameters {
 
-  public:
-    // Path to OpenFace models
-    std::string OpenFace_models_dir =
-        (path(getenv("TOMCAT")) / "data/OpenFace_models").string();
+      public:
+        // Path to OpenFace models
 
-    // A number of RLMS or NU-RLMS iterations
-    int num_optimisation_iteration;
+        std::string OpenFace_models_dir;
 
-    // Should pose be limited to 180 degrees frontal
-    bool limit_pose;
+        // A number of RLMS or NU-RLMS iterations
+        int num_optimisation_iteration;
 
-    // Should face validation be done
-    bool validate_detections;
+        // Should pose be limited to 180 degrees frontal
+        bool limit_pose;
 
-    // Landmark detection validator boundary for correct detection, the
-    // regressor output 1 (perfect alignment) 0 (bad alignment),
-    float validation_boundary;
+        // Should face validation be done
+        bool validate_detections;
 
-    // Used when tracking is going well
-    std::vector<int> window_sizes_small;
+        // Landmark detection validator boundary for correct detection, the
+        // regressor output 1 (perfect alignment) 0 (bad alignment),
+        float validation_boundary;
 
-    // Used when initialising or tracking fails
-    std::vector<int> window_sizes_init;
+        // Used when tracking is going well
+        std::vector<int> window_sizes_small;
 
-    // Used for the current frame
-    std::vector<int> window_sizes_current;
+        // Used when initialising or tracking fails
+        std::vector<int> window_sizes_init;
 
-    // How big is the tracking template that helps with large motions
-    float face_template_scale;
-    bool use_face_template;
+        // Used for the current frame
+        std::vector<int> window_sizes_current;
 
-    // Where to load the model from
-    std::string model_location;
+        // How big is the tracking template that helps with large motions
+        float face_template_scale;
+        bool use_face_template;
 
-    // this is used for the smooting of response maps (KDE sigma)
-    float sigma;
+        // Where to load the model from
+        std::string model_location;
 
-    float reg_factor;    // weight put to regularisation
-    float weight_factor; // factor for weighted least squares
+        // this is used for the smooting of response maps (KDE sigma)
+        float sigma;
 
-    // should multiple views be considered during reinit
-    bool multi_view;
+        float reg_factor;    // weight put to regularisation
+        float weight_factor; // factor for weighted least squares
 
-    // Based on model location, this affects the parameter settings
-    enum LandmarkDetector { CLM_DETECTOR, CLNF_DETECTOR, CECLM_DETECTOR };
-    LandmarkDetector curr_landmark_detector;
+        // should multiple views be considered during reinit
+        bool multi_view;
 
-    // How often should face detection be used to attempt reinitialisation,
-    // every n frames (set to negative not to reinit)
-    int reinit_video_every;
+        // Based on model location, this affects the parameter settings
+        enum LandmarkDetector { CLM_DETECTOR, CLNF_DETECTOR, CECLM_DETECTOR };
+        LandmarkDetector curr_landmark_detector;
 
-    // Determining which face detector to use for (re)initialisation, HAAR is
-    // quicker but provides more false positives and is not goot for in-the-wild
-    // conditions Also HAAR detector can detect smaller faces while HOG SVM is
-    // only capable of detecting faces at least 70px across MTCNN detector is
-    // much more accurate that the other two, and is even suitable for profile
-    // faces, but it is somewhat slower
-    enum FaceDetector { HAAR_DETECTOR, HOG_SVM_DETECTOR, MTCNN_DETECTOR };
+        // How often should face detection be used to attempt reinitialisation,
+        // every n frames (set to negative not to reinit)
+        int reinit_video_every;
 
-    std::string haar_face_detector_location;
-    std::string mtcnn_face_detector_location;
-    FaceDetector curr_face_detector;
+        // Determining which face detector to use for (re)initialisation, HAAR
+        // is quicker but provides more false positives and is not goot for
+        // in-the-wild conditions Also HAAR detector can detect smaller faces
+        // while HOG SVM is only capable of detecting faces at least 70px across
+        // MTCNN detector is much more accurate that the other two, and is even
+        // suitable for profile faces, but it is somewhat slower
+        enum FaceDetector { HAAR_DETECTOR, HOG_SVM_DETECTOR, MTCNN_DETECTOR };
 
-    // Should the model be refined hierarchically (if available)
-    bool refine_hierarchical;
+        std::string haar_face_detector_location;
+        std::string mtcnn_face_detector_location;
+        FaceDetector curr_face_detector;
 
-    // Should the parameters be refined for different scales
-    bool refine_parameters;
+        // Should the model be refined hierarchically (if available)
+        bool refine_hierarchical;
 
-    FaceModelParameters();
+        // Should the parameters be refined for different scales
+        bool refine_parameters;
 
-    FaceModelParameters(std::vector<std::string>& arguments);
+        FaceModelParameters();
 
-  private:
-    void init();
-    void check_model_path(std::string model_path);
-    void check_model_paths();
-  };
+        FaceModelParameters(std::vector<std::string>& arguments);
+
+      private:
+        void init();
+        void check_model_path(std::string model_path);
+        void check_model_paths();
+    };
 
 } // namespace LandmarkDetector

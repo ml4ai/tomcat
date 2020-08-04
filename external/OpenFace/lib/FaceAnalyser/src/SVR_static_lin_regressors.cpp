@@ -45,44 +45,44 @@ using namespace FaceAnalysis;
 void SVR_static_lin_regressors::Read(std::ifstream& stream,
                                      const std::vector<std::string>& au_names) {
 
-  if (this->means.empty()) {
-    ReadMatBin(stream, this->means);
-  }
-  else {
-    cv::Mat_<double> m_tmp;
-    ReadMatBin(stream, m_tmp);
-    if (cv::norm(m_tmp - this->means > 0.00001)) {
-      std::cout << "Something went wrong with the SVR static regressors"
-                << std::endl;
+    if (this->means.empty()) {
+        ReadMatBin(stream, this->means);
     }
-  }
+    else {
+        cv::Mat_<double> m_tmp;
+        ReadMatBin(stream, m_tmp);
+        if (cv::norm(m_tmp - this->means > 0.00001)) {
+            std::cout << "Something went wrong with the SVR static regressors"
+                      << std::endl;
+        }
+    }
 
-  cv::Mat_<double> support_vectors_curr;
-  ReadMatBin(stream, support_vectors_curr);
+    cv::Mat_<double> support_vectors_curr;
+    ReadMatBin(stream, support_vectors_curr);
 
-  double bias;
-  stream.read((char*)&bias, 8);
+    double bias;
+    stream.read((char*)&bias, 8);
 
-  // Add a column vector to the matrix of support vectors (each column is a
-  // support vector)
-  if (!this->support_vectors.empty()) {
-    cv::transpose(this->support_vectors, this->support_vectors);
-    cv::transpose(support_vectors_curr, support_vectors_curr);
-    this->support_vectors.push_back(support_vectors_curr);
-    cv::transpose(this->support_vectors, this->support_vectors);
+    // Add a column vector to the matrix of support vectors (each column is a
+    // support vector)
+    if (!this->support_vectors.empty()) {
+        cv::transpose(this->support_vectors, this->support_vectors);
+        cv::transpose(support_vectors_curr, support_vectors_curr);
+        this->support_vectors.push_back(support_vectors_curr);
+        cv::transpose(this->support_vectors, this->support_vectors);
 
-    cv::transpose(this->biases, this->biases);
-    this->biases.push_back(cv::Mat_<double>(1, 1, bias));
-    cv::transpose(this->biases, this->biases);
-  }
-  else {
-    this->support_vectors.push_back(support_vectors_curr);
-    this->biases.push_back(cv::Mat_<double>(1, 1, bias));
-  }
+        cv::transpose(this->biases, this->biases);
+        this->biases.push_back(cv::Mat_<double>(1, 1, bias));
+        cv::transpose(this->biases, this->biases);
+    }
+    else {
+        this->support_vectors.push_back(support_vectors_curr);
+        this->biases.push_back(cv::Mat_<double>(1, 1, bias));
+    }
 
-  for (size_t i = 0; i < au_names.size(); ++i) {
-    this->AU_names.push_back(au_names[i]);
-  }
+    for (size_t i = 0; i < au_names.size(); ++i) {
+        this->AU_names.push_back(au_names[i]);
+    }
 }
 
 // Prediction using the HOG descriptor
@@ -90,25 +90,26 @@ void SVR_static_lin_regressors::Predict(std::vector<double>& predictions,
                                         std::vector<std::string>& names,
                                         const cv::Mat_<double>& fhog_descriptor,
                                         const cv::Mat_<double>& geom_params) {
-  if (AU_names.size() > 0) {
-    cv::Mat_<double> preds;
-    if (fhog_descriptor.cols == this->means.cols) {
-      preds = (fhog_descriptor - this->means) * this->support_vectors +
-              this->biases;
-    }
-    else {
-      cv::Mat_<double> input;
-      cv::hconcat(fhog_descriptor, geom_params, input);
+    if (AU_names.size() > 0) {
+        cv::Mat_<double> preds;
+        if (fhog_descriptor.cols == this->means.cols) {
+            preds = (fhog_descriptor - this->means) * this->support_vectors +
+                    this->biases;
+        }
+        else {
+            cv::Mat_<double> input;
+            cv::hconcat(fhog_descriptor, geom_params, input);
 
-      preds = (input - this->means) * this->support_vectors + this->biases;
-    }
+            preds =
+                (input - this->means) * this->support_vectors + this->biases;
+        }
 
-    for (cv::MatIterator_<double> pred_it = preds.begin();
-         pred_it != preds.end();
-         ++pred_it) {
-      predictions.push_back(*pred_it);
-    }
+        for (cv::MatIterator_<double> pred_it = preds.begin();
+             pred_it != preds.end();
+             ++pred_it) {
+            predictions.push_back(*pred_it);
+        }
 
-    names = this->AU_names;
-  }
+        names = this->AU_names;
+    }
 }

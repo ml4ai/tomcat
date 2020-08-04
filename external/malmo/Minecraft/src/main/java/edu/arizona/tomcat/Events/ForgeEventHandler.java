@@ -20,12 +20,12 @@ import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemPickupEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemPickupEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 public class ForgeEventHandler {
@@ -248,12 +248,16 @@ public class ForgeEventHandler {
     /** EntityItemPickupEvent handler */
     @SubscribeEvent
     public void handle(EntityItemPickupEvent event) {
-        this.mqttService.publish(new ItemPickedUp(event), "observations/events/player_interactions/item_pickup");
+        this.mqttService.publish(
+            new ItemPickedUp(event),
+            "observations/events/player_interactions/item_pickup");
     }
 
     /** LivingEquipmentChange handler */
     @SubscribeEvent
     public void handle(LivingEquipmentChangeEvent event) {
-        this.mqttService.publish(new EquipmentChange(event), "observations/events/player_interactions/equipment_change");
+        this.mqttService.publish(
+            new EquipmentChange(event),
+            "observations/events/player_interactions/equipment_change");
     }
 }
