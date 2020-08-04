@@ -21,6 +21,15 @@ export TOMCAT
 # =============================================================================
 
 set_local_configuration() {
+
+    # The chunk of code below allows environment variables to be set with a
+    # .env file
+    if [ -f .env ]; then
+        echo ".env file detected:" "$(pwd)/.env"
+        echo "Loading environment variables from it."
+        export $(grep -v '^#' .env | xargs)
+    fi
+
     # TOMCAT_DEBUG_LEVEL: Set this to 1 or more to get geeky output.
     export TOMCAT_DEBUG_LEVEL=${TOMCAT_DEBUG_LEVEL:-0}
 
