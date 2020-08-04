@@ -20,7 +20,7 @@ __install_dependencies_using_macports() {
 
     if ! sudo port selfupdate; then exit 1; fi
 
-    local macports_deps="libfmt openblas"
+    local macports_deps="libfmt openblas eigen3"
     for dep in $COMMON_MACOS_DEPS $macports_deps; do
         if ! sudo port -N install $dep; then
             echo "Unable to install $dep using MacPorts. Exiting."
@@ -46,7 +46,7 @@ __install_dependencies_using_homebrew() {
     if ! brew update; then exit 1; fi
 
 
-    local homebrew_deps="fmt"
+    local homebrew_deps="fmt eigen"
     for dep in $COMMON_MACOS_DEPS $homebrew_deps; do
         brew install $dep
         # We do not require exit codes for Homebrew installs to be 0 since
@@ -98,7 +98,8 @@ __install_dependencies_using_apt() {
         mosquitto\
         mosquitto-clients\
         curl\
-        openssl
+        openssl\
+        libeigen3-dev
     if [[ $? -ne 0 ]]; then exit 1; fi
 
     # On Ubuntu 18.04, the required version of the nlohmann-json JSON library
