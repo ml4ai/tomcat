@@ -16,8 +16,12 @@ typedef vector<pair<string, double>> au_vector;
 
 namespace tomcat {
 
-    void
-    WebcamSensor::initialize(string exp, string trial, string pname, bool ind, bool vis, string file_path) {
+    void WebcamSensor::initialize(string exp,
+                                  string trial,
+                                  string pname,
+                                  bool ind,
+                                  bool vis,
+                                  string file_path) {
         // Initialize the experiment ID, trial ID and player name
         this->exp_id = exp;
         this->trial_id = trial;
@@ -279,14 +283,19 @@ namespace tomcat {
             output["data"]["gaze"]["eye_landmarks"]["3D"]["z"] = {};
 
             for (auto& landmark : eye_landmarks2d) {
-                output["data"]["gaze"]["eye_landmarks"]["2D"]["x"].push_back(landmark.x);
-                output["data"]["gaze"]["eye_landmarks"]["2D"]["y"].push_back(landmark.y);
+                output["data"]["gaze"]["eye_landmarks"]["2D"]["x"].push_back(
+                    landmark.x);
+                output["data"]["gaze"]["eye_landmarks"]["2D"]["y"].push_back(
+                    landmark.y);
             }
 
             for (auto& landmark : eye_landmarks3d) {
-                output["data"]["gaze"]["eye_landmarks"]["3D"]["x"].push_back(landmark.x);
-                output["data"]["gaze"]["eye_landmarks"]["3D"]["y"].push_back(landmark.y);
-                output["data"]["gaze"]["eye_landmarks"]["3D"]["z"].push_back(landmark.z);
+                output["data"]["gaze"]["eye_landmarks"]["3D"]["x"].push_back(
+                    landmark.x);
+                output["data"]["gaze"]["eye_landmarks"]["3D"]["y"].push_back(
+                    landmark.y);
+                output["data"]["gaze"]["eye_landmarks"]["3D"]["z"].push_back(
+                    landmark.z);
             }
 
             output["data"]["pose"] = {{"location",

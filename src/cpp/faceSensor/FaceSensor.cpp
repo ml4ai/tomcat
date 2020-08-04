@@ -27,8 +27,9 @@ int main(int ac, char* av[]) {
             po::value<string>(&trial_id)->default_value(""),
             "Set trial ID")("playername",
                             po::value<string>(&playername)->default_value(""),
-                            "Set player name")(
-            "mloc", po::value<string>(&of_dir), "Set OpenFace models directory")(
+                            "Set player name")("mloc",
+                                               po::value<string>(&of_dir),
+                                               "Set OpenFace models directory")(
             "indent",
             po::bool_switch(&indent)->default_value(false),
             "Indent output JSON by four spaces")(
