@@ -45,7 +45,7 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-            void sample(int num_samples, int time_steps) override;
+            void sample(int num_samples) override;
 
             std::unique_ptr<Sampler> clone() override;
 

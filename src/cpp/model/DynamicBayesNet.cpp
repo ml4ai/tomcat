@@ -6,7 +6,6 @@
 #include "FileHandler.h"
 
 #include <boost/filesystem.hpp>
-namespace fs=boost::filesystem;
 
 namespace tomcat {
     namespace model {
@@ -28,29 +27,8 @@ namespace tomcat {
         DynamicBayesNet::~DynamicBayesNet() {}
 
         //----------------------------------------------------------------------
-        // Copy & Move constructors/assignments
-        //----------------------------------------------------------------------
-        DynamicBayesNet::DynamicBayesNet(const DynamicBayesNet& dbn) {
-            this->copy_from_dbn(dbn);
-        }
-
-        DynamicBayesNet&
-        DynamicBayesNet::operator=(const DynamicBayesNet& dbn) {
-            this->copy_from_dbn(dbn);
-            return *this;
-        }
-
-        //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void DynamicBayesNet::copy_from_dbn(const DynamicBayesNet& dbn) {
-            // Call the add_node_template function to create a deep copy of the
-            // nodes objects.
-            for (const auto& node_template : dbn.node_templates) {
-                this->add_node_template(node_template);
-            }
-        }
-
         void
         DynamicBayesNet::add_node_template(const RandomVariableNode& node) {
             RandomVariableNode cloned_node =
@@ -60,6 +38,7 @@ namespace tomcat {
 
         void DynamicBayesNet::unroll(int time_steps, bool force) {
             if (time_steps != this->time_steps || force) {
+                this->reset();
                 this->time_steps = time_steps;
                 this->create_vertices_from_nodes();
                 this->create_edges();
@@ -71,6 +50,13 @@ namespace tomcat {
                     std::cout << *edge << std::endl;
                 }
             }
+        }
+
+        void DynamicBayesNet::reset() {
+            this->time_steps = 0;
+            this->graph.clear();
+            this->name_to_id.clear();
+            this->parameter_nodes_map.clear();
         }
 
         void DynamicBayesNet::create_vertices_from_nodes() {
@@ -307,8 +293,6 @@ namespace tomcat {
         void DynamicBayesNet::save_to_folder(
             const std::string& output_folder) const {
 
-            fs::path folder(output_folder);
-
             for (const auto& mapping : this->parameter_nodes_map) {
                 std::string filename = mapping.first + ".txt";
                 std::string filepath = get_filepath(output_folder, filename);
@@ -319,7 +303,7 @@ namespace tomcat {
         void
         DynamicBayesNet::load_from_folder(const std::string& input_folder) {
             for (const auto& file :
-                 fs::directory_iterator(input_folder)) {
+                 boost::filesystem::directory_iterator(input_folder)) {
 
                 std::string filename = file.path().filename().string();
                 std::string filepath = get_filepath(input_folder, filename);
@@ -328,22 +312,10 @@ namespace tomcat {
 
                 // Set loaded vector as assignment of the corresponding
                 // parameter node.
-                std::shared_ptr<Node> parameter_node =
-                    this->parameter_nodes_map.at(parameter_timed_name);
-                dynamic_cast<RandomVariableNode*>(parameter_node.get())
-                    ->set_assignment(assignment);
-
-                // Removing the parameter node from the vertex will make the
-                // assignment of such node to be permanent as it's not part of
-                // the graph anymore and won't be retrieved by any sampling
-                // sampling process.
-                int vertex_id = this->name_to_id.at(parameter_timed_name);
-                boost::remove_vertex(vertex_id, this->graph);
-
-                // Not required but since it's not part of the graph anymore, it
-                // can be removed from auxiliary structures.
-                this->name_to_id.erase(parameter_timed_name);
-                this->parameter_nodes_map.erase(parameter_timed_name);
+                RandomVariableNode* parameter_node =
+                    dynamic_cast<RandomVariableNode*>(this->parameter_nodes_map.at(parameter_timed_name).get());
+                parameter_node->set_assignment(assignment);
+                parameter_node->freeze();
             }
         }
 
@@ -354,6 +326,8 @@ namespace tomcat {
         DynamicBayesNet::get_node_templates() const {
             return node_templates;
         }
+
+        int DynamicBayesNet::get_time_steps() const { return time_steps; }
 
     } // namespace model
 } // namespace tomcat

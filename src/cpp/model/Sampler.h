@@ -15,8 +15,18 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Constructors & Destructor
             //------------------------------------------------------------------
+            /**
+             * Creates an instance of an abstract sampler.
+             */
             Sampler();
 
+            /**
+             * Creates an abstract instance of an abstract sampler for an
+             * unrolled DBN.
+             *
+             * @param model: unrolled DBN
+             * @param random_generator: random number generator
+             */
             Sampler(DynamicBayesNet model,
                     std::shared_ptr<gsl_rng> random_generator);
 
@@ -68,8 +78,7 @@ namespace tomcat {
              * @return Samples over time. A matrix of dimension (num_samples,
              * time_steps).
              */
-            const Tensor3&
-            get_samples(const std::string& node_label) const;
+            const Tensor3& get_samples(const std::string& node_label) const;
 
             /**
              * Saves generated samples to files in a specific folder.
@@ -85,10 +94,8 @@ namespace tomcat {
              * Generates samples for the latent nodes
              *
              * @param num_samples: number of samples to generate
-             * @param time_steps: number of time steps the model should be
-             * unrolled into
              */
-            virtual void sample(int num_samples, int time_steps) = 0;
+            virtual void sample(int num_samples) = 0;
 
             /**
              * Clones a sampler
@@ -96,6 +103,8 @@ namespace tomcat {
              * @return Pointer to the new sampler.
              */
             virtual std::unique_ptr<Sampler> clone() = 0;
+
+            const DynamicBayesNet& get_dbn() const { return model; }
 
           protected:
             //------------------------------------------------------------------
@@ -105,7 +114,8 @@ namespace tomcat {
             DynamicBayesNet model;
 
             // Mapping between a node's label and its metadata.
-            std::unordered_map<std::string, NodeMetadata> node_label_to_metadata;
+            std::unordered_map<std::string, NodeMetadata>
+                node_label_to_metadata;
 
             // Mapping between a node's label and data (observed values over
             // time). The data tensor has dimension (sample_size,
@@ -136,15 +146,15 @@ namespace tomcat {
             void check_data(int num_samples) const;
 
             /**
-             * Creates a tensor of dimensions (sample_size, num_samples, time_steps) for each
-             * one of the latent nodes in the model and adds it to the
-             * node_lable_to_samples mapping.
+             * Creates a tensor of dimensions (sample_size, num_samples,
+             * time_steps) for a given latent node in the model and
+             * adds it to the node_lable_to_samples mapping.
              *
+             * @param node_label: label of the node which samples must be
+             * initialized to
              * @param num_samples: number of samples to generate
-             * @param time_steps: number of time steps the model will be
-             * unrolled into
              */
-            void init_samples_tensor(int num_samples, int time_steps);
+            void init_samples_tensor(const std::string& node_label, int num_samples);
 
             /**
              * Samples a value from a node's CPD and set it as the node's

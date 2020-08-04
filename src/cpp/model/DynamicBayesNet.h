@@ -47,9 +47,9 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Copy & Move constructors/assignments
             //------------------------------------------------------------------
-            DynamicBayesNet(const DynamicBayesNet& dbn);
+            DynamicBayesNet(const DynamicBayesNet&) = default;
 
-            DynamicBayesNet& operator=(const DynamicBayesNet& dbn);
+            DynamicBayesNet& operator=(const DynamicBayesNet&) = default;
 
             DynamicBayesNet(DynamicBayesNet&&) = default;
 
@@ -139,6 +139,8 @@ namespace tomcat {
             // --------------------------------------------------------
             const std::vector<RandomVariableNode>& get_node_templates() const;
 
+            int get_time_steps() const;
+
           private:
             //------------------------------------------------------------------
             // Types, Enums & Constants
@@ -160,13 +162,10 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
-             * Creates a new DBN based on a shallow copy of another DBN. If the
-             * DBN to be copied from is unrolled, the objects created in this
-             * process are not copied to the new instance.
-             *
-             * @param dbn: Dynamic Bayes Net
+             * Clears graph and mappings. Only the list of node templates are
+             * preserved.
              */
-            void copy_from_dbn(const DynamicBayesNet& dbn);
+            void reset();
 
             /**
              * Creates vertices from a list of node templates.
@@ -232,7 +231,7 @@ namespace tomcat {
             std::vector<RandomVariableNode> node_templates;
 
             // If unrolled, the number of time steps the DBN was unrolled into
-            int time_steps;
+            int time_steps = 0;
         };
 
     } // namespace model

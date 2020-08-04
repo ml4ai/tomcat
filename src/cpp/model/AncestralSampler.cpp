@@ -33,31 +33,31 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void AncestralSampler::sample(int num_samples, int time_steps) {
-            this->model.unroll(time_steps, false);
-            std::vector<std::shared_ptr<RandomVariableNode>> nodes =
-                this->model.get_nodes_topological_order();
-
+        void AncestralSampler::sample(int num_samples) {
+            std::vector<std::shared_ptr<RandomVariableNode>> nodes;
+            for (auto& node : this->model.get_nodes_topological_order()) {
+                if (!node->is_frozen()) {
+                    nodes.push_back(node);
+                }
+            }
             this->check_data(num_samples);
-            this->init_samples_tensor(num_samples, time_steps);
 
             for (int s = 0; s < num_samples; s++) {
                 for (auto& node : nodes) {
-                    if (exists(node->get_metadata()->get_label(),
-                               this->latent_node_labels)) {
+                    std::string node_label = node->get_metadata()->get_label();
+                    if (exists(node_label, this->latent_node_labels)) {
 
+                        this->init_samples_tensor(node_label, num_samples);
                         this->update_assignment_from_sample(node);
 
-                        // TODO - fix for multidimensional sample size (e.g.
-                        //  samples from a parameter with dirichlet prior)
                         int time_step = node->get_time_step();
                         std::string label = node->get_metadata()->get_label();
                         int sample_size =
                             node->get_metadata()->get_sample_size();
                         for (int i = 0; i < sample_size; i++) {
                             double sampled_value = node->get_assignment()(i);
-                            this->node_label_to_samples.at(label)(i, s, time_step) =
-                                sampled_value;
+                            this->node_label_to_samples.at(label)(
+                                i, s, time_step) = sampled_value;
                         }
                     }
                     else {

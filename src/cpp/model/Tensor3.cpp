@@ -1,5 +1,7 @@
 #include "Tensor3.h"
 
+#include <iomanip>
+
 namespace tomcat {
     namespace model {
 
@@ -30,26 +32,11 @@ namespace tomcat {
         // Operator overload
         //----------------------------------------------------------------------
         std::ostream& operator<<(std::ostream& os, const Tensor3& tensor) {
-            os << "[";
             for (int m = 0; m < tensor.tensor.size(); m++) {
                 const Eigen::MatrixXd& matrix = tensor.tensor[m];
 
-                os << "[";
-                for (int i = 0; i < matrix.rows(); i++){
-                    os << matrix.row(i);
-                    if (i == matrix.rows() - 1){
-                        os << "]";
-                    } else{
-                        os << "\n";
-                        os << "  ";
-                    }
-                }
-                if (m == tensor.tensor.size() - 1){
-                    os << "]";
-                } else{
-                    os << "\n";
-                    os << "  ";
-                }
+                os << Tensor3::matrix_to_string(matrix);
+                os << "\n";
             }
 
             return os;
@@ -88,6 +75,28 @@ namespace tomcat {
             Tensor3 tensor(buffer, d1, d2, d3);
 
             return tensor;
+        }
+
+        std::string Tensor3::matrix_to_string(const Eigen::MatrixXd& matrix) {
+            std::stringstream ss;
+            for (int i = 0; i < matrix.rows(); i++) {
+                for (int j = 0; j < matrix.cols(); j++) {
+                    double value = matrix(i, j);
+
+                    if (int(value) == value) {
+                        ss << std::fixed << std::setprecision(0) << value;
+                    } else {
+                        ss << std::fixed << std::setprecision(20) << value;
+                    }
+
+                    if (j < matrix.cols() - 1) {
+                        ss << " ";
+                    }
+                }
+                ss << "\n";
+            }
+
+            return ss.str();
         }
 
         //----------------------------------------------------------------------

@@ -176,7 +176,7 @@ namespace tomcat {
 
             // It indicates whether the CPD was updated with concrete instances
             // of the nodes it depends on
-            bool updated;
+            bool updated = false;
 
           private:
             //------------------------------------------------------------------

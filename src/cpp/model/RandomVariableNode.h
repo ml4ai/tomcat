@@ -135,6 +135,16 @@ namespace tomcat {
             void replace_cpd_parameter_by_value(
                 const std::string& parameter_timed_name, Eigen::VectorXd value);
 
+            /**
+             * Prevents node's assignment to be changed.
+             */
+            void freeze();
+
+            /**
+             * Frees node's assignment to be changed.
+             */
+            void unfreeze();
+
             // -----------------------------------------------------------------
             // Getters & Setters
             // -----------------------------------------------------------------
@@ -143,6 +153,8 @@ namespace tomcat {
             void set_time_step(int time_step);
 
             void set_assignment(Eigen::VectorXd assignment);
+
+            bool is_frozen() const;
 
           protected:
             // -----------------------------------------------------------------
@@ -164,7 +176,7 @@ namespace tomcat {
             // Time step where the node shows up in the unrolled DBN. This
             // variable will be assigned when a concrete timed instance of this
             // node is created and assigned to a vertex in an unrolled DBN.
-            int time_step;
+            int time_step = 0;
 
           private:
             //------------------------------------------------------------------
@@ -198,6 +210,16 @@ namespace tomcat {
              */
             std::string
             get_unique_key_from_labels(std::vector<std::string> labels) const;
+
+            // -----------------------------------------------------------------
+            // Data members
+            // -----------------------------------------------------------------
+            /**
+             * A frozen node will have it's assignment preserved and won't be
+             * considered a latent node by the samplers. It will behave like a
+             * constant node.
+             */
+            bool frozen = false;
         };
 
     } // namespace model

@@ -180,6 +180,14 @@ namespace tomcat {
             }
         }
 
+        void RandomVariableNode::freeze() {
+            RandomVariableNode::frozen = true;
+        }
+
+        void RandomVariableNode::unfreeze() {
+            RandomVariableNode::frozen = false;
+        }
+
         // ---------------------------------------------------------------------
         // Getters & Setters
         // ---------------------------------------------------------------------
@@ -190,8 +198,12 @@ namespace tomcat {
         }
 
         void RandomVariableNode::set_assignment(Eigen::VectorXd assignment) {
-            this->assignment = std::move(assignment);
+            if (!this->frozen) {
+                this->assignment = std::move(assignment);
+            }
         }
+
+        bool RandomVariableNode::is_frozen() const { return frozen; }
 
     } // namespace model
 } // namespace tomcat

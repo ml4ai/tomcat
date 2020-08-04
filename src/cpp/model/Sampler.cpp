@@ -12,7 +12,7 @@ namespace tomcat {
         // Definitions
         //----------------------------------------------------------------------
 
-        // No definitions in this file
+#define exists(member, container) (container.find(member) != container.end())
 
         //----------------------------------------------------------------------
         // Constructors & Destructor
@@ -25,7 +25,8 @@ namespace tomcat {
             for (auto& node : model.get_node_templates()) {
                 std::string node_label = node.get_metadata()->get_label();
                 this->latent_node_labels.insert(node_label);
-                this->node_label_to_metadata[node_label] = *(node.get_metadata());
+                this->node_label_to_metadata[node_label] =
+                    *(node.get_metadata());
             }
         }
 
@@ -72,18 +73,19 @@ namespace tomcat {
             }
         }
 
-        void Sampler::init_samples_tensor(int num_samples, int time_steps) {
-            for (const auto& node_label : this->latent_node_labels) {
-                // If there's no observation for a node in a specific time step,
-                // this might be inferred by the value in the column that
-                // represent such time step in the matrix of samples as it's
-                // going to be filled with the original value = -1. Therefore,
-                // all the matrices of samples have the same size, regardless of
-                // the node's initial time step.
-                int sample_size =
-                    this->node_label_to_metadata.at(node_label).get_sample_size();
-                this->node_label_to_samples[node_label] =
-                    Tensor3::constant(sample_size, num_samples, time_steps, -1);
+        void Sampler::init_samples_tensor(const std::string& node_label,
+                                          int num_samples) {
+            // If there's no observation for a node in a specific time step,
+            // this might be inferred by the value in the column that
+            // represent such time step in the matrix of samples as it's
+            // going to be filled with the original value = -1. Therefore,
+            // all the matrices of samples have the same size, regardless of
+            // the node's initial time step.
+            if (!exists(node_label, this->node_label_to_samples)) {
+                int sample_size = this->node_label_to_metadata.at(node_label)
+                                      .get_sample_size();
+                this->node_label_to_samples[node_label] = Tensor3::constant(
+                    sample_size, num_samples, this->model.get_time_steps(), -1);
             }
         }
 

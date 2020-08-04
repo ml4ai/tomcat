@@ -38,9 +38,7 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Copy & Move constructors/assignments
             //------------------------------------------------------------------
-            Tensor3(const Tensor3&) {
-                std::cout << "Copying" << std::endl;
-            };
+            Tensor3(const Tensor3&) = default;
 
             Tensor3& operator=(const Tensor3&) = default;
 
@@ -87,7 +85,24 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Static functions
             //------------------------------------------------------------------
+            /**
+             * Creates a tensor filled with a constant value.
+             *
+             * @param d1: dimension of the first axis
+             * @param d2: dimension of the second axis
+             * @param d3: dimension of the third axis
+             * @param value: constant value
+             * @return Tensor of constant values.
+             */
             static Tensor3 constant(int d1, int d2, int d3, double value);
+
+            /**
+             * Returns a string representation for a matrix;
+             *
+             * @param matrix: matrix
+             * @return Matrix's string representation.
+             */
+            static std::string matrix_to_string(const Eigen::MatrixXd& matrix);
 
             //------------------------------------------------------------------
             // Member functions

@@ -17,7 +17,7 @@
 #include <variant>
 
 #include <boost/filesystem.hpp>
-namespace fs=boost::filesystem;
+namespace fs = boost::filesystem;
 
 using namespace Eigen;
 using namespace tomcat::model;
@@ -258,12 +258,12 @@ int main() {
     std::shared_ptr<CPD> prior_state_cpd_ptr =
         std::make_shared<CategoricalCPD>(prior_state_cpd);
 
-    //    CategoricalCPD state_cpd(
-    //        {"State"},
-    //        {theta_s0_node_ptr, theta_s1_node_ptr, theta_s2_node_ptr});
-    Eigen::MatrixXd state_transition_matrix(3, 3);
-    state_transition_matrix << 0, 0, 1, 1, 0, 0, 0, 1, 0;
-    CategoricalCPD state_cpd({"State"}, std::move(state_transition_matrix));
+        CategoricalCPD state_cpd(
+            {"State"},
+            {theta_s0_node_ptr, theta_s1_node_ptr, theta_s2_node_ptr});
+//    Eigen::MatrixXd state_transition_matrix(3, 3);
+//    state_transition_matrix << 0, 0, 1, 1, 0, 0, 0, 1, 0;
+//    CategoricalCPD state_cpd({"State"}, std::move(state_transition_matrix));
 
     std::shared_ptr<CPD> state_cpd_ptr =
         std::make_shared<CategoricalCPD>(state_cpd);
@@ -276,9 +276,9 @@ int main() {
         std::make_shared<RandomVariableNode>(state_node);
     state_metadata_ptr->add_parent_link(state_metadata_ptr, true);
     state_metadata_ptr->add_parent_link(state_prior_metadata_ptr, false);
-    //    state_metadata_ptr->add_parent_link(theta_s0_metadata_ptr, true);
-    //    state_metadata_ptr->add_parent_link(theta_s1_metadata_ptr, true);
-    //    state_metadata_ptr->add_parent_link(theta_s2_metadata_ptr, true);
+    state_metadata_ptr->add_parent_link(theta_s0_metadata_ptr, true);
+    state_metadata_ptr->add_parent_link(theta_s1_metadata_ptr, true);
+    state_metadata_ptr->add_parent_link(theta_s2_metadata_ptr, true);
 
     NodeMetadata tg_metadata = NodeMetadata::create_multiple_time_link_metadata(
         "TG", 1, true, false, 1, 2);
@@ -307,29 +307,32 @@ int main() {
     dbn.add_node_template(tg_node);
     dbn.add_node_template(ty_node);
     dbn.add_node_template(prior_state_node);
-    //    dbn.add_node_template(std::move(theta_s0_node));
-    //    dbn.add_node_template(std::move(theta_s1_node));
-    //    dbn.add_node_template(std::move(theta_s2_node));
+    dbn.add_node_template(std::move(theta_s0_node));
+    dbn.add_node_template(std::move(theta_s1_node));
+    dbn.add_node_template(std::move(theta_s2_node));
 
     dbn.unroll(3, false);
 
     Node::NodeMap param_map;
     Eigen::VectorXd temp(3);
     temp << 0.000001, 0.000001, 1;
-    param_map["(PriorS,0)"] = std::make_shared<ConstantNode>(ConstantNode(temp));
+    param_map["(PriorS,0)"] =
+        std::make_shared<ConstantNode>(ConstantNode(temp));
     prior_state_cpd_ptr->update_dependencies(param_map, 0);
 
-    std::vector<std::shared_ptr<RandomVariableNode>> nodes =
-        dbn.get_nodes_topological_order();
-
-    for (const auto& node : nodes) {
-        std::cout << *node << std::endl;
-    }
+//    std::vector<std::shared_ptr<RandomVariableNode>> nodes =
+//        dbn.get_nodes_topological_order();
+//
+//    for (const auto& node : nodes) {
+//        std::cout << *node << std::endl;
+//    }
 
     std::shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+    dbn.unroll(10, true);
+    dbn.load_from_folder("../../data/model");
     AncestralSampler sampler(dbn, gen);
-    sampler.sample(5, 10);
-//    sampler.sample(5, 10);
+    sampler.sample(5);
+    //    sampler.sample(5, 10);
 
     std::cout << "States" << std::endl;
     std::cout << sampler.get_samples("State") << std::endl;
@@ -337,23 +340,24 @@ int main() {
     std::cout << sampler.get_samples("TG") << std::endl;
     std::cout << "TYs" << std::endl;
     std::cout << sampler.get_samples("TY") << std::endl;
+//    std::cout << "PriorS" << std::endl;
+//    std::cout << sampler.get_samples("PriorS") << std::endl;
 
-    sampler.save_samples_to_folder("../../data/samples");
-    dbn.save_to_folder("../../data/model");
-    dbn.load_from_folder("../../data/model");
-//
-//    char buff[FILENAME_MAX]; // create string buffer to hold path
-//    getcwd(buff, FILENAME_MAX);
-//    fs::path current_dir = buff;
-//
-//    fs::path folder = current_dir.parent_path().parent_path() /
-//                                   fs::path("data/samples");
-//
-//    fs::path filepath = folder / fs::path("test.txt");
-//
-//    std::cout << filepath;
-//    std::ofstream file("../../data/samples/test2.txt");
-//    std::cout << "Writing into a file";
-//    file << "Teste Maior";
-//    file.close();
+//    sampler.save_samples_to_folder("../../data/samples");
+//    sampler.get_dbn().save_to_folder("../../data/model");
+    //
+    //    char buff[FILENAME_MAX]; // create string buffer to hold path
+    //    getcwd(buff, FILENAME_MAX);
+    //    fs::path current_dir = buff;
+    //
+    //    fs::path folder = current_dir.parent_path().parent_path() /
+    //                                   fs::path("data/samples");
+    //
+    //    fs::path filepath = folder / fs::path("test.txt");
+    //
+    //    std::cout << filepath;
+    //    std::ofstream file("../../data/samples/test2.txt");
+    //    std::cout << "Writing into a file";
+    //    file << "Teste Maior";
+    //    file.close();
 }
