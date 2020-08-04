@@ -110,19 +110,21 @@ For an example of handling a mission-specific event, see the ``PlayerDeath``
 handler method in ``Mission.java``. For examples of non mission-specific event
 handlers, see the ``ForgeEventHandler`` class.
 
-If you are implementing an event (see minecraft_forge_events) that needs to be
-published to the message bus (this is most likely the case), then you'll need
-to use the `MqttService`_ class singleton class. The class has an overloaded
-method, ``publish``, which can publish either an object or a string - in the
-case of an object, it is automatically serialized to JSON. The ``publish``
-method also takes a second string-type argument, which is the topic that the
-message corresponding to the event should be published to. You can see the
-currently implemented topics and message data models `here`_.
+If you are implementing an event (see `here`_ for a list of events that are
+potentially interesting for ToMCAT research) that needs to be published to the
+message bus (this is most likely the case), then you'll need to use the
+`MqttService`_ class singleton class. The class has an overloaded method,
+``publish``, which can publish either an object or a string - in the case of an
+object, it is automatically serialized to JSON. The ``publish`` method also
+takes a second string-type argument, which is the topic that the message
+corresponding to the event should be published to. You can see the currently
+implemented topics and message data models `here`_.
 
 If you add an event that corresponds to a published message, you'll also need
 to add the message schema and topic for that event to ``docs/spec.yml``,
 following the pattern of the other messages and topics that are already in
 there.
+
 .. _manually-designed and built: https://minecraft.gamepedia.com/Tutorials/Menu_screen#Creating_a_New_World
 .. _Project Malmo: https://github.com/microsoft/malmo
 .. _MqttService: https://ml4ai.github.io/tomcat/developer/java_api/classedu_1_1arizona_1_1tomcat_1_1Messaging_1_1MqttService.html
@@ -131,3 +133,4 @@ there.
 .. _here: https://ml4ai.github.io/tomcat/tomcat_openapi.html
 .. _Gson: https://github.com/google/gson
 .. _build upon: architecture.html
+.. _minecraft_forge_events: minecraft_forge_events.html
