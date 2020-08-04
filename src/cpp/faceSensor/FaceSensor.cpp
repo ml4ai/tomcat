@@ -25,7 +25,7 @@ int main(int ac, char* av[]) {
             "Set experiment ID")(
             "trial_id",
             po::value<string>(&trial_id)->default_value(""),
-            "set trial ID")("playername",
+            "Set trial ID")("playername",
                             po::value<string>(&playername)->default_value(""),
                             "Set player name")(
             "mloc", po::value<string>(&of_dir), "Set OpenFace models directory")(
@@ -37,7 +37,7 @@ int main(int ac, char* av[]) {
             "Enable visualization")(
             "file,f",
             po::value<string>(&file_path)->default_value("null"),
-            "Specify an input video file");
+            "Specify an input video/image file");
 
         po::variables_map vm;
         po::store(po::parse_command_line(ac, av, desc), vm);

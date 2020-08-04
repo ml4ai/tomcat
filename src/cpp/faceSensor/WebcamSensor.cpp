@@ -219,7 +219,7 @@ namespace tomcat {
             output["msg"] = {{"experiment_id", this->exp_id},
                              {"trial_id", this->trial_id},
                              {"timestamp", str_timestamp},
-                             {"source", "facesensor"},
+                             {"source", "faceSensor"},
                              {"sub_type", "state"},
                              {"version", "0.1"}};
 
