@@ -321,7 +321,7 @@ namespace tomcat {
             for (const auto& file :
                  fs::directory_iterator(input_folder)) {
 
-                std::string filename = file.path().filename();
+                std::string filename = file.path().filename().string();
                 std::string filepath = get_filepath(input_folder, filename);
                 std::string parameter_timed_name = remove_extension(filename);
                 Eigen::VectorXd assignment = read_matrix_from_file(filepath);
