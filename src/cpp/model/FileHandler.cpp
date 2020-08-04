@@ -1,7 +1,10 @@
 #include "FileHandler.h"
 
-#include <filesystem>
 #include <iostream>
+
+
+#include <boost/filesystem.hpp>
+namespace fs=boost::filesystem;
 
 namespace tomcat {
     namespace model {
@@ -10,9 +13,9 @@ namespace tomcat {
 
         std::string get_filepath(const std::string& folder_name,
                                  const std::string& filename) {
-            std::filesystem::path folder(folder_name);
-            std::filesystem::path file(filename);
-            std::filesystem::path filepath = folder / file;
+            fs::path folder(folder_name);
+            fs::path file(filename);
+            fs::path filepath = folder / file;
 
             return filepath.string();
         }

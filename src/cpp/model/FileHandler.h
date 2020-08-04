@@ -1,9 +1,9 @@
 #pragma once
 
-#import <fstream>
-#import <string>
+#include <fstream>
+#include <string>
 
-#import "Tensor3.h"
+#include "Tensor3.h"
 
 namespace tomcat {
     namespace model {
