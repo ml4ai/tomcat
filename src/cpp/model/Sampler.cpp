@@ -1,5 +1,7 @@
 #include "Sampler.h"
 
+#include <array>
+
 #include <fmt/format.h>
 
 #include "FileHandler.h"
@@ -21,8 +23,9 @@ namespace tomcat {
                          std::shared_ptr<gsl_rng> random_generator)
             : random_generator(random_generator), model(model) {
             for (auto& node : model.get_node_templates()) {
-                this->latent_node_labels.insert(
-                    node.get_metadata()->get_label());
+                std::string node_label = node.get_metadata()->get_label();
+                this->latent_node_labels.insert(node_label);
+                this->node_label_to_metadata[node_label] = *(node.get_metadata());
             }
         }
 
@@ -31,36 +34,35 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void Sampler::add_data(std::string& node_label, Eigen::MatrixXd& data) {
-            this->node_to_data[node_label] = data;
+        void Sampler::add_data(std::string& node_label, Tensor3& data) {
+            this->node_label_to_data[node_label] = data;
             this->latent_node_labels.erase(node_label);
         }
 
-        void Sampler::add_data(std::string&& node_label,
-                               Eigen::MatrixXd&& data) {
-            this->node_to_data[node_label] = std::move(data);
+        void Sampler::add_data(std::string&& node_label, Tensor3&& data) {
+            this->node_label_to_data[node_label] = std::move(data);
             this->latent_node_labels.erase(node_label);
         }
 
-        const Eigen::MatrixXd&
+        const Tensor3&
         Sampler::get_samples(const std::string& node_label) const {
-            return this->node_to_samples.at(node_label);
+            return this->node_label_to_samples.at(node_label);
         }
 
         void Sampler::save_samples_to_folder(
             const std::string& output_folder) const {
 
-            for (const auto& mapping : this->node_to_samples) {
+            for (const auto& mapping : this->node_label_to_samples) {
                 std::string filename = mapping.first + ".txt";
                 std::string filepath = get_filepath(output_folder, filename);
-                save_matrix_to_file(filepath, mapping.second);
+                save_tensor_to_file(filepath, mapping.second);
             }
         }
 
         void Sampler::check_data(int num_samples) const {
-            for (const auto& mapping : this->node_to_data) {
-                if (mapping.second.rows() != 1 &&
-                    mapping.second.rows() != num_samples) {
+            for (const auto& mapping : this->node_label_to_data) {
+                std::array<int, 3> tensor_shape = mapping.second.get_shape();
+                if (tensor_shape[1] != 1 && tensor_shape[1] != num_samples) {
 
                     throw std::invalid_argument(fmt::format(
                         "Node {} has number of datapoints incompatible with "
@@ -70,7 +72,7 @@ namespace tomcat {
             }
         }
 
-        void Sampler::init_samples_matrix(int num_samples, int time_steps) {
+        void Sampler::init_samples_tensor(int num_samples, int time_steps) {
             for (const auto& node_label : this->latent_node_labels) {
                 // If there's no observation for a node in a specific time step,
                 // this might be inferred by the value in the column that
@@ -78,16 +80,17 @@ namespace tomcat {
                 // going to be filled with the original value = -1. Therefore,
                 // all the matrices of samples have the same size, regardless of
                 // the node's initial time step.
-                this->node_to_samples[node_label] =
-                    Eigen::MatrixXd::Constant(num_samples, time_steps, -1);
+                int sample_size =
+                    this->node_label_to_metadata.at(node_label).get_sample_size();
+                this->node_label_to_samples[node_label] =
+                    Tensor3::constant(sample_size, num_samples, time_steps, -1);
             }
         }
 
         void Sampler::update_assignment_from_sample(
             std::shared_ptr<RandomVariableNode> node) {
             const std::vector<std::shared_ptr<RandomVariableNode>>&
-                parent_nodes =
-                this->model.get_parent_nodes_of(*node, true);
+                parent_nodes = this->model.get_parent_nodes_of(*node, true);
             Eigen::VectorXd assignment =
                 node->sample(this->random_generator, parent_nodes);
             node->set_assignment(assignment);

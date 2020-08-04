@@ -39,7 +39,7 @@ namespace tomcat {
                 this->model.get_nodes_topological_order();
 
             this->check_data(num_samples);
-            this->init_samples_matrix(num_samples, time_steps);
+            this->init_samples_tensor(num_samples, time_steps);
 
             for (int s = 0; s < num_samples; s++) {
                 for (auto& node : nodes) {
@@ -50,11 +50,15 @@ namespace tomcat {
 
                         // TODO - fix for multidimensional sample size (e.g.
                         //  samples from a parameter with dirichlet prior)
-                        this->node_to_samples.at(
-                            node->get_metadata()->get_label())(
-                            s, node->get_time_step()) =
-
-                            static_cast<int>(node->get_assignment()(0));
+                        int time_step = node->get_time_step();
+                        std::string label = node->get_metadata()->get_label();
+                        int sample_size =
+                            node->get_metadata()->get_sample_size();
+                        for (int i = 0; i < sample_size; i++) {
+                            double sampled_value = node->get_assignment()(i);
+                            this->node_label_to_samples.at(label)(i, s, time_step) =
+                                sampled_value;
+                        }
                     }
                     else {
                         this->assign_data_to_node(node, s);
@@ -67,14 +71,14 @@ namespace tomcat {
             const std::shared_ptr<RandomVariableNode>& node,
             int data_point_index) {
 
-            std::string node_label = node->get_metadata()->get_label();
+            std::string label = node->get_metadata()->get_label();
 
-            if (exists(node_label, this->node_to_data)) {
+            if (exists(label, this->node_label_to_data)) {
                 // TODO - extend this to multidimensional sample size. I am
                 //  assuming the samples are 1D numbers but this is not true for
                 //  all of the distributions. A sample from a Dirichlet or a
                 //  multivariate Gaussian can yield a vector.
-                double assignment = this->node_to_data[node_label](
+                Eigen::VectorXd assignment = this->node_label_to_data[label](
                     data_point_index, node->get_time_step());
                 node->set_assignment(assignment);
             }

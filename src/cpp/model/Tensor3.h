@@ -1,0 +1,115 @@
+#pragma once
+
+#include <array>
+#include <vector>
+
+#include <eigen3/Eigen/Dense>
+
+#include <iostream>
+
+namespace tomcat {
+    namespace model {
+
+        //------------------------------------------------------------------
+        // Forward declarations
+        //------------------------------------------------------------------
+
+        //------------------------------------------------------------------
+        // Structs
+        //------------------------------------------------------------------
+
+        /**
+         * Class description here
+         */
+        class Tensor3 {
+          public:
+            //------------------------------------------------------------------
+            // Types, Enums & Constants
+            //------------------------------------------------------------------
+
+            //------------------------------------------------------------------
+            // Constructors & Destructor
+            //------------------------------------------------------------------
+            Tensor3() {}
+            Tensor3(double* buffer, int d1, int d2, int d3);
+
+            ~Tensor3();
+
+            //------------------------------------------------------------------
+            // Copy & Move constructors/assignments
+            //------------------------------------------------------------------
+            Tensor3(const Tensor3&) {
+                std::cout << "Copying" << std::endl;
+            };
+
+            Tensor3& operator=(const Tensor3&) = default;
+
+            Tensor3(Tensor3&&) = default;
+
+            Tensor3& operator=(Tensor3&&) = default;
+
+            //------------------------------------------------------------------
+            // Operator overload
+            //------------------------------------------------------------------
+            friend std::ostream& operator<<(std::ostream& os,
+                                            const Tensor3& tensor);
+
+            /**
+             * Returns assignable matrix for a given index of the first axis.
+             *
+             * @param i: first axis' index
+             *
+             * @return Assignable matrix.
+             */
+            Eigen::MatrixXd& operator()(int i);
+
+            /**
+             * Returns a non-assignable vector for given indices of the second
+             * and third axes.
+             *
+             * @param j: second axis' index
+             * @param k: third axis' index
+             * @return Non-assignable vector.
+             */
+            Eigen::VectorXd operator()(int j, int k);
+
+            /**
+             * Returns an assignable number given indices of all axes.
+             *
+             * @param i: first axis' index
+             * @param j: second axis' index
+             * @param k: third axis' index
+             *
+             * @return Assignable number.
+             */
+            double& operator()(int i, int j, int k);
+
+            //------------------------------------------------------------------
+            // Static functions
+            //------------------------------------------------------------------
+            static Tensor3 constant(int d1, int d2, int d3, double value);
+
+            //------------------------------------------------------------------
+            // Member functions
+            //------------------------------------------------------------------
+
+            /**
+             * Returns 3D array containing the dimensions of the tensor.
+             *
+             * @return Tensor's dimensions.
+             */
+            std::array<int, 3> get_shape() const;
+
+          private:
+            //------------------------------------------------------------------
+            // Getters & Setters
+            //------------------------------------------------------------------
+
+            //------------------------------------------------------------------
+            // Data members
+            //------------------------------------------------------------------
+            std::vector<Eigen::MatrixXd> tensor;
+        };
+
+    } // namespace model
+} // namespace tomcat

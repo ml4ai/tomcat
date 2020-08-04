@@ -41,6 +41,10 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Constructors & Destructor
             //------------------------------------------------------------------
+            /**
+             * Empty constructor to allow usage in map structures.
+             */
+            NodeMetadata();
 
             /**
              * Creates an instance of NodeMetadata for a node that shows up or

@@ -13,6 +13,8 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
+        NodeMetadata::NodeMetadata() {}
+
         NodeMetadata::NodeMetadata(std::string label,
                                    int initial_time_step,
                                    bool replicable,

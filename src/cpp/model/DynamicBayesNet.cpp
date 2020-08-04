@@ -71,15 +71,15 @@ namespace tomcat {
         }
 
         void DynamicBayesNet::create_vertices_from_nodes() {
-            for (const auto& node : this->node_templates) {
+            for (const auto& node_template : this->node_templates) {
                 const std::shared_ptr<NodeMetadata> metadata =
-                    node.get_metadata();
+                    node_template.get_metadata();
                 if (metadata->is_replicable()) {
                     for (int t = metadata->get_initial_time_step();
                          t < this->time_steps;
                          t++) {
 
-                        VertexData vertex_data = this->add_vertex(node, t);
+                        VertexData vertex_data = this->add_vertex(node_template, t);
                         if (vertex_data.node->get_metadata()->is_parameter()) {
                             this->parameter_nodes_map[vertex_data.node
                                                           ->get_timed_name()] =
@@ -89,7 +89,7 @@ namespace tomcat {
                 }
                 else {
                     VertexData vertex_data = this->add_vertex(
-                        node, metadata->get_initial_time_step());
+                        node_template, metadata->get_initial_time_step());
                     if (vertex_data.node->get_metadata()->is_parameter()) {
                         this->parameter_nodes_map[vertex_data.node
                                                       ->get_timed_name()] =
@@ -126,9 +126,9 @@ namespace tomcat {
         }
 
         void DynamicBayesNet::create_edges() {
-            for (const auto& node : this->node_templates) {
+            for (const auto& node_template : this->node_templates) {
                 const std::shared_ptr<NodeMetadata> metadata =
-                    node.get_metadata();
+                    node_template.get_metadata();
 
                 for (const auto& parent_link : metadata->get_parent_links()) {
                     if (metadata->is_replicable()) {
@@ -137,14 +137,14 @@ namespace tomcat {
                              t++) {
 
                             this->add_edge(*(parent_link.parent_node_metadata),
-                                           *(node.get_metadata()),
+                                           *(node_template.get_metadata()),
                                            parent_link.time_crossing,
                                            t);
                         }
                     }
                     else {
                         this->add_edge(*(parent_link.parent_node_metadata),
-                                       *(node.get_metadata()),
+                                       *(node_template.get_metadata()),
                                        parent_link.time_crossing,
                                        metadata->get_initial_time_step());
                     }

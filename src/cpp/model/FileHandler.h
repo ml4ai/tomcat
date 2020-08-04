@@ -3,7 +3,7 @@
 #import <fstream>
 #import <string>
 
-#import <eigen3/Eigen/Dense>
+#import "Tensor3.h"
 
 namespace tomcat {
     namespace model {
@@ -34,7 +34,7 @@ namespace tomcat {
          * @param matrix: matrix of numeric values
          */
         void save_matrix_to_file(const std::string& filepath,
-                                 const Eigen::MatrixXd& matrix);
+                                 const Eigen::MatrixXd & matrix);
 
         /**
          * Reads a matrix of numeric values from a file.
@@ -43,6 +43,23 @@ namespace tomcat {
          * @return Matrix of numeric values.
          */
         Eigen::MatrixXd read_matrix_from_file(const std::string& filepath);
+
+        /**
+         * Saves a tensor of numeric values to a file.
+         *
+         * @param filepath: path of the file where the tensor must be written to
+         * @param tensor: tensor of numeric values
+         */
+        void save_tensor_to_file(const std::string& filepath,
+                                 const Tensor3& tensor);
+
+        /**
+         * Reads a tensor of numeric values from a file.
+         *
+         * @param filepath: path of the file where the tensor is stored
+         * @return Tensor of numeric values.
+         */
+        Tensor3 read_tensor_from_file(const std::string& filepath);
 
     } // namespace model
 } // namespace tomcat

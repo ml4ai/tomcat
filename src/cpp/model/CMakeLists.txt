@@ -49,7 +49,8 @@ add_library(tomcat_model_libs
         DynamicBayesNet.cpp
         Sampler.cpp
         AncestralSampler.cpp
-        FileHandler.cpp)
+        FileHandler.cpp
+        Tensor3.cpp)
 
 # Todo make code coverage work on Linux as well.
 if(APPLE AND CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
