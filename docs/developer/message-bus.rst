@@ -23,13 +23,53 @@ routing them as necessary between the publishers and subscribers. It enables
 asynchronicity by storing messages on a topic until all the subscribers who
 have subscribed to the topic have received them.
 
-- What is a message broker?
-- How do we use one in ToMCAT?
-- How do I publish a message?
-  - Using a client executable (mosquitto_pub)
-  - Using a client library (Eclipse Paho)
-- How do I subscribe to a topic?
-  - Using a client executable (mosquitto_pub)
-  - Using a client library (Eclipse Paho)
+There are a number different types of messaging protocols. In ToMCAT, we use
+MQTT, since it is the protocol being used in the ASIST cloud testbed being
+developed by the SIM2 collaboration (Aptima, ASU, CoS). MQTT is a lightweight
+messaging protocol suitable for embedded computers and IoT (internet of things)
+systems.
+
+The message broker that we use in ToMCAT is `Mosquitto`_. Communication with
+the message broker can be done using an executable or a client library. We will
+go over both these methods.
+
+Starting up the Mosquitto message broker
+----------------------------------------
+
+The invocation to start up the Mosquitto message broker depends on the
+operating system and the package manager you're using (keep in mind that
+running the ``tools/install`` script will automatically install Mosquitto for
+you).
+
+MacOS
+^^^^^
+
+If you installed Mosquitto using MacPorts, you can start it up in the
+background with the default settings by invoking:::
+
+    mosquitto &
+
+
+If you used Homebrew, you can do:::
+
+    $(brew --prefix)/sbin/mosquitto &
+
+
+Ubuntu
+^^^^^^
+
+If you're on Ubuntu, Mosquitto will automatically start up as a background
+service after installation, so you don't need to start it up manually.
+
+
+Publishing/subscribing
+----------------------
+
+Using client executables
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Using a client library
+^^^^^^^^^^^^^^^^^^^^^^
 
 .. _other ways: https://www.enterpriseintegrationpatterns.com/patterns/messaging/IntegrationStylesIntro.html
+.. _mosquitto: https://mosquitto.org
