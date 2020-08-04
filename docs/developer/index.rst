@@ -6,6 +6,7 @@ Developer documentation
    :caption: Contents:
 
    CONTRIBUTING
+   architecture
    missions
    Client_Server_Communication
    prebuilt_world_loading
