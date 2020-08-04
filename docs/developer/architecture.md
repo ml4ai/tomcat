@@ -12,12 +12,15 @@ programmatically control avatars in the Minecraft world and declaratively
 specify 'missions' that provided suitable environments for reinforcement
 learning research.
 
-ToMCAT inverts the original research direction of Project Malmo, placing humans
-in the spotlight instead of AI agents. We have vendorized the source of Project
-Malmo (external/malmo) and modified it to suit our purposes:
+ToMCAT inverts the original research direction of Project Malmo somewhat -
+rather than serving as a reinforcement learning research platform to teach AI
+agents to perform complex tasks in Minecraft, we focus on learning about how
+_humans_ think and behave. We have vendorized the source of Project Malmo
+(external/malmo) and modified it to suit our purposes:
 1. The original Java mod (external/malmo/Minecraft) has been extended to
    - allow human control by default
-   - add software instrumentation to capture human actions in the Minecraft environment.
+   - add software instrumentation to capture human actions in the Minecraft
+     environment.
    - add 'missions' (and documentation on how to implement new ones) to support
      developing machine social intelligence.
 2. The original C++ code for the Malmo static library has not been changed
@@ -41,9 +44,16 @@ by Malmo and ToMCAT.
   parsed relatively straightforward on the Java side to create the mission
   environment. These representations can also be used downstream by other
   applications, including AI agents in the ASIST program.
+* Malmo focuses on state observations at regular time intervals, but when
+  studying humans, it is desirable to record events that do not necessary
+  happen at regular time intervals (e.g. opening a door, flipping a lever,
+  attacking a mob). These kinds of events are accessible through the Forge API,
+  and ToMCAT exposes a subset of these.
 
-A significant part of ToMCAT involves a set of robust shell scripts for
-installing the software, running single and multiplayer sessions, and uploading
-data to servers. We place a heavy premium on automation, and thus eschew
-targeting the Windows operating system and non-LAN multiplayer. Our software
-is currently tested on macOS and Ubuntu.
+A significant part of ToMCAT involves a set of shell scripts for installing the
+software, running single and multiplayer sessions, and uploading data to
+servers. We place a heavy premium on automation, and thus eschew targeting the
+Windows operating system and non-LAN multiplayer in favor of maintaining a set
+of robust scripts to ease the lives of developers and end-users, minimizing the
+amount of complex documentation they need to read to get set up. Our software
+is currently tested on macOS and Ubuntu with a continuous integration pipeline.
