@@ -5,6 +5,9 @@
 #include "ConstantNode.h"
 #include "FileHandler.h"
 
+#include <boost/filesystem.hpp>
+namespace fs=boost::filesystem;
+
 namespace tomcat {
     namespace model {
         //----------------------------------------------------------------------
@@ -304,7 +307,7 @@ namespace tomcat {
         void DynamicBayesNet::save_to_folder(
             const std::string& output_folder) const {
 
-            std::filesystem::path folder(output_folder);
+            fs::path folder(output_folder);
 
             for (const auto& mapping : this->parameter_nodes_map) {
                 std::string filename = mapping.first + ".txt";
@@ -316,7 +319,7 @@ namespace tomcat {
         void
         DynamicBayesNet::load_from_folder(const std::string& input_folder) {
             for (const auto& file :
-                 std::filesystem::directory_iterator(input_folder)) {
+                 fs::directory_iterator(input_folder)) {
 
                 std::string filename = file.path().filename();
                 std::string filepath = get_filepath(input_folder, filename);

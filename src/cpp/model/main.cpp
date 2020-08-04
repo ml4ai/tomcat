@@ -8,7 +8,6 @@
 #include "NodeMetadata.h"
 #include "RandomVariableNode.h"
 #include <eigen3/Eigen/Dense>
-#include <filesystem>
 #include <fstream>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
@@ -16,6 +15,9 @@
 #include <memory>
 #include <unistd.h>
 #include <variant>
+
+#include <boost/filesystem.hpp>
+namespace fs=boost::filesystem;
 
 using namespace Eigen;
 using namespace tomcat::model;
@@ -342,12 +344,12 @@ int main() {
 //
 //    char buff[FILENAME_MAX]; // create string buffer to hold path
 //    getcwd(buff, FILENAME_MAX);
-//    std::filesystem::path current_dir = buff;
+//    fs::path current_dir = buff;
 //
-//    std::filesystem::path folder = current_dir.parent_path().parent_path() /
-//                                   std::filesystem::path("data/samples");
+//    fs::path folder = current_dir.parent_path().parent_path() /
+//                                   fs::path("data/samples");
 //
-//    std::filesystem::path filepath = folder / std::filesystem::path("test.txt");
+//    fs::path filepath = folder / fs::path("test.txt");
 //
 //    std::cout << filepath;
 //    std::ofstream file("../../data/samples/test2.txt");
