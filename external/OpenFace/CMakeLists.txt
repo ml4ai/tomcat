@@ -52,9 +52,9 @@ target_link_libraries(
           dlib::dlib
           ${OpenBLAS_LIB})
 
-target_include_directories(OpenFace PUBLIC ${openface_include_dirs}
-                                           ${OpenBLAS_INCLUDE_DIR}
-                                           ${OpenCV_INCLUDE_DIRS})
+target_include_directories(
+  OpenFace PUBLIC ${openface_include_dirs} ${OpenBLAS_INCLUDE_DIR}
+                  ${OpenCV_INCLUDE_DIRS})
 
 install(FILES ${openface_headers}
         DESTINATION ${CMAKE_INSTALL_PREFIX}/include/OpenFace)
