@@ -1,6 +1,6 @@
 set(CMAKE_CXX_STANDARD 17)
 
-find_package(Boost COMPONENTS program_options filesystem QUIET)
+find_package(Boost COMPONENTS program_options filesystem REQUIRED QUIET)
 find_package(yaml-cpp REQUIRED)
 add_executable(getSpecVersion getSpecVersion.cpp)
 target_include_directories(getSpecVersion PRIVATE ${YAML_CPP_INCLUDE_DIR}
