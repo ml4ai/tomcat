@@ -14,10 +14,10 @@ learning research.
 
 ToMCAT inverts the original research direction of Project Malmo, placing humans
 in the spotlight instead of AI agents. We have vendorized the source of Project
-Malmo (external/malmo) and modified it to suit our purposes.
+Malmo (external/malmo) and modified it to suit our purposes:
 1. The original Java mod (external/malmo/Minecraft) has been extended to
    - allow human control by default
-   - add software instrumentation to capture human actions in the Minecraft environment. 
+   - add software instrumentation to capture human actions in the Minecraft environment.
    - add 'missions' (and documentation on how to implement new ones) to support
      developing machine social intelligence.
 2. The original C++ code for the Malmo static library has not been changed
@@ -25,8 +25,25 @@ Malmo (external/malmo) and modified it to suit our purposes.
    this library to create an executable, `runMission` that serves as the driver
    for our experiments.
 
+There are a couple of other high-level differences in the technical approaches taken
+by Malmo and ToMCAT.
+
+* In Malmo, a mission environment can be declaratively
+  specified using low (e.g. `DrawBlock`, `DrawEntity` elements) and high (e.g.
+  `BuildBattleDecorator`) level XML elements, and corresponding 'decorator'
+  implementations on the Java side.
+
+  In contrast, the equivalent functionality in ToMCAT has been almost
+  completely extracted out into a separate C++ module (src/cpp/pro_gen) that
+  simultaneously creates low-level (block and entity positions, types, etc) and
+  high-level (specifications of bounding volumes and topological structure)
+  machine-readable representations of the mission environment that can be then
+  parsed relatively straightforward on the Java side to create the mission
+  environment. These representations can also be used downstream by other
+  applications, including AI agents in the ASIST program.
+
 A significant part of ToMCAT involves a set of robust shell scripts for
 installing the software, running single and multiplayer sessions, and uploading
 data to servers. We place a heavy premium on automation, and thus eschew
 targeting the Windows operating system and non-LAN multiplayer. Our software
-is currently tested on macOS and Ubuntu. 
+is currently tested on macOS and Ubuntu.
