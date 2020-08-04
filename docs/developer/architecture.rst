@@ -90,12 +90,13 @@ We leverage `OpenFace`_ to create an executable (``faceSensor``, whose code
 resides in ``src/cpp/faceSensor``) that outputs JSON messages containing
 information about a player's gaze, pose, action units, and face landmarks,
 either from a webcam feed or from a video file. These messages are output to
-standard output, from where they can be either redirected to a file, piped into
-an MQTT client (like ``mosquitto_sub``) for publication, or used for other
-downstream applications.
+standard output, from where they can be either redirected to a file, piped to
+an MQTT client (e.g. ``mosquitto_sub``) for publication to a message bus, or
+used for other downstream applications.
 
-Note: We vendorize OpenFace under ``external/OpenFace`` since we have made some
-modifications to it.
+Note: We vendorize OpenFace under ``external/OpenFace`` since (i) it's not
+available using a package manager, and (ii) we have made some modifications
+(mainly ergonomic) to it to suit our purposes.
 
 .. _documentation on events and data models: ../tomcat_openapi.html
 .. _instructions on how to implement new events: missions.html
