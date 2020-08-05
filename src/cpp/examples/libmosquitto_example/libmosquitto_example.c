@@ -16,7 +16,6 @@
  */
 
 #include <mosquitto.h>
-#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 
