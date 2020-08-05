@@ -1,6 +1,10 @@
 Design and Architecture
 =======================
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Contents:
+
 Building upon Project Malmo
 ---------------------------
 

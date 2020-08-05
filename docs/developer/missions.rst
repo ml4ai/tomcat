@@ -1,6 +1,10 @@
 Guide to developing ToMCAT missions
 ===================================
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Contents:
+
 ToMCAT aims to provide a flexible framework for studying human-machine teaming
 in the virtual world of Minecraft. It provides an API for constructing various
 scenarios in Minecraft that can act as focused tests of specific aspects of

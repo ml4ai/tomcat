@@ -2,11 +2,12 @@ Developer documentation
 =======================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents:
 
    CONTRIBUTING
    architecture
+   message-bus
    missions
    Client_Server_Communication
    prebuilt_world_loading

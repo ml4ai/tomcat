@@ -1,6 +1,11 @@
 Working with the MQTT message bus
 =================================
 
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Contents:
+
 In this section, we will briefly cover the basics of message buses and how to
 work with them, in the context of the ToMCAT project.
 
@@ -103,6 +108,8 @@ publish a message containing the string ``Hello world`` to ``example_topic``.::
 
 You should see ``Hello world`` printed to standard output in the terminal
 window in which ``mosquitto_sub`` was run.
+
+.. image:: http://vanga.sista.arizona.edu/tomcat/data/screenshots/mosquitto_client_executable_usage.png 
 
 Using client executables provides a few advantages over using a client library.
 
