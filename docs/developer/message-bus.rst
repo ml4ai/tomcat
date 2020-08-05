@@ -163,17 +163,24 @@ Then, in a third window, publish two JSON messages to topic1:::
     echo '{"key": "value1"}' '{"key": "value2"}' | mosquitto_pub -t topic1 -l
 
 In the second window, you'll see ``value1`` and ``value2`` being printed to
-standard output. This example illustrates an elegant stream processing pipeline
+standard output.
+
+.. image:: http://vanga.sista.arizona.edu/tomcat/data/screenshots/mosquitto_client_executable_usage_pipe_2.png
+
+This example illustrates an elegant stream processing pipeline
 setup with MQTT client executables and pipes. Hopefully, this simple exercise
 has helped you get an intuitive sense of how a message-based communication
 system works.
 
-
 Using a client library
 ^^^^^^^^^^^^^^^^^^^^^^
 
-For when a client application does not need to publish to more than one topic,
-this is an elegant way to work with a message bus.
+For more complex scenarios, it may be necessary to use a client library instead
+of a client executable. One example of such a scenario would be when a client
+application needs to publish a variety of messages to different topics. This is
+the case with the ToMCAT Java mod (which extends the `Malmo`_ mod). For when a
+client application does not need to publish to more than one topic, this is an
+elegant way to work with a message bus.
 
 Using client executables provides a couple of advantages over
 using a client library. For one, it makes it easier to switch message brokers
@@ -184,3 +191,4 @@ architecture rather than Mosquitto.
 .. _mosquitto: https://mosquitto.org
 .. _topics: ../tomcat_openapi.html
 .. _Apache Kafka: https://kafka.apache.org
+.. _Malmo: https://github.com/microsoft/malmo
