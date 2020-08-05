@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.10)
 # tomcat/tools/cmake directory , so that we can then call
 # find_package(Mosquitto REQUIRED) and set the correct compiler flags for the
 # include directories and libraries to link to.
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/../../../tools/cmake")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/../../../../tools/cmake")
 
 find_package(Mosquitto REQUIRED)
 message("Mosquitto header file found: ${Mosquitto_INCLUDE_DIRS}/mosquitto.h")
