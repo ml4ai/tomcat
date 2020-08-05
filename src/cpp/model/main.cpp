@@ -15,6 +15,7 @@
 #include <memory>
 #include <unistd.h>
 #include <variant>
+#include "FileHandler.h"
 
 #include <boost/filesystem.hpp>
 namespace fs = boost::filesystem;
@@ -329,13 +330,15 @@ int main() {
 
     std::shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
     dbn.unroll(10, true);
-    dbn.load_from_folder("../../data/model");
+    //dbn.load_from_folder("../../data/model");
     AncestralSampler sampler(dbn, gen);
+    Tensor3 state_data = read_tensor_from_file("../../data/samples/State.txt");
+    sampler.add_data("State", std::move(state_data));
     sampler.sample(5);
     //    sampler.sample(5, 10);
 
-    std::cout << "States" << std::endl;
-    std::cout << sampler.get_samples("State") << std::endl;
+//    std::cout << "States" << std::endl;
+//    std::cout << sampler.get_samples("State") << std::endl;
     std::cout << "TGs" << std::endl;
     std::cout << sampler.get_samples("TG") << std::endl;
     std::cout << "TYs" << std::endl;

@@ -1,6 +1,7 @@
 #include "FileHandler.h"
 
 #include <iostream>
+#include <sstream>
 
 #include <boost/filesystem.hpp>
 namespace fs = boost::filesystem;
@@ -126,11 +127,13 @@ namespace tomcat {
                 else {
                     int temp_cols = 0;
                     int previous_matrices_size = number_matrices * d2 * d3;
+                    double value;
 
                     while (!ss.eof()) {
-                        if (ss.peek() != DELIMITER) {
-                            ss >> buffer[rows * cols + previous_matrices_size +
-                                         temp_cols++];
+                        ss >> value;
+                        if (!ss.fail()) {
+                            buffer[rows * cols + previous_matrices_size +
+                                         temp_cols++] = value;
                         }
                     }
 
