@@ -197,17 +197,30 @@ writing non-Java programs, we'll use the `libmosquitto`_ client library
 reasons including static typing and easier dependency installation.
 
 For a simple example program that uses the `libmosquitto`_ client library, see
-``src/cpp/examples/libmosquitto_example``. The ``README.md`` file in there
-describes the steps to compile and run the example program.
+`src/cpp/examples/libmosquitto_example`_. The ``README.md`` file in there
+describes the steps to compile and run the example program. The source file
+itself, ``libmosquitto_example.c`` has comments explaining the components of
+the program, which demonstrates the usage of a callback function, which can be
+used to asynchronously process events.
+
+As an example, in a multiplayer experiment in which there is a server machine
+that communicates with client machines (that human participants would use to
+play Minecraft), there is a need to synchronize starting up certain programs
+like ``ffmpeg``, ``faceSensor`` at the same time on all client machines. This
+could be achieved by having a program running in the background on a client
+machine that acts as a controller - it would listen for a particular message on
+a particular topic that would prompt it to start the required program.
+
+When to use a client executable versus a client library
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 For when a client application does not need to publish to more than one topic,
-using the mosquitto_pub and mosquitto_sub executables is an elegant way to work
-with a message bus. Using these provides a couple of advantages over using a
-client library. For one, it makes it easier to switch message brokers in the
-future - say, if you wanted to use `Apache Kafka`_ for your streaming
-architecture rather than Mosquitto. The other advantages, of course, is that
-you do not need to compile/link a program, manage Java dependencies, or create
-Python virtual environments.
+using the ``mosquitto_pub`` and ``mosquitto_sub`` executables provides a couple
+of advantages over using a client library. For one, it makes it easier to
+switch message brokers in the future - say, if you wanted to use `Apache
+Kafka`_ for your streaming architecture rather than Mosquitto. Other advantages
+include not having to need to compile/link C/C++ programs, manage Java
+dependencies, or create a Python virtual environment for development.
 
 .. _other ways: https://www.enterpriseintegrationpatterns.com/patterns/messaging/IntegrationStylesIntro.html
 .. _mosquitto: https://mosquitto.org
@@ -217,3 +230,4 @@ Python virtual environments.
 .. _Eclipse Paho Java client library: https://www.eclipse.org/paho/clients/java/
 .. _MqttService: https://ml4ai.github.io/tomcat/developer/java_api/classedu_1_1arizona_1_1tomcat_1_1Messaging_1_1MqttService.html
 .. _libmosquitto: https://mosquitto.org/man/libmosquitto-3.html
+.. _src/cpp/examples/libmosquitto_example: https://github.com/ml4ai/tomcat/tree/master/src/cpp/examples/libmosquitto_example
