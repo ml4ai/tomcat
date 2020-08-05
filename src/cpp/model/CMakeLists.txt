@@ -49,6 +49,7 @@ add_library(tomcat_model_libs
         DynamicBayesNet.cpp
         Sampler.cpp
         AncestralSampler.cpp
+        GibbsSampler.cpp
         FileHandler.cpp
         Tensor3.cpp)
 

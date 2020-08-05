@@ -98,5 +98,18 @@ namespace tomcat {
             node->set_assignment(assignment);
         }
 
+        void Sampler::assign_data_to_node(
+            const std::shared_ptr<RandomVariableNode>& node,
+            int data_point_index) {
+
+            std::string label = node->get_metadata()->get_label();
+
+            if (exists(label, this->node_label_to_data)) {
+                Eigen::VectorXd assignment = this->node_label_to_data[label](
+                    data_point_index, node->get_time_step());
+                node->set_assignment(assignment);
+            }
+        }
+
     } // namespace model
 } // namespace tomcat

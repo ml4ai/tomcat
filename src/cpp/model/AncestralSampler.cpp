@@ -67,26 +67,5 @@ namespace tomcat {
             }
         }
 
-        void AncestralSampler::assign_data_to_node(
-            const std::shared_ptr<RandomVariableNode>& node,
-            int data_point_index) {
-
-            std::string label = node->get_metadata()->get_label();
-
-            if (exists(label, this->node_label_to_data)) {
-                // TODO - extend this to multidimensional sample size. I am
-                //  assuming the samples are 1D numbers but this is not true for
-                //  all of the distributions. A sample from a Dirichlet or a
-                //  multivariate Gaussian can yield a vector.
-                Eigen::VectorXd assignment = this->node_label_to_data[label](
-                    data_point_index, node->get_time_step());
-                node->set_assignment(assignment);
-            }
-        }
-
-        std::unique_ptr<Sampler> AncestralSampler::clone() {
-            return std::make_unique<AncestralSampler>(*this);
-        }
-
     } // namespace model
 } // namespace tomcat

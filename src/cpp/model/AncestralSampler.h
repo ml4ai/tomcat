@@ -47,28 +47,6 @@ namespace tomcat {
             //------------------------------------------------------------------
             void sample(int num_samples) override;
 
-            std::unique_ptr<Sampler> clone() override;
-
-          private:
-            //------------------------------------------------------------------
-            // Member functions
-            //------------------------------------------------------------------
-
-            /**
-             * Assigns a value from a given data point (row in the data matrix)
-             * to its corresponding node in the unrolled DBN. Each node in the
-             * unrolled DBN has a time step assigned to it, which determines the
-             * column (in the data matrix) from which the value has to be picked
-             * from. Each node can only assume one value at a time so this
-             * method has to be called separately for each one of the data
-             * points in the data matrix.
-             *
-             * @param data_point_index: index of the data point in the data
-             * matrix
-             */
-            void
-            assign_data_to_node(const std::shared_ptr<RandomVariableNode>& node,
-                                int data_point_index);
         };
     } // namespace model
 } // namespace tomcat
