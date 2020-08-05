@@ -27,10 +27,10 @@ __build_tomcat() {
         /bin/rm -rf build
         mkdir build
 
-        pushd build > /dev/null 
+        pushd build > /dev/null
             if [[ $CI -eq 1 && $OSTYPE == "linux-gnu" ]]; then
-                cmake ${TOMCAT} -DBoost_ARCHITECTURE=-x64\
-                                -DBOOST_ROOT=$BOOST_ROOT_1_69_0
+                CC=gcc-9 CXX=g++-9 cmake ${TOMCAT} -DBoost_ARCHITECTURE=-x64\
+                                   -DBOOST_ROOT=$BOOST_ROOT_1_69_0
                 if [[ $? -ne 0 ]]; then exit 1; fi
             else
                 if ! cmake ${TOMCAT}; then exit 1; fi
@@ -38,8 +38,8 @@ __build_tomcat() {
 
             if ! make -j; then exit 1; fi
             if ! make -j Minecraft; then exit 1; fi
-        popd > /dev/null 
-    popd > /dev/null 
+        popd > /dev/null
+    popd > /dev/null
 }
 
 __download_tomcat_data() {
