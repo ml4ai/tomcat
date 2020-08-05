@@ -25,7 +25,7 @@ have subscribed to the topic have received them.
 
 There are a number different types of messaging protocols. In ToMCAT, we use
 MQTT, since it is the protocol being used in the ASIST cloud testbed being
-developed by the SIM2 collaboration (Aptima, ASU, CoS). MQTT is a lightweight
+developed by the SIM2 collaboration (Aptima + ASU + CoS). MQTT is a lightweight
 messaging protocol suitable for embedded computers and IoT (internet of things)
 systems.
 
@@ -79,8 +79,38 @@ receive the messages from both the ``observations/events/entity_death`` and
 Publishing/subscribing
 ----------------------
 
+There are two ways to publish/subscribe to topics on a message bus - using
+client executables, or using a client library in your own program.
+
 Using client executables
 ^^^^^^^^^^^^^^^^^^^^^^^^
+
+Using a client executable is a simple, no-frills method to work with a message
+bus.
+
+Let's go through a small exercise in publishing/subscribing using client
+executables.
+
+Once you've started up the broker, you can subscribe to a topic called
+``example_topic`` using the ``mosquitto_sub`` client:::
+
+    mosquitto_sub -t example_topic
+
+Then, in a separate terminal window, use the ``mosquitto_pub`` client to
+publish a message containing the string ``Hello world`` to ``example_topic``.::
+
+    mosquitto_pub -t example_topic -m "Hello world"
+
+You should see ``Hello world`` printed to standard output in the terminal
+window in which ``mosquitto_sub`` was run.
+
+Using client executables provides a few advantages over using a client library.
+
+- It makes it easier to switch message brokers
+- It can potentially make dependency management simpler.
+
+For when a client application does not need to publish to more than one topic,
+this is an elegant way to work with a message bus.
 
 Using a client library
 ^^^^^^^^^^^^^^^^^^^^^^
