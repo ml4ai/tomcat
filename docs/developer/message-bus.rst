@@ -197,16 +197,17 @@ writing non-Java programs, we'll use the `libmosquitto`_ client library
 reasons including static typing and easier dependency installation.
 
 For a simple example program that uses the `libmosquitto`_ client library, see
-``src/cpp/examples/libmosquitto_example``.
+``src/cpp/examples/libmosquitto_example``. The ``README.md`` file in there
+describes the steps to compile and run the example program.
 
 For when a client application does not need to publish to more than one topic,
 using the mosquitto_pub and mosquitto_sub executables is an elegant way to work
-with a message bus.
-
-Using client executables provides a couple of advantages over using a client
-library. For one, it makes it easier to switch message brokers in the future -
-say, if you wanted to use `Apache Kafka`_ for your streaming architecture
-rather than Mosquitto.
+with a message bus. Using these provides a couple of advantages over using a
+client library. For one, it makes it easier to switch message brokers in the
+future - say, if you wanted to use `Apache Kafka`_ for your streaming
+architecture rather than Mosquitto. The other advantages, of course, is that
+you do not need to compile/link a program, manage Java dependencies, or create
+Python virtual environments.
 
 .. _other ways: https://www.enterpriseintegrationpatterns.com/patterns/messaging/IntegrationStylesIntro.html
 .. _mosquitto: https://mosquitto.org
