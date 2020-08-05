@@ -179,26 +179,40 @@ For more complex scenarios, it may be necessary to use a client library instead
 of a client executable. One example of such a scenario would be when a client
 application needs to publish a variety of messages to different topics. While
 ``mosquitto_sub`` is capable of subscribing to multiple topics,
-``mosquitto_pub`` is designed to publish to a single topic. =
+``mosquitto_pub`` is designed to publish to a single topic.
 
 Using a client library is also not a bad idea when your client program needs to
 process messages from different topics differently. While you could technically
 design your client to inspect each incoming message and route them based on
-their contents, it is probably simpler to create multiple client objects to
-subscribe to different topics with different callbacks (it's okay if this
-doesn't mean anything to you just yet - we'll get to it soon).
+their contents, it is probably simpler to call out to different functions
+within a program by inspecting the topic that the message arrived on (which can
+be done with a client library).
 
-This is the case with the ToMCAT Java mod (which extends the `Malmo`_ mod). For
-when a client application does not need to publish to more than one topic, this
-is an elegant way to work with a message bus.
+This is the case with the ToMCAT Java mod (which extends the `Malmo`_ mod),
+which uses the `Eclipse Paho Java client library`_. The functionality is
+wrapped in the `MqttService`_ singleton class. Eclipse Paho provides client
+libraries in a number of languages. However, for our purposes, when we are
+writing non-Java programs, we'll use the `libmosquitto`_ client library
+(instead of, say the Paho C++ or Python client libraries), for a couple of
+reasons including static typing and easier dependency installation.
 
-Using client executables provides a couple of advantages over
-using a client library. For one, it makes it easier to switch message brokers
-in the future - say, if you wanted to use `Apache Kafka`_ for your streaming
-architecture rather than Mosquitto.
+For a simple example program that uses the `libmosquitto`_ client library, see
+``src/cpp/examples/libmosquitto_example``.
+
+For when a client application does not need to publish to more than one topic,
+using the mosquitto_pub and mosquitto_sub executables is an elegant way to work
+with a message bus.
+
+Using client executables provides a couple of advantages over using a client
+library. For one, it makes it easier to switch message brokers in the future -
+say, if you wanted to use `Apache Kafka`_ for your streaming architecture
+rather than Mosquitto.
 
 .. _other ways: https://www.enterpriseintegrationpatterns.com/patterns/messaging/IntegrationStylesIntro.html
 .. _mosquitto: https://mosquitto.org
 .. _topics: ../tomcat_openapi.html
 .. _Apache Kafka: https://kafka.apache.org
 .. _Malmo: https://github.com/microsoft/malmo
+.. _Eclipse Paho Java client library: https://www.eclipse.org/paho/clients/java/
+.. _MqttService: https://ml4ai.github.io/tomcat/developer/java_api/classedu_1_1arizona_1_1tomcat_1_1Messaging_1_1MqttService.html
+.. _libmosquitto: https://mosquitto.org/man/libmosquitto-3.html
