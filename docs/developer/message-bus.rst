@@ -91,9 +91,7 @@ Using client executables
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 Using a client executable is a simple, no-frills method to work with a message
-bus.
-
-Let's go through a small exercise in publishing/subscribing using client
+bus. Let's go through a small exercise in publishing/subscribing using client
 executables.
 
 Once you've started up the broker, you can subscribe to a topic called
@@ -107,21 +105,82 @@ publish a message containing the string ``Hello world`` to ``example_topic``.::
     mosquitto_pub -t example_topic -m "Hello world"
 
 You should see ``Hello world`` printed to standard output in the terminal
-window in which ``mosquitto_sub`` was run.
+window in which ``mosquitto_sub`` was run (see screenshot below for example)
 
-.. image:: http://vanga.sista.arizona.edu/tomcat/data/screenshots/mosquitto_client_executable_usage.png 
+.. image:: http://vanga.sista.arizona.edu/tomcat/data/screenshots/mosquitto_client_executable_usage.png
 
-Using client executables provides a few advantages over using a client library.
+Now, let's try an example where the message published is not supplied using the
+``-m`` command line flag, but using a pipe instead. Since the messages we will
+be producing and consuming are in JSON format, we will use JSON for this
+example.
 
-- It makes it easier to switch message brokers
-- It can potentially make dependency management simpler.
+In the same window where you ran ``mosquitto_pub`` last time, run the following
+invocation:::
 
-For when a client application does not need to publish to more than one topic,
-this is an elegant way to work with a message bus.
+    echo '{"key": "value"}' | mosquitto_pub -t example_topic -l
+
+You should see the JSON object output to standard output in the window in which
+``mosquitto_sub`` was run.
+
+.. image:: http://vanga.sista.arizona.edu/tomcat/data/screenshots/mosquitto_client_executable_usage_pipe_1.png
+
+The string ``{"key": "value"}`` represents a JSON object. It is output to
+standard output using ``echo``, and subsequently piped into ``mosquitto_pub``
+using ``|``. The ``-l`` command line flag tells ``mosquitto_pub`` to treat each
+incoming line (separated by newline characters) as separate messages.
+
+Let us now put all these components together, as well as learn a bit more about
+another useful tool called ``jq`` (which can be obtained using your package
+manager: ``port/brew/apt-get install jq``), which is a program for working with
+JSON at the command line. ``jq`` can be a helpful tool when debugging JSON
+message publishing. When used as a filter with no arguments, any JSON piped
+into jq will be pretty-printed to the standard output stream.::
+
+    ~ $ echo '{"key": "value"}' | jq
+    {
+      "key": "value"
+    }
+
+We will publish the following two JSON messages to ``topic1``.::
+
+    {"key": "value1"}
+    {"key": "value2"}
+
+For each one, we will extract the value stored in the key '``key``' using
+``jq``, and publish that value to ``topic2``.
+
+In one terminal window, run the following invocation to set up the ``jq``
+processing 'stream'.::
+
+    mosquitto_sub -t topic1 | jq --unbuffered .key | mosquitto_pub -t topic2 -l
+
+In another window, subscribe to ``topic2``:::
+
+    mosquitto_sub -t topic2
+
+Then, in a third window, publish two JSON messages to topic1:::
+
+    echo '{"key": "value1"}' '{"key": "value2"}' | mosquitto_pub -t topic1 -l
+
+In the second window, you'll see ``value1`` and ``value2`` being printed to
+standard output. This example illustrates an elegant stream processing pipeline
+setup with MQTT client executables and pipes. Hopefully, this simple exercise
+has helped you get an intuitive sense of how a message-based communication
+system works.
+
 
 Using a client library
 ^^^^^^^^^^^^^^^^^^^^^^
 
+For when a client application does not need to publish to more than one topic,
+this is an elegant way to work with a message bus.
+
+Using client executables provides a couple of advantages over
+using a client library. For one, it makes it easier to switch message brokers
+in the future - say, if you wanted to use `Apache Kafka`_ for your streaming
+architecture rather than Mosquitto.
+
 .. _other ways: https://www.enterpriseintegrationpatterns.com/patterns/messaging/IntegrationStylesIntro.html
 .. _mosquitto: https://mosquitto.org
 .. _topics: ../tomcat_openapi.html
+.. _Apache Kafka: https://kafka.apache.org
