@@ -1,28 +1,28 @@
 # - Try to find Mosquitto
 # Once done this will define
-#  MOSQUITTO_FOUND - System has Mosquitto
-#  MOSQUITTO_INCLUDE_DIRS - The Mosquitto include directories
-#  MOSQUITTO_LIBRARIES - The libraries needed to use Mosquitto
-#  MOSQUITTO_DEFINITIONS - Compiler switches required for using Mosquitto
+#  Mosquitto_FOUND - System has Mosquitto
+#  Mosquitto_INCLUDE_DIRS - The Mosquitto include directories
+#  Mosquitto_LIBRARIES - The libraries needed to use Mosquitto
+#  Mosquitto_DEFINITIONS - Compiler switches required for using Mosquitto
 
 find_package(PkgConfig)
-pkg_check_modules(PC_MOSQUITTO QUIET libmosquitto)
-set(MOSQUITTO_DEFINITIONS ${PC_MOSQUITTO_CFLAGS_OTHER})
+pkg_check_modules(PC_Mosquitto QUIET libmosquitto)
+set(Mosquitto_DEFINITIONS ${PC_Mosquitto_CFLAGS_OTHER})
 
-find_path(MOSQUITTO_INCLUDE_DIR mosquitto.h
-          HINTS ${PC_MOSQUITTO_INCLUDEDIR} ${PC_MOSQUITTO_INCLUDE_DIRS}
+find_path(Mosquitto_INCLUDE_DIR mosquitto.h
+          HINTS ${PC_Mosquitto_INCLUDEDIR} ${PC_Mosquitto_INCLUDE_DIRS}
           PATH_SUFFIXES mosquitto )
 
-find_library(MOSQUITTO_LIBRARY NAMES libmosquitto mosquitto
-             HINTS ${PC_MOSQUITTO_LIBDIR} ${PC_MOSQUITTO_LIBRARY_DIRS} )
+find_library(Mosquitto_LIBRARY NAMES libmosquitto mosquitto
+             HINTS ${PC_Mosquitto_LIBDIR} ${PC_Mosquitto_LIBRARY_DIRS} )
 
 include(FindPackageHandleStandardArgs)
-# handle the QUIETLY and REQUIRED arguments and set MOSQUITTO_FOUND to TRUE
+# handle the QUIETLY and REQUIRED arguments and set Mosquitto_FOUND to TRUE
 # if all listed variables are TRUE
 find_package_handle_standard_args(Mosquitto  DEFAULT_MSG
-                                  MOSQUITTO_LIBRARY MOSQUITTO_INCLUDE_DIR)
+                                  Mosquitto_LIBRARY Mosquitto_INCLUDE_DIR)
 
-mark_as_advanced(MOSQUITTO_INCLUDE_DIR MOSQUITTO_LIBRARY )
+mark_as_advanced(Mosquitto_INCLUDE_DIR Mosquitto_LIBRARY )
 
-set(MOSQUITTO_LIBRARIES ${MOSQUITTO_LIBRARY} )
-set(MOSQUITTO_INCLUDE_DIRS ${MOSQUITTO_INCLUDE_DIR} )
+set(Mosquitto_LIBRARIES ${Mosquitto_LIBRARY} )
+set(Mosquitto_INCLUDE_DIRS ${Mosquitto_INCLUDE_DIR} )
