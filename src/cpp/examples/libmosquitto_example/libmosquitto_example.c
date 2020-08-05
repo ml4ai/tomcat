@@ -4,7 +4,7 @@
  * wildcard character '#'). For every message received it prints the topic, the
  * message, and the length of the message.
  *
- * This example has been adapted from the 'callback.c' in the official
+ * This example has been adapted from the 'callback.c' example in the official
  * mosquitto source tree
  * (https://github.com/eclipse/mosquitto/blob/master/examples/subscribe_simple/callback.c)
  * by Adarsh Pyarelal (adarsh@arizona.edu).
@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/* on_message is a 'callback' function - it will be called everytime there is a
+/* on_message is a 'callback' function - it will be called for every
  * message published on the topic named 'example_topic' (see call to
  * mosquitto_subscribe_callback in the 'main' function below). */
 int on_message(struct mosquitto* mosq,
