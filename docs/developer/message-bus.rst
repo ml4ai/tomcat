@@ -136,7 +136,7 @@ JSON at the command line. ``jq`` can be a helpful tool when debugging JSON
 message publishing. When used as a filter with no arguments, any JSON piped
 into jq will be pretty-printed to the standard output stream.::
 
-    ~ $ echo '{"key": "value"}' | jq
+    $ echo '{"key": "value"}' | jq
     {
       "key": "value"
     }
@@ -177,10 +177,20 @@ Using a client library
 
 For more complex scenarios, it may be necessary to use a client library instead
 of a client executable. One example of such a scenario would be when a client
-application needs to publish a variety of messages to different topics. This is
-the case with the ToMCAT Java mod (which extends the `Malmo`_ mod). For when a
-client application does not need to publish to more than one topic, this is an
-elegant way to work with a message bus.
+application needs to publish a variety of messages to different topics. While
+``mosquitto_sub`` is capable of subscribing to multiple topics,
+``mosquitto_pub`` is designed to publish to a single topic. =
+
+Using a client library is also not a bad idea when your client program needs to
+process messages from different topics differently. While you could technically
+design your client to inspect each incoming message and route them based on
+their contents, it is probably simpler to create multiple client objects to
+subscribe to different topics with different callbacks (it's okay if this
+doesn't mean anything to you just yet - we'll get to it soon).
+
+This is the case with the ToMCAT Java mod (which extends the `Malmo`_ mod). For
+when a client application does not need to publish to more than one topic, this
+is an elegant way to work with a message bus.
 
 Using client executables provides a couple of advantages over
 using a client library. For one, it makes it easier to switch message brokers
