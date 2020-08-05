@@ -7,7 +7,7 @@ Developer documentation
 
    CONTRIBUTING
    architecture
-   message-bus
+   message_bus
    missions
    Client_Server_Communication
    prebuilt_world_loading
