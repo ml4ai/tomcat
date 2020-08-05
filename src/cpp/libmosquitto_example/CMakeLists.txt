@@ -1,0 +1,8 @@
+project(libmosquitto_example)
+cmake_minimum_required(VERSION 3.10)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/../../../tools/cmake")
+find_package(Mosquitto REQUIRED)
+message("Mosquitto include dirs: ${MOSQUITTO_INCLUDE_DIRS}")
+add_executable(example example.c)
+target_include_directories(example PRIVATE ${MOSQUITTO_INCLUDE_DIRS})
+target_link_libraries(example PRIVATE ${MOSQUITTO_LIBRARIES})
