@@ -4,15 +4,9 @@ project(progen)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-find_package(Boost 1.69
-              COMPONENTS chrono
-                         date_time
-                         filesystem
-                         iostreams
+find_package(Boost 
+              COMPONENTS filesystem
                          program_options
-                         regex
-                         system
-                         thread
               REQUIRED)
  
 find_package(nlohmann_json REQUIRED)

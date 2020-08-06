@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
                       "${CMAKE_SOURCE_DIR}/../../../../tools/cmake")
 
-find_package(Mosquitto REQUIRED)
+find_package(Mosquitto 1.5 REQUIRED)
 message("Mosquitto header file found: ${Mosquitto_INCLUDE_DIRS}/mosquitto.h")
 message("Mosquitto library found: ${Mosquitto_LIBRARIES}")
 
