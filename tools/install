@@ -40,9 +40,10 @@ __build_tomcat() {
                     if [[ $DISTRO_MAJOR_VERSION -le 18 ]]; then
                         cmake ${TOMCAT} -DBOOST_ROOT=$BOOST_ROOT_1_69_0\
                                         -DBUILD_FACESENSOR=OFF
+                                        -DBUILD_EXAMPLES=ON
                         if [[ $? -ne 0 ]]; then exit 1; fi
                     else
-                        cmake ${TOMCAT}
+                        cmake ${TOMCAT} -DBUILD_EXAMPLES=ON
                         if [[ $? -ne 0 ]]; then exit 1; fi
                     fi
                 else

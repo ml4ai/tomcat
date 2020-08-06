@@ -96,7 +96,8 @@ __install_dependencies_using_apt() {
         openssl \
         zlib1g-dev \
         libbz2-dev \
-        libyaml-cpp-dev
+        libyaml-cpp-dev \
+        libmosquitto-dev
     if [[ $? -ne 0 ]]; then exit 1; fi
 
     # On Ubuntu 18.04 and older, the required version of the nlohmann-json JSON

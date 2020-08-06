@@ -12,3 +12,9 @@ add_subdirectory(getSpecVersion)
 
 # Procedural generation module.
 add_subdirectory(pro_gen)
+
+# Optionally, build examples
+option(BUILD_EXAMPLES "Enable building of the example programs" OFF)
+if(BUILD_EXAMPLES)
+    add_subdirectory(examples/libmosquitto_example)
+endif()
