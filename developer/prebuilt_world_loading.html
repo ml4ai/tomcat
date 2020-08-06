@@ -91,6 +91,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Developer documentation</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="CONTRIBUTING.html">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html">Design and Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="message_bus.html">Working with the MQTT message bus</a></li>
 <li class="toctree-l2"><a class="reference internal" href="missions.html">Guide to developing ToMCAT missions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Client_Server_Communication.html">Message Exchange between Client and Server in Minecraft Forge</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Pre-Built World Loading Tutorial</a><ul>
@@ -215,7 +217,7 @@ the tutorial go to the line <code class="docutils literal notranslate"><span cla
 <p>The whole path needs to be specified using <code class="docutils literal notranslate"><span class="pre">home/&lt;your</span> <span class="pre">username&gt;</span></code></p>
 <p>5. For now, don’t modify any of the other variables. Simply save the XML.</p>
 <p>6. Launch Minecraft from the build directory in tomcat, and in a separate terminal from inside build</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>run ./bin/runExperiment –mission &lt;Path to the file_gen_skeleton.xml you modified&gt;
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>run ./bin/runMission –mission &lt;Path to the file_gen_skeleton.xml you modified&gt;
 </pre></div>
 </div>
 <p>7.	That’s it! You should be inside the world I built.</p>

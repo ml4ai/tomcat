@@ -1,0 +1,340 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Design and Architecture &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Working with the MQTT message bus" href="message_bus.html" />
+    <link rel="prev" title="Contributing" href="CONTRIBUTING.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Developer documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="CONTRIBUTING.html">Contributing</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Design and Architecture</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#building-upon-project-malmo">Building upon Project Malmo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#automation">Automation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sensors">Sensors</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#audio-and-video">Audio and Video</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#in-game-observations-and-events">In-game observations and events</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#facial-landmark-gaze-pose-and-au-detection">Facial Landmark, Gaze, Pose, and AU detection</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="message_bus.html">Working with the MQTT message bus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="missions.html">Guide to developing ToMCAT missions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Client_Server_Communication.html">Message Exchange between Client and Server in Minecraft Forge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prebuilt_world_loading.html">Pre-Built World Loading Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="minecraft_forge_events.html">Events available through the Minecraft Forge event bus (for MC v1.11.2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cpp_api/index.html">C++ API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lisp.html">LISP Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tomcat_openapi.html">Data models and message bus topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Developer documentation</a> &raquo;</li>
+        
+      <li>Design and Architecture</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/developer/architecture.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="design-and-architecture">
+<h1>Design and Architecture<a class="headerlink" href="#design-and-architecture" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="building-upon-project-malmo">
+<h2>Building upon Project Malmo<a class="headerlink" href="#building-upon-project-malmo" title="Permalink to this headline">¶</a></h2>
+<p>ToMCAT extends <cite>Project Malmo</cite> to provide a platform to study human behavior in
+a virtual environment, with a focus on studying human-human and human-machine
+teaming.</p>
+<p>The core of Project Malmo consisted of two components: a static C++ library and
+a Java mod for Minecraft. Together, these components exposed an API for
+communicating with Minecraft over a TCP socket, thus enabling researchers to
+programmatically control avatars in the Minecraft world and declaratively
+specify ‘missions’ that provided suitable environments for reinforcement
+learning research.</p>
+<p>ToMCAT inverts the original research direction of Project Malmo somewhat -
+rather than serving as a reinforcement learning research platform to teach AI
+agents to perform complex tasks in Minecraft, we focus on learning about how
+<em>humans</em> think and behave. We have vendorized the source of Project Malmo
+(<code class="docutils literal notranslate"><span class="pre">external/malmo</span></code>) and modified it to suit our purposes:
+1. The original Java mod (<code class="docutils literal notranslate"><span class="pre">external/malmo/Minecraft</span></code>) has been extended to</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>allow human control by default</p></li>
+<li><p>add software instrumentation to capture human actions in the Minecraft
+environment.</p></li>
+<li><p>add ‘missions’ (and documentation on how to implement new ones) to support
+developing machine social intelligence.</p></li>
+</ul>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>The original C++ code for the Malmo static library has not been changed
+significantly (besides a bit of modernization and code formatting). We use
+this library to create an executable, <code class="docutils literal notranslate"><span class="pre">runMission</span></code> that serves as the driver
+for our experiments.</p></li>
+</ol>
+<p>There are a couple of other high-level differences in the technical approaches taken
+by Malmo and ToMCAT.</p>
+<ul class="simple">
+<li><p>In Malmo, a mission environment can be declaratively specified using low
+(e.g. <code class="docutils literal notranslate"><span class="pre">DrawBlock</span></code>, <code class="docutils literal notranslate"><span class="pre">DrawEntity</span></code> elements) and high (e.g.
+<code class="docutils literal notranslate"><span class="pre">BuildBattleDecorator</span></code>) level XML elements, and corresponding ‘decorator’
+implementations on the Java side.  In contrast, the equivalent functionality
+in ToMCAT has been almost completely extracted out into a separate C++ module
+(src/cpp/pro_gen) that simultaneously creates low-level (block and entity
+positions, types, etc) and high-level (specifications of bounding volumes and
+topological structure) machine-readable representations of the mission
+environment that can be then parsed relatively straightforward on the Java
+side to create the mission environment. These representations can also be
+used downstream by other applications, including AI agents in the ASIST
+program.</p></li>
+<li><p>Malmo focuses on state observations at regular time intervals, but when
+studying humans, it is desirable to record events that do not necessary
+happen at regular time intervals (e.g. opening a door, flipping a lever,
+attacking a mob). These kinds of events are accessible through the Forge API,
+and ToMCAT exposes a subset of these (see the <a class="reference external" href="../tomcat_openapi.html">documentation on events and
+data models</a> and <a href="#id1"><span class="problematic" id="id2">`instructions on how to implement new missions and events`_</span></a>
+for more details).</p></li>
+</ul>
+</div>
+<div class="section" id="automation">
+<h2>Automation<a class="headerlink" href="#automation" title="Permalink to this headline">¶</a></h2>
+<p>We place a heavy premium on automation, and thus eschew support for Windows and
+non-LAN multiplayer in favor of maintaining a set of robust scripts (in the
+<code class="docutils literal notranslate"><span class="pre">tools</span></code> directory) and a procedural generation module (<code class="docutils literal notranslate"><span class="pre">src/cpp/pro_gen</span></code>)
+to ease the lives of developers and end-users by minimizing the amount of
+complex documentation they need to read to get set up. Our software is
+currently tested on macOS and Ubuntu with a continuous integration pipeline.</p>
+</div>
+<div class="section" id="sensors">
+<h2>Sensors<a class="headerlink" href="#sensors" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="audio-and-video">
+<h3>Audio and Video<a class="headerlink" href="#audio-and-video" title="Permalink to this headline">¶</a></h3>
+<p>We implement sensors to record video and audio of the human player and the game
+itself. The video and audio of the player and the video of the game are
+captured using <a class="reference external" href="http://ffmpeg.org">ffmpeg</a>, and the audio of the game is captured using <a class="reference external" href="https://linux.die.net/man/1/pacat">pacat</a>
+(Linux) or <a class="reference external" href="https://github.com/ExistentialAudio/BlackHole">BlackHole</a> (macOS).</p>
+</div>
+<div class="section" id="in-game-observations-and-events">
+<h3>In-game observations and events<a class="headerlink" href="#in-game-observations-and-events" title="Permalink to this headline">¶</a></h3>
+<p>We implement capturing in-game observations and events related to the human
+players and the missions they are conducting. These are published to an MQTT
+message bus on various topics.</p>
+</div>
+<div class="section" id="facial-landmark-gaze-pose-and-au-detection">
+<h3>Facial Landmark, Gaze, Pose, and AU detection<a class="headerlink" href="#facial-landmark-gaze-pose-and-au-detection" title="Permalink to this headline">¶</a></h3>
+<p>We leverage <a class="reference external" href="https://github.com/TadasBaltrusaitis/OpenFace">OpenFace</a> to create an executable (<code class="docutils literal notranslate"><span class="pre">faceSensor</span></code>, whose code
+resides in <code class="docutils literal notranslate"><span class="pre">src/cpp/faceSensor</span></code>) that outputs JSON messages containing
+information about a player’s gaze, pose, action units, and face landmarks,
+either from a webcam feed or from a video file. These messages are output to
+standard output, from where they can be either redirected to a file, piped to
+an MQTT client (e.g. <code class="docutils literal notranslate"><span class="pre">mosquitto_sub</span></code>) for publication to a message bus, or
+used for other downstream applications.</p>
+<p>Note: We vendorize OpenFace under <code class="docutils literal notranslate"><span class="pre">external/OpenFace</span></code> since (i) it’s not
+available using a package manager, and (ii) we have made some modifications
+(mainly ergonomic) to it to suit our purposes.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="message_bus.html" class="btn btn-neutral float-right" title="Working with the MQTT message bus" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="CONTRIBUTING.html" class="btn btn-neutral float-left" title="Contributing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

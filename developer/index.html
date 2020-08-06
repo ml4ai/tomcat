@@ -91,6 +91,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Developer documentation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="CONTRIBUTING.html">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html">Design and Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="message_bus.html">Working with the MQTT message bus</a></li>
 <li class="toctree-l2"><a class="reference internal" href="missions.html">Guide to developing ToMCAT missions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Client_Server_Communication.html">Message Exchange between Client and Server in Minecraft Forge</a></li>
 <li class="toctree-l2"><a class="reference internal" href="prebuilt_world_loading.html">Pre-Built World Loading Tutorial</a></li>
@@ -172,38 +174,15 @@
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="CONTRIBUTING.html">Contributing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="CONTRIBUTING.html#suggested-git-workflow">Suggested Git Workflow</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="missions.html">Guide to developing ToMCAT missions</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="missions.html#building-the-environment">Building the environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="missions.html#setting-up-the-mission-skeleton">Setting up the mission skeleton</a></li>
-<li class="toctree-l2"><a class="reference internal" href="missions.html#defining-event-handlers">Defining event handlers</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="CONTRIBUTING.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Design and Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="message_bus.html">Working with the MQTT message bus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="missions.html">Guide to developing ToMCAT missions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Client_Server_Communication.html">Message Exchange between Client and Server in Minecraft Forge</a></li>
-<li class="toctree-l1"><a class="reference internal" href="prebuilt_world_loading.html">Pre-Built World Loading Tutorial</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="prebuilt_world_loading.html#loading-pre-built-worlds">Loading Pre-Built Worlds</a></li>
-<li class="toctree-l2"><a class="reference internal" href="prebuilt_world_loading.html#creating-a-world-to-load">Creating A World to Load</a></li>
-<li class="toctree-l2"><a class="reference internal" href="prebuilt_world_loading.html#final-notes">Final Notes</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="prebuilt_world_loading.html">Pre-Built World Loading Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="minecraft_forge_events.html">Events available through the Minecraft Forge event bus (for MC v1.11.2)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cpp_api/index.html">C++ API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../cpp_api/index.html#class-hierarchy">Class Hierarchy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../cpp_api/index.html#file-hierarchy">File Hierarchy</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../cpp_api/index.html#full-api">Full API</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="lisp.html">LISP Notes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="lisp.html#get-a-lisp">Get a Lisp</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lisp.html#quicklisp">Quicklisp</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lisp.html#lisp-editor">Lisp Editor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lisp.html#shop3">SHOP3</a></li>
-<li class="toctree-l2"><a class="reference internal" href="lisp.html#common-foreign-function-interface-cffi">Common Foreign Function Interface (CFFI)</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../cpp_api/index.html">C++ API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lisp.html">LISP Notes</a></li>
 </ul>
 </div>
 <p>Welcome to the developer documentation for ToMCAT. We collect here a miscellany
@@ -213,6 +192,7 @@ developers get up-to-speed rapidly.</p>
 how to implement a particular feature or debug a particularly ornery bug in the
 ToMCAT codebase, consider adding it to the ToMCAT developer documentation so
 that it can help future developers.</p>
+<p>The API for the Java component of ToMCAT can be found here: <a class="reference external" href="java_api/index.html">Java API</a></p>
 </div>
 
 

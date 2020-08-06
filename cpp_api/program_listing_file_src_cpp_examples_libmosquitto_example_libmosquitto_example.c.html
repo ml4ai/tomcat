@@ -1,0 +1,287 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Program Listing for File libmosquitto_example.c &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tomcat_openapi.html">Data models and message bus topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Program Listing for File libmosquitto_example.c</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/cpp_api/program_listing_file_src_cpp_examples_libmosquitto_example_libmosquitto_example.c.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="program-listing-for-file-libmosquitto-example-c">
+<span id="program-listing-file-src-cpp-examples-libmosquitto-example-libmosquitto-example-c"></span><h1>Program Listing for File libmosquitto_example.c<a class="headerlink" href="#program-listing-for-file-libmosquitto-example-c" title="Permalink to this headline">¶</a></h1>
+<p>↰ <a class="reference internal" href="file_src_cpp_examples_libmosquitto_example_libmosquitto_example.c.html#file-src-cpp-examples-libmosquitto-example-libmosquitto-example-c"><span class="std std-ref">Return to documentation for file</span></a> (<code class="docutils literal notranslate"><span class="pre">src/cpp/examples/libmosquitto_example/libmosquitto_example.c</span></code>)</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cm">/* This is an example program to demonstrate the usage of the Mosquitto client</span>
+<span class="cm"> * library (https://mosquitto.org/man/libmosquitto-3.html). It subscribes to</span>
+<span class="cm"> * all the topics under &#39;irc&#39; in a topic hierarchy (note the usage of the</span>
+<span class="cm"> * wildcard character &#39;#&#39;). For every message received it prints the topic, the</span>
+<span class="cm"> * message, and the length of the message.</span>
+<span class="cm"> *</span>
+<span class="cm"> * This example has been adapted from the &#39;callback.c&#39; example in the official</span>
+<span class="cm"> * mosquitto source tree</span>
+<span class="cm"> * (https://github.com/eclipse/mosquitto/blob/master/examples/subscribe_simple/callback.c)</span>
+<span class="cm"> * by Adarsh Pyarelal (adarsh@arizona.edu).</span>
+<span class="cm"> *</span>
+<span class="cm"> * For the full API documentation of libmosquitto, see</span>
+<span class="cm"> * https://mosquitto.org/api/files/mosquitto-h.html.</span>
+<span class="cm"> *</span>
+<span class="cm"> * Usage: ./libmosquitto_example</span>
+<span class="cm"> */</span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;mosquitto.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp"></span>
+
+<span class="cm">/* on_message is a &#39;callback&#39; function - it will be called for every</span>
+<span class="cm"> * message published on the topic named &#39;example_topic&#39; (see call to</span>
+<span class="cm"> * mosquitto_subscribe_callback in the &#39;main&#39; function below). */</span>
+<span class="kt">int</span> <span class="nf">on_message</span><span class="p">(</span><span class="k">struct</span> <span class="n">mosquitto</span><span class="o">*</span> <span class="n">mosq</span><span class="p">,</span>
+               <span class="kt">void</span><span class="o">*</span> <span class="n">userdata</span><span class="p">,</span>
+               <span class="k">const</span> <span class="k">struct</span> <span class="n">mosquitto_message</span><span class="o">*</span> <span class="n">msg</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span>
+        <span class="s">&quot;%s %s (%d)</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">msg</span><span class="o">-&gt;</span><span class="n">topic</span><span class="p">,</span> <span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span><span class="p">)</span><span class="n">msg</span><span class="o">-&gt;</span><span class="n">payload</span><span class="p">,</span> <span class="n">msg</span><span class="o">-&gt;</span><span class="n">payloadlen</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+    <span class="cm">/* We declare an integer variable to hold the return code for our C API</span>
+<span class="cm">     * calls. */</span>
+    <span class="kt">int</span> <span class="n">rc</span><span class="p">;</span>
+
+    <span class="c1">// mosquitto_lib_init must be called before any other mosquitto function.</span>
+    <span class="n">mosquitto_lib_init</span><span class="p">();</span>
+
+    <span class="cm">/* We then associate the on_message callback function to process messages</span>
+<span class="cm">     * received on the &#39;irc&#39; topic and all topics under it in the topic</span>
+<span class="cm">     * hierarchy.</span>
+<span class="cm">     *</span>
+<span class="cm">     * mosquitto_subscribe_callback is a helper function to make implementing</span>
+<span class="cm">     * callbacks easier.</span>
+<span class="cm">     * See</span>
+<span class="cm">     * https://mosquitto.org/api/files/mosquitto-h.html#mosquitto_subscribe_callback</span>
+<span class="cm">     * for descriptions of the arguments to this function.</span>
+<span class="cm">     * */</span>
+    <span class="n">rc</span> <span class="o">=</span> <span class="n">mosquitto_subscribe_callback</span><span class="p">(</span><span class="n">on_message</span><span class="p">,</span>
+                                      <span class="nb">NULL</span><span class="p">,</span>
+                                      <span class="s">&quot;irc/#&quot;</span><span class="p">,</span>
+                                      <span class="mi">0</span><span class="p">,</span>
+                                      <span class="s">&quot;localhost&quot;</span><span class="p">,</span>
+                                      <span class="mi">1883</span><span class="p">,</span>
+                                      <span class="nb">NULL</span><span class="p">,</span>
+                                      <span class="mi">60</span><span class="p">,</span>
+                                      <span class="nb">true</span><span class="p">,</span>
+                                      <span class="nb">NULL</span><span class="p">,</span>
+                                      <span class="nb">NULL</span><span class="p">,</span>
+                                      <span class="nb">NULL</span><span class="p">,</span>
+                                      <span class="nb">NULL</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">rc</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Error: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">mosquitto_strerror</span><span class="p">(</span><span class="n">rc</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="c1">// mosquitto_lib_cleanup must be called to free resources associated with</span>
+    <span class="c1">// the library.</span>
+    <span class="n">mosquitto_lib_cleanup</span><span class="p">();</span>
+
+    <span class="k">return</span> <span class="n">rc</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

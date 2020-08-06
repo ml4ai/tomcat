@@ -1,0 +1,438 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Working with the MQTT message bus &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Guide to developing ToMCAT missions" href="missions.html" />
+    <link rel="prev" title="Design and Architecture" href="architecture.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Developer documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="CONTRIBUTING.html">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html">Design and Architecture</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Working with the MQTT message bus</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#starting-up-the-mosquitto-message-broker">Starting up the Mosquitto message broker</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#macos">MacOS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ubuntu">Ubuntu</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#message-topics-and-topic-hierarchies">Message topics and topic hierarchies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#publishing-subscribing">Publishing/subscribing</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#using-client-executables">Using client executables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#using-a-client-library">Using a client library</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#when-to-use-a-client-executable-versus-a-client-library">When to use a client executable versus a client library</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="missions.html">Guide to developing ToMCAT missions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Client_Server_Communication.html">Message Exchange between Client and Server in Minecraft Forge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prebuilt_world_loading.html">Pre-Built World Loading Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="minecraft_forge_events.html">Events available through the Minecraft Forge event bus (for MC v1.11.2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cpp_api/index.html">C++ API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lisp.html">LISP Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tomcat_openapi.html">Data models and message bus topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">Developer documentation</a> &raquo;</li>
+        
+      <li>Working with the MQTT message bus</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/developer/message_bus.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="working-with-the-mqtt-message-bus">
+<h1>Working with the MQTT message bus<a class="headerlink" href="#working-with-the-mqtt-message-bus" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p>In this section, we will briefly cover the basics of message buses and how to
+work with them, in the context of the ToMCAT project.</p>
+<p>A message bus is a system that allows communication between software
+components. There are <a class="reference external" href="https://www.enterpriseintegrationpatterns.com/patterns/messaging/IntegrationStylesIntro.html">other ways</a> to achieve this kind of communication (e.g.
+production and consumption of files, a shared database, remote procedure
+invocations) - however, an architecture built around a message bus provides a
+great deal of flexibility and enables asynchronous communication between the
+components.</p>
+<p>It might be useful to visualize the bus as a hierarchical collection of
+‘streams’ of data, called ‘topics’. The data on the bus is in the form of
+‘messages’, which are usually in a lightweight machine-readable plain text
+format (in our case, we use JSON messages). Client applications can then
+‘subscribe’ and ‘publish’ to specific topics, thus having to deal with only a
+subset of the information on the bus rather than all of it.</p>
+<p>A message <em>broker</em> is a program that serves to handle the flow of messages,
+routing them as necessary between the publishers and subscribers. It enables
+asynchronicity by storing messages on a topic until all the subscribers who
+have subscribed to the topic have received them.</p>
+<p>There are a number different types of messaging protocols. In ToMCAT, we use
+MQTT, since it is the protocol being used in the ASIST cloud testbed being
+developed by the SIM2 collaboration (Aptima + ASU + CoS). MQTT is a lightweight
+messaging protocol suitable for embedded computers and IoT (internet of things)
+systems.</p>
+<p>The message broker that we use in ToMCAT is <a class="reference external" href="https://mosquitto.org">Mosquitto</a>. Communication with
+the message broker can be done using an executable or a client library. We will
+go over both these methods.</p>
+<div class="section" id="starting-up-the-mosquitto-message-broker">
+<h2>Starting up the Mosquitto message broker<a class="headerlink" href="#starting-up-the-mosquitto-message-broker" title="Permalink to this headline">¶</a></h2>
+<p>The invocation to start up the Mosquitto message broker depends on the
+operating system and the package manager you’re using (keep in mind that
+running the <code class="docutils literal notranslate"><span class="pre">tools/install</span></code> script will automatically install Mosquitto for
+you).</p>
+<div class="section" id="macos">
+<h3>MacOS<a class="headerlink" href="#macos" title="Permalink to this headline">¶</a></h3>
+<p>If you installed Mosquitto using MacPorts, you can start it up in the
+background with the default settings by invoking::</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">mosquitto</span> <span class="o">&amp;</span>
+</pre></div>
+</div>
+<p>If you used Homebrew, you can do::</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>$(brew --prefix)/sbin/mosquitto &amp;
+</pre></div>
+</div>
+</div>
+<div class="section" id="ubuntu">
+<h3>Ubuntu<a class="headerlink" href="#ubuntu" title="Permalink to this headline">¶</a></h3>
+<p>If you’re on Ubuntu, Mosquitto will automatically start up as a background
+service after installation, so you don’t need to start it up manually.</p>
+</div>
+</div>
+<div class="section" id="message-topics-and-topic-hierarchies">
+<h2>Message topics and topic hierarchies<a class="headerlink" href="#message-topics-and-topic-hierarchies" title="Permalink to this headline">¶</a></h2>
+<p>Message brokers route messages to/from client applications based on the topics
+that the applications published/subscribed to. Topics follow a hierarchical
+pattern, with levels in the hierarchy separated by slashes (<code class="docutils literal notranslate"><span class="pre">/</span></code>). For
+example, consider the topics shown below (a subset of the <a class="reference external" href="../tomcat_openapi.html">topics</a>
+implemented in ToMCAT).</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">observations/events/entity_death</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">observations/events/mob_attacked</span></code></p></li>
+</ul>
+<p>If a client application subscribed to <code class="docutils literal notranslate"><span class="pre">observations/events/#</span></code>, they would
+receive the messages from both the <code class="docutils literal notranslate"><span class="pre">observations/events/entity_death</span></code> and
+<code class="docutils literal notranslate"><span class="pre">observations/events/mob_attacked</span></code> topics.</p>
+</div>
+<div class="section" id="publishing-subscribing">
+<h2>Publishing/subscribing<a class="headerlink" href="#publishing-subscribing" title="Permalink to this headline">¶</a></h2>
+<p>There are two ways to publish/subscribe to topics on a message bus - using
+client executables, or using a client library in your own program.</p>
+<div class="section" id="using-client-executables">
+<h3>Using client executables<a class="headerlink" href="#using-client-executables" title="Permalink to this headline">¶</a></h3>
+<p>Using a client executable is a simple, no-frills method to work with a message
+bus. Let’s go through a small exercise in publishing/subscribing using client
+executables.</p>
+<p>Once you’ve started up the broker, you can subscribe to a topic called
+<code class="docutils literal notranslate"><span class="pre">example_topic</span></code> using the <code class="docutils literal notranslate"><span class="pre">mosquitto_sub</span></code> client::</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">mosquitto_sub</span> <span class="o">-</span><span class="n">t</span> <span class="n">example_topic</span>
+</pre></div>
+</div>
+<p>Then, in a separate terminal window, use the <code class="docutils literal notranslate"><span class="pre">mosquitto_pub</span></code> client to
+publish a message containing the string <code class="docutils literal notranslate"><span class="pre">Hello</span> <span class="pre">world</span></code> to <code class="docutils literal notranslate"><span class="pre">example_topic</span></code>.:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">mosquitto_pub</span> <span class="o">-</span><span class="n">t</span> <span class="n">example_topic</span> <span class="o">-</span><span class="n">m</span> <span class="s">&quot;Hello world&quot;</span>
+</pre></div>
+</div>
+<p>You should see <code class="docutils literal notranslate"><span class="pre">Hello</span> <span class="pre">world</span></code> printed to standard output in the terminal
+window in which <code class="docutils literal notranslate"><span class="pre">mosquitto_sub</span></code> was run (see screenshot below for example)</p>
+<img alt="http://vanga.sista.arizona.edu/tomcat/data/screenshots/mosquitto_client_executable_usage.png" src="http://vanga.sista.arizona.edu/tomcat/data/screenshots/mosquitto_client_executable_usage.png" />
+<p>Now, let’s try an example where the message published is not supplied using the
+<code class="docutils literal notranslate"><span class="pre">-m</span></code> command line flag, but using a pipe instead. Since the messages we will
+be producing and consuming are in JSON format, we will use JSON for this
+example.</p>
+<p>In the same window where you ran <code class="docutils literal notranslate"><span class="pre">mosquitto_pub</span></code> last time, run the following
+invocation::</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>echo &#39;{&quot;key&quot;: &quot;value&quot;}&#39; | mosquitto_pub -t example_topic -l
+</pre></div>
+</div>
+<p>You should see the JSON object output to standard output in the window in which
+<code class="docutils literal notranslate"><span class="pre">mosquitto_sub</span></code> was run.</p>
+<img alt="http://vanga.sista.arizona.edu/tomcat/data/screenshots/mosquitto_client_executable_usage_pipe_1.png" src="http://vanga.sista.arizona.edu/tomcat/data/screenshots/mosquitto_client_executable_usage_pipe_1.png" />
+<p>The string <code class="docutils literal notranslate"><span class="pre">{&quot;key&quot;:</span> <span class="pre">&quot;value&quot;}</span></code> represents a JSON object. It is output to
+standard output using <code class="docutils literal notranslate"><span class="pre">echo</span></code>, and subsequently piped into <code class="docutils literal notranslate"><span class="pre">mosquitto_pub</span></code>
+using <code class="docutils literal notranslate"><span class="pre">|</span></code>. The <code class="docutils literal notranslate"><span class="pre">-l</span></code> command line flag tells <code class="docutils literal notranslate"><span class="pre">mosquitto_pub</span></code> to treat each
+incoming line (separated by newline characters) as separate messages.</p>
+<p>Let us now put all these components together, as well as learn a bit more about
+another useful tool called <code class="docutils literal notranslate"><span class="pre">jq</span></code> (which can be obtained using your package
+manager: <code class="docutils literal notranslate"><span class="pre">port/brew/apt-get</span> <span class="pre">install</span> <span class="pre">jq</span></code>), which is a program for working with
+JSON at the command line. <code class="docutils literal notranslate"><span class="pre">jq</span></code> can be a helpful tool when debugging JSON
+message publishing. When used as a filter with no arguments, any JSON piped
+into jq will be pretty-printed to the standard output stream.:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>$ echo &#39;{&quot;key&quot;: &quot;value&quot;}&#39; | jq
+{
+  &quot;key&quot;: &quot;value&quot;
+}
+</pre></div>
+</div>
+<p>We will publish the following two JSON messages to <code class="docutils literal notranslate"><span class="pre">topic1</span></code>.:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s">&quot;key&quot;</span><span class="o">:</span> <span class="s">&quot;value1&quot;</span><span class="p">}</span>
+<span class="p">{</span><span class="s">&quot;key&quot;</span><span class="o">:</span> <span class="s">&quot;value2&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>For each one, we will extract the value stored in the key ‘<code class="docutils literal notranslate"><span class="pre">key</span></code>’ using
+<code class="docutils literal notranslate"><span class="pre">jq</span></code>, and publish that value to <code class="docutils literal notranslate"><span class="pre">topic2</span></code>.</p>
+<p>In one terminal window, run the following invocation to set up the <code class="docutils literal notranslate"><span class="pre">jq</span></code>
+processing ‘stream’.:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">mosquitto_sub</span> <span class="o">-</span><span class="n">t</span> <span class="n">topic1</span> <span class="o">|</span> <span class="n">jq</span> <span class="o">--</span><span class="n">unbuffered</span> <span class="p">.</span><span class="n">key</span> <span class="o">|</span> <span class="n">mosquitto_pub</span> <span class="o">-</span><span class="n">t</span> <span class="n">topic2</span> <span class="o">-</span><span class="n">l</span>
+</pre></div>
+</div>
+<p>In another window, subscribe to <code class="docutils literal notranslate"><span class="pre">topic2</span></code>::</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">mosquitto_sub</span> <span class="o">-</span><span class="n">t</span> <span class="n">topic2</span>
+</pre></div>
+</div>
+<p>Then, in a third window, publish two JSON messages to topic1::</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>echo &#39;{&quot;key&quot;: &quot;value1&quot;}&#39; &#39;{&quot;key&quot;: &quot;value2&quot;}&#39; | mosquitto_pub -t topic1 -l
+</pre></div>
+</div>
+<p>In the second window, you’ll see <code class="docutils literal notranslate"><span class="pre">value1</span></code> and <code class="docutils literal notranslate"><span class="pre">value2</span></code> being printed to
+standard output.</p>
+<img alt="http://vanga.sista.arizona.edu/tomcat/data/screenshots/mosquitto_client_executable_usage_pipe_2.png" src="http://vanga.sista.arizona.edu/tomcat/data/screenshots/mosquitto_client_executable_usage_pipe_2.png" />
+<p>This example illustrates an elegant stream processing pipeline
+setup with MQTT client executables and pipes. Hopefully, this simple exercise
+has helped you get an intuitive sense of how a message-based communication
+system works.</p>
+</div>
+<div class="section" id="using-a-client-library">
+<h3>Using a client library<a class="headerlink" href="#using-a-client-library" title="Permalink to this headline">¶</a></h3>
+<p>For more complex scenarios, it may be necessary to use a client library instead
+of a client executable. One example of such a scenario would be when a client
+application needs to publish a variety of messages to different topics. While
+<code class="docutils literal notranslate"><span class="pre">mosquitto_sub</span></code> is capable of subscribing to multiple topics,
+<code class="docutils literal notranslate"><span class="pre">mosquitto_pub</span></code> is designed to publish to a single topic.</p>
+<p>Using a client library is also not a bad idea when your client program needs to
+process messages from different topics differently. While you could technically
+design your client to inspect each incoming message and route them based on
+their contents, it is probably simpler to call out to different functions
+within a program by inspecting the topic that the message arrived on (which can
+be done with a client library).</p>
+<p>This is the case with the ToMCAT Java mod (which extends the <a class="reference external" href="https://github.com/microsoft/malmo">Malmo</a> mod),
+which uses the <a class="reference external" href="https://www.eclipse.org/paho/clients/java/">Eclipse Paho Java client library</a>. The functionality is
+wrapped in the <a class="reference external" href="https://ml4ai.github.io/tomcat/developer/java_api/classedu_1_1arizona_1_1tomcat_1_1Messaging_1_1MqttService.html">MqttService</a> singleton class. Eclipse Paho provides client
+libraries in a number of languages. However, for our purposes, when we are
+writing non-Java programs, we’ll use the <a class="reference external" href="https://mosquitto.org/man/libmosquitto-3.html">libmosquitto</a> client library
+(instead of, say the Paho C++ or Python client libraries), for a couple of
+reasons including static typing and easier dependency installation.</p>
+<p>For a simple example program that uses the <a class="reference external" href="https://mosquitto.org/man/libmosquitto-3.html">libmosquitto</a> client library, see
+<a class="reference external" href="https://github.com/ml4ai/tomcat/tree/master/src/cpp/examples/libmosquitto_example">src/cpp/examples/libmosquitto_example</a>. The <code class="docutils literal notranslate"><span class="pre">README.md</span></code> file in there
+describes the steps to compile and run the example program. The source file
+itself, <code class="docutils literal notranslate"><span class="pre">libmosquitto_example.c</span></code> has comments explaining the components of
+the program, which demonstrates the usage of a callback function, which can be
+used to asynchronously process events.</p>
+<p>As an example, in a multiplayer experiment in which there is a server machine
+that communicates with client machines (that human participants would use to
+play Minecraft), there is a need to synchronize starting up certain programs
+like <code class="docutils literal notranslate"><span class="pre">ffmpeg</span></code>, <code class="docutils literal notranslate"><span class="pre">faceSensor</span></code> at the same time on all client machines. This
+could be achieved by having a program running in the background on a client
+machine that acts as a controller - it would listen for a particular message on
+a particular topic that would prompt it to start the required program.</p>
+</div>
+<div class="section" id="when-to-use-a-client-executable-versus-a-client-library">
+<h3>When to use a client executable versus a client library<a class="headerlink" href="#when-to-use-a-client-executable-versus-a-client-library" title="Permalink to this headline">¶</a></h3>
+<p>For when a client application does not need to publish to more than one topic,
+using the <code class="docutils literal notranslate"><span class="pre">mosquitto_pub</span></code> and <code class="docutils literal notranslate"><span class="pre">mosquitto_sub</span></code> executables provides a couple
+of advantages over using a client library. For one, it makes it easier to
+switch message brokers in the future - say, if you wanted to use <a class="reference external" href="https://kafka.apache.org">Apache
+Kafka</a> for your streaming architecture rather than Mosquitto. Other advantages
+include not having to need to compile/link C/C++ programs, manage Java
+dependencies, or create a Python virtual environment for development.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="missions.html" class="btn btn-neutral float-right" title="Guide to developing ToMCAT missions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="architecture.html" class="btn btn-neutral float-left" title="Design and Architecture" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

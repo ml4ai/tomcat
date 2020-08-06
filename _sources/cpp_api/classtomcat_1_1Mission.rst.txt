@@ -3,7 +3,7 @@
 Class Mission
 =============
 
-- Defined in :ref:`file_src_cpp_Mission.h`
+- Defined in :ref:`file_src_cpp_runMission_Mission.h`
 
 
 Class Documentation

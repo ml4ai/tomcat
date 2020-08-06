@@ -19,8 +19,6 @@ Classes
 
 - :ref:`exhale_class_classtomcat_1_1FileHandler`
 
-- :ref:`exhale_class_classtomcat_1_1LocalAgent`
-
 - :ref:`exhale_class_classtomcat_1_1Mission`
 
 - :ref:`exhale_class_classtomcat_1_1TomcatMissionException`

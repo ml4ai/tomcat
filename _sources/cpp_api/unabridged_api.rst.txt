@@ -88,11 +88,6 @@ Classes and Structs
 .. toctree::
    :maxdepth: 5
 
-   classtomcat_1_1LocalAgent.rst
-
-.. toctree::
-   :maxdepth: 5
-
    classtomcat_1_1Mission.rst
 
 .. toctree::
@@ -122,17 +117,22 @@ Functions
 .. toctree::
    :maxdepth: 5
 
-   function_runExperiment_8cpp_1a9501ceee8084de9223727b590efdc465.rst
+   function_runMission_8cpp_1a9501ceee8084de9223727b590efdc465.rst
 
 .. toctree::
    :maxdepth: 5
 
-   function_runExperiment_8cpp_1a67585f7c8b402e3a0bd288020ef776a2.rst
+   function_runMission_8cpp_1a67585f7c8b402e3a0bd288020ef776a2.rst
 
 .. toctree::
    :maxdepth: 5
 
-   function_runExperiment_8cpp_1a4c30e5933c30c69fe3d583b975a28746.rst
+   function_runMission_8cpp_1a4c30e5933c30c69fe3d583b975a28746.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   function_libmosquitto__example_8c_1a0ddf1224851353fc92bfbff6f499fa97.rst
 
 .. toctree::
    :maxdepth: 5
@@ -152,17 +152,22 @@ Functions
 .. toctree::
    :maxdepth: 5
 
-   function_runExperiment_8cpp_1ac0f2228420376f4db7e1274f2b41667c.rst
+   function_runMission_8cpp_1ac0f2228420376f4db7e1274f2b41667c.rst
 
 .. toctree::
    :maxdepth: 5
 
-   function_runExperiment_8cpp_1a4c7aa67e53816957235574e13064f20f.rst
+   function_runMission_8cpp_1a4c7aa67e53816957235574e13064f20f.rst
 
 .. toctree::
    :maxdepth: 5
 
-   function_runExperiment_8cpp_1aa732c79c5780d31e5072dba7c547cc2e.rst
+   function_libmosquitto__example_8c_1ae3aab556f36270e2becea4a8d5704dd7.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   function_runMission_8cpp_1aa732c79c5780d31e5072dba7c547cc2e.rst
 
 .. toctree::
    :maxdepth: 5
@@ -191,9 +196,9 @@ Typedefs
 .. toctree::
    :maxdepth: 5
 
-   typedef_Mission_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d.rst
+   typedef_World_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d.rst
 
 .. toctree::
    :maxdepth: 5
 
-   typedef_World_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d.rst
+   typedef_Mission_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d.rst
