@@ -39,7 +39,7 @@ __build_tomcat() {
                     # causes timeouts.
                     if [[ $DISTRO_MAJOR_VERSION -le 18 ]]; then
                         cmake ${TOMCAT} -DBOOST_ROOT=$BOOST_ROOT_1_69_0\
-                                        -DBUILD_FACESENSOR=OFF
+                                        -DBUILD_FACESENSOR=OFF\
                                         -DBUILD_EXAMPLES=ON
                         if [[ $? -ne 0 ]]; then exit 1; fi
                     else
