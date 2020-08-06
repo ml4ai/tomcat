@@ -1,13 +1,11 @@
+project(tomcat)
+
 cmake_minimum_required(VERSION 3.10)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-project(tomcat)
-
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/tools/cmake/")
-
-include(utils)
 
 set(ENV{MALMO_XSD_PATH} external/malmo/Schemas)
 
@@ -20,40 +18,17 @@ set(CMAKE_CXX_FLAGS
 
 cmake_policy(SET CMP0074 NEW)
 
-find_package(FMT REQUIRED)
-
-if(FMT_FOUND)
-  message("-- fmt package found.")
-else()
-  message(
-    "-- fmt package not found on system, please install it.  (https://fmt.dev)")
-endif()
-
-find_package(
-  Boost 1.69
-  COMPONENTS chrono
-             date_time
-             filesystem
-             iostreams
-             program_options
-             regex
-             system
-             thread
-             REQUIRED)
-
-
-option(BUILD_FACESENSOR "Enable building of the facesensor executable" ON)
 
 add_subdirectory(external/malmo)
 
+option(BUILD_FACESENSOR "Enable building of the facesensor executable" ON)
 if(BUILD_FACESENSOR)
     add_subdirectory(external/OpenFace)
 endif()
 
 add_subdirectory(src/cpp)
 
-target_include_directories(tomcat PRIVATE src external/malmo/Malmo/src)
-target_include_directories(runExperiment PRIVATE external/malmo/Malmo/src)
+target_include_directories(runMission PRIVATE external/malmo/Malmo/src)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/tools/launch_minecraft
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

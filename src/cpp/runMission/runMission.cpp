@@ -1,4 +1,3 @@
-#include "LocalAgent.h"
 #include "Mission.h"
 #include "utils.h"
 #include <boost/program_options.hpp>
@@ -127,8 +126,6 @@ int main(int argc, const char* argv[]) {
     if (are_parameters_ok(parameters_map, options)) {
         Mission mission = create_mission(parameters_map);
         try {
-            shared_ptr<LocalAgent> tomcat_agent = make_shared<LocalAgent>();
-            mission.add_listener(tomcat_agent);
             mission.start();
         }
         catch (exception& e) {

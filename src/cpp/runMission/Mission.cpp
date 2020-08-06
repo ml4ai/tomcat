@@ -1,6 +1,5 @@
 #include "Mission.h"
 #include "FileHandler.h"
-#include "LocalAgent.h"
 #include "utils.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem.hpp>
@@ -53,10 +52,6 @@ namespace tomcat {
         else {
             this->uuid = uuid;
         }
-    }
-
-    void Mission::add_listener(shared_ptr<LocalAgent> tomcat_agent) {
-        this->tomcat_agents.push_back(tomcat_agent);
     }
 
     void Mission::start() {
@@ -370,9 +365,6 @@ namespace tomcat {
             // (https://minecraft.gamepedia.com/Tick), so we set the sleep
             // duration to 50 ms.
             sleep_for(milliseconds(50));
-            for (auto& tomcat_agent : this->tomcat_agents) {
-                tomcat_agent->observe_mission(*this);
-            }
 
             worldState = this->minecraft_server->peekWorldState();
         } while (worldState.is_mission_running);
