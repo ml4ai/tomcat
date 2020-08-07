@@ -31,8 +31,10 @@ import java.nio.file.Paths;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.Map;
+import com.google.gson.GsonBuilder;
 import com.google.gson.Gson;
 import java.util.List;
+import java.util.HashMap;
 
 public class ForgeEventHandler {
 
@@ -40,7 +42,8 @@ public class ForgeEventHandler {
     private int zombieMissionVillagersSaved = 0;
     
     private boolean devMode = false;
-    private List<?> whitelist = null;
+    private List<String> whitelist = null;
+    private String dmPath = "devmode.json";
 
     private Block getBlock(PlayerInteractEvent.RightClickBlock event) {
         return event.getWorld().getBlockState(event.getPos()).getBlock();
@@ -80,6 +83,59 @@ public class ForgeEventHandler {
         }
     }
 
+    /**
+     * This method takes a string command name to add to the list of
+     * whitelisted commands, and modifies the config file accordingly. 
+     */ 
+    public void addToWhitelist(String cmd) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        FileWriter fwriter = null;
+        Map<String,Object> jMap = new HashMap <String,Object>();
+        // this makes for 'set-like' operation; we can't use an actual set
+        // because JSONs don't support sets.
+        if (!this.whitelist.contains(cmd)) {
+            this.whitelist.add(cmd);
+        } else {
+            return;
+        }
+        jMap.put("devmode",this.devMode);
+        jMap.put("whitelist",this.whitelist);
+
+        try {
+            fwriter = new FileWriter(this.dmPath);
+            gson.toJson(jMap,fwriter);
+            fwriter.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
+    public void removeFromWhitelist(String cmd) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        FileWriter fwriter = null;
+        Map<String,Object> jMap = new HashMap <String,Object>();
+        // this makes for 'set-like' operation; we can't use an actual set
+        // because JSONs don't support sets.
+        if (!this.whitelist.contains(cmd)) {
+            this.whitelist.remove(cmd);
+        } else {
+            return;
+        }
+        jMap.put("devmode",this.devMode);
+        jMap.put("whitelist",this.whitelist);
+
+        try {
+            fwriter = new FileWriter("devmode.json");
+            gson.toJson(jMap,fwriter);
+            fwriter.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+
+    
+    }
 
     /**
      * This method reads the devmode json config and returns whether devmode
@@ -89,13 +145,13 @@ public class ForgeEventHandler {
      *
      * @return devMap - the Map version of the JSON config.
      */
-    private static Map<?,?> readDevModeJson() {
+    private Map<?,?> readDevModeJson() {
         Gson gson = new Gson();
         Reader reader = null;
         Map<?,?> devMap = null;
-
+        
         try {
-            reader = Files.newBufferedReader(Paths.get("devmode.json"));
+            reader = Files.newBufferedReader(Paths.get(this.dmPath));
             devMap = gson.fromJson(reader, Map.class);
             reader.close();
         } catch (IOException ex) {
@@ -111,11 +167,11 @@ public class ForgeEventHandler {
      *
      * @param devMap - the Map version of the JSON config file.
      */ 
-    private static List<?> getWhitelist(Map<?,?> devMap) {
-        List<?> list = null;
+    private List<String> getWhitelist(Map<?,?> devMap) {
+        List<String> list = null;
 
         if (devMap.get("whitelist") instanceof List<?>) {
-            list = (List<?>) devMap.get("whitelist");
+            list = (List<String>) devMap.get("whitelist");
         }
 
         return list;
@@ -127,7 +183,7 @@ public class ForgeEventHandler {
      *
      * @param devMap - the Map version of the JSON config file
      */
-    private static boolean getDevMode(Map<?,?> devMap) {
+    private boolean getDevMode(Map<?,?> devMap) {
         boolean devmode = false;
 
         if (devMap.get("devmode") instanceof Boolean) {
