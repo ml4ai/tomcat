@@ -42,3 +42,4 @@
 #include "LandmarkDetectorModel.h"
 #include "LandmarkDetectorParameters.h"
 #include "LandmarkDetectorUtils.h"
+#include <GazeEstimation.h>

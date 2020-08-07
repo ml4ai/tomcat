@@ -92,11 +92,11 @@ public class WorldReader {
                     IBlockState doorBottom = this.getBlockState("door_bottom");
 
                     BlockPos topPos =
-                        new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
+                            new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
                     IBlockState doorTop = this.getBlockState("door_top");
 
                     this.blockMap.remove(
-                        topPos); // For a door we need to remove and re add the
+                            topPos); // For a door we need to remove and re add the
                     // block above the current as well
                     this.blockMap.put(pos, doorBottom);
                     this.blockMap.put(topPos, doorTop);
@@ -132,15 +132,15 @@ public class WorldReader {
     private TomcatEntity getTomcatEntity(int x, int y, int z, String type) {
         if (type.equals("zombie")) {
             return new TomcatEntity(
-                UUID.randomUUID(), x, y, z, EntityTypes.ZOMBIE);
+                    UUID.randomUUID(), x, y, z, EntityTypes.ZOMBIE);
         }
         else if (type.equals("skeleton")) {
             return new TomcatEntity(
-                UUID.randomUUID(), x, y, z, EntityTypes.SKELETON);
+                    UUID.randomUUID(), x, y, z, EntityTypes.SKELETON);
         }
         else {
             return new TomcatEntity(
-                UUID.randomUUID(), x, y, z, EntityTypes.VILLAGER);
+                    UUID.randomUUID(), x, y, z, EntityTypes.VILLAGER);
         }
     }
 

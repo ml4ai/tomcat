@@ -1,23 +1,54 @@
 #!/bin/bash
 
+set -u
+
 # Install OpenCV 4 from source
 
-opencv_version=4.2.0
-wget https://github.com/opencv/opencv/archive/$opencv_version.tar.gz && \
-if [[ $? -ne 0 ]]; then exit 1; fi;
-tar xfz $opencv_version.tar.gz
-if [[ $? -ne 0 ]]; then exit 1; fi;
+OPENCV_VERSION=4.3.0
 
-pushd opencv-$opencv_version
-  mkdir build
-  pushd build
-    cmake -D CMAKE_BUILD_TYPE=RELEASE -D OPENCV_GENERATE_PKGCONFIG=ON ..
+install_opencv_from_source() {
+    local version=$1
+    curl -LO https://github.com/opencv/opencv/archive/$version.tar.gz
     if [[ $? -ne 0 ]]; then exit 1; fi;
-    make -j8
+    tar xfz $version.tar.gz
     if [[ $? -ne 0 ]]; then exit 1; fi;
-    sudo make install
-    if [[ $? -ne 0 ]]; then exit 1; fi;
-    pkg-config --modversion opencv4
-    if [[ $? -ne 0 ]]; then exit 1; fi;
-  popd
-popd
+
+    pushd opencv-$version
+        mkdir build
+        pushd build
+            cmake -D CMAKE_BUILD_TYPE=RELEASE -D OPENCV_GENERATE_PKGCONFIG=ON ..
+            if [[ $? -ne 0 ]]; then exit 1; fi;
+            make -j8
+            if [[ $? -ne 0 ]]; then exit 1; fi;
+            sudo make install
+            if [[ $? -ne 0 ]]; then exit 1; fi;
+            pkg-config --modversion opencv4
+            if [[ $? -ne 0 ]]; then exit 1; fi;
+        popd
+    popd
+}
+
+if [[ $OSTYPE == "linux-gnu" ]]; then
+    # Check if OpenCV is installed. Default installations will likely be
+    # registered with pkg-config.
+    if [[ $(pkg-config --list-all | grep opencv) == "" ]]; then
+        echo "OpenCV not found using pkg-config, installing from source."
+        install_opencv_from_source $OPENCV_VERSION
+    else
+        if ! pkg-config --atleast-version=3.3 opencv; then
+            echo "OpenCV found, but version is less than 3.3. Installing"\
+                 "version ${OPENCV_VERSION} from source."
+            install_opencv_from_source $OPENCV_VERSION
+        fi
+    fi
+elif [[ $OSTYPE == "darwin"* ]]; then
+    echo "Not installing OpenCV from source, since the preferred way to"\
+         "install OpenCV on macOS is using a package manager like MacPorts or"\
+         "Homebrew."
+    exit 1
+else
+    echo "OS is not Linux or macOS, this script will likely not work. Exiting."
+    exit 1
+fi
+
+exit 0

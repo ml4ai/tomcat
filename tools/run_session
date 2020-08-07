@@ -172,7 +172,7 @@ mission_cleanup() {
     kill_av_recording_and_mosquitto_sub
     echo "Checking output files..."
 
-    files_to_check=("events.txt" "malmo_data.txt" "chat.txt" "self_reports.txt")
+    files_to_check=("messages.txt")
 
     if (( ENABLE_FFMPEG )); then
         files_to_check+=("player_audio.wav" "screen_video.mpg" "webcam_video.mpg")
@@ -189,15 +189,6 @@ mission_cleanup() {
             file_size=$(ls -l "${MISSION_OUTPUT_DIR}/${file}" | awk '{print $5}')
             if [[ ${file_size} -eq 0 ]]; then
                 echo "WARNING: ${file} from Mission ${CURRENT_MISSION}: size is 0 bytes"
-                if [[ $file == self_reports.txt ]]; then
-                    echo "This is not necessarily an error - you might just "\
-                         "have finished the mission before you reached the "\
-                         "self-report point."
-                elif [[ $file == chat.txt ]]; then
-                    echo "This is not necessarily an error - you might just "\
-                         "not have sent or received any chat messages during "\
-                         "the mission."
-                fi
             fi
         else
             echo "WARNING: ${file} from Mission ${CURRENT_MISSION}: does not exist"
@@ -226,10 +217,7 @@ do_mission() {
     mission_log="$TOMCAT_TMP_DIR"/mission_"$CURRENT_MISSION".log
     export MISSION_OUTPUT_DIR="${SESSION_OUTPUT_DIR}"/mission_"$CURRENT_MISSION"
     mkdir -p "$MISSION_OUTPUT_DIR"
-    malmo_data="$MISSION_OUTPUT_DIR"/malmo_data.txt
-    chat_data="$MISSION_OUTPUT_DIR"/chat.txt
-    event_data="$MISSION_OUTPUT_DIR"/events.txt
-    self_report_data="$MISSION_OUTPUT_DIR"/self_reports.txt
+    messages="$MISSION_OUTPUT_DIR"/messages.txt
 
 
     if ! "${TOMCAT}"/tools/check_minecraft; then
@@ -238,12 +226,12 @@ do_mission() {
         exit 1
     fi
 
-    runExperiment_args="--mission ${CURRENT_MISSION}\
-                        --record_observations\
-                        --uuid ${SESSION_UUID}"
+    runMission_args="--mission ${CURRENT_MISSION}\
+                     --record_observations\
+                     --uuid ${SESSION_UUID}"
 
     if [[ $CURRENT_MISSION -gt 0 ]]; then
-        runExperiment_args="${runExperiment_args}\
+        runMission_args="${runMission_args}\
                             --time_limit ${TIME_LIMIT}\
                             --difficulty ${DIFFICULTY}"
     fi
@@ -254,28 +242,24 @@ do_mission() {
 
     # Publish the Malmo observation messages to the message bus on the
     # topic observations/state.
-    "${TOMCAT}"/build/bin/runExperiment\
-    $runExperiment_args\
+    "${TOMCAT}"/build/bin/runMission\
+    $runMission_args\
     2> "${mission_log}" &
-    pid_runExperiment=$!
+    pid_runMission=$!
 
-    # Subscribe to the observations/state topic on the message bus and
-    # redirect the output to a file.
-    mosquitto_sub -t observations/state > "$malmo_data" &
-    mosquitto_sub -t observations/chat > "$chat_data" &
-    mosquitto_sub -t "observations/events/#" > "$event_data" &
-    mosquitto_sub -t observations/self_reports > "$self_report_data" &
+    # Subscribe to topics on the message bus and redirect the output to a file.
+    mosquitto_sub -t "observations/#" -F '{"topic": "%t", "message": %p}' > "$messages" &
 
     if [[ $CURRENT_MISSION -gt 0 ]]; then
         echo "Time limit set to ${TIME_LIMIT}."
     fi
-    echo "Process ID corresponding to ./bin/runExperiment is"\
-            "$pid_runExperiment ... waiting for it to complete."
+    echo "Process ID corresponding to ./bin/runMission is"\
+            "$pid_runMission ... waiting for it to complete."
 
     # Set up a background job to kill the mission if Minecraft dies.
-    ${TOMCAT}/tools/kill_me_if_no_minecraft $pid_runExperiment < /dev/null &
+    ${TOMCAT}/tools/kill_me_if_no_minecraft $pid_runMission < /dev/null &
 
-    wait $pid_runExperiment
+    wait $pid_runMission
     mission_status=$?
 
     if [[ ${mission_status} -eq 0 ]]; then
