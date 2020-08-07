@@ -58,7 +58,7 @@ set(INCLUDE_PYTHON
     CACHE BOOL ${INCLUDE_PYTHON_DESC})
 
 find_package(
-  Boost 1.69
+  Boost
   COMPONENTS chrono
              date_time
              filesystem

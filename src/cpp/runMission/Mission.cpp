@@ -1,12 +1,14 @@
 #include "Mission.h"
 #include "FileHandler.h"
-#include "LocalAgent.h"
 #include "utils.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
+#include <dirent.h>
 #include <fmt/format.h>
+#include <fstream>
+#include <iostream>
 #include <nlohmann/json.hpp>
 #include <sstream>
 
@@ -52,10 +54,6 @@ namespace tomcat {
         }
     }
 
-    void Mission::add_listener(shared_ptr<LocalAgent> tomcat_agent) {
-        this->tomcat_agents.push_back(tomcat_agent);
-    }
-
     void Mission::start() {
         this->create_client_pool();
         this->create_mission_spec();
@@ -66,14 +64,31 @@ namespace tomcat {
 
     void Mission::create_client_pool() {
         this->client_pool = make_shared<ClientPool>();
-        this->client_pool->add(ClientInfo("127.0.0.1", this->port_number));
+        if (!this->multiplayer) {
+            this->client_pool->add(ClientInfo("127.0.0.1", this->port_number));
+        }
+        else {
+            string multiplayer_config_path =
+                format("{}/conf/multiplayer_config.json", getenv("TOMCAT"));
+            ifstream clients_json(multiplayer_config_path);
+            json clients_info = json::parse(clients_json);
+            string server_ip_address =
+                clients_info["server"]["address"].get<string>();
+            int server_port = clients_info["server"]["port"].get<int>();
+            this->client_pool->add(ClientInfo(server_ip_address, server_port));
+            json client_object = clients_info["clients"];
+            cout << "Number of clients to be connected: "
+                 << client_object.size() << endl;
+            string client_ip_address;
+            int client_port;
 
-        if (this->multiplayer) {
-            // Add each one of the clients in the multiplayer mission
-            // This is hardcoded but needs to be moved to a config file at some
-            // point
-            this->client_pool->add(ClientInfo("127.0.0.1", 10001));
-            this->client_pool->add(ClientInfo("127.0.0.1", 10002));
+            for (auto it = client_object.begin(); it != client_object.end();
+                 it++) {
+                client_ip_address = it.value()["address"].get<string>();
+                client_port = it.value()["port"].get<int>();
+                this->client_pool->add(
+                    ClientInfo(client_ip_address, client_port));
+            }
         }
     }
 
@@ -176,8 +191,7 @@ namespace tomcat {
                 agent_name = "tomcat";
             }
             else {
-                agent_name =
-                    format("{}:{}", client->ip_address, client->control_port);
+                agent_name = client->ip_address;
             }
             // For USAR_SINGLEPLAYER mission: <Placement x="-2165" y="52"
             // z="175"/>
@@ -331,9 +345,9 @@ namespace tomcat {
             current_time = clock();
             elapsed_time_in_seconds =
                 int(current_time - start_time) / CLOCKS_PER_SEC;
-            mission_has_begun_for_all = std::all_of(mission_has_begun.begin(),
-                                                    mission_has_begun.end(),
-                                                    [](bool v) { return v; });
+            mission_has_begun_for_all = all_of(mission_has_begun.begin(),
+                                               mission_has_begun.end(),
+                                               [](bool v) { return v; });
         }
 
         if (elapsed_time_in_seconds >= max_seconds_to_start) {
@@ -351,9 +365,6 @@ namespace tomcat {
             // (https://minecraft.gamepedia.com/Tick), so we set the sleep
             // duration to 50 ms.
             sleep_for(milliseconds(50));
-            for (auto& tomcat_agent : this->tomcat_agents) {
-                tomcat_agent->observe_mission(*this);
-            }
 
             worldState = this->minecraft_server->peekWorldState();
         } while (worldState.is_mission_running);

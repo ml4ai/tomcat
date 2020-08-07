@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Mission xmlns="http://ProjectMalmo.microsoft.com"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <About>
+        <Summary>Load a world</Summary>
+    </About>
+    <ServerSection>
+        <ServerHandlers>
+            <FileWorldGenerator src="absolute/path/to/world/folder" />
+            <ServerQuitWhenAnyAgentFinishes />
+        </ServerHandlers>
+    </ServerSection>
+    <AgentSection mode="Adventure">
+        <Name>Tom</Name>
+        <AgentStart>
+            <Placement x="-2186" y="52" z="177" />
+        </AgentStart>
+        <AgentHandlers>
+            <MissionQuitCommands />
+        </AgentHandlers>
+    </AgentSection>
+</Mission>

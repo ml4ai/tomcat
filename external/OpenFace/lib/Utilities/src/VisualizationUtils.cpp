@@ -47,141 +47,142 @@
 
 namespace Utilities {
 
-  FpsTracker::FpsTracker() {
-    // Keep two seconds of history
-    history_length = 2;
-  }
-
-  void FpsTracker::AddFrame() {
-    double current_time = cv::getTickCount() / cv::getTickFrequency();
-    frame_times.push(current_time);
-    DiscardOldFrames();
-  }
-
-  double FpsTracker::GetFPS() {
-    DiscardOldFrames();
-
-    if (frame_times.size() == 0)
-      return 0;
-
-    double current_time = cv::getTickCount() / cv::getTickFrequency();
-
-    return ((double)frame_times.size()) / (current_time - frame_times.front());
-  }
-
-  void FpsTracker::DiscardOldFrames() {
-    double current_time = cv::getTickCount() / cv::getTickFrequency();
-    // Remove old history
-    while (frame_times.size() > 0 &&
-           (current_time - frame_times.front()) > history_length)
-      frame_times.pop();
-  }
-
-  void DrawBox(cv::Mat image,
-               cv::Vec6f pose,
-               cv::Scalar color,
-               int thickness,
-               float fx,
-               float fy,
-               float cx,
-               float cy) {
-    auto edge_lines = CalculateBox(pose, fx, fy, cx, cy);
-    DrawBox(edge_lines, image, color, thickness);
-  }
-
-  std::vector<std::pair<cv::Point2f, cv::Point2f>>
-  CalculateBox(cv::Vec6f pose, float fx, float fy, float cx, float cy) {
-    float boxVerts[] = {-1, 1,  -1, 1, 1,  -1, 1,  1,  1,  -1, 1,  1,
-                        1,  -1, 1,  1, -1, -1, -1, -1, -1, -1, -1, 1};
-
-    std::vector<std::pair<int, int>> edges;
-    edges.push_back(std::pair<int, int>(0, 1));
-    edges.push_back(std::pair<int, int>(1, 2));
-    edges.push_back(std::pair<int, int>(2, 3));
-    edges.push_back(std::pair<int, int>(0, 3));
-    edges.push_back(std::pair<int, int>(2, 4));
-    edges.push_back(std::pair<int, int>(1, 5));
-    edges.push_back(std::pair<int, int>(0, 6));
-    edges.push_back(std::pair<int, int>(3, 7));
-    edges.push_back(std::pair<int, int>(6, 5));
-    edges.push_back(std::pair<int, int>(5, 4));
-    edges.push_back(std::pair<int, int>(4, 7));
-    edges.push_back(std::pair<int, int>(7, 6));
-
-    // The size of the head is roughly 200mm x 200mm x 200mm
-    cv::Mat_<float> box = cv::Mat(8, 3, CV_32F, boxVerts).clone() * 100.0f;
-
-    cv::Matx33f rot =
-        Euler2RotationMatrix(cv::Vec3f(pose[3], pose[4], pose[5]));
-    cv::Mat_<float> rotBox;
-
-    // Rotate the box
-    rotBox = cv::Mat(rot) * box.t();
-    rotBox = rotBox.t();
-
-    // Move the bounding box to head position
-    rotBox.col(0) = rotBox.col(0) + pose[0];
-    rotBox.col(1) = rotBox.col(1) + pose[1];
-    rotBox.col(2) = rotBox.col(2) + pose[2];
-
-    // draw the lines
-    cv::Mat_<float> rotBoxProj;
-    Project(rotBoxProj, rotBox, fx, fy, cx, cy);
-
-    std::vector<std::pair<cv::Point2f, cv::Point2f>> lines;
-
-    for (size_t i = 0; i < edges.size(); ++i) {
-      cv::Mat_<float> begin;
-      cv::Mat_<float> end;
-
-      rotBoxProj.row(edges[i].first).copyTo(begin);
-      rotBoxProj.row(edges[i].second).copyTo(end);
-
-      cv::Point2f p1(begin.at<float>(0), begin.at<float>(1));
-      cv::Point2f p2(end.at<float>(0), end.at<float>(1));
-
-      lines.push_back(std::pair<cv::Point2f, cv::Point2f>(p1, p2));
+    FpsTracker::FpsTracker() {
+        // Keep two seconds of history
+        history_length = 2;
     }
 
-    return lines;
-  }
-
-  void DrawBox(const std::vector<std::pair<cv::Point2f, cv::Point2f>>& lines,
-               cv::Mat image,
-               cv::Scalar color,
-               int thickness) {
-    cv::Rect image_rect(0, 0, image.cols, image.rows);
-
-    for (size_t i = 0; i < lines.size(); ++i) {
-      cv::Point2f p1 = lines.at(i).first;
-      cv::Point2f p2 = lines.at(i).second;
-      // Only draw the line if one of the points is inside the image
-      if (p1.inside(image_rect) || p2.inside(image_rect)) {
-        cv::line(image, p1, p2, color, thickness, cv::LINE_AA);
-      }
+    void FpsTracker::AddFrame() {
+        double current_time = cv::getTickCount() / cv::getTickFrequency();
+        frame_times.push(current_time);
+        DiscardOldFrames();
     }
-  }
 
-  void Visualise_FHOG(const cv::Mat_<double>& descriptor,
-                      int num_rows,
-                      int num_cols,
-                      cv::Mat& visualisation) {
+    double FpsTracker::GetFPS() {
+        DiscardOldFrames();
 
-    // First convert to dlib format
-    dlib::array2d<dlib::matrix<float, 31, 1>> hog(num_rows, num_cols);
+        if (frame_times.size() == 0)
+            return 0;
 
-    cv::MatConstIterator_<double> descriptor_it = descriptor.begin();
-    for (int y = 0; y < num_cols; ++y) {
-      for (int x = 0; x < num_rows; ++x) {
-        for (unsigned int o = 0; o < 31; ++o) {
-          hog[y][x](o) = *descriptor_it++;
+        double current_time = cv::getTickCount() / cv::getTickFrequency();
+
+        return ((double)frame_times.size()) /
+               (current_time - frame_times.front());
+    }
+
+    void FpsTracker::DiscardOldFrames() {
+        double current_time = cv::getTickCount() / cv::getTickFrequency();
+        // Remove old history
+        while (frame_times.size() > 0 &&
+               (current_time - frame_times.front()) > history_length)
+            frame_times.pop();
+    }
+
+    void DrawBox(cv::Mat image,
+                 cv::Vec6f pose,
+                 cv::Scalar color,
+                 int thickness,
+                 float fx,
+                 float fy,
+                 float cx,
+                 float cy) {
+        auto edge_lines = CalculateBox(pose, fx, fy, cx, cy);
+        DrawBox(edge_lines, image, color, thickness);
+    }
+
+    std::vector<std::pair<cv::Point2f, cv::Point2f>>
+    CalculateBox(cv::Vec6f pose, float fx, float fy, float cx, float cy) {
+        float boxVerts[] = {-1, 1,  -1, 1, 1,  -1, 1,  1,  1,  -1, 1,  1,
+                            1,  -1, 1,  1, -1, -1, -1, -1, -1, -1, -1, 1};
+
+        std::vector<std::pair<int, int>> edges;
+        edges.push_back(std::pair<int, int>(0, 1));
+        edges.push_back(std::pair<int, int>(1, 2));
+        edges.push_back(std::pair<int, int>(2, 3));
+        edges.push_back(std::pair<int, int>(0, 3));
+        edges.push_back(std::pair<int, int>(2, 4));
+        edges.push_back(std::pair<int, int>(1, 5));
+        edges.push_back(std::pair<int, int>(0, 6));
+        edges.push_back(std::pair<int, int>(3, 7));
+        edges.push_back(std::pair<int, int>(6, 5));
+        edges.push_back(std::pair<int, int>(5, 4));
+        edges.push_back(std::pair<int, int>(4, 7));
+        edges.push_back(std::pair<int, int>(7, 6));
+
+        // The size of the head is roughly 200mm x 200mm x 200mm
+        cv::Mat_<float> box = cv::Mat(8, 3, CV_32F, boxVerts).clone() * 100.0f;
+
+        cv::Matx33f rot =
+            Euler2RotationMatrix(cv::Vec3f(pose[3], pose[4], pose[5]));
+        cv::Mat_<float> rotBox;
+
+        // Rotate the box
+        rotBox = cv::Mat(rot) * box.t();
+        rotBox = rotBox.t();
+
+        // Move the bounding box to head position
+        rotBox.col(0) = rotBox.col(0) + pose[0];
+        rotBox.col(1) = rotBox.col(1) + pose[1];
+        rotBox.col(2) = rotBox.col(2) + pose[2];
+
+        // draw the lines
+        cv::Mat_<float> rotBoxProj;
+        Project(rotBoxProj, rotBox, fx, fy, cx, cy);
+
+        std::vector<std::pair<cv::Point2f, cv::Point2f>> lines;
+
+        for (size_t i = 0; i < edges.size(); ++i) {
+            cv::Mat_<float> begin;
+            cv::Mat_<float> end;
+
+            rotBoxProj.row(edges[i].first).copyTo(begin);
+            rotBoxProj.row(edges[i].second).copyTo(end);
+
+            cv::Point2f p1(begin.at<float>(0), begin.at<float>(1));
+            cv::Point2f p2(end.at<float>(0), end.at<float>(1));
+
+            lines.push_back(std::pair<cv::Point2f, cv::Point2f>(p1, p2));
         }
-      }
+
+        return lines;
     }
 
-    // Draw the FHOG to OpenCV format
-    auto fhog_vis = dlib::draw_fhog(hog);
-    visualisation = dlib::toMat(fhog_vis).clone();
-  }
+    void DrawBox(const std::vector<std::pair<cv::Point2f, cv::Point2f>>& lines,
+                 cv::Mat image,
+                 cv::Scalar color,
+                 int thickness) {
+        cv::Rect image_rect(0, 0, image.cols, image.rows);
+
+        for (size_t i = 0; i < lines.size(); ++i) {
+            cv::Point2f p1 = lines.at(i).first;
+            cv::Point2f p2 = lines.at(i).second;
+            // Only draw the line if one of the points is inside the image
+            if (p1.inside(image_rect) || p2.inside(image_rect)) {
+                cv::line(image, p1, p2, color, thickness, cv::LINE_AA);
+            }
+        }
+    }
+
+    void Visualise_FHOG(const cv::Mat_<double>& descriptor,
+                        int num_rows,
+                        int num_cols,
+                        cv::Mat& visualisation) {
+
+        // First convert to dlib format
+        dlib::array2d<dlib::matrix<float, 31, 1>> hog(num_rows, num_cols);
+
+        cv::MatConstIterator_<double> descriptor_it = descriptor.begin();
+        for (int y = 0; y < num_cols; ++y) {
+            for (int x = 0; x < num_rows; ++x) {
+                for (unsigned int o = 0; o < 31; ++o) {
+                    hog[y][x](o) = *descriptor_it++;
+                }
+            }
+        }
+
+        // Draw the FHOG to OpenCV format
+        auto fhog_vis = dlib::draw_fhog(hog);
+        visualisation = dlib::toMat(fhog_vis).clone();
+    }
 
 } // namespace Utilities

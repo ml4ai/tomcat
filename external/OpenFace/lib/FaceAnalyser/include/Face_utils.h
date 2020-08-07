@@ -46,59 +46,59 @@
 #include "PDM.h"
 
 namespace FaceAnalysis {
-  //===========================================================================
-  // Defining a set of useful utility functions to be used within FaceAnalyser
+    //===========================================================================
+    // Defining a set of useful utility functions to be used within FaceAnalyser
 
-  // Aligning a face to a common reference frame
-  void AlignFace(cv::Mat& aligned_face,
-                 const cv::Mat& frame,
-                 const cv::Mat_<float>& detected_landmarks,
-                 cv::Vec6f params_global,
-                 const LandmarkDetector::PDM& pdm,
-                 bool rigid = true,
-                 double scale = 0.7,
-                 int width = 96,
-                 int height = 96);
-  void AlignFaceMask(cv::Mat& aligned_face,
-                     const cv::Mat& frame,
-                     const cv::Mat_<float>& detected_landmarks,
-                     cv::Vec6f params_global,
-                     const LandmarkDetector::PDM& pdm,
-                     const cv::Mat_<int>& triangulation,
-                     bool rigid = true,
-                     double scale = 0.7,
-                     int width = 96,
-                     int height = 96);
+    // Aligning a face to a common reference frame
+    void AlignFace(cv::Mat& aligned_face,
+                   const cv::Mat& frame,
+                   const cv::Mat_<float>& detected_landmarks,
+                   cv::Vec6f params_global,
+                   const LandmarkDetector::PDM& pdm,
+                   bool rigid = true,
+                   double scale = 0.7,
+                   int width = 96,
+                   int height = 96);
+    void AlignFaceMask(cv::Mat& aligned_face,
+                       const cv::Mat& frame,
+                       const cv::Mat_<float>& detected_landmarks,
+                       cv::Vec6f params_global,
+                       const LandmarkDetector::PDM& pdm,
+                       const cv::Mat_<int>& triangulation,
+                       bool rigid = true,
+                       double scale = 0.7,
+                       int width = 96,
+                       int height = 96);
 
-  void Extract_FHOG_descriptor(cv::Mat_<double>& descriptor,
-                               const cv::Mat& image,
-                               int& num_rows,
-                               int& num_cols,
-                               int cell_size = 8);
+    void Extract_FHOG_descriptor(cv::Mat_<double>& descriptor,
+                                 const cv::Mat& image,
+                                 int& num_rows,
+                                 int& num_cols,
+                                 int cell_size = 8);
 
-  // The following two methods go hand in hand
-  void ExtractSummaryStatistics(const cv::Mat_<double>& descriptors,
-                                cv::Mat_<double>& sum_stats,
-                                bool mean,
-                                bool stdev,
-                                bool max_min);
-  void AddDescriptor(cv::Mat_<double>& descriptors,
-                     cv::Mat_<double> new_descriptor,
-                     int curr_frame,
-                     int num_frames_to_keep = 120);
+    // The following two methods go hand in hand
+    void ExtractSummaryStatistics(const cv::Mat_<double>& descriptors,
+                                  cv::Mat_<double>& sum_stats,
+                                  bool mean,
+                                  bool stdev,
+                                  bool max_min);
+    void AddDescriptor(cv::Mat_<double>& descriptors,
+                       cv::Mat_<double> new_descriptor,
+                       int curr_frame,
+                       int num_frames_to_keep = 120);
 
-  //============================================================================
-  // Matrix reading functionality
-  //============================================================================
+    //============================================================================
+    // Matrix reading functionality
+    //============================================================================
 
-  // Reading a matrix written in a binary format
-  void ReadMatBin(std::ifstream& stream, cv::Mat& output_mat);
+    // Reading a matrix written in a binary format
+    void ReadMatBin(std::ifstream& stream, cv::Mat& output_mat);
 
-  // Reading in a matrix from a stream
-  void ReadMat(std::ifstream& stream, cv::Mat& output_matrix);
+    // Reading in a matrix from a stream
+    void ReadMat(std::ifstream& stream, cv::Mat& output_matrix);
 
-  // Skipping comments (lines starting with # symbol)
-  void SkipComments(std::ifstream& stream);
+    // Skipping comments (lines starting with # symbol)
+    void SkipComments(std::ifstream& stream);
 
 } // namespace FaceAnalysis
 #endif // FACE_UTILS_H
