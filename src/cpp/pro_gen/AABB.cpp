@@ -208,6 +208,7 @@ void AABB::addRandomBlocks(int n,
 json AABB::toJSON() {
     json aabb_json;
     aabb_json["id"] = to_string(this->getID());
+    aabb_json["type"] = this->getType();
 
     aabb_json["x1"] = to_string(this->getTopLeft().getX());
     aabb_json["y1"] = to_string(this->getTopLeft().getY());

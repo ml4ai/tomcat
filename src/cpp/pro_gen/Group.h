@@ -38,11 +38,19 @@ class Group : public AABB {
     AABB* getAABB(int id);
 
     /**
+     * @brief Gets the JSON representation of the various
+     * fields and values stored in an instance
+     *
+     * @return nlohmann::json The JSON representation
+     */
+    nlohmann::json virtual toJSON();
+
+    /**
      * @brief Creates the TSV representation of the instance.
      *
      * @return std::string The TSV representation as a string
      */
-    std::string toTSV();
+    std::string virtual toTSV();
 
     /**
      * @brief Construct a new Group object.

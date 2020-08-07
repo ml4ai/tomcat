@@ -1,5 +1,6 @@
 #include "Group.h"
 using namespace std;
+using json = nlohmann::json;
 
 Group::Group(int id)
     : AABB(id, "group", "air", *(new Pos()), *(new Pos()), true, false) {}
@@ -76,6 +77,45 @@ void Group::recalculateGroupBoundaries() {
 
     this->setTopLeft(newTopLeft);
     this->setBottomRight(newBottomRight);
+}
+
+json Group::toJSON() {
+    vector<json> group_aabb_list;
+    json group_json;
+
+    group_json["id"] = to_string(this->getID());
+    group_json["type"] = this->getType();
+
+    group_json["x1"] = to_string(this->getTopLeft().getX());
+    group_json["y1"] = to_string(this->getTopLeft().getY());
+    group_json["z1"] = to_string(this->getTopLeft().getZ());
+
+    group_json["x2"] = to_string(this->getBottomRight().getX());
+    group_json["y2"] = to_string(this->getBottomRight().getY());
+    group_json["z2"] = to_string(this->getBottomRight().getZ());
+    group_json["material"] = this->getMaterial();
+
+    vector<json> group_block_list_json;
+    for (auto& blockPtr : this->getBlockList()) {
+        json block_json = (*blockPtr).toJSON();
+        group_block_list_json.push_back(block_json);
+    }
+
+    vector<json> group_entity_list_json;
+    for (auto& entityPtr : this->getEntityList()) {
+        json entity_json = (*entityPtr).toJSON();
+        group_entity_list_json.push_back(entity_json);
+    }
+
+    for (auto& aabbPtr : this->aabbList) {
+        json aabb_json = (*aabbPtr).toJSON();
+        group_aabb_list.push_back(aabb_json);
+    }
+
+    group_json["block_list"] = group_block_list_json;
+    group_json["entity_list"] = group_entity_list_json;
+    group_json["aabb_list"] = group_aabb_list;
+    return group_json;
 }
 
 string Group::toTSV() {

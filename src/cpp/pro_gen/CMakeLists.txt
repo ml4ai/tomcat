@@ -26,6 +26,7 @@ add_library(
   AABB.cpp
   World.cpp
   Block.cpp
+  Lever.cpp
   Entity.cpp
   Group.cpp
   ZombieworldPit.cpp

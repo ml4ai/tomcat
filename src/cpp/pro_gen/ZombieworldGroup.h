@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Group.h"
+#include "Lever.h"
 
 /**
  * @brief This class represents a very specific building that is used in the

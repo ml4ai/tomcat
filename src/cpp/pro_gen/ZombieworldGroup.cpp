@@ -74,7 +74,7 @@ void ZombieworldGroup::addLevers() {
         topEdgeMidpoint.shiftX(-1);
         topEdgeMidpoint.shiftZ(-1);
 
-        this->addBlock(*(new Block("lever", topEdgeMidpoint)));
+        this->addBlock(*(new Lever(topEdgeMidpoint, "normal", false, "north")));
     }
 }
 
