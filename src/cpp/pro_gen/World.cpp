@@ -49,32 +49,28 @@ string World::toTSV() {
 }
 
 string World::toJSON() {
-    vector<json> json_aabb_list;
-    vector<json> json_block_list;
-    vector<json> json_entity_list;
+    json world_json;
 
+    vector<json> location_list;
     // Add AABBs to the JSON list
     for (auto& aabbPtr : this->aabbList) {
-        json aabb_json = (*aabbPtr).toJSON();
-        json_aabb_list.push_back(aabb_json);
+        location_list.push_back((*aabbPtr).toJSON());
     }
 
     // Add Blocks to the JSON List
     for (auto& blockPtr : this->blockList) {
-        json block_json = (*blockPtr).toJSON();
-        json_block_list.push_back(block_json);
+        location_list.push_back((*blockPtr).toJSON());
     }
 
+    vector<json> entity_list;
     for (auto& entityPtr : this->blockList) {
-        json entity_json = (*entityPtr).toJSON();
-        json_entity_list.push_back(entity_json);
+        entity_list.push_back((*entityPtr).toJSON());
     }
 
-    json j;
-    j["aabb_list"] = json_aabb_list;
-    j["block_list"] = json_block_list;
-    j["entity_list"] = json_entity_list;
-    return j.dump(4);
+    world_json["locations"]= location_list;
+    world_json["entity_list"] = entity_list;
+
+    return world_json.dump(4);
 }
 
 void World::writeToFile(string jsonPath, string tsvPath) {
