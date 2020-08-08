@@ -15,7 +15,7 @@
  */
 class AABB {
 
-  private:
+  protected:
     int id;
     std::string material;
     std::string type;

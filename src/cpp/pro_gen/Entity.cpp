@@ -1,16 +1,15 @@
 #include "Entity.h"
-#include <iostream>
 using namespace std;
 using json = nlohmann::json;
 
-Entity::Entity(string type,
+Entity::Entity(string mobType,
                Pos& pos,
-               int helmet,
-               int chestplate,
-               int leggings,
-               int boots,
-               int weapon)
-    : type{type}, pos{pos} {
+               string helmet,
+               string chestplate,
+               string leggings,
+               string boots,
+               string weapon)
+    : mobType{mobType}, pos{pos} {
     this->equipment.push_back(helmet);
     this->equipment.push_back(chestplate);
     this->equipment.push_back(leggings);
@@ -24,25 +23,27 @@ int Entity::getY() { return this->pos.getY(); }
 
 int Entity::getZ() { return this->pos.getZ(); }
 
-int Entity::getHelmet() { return this->equipment.at(0); }
+string Entity::getHelmet() { return this->equipment.at(0); }
 
-int Entity::getChestplate() { return this->equipment.at(1); }
+string Entity::getChestplate() { return this->equipment.at(1); }
 
-int Entity::getLeggings() { return this->equipment.at(2); }
+string Entity::getLeggings() { return this->equipment.at(2); }
 
-int Entity::getBoots() { return this->equipment.at(3); }
+string Entity::getBoots() { return this->equipment.at(3); }
 
-int Entity::getWeapon() { return this->equipment.at(4); }
+string Entity::getWeapon() { return this->equipment.at(4); }
 
-void Entity::setHelmet(int helmet) { this->equipment[0] = helmet; }
+void Entity::setHelmet(string helmet) { this->equipment[0] = helmet; }
 
-void Entity::setChestplate(int chestplate) { this->equipment[1] = chestplate; }
+void Entity::setChestplate(string chestplate) {
+    this->equipment[1] = chestplate;
+}
 
-void Entity::setLeggings(int leggings) { this->equipment[2] = leggings; }
+void Entity::setLeggings(string leggings) { this->equipment[2] = leggings; }
 
-void Entity::setBoots(int boots) { this->equipment[3] = boots; }
+void Entity::setBoots(string boots) { this->equipment[3] = boots; }
 
-void Entity::setWeapon(int weapon) { this->equipment[4] = weapon; }
+void Entity::setWeapon(string weapon) { this->equipment[4] = weapon; }
 
 void Entity::setX(int x) { this->pos.setX(x); }
 
@@ -50,11 +51,11 @@ void Entity::setY(int y) { this->pos.setY(y); }
 
 void Entity::setZ(int z) { this->pos.setZ(z); }
 
-string Entity::getType() { return this->type; }
+string Entity::getMobType() { return this->mobType; }
 
-void Entity::setType(string type) { this->type = type; }
+void Entity::setMobType(string mobType) { this->mobType = mobType; }
 
-void Entity::setAllEquipment(vector<int>& equipment) {
+void Entity::setAllEquipment(vector<string>& equipment) {
     if (equipment.size() == 5) {
         this->setHelmet(equipment.at(0));
         this->setChestplate(equipment.at(1));
@@ -69,24 +70,26 @@ void Entity::setAllEquipment(vector<int>& equipment) {
 
 json Entity::toJSON() {
     json entity_json;
-    entity_json["type"] = this->getType();
-    entity_json["x"] = to_string(this->getX());
-    entity_json["y"] = to_string(this->getY());
-    entity_json["z"] = to_string(this->getZ());
-    entity_json["helmet"] = to_string(this->getHelmet());
-    entity_json["chestplate"] = to_string(this->getChestplate());
-    entity_json["leggings"] = to_string(this->getLeggings());
-    entity_json["boots"] = to_string(this->getBoots());
-    entity_json["weapon"] = to_string(this->getWeapon());
+    vector<json> coordinate_list;
+    coordinate_list.push_back(this->pos.toJSON());
+
+    entity_json["bounds"] = {{"type", "entity"},
+                             {"mob_type", this->getMobType()},
+                             {"coordinates", coordinate_list},
+                             {"helmet", this->getHelmet()},
+                             {"chestplate", this->getChestplate()},
+                             {"leggings", this->getLeggings()},
+                             {"boots", this->getBoots()},
+                             {"weapon", this->getWeapon()}};
     return entity_json;
 }
 
 string Entity::toTSV() {
     string retval =
-        (this->pos).toTSV() + "\t" + "entity" + "\t" + (this->type) + "\t";
+        (this->pos).toTSV() + "\t" + "entity" + "\t" + (this->mobType) + "\t";
 
     for (auto& equipment : this->equipment) {
-        retval += to_string(equipment) + "\t";
+        retval += equipment + "\t";
     }
     return retval;
 }

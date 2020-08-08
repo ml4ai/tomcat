@@ -1,4 +1,5 @@
 #include "Group.h"
+#include <iostream>
 using namespace std;
 using json = nlohmann::json;
 
@@ -80,41 +81,36 @@ void Group::recalculateGroupBoundaries() {
 }
 
 json Group::toJSON() {
-    vector<json> group_aabb_list;
     json group_json;
 
-    group_json["id"] = to_string(this->getID());
-    group_json["type"] = this->getType();
+    vector<json> coordinates_list;
+    coordinates_list.push_back(this->topLeft.toJSON());
+    coordinates_list.push_back(this->bottomRight.toJSON());
 
-    group_json["x1"] = to_string(this->getTopLeft().getX());
-    group_json["y1"] = to_string(this->getTopLeft().getY());
-    group_json["z1"] = to_string(this->getTopLeft().getZ());
 
-    group_json["x2"] = to_string(this->getBottomRight().getX());
-    group_json["y2"] = to_string(this->getBottomRight().getY());
-    group_json["z2"] = to_string(this->getBottomRight().getZ());
-    group_json["material"] = this->getMaterial();
-
-    vector<json> group_block_list_json;
+    vector<json> block_list;
     for (auto& blockPtr : this->getBlockList()) {
-        json block_json = (*blockPtr).toJSON();
-        group_block_list_json.push_back(block_json);
+        block_list.push_back((*blockPtr).toJSON());
     }
 
-    vector<json> group_entity_list_json;
+    vector<json> entity_list;
     for (auto& entityPtr : this->getEntityList()) {
-        json entity_json = (*entityPtr).toJSON();
-        group_entity_list_json.push_back(entity_json);
+        entity_list.push_back((*entityPtr).toJSON());
     }
 
-    for (auto& aabbPtr : this->aabbList) {
-        json aabb_json = (*aabbPtr).toJSON();
-        group_aabb_list.push_back(aabb_json);
+    vector<json> aabb_list;
+    for (auto& aabbPtr : this->getAABBList()) {
+        aabb_list.push_back((*aabbPtr).toJSON());
     }
 
-    group_json["block_list"] = group_block_list_json;
-    group_json["entity_list"] = group_entity_list_json;
-    group_json["aabb_list"] = group_aabb_list;
+    group_json["bounds"] = {{"id", to_string(this->getID())},
+                           {"type", "cuboid"},
+                           {"coordinates", coordinates_list},
+                           {"material", this->getMaterial()},
+                           {"block_list", block_list},
+                           {"aabb_list", aabb_list},
+                           {"entity_list", entity_list}};
+
     return group_json;
 }
 

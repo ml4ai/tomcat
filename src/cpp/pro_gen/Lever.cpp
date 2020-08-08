@@ -8,6 +8,8 @@ Lever::Lever(Pos& pos, bool powered, string facing) : Block("lever", pos) {
 }
 
 json Lever::toJSON() {
+    json block_json;
+
     string isPowered = "";
     if (this->powered) {
         isPowered = "true";
@@ -16,19 +18,14 @@ json Lever::toJSON() {
         isPowered = "false";
     }
 
-    json block_json;
     vector<json> coordinate_list;
     coordinate_list.push_back(this->pos.toJSON());
-    string powered =
 
-        block_json["bounds"] = {{"type", "block"},
-                                {"coordinates", coordinate_list},
-                                {"material", this->getMaterial()},
-                                {"powered", isPowered},
-                                {"facing", this->facing}};
-    return block_json;
-
-    block_json["facing"] = this->facing;
+    block_json["bounds"] = {{"type", "block"},
+                            {"coordinates", coordinate_list},
+                            {"material", this->getMaterial()},
+                            {"powered", isPowered},
+                            {"facing", this->facing}};
     return block_json;
 }
 

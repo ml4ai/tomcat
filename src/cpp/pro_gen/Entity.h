@@ -13,8 +13,8 @@
 class Entity {
 
   private:
-    std::string type;
-    std::vector<int> equipment;
+    std::string mobType;
+    std::vector<std::string> equipment;
     Pos pos;
 
   public:
@@ -23,7 +23,7 @@ class Entity {
      *
      * @return std::string The type
      */
-    std::string getType();
+    std::string getMobType();
 
     /**
      * @brief Get the x coordinate
@@ -51,70 +51,70 @@ class Entity {
      *
      * @return int The material level
      */
-    int getHelmet();
+    std::string getHelmet();
 
     /**
      * @brief Get the chestplate's material level
      *
      * @return int The material level
      */
-    int getChestplate();
+    std::string getChestplate();
 
     /**
      * @brief Get the leggings' material level
      *
      * @return int The material level
      */
-    int getLeggings();
+    std::string getLeggings();
 
     /**
      * @brief Get the boots' material level
      *
      * @return int The material level
      */
-    int getBoots();
+    std::string getBoots();
 
     /**
      * @brief Get the weapon's material level
      *
      * @return int The material level
      */
-    int getWeapon();
+    std::string getWeapon();
 
     /**
      * @brief Set the helmet's material level
      *
      * @param helmet The new material level
      */
-    void setHelmet(int helmet);
+    void setHelmet(std::string helmet);
 
     /**
      * @brief Set the chestplate's material level
      *
      * @param chestplate The new material level
      */
-    void setChestplate(int chestplate);
+    void setChestplate(std::string chestplate);
 
     /**
      * @brief Set the leggings' material level
      *
      * @param leggings The new material level
      */
-    void setLeggings(int leggings);
+    void setLeggings(std::string leggings);
 
     /**
      * @brief Set the boots' material level
      *
      * @param boots The new material level
      */
-    void setBoots(int boots);
+    void setBoots(std::string boots);
 
     /**
      * @brief Set the weapon's material level
      *
      * @param weapon The new material level
      */
-    void setWeapon(int weapon);
+    void setWeapon(std::string weapon);
 
     /**
      * @brief Set the x coordinate
@@ -142,7 +142,7 @@ class Entity {
      *
      * @param type The new type
      */
-    void setType(std::string type);
+    void setMobType(std::string mobType);
 
     /**
      * @brief Set values for all the equipment. If the size of the input vector
@@ -151,7 +151,7 @@ class Entity {
      * @param equipment A vector of size 5 with the helmet, chestplate,
      * leggings, boots and weapon values to assign.
      */
-    void setAllEquipment(std::vector<int>& equipment);
+    void setAllEquipment(std::vector<std::string>& equipment);
 
     /**
      * @brief Gets the JSON representation of the various
@@ -173,7 +173,7 @@ class Entity {
      * @brief Construct a new Entity object. The material level values are
      * interpreted on the Java side.
      *
-     * @param type What kind of mob is it
+     * @param mobType What kind of mob is it
      * @param pos Where the mob should be placed
      * @param helmet Helmet's material level
      * @param chestplate Chestplate's material level
@@ -181,13 +181,13 @@ class Entity {
      * @param boots Boots's material level
      * @param weapon Weapons's material level
      */
-    Entity(std::string type,
+    Entity(std::string mobType,
            Pos& pos,
-           int helmet = 0,
-           int chestplate = 0,
-           int leggings = 0,
-           int boots = 0,
-           int weapon = 0);
+           std::string helmet = "none",
+           std::string chestplate = "none",
+           std::string leggings = "none",
+           std::string boots = "none",
+           std::string weapon = "none");
 
     /**
      * @brief Destroy the Entity object
