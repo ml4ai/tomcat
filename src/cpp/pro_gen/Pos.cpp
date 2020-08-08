@@ -5,6 +5,7 @@
 
 #include "Pos.h"
 using namespace std;
+using json = nlohmann::json;
 
 Pos::Pos() {}
 
@@ -29,6 +30,14 @@ void Pos::shiftX(int shift) { this->x += shift; }
 void Pos::shiftY(int shift) { this->y += shift; }
 
 void Pos::shiftZ(int shift) { this->z += shift; }
+
+json Pos::toJSON() {
+    json pos_json;
+    pos_json["x"] = this->getX();
+    pos_json["y"] = this->getY();
+    pos_json["z"] = this->getZ();
+    return pos_json;
+}
 
 string Pos::toTSV() {
     string retval = to_string(this->x) + "\t" + to_string(this->y) + "\t" +

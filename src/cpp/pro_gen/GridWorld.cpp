@@ -9,10 +9,10 @@ void GridWorld::addRandomVictim(AABB& aabb, Pos& pos, double greenBias) {
     double greenProbability = greenBias * 100;
     int randomInt = dist(gen);
     if (randomInt <= greenProbability) {
-        aabb.addBlock(*(new Block("prismarine", pos, "victim")));
+        aabb.addBlock(*(new Block("prismarine", pos)));
     }
     else {
-        aabb.addBlock(*(new Block("gold", pos, "victim")));
+        aabb.addBlock(*(new Block("gold", pos)));
     }
 }
 

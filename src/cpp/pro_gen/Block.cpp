@@ -7,10 +7,7 @@
 using namespace std;
 using json = nlohmann::json;
 
-Block::Block(string material, Pos& pos, string type)
-    : type(type), material(material), pos(pos) {}
-
-string Block::getType() { return this->type; }
+Block::Block(string material, Pos& pos) : material{material}, pos{pos} {}
 
 string Block::getMaterial() { return this->material; }
 
@@ -27,12 +24,14 @@ void Block::setY(int y) { this->pos.setY(y); }
 void Block::setZ(int z) { this->pos.setZ(z); }
 
 json Block::toJSON() {
+
     json block_json;
-    block_json["type"] = this->getType();
-    block_json["x"] = to_string(this->getX());
-    block_json["y"] = to_string(this->getY());
-    block_json["z"] = to_string(this->getZ());
-    block_json["material"] = this->getMaterial();
+    vector<json> coordinate_list;
+    coordinate_list.push_back(this->pos.toJSON());
+
+    block_json["bounds"] = {{"type", "block"},
+                            {"coordinates", coordinate_list},
+                            {"material", this->getMaterial()}};
     return block_json;
 }
 

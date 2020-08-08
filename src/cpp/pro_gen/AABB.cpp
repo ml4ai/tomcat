@@ -151,8 +151,7 @@ void AABB::generateBox(string material,
                        int offsetPosY,
                        int offsetNegY,
                        int offsetPosZ,
-                       int offsetNegZ,
-                       string type) {
+                       int offsetNegZ) {
 
     int startX = this->getTopLeft().getX() + offsetPosX;
     int startY = this->getTopLeft().getY() + offsetPosY;
@@ -166,7 +165,7 @@ void AABB::generateBox(string material,
         for (int y = startY; y <= endY; y++) {
             for (int z = startZ; z <= endZ; z++) {
                 Pos pos(x, y, z);
-                this->addBlock(*(new Block(material, pos, type)));
+                this->addBlock(*(new Block(material, pos)));
             }
         }
     }
@@ -180,8 +179,7 @@ void AABB::addRandomBlocks(int n,
                            int offsetPosY,
                            int offsetNegY,
                            int offsetPosZ,
-                           int offsetNegZ,
-                           string type) {
+                           int offsetNegZ) {
 
     int startX = this->getTopLeft().getX() + offsetPosX;
     int startY = this->getTopLeft().getY() + offsetPosY;
@@ -200,39 +198,35 @@ void AABB::addRandomBlocks(int n,
         int y = randY(gen);
         int z = randZ(gen);
         Pos pos(x, y, z);
-        this->addBlock(*(new Block(material, pos, type)));
+        this->addBlock(*(new Block(material, pos)));
         n--;
     }
 }
 
 json AABB::toJSON() {
     json aabb_json;
-    aabb_json["id"] = to_string(this->getID());
-    aabb_json["type"] = this->getType();
 
-    aabb_json["x1"] = to_string(this->getTopLeft().getX());
-    aabb_json["y1"] = to_string(this->getTopLeft().getY());
-    aabb_json["z1"] = to_string(this->getTopLeft().getZ());
+    vector<json> coordinates_list;
+    coordinates_list.push_back(this->topLeft.toJSON());
+    coordinates_list.push_back(this->bottomRight.toJSON());
 
-    aabb_json["x2"] = to_string(this->getBottomRight().getX());
-    aabb_json["y2"] = to_string(this->getBottomRight().getY());
-    aabb_json["z2"] = to_string(this->getBottomRight().getZ());
-    aabb_json["material"] = this->getMaterial();
-
-    vector<json> aabb_block_list_json;
+    vector<json> block_list;
     for (auto& blockPtr : this->getBlockList()) {
-        json block_json = (*blockPtr).toJSON();
-        aabb_block_list_json.push_back(block_json);
+        block_list.push_back((*blockPtr).toJSON());
     }
 
-    vector<json> aabb_entity_list_json;
+    vector<json> entity_list;
     for (auto& entityPtr : this->getEntityList()) {
-        json entity_json = (*entityPtr).toJSON();
-        aabb_entity_list_json.push_back(entity_json);
+        entity_list.push_back((*entityPtr).toJSON());
     }
 
-    aabb_json["block_list"] = aabb_block_list_json;
-    aabb_json["entity_list"] = aabb_entity_list_json;
+    aabb_json["bounds"] = {{"id", to_string(this->getID())},
+                           {"type", "cuboid"},
+                           {"coordinates", coordinates_list},
+                           {"material", this->getMaterial()},
+                           {"block_list", block_list},
+                           {"entity_list", entity_list}};
+
     return aabb_json;
 }
 

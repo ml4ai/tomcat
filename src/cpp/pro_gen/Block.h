@@ -11,19 +11,11 @@
  */
 class Block {
 
-  private:
-    std::string type;
+  protected:
     std::string material;
     Pos pos;
 
   public:
-    /**
-     * @brief Get the type of the block
-     *
-     * @return string The block's type
-     */
-    std::string getType();
-
     /**
      * @brief Get the material of the block
      *
@@ -94,10 +86,8 @@ class Block {
      *
      * @param material The material the block is made of
      * @param pos The position of the block in the Minecraft world
-     * @param type The semantic type for this block which is not the same as
-     * its material. Defaults to "normal".
      */
-    Block(std::string material, Pos& pos, std::string type = "normal");
+    Block(std::string material, Pos& pos);
 
     /**
      * @brief Destroy the Block object

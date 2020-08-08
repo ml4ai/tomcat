@@ -8,7 +8,7 @@ class Lever : public Block{
 
     public:
         nlohmann::json virtual toJSON();
-        Lever(Pos& pos, std::string type = "normal", bool powered = false, std::string facing = "null");
+        Lever(Pos& pos, bool powered = false, std::string facing = "null");
         ~Lever();
 
 };

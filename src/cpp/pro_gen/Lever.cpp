@@ -2,27 +2,32 @@
 using namespace std;
 using json = nlohmann::json;
 
-Lever::Lever(
-    Pos& pos, string type, bool powered, string facing)
-    : Block("lever", pos, type) {
+Lever::Lever(Pos& pos, bool powered, string facing) : Block("lever", pos) {
     this->powered = powered;
     this->facing = facing;
 }
 
 json Lever::toJSON() {
-    json block_json;
-    block_json["type"] = this->getType();
-    block_json["x"] = to_string(this->getX());
-    block_json["y"] = to_string(this->getY());
-    block_json["z"] = to_string(this->getZ());
-    block_json["material"] = this->getMaterial();
-
+    string isPowered = "";
     if (this->powered) {
-        block_json["powered"] = "true";
+        isPowered = "true";
     }
     else {
-        block_json["powered"] = "false";
+        isPowered = "false";
     }
+
+    json block_json;
+    vector<json> coordinate_list;
+    coordinate_list.push_back(this->pos.toJSON());
+    string powered =
+
+        block_json["bounds"] = {{"type", "block"},
+                                {"coordinates", coordinate_list},
+                                {"material", this->getMaterial()},
+                                {"powered", isPowered},
+                                {"facing", this->facing}};
+    return block_json;
+
     block_json["facing"] = this->facing;
     return block_json;
 }

@@ -4,8 +4,8 @@
  */
 #pragma once
 
+#include <nlohmann/json.hpp>
 #include <string>
-
 /**
  * @brief This class represents a 3D coordinate
  */
@@ -79,6 +79,14 @@ class Pos {
      * @param shift The amount to shift by which may be positive or negative
      */
     void shiftZ(int shift);
+
+    /**
+     * @brief Gets the JSON representation of the various
+     * fields and values stored in an instance
+     *
+     * @return nlohmann::json The JSON representation
+     */
+    nlohmann::json virtual toJSON();
 
     /**
      * @brief Gets a string representation of the various

@@ -232,8 +232,7 @@ class AABB {
                              int offsetPosY = 0,
                              int offsetNegY = 0,
                              int offsetPosZ = 0,
-                             int offsetNegZ = 0,
-                             std::string type = "normal");
+                             int offsetNegZ = 0);
 
     /**
      * @brief Add n random blocks of the given type and material inside the AABB
@@ -254,7 +253,6 @@ class AABB {
      * be. Defaults to 0
      * @param offsetNegZ How far away from the top wall should the position be.
      * Defaults to 0
-     * @param type The semantic name to give this block. Defaults to "normal".
      */
     void virtual addRandomBlocks(int n,
                                  std::string material,
@@ -264,8 +262,7 @@ class AABB {
                                  int offsetPosY = 0,
                                  int offsetNegY = 0,
                                  int offsetPosZ = 0,
-                                 int offsetNegZ = 0,
-                                 std::string type = "normal");
+                                 int offsetNegZ = 0);
 
     /**
      * @brief Generate all 4 doors for an AABB. Door blocks are added to the
