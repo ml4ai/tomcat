@@ -14,6 +14,8 @@
 1. In version >=1.2.4 the SuperUser password is generated automatically on the first server start. You can find it in the logfile. Search for an entry like 	`<W>2013-09-03 11:23:44.516 1 => Password for 'SuperUser' set to 'supersecretpassword'` 
 This can be changed <br>
 [This is all that was required on a Mac laptop for server setup]
+1. To run the server after setup using ssh: `ssh -o ConnectTimeout=7 -f -N -L 64738:localhost:64738 [name of system]`
+	Note: Currently, the system is setup on `laplace` 	
 
 ### Sources:
 [https://wiki.mumble.info/wiki/Murmurguide](https://wiki.mumble.info/wiki/Murmurguide)
