@@ -42,7 +42,16 @@ if [[ ! -d /Applications/Mumble.app ]]; then
     echo "Mumble installation complete!"
 fi
 
+
 # Launch the Mumble app
 echo "Launching Mumble."
 open -a Mumble.app
+
+# The line below adds the laplace server. However, it cannot be called before
+# Mumble is launched and shutdown at least once, in order to create the SQLite3
+# database that holds the configuration settings.
+#./tools/add_mumble_server
+
+# Uncomment the line below to hide the Mumble GUI after it's launched.
+#osascript -e 'tell application "System Events" to tell process "Mumble" to set visible to false'
 exit 0
