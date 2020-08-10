@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+DB="$HOME"/Library/ApplicationSupport/Mumble/Mumble/mumble.sqlite
+PORT=64738
+SERVER_NAME=laplace
+HOSTNAME=127.0.0.1
+SQL_STMT=\
+"insert into servers (name, hostname, port, username)
+select '${SERVER_NAME}', '${HOSTNAME}', ${PORT}, '${USER}'
+where not exists (select 1 from servers where name='${SERVER_NAME}' and hostname='${HOSTNAME}' and port=${PORT} and username='${USER}');"
+
+sqlite3 "$DB" "$SQL_STMT"
