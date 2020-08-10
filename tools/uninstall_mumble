@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# Script to uninstall Mumble on macOS
+
+/bin/rm -rf /Applications/Mumble.app
+/bin/rm -rf $HOME/Library/Application*/Mumble
