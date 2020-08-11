@@ -39,8 +39,8 @@ class ModelInference:
         log_powers_rho_ty[0] = np.zeros(num_states)
         for i in range(1, h):
             powers_theta_s[i] = np.dot(powers_theta_s[i - 1], self.model.cpd_tables.theta_s)
-            log_powers_rho_tg[i] = log_powers_rho_tg[i - 1] + utils.log(1 - self.model.cpd_tables.pi_tg[:,x])
-            log_powers_rho_ty[i] = log_powers_rho_ty[i - 1] + utils.log(1 - self.model.cpd_tables.pi_ty[:,x])
+            log_powers_rho_tg[i] = log_powers_rho_tg[i - 1] + utils.log(1 - self.model.cpd_tables.pi_tg[:, x])
+            log_powers_rho_ty[i] = log_powers_rho_ty[i - 1] + utils.log(1 - self.model.cpd_tables.pi_ty[:, x])
 
         # Marginals are computed individually for each data points in the data set
         for d in tqdm(
@@ -55,19 +55,21 @@ class ModelInference:
             alpha[initial_state] = 1
 
             # skip the first one
-            for t in range(1, evidence_set.time_slices - h + 1): # Prediction time
+            for t in range(1, evidence_set.time_slices - h + 1):  # Prediction time
                 cum_f_tg = 1
                 cum_f_ty = 1
                 for w in range(h):
                     f_tg = (log_powers_rho_tg[w] + utils.log(np.dot(alpha, powers_theta_s[w])))
                     f_tg = np.exp(f_tg - np.max(f_tg))
                     f_tg = f_tg / sum(f_tg)
-                    cum_f_tg *= np.dot(np.dot(f_tg, self.model.cpd_tables.theta_s), 1 - self.model.cpd_tables.pi_tg[:,x])
+                    cum_f_tg *= np.dot(np.dot(f_tg, self.model.cpd_tables.theta_s),
+                                       1 - self.model.cpd_tables.pi_tg[:, x])
 
                     f_ty = (log_powers_rho_ty[w] + utils.log(np.dot(alpha, powers_theta_s[w])))
                     f_ty = np.exp(f_ty - np.max(f_ty))
                     f_ty = f_ty / sum(f_ty)
-                    cum_f_ty *= np.dot(np.dot(f_ty, self.model.cpd_tables.theta_s), 1 - self.model.cpd_tables.pi_ty[:,x])
+                    cum_f_ty *= np.dot(np.dot(f_ty, self.model.cpd_tables.theta_s),
+                                       1 - self.model.cpd_tables.pi_ty[:, x])
 
                 # Because of precision, cum_f can be slightly greater than 1
                 tg_marginals[d, t - 1] = 1 - (cum_f_tg if cum_f_tg < 1 else 1)
@@ -88,23 +90,29 @@ class ModelInference:
 
     def get_triaging_normalized_frequencies(self, evidence_set, h=1, x=1):
         # skip the first one
-        tg_frequencies = self.sum_ahead(np.sum(evidence_set.tg_evidence[:, 1:] == x, axis=0), h)
-        tg_frequencies = tg_frequencies / (evidence_set.number_of_data_points*h)
-
-        ty_frequencies = self.sum_ahead(np.sum(evidence_set.ty_evidence[:, 1:] == x, axis=0), h)
-        ty_frequencies = ty_frequencies / (evidence_set.number_of_data_points*h)
+        # tg_frequencies = self.sum_ahead(np.sum(evidence_set.tg_evidence[:, 1:] == x, axis=0), h)
+        # tg_frequencies = tg_frequencies / (evidence_set.number_of_data_points*h)
+        #
+        # ty_frequencies = self.sum_ahead(np.sum(evidence_set.ty_evidence[:, 1:] == x, axis=0), h)
+        # ty_frequencies = ty_frequencies / (evidence_set.number_of_data_points*h)
+        tg_frequencies = self.sum_ahead(evidence_set.tg_evidence[:, 1:] == x, h)
+        ty_frequencies = self.sum_ahead(evidence_set.ty_evidence[:, 1:] == x, h)
 
         return tg_frequencies, ty_frequencies
 
-    def sum_ahead(self, v, value_range):
-        if value_range == 1:
-            return v
-        else:
-            new_values = []
-            cum_sum = np.cumsum(v)
-            previous = 0
-            for i in range(len(v)-value_range+1):
-                new_values.append(cum_sum[i+value_range-1] - previous)
-                previous = cum_sum[i]
+    def sum_ahead(self, data, value_range):
+        new_values = []
+        # cum_sum = np.cumsum(v)
+        # previous = 0
+        for i in range(data.shape[1] - value_range + 1):
+            if value_range == 1:
+                prob = np.mean(data[:, i:i + 1])
+            else:
+                prob = np.mean(np.bitwise_or.reduce(data[:, i:i + value_range], 1))
+            new_values.append(prob)
 
-            return np.array(new_values)
+            # new_values.append(np.sum(v[i:i+value_range]))
+            # new_values.append(cum_sum[i+value_range-1] - previous)
+            # previous = cum_sum[i]
+
+        return np.array(new_values)
