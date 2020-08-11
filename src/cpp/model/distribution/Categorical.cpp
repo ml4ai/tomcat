@@ -2,7 +2,7 @@
 
 #include <gsl/gsl_randist.h>
 
-#include "ConstantNode.h"
+#include "../ConstantNode.h"
 
 namespace tomcat {
     namespace model {
@@ -49,6 +49,26 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
+        void
+        Categorical::update_dependencies(Node::NodeMap& parameter_nodes_map,
+                                         int time_step) {
+
+            std::string parameter_timed_name;
+            const NodeMetadata* metadata =
+                this->probabilities->get_metadata().get();
+            if (metadata->is_replicable()) {
+                parameter_timed_name = metadata->get_timed_name(time_step);
+            }
+            else {
+                parameter_timed_name =
+                    metadata->get_timed_name(metadata->get_initial_time_step());
+            }
+
+            if (parameter_nodes_map.count(parameter_timed_name) > 0) {
+                this->probabilities = parameter_nodes_map[parameter_timed_name];
+            }
+        }
+
         Eigen::VectorXd
         Categorical::sample(std::shared_ptr<gsl_rng> random_generator) const {
             Eigen::VectorXd probabilities =
@@ -85,16 +105,9 @@ namespace tomcat {
 
         Eigen::VectorXd
         Categorical::sample(std::shared_ptr<gsl_rng> random_generator,
-                            Eigen::VectorXd log_weights) const {
-            Eigen::VectorXd log_probs = this->probabilities->get_assignment();
-
-            // Add a small value before converting to log to avoid error if any
-            // of the values is zero.
-            log_probs = (log_probs.array() + EPSILON).log();
-
-            Eigen::VectorXd weighted_probs = log_probs + log_weights;
-            weighted_probs = weighted_probs.array() - weighted_probs.maxCoeff();
-            weighted_probs = weighted_probs.array().exp();
+                            Eigen::VectorXd weights) const {
+            Eigen::VectorXd weighted_probs =
+                this->probabilities->get_assignment() * weights;
 
             // weighted_probs does not need to be normalized because GSL already
             // does that.
@@ -128,18 +141,6 @@ namespace tomcat {
             ss << "Cat(" << this->probabilities << ")";
 
             return ss.str();
-        }
-
-        //----------------------------------------------------------------------
-        // Getters & Setters
-        //----------------------------------------------------------------------
-        const std::shared_ptr<Node>& Categorical::get_probabilities() const {
-            return probabilities;
-        }
-
-        void Categorical::set_probabilities(
-            const std::shared_ptr<Node>& probabilities) {
-            this->probabilities = probabilities;
         }
 
     } // namespace model

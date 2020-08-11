@@ -26,6 +26,22 @@ namespace tomcat {
             this->fill_indexing_mapping();
         }
 
+        CPD::CPD(std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order,
+                 std::vector<std::shared_ptr<Distribution>>& distributions)
+            : parent_node_order(parent_node_order),
+              distributions(distributions) {
+            this->init_id();
+            this->fill_indexing_mapping();
+        }
+
+        CPD::CPD(std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order,
+                 std::vector<std::shared_ptr<Distribution>>&& distributions)
+            : parent_node_order(std::move(parent_node_order)),
+              distributions(std::move(distributions)) {
+            this->init_id();
+            this->fill_indexing_mapping();
+        }
+
         CPD::~CPD() {}
 
         //----------------------------------------------------------------------
@@ -74,36 +90,34 @@ namespace tomcat {
             }
         }
 
-        void CPD::copy_from_cpd(const CPD& cpd) {
+        void CPD::copy_cpd(const CPD& cpd) {
             this->id = cpd.id;
             this->updated = cpd.updated;
             this->parent_label_to_indexing = cpd.parent_label_to_indexing;
+            this->parent_node_order = cpd.parent_node_order;
+            this->distributions = cpd.distributions;
+        }
+
+        void CPD::update_dependencies(Node::NodeMap& parameter_nodes_map,
+                                      int time_step) {
+
+            for (auto& distribution : this->distributions) {
+                distribution->update_dependencies(parameter_nodes_map,
+                                                  time_step);
+            }
+
+            this->updated = true;
         }
 
         Eigen::VectorXd
         CPD::sample(std::shared_ptr<gsl_rng> random_generator,
                     const Node::NodeMap& parent_labels_to_nodes) const {
 
-            int table_row = this->get_table_row_given_parents_assignments(
+            int index = this->get_table_row_given_parents_assignments(
                 parent_labels_to_nodes);
 
-            return this->sample_from_table_row(random_generator, table_row);
+            return this->distributions[index]->sample(random_generator);
         }
-
-        //        Eigen::VectorXd CPD::sample_weighted(
-        //            std::shared_ptr<gsl_rng> random_generator,
-        //            const Node::NodeMap& parent_labels_to_nodes,
-        //            const std::vector<std::shared_ptr<RandomVariableNode>>&
-        //            child_nodes) const {
-        //
-        //            int table_row =
-        //            this->get_table_row_given_parents_assignments(
-        //                parent_labels_to_nodes);
-        //
-        //            // TODO - adjust for weighted cases
-        //            return this->sample_from_table_row(random_generator,
-        //            table_row);
-        //        }
 
         int CPD::get_table_row_given_parents_assignments(
             const Node::NodeMap& parent_labels_to_nodes) const {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CPD.h"
-#include "Categorical.h"
+#include "distribution/Categorical.h"
 
 namespace tomcat {
     namespace model {
@@ -13,6 +13,8 @@ namespace tomcat {
          * this CPD. Each row represents a combination of possible assignments
          * of the parent nodes ordered in ascending order with respect to the
          * binary basis. A categorical CPD is used for discrete probabilities.
+         * The table is represented by a list of categorical distributions that
+         * contain a list of probabilities in itself.
          *
          * For instance,
          *
@@ -49,58 +51,52 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
-             * Creates an instance of a Categorical CPD table comprised of a
-             * list of node dependent probabilities.
+             * Creates an instance of a Categorical CPD.
              *
              * @param parent_node_order: evaluation order of the parent
-             * nodes' assignments for correct table indexing
-             * @param cpd_table: table of probabilities determined other by
-             * nodes' assignments
+             * nodes' assignments for correct distribution indexing
+             * @param distributions: list of categorical distributions
              */
             CategoricalCPD(
                 std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order,
-                std::vector<std::shared_ptr<Categorical>>& cpd_table);
+                std::vector<std::shared_ptr<Categorical>>& distributions);
 
             /**
-             * Creates an instance of a Categorical CPD table comprised of a
-             * list of node dependent probabilities.
+             * Creates an instance of a Categorical CPD.
              *
              * @param parent_node_order: evaluation order of the parent
-             * nodes' assignments for correct table indexing
-             * @param cpd_table: table of probabilities determined other by
-             * nodes' assignments
+             * nodes' assignments for correct distribution indexing
+             * @param distributions: list of categorical distributions
              */
             CategoricalCPD(
                 std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order,
-                std::vector<std::shared_ptr<Categorical>>&& cpd_table);
+                std::vector<std::shared_ptr<Categorical>>&& distributions);
 
             /**
-             * Creates an instance of a Categorical CPD table by transforming a
-             * table of probabilities to a list of constant vector nodes to keep
-             * static and node dependent CPDs compatible.
+             * Creates an instance of a Categorical CPD by transforming a
+             * table of probabilities to a list of categorical distributions
+             * with constant probabilities.
              *
              * @param parent_node_order: evaluation order of the parent
-             * nodes' assignments for correct table indexing
-             * @param cpd_table: matrix containing constant numerical
-             * probabilities
+             * nodes' assignments for correct distribution indexing
+             * @param probabilities: matrix containing probabilities
              */
             CategoricalCPD(
                 std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order,
-                const Eigen::MatrixXd& cpd_table);
+                const Eigen::MatrixXd& probabilities);
 
             /**
-             * Creates an instance of a Categorical CPD table by transforming a
-             * table of probabilities to a list of constant vector nodes to keep
-             * static and node dependent CPDs compatible.
+             * Creates an instance of a Categorical CPD by transforming a
+             * table of probabilities to a list of categorical distributions
+             * with constant probabilities.
              *
              * @param parent_node_order: evaluation order of the parent
-             * nodes assignment for correct table indexing
-             * @param cpd_table: matrix containing constant numerical
-             * probabilities
+             * nodes' assignments for correct distribution indexing
+             * @param probabilities: matrix containing probabilities
              */
             CategoricalCPD(
                 std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order,
-                const Eigen::MatrixXd&& cpd_table);
+                const Eigen::MatrixXd& probabilities);
 
             ~CategoricalCPD();
 
@@ -118,9 +114,6 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-            virtual void update_dependencies(Node::NodeMap& parameter_nodes_map,
-                                             int time_step) override;
-
             std::unique_ptr<CPD> clone() const override;
 
             std::string get_description() const override;
@@ -129,20 +122,6 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-
-            /**
-             * Samples a value from a categorical distribution comprised by the
-             * probabilities assigned one of the nodes in the probability table.
-             *
-             * @param random_generator: random number generator
-             * @param table_row: row of the probability table containing the
-             * node that stores the list of discrete probabilities
-             * @return Value sampled from a categorical distribution
-             */
-            virtual Eigen::VectorXd
-            sample_from_table_row(std::shared_ptr<gsl_rng> random_generator,
-                                  int table_row) const override;
-
             void clone_distributions() override;
 
           private:
@@ -151,24 +130,12 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
-             * Fills the probability table with constant nodes created from a
-             * matrix of constant numerical values.
+             * Uses the values in the matrix to create a list of constant
+             * categorical distributions.
              *
              * @param matrix: matrix of probabilities
              */
             void init_from_matrix(const Eigen::MatrixXd& matrix);
-
-            /**
-             * Copies data members of a categorical CPD.
-             *
-             * @param cpd: categorical CPD
-             */
-            void copy_from_cpd(const CategoricalCPD& cpd);
-
-            //------------------------------------------------------------------
-            // Data members
-            //------------------------------------------------------------------
-            std::vector<std::shared_ptr<Categorical>> probability_table;
         };
 
     } // namespace model

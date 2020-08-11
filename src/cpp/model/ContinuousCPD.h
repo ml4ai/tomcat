@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CPD.h"
+#include "distribution/Continuous.h"
 
 namespace tomcat {
     namespace model {
@@ -40,97 +41,91 @@ namespace tomcat {
          * | 1 | 2 |      \f$\phi_{12}\f$       |
          * |------------------------------------|
          */
-        class ContinuousCPD : public CPD {
-          public:
-            //------------------------------------------------------------------
-            // Constructors & Destructor
-            //------------------------------------------------------------------
-
-            /**
-             * Creates an abstract representation of a Continuous CPD.
-             */
-            ContinuousCPD();
-
-            /**
-             * Creates an abstract representation of a Continuous CPD. This
-             * constructor is marked as explicit because it takes only one
-             * parameter what makes it easier to be implicitly instantiated.
-             * Explicit instantiation is preferred to avoid hard to catch
-             * errors.
-             *
-             * @param parent_node_order: evaluation order of the parent
-             * nodes assignment for correct table indexing
-             */
-            explicit ContinuousCPD(
-                std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order);
-
-            /**
-             * Creates an abstract representation of a Continuous CPD. This
-             * constructor is marked as explicit because it takes only one
-             * parameter what makes it easier to be implicitly instantiated.
-             * Explicit instantiation is preferred to avoid hard to catch
-             * errors.
-             *
-             * @param parent_node_order: evaluation order of the parent
-             * nodes assignment for correct table indexing
-             */
-            explicit ContinuousCPD(
-                std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order);
-
-            virtual ~ContinuousCPD();
-
-            //------------------------------------------------------------------
-            // Copy & Move constructors/assignments
-            //------------------------------------------------------------------
-
-            // Copy constructor and assignment should be deleted to avoid
-            // implicit slicing and loss of polymorphic behaviour in the
-            // subclasses. For deep copy, the clone method must be used.
-            ContinuousCPD(const ContinuousCPD&) = delete;
-
-            ContinuousCPD& operator=(const ContinuousCPD&) = delete;
-
-            ContinuousCPD(ContinuousCPD&& cpd) = default;
-
-            ContinuousCPD& operator=(ContinuousCPD&& cpd) = default;
-
-            //------------------------------------------------------------------
-            // Member functions
-            //------------------------------------------------------------------
-            virtual void update_dependencies(Node::NodeMap& parameter_nodes_map,
-                                             int time_step) override;
-
-          protected:
-            //------------------------------------------------------------------
-            // Member functions
-            //------------------------------------------------------------------
-
-            /**
-             * Copy data members of a continuous CPD.
-             *
-             * @param cpd: continuous CPD
-             */
-            void copy_from_cpd(const ContinuousCPD& cpd);
-
-            void clone_distributions() override;
-
-            //------------------------------------------------------------------
-            // Pure virtual functions
-            //------------------------------------------------------------------
-
-            /**
-             * Fills the probability table with constant nodes created from a
-             * matrix of numeric values for \f$\phi\f$.
-             *
-             * @param matrix: matrix of values for \f$\phi\f$
-             */
-            virtual void init_from_matrix(const Eigen::MatrixXd& matrix) = 0;
-
-            //------------------------------------------------------------------
-            // Data members
-            //------------------------------------------------------------------
-            std::vector<std::vector<std::shared_ptr<Node>>> parameter_table;
-        };
+//        class ContinuousCPD : public CPD {
+//          public:
+//            //------------------------------------------------------------------
+//            // Constructors & Destructor
+//            //------------------------------------------------------------------
+//
+//            /**
+//             * Creates an abstract representation of a Continuous CPD.
+//             */
+//            ContinuousCPD();
+//
+//            /**
+//             * Creates an abstract representation of a Continuous CPD. This
+//             * constructor is marked as explicit because it takes only one
+//             * parameter what makes it easier to be implicitly instantiated.
+//             * Explicit instantiation is preferred to avoid hard to catch
+//             * errors.
+//             *
+//             * @param parent_node_order: evaluation order of the parent
+//             * nodes assignment for correct table indexing
+//             */
+//            explicit ContinuousCPD(
+//                std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order);
+//
+//            /**
+//             * Creates an abstract representation of a Continuous CPD. This
+//             * constructor is marked as explicit because it takes only one
+//             * parameter what makes it easier to be implicitly instantiated.
+//             * Explicit instantiation is preferred to avoid hard to catch
+//             * errors.
+//             *
+//             * @param parent_node_order: evaluation order of the parent
+//             * nodes assignment for correct table indexing
+//             */
+//            explicit ContinuousCPD(
+//                std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order);
+//
+//            virtual ~ContinuousCPD();
+//
+//            //------------------------------------------------------------------
+//            // Copy & Move constructors/assignments
+//            //------------------------------------------------------------------
+//
+//            // Copy constructor and assignment should be deleted to avoid
+//            // implicit slicing and loss of polymorphic behaviour in the
+//            // subclasses. For deep copy, the clone method must be used.
+//            ContinuousCPD(const ContinuousCPD&) = delete;
+//
+//            ContinuousCPD& operator=(const ContinuousCPD&) = delete;
+//
+//            ContinuousCPD(ContinuousCPD&& cpd) = default;
+//
+//            ContinuousCPD& operator=(ContinuousCPD&& cpd) = default;
+//
+//            //------------------------------------------------------------------
+//            // Member functions
+//            //------------------------------------------------------------------
+//            virtual void update_dependencies(Node::NodeMap& parameter_nodes_map,
+//                                             int time_step) override;
+//
+//          protected:
+//            //------------------------------------------------------------------
+//            // Member functions
+//            //------------------------------------------------------------------
+//
+//            /**
+//             * Copy data members of a continuous CPD.
+//             *
+//             * @param cpd: continuous CPD
+//             */
+//            void copy_from_cpd(const ContinuousCPD& cpd);
+//
+//            //------------------------------------------------------------------
+//            // Pure virtual functions
+//            //------------------------------------------------------------------
+//
+//            /**
+//             * Fills the parameter table with distributions defined by
+//             * parameters from a matrix of numeric values for \f$\phi\f$.
+//             *
+//             * @param matrix: matrix of values for \f$\phi\f$
+//             */
+//            virtual void init_from_matrix(const Eigen::MatrixXd& matrix) = 0;
+//
+//        };
 
     } // namespace model
 } // namespace tomcat

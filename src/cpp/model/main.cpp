@@ -1,5 +1,4 @@
 #include "AncestralSampler.h"
-#include "Categorical.h"
 #include "CategoricalCPD.h"
 #include "ConstantNode.h"
 #include "DirichletCPD.h"
@@ -9,6 +8,9 @@
 #include "Node.h"
 #include "NodeMetadata.h"
 #include "RandomVariableNode.h"
+#include "distribution/Categorical.h"
+#include "distribution/Dirichlet.h"
+#include "distribution/Gaussian.h"
 #include <eigen3/Eigen/Dense>
 #include <fstream>
 #include <gsl/gsl_randist.h>

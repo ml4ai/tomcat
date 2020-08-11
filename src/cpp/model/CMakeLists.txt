@@ -43,7 +43,6 @@ add_library(tomcat_model_libs
         RandomVariableNode.cpp
         CPD.cpp
         CategoricalCPD.cpp
-        ContinuousCPD.cpp
         GaussianCPD.cpp
         DirichletCPD.cpp
         DynamicBayesNet.cpp
@@ -52,8 +51,11 @@ add_library(tomcat_model_libs
         GibbsSampler.cpp
         FileHandler.cpp
         Tensor3.cpp
-        Distribution.cpp
-        Categorical.cpp)
+        distribution/Distribution.cpp
+        distribution/Categorical.cpp
+        distribution/Continuous.cpp
+        distribution/Dirichlet.cpp
+        distribution/Gaussian.cpp)
 
 # Todo make code coverage work on Linux as well.
 if(APPLE AND CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")

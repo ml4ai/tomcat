@@ -15,34 +15,38 @@ namespace tomcat {
         //----------------------------------------------------------------------
         DirichletCPD::DirichletCPD(
             std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order,
-            std::vector<std::shared_ptr<Node>>& parameter_table)
-            : ContinuousCPD(parent_node_order) {
+            std::vector<std::shared_ptr<Dirichlet>>& distributions)
+            : CPD(parent_node_order) {
 
-            this->init_from_table(parameter_table);
+            this->distributions.reserve(distributions.size());
+            for (const auto& distribution : distributions) {
+                this->distributions.push_back(distribution);
+            }
         }
 
         DirichletCPD::DirichletCPD(
             std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order,
-            std::vector<std::shared_ptr<Node>>&& parameter_table)
-            : ContinuousCPD(std::move(parent_node_order)) {
+            std::vector<std::shared_ptr<Dirichlet>>&& distributions)
+            : CPD(parent_node_order) {
 
-            this->init_from_table(parameter_table);
+            this->distributions.reserve(distributions.size());
+            for (const auto& distribution : distributions) {
+                this->distributions.push_back(distribution);
+            }
         }
 
         DirichletCPD::DirichletCPD(
             std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order,
-            const Eigen::MatrixXd& parameter_values)
-            : ContinuousCPD(parent_node_order) {
-
-            this->init_from_matrix(parameter_values);
+            const Eigen::MatrixXd& alphas)
+            : CPD(parent_node_order) {
+            this->init_from_matrix(alphas);
         }
 
         DirichletCPD::DirichletCPD(
             std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order,
-            const Eigen::MatrixXd&& parameter_values)
-            : ContinuousCPD(std::move(parent_node_order)) {
-
-            this->init_from_matrix(parameter_values);
+            const Eigen::MatrixXd& alphas)
+            : CPD(parent_node_order) {
+            this->init_from_matrix(alphas);
         }
 
         DirichletCPD::~DirichletCPD() {}
@@ -51,53 +55,23 @@ namespace tomcat {
         // Copy & Move constructors/assignments
         //----------------------------------------------------------------------
         DirichletCPD::DirichletCPD(const DirichletCPD& cpd) {
-            this->copy_from_cpd(cpd);
+            this->copy_cpd(cpd);
         }
 
         DirichletCPD& DirichletCPD::operator=(const DirichletCPD& cpd) {
-            this->copy_from_cpd(cpd);
+            this->copy_cpd(cpd);
             return *this;
         }
 
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void DirichletCPD::init_from_table(
-            std::vector<std::shared_ptr<Node>>& parameter_table) {
-            // Each node contains the parameter vector alpha.
-            for (int i = 0; i < parameter_table.size(); i++) {
-                std::vector<std::shared_ptr<Node>> parameters;
-                parameters.push_back(parameter_table[i]);
-                this->parameter_table.push_back(std::move(parameters));
-            }
-        }
-
         void DirichletCPD::init_from_matrix(const Eigen::MatrixXd& matrix) {
-            for (int row = 0; row < matrix.rows(); row++) {
-                Eigen::VectorXd alpha = matrix.row(row);
-                std::vector<std::shared_ptr<Node>> alpha_vector;
-                alpha_vector.push_back(
-                    std::make_shared<ConstantNode>(ConstantNode(alpha)));
-                this->parameter_table.push_back(std::move(alpha_vector));
+            for (int i = 0; i < matrix.rows(); i++) {
+                std::shared_ptr<Dirichlet> distribution_ptr =
+                    std::make_shared<Dirichlet>(Dirichlet(matrix.row(i)));
+                this->distributions.push_back(distribution_ptr);
             }
-        }
-
-        Eigen::VectorXd DirichletCPD::sample_from_table_row(
-            std::shared_ptr<gsl_rng> random_generator, int table_row) const {
-            int alpha_size = this->parameter_table[table_row][0]
-                                 ->get_metadata()
-                                 ->get_sample_size();
-            double* sample_ptr = new double[alpha_size];
-
-            const double* alpha =
-                this->parameter_table[table_row][0]->get_assignment().data();
-
-            gsl_ran_dirichlet(
-                random_generator.get(), alpha_size, alpha, sample_ptr);
-
-            Eigen::Map<Eigen::VectorXd> sample(sample_ptr, alpha_size);
-
-            return sample;
         }
 
         std::unique_ptr<CPD> DirichletCPD::clone() const {
@@ -107,12 +81,19 @@ namespace tomcat {
             return new_cpd;
         }
 
+        void DirichletCPD::clone_distributions() {
+            for (auto& distribution : this->distributions) {
+                std::shared_ptr<Distribution> temp = distribution->clone();
+                distribution = std::dynamic_pointer_cast<Dirichlet>(temp);
+            }
+        }
+
         std::string DirichletCPD::get_description() const {
             std::stringstream ss;
 
             ss << "Dirichlet CPD: {\n";
-            for (auto& alpha : this->parameter_table) {
-                ss << " " << *alpha[0] << "\n";
+            for (auto& alpha : this->distributions) {
+                ss << " " << *alpha << "\n";
             }
             ss << "}";
 

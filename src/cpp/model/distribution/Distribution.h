@@ -1,7 +1,9 @@
 #pragma once
 
-#include "eigen3/Eigen/Dense"
+#include <eigen3/Eigen/Dense>
 #include <gsl/gsl_rng.h>
+
+#include "../Node.h"
 
 namespace tomcat {
     namespace model {
@@ -61,6 +63,20 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
+             * Replaces parameter nodes in the distribution by the correct
+             * copy of the node in an unrolled DBN.
+             *
+             * @param parameter_nodes_map: mapping between a parameter node's
+             * timed name and its concrete object reference in an unrolled DBN
+             * @param time_step: time step of the node that owns the CPD in the
+             * unrolled DBN. It can be different from the time step of the
+             * parameter node if the latter is shared among nodes over several
+             * time steps.
+             */
+            virtual void update_dependencies(Node::NodeMap& parameter_nodes_map,
+                                             int time_step) = 0;
+
+            /**
              * Draws a sample from the distribution.
              *
              * @param random_generator: random number random_generator
@@ -71,20 +87,21 @@ namespace tomcat {
             sample(std::shared_ptr<gsl_rng> random_generator) const = 0;
 
             /**
-             * Draws a sample from the distribution scaled by a vector of log
+             * Draws a sample from the distribution scaled by a vector of
              * weights.
              *
              * @param random_generator: random number random_generator
-             * @param log_weights: log-values to scale the parameters of the
+             * @param weights: values to scale the parameters of the
              * distribution
              *
              * @return A sample from the distribution.
              */
-            virtual Eigen::VectorXd sample(std::shared_ptr<gsl_rng> random_generator,
-                                           Eigen::VectorXd log_weights) const = 0;
+            virtual Eigen::VectorXd
+            sample(std::shared_ptr<gsl_rng> random_generator,
+                   Eigen::VectorXd weights) const = 0;
 
             /**
-             * Returns the PDF for a given value.
+             * Returns the PDF/PMF for a given value.
              *
              * @param value: a possible sample from the distribution
              * @return PDF for the value.
@@ -92,7 +109,8 @@ namespace tomcat {
             virtual double get_pdf(Eigen::VectorXd value) const = 0;
 
             /**
-             * Creates a new unique pointer from a concrete instance of a distribution.
+             * Creates a new unique pointer from a concrete instance of a
+             * distribution.
              *
              * @return Pointer to the new distribution.
              */

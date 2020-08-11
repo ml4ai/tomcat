@@ -1,6 +1,7 @@
 #pragma once
 
-#include "ContinuousCPD.h"
+#include "CPD.h"
+#include "distribution/Dirichlet.h"
 
 namespace tomcat {
     namespace model {
@@ -12,7 +13,9 @@ namespace tomcat {
          * CPD given its parents' assignments. The number of rows is given by
          * the product of the cardinalities of these parent nodes. Each row
          * represents a combination of possible assignments of the parent nodes
-         * ordered with respect to the binary basis.
+         * ordered with respect to the binary basis. The table is represented by
+         * a list of Dirichlet distributions that contain a list of coefficients
+         * of \f$\alpha\f$ in itself.
          *
          * For instance,
          *
@@ -44,65 +47,59 @@ namespace tomcat {
          * |------------------------------------|
          */
 
-        class DirichletCPD : public ContinuousCPD {
+        class DirichletCPD : public CPD {
           public:
             //------------------------------------------------------------------
             // Constructors & Destructor
             //------------------------------------------------------------------
 
             /**
-             * Creates an instance of a Dirichlet CPD comprised by a list of
-             * node dependent parameters.
+             * Creates an instance of a Dirichlet CPD.
              *
              * @param parent_node_order: evaluation order of the parent
-             * nodes' assignments for correct table indexing
-             * @param parameter_table: list of parameter vector \f$\alpha\f$
-             * determined by other nodes' assignments
+             * nodes' assignments for correct distribution indexing
+             * @param distributions: list of Dirichlet distributions
              */
             DirichletCPD(
                 std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order,
-                std::vector<std::shared_ptr<Node>>& parameter_table);
+                std::vector<std::shared_ptr<Dirichlet>>& distributions);
 
             /**
-             * Creates an instance of a Dirichlet CPD comprised by a list of
-             * node dependent parameters.
+             * Creates an instance of a Dirichlet CPD.
              *
              * @param parent_node_order: evaluation order of the parent
-             * nodes' assignments for correct table indexing
-             * @param parameter_table: list of parameter vector \f$\alpha\f$
-             * determined by other nodes' assignments
+             * nodes' assignments for correct distribution indexing
+             * @param distributions: list of Dirichlet distributions
              */
             DirichletCPD(
                 std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order,
-                std::vector<std::shared_ptr<Node>>&& parameter_table);
+                std::vector<std::shared_ptr<Dirichlet>>&& distributions);
 
             /**
              * Creates an instance of a Dirichlet CPD table by transforming a
-             * table of parameter values to a list of constant vector nodes to
-             * keep static and node dependent CPDs compatible.
+             * table of parameter values to a list of Dirichlet distributions
+             * with constant parameters.
              *
              * @param parent_node_order: evaluation order of the parent
-             * nodes' assignments for correct table indexing
-             * @param cpd_table: matrix containing constant numerical values for
-             * \f$\alpha\f$
+             * nodes' assignments for correct distribution indexing
+             * @param cpd_table: matrix containing a \f$\alpha\f$s
              */
             DirichletCPD(
                 std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order,
-                const Eigen::MatrixXd& parameter_values);
+                const Eigen::MatrixXd& alphas);
 
             /**
              * Creates an instance of a Dirichlet CPD table by transforming a
-             * table of parameter values to a list of constant vector nodes to
-             * keep static and node dependent CPDs compatible.
+             * table of parameter values to a list of Dirichlet distributions
+             * with constant parameters.
              *
              * @param parent_node_order: evaluation order of the parent
-             * nodes' assignments for correct table indexing
-             * @param cpd_table: matrix containing constant numerical values for
-             * \f$\alpha\f$
+             * nodes' assignments for correct distribution indexing
+             * @param cpd_table: matrix containing a \f$\alpha\f$s
              */
             DirichletCPD(
                 std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order,
-                const Eigen::MatrixXd&& parameter_values);
+                const Eigen::MatrixXd& alphas);
 
             ~DirichletCPD();
 
@@ -128,30 +125,7 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-
-            /**
-             * Samples a value from a Dirichlet distribution comprised by the
-             * parameter vector \f$\alpha\f$ assigned to one of the nodes in the
-             * parameter table.
-             *
-             * @param random_generator: random number generator
-             * @param table_row: row of the parameter table containing the
-             * node that stores the \f$\alpha\f$
-             * @return Value sampled from a Dirichlet distribution
-             */
-            virtual Eigen::VectorXd
-            sample_from_table_row(std::shared_ptr<gsl_rng> random_generator,
-                                  int table_row) const override;
-
-            /**
-             * Transform a table of numeric values for \f$\alpha\f$ to a list of
-             * constant vector nodes to keep static and node dependent CPDs
-             * compatible.
-             *
-             * @param matrix: matrix containing constant numerical
-             * values for \f$\alpha\f$
-             */
-            void init_from_matrix(const Eigen::MatrixXd& matrix) override;
+            void clone_distributions() override;
 
           private:
             //------------------------------------------------------------------
@@ -159,17 +133,12 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
-             * Stores the parameter table in the CPD. Instead of storing each
-             * term of the parameter vector \f$\alpha\f$ in a different node,
-             * the whole \f$\alpha\f$ will be stored as an assignment of such
-             * node. This function converts a list of nodes to a list of list of
-             * a single node to comply with the format of the parameter table
-             * data member.
+             * Uses the values in the matrix to create a list of constant
+             * Dirichlet distributions.
              *
-             * @param parameter_table: vector of nodes containing \f$\alpha\f$
+             * @param matrix: matrix of \f$\alpha\f$s
              */
-            void init_from_table(
-                std::vector<std::shared_ptr<Node>>& parameter_table);
+            void init_from_matrix(const Eigen::MatrixXd& matrix);
         };
 
     } // namespace model
