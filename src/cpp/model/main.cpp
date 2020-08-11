@@ -1,8 +1,10 @@
 #include "AncestralSampler.h"
+#include "Categorical.h"
 #include "CategoricalCPD.h"
 #include "ConstantNode.h"
 #include "DirichletCPD.h"
 #include "DynamicBayesNet.h"
+#include "FileHandler.h"
 #include "GaussianCPD.h"
 #include "Node.h"
 #include "NodeMetadata.h"
@@ -15,7 +17,6 @@
 #include <memory>
 #include <unistd.h>
 #include <variant>
-#include "FileHandler.h"
 
 #include <boost/filesystem.hpp>
 namespace fs = boost::filesystem;
@@ -175,19 +176,20 @@ int main() {
     // Creation of a simple DBN to test
     // Parameters
     NodeMetadata state_prior_metadata =
-        NodeMetadata::create_single_time_link_metadata("PriorS", 0, true, 3);
+        NodeMetadata::create_single_time_link_metadata(
+            "PriorS", true, false, 0, 3);
 
     NodeMetadata theta_s0_metadata =
         NodeMetadata::create_multiple_time_link_metadata(
-            "ThetaS0", 1, false, true, 3);
+            "ThetaS0", false, true, false, 1, 3);
 
     NodeMetadata theta_s1_metadata =
         NodeMetadata::create_multiple_time_link_metadata(
-            "ThetaS1", 1, false, true, 3);
+            "ThetaS1", false, true, false, 1, 3);
 
     NodeMetadata theta_s2_metadata =
         NodeMetadata::create_multiple_time_link_metadata(
-            "ThetaS2", 1, false, true, 3);
+            "ThetaS2", false, true, false, 1, 3);
 
     std::shared_ptr<NodeMetadata> state_prior_metadata_ptr =
         std::make_shared<NodeMetadata>(std::move(state_prior_metadata));
@@ -249,22 +251,26 @@ int main() {
 
     NodeMetadata state_metadata =
         NodeMetadata::create_multiple_time_link_metadata(
-            "State", 0, true, false, 1, 3);
+            "State", true, false, true, 0, 1, 3);
 
     std::shared_ptr<NodeMetadata> state_metadata_ptr =
         std::make_shared<NodeMetadata>(state_metadata);
 
-    CategoricalCPD prior_state_cpd({}, {prior_state_node_ptr});
+    CategoricalCPD prior_state_cpd(
+        {}, {std::make_shared<Categorical>(Categorical(prior_state_node_ptr))});
 
     std::shared_ptr<CPD> prior_state_cpd_ptr =
         std::make_shared<CategoricalCPD>(prior_state_cpd);
 
-        CategoricalCPD state_cpd(
-            {"State"},
-            {theta_s0_node_ptr, theta_s1_node_ptr, theta_s2_node_ptr});
-//    Eigen::MatrixXd state_transition_matrix(3, 3);
-//    state_transition_matrix << 0, 0, 1, 1, 0, 0, 0, 1, 0;
-//    CategoricalCPD state_cpd({"State"}, std::move(state_transition_matrix));
+    CategoricalCPD state_cpd(
+        {state_metadata_ptr},
+        {std::make_shared<Categorical>(theta_s0_node_ptr),
+         std::make_shared<Categorical>(theta_s1_node_ptr),
+         std::make_shared<Categorical>(theta_s2_node_ptr)});
+    //    Eigen::MatrixXd state_transition_matrix(3, 3);
+    //    state_transition_matrix << 0, 0, 1, 1, 0, 0, 0, 1, 0;
+    //    CategoricalCPD state_cpd({"State"},
+    //    std::move(state_transition_matrix));
 
     std::shared_ptr<CPD> state_cpd_ptr =
         std::make_shared<CategoricalCPD>(state_cpd);
@@ -282,23 +288,23 @@ int main() {
     state_metadata_ptr->add_parent_link(theta_s2_metadata_ptr, true);
 
     NodeMetadata tg_metadata = NodeMetadata::create_multiple_time_link_metadata(
-        "TG", 1, true, false, 1, 2);
+        "TG", true, false, true, 1, 1, 2);
     tg_metadata.add_parent_link(state_metadata_ptr, false);
 
     Eigen::MatrixXd tg_emission_matrix(3, 2);
     tg_emission_matrix << 1, 0, 0, 1, 0.5, 0.5;
-    CategoricalCPD tg_cpd({"State"}, std::move(tg_emission_matrix));
+    CategoricalCPD tg_cpd({state_metadata_ptr}, std::move(tg_emission_matrix));
 
     RandomVariableNode tg_node(std::make_shared<NodeMetadata>(tg_metadata));
     tg_node.add_cpd(std::make_shared<CategoricalCPD>(tg_cpd));
 
     NodeMetadata ty_metadata = NodeMetadata::create_multiple_time_link_metadata(
-        "TY", 1, true, false, 1, 2);
+        "TY", true, false, true, 1, 1, 2);
     ty_metadata.add_parent_link(state_metadata_ptr, false);
 
     Eigen::MatrixXd ty_emission_matrix(3, 2);
     ty_emission_matrix << 0, 1, 1, 0, 0.5, 0.5;
-    CategoricalCPD ty_cpd({"State"}, std::move(ty_emission_matrix));
+    CategoricalCPD ty_cpd({state_metadata_ptr}, std::move(ty_emission_matrix));
 
     RandomVariableNode ty_node(std::make_shared<NodeMetadata>(ty_metadata));
     ty_node.add_cpd(std::make_shared<CategoricalCPD>(ty_cpd));
@@ -321,33 +327,33 @@ int main() {
         std::make_shared<ConstantNode>(ConstantNode(temp));
     prior_state_cpd_ptr->update_dependencies(param_map, 0);
 
-//    std::vector<std::shared_ptr<RandomVariableNode>> nodes =
-//        dbn.get_nodes_topological_order();
-//
-//    for (const auto& node : nodes) {
-//        std::cout << *node << std::endl;
-//    }
+    //    std::vector<std::shared_ptr<RandomVariableNode>> nodes =
+    //        dbn.get_nodes_topological_order();
+    //
+    //    for (const auto& node : nodes) {
+    //        std::cout << *node << std::endl;
+    //    }
 
     std::shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
     dbn.unroll(10, true);
-    //dbn.load_from_folder("../../data/model");
+    // dbn.load_from_folder("../../data/model");
     AncestralSampler sampler(dbn, gen);
     Tensor3 state_data = read_tensor_from_file("../../data/samples/State.txt");
     sampler.add_data("State", std::move(state_data));
     sampler.sample(5);
     //    sampler.sample(5, 10);
 
-//    std::cout << "States" << std::endl;
-//    std::cout << sampler.get_samples("State") << std::endl;
+    //    std::cout << "States" << std::endl;
+    //    std::cout << sampler.get_samples("State") << std::endl;
     std::cout << "TGs" << std::endl;
     std::cout << sampler.get_samples("TG") << std::endl;
     std::cout << "TYs" << std::endl;
     std::cout << sampler.get_samples("TY") << std::endl;
-//    std::cout << "PriorS" << std::endl;
-//    std::cout << sampler.get_samples("PriorS") << std::endl;
+    //    std::cout << "PriorS" << std::endl;
+    //    std::cout << sampler.get_samples("PriorS") << std::endl;
 
-//    sampler.save_samples_to_folder("../../data/samples");
-//    sampler.get_dbn().save_to_folder("../../data/model");
+    //    sampler.save_samples_to_folder("../../data/samples");
+    //    sampler.get_dbn().save_to_folder("../../data/model");
     //
     //    char buff[FILENAME_MAX]; // create string buffer to hold path
     //    getcwd(buff, FILENAME_MAX);

@@ -14,33 +14,33 @@ namespace tomcat {
         // Constructors & Destructor
         //----------------------------------------------------------------------
         DirichletCPD::DirichletCPD(
-            std::vector<std::string>& parent_node_label_order,
+            std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order,
             std::vector<std::shared_ptr<Node>>& parameter_table)
-            : ContinuousCPD(parent_node_label_order) {
+            : ContinuousCPD(parent_node_order) {
 
             this->init_from_table(parameter_table);
         }
 
         DirichletCPD::DirichletCPD(
-            std::vector<std::string>&& parent_node_label_order,
+            std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order,
             std::vector<std::shared_ptr<Node>>&& parameter_table)
-            : ContinuousCPD(std::move(parent_node_label_order)) {
+            : ContinuousCPD(std::move(parent_node_order)) {
 
             this->init_from_table(parameter_table);
         }
 
         DirichletCPD::DirichletCPD(
-            std::vector<std::string>& parent_node_label_order,
+            std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order,
             const Eigen::MatrixXd& parameter_values)
-            : ContinuousCPD(parent_node_label_order) {
+            : ContinuousCPD(parent_node_order) {
 
             this->init_from_matrix(parameter_values);
         }
 
         DirichletCPD::DirichletCPD(
-            std::vector<std::string>&& parent_node_label_order,
+            std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order,
             const Eigen::MatrixXd&& parameter_values)
-            : ContinuousCPD(std::move(parent_node_label_order)) {
+            : ContinuousCPD(std::move(parent_node_order)) {
 
             this->init_from_matrix(parameter_values);
         }
@@ -103,7 +103,7 @@ namespace tomcat {
         std::unique_ptr<CPD> DirichletCPD::clone() const {
             std::unique_ptr<DirichletCPD> new_cpd =
                 std::make_unique<DirichletCPD>(*this);
-            new_cpd->clone_nodes();
+            new_cpd->clone_distributions();
             return new_cpd;
         }
 

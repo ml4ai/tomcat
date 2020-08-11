@@ -17,7 +17,7 @@ namespace tomcat {
         //------------------------------------------------------------------
         // Structs
         //------------------------------------------------------------------
-        // Defined in the end of this file.
+
         /** This struct represents how a node should be linked to a given parent
          * node. This link is an abstraction as it identifies a parent node only
          * by its metadata. This will be transformed in a concrete edge in the
@@ -67,16 +67,18 @@ namespace tomcat {
              */
             static NodeMetadata
             create_multiple_time_link_metadata(std::string label,
-                                               int initial_time_step,
                                                bool replicable,
                                                bool parameter,
+                                               bool in_plate,
+                                               int initial_time_step,
                                                int sample_size,
                                                int cardinality = 0) {
                 return NodeMetadata(label,
-                                    initial_time_step,
                                     replicable,
                                     parameter,
                                     false,
+                                    in_plate,
+                                    initial_time_step,
                                     sample_size,
                                     cardinality);
             }
@@ -100,15 +102,17 @@ namespace tomcat {
              */
             static NodeMetadata
             create_single_time_link_metadata(std::string label,
-                                             int time_step,
                                              bool parameter,
+                                             bool in_plate,
+                                             int time_step,
                                              int sample_size,
                                              int cardinality = 0) {
                 return NodeMetadata(label,
-                                    time_step,
                                     false,
                                     parameter,
                                     true,
+                                    in_plate,
+                                    time_step,
                                     sample_size,
                                     cardinality);
             }
@@ -145,9 +149,8 @@ namespace tomcat {
              *  in the previous or in the same time step as the node defined by
              *  the metadata.
              */
-            void
-            add_parent_link(std::shared_ptr<NodeMetadata> parent_node,
-                            bool time_crossing);
+            void add_parent_link(std::shared_ptr<NodeMetadata> parent_node,
+                                 bool time_crossing);
 
             /**
              * Returns the node's unique id in an unrolled DBN for an arbitrary
@@ -163,13 +166,17 @@ namespace tomcat {
             //------------------------------------------------------------------
             const std::string& get_label() const;
 
-            int get_initial_time_step() const;
-
             bool is_replicable() const;
 
             bool is_parameter() const;
 
             bool is_single_time_link() const;
+
+            bool is_in_plate() const;
+
+            int get_initial_time_step() const;
+
+            int get_sample_size() const;
 
             int get_cardinality() const;
 
@@ -178,8 +185,6 @@ namespace tomcat {
             bool has_parameter_parents() const;
 
             bool has_replicable_parameter_parent() const;
-
-            int get_sample_size() const;
 
           private:
             //------------------------------------------------------------------
@@ -196,10 +201,11 @@ namespace tomcat {
              * static methods are provided to create valid instances.
              */
             NodeMetadata(std::string label,
-                         int initial_time_step,
                          bool replicable,
                          bool parameter,
                          bool single_time_link,
+                         bool in_plate,
+                         int initial_time_step,
                          int sample_size,
                          int cardinality);
 
@@ -221,9 +227,6 @@ namespace tomcat {
             // Unique identifier of a node in a DBN.
             std::string label;
 
-            // The first time step the node shows up in an unrolled DBN.
-            int initial_time_step;
-
             // If a node is replicable, there will be multiple instances of it,
             // one for each time step starting from initial_time_step, and each
             // one of these replicas will be linked to the corresponding
@@ -240,6 +243,14 @@ namespace tomcat {
             // Indicates whether the node shows up and connects to its
             // children in only one time step of the unrolled DBN.
             bool single_time_link;
+
+            // Whether the node is inside a plate diagram when data is provided
+            // which means that in a single time step there are as many
+            // instances of the node as the number of data points.
+            bool in_plate;
+
+            // The first time step the node shows up in an unrolled DBN.
+            int initial_time_step;
 
             // Dimensionality of a sample from the node.
             int sample_size;
@@ -267,7 +278,6 @@ namespace tomcat {
             // information is stored to avoid unnecessary CPD updates when
             // unrolling a DBN.
             bool replicable_parameter_parent = false;
-
         };
 
     } // namespace model

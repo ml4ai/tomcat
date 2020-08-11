@@ -48,18 +48,74 @@ namespace tomcat {
         // Member functions
         //----------------------------------------------------------------------
         void GibbsSampler::sample(int num_samples) {
-            // Filling latent nodes with a initial sampled value
-            AncestralSampler initial_sampler(this->model,
-                                             this->random_generator);
-            for (auto& data : this->node_label_to_data) {
-                std::string label = data.first;
-                Tensor3 tensor = data.second;
-                initial_sampler.add_data(std::move(label),
-                                         std::move(data.second));
-            }
-            // TODO - replicate the single sample for in_plate nodes to their
-            // samples matrix.
-            initial_sampler.sample(1);
+            this->fill_initial_samples();
+
+//            std::vector<std::shared_ptr<RandomVariableNode>> in_plate_nodes;
+//            std::vector<std::shared_ptr<RandomVariableNode>> not_in_plate_nodes;
+//
+//            for (auto& node : this->model.get_nodes_topological_order()) {
+//                std::string node_label =
+//                    node->get_metadata()->get_label();
+//                exists(node_label, this->latent_node_labels) {
+//                    this->init_samples_tensor(node_label, num_samples);
+//                }
+//
+//                if (node->get_metadata()->is_in_plate()) {
+//                    in_plate_nodes.push_back(node);
+//                }
+//                else {
+//                    not_in_plate_nodes.push_back(node);
+//                }
+//            }
+//
+//            int num_in_plate_copies =
+//                this->num_data_points == 0 ? 1 : this->num_data_points;
+//            for (int data_idx = 0; data_idx < num_in_plate_copies; data_idx++) {
+//                if (this->num_data_points > 1) {
+//                    // When the number of data points is greater than 0, it
+//                    // means data was provided for some in-plate nodes and,
+//                    // therefore, we have to sample in-plate latent nodes for
+//                    // each copy. As a node only comports one assigned value at
+//                    // a time, we need to assign the correct value to a node
+//                    // before proceeding.
+//                    for (auto& node : in_plate_nodes) {
+//                        std::string node_label =
+//                            node->get_metadata()->get_label();
+//                        if (exists(node_label, this->latent_node_labels)) {
+//                            int t = node->get_time_step();
+//                            Eigen::VectorXd assignment =
+//                                this->get_samples(node_label)(data_idx, t);
+//                            node->set_assignment(assignment);
+//                        }
+//                        else {
+//                            this->assign_data_to_node(node, data_idx);
+//                        }
+//                    }
+//
+//                    for (auto& node : in_plate_nodes) {
+//                        std::string node_label =
+//                            node->get_metadata()->get_label();
+//                        if (exists(node_label, this->latent_node_labels)) {
+//                            Eigen::VectorXd assignment = node->sample_from_posterior();
+//                            node->set_assignment(assignment);
+//
+//                            int time_step = node->get_time_step();
+//                            int sample_size =
+//                                node->get_metadata()->get_sample_size();
+//                            for (int i = 0; i < sample_size; i++) {
+//                                double sampled_value = assignment(i);
+//                                this->node_label_to_samples.at(node_label)(
+//                                    i, data_idx, time_step) = sampled_value;
+//                            }
+//
+//                            // TODO:
+//                            // 1. For each parent node, include link of other parents and this cpd.
+//                            // 2. For each parameter node, update sufficient statistics
+//
+//                        }
+//                    }
+//                }
+//            }
 
             // TODO -
             //  1. For nodes that are not in plate, compute the posterior using
@@ -108,6 +164,44 @@ namespace tomcat {
             //                    }
             //                }
             //            }
+        }
+
+        void GibbsSampler::fill_initial_samples() {
+            AncestralSampler initial_sampler(this->model,
+                                             this->random_generator);
+            for (auto& data : this->node_label_to_data) {
+                std::string label = data.first;
+                Tensor3 tensor = data.second;
+                initial_sampler.add_data(std::move(label),
+                                         std::move(data.second));
+            }
+
+            // This is going to fill the nodes' assignments with sampled values.
+            initial_sampler.sample(1);
+
+            // For in-plate nodes, we need to generate as many samples as the
+            // number of data points. So we freeze non-in-plate nodes and
+            // generate more samples for the in-plate nodes.
+            std::vector<std::shared_ptr<RandomVariableNode>> nodes_to_unfreeze;
+            for (auto& node : this->model.get_nodes()) {
+                if (!node->get_metadata()->is_in_plate()) {
+                    // A node can be previously frozen (in a pre-trained model,
+                    // for instance) and we don't want to unfreeze it in this
+                    // process.
+                    if (!node->is_frozen()) {
+                        node->freeze();
+                        nodes_to_unfreeze.push_back(node);
+                    }
+                }
+            }
+
+            // This will generate samples for all in-plate latent nodes given
+            // data and previously sampled values for non-in-plate nodes.
+            initial_sampler.sample(this->num_data_points);
+
+            for (auto& node : nodes_to_unfreeze) {
+                node->unfreeze();
+            }
         }
 
         //----------------------------------------------------------------------

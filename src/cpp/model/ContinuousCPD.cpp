@@ -15,12 +15,12 @@ namespace tomcat {
         ContinuousCPD::ContinuousCPD() {}
 
         ContinuousCPD::ContinuousCPD(
-            std::vector<std::string>& parent_node_label_order)
-        : CPD(parent_node_label_order) {}
+            std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order)
+        : CPD(parent_node_order) {}
 
         ContinuousCPD::ContinuousCPD(
-            std::vector<std::string>&& parent_node_label_order)
-        : CPD(std::move(parent_node_label_order)) {}
+            std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order)
+        : CPD(std::move(parent_node_order)) {}
 
         ContinuousCPD::~ContinuousCPD() {}
 
@@ -56,11 +56,12 @@ namespace tomcat {
         }
 
         void ContinuousCPD::copy_from_cpd(const ContinuousCPD& cpd) {
-            this->parent_node_label_order = cpd.parent_node_label_order;
+            CPD::copy_from_cpd(cpd);
+            this->parent_node_order = cpd.parent_node_order;
             this->parameter_table = cpd.parameter_table;
         }
 
-        void ContinuousCPD::clone_nodes() {
+        void ContinuousCPD::clone_distributions() {
             for (auto& nodes : this->parameter_table) {
                 for (auto& node : nodes) {
                     node = node->clone();

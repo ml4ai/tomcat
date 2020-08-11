@@ -36,13 +36,31 @@ namespace tomcat {
         // Member functions
         //----------------------------------------------------------------------
         void Sampler::add_data(std::string& node_label, Tensor3& data) {
-            this->node_label_to_data[node_label] = data;
-            this->latent_node_labels.erase(node_label);
+            if (this->num_data_points ==
+                    0 || data.get_shape()[2] == this->num_data_points) {
+                this->node_label_to_data[node_label] = data;
+                this->latent_node_labels.erase(node_label);
+                this->num_data_points = data.get_shape()[1];
+            }
+            else {
+                throw std::invalid_argument(
+                    "The number of data points must be the same for all "
+                    "observable nodes.");
+            }
         }
 
         void Sampler::add_data(std::string&& node_label, Tensor3&& data) {
-            this->node_label_to_data[node_label] = std::move(data);
-            this->latent_node_labels.erase(node_label);
+            if (this->num_data_points ==
+                    0 || data.get_shape()[2] == this->num_data_points) {
+                this->node_label_to_data[node_label] = std::move(data);
+                this->latent_node_labels.erase(node_label);
+                this->num_data_points = data.get_shape()[1];
+            }
+            else {
+                throw std::invalid_argument(
+                    "The number of data points must be the same for all "
+                    "observable nodes.");
+            }
         }
 
         const Tensor3&

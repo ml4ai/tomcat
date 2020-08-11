@@ -59,7 +59,7 @@ namespace tomcat {
             this->parameter_nodes_map.clear();
         }
 
-        void DynamicBayesNet::create_vertices_from_nodes() {
+        void DynamicBayesNet::            create_vertices_from_nodes() {
             for (const auto& node_template : this->node_templates) {
                 const std::shared_ptr<NodeMetadata> metadata =
                     node_template.get_metadata();
@@ -68,7 +68,8 @@ namespace tomcat {
                          t < this->time_steps;
                          t++) {
 
-                        VertexData vertex_data = this->add_vertex(node_template, t);
+                        VertexData vertex_data =
+                            this->add_vertex(node_template, t);
                         if (vertex_data.node->get_metadata()->is_parameter()) {
                             this->parameter_nodes_map[vertex_data.node
                                                           ->get_timed_name()] =
@@ -251,17 +252,45 @@ namespace tomcat {
         }
 
         std::vector<std::shared_ptr<RandomVariableNode>>
-        DynamicBayesNet::get_nodes_topological_order() const {
+        DynamicBayesNet::get_nodes() const {
+            std::vector<std::shared_ptr<RandomVariableNode>> nodes;
+            nodes.reserve(boost::num_vertices(this->graph));
+
+            Graph::vertex_iterator vertex_ptr, final_vertex_ptr;
+            boost::tie(vertex_ptr, final_vertex_ptr) =
+                boost::vertices(this->graph);
+            for (; vertex_ptr != final_vertex_ptr; vertex_ptr++) {
+                nodes.push_back(this->graph[*vertex_ptr].node);
+            }
+
+            return nodes;
+        }
+
+        std::vector<std::shared_ptr<RandomVariableNode>>
+        DynamicBayesNet::get_nodes_topological_order(
+            bool from_roots_to_leaves) const {
             std::vector<int> vertex_ids;
             boost::topological_sort(this->graph,
                                     std::back_inserter(vertex_ids));
 
             std::vector<std::shared_ptr<RandomVariableNode>> nodes(
                 vertex_ids.size());
-            int i = vertex_ids.size();
+            int i = 0;
+            if (from_roots_to_leaves) {
+                // The default behavior of the boost topological sort is to
+                // order from the leaves to the roots so if we want otherwise,
+                // the elements have to be inserted in reversed order in the
+                // final array.
+                i = vertex_ids.size() - 1;
+            }
 
             for (int vertex_id : vertex_ids) {
-                nodes[--i] = this->graph[vertex_id].node;
+                if (from_roots_to_leaves) {
+                    nodes[i--] = this->graph[vertex_id].node;
+                }
+                else {
+                    nodes[i++] = this->graph[vertex_id].node;
+                }
             }
 
             return nodes;
@@ -313,7 +342,9 @@ namespace tomcat {
                 // Set loaded vector as assignment of the corresponding
                 // parameter node.
                 RandomVariableNode* parameter_node =
-                    dynamic_cast<RandomVariableNode*>(this->parameter_nodes_map.at(parameter_timed_name).get());
+                    dynamic_cast<RandomVariableNode*>(
+                        this->parameter_nodes_map.at(parameter_timed_name)
+                            .get());
                 parameter_node->set_assignment(assignment);
                 parameter_node->freeze();
             }

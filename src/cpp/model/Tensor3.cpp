@@ -44,7 +44,7 @@ namespace tomcat {
 
         Eigen::MatrixXd& Tensor3::operator()(int i) { return this->tensor[i]; }
 
-        Eigen::VectorXd Tensor3::operator()(int j, int k) {
+        Eigen::VectorXd Tensor3::operator()(int j, int k) const {
             size_t vector_size = this->tensor.size();
             double* buffer = new double[vector_size];
 

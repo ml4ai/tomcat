@@ -58,11 +58,11 @@ namespace tomcat {
              * Explicit instantiation is preferred to avoid hard to catch
              * errors.
              *
-             * @param parent_node_label_order: evaluation order of the parent
+             * @param parent_node_order: evaluation order of the parent
              * nodes assignment for correct table indexing
              */
             explicit ContinuousCPD(
-                std::vector<std::string>& parent_node_label_order);
+                std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order);
 
             /**
              * Creates an abstract representation of a Continuous CPD. This
@@ -71,11 +71,11 @@ namespace tomcat {
              * Explicit instantiation is preferred to avoid hard to catch
              * errors.
              *
-             * @param parent_node_label_order: evaluation order of the parent
+             * @param parent_node_order: evaluation order of the parent
              * nodes assignment for correct table indexing
              */
             explicit ContinuousCPD(
-                std::vector<std::string>&& parent_node_label_order);
+                std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order);
 
             virtual ~ContinuousCPD();
 
@@ -112,7 +112,7 @@ namespace tomcat {
              */
             void copy_from_cpd(const ContinuousCPD& cpd);
 
-            void clone_nodes() override;
+            void clone_distributions() override;
 
             //------------------------------------------------------------------
             // Pure virtual functions

@@ -16,16 +16,17 @@ namespace tomcat {
         NodeMetadata::NodeMetadata() {}
 
         NodeMetadata::NodeMetadata(std::string label,
-                                   int initial_time_step,
                                    bool replicable,
                                    bool parameter,
                                    bool single_time_link,
+                                   bool in_plate,
+                                   int initial_time_step,
                                    int sample_size,
                                    int cardinality)
-            : label(label), initial_time_step(initial_time_step),
-              replicable(replicable), parameter(parameter),
-              single_time_link(single_time_link), sample_size(sample_size),
-              cardinality(cardinality) {}
+            : label(label), replicable(replicable), parameter(parameter),
+              single_time_link(single_time_link),
+              in_plate(in_plate), initial_time_step(initial_time_step),
+              sample_size(sample_size), cardinality(cardinality) {}
 
         //----------------------------------------------------------------------
         // Destructor
@@ -73,13 +74,15 @@ namespace tomcat {
             return ss.str();
         }
 
-        void NodeMetadata::add_parent_link(
-            std::shared_ptr<NodeMetadata> parent_node,
-            bool time_crossing) {
+        void
+        NodeMetadata::add_parent_link(std::shared_ptr<NodeMetadata> parent_node,
+                                      bool time_crossing) {
             // TODO - 1. error if parent node is a parameter node and time
             //  crossing
             //  is true. 2. Parameter cannot be replicable if child nodes are
             //  not
+            //  Parent node cannot have continuous distribution and not be a
+            //  parameter node
 
             if (!this->replicable && !this->single_time_link &&
                 !time_crossing) {
@@ -90,8 +93,7 @@ namespace tomcat {
             this->parameter_parents |= parent_node->parameter;
 
             this->replicable_parameter_parent |=
-                parent_node->parameter &&
-                parent_node->replicable;
+                parent_node->parameter && parent_node->replicable;
 
             ParentLink link{parent_node, time_crossing};
             this->parent_links.push_back(link);
@@ -118,6 +120,10 @@ namespace tomcat {
             return single_time_link;
         }
 
+        bool NodeMetadata::is_in_plate() const { return in_plate; }
+
+        int NodeMetadata::get_sample_size() const { return sample_size; }
+
         int NodeMetadata::get_cardinality() const { return cardinality; }
 
         const std::vector<ParentLink>& NodeMetadata::get_parent_links() const {
@@ -131,8 +137,6 @@ namespace tomcat {
         bool NodeMetadata::has_replicable_parameter_parent() const {
             return replicable_parameter_parent;
         }
-
-        int NodeMetadata::get_sample_size() const { return sample_size; }
 
     } // namespace model
 } // namespace tomcat

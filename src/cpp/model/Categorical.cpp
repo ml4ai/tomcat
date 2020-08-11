@@ -1,0 +1,146 @@
+#include "Categorical.h"
+
+#include <gsl/gsl_randist.h>
+
+#include "ConstantNode.h"
+
+namespace tomcat {
+    namespace model {
+
+        //----------------------------------------------------------------------
+        // Definitions
+        //----------------------------------------------------------------------
+
+        // No definitions in this file
+
+        //----------------------------------------------------------------------
+        // Constructors & Destructor
+        //----------------------------------------------------------------------
+        Categorical::Categorical(std::shared_ptr<Node>& probabilities)
+            : probabilities(probabilities) {}
+
+        Categorical::Categorical(std::shared_ptr<Node>&& probabilities)
+            : probabilities(std::move(probabilities)) {}
+
+        Categorical::Categorical(const Eigen::VectorXd& probabilities) {
+            this->probabilities =
+                std::make_shared<ConstantNode>(ConstantNode(probabilities));
+        }
+
+        Categorical::Categorical(const Eigen::VectorXd&& probabilities) {
+            this->probabilities = std::make_shared<ConstantNode>(
+                ConstantNode(std::move(probabilities)));
+        }
+
+        Categorical::~Categorical() {}
+
+        //----------------------------------------------------------------------
+        // Copy & Move constructors/assignments
+        //----------------------------------------------------------------------
+        Categorical::Categorical(const Categorical& categorical) {
+            this->probabilities = categorical.probabilities;
+        }
+
+        Categorical& Categorical::operator=(const Categorical& categorical) {
+            this->probabilities = categorical.probabilities;
+            return *this;
+        }
+
+        //----------------------------------------------------------------------
+        // Member functions
+        //----------------------------------------------------------------------
+        Eigen::VectorXd
+        Categorical::sample(std::shared_ptr<gsl_rng> random_generator) const {
+            Eigen::VectorXd probabilities =
+                this->probabilities->get_assignment();
+            return this->sample_from_gsl(random_generator, probabilities);
+        }
+
+        Eigen::VectorXd
+        Categorical::sample_from_gsl(std::shared_ptr<gsl_rng> random_generator,
+                                     const Eigen::VectorXd& parameters) const {
+
+            int k = parameters.size();
+            const double* parameters_ptr = parameters.data();
+            unsigned int* sample_ptr = new unsigned int[k];
+
+            gsl_ran_multinomial(
+                random_generator.get(), k, 1, parameters_ptr, sample_ptr);
+
+            Eigen::VectorXd sample_vector(1);
+            sample_vector(0) = this->get_sample_index(sample_ptr, k);
+
+            delete[] sample_ptr;
+
+            return sample_vector;
+        }
+
+        unsigned int
+        Categorical::get_sample_index(const unsigned int* sample_array,
+                                      size_t array_size) const {
+            return std::distance(
+                sample_array,
+                std::find(sample_array, sample_array + array_size, 1));
+        }
+
+        Eigen::VectorXd
+        Categorical::sample(std::shared_ptr<gsl_rng> random_generator,
+                            Eigen::VectorXd log_weights) const {
+            Eigen::VectorXd log_probs = this->probabilities->get_assignment();
+
+            // Add a small value before converting to log to avoid error if any
+            // of the values is zero.
+            log_probs = (log_probs.array() + EPSILON).log();
+
+            Eigen::VectorXd weighted_probs = log_probs + log_weights;
+            weighted_probs = weighted_probs.array() - weighted_probs.maxCoeff();
+            weighted_probs = weighted_probs.array().exp();
+
+            // weighted_probs does not need to be normalized because GSL already
+            // does that.
+            return this->sample_from_gsl(random_generator, weighted_probs);
+        }
+
+        double Categorical::get_pdf(Eigen::VectorXd value) const {
+            Eigen::VectorXd probabilities =
+                this->probabilities->get_assignment();
+            int k = probabilities.size();
+            const double* probs_ptr = probabilities.data();
+            unsigned int* sample_ptr = new unsigned int[1];
+            sample_ptr[0] = static_cast<unsigned int>(value(0));
+
+            double pdf = gsl_ran_multinomial_pdf(k, probs_ptr, sample_ptr);
+
+            return pdf;
+        }
+
+        std::unique_ptr<Distribution> Categorical::clone() const {
+            std::unique_ptr<Categorical> new_distribution =
+                std::make_unique<Categorical>(*this);
+            new_distribution->probabilities =
+                new_distribution->probabilities->clone();
+
+            return new_distribution;
+        }
+
+        std::string Categorical::get_description() const {
+            std::stringstream ss;
+            ss << "Cat(" << this->probabilities << ")";
+
+            return ss.str();
+        }
+
+        //----------------------------------------------------------------------
+        // Getters & Setters
+        //----------------------------------------------------------------------
+        const std::shared_ptr<Node>& Categorical::get_probabilities() const {
+            return probabilities;
+        }
+
+        void Categorical::set_probabilities(
+            const std::shared_ptr<Node>& probabilities) {
+            this->probabilities = probabilities;
+        }
+
+    } // namespace model
+} // namespace tomcat

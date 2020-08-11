@@ -14,33 +14,33 @@ namespace tomcat {
         // Constructors & Destructor
         //----------------------------------------------------------------------
         GaussianCPD::GaussianCPD(
-            std::vector<std::string>& parent_node_label_order,
+            std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order,
             std::vector<GaussianParameters>& parameter_table)
-            : ContinuousCPD(parent_node_label_order) {
+            : ContinuousCPD(parent_node_order) {
 
             this->init_from_table(parameter_table);
         }
 
         GaussianCPD::GaussianCPD(
-            std::vector<std::string>&& parent_node_label_order,
+            std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order,
             std::vector<GaussianParameters>&& parameter_table)
-            : ContinuousCPD(std::move(parent_node_label_order)) {
+            : ContinuousCPD(std::move(parent_node_order)) {
 
             this->init_from_table(parameter_table);
         }
 
         GaussianCPD::GaussianCPD(
-            std::vector<std::string>& parent_node_label_order,
+            std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order,
             Eigen::MatrixXd& parameter_values)
-            : ContinuousCPD(parent_node_label_order) {
+            : ContinuousCPD(parent_node_order) {
 
             this->init_from_matrix(parameter_values);
         }
 
         GaussianCPD::GaussianCPD(
-            std::vector<std::string>&& parent_node_label_order,
+            std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order,
             Eigen::MatrixXd&& parameter_values)
-            : ContinuousCPD(std::move(parent_node_label_order)) {
+            : ContinuousCPD(std::move(parent_node_order)) {
 
             this->init_from_matrix(parameter_values);
         }
@@ -107,7 +107,7 @@ namespace tomcat {
         std::unique_ptr<CPD> GaussianCPD::clone() const {
             std::unique_ptr<GaussianCPD> new_cpd =
                 std::make_unique<GaussianCPD>(*this);
-            new_cpd->clone_nodes();
+            new_cpd->clone_distributions();
             return new_cpd;
         }
 

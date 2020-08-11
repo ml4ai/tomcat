@@ -26,7 +26,7 @@ namespace tomcat {
              * @param values: node's constant assignment
              * * @param label: node's label
              */
-            ConstantNode(Eigen::VectorXd& values,
+            ConstantNode(const Eigen::VectorXd& values,
                          std::string label = "unlabeled");
 
             /**
@@ -35,7 +35,7 @@ namespace tomcat {
              * @param values: node's constant assignment
              * * @param label: node's label
              */
-            ConstantNode(Eigen::VectorXd&& values,
+            ConstantNode(const Eigen::VectorXd&& values,
                          std::string label = "unlabeled");
 
             ~ConstantNode();

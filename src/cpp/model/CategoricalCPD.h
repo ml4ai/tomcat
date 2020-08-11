@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CPD.h"
+#include "Categorical.h"
 
 namespace tomcat {
     namespace model {
@@ -48,57 +49,58 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
-             * Creates an instance of a Categorical CPD table comprised by a
+             * Creates an instance of a Categorical CPD table comprised of a
              * list of node dependent probabilities.
              *
-             * @param parent_node_label_order: evaluation order of the parent
+             * @param parent_node_order: evaluation order of the parent
              * nodes' assignments for correct table indexing
              * @param cpd_table: table of probabilities determined other by
              * nodes' assignments
              */
-            CategoricalCPD(std::vector<std::string>& parent_node_label_order,
-                           std::vector<std::shared_ptr<Node>>& cpd_table);
+            CategoricalCPD(
+                std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order,
+                std::vector<std::shared_ptr<Categorical>>& cpd_table);
 
             /**
-             * Creates an instance of a Categorical CPD table comprised by a
+             * Creates an instance of a Categorical CPD table comprised of a
              * list of node dependent probabilities.
              *
-             * @param parent_node_label_order: evaluation order of the parent
+             * @param parent_node_order: evaluation order of the parent
              * nodes' assignments for correct table indexing
              * @param cpd_table: table of probabilities determined other by
              * nodes' assignments
              */
-            CategoricalCPD(std::vector<std::string>&& parent_node_label_order,
-                           std::vector<std::shared_ptr<Node>>&& cpd_table);
+            CategoricalCPD(
+                std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order,
+                std::vector<std::shared_ptr<Categorical>>&& cpd_table);
 
             /**
              * Creates an instance of a Categorical CPD table by transforming a
              * table of probabilities to a list of constant vector nodes to keep
              * static and node dependent CPDs compatible.
              *
-             * @param parent_node_label_order: evaluation order of the parent
+             * @param parent_node_order: evaluation order of the parent
              * nodes' assignments for correct table indexing
              * @param cpd_table: matrix containing constant numerical
              * probabilities
              */
-            CategoricalCPD(std::vector<std::string>& parent_node_label_order,
-                           const Eigen::MatrixXd& cpd_table);
+            CategoricalCPD(
+                std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order,
+                const Eigen::MatrixXd& cpd_table);
 
             /**
              * Creates an instance of a Categorical CPD table by transforming a
              * table of probabilities to a list of constant vector nodes to keep
              * static and node dependent CPDs compatible.
              *
-             * @param parent_node_label_order: evaluation order of the parent
+             * @param parent_node_order: evaluation order of the parent
              * nodes assignment for correct table indexing
              * @param cpd_table: matrix containing constant numerical
              * probabilities
              */
-            CategoricalCPD(std::vector<std::string>&& parent_node_label_order,
-                           const Eigen::MatrixXd&& cpd_table)
-                : CPD(std::move(parent_node_label_order)) {
-                this->init_from_matrix(cpd_table);
-            }
+            CategoricalCPD(
+                std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order,
+                const Eigen::MatrixXd&& cpd_table);
 
             ~CategoricalCPD();
 
@@ -141,7 +143,7 @@ namespace tomcat {
             sample_from_table_row(std::shared_ptr<gsl_rng> random_generator,
                                   int table_row) const override;
 
-            void clone_nodes() override;
+            void clone_distributions() override;
 
           private:
             //------------------------------------------------------------------
@@ -163,20 +165,10 @@ namespace tomcat {
              */
             void copy_from_cpd(const CategoricalCPD& cpd);
 
-            /**
-             * Returns the index of a sampled value from a one-hot-encode array.
-             *
-             * @param sample_array: one-hot-encode sample
-             * @param array_size: size of the one-hot-encode sample
-             * @return Index containing 1 in an one-hot-encode array
-             */
-            unsigned int get_sample_index(const unsigned int* sample_array,
-                                          size_t array_size) const;
-
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------
-            std::vector<std::shared_ptr<Node>> probability_table;
+            std::vector<std::shared_ptr<Categorical>> probability_table;
         };
 
     } // namespace model

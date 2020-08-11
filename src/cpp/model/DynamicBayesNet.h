@@ -96,12 +96,19 @@ namespace tomcat {
             void check();
 
             /**
+             * Returns the list of nodes in the unrolled DBN
+             *
+             * @return List of timed nodes
+             */
+            std::vector<std::shared_ptr<RandomVariableNode>> get_nodes() const;
+
+            /**
              * Returns timed node objects in topological order.
              *
              * @return Times node objects in topological order.
              */
             std::vector<std::shared_ptr<RandomVariableNode>>
-            get_nodes_topological_order() const;
+            get_nodes_topological_order(bool from_roots_to_leaves = true) const;
 
             /**
              * Returns timed instances of the parents of a node

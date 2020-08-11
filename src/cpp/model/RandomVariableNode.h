@@ -7,6 +7,16 @@
 namespace tomcat {
     namespace model {
 
+        //------------------------------------------------------------------
+        // Forward declarations
+        //------------------------------------------------------------------
+
+        class RandomVariableNode;
+
+        //------------------------------------------------------------------
+        // Structs
+        //------------------------------------------------------------------
+
         /**
          * A random variable node is a concrete node in the unrolled DBN
          * that has a distribution from which it can be sampled from. The
@@ -117,13 +127,16 @@ namespace tomcat {
              * Generate a sample from this node's CPD given its parents
              * assignments.
              *
-             * @param model: DBN where the timed instance node was created
+             * @param random_generator: random number generator
+             * @param parent_nodes: list of parent nodes' timed instances
              * @return A sample from the node's CPD.
              */
             Eigen::VectorXd
             sample(std::shared_ptr<gsl_rng> random_generator,
                    const std::vector<std::shared_ptr<RandomVariableNode>>&
-                       parent_nodes) const;
+                       parent_nodes,
+                   const std::vector<std::shared_ptr<RandomVariableNode>>&
+                       child_nodes = {}) const;
 
             /**
              * Replaces a parameter node in the node's CPDs by a constant value.

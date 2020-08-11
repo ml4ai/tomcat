@@ -77,53 +77,57 @@ namespace tomcat {
              * Creates an instance of a Gaussian CPD comprised by a list of
              * node dependent parameters.
              *
-             * @param parent_node_label_order: evaluation order of the parent
+             * @param parent_node_order: evaluation order of the parent
              * nodes' assignments for correct table indexing
              * @param parameter_table: list of two parameter nodes which
              * assignments determine the two parameters of the distribution:
              * mean and variance.
              */
-            GaussianCPD(std::vector<std::string>& parent_node_label_order,
-                        std::vector<GaussianParameters>& parameter_table);
+            GaussianCPD(
+                std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order,
+                std::vector<GaussianParameters>& parameter_table);
 
             /**
              * Creates an instance of a Gaussian CPD comprised by a list of
              * node dependent parameters.
              *
-             * @param parent_node_label_order: evaluation order of the parent
+             * @param parent_node_order: evaluation order of the parent
              * nodes' assignments for correct table indexing
              * @param parameter_table: list of two parameter nodes which
              * assignments determine the two parameters of the distribution:
              * mean and variance.
              */
-            GaussianCPD(std::vector<std::string>&& parent_node_label_order,
-                        std::vector<GaussianParameters>&& parameter_table);
+            GaussianCPD(
+                std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order,
+                std::vector<GaussianParameters>&& parameter_table);
 
             /**
              * Creates an instance of a Gaussian CPD table by transforming a
              * table of parameter values to a list of constant vector nodes to
              * keep static and node dependent CPDs compatible.
              *
-             * @param parent_node_label_order: evaluation order of the parent
+             * @param parent_node_order: evaluation order of the parent
              * nodes' assignments for correct table indexing
              * @param cpd_table: 2-columns matrix containing constant numerical
              * values for mean and variance
              */
-            GaussianCPD(std::vector<std::string>& parent_node_label_order,
-                        Eigen::MatrixXd& parameter_values);
+            GaussianCPD(
+                std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order,
+                Eigen::MatrixXd& parameter_values);
 
             /**
              * Creates an instance of a Gaussian CPD table by transforming a
              * table of parameter values to a list of constant vector nodes to
              * keep static and node dependent CPDs compatible.
              *
-             * @param parent_node_label_order: evaluation order of the parent
+             * @param parent_node_order: evaluation order of the parent
              * nodes' assignments for correct table indexing
              * @param cpd_table: 2-columns matrix containing constant numerical
              * values for mean and variance
              */
-            GaussianCPD(std::vector<std::string>&& parent_node_label_order,
-                        Eigen::MatrixXd&& parameter_values);
+            GaussianCPD(
+                std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order,
+                Eigen::MatrixXd&& parameter_values);
 
             ~GaussianCPD();
 

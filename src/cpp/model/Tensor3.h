@@ -69,7 +69,7 @@ namespace tomcat {
              * @param k: third axis' index
              * @return Non-assignable vector.
              */
-            Eigen::VectorXd operator()(int j, int k);
+            Eigen::VectorXd operator()(int j, int k) const;
 
             /**
              * Returns an assignable number given indices of all axes.

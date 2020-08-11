@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 #include <eigen3/Eigen/Dense>
 #include <gsl/gsl_randist.h>
@@ -11,6 +11,24 @@
 
 namespace tomcat {
     namespace model {
+
+        //------------------------------------------------------------------
+        // Structs
+        //------------------------------------------------------------------
+
+        /** This struct represents stores indexing information for fast
+         * retrieval of a distribution in the CPD table given parent nodes'
+         * assignments.
+         */
+        struct ParentIndexing {
+
+            // Order of the parent node's label for table indexing
+            int order;
+
+            // Cummulative cardinality of the nodes to the right of the parent
+            // node's label border.
+            int right_cumulative_cardinality;
+        };
 
         /**
          * Abstract representation of a conditional probability distribution.
@@ -39,10 +57,19 @@ namespace tomcat {
              * Creates an abstract representation of a conditional probability
              * distribution.
              *
+             * @param parent_node_order: evaluation order of the parent
+             * nodes' assignments for correct table indexing
+             */
+            CPD(std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order);
+
+            /**
+             * Creates an abstract representation of a conditional probability
+             * distribution.
+             *
              * @param parent_node_label_order: evaluation order of the parent
              * nodes' assignments for correct table indexing
              */
-            CPD(std::vector<std::string> parent_node_label_order);
+            CPD(std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order);
 
             virtual ~CPD();
 
@@ -80,9 +107,30 @@ namespace tomcat {
              *
              * @return A sample from one of the distributions in the CPD table.
              */
-            Eigen::VectorXd sample(std::shared_ptr<gsl_rng> random_generator,
-                                   const Node::NodeMap&
-                                       parent_labels_to_nodes) const;
+            Eigen::VectorXd
+            sample(std::shared_ptr<gsl_rng> random_generator,
+                   const Node::NodeMap& parent_labels_to_nodes) const;
+
+            /**
+             * Draws a sample from a distribution (weighted by children's
+             * assignments) in a given row of the CPD table given parent node's
+             * assignments.
+             *
+             * @param random_generator: random number random_generator
+             * @param parent_labels_to_nodes: mapping between a node's label and
+             * its concrete object representation in an unrolled DBN.
+             * @param child_nodes: children of node that owns the CPD
+             *
+             * @return A sample from one of the distributions (weighted) in the
+             * CPD table.
+             */
+            // TODO - remove
+            //            Eigen::VectorXd sample_weighted(
+            //                std::shared_ptr<gsl_rng> random_generator,
+            //                const Node::NodeMap& parent_labels_to_nodes,
+            //                const
+            //                std::vector<std::shared_ptr<RandomVariableNode>>&
+            //                    child_nodes) const;
 
             /**
              * Marks the CPD as not updated to force dependency updating on a
@@ -115,25 +163,38 @@ namespace tomcat {
              * parameter node if the latter is shared among nodes over several
              * time steps.
              */
-            virtual void update_dependencies(
-                Node::NodeMap& parameter_nodes_map,
-                int time_step) = 0;
+            virtual void update_dependencies(Node::NodeMap& parameter_nodes_map,
+                                             int time_step) = 0;
 
             /**
              * Creates a new unique pointer from a concrete instance of a CPD.
              *
-             * @return pointer to the new CPD
+             * @return Pointer to the new CPD.
              */
             virtual std::unique_ptr<CPD> clone() const = 0;
 
             //------------------------------------------------------------------
             // Getters & Setters
             //------------------------------------------------------------------
+            const std::string& get_id() const;
+
             bool is_updated() const;
 
-            const std::vector<std::string>& get_parent_node_label_order() const;
+            const std::unordered_map<std::string, ParentIndexing>&
+            get_parent_label_to_indexing() const;
 
           protected:
+            //------------------------------------------------------------------
+            // Member functions
+            //------------------------------------------------------------------
+
+            /**
+             * Copies data members of a generic CPD.
+             *
+             * @param cpd: generic CPD
+             */
+            void copy_from_cpd(const CPD& cpd);
+
             //------------------------------------------------------------------
             // Pure virtual functions
             //------------------------------------------------------------------
@@ -162,17 +223,21 @@ namespace tomcat {
             /**
              * Clones the nodes the CPD depends on.
              */
-            virtual void clone_nodes() = 0;
+            virtual void clone_distributions() = 0;
 
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------
 
+            // Unique identifier formed by the concatenation of the parent
+            // labels in alphabetical order delimited by comma.
+            std::string id;
+
             // It defines the order of the parent nodes in the cartesian
             // product of their possible assignments. It's necessary to know
             // this order for correctly index a distribution given parent's
             // assignments.
-            std::vector<std::string> parent_node_label_order;
+            std::vector<std::shared_ptr<NodeMetadata>> parent_node_order;
 
             // It indicates whether the CPD was updated with concrete instances
             // of the nodes it depends on
@@ -182,6 +247,18 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
+
+            /**
+             * Fill CPD's unique identifier formed by the concatenation of the parent
+            // labels in alphabetical order delimited by comma.
+             */
+            void init_id();
+
+            /**
+             * Fills mapping table for quick access to a distribution in the CPD
+             * table given parent node's assignments.
+             */
+            void fill_indexing_mapping();
 
             /**
              * Returns the index of the distribution (row in the table) given
@@ -199,8 +276,13 @@ namespace tomcat {
              * assignments.
              */
             int get_table_row_given_parents_assignments(
-                const Node::NodeMap& parent_labels_to_nodes)
-                const;
+                const Node::NodeMap& parent_labels_to_nodes) const;
+
+            //------------------------------------------------------------------
+            // Data members
+            //------------------------------------------------------------------
+            std::unordered_map<std::string, ParentIndexing>
+                parent_label_to_indexing;
         };
 
     } // namespace model

@@ -54,51 +54,55 @@ namespace tomcat {
              * Creates an instance of a Dirichlet CPD comprised by a list of
              * node dependent parameters.
              *
-             * @param parent_node_label_order: evaluation order of the parent
+             * @param parent_node_order: evaluation order of the parent
              * nodes' assignments for correct table indexing
              * @param parameter_table: list of parameter vector \f$\alpha\f$
              * determined by other nodes' assignments
              */
-            DirichletCPD(std::vector<std::string>& parent_node_label_order,
-                         std::vector<std::shared_ptr<Node>>& parameter_table);
+            DirichletCPD(
+                std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order,
+                std::vector<std::shared_ptr<Node>>& parameter_table);
 
             /**
              * Creates an instance of a Dirichlet CPD comprised by a list of
              * node dependent parameters.
              *
-             * @param parent_node_label_order: evaluation order of the parent
+             * @param parent_node_order: evaluation order of the parent
              * nodes' assignments for correct table indexing
              * @param parameter_table: list of parameter vector \f$\alpha\f$
              * determined by other nodes' assignments
              */
-            DirichletCPD(std::vector<std::string>&& parent_node_label_order,
-                         std::vector<std::shared_ptr<Node>>&& parameter_table);
+            DirichletCPD(
+                std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order,
+                std::vector<std::shared_ptr<Node>>&& parameter_table);
 
             /**
              * Creates an instance of a Dirichlet CPD table by transforming a
              * table of parameter values to a list of constant vector nodes to
              * keep static and node dependent CPDs compatible.
              *
-             * @param parent_node_label_order: evaluation order of the parent
+             * @param parent_node_order: evaluation order of the parent
              * nodes' assignments for correct table indexing
              * @param cpd_table: matrix containing constant numerical values for
              * \f$\alpha\f$
              */
-            DirichletCPD(std::vector<std::string>& parent_node_label_order,
-                         const Eigen::MatrixXd& parameter_values);
+            DirichletCPD(
+                std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order,
+                const Eigen::MatrixXd& parameter_values);
 
             /**
              * Creates an instance of a Dirichlet CPD table by transforming a
              * table of parameter values to a list of constant vector nodes to
              * keep static and node dependent CPDs compatible.
              *
-             * @param parent_node_label_order: evaluation order of the parent
+             * @param parent_node_order: evaluation order of the parent
              * nodes' assignments for correct table indexing
              * @param cpd_table: matrix containing constant numerical values for
              * \f$\alpha\f$
              */
-            DirichletCPD(std::vector<std::string>&& parent_node_label_order,
-                         const Eigen::MatrixXd&& parameter_values);
+            DirichletCPD(
+                std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order,
+                const Eigen::MatrixXd&& parameter_values);
 
             ~DirichletCPD();
 
