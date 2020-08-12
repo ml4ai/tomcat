@@ -140,12 +140,15 @@ namespace tomcat {
              * @param random_generator: random number random_generator
              * @param parent_labels_to_nodes: mapping between a node's label and
              * its concrete object representation in an unrolled DBN
+             * @param num_samples: number of samples to generate. If the parent
+             * nodes have multiple assignments, each sample will use one of them
+             * to determine the distribution which it's sampled from.
              *
              * @return A sample from one of the distributions in the CPD.
              */
-            Eigen::VectorXd
-            sample(std::shared_ptr<gsl_rng> random_generator,
-                   const Node::NodeMap& parent_labels_to_nodes) const;
+            Eigen::MatrixXd sample(std::shared_ptr<gsl_rng> random_generator,
+                                   const Node::NodeMap& parent_labels_to_nodes,
+                                   int num_samples) const;
 
             /**
              * Marks the CPD as not updated to force dependency update on a
@@ -259,13 +262,14 @@ namespace tomcat {
              * represents a combination of the values these parent nodes can
              * assume.
              *
-             * @param parent_labels_to_nodes: Mapping between parent node's
+             * @param parent_labels_to_nodes: mapping between parent node's
              * labels and node objects.
-             * @return Index of distribution assigned to specific parent nodes'
-             * assignments.
+             * @param num_samples: number of samples to generate. If the parent
+             * nodes have multiple assignments, each sample will use one of them
+             * to determine the distribution which it's sampled from.
              */
-            int get_table_row_given_parents_assignments(
-                const Node::NodeMap& parent_labels_to_nodes) const;
+            std::vector<int> get_distribution_indices(
+                const Node::NodeMap& parent_labels_to_nodes, int num_samples) const;
 
             //------------------------------------------------------------------
             // Data members

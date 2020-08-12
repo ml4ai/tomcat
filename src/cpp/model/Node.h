@@ -17,8 +17,7 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Types, Enums & Constants
             //------------------------------------------------------------------
-            typedef std::unordered_map<std::string,
-                std::shared_ptr<Node>>
+            typedef std::unordered_map<std::string, std::shared_ptr<Node>>
                 NodeMap;
 
             //------------------------------------------------------------------
@@ -71,6 +70,13 @@ namespace tomcat {
              */
             void print(std::ostream& os) const;
 
+            /**
+             * Returns the number of assigned values in the node.
+             *
+             * @return Number of assigned values in the node.
+             */
+            int get_size();
+
             //------------------------------------------------------------------
             // Pure virtual functions
             //------------------------------------------------------------------
@@ -100,14 +106,14 @@ namespace tomcat {
              * @return Node's description in an unrolled DBN for an arbitrary
              * time step.
              */
-            //virtual std::string get_timed_name(int time_step) const = 0;
+            // virtual std::string get_timed_name(int time_step) const = 0;
 
             // --------------------------------------------------------
             // Getters & Setters
             // --------------------------------------------------------
             const std::shared_ptr<NodeMetadata>& get_metadata() const;
 
-            const Eigen::VectorXd& get_assignment() const;
+            const Eigen::MatrixXd& get_assignment() const;
 
           protected:
             //------------------------------------------------------------------
@@ -129,7 +135,10 @@ namespace tomcat {
             // node in the unrolled DBN will share the same metadata.
             std::shared_ptr<NodeMetadata> metadata;
 
-            Eigen::VectorXd assignment;
+            // Multiple values can be assigned to a node (e.g. when the node is
+            // observable and data is provided). Each value is assigned to a row
+            // of the matrix.
+            Eigen::MatrixXd assignment;
         };
 
     } // namespace model

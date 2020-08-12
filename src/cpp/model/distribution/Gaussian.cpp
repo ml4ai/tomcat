@@ -117,5 +117,9 @@ namespace tomcat {
             return ss.str();
         }
 
+        int Gaussian::get_sample_size() const {
+            return 1;
+        }
+
     } // namespace model
 } // namespace tomcat

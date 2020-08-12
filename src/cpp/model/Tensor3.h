@@ -59,7 +59,7 @@ namespace tomcat {
              *
              * @return Assignable matrix.
              */
-            Eigen::MatrixXd& operator()(int i);
+            Eigen::MatrixXd operator()(int i, int axis = 0);
 
             /**
              * Returns a non-assignable vector for given indices of the second

@@ -103,6 +103,16 @@ namespace tomcat {
             std::vector<std::shared_ptr<RandomVariableNode>> get_nodes() const;
 
             /**
+             * Returns the list of timed instance nodes created from the
+             * template with with a specific label.
+             *
+             * @param label: node's label
+             * @return
+             */
+            std::vector<std::shared_ptr<RandomVariableNode>>
+            get_nodes_by_label(const std::string& node_abel) const;
+
+            /**
              * Returns timed node objects in topological order.
              *
              * @return Times node objects in topological order.
@@ -226,6 +236,12 @@ namespace tomcat {
             // Mapping between a timed instance parameter node's label and its
             // node object.
             Node::NodeMap parameter_nodes_map;
+
+            // Mapping between a node label and all of the timed instance nodes
+            // created from the template with such label.
+            std::unordered_map<std::string,
+                               std::vector<std::shared_ptr<RandomVariableNode>>>
+                label_to_nodes;
 
             // Node templates will be used to create concrete instances of
             // nodes over time (timed node instances/objects), which will be

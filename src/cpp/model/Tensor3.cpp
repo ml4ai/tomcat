@@ -42,7 +42,34 @@ namespace tomcat {
             return os;
         }
 
-        Eigen::MatrixXd& Tensor3::operator()(int i) { return this->tensor[i]; }
+        Eigen::MatrixXd Tensor3::operator()(int i, int axis) {
+            std::array<int, 3> shape = this->get_shape();
+            Eigen::MatrixXd matrix;
+
+            if (axis == 0) {
+                matrix = this->tensor[i];
+            }
+            else if (axis == 1) {
+                int j = i;
+                matrix = Eigen::MatrixXd(shape[0], shape[2]);
+                for (int i = 0; i < this->tensor.size(); i++) {
+                    matrix.row(i) = this->tensor[i].row(j);
+                }
+            }
+            else if (axis == 2) {
+                int k = i;
+                matrix = Eigen::MatrixXd(shape[0], shape[1]);
+                for (int i = 0; i < this->tensor.size(); i++) {
+                    matrix.row(i) = this->tensor[i].col(k).transpose();
+                }
+            }
+            else {
+                throw std::invalid_argument(
+                    "Invalid axis. Valid axes are 0, 1 or 2.");
+            }
+
+            return matrix;
+        }
 
         Eigen::VectorXd Tensor3::operator()(int j, int k) const {
             size_t vector_size = this->tensor.size();

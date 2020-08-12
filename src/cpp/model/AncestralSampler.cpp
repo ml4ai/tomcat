@@ -33,39 +33,30 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void AncestralSampler::sample(int num_samples) {
+        void AncestralSampler::sample_latent(int num_samples) {
             std::vector<std::shared_ptr<RandomVariableNode>> nodes;
             for (auto& node : this->model.get_nodes_topological_order()) {
                 if (!node->is_frozen()) {
                     nodes.push_back(node);
                 }
             }
-            this->check_data(num_samples);
 
             for (int s = 0; s < num_samples; s++) {
                 for (auto& node : nodes) {
-                    std::string node_label = node->get_metadata()->get_label();
-                    if (exists(node_label, this->latent_node_labels)) {
+                    this->sampled_node_labels.insert(
+                        node->get_metadata()->get_label());
 
-                        this->init_samples_tensor(node_label, num_samples);
-                        this->update_assignment_from_sample(node);
-
-                        int time_step = node->get_time_step();
-                        std::string label = node->get_metadata()->get_label();
-                        int sample_size =
-                            node->get_metadata()->get_sample_size();
-                        for (int i = 0; i < sample_size; i++) {
-                            double sampled_value = node->get_assignment()(i);
-                            this->node_label_to_samples.at(label)(
-                                i, s, time_step) = sampled_value;
-                        }
-                    }
-                    else {
-                        this->assign_data_to_node(node, s);
-                    }
+                    const std::vector<std::shared_ptr<RandomVariableNode>>&
+                        parent_nodes =
+                            this->model.get_parent_nodes_of(*node, true);
+                    int num_samples =
+                        this->num_data_points == 0 ? 1 : this->num_data_points;
+                    Eigen::MatrixXd assignment = node->sample(
+                        this->random_generator, parent_nodes, num_samples);
+                    node->set_assignment(assignment);
                 }
             }
-        }
+        };
 
     } // namespace model
 } // namespace tomcat

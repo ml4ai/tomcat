@@ -30,12 +30,12 @@ namespace tomcat {
         // Copy & Move constructors/assignments
         //----------------------------------------------------------------------
         RandomVariableNode::RandomVariableNode(const RandomVariableNode& node) {
-            this->copy_from_node(node);
+            this->copy_node(node);
         }
 
         RandomVariableNode&
         RandomVariableNode::operator=(const RandomVariableNode& node) {
-            this->copy_from_node(node);
+            this->copy_node(node);
             return *this;
         }
 
@@ -43,7 +43,7 @@ namespace tomcat {
         // Member functions
         //----------------------------------------------------------------------
         void
-        RandomVariableNode::copy_from_node(const RandomVariableNode& node) {
+        RandomVariableNode::copy_node(const RandomVariableNode& node) {
             this->metadata = node.metadata;
             this->cpds = node.cpds;
             this->time_step = node.time_step;
@@ -140,21 +140,11 @@ namespace tomcat {
             }
         }
 
-        void RandomVariableNode::set_assignment(double assignment) {
-            if (this->assignment.size() == 1) {
-                this->assignment(0) = assignment;
-            }
-            else {
-                throw std::invalid_argument("The RV is not 1-dimensional.");
-            }
-        }
-
-        Eigen::VectorXd RandomVariableNode::sample(
+        Eigen::MatrixXd RandomVariableNode::sample(
             std::shared_ptr<gsl_rng> random_generator,
             const std::vector<std::shared_ptr<RandomVariableNode>>&
                 parent_nodes,
-            const std::vector<std::shared_ptr<RandomVariableNode>>& child_nodes)
-            const {
+            int in_plate_copies) const {
 
             std::vector<std::string> parent_labels;
             parent_labels.reserve(parent_nodes.size());
@@ -172,19 +162,13 @@ namespace tomcat {
 
             std::shared_ptr<CPD> cpd = this->get_cpd_for(parent_labels);
 
-            if (child_nodes.empty()) {
-                return cpd->sample(random_generator, parent_labels_to_nodes);
+            int num_samples = 1;
+            if (this->metadata->is_in_plate()) {
+                num_samples = in_plate_copies;
             }
-            else {
-//                return cpd->sample_weighted(
-//                    random_generator, parent_labels_to_nodes, child_nodes);
-            }
-        }
 
-        void RandomVariableNode::replace_cpd_parameter_by_value(
-            const std::string& parameter_timed_name, Eigen::VectorXd value) {
-            for (const auto& mapping : this->cpds) {
-            }
+            return cpd->sample(
+                random_generator, parent_labels_to_nodes, num_samples);
         }
 
         void RandomVariableNode::freeze() { RandomVariableNode::frozen = true; }
@@ -202,9 +186,9 @@ namespace tomcat {
             this->time_step = time_step;
         }
 
-        void RandomVariableNode::set_assignment(Eigen::VectorXd assignment) {
+        void RandomVariableNode::set_assignment(Eigen::MatrixXd assignment) {
             if (!this->frozen) {
-                this->assignment = std::move(assignment);
+                this->assignment = assignment;
             }
         }
 

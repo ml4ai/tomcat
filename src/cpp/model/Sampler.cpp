@@ -22,12 +22,6 @@ namespace tomcat {
         Sampler::Sampler(DynamicBayesNet model,
                          std::shared_ptr<gsl_rng> random_generator)
             : random_generator(random_generator), model(model) {
-            for (auto& node : model.get_node_templates()) {
-                std::string node_label = node.get_metadata()->get_label();
-                this->latent_node_labels.insert(node_label);
-                this->node_label_to_metadata[node_label] =
-                    *(node.get_metadata());
-            }
         }
 
         Sampler::~Sampler() {}
@@ -35,12 +29,25 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void Sampler::add_data(std::string& node_label, Tensor3& data) {
-            if (this->num_data_points ==
-                    0 || data.get_shape()[2] == this->num_data_points) {
-                this->node_label_to_data[node_label] = data;
-                this->latent_node_labels.erase(node_label);
+        void Sampler::sample(int num_samples) {
+            this->freeze_observable_nodes();
+            this->sample_latent(num_samples);
+            this->unfreeze_observable_nodes();
+        }
+
+        void Sampler::add_data(const std::string& node_label, Tensor3& data) {
+            // If data has been previously assigned for some node, all the
+            // subsequent data assignments must have the same number of data
+            // points.
+            if (this->num_data_points == 0 ||
+                data.get_shape()[2] == this->num_data_points) {
                 this->num_data_points = data.get_shape()[1];
+
+                for (auto& node : this->model.get_nodes_by_label(node_label)) {
+                    node->set_assignment(
+                        data(node->get_time_step(), 2).transpose());
+                    this->observable_node_labels.insert(node_label);
+                }
             }
             else {
                 throw std::invalid_argument(
@@ -49,83 +56,56 @@ namespace tomcat {
             }
         }
 
-        void Sampler::add_data(std::string&& node_label, Tensor3&& data) {
-            if (this->num_data_points ==
-                    0 || data.get_shape()[2] == this->num_data_points) {
-                this->node_label_to_data[node_label] = std::move(data);
-                this->latent_node_labels.erase(node_label);
-                this->num_data_points = data.get_shape()[1];
+        Tensor3 Sampler::get_samples(const std::string& node_label) const {
+            std::vector<std::shared_ptr<RandomVariableNode>> nodes =
+                this->model.get_nodes_by_label(node_label);
+            if (!nodes.empty()) {
+                int d1 = nodes[0]->get_metadata()->get_sample_size();
+                int d2 = nodes[0]->get_size();
+                int d3 = this->model.get_time_steps();
+                double* buffer = new double[d1 * d2 * d3];
+                std::fill_n(buffer, d1 * d2 * d3, -1);
+                for (auto& node : nodes) {
+                    Eigen::Matrix assignment = node->get_assignment();
+                    for(int i = 0; i < assignment.rows(); i++){
+                        for(int j = 0; j < assignment.cols(); j++){
+                            int index = j*d2*d3 + i*d3 + node->get_time_step();
+                            buffer[index] = assignment(i, j);
+                        }
+                    }
+                }
+
+                return Tensor3(buffer, d1, d2, d3);
             }
             else {
                 throw std::invalid_argument(
-                    "The number of data points must be the same for all "
-                    "observable nodes.");
+                    "This node does not belong to the model.");
             }
-        }
 
-        const Tensor3&
-        Sampler::get_samples(const std::string& node_label) const {
-            return this->node_label_to_samples.at(node_label);
         }
 
         void Sampler::save_samples_to_folder(
             const std::string& output_folder) const {
-
-            for (const auto& mapping : this->node_label_to_samples) {
-                std::string filename = mapping.first + ".txt";
+            for (const auto& node_label : this->sampled_node_labels) {
+                std::string filename = node_label + ".txt";
                 std::string filepath = get_filepath(output_folder, filename);
-                save_tensor_to_file(filepath, mapping.second);
+                save_tensor_to_file(filepath, this->get_samples(node_label));
             }
         }
 
-        void Sampler::check_data(int num_samples) const {
-            for (const auto& mapping : this->node_label_to_data) {
-                std::array<int, 3> tensor_shape = mapping.second.get_shape();
-                if (tensor_shape[1] != 1 && tensor_shape[1] != num_samples) {
-
-                    throw std::invalid_argument(fmt::format(
-                        "Node {} has number of datapoints incompatible with "
-                        "the number of samples to generate.",
-                        mapping.first));
+        void Sampler::freeze_observable_nodes() {
+            for(const auto& node_label : this->observable_node_labels) {
+                for (auto& node : this->model.get_nodes_by_label(node_label)) {
+                    node->freeze();
                 }
             }
         }
 
-        void Sampler::init_samples_tensor(const std::string& node_label,
-                                          int num_samples) {
-            // If there's no observation for a node in a specific time step,
-            // this might be inferred by the value in the column that
-            // represent such time step in the matrix of samples as it's
-            // going to be filled with the original value = -1. Therefore,
-            // all the matrices of samples have the same size, regardless of
-            // the node's initial time step.
-            if (!exists(node_label, this->node_label_to_samples)) {
-                int sample_size = this->node_label_to_metadata.at(node_label)
-                                      .get_sample_size();
-                this->node_label_to_samples[node_label] = Tensor3::constant(
-                    sample_size, num_samples, this->model.get_time_steps(), -1);
-            }
-        }
-
-        void Sampler::update_assignment_from_sample(
-            std::shared_ptr<RandomVariableNode> node) {
-            const std::vector<std::shared_ptr<RandomVariableNode>>&
-                parent_nodes = this->model.get_parent_nodes_of(*node, true);
-            Eigen::VectorXd assignment =
-                node->sample(this->random_generator, parent_nodes);
-            node->set_assignment(assignment);
-        }
-
-        void Sampler::assign_data_to_node(
-            const std::shared_ptr<RandomVariableNode>& node,
-            int data_point_index) {
-
-            std::string label = node->get_metadata()->get_label();
-
-            if (exists(label, this->node_label_to_data)) {
-                Eigen::VectorXd assignment = this->node_label_to_data[label](
-                    data_point_index, node->get_time_step());
-                node->set_assignment(assignment);
+        void Sampler::unfreeze_observable_nodes() {
+            for(const auto& node_label : this->observable_node_labels) {
+                for (auto& node : this->model.get_nodes_by_label(node_label)) {
+                    node->unfreeze();
+                }
             }
         }
 

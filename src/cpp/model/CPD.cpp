@@ -109,20 +109,32 @@ namespace tomcat {
             this->updated = true;
         }
 
-        Eigen::VectorXd
-        CPD::sample(std::shared_ptr<gsl_rng> random_generator,
-                    const Node::NodeMap& parent_labels_to_nodes) const {
+        Eigen::MatrixXd CPD::sample(std::shared_ptr<gsl_rng> random_generator,
+                                    const Node::NodeMap& parent_labels_to_nodes,
+                                    int num_samples) const {
 
-            int index = this->get_table_row_given_parents_assignments(
-                parent_labels_to_nodes);
+            std::vector<int> distribution_indices =
+                this->get_distribution_indices(parent_labels_to_nodes,
+                                               num_samples);
 
-            return this->distributions[index]->sample(random_generator);
+            int sample_size = this->distributions[0]->get_sample_size();
+
+            Eigen::MatrixXd samples(distribution_indices.size(), sample_size);
+            int i = 0;
+            for (const auto& distribution_idx : distribution_indices) {
+                samples.row(i++) =
+                    this->distributions[distribution_idx]->sample(
+                        random_generator);
+            }
+
+            return samples;
         }
 
-        int CPD::get_table_row_given_parents_assignments(
-            const Node::NodeMap& parent_labels_to_nodes) const {
+        std::vector<int> CPD::get_distribution_indices(
+            const Node::NodeMap& parent_labels_to_nodes,
+            int num_samples) const {
 
-            int distribution_index = 0;
+            std::vector<int> indices(num_samples, 0);
 
             for (const auto& mapping : parent_labels_to_nodes) {
                 std::string label = mapping.first;
@@ -130,12 +142,19 @@ namespace tomcat {
                 ParentIndexing indexing =
                     this->parent_label_to_indexing.at(label);
 
-                distribution_index +=
-                    static_cast<int>(node->get_assignment()[0]) *
-                    indexing.right_cumulative_cardinality;
+                Eigen::MatrixXd matrix = node->get_assignment();
+                for (int i = 0; i < num_samples; i++) {
+                    // Non-in-plate nodes will have a single assignment while
+                    // in-plate nodes can have multiple assignments. The value
+                    // of a non-in-plate node must be broadcasted.
+                    int row = matrix.rows() == 1 ? 0 : i;
+
+                    indices[i] += static_cast<int>(matrix(row, 0)) *
+                                  indexing.right_cumulative_cardinality;
+                }
             }
 
-            return distribution_index;
+            return indices;
         }
 
         void CPD::reset_updated_status() { this->updated = false; }

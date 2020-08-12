@@ -45,7 +45,7 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-            void sample(int num_samples) override;
+            void sample_latent(int num_samples) override;
 
         };
     } // namespace model

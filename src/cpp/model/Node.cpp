@@ -34,6 +34,10 @@ namespace tomcat {
             os << this->get_description();
         }
 
+        int Node::get_size() {
+            return this->assignment.rows();
+        }
+
         //----------------------------------------------------------------------
         // Getters & Setters
         //----------------------------------------------------------------------
@@ -41,7 +45,7 @@ namespace tomcat {
             return metadata;
         }
 
-        const Eigen::VectorXd& Node::get_assignment() const { return assignment; }
+        const Eigen::MatrixXd& Node::get_assignment() const { return assignment; }
 
     } // namespace model
 } // namespace tomcat

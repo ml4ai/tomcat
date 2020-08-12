@@ -78,6 +78,8 @@ namespace tomcat {
 
             std::string get_description() const override;
 
+            int get_sample_size() const override;
+
           private:
             //------------------------------------------------------------------
             // Member functions

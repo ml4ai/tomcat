@@ -132,5 +132,9 @@ namespace tomcat {
             return ss.str();
         }
 
+        int Dirichlet::get_sample_size() const {
+            return this->parameters.size();
+        }
+
     } // namespace model
 } // namespace tomcat

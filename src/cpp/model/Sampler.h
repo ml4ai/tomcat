@@ -1,5 +1,7 @@
 #pragma once
 
+#include <unordered_set>
+
 #include "DynamicBayesNet.h"
 #include "Tensor3.h"
 
@@ -52,6 +54,13 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
+             * Generates samples for the latent nodes.
+             *
+             * @param num_samples: number of samples to generate
+             */
+            void sample(int num_samples);
+
+            /**
              * Adds data to node of arbitrary sample size.
              *
              * @param node_label: node's label
@@ -59,17 +68,7 @@ namespace tomcat {
              * be a tensor of dimensions (sample_size, num_data_points,
              * time_steps)
              */
-            void add_data(std::string& node_label, Tensor3& data);
-
-            /**
-             * Adds data to node of arbitrary sample size.
-             *
-             * @param node_label: node's label
-             * @param data: observed values for the node over time. Data should
-             * be a matrix of dimensions (sample_size, num_data_points,
-             * time_steps).
-             */
-            void add_data(std::string&& node_label, Tensor3&& data);
+            void add_data(const std::string& node_label, Tensor3& data);
 
             /**
              * Returns samples generated for a specific latent node.
@@ -78,7 +77,7 @@ namespace tomcat {
              * @return Samples over time. A matrix of dimension (num_samples,
              * time_steps).
              */
-            const Tensor3& get_samples(const std::string& node_label) const;
+            Tensor3 get_samples(const std::string& node_label) const;
 
             /**
              * Saves generated samples to files in a specific folder.
@@ -91,96 +90,49 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
-             * Generates samples for the latent nodes
+             * Function called by the function sample to generate samples for
+             * unfrozen nodes. The function sample freezes observable nodes and
+             * releases them in the end. Calling this function in between.
              *
              * @param num_samples: number of samples to generate
              */
-            virtual void sample(int num_samples) = 0;
+            virtual void sample_latent(int num_samples) = 0;
 
           protected:
-            //------------------------------------------------------------------
-            // Member functions
-            //------------------------------------------------------------------
-
-            /**
-             * Check whether the number of data points is consistent with the
-             * number of samples. If there's a single data point, then it's
-             * values over time are going to be considered in all the samples
-             * generated. If there are as many data points as the number of
-             * samples requested, then for each new sample, a new data point
-             * will be considered. Otherwise, samples cannot be generated as
-             * it's impossible to tell how the data points should be broadcasted
-             * or associated to each one of the samples to be generated.
-             *
-             * @param num_samples: number of samples to be generated
-             */
-            void check_data(int num_samples) const;
-
-            /**
-             * Creates a tensor of dimensions (sample_size, num_samples,
-             * time_steps) for a given latent node in the model and
-             * adds it to the node_lable_to_samples mapping.
-             *
-             * @param node_label: label of the node which samples must be
-             * initialized to
-             * @param num_samples: number of samples to generate
-             */
-            void init_samples_tensor(const std::string& node_label,
-                                     int num_samples);
-
-            /**
-             * Samples a value from a node's CPD and set it as the node's
-             * assignment.
-             *
-             * @param node: Random variable node
-             */
-            void update_assignment_from_sample(
-                std::shared_ptr<RandomVariableNode> node);
-
-            /**
-             * Assigns a value from a given data point (row in the data matrix)
-             * to its corresponding node in the unrolled DBN. Each node in the
-             * unrolled DBN has a time step assigned to it, which determines the
-             * column (in the data matrix) from which the value has to be picked
-             * from. Each node can only assume one value at a time so this
-             * method has to be called separately for each one of the data
-             * points in the data matrix.
-             *
-             * @param data_point_index: index of the data point in the data
-             * matrix
-             */
-            void
-            assign_data_to_node(const std::shared_ptr<RandomVariableNode>& node,
-                                int data_point_index);
-
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------
             std::shared_ptr<gsl_rng> random_generator;
             DynamicBayesNet model;
 
-            // Mapping between a node's label and its metadata.
-            std::unordered_map<std::string, NodeMetadata>
-                node_label_to_metadata;
-
-            // Mapping between a node's label and data (observed values over
-            // time). The data tensor has dimension (sample_size,
-            // num_data_points, time_steps).
-            std::unordered_map<std::string, Tensor3> node_label_to_data;
-
-            // Mapping between a node's label and samples generated by a
-            // sampler. The samples matrix has dimension (sample_size,
-            // num_samples, num_time_steps).
-            std::unordered_map<std::string, Tensor3> node_label_to_samples;
-
-            // Nodes which values are not observed, i.e., nodes which samples
-            // will be generated for.
-            std::unordered_set<std::string> latent_node_labels;
+            // Labels of the nodes that were sampled (this has to be filled in
+            // the derived classes).
+            std::unordered_set<std::string> sampled_node_labels;
 
             // If provided for some node, the number of data points. It's a
             // single variable because it must be the same for all observable
             // nodes.
             int num_data_points = 0;
+
+          private:
+            //------------------------------------------------------------------
+            // Member functions
+            //------------------------------------------------------------------
+
+            /**
+             * Freeze nodes that have data assigned to them.
+             */
+            void freeze_observable_nodes();
+
+            /**
+             * Unfreeze nodes that have data assigned to them.
+             */
+            void unfreeze_observable_nodes();
+
+            //------------------------------------------------------------------
+            // Data members
+            //------------------------------------------------------------------
+            std::unordered_set<std::string> observable_node_labels;
         };
     } // namespace model
 } // namespace tomcat

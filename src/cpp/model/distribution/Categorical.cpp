@@ -143,5 +143,9 @@ namespace tomcat {
             return ss.str();
         }
 
+        int Categorical::get_sample_size() const {
+            return 1;
+        }
+
     } // namespace model
 } // namespace tomcat

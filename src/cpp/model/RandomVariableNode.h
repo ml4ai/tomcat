@@ -115,38 +115,31 @@ namespace tomcat {
              */
             void clone_cpds();
 
-            /**
-             * Assigns a 1D-vector comprised by the informed numerical value as
-             * assignment of the node's sample size is one.
-             *
-             * @param assignment: numeric value
-             */
-            void set_assignment(double assignment);
+            //            /**
+            //             * Assigns a 1D-vector comprised by the informed
+            //             numerical value as
+            //             * assignment of the node.
+            //             *
+            //             * @param assignment: numeric value
+            //             */
+            //            void set_assignment(double assignment);
 
             /**
-             * Generate a sample from this node's CPD given its parents
-             * assignments.
+             * Generate samples from this node's CPD given its parents
+             * assignments. If the node belongs to a plate, multiple samples are
+             * generated: one for each in-plate copy. Otherwise a single sample
+             * is returned.
              *
              * @param random_generator: random number generator
              * @param parent_nodes: list of parent nodes' timed instances
-             * @return A sample from the node's CPD.
+             * @param in_plate_copies: number of copies of in_plate_nodes
+             * @return Samples from the node's CPD.
              */
-            Eigen::VectorXd
+            Eigen::MatrixXd
             sample(std::shared_ptr<gsl_rng> random_generator,
                    const std::vector<std::shared_ptr<RandomVariableNode>>&
                        parent_nodes,
-                   const std::vector<std::shared_ptr<RandomVariableNode>>&
-                       child_nodes = {}) const;
-
-            /**
-             * Replaces a parameter node in the node's CPDs by a constant value.
-             *
-             * @param parameter_timed_name: parameter node's timed name
-             * @param value: fixed parameters of a distribution encoded by the
-             * parameter node
-             */
-            void replace_cpd_parameter_by_value(
-                const std::string& parameter_timed_name, Eigen::VectorXd value);
+                   int in_plate_copies) const;
 
             /**
              * Prevents node's assignment to be changed.
@@ -165,7 +158,7 @@ namespace tomcat {
 
             void set_time_step(int time_step);
 
-            void set_assignment(Eigen::VectorXd assignment);
+            void set_assignment(Eigen::MatrixXd assignment);
 
             bool is_frozen() const;
 
@@ -201,7 +194,7 @@ namespace tomcat {
              *
              * @param cpd: continuous CPD
              */
-            void copy_from_node(const RandomVariableNode& node);
+            void copy_node(const RandomVariableNode& node);
 
             /**
              * Returns the node's CPD associated to a set of parents.

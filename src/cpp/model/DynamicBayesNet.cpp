@@ -57,9 +57,10 @@ namespace tomcat {
             this->graph.clear();
             this->name_to_id.clear();
             this->parameter_nodes_map.clear();
+            this->label_to_nodes.clear();
         }
 
-        void DynamicBayesNet::            create_vertices_from_nodes() {
+        void DynamicBayesNet::create_vertices_from_nodes() {
             for (const auto& node_template : this->node_templates) {
                 const std::shared_ptr<NodeMetadata> metadata =
                     node_template.get_metadata();
@@ -70,9 +71,11 @@ namespace tomcat {
 
                         VertexData vertex_data =
                             this->add_vertex(node_template, t);
+
                         if (vertex_data.node->get_metadata()->is_parameter()) {
-                            this->parameter_nodes_map[vertex_data.node
-                                                          ->get_timed_name()] =
+                            std::string node_name =
+                                vertex_data.node->get_timed_name();
+                            this->parameter_nodes_map[node_name] =
                                 vertex_data.node;
                         }
                     }
@@ -111,6 +114,10 @@ namespace tomcat {
 
             // Include node as a property of the vertex in the graph.
             this->graph[vertex_id] = data;
+
+            // Include node in the list of created nodes
+            this->label_to_nodes[data.node->get_metadata()->get_label()]
+                .push_back(data.node);
 
             return data;
         }
@@ -264,6 +271,12 @@ namespace tomcat {
             }
 
             return nodes;
+        }
+
+        std::vector<std::shared_ptr<RandomVariableNode>>
+        DynamicBayesNet::get_nodes_by_label(
+            const std::string& node_label) const {
+            return this->label_to_nodes.at(node_label);
         }
 
         std::vector<std::shared_ptr<RandomVariableNode>>

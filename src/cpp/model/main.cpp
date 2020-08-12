@@ -341,7 +341,7 @@ int main() {
     // dbn.load_from_folder("../../data/model");
     AncestralSampler sampler(dbn, gen);
     Tensor3 state_data = read_tensor_from_file("../../data/samples/State.txt");
-    sampler.add_data("State", std::move(state_data));
+    sampler.add_data("State", state_data);
     sampler.sample(5);
     //    sampler.sample(5, 10);
 
