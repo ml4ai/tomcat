@@ -10,7 +10,7 @@ class ParameterLearning:
         self.model = model
 
     def estimate_parameters(
-        self, evidence_set, number_of_samples, burn_in, show_progress=True
+            self, evidence_set, number_of_samples, burn_in, show_progress=True
     ):
         """
         This method executes Gibbs Sampling to estimate CPDs
@@ -34,7 +34,7 @@ class ParameterLearning:
             evidence_set.number_of_data_points, evidence_set.time_slices
         )
         for _ in tqdm(
-            range(burn_in), desc="Burn-in", disable=not show_progress
+                range(burn_in), desc="Burn-in", disable=not show_progress
         ):
             local_model.cpd_tables, states_sample = self.sample(
                 evidence_set, local_model.cpd_tables, states_sample
@@ -54,7 +54,7 @@ class ParameterLearning:
         return local_model
 
     def get_initial_states_sample_from_parameters_priors(
-        self, number_of_data_points, time_slices
+            self, number_of_data_points, time_slices
     ):
         """
         This method samples initial values for S_t using ancestral sampling
@@ -122,7 +122,19 @@ class ParameterLearning:
                 ] += 1
                 posteriors_pi_lt[state_sample[d][t]][
                     1 - evidence_set.lt_evidence[d][t]
-                ] += 1
+                    ] += 1
+
+        # Hacking to share parameters. Here I am considering the transitions between the
+        # same room to be the shares for all the rooms.
+        first_room_index = self.model.number_of_hallways
+        cum_counts = np.zeros((6, 6))  # states inside a room
+        # Accumulate the counts from states inside each one of the rooms in a single array
+        for i in range(first_room_index, self.model.number_of_states, 6):
+            cum_counts += posteriors_theta_s[i:i+6, i:i+6]
+
+        # Replace the counts in the states across rooms to be the same cumulative count
+        for i in range(first_room_index, self.model.number_of_states, 6):
+            posteriors_theta_s[i:i+6, i:i+6] = cum_counts
 
         # Sample parameters
         theta_s_sample = np.zeros(
@@ -149,19 +161,19 @@ class ParameterLearning:
 
         for t in range(1, evidence_set.time_slices):
             posterior_state += (
-                utils.log(distributions.theta_s[states_sample[:, t - 1]])
-                + utils.log(
-                    distributions.pi_lt[:, evidence_set.lt_evidence[:, t]]
-                ).T
-                + utils.log(
-                    distributions.theta_rm[:, evidence_set.rm_evidence[:, t]]
-                ).T
-                + utils.log(
-                    distributions.pi_tg[:, evidence_set.tg_evidence[:, t]]
-                ).T
-                + utils.log(
-                    distributions.pi_ty[:, evidence_set.ty_evidence[:, t]].T
-                )
+                    utils.log(distributions.theta_s[states_sample[:, t - 1]])
+                    + utils.log(
+                distributions.pi_lt[:, evidence_set.lt_evidence[:, t]]
+            ).T
+                    + utils.log(
+                distributions.theta_rm[:, evidence_set.rm_evidence[:, t]]
+            ).T
+                    + utils.log(
+                distributions.pi_tg[:, evidence_set.tg_evidence[:, t]]
+            ).T
+                    + utils.log(
+                distributions.pi_ty[:, evidence_set.ty_evidence[:, t]].T
+            )
             )
 
             max_value_per_row = np.max(posterior_state, axis=1)[:, np.newaxis]

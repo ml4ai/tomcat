@@ -29,6 +29,7 @@ class Model:
         self.number_of_states = cpds.theta_s.shape[0]
         self.number_of_rooms = cpds.theta_rm.shape[1]
         self.cpd_tables = cpds
+        self.number_of_hallways = 0
 
     def init_from_mission_map(self, mission_map_id):
         self.mission_map_id = mission_map_id

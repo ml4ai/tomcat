@@ -17,7 +17,7 @@ import pandas as pd
 import math
 import matplotlib.pyplot as plt
 from hackathon.model_representation import CPDTables
-
+from enum import Enum
 
 def fit_and_evaluate(
         original_model, evidence_set, num_gibbs_samples, gibbs_burn_in, number_of_folds, horizons, model_root_folder
@@ -593,6 +593,118 @@ def experiment_check_with_toy_model():
                                                          'manual')
 
 
+def evaluate_transitions(data, first_room_index):
+    class States(Enum):
+        HW = 0
+        LRW = 1
+        LTG = 2
+        LTY = 3
+        DRW = 4
+        DTG = 5
+        DTY = 6
+
+    transitions_per_mission = []
+    curr_state = States.HW
+
+    for d in range(data.number_of_data_points):
+        transitions = np.zeros((7, 7))
+        for t in range(1, data.time_slices):
+            if data.rm_evidence[d, t] >= first_room_index:
+                if data.lt_evidence[d, t] == 1:
+                    if data.tg_evidence[d, t] == 1:
+                        new_state = States.LTG
+                    elif data.ty_evidence[d, t] == 1:
+                        new_state = States.LTY
+                    else:
+                        new_state = States.LRW
+                else:
+                    if data.tg_evidence[d, t] == 1:
+                        new_state = States.DTG
+                    elif data.ty_evidence[d, t] == 1:
+                        new_state = States.DTY
+                    else:
+                        new_state = States.DRW
+            else:
+                new_state = States.HW
+
+            transitions[curr_state][new_state] += 1
+        transitions_per_mission.append(transitions/(data.time_slices-1))
+
+    for d, transitions in enumerate(transitions_per_mission):
+        print('Transition in Mission {}'.format(d))
+        print(transitions)
+
+def experiment_transitions():
+    print('**********************')
+    print('EVALUATING TRANSITIONS')
+    print('**********************')
+
+    print('>> Sparky')
+    data = load_evidence_set("../data/evidence/asist/sparky")
+    evaluate_transitions(data, 8)
+
+    print('>> Falcon')
+    data = load_evidence_set("../data/evidence/asist/falcon")
+    evaluate_transitions(data, 10)
+
+"""
+Check to see what is the player behavior while inside a room in each one of the mission trials 
+"""
+def evaluate_common_behavior(data, first_room_index):
+    times_hallway = np.zeros(data.number_of_data_points)
+    times_rw_light = np.zeros(data.number_of_data_points)
+    times_tg_light = np.zeros(data.number_of_data_points)
+    times_ty_light = np.zeros(data.number_of_data_points)
+    times_tg_dark = np.zeros(data.number_of_data_points)
+    times_ty_dark = np.zeros(data.number_of_data_points)
+    times_rw_dark = np.zeros(data.number_of_data_points)
+
+    for d in range(data.number_of_data_points):
+        for t in range(data.time_slices):
+            if data.rm_evidence[d, t] >= first_room_index:
+                if data.lt_evidence[d, t] == 1:
+                    if data.tg_evidence[d, t] == 1:
+                        times_tg_light[d] += 1
+                    elif data.ty_evidence[d, t] == 1:
+                        times_ty_light[d] += 1
+                    else:
+                        times_rw_light[d] += 1
+                else:
+                    if data.tg_evidence[d, t] == 1:
+                        times_tg_dark[d] += 1
+                    elif data.ty_evidence[d, t] == 1:
+                        times_ty_dark[d] += 1
+                    else:
+                        times_rw_dark[d] += 1
+            else:
+                times_hallway[d] += 1
+
+    print('RW in a light room:')
+    print(times_rw_light/data.time_slices)
+    print('RW in a dark room:')
+    print(times_rw_dark / data.time_slices)
+    print('TG in a light room:')
+    print(times_tg_light / data.time_slices)
+    print('TG in a dark room:')
+    print(times_tg_dark / data.time_slices)
+    print('TY in a light room:')
+    print(times_ty_light / data.time_slices)
+    print('TY in a dark room:')
+    print(times_ty_dark / data.time_slices)
+
+def experiment_common_behavior():
+    print('**************************')
+    print('EVALUATING COMMON BEHAVIOR')
+    print('**************************')
+
+    print('>> Sparky')
+    data = load_evidence_set("../data/evidence/asist/sparky")
+    evaluate_common_behavior(data, 8)
+
+    print('>> Falcon')
+    data = load_evidence_set("../data/evidence/asist/falcon")
+    evaluate_common_behavior(data, 10)
+
 if __name__ == "__main__":
     NUM_SAMPLES = 100
     NUM_GIBBS_SAMPLES = 5000
@@ -601,6 +713,8 @@ if __name__ == "__main__":
 
     #experiment_generate_synthetic_data(100, NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, 0)
     # experiment_eval_performance_synthetic(NUM_SAMPLES, NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, HORIZONS)
-    # experiment_eval_performance_real(NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, HORIZONS)
+    experiment_eval_performance_real(NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, HORIZONS)
     # experiment_check_with_toy_model()
-    experiment_check_with_asist_model()
+    # experiment_check_with_asist_model()
+    experiment_common_behavior()
+    experiment_transitions()
