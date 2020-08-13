@@ -66,13 +66,16 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-            Eigen::VectorXd
-            sample(std::shared_ptr<gsl_rng> random_generator) const override;
-
             Eigen::VectorXd sample(std::shared_ptr<gsl_rng> random_generator,
-                                   Eigen::VectorXd weights) const override;
+                                   int parameter_idx) const override;
 
-            double get_pdf(Eigen::VectorXd value) const override;
+            Eigen::VectorXd
+            sample(std::shared_ptr<gsl_rng> random_generator,
+                   int parameter_idx,
+                   const Eigen::VectorXd& weights) const override;
+
+            double get_pdf(const Eigen::VectorXd& value,
+                           int parameter_idx) const override;
 
             std::unique_ptr<Distribution> clone() const override;
 
@@ -85,7 +88,21 @@ namespace tomcat {
             // Member functions
             //------------------------------------------------------------------
 
-           /**
+            /**
+             * Returns the mean and the variance from assignments of the nodes
+             * in the list of parameters.
+             *
+             * @param parameter_idx: the index of the parameter assignment
+             * to use in case the distribution depend on parameter nodes with
+             * multiple assignments. If the parameter has single assignment,
+             * that is the one being used regardless of the value informed in
+             * this argument.
+             * @return Vector of containing the mean and the variance of the
+             * distribution.
+             */
+            Eigen::VectorXd get_parameters(int parameter_idx) const;
+
+            /**
              * Generate a sample using the GSL library.
              *
              * @param random_generator: random number generator
@@ -95,7 +112,8 @@ namespace tomcat {
              */
             Eigen::VectorXd
             sample_from_gsl(std::shared_ptr<gsl_rng> random_generator,
-                            double mean, double variance) const;
+                            double mean,
+                            double variance) const;
         };
 
     } // namespace model

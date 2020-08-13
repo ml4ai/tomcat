@@ -61,13 +61,15 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-            Eigen::VectorXd
-            sample(std::shared_ptr<gsl_rng> random_generator) const override;
+            Eigen::VectorXd sample(std::shared_ptr<gsl_rng> random_generator,
+                                   int parameter_idx) const override;
 
             Eigen::VectorXd sample(std::shared_ptr<gsl_rng> random_generator,
-                                   Eigen::VectorXd weights) const override;
+                                   int parameter_idx,
+                                   const Eigen::VectorXd& weights) const override;
 
-            double get_pdf(Eigen::VectorXd value) const override;
+            double get_pdf(const Eigen::VectorXd& value,
+                           int parameter_idx) const override;
 
             std::unique_ptr<Distribution> clone() const override;
 
@@ -81,12 +83,17 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
-             * Returns the parameter vector \f$\alpha\f$ formed by the
+             * Returns the parameter vectors \f$\alpha\f$s formed by the
              * assignments of the nodes in the list of parameters.
              *
+             * @param parameter_idx: the index of the parameter assignment
+             * to use in case the distribution depend on parameter nodes with
+             * multiple assignments. If the parameter has single assignment,
+             * that is the one being used regardless of the value informed in
+             * this argument.             *
              * @return Vector of containing the coefficients of \f$\alpha\f$
              */
-            Eigen::VectorXd get_alpha() const;
+            Eigen::VectorXd get_alpha(int parameter_idx) const;
 
             /**
              * Generate a sample using the GSL library.

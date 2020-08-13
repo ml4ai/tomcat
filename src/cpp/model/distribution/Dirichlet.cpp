@@ -48,17 +48,21 @@ namespace tomcat {
         // Member functions
         //----------------------------------------------------------------------
         Eigen::VectorXd
-        Dirichlet::sample(std::shared_ptr<gsl_rng> random_generator) const {
-            return this->sample_from_gsl(random_generator, this->get_alpha());
+        Dirichlet::sample(std::shared_ptr<gsl_rng> random_generator,
+                          int parameter_idx) const {
+            Eigen::VectorXd alpha = this->get_alpha(parameter_idx);
+
+            return this->sample_from_gsl(random_generator, alpha);
         }
 
-        Eigen::VectorXd Dirichlet::get_alpha() const{
+        Eigen::VectorXd Dirichlet::get_alpha(int parameter_idx) const {
             Eigen::VectorXd alpha(this->parameters.size());
 
-            int i = 0;
-            for (const auto& parameter_node : this->parameters) {
-                alpha(i) = parameter_node->get_assignment()(0);
-                i++;
+            for (int i = 0; i < alpha.size(); i++) {
+                Eigen::MatrixXd alphas = this->parameters[i]->get_assignment();
+                parameter_idx = alphas.rows() == 1 ? 0 : parameter_idx;
+
+                alpha(i) = alphas(parameter_idx, 0);
             }
 
             return alpha;
@@ -72,8 +76,7 @@ namespace tomcat {
 
             const double* alpha = parameters.data();
 
-            gsl_ran_dirichlet(
-                random_generator.get(), k, alpha, sample_ptr);
+            gsl_ran_dirichlet(random_generator.get(), k, alpha, sample_ptr);
 
             Eigen::Map<Eigen::VectorXd> sample(sample_ptr, k);
 
@@ -82,37 +85,28 @@ namespace tomcat {
 
         Eigen::VectorXd
         Dirichlet::sample(std::shared_ptr<gsl_rng> random_generator,
-                          Eigen::VectorXd weights) const {
+                          int parameter_idx,
+                          const Eigen::VectorXd& weights) const {
+            Eigen::VectorXd alpha = this->get_alpha(parameter_idx) * weights;
 
-            Eigen::VectorXd weighted_params(this->parameters.size());
-
-            int i = 0;
-            for (const auto& parameter_node : this->parameters) {
-                // In a Dirichlet distribution the weights are sufficient
-                // statistics added to each one of the coefficients.
-                weighted_params(i) =
-                    parameter_node->get_assignment()(0) + weights(i);
-            }
-
-            return this->sample_from_gsl(random_generator, weighted_params);
+            return this->sample_from_gsl(random_generator, alpha);
         }
 
-        double Dirichlet::get_pdf(Eigen::VectorXd value) const {
-            Eigen::VectorXd alpha = this->get_alpha();
+        double Dirichlet::get_pdf(const Eigen::VectorXd& value,
+                                  int parameter_idx) const {
+            Eigen::VectorXd alpha = this->get_alpha(parameter_idx);
             int k = alpha.size();
-            const double* params_ptr = alpha.data();
-            const double* sample_ptr = value.data();
+            const double* alpha_ptr = alpha.data();
+            const double* value_ptr = value.data();
 
-            double pdf = gsl_ran_dirichlet_pdf(k, params_ptr, sample_ptr);
-
-            return pdf;
+            return gsl_ran_dirichlet_pdf(k, alpha_ptr, value_ptr);
         }
 
         std::unique_ptr<Distribution> Dirichlet::clone() const {
             std::unique_ptr<Dirichlet> new_distribution =
                 std::make_unique<Dirichlet>(*this);
 
-            for(auto& parameter : new_distribution->parameters){
+            for (auto& parameter : new_distribution->parameters) {
                 parameter = parameter->clone();
             }
 
@@ -123,11 +117,10 @@ namespace tomcat {
             std::stringstream ss;
             ss << "Dir\n";
             ss << "(\n";
-            for(const auto& parameter : this->parameters) {
+            for (const auto& parameter : this->parameters) {
                 ss << " " << parameter << "\n";
             }
             ss << ")";
-
 
             return ss.str();
         }

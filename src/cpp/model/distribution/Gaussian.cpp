@@ -52,13 +52,36 @@ namespace tomcat {
         // Member functions
         //----------------------------------------------------------------------
         Eigen::VectorXd
-        Gaussian::sample(std::shared_ptr<gsl_rng> random_generator) const {
-            double mean =
-                this->parameters[PARAMETER_INDEX::mean]->get_assignment()(0);
-            double variance =
-                this->parameters[PARAMETER_INDEX::mean]->get_assignment()(0);
+        Gaussian::sample(std::shared_ptr<gsl_rng> random_generator,
+                         int parameter_idx) const {
+
+            Eigen::VectorXd parameters = this->get_parameters(parameter_idx);
+            double mean = parameters(PARAMETER_INDEX::mean);
+            double variance = parameters(PARAMETER_INDEX::variance);
 
             return this->sample_from_gsl(random_generator, mean, variance);
+        }
+
+        Eigen::VectorXd Gaussian::get_parameters(int parameter_idx) const {
+            Eigen::VectorXd means =
+                this->parameters[PARAMETER_INDEX::mean]->get_assignment().col(
+                    0);
+            Eigen::VectorXd variances =
+                this->parameters[PARAMETER_INDEX::variance]
+                    ->get_assignment()
+                    .col(0);
+
+            int mean_idx = means.size() == 1 ? 0 : parameter_idx;
+            double mean = means(mean_idx);
+
+            int variance_idx = variances.size() == 1 ? 0 : parameter_idx;
+            double variance = variances(variance_idx);
+
+            Eigen::VectorXd parameters(2);
+            parameters(PARAMETER_INDEX::mean) = mean;
+            parameters(PARAMETER_INDEX::variance) = variance;
+
+            return parameters;
         }
 
         Eigen::VectorXd
@@ -67,7 +90,7 @@ namespace tomcat {
                                   double variance) const {
 
             double sample =
-                mean + gsl_ran_gaussian(random_generator.get(), variance);
+                mean + gsl_ran_gaussian(random_generator.get(), sqrt(variance));
 
             Eigen::VectorXd sample_vector(1);
             sample_vector(0) = sample;
@@ -77,25 +100,25 @@ namespace tomcat {
 
         Eigen::VectorXd
         Gaussian::sample(std::shared_ptr<gsl_rng> random_generator,
-                         Eigen::VectorXd weights) const {
+                         int parameter_idx,
+                         const Eigen::VectorXd& weights) const {
 
-            // In a Gaussian distribution the weights are the new parameters.
-
-            double mean = weights(PARAMETER_INDEX::mean);
-            double variance = weights(PARAMETER_INDEX::variance);
+            Eigen::VectorXd parameters =
+                this->get_parameters(parameter_idx) * weights;
+            double mean = parameters(PARAMETER_INDEX::mean);
+            double variance = parameters(PARAMETER_INDEX::variance);
 
             return this->sample_from_gsl(random_generator, mean, variance);
         }
 
-        double Gaussian::get_pdf(Eigen::VectorXd value) const {
-            double mean =
-                this->parameters[PARAMETER_INDEX::mean]->get_assignment()(0);
-            double variance = sqrt(
-                this->parameters[PARAMETER_INDEX::mean]->get_assignment()(0));
+        double Gaussian::get_pdf(const Eigen::VectorXd& value,
+                                 int parameter_idx) const {
 
-            double pdf = gsl_ran_gaussian_pdf(value(0) - mean, variance);
+            Eigen::VectorXd parameters = this->get_parameters(parameter_idx);
+            double mean = parameters(PARAMETER_INDEX::mean);
+            double variance = parameters(PARAMETER_INDEX::variance);
 
-            return pdf;
+            return gsl_ran_gaussian_pdf(value(0) - mean, sqrt(variance));
         }
 
         std::unique_ptr<Distribution> Gaussian::clone() const {
@@ -117,9 +140,7 @@ namespace tomcat {
             return ss.str();
         }
 
-        int Gaussian::get_sample_size() const {
-            return 1;
-        }
+        int Gaussian::get_sample_size() const { return 1; }
 
     } // namespace model
 } // namespace tomcat

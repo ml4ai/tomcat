@@ -169,6 +169,12 @@ namespace tomcat {
         void GibbsSampler::fill_initial_samples() {
 //            AncestralSampler initial_sampler(this->model,
 //                                             this->random_generator);
+//            initial_sampler.sample(1)
+
+
+
+//            AncestralSampler initial_sampler(this->model,
+//                                             this->random_generator);
 //            for (auto& data : this->node_label_to_data) {
 //                std::string label = data.first;
 //                Tensor3 tensor = data.second;

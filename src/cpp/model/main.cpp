@@ -345,8 +345,8 @@ int main() {
     sampler.sample(5);
     //    sampler.sample(5, 10);
 
-    //    std::cout << "States" << std::endl;
-    //    std::cout << sampler.get_samples("State") << std::endl;
+    std::cout << "States" << std::endl;
+    std::cout << sampler.get_samples("State") << std::endl;
     std::cout << "TGs" << std::endl;
     std::cout << sampler.get_samples("TG") << std::endl;
     std::cout << "TYs" << std::endl;

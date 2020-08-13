@@ -41,21 +41,21 @@ namespace tomcat {
                 }
             }
 
-            for (int s = 0; s < num_samples; s++) {
-                for (auto& node : nodes) {
-                    this->sampled_node_labels.insert(
-                        node->get_metadata()->get_label());
+            for (auto& node : nodes) {
+                this->sampled_node_labels.insert(
+                    node->get_metadata()->get_label());
 
-                    const std::vector<std::shared_ptr<RandomVariableNode>>&
-                        parent_nodes =
-                            this->model.get_parent_nodes_of(*node, true);
-                    int num_samples =
-                        this->num_data_points == 0 ? 1 : this->num_data_points;
-                    Eigen::MatrixXd assignment = node->sample(
-                        this->random_generator, parent_nodes, num_samples);
-                    node->set_assignment(assignment);
+                const std::vector<std::shared_ptr<RandomVariableNode>>&
+                    parent_nodes =
+                        this->model.get_parent_nodes_of(*node, true);
+                if (node->get_metadata()->is_in_plate()){
+                    num_samples = this->num_data_points == 0 ? num_samples : this->num_data_points;
                 }
+                Eigen::MatrixXd assignment = node->sample(
+                    this->random_generator, parent_nodes, num_samples);
+                node->set_assignment(assignment);
             }
+
         };
 
     } // namespace model

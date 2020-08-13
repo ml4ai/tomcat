@@ -80,17 +80,28 @@ namespace tomcat {
              * Draws a sample from the distribution.
              *
              * @param random_generator: random number random_generator
+             * @param parameter_idx: the index of the parameter assignment
+             * to use in case the distribution depend on parameter nodes with
+             * multiple assignments. If the parameter has single assignment,
+             * that is the one being used regardless of the value informed in
+             * this argument.
              *
              * @return A sample from the distribution.
              */
             virtual Eigen::VectorXd
-            sample(std::shared_ptr<gsl_rng> random_generator) const = 0;
+            sample(std::shared_ptr<gsl_rng> random_generator,
+                   int parameter_idx = 0) const = 0;
 
             /**
              * Draws a sample from the distribution scaled by a vector of
              * weights.
              *
              * @param random_generator: random number random_generator
+             * @param parameter_idx: the index of the parameter assignment
+             * to use in case the distribution depend on parameter nodes with
+             * multiple assignments. If the parameter has single assignment,
+             * that is the one being used regardless of the value informed in
+             * this argument.
              * @param weights: values to scale the parameters of the
              * distribution
              *
@@ -98,15 +109,22 @@ namespace tomcat {
              */
             virtual Eigen::VectorXd
             sample(std::shared_ptr<gsl_rng> random_generator,
-                   Eigen::VectorXd weights) const = 0;
+                   int parameter_idx,
+                   const Eigen::VectorXd& weights) const = 0;
 
             /**
-             * Returns the PDF/PMF for a given value.
+             * Returns the PDF/PMFs for a given value.
              *
-             * @param value: a possible sample from the distribution
-             * @return PDF for the value.
+             * @param value: possible sample from the distribution
+             * @param parameter_idx: the index of the parameter assignment
+             * to use in case the distribution depend on parameter nodes with
+             * multiple assignments. If the parameter has single assignment,
+             * that is the one being used regardless of the value informed in
+             * this argument.
+             * @return PDFs for the values.
              */
-            virtual double get_pdf(Eigen::VectorXd value) const = 0;
+            virtual double get_pdf(const Eigen::VectorXd& value,
+                                            int parameter_idx) const = 0;
 
             /**
              * Creates a new unique pointer from a concrete instance of a

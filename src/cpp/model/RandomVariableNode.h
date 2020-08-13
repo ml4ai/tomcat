@@ -139,7 +139,7 @@ namespace tomcat {
             sample(std::shared_ptr<gsl_rng> random_generator,
                    const std::vector<std::shared_ptr<RandomVariableNode>>&
                        parent_nodes,
-                   int in_plate_copies) const;
+                   int num_samples) const;
 
             /**
              * Prevents node's assignment to be changed.

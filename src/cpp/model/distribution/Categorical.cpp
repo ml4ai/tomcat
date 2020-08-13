@@ -70,10 +70,15 @@ namespace tomcat {
         }
 
         Eigen::VectorXd
-        Categorical::sample(std::shared_ptr<gsl_rng> random_generator) const {
-            Eigen::VectorXd probabilities =
+        Categorical::sample(std::shared_ptr<gsl_rng> random_generator,
+                            int parameter_idx) const {
+            Eigen::MatrixXd probabilities =
                 this->probabilities->get_assignment();
-            return this->sample_from_gsl(random_generator, probabilities);
+
+            parameter_idx = probabilities.rows() == 1 ? 0 : parameter_idx;
+
+            return this->sample_from_gsl(random_generator,
+                                         probabilities.row(parameter_idx));
         }
 
         Eigen::VectorXd
@@ -105,24 +110,37 @@ namespace tomcat {
 
         Eigen::VectorXd
         Categorical::sample(std::shared_ptr<gsl_rng> random_generator,
-                            Eigen::VectorXd weights) const {
-            Eigen::VectorXd weighted_probs =
-                this->probabilities->get_assignment() * weights;
+                            int parameter_idx,
+                            const Eigen::VectorXd& weights) const {
+
+            Eigen::MatrixXd probabilities =
+                this->probabilities->get_assignment();
+
+            parameter_idx = probabilities.rows() == 1 ? 0 : parameter_idx;
+
+            Eigen::VectorXd weighted_probabilities =
+                probabilities.row(parameter_idx).transpose() * weights;
 
             // weighted_probs does not need to be normalized because GSL already
             // does that.
-            return this->sample_from_gsl(random_generator, weighted_probs);
+            return this->sample_from_gsl(random_generator,
+                                         weighted_probabilities);
         }
 
-        double Categorical::get_pdf(Eigen::VectorXd value) const {
-            Eigen::VectorXd probabilities =
+        double Categorical::get_pdf(const Eigen::VectorXd& value,
+                                    int parameter_idx) const {
+            Eigen::MatrixXd probabilities =
                 this->probabilities->get_assignment();
-            int k = probabilities.size();
-            const double* probs_ptr = probabilities.data();
-            unsigned int* sample_ptr = new unsigned int[1];
-            sample_ptr[0] = static_cast<unsigned int>(value(0));
+            parameter_idx = probabilities.rows() == 1 ? 0 : parameter_idx;
+            int k = probabilities.cols();
 
-            double pdf = gsl_ran_multinomial_pdf(k, probs_ptr, sample_ptr);
+            const double* probs_ptr = probabilities.row(parameter_idx).data();
+            unsigned int* value_ptr = new unsigned int[1];
+            value_ptr[0] = static_cast<unsigned int>(value(0));
+
+            double pdf =  gsl_ran_multinomial_pdf(k, probs_ptr, value_ptr);
+
+            delete [] value_ptr;
 
             return pdf;
         }
@@ -143,9 +161,7 @@ namespace tomcat {
             return ss.str();
         }
 
-        int Categorical::get_sample_size() const {
-            return 1;
-        }
+        int Categorical::get_sample_size() const { return 1; }
 
     } // namespace model
 } // namespace tomcat

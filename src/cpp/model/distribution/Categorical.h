@@ -34,8 +34,8 @@ namespace tomcat {
             Categorical(std::shared_ptr<Node>&& probabilities);
 
             /**
-             * Creates an instance of a categorical distribution by transforming a
-             * numerical vector of probabilities into a constant node to keep
+             * Creates an instance of a categorical distribution by transforming
+             * a numerical vector of probabilities into a constant node to keep
              * static and node dependent distributions compatible.
              *
              * @param probabilities: Vector of constant probabilities
@@ -43,8 +43,8 @@ namespace tomcat {
             Categorical(const Eigen::VectorXd& probabilities);
 
             /**
-             * Creates an instance of a categorical distribution by transforming a
-             * numerical vector of probabilities into a constant node to keep
+             * Creates an instance of a categorical distribution by transforming
+             * a numerical vector of probabilities into a constant node to keep
              * static and node dependent distributions compatible.
              *
              * @param probabilities: Vector of constant probabilities
@@ -70,13 +70,15 @@ namespace tomcat {
             void update_dependencies(Node::NodeMap& parameter_nodes_map,
                                      int time_step) override;
 
-            Eigen::VectorXd
-            sample(std::shared_ptr<gsl_rng> random_generator) const override;
+            Eigen::VectorXd sample(std::shared_ptr<gsl_rng> random_generator,
+                                   int parameter_idx) const override;
 
             Eigen::VectorXd sample(std::shared_ptr<gsl_rng> random_generator,
-                                   Eigen::VectorXd weights) const override;
+                                   int parameter_idx,
+                                   const Eigen::VectorXd& weights) const override;
 
-            double get_pdf(Eigen::VectorXd value) const override;
+            double get_pdf(const Eigen::VectorXd& value,
+                                    int parameter_idx) const override;
 
             std::unique_ptr<Distribution> clone() const override;
 

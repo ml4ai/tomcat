@@ -144,7 +144,7 @@ namespace tomcat {
             std::shared_ptr<gsl_rng> random_generator,
             const std::vector<std::shared_ptr<RandomVariableNode>>&
                 parent_nodes,
-            int in_plate_copies) const {
+            int num_samples) const {
 
             std::vector<std::string> parent_labels;
             parent_labels.reserve(parent_nodes.size());
@@ -161,11 +161,6 @@ namespace tomcat {
             }
 
             std::shared_ptr<CPD> cpd = this->get_cpd_for(parent_labels);
-
-            int num_samples = 1;
-            if (this->metadata->is_in_plate()) {
-                num_samples = in_plate_copies;
-            }
 
             return cpd->sample(
                 random_generator, parent_labels_to_nodes, num_samples);
