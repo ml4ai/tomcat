@@ -2,5 +2,12 @@
 
 # Script to uninstall Mumble on macOS
 
+if [[ ! "$OSTYPE" == "darwin"* ]]; then
+    echo "This script currently only works on macOS. Exiting now."
+    exit 1
+fi
+
 /bin/rm -rf /Applications/Mumble.app
 /bin/rm -rf $HOME/Library/Application*/Mumble
+
+exit 0

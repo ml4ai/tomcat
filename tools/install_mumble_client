@@ -4,6 +4,9 @@
 
 set -eu pipefail
 
+# Set the Mumble version to install.
+export MUMBLE_VERSION=1.3.2
+
 if [[ ! "$OSTYPE" == "darwin"* ]]; then
     echo "This script currently only works on macOS. Exiting now."
     exit 1
@@ -11,33 +14,33 @@ fi
 
 # Check to see if Mumble is already installed.
 if [[ ! -d /Applications/Mumble.app ]]; then
-    # Check to see if Mumble-1.3.2.dmg exists in the current directory.
-    if [[ ! -f Mumble-1.3.2.dmg ]]; then
-        echo "Downloading Mumble-1.3.2.dmg..."
-        curl -LO https://dl.mumble.info/stable/Mumble-1.3.2.dmg
+    # Check to see if Mumble-${MUMBLE_VERSION}.dmg exists in the current directory.
+    if [[ ! -f Mumble-${MUMBLE_VERSION}.dmg ]]; then
+        echo "Downloading Mumble-${MUMBLE_VERSION}.dmg..."
+        curl -LO https://dl.mumble.info/stable/Mumble-${MUMBLE_VERSION}.dmg
     fi
 
     # If the .dmg file exists in the current directory, then mount it using
     # hdiutil.
-    if [[ -f Mumble-1.3.2.dmg ]]; then
+    if [[ -f Mumble-${MUMBLE_VERSION}.dmg ]]; then
         echo "Mounting the Mumble disk image..."
-        hdiutil attach Mumble-1.3.2.dmg
+        hdiutil attach Mumble-${MUMBLE_VERSION}.dmg
     fi
 
     # Check to see if the disk image is mounted.
-    if [[ -d "/Volumes/Mumble 1.3.2" ]]; then
+    if [[ -d "/Volumes/Mumble ${MUMBLE_VERSION}" ]]; then
         echo "Copying Mumble.app to /Applications..."
         # Copy Mumble.app to the /Applications
-        cp -R "/Volumes/Mumble 1.3.2/Mumble.app" /Applications
+        cp -R "/Volumes/Mumble ${MUMBLE_VERSION}/Mumble.app" /Applications
 
         # Unmount the disk image.
         echo "Unmounting the Mumble disk image..."
-        hdiutil unmount "/Volumes/Mumble 1.3.2"
+        hdiutil unmount "/Volumes/Mumble ${MUMBLE_VERSION}"
     fi
 
     # Remove the disk image file once the installation is complete
-    echo "Finished installing Mumble. Removing Mumble-1.3.2.dmg..."
-    /bin/rm Mumble-1.3.2.dmg
+    echo "Finished installing Mumble. Removing Mumble-${MUMBLE_VERSION}.dmg..."
+    /bin/rm Mumble-${MUMBLE_VERSION}.dmg
 
     echo "Mumble installation complete!"
 fi
