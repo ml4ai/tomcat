@@ -75,26 +75,10 @@ namespace tomcat {
 
             std::string get_timed_name() const override;
 
-            // std::string get_timed_name(int time_step) const override;
-
-            /**
-             * Adds a CPD to the list of CPDs of the node.
-             *
-             * @param cpd: CPD
-             */
-            void add_cpd(std::shared_ptr<CPD>& cpd);
-
-            /**
-             * Adds CPD to the list of CPDs of the node.
-             *
-             * @param cpd: CPD
-             */
-            void add_cpd(std::shared_ptr<CPD>&& cpd);
-
             /**
              * Marks the CPDs of the node as not updated.
              */
-            void reset_cpds_updated_status();
+            void reset_cpd_updated_status();
 
             /**
              * Replaces parameter nodes in node dependent CPDs by a concrete
@@ -111,18 +95,9 @@ namespace tomcat {
                                          int time_step);
 
             /**
-             * Create new references for the CPDs of the node.
+             * Create new reference for the CPD of the node.
              */
-            void clone_cpds();
-
-            //            /**
-            //             * Assigns a 1D-vector comprised by the informed
-            //             numerical value as
-            //             * assignment of the node.
-            //             *
-            //             * @param assignment: numeric value
-            //             */
-            //            void set_assignment(double assignment);
+            void clone_cpd();
 
             /**
              * Generate samples from this node's CPD given its parents
@@ -132,7 +107,7 @@ namespace tomcat {
              *
              * @param random_generator: random number generator
              * @param parent_nodes: list of parent nodes' timed instances
-             * @param in_plate_copies: number of copies of in_plate_nodes
+             * @param num_samples: number of samples to generate
              * @return Samples from the node's CPD.
              */
             Eigen::MatrixXd
@@ -140,6 +115,19 @@ namespace tomcat {
                    const std::vector<std::shared_ptr<RandomVariableNode>>&
                        parent_nodes,
                    int num_samples) const;
+
+            /**
+             * Get pdfs for the node's assignments given its parents'
+             * assignments.
+             *
+             * @param random_generator: random number generator
+             * @param parent_nodes: list of parent nodes' timed instances
+             * @return Pdfs relative to the node's assignments.
+             */
+            Eigen::VectorXd
+            get_pdfs(std::shared_ptr<gsl_rng> random_generator,
+                   const std::vector<std::shared_ptr<RandomVariableNode>>&
+                       parent_nodes) const;
 
             /**
              * Prevents node's assignment to be changed.
@@ -150,6 +138,30 @@ namespace tomcat {
              * Frees node's assignment to be changed.
              */
             void unfreeze();
+
+            /**
+             * Adds a CPD to the list of possible CPDs of the node.
+             *
+             * @param cpd: CPD
+             */
+            void add_cpd_template(std::shared_ptr<CPD>& cpd);
+
+            /**
+             * Adds CPD to the list of possible CPDs of the node.
+             *
+             * @param cpd: CPD
+             */
+            void add_cpd_template(std::shared_ptr<CPD>&& cpd);
+
+            /**
+             * Returns the node's CPD associated to a set of parents.
+             *
+             * @param parent_labels: labels of the parents of the node
+             *
+             * @return node's CPD related to the parents informed
+             */
+            std::shared_ptr<CPD>
+            get_cpd_for(const std::vector<std::string>& parent_labels) const;
 
             // -----------------------------------------------------------------
             // Getters & Setters
@@ -162,27 +174,7 @@ namespace tomcat {
 
             bool is_frozen() const;
 
-          protected:
-            // -----------------------------------------------------------------
-            // Data members
-            // -----------------------------------------------------------------
-
-            // CPD is a shared pointer because multiple nodes can have a CPD
-            // that depend on the same set of parameters.
-            // A node can also have more than one CPD, each one referring to a
-            // conditional distribution given a set of different parents. For
-            // instance, a State node in a HMM will likely have two CPDs: one
-            // for the first time step with no parent nodes associated and
-            // another one to the following time steps with a State from the
-            // previous time step as a parent.
-            // The key in this data structure is a string that uniquely identify
-            // the set of parents of the node to which the CPD is related.
-            std::unordered_map<std::string, std::shared_ptr<CPD>> cpds;
-
-            // Time step where the node shows up in the unrolled DBN. This
-            // variable will be assigned when a concrete timed instance of this
-            // node is created and assigned to a vertex in an unrolled DBN.
-            int time_step = 0;
+            void set_cpd(const std::shared_ptr<CPD>& cpd);
 
           private:
             //------------------------------------------------------------------
@@ -190,21 +182,16 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
+             * Create new references for the CPD templates of the node.
+             */
+            void clone_cpd_templates();
+
+            /**
              * Copies data members of a random variable node.
              *
              * @param cpd: continuous CPD
              */
             void copy_node(const RandomVariableNode& node);
-
-            /**
-             * Returns the node's CPD associated to a set of parents.
-             *
-             * @param parent_labels: labels of the parents of the node
-             *
-             * @return node's CPD related to the parents informed
-             */
-            std::shared_ptr<CPD>
-            get_cpd_for(const std::vector<std::string>& parent_labels) const;
 
             /**
              * Sorts a list of labels and concatenate them into a string
@@ -220,6 +207,32 @@ namespace tomcat {
             // -----------------------------------------------------------------
             // Data members
             // -----------------------------------------------------------------
+
+            // Time step where the node shows up in the unrolled DBN. This
+            // variable will be assigned when a concrete timed instance of this
+            // node is created and assigned to a vertex in an unrolled DBN.
+            int time_step = 0;
+
+            // CPD is a shared pointer because multiple nodes can have a CPD
+            // that depend on the same set of parameters.
+            // A node can also have more than one CPD, each one referring to a
+            // conditional distribution given a set of different parents. For
+            // instance, a State node in a HMM will likely have two CPDs: one
+            // for the first time step with no parent nodes associated and
+            // another one to the following time steps with a State from the
+            // previous time step as a parent.
+            // The key in this data structure is a string that uniquely identify
+            // the set of parents of the node to which the CPD is related.
+            std::unordered_map<std::string, std::shared_ptr<CPD>> cpd_templates;
+
+            // Conditional probability distribution of the timed instance of the
+            // node in the unrolled DBN. The node template contains a list of
+            // possible CPDs that can be associated with it. Once a concrete
+            // timed instance of the node is created in the unrolled DBN, the
+            // set of parents of such node is known and its CPD can be fully
+            // determined.
+            std::shared_ptr<CPD> cpd;
+
             /**
              * A frozen node will have it's assignment preserved and won't be
              * considered a latent node by the samplers. It will behave like a

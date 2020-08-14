@@ -122,12 +122,34 @@ namespace tomcat {
             Eigen::MatrixXd samples(distribution_indices.size(), sample_size);
             int i = 0;
             for (const auto& distribution_idx : distribution_indices) {
-                samples.row(i++) =
+                Eigen::VectorXd assignment =
                     this->distributions[distribution_idx]->sample(
-                        random_generator);
+                        random_generator, distribution_idx);
+                samples.row(i) = std::move(assignment);
+                i++;
             }
 
             return samples;
+        }
+
+        Eigen::VectorXd CPD::get_pdfs(std::shared_ptr<gsl_rng> random_generator,
+                                    const Node::NodeMap& parent_labels_to_nodes,
+                                    const Node& node) const {
+
+            std::vector<int> distribution_indices =
+                this->get_distribution_indices(parent_labels_to_nodes,
+                                               node.get_size());
+
+            Eigen::VectorXd pdfs(distribution_indices.size());
+            int i = 0;
+            for (const auto& distribution_idx : distribution_indices) {
+                std::shared_ptr<Distribution> distribution = this->distributions[distribution_idx];
+                double pdf = distribution->get_pdf(node.get_assignment().row(i), i);
+                pdfs(i) = pdf;
+                i++;
+            }
+
+            return pdfs;
         }
 
         std::vector<int> CPD::get_distribution_indices(

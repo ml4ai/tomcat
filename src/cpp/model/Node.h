@@ -75,7 +75,7 @@ namespace tomcat {
              *
              * @return Number of assigned values in the node.
              */
-            int get_size();
+            int get_size() const;
 
             //------------------------------------------------------------------
             // Pure virtual functions

@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 namespace tomcat {
     namespace model {
@@ -278,6 +279,7 @@ namespace tomcat {
             // information is stored to avoid unnecessary CPD updates when
             // unrolling a DBN.
             bool replicable_parameter_parent = false;
+
         };
 
     } // namespace model

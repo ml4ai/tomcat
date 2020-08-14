@@ -231,16 +231,16 @@ int main() {
         std::make_shared<DirichletCPD>(prior_theta_s2_cpd);
 
     RandomVariableNode prior_state_node(state_prior_metadata_ptr);
-    prior_state_node.add_cpd(prior_state_prior_cpd_ptr);
+    prior_state_node.add_cpd_template(prior_state_prior_cpd_ptr);
 
     RandomVariableNode theta_s0_node(theta_s0_metadata_ptr);
-    theta_s0_node.add_cpd(prior_theta_s0_cpd_ptr);
+    theta_s0_node.add_cpd_template(prior_theta_s0_cpd_ptr);
 
     RandomVariableNode theta_s1_node(theta_s1_metadata_ptr);
-    theta_s1_node.add_cpd(prior_theta_s1_cpd_ptr);
+    theta_s1_node.add_cpd_template(prior_theta_s1_cpd_ptr);
 
     RandomVariableNode theta_s2_node(theta_s2_metadata_ptr);
-    theta_s2_node.add_cpd(prior_theta_s2_cpd_ptr);
+    theta_s2_node.add_cpd_template(prior_theta_s2_cpd_ptr);
 
     std::shared_ptr<RandomVariableNode> prior_state_node_ptr =
         std::make_shared<RandomVariableNode>(prior_state_node);
@@ -278,8 +278,8 @@ int main() {
         std::make_shared<CategoricalCPD>(state_cpd);
 
     RandomVariableNode state_node(state_metadata_ptr);
-    state_node.add_cpd(prior_state_cpd_ptr);
-    state_node.add_cpd(state_cpd_ptr);
+    state_node.add_cpd_template(prior_state_cpd_ptr);
+    state_node.add_cpd_template(state_cpd_ptr);
 
     std::shared_ptr<RandomVariableNode> state_node_ptr =
         std::make_shared<RandomVariableNode>(state_node);
@@ -298,7 +298,7 @@ int main() {
     CategoricalCPD tg_cpd({state_metadata_ptr}, std::move(tg_emission_matrix));
 
     RandomVariableNode tg_node(std::make_shared<NodeMetadata>(tg_metadata));
-    tg_node.add_cpd(std::make_shared<CategoricalCPD>(tg_cpd));
+    tg_node.add_cpd_template(std::make_shared<CategoricalCPD>(tg_cpd));
 
     NodeMetadata ty_metadata = NodeMetadata::create_multiple_time_link_metadata(
         "TY", true, false, true, 1, 1, 2);
@@ -309,7 +309,7 @@ int main() {
     CategoricalCPD ty_cpd({state_metadata_ptr}, std::move(ty_emission_matrix));
 
     RandomVariableNode ty_node(std::make_shared<NodeMetadata>(ty_metadata));
-    ty_node.add_cpd(std::make_shared<CategoricalCPD>(ty_cpd));
+    ty_node.add_cpd_template(std::make_shared<CategoricalCPD>(ty_cpd));
 
     DynamicBayesNet dbn(3);
     dbn.add_node_template(state_node);
@@ -337,6 +337,7 @@ int main() {
     //    }
 
     std::shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+    //gsl_rng_set(gen.get(), time(0));
     dbn.unroll(10, true);
     // dbn.load_from_folder("../../data/model");
     AncestralSampler sampler(dbn, gen);
@@ -371,4 +372,9 @@ int main() {
     //    std::cout << "Writing into a file";
     //    file << "Teste Maior";
     //    file.close();
+
+
+    for(int i = 0; i < 6000000; i++){
+        std::cout << i << '\n';
+    }
 }

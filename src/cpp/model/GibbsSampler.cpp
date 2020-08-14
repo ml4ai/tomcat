@@ -48,166 +48,84 @@ namespace tomcat {
         // Member functions
         //----------------------------------------------------------------------
         void GibbsSampler::sample_latent(int num_samples) {
-            this->fill_initial_samples();
-
-//            std::vector<std::shared_ptr<RandomVariableNode>> in_plate_nodes;
-//            std::vector<std::shared_ptr<RandomVariableNode>> not_in_plate_nodes;
+//            // This needs to be repeated for num_samples + burn_in
+//            // Samples generated here need to be saved in a structure apart and at the end they can be placed as nodes assignments.
+//            // Remember to clear the unfrozen nodes assignments before starting
 //
-//            for (auto& node : this->model.get_nodes_topological_order()) {
-//                std::string node_label =
-//                    node->get_metadata()->get_label();
-//                exists(node_label, this->latent_node_labels) {
-//                    this->init_samples_tensor(node_label, num_samples);
+//            // We will proceed from the leaves to the root
+//            std::vector<std::shared_ptr<RandomVariableNode>> nodes;
+//            for (auto& node : this->model.get_nodes_topological_order(false)) {
+//                if (!node->is_frozen()) {
+//                    nodes.push_back(node);
 //                }
+//            }
 //
-//                if (node->get_metadata()->is_in_plate()) {
-//                    in_plate_nodes.push_back(node);
+//            this->fill_initial_samples();
+//            for (auto& node : nodes) {
+//                if (node->get_metadata()->is_parameter()) {
+//                    // As child nodes are processed, the sufficient statistic
+//                    // table of their dependent parent parameter nodes are
+//                    // updated accordingly. So at this point we already have all
+//                    // the information needed to sample the parameter from its
+//                    // posterior.
+//                    node.sample_from_posterior(random_generator);
 //                }
 //                else {
-//                    not_in_plate_nodes.push_back(node);
-//                }
-//            }
+//                    std::vector<std::shared_ptr<RandomVariableNode>>
+//                        child_nodes = this->model.get_child_nodes_of(*node);
 //
-//            int num_in_plate_copies =
-//                this->num_data_points == 0 ? 1 : this->num_data_points;
-//            for (int data_idx = 0; data_idx < num_in_plate_copies; data_idx++) {
-//                if (this->num_data_points > 1) {
-//                    // When the number of data points is greater than 0, it
-//                    // means data was provided for some in-plate nodes and,
-//                    // therefore, we have to sample in-plate latent nodes for
-//                    // each copy. As a node only comports one assigned value at
-//                    // a time, we need to assign the correct value to a node
-//                    // before proceeding.
-//                    for (auto& node : in_plate_nodes) {
-//                        std::string node_label =
-//                            node->get_metadata()->get_label();
-//                        if (exists(node_label, this->latent_node_labels)) {
-//                            int t = node->get_time_step();
-//                            Eigen::VectorXd assignment =
-//                                this->get_samples(node_label)(data_idx, t);
-//                            node->set_assignment(assignment);
-//                        }
-//                        else {
-//                            this->assign_data_to_node(node, data_idx);
+//                    Eigen::MatrixXd weights = Eigen::MatrixXd::Zero(
+//                        node->get_size(),
+//                        node->get_metadata()->get_cardinality());
+//                    for (auto& child_node : child_nodes) {
+//                        for (int i = 0;
+//                             i < node->get_metadata()->get_cardinality();
+//                             i++) {
+//                            node->set_assignment(Eigen::MatrixXd::Constant(
+//                                node->get_size(), 1, i));
+//                            Eigen::VectorXd pdfs = child_node->get_pdfs(
+//                                random_generator,
+//                                this->model.get_parent_nodes_of(*child_node,
+//                                                                true));
+//                            weights.col(i) = weights.col(i).array() +
+//                                             (pdfs.array() + EPSILON).log();
+//                            // Get pdf for parents given each one of the parents
+//                            // assignment
 //                        }
 //                    }
 //
-//                    for (auto& node : in_plate_nodes) {
-//                        std::string node_label =
-//                            node->get_metadata()->get_label();
-//                        if (exists(node_label, this->latent_node_labels)) {
-//                            Eigen::VectorXd assignment = node->sample_from_posterior();
-//                            node->set_assignment(assignment);
+//                    // Unlog the weights
+//                    weights = weights.array() - weights.maxCoeff();
+//                    weights = weights.array().exp() - EPSILON;
 //
-//                            int time_step = node->get_time_step();
-//                            int sample_size =
-//                                node->get_metadata()->get_sample_size();
-//                            for (int i = 0; i < sample_size; i++) {
-//                                double sampled_value = assignment(i);
-//                                this->node_label_to_samples.at(node_label)(
-//                                    i, data_idx, time_step) = sampled_value;
-//                            }
+//                    std::vector<std::shared_ptr<RandomVariableNode>>
+//                        parent_nodes =
+//                            this->model.get_parent_nodes_of(*node, true);
 //
-//                            // TODO:
-//                            // 1. For each parent node, include link of other parents and this cpd.
-//                            // 2. For each parameter node, update sufficient statistics
+//                    // Similar to the sample method. We'll iterate over each one
+//                    // of the weights and call the sample function with weight
+//                    // that already exist in the Distribution class
+//                    node->sample(random_generator,
+//                                 parent_nodes,
+//                                 node->get_size(),
+//                                 weights);
 //
-//                        }
-//                    }
+//                    // Get each one of the distributions given the parents'
+//                    // assignments and update the suff statistics of the node
+//                    // (and the node will do the same for the cpd) by setting
+//                    // the each one of the node's assignments to a counting
+//                    // table or list value in case of a gaussian.
+//                    // At this point do not worry about parameter that depend
+//                    // on another parameter.
+//                    node->update_parents_sufficient_statistics(parent_nodes);
 //                }
 //            }
-
-            // TODO -
-            //  1. For nodes that are not in plate, compute the posterior using
-            //  the sufficient statistics
-            //  2. Otherwise, populate data with samples for the node at each
-            //  data point
-            //  I am gonna use the samples matrix of in_plate nodes t=in the
-            //  computations instead of individual assignments. I can loop over
-            //  it assigning values to the parent nodes and sampling from the
-            //  node to get each row of the samples matrix for a node.
-
-            //            std::vector<std::shared_ptr<RandomVariableNode>>
-            //            nodes; for (auto& node :
-            //            this->model.get_nodes_topological_order()) {
-            //                if (!node->is_frozen()) {
-            //                    nodes.push_back(node);
-            //                }
-            //            }
-            //            this->check_data(num_samples);
-            //
-            //            for (int s = 0; s < num_samples; s++) {
-            //                for (auto& node : nodes) {
-            //                    std::string node_label =
-            //                    node->get_metadata()->get_label(); if
-            //                    (exists(node_label, this->latent_node_labels))
-            //                    {
-            //
-            //                        this->init_samples_tensor(node_label,
-            //                        num_samples);
-            //                        this->update_assignment_from_sample(node);
-            //
-            //                        int time_step = node->get_time_step();
-            //                        std::string label =
-            //                        node->get_metadata()->get_label(); int
-            //                        sample_size =
-            //                            node->get_metadata()->get_sample_size();
-            //                        for (int i = 0; i < sample_size; i++) {
-            //                            double sampled_value =
-            //                            node->get_assignment()(i);
-            //                            this->node_label_to_samples.at(label)(
-            //                                i, s, time_step) = sampled_value;
-            //                        }
-            //                    }
-            //                    else {
-            //                        this->assign_data_to_node(node, s);
-            //                    }
-            //                }
-            //            }
         }
 
         void GibbsSampler::fill_initial_samples() {
-//            AncestralSampler initial_sampler(this->model,
-//                                             this->random_generator);
-//            initial_sampler.sample(1)
-
-
-
-//            AncestralSampler initial_sampler(this->model,
-//                                             this->random_generator);
-//            for (auto& data : this->node_label_to_data) {
-//                std::string label = data.first;
-//                Tensor3 tensor = data.second;
-//                initial_sampler.add_data(std::move(label),
-//                                         std::move(data.second));
-//            }
-//
-//            // This is going to fill the nodes' assignments with sampled values.
-//            initial_sampler.sample(1);
-//
-//            // For in-plate nodes, we need to generate as many samples as the
-//            // number of data points. So we freeze non-in-plate nodes and
-//            // generate more samples for the in-plate nodes.
-//            std::vector<std::shared_ptr<RandomVariableNode>> nodes_to_unfreeze;
-//            for (auto& node : this->model.get_nodes()) {
-//                if (!node->get_metadata()->is_in_plate()) {
-//                    // A node can be previously frozen (in a pre-trained model,
-//                    // for instance) and we don't want to unfreeze it in this
-//                    // process.
-//                    if (!node->is_frozen()) {
-//                        node->freeze();
-//                        nodes_to_unfreeze.push_back(node);
-//                    }
-//                }
-//            }
-//
-//            // This will generate samples for all in-plate latent nodes given
-//            // data and previously sampled values for non-in-plate nodes.
-//            initial_sampler.sample(this->num_data_points);
-//
-//            for (auto& node : nodes_to_unfreeze) {
-//                node->unfreeze();
-//            }
+            AncestralSampler initial_sampler(this->model,
+                                             this->random_generator);
+            initial_sampler.sample(1);
         }
 
         //----------------------------------------------------------------------

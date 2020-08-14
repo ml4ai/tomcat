@@ -34,7 +34,7 @@ namespace tomcat {
             os << this->get_description();
         }
 
-        int Node::get_size() {
+        int Node::get_size() const {
             return this->assignment.rows();
         }
 

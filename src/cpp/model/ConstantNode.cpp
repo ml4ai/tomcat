@@ -14,19 +14,21 @@ namespace tomcat {
         // Constructors & Destructor
         //----------------------------------------------------------------------
         ConstantNode::ConstantNode(double value, std::string label) {
-            this->assignment = Eigen::VectorXd(1);
-            this->assignment(0) = value;
+            this->assignment = Eigen::MatrixXd(1, 1);
+            this->assignment(0,0) = value;
             this->create_default_metadata(label, 1);
         }
 
         ConstantNode::ConstantNode(const Eigen::VectorXd& values, std::string label) {
-            this->assignment = values;
-            this->create_default_metadata(label, this->assignment.size());
+            this->assignment = Eigen::MatrixXd(1, values.size());
+            this->assignment.row(0) = values;
+            this->create_default_metadata(label, values.size());
         }
 
         ConstantNode::ConstantNode(const Eigen::VectorXd&& values,
                                    std::string label) {
-            this->assignment = std::move(values);
+            this->assignment = Eigen::MatrixXd(1, values.size());
+            this->assignment.row(0) = std::move(values);
             this->create_default_metadata(label, this->assignment.size());
         }
 

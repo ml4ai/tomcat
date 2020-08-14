@@ -96,13 +96,6 @@ namespace tomcat {
             void check();
 
             /**
-             * Returns the list of nodes in the unrolled DBN
-             *
-             * @return List of timed nodes
-             */
-            std::vector<std::shared_ptr<RandomVariableNode>> get_nodes() const;
-
-            /**
              * Returns the list of timed instance nodes created from the
              * template with with a specific label.
              *
@@ -132,6 +125,14 @@ namespace tomcat {
                                 bool exclude_parameters) const;
 
             /**
+             * Returns timed instances of the children of a node
+             * @param node: timed instance of a node
+             * @return Time instances of a node's children.
+             */
+            std::vector<std::shared_ptr<RandomVariableNode>>
+            get_child_nodes_of(const RandomVariableNode& node) const;
+
+            /**
              * Saves model's parameter values in individual files inside a given
              * folder.
              *
@@ -154,6 +155,9 @@ namespace tomcat {
             // --------------------------------------------------------
             // Getters & Setters
             // --------------------------------------------------------
+            const std::vector<std::shared_ptr<RandomVariableNode>>
+            get_nodes() const;
+
             const std::vector<RandomVariableNode>& get_node_templates() const;
 
             int get_time_steps() const;
@@ -222,6 +226,12 @@ namespace tomcat {
                           int target_time_step);
 
             /**
+             * For each one of the nodes, define it's concrete CPD from the list
+             * of possible CPDs in its metadata.
+             */
+            void set_nodes_cpd();
+
+            /**
              * Replaces node objects in the CPDs that depend on other nodes with
              * their concrete timed instance replica in the unrolled DBN.
              */
@@ -232,6 +242,9 @@ namespace tomcat {
             //------------------------------------------------------------------
             Graph graph;
             IDMap name_to_id;
+
+            // List of concrete timed instances node of the unrolled DBN.
+            std::vector<std::shared_ptr<RandomVariableNode>> nodes;
 
             // Mapping between a timed instance parameter node's label and its
             // node object.

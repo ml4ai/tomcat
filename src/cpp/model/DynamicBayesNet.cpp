@@ -42,6 +42,7 @@ namespace tomcat {
                 this->time_steps = time_steps;
                 this->create_vertices_from_nodes();
                 this->create_edges();
+                this->set_nodes_cpd();
                 this->update_cpds();
 
                 for (auto edge = boost::edges(this->graph).first;
@@ -100,14 +101,6 @@ namespace tomcat {
             VertexData data;
             data.node = std::make_shared<RandomVariableNode>(node_template);
             data.node->set_time_step(time_step);
-            data.node->reset_cpds_updated_status();
-
-            if (data.node->get_metadata()->has_replicable_parameter_parent()) {
-                // If a node has parameter nodes that are replicable, its
-                // replicas do not share the same CPD's and therefore it cannot
-                // use the CPD pointer inherited from its template.
-                data.node->clone_cpds();
-            }
 
             // Save mapping between the vertice id and it's name.
             this->name_to_id[data.node->get_timed_name()] = vertex_id;
@@ -118,6 +111,8 @@ namespace tomcat {
             // Include node in the list of created nodes
             this->label_to_nodes[data.node->get_metadata()->get_label()]
                 .push_back(data.node);
+
+            this->nodes.push_back(data.node);
 
             return data;
         }
@@ -221,6 +216,33 @@ namespace tomcat {
             }
         }
 
+        void DynamicBayesNet::set_nodes_cpd() {
+            for (auto& node : this->nodes) {
+
+                std::vector<std::shared_ptr<RandomVariableNode>> parent_nodes =
+                    this->get_parent_nodes_of(*node, true);
+                std::vector<std::string> parent_labels;
+                parent_labels.reserve(parent_nodes.size());
+
+                for (const auto& parent_node : parent_nodes) {
+                    std::string label =
+                        parent_node->get_metadata()->get_label();
+                    parent_labels.push_back(label);
+                }
+
+                std::shared_ptr<CPD> cpd = node->get_cpd_for(parent_labels);
+                node->set_cpd(cpd);
+                node->reset_cpd_updated_status();
+
+                if (node->get_metadata()->has_replicable_parameter_parent()) {
+                    // If a node has parameter nodes that are replicable, its
+                    // replicas do not share the same CPD's and therefore it
+                    // cannot use the CPD pointer inherited from its template.
+                    node->clone_cpd();
+                }
+            }
+        }
+
         void DynamicBayesNet::update_cpds() {
             for (const auto& node_template : this->node_templates) {
                 const std::shared_ptr<NodeMetadata> metadata =
@@ -256,21 +278,6 @@ namespace tomcat {
         void DynamicBayesNet::check() {
             // TODO - Implement the verifications needed to make sure the DBN is
             //  valid and prepared to be unrolled.
-        }
-
-        std::vector<std::shared_ptr<RandomVariableNode>>
-        DynamicBayesNet::get_nodes() const {
-            std::vector<std::shared_ptr<RandomVariableNode>> nodes;
-            nodes.reserve(boost::num_vertices(this->graph));
-
-            Graph::vertex_iterator vertex_ptr, final_vertex_ptr;
-            boost::tie(vertex_ptr, final_vertex_ptr) =
-                boost::vertices(this->graph);
-            for (; vertex_ptr != final_vertex_ptr; vertex_ptr++) {
-                nodes.push_back(this->graph[*vertex_ptr].node);
-            }
-
-            return nodes;
         }
 
         std::vector<std::shared_ptr<RandomVariableNode>>
@@ -332,6 +339,24 @@ namespace tomcat {
             return parent_nodes;
         }
 
+        std::vector<std::shared_ptr<RandomVariableNode>>
+        DynamicBayesNet::get_child_nodes_of(
+            const RandomVariableNode& node) const {
+
+            int vertex_id = this->name_to_id.at(node.get_timed_name());
+            std::vector<std::shared_ptr<RandomVariableNode>> child_nodes;
+
+            Graph::out_edge_iterator in_begin, in_end;
+            boost::tie(in_begin, in_end) = out_edges(vertex_id, this->graph);
+            while (in_begin != in_end) {
+                int child_vertex_id = source(*in_begin, graph);
+                child_nodes.push_back(this->graph[child_vertex_id].node);
+                in_begin++;
+            }
+
+            return child_nodes;
+        }
+
         void DynamicBayesNet::save_to_folder(
             const std::string& output_folder) const {
 
@@ -366,6 +391,11 @@ namespace tomcat {
         //------------------------------------------------------------------
         // Getters & Setters
         //------------------------------------------------------------------
+        const std::vector<std::shared_ptr<RandomVariableNode>>
+        DynamicBayesNet::get_nodes() const {
+            return nodes;
+        }
+
         const std::vector<RandomVariableNode>&
         DynamicBayesNet::get_node_templates() const {
             return node_templates;

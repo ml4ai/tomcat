@@ -11,6 +11,7 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Definitions
         //----------------------------------------------------------------------
+
 #define exists(member, container) container.find(member) != container.end()
 
         //----------------------------------------------------------------------
@@ -42,12 +43,12 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void
-        RandomVariableNode::copy_node(const RandomVariableNode& node) {
+        void RandomVariableNode::copy_node(const RandomVariableNode& node) {
             this->metadata = node.metadata;
-            this->cpds = node.cpds;
             this->time_step = node.time_step;
             this->assignment = node.assignment;
+            this->cpd_templates = node.cpd_templates;
+            this->cpd = node.cpd;
         }
 
         std::string RandomVariableNode::get_description() const {
@@ -77,28 +78,97 @@ namespace tomcat {
                 std::make_unique<RandomVariableNode>(*this);
             new_node->metadata =
                 std::make_shared<NodeMetadata>(*this->metadata);
-            new_node->clone_cpds();
+            new_node->clone_cpd_templates();
+            new_node->clone_cpd();
             return new_node;
+        }
+
+        void RandomVariableNode::clone_cpd_templates() {
+            for(auto& mapping : this->cpd_templates){
+                mapping.second = mapping.second->clone();
+            }
+        }
+
+        void RandomVariableNode::clone_cpd() {
+            if (this->cpd != nullptr) {
+                this->cpd = this->cpd->clone();
+            }
         }
 
         std::string RandomVariableNode::get_timed_name() const {
             return this->metadata->get_timed_name(this->time_step);
         }
 
-        void RandomVariableNode::add_cpd(std::shared_ptr<CPD>& cpd) {
-            this->cpds[cpd->get_id()] = cpd;
+        void RandomVariableNode::reset_cpd_updated_status() {
+            this->cpd->reset_updated_status();
         }
 
-        void RandomVariableNode::add_cpd(std::shared_ptr<CPD>&& cpd) {
-            this->cpds[cpd->get_id()] = std::move(cpd);
+        void RandomVariableNode::update_cpd_dependencies(
+            NodeMap& parameter_nodes_map, int time_step) {
+            if (!this->cpd->is_updated()) {
+                this->cpd->update_dependencies(parameter_nodes_map, time_step);
+            }
+        }
+
+        Eigen::MatrixXd RandomVariableNode::sample(
+            std::shared_ptr<gsl_rng> random_generator,
+            const std::vector<std::shared_ptr<RandomVariableNode>>&
+                parent_nodes,
+            int num_samples) const {
+
+            // This mapping will make it easy to access the parent node's object
+            // by it's label
+            Node::NodeMap parent_labels_to_nodes;
+            for (const auto& parent_node : parent_nodes) {
+                std::string label = parent_node->get_metadata()->get_label();
+                // Moving the reference because there's no need to keep it in
+                // the parent_nodes vector beyond this point
+                parent_labels_to_nodes[label] = std::move(parent_node);
+            }
+
+            return this->cpd->sample(
+                random_generator, parent_labels_to_nodes, num_samples);
+        }
+
+        Eigen::VectorXd RandomVariableNode::get_pdfs(
+            std::shared_ptr<gsl_rng> random_generator,
+            const std::vector<std::shared_ptr<RandomVariableNode>>&
+            parent_nodes) const {
+
+            // This mapping will make it easy to access the parent node's object
+            // by it's label
+            Node::NodeMap parent_labels_to_nodes;
+            for (const auto& parent_node : parent_nodes) {
+                std::string label = parent_node->get_metadata()->get_label();
+                // Moving the reference because there's no need to keep it in
+                // the parent_nodes vector beyond this point
+                parent_labels_to_nodes[label] = std::move(parent_node);
+            }
+
+            return this->cpd->get_pdfs(
+                random_generator, parent_labels_to_nodes, *this);
+        }
+
+        void RandomVariableNode::freeze() { RandomVariableNode::frozen = true; }
+
+        void RandomVariableNode::unfreeze() {
+            RandomVariableNode::frozen = false;
+        }
+
+        void RandomVariableNode::add_cpd_template(std::shared_ptr<CPD>& cpd) {
+            this->cpd_templates[cpd->get_id()] = cpd;
+        }
+
+        void RandomVariableNode::add_cpd_template(std::shared_ptr<CPD>&& cpd) {
+            this->cpd_templates[cpd->get_id()] = std::move(cpd);
         }
 
         std::shared_ptr<CPD> RandomVariableNode::get_cpd_for(
             const std::vector<std::string>& parent_labels) const {
             std::string key = this->get_unique_key_from_labels(parent_labels);
             std::shared_ptr<CPD> cpd;
-            if (exists(key, this->cpds)) {
-                cpd = this->cpds.at(key);
+            if (exists(key, this->cpd_templates)) {
+                cpd = this->cpd_templates.at(key);
             }
             else {
                 throw std::invalid_argument(
@@ -118,60 +188,6 @@ namespace tomcat {
             return ss.str();
         }
 
-        void RandomVariableNode::reset_cpds_updated_status() {
-            for (const auto& mapping : this->cpds) {
-                mapping.second->reset_updated_status();
-            }
-        }
-
-        void RandomVariableNode::update_cpd_dependencies(
-            NodeMap& parameter_nodes_map, int time_step) {
-            for (const auto& mapping : cpds) {
-                if (!mapping.second->is_updated()) {
-                    mapping.second->update_dependencies(parameter_nodes_map,
-                                                        time_step);
-                }
-            }
-        }
-
-        void RandomVariableNode::clone_cpds() {
-            for (auto& mapping : this->cpds) {
-                mapping.second = mapping.second->clone();
-            }
-        }
-
-        Eigen::MatrixXd RandomVariableNode::sample(
-            std::shared_ptr<gsl_rng> random_generator,
-            const std::vector<std::shared_ptr<RandomVariableNode>>&
-                parent_nodes,
-            int num_samples) const {
-
-            std::vector<std::string> parent_labels;
-            parent_labels.reserve(parent_nodes.size());
-
-            // This mapping will make it easy to access the parent node's object
-            // by it's label
-            Node::NodeMap parent_labels_to_nodes;
-            for (const auto& parent_node : parent_nodes) {
-                std::string label = parent_node->get_metadata()->get_label();
-                parent_labels.push_back(label);
-                // Moving the reference because there's no need to keep it in
-                // the parent_nodes vector beyond this point
-                parent_labels_to_nodes[label] = std::move(parent_node);
-            }
-
-            std::shared_ptr<CPD> cpd = this->get_cpd_for(parent_labels);
-
-            return cpd->sample(
-                random_generator, parent_labels_to_nodes, num_samples);
-        }
-
-        void RandomVariableNode::freeze() { RandomVariableNode::frozen = true; }
-
-        void RandomVariableNode::unfreeze() {
-            RandomVariableNode::frozen = false;
-        }
-
         // ---------------------------------------------------------------------
         // Getters & Setters
         // ---------------------------------------------------------------------
@@ -188,6 +204,10 @@ namespace tomcat {
         }
 
         bool RandomVariableNode::is_frozen() const { return frozen; }
+
+        void RandomVariableNode::set_cpd(const std::shared_ptr<CPD>& cpd) {
+            this->cpd = cpd;
+        }
 
     } // namespace model
 } // namespace tomcat

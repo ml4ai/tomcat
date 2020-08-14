@@ -151,6 +151,21 @@ namespace tomcat {
                                    int num_samples) const;
 
             /**
+             * Returns pdfs for assignments of a given node from the distributions associated with its parent
+             * nodes' assignments.
+             *
+             * @param random_generator: random number random_generator
+             * @param parent_labels_to_nodes: mapping between a node's label and
+             * its concrete object representation in an unrolled DBN
+             * @param node: node containing the assignments to be used to compute the pdfs
+             *
+             * @return A sample from one of the distributions in the CPD.
+             */
+            Eigen::VectorXd get_pdfs(std::shared_ptr<gsl_rng> random_generator,
+                                   const Node::NodeMap& parent_labels_to_nodes,
+                                   const Node& node) const;
+
+            /**
              * Marks the CPD as not updated to force dependency update on a
              * subsequent call to the member function update_dependencies.
              */
