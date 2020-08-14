@@ -132,6 +132,12 @@ class EvidenceSet:
             self.number_of_data_points = 1
             self.time_slices = len(lt_evidence)
 
+    def cut(self, num_samples_to_keep):
+        self.lt_evidence = self.lt_evidence[0:num_samples_to_keep, :]
+        self.rm_evidence = self.rm_evidence[0:num_samples_to_keep, :]
+        self.tg_evidence = self.tg_evidence[0:num_samples_to_keep, :]
+        self.ty_evidence = self.ty_evidence[0:num_samples_to_keep, :]
+        self.number_of_data_points = num_samples_to_keep
 
 def convert_experiments_data_to_evidence_set(
     experiments_folder,

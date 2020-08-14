@@ -19,6 +19,7 @@ import matplotlib.pyplot as plt
 from hackathon.model_representation import CPDTables
 from enum import Enum
 
+
 def fit_and_evaluate(
         original_model, evidence_set, num_gibbs_samples, gibbs_burn_in, number_of_folds, horizons, model_root_folder
 ):
@@ -253,11 +254,13 @@ def compute_accuracy_for_triaging(
 def get_formatted_metric(metric):
     return '${:.2f} \\pm {:.4f}$'.format(np.mean(metric), np.std(metric) / len(metric))
 
+
 def format_rate(rate, error):
     if math.isnan(rate) or math.isnan(error):
         return '--'
     else:
         return '${}\\% \\pm {}\\%$'.format(int(rate), int(error))
+
 
 def get_formatted_rates(matrices_1, matrices_2):
     rates = (np.array(matrices_2) - np.array(matrices_1)) / np.array(matrices_1)
@@ -336,6 +339,7 @@ def print_results(tg_baseline_ll, ty_baseline_ll, tg_baseline_f1, ty_baseline_f1
         print(
             '& FP & {} & {} & {} & {} \\\\'.format(r1, r2, r3, r4))
         print('\\hline')
+
 
 def get_toy_model():
     theta_s = np.array([[0.2, 0.3, 0.5], [0.4, 0.1, 0.5], [0.7, 0.1, 0.2]])
@@ -416,11 +420,12 @@ def experiment_generate_synthetic_data(num_samples, gibbs_samples, gibbs_burn_in
     generate_asist_synthetic_data(model, MissionMap.SPARKY, num_samples, time_steps, gibbs_samples, gibbs_burn_in,
                                   even_until)
 
-    # print('>> Falcon')
-    # np.random.seed(42)
-    # random.seed(42)
-    # model = load_trained_asist_model(MissionMap.FALCON, gibbs_samples, gibbs_burn_in)
-    # generate_asist_synthetic_data(model, MissionMap.FALCON, num_samples, time_steps, gibbs_samples, gibbs_burn_in, even_until)
+    print('>> Falcon')
+    np.random.seed(42)
+    random.seed(42)
+    model = load_trained_asist_model(MissionMap.FALCON, gibbs_samples, gibbs_burn_in)
+    generate_asist_synthetic_data(model, MissionMap.FALCON, num_samples, time_steps, gibbs_samples, gibbs_burn_in,
+                                  even_until)
 
 
 def experiment_eval_performance_synthetic(num_samples, gibbs_samples, gibbs_burn_in, horizons):
@@ -604,9 +609,9 @@ def evaluate_transitions(data, first_room_index):
         DTY = 6
 
     transitions_per_mission = []
-    curr_state = States.HW
 
     for d in range(data.number_of_data_points):
+        curr_state = States.HW
         transitions = np.zeros((7, 7))
         for t in range(1, data.time_slices):
             if data.rm_evidence[d, t] >= first_room_index:
@@ -627,30 +632,54 @@ def evaluate_transitions(data, first_room_index):
             else:
                 new_state = States.HW
 
-            transitions[curr_state][new_state] += 1
-        transitions_per_mission.append(transitions/(data.time_slices-1))
+            transitions[curr_state.value][new_state.value] += 1
+            curr_state = new_state
 
-    for d, transitions in enumerate(transitions_per_mission):
-        print('Transition in Mission {}'.format(d))
-        print(transitions)
+        z = np.sum(transitions, 1)[:, np.newaxis]
+        transitions_per_mission.append(np.divide(transitions, z, out=np.zeros_like(transitions), where=z != 0))
+
+    transitions_per_mission = np.array(transitions_per_mission)
+
+    for i in range(7):
+        row = []
+        for j in range(7):
+            row.append(get_formatted_metric(transitions_per_mission[:, i, j]))
+        print(' & '.join(row))
+
+    # np.set_printoptions(formatter={'float': lambda x: "{0:0.2f}".format(x)})
+    # for d, transitions in enumerate(transitions_per_mission):
+    #     print('Transition in Mission {}'.format(d))
+    #     print(transitions)
+
 
 def experiment_transitions():
     print('**********************')
     print('EVALUATING TRANSITIONS')
     print('**********************')
 
-    print('>> Sparky')
+    print('>> Synthetic Sparky')
+    data = load_evidence_set("../data/evidence/asist/synthetic_sparky_0eu_100s_5000gs500gbi")
+    evaluate_transitions(data, 8)
+
+    print('\n>> Sparky')
     data = load_evidence_set("../data/evidence/asist/sparky")
     evaluate_transitions(data, 8)
 
-    print('>> Falcon')
+    print('\n>> Synthetic Falcon')
+    data = load_evidence_set("../data/evidence/asist/synthetic_falcon_0eu_100s_5000gs500gbi")
+    evaluate_transitions(data, 10)
+
+    print('\n>> Falcon')
     data = load_evidence_set("../data/evidence/asist/falcon")
     evaluate_transitions(data, 10)
+
 
 """
 Check to see what is the player behavior while inside a room in each one of the mission trials 
 """
-def evaluate_common_behavior(data, first_room_index):
+
+
+def evaluate_common_behavior(data, first_room_index, output_folder, filename):
     times_hallway = np.zeros(data.number_of_data_points)
     times_rw_light = np.zeros(data.number_of_data_points)
     times_tg_light = np.zeros(data.number_of_data_points)
@@ -679,31 +708,64 @@ def evaluate_common_behavior(data, first_room_index):
             else:
                 times_hallway[d] += 1
 
+    # Normalize
+    times_hallway /= data.time_slices
+    times_rw_light /= data.time_slices
+    times_rw_dark /= data.time_slices
+    times_tg_light /= data.time_slices
+    times_tg_dark /= data.time_slices
+    times_ty_light /= data.time_slices
+    times_ty_dark /= data.time_slices
+
+    # Plot
+    categories = list(range(7))
+    cat_names = ['HW', 'LRW', 'DRW', 'LTG', 'DTG', 'LTY', 'DTY']
+    cat_values = [np.mean(times_hallway), np.mean(times_rw_light), np.mean(times_rw_dark), np.mean(times_tg_light),
+                  np.mean(times_tg_dark), np.mean(times_ty_light), np.mean(times_ty_dark)]
+
+    fig, ax = plt.subplots()
+    ax.bar(categories, cat_values, tick_label=cat_names)
+    ax.set_title("States' Frequencies")
+    filepath = '{}/{}.png'.format(output_folder, filename)
+    plt.savefig(filepath)
+
+    print('Hallway:')
+    print(get_formatted_metric(times_hallway))
     print('RW in a light room:')
-    print(times_rw_light/data.time_slices)
+    print(get_formatted_metric(times_rw_light))
     print('RW in a dark room:')
-    print(times_rw_dark / data.time_slices)
+    print(get_formatted_metric(times_rw_dark))
     print('TG in a light room:')
-    print(times_tg_light / data.time_slices)
+    print(get_formatted_metric(times_tg_light))
     print('TG in a dark room:')
-    print(times_tg_dark / data.time_slices)
+    print(get_formatted_metric(times_tg_dark))
     print('TY in a light room:')
-    print(times_ty_light / data.time_slices)
+    print(get_formatted_metric(times_ty_light))
     print('TY in a dark room:')
-    print(times_ty_dark / data.time_slices)
+    print(get_formatted_metric(times_ty_dark))
+
 
 def experiment_common_behavior():
     print('**************************')
     print('EVALUATING COMMON BEHAVIOR')
     print('**************************')
 
-    print('>> Sparky')
-    data = load_evidence_set("../data/evidence/asist/sparky")
-    evaluate_common_behavior(data, 8)
+    print('>> Synthetic Sparky')
+    data = load_evidence_set("../data/evidence/asist/synthetic_sparky_0eu_100s_5000gs500gbi")
+    evaluate_common_behavior(data, 8, '../data/plots/asist/sparky', 'state_freq_synthetic_sparky_0eu_100s_5000gs500gbi')
 
-    print('>> Falcon')
+    print('\n>> Sparky')
+    data = load_evidence_set("../data/evidence/asist/sparky")
+    evaluate_common_behavior(data, 8, '../data/plots/asist/sparky', 'state_freq_sparky_0eu_6s_5000gs500gbi')
+
+    print('\n>> Synthetic Falcon')
+    data = load_evidence_set("../data/evidence/asist/synthetic_falcon_0eu_100s_5000gs500gbi")
+    evaluate_common_behavior(data, 10, '../data/plots/asist/falcon', 'state_freq_synthetic_falcon_0eu_100s_5000gs500gbi')
+
+    print('\n>> Falcon')
     data = load_evidence_set("../data/evidence/asist/falcon")
-    evaluate_common_behavior(data, 10)
+    evaluate_common_behavior(data, 10, '../data/plots/asist/falcon', 'state_freq_falcon_0eu_5s_5000gs500gbi')
+
 
 if __name__ == "__main__":
     NUM_SAMPLES = 100
@@ -711,10 +773,15 @@ if __name__ == "__main__":
     GIBBS_BURN_IN = 500
     HORIZONS = [1, 3, 5, 10, 15, 30]
 
-    #experiment_generate_synthetic_data(100, NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, 0)
-    # experiment_eval_performance_synthetic(NUM_SAMPLES, NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, HORIZONS)
-    experiment_eval_performance_real(NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, HORIZONS)
-    # experiment_check_with_toy_model()
-    # experiment_check_with_asist_model()
     experiment_common_behavior()
     experiment_transitions()
+    # experiment_generate_synthetic_data(100, NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, 0)
+    # experiment_eval_performance_synthetic(NUM_SAMPLES, NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, HORIZONS)
+    # experiment_eval_performance_real(NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, HORIZONS)
+    # experiment_check_with_toy_model()
+    # experiment_check_with_asist_model()
+
+    model = Model()
+    model.init_from_mission_map(MissionMap.SPARKY)
+    prior = model.get_theta_s_priors()
+    print('Stop')
