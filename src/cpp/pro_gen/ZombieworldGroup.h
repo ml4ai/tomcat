@@ -59,7 +59,7 @@ class ZombieworldGroup : public Group {
      * @param firstBottomRight The bottom right coordinate for the first AABB in
      * the group
      */
-    ZombieworldGroup(int id, Pos& firstTopLeft, Pos& firstBottomRight);
+    ZombieworldGroup(std::string id, Pos& firstTopLeft, Pos& firstBottomRight);
 
     /**
      * @brief Destroy the Zombieworld Group object

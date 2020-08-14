@@ -7,7 +7,7 @@
 using namespace std;
 using json = nlohmann::json;
 
-AABB::AABB(int id,
+AABB::AABB(string id,
            string type,
            string material,
            Pos& topLeft,
@@ -17,7 +17,7 @@ AABB::AABB(int id,
     : id{id}, type{type}, material{material}, topLeft{topLeft},
       bottomRight{bottomRight}, isHollow{isHollow}, hasRoof{hasRoof} {}
 
-int AABB::getID() { return this->id; }
+string AABB::getID() { return this->id; }
 
 string AABB::getMaterial() { return this->material; }
 
@@ -230,7 +230,7 @@ json AABB::toJSON() {
         object_list.push_back((*objectPtr).toJSON());
     }
 
-    aabb_json["bounds"] = {{"id", to_string(this->getID())},
+    aabb_json["bounds"] = {{"id", this->getID()},
                            {"type", "cuboid"},
                            {"coordinates", coordinates_list},
                            {"material", this->getMaterial()},

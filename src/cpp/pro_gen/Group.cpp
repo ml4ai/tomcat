@@ -3,7 +3,7 @@
 using namespace std;
 using json = nlohmann::json;
 
-Group::Group(int id)
+Group::Group(string id)
     : AABB(id, "group", "air", *(new Pos()), *(new Pos()), true, false) {}
 
 void Group::addAABB(AABB& aabb) {
@@ -19,9 +19,9 @@ void Group::generateAllDoorsInAABB() {
 
 vector<AABB*>& Group::getAABBList() { return this->aabbList; }
 
-AABB* Group::getAABB(int id) {
+AABB* Group::getAABB(string id) {
     for (auto& aabb : this->aabbList) {
-        if ((*aabb).getID() == id) {
+        if (strcmp((*aabb).getID().c_str(), id.c_str()) == 0) {
             return aabb;
         }
     }
@@ -103,7 +103,7 @@ json Group::toJSON() {
         aabb_list.push_back((*aabbPtr).toJSON());
     }
 
-    group_json["bounds"] = {{"id", to_string(this->getID())},
+    group_json["bounds"] = {{"id", this->getID()},
                            {"type", "cuboid"},
                            {"coordinates", coordinates_list},
                            {"material", this->getMaterial()},

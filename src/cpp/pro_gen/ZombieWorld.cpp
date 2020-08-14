@@ -15,18 +15,22 @@ void ZombieWorld::chooseZombieworldAABB(int idCtr,
 
         // Choose between an air, water or lava pit
         if (rand <= 25) {
-            this->addAABB(*(new ZombieworldPit(idCtr, topLeft, "air")));
+            this->addAABB(
+                *(new ZombieworldPit(to_string(idCtr), topLeft, "air")));
         }
 
         else if (rand > 25 && rand <= 75) {
-            this->addAABB(*(new ZombieworldPit(idCtr, newTopLeft, "water")));
+            this->addAABB(
+                *(new ZombieworldPit(to_string(idCtr), newTopLeft, "water")));
         }
         else {
-            this->addAABB(*(new ZombieworldPit(idCtr, newTopLeft, "lava")));
+            this->addAABB(
+                *(new ZombieworldPit(to_string(idCtr), newTopLeft, "lava")));
         }
     }
     else {
-        this->addAABB(*(new ZombieworldGroup(idCtr, topLeft, bottomRight)));
+        this->addAABB(
+            *(new ZombieworldGroup(to_string(idCtr), topLeft, bottomRight)));
     }
 }
 
@@ -38,7 +42,8 @@ void ZombieWorld::generateAABBGrid() {
     Pos prevTopLeft(1, 3, 1);
     Pos prevBottomRight(AABB_size, 3 + AABB_size / 2, AABB_size);
 
-    this->addAABB(*(new ZombieworldGroup(idCtr, prevTopLeft, prevBottomRight)));
+    this->addAABB(*(
+        new ZombieworldGroup(to_string(idCtr), prevTopLeft, prevBottomRight)));
 
     // Use relative coordinates for the "previous" AABB to generate the rest
     // at each step
@@ -116,7 +121,7 @@ void ZombieWorld::generateBoundingWalls() {
     separator1TopLeft.shiftZ(-50);
     separator1TopLeft.setY(boundaryTopLeft.getY());
 
-    this->addAABB(*(new AABB(-1,
+    this->addAABB(*(new AABB(to_string(-1),
                              "wall",
                              "cobblestone",
                              separator1TopLeft,
@@ -134,7 +139,7 @@ void ZombieWorld::generateBoundingWalls() {
     separator2TopLeft.shiftX(-25);
     separator2TopLeft.setY(boundaryTopLeft.getY());
 
-    this->addAABB(*(new AABB(-2,
+    this->addAABB(*(new AABB(to_string(-2),
                              "wall",
                              "cobblestone",
                              separator2TopLeft,

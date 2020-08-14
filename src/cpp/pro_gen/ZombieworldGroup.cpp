@@ -2,7 +2,7 @@
 
 using namespace std;
 
-ZombieworldGroup::ZombieworldGroup(int id,
+ZombieworldGroup::ZombieworldGroup(string id,
                                    Pos& firstTopLeft,
                                    Pos& firstBottomRight)
     : Group(id) {
@@ -18,7 +18,7 @@ void ZombieworldGroup::decorate(Pos& firstTopLeft, Pos& firstBottomRight) {
 }
 
 void ZombieworldGroup::addEntities() {
-    AABB* aabbTwo = this->getAABB(2);
+    AABB* aabbTwo = this->getAABB("2");
 
     if (aabbTwo != nullptr) {
 
@@ -27,7 +27,7 @@ void ZombieworldGroup::addEntities() {
         (*aabbTwo).addEntity(*(new Entity("villager", randomPos)));
     }
 
-    AABB* aabbOne = this->getAABB(1); // 1 sub AABB definitely exists
+    AABB* aabbOne = this->getAABB("1"); // 1 sub AABB definitely exists
     int sizeY = (*aabbOne).getSizeY() - 1;
     Pos randomPos = (*aabbOne).getRandomPos(this->gen, 1, 1, sizeY, 1, 1);
     (*aabbOne).addEntity(*(new Entity("zombie", randomPos)));
@@ -41,10 +41,11 @@ void ZombieworldGroup::addLights() {
 
 void ZombieworldGroup::createAABB(Pos& firstTopLeft, Pos& firstBottomRight) {
     this->addAABB(*(new AABB(
-        1, "room", "planks", firstTopLeft, firstBottomRight, true, true)));
+        "1", "room", "planks", firstTopLeft, firstBottomRight, true, true)));
 
-    int id = this->getID();
-    if (!(id == 1 || id == 7 || id == 9)) {
+    string id = this->getID();
+    if (!(strcmp(id.c_str(), "1") == 0 || strcmp(id.c_str(), "7") == 0 ||
+          strcmp(id.c_str(), "9") == 0)) {
 
         Pos secondTopLeft(firstTopLeft);
         secondTopLeft.shiftX(3);
@@ -54,7 +55,7 @@ void ZombieworldGroup::createAABB(Pos& firstTopLeft, Pos& firstBottomRight) {
         secondBottomRight.shiftX(3);
         secondBottomRight.shiftZ(9);
 
-        this->addAABB(*(new AABB(2,
+        this->addAABB(*(new AABB("2",
                                  "room",
                                  "planks",
                                  secondTopLeft,
@@ -65,7 +66,7 @@ void ZombieworldGroup::createAABB(Pos& firstTopLeft, Pos& firstBottomRight) {
 }
 
 void ZombieworldGroup::addLevers() {
-    AABB* aabbTwo = this->getAABB(2);
+    AABB* aabbTwo = this->getAABB("2");
 
     if (aabbTwo != nullptr) {
 

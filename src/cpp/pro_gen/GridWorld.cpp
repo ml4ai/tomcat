@@ -26,8 +26,13 @@ void GridWorld::generateAABBGrid() {
     Pos topLeft(1, 3, 1);
     Pos bottomRight(AABB_size, 3 + AABB_size, AABB_size);
 
-    this->addAABB(*(
-        new AABB(idCtr, "room", material, topLeft, bottomRight, true, false)));
+    this->addAABB(*(new AABB(to_string(idCtr),
+                             "room",
+                             material,
+                             topLeft,
+                             bottomRight,
+                             true,
+                             false)));
     AABB prevAABB = *(this->getAABBList().back());
 
     // Use relative coordinates for the "previous" AABB to generate the rest at
@@ -43,7 +48,7 @@ void GridWorld::generateAABBGrid() {
 
             Pos newBottomRight(
                 AABB_size, 3 + AABB_size, newTopLeft.getZ() + AABB_size);
-            this->addAABB(*(new AABB(idCtr,
+            this->addAABB(*(new AABB(to_string(idCtr),
                                      "room",
                                      material,
                                      newTopLeft,
@@ -60,7 +65,7 @@ void GridWorld::generateAABBGrid() {
             Pos newBottomRight = prevAABB.getBottomRight();
             newBottomRight.setX(newTopLeft.getX() + AABB_size);
 
-            this->addAABB(*(new AABB(idCtr,
+            this->addAABB(*(new AABB(to_string(idCtr),
                                      "room",
                                      material,
                                      newTopLeft,

@@ -17,7 +17,7 @@
 class AABB {
 
   protected:
-    int id;
+    std::string id;
     std::string material;
     std::string type;
     Pos topLeft;
@@ -34,7 +34,7 @@ class AABB {
      *
      * @return int The id
      */
-    int getID();
+    std::string getID();
 
     /**
      * @brief Get the AABB's material
@@ -310,7 +310,7 @@ class AABB {
      * @param hasRoof specify wether the AABB should have a roof or not.
      * Defaults to false.
      */
-    AABB(int id,
+    AABB(std::string id,
          std::string type,
          std::string material,
          Pos& topLeft,

@@ -1,7 +1,7 @@
 #include "ZombieworldPit.h"
 using namespace std;
 
-ZombieworldPit::ZombieworldPit(int id, Pos& topLeft, string fluid)
+ZombieworldPit::ZombieworldPit(string id, Pos& topLeft, string fluid)
     : AABB(id, "pit", "grass", topLeft, topLeft, false, true) {
     this->fluid = fluid;
 

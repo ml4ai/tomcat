@@ -35,7 +35,7 @@ class Group : public AABB {
      * @param id The id of the AABB to find
      * @return AABB* Pointer to the relevant AABB or nullptr if it doesn't exist
      */
-    AABB* getAABB(int id);
+    AABB* getAABB(std::string id);
 
     /**
      * @brief Gets the JSON representation of the various
@@ -57,7 +57,7 @@ class Group : public AABB {
      *
      * @param id The id to give the Group object.
      */
-    Group(int id);
+    Group(std::string id);
 
     /**
      * @brief Destroy the Group object
