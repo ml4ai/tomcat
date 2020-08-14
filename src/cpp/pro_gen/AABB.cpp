@@ -3,7 +3,6 @@
  * @brief This file implements the methods in the AABB class.
  */
 #include "AABB.h"
-#include <iostream>
 using namespace std;
 using json = nlohmann::json;
 
