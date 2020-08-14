@@ -363,8 +363,9 @@ public class ForgeEventHandler {
 
     /** Command event handler
      * 
-     *  Currently, just handles turning dev mode on/off; all commands are
-     *  enabled in dev mode and all are disabled out of dev mode.
+     *  Currently, just handles turning dev mode on/off and bus publishing; 
+     *  all commands are enabled in dev mode and all are disabled out of dev mode 
+     *  excluding those whitelisted for command block function.
      */
     @SubscribeEvent
     public void handle(CommandEvent event) {
@@ -374,6 +375,8 @@ public class ForgeEventHandler {
                 if (event.isCancelable()) {
                     event.setCanceled(true);
                 }
+            } else {
+                this.mqttService.publish(new CommandExecuted(event), "observations/events/command_executed");
             }
         }
     }
