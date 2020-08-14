@@ -23,6 +23,7 @@ add_library(
   progen STATIC
   ${pro_gen_headers}
   Pos.cpp
+  Object.cpp
   AABB.cpp
   World.cpp
   Block.cpp

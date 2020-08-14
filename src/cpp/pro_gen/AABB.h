@@ -6,6 +6,7 @@
 
 #include "Block.h"
 #include "Entity.h"
+#include "Object.h"
 #include <random>
 #include <vector>
 
@@ -25,6 +26,7 @@ class AABB {
     bool hasRoof;
     std::vector<Block*> blockList;
     std::vector<Entity*> entityList;
+    std::vector<Object*> objectList;
 
   public:
     /**
@@ -77,6 +79,8 @@ class AABB {
      * @return The reference to the entity list
      */
     std::vector<Entity*>& getEntityList();
+
+    std::vector<Object*>& getObjectList();
 
     /**
      * @brief Get the midpoint X value calculated between
@@ -197,6 +201,8 @@ class AABB {
      * @param entity Entity to be added
      */
     void addEntity(Entity& entity);
+
+    void addObject(Object& object);
 
     /**
      * @brief Checks to see if two AABBs overlapp on any of the axes

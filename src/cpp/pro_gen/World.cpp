@@ -24,11 +24,15 @@ vector<Block*>& World::getBlockList() { return (this->blockList); }
 
 vector<Entity*>& World::getEntityList() { return this->entityList; }
 
+vector<Object*>& World::getObjectList() { return this->objectList; }
+
 void World::addAABB(AABB& aabb) { (this->aabbList).push_back(&aabb); }
 
 void World::addBlock(Block& block) { (this->blockList).push_back(&block); }
 
 void World::addEntity(Entity& entity) { this->entityList.push_back(&entity); }
+
+void World::addObject(Object& object){this->objectList.push_back(&object);}
 
 string World::toTSV() {
     string retval = "";
@@ -67,8 +71,14 @@ string World::toJSON() {
         entity_list.push_back((*entityPtr).toJSON());
     }
 
+    vector<json> object_list;
+    for (auto& objectPtr : this->getObjectList()) {
+        object_list.push_back((*objectPtr).toJSON());
+    }
+
     world_json["locations"]= location_list;
     world_json["entity_list"] = entity_list;
+    //world_json["object_list"] = object_list;
 
     return world_json.dump(4);
 }
