@@ -232,11 +232,22 @@ namespace tomcat {
             virtual void
             add_to_sufficient_statistics(const Eigen::VectorXd& sample) = 0;
 
-            // TODO - Implement this
-//            virtual Eigen::MatrixXd
-//            sample_from_posterior(std::shared_ptr<gsl_rng> random_generator,
-//                                  const std::vector<std::shared_ptr<Node>>& parent_nodes,
-//                                  int num_samples) const = 0;
+            /**
+             * Samples using conjugacy properties and sufficient statistics
+             * stored in the CPD.
+             *
+             * @param random_generator: random number generator
+             * @return
+             */
+            virtual Eigen::MatrixXd sample_from_conjugacy(
+                std::shared_ptr<gsl_rng> random_generator,
+                const std::vector<std::shared_ptr<Node>>& parent_nodes,
+                int num_samples) const = 0;
+
+            /**
+             * Clear the values stored as sufficient statistics;
+             */
+            virtual void reset_sufficient_statistics() = 0;
 
             //------------------------------------------------------------------
             // Getters & Setters
@@ -256,6 +267,26 @@ namespace tomcat {
              * @param cpd: CPD
              */
             void copy_cpd(const CPD& cpd);
+
+            /**
+             * Returns the index of the distribution (row in the table) given
+             * parents' assignments.
+             *
+             * A CPD is comprised of a table where each row represents a certain
+             * distribution. The number of rows is given by the size of the
+             * cartesian product of parent nodes' cardinalities, and each row
+             * represents a combination of the values these parent nodes can
+             * assume.
+             *
+             * @param parent_labels_to_nodes: mapping between parent node's
+             * labels and node objects.
+             * @param num_samples: number of samples to generate. If the parent
+             * nodes have multiple assignments, each sample will use one of them
+             * to determine the distribution which it's sampled from.
+             */
+            std::vector<int> get_distribution_indices(
+                const std::vector<std::shared_ptr<Node>>& parent_nodes,
+                int num_samples) const;
 
             //------------------------------------------------------------------
             // Pure virtual functions
@@ -312,26 +343,6 @@ namespace tomcat {
              * table given parent node's assignments.
              */
             void fill_indexing_mapping();
-
-            /**
-             * Returns the index of the distribution (row in the table) given
-             * parents' assignments.
-             *
-             * A CPD is comprised of a table where each row represents a certain
-             * distribution. The number of rows is given by the size of the
-             * cartesian product of parent nodes' cardinalities, and each row
-             * represents a combination of the values these parent nodes can
-             * assume.
-             *
-             * @param parent_labels_to_nodes: mapping between parent node's
-             * labels and node objects.
-             * @param num_samples: number of samples to generate. If the parent
-             * nodes have multiple assignments, each sample will use one of them
-             * to determine the distribution which it's sampled from.
-             */
-            std::vector<int> get_distribution_indices(
-                const std::vector<std::shared_ptr<Node>>& parent_nodes,
-                int num_samples) const;
 
             /**
              * Indexes a list of random variable nodes by their label.

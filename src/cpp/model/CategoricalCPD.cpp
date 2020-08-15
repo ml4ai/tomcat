@@ -107,5 +107,17 @@ namespace tomcat {
                 "No conjugate prior with a categorical distribution.");
         }
 
+        Eigen::MatrixXd CategoricalCPD::sample_from_conjugacy(
+            std::shared_ptr<gsl_rng> random_generator,
+            const std::vector<std::shared_ptr<Node>>& parent_nodes,
+            int num_samples) const {
+            throw std::invalid_argument(
+                "No conjugate prior with a categorical distribution.");
+        }
+
+        void CategoricalCPD::reset_sufficient_statistics() {
+            // Nothing to reset
+        }
+
     } // namespace model
 } // namespace tomcat

@@ -50,10 +50,12 @@ namespace tomcat {
         //----------------------------------------------------------------------
         DirichletCPD::DirichletCPD(const DirichletCPD& cpd) {
             this->copy_cpd(cpd);
+            this->sufficient_statistics = cpd.sufficient_statistics;
         }
 
         DirichletCPD& DirichletCPD::operator=(const DirichletCPD& cpd) {
             this->copy_cpd(cpd);
+            this->sufficient_statistics = cpd.sufficient_statistics;
             return *this;
         }
 
@@ -68,6 +70,7 @@ namespace tomcat {
                 this->distributions.push_back(distribution);
                 sample_size = distribution->get_sample_size();
             }
+            this->sufficient_statistics = Eigen::VectorXd::Zero(sample_size);
             this->sufficient_statistics = Eigen::VectorXd(sample_size);
         }
 
@@ -77,13 +80,14 @@ namespace tomcat {
                     std::make_shared<Dirichlet>(Dirichlet(matrix.row(i)));
                 this->distributions.push_back(distribution_ptr);
             }
-            this->sufficient_statistics = Eigen::VectorXd(matrix.cols());
+            this->sufficient_statistics = Eigen::VectorXd::Zero(matrix.cols());
         }
 
         std::unique_ptr<CPD> DirichletCPD::clone() const {
             std::unique_ptr<DirichletCPD> new_cpd =
                 std::make_unique<DirichletCPD>(*this);
             new_cpd->clone_distributions();
+            new_cpd->sufficient_statistics = this->sufficient_statistics;
             return new_cpd;
         }
 
@@ -109,6 +113,35 @@ namespace tomcat {
         void DirichletCPD::add_to_sufficient_statistics(
             const Eigen::VectorXd& sample) {
             this->sufficient_statistics(sample(0)) += 1;
+        }
+
+        Eigen::MatrixXd DirichletCPD::sample_from_conjugacy(
+            std::shared_ptr<gsl_rng> random_generator,
+            const std::vector<std::shared_ptr<Node>>& parent_nodes,
+            int num_samples) const {
+
+            std::vector<int> distribution_indices =
+                this->get_distribution_indices(parent_nodes, num_samples);
+
+            int sample_size = this->distributions[0]->get_sample_size();
+
+            Eigen::MatrixXd samples(distribution_indices.size(), sample_size);
+            int i = 0;
+            for (const auto& distribution_idx : distribution_indices) {
+                Eigen::VectorXd assignment =
+                    this->distributions[distribution_idx]
+                        ->sample_from_conjugacy(random_generator,
+                                                distribution_idx,
+                                                this->sufficient_statistics);
+                samples.row(i) = std::move(assignment);
+                i++;
+            }
+
+            return samples;
+        }
+
+        void DirichletCPD::reset_sufficient_statistics() {
+            this->sufficient_statistics = Eigen::VectorXd::Zero(this->sufficient_statistics.size());
         }
 
     } // namespace model

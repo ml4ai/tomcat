@@ -71,19 +71,23 @@ namespace tomcat {
             void add_data(const std::string& node_label, Tensor3& data);
 
             /**
+             * Saves generated samples to files in a specific folder.
+             * @param output_folder: folder where the files should be saved.
+             */
+            void save_samples_to_folder(const std::string& output_folder) const;
+
+            //------------------------------------------------------------------
+            // Virtual functions
+            //------------------------------------------------------------------
+
+            /**
              * Returns samples generated for a specific latent node.
              *
              * @param node_label: latent node label
              * @return Samples over time. A matrix of dimension (num_samples,
              * time_steps).
              */
-            Tensor3 get_samples(const std::string& node_label) const;
-
-            /**
-             * Saves generated samples to files in a specific folder.
-             * @param output_folder: folder where the files should be saved.
-             */
-            void save_samples_to_folder(const std::string& output_folder) const;
+            virtual Tensor3 get_samples(const std::string& node_label) const;
 
             //------------------------------------------------------------------
             // Pure virtual functions
@@ -98,6 +102,11 @@ namespace tomcat {
              */
             virtual void sample_latent(int num_samples) = 0;
 
+            // -----------------------------------------------------------------
+            // Getters & Setters
+            // -----------------------------------------------------------------
+            void set_num_in_plate_samples(int num_in_plate_samples);
+
           protected:
             //------------------------------------------------------------------
             // Data members
@@ -109,10 +118,10 @@ namespace tomcat {
             // the derived classes).
             std::unordered_set<std::string> sampled_node_labels;
 
-            // If provided for some node, the number of data points. It's a
-            // single variable because it must be the same for all observable
-            // nodes.
-            int num_data_points = 0;
+            // The number of samples generated for in-plate nodes. If data is
+            // provided for some node, the number of data points has to be the
+            // same as the number of in-plate samples.
+            int num_in_plate_samples = 0;
 
           private:
             //------------------------------------------------------------------

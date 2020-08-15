@@ -235,7 +235,7 @@ namespace tomcat {
              * Replaces node objects in the CPDs that depend on other nodes with
              * their concrete timed instance replica in the unrolled DBN.
              */
-            void update_cpds();
+            void update_cpd_templates_dependencies();
 
             //------------------------------------------------------------------
             // Data members

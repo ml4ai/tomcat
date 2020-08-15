@@ -42,8 +42,8 @@ namespace tomcat {
                 this->time_steps = time_steps;
                 this->create_vertices_from_nodes();
                 this->create_edges();
+                this->update_cpd_templates_dependencies();
                 this->set_nodes_cpd();
-                this->update_cpds();
 
                 for (auto edge = boost::edges(this->graph).first;
                      edge != boost::edges(this->graph).second;
@@ -101,6 +101,13 @@ namespace tomcat {
             VertexData data;
             data.node = std::make_shared<RandomVariableNode>(node_template);
             data.node->set_time_step(time_step);
+
+            if (data.node->get_metadata()->has_replicable_parameter_parent()) {
+                // If a node has parameter nodes that are replicable, its
+                // replicas do not share the same CPD's and therefore it cannot
+                // use the CPD pointer inherited from its template.
+                data.node->clone_cpd_templates();
+            }
 
             // Save mapping between the vertice id and it's name.
             this->name_to_id[data.node->get_timed_name()] = vertex_id;
@@ -234,18 +241,10 @@ namespace tomcat {
                 std::shared_ptr<CPD> cpd = rv_node->get_cpd_for(parent_labels);
                 rv_node->set_cpd(cpd);
                 rv_node->reset_cpd_updated_status();
-
-                if (rv_node->get_metadata()
-                        ->has_replicable_parameter_parent()) {
-                    // If a node has parameter nodes that are replicable, its
-                    // replicas do not share the same CPD's and therefore it
-                    // cannot use the CPD pointer inherited from its template.
-                    rv_node->clone_cpd();
-                }
             }
         }
 
-        void DynamicBayesNet::update_cpds() {
+        void DynamicBayesNet::update_cpd_templates_dependencies() {
             for (const auto& node_template : this->node_templates) {
                 const std::shared_ptr<NodeMetadata> metadata =
                     node_template.get_metadata();
@@ -260,7 +259,7 @@ namespace tomcat {
                                 node_template.get_metadata()->get_timed_name(
                                     t));
                             VertexData vertex_data = this->graph[vertex_id];
-                            vertex_data.node->update_cpd_dependencies(
+                            vertex_data.node->update_cpd_templates_dependencies(
                                 this->parameter_nodes_map, t);
                         }
                     }
@@ -270,7 +269,7 @@ namespace tomcat {
                         int vertex_id = this->name_to_id.at(
                             node_template.get_metadata()->get_timed_name(t));
                         VertexData vertex_data = this->graph[vertex_id];
-                        vertex_data.node->update_cpd_dependencies(
+                        vertex_data.node->update_cpd_templates_dependencies(
                             this->parameter_nodes_map, t);
                     }
                 }
@@ -346,12 +345,12 @@ namespace tomcat {
             int vertex_id = this->name_to_id.at(node->get_timed_name());
             std::vector<std::shared_ptr<Node>> child_nodes;
 
-            Graph::out_edge_iterator in_begin, in_end;
-            boost::tie(in_begin, in_end) = out_edges(vertex_id, this->graph);
-            while (in_begin != in_end) {
-                int child_vertex_id = source(*in_begin, graph);
+            Graph::out_edge_iterator out_begin, out_end;
+            boost::tie(out_begin, out_end) = out_edges(vertex_id, this->graph);
+            while (out_begin != out_end) {
+                int child_vertex_id = target(*out_begin, graph);
                 child_nodes.push_back(this->graph[child_vertex_id].node);
-                in_begin++;
+                out_begin++;
             }
 
             return child_nodes;

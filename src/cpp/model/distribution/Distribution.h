@@ -113,6 +113,26 @@ namespace tomcat {
                    const Eigen::VectorXd& weights) const = 0;
 
             /**
+             * Draws a sample from a posterior computed by conjugacy using
+             * sufficient statistics.
+             *
+             * @param random_generator: random number random_generator
+             * @param parameter_idx: the index of the parameter assignment
+             * to use in case the distribution depend on parameter nodes with
+             * multiple assignments. If the parameter has single assignment,
+             * that is the one being used regardless of the value informed in
+             * this argument.
+             * @param sufficient_statistics: sufficient statistics needed to
+             * come up with a posterior for the distribution
+             *
+             * @return A sample from the posterior distribution
+             */
+            virtual Eigen::VectorXd sample_from_conjugacy(
+                std::shared_ptr<gsl_rng> random_generator,
+                int parameter_idx,
+                const Eigen::VectorXd& sufficient_statistics) const = 0;
+
+            /**
              * Returns the PDF/PMFs for a given value.
              *
              * @param value: possible sample from the distribution

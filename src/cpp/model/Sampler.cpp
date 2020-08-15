@@ -35,13 +35,7 @@ namespace tomcat {
         }
 
         void Sampler::add_data(const std::string& node_label, Tensor3& data) {
-            // If data has been previously assigned for some node, all the
-            // subsequent data assignments must have the same number of data
-            // points.
-            if (this->num_data_points == 0 ||
-                data.get_shape()[2] == this->num_data_points) {
-                this->num_data_points = data.get_shape()[1];
-
+            if (data.get_shape()[1] == this->num_in_plate_samples) {
                 for (auto& node : this->model.get_nodes_by_label(node_label)) {
                     std::shared_ptr<RandomVariableNode> rv_node =
                         std::dynamic_pointer_cast<RandomVariableNode>(node);
@@ -53,8 +47,8 @@ namespace tomcat {
             }
             else {
                 throw std::invalid_argument(
-                    "The number of data points must be the same for all "
-                    "observable nodes.");
+                    "The number of data points must be equal to the number of "
+                    "samples of in-plate nodes defined for the sampler.");
             }
         }
 
@@ -114,6 +108,13 @@ namespace tomcat {
                         ->unfreeze();
                 }
             }
+        }
+
+        // ---------------------------------------------------------------------
+        // Getters & Setters
+        // ---------------------------------------------------------------------
+        void Sampler::set_num_in_plate_samples(int num_in_plate_samples) {
+            this->num_in_plate_samples = num_in_plate_samples;
         }
 
     } // namespace model

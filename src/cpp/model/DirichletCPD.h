@@ -124,6 +124,13 @@ namespace tomcat {
             void add_to_sufficient_statistics(
                 const Eigen::VectorXd& sample) override;
 
+            Eigen::MatrixXd sample_from_conjugacy(
+                std::shared_ptr<gsl_rng> random_generator,
+                const std::vector<std::shared_ptr<Node>>& parent_nodes,
+                int num_samples) const override;
+
+            void reset_sufficient_statistics() override;
+
           protected:
             //------------------------------------------------------------------
             // Member functions

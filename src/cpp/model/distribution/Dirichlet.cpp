@@ -92,6 +92,17 @@ namespace tomcat {
             return this->sample_from_gsl(random_generator, alpha);
         }
 
+        Eigen::VectorXd Dirichlet::sample_from_conjugacy(
+            std::shared_ptr<gsl_rng> random_generator,
+            int parameter_idx,
+            const Eigen::VectorXd& sufficient_statistics) const {
+
+            Eigen::VectorXd alpha = this->get_alpha(parameter_idx);
+            alpha = alpha + sufficient_statistics;
+
+            return this->sample_from_gsl(random_generator, alpha);
+        }
+
         double Dirichlet::get_pdf(const Eigen::VectorXd& value,
                                   int parameter_idx) const {
             Eigen::VectorXd alpha = this->get_alpha(parameter_idx);

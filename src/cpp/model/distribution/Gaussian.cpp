@@ -111,6 +111,14 @@ namespace tomcat {
             return this->sample_from_gsl(random_generator, mean, variance);
         }
 
+        Eigen::VectorXd Gaussian::sample_from_conjugacy(
+            std::shared_ptr<gsl_rng> random_generator,
+            int parameter_idx,
+            const Eigen::VectorXd& sufficient_statistics) const {
+            throw std::invalid_argument(
+                "Not implemented yet.");
+        }
+
         double Gaussian::get_pdf(const Eigen::VectorXd& value,
                                  int parameter_idx) const {
 

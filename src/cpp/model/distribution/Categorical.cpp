@@ -120,7 +120,7 @@ namespace tomcat {
             parameter_idx = probabilities.rows() == 1 ? 0 : parameter_idx;
 
             Eigen::VectorXd weighted_probabilities =
-                probabilities.row(parameter_idx).transpose() * weights;
+                probabilities.row(parameter_idx).transpose().array() * weights.array();
 
             // weighted_probs does not need to be normalized because GSL already
             // does that.
@@ -128,22 +128,20 @@ namespace tomcat {
                                          weighted_probabilities);
         }
 
+        Eigen::VectorXd Categorical::sample_from_conjugacy(
+            std::shared_ptr<gsl_rng> random_generator,
+            int parameter_idx,
+            const Eigen::VectorXd& sufficient_statistics) const {
+            throw std::invalid_argument(
+                "No conjugate prior with a categorical distribution.");
+        }
+
         double Categorical::get_pdf(const Eigen::VectorXd& value,
                                     int parameter_idx) const {
             Eigen::MatrixXd probabilities =
                 this->probabilities->get_assignment();
             parameter_idx = probabilities.rows() == 1 ? 0 : parameter_idx;
-            int k = probabilities.cols();
-
-            const double* probs_ptr = probabilities.row(parameter_idx).data();
-            unsigned int* value_ptr = new unsigned int[1];
-            value_ptr[0] = static_cast<unsigned int>(value(0));
-
-            double pdf = gsl_ran_multinomial_pdf(k, probs_ptr, value_ptr);
-
-            delete[] value_ptr;
-
-            return pdf;
+            return probabilities(parameter_idx, value(0));
         }
 
         std::unique_ptr<Distribution> Categorical::clone() const {

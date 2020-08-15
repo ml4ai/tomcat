@@ -19,6 +19,7 @@
 #include <memory>
 #include <unistd.h>
 #include <variant>
+#include "GibbsSampler.h"
 
 #include <boost/filesystem.hpp>
 namespace fs = boost::filesystem;
@@ -338,24 +339,44 @@ int main() {
 
     std::shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
     //gsl_rng_set(gen.get(), time(0));
-    dbn.unroll(10, true);
+    dbn.unroll(600, true);
     // dbn.load_from_folder("../../data/model");
-    AncestralSampler sampler(dbn, gen);
-    Tensor3 state_data = read_tensor_from_file("../../data/samples/State.txt");
-    sampler.add_data("State", state_data);
-    sampler.sample(5);
-    //    sampler.sample(5, 10);
+    Tensor3 tg_data = read_tensor_from_file("../../data/samples/TG.txt");
+    Tensor3 ty_data = read_tensor_from_file("../../data/samples/TY.txt");
+    GibbsSampler gibbs(dbn, gen, 10);
+    gibbs.set_num_in_plate_samples(tg_data.get_shape()[1]);
+    gibbs.add_data("TG", tg_data);
+    gibbs.add_data("TY", ty_data);
+    gibbs.sample(10);
 
-    std::cout << "States" << std::endl;
-    std::cout << sampler.get_samples("State") << std::endl;
-    std::cout << "TGs" << std::endl;
-    std::cout << sampler.get_samples("TG") << std::endl;
-    std::cout << "TYs" << std::endl;
-    std::cout << sampler.get_samples("TY") << std::endl;
+    std::cout << "ThetaS0" << std::endl;
+    std::cout << gibbs.get_samples("ThetaS0") << std::endl;
+
+    std::cout << "ThetaS1" << std::endl;
+    std::cout << gibbs.get_samples("ThetaS1") << std::endl;
+
+    std::cout << "ThetaS2" << std::endl;
+    std::cout << gibbs.get_samples("ThetaS2") << std::endl;
+
+//    AncestralSampler sampler(dbn, gen);
+//    Tensor3 state_data = read_tensor_from_file("../../data/samples/State.txt");
+//    sampler.set_num_in_plate_samples(state_data.get_shape()[1]);
+//    //sampler.add_data("State", state_data);
+//    sampler.sample(5);
+//    //    sampler.sample(5, 10);
+//
+//    std::cout << "States" << std::endl;
+//    std::cout << sampler.get_samples("State") << std::endl;
+//    std::cout << "TGs" << std::endl;
+//    std::cout << sampler.get_samples("TG") << std::endl;
+//    std::cout << "TYs" << std::endl;
+//    std::cout << sampler.get_samples("TY") << std::endl;
+
+
     //    std::cout << "PriorS" << std::endl;
     //    std::cout << sampler.get_samples("PriorS") << std::endl;
 
-    //    sampler.save_samples_to_folder("../../data/samples");
+    //sampler.save_samples_to_folder("../../data/samples");
     //    sampler.get_dbn().save_to_folder("../../data/model");
     //
     //    char buff[FILENAME_MAX]; // create string buffer to hold path

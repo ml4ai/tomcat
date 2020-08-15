@@ -103,10 +103,13 @@ namespace tomcat {
             this->cpd->reset_updated_status();
         }
 
-        void RandomVariableNode::update_cpd_dependencies(
+        void RandomVariableNode::update_cpd_templates_dependencies(
             NodeMap& parameter_nodes_map, int time_step) {
-            if (!this->cpd->is_updated()) {
-                this->cpd->update_dependencies(parameter_nodes_map, time_step);
+            for(auto& mapping : this->cpd_templates) {
+                if (!mapping.second->is_updated()) {
+                    mapping.second->update_dependencies(parameter_nodes_map,
+                                                   time_step);
+                }
             }
         }
 
@@ -129,6 +132,14 @@ namespace tomcat {
                 random_generator, parent_nodes, num_samples, weights);
         }
 
+        Eigen::MatrixXd RandomVariableNode::sample_from_conjugacy(
+            std::shared_ptr<gsl_rng> random_generator,
+            const std::vector<std::shared_ptr<Node>>& parent_nodes,
+            int num_samples) const {
+            return this->cpd->sample_from_conjugacy(
+                random_generator, parent_nodes, num_samples);
+        }
+
         Eigen::VectorXd RandomVariableNode::get_pdfs(
             std::shared_ptr<gsl_rng> random_generator,
             const std::vector<std::shared_ptr<Node>>& parent_nodes) const {
@@ -139,11 +150,17 @@ namespace tomcat {
         void RandomVariableNode::update_parents_sufficient_statistics(
             const std::vector<std::shared_ptr<Node>>& parent_nodes) {
 
-            this->cpd->update_sufficient_statistics(parent_nodes, this->assignment);
+            this->cpd->update_sufficient_statistics(parent_nodes,
+                                                    this->assignment);
         }
 
-        void RandomVariableNode::add_to_sufficient_statistics(const Eigen::VectorXd& sample) {
+        void RandomVariableNode::add_to_sufficient_statistics(
+            const Eigen::VectorXd& sample) {
             this->cpd->add_to_sufficient_statistics(sample);
+        }
+
+        void RandomVariableNode::reset_sufficient_statistics() {
+            this->cpd->reset_sufficient_statistics();
         }
 
         void RandomVariableNode::freeze() { RandomVariableNode::frozen = true; }

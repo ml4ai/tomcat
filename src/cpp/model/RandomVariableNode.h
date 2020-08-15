@@ -81,8 +81,8 @@ namespace tomcat {
             void reset_cpd_updated_status();
 
             /**
-             * Replaces parameter nodes in node dependent CPDs by a concrete
-             * timed-instance node in the unrolled DBN.
+             * Replaces parameter nodes in node dependent CPD templates by a
+             * concrete timed-instance node in the unrolled DBN.
              *
              * @param parameter_nodes_map: mapping between a parameter node
              * timed name and its object in an unrolled DBN
@@ -91,13 +91,13 @@ namespace tomcat {
              * parameter node if the latter is shared among nodes over several
              * time steps.
              */
-            void update_cpd_dependencies(NodeMap& parameter_nodes_map,
-                                         int time_step);
+            void update_cpd_templates_dependencies(NodeMap& parameter_nodes_map,
+                                                   int time_step);
 
             /**
-             * Create new reference for the CPD of the node.
+             * Create new references for the CPD templates of the node.
              */
-            void clone_cpd();
+            void clone_cpd_templates();
 
             /**
              * Generate samples from this node's CPD given its parents
@@ -136,6 +136,18 @@ namespace tomcat {
                    Eigen::MatrixXd weights) const;
 
             /**
+             * Samples a node using conjugacy properties and sufficient
+             * statistics stored in the node's CPD.
+             *
+             * @param random_generator: random number generator
+             * @return
+             */
+            Eigen::MatrixXd sample_from_conjugacy(
+                std::shared_ptr<gsl_rng> random_generator,
+                const std::vector<std::shared_ptr<Node>>& parent_nodes,
+                int num_samples) const;
+
+            /**
              * Get pdfs for the node's assignments given its parents'
              * assignments.
              *
@@ -166,6 +178,12 @@ namespace tomcat {
              * parameter nodes at some point.
              */
             void add_to_sufficient_statistics(const Eigen::VectorXd& sample);
+
+            /**
+             * Clear the values stored as sufficient statistics in the node's
+             * CPD.
+             */
+            void reset_sufficient_statistics();
 
             /**
              * Prevents node's assignment to be changed.
@@ -220,9 +238,9 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
-             * Create new references for the CPD templates of the node.
+             * Create new reference for the CPD of the node.
              */
-            void clone_cpd_templates();
+            void clone_cpd();
 
             /**
              * Copies data members of a random variable node.

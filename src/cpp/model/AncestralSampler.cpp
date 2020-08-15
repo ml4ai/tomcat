@@ -49,9 +49,9 @@ namespace tomcat {
                 const std::vector<std::shared_ptr<Node>>& parent_nodes =
                     this->model.get_parent_nodes_of(node, true);
                 if (node->get_metadata()->is_in_plate()) {
-                    num_samples = this->num_data_points == 0
+                    num_samples = this->num_in_plate_samples == 0
                                       ? num_samples
-                                      : this->num_data_points;
+                                      : this->num_in_plate_samples;
                 }
 
                 std::shared_ptr<RandomVariableNode> rv_node =

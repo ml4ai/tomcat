@@ -105,7 +105,20 @@ namespace tomcat {
         void GaussianCPD::add_to_sufficient_statistics(
             const Eigen::VectorXd& sample) {
             throw std::invalid_argument(
-                "No conjugate prior with a Gaussian distribution.");
+                "Not implemented yet.");
+        }
+
+        Eigen::MatrixXd GaussianCPD::sample_from_conjugacy(
+            std::shared_ptr<gsl_rng> random_generator,
+            const std::vector<std::shared_ptr<Node>>& parent_nodes,
+            int num_samples) const {
+            throw std::invalid_argument(
+                "Not implemented yet.");
+        }
+
+        void GaussianCPD::reset_sufficient_statistics() {
+            throw std::invalid_argument(
+                "Not implemented yet.");
         }
 
     } // namespace model
