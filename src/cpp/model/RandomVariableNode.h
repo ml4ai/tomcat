@@ -108,13 +108,32 @@ namespace tomcat {
              * @param random_generator: random number generator
              * @param parent_nodes: list of parent nodes' timed instances
              * @param num_samples: number of samples to generate
+             *
              * @return Samples from the node's CPD.
              */
             Eigen::MatrixXd
             sample(std::shared_ptr<gsl_rng> random_generator,
-                   const std::vector<std::shared_ptr<RandomVariableNode>>&
-                       parent_nodes,
+                   const std::vector<std::shared_ptr<Node>>& parent_nodes,
                    int num_samples) const;
+
+            /**
+             * Generate samples from this node's CPD scaled by some weights
+             * given its parents assignments. If the node belongs to a plate,
+             * multiple samples are generated: one for each in-plate copy.
+             * Otherwise a single sample is returned.
+             *
+             * @param random_generator: random number generator
+             * @param parent_nodes: list of parent nodes' timed instances
+             * @param num_samples: number of samples to generate
+             * @param weights: scale coefficients to the underlying distribution
+             *
+             * @return Samples from the node's CPD.
+             */
+            Eigen::MatrixXd
+            sample(std::shared_ptr<gsl_rng> random_generator,
+                   const std::vector<std::shared_ptr<Node>>& parent_nodes,
+                   int num_samples,
+                   Eigen::MatrixXd weights) const;
 
             /**
              * Get pdfs for the node's assignments given its parents'
@@ -122,12 +141,31 @@ namespace tomcat {
              *
              * @param random_generator: random number generator
              * @param parent_nodes: list of parent nodes' timed instances
+             *
              * @return Pdfs relative to the node's assignments.
              */
-            Eigen::VectorXd
-            get_pdfs(std::shared_ptr<gsl_rng> random_generator,
-                   const std::vector<std::shared_ptr<RandomVariableNode>>&
-                       parent_nodes) const;
+            Eigen::VectorXd get_pdfs(
+                std::shared_ptr<gsl_rng> random_generator,
+                const std::vector<std::shared_ptr<Node>>& parent_nodes) const;
+
+            /**
+             * Update sufficient statistics of parent parameter nodes with this
+             * node's assignment(s).
+             *
+             * @param parent_nodes: list of parent nodes' timed instances
+             */
+            void update_parents_sufficient_statistics(
+                const std::vector<std::shared_ptr<Node>>& parent_nodes);
+
+            /**
+             * Adds a value to the sufficient statistics of a parameter node's
+             * CPD.
+             *
+             * @param sample: Sample to add to the sufficient statistics. The
+             * update_parents_sufficient_statistics will call this function for
+             * parameter nodes at some point.
+             */
+            void add_to_sufficient_statistics(const Eigen::VectorXd& sample);
 
             /**
              * Prevents node's assignment to be changed.

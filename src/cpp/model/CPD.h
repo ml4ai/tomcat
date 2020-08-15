@@ -138,32 +138,67 @@ namespace tomcat {
              * nodes' assignments.
              *
              * @param random_generator: random number random_generator
-             * @param parent_labels_to_nodes: mapping between a node's label and
-             * its concrete object representation in an unrolled DBN
+             * @param parent_nodes: timed instance of the parent nodes of the
+             * cpd's owner in an unrolled DBN
              * @param num_samples: number of samples to generate. If the parent
              * nodes have multiple assignments, each sample will use one of them
              * to determine the distribution which it's sampled from.
              *
              * @return A sample from one of the distributions in the CPD.
              */
-            Eigen::MatrixXd sample(std::shared_ptr<gsl_rng> random_generator,
-                                   const Node::NodeMap& parent_labels_to_nodes,
-                                   int num_samples) const;
+            Eigen::MatrixXd
+            sample(std::shared_ptr<gsl_rng> random_generator,
+                   const std::vector<std::shared_ptr<Node>>& parent_nodes,
+                   int num_samples) const;
 
             /**
-             * Returns pdfs for assignments of a given node from the distributions associated with its parent
-             * nodes' assignments.
+             * Draws a sample from the distribution associated with the parent
+             * nodes' assignments scaled by some weights.
              *
              * @param random_generator: random number random_generator
-             * @param parent_labels_to_nodes: mapping between a node's label and
-             * its concrete object representation in an unrolled DBN
-             * @param node: node containing the assignments to be used to compute the pdfs
+             * @param parent_to_nodes: timed instance of the parent nodes of the
+             * cpd's owner in an unrolled DBN
+             * @param num_samples: number of samples to generate. If the parent
+             * nodes have multiple assignments, each sample will use one of them
+             * to determine the distribution which it's sampled from.
+             * @param weights: Scale coefficients for the distributions
              *
              * @return A sample from one of the distributions in the CPD.
              */
-            Eigen::VectorXd get_pdfs(std::shared_ptr<gsl_rng> random_generator,
-                                   const Node::NodeMap& parent_labels_to_nodes,
-                                   const Node& node) const;
+            Eigen::MatrixXd
+            sample(std::shared_ptr<gsl_rng> random_generator,
+                   const std::vector<std::shared_ptr<Node>>& parent_nodes,
+                   int num_samples,
+                   Eigen::MatrixXd weights) const;
+
+            /**
+             * Returns pdfs for assignments of a given node from the
+             * distributions associated with its parent nodes' assignments.
+             *
+             * @param random_generator: random number random_generator
+             * @param parent_nodes: timed instance of the parent nodes of the
+             * cpd's owner in an unrolled DBN
+             * @param node: node containing the assignments to be used to
+             * compute the pdfs
+             *
+             * @return A sample from one of the distributions in the CPD.
+             */
+            Eigen::VectorXd
+            get_pdfs(std::shared_ptr<gsl_rng> random_generator,
+                     const std::vector<std::shared_ptr<Node>>& parent_nodes,
+                     const Node& node) const;
+
+            /**
+             * Update the sufficient statistics of parameter nodes the cpd
+             * depend on with assignments of the cpd's owner.
+             *
+             * @param parent_nodes: timed instance of the parent nodes of the
+             * cpd's owner in an unrolled DBN
+             * @param cpd_owner_assignments
+             */
+            void update_sufficient_statistics(
+                const std::vector<std::shared_ptr<Node>>& parent_nodes,
+                const Eigen::MatrixXd& cpd_owner_assignments);
 
             /**
              * Marks the CPD as not updated to force dependency update on a
@@ -189,15 +224,26 @@ namespace tomcat {
              */
             virtual std::unique_ptr<CPD> clone() const = 0;
 
+            /**
+             * Adds a value to the sufficient statistics of this CPD.
+             *
+             * @param sample: Sample to add to the sufficient statistics.
+             */
+            virtual void
+            add_to_sufficient_statistics(const Eigen::VectorXd& sample) = 0;
+
+            // TODO - Implement this
+//            virtual Eigen::MatrixXd
+//            sample_from_posterior(std::shared_ptr<gsl_rng> random_generator,
+//                                  const std::vector<std::shared_ptr<Node>>& parent_nodes,
+//                                  int num_samples) const = 0;
+
             //------------------------------------------------------------------
             // Getters & Setters
             //------------------------------------------------------------------
             const std::string& get_id() const;
 
             bool is_updated() const;
-
-            const std::unordered_map<std::string, ParentIndexing>&
-            get_parent_label_to_indexing() const;
 
           protected:
             //------------------------------------------------------------------
@@ -284,7 +330,18 @@ namespace tomcat {
              * to determine the distribution which it's sampled from.
              */
             std::vector<int> get_distribution_indices(
-                const Node::NodeMap& parent_labels_to_nodes, int num_samples) const;
+                const std::vector<std::shared_ptr<Node>>& parent_nodes,
+                int num_samples) const;
+
+            /**
+             * Indexes a list of random variable nodes by their label.
+             *
+             * @param nodes: list of random variable nodes
+             *
+             * @return Mapping between a node's label and its object.
+             */
+            Node::NodeMap map_labels_to_nodes(
+                const std::vector<std::shared_ptr<Node>>& nodes) const;
 
             //------------------------------------------------------------------
             // Data members

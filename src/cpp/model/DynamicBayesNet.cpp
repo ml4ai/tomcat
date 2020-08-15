@@ -218,9 +218,8 @@ namespace tomcat {
 
         void DynamicBayesNet::set_nodes_cpd() {
             for (auto& node : this->nodes) {
-
-                std::vector<std::shared_ptr<RandomVariableNode>> parent_nodes =
-                    this->get_parent_nodes_of(*node, true);
+                std::vector<std::shared_ptr<Node>> parent_nodes =
+                    this->get_parent_nodes_of(node, true);
                 std::vector<std::string> parent_labels;
                 parent_labels.reserve(parent_nodes.size());
 
@@ -230,15 +229,18 @@ namespace tomcat {
                     parent_labels.push_back(label);
                 }
 
-                std::shared_ptr<CPD> cpd = node->get_cpd_for(parent_labels);
-                node->set_cpd(cpd);
-                node->reset_cpd_updated_status();
+                std::shared_ptr<RandomVariableNode> rv_node =
+                    std::dynamic_pointer_cast<RandomVariableNode>(node);
+                std::shared_ptr<CPD> cpd = rv_node->get_cpd_for(parent_labels);
+                rv_node->set_cpd(cpd);
+                rv_node->reset_cpd_updated_status();
 
-                if (node->get_metadata()->has_replicable_parameter_parent()) {
+                if (rv_node->get_metadata()
+                        ->has_replicable_parameter_parent()) {
                     // If a node has parameter nodes that are replicable, its
                     // replicas do not share the same CPD's and therefore it
                     // cannot use the CPD pointer inherited from its template.
-                    node->clone_cpd();
+                    rv_node->clone_cpd();
                 }
             }
         }
@@ -278,23 +280,22 @@ namespace tomcat {
         void DynamicBayesNet::check() {
             // TODO - Implement the verifications needed to make sure the DBN is
             //  valid and prepared to be unrolled.
+            //  Only allow conjugate priors
         }
 
-        std::vector<std::shared_ptr<RandomVariableNode>>
-        DynamicBayesNet::get_nodes_by_label(
+        std::vector<std::shared_ptr<Node>> DynamicBayesNet::get_nodes_by_label(
             const std::string& node_label) const {
             return this->label_to_nodes.at(node_label);
         }
 
-        std::vector<std::shared_ptr<RandomVariableNode>>
+        std::vector<std::shared_ptr<Node>>
         DynamicBayesNet::get_nodes_topological_order(
             bool from_roots_to_leaves) const {
             std::vector<int> vertex_ids;
             boost::topological_sort(this->graph,
                                     std::back_inserter(vertex_ids));
 
-            std::vector<std::shared_ptr<RandomVariableNode>> nodes(
-                vertex_ids.size());
+            std::vector<std::shared_ptr<Node>> nodes(vertex_ids.size());
             int i = 0;
             if (from_roots_to_leaves) {
                 // The default behavior of the boost topological sort is to
@@ -316,12 +317,12 @@ namespace tomcat {
             return nodes;
         }
 
-        std::vector<std::shared_ptr<RandomVariableNode>>
-        DynamicBayesNet::get_parent_nodes_of(const RandomVariableNode& node,
+        std::vector<std::shared_ptr<Node>>
+        DynamicBayesNet::get_parent_nodes_of(const std::shared_ptr<Node>& node,
                                              bool exclude_parameters) const {
 
-            int vertex_id = this->name_to_id.at(node.get_timed_name());
-            std::vector<std::shared_ptr<RandomVariableNode>> parent_nodes;
+            int vertex_id = this->name_to_id.at(node->get_timed_name());
+            std::vector<std::shared_ptr<Node>> parent_nodes;
 
             Graph::in_edge_iterator in_begin, in_end;
             boost::tie(in_begin, in_end) = in_edges(vertex_id, this->graph);
@@ -339,12 +340,11 @@ namespace tomcat {
             return parent_nodes;
         }
 
-        std::vector<std::shared_ptr<RandomVariableNode>>
-        DynamicBayesNet::get_child_nodes_of(
-            const RandomVariableNode& node) const {
+        std::vector<std::shared_ptr<Node>> DynamicBayesNet::get_child_nodes_of(
+            const std::shared_ptr<Node>& node) const {
 
-            int vertex_id = this->name_to_id.at(node.get_timed_name());
-            std::vector<std::shared_ptr<RandomVariableNode>> child_nodes;
+            int vertex_id = this->name_to_id.at(node->get_timed_name());
+            std::vector<std::shared_ptr<Node>> child_nodes;
 
             Graph::out_edge_iterator in_begin, in_end;
             boost::tie(in_begin, in_end) = out_edges(vertex_id, this->graph);
@@ -391,15 +391,15 @@ namespace tomcat {
         //------------------------------------------------------------------
         // Getters & Setters
         //------------------------------------------------------------------
-        const std::vector<std::shared_ptr<RandomVariableNode>>
-        DynamicBayesNet::get_nodes() const {
-            return nodes;
-        }
-
-        const std::vector<RandomVariableNode>&
-        DynamicBayesNet::get_node_templates() const {
-            return node_templates;
-        }
+        //        const std::vector<std::shared_ptr<RandomVariableNode>>
+        //        DynamicBayesNet::get_nodes() const {
+        //            return nodes;
+        //        }
+        //
+        //        const std::vector<RandomVariableNode>&
+        //        DynamicBayesNet::get_node_templates() const {
+        //            return node_templates;
+        //        }
 
         int DynamicBayesNet::get_time_steps() const { return time_steps; }
 

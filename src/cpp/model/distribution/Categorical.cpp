@@ -3,6 +3,7 @@
 #include <gsl/gsl_randist.h>
 
 #include "../ConstantNode.h"
+#include "../RandomVariableNode.h"
 
 namespace tomcat {
     namespace model {
@@ -138,9 +139,9 @@ namespace tomcat {
             unsigned int* value_ptr = new unsigned int[1];
             value_ptr[0] = static_cast<unsigned int>(value(0));
 
-            double pdf =  gsl_ran_multinomial_pdf(k, probs_ptr, value_ptr);
+            double pdf = gsl_ran_multinomial_pdf(k, probs_ptr, value_ptr);
 
-            delete [] value_ptr;
+            delete[] value_ptr;
 
             return pdf;
         }
@@ -162,6 +163,17 @@ namespace tomcat {
         }
 
         int Categorical::get_sample_size() const { return 1; }
+
+        void Categorical::update_sufficient_statistics(
+            const Eigen::MatrixXd& sample) {
+            if (this->probabilities->get_metadata()->is_parameter()) {
+                if (RandomVariableNode* rv_node =
+                        dynamic_cast<RandomVariableNode*>(
+                            this->probabilities.get())) {
+                    rv_node->add_to_sufficient_statistics(sample);
+                }
+            }
+        }
 
     } // namespace model
 } // namespace tomcat

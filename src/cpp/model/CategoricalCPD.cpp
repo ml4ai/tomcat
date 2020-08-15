@@ -16,22 +16,16 @@ namespace tomcat {
         //----------------------------------------------------------------------
         CategoricalCPD::CategoricalCPD(
             std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order,
-            std::vector<std::shared_ptr<Categorical>>& distributions)
+            const std::vector<std::shared_ptr<Categorical>>& distributions)
             : CPD(parent_node_order) {
-            this->distributions.reserve(distributions.size());
-            for (const auto& distribution : distributions) {
-                this->distributions.push_back(distribution);
-            }
+            this->init_from_distributions(distributions);
         }
 
         CategoricalCPD::CategoricalCPD(
             std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order,
-            std::vector<std::shared_ptr<Categorical>>&& distributions)
+            const std::vector<std::shared_ptr<Categorical>>& distributions)
             : CPD(parent_node_order) {
-            this->distributions.reserve(distributions.size());
-            for (const auto& distribution : distributions) {
-                this->distributions.push_back(distribution);
-            }
+            this->init_from_distributions(distributions);
         }
 
         CategoricalCPD::CategoricalCPD(
@@ -65,6 +59,14 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
+        void CategoricalCPD::init_from_distributions(
+            const std::vector<std::shared_ptr<Categorical>>& distributions) {
+            this->distributions.reserve(distributions.size());
+            for (const auto& distribution : distributions) {
+                this->distributions.push_back(distribution);
+            }
+        }
+
         void CategoricalCPD::init_from_matrix(const Eigen::MatrixXd& matrix) {
             for (int i = 0; i < matrix.rows(); i++) {
                 std::shared_ptr<Categorical> distribution_ptr =
@@ -97,6 +99,12 @@ namespace tomcat {
             ss << "}";
 
             return ss.str();
+        }
+
+        void CategoricalCPD::add_to_sufficient_statistics(
+            const Eigen::VectorXd& sample) {
+            throw std::invalid_argument(
+                "No conjugate prior with a categorical distribution.");
         }
 
     } // namespace model

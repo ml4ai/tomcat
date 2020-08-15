@@ -109,13 +109,13 @@ namespace tomcat {
             this->updated = true;
         }
 
-        Eigen::MatrixXd CPD::sample(std::shared_ptr<gsl_rng> random_generator,
-                                    const Node::NodeMap& parent_labels_to_nodes,
-                                    int num_samples) const {
+        Eigen::MatrixXd
+        CPD::sample(std::shared_ptr<gsl_rng> random_generator,
+                    const std::vector<std::shared_ptr<Node>>& parent_nodes,
+                    int num_samples) const {
 
             std::vector<int> distribution_indices =
-                this->get_distribution_indices(parent_labels_to_nodes,
-                                               num_samples);
+                this->get_distribution_indices(parent_nodes, num_samples);
 
             int sample_size = this->distributions[0]->get_sample_size();
 
@@ -132,32 +132,14 @@ namespace tomcat {
             return samples;
         }
 
-        Eigen::VectorXd CPD::get_pdfs(std::shared_ptr<gsl_rng> random_generator,
-                                    const Node::NodeMap& parent_labels_to_nodes,
-                                    const Node& node) const {
-
-            std::vector<int> distribution_indices =
-                this->get_distribution_indices(parent_labels_to_nodes,
-                                               node.get_size());
-
-            Eigen::VectorXd pdfs(distribution_indices.size());
-            int i = 0;
-            for (const auto& distribution_idx : distribution_indices) {
-                std::shared_ptr<Distribution> distribution = this->distributions[distribution_idx];
-                double pdf = distribution->get_pdf(node.get_assignment().row(i), i);
-                pdfs(i) = pdf;
-                i++;
-            }
-
-            return pdfs;
-        }
-
         std::vector<int> CPD::get_distribution_indices(
-            const Node::NodeMap& parent_labels_to_nodes,
+            const std::vector<std::shared_ptr<Node>>& parent_nodes,
             int num_samples) const {
 
             std::vector<int> indices(num_samples, 0);
 
+            Node::NodeMap parent_labels_to_nodes =
+                this->map_labels_to_nodes(parent_nodes);
             for (const auto& mapping : parent_labels_to_nodes) {
                 std::string label = mapping.first;
                 std::shared_ptr<Node> node = mapping.second;
@@ -179,6 +161,83 @@ namespace tomcat {
             return indices;
         }
 
+        Node::NodeMap CPD::map_labels_to_nodes(
+            const std::vector<std::shared_ptr<Node>>& nodes) const {
+
+            Node::NodeMap labels_to_nodes;
+            for (auto& node : nodes) {
+                std::string label = node->get_metadata()->get_label();
+                labels_to_nodes[label] = node;
+            }
+
+            return labels_to_nodes;
+        }
+
+        Eigen::MatrixXd
+        CPD::sample(std::shared_ptr<gsl_rng> random_generator,
+                    const std::vector<std::shared_ptr<Node>>& parent_nodes,
+                    int num_samples,
+                    Eigen::MatrixXd weights) const {
+
+            std::vector<int> distribution_indices =
+                this->get_distribution_indices(parent_nodes, num_samples);
+
+            int sample_size = this->distributions[0]->get_sample_size();
+
+            Eigen::MatrixXd samples(distribution_indices.size(), sample_size);
+            int i = 0;
+            for (const auto& distribution_idx : distribution_indices) {
+                Eigen::VectorXd assignment =
+                    this->distributions[distribution_idx]->sample(
+                        random_generator,
+                        distribution_idx,
+                        weights.row(distribution_idx));
+                samples.row(i) = std::move(assignment);
+                i++;
+            }
+
+            return samples;
+        }
+
+        Eigen::VectorXd
+        CPD::get_pdfs(std::shared_ptr<gsl_rng> random_generator,
+                      const std::vector<std::shared_ptr<Node>>& parent_nodes,
+                      const Node& node) const {
+
+            std::vector<int> distribution_indices =
+                this->get_distribution_indices(parent_nodes, node.get_size());
+
+            Eigen::VectorXd pdfs(distribution_indices.size());
+            int i = 0;
+            for (const auto& distribution_idx : distribution_indices) {
+                std::shared_ptr<Distribution> distribution =
+                    this->distributions[distribution_idx];
+                double pdf =
+                    distribution->get_pdf(node.get_assignment().row(i), i);
+                pdfs(i) = pdf;
+                i++;
+            }
+
+            return pdfs;
+        }
+
+        void CPD::update_sufficient_statistics(
+            const std::vector<std::shared_ptr<Node>>& parent_nodes,
+            const Eigen::MatrixXd& cpd_owner_assignments) {
+
+            std::vector<int> distribution_indices =
+                this->get_distribution_indices(parent_nodes,
+                                               cpd_owner_assignments.rows());
+
+            int i = 0;
+            for (const auto& distribution_idx : distribution_indices) {
+                Eigen::VectorXd assignment = cpd_owner_assignments.row(i);
+                this->distributions[distribution_idx]
+                    ->update_sufficient_statistics(assignment);
+                i++;
+            }
+        }
+
         void CPD::reset_updated_status() { this->updated = false; }
 
         void CPD::print(std::ostream& os) const {
@@ -191,11 +250,6 @@ namespace tomcat {
         const std::string& CPD::get_id() const { return id; }
 
         bool CPD::is_updated() const { return updated; }
-
-        const std::unordered_map<std::string, ParentIndexing>&
-        CPD::get_parent_label_to_indexing() const {
-            return parent_label_to_indexing;
-        }
 
     } // namespace model
 } // namespace tomcat

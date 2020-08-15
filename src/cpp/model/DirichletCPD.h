@@ -62,7 +62,7 @@ namespace tomcat {
              */
             DirichletCPD(
                 std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order,
-                std::vector<std::shared_ptr<Dirichlet>>& distributions);
+                const std::vector<std::shared_ptr<Dirichlet>>& distributions);
 
             /**
              * Creates an instance of a Dirichlet CPD.
@@ -73,7 +73,7 @@ namespace tomcat {
              */
             DirichletCPD(
                 std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order,
-                std::vector<std::shared_ptr<Dirichlet>>&& distributions);
+                const std::vector<std::shared_ptr<Dirichlet>>& distributions);
 
             /**
              * Creates an instance of a Dirichlet CPD table by transforming a
@@ -121,6 +121,9 @@ namespace tomcat {
 
             std::string get_description() const override;
 
+            void add_to_sufficient_statistics(
+                const Eigen::VectorXd& sample) override;
+
           protected:
             //------------------------------------------------------------------
             // Member functions
@@ -133,12 +136,30 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
+             * Initialized the CPD from a list of distributions.
+             *
+             * @param distributions: list of Dirichlet distributions.
+             */
+            void init_from_distributions(
+                const std::vector<std::shared_ptr<Dirichlet>>& distributions);
+
+            /**
              * Uses the values in the matrix to create a list of constant
              * Dirichlet distributions.
              *
              * @param matrix: matrix of \f$\alpha\f$s
              */
             void init_from_matrix(const Eigen::MatrixXd& matrix);
+
+            //------------------------------------------------------------------
+            // Data members
+            //------------------------------------------------------------------
+
+            /**
+             * Sufficient statistics used for CPDs owned by parameter nodes.
+             * It's used to compute the posterior of a conjugate prior.
+             */
+            Eigen::VectorXd sufficient_statistics;
         };
 
     } // namespace model

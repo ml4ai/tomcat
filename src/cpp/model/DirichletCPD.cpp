@@ -15,24 +15,18 @@ namespace tomcat {
         //----------------------------------------------------------------------
         DirichletCPD::DirichletCPD(
             std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order,
-            std::vector<std::shared_ptr<Dirichlet>>& distributions)
+            const std::vector<std::shared_ptr<Dirichlet>>& distributions)
             : CPD(parent_node_order) {
 
-            this->distributions.reserve(distributions.size());
-            for (const auto& distribution : distributions) {
-                this->distributions.push_back(distribution);
-            }
+            this->init_from_distributions(distributions);
         }
 
         DirichletCPD::DirichletCPD(
             std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order,
-            std::vector<std::shared_ptr<Dirichlet>>&& distributions)
+            const std::vector<std::shared_ptr<Dirichlet>>& distributions)
             : CPD(parent_node_order) {
 
-            this->distributions.reserve(distributions.size());
-            for (const auto& distribution : distributions) {
-                this->distributions.push_back(distribution);
-            }
+            this->init_from_distributions(distributions);
         }
 
         DirichletCPD::DirichletCPD(
@@ -66,12 +60,24 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
+        void DirichletCPD::init_from_distributions(
+            const std::vector<std::shared_ptr<Dirichlet>>& distributions) {
+            this->distributions.reserve(distributions.size());
+            int sample_size = 0;
+            for (const auto& distribution : distributions) {
+                this->distributions.push_back(distribution);
+                sample_size = distribution->get_sample_size();
+            }
+            this->sufficient_statistics = Eigen::VectorXd(sample_size);
+        }
+
         void DirichletCPD::init_from_matrix(const Eigen::MatrixXd& matrix) {
             for (int i = 0; i < matrix.rows(); i++) {
                 std::shared_ptr<Dirichlet> distribution_ptr =
                     std::make_shared<Dirichlet>(Dirichlet(matrix.row(i)));
                 this->distributions.push_back(distribution_ptr);
             }
+            this->sufficient_statistics = Eigen::VectorXd(matrix.cols());
         }
 
         std::unique_ptr<CPD> DirichletCPD::clone() const {
@@ -98,6 +104,11 @@ namespace tomcat {
             ss << "}";
 
             return ss.str();
+        }
+
+        void DirichletCPD::add_to_sufficient_statistics(
+            const Eigen::VectorXd& sample) {
+            this->sufficient_statistics(sample(0)) += 1;
         }
 
     } // namespace model

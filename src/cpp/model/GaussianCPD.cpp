@@ -102,5 +102,11 @@ namespace tomcat {
             return ss.str();
         }
 
+        void GaussianCPD::add_to_sufficient_statistics(
+            const Eigen::VectorXd& sample) {
+            throw std::invalid_argument(
+                "No conjugate prior with a Gaussian distribution.");
+        }
+
     } // namespace model
 } // namespace tomcat

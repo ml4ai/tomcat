@@ -59,7 +59,7 @@ namespace tomcat {
              */
             CategoricalCPD(
                 std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order,
-                std::vector<std::shared_ptr<Categorical>>& distributions);
+                const std::vector<std::shared_ptr<Categorical>>& distributions);
 
             /**
              * Creates an instance of a Categorical CPD.
@@ -70,7 +70,7 @@ namespace tomcat {
              */
             CategoricalCPD(
                 std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order,
-                std::vector<std::shared_ptr<Categorical>>&& distributions);
+                const std::vector<std::shared_ptr<Categorical>>& distributions);
 
             /**
              * Creates an instance of a Categorical CPD by transforming a
@@ -118,6 +118,9 @@ namespace tomcat {
 
             std::string get_description() const override;
 
+            void add_to_sufficient_statistics(
+                const Eigen::VectorXd& sample) override;
+
           protected:
             //------------------------------------------------------------------
             // Member functions
@@ -130,12 +133,21 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
+             * Initialized the CPD from a list of distributions.
+             *
+             * @param distributions: list of categorical distributions.
+             */
+            void init_from_distributions(
+                const std::vector<std::shared_ptr<Categorical>>& distributions);
+
+            /**
              * Uses the values in the matrix to create a list of constant
              * categorical distributions.
              *
              * @param matrix: matrix of probabilities
              */
             void init_from_matrix(const Eigen::MatrixXd& matrix);
+
         };
 
     } // namespace model

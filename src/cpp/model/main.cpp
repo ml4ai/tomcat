@@ -374,7 +374,7 @@ int main() {
     //    file.close();
 
 
-    for(int i = 0; i < 6000000; i++){
-        std::cout << i << '\n';
-    }
+//    for(int i = 0; i < 6000000; i++){
+//        std::cout << i << '\n';
+//    }
 }

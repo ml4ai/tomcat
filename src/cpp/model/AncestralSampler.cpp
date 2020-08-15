@@ -34,9 +34,10 @@ namespace tomcat {
         // Member functions
         //----------------------------------------------------------------------
         void AncestralSampler::sample_latent(int num_samples) {
-            std::vector<std::shared_ptr<RandomVariableNode>> nodes;
+            std::vector<std::shared_ptr<Node>> nodes;
             for (auto& node : this->model.get_nodes_topological_order()) {
-                if (!node->is_frozen()) {
+                if (!std::dynamic_pointer_cast<RandomVariableNode>(node)
+                         ->is_frozen()) {
                     nodes.push_back(node);
                 }
             }
@@ -45,17 +46,20 @@ namespace tomcat {
                 this->sampled_node_labels.insert(
                     node->get_metadata()->get_label());
 
-                const std::vector<std::shared_ptr<RandomVariableNode>>&
-                    parent_nodes =
-                        this->model.get_parent_nodes_of(*node, true);
-                if (node->get_metadata()->is_in_plate()){
-                    num_samples = this->num_data_points == 0 ? num_samples : this->num_data_points;
+                const std::vector<std::shared_ptr<Node>>& parent_nodes =
+                    this->model.get_parent_nodes_of(node, true);
+                if (node->get_metadata()->is_in_plate()) {
+                    num_samples = this->num_data_points == 0
+                                      ? num_samples
+                                      : this->num_data_points;
                 }
-                Eigen::MatrixXd assignment = node->sample(
-                    this->random_generator, parent_nodes, num_samples);
-                node->set_assignment(assignment);
-            }
 
+                std::shared_ptr<RandomVariableNode> rv_node =
+                    std::dynamic_pointer_cast<RandomVariableNode>(node);
+                Eigen::MatrixXd assignment = rv_node->sample(
+                    this->random_generator, parent_nodes, num_samples);
+                rv_node->set_assignment(assignment);
+            }
         };
 
     } // namespace model

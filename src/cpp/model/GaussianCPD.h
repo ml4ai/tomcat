@@ -119,6 +119,9 @@ namespace tomcat {
 
             std::string get_description() const override;
 
+            void add_to_sufficient_statistics(
+                const Eigen::VectorXd& sample) override;
+
           protected:
             //------------------------------------------------------------------
             // Member functions

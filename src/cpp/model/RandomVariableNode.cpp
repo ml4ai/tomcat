@@ -84,7 +84,7 @@ namespace tomcat {
         }
 
         void RandomVariableNode::clone_cpd_templates() {
-            for(auto& mapping : this->cpd_templates){
+            for (auto& mapping : this->cpd_templates) {
                 mapping.second = mapping.second->clone();
             }
         }
@@ -112,41 +112,38 @@ namespace tomcat {
 
         Eigen::MatrixXd RandomVariableNode::sample(
             std::shared_ptr<gsl_rng> random_generator,
-            const std::vector<std::shared_ptr<RandomVariableNode>>&
-                parent_nodes,
+            const std::vector<std::shared_ptr<Node>>& parent_nodes,
             int num_samples) const {
 
-            // This mapping will make it easy to access the parent node's object
-            // by it's label
-            Node::NodeMap parent_labels_to_nodes;
-            for (const auto& parent_node : parent_nodes) {
-                std::string label = parent_node->get_metadata()->get_label();
-                // Moving the reference because there's no need to keep it in
-                // the parent_nodes vector beyond this point
-                parent_labels_to_nodes[label] = std::move(parent_node);
-            }
+            return this->cpd->sample(
+                random_generator, parent_nodes, num_samples);
+        }
+
+        Eigen::MatrixXd RandomVariableNode::sample(
+            std::shared_ptr<gsl_rng> random_generator,
+            const std::vector<std::shared_ptr<Node>>& parent_nodes,
+            int num_samples,
+            Eigen::MatrixXd weights) const {
 
             return this->cpd->sample(
-                random_generator, parent_labels_to_nodes, num_samples);
+                random_generator, parent_nodes, num_samples, weights);
         }
 
         Eigen::VectorXd RandomVariableNode::get_pdfs(
             std::shared_ptr<gsl_rng> random_generator,
-            const std::vector<std::shared_ptr<RandomVariableNode>>&
-            parent_nodes) const {
+            const std::vector<std::shared_ptr<Node>>& parent_nodes) const {
 
-            // This mapping will make it easy to access the parent node's object
-            // by it's label
-            Node::NodeMap parent_labels_to_nodes;
-            for (const auto& parent_node : parent_nodes) {
-                std::string label = parent_node->get_metadata()->get_label();
-                // Moving the reference because there's no need to keep it in
-                // the parent_nodes vector beyond this point
-                parent_labels_to_nodes[label] = std::move(parent_node);
-            }
+            return this->cpd->get_pdfs(random_generator, parent_nodes, *this);
+        }
 
-            return this->cpd->get_pdfs(
-                random_generator, parent_labels_to_nodes, *this);
+        void RandomVariableNode::update_parents_sufficient_statistics(
+            const std::vector<std::shared_ptr<Node>>& parent_nodes) {
+
+            this->cpd->update_sufficient_statistics(parent_nodes, this->assignment);
+        }
+
+        void RandomVariableNode::add_to_sufficient_statistics(const Eigen::VectorXd& sample) {
+            this->cpd->add_to_sufficient_statistics(sample);
         }
 
         void RandomVariableNode::freeze() { RandomVariableNode::frozen = true; }

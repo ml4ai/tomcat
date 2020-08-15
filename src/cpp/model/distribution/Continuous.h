@@ -56,6 +56,12 @@ namespace tomcat {
 
             Continuous& operator=(Continuous&&) = default;
 
+            //------------------------------------------------------------------
+            // Member functions
+            //------------------------------------------------------------------
+
+            void update_sufficient_statistics(const Eigen::MatrixXd& sample) override;
+
           protected:
             //------------------------------------------------------------------
             // Member functions

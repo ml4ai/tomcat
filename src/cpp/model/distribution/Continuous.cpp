@@ -1,5 +1,7 @@
 #include "Continuous.h"
 
+#include "../RandomVariableNode.h"
+
 namespace tomcat {
     namespace model {
 
@@ -40,6 +42,18 @@ namespace tomcat {
                 if (parameter_nodes_map.count(parameter_timed_name) > 0) {
                     parameter =
                         parameter_nodes_map[parameter_timed_name];
+                }
+            }
+        }
+
+        void Continuous::update_sufficient_statistics(const Eigen::MatrixXd& sample) {
+            for(auto& parameter : this->parameters){
+                if (parameter->get_metadata()->is_parameter()) {
+                    if (RandomVariableNode* rv_node =
+                            dynamic_cast<RandomVariableNode*>(
+                                parameter.get())) {
+                        rv_node->add_to_sufficient_statistics(sample);
+                    }
                 }
             }
         }

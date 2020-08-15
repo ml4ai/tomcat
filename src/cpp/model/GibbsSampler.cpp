@@ -48,78 +48,124 @@ namespace tomcat {
         // Member functions
         //----------------------------------------------------------------------
         void GibbsSampler::sample_latent(int num_samples) {
-//            // This needs to be repeated for num_samples + burn_in
-//            // Samples generated here need to be saved in a structure apart and at the end they can be placed as nodes assignments.
-//            // Remember to clear the unfrozen nodes assignments before starting
-//
-//            // We will proceed from the leaves to the root
-//            std::vector<std::shared_ptr<RandomVariableNode>> nodes;
-//            for (auto& node : this->model.get_nodes_topological_order(false)) {
-//                if (!node->is_frozen()) {
-//                    nodes.push_back(node);
-//                }
-//            }
-//
-//            this->fill_initial_samples();
-//            for (auto& node : nodes) {
-//                if (node->get_metadata()->is_parameter()) {
-//                    // As child nodes are processed, the sufficient statistic
-//                    // table of their dependent parent parameter nodes are
-//                    // updated accordingly. So at this point we already have all
-//                    // the information needed to sample the parameter from its
-//                    // posterior.
-//                    node.sample_from_posterior(random_generator);
-//                }
-//                else {
-//                    std::vector<std::shared_ptr<RandomVariableNode>>
-//                        child_nodes = this->model.get_child_nodes_of(*node);
-//
-//                    Eigen::MatrixXd weights = Eigen::MatrixXd::Zero(
-//                        node->get_size(),
-//                        node->get_metadata()->get_cardinality());
-//                    for (auto& child_node : child_nodes) {
-//                        for (int i = 0;
-//                             i < node->get_metadata()->get_cardinality();
-//                             i++) {
-//                            node->set_assignment(Eigen::MatrixXd::Constant(
-//                                node->get_size(), 1, i));
-//                            Eigen::VectorXd pdfs = child_node->get_pdfs(
-//                                random_generator,
-//                                this->model.get_parent_nodes_of(*child_node,
-//                                                                true));
-//                            weights.col(i) = weights.col(i).array() +
-//                                             (pdfs.array() + EPSILON).log();
-//                            // Get pdf for parents given each one of the parents
-//                            // assignment
-//                        }
-//                    }
-//
-//                    // Unlog the weights
-//                    weights = weights.array() - weights.maxCoeff();
-//                    weights = weights.array().exp() - EPSILON;
-//
-//                    std::vector<std::shared_ptr<RandomVariableNode>>
-//                        parent_nodes =
-//                            this->model.get_parent_nodes_of(*node, true);
-//
-//                    // Similar to the sample method. We'll iterate over each one
-//                    // of the weights and call the sample function with weight
-//                    // that already exist in the Distribution class
-//                    node->sample(random_generator,
-//                                 parent_nodes,
-//                                 node->get_size(),
-//                                 weights);
-//
-//                    // Get each one of the distributions given the parents'
-//                    // assignments and update the suff statistics of the node
-//                    // (and the node will do the same for the cpd) by setting
-//                    // the each one of the node's assignments to a counting
-//                    // table or list value in case of a gaussian.
-//                    // At this point do not worry about parameter that depend
-//                    // on another parameter.
-//                    node->update_parents_sufficient_statistics(parent_nodes);
-//                }
-//            }
+            // This needs to be repeated for num_samples + burn_in
+            // Samples generated here need to be saved in a structure apart and
+            // at the end they can be placed as nodes assignments. Remember to
+            // clear the unfrozen nodes assignments before starting
+
+            // We will proceed from the leaves to the root
+            std::vector<std::shared_ptr<Node>> data_nodes;
+            std::vector<std::shared_ptr<Node>> parameter_nodes;
+            for (auto& node : this->model.get_nodes_topological_order()) {
+                if (!std::dynamic_pointer_cast<RandomVariableNode>(node)
+                         ->is_frozen()) {
+                    if (node->get_metadata()->is_parameter()) {
+                        parameter_nodes.push_back(node);
+                    }
+                    else {
+                        data_nodes.push_back(node);
+                    }
+                }
+            }
+
+            this->fill_initial_samples();
+
+            for (int i = 0; i < this->burn_in_period; i++) {
+                for (auto& node : data_nodes) {
+                    this->sample_data_node(node, true);
+                }
+
+                for (auto& node : parameter_nodes) {
+                    this->sample_parameter_node(node, true);
+                }
+            }
+
+            for (int i = 0; i < num_samples; i++) {
+                for (auto& node : data_nodes) {
+                    this->sample_data_node(node, false);
+                }
+
+                for (auto& node : parameter_nodes) {
+                    this->sample_parameter_node(node, false);
+                }
+            }
+        }
+
+        void GibbsSampler::sample_data_node(std::shared_ptr<Node> node,
+                                            bool discard) {
+
+            Eigen::MatrixXd weights = this->get_weights_for(node);
+            std::vector<std::shared_ptr<Node>> parent_nodes =
+                this->model.get_parent_nodes_of(node, true);
+            std::shared_ptr<RandomVariableNode> rv_node =
+                std::dynamic_pointer_cast<RandomVariableNode>(node);
+
+            Eigen::MatrixXd sample = rv_node->sample(
+                random_generator, parent_nodes, node->get_size(), weights);
+
+            rv_node->update_parents_sufficient_statistics(parent_nodes);
+            if (sample.rows() == 1) {
+                // TODO - Store sample only for nodes with single assignment
+            }
+        }
+
+        Eigen::MatrixXd
+        GibbsSampler::get_weights_for(const std::shared_ptr<Node>& node) {
+            std::vector<std::shared_ptr<Node>> child_nodes =
+                this->model.get_child_nodes_of(node);
+            Eigen::MatrixXd weights = Eigen::MatrixXd::Zero(
+                node->get_size(), node->get_metadata()->get_cardinality());
+
+            for (auto& child_node : child_nodes) {
+                for (int i = 0; i < node->get_metadata()->get_cardinality();
+                     i++) {
+
+                    std::dynamic_pointer_cast<RandomVariableNode>(node)
+                        ->set_assignment(
+                            Eigen::MatrixXd::Constant(node->get_size(), 1, i));
+                    Eigen::VectorXd pdfs =
+                        std::dynamic_pointer_cast<RandomVariableNode>(
+                            child_node)
+                            ->get_pdfs(random_generator,
+                                       this->model.get_parent_nodes_of(
+                                           child_node, true));
+
+                    if (node->get_size() == 1) {
+                        // If an out-of-plate node is parent of an in-plate
+                        // node, the former will have a single assignment at a
+                        // time and the latter multiple ones (as many as the
+                        // number of data points passed in the observed nodes).
+                        // In this case, each in-plate instance is treated as a
+                        // child of the out-of-plate node and therefore, their
+                        // pdfs must be multiplied instead of stored
+                        // separately as a row in the matrix of weights.
+                        double cum_log_pdf =
+                            (pdfs.array() + EPSILON).log().sum();
+                        weights(0, i) = weights(0, i) + cum_log_pdf;
+                    }
+                    else {
+                        weights.col(i) = weights.col(i).array() +
+                                         (pdfs.array() + EPSILON).log();
+                    }
+                }
+            }
+
+            // Unlog the weights
+            weights = weights.array() - weights.maxCoeff();
+            weights = weights.array().exp() - EPSILON;
+
+            return weights;
+        }
+
+        void GibbsSampler::sample_parameter_node(std::shared_ptr<Node> node,
+                                                 bool discard) {
+            // As nodes are processed, the sufficient statistic
+            // table of their dependent parent parameter nodes are
+            // updated accordingly. So at this point we already have all
+            // the information needed to sample the parameter from its
+            // posterior.
+//            std::dynamic_pointer_cast<RandomVariableNode>(node)
+//                .sample_from_posterior(random_generator);
         }
 
         void GibbsSampler::fill_initial_samples() {

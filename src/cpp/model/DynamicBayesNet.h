@@ -102,7 +102,7 @@ namespace tomcat {
              * @param label: node's label
              * @return
              */
-            std::vector<std::shared_ptr<RandomVariableNode>>
+            std::vector<std::shared_ptr<Node>>
             get_nodes_by_label(const std::string& node_abel) const;
 
             /**
@@ -110,7 +110,7 @@ namespace tomcat {
              *
              * @return Times node objects in topological order.
              */
-            std::vector<std::shared_ptr<RandomVariableNode>>
+            std::vector<std::shared_ptr<Node>>
             get_nodes_topological_order(bool from_roots_to_leaves = true) const;
 
             /**
@@ -120,8 +120,8 @@ namespace tomcat {
              * excluded from the list of parent nodes
              * @return Time instances of a node's parents.
              */
-            std::vector<std::shared_ptr<RandomVariableNode>>
-            get_parent_nodes_of(const RandomVariableNode& node,
+            std::vector<std::shared_ptr<Node>>
+            get_parent_nodes_of(const std::shared_ptr<Node>& node,
                                 bool exclude_parameters) const;
 
             /**
@@ -129,8 +129,8 @@ namespace tomcat {
              * @param node: timed instance of a node
              * @return Time instances of a node's children.
              */
-            std::vector<std::shared_ptr<RandomVariableNode>>
-            get_child_nodes_of(const RandomVariableNode& node) const;
+            std::vector<std::shared_ptr<Node>>
+            get_child_nodes_of(const std::shared_ptr<Node>& node) const;
 
             /**
              * Saves model's parameter values in individual files inside a given
@@ -155,10 +155,10 @@ namespace tomcat {
             // --------------------------------------------------------
             // Getters & Setters
             // --------------------------------------------------------
-            const std::vector<std::shared_ptr<RandomVariableNode>>
-            get_nodes() const;
-
-            const std::vector<RandomVariableNode>& get_node_templates() const;
+//            const std::vector<std::shared_ptr<RandomVariableNode>>
+//            get_nodes() const;
+//
+//            const std::vector<RandomVariableNode>& get_node_templates() const;
 
             int get_time_steps() const;
 
@@ -244,7 +244,7 @@ namespace tomcat {
             IDMap name_to_id;
 
             // List of concrete timed instances node of the unrolled DBN.
-            std::vector<std::shared_ptr<RandomVariableNode>> nodes;
+            std::vector<std::shared_ptr<Node>> nodes;
 
             // Mapping between a timed instance parameter node's label and its
             // node object.
@@ -253,7 +253,7 @@ namespace tomcat {
             // Mapping between a node label and all of the timed instance nodes
             // created from the template with such label.
             std::unordered_map<std::string,
-                               std::vector<std::shared_ptr<RandomVariableNode>>>
+                               std::vector<std::shared_ptr<Node>>>
                 label_to_nodes;
 
             // Node templates will be used to create concrete instances of

@@ -124,7 +124,7 @@ namespace tomcat {
              * @return PDFs for the values.
              */
             virtual double get_pdf(const Eigen::VectorXd& value,
-                                            int parameter_idx) const = 0;
+                                   int parameter_idx) const = 0;
 
             /**
              * Creates a new unique pointer from a concrete instance of a
@@ -140,6 +140,16 @@ namespace tomcat {
              * @return Sample size.
              */
             virtual int get_sample_size() const = 0;
+
+            /**
+             * Update the sufficient statistics in the parameter nodes given the
+             * assignment informed.
+             *
+             * @param assignment: Assignment from the data node that depends on
+             * the parameter being updated
+             */
+            virtual void
+            update_sufficient_statistics(const Eigen::MatrixXd& sample) = 0;
 
           protected:
             //------------------------------------------------------------------
