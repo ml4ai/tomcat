@@ -374,7 +374,7 @@ def load_trained_asist_model(mission_map, gibbs_samples, gibbs_burn_in):
     elif mission_map == MissionMap.FALCON:
         map_name = 'falcon'
 
-    model_folder = "../data/models/{}/{}s{}b".format(map_name, gibbs_samples, gibbs_burn_in)
+    model_folder = "../data/models/{}/not_shared_params/{}s{}b".format(map_name, gibbs_samples, gibbs_burn_in)
     model = Model()
     if model.load(model_folder):
         return model
@@ -401,7 +401,7 @@ def generate_asist_synthetic_data(model, mission_map, num_samples, time_steps, g
     initial_state = 0
 
     synthetic_data = sampling.sample(initial_state, time_steps, num_samples, even_until)
-    filepath_template = '../data/evidence/asist/synthetic_{}_{}eu_{}s_{}gs{}gbi'
+    filepath_template = '../data/evidence/asist/non_shared/synthetic_{}_{}eu_{}s_{}gs{}gbi'
     filepath = filepath_template.format(map_name, even_until, num_samples, gibbs_samples, gibbs_burn_in)
     save_evidence_set(filepath, synthetic_data)
 
@@ -658,7 +658,7 @@ def experiment_transitions():
     print('**********************')
 
     print('>> Synthetic Sparky')
-    data = load_evidence_set("../data/evidence/asist/synthetic_sparky_0eu_100s_5000gs500gbi")
+    data = load_evidence_set("../data/evidence/asist/non_shared/synthetic_sparky_0eu_100s_5000gs500gbi")
     evaluate_transitions(data, 8)
 
     print('\n>> Sparky')
@@ -666,7 +666,7 @@ def experiment_transitions():
     evaluate_transitions(data, 8)
 
     print('\n>> Synthetic Falcon')
-    data = load_evidence_set("../data/evidence/asist/synthetic_falcon_0eu_100s_5000gs500gbi")
+    data = load_evidence_set("../data/evidence/asist/non_shared/synthetic_falcon_0eu_100s_5000gs500gbi")
     evaluate_transitions(data, 10)
 
     print('\n>> Falcon')
@@ -751,16 +751,16 @@ def experiment_common_behavior():
     print('**************************')
 
     print('>> Synthetic Sparky')
-    data = load_evidence_set("../data/evidence/asist/synthetic_sparky_0eu_100s_5000gs500gbi")
-    evaluate_common_behavior(data, 8, '../data/plots/asist/sparky', 'state_freq_synthetic_sparky_0eu_100s_5000gs500gbi')
+    data = load_evidence_set("../data/evidence/asist/non_shared/synthetic_sparky_0eu_100s_5000gs500gbi")
+    evaluate_common_behavior(data, 8, '../data/plots/asist/sparky/non_shared', 'state_freq_synthetic_sparky_0eu_100s_5000gs500gbi')
 
     print('\n>> Sparky')
     data = load_evidence_set("../data/evidence/asist/sparky")
     evaluate_common_behavior(data, 8, '../data/plots/asist/sparky', 'state_freq_sparky_0eu_6s_5000gs500gbi')
 
     print('\n>> Synthetic Falcon')
-    data = load_evidence_set("../data/evidence/asist/synthetic_falcon_0eu_100s_5000gs500gbi")
-    evaluate_common_behavior(data, 10, '../data/plots/asist/falcon', 'state_freq_synthetic_falcon_0eu_100s_5000gs500gbi')
+    data = load_evidence_set("../data/evidence/asist/non_shared/synthetic_falcon_0eu_100s_5000gs500gbi")
+    evaluate_common_behavior(data, 10, '../data/plots/asist/falcon/non_shared', 'state_freq_synthetic_falcon_0eu_100s_5000gs500gbi')
 
     print('\n>> Falcon')
     data = load_evidence_set("../data/evidence/asist/falcon")
@@ -781,7 +781,7 @@ if __name__ == "__main__":
     # experiment_check_with_toy_model()
     # experiment_check_with_asist_model()
 
-    model = Model()
-    model.init_from_mission_map(MissionMap.SPARKY)
-    prior = model.get_theta_s_priors()
-    print('Stop')
+    # model = Model()
+    # model.init_from_mission_map(MissionMap.SPARKY)
+    # prior = model.get_theta_s_priors()
+    # print('Stop')
