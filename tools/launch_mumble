@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# Script to launch the Mumble client.
+
+set -eu pipefail
+
+if [[ ! "$OSTYPE" == "darwin"* ]]; then
+    echo "This script currently only works on macOS. Exiting now."
+    exit 1
+fi
+
+echo "Launching Mumble."
+open -a Mumble.app
