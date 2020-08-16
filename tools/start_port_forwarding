@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-# Script to start SSH port forwarding for multiplayer experiments.
-
-# Port forwarding for Murmur
-ssh -o ConnectTimeout=7 -f -N -L 64738:localhost:64738 laplace

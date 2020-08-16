@@ -15,7 +15,7 @@ USAGE="Usage:
     mumble_helper uninstall               Uninstall Mumble.
     mumble_helper launch                  Launch Mumble."
 
-# Parse options to the `pip` command
+# Parse options
 while getopts ":h" opt; do
     case ${opt} in
         h)

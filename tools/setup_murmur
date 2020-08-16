@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-# Script to set up the Murmur server on Laplace
+# Script to set up the Murmur server on Laplace. Note: This has not been fully
+# tested yet! Use at your own risk.
 
 set -euo pipefail
 
@@ -11,7 +12,7 @@ fi
 
 pushd murmur-static_x86-1.3.2
     sudo mkdir -p /usr/local/murmur
-    sudo cp -r * /usr/local/murmur/
+    sudo cp -r .* /usr/local/murmur/
     sudo cp murmur.ini /etc/murmur.ini
 popd
 
@@ -20,3 +21,20 @@ sudo useradd -r -g murmur -m -d /var/lib/murmur -s /sbin/nologin murmur
 sudo mkdir /var/log/murmur
 sudo chown murmur:murmur /var/log/murmur
 sudo chmod 0770 /var/log/murmur
+
+echo "Copy the following to /etc/logrotate.d/murmur:
+
+/var/log/murmur/*log {
+    su murmur murmur
+    dateext
+    rotate 4
+    missingok
+    notifempty
+    sharedscripts
+    delaycompress
+    postrotate
+        /bin/systemctl reload murmur.service > /dev/null 2>/dev/null || true
+    endscript
+}"
+
+exit 0

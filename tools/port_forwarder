@@ -1,0 +1,39 @@
+#!/usr/bin/env python
+
+""" A helper script to automate port forwarding. """
+
+import argparse
+import subprocess as sp
+
+parser = argparse.ArgumentParser(
+    description="Helper script for port forwarding."
+)
+parser.add_argument(
+    "cmd", help="The command to execute", choices=["start", "stop"]
+)
+args = parser.parse_args()
+
+# TODO: Implement the server as a command line option
+# TODO: Implement support for multiple ports
+
+server = "laplace"
+
+if args.cmd == "start":
+    for port in [64738]:
+        # TODO Implement error handling, including checking if a port is
+        # already forwarded.
+        sp.run(
+            [
+                "ssh",
+                "-o",
+                "ConnectTimeout=7",
+                "-f",
+                "-N",
+                "-L",
+                f"{port}:localhost:{port}",
+                server,
+            ]
+        )
+else:
+    # TODO: Implement automated stopping of port forwarding
+    raise NotImplementedError
