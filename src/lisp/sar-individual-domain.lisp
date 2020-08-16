@@ -211,7 +211,7 @@
              (searching ?t ?r)
              (:ordered (:task !continue-searching ?t ?r)
                        (:task util-percept-victims ?t ?r)
-                       (!done-searching ?t ?r))
+                       (:task !done-searching ?t ?r))
     )
 
     (:method (triage ?t ?v)
