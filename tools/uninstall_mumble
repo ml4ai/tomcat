@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-set -euo pipefail
-
-# Script to uninstall Mumble on macOS
-
-/bin/rm -rf /Applications/Mumble.app
-/bin/rm -rf $HOME/Library/Application*/Mumble
