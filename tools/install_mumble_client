@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Script to install and launch Mumble.
+# Script to install Mumble.
 
 set -eu pipefail
 
@@ -41,11 +41,6 @@ if [[ ! -d /Applications/Mumble.app ]]; then
 
     echo "Mumble installation complete!"
 fi
-
-
-# Launch the Mumble app
-echo "Launching Mumble."
-open -a Mumble.app
 
 # The line below adds the laplace server. However, it cannot be called before
 # Mumble is launched and shutdown at least once, in order to create the SQLite3
