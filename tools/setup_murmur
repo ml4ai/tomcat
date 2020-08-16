@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+# Script to set up the Murmur server on Laplace
+
+set -euo pipefail
+
+if [[ ! -d murmur-static_x86-1.3.2 ]]; then
+    curl -LO https://www.mumble.info/downloads/linux-static-server
+    tar -xvjf linux-static-server
+fi
+
+pushd murmur-static_x86-1.3.2
+    sudo mkdir -p /usr/local/murmur
+    sudo cp -r * /usr/local/murmur/
+    sudo cp murmur.ini /etc/murmur.ini
+popd
+
+sudo groupadd -r murmur
+sudo useradd -r -g murmur -m -d /var/lib/murmur -s /sbin/nologin murmur
+sudo mkdir /var/log/murmur
+sudo chown murmur:murmur /var/log/murmur
+sudo chmod 0770 /var/log/murmur

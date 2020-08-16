@@ -2,7 +2,7 @@
 
 # Script to install Mumble.
 
-set -eu pipefail
+set -euo pipefail
 
 if [[ ! "$OSTYPE" == "darwin"* ]]; then
     echo "This script currently only works on macOS. Exiting now."
