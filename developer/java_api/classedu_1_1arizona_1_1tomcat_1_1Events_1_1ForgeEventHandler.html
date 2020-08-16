@@ -76,6 +76,11 @@ $(function() {
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a29b53f131ee091362ceeaf9e3c62b979"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Events_1_1ForgeEventHandler.html#a29b53f131ee091362ceeaf9e3c62b979">updateExtraEvents</a> ()</td></tr>
 <tr class="separator:a29b53f131ee091362ceeaf9e3c62b979"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad008423def1b0be1f812b616176710f3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Events_1_1ForgeEventHandler.html#ad008423def1b0be1f812b616176710f3">addToWhitelist</a> (String cmd)</td></tr>
+<tr class="separator:ad008423def1b0be1f812b616176710f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af13e5c95e6c064a154e19ebb0f6eb30e"><td class="memItemLeft" align="right" valign="top"><a id="af13e5c95e6c064a154e19ebb0f6eb30e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>removeFromWhitelist</b> (String cmd)</td></tr>
+<tr class="separator:af13e5c95e6c064a154e19ebb0f6eb30e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a6d3c52d5e94629b7ae7b94fef8434e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Events_1_1ForgeEventHandler.html#a6a6d3c52d5e94629b7ae7b94fef8434e">handle</a> (AttackEntityEvent event)</td></tr>
 <tr class="separator:a6a6d3c52d5e94629b7ae7b94fef8434e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a933f4f4d4a0441dcda10e89c43a026bb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Events_1_1ForgeEventHandler.html#a933f4f4d4a0441dcda10e89c43a026bb">handle</a> (PlayerInteractEvent.EntityInteract event)</td></tr>
@@ -106,6 +111,33 @@ static <a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Events_1_1ForgeEvent
 <tr class="separator:aa19d5b86a324078a5ad3c50566e22c33"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="ad008423def1b0be1f812b616176710f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad008423def1b0be1f812b616176710f3">&#9670;&nbsp;</a></span>addToWhitelist()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void edu.arizona.tomcat.Events.ForgeEventHandler.addToWhitelist </td>
+          <td>(</td>
+          <td class="paramtype">String&#160;</td>
+          <td class="paramname"><em>cmd</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>This method takes a string command name to add to the list of whitelisted commands, and modifies the config file accordingly. </p>
+
+</div>
+</div>
 <a id="a6a6d3c52d5e94629b7ae7b94fef8434e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6a6d3c52d5e94629b7ae7b94fef8434e">&#9670;&nbsp;</a></span>handle() <span class="overload">[1/10]</span></h2>
 
@@ -318,7 +350,8 @@ static <a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Events_1_1ForgeEvent
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Command event handler </p>
+<p>Command event handler</p>
+<p>Currently, just handles turning dev mode on/off and bus publishing; all commands are enabled in dev mode and all are disabled out of dev mode excluding those whitelisted for command block function. </p>
 
 </div>
 </div>
