@@ -6,9 +6,9 @@
             (:types human)
             (:predicates (raining)
                          (work-today)
-                         (need-groceries)
-                         (have-homework)
-                         (found-movie)
+                         (store-today)
+                         (homework-today)
+                         (movie-today)
                          (went-to-school)
                          (went-to-work)
                          (did-chores)
@@ -45,7 +45,7 @@
             (:action do-homework
                      :parameters (?t - human)
                      :precondition ()
-                     :effect (and (did-homework) (not (have-homework)))
+                     :effect (did-homework)
             )
 
             (:action stay-for-tutoring
@@ -69,13 +69,13 @@
             (:action go-to-store
                      :parameters (?t - human)
                      :precondition ()
-                     :effect (and (went-to-store) (not (need-groceries)))
+                     :effect (went-to-store)
             )
 
             (:action watch-movie
                      :parameters (?t - human)
                      :precondition ()
-                     :effect (and (watched-movie) (not (found-movies)))
+                     :effect (watched-movie)
             )
 
             (:operator (!!assert ?fact)
@@ -93,33 +93,69 @@
             )
 
             (:method (monday ?t)
-                     work-rain-homework
-                     (and (work-today) (raining) (have-homework))
-                     (:ordered (:task !go-to-school ?t)
-                               (:task !go-to-work ?t)
-                               (:task !do-chores ?t)
-                               (:task !do-homework ?t))
+                     work-rain-homework-early
+                     (and (early-morning) (work-today) (raining) (homework-today))
+                     (:task !go-to-school ?t)
 
-                     rain-homework
-                     (and (raining) (have-homework))
-                     (:ordered (:task !go-to-school ?t)
-                               (:task !stay-for-tutoring ?t)
-                               (:task !do-chores ?t)
-                               (:task !do-homework ?t))
+                     work-rain-homework-late
+                     (and (late-morning) (work-today) (raining) (homework-today))
+                     (:task !go-to-work ?t)
 
-                     work-homework
-                     (and (work-today) (have-homework))
-                     (:ordered (:task !go-to-school ?t)
-                               (:task !go-to-work ?t)
-                               (:task !go-running ?t)
-                               (:task !do-homework ?t))
+                     work-rain-homework-afternoon
+                     (and (afternoon) (work-today) (raining) (homework-today))
+                     (:task !do-chores ?t)
 
-                     homework
-                     (have-homework)
-                     (:ordered (:task !go-to-school ?t)
-                               (:task !stay-for-tutoring ?t)
-                               (:task !go-running ?t)
-                               (:task !do-homework ?t))
+                     work-rain-homework-evening
+                     (and (evening) (work-today) (raining) (homework-today))
+                     (:task !do-homework ?t)
+
+                     rain-homework-early
+                     (and (early-morning) (raining) (homework-today))
+                     (:task !go-to-school ?t)
+
+                     rain-homework-late
+                     (and (late-morning) (raining) (homework-today))
+                     (:task !stay-for-tutoring ?t)
+
+                     rain-homework-afternoon
+                     (and (afternoon) (raining) (homework-today))
+                     (:task !do-chores ?t)
+
+                     rain-homework-evening
+                     (and (evening) (raining) (homework-today))
+                     (:task !do-homework ?t)
+
+                     work-homework-early
+                     (and (early-morning) (work-today) (homework-today))
+                     (:task !go-to-school ?t)
+
+                     work-homework-late
+                     (and (late-morning) (work-today) (have-homework))
+                     (:task !go-to-work ?t)
+
+                     work-homework-afternoon
+                     (and (afternoon) (work-today) (have-homework))
+                     (:task !go-running ?t)
+
+                     work-homework-evening
+                     (and (evening) (work-today) (have-homework))
+                     (:task !do-homework ?t)
+
+                     homework-early
+                     (and (early-morning) (homework-today))
+                     (:task !go-to-school ?t)
+
+                     homework-late
+                     (and (late-morning) (homework-today))
+                     (:task !stay-for-tutoring ?t)
+
+                     homework-afternoon
+                     (and (afternoon) (homework-today))
+                     (:task !go-running ?t)
+
+                     homework-evening
+                     (and (evening) (homework-today))
+                     (:task !do-homework ?t)
 
                      work-rain
                      (and (work-today) (raining))
@@ -153,63 +189,63 @@
 
             (:method (tuesday ?t)
                      work-rain-homework-store
-                     (and (need-groceries) (work-today) (raining) (have-homework))
+                     (and (store-today) (work-today) (raining) (homework-today))
                      (:ordered (:task !go-to-work ?t)
                                (:task !go-to-school ?t)
                                (:task !go-to-store ?t)
                                (:task !do-homework ?t))
 
                      work-rain-homework
-                     (and (work-today) (raining) (have-homework))
+                     (and (work-today) (raining) (homework-today))
                      (:ordered (:task !go-to-work ?t)
                                (:task !go-to-school ?t)
                                (:task !do-homework ?t)
                                (:task !play-videogames ?t))
 
                      rain-homework-store
-                     (and (need-groceries) (raining) (have-homework))
+                     (and (store-today) (raining) (homework-today))
                      (:ordered (:task !go-to-school ?t)
                                (:task !stay-for-tutoring ?t)
                                (:task !go-to-store ?t)
                                (:task !do-homework ?t))
 
                      rain-homework
-                     (and (raining) (have-homework))
+                     (and (raining) (homework-today))
                      (:ordered (:task !go-to-school ?t)
                                (:task !stay-for-tutoring ?t)
                                (:task !do-homework ?t)
                                (:task !play-videogames ?t))
 
                      work-homework-store
-                     (and (need-groceries) (work-today) (have-homework))
+                     (and (store-today) (work-today) (homework-today))
                      (:ordered (:task !go-to-work ?t)
                                (:task !go-to-school ?t)
                                (:task !go-to-store ?t)
                                (:task !do-homework ?t))
 
                      work-homework
-                     (and (work-today) (have-homework))
+                     (and (work-today) (homework-today))
                      (:ordered (:task !go-to-work ?t)
                                (:task !go-to-school ?t)
                                (:task !do-homework ?t)
                                (:task !play-videogames ?t))
 
                      homework-store
-                     (and (need-groceries) (have-homework))
+                     (and (store-today) (homework-today))
                      (:ordered (:task !go-to-school ?t)
                                (:task !stay-for-tutoring ?t)
                                (:task !go-to-store ?t)
                                (:task !do-homework ?t))
 
                      homework
-                     (have-homework)
+                     (homework-today)
                      (:ordered (:task !go-to-school ?t)
                                (:task !stay-for-tutoring ?t)
                                (:task !do-homework ?t)
                                (:task !play-videogames ?t))
 
                      work-rain-store
-                     (and (need-groceries) (work-today) (raining))
+                     (and (store-today) (work-today) (raining))
                      (:ordered (:task !go-to-work ?t)
                                (:task !go-to-school ?t)
                                (:task !go-to-store ?t)
@@ -223,7 +259,7 @@
                                (:task !play-videogames ?t))
 
                      rain-store
-                     (and (need-groceries) (raining))
+                     (and (store-today) (raining))
                      (:ordered (:task !go-to-school ?t)
                                (:task !stay-for-tutoring ?t)
                                (:task !go-to-store ?t)
@@ -237,7 +273,7 @@
                                (:task !play-videogames ?t))
 
                      work-store
-                     (and (need-groceries) (work-today))
+                     (and (store-today) (work-today))
                      (:ordered (:task !go-to-work ?t)
                                (:task !go-to-school ?t)
                                (:task !go-to-store ?t)
@@ -251,7 +287,7 @@
                                (:task !play-videogames ?t))
 
                      no-work-store
-                     (need-groceries)
+                     (store-today)
                      (:ordered (:task !go-to-school ?t)
                                (:task !stay-for-tutoring ?t)
                                (:task !go-to-store ?t)
@@ -267,28 +303,28 @@
  
             (:method (wednesday ?t)
                      work-rain-homework
-                     (and (work-today) (raining) (have-homework))
+                     (and (work-today) (raining) (homework-today))
                      (:ordered (:task !go-to-school ?t)
                                (:task !do-homework ?t)
                                (:task !go-to-work ?t)
                                (:task !do-chores ?t))
 
                      rain-homework
-                     (and (raining) (have-homework))
+                     (and (raining) (homework-today))
                      (:ordered (:task !go-to-school ?t)
                                (:task !do-homework ?t)
                                (:task !do-chores ?t)
                                (:task !play-videogames ?t))
 
                      work-homework
-                     (and (work-today) (have-homework))
+                     (and (work-today) (homework-today))
                      (:ordered (:task !go-to-school ?t)
                                (:task !do-homework ?t)
                                (:task !go-to-work ?t)
                                (:task !do-chores ?t))
 
                      homework
-                     (have-homework)
+                     (homework-today)
                      (:ordered (:task !go-to-school ?t)
                                (:task !do-homework ?t)
                                (:task !go-running ?t)
@@ -325,42 +361,42 @@
 
             (:method (thursday ?t)
                      work-rain-homework
-                     (and (work-today) (raining) (have-homework))
+                     (and (work-today) (raining) (homework-today))
                      (:ordered (:task !go-to-work ?t)
                                (:task !go-to-school ?t)
                                (:task !do-homework ?t)
                                (:task !play-videogames ?t))
 
                      rain-homework-movie
-                     (and (found-movie) (raining) (have-homework))
+                     (and (movie-today) (raining) (homework-today))
                      (:ordered (:task !go-to-school ?t)
                                (:task !do-homework ?t)
                                (:task !do-chores ?t)
                                (:task !watch-movie ?t))
 
                      rain-homework
-                     (and (raining) (have-homework))
+                     (and (raining) (homework-today))
                      (:ordered (:task !go-to-school ?t)
                                (:task !do-homework ?t)
                                (:task !do-chores ?t)
                                (:task !play-videogames ?t))
 
                      work-homework
-                     (and (work-today) (have-homework))
+                     (and (work-today) (homework-today))
                      (:ordered (:task !go-to-work ?t)
                                (:task !go-to-school ?t)
                                (:task !do-homework ?t)
                                (:task !go-running ?t))
 
                      homework-movie
-                     (and (found-movie) (have-homework))
+                     (and (movie-today) (homework-today))
                      (:ordered (:task !go-to-school ?t)
                                (:task !do-homework ?t)
                                (:task !go-running ?t)
                                (:task !watch-movie ?t))
 
                      homework
-                     (have-homework)
+                     (homework-today)
                      (:ordered (:task !go-to-school ?t)
                                (:task !do-homework ?t)
                                (:task !go-running ?t)
@@ -374,7 +410,7 @@
                                (:task !play-videogames ?t))
 
                      rain-movie
-                     (and (found-movie) (raining))
+                     (and (movie-today) (raining))
                      (:ordered (:task !go-to-school ?t)
                                (:task !stay-for-tutoring ?t)
                                (:task !play-videogames ?t)
@@ -384,6 +420,7 @@
                      (raining)
                      (:ordered (:task !go-to-school ?t)
                                (:task !stay-for-tutoring ?t)
+                               (:task !play-videogames ?t)
                                (:task !play-videogames ?t))
 
                      work
@@ -394,7 +431,7 @@
                                (:task !play-videogames ?t))
 
                      no-work-movie
-                     (found-movie)
+                     (movie-today)
                      (:ordered (:task !go-to-school ?t)
                                (:task !stay-for-tutoring ?t)
                                (:task !play-videogames ?t)
@@ -404,6 +441,7 @@
                      ()
                      (:ordered (:task !go-to-school ?t)
                                (:task !stay-for-tutoring ?t)
+                               (:task !play-videogames ?t)
                                (:task !play-videogames ?t))
  
             )
@@ -413,6 +451,7 @@
                      (and (work-today) (raining))
                      (:ordered (:task !do-chores ?t)
                                (:task !play-videogames ?t)
+                               (:task !go-to-work ?t)
                                (:task !go-to-work ?t))
 
                      rain
@@ -426,6 +465,7 @@
                      (work-today)
                      (:ordered (:task !play-videogames ?t)
                                (:task !go-running ?t)
+                               (:task !go-to-work ?t)
                                (:task !go-to-work ?t))
 
                      no-work
