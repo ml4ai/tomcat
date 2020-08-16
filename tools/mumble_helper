@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+# A helper script to automate installing, uninstalling, and launching Mumble.
+
+set -eo pipefail
+
+if [[ ! "$OSTYPE" == "darwin"* ]]; then
+    echo "This script only works on macOS. Exiting now."
+    exit 1
+fi
 
 USAGE="Usage:
     mumble_helper -h                      Display this help message.
@@ -64,7 +71,7 @@ case "$SUBCOMMAND" in
         ;;
     "")
         echo "Invalid command: mumble_helper requires an argument."\
-             "Valid arguments: [install|uninstall]" 1>&2
+             "Valid arguments: [install|uninstall|launch]" 1>&2
         exit 1
         ;;
     launch)
