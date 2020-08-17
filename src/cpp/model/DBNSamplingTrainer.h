@@ -1,17 +1,9 @@
 #pragma once
 
-#include "Sampler.h"
+#include "sampling/Sampler.h"
 
 namespace tomcat {
     namespace model {
-
-        //------------------------------------------------------------------
-        // Forward declarations
-        //------------------------------------------------------------------
-
-        //------------------------------------------------------------------
-        // Structs
-        //------------------------------------------------------------------
 
         /**
          * This class is responsible for estimating a DBN's parameters by
@@ -19,10 +11,6 @@ namespace tomcat {
          */
         class DBNSamplingTrainer {
           public: // same pattern for protected and private in this order
-            //------------------------------------------------------------------
-            // Types, Enums & Constants
-            //------------------------------------------------------------------
-
             //------------------------------------------------------------------
             // Constructors & Destructor
             //------------------------------------------------------------------
@@ -33,25 +21,13 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Copy & Move constructors/assignments
             //------------------------------------------------------------------
+            DBNSamplingTrainer(const DBNSamplingTrainer&) = default;
 
-            // Copy constructor and assignment should be deleted to avoid
-            // implicit slicing and loss of polymorphic behaviour in the
-            // subclasses. To deep copy, the clone method must be used.
-            DBNSamplingTrainer(const DBNSamplingTrainer&) = delete;
-
-            DBNSamplingTrainer& operator=(const DBNSamplingTrainer&) = delete;
+            DBNSamplingTrainer& operator=(const DBNSamplingTrainer&) = default;
 
             DBNSamplingTrainer(DBNSamplingTrainer&&) = default;
 
             DBNSamplingTrainer& operator=(DBNSamplingTrainer&&) = default;
-
-            //------------------------------------------------------------------
-            // Operator overload
-            //------------------------------------------------------------------
-
-            //------------------------------------------------------------------
-            // Static functions
-            //------------------------------------------------------------------
 
             //------------------------------------------------------------------
             // Member functions
@@ -59,16 +35,9 @@ namespace tomcat {
             void fit(std::shared_ptr<gsl_rng> random_generator, int num_samples);
 
             //------------------------------------------------------------------
-            // Virtual functions
-            //------------------------------------------------------------------
-
-            //------------------------------------------------------------------
-            // Pure virtual functions
-            //------------------------------------------------------------------
-
-            //------------------------------------------------------------------
             // Getters & Setters
             //------------------------------------------------------------------
+            const std::shared_ptr<Sampler>& get_sampler() const;
 
           private:
             //------------------------------------------------------------------

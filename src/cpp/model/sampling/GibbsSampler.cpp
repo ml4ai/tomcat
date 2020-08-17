@@ -140,8 +140,17 @@ namespace tomcat {
                 std::dynamic_pointer_cast<RandomVariableNode>(node);
 
             if (!rv_node->is_frozen()) {
-                Eigen::MatrixXd sample = rv_node->sample(
-                    random_generator, parent_nodes, node->get_size(), weights);
+                Eigen::MatrixXd sample;
+                if (weights.size() == 0) {
+                    sample = rv_node->sample(
+                        random_generator, parent_nodes, node->get_size());
+                }
+                else {
+                    sample = rv_node->sample(random_generator,
+                                             parent_nodes,
+                                             node->get_size(),
+                                             weights);
+                }
                 rv_node->set_assignment(sample);
                 if (!discard) {
                     this->keep_sample(rv_node, sample);

@@ -8,8 +8,8 @@
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
 
-#include "Node.h"
-#include "distribution/Distribution.h"
+#include "../../distribution/Distribution.h"
+#include "../Node.h"
 
 namespace tomcat {
     namespace model {

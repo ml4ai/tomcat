@@ -2,7 +2,7 @@
 
 #include <gsl/gsl_randist.h>
 
-#include "../ConstantNode.h"
+#include "../pgm/ConstantNode.h"
 
 namespace tomcat {
     namespace model {

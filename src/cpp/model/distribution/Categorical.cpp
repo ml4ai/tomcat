@@ -2,8 +2,8 @@
 
 #include <gsl/gsl_randist.h>
 
-#include "../ConstantNode.h"
-#include "../RandomVariableNode.h"
+#include "../pgm/ConstantNode.h"
+#include "../pgm/RandomVariableNode.h"
 
 namespace tomcat {
     namespace model {

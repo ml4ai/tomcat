@@ -1,7 +1,7 @@
 #pragma once
 
+#include "../../distribution/Gaussian.h"
 #include "CPD.h"
-#include "distribution/Gaussian.h"
 
 namespace tomcat {
     namespace model {

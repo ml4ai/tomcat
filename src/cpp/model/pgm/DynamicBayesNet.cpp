@@ -1,11 +1,10 @@
 #include "DynamicBayesNet.h"
 
+#include <boost/filesystem.hpp>
 #include <boost/graph/topological_sort.hpp>
 
+#include "../FileHandler.h"
 #include "ConstantNode.h"
-#include "FileHandler.h"
-
-#include <boost/filesystem.hpp>
 
 namespace tomcat {
     namespace model {
@@ -283,11 +282,12 @@ namespace tomcat {
             //  Only allow conjugate priors
         }
 
-        std::vector<std::shared_ptr<Node>> DynamicBayesNet::get_parameter_nodes() {
+        std::vector<std::shared_ptr<Node>>
+        DynamicBayesNet::get_parameter_nodes() {
             std::vector<std::shared_ptr<Node>> parameter_nodes;
             parameter_nodes.reserve(this->parameter_nodes_map.size());
 
-            for(const auto& mapping : this->parameter_nodes_map){
+            for (const auto& mapping : this->parameter_nodes_map) {
                 parameter_nodes.push_back(mapping.second);
             }
 
@@ -384,9 +384,9 @@ namespace tomcat {
                  boost::filesystem::directory_iterator(input_folder)) {
 
                 std::string filename = file.path().filename().string();
-                std::string filepath = get_filepath(input_folder, filename);
                 std::string parameter_timed_name = remove_extension(filename);
-                Eigen::VectorXd assignment = read_matrix_from_file(filepath);
+                Eigen::VectorXd assignment =
+                    read_matrix_from_file(file.path().string());
 
                 // Set loaded vector as assignment of the corresponding
                 // parameter node.

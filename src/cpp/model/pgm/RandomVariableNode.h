@@ -2,7 +2,7 @@
 
 #include "Node.h"
 
-#include "CPD.h"
+#include "cpd/CPD.h"
 
 namespace tomcat {
     namespace model {

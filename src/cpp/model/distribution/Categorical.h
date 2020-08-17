@@ -1,6 +1,6 @@
 #pragma once
 
-#import "../Node.h"
+#import "../pgm/Node.h"
 #import "Distribution.h"
 
 namespace tomcat {

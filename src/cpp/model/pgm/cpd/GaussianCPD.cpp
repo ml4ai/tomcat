@@ -1,6 +1,6 @@
 #include "GaussianCPD.h"
 
-#include "ConstantNode.h"
+#include "../ConstantNode.h"
 
 namespace tomcat {
     namespace model {

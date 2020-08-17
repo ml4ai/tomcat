@@ -1,6 +1,6 @@
 #include "Continuous.h"
 
-#include "../RandomVariableNode.h"
+#include "../pgm/RandomVariableNode.h"
 
 namespace tomcat {
     namespace model {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Node.h"
+#include "../pgm/Node.h"
 #include "Distribution.h"
 
 namespace tomcat {

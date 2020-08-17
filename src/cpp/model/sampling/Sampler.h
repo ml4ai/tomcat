@@ -2,8 +2,8 @@
 
 #include <unordered_set>
 
-#include "DynamicBayesNet.h"
-#include "Tensor3.h"
+#include "../Tensor3.h"
+#include "../pgm/DynamicBayesNet.h"
 
 namespace tomcat {
     namespace model {

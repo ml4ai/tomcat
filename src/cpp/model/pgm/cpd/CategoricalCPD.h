@@ -1,7 +1,7 @@
 #pragma once
 
+#include "../../distribution/Categorical.h"
 #include "CPD.h"
-#include "distribution/Categorical.h"
 
 namespace tomcat {
     namespace model {

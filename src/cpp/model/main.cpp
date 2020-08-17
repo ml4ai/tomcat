@@ -1,18 +1,18 @@
-#include "AncestralSampler.h"
-#include "CategoricalCPD.h"
-#include "ConstantNode.h"
 #include "DBNSamplingTrainer.h"
-#include "DirichletCPD.h"
-#include "DynamicBayesNet.h"
 #include "FileHandler.h"
-#include "GaussianCPD.h"
-#include "GibbsSampler.h"
-#include "Node.h"
-#include "NodeMetadata.h"
-#include "RandomVariableNode.h"
 #include "distribution/Categorical.h"
 #include "distribution/Dirichlet.h"
 #include "distribution/Gaussian.h"
+#include "pgm/ConstantNode.h"
+#include "pgm/DynamicBayesNet.h"
+#include "pgm/Node.h"
+#include "pgm/NodeMetadata.h"
+#include "pgm/RandomVariableNode.h"
+#include "pgm/cpd/CategoricalCPD.h"
+#include "pgm/cpd/DirichletCPD.h"
+#include "pgm/cpd/GaussianCPD.h"
+#include "sampling/AncestralSampler.h"
+#include "sampling/GibbsSampler.h"
 #include <eigen3/Eigen/Dense>
 #include <fstream>
 #include <gsl/gsl_randist.h>
@@ -21,8 +21,9 @@
 #include <memory>
 #include <unistd.h>
 #include <variant>
-
+#include "EvidenceSet.h"
 #include <boost/filesystem.hpp>
+
 namespace fs = boost::filesystem;
 
 using namespace Eigen;
@@ -370,16 +371,32 @@ int main() {
     std::shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
 
 //    DynamicBayesNet dbn = create_dbn(true);
-//    dbn.unroll(600, true);
+//    dbn.unroll(100, true);
 //    generate_samples_to_test(std::make_shared<DynamicBayesNet>(dbn), 100, gen);
 
-    std::shared_ptr<DynamicBayesNet> dbn_ptr =
-        std::make_shared<DynamicBayesNet>(create_dbn(false));
-    dbn_ptr->unroll(600, true);
-    //    sample_parameters_from_posterior(
-    //        dbn_ptr, 10, gen);
+//    std::shared_ptr<DynamicBayesNet> dbn_ptr =
+//        std::make_shared<DynamicBayesNet>(create_dbn(false));
+//    dbn_ptr->unroll(100, true);
+//
+//    train_dbn(dbn_ptr, 50, gen);
 
-    train_dbn(dbn_ptr, 100, gen);
+    EvidenceSet data("../../data/samples");
+    std::cout << data.get_num_data_points();
+    std::cout << data.get_time_steps();
+    std::cout << data["TG"];
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // gsl_rng_set(gen.get(), time(0));
     // dbn.unroll(4, true);

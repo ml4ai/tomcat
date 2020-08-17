@@ -10,7 +10,10 @@ namespace tomcat {
     namespace model {
 
         /**
-         * A node in a Dynamic Bayes Net (DBN).
+         * A node in a Dynamic Bayes Net (DBN). A node can either be a data node
+         * or a parameter node. The former defines observed and latent nodes in
+         * a PGM, the latter defines nodes that store parameters for some data
+         * node's distributions.
          */
         class Node {
           public:

@@ -37,18 +37,18 @@ file(GLOB tomcat_model_headers CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*.h
 add_library(tomcat_model_libs
         STATIC
         ${tomcat_model_headers}
-        NodeMetadata.cpp
-        Node.cpp
-        ConstantNode.cpp
-        RandomVariableNode.cpp
-        CPD.cpp
-        CategoricalCPD.cpp
-        GaussianCPD.cpp
-        DirichletCPD.cpp
-        DynamicBayesNet.cpp
-        Sampler.cpp
-        AncestralSampler.cpp
-        GibbsSampler.cpp
+        pgm/NodeMetadata.cpp
+        pgm/Node.cpp
+        pgm/ConstantNode.cpp
+        pgm/RandomVariableNode.cpp
+        pgm/cpd/CPD.cpp
+        pgm/cpd/CategoricalCPD.cpp
+        pgm/cpd/GaussianCPD.cpp
+        pgm/cpd/DirichletCPD.cpp
+        pgm/DynamicBayesNet.cpp
+        sampling/Sampler.cpp
+        sampling/AncestralSampler.cpp
+        sampling/GibbsSampler.cpp
         FileHandler.cpp
         Tensor3.cpp
         distribution/Distribution.cpp
@@ -56,7 +56,8 @@ add_library(tomcat_model_libs
         distribution/Continuous.cpp
         distribution/Dirichlet.cpp
         distribution/Gaussian.cpp
-        DBNSamplingTrainer.cpp)
+        DBNSamplingTrainer.cpp
+        EvidenceSet.cpp)
 
 # Todo make code coverage work on Linux as well.
 if(APPLE AND CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")

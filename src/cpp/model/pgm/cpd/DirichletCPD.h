@@ -1,7 +1,7 @@
 #pragma once
 
+#include "../../distribution/Dirichlet.h"
 #include "CPD.h"
-#include "distribution/Dirichlet.h"
 
 namespace tomcat {
     namespace model {
