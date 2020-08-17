@@ -95,268 +95,778 @@
             (:method (monday ?t)
                      work-rain-homework-early
                      (and (early-morning) (work-today) (raining) (homework-today))
-                     (:task !go-to-school ?t)
+                     (:ordered (:task !go-to-school ?t)
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
 
                      work-rain-homework-late
                      (and (late-morning) (work-today) (raining) (homework-today))
-                     (:task !go-to-work ?t)
+                     (:ordered (:task !go-to-work ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
 
                      work-rain-homework-afternoon
                      (and (afternoon) (work-today) (raining) (homework-today))
-                     (:task !do-chores ?t)
+                     (:ordered (:task !do-chores ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
 
                      work-rain-homework-evening
                      (and (evening) (work-today) (raining) (homework-today))
-                     (:task !do-homework ?t)
+                     (:ordered (:task !do-homework ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
 
                      rain-homework-early
                      (and (early-morning) (raining) (homework-today))
-                     (:task !go-to-school ?t)
+                     (:ordered (:task !go-to-school ?t)
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
 
                      rain-homework-late
                      (and (late-morning) (raining) (homework-today))
-                     (:task !stay-for-tutoring ?t)
+                     (:ordered (:task !stay-for-tutoring ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
 
                      rain-homework-afternoon
                      (and (afternoon) (raining) (homework-today))
-                     (:task !do-chores ?t)
+                     (:ordered (:task !do-chores ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
 
                      rain-homework-evening
                      (and (evening) (raining) (homework-today))
-                     (:task !do-homework ?t)
+                     (:ordered (:task !do-homework ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
 
                      work-homework-early
                      (and (early-morning) (work-today) (homework-today))
-                     (:task !go-to-school ?t)
+                     (:ordered (:task !go-to-school ?t)
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
 
                      work-homework-late
                      (and (late-morning) (work-today) (have-homework))
-                     (:task !go-to-work ?t)
+                     (:ordered (:task !go-to-work ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
 
                      work-homework-afternoon
                      (and (afternoon) (work-today) (have-homework))
-                     (:task !go-running ?t)
+                     (:ordered (:task !go-running ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
 
                      work-homework-evening
                      (and (evening) (work-today) (have-homework))
-                     (:task !do-homework ?t)
+                     (:ordered (:task !do-homework ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
 
                      homework-early
                      (and (early-morning) (homework-today))
-                     (:task !go-to-school ?t)
+                     (:ordered (:task !go-to-school ?t)
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
 
                      homework-late
                      (and (late-morning) (homework-today))
-                     (:task !stay-for-tutoring ?t)
+                     (:ordered (:task !stay-for-tutoring ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
 
                      homework-afternoon
                      (and (afternoon) (homework-today))
-                     (:task !go-running ?t)
+                     (:ordered (:task !go-running ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
 
                      homework-evening
                      (and (evening) (homework-today))
-                     (:task !do-homework ?t)
+                     (:ordered (:task !do-homework ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
 
-                     work-rain
-                     (and (work-today) (raining))
+                     work-rain-early
+                     (and (early-morning) (work-today) (raining))
                      (:ordered (:task !go-to-school ?t)
-                               (:task !go-to-work ?t)
-                               (:task !do-chores ?t)
-                               (:task !play-videogames ?t))
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
 
-                     rain
-                     (raining)
-                     (:ordered (:task !go-to-school ?t)
-                               (:task !stay-for-tutoring ?t)
-                               (:task !do-chores ?t)
-                               (:task !play-videogames ?t))
+                     work-rain-late
+                     (and (late-morning) (work-today) (raining))
+                     (:ordered (:task !go-to-work ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
 
-                     work
-                     (work-today)
+                     work-rain-afternoon
+                     (and (afternoon) (work-today) (raining))
+                     (:ordered (:task !do-chores ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
+
+                     work-rain-evening
+                     (and (evening) (work-today) (raining))
+                     (:ordered (:task !play-videogames ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+
+                     rain-early
+                     (and (early-morning) (raining))
                      (:ordered (:task !go-to-school ?t)
-                               (:task !stay-for-tutoring ?t)
-                               (:task !go-running ?t)
-                               (:task !play-videogames ?t))
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
+
+                     rain-late
+                     (and (late-morning) (raining))
+                     (:ordered (:task !stay-for-tutoring ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
+
+                     rain-afternoon
+                     (and (afternoon) (raining))
+                     (:ordered (:task !do-chores ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
+
+                     rain-evening
+                     (and (evening) (raining))
+                     (:ordered (:task !play-videogames ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+
+                     work-early
+                     (and (early-morning) (work-today))
+                     (:ordered (:task !go-to-school ?t)
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
+
+                     work-late
+                     (and (late-morning) (work-today))
+                     (:ordered (:task !stay-for-tutoring ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
+
+                     work-afternoon
+                     (and (afternoon) (work-today))
+                     (:ordered (:task !go-running ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
+
+                     work-evening
+                     (and (evening) (work-today))
+                     (:ordered (:task !play-videogames ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+
+                     no-work-early
+                     (early-morning)
+                     (:ordered (:task !go-to-school ?t)
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
+
+                     no-work-late
+                     (late-morning)
+                     (:ordered (:task !stay-for-tutoring ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
+
+                     no-work-afternoon
+                     (afternoon)
+                     (:ordered (:task !go-running ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
 
                      no-work
-                     ()
-                     (:ordered (:task !go-to-school ?t)
-                               (:task !stay-for-tutoring ?t)
-                               (:task !go-running ?t)
-                               (:task !play-videogames ?t))
+                     (evening)
+                     (:ordered (:task !play-videogames ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
 
             )
 
             (:method (tuesday ?t)
-                     work-rain-homework-store
-                     (and (store-today) (work-today) (raining) (homework-today))
+                     work-rain-homework-store-early
+                     (and (early-morning) (store-today) (work-today) (raining) (homework-today))
                      (:ordered (:task !go-to-work ?t)
-                               (:task !go-to-school ?t)
-                               (:task !go-to-store ?t)
-                               (:task !do-homework ?t))
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
 
-                     work-rain-homework
-                     (and (work-today) (raining) (homework-today))
+                     work-rain-homework-store-late
+                     (and (late-morning) (store-today) (work-today) (raining) (homework-today))
+                     (:ordered (:task !go-to-school ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
+
+                     work-rain-homework-store-afternoon
+                     (and (afternoon) (store-today) (work-today) (raining) (homework-today))
+                     (:ordered (:task !go-to-store ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
+
+                     work-rain-homework-store-evening
+                     (and (evening) (store-today) (work-today) (raining) (homework-today))
+                     (:ordered (:task !do-homework ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+
+                     work-rain-homework-early
+                     (and (early-morning) (work-today) (raining) (homework-today))
                      (:ordered (:task !go-to-work ?t)
-                               (:task !go-to-school ?t)
-                               (:task !do-homework ?t)
-                               (:task !play-videogames ?t))
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
 
-                     rain-homework-store
-                     (and (store-today) (raining) (homework-today))
+                     work-rain-homework-late
+                     (and (late-morning) (work-today) (raining) (homework-today))
                      (:ordered (:task !go-to-school ?t)
-                               (:task !stay-for-tutoring ?t)
-                               (:task !go-to-store ?t)
-                               (:task !do-homework ?t))
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
 
-                     rain-homework
-                     (and (raining) (homework-today))
+                     work-rain-homework-afternoon
+                     (and (afternoon) (work-today) (raining) (homework-today))
+                     (:ordered (:task !do-homework ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
+
+                     work-rain-homework-evening
+                     (and (evening) (work-today) (raining) (homework-today))
+                     (:ordered (:task !play-videogames ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+
+                     rain-homework-store-early
+                     (and (early-morning) (store-today) (raining) (homework-today))
                      (:ordered (:task !go-to-school ?t)
-                               (:task !stay-for-tutoring ?t)
-                               (:task !do-homework ?t)
-                               (:task !play-videogames ?t))
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
 
-                     work-homework-store
-                     (and (store-today) (work-today) (homework-today))
+                     rain-homework-store-late
+                     (and (late-morning) (store-today) (raining) (homework-today))
+                     (:ordered (:task !stay-for-tutoring ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
+
+                     rain-homework-store-afternoon
+                     (and (afternoon) (store-today) (raining) (homework-today))
+                     (:ordered (:task !go-to-store ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
+
+                     rain-homework-store-evening
+                     (and (evening) (store-today) (raining) (homework-today))
+                     (:ordered (:task !do-homework ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+
+                     rain-homework-early
+                     (and (early-morning) (raining) (homework-today))
+                     (:ordered (:task !go-to-school ?t)
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
+
+                     rain-homework-late
+                     (and (late-morning) (raining) (homework-today))
+                     (:ordered (:task !stay-for-tutoring ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
+
+                     rain-homework-afternoon
+                     (and (afternoon) (raining) (homework-today))
+                     (:ordered (:task !do-homework ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
+
+                     rain-homework-evening
+                     (and (evening) (raining) (homework-today))
+                     (:ordered (:task !play-videogames ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+
+                     work-homework-store-early
+                     (and (early-morning) (store-today) (work-today) (homework-today))
                      (:ordered (:task !go-to-work ?t)
-                               (:task !go-to-school ?t)
-                               (:task !go-to-store ?t)
-                               (:task !do-homework ?t))
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
 
-                     work-homework
-                     (and (work-today) (homework-today))
+                     work-homework-store-late
+                     (and (late-morning) (store-today) (work-today) (homework-today))
+                     (:ordered (:task !go-to-school ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
+
+                     work-homework-store-afternoon
+                     (and (afternoon) (store-today) (work-today) (homework-today))
+                     (:ordered (:task !go-to-store ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
+
+                     work-homework-store-evening
+                     (and (evening) (store-today) (work-today) (homework-today))
+                     (:ordered (:task !do-homework ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+
+                     work-homework-early
+                     (and (early-morning) (work-today) (homework-today))
                      (:ordered (:task !go-to-work ?t)
-                               (:task !go-to-school ?t)
-                               (:task !do-homework ?t)
-                               (:task !play-videogames ?t))
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
 
-                     homework-store
-                     (and (store-today) (homework-today))
+                     work-homework-late
+                     (and (late-morning) (work-today) (homework-today))
                      (:ordered (:task !go-to-school ?t)
-                               (:task !stay-for-tutoring ?t)
-                               (:task !go-to-store ?t)
-                               (:task !do-homework ?t))
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
 
-                     homework
-                     (homework-today)
+                     work-homework-afternoon
+                     (and (afternoon) (work-today) (homework-today))
+                     (:ordered (:task !do-homework ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
+
+                     work-homework-evening
+                     (and (evening) (work-today) (homework-today))
+                     (:ordered (:task !play-videogames ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+
+                     homework-store-early
+                     (and (early-morning) (store-today) (homework-today))
                      (:ordered (:task !go-to-school ?t)
-                               (:task !stay-for-tutoring ?t)
-                               (:task !do-homework ?t)
-                               (:task !play-videogames ?t))
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
 
-                     work-rain-store
-                     (and (store-today) (work-today) (raining))
+                     homework-store-late
+                     (and (late-morning) (store-today) (homework-today))
+                     (:ordered (:task !stay-for-tutoring ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
+
+                     homework-store-afternoon
+                     (and (afternoon) (store-today) (homework-today))
+                     (:ordered (:task !go-to-store ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
+
+                     homework-store-evening
+                     (and (evening) (store-today) (homework-today))
+                     (:ordered (:task !do-homework ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+
+                     homework-early
+                     (and (early-morning) (homework-today))
+                     (:ordered (:task !go-to-school ?t)
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
+
+                     homework-late
+                     (and (late-morning) (homework-today))
+                     (:ordered (:task !stay-for-tutoring ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
+
+                     homework-afternoon
+                     (and (afternoon) (homework-today))
+                     (:ordered (:task !do-homework ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
+
+                     homework-evening
+                     (and (evening) (homework-today))
+                     (:ordered (:task !play-videogames ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+
+                     work-rain-store-early
+                     (and (early-morning) (store-today) (work-today) (raining))
                      (:ordered (:task !go-to-work ?t)
-                               (:task !go-to-school ?t)
-                               (:task !go-to-store ?t)
-                               (:task !play-videogames ?t))
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
 
-                     work-rain
-                     (and (work-today) (raining))
+                     work-rain-store-late
+                     (and (late-morning) (store-today) (work-today) (raining))
+                     (:ordered (:task !go-to-school ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
+
+                     work-rain-store-afternoon
+                     (and (afternoon) (store-today) (work-today) (raining))
+                     (:ordered (:task !go-to-store ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
+
+                     work-rain-store-evening
+                     (and (evening) (store-today) (work-today) (raining))
+                     (:ordered (:task !play-videogames ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+
+                     work-rain-early
+                     (and (early-morning) (work-today) (raining))
                      (:ordered (:task !go-to-work ?t)
-                               (:task !go-to-school ?t)
-                               (:task !do-chores ?t)
-                               (:task !play-videogames ?t))
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
 
-                     rain-store
-                     (and (store-today) (raining))
+                     work-rain-late
+                     (and (late-morning) (work-today) (raining))
                      (:ordered (:task !go-to-school ?t)
-                               (:task !stay-for-tutoring ?t)
-                               (:task !go-to-store ?t)
-                               (:task !play-videogames ?t))
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
 
-                     rain
-                     (raining)
+                     work-rain-afternoon
+                     (and (afternoon) (work-today) (raining))
+                     (:ordered (:task !do-chores ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
+
+                     work-rain-evening
+                     (and (evening) (work-today) (raining))
+                     (:ordered (:task !play-videogames ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+
+                     rain-store-early
+                     (and (early-morning) (store-today) (raining))
                      (:ordered (:task !go-to-school ?t)
-                               (:task !stay-for-tutoring ?t)
-                               (:task !do-chores ?t)
-                               (:task !play-videogames ?t))
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
 
-                     work-store
-                     (and (store-today) (work-today))
+                     rain-store-late
+                     (and (late-morning) (store-today) (raining))
+                     (:ordered (:task !stay-for-tutoring ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
+
+                     rain-store-afternoon
+                     (and (afternoon) (store-today) (raining))
+                     (:ordered (:task !go-to-store ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
+
+                     rain-store-evening
+                     (and (evening) (store-today) (raining))
+                     (:ordered (:task !play-videogames ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+
+                     rain-early
+                     (and (early-morning) (raining))
+                     (:ordered (:task !go-to-school ?t)
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
+
+                     rain-late
+                     (and (late-morning) (raining))
+                     (:ordered (:task !stay-for-tutoring ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
+
+                     rain-afternoon
+                     (and (afternoon) (raining))
+                     (:ordered (:task !do-chores ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
+
+                     rain-evening
+                     (and (evening) (raining))
+                     (:ordered (:task !play-videogames ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+
+                     work-store-early
+                     (and (early-morning) (store-today) (work-today))
                      (:ordered (:task !go-to-work ?t)
-                               (:task !go-to-school ?t)
-                               (:task !go-to-store ?t)
-                               (:task !play-videogames ?t))
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
 
-                     work
-                     (work-today)
+                     work-store-late
+                     (and (late-morning) (store-today) (work-today))
+                     (:ordered (:task !go-to-school ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
+
+                     work-store-afternoon
+                     (and (afternoon) (store-today) (work-today))
+                     (:ordered (:task !go-to-store ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
+
+                     work-store-evening
+                     (and (evening) (store-today) (work-today))
+                     (:ordered (:task !play-videogames ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+
+                     work-early
+                     (and (early-morning) (work-today))
                      (:ordered (:task !go-to-work ?t)
-                               (:task !go-to-school ?t)
-                               (:task !go-running ?t)
-                               (:task !play-videogames ?t))
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
 
-                     no-work-store
-                     (store-today)
+                     work-late
+                     (and (late-morning) (work-today))
                      (:ordered (:task !go-to-school ?t)
-                               (:task !stay-for-tutoring ?t)
-                               (:task !go-to-store ?t)
-                               (:task !play-videogames ?t))
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
 
-                     no-work
-                     ()
+                     work-afternoon
+                     (and (afternoon) (work-today))
+                     (:ordered (:task !go-running ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
+
+                     work-evening
+                     (and (evening) (work-today))
+                     (:ordered (:task !play-videogames ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+
+                     no-work-store-early
+                     (and (early-morning) (store-today))
                      (:ordered (:task !go-to-school ?t)
-                               (:task !stay-for-tutoring ?t)
-                               (:task !go-running ?t)
-                               (:task !play-videogames ?t))
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
+
+                     no-work-store-late
+                     (and (late-morning) (store-today))
+                     (:ordered (:task !stay-for-tutoring ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
+
+                     no-work-store-afternoon
+                     (and (afternoon) (store-today))
+                     (:ordered (:task !go-to-store ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
+
+                     no-work-store-evening
+                     (and (evening) (store-today))
+                     (:ordered (:task !play-videogames ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+
+                     no-work-early
+                     (early-morning)
+                     (:ordered (:task !go-to-school ?t)
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
+
+                     no-work-late
+                     (late-morning)
+                     (:ordered (:task !stay-for-tutoring ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
+
+                     no-work-afternoon
+                     (afternoon)
+                     (:ordered (:task !go-running ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
+
+                     no-work-evening
+                     (evening)
+                     (:ordered (:task !play-videogames ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+
             )
  
             (:method (wednesday ?t)
-                     work-rain-homework
-                     (and (work-today) (raining) (homework-today))
+                     work-rain-homework-early
+                     (and (early-morning) (work-today) (raining) (homework-today))
                      (:ordered (:task !go-to-school ?t)
-                               (:task !do-homework ?t)
-                               (:task !go-to-work ?t)
-                               (:task !do-chores ?t))
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
 
-                     rain-homework
-                     (and (raining) (homework-today))
-                     (:ordered (:task !go-to-school ?t)
-                               (:task !do-homework ?t)
-                               (:task !do-chores ?t)
-                               (:task !play-videogames ?t))
+                     work-rain-homework-late
+                     (and (late-morning) (work-today) (raining) (homework-today))
+                     (:ordered (:task !do-homework ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
 
-                     work-homework
-                     (and (work-today) (homework-today))
-                     (:ordered (:task !go-to-school ?t)
-                               (:task !do-homework ?t)
-                               (:task !go-to-work ?t)
-                               (:task !do-chores ?t))
+                     work-rain-homework-afternoon
+                     (and (afternoon) (work-today) (raining) (homework-today))
+                     (:ordered (:task !go-to-work ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
 
-                     homework
-                     (homework-today)
-                     (:ordered (:task !go-to-school ?t)
-                               (:task !do-homework ?t)
-                               (:task !go-running ?t)
-                               (:task !do-chores ?t))
+                     work-rain-homework-evening
+                     (and (evening) (work-today) (raining) (homework-today))
+                     (:ordered (:task !do-chores ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
 
-                     work-rain
-                     (and (work-today) (raining))
+                     rain-homework-early
+                     (and (early-morning) (raining) (homework-today))
                      (:ordered (:task !go-to-school ?t)
-                               (:task !stay-for-tutoring ?t)
-                               (:task !go-to-work ?t)
-                               (:task !do-chores ?t))
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
 
-                     rain
-                     (raining)
-                     (:ordered (:task !go-to-school ?t)
-                               (:task !stay-for-tutoring ?t)
-                               (:task !play-videogames ?t)
-                               (:task !do-chores ?t))
+                     rain-homework-late
+                     (and (late-morning) (raining) (homework-today))
+                     (:ordered (:task !do-homework ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
 
-                     work
-                     (work-today)
+                     rain-homework-afternoon
+                     (and (afternoon) (raining) (homework-today))
+                     (:ordered (:task !do-chores ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
+
+                     rain-homework-evening
+                     (and (evening) (raining) (homework-today))
+                     (:ordered (:task !play-videogames ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+
+                     work-homework-early
+                     (and (early-morning) (work-today) (homework-today))
                      (:ordered (:task !go-to-school ?t)
-                               (:task !go-to-work ?t)
-                               (:task !go-running ?t)
-                               (:task !do-chores ?t))
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
+
+                     work-homework-late
+                     (and (late-morning) (work-today) (have-homework))
+                     (:ordered (:task !do-homework ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
+
+                     work-homework-afternoon
+                     (and (afternoon) (work-today) (have-homework))
+                     (:ordered (:task !go-to-work ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
+
+                     work-homework-evening
+                     (and (evening) (work-today) (have-homework))
+                     (:ordered (:task !do-chores ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+
+                     homework-early
+                     (and (early-morning) (homework-today))
+                     (:ordered (:task !go-to-school ?t)
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
+
+                     homework-late
+                     (and (late-morning) (homework-today))
+                     (:ordered (:task !do-homework ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
+
+                     homework-afternoon
+                     (and (afternoon) (homework-today))
+                     (:ordered (:task !go-running ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
+
+                     homework-evening
+                     (and (evening) (homework-today))
+                     (:ordered (:task !do-chores ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+
+                     work-rain-early
+                     (and (early-morning) (work-today) (raining))
+                     (:ordered (:task !go-to-school ?t)
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
+
+                     work-rain-late
+                     (and (late-morning) (work-today) (raining))
+                     (:ordered (:task !stay-for-tutoring ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
+
+                     work-rain-afternoon
+                     (and (afternoon) (work-today) (raining))
+                     (:ordered (:task !go-to-work ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
+
+                     work-rain-evening
+                     (and (evening) (work-today) (raining))
+                     (:ordered (:task !do-chores ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+
+                     rain-early
+                     (and (early-morning) (raining))
+                     (:ordered (:task !go-to-school ?t)
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
+
+                     rain-late
+                     (and (late-morning) (raining))
+                     (:ordered (:task !stay-for-tutoring ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
+
+                     rain-afternoon
+                     (and (afternoon) (raining))
+                     (:ordered (:task !play-videogames ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
+
+                     rain-evening
+                     (and (evening) (raining))
+                     (:ordered (:task !do-chores ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+
+                     work-early
+                     (and (early-morning) (work-today))
+                     (:ordered (:task !go-to-school ?t)
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
+
+                     work-late
+                     (and (late-morning) (work-today))
+                     (:ordered (:task !go-to-work ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
+
+                     work-afternoon
+                     (and (afternoon) (work-today))
+                     (:ordered (:task !go-running ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
+
+                     work-evening
+                     (and (evening) (work-today))
+                     (:ordered (:task !do-chores ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+
+                     no-work-early
+                     (early-morning)
+                     (:ordered (:task !go-to-school ?t)
+                               (:task !!delete (early-morning))
+                               (:task !!assert (late-morning)))
+
+                     no-work-late
+                     (late-morning)
+                     (:ordered (:task !stay-for-tutoring ?t)
+                               (:task !!delete (late-morning))
+                               (:task !!assert (afternoon)))
+
+                     no-work-afternoon
+                     (afternoon)
+                     (:ordered (:task !go-running ?t)
+                               (:task !!delete (afternoon))
+                               (:task !!assert (evening)))
 
                      no-work
-                     ()
-                     (:ordered (:task !go-to-school ?t)
-                               (:task !stay-for-tutoring ?t)
-                               (:task !go-running ?t)
-                               (:task !do-chores ?t))
+                     (evening)
+                     (:ordered (:task !do-chores ?t)
+                               (:task !!delete (evening))
+                               (:task !!assert (early-morning)))
+ 
             )
 
             (:method (thursday ?t)
