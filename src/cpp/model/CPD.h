@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include <iterator>
 
 #include <eigen3/Eigen/Dense>
 #include <gsl/gsl_randist.h>
