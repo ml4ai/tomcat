@@ -59,6 +59,7 @@ namespace tomcat {
             this->name_to_id.clear();
             this->parameter_nodes_map.clear();
             this->label_to_nodes.clear();
+            this->nodes.clear();
         }
 
         void DynamicBayesNet::create_vertices_from_nodes() {
@@ -280,6 +281,17 @@ namespace tomcat {
             // TODO - Implement the verifications needed to make sure the DBN is
             //  valid and prepared to be unrolled.
             //  Only allow conjugate priors
+        }
+
+        std::vector<std::shared_ptr<Node>> DynamicBayesNet::get_parameter_nodes() {
+            std::vector<std::shared_ptr<Node>> parameter_nodes;
+            parameter_nodes.reserve(this->parameter_nodes_map.size());
+
+            for(const auto& mapping : this->parameter_nodes_map){
+                parameter_nodes.push_back(mapping.second);
+            }
+
+            return parameter_nodes;
         }
 
         std::vector<std::shared_ptr<Node>> DynamicBayesNet::get_nodes_by_label(

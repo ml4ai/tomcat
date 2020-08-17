@@ -27,10 +27,8 @@ namespace tomcat {
              * unrolled DBN.
              *
              * @param model: unrolled DBN
-             * @param random_generator: random number generator
              */
-            Sampler(DynamicBayesNet model,
-                    std::shared_ptr<gsl_rng> random_generator);
+            Sampler(std::shared_ptr<DynamicBayesNet> model);
 
             virtual ~Sampler();
 
@@ -56,9 +54,11 @@ namespace tomcat {
             /**
              * Generates samples for the latent nodes.
              *
+             * @param random_generator: random number generator
              * @param num_samples: number of samples to generate
              */
-            void sample(int num_samples);
+            void sample(std::shared_ptr<gsl_rng> random_generator,
+                        int num_samples);
 
             /**
              * Adds data to node of arbitrary sample size.
@@ -100,19 +100,33 @@ namespace tomcat {
              *
              * @param num_samples: number of samples to generate
              */
-            virtual void sample_latent(int num_samples) = 0;
+            virtual void
+            sample_latent(std::shared_ptr<gsl_rng> random_generator,
+                          int num_samples) = 0;
 
             // -----------------------------------------------------------------
             // Getters & Setters
             // -----------------------------------------------------------------
             void set_num_in_plate_samples(int num_in_plate_samples);
 
+            const std::shared_ptr<DynamicBayesNet>& get_model() const;
+
           protected:
+            //------------------------------------------------------------------
+            // Member functions
+            //------------------------------------------------------------------
+
+            /**
+             * Copy data members from another sampler instance.
+             *
+             * @param sampler: Sampler
+             */
+            void copy_sampler(const Sampler& sampler);
+
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------
-            std::shared_ptr<gsl_rng> random_generator;
-            DynamicBayesNet model;
+            std::shared_ptr<DynamicBayesNet> model;
 
             // Labels of the nodes that were sampled (this has to be filled in
             // the derived classes).
@@ -121,7 +135,9 @@ namespace tomcat {
             // The number of samples generated for in-plate nodes. If data is
             // provided for some node, the number of data points has to be the
             // same as the number of in-plate samples.
-            int num_in_plate_samples = 0;
+            int num_in_plate_samples = 1;
+
+            std::unordered_set<std::string> observable_node_labels;
 
           private:
             //------------------------------------------------------------------
@@ -137,11 +153,6 @@ namespace tomcat {
              * Unfreeze nodes that have data assigned to them.
              */
             void unfreeze_observable_nodes();
-
-            //------------------------------------------------------------------
-            // Data members
-            //------------------------------------------------------------------
-            std::unordered_set<std::string> observable_node_labels;
         };
     } // namespace model
 } // namespace tomcat

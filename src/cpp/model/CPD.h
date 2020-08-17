@@ -175,7 +175,6 @@ namespace tomcat {
              * Returns pdfs for assignments of a given node from the
              * distributions associated with its parent nodes' assignments.
              *
-             * @param random_generator: random number random_generator
              * @param parent_nodes: timed instance of the parent nodes of the
              * cpd's owner in an unrolled DBN
              * @param node: node containing the assignments to be used to
@@ -184,8 +183,7 @@ namespace tomcat {
              * @return A sample from one of the distributions in the CPD.
              */
             Eigen::VectorXd
-            get_pdfs(std::shared_ptr<gsl_rng> random_generator,
-                     const std::vector<std::shared_ptr<Node>>& parent_nodes,
+            get_pdfs(const std::vector<std::shared_ptr<Node>>& parent_nodes,
                      const Node& node) const;
 
             /**

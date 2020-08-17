@@ -200,8 +200,7 @@ namespace tomcat {
         }
 
         Eigen::VectorXd
-        CPD::get_pdfs(std::shared_ptr<gsl_rng> random_generator,
-                      const std::vector<std::shared_ptr<Node>>& parent_nodes,
+        CPD::get_pdfs(const std::vector<std::shared_ptr<Node>>& parent_nodes,
                       const Node& node) const {
 
             std::vector<int> distribution_indices =

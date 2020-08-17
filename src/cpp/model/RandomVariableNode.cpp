@@ -49,6 +49,7 @@ namespace tomcat {
             this->assignment = node.assignment;
             this->cpd_templates = node.cpd_templates;
             this->cpd = node.cpd;
+            this->frozen = node.frozen;
         }
 
         std::string RandomVariableNode::get_description() const {
@@ -141,10 +142,9 @@ namespace tomcat {
         }
 
         Eigen::VectorXd RandomVariableNode::get_pdfs(
-            std::shared_ptr<gsl_rng> random_generator,
             const std::vector<std::shared_ptr<Node>>& parent_nodes) const {
 
-            return this->cpd->get_pdfs(random_generator, parent_nodes, *this);
+            return this->cpd->get_pdfs(parent_nodes, *this);
         }
 
         void RandomVariableNode::update_parents_sufficient_statistics(

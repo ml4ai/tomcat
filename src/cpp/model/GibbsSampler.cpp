@@ -14,11 +14,9 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
-        GibbsSampler::GibbsSampler(DynamicBayesNet model,
-                                   std::shared_ptr<gsl_rng> random_generator,
+        GibbsSampler::GibbsSampler(std::shared_ptr<DynamicBayesNet> model,
                                    int burn_in_period)
-            : Sampler(model, random_generator), burn_in_period(burn_in_period) {
-        }
+            : Sampler(model), burn_in_period(burn_in_period) {}
 
         GibbsSampler::~GibbsSampler() {}
 
@@ -26,28 +24,27 @@ namespace tomcat {
         // Copy & Move constructors/assignments
         //----------------------------------------------------------------------
         GibbsSampler& GibbsSampler::operator=(const GibbsSampler& sampler) {
-            this->model = sampler.model;
-            this->burn_in_period = sampler.burn_in_period;
+            this->copy_sampler(sampler);
             return *this;
         }
 
         GibbsSampler::GibbsSampler(const GibbsSampler& sampler) {
-            this->model = sampler.model;
-            this->burn_in_period = sampler.burn_in_period;
+            this->copy_sampler(sampler);
         }
-
-        //----------------------------------------------------------------------
-        // Operator overload
-        //----------------------------------------------------------------------
-
-        //----------------------------------------------------------------------
-        // Static functions
-        //----------------------------------------------------------------------
 
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void GibbsSampler::sample_latent(int num_samples) {
+        void GibbsSampler::copy_sampler(const GibbsSampler& sampler) {
+            Sampler::copy_sampler(sampler);
+            this->burn_in_period = sampler.burn_in_period;
+            this->node_label_to_samples = sampler.node_label_to_samples;
+            this->iteration = sampler.iteration;
+        }
+
+        void
+        GibbsSampler::sample_latent(std::shared_ptr<gsl_rng> random_generator,
+                                    int num_samples) {
             // We will proceed from the root to the leaves so that child nodes
             // can update the sufficient statistics of parameter nodes correctly
             // given that parent nodes were already sampled.
@@ -55,7 +52,7 @@ namespace tomcat {
             std::vector<std::shared_ptr<Node>> data_nodes;
             std::vector<std::shared_ptr<Node>> parameter_nodes;
             std::vector<std::shared_ptr<Node>> latent_nodes;
-            for (auto& node : this->model.get_nodes_topological_order()) {
+            for (auto& node : this->model->get_nodes_topological_order()) {
                 if (node->get_metadata()->is_parameter()) {
                     if (!std::dynamic_pointer_cast<RandomVariableNode>(node)
                              ->is_frozen()) {
@@ -74,38 +71,40 @@ namespace tomcat {
                 }
             }
 
-            this->fill_initial_samples();
+            this->fill_initial_samples(random_generator);
             this->init_samples_storage(num_samples, latent_nodes);
 
             for (int i = 0; i < this->burn_in_period + num_samples; i++) {
                 bool discard = i < burn_in_period;
                 for (auto& node : data_nodes) {
-                    this->sample_data_node(node, discard);
+                    this->sample_data_node(random_generator, node, discard);
                 }
 
                 for (auto& node : parameter_nodes) {
-                    this->sample_parameter_node(node, discard);
+                    this->sample_parameter_node(
+                        random_generator, node, discard);
                 }
 
-                if(i >= this->burn_in_period){
+                if (i >= this->burn_in_period) {
+                    std::cout << i << "\n";
                     this->iteration++;
                 }
             }
         }
 
-        void GibbsSampler::reset(){
+        void GibbsSampler::reset() {
             this->iteration = 0;
             this->node_label_to_samples.clear();
         }
 
-        void GibbsSampler::fill_initial_samples() {
+        void GibbsSampler::fill_initial_samples(
+            std::shared_ptr<gsl_rng> random_generator) {
             // Observable nodes are already frozen by the gibbs sampler thus
             // there's no need to add them as data in the ancestral sampler.
-            AncestralSampler initial_sampler(this->model,
-                                             this->random_generator);
+            AncestralSampler initial_sampler(this->model);
             initial_sampler.set_num_in_plate_samples(
                 this->num_in_plate_samples);
-            initial_sampler.sample(1);
+            initial_sampler.sample(random_generator, 1);
         }
 
         void GibbsSampler::init_samples_storage(
@@ -123,17 +122,20 @@ namespace tomcat {
                     this->node_label_to_samples[node_label] =
                         Tensor3::constant(sample_size,
                                           num_samples,
-                                          this->model.get_time_steps(),
+                                          this->model->get_time_steps(),
                                           -1);
                 }
             }
         }
 
-        void GibbsSampler::sample_data_node(std::shared_ptr<Node> node, bool discard) {
+        void GibbsSampler::sample_data_node(
+            std::shared_ptr<gsl_rng> random_generator,
+            std::shared_ptr<Node> node,
+            bool discard) {
 
             Eigen::MatrixXd weights = this->get_weights_for(node);
             std::vector<std::shared_ptr<Node>> parent_nodes =
-                this->model.get_parent_nodes_of(node, true);
+                this->model->get_parent_nodes_of(node, true);
             std::shared_ptr<RandomVariableNode> rv_node =
                 std::dynamic_pointer_cast<RandomVariableNode>(node);
 
@@ -147,13 +149,12 @@ namespace tomcat {
             }
 
             rv_node->update_parents_sufficient_statistics(parent_nodes);
-            rv_node->reset_sufficient_statistics();
         }
 
         Eigen::MatrixXd
         GibbsSampler::get_weights_for(const std::shared_ptr<Node>& node) {
             std::vector<std::shared_ptr<Node>> child_nodes =
-                this->model.get_child_nodes_of(node);
+                this->model->get_child_nodes_of(node);
             Eigen::MatrixXd weights = Eigen::MatrixXd::Zero(
                 node->get_size(), node->get_metadata()->get_cardinality());
 
@@ -167,9 +168,8 @@ namespace tomcat {
                     Eigen::VectorXd pdfs =
                         std::dynamic_pointer_cast<RandomVariableNode>(
                             child_node)
-                            ->get_pdfs(random_generator,
-                                       this->model.get_parent_nodes_of(
-                                           child_node, true));
+                            ->get_pdfs(this->model->get_parent_nodes_of(
+                                child_node, true));
 
                     if (node->get_size() == 1) {
                         // If an out-of-plate node is parent of an in-plate
@@ -192,7 +192,7 @@ namespace tomcat {
             }
 
             // Unlog the weights
-            weights = weights.array() - weights.maxCoeff();
+            weights.colwise() -= weights.rowwise().maxCoeff();
             weights = weights.array().exp() - EPSILON;
 
             return weights;
@@ -203,36 +203,41 @@ namespace tomcat {
             const Eigen::MatrixXd& sample) {
             if (sample.rows() == 1) {
                 std::string node_label = node->get_metadata()->get_label();
+                this->sampled_node_labels.insert(node_label);
                 int time_step = node->get_time_step();
                 for (int i = 0; i < sample.cols(); i++) {
                     this->node_label_to_samples.at(node_label)(
-                        i, this->iteration, time_step) =
-                        sample(0, i);
+                        i, this->iteration, time_step) = sample(0, i);
                 }
             }
         }
 
-        void GibbsSampler::sample_parameter_node(std::shared_ptr<Node> node,
-                                                 bool discard) {
-            // As nodes are processed, the sufficient statistic
-            // table of their dependent parent parameter nodes are
-            // updated accordingly. So at this point we already have all
-            // the information needed to sample the parameter from its
-            // posterior.
+        void GibbsSampler::sample_parameter_node(
+            std::shared_ptr<gsl_rng> random_generator,
+            std::shared_ptr<Node> node,
+            bool discard) {
+
             std::vector<std::shared_ptr<Node>> parent_nodes =
-                this->model.get_parent_nodes_of(node, true);
+                this->model->get_parent_nodes_of(node, true);
             std::shared_ptr<RandomVariableNode> rv_node =
                 std::dynamic_pointer_cast<RandomVariableNode>(node);
             Eigen::MatrixXd sample = rv_node->sample_from_conjugacy(
                 random_generator, parent_nodes, rv_node->get_size());
             rv_node->set_assignment(sample);
 
+            // As nodes are processed, the sufficient statistic
+            // table of their dependent parent parameter nodes are
+            // updated accordingly. So at this point we already have all
+            // the information needed to sample the parameter from its
+            // posterior.
+            rv_node->reset_sufficient_statistics();
+
             if (!discard) {
                 this->keep_sample(rv_node, sample);
             }
         }
 
-        Tensor3 GibbsSampler::get_samples(const std::string &node_label) const {
+        Tensor3 GibbsSampler::get_samples(const std::string& node_label) const {
             return this->node_label_to_samples.at(node_label);
         }
 

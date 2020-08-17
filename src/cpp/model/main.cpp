@@ -1,10 +1,12 @@
 #include "AncestralSampler.h"
 #include "CategoricalCPD.h"
 #include "ConstantNode.h"
+#include "DBNSamplingTrainer.h"
 #include "DirichletCPD.h"
 #include "DynamicBayesNet.h"
 #include "FileHandler.h"
 #include "GaussianCPD.h"
+#include "GibbsSampler.h"
 #include "Node.h"
 #include "NodeMetadata.h"
 #include "RandomVariableNode.h"
@@ -19,7 +21,6 @@
 #include <memory>
 #include <unistd.h>
 #include <variant>
-#include "GibbsSampler.h"
 
 #include <boost/filesystem.hpp>
 namespace fs = boost::filesystem;
@@ -53,14 +54,16 @@ class B {
     void print(A& a) const { a.print(); }
 };
 
-int main() {
-    //          A a;
-    //          B b(std::move(a));
-    //    //
-    //          std::shared_ptr<A> a_ptr = std::make_shared<A>();
-    //    //      A a_ref = *a_ptr;
-    //          b.print(*a_ptr);
+void test_cpp_capabilities() {
+    A a;
+    B b(std::move(a));
 
+    std::shared_ptr<A> a_ptr = std::make_shared<A>();
+    // A a_ref = *a_ptr;
+    b.print(*a_ptr);
+}
+
+void test_random_number_generation() {
     gsl_rng* gen_ptr = gsl_rng_alloc(gsl_rng_mt19937);
     gsl_rng_set(gen_ptr, time(0));
     double* probs = new double[3]{0.3, 0.4, 0.3};
@@ -75,21 +78,9 @@ int main() {
     delete[] probs;
     delete[] sample;
     delete gen_ptr;
+}
 
-    //    gsl_rng_set(gen.get(), time(0));
-    //    unsigned int k = gsl_ran_poisson(gen.get(), 3);
-    //    std::cout << k << std::endl;
-    //
-    //    VectorXd v(2);
-    //    v << 0.54, 0.46;
-    //    std::cout << v << std::endl;
-    //
-    //    double* theta = new double[2];
-    //    double* alpha = v.data();
-    //    gsl_ran_dirichlet(gen.get(), 2, alpha, theta);
-    //    for (int i = 0; i < 2; i++) {
-    //        std::cout << theta[i] << " ";
-    //    }
+void test_dbn_entities() {
     //    std::cout << std::endl;
     //
     //    VectorXd v2 = Map<VectorXd>(theta, 2);
@@ -169,13 +160,9 @@ int main() {
     //    dbn.add_node(param_node2);
     //    dbn.add_node(data_node1);
     // dbn.unroll(3);
+}
 
-    //    std::vector<std::variant<A*, B*>> multi_vec;
-    //    std::variant<A*, B*> var1 (new A());
-    //    multi_vec.push_back(var1);
-
-    // multi_vec.push_back(B());
-
+DynamicBayesNet create_dbn(bool fixed_parameters) {
     // Creation of a simple DBN to test
     // Parameters
     NodeMetadata state_prior_metadata =
@@ -265,15 +252,16 @@ int main() {
     std::shared_ptr<CPD> prior_state_cpd_ptr =
         std::make_shared<CategoricalCPD>(prior_state_cpd);
 
-    CategoricalCPD state_cpd(
-        {state_metadata_ptr},
-        {std::make_shared<Categorical>(theta_s0_node_ptr),
-         std::make_shared<Categorical>(theta_s1_node_ptr),
-         std::make_shared<Categorical>(theta_s2_node_ptr)});
-    //    Eigen::MatrixXd state_transition_matrix(3, 3);
-    //    state_transition_matrix << 0, 0, 1, 1, 0, 0, 0, 1, 0;
-    //    CategoricalCPD state_cpd({"State"},
-    //    std::move(state_transition_matrix));
+    Eigen::MatrixXd state_transition_matrix(3, 3);
+    state_transition_matrix << 0, 0, 1, 1, 0, 0, 0, 1, 0;
+    CategoricalCPD state_cpd({state_metadata_ptr}, state_transition_matrix);
+    if (!fixed_parameters) {
+        state_cpd =
+            CategoricalCPD({state_metadata_ptr},
+                           {std::make_shared<Categorical>(theta_s0_node_ptr),
+                            std::make_shared<Categorical>(theta_s1_node_ptr),
+                            std::make_shared<Categorical>(theta_s2_node_ptr)});
+    }
 
     std::shared_ptr<CPD> state_cpd_ptr =
         std::make_shared<CategoricalCPD>(state_cpd);
@@ -286,9 +274,11 @@ int main() {
         std::make_shared<RandomVariableNode>(state_node);
     state_metadata_ptr->add_parent_link(state_metadata_ptr, true);
     state_metadata_ptr->add_parent_link(state_prior_metadata_ptr, false);
-    state_metadata_ptr->add_parent_link(theta_s0_metadata_ptr, true);
-    state_metadata_ptr->add_parent_link(theta_s1_metadata_ptr, true);
-    state_metadata_ptr->add_parent_link(theta_s2_metadata_ptr, true);
+    if (!fixed_parameters) {
+        state_metadata_ptr->add_parent_link(theta_s0_metadata_ptr, true);
+        state_metadata_ptr->add_parent_link(theta_s1_metadata_ptr, true);
+        state_metadata_ptr->add_parent_link(theta_s2_metadata_ptr, true);
+    }
 
     NodeMetadata tg_metadata = NodeMetadata::create_multiple_time_link_metadata(
         "TG", true, false, true, 1, 1, 2);
@@ -317,37 +307,33 @@ int main() {
     dbn.add_node_template(tg_node);
     dbn.add_node_template(ty_node);
     dbn.add_node_template(prior_state_node);
-    dbn.add_node_template(std::move(theta_s0_node));
-    dbn.add_node_template(std::move(theta_s1_node));
-    dbn.add_node_template(std::move(theta_s2_node));
+    if (!fixed_parameters) {
+        dbn.add_node_template(std::move(theta_s0_node));
+        dbn.add_node_template(std::move(theta_s1_node));
+        dbn.add_node_template(std::move(theta_s2_node));
+    }
 
-    dbn.unroll(3, false);
+    return dbn;
+}
 
-    Node::NodeMap param_map;
-    Eigen::VectorXd temp(3);
-    temp << 0.000001, 0.000001, 1;
-    param_map["(PriorS,0)"] =
-        std::make_shared<ConstantNode>(ConstantNode(temp));
-    prior_state_cpd_ptr->update_dependencies(param_map, 0);
+void generate_samples_to_test(std::shared_ptr<DynamicBayesNet> dbn,
+                              int num_samples,
+                              std::shared_ptr<gsl_rng> gen) {
+    AncestralSampler sampler(dbn);
+    sampler.sample(gen, num_samples);
+    sampler.save_samples_to_folder("../../data/samples");
+}
 
-    //    std::vector<std::shared_ptr<RandomVariableNode>> nodes =
-    //        dbn.get_nodes_topological_order();
-    //
-    //    for (const auto& node : nodes) {
-    //        std::cout << *node << std::endl;
-    //    }
-
-    std::shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
-    //gsl_rng_set(gen.get(), time(0));
-    dbn.unroll(600, true);
-    // dbn.load_from_folder("../../data/model");
+void sample_parameters_from_posterior(std::shared_ptr<DynamicBayesNet> dbn,
+                                      int num_samples,
+                                      std::shared_ptr<gsl_rng> gen) {
     Tensor3 tg_data = read_tensor_from_file("../../data/samples/TG.txt");
     Tensor3 ty_data = read_tensor_from_file("../../data/samples/TY.txt");
-    GibbsSampler gibbs(dbn, gen, 10);
+    GibbsSampler gibbs(dbn, 20);
     gibbs.set_num_in_plate_samples(tg_data.get_shape()[1]);
     gibbs.add_data("TG", tg_data);
     gibbs.add_data("TY", ty_data);
-    gibbs.sample(10);
+    gibbs.sample(gen, num_samples);
 
     std::cout << "ThetaS0" << std::endl;
     std::cout << gibbs.get_samples("ThetaS0") << std::endl;
@@ -357,26 +343,67 @@ int main() {
 
     std::cout << "ThetaS2" << std::endl;
     std::cout << gibbs.get_samples("ThetaS2") << std::endl;
+}
 
-//    AncestralSampler sampler(dbn, gen);
-//    Tensor3 state_data = read_tensor_from_file("../../data/samples/State.txt");
-//    sampler.set_num_in_plate_samples(state_data.get_shape()[1]);
-//    //sampler.add_data("State", state_data);
-//    sampler.sample(5);
-//    //    sampler.sample(5, 10);
-//
-//    std::cout << "States" << std::endl;
-//    std::cout << sampler.get_samples("State") << std::endl;
-//    std::cout << "TGs" << std::endl;
-//    std::cout << sampler.get_samples("TG") << std::endl;
-//    std::cout << "TYs" << std::endl;
-//    std::cout << sampler.get_samples("TY") << std::endl;
+void train_dbn(std::shared_ptr<DynamicBayesNet> dbn,
+               int num_samples,
+               std::shared_ptr<gsl_rng> gen) {
 
+    Tensor3 tg_data = read_tensor_from_file("../../data/samples/TG.txt");
+    Tensor3 ty_data = read_tensor_from_file("../../data/samples/TY.txt");
+    GibbsSampler gibbs(dbn, 20);
+    gibbs.set_num_in_plate_samples(tg_data.get_shape()[1]);
+    gibbs.add_data("TG", tg_data);
+    gibbs.add_data("TY", ty_data);
+
+    DBNSamplingTrainer trainer(std::make_shared<GibbsSampler>(gibbs));
+    trainer.fit(gen, num_samples);
+
+    dbn->save_to_folder("../../data/model");
+}
+
+int main() {
+    //    test_cpp_capabilities();
+    //    test_random_number_generation();
+    //    test_dbn_entities();
+
+    std::shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+
+//    DynamicBayesNet dbn = create_dbn(true);
+//    dbn.unroll(600, true);
+//    generate_samples_to_test(std::make_shared<DynamicBayesNet>(dbn), 100, gen);
+
+    std::shared_ptr<DynamicBayesNet> dbn_ptr =
+        std::make_shared<DynamicBayesNet>(create_dbn(false));
+    dbn_ptr->unroll(600, true);
+    //    sample_parameters_from_posterior(
+    //        dbn_ptr, 10, gen);
+
+    train_dbn(dbn_ptr, 100, gen);
+
+    // gsl_rng_set(gen.get(), time(0));
+    // dbn.unroll(4, true);
+
+    // dbn.unroll(4, true);
+    // AncestralSampler sampler(dbn, gen);
+    // Tensor3 state_data =
+    // read_tensor_from_file("../../data/samples/State.txt");
+    // sampler.set_num_in_plate_samples(state_data.get_shape()[1]);
+    // sampler.add_data("State", state_data);
+    // sampler.sample(5);
+    // sampler.save_samples_to_folder("../../data/samples");
+
+    //
+    //    std::cout << "States" << std::endl;
+    //    std::cout << sampler.get_samples("State") << std::endl;
+    //    std::cout << "TGs" << std::endl;
+    //    std::cout << sampler.get_samples("TG") << std::endl;
+    //    std::cout << "TYs" << std::endl;
+    //    std::cout << sampler.get_samples("TY") << std::endl;
 
     //    std::cout << "PriorS" << std::endl;
     //    std::cout << sampler.get_samples("PriorS") << std::endl;
 
-    //sampler.save_samples_to_folder("../../data/samples");
     //    sampler.get_dbn().save_to_folder("../../data/model");
     //
     //    char buff[FILENAME_MAX]; // create string buffer to hold path
@@ -394,8 +421,7 @@ int main() {
     //    file << "Teste Maior";
     //    file.close();
 
-
-//    for(int i = 0; i < 6000000; i++){
-//        std::cout << i << '\n';
-//    }
+    //    for(int i = 0; i < 6000000; i++){
+    //        std::cout << i << '\n';
+    //    }
 }

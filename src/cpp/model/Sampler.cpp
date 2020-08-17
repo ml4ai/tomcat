@@ -19,24 +19,30 @@ namespace tomcat {
         //----------------------------------------------------------------------
         Sampler::Sampler() {}
 
-        Sampler::Sampler(DynamicBayesNet model,
-                         std::shared_ptr<gsl_rng> random_generator)
-            : random_generator(random_generator), model(model) {}
+        Sampler::Sampler(std::shared_ptr<DynamicBayesNet> model)
+            : model(model) {}
 
         Sampler::~Sampler() {}
 
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void Sampler::sample(int num_samples) {
+        void Sampler::copy_sampler(const Sampler& sampler){
+            this->model = sampler.model;
+            this->observable_node_labels = sampler.observable_node_labels;
+            this->num_in_plate_samples = sampler.num_in_plate_samples;
+            this->sampled_node_labels = sampler.sampled_node_labels;
+        }
+
+        void Sampler::sample(std::shared_ptr<gsl_rng> random_generator, int num_samples) {
             this->freeze_observable_nodes();
-            this->sample_latent(num_samples);
+            this->sample_latent(random_generator, num_samples);
             this->unfreeze_observable_nodes();
         }
 
         void Sampler::add_data(const std::string& node_label, Tensor3& data) {
             if (data.get_shape()[1] == this->num_in_plate_samples) {
-                for (auto& node : this->model.get_nodes_by_label(node_label)) {
+                for (auto& node : this->model->get_nodes_by_label(node_label)) {
                     std::shared_ptr<RandomVariableNode> rv_node =
                         std::dynamic_pointer_cast<RandomVariableNode>(node);
 
@@ -54,11 +60,11 @@ namespace tomcat {
 
         Tensor3 Sampler::get_samples(const std::string& node_label) const {
             std::vector<std::shared_ptr<Node>> nodes =
-                this->model.get_nodes_by_label(node_label);
+                this->model->get_nodes_by_label(node_label);
             if (!nodes.empty()) {
                 int d1 = nodes[0]->get_metadata()->get_sample_size();
                 int d2 = nodes[0]->get_size();
-                int d3 = this->model.get_time_steps();
+                int d3 = this->model->get_time_steps();
                 double* buffer = new double[d1 * d2 * d3];
                 std::fill_n(buffer, d1 * d2 * d3, -1);
                 for (auto& node : nodes) {
@@ -94,7 +100,7 @@ namespace tomcat {
 
         void Sampler::freeze_observable_nodes() {
             for (const auto& node_label : this->observable_node_labels) {
-                for (auto& node : this->model.get_nodes_by_label(node_label)) {
+                for (auto& node : this->model->get_nodes_by_label(node_label)) {
                     std::dynamic_pointer_cast<RandomVariableNode>(node)
                         ->freeze();
                 }
@@ -103,7 +109,7 @@ namespace tomcat {
 
         void Sampler::unfreeze_observable_nodes() {
             for (const auto& node_label : this->observable_node_labels) {
-                for (auto& node : this->model.get_nodes_by_label(node_label)) {
+                for (auto& node : this->model->get_nodes_by_label(node_label)) {
                     std::dynamic_pointer_cast<RandomVariableNode>(node)
                         ->unfreeze();
                 }
@@ -115,6 +121,10 @@ namespace tomcat {
         // ---------------------------------------------------------------------
         void Sampler::set_num_in_plate_samples(int num_in_plate_samples) {
             this->num_in_plate_samples = num_in_plate_samples;
+        }
+
+        const std::shared_ptr<DynamicBayesNet>& Sampler::get_model() const {
+            return model;
         }
 
     } // namespace model

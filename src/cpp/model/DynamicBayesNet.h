@@ -96,6 +96,13 @@ namespace tomcat {
             void check();
 
             /**
+             * Returns the list of timed-instance parameter nodes in the DBN.
+             *
+             * @return Parameter nodes.
+             */
+            std::vector<std::shared_ptr<Node>> get_parameter_nodes();
+
+            /**
              * Returns the list of timed instance nodes created from the
              * template with with a specific label.
              *

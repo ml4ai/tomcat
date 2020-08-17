@@ -24,10 +24,8 @@ namespace tomcat {
              * number generator.
              *
              * @param model: DBN
-             * @param random_generator: Random number generator
              */
-            AncestralSampler(DynamicBayesNet model,
-                             std::shared_ptr<gsl_rng> random_generator);
+            AncestralSampler(std::shared_ptr<DynamicBayesNet> model);
 
             ~AncestralSampler();
 
@@ -45,8 +43,8 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-            void sample_latent(int num_samples) override;
-
+            void sample_latent(std::shared_ptr<gsl_rng> random_generator,
+                               int num_samples) override;
         };
     } // namespace model
 } // namespace tomcat

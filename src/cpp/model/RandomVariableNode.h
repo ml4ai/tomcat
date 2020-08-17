@@ -151,13 +151,11 @@ namespace tomcat {
              * Get pdfs for the node's assignments given its parents'
              * assignments.
              *
-             * @param random_generator: random number generator
              * @param parent_nodes: list of parent nodes' timed instances
              *
              * @return Pdfs relative to the node's assignments.
              */
             Eigen::VectorXd get_pdfs(
-                std::shared_ptr<gsl_rng> random_generator,
                 const std::vector<std::shared_ptr<Node>>& parent_nodes) const;
 
             /**
