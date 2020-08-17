@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+
+# A helper script to automate installing, uninstalling, and launching Mumble.
+
+set -eo pipefail
+
+if [[ ! "$OSTYPE" == "darwin"* ]]; then
+    echo "This script only works on macOS. Exiting now."
+    exit 1
+fi
+
+USAGE="Usage:
+    mumble_helper -h                      Display this help message.
+    mumble_helper install                 Install Mumble.
+    mumble_helper uninstall               Uninstall Mumble.
+    mumble_helper launch                  Launch Mumble."
+
+# Parse options
+while getopts ":h" opt; do
+    case ${opt} in
+        h)
+            echo "$USAGE"
+            exit 0
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG" 1>&2
+            echo ""
+            echo "$USAGE" 1>&2
+            exit 1
+            ;;
+    esac
+done
+
+SUBCOMMAND=$1
+
+case "$SUBCOMMAND" in
+    install)
+        if [[ -d /Applications/Mumble.app ]]; then
+            echo "Detected the directory /Applications/Mumble.app - it looks"\
+                 "like Mumble is already installed."
+        fi
+
+        if [[ ! -f Mumble-1.3.2.dmg ]]; then
+            echo "Downloading Mumble-1.3.2.dmg..."
+            curl -LO https://dl.mumble.info/stable/Mumble-1.3.2.dmg
+        fi
+
+        if [[ -f Mumble-1.3.2.dmg ]]; then
+            echo "Mounting the Mumble disk image..."
+            hdiutil attach Mumble-1.3.2.dmg
+        fi
+
+        if [[ -d "/Volumes/Mumble 1.3.2" ]]; then
+            echo "Copying Mumble.app to /Applications..."
+            cp -R "/Volumes/Mumble 1.3.2/Mumble.app" /Applications
+
+            echo "Unmounting the Mumble disk image..."
+            hdiutil unmount "/Volumes/Mumble 1.3.2"
+        fi
+
+        echo "Finished installing Mumble. Removing Mumble-1.3.2.dmg..."
+        /bin/rm Mumble-1.3.2.dmg
+
+        echo "Mumble installation complete!"
+        ;;
+    uninstall)
+        echo "Uninstalling Mumble..."
+        /bin/rm -rf /Applications/Mumble.app
+        /bin/rm -rf $HOME/Library/Application*/Mumble
+        echo "Mumble uninstallation complete!"
+        ;;
+    "")
+        echo "Invalid command: mumble_helper requires an argument."\
+             "Valid arguments: [install|uninstall|launch]" 1>&2
+        exit 1
+        ;;
+    launch)
+        if [[ ! -d /Applications/Mumble.app ]]; then
+            echo "Mumble is not installed. Please run './mumble_helper install'"\
+                 "to install it."
+            exit 1
+        fi
+        echo "Launching Mumble."
+        open -a Mumble.app
+        ;;
+esac
+
+exit 0
