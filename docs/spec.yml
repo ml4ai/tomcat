@@ -3,7 +3,7 @@ openapi: 3.0.0
 info:
   title: ToMCAT Data Models and Message Topics
   description: A formal specification of data models and message bus topics associated with ToMCAT.
-  version: "0.1"
+  version: "0.2"
 
 tags:
 - name: Common Events
@@ -158,17 +158,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CommandExecuted'
-
-  /observations/events/dog_barks:
-    subscribe:
-      tags:
-      - USAR Events
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DogBarkEvent'
 
 
   /observations/events/hit_controlled_door_opened:
@@ -411,20 +400,6 @@ components:
           enum:
             - edu.arizona.tomcat.Events.EntityDeath
       
-    DogBarkEvent:
-      allOf:
-      - $ref: '#/components/schemas/Event'
-      properties:
-        number_of_barks:
-          type: integer
-          enum:
-            - 1
-            - 2
-        event_type:
-          type: string
-          enum:
-            - edu.arizona.tomcat.Events.DogBarkEvent
-
     PlayerName:
       type: string
       example: tomcat
