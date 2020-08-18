@@ -23,6 +23,7 @@
 #include <variant>
 #include "EvidenceSet.h"
 #include <boost/filesystem.hpp>
+#include "KFold.h"
 
 namespace fs = boost::filesystem;
 
@@ -380,10 +381,22 @@ int main() {
 //
 //    train_dbn(dbn_ptr, 50, gen);
 
-    EvidenceSet data("../../data/samples");
-    std::cout << data.get_num_data_points();
-    std::cout << data.get_time_steps();
-    std::cout << data["TG"];
+    EvidenceSet data("../../data/samples/toy");
+    std::cout << data.get_num_data_points() << std::endl;
+    std::cout << data.get_time_steps() << std::endl;
+    //std::cout << data["TG"];
+
+    KFold k_fold(5);
+    int fold = 1;
+    for(auto&[training, test] : k_fold.split(gen, data)) {
+        std::cout << "Fold " << fold++ << std::endl;
+        std::cout << training["TG"] << std::endl;
+        std::cout << std::endl;
+        std::cout << test["TG"] << std::endl;
+        std::cout << std::endl;
+    }
+
+
 
 
 

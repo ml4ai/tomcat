@@ -2,6 +2,8 @@
 
 #include <iomanip>
 
+#include <eigen3/Eigen/Core>
+
 namespace tomcat {
     namespace model {
 
@@ -14,11 +16,16 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
+        Tensor3::Tensor3() {}
+
         Tensor3::Tensor3(double* buffer, int d1, int d2, int d3) {
             this->tensor.reserve(d1);
             for (int i = 0; i < d1; i++) {
                 Eigen::MatrixXd matrix =
-                    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>(buffer, d2, d3);
+                    Eigen::Map<Eigen::Matrix<double,
+                                             Eigen::Dynamic,
+                                             Eigen::Dynamic,
+                                             Eigen::RowMajor>>(buffer, d2, d3);
                 this->tensor.push_back(std::move(matrix));
                 if (i < d1 - 1) {
                     buffer += d2 * d3;
@@ -46,24 +53,28 @@ namespace tomcat {
             std::array<int, 3> shape = this->get_shape();
             Eigen::MatrixXd matrix;
 
-            if (axis == 0) {
+            switch (axis) {
+            case 0: {
                 matrix = this->tensor[i];
+                break;
             }
-            else if (axis == 1) {
+            case 1: {
                 int j = i;
                 matrix = Eigen::MatrixXd(shape[0], shape[2]);
                 for (int i = 0; i < this->tensor.size(); i++) {
                     matrix.row(i) = this->tensor[i].row(j);
                 }
+                break;
             }
-            else if (axis == 2) {
+            case 2: {
                 int k = i;
                 matrix = Eigen::MatrixXd(shape[0], shape[1]);
                 for (int i = 0; i < this->tensor.size(); i++) {
                     matrix.row(i) = this->tensor[i].col(k).transpose();
                 }
+                break;
             }
-            else {
+            default:
                 throw std::invalid_argument(
                     "Invalid axis. Valid axes are 0, 1 or 2.");
             }
@@ -76,7 +87,7 @@ namespace tomcat {
             double* buffer = new double[vector_size];
 
             for (int i = 0; i < vector_size; i++) {
-                buffer[i] = this->tensor[i](j, k);//(*this)(i, j, k);
+                buffer[i] = this->tensor[i](j, k); //(*this)(i, j, k);
             }
 
             Eigen::Map<Eigen::VectorXd> vector(buffer, vector_size);
@@ -112,7 +123,8 @@ namespace tomcat {
 
                     if (int(value) == value) {
                         ss << std::fixed << std::setprecision(0) << value;
-                    } else {
+                    }
+                    else {
                         ss << std::fixed << std::setprecision(20) << value;
                     }
 
@@ -139,6 +151,49 @@ namespace tomcat {
             }
 
             return std::array<int, 3>({i, j, k});
+        }
+
+        Tensor3 Tensor3::slice(std::vector<int> indices, int axis) const {
+            Tensor3 sliced_tensor = *this;
+
+            switch (axis) {
+            case 0: {
+                for (int i = 0; i < indices.size(); i++) {
+                    sliced_tensor.tensor.erase(sliced_tensor.tensor.begin() +
+                                               indices[i]);
+                }
+
+                break;
+            }
+            case 1: {
+                for (auto& matrix : sliced_tensor.tensor) {
+                    Eigen::MatrixXd sliced_matrix(indices.size(),
+                                                  matrix.cols());
+
+                    for (int j = 0; j < indices.size(); j++) {
+                        sliced_matrix.row(j) = matrix.row(indices[j]);
+                    }
+
+                    matrix = sliced_matrix;
+                }
+                break;
+            }
+            case 2: {
+                for (auto& matrix : sliced_tensor.tensor) {
+                    Eigen::MatrixXd sliced_matrix(matrix.rows(),
+                                                  indices.size());
+
+                    for (int k = 0; k < indices.size(); k++) {
+                        sliced_matrix.col(k) = matrix.col(indices[k]);
+                    }
+
+                    matrix = sliced_matrix;
+                }
+                break;
+            }
+            }
+
+            return sliced_tensor;
         }
 
         //----------------------------------------------------------------------

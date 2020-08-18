@@ -20,6 +20,12 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
+             * Creates a blank evidence set.
+             *
+             */
+            EvidenceSet();
+
+            /**
              * Creates an evidence set with data from files in a given folder.
              *
              * @param data_folder_path: folder where files with nodes'
@@ -51,7 +57,7 @@ namespace tomcat {
              *
              * @return Observations for the informed node.
              */
-            const Tensor3& operator[](const std::string& node_label);
+            const Tensor3& operator[](const std::string& node_label) const;
 
             /**
              * Returns data for a given node.
@@ -60,7 +66,23 @@ namespace tomcat {
              *
              * @return Observations for the informed node.
              */
-            const Tensor3& operator[](std::string&& node_label);
+            const Tensor3& operator[](std::string&& node_label) const;
+
+            /**
+             * Returns the labels of the nodes which the evidence set has data
+             * for.
+             *
+             * @return Observable-node's labels.
+             */
+            std::vector<std::string> get_node_labels() const;
+
+            /**
+             * Adds data for a specific node.
+             *
+             * @param node_label: node's label
+             * @param data: observed values for the node
+             */
+            void add_data(std::string node_label, Tensor3 data);
 
             //------------------------------------------------------------------
             // Getters & Setters

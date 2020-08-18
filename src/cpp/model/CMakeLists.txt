@@ -57,7 +57,8 @@ add_library(tomcat_model_libs
         distribution/Dirichlet.cpp
         distribution/Gaussian.cpp
         DBNSamplingTrainer.cpp
-        EvidenceSet.cpp)
+        EvidenceSet.cpp
+        KFold.cpp)
 
 # Todo make code coverage work on Linux as well.
 if(APPLE AND CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")

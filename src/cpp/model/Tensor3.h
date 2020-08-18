@@ -30,7 +30,21 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Constructors & Destructor
             //------------------------------------------------------------------
-            Tensor3() {}
+
+            /**
+             * Creates an empty tensor.
+             */
+            Tensor3();
+
+            /**
+             * Creates a tensor filled with data.
+             *
+             * @param buffer: values to be stored in the tensor. There must be
+             * d1*d2*d3 elements in the buffer array.
+             * @param d1: dimension of the first axis
+             * @param d2: dimension of the second axis
+             * @param d3: dimension of the third axis
+             */
             Tensor3(double* buffer, int d1, int d2, int d3);
 
             ~Tensor3();
@@ -114,6 +128,16 @@ namespace tomcat {
              * @return Tensor's dimensions.
              */
             std::array<int, 3> get_shape() const;
+
+            /**
+             * Returns a sliced copy of the tensor.
+             *
+             * @param indices: indices to keep from the original tensor
+             * @param axis: axis where the slicing must be done
+             *
+             * @return Sliced copy of the original tensor.
+             */
+            Tensor3 slice(std::vector<int> indices, int axis = 0) const;
 
           private:
             //------------------------------------------------------------------
