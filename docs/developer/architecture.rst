@@ -24,6 +24,7 @@ rather than serving as a reinforcement learning research platform to teach AI
 agents to perform complex tasks in Minecraft, we focus on learning about how
 *humans* think and behave. We have vendorized the source of Project Malmo
 (``external/malmo``) and modified it to suit our purposes:
+
 1. The original Java mod (``external/malmo/Minecraft``) has been extended to
    - allow human control by default
    - add software instrumentation to capture human actions in the Minecraft
@@ -103,7 +104,7 @@ available using a package manager, and (ii) we have made some modifications
 (mainly ergonomic) to it to suit our purposes.
 
 .. _documentation on events and data models: ../tomcat_openapi.html
-.. _instructions on how to implement new events: missions.html
+.. _instructions on how to implement new missions and events: missions.html
 .. _Project Malmo: https://github.com/microsoft/malmo
 .. _ffmpeg: http://ffmpeg.org
 .. _pacat: https://linux.die.net/man/1/pacat
