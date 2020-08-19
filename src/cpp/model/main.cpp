@@ -1,5 +1,9 @@
+#include "BaselineEstimator.h"
 #include "DBNSamplingTrainer.h"
+#include "EvidenceSet.h"
 #include "FileHandler.h"
+#include "KFold.h"
+#include "ModelEstimator.h"
 #include "distribution/Categorical.h"
 #include "distribution/Dirichlet.h"
 #include "distribution/Gaussian.h"
@@ -13,6 +17,7 @@
 #include "pgm/cpd/GaussianCPD.h"
 #include "sampling/AncestralSampler.h"
 #include "sampling/GibbsSampler.h"
+#include <boost/filesystem.hpp>
 #include <eigen3/Eigen/Dense>
 #include <fstream>
 #include <gsl/gsl_randist.h>
@@ -21,9 +26,7 @@
 #include <memory>
 #include <unistd.h>
 #include <variant>
-#include "EvidenceSet.h"
-#include <boost/filesystem.hpp>
-#include "KFold.h"
+#include "SumProductEstimator.h"
 
 namespace fs = boost::filesystem;
 
@@ -331,10 +334,12 @@ void sample_parameters_from_posterior(std::shared_ptr<DynamicBayesNet> dbn,
                                       std::shared_ptr<gsl_rng> gen) {
     Tensor3 tg_data = read_tensor_from_file("../../data/samples/TG.txt");
     Tensor3 ty_data = read_tensor_from_file("../../data/samples/TY.txt");
+    EvidenceSet data;
+    data.add_data("TG", tg_data);
+    data.add_data("TY", ty_data);
     GibbsSampler gibbs(dbn, 20);
-    gibbs.set_num_in_plate_samples(tg_data.get_shape()[1]);
-    gibbs.add_data("TG", tg_data);
-    gibbs.add_data("TY", ty_data);
+    gibbs.set_num_in_plate_samples(data.get_num_data_points());
+    gibbs.add_data(data);
     gibbs.sample(gen, num_samples);
 
     std::cout << "ThetaS0" << std::endl;
@@ -353,15 +358,29 @@ void train_dbn(std::shared_ptr<DynamicBayesNet> dbn,
 
     Tensor3 tg_data = read_tensor_from_file("../../data/samples/TG.txt");
     Tensor3 ty_data = read_tensor_from_file("../../data/samples/TY.txt");
+    EvidenceSet data;
+    data.add_data("TG", tg_data);
+    data.add_data("TY", ty_data);
     GibbsSampler gibbs(dbn, 20);
-    gibbs.set_num_in_plate_samples(tg_data.get_shape()[1]);
-    gibbs.add_data("TG", tg_data);
-    gibbs.add_data("TY", ty_data);
+    gibbs.set_num_in_plate_samples(data.get_num_data_points());
 
-    DBNSamplingTrainer trainer(std::make_shared<GibbsSampler>(gibbs));
-    trainer.fit(gen, num_samples);
+    DBNSamplingTrainer trainer(
+        gen, std::make_shared<GibbsSampler>(gibbs), num_samples);
+    trainer.fit(data);
 
     dbn->save_to_folder("../../data/model");
+}
+
+void test_baseline_estimator(std::shared_ptr<DynamicBayesNet> model) {
+    std::shared_ptr<BaselineEstimator> estimator =
+        std::make_shared<BaselineEstimator>(BaselineEstimator(model, 1));
+    estimator->estimate(EvidenceSet());
+}
+
+void test_sum_product_estimator(std::shared_ptr<DynamicBayesNet> model) {
+    std::shared_ptr<SumProductEstimator> estimator =
+        std::make_shared<SumProductEstimator>(SumProductEstimator(model, 1));
+    estimator->estimate(EvidenceSet());
 }
 
 int main() {
@@ -371,45 +390,33 @@ int main() {
 
     std::shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
 
-//    DynamicBayesNet dbn = create_dbn(true);
-//    dbn.unroll(100, true);
-//    generate_samples_to_test(std::make_shared<DynamicBayesNet>(dbn), 100, gen);
+    std::shared_ptr<DynamicBayesNet> dbn_ptr =
+        std::make_shared<DynamicBayesNet>(create_dbn(true));
+    //    dbn.unroll(100, true);
+    //    generate_samples_to_test(dbn_ptr, 100,
+    //    gen);
 
-//    std::shared_ptr<DynamicBayesNet> dbn_ptr =
-//        std::make_shared<DynamicBayesNet>(create_dbn(false));
-//    dbn_ptr->unroll(100, true);
-//
-//    train_dbn(dbn_ptr, 50, gen);
+    //        std::shared_ptr<DynamicBayesNet> dbn_ptr =
+    //            std::make_shared<DynamicBayesNet>(create_dbn(false));
+    //    dbn_ptr->unroll(100, true);
+    //
+    //    train_dbn(dbn_ptr, 50, gen);
 
-    EvidenceSet data("../../data/samples/toy");
-    std::cout << data.get_num_data_points() << std::endl;
-    std::cout << data.get_time_steps() << std::endl;
-    //std::cout << data["TG"];
+    //    EvidenceSet data("../../data/samples/toy");
+    //    std::cout << data.get_num_data_points() << std::endl;
+    //    std::cout << data.get_time_steps() << std::endl;
+    //    //std::cout << data["TG"];
+    //
+    //    KFold k_fold(5);
+    //    int fold = 1;
+    //    for(auto&[training, test] : k_fold.split(gen, data)) {
+    //        std::cout << "Fold " << fold++ << std::endl;
+    //        std::cout << training["TG"] << std::endl;
+    //        std::cout << test["TG"] << std::endl;
+    //    }
 
-    KFold k_fold(5);
-    int fold = 1;
-    for(auto&[training, test] : k_fold.split(gen, data)) {
-        std::cout << "Fold " << fold++ << std::endl;
-        std::cout << training["TG"] << std::endl;
-        std::cout << std::endl;
-        std::cout << test["TG"] << std::endl;
-        std::cout << std::endl;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    test_baseline_estimator(dbn_ptr);
+    test_sum_product_estimator(dbn_ptr);
 
     // gsl_rng_set(gen.get(), time(0));
     // dbn.unroll(4, true);

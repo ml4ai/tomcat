@@ -12,16 +12,42 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
-        DBNSamplingTrainer::DBNSamplingTrainer(std::shared_ptr<Sampler> sampler)
-            : sampler(sampler) {}
+        DBNSamplingTrainer::DBNSamplingTrainer(
+            std::shared_ptr<gsl_rng> random_generator,
+            std::shared_ptr<Sampler> sampler,
+            int num_samples)
+            : random_generator(random_generator), sampler(sampler),
+              num_samples(num_samples) {}
 
         DBNSamplingTrainer::~DBNSamplingTrainer() {}
 
         //----------------------------------------------------------------------
+        // Copy & Move constructors/assignments
+        //----------------------------------------------------------------------
+        DBNSamplingTrainer::DBNSamplingTrainer(const DBNSamplingTrainer& trainer) {
+            this->copy_trainer(trainer);
+        }
+
+        DBNSamplingTrainer&
+        DBNSamplingTrainer::operator=(const DBNSamplingTrainer& trainer) {
+            this->copy_trainer(trainer);
+            return *this;
+        }
+
+        //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void DBNSamplingTrainer::fit(std::shared_ptr<gsl_rng> random_generator, int num_samples) {
-            this->sampler->sample(random_generator, num_samples);
+        void DBNSamplingTrainer::copy_trainer(const DBNSamplingTrainer& trainer) {
+            this->random_generator = trainer.random_generator;
+            this->sampler = trainer.sampler;
+            this->num_samples = trainer.num_samples;
+        }
+
+        void DBNSamplingTrainer::prepare() {}
+
+        void DBNSamplingTrainer::fit(const EvidenceSet& training_data) {
+            this->sampler->add_data(training_data);
+            this->sampler->sample(this->random_generator, this->num_samples);
 
             std::shared_ptr<DynamicBayesNet> model = this->sampler->get_model();
             std::unordered_map<std::string, Tensor3> node_label_to_samples;
@@ -45,14 +71,6 @@ namespace tomcat {
                     rv_node->set_assignment(mean_value);
                 }
             }
-        }
-
-        //----------------------------------------------------------------------
-        // Getters & Setters
-        //----------------------------------------------------------------------
-        const std::shared_ptr<Sampler>&
-        DBNSamplingTrainer::get_sampler() const {
-            return sampler;
         }
 
     } // namespace model

@@ -4,6 +4,7 @@
 
 #include "../Tensor3.h"
 #include "../pgm/DynamicBayesNet.h"
+#include "../EvidenceSet.h"
 
 namespace tomcat {
     namespace model {
@@ -61,14 +62,11 @@ namespace tomcat {
                         int num_samples);
 
             /**
-             * Adds data to node of arbitrary sample size.
+             * Adds data to the sampler.
              *
-             * @param node_label: node's label
-             * @param data: observed values for the node over time. Data should
-             * be a tensor of dimensions (sample_size, num_data_points,
-             * time_steps)
+             * @param data: observed values for the observable nodes over time.
              */
-            void add_data(const std::string& node_label, Tensor3& data);
+            void add_data(EvidenceSet data);
 
             /**
              * Saves generated samples to files in a specific folder.
@@ -137,7 +135,7 @@ namespace tomcat {
             // same as the number of in-plate samples.
             int num_in_plate_samples = 1;
 
-            std::unordered_set<std::string> observable_node_labels;
+            EvidenceSet data;
 
           private:
             //------------------------------------------------------------------

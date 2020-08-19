@@ -1,0 +1,37 @@
+#include "DBNSaver.h"
+
+#include <fmt/format.h>
+
+namespace tomcat {
+    namespace model {
+
+        //----------------------------------------------------------------------
+        // Definitions
+        //----------------------------------------------------------------------
+
+        // No definitions in this file
+
+        //----------------------------------------------------------------------
+        // Constructors & Destructor
+        //----------------------------------------------------------------------
+        DBNSaver::DBNSaver(std::shared_ptr<DynamicBayesNet> model,
+                           std::string output_folder_path)
+            : model(model), output_folder_path(output_folder_path) {}
+
+        DBNSaver::~DBNSaver() {}
+
+        //----------------------------------------------------------------------
+        // Member functions
+        //----------------------------------------------------------------------
+        void DBNSaver::prepare() { this->cv_step = 0; }
+
+        void DBNSaver::save() {
+            // If the name of the folder has a placeholder for the cv step,
+            // replace it with the current number.
+            std::string final_folder_path =
+                fmt::format(this->output_folder_path, this->cv_step++);
+            this->model->save_to_folder(final_folder_path);
+        }
+
+    } // namespace model
+} // namespace tomcat

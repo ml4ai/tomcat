@@ -58,7 +58,14 @@ add_library(tomcat_model_libs
         distribution/Gaussian.cpp
         DBNSamplingTrainer.cpp
         EvidenceSet.cpp
-        KFold.cpp)
+        KFold.cpp
+        DBNTrainer.cpp
+        DBNLoader.cpp
+        DBNSaver.cpp
+        ModelEstimator.cpp
+        BaselineEstimator.cpp
+        SumProductEstimator.cpp
+        ModelEstimation.cpp OfflineEstimation.cpp OfflineEstimation.cpp OfflineEstimation.h OnlineEstimation.cpp OnlineEstimation.h)
 
 # Todo make code coverage work on Linux as well.
 if(APPLE AND CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")

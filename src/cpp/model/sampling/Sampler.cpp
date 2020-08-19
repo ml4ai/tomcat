@@ -27,28 +27,31 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void Sampler::copy_sampler(const Sampler& sampler){
+        void Sampler::copy_sampler(const Sampler& sampler) {
             this->model = sampler.model;
-            this->observable_node_labels = sampler.observable_node_labels;
             this->num_in_plate_samples = sampler.num_in_plate_samples;
             this->sampled_node_labels = sampler.sampled_node_labels;
         }
 
-        void Sampler::sample(std::shared_ptr<gsl_rng> random_generator, int num_samples) {
+        void Sampler::sample(std::shared_ptr<gsl_rng> random_generator,
+                             int num_samples) {
             this->freeze_observable_nodes();
             this->sample_latent(random_generator, num_samples);
             this->unfreeze_observable_nodes();
         }
 
-        void Sampler::add_data(const std::string& node_label, Tensor3& data) {
-            if (data.get_shape()[1] == this->num_in_plate_samples) {
-                for (auto& node : this->model->get_nodes_by_label(node_label)) {
-                    std::shared_ptr<RandomVariableNode> rv_node =
-                        std::dynamic_pointer_cast<RandomVariableNode>(node);
+        void Sampler::add_data(EvidenceSet data) {
+            if (data.get_num_data_points() == this->num_in_plate_samples) {
+                for (const auto& node_label : this->data.get_node_labels()) {
+                    for (auto& node :
+                         this->model->get_nodes_by_label(node_label)) {
+                        std::shared_ptr<RandomVariableNode> rv_node =
+                            std::dynamic_pointer_cast<RandomVariableNode>(node);
 
-                    rv_node->set_assignment(
-                        data(rv_node->get_time_step(), 2).transpose());
-                    this->observable_node_labels.insert(node_label);
+                        rv_node->set_assignment(
+                            data[node_label](rv_node->get_time_step(), 2)
+                                .transpose());
+                    }
                 }
             }
             else {
@@ -99,7 +102,7 @@ namespace tomcat {
         }
 
         void Sampler::freeze_observable_nodes() {
-            for (const auto& node_label : this->observable_node_labels) {
+            for (const auto& node_label : this->data.get_node_labels()) {
                 for (auto& node : this->model->get_nodes_by_label(node_label)) {
                     std::dynamic_pointer_cast<RandomVariableNode>(node)
                         ->freeze();
@@ -108,7 +111,7 @@ namespace tomcat {
         }
 
         void Sampler::unfreeze_observable_nodes() {
-            for (const auto& node_label : this->observable_node_labels) {
+            for (const auto& node_label : this->data.get_node_labels()) {
                 for (auto& node : this->model->get_nodes_by_label(node_label)) {
                     std::dynamic_pointer_cast<RandomVariableNode>(node)
                         ->unfreeze();
