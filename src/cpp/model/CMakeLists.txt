@@ -62,10 +62,18 @@ add_library(tomcat_model_libs
         DBNTrainer.cpp
         DBNLoader.cpp
         DBNSaver.cpp
-        ModelEstimator.cpp
+        Estimator.cpp
         BaselineEstimator.cpp
         SumProductEstimator.cpp
-        ModelEstimation.cpp OfflineEstimation.cpp OfflineEstimation.cpp OfflineEstimation.h OnlineEstimation.cpp OnlineEstimation.h)
+        Estimation.cpp
+        OfflineEstimation.cpp
+        OnlineEstimation.cpp
+        Measure.cpp
+        Estimates.cpp
+        Accuracy.cpp
+        F1Score.cpp
+        MeasureAggregator.cpp
+        Pipeline.cpp)
 
 # Todo make code coverage work on Linux as well.
 if(APPLE AND CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")

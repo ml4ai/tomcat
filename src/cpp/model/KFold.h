@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <utility>
 #include <vector>
 
@@ -10,27 +11,30 @@
 namespace tomcat {
     namespace model {
 
-        //------------------------------------------------------------------
-        // Forward declarations
-        //------------------------------------------------------------------
-
-        //------------------------------------------------------------------
-        // Structs
-        //------------------------------------------------------------------
-
         /**
-         * Class description here
+         * This class is responsible for splitting data into disjoint folds
+         * where k-1 of them is used for training data and the remaining one for
+         * test data creating a list of this pair of data sets by repeating this
+         * logic for all the k folds.
          */
         class KFold {
           public:
             //------------------------------------------------------------------
             // Types, Enums & Constants
             //------------------------------------------------------------------
+            typedef std::vector<std::pair<EvidenceSet, EvidenceSet>> Split;
 
             //------------------------------------------------------------------
             // Constructors & Destructor
             //------------------------------------------------------------------
-            KFold(int num_folds);
+
+            /**
+             * Creates an instance of a KFold data splitter.
+             *
+             * @param random_generator
+             * @param num_folds
+             */
+            KFold(std::shared_ptr<gsl_rng> random_generator, int num_folds);
 
             ~KFold();
 
@@ -46,31 +50,17 @@ namespace tomcat {
             KFold& operator=(KFold&&) = default;
 
             //------------------------------------------------------------------
-            // Operator overload
-            //------------------------------------------------------------------
-
-            //------------------------------------------------------------------
-            // Static functions
-            //------------------------------------------------------------------
-
-            //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-            std::vector<std::pair<EvidenceSet, EvidenceSet>>
-            split(std::shared_ptr<gsl_rng> random_generator,
-                  const EvidenceSet& data);
 
-            //------------------------------------------------------------------
-            // Virtual functions
-            //------------------------------------------------------------------
-
-            //------------------------------------------------------------------
-            // Pure virtual functions
-            //------------------------------------------------------------------
-
-            //------------------------------------------------------------------
-            // Getters & Setters
-            //------------------------------------------------------------------
+            /**
+             * Creates k data splits comprised of disjoint training and test set.
+             *
+             * @param data: data to be split
+             *
+             * @return List of splits
+             */
+            Split split(const EvidenceSet& data);
 
           private:
             //------------------------------------------------------------------
@@ -86,8 +76,7 @@ namespace tomcat {
              *
              * @return Shuffled indices of the data points.
              */
-            std::vector<int> get_shuffled_indices(std::shared_ptr<gsl_rng> random_generator,
-                                      int num_data_points) const;
+            std::vector<int> get_shuffled_indices(int num_data_points) const;
 
             /**
              * Returns the number of data points in each fold.
@@ -102,6 +91,8 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------
+            std::shared_ptr<gsl_rng> random_generator;
+
             int num_folds;
         };
 

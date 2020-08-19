@@ -13,8 +13,8 @@ namespace tomcat {
         // Constructors & Destructor
         //----------------------------------------------------------------------
         OfflineEstimation::OfflineEstimation(
-            std::shared_ptr<ModelEstimator> estimator)
-            : ModelEstimation(estimator) {}
+            std::shared_ptr<Estimator> estimator)
+            : Estimation(estimator) {}
 
         OfflineEstimation::~OfflineEstimation() {}
 

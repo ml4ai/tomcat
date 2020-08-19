@@ -14,30 +14,30 @@ namespace tomcat {
     namespace model {
 
         /**
-         * Represents a generic model estimator.
+         * Represents a generic estimator for a DBN model.
          */
-        class ModelEstimator {
+        class Estimator {
           public:
             //------------------------------------------------------------------
             // Constructors & Destructor
             //------------------------------------------------------------------
 
             /**
-             * Creates an empty model estimator.
+             * Creates an empty estimator.
              */
-            ModelEstimator();
+            Estimator();
 
             /**
-             * Creates an abstract model estimator.
+             * Creates an abstract estimator.
              *
              * @param model: DBN
              * @param inference_horizon: how many time steps in the future
              * estimations are going to be computed for
              */
-            ModelEstimator(std::shared_ptr<DynamicBayesNet> model,
+            Estimator(std::shared_ptr<DynamicBayesNet> model,
                            int inference_horizon);
 
-            virtual ~ModelEstimator();
+            virtual ~Estimator();
 
             //------------------------------------------------------------------
             // Copy & Move constructors/assignments
@@ -46,13 +46,13 @@ namespace tomcat {
             // Copy constructor and assignment should be deleted to avoid
             // implicit slicing and loss of polymorphic behaviour in the
             // subclasses. To deep copy, the clone method must be used.
-            ModelEstimator(const ModelEstimator&) = delete;
+            Estimator(const Estimator&) = delete;
 
-            ModelEstimator& operator=(const ModelEstimator&) = delete;
+            Estimator& operator=(const Estimator&) = delete;
 
-            ModelEstimator(ModelEstimator&&) = default;
+            Estimator(Estimator&&) = default;
 
-            ModelEstimator& operator=(ModelEstimator&&) = default;
+            Estimator& operator=(Estimator&&) = default;
 
             //------------------------------------------------------------------
             // Pure virtual functions
@@ -101,7 +101,7 @@ namespace tomcat {
             /**
              * Copies data members from another estimator.
              */
-            void copy_estimator(const ModelEstimator& estimator);
+            void copy_estimator(const Estimator& estimator);
 
             //------------------------------------------------------------------
             // Data members

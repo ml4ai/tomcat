@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "ModelEstimator.h"
+#include "Estimator.h"
 
 namespace tomcat {
     namespace model {
@@ -16,9 +16,9 @@ namespace tomcat {
         //------------------------------------------------------------------
 
         /**
-         * Class description here
+         * Generic estimation process for a DBN model.
          */
-        class ModelEstimation {
+        class Estimation {
           public:
             //------------------------------------------------------------------
             // Types, Enums & Constants
@@ -31,16 +31,16 @@ namespace tomcat {
             /**
              * Creates an empty estimation process for a model.
              */
-            ModelEstimation();
+            Estimation();
 
             /**
              * Creates an abstract estimation process for a model.
              *
              * @param estimator: type of estimation to be performed
              */
-            ModelEstimation(std::shared_ptr<ModelEstimator> estimator);
+            Estimation(std::shared_ptr<Estimator> estimator);
 
-            virtual ~ModelEstimation();
+            virtual ~Estimation();
 
             //------------------------------------------------------------------
             // Copy & Move constructors/assignments
@@ -49,13 +49,13 @@ namespace tomcat {
             // Copy constructor and assignment should be deleted to avoid
             // implicit slicing and loss of polymorphic behaviour in the
             // subclasses. To deep copy, the clone method must be used.
-            ModelEstimation(const ModelEstimation&) = delete;
+            Estimation(const Estimation&) = delete;
 
-            ModelEstimation& operator=(const ModelEstimation&) = delete;
+            Estimation& operator=(const Estimation&) = delete;
 
-            ModelEstimation(ModelEstimation&&) = default;
+            Estimation(Estimation&&) = default;
 
-            ModelEstimation& operator=(ModelEstimation&&) = default;
+            Estimation& operator=(Estimation&&) = default;
 
             //------------------------------------------------------------------
             // Pure virtual functions
@@ -72,7 +72,7 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Getters & Setters
             //------------------------------------------------------------------
-            const std::shared_ptr<ModelEstimator>& get_estimator() const;
+            const std::shared_ptr<Estimator>& get_estimator() const;
 
           protected:
             //------------------------------------------------------------------
@@ -82,12 +82,12 @@ namespace tomcat {
             /**
              * Copies data members from another estimation process.
              */
-            void copy_estimation(const ModelEstimation& estimation);
+            void copy_estimation(const Estimation& estimation);
 
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------
-            std::shared_ptr<ModelEstimator> estimator;
+            std::shared_ptr<Estimator> estimator;
 
         };
 

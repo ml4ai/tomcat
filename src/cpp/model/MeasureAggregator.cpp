@@ -1,4 +1,4 @@
-#include "Pipeline.h"
+#include "MeasureAggregator.h"
 
 namespace tomcat {
     namespace model {
@@ -12,28 +12,28 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
-        Pipeline::Pipeline() {}
+        MeasureAggregator::MeasureAggregator(std::shared_ptr<std::ostream> output_stream)
+            : output_stream(output_stream) {}
 
-        Pipeline::Pipeline(const std::string& id) : id(id) {}
-
-        Pipeline::~Pipeline() {}
+        MeasureAggregator::~MeasureAggregator() {}
 
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void Pipeline:: execute() {
-            KFold::Split splits = this->data_splitter->split(this->data);
-            for (const auto& [training_data, test_data] : splits) {
-                this->model_trainner->fit(training_data);
-                this->model_saver->save();
-                this->start_estimation_threads(test_data);
-                this->aggregator->aggregate(test_data);
-            }
-            this->aggregator->dump();
+        void MeasureAggregator::add_measure(std::shared_ptr<Measure> measure) {
+            this->measures.push_back(measure);
         }
 
-        void Pipeline::start_estimation_threads(const EvidenceSet& test_data) {
+        void MeasureAggregator::aggregate(const EvidenceSet& test_data) {
+            for (auto& measure : this->measures) {
+                Eigen::MatrixXd result = measure.evaluate(test_data);
 
+                // TODO - aggregate results
+            }
+        }
+
+        void MeasureAggregator::dump() {
+            // TODO - write aggregate results to the output stream.
         }
 
     } // namespace model

@@ -16,7 +16,7 @@ namespace tomcat {
         //----------------------------------------------------------------------
         SumProductEstimator::SumProductEstimator(
             std::shared_ptr<DynamicBayesNet> model, int inference_horizon)
-            : ModelEstimator(model, inference_horizon) {}
+            : Estimator(model, inference_horizon) {}
 
         SumProductEstimator::~SumProductEstimator() {}
 

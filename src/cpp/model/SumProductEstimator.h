@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ModelEstimator.h"
+#include "Estimator.h"
 
 namespace tomcat {
     namespace model {
@@ -8,7 +8,7 @@ namespace tomcat {
         /**
          * Class description here
          */
-        class SumProductEstimator : public ModelEstimator {
+        class SumProductEstimator : public Estimator {
           public:
             //------------------------------------------------------------------
             // Types, Enums & Constants

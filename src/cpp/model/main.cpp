@@ -1,9 +1,10 @@
 #include "BaselineEstimator.h"
 #include "DBNSamplingTrainer.h"
+#include "Estimator.h"
 #include "EvidenceSet.h"
 #include "FileHandler.h"
 #include "KFold.h"
-#include "ModelEstimator.h"
+#include "SumProductEstimator.h"
 #include "distribution/Categorical.h"
 #include "distribution/Dirichlet.h"
 #include "distribution/Gaussian.h"
@@ -26,7 +27,6 @@
 #include <memory>
 #include <unistd.h>
 #include <variant>
-#include "SumProductEstimator.h"
 
 namespace fs = boost::filesystem;
 

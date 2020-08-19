@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ModelEstimation.h"
+#include "Estimation.h"
 
 namespace tomcat {
     namespace model {
@@ -32,7 +32,7 @@ namespace tomcat {
          * fashion. It listens to a message bus topic to compute estimates in
          * real time as data is observed.
          */
-        class OnlineEstimation : public ModelEstimation {
+        class OnlineEstimation : public Estimation {
           public:
             //------------------------------------------------------------------
             // Constructors & Destructor
@@ -43,7 +43,7 @@ namespace tomcat {
              *
              * @param estimator: type of estimation to be performed
              */
-            OnlineEstimation(std::shared_ptr<ModelEstimator> estimator,
+            OnlineEstimation(std::shared_ptr<Estimator> estimator,
                              MessageBrokerConfiguration& config);
 
             /**
@@ -51,7 +51,7 @@ namespace tomcat {
              *
              * @param estimator: type of estimation to be performed
              */
-            OnlineEstimation(std::shared_ptr<ModelEstimator> estimator,
+            OnlineEstimation(std::shared_ptr<Estimator> estimator,
                              MessageBrokerConfiguration&& config);
 
             ~OnlineEstimation();

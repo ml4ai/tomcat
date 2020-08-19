@@ -1,4 +1,4 @@
-#include "Pipeline.h"
+#include "Measure.h"
 
 namespace tomcat {
     namespace model {
@@ -12,28 +12,18 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
-        Pipeline::Pipeline() {}
+        Measure::Measure() {}
 
-        Pipeline::Pipeline(const std::string& id) : id(id) {}
+        Measure::Measure(std::shared_ptr<Estimator> estimator)
+            : estimator(estimator) {}
 
-        Pipeline::~Pipeline() {}
+        Measure::~Measure() {}
 
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void Pipeline:: execute() {
-            KFold::Split splits = this->data_splitter->split(this->data);
-            for (const auto& [training_data, test_data] : splits) {
-                this->model_trainner->fit(training_data);
-                this->model_saver->save();
-                this->start_estimation_threads(test_data);
-                this->aggregator->aggregate(test_data);
-            }
-            this->aggregator->dump();
-        }
-
-        void Pipeline::start_estimation_threads(const EvidenceSet& test_data) {
-
+        void Measure::copy_measure(const Measure& measure) {
+            this->estimator = measure.estimator;
         }
 
     } // namespace model

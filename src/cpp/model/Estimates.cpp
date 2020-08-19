@@ -1,4 +1,4 @@
-#include "ModelEstimation.h"
+#include "Estimates.h"
 
 namespace tomcat {
     namespace model {
@@ -12,27 +12,28 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
-        ModelEstimation::ModelEstimation() {}
+        Estimates::Estimates(std::shared_ptr<Estimator> estimator) : Measure(estimator) {}
 
-        ModelEstimation::ModelEstimation(
-            std::shared_ptr<ModelEstimator> estimator)
-            : estimator(estimator) {}
+        Estimates::~Estimates() {}
 
-        ModelEstimation::~ModelEstimation() {}
+        //----------------------------------------------------------------------
+        // Copy & Move constructors/assignments
+        //----------------------------------------------------------------------
+        Estimates::Estimates(
+            const Estimates& estimates) {
+            this->copy_measure(estimates);
+        }
+
+        Estimates& Estimates::operator=(const Estimates& estimates) {
+            this->copy_measure(estimates);
+            return *this;
+        }
 
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void ModelEstimation::copy_estimation(const ModelEstimation& estimation) {
-            this->estimator = estimation.estimator;
-        }
-
-        //----------------------------------------------------------------------
-        // Getters & Setters
-        //----------------------------------------------------------------------
-        const std::shared_ptr<ModelEstimator>&
-        ModelEstimation::get_estimator() const {
-            return estimator;
+        Eigen::MatrixXd Estimates::evaluate(const EvidenceSet& test_data) const {
+            // TODO - return estimates stored in the estimator.
         }
 
     } // namespace model

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ModelEstimation.h"
+#include "Estimation.h"
 
 namespace tomcat {
     namespace model {
@@ -10,7 +10,7 @@ namespace tomcat {
          * fashion. The test data received from the pipeline is used in batch to
          * compute the estimates.
          */
-        class OfflineEstimation : public ModelEstimation {
+        class OfflineEstimation : public Estimation {
           public:
             //------------------------------------------------------------------
             // Constructors & Destructor
@@ -21,7 +21,7 @@ namespace tomcat {
              *
              * @param estimator: type of estimation to be performed
              */
-            OfflineEstimation(std::shared_ptr<ModelEstimator> estimator);
+            OfflineEstimation(std::shared_ptr<Estimator> estimator);
 
             ~OfflineEstimation();
 

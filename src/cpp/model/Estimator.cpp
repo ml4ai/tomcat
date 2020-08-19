@@ -1,4 +1,4 @@
-#include "ModelEstimator.h"
+#include "Estimator.h"
 
 namespace tomcat {
     namespace model {
@@ -12,18 +12,18 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
-        ModelEstimator::ModelEstimator() {}
+        Estimator::Estimator() {}
 
-        ModelEstimator::ModelEstimator(std::shared_ptr<DynamicBayesNet> model,
+        Estimator::Estimator(std::shared_ptr<DynamicBayesNet> model,
                                        int inference_horizon)
             : model(model), inference_horizon(inference_horizon) {}
 
-        ModelEstimator::~ModelEstimator() {}
+        Estimator::~Estimator() {}
 
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void ModelEstimator::copy_estimator(const ModelEstimator& estimator) {
+        void Estimator::copy_estimator(const Estimator& estimator) {
             this->model = estimator.model;
             this->training_data = estimator.training_data;
             this->test_data = estimator.test_data;
@@ -32,15 +32,14 @@ namespace tomcat {
             this->inference_horizon = estimator.inference_horizon;
         }
 
-        void ModelEstimator::add_node(const std::string node_label) {
+        void Estimator::add_node(const std::string node_label) {
             this->node_labels.insert(node_label);
         }
 
         //----------------------------------------------------------------------
         // Getters & Setters
         //----------------------------------------------------------------------
-        void
-        ModelEstimator::set_training_data(const EvidenceSet& training_data) {
+        void Estimator::set_training_data(const EvidenceSet& training_data) {
             this->training_data = training_data;
         }
 

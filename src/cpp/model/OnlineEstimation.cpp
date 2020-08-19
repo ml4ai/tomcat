@@ -13,14 +13,14 @@ namespace tomcat {
         // Constructors & Destructor
         //----------------------------------------------------------------------
         OnlineEstimation::OnlineEstimation(
-            std::shared_ptr<ModelEstimator> estimator,
+            std::shared_ptr<Estimator> estimator,
             MessageBrokerConfiguration& config)
-            : ModelEstimation(estimator), config(config) {}
+            : Estimation(estimator), config(config) {}
 
         OnlineEstimation::OnlineEstimation(
-            std::shared_ptr<ModelEstimator> estimator,
+            std::shared_ptr<Estimator> estimator,
             MessageBrokerConfiguration&& config)
-            : ModelEstimation(estimator), config(std::move(config)) {}
+            : Estimation(estimator), config(std::move(config)) {}
 
         OnlineEstimation::~OnlineEstimation() {}
 
@@ -42,7 +42,7 @@ namespace tomcat {
         //----------------------------------------------------------------------
         void
         OnlineEstimation::copy_estimation(const OnlineEstimation& estimation) {
-            ModelEstimation::copy_estimation(estimation);
+            Estimation::copy_estimation(estimation);
             this->config = estimation.config;
         }
 
