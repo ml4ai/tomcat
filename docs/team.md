@@ -17,6 +17,10 @@ Current
 - [Mihai Surdeanu](http://surdeanu.info/mihai/)
 - [Marco Antonio Valenzuela-Escarcega](https://scholar.google.com/citations?user=uU2UhGIAAAAJ&hl=en)
 
+**Postdocs**:
+
+- Liang Zhang
+
 **Graduate Students:**
 - [Salena Ashton](https://github.com/SalenaAshton)
 - [Savannah Boyd](https://cals.arizona.edu/fcs/grad/savannah_boyd)
