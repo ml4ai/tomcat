@@ -68,20 +68,23 @@ void Entity::setAllEquipment(vector<string>& equipment) {
     }
 }
 
-json Entity::toJSON() {
+void Entity::toJSON(json& json_base) {
     json entity_json;
     vector<json> coordinate_list;
     coordinate_list.push_back(this->pos.toJSON());
 
-    entity_json["bounds"] = {{"type", "entity"},
-                             {"mob_type", this->getMobType()},
-                             {"coordinates", coordinate_list},
-                             {"helmet", this->getHelmet()},
-                             {"chestplate", this->getChestplate()},
-                             {"leggings", this->getLeggings()},
-                             {"boots", this->getBoots()},
-                             {"weapon", this->getWeapon()}};
-    return entity_json;
+    entity_json["bounds"] = {{"coordinates", coordinate_list}};
+
+    entity_json["chestplate"] = this->getChestplate();
+    entity_json["leggings"] = this->getLeggings();
+    entity_json["boots"] = this->getBoots();
+    entity_json["weapon"] = this->getWeapon();
+
+    entity_json["type"] = "entity";
+    entity_json["mob_type"] = this->getMobType();
+    entity_json["helmet"] = this->getHelmet();
+
+    json_base["entities"].push_back(entity_json);
 }
 
 string Entity::toTSV() {

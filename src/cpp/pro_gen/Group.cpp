@@ -80,6 +80,24 @@ void Group::recalculateGroupBoundaries() {
     this->setBottomRight(newBottomRight);
 }
 
+void Group::toJSON(json& json_base) {
+    for (auto& aabbPtr : this->aabbList) {
+        (*aabbPtr).toJSON(json_base);
+    }
+
+    for (auto& blockPtr : this->getBlockList()) {
+        (*blockPtr).toJSON(json_base);
+    }
+
+    for (auto& entityPtr : this->getEntityList()) {
+        (*entityPtr).toJSON(json_base);
+    }
+
+    for (auto& objectPtr : this->getObjectList()) {
+        (*objectPtr).toJSON(json_base);
+    }
+}
+
 string Group::toTSV() {
     string retval = "";
 

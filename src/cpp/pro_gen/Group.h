@@ -37,6 +37,8 @@ class Group : public AABB {
      */
     AABB* getAABB(std::string id);
 
+    void virtual toJSON(nlohmann::json& json_base);
+
     /**
      * @brief Creates the TSV representation of the instance.
      *

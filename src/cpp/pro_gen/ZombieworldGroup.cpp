@@ -1,4 +1,5 @@
 #include "ZombieworldGroup.h"
+#include <iostream>
 
 using namespace std;
 
@@ -30,7 +31,7 @@ void ZombieworldGroup::addEntities() {
     AABB* aabbOne = this->getAABB("1"); // 1 sub AABB definitely exists
     int sizeY = (*aabbOne).getSizeY() - 1;
     Pos randomPos = (*aabbOne).getRandomPos(this->gen, 1, 1, sizeY, 1, 1);
-    (*aabbOne).addEntity(*(new Entity("zombie", randomPos)));
+    this->addEntity(*(new Entity("zombie", randomPos)));
 }
 
 void ZombieworldGroup::addLights() {

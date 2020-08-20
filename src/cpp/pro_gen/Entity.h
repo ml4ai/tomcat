@@ -159,7 +159,7 @@ class Entity {
      *
      * @return nlohmann::json The JSON representation
      */
-    nlohmann::json virtual toJSON();
+    void virtual toJSON(nlohmann::json& json_base);
 
     /**
      * @brief Gets a string representation of the various

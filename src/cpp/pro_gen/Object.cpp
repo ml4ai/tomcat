@@ -6,13 +6,13 @@ using json = nlohmann::json;
 Object::Object(string id, string type, Block& block)
     : id{id}, type{type}, block{block} {}
 
-json Object::toJSON() {
+void Object::toJSON(json& json_base) {
     json object_json;
 
     object_json["id"] = this->id;
     object_json["type"] = this->type;
-    object_json.push_back(this->block.toJSON());
-    return object_json;
+    this->block.toJSON(object_json);
+    json_base["objects"].push_back(object_json);
 }
 
 Object::~Object() {}

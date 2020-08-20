@@ -207,7 +207,7 @@ void AABB::addRandomBlocks(int n,
     }
 }
 
-json AABB::toJSON() {
+void AABB::toJSON(json& json_base) {
     json aabb_json;
 
     vector<json> coordinates_list;
@@ -219,7 +219,19 @@ json AABB::toJSON() {
                            {"coordinates", coordinates_list},
                            {"material", this->getMaterial()}};
 
-    return aabb_json;
+    json_base["locations"].push_back(aabb_json);
+
+    for (auto& blockPtr : this->getBlockList()) {
+        (*blockPtr).toJSON(json_base);
+    }
+
+    for (auto& entityPtr : this->getEntityList()) {
+        (*entityPtr).toJSON(json_base);
+    }
+
+    for (auto& objectPtr : this->getObjectList()) {
+        (*objectPtr).toJSON(json_base);
+    }
 }
 
 string AABB::toTSV() {

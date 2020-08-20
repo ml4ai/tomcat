@@ -59,46 +59,26 @@ string World::toJSON() {
     vector<json> entity_list;
     vector<json> object_list;
 
-    // Add AABBs to the JSON list
-    for (auto& aabbPtr : this->aabbList) {
-        Group* group = dynamic_cast<Group*>(aabbPtr);
-        if (!group) {
-            location_list.push_back((*aabbPtr).toJSON());
-        }
-        else {
-            for (auto& groupAabbPtr : (*group).getAABBList()) {
-                location_list.push_back((*groupAabbPtr).toJSON());
-            }
-        }
-
-        for (auto& blockPtr : (*aabbPtr).getBlockList()) {
-            location_list.push_back((*blockPtr).toJSON());
-        }
-
-        for (auto& entityPtr : (*aabbPtr).getEntityList()) {
-            entity_list.push_back((*entityPtr).toJSON());
-        }
-
-        for (auto& objectPtr : (*aabbPtr).getObjectList()) {
-            object_list.push_back((*objectPtr).toJSON());
-        }
-    }
-
-    // Add Blocks to the JSON List
-    for (auto& blockPtr : this->blockList) {
-        location_list.push_back((*blockPtr).toJSON());
-    }
-
-    for (auto& entityPtr : this->blockList) {
-        entity_list.push_back((*entityPtr).toJSON());
-    }
-    for (auto& objectPtr : this->getObjectList()) {
-        object_list.push_back((*objectPtr).toJSON());
-    }
-
     world_json["locations"] = location_list;
     world_json["entities"] = entity_list;
     world_json["objects"] = object_list;
+
+    // Add AABBs to the JSON list
+    for (auto& aabbPtr : this->aabbList) {
+        (*aabbPtr).toJSON(world_json);
+    }
+
+    for (auto& blockPtr : this->getBlockList()) {
+        (*blockPtr).toJSON(world_json);
+    }
+
+    for (auto& entityPtr : this->getEntityList()) {
+        (*entityPtr).toJSON(world_json);
+    }
+
+    for (auto& objectPtr : this->getObjectList()) {
+        (*objectPtr).toJSON(world_json);
+    }
 
     return world_json.dump(4);
 }

@@ -9,7 +9,7 @@ class Object{
         Block block;
 
     public:
-        nlohmann::json virtual toJSON();
+        void virtual toJSON(nlohmann::json& json_base);
         Object(std::string id, std::string type, Block& block);
         ~Object();
 

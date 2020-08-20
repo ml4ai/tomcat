@@ -23,7 +23,7 @@ void Block::setY(int y) { this->pos.setY(y); }
 
 void Block::setZ(int z) { this->pos.setZ(z); }
 
-json Block::toJSON() {
+void Block::toJSON(json& json_base) {
 
     json block_json;
     vector<json> coordinate_list;
@@ -32,7 +32,7 @@ json Block::toJSON() {
     block_json["bounds"] = {{"type", "block"},
                             {"coordinates", coordinate_list},
                             {"material", this->getMaterial()}};
-    return block_json;
+    json_base["locations"].push_back(block_json);
 }
 
 string Block::toTSV() {
