@@ -44,6 +44,8 @@ class Block {
      */
     int getZ();
 
+    Pos& getPos();
+
     /**
      * @brief Set the x value of this object
      *

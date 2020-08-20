@@ -1,4 +1,5 @@
 #include "Object.h"
+#include <iostream>
 
 using namespace std;
 using json = nlohmann::json;
@@ -11,7 +12,14 @@ void Object::toJSON(json& json_base) {
 
     object_json["id"] = this->id;
     object_json["type"] = this->type;
-    this->block.toJSON(object_json);
+
+    vector<json> coordinate_list;
+    coordinate_list.push_back(this->block.getPos().toJSON());
+
+    object_json["bounds"] = {{"type", "block"},
+                             {"coordinates", coordinate_list},
+                             {"material", this->block.getMaterial()}};
+
     json_base["objects"].push_back(object_json);
 }
 

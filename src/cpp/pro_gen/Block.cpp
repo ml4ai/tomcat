@@ -17,6 +17,8 @@ int Block::getY() { return this->pos.getY(); }
 
 int Block::getZ() { return this->pos.getZ(); }
 
+Pos& Block::getPos() { return this->pos; }
+
 void Block::setX(int x) { this->pos.setX(x); }
 
 void Block::setY(int y) { this->pos.setY(y); }
