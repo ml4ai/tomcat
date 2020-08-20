@@ -131,7 +131,7 @@ void AABB::addBlock(Block& block) { (this->blockList).push_back(&block); }
 
 void AABB::addEntity(Entity& entity) { this->entityList.push_back(&entity); }
 
-void AABB::addObject(Object& object){this->objectList.push_back(&object);}
+void AABB::addObject(Object& object) { this->objectList.push_back(&object); }
 
 bool AABB::isOverlapping(AABB& other) {
     int xRange = (this->bottomRight.getX()) - (this->topLeft.getX());
@@ -214,29 +214,10 @@ json AABB::toJSON() {
     coordinates_list.push_back(this->topLeft.toJSON());
     coordinates_list.push_back(this->bottomRight.toJSON());
 
-    vector<json> block_list;
-    for (auto& blockPtr : this->getBlockList()) {
-        block_list.push_back((*blockPtr).toJSON());
-    }
-
-    vector<json> entity_list;
-    for (auto& entityPtr : this->getEntityList()) {
-        entity_list.push_back((*entityPtr).toJSON());
-    }
-
-    vector<json> object_list;
-    for (auto& objectPtr : this->getObjectList()) {
-        object_list.push_back((*objectPtr).toJSON());
-    }
-
     aabb_json["bounds"] = {{"id", this->getID()},
                            {"type", "cuboid"},
                            {"coordinates", coordinates_list},
-                           {"material", this->getMaterial()},
-                           {"block_list", block_list},
-                           {"entity_list", entity_list},
-                           {"object_list", object_list}};
-
+                           {"material", this->getMaterial()}};
 
     return aabb_json;
 }

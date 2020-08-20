@@ -80,40 +80,6 @@ void Group::recalculateGroupBoundaries() {
     this->setBottomRight(newBottomRight);
 }
 
-json Group::toJSON() {
-    json group_json;
-
-    vector<json> coordinates_list;
-    coordinates_list.push_back(this->topLeft.toJSON());
-    coordinates_list.push_back(this->bottomRight.toJSON());
-
-
-    vector<json> block_list;
-    for (auto& blockPtr : this->getBlockList()) {
-        block_list.push_back((*blockPtr).toJSON());
-    }
-
-    vector<json> entity_list;
-    for (auto& entityPtr : this->getEntityList()) {
-        entity_list.push_back((*entityPtr).toJSON());
-    }
-
-    vector<json> aabb_list;
-    for (auto& aabbPtr : this->getAABBList()) {
-        aabb_list.push_back((*aabbPtr).toJSON());
-    }
-
-    group_json["bounds"] = {{"id", this->getID()},
-                           {"type", "cuboid"},
-                           {"coordinates", coordinates_list},
-                           {"material", this->getMaterial()},
-                           {"block_list", block_list},
-                           {"aabb_list", aabb_list},
-                           {"entity_list", entity_list}};
-
-    return group_json;
-}
-
 string Group::toTSV() {
     string retval = "";
 

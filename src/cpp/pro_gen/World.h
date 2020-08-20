@@ -5,6 +5,7 @@
 #pragma once
 
 #include "AABB.h"
+#include "Group.h"
 
 /**
  * @brief This class represents a Minecraft world as a

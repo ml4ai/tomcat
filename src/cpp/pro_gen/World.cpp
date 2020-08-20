@@ -32,7 +32,7 @@ void World::addBlock(Block& block) { (this->blockList).push_back(&block); }
 
 void World::addEntity(Entity& entity) { this->entityList.push_back(&entity); }
 
-void World::addObject(Object& object){this->objectList.push_back(&object);}
+void World::addObject(Object& object) { this->objectList.push_back(&object); }
 
 string World::toTSV() {
     string retval = "";
@@ -56,9 +56,32 @@ string World::toJSON() {
     json world_json;
 
     vector<json> location_list;
+    vector<json> entity_list;
+    vector<json> object_list;
+
     // Add AABBs to the JSON list
     for (auto& aabbPtr : this->aabbList) {
-        location_list.push_back((*aabbPtr).toJSON());
+        Group* group = dynamic_cast<Group*>(aabbPtr);
+        if (!group) {
+            location_list.push_back((*aabbPtr).toJSON());
+        }
+        else {
+            for (auto& groupAabbPtr : (*group).getAABBList()) {
+                location_list.push_back((*groupAabbPtr).toJSON());
+            }
+        }
+
+        for (auto& blockPtr : (*aabbPtr).getBlockList()) {
+            location_list.push_back((*blockPtr).toJSON());
+        }
+
+        for (auto& entityPtr : (*aabbPtr).getEntityList()) {
+            entity_list.push_back((*entityPtr).toJSON());
+        }
+
+        for (auto& objectPtr : (*aabbPtr).getObjectList()) {
+            object_list.push_back((*objectPtr).toJSON());
+        }
     }
 
     // Add Blocks to the JSON List
@@ -66,19 +89,16 @@ string World::toJSON() {
         location_list.push_back((*blockPtr).toJSON());
     }
 
-    vector<json> entity_list;
     for (auto& entityPtr : this->blockList) {
         entity_list.push_back((*entityPtr).toJSON());
     }
-
-    vector<json> object_list;
     for (auto& objectPtr : this->getObjectList()) {
         object_list.push_back((*objectPtr).toJSON());
     }
 
-    world_json["locations"]= location_list;
-    world_json["entity_list"] = entity_list;
-    //world_json["object_list"] = object_list;
+    world_json["locations"] = location_list;
+    world_json["entities"] = entity_list;
+    world_json["objects"] = object_list;
 
     return world_json.dump(4);
 }
