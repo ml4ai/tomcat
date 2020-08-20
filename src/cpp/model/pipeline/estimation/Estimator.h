@@ -7,8 +7,8 @@
 
 #include <eigen3/Eigen/Dense>
 
-#include "EvidenceSet.h"
-#include "pgm/DynamicBayesNet.h"
+#include "../../pgm/DynamicBayesNet.h"
+#include "../../utils/EvidenceSet.h"
 
 namespace tomcat {
     namespace model {

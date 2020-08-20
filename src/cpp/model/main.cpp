@@ -1,10 +1,3 @@
-#include "BaselineEstimator.h"
-#include "DBNSamplingTrainer.h"
-#include "Estimator.h"
-#include "EvidenceSet.h"
-#include "FileHandler.h"
-#include "KFold.h"
-#include "SumProductEstimator.h"
 #include "distribution/Categorical.h"
 #include "distribution/Dirichlet.h"
 #include "distribution/Gaussian.h"
@@ -16,8 +9,17 @@
 #include "pgm/cpd/CategoricalCPD.h"
 #include "pgm/cpd/DirichletCPD.h"
 #include "pgm/cpd/GaussianCPD.h"
+#include "pipeline/KFold.h"
+#include "pipeline/Pipeline.h"
+#include "pipeline/estimation/BaselineEstimator.h"
+#include "pipeline/estimation/Estimator.h"
+#include "pipeline/estimation/OnlineEstimation.h"
+#include "pipeline/estimation/SumProductEstimator.h"
+#include "pipeline/training/DBNSamplingTrainer.h"
 #include "sampling/AncestralSampler.h"
 #include "sampling/GibbsSampler.h"
+#include "utils/EvidenceSet.h"
+#include "utils/FileHandler.h"
 #include <boost/filesystem.hpp>
 #include <eigen3/Eigen/Dense>
 #include <fstream>
@@ -383,6 +385,54 @@ void test_sum_product_estimator(std::shared_ptr<DynamicBayesNet> model) {
     estimator->estimate(EvidenceSet());
 }
 
+void test_pipeline() {
+    Tensor3 tg_data = read_tensor_from_file("../../data/samples/TG.txt");
+    Tensor3 ty_data = read_tensor_from_file("../../data/samples/TY.txt");
+    EvidenceSet data;
+    data.add_data("TG", tg_data);
+    data.add_data("TY", ty_data);
+
+    std::shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+
+    std::shared_ptr<DynamicBayesNet> model =
+        std::make_shared<DynamicBayesNet>(create_dbn(false));
+
+    GibbsSampler gibbs(model, 20);
+
+    std::shared_ptr<DBNSamplingTrainer> trainer =
+        std::make_shared<DBNSamplingTrainer>(DBNSamplingTrainer(
+            gen, std::make_shared<GibbsSampler>(gibbs), 100));
+
+    std::shared_ptr<DBNSaver> saver =
+        std::make_shared<DBNSaver>(DBNSaver(model, "../../data/model"));
+
+    std::shared_ptr<KFold> kfold = std::make_shared<KFold>(KFold(gen, 5));
+
+    MessageBrokerConfiguration config;
+    config.timeout = 5;
+    std::shared_ptr<BaselineEstimator> baseline_estimator =
+        std::make_shared<BaselineEstimator>(BaselineEstimator(model, 1));
+    std::shared_ptr<SumProductEstimator> sumproduct_estimator =
+        std::make_shared<SumProductEstimator>(SumProductEstimator(model, 1));
+
+    std::shared_ptr<OnlineEstimation> estimation1 =
+        std::make_shared<OnlineEstimation>(
+            OnlineEstimation(baseline_estimator, config));
+    std::shared_ptr<OnlineEstimation> estimation2 =
+        std::make_shared<OnlineEstimation>(
+            OnlineEstimation(sumproduct_estimator, config));
+
+    Pipeline pipeline;
+    pipeline.set_data(data);
+    pipeline.set_data_splitter(kfold);
+    pipeline.set_model_trainner(trainer);
+    pipeline.set_model_saver(saver);
+    pipeline.add_estimation(estimation1);
+    pipeline.add_estimation(estimation2);
+
+    pipeline.execute();
+}
+
 int main() {
     //    test_cpp_capabilities();
     //    test_random_number_generation();
@@ -415,8 +465,10 @@ int main() {
     //        std::cout << test["TG"] << std::endl;
     //    }
 
-    test_baseline_estimator(dbn_ptr);
-    test_sum_product_estimator(dbn_ptr);
+//    test_baseline_estimator(dbn_ptr);
+//    test_sum_product_estimator(dbn_ptr);
+
+    test_pipeline();
 
     // gsl_rng_set(gen.get(), time(0));
     // dbn.unroll(4, true);

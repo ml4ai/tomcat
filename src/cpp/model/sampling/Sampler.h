@@ -2,9 +2,9 @@
 
 #include <unordered_set>
 
-#include "../Tensor3.h"
 #include "../pgm/DynamicBayesNet.h"
-#include "../EvidenceSet.h"
+#include "../utils/EvidenceSet.h"
+#include "../utils/Tensor3.h"
 
 namespace tomcat {
     namespace model {

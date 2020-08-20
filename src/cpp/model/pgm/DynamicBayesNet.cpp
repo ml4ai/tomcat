@@ -3,7 +3,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/graph/topological_sort.hpp>
 
-#include "../FileHandler.h"
+#include "../utils/FileHandler.h"
 #include "ConstantNode.h"
 
 namespace tomcat {

@@ -1,15 +1,16 @@
 #pragma once
 
 #include <memory>
-#include <vector>
 #include <string>
+#include <vector>
+#include <thread>
 
+#include "../utils/EvidenceSet.h"
 #include "DBNSaver.h"
-#include "DBNTrainer.h"
-#include "Estimation.h"
-#include "EvidenceSet.h"
 #include "KFold.h"
-#include "MeasureAggregator.h"
+#include "estimation/Estimation.h"
+#include "evaluation/MeasureAggregator.h"
+#include "training/DBNTrainer.h"
 
 namespace tomcat {
     namespace model {
@@ -60,11 +61,31 @@ namespace tomcat {
             //------------------------------------------------------------------
             void execute();
 
+            void add_estimation(const std::shared_ptr<Estimation>& estimation);
+
+            //------------------------------------------------------------------
+            // Getters & Setters
+            //------------------------------------------------------------------
+            void set_data(const EvidenceSet& data);
+
+            void set_data_splitter(const std::shared_ptr<KFold>& data_splitter);
+
+            void set_model_trainner(
+                const std::shared_ptr<DBNTrainer>& model_trainner);
+
+            void set_model_saver(const std::shared_ptr<DBNSaver>& model_saver);
+
+            void set_aggregator(
+                const std::shared_ptr<MeasureAggregator>& aggregator);
+
           private:
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-            void start_estimation_threads(const EvidenceSet& test_data);
+            std::vector<std::thread> start_estimation_threads(const EvidenceSet& test_data);
+
+            void estimate(std::shared_ptr<Estimation> estimation,
+                                    const EvidenceSet& test_data);
 
             //------------------------------------------------------------------
             // Data members

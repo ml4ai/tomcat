@@ -74,7 +74,7 @@ namespace tomcat {
             //------------------------------------------------------------------
             std::shared_ptr<std::ostream> output_stream;
 
-            std::vector<Measure> measures;
+            std::vector<std::shared_ptr<Measure>> measures;
         };
 
     } // namespace model

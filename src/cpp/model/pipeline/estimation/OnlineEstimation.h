@@ -1,5 +1,7 @@
 #pragma once
 
+#include <chrono>
+
 #include "Estimation.h"
 
 namespace tomcat {
@@ -16,6 +18,10 @@ namespace tomcat {
         struct MessageBrokerConfiguration {
             std::string address;
             std::string port;
+
+            // If defined, the estimation thread will terminate after the number
+            // of seconds here defined without receiving any message.
+            int timeout = -1;
 
             // Topics to subscribe to
             std::string state_topic = "observations/state";
@@ -34,6 +40,11 @@ namespace tomcat {
          */
         class OnlineEstimation : public Estimation {
           public:
+            //------------------------------------------------------------------
+            // Types, Enums & Constants
+            //------------------------------------------------------------------
+            typedef std::chrono::steady_clock::time_point Time;
+
             //------------------------------------------------------------------
             // Constructors & Destructor
             //------------------------------------------------------------------
@@ -82,11 +93,19 @@ namespace tomcat {
              */
             void copy_estimation(const OnlineEstimation& estimation);
 
+            // TODO - remove this later
+            void reset() override;
+
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------
             MessageBrokerConfiguration config;
 
+            // Last time the estimation process received a message.
+            Time last_updated_time;
+
+            // TODO - remove this later
+            bool init = false;
         };
 
     } // namespace model

@@ -24,7 +24,8 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Copy & Move constructors/assignments
         //----------------------------------------------------------------------
-        DBNSamplingTrainer::DBNSamplingTrainer(const DBNSamplingTrainer& trainer) {
+        DBNSamplingTrainer::DBNSamplingTrainer(
+            const DBNSamplingTrainer& trainer) {
             this->copy_trainer(trainer);
         }
 
@@ -37,7 +38,8 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void DBNSamplingTrainer::copy_trainer(const DBNSamplingTrainer& trainer) {
+        void
+        DBNSamplingTrainer::copy_trainer(const DBNSamplingTrainer& trainer) {
             this->random_generator = trainer.random_generator;
             this->sampler = trainer.sampler;
             this->num_samples = trainer.num_samples;
@@ -46,6 +48,8 @@ namespace tomcat {
         void DBNSamplingTrainer::prepare() {}
 
         void DBNSamplingTrainer::fit(const EvidenceSet& training_data) {
+            this->sampler->set_num_in_plate_samples(
+                training_data.get_num_data_points());
             this->sampler->add_data(training_data);
             this->sampler->sample(this->random_generator, this->num_samples);
 

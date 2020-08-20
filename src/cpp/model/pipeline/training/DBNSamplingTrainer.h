@@ -2,7 +2,7 @@
 
 #include "DBNTrainer.h"
 
-#include "sampling/Sampler.h"
+#include "../../sampling/Sampler.h"
 
 namespace tomcat {
     namespace model {

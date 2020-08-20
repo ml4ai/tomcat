@@ -6,7 +6,7 @@
 
 #include <gsl/gsl_rng.h>
 
-#include "EvidenceSet.h"
+#include "../utils/EvidenceSet.h"
 
 namespace tomcat {
     namespace model {

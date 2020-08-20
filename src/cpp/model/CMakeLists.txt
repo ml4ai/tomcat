@@ -49,31 +49,31 @@ add_library(tomcat_model_libs
         sampling/Sampler.cpp
         sampling/AncestralSampler.cpp
         sampling/GibbsSampler.cpp
-        FileHandler.cpp
-        Tensor3.cpp
+        utils/FileHandler.cpp
+        utils/Tensor3.cpp
         distribution/Distribution.cpp
         distribution/Categorical.cpp
         distribution/Continuous.cpp
         distribution/Dirichlet.cpp
         distribution/Gaussian.cpp
-        DBNSamplingTrainer.cpp
-        EvidenceSet.cpp
-        KFold.cpp
-        DBNTrainer.cpp
-        DBNLoader.cpp
-        DBNSaver.cpp
-        Estimator.cpp
-        BaselineEstimator.cpp
-        SumProductEstimator.cpp
-        Estimation.cpp
-        OfflineEstimation.cpp
-        OnlineEstimation.cpp
-        Measure.cpp
-        Estimates.cpp
-        Accuracy.cpp
-        F1Score.cpp
-        MeasureAggregator.cpp
-        Pipeline.cpp)
+        pipeline/training/DBNSamplingTrainer.cpp
+        utils/EvidenceSet.cpp
+        pipeline/KFold.cpp
+        pipeline/training/DBNTrainer.cpp
+        pipeline/training/DBNLoader.cpp
+        pipeline/DBNSaver.cpp
+        pipeline/estimation/Estimator.cpp
+        pipeline/estimation/BaselineEstimator.cpp
+        pipeline/estimation/SumProductEstimator.cpp
+        pipeline/estimation/Estimation.cpp
+        pipeline/estimation/OfflineEstimation.cpp
+        pipeline/estimation/OnlineEstimation.cpp
+        pipeline/evaluation/Measure.cpp
+        pipeline/evaluation/Estimates.cpp
+        pipeline/evaluation/Accuracy.cpp
+        pipeline/evaluation/F1Score.cpp
+        pipeline/evaluation/MeasureAggregator.cpp
+        pipeline/Pipeline.cpp)
 
 # Todo make code coverage work on Linux as well.
 if(APPLE AND CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")

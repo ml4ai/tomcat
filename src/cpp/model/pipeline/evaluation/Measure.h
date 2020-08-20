@@ -2,8 +2,8 @@
 
 #include <memory>
 
-#include "EvidenceSet.h"
-#include "Estimator.h"
+#include "../../utils/EvidenceSet.h"
+#include "../estimation/Estimator.h"
 
 namespace tomcat {
     namespace model {

@@ -58,6 +58,15 @@ namespace tomcat {
             Estimation& operator=(Estimation&&) = default;
 
             //------------------------------------------------------------------
+            // Virtual functions
+            //------------------------------------------------------------------
+
+            /**
+             * Prepare estimation process to start again;
+             */
+            virtual void reset();
+
+            //------------------------------------------------------------------
             // Pure virtual functions
             //------------------------------------------------------------------
 
@@ -74,6 +83,8 @@ namespace tomcat {
             //------------------------------------------------------------------
             const std::shared_ptr<Estimator>& get_estimator() const;
 
+            bool is_finished() const;
+
           protected:
             //------------------------------------------------------------------
             // Member functions
@@ -88,6 +99,8 @@ namespace tomcat {
             // Data members
             //------------------------------------------------------------------
             std::shared_ptr<Estimator> estimator;
+
+            bool finished = false;
 
         };
 

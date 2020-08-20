@@ -26,7 +26,7 @@ namespace tomcat {
 
         void MeasureAggregator::aggregate(const EvidenceSet& test_data) {
             for (auto& measure : this->measures) {
-                Eigen::MatrixXd result = measure.evaluate(test_data);
+                Eigen::MatrixXd result = measure->evaluate(test_data);
 
                 // TODO - aggregate results
             }

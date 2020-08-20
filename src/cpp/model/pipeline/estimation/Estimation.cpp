@@ -23,6 +23,10 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
+        void Estimation::reset() {
+            this->finished = false;
+        }
+
         void Estimation::copy_estimation(const Estimation& estimation) {
             this->estimator = estimation.estimator;
         }
@@ -34,6 +38,8 @@ namespace tomcat {
         Estimation::get_estimator() const {
             return estimator;
         }
+
+        bool Estimation::is_finished() const { return finished; }
 
     } // namespace model
 } // namespace tomcat
