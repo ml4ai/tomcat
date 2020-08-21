@@ -145,6 +145,7 @@ def convert_experiments_data_to_evidence_set(
     mission_map_id,
     time_gap,
     time_slices,
+    binary_area,
     show_progress=True,
 ):
     """
@@ -171,6 +172,15 @@ def convert_experiments_data_to_evidence_set(
             time_gap,
             time_slices,
         )
+
+        if binary_area:
+            if mission_map_id == MissionMap.SPARKY:
+                rm[rm < 8] = 0
+                rm[rm >= 8] = 1
+            elif mission_map_id == MissionMap.FALCON:
+                rm[rm < 10] = 0
+                rm[rm >= 10] = 1
+
         lt_evidence_set.append(lt)
         rm_evidence_set.append(rm)
         tg_evidence_set.append(tg)
@@ -347,6 +357,8 @@ def get_number_of_areas(mission_map_id):
         return len(SPARKY_AREA_ORDER)
     elif mission_map_id == MissionMap.FALCON:
         return len(FALCON_AREA_ORDER)
+    elif mission_map_id == MissionMap.SHARED:
+        return 6
 
     return 0
 
@@ -455,16 +467,18 @@ def load_evidence_set(evidence_folder):
 if __name__ == "__main__":
     TIME_GAP = 1
     TIME_SLICES = 600
-    # convert_experiments_data_to_evidence_set('../data/experiments/asist/formatted/singleplayer',
-    #                                          '../data/evidence/asist/singleplayer', MissionMap.SINGLEPLAYER, TIME_GAP,
+    # convert_experiments_data_to_evidence_set('../data/experiments/asist/formatted/sparky',
+    #                                          '../data/evidence/asist/sparky', MissionMap.SINGLEPLAYER, TIME_GAP,
     #                                          TIME_SLICES)
-    convert_experiments_data_to_evidence_set(
-        "../data/experiments/asist/formatted/falcon",
-        "../data/evidence/asist/falcon",
-        MissionMap.FALCON,
-        TIME_GAP,
-        TIME_SLICES,
-    )
+    #
+    # convert_experiments_data_to_evidence_set('../data/experiments/asist/formatted/falcon',
+    #                                          '../data/evidence/asist/falcon', MissionMap.FALCON, TIME_GAP,
+    #                                          TIME_SLICES)
+
+    convert_experiments_data_to_evidence_set('../data/experiments/asist/formatted/sparky',
+                                             '../data/evidence/asist/sparky/binary_area', MissionMap.SPARKY, TIME_GAP,
+                                             TIME_SLICES, True)
+
     convert_experiments_data_to_evidence_set('../data/experiments/asist/formatted/falcon',
-                                             '../data/evidence/asist/falcon', MissionMap.FALCON, TIME_GAP,
-                                             TIME_SLICES)
+                                             '../data/evidence/asist/falcon/binary_area', MissionMap.FALCON, TIME_GAP,
+                                             TIME_SLICES, True)

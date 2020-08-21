@@ -124,18 +124,6 @@ class ParameterLearning:
                     1 - evidence_set.lt_evidence[d][t]
                     ] += 1
 
-        # # Hacking to share parameters. Here I am considering the transitions between the
-        # # same room to be the shares for all the rooms.
-        # first_room_index = self.model.number_of_hallways
-        # cum_counts = np.zeros((6, 6))  # states inside a room
-        # # Accumulate the counts from states inside each one of the rooms in a single array
-        # for i in range(first_room_index, self.model.number_of_states, 6):
-        #     cum_counts += posteriors_theta_s[i:i+6, i:i+6]
-        #
-        # # Replace the counts in the states across rooms to be the same cumulative count
-        # for i in range(first_room_index, self.model.number_of_states, 6):
-        #     posteriors_theta_s[i:i+6, i:i+6] = cum_counts
-
         # Sample parameters
         theta_s_sample = np.zeros(
             (self.model.number_of_states, self.model.number_of_states)

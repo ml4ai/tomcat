@@ -18,6 +18,7 @@ class MissionMap(Enum):
     SINGLEPLAYER = 0
     SPARKY = 1
     FALCON = 2
+    SHARED = 3
 
 
 def split_data_files_into_folders(

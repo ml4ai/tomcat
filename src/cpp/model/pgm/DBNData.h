@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "../utils/Definitions.h"
 #include "FileHandler.h"
 
 namespace tomcat {

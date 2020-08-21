@@ -367,46 +367,64 @@ def generate_synthetic_toy_data(num_samples, even_until):
     save_evidence_set(folder_name, data)
 
 
-def load_trained_asist_model(mission_map, gibbs_samples, gibbs_burn_in):
+def load_trained_asist_model(mission_map, gibbs_samples, gibbs_burn_in, share_parameters):
     map_name = ''
     if mission_map == MissionMap.SPARKY:
         map_name = 'sparky'
     elif mission_map == MissionMap.FALCON:
         map_name = 'falcon'
 
-    model_folder = "../data/models/{}/not_shared_params/{}s{}b".format(map_name, gibbs_samples, gibbs_burn_in)
+    if share_parameters:
+        sharing_opt = "shared"
+    else:
+        sharing_opt = "non_shared"
+
+    model_folder = "../data/models/{}/{}/{}s{}b".format(map_name, sharing_opt, gibbs_samples, gibbs_burn_in)
     model = Model()
     if model.load(model_folder):
         return model
     else:
-        evidence_set = load_evidence_set("../data/evidence/asist/{}".format(map_name))
         model = Model()
-        model.init_from_mission_map(mission_map)
+        if share_parameters:
+            evidence_set = load_evidence_set("../data/evidence/asist/{}/binary_area".format(map_name))
+            model.init_from_mission_map(MissionMap.SHARED)
+        else:
+            evidence_set = load_evidence_set("../data/evidence/asist/{}".format(map_name))
+            model.init_from_mission_map(mission_map)
         learning = ParameterLearning(model)
         trained_model = learning.estimate_parameters(evidence_set, gibbs_samples, gibbs_burn_in)
-        model_folder = "../data/models/{}/{}s{}b".format(map_name, gibbs_samples, gibbs_burn_in)
+        model_folder = "../data/models/{}/{}/{}s{}b".format(map_name, sharing_opt, gibbs_samples, gibbs_burn_in)
         trained_model.save(model_folder)
         return trained_model
 
 
 def generate_asist_synthetic_data(model, mission_map, num_samples, time_steps, gibbs_samples, gibbs_burn_in,
-                                  even_until=0):
+                                  even_until, share_parameters):
     map_name = ''
     if mission_map == MissionMap.SPARKY:
         map_name = 'sparky'
     elif mission_map == MissionMap.FALCON:
         map_name = 'falcon'
 
+    if share_parameters:
+        sharing_opt = "shared"
+        model.mission_map_id = MissionMap.SHARED
+        model.number_of_states = 7
+        model.number_of_hallways = 1
+        model.number_of_rooms = 2
+    else:
+        sharing_opt = "non_shared"
+
     sampling = AncestralSampling(model)
     initial_state = 0
 
     synthetic_data = sampling.sample(initial_state, time_steps, num_samples, even_until)
-    filepath_template = '../data/evidence/asist/non_shared/synthetic_{}_{}eu_{}s_{}gs{}gbi'
-    filepath = filepath_template.format(map_name, even_until, num_samples, gibbs_samples, gibbs_burn_in)
+    filepath_template = '../data/evidence/asist/{}/synthetic_{}_{}eu_{}s_{}gs{}gbi'
+    filepath = filepath_template.format(sharing_opt, map_name, even_until, num_samples, gibbs_samples, gibbs_burn_in)
     save_evidence_set(filepath, synthetic_data)
 
 
-def experiment_generate_synthetic_data(num_samples, gibbs_samples, gibbs_burn_in, even_until):
+def experiment_generate_synthetic_data(num_samples, gibbs_samples, gibbs_burn_in, even_until, share_parameters):
     print('*************************')
     print('GENERATING SYNTHETIC DATA')
     print('*************************')
@@ -416,16 +434,16 @@ def experiment_generate_synthetic_data(num_samples, gibbs_samples, gibbs_burn_in
     print('>> Sparky')
     np.random.seed(42)
     random.seed(42)
-    model = load_trained_asist_model(MissionMap.SPARKY, gibbs_samples, gibbs_burn_in)
+    model = load_trained_asist_model(MissionMap.SPARKY, gibbs_samples, gibbs_burn_in, share_parameters)
     generate_asist_synthetic_data(model, MissionMap.SPARKY, num_samples, time_steps, gibbs_samples, gibbs_burn_in,
-                                  even_until)
+                                  even_until, share_parameters)
 
     print('>> Falcon')
     np.random.seed(42)
     random.seed(42)
-    model = load_trained_asist_model(MissionMap.FALCON, gibbs_samples, gibbs_burn_in)
+    model = load_trained_asist_model(MissionMap.FALCON, gibbs_samples, gibbs_burn_in, share_parameters)
     generate_asist_synthetic_data(model, MissionMap.FALCON, num_samples, time_steps, gibbs_samples, gibbs_burn_in,
-                                  even_until)
+                                  even_until, share_parameters)
 
 
 def experiment_eval_performance_synthetic(num_samples, gibbs_samples, gibbs_burn_in, horizons):
@@ -470,28 +488,42 @@ def experiment_eval_performance_synthetic(num_samples, gibbs_samples, gibbs_burn
                      "../data/models/synthetic_falcon")
 
 
-def experiment_eval_performance_real(gibbs_samples, gibbs_burn_in, horizons):
+def experiment_eval_performance_real(gibbs_samples, gibbs_burn_in, horizons, share_parameters):
     print('***********************************')
     print('EVALUATING PERFORMANCE ON REAL DATA')
     print('***********************************')
+
+    if share_parameters:
+        sharing_opt = "shared"
+    else:
+        sharing_opt = "non_shared"
 
     print('>> Sparky')
     np.random.seed(42)
     random.seed(42)
     models = Model()
-    models.init_from_mission_map(MissionMap.SPARKY)
-    evidence_set = load_evidence_set("../data/evidence/asist/sparky")
+    if share_parameters:
+        models.init_from_mission_map(MissionMap.SHARED)
+        evidence_set = load_evidence_set("../data/evidence/asist/sparky/binary_area")
+    else:
+        models.init_from_mission_map(MissionMap.SPARKY)
+        evidence_set = load_evidence_set("../data/evidence/asist/sparky")
+
     num_folds = 6
-    fit_and_evaluate(models, evidence_set, gibbs_samples, gibbs_burn_in, num_folds, horizons, "../data/models/sparky")
+    fit_and_evaluate(models, evidence_set, gibbs_samples, gibbs_burn_in, num_folds, horizons, "../data/models/sparky/" + sharing_opt)
 
     print('>> Falcon')
     np.random.seed(42)
     random.seed(42)
     models = Model()
-    models.init_from_mission_map(MissionMap.FALCON)
-    evidence_set = load_evidence_set("../data/evidence/asist/falcon")
+    if share_parameters:
+        models.init_from_mission_map(MissionMap.SHARED)
+        evidence_set = load_evidence_set("../data/evidence/asist/falcon/binary_area")
+    else:
+        models.init_from_mission_map(MissionMap.SPARKY)
+        evidence_set = load_evidence_set("../data/evidence/asist/falcon")
     num_folds = 5
-    fit_and_evaluate(models, evidence_set, gibbs_samples, gibbs_burn_in, num_folds, horizons, "../data/models/falcon")
+    fit_and_evaluate(models, evidence_set, gibbs_samples, gibbs_burn_in, num_folds, horizons, "../data/models/falcon/" + sharing_opt)
 
 
 def compare_empirical_vs_projected_probabilities_for(model, data, horizons, even_until, t, output_folder,
@@ -652,22 +684,14 @@ def evaluate_transitions(data, first_room_index):
     #     print(transitions)
 
 
-def experiment_transitions():
+def experiment_transitions(share_parameters):
     print('**********************')
     print('EVALUATING TRANSITIONS')
     print('**********************')
 
-    print('>> Synthetic Sparky')
-    data = load_evidence_set("../data/evidence/asist/non_shared/synthetic_sparky_0eu_100s_5000gs500gbi")
-    evaluate_transitions(data, 8)
-
     print('\n>> Sparky')
     data = load_evidence_set("../data/evidence/asist/sparky")
     evaluate_transitions(data, 8)
-
-    print('\n>> Synthetic Falcon')
-    data = load_evidence_set("../data/evidence/asist/non_shared/synthetic_falcon_0eu_100s_5000gs500gbi")
-    evaluate_transitions(data, 10)
 
     print('\n>> Falcon')
     data = load_evidence_set("../data/evidence/asist/falcon")
@@ -745,22 +769,36 @@ def evaluate_common_behavior(data, first_room_index, output_folder, filename):
     print(get_formatted_metric(times_ty_dark))
 
 
-def experiment_common_behavior():
+def experiment_common_behavior(share_parameters):
     print('**************************')
     print('EVALUATING COMMON BEHAVIOR')
     print('**************************')
 
+    if share_parameters:
+        sharing_opt = "shared"
+        first_room_index = 1
+    else:
+        sharing_opt = "non_shared"
+        first_room_index = 8
+
     print('>> Synthetic Sparky')
-    data = load_evidence_set("../data/evidence/asist/non_shared/synthetic_sparky_0eu_100s_5000gs500gbi")
-    evaluate_common_behavior(data, 8, '../data/plots/asist/sparky/non_shared', 'state_freq_synthetic_sparky_0eu_100s_5000gs500gbi')
+    data = load_evidence_set("../data/evidence/asist/{}/synthetic_sparky_0eu_100s_5000gs500gbi".format(sharing_opt))
+    evaluate_common_behavior(data, first_room_index, '../data/plots/asist/sparky/{}'.format(sharing_opt), 'state_freq_synthetic_sparky_0eu_100s_5000gs500gbi')
 
     print('\n>> Sparky')
     data = load_evidence_set("../data/evidence/asist/sparky")
     evaluate_common_behavior(data, 8, '../data/plots/asist/sparky', 'state_freq_sparky_0eu_6s_5000gs500gbi')
 
+    if share_parameters:
+        sharing_opt = "shared"
+        first_room_index = 1
+    else:
+        sharing_opt = "non_shared"
+        first_room_index = 10
+
     print('\n>> Synthetic Falcon')
-    data = load_evidence_set("../data/evidence/asist/non_shared/synthetic_falcon_0eu_100s_5000gs500gbi")
-    evaluate_common_behavior(data, 10, '../data/plots/asist/falcon/non_shared', 'state_freq_synthetic_falcon_0eu_100s_5000gs500gbi')
+    data = load_evidence_set("../data/evidence/asist/{}/synthetic_falcon_0eu_100s_5000gs500gbi".format(sharing_opt))
+    evaluate_common_behavior(data, first_room_index, '../data/plots/asist/falcon/{}'.format(sharing_opt), 'state_freq_synthetic_falcon_0eu_100s_5000gs500gbi')
 
     print('\n>> Falcon')
     data = load_evidence_set("../data/evidence/asist/falcon")
@@ -773,11 +811,11 @@ if __name__ == "__main__":
     GIBBS_BURN_IN = 500
     HORIZONS = [1, 3, 5, 10, 15, 30]
 
-    experiment_common_behavior()
-    experiment_transitions()
-    # experiment_generate_synthetic_data(100, NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, 0)
+    # experiment_generate_synthetic_data(100, NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, 0, True)
     # experiment_eval_performance_synthetic(NUM_SAMPLES, NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, HORIZONS)
-    # experiment_eval_performance_real(NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, HORIZONS)
+    experiment_eval_performance_real(NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, HORIZONS, True)
+    experiment_common_behavior(True)
+    experiment_transitions(True)
     # experiment_check_with_toy_model()
     # experiment_check_with_asist_model()
 
