@@ -4,12 +4,6 @@ namespace tomcat {
     namespace model {
 
         //----------------------------------------------------------------------
-        // Definitions
-        //----------------------------------------------------------------------
-
-        // No definitions in this file
-
-        //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
         Estimation::Estimation() {}
@@ -23,6 +17,11 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
+        void Estimation::set_training_data(
+            const tomcat::model::DBNData& training_data) {
+           this->estimator->set_training_data(training_data);
+        }
+
         void Estimation::reset() {
             this->finished = false;
         }

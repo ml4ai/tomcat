@@ -8,12 +8,6 @@ namespace tomcat {
     namespace model {
 
         //----------------------------------------------------------------------
-        // Definitions
-        //----------------------------------------------------------------------
-
-        // No definitions in this file
-
-        //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
         KFold::KFold(std::shared_ptr<gsl_rng> random_generator, int num_folds)
@@ -22,21 +16,9 @@ namespace tomcat {
         KFold::~KFold() {}
 
         //----------------------------------------------------------------------
-        // Copy & Move constructors/assignments
-        //----------------------------------------------------------------------
-
-        //----------------------------------------------------------------------
-        // Operator overload
-        //----------------------------------------------------------------------
-
-        //----------------------------------------------------------------------
-        // Static functions
-        //----------------------------------------------------------------------
-
-        //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        KFold::Split KFold::split(const EvidenceSet& data) {
+        KFold::Split KFold::split(const DBNData& data) {
 
             if (this->num_folds > data.get_num_data_points()) {
                 throw std::invalid_argument(
@@ -56,8 +38,8 @@ namespace tomcat {
             for (int i = 0; i < this->num_folds; i++) {
                 int end_idx = start_idx + fold_sizes[i] - 1;
 
-                EvidenceSet training;
-                EvidenceSet test;
+                DBNData training;
+                DBNData test;
                 std::vector<int> training_indices;
                 if (start_idx > 0) {
                     training_indices.insert(training_indices.end(),
@@ -85,7 +67,15 @@ namespace tomcat {
                     test.add_data(node_label, test_data);
                 }
 
-                splits.push_back(std::make_pair(training, test));
+                if (num_folds == 1) {
+                    // In this case the single fold must be used as training
+                    // data instead of test data.
+                    splits.push_back(std::make_pair(test, training));
+                }
+                else {
+                    splits.push_back(std::make_pair(training, test));
+                }
+
                 start_idx = end_idx + 1;
             }
 

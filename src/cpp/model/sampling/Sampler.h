@@ -2,8 +2,9 @@
 
 #include <unordered_set>
 
+#include "../pgm/DBNData.h"
 #include "../pgm/DynamicBayesNet.h"
-#include "../utils/EvidenceSet.h"
+#include "../utils/Definitions.h"
 #include "../utils/Tensor3.h"
 
 namespace tomcat {
@@ -66,7 +67,7 @@ namespace tomcat {
              *
              * @param data: observed values for the observable nodes over time.
              */
-            void add_data(EvidenceSet data);
+            void add_data(DBNData data);
 
             /**
              * Saves generated samples to files in a specific folder.
@@ -135,7 +136,7 @@ namespace tomcat {
             // same as the number of in-plate samples.
             int num_in_plate_samples = 1;
 
-            EvidenceSet data;
+            DBNData data;
 
           private:
             //------------------------------------------------------------------

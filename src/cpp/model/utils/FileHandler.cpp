@@ -35,39 +35,7 @@ namespace tomcat {
         }
 
         Eigen::MatrixXd read_matrix_from_file(const std::string& filepath) {
-            //            int cols = 0, rows = 0;
-            //            double* buffer = new double[MAXBUFSIZE];
-            //
-            //            std::ifstream file_reader(filepath);
-            //
-            //            while (!file_reader.eof()) {
-            //                std::string line;
-            //                std::getline(file_reader, line);
-            //
-            //                int temp_cols = 0;
-            //                std::stringstream ss(line);
-            //                while (!ss.eof()) {
-            //                    ss >> buffer[cols * rows + temp_cols++];
-            //                }
-            //
-            //                if (temp_cols == 0) {
-            //                    continue;
-            //                }
-            //
-            //                if (cols == 0) {
-            //                    cols = temp_cols;
-            //                }
-            //
-            //                rows++;
-            //            }
-            //
-            //            file_reader.close();
-            //
-            //            Eigen::Map<Eigen::MatrixXd> matrix(buffer, rows,
-            //            cols);
-            //
-            //            return matrix;
-            return read_tensor_from_file(filepath)(0);
+            return read_tensor_from_file(filepath)(0, 0);
         }
 
         void save_tensor_to_file(const std::string& filepath,

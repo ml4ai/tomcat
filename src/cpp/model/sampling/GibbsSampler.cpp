@@ -6,12 +6,6 @@ namespace tomcat {
     namespace model {
 
         //----------------------------------------------------------------------
-        // Definitions
-        //----------------------------------------------------------------------
-
-#define exists(member, container) (container.find(member) != container.end())
-
-        //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
         GibbsSampler::GibbsSampler(std::shared_ptr<DynamicBayesNet> model,
@@ -117,7 +111,7 @@ namespace tomcat {
             // the node's initial time step.
             for (const auto& node : latent_nodes) {
                 std::string node_label = node->get_metadata()->get_label();
-                if (!exists(node_label, this->node_label_to_samples)) {
+                if (!EXISTS(node_label, this->node_label_to_samples)) {
                     int sample_size = node->get_metadata()->get_sample_size();
                     this->node_label_to_samples[node_label] =
                         Tensor3::constant(sample_size,

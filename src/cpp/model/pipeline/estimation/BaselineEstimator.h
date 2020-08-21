@@ -1,19 +1,23 @@
 #pragma once
 
+#include <unordered_set>
+
+#include "../../utils/Definitions.h"
+
 #include "Estimator.h"
 
 namespace tomcat {
     namespace model {
 
         /**
-         * Class description here
+         * This estimator is based on the relative frequencies of the
+         * observations over the training data for each time step on an unrolled
+         * DBN. For instance, the probability of observing a value x in time
+         * step t for a given node will be proportional to the number of times
+         * the value x is observed in the training data for that node at time t.
          */
         class BaselineEstimator : public Estimator {
           public:
-            //------------------------------------------------------------------
-            // Types, Enums & Constants
-            //------------------------------------------------------------------
-
             //------------------------------------------------------------------
             // Constructors & Destructor
             //------------------------------------------------------------------
@@ -44,19 +48,14 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-            void estimate(EvidenceSet new_data) override;
+            void estimate(DBNData new_data) override;
 
-            Eigen::MatrixXd get_last_estimates(const std::string& node_label,
-                                 int initial_time_step) const override;
+            DBNData
+            get_last_estimates(int initial_time_step) const override;
 
-          protected:
-            //------------------------------------------------------------------
-            // Member functions
-            //------------------------------------------------------------------
+            void add_node(const std::string node_label) override;
 
-            //------------------------------------------------------------------
-            // Data members
-            //------------------------------------------------------------------
+            void set_training_data(const DBNData& training_data) override;
 
           private:
             //------------------------------------------------------------------
@@ -66,6 +65,12 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------
+
+            // Every time a new training set is assigned to the estimator, its
+            // node's estimates will need to be recalculated. The same if a new
+            // node is added to the estimator. This variable keeps track of the
+            // nodes that need to have their estimates recalculated.
+            std::unordered_set<std::string> nodes_to_reestimate;
         };
 
     } // namespace model

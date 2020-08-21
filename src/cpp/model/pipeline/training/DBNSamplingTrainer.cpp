@@ -4,12 +4,6 @@ namespace tomcat {
     namespace model {
 
         //----------------------------------------------------------------------
-        // Definitions
-        //----------------------------------------------------------------------
-
-#define exists(member, container) (container.find(member) != container.end())
-
-        //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
         DBNSamplingTrainer::DBNSamplingTrainer(
@@ -47,7 +41,7 @@ namespace tomcat {
 
         void DBNSamplingTrainer::prepare() {}
 
-        void DBNSamplingTrainer::fit(const EvidenceSet& training_data) {
+        void DBNSamplingTrainer::fit(const DBNData& training_data) {
             this->sampler->set_num_in_plate_samples(
                 training_data.get_num_data_points());
             this->sampler->add_data(training_data);
@@ -61,7 +55,7 @@ namespace tomcat {
                     std::dynamic_pointer_cast<RandomVariableNode>(node);
                 if (!rv_node->is_frozen()) {
                     std::string node_label = node->get_metadata()->get_label();
-                    if (!exists(node_label, node_label_to_samples)) {
+                    if (!EXISTS(node_label, node_label_to_samples)) {
                         node_label_to_samples[node_label] =
                             this->sampler->get_samples(node_label);
                     }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../utils/Definitions.h"
 #include "Measure.h"
 
 namespace tomcat {
@@ -38,7 +39,9 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-            Eigen::MatrixXd evaluate(const EvidenceSet& test_data) const override;
+            std::string get_name() const override;
+
+            DBNData evaluate(const DBNData& test_data) const override;
 
         };
 

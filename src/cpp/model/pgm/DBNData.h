@@ -4,48 +4,48 @@
 #include <unordered_map>
 
 #include "../utils/Definitions.h"
-#include "FileHandler.h"
+#include "../utils/FileHandler.h"
 
 namespace tomcat {
     namespace model {
 
         /**
-         * This class contains observations for data nodes in a DBN. The
-         * observations are stored in three dimensional tensors (sample size,
-         * number data points, time steps).
+         * This class contains a map between node labels in a DBN and values
+         * stored into 3-dimensional tensors (value dimensionality, number data
+         * points, time steps).
          */
-        class EvidenceSet {
+        class DBNData {
           public:
             //------------------------------------------------------------------
             // Constructors & Destructor
             //------------------------------------------------------------------
 
             /**
-             * Creates a blank evidence set.
+             * Creates a blank DBNData object.
              *
              */
-            EvidenceSet();
+            DBNData();
 
             /**
-             * Creates an evidence set with data from files in a given folder.
+             * Creates an DBNData object with data from files in a given folder.
              *
              * @param data_folder_path: folder where files with nodes'
-             * observations are stored.
+             * values are stored.
              */
-            EvidenceSet(const std::string& data_folder_path);
+            DBNData(const std::string& data_folder_path);
 
-            ~EvidenceSet();
+            ~DBNData();
 
             //------------------------------------------------------------------
             // Copy & Move constructors/assignments
             //------------------------------------------------------------------
-            EvidenceSet(const EvidenceSet&) = default;
+            DBNData(const DBNData&) = default;
 
-            EvidenceSet& operator=(const EvidenceSet&) = default;
+            DBNData& operator=(const DBNData&) = default;
 
-            EvidenceSet(EvidenceSet&&) = default;
+            DBNData(DBNData&&) = default;
 
-            EvidenceSet& operator=(EvidenceSet&&) = default;
+            DBNData& operator=(DBNData&&) = default;
 
             //------------------------------------------------------------------
             // Operator overload
@@ -56,7 +56,7 @@ namespace tomcat {
              *
              * @param node_label: node's label
              *
-             * @return Observations for the informed node.
+             * @return Values for the informed node.
              */
             const Tensor3& operator[](const std::string& node_label) const;
 
@@ -65,15 +65,15 @@ namespace tomcat {
              *
              * @param node_label: node's label
              *
-             * @return Observations for the informed node.
+             * @return Values for the informed node.
              */
             const Tensor3& operator[](std::string&& node_label) const;
 
             /**
-             * Returns the labels of the nodes which the evidence set has data
+             * Returns the labels of the nodes which the DBNData has values
              * for.
              *
-             * @return Observable-node's labels.
+             * @return Nodes' labels.
              */
             std::vector<std::string> get_node_labels() const;
 
@@ -81,9 +81,27 @@ namespace tomcat {
              * Adds data for a specific node.
              *
              * @param node_label: node's label
-             * @param data: observed values for the node
+             * @param data: values for the node
              */
-            void add_data(std::string node_label, Tensor3 data);
+            void add_data(const std::string& node_label, const Tensor3& data);
+
+            /**
+             * Checks whether this object contains data for a given node.
+             *
+             * @param node_label: node's label
+             *
+             * @return: Whether this object contains data for a given node.
+             */
+            bool has_data_for(const std::string& node_label);
+
+            /**
+             * Assigns a new tensor to a node;
+             *
+             * @param node_label: node's label
+             *
+             */
+            void set_data_for(const std::string& node_label,
+                                       const Tensor3 data);
 
             //------------------------------------------------------------------
             // Getters & Setters
@@ -94,7 +112,7 @@ namespace tomcat {
 
           private:
             /**
-             * Reads data from files in a folder and store in the evidence set.
+             * Reads data from files in a folder and store in this object.
              *
              * @param data_folder_path: folder where the data files are stored
              */

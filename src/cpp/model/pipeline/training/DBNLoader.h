@@ -5,6 +5,7 @@
 
 #include "DBNTrainer.h"
 
+#include "../../utils/Definitions.h"
 #include "../../pgm/DynamicBayesNet.h"
 
 namespace tomcat {
@@ -48,7 +49,7 @@ namespace tomcat {
             //------------------------------------------------------------------
             void prepare() override;
 
-            void fit(const EvidenceSet& training_data) override;
+            void fit(const DBNData& training_data) override;
 
           private:
             //------------------------------------------------------------------

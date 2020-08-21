@@ -4,11 +4,6 @@ namespace tomcat {
     namespace model {
 
         //----------------------------------------------------------------------
-        // Definitions
-        //----------------------------------------------------------------------
-#define exists(member, container) container.find(member) != container.end()
-
-        //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
         AncestralSampler::AncestralSampler(

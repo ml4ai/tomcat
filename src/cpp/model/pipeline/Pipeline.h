@@ -2,10 +2,11 @@
 
 #include <memory>
 #include <string>
-#include <vector>
 #include <thread>
+#include <vector>
 
-#include "../utils/EvidenceSet.h"
+#include "../pgm/DBNData.h"
+#include "../utils/Definitions.h"
 #include "DBNSaver.h"
 #include "KFold.h"
 #include "estimation/Estimation.h"
@@ -66,7 +67,7 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Getters & Setters
             //------------------------------------------------------------------
-            void set_data(const EvidenceSet& data);
+            void set_data(const DBNData& data);
 
             void set_data_splitter(const std::shared_ptr<KFold>& data_splitter);
 
@@ -82,17 +83,25 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-            std::vector<std::thread> start_estimation_threads(const EvidenceSet& test_data);
+            std::vector<std::thread>
+            start_estimation_threads(const DBNData& training_data,
+                                     const DBNData& test_data);
 
             void estimate(std::shared_ptr<Estimation> estimation,
-                                    const EvidenceSet& test_data);
+                          const DBNData& test_data);
+
+            /**
+             * Checks if the pipeline is consistent, that is, whether at least a
+             * data splitter and a  model trainer were provided.
+             */
+            void check();
 
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------
             std::string id;
 
-            EvidenceSet data;
+            DBNData data;
 
             std::shared_ptr<KFold> data_splitter;
 

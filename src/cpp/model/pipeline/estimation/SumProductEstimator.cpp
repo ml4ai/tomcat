@@ -6,12 +6,6 @@ namespace tomcat {
     namespace model {
 
         //----------------------------------------------------------------------
-        // Definitions
-        //----------------------------------------------------------------------
-
-        // No definitions in this file
-
-        //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
         SumProductEstimator::SumProductEstimator(
@@ -37,16 +31,15 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void SumProductEstimator::estimate(EvidenceSet new_data) {
+        void SumProductEstimator::estimate(DBNData new_data) {
             // TODO
             std::cout << "Sum-Product Estimation" << std::endl;
         }
 
-        Eigen::MatrixXd
-        SumProductEstimator::get_last_estimates(const std::string& node_label,
-                                                int initial_time_step) const {
+        DBNData
+        SumProductEstimator::get_last_estimates(int initial_time_step) const {
             // TODO
-            return Eigen::MatrixXd(0,0);
+            return DBNData();
         }
 
     } // namespace model

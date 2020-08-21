@@ -4,12 +4,6 @@ namespace tomcat {
     namespace model {
 
         //----------------------------------------------------------------------
-        // Definitions
-        //----------------------------------------------------------------------
-
-        // No definitions in this file
-
-        //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
         Estimator::Estimator() {}
@@ -34,12 +28,13 @@ namespace tomcat {
 
         void Estimator::add_node(const std::string node_label) {
             this->node_labels.insert(node_label);
+            this->estimates.add_data(node_label, Tensor3());
         }
 
         //----------------------------------------------------------------------
         // Getters & Setters
         //----------------------------------------------------------------------
-        void Estimator::set_training_data(const EvidenceSet& training_data) {
+        void Estimator::set_training_data(const DBNData& training_data) {
             this->training_data = training_data;
         }
 

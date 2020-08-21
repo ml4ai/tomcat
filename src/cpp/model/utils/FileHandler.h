@@ -3,6 +3,7 @@
 #include <fstream>
 #include <string>
 
+#include "../utils/Definitions.h"
 #include "Tensor3.h"
 
 namespace tomcat {

@@ -4,12 +4,6 @@ namespace tomcat {
     namespace model {
 
         //----------------------------------------------------------------------
-        // Definitions
-        //----------------------------------------------------------------------
-
-        // No definitions in this file
-
-        //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
         F1Score::F1Score(std::shared_ptr<Estimator> estimator)
@@ -32,9 +26,15 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        Eigen::MatrixXd F1Score::evaluate(const EvidenceSet& test_data) const {
+        std::string F1Score::get_name() const {
+            return "F1-Score";
+        }
+
+        DBNData F1Score::evaluate(const DBNData& test_data) const {
             // TODO - return the F1 Score of the estimates computed by the
             //  estimator
+
+            return DBNData();
         }
 
     } // namespace model

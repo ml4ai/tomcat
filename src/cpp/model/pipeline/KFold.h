@@ -6,7 +6,8 @@
 
 #include <gsl/gsl_rng.h>
 
-#include "../utils/EvidenceSet.h"
+#include "../pgm/DBNData.h"
+#include "../utils/Definitions.h"
 
 namespace tomcat {
     namespace model {
@@ -22,7 +23,7 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Types, Enums & Constants
             //------------------------------------------------------------------
-            typedef std::vector<std::pair<EvidenceSet, EvidenceSet>> Split;
+            typedef std::vector<std::pair<DBNData, DBNData>> Split;
 
             //------------------------------------------------------------------
             // Constructors & Destructor
@@ -60,7 +61,7 @@ namespace tomcat {
              *
              * @return List of splits
              */
-            Split split(const EvidenceSet& data);
+            Split split(const DBNData& data);
 
           private:
             //------------------------------------------------------------------

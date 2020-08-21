@@ -141,7 +141,7 @@ namespace tomcat {
 
             /**
              * Saves model's parameter values in individual files inside a given
-             * folder.
+             * folder. The folder is created if it does not exist.
              *
              * @param output_folder: folder where the files must be saved
              */

@@ -4,12 +4,6 @@ namespace tomcat {
     namespace model {
 
         //----------------------------------------------------------------------
-        // Definitions
-        //----------------------------------------------------------------------
-
-        // No definitions in this file
-
-        //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
         Estimates::Estimates(std::shared_ptr<Estimator> estimator) : Measure(estimator) {}
@@ -32,8 +26,12 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        Eigen::MatrixXd Estimates::evaluate(const EvidenceSet& test_data) const {
-            // TODO - return estimates stored in the estimator.
+        std::string Estimates::get_name() const {
+            return "Estimates";
+        }
+
+        DBNData Estimates::evaluate(const DBNData& test_data) const {
+            return this->estimator->get_last_estimates(0);
         }
 
     } // namespace model

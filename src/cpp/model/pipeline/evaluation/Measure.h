@@ -1,9 +1,12 @@
 #pragma once
 
 #include <memory>
+#include <string>
 
-#include "../../utils/EvidenceSet.h"
+#include "../../pgm/DBNData.h"
+#include "../../utils/Definitions.h"
 #include "../estimation/Estimator.h"
+#include "../../utils/Tensor3.h"
 
 namespace tomcat {
     namespace model {
@@ -44,7 +47,22 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Pure virtual functions
             //------------------------------------------------------------------
-            virtual Eigen::MatrixXd evaluate(const EvidenceSet& test_data) const = 0;
+
+            /**
+             * Returns the name of the measure.
+             *
+             * @return Measure's name.
+             */
+            virtual std::string get_name() const = 0;
+
+            /**
+             * Calculates the measure over a data set.
+             *
+             * @param test_data: data to calculate the measure over
+             *
+             * @return Computed values.
+             */
+            virtual DBNData evaluate(const DBNData& test_data) const = 0;
 
           protected:
             //------------------------------------------------------------------

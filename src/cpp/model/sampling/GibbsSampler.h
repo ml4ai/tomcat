@@ -2,6 +2,8 @@
 
 #include "Sampler.h"
 
+#include "../utils/Definitions.h"
+
 namespace tomcat {
     namespace model {
 

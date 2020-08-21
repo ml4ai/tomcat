@@ -1,11 +1,12 @@
 #pragma once
 
 #include <array>
+#include <iostream>
 #include <vector>
 
 #include <eigen3/Eigen/Dense>
 
-#include <iostream>
+#include "../utils/Definitions.h"
 
 namespace tomcat {
     namespace model {
@@ -26,6 +27,7 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Types, Enums & Constants
             //------------------------------------------------------------------
+            static const int ALL = -1;
 
             //------------------------------------------------------------------
             // Constructors & Destructor
@@ -73,7 +75,7 @@ namespace tomcat {
              *
              * @return Assignable matrix.
              */
-            Eigen::MatrixXd operator()(int i, int axis = 0);
+            Eigen::MatrixXd operator()(int i, int axis);
 
             /**
              * Returns a non-assignable vector for given indices of the second
@@ -123,11 +125,31 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
+             * Returns the number of elements in the tensor.
+             *
+             * @return The number of elements in the tensor.
+             */
+            int get_size() const;
+
+            /**
              * Returns 3D array containing the dimensions of the tensor.
              *
              * @return Tensor's dimensions.
              */
             std::array<int, 3> get_shape() const;
+
+            /**
+             * Returns a sliced copy of the tensor in a certain range.
+             *
+             * @param initial_index: first index in the range (inclusive). The
+             * element in this index is kept.
+             * @param final_index: last index in the range (exclusive). The
+             * element in this index is not kept.
+             * @param axis: axis where the slicing must be done
+             *
+             * @return Sliced copy of the original tensor.
+             */
+            Tensor3 slice(int initial_index, int final_index, int axis) const;
 
             /**
              * Returns a sliced copy of the tensor.
@@ -137,13 +159,51 @@ namespace tomcat {
              *
              * @return Sliced copy of the original tensor.
              */
-            Tensor3 slice(std::vector<int> indices, int axis = 0) const;
+            Tensor3 slice(std::vector<int> indices, int axis) const;
+
+            /**
+             * Returns the mean off all the values in the tensor.
+             *
+             * @return Mean.
+             */
+            double mean() const;
+
+            /**
+             * Returns the mean off all the values in the tensor in a given
+             * axis. This operation shrinks the number of elements in the axis
+             * where the operation is performed but it preserves the number of
+             * axis.
+             *
+             * @param axis: axis where the mean must be computed along
+             *
+             * @return Mean.
+             */
+            Tensor3 mean(int axis) const;
+
+            /**
+             * Reshapes the tensor if new dimensions are compatible with the
+             * number of elements in the tensor.
+             *
+             * @param d1: dimension of the first axis
+             * @param d2: dimension of the second axis
+             * @param d3: dimension of the third axis
+             *
+             * @return Reshaped tensor.
+             */
+            Tensor3 reshape(int d1, int d2, int d3) const;
+
+            /**
+             * Repeates the elements of the tensor in a given axis by a certain
+             * amount of time.
+             *
+             * @param num_repetitions: number of repetitions
+             * @param axis: axis where the repetitions must occur
+             *
+             * @return Repeated tensor.
+             */
+            Tensor3 repeat(int num_repetitions, int axis) const;
 
           private:
-            //------------------------------------------------------------------
-            // Getters & Setters
-            //------------------------------------------------------------------
-
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------

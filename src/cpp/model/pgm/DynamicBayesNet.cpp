@@ -371,6 +371,8 @@ namespace tomcat {
         void DynamicBayesNet::save_to_folder(
             const std::string& output_folder) const {
 
+            boost::filesystem::create_directories(output_folder);
+
             for (const auto& mapping : this->parameter_nodes_map) {
                 std::string filename = mapping.first + ".txt";
                 std::string filepath = get_filepath(output_folder, filename);
@@ -398,19 +400,6 @@ namespace tomcat {
                 parameter_node->freeze();
             }
         }
-
-        //------------------------------------------------------------------
-        // Getters & Setters
-        //------------------------------------------------------------------
-        //        const std::vector<std::shared_ptr<RandomVariableNode>>
-        //        DynamicBayesNet::get_nodes() const {
-        //            return nodes;
-        //        }
-        //
-        //        const std::vector<RandomVariableNode>&
-        //        DynamicBayesNet::get_node_templates() const {
-        //            return node_templates;
-        //        }
 
         int DynamicBayesNet::get_time_steps() const { return time_steps; }
 

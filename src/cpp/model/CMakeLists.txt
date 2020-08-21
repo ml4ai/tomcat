@@ -57,7 +57,7 @@ add_library(tomcat_model_libs
         distribution/Dirichlet.cpp
         distribution/Gaussian.cpp
         pipeline/training/DBNSamplingTrainer.cpp
-        utils/EvidenceSet.cpp
+        pgm/DBNData.cpp
         pipeline/KFold.cpp
         pipeline/training/DBNTrainer.cpp
         pipeline/training/DBNLoader.cpp
@@ -73,7 +73,7 @@ add_library(tomcat_model_libs
         pipeline/evaluation/Accuracy.cpp
         pipeline/evaluation/F1Score.cpp
         pipeline/evaluation/MeasureAggregator.cpp
-        pipeline/Pipeline.cpp)
+        pipeline/Pipeline.cpp utils/Definitions.h)
 
 # Todo make code coverage work on Linux as well.
 if(APPLE AND CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")

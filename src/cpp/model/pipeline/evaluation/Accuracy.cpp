@@ -4,12 +4,6 @@ namespace tomcat {
     namespace model {
 
         //----------------------------------------------------------------------
-        // Definitions
-        //----------------------------------------------------------------------
-
-        // No definitions in this file
-
-        //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
         Accuracy::Accuracy(std::shared_ptr<Estimator> estimator)
@@ -32,9 +26,14 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        Eigen::MatrixXd Accuracy::evaluate(const EvidenceSet& test_data) const {
+        std::string Accuracy::get_name() const {
+            return "Accuracy";
+        }
+
+        DBNData Accuracy::evaluate(const DBNData& test_data) const {
             // TODO - return the accuracy of the estimates computed by the
             //  estimator
+            return DBNData();
         }
 
     } // namespace model

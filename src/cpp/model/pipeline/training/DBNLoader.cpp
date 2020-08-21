@@ -6,12 +6,6 @@ namespace tomcat {
     namespace model {
 
         //----------------------------------------------------------------------
-        // Definitions
-        //----------------------------------------------------------------------
-
-        // No definitions in this file
-
-        //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
         DBNLoader::DBNLoader(std::shared_ptr<DynamicBayesNet> model,
@@ -43,7 +37,7 @@ namespace tomcat {
 
         void DBNLoader::prepare() { this->cv_step = 0; }
 
-        void DBNLoader::fit(const EvidenceSet& training_data) {
+        void DBNLoader::fit(const DBNData& training_data) {
             // If the name of the folder has a placeholder for the cv step,
             // replace it with the current number.
             std::string final_folder_path =

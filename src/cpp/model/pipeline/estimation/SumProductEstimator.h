@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../utils/Definitions.h"
+
 #include "Estimator.h"
 
 namespace tomcat {
@@ -44,10 +46,9 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-            void estimate(EvidenceSet new_data) override;
+            void estimate(DBNData new_data) override;
 
-            Eigen::MatrixXd get_last_estimates(const std::string& node_label,
-                                 int initial_time_step) const override;
+            DBNData get_last_estimates(int initial_time_step) const override;
 
           protected:
             //------------------------------------------------------------------

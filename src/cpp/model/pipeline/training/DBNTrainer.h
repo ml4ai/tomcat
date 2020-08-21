@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../../utils/EvidenceSet.h"
+#include "../../pgm/DBNData.h"
+#include "../../utils/Definitions.h"
 
 namespace tomcat {
     namespace model {
@@ -49,7 +50,7 @@ namespace tomcat {
             /**
              * Estimates the model's parameters from training data.
              */
-            virtual void fit(const EvidenceSet& training_data) = 0;
+            virtual void fit(const DBNData& training_data) = 0;
 
         };
 

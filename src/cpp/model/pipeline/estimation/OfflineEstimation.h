@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../utils/Definitions.h"
+
 #include "Estimation.h"
 
 namespace tomcat {
@@ -39,7 +41,7 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-            void estimate(EvidenceSet test_data) override;
+            void estimate(DBNData test_data) override;
 
         };
 

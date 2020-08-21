@@ -4,12 +4,6 @@ namespace tomcat {
     namespace model {
 
         //----------------------------------------------------------------------
-        // Definitions
-        //----------------------------------------------------------------------
-
-        // No definitions in this file
-
-        //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
         OfflineEstimation::OfflineEstimation(
@@ -35,8 +29,9 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void OfflineEstimation::estimate(EvidenceSet test_data) {
+        void OfflineEstimation::estimate(DBNData test_data) {
             this->estimator->estimate(test_data);
+            this->finished = true;
         }
 
     } // namespace model

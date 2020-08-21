@@ -7,12 +7,6 @@ namespace tomcat {
     namespace model {
 
         //----------------------------------------------------------------------
-        // Definitions
-        //----------------------------------------------------------------------
-
-        // No definitions in this file
-
-        //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
         OnlineEstimation::OnlineEstimation(std::shared_ptr<Estimator> estimator,
@@ -52,8 +46,8 @@ namespace tomcat {
             this->config = estimation.config;
         }
 
-        void OnlineEstimation::estimate(EvidenceSet test_data) {
-            // TODO - starts news connection with the message broker and listens
+        void OnlineEstimation::estimate(DBNData test_data) {
+            // TODO - start new connection with the message broker and listens
             //  to it forever (it's killed externally).
             // This is temporary. Just to test the thread creation
 
@@ -77,11 +71,6 @@ namespace tomcat {
                     }
                 }
             }
-
-            //            for(int t = 0; t < test_data.get_time_steps(); t++){
-            //                this->estimator->estimate(test_data.slice({t},
-            //                2));
-            //            }
         }
 
     } // namespace model

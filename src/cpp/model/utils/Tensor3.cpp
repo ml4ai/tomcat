@@ -8,12 +8,6 @@ namespace tomcat {
     namespace model {
 
         //----------------------------------------------------------------------
-        // Definitions
-        //----------------------------------------------------------------------
-
-        // No definitions in this file
-
-        //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
         Tensor3::Tensor3() {}
@@ -74,9 +68,10 @@ namespace tomcat {
                 }
                 break;
             }
-            default:
-                throw std::invalid_argument(
+            default: {
+                throw TomcatModelException(
                     "Invalid axis. Valid axes are 0, 1 or 2.");
+            }
             }
 
             return matrix;
@@ -141,6 +136,11 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
+        int Tensor3::get_size() const {
+            return this->get_shape()[0] * this->get_shape()[2] *
+                   this->get_shape()[2];
+        }
+
         std::array<int, 3> Tensor3::get_shape() const {
             int i = this->tensor.size();
             int j = 0;
@@ -153,11 +153,26 @@ namespace tomcat {
             return std::array<int, 3>({i, j, k});
         }
 
+        Tensor3 Tensor3::slice(int initial_index, int final_index, int axis) const {
+            if (final_index == ALL) {
+                final_index = this->get_shape()[axis];
+            }
+
+            std::vector<int> indices;
+            indices.reserve(final_index - initial_index);
+            for(int idx = initial_index; idx < final_index; idx++){
+                indices.push_back(idx);
+            }
+
+            return slice(indices, axis);
+        }
+
         Tensor3 Tensor3::slice(std::vector<int> indices, int axis) const {
-            Tensor3 sliced_tensor = *this;
+            Tensor3 sliced_tensor;
 
             switch (axis) {
             case 0: {
+                sliced_tensor = *this;
                 for (int i = 0; i < indices.size(); i++) {
                     sliced_tensor.tensor.erase(sliced_tensor.tensor.begin() +
                                                indices[i]);
@@ -166,6 +181,7 @@ namespace tomcat {
                 break;
             }
             case 1: {
+                sliced_tensor = *this;
                 for (auto& matrix : sliced_tensor.tensor) {
                     Eigen::MatrixXd sliced_matrix(indices.size(),
                                                   matrix.cols());
@@ -179,6 +195,7 @@ namespace tomcat {
                 break;
             }
             case 2: {
+                sliced_tensor = *this;
                 for (auto& matrix : sliced_tensor.tensor) {
                     Eigen::MatrixXd sliced_matrix(matrix.rows(),
                                                   indices.size());
@@ -191,15 +208,130 @@ namespace tomcat {
                 }
                 break;
             }
+            default: {
+                throw TomcatModelException(
+                    "Invalid axis. Valid axes are 0, 1 or 2.");
+            }
             }
 
             return sliced_tensor;
         }
 
-        //----------------------------------------------------------------------
-        // Getters & Setters
-        //----------------------------------------------------------------------
-        // No definitions in this file
+        double Tensor3::mean() const {
+            double mean = 0;
+            for (const auto& matrix : this->tensor) {
+                mean += matrix.mean();
+            }
+
+            return mean / this->tensor.size();
+        }
+
+        Tensor3 Tensor3::mean(int axis) const {
+            Tensor3 new_tensor;
+
+            switch (axis) {
+            case 0: {
+
+                new_tensor.tensor = std::vector<Eigen::MatrixXd>();
+                for (const auto& matrix : this->tensor) {
+                    if (new_tensor.tensor.empty()) {
+                        new_tensor.tensor.push_back(matrix);
+                    } else {
+                        new_tensor.tensor[0] += matrix;
+                    }
+                }
+
+                new_tensor.tensor[0] =
+                    new_tensor.tensor[0].array() / this->tensor.size();
+                break;
+            }
+            case 1: {
+                new_tensor = *this;
+
+                for (auto& matrix : new_tensor.tensor) {
+                    Eigen::MatrixXd new_matrix(1, matrix.cols());
+                    new_matrix.row(0) = matrix.colwise().mean();
+                    matrix = new_matrix;
+                }
+                break;
+            }
+            case 2: {
+                new_tensor = *this;
+
+                for (auto& matrix : new_tensor.tensor) {
+                    Eigen::MatrixXd new_matrix(matrix.rows(), 1);
+                    new_matrix.col(0) = matrix.rowwise().mean();
+                    matrix = new_matrix;
+                }
+                break;
+            }
+            default: {
+                throw TomcatModelException(
+                    "Invalid axis. Valid axes are 0, 1 or 2.");
+            }
+            }
+
+            return new_tensor;
+        }
+
+        Tensor3 Tensor3::reshape(int d1, int d2, int d3) const {
+            if (d1 * d2 * d3 != this->get_size()) {
+                throw TomcatModelException(
+                    "New dimensions must result in a tensor of the same size.");
+            }
+
+            double* buffer = new double[d1 * d2 * d3];
+            for (auto& matrix : this->tensor) {
+                for(int i = 0; i < matrix.rows(); i++){
+                    for(int j = 0; j < matrix.cols(); j++){
+                        *buffer = matrix(i, j);
+                        buffer++;
+                    }
+                }
+            }
+
+            buffer -= d1 * d2 * d3;
+            return Tensor3(buffer, d1, d2, d3);
+        }
+
+        Tensor3 Tensor3::repeat(int num_repetitions, int axis) const {
+            Tensor3 new_tensor;
+
+            switch (axis) {
+            case 0: {
+                new_tensor = *this;
+
+                for(int r = 0; r < num_repetitions - 1; r++){
+                    for(const auto& matrix : this->tensor){
+                        new_tensor.tensor.push_back(matrix);
+                    }
+                }
+                break;
+            }
+            case 1: {
+                new_tensor = *this;
+
+                for (auto& matrix : new_tensor.tensor) {
+                    matrix = matrix.colwise().replicate(num_repetitions);
+                }
+                break;
+            }
+            case 2: {
+                new_tensor = *this;
+
+                for (auto& matrix : new_tensor.tensor) {
+                    matrix = matrix.rowwise().replicate(num_repetitions);
+                }
+                break;
+            }
+            default: {
+                throw TomcatModelException(
+                    "Invalid axis. Valid axes are 0, 1 or 2.");
+            }
+            }
+
+            return new_tensor;
+        }
 
     } // namespace model
 } // namespace tomcat

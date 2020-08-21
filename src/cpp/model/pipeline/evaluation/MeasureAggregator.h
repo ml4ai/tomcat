@@ -2,8 +2,11 @@
 
 #include <iostream>
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
+#include "../../utils/Definitions.h"
+#include "../../pgm/DBNData.h"
 #include "Measure.h"
 
 namespace tomcat {
@@ -25,7 +28,7 @@ namespace tomcat {
              * @param output_stream: where the results will be written when
              * dumped
              */
-            MeasureAggregator(std::shared_ptr<std::ostream> output_stream);
+            MeasureAggregator(std::ostream& output_stream);
 
             ~MeasureAggregator();
 
@@ -45,6 +48,11 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
+             * Prepares the aggregator to start again.
+             */
+            void reset();
+
+            /**
              * Adds a measure to the aggregator.
              *
              * @param measure: measure
@@ -57,7 +65,7 @@ namespace tomcat {
              *
              * @param test_data: data to evaluate the measures
              */
-            void aggregate(const EvidenceSet& test_data);
+            void aggregate(const DBNData& test_data);
 
             /**
              * Writes the aggregated results to an output_stream.
@@ -72,9 +80,12 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------
-            std::shared_ptr<std::ostream> output_stream;
+            std::reference_wrapper<std::ostream> output_stream;
 
             std::vector<std::shared_ptr<Measure>> measures;
+
+            std::unordered_map<std::string, std::vector<DBNData>>
+                measures_to_results;
         };
 
     } // namespace model
