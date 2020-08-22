@@ -3,6 +3,8 @@
 #include <string>
 #include <unordered_map>
 
+#include <nlohmann/json.hpp>
+
 #include "../utils/Definitions.h"
 #include "../utils/FileHandler.h"
 
@@ -14,17 +16,16 @@ namespace tomcat {
          * stored into 3-dimensional tensors (value dimensionality, number data
          * points, time steps).
          */
-        class DBNData {
+        class EvidenceSet {
           public:
             //------------------------------------------------------------------
             // Constructors & Destructor
             //------------------------------------------------------------------
 
             /**
-             * Creates a blank DBNData object.
-             *
+             * Creates a blank DBNData object.             *
              */
-            DBNData();
+            EvidenceSet();
 
             /**
              * Creates an DBNData object with data from files in a given folder.
@@ -32,20 +33,20 @@ namespace tomcat {
              * @param data_folder_path: folder where files with nodes'
              * values are stored.
              */
-            DBNData(const std::string& data_folder_path);
+            EvidenceSet(const std::string& data_folder_path);
 
-            ~DBNData();
+            ~EvidenceSet();
 
             //------------------------------------------------------------------
             // Copy & Move constructors/assignments
             //------------------------------------------------------------------
-            DBNData(const DBNData&) = default;
+            EvidenceSet(const EvidenceSet&) = default;
 
-            DBNData& operator=(const DBNData&) = default;
+            EvidenceSet& operator=(const EvidenceSet&) = default;
 
-            DBNData(DBNData&&) = default;
+            EvidenceSet(EvidenceSet&&) = default;
 
-            DBNData& operator=(DBNData&&) = default;
+            EvidenceSet& operator=(EvidenceSet&&) = default;
 
             //------------------------------------------------------------------
             // Operator overload
@@ -101,7 +102,14 @@ namespace tomcat {
              *
              */
             void set_data_for(const std::string& node_label,
-                                       const Tensor3 data);
+                              const Tensor3 data);
+
+            /**
+             * Writes information about the splitter in a json object.
+             *
+             * @param json: json object
+             */
+            void get_info(nlohmann::json& json) const;
 
             //------------------------------------------------------------------
             // Getters & Setters
@@ -109,6 +117,8 @@ namespace tomcat {
             int get_num_data_points() const;
 
             int get_time_steps() const;
+
+            void set_id(const std::string& id);
 
           private:
             /**
@@ -121,6 +131,8 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------
+            std::string id = "";
+
             int num_data_points = 0;
 
             int time_steps = 0;

@@ -70,7 +70,7 @@ namespace tomcat {
              *
              * @param training_data: training data
              */
-            void set_training_data(const DBNData& training_data);
+            void set_training_data(const EvidenceSet& training_data);
 
             //------------------------------------------------------------------
             // Virtual functions
@@ -91,7 +91,7 @@ namespace tomcat {
              * @param test_data: Test data used to compute the estimations for
              * the model
              */
-            virtual void estimate(DBNData test_data) = 0;
+            virtual void estimate(EvidenceSet test_data) = 0;
 
             //------------------------------------------------------------------
             // Getters & Setters

@@ -2,8 +2,8 @@
 #include "distribution/Dirichlet.h"
 #include "distribution/Gaussian.h"
 #include "pgm/ConstantNode.h"
-#include "pgm/DBNData.h"
 #include "pgm/DynamicBayesNet.h"
+#include "pgm/EvidenceSet.h"
 #include "pgm/Node.h"
 #include "pgm/NodeMetadata.h"
 #include "pgm/RandomVariableNode.h"
@@ -12,13 +12,13 @@
 #include "pgm/cpd/GaussianCPD.h"
 #include "pipeline/KFold.h"
 #include "pipeline/Pipeline.h"
-#include "pipeline/estimation/BaselineEstimator.h"
 #include "pipeline/estimation/Estimator.h"
-#include "pipeline/evaluation/Estimates.h"
-#include "pipeline/evaluation/MeasureAggregator.h"
-#include "pipeline/estimation/OnlineEstimation.h"
 #include "pipeline/estimation/OfflineEstimation.h"
+#include "pipeline/estimation/OnlineEstimation.h"
 #include "pipeline/estimation/SumProductEstimator.h"
+#include "pipeline/estimation/TrainingFrequencyEstimator.h"
+#include "pipeline/evaluation/Estimates.h"
+#include "pipeline/evaluation/EvaluationAggregator.h"
 #include "pipeline/training/DBNSamplingTrainer.h"
 #include "sampling/AncestralSampler.h"
 #include "sampling/GibbsSampler.h"
@@ -339,7 +339,7 @@ void sample_parameters_from_posterior(std::shared_ptr<DynamicBayesNet> dbn,
                                       std::shared_ptr<gsl_rng> gen) {
     Tensor3 tg_data = read_tensor_from_file("../../data/samples/TG.txt");
     Tensor3 ty_data = read_tensor_from_file("../../data/samples/TY.txt");
-    DBNData data;
+    EvidenceSet data;
     data.add_data("TG", tg_data);
     data.add_data("TY", ty_data);
     GibbsSampler gibbs(dbn, 20);
@@ -363,7 +363,7 @@ void train_dbn(std::shared_ptr<DynamicBayesNet> dbn,
 
     Tensor3 tg_data = read_tensor_from_file("../../data/samples/TG.txt");
     Tensor3 ty_data = read_tensor_from_file("../../data/samples/TY.txt");
-    DBNData data;
+    EvidenceSet data;
     data.add_data("TG", tg_data);
     data.add_data("TY", ty_data);
     GibbsSampler gibbs(dbn, 20);
@@ -377,21 +377,23 @@ void train_dbn(std::shared_ptr<DynamicBayesNet> dbn,
 }
 
 void test_baseline_estimator(std::shared_ptr<DynamicBayesNet> model) {
-    std::shared_ptr<BaselineEstimator> estimator =
-        std::make_shared<BaselineEstimator>(BaselineEstimator(model, 1));
-    estimator->estimate(DBNData());
+    std::shared_ptr<TrainingFrequencyEstimator> estimator =
+        std::make_shared<TrainingFrequencyEstimator>(
+            TrainingFrequencyEstimator(model, 1));
+    estimator->estimate(EvidenceSet());
 }
 
 void test_sum_product_estimator(std::shared_ptr<DynamicBayesNet> model) {
     std::shared_ptr<SumProductEstimator> estimator =
         std::make_shared<SumProductEstimator>(SumProductEstimator(model, 1));
-    estimator->estimate(DBNData());
+    estimator->estimate(EvidenceSet());
 }
 
 void test_pipeline() {
     Tensor3 tg_data = read_tensor_from_file("../../data/samples/TG.txt");
     Tensor3 ty_data = read_tensor_from_file("../../data/samples/TY.txt");
-    DBNData data;
+    EvidenceSet data;
+    data.set_id("synthetic_pipeline_testing");
     data.add_data("TG", tg_data);
     data.add_data("TY", ty_data);
 
@@ -399,7 +401,7 @@ void test_pipeline() {
 
     std::shared_ptr<DynamicBayesNet> model =
         std::make_shared<DynamicBayesNet>(create_dbn(false));
-    model->unroll(50, true);
+    model->unroll(100, true);
 
     GibbsSampler gibbs(model, 20);
 
@@ -410,16 +412,17 @@ void test_pipeline() {
     std::shared_ptr<DBNSaver> saver = std::make_shared<DBNSaver>(
         DBNSaver(model, "../../data/model/pipeline_test/fold{}"));
 
-    std::shared_ptr<KFold> kfold = std::make_shared<KFold>(KFold(gen, 4));
+    std::shared_ptr<KFold> kfold = std::make_shared<KFold>(KFold(gen, 2));
 
     MessageBrokerConfiguration config;
     config.timeout = 5;
-    std::shared_ptr<BaselineEstimator> baseline_estimator =
-        std::make_shared<BaselineEstimator>(BaselineEstimator(model, 1));
-    baseline_estimator->add_node("TG");
+    std::shared_ptr<TrainingFrequencyEstimator> baseline_estimator =
+        std::make_shared<TrainingFrequencyEstimator>(
+            TrainingFrequencyEstimator(model, 1));
+    baseline_estimator->add_node("TG", Eigen::VectorXd::Constant(1,1));
     std::shared_ptr<SumProductEstimator> sumproduct_estimator =
         std::make_shared<SumProductEstimator>(SumProductEstimator(model, 1));
-    sumproduct_estimator->add_node("TG");
+    sumproduct_estimator->add_node("TG", Eigen::VectorXd::Constant(1, 1));
 
     std::shared_ptr<OnlineEstimation> estimation1 =
         std::make_shared<OnlineEstimation>(
@@ -431,8 +434,9 @@ void test_pipeline() {
         std::make_shared<OfflineEstimation>(
             OfflineEstimation(baseline_estimator));
 
-    std::shared_ptr<MeasureAggregator> aggregator =
-        std::make_shared<MeasureAggregator>(MeasureAggregator(std::cout));
+    std::shared_ptr<EvaluationAggregator> aggregator =
+        std::make_shared<EvaluationAggregator>(
+            EvaluationAggregator(EvaluationAggregator::METHOD::average));
 
     std::shared_ptr<Estimates> estimates = std::make_shared<Estimates>(Estimates(baseline_estimator));
 
@@ -460,9 +464,9 @@ int main() {
 
     std::shared_ptr<DynamicBayesNet> dbn_ptr =
         std::make_shared<DynamicBayesNet>(create_dbn(true));
-    //    dbn.unroll(100, true);
-    //    generate_samples_to_test(dbn_ptr, 100,
-    //    gen);
+    dbn_ptr->unroll(100, true);
+        generate_samples_to_test(dbn_ptr, 100,
+        gen);
 
     //        std::shared_ptr<DynamicBayesNet> dbn_ptr =
     //            std::make_shared<DynamicBayesNet>(create_dbn(false));

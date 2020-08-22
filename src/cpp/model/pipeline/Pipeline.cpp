@@ -1,14 +1,18 @@
 #include "Pipeline.h"
 
+#import <nlohmann/json.hpp>
+
 namespace tomcat {
     namespace model {
 
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
-        Pipeline::Pipeline() {}
+        Pipeline::Pipeline(std::ostream& output_stream)
+            : output_stream(output_stream) {}
 
-        Pipeline::Pipeline(const std::string& id) : id(id) {}
+        Pipeline::Pipeline(const std::string& id, std::ostream& output_stream)
+            : id(id), output_stream(output_stream) {}
 
         Pipeline::~Pipeline() {}
 
@@ -17,6 +21,10 @@ namespace tomcat {
         //----------------------------------------------------------------------
         void Pipeline::execute() {
             this->check();
+
+            boost::posix_time::ptime start_time =
+                boost::posix_time::microsec_clock::universal_time();
+
             if (this->aggregator != nullptr) {
                 this->aggregator->reset();
             }
@@ -33,22 +41,29 @@ namespace tomcat {
                     thread.join();
                 }
                 if (this->aggregator != nullptr) {
-                    this->aggregator->aggregate(test_data);
+                    this->aggregator->evaluate(test_data);
                 }
             }
 
             if (this->aggregator != nullptr) {
-                this->aggregator->dump();
+                this->aggregator->aggregate();
             }
+
+            boost::posix_time::ptime end_time =
+                boost::posix_time::microsec_clock::universal_time();
+
+            this->display_results(start_time, end_time);
         }
 
         void Pipeline::check() {
             if (this->data_splitter == nullptr) {
-                throw TomcatModelException("A data splitter was not provided to the pipeline.");
+                throw TomcatModelException(
+                    "A data splitter was not provided to the pipeline.");
             }
 
             if (this->model_trainner == nullptr) {
-                throw TomcatModelException("A model trainer was not provided to the pipeline.");
+                throw TomcatModelException(
+                    "A model trainer was not provided to the pipeline.");
             }
 
             if (this->estimations.empty()) {
@@ -57,7 +72,8 @@ namespace tomcat {
         }
 
         std::vector<std::thread>
-        Pipeline::start_estimation_threads(const DBNData& training_data, const DBNData& test_data) {
+        Pipeline::start_estimation_threads(const EvidenceSet& training_data,
+                                           const EvidenceSet& test_data) {
             std::vector<std::thread> threads;
             threads.reserve(this->estimations.size());
             for (auto& estimation : this->estimations) {
@@ -72,7 +88,7 @@ namespace tomcat {
         }
 
         void Pipeline::estimate(std::shared_ptr<Estimation> estimation,
-                                const DBNData& test_data) {
+                                const EvidenceSet& test_data) {
             while (!estimation->is_finished()) {
                 estimation->estimate(test_data);
             }
@@ -83,10 +99,34 @@ namespace tomcat {
             this->estimations.push_back(estimation);
         }
 
+        void Pipeline::display_results(
+            const boost::posix_time::ptime& execution_start_time,
+            const boost::posix_time::ptime& execution_end_time) {
+
+            std::string initial_timestamp =
+                boost::posix_time::to_iso_extended_string(execution_start_time);
+            std::string final_timestamp =
+                boost::posix_time::to_iso_extended_string(execution_end_time);
+            auto duration = execution_end_time - execution_start_time;
+            long duration_in_seconds = duration.seconds();
+
+            nlohmann::json json;
+            json["id"] = this->id;
+            json["execution_start"] = initial_timestamp;
+            json["execution_end"] = initial_timestamp;
+            json["duration_in_seconds"] = duration_in_seconds;
+            this->data.get_info(json["data"]);
+            this->data_splitter->get_info(json["data_split"]);
+            this->model_trainner->get_info(json["training"]);
+            this->aggregator->get_info(json["evaluation"]);
+
+            this->output_stream << std::setw(4) << json;
+        }
+
         //----------------------------------------------------------------------
         // Getters & Setters
         //----------------------------------------------------------------------
-        void Pipeline::set_data(const DBNData& data) { this->data = data; }
+        void Pipeline::set_data(const EvidenceSet& data) { this->data = data; }
 
         void Pipeline::set_data_splitter(
             const std::shared_ptr<KFold>& data_splitter) {
@@ -104,7 +144,7 @@ namespace tomcat {
         }
 
         void Pipeline::set_aggregator(
-            const std::shared_ptr<MeasureAggregator>& aggregator) {
+            const std::shared_ptr<EvaluationAggregator>& aggregator) {
             this->aggregator = aggregator;
         }
 

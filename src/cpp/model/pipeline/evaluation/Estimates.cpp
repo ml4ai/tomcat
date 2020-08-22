@@ -6,15 +6,15 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
-        Estimates::Estimates(std::shared_ptr<Estimator> estimator) : Measure(estimator) {}
+        Estimates::Estimates(std::shared_ptr<Estimator> estimator)
+            : Measure(estimator) {}
 
         Estimates::~Estimates() {}
 
         //----------------------------------------------------------------------
         // Copy & Move constructors/assignments
         //----------------------------------------------------------------------
-        Estimates::Estimates(
-            const Estimates& estimates) {
+        Estimates::Estimates(const Estimates& estimates) {
             this->copy_measure(estimates);
         }
 
@@ -26,12 +26,27 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        std::string Estimates::get_name() const {
-            return "Estimates";
+        std::vector<NodeEvaluation> Estimates::evaluate(const EvidenceSet& test_data) const {
+            std::vector<NodeEvaluation> evaluations;
+
+            for (const auto& estimates :
+                 this->estimator->get_last_estimates(0)) {
+                NodeEvaluation evaluation;
+                evaluation.label = estimates.label;
+                evaluation.assignment = estimates.assignment;
+
+                // This measure doesn't compute anything over the estimates. It
+                // just returns the raw estimates as evaluation.
+                evaluation.evaluation = estimates.estimates;
+                evaluations.push_back(evaluation);
+            }
+
+            return evaluations;
         }
 
-        DBNData Estimates::evaluate(const DBNData& test_data) const {
-            return this->estimator->get_last_estimates(0);
+        void Estimates::get_info(nlohmann::json& json) const {
+            json["name"] = "raw estimates";
+            this->estimator->get_info(json["estimator"]);
         }
 
     } // namespace model

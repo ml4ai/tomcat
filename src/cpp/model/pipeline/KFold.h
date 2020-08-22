@@ -5,8 +5,9 @@
 #include <vector>
 
 #include <gsl/gsl_rng.h>
+#include <nlohmann/json.hpp>
 
-#include "../pgm/DBNData.h"
+#include "../pgm/EvidenceSet.h"
 #include "../utils/Definitions.h"
 
 namespace tomcat {
@@ -23,7 +24,7 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Types, Enums & Constants
             //------------------------------------------------------------------
-            typedef std::vector<std::pair<DBNData, DBNData>> Split;
+            typedef std::vector<std::pair<EvidenceSet, EvidenceSet>> Split;
 
             //------------------------------------------------------------------
             // Constructors & Destructor
@@ -61,7 +62,14 @@ namespace tomcat {
              *
              * @return List of splits
              */
-            Split split(const DBNData& data);
+            Split split(const EvidenceSet& data);
+
+            /**
+             * Writes information about the splitter in a json object.
+             *
+             * @param json: json object
+             */
+            void get_info(nlohmann::json& json) const;
 
           private:
             //------------------------------------------------------------------

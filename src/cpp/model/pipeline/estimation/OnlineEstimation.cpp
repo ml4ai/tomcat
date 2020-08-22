@@ -46,7 +46,7 @@ namespace tomcat {
             this->config = estimation.config;
         }
 
-        void OnlineEstimation::estimate(DBNData test_data) {
+        void OnlineEstimation::estimate(EvidenceSet test_data) {
             // TODO - start new connection with the message broker and listens
             //  to it forever (it's killed externally).
             // This is temporary. Just to test the thread creation

@@ -1,4 +1,4 @@
-#include "DBNData.h"
+#include "EvidenceSet.h"
 
 #include <boost/filesystem.hpp>
 
@@ -10,30 +10,31 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
-        DBNData::DBNData() {}
+        EvidenceSet::EvidenceSet() {}
 
-        DBNData::DBNData(const std::string& data_folder_path) {
+        EvidenceSet::EvidenceSet(const std::string& data_folder_path) {
             this->init_from_folder(data_folder_path);
         }
 
-        DBNData::~DBNData() {}
+        EvidenceSet::~EvidenceSet() {}
 
         //----------------------------------------------------------------------
         // Operator overload
         //----------------------------------------------------------------------
         const Tensor3&
-            DBNData::operator[](const std::string& node_label) const {
+            EvidenceSet::operator[](const std::string& node_label) const {
             return this->node_label_to_data.at(node_label);
         }
 
-        const Tensor3& DBNData::operator[](std::string&& node_label) const {
+        const Tensor3& EvidenceSet::operator[](std::string&& node_label) const {
             return this->node_label_to_data.at(node_label);
         }
 
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void DBNData::init_from_folder(const std::string& data_folder_path) {
+        void
+        EvidenceSet::init_from_folder(const std::string& data_folder_path) {
             for (const auto& file :
                  boost::filesystem::directory_iterator(data_folder_path)) {
 
@@ -44,7 +45,7 @@ namespace tomcat {
             }
         }
 
-        std::vector<std::string> DBNData::get_node_labels() const {
+        std::vector<std::string> EvidenceSet::get_node_labels() const {
             std::vector<std::string> node_labels;
             node_labels.reserve(this->node_label_to_data.size());
 
@@ -55,7 +56,8 @@ namespace tomcat {
             return node_labels;
         }
 
-        void DBNData::add_data(const std::string& node_label, const Tensor3& data) {
+        void EvidenceSet::add_data(const std::string& node_label,
+                               const Tensor3& data) {
             if (this->num_data_points == 0 && this->time_steps == 0) {
                 this->num_data_points = data.get_shape()[1];
                 this->time_steps = data.get_shape()[2];
@@ -77,11 +79,11 @@ namespace tomcat {
             this->node_label_to_data[node_label] = data;
         }
 
-        bool DBNData::has_data_for(const std::string& node_label) {
+        bool EvidenceSet::has_data_for(const std::string& node_label) {
             return EXISTS(node_label, this->node_label_to_data);
         }
 
-        void DBNData::set_data_for(const std::string& node_label,
+        void EvidenceSet::set_data_for(const std::string& node_label,
                                    const Tensor3 data) {
             if (!EXISTS(node_label, this->node_label_to_data)) {
                 throw TomcatModelException("The node " + node_label +
@@ -91,12 +93,20 @@ namespace tomcat {
             this->node_label_to_data[node_label] = data;
         }
 
+        void EvidenceSet::get_info(nlohmann::json& json) const {
+            json["id"] = this->id;
+            json["num_data_points"] = this->get_num_data_points();
+            json["time_steps"] = this->get_time_steps();
+        }
+
         //----------------------------------------------------------------------
         // Getters & Setters
         //----------------------------------------------------------------------
-        int DBNData::get_num_data_points() const { return num_data_points; }
+        int EvidenceSet::get_num_data_points() const { return num_data_points; }
 
-        int DBNData::get_time_steps() const { return time_steps; }
+        int EvidenceSet::get_time_steps() const { return time_steps; }
+
+        void EvidenceSet::set_id(const std::string& id) { this->id = id; }
 
     } // namespace model
 } // namespace tomcat

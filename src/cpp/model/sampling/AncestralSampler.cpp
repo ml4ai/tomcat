@@ -56,7 +56,11 @@ namespace tomcat {
                     random_generator, parent_nodes, num_samples);
                 rv_node->set_assignment(assignment);
             }
-        };
+        }
+
+        void AncestralSampler::get_info(nlohmann::json& json) const {
+            json["name"] = "ancestral";
+        }
 
     } // namespace model
 } // namespace tomcat

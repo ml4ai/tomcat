@@ -43,12 +43,6 @@ namespace tomcat {
                 this->create_edges();
                 this->update_cpd_templates_dependencies();
                 this->set_nodes_cpd();
-
-                for (auto edge = boost::edges(this->graph).first;
-                     edge != boost::edges(this->graph).second;
-                     edge++) {
-                    std::cout << *edge << std::endl;
-                }
             }
         }
 

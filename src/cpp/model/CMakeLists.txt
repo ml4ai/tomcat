@@ -28,6 +28,9 @@ find_package(Boost 1.69
 # FMT is a library used for formatting.
 find_package(FMT REQUIRED)
 
+# Json library is being used for writing evaluations to an output stream
+find_package(nlohmann_json REQUIRED)
+
 include_directories(${Boost_INCLUDE_DIR})
 
 # Header files inside model folder
@@ -57,13 +60,13 @@ add_library(tomcat_model_libs
         distribution/Dirichlet.cpp
         distribution/Gaussian.cpp
         pipeline/training/DBNSamplingTrainer.cpp
-        pgm/DBNData.cpp
+        pgm/EvidenceSet.cpp
         pipeline/KFold.cpp
         pipeline/training/DBNTrainer.cpp
         pipeline/training/DBNLoader.cpp
         pipeline/DBNSaver.cpp
         pipeline/estimation/Estimator.cpp
-        pipeline/estimation/BaselineEstimator.cpp
+        pipeline/estimation/TrainingFrequencyEstimator.cpp
         pipeline/estimation/SumProductEstimator.cpp
         pipeline/estimation/Estimation.cpp
         pipeline/estimation/OfflineEstimation.cpp
@@ -72,11 +75,11 @@ add_library(tomcat_model_libs
         pipeline/evaluation/Estimates.cpp
         pipeline/evaluation/Accuracy.cpp
         pipeline/evaluation/F1Score.cpp
-        pipeline/evaluation/MeasureAggregator.cpp
+        pipeline/evaluation/EvaluationAggregator.cpp
         pipeline/Pipeline.cpp utils/Definitions.h)
 
 # Todo make code coverage work on Linux as well.
-if(APPLE AND CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+if (APPLE AND CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     # Add required flags (GCC & LLVM/Clang)
     message("Building with code coverage")
     target_compile_options(
@@ -85,12 +88,18 @@ if(APPLE AND CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
             -g # generate debug info
             --coverage # sets all required flags
     )
-    if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.13)
+    if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.13)
         target_link_options(tomcat PUBLIC --coverage)
-    else()
+    else ()
         target_link_libraries(tomcat PUBLIC --coverage)
-    endif()
-endif()
+    endif ()
+endif ()
 
 add_executable(TomcatModel main.cpp)
-target_link_libraries(TomcatModel PUBLIC tomcat_model_libs ${Boost_LIBRARIES} Eigen3::Eigen GSL::gsl GSL::gslcblas fmt::fmt)
+target_link_libraries(TomcatModel PUBLIC tomcat_model_libs
+        ${Boost_LIBRARIES}
+        Eigen3::Eigen
+        GSL::gsl
+        GSL::gslcblas
+        fmt::fmt
+        nlohmann_json::nlohmann_json)

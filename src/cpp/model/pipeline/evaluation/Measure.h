@@ -3,13 +3,33 @@
 #include <memory>
 #include <string>
 
-#include "../../pgm/DBNData.h"
+#include <nlohmann/json.hpp>
+
+#include "../../pgm/EvidenceSet.h"
 #include "../../utils/Definitions.h"
-#include "../estimation/Estimator.h"
 #include "../../utils/Tensor3.h"
+#include "../estimation/Estimator.h"
 
 namespace tomcat {
     namespace model {
+
+        //------------------------------------------------------------------
+        // Structs
+        //------------------------------------------------------------------
+
+        /**
+         * This struct stores a node's label, assignment over which the
+         * estimator performed its computations and the evaluations calculated
+         * for that node.
+         */
+        struct NodeEvaluation {
+
+            std::string label;
+
+            Eigen::VectorXd assignment;
+
+            Tensor3 evaluation;
+        };
 
         /**
          * Represents some measurement that can be performed over estimates.
@@ -49,20 +69,22 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
-             * Returns the name of the measure.
-             *
-             * @return Measure's name.
-             */
-            virtual std::string get_name() const = 0;
-
-            /**
              * Calculates the measure over a data set.
              *
              * @param test_data: data to calculate the measure over
              *
-             * @return Computed values.
+             * @return Computed values for all of the nodes processed by the
+             * estimator.
              */
-            virtual DBNData evaluate(const DBNData& test_data) const = 0;
+            virtual std::vector<NodeEvaluation>
+            evaluate(const EvidenceSet& test_data) const = 0;
+
+            /**
+             * Writes information about the splitter in a json object.
+             *
+             * @param json: json object
+             */
+            virtual void get_info(nlohmann::json& json) const = 0;
 
           protected:
             //------------------------------------------------------------------
@@ -82,8 +104,6 @@ namespace tomcat {
             // The estimates computed and stored in the estimator will be used
             // to evaluate the measure.
             std::shared_ptr<Estimator> estimator;
-
-
         };
 
     } // namespace model

@@ -29,7 +29,7 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void OfflineEstimation::estimate(DBNData test_data) {
+        void OfflineEstimation::estimate(EvidenceSet test_data) {
             this->estimator->estimate(test_data);
             this->finished = true;
         }

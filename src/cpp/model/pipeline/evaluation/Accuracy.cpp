@@ -26,14 +26,15 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        std::string Accuracy::get_name() const {
-            return "Accuracy";
-        }
-
-        DBNData Accuracy::evaluate(const DBNData& test_data) const {
+        std::vector<NodeEvaluation> Accuracy::evaluate(const EvidenceSet& test_data) const {
             // TODO - return the accuracy of the estimates computed by the
             //  estimator
-            return DBNData();
+            return {};
+        }
+
+        void Accuracy::get_info(nlohmann::json& json) const {
+            json["name"] = "accuracy";
+            this->estimator->get_info(json["estimator"]);
         }
 
     } // namespace model

@@ -47,6 +47,8 @@ namespace tomcat {
             //------------------------------------------------------------------
             void sample_latent(std::shared_ptr<gsl_rng> random_generator,
                                int num_samples) override;
+
+            void get_info(nlohmann::json& json) const override;
         };
     } // namespace model
 } // namespace tomcat

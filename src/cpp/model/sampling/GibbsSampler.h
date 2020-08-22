@@ -51,11 +51,10 @@ namespace tomcat {
             void sample_latent(std::shared_ptr<gsl_rng> random_generator,
                                int num_samples) override;
 
-            //------------------------------------------------------------------
-            // Virtual functions
-            //------------------------------------------------------------------
-            virtual Tensor3
+            Tensor3
             get_samples(const std::string& node_label) const override;
+
+            void get_info(nlohmann::json& json) const override;
 
           protected:
             //------------------------------------------------------------------

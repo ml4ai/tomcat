@@ -26,15 +26,16 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        std::string F1Score::get_name() const {
-            return "F1-Score";
-        }
-
-        DBNData F1Score::evaluate(const DBNData& test_data) const {
+        std::vector<NodeEvaluation> F1Score::evaluate(const EvidenceSet& test_data) const {
             // TODO - return the F1 Score of the estimates computed by the
             //  estimator
 
-            return DBNData();
+            return {};
+        }
+
+        void F1Score::get_info(nlohmann::json& json) const {
+            json["name"] = "f1 score";
+            this->estimator->get_info(json["estimator"]);
         }
 
     } // namespace model

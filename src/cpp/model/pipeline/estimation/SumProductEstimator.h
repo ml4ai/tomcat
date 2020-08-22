@@ -46,9 +46,9 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-            void estimate(DBNData new_data) override;
+            void estimate(EvidenceSet new_data) override;
 
-            DBNData get_last_estimates(int initial_time_step) const override;
+            void get_info(nlohmann::json& json) const override;
 
           protected:
             //------------------------------------------------------------------

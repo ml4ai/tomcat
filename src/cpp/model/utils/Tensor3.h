@@ -98,6 +98,35 @@ namespace tomcat {
              */
             double& operator()(int i, int j, int k);
 
+            /**
+             * Returns the tensor formed by the element-wise sum of two tensors.
+             *
+             * @param tensor: another tensor
+             *
+             * @return Element-wise sum of two tensors.
+             */
+            Tensor3 operator+(const Tensor3& tensor) const;
+
+            /**
+             * Returns the tensor formed by the element-wise subtraction of two
+             * tensors.
+             *
+             * @param tensor: another tensor
+             *
+             * @return Element-wise subtraction of two tensors.
+             */
+            Tensor3 operator-(const Tensor3& tensor) const;
+
+            /**
+             * Returns the tensor formed by the element-wise scalar division of
+             * a tensor.
+             *
+             * @param value: value to divide the elements of a tensor
+             *
+             * @return Element-wise scalar division of a tensor.
+             */
+            Tensor3 operator/(double value) const;
+
             //------------------------------------------------------------------
             // Static functions
             //------------------------------------------------------------------
@@ -120,9 +149,54 @@ namespace tomcat {
              */
             static std::string matrix_to_string(const Eigen::MatrixXd& matrix);
 
+            /**
+             * Computes the element-wise sum of a list of tensors.
+             *
+             * @param tensors: tensors
+             *
+             * @return: Element-wise sum of a list of tensors.
+             */
+            static Tensor3 sum(std::vector<Tensor3> tensors);
+
+            /**
+             * Computes the element-wise mean of a list of tensors.
+             *
+             * @param tensors: tensors
+             *
+             * @return: Element-wise mean of a list of tensors.
+             */
+            static Tensor3 mean(std::vector<Tensor3> tensors);
+
+            /**
+             * Computes the element-wise standard deviation of a list of
+             * tensors.
+             *
+             * @param tensors: tensors
+             *
+             * @return: Element-wise standard deviation of a list of tensors.
+             */
+            static Tensor3 std(std::vector<Tensor3> tensors);
+
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
+
+            /**
+             * Clears the tensor;
+             */
+            void clear();
+
+            /**
+             * Checks whether a tensor is empty.
+             */
+            bool is_empty() const;
+
+            /**
+             * Returns the content of the tensor as a string;
+             *
+             * @return String with the tensor's content.
+             */
+            std::string to_string() const;
 
             /**
              * Returns the number of elements in the tensor.
@@ -202,6 +276,26 @@ namespace tomcat {
              * @return Repeated tensor.
              */
             Tensor3 repeat(int num_repetitions, int axis) const;
+
+            /**
+             * Returns a tensor formed by the elements of the original tensor to
+             * a given power.
+             *
+             * @param power: power
+             *
+             * @return Tensor formed by the elements of the original tensor to a
+             * given power.
+             */
+            Tensor3 pow(int power) const;
+
+            /**
+             * Returns a tensor formed by the squared root of the elements of
+             * the original tensor.
+             *
+             * @return Tensor formed by the squared root of the elements of the
+             * original tensor.
+             */
+            Tensor3 sqrt() const;
 
           private:
             //------------------------------------------------------------------

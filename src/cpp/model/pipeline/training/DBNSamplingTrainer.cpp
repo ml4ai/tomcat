@@ -41,7 +41,7 @@ namespace tomcat {
 
         void DBNSamplingTrainer::prepare() {}
 
-        void DBNSamplingTrainer::fit(const DBNData& training_data) {
+        void DBNSamplingTrainer::fit(const EvidenceSet& training_data) {
             this->sampler->set_num_in_plate_samples(
                 training_data.get_num_data_points());
             this->sampler->add_data(training_data);
@@ -69,6 +69,12 @@ namespace tomcat {
                     rv_node->set_assignment(mean_value);
                 }
             }
+        }
+
+        void DBNSamplingTrainer::get_info(nlohmann::json& json) const {
+            json["type"] = "sampling";
+            json["num_samples"] = this->num_samples;
+            this->sampler->get_info(json["algorithm"]);
         }
 
     } // namespace model

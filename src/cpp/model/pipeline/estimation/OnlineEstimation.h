@@ -83,7 +83,7 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-            void estimate(DBNData test_data) override;
+            void estimate(EvidenceSet test_data) override;
 
           private:
             //------------------------------------------------------------------

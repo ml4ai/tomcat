@@ -37,12 +37,17 @@ namespace tomcat {
 
         void DBNLoader::prepare() { this->cv_step = 0; }
 
-        void DBNLoader::fit(const DBNData& training_data) {
+        void DBNLoader::fit(const EvidenceSet& training_data) {
             // If the name of the folder has a placeholder for the cv step,
             // replace it with the current number.
             std::string final_folder_path =
                 fmt::format(this->input_folder_path, this->cv_step++);
             this->model->load_from_folder(final_folder_path);
+        }
+
+        void DBNLoader::get_info(nlohmann::json& json) const {
+            json["type"] = "pre_trained";
+            json["input_folder_path"] = this->input_folder_path;
         }
 
     } // namespace model

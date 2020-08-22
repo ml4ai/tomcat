@@ -2,8 +2,10 @@
 
 #include <unordered_set>
 
-#include "../pgm/DBNData.h"
+#include <nlohmann/json.hpp>
+
 #include "../pgm/DynamicBayesNet.h"
+#include "../pgm/EvidenceSet.h"
 #include "../utils/Definitions.h"
 #include "../utils/Tensor3.h"
 
@@ -67,7 +69,7 @@ namespace tomcat {
              *
              * @param data: observed values for the observable nodes over time.
              */
-            void add_data(DBNData data);
+            void add_data(EvidenceSet data);
 
             /**
              * Saves generated samples to files in a specific folder.
@@ -103,6 +105,13 @@ namespace tomcat {
             sample_latent(std::shared_ptr<gsl_rng> random_generator,
                           int num_samples) = 0;
 
+            /**
+             * Writes information about the splitter in a json object.
+             *
+             * @param json: json object
+             */
+            virtual void get_info(nlohmann::json& json) const = 0;
+
             // -----------------------------------------------------------------
             // Getters & Setters
             // -----------------------------------------------------------------
@@ -136,7 +145,7 @@ namespace tomcat {
             // same as the number of in-plate samples.
             int num_in_plate_samples = 1;
 
-            DBNData data;
+            EvidenceSet data;
 
           private:
             //------------------------------------------------------------------

@@ -18,7 +18,7 @@ namespace tomcat {
         // Member functions
         //----------------------------------------------------------------------
         void Estimation::set_training_data(
-            const tomcat::model::DBNData& training_data) {
+            const tomcat::model::EvidenceSet& training_data) {
            this->estimator->set_training_data(training_data);
         }
 

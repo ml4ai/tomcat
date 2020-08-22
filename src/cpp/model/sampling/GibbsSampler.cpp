@@ -1,5 +1,8 @@
 #include "GibbsSampler.h"
 
+// This is deprecated. The new version is in boost/timer/progress_display.hpp but only available for boost 1.72
+#include <boost/progress.hpp>
+
 #include "AncestralSampler.h"
 
 namespace tomcat {
@@ -67,9 +70,17 @@ namespace tomcat {
 
             this->fill_initial_samples(random_generator);
             this->init_samples_storage(num_samples, latent_nodes);
+            bool discard = true;
+            LOG("Burn-in");
+            boost::progress_display progress( this->burn_in_period);
 
             for (int i = 0; i < this->burn_in_period + num_samples; i++) {
-                bool discard = i < burn_in_period;
+                if (i >= burn_in_period && discard) {
+                    discard = false;
+                    LOG("Sampling");
+                    progress.restart(num_samples);
+                }
+
                 for (auto& node : data_nodes) {
                     this->sample_data_node(random_generator, node, discard);
                 }
@@ -79,10 +90,12 @@ namespace tomcat {
                         random_generator, node, discard);
                 }
 
-                if (i >= this->burn_in_period) {
-                    std::cout << i << "\n";
-                    this->iteration++;
-                }
+                ++progress;
+
+//                if (i >= this->burn_in_period) {
+//                    std::cout << i << "\n";
+//                    this->iteration++;
+//                }
             }
         }
 
@@ -242,6 +255,11 @@ namespace tomcat {
 
         Tensor3 GibbsSampler::get_samples(const std::string& node_label) const {
             return this->node_label_to_samples.at(node_label);
+        }
+
+        void GibbsSampler::get_info(nlohmann::json& json) const {
+            json["name"] = "gibbs";
+            json["burn_in"] = this->burn_in_period;
         }
 
     } // namespace model

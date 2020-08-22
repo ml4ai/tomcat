@@ -1,6 +1,7 @@
 #include "Tensor3.h"
 
 #include <iomanip>
+#include <sstream>
 
 #include <eigen3/Eigen/Core>
 
@@ -95,6 +96,56 @@ namespace tomcat {
             return this->tensor[i](j, k);
         }
 
+        Tensor3 Tensor3::operator+(const Tensor3& tensor) const {
+            if (this->get_shape()[0] != tensor.get_shape()[0] ||
+                this->get_shape()[1] != tensor.get_shape()[1] ||
+                this->get_shape()[2] != tensor.get_shape()[2]) {
+                throw TomcatModelException(
+                    "It's not possible to sum tensors of different shapes.");
+            }
+
+            Tensor3 new_tensor;
+            for (int i = 0; i < this->tensor.size(); i++) {
+                new_tensor.tensor.push_back(
+                    (this->tensor[i].array() + tensor.tensor[i].array())
+                        .matrix());
+            }
+
+            return new_tensor;
+        }
+
+        Tensor3 Tensor3::operator-(const Tensor3& tensor) const {
+            if (this->get_shape()[0] != tensor.get_shape()[0] ||
+                this->get_shape()[1] != tensor.get_shape()[1] ||
+                this->get_shape()[2] != tensor.get_shape()[2]) {
+                throw TomcatModelException(
+                    "It's not possible to sum tensors of different shapes.");
+            }
+
+            Tensor3 new_tensor;
+            for (int i = 0; i < this->tensor.size(); i++) {
+                new_tensor.tensor.push_back(
+                    (this->tensor[i].array() - tensor.tensor[i].array())
+                        .matrix());
+            }
+
+            return new_tensor;
+        }
+
+        Tensor3 Tensor3::operator/(double value) const {
+            if (value == 0) {
+                throw std::domain_error(
+                    "It's not possible to divide a tensor by 0.");
+            }
+
+            Tensor3 new_tensor = *this;
+            for (auto& matrix : new_tensor.tensor) {
+                matrix = matrix.array() / value;
+            }
+
+            return new_tensor;
+        }
+
         //----------------------------------------------------------------------
         // Static functions
         //----------------------------------------------------------------------
@@ -133,9 +184,57 @@ namespace tomcat {
             return ss.str();
         }
 
+        Tensor3 Tensor3::sum(std::vector<Tensor3> tensors) {
+            Tensor3 new_tensor;
+
+            if (!tensors.empty()) {
+                new_tensor = tensors[0];
+
+                for (int i = 1; i < tensors.size(); i++) {
+                    new_tensor = new_tensor + tensors[i];
+                }
+            }
+
+            return new_tensor;
+        }
+
+        Tensor3 Tensor3::mean(std::vector<Tensor3> tensors) {
+            Tensor3 new_tensor = Tensor3::sum(tensors);
+            new_tensor = new_tensor / tensors.size();
+
+            return new_tensor;
+        }
+
+        Tensor3 Tensor3::std(std::vector<Tensor3> tensors) {
+            Tensor3 new_tensor;
+
+            if (!tensors.empty()) {
+                Tensor3 mean_tensor = Tensor3::mean(tensors);
+                new_tensor = (tensors[0] - mean_tensor).pow(2);
+
+                for (int i = 1; i < tensors.size(); i++) {
+                    new_tensor = new_tensor + (tensors[i] - mean_tensor).pow(2);
+                }
+
+                new_tensor = (new_tensor / tensors.size()).sqrt();
+            }
+
+            return new_tensor;
+        }
+
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
+        void Tensor3::clear() { this->tensor.clear(); }
+
+        bool Tensor3::is_empty() const { return this->tensor.empty(); }
+
+        std::string Tensor3::to_string() const {
+            std::stringstream ss;
+            ss << *this;
+            return ss.str();
+        }
+
         int Tensor3::get_size() const {
             return this->get_shape()[0] * this->get_shape()[2] *
                    this->get_shape()[2];
@@ -153,14 +252,15 @@ namespace tomcat {
             return std::array<int, 3>({i, j, k});
         }
 
-        Tensor3 Tensor3::slice(int initial_index, int final_index, int axis) const {
+        Tensor3
+        Tensor3::slice(int initial_index, int final_index, int axis) const {
             if (final_index == ALL) {
                 final_index = this->get_shape()[axis];
             }
 
             std::vector<int> indices;
             indices.reserve(final_index - initial_index);
-            for(int idx = initial_index; idx < final_index; idx++){
+            for (int idx = initial_index; idx < final_index; idx++) {
                 indices.push_back(idx);
             }
 
@@ -236,7 +336,8 @@ namespace tomcat {
                 for (const auto& matrix : this->tensor) {
                     if (new_tensor.tensor.empty()) {
                         new_tensor.tensor.push_back(matrix);
-                    } else {
+                    }
+                    else {
                         new_tensor.tensor[0] += matrix;
                     }
                 }
@@ -282,8 +383,8 @@ namespace tomcat {
 
             double* buffer = new double[d1 * d2 * d3];
             for (auto& matrix : this->tensor) {
-                for(int i = 0; i < matrix.rows(); i++){
-                    for(int j = 0; j < matrix.cols(); j++){
+                for (int i = 0; i < matrix.rows(); i++) {
+                    for (int j = 0; j < matrix.cols(); j++) {
                         *buffer = matrix(i, j);
                         buffer++;
                     }
@@ -301,8 +402,8 @@ namespace tomcat {
             case 0: {
                 new_tensor = *this;
 
-                for(int r = 0; r < num_repetitions - 1; r++){
-                    for(const auto& matrix : this->tensor){
+                for (int r = 0; r < num_repetitions - 1; r++) {
+                    for (const auto& matrix : this->tensor) {
                         new_tensor.tensor.push_back(matrix);
                     }
                 }
@@ -312,7 +413,9 @@ namespace tomcat {
                 new_tensor = *this;
 
                 for (auto& matrix : new_tensor.tensor) {
-                    matrix = matrix.colwise().replicate(num_repetitions);
+                    Eigen::MatrixXd new_matrix(num_repetitions, matrix.cols());
+                    new_matrix = matrix.colwise().replicate(num_repetitions);
+                    matrix = new_matrix;
                 }
                 break;
             }
@@ -320,7 +423,9 @@ namespace tomcat {
                 new_tensor = *this;
 
                 for (auto& matrix : new_tensor.tensor) {
-                    matrix = matrix.rowwise().replicate(num_repetitions);
+                    Eigen::MatrixXd new_matrix(matrix.rows(), num_repetitions);
+                    new_matrix = matrix.rowwise().replicate(num_repetitions);
+                    matrix = new_matrix;
                 }
                 break;
             }
@@ -328,6 +433,26 @@ namespace tomcat {
                 throw TomcatModelException(
                     "Invalid axis. Valid axes are 0, 1 or 2.");
             }
+            }
+
+            return new_tensor;
+        }
+
+        Tensor3 Tensor3::pow(int power) const {
+            Tensor3 new_tensor = *this;
+
+            for (auto& matrix : new_tensor.tensor) {
+                matrix = matrix.array().pow(power).matrix();
+            }
+
+            return new_tensor;
+        }
+
+        Tensor3 Tensor3::sqrt() const {
+            Tensor3 new_tensor = *this;
+
+            for (auto& matrix : new_tensor.tensor) {
+                matrix = matrix.array().sqrt().matrix();
             }
 
             return new_tensor;

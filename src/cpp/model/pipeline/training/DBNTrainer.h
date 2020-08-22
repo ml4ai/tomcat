@@ -1,6 +1,8 @@
 #pragma once
 
-#include "../../pgm/DBNData.h"
+#include <nlohmann/json.hpp>
+
+#include "../../pgm/EvidenceSet.h"
 #include "../../utils/Definitions.h"
 
 namespace tomcat {
@@ -50,7 +52,14 @@ namespace tomcat {
             /**
              * Estimates the model's parameters from training data.
              */
-            virtual void fit(const DBNData& training_data) = 0;
+            virtual void fit(const EvidenceSet& training_data) = 0;
+
+            /**
+             * Writes information about the splitter in a json object.
+             *
+             * @param json: json object
+             */
+            virtual void get_info(nlohmann::json& json) const = 0;
 
         };
 

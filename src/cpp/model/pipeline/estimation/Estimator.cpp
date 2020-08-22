@@ -9,7 +9,7 @@ namespace tomcat {
         Estimator::Estimator() {}
 
         Estimator::Estimator(std::shared_ptr<DynamicBayesNet> model,
-                                       int inference_horizon)
+                             int inference_horizon)
             : model(model), inference_horizon(inference_horizon) {}
 
         Estimator::~Estimator() {}
@@ -21,20 +21,39 @@ namespace tomcat {
             this->model = estimator.model;
             this->training_data = estimator.training_data;
             this->test_data = estimator.test_data;
-            this->node_labels = estimator.node_labels;
+            this->nodes_estimates = estimator.nodes_estimates;
             this->last_processed_time_step = estimator.last_processed_time_step;
             this->inference_horizon = estimator.inference_horizon;
         }
 
-        void Estimator::add_node(const std::string node_label) {
-            this->node_labels.insert(node_label);
-            this->estimates.add_data(node_label, Tensor3());
+        void Estimator::add_node(const std::string& node_label,
+                                 const Eigen::VectorXd& assignment) {
+            NodeEstimates node_estimates;
+            node_estimates.label = node_label;
+            node_estimates.assignment = assignment;
+            this->nodes_estimates.push_back(node_estimates);
+        }
+
+        std::vector<NodeEstimates> Estimator::get_last_estimates(int initial_time_step) const {
+            std::vector<NodeEstimates> last_estimates;
+            last_estimates.reserve(this->nodes_estimates.size());
+
+            for (const auto& node_estimate : this->nodes_estimates) {
+                NodeEstimates sliced_estimates;
+                sliced_estimates.label = node_estimate.label;
+                sliced_estimates.assignment = node_estimate.assignment;
+                sliced_estimates.estimates = node_estimate.estimates.slice(
+                        initial_time_step, Tensor3::ALL, 2);
+                last_estimates.push_back(sliced_estimates);
+            }
+
+            return last_estimates;
         }
 
         //----------------------------------------------------------------------
         // Getters & Setters
         //----------------------------------------------------------------------
-        void Estimator::set_training_data(const DBNData& training_data) {
+        void Estimator::set_training_data(const EvidenceSet& training_data) {
             this->training_data = training_data;
         }
 

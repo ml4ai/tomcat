@@ -37,9 +37,9 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-            std::string get_name() const override;
+            std::vector<NodeEvaluation> evaluate(const EvidenceSet& test_data) const override;
 
-            DBNData evaluate(const DBNData& test_data) const override;
+            void get_info(nlohmann::json& json) const override;
         };
 
     } // namespace model

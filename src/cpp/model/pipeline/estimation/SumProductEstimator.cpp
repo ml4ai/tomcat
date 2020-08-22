@@ -31,15 +31,14 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void SumProductEstimator::estimate(DBNData new_data) {
+        void SumProductEstimator::estimate(EvidenceSet new_data) {
             // TODO
             std::cout << "Sum-Product Estimation" << std::endl;
         }
 
-        DBNData
-        SumProductEstimator::get_last_estimates(int initial_time_step) const {
-            // TODO
-            return DBNData();
+        void SumProductEstimator::get_info(nlohmann::json& json) const {
+            json["name"] = "sum_product";
+            json["inference_horizon"] = this->inference_horizon;
         }
 
     } // namespace model

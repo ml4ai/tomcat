@@ -18,7 +18,7 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        KFold::Split KFold::split(const DBNData& data) {
+        KFold::Split KFold::split(const EvidenceSet& data) {
 
             if (this->num_folds > data.get_num_data_points()) {
                 throw std::invalid_argument(
@@ -38,8 +38,8 @@ namespace tomcat {
             for (int i = 0; i < this->num_folds; i++) {
                 int end_idx = start_idx + fold_sizes[i] - 1;
 
-                DBNData training;
-                DBNData test;
+                EvidenceSet training;
+                EvidenceSet test;
                 std::vector<int> training_indices;
                 if (start_idx > 0) {
                     training_indices.insert(training_indices.end(),
@@ -111,6 +111,10 @@ namespace tomcat {
             }
 
             return fold_sizes;
+        }
+
+        void KFold::get_info(nlohmann::json &json) const {
+            json["num_folds"] = this->num_folds;
         }
 
     } // namespace model
