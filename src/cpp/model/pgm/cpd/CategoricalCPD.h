@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../utils/Definitions.h"
 #include "../../distribution/Categorical.h"
 #include "CPD.h"
 

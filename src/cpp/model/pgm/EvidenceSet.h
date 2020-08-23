@@ -70,6 +70,45 @@ namespace tomcat {
              */
             const Tensor3& operator[](std::string&& node_label) const;
 
+            //------------------------------------------------------------------
+            // Static functions
+            //------------------------------------------------------------------
+
+            /**
+             * Returns a matrix such that, for each coefficient in the original
+             * matrix up to the original number of columns - window, 1 will be
+             * assigned to the coefficient if a given assignment was observed
+             * within a given window (if the assignment shows up in at least
+             * one of the subsequent columns of the coefficient up to window
+             * size), 0 otherwise. The assignment is compared with the elements
+             * in the first dimension of the tensor. Therefore the result will
+             * be a matrix.
+             *
+             * @param data: data
+             * @param assignment: assignment to compare against
+             * @param window: determines the number of columns to look ahead (it
+             * only looks ahead for windows of size > 1)
+             *
+             * @return Logical matrix with observations within a window.
+             */
+            static Eigen::MatrixXd
+            get_observations_in_window(const Tensor3& data,
+                                       const Eigen::VectorXd& assignment,
+                                       int window);
+            /**
+             * Returns the first time step with values different than NO_OBS for
+             * some node's data.
+             *
+             * @param data: data
+             *
+             * @return First time step with actual data.
+             */
+            static int get_first_time_with_observation(const Tensor3& data);
+
+            //------------------------------------------------------------------
+            // Member functions
+            //------------------------------------------------------------------
+
             /**
              * Returns the labels of the nodes which the DBNData has values
              * for.
@@ -111,6 +150,23 @@ namespace tomcat {
              */
             void get_info(nlohmann::json& json) const;
 
+            /**
+             * For a given node's data, returns a logical matrix flagging the
+             * time steps where a given assignment was observed within a given
+             * window.
+             *
+             * @param node_label: node's label
+             * @param assignment: assignment to compare against
+             * @param window: determines the number of columns to look ahead (it
+             * only looks ahead for windows of size > 1)
+             *
+             * @return Logical matrix with observations within a window.
+             */
+            Eigen::MatrixXd
+            get_observations_in_window_for(const std::string& node_label,
+                                           const Eigen::VectorXd& assignment,
+                                           int window) const;
+
             //------------------------------------------------------------------
             // Getters & Setters
             //------------------------------------------------------------------
@@ -121,6 +177,10 @@ namespace tomcat {
             void set_id(const std::string& id);
 
           private:
+            //------------------------------------------------------------------
+            // Member functions
+            //------------------------------------------------------------------
+
             /**
              * Reads data from files in a folder and store in this object.
              *

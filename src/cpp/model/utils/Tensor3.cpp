@@ -13,6 +13,14 @@ namespace tomcat {
         //----------------------------------------------------------------------
         Tensor3::Tensor3() {}
 
+        Tensor3::Tensor3(const Eigen::MatrixXd& matrix) : tensor({matrix}) {}
+
+        /**
+         * Creates a tensor comprised of several matrices.
+         */
+        Tensor3::Tensor3(const std::vector<Eigen::MatrixXd> matrices)
+            : tensor(matrices) {}
+
         Tensor3::Tensor3(double* buffer, int d1, int d2, int d3) {
             this->tensor.reserve(d1);
             for (int i = 0; i < d1; i++) {
@@ -146,6 +154,25 @@ namespace tomcat {
             return new_tensor;
         }
 
+        Eigen::MatrixXd
+        Tensor3::operator==(const Eigen::VectorXd& value) const {
+            Tensor3 new_tensor;
+
+            int i = 0;
+            for (const auto& matrix : this->tensor) {
+                Eigen::MatrixXd new_matrix =
+                    (matrix.array() == value(i))
+                        .select(
+                            Eigen::MatrixXd::Ones(matrix.rows(), matrix.cols()),
+                            Eigen::MatrixXd::Zero(matrix.rows(),
+                                                  matrix.cols()));
+                new_tensor.tensor.push_back(std::move(new_matrix));
+                i++;
+            }
+
+            return new_tensor.coeff_wise_and(0)(0, 0);
+        }
+
         //----------------------------------------------------------------------
         // Static functions
         //----------------------------------------------------------------------
@@ -250,6 +277,10 @@ namespace tomcat {
             }
 
             return std::array<int, 3>({i, j, k});
+        }
+
+        double Tensor3::at(int i, int j, int k) const {
+            return this->tensor[i](j, k);
         }
 
         Tensor3
@@ -453,6 +484,62 @@ namespace tomcat {
 
             for (auto& matrix : new_tensor.tensor) {
                 matrix = matrix.array().sqrt().matrix();
+            }
+
+            return new_tensor;
+        }
+
+        Tensor3 Tensor3::coeff_wise_and(int axis) const {
+            auto [d1, d2, d3] = this->get_shape();
+            Tensor3 new_tensor;
+
+            switch (axis) {
+            case 0: {
+                new_tensor = Tensor3::constant(1, d2, d3, 1);
+                for (int j = 0; j < d2; j++) {
+                    for (int k = 0; k < d3; k++) {
+                        for (int i = 0; i < d1; i++) {
+                            if (this->tensor[i](j, k) <= 0) {
+                                new_tensor.tensor[0](j, k) = 0;
+                                break;
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+            case 1: {
+                new_tensor = Tensor3::constant(d1, 1, d3, 1);
+                for (int i = 0; i < d1; i++) {
+                    for (int k = 0; k < d3; k++) {
+                        for (int j = 0; j < d2; j++) {
+                            if (this->tensor[i](j, k) <= 0) {
+                                new_tensor.tensor[i](0, k) = 0;
+                                break;
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+            case 2: {
+                new_tensor = Tensor3::constant(d1, d2, 1, 1);
+                for (int i = 0; i < d1; i++) {
+                    for (int j = 0; j < d2; j++) {
+                        for (int k = 0; k < d3; k++) {
+                            if (this->tensor[i](j, k) <= 0) {
+                                new_tensor.tensor[i](j, 0) = 0;
+                                break;
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+            default: {
+                throw TomcatModelException(
+                    "Invalid axis. Valid axes are 0, 1 or 2.");
+            }
             }
 
             return new_tensor;

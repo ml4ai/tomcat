@@ -18,6 +18,8 @@
 #include "pipeline/estimation/SumProductEstimator.h"
 #include "pipeline/estimation/TrainingFrequencyEstimator.h"
 #include "pipeline/evaluation/Estimates.h"
+#include "pipeline/evaluation/Accuracy.h"
+#include "pipeline/evaluation/F1Score.h"
 #include "pipeline/evaluation/EvaluationAggregator.h"
 #include "pipeline/training/DBNSamplingTrainer.h"
 #include "sampling/AncestralSampler.h"
@@ -401,13 +403,13 @@ void test_pipeline() {
 
     std::shared_ptr<DynamicBayesNet> model =
         std::make_shared<DynamicBayesNet>(create_dbn(false));
-    model->unroll(100, true);
+    model->unroll(20, true);
 
     GibbsSampler gibbs(model, 20);
 
     std::shared_ptr<DBNSamplingTrainer> trainer =
         std::make_shared<DBNSamplingTrainer>(DBNSamplingTrainer(
-            gen, std::make_shared<GibbsSampler>(gibbs), 100));
+            gen, std::make_shared<GibbsSampler>(gibbs), 50));
 
     std::shared_ptr<DBNSaver> saver = std::make_shared<DBNSaver>(
         DBNSaver(model, "../../data/model/pipeline_test/fold{}"));
@@ -418,7 +420,7 @@ void test_pipeline() {
     config.timeout = 5;
     std::shared_ptr<TrainingFrequencyEstimator> baseline_estimator =
         std::make_shared<TrainingFrequencyEstimator>(
-            TrainingFrequencyEstimator(model, 1));
+            TrainingFrequencyEstimator(model, 2));
     baseline_estimator->add_node("TG", Eigen::VectorXd::Constant(1,1));
     std::shared_ptr<SumProductEstimator> sumproduct_estimator =
         std::make_shared<SumProductEstimator>(SumProductEstimator(model, 1));
@@ -439,8 +441,10 @@ void test_pipeline() {
             EvaluationAggregator(EvaluationAggregator::METHOD::average));
 
     std::shared_ptr<Estimates> estimates = std::make_shared<Estimates>(Estimates(baseline_estimator));
+    std::shared_ptr<Accuracy> accuracy = std::make_shared<Accuracy>(Accuracy(baseline_estimator));
 
     aggregator->add_measure(estimates);
+    aggregator->add_measure(accuracy);
 
     Pipeline pipeline;
     pipeline.set_data(data);
@@ -464,8 +468,8 @@ int main() {
 
     std::shared_ptr<DynamicBayesNet> dbn_ptr =
         std::make_shared<DynamicBayesNet>(create_dbn(true));
-    dbn_ptr->unroll(100, true);
-        generate_samples_to_test(dbn_ptr, 100,
+    dbn_ptr->unroll(20, true);
+        generate_samples_to_test(dbn_ptr, 10,
         gen);
 
     //        std::shared_ptr<DynamicBayesNet> dbn_ptr =
@@ -515,6 +519,16 @@ int main() {
     //    LOG(tensor.repeat(1, 2));
 
     test_pipeline();
+
+//    Eigen::MatrixXd m(2,3);
+//    m << 1, 0, 1,
+//         0, 0, 1;
+//
+//    Eigen::MatrixXd b = (m.array() == 1).select(MatrixXd::Constant(m.rows(), m.cols(), 2), MatrixXd::Zero(m.rows(), m.cols()));
+//
+//    std::cout << b;
+
+
 
     // gsl_rng_set(gen.get(), time(0));
     // dbn.unroll(4, true);

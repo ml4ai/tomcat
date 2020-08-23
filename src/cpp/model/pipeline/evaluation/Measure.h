@@ -28,7 +28,7 @@ namespace tomcat {
 
             Eigen::VectorXd assignment;
 
-            Tensor3 evaluation;
+            Eigen::MatrixXd evaluation;
         };
 
         /**

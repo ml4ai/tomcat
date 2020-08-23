@@ -39,6 +39,16 @@ namespace tomcat {
             Tensor3();
 
             /**
+             * Creates tensor with one matrix.
+             */
+            Tensor3(const Eigen::MatrixXd& matrix);
+
+            /**
+             * Creates a tensor comprised of several matrices.
+             */
+            Tensor3(const std::vector<Eigen::MatrixXd> matrices);
+
+            /**
              * Creates a tensor filled with data.
              *
              * @param buffer: values to be stored in the tensor. There must be
@@ -127,6 +137,16 @@ namespace tomcat {
              */
             Tensor3 operator/(double value) const;
 
+            /**
+             * Returns a 1 x m x n tensor comprised by ones where the
+             * coefficients along axis 0 are equal to value, and zero otherwise.
+             *
+             * @param value: value to compare the coefficients of axis 0 with
+             *
+             * @return Binary tensor
+             */
+            Eigen::MatrixXd operator==(const Eigen::VectorXd& value) const;
+
             //------------------------------------------------------------------
             // Static functions
             //------------------------------------------------------------------
@@ -213,6 +233,18 @@ namespace tomcat {
             std::array<int, 3> get_shape() const;
 
             /**
+             * Returns a non-assignable coefficient from a specific tensor
+             * index.
+             *
+             * @param i: first axis' index
+             * @param j: second axis' index
+             * @param k: third axis' index
+             *
+             * @return Non-assignable tensor coefficient.
+             */
+            double at(int i, int j, int k) const;
+
+            /**
              * Returns a sliced copy of the tensor in a certain range.
              *
              * @param initial_index: first index in the range (inclusive). The
@@ -236,17 +268,17 @@ namespace tomcat {
             Tensor3 slice(std::vector<int> indices, int axis) const;
 
             /**
-             * Returns the mean off all the values in the tensor.
+             * Returns the mean of all the values in the tensor.
              *
              * @return Mean.
              */
             double mean() const;
 
             /**
-             * Returns the mean off all the values in the tensor in a given
+             * Returns the mean of all the values in the tensor in a given
              * axis. This operation shrinks the number of elements in the axis
              * where the operation is performed but it preserves the number of
-             * axis.
+             * axes.
              *
              * @param axis: axis where the mean must be computed along
              *
@@ -267,7 +299,7 @@ namespace tomcat {
             Tensor3 reshape(int d1, int d2, int d3) const;
 
             /**
-             * Repeates the elements of the tensor in a given axis by a certain
+             * Repeats the elements of the tensor in a given axis by a certain
              * amount of time.
              *
              * @param num_repetitions: number of repetitions
@@ -296,6 +328,20 @@ namespace tomcat {
              * original tensor.
              */
             Tensor3 sqrt() const;
+
+            /**
+             * Returns the bitwise-and of all the coefficients in a tensor in a
+             * given axis. All numbers greater greater 0 are considered as true
+             * for the purpose of this logical operation. Negative numbers are
+             * neutral and preserved in the final tensor. This operation shrinks
+             * the number of coefficients in the axis where the operation is
+             * performed but it preserves the number of axes.
+             *
+             * @param axis: axis where the bitwise-and must be computed along
+             *
+             * @return Mean.
+             */
+            Tensor3 coeff_wise_and(int axis) const;
 
           private:
             //------------------------------------------------------------------

@@ -1,5 +1,7 @@
 #include "Node.h"
 
+#include "../utils/Definitions.h"
+
 namespace tomcat {
     namespace model {
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../utils/Definitions.h"
 #include "../../distribution/Dirichlet.h"
 #include "CPD.h"
 

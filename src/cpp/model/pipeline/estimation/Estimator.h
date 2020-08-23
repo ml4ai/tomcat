@@ -31,7 +31,9 @@ namespace tomcat {
 
             Eigen::VectorXd assignment;
 
-            Tensor3 estimates;
+            // Probabilities or densities calculated for n data points over
+            // several time steps.
+            Eigen::MatrixXd estimates;
         };
 
         /**
@@ -130,6 +132,11 @@ namespace tomcat {
              * @param json: json object
              */
             virtual void get_info(nlohmann::json& json) const = 0;
+
+            //------------------------------------------------------------------
+            // Getters & Setters
+            //------------------------------------------------------------------
+            int get_inference_horizon() const;
 
           protected:
             //------------------------------------------------------------------

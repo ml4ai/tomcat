@@ -8,6 +8,7 @@
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
 
+#include "../../utils/Definitions.h"
 #include "../../distribution/Distribution.h"
 #include "../Node.h"
 

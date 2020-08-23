@@ -2,6 +2,8 @@
 
 #include <sstream>
 
+#include "../../utils/EigenExtensions.h"
+
 namespace tomcat {
     namespace model {
 
@@ -53,7 +55,7 @@ namespace tomcat {
                     // row-wise fashion to aggregate the values for a given
                     // node.
                     for (int j = 0; j < num_nodes_evaluated; j++) {
-                        std::vector<Tensor3> evaluations_per_node;
+                        std::vector<Eigen::MatrixXd> evaluations_per_node;
                         evaluations_per_node.reserve(evaluations.size());
 
                         NodeEvaluationAggregation node_aggregation;
@@ -75,7 +77,7 @@ namespace tomcat {
         }
 
         Aggregation EvaluationAggregator::compute_aggregation(
-            const std::vector<Tensor3>& evaluations) const {
+            const std::vector<Eigen::MatrixXd>& evaluations) const {
 
             Aggregation aggregation;
 
@@ -85,9 +87,9 @@ namespace tomcat {
                 break;
             }
             case METHOD::average: {
-                aggregation.aggregated_values = std::vector<Tensor3>(1);
-                aggregation.aggregated_values[0] = Tensor3::mean(evaluations);
-                aggregation.errors = Tensor3::std(evaluations);
+                aggregation.aggregated_values = std::vector<Eigen::MatrixXd>(1);
+                aggregation.aggregated_values[0] = mean(evaluations);
+                aggregation.errors = standard_error(evaluations);
                 break;
             }
             default: {
@@ -115,21 +117,18 @@ namespace tomcat {
 
                     // The Eigen::VectorXd class does not have a to_string
                     // function.
-                    std::stringstream ss;
-                    ss << aggregations_per_node.assignment;
-                    json_result["node_assignment"] = ss.str();
+                    json_result["node_assignment"] =
+                        to_string(aggregations_per_node.assignment);
 
                     json_result["aggregated_value"] = nlohmann::json::array();
                     for (const auto& aggregated_value :
                          aggregations_per_node.aggregated_evaluation
                              .aggregated_values) {
                         json_result["aggregated_value"].push_back(
-                            aggregated_value.to_string());
-                        LOG(aggregated_value);
+                            to_string(aggregated_value));
                     }
-                    json_result["error"] =
-                        aggregations_per_node.aggregated_evaluation.errors
-                            .to_string();
+                    json_result["error"] = to_string(
+                        aggregations_per_node.aggregated_evaluation.errors);
                 }
                 json_aggregation["results"].push_back(json_result);
                 json.push_back(json_aggregation);

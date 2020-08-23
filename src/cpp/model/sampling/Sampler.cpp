@@ -64,7 +64,7 @@ namespace tomcat {
                 int d2 = nodes[0]->get_size();
                 int d3 = this->model->get_time_steps();
                 double* buffer = new double[d1 * d2 * d3];
-                std::fill_n(buffer, d1 * d2 * d3, -1);
+                std::fill_n(buffer, d1 * d2 * d3, NO_OBS);
                 for (auto& node : nodes) {
                     Eigen::Matrix assignment = node->get_assignment();
                     for (int i = 0; i < assignment.rows(); i++) {

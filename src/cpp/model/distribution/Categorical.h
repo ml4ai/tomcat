@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../utils/Definitions.h"
 #import "../pgm/Node.h"
 #import "Distribution.h"
 

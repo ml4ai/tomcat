@@ -76,7 +76,7 @@ add_library(tomcat_model_libs
         pipeline/evaluation/Accuracy.cpp
         pipeline/evaluation/F1Score.cpp
         pipeline/evaluation/EvaluationAggregator.cpp
-        pipeline/Pipeline.cpp utils/Definitions.h)
+        pipeline/Pipeline.cpp utils/Definitions.h utils/EigenExtensions.cpp utils/EigenExtensions.h)
 
 # Todo make code coverage work on Linux as well.
 if (APPLE AND CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")

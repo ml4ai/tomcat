@@ -7,13 +7,6 @@
 
 namespace tomcat {
     namespace model {
-
-        //----------------------------------------------------------------------
-        // Definitions
-        //----------------------------------------------------------------------
-
-#define exists(member, container) container.find(member) != container.end()
-
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
@@ -181,7 +174,7 @@ namespace tomcat {
             const std::vector<std::string>& parent_labels) const {
             std::string key = this->get_unique_key_from_labels(parent_labels);
             std::shared_ptr<CPD> cpd;
-            if (exists(key, this->cpd_templates)) {
+            if (EXISTS(key, this->cpd_templates)) {
                 cpd = this->cpd_templates.at(key);
             }
             else {

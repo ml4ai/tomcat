@@ -34,7 +34,8 @@ namespace tomcat {
             this->nodes_estimates.push_back(node_estimates);
         }
 
-        std::vector<NodeEstimates> Estimator::get_last_estimates(int initial_time_step) const {
+        std::vector<NodeEstimates>
+        Estimator::get_last_estimates(int initial_time_step) const {
             std::vector<NodeEstimates> last_estimates;
             last_estimates.reserve(this->nodes_estimates.size());
 
@@ -42,8 +43,11 @@ namespace tomcat {
                 NodeEstimates sliced_estimates;
                 sliced_estimates.label = node_estimate.label;
                 sliced_estimates.assignment = node_estimate.assignment;
-                sliced_estimates.estimates = node_estimate.estimates.slice(
-                        initial_time_step, Tensor3::ALL, 2);
+                sliced_estimates.estimates = node_estimate.estimates.block(
+                    0,
+                    initial_time_step,
+                    node_estimate.estimates.rows(),
+                    node_estimate.estimates.cols() - initial_time_step);
                 last_estimates.push_back(sliced_estimates);
             }
 
@@ -55,6 +59,10 @@ namespace tomcat {
         //----------------------------------------------------------------------
         void Estimator::set_training_data(const EvidenceSet& training_data) {
             this->training_data = training_data;
+        }
+
+        int Estimator::get_inference_horizon() const {
+            return inference_horizon;
         }
 
     } // namespace model

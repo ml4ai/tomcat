@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../utils/Definitions.h"
 #include "../pgm/Node.h"
 #include "Distribution.h"
 

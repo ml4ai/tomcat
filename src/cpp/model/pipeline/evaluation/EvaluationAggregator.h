@@ -23,16 +23,16 @@ namespace tomcat {
 
             // This is defined as a vector because according to the aggregation
             // method chosen, no aggregation might be performed at all.
-            std::vector<Tensor3> aggregated_values;
+            std::vector<Eigen::MatrixXd> aggregated_values;
 
-            // The error is a single tensor because, depending on the measure
-            // chosen to evaluate nodes, the results can be tensors instead of a
+            // The error is a single matrix because, depending on the measure
+            // chosen to evaluate nodes, the results can be matrices instead of a
             // single number. In that case, if the method chosen for aggregating
             // such evaluations is indeed a summarizer (it can just preserve
             // the evaluations with no aggregation at all), the resultant error
-            // will be over a list of tensors, which will result in another
-            // tensor.
-            Tensor3 errors;
+            // will be over a list of matrices, which will result in a single
+            // matrix.
+            Eigen::MatrixXd errors;
         };
 
         /**
@@ -137,7 +137,7 @@ namespace tomcat {
              * @return Aggregated evaluations
              */
             Aggregation
-            compute_aggregation(const std::vector<Tensor3>& evaluations) const;
+            compute_aggregation(const std::vector<Eigen::MatrixXd>& evaluations) const;
 
             /**
              * Returns the name of the aggregation method used;

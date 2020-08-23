@@ -3,6 +3,7 @@
 #include <eigen3/Eigen/Dense>
 #include <gsl/gsl_rng.h>
 
+#include "../utils/Definitions.h"
 #include "../pgm/Node.h"
 
 namespace tomcat {

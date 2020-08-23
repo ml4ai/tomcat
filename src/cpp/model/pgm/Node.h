@@ -4,6 +4,7 @@
 
 #include <eigen3/Eigen/Dense>
 
+#include "../utils/Definitions.h"
 #include "NodeMetadata.h"
 
 namespace tomcat {

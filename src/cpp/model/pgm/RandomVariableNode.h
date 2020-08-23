@@ -2,6 +2,7 @@
 
 #include "Node.h"
 
+#include "../utils/Definitions.h"
 #include "cpd/CPD.h"
 
 namespace tomcat {
