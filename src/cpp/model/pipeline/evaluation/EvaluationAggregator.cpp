@@ -105,14 +105,14 @@ namespace tomcat {
             json = nlohmann::json::array();
             for (int m = 0; m < this->measures.size(); m++) {
                 nlohmann::json json_aggregation;
-                json_aggregation["aggregation_method"] =
-                    this->get_method_name();
                 this->measures[m]->get_info(json_aggregation["measure"]);
-                json_aggregation["results"] = nlohmann::json::array();
-                nlohmann::json json_result;
+                json_aggregation["aggregation"]["method"] = this->get_method_name();
+                json_aggregation["aggregation"]["results"] = nlohmann::json::array();
+
 
                 for (const auto& aggregations_per_node :
                      this->aggregations_per_measure[m]) {
+                    nlohmann::json json_result;
                     json_result["node_label"] = aggregations_per_node.label;
 
                     // The Eigen::VectorXd class does not have a to_string
@@ -129,8 +129,9 @@ namespace tomcat {
                     }
                     json_result["error"] = to_string(
                         aggregations_per_node.aggregated_evaluation.errors);
+                    json_aggregation["aggregation"]["results"].push_back(json_result);
                 }
-                json_aggregation["results"].push_back(json_result);
+
                 json.push_back(json_aggregation);
             }
         }

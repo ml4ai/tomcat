@@ -25,13 +25,25 @@ find_package(Boost 1.69
         thread
         REQUIRED)
 
+include_directories(${Boost_INCLUDE_DIR})
+
 # FMT is a library used for formatting.
 find_package(FMT REQUIRED)
 
 # Json library is being used for writing evaluations to an output stream
 find_package(nlohmann_json REQUIRED)
 
-include_directories(${Boost_INCLUDE_DIR})
+if (NOT MOSQUITTO_INCLUDE_DIR)
+    find_path(MOSQUITTO_INCLUDE_DIR mosquitto.h)
+endif()
+
+include_directories(${MOSQUITTO_INCLUDE_DIR})
+
+if (NOT MOSQUITTO_LIBRARY)
+find_library(
+        MOSQUITTO_LIBRARY
+        NAMES mosquitto)
+endif()
 
 # Header files inside model folder
 file(GLOB tomcat_model_headers CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
@@ -76,7 +88,7 @@ add_library(tomcat_model_libs
         pipeline/evaluation/Accuracy.cpp
         pipeline/evaluation/F1Score.cpp
         pipeline/evaluation/EvaluationAggregator.cpp
-        pipeline/Pipeline.cpp utils/Definitions.h utils/EigenExtensions.cpp utils/EigenExtensions.h)
+        pipeline/Pipeline.cpp utils/Definitions.h utils/EigenExtensions.cpp utils/EigenExtensions.h utils/Mosquitto.cpp utils/Mosquitto.h)
 
 # Todo make code coverage work on Linux as well.
 if (APPLE AND CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
@@ -102,4 +114,5 @@ target_link_libraries(TomcatModel PUBLIC tomcat_model_libs
         GSL::gsl
         GSL::gslcblas
         fmt::fmt
-        nlohmann_json::nlohmann_json)
+        nlohmann_json::nlohmann_json
+        ${MOSQUITTO_LIBRARY})

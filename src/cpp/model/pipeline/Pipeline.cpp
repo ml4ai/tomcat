@@ -37,9 +37,9 @@ namespace tomcat {
                 }
                 std::vector<std::thread> threads =
                     this->start_estimation_threads(training_data, test_data);
-                for (auto& thread : threads) {
-                    thread.join();
-                }
+//                for (auto& thread : threads) {
+//                    thread.join();
+//                }
                 if (this->aggregator != nullptr) {
                     this->aggregator->evaluate(test_data);
                 }
@@ -75,13 +75,15 @@ namespace tomcat {
         Pipeline::start_estimation_threads(const EvidenceSet& training_data,
                                            const EvidenceSet& test_data) {
             std::vector<std::thread> threads;
-            threads.reserve(this->estimations.size());
+//            threads.reserve(this->estimations.size());
             for (auto& estimation : this->estimations) {
                 estimation->reset();
                 estimation->set_training_data(training_data);
-                std::thread estimation_thread(
-                    &Pipeline::estimate, this, estimation, test_data);
-                threads.push_back(std::move(estimation_thread));
+//                std::thread estimation_thread(
+//                    &Pipeline::estimate, this, estimation, test_data);
+//                threads.push_back(std::move(estimation_thread));
+                estimation->estimate(test_data);
+
             }
 
             return threads;

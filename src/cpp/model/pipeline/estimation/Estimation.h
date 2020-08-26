@@ -3,7 +3,6 @@
 #include <memory>
 
 #include "../../utils/Definitions.h"
-
 #include "Estimator.h"
 
 namespace tomcat {

@@ -90,17 +90,23 @@ namespace tomcat {
                           const Eigen::VectorXd& assignment);
 
             /**
-             * Returns estimates from a given initial time step until the last
-             * time step processed by the method, for all nodes processed by the
-             * estimator.
+             * Returns estimates at a given time step, for all nodes processed
+             * by the estimator.
              *
-             * @param initial_time_step: First time step to get the estimates
+             * @param time_step: First time step to get the estimates
              * from
              *
              * @return Series of estimates for the nodes in the estimator.
              */
-            std::vector<NodeEstimates>
-            get_last_estimates(int initial_time_step) const;
+            std::vector<NodeEstimates> get_estimates_at(int time_step) const;
+
+            /**
+             * Returns all the estimates computed so far, for all nodes
+             * processed by the estimator.
+             *
+             * @return Series of estimates for the nodes in the estimator.
+             */
+            std::vector<NodeEstimates> get_estimates() const;
 
             //------------------------------------------------------------------
             // Virtual functions
@@ -166,9 +172,6 @@ namespace tomcat {
             // List of nodes to estimate, their assignments and estimates
             // calculated.
             std::vector<NodeEstimates> nodes_estimates;
-
-            // Last time step used in the estimation.
-            int last_processed_time_step;
 
             // Determines if the task is a prediction (> 0) or an inference (=
             // 0). If it's a prediction, how much further in the future

@@ -34,6 +34,7 @@
 #include <memory>
 #include <unistd.h>
 #include <variant>
+#include "utils/Mosquitto.h"
 
 namespace fs = boost::filesystem;
 
@@ -45,6 +46,7 @@ class A {
     A() { std::cout << "New A" << std::endl; }
     A(A& a) { std::cout << "Copying A" << std::endl; }
     A(A&& a) { std::cout << "Moving A" << std::endl; }
+    ~A() { std::cout << "Destroying A" << std::endl; }
 
     void print() { std::cout << "I am A" << std::endl; }
 };
@@ -65,6 +67,11 @@ class B {
     }
     void print(A& a) const { a.print(); }
 };
+
+void test_shared_ptr(){
+    std::shared_ptr<A> a = std::make_shared<A>(A());
+    a->print();
+}
 
 void test_cpp_capabilities() {
     A a;
@@ -414,49 +421,101 @@ void test_pipeline() {
     std::shared_ptr<DBNSaver> saver = std::make_shared<DBNSaver>(
         DBNSaver(model, "../../data/model/pipeline_test/fold{}"));
 
-    std::shared_ptr<KFold> kfold = std::make_shared<KFold>(KFold(gen, 2));
+    std::shared_ptr<KFold> kfold = std::make_shared<KFold>(gen, 2);
 
-    MessageBrokerConfiguration config;
-    config.timeout = 5;
     std::shared_ptr<TrainingFrequencyEstimator> baseline_estimator =
         std::make_shared<TrainingFrequencyEstimator>(
-            TrainingFrequencyEstimator(model, 2));
+            TrainingFrequencyEstimator(model, 1));
     baseline_estimator->add_node("TG", Eigen::VectorXd::Constant(1,1));
+    baseline_estimator->add_node("TY", Eigen::VectorXd::Constant(1,1));
     std::shared_ptr<SumProductEstimator> sumproduct_estimator =
         std::make_shared<SumProductEstimator>(SumProductEstimator(model, 1));
     sumproduct_estimator->add_node("TG", Eigen::VectorXd::Constant(1, 1));
 
+    MessageBrokerConfiguration config;
+    config.timeout = 5;
+    config.address = "localhost";
+    config.port = 1883;
     std::shared_ptr<OnlineEstimation> estimation1 =
         std::make_shared<OnlineEstimation>(
-            OnlineEstimation(baseline_estimator, config));
+            baseline_estimator, config);
     std::shared_ptr<OnlineEstimation> estimation2 =
         std::make_shared<OnlineEstimation>(
-            OnlineEstimation(sumproduct_estimator, config));
+            sumproduct_estimator, config);
     std::shared_ptr<OfflineEstimation> estimation3 =
         std::make_shared<OfflineEstimation>(
-            OfflineEstimation(baseline_estimator));
+            baseline_estimator);
 
     std::shared_ptr<EvaluationAggregator> aggregator =
         std::make_shared<EvaluationAggregator>(
-            EvaluationAggregator(EvaluationAggregator::METHOD::average));
+            EvaluationAggregator(EvaluationAggregator::METHOD::no_aggregation));
 
-    std::shared_ptr<Estimates> estimates = std::make_shared<Estimates>(Estimates(baseline_estimator));
-    std::shared_ptr<Accuracy> accuracy = std::make_shared<Accuracy>(Accuracy(baseline_estimator));
+    std::shared_ptr<Estimates> estimates = std::make_shared<Estimates>(baseline_estimator);
+    std::shared_ptr<Accuracy> accuracy = std::make_shared<Accuracy>(baseline_estimator);
+    std::shared_ptr<F1Score> f1_score = std::make_shared<F1Score>(baseline_estimator);
 
     aggregator->add_measure(estimates);
     aggregator->add_measure(accuracy);
+    aggregator->add_measure(f1_score);
 
     Pipeline pipeline;
     pipeline.set_data(data);
     pipeline.set_data_splitter(kfold);
     pipeline.set_model_trainner(trainer);
     pipeline.set_model_saver(saver);
-//    pipeline.add_estimation(estimation1);
+    pipeline.add_estimation(estimation1);
 //    pipeline.add_estimation(estimation2);
-    pipeline.add_estimation(estimation3);
+//    pipeline.add_estimation(estimation3);
     pipeline.set_aggregator(aggregator);
 
     pipeline.execute();
+
+}
+namespace test {
+    class Test {
+      public:
+        virtual void init() = 0;
+
+        bool yay;
+    };
+
+    class Mosq : public Test, public Mosquitto {
+      public:
+        Mosq(MessageBrokerConfiguration config) : config(config) {}
+
+        ~Mosq(){
+        }
+
+        void init() override {
+            this->connect(config.address, config.port, 60);
+            this->subscribe("toy/test");
+            this->subscribe("toy/test2");
+            this->loop(true);
+            this->close();
+        }
+
+        void on_message(const std::string &topic, const std::string &message) override {
+
+        }
+
+        void on_error(const std::string &error_message) override {
+
+        }
+
+      private:
+        MessageBrokerConfiguration config;
+
+    };
+}
+
+void test_mosquitto(){
+    MessageBrokerConfiguration config;
+    config.timeout = 5;
+    config.address = "localhost";
+    config.port = 1883;
+
+    std::shared_ptr<test::Mosq> mosq_ptr = std::make_shared<test::Mosq>(test::Mosq(config));
+    mosq_ptr->init();
 }
 
 int main() {
@@ -519,6 +578,7 @@ int main() {
     //    LOG(tensor.repeat(1, 2));
 
     test_pipeline();
+    //test_mosquitto();
 
 //    Eigen::MatrixXd m(2,3);
 //    m << 1, 0, 1,

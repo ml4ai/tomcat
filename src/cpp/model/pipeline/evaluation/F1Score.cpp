@@ -26,11 +26,41 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        std::vector<NodeEvaluation> F1Score::evaluate(const EvidenceSet& test_data) const {
-            // TODO - return the F1 Score of the estimates computed by the
-            //  estimator
+        std::vector<NodeEvaluation>
+        F1Score::evaluate(const EvidenceSet& test_data) const {
+            std::vector<NodeEvaluation> evaluations;
 
-            return {};
+            for (const auto& estimates :
+                 this->estimator->get_estimates()) {
+                NodeEvaluation evaluation;
+                evaluation.label = estimates.label;
+                evaluation.assignment = estimates.assignment;
+
+                ConfusionMatrix confusion_matrix =
+                    this->get_confusion_matrix(estimates, test_data);
+                double precision = 0;
+                if (confusion_matrix.true_positives + confusion_matrix.false_positives > 0) {
+                    precision = (double)confusion_matrix.true_positives /
+                                (confusion_matrix.true_positives + confusion_matrix.false_positives);
+                }
+
+                double recall = 0;
+                if (confusion_matrix.true_positives + confusion_matrix.false_negatives > 0) {
+                    recall = (double)confusion_matrix.true_positives /
+                                (confusion_matrix.true_positives + confusion_matrix.false_negatives);
+                }
+
+                double f1_score = 0;
+                if (precision > 0 and recall > 0) {
+                    f1_score = (2 * precision * recall) / (precision + recall);
+                }
+
+                evaluation.evaluation =
+                    Eigen::MatrixXd::Constant(1, 1, f1_score);
+                evaluations.push_back(evaluation);
+            }
+
+            return evaluations;
         }
 
         void F1Score::get_info(nlohmann::json& json) const {

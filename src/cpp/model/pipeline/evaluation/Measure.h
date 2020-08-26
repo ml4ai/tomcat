@@ -18,6 +18,26 @@ namespace tomcat {
         //------------------------------------------------------------------
 
         /**
+         * This struct stores the counts of the 4 components of a confusion
+         * matrix.
+         */
+        struct ConfusionMatrix {
+
+            int true_positives = 0;
+
+            int false_positives = 0;
+
+            int true_negatives = 0;
+
+            int false_negatives = 0;
+
+            int get_total() const {
+                return true_positives + true_negatives + false_positives +
+                       false_negatives;
+            }
+        };
+
+        /**
          * This struct stores a node's label, assignment over which the
          * estimator performed its computations and the evaluations calculated
          * for that node.
@@ -97,6 +117,19 @@ namespace tomcat {
              * @param measure: measure to copy data members from
              */
             void copy_measure(const Measure& measure);
+
+            /**
+             * Computes the confusion matrix between real values and estimates
+             * previously computed for a model.
+             *
+             * @param estimates: estimates previously computed for the model
+             * @param test_data: data with real values to compare the estimates
+             * against
+             *
+             * @return Confusion matrix.
+             */
+            ConfusionMatrix
+            get_confusion_matrix(const NodeEstimates& estimates, const EvidenceSet& test_data) const;
 
             //------------------------------------------------------------------
             // Data members

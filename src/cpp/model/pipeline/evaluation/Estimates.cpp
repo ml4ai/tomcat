@@ -26,11 +26,11 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        std::vector<NodeEvaluation> Estimates::evaluate(const EvidenceSet& test_data) const {
+        std::vector<NodeEvaluation>
+        Estimates::evaluate(const EvidenceSet& test_data) const {
             std::vector<NodeEvaluation> evaluations;
 
-            for (const auto& estimates :
-                 this->estimator->get_last_estimates(0)) {
+            for (const auto& estimates : this->estimator->get_estimates()) {
                 NodeEvaluation evaluation;
                 evaluation.label = estimates.label;
                 evaluation.assignment = estimates.assignment;

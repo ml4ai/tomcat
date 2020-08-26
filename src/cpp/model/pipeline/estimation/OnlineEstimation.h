@@ -2,9 +2,10 @@
 
 #include <chrono>
 
-#include "../../utils/Definitions.h"
-
 #include "Estimation.h"
+
+#include "../../utils/Definitions.h"
+#include "../../utils/Mosquitto.h"
 
 namespace tomcat {
     namespace model {
@@ -19,11 +20,11 @@ namespace tomcat {
          */
         struct MessageBrokerConfiguration {
             std::string address;
-            std::string port;
+            int port;
 
             // If defined, the estimation thread will terminate after the number
             // of seconds here defined without receiving any message.
-            int timeout = -1;
+            int timeout = 9999;
 
             // Topics to subscribe to
             std::string state_topic = "observations/state";
@@ -40,13 +41,8 @@ namespace tomcat {
          * fashion. It listens to a message bus topic to compute estimates in
          * real time as data is observed.
          */
-        class OnlineEstimation : public Estimation {
+        class OnlineEstimation : public Estimation, public Mosquitto {
           public:
-            //------------------------------------------------------------------
-            // Types, Enums & Constants
-            //------------------------------------------------------------------
-            typedef std::chrono::steady_clock::time_point Time;
-
             //------------------------------------------------------------------
             // Constructors & Destructor
             //------------------------------------------------------------------
@@ -57,15 +53,7 @@ namespace tomcat {
              * @param estimator: type of estimation to be performed
              */
             OnlineEstimation(std::shared_ptr<Estimator> estimator,
-                             MessageBrokerConfiguration& config);
-
-            /**
-             * Creates an online estimation process.
-             *
-             * @param estimator: type of estimation to be performed
-             */
-            OnlineEstimation(std::shared_ptr<Estimator> estimator,
-                             MessageBrokerConfiguration&& config);
+                             MessageBrokerConfiguration config);
 
             ~OnlineEstimation();
 
@@ -85,6 +73,16 @@ namespace tomcat {
             //------------------------------------------------------------------
             void estimate(EvidenceSet test_data) override;
 
+          protected:
+            void reset() override;
+
+            void on_error(const std::string& error_message) override;
+
+            void on_message(const std::string& topic,
+                            const std::string& message) override;
+
+            void on_time_out() override;
+
           private:
             //------------------------------------------------------------------
             // Member functions
@@ -95,19 +93,13 @@ namespace tomcat {
              */
             void copy_estimation(const OnlineEstimation& estimation);
 
-            // TODO - remove this later
-            void reset() override;
-
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------
             MessageBrokerConfiguration config;
 
-            // Last time the estimation process received a message.
-            Time last_updated_time;
-
-            // TODO - remove this later
-            bool init = false;
+            // Number of time steps the estimation already processed.
+            int time_step;
         };
 
     } // namespace model
