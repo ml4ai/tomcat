@@ -26,6 +26,3 @@ mark_as_advanced(Mosquitto_INCLUDE_DIR Mosquitto_LIBRARY )
 
 set(Mosquitto_LIBRARIES ${Mosquitto_LIBRARY} )
 set(Mosquitto_INCLUDE_DIRS ${Mosquitto_INCLUDE_DIR})
-
-message("Mosquitto header file found: ${Mosquitto_INCLUDE_DIRS}/mosquitto.h")
-message("Mosquitto library found: ${Mosquitto_LIBRARIES}")
