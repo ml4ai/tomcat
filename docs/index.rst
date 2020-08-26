@@ -74,8 +74,6 @@ the Zombie Invasion.
    usage
    CONTRIBUTING
 
-We are also building some Java components to extend Minecraft and Project Malmo
-functionality - The API for those components can be found here: `Java API <developer/java_api/index.html>`_
 
 The Github repository for ToMCAT can be found `here <https://github.com/ml4ai/tomcat>`_.
 

@@ -49,45 +49,45 @@
 
 namespace Utilities {
 
-  //===========================================================================
-  /**
-  A class for recording CSV file from OpenFace
-  */
-  class RecorderHOG {
+    //===========================================================================
+    /**
+    A class for recording CSV file from OpenFace
+    */
+    class RecorderHOG {
 
-  public:
-    // The constructor for the recorder, by default does not do anything
-    RecorderHOG();
+      public:
+        // The constructor for the recorder, by default does not do anything
+        RecorderHOG();
 
-    // Adding observations to the recorder
-    void SetObservationHOG(bool success,
-                           const cv::Mat_<double>& hog_descriptor,
-                           int num_cols,
-                           int num_rows,
-                           int num_channels);
+        // Adding observations to the recorder
+        void SetObservationHOG(bool success,
+                               const cv::Mat_<double>& hog_descriptor,
+                               int num_cols,
+                               int num_rows,
+                               int num_channels);
 
-    void Write();
+        void Write();
 
-    bool Open(std::string filename);
+        bool Open(std::string filename);
 
-    void Close();
+        void Close();
 
-  private:
-    // Blocking copy and move, as it doesn't make sense to read to write to the
-    // same file
-    RecorderHOG& operator=(const RecorderHOG& other);
-    RecorderHOG& operator=(const RecorderHOG&& other);
-    RecorderHOG(const RecorderHOG&& other);
-    RecorderHOG(const RecorderHOG& other);
+      private:
+        // Blocking copy and move, as it doesn't make sense to read to write to
+        // the same file
+        RecorderHOG& operator=(const RecorderHOG& other);
+        RecorderHOG& operator=(const RecorderHOG&& other);
+        RecorderHOG(const RecorderHOG&& other);
+        RecorderHOG(const RecorderHOG& other);
 
-    std::ofstream hog_file;
+        std::ofstream hog_file;
 
-    // Internals for recording
-    int num_cols;
-    int num_rows;
-    int num_channels;
-    cv::Mat_<double> hog_descriptor;
-    bool good_frame;
-  };
+        // Internals for recording
+        int num_cols;
+        int num_rows;
+        int num_channels;
+        cv::Mat_<double> hog_descriptor;
+        bool good_frame;
+    };
 } // namespace Utilities
 #endif // RECORDER_HOG_H

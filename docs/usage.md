@@ -25,16 +25,9 @@ This folder will contain the following files:
     - `system_audio.wav` : A WAV file containing a recording of the sound
       output produced by the computer. This will not be produced on macOS
       computers running macOS Mojave or older.
-    - `malmo_data.txt` : A file containing timestamped observations of the player's
-    state (position, velocity, health, pitch, yaw, etc.)
-    - `events.txt`: A file containing timestamped discrete event data
-    such as players interacting with doors, buttons, and levers, or attacking
-    monsters.
-    - `chat.txt`: A  file containing timestamped chat event data.
-      Can be empty if there were no chats sent.
-    - `self_reports.txt`: A JSON file with self-report survey responses. Can be
-      empty if the player exits the game before answering the self-report
-      questions.
+    - `messages.txt` : A file containing timestamped observations of the player's
+                     state, in-game events, and self-report responses. Each
+                     line in this file corresponds to a JSON object.
 
 The format for the event and observation data can be found
 [here](https://ml4ai.github.io/tomcat/tomcat_openapi).
