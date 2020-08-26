@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../utils/Definitions.h"
-#import "../pgm/Node.h"
-#import "Distribution.h"
+#include "../pgm/Node.h"
+#include "Distribution.h"
 
 namespace tomcat {
     namespace model {
