@@ -37,8 +37,12 @@ namespace tomcat {
         }
 
         void SumProductEstimator::get_info(nlohmann::json& json) const {
-            json["name"] = "sum_product";
+            json["name"] = this->get_name();
             json["inference_horizon"] = this->inference_horizon;
+        }
+
+        std::string SumProductEstimator::get_name() const {
+            return "sum-product";
         }
 
     } // namespace model

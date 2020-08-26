@@ -54,6 +54,8 @@ namespace tomcat {
 
             void get_info(nlohmann::json& json) const override;
 
+            std::string get_name() const override;
+
         };
 
     } // namespace model

@@ -3,7 +3,6 @@
 #include <iostream>
 #include <memory>
 #include <string>
-#include <thread>
 #include <vector>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -12,7 +11,7 @@
 #include "../utils/Definitions.h"
 #include "DBNSaver.h"
 #include "KFold.h"
-#include "estimation/Estimation.h"
+#include "estimation/EstimationProcess.h"
 #include "evaluation/EvaluationAggregator.h"
 #include "training/DBNTrainer.h"
 
@@ -81,13 +80,6 @@ namespace tomcat {
             void execute();
 
             /**
-             * Adds an estimation process to the pipeline.
-             *
-             * @param estimation: estimation process
-             */
-            void add_estimation(const std::shared_ptr<Estimation>& estimation);
-
-            /**
              * Writes information about the execution to an output stream.
              *
              * @param execution_start_time: time when the pipeline
@@ -111,6 +103,9 @@ namespace tomcat {
 
             void set_model_saver(const std::shared_ptr<DBNSaver>& model_saver);
 
+            void set_estimation_process(
+                const std::shared_ptr<EstimationProcess>& estimation_process);
+
             void set_aggregator(
                 const std::shared_ptr<EvaluationAggregator>& aggregator);
 
@@ -118,12 +113,6 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-            std::vector<std::thread>
-            start_estimation_threads(const EvidenceSet& training_data,
-                                     const EvidenceSet& test_data);
-
-            void estimate(std::shared_ptr<Estimation> estimation,
-                          const EvidenceSet& test_data);
 
             /**
              * Checks if the pipeline is consistent, that is, whether at least a
@@ -147,7 +136,7 @@ namespace tomcat {
 
             std::shared_ptr<DBNSaver> model_saver;
 
-            std::vector<std::shared_ptr<Estimation>> estimations;
+            std::shared_ptr<EstimationProcess> estimation_process;
 
             std::shared_ptr<EvaluationAggregator> aggregator;
         };

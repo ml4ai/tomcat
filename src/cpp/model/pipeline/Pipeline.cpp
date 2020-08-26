@@ -35,11 +35,11 @@ namespace tomcat {
                 if (this->model_saver != nullptr) {
                     this->model_saver->save();
                 }
-                std::vector<std::thread> threads =
-                    this->start_estimation_threads(training_data, test_data);
-//                for (auto& thread : threads) {
-//                    thread.join();
-//                }
+
+                this->estimation_process->reset();
+                this->estimation_process->set_training_data(training_data);
+                this->estimation_process->estimate(test_data);
+
                 if (this->aggregator != nullptr) {
                     this->aggregator->evaluate(test_data);
                 }
@@ -66,39 +66,9 @@ namespace tomcat {
                     "A model trainer was not provided to the pipeline.");
             }
 
-            if (this->estimations.empty()) {
+            if (this->estimation_process == nullptr) {
                 LOG_WARNING("No estimation was provided to the pipeline.");
             }
-        }
-
-        std::vector<std::thread>
-        Pipeline::start_estimation_threads(const EvidenceSet& training_data,
-                                           const EvidenceSet& test_data) {
-            std::vector<std::thread> threads;
-//            threads.reserve(this->estimations.size());
-            for (auto& estimation : this->estimations) {
-                estimation->reset();
-                estimation->set_training_data(training_data);
-//                std::thread estimation_thread(
-//                    &Pipeline::estimate, this, estimation, test_data);
-//                threads.push_back(std::move(estimation_thread));
-                estimation->estimate(test_data);
-
-            }
-
-            return threads;
-        }
-
-        void Pipeline::estimate(std::shared_ptr<Estimation> estimation,
-                                const EvidenceSet& test_data) {
-            while (!estimation->is_finished()) {
-                estimation->estimate(test_data);
-            }
-        }
-
-        void Pipeline::add_estimation(
-            const std::shared_ptr<Estimation>& estimation) {
-            this->estimations.push_back(estimation);
         }
 
         void Pipeline::display_results(
@@ -143,6 +113,11 @@ namespace tomcat {
         void Pipeline::set_model_saver(
             const std::shared_ptr<DBNSaver>& model_saver) {
             this->model_saver = model_saver;
+        }
+
+        void Pipeline::set_estimation_process(
+            const std::shared_ptr<EstimationProcess>& estimation_process) {
+            this->estimation_process = estimation_process;
         }
 
         void Pipeline::set_aggregator(

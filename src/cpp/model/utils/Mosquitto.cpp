@@ -117,7 +117,11 @@ void Mosquitto::connect(const std::string& address, int port, int alive_delay) {
     int error_code = mosquitto_connect(
         this->mqtt_client, address.c_str(), port, alive_delay);
     if (error_code != MOSQ_ERR_SUCCESS) {
-        throw mosquitto_strerror(error_code);
+        std::stringstream ss;
+        ss << "It was not possible to establish connection with the "
+              "message broker at "
+           << address << ":" << port;
+        this->on_error(ss.str());
     }
     this->running = true;
 }
@@ -127,7 +131,9 @@ void Mosquitto::subscribe(const std::string& topic) {
     int error_code =
         mosquitto_subscribe(this->mqtt_client, NULL, topic.c_str(), qos);
     if (error_code != MOSQ_ERR_SUCCESS) {
-        throw mosquitto_strerror(error_code);
+        std::stringstream ss;
+        ss << "It was not possible to subscribe to the topic " << topic;
+        this->on_error(ss.str());
     }
 }
 
@@ -144,7 +150,9 @@ void Mosquitto::publish(const std::string& topic, const std::string& message) {
                                        qos,
                                        false);
     if (error_code != MOSQ_ERR_SUCCESS) {
-        throw mosquitto_strerror(error_code);
+        std::stringstream ss;
+        ss << "It was not possible to publish in the topic " << topic;
+        this->on_error(ss.str());
     }
 }
 

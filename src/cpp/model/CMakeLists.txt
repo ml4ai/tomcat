@@ -80,7 +80,7 @@ add_library(tomcat_model_libs
         pipeline/estimation/Estimator.cpp
         pipeline/estimation/TrainingFrequencyEstimator.cpp
         pipeline/estimation/SumProductEstimator.cpp
-        pipeline/estimation/Estimation.cpp
+        pipeline/estimation/EstimationProcess.cpp
         pipeline/estimation/OfflineEstimation.cpp
         pipeline/estimation/OnlineEstimation.cpp
         pipeline/evaluation/Measure.cpp

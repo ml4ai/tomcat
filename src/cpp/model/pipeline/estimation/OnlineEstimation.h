@@ -1,18 +1,15 @@
 #pragma once
 
-#include <chrono>
+#include <thread>
+#include <queue>
 
-#include "Estimation.h"
+#include "EstimationProcess.h"
 
 #include "../../utils/Definitions.h"
 #include "../../utils/Mosquitto.h"
 
 namespace tomcat {
     namespace model {
-
-        //------------------------------------------------------------------
-        // Structs
-        //------------------------------------------------------------------
 
         /**
          * This struct contains information needed to connect to a message
@@ -33,7 +30,8 @@ namespace tomcat {
             std::string self_report_topic = "observations/self_reports";
 
             // Topics to publish to
-            std::string estimation_topic = "estimations/xxxx";
+            std::string estimates_topic = "tomcat/estimates";
+            std::string log_topic = "tomcat/log";
         };
 
         /**
@@ -41,7 +39,7 @@ namespace tomcat {
          * fashion. It listens to a message bus topic to compute estimates in
          * real time as data is observed.
          */
-        class OnlineEstimation : public Estimation, public Mosquitto {
+        class OnlineEstimation : public EstimationProcess, public Mosquitto {
           public:
             //------------------------------------------------------------------
             // Constructors & Destructor
@@ -52,8 +50,7 @@ namespace tomcat {
              *
              * @param estimator: type of estimation to be performed
              */
-            OnlineEstimation(std::shared_ptr<Estimator> estimator,
-                             MessageBrokerConfiguration config);
+            OnlineEstimation(MessageBrokerConfiguration config);
 
             ~OnlineEstimation();
 
@@ -93,6 +90,20 @@ namespace tomcat {
              */
             void copy_estimation(const OnlineEstimation& estimation);
 
+            /**
+             * Function executed by a thread responsible for calculating the
+             * estimates for a single estimator.
+             *
+             * @param estimator: estimator
+             * @param test_data: data to estimate values over
+             */
+            void run_estimation_thread();
+
+            /**
+             * Publishes last computed estimates to the message bus.
+             */
+            void publish_last_estimates();
+
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------
@@ -100,6 +111,10 @@ namespace tomcat {
 
             // Number of time steps the estimation already processed.
             int time_step;
+
+            // Data received from the message bus and stored to be processed by
+            // the estimation threads.
+            std::queue<EvidenceSet> data_to_process;
         };
 
     } // namespace model

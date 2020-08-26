@@ -17,14 +17,15 @@
 #include "pipeline/estimation/OnlineEstimation.h"
 #include "pipeline/estimation/SumProductEstimator.h"
 #include "pipeline/estimation/TrainingFrequencyEstimator.h"
-#include "pipeline/evaluation/Estimates.h"
 #include "pipeline/evaluation/Accuracy.h"
-#include "pipeline/evaluation/F1Score.h"
+#include "pipeline/evaluation/Estimates.h"
 #include "pipeline/evaluation/EvaluationAggregator.h"
+#include "pipeline/evaluation/F1Score.h"
 #include "pipeline/training/DBNSamplingTrainer.h"
 #include "sampling/AncestralSampler.h"
 #include "sampling/GibbsSampler.h"
 #include "utils/FileHandler.h"
+#include "utils/Mosquitto.h"
 #include <boost/filesystem.hpp>
 #include <eigen3/Eigen/Dense>
 #include <fstream>
@@ -34,7 +35,6 @@
 #include <memory>
 #include <unistd.h>
 #include <variant>
-#include "utils/Mosquitto.h"
 
 namespace fs = boost::filesystem;
 
@@ -68,7 +68,7 @@ class B {
     void print(A& a) const { a.print(); }
 };
 
-void test_shared_ptr(){
+void test_shared_ptr() {
     std::shared_ptr<A> a = std::make_shared<A>(A());
     a->print();
 }
@@ -415,8 +415,8 @@ void test_pipeline() {
     GibbsSampler gibbs(model, 20);
 
     std::shared_ptr<DBNSamplingTrainer> trainer =
-        std::make_shared<DBNSamplingTrainer>(DBNSamplingTrainer(
-            gen, std::make_shared<GibbsSampler>(gibbs), 50));
+        std::make_shared<DBNSamplingTrainer>(
+            DBNSamplingTrainer(gen, std::make_shared<GibbsSampler>(gibbs), 50));
 
     std::shared_ptr<DBNSaver> saver = std::make_shared<DBNSaver>(
         DBNSaver(model, "../../data/model/pipeline_test/fold{}"));
@@ -426,8 +426,8 @@ void test_pipeline() {
     std::shared_ptr<TrainingFrequencyEstimator> baseline_estimator =
         std::make_shared<TrainingFrequencyEstimator>(
             TrainingFrequencyEstimator(model, 1));
-    baseline_estimator->add_node("TG", Eigen::VectorXd::Constant(1,1));
-    baseline_estimator->add_node("TY", Eigen::VectorXd::Constant(1,1));
+    baseline_estimator->add_node("TG", Eigen::VectorXd::Constant(1, 1));
+    baseline_estimator->add_node("TY", Eigen::VectorXd::Constant(1, 1));
     std::shared_ptr<SumProductEstimator> sumproduct_estimator =
         std::make_shared<SumProductEstimator>(SumProductEstimator(model, 1));
     sumproduct_estimator->add_node("TG", Eigen::VectorXd::Constant(1, 1));
@@ -437,25 +437,29 @@ void test_pipeline() {
     config.address = "localhost";
     config.port = 1883;
     std::shared_ptr<OnlineEstimation> estimation1 =
-        std::make_shared<OnlineEstimation>(
-            baseline_estimator, config);
-    std::shared_ptr<OnlineEstimation> estimation2 =
-        std::make_shared<OnlineEstimation>(
-            sumproduct_estimator, config);
-    std::shared_ptr<OfflineEstimation> estimation3 =
-        std::make_shared<OfflineEstimation>(
-            baseline_estimator);
+        std::make_shared<OnlineEstimation>(config);
+    estimation1->add_estimator(baseline_estimator);
+    std::shared_ptr<OfflineEstimation> estimation2 =
+        std::make_shared<OfflineEstimation>();
+    estimation2->add_estimator(baseline_estimator);
+    estimation2->add_estimator(sumproduct_estimator);
 
     std::shared_ptr<EvaluationAggregator> aggregator =
         std::make_shared<EvaluationAggregator>(
-            EvaluationAggregator(EvaluationAggregator::METHOD::no_aggregation));
+            EvaluationAggregator::METHOD::no_aggregation);
 
-    std::shared_ptr<Estimates> estimates = std::make_shared<Estimates>(baseline_estimator);
-    std::shared_ptr<Accuracy> accuracy = std::make_shared<Accuracy>(baseline_estimator);
-    std::shared_ptr<F1Score> f1_score = std::make_shared<F1Score>(baseline_estimator);
+    std::shared_ptr<Estimates> estimates =
+        std::make_shared<Estimates>(baseline_estimator);
+    std::shared_ptr<Accuracy> accuracy =
+        std::make_shared<Accuracy>(baseline_estimator);
+    std::shared_ptr<Accuracy> accuracy_sp =
+        std::make_shared<Accuracy>(sumproduct_estimator);
+    std::shared_ptr<F1Score> f1_score =
+        std::make_shared<F1Score>(baseline_estimator);
 
     aggregator->add_measure(estimates);
     aggregator->add_measure(accuracy);
+    aggregator->add_measure(accuracy_sp);
     aggregator->add_measure(f1_score);
 
     Pipeline pipeline;
@@ -463,13 +467,11 @@ void test_pipeline() {
     pipeline.set_data_splitter(kfold);
     pipeline.set_model_trainner(trainer);
     pipeline.set_model_saver(saver);
-    pipeline.add_estimation(estimation1);
-//    pipeline.add_estimation(estimation2);
-//    pipeline.add_estimation(estimation3);
+    pipeline.set_estimation_process(estimation1);
+    //pipeline.set_estimation_process(estimation2);
     pipeline.set_aggregator(aggregator);
 
     pipeline.execute();
-
 }
 namespace test {
     class Test {
@@ -483,8 +485,7 @@ namespace test {
       public:
         Mosq(MessageBrokerConfiguration config) : config(config) {}
 
-        ~Mosq(){
-        }
+        ~Mosq() {}
 
         void init() override {
             this->connect(config.address, config.port, 60);
@@ -494,27 +495,24 @@ namespace test {
             this->close();
         }
 
-        void on_message(const std::string &topic, const std::string &message) override {
+        void on_message(const std::string& topic,
+                        const std::string& message) override {}
 
-        }
-
-        void on_error(const std::string &error_message) override {
-
-        }
+        void on_error(const std::string& error_message) override {}
 
       private:
         MessageBrokerConfiguration config;
-
     };
-}
+} // namespace test
 
-void test_mosquitto(){
+void test_mosquitto() {
     MessageBrokerConfiguration config;
     config.timeout = 5;
     config.address = "localhost";
     config.port = 1883;
 
-    std::shared_ptr<test::Mosq> mosq_ptr = std::make_shared<test::Mosq>(test::Mosq(config));
+    std::shared_ptr<test::Mosq> mosq_ptr =
+        std::make_shared<test::Mosq>(test::Mosq(config));
     mosq_ptr->init();
 }
 
@@ -528,8 +526,7 @@ int main() {
     std::shared_ptr<DynamicBayesNet> dbn_ptr =
         std::make_shared<DynamicBayesNet>(create_dbn(true));
     dbn_ptr->unroll(20, true);
-        generate_samples_to_test(dbn_ptr, 10,
-        gen);
+    generate_samples_to_test(dbn_ptr, 10, gen);
 
     //        std::shared_ptr<DynamicBayesNet> dbn_ptr =
     //            std::make_shared<DynamicBayesNet>(create_dbn(false));
@@ -578,17 +575,17 @@ int main() {
     //    LOG(tensor.repeat(1, 2));
 
     test_pipeline();
-    //test_mosquitto();
+    // test_mosquitto();
 
-//    Eigen::MatrixXd m(2,3);
-//    m << 1, 0, 1,
-//         0, 0, 1;
-//
-//    Eigen::MatrixXd b = (m.array() == 1).select(MatrixXd::Constant(m.rows(), m.cols(), 2), MatrixXd::Zero(m.rows(), m.cols()));
-//
-//    std::cout << b;
-
-
+    //    Eigen::MatrixXd m(2,3);
+    //    m << 1, 0, 1,
+    //         0, 0, 1;
+    //
+    //    Eigen::MatrixXd b = (m.array() ==
+    //    1).select(MatrixXd::Constant(m.rows(), m.cols(), 2),
+    //    MatrixXd::Zero(m.rows(), m.cols()));
+    //
+    //    std::cout << b;
 
     // gsl_rng_set(gen.get(), time(0));
     // dbn.unroll(4, true);

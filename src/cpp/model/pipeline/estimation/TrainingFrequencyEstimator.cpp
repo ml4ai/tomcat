@@ -73,8 +73,12 @@ namespace tomcat {
         }
 
         void TrainingFrequencyEstimator::get_info(nlohmann::json& json) const {
-            json["name"] = "training frequency";
+            json["name"] = this->get_name();
             json["inference_horizon"] = this->inference_horizon;
+        }
+
+        std::string TrainingFrequencyEstimator::get_name() const {
+            return "training frequency";
         }
 
     } // namespace model

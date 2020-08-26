@@ -1,5 +1,6 @@
 #include "OnlineEstimation.h"
 
+#include <algorithm>
 #include <sstream>
 #include <thread>
 
@@ -11,9 +12,8 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
-        OnlineEstimation::OnlineEstimation(std::shared_ptr<Estimator> estimator,
-                                           MessageBrokerConfiguration config)
-            : Estimation(estimator), config(config) {}
+        OnlineEstimation::OnlineEstimation(MessageBrokerConfiguration config)
+            : config(config) {}
 
         OnlineEstimation::~OnlineEstimation() {}
 
@@ -34,13 +34,13 @@ namespace tomcat {
         // Member functions
         //----------------------------------------------------------------------
         void OnlineEstimation::reset() {
-            Estimation::reset();
+            EstimationProcess::reset();
             this->time_step = 0;
         }
 
         void
         OnlineEstimation::copy_estimation(const OnlineEstimation& estimation) {
-            Estimation::copy_estimation(estimation);
+            EstimationProcess::copy_estimation(estimation);
             Mosquitto::copy_wrapper(estimation);
             this->config = estimation.config;
         }
@@ -50,32 +50,60 @@ namespace tomcat {
             this->connect(this->config.address, this->config.port, 60);
             this->subscribe(this->config.state_topic);
             this->subscribe(this->config.events_topic);
+            std::thread estimation_thread(
+                &OnlineEstimation::run_estimation_thread, this);
             this->loop();
             this->close();
-            this->finished = true;
+            // Join because even if messages are not coming anymore, pending
+            // data from previous messages could still be in the queue to
+            // be processed.
+            estimation_thread.join();
+        }
 
-            //            this->estimator->estimate(test_data);
-            //            std::this_thread::sleep_for(std::chrono::seconds(1));
-            //
-            //            if (this->config.timeout > 0) {
-            //                if (!this->init) {
-            //                    this->last_updated_time =
-            //                    std::chrono::steady_clock::now(); this->init =
-            //                    true;
-            //                }
-            //                else {
-            //                    Time current_time =
-            //                    std::chrono::steady_clock::now(); long
-            //                    duration =
-            //                        std::chrono::duration_cast<std::chrono::seconds>(
-            //                            current_time -
-            //                            this->last_updated_time) .count();
-            //
-            //                    if (duration > this->config.timeout) {
-            //                        this->finished = true;
-            //                    }
-            //                }
-            //            }
+        void OnlineEstimation::run_estimation_thread() {
+            while (this->running || !this->data_to_process.empty()) {
+                // To avoid the overload of creating and destroying threads, so
+                // far the estimators will run in sequence. Later this can be
+                // improved by creating perennial threads for each one of the
+                // estimators and keep tracking of the data point they have
+                // processes in the list of available data.
+                if (!this->data_to_process.empty()) {
+                    EvidenceSet new_data = this->data_to_process.front();
+                    this->data_to_process.pop();
+                    for (auto estimator : this->estimators) {
+                        estimator->estimate(new_data);
+                    }
+
+                    this->publish_last_estimates();
+                    this->time_step++;
+                }
+            }
+        }
+
+        void OnlineEstimation::publish_last_estimates() {
+            try {
+                for (const auto estimator : this->estimators) {
+                    for (const auto& node_estimates :
+                         estimator->get_estimates_at(this->time_step)) {
+                        std::string estimator_name = estimator->get_name();
+                        std::replace(estimator_name.begin(),
+                                     estimator_name.end(),
+                                     ' ',
+                                     '_');
+                        std::stringstream ss_topic;
+                        ss_topic << this->config.estimates_topic << "/"
+                                 << estimator_name << "/"
+                                 << node_estimates.label;
+
+                        this->publish(ss_topic.str(),
+                                      to_string(node_estimates.estimates));
+                    }
+                }
+            }
+            catch (std::out_of_range& e) {
+                this->publish(this->config.log_topic, "max_time_step_reached");
+                this->running = false;
+            }
         }
 
         void OnlineEstimation::on_error(const std::string& error_message) {
@@ -91,27 +119,11 @@ namespace tomcat {
             EvidenceSet new_data;
             new_data.add_data("TG", data1);
             new_data.add_data("TY", data2);
-            this->estimator->estimate(new_data);
-
-            try {
-                for (const auto& node_estimates :
-                     this->estimator->get_estimates_at(this->time_step)) {
-                    std::stringstream ss_topic;
-                    ss_topic << "estimates/" << node_estimates.label;
-
-                    this->publish(ss_topic.str(),
-                                  to_string(node_estimates.estimates));
-                }
-            }
-            catch (std::out_of_range& e) {
-                this->publish("log", "max_time_step_reached");
-                this->running = false;
-            }
-            this->time_step++;
+            this->data_to_process.push(new_data);
         }
 
         void OnlineEstimation::on_time_out() {
-            this->publish("log", "time_out");
+            this->publish(this->config.log_topic, "time_out");
         }
 
     } // namespace model

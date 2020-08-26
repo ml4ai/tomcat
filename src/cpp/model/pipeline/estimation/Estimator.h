@@ -139,6 +139,13 @@ namespace tomcat {
              */
             virtual void get_info(nlohmann::json& json) const = 0;
 
+            /**
+             * Returns the name of the estimator.
+             *
+             * @return Estimator's name.
+             */
+            virtual std::string get_name() const = 0;
+
             //------------------------------------------------------------------
             // Getters & Setters
             //------------------------------------------------------------------

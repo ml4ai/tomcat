@@ -19,7 +19,7 @@ namespace tomcat {
         /**
          * Generic estimation process for a DBN model.
          */
-        class Estimation {
+        class EstimationProcess {
           public:
             //------------------------------------------------------------------
             // Types, Enums & Constants
@@ -32,16 +32,9 @@ namespace tomcat {
             /**
              * Creates an empty estimation process for a model.
              */
-            Estimation();
+            EstimationProcess();
 
-            /**
-             * Creates an abstract estimation process for a model.
-             *
-             * @param estimator: type of estimation to be performed
-             */
-            Estimation(std::shared_ptr<Estimator> estimator);
-
-            virtual ~Estimation();
+            virtual ~EstimationProcess();
 
             //------------------------------------------------------------------
             // Copy & Move constructors/assignments
@@ -50,13 +43,13 @@ namespace tomcat {
             // Copy constructor and assignment should be deleted to avoid
             // implicit slicing and loss of polymorphic behaviour in the
             // subclasses. To deep copy, the clone method must be used.
-            Estimation(const Estimation&) = delete;
+            EstimationProcess(const EstimationProcess&) = delete;
 
-            Estimation& operator=(const Estimation&) = delete;
+            EstimationProcess& operator=(const EstimationProcess&) = delete;
 
-            Estimation(Estimation&&) = default;
+            EstimationProcess(EstimationProcess&&) = default;
 
-            Estimation& operator=(Estimation&&) = default;
+            EstimationProcess& operator=(EstimationProcess&&) = default;
 
             //------------------------------------------------------------------
             // Member functions
@@ -70,6 +63,13 @@ namespace tomcat {
              * @param training_data: training data
              */
             void set_training_data(const EvidenceSet& training_data);
+
+            /**
+             * Adds a new estimator to the estimation process.
+             *
+             * @param estimator: Estimator
+             */
+            void add_estimator(std::shared_ptr<Estimator> estimator);
 
             //------------------------------------------------------------------
             // Virtual functions
@@ -92,13 +92,6 @@ namespace tomcat {
              */
             virtual void estimate(EvidenceSet test_data) = 0;
 
-            //------------------------------------------------------------------
-            // Getters & Setters
-            //------------------------------------------------------------------
-            const std::shared_ptr<Estimator>& get_estimator() const;
-
-            bool is_finished() const;
-
           protected:
             //------------------------------------------------------------------
             // Member functions
@@ -107,14 +100,12 @@ namespace tomcat {
             /**
              * Copies data members from another estimation process.
              */
-            void copy_estimation(const Estimation& estimation);
+            void copy_estimation(const EstimationProcess& estimation);
 
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------
-            std::shared_ptr<Estimator> estimator;
-
-            bool finished = false;
+            std::vector<std::shared_ptr<Estimator>> estimators;
         };
 
     } // namespace model
