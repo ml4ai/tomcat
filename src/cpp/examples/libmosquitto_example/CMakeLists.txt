@@ -9,8 +9,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
                       "${CMAKE_SOURCE_DIR}/../../../../tools/cmake")
 
 find_package(Mosquitto 1.5 REQUIRED)
-message("Mosquitto header file found: ${Mosquitto_INCLUDE_DIRS}/mosquitto.h")
-message("Mosquitto library found: ${Mosquitto_LIBRARIES}")
 
 add_executable(libmosquitto_example libmosquitto_example.c)
 target_include_directories(libmosquitto_example
