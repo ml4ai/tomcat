@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -u
 
 # =============================================================================
@@ -35,8 +34,8 @@ if [[ ! $(pgrep -l mosquitto | head -n1 | cut -d' ' -f2) == mosquitto ]]; then
     "$MOSQUITTO" &> ${TOMCAT_TMP_DIR}/mosquitto.log &
 fi
 
-# On macOS, uuidgen produces uppercase UUIDs, so we pipe the output through tr
-# to get uniform behaviour on macOS and Linux.
+# On macOS, uuidgen produces uppercase UUIDS, so we pipe the output
+# through 'tr' to get uniform behavior on macOS and Linux.
 SESSION_UUID=$(uuidgen | tr '[:upper:]' '[:lower:]')
 if [[ $? -ne 0 ]]; then exit 1; fi
 
@@ -44,8 +43,16 @@ if [[ $? -ne 0 ]]; then exit 1; fi
 SESSION_OUTPUT_DIR="${TOMCAT}"/data/participant_data/"$SESSION_UUID"
 mkdir -p "${SESSION_OUTPUT_DIR}"
 
+SPEC_VERSION=$("$TOMCAT"/build/bin/getSpecVersion --spec "$TOMCAT"/docs/spec.yml)
+
 # Generate metadata file for the session
-"$TOMCAT"/tools/generate_session_metadata "$SESSION_UUID" "$PLAYER_ID" > "$SESSION_OUTPUT_DIR"/metadata.json
+"$TOMCAT"/tools/generate_session_metadata\
+    "$SESSION_UUID"\
+    "$PLAYER_ID"\
+    "$TIME_LIMIT"\
+    "$DIFFICULTY"\
+    "$SPEC_VERSION" > "$SESSION_OUTPUT_DIR"/metadata.json
+
 if [[ $? -ne 0 ]]; then exit 1; fi
 
 
@@ -73,8 +80,9 @@ start_av_recording() {
             echo "Recording system audio for Linux."
             # For Linux system audio recording, we will use pacat.
             # We need to extract the alsa output monitor.
-            export ALSA_OUTPUT_MONITOR=`pacmd list-sources | \
-            awk '/name:/ && /monitor/ {print $2 }'|sed 's/[<,>]//g'`
+            export ALSA_OUTPUT_MONITOR=$(pacmd list-sources | \
+                awk '/name:/ && /monitor/ {print $2 }'|sed 's/[<,>]//g')
+
             # Calling pacat command.
             pacat --record --file-format=wav -d ${ALSA_OUTPUT_MONITOR} \
             > "${MISSION_OUTPUT_DIR}"/system_audio.wav &
@@ -164,7 +172,7 @@ mission_cleanup() {
     kill_av_recording_and_mosquitto_sub
     echo "Checking output files..."
 
-    files_to_check=("events.txt" "malmo_data.txt" "chat.txt" "self_reports.txt")
+    files_to_check=("messages.txt")
 
     if (( ENABLE_FFMPEG )); then
         files_to_check+=("player_audio.wav" "screen_video.mpg" "webcam_video.mpg")
@@ -181,15 +189,6 @@ mission_cleanup() {
             file_size=$(ls -l "${MISSION_OUTPUT_DIR}/${file}" | awk '{print $5}')
             if [[ ${file_size} -eq 0 ]]; then
                 echo "WARNING: ${file} from Mission ${CURRENT_MISSION}: size is 0 bytes"
-                if [[ $file == self_reports.txt ]]; then
-                    echo "This is not necessarily an error - you might just "\
-                         "have finished the mission before you reached the "\
-                         "self-report point."
-                elif [[ $file == chat.txt ]]; then
-                    echo "This is not necessarily an error - you might just "\
-                         "not have sent or received any chat messages during "\
-                         "the mission."
-                fi
             fi
         else
             echo "WARNING: ${file} from Mission ${CURRENT_MISSION}: does not exist"
@@ -199,7 +198,6 @@ mission_cleanup() {
     echo -e '\n'
 }
 
-
 # A function to handle cleanup when a user interrupts the script with Ctrl+C
 user_interrupt() {
     echo "Detected keyboard interrupt."
@@ -207,7 +205,6 @@ user_interrupt() {
     mission_cleanup
     session_cleanup
 }
-
 
 trap user_interrupt SIGINT SIGTERM
 
@@ -220,87 +217,61 @@ do_mission() {
     mission_log="$TOMCAT_TMP_DIR"/mission_"$CURRENT_MISSION".log
     export MISSION_OUTPUT_DIR="${SESSION_OUTPUT_DIR}"/mission_"$CURRENT_MISSION"
     mkdir -p "$MISSION_OUTPUT_DIR"
-    malmo_data="$MISSION_OUTPUT_DIR"/malmo_data.txt
-    chat_data="$MISSION_OUTPUT_DIR"/chat.txt
-    event_data="$MISSION_OUTPUT_DIR"/events.txt
-    self_report_data="$MISSION_OUTPUT_DIR"/self_reports.txt
-
-    # Kobus: Other mechanisms are in place that now mean we might not want to do
-    # a second try. So, let's test with num_tries=1, and if this works out, we
-    # can clean the loop.
-    num_tries=1
-    try=0
+    messages="$MISSION_OUTPUT_DIR"/messages.txt
 
 
-    while [ $try -lt $num_tries ]; do
-        if ! "${TOMCAT}"/tools/check_minecraft; then
-            echo "Main mission cannot find or create a viable Minecraft process."
-            cleanup
-            exit 1
-        fi
+    if ! "${TOMCAT}"/tools/check_minecraft; then
+        echo "Main mission cannot find or create a viable Minecraft process."
+        cleanup
+        exit 1
+    fi
 
-        runExperiment_args="--mission ${CURRENT_MISSION}\
-                            --record_observations\
-                            --uuid ${SESSION_UUID}"
+    runMission_args="--mission ${CURRENT_MISSION}\
+                     --record_observations\
+                     --uuid ${SESSION_UUID}"
 
-        if [[ $CURRENT_MISSION -gt 0 ]]; then
-            runExperiment_args="${runExperiment_args} --time_limit ${TIME_LIMIT}"
-        fi
+    if [[ $CURRENT_MISSION -gt 0 ]]; then
+        runMission_args="${runMission_args}\
+                            --time_limit ${TIME_LIMIT}\
+                            --difficulty ${DIFFICULTY}"
+    fi
 
-        if (( ENABLE_FFMPEG )); then
-            start_av_recording
-        fi
+    if (( ENABLE_FFMPEG )); then
+        start_av_recording
+    fi
 
-        # Publish the Malmo observation messages to the message bus on the
-        # topic observations/state.
-        "${TOMCAT}"/build/bin/runExperiment\
-        $runExperiment_args\
-        2> "${mission_log}" &
-        pid_runExperiment=$!
+    # Publish the Malmo observation messages to the message bus on the
+    # topic observations/state.
+    "${TOMCAT}"/build/bin/runMission\
+    $runMission_args\
+    2> "${mission_log}" &
+    pid_runMission=$!
 
-        # Subscribe to the observations/state topic on the message bus and
-        # redirect the output to a file.
-        mosquitto_sub -t observations/state > "$malmo_data" &
-        mosquitto_sub -t observations/chat > "$chat_data" &
-        mosquitto_sub -t "observations/events/#" > "$event_data" &
-        mosquitto_sub -t observations/self_reports > "$self_report_data" &
+    # Subscribe to topics on the message bus and redirect the output to a file.
+    mosquitto_sub -t "observations/#" -F '{"topic": "%t", "message": %p}' > "$messages" &
 
-        if [[ $CURRENT_MISSION -gt 0 ]]; then
-            echo "Time limit set to ${TIME_LIMIT}."
-        fi
-        echo "Process ID corresponding to ./bin/runExperiment is"\
-             "$pid_runExperiment ... waiting for it to complete."
+    if [[ $CURRENT_MISSION -gt 0 ]]; then
+        echo "Time limit set to ${TIME_LIMIT}."
+    fi
+    echo "Process ID corresponding to ./bin/runMission is"\
+            "$pid_runMission ... waiting for it to complete."
 
-        # Set up a background job to kill the mission if Minecraft dies.
-        ${TOMCAT}/tools/kill_me_if_no_minecraft $pid_runExperiment < /dev/null &
+    # Set up a background job to kill the mission if Minecraft dies.
+    ${TOMCAT}/tools/kill_me_if_no_minecraft $pid_runMission < /dev/null &
 
-        wait $pid_runExperiment
-        mission_status=$?
+    wait $pid_runMission
+    mission_status=$?
 
-        if [[ ${mission_status} -eq 0 ]]; then
-            mission_status=$(grep -c "Error starting mission" "${mission_log}")
-        fi
+    if [[ ${mission_status} -eq 0 ]]; then
+        mission_status=$(grep -c "Error starting mission" "${mission_log}")
+    fi
 
-        if [[ ${mission_status} -eq 0 ]]; then
-            mission_cleanup
-            echo "Mission ${CURRENT_MISSION} ended with exit code 0."
-            echo "All recorded data is in ${MISSION_OUTPUT_DIR}"
-            echo " "
-            break
-        fi
-
-        (( try++ ))
-
-        if [[ $try -lt $num_tries ]]; then
-            echo "Mission ${CURRENT_MISSION} ended with exit code 1."
-            echo "Killing all Minecraft and Malmo processes that can be found"
-            echo "and trying again."
-
-            if [[ ${RECYCLE_MINECRAFT} -lt 1 ]]; then
-                "$TOMCAT"/tools/kill_minecraft
-            fi
-        fi
-    done
+    if [[ ${mission_status} -eq 0 ]]; then
+        mission_cleanup
+        echo "Mission ${CURRENT_MISSION} ended with exit code 0."
+        echo "All recorded data is in ${MISSION_OUTPUT_DIR}"
+        echo " "
+    fi
 }
 
 echo TOMCAT_DEBUG_ECHO: $TOMCAT_DEBUG_ECHO
@@ -315,6 +286,16 @@ if [[ $DO_TUTORIAL_MISSION -eq 1 && $DO_MAIN_MISSION -eq 1 ]]; then
     # tutorial and main missions.
     sleep 6
 fi
+
+# If the main mission is 3 (i.e. procedural generation) then we run the
+# generator before starting the mission.
+if [[ $MAIN_MISSION -eq 3 ]]; then
+    "$TOMCAT"/build/bin/generator\
+        --gen_type 0\
+        --json_path "$TOMCAT"/external/malmo/Minecraft/run/procedural.json\
+        --tsv_path "$TOMCAT"/external/malmo/Minecraft/run/procedural.tsv
+fi
+
 
 if (( DO_MAIN_MISSION )); then do_mission ${MAIN_MISSION}; fi
 

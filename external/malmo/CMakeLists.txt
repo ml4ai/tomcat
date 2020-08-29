@@ -57,16 +57,17 @@ set(INCLUDE_PYTHON
     OFF
     CACHE BOOL ${INCLUDE_PYTHON_DESC})
 
-find_package(Boost 1.69
-             COMPONENTS chrono
-                        date_time
-                        filesystem
-                        iostreams
-                        program_options
-                        regex
-                        system
-                        thread
-             REQUIRED)
+find_package(
+  Boost
+  COMPONENTS chrono
+             date_time
+             filesystem
+             iostreams
+             program_options
+             regex
+             system
+             thread
+  REQUIRED)
 
 if(INCLUDE_PYTHON)
   set(USE_PYTHON_VERSIONS_DESC
@@ -140,13 +141,21 @@ find_package(Git REQUIRED)
 find_package(ZLIB REQUIRED)
 
 if(INCLUDE_JAVA OR BUILD_MOD)
-  message("JAVA_HOME set to ${JAVA_HOME}")
+  if(JAVA_HOME)
+    message("JAVA_HOME set to ${JAVA_HOME}")
+  else()
+    if(DEFINED ENV{JAVA_HOME})
+      message("JAVA_HOME set to $ENV{JAVA_HOME} using environment variable.")
+    endif()
+  endif()
+
   find_package(Java 1.8 EXACT REQUIRED COMPONENTS Runtime Development)
+
   if(${Java_FOUND})
-      message("Found Java.")
-      message("    Version : ${Java_VERSION_STRING}")
-      message("    Runtime : ${Java_JAVA_EXECUTABLE}")
-      message("    Compiler: ${Java_JAVAC_EXECUTABLE}")
+    message("Found Java.")
+    message("    Version : ${Java_VERSION_STRING}")
+    message("    Runtime : ${Java_JAVA_EXECUTABLE}")
+    message("    Compiler: ${Java_JAVAC_EXECUTABLE}")
   endif()
 endif()
 

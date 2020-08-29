@@ -51,103 +51,103 @@ RecorderOpenFaceParameters::RecorderOpenFaceParameters(
     float cy,
     double fps_vid_out) {
 
-  this->is_sequence = sequence;
-  this->is_from_webcam = from_webcam;
-  this->fx = fx;
-  this->fy = fy;
-  this->cx = cx;
-  this->cy = cy;
+    this->is_sequence = sequence;
+    this->is_from_webcam = from_webcam;
+    this->fx = fx;
+    this->fy = fy;
+    this->cx = cx;
+    this->cy = cy;
 
-  if (fps_vid_out > 0) {
-    this->fps_vid_out = fps_vid_out;
-  }
-  else {
-    this->fps_vid_out =
-        30; // If an illegal value for fps provided, default to 30
-  }
-  // Default output code
-  this->output_codec = "DIVX";
+    if (fps_vid_out > 0) {
+        this->fps_vid_out = fps_vid_out;
+    }
+    else {
+        this->fps_vid_out =
+            30; // If an illegal value for fps provided, default to 30
+    }
+    // Default output code
+    this->output_codec = "DIVX";
 
-  this->image_format_aligned = "bmp";
-  this->image_format_visualization = "jpg";
+    this->image_format_aligned = "bmp";
+    this->image_format_visualization = "jpg";
 
-  bool output_set = false;
+    bool output_set = false;
 
-  this->output_2D_landmarks = false;
-  this->output_3D_landmarks = false;
-  this->output_model_params = false;
-  this->output_pose = false;
-  this->output_AUs = false;
-  this->output_gaze = false;
-  this->output_hog = false;
-  this->output_tracked = false;
-  this->output_aligned_faces = false;
+    this->output_2D_landmarks = false;
+    this->output_3D_landmarks = false;
+    this->output_model_params = false;
+    this->output_pose = false;
+    this->output_AUs = false;
+    this->output_gaze = false;
+    this->output_hog = false;
+    this->output_tracked = false;
+    this->output_aligned_faces = false;
 
-  this->record_aligned_bad = true;
+    this->record_aligned_bad = true;
 
-  for (size_t i = 0; i < arguments.size(); ++i) {
-    if (arguments[i].compare("-format_aligned") == 0) {
-      this->image_format_aligned = arguments[i + 1];
-      i++;
+    for (size_t i = 0; i < arguments.size(); ++i) {
+        if (arguments[i].compare("-format_aligned") == 0) {
+            this->image_format_aligned = arguments[i + 1];
+            i++;
+        }
+        if (arguments[i].compare("-format_vis_image") == 0) {
+            this->image_format_visualization = arguments[i + 1];
+            i++;
+        }
+        if (arguments[i].compare("-nobadaligned") == 0) {
+            this->record_aligned_bad = false;
+        }
+        if (arguments[i].compare("-simalign") == 0) {
+            this->output_aligned_faces = true;
+            output_set = true;
+        }
+        else if (arguments[i].compare("-hogalign") == 0) {
+            this->output_hog = true;
+            output_set = true;
+        }
+        else if (arguments[i].compare("-2Dfp") == 0) {
+            this->output_2D_landmarks = true;
+            output_set = true;
+        }
+        else if (arguments[i].compare("-3Dfp") == 0) {
+            this->output_3D_landmarks = true;
+            output_set = true;
+        }
+        else if (arguments[i].compare("-pdmparams") == 0) {
+            this->output_model_params = true;
+            output_set = true;
+        }
+        else if (arguments[i].compare("-pose") == 0) {
+            this->output_pose = true;
+            output_set = true;
+        }
+        else if (arguments[i].compare("-aus") == 0) {
+            this->output_AUs = true;
+            output_set = true;
+        }
+        else if (arguments[i].compare("-gaze") == 0) {
+            this->output_gaze = true;
+            output_set = true;
+        }
+        else if (arguments[i].compare("-tracked") == 0) {
+            this->output_tracked = true;
+            output_set = true;
+        }
     }
-    if (arguments[i].compare("-format_vis_image") == 0) {
-      this->image_format_visualization = arguments[i + 1];
-      i++;
-    }
-    if (arguments[i].compare("-nobadaligned") == 0) {
-      this->record_aligned_bad = false;
-    }
-    if (arguments[i].compare("-simalign") == 0) {
-      this->output_aligned_faces = true;
-      output_set = true;
-    }
-    else if (arguments[i].compare("-hogalign") == 0) {
-      this->output_hog = true;
-      output_set = true;
-    }
-    else if (arguments[i].compare("-2Dfp") == 0) {
-      this->output_2D_landmarks = true;
-      output_set = true;
-    }
-    else if (arguments[i].compare("-3Dfp") == 0) {
-      this->output_3D_landmarks = true;
-      output_set = true;
-    }
-    else if (arguments[i].compare("-pdmparams") == 0) {
-      this->output_model_params = true;
-      output_set = true;
-    }
-    else if (arguments[i].compare("-pose") == 0) {
-      this->output_pose = true;
-      output_set = true;
-    }
-    else if (arguments[i].compare("-aus") == 0) {
-      this->output_AUs = true;
-      output_set = true;
-    }
-    else if (arguments[i].compare("-gaze") == 0) {
-      this->output_gaze = true;
-      output_set = true;
-    }
-    else if (arguments[i].compare("-tracked") == 0) {
-      this->output_tracked = true;
-      output_set = true;
-    }
-  }
 
-  // Output everything if nothing has been set
+    // Output everything if nothing has been set
 
-  if (!output_set) {
-    this->output_2D_landmarks = true;
-    this->output_3D_landmarks = true;
-    this->output_model_params = true;
-    this->output_pose = true;
-    this->output_AUs = true;
-    this->output_gaze = true;
-    this->output_hog = true;
-    this->output_tracked = true;
-    this->output_aligned_faces = true;
-  }
+    if (!output_set) {
+        this->output_2D_landmarks = true;
+        this->output_3D_landmarks = true;
+        this->output_model_params = true;
+        this->output_pose = true;
+        this->output_AUs = true;
+        this->output_gaze = true;
+        this->output_hog = true;
+        this->output_tracked = true;
+        this->output_aligned_faces = true;
+    }
 }
 
 RecorderOpenFaceParameters::RecorderOpenFaceParameters(
@@ -168,30 +168,30 @@ RecorderOpenFaceParameters::RecorderOpenFaceParameters(
     float cx,
     float cy,
     double fps_vid_out) {
-  this->is_sequence = sequence;
-  this->is_from_webcam = is_from_webcam;
-  this->fx = fx;
-  this->fy = fy;
-  this->cx = cx;
-  this->cy = cy;
+    this->is_sequence = sequence;
+    this->is_from_webcam = is_from_webcam;
+    this->fx = fx;
+    this->fy = fy;
+    this->cx = cx;
+    this->cy = cy;
 
-  if (fps_vid_out > 0) {
-    this->fps_vid_out = fps_vid_out;
-  }
-  else {
-    this->fps_vid_out =
-        30; // If an illegal value for fps provided, default to 30
-  }
-  // Default output code
-  this->output_codec = "DIVX";
+    if (fps_vid_out > 0) {
+        this->fps_vid_out = fps_vid_out;
+    }
+    else {
+        this->fps_vid_out =
+            30; // If an illegal value for fps provided, default to 30
+    }
+    // Default output code
+    this->output_codec = "DIVX";
 
-  this->output_2D_landmarks = output_2D_landmarks;
-  this->output_3D_landmarks = output_3D_landmarks;
-  this->output_model_params = output_model_params;
-  this->output_pose = output_pose;
-  this->output_AUs = output_AUs;
-  this->output_gaze = output_gaze;
-  this->output_hog = output_hog;
-  this->output_tracked = output_tracked;
-  this->output_aligned_faces = output_aligned_faces;
+    this->output_2D_landmarks = output_2D_landmarks;
+    this->output_3D_landmarks = output_3D_landmarks;
+    this->output_model_params = output_model_params;
+    this->output_pose = output_pose;
+    this->output_AUs = output_AUs;
+    this->output_gaze = output_gaze;
+    this->output_hog = output_hog;
+    this->output_tracked = output_tracked;
+    this->output_aligned_faces = output_aligned_faces;
 }

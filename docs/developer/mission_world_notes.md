@@ -16,7 +16,7 @@ number.
 This is the world used for the Tutorial Mission, and it can
 be downloaded from this Drive link as the `tutorial_x_x_x` folder:
 
-    https://drive.google.com/open?id=19PjgHmUeJmOQ4DS4dAy-4bgax2_TnJRp 
+    https://drive.google.com/open?id=19PjgHmUeJmOQ4DS4dAy-4bgax2_TnJRp
 
 The environment parameters modified in-game at the time the world was built were as follows:
 
@@ -27,7 +27,7 @@ command. To re-enable day-night cycles, use the following command in-game:
 
 2\. The weather cycle was disabled with the `/gamerule doWeatherCycle`
 command. To re-enable weather cycles, use the following command in-game:
-    
+
     /gamerule doWeatherCycle true
 
 3\. Mob spawning was disabled with the `/gamerule doMobSpawning` command.To
@@ -42,12 +42,12 @@ coordinates in the  `<x> <y> <z>` spaces (without <>) in the following command:
     /setworldspawn <x> <y> <z>
 
 
-## Search and Rescure Mission World
+## Search and Rescue Mission World
 
 This is the world used for the Search and Rescue(SAR) Mission, and it can
 be downloaded from this Drive link as the `sar_x_x_x` folder:
 
-    https://drive.google.com/open?id=19PjgHmUeJmOQ4DS4dAy-4bgax2_TnJRp 
+    https://drive.google.com/open?id=19PjgHmUeJmOQ4DS4dAy-4bgax2_TnJRp
 
 The environment parameters modified in-game at the time the world was built were as follows:
 
@@ -58,7 +58,7 @@ command. To re-enable day-night cycles, use the following command in-game:
 
 2\. The weather cycle was  disabled with the `/gamerule doWeatherCycle`
 command. To re-enable weather cycles, use the following command in-game:
-    
+
     /gamerule doWeatherCycle true
 
 3\. The world's default spawnpoint for all players was set to `x = 22 y = 64 z

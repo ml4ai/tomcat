@@ -41,42 +41,43 @@
 #include <opencv2/core/core.hpp>
 
 namespace LandmarkDetector {
-  //===========================================================================
-  // Various CNN layers
+    //===========================================================================
+    // Various CNN layers
 
-  // Parametric ReLU with leaky weights (separate ones per channel)
-  void PReLU(std::vector<cv::Mat_<float>>& input_output_maps,
-             cv::Mat_<float> prelu_weights);
+    // Parametric ReLU with leaky weights (separate ones per channel)
+    void PReLU(std::vector<cv::Mat_<float>>& input_output_maps,
+               cv::Mat_<float> prelu_weights);
 
-  // The fully connected layer
-  void fully_connected(std::vector<cv::Mat_<float>>& outputs,
-                       const std::vector<cv::Mat_<float>>& input_maps,
-                       cv::Mat_<float> weights,
-                       cv::Mat_<float> biases);
+    // The fully connected layer
+    void fully_connected(std::vector<cv::Mat_<float>>& outputs,
+                         const std::vector<cv::Mat_<float>>& input_maps,
+                         cv::Mat_<float> weights,
+                         cv::Mat_<float> biases);
 
-  // Max pooling layer with parametrized stride and kernel sizes
-  void max_pooling(std::vector<cv::Mat_<float>>& outputs,
-                   const std::vector<cv::Mat_<float>>& input_maps,
-                   int stride_x,
-                   int stride_y,
-                   int kernel_size_x,
-                   int kernel_size_y);
+    // Max pooling layer with parametrized stride and kernel sizes
+    void max_pooling(std::vector<cv::Mat_<float>>& outputs,
+                     const std::vector<cv::Mat_<float>>& input_maps,
+                     int stride_x,
+                     int stride_y,
+                     int kernel_size_x,
+                     int kernel_size_y);
 
-  // Convolution using FFT optimization rather than matrix multiplication, TODO
-  // do these still work
-  void convolution_fft2(
-      std::vector<cv::Mat_<float>>& outputs,
-      const std::vector<cv::Mat_<float>>& input_maps,
-      const std::vector<std::vector<cv::Mat_<float>>>& kernels,
-      const std::vector<float>& biases,
-      std::vector<std::map<int, std::vector<cv::Mat_<double>>>>& precomp_dfts);
+    // Convolution using FFT optimization rather than matrix multiplication,
+    // TODO do these still work
+    void
+    convolution_fft2(std::vector<cv::Mat_<float>>& outputs,
+                     const std::vector<cv::Mat_<float>>& input_maps,
+                     const std::vector<std::vector<cv::Mat_<float>>>& kernels,
+                     const std::vector<float>& biases,
+                     std::vector<std::map<int, std::vector<cv::Mat_<double>>>>&
+                         precomp_dfts);
 
-  // Convolution using matrix multiplication and OpenBLAS optimization, can also
-  // provide a pre-allocated im2col result for faster processing
-  void convolution_direct_blas(std::vector<cv::Mat_<float>>& outputs,
-                               const std::vector<cv::Mat_<float>>& input_maps,
-                               const cv::Mat_<float>& weight_matrix,
-                               int height_k,
-                               int width_k,
-                               cv::Mat_<float>& pre_alloc_im2col);
+    // Convolution using matrix multiplication and OpenBLAS optimization, can
+    // also provide a pre-allocated im2col result for faster processing
+    void convolution_direct_blas(std::vector<cv::Mat_<float>>& outputs,
+                                 const std::vector<cv::Mat_<float>>& input_maps,
+                                 const cv::Mat_<float>& weight_matrix,
+                                 int height_k,
+                                 int width_k,
+                                 cv::Mat_<float>& pre_alloc_im2col);
 } // namespace LandmarkDetector

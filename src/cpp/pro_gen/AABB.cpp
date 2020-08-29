@@ -3,114 +3,53 @@
  * @brief This file implements the methods in the AABB class.
  */
 #include "AABB.h"
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
-#include <string>
-
 using namespace std;
 
-/**
- * @brief Construct a new AABB::AABB object
- *
- * @param AABBid The id associated with this AABB
- * @param AABBmaterial The material this AABB is built out of
- * @param topLeftPos The coordinates of the top left of the AABB from the top
- * view of the X-Z plane. Y coordinate should be lowest here.
- * @param bottomRightPos The coordinates of the bottom right of the AABB from
- * the top view of the X-Z plane. Y coordinate should be maximum here.
- */
-AABB::AABB(int AABBid,
-           string AABBmaterial,
-           Pos* topLeftPos,
-           Pos* bottomRightPos)
-    : id(AABBid), material(AABBmaterial), topLeft(*topLeftPos),
-      bottomRight(*bottomRightPos) {}
+AABB::AABB(int id,
+           string type,
+           string material,
+           Pos& topLeft,
+           Pos& bottomRight,
+           bool isHollow,
+           bool hasRoof)
+    : id{id}, type{type}, material{material}, topLeft{topLeft},
+      bottomRight{bottomRight}, isHollow{isHollow}, hasRoof{hasRoof} {}
 
-/**
- * @brief Get the AABB's id
- *
- * @return int The id
- */
 int AABB::getID() { return this->id; }
 
-/**
- * @brief Get the AABB's material
- *
- * @return string The material name
- */
 string AABB::getMaterial() { return this->material; }
 
-/**
- * @brief Returns a copy of the Pos object used to represent
- * the top left of the AABB from the top view of the X-Z plane
- *
- * @return Pos The copy of the top left coordinate
- */
+string AABB::getType() { return this->type; }
+
 Pos AABB::getTopLeft() { return this->topLeft; }
 
-/**
- * @brief Returns a copy of the Pos object used to represent
- * the bottom right of the AABB from the top view of the X-Z plane
- *
- * @return Pos The copy of the bottom right coordinate
- */
 Pos AABB::getBottomRight() { return this->bottomRight; }
 
-/**
- * @brief Get the midpoint X value calculated between
- * the top left and bottom right x values
- *
- * @return int The midpoint X coordinate
- */
+vector<Block*>& AABB::getBlockList() { return (this->blockList); }
+
 int AABB::getMidpointX() {
     int mid_x = ((this->topLeft).getX() +
                  ((this->bottomRight).getX() - (this->topLeft).getX()) / 2);
     return mid_x;
 }
 
-/**
- * @brief Get the midpoint Y value calculated between
- * the top left and bottom right y values
- *
- * @return int The midpoint Y coordinate
- */
 int AABB::getMidpointY() {
     int mid_y = ((this->topLeft).getY() +
                  ((this->bottomRight).getY() - (this->topLeft).getY()) / 2);
     return mid_y;
 }
 
-/**
- * @brief Get the midpoint Z value calculated between
- * the top left and bottom right z values
- *
- * @return int The midpoint Z coordinate
- */
 int AABB::getMidpointZ() {
     int mid_z = ((this->topLeft).getZ() +
                  ((this->bottomRight).getZ() - (this->topLeft).getZ()) / 2);
     return mid_z;
 }
 
-/**
- * @brief Gets a random position in the AABB such that
- * the y coordinate of the returned value is set to
- * the top left y value which is considered the base
- *
- * @param offsetPosX How far away from the left wall should the position be.
- * Defaults to 1
- * @param offsetNegX How far away from the right wall should the position be.
- * Defaults to 1
- * @param offsetPosZ How far away from the bottom wall should the position be.
- * Defaults to 1
- * @param offsetNegZ How far away from the top wall should the position be.
- * Defaults to 1
- * @return Pos
- */
-Pos AABB::getRandomPosAtBase(int offsetPosX = 1,
-                             int offsetNegX = 1,
-                             int offsetPosZ = 1,
-                             int offsetNegZ = 1) {
+Pos AABB::getRandomPosAtBase(mt19937_64& gen,
+                             int offsetPosX,
+                             int offsetNegX,
+                             int offsetPosZ,
+                             int offsetNegZ) {
 
     int startX = (this->topLeft).getX() + offsetPosX;
     int startZ = (this->topLeft).getZ() + offsetPosZ;
@@ -118,9 +57,8 @@ Pos AABB::getRandomPosAtBase(int offsetPosX = 1,
     int endX = (this->bottomRight).getX() - offsetNegX;
     int endZ = (this->bottomRight).getZ() - offsetNegZ;
 
-    boost::random::mt19937 gen;
-    boost::random::uniform_int_distribution<> randXGen(startX, endX);
-    boost::random::uniform_int_distribution<> randZGen(startZ, endZ);
+    uniform_int_distribution<> randXGen(startX, endX);
+    uniform_int_distribution<> randZGen(startZ, endZ);
 
     int randX = randXGen(gen);
     int randZ = randZGen(gen);
@@ -131,22 +69,182 @@ Pos AABB::getRandomPosAtBase(int offsetPosX = 1,
     return pos;
 }
 
-/**
- * @brief Gets a string representation of the various
- * fields and values stores in an instance
- *
- * @return string The string representation
- */
-string AABB::toString() {
-    string retval = "ID: " + to_string(this->id) + "\n" +
-                    "Material: " + this->material + "\n" +
-                    "Top Left: " + (this->topLeft).toString() +
-                    "Bottom Right: " + (this->bottomRight).toString();
+vector<Pos> AABB::getEdgeMidpointAtBase() {
+    int midX = this->getMidpointX();
+    int midZ = this->getMidpointZ();
+    int base = this->getTopLeft().getY();
+
+    Pos topEdgeMid(this->getTopLeft());
+    topEdgeMid.setX(midX);
+    topEdgeMid.setY(base);
+
+    Pos bottomEdgeMid(this->getBottomRight());
+    bottomEdgeMid.setX(midX);
+    bottomEdgeMid.setY(base);
+
+    Pos leftEdgeMid(this->getTopLeft());
+    leftEdgeMid.setZ(midZ);
+    leftEdgeMid.setY(base);
+
+    Pos rightEdgeMid(this->getBottomRight());
+    rightEdgeMid.setZ(midZ);
+    rightEdgeMid.setY(base);
+
+    vector<Pos> midEdgesAtBase;
+    midEdgesAtBase.push_back(topEdgeMid);
+    midEdgesAtBase.push_back(rightEdgeMid);
+    midEdgesAtBase.push_back(bottomEdgeMid);
+    midEdgesAtBase.push_back(leftEdgeMid);
+
+    return midEdgesAtBase;
+}
+
+void AABB::setTopLeft(Pos& topLeft) { this->topLeft = topLeft; }
+
+void AABB::setBottomRight(Pos& bottomRight) { this->bottomRight = bottomRight; }
+
+void AABB::addBlock(Block& block) { (this->blockList).push_back(&block); }
+
+bool AABB::isOverlapping(AABB& other) {
+    int xRange = (this->bottomRight.getX()) - (this->topLeft.getX());
+    int yRange = (this->bottomRight.getY()) - (this->topLeft.getY());
+    int zRange = (this->bottomRight.getZ()) - (this->topLeft.getZ());
+
+    if ((abs(other.topLeft.getX() - this->topLeft.getX()) < xRange) ||
+        (abs(other.topLeft.getY() - this->topLeft.getY()) < yRange) ||
+        (abs(other.topLeft.getZ() - this->topLeft.getZ()) < zRange)) {
+
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+void AABB::generateBox(string material,
+                       int offsetPosX,
+                       int offsetNegX,
+                       int offsetPosY,
+                       int offsetNegY,
+                       int offsetPosZ,
+                       int offsetNegZ,
+                       string type) {
+
+    int startX = this->getTopLeft().getX() + offsetPosX;
+    int startY = this->getTopLeft().getY() + offsetPosY;
+    int startZ = this->getTopLeft().getZ() + offsetPosZ;
+
+    int endX = this->getBottomRight().getX() - offsetNegX;
+    int endY = this->getBottomRight().getY() - offsetNegY;
+    int endZ = this->getBottomRight().getZ() - offsetNegZ;
+
+    for (int x = startX; x <= endX; x++) {
+        for (int y = startY; y <= endY; y++) {
+            for (int z = startZ; z <= endZ; z++) {
+                Pos pos(x, y, z);
+                this->addBlock(*(new Block(material, pos, type)));
+            }
+        }
+    }
+}
+
+void AABB::addRandomBlocks(int n,
+                           string material,
+                           mt19937_64& gen,
+                           int offsetPosX,
+                           int offsetNegX,
+                           int offsetPosY,
+                           int offsetNegY,
+                           int offsetPosZ,
+                           int offsetNegZ,
+                           string type) {
+
+    int startX = this->getTopLeft().getX() + offsetPosX;
+    int startY = this->getTopLeft().getY() + offsetPosY;
+    int startZ = this->getTopLeft().getZ() + offsetPosZ;
+
+    int endX = this->getBottomRight().getX() - offsetNegX;
+    int endY = this->getBottomRight().getY() - offsetNegY;
+    int endZ = this->getBottomRight().getZ() - offsetNegZ;
+
+    while (n > 0) {
+        uniform_int_distribution<> randX(startX, endX);
+        uniform_int_distribution<> randY(startY, endY);
+        uniform_int_distribution<> randZ(startZ, endZ);
+
+        int x = randX(gen);
+        int y = randY(gen);
+        int z = randZ(gen);
+        Pos pos(x, y, z);
+        this->addBlock(*(new Block(material, pos, type)));
+        n--;
+    }
+}
+
+string AABB::toTSV() {
+
+    string retval = "";
+    for (int x = (this->topLeft).getX(); x <= (this->bottomRight).getX(); x++) {
+        for (int y = (this->topLeft).getY(); y <= (this->bottomRight).getY();
+             y++) {
+            for (int z = (this->topLeft).getZ();
+                 z <= (this->bottomRight).getZ();
+                 z++) {
+                bool addCurrent = true;
+
+                if (isHollow) {
+                    if (x > (this->topLeft).getX() &&
+                        x < (this->bottomRight).getX() &&
+                        z > (this->topLeft).getZ() &&
+                        z < (this->bottomRight).getZ()) {
+                        if (y != (this->topLeft).getY() &&
+                            y != (this->bottomRight).getY()) {
+                            addCurrent = false;
+                        }
+                    }
+                }
+
+                if (!hasRoof) {
+                    if (y == (this->bottomRight).getY()) {
+                        addCurrent = false;
+                    }
+                }
+
+                if (addCurrent) {
+                    retval += to_string(x) + "\t" + to_string(y) + "\t" +
+                              to_string(z) + "\t" + (this->material) + "\n";
+                }
+            }
+        }
+    }
+
+    for (auto& block : (this->blockList)) {
+        retval += (*block).toTSV() + "\n";
+    }
 
     return retval;
 }
 
-/**
- * @brief Destroy the AABB::AABB object
- */
+void AABB::generateAllDoorsInAABB() {
+    // Get edge midpoints for the AABB because that is where the doors will
+    // be placed
+    vector<Pos> edges = this->getEdgeMidpointAtBase();
+    Pos topEdgeMid(edges.at(0));
+    Pos rightEdgeMid(edges.at(1));
+    Pos bottomEdgeMid(edges.at(2));
+    Pos leftEdgeMid(edges.at(3));
+
+    // Since points are at base we want them to be at base + 1
+    topEdgeMid.shiftY(1);
+    bottomEdgeMid.shiftY(1);
+    leftEdgeMid.shiftY(1);
+    rightEdgeMid.shiftY(1);
+
+    // Add it to the AABB's doors
+    this->addBlock(*(new Block("door", topEdgeMid)));
+    this->addBlock(*(new Block("door", bottomEdgeMid)));
+    this->addBlock(*(new Block("door", leftEdgeMid)));
+    this->addBlock(*(new Block("door", rightEdgeMid)));
+}
+
 AABB::~AABB() {}

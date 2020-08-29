@@ -237,7 +237,6 @@ def fit_and_evaluate_single_fold(
         horizons
     )
 
-
 def shuffle_and_split_data(evidence_set, number_of_folds):
     """
     This function shuffles and splits data into folds comprised of training and test data
@@ -928,6 +927,106 @@ def experiment_common_behavior(share_parameters):
     data = load_evidence_set("../data/evidence/asist/falcon")
     evaluate_common_behavior(data, 10, '../data/plots/asist/falcon', 'state_freq_falcon_0eu_5s_5000gs500gbi')
 
+def print_results(tg_baseline_ll, ty_baseline_ll, tg_baseline_cm, ty_baseline_cm, tg_model_ll, ty_model_ll, tg_model_cm, ty_model_cm, horizons):
+    for i, h in enumerate(horizons):
+        print('h = {}'.format(h))
+        print('')
+
+        agg_tg_baseline_cm = np.sum(tg_baseline_cm[i], axis=0)
+        agg_ty_baseline_cm = np.sum(ty_baseline_cm[i], axis=0)
+        agg_tg_model_cm = np.sum(tg_model_cm[i], axis=0)
+        agg_ty_model_cm = np.sum(ty_model_cm[i], axis=0)
+
+        print('Baseline')
+        print('----------------')
+        print('Log-loss')
+        print('{:.4f} {:.4f}'.format(np.mean(tg_baseline_ll[i]), np.mean(ty_baseline_ll[i])))
+        print('')
+        print('Confusion Matrix')
+        print(agg_tg_baseline_cm)
+        print(agg_ty_baseline_cm)
+        print('')
+        print('F1 Score')
+        print('{:.4f} {:.4f}'.format(get_f1_score(agg_tg_baseline_cm), get_f1_score(agg_ty_baseline_cm)))
+
+        print('')
+        print('Model')
+        print('----------------')
+        print('Log-loss')
+        print('{:.4f} {:.4f}'.format(np.mean(tg_model_ll[i]), np.mean(ty_model_ll[i])))
+        print('')
+        print('Confusion Matrix')
+        print(agg_tg_baseline_cm)
+        print(agg_ty_baseline_cm)
+        print('F1 Score')
+        print('{:.4f} {:.4f}'.format(get_f1_score(agg_tg_model_cm), get_f1_score(agg_ty_model_cm)))
+
+        print('########################')
+        print('########################')
+
+    print('TG')
+    print('Baseline')
+    print('1->3')
+    print((np.sum(tg_baseline_cm[1], axis=0) - np.sum(tg_baseline_cm[0], axis=0)) / np.sum(tg_baseline_cm[0], axis=0))
+    print('3->5')
+    print((np.sum(tg_baseline_cm[2], axis=0) - np.sum(tg_baseline_cm[1], axis=0)) / np.sum(tg_baseline_cm[1], axis=0))
+    print('Model')
+    print('1->3')
+    print((np.sum(tg_model_cm[1], axis=0) - np.sum(tg_model_cm[0], axis=0)) / np.sum(tg_model_cm[0], axis=0))
+    print('3->5')
+    print((np.sum(tg_model_cm[2], axis=0) - np.sum(tg_model_cm[1], axis=0)) / np.sum(tg_model_cm[1], axis=0))
+
+    print('TY')
+    print('Baseline')
+    print('1->3')
+    print((np.sum(ty_baseline_cm[1], axis=0) - np.sum(ty_baseline_cm[0], axis=0)) / np.sum(ty_baseline_cm[0], axis=0))
+    print('3->5')
+    print((np.sum(ty_baseline_cm[2], axis=0) - np.sum(ty_baseline_cm[1], axis=0)) / np.sum(ty_baseline_cm[1], axis=0))
+    print('Model')
+    print('1->3')
+    print((np.sum(ty_model_cm[1], axis=0) - np.sum(ty_model_cm[0], axis=0)) / np.sum(ty_model_cm[0], axis=0))
+    print('3->5')
+    print((np.sum(ty_model_cm[2], axis=0) - np.sum(ty_model_cm[1], axis=0)) / np.sum(ty_model_cm[1], axis=0))
+
+
+def toy_data():
+    evidence_set = load_evidence_set("../data/evidence/toy")
+    evidence_set.lt_evidence -= 1
+    evidence_set.tg_evidence -= 1
+    evidence_set.ty_evidence -= 1
+    evidence_set.rm_evidence -= 1
+
+    from hackathon.model_representation import  CPDTables
+    theta_s = np.array([[0.2, 0.3, 0.5], [0.4, 0.1, 0.5], [0.7, 0.1, 0.2]])
+    pi_lt = np.array([[0.3, 0.7], [0.2, 0.8], [0.6, 0.4]])
+    pi_tg = np.array([[0.8, 0.2], [0.1, 0.9], [0.5,0.5]])
+    pi_ty = np.array([[0.3, 0.7], [0.4, 0.6], [0.8, 0.2]])
+    theta_rm = np.array([[0.1, 0.2, 0.7], [0.5, 0.2, 0.3], [0.4, 0.5, 0.1]])
+    cpds = CPDTables(theta_s, pi_lt, theta_rm, pi_tg, pi_ty)
+    model = Model()
+    model.init_from_cpds(cpds)
+    inference = ModelInference(model)
+    tg_marginals_bl, ty_marginals_bl = inference.get_triaging_normalized_frequencies(evidence_set, h=3)
+    tg_marginals, ty_marginals = inference.get_triaging_marginals_over_time(evidence_set, h=3)
+
+    # tg_bl_ll = [[]]
+    # ty_bl_ll = [[]]
+    # tg_bl_cm = [[]]
+    # ty_bl_cm = [[]]
+    # tg_ll = [[]]
+    # ty_ll = [[]]
+    # tg_cm = [[]]
+    # ty_cm = [[]]
+    #
+    # (tg_bl_ll[0],
+    # ty_bl_ll[0],
+    # tg_bl_cm[0],
+    # ty_bl_cm[0]) = compute_accuracy_for_triaging(tg_marginals_bl, ty_marginals_bl, evidence_set, h=3)
+    # (tg_ll[0],
+    #  ty_ll[0],
+    #  tg_cm[0],
+    #  ty_cm[0]) = compute_accuracy_for_triaging(tg_marginals, ty_marginals, evidence_set, h=3)
+    # print_results(tg_bl_ll, ty_bl_ll, tg_bl_cm, ty_bl_cm, tg_ll, ty_ll, tg_cm, ty_cm)
 
 if __name__ == "__main__":
     NUM_SAMPLES = 100

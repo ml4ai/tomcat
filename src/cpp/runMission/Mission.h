@@ -8,8 +8,6 @@
 
 namespace tomcat {
 
-    class LocalAgent; // Forward declaration to deal with circular dependency
-
     class TomcatMissionException : public std::exception {
       public:
         enum ErrorCode {
@@ -69,12 +67,6 @@ namespace tomcat {
         ~Mission(){};
 
         /**
-         * Adds a Tomcat agent as a listener of the mission
-         * @param tomcat_agent - Tomcat agent
-         */
-        void add_listener(std::shared_ptr<LocalAgent> tomcat_agent);
-
-        /**
          * Starts the mission
          * @return
          */
@@ -107,7 +99,6 @@ namespace tomcat {
         std::shared_ptr<malmo::AgentHost> minecraft_server;
         std::vector<std::shared_ptr<malmo::AgentHost>> minecraft_clients;
         std::shared_ptr<malmo::ClientPool> client_pool;
-        std::vector<std::shared_ptr<LocalAgent>> tomcat_agents;
         std::string uuid;
 
         /**

@@ -48,72 +48,84 @@
 #include <boost/filesystem/fstream.hpp>
 
 namespace FaceAnalysis {
-  using namespace std;
-  using boost::filesystem::path;
+    using namespace std;
+    using boost::filesystem::path;
 
-  path OpenFace_models_dir = path(getenv("TOMCAT")) / "data/OpenFace_models";
+    // Path to OpenFace models
 
-  class FaceAnalyserParameters {
-  public:
-    // Constructors
-    FaceAnalyserParameters();
-    FaceAnalyserParameters(string root_exe);
-    FaceAnalyserParameters(vector<string>& arguments);
+    class FaceAnalyserParameters {
+      public:
+        // Constructors
+        FaceAnalyserParameters();
+        FaceAnalyserParameters(string root_exe);
+        FaceAnalyserParameters(vector<string>& arguments);
 
-    // These are the parameters of training and will not change and are fixed
-    const double sim_scale_au = 0.7;
-    const int sim_size_au = 112;
+        // These are the parameters of training and will not change and are
+        // fixed
+        const double sim_scale_au = 0.7;
+        const int sim_size_au = 112;
 
-    // Should the output aligned faces be grayscale
-    bool grayscale;
+        // Should the output aligned faces be grayscale
+        bool grayscale;
 
-    // Use getters and setters for these as they might need to reload models and
-    // make sure the scale and size ratio makes sense
-    void
-    setAlignedOutput(int output_size, double scale = -1, bool masked = true);
-    // This will also change the model location
-    void OptimizeForVideos();
-    void OptimizeForImages();
+        // Use getters and setters for these as they might need to reload models
+        // and make sure the scale and size ratio makes sense
+        void setAlignedOutput(int output_size,
+                              double scale = -1,
+                              bool masked = true);
+        // This will also change the model location
+        void OptimizeForVideos();
+        void OptimizeForImages();
 
-    bool getAlignMask() const { return this->sim_align_face_mask; }
-    double getSimScaleOut() const { return this->sim_scale_out; }
-    int getSimSizeOut() const { return this->sim_size_out; }
-    bool getDynamic() const { return this->dynamic; }
-    string getModelLoc() const { return string(this->model_location); }
-    void setModelLoc() {
-      string model_type = this->dynamic ? "dynamic" : "static";
-      path model_path = OpenFace_models_dir /
-                        ("AU_Predictors/main_" + model_type + "_svms.txt");
-      if (!exists(model_path)) {
-        throw runtime_error("Could not find the face analysis module to load");
-      }
+        bool getAlignMask() const { return this->sim_align_face_mask; }
+        double getSimScaleOut() const { return this->sim_scale_out; }
+        int getSimSizeOut() const { return this->sim_size_out; }
+        bool getDynamic() const { return this->dynamic; }
+        string getModelLoc() const { return string(this->model_location); }
+        void setModelLoc() {
+            if (!getenv("OPENFACE_MODELS_DIR")) {
+                throw std::runtime_error(
+                    "The OPENFACE_MODELS_DIR environment variable is not set - "
+                    "it needs to be set to point to the directory containing "
+                    "the OpenFace models. Exiting now.");
+            }
 
-      this->model_location = model_path.string();
-    }
+            path OpenFace_models_dir = path(getenv("OPENFACE_MODELS_DIR"));
 
-    vector<cv::Vec3d> getOrientationBins() const {
-      return vector<cv::Vec3d>(this->orientation_bins);
-    }
+            string model_type = this->dynamic ? "dynamic" : "static";
+            path model_path = OpenFace_models_dir / ("AU_predictors/main_" +
+                                                     model_type + "_svms.txt");
+            if (!exists(model_path)) {
+                throw runtime_error(
+                    "Could not find the face analysis module to load");
+            }
 
-  private:
-    void init();
+            this->model_location = model_path.string();
+        }
 
-    // Aligned face output size
-    double sim_scale_out;
-    int sim_size_out;
+        vector<cv::Vec3d> getOrientationBins() const {
+            return vector<cv::Vec3d>(this->orientation_bins);
+        }
 
-    // Should aligned face be masked out from background
-    bool sim_align_face_mask;
+      private:
+        void init();
 
-    // Should a video stream be assumed
-    bool dynamic;
+        // Aligned face output size
+        double sim_scale_out;
+        int sim_size_out;
 
-    // Where to load the models from
-    string model_location;
+        // Should aligned face be masked out from background
+        bool sim_align_face_mask;
 
-    // The location of the executable
-    boost::filesystem::path root;
+        // Should a video stream be assumed
+        bool dynamic;
 
-    vector<cv::Vec3d> orientation_bins;
-  };
+        // Where to load the models from
+        string model_location;
+
+        // The location of the executable
+        boost::filesystem::path root;
+
+        vector<cv::Vec3d> orientation_bins;
+    };
 } // namespace FaceAnalysis

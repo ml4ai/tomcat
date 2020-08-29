@@ -14,18 +14,17 @@ find_package(Eigen3 REQUIRED NO_MODULE)
 find_package(GSL REQUIRED)
 
 # Boost is used for several requirements in the project.
-find_package(Boost 1.69
-        COMPONENTS chrono
-        date_time
-        filesystem
-        iostreams
-        program_options
-        regex
-        system
-        thread
-        REQUIRED)
-
-include_directories(${Boost_INCLUDE_DIR})
+find_package(
+  Boost 1.69
+  COMPONENTS chrono
+             date_time
+             filesystem
+             iostreams
+             program_options
+             regex
+             system
+             thread
+  REQUIRED)
 
 # FMT is a library used for formatting.
 find_package(FMT REQUIRED)
@@ -33,20 +32,14 @@ find_package(FMT REQUIRED)
 # Json library is being used for writing evaluations to an output stream
 find_package(nlohmann_json REQUIRED)
 
-if (NOT MOSQUITTO_INCLUDE_DIR)
-    find_path(MOSQUITTO_INCLUDE_DIR mosquitto.h)
-endif()
-
-include_directories(${MOSQUITTO_INCLUDE_DIR})
-
-if (NOT MOSQUITTO_LIBRARY)
-find_library(
-        MOSQUITTO_LIBRARY
-        NAMES mosquitto)
-endif()
+# Finding the Mosquitto header and library
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
+                      "${CMAKE_SOURCE_DIR}/../../../tools/cmake")
+find_package(Mosquitto 1.5 REQUIRED)
 
 # Header files inside model folder
-file(GLOB tomcat_model_headers CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
+file(GLOB tomcat_model_headers CONFIGURE_DEPENDS
+     ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 
 # Header and cpp files
 add_library(tomcat_model_libs
@@ -92,29 +85,36 @@ add_library(tomcat_model_libs
         utils/EigenExtensions.cpp
         utils/Mosquitto.cpp pgm/inference/ExactInferenceNode.cpp pgm/inference/ExactInferenceNode.h pgm/inference/FactorNode.cpp pgm/inference/FactorNode.h pgm/inference/NonFactorNode.cpp pgm/inference/NonFactorNode.h pgm/inference/FactorGraph.cpp pgm/inference/FactorGraph.h)
 
+target_include_directories(tomcat_model_lib PRIVATE ${Boost_INCLUDE_DIR})
+
 # Todo make code coverage work on Linux as well.
-if (APPLE AND CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    # Add required flags (GCC & LLVM/Clang)
-    message("Building with code coverage")
-    target_compile_options(
-            tomcat
-            -O0 # no optimization
-            -g # generate debug info
-            --coverage # sets all required flags
-    )
-    if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.13)
-        target_link_options(tomcat PUBLIC --coverage)
-    else ()
-        target_link_libraries(tomcat PUBLIC --coverage)
-    endif ()
-endif ()
+if(APPLE
+   AND CODE_COVERAGE
+   AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+  # Add required flags (GCC & LLVM/Clang)
+  message("Building with code coverage")
+  target_compile_options(
+    tomcat -O0 # no optimization
+    -g # generate debug info
+    --coverage # sets all required flags
+  )
+  if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.13)
+    target_link_options(tomcat PUBLIC --coverage)
+  else()
+    target_link_libraries(tomcat PUBLIC --coverage)
+  endif()
+endif()
 
 add_executable(TomcatModel main.cpp)
-target_link_libraries(TomcatModel PUBLIC tomcat_model_libs
-        ${Boost_LIBRARIES}
-        Eigen3::Eigen
-        GSL::gsl
-        GSL::gslcblas
-        fmt::fmt
-        nlohmann_json::nlohmann_json
-        ${MOSQUITTO_LIBRARY})
+target_include_directories(TomcatModel PRIVATE ${Boost_INCLUDE_DIR}
+                                               ${Mosquitto_INCLUDE_DIRS})
+target_link_libraries(
+  TomcatModel
+  PRIVATE tomcat_model_lib
+          ${Boost_LIBRARIES}
+          Eigen3::Eigen
+          GSL::gsl
+          GSL::gslcblas
+          fmt::fmt
+          nlohmann_json::nlohmann_json
+          ${Mosquitto_LIBRARIES})
