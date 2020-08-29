@@ -249,6 +249,7 @@ namespace tomcat {
             // Data members
             //------------------------------------------------------------------
             Graph graph;
+            
             IDMap name_to_id;
 
             // List of concrete timed instances node of the unrolled DBN.

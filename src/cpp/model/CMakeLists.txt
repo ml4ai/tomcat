@@ -88,7 +88,9 @@ add_library(tomcat_model_libs
         pipeline/evaluation/Accuracy.cpp
         pipeline/evaluation/F1Score.cpp
         pipeline/evaluation/EvaluationAggregator.cpp
-        pipeline/Pipeline.cpp utils/Definitions.h utils/EigenExtensions.cpp utils/EigenExtensions.h utils/Mosquitto.cpp utils/Mosquitto.h)
+        pipeline/Pipeline.cpp
+        utils/EigenExtensions.cpp
+        utils/Mosquitto.cpp pgm/inference/ExactInferenceNode.cpp pgm/inference/ExactInferenceNode.h pgm/inference/FactorNode.cpp pgm/inference/FactorNode.h pgm/inference/NonFactorNode.cpp pgm/inference/NonFactorNode.h pgm/inference/FactorGraph.cpp pgm/inference/FactorGraph.h)
 
 # Todo make code coverage work on Linux as well.
 if (APPLE AND CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")

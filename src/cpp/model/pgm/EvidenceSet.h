@@ -132,7 +132,7 @@ namespace tomcat {
              *
              * @return: Whether this object contains data for a given node.
              */
-            bool has_data_for(const std::string& node_label);
+            bool has_data_for(const std::string& node_label) const;
 
             /**
              * Assigns a new tensor to a node;

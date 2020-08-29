@@ -189,7 +189,7 @@ namespace tomcat {
             this->node_label_to_data[node_label] = data;
         }
 
-        bool EvidenceSet::has_data_for(const std::string& node_label) {
+        bool EvidenceSet::has_data_for(const std::string& node_label) const {
             return EXISTS(node_label, this->node_label_to_data);
         }
 

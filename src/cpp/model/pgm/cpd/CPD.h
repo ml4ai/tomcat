@@ -1,15 +1,15 @@
 #pragma once
 
+#include <iterator>
 #include <memory>
 #include <vector>
-#include <iterator>
 
 #include <eigen3/Eigen/Dense>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
 
-#include "../../utils/Definitions.h"
 #include "../../distribution/Distribution.h"
+#include "../../utils/Definitions.h"
 #include "../Node.h"
 
 namespace tomcat {
@@ -43,6 +43,9 @@ namespace tomcat {
          */
         class CPD {
           public:
+            typedef std::unordered_map<std::string, ParentIndexing>
+                TableOrderingMap;
+
             //------------------------------------------------------------------
             // Constructors & Destructor
             //------------------------------------------------------------------
@@ -357,8 +360,7 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------
-            std::unordered_map<std::string, ParentIndexing>
-                parent_label_to_indexing;
+            TableOrderingMap parent_label_to_indexing;
         };
 
     } // namespace model

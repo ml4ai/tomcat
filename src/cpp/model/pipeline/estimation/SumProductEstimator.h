@@ -2,6 +2,7 @@
 
 #include "../../utils/Definitions.h"
 
+#include "../../pgm/inference/FactorGraph.h"
 #include "Estimator.h"
 
 namespace tomcat {
@@ -28,7 +29,7 @@ namespace tomcat {
              * estimations are going to be computed for
              */
             SumProductEstimator(std::shared_ptr<DynamicBayesNet> model,
-                              int inference_horizon);
+                                int inference_horizon);
 
             ~SumProductEstimator();
 
@@ -37,7 +38,8 @@ namespace tomcat {
             //------------------------------------------------------------------
             SumProductEstimator(const SumProductEstimator& estimator);
 
-            SumProductEstimator& operator=(const SumProductEstimator& estimator);
+            SumProductEstimator&
+            operator=(const SumProductEstimator& estimator);
 
             SumProductEstimator(SumProductEstimator&&) = default;
 
@@ -65,10 +67,22 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
+            void compute_forward_messages(const FactorGraph& factor_graph,
+                                          int time_step,
+                                          const EvidenceSet& new_data);
+
+            void compute_backward_messages(const FactorGraph& factor_graph,
+                                           int time_step,
+                                           const EvidenceSet& new_data);
 
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------
+
+            // Next time step to compute messages to the nodes in the factor
+            // graph. Nodes with time steps before next_time_step already have
+            // their messages computed.
+            int next_time_step = 0;
         };
 
     } // namespace model
