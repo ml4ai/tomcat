@@ -134,6 +134,109 @@ def fit_and_evaluate(
         horizons
     )
 
+def fit_and_evaluate_single_fold(
+        original_model, evidence_set, num_gibbs_samples, gibbs_burn_in, horizons, model_root_folder
+):
+    learning = ParameterLearning(original_model)
+
+    tg_baseline_log_losses = [[] for _ in range(len(horizons))]
+    ty_baseline_log_losses = [[] for _ in range(len(horizons))]
+    tg_baseline_f1_scores = [[] for _ in range(len(horizons))]
+    ty_baseline_f1_scores = [[] for _ in range(len(horizons))]
+    tg_baseline_accuracies = [[] for _ in range(len(horizons))]
+    ty_baseline_accuracies = [[] for _ in range(len(horizons))]
+    tg_baseline_conf_matrices = [[] for _ in range(len(horizons))]
+    ty_baseline_conf_matrices = [[] for _ in range(len(horizons))]
+
+    tg_model_log_losses = [[] for _ in range(len(horizons))]
+    ty_model_log_losses = [[] for _ in range(len(horizons))]
+    tg_model_f1_scores = [[] for _ in range(len(horizons))]
+    ty_model_f1_scores = [[] for _ in range(len(horizons))]
+    tg_model_accuracies = [[] for _ in range(len(horizons))]
+    ty_model_accuracies = [[] for _ in range(len(horizons))]
+    tg_model_conf_matrices = [[] for _ in range(len(horizons))]
+    ty_model_conf_matrices = [[] for _ in range(len(horizons))]
+
+    trained_model = original_model
+    model_folder = "{}/{}s{}b".format(model_root_folder, num_gibbs_samples, gibbs_burn_in)
+    if not trained_model.load(model_folder):
+        trained_model = learning.estimate_parameters(
+            evidence_set, num_gibbs_samples, gibbs_burn_in
+        )
+        trained_model.save(model_folder)
+
+    inference = ModelInference(trained_model)
+
+    for i, h in enumerate(horizons):
+        (
+            tg_baseline_frequencies,
+            ty_baseline_frequencies,
+        ) = inference.get_triaging_normalized_frequencies(evidence_set, h)
+
+        (
+            tg_baseline_ll,
+            ty_baseline_ll,
+            tg_baseline_f1,
+            ty_baseline_f1,
+            tg_baseline_acc,
+            ty_baseline_acc,
+            tg_baseline_cm,
+            ty_baseline_cm,
+        ) = compute_accuracy_for_triaging(
+            tg_baseline_frequencies, ty_baseline_frequencies, evidence_set, h
+        )
+        tg_baseline_log_losses[i].append(tg_baseline_ll)
+        ty_baseline_log_losses[i].append(ty_baseline_ll)
+        tg_baseline_f1_scores[i].append(tg_baseline_f1)
+        ty_baseline_f1_scores[i].append(ty_baseline_f1)
+        tg_baseline_accuracies[i].append(tg_baseline_acc)
+        ty_baseline_accuracies[i].append(ty_baseline_acc)
+        tg_baseline_conf_matrices[i].append(tg_baseline_cm)
+        ty_baseline_conf_matrices[i].append(ty_baseline_cm)
+
+        (
+            tg_marginals,
+            ty_marginals,
+        ) = inference.get_triaging_marginals_over_time(evidence_set, h)
+        (
+            tg_model_ll,
+            ty_model_ll,
+            tg_model_f1,
+            ty_model_f1,
+            tg_model_acc,
+            ty_model_acc,
+            tg_model_cm,
+            ty_model_cm,
+        ) = compute_accuracy_for_triaging(tg_marginals, ty_marginals, evidence_set, h)
+        tg_model_log_losses[i].append(tg_model_ll)
+        ty_model_log_losses[i].append(ty_model_ll)
+        tg_model_f1_scores[i].append(tg_model_f1)
+        ty_model_f1_scores[i].append(ty_model_f1)
+        tg_model_accuracies[i].append(tg_model_acc)
+        ty_model_accuracies[i].append(ty_model_acc)
+        tg_model_conf_matrices[i].append(tg_model_cm)
+        ty_model_conf_matrices[i].append(ty_model_cm)
+
+    print_results(
+        tg_baseline_log_losses,
+        ty_baseline_log_losses,
+        tg_baseline_f1_scores,
+        ty_baseline_f1_scores,
+        tg_baseline_accuracies,
+        ty_baseline_accuracies,
+        tg_baseline_conf_matrices,
+        ty_baseline_conf_matrices,
+        tg_model_log_losses,
+        ty_model_log_losses,
+        tg_model_f1_scores,
+        ty_model_f1_scores,
+        tg_model_accuracies,
+        ty_model_accuracies,
+        tg_model_conf_matrices,
+        ty_model_conf_matrices,
+        horizons
+    )
+
 
 def shuffle_and_split_data(evidence_set, number_of_folds):
     """
@@ -446,46 +549,67 @@ def experiment_generate_synthetic_data(num_samples, gibbs_samples, gibbs_burn_in
                                   even_until, share_parameters)
 
 
-def experiment_eval_performance_synthetic(num_samples, gibbs_samples, gibbs_burn_in, horizons):
+def experiment_eval_performance_synthetic(num_samples, gibbs_samples, gibbs_burn_in, horizons, share_parameters, single_fold=False):
     print('****************************************')
     print('EVALUATING PERFORMANCE ON SYNTHETIC DATA')
     print('****************************************')
+
+    if share_parameters:
+        sharing_opt = "shared"
+    else:
+        sharing_opt = "non_shared"
 
     print('>> Sparky')
     np.random.seed(42)
     random.seed(42)
     model = Model()
-    model.init_from_mission_map(MissionMap.SPARKY)
-    evidence_set = load_evidence_set(
-        '../data/evidence/asist/synthetic_sparky_0eu_{}s_{}gs{}gbi'.format(num_samples, gibbs_samples, gibbs_burn_in))
+    if share_parameters:
+        model.init_from_mission_map(MissionMap.SHARED)
+        evidence_set = load_evidence_set(
+            '../data/evidence/asist/shared/synthetic_sparky_0eu_{}s_{}gs{}gbi'.format(num_samples, gibbs_samples, gibbs_burn_in))
+        num_folds = 5
+    else:
+        model.init_from_mission_map(MissionMap.SPARKY)
+        evidence_set = load_evidence_set(
+            '../data/evidence/asist/non_shared/synthetic_sparky_0eu_{}s_{}gs{}gbi'.format(num_samples, gibbs_samples, gibbs_burn_in))
+        num_folds = 6
 
-    # Use the same size of training set
-    evidence_set.lt_evidence = evidence_set.lt_evidence[:6, :]
-    evidence_set.rm_evidence = evidence_set.rm_evidence[:6, :]
-    evidence_set.tg_evidence = evidence_set.tg_evidence[:6, :]
-    evidence_set.ty_evidence = evidence_set.ty_evidence[:6, :]
-    evidence_set.number_of_data_points = 6
-    num_folds = 6
-    fit_and_evaluate(model, evidence_set, gibbs_samples, gibbs_burn_in, num_folds, horizons,
-                     "../data/models/synthetic_sparky")
+    # # Use the same size of training set
+    # evidence_set.lt_evidence = evidence_set.lt_evidence[:6, :]
+    # evidence_set.rm_evidence = evidence_set.rm_evidence[:6, :]
+    # evidence_set.tg_evidence = evidence_set.tg_evidence[:6, :]
+    # evidence_set.ty_evidence = evidence_set.ty_evidence[:6, :]
+    # evidence_set.number_of_data_points = 6
+
+    if single_fold:
+        fit_and_evaluate_single_fold(model, evidence_set, 100, 10, horizons,
+                     "../data/models/synthetic_sparky" + sharing_opt)
+    else:
+        fit_and_evaluate(model, evidence_set, 100, 10, num_folds, horizons,
+                         "../data/models/synthetic_sparky" + sharing_opt)
 
     print('>> Falcon')
     np.random.seed(42)
     random.seed(42)
     model = Model()
-    model.init_from_mission_map(MissionMap.FALCON)
-    evidence_set = load_evidence_set(
-        '../data/evidence/asist/synthetic_falcon_0eu_{}s_{}gs{}gbi'.format(num_samples, gibbs_samples, gibbs_burn_in))
+    if share_parameters:
+        model.init_from_mission_map(MissionMap.SHARED)
+        evidence_set = load_evidence_set(
+            '../data/evidence/asist/shared/synthetic_falcon_0eu_{}s_{}gs{}gbi'.format(num_samples, gibbs_samples, gibbs_burn_in))
+    else:
+        model.init_from_mission_map(MissionMap.FALCON)
+        evidence_set = load_evidence_set(
+            '../data/evidence/asist/non_shared/synthetic_falcon_0eu_{}s_{}gs{}gbi'.format(num_samples, gibbs_samples, gibbs_burn_in))
 
     # Use the same size of training set
-    evidence_set.lt_evidence = evidence_set.lt_evidence[:5, :]
-    evidence_set.rm_evidence = evidence_set.rm_evidence[:5, :]
-    evidence_set.tg_evidence = evidence_set.tg_evidence[:5, :]
-    evidence_set.ty_evidence = evidence_set.ty_evidence[:5, :]
-    evidence_set.number_of_data_points = 5
+    # evidence_set.lt_evidence = evidence_set.lt_evidence[:5, :]
+    # evidence_set.rm_evidence = evidence_set.rm_evidence[:5, :]
+    # evidence_set.tg_evidence = evidence_set.tg_evidence[:5, :]
+    # evidence_set.ty_evidence = evidence_set.ty_evidence[:5, :]
+    # evidence_set.number_of_data_points = 5
     num_folds = 5
-    fit_and_evaluate(model, evidence_set, gibbs_samples, gibbs_burn_in, num_folds, horizons,
-                     "../data/models/synthetic_falcon")
+    fit_and_evaluate(model, evidence_set, 1000, 100, num_folds, horizons,
+                     "../data/models/synthetic_falcon" + sharing_opt)
 
 
 def experiment_eval_performance_real(gibbs_samples, gibbs_burn_in, horizons, share_parameters):
@@ -811,13 +935,16 @@ if __name__ == "__main__":
     GIBBS_BURN_IN = 500
     HORIZONS = [1, 3, 5, 10, 15, 30]
 
-    # experiment_generate_synthetic_data(100, NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, 0, True)
-    # experiment_eval_performance_synthetic(NUM_SAMPLES, NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, HORIZONS)
-    experiment_eval_performance_real(NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, HORIZONS, True)
-    experiment_common_behavior(True)
-    experiment_transitions(True)
+     # experiment_generate_synthetic_data(100, NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, 0, True)
+    # experiment_eval_performance_synthetic(NUM_SAMPLES, NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, HORIZONS, True)
+    # experiment_eval_performance_real(NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, HORIZONS, True)
+    # experiment_common_behavior(True)
+    # experiment_transitions(True)
     # experiment_check_with_toy_model()
     # experiment_check_with_asist_model()
+
+    experiment_eval_performance_synthetic(NUM_SAMPLES, NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, HORIZONS, True, True)
+
 
     # model = Model()
     # model.init_from_mission_map(MissionMap.SPARKY)
