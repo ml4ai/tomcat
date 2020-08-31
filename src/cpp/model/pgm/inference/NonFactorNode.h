@@ -65,7 +65,7 @@ namespace tomcat {
              * @return Outward message
              */
             Eigen::MatrixXd
-            get_outward_message_to(const NodeName& node_name, int source_time_slice) const override;
+            get_outward_message_to(const NodeName& node_name, int source_time_slice, int inference_time_step) const override;
 
             Eigen::MatrixXd get_marginal_at(int time_step) const;
 

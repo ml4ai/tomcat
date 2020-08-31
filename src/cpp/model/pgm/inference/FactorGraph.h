@@ -5,7 +5,6 @@
 #include <vector>
 
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/subgraph.hpp>
 
 #include "../../utils/Definitions.h"
 #include "../cpd/CPD.h"
@@ -50,9 +49,9 @@ namespace tomcat {
             // Copy constructor and assignment should be deleted to avoid
             // implicit slicing and loss of polymorphic behaviour in the
             // subclasses. To deep copy, the clone method must be used.
-            FactorGraph(const FactorGraph&) = delete;
+            FactorGraph(const FactorGraph&) = default;
 
-            FactorGraph& operator=(const FactorGraph&) = delete;
+            FactorGraph& operator=(const FactorGraph&) = default;
 
             FactorGraph(FactorGraph&&) = default;
 
@@ -90,12 +89,14 @@ namespace tomcat {
             std::vector<VertexData> get_vertices_topological_order(
                 int time_step, bool from_roots_to_leaves = true) const;
 
-            std::vector<VertexData> get_parents_of(const ExactInferenceNode::NodeName& node_name) const;
-
             std::vector<VertexData>
-            get_children_of(const ExactInferenceNode::NodeName& node_name) const;
+            get_parents_of(const ExactInferenceNode::NodeName& node_name) const;
 
-            Eigen::VectorXd get_marginal_for(const ExactInferenceNode::NodeName& node_name) const;
+            std::vector<VertexData> get_children_of(
+                const ExactInferenceNode::NodeName& node_name) const;
+
+            Eigen::MatrixXd get_marginal_for(
+                const ExactInferenceNode::NodeName& node_name) const;
 
             //------------------------------------------------------------------
             // Virtual functions
@@ -130,13 +131,27 @@ namespace tomcat {
             // potential functions are actually CPDs, to make the computation of
             // the messages more straightforward, we keep the direction of the
             // edges in the original DBN.
-            typedef boost::subgraph<boost::adjacency_list<boost::vecS,
-                                                          boost::vecS,
-                                                          boost::bidirectionalS,
-                                                          VertexData>>
+            typedef boost::adjacency_list<boost::vecS,
+                                          boost::vecS,
+                                          boost::bidirectionalS,
+                                          VertexData>
                 Graph;
 
             typedef std::unordered_map<std::string, int> IDMap;
+
+            //------------------------------------------------------------------
+            // Static functions
+            //------------------------------------------------------------------
+
+            /**
+             * We need unique labels because...
+             * @param original_label
+             * @param time_step
+             * @return
+             */
+//            static std::string
+//            get_unique_label_for(const std::string& original_label,
+//                                 int time_step);
 
             //------------------------------------------------------------------
             // Member functions
@@ -144,12 +159,21 @@ namespace tomcat {
             std::string
             get_factor_label(const std::string& target_non_factor_label) const;
 
-            std::string get_relative_name_for(const ExactInferenceNode::NodeName& node_name) const;
+            std::string get_relative_name_for(
+                const ExactInferenceNode::NodeName& node_name) const;
+
+            int add_non_factor_node(const std::string& node_label,
+                                    int cardinality,
+                                    int time_step);
+            int add_factor_node(const std::string& node_label,
+                                int time_step,
+                                Eigen::MatrixXd& cpd,
+                                const CPD::TableOrderingMap& cpd_ordering_map);
 
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------
-            std::unique_ptr<Graph> graph;
+            Graph graph;
 
             IDMap name_to_id;
 
@@ -166,13 +190,7 @@ namespace tomcat {
             // single Bayes Net (only one time step) as this implementation is
             // flexible enough to allow working with them. In that case,
             // max_time_step would be 0.
-            int last_time_step;
-
-            // Vertices that are part of the sub-graph comprised by the nodes in
-            // time step 0, 1 and 2. This information will be useful to compute
-            // the sub-graphs per time step and subsequently a topological order
-            // over them.
-            std::array<std::vector<int>, 3> time_sliced_vertices;
+            int last_time_step = 0;
 
             // The two members below store the topological orders for each one
             // of the time slices sub-graphs. A reversed topological order here

@@ -54,6 +54,8 @@ namespace tomcat {
 
             std::string get_name() const override;
 
+            FactorGraph factor_graph;
+
           protected:
             //------------------------------------------------------------------
             // Member functions
@@ -83,6 +85,8 @@ namespace tomcat {
             // graph. Nodes with time steps before next_time_step already have
             // their messages computed.
             int next_time_step = 0;
+
+
         };
 
     } // namespace model

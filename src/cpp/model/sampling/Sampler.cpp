@@ -43,9 +43,9 @@ namespace tomcat {
                         std::shared_ptr<RandomVariableNode> rv_node =
                             std::dynamic_pointer_cast<RandomVariableNode>(node);
 
+                        Tensor3 node_data = data[node_label];
                         rv_node->set_assignment(
-                            data[node_label](rv_node->get_time_step(), 2)
-                                .transpose());
+                            node_data(rv_node->get_time_step(), 2).transpose());
                     }
                 }
             }

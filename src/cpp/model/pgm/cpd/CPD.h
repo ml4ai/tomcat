@@ -24,13 +24,19 @@ namespace tomcat {
          * parent nodes' assignments.
          */
         struct ParentIndexing {
-
             // Order of the parent node's label for table indexing
             int order;
-
+            int cardinality;
             // Cumulative cardinality of the nodes to the right of the parent
             // node's label order.
             int right_cumulative_cardinality;
+
+            ParentIndexing() {}
+            ParentIndexing(int order,
+                           int cardinality,
+                           int right_cumulative_cardinality)
+                : order(order), cardinality(cardinality),
+                  right_cumulative_cardinality(right_cumulative_cardinality) {}
         };
 
         /**

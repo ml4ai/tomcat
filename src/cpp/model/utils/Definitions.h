@@ -12,6 +12,7 @@ namespace tomcat {
 #define LOG(log) std::cout << log << std::endl
 #define LOG_WARNING(log) std::cerr << log << std::endl
 #define EXISTS(member, container) (container.find(member) != container.end())
+#define EPSILON 10E-16
 
         struct TomcatModelException : public std::exception {
             std::string message;

@@ -72,7 +72,10 @@ namespace tomcat {
              */
             Eigen::MatrixXd
             get_outward_message_to(const NodeName& node_name,
-                                   int source_time_slice) const override;
+                                   int source_time_slice,
+                                   int inference_time_step) const override;
+
+            void replace_cpd_ordering_label(const std::string& current_label, const std::string& new_label);
 
             //------------------------------------------------------------------
             // Virtual functions
@@ -106,18 +109,30 @@ namespace tomcat {
             // pivot the table so that the child become one of the parents.
             // That's why this adjusted table is for. It will pivot the original
             // potential function according to the direction of the message.
-            std::vector<Eigen::MatrixXd>
-            get_incoming_messages_in_order(const NodeName& excluding_node_name,
-                                           int source_time_slice,
-                                           Eigen::MatrixXd& adjusted_potential_function) const;
+            std::vector<Eigen::MatrixXd> get_incoming_messages_in_order(
+                const NodeName& excluding_node_name,
+                int source_time_slice,
+                Eigen::MatrixXd& adjusted_potential_function) const;
+
+            void fill_rotated_potential_functions();
 
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------
 
-            // This is, concretely, the CPD table of the child node of the
-            // factor.
             Eigen::MatrixXd potential_function;
+
+            // A potential function will actually be a CPD table that is
+            // defined as the probability of a node (columns) given its parents
+            // (rows). When computing messages in a factor graph, depending on
+            // the direction of the message, we need to swap axis of the
+            // potential function matrix, such that one of the parents assumes
+            // the column axis and the main node takes that parent's place.
+            // Since we are simulating a multi-dimensional array by using a
+            // matrix, we need to perform some computation to do the swap.
+            // This vector store all possible swaps where the index is the index
+            // of the parent swapped.
+            std::vector<Eigen::MatrixXd> rotated_potential_function;
 
             // The joint CPD is implemented as a single matrix where the rows
             // are combinations of parents' assignments for a node and the

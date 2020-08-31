@@ -73,10 +73,8 @@ namespace tomcat {
                 std::shared_ptr<NodeMetadata> metadata =
                     this->parent_node_order[order];
 
-                ParentIndexing indexing;
-                indexing.order = order;
-                indexing.right_cumulative_cardinality = cum_cardinality;
-
+                ParentIndexing indexing(
+                    order, metadata->get_cardinality(), cum_cardinality);
                 this->parent_label_to_indexing[metadata->get_label()] =
                     indexing;
 

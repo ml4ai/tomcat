@@ -81,7 +81,8 @@ namespace tomcat {
             /**
              * Returns assignable matrix for a given index of the first axis.
              *
-             * @param i: first axis' index
+             * @param i: index to select in the chosen axis
+             * @param axis: axis
              *
              * @return Assignable matrix.
              */
@@ -95,7 +96,7 @@ namespace tomcat {
              * @param k: third axis' index
              * @return Non-assignable vector.
              */
-            Eigen::VectorXd operator()(int j, int k) const;
+            Eigen::VectorXd at(int j, int k) const;
 
             /**
              * Returns an assignable number given indices of all axes.

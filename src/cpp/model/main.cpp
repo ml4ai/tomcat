@@ -24,6 +24,7 @@
 #include "pipeline/training/DBNSamplingTrainer.h"
 #include "sampling/AncestralSampler.h"
 #include "sampling/GibbsSampler.h"
+#include "utils/Definitions.h"
 #include "utils/FileHandler.h"
 #include "utils/Mosquitto.h"
 #include <boost/filesystem.hpp>
@@ -40,15 +41,16 @@ namespace fs = boost::filesystem;
 
 using namespace Eigen;
 using namespace tomcat::model;
+using namespace std;
 
 class A {
   public:
-    A() { std::cout << "New A" << std::endl; }
-    A(A& a) { std::cout << "Copying A" << std::endl; }
-    A(A&& a) { std::cout << "Moving A" << std::endl; }
-    ~A() { std::cout << "Destroying A" << std::endl; }
+    A() { cout << "New A" << endl; }
+    A(A& a) { cout << "Copying A" << endl; }
+    A(A&& a) { cout << "Moving A" << endl; }
+    ~A() { cout << "Destroying A" << endl; }
 
-    void print() { std::cout << "I am A" << std::endl; }
+    void print() { cout << "I am A" << endl; }
 };
 
 class B {
@@ -56,28 +58,28 @@ class B {
     A a;
 
   public:
-    B() { std::cout << "New B without A" << std::endl; }
+    B() { cout << "New B without A" << endl; }
     B(A& a) : a(a) {
-        std::cout << "New B with A&" << std::endl;
+        cout << "New B with A&" << endl;
         print(a);
     }
-    B(A&& a) : a(std::move(a)) {
-        std::cout << "New B with A&&" << std::endl;
+    B(A&& a) : a(move(a)) {
+        cout << "New B with A&&" << endl;
         print(a);
     }
     void print(A& a) const { a.print(); }
 };
 
 void test_shared_ptr() {
-    std::shared_ptr<A> a = std::make_shared<A>(A());
+    shared_ptr<A> a = make_shared<A>(A());
     a->print();
 }
 
 void test_cpp_capabilities() {
     A a;
-    B b(std::move(a));
+    B b(move(a));
 
-    std::shared_ptr<A> a_ptr = std::make_shared<A>();
+    shared_ptr<A> a_ptr = make_shared<A>();
     // A a_ref = *a_ptr;
     b.print(*a_ptr);
 }
@@ -89,10 +91,10 @@ void test_random_number_generation() {
     unsigned int* sample = new unsigned int[3];
     gsl_ran_multinomial(gen_ptr, 3, 1, probs, sample);
 
-    std::cout << sample[0] << "," << sample[1] << "," << sample[2] << std::endl;
+    cout << sample[0] << "," << sample[1] << "," << sample[2] << endl;
 
-    unsigned int x = std::distance(sample, std::find(sample, sample + 3, 1));
-    std::cout << x << std::endl;
+    unsigned int x = distance(sample, find(sample, sample + 3, 1));
+    cout << x << endl;
 
     delete[] probs;
     delete[] sample;
@@ -100,17 +102,17 @@ void test_random_number_generation() {
 }
 
 void test_dbn_entities() {
-    //    std::cout << std::endl;
+    //    cout << endl;
     //
     //    VectorXd v2 = Map<VectorXd>(theta, 2);
-    //    std::cout << v2 << std::endl;
+    //    cout << v2 << endl;
     //
     //    MatrixXd m(2, 2);
     //    m(0, 0) = 0.3;
     //    m(1, 0) = 0.8;
     //    m(0, 1) = 1 - m(0, 0);
     //    m(1, 1) = 1 - m(1, 0);
-    //    std::cout << m << std::endl;
+    //    cout << m << endl;
     //
     //    // Testing node metadata
     //    NodeMetadata metadata1;
@@ -125,54 +127,54 @@ void test_dbn_entities() {
     //    metadata2.replicable = true;
     //    metadata2.cardinality = 2;
     //
-    //    std::cout << metadata2 << std::endl;
+    //    cout << metadata2 << endl;
     //
     //    // Testing constant nodes
     //    ConstantNode node1(2);
     //    ConstantNode node2(v, "v");
     //
-    //    std::cout << node1 << std::endl;
-    //    std::cout << node2 << std::endl;
+    //    cout << node1 << endl;
+    //    cout << node2 << endl;
     //
     //    // Testing CPDs
-    //    std::vector<std::string> order{"A", "B", "C"};
+    //    vector<string> order{"A", "B", "C"};
     //    CategoricalCPD categorical_cpd(order, m);
-    //    std::cout << categorical_cpd << std::endl;
+    //    cout << categorical_cpd << endl;
     //    Eigen::VectorXd sample = categorical_cpd.sample(gen);
-    //    std::cout << sample << std::endl;
+    //    cout << sample << endl;
     //
     //    GaussianCPD gaussian_cpd(order, m);
-    //    std::cout << gaussian_cpd << std::endl;
+    //    cout << gaussian_cpd << endl;
     //    sample = gaussian_cpd.sample(gen);
-    //    std::cout << sample << std::endl;
+    //    cout << sample << endl;
     //
     //    DirichletCPD dirichlet_cpd(order, m);
-    //    std::cout << dirichlet_cpd << std::endl;
+    //    cout << dirichlet_cpd << endl;
     //    Eigen::MatrixXd sample2 = dirichlet_cpd.sample(gen);
-    //    std::cout << sample2 << std::endl;
+    //    cout << sample2 << endl;
     //
     //    // Testing RV nodes
     //    RandomVariableNode param_node1(
-    //        std::make_shared<NodeMetadata>(metadata1),
-    //        std::make_unique<CategoricalCPD>(categorical_cpd));
-    //    std::cout << param_node1 << std::endl;
+    //        make_shared<NodeMetadata>(metadata1),
+    //        make_unique<CategoricalCPD>(categorical_cpd));
+    //    cout << param_node1 << endl;
     //
     //    RandomVariableNode param_node2(
-    //        std::make_shared<NodeMetadata>(metadata2),
-    //        std::make_unique<CategoricalCPD>(categorical_cpd));
-    //    std::cout << param_node2 << std::endl;
+    //        make_shared<NodeMetadata>(metadata2),
+    //        make_unique<CategoricalCPD>(categorical_cpd));
+    //    cout << param_node2 << endl;
     //
     //    NodeMetadata metadata3 = metadata2;
     //    metadata3.label = "StateC";
-    //    metadata3.add_parent_link(std::make_shared<RandomVariableNode>(param_node1),
+    //    metadata3.add_parent_link(make_shared<RandomVariableNode>(param_node1),
     //                              true);
-    //    metadata3.add_parent_link(std::make_shared<RandomVariableNode>(param_node2),
+    //    metadata3.add_parent_link(make_shared<RandomVariableNode>(param_node2),
     //                              false);
     //
     //    RandomVariableNode data_node1(
-    //        std::make_shared<NodeMetadata>(metadata3),
-    //        std::make_unique<CategoricalCPD>(categorical_cpd));
-    //    std::cout << data_node1 << std::endl;
+    //        make_shared<NodeMetadata>(metadata3),
+    //        make_unique<CategoricalCPD>(categorical_cpd));
+    //    cout << data_node1 << endl;
     //
     //    DynamicBayesNet dbn;
     //    dbn.add_node(param_node1);
@@ -200,42 +202,42 @@ DynamicBayesNet create_dbn(bool fixed_parameters) {
         NodeMetadata::create_multiple_time_link_metadata(
             "ThetaS2", false, true, false, 1, 3);
 
-    std::shared_ptr<NodeMetadata> state_prior_metadata_ptr =
-        std::make_shared<NodeMetadata>(std::move(state_prior_metadata));
+    shared_ptr<NodeMetadata> state_prior_metadata_ptr =
+        make_shared<NodeMetadata>(move(state_prior_metadata));
 
-    std::shared_ptr<NodeMetadata> theta_s0_metadata_ptr =
-        std::make_shared<NodeMetadata>(std::move(theta_s0_metadata));
+    shared_ptr<NodeMetadata> theta_s0_metadata_ptr =
+        make_shared<NodeMetadata>(move(theta_s0_metadata));
 
-    std::shared_ptr<NodeMetadata> theta_s1_metadata_ptr =
-        std::make_shared<NodeMetadata>(std::move(theta_s1_metadata));
+    shared_ptr<NodeMetadata> theta_s1_metadata_ptr =
+        make_shared<NodeMetadata>(move(theta_s1_metadata));
 
-    std::shared_ptr<NodeMetadata> theta_s2_metadata_ptr =
-        std::make_shared<NodeMetadata>(std::move(theta_s2_metadata));
+    shared_ptr<NodeMetadata> theta_s2_metadata_ptr =
+        make_shared<NodeMetadata>(move(theta_s2_metadata));
 
     Eigen::MatrixXd prior_state_prior(1, 3);
     prior_state_prior << 1, 0.000001, 0.000001;
-    DirichletCPD prior_state_prior_cpd({}, std::move(prior_state_prior));
+    DirichletCPD prior_state_prior_cpd({}, move(prior_state_prior));
 
     Eigen::MatrixXd prior_theta_s0(1, 3);
     prior_theta_s0 << 0.2, 0.3, 0.5;
-    DirichletCPD prior_theta_s0_cpd({}, std::move(prior_theta_s0));
+    DirichletCPD prior_theta_s0_cpd({}, move(prior_theta_s0));
 
     Eigen::MatrixXd prior_theta_s1(1, 3);
     prior_theta_s1 << 0.4, 0.1, 0.5;
-    DirichletCPD prior_theta_s1_cpd({}, std::move(prior_theta_s1));
+    DirichletCPD prior_theta_s1_cpd({}, move(prior_theta_s1));
 
     Eigen::MatrixXd prior_theta_s2(1, 3);
     prior_theta_s2 << 0.7, 0.1, 0.2;
-    DirichletCPD prior_theta_s2_cpd({}, std::move(prior_theta_s2));
+    DirichletCPD prior_theta_s2_cpd({}, move(prior_theta_s2));
 
-    std::shared_ptr<CPD> prior_state_prior_cpd_ptr =
-        std::make_shared<DirichletCPD>(prior_state_prior_cpd);
-    std::shared_ptr<CPD> prior_theta_s0_cpd_ptr =
-        std::make_shared<DirichletCPD>(prior_theta_s0_cpd);
-    std::shared_ptr<CPD> prior_theta_s1_cpd_ptr =
-        std::make_shared<DirichletCPD>(prior_theta_s1_cpd);
-    std::shared_ptr<CPD> prior_theta_s2_cpd_ptr =
-        std::make_shared<DirichletCPD>(prior_theta_s2_cpd);
+    shared_ptr<CPD> prior_state_prior_cpd_ptr =
+        make_shared<DirichletCPD>(prior_state_prior_cpd);
+    shared_ptr<CPD> prior_theta_s0_cpd_ptr =
+        make_shared<DirichletCPD>(prior_theta_s0_cpd);
+    shared_ptr<CPD> prior_theta_s1_cpd_ptr =
+        make_shared<DirichletCPD>(prior_theta_s1_cpd);
+    shared_ptr<CPD> prior_theta_s2_cpd_ptr =
+        make_shared<DirichletCPD>(prior_theta_s2_cpd);
 
     RandomVariableNode prior_state_node(state_prior_metadata_ptr);
     prior_state_node.add_cpd_template(prior_state_prior_cpd_ptr);
@@ -249,27 +251,27 @@ DynamicBayesNet create_dbn(bool fixed_parameters) {
     RandomVariableNode theta_s2_node(theta_s2_metadata_ptr);
     theta_s2_node.add_cpd_template(prior_theta_s2_cpd_ptr);
 
-    std::shared_ptr<RandomVariableNode> prior_state_node_ptr =
-        std::make_shared<RandomVariableNode>(prior_state_node);
-    std::shared_ptr<RandomVariableNode> theta_s0_node_ptr =
-        std::make_shared<RandomVariableNode>(theta_s0_node);
-    std::shared_ptr<RandomVariableNode> theta_s1_node_ptr =
-        std::make_shared<RandomVariableNode>(theta_s1_node);
-    std::shared_ptr<RandomVariableNode> theta_s2_node_ptr =
-        std::make_shared<RandomVariableNode>(theta_s2_node);
+    shared_ptr<RandomVariableNode> prior_state_node_ptr =
+        make_shared<RandomVariableNode>(prior_state_node);
+    shared_ptr<RandomVariableNode> theta_s0_node_ptr =
+        make_shared<RandomVariableNode>(theta_s0_node);
+    shared_ptr<RandomVariableNode> theta_s1_node_ptr =
+        make_shared<RandomVariableNode>(theta_s1_node);
+    shared_ptr<RandomVariableNode> theta_s2_node_ptr =
+        make_shared<RandomVariableNode>(theta_s2_node);
 
     NodeMetadata state_metadata =
         NodeMetadata::create_multiple_time_link_metadata(
             "State", true, false, true, 0, 1, 3);
 
-    std::shared_ptr<NodeMetadata> state_metadata_ptr =
-        std::make_shared<NodeMetadata>(state_metadata);
+    shared_ptr<NodeMetadata> state_metadata_ptr =
+        make_shared<NodeMetadata>(state_metadata);
 
     CategoricalCPD prior_state_cpd(
-        {}, {std::make_shared<Categorical>(Categorical(prior_state_node_ptr))});
+        {}, {make_shared<Categorical>(Categorical(prior_state_node_ptr))});
 
-    std::shared_ptr<CPD> prior_state_cpd_ptr =
-        std::make_shared<CategoricalCPD>(prior_state_cpd);
+    shared_ptr<CPD> prior_state_cpd_ptr =
+        make_shared<CategoricalCPD>(prior_state_cpd);
 
     Eigen::MatrixXd state_transition_matrix(3, 3);
     state_transition_matrix << 0, 0, 1, 1, 0, 0, 0, 1, 0;
@@ -277,20 +279,19 @@ DynamicBayesNet create_dbn(bool fixed_parameters) {
     if (!fixed_parameters) {
         state_cpd =
             CategoricalCPD({state_metadata_ptr},
-                           {std::make_shared<Categorical>(theta_s0_node_ptr),
-                            std::make_shared<Categorical>(theta_s1_node_ptr),
-                            std::make_shared<Categorical>(theta_s2_node_ptr)});
+                           {make_shared<Categorical>(theta_s0_node_ptr),
+                            make_shared<Categorical>(theta_s1_node_ptr),
+                            make_shared<Categorical>(theta_s2_node_ptr)});
     }
 
-    std::shared_ptr<CPD> state_cpd_ptr =
-        std::make_shared<CategoricalCPD>(state_cpd);
+    shared_ptr<CPD> state_cpd_ptr = make_shared<CategoricalCPD>(state_cpd);
 
     RandomVariableNode state_node(state_metadata_ptr);
     state_node.add_cpd_template(prior_state_cpd_ptr);
     state_node.add_cpd_template(state_cpd_ptr);
 
-    std::shared_ptr<RandomVariableNode> state_node_ptr =
-        std::make_shared<RandomVariableNode>(state_node);
+    shared_ptr<RandomVariableNode> state_node_ptr =
+        make_shared<RandomVariableNode>(state_node);
     state_metadata_ptr->add_parent_link(state_metadata_ptr, true);
     state_metadata_ptr->add_parent_link(state_prior_metadata_ptr, false);
     if (!fixed_parameters) {
@@ -305,10 +306,10 @@ DynamicBayesNet create_dbn(bool fixed_parameters) {
 
     Eigen::MatrixXd tg_emission_matrix(3, 2);
     tg_emission_matrix << 1, 0, 0, 1, 0.5, 0.5;
-    CategoricalCPD tg_cpd({state_metadata_ptr}, std::move(tg_emission_matrix));
+    CategoricalCPD tg_cpd({state_metadata_ptr}, move(tg_emission_matrix));
 
-    RandomVariableNode tg_node(std::make_shared<NodeMetadata>(tg_metadata));
-    tg_node.add_cpd_template(std::make_shared<CategoricalCPD>(tg_cpd));
+    RandomVariableNode tg_node(make_shared<NodeMetadata>(tg_metadata));
+    tg_node.add_cpd_template(make_shared<CategoricalCPD>(tg_cpd));
 
     NodeMetadata ty_metadata = NodeMetadata::create_multiple_time_link_metadata(
         "TY", true, false, true, 1, 1, 2);
@@ -316,10 +317,10 @@ DynamicBayesNet create_dbn(bool fixed_parameters) {
 
     Eigen::MatrixXd ty_emission_matrix(3, 2);
     ty_emission_matrix << 0, 1, 1, 0, 0.5, 0.5;
-    CategoricalCPD ty_cpd({state_metadata_ptr}, std::move(ty_emission_matrix));
+    CategoricalCPD ty_cpd({state_metadata_ptr}, move(ty_emission_matrix));
 
-    RandomVariableNode ty_node(std::make_shared<NodeMetadata>(ty_metadata));
-    ty_node.add_cpd_template(std::make_shared<CategoricalCPD>(ty_cpd));
+    RandomVariableNode ty_node(make_shared<NodeMetadata>(ty_metadata));
+    ty_node.add_cpd_template(make_shared<CategoricalCPD>(ty_cpd));
 
     DynamicBayesNet dbn(3);
     dbn.add_node_template(state_node);
@@ -327,25 +328,25 @@ DynamicBayesNet create_dbn(bool fixed_parameters) {
     dbn.add_node_template(ty_node);
     dbn.add_node_template(prior_state_node);
     if (!fixed_parameters) {
-        dbn.add_node_template(std::move(theta_s0_node));
-        dbn.add_node_template(std::move(theta_s1_node));
-        dbn.add_node_template(std::move(theta_s2_node));
+        dbn.add_node_template(move(theta_s0_node));
+        dbn.add_node_template(move(theta_s1_node));
+        dbn.add_node_template(move(theta_s2_node));
     }
 
     return dbn;
 }
 
-void generate_samples_to_test(std::shared_ptr<DynamicBayesNet> dbn,
+void generate_samples_to_test(shared_ptr<DynamicBayesNet> dbn,
                               int num_samples,
-                              std::shared_ptr<gsl_rng> gen) {
+                              shared_ptr<gsl_rng> gen) {
     AncestralSampler sampler(dbn);
     sampler.sample(gen, num_samples);
     sampler.save_samples_to_folder("../../data/samples");
 }
 
-void sample_parameters_from_posterior(std::shared_ptr<DynamicBayesNet> dbn,
+void sample_parameters_from_posterior(shared_ptr<DynamicBayesNet> dbn,
                                       int num_samples,
-                                      std::shared_ptr<gsl_rng> gen) {
+                                      shared_ptr<gsl_rng> gen) {
     Tensor3 tg_data = read_tensor_from_file("../../data/samples/TG.txt");
     Tensor3 ty_data = read_tensor_from_file("../../data/samples/TY.txt");
     EvidenceSet data;
@@ -356,19 +357,19 @@ void sample_parameters_from_posterior(std::shared_ptr<DynamicBayesNet> dbn,
     gibbs.add_data(data);
     gibbs.sample(gen, num_samples);
 
-    std::cout << "ThetaS0" << std::endl;
-    std::cout << gibbs.get_samples("ThetaS0") << std::endl;
+    cout << "ThetaS0" << endl;
+    cout << gibbs.get_samples("ThetaS0") << endl;
 
-    std::cout << "ThetaS1" << std::endl;
-    std::cout << gibbs.get_samples("ThetaS1") << std::endl;
+    cout << "ThetaS1" << endl;
+    cout << gibbs.get_samples("ThetaS1") << endl;
 
-    std::cout << "ThetaS2" << std::endl;
-    std::cout << gibbs.get_samples("ThetaS2") << std::endl;
+    cout << "ThetaS2" << endl;
+    cout << gibbs.get_samples("ThetaS2") << endl;
 }
 
-void train_dbn(std::shared_ptr<DynamicBayesNet> dbn,
+void train_dbn(shared_ptr<DynamicBayesNet> dbn,
                int num_samples,
-               std::shared_ptr<gsl_rng> gen) {
+               shared_ptr<gsl_rng> gen) {
 
     Tensor3 tg_data = read_tensor_from_file("../../data/samples/TG.txt");
     Tensor3 ty_data = read_tensor_from_file("../../data/samples/TY.txt");
@@ -379,22 +380,22 @@ void train_dbn(std::shared_ptr<DynamicBayesNet> dbn,
     gibbs.set_num_in_plate_samples(data.get_num_data_points());
 
     DBNSamplingTrainer trainer(
-        gen, std::make_shared<GibbsSampler>(gibbs), num_samples);
+        gen, make_shared<GibbsSampler>(gibbs), num_samples);
     trainer.fit(data);
 
     dbn->save_to_folder("../../data/model");
 }
 
-void test_baseline_estimator(std::shared_ptr<DynamicBayesNet> model) {
-    std::shared_ptr<TrainingFrequencyEstimator> estimator =
-        std::make_shared<TrainingFrequencyEstimator>(
+void test_baseline_estimator(shared_ptr<DynamicBayesNet> model) {
+    shared_ptr<TrainingFrequencyEstimator> estimator =
+        make_shared<TrainingFrequencyEstimator>(
             TrainingFrequencyEstimator(model, 1));
     estimator->estimate(EvidenceSet());
 }
 
-void test_sum_product_estimator(std::shared_ptr<DynamicBayesNet> model) {
-    std::shared_ptr<SumProductEstimator> estimator =
-        std::make_shared<SumProductEstimator>(SumProductEstimator(model, 1));
+void test_sum_product_estimator(shared_ptr<DynamicBayesNet> model) {
+    shared_ptr<SumProductEstimator> estimator =
+        make_shared<SumProductEstimator>(SumProductEstimator(model, 1));
     estimator->estimate(EvidenceSet());
 }
 
@@ -406,56 +407,53 @@ void test_pipeline() {
     data.add_data("TG", tg_data);
     data.add_data("TY", ty_data);
 
-    std::shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+    shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
 
-    std::shared_ptr<DynamicBayesNet> model =
-        std::make_shared<DynamicBayesNet>(create_dbn(false));
+    shared_ptr<DynamicBayesNet> model =
+        make_shared<DynamicBayesNet>(create_dbn(false));
     model->unroll(20, true);
 
     GibbsSampler gibbs(model, 20);
 
-    std::shared_ptr<DBNSamplingTrainer> trainer =
-        std::make_shared<DBNSamplingTrainer>(
-            DBNSamplingTrainer(gen, std::make_shared<GibbsSampler>(gibbs), 50));
+    shared_ptr<DBNSamplingTrainer> trainer = make_shared<DBNSamplingTrainer>(
+        DBNSamplingTrainer(gen, make_shared<GibbsSampler>(gibbs), 50));
 
-    std::shared_ptr<DBNSaver> saver = std::make_shared<DBNSaver>(
+    shared_ptr<DBNSaver> saver = make_shared<DBNSaver>(
         DBNSaver(model, "../../data/model/pipeline_test/fold{}"));
 
-    std::shared_ptr<KFold> kfold = std::make_shared<KFold>(gen, 2);
+    shared_ptr<KFold> kfold = make_shared<KFold>(gen, 2);
 
-    std::shared_ptr<TrainingFrequencyEstimator> baseline_estimator =
-        std::make_shared<TrainingFrequencyEstimator>(
+    shared_ptr<TrainingFrequencyEstimator> baseline_estimator =
+        make_shared<TrainingFrequencyEstimator>(
             TrainingFrequencyEstimator(model, 1));
     baseline_estimator->add_node("TG", Eigen::VectorXd::Constant(1, 1));
     baseline_estimator->add_node("TY", Eigen::VectorXd::Constant(1, 1));
-    std::shared_ptr<SumProductEstimator> sumproduct_estimator =
-        std::make_shared<SumProductEstimator>(SumProductEstimator(model, 1));
+    shared_ptr<SumProductEstimator> sumproduct_estimator =
+        make_shared<SumProductEstimator>(SumProductEstimator(model, 1));
     sumproduct_estimator->add_node("TG", Eigen::VectorXd::Constant(1, 1));
 
     MessageBrokerConfiguration config;
     config.timeout = 5;
     config.address = "localhost";
     config.port = 1883;
-    std::shared_ptr<OnlineEstimation> estimation1 =
-        std::make_shared<OnlineEstimation>(config);
+    shared_ptr<OnlineEstimation> estimation1 =
+        make_shared<OnlineEstimation>(config);
     estimation1->add_estimator(baseline_estimator);
-    std::shared_ptr<OfflineEstimation> estimation2 =
-        std::make_shared<OfflineEstimation>();
+    shared_ptr<OfflineEstimation> estimation2 =
+        make_shared<OfflineEstimation>();
     estimation2->add_estimator(baseline_estimator);
     estimation2->add_estimator(sumproduct_estimator);
 
-    std::shared_ptr<EvaluationAggregator> aggregator =
-        std::make_shared<EvaluationAggregator>(
+    shared_ptr<EvaluationAggregator> aggregator =
+        make_shared<EvaluationAggregator>(
             EvaluationAggregator::METHOD::no_aggregation);
 
-    std::shared_ptr<Estimates> estimates =
-        std::make_shared<Estimates>(baseline_estimator);
-    std::shared_ptr<Accuracy> accuracy =
-        std::make_shared<Accuracy>(baseline_estimator);
-    std::shared_ptr<Accuracy> accuracy_sp =
-        std::make_shared<Accuracy>(sumproduct_estimator);
-    std::shared_ptr<F1Score> f1_score =
-        std::make_shared<F1Score>(baseline_estimator);
+    shared_ptr<Estimates> estimates =
+        make_shared<Estimates>(baseline_estimator);
+    shared_ptr<Accuracy> accuracy = make_shared<Accuracy>(baseline_estimator);
+    shared_ptr<Accuracy> accuracy_sp =
+        make_shared<Accuracy>(sumproduct_estimator);
+    shared_ptr<F1Score> f1_score = make_shared<F1Score>(baseline_estimator);
 
     aggregator->add_measure(estimates);
     aggregator->add_measure(accuracy);
@@ -468,7 +466,7 @@ void test_pipeline() {
     pipeline.set_model_trainner(trainer);
     pipeline.set_model_saver(saver);
     pipeline.set_estimation_process(estimation1);
-    //pipeline.set_estimation_process(estimation2);
+    // pipeline.set_estimation_process(estimation2);
     pipeline.set_aggregator(aggregator);
 
     pipeline.execute();
@@ -495,10 +493,9 @@ namespace test {
             this->close();
         }
 
-        void on_message(const std::string& topic,
-                        const std::string& message) override {}
+        void on_message(const string& topic, const string& message) override {}
 
-        void on_error(const std::string& error_message) override {}
+        void on_error(const string& error_message) override {}
 
       private:
         MessageBrokerConfiguration config;
@@ -511,40 +508,373 @@ void test_mosquitto() {
     config.address = "localhost";
     config.port = 1883;
 
-    std::shared_ptr<test::Mosq> mosq_ptr =
-        std::make_shared<test::Mosq>(test::Mosq(config));
+    shared_ptr<test::Mosq> mosq_ptr =
+        make_shared<test::Mosq>(test::Mosq(config));
     mosq_ptr->init();
 }
+
+void test_message_passing() {
+    FactorGraph factor_graph;
+
+    Eigen::MatrixXd S0(1, 3);
+    S0 << 0.8, 0.1, 0.1;
+    factor_graph.add_node("S", 3, 0, S0, {});
+
+    Eigen::MatrixXd Q(1, 2);
+    Q << 0.6, 0.4;
+    factor_graph.add_node("Q", 2, 1, Q, {});
+
+    CPD::TableOrderingMap S1_om;
+    S1_om["S"] = {0, 3, 2};
+    S1_om["Q"] = {1, 2, 1};
+    Eigen::MatrixXd S1(6, 3);
+    S1 << 0.5, 0.4, 0.1, 0.2, 0.3, 0.5, 0.3, 0.6, 0.1, 0.6, 0.2, 0.2, 0.1, 0.8,
+        0.1, 0.5, 0.4, 0.1;
+    factor_graph.add_node("S", 3, 1, S1, S1_om);
+
+    CPD::TableOrderingMap G_om;
+    G_om["S"] = {0, 3, 1};
+    Eigen::MatrixXd G(3, 2);
+    G << 0.2, 0.8, 0.7, 0.3, 0.1, 0.9;
+    factor_graph.add_node("G", 2, 1, G, G_om);
+
+    CPD::TableOrderingMap Y_om;
+    Y_om["S"] = {0, 3, 1};
+    Eigen::MatrixXd Y(3, 2);
+    Y << 0.6, 0.4, 0.2, 0.8, 0.3, 0.7;
+    factor_graph.add_node("Y", 2, 1, Y, Y_om);
+
+    CPD::TableOrderingMap S2_om;
+    S2_om["S"] = {0, 3, 1};
+    Eigen::MatrixXd S2(3, 3);
+    S2 << 0.5, 0.4, 0.1, 0.2, 0.3, 0.5, 0.3, 0.6, 0.1;
+    factor_graph.add_node("S", 3, 2, S2, S2_om);
+
+    CPD::TableOrderingMap G2_om;
+    G2_om["S"] = {0, 3, 1};
+    Eigen::MatrixXd G2(3, 2);
+    G2 << 0.2, 0.8, 0.7, 0.3, 0.1, 0.9;
+    factor_graph.add_node("G", 2, 2, G2, G2_om);
+
+    CPD::TableOrderingMap Y2_om;
+    Y2_om["S"] = {0, 3, 1};
+    Eigen::MatrixXd Y2(3, 2);
+    Y2 << 0.6, 0.4, 0.2, 0.8, 0.3, 0.7;
+    factor_graph.add_node("Y", 2, 2, Y2, Y2_om);
+
+    factor_graph.add_edge("S", 0, "S", 1);
+    factor_graph.add_edge("Q", 1, "S", 1);
+    factor_graph.add_edge("S", 1, "G", 1);
+    factor_graph.add_edge("S", 1, "Y", 1);
+    factor_graph.add_edge("S", 1, "S", 2);
+    factor_graph.add_edge("S", 2, "G", 2);
+    factor_graph.add_edge("S", 2, "Y", 2);
+
+    Tensor3 tg_data = read_tensor_from_file("../../data/samples/TG.txt");
+    Tensor3 ty_data = read_tensor_from_file("../../data/samples/TY.txt");
+    EvidenceSet data;
+    data.set_id("synthetic_pipeline_testing");
+    data.add_data("G", tg_data);
+    data.add_data("Y", ty_data);
+
+    SumProductEstimator sp(nullptr, 1);
+    sp.add_node("G", Eigen::VectorXd::Constant(1, 1));
+    sp.add_node("Y", Eigen::VectorXd::Constant(1, 0));
+    sp.factor_graph = factor_graph;
+    sp.estimate(data);
+}
+
+void create_tomcat_model() {
+    // 1. PARAMETER NODES
+
+    // 1.1 STATES
+
+    // 1.1.1 METADATA
+    vector<std::shared_ptr<NodeMetadata>> theta_s_metadatas(7);
+    for (int i = 0; i < 7; i++) {
+        stringstream parameter_label;
+        parameter_label << "Theta_S" << i;
+
+        NodeMetadata metadata =
+            NodeMetadata::create_multiple_time_link_metadata(
+                parameter_label.str(), false, true, false, 1, 7);
+        theta_s_metadatas[i] = make_shared<NodeMetadata>(move(metadata));
+    }
+
+    // 1.1.2 CPD
+    std::vector<std::shared_ptr<DirichletCPD>> theta_s_cpds(7);
+
+    // From HW to HW | LRW | DRW
+    Eigen::MatrixXd theta_s0(1, 7);
+    theta_s0 << 1, 1, EPSILON, EPSILON, 1, EPSILON, EPSILON;
+    theta_s_cpds[0] = {{}, move(theta_s0)};
+
+    // From LRW to HW | LRW | LTG | LTY | DRW
+    Eigen::MatrixXd theta_s1(1, 7);
+    theta_s1 << 1, 1, 1, 1, 1, EPSILON, EPSILON;
+    theta_s_cpds[1] = {{}, move(theta_s1)};
+
+    // From LTG to LRW | LTG
+    Eigen::MatrixXd theta_s2(1, 7);
+    theta_s2 << EPSILON, 1, 1, EPSILON, EPSILON, EPSILON, EPSILON;
+    theta_s_cpds[2] = {{}, move(theta_s2)};
+
+    // From LTY to LRW | LTY
+    Eigen::MatrixXd theta_s3(1, 7);
+    theta_s3 << EPSILON, 1, EPSILON, 1, EPSILON, EPSILON, EPSILON;
+    theta_s_cpds[3] = {{}, move(theta_s3)};
+
+    // From DRW to HW | LRW | DRW | DTG | DTY
+    Eigen::MatrixXd theta_s4(1, 7);
+    theta_s4 << 1, 1, EPSILON, EPSILON, 1, 1, 1;
+    theta_s_cpds[4] = {{}, move(theta_s4)};
+
+    // From DTG to DRW | DTG
+    Eigen::MatrixXd theta_s5(1, 7);
+    theta_s5 << EPSILON, EPSILON, EPSILON, EPSILON, 1, 1, EPSILON;
+    theta_s_cpds[5] = {{}, move(theta_s5)};
+
+    // From DTY to DRW | DTY
+    Eigen::MatrixXd theta_s6(1, 7);
+    theta_s6 << EPSILON, EPSILON, EPSILON, EPSILON, 1, EPSILON, 1;
+    theta_s_cpds[6] = {{}, move(theta_s6)};
+
+    // 1.1.3 RANDOM VARIABLES
+    std::vector<std::shared_ptr<RandomVariableNode>> theta_s_nodes(7);
+    for (int i = 0; i < 7; i++) {
+        theta_s_nodes[0] =
+            make_shared<RandomVariableNode>(theta_s_metadatas[i]);
+        theta_s_nodes[0]->add_cpd_template(theta_s_cpds[i]);
+    }
+
+    // 1.2 LIGHTS
+
+    // 1.2.1 METADATA
+    vector<std::shared_ptr<NodeMetadata>> pi_lt_metadatas(7);
+    for (int i = 0; i < 7; i++) {
+        stringstream parameter_label;
+        parameter_label << "Pi_LT" << i;
+
+        NodeMetadata metadata =
+            NodeMetadata::create_multiple_time_link_metadata(
+                parameter_label.str(), false, true, false, 1, 2);
+        pi_lt_metadatas[i] = make_shared<NodeMetadata>(move(metadata));
+    }
+
+    // 1.2.2 CPDS
+    std::vector<std::shared_ptr<DirichletCPD>> pi_lt_cpds(7);
+
+    Eigen::MatrixXd pi_lt0(1, 2);
+    pi_lt0 << 1, 1;
+    pi_lt_cpds[0] = {{}, move(pi_lt0)};
+
+    // States where the light is always on
+    Eigen::MatrixXd pi_lt_on(1, 2);
+    pi_lt_on << EPSILON, 1;
+    for (int i = 1; i < 4; i++) {
+        pi_lt_cpds[i] = {{}, pi_lt_on};
+    }
+
+    // States where the light is always off
+    Eigen::MatrixXd pi_lt_off(1, 2);
+    pi_lt_off << 1, EPSILON;
+    for (int i = 4; i < 7; i++) {
+        pi_lt_cpds[i] = {{}, pi_lt_off};
+    }
+
+    // 1.2.3 RANDOM VARIABLES
+    std::vector<std::shared_ptr<RandomVariableNode>> pi_lt_nodes(7);
+    for (int i = 0; i < 7; i++) {
+        pi_lt_nodes[0] = make_shared<RandomVariableNode>(pi_lt_metadatas[i]);
+        pi_lt_nodes[0]->add_cpd_template(pi_lt_cpds[i]);
+    }
+
+    // 2. VARIABLES
+
+    // 2.1 METADATAS
+    NodeMetadata state_metadata_temp =
+        NodeMetadata::create_multiple_time_link_metadata(
+            "State", true, false, true, 0, 1, 7);
+    shared_ptr<NodeMetadata> state_metadata =
+        make_shared<NodeMetadata>(move(state_metadata_temp));
+
+    NodeMetadata light_metadata_temp =
+        NodeMetadata::create_multiple_time_link_metadata(
+            "Light", true, false, true, 1, 1, 2);
+    shared_ptr<NodeMetadata> light_metadata =
+        make_shared<NodeMetadata>(move(light_metadata_temp));
+
+    NodeMetadata room_metadata_temp =
+        NodeMetadata::create_multiple_time_link_metadata(
+            "Room", true, false, true, 1, 1, 2);
+    shared_ptr<NodeMetadata> room_metadata =
+        make_shared<NodeMetadata>(move(room_metadata_temp));
+
+    NodeMetadata tg_metadata_temp =
+        NodeMetadata::create_multiple_time_link_metadata(
+            "TG", true, false, true, 1, 1, 2);
+    shared_ptr<NodeMetadata> tg_metadata =
+        make_shared<NodeMetadata>(move(tg_metadata_temp));
+
+    NodeMetadata ty_metadata_temp =
+        NodeMetadata::create_multiple_time_link_metadata(
+            "TY", true, false, true, 1, 1, 2);
+    shared_ptr<NodeMetadata> ty_metadata =
+        make_shared<NodeMetadata>(move(ty_metadata_temp));
+
+    // 2.2 CPDS
+
+    // 2.2.1 State Prior
+    Eigen::MatrixXd state_prior = Eigen::MatrixXd::Constant(1, 7, EPSILON);
+    state_prior[0] = 1; // The first state is always 0
+    shared_ptr<CategoricalCPD> state_prior_cpd({}, state_prior);
+
+    // 2.2.2 State Transition
+    vector<shared_ptr<Categorical>> state_transition_matrix;
+    state_transition_matrix.reserve(theta_s_nodes.size());
+    for (auto& theta_s_node : theta_s_nodes) {
+        state_transition_matrix.push_back(
+            make_shared<Categorical>(theta_s_node));
+    }
+    CategoricalCPD state_transition_cpd_temp({state_metadata},
+                                             state_transition_matrix);
+    shared_ptr<CategoricalCPD> state_transition_cpd =
+        make_shared<CategoricalCPD>(std::move(state_transition_cpd_temp));
+
+    // 2.2.2 Light Emission
+    vector<shared_ptr<Categorical>> light_emission_matrix;
+    light_emission_matrix.reserve(pi_lt_nodes.size());
+    for (auto& pi_lt_node : pi_lt_nodes) {
+        light_emission_matrix.push_back(make_shared<Categorical>(pi_lt_node));
+    }
+    CategoricalCPD light_emission_cpd_temp({state_metadata},
+                                           light_emission_matrix);
+    shared_ptr<CategoricalCPD> light_emission_cpd =
+        make_shared<CategoricalCPD>(std::move(light_emission_cpd_temp));
+
+    // 2.2.2 Room Emission
+
+    // HW (the first state) is the only state where the player is not in a room
+    // but in the hallway
+    Eigen::MatrixXd room_emission_matrix(7, 2);
+    room_emission_matrix << 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0;
+    CategoricalCPD room_emission_cpd_temp({state_metadata},
+                                           room_emission_matrix);
+
+    // 2.2.3 TG Emission
+
+    // HW (the first state) is the only state where the player is not in a room
+    // but in the hallway
+    Eigen::MatrixXd room_emission_matrix(7, 2);
+    room_emission_matrix << 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0;
+    CategoricalCPD room_emission_cpd_temp({state_metadata},
+                                          room_emission_matrix);
+
+    shared_ptr<CategoricalCPD> light_emission_cpd =
+        make_shared<CategoricalCPD>(std::move(light_emission_cpd_temp));
+
+    Eigen::MatrixXd prior_s = Eigen::MatrixXd::Constant(1, 7, EPSILON);
+    prior_s[0] = 1; // The first state is always 0
+    DirichletCPD prior_s_cpd({}, move(prior_s));
+
+    CategoricalCPD prior_state_cpd(
+        {}, {make_shared<Categorical>(Categorical(prior_state_node_ptr))});
+
+    shared_ptr<CPD> prior_state_cpd_ptr =
+        make_shared<CategoricalCPD>(prior_state_cpd);
+
+    Eigen::MatrixXd state_transition_matrix(3, 3);
+    state_transition_matrix << 0, 0, 1, 1, 0, 0, 0, 1, 0;
+    CategoricalCPD state_cpd({state_metadata_ptr}, state_transition_matrix);
+    if (!fixed_parameters) {
+        state_cpd =
+            CategoricalCPD({state_metadata_ptr},
+                           {make_shared<Categorical>(theta_s0_node_ptr),
+                            make_shared<Categorical>(theta_s1_node_ptr),
+                            make_shared<Categorical>(theta_s2_node_ptr)});
+    }
+
+    shared_ptr<CPD> state_cpd_ptr = make_shared<CategoricalCPD>(state_cpd);
+
+    RandomVariableNode state_node(state_metadata_ptr);
+    state_node.add_cpd_template(prior_state_cpd_ptr);
+    state_node.add_cpd_template(state_cpd_ptr);
+
+    shared_ptr<RandomVariableNode> state_node_ptr =
+        make_shared<RandomVariableNode>(state_node);
+    state_metadata_ptr->add_parent_link(state_metadata_ptr, true);
+    state_metadata_ptr->add_parent_link(state_prior_metadata_ptr, false);
+    if (!fixed_parameters) {
+        state_metadata_ptr->add_parent_link(theta_s0_metadata_ptr, true);
+        state_metadata_ptr->add_parent_link(theta_s1_metadata_ptr, true);
+        state_metadata_ptr->add_parent_link(theta_s2_metadata_ptr, true);
+    }
+
+    NodeMetadata tg_metadata = NodeMetadata::create_multiple_time_link_metadata(
+        "TG", true, false, true, 1, 1, 2);
+    tg_metadata.add_parent_link(state_metadata_ptr, false);
+
+    Eigen::MatrixXd tg_emission_matrix(3, 2);
+    tg_emission_matrix << 1, 0, 0, 1, 0.5, 0.5;
+    CategoricalCPD tg_cpd({state_metadata_ptr}, move(tg_emission_matrix));
+
+    RandomVariableNode tg_node(make_shared<NodeMetadata>(tg_metadata));
+    tg_node.add_cpd_template(make_shared<CategoricalCPD>(tg_cpd));
+
+    NodeMetadata ty_metadata = NodeMetadata::create_multiple_time_link_metadata(
+        "TY", true, false, true, 1, 1, 2);
+    ty_metadata.add_parent_link(state_metadata_ptr, false);
+
+    Eigen::MatrixXd ty_emission_matrix(3, 2);
+    ty_emission_matrix << 0, 1, 1, 0, 0.5, 0.5;
+    CategoricalCPD ty_cpd({state_metadata_ptr}, move(ty_emission_matrix));
+
+    RandomVariableNode ty_node(make_shared<NodeMetadata>(ty_metadata));
+    ty_node.add_cpd_template(make_shared<CategoricalCPD>(ty_cpd));
+
+    DynamicBayesNet dbn(3);
+    dbn.add_node_template(state_node);
+    dbn.add_node_template(tg_node);
+    dbn.add_node_template(ty_node);
+    dbn.add_node_template(prior_state_node);
+    if (!fixed_parameters) {
+        dbn.add_node_template(move(theta_s0_node));
+        dbn.add_node_template(move(theta_s1_node));
+        dbn.add_node_template(move(theta_s2_node));
+    }
+}
+
+void test_training_runtime() {}
 
 int main() {
     //    test_cpp_capabilities();
     //    test_random_number_generation();
     //    test_dbn_entities();
 
-    std::shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+    shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
 
-    std::shared_ptr<DynamicBayesNet> dbn_ptr =
-        std::make_shared<DynamicBayesNet>(create_dbn(true));
+    shared_ptr<DynamicBayesNet> dbn_ptr =
+        make_shared<DynamicBayesNet>(create_dbn(true));
     dbn_ptr->unroll(20, true);
     generate_samples_to_test(dbn_ptr, 10, gen);
 
-    //        std::shared_ptr<DynamicBayesNet> dbn_ptr =
-    //            std::make_shared<DynamicBayesNet>(create_dbn(false));
+    //        shared_ptr<DynamicBayesNet> dbn_ptr =
+    //            make_shared<DynamicBayesNet>(create_dbn(false));
     //    dbn_ptr->unroll(100, true);
     //
     //    train_dbn(dbn_ptr, 50, gen);
 
     //    EvidenceSet data("../../data/samples/toy");
-    //    std::cout << data.get_num_data_points() << std::endl;
-    //    std::cout << data.get_time_steps() << std::endl;
-    //    //std::cout << data["TG"];
+    //    cout << data.get_num_data_points() << endl;
+    //    cout << data.get_time_steps() << endl;
+    //    //cout << data["TG"];
     //
     //    KFold k_fold(5);
     //    int fold = 1;
     //    for(auto&[training, test] : k_fold.split(gen, data)) {
-    //        std::cout << "Fold " << fold++ << std::endl;
-    //        std::cout << training["TG"] << std::endl;
-    //        std::cout << test["TG"] << std::endl;
+    //        cout << "Fold " << fold++ << endl;
+    //        cout << training["TG"] << endl;
+    //        cout << test["TG"] << endl;
     //    }
 
     //    test_baseline_estimator(dbn_ptr);
@@ -574,8 +904,9 @@ int main() {
     //    LOG("Repeated axis = 2");
     //    LOG(tensor.repeat(1, 2));
 
-    test_pipeline();
+    // test_pipeline();
     // test_mosquitto();
+    test_message_passing();
 
     //    Eigen::MatrixXd m(2,3);
     //    m << 1, 0, 1,
@@ -585,7 +916,7 @@ int main() {
     //    1).select(MatrixXd::Constant(m.rows(), m.cols(), 2),
     //    MatrixXd::Zero(m.rows(), m.cols()));
     //
-    //    std::cout << b;
+    //    cout << b;
 
     // gsl_rng_set(gen.get(), time(0));
     // dbn.unroll(4, true);
@@ -600,15 +931,15 @@ int main() {
     // sampler.save_samples_to_folder("../../data/samples");
 
     //
-    //    std::cout << "States" << std::endl;
-    //    std::cout << sampler.get_samples("State") << std::endl;
-    //    std::cout << "TGs" << std::endl;
-    //    std::cout << sampler.get_samples("TG") << std::endl;
-    //    std::cout << "TYs" << std::endl;
-    //    std::cout << sampler.get_samples("TY") << std::endl;
+    //    cout << "States" << endl;
+    //    cout << sampler.get_samples("State") << endl;
+    //    cout << "TGs" << endl;
+    //    cout << sampler.get_samples("TG") << endl;
+    //    cout << "TYs" << endl;
+    //    cout << sampler.get_samples("TY") << endl;
 
-    //    std::cout << "PriorS" << std::endl;
-    //    std::cout << sampler.get_samples("PriorS") << std::endl;
+    //    cout << "PriorS" << endl;
+    //    cout << sampler.get_samples("PriorS") << endl;
 
     //    sampler.get_dbn().save_to_folder("../../data/model");
     //
@@ -621,13 +952,13 @@ int main() {
     //
     //    fs::path filepath = folder / fs::path("test.txt");
     //
-    //    std::cout << filepath;
-    //    std::ofstream file("../../data/samples/test2.txt");
-    //    std::cout << "Writing into a file";
+    //    cout << filepath;
+    //    ofstream file("../../data/samples/test2.txt");
+    //    cout << "Writing into a file";
     //    file << "Teste Maior";
     //    file.close();
 
     //    for(int i = 0; i < 6000000; i++){
-    //        std::cout << i << '\n';
+    //        cout << i << '\n';
     //    }
 }

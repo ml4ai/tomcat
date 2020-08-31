@@ -40,6 +40,7 @@ namespace tomcat {
                     }
                 };
 
+                NodeName() {}
                 NodeName(const std::string& label, int time_step)
                     : label(label), time_step(time_step) {}
 
@@ -96,6 +97,16 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Static functions
             //------------------------------------------------------------------
+
+            /**
+             * We need unique labels because...
+             * @param original_label
+             * @param time_step
+             * @return
+             */
+            static std::string
+            get_unique_label_for(const std::string& original_label,
+                                 int time_step);
 
             /**
              * Returns a unique name for a node given its label and a time step.
@@ -172,7 +183,10 @@ namespace tomcat {
              */
             virtual Eigen::MatrixXd
             get_outward_message_to(const NodeName& node_name,
-                                   int source_time_slice) const = 0;
+                                   int source_time_slice,
+                                   int inference_time_step) const = 0;
+
+            std::string get_original_label() const;
 
             //------------------------------------------------------------------
             // Getters & Setters

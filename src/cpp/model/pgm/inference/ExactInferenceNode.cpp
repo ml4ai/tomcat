@@ -18,10 +18,11 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Copy & Move constructors/assignments
         //----------------------------------------------------------------------
-//        InferenceNode(const ExactInferenceNode& InferenceNode) {}
-//
-//        ExactInferenceNode& operator=(const ExactInferenceNode& InferenceNode) {
-//        }
+        //        InferenceNode(const ExactInferenceNode& InferenceNode) {}
+        //
+        //        ExactInferenceNode& operator=(const ExactInferenceNode&
+        //        InferenceNode) {
+        //        }
 
         //----------------------------------------------------------------------
         // Operator overload
@@ -30,6 +31,13 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Static functions
         //----------------------------------------------------------------------
+        string ExactInferenceNode::get_unique_label_for(
+            const std::string& original_label, int time_step) {
+            stringstream ss;
+            ss << original_label << time_step;
+            return ss.str();
+        }
+
         //        string ExactInferenceNode::get_node_name(const string&
         //        node_label,
         //                                                 int time_step) {
@@ -68,6 +76,11 @@ namespace tomcat {
 
             this->incoming_messages_per_time_slice[target_time_step]
                                                   [node_name] = message;
+        }
+
+        string ExactInferenceNode::get_original_label() const {
+            string original_label = label.substr(0, label.size() - 1);
+            return original_label;
         }
 
         //----------------------------------------------------------------------

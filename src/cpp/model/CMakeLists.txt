@@ -42,7 +42,7 @@ file(GLOB tomcat_model_headers CONFIGURE_DEPENDS
      ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 
 # Header and cpp files
-add_library(tomcat_model_libs
+add_library(tomcat_model_lib
         STATIC
         ${tomcat_model_headers}
         pgm/NodeMetadata.cpp
