@@ -53,7 +53,7 @@
                 (first (first (let ((current-plan (multiple-value-list 
                                       (find-plans 'sar-individual-problem :which :first :optimize-cost nil :verbose nil :plan-tree t)))) 
                   (setf *sar-state* (state-atoms (first (fourth current-plan)))) 
-                  (if (eql '!change-strategy (first (first (first (first current-plan)))))
+                  (if (eql '!change-priority (first (first (first (first current-plan)))))
                     (progn 
                       (setf *task-type* 'perform-next-task-without-victim-priority)
                       (setf *sar-task* (list (list *task-type*

@@ -108,10 +108,10 @@
                0
     )
 
-    (:operator (!change-strategy)
+    (:operator (!change-priority)
                (())
                (())
-               ((strategy-changed))
+               ((priority-changed))
                0
     )
 
@@ -157,10 +157,10 @@
 
 
     (:method (perform-next-task-that-prioritizes-yellow-victims ?t ?r) ;; Method for examining and triaging victims
-             change-strategy
-             (and (eval (< cl-user::*time-passed* 900)) (not (strategy-changed)) 
+             change-priority
+             (and (eval (< cl-user::*time-passed* 900)) (not (priority-changed)) 
                   (or (all-rooms-searched) (eval (> cl-user::*time-passed* 525))))
-             (:task !change-strategy)
+             (:task !change-priority)
 
              search ;; Search strategy where agent only stops to treat gold victims.
              (and (eval (< cl-user::*time-passed* 900)) (not (triaging ?t ?_)) (not (searched ?t ?r)) 
