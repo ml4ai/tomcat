@@ -89,12 +89,18 @@ void test_random_number_generation() {
     gsl_rng_set(gen_ptr, time(0));
     double* probs = new double[3]{0.3, 0.4, 0.3};
     unsigned int* sample = new unsigned int[3];
-    gsl_ran_multinomial(gen_ptr, 3, 1, probs, sample);
 
-    cout << sample[0] << "," << sample[1] << "," << sample[2] << endl;
-
-    unsigned int x = distance(sample, find(sample, sample + 3, 1));
-    cout << x << endl;
+    for (int i = 0; i < 20; i++) {
+        int k = 7;
+        double* probs = new double[k]{0, 0, 0, 0, 0, 0, 0.5};
+        gsl_ran_multinomial(gen_ptr, k, 1, probs, sample);
+        for (int j = 0; j < k; j++) {
+            cout << sample[j] << ",";
+        }
+        cout << endl;
+        unsigned int x = distance(sample, find(sample, sample + k, 1));
+        cout << x << endl;
+    }
 
     delete[] probs;
     delete[] sample;
@@ -584,7 +590,221 @@ void test_message_passing() {
     sp.estimate(data);
 }
 
-void create_tomcat_model() {
+DynamicBayesNet create_student_model(bool complete) {
+    // 1. PARAMETER NODES
+
+    // 1.1 GRADE
+
+    // 1.1.1 METADATA
+    vector<std::shared_ptr<NodeMetadata>> theta_g_metadatas(7);
+    for (int i = 0; i < 4; i++) {
+        stringstream parameter_label;
+        parameter_label << "Theta_G" << i;
+
+        NodeMetadata metadata =
+            NodeMetadata::create_multiple_time_link_metadata(
+                parameter_label.str(), false, true, false, 0, 3);
+        theta_g_metadatas[i] = make_shared<NodeMetadata>(move(metadata));
+    }
+
+    // 1.1.2 CPD
+    std::vector<std::shared_ptr<DirichletCPD>> theta_g_cpds(4);
+
+    Eigen::MatrixXd theta_g(1, 3);
+    theta_g << 1, 1, 1;
+    DirichletCPD theta_g_cpd_temp({}, theta_g);
+    for (int i = 0; i < 4; i++) {
+        theta_g_cpds[i] = make_shared<DirichletCPD>(theta_g_cpd_temp);
+    }
+
+    // 1.1.3 RANDOM VARIABLES
+    std::vector<std::shared_ptr<RandomVariableNode>> theta_g_nodes(4);
+    for (int i = 0; i < 4; i++) {
+        theta_g_nodes[i] =
+            make_shared<RandomVariableNode>(theta_g_metadatas[i]);
+        theta_g_nodes[i]->add_cpd_template(theta_g_cpds[i]);
+    }
+
+    // 2. VARIABLES
+
+    // 2.1 METADATAS
+    NodeMetadata grade_metadata_temp =
+        NodeMetadata::create_multiple_time_link_metadata(
+            "Grade", true, false, true, 0, 1, 3);
+    shared_ptr<NodeMetadata> grade_metadata =
+        make_shared<NodeMetadata>(move(grade_metadata_temp));
+
+    NodeMetadata difficulty_metadata_temp =
+        NodeMetadata::create_multiple_time_link_metadata(
+            "Difficulty", true, false, true, 0, 1, 2);
+    shared_ptr<NodeMetadata> difficulty_metadata =
+        make_shared<NodeMetadata>(move(difficulty_metadata_temp));
+
+    NodeMetadata intelligence_metadata_temp =
+        NodeMetadata::create_multiple_time_link_metadata(
+            "Intelligence", true, false, true, 0, 1, 2);
+    shared_ptr<NodeMetadata> intelligence_metadata =
+        make_shared<NodeMetadata>(move(intelligence_metadata_temp));
+
+    NodeMetadata sat_metadata_temp =
+        NodeMetadata::create_multiple_time_link_metadata(
+            "SAT", true, false, true, 0, 1, 2);
+    shared_ptr<NodeMetadata> sat_metadata =
+        make_shared<NodeMetadata>(move(sat_metadata_temp));
+
+    NodeMetadata letter_metadata_temp =
+        NodeMetadata::create_multiple_time_link_metadata(
+            "Letter", true, false, true, 0, 1, 2);
+    shared_ptr<NodeMetadata> letter_metadata =
+        make_shared<NodeMetadata>(move(letter_metadata_temp));
+
+    // 2.2 CPDS
+
+    // 2.2.1 Grade
+    shared_ptr<CategoricalCPD> grade_cpd;
+    if (complete) {
+        Eigen::MatrixXd grade_matrix(4, 3);
+        grade_matrix << 0.3, 0.4, 0.3, 0.05, 0.25, 0.7, 0.9, 0.08, 0.02, 0.5,
+            0.3, 0.2;
+        CategoricalCPD grade_cpd_temp(
+            {intelligence_metadata, difficulty_metadata}, grade_matrix);
+        grade_cpd = make_shared<CategoricalCPD>(std::move(grade_cpd_temp));
+    }
+    else {
+        vector<shared_ptr<Categorical>> grade_matrix;
+        grade_matrix.reserve(theta_g_nodes.size());
+        for (auto& theta_g_node : theta_g_nodes) {
+            grade_matrix.push_back(make_shared<Categorical>(theta_g_node));
+        }
+        CategoricalCPD grade_cpd_temp(
+            {intelligence_metadata, difficulty_metadata}, grade_matrix);
+        grade_cpd = make_shared<CategoricalCPD>(std::move(grade_cpd_temp));
+    }
+
+    // 2.2.2 Intelligence
+    Eigen::MatrixXd intelligence_matrix(1, 2);
+    intelligence_matrix << 0.6, 0.4;
+    CategoricalCPD intelligence_cpd_temp({}, intelligence_matrix);
+    shared_ptr<CategoricalCPD> intelligence_cpd =
+        make_shared<CategoricalCPD>(std::move(intelligence_cpd_temp));
+
+    // 2.2.3 Difficulty
+    Eigen::MatrixXd difficulty_matrix(1, 2);
+    difficulty_matrix << 0.7, 0.3;
+    CategoricalCPD difficulty_cpd_temp({}, difficulty_matrix);
+    shared_ptr<CategoricalCPD> difficulty_cpd =
+        make_shared<CategoricalCPD>(std::move(difficulty_cpd_temp));
+
+    // 2.2.4 SAT
+    Eigen::MatrixXd sat_matrix(2, 2);
+    sat_matrix << 0.95, 0.05, 0.2, 0.8;
+    CategoricalCPD sat_cpd_temp({intelligence_metadata}, sat_matrix);
+    shared_ptr<CategoricalCPD> sat_cpd =
+        make_shared<CategoricalCPD>(std::move(sat_cpd_temp));
+
+    // 2.2.4 SAT
+    Eigen::MatrixXd letter_matrix(3, 2);
+    letter_matrix << 0.1, 0.9, 0.4, 0.6, 0.99, 0.01;
+    CategoricalCPD letter_cpd_temp({grade_metadata}, letter_matrix);
+    shared_ptr<CategoricalCPD> letter_cpd =
+        make_shared<CategoricalCPD>(std::move(letter_cpd_temp));
+
+    // 2.3 RANDOM VARIABLES
+
+    std::shared_ptr<RandomVariableNode> grade(
+        make_shared<RandomVariableNode>(grade_metadata));
+    grade->add_cpd_template(grade_cpd);
+
+    std::shared_ptr<RandomVariableNode> intelligence(
+        make_shared<RandomVariableNode>(intelligence_metadata));
+    intelligence->add_cpd_template(intelligence_cpd);
+
+    std::shared_ptr<RandomVariableNode> difficulty(
+        make_shared<RandomVariableNode>(difficulty_metadata));
+    difficulty->add_cpd_template(difficulty_cpd);
+
+    std::shared_ptr<RandomVariableNode> sat(
+        make_shared<RandomVariableNode>(sat_metadata));
+    sat->add_cpd_template(sat_cpd);
+
+    std::shared_ptr<RandomVariableNode> letter(
+        make_shared<RandomVariableNode>(letter_metadata));
+    letter->add_cpd_template(letter_cpd);
+
+    // 3 CONNECTIONS
+    if(!complete) {
+        for (int i = 0; i < 4; i++) {
+            grade_metadata->add_parent_link(theta_g_metadatas[i], false);
+        }
+    }
+    grade_metadata->add_parent_link(intelligence_metadata, false);
+    grade_metadata->add_parent_link(difficulty_metadata, false);
+    letter_metadata->add_parent_link(grade_metadata, false);
+    sat_metadata->add_parent_link(intelligence_metadata, false);
+
+    // 4 DBN
+    DynamicBayesNet model;
+
+    // 4.1 ADD PARAMETER NODES
+    if(!complete) {
+        for (int i = 0; i < 4; i++) {
+            model.add_node_template(*theta_g_nodes[i]);
+        }
+    }
+
+    // 4.2 ADD VARIABLE NODES
+    model.add_node_template(*grade);
+    model.add_node_template(*intelligence);
+    model.add_node_template(*difficulty);
+    model.add_node_template(*sat);
+    model.add_node_template(*letter);
+
+    return model;
+}
+
+void generate_student_data() {
+    shared_ptr<DynamicBayesNet> model =
+        make_shared<DynamicBayesNet>(create_student_model(true));
+    shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+    model->unroll(1, true);
+    AncestralSampler sampler(model);
+    sampler.set_num_in_plate_samples(1);
+    sampler.sample(gen, 500);
+    sampler.save_samples_to_folder("../../data/samples/student");
+}
+
+void test_student_training_runtime() {
+    shared_ptr<DynamicBayesNet> model =
+        make_shared<DynamicBayesNet>(create_student_model(false));
+
+    Tensor3 difficulty_data = read_tensor_from_file("../../data/samples/student/Difficulty.txt");
+    Tensor3 intelligence_data =
+        read_tensor_from_file("../../data/samples/student/Intelligence.txt");
+    Tensor3 sat_data = read_tensor_from_file(
+        "../../data/samples/student/SAT.txt");
+    Tensor3 letter_data = read_tensor_from_file(
+        "../../data/samples/student/Letter.txt");
+    EvidenceSet data;
+    data.add_data("Difficulty", difficulty_data);
+    data.add_data("Intelligence", intelligence_data);
+    data.add_data("SAT", sat_data);
+    data.add_data("Letter", letter_data);
+
+    model->unroll(data.get_time_steps(), true);
+    shared_ptr<GibbsSampler> gibbs = make_shared<GibbsSampler>(model, 500);
+    gibbs->set_num_in_plate_samples(data.get_num_data_points());
+
+    Timer timer;
+    shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+    DBNSamplingTrainer trainer(gen, gibbs, 5000);
+    trainer.fit(data);
+
+    shared_ptr<DBNSaver> saver =
+        make_shared<DBNSaver>(model, "../../data/model/student");
+    saver->save();
+}
+
+DynamicBayesNet create_tomcat_model() {
     // 1. PARAMETER NODES
 
     // 1.1 STATES
@@ -607,44 +827,51 @@ void create_tomcat_model() {
     // From HW to HW | LRW | DRW
     Eigen::MatrixXd theta_s0(1, 7);
     theta_s0 << 1, 1, EPSILON, EPSILON, 1, EPSILON, EPSILON;
-    theta_s_cpds[0] = {{}, move(theta_s0)};
+    DirichletCPD theta_s_cpd_temp({}, theta_s0);
+    theta_s_cpds[0] = make_shared<DirichletCPD>(move(theta_s_cpd_temp));
 
     // From LRW to HW | LRW | LTG | LTY | DRW
     Eigen::MatrixXd theta_s1(1, 7);
     theta_s1 << 1, 1, 1, 1, 1, EPSILON, EPSILON;
-    theta_s_cpds[1] = {{}, move(theta_s1)};
+    theta_s_cpd_temp = DirichletCPD({}, theta_s1);
+    theta_s_cpds[1] = make_shared<DirichletCPD>(move(theta_s_cpd_temp));
 
     // From LTG to LRW | LTG
     Eigen::MatrixXd theta_s2(1, 7);
     theta_s2 << EPSILON, 1, 1, EPSILON, EPSILON, EPSILON, EPSILON;
-    theta_s_cpds[2] = {{}, move(theta_s2)};
+    theta_s_cpd_temp = DirichletCPD({}, theta_s2);
+    theta_s_cpds[2] = make_shared<DirichletCPD>(move(theta_s_cpd_temp));
 
     // From LTY to LRW | LTY
     Eigen::MatrixXd theta_s3(1, 7);
     theta_s3 << EPSILON, 1, EPSILON, 1, EPSILON, EPSILON, EPSILON;
-    theta_s_cpds[3] = {{}, move(theta_s3)};
+    theta_s_cpd_temp = DirichletCPD({}, theta_s3);
+    theta_s_cpds[3] = make_shared<DirichletCPD>(move(theta_s_cpd_temp));
 
     // From DRW to HW | LRW | DRW | DTG | DTY
     Eigen::MatrixXd theta_s4(1, 7);
     theta_s4 << 1, 1, EPSILON, EPSILON, 1, 1, 1;
-    theta_s_cpds[4] = {{}, move(theta_s4)};
+    theta_s_cpd_temp = DirichletCPD({}, theta_s4);
+    theta_s_cpds[4] = make_shared<DirichletCPD>(move(theta_s_cpd_temp));
 
     // From DTG to DRW | DTG
     Eigen::MatrixXd theta_s5(1, 7);
     theta_s5 << EPSILON, EPSILON, EPSILON, EPSILON, 1, 1, EPSILON;
-    theta_s_cpds[5] = {{}, move(theta_s5)};
+    theta_s_cpd_temp = DirichletCPD({}, theta_s5);
+    theta_s_cpds[5] = make_shared<DirichletCPD>(move(theta_s_cpd_temp));
 
     // From DTY to DRW | DTY
     Eigen::MatrixXd theta_s6(1, 7);
     theta_s6 << EPSILON, EPSILON, EPSILON, EPSILON, 1, EPSILON, 1;
-    theta_s_cpds[6] = {{}, move(theta_s6)};
+    theta_s_cpd_temp = DirichletCPD({}, theta_s6);
+    theta_s_cpds[6] = make_shared<DirichletCPD>(move(theta_s_cpd_temp));
 
     // 1.1.3 RANDOM VARIABLES
     std::vector<std::shared_ptr<RandomVariableNode>> theta_s_nodes(7);
     for (int i = 0; i < 7; i++) {
-        theta_s_nodes[0] =
+        theta_s_nodes[i] =
             make_shared<RandomVariableNode>(theta_s_metadatas[i]);
-        theta_s_nodes[0]->add_cpd_template(theta_s_cpds[i]);
+        theta_s_nodes[i]->add_cpd_template(theta_s_cpds[i]);
     }
 
     // 1.2 LIGHTS
@@ -666,27 +893,30 @@ void create_tomcat_model() {
 
     Eigen::MatrixXd pi_lt0(1, 2);
     pi_lt0 << 1, 1;
-    pi_lt_cpds[0] = {{}, move(pi_lt0)};
+    DirichletCPD pi_lt_cpd_temp({}, pi_lt0);
+    pi_lt_cpds[0] = make_shared<DirichletCPD>(move(pi_lt_cpd_temp));
 
     // States where the light is always on
     Eigen::MatrixXd pi_lt_on(1, 2);
     pi_lt_on << EPSILON, 1;
+    pi_lt_cpd_temp = DirichletCPD({}, pi_lt_on);
     for (int i = 1; i < 4; i++) {
-        pi_lt_cpds[i] = {{}, pi_lt_on};
+        pi_lt_cpds[i] = make_shared<DirichletCPD>(pi_lt_cpd_temp);
     }
 
     // States where the light is always off
     Eigen::MatrixXd pi_lt_off(1, 2);
     pi_lt_off << 1, EPSILON;
+    pi_lt_cpd_temp = DirichletCPD({}, pi_lt_off);
     for (int i = 4; i < 7; i++) {
-        pi_lt_cpds[i] = {{}, pi_lt_off};
+        pi_lt_cpds[i] = make_shared<DirichletCPD>(pi_lt_cpd_temp);
     }
 
     // 1.2.3 RANDOM VARIABLES
     std::vector<std::shared_ptr<RandomVariableNode>> pi_lt_nodes(7);
     for (int i = 0; i < 7; i++) {
-        pi_lt_nodes[0] = make_shared<RandomVariableNode>(pi_lt_metadatas[i]);
-        pi_lt_nodes[0]->add_cpd_template(pi_lt_cpds[i]);
+        pi_lt_nodes[i] = make_shared<RandomVariableNode>(pi_lt_metadatas[i]);
+        pi_lt_nodes[i]->add_cpd_template(pi_lt_cpds[i]);
     }
 
     // 2. VARIABLES
@@ -726,8 +956,10 @@ void create_tomcat_model() {
 
     // 2.2.1 State Prior
     Eigen::MatrixXd state_prior = Eigen::MatrixXd::Constant(1, 7, EPSILON);
-    state_prior[0] = 1; // The first state is always 0
-    shared_ptr<CategoricalCPD> state_prior_cpd({}, state_prior);
+    state_prior(0, 0) = 1; // The first state is always 0
+    CategoricalCPD state_prior_cpd_temp({}, state_prior);
+    shared_ptr<CategoricalCPD> state_prior_cpd =
+        make_shared<CategoricalCPD>(move(state_prior_cpd_temp));
 
     // 2.2.2 State Transition
     vector<shared_ptr<Categorical>> state_transition_matrix;
@@ -759,104 +991,128 @@ void create_tomcat_model() {
     Eigen::MatrixXd room_emission_matrix(7, 2);
     room_emission_matrix << 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0;
     CategoricalCPD room_emission_cpd_temp({state_metadata},
-                                           room_emission_matrix);
+                                          room_emission_matrix);
+    shared_ptr<CategoricalCPD> room_emission_cpd =
+        make_shared<CategoricalCPD>(std::move(room_emission_cpd_temp));
 
     // 2.2.3 TG Emission
 
     // HW (the first state) is the only state where the player is not in a room
     // but in the hallway
-    Eigen::MatrixXd room_emission_matrix(7, 2);
-    room_emission_matrix << 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0;
-    CategoricalCPD room_emission_cpd_temp({state_metadata},
-                                          room_emission_matrix);
+    Eigen::MatrixXd tg_emission_matrix(7, 2);
+    tg_emission_matrix << 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0;
+    CategoricalCPD tg_emission_cpd_temp({state_metadata}, tg_emission_matrix);
+    shared_ptr<CategoricalCPD> tg_emission_cpd =
+        make_shared<CategoricalCPD>(std::move(tg_emission_cpd_temp));
 
-    shared_ptr<CategoricalCPD> light_emission_cpd =
-        make_shared<CategoricalCPD>(std::move(light_emission_cpd_temp));
+    Eigen::MatrixXd ty_emission_matrix(7, 2);
+    ty_emission_matrix << 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0;
+    CategoricalCPD ty_emission_cpd_temp({state_metadata}, ty_emission_matrix);
+    shared_ptr<CategoricalCPD> ty_emission_cpd =
+        make_shared<CategoricalCPD>(std::move(ty_emission_cpd_temp));
 
-    Eigen::MatrixXd prior_s = Eigen::MatrixXd::Constant(1, 7, EPSILON);
-    prior_s[0] = 1; // The first state is always 0
-    DirichletCPD prior_s_cpd({}, move(prior_s));
+    // 2.3 RANDOM VARIABLES
 
-    CategoricalCPD prior_state_cpd(
-        {}, {make_shared<Categorical>(Categorical(prior_state_node_ptr))});
+    std::shared_ptr<RandomVariableNode> state(
+        make_shared<RandomVariableNode>(state_metadata));
+    state->add_cpd_template(state_prior_cpd);
+    state->add_cpd_template(state_transition_cpd);
 
-    shared_ptr<CPD> prior_state_cpd_ptr =
-        make_shared<CategoricalCPD>(prior_state_cpd);
+    std::shared_ptr<RandomVariableNode> light(
+        make_shared<RandomVariableNode>(light_metadata));
+    light->add_cpd_template(light_emission_cpd);
 
-    Eigen::MatrixXd state_transition_matrix(3, 3);
-    state_transition_matrix << 0, 0, 1, 1, 0, 0, 0, 1, 0;
-    CategoricalCPD state_cpd({state_metadata_ptr}, state_transition_matrix);
-    if (!fixed_parameters) {
-        state_cpd =
-            CategoricalCPD({state_metadata_ptr},
-                           {make_shared<Categorical>(theta_s0_node_ptr),
-                            make_shared<Categorical>(theta_s1_node_ptr),
-                            make_shared<Categorical>(theta_s2_node_ptr)});
+    std::shared_ptr<RandomVariableNode> room(
+        make_shared<RandomVariableNode>(room_metadata));
+    room->add_cpd_template(room_emission_cpd);
+
+    std::shared_ptr<RandomVariableNode> tg(
+        make_shared<RandomVariableNode>(tg_metadata));
+    tg->add_cpd_template(tg_emission_cpd);
+
+    std::shared_ptr<RandomVariableNode> ty(
+        make_shared<RandomVariableNode>(ty_metadata));
+    ty->add_cpd_template(ty_emission_cpd);
+
+    // 3 CONNECTIONS
+    for (int i = 0; i < 7; i++) {
+        state_metadata->add_parent_link(theta_s_metadatas[i], true);
+        light_metadata->add_parent_link(pi_lt_metadatas[i], false);
+    }
+    state_metadata->add_parent_link(state_metadata, true);
+    light_metadata->add_parent_link(state_metadata, false);
+    room_metadata->add_parent_link(state_metadata, false);
+    tg_metadata->add_parent_link(state_metadata, false);
+    ty_metadata->add_parent_link(state_metadata, false);
+
+    // 4 DBN
+    DynamicBayesNet model;
+
+    // 4.1 ADD PARAMETER NODES
+    for (int i = 0; i < 7; i++) {
+        model.add_node_template(*theta_s_nodes[i]);
+        model.add_node_template(*pi_lt_nodes[i]);
     }
 
-    shared_ptr<CPD> state_cpd_ptr = make_shared<CategoricalCPD>(state_cpd);
+    // 4.2 ADD VARIABLE NODES
+    model.add_node_template(*state);
+    model.add_node_template(*light);
+    model.add_node_template(*room);
+    model.add_node_template(*tg);
+    model.add_node_template(*ty);
 
-    RandomVariableNode state_node(state_metadata_ptr);
-    state_node.add_cpd_template(prior_state_cpd_ptr);
-    state_node.add_cpd_template(state_cpd_ptr);
-
-    shared_ptr<RandomVariableNode> state_node_ptr =
-        make_shared<RandomVariableNode>(state_node);
-    state_metadata_ptr->add_parent_link(state_metadata_ptr, true);
-    state_metadata_ptr->add_parent_link(state_prior_metadata_ptr, false);
-    if (!fixed_parameters) {
-        state_metadata_ptr->add_parent_link(theta_s0_metadata_ptr, true);
-        state_metadata_ptr->add_parent_link(theta_s1_metadata_ptr, true);
-        state_metadata_ptr->add_parent_link(theta_s2_metadata_ptr, true);
-    }
-
-    NodeMetadata tg_metadata = NodeMetadata::create_multiple_time_link_metadata(
-        "TG", true, false, true, 1, 1, 2);
-    tg_metadata.add_parent_link(state_metadata_ptr, false);
-
-    Eigen::MatrixXd tg_emission_matrix(3, 2);
-    tg_emission_matrix << 1, 0, 0, 1, 0.5, 0.5;
-    CategoricalCPD tg_cpd({state_metadata_ptr}, move(tg_emission_matrix));
-
-    RandomVariableNode tg_node(make_shared<NodeMetadata>(tg_metadata));
-    tg_node.add_cpd_template(make_shared<CategoricalCPD>(tg_cpd));
-
-    NodeMetadata ty_metadata = NodeMetadata::create_multiple_time_link_metadata(
-        "TY", true, false, true, 1, 1, 2);
-    ty_metadata.add_parent_link(state_metadata_ptr, false);
-
-    Eigen::MatrixXd ty_emission_matrix(3, 2);
-    ty_emission_matrix << 0, 1, 1, 0, 0.5, 0.5;
-    CategoricalCPD ty_cpd({state_metadata_ptr}, move(ty_emission_matrix));
-
-    RandomVariableNode ty_node(make_shared<NodeMetadata>(ty_metadata));
-    ty_node.add_cpd_template(make_shared<CategoricalCPD>(ty_cpd));
-
-    DynamicBayesNet dbn(3);
-    dbn.add_node_template(state_node);
-    dbn.add_node_template(tg_node);
-    dbn.add_node_template(ty_node);
-    dbn.add_node_template(prior_state_node);
-    if (!fixed_parameters) {
-        dbn.add_node_template(move(theta_s0_node));
-        dbn.add_node_template(move(theta_s1_node));
-        dbn.add_node_template(move(theta_s2_node));
-    }
+    return model;
 }
 
-void test_training_runtime() {}
+void test_training_runtime() {
+    shared_ptr<DynamicBayesNet> model =
+        make_shared<DynamicBayesNet>(create_tomcat_model());
+
+    Tensor3 light_data =
+        read_tensor_from_file("../../data/samples/asist/sparky/lights.csv");
+    Tensor3 room_data =
+        read_tensor_from_file("../../data/samples/asist/sparky/rooms.csv");
+    Tensor3 tg_data = read_tensor_from_file(
+        "../../data/samples/asist/sparky/triaging_green.csv");
+    Tensor3 ty_data = read_tensor_from_file(
+        "../../data/samples/asist/sparky/triaging_yellow.csv");
+    EvidenceSet data;
+    data.add_data("Light", light_data);
+    data.add_data("Room", room_data);
+    data.add_data("TG", tg_data);
+    data.add_data("TY", ty_data);
+
+    model->unroll(data.get_time_steps(), true);
+    shared_ptr<GibbsSampler> gibbs = make_shared<GibbsSampler>(model, 500);
+    gibbs->set_num_in_plate_samples(data.get_num_data_points());
+
+    Timer timer;
+    shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+    DBNSamplingTrainer trainer(gen, gibbs, 5000);
+    trainer.fit(data);
+
+    shared_ptr<DBNSaver> saver =
+        make_shared<DBNSaver>(model, "../../data/model/asist/sparky");
+    saver->save();
+}
 
 int main() {
+    //generate_student_data();
+    //test_student_training_runtime();
+    //test_training_runtime();
+
+    test_message_passing();
+
     //    test_cpp_capabilities();
-    //    test_random_number_generation();
+    // test_random_number_generation();
     //    test_dbn_entities();
 
-    shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
-
-    shared_ptr<DynamicBayesNet> dbn_ptr =
-        make_shared<DynamicBayesNet>(create_dbn(true));
-    dbn_ptr->unroll(20, true);
-    generate_samples_to_test(dbn_ptr, 10, gen);
+    //    shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+    //
+    //    shared_ptr<DynamicBayesNet> dbn_ptr =
+    //        make_shared<DynamicBayesNet>(create_dbn(true));
+    //    dbn_ptr->unroll(20, true);
+    //    generate_samples_to_test(dbn_ptr, 10, gen);
 
     //        shared_ptr<DynamicBayesNet> dbn_ptr =
     //            make_shared<DynamicBayesNet>(create_dbn(false));
@@ -906,7 +1162,7 @@ int main() {
 
     // test_pipeline();
     // test_mosquitto();
-    test_message_passing();
+    // test_message_passing();
 
     //    Eigen::MatrixXd m(2,3);
     //    m << 1, 0, 1,

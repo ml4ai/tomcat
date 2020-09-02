@@ -36,27 +36,31 @@ namespace tomcat {
         // Static functions
         //----------------------------------------------------------------------
 
-
-//        CPD::TableOrderingMap FactorGraph::get_unique_labels_ordering_map(
-//            const CPD::TableOrderingMap& cpd_ordering_map, int time_step) {
-//
-//            CPD::TableOrderingMap new_ordering_map;
-//
-//            for (const auto& [node_label, ordering_map] : cpd_ordering_map) {
-//                int parent_time_step = time_step;
-//
-//                if (node_label == main_node_label) {
-//                    // This is a CPD that links two nodes with the same label
-//                    // but in different time steps. We should use the parent's
-//                    // time step then.
-//                }
-//                string unique_label =
-//                    get_unique_label_for(node_label, time_step);
-//                new_ordering_map[unique_label] = ordering_map;
-//            }
-//
-//            return new_ordering_map;
-//        }
+        //        CPD::TableOrderingMap
+        //        FactorGraph::get_unique_labels_ordering_map(
+        //            const CPD::TableOrderingMap& cpd_ordering_map, int
+        //            time_step) {
+        //
+        //            CPD::TableOrderingMap new_ordering_map;
+        //
+        //            for (const auto& [node_label, ordering_map] :
+        //            cpd_ordering_map) {
+        //                int parent_time_step = time_step;
+        //
+        //                if (node_label == main_node_label) {
+        //                    // This is a CPD that links two nodes with the
+        //                    same label
+        //                    // but in different time steps. We should use the
+        //                    parent's
+        //                    // time step then.
+        //                }
+        //                string unique_label =
+        //                    get_unique_label_for(node_label, time_step);
+        //                new_ordering_map[unique_label] = ordering_map;
+        //            }
+        //
+        //            return new_ordering_map;
+        //        }
 
         //----------------------------------------------------------------------
         // Member functions
@@ -70,7 +74,7 @@ namespace tomcat {
 
             if (time_step > 2) {
                 throw TomcatModelException(
-                    "A factor graph cannot contain "
+                    "A factor graph cannot accept "
                     "nodes at time step greater than 2.");
             }
 
@@ -92,7 +96,8 @@ namespace tomcat {
                                              int cardinality,
                                              int time_step) {
 
-            string unique_label = ExactInferenceNode::get_unique_label_for(node_label, time_step);
+            string unique_label = node_label;
+            // ExactInferenceNode::get_unique_label_for(node_label, time_step);
 
             int vertex_id = boost::add_vertex(this->graph);
             VertexData vertex;
@@ -113,13 +118,15 @@ namespace tomcat {
             Eigen::MatrixXd& cpd,
             const CPD::TableOrderingMap& cpd_ordering_map) {
 
-            string unique_label = ExactInferenceNode::get_unique_label_for(node_label, time_step);
+            string unique_label = node_label;
+            // ExactInferenceNode::get_unique_label_for(node_label, time_step);
             string factor_label = this->get_factor_label(unique_label);
 
             int vertex_id = boost::add_vertex(this->graph);
             VertexData vertex;
-//            CPD::TableOrderingMap new_ordering_map =
-//                get_unique_labels_ordering_map(cpd_ordering_map, time_step);
+            //            CPD::TableOrderingMap new_ordering_map =
+            //                get_unique_labels_ordering_map(cpd_ordering_map,
+            //                time_step);
             vertex.node =
                 make_shared<FactorNode>(factor_label, cpd, cpd_ordering_map);
             vertex.factor = true;
@@ -144,19 +151,25 @@ namespace tomcat {
 
             if (source_node_time_step > this->last_time_step ||
                 target_node_time_step > this->last_time_step) {
-                throw TomcatModelException(
-                    "There are no vertices in the time step informed.");
+                stringstream ss;
+                ss << "It's not possible to define connections between nodes "
+                      "with time step greater than "
+                   << this->last_time_step;
+                throw TomcatModelException(ss.str());
             }
 
             // When adding an edge, the target node must be actually the
             // incoming factor node of it. Since the CPD of a node is given by a
             // joint distribution of its parents, its guaranteed to have only
             // one incoming factor node per non-factor node in the graph.
-            string unique_source_label =
-                ExactInferenceNode::get_unique_label_for(source_node_label, source_node_time_step);
+            string unique_source_label = source_node_label;
+            //                ExactInferenceNode::get_unique_label_for(source_node_label,
+            //                                                         source_node_time_step);
             string unique_target_label =
-                ExactInferenceNode::get_unique_label_for(this->get_factor_label(target_node_label),
-                                     target_node_time_step);
+                this->get_factor_label(target_node_label);
+            //                ExactInferenceNode::get_unique_label_for(
+            //                    this->get_factor_label(target_node_label),
+            //                    target_node_time_step);
 
             string source_node_name =
                 NodeName::get(unique_source_label, source_node_time_step);
@@ -168,8 +181,9 @@ namespace tomcat {
 
             boost::add_edge(source_vertex_id, target_vertex_id, this->graph);
 
-            dynamic_pointer_cast<FactorNode>(this->graph[target_vertex_id].node)->replace_cpd_ordering_label(
-                source_node_label, unique_source_label);
+            //            dynamic_pointer_cast<FactorNode>(this->graph[target_vertex_id].node)
+            //                ->replace_cpd_ordering_label(source_node_label,
+            //                                             unique_source_label);
         }
 
         void FactorGraph::compute_topological_traversal_per_time_slice() {
@@ -182,8 +196,11 @@ namespace tomcat {
             while (begin != end) {
                 int source = boost::source(*begin, this->graph);
                 int target = boost::target(*begin, this->graph);
-                LOG(this->graph[source].node->get_label() + " -> " +
-                    this->graph[target].node->get_label());
+                LOG(NodeName::get(this->graph[source].node->get_label(),
+                                  this->graph[source].time_step) +
+                    " -> " +
+                    NodeName::get(this->graph[target].node->get_label(),
+                                  this->graph[target].time_step));
                 begin++;
             }
 
@@ -198,8 +215,6 @@ namespace tomcat {
                 while (begin != end) {
                     int source = boost::source(*begin, this->graph);
                     int target = boost::target(*begin, this->graph);
-                    LOG(this->graph[source].node->get_label() + " -> " +
-                        this->graph[target].node->get_label());
                     begin++;
                 }
 
@@ -306,6 +321,21 @@ namespace tomcat {
             }
 
             return marginal;
+        }
+
+        shared_ptr<ExactInferenceNode>
+        FactorGraph::get_node_instance_in_time_step(const string& node_label,
+                                                    int time_step) const {
+            int vertex_id =
+                this->name_to_id.at(NodeName::get(node_label, time_step));
+            return this->graph[vertex_id].node;
+        }
+
+        ExactInferenceNode::NodeName FactorGraph::get_template_name(
+            const ExactInferenceNode::NodeName& node_name) const {
+            return ExactInferenceNode::NodeName(
+                node_name.label,
+                min(this->last_time_step, node_name.time_step));
         }
 
         //----------------------------------------------------------------------

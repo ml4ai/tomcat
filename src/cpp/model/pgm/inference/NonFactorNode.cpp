@@ -34,16 +34,16 @@ namespace tomcat {
         //----------------------------------------------------------------------
         Eigen::MatrixXd
         NonFactorNode::get_outward_message_to(const NodeName& node_name,
-                                              int source_time_slice,
-                                              int inference_time_step) const {
+                                              int inference_time_slice,
+                                              Direction direction) const {
 
             Eigen::MatrixXd outward_message;
-            if (EXISTS(source_time_slice, this->data_per_time_slice)) {
-                outward_message = this->data_per_time_slice.at(inference_time_step);
+            if (EXISTS(inference_time_slice, this->data_per_time_slice)) {
+                outward_message = this->data_per_time_slice.at(inference_time_slice);
             } else {
                 for (const auto& [source_node_name, incoming_message] :
                      this->incoming_messages_per_time_slice.at(
-                         source_time_slice)) {
+                         inference_time_slice)) {
 
                     if (source_node_name == node_name) {
                         continue;
@@ -58,6 +58,12 @@ namespace tomcat {
                     }
                 }
             }
+
+            Eigen::VectorXd sum_per_row =
+                outward_message.rowwise().sum();
+            outward_message = (outward_message.array().colwise() /
+                               sum_per_row.array())
+                .matrix();
 
             return outward_message;
         }

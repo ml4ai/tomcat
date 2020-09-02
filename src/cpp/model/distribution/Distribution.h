@@ -170,7 +170,7 @@ namespace tomcat {
              * the parameter being updated
              */
             virtual void
-            update_sufficient_statistics(const Eigen::MatrixXd& sample) = 0;
+            update_sufficient_statistics(const Eigen::VectorXd& sample) = 0;
 
           protected:
             //------------------------------------------------------------------

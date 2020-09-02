@@ -116,7 +116,7 @@ namespace tomcat {
             for (const auto& distribution_idx : distribution_indices) {
                 Eigen::VectorXd assignment =
                     this->distributions[distribution_idx]->sample(
-                        random_generator, distribution_idx);
+                        random_generator, i);
                 samples.row(i) = std::move(assignment);
                 i++;
             }
@@ -177,15 +177,15 @@ namespace tomcat {
             int sample_size = this->distributions[0]->get_sample_size();
 
             Eigen::MatrixXd samples(distribution_indices.size(), sample_size);
-            int i = 0;
+            int sample_index = 0;
             for (const auto& distribution_idx : distribution_indices) {
                 Eigen::VectorXd assignment =
                     this->distributions[distribution_idx]->sample(
                         random_generator,
-                        distribution_idx,
-                        weights.row(distribution_idx));
-                samples.row(i) = std::move(assignment);
-                i++;
+                        sample_index,
+                        weights.row(sample_index));
+                samples.row(sample_index) = std::move(assignment);
+                sample_index++;
             }
 
             return samples;
@@ -199,14 +199,14 @@ namespace tomcat {
                 this->get_distribution_indices(parent_nodes, node.get_size());
 
             Eigen::VectorXd pdfs(distribution_indices.size());
-            int i = 0;
+            int sample_index = 0;
             for (const auto& distribution_idx : distribution_indices) {
                 std::shared_ptr<Distribution> distribution =
                     this->distributions[distribution_idx];
                 double pdf =
-                    distribution->get_pdf(node.get_assignment().row(i), i);
-                pdfs(i) = pdf;
-                i++;
+                    distribution->get_pdf(node.get_assignment().row(sample_index), sample_index);
+                pdfs(sample_index) = pdf;
+                sample_index++;
             }
 
             return pdfs;
@@ -220,12 +220,12 @@ namespace tomcat {
                 this->get_distribution_indices(parent_nodes,
                                                cpd_owner_assignments.rows());
 
-            int i = 0;
+            int sample_index = 0;
             for (const auto& distribution_idx : distribution_indices) {
-                Eigen::VectorXd assignment = cpd_owner_assignments.row(i);
+                Eigen::VectorXd assignment = cpd_owner_assignments.row(sample_index);
                 this->distributions[distribution_idx]
                     ->update_sufficient_statistics(assignment);
-                i++;
+                sample_index++;
             }
         }
 

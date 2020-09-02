@@ -1,5 +1,7 @@
 #pragma once
 
+#include <unordered_map>
+
 #include "ExactInferenceNode.h"
 
 #include "../../utils/Definitions.h"
@@ -21,6 +23,29 @@ namespace tomcat {
          */
         class FactorNode : public ExactInferenceNode {
           public:
+            //------------------------------------------------------------------
+            // Structs
+            //------------------------------------------------------------------
+            struct PotentialFunction {
+                // The joint CPD is implemented as a single matrix where the
+                // rows are combinations of parents' assignments for a node and
+                // the columns are the node's assignments. We need to now the
+                // index of each parent in this table to be able to index them
+                // correctly when performing reductions or transformations in
+                // the matrix.
+                CPD::TableOrderingMap ordering_map;
+
+                Eigen::MatrixXd matrix;
+
+                std::string duplicate_key = "";
+
+                PotentialFunction() {}
+
+                PotentialFunction(const CPD::TableOrderingMap& ordering_map,
+                                  const Eigen::MatrixXd& matrix)
+                    : ordering_map(ordering_map), matrix(matrix) {}
+            };
+
             //------------------------------------------------------------------
             // Types, Enums & Constants
             //------------------------------------------------------------------
@@ -57,6 +82,8 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Static functions
             //------------------------------------------------------------------
+            static std::string get_factor_label_for_node(
+                const std::string& non_factor_label);
 
             //------------------------------------------------------------------
             // Member functions
@@ -72,10 +99,11 @@ namespace tomcat {
              */
             Eigen::MatrixXd
             get_outward_message_to(const NodeName& node_name,
-                                   int source_time_slice,
-                                   int inference_time_step) const override;
+                                   int inference_time_slice,
+                                   Direction direction) const override;
 
-            void replace_cpd_ordering_label(const std::string& current_label, const std::string& new_label);
+//            void replace_cpd_ordering_label(const std::string& current_label,
+//                                            const std::string& new_label);
 
             //------------------------------------------------------------------
             // Virtual functions
@@ -110,17 +138,19 @@ namespace tomcat {
             // That's why this adjusted table is for. It will pivot the original
             // potential function according to the direction of the message.
             std::vector<Eigen::MatrixXd> get_incoming_messages_in_order(
-                const NodeName& excluding_node_name,
-                int source_time_slice,
-                Eigen::MatrixXd& adjusted_potential_function) const;
+                const NodeName& ignore_node_name,
+                int inference_time_step,
+                const PotentialFunction& potential_function) const;
 
-            void fill_rotated_potential_functions();
+            void adjust_potential_functions();
+
+            std::string get_child_non_factor_label() const;
 
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------
 
-            Eigen::MatrixXd potential_function;
+            PotentialFunction original_potential_function;
 
             // A potential function will actually be a CPD table that is
             // defined as the probability of a node (columns) given its parents
@@ -132,14 +162,8 @@ namespace tomcat {
             // matrix, we need to perform some computation to do the swap.
             // This vector store all possible swaps where the index is the index
             // of the parent swapped.
-            std::vector<Eigen::MatrixXd> rotated_potential_function;
-
-            // The joint CPD is implemented as a single matrix where the rows
-            // are combinations of parents' assignments for a node and the
-            // columns are the node's assignments. We need to now the index of
-            // each parent in this table to be able to index them correctly when
-            // performing reductions or transformations in the matrix.
-            CPD::TableOrderingMap ordering_map;
+            std::unordered_map<std::string, PotentialFunction>
+                node_label_to_rotated_potential_function;
         };
 
     } // namespace model

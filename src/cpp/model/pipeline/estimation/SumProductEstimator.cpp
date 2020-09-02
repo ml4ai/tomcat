@@ -73,16 +73,17 @@ namespace tomcat {
                     //                    Eigen::MatrixXd
                     //                    new_estimates(new_data.number);
 
-                    stringstream ss;
-
-                    ss << estimates.label << min(2, t);
                     Eigen::MatrixXd marginal =
-                        factor_graph.get_marginal_for({ss.str(), t});
+                        factor_graph.get_marginal_for({estimates.label, t});
                     if (marginal.size() == 0) {
                         estimates.estimates = Eigen::MatrixXd::Constant(
                             new_data.get_num_data_points(), 1, NO_OBS);
                     }
                     else {
+//                        Eigen::VectorXd sum_per_row = marginal.rowwise().sum();
+//                        marginal =
+//                            (marginal.array().colwise() / sum_per_row.array())
+//                                .matrix();
                         // In this implementation, sum-product will only be
                         // executed with discrete one-dimensional variables, so
                         // the assignment vector should only contain one value
@@ -97,6 +98,7 @@ namespace tomcat {
                             int num_cols = estimates.estimates.cols() + 1;
                             estimates.estimates.conservativeResize(num_rows,
                                                                    num_cols);
+
                             estimates.estimates.col(num_cols - 1) =
                                 marginal.col(discrete_assignment);
                         }
@@ -122,15 +124,15 @@ namespace tomcat {
                     factor_graph.get_parents_of(node_name);
 
                 if (!vertex.factor &&
-                    new_data.has_data_for(vertex.node->get_original_label())) {
+                    new_data.has_data_for(vertex.node->get_label())) {
                     // Column of the data matrix that contains data for the time
                     // step being processed.
-                    Tensor3 node_data =
-                        new_data[vertex.node->get_original_label()];
+                    Tensor3 node_data = new_data[vertex.node->get_label()];
                     Eigen::VectorXd data_in_time_step =
                         node_data(0, 0).col(time_step - this->next_time_step);
                     dynamic_pointer_cast<NonFactorNode>(vertex.node)
-                        ->set_data_at(time_step, data_in_time_step);
+                        ->set_data_at(time_step - this->next_time_step,
+                                      data_in_time_step);
                 }
 
                 if (parent_vertices.empty()) {
@@ -147,26 +149,56 @@ namespace tomcat {
                     for (const auto& parent_vertex : parent_vertices) {
 
                         // Relative distance in time from the parent to the
-                        // child. 0 if they are in the same time slice.
+                        // child. 0 if they are in the same time slice. When the
+                        // time step is greater than the maximum time slice of
+                        // the factor graph, use that vertex to store all the
+                        // messages of future time slices.
                         int time_diff =
                             vertex.time_step - parent_vertex.time_step;
+                        int parent_time_step = parent_vertex.time_step;
+
+                        shared_ptr<ExactInferenceNode> parent_node;
+                        if (time_step > vertex.time_step && time_diff > 0) {
+                            // We are calculating messages for the last time
+                            // slice of the factor graph, that works as a
+                            // template to calculate future messages. When a
+                            // node depends on the previous time slice (which is
+                            // the case of a factor that links two nodes from
+                            // different time slices), and this node is beyond
+                            // the template time slice time step, its parent is
+                            // actually a node from the template time slice
+                            // instead of a node from the time slice prior to
+                            // the template's.
+                            parent_time_step = vertex.time_step;
+                            parent_node =
+                                factor_graph.get_node_instance_in_time_step(
+                                    parent_vertex.node->get_label(),
+                                    parent_time_step);
+                            // node_name.time_step = time_step;
+                        }
+                        else {
+                            parent_node = parent_vertex.node;
+                            //                            node_name =
+                            //                            this->factor_graph.get_template_name(
+                            //                                NodeName(node_name.label,
+                            //                                time_step));
+                        }
+
+                        node_name.time_step = time_step;
 
                         Eigen::MatrixXd message =
-                            parent_vertex.node->get_outward_message_to(
+                            parent_node->get_outward_message_to(
                                 node_name,
-                                vertex.time_step - time_diff,
-                                time_step);
+                                time_step - time_diff,
+                                ExactInferenceNode::Direction::forward);
 
+                        LOG("Forward");
+                        LOG(node_name.get());
                         LOG(message);
-                        // Normalize the message
-                        Eigen::VectorXd sum_per_row = message.rowwise().sum();
-                        message =
-                            (message.array().colwise() / sum_per_row.array())
-                                .matrix();
-                        LOG(message);
+                        LOG("");
 
                         NodeName parent_name(parent_vertex.node->get_label(),
-                                             time_step - time_diff);
+                                             parent_time_step);
                         vertex.node->set_incoming_message_from(
                             parent_name, time_step, message);
                     }
@@ -182,12 +214,17 @@ namespace tomcat {
             for (auto& vertex : factor_graph.get_vertices_topological_order(
                      time_step, false)) {
 
-                NodeName node_name(vertex.node->get_label(), time_step);
+                NodeName node_name = factor_graph.get_template_name(
+                    NodeName(vertex.node->get_label(), time_step));
                 vector<FactorGraph::VertexData> child_vertices =
                     factor_graph.get_children_of(node_name);
 
-                if (child_vertices.empty()) {
-                    // This vertex is a leaf in the factor graph. It's single
+                if (child_vertices.empty() ||
+                    (child_vertices.size() == 1 &&
+                     child_vertices[0].time_step - vertex.time_step > 0)) {
+                    // This vertex is a leaf in the factor graph for that time
+                    // step (it can have a child in the next time step, which
+                    // should not be considered at this point). It's single
                     // incoming bottom up message is a vector of ones.
                     // Implemented as a matrix so that messages for multiple
                     // data points can be processes at once.
@@ -209,7 +246,7 @@ namespace tomcat {
                         int time_diff =
                             child_vertex.time_step - vertex.time_step;
 
-                        // We compute the backward passing contrained to the
+                        // We compute the backward passing constrained to the
                         // fact that we are doing inference up to the time step
                         // being processed, so we do not process child nodes in
                         // a future time step.
@@ -217,17 +254,13 @@ namespace tomcat {
                             Eigen::MatrixXd message =
                                 child_vertex.node->get_outward_message_to(
                                     node_name,
-                                    vertex.time_step + time_diff,
-                                    time_step);
+                                    time_step + time_diff,
+                                    ExactInferenceNode::Direction::backwards);
 
+                            LOG("Backward");
+                            LOG(node_name.get());
                             LOG(message);
-                            // Normalize the message
-                            Eigen::VectorXd sum_per_row =
-                                message.rowwise().sum();
-                            message = (message.array().colwise() /
-                                       sum_per_row.array())
-                                          .matrix();
-                            LOG(message);
+                            LOG("");
 
                             NodeName child_name(child_vertex.node->get_label(),
                                                 time_step + time_diff);

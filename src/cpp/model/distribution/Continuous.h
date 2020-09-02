@@ -61,7 +61,7 @@ namespace tomcat {
             // Member functions
             //------------------------------------------------------------------
 
-            void update_sufficient_statistics(const Eigen::MatrixXd& sample) override;
+            void update_sufficient_statistics(const Eigen::VectorXd& sample) override;
 
           protected:
             //------------------------------------------------------------------

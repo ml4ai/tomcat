@@ -44,16 +44,21 @@ namespace tomcat {
 
                 const std::vector<std::shared_ptr<Node>>& parent_nodes =
                     this->model->get_parent_nodes_of(node, true);
+                int real_num_samples = num_samples;
                 if (node->get_metadata()->is_in_plate()) {
-                    num_samples = this->num_in_plate_samples == 1
-                                      ? num_samples
-                                      : this->num_in_plate_samples;
+                    // Number of in-plate samples should match the number of
+                    // data points (num_in_plate_samples). If there's no data
+                    // point or just one, which will cause num_in_plate_samples
+                    // to be equals to 1, then we can generate multiple samples.
+                    real_num_samples = this->num_in_plate_samples == 1
+                                           ? num_samples
+                                           : this->num_in_plate_samples;
                 }
 
                 std::shared_ptr<RandomVariableNode> rv_node =
                     std::dynamic_pointer_cast<RandomVariableNode>(node);
                 Eigen::MatrixXd assignment = rv_node->sample(
-                    random_generator, parent_nodes, num_samples);
+                    random_generator, parent_nodes, real_num_samples);
                 rv_node->set_assignment(assignment);
             }
         }

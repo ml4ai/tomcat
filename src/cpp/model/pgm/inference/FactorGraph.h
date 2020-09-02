@@ -98,6 +98,12 @@ namespace tomcat {
             Eigen::MatrixXd get_marginal_for(
                 const ExactInferenceNode::NodeName& node_name) const;
 
+            std::shared_ptr<ExactInferenceNode>
+            get_node_instance_in_time_step(const std::string& node_label,
+                                           int time_step) const;
+
+            ExactInferenceNode::NodeName get_template_name(const ExactInferenceNode::NodeName& node_name) const;
+
             //------------------------------------------------------------------
             // Virtual functions
             //------------------------------------------------------------------
@@ -149,9 +155,10 @@ namespace tomcat {
              * @param time_step
              * @return
              */
-//            static std::string
-//            get_unique_label_for(const std::string& original_label,
-//                                 int time_step);
+            //            static std::string
+            //            get_unique_label_for(const std::string&
+            //            original_label,
+            //                                 int time_step);
 
             //------------------------------------------------------------------
             // Member functions

@@ -80,8 +80,16 @@ namespace tomcat {
         Categorical::sample_from_gsl(std::shared_ptr<gsl_rng> random_generator,
                                      const Eigen::VectorXd& parameters) const {
 
+            Eigen::VectorXd checked_parameters;
+            // If for some reason, all the probabilities are zero, sample from a uniform distribution;
+            if (parameters.sum() < EPSILON) {
+                checked_parameters = Eigen::VectorXd::Ones(parameters.size());
+            } else {
+                checked_parameters = parameters;
+            }
+
             int k = parameters.size();
-            const double* parameters_ptr = parameters.data();
+            const double* parameters_ptr = checked_parameters.data();
             unsigned int* sample_ptr = new unsigned int[k];
 
             gsl_ran_multinomial(
@@ -157,7 +165,7 @@ namespace tomcat {
         int Categorical::get_sample_size() const { return 1; }
 
         void Categorical::update_sufficient_statistics(
-            const Eigen::MatrixXd& sample) {
+            const Eigen::VectorXd& sample) {
             if (this->probabilities->get_metadata()->is_parameter()) {
                 if (RandomVariableNode* rv_node =
                         dynamic_cast<RandomVariableNode*>(

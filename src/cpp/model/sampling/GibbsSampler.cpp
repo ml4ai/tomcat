@@ -91,11 +91,9 @@ namespace tomcat {
                 }
 
                 ++progress;
-
-//                if (i >= this->burn_in_period) {
-//                    std::cout << i << "\n";
-//                    this->iteration++;
-//                }
+                if(!discard){
+                    this->iteration++;
+                }
             }
         }
 

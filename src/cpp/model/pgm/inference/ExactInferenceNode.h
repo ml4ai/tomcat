@@ -65,6 +65,12 @@ namespace tomcat {
             };
 
             //------------------------------------------------------------------
+            // Types, Enums & Constants
+            //------------------------------------------------------------------
+
+            enum Direction { backwards, forward };
+
+            //------------------------------------------------------------------
             // Constructors & Destructor
             //------------------------------------------------------------------
 
@@ -183,10 +189,10 @@ namespace tomcat {
              */
             virtual Eigen::MatrixXd
             get_outward_message_to(const NodeName& node_name,
-                                   int source_time_slice,
-                                   int inference_time_step) const = 0;
+                                   int inference_time_slice,
+                                   Direction direction) const = 0;
 
-            std::string get_original_label() const;
+//            std::string get_original_label() const;
 
             //------------------------------------------------------------------
             // Getters & Setters

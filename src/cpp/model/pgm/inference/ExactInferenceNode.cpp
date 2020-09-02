@@ -78,10 +78,10 @@ namespace tomcat {
                                                   [node_name] = message;
         }
 
-        string ExactInferenceNode::get_original_label() const {
-            string original_label = label.substr(0, label.size() - 1);
-            return original_label;
-        }
+//        string ExactInferenceNode::get_original_label() const {
+//            string original_label = label.substr(0, label.size() - 1);
+//            return original_label;
+//        }
 
         //----------------------------------------------------------------------
         // Getters & Setters

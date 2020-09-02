@@ -94,7 +94,7 @@ namespace tomcat {
             int get_sample_size() const override;
 
             void update_sufficient_statistics(
-                const Eigen::MatrixXd& sample) override;
+                const Eigen::VectorXd& sample) override;
 
           private:
             //------------------------------------------------------------------
