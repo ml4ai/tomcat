@@ -134,6 +134,7 @@ def fit_and_evaluate(
         horizons
     )
 
+
 def fit_and_evaluate_single_fold(
         original_model, evidence_set, num_gibbs_samples, gibbs_burn_in, horizons, model_root_folder
 ):
@@ -236,6 +237,7 @@ def fit_and_evaluate_single_fold(
         ty_model_conf_matrices,
         horizons
     )
+
 
 def shuffle_and_split_data(evidence_set, number_of_folds):
     """
@@ -477,7 +479,7 @@ def load_trained_asist_model(mission_map, gibbs_samples, gibbs_burn_in, share_pa
         map_name = 'falcon'
 
     if share_parameters:
-        sharing_opt = "shared"
+        sharing_opt = "combined/shared"
     else:
         sharing_opt = "non_shared"
 
@@ -582,7 +584,7 @@ def experiment_eval_performance_synthetic(num_samples, gibbs_samples, gibbs_burn
 
     if single_fold:
         fit_and_evaluate_single_fold(model, evidence_set, 100, 10, horizons,
-                     "../data/models/synthetic_sparky" + sharing_opt)
+                                     "../data/models/synthetic_sparky" + sharing_opt)
     else:
         fit_and_evaluate(model, evidence_set, 100, 10, num_folds, horizons,
                          "../data/models/synthetic_sparky" + sharing_opt)
@@ -609,6 +611,46 @@ def experiment_eval_performance_synthetic(num_samples, gibbs_samples, gibbs_burn
     num_folds = 5
     fit_and_evaluate(model, evidence_set, 1000, 100, num_folds, horizons,
                      "../data/models/synthetic_falcon" + sharing_opt)
+
+def experiment_eval_performance_new_format(gibbs_samples, gibbs_burn_in, horizons):
+    print('>> Falcon Shared Lights On')
+    np.random.seed(42)
+    random.seed(42)
+    models = Model()
+    models.init_from_mission_map(MissionMap.SHARED)
+    evidence_set = load_evidence_set("../data/evidence/asist/falcon/combined")
+    evidence_set.lt_evidence = evidence_set.lt_evidence[0:5, :]
+    evidence_set.rm_evidence = evidence_set.rm_evidence[0:5, :]
+    evidence_set.tg_evidence = evidence_set.tg_evidence[0:5, :]
+    evidence_set.ty_evidence = evidence_set.ty_evidence[0:5, :]
+    num_folds = 5
+    sharing_opt = "shared"
+    # sharing_opt = "combined/shared"
+    # num_folds = 4
+
+    fit_and_evaluate(models, evidence_set, gibbs_samples, gibbs_burn_in, num_folds, horizons, "../data/models/falcon/" + sharing_opt)
+
+    print('>> Falcon Shared Combined Lights On')
+    np.random.seed(42)
+    random.seed(42)
+    models = Model()
+    models.init_from_mission_map(MissionMap.SHARED)
+    evidence_set = load_evidence_set("../data/evidence/asist/falcon/combined")
+    num_folds = 4
+    sharing_opt = "combined/shared"
+
+    fit_and_evaluate(models, evidence_set, gibbs_samples, gibbs_burn_in, num_folds, horizons, "../data/models/falcon/" + sharing_opt)
+
+    print('>> Falcon Shared Tested on New')
+    np.random.seed(42)
+    random.seed(42)
+    models = Model()
+    models.init_from_mission_map(MissionMap.SHARED)
+    evidence_set = load_evidence_set("../data/evidence/asist/falcon/new_format")
+    num_folds = 0
+    sharing_opt = "shared"
+
+    fit_and_evaluate_single_fold(models, evidence_set, gibbs_samples, gibbs_burn_in, horizons, "../data/models/falcon/" + sharing_opt)
 
 
 def experiment_eval_performance_real(gibbs_samples, gibbs_burn_in, horizons, share_parameters):
@@ -642,10 +684,12 @@ def experiment_eval_performance_real(gibbs_samples, gibbs_burn_in, horizons, sha
     if share_parameters:
         models.init_from_mission_map(MissionMap.SHARED)
         evidence_set = load_evidence_set("../data/evidence/asist/falcon/binary_area")
+        num_folds = 5
     else:
-        models.init_from_mission_map(MissionMap.SPARKY)
+        models.init_from_mission_map(MissionMap.FALCON)
         evidence_set = load_evidence_set("../data/evidence/asist/falcon")
-    num_folds = 5
+        num_folds = 5
+
     fit_and_evaluate(models, evidence_set, gibbs_samples, gibbs_burn_in, num_folds, horizons, "../data/models/falcon/" + sharing_opt)
 
 
@@ -906,7 +950,8 @@ def experiment_common_behavior(share_parameters):
 
     print('>> Synthetic Sparky')
     data = load_evidence_set("../data/evidence/asist/{}/synthetic_sparky_0eu_100s_5000gs500gbi".format(sharing_opt))
-    evaluate_common_behavior(data, first_room_index, '../data/plots/asist/sparky/{}'.format(sharing_opt), 'state_freq_synthetic_sparky_0eu_100s_5000gs500gbi')
+    evaluate_common_behavior(data, first_room_index, '../data/plots/asist/sparky/{}'.format(sharing_opt),
+                             'state_freq_synthetic_sparky_0eu_100s_5000gs500gbi')
 
     print('\n>> Sparky')
     data = load_evidence_set("../data/evidence/asist/sparky")
@@ -921,72 +966,12 @@ def experiment_common_behavior(share_parameters):
 
     print('\n>> Synthetic Falcon')
     data = load_evidence_set("../data/evidence/asist/{}/synthetic_falcon_0eu_100s_5000gs500gbi".format(sharing_opt))
-    evaluate_common_behavior(data, first_room_index, '../data/plots/asist/falcon/{}'.format(sharing_opt), 'state_freq_synthetic_falcon_0eu_100s_5000gs500gbi')
+    evaluate_common_behavior(data, first_room_index, '../data/plots/asist/falcon/{}'.format(sharing_opt),
+                             'state_freq_synthetic_falcon_0eu_100s_5000gs500gbi')
 
     print('\n>> Falcon')
     data = load_evidence_set("../data/evidence/asist/falcon")
     evaluate_common_behavior(data, 10, '../data/plots/asist/falcon', 'state_freq_falcon_0eu_5s_5000gs500gbi')
-
-def print_results(tg_baseline_ll, ty_baseline_ll, tg_baseline_cm, ty_baseline_cm, tg_model_ll, ty_model_ll, tg_model_cm, ty_model_cm, horizons):
-    for i, h in enumerate(horizons):
-        print('h = {}'.format(h))
-        print('')
-
-        agg_tg_baseline_cm = np.sum(tg_baseline_cm[i], axis=0)
-        agg_ty_baseline_cm = np.sum(ty_baseline_cm[i], axis=0)
-        agg_tg_model_cm = np.sum(tg_model_cm[i], axis=0)
-        agg_ty_model_cm = np.sum(ty_model_cm[i], axis=0)
-
-        print('Baseline')
-        print('----------------')
-        print('Log-loss')
-        print('{:.4f} {:.4f}'.format(np.mean(tg_baseline_ll[i]), np.mean(ty_baseline_ll[i])))
-        print('')
-        print('Confusion Matrix')
-        print(agg_tg_baseline_cm)
-        print(agg_ty_baseline_cm)
-        print('')
-        print('F1 Score')
-        print('{:.4f} {:.4f}'.format(get_f1_score(agg_tg_baseline_cm), get_f1_score(agg_ty_baseline_cm)))
-
-        print('')
-        print('Model')
-        print('----------------')
-        print('Log-loss')
-        print('{:.4f} {:.4f}'.format(np.mean(tg_model_ll[i]), np.mean(ty_model_ll[i])))
-        print('')
-        print('Confusion Matrix')
-        print(agg_tg_baseline_cm)
-        print(agg_ty_baseline_cm)
-        print('F1 Score')
-        print('{:.4f} {:.4f}'.format(get_f1_score(agg_tg_model_cm), get_f1_score(agg_ty_model_cm)))
-
-        print('########################')
-        print('########################')
-
-    print('TG')
-    print('Baseline')
-    print('1->3')
-    print((np.sum(tg_baseline_cm[1], axis=0) - np.sum(tg_baseline_cm[0], axis=0)) / np.sum(tg_baseline_cm[0], axis=0))
-    print('3->5')
-    print((np.sum(tg_baseline_cm[2], axis=0) - np.sum(tg_baseline_cm[1], axis=0)) / np.sum(tg_baseline_cm[1], axis=0))
-    print('Model')
-    print('1->3')
-    print((np.sum(tg_model_cm[1], axis=0) - np.sum(tg_model_cm[0], axis=0)) / np.sum(tg_model_cm[0], axis=0))
-    print('3->5')
-    print((np.sum(tg_model_cm[2], axis=0) - np.sum(tg_model_cm[1], axis=0)) / np.sum(tg_model_cm[1], axis=0))
-
-    print('TY')
-    print('Baseline')
-    print('1->3')
-    print((np.sum(ty_baseline_cm[1], axis=0) - np.sum(ty_baseline_cm[0], axis=0)) / np.sum(ty_baseline_cm[0], axis=0))
-    print('3->5')
-    print((np.sum(ty_baseline_cm[2], axis=0) - np.sum(ty_baseline_cm[1], axis=0)) / np.sum(ty_baseline_cm[1], axis=0))
-    print('Model')
-    print('1->3')
-    print((np.sum(ty_model_cm[1], axis=0) - np.sum(ty_model_cm[0], axis=0)) / np.sum(ty_model_cm[0], axis=0))
-    print('3->5')
-    print((np.sum(ty_model_cm[2], axis=0) - np.sum(ty_model_cm[1], axis=0)) / np.sum(ty_model_cm[1], axis=0))
 
 
 def toy_data():
@@ -996,10 +981,10 @@ def toy_data():
     evidence_set.ty_evidence -= 1
     evidence_set.rm_evidence -= 1
 
-    from hackathon.model_representation import  CPDTables
+    from hackathon.model_representation import CPDTables
     theta_s = np.array([[0.2, 0.3, 0.5], [0.4, 0.1, 0.5], [0.7, 0.1, 0.2]])
     pi_lt = np.array([[0.3, 0.7], [0.2, 0.8], [0.6, 0.4]])
-    pi_tg = np.array([[0.8, 0.2], [0.1, 0.9], [0.5,0.5]])
+    pi_tg = np.array([[0.8, 0.2], [0.1, 0.9], [0.5, 0.5]])
     pi_ty = np.array([[0.3, 0.7], [0.4, 0.6], [0.8, 0.2]])
     theta_rm = np.array([[0.1, 0.2, 0.7], [0.5, 0.2, 0.3], [0.4, 0.5, 0.1]])
     cpds = CPDTables(theta_s, pi_lt, theta_rm, pi_tg, pi_ty)
@@ -1028,13 +1013,16 @@ def toy_data():
     #  ty_cm[0]) = compute_accuracy_for_triaging(tg_marginals, ty_marginals, evidence_set, h=3)
     # print_results(tg_bl_ll, ty_bl_ll, tg_bl_cm, ty_bl_cm, tg_ll, ty_ll, tg_cm, ty_cm)
 
+
 if __name__ == "__main__":
     NUM_SAMPLES = 100
     NUM_GIBBS_SAMPLES = 5000
     GIBBS_BURN_IN = 500
-    HORIZONS = [1, 3, 5, 10, 15, 30]
+    HORIZONS = [1]#, 3, 5, 10, 15, 30]
 
-     # experiment_generate_synthetic_data(100, NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, 0, True)
+    # load_trained_asist_model(MissionMap.FALCON, NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, True)
+
+    # experiment_generate_synthetic_data(100, NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, 0, True)
     # experiment_eval_performance_synthetic(NUM_SAMPLES, NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, HORIZONS, True)
     # experiment_eval_performance_real(NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, HORIZONS, True)
     # experiment_common_behavior(True)
@@ -1042,10 +1030,11 @@ if __name__ == "__main__":
     # experiment_check_with_toy_model()
     # experiment_check_with_asist_model()
 
-    experiment_eval_performance_synthetic(NUM_SAMPLES, NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, HORIZONS, True, True)
-
+    # experiment_eval_performance_synthetic(NUM_SAMPLES, NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, HORIZONS, True, True)
 
     # model = Model()
     # model.init_from_mission_map(MissionMap.SPARKY)
     # prior = model.get_theta_s_priors()
     # print('Stop')
+
+    experiment_eval_performance_new_format(NUM_GIBBS_SAMPLES, GIBBS_BURN_IN, HORIZONS)

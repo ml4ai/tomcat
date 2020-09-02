@@ -126,11 +126,11 @@ class EvidenceSet:
         self.tg_evidence = tg_evidence
         self.ty_evidence = ty_evidence
 
-        if len(self.lt_evidence.shape) == 2:
-            self.number_of_data_points, self.time_slices = lt_evidence.shape
+        if len(self.rm_evidence.shape) == 2:
+            self.number_of_data_points, self.time_slices = rm_evidence.shape
         else:
             self.number_of_data_points = 1
-            self.time_slices = len(lt_evidence)
+            self.time_slices = len(rm_evidence)
 
     def cut(self, num_samples_to_keep):
         self.lt_evidence = self.lt_evidence[0:num_samples_to_keep, :]
@@ -438,14 +438,16 @@ def get_evidence_file_absolute_path(destiny_folder, filename):
     return os.path.join(destiny_folder, filename + ".csv")
 
 
-def load_evidence_set(evidence_folder):
+def load_evidence_set(evidence_folder, no_light=False):
     """
     Loads evidence from files to matrices
     """
-    lt_evidence_set = np.loadtxt(
-        get_evidence_file_absolute_path(evidence_folder, LT_EVIDENCE_FILENAME),
-        dtype=np.int,
-    )
+    lt_evidence_set = np.array([])
+    if not no_light:
+        lt_evidence_set = np.loadtxt(
+            get_evidence_file_absolute_path(evidence_folder, LT_EVIDENCE_FILENAME),
+            dtype=np.int,
+        )
     rm_evidence_set = np.loadtxt(
         get_evidence_file_absolute_path(evidence_folder, RM_EVIDENCE_FILENAME),
         dtype=np.int,
@@ -462,6 +464,7 @@ def load_evidence_set(evidence_folder):
     return EvidenceSet(
         lt_evidence_set, rm_evidence_set, tg_evidence_set, ty_evidence_set
     )
+
 
 
 if __name__ == "__main__":

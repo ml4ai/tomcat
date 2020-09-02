@@ -47,7 +47,7 @@ class Model:
             self.number_of_states = 166
             self.number_of_hallways = 10
         elif mission_map_id == evidence_extraction.MissionMap.SHARED:
-            self.number_of_states = 7
+            self.number_of_states = 4
             self.number_of_hallways = 1
 
         self.cpd_tables = CPDTables(
@@ -65,14 +65,13 @@ class Model:
 
         # In the hallways, the number of the room in the number of the state
         if self.mission_map_id == evidence_extraction.MissionMap.SHARED:
+            # This has do not consider lights
             theta_rm = np.array([[1, utils.ZERO],
-                                 [utils.ZERO, 1],
-                                 [utils.ZERO, 1],
-                                 [utils.ZERO, 1],
                                  [utils.ZERO, 1],
                                  [utils.ZERO, 1],
                                  [utils.ZERO, 1]])
         else:
+            # This has light
             theta_rm = np.zeros((self.number_of_states, self.number_of_rooms))
             for state in range(self.number_of_hallways):
                 theta_rm[state] = self.one_hot_encode(
@@ -110,9 +109,6 @@ class Model:
             pi_tg = np.array([[1, utils.ZERO],
                               [1, utils.ZERO],
                               [utils.ZERO, 1],
-                              [1, utils.ZERO],
-                              [1, utils.ZERO],
-                              [utils.ZERO, 1],
                               [1, utils.ZERO]])
         else:
             pi_tg = np.array([[1, utils.ZERO]]).repeat(
@@ -136,9 +132,6 @@ class Model:
             pi_ty = np.array([[1, utils.ZERO],
                               [1, utils.ZERO],
                               [1, utils.ZERO],
-                              [utils.ZERO, 1],
-                              [1, utils.ZERO],
-                              [1, utils.ZERO],
                               [utils.ZERO, 1]])
         else:
             pi_ty = np.array([[1, utils.ZERO]]).repeat(
@@ -156,13 +149,10 @@ class Model:
         This method returns a matrix with the priors for each one of the pi_lt nodes in the models
         """
         if self.mission_map_id == evidence_extraction.MissionMap.SHARED:
-            priors = np.array([[1000, 1000],
-                               [1000, utils.ZERO],
-                               [1000, utils.ZERO],
-                               [1000, utils.ZERO],
-                               [utils.ZERO, 1000],
-                               [utils.ZERO, 1000],
-                               [utils.ZERO, 1000]])
+            priors = np.array([[utils.ZERO, 1],
+                               [utils.ZERO, 1],
+                               [utils.ZERO, 1],
+                               [utils.ZERO, 1]])
         else:
             priors = np.zeros((self.number_of_states, 2))
 
@@ -549,13 +539,13 @@ class Model:
         return priors
 
     def get_theta_s_priors_for_shared_map(self):
-        priors = np.array([[1, 1, utils.ZERO, utils.ZERO, 1, utils.ZERO, utils.ZERO],
-                           [1, 1, 1, 1, 1, utils.ZERO, utils.ZERO],
-                           [utils.ZERO, 1, 1, utils.ZERO, utils.ZERO, utils.ZERO, utils.ZERO],
-                           [utils.ZERO, 1, utils.ZERO, 1, utils.ZERO, utils.ZERO, utils.ZERO],
-                           [1, 1, utils.ZERO, utils.ZERO, 1, 1, 1],
-                           [utils.ZERO, utils.ZERO, utils.ZERO, utils.ZERO, 1, 1, utils.ZERO],
-                           [utils.ZERO, utils.ZERO, utils.ZERO, utils.ZERO, 1, utils.ZERO, 1]])
+        priors = np.array([[1, 1, utils.ZERO, utils.ZERO],
+                           [1, 1, 1, 1],
+                           [utils.ZERO, 1, 1, utils.ZERO],
+                           [utils.ZERO, 1, utils.ZERO, 1],
+                           [1, 1, utils.ZERO, utils.ZERO],
+                           [utils.ZERO, utils.ZERO, utils.ZERO, utils.ZERO],
+                           [utils.ZERO, utils.ZERO, utils.ZERO, utils.ZERO]])
 
         return priors
 
