@@ -43,6 +43,9 @@ namespace tomcat {
 
             Eigen::MatrixXd outward_message;
             if (EXISTS(target_time_step, this->data_per_time_slice)) {
+                // If there's data for the node, just report the one-hot-encode
+                // representation of that data as the message emitted by this
+                // node.
                 outward_message =
                     this->data_per_time_slice.at(target_time_step);
             }
@@ -53,7 +56,8 @@ namespace tomcat {
                 for (const auto& [incoming_node_name, incoming_message] :
                      message_container.node_name_to_messages) {
 
-                    if (template_target_node->get_name() == incoming_node_name) {
+                    if (template_target_node->get_name() ==
+                        incoming_node_name) {
                         continue;
                     }
 
@@ -97,8 +101,8 @@ namespace tomcat {
 
         void VariableNode::set_data_at(int time_step,
                                        const Eigen::VectorXd& data) {
-            // Convert each element of the vector to a binary vector and stack
-            // them horizontally;
+            // Convert each element of the vector to a binary row vector and
+            // stack them horizontally;
             Eigen::MatrixXd data_matrix(data.size(), this->cardinality);
             for (int i = 0; i < data.size(); i++) {
                 Eigen::VectorXd binary_vector =

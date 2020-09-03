@@ -2,6 +2,8 @@
 
 #include <array>
 #include <memory>
+#include <string>
+#include <utility>
 #include <vector>
 
 #include <boost/graph/adjacency_list.hpp>
@@ -129,17 +131,24 @@ namespace tomcat {
                 int time_step, bool from_roots_to_leaves = true) const;
 
             /**
-             * Returns the parents of a given node. The parents are not
-             * constrained to the node's time step and can come from a previous
-             * time step.
-             * TODO: Parents of a transition factor node in the graph will .
+             * Returns a list of pairs (parent, transition) for a given template
+             * node where parent is one of the node's parents and transition
+             * indicates whether that parent comes from a previous time step or
+             * not. The latter is needed for when the retrieving parents for
+             * nodes in a time step greater than the repeatable time step of the
+             * graph, because the template parent node will have the same time
+             * step of the child node (they both come from the repeatable
+             * structure since this structure repeats beyond that
+             * point in time).
              *
              * @param node: node in the factor graph
+             * @param time_step: real time step
              *
              * @return Parents of the template node informed
              */
-            std::vector<std::shared_ptr<MessageNode>> get_parents_of(
-                const std::shared_ptr<MessageNode>& template_node) const;
+            std::vector<std::pair<std::shared_ptr<MessageNode>, bool>>
+            get_parents_of(const std::shared_ptr<MessageNode>& template_node,
+                           int time_step) const;
 
             /**
              * Returns the children of a given node. The child nodes are not
@@ -251,9 +260,10 @@ namespace tomcat {
             // of PGM. In that case, max_time_step would be 0.
             int repeatable_time_step = 0;
 
-            // The two data structures below store the topological orders for each one
-            // of the time-step sub-graphs. A reversed topological order here
-            // is defined as a traversal from the leaves to the roots.
+            // The two data structures below store the topological orders for
+            // each one of the time-step sub-graphs. A reversed topological
+            // order here is defined as a traversal from the leaves to the
+            // roots.
             std::array<std::vector<std::shared_ptr<MessageNode>>, 3>
                 time_sliced_topological_order;
 

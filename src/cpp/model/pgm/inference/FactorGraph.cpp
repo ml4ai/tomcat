@@ -122,7 +122,6 @@ namespace tomcat {
                 shared_ptr<FactorNode> factor_node =
                     dynamic_pointer_cast<FactorNode>(
                         this->graph[target_vertex_id]);
-                factor_node->set_transition(true);
             }
         }
 
@@ -175,21 +174,38 @@ namespace tomcat {
             }
         }
 
-        vector<shared_ptr<MessageNode>> FactorGraph::get_parents_of(
-            const shared_ptr<MessageNode>& template_node) const {
+        vector<pair<shared_ptr<MessageNode>, bool>> FactorGraph::get_parents_of(
+            const shared_ptr<MessageNode>& template_node, int time_step) const {
 
             int vertex_id = this->name_to_id.at(template_node->get_name());
             Graph::in_edge_iterator in_begin, in_end;
             boost::tie(in_begin, in_end) = in_edges(vertex_id, this->graph);
 
-            vector<shared_ptr<MessageNode>> parent_vertices;
+            vector<pair<shared_ptr<MessageNode>, bool>> parent_nodes;
             while (in_begin != in_end) {
                 int parent_vertex_id = source(*in_begin, graph);
-                parent_vertices.push_back(this->graph[parent_vertex_id]);
+                shared_ptr<MessageNode> parent_node =
+                    this->graph[parent_vertex_id];
+                bool transition = false;
+                if (parent_node->get_time_step() <
+                        template_node->get_time_step()) {
+
+                    transition = true;
+
+                    if (time_step > this->repeatable_time_step) {
+                        string real_parent_name =
+                            MessageNode::get_name(parent_node->get_label(),
+                                                  this->repeatable_time_step);
+                        int real_parent_vertex_id =
+                            this->name_to_id.at(real_parent_name);
+                        parent_node = this->graph[real_parent_vertex_id];
+                    }
+                }
+                parent_nodes.push_back(make_pair(parent_node, transition));
                 in_begin++;
             }
 
-            return parent_vertices;
+            return parent_nodes;
         }
 
         vector<shared_ptr<MessageNode>> FactorGraph::get_children_of(
@@ -199,14 +215,14 @@ namespace tomcat {
             Graph::out_edge_iterator out_begin, out_end;
             boost::tie(out_begin, out_end) = out_edges(vertex_id, this->graph);
 
-            vector<shared_ptr<MessageNode>> child_vertices;
+            vector<shared_ptr<MessageNode>> child_nodes;
             while (out_begin != out_end) {
                 int child_vertex_id = target(*out_begin, graph);
-                child_vertices.push_back(this->graph[child_vertex_id]);
+                child_nodes.push_back(this->graph[child_vertex_id]);
                 out_begin++;
             }
 
-            return child_vertices;
+            return child_nodes;
         }
 
         Eigen::MatrixXd

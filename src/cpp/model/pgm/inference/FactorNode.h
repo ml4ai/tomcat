@@ -51,6 +51,11 @@ namespace tomcat {
                                   const std::string main_node_label)
                     : ordering_map(ordering_map), matrix(matrix),
                       main_node_label(main_node_label) {}
+
+                static std::string
+                get_alternative_key_label(const std::string& label) {
+                    return label + "*";
+                }
             };
 
             //------------------------------------------------------------------
@@ -123,13 +128,6 @@ namespace tomcat {
 
             bool is_factor() const override;
 
-            //------------------------------------------------------------------
-            // Getters & Setters
-            //------------------------------------------------------------------
-            bool is_transition() const;
-
-            void set_transition(bool transition);
-
           private:
             //------------------------------------------------------------------
             // Member functions
@@ -184,10 +182,6 @@ namespace tomcat {
             // node that should assume the child's position.
             std::unordered_map<std::string, PotentialFunction>
                 node_label_to_rotated_potential_function;
-
-            // Indicates whether the factor node links nodes from different time
-            // steps.
-            bool transition = false;
         };
 
     } // namespace model
