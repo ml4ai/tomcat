@@ -127,7 +127,7 @@ namespace tomcat {
              * Computes new estimates for the new data. New data consists of
              * observed values for time steps after the last processed one.
              *
-             * @param new_data: Observed values for time steps not already
+             * @param new_data: observed values for time steps not already
              * seen by the method
              */
             virtual void estimate(EvidenceSet new_data) = 0;

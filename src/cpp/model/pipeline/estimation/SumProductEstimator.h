@@ -9,14 +9,12 @@ namespace tomcat {
     namespace model {
 
         /**
-         * Class description here
+         * This estimator computes the estimates of a node by using
+         * message-passing sum-product algorithm on top of a factor graph
+         * originated from an unrolled DBN.
          */
         class SumProductEstimator : public Estimator {
           public:
-            //------------------------------------------------------------------
-            // Types, Enums & Constants
-            //------------------------------------------------------------------
-
             //------------------------------------------------------------------
             // Constructors & Destructor
             //------------------------------------------------------------------
@@ -56,23 +54,33 @@ namespace tomcat {
 
             FactorGraph factor_graph;
 
-          protected:
-            //------------------------------------------------------------------
-            // Member functions
-            //------------------------------------------------------------------
-
-            //------------------------------------------------------------------
-            // Data members
-            //------------------------------------------------------------------
-
           private:
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
+
+            /**
+             * Computes messages from parents to child nodes in a given time
+             * step.
+             *
+             * @param factor_graph: factor graph used to compute messages
+             * @param time_step: time step to process
+             * @param new_data: observed values for time steps not already
+             * processed by the method
+             */
             void compute_forward_messages(const FactorGraph& factor_graph,
                                           int time_step,
                                           const EvidenceSet& new_data);
 
+            /**
+             * Computes messages from children to parent nodes in a given time
+             * step.
+             *
+             * @param factor_graph: factor graph used to compute messages
+             * @param time_step: time step to process
+             * @param new_data: observed values for time steps not already
+             * processed by the method
+             */
             void compute_backward_messages(const FactorGraph& factor_graph,
                                            int time_step,
                                            const EvidenceSet& new_data);
@@ -85,8 +93,6 @@ namespace tomcat {
             // graph. Nodes with time steps before next_time_step already have
             // their messages computed.
             int next_time_step = 0;
-
-
         };
 
     } // namespace model

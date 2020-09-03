@@ -9,10 +9,14 @@ namespace tomcat {
         // Constructors & Destructor
         //----------------------------------------------------------------------
         FactorNode::FactorNode(const std::string& label,
+                               int time_step,
                                const Eigen::MatrixXd& potential_function,
-                               const CPD::TableOrderingMap& ordering_map)
-            : ExactInferenceNode(label),
-              original_potential_function(ordering_map, potential_function) {
+                               const CPD::TableOrderingMap& ordering_map,
+                               const std::string cpd_main_node_label)
+            : MessageNode(compose_label(label), time_step),
+              original_potential_function(
+                  ordering_map, potential_function, cpd_main_node_label) {
+
             this->adjust_potential_functions();
         }
 
@@ -21,160 +25,25 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Copy & Move constructors/assignments
         //----------------------------------------------------------------------
-        //        FactorNode(const FactorNode& FactorNode) {}
-        //
-        //        FactorNode& operator=(const FactorNode& FactorNode) {}
+        FactorNode::FactorNode(const FactorNode& node) {
+            this->copy_node(node);
+        }
 
-        //----------------------------------------------------------------------
-        // Operator overload
-        //----------------------------------------------------------------------
+        FactorNode& FactorNode::operator=(const FactorNode& node) {
+            this->copy_node(node);
+            return *this;
+        }
 
         //----------------------------------------------------------------------
         // Static functions
         //----------------------------------------------------------------------
-        string
-        FactorNode::get_factor_label_for_node(const string& non_factor_label) {
-            return "f:" + non_factor_label;
+        string FactorNode::compose_label(const string& variable_node_label) {
+            return "f:" + variable_node_label;
         }
 
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        string FactorNode::get_child_non_factor_label() const {
-            return this->label.substr(2, this->label.size() - 2);
-        }
-
-        Eigen::MatrixXd
-        FactorNode::get_outward_message_to(const NodeName& node_name,
-                                           int inference_time_slice,
-                                           Direction direction) const {
-            // The messages have to be multiplied following the CPD order
-            // defined for parent nodes to correct indexing.
-            PotentialFunction potential_function;
-            if (direction == Direction::forward) {
-                potential_function = original_potential_function;
-            }
-            else {
-                potential_function =
-                    this->node_label_to_rotated_potential_function.at(
-                        node_name.label);
-            }
-
-            vector<Eigen::MatrixXd> messages_in_order =
-                this->get_incoming_messages_in_order(
-                    node_name, inference_time_slice, potential_function);
-
-            // Each row in the message matrix contains the message for one data
-            // point. We need to perform the following operation individually
-            // for each data point before multiplying by the potential function
-            // matrix.
-            int num_data_points = messages_in_order[0].rows();
-            Eigen::MatrixXd temp_matrix(num_data_points,
-                                        potential_function.matrix.rows());
-            for (int d = 0; d < num_data_points; d++) {
-                Eigen::VectorXd temp_vector = messages_in_order[0].row(d);
-
-                for (int i = 1; i < messages_in_order.size(); i++) {
-                    Eigen::MatrixXd cartesian_product =
-                        temp_vector * messages_in_order[i].row(d);
-                    cartesian_product.transposeInPlace();
-                    temp_vector = Eigen::Map<Eigen::VectorXd>(
-                        cartesian_product.data(), cartesian_product.size());
-                }
-
-                temp_matrix.row(d) = temp_vector;
-            }
-
-            // This will marginalize the incoming nodes by summing the rows.
-            Eigen::MatrixXd outward_message =
-                temp_matrix * potential_function.matrix;
-
-            // Normalize the message
-            Eigen::VectorXd sum_per_row =
-                outward_message.rowwise().sum();
-            outward_message = (outward_message.array().colwise() /
-                       sum_per_row.array())
-                .matrix();
-
-            return outward_message;
-        }
-
-        vector<Eigen::MatrixXd> FactorNode::get_incoming_messages_in_order(
-            const NodeName& ignore_node_name,
-            int inference_time_step,
-            const PotentialFunction& potential_function) const {
-
-            int num_messages = this->incoming_messages_per_time_slice
-                                   .at(inference_time_step)
-                                   .size();
-            vector<Eigen::MatrixXd> messages_in_order(num_messages);
-            int added_duplicate_key_order = -1;
-            int added_duplicate_key_time_step = -1;
-
-            for (const auto& [source_node_name, incoming_message] :
-                 this->incoming_messages_per_time_slice.at(
-                     inference_time_step)) {
-
-                if (source_node_name.label.empty()) {
-                    // The factor is a prior
-                    messages_in_order[0] = incoming_message;
-                    break;
-                }
-                else {
-                    if (ignore_node_name == source_node_name) {
-                        messages_in_order.pop_back();
-                        continue;
-                    }
-
-                    int order = 0;
-                    if (potential_function.duplicate_key ==
-                        source_node_name.label) {
-                        if (added_duplicate_key_order < 0) {
-                            order = potential_function.ordering_map
-                                        .at(source_node_name.label)
-                                        .order;
-                            added_duplicate_key_order = order;
-                            added_duplicate_key_time_step =
-                                source_node_name.time_step;
-                        }
-                        else {
-                            string alternative_key_label =
-                                source_node_name.label + "*";
-                            order = potential_function.ordering_map
-                                        .at(alternative_key_label)
-                                        .order;
-                            if (source_node_name.time_step <
-                                added_duplicate_key_time_step) {
-                                // This node is in the past with respect to the
-                                // previous node with the same key inserted.
-                                // Therefore, they have to change position as
-                                // Node* has to be in the future by the way CPDs
-                                // were defined. An CPD indexing node is always
-                                // in the past with regarding the CPD's main
-                                // node. When CPDs were adjusted in this factor
-                                // node, the main node was swapped with one of
-                                // the inxeding nodes and appended * if there
-                                // was a conflict with an already existing
-                                // label.
-                                messages_in_order[order] = messages_in_order
-                                    [added_duplicate_key_order];
-                                order = added_duplicate_key_order;
-                            }
-                        }
-                    }
-                    else {
-                        order = potential_function.ordering_map
-                                    .at(source_node_name.label)
-                                    .order;
-                    }
-
-                    messages_in_order[order] = incoming_message;
-                }
-            }
-
-            return messages_in_order;
-        }
-
         void FactorNode::adjust_potential_functions() {
             int num_rows = this->original_potential_function.matrix.rows();
             int num_cols = this->original_potential_function.matrix.cols();
@@ -208,22 +77,24 @@ namespace tomcat {
 
                 PotentialFunction new_function;
                 new_function.matrix = std::move(new_matrix);
+                new_function.main_node_label = node_label;
                 // Create a new ordering map and replace the parent node's label
                 // by the main node name, that happens to be the child of this
                 // factor node;
                 CPD::TableOrderingMap new_map =
                     this->original_potential_function.ordering_map;
-                string moved_node_label = this->get_child_non_factor_label();
-                if (EXISTS(moved_node_label, new_map)) {
-                    new_function.duplicate_key = moved_node_label;
+                string prev_main_node_label =
+                    this->original_potential_function.main_node_label;
+                if (EXISTS(prev_main_node_label, new_map)) {
+                    new_function.duplicate_key = prev_main_node_label;
                     // Adds * to the key to differentiate it from the already
                     // existing key with the same label. E.g. transition matrix
                     // between one node with a label and another node with the
                     // same label but in the future.
-                    moved_node_label = moved_node_label + "*";
+                    prev_main_node_label = prev_main_node_label + "*";
                 }
                 auto map_entry = new_map.extract(node_label);
-                map_entry.key() = moved_node_label;
+                map_entry.key() = prev_main_node_label;
                 new_map.insert(move(map_entry));
 
                 new_function.ordering_map = std::move(new_map);
@@ -233,19 +104,161 @@ namespace tomcat {
             }
         }
 
-        //        void
-        //        FactorNode::replace_cpd_ordering_label(const std::string&
-        //        current_label,
-        //                                               const std::string&
-        //                                               new_label) {
-        //            auto ordering = this->ordering_map.extract(current_label);
-        //            ordering.key() = new_label;
-        //            this->ordering_map.insert(move(ordering));
-        //        }
+        void FactorNode::copy_node(const FactorNode& node) {
+            MessageNode::copy_node(node);
+            this->original_potential_function =
+                node.original_potential_function;
+            this->node_label_to_rotated_potential_function =
+                node.node_label_to_rotated_potential_function;
+            this->transition = node.transition;
+        }
+
+        Eigen::MatrixXd FactorNode::get_outward_message_to(
+            const std::shared_ptr<MessageNode>& template_target_node,
+            int target_time_step,
+            Direction direction) const {
+            // The messages have to be multiplied following the CPD order
+            // defined for parent nodes to correct indexing.
+            PotentialFunction potential_function;
+            if (direction == Direction::forward) {
+                potential_function = original_potential_function;
+            }
+            else {
+                potential_function =
+                    this->node_label_to_rotated_potential_function.at(
+                        template_target_node->get_label());
+            }
+
+            vector<Eigen::MatrixXd> messages_in_order =
+                this->get_incoming_messages_in_order(
+                    template_target_node->get_label(),
+                    target_time_step,
+                    potential_function);
+
+            // Each row in the message matrix contains the message for one data
+            // point. We need to perform the following operation individually
+            // for each data point before multiplying by the potential function
+            // matrix.
+            int num_data_points = messages_in_order[0].rows();
+            Eigen::MatrixXd temp_matrix(num_data_points,
+                                        potential_function.matrix.rows());
+            for (int d = 0; d < num_data_points; d++) {
+                Eigen::VectorXd temp_vector = messages_in_order[0].row(d);
+
+                for (int i = 1; i < messages_in_order.size(); i++) {
+                    Eigen::MatrixXd cartesian_product =
+                        temp_vector * messages_in_order[i].row(d);
+                    cartesian_product.transposeInPlace();
+                    temp_vector = Eigen::Map<Eigen::VectorXd>(
+                        cartesian_product.data(), cartesian_product.size());
+                }
+
+                temp_matrix.row(d) = temp_vector;
+            }
+
+            // This will marginalize the incoming nodes by summing the rows.
+            Eigen::MatrixXd outward_message =
+                temp_matrix * potential_function.matrix;
+
+            // Normalize the message
+            Eigen::VectorXd sum_per_row = outward_message.rowwise().sum();
+            outward_message =
+                (outward_message.array().colwise() / sum_per_row.array())
+                    .matrix();
+
+            return outward_message;
+        }
+
+        vector<Eigen::MatrixXd> FactorNode::get_incoming_messages_in_order(
+            const std::string& ignore_label,
+            int target_time_step,
+            const PotentialFunction& potential_function) const {
+
+            int num_messages =
+                this->incoming_messages_per_time_slice.at(target_time_step)
+                    .size();
+            vector<Eigen::MatrixXd> messages_in_order(num_messages);
+            int added_duplicate_key_order = -1;
+            int added_duplicate_key_time_step = -1;
+
+            MessageContainer message_container =
+                this->incoming_messages_per_time_slice.at(target_time_step);
+
+            for (const auto& [incoming_node_name, incoming_message] :
+                 message_container.node_name_to_messages) {
+
+                if (MessageNode::is_prior(incoming_node_name)) {
+                    messages_in_order[0] = incoming_message;
+                    break;
+                }
+                else {
+                    if (incoming_node_name ==
+                        MessageNode::get_name(ignore_label, target_time_step)) {
+                        messages_in_order.pop_back();
+                        continue;
+                    }
+
+                    int order = 0;
+                    auto [incoming_node_label, incoming_node_time_step] =
+                        MessageNode::strip(incoming_node_name);
+                    if (potential_function.duplicate_key ==
+                        incoming_node_label) {
+                        if (added_duplicate_key_order < 0) {
+                            order = potential_function.ordering_map
+                                        .at(incoming_node_label)
+                                        .order;
+                            added_duplicate_key_order = order;
+                            added_duplicate_key_time_step =
+                                incoming_node_time_step;
+                        }
+                        else {
+                            string alternative_key_label =
+                                incoming_node_label + "*";
+                            order = potential_function.ordering_map
+                                        .at(alternative_key_label)
+                                        .order;
+                            if (incoming_node_time_step <
+                                added_duplicate_key_time_step) {
+                                // This node is in the past with respect to the
+                                // previous node with the same key inserted.
+                                // Therefore, they have to change position as
+                                // Node* has to be in the future by the way CPDs
+                                // were defined. An CPD indexing node is always
+                                // in the past with regarding the CPD's main
+                                // node. When CPDs were adjusted in this factor
+                                // node, the main node was swapped with one of
+                                // the inxeding nodes and appended * if there
+                                // was a conflict with an already existing
+                                // label.
+                                messages_in_order[order] = messages_in_order
+                                    [added_duplicate_key_order];
+                                order = added_duplicate_key_order;
+                            }
+                        }
+                    }
+                    else {
+                        order = potential_function.ordering_map
+                                    .at(incoming_node_label)
+                                    .order;
+                    }
+
+                    messages_in_order[order] = incoming_message;
+                }
+            }
+
+            return messages_in_order;
+        }
+
+        bool FactorNode::is_factor() const { return true; }
 
         //----------------------------------------------------------------------
         // Getters & Setters
         //----------------------------------------------------------------------
+        bool FactorNode::is_transition() const { return transition; }
+
+        void FactorNode::set_transition(bool transition) {
+            this->transition = transition;
+        }
 
     } // namespace model
 } // namespace tomcat

@@ -1,8 +1,6 @@
 #pragma once
 
-#include <unordered_map>
-
-#include "ExactInferenceNode.h"
+#include "MessageNode.h"
 
 #include "../../utils/Definitions.h"
 #include "../cpd/CPD.h"
@@ -10,80 +8,98 @@
 namespace tomcat {
     namespace model {
 
-        //------------------------------------------------------------------
-        // Forward declarations
-        //------------------------------------------------------------------
-
-        //------------------------------------------------------------------
-        // Structs
-        //------------------------------------------------------------------
-
         /**
-         * Class description here
+         * This class represents a factor node in a factor graph.
          */
-        class FactorNode : public ExactInferenceNode {
+        class FactorNode : public MessageNode {
           public:
             //------------------------------------------------------------------
             // Structs
             //------------------------------------------------------------------
             struct PotentialFunction {
-                // The joint CPD is implemented as a single matrix where the
-                // rows are combinations of parents' assignments for a node and
-                // the columns are the node's assignments. We need to now the
-                // index of each parent in this table to be able to index them
-                // correctly when performing reductions or transformations in
-                // the matrix.
+                // The joint CPD table is implemented as a single matrix where
+                // the rows are combinations of parents' assignments for a node
+                // and the columns are the node's assignments. We need to now
+                // the index of each parent in this table to be able to index
+                // them correctly when performing reductions or transformations
+                // in the matrix. This information is stored in the ordering
+                // map.
                 CPD::TableOrderingMap ordering_map;
 
+                // CPD table
                 Eigen::MatrixXd matrix;
 
+                // Node's label in P(Node | ...)
+                std::string main_node_label;
+
+                // The node's label can be the same as one of its parents. For
+                // instance, if the CPD table defines a transition matrix. The
+                // labels are the same but the time step. The matrix will need
+                // to be rotated to deal with backward messages, so this
+                // attribute keeps track of duplicate keys so the matrix can be
+                // correctly indexed even when rotated. In this context, a
+                // rotation means replacing the node position in the matrix  by
+                // one of it's parents. Suppose a CPD defines the probability
+                // P(S|S,Q), the rotation P(Q|S,S) will cause a problem if
+                // duplicate keys are not correctly handled.
                 std::string duplicate_key = "";
 
                 PotentialFunction() {}
 
                 PotentialFunction(const CPD::TableOrderingMap& ordering_map,
-                                  const Eigen::MatrixXd& matrix)
-                    : ordering_map(ordering_map), matrix(matrix) {}
+                                  const Eigen::MatrixXd& matrix,
+                                  const std::string main_node_label)
+                    : ordering_map(ordering_map), matrix(matrix),
+                      main_node_label(main_node_label) {}
             };
-
-            //------------------------------------------------------------------
-            // Types, Enums & Constants
-            //------------------------------------------------------------------
 
             //------------------------------------------------------------------
             // Constructors & Destructor
             //------------------------------------------------------------------
 
+            /**
+             * Creates an instance of a factor node.
+             *
+             * @param label: node's label. The factor's label will be a
+             * modified version of the label informed to indicate that it's a
+             * factor.
+             * @param time_step: factor's time step
+             * @param potential_function: matrix representing the potential
+             * function
+             * @param ordering_map: potential function matrix's ordering map
+             */
             FactorNode(const std::string& label,
+                       int time_step,
                        const Eigen::MatrixXd& potential_function,
-                       const CPD::TableOrderingMap& ordering_map);
+                       const CPD::TableOrderingMap& ordering_map,
+                       const std::string cpd_node_label);
 
             ~FactorNode();
 
             //------------------------------------------------------------------
             // Copy & Move constructors/assignments
             //------------------------------------------------------------------
+            FactorNode(const FactorNode& node);
 
-            // Copy constructor and assignment should be deleted to avoid
-            // implicit slicing and loss of polymorphic behaviour in the
-            // subclasses. To deep copy, the clone method must be used.
-            FactorNode(const FactorNode&) = delete;
-
-            FactorNode& operator=(const FactorNode&) = delete;
+            FactorNode& operator=(const FactorNode& node);
 
             FactorNode(FactorNode&&) = default;
 
             FactorNode& operator=(FactorNode&&) = default;
 
             //------------------------------------------------------------------
-            // Operator overload
-            //------------------------------------------------------------------
-
-            //------------------------------------------------------------------
             // Static functions
             //------------------------------------------------------------------
-            static std::string get_factor_label_for_node(
-                const std::string& non_factor_label);
+
+            /**
+             * Adds a prefix to a label to indicate that it's a factor node's
+             * label.
+             *
+             * @param original_label: label used in the composition.
+             *
+             * @return Factor node label
+             */
+            static std::string compose_label(const std::string& original_label);
 
             //------------------------------------------------------------------
             // Member functions
@@ -91,79 +107,87 @@ namespace tomcat {
 
             /**
              * Computes the product of all the incoming messages (except the one
-             * coming from the destiny node) )and the potential function. Next,
+             * coming from the target node) and the potential function. Next,
              * marginalizes out the incoming nodes and returns the resultant
              * message.
              *
-             * @return Outward message
+             * @param template_target_node:
+             * @param in
+             *
+             * @return Message
              */
-            Eigen::MatrixXd
-            get_outward_message_to(const NodeName& node_name,
-                                   int inference_time_slice,
-                                   Direction direction) const override;
+            Eigen::MatrixXd get_outward_message_to(
+                const std::shared_ptr<MessageNode>& template_target_node,
+                int target_time_step,
+                Direction direction) const override;
 
-//            void replace_cpd_ordering_label(const std::string& current_label,
-//                                            const std::string& new_label);
-
-            //------------------------------------------------------------------
-            // Virtual functions
-            //------------------------------------------------------------------
-
-            //------------------------------------------------------------------
-            // Pure virtual functions
-            //------------------------------------------------------------------
+            bool is_factor() const override;
 
             //------------------------------------------------------------------
             // Getters & Setters
             //------------------------------------------------------------------
+            bool is_transition() const;
 
-          protected:
-            //------------------------------------------------------------------
-            // Member functions
-            //------------------------------------------------------------------
-
-            //------------------------------------------------------------------
-            // Data members
-            //------------------------------------------------------------------
+            void set_transition(bool transition);
 
           private:
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
 
-            // The potential function here is represented as a matrix that
-            // corresponds to the conditional probability of a child node given
-            // its parents. When calculating messages, sometimes we'll need to
-            // pivot the table so that the child become one of the parents.
-            // That's why this adjusted table is for. It will pivot the original
-            // potential function according to the direction of the message.
-            std::vector<Eigen::MatrixXd> get_incoming_messages_in_order(
-                const NodeName& ignore_node_name,
-                int inference_time_step,
-                const PotentialFunction& potential_function) const;
-
+            /**
+             * Computes and stores all possible rotations of the original
+             * potential function.
+             */
             void adjust_potential_functions();
 
-            std::string get_child_non_factor_label() const;
+            /**
+             * Copies data members from another factor node.
+             *
+             * @param node: other factor node
+             */
+            void copy_node(const FactorNode& node);
+
+            /**
+             * Returns the messages that arrive into the factor node (ignoring a
+             * given target node) in the order defined by its parents nodes in
+             * the potential function ordering map. This is crucial to correclty
+             * multiply incoming messages with the potential function matrix in
+             * a correct way.
+             *
+             * @param ignore_label: label of the node that must be ignored. If
+             * there's any, messages from this node in the target time step must
+             * be discarded as this node is the final destination of the
+             * messages we aim to compute when calling this function.
+             * @param target_time_step: real time step of the target node
+             * @param potential_function: potential function
+             *
+             * @return Incoming messages
+             */
+            std::vector<Eigen::MatrixXd> get_incoming_messages_in_order(
+                const std::string& ignore_label,
+                int target_time_step,
+                const PotentialFunction& potential_function) const;
 
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------
-
             PotentialFunction original_potential_function;
 
-            // A potential function will actually be a CPD table that is
-            // defined as the probability of a node (columns) given its parents
-            // (rows). When computing messages in a factor graph, depending on
-            // the direction of the message, we need to swap axis of the
-            // potential function matrix, such that one of the parents assumes
-            // the column axis and the main node takes that parent's place.
-            // Since we are simulating a multi-dimensional array by using a
-            // matrix, we need to perform some computation to do the swap.
-            // This vector store all possible swaps where the index is the index
-            // of the parent swapped.
+            // The potential function here is represented as a matrix that
+            // corresponds to the conditional probability of a child node given
+            // its parents. When calculating messages, depending on the
+            // direction the message flows, the potential function matrix needs
+            // to be rotated so that the child become one of the parents. That's
+            // what this adjusted table is for. It will store all possible
+            // rotations of the potential function matrix according to the the
+            // node that should assume the child's position.
             std::unordered_map<std::string, PotentialFunction>
                 node_label_to_rotated_potential_function;
+
+            // Indicates whether the factor node links nodes from different time
+            // steps.
+            bool transition = false;
         };
 
     } // namespace model

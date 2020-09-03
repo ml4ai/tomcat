@@ -83,7 +83,7 @@ add_library(tomcat_model_lib
         pipeline/evaluation/EvaluationAggregator.cpp
         pipeline/Pipeline.cpp
         utils/EigenExtensions.cpp
-        utils/Mosquitto.cpp pgm/inference/ExactInferenceNode.cpp pgm/inference/ExactInferenceNode.h pgm/inference/FactorNode.cpp pgm/inference/FactorNode.h pgm/inference/NonFactorNode.cpp pgm/inference/NonFactorNode.h pgm/inference/FactorGraph.cpp pgm/inference/FactorGraph.h)
+        utils/Mosquitto.cpp pgm/inference/MessageNode.cpp pgm/inference/MessageNode.h pgm/inference/FactorNode.cpp pgm/inference/FactorNode.h pgm/inference/VariableNode.cpp pgm/inference/VariableNode.h pgm/inference/FactorGraph.cpp pgm/inference/FactorGraph.h)
 
 target_include_directories(tomcat_model_lib PRIVATE ${Boost_INCLUDE_DIR})
 

@@ -4,13 +4,12 @@
 
 #include "../../pgm/inference/FactorGraph.h"
 #include "../../pgm/inference/FactorNode.h"
-#include "../../pgm/inference/NonFactorNode.h"
+#include "../../pgm/inference/VariableNode.h"
 
 namespace tomcat {
     namespace model {
 
         using namespace std;
-        using NodeName = ExactInferenceNode::NodeName;
 
         //----------------------------------------------------------------------
         // Constructors & Destructor
@@ -26,12 +25,14 @@ namespace tomcat {
         //----------------------------------------------------------------------
         SumProductEstimator::SumProductEstimator(
             const SumProductEstimator& estimator) {
-            this->copy_estimator(estimator);
+            Estimator::copy_estimator(estimator);
+            this->next_time_step = estimator.next_time_step;
         }
 
         SumProductEstimator&
         SumProductEstimator::operator=(const SumProductEstimator& estimator) {
-            this->copy_estimator(estimator);
+            Estimator::copy_estimator(estimator);
+            this->next_time_step = estimator.next_time_step;
             return *this;
         }
 
@@ -39,7 +40,7 @@ namespace tomcat {
         // Member functions
         //----------------------------------------------------------------------
         void SumProductEstimator::estimate(EvidenceSet new_data) {
-            this->factor_graph.compute_topological_traversal_per_time_slice();
+            this->factor_graph.store_topological_traversal_per_time_step();
 
             for (int t = this->next_time_step;
                  t < this->next_time_step + new_data.get_time_steps();
@@ -50,44 +51,17 @@ namespace tomcat {
                     this->factor_graph, t, new_data);
             }
 
-            //            for (int t = this->next_time_step +
-            //            new_data.get_time_steps() - 1;
-            //                 t >= 0;
-            //                 t--) {
-            //
-            //                this->compute_backward_messages(
-            //                    this->factor_graph, t, new_data);
-            //            }
-
-            //            Eigen::MatrixXd marginal =
-            //                factor_graph.get_marginal_for({"S_1", 1});
-            //            LOG(marginal);
-
             for (int t = this->next_time_step;
                  t < this->next_time_step + new_data.get_time_steps();
                  t++) {
                 for (auto& estimates : this->nodes_estimates) {
-                    //                    int num_cols =
-                    //                        this->next_time_step +
-                    //                        new_data.get_time_steps() - 1;
-                    //                    Eigen::MatrixXd
-                    //                    new_estimates(new_data.number);
-
                     Eigen::MatrixXd marginal =
-                        factor_graph.get_marginal_for({estimates.label, t});
+                        factor_graph.get_marginal_for(estimates.label, t);
                     if (marginal.size() == 0) {
                         estimates.estimates = Eigen::MatrixXd::Constant(
                             new_data.get_num_data_points(), 1, NO_OBS);
                     }
                     else {
-//                        Eigen::VectorXd sum_per_row = marginal.rowwise().sum();
-//                        marginal =
-//                            (marginal.array().colwise() / sum_per_row.array())
-//                                .matrix();
-                        // In this implementation, sum-product will only be
-                        // executed with discrete one-dimensional variables, so
-                        // the assignment vector should only contain one value
-                        // which is the discrete state of the node.
                         int discrete_assignment = estimates.assignment[0];
                         if (estimates.estimates.size() == 0) {
                             estimates.estimates =
@@ -117,31 +91,29 @@ namespace tomcat {
             const EvidenceSet& new_data) {
 
             for (auto& vertex :
-                 factor_graph.get_vertices_topological_order(time_step)) {
+                 factor_graph.get_vertices_topological_order_in(time_step)) {
 
-                NodeName node_name(vertex.node->get_label(), time_step);
-                vector<FactorGraph::VertexData> parent_vertices =
-                    factor_graph.get_parents_of(node_name);
+                vector<shared_ptr<MessageNode>> parent_vertices =
+                    factor_graph.get_parents_of(vertex);
 
-                if (!vertex.factor &&
-                    new_data.has_data_for(vertex.node->get_label())) {
+                if (!vertex->is_factor() &&
+                    new_data.has_data_for(vertex->get_label())) {
                     // Column of the data matrix that contains data for the time
                     // step being processed.
-                    Tensor3 node_data = new_data[vertex.node->get_label()];
+                    Tensor3 node_data = new_data[vertex->get_label()];
                     Eigen::VectorXd data_in_time_step =
                         node_data(0, 0).col(time_step - this->next_time_step);
-                    dynamic_pointer_cast<NonFactorNode>(vertex.node)
-                        ->set_data_at(time_step - this->next_time_step,
-                                      data_in_time_step);
+                    dynamic_pointer_cast<VariableNode>(vertex)->set_data_at(
+                        time_step - this->next_time_step, data_in_time_step);
                 }
 
                 if (parent_vertices.empty()) {
                     // This vertex is a factor that represents the prior
                     // probability of the factor's child node.
                     int num_rows = max(1, new_data.get_num_data_points());
-                    NodeName parent_name("", time_step);
-                    vertex.node->set_incoming_message_from(
-                        parent_name,
+                    vertex->set_incoming_message_from(
+                        MessageNode::PRIOR_NODE_LABEL,
+                        time_step,
                         time_step,
                         Eigen::MatrixXd::Ones(num_rows, 1));
                 }
@@ -153,12 +125,13 @@ namespace tomcat {
                         // time step is greater than the maximum time slice of
                         // the factor graph, use that vertex to store all the
                         // messages of future time slices.
-                        int time_diff =
-                            vertex.time_step - parent_vertex.time_step;
-                        int parent_time_step = parent_vertex.time_step;
+                        int time_diff = vertex->get_time_step() -
+                                        parent_vertex->get_time_step();
+                        int parent_time_step = parent_vertex->get_time_step();
 
-                        shared_ptr<ExactInferenceNode> parent_node;
-                        if (time_step > vertex.time_step && time_diff > 0) {
+                        shared_ptr<MessageNode> parent_node;
+                        if (time_step > vertex->get_time_step() &&
+                            time_diff > 0) {
                             // We are calculating messages for the last time
                             // slice of the factor graph, that works as a
                             // template to calculate future messages. When a
@@ -169,38 +142,41 @@ namespace tomcat {
                             // actually a node from the template time slice
                             // instead of a node from the time slice prior to
                             // the template's.
-                            parent_time_step = vertex.time_step;
+                            parent_time_step = vertex->get_time_step();
                             parent_node =
                                 factor_graph.get_node_instance_in_time_step(
-                                    parent_vertex.node->get_label(),
+                                    parent_vertex->get_label(),
                                     parent_time_step);
                             // node_name.time_step = time_step;
                         }
                         else {
-                            parent_node = parent_vertex.node;
+                            parent_node = parent_vertex;
                             //                            node_name =
                             //                            this->factor_graph.get_template_name(
                             //                                NodeName(node_name.label,
                             //                                time_step));
                         }
-
-                        node_name.time_step = time_step;
-
+                        // time_step - diff will be the last time step in case
+                        // of transition factor
                         Eigen::MatrixXd message =
                             parent_node->get_outward_message_to(
-                                node_name,
+                                vertex,
                                 time_step - time_diff,
-                                ExactInferenceNode::Direction::forward);
+                                MessageNode::Direction::forward);
 
                         LOG("Forward");
-                        LOG(node_name.get());
+                        LOG(vertex->get_name());
                         LOG(message);
                         LOG("");
 
-                        NodeName parent_name(parent_vertex.node->get_label(),
-                                             parent_time_step);
-                        vertex.node->set_incoming_message_from(
-                            parent_name, time_step, message);
+                        //                        NodeName
+                        //                        parent_name(parent_vertex->get_label(),
+                        //                                             parent_time_step);
+                        vertex->set_incoming_message_from(
+                            parent_node->get_label(),
+                            time_step - time_diff,
+                            time_step,
+                            message);
                     }
                 }
             }
@@ -211,17 +187,20 @@ namespace tomcat {
             int time_step,
             const EvidenceSet& new_data) {
 
-            for (auto& vertex : factor_graph.get_vertices_topological_order(
+            for (auto& vertex : factor_graph.get_vertices_topological_order_in(
                      time_step, false)) {
 
-                NodeName node_name = factor_graph.get_template_name(
-                    NodeName(vertex.node->get_label(), time_step));
-                vector<FactorGraph::VertexData> child_vertices =
-                    factor_graph.get_children_of(node_name);
+                //                NodeName node_name =
+                //                factor_graph.get_template_name(
+                //                    NodeName(vertex->get_label(), time_step));
+                vector<shared_ptr<MessageNode>> child_vertices =
+                    factor_graph.get_children_of(vertex);
 
                 if (child_vertices.empty() ||
                     (child_vertices.size() == 1 &&
-                     child_vertices[0].time_step - vertex.time_step > 0)) {
+                     child_vertices[0]->get_time_step() -
+                             vertex->get_time_step() >
+                         0)) {
                     // This vertex is a leaf in the factor graph for that time
                     // step (it can have a child in the next time step, which
                     // should not be considered at this point). It's single
@@ -229,12 +208,12 @@ namespace tomcat {
                     // Implemented as a matrix so that messages for multiple
                     // data points can be processes at once.
                     int num_rows = max(1, new_data.get_num_data_points());
-                    int num_cols =
-                        dynamic_pointer_cast<NonFactorNode>(vertex.node)
-                            ->get_cardinality();
-                    NodeName child_name("end_factor", time_step);
-                    vertex.node->set_incoming_message_from(
-                        child_name,
+                    int num_cols = dynamic_pointer_cast<VariableNode>(vertex)
+                                       ->get_cardinality();
+
+                    vertex->set_incoming_message_from(
+                        MessageNode::END_NODE_LABEL,
+                        time_step,
                         time_step,
                         Eigen::MatrixXd::Ones(num_rows, num_cols));
                 }
@@ -243,8 +222,8 @@ namespace tomcat {
 
                         // Relative distance in time from the node to the
                         // child. 0 if they are in the same time slice.
-                        int time_diff =
-                            child_vertex.time_step - vertex.time_step;
+                        int time_diff = child_vertex->get_time_step() -
+                                        vertex->get_time_step();
 
                         // We compute the backward passing constrained to the
                         // fact that we are doing inference up to the time step
@@ -252,20 +231,26 @@ namespace tomcat {
                         // a future time step.
                         if (time_diff == 0) {
                             Eigen::MatrixXd message =
-                                child_vertex.node->get_outward_message_to(
-                                    node_name,
+                                child_vertex->get_outward_message_to(
+                                    vertex,
                                     time_step + time_diff,
-                                    ExactInferenceNode::Direction::backwards);
+                                    MessageNode::Direction::backwards);
 
                             LOG("Backward");
-                            LOG(node_name.get());
+                            LOG(vertex->get_name());
                             LOG(message);
                             LOG("");
 
-                            NodeName child_name(child_vertex.node->get_label(),
-                                                time_step + time_diff);
-                            vertex.node->set_incoming_message_from(
-                                child_name, time_step, message);
+                            //                            NodeName
+                            //                            child_name(child_vertex->get_label(),
+                            //                                                time_step
+                            //                                                +
+                            //                                                time_diff);
+                            vertex->set_incoming_message_from(
+                                child_vertex->get_label(),
+                                time_step + time_diff,
+                                time_step,
+                                message);
                         }
                     }
                 }
