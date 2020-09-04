@@ -70,3 +70,22 @@ window and change to the `tomcat/tools` directory and then run,
 Back in this directory (`tomcat/src/lisp`) you will see that
 `sar-individual-current-goal.txt` now includes predicate statements converted
 from the json messages.  
+
+Domain Element Parser
+----------------------
+The `domain-element-parser.py` file is a script that can take a SHOP3 domain
+definition file (with .lisp extension) and extract the headers of the main elements (types,
+predicates, actions, compound tasks, methods) from it into a JSON file. 
+
+This can simply be ran by doing,
+
+`python domain-element-parser.py <domain definition file>.lisp <name of output file>.json`
+
+Ex:
+
+`python domain-element-parser.py sar-individual-domain.lisp
+sar-individual-domain-elements.json`
+
+Note: The parser requires certain format conventions in the domain definition
+file, please look `sar-individual-domain.lisp` as an example of these
+conventions. 
