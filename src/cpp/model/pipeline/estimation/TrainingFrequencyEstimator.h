@@ -50,8 +50,6 @@ namespace tomcat {
             //------------------------------------------------------------------
             void estimate(EvidenceSet new_data) override;
 
-            void set_training_data(const EvidenceSet& training_data) override;
-
             void get_info(nlohmann::json& json) const override;
 
             std::string get_name() const override;

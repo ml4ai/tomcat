@@ -1,5 +1,10 @@
 #pragma once
 
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include <boost/graph/adjacency_list.hpp>
 
 #include "../utils/Definitions.h"
@@ -28,6 +33,13 @@ namespace tomcat {
          */
         class DynamicBayesNet {
           public:
+            //------------------------------------------------------------------
+            // Types, Enums & Constants
+            //------------------------------------------------------------------
+            typedef std::pair<std::shared_ptr<RandomVariableNode>,
+                              std::shared_ptr<RandomVariableNode>>
+                Edge;
+
             //------------------------------------------------------------------
             // Constructors & Destructor
             //------------------------------------------------------------------
@@ -160,13 +172,21 @@ namespace tomcat {
              */
             void load_from_folder(const std::string& input_folder);
 
+            /**
+             * Returns edges of the unrolled DBN
+             *
+             * @return Edges
+             */
+            std::vector<Edge> get_edges() const;
+
             // --------------------------------------------------------
             // Getters & Setters
             // --------------------------------------------------------
-//            const std::vector<std::shared_ptr<RandomVariableNode>>
-//            get_nodes() const;
-//
-//            const std::vector<RandomVariableNode>& get_node_templates() const;
+            //            const std::vector<std::shared_ptr<RandomVariableNode>>
+            //            get_nodes() const;
+            //
+            //            const std::vector<RandomVariableNode>&
+            //            get_node_templates() const;
 
             int get_time_steps() const;
 
@@ -249,7 +269,7 @@ namespace tomcat {
             // Data members
             //------------------------------------------------------------------
             Graph graph;
-            
+
             IDMap name_to_id;
 
             // List of concrete timed instances node of the unrolled DBN.
@@ -261,8 +281,7 @@ namespace tomcat {
 
             // Mapping between a node label and all of the timed instance nodes
             // created from the template with such label.
-            std::unordered_map<std::string,
-                               std::vector<std::shared_ptr<Node>>>
+            std::unordered_map<std::string, std::vector<std::shared_ptr<Node>>>
                 label_to_nodes;
 
             // Node templates will be used to create concrete instances of

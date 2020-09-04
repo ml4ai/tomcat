@@ -25,7 +25,11 @@ namespace tomcat {
             this->estimators.push_back(estimator);
         }
 
-        void EstimationProcess::reset() { }
+        void EstimationProcess::reset() {
+            for(auto& estimator :this->estimators){
+                estimator->prepare();
+            }
+        }
 
         void EstimationProcess::copy_estimation(
             const EstimationProcess& estimation) {

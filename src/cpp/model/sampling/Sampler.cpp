@@ -37,6 +37,7 @@ namespace tomcat {
 
         void Sampler::add_data(EvidenceSet data) {
             if (data.get_num_data_points() == this->num_in_plate_samples) {
+                this->data = data;
                 for (const auto& node_label : this->data.get_node_labels()) {
                     for (auto& node :
                          this->model->get_nodes_by_label(node_label)) {

@@ -225,15 +225,15 @@ DynamicBayesNet create_dbn(bool fixed_parameters) {
     DirichletCPD prior_state_prior_cpd({}, move(prior_state_prior));
 
     Eigen::MatrixXd prior_theta_s0(1, 3);
-    prior_theta_s0 << 0.2, 0.3, 0.5;
+    prior_theta_s0 << 1, 1, 1;
     DirichletCPD prior_theta_s0_cpd({}, move(prior_theta_s0));
 
     Eigen::MatrixXd prior_theta_s1(1, 3);
-    prior_theta_s1 << 0.4, 0.1, 0.5;
+    prior_theta_s1 << 1, 1, 1;
     DirichletCPD prior_theta_s1_cpd({}, move(prior_theta_s1));
 
     Eigen::MatrixXd prior_theta_s2(1, 3);
-    prior_theta_s2 << 0.7, 0.1, 0.2;
+    prior_theta_s2 << 1, 1, 1;
     DirichletCPD prior_theta_s2_cpd({}, move(prior_theta_s2));
 
     shared_ptr<CPD> prior_state_prior_cpd_ptr =
@@ -419,10 +419,10 @@ void test_pipeline() {
         make_shared<DynamicBayesNet>(create_dbn(false));
     model->unroll(20, true);
 
-    GibbsSampler gibbs(model, 20);
+    GibbsSampler gibbs(model, 100);
 
     shared_ptr<DBNSamplingTrainer> trainer = make_shared<DBNSamplingTrainer>(
-        DBNSamplingTrainer(gen, make_shared<GibbsSampler>(gibbs), 50));
+        DBNSamplingTrainer(gen, make_shared<GibbsSampler>(gibbs), 5));
 
     shared_ptr<DBNSaver> saver = make_shared<DBNSaver>(
         DBNSaver(model, "../../data/model/pipeline_test/fold{}"));
@@ -437,18 +437,19 @@ void test_pipeline() {
     shared_ptr<SumProductEstimator> sumproduct_estimator =
         make_shared<SumProductEstimator>(SumProductEstimator(model, 1));
     sumproduct_estimator->add_node("TG", Eigen::VectorXd::Constant(1, 1));
+    sumproduct_estimator->add_node("TY", Eigen::VectorXd::Constant(1, 1));
 
     MessageBrokerConfiguration config;
     config.timeout = 5;
     config.address = "localhost";
     config.port = 1883;
-    shared_ptr<OnlineEstimation> estimation1 =
+    shared_ptr<OnlineEstimation> online_estimation =
         make_shared<OnlineEstimation>(config);
-    estimation1->add_estimator(baseline_estimator);
-    shared_ptr<OfflineEstimation> estimation2 =
+    online_estimation->add_estimator(baseline_estimator);
+    shared_ptr<OfflineEstimation> offline_estimation =
         make_shared<OfflineEstimation>();
-    estimation2->add_estimator(baseline_estimator);
-    estimation2->add_estimator(sumproduct_estimator);
+    offline_estimation->add_estimator(baseline_estimator);
+    offline_estimation->add_estimator(sumproduct_estimator);
 
     shared_ptr<EvaluationAggregator> aggregator =
         make_shared<EvaluationAggregator>(
@@ -457,22 +458,28 @@ void test_pipeline() {
     shared_ptr<Estimates> estimates =
         make_shared<Estimates>(baseline_estimator);
     shared_ptr<Accuracy> accuracy = make_shared<Accuracy>(baseline_estimator);
-    shared_ptr<Accuracy> accuracy_sp =
-        make_shared<Accuracy>(sumproduct_estimator);
     shared_ptr<F1Score> f1_score = make_shared<F1Score>(baseline_estimator);
 
-    aggregator->add_measure(estimates);
-    aggregator->add_measure(accuracy);
+
+    shared_ptr<Estimates> estimates_sp =
+        make_shared<Estimates>(sumproduct_estimator);
+    shared_ptr<Accuracy> accuracy_sp =
+        make_shared<Accuracy>(sumproduct_estimator);
+
+//    aggregator->add_measure(estimates);
+//    aggregator->add_measure(accuracy);
+//    aggregator->add_measure(f1_score);
+    aggregator->add_measure(estimates_sp);
     aggregator->add_measure(accuracy_sp);
-    aggregator->add_measure(f1_score);
+
 
     Pipeline pipeline;
     pipeline.set_data(data);
     pipeline.set_data_splitter(kfold);
     pipeline.set_model_trainner(trainer);
     pipeline.set_model_saver(saver);
-    pipeline.set_estimation_process(estimation1);
-    // pipeline.set_estimation_process(estimation2);
+    //pipeline.set_estimation_process(online_estimation);
+    pipeline.set_estimation_process(offline_estimation);
     pipeline.set_aggregator(aggregator);
 
     pipeline.execute();
@@ -1101,18 +1108,19 @@ int main() {
     //test_student_training_runtime();
     //test_training_runtime();
 
-    test_message_passing();
+    //test_message_passing();
+    test_pipeline();
 
     //    test_cpp_capabilities();
     // test_random_number_generation();
     //    test_dbn_entities();
 
-    //    shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
-    //
-    //    shared_ptr<DynamicBayesNet> dbn_ptr =
-    //        make_shared<DynamicBayesNet>(create_dbn(true));
-    //    dbn_ptr->unroll(20, true);
-    //    generate_samples_to_test(dbn_ptr, 10, gen);
+//        shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+//    //
+//        shared_ptr<DynamicBayesNet> dbn_ptr =
+//            make_shared<DynamicBayesNet>(create_dbn(true));
+//        dbn_ptr->unroll(20, true);
+//        generate_samples_to_test(dbn_ptr, 10, gen);
 
     //        shared_ptr<DynamicBayesNet> dbn_ptr =
     //            make_shared<DynamicBayesNet>(create_dbn(false));

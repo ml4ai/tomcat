@@ -222,6 +222,14 @@ namespace tomcat {
              */
             void print(std::ostream& os) const;
 
+            /**
+             * Return the matrix formed by the concrete assignments of the nodes
+             * it depends on.
+             *
+             * @return CPD table
+             */
+            Eigen::MatrixXd get_table() const;
+
             //------------------------------------------------------------------
             // Pure virtual functions
             //------------------------------------------------------------------
@@ -264,6 +272,8 @@ namespace tomcat {
             const std::string& get_id() const;
 
             bool is_updated() const;
+
+            const TableOrderingMap& get_parent_label_to_indexing() const;
 
           protected:
             //------------------------------------------------------------------

@@ -23,8 +23,7 @@ namespace tomcat {
 
             for (auto& parameter : this->parameters) {
                 std::string parameter_timed_name;
-                const NodeMetadata* metadata =
-                    parameter->get_metadata().get();
+                const NodeMetadata* metadata = parameter->get_metadata().get();
                 if (metadata->is_replicable()) {
                     parameter_timed_name = metadata->get_timed_name(time_step);
                 }
@@ -34,14 +33,14 @@ namespace tomcat {
                 }
 
                 if (parameter_nodes_map.count(parameter_timed_name) > 0) {
-                    parameter =
-                        parameter_nodes_map[parameter_timed_name];
+                    parameter = parameter_nodes_map[parameter_timed_name];
                 }
             }
         }
 
-        void Continuous::update_sufficient_statistics(const Eigen::VectorXd& sample) {
-            for(auto& parameter : this->parameters){
+        void Continuous::update_sufficient_statistics(
+            const Eigen::VectorXd& sample) {
+            for (auto& parameter : this->parameters) {
                 if (parameter->get_metadata()->is_parameter()) {
                     if (RandomVariableNode* rv_node =
                             dynamic_cast<RandomVariableNode*>(
@@ -50,6 +49,18 @@ namespace tomcat {
                     }
                 }
             }
+        }
+
+        Eigen::VectorXd Continuous::get_values() const {
+            Eigen::VectorXd parameter_vector(this->parameters.size());
+
+            int i = 0;
+            for (const auto& parameter_node : this->parameters) {
+                parameter_vector(i) =
+                    parameter_node->get_assignment()(0, i);
+            }
+
+            return parameter_vector;
         }
 
     } // namespace model

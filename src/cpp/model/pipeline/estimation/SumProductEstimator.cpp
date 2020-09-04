@@ -39,6 +39,13 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
+        void SumProductEstimator::prepare() {
+            Estimator::prepare();
+            this->next_time_step = 0;
+            this->factor_graph =
+                FactorGraph::create_from_unrolled_dbn(*this->model);
+        }
+
         void SumProductEstimator::estimate(EvidenceSet new_data) {
             this->factor_graph.store_topological_traversal_per_time_step();
 

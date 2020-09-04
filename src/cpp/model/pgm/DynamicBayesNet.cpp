@@ -389,6 +389,27 @@ namespace tomcat {
             }
         }
 
+        std::vector<DynamicBayesNet::Edge> DynamicBayesNet::get_edges() const {
+            Graph::edge_iterator begin, end;
+            boost::tie(begin, end) = boost::edges(this->graph);
+            std::vector<Edge> edges;
+            while (begin != end) {
+                int source_vertex_id = boost::source(*begin, graph);
+                int target_vertex_id = boost::target(*begin, graph);
+
+                Edge edge = std::make_pair(this->graph[source_vertex_id].node,
+                    this->graph[target_vertex_id].node);
+                edges.push_back(std::move(edge));
+                begin++;
+            }
+
+            return edges;
+        }
+
+        //----------------------------------------------------------------------
+        // Getters & Setters
+        //----------------------------------------------------------------------
+
         int DynamicBayesNet::get_time_steps() const { return time_steps; }
 
     } // namespace model

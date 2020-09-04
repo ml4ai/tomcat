@@ -1,6 +1,7 @@
 #include "GibbsSampler.h"
 
-// This is deprecated. The new version is in boost/timer/progress_display.hpp but only available for boost 1.72
+// This is deprecated. The new version is in boost/timer/progress_display.hpp
+// but only available for boost 1.72
 #include <boost/progress.hpp>
 
 #include "AncestralSampler.h"
@@ -72,7 +73,7 @@ namespace tomcat {
             this->init_samples_storage(num_samples, latent_nodes);
             bool discard = true;
             LOG("Burn-in");
-            boost::progress_display progress( this->burn_in_period);
+            boost::progress_display progress(this->burn_in_period);
 
             for (int i = 0; i < this->burn_in_period + num_samples; i++) {
                 if (i >= burn_in_period && discard) {
@@ -91,7 +92,7 @@ namespace tomcat {
                 }
 
                 ++progress;
-                if(!discard){
+                if (!discard) {
                     this->iteration++;
                 }
             }
@@ -205,9 +206,13 @@ namespace tomcat {
                 }
             }
 
-            // Unlog the weights
+            // Unlog and normalize the weights
             weights.colwise() -= weights.rowwise().maxCoeff();
             weights = weights.array().exp() - EPSILON;
+            // Normalize the message
+            Eigen::VectorXd sum_per_row = weights.rowwise().sum();
+            weights =
+                (weights.array().colwise() / sum_per_row.array()).matrix();
 
             return weights;
         }

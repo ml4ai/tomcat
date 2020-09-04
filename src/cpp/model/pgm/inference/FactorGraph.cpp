@@ -24,7 +24,59 @@ namespace tomcat {
         //----------------------------------------------------------------------
         FactorGraph
         FactorGraph::create_from_unrolled_dbn(const DynamicBayesNet& dbn) {
-            return FactorGraph();
+            FactorGraph factor_graph;
+
+            for (const auto& node : dbn.get_nodes_topological_order()) {
+                if (!node->get_metadata()->is_parameter()) {
+                    shared_ptr<RandomVariableNode> random_variable =
+                        dynamic_pointer_cast<RandomVariableNode>(node);
+
+                    if (random_variable->get_time_step() <= 2) {
+                        factor_graph.add_node(
+                            random_variable->get_metadata()->get_label(),
+                            random_variable->get_metadata()->get_cardinality(),
+                            random_variable->get_time_step(),
+                            random_variable->get_cpd()->get_table(),
+                            random_variable->get_cpd()
+                                ->get_parent_label_to_indexing());
+                    }
+                }
+            }
+
+            for (const auto& [source_node, target_node] : dbn.get_edges()) {
+                if (source_node->get_time_step() <= 2 &&
+                    !source_node->get_metadata()->is_parameter() &&
+                    target_node->get_time_step() <= 2 &&
+                    !target_node->get_metadata()->is_parameter()) {
+
+                    factor_graph.add_edge(
+                        source_node->get_metadata()->get_label(),
+                        source_node->get_time_step(),
+                        target_node->get_metadata()->get_label(),
+                        target_node->get_time_step());
+                }
+            }
+
+            // Print edges
+            Graph::edge_iterator begin, end;
+            boost::tie(begin, end) = boost::edges(factor_graph.graph);
+            while (begin != end) {
+                int source_vertex_id =
+                    boost::source(*begin, factor_graph.graph);
+                int target_vertex_id =
+                    boost::target(*begin, factor_graph.graph);
+
+                string source_name =
+                    factor_graph.graph[source_vertex_id]->get_name();
+                string target_name =
+                    factor_graph.graph[target_vertex_id]->get_name();
+
+                std::cout << source_name << " -> " << target_name << std::endl;
+
+                begin++;
+            }
+
+            return factor_graph;
         }
 
         //----------------------------------------------------------------------
@@ -34,7 +86,7 @@ namespace tomcat {
         FactorGraph::add_node(const string& node_label,
                               int cardinality,
                               int time_step,
-                              Eigen::MatrixXd& cpd,
+                              const Eigen::MatrixXd& cpd,
                               const CPD::TableOrderingMap& cpd_ordering_map) {
 
             if (time_step > 2) {
@@ -73,13 +125,12 @@ namespace tomcat {
         int FactorGraph::add_factor_node(
             const std::string& node_label,
             int time_step,
-            Eigen::MatrixXd& cpd,
+            const Eigen::MatrixXd& cpd,
             const CPD::TableOrderingMap& cpd_ordering_map) {
 
             int vertex_id = boost::add_vertex(this->graph);
             this->graph[vertex_id] = make_shared<FactorNode>(
                 node_label, time_step, cpd, cpd_ordering_map, node_label);
-            ;
 
             string factor_name = this->graph[vertex_id]->get_name();
             this->name_to_id[factor_name] = vertex_id;

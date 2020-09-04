@@ -29,9 +29,17 @@ namespace tomcat {
             Eigen::MatrixXd zeros = Eigen::MatrixXd::Zero(
                 estimates.estimates.rows(), estimates.estimates.cols());
 
+            // Preserve the first time steps with no observed values for the
+            // estimate in analysis.
+            Eigen::MatrixXd no_obs = Eigen::MatrixXd::Constant(
+                estimates.estimates.rows(), estimates.estimates.cols(), NO_OBS);
+            no_obs =
+                (estimates.estimates.array() == NO_OBS).select(no_obs, zeros);
+
             // If estimates are probabilities, make it class 1 if above 0.5.
             Eigen::MatrixXd discrete_estimates =
-                (estimates.estimates.array() > 0.5).select(ones, zeros);
+                (estimates.estimates.array() > 0.5).select(ones, no_obs);
+            LOG(discrete_estimates);
 
             // For a given assignment, transform the test data into 0s and 1s.
             // Where 1 is assigned to the coefficients equal to the assignment
@@ -39,7 +47,7 @@ namespace tomcat {
             Eigen::MatrixXd observed_data_in_horizon =
                 EvidenceSet::get_observations_in_window(
                     test_data[estimates.label],
-                    Eigen::VectorXd::Constant(1, 1),
+                    Eigen::VectorXd::Constant(1, estimates.assignment(0, 0)),
                     this->estimator->get_inference_horizon());
 
             // The first columns with NO_OBS value must not be counted as this

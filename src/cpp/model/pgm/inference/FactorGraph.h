@@ -90,7 +90,7 @@ namespace tomcat {
             void add_node(const std::string& node_label,
                           int cardinality,
                           int time_step,
-                          Eigen::MatrixXd& cpd,
+                          const Eigen::MatrixXd& cpd,
                           const CPD::TableOrderingMap& cpd_ordering_map);
 
             /**
@@ -232,7 +232,7 @@ namespace tomcat {
              */
             int add_factor_node(const std::string& node_label,
                                 int time_step,
-                                Eigen::MatrixXd& cpd,
+                                const Eigen::MatrixXd& cpd,
                                 const CPD::TableOrderingMap& cpd_ordering_map);
 
             //------------------------------------------------------------------

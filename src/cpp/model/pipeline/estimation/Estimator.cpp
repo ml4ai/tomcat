@@ -74,6 +74,14 @@ namespace tomcat {
             return estimates_per_node;
         }
 
+        void Estimator::prepare() {
+            // Clear estimates so they can be recalculated over the new
+            // training data in the next call to the function estimate.
+            for (auto& node_estimates : this->nodes_estimates) {
+                node_estimates.estimates = Eigen::MatrixXd(0, 0);
+            }
+        }
+
         //----------------------------------------------------------------------
         // Getters & Setters
         //----------------------------------------------------------------------

@@ -96,6 +96,8 @@ namespace tomcat {
             void update_sufficient_statistics(
                 const Eigen::VectorXd& sample) override;
 
+            Eigen::VectorXd get_values() const override;
+
           private:
             //------------------------------------------------------------------
             // Member functions

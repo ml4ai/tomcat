@@ -113,11 +113,10 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
-             * Assigns a training data to the estimator.
-             *
-             * @param training_data: training data
-             */
-            virtual void set_training_data(const EvidenceSet& training_data);
+            * Initializations before the computation of estimates.
+            *
+            */
+            virtual void prepare();
 
             //------------------------------------------------------------------
             // Pure virtual functions
@@ -150,6 +149,8 @@ namespace tomcat {
             // Getters & Setters
             //------------------------------------------------------------------
             int get_inference_horizon() const;
+
+            void set_training_data(const EvidenceSet& training_data);
 
           protected:
             //------------------------------------------------------------------

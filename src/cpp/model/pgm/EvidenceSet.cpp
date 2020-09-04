@@ -34,81 +34,48 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Static functions
         //----------------------------------------------------------------------
-        Eigen::MatrixXd  EvidenceSet::get_observations_in_window(
+        Eigen::MatrixXd EvidenceSet::get_observations_in_window(
             const Tensor3& data,
             const Eigen::VectorXd& assignment,
             int window) {
-            Eigen::MatrixXd logical_data = data == assignment;
 
+            Eigen::MatrixXd logical_data = (data == assignment);
+            LOG(data);
+            LOG("");
+            LOG(assignment);
             int first_time_step = get_first_time_with_observation(data);
             int num_rows = logical_data.rows();
             int num_cols = logical_data.cols();
-            int num_cols_in_window = num_cols - window + 1;
-            int num_cols_with_obs = num_cols - first_time_step;
-            int num_cols_with_obs_in_window =
-                num_cols_in_window - first_time_step;
+            // Replace the first columns with no observable data with NO_OBS
+            // value so it can be preserved in the operations below.
+            logical_data.block(0, 0, num_rows, first_time_step) =
+                Eigen::MatrixXd::Constant(num_rows, first_time_step, NO_OBS);
 
-            // Final matrix with ones where the assignment was found in
-            // any of the time steps within the window for a given time step. In
-            // sum, For instance, for a given data point (row in the matrix), if
-            // the window is 3 and the assignment was observed up to 2
-            // (horizon - 1) time steps ahead of a current time step,
-            // there will be a number one in the matrix in the
-            // row for that data point in the column for that
-            // time step.
-            Eigen::MatrixXd logical_data_in_window =
-                Eigen::MatrixXd::Constant(num_rows, num_cols_in_window, NO_OBS);
-
-            Eigen::MatrixXd logical_data_with_obs = logical_data.block(
-                0, first_time_step, num_rows, num_cols_with_obs);
-
-            if (window == 1) {
-                // When the window is equal one, the result it's just
-                // the logical data previously computed. We just make
-                // sure to preserve the NO_OBS values in the first
-                // columns by moving a portion of the matrix only.
-                logical_data_in_window.block(
-                    0, first_time_step, num_rows, num_cols - first_time_step) =
-                    std::move(logical_data_with_obs);
+            Eigen::MatrixXd logical_data_in_window(num_rows, num_cols - window);
+            if (window == 0) {
+                logical_data_in_window = logical_data;
             }
             else {
-                Eigen::MatrixXd cum_sum_over_time =
-                    cum_sum(logical_data_with_obs, 1);
+                Eigen::MatrixXd cum_sum_over_time = cum_sum(logical_data, 1);
 
-                // As the window increases, the number of columns in the final
-                // matrix shrinks as for each columns we need to check window -
-                // 1 subsequent columns.
-                Eigen::MatrixXd obs_in_window(num_rows,
-                                              num_cols_with_obs_in_window);
-
-                for (int i = 0; i < num_rows; i++) {
-                    for (int j = 0; j < num_cols_with_obs_in_window; j++) {
-
-                        int upper_idx = window + j - 1;
-                        int lower_idx = j - 1;
-
-                        if (lower_idx < 0) {
-                            obs_in_window(i, j) =
-                                cum_sum_over_time(i, upper_idx);
-                        }
-                        else {
-                            obs_in_window(i, j) =
-                                cum_sum_over_time(i, upper_idx) -
-                                cum_sum_over_time(i, lower_idx);
-                        }
-                    }
+                Eigen::MatrixXd num_obs_in_window(num_rows, num_cols - window);
+                int j = 0;
+                for (int w = window; w < cum_sum_over_time.cols(); w++) {
+                    num_obs_in_window.col(j) =
+                        cum_sum_over_time.col(w).array() -
+                        cum_sum_over_time.col(j).array();
+                    j++;
                 }
 
                 Eigen::MatrixXd ones = Eigen::MatrixXd::Ones(
-                    num_rows, num_cols_with_obs_in_window);
+                    num_obs_in_window.rows(), num_obs_in_window.cols());
                 Eigen::MatrixXd zeros = Eigen::MatrixXd::Zero(
-                    num_rows, num_cols_with_obs_in_window);
-
-                obs_in_window = (obs_in_window.array() > 0).select(ones, zeros);
-
-                logical_data_in_window.block(
-                    0, first_time_step, num_rows, num_cols_with_obs_in_window) =
-                    std::move(obs_in_window);
+                    num_obs_in_window.rows(), num_obs_in_window.cols());
+                Eigen::MatrixXd no_obs = Eigen::MatrixXd::Constant(
+                    num_obs_in_window.rows(), num_obs_in_window.cols(), NO_OBS);
+                no_obs = (num_obs_in_window.array() < 0).select(no_obs, zeros);
+                logical_data_in_window =
+                    (num_obs_in_window.array() > 0).select(ones, no_obs);
             }
 
             return logical_data_in_window;
@@ -209,7 +176,7 @@ namespace tomcat {
             json["time_steps"] = this->get_time_steps();
         }
 
-        Eigen::MatrixXd  EvidenceSet::get_observations_in_window_for(
+        Eigen::MatrixXd EvidenceSet::get_observations_in_window_for(
             const std::string& node_label,
             const Eigen::VectorXd& assignment,
             int window) const {

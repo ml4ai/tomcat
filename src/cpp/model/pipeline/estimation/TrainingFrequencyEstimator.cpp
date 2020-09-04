@@ -61,17 +61,6 @@ namespace tomcat {
             }
         }
 
-        void TrainingFrequencyEstimator::set_training_data(
-            const EvidenceSet& training_data) {
-            Estimator::set_training_data(training_data);
-
-            // Clear estimates so they can be recalculated over the new
-            // training data in the next call to the function estimate.
-            for (auto& node_estimates : this->nodes_estimates) {
-                node_estimates.estimates = Eigen::MatrixXd(0, 0);
-            }
-        }
-
         void TrainingFrequencyEstimator::get_info(nlohmann::json& json) const {
             json["name"] = this->get_name();
             json["inference_horizon"] = this->inference_horizon;

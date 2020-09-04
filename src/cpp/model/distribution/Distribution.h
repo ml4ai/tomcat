@@ -3,8 +3,8 @@
 #include <eigen3/Eigen/Dense>
 #include <gsl/gsl_rng.h>
 
-#include "../utils/Definitions.h"
 #include "../pgm/Node.h"
+#include "../utils/Definitions.h"
 
 namespace tomcat {
     namespace model {
@@ -171,6 +171,15 @@ namespace tomcat {
              */
             virtual void
             update_sufficient_statistics(const Eigen::VectorXd& sample) = 0;
+
+            /**
+             * Returns assignments of the node(s) the distribution depends on. A
+             * node can have multiple assignments. Only the first one is
+             * returned by this function.
+             *
+             * @return Concrete node assignments.
+             */
+            virtual Eigen::VectorXd get_values() const = 0;
 
           protected:
             //------------------------------------------------------------------

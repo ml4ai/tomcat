@@ -215,6 +215,9 @@ namespace tomcat {
         void RandomVariableNode::set_cpd(const std::shared_ptr<CPD>& cpd) {
             this->cpd = cpd;
         }
+        const std::shared_ptr<CPD>& RandomVariableNode::get_cpd() const {
+            return cpd;
+        }
 
     } // namespace model
 } // namespace tomcat

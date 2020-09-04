@@ -81,10 +81,12 @@ namespace tomcat {
                                      const Eigen::VectorXd& parameters) const {
 
             Eigen::VectorXd checked_parameters;
-            // If for some reason, all the probabilities are zero, sample from a uniform distribution;
+            // If for some reason, all the probabilities are zero, sample from a
+            // uniform distribution;
             if (parameters.sum() < EPSILON) {
                 checked_parameters = Eigen::VectorXd::Ones(parameters.size());
-            } else {
+            }
+            else {
                 checked_parameters = parameters;
             }
 
@@ -122,7 +124,8 @@ namespace tomcat {
             parameter_idx = probabilities.rows() == 1 ? 0 : parameter_idx;
 
             Eigen::VectorXd weighted_probabilities =
-                probabilities.row(parameter_idx).transpose().array() * weights.array();
+                probabilities.row(parameter_idx).transpose().array() *
+                weights.array();
 
             // weighted_probs does not need to be normalized because GSL already
             // does that.
@@ -173,6 +176,10 @@ namespace tomcat {
                     rv_node->add_to_sufficient_statistics(sample);
                 }
             }
+        }
+
+        Eigen::VectorXd Categorical::get_values() const {
+            return this->probabilities->get_assignment().row(0);
         }
 
     } // namespace model

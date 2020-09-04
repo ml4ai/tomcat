@@ -231,6 +231,8 @@ namespace tomcat {
 
             void set_cpd(const std::shared_ptr<CPD>& cpd);
 
+            const std::shared_ptr<CPD>& get_cpd() const;
+
           private:
             //------------------------------------------------------------------
             // Member functions

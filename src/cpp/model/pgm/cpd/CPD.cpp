@@ -203,8 +203,8 @@ namespace tomcat {
             for (const auto& distribution_idx : distribution_indices) {
                 std::shared_ptr<Distribution> distribution =
                     this->distributions[distribution_idx];
-                double pdf =
-                    distribution->get_pdf(node.get_assignment().row(sample_index), sample_index);
+                double pdf = distribution->get_pdf(
+                    node.get_assignment().row(sample_index), sample_index);
                 pdfs(sample_index) = pdf;
                 sample_index++;
             }
@@ -222,7 +222,8 @@ namespace tomcat {
 
             int sample_index = 0;
             for (const auto& distribution_idx : distribution_indices) {
-                Eigen::VectorXd assignment = cpd_owner_assignments.row(sample_index);
+                Eigen::VectorXd assignment =
+                    cpd_owner_assignments.row(sample_index);
                 this->distributions[distribution_idx]
                     ->update_sufficient_statistics(assignment);
                 sample_index++;
@@ -235,12 +236,36 @@ namespace tomcat {
             os << this->get_description();
         }
 
+        Eigen::MatrixXd CPD::get_table() const {
+            Eigen::MatrixXd table;
+
+            int row = 0;
+            for (const auto& distribution : this->distributions) {
+                Eigen::VectorXd parameters = distribution->get_values();
+                if (table.size() == 0) {
+                    table = Eigen::MatrixXd(this->distributions.size(),
+                                            parameters.size());
+                    table.row(row) = parameters;
+                }
+                else {
+                    table.row(row) = parameters;
+                }
+                row++;
+            }
+
+            return table;
+        }
+
         //------------------------------------------------------------------
         // Getters & Setters
         //------------------------------------------------------------------
         const std::string& CPD::get_id() const { return id; }
 
         bool CPD::is_updated() const { return updated; }
+
+        const CPD::TableOrderingMap& CPD::get_parent_label_to_indexing() const {
+            return parent_label_to_indexing;
+        }
 
     } // namespace model
 } // namespace tomcat
