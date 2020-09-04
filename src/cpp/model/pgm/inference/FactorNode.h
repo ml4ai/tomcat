@@ -116,13 +116,20 @@ namespace tomcat {
              * marginalizes out the incoming nodes and returns the resultant
              * message.
              *
-             * @param template_target_node:
-             * @param in
+             * @param template_target_node: template instance of the node where
+             * the message should go to
+             * @param template_time_step: time step of this node where to get
+             * the incoming messages from. If the template node belongs to the
+             * repeatable structure, this information is needed to know which
+             * time step to address to retrieve the incoming messages.
+             * @param target_time_step: real time step of the target node
+             * @param direction: direction of the message passing
              *
              * @return Message
              */
             Eigen::MatrixXd get_outward_message_to(
                 const std::shared_ptr<MessageNode>& template_target_node,
+                int template_time_step,
                 int target_time_step,
                 Direction direction) const override;
 
@@ -157,6 +164,10 @@ namespace tomcat {
              * there's any, messages from this node in the target time step must
              * be discarded as this node is the final destination of the
              * messages we aim to compute when calling this function.
+             * @param template_time_step: time step of this node where to get
+             * the incoming messages from. If the template node belongs to the
+             * repeatable structure, this information is needed to know which
+             * time step to address to retrieve the incoming messages.
              * @param target_time_step: real time step of the target node
              * @param potential_function: potential function
              *
@@ -164,6 +175,7 @@ namespace tomcat {
              */
             std::vector<Eigen::MatrixXd> get_incoming_messages_in_order(
                 const std::string& ignore_label,
+                int template_time_step,
                 int target_time_step,
                 const PotentialFunction& potential_function) const;
 

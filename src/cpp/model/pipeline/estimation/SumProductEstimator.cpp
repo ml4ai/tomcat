@@ -51,28 +51,38 @@ namespace tomcat {
                     this->factor_graph, t, new_data);
 
                 for (auto& estimates : this->nodes_estimates) {
-                    Eigen::MatrixXd marginal =
-                        factor_graph.get_marginal_for(estimates.label, t);
-                    if (marginal.size() == 0) {
-                        estimates.estimates = Eigen::MatrixXd::Constant(
-                            new_data.get_num_data_points(), 1, NO_OBS);
+                    Eigen::VectorXd estimates_in_time_step;
+                    int discrete_assignment = estimates.assignment[0];
+
+                    if (this->inference_horizon > 0) {
+                        estimates_in_time_step = this->get_predictions_for(
+                            estimates.label,
+                            t,
+                            discrete_assignment,
+                            new_data.get_num_data_points());
                     }
                     else {
-                        int discrete_assignment = estimates.assignment[0];
-                        if (estimates.estimates.size() == 0) {
-                            estimates.estimates =
-                                marginal.col(discrete_assignment);
+                        // This could be incorporated to the marginal with
+                        // horizon but I prefered to let it separate as for
+                        // inference, it's possible to retrieve the whole
+                        // distribution. Conversely, with horizons this
+                        // implementation is limited to find the probability of
+                        // a given value in a binary node.
+                        Eigen::MatrixXd marginal =
+                            factor_graph.get_marginal_for(estimates.label, t);
+
+                        if (marginal.size() == 0) {
+                            estimates_in_time_step = Eigen::MatrixXd::Constant(
+                                new_data.get_num_data_points(), 1, NO_OBS);
                         }
                         else {
-                            int num_rows = estimates.estimates.rows();
-                            int num_cols = estimates.estimates.cols() + 1;
-                            estimates.estimates.conservativeResize(num_rows,
-                                                                   num_cols);
-
-                            estimates.estimates.col(num_cols - 1) =
+                            estimates_in_time_step =
                                 marginal.col(discrete_assignment);
                         }
                     }
+
+                    this->add_column_to_estimates(estimates,
+                                                  estimates_in_time_step);
                 }
             }
 
@@ -97,15 +107,21 @@ namespace tomcat {
                 vector<pair<shared_ptr<MessageNode>, bool>> parent_nodes =
                     factor_graph.get_parents_of(node, time_step);
 
-                if (!node->is_factor() &&
-                    new_data.has_data_for(node->get_label())) {
-                    // Column of the data matrix that contains data for the time
-                    // step being processed.
-                    Tensor3 node_data = new_data[node->get_label()];
-                    Eigen::VectorXd data_in_time_step =
-                        node_data(0, 0).col(time_step - this->next_time_step);
-                    dynamic_pointer_cast<VariableNode>(node)->set_data_at(
-                        time_step - this->next_time_step, data_in_time_step);
+                if (!node->is_factor()) {
+                    shared_ptr<VariableNode> variable_node =
+                        dynamic_pointer_cast<VariableNode>(node);
+                    if (new_data.has_data_for(node->get_label())) {
+                        // Column of the data matrix that contains data for the
+                        // time step being processed.
+                        Tensor3 node_data = new_data[node->get_label()];
+                        Eigen::VectorXd data_in_time_step = node_data(0, 0).col(
+                            time_step - this->next_time_step);
+                        variable_node->set_data_at(time_step,
+                                                   data_in_time_step);
+                    }
+                    else {
+                        variable_node->erase_data_at(time_step);
+                    }
                 }
 
                 if (parent_nodes.empty()) {
@@ -133,10 +149,12 @@ namespace tomcat {
                             parent_node->get_outward_message_to(
                                 node,
                                 parent_incoming_messages_time_step,
+                                time_step,
                                 MessageNode::Direction::forward);
 
                         LOG("Forward");
-                        LOG(node->get_name());
+                        LOG(MessageNode::get_name(node->get_label(),
+                                                  time_step));
                         LOG(message);
                         LOG("");
 
@@ -198,10 +216,12 @@ namespace tomcat {
                                 child_vertex->get_outward_message_to(
                                     node,
                                     time_step,
+                                    time_step,
                                     MessageNode::Direction::backwards);
 
                             LOG("Backward");
-                            LOG(node->get_name());
+                            LOG(MessageNode::get_name(node->get_label(),
+                                                      time_step));
                             LOG(message);
                             LOG("");
 
@@ -213,6 +233,76 @@ namespace tomcat {
                         }
                     }
                 }
+            }
+        }
+
+        Eigen::VectorXd
+        SumProductEstimator::get_predictions_for(const std::string& node_label,
+                                                 int time_step,
+                                                 int assignment,
+                                                 int num_data_points) {
+
+            // To compute the probability of observing at least one
+            // occurence of an assignment in the inference_horizon, we
+            // compute the complement of not observing the assignment in
+            // any of the time steps in the inference horizon.
+            int opposite_assignment = 1 - assignment;
+            Eigen::MatrixXd opposite_assignment_matrix =
+                Eigen::MatrixXd::Constant(
+                    num_data_points, 1, opposite_assignment);
+            EvidenceSet horizon_data;
+            horizon_data.add_data(node_label,
+                                  Tensor3(opposite_assignment_matrix));
+            Eigen::VectorXd estimates;
+
+            for (int h = 1; h <= this->inference_horizon; h++) {
+                // Simulate new data coming and compute estimates in a regular
+                // way.
+                std::cout << node_label << " t = " << time_step << " h = " << h
+                          << std::endl;
+                this->next_time_step = time_step + h;
+                this->compute_forward_messages(
+                    this->factor_graph, time_step + h, horizon_data);
+                this->compute_backward_messages(
+                    this->factor_graph, time_step + h, horizon_data);
+
+                Eigen::MatrixXd marginal =
+                    factor_graph.get_marginal_for(node_label, time_step + h);
+
+                std::cout << ">" << node_label << " t = " << time_step
+                          << " h = " << h << std::endl;
+                std::cout << "Marginal at " << time_step + h << std::endl;
+                LOG(marginal.col(opposite_assignment));
+                if (estimates.size() == 0) {
+                    estimates = marginal.col(opposite_assignment);
+                }
+                else {
+                    estimates = estimates.array() *
+                                marginal.col(opposite_assignment).array();
+                }
+            }
+            // Adjust the time counter back to it's original position.
+            this->next_time_step -= (time_step + this->inference_horizon);
+            this->factor_graph.erase_incoming_messages_beyond(time_step);
+
+            estimates = 1 - estimates.array();
+
+            return estimates;
+        }
+
+        void SumProductEstimator::add_column_to_estimates(
+
+            NodeEstimates& estimates, const Eigen::VectorXd new_column) {
+            if (estimates.estimates.size() == 0) {
+                estimates.estimates = new_column;
+            }
+            else {
+                // Append new column to the existing estimates
+                int num_rows = estimates.estimates.rows();
+                int num_cols = estimates.estimates.cols() + 1;
+                estimates.estimates.conservativeResize(num_rows, num_cols);
+
+                estimates.estimates.col(num_cols - 1) = new_column;
             }
         }
 

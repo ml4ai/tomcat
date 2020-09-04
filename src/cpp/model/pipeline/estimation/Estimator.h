@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <set>
 #include <string>
 #include <unordered_set>
 #include <vector>
@@ -57,8 +58,7 @@ namespace tomcat {
              * @param inference_horizon: how many time steps in the future
              * estimations are going to be computed for
              */
-            Estimator(std::shared_ptr<DynamicBayesNet> model,
-                      int inference_horizon);
+            Estimator(std::shared_ptr<DynamicBayesNet> model, int inference_horizon);
 
             virtual ~Estimator();
 
@@ -177,12 +177,12 @@ namespace tomcat {
             EvidenceSet test_data;
 
             // List of nodes to estimate, their assignments and estimates
-            // calculated.
             std::vector<NodeEstimates> nodes_estimates;
 
-            // Determines if the task is a prediction (> 0) or an inference (=
-            // 0). If it's a prediction, how much further in the future
-            // predictions are made.
+            // An inference horizon determines if the task is a prediction (> 0)
+            // or an inference (= 0). If it's a prediction, the horizon
+            // determines up to how much further in the future predictions are
+            // made.
             int inference_horizon;
         };
 

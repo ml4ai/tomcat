@@ -116,6 +116,7 @@ namespace tomcat {
 
         Eigen::MatrixXd FactorNode::get_outward_message_to(
             const std::shared_ptr<MessageNode>& template_target_node,
+            int template_time_step,
             int target_time_step,
             Direction direction) const {
 
@@ -135,6 +136,7 @@ namespace tomcat {
             vector<Eigen::MatrixXd> messages_in_order =
                 this->get_incoming_messages_in_order(
                     template_target_node->get_label(),
+                    template_time_step,
                     target_time_step,
                     potential_function);
 
@@ -178,24 +180,26 @@ namespace tomcat {
 
         vector<Eigen::MatrixXd> FactorNode::get_incoming_messages_in_order(
             const std::string& ignore_label,
+            int template_time_step,
             int target_time_step,
             const PotentialFunction& potential_function) const {
 
             int num_messages =
-                this->incoming_messages_per_time_slice.at(target_time_step)
+                this->incoming_messages_per_time_slice.at(template_time_step)
                     .size();
             vector<Eigen::MatrixXd> messages_in_order(num_messages);
             int added_duplicate_key_order = -1;
             int added_duplicate_key_time_step = -1;
 
             MessageContainer message_container =
-                this->incoming_messages_per_time_slice.at(target_time_step);
+                this->incoming_messages_per_time_slice.at(template_time_step);
 
             for (const auto& [incoming_node_name, incoming_message] :
                  message_container.node_name_to_messages) {
 
                 if (MessageNode::is_prior(incoming_node_name)) {
                     // No parents. There's only one incoming message.
+                    messages_in_order.resize(1);
                     messages_in_order[0] = incoming_message;
                     break;
                 }

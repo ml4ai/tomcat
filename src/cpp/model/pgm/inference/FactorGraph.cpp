@@ -188,7 +188,7 @@ namespace tomcat {
                     this->graph[parent_vertex_id];
                 bool transition = false;
                 if (parent_node->get_time_step() <
-                        template_node->get_time_step()) {
+                    template_node->get_time_step()) {
 
                     transition = true;
 
@@ -248,12 +248,14 @@ namespace tomcat {
             return marginal;
         }
 
-        shared_ptr<MessageNode>
-        FactorGraph::get_node_instance_in_time_step(const string& node_label,
-                                                    int time_step) const {
-            int vertex_id = this->name_to_id.at(
-                MessageNode::get_name(node_label, time_step));
-            return this->graph[vertex_id];
+        void FactorGraph::erase_incoming_messages_beyond(int time_step) {
+            for (int t = min(this->repeatable_time_step, time_step + 1);
+                 t <= this->repeatable_time_step;
+                 t++) {
+                for (auto& node : time_sliced_topological_order.at(t)) {
+                    node->erase_incoming_messages_beyond(time_step);
+                }
+            }
         }
 
     } // namespace model

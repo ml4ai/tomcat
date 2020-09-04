@@ -38,26 +38,28 @@ namespace tomcat {
 
         Eigen::MatrixXd VariableNode::get_outward_message_to(
             const std::shared_ptr<MessageNode>& template_target_node,
+            int template_time_step,
             int target_time_step,
             Direction direction) const {
 
             Eigen::MatrixXd outward_message;
-            if (EXISTS(target_time_step, this->data_per_time_slice)) {
+            if (EXISTS(template_time_step, this->data_per_time_slice)) {
                 // If there's data for the node, just report the one-hot-encode
                 // representation of that data as the message emitted by this
                 // node.
                 outward_message =
-                    this->data_per_time_slice.at(target_time_step);
+                    this->data_per_time_slice.at(template_time_step);
             }
             else {
                 MessageContainer message_container =
-                    this->incoming_messages_per_time_slice.at(target_time_step);
+                    this->incoming_messages_per_time_slice.at(template_time_step);
 
                 for (const auto& [incoming_node_name, incoming_message] :
                      message_container.node_name_to_messages) {
 
-                    if (template_target_node->get_name() ==
-                        incoming_node_name) {
+                    if (incoming_node_name ==
+                        MessageNode::get_name(template_target_node->get_label(),
+                                              target_time_step)) {
                         continue;
                     }
 
@@ -112,6 +114,10 @@ namespace tomcat {
             }
 
             this->data_per_time_slice[time_step] = data_matrix;
+        }
+
+        void VariableNode::erase_data_at(int time_step) {
+            this->data_per_time_slice.erase(time_step);
         }
 
         //----------------------------------------------------------------------

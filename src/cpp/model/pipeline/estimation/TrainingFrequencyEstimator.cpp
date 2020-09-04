@@ -37,7 +37,7 @@ namespace tomcat {
                     if (!this->training_data.has_data_for(
                             node_estimates.label)) {
                         throw TomcatModelException(
-                            "No data was provided to the node " +
+                            "No training data was provided to the node " +
                             node_estimates.label);
                     }
 

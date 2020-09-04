@@ -85,6 +85,33 @@ namespace tomcat {
                                            int time_step,
                                            const EvidenceSet& new_data);
 
+            /**
+             * Computes the a node's marginal for a given assignment in the
+             * future, according to the the horizons provided to the estimator;
+             *
+             * @param node_label: node's label
+             * @param time_step: current estimated time step. The predictions
+             * are made beyond this time step up to the limit of the maximum
+             * horizon provided to the estimator
+             * @param num_data_points: number of data points in the data set
+             * used for estimation
+             *
+             * @return Estimates for each data point in a single time step.
+             */
+            Eigen::VectorXd get_predictions_for(const std::string& node_label,
+                                                int time_step,
+                                                int assignment,
+                                                int num_data_points);
+
+            /**
+             * Appends the estimates matrix with a new column.
+             *
+             * @param estimates: estimates for a given node
+             * @param new_column: new column with new estimates
+             */
+            void add_column_to_estimates(NodeEstimates& estimates,
+                                         const Eigen::VectorXd new_column);
+
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------

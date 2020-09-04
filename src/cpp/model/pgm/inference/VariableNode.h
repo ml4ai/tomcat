@@ -48,10 +48,20 @@ namespace tomcat {
              * Computes the element-wise product of all the incoming messages
              * excluding the one that comes from the target node.
              *
+             * @param template_target_node: template instance of the node where
+             * the message should go to
+             * @param template_time_step: time step of this node where to get
+             * the incoming messages from. If the template node belongs to the
+             * repeatable structure, this information is needed to know which
+             * time step to address to retrieve the incoming messages.
+             * @param target_time_step: real time step of the target node
+             * @param direction: direction of the message passing
+             *
              * @return Message
              */
             Eigen::MatrixXd get_outward_message_to(
                 const std::shared_ptr<MessageNode>& template_target_node,
+                int template_time_step,
                 int target_time_step,
                 Direction direction) const override;
 
@@ -78,6 +88,15 @@ namespace tomcat {
              *
              */
             void set_data_at(int time_step, const Eigen::VectorXd& data);
+
+            /**
+             * If there's data assigned to a node in a given time step, remove
+             * it from there.
+             *
+             * @param time_step: time step to remove the data from
+             *
+             */
+            void erase_data_at(int time_step);
 
             //------------------------------------------------------------------
             // Getters & Setters

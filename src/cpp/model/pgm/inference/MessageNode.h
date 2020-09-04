@@ -1,10 +1,10 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <utility>
 #include <vector>
-#include <memory>
 
 #include <eigen3/Eigen/Dense>
 
@@ -185,6 +185,17 @@ namespace tomcat {
             std::string get_name() const;
 
             //------------------------------------------------------------------
+            // Virtual functions
+            //------------------------------------------------------------------
+
+            /**
+             * Clears messages and beyond a given time step (not inclusive).
+             *
+             * @param time_step: time step
+             */
+            virtual void erase_incoming_messages_beyond(int time_step);
+
+            //------------------------------------------------------------------
             // Pure virtual functions
             //------------------------------------------------------------------
 
@@ -194,6 +205,10 @@ namespace tomcat {
              *
              * @param template_target_node: template instance of the node where
              * the message should go to
+             * @param template_time_step: time step of this node where to get
+             * the incoming messages from. If the template node belongs to the
+             * repeatable structure, this information is needed to know which
+             * time step to address to retrieve the incoming messages.
              * @param target_time_step: real time step of the target node
              * @param direction: direction of the message passing
              *
@@ -201,6 +216,7 @@ namespace tomcat {
              */
             virtual Eigen::MatrixXd get_outward_message_to(
                 const std::shared_ptr<MessageNode>& template_target_node,
+                int template_time_step,
                 int target_time_step,
                 Direction direction) const = 0;
 
@@ -239,6 +255,9 @@ namespace tomcat {
 
             int time_step;
 
+            // Max time step with stored messages
+            int max_time_step_stored = 0;
+
             // This map stores messages tha arrive in this node. The key to the
             // map is the time step of the messages. This is needed because a
             // node template in the repeatable time step of the factor graph
@@ -246,7 +265,6 @@ namespace tomcat {
             // the future.
             std::unordered_map<int, MessageContainer>
                 incoming_messages_per_time_slice;
-
         };
 
     } // namespace model

@@ -52,8 +52,8 @@ namespace tomcat {
             LOG(discrete_estimates);
             LOG(observed_data_in_horizon);
 
-            int rows = discrete_estimates.rows();
-            int cols = discrete_estimates.cols();
+            int rows = observed_data_in_horizon.rows();
+            int cols = observed_data_in_horizon.cols();
             ConfusionMatrix confusion_matrix;
             for (int i = 0; i < rows; i++) {
                 for (int j = node_initial_time; j < cols; j++) {

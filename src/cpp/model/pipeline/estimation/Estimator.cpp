@@ -10,8 +10,7 @@ namespace tomcat {
         //----------------------------------------------------------------------
         Estimator::Estimator() {}
 
-        Estimator::Estimator(std::shared_ptr<DynamicBayesNet> model,
-                             int inference_horizon)
+        Estimator::Estimator(std::shared_ptr<DynamicBayesNet> model, int inference_horizon)
             : model(model), inference_horizon(inference_horizon) {}
 
         Estimator::~Estimator() {}
@@ -85,6 +84,5 @@ namespace tomcat {
         int Estimator::get_inference_horizon() const {
             return inference_horizon;
         }
-
     } // namespace model
 } // namespace tomcat

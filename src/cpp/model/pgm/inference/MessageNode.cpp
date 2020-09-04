@@ -62,6 +62,9 @@ namespace tomcat {
                                                int target_time_step,
                                                const Eigen::MatrixXd& message) {
 
+            this->max_time_step_stored =
+                max(this->max_time_step_stored, target_time_step);
+
             this->incoming_messages_per_time_slice[target_time_step]
                 .set_message_for(source_label, source_time_step, message);
         }
@@ -75,6 +78,14 @@ namespace tomcat {
             this->time_step = node.time_step;
             this->incoming_messages_per_time_slice =
                 node.incoming_messages_per_time_slice;
+        }
+
+        void MessageNode::erase_incoming_messages_beyond(int time_step) {
+            for (int t = time_step + 1; t <= this->max_time_step_stored; t++) {
+                this->incoming_messages_per_time_slice.erase(t);
+            }
+            this->max_time_step_stored =
+                min(this->max_time_step_stored, time_step);
         }
 
         //----------------------------------------------------------------------

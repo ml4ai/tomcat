@@ -176,14 +176,11 @@ namespace tomcat {
                                              int time_step) const;
 
             /**
-             * Returns a....
-             * @param node_label
-             * @param time_step
-             * @return
+             * Clears messages and beyond a given time step (not inclusive).
+             *
+             * @param time_step: time step
              */
-            std::shared_ptr<MessageNode>
-            get_node_instance_in_time_step(const std::string& node_label,
-                                           int time_step) const;
+            void erase_incoming_messages_beyond(int time_step);
 
           private:
             //------------------------------------------------------------------

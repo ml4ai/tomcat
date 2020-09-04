@@ -401,7 +401,7 @@ void test_baseline_estimator(shared_ptr<DynamicBayesNet> model) {
 
 void test_sum_product_estimator(shared_ptr<DynamicBayesNet> model) {
     shared_ptr<SumProductEstimator> estimator =
-        make_shared<SumProductEstimator>(SumProductEstimator(model, 1));
+        make_shared<SumProductEstimator>(SumProductEstimator(model, 2));
     estimator->estimate(EvidenceSet());
 }
 
@@ -583,7 +583,7 @@ void test_message_passing() {
     data.add_data("G", tg_data);
     data.add_data("Y", ty_data);
 
-    SumProductEstimator sp(nullptr, 1);
+    SumProductEstimator sp(nullptr, 3);
     sp.add_node("G", Eigen::VectorXd::Constant(1, 1));
     sp.add_node("Y", Eigen::VectorXd::Constant(1, 0));
     sp.factor_graph = factor_graph;
