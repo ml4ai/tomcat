@@ -5,10 +5,7 @@
 
 (in-package :shop-user)
 (defparameter *day-state* '((human me)
-                            (early-morning)
-                            (raining)
-                            (homework-today)
-                            (work-today)))
+                            (early-morning)))
 
 (defparameter *day* '((monday me) (monday me) (monday me) (monday me)))
 
