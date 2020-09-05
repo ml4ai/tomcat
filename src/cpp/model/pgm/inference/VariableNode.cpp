@@ -52,7 +52,8 @@ namespace tomcat {
             }
             else {
                 MessageContainer message_container =
-                    this->incoming_messages_per_time_slice.at(template_time_step);
+                    this->incoming_messages_per_time_slice.at(
+                        template_time_step);
 
                 for (const auto& [incoming_node_name, incoming_message] :
                      message_container.node_name_to_messages) {
@@ -73,7 +74,11 @@ namespace tomcat {
                 }
             }
 
-            Eigen::VectorXd sum_per_row = outward_message.rowwise().sum();
+            // Outliers can result in zero vector probabilities. Adding a noise
+            // to generate a uniform distribution after normalization.
+            outward_message = outward_message.array() + EPSILON;
+            Eigen::VectorXd sum_per_row =
+                outward_message.rowwise().sum().array();
             outward_message =
                 (outward_message.array().colwise() / sum_per_row.array())
                     .matrix();

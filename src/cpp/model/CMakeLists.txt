@@ -105,7 +105,7 @@ if(APPLE
   endif()
 endif()
 
-add_executable(TomcatModel main.cpp)
+add_executable(TomcatModel main.cpp Tomcat.cpp Tomcat.h)
 target_include_directories(TomcatModel PRIVATE ${Boost_INCLUDE_DIR}
                                                ${Mosquitto_INCLUDE_DIRS})
 target_link_libraries(

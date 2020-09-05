@@ -208,7 +208,7 @@ namespace tomcat {
 
             // Unlog and normalize the weights
             weights.colwise() -= weights.rowwise().maxCoeff();
-            weights = weights.array().exp() - EPSILON;
+            weights = weights.array().exp();
             // Normalize the message
             Eigen::VectorXd sum_per_row = weights.rowwise().sum();
             weights =
