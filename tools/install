@@ -46,7 +46,8 @@ __build_tomcat() {
                 NJOBS=$(sysctl -n hw.ncpu)
                 if ! cmake ${TOMCAT}; then exit 1; fi
             fi
-
+#           Needed to build in docker!
+            cmake ${TOMCAT} -DBUILD_EXAMPLES=ON
             if ! make -j $NJOBS; then exit 1; fi
             if ! make -j $NJOBS Minecraft; then exit 1; fi
         popd > /dev/null
