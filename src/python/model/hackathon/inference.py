@@ -54,8 +54,7 @@ class ModelInference:
             alpha = np.zeros(num_states)
             alpha[initial_state] = 1
 
-            # skip the first one
-            for t in range(1, evidence_set.time_slices - h + 1):  # Prediction time
+            for t in range(evidence_set.time_slices - h):  # Prediction time
                 cum_f_tg = 1
                 cum_f_ty = 1
                 for w in range(h):
@@ -72,18 +71,27 @@ class ModelInference:
                                        1 - self.model.cpd_tables.pi_ty[:, x])
 
                 # Because of precision, cum_f can be slightly greater than 1
-                tg_marginals[d, t - 1] = 1 - (cum_f_tg if cum_f_tg < 1 else 1)
-                ty_marginals[d, t - 1] = 1 - (cum_f_ty if cum_f_ty < 1 else 1)
+                prob_tg = 1 - (cum_f_tg if cum_f_tg < 1 else 1)
+                tg_marginals[d, t] = prob_tg
 
-                lt = o_lt[t]
-                tg = o_tg[t]
-                ty = o_ty[t]
-                rm = o_rm[t]
+                prob_ty = 1 - (cum_f_ty if cum_f_ty < 1 else 1)
+                ty_marginals[d, t] = prob_ty
 
-                alpha = self.model.cpd_tables.pi_lt[:, lt] * \
-                        self.model.cpd_tables.pi_tg[:, tg] * \
-                        self.model.cpd_tables.pi_ty[:, ty] * \
-                        self.model.cpd_tables.theta_rm[:, rm] * np.dot(alpha, self.model.cpd_tables.theta_s)
+                # lt = o_lt[t]
+                tg = o_tg[t+1]
+                ty = o_ty[t+1]
+                rm = o_rm[t+1]
+
+                # alpha = self.model.cpd_tables.pi_lt[:, lt] * \
+                tg_norm = self.model.cpd_tables.pi_tg[:, tg] / np.sum(self.model.cpd_tables.pi_tg[:, tg])
+                ty_norm = self.model.cpd_tables.pi_ty[:, ty] / np.sum(self.model.cpd_tables.pi_ty[:, ty])
+                rm_norm = self.model.cpd_tables.theta_rm[:, rm] / np.sum(self.model.cpd_tables.theta_rm[:, rm])
+                # temp = self.model.cpd_tables.pi_tg[:, tg] * \
+                #         self.model.cpd_tables.pi_ty[:, ty] * \
+                #         self.model.cpd_tables.theta_rm[:, rm] * alpha
+                temp = tg_norm * ty_norm * rm_norm * alpha
+                temp = temp / np.sum(temp)
+                alpha = np.dot(temp, self.model.cpd_tables.theta_s)
                 alpha = alpha / sum(alpha)
 
         return tg_marginals, ty_marginals

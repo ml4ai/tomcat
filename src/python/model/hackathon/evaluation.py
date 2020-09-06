@@ -307,6 +307,9 @@ def compute_accuracy_for_triaging(
     tg_conf_matrix = np.zeros((2, 2))
     ty_conf_matrix = np.zeros((2, 2))
 
+    cum_pred = []
+    cum_real = []
+
     for d in range(test_set.number_of_data_points):
         if len(tg_probabilities.shape) > 1:
             tg_data_point_probabilities = tg_probabilities[d]
@@ -315,18 +318,18 @@ def compute_accuracy_for_triaging(
             tg_data_point_probabilities = tg_probabilities
             ty_data_point_probabilities = ty_probabilities
 
-        tg_evidence = test_set.tg_evidence[d][1:]
-        ty_evidence = test_set.ty_evidence[d][1:]
+        tg_evidence = test_set.tg_evidence[d]
+        ty_evidence = test_set.ty_evidence[d]
 
-        agg_tg_evidence = np.zeros(len(tg_evidence) - h + 1, dtype=np.int)
-        agg_ty_evidence = np.zeros(len(tg_evidence) - h + 1, dtype=np.int)
-        for i in range(len(tg_evidence) - h + 1):
-            agg_tg_evidence[i] = tg_evidence[i]
-            agg_ty_evidence[i] = ty_evidence[i]
+        agg_tg_evidence = np.zeros(len(tg_evidence) - h, dtype=np.int)
+        agg_ty_evidence = np.zeros(len(tg_evidence) - h, dtype=np.int)
+        for i in range(1, len(tg_evidence) - h + 1):
+            agg_tg_evidence[i-1] = tg_evidence[i]
+            agg_ty_evidence[i-1] = ty_evidence[i]
             for j in range(h - 1):
-                agg_tg_evidence[i] |= tg_evidence[i + j + 1]
-                agg_ty_evidence[i] |= ty_evidence[i + j + 1]
-                if agg_tg_evidence[i] & agg_ty_evidence[i]:
+                agg_tg_evidence[i-1] |= tg_evidence[i + j + 1]
+                agg_ty_evidence[i-1] |= ty_evidence[i + j + 1]
+                if agg_tg_evidence[i-1] & agg_ty_evidence[i-1]:
                     break
 
         # ylog(p(y)) + (1-y)log(1-p(y))
@@ -342,8 +345,12 @@ def compute_accuracy_for_triaging(
         tg_accuracy += accuracy_score(agg_tg_evidence, tg_predicted_labels)
         ty_accuracy += accuracy_score(agg_ty_evidence, ty_predicted_labels)
 
+        cum_pred.append(ty_predicted_labels)
+        cum_real.append(agg_ty_evidence)
         tg_conf_matrix += confusion_matrix(agg_tg_evidence, tg_predicted_labels)
         ty_conf_matrix += confusion_matrix(agg_ty_evidence, ty_predicted_labels)
+
+    np.savetxt('../data/temp.txt', np.array(cum_pred + cum_real), fmt="%i", )
 
     tg_log_loss /= test_set.number_of_data_points
     ty_log_loss /= test_set.number_of_data_points
@@ -613,33 +620,33 @@ def experiment_eval_performance_synthetic(num_samples, gibbs_samples, gibbs_burn
                      "../data/models/synthetic_falcon" + sharing_opt)
 
 def experiment_eval_performance_new_format(gibbs_samples, gibbs_burn_in, horizons):
-    print('>> Falcon Shared Lights On')
-    np.random.seed(42)
-    random.seed(42)
-    models = Model()
-    models.init_from_mission_map(MissionMap.SHARED)
-    evidence_set = load_evidence_set("../data/evidence/asist/falcon/combined")
-    evidence_set.lt_evidence = evidence_set.lt_evidence[0:5, :]
-    evidence_set.rm_evidence = evidence_set.rm_evidence[0:5, :]
-    evidence_set.tg_evidence = evidence_set.tg_evidence[0:5, :]
-    evidence_set.ty_evidence = evidence_set.ty_evidence[0:5, :]
-    num_folds = 5
-    sharing_opt = "shared"
+    # print('>> Falcon Shared Lights On')
+    # np.random.seed(42)
+    # random.seed(42)
+    # models = Model()
+    # models.init_from_mission_map(MissionMap.SHARED)
+    # evidence_set = load_evidence_set("../data/evidence/asist/falcon/combined")
+    # evidence_set.lt_evidence = evidence_set.lt_evidence[0:5, :]
+    # evidence_set.rm_evidence = evidence_set.rm_evidence[0:5, :]
+    # evidence_set.tg_evidence = evidence_set.tg_evidence[0:5, :]
+    # evidence_set.ty_evidence = evidence_set.ty_evidence[0:5, :]
+    # num_folds = 5
+    # sharing_opt = "shared"
     # sharing_opt = "combined/shared"
     # num_folds = 4
 
-    fit_and_evaluate(models, evidence_set, gibbs_samples, gibbs_burn_in, num_folds, horizons, "../data/models/falcon/" + sharing_opt)
-
-    print('>> Falcon Shared Combined Lights On')
-    np.random.seed(42)
-    random.seed(42)
-    models = Model()
-    models.init_from_mission_map(MissionMap.SHARED)
-    evidence_set = load_evidence_set("../data/evidence/asist/falcon/combined")
-    num_folds = 4
-    sharing_opt = "combined/shared"
-
-    fit_and_evaluate(models, evidence_set, gibbs_samples, gibbs_burn_in, num_folds, horizons, "../data/models/falcon/" + sharing_opt)
+    # fit_and_evaluate(models, evidence_set, gibbs_samples, gibbs_burn_in, num_folds, horizons, "../data/models/falcon/" + sharing_opt)
+    #
+    # print('>> Falcon Shared Combined Lights On')
+    # np.random.seed(42)
+    # random.seed(42)
+    # models = Model()
+    # models.init_from_mission_map(MissionMap.SHARED)
+    # evidence_set = load_evidence_set("../data/evidence/asist/falcon/combined")
+    # num_folds = 4
+    # sharing_opt = "combined/shared"
+    #
+    # fit_and_evaluate(models, evidence_set, gibbs_samples, gibbs_burn_in, num_folds, horizons, "../data/models/falcon/" + sharing_opt)
 
     print('>> Falcon Shared Tested on New')
     np.random.seed(42)
