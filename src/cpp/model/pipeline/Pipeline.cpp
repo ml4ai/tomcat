@@ -28,7 +28,7 @@ namespace tomcat {
                 this->aggregator->reset();
             }
 
-            KFold::Split splits = this->data_splitter->split(this->data);
+            std::vector<KFold::Split> splits = this->data_splitter->get_splits();
             for (const auto& [training_data, test_data] : splits) {
                 this->model_trainner->fit(training_data);
                 if (this->model_saver != nullptr) {
@@ -79,14 +79,13 @@ namespace tomcat {
             std::string final_timestamp =
                 boost::posix_time::to_iso_extended_string(execution_end_time);
             auto duration = execution_end_time - execution_start_time;
-            long duration_in_seconds = duration.seconds();
+            long duration_in_seconds = duration.total_seconds();
 
             nlohmann::json json;
             json["id"] = this->id;
             json["execution_start"] = initial_timestamp;
-            json["execution_end"] = initial_timestamp;
+            json["execution_end"] = final_timestamp;
             json["duration_in_seconds"] = duration_in_seconds;
-            this->data.get_info(json["data"]);
             this->data_splitter->get_info(json["data_split"]);
             this->model_trainner->get_info(json["training"]);
             this->aggregator->get_info(json["evaluation"]);
@@ -97,8 +96,6 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Getters & Setters
         //----------------------------------------------------------------------
-        void Pipeline::set_data(const EvidenceSet& data) { this->data = data; }
-
         void Pipeline::set_data_splitter(
             const std::shared_ptr<KFold>& data_splitter) {
             this->data_splitter = data_splitter;

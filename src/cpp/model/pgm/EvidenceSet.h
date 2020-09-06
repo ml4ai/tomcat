@@ -144,13 +144,6 @@ namespace tomcat {
                               const Tensor3 data);
 
             /**
-             * Writes information about the splitter in a json object.
-             *
-             * @param json: json object
-             */
-            void get_info(nlohmann::json& json) const;
-
-            /**
              * For a given node's data, returns a logical matrix flagging the
              * time steps where a given assignment was observed within a given
              * window.
@@ -174,8 +167,6 @@ namespace tomcat {
 
             int get_time_steps() const;
 
-            void set_id(const std::string& id);
-
           private:
             //------------------------------------------------------------------
             // Member functions
@@ -191,8 +182,6 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------
-            std::string id = "";
-
             int num_data_points = 0;
 
             int time_steps = 0;

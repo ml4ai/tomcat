@@ -26,7 +26,7 @@ namespace tomcat {
 
         struct Timer {
 
-            typedef std::chrono::milliseconds seconds;
+            typedef std::chrono::seconds seconds;
 
             std::chrono::time_point<std::chrono::steady_clock> start, end;
             std::chrono::duration<float> duration;

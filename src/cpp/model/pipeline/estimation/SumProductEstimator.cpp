@@ -93,13 +93,6 @@ namespace tomcat {
                 }
             }
 
-            for (auto& estimates : this->nodes_estimates) {
-                std::cout << estimates.label << " = " << estimates.assignment
-                          << std::endl;
-                LOG(estimates.estimates);
-                LOG("");
-            }
-
             this->next_time_step += new_data.get_time_steps();
         }
 
@@ -159,11 +152,11 @@ namespace tomcat {
                                 time_step,
                                 MessageNode::Direction::forward);
 
-                        LOG("Forward");
-                        LOG(MessageNode::get_name(node->get_label(),
-                                                  time_step));
-                        LOG(message);
-                        LOG("");
+//                        LOG("Forward");
+//                        LOG(MessageNode::get_name(node->get_label(),
+//                                                  time_step));
+//                        LOG(message);
+//                        LOG("");
 
                         node->set_incoming_message_from(
                             parent_node->get_label(),
@@ -226,11 +219,11 @@ namespace tomcat {
                                     time_step,
                                     MessageNode::Direction::backwards);
 
-                            LOG("Backward");
-                            LOG(MessageNode::get_name(node->get_label(),
-                                                      time_step));
-                            LOG(message);
-                            LOG("");
+//                            LOG("Backward");
+//                            LOG(MessageNode::get_name(node->get_label(),
+//                                                      time_step));
+//                            LOG(message);
+//                            LOG("");
 
                             node->set_incoming_message_from(
                                 child_vertex->get_label(),
@@ -265,8 +258,6 @@ namespace tomcat {
             for (int h = 1; h <= this->inference_horizon; h++) {
                 // Simulate new data coming and compute estimates in a regular
                 // way.
-                std::cout << node_label << " t = " << time_step << " h = " << h
-                          << std::endl;
                 this->next_time_step = time_step + h;
                 this->compute_forward_messages(
                     this->factor_graph, time_step + h, horizon_data);
@@ -276,10 +267,6 @@ namespace tomcat {
                 Eigen::MatrixXd marginal =
                     factor_graph.get_marginal_for(node_label, time_step + h);
 
-                std::cout << ">" << node_label << " t = " << time_step
-                          << " h = " << h << std::endl;
-                std::cout << "Marginal at " << time_step + h << std::endl;
-                LOG(marginal.col(opposite_assignment));
                 if (estimates.size() == 0) {
                     estimates = marginal.col(opposite_assignment);
                 }

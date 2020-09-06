@@ -11,16 +11,8 @@
 namespace tomcat {
     namespace model {
 
-        //------------------------------------------------------------------
-        // Forward declarations
-        //------------------------------------------------------------------
-
-        //------------------------------------------------------------------
-        // Structs
-        //------------------------------------------------------------------
-
         /**
-         * Class description here
+         * ToMCAT PGM
          */
         class Tomcat {
           public:
@@ -42,6 +34,9 @@ namespace tomcat {
             // Constructors & Destructor
             //------------------------------------------------------------------
 
+            /**
+             * Creates a tomcat model object.
+             */
             Tomcat();
 
             ~Tomcat();
@@ -49,63 +44,42 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Copy & Move constructors/assignments
             //------------------------------------------------------------------
+            Tomcat(const Tomcat&) = default;
 
-            // Copy constructor and assignment should be deleted to avoid
-            // implicit slicing and loss of polymorphic behaviour in the
-            // subclasses. To deep copy, the clone method must be used.
-            Tomcat(const Tomcat&) = delete;
-
-            Tomcat& operator=(const Tomcat&) = delete;
+            Tomcat& operator=(const Tomcat&) = default;
 
             Tomcat(Tomcat&&) = default;
 
             Tomcat& operator=(Tomcat&&) = default;
 
             //------------------------------------------------------------------
-            // Operator overload
-            //------------------------------------------------------------------
-
-            //------------------------------------------------------------------
-            // Static functions
-            //------------------------------------------------------------------
-
-            //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
+
+            /**
+             * Initializes ToMCAT as the v1.0 of the model for the TA3 testbed
+             * as a DBN.
+             */
             void init_ta3_learnable_model();
 
-            void
-            generate_synthetic_data(std::shared_ptr<gsl_rng> random_generator,
-                                    int num_samples,
-                                    const std::string& output_folder);
-
-            //------------------------------------------------------------------
-            // Virtual functions
-            //------------------------------------------------------------------
-
-            //------------------------------------------------------------------
-            // Pure virtual functions
-            //------------------------------------------------------------------
+            /**
+             * Generates synthetic data for the instantiated model.
+             *
+             * @param random_generator: random number generator
+             * @param num_samples: number of samples to generate
+             * @param output_folder: folder where the samples must be saved
+             */
+            void generate_synthetic_data(
+                  std::shared_ptr<gsl_rng> random_generator,
+                  int num_samples,
+                  const std::string& output_folder);
 
             //------------------------------------------------------------------
             // Getters & Setters
             //------------------------------------------------------------------
             const std::shared_ptr<DynamicBayesNet>& get_model() const;
 
-          protected:
-            //------------------------------------------------------------------
-            // Member functions
-            //------------------------------------------------------------------
-
-            //------------------------------------------------------------------
-            // Data members
-            //------------------------------------------------------------------
-
           private:
-            //------------------------------------------------------------------
-            // Member functions
-            //------------------------------------------------------------------
-
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------

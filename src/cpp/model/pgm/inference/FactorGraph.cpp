@@ -57,25 +57,6 @@ namespace tomcat {
                 }
             }
 
-            // Print edges
-            Graph::edge_iterator begin, end;
-            boost::tie(begin, end) = boost::edges(factor_graph.graph);
-            while (begin != end) {
-                int source_vertex_id =
-                    boost::source(*begin, factor_graph.graph);
-                int target_vertex_id =
-                    boost::target(*begin, factor_graph.graph);
-
-                string source_name =
-                    factor_graph.graph[source_vertex_id]->get_name();
-                string target_name =
-                    factor_graph.graph[target_vertex_id]->get_name();
-
-                std::cout << source_name << " -> " << target_name << std::endl;
-
-                begin++;
-            }
-
             return factor_graph;
         }
 

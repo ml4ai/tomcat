@@ -10,32 +10,43 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
-        KFold::KFold(std::shared_ptr<gsl_rng> random_generator, int num_folds)
-            : random_generator(random_generator), num_folds(num_folds) {}
+        KFold::KFold(const EvidenceSet& data,
+                     int num_folds,
+                     std::shared_ptr<gsl_rng> random_generator) {
+
+            this->split(data, num_folds, random_generator);
+        }
+
+        KFold::KFold(const EvidenceSet& training_data,
+                     const EvidenceSet& test_data) {
+
+            this->splits.push_back(std::make_pair(training_data, test_data));
+        }
 
         KFold::~KFold() {}
 
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        KFold::Split KFold::split(const EvidenceSet& data) {
+        void KFold::split(const EvidenceSet& data,
+                          int num_folds,
+                          std::shared_ptr<gsl_rng> random_generator) {
 
-            if (this->num_folds > data.get_num_data_points()) {
+            if (num_folds > data.get_num_data_points()) {
                 throw std::invalid_argument(
                     "The number of folds is bigger than the number of data "
                     "points in the evidence set.");
             }
 
             std::vector<int> fold_sizes =
-                this->get_fold_sizes(data.get_num_data_points());
-            std::vector<int> shuffled_indices =
-                this->get_shuffled_indices(data.get_num_data_points());
+                this->get_fold_sizes(data.get_num_data_points(), num_folds);
+            std::vector<int> shuffled_indices = this->get_shuffled_indices(
+                data.get_num_data_points(), random_generator);
 
-            Split splits;
-            splits.reserve(this->num_folds);
+            this->splits.reserve(num_folds);
             int start_idx = 0;
 
-            for (int i = 0; i < this->num_folds; i++) {
+            for (int i = 0; i < num_folds; i++) {
                 int end_idx = start_idx + fold_sizes[i] - 1;
 
                 EvidenceSet training;
@@ -70,39 +81,37 @@ namespace tomcat {
                 if (num_folds == 1) {
                     // In this case the single fold must be used as training
                     // data instead of test data.
-                    splits.push_back(std::make_pair(test, training));
+                    this->splits.push_back(std::make_pair(test, training));
                 }
                 else {
-                    splits.push_back(std::make_pair(training, test));
+                    this->splits.push_back(std::make_pair(training, test));
                 }
 
                 start_idx = end_idx + 1;
             }
-
-            return splits;
         }
 
-        std::vector<int>
-        KFold::get_shuffled_indices(int num_data_points) const {
+        std::vector<int> KFold::get_shuffled_indices(
+            int num_data_points,
+            std::shared_ptr<gsl_rng> random_generator) const {
             int* indices = new int[num_data_points];
             for (int i = 0; i < num_data_points; i++) {
                 indices[i] = i;
             }
 
-            gsl_ran_shuffle(this->random_generator.get(),
-                            indices,
-                            num_data_points,
-                            sizeof(int));
+            gsl_ran_shuffle(
+                random_generator.get(), indices, num_data_points, sizeof(int));
 
             return std::vector<int>(indices, indices + num_data_points);
         }
 
-        std::vector<int> KFold::get_fold_sizes(int num_data_points) const {
-            int fold_size = floor(num_data_points / this->num_folds);
-            int excess = num_data_points % this->num_folds;
-            std::vector<int> fold_sizes(this->num_folds);
+        std::vector<int> KFold::get_fold_sizes(int num_data_points,
+                                               int num_folds) const {
+            int fold_size = floor(num_data_points / num_folds);
+            int excess = num_data_points % num_folds;
+            std::vector<int> fold_sizes(num_folds);
 
-            for (int i = 0; i < this->num_folds; i++) {
+            for (int i = 0; i < num_folds; i++) {
                 fold_sizes[i] = fold_size;
                 if (excess > 0) {
                     fold_sizes[i]++;
@@ -113,9 +122,14 @@ namespace tomcat {
             return fold_sizes;
         }
 
-        void KFold::get_info(nlohmann::json &json) const {
-            json["num_folds"] = this->num_folds;
+        void KFold::get_info(nlohmann::json& json) const {
+            json["num_folds"] = this->splits.size();
         }
+
+        //----------------------------------------------------------------------
+        // Member functions
+        //----------------------------------------------------------------------
+        const std::vector<KFold::Split>& KFold::get_splits() const { return splits; }
 
     } // namespace model
 } // namespace tomcat

@@ -24,7 +24,7 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Types, Enums & Constants
             //------------------------------------------------------------------
-            typedef std::vector<std::pair<EvidenceSet, EvidenceSet>> Split;
+            typedef std::pair<EvidenceSet, EvidenceSet> Split;
 
             //------------------------------------------------------------------
             // Constructors & Destructor
@@ -33,10 +33,16 @@ namespace tomcat {
             /**
              * Creates an instance of a KFold data splitter.
              *
-             * @param random_generator
-             * @param num_folds
+             * @param data: data to be split
+             * @param num_folds: number of splits
+             * @param random_generator: random number generator
              */
-            KFold(std::shared_ptr<gsl_rng> random_generator, int num_folds);
+            KFold(const EvidenceSet& data,
+                  int num_folds,
+                  std::shared_ptr<gsl_rng> random_generator);
+
+            KFold(const EvidenceSet& training_data,
+                  const EvidenceSet& test_data);
 
             ~KFold();
 
@@ -56,20 +62,16 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
-             * Creates k data splits comprised of disjoint training and test set.
-             *
-             * @param data: data to be split
-             *
-             * @return List of splits
-             */
-            Split split(const EvidenceSet& data);
-
-            /**
              * Writes information about the splitter in a json object.
              *
              * @param json: json object
              */
             void get_info(nlohmann::json& json) const;
+
+            //------------------------------------------------------------------
+            // Getters & Setters
+            //------------------------------------------------------------------
+            const std::vector<Split>& get_splits() const;
 
           private:
             //------------------------------------------------------------------
@@ -77,32 +79,48 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
+             * Creates k data splits comprised of disjoint training and test
+             * set.
+             *
+             * @param data: data to be split
+             * @param num_folds: number of splits
+             * @param random_generator: random number generator
+             */
+            void split(const EvidenceSet& data,
+                       int num_folds,
+                       std::shared_ptr<gsl_rng> random_generator);
+
+            /**
              * Returns a list of shuffled indices of the data points.
              *
-             * @param random_generator: random number generator
              * @param num_data_points: number of data points that will be
              * split into folds
+             * @param random_generator: random number generator
              *
              * @return Shuffled indices of the data points.
              */
-            std::vector<int> get_shuffled_indices(int num_data_points) const;
+            std::vector<int> get_shuffled_indices(
+                int num_data_points,
+                std::shared_ptr<gsl_rng> random_generator) const;
 
             /**
              * Returns the number of data points in each fold.
              *
              * @param num_data_points: number of data points that will be
              * split into folds
+             * @param num_folds: number of splits
              *
              * @return Number of data points in each one of the folds.
              */
-            std::vector<int> get_fold_sizes(int num_data_points) const;
+            std::vector<int> get_fold_sizes(int num_data_points, int num_folds) const;
 
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------
-            std::shared_ptr<gsl_rng> random_generator;
 
-            int num_folds;
+            // Data split in training and test sets. Populated in the creation
+            // of the class object.
+            std::vector<Split> splits;
         };
 
     } // namespace model

@@ -6,7 +6,6 @@
 #include "pgm/RandomVariableNode.h"
 #include "pgm/cpd/CategoricalCPD.h"
 #include "pgm/cpd/DirichletCPD.h"
-#include "pgm/cpd/DirichletCPD.h"
 #include "sampling/AncestralSampler.h"
 
 using namespace std;
@@ -22,18 +21,10 @@ namespace tomcat {
         Tomcat::~Tomcat() {}
 
         //----------------------------------------------------------------------
-        // Operator overload
-        //----------------------------------------------------------------------
-
-        //----------------------------------------------------------------------
-        // Static functions
-        //----------------------------------------------------------------------
-
-        //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
         void Tomcat::init_ta3_learnable_model() {
-            int num_states = 7;
+            int num_states = 4;
 
             // 1. Parameter nodes
 
@@ -60,47 +51,29 @@ namespace tomcat {
             // 1.1.2 CPD (priors of the parameters)
             std::vector<std::shared_ptr<DirichletCPD>> theta_s_cpds(num_states);
 
-            // From HW to HW | LRW | DRW
+            // From HW to HW | RW | SG | SY
             Eigen::MatrixXd theta_s0(1, num_states);
-            theta_s0 << 1, 1, EPSILON, EPSILON, 1, EPSILON, EPSILON;
+            theta_s0 << 1, 1, EPSILON, EPSILON;
             DirichletCPD theta_s_cpd_temp({}, theta_s0);
             theta_s_cpds[0] = make_shared<DirichletCPD>(move(theta_s_cpd_temp));
 
-            // From LRW to HW | LRW | Lsg | Lsy | DRW
+            // From RW to HW | RW | SG | SY
             Eigen::MatrixXd theta_s1(1, num_states);
-            theta_s1 << 1, 1, 1, 1, 1, EPSILON, EPSILON;
+            theta_s1 << 1, 1, 1, 1;
             theta_s_cpd_temp = DirichletCPD({}, theta_s1);
             theta_s_cpds[1] = make_shared<DirichletCPD>(move(theta_s_cpd_temp));
 
-            // From Lsg to LRW | Lsg
+            // From SG to HW | RW | SG | SY
             Eigen::MatrixXd theta_s2(1, num_states);
-            theta_s2 << EPSILON, 1, 1, EPSILON, EPSILON, EPSILON, EPSILON;
+            theta_s2 << EPSILON, 1, 1, EPSILON;
             theta_s_cpd_temp = DirichletCPD({}, theta_s2);
             theta_s_cpds[2] = make_shared<DirichletCPD>(move(theta_s_cpd_temp));
 
-            // From Lsy to LRW | Lsy
+            // From SY to HW | RW | SG | SY
             Eigen::MatrixXd theta_s3(1, num_states);
-            theta_s3 << EPSILON, 1, EPSILON, 1, EPSILON, EPSILON, EPSILON;
+            theta_s3 << EPSILON, 1, EPSILON, 1;
             theta_s_cpd_temp = DirichletCPD({}, theta_s3);
             theta_s_cpds[3] = make_shared<DirichletCPD>(move(theta_s_cpd_temp));
-
-            // From DRW to HW | LRW | DRW | Dsg | Dsy
-            Eigen::MatrixXd theta_s4(1, num_states);
-            theta_s4 << 1, 1, EPSILON, EPSILON, 1, 1, 1;
-            theta_s_cpd_temp = DirichletCPD({}, theta_s4);
-            theta_s_cpds[4] = make_shared<DirichletCPD>(move(theta_s_cpd_temp));
-
-            // From Dsg to DRW | Dsg
-            Eigen::MatrixXd theta_s5(1, num_states);
-            theta_s5 << EPSILON, EPSILON, EPSILON, EPSILON, 1, 1, EPSILON;
-            theta_s_cpd_temp = DirichletCPD({}, theta_s5);
-            theta_s_cpds[5] = make_shared<DirichletCPD>(move(theta_s_cpd_temp));
-
-            // From Dsy to DRW | Dsy
-            Eigen::MatrixXd theta_s6(1, num_states);
-            theta_s6 << EPSILON, EPSILON, EPSILON, EPSILON, 1, EPSILON, 1;
-            theta_s_cpd_temp = DirichletCPD({}, theta_s6);
-            theta_s_cpds[6] = make_shared<DirichletCPD>(move(theta_s_cpd_temp));
 
             // 1.1.3 Random Variables
             std::vector<std::shared_ptr<RandomVariableNode>> theta_s_nodes(
@@ -166,26 +139,24 @@ namespace tomcat {
             // HW (the first state) is the only state where the player is not in
             // a room but in the hallway
             Eigen::MatrixXd room_emission_matrix(num_states, 2);
-            room_emission_matrix << 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0;
+            room_emission_matrix << 1, EPSILON, EPSILON, 1, EPSILON, 1, EPSILON, 1;
             CategoricalCPD room_emission_cpd_temp({state_metadata},
                                                   room_emission_matrix);
             shared_ptr<CategoricalCPD> room_emission_cpd =
                 make_shared<CategoricalCPD>(std::move(room_emission_cpd_temp));
 
-            // 2.2.4 sg Emission
+            // 2.2.4 SG Emission
 
-            // HW (the first state) is the only state where the player is not in
-            // a room but in the hallway
             Eigen::MatrixXd sg_emission_matrix(num_states, 2);
-            sg_emission_matrix << 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0;
+            sg_emission_matrix << 1, EPSILON, 1, EPSILON, EPSILON, 1, 1, EPSILON;
             CategoricalCPD sg_emission_cpd_temp({state_metadata},
                                                 sg_emission_matrix);
             shared_ptr<CategoricalCPD> sg_emission_cpd =
                 make_shared<CategoricalCPD>(std::move(sg_emission_cpd_temp));
 
-            // 2.2.5 SG Emission
+            // 2.2.5 SY Emission
             Eigen::MatrixXd sy_emission_matrix(num_states, 2);
-            sy_emission_matrix << 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0;
+            sy_emission_matrix << 1, EPSILON, 1, EPSILON, 1, EPSILON, EPSILON, 1;
             CategoricalCPD sy_emission_cpd_temp({state_metadata},
                                                 sy_emission_matrix);
             shared_ptr<CategoricalCPD> sy_emission_cpd =

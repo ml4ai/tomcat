@@ -94,8 +94,6 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Getters & Setters
             //------------------------------------------------------------------
-            void set_data(const EvidenceSet& data);
-
             void set_data_splitter(const std::shared_ptr<KFold>& data_splitter);
 
             void set_model_trainner(
@@ -127,8 +125,6 @@ namespace tomcat {
 
             // Where to display pipeline execution's results.
             std::ostream& output_stream;
-
-            EvidenceSet data;
 
             std::shared_ptr<KFold> data_splitter;
 

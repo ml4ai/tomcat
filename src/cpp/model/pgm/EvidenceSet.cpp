@@ -40,9 +40,6 @@ namespace tomcat {
             int window) {
 
             Eigen::MatrixXd logical_data = (data == assignment);
-            LOG(data);
-            LOG("");
-            LOG(assignment);
             int first_time_step = get_first_time_with_observation(data);
             int num_rows = logical_data.rows();
             int num_cols = logical_data.cols();
@@ -83,7 +80,7 @@ namespace tomcat {
 
         int EvidenceSet::get_first_time_with_observation(const Tensor3& data) {
 
-            int time_step = 0;
+            int time_step = -1;
             auto [d1, d2, d3] = data.get_shape();
             for (int k = 0; k < d3; k++) {
                 bool has_data = true;
@@ -170,12 +167,6 @@ namespace tomcat {
             this->node_label_to_data[node_label] = data;
         }
 
-        void EvidenceSet::get_info(nlohmann::json& json) const {
-            json["id"] = this->id;
-            json["num_data_points"] = this->get_num_data_points();
-            json["time_steps"] = this->get_time_steps();
-        }
-
         Eigen::MatrixXd EvidenceSet::get_observations_in_window_for(
             const std::string& node_label,
             const Eigen::VectorXd& assignment,
@@ -191,8 +182,6 @@ namespace tomcat {
         int EvidenceSet::get_num_data_points() const { return num_data_points; }
 
         int EvidenceSet::get_time_steps() const { return time_steps; }
-
-        void EvidenceSet::set_id(const std::string& id) { this->id = id; }
 
     } // namespace model
 } // namespace tomcat

@@ -39,7 +39,6 @@ namespace tomcat {
             // If estimates are probabilities, make it class 1 if above 0.5.
             Eigen::MatrixXd discrete_estimates =
                 (estimates.estimates.array() > 0.5).select(ones, no_obs);
-            LOG(discrete_estimates);
 
             // For a given assignment, transform the test data into 0s and 1s.
             // Where 1 is assigned to the coefficients equal to the assignment
@@ -55,10 +54,7 @@ namespace tomcat {
             // that column.
             int node_initial_time =
                 EvidenceSet::get_first_time_with_observation(
-                    test_data[estimates.label]);
-
-            LOG(discrete_estimates);
-            LOG(observed_data_in_horizon);
+                    observed_data_in_horizon);
 
             int rows = observed_data_in_horizon.rows();
             int cols = observed_data_in_horizon.cols();

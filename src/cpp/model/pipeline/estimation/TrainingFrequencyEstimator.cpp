@@ -55,8 +55,6 @@ namespace tomcat {
 
                     node_estimates.estimates = estimates;
 
-                    LOG(this->training_data[node_estimates.label]);
-                    LOG(estimates);
                 }
             }
         }

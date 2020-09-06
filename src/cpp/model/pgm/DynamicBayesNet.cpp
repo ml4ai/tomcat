@@ -375,7 +375,7 @@ namespace tomcat {
 
                 std::string filename = file.path().filename().string();
                 std::string parameter_timed_name = remove_extension(filename);
-                Eigen::VectorXd assignment =
+                Eigen::MatrixXd assignment =
                     read_matrix_from_file(file.path().string());
 
                 // Set loaded vector as assignment of the corresponding
