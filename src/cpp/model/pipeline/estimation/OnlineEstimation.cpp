@@ -9,6 +9,8 @@
 namespace tomcat {
     namespace model {
 
+        using namespace std;
+
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
@@ -50,7 +52,7 @@ namespace tomcat {
             this->connect(this->config.address, this->config.port, 60);
             this->subscribe(this->config.state_topic);
             this->subscribe(this->config.events_topic);
-            std::thread estimation_thread(
+            thread estimation_thread(
                 &OnlineEstimation::run_estimation_thread, this);
             this->loop();
             this->close();
@@ -85,12 +87,12 @@ namespace tomcat {
                 for (const auto estimator : this->estimators) {
                     for (const auto& node_estimates :
                          estimator->get_estimates_at(this->time_step)) {
-                        std::string estimator_name = estimator->get_name();
-                        std::replace(estimator_name.begin(),
+                        string estimator_name = estimator->get_name();
+                        replace(estimator_name.begin(),
                                      estimator_name.end(),
                                      ' ',
                                      '_');
-                        std::stringstream ss_topic;
+                        stringstream ss_topic;
                         ss_topic << this->config.estimates_topic << "/"
                                  << estimator_name << "/"
                                  << node_estimates.label;
@@ -100,19 +102,19 @@ namespace tomcat {
                     }
                 }
             }
-            catch (std::out_of_range& e) {
+            catch (out_of_range& e) {
                 this->publish(this->config.log_topic, "max_time_step_reached");
                 this->running = false;
             }
         }
 
-        void OnlineEstimation::on_error(const std::string& error_message) {
+        void OnlineEstimation::on_error(const string& error_message) {
             this->close();
             throw TomcatModelException(error_message);
         }
 
-        void OnlineEstimation::on_message(const std::string& topic,
-                                          const std::string& message) {
+        void OnlineEstimation::on_message(const string& topic,
+                                          const string& message) {
             // TODO: Convert message to data set.
             Tensor3 data1(Eigen::MatrixXd::Ones(1, 1));
             Tensor3 data2(Eigen::MatrixXd::Ones(1, 1));

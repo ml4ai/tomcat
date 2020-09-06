@@ -5,10 +5,12 @@ using namespace std;
 namespace tomcat {
     namespace model {
 
+        using namespace std;
+
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
-        VariableNode::VariableNode(const std::string& label,
+        VariableNode::VariableNode(const string& label,
                                    int time_step,
                                    int cardinality)
             : MessageNode(label, time_step), cardinality(cardinality) {}
@@ -37,7 +39,7 @@ namespace tomcat {
         }
 
         Eigen::MatrixXd VariableNode::get_outward_message_to(
-            const std::shared_ptr<MessageNode>& template_target_node,
+            const shared_ptr<MessageNode>& template_target_node,
             int template_time_step,
             int target_time_step,
             Direction direction) const {
@@ -115,7 +117,7 @@ namespace tomcat {
                 Eigen::VectorXd binary_vector =
                     Eigen::VectorXd::Zero(this->cardinality);
                 binary_vector[data[i]] = 1;
-                data_matrix.row(i) = std::move(binary_vector);
+                data_matrix.row(i) = move(binary_vector);
             }
 
             this->data_per_time_slice[time_step] = data_matrix;

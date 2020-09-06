@@ -7,6 +7,8 @@
 namespace tomcat {
     namespace model {
 
+        using namespace std;
+
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
@@ -29,7 +31,7 @@ namespace tomcat {
         }
 
         void
-        EvaluationAggregator::add_measure(std::shared_ptr<Measure> measure) {
+        EvaluationAggregator::add_measure(shared_ptr<Measure> measure) {
             this->measures.push_back(measure);
             this->evaluations_per_measure.push_back({});
             this->aggregations_per_measure.push_back({});
@@ -55,7 +57,7 @@ namespace tomcat {
                     // row-wise fashion to aggregate the values for a given
                     // node.
                     for (int j = 0; j < num_nodes_evaluated; j++) {
-                        std::vector<Eigen::MatrixXd> evaluations_per_node;
+                        vector<Eigen::MatrixXd> evaluations_per_node;
                         evaluations_per_node.reserve(evaluations.size());
 
                         NodeEvaluationAggregation node_aggregation;
@@ -77,7 +79,7 @@ namespace tomcat {
         }
 
         Aggregation EvaluationAggregator::compute_aggregation(
-            const std::vector<Eigen::MatrixXd>& evaluations) const {
+            const vector<Eigen::MatrixXd>& evaluations) const {
 
             Aggregation aggregation;
 
@@ -87,7 +89,7 @@ namespace tomcat {
                 break;
             }
             case METHOD::average: {
-                aggregation.aggregated_values = std::vector<Eigen::MatrixXd>(1);
+                aggregation.aggregated_values = vector<Eigen::MatrixXd>(1);
                 aggregation.aggregated_values[0] = mean(evaluations);
                 aggregation.errors = standard_error(evaluations);
                 break;
@@ -136,8 +138,8 @@ namespace tomcat {
             }
         }
 
-        std::string EvaluationAggregator::get_method_name() const {
-            std::string method_name = "";
+        string EvaluationAggregator::get_method_name() const {
+            string method_name = "";
 
             switch (this->method) {
             case METHOD::no_aggregation: {

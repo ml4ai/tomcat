@@ -7,20 +7,22 @@
 namespace tomcat {
     namespace model {
 
+        using namespace std;
+
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
-        Dirichlet::Dirichlet(std::vector<std::shared_ptr<Node>>& alpha)
+        Dirichlet::Dirichlet(vector<shared_ptr<Node>>& alpha)
             : Continuous(alpha) {}
 
-        Dirichlet::Dirichlet(std::vector<std::shared_ptr<Node>>&& alpha)
-            : Continuous(std::move(alpha)) {}
+        Dirichlet::Dirichlet(vector<shared_ptr<Node>>&& alpha)
+            : Continuous(move(alpha)) {}
 
         Dirichlet::Dirichlet(const Eigen::VectorXd& alpha) {
             for (int i = 0; i < alpha.size(); i++) {
                 ConstantNode parameter_node(alpha(i));
                 this->parameters.push_back(
-                    std::make_shared<ConstantNode>(std::move(parameter_node)));
+                    make_shared<ConstantNode>(move(parameter_node)));
             }
         }
 
@@ -42,7 +44,7 @@ namespace tomcat {
         // Member functions
         //----------------------------------------------------------------------
         Eigen::VectorXd
-        Dirichlet::sample(std::shared_ptr<gsl_rng> random_generator,
+        Dirichlet::sample(shared_ptr<gsl_rng> random_generator,
                           int parameter_idx) const {
             Eigen::VectorXd alpha = this->get_alpha(parameter_idx);
 
@@ -63,7 +65,7 @@ namespace tomcat {
         }
 
         Eigen::VectorXd
-        Dirichlet::sample_from_gsl(std::shared_ptr<gsl_rng> random_generator,
+        Dirichlet::sample_from_gsl(shared_ptr<gsl_rng> random_generator,
                                    const Eigen::VectorXd& parameters) const {
             int k = this->parameters.size();
             double* sample_ptr = new double[k];
@@ -78,7 +80,7 @@ namespace tomcat {
         }
 
         Eigen::VectorXd
-        Dirichlet::sample(std::shared_ptr<gsl_rng> random_generator,
+        Dirichlet::sample(shared_ptr<gsl_rng> random_generator,
                           int parameter_idx,
                           const Eigen::VectorXd& weights) const {
             Eigen::VectorXd alpha = this->get_alpha(parameter_idx) * weights;
@@ -87,7 +89,7 @@ namespace tomcat {
         }
 
         Eigen::VectorXd Dirichlet::sample_from_conjugacy(
-            std::shared_ptr<gsl_rng> random_generator,
+            shared_ptr<gsl_rng> random_generator,
             int parameter_idx,
             const Eigen::VectorXd& sufficient_statistics) const {
 
@@ -107,9 +109,9 @@ namespace tomcat {
             return gsl_ran_dirichlet_pdf(k, alpha_ptr, value_ptr);
         }
 
-        std::unique_ptr<Distribution> Dirichlet::clone() const {
-            std::unique_ptr<Dirichlet> new_distribution =
-                std::make_unique<Dirichlet>(*this);
+        unique_ptr<Distribution> Dirichlet::clone() const {
+            unique_ptr<Dirichlet> new_distribution =
+                make_unique<Dirichlet>(*this);
 
             for (auto& parameter : new_distribution->parameters) {
                 parameter = parameter->clone();
@@ -118,8 +120,8 @@ namespace tomcat {
             return new_distribution;
         }
 
-        std::string Dirichlet::get_description() const {
-            std::stringstream ss;
+        string Dirichlet::get_description() const {
+            stringstream ss;
             ss << "Dir\n";
             ss << "(\n";
             for (const auto& parameter : this->parameters) {

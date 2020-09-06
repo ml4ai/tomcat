@@ -8,6 +8,8 @@
 namespace tomcat {
     namespace model {
 
+        using namespace std;
+
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
@@ -18,7 +20,7 @@ namespace tomcat {
         /**
          * Creates a tensor comprised of several matrices.
          */
-        Tensor3::Tensor3(const std::vector<Eigen::MatrixXd> matrices)
+        Tensor3::Tensor3(const vector<Eigen::MatrixXd> matrices)
             : tensor(matrices) {}
 
         Tensor3::Tensor3(double* buffer, int d1, int d2, int d3) {
@@ -29,7 +31,7 @@ namespace tomcat {
                                              Eigen::Dynamic,
                                              Eigen::Dynamic,
                                              Eigen::RowMajor>>(buffer, d2, d3);
-                this->tensor.push_back(std::move(matrix));
+                this->tensor.push_back(move(matrix));
                 if (i < d1 - 1) {
                     buffer += d2 * d3;
                 }
@@ -41,7 +43,7 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Operator overload
         //----------------------------------------------------------------------
-        std::ostream& operator<<(std::ostream& os, const Tensor3& tensor) {
+        ostream& operator<<(ostream& os, const Tensor3& tensor) {
             for (int m = 0; m < tensor.tensor.size(); m++) {
                 const Eigen::MatrixXd& matrix = tensor.tensor[m];
 
@@ -53,7 +55,7 @@ namespace tomcat {
         }
 
         Eigen::MatrixXd Tensor3::operator()(int i, int axis) {
-            std::array<int, 3> shape = this->get_shape();
+            array<int, 3> shape = this->get_shape();
             Eigen::MatrixXd matrix;
 
             switch (axis) {
@@ -142,7 +144,7 @@ namespace tomcat {
 
         Tensor3 Tensor3::operator/(double value) const {
             if (value == 0) {
-                throw std::domain_error(
+                throw domain_error(
                     "It's not possible to divide a tensor by 0.");
             }
 
@@ -166,7 +168,7 @@ namespace tomcat {
                             Eigen::MatrixXd::Ones(matrix.rows(), matrix.cols()),
                             Eigen::MatrixXd::Zero(matrix.rows(),
                                                   matrix.cols()));
-                new_tensor.tensor.push_back(std::move(new_matrix));
+                new_tensor.tensor.push_back(move(new_matrix));
                 i++;
             }
 
@@ -188,17 +190,17 @@ namespace tomcat {
             return tensor;
         }
 
-        std::string Tensor3::matrix_to_string(const Eigen::MatrixXd& matrix) {
-            std::stringstream ss;
+        string Tensor3::matrix_to_string(const Eigen::MatrixXd& matrix) {
+            stringstream ss;
             for (int i = 0; i < matrix.rows(); i++) {
                 for (int j = 0; j < matrix.cols(); j++) {
                     double value = matrix(i, j);
 
                     if (int(value) == value) {
-                        ss << std::fixed << std::setprecision(0) << value;
+                        ss << fixed << setprecision(0) << value;
                     }
                     else {
-                        ss << std::fixed << std::setprecision(20) << value;
+                        ss << fixed << setprecision(20) << value;
                     }
 
                     if (j < matrix.cols() - 1) {
@@ -211,7 +213,7 @@ namespace tomcat {
             return ss.str();
         }
 
-        Tensor3 Tensor3::sum(std::vector<Tensor3> tensors) {
+        Tensor3 Tensor3::sum(vector<Tensor3> tensors) {
             Tensor3 new_tensor;
 
             if (!tensors.empty()) {
@@ -225,14 +227,14 @@ namespace tomcat {
             return new_tensor;
         }
 
-        Tensor3 Tensor3::mean(std::vector<Tensor3> tensors) {
+        Tensor3 Tensor3::mean(vector<Tensor3> tensors) {
             Tensor3 new_tensor = Tensor3::sum(tensors);
             new_tensor = new_tensor / tensors.size();
 
             return new_tensor;
         }
 
-        Tensor3 Tensor3::std(std::vector<Tensor3> tensors) {
+        Tensor3 Tensor3::std(vector<Tensor3> tensors) {
             Tensor3 new_tensor;
 
             if (!tensors.empty()) {
@@ -256,8 +258,8 @@ namespace tomcat {
 
         bool Tensor3::is_empty() const { return this->tensor.empty(); }
 
-        std::string Tensor3::to_string() const {
-            std::stringstream ss;
+        string Tensor3::to_string() const {
+            stringstream ss;
             ss << *this;
             return ss.str();
         }
@@ -267,7 +269,7 @@ namespace tomcat {
                    this->get_shape()[2];
         }
 
-        std::array<int, 3> Tensor3::get_shape() const {
+        array<int, 3> Tensor3::get_shape() const {
             int i = this->tensor.size();
             int j = 0;
             int k = 0;
@@ -276,7 +278,7 @@ namespace tomcat {
                 k = this->tensor[0].cols();
             }
 
-            return std::array<int, 3>({i, j, k});
+            return array<int, 3>({i, j, k});
         }
 
         double Tensor3::at(int i, int j, int k) const {
@@ -289,7 +291,7 @@ namespace tomcat {
                 final_index = this->get_shape()[axis];
             }
 
-            std::vector<int> indices;
+            vector<int> indices;
             indices.reserve(final_index - initial_index);
             for (int idx = initial_index; idx < final_index; idx++) {
                 indices.push_back(idx);
@@ -298,7 +300,7 @@ namespace tomcat {
             return slice(indices, axis);
         }
 
-        Tensor3 Tensor3::slice(std::vector<int> indices, int axis) const {
+        Tensor3 Tensor3::slice(vector<int> indices, int axis) const {
             Tensor3 sliced_tensor;
 
             switch (axis) {
@@ -363,7 +365,7 @@ namespace tomcat {
             switch (axis) {
             case 0: {
 
-                new_tensor.tensor = std::vector<Eigen::MatrixXd>();
+                new_tensor.tensor = vector<Eigen::MatrixXd>();
                 for (const auto& matrix : this->tensor) {
                     if (new_tensor.tensor.empty()) {
                         new_tensor.tensor.push_back(matrix);

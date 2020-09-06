@@ -8,23 +8,25 @@
 namespace tomcat {
     namespace model {
 
+        using namespace std;
+
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
-        Categorical::Categorical(std::shared_ptr<Node>& probabilities)
+        Categorical::Categorical(shared_ptr<Node>& probabilities)
             : probabilities(probabilities) {}
 
-        Categorical::Categorical(std::shared_ptr<Node>&& probabilities)
-            : probabilities(std::move(probabilities)) {}
+        Categorical::Categorical(shared_ptr<Node>&& probabilities)
+            : probabilities(move(probabilities)) {}
 
         Categorical::Categorical(const Eigen::VectorXd& probabilities) {
             this->probabilities =
-                std::make_shared<ConstantNode>(ConstantNode(probabilities));
+                make_shared<ConstantNode>(ConstantNode(probabilities));
         }
 
         Categorical::Categorical(const Eigen::VectorXd&& probabilities) {
-            this->probabilities = std::make_shared<ConstantNode>(
-                ConstantNode(std::move(probabilities)));
+            this->probabilities = make_shared<ConstantNode>(
+                ConstantNode(move(probabilities)));
         }
 
         Categorical::~Categorical() {}
@@ -48,7 +50,7 @@ namespace tomcat {
         Categorical::update_dependencies(Node::NodeMap& parameter_nodes_map,
                                          int time_step) {
 
-            std::string parameter_timed_name;
+            string parameter_timed_name;
             const NodeMetadata* metadata =
                 this->probabilities->get_metadata().get();
             if (metadata->is_replicable()) {
@@ -65,7 +67,7 @@ namespace tomcat {
         }
 
         Eigen::VectorXd
-        Categorical::sample(std::shared_ptr<gsl_rng> random_generator,
+        Categorical::sample(shared_ptr<gsl_rng> random_generator,
                             int parameter_idx) const {
             Eigen::MatrixXd probabilities =
                 this->probabilities->get_assignment();
@@ -77,7 +79,7 @@ namespace tomcat {
         }
 
         Eigen::VectorXd
-        Categorical::sample_from_gsl(std::shared_ptr<gsl_rng> random_generator,
+        Categorical::sample_from_gsl(shared_ptr<gsl_rng> random_generator,
                                      const Eigen::VectorXd& parameters) const {
 
             Eigen::VectorXd checked_parameters;
@@ -108,13 +110,13 @@ namespace tomcat {
         unsigned int
         Categorical::get_sample_index(const unsigned int* sample_array,
                                       size_t array_size) const {
-            return std::distance(
+            return distance(
                 sample_array,
-                std::find(sample_array, sample_array + array_size, 1));
+                find(sample_array, sample_array + array_size, 1));
         }
 
         Eigen::VectorXd
-        Categorical::sample(std::shared_ptr<gsl_rng> random_generator,
+        Categorical::sample(shared_ptr<gsl_rng> random_generator,
                             int parameter_idx,
                             const Eigen::VectorXd& weights) const {
 
@@ -134,10 +136,10 @@ namespace tomcat {
         }
 
         Eigen::VectorXd Categorical::sample_from_conjugacy(
-            std::shared_ptr<gsl_rng> random_generator,
+            shared_ptr<gsl_rng> random_generator,
             int parameter_idx,
             const Eigen::VectorXd& sufficient_statistics) const {
-            throw std::invalid_argument(
+            throw invalid_argument(
                 "No conjugate prior with a categorical distribution.");
         }
 
@@ -149,17 +151,17 @@ namespace tomcat {
             return probabilities(parameter_idx, value(0));
         }
 
-        std::unique_ptr<Distribution> Categorical::clone() const {
-            std::unique_ptr<Categorical> new_distribution =
-                std::make_unique<Categorical>(*this);
+        unique_ptr<Distribution> Categorical::clone() const {
+            unique_ptr<Categorical> new_distribution =
+                make_unique<Categorical>(*this);
             new_distribution->probabilities =
                 new_distribution->probabilities->clone();
 
             return new_distribution;
         }
 
-        std::string Categorical::get_description() const {
-            std::stringstream ss;
+        string Categorical::get_description() const {
+            stringstream ss;
             ss << "Cat(" << this->probabilities << ")";
 
             return ss.str();

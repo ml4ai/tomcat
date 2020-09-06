@@ -104,7 +104,7 @@ namespace tomcat {
         }
 
         int FactorGraph::add_factor_node(
-            const std::string& node_label,
+            const string& node_label,
             int time_step,
             const Eigen::MatrixXd& cpd,
             const CPD::TableOrderingMap& cpd_ordering_map) {
@@ -258,7 +258,7 @@ namespace tomcat {
         }
 
         Eigen::MatrixXd
-        FactorGraph::get_marginal_for(const std::string& node_label,
+        FactorGraph::get_marginal_for(const string& node_label,
                                       int time_step) const {
             Eigen::MatrixXd marginal(0, 0);
 

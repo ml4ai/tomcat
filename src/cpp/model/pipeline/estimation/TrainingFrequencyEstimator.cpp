@@ -5,11 +5,13 @@
 namespace tomcat {
     namespace model {
 
+        using namespace std;
+
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
         TrainingFrequencyEstimator::TrainingFrequencyEstimator(
-            std::shared_ptr<DynamicBayesNet> model, int inference_horizon)
+            shared_ptr<DynamicBayesNet> model, int inference_horizon)
             : Estimator(model, inference_horizon) {}
 
         TrainingFrequencyEstimator::~TrainingFrequencyEstimator() {}
@@ -64,7 +66,7 @@ namespace tomcat {
             json["inference_horizon"] = this->inference_horizon;
         }
 
-        std::string TrainingFrequencyEstimator::get_name() const {
+        string TrainingFrequencyEstimator::get_name() const {
             return "training frequency";
         }
 

@@ -3,7 +3,6 @@
 #include <iostream>
 
 #include "../../pgm/inference/FactorGraph.h"
-#include "../../pgm/inference/FactorNode.h"
 #include "../../pgm/inference/VariableNode.h"
 
 namespace tomcat {
@@ -15,7 +14,7 @@ namespace tomcat {
         // Constructors & Destructor
         //----------------------------------------------------------------------
         SumProductEstimator::SumProductEstimator(
-            std::shared_ptr<DynamicBayesNet> model, int inference_horizon)
+            shared_ptr<DynamicBayesNet> model, int inference_horizon)
             : Estimator(model, inference_horizon) {}
 
         SumProductEstimator::~SumProductEstimator() {}
@@ -237,7 +236,7 @@ namespace tomcat {
         }
 
         Eigen::VectorXd
-        SumProductEstimator::get_predictions_for(const std::string& node_label,
+        SumProductEstimator::get_predictions_for(const string& node_label,
                                                  int time_step,
                                                  int assignment,
                                                  int num_data_points) {
@@ -305,7 +304,7 @@ namespace tomcat {
             json["inference_horizon"] = this->inference_horizon;
         }
 
-        std::string SumProductEstimator::get_name() const {
+        string SumProductEstimator::get_name() const {
             return "sum-product";
         }
 

@@ -3,12 +3,14 @@
 namespace tomcat {
     namespace model {
 
+        using namespace std;
+
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
         Measure::Measure() {}
 
-        Measure::Measure(std::shared_ptr<Estimator> estimator)
+        Measure::Measure(shared_ptr<Estimator> estimator)
             : estimator(estimator) {}
 
         Measure::~Measure() {}

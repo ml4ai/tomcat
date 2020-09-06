@@ -3,6 +3,8 @@
 namespace tomcat {
     namespace model {
 
+        using namespace std;
+
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
@@ -21,7 +23,7 @@ namespace tomcat {
         }
 
         void
-        EstimationProcess::add_estimator(std::shared_ptr<Estimator> estimator) {
+        EstimationProcess::add_estimator(shared_ptr<Estimator> estimator) {
             this->estimators.push_back(estimator);
         }
 

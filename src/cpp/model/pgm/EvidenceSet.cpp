@@ -8,12 +8,14 @@
 namespace tomcat {
     namespace model {
 
+        using namespace std;
+
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
         EvidenceSet::EvidenceSet() {}
 
-        EvidenceSet::EvidenceSet(const std::string& data_folder_path) {
+        EvidenceSet::EvidenceSet(const string& data_folder_path) {
             this->init_from_folder(data_folder_path);
         }
 
@@ -23,11 +25,11 @@ namespace tomcat {
         // Operator overload
         //----------------------------------------------------------------------
         const Tensor3&
-            EvidenceSet::operator[](const std::string& node_label) const {
+            EvidenceSet::operator[](const string& node_label) const {
             return this->node_label_to_data.at(node_label);
         }
 
-        const Tensor3& EvidenceSet::operator[](std::string&& node_label) const {
+        const Tensor3& EvidenceSet::operator[](string&& node_label) const {
             return this->node_label_to_data.at(node_label);
         }
 
@@ -108,19 +110,19 @@ namespace tomcat {
         // Member functions
         //----------------------------------------------------------------------
         void
-        EvidenceSet::init_from_folder(const std::string& data_folder_path) {
+        EvidenceSet::init_from_folder(const string& data_folder_path) {
             for (const auto& file :
                  boost::filesystem::directory_iterator(data_folder_path)) {
 
-                std::string filename = file.path().filename().string();
-                std::string node_label = remove_extension(filename);
+                string filename = file.path().filename().string();
+                string node_label = remove_extension(filename);
                 Tensor3 data = read_tensor_from_file(file.path().string());
                 this->add_data(node_label, data);
             }
         }
 
-        std::vector<std::string> EvidenceSet::get_node_labels() const {
-            std::vector<std::string> node_labels;
+        vector<string> EvidenceSet::get_node_labels() const {
+            vector<string> node_labels;
             node_labels.reserve(this->node_label_to_data.size());
 
             for (auto& [label, data] : this->node_label_to_data) {
@@ -130,7 +132,7 @@ namespace tomcat {
             return node_labels;
         }
 
-        void EvidenceSet::add_data(const std::string& node_label,
+        void EvidenceSet::add_data(const string& node_label,
                                    const Tensor3& data) {
             if (this->num_data_points == 0 && this->time_steps == 0) {
                 this->num_data_points = data.get_shape()[1];
@@ -138,13 +140,13 @@ namespace tomcat {
             }
             else {
                 if (data.get_shape()[1] != this->num_data_points) {
-                    throw std::invalid_argument(
+                    throw invalid_argument(
                         "The number of data points must be the same for "
                         "all the observable nodes in the folder.");
                 }
 
                 if (data.get_shape()[2] != this->time_steps) {
-                    throw std::invalid_argument(
+                    throw invalid_argument(
                         "The number of time steps must be the same for "
                         "all the observable nodes in the folder.");
                 }
@@ -153,11 +155,11 @@ namespace tomcat {
             this->node_label_to_data[node_label] = data;
         }
 
-        bool EvidenceSet::has_data_for(const std::string& node_label) const {
+        bool EvidenceSet::has_data_for(const string& node_label) const {
             return EXISTS(node_label, this->node_label_to_data);
         }
 
-        void EvidenceSet::set_data_for(const std::string& node_label,
+        void EvidenceSet::set_data_for(const string& node_label,
                                        const Tensor3 data) {
             if (!EXISTS(node_label, this->node_label_to_data)) {
                 throw TomcatModelException("The node " + node_label +
@@ -168,7 +170,7 @@ namespace tomcat {
         }
 
         Eigen::MatrixXd EvidenceSet::get_observations_in_window_for(
-            const std::string& node_label,
+            const string& node_label,
             const Eigen::VectorXd& assignment,
             int window) const {
 

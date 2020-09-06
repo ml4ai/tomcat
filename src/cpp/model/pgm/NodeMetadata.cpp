@@ -4,12 +4,15 @@
 
 namespace tomcat {
     namespace model {
+
+        using namespace std;
+        
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
         NodeMetadata::NodeMetadata() {}
 
-        NodeMetadata::NodeMetadata(std::string label,
+        NodeMetadata::NodeMetadata(string label,
                                    bool replicable,
                                    bool parameter,
                                    bool single_time_link,
@@ -30,7 +33,7 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Operator overload
         //----------------------------------------------------------------------
-        std::ostream& operator<<(std::ostream& os,
+        ostream& operator<<(ostream& os,
                                  const NodeMetadata& metadata) {
 
             os << metadata.get_description();
@@ -41,8 +44,8 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        std::string NodeMetadata::get_description() const {
-            std::stringstream ss;
+        string NodeMetadata::get_description() const {
+            stringstream ss;
 
             ss << "Metadata: {\n";
             ss << " Label: " << this->label << "\n";
@@ -69,7 +72,7 @@ namespace tomcat {
         }
 
         void
-        NodeMetadata::add_parent_link(std::shared_ptr<NodeMetadata> parent_node,
+        NodeMetadata::add_parent_link(shared_ptr<NodeMetadata> parent_node,
                                       bool time_crossing) {
             // TODO - 1. error if parent node is a parameter node and time
             //  crossing
@@ -93,14 +96,14 @@ namespace tomcat {
             this->parent_links.push_back(link);
         }
 
-        std::string NodeMetadata::get_timed_name(int time_step) const {
+        string NodeMetadata::get_timed_name(int time_step) const {
             return fmt::format("({},{})", this->label, time_step);
         }
 
         //----------------------------------------------------------------------
         // Getters & Setters
         //----------------------------------------------------------------------
-        const std::string& NodeMetadata::get_label() const { return label; }
+        const string& NodeMetadata::get_label() const { return label; }
 
         int NodeMetadata::get_initial_time_step() const {
             return initial_time_step;
@@ -120,7 +123,7 @@ namespace tomcat {
 
         int NodeMetadata::get_cardinality() const { return cardinality; }
 
-        const std::vector<ParentLink>& NodeMetadata::get_parent_links() const {
+        const vector<ParentLink>& NodeMetadata::get_parent_links() const {
             return parent_links;
         }
 

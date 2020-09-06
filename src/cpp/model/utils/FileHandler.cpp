@@ -9,11 +9,13 @@ namespace fs = boost::filesystem;
 namespace tomcat {
     namespace model {
 
+        using namespace std;
+
 #define MAXBUFSIZE static_cast<int>(1e6)
 #define DELIMITER ' '
 
-        std::string get_filepath(const std::string& folder_name,
-                                 const std::string& filename) {
+        string get_filepath(const string& folder_name,
+                                 const string& filename) {
             fs::path folder(folder_name);
             fs::path file(filename);
             fs::path filepath = folder / file;
@@ -21,33 +23,33 @@ namespace tomcat {
             return filepath.string();
         }
 
-        std::string remove_extension(const std::string& filename) {
+        string remove_extension(const string& filename) {
             return filename.substr(0, filename.find_last_of("."));
         }
 
-        void save_matrix_to_file(const std::string& filepath,
+        void save_matrix_to_file(const string& filepath,
                                  const Eigen::MatrixXd& matrix) {
-            std::ofstream file(filepath);
+            ofstream file(filepath);
             if (file.is_open()) {
                 file << Tensor3::matrix_to_string(matrix);
                 file.close();
             }
         }
 
-        Eigen::MatrixXd read_matrix_from_file(const std::string& filepath) {
+        Eigen::MatrixXd read_matrix_from_file(const string& filepath) {
             return read_tensor_from_file(filepath)(0, 0);
         }
 
-        void save_tensor_to_file(const std::string& filepath,
+        void save_tensor_to_file(const string& filepath,
                                  const Tensor3& tensor) {
-            std::ofstream file(filepath);
+            ofstream file(filepath);
             if (file.is_open()) {
                 file << tensor;
                 file.close();
             }
         }
 
-        Tensor3 read_tensor_from_file(const std::string& filepath) {
+        Tensor3 read_tensor_from_file(const string& filepath) {
             int number_matrices = 0, rows = 0, cols = 0;
 
             // Final tensor's second and third dimensions
@@ -55,22 +57,22 @@ namespace tomcat {
 
             bool started_reading_matrix = false;
             double* buffer = new double[MAXBUFSIZE];
-            std::ifstream file_reader(filepath);
+            ifstream file_reader(filepath);
 
             while (true) {
                 // if (line.replace(line.begin(), line.end(), " ", "").empty())
                 // {
-                std::string line;
+                string line;
                 if (!file_reader.eof()) {
-                    std::getline(file_reader, line);
+                    getline(file_reader, line);
                 }
-                std::stringstream ss(line);
+                stringstream ss(line);
 
                 if (file_reader.eof() || ss.eof()) {
                     if (started_reading_matrix) {
                         if (d2 != 0 && d3 != 0) {
                             if (d2 != rows || d3 != cols) {
-                                throw std::invalid_argument(
+                                throw invalid_argument(
                                     "All the matrixes in a tensor must have "
                                     "the same dimensions.");
                             }
@@ -111,7 +113,7 @@ namespace tomcat {
                             cols = temp_cols;
                         }
                         else if (cols != temp_cols) {
-                            throw std::invalid_argument(
+                            throw invalid_argument(
                                 "All the rows in a matrix must have the same "
                                 "number of columns.");
                         }

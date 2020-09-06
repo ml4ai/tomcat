@@ -5,16 +5,18 @@
 namespace tomcat {
     namespace model {
 
+        using namespace std;
+
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
         Continuous::Continuous() {}
 
-        Continuous::Continuous(std::vector<std::shared_ptr<Node>>& parameters)
+        Continuous::Continuous(vector<shared_ptr<Node>>& parameters)
             : parameters(parameters) {}
 
-        Continuous::Continuous(std::vector<std::shared_ptr<Node>>&& parameters)
-            : parameters(std::move(parameters)) {}
+        Continuous::Continuous(vector<shared_ptr<Node>>&& parameters)
+            : parameters(move(parameters)) {}
 
         Continuous::~Continuous() {}
 
@@ -22,7 +24,7 @@ namespace tomcat {
                                              int time_step) {
 
             for (auto& parameter : this->parameters) {
-                std::string parameter_timed_name;
+                string parameter_timed_name;
                 const NodeMetadata* metadata = parameter->get_metadata().get();
                 if (metadata->is_replicable()) {
                     parameter_timed_name = metadata->get_timed_name(time_step);

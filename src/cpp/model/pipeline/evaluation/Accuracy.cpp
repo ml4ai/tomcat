@@ -3,10 +3,12 @@
 namespace tomcat {
     namespace model {
 
+        using namespace std;
+
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
-        Accuracy::Accuracy(std::shared_ptr<Estimator> estimator)
+        Accuracy::Accuracy(shared_ptr<Estimator> estimator)
             : Measure(estimator) {}
 
         Accuracy::~Accuracy() {}
@@ -26,9 +28,9 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        std::vector<NodeEvaluation>
+        vector<NodeEvaluation>
         Accuracy::evaluate(const EvidenceSet& test_data) const {
-            std::vector<NodeEvaluation> evaluations;
+            vector<NodeEvaluation> evaluations;
 
             for (const auto& estimates :
                  this->estimator->get_estimates()) {

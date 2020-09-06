@@ -5,6 +5,8 @@
 namespace tomcat {
     namespace model {
 
+        using namespace std;
+
         Eigen::MatrixXd cum_sum(const Eigen::MatrixXd& matrix, int axis) {
             Eigen::MatrixXd new_matrix(matrix.rows(), matrix.cols());
 
@@ -26,7 +28,7 @@ namespace tomcat {
                 break;
             }
             default: {
-                throw std::invalid_argument(
+                throw invalid_argument(
                     "Invalid axis. Valid axes are 0, 1 or 2.");
             }
             }
@@ -34,7 +36,7 @@ namespace tomcat {
             return new_matrix;
         }
 
-        Eigen::MatrixXd mean(const std::vector<Eigen::MatrixXd>& matrices) {
+        Eigen::MatrixXd mean(const vector<Eigen::MatrixXd>& matrices) {
             Eigen::MatrixXd mean_matrix;
 
             if (!matrices.empty()) {
@@ -52,7 +54,7 @@ namespace tomcat {
         }
 
         Eigen::MatrixXd
-        standard_error(const std::vector<Eigen::MatrixXd>& matrices){
+        standard_error(const vector<Eigen::MatrixXd>& matrices){
             Eigen::MatrixXd mean_matrix = mean(matrices);
             Eigen::MatrixXd se_matrix = (matrices[0].array() - mean_matrix.array()).pow(2).matrix();
 
@@ -65,14 +67,14 @@ namespace tomcat {
             return se_matrix;
         }
 
-        std::string to_string(const Eigen::VectorXd& vector) {
-            std::stringstream ss;
+        string to_string(const Eigen::VectorXd& vector) {
+            stringstream ss;
             ss << vector;
             return ss.str();
         }
 
-        std::string to_string(const Eigen::MatrixXd& matrix) {
-            std::stringstream ss;
+        string to_string(const Eigen::MatrixXd& matrix) {
+            stringstream ss;
             ss << matrix;
             return ss.str();
         }

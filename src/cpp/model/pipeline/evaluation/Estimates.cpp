@@ -3,10 +3,12 @@
 namespace tomcat {
     namespace model {
 
+        using namespace std;
+
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
-        Estimates::Estimates(std::shared_ptr<Estimator> estimator)
+        Estimates::Estimates(shared_ptr<Estimator> estimator)
             : Measure(estimator) {}
 
         Estimates::~Estimates() {}
@@ -26,9 +28,9 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        std::vector<NodeEvaluation>
+        vector<NodeEvaluation>
         Estimates::evaluate(const EvidenceSet& test_data) const {
-            std::vector<NodeEvaluation> evaluations;
+            vector<NodeEvaluation> evaluations;
 
             for (const auto& estimates : this->estimator->get_estimates()) {
                 NodeEvaluation evaluation;

@@ -2,36 +2,38 @@
 
 namespace tomcat {
     namespace model {
+        
+        using namespace std;
 
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
         CPD::CPD() {}
 
-        CPD::CPD(std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order)
+        CPD::CPD(vector<shared_ptr<NodeMetadata>>& parent_node_order)
             : parent_node_order(parent_node_order) {
             this->init_id();
             this->fill_indexing_mapping();
         }
 
-        CPD::CPD(std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order)
-            : parent_node_order(std::move(parent_node_order)) {
+        CPD::CPD(vector<shared_ptr<NodeMetadata>>&& parent_node_order)
+            : parent_node_order(move(parent_node_order)) {
             this->init_id();
             this->fill_indexing_mapping();
         }
 
-        CPD::CPD(std::vector<std::shared_ptr<NodeMetadata>>& parent_node_order,
-                 std::vector<std::shared_ptr<Distribution>>& distributions)
+        CPD::CPD(vector<shared_ptr<NodeMetadata>>& parent_node_order,
+                 vector<shared_ptr<Distribution>>& distributions)
             : parent_node_order(parent_node_order),
               distributions(distributions) {
             this->init_id();
             this->fill_indexing_mapping();
         }
 
-        CPD::CPD(std::vector<std::shared_ptr<NodeMetadata>>&& parent_node_order,
-                 std::vector<std::shared_ptr<Distribution>>&& distributions)
-            : parent_node_order(std::move(parent_node_order)),
-              distributions(std::move(distributions)) {
+        CPD::CPD(vector<shared_ptr<NodeMetadata>>&& parent_node_order,
+                 vector<shared_ptr<Distribution>>&& distributions)
+            : parent_node_order(move(parent_node_order)),
+              distributions(move(distributions)) {
             this->init_id();
             this->fill_indexing_mapping();
         }
@@ -41,7 +43,7 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Operator overload
         //----------------------------------------------------------------------
-        std::ostream& operator<<(std::ostream& os, const CPD& cpd) {
+        ostream& operator<<(ostream& os, const CPD& cpd) {
             cpd.print(os);
             return os;
         }
@@ -50,18 +52,18 @@ namespace tomcat {
         // Member functions
         //----------------------------------------------------------------------
         void CPD::init_id() {
-            std::vector<std::string> labels;
+            vector<string> labels;
             labels.reserve(this->parent_node_order.size());
 
             for (const auto& metadata : this->parent_node_order) {
                 labels.push_back(metadata->get_label());
             }
 
-            std::sort(labels.begin(), labels.end());
-            std::stringstream ss;
+            sort(labels.begin(), labels.end());
+            stringstream ss;
             copy(labels.begin(),
                  labels.end(),
-                 std::ostream_iterator<std::string>(ss, ","));
+                 ostream_iterator<string>(ss, ","));
             this->id = ss.str();
         }
 
@@ -70,7 +72,7 @@ namespace tomcat {
 
             for (int order = this->parent_node_order.size() - 1; order >= 0;
                  order--) {
-                std::shared_ptr<NodeMetadata> metadata =
+                shared_ptr<NodeMetadata> metadata =
                     this->parent_node_order[order];
 
                 ParentIndexing indexing(
@@ -102,11 +104,11 @@ namespace tomcat {
         }
 
         Eigen::MatrixXd
-        CPD::sample(std::shared_ptr<gsl_rng> random_generator,
-                    const std::vector<std::shared_ptr<Node>>& parent_nodes,
+        CPD::sample(shared_ptr<gsl_rng> random_generator,
+                    const vector<shared_ptr<Node>>& parent_nodes,
                     int num_samples) const {
 
-            std::vector<int> distribution_indices =
+            vector<int> distribution_indices =
                 this->get_distribution_indices(parent_nodes, num_samples);
 
             int sample_size = this->distributions[0]->get_sample_size();
@@ -117,24 +119,24 @@ namespace tomcat {
                 Eigen::VectorXd assignment =
                     this->distributions[distribution_idx]->sample(
                         random_generator, i);
-                samples.row(i) = std::move(assignment);
+                samples.row(i) = move(assignment);
                 i++;
             }
 
             return samples;
         }
 
-        std::vector<int> CPD::get_distribution_indices(
-            const std::vector<std::shared_ptr<Node>>& parent_nodes,
+        vector<int> CPD::get_distribution_indices(
+            const vector<shared_ptr<Node>>& parent_nodes,
             int num_samples) const {
 
-            std::vector<int> indices(num_samples, 0);
+            vector<int> indices(num_samples, 0);
 
             Node::NodeMap parent_labels_to_nodes =
                 this->map_labels_to_nodes(parent_nodes);
             for (const auto& mapping : parent_labels_to_nodes) {
-                std::string label = mapping.first;
-                std::shared_ptr<Node> node = mapping.second;
+                string label = mapping.first;
+                shared_ptr<Node> node = mapping.second;
                 ParentIndexing indexing =
                     this->parent_label_to_indexing.at(label);
 
@@ -154,11 +156,11 @@ namespace tomcat {
         }
 
         Node::NodeMap CPD::map_labels_to_nodes(
-            const std::vector<std::shared_ptr<Node>>& nodes) const {
+            const vector<shared_ptr<Node>>& nodes) const {
 
             Node::NodeMap labels_to_nodes;
             for (auto& node : nodes) {
-                std::string label = node->get_metadata()->get_label();
+                string label = node->get_metadata()->get_label();
                 labels_to_nodes[label] = node;
             }
 
@@ -166,12 +168,12 @@ namespace tomcat {
         }
 
         Eigen::MatrixXd
-        CPD::sample(std::shared_ptr<gsl_rng> random_generator,
-                    const std::vector<std::shared_ptr<Node>>& parent_nodes,
+        CPD::sample(shared_ptr<gsl_rng> random_generator,
+                    const vector<shared_ptr<Node>>& parent_nodes,
                     int num_samples,
                     Eigen::MatrixXd weights) const {
 
-            std::vector<int> distribution_indices =
+            vector<int> distribution_indices =
                 this->get_distribution_indices(parent_nodes, num_samples);
 
             int sample_size = this->distributions[0]->get_sample_size();
@@ -184,7 +186,7 @@ namespace tomcat {
                         random_generator,
                         sample_index,
                         weights.row(sample_index));
-                samples.row(sample_index) = std::move(assignment);
+                samples.row(sample_index) = move(assignment);
                 sample_index++;
             }
 
@@ -192,16 +194,16 @@ namespace tomcat {
         }
 
         Eigen::VectorXd
-        CPD::get_pdfs(const std::vector<std::shared_ptr<Node>>& parent_nodes,
+        CPD::get_pdfs(const vector<shared_ptr<Node>>& parent_nodes,
                       const Node& node) const {
 
-            std::vector<int> distribution_indices =
+            vector<int> distribution_indices =
                 this->get_distribution_indices(parent_nodes, node.get_size());
 
             Eigen::VectorXd pdfs(distribution_indices.size());
             int sample_index = 0;
             for (const auto& distribution_idx : distribution_indices) {
-                std::shared_ptr<Distribution> distribution =
+                shared_ptr<Distribution> distribution =
                     this->distributions[distribution_idx];
                 double pdf = distribution->get_pdf(
                     node.get_assignment().row(sample_index), sample_index);
@@ -213,10 +215,10 @@ namespace tomcat {
         }
 
         void CPD::update_sufficient_statistics(
-            const std::vector<std::shared_ptr<Node>>& parent_nodes,
+            const vector<shared_ptr<Node>>& parent_nodes,
             const Eigen::MatrixXd& cpd_owner_assignments) {
 
-            std::vector<int> distribution_indices =
+            vector<int> distribution_indices =
                 this->get_distribution_indices(parent_nodes,
                                                cpd_owner_assignments.rows());
 
@@ -232,7 +234,7 @@ namespace tomcat {
 
         void CPD::reset_updated_status() { this->updated = false; }
 
-        void CPD::print(std::ostream& os) const {
+        void CPD::print(ostream& os) const {
             os << this->get_description();
         }
 
@@ -259,7 +261,7 @@ namespace tomcat {
         //------------------------------------------------------------------
         // Getters & Setters
         //------------------------------------------------------------------
-        const std::string& CPD::get_id() const { return id; }
+        const string& CPD::get_id() const { return id; }
 
         bool CPD::is_updated() const { return updated; }
 

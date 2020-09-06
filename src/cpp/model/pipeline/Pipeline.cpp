@@ -4,13 +4,15 @@
 namespace tomcat {
     namespace model {
 
+        using namespace std;
+
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
-        Pipeline::Pipeline(std::ostream& output_stream)
+        Pipeline::Pipeline(ostream& output_stream)
             : output_stream(output_stream) {}
 
-        Pipeline::Pipeline(const std::string& id, std::ostream& output_stream)
+        Pipeline::Pipeline(const string& id, ostream& output_stream)
             : id(id), output_stream(output_stream) {}
 
         Pipeline::~Pipeline() {}
@@ -28,7 +30,7 @@ namespace tomcat {
                 this->aggregator->reset();
             }
 
-            std::vector<KFold::Split> splits = this->data_splitter->get_splits();
+            vector<KFold::Split> splits = this->data_splitter->get_splits();
             for (const auto& [training_data, test_data] : splits) {
                 this->model_trainner->fit(training_data);
                 if (this->model_saver != nullptr) {
@@ -74,9 +76,9 @@ namespace tomcat {
             const boost::posix_time::ptime& execution_start_time,
             const boost::posix_time::ptime& execution_end_time) {
 
-            std::string initial_timestamp =
+            string initial_timestamp =
                 boost::posix_time::to_iso_extended_string(execution_start_time);
-            std::string final_timestamp =
+            string final_timestamp =
                 boost::posix_time::to_iso_extended_string(execution_end_time);
             auto duration = execution_end_time - execution_start_time;
             long duration_in_seconds = duration.total_seconds();
@@ -90,34 +92,34 @@ namespace tomcat {
             this->model_trainner->get_info(json["training"]);
             this->aggregator->get_info(json["evaluation"]);
 
-            this->output_stream << std::setw(4) << json;
+            this->output_stream << setw(4) << json;
         }
 
         //----------------------------------------------------------------------
         // Getters & Setters
         //----------------------------------------------------------------------
         void Pipeline::set_data_splitter(
-            const std::shared_ptr<KFold>& data_splitter) {
+            const shared_ptr<KFold>& data_splitter) {
             this->data_splitter = data_splitter;
         }
 
         void Pipeline::set_model_trainner(
-            const std::shared_ptr<DBNTrainer>& model_trainner) {
+            const shared_ptr<DBNTrainer>& model_trainner) {
             this->model_trainner = model_trainner;
         }
 
         void Pipeline::set_model_saver(
-            const std::shared_ptr<DBNSaver>& model_saver) {
+            const shared_ptr<DBNSaver>& model_saver) {
             this->model_saver = model_saver;
         }
 
         void Pipeline::set_estimation_process(
-            const std::shared_ptr<EstimationProcess>& estimation_process) {
+            const shared_ptr<EstimationProcess>& estimation_process) {
             this->estimation_process = estimation_process;
         }
 
         void Pipeline::set_aggregator(
-            const std::shared_ptr<EvaluationAggregator>& aggregator) {
+            const shared_ptr<EvaluationAggregator>& aggregator) {
             this->aggregator = aggregator;
         }
 

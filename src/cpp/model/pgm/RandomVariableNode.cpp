@@ -2,21 +2,23 @@
 #include <algorithm>
 #include <fmt/format.h>
 #include <iterator>
-#include <sstream>
 #include <stdexcept>
 
 namespace tomcat {
     namespace model {
+
+        using namespace std;
+
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
         RandomVariableNode::RandomVariableNode(
-            std::shared_ptr<NodeMetadata>& metadata, int time_step)
+            shared_ptr<NodeMetadata>& metadata, int time_step)
             : Node(metadata), time_step(time_step) {}
 
         RandomVariableNode::RandomVariableNode(
-            std::shared_ptr<NodeMetadata>&& metadata, int time_step)
-            : Node(std::move(metadata)), time_step(time_step) {}
+            shared_ptr<NodeMetadata>&& metadata, int time_step)
+            : Node(move(metadata)), time_step(time_step) {}
 
         RandomVariableNode::~RandomVariableNode() {}
 
@@ -45,10 +47,10 @@ namespace tomcat {
             this->frozen = node.frozen;
         }
 
-        std::string RandomVariableNode::get_description() const {
+        string RandomVariableNode::get_description() const {
 
             if (this->assignment.size() == 1) {
-                std::stringstream assignment_string;
+                stringstream assignment_string;
                 assignment_string << this->assignment;
 
                 return fmt::format("RV({}, {}, {})",
@@ -57,7 +59,7 @@ namespace tomcat {
                                    assignment_string.str());
             }
             else {
-                std::stringstream assignment_string;
+                stringstream assignment_string;
                 assignment_string << this->assignment.transpose();
 
                 return fmt::format("RV({}, {}, [{}])",
@@ -67,11 +69,11 @@ namespace tomcat {
             }
         }
 
-        std::unique_ptr<Node> RandomVariableNode::clone() const {
-            std::unique_ptr<RandomVariableNode> new_node =
-                std::make_unique<RandomVariableNode>(*this);
+        unique_ptr<Node> RandomVariableNode::clone() const {
+            unique_ptr<RandomVariableNode> new_node =
+                make_unique<RandomVariableNode>(*this);
             new_node->metadata =
-                std::make_shared<NodeMetadata>(*this->metadata);
+                make_shared<NodeMetadata>(*this->metadata);
             new_node->clone_cpd_templates();
             new_node->clone_cpd();
             return new_node;
@@ -89,7 +91,7 @@ namespace tomcat {
             }
         }
 
-        std::string RandomVariableNode::get_timed_name() const {
+        string RandomVariableNode::get_timed_name() const {
             return this->metadata->get_timed_name(this->time_step);
         }
 
@@ -108,8 +110,8 @@ namespace tomcat {
         }
 
         Eigen::MatrixXd RandomVariableNode::sample(
-            std::shared_ptr<gsl_rng> random_generator,
-            const std::vector<std::shared_ptr<Node>>& parent_nodes,
+            shared_ptr<gsl_rng> random_generator,
+            const vector<shared_ptr<Node>>& parent_nodes,
             int num_samples) const {
 
             return this->cpd->sample(
@@ -117,8 +119,8 @@ namespace tomcat {
         }
 
         Eigen::MatrixXd RandomVariableNode::sample(
-            std::shared_ptr<gsl_rng> random_generator,
-            const std::vector<std::shared_ptr<Node>>& parent_nodes,
+            shared_ptr<gsl_rng> random_generator,
+            const vector<shared_ptr<Node>>& parent_nodes,
             int num_samples,
             Eigen::MatrixXd weights) const {
 
@@ -127,21 +129,21 @@ namespace tomcat {
         }
 
         Eigen::MatrixXd RandomVariableNode::sample_from_conjugacy(
-            std::shared_ptr<gsl_rng> random_generator,
-            const std::vector<std::shared_ptr<Node>>& parent_nodes,
+            shared_ptr<gsl_rng> random_generator,
+            const vector<shared_ptr<Node>>& parent_nodes,
             int num_samples) const {
             return this->cpd->sample_from_conjugacy(
                 random_generator, parent_nodes, num_samples);
         }
 
         Eigen::VectorXd RandomVariableNode::get_pdfs(
-            const std::vector<std::shared_ptr<Node>>& parent_nodes) const {
+            const vector<shared_ptr<Node>>& parent_nodes) const {
 
             return this->cpd->get_pdfs(parent_nodes, *this);
         }
 
         void RandomVariableNode::update_parents_sufficient_statistics(
-            const std::vector<std::shared_ptr<Node>>& parent_nodes) {
+            const vector<shared_ptr<Node>>& parent_nodes) {
 
             this->cpd->update_sufficient_statistics(parent_nodes,
                                                     this->assignment);
@@ -162,36 +164,36 @@ namespace tomcat {
             RandomVariableNode::frozen = false;
         }
 
-        void RandomVariableNode::add_cpd_template(std::shared_ptr<CPD>& cpd) {
+        void RandomVariableNode::add_cpd_template(shared_ptr<CPD>& cpd) {
             this->cpd_templates[cpd->get_id()] = cpd;
         }
 
-        void RandomVariableNode::add_cpd_template(std::shared_ptr<CPD>&& cpd) {
-            this->cpd_templates[cpd->get_id()] = std::move(cpd);
+        void RandomVariableNode::add_cpd_template(shared_ptr<CPD>&& cpd) {
+            this->cpd_templates[cpd->get_id()] = move(cpd);
         }
 
-        std::shared_ptr<CPD> RandomVariableNode::get_cpd_for(
-            const std::vector<std::string>& parent_labels) const {
-            std::string key = this->get_unique_key_from_labels(parent_labels);
-            std::shared_ptr<CPD> cpd;
+        shared_ptr<CPD> RandomVariableNode::get_cpd_for(
+            const vector<string>& parent_labels) const {
+            string key = this->get_unique_key_from_labels(parent_labels);
+            shared_ptr<CPD> cpd;
             if (EXISTS(key, this->cpd_templates)) {
                 cpd = this->cpd_templates.at(key);
             }
             else {
-                throw std::invalid_argument(
+                throw invalid_argument(
                     "No CPD found associated with the parents informed.");
             }
 
             return cpd;
         }
 
-        std::string RandomVariableNode::get_unique_key_from_labels(
-            std::vector<std::string> labels) const {
-            std::stringstream ss;
-            std::sort(labels.begin(), labels.end());
+        string RandomVariableNode::get_unique_key_from_labels(
+            vector<string> labels) const {
+            stringstream ss;
+            sort(labels.begin(), labels.end());
             copy(labels.begin(),
                  labels.end(),
-                 std::ostream_iterator<std::string>(ss, ","));
+                 ostream_iterator<string>(ss, ","));
             return ss.str();
         }
 
@@ -212,10 +214,10 @@ namespace tomcat {
 
         bool RandomVariableNode::is_frozen() const { return frozen; }
 
-        void RandomVariableNode::set_cpd(const std::shared_ptr<CPD>& cpd) {
+        void RandomVariableNode::set_cpd(const shared_ptr<CPD>& cpd) {
             this->cpd = cpd;
         }
-        const std::shared_ptr<CPD>& RandomVariableNode::get_cpd() const {
+        const shared_ptr<CPD>& RandomVariableNode::get_cpd() const {
             return cpd;
         }
 

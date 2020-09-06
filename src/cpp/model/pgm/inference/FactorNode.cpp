@@ -5,14 +5,16 @@ using namespace std;
 namespace tomcat {
     namespace model {
 
+        using namespace std;
+
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
-        FactorNode::FactorNode(const std::string& label,
+        FactorNode::FactorNode(const string& label,
                                int time_step,
                                const Eigen::MatrixXd& potential_function,
                                const CPD::TableOrderingMap& ordering_map,
-                               const std::string cpd_main_node_label)
+                               const string cpd_main_node_label)
             : MessageNode(compose_label(label), time_step),
               original_potential_function(
                   ordering_map, potential_function, cpd_main_node_label) {
@@ -76,7 +78,7 @@ namespace tomcat {
                 }
 
                 PotentialFunction new_function;
-                new_function.matrix = std::move(new_matrix);
+                new_function.matrix = move(new_matrix);
                 new_function.main_node_label = node_label;
                 // Create a new ordering map and replace the parent node's label
                 // by the main node name, that happens to be the child of this
@@ -99,7 +101,7 @@ namespace tomcat {
                 map_entry.key() = prev_main_node_label;
                 new_map.insert(move(map_entry));
 
-                new_function.ordering_map = std::move(new_map);
+                new_function.ordering_map = move(new_map);
 
                 this->node_label_to_rotated_potential_function[node_label] =
                     new_function;
@@ -115,7 +117,7 @@ namespace tomcat {
         }
 
         Eigen::MatrixXd FactorNode::get_outward_message_to(
-            const std::shared_ptr<MessageNode>& template_target_node,
+            const shared_ptr<MessageNode>& template_target_node,
             int template_time_step,
             int target_time_step,
             Direction direction) const {
@@ -179,7 +181,7 @@ namespace tomcat {
         }
 
         vector<Eigen::MatrixXd> FactorNode::get_incoming_messages_in_order(
-            const std::string& ignore_label,
+            const string& ignore_label,
             int template_time_step,
             int target_time_step,
             const PotentialFunction& potential_function) const {

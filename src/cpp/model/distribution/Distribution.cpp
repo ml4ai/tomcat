@@ -3,6 +3,8 @@
 namespace tomcat {
     namespace model {
 
+        using namespace std;
+
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
@@ -13,7 +15,7 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Operator overload
         //----------------------------------------------------------------------
-        std::ostream& operator<<(std::ostream& os,
+        ostream& operator<<(ostream& os,
                                  const Distribution& distribution) {
             distribution.print(os);
             return os;
@@ -22,7 +24,7 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void Distribution::print(std::ostream& os) const {
+        void Distribution::print(ostream& os) const {
             os << this->get_description();
         }
 

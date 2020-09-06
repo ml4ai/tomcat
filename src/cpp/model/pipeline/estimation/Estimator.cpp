@@ -5,12 +5,14 @@
 namespace tomcat {
     namespace model {
 
+        using namespace std;
+
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
         Estimator::Estimator() {}
 
-        Estimator::Estimator(std::shared_ptr<DynamicBayesNet> model, int inference_horizon)
+        Estimator::Estimator(shared_ptr<DynamicBayesNet> model, int inference_horizon)
             : model(model), inference_horizon(inference_horizon) {}
 
         Estimator::~Estimator() {}
@@ -26,7 +28,7 @@ namespace tomcat {
             this->inference_horizon = estimator.inference_horizon;
         }
 
-        void Estimator::add_node(const std::string& node_label,
+        void Estimator::add_node(const string& node_label,
                                  const Eigen::VectorXd& assignment) {
             NodeEstimates node_estimates;
             node_estimates.label = node_label;
@@ -34,18 +36,18 @@ namespace tomcat {
             this->nodes_estimates.push_back(node_estimates);
         }
 
-        std::vector<NodeEstimates>
+        vector<NodeEstimates>
         Estimator::get_estimates_at(int time_step) const {
-            std::vector<NodeEstimates> estimates_per_node;
+            vector<NodeEstimates> estimates_per_node;
             estimates_per_node.reserve(this->nodes_estimates.size());
 
             for (const auto& node_estimate : this->nodes_estimates) {
                 if (node_estimate.estimates.cols() <= time_step) {
-                    std::stringstream ss;
+                    stringstream ss;
                     ss << "The chosen estimator can only calculate estimates "
                           "up to time step "
                        << time_step;
-                    throw std::out_of_range(ss.str());
+                    throw out_of_range(ss.str());
                 }
 
                 NodeEstimates sliced_estimates;
@@ -59,8 +61,8 @@ namespace tomcat {
             return estimates_per_node;
         }
 
-        std::vector<NodeEstimates> Estimator::get_estimates() const {
-            std::vector<NodeEstimates> estimates_per_node;
+        vector<NodeEstimates> Estimator::get_estimates() const {
+            vector<NodeEstimates> estimates_per_node;
             estimates_per_node.reserve(this->nodes_estimates.size());
 
             for (const auto& node_estimate : this->nodes_estimates) {

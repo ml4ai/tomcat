@@ -3,11 +3,13 @@
 namespace tomcat {
     namespace model {
 
+        using namespace std;
+
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
         AncestralSampler::AncestralSampler(
-            std::shared_ptr<DynamicBayesNet> model)
+            shared_ptr<DynamicBayesNet> model)
             : Sampler(model) {}
 
         AncestralSampler::~AncestralSampler() {}
@@ -29,10 +31,10 @@ namespace tomcat {
         // Member functions
         //----------------------------------------------------------------------
         void AncestralSampler::sample_latent(
-            std::shared_ptr<gsl_rng> random_generator, int num_samples) {
-            std::vector<std::shared_ptr<Node>> nodes;
+            shared_ptr<gsl_rng> random_generator, int num_samples) {
+            vector<shared_ptr<Node>> nodes;
             for (auto& node : this->model->get_nodes_topological_order()) {
-                if (!std::dynamic_pointer_cast<RandomVariableNode>(node)
+                if (!dynamic_pointer_cast<RandomVariableNode>(node)
                          ->is_frozen()) {
                     nodes.push_back(node);
                 }
@@ -42,7 +44,7 @@ namespace tomcat {
                 this->sampled_node_labels.insert(
                     node->get_metadata()->get_label());
 
-                const std::vector<std::shared_ptr<Node>>& parent_nodes =
+                const vector<shared_ptr<Node>>& parent_nodes =
                     this->model->get_parent_nodes_of(node, true);
                 int real_num_samples = num_samples;
                 if (node->get_metadata()->is_in_plate()) {
@@ -55,8 +57,8 @@ namespace tomcat {
                                            : this->num_in_plate_samples;
                 }
 
-                std::shared_ptr<RandomVariableNode> rv_node =
-                    std::dynamic_pointer_cast<RandomVariableNode>(node);
+                shared_ptr<RandomVariableNode> rv_node =
+                    dynamic_pointer_cast<RandomVariableNode>(node);
                 Eigen::MatrixXd assignment = rv_node->sample(
                     random_generator, parent_nodes, real_num_samples);
                 rv_node->set_assignment(assignment);

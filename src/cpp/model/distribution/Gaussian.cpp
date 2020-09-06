@@ -7,25 +7,27 @@
 namespace tomcat {
     namespace model {
 
+        using namespace std;
+
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
-        Gaussian::Gaussian(std::shared_ptr<Node>& mean,
-                           std::shared_ptr<Node>& variance)
+        Gaussian::Gaussian(shared_ptr<Node>& mean,
+                           shared_ptr<Node>& variance)
             : Continuous({mean, variance}) {}
 
-        Gaussian::Gaussian(std::shared_ptr<Node>&& mean,
-                           std::shared_ptr<Node>&& variance)
-            : Continuous({std::move(mean), std::move(variance)}) {}
+        Gaussian::Gaussian(shared_ptr<Node>&& mean,
+                           shared_ptr<Node>&& variance)
+            : Continuous({move(mean), move(variance)}) {}
 
         Gaussian::Gaussian(const Eigen::VectorXd& parameters) {
             ConstantNode mean(parameters[PARAMETER_INDEX::mean]);
             ConstantNode variance(parameters[PARAMETER_INDEX::variance]);
 
             this->parameters.push_back(
-                std::make_shared<ConstantNode>(std::move(mean)));
+                make_shared<ConstantNode>(move(mean)));
             this->parameters.push_back(
-                std::make_shared<ConstantNode>(std::move(variance)));
+                make_shared<ConstantNode>(move(variance)));
         }
 
         Gaussian::~Gaussian() {}
@@ -46,7 +48,7 @@ namespace tomcat {
         // Member functions
         //----------------------------------------------------------------------
         Eigen::VectorXd
-        Gaussian::sample(std::shared_ptr<gsl_rng> random_generator,
+        Gaussian::sample(shared_ptr<gsl_rng> random_generator,
                          int parameter_idx) const {
 
             Eigen::VectorXd parameters = this->get_parameters(parameter_idx);
@@ -79,7 +81,7 @@ namespace tomcat {
         }
 
         Eigen::VectorXd
-        Gaussian::sample_from_gsl(std::shared_ptr<gsl_rng> random_generator,
+        Gaussian::sample_from_gsl(shared_ptr<gsl_rng> random_generator,
                                   double mean,
                                   double variance) const {
 
@@ -93,7 +95,7 @@ namespace tomcat {
         }
 
         Eigen::VectorXd
-        Gaussian::sample(std::shared_ptr<gsl_rng> random_generator,
+        Gaussian::sample(shared_ptr<gsl_rng> random_generator,
                          int parameter_idx,
                          const Eigen::VectorXd& weights) const {
 
@@ -106,10 +108,10 @@ namespace tomcat {
         }
 
         Eigen::VectorXd Gaussian::sample_from_conjugacy(
-            std::shared_ptr<gsl_rng> random_generator,
+            shared_ptr<gsl_rng> random_generator,
             int parameter_idx,
             const Eigen::VectorXd& sufficient_statistics) const {
-            throw std::invalid_argument(
+            throw invalid_argument(
                 "Not implemented yet.");
         }
 
@@ -123,9 +125,9 @@ namespace tomcat {
             return gsl_ran_gaussian_pdf(value(0) - mean, sqrt(variance));
         }
 
-        std::unique_ptr<Distribution> Gaussian::clone() const {
-            std::unique_ptr<Gaussian> new_distribution =
-                std::make_unique<Gaussian>(*this);
+        unique_ptr<Distribution> Gaussian::clone() const {
+            unique_ptr<Gaussian> new_distribution =
+                make_unique<Gaussian>(*this);
 
             for (auto& parameter : new_distribution->parameters) {
                 parameter = parameter->clone();
@@ -134,8 +136,8 @@ namespace tomcat {
             return new_distribution;
         }
 
-        std::string Gaussian::get_description() const {
-            std::stringstream ss;
+        string Gaussian::get_description() const {
+            stringstream ss;
             ss << "N(" << this->parameters[0] << ", " << this->parameters[1]
                << ")";
 

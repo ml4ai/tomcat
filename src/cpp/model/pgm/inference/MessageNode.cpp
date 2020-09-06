@@ -7,12 +7,14 @@ using namespace std;
 namespace tomcat {
     namespace model {
 
+        using namespace std;
+
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
         MessageNode::MessageNode() {}
 
-        MessageNode::MessageNode(const std::string& label, int time_step)
+        MessageNode::MessageNode(const string& label, int time_step)
             : label(label), time_step(time_step) {}
 
         MessageNode::~MessageNode() {}
@@ -20,22 +22,22 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Static functions
         //----------------------------------------------------------------------
-        std::string MessageNode::get_name(const std::string& label,
+        string MessageNode::get_name(const string& label,
                                           int time_step) {
             stringstream ss;
             ss << "(" << label << ", " << time_step << ")";
             return ss.str();
         }
 
-        bool MessageNode::is_prior(const std::string& node_name) {
+        bool MessageNode::is_prior(const string& node_name) {
             return strip(node_name).first == PRIOR_NODE_LABEL;
         }
 
-        bool MessageNode::is_end_node(const std::string& node_name) {
+        bool MessageNode::is_end_node(const string& node_name) {
             return strip(node_name).first == END_NODE_LABEL;
         }
 
-        pair<string, int> MessageNode::strip(const std::string& node_name) {
+        pair<string, int> MessageNode::strip(const string& node_name) {
             size_t end_index = node_name.find(",");
             string label = node_name.substr(1, end_index - 1);
             int time_step =
@@ -48,7 +50,7 @@ namespace tomcat {
         // Member functions
         //----------------------------------------------------------------------
         Eigen::MatrixXd
-        MessageNode::get_incoming_message_from(const std::string& source_label,
+        MessageNode::get_incoming_message_from(const string& source_label,
                                                int source_time_step,
                                                int target_time_step) const {
 
@@ -69,7 +71,7 @@ namespace tomcat {
                 .set_message_for(source_label, source_time_step, message);
         }
 
-        std::string MessageNode::get_name() const {
+        string MessageNode::get_name() const {
             return get_name(this->label, this->time_step);
         }
 

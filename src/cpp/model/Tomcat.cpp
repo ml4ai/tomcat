@@ -13,6 +13,8 @@ using namespace std;
 namespace tomcat {
     namespace model {
 
+        using namespace std;
+
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
@@ -31,7 +33,7 @@ namespace tomcat {
             // 1.1 States
 
             // 1.1.1 Metadata
-            vector<std::shared_ptr<NodeMetadata>> theta_s_metadatas(num_states);
+            vector<shared_ptr<NodeMetadata>> theta_s_metadatas(num_states);
             for (int i = 0; i < num_states; i++) {
                 stringstream parameter_label;
                 parameter_label << THETA_S << i;
@@ -49,7 +51,7 @@ namespace tomcat {
             }
 
             // 1.1.2 CPD (priors of the parameters)
-            std::vector<std::shared_ptr<DirichletCPD>> theta_s_cpds(num_states);
+            vector<shared_ptr<DirichletCPD>> theta_s_cpds(num_states);
 
             // From HW to HW | RW | SG | SY
             Eigen::MatrixXd theta_s0(1, num_states);
@@ -76,7 +78,7 @@ namespace tomcat {
             theta_s_cpds[3] = make_shared<DirichletCPD>(move(theta_s_cpd_temp));
 
             // 1.1.3 Random Variables
-            std::vector<std::shared_ptr<RandomVariableNode>> theta_s_nodes(
+            vector<shared_ptr<RandomVariableNode>> theta_s_nodes(
                 num_states);
             for (int i = 0; i < num_states; i++) {
                 theta_s_nodes[i] =
@@ -132,7 +134,7 @@ namespace tomcat {
                                                      state_transition_matrix);
             shared_ptr<CategoricalCPD> state_transition_cpd =
                 make_shared<CategoricalCPD>(
-                    std::move(state_transition_cpd_temp));
+                    move(state_transition_cpd_temp));
 
             // 2.2.3 Room Emission
 
@@ -143,7 +145,7 @@ namespace tomcat {
             CategoricalCPD room_emission_cpd_temp({state_metadata},
                                                   room_emission_matrix);
             shared_ptr<CategoricalCPD> room_emission_cpd =
-                make_shared<CategoricalCPD>(std::move(room_emission_cpd_temp));
+                make_shared<CategoricalCPD>(move(room_emission_cpd_temp));
 
             // 2.2.4 SG Emission
 
@@ -152,7 +154,7 @@ namespace tomcat {
             CategoricalCPD sg_emission_cpd_temp({state_metadata},
                                                 sg_emission_matrix);
             shared_ptr<CategoricalCPD> sg_emission_cpd =
-                make_shared<CategoricalCPD>(std::move(sg_emission_cpd_temp));
+                make_shared<CategoricalCPD>(move(sg_emission_cpd_temp));
 
             // 2.2.5 SY Emission
             Eigen::MatrixXd sy_emission_matrix(num_states, 2);
@@ -160,7 +162,7 @@ namespace tomcat {
             CategoricalCPD sy_emission_cpd_temp({state_metadata},
                                                 sy_emission_matrix);
             shared_ptr<CategoricalCPD> sy_emission_cpd =
-                make_shared<CategoricalCPD>(std::move(sy_emission_cpd_temp));
+                make_shared<CategoricalCPD>(move(sy_emission_cpd_temp));
 
             // 2.3 Random Variables
             RandomVariableNode state(state_metadata);
@@ -204,9 +206,9 @@ namespace tomcat {
         }
 
         void Tomcat::generate_synthetic_data(
-            std::shared_ptr<gsl_rng> random_generator,
+            shared_ptr<gsl_rng> random_generator,
             int num_samples,
-            const std::string& output_folder) {
+            const string& output_folder) {
 
             AncestralSampler sampler(model);
             sampler.set_num_in_plate_samples(1);

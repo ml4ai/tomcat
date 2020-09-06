@@ -4,25 +4,28 @@
 
 namespace tomcat {
     namespace model {
+
+        using namespace std;
+        
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
-        ConstantNode::ConstantNode(double value, std::string label) {
+        ConstantNode::ConstantNode(double value, string label) {
             this->assignment = Eigen::MatrixXd(1, 1);
             this->assignment(0,0) = value;
             this->create_default_metadata(label, 1);
         }
 
-        ConstantNode::ConstantNode(const Eigen::VectorXd& values, std::string label) {
+        ConstantNode::ConstantNode(const Eigen::VectorXd& values, string label) {
             this->assignment = Eigen::MatrixXd(1, values.size());
             this->assignment.row(0) = values;
             this->create_default_metadata(label, values.size());
         }
 
         ConstantNode::ConstantNode(const Eigen::VectorXd&& values,
-                                   std::string label) {
+                                   string label) {
             this->assignment = Eigen::MatrixXd(1, values.size());
-            this->assignment.row(0) = std::move(values);
+            this->assignment.row(0) = move(values);
             this->create_default_metadata(label, this->assignment.size());
         }
 
@@ -45,30 +48,30 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void ConstantNode::create_default_metadata(std::string& label,
+        void ConstantNode::create_default_metadata(string& label,
                                                    int sample_size) {
             NodeMetadata metadata =
                 NodeMetadata::create_single_time_link_metadata(
                     label, true, false, 0, sample_size, 1);
             this->metadata =
-                std::make_shared<NodeMetadata>(std::move(metadata));
+                make_shared<NodeMetadata>(move(metadata));
         }
 
-        std::unique_ptr<Node> ConstantNode::clone() const {
-            std::unique_ptr<ConstantNode> new_node =
-                std::make_unique<ConstantNode>(*this);
+        unique_ptr<Node> ConstantNode::clone() const {
+            unique_ptr<ConstantNode> new_node =
+                make_unique<ConstantNode>(*this);
             new_node->metadata =
-                std::make_shared<NodeMetadata>(*this->metadata);
+                make_shared<NodeMetadata>(*this->metadata);
             return new_node;
         }
 
-        std::string ConstantNode::get_timed_name() const {
+        string ConstantNode::get_timed_name() const {
             return this->metadata->get_label();
         }
 
-        std::string ConstantNode::get_description() const {
+        string ConstantNode::get_description() const {
             if (this->assignment.size() == 1) {
-                std::stringstream assignment_string;
+                stringstream assignment_string;
                 assignment_string << this->assignment;
 
                 return fmt::format("Constant({}, {})",
@@ -76,7 +79,7 @@ namespace tomcat {
                                    assignment_string.str());
             }
             else {
-                std::stringstream assignment_string;
+                stringstream assignment_string;
                 assignment_string << this->assignment.transpose();
 
                 return fmt::format("Constant({}, [{}])",
