@@ -256,6 +256,9 @@ void execute_experiment_1c_part_b() {
  * threshold is 0.5 by default.
  */
 void execute_experiment_1d() {
+    // Random Seed
+    shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+
     // Model
     Tomcat tomcat;
     tomcat.init_ta3_learnable_model();
