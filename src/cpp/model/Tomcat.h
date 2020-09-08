@@ -68,11 +68,14 @@ namespace tomcat {
              * @param random_generator: random number generator
              * @param num_samples: number of samples to generate
              * @param output_folder: folder where the samples must be saved
+             * @param equal_until: max time step for equal samples. After this
+             * time step, samples are not required to be the same.
              */
-            void generate_synthetic_data(
-                  std::shared_ptr<gsl_rng> random_generator,
-                  int num_samples,
-                  const std::string& output_folder);
+            void
+            generate_synthetic_data(std::shared_ptr<gsl_rng> random_generator,
+                                    int num_samples,
+                                    const std::string& output_folder,
+                                    int equal_until = -1);
 
             //------------------------------------------------------------------
             // Getters & Setters

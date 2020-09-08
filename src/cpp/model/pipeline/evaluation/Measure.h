@@ -53,6 +53,7 @@ namespace tomcat {
 
         /**
          * Represents some measurement that can be performed over estimates.
+         *
          */
         class Measure {
           public:
@@ -62,14 +63,20 @@ namespace tomcat {
 
             /**
              * Creates an empty measure.
+             *
+             * @param threshold: Probability threshold for predicting or
+             * inferring the occurrence of an assignment as true
              */
             Measure();
 
             /**
              * Creates an abstract measure.
-             * @param estimator
+             *
+             * @param estimator: estimator used to compute the estimates
+             * @param threshold: Probability threshold for predicting or
+             * inferring the occurrence of an assignment as true
              */
-            Measure(std::shared_ptr<Estimator> estimator);
+            Measure(std::shared_ptr<Estimator> estimator, double threshold = 0.5);
 
             virtual ~Measure();
 
@@ -129,7 +136,8 @@ namespace tomcat {
              * @return Confusion matrix.
              */
             ConfusionMatrix
-            get_confusion_matrix(const NodeEstimates& estimates, const EvidenceSet& test_data) const;
+            get_confusion_matrix(const NodeEstimates& estimates,
+                                 const EvidenceSet& test_data) const;
 
             //------------------------------------------------------------------
             // Data members
@@ -137,6 +145,10 @@ namespace tomcat {
             // The estimates computed and stored in the estimator will be used
             // to evaluate the measure.
             std::shared_ptr<Estimator> estimator;
+
+            // Probability threshold for predicting or inferring the occurrence
+            // of an assignment as true
+            double threshold = 0.5;
         };
 
     } // namespace model

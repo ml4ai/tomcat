@@ -72,8 +72,7 @@ namespace tomcat {
         unique_ptr<Node> RandomVariableNode::clone() const {
             unique_ptr<RandomVariableNode> new_node =
                 make_unique<RandomVariableNode>(*this);
-            new_node->metadata =
-                make_shared<NodeMetadata>(*this->metadata);
+            new_node->metadata = make_shared<NodeMetadata>(*this->metadata);
             new_node->clone_cpd_templates();
             new_node->clone_cpd();
             return new_node;
@@ -101,31 +100,36 @@ namespace tomcat {
 
         void RandomVariableNode::update_cpd_templates_dependencies(
             NodeMap& parameter_nodes_map, int time_step) {
-            for(auto& mapping : this->cpd_templates) {
+            for (auto& mapping : this->cpd_templates) {
                 if (!mapping.second->is_updated()) {
                     mapping.second->update_dependencies(parameter_nodes_map,
-                                                   time_step);
+                                                        time_step);
                 }
             }
         }
 
-        Eigen::MatrixXd RandomVariableNode::sample(
-            shared_ptr<gsl_rng> random_generator,
-            const vector<shared_ptr<Node>>& parent_nodes,
-            int num_samples) const {
+        Eigen::MatrixXd
+        RandomVariableNode::sample(shared_ptr<gsl_rng> random_generator,
+                                   const vector<shared_ptr<Node>>& parent_nodes,
+                                   int num_samples,
+                                   bool equal_samples) const {
 
             return this->cpd->sample(
-                random_generator, parent_nodes, num_samples);
+                random_generator, parent_nodes, num_samples, equal_samples);
         }
 
-        Eigen::MatrixXd RandomVariableNode::sample(
-            shared_ptr<gsl_rng> random_generator,
-            const vector<shared_ptr<Node>>& parent_nodes,
-            int num_samples,
-            Eigen::MatrixXd weights) const {
+        Eigen::MatrixXd
+        RandomVariableNode::sample(shared_ptr<gsl_rng> random_generator,
+                                   const vector<shared_ptr<Node>>& parent_nodes,
+                                   int num_samples,
+                                   Eigen::MatrixXd weights,
+                                   bool equal_samples) const {
 
-            return this->cpd->sample(
-                random_generator, parent_nodes, num_samples, weights);
+            return this->cpd->sample(random_generator,
+                                     parent_nodes,
+                                     num_samples,
+                                     weights,
+                                     equal_samples);
         }
 
         Eigen::MatrixXd RandomVariableNode::sample_from_conjugacy(

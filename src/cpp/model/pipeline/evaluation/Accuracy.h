@@ -18,8 +18,13 @@ namespace tomcat {
 
             /**
              * Creates an accuracy measure.
+             *
+             * @param estimator: estimator used to compute the estimates
+             * @param threshold: Probability threshold for predicting or
+             * inferring the occurrence of an assignment as true
              */
-            Accuracy(std::shared_ptr<Estimator> estimator);
+            Accuracy(std::shared_ptr<Estimator> estimator,
+                     double threshold = 0.5);
 
             ~Accuracy();
 
@@ -37,7 +42,8 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-            std::vector<NodeEvaluation> evaluate(const EvidenceSet& test_data) const override;
+            std::vector<NodeEvaluation>
+            evaluate(const EvidenceSet& test_data) const override;
 
             void get_info(nlohmann::json& json) const override;
         };

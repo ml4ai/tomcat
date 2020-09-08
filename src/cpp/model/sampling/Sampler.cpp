@@ -3,6 +3,7 @@
 #include <array>
 
 #include <fmt/format.h>
+#include <boost/filesystem.hpp>
 
 #include "../utils/FileHandler.h"
 
@@ -92,6 +93,9 @@ namespace tomcat {
 
         void Sampler::save_samples_to_folder(
             const string& output_folder) const {
+
+            boost::filesystem::create_directories(output_folder);
+
             for (const auto& node_label : this->sampled_node_labels) {
                 string filename = node_label + ".txt";
                 string filepath = get_filepath(output_folder, filename);

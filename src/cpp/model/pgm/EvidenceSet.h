@@ -160,6 +160,20 @@ namespace tomcat {
                                            const Eigen::VectorXd& assignment,
                                            int window) const;
 
+            /**
+             * Keep the first samples and remove the rest.
+             *
+             * @param num_samples: Number of the first samples to preserve.
+             */
+            void keep_first(int num_samples);
+
+            /**
+             * Shrinks the data up to a time slice (inclusive).
+             *
+             * @param time_slice: max time step included in the data.
+             */
+            void shrink_up_to(int time_step);
+
             //------------------------------------------------------------------
             // Getters & Setters
             //------------------------------------------------------------------

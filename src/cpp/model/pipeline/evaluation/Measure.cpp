@@ -10,8 +10,8 @@ namespace tomcat {
         //----------------------------------------------------------------------
         Measure::Measure() {}
 
-        Measure::Measure(shared_ptr<Estimator> estimator)
-            : estimator(estimator) {}
+        Measure::Measure(shared_ptr<Estimator> estimator, double threshold)
+            : estimator(estimator), threshold(threshold) {}
 
         Measure::~Measure() {}
 
@@ -38,9 +38,9 @@ namespace tomcat {
             no_obs =
                 (estimates.estimates.array() == NO_OBS).select(no_obs, zeros);
 
-            // If estimates are probabilities, make it class 1 if above 0.5.
             Eigen::MatrixXd discrete_estimates =
-                (estimates.estimates.array() > 0.5).select(ones, no_obs);
+                (estimates.estimates.array() > this->threshold)
+                    .select(ones, no_obs);
 
             // For a given assignment, transform the test data into 0s and 1s.
             // Where 1 is assigned to the coefficients equal to the assignment

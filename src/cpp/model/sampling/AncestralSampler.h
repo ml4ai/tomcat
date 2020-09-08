@@ -49,6 +49,23 @@ namespace tomcat {
                                int num_samples) override;
 
             void get_info(nlohmann::json& json) const override;
+
+            //------------------------------------------------------------------
+            // Getters & Setters
+            //------------------------------------------------------------------
+            void set_equal_samples_time_step_limit(
+                int equal_samples_time_step_limit);
+
+          private:
+            //------------------------------------------------------------------
+            // Data members
+            //------------------------------------------------------------------
+
+            // If set, samples up to this time will be the same for all the
+            // samples generated. Starting from the next time step, samples will
+            // be able to diverge according to a regular ancestral sampling
+            // process.
+            int equal_samples_time_step_limit = -1;
         };
     } // namespace model
 } // namespace tomcat

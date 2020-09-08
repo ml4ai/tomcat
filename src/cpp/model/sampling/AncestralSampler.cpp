@@ -59,14 +59,29 @@ namespace tomcat {
 
                 shared_ptr<RandomVariableNode> rv_node =
                     dynamic_pointer_cast<RandomVariableNode>(node);
+
+                bool equal_samples = false;
+                if (rv_node->get_time_step() <= this->equal_samples_time_step_limit) {
+                    equal_samples = true;
+                }
+
                 Eigen::MatrixXd assignment = rv_node->sample(
-                    random_generator, parent_nodes, real_num_samples);
+                    random_generator, parent_nodes, real_num_samples, equal_samples);
                 rv_node->set_assignment(assignment);
             }
         }
 
         void AncestralSampler::get_info(nlohmann::json& json) const {
             json["name"] = "ancestral";
+        }
+
+        //----------------------------------------------------------------------
+        // Getters & Setters
+        //----------------------------------------------------------------------
+        void AncestralSampler::set_equal_samples_time_step_limit(
+            int equal_samples_time_step_limit) {
+            this->equal_samples_time_step_limit =
+                equal_samples_time_step_limit;
         }
 
     } // namespace model

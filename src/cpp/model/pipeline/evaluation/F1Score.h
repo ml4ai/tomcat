@@ -18,8 +18,13 @@ namespace tomcat {
 
             /**
              * Creates an F1 Score measure.
+             *
+             * @param estimator: estimator used to compute the estimates
+             * @param threshold: Probability threshold for predicting or
+             * inferring the occurrence of an assignment as true
              */
-            F1Score(std::shared_ptr<Estimator> estimator);
+            F1Score(std::shared_ptr<Estimator> estimator,
+                    double threshold = 0.5);
 
             ~F1Score();
 

@@ -208,10 +208,12 @@ namespace tomcat {
         void Tomcat::generate_synthetic_data(
             shared_ptr<gsl_rng> random_generator,
             int num_samples,
-            const string& output_folder) {
+            const string& output_folder,
+            int equal_until) {
 
             AncestralSampler sampler(model);
             sampler.set_num_in_plate_samples(1);
+            sampler.set_equal_samples_time_step_limit(equal_until);
             sampler.sample(random_generator, num_samples);
             sampler.save_samples_to_folder(output_folder);
         }

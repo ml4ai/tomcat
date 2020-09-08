@@ -8,8 +8,8 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
-        F1Score::F1Score(shared_ptr<Estimator> estimator)
-            : Measure(estimator) {}
+        F1Score::F1Score(shared_ptr<Estimator> estimator, double threshold)
+            : Measure(estimator, threshold) {}
 
         F1Score::~F1Score() {}
 
@@ -67,6 +67,7 @@ namespace tomcat {
 
         void F1Score::get_info(nlohmann::json& json) const {
             json["name"] = "f1 score";
+            json["threshold"] = this->threshold;
             this->estimator->get_info(json["estimator"]);
         }
 

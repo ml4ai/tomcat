@@ -2,7 +2,7 @@
 
 namespace tomcat {
     namespace model {
-        
+
         using namespace std;
 
         //----------------------------------------------------------------------
@@ -106,7 +106,8 @@ namespace tomcat {
         Eigen::MatrixXd
         CPD::sample(shared_ptr<gsl_rng> random_generator,
                     const vector<shared_ptr<Node>>& parent_nodes,
-                    int num_samples) const {
+                    int num_samples,
+                    bool equal_samples) const {
 
             vector<int> distribution_indices =
                 this->get_distribution_indices(parent_nodes, num_samples);
@@ -121,6 +122,20 @@ namespace tomcat {
                         random_generator, i);
                 samples.row(i) = move(assignment);
                 i++;
+
+                if (equal_samples) {
+                    // We generate one sample and replicate to the others
+                    break;
+                }
+            }
+
+            // Sample replication if requested. We use the distribution_indices
+            // size because, even if the number of samples is greater than one,
+            // if the node is a parent of an in-plate node, it always yields a
+            // single sample. This information is encoded in the distribution
+            // indices size.
+            for (; i < distribution_indices.size(); i++) {
+                samples.row(i) = samples.row(0);
             }
 
             return samples;
@@ -155,8 +170,8 @@ namespace tomcat {
             return indices;
         }
 
-        Node::NodeMap CPD::map_labels_to_nodes(
-            const vector<shared_ptr<Node>>& nodes) const {
+        Node::NodeMap
+        CPD::map_labels_to_nodes(const vector<shared_ptr<Node>>& nodes) const {
 
             Node::NodeMap labels_to_nodes;
             for (auto& node : nodes) {
@@ -171,7 +186,8 @@ namespace tomcat {
         CPD::sample(shared_ptr<gsl_rng> random_generator,
                     const vector<shared_ptr<Node>>& parent_nodes,
                     int num_samples,
-                    Eigen::MatrixXd weights) const {
+                    Eigen::MatrixXd weights,
+                    bool equal_samples) const {
 
             vector<int> distribution_indices =
                 this->get_distribution_indices(parent_nodes, num_samples);
@@ -188,6 +204,20 @@ namespace tomcat {
                         weights.row(sample_index));
                 samples.row(sample_index) = move(assignment);
                 sample_index++;
+
+                if (equal_samples) {
+                    // We generate one sample and replicate to the others
+                    break;
+                }
+            }
+
+            // Sample replication if requested. We use the distribution_indices
+            // size because, even if the number of samples is greater than one,
+            // if the node is a parent of an in-plate node, it always yields a
+            // single sample. This information is encoded in the distribution
+            // indices size.
+            for (; sample_index < distribution_indices.size(); sample_index++) {
+                samples.row(sample_index) = samples.row(0);
             }
 
             return samples;
@@ -218,9 +248,8 @@ namespace tomcat {
             const vector<shared_ptr<Node>>& parent_nodes,
             const Eigen::MatrixXd& cpd_owner_assignments) {
 
-            vector<int> distribution_indices =
-                this->get_distribution_indices(parent_nodes,
-                                               cpd_owner_assignments.rows());
+            vector<int> distribution_indices = this->get_distribution_indices(
+                parent_nodes, cpd_owner_assignments.rows());
 
             int sample_index = 0;
             for (const auto& distribution_idx : distribution_indices) {
@@ -234,9 +263,7 @@ namespace tomcat {
 
         void CPD::reset_updated_status() { this->updated = false; }
 
-        void CPD::print(ostream& os) const {
-            os << this->get_description();
-        }
+        void CPD::print(ostream& os) const { os << this->get_description(); }
 
         Eigen::MatrixXd CPD::get_table() const {
             Eigen::MatrixXd table;

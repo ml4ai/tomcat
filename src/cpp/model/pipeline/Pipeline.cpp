@@ -32,6 +32,7 @@ namespace tomcat {
 
             vector<KFold::Split> splits = this->data_splitter->get_splits();
             for (const auto& [training_data, test_data] : splits) {
+                this->model_trainner->prepare();
                 this->model_trainner->fit(training_data);
                 if (this->model_saver != nullptr) {
                     this->model_saver->save();

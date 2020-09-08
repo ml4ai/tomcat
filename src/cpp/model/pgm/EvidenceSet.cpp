@@ -178,6 +178,20 @@ namespace tomcat {
                 this->node_label_to_data.at(node_label), assignment, window);
         }
 
+        void EvidenceSet::keep_first(int num_samples) {
+            for(auto&[node_label, data] : this->node_label_to_data){
+                data = data.slice(0, num_samples, 1);
+            }
+            this->num_data_points = num_samples;
+        }
+
+        void EvidenceSet::shrink_up_to(int time_step) {
+            for(auto&[node_label, data] : this->node_label_to_data){
+                data = data.slice(0, time_step + 1, 2);
+            }
+            this->time_steps = time_step + 1;
+        }
+
         //----------------------------------------------------------------------
         // Getters & Setters
         //----------------------------------------------------------------------

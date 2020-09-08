@@ -154,13 +154,16 @@ namespace tomcat {
              * @param num_samples: number of samples to generate. If the parent
              * nodes have multiple assignments, each sample will use one of them
              * to determine the distribution which it's sampled from.
+             * @param equal_samples: whether the samples generated must be the
+             * same
              *
              * @return A sample from one of the distributions in the CPD.
              */
             Eigen::MatrixXd
             sample(std::shared_ptr<gsl_rng> random_generator,
                    const std::vector<std::shared_ptr<Node>>& parent_nodes,
-                   int num_samples) const;
+                   int num_samples,
+                   bool equal_samples = false) const;
 
             /**
              * Draws a sample from the distribution associated with the parent
@@ -173,6 +176,8 @@ namespace tomcat {
              * nodes have multiple assignments, each sample will use one of them
              * to determine the distribution which it's sampled from.
              * @param weights: Scale coefficients for the distributions
+             * @param equal_samples: whether the samples generated must be the
+             * same
              *
              * @return A sample from one of the distributions in the CPD.
              */
@@ -180,7 +185,8 @@ namespace tomcat {
             sample(std::shared_ptr<gsl_rng> random_generator,
                    const std::vector<std::shared_ptr<Node>>& parent_nodes,
                    int num_samples,
-                   Eigen::MatrixXd weights) const;
+                   Eigen::MatrixXd weights,
+                   bool equal_samples = false) const;
 
             /**
              * Returns pdfs for assignments of a given node from the
