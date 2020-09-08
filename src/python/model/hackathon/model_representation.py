@@ -3,6 +3,7 @@ from hackathon import (
     utils as utils,
 )
 import numpy as np
+import os
 
 
 class CPDTables:
@@ -26,7 +27,9 @@ class ParameterPriors:
 class Model:
     def init_from_cpds(self, cpds):
         self.number_of_states = cpds.theta_s.shape[0]
+        self.number_of_rooms = cpds.theta_rm.shape[1]
         self.cpd_tables = cpds
+        self.number_of_hallways = 0
 
     def init_from_mission_map(self, mission_map_id):
         self.mission_map_id = mission_map_id
@@ -43,6 +46,9 @@ class Model:
         elif mission_map_id == evidence_extraction.MissionMap.FALCON:
             self.number_of_states = 166
             self.number_of_hallways = 10
+        elif mission_map_id == evidence_extraction.MissionMap.SHARED:
+            self.number_of_states = 4
+            self.number_of_hallways = 1
 
         self.cpd_tables = CPDTables(
             None, None, self.get_theta_rm(), self.get_pi_tg(), self.get_pi_ty()
@@ -53,24 +59,33 @@ class Model:
 
     def get_theta_rm(self):
         """
-        This method returns the pre-defined distribution for theta_rm, because we can always tell the room by the state
+        This method returns the pre-defined distribution for theta_rm, because we can
+        always tell the room by the state
         """
 
         # In the hallways, the number of the room in the number of the state
-        theta_rm = np.zeros((self.number_of_states, self.number_of_rooms))
-        for state in range(self.number_of_hallways):
-            theta_rm[state] = self.one_hot_encode(
-                self.number_of_rooms, [state]
-            )
+        if self.mission_map_id == evidence_extraction.MissionMap.SHARED:
+            # This has do not consider lights
+            theta_rm = np.array([[1, utils.ZERO],
+                                 [utils.ZERO, 1],
+                                 [utils.ZERO, 1],
+                                 [utils.ZERO, 1]])
+        else:
+            # This has light
+            theta_rm = np.zeros((self.number_of_states, self.number_of_rooms))
+            for state in range(self.number_of_hallways):
+                theta_rm[state] = self.one_hot_encode(
+                    self.number_of_rooms, [state]
+                )
 
-        for state in range(self.number_of_hallways, self.number_of_states):
-            room_index = (
-                int((state - self.number_of_hallways) / 6)
-                + self.number_of_hallways
-            )
-            theta_rm[state] = self.one_hot_encode(
-                self.number_of_rooms, [room_index]
-            )
+            for state in range(self.number_of_hallways, self.number_of_states):
+                room_index = (
+                    int((state - self.number_of_hallways) / 6)
+                    + self.number_of_hallways
+                )
+                theta_rm[state] = self.one_hot_encode(
+                    self.number_of_rooms, [room_index]
+                )
 
         return theta_rm
 
@@ -89,14 +104,22 @@ class Model:
         This method returns the pre-defined distribution for pi_tg, because we can always tell if the player is
         triaging a victim by the state he's in
         """
-        pi_tg = np.array([[1, utils.ZERO]]).repeat(
-            self.number_of_states, axis=0
-        )
-        # Dark and light room triaging of green victims
-        pi_tg[(self.number_of_hallways + 1) : self.number_of_states : 3] = [
-            utils.ZERO,
-            1,
-        ]
+
+        if self.mission_map_id == evidence_extraction.MissionMap.SHARED:
+            pi_tg = np.array([[1, utils.ZERO],
+                              [1, utils.ZERO],
+                              [utils.ZERO, 1],
+                              [1, utils.ZERO]])
+        else:
+            pi_tg = np.array([[1, utils.ZERO]]).repeat(
+                self.number_of_states, axis=0
+            )
+            # Dark and light room triaging of green victims
+            pi_tg[(self.number_of_hallways + 1) : self.number_of_states : 3] = [
+                utils.ZERO,
+                1,
+            ]
+
 
         return pi_tg
 
@@ -105,42 +128,54 @@ class Model:
         This method returns the pre-defined distribution for pi_tg, because we can always tell if the player is
         triaging a victim by the state he's in
         """
-        pi_ty = np.array([[1, utils.ZERO]]).repeat(
-            self.number_of_states, axis=0
-        )
-        # Dark and light room triaging of yellow victims
-        pi_ty[(self.number_of_hallways + 2) : self.number_of_states : 3] = [
-            utils.ZERO,
-            1,
-        ]
+        if self.mission_map_id == evidence_extraction.MissionMap.SHARED:
+            pi_ty = np.array([[1, utils.ZERO],
+                              [1, utils.ZERO],
+                              [1, utils.ZERO],
+                              [utils.ZERO, 1]])
+        else:
+            pi_ty = np.array([[1, utils.ZERO]]).repeat(
+                self.number_of_states, axis=0
+            )
+            # Dark and light room triaging of yellow victims
+            pi_ty[(self.number_of_hallways + 2) : self.number_of_states : 3] = [
+                utils.ZERO,
+                1,
+            ]
         return pi_ty
 
     def get_pi_lt_priors(self):
         """
-        This method returns a matrix with the priors for each one of the pi_lt nodes in the model
+        This method returns a matrix with the priors for each one of the pi_lt nodes in the models
         """
-        priors = np.zeros((self.number_of_states, 2))
+        if self.mission_map_id == evidence_extraction.MissionMap.SHARED:
+            priors = np.array([[utils.ZERO, 1],
+                               [utils.ZERO, 1],
+                               [utils.ZERO, 1],
+                               [utils.ZERO, 1]])
+        else:
+            priors = np.zeros((self.number_of_states, 2))
 
-        # Lights in the hallway states (exception below) are always on
-        priors[0 : self.number_of_hallways, 0] = 1
-        priors[0 : self.number_of_hallways, 1] = utils.ZERO
+            # Lights in the hallway states (exception below) are always on
+            priors[0 : self.number_of_hallways, 0] = 1
+            priors[0 : self.number_of_hallways, 1] = utils.ZERO
 
-        # Lights in the staging area can be on or off
-        priors[1] = [1, 1]
+            # Lights in the staging area can be on or off
+            priors[1] = [1, 1]
 
-        for state in range(self.number_of_hallways, self.number_of_states):
-            if int((state - self.number_of_hallways) / 3) % 2 == 0:
-                # States which the light is on
-                priors[state] = [1, utils.ZERO]
-            else:
-                # States which the light is off
-                priors[state] = [utils.ZERO, 1]
+            for state in range(self.number_of_hallways, self.number_of_states):
+                if int((state - self.number_of_hallways) / 3) % 2 == 0:
+                    # States which the light is on
+                    priors[state] = [1, utils.ZERO]
+                else:
+                    # States which the light is off
+                    priors[state] = [utils.ZERO, 1]
 
         return priors
 
     def get_theta_s_priors(self):
         """
-        This method returns a matrix with the priors for each one of the theta_s nodes in the model
+        This method returns a matrix with the priors for each one of the theta_s nodes in the models
         """
         if (
             self.mission_map_id
@@ -149,8 +184,10 @@ class Model:
             return self.get_theta_s_priors_for_singleplayer_map()
         elif self.mission_map_id == evidence_extraction.MissionMap.SPARKY:
             return self.get_theta_s_priors_for_sparky_map()
-        else:
+        elif self.mission_map_id == evidence_extraction.MissionMap.FALCON:
             return self.get_theta_s_priors_for_falcon_map()
+        elif self.mission_map_id == evidence_extraction.MissionMap.SHARED:
+            return self.get_theta_s_priors_for_shared_map()
 
     def get_theta_s_priors_for_singleplayer_map(self):
         priors = np.zeros((self.number_of_states, self.number_of_states))
@@ -500,3 +537,50 @@ class Model:
         )
 
         return priors
+
+    def get_theta_s_priors_for_shared_map(self):
+        priors = np.array([[1, 1, utils.ZERO, utils.ZERO],
+                           [1, 1, 1, 1],
+                           [utils.ZERO, 1, 1, utils.ZERO],
+                           [utils.ZERO, 1, utils.ZERO, 1],
+                           [1, 1, utils.ZERO, utils.ZERO],
+                           [utils.ZERO, utils.ZERO, utils.ZERO, utils.ZERO],
+                           [utils.ZERO, utils.ZERO, utils.ZERO, utils.ZERO]])
+
+        return priors
+
+    def save(self, folder):
+        """
+        Save models parameters
+        """
+        if not os.path.isdir(folder):
+            os.makedirs(folder, exist_ok=True)
+
+        np.savetxt(os.path.join(folder, 'theta_s'), self.cpd_tables.theta_s)
+        np.savetxt(os.path.join(folder, 'pi_lt'), self.cpd_tables.pi_lt)
+        np.savetxt(os.path.join(folder, 'theta_rm'), self.cpd_tables.theta_rm)
+        np.savetxt(os.path.join(folder, 'pi_tg'), self.cpd_tables.pi_tg)
+        np.savetxt(os.path.join(folder, 'pi_ty'), self.cpd_tables.pi_ty)
+
+    def load(self, folder):
+        """
+        Load models parameters
+        """
+        if (os.path.exists(os.path.join(folder, 'theta_s'))
+            and os.path.exists(os.path.join(folder, 'pi_lt'))
+            and os.path.exists(os.path.join(folder, 'theta_rm'))
+            and os.path.exists(os.path.join(folder, 'pi_tg'))
+            and os.path.exists(os.path.join(folder, 'pi_ty'))):
+
+            theta_s = np.loadtxt(os.path.join(folder, 'theta_s'))
+            pi_lt = np.loadtxt(os.path.join(folder, 'pi_lt'))
+            theta_rm = np.loadtxt(os.path.join(folder, 'theta_rm'))
+            pi_tg = np.loadtxt(os.path.join(folder, 'pi_tg'))
+            pi_ty = np.loadtxt(os.path.join(folder, 'pi_ty'))
+
+            self.init_from_cpds(CPDTables(theta_s, pi_lt, theta_rm, pi_tg, pi_ty))
+
+            return True
+
+        else:
+            return False
