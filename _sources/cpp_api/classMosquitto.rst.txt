@@ -1,0 +1,25 @@
+.. _exhale_class_classMosquitto:
+
+Class Mosquitto
+===============
+
+- Defined in :ref:`file_src_cpp_model_utils_Mosquitto.h`
+
+
+Inheritance Relationships
+-------------------------
+
+Derived Type
+************
+
+- ``public tomcat::model::OnlineEstimation`` (:ref:`exhale_class_classtomcat_1_1model_1_1OnlineEstimation`)
+
+
+Class Documentation
+-------------------
+
+
+.. doxygenclass:: Mosquitto
+   :members:
+   :protected-members:
+   :undoc-members:

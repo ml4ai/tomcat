@@ -1,0 +1,13 @@
+.. _exhale_define_Definitions_8h_1aab50d86682d80ffe1fdbd1ccba572cec:
+
+Define LOG
+==========
+
+- Defined in :ref:`file_src_cpp_model_utils_Definitions.h`
+
+
+Define Documentation
+--------------------
+
+
+.. doxygendefine:: LOG

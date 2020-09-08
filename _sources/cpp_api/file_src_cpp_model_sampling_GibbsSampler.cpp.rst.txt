@@ -1,0 +1,50 @@
+
+.. _file_src_cpp_model_sampling_GibbsSampler.cpp:
+
+File GibbsSampler.cpp
+=====================
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp_model_sampling>` (``src/cpp/model/sampling``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. contents:: Contents
+   :local:
+   :backlinks: none
+
+Definition (``src/cpp/model/sampling/GibbsSampler.cpp``)
+--------------------------------------------------------
+
+
+.. toctree::
+   :maxdepth: 1
+
+   program_listing_file_src_cpp_model_sampling_GibbsSampler.cpp.rst
+
+
+
+
+
+Includes
+--------
+
+
+- ``AncestralSampler.h`` (:ref:`file_src_cpp_model_sampling_AncestralSampler.h`)
+
+- ``GibbsSampler.h`` (:ref:`file_src_cpp_model_sampling_GibbsSampler.h`)
+
+- ``boost/progress.hpp``
+
+
+
+
+
+
+Namespaces
+----------
+
+
+- :ref:`namespace_tomcat`
+
+- :ref:`namespace_tomcat__model`
+

@@ -1,0 +1,27 @@
+.. _dir_src_cpp_model_pgm_inference:
+
+
+Directory inference
+===================
+
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp_model_pgm>` (``src/cpp/model/pgm``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+*Directory path:* ``src/cpp/model/pgm/inference``
+
+
+Files
+-----
+
+- :ref:`file_src_cpp_model_pgm_inference_FactorGraph.cpp`
+- :ref:`file_src_cpp_model_pgm_inference_FactorGraph.h`
+- :ref:`file_src_cpp_model_pgm_inference_FactorNode.cpp`
+- :ref:`file_src_cpp_model_pgm_inference_FactorNode.h`
+- :ref:`file_src_cpp_model_pgm_inference_MessageNode.cpp`
+- :ref:`file_src_cpp_model_pgm_inference_MessageNode.h`
+- :ref:`file_src_cpp_model_pgm_inference_VariableNode.cpp`
+- :ref:`file_src_cpp_model_pgm_inference_VariableNode.h`
+
+

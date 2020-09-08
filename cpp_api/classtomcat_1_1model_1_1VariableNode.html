@@ -1,0 +1,366 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Class VariableNode &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Class TomcatMissionException" href="classtomcat_1_1TomcatMissionException.html" />
+    <link rel="prev" title="Class TrainingFrequencyEstimator" href="classtomcat_1_1model_1_1TrainingFrequencyEstimator.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tomcat_openapi.html">Data models and message bus topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../developer/index.html">Developer documentation</a> &raquo;</li>
+        
+          <li><a href="index.html">C++ API</a> &raquo;</li>
+        
+      <li>Class VariableNode</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/cpp_api/classtomcat_1_1model_1_1VariableNode.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="class-variablenode">
+<span id="exhale-class-classtomcat-1-1model-1-1variablenode"></span><h1>Class VariableNode<a class="headerlink" href="#class-variablenode" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Defined in <a class="reference internal" href="file_src_cpp_model_pgm_inference_VariableNode.h.html#file-src-cpp-model-pgm-inference-variablenode-h"><span class="std std-ref">File VariableNode.h</span></a></p></li>
+</ul>
+<div class="section" id="inheritance-relationships">
+<h2>Inheritance Relationships<a class="headerlink" href="#inheritance-relationships" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="base-type">
+<h3>Base Type<a class="headerlink" href="#base-type" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">public</span> <span class="pre">tomcat::model::MessageNode</span></code> (<a class="reference internal" href="classtomcat_1_1model_1_1MessageNode.html#exhale-class-classtomcat-1-1model-1-1messagenode"><span class="std std-ref">Class MessageNode</span></a>)</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="class-documentation">
+<h2>Class Documentation<a class="headerlink" href="#class-documentation" title="Permalink to this headline">¶</a></h2>
+<dl class="cpp class">
+<dt id="_CPPv4N6tomcat5model12VariableNodeE">
+<span id="_CPPv3N6tomcat5model12VariableNodeE"></span><span id="_CPPv2N6tomcat5model12VariableNodeE"></span><span id="tomcat::model::VariableNode"></span><span class="target" id="classtomcat_1_1model_1_1VariableNode"></span><em class="property">class </em><code class="sig-prename descclassname">tomcat::model<code class="sig-prename descclassname">::</code></code><code class="sig-name descname">VariableNode</code> : <em class="property">public</em> tomcat::model::<a class="reference internal" href="classtomcat_1_1model_1_1MessageNode.html#_CPPv4N6tomcat5model11MessageNodeE" title="tomcat::model::MessageNode">MessageNode</a><a class="headerlink" href="#_CPPv4N6tomcat5model12VariableNodeE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>This class represents a variable node in a factor graph. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Functions</p>
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model12VariableNode12VariableNodeERKNSt6stringEii">
+<span id="_CPPv3N6tomcat5model12VariableNode12VariableNodeERKNSt6stringEii"></span><span id="_CPPv2N6tomcat5model12VariableNode12VariableNodeERKNSt6stringEii"></span><span id="tomcat::model::VariableNode::VariableNode__ssCR.i.i"></span><span class="target" id="classtomcat_1_1model_1_1VariableNode_1a96b001b23f6142ab4719c6ba587a56da"></span><code class="sig-name descname">VariableNode</code><span class="sig-paren">(</span><em class="property">const</em> std::string &amp;<em>label</em>, int <em>time_step</em>, int <em>cardinality</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model12VariableNode12VariableNodeERKNSt6stringEii" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Creates an instance of a variable node.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">label</span></code>: node’s label </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">time_step</span></code>: node’s time step </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cardinality</span></code>: node’s cardinality </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model12VariableNodeD0Ev">
+<span id="_CPPv3N6tomcat5model12VariableNodeD0Ev"></span><span id="_CPPv2N6tomcat5model12VariableNodeD0Ev"></span><span id="tomcat::model::VariableNode::~VariableNode"></span><span class="target" id="classtomcat_1_1model_1_1VariableNode_1a8eabf7951d8c81a5d26f089d0be9f643"></span><code class="sig-name descname">~VariableNode</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model12VariableNodeD0Ev" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model12VariableNode12VariableNodeERK12VariableNode">
+<span id="_CPPv3N6tomcat5model12VariableNode12VariableNodeERK12VariableNode"></span><span id="_CPPv2N6tomcat5model12VariableNode12VariableNodeERK12VariableNode"></span><span id="tomcat::model::VariableNode::VariableNode__VariableNodeCR"></span><span class="target" id="classtomcat_1_1model_1_1VariableNode_1a31e24c57bfb29f685b9fc054075dac9a"></span><code class="sig-name descname">VariableNode</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv4N6tomcat5model12VariableNode12VariableNodeERK12VariableNode" title="tomcat::model::VariableNode::VariableNode">VariableNode</a> &amp;<em>node</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model12VariableNode12VariableNodeERK12VariableNode" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model12VariableNodeaSERK12VariableNode">
+<span id="_CPPv3N6tomcat5model12VariableNodeaSERK12VariableNode"></span><span id="_CPPv2N6tomcat5model12VariableNodeaSERK12VariableNode"></span><span id="tomcat::model::VariableNode::assign-operator__VariableNodeCR"></span><span class="target" id="classtomcat_1_1model_1_1VariableNode_1aeec3e17f6e6cfbfef9df053ee8c6c93f"></span><a class="reference internal" href="#_CPPv4N6tomcat5model12VariableNodeE" title="tomcat::model::VariableNode">VariableNode</a> &amp;<code class="sig-name descname">operator=</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv4N6tomcat5model12VariableNodeE" title="tomcat::model::VariableNode">VariableNode</a> &amp;<em>node</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model12VariableNodeaSERK12VariableNode" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model12VariableNode12VariableNodeERR12VariableNode">
+<span id="_CPPv3N6tomcat5model12VariableNode12VariableNodeERR12VariableNode"></span><span id="_CPPv2N6tomcat5model12VariableNode12VariableNodeERR12VariableNode"></span><span id="tomcat::model::VariableNode::VariableNode__VariableNodeRR"></span><span class="target" id="classtomcat_1_1model_1_1VariableNode_1a1fe08bfa7095743f972f5608edd93a92"></span><code class="sig-name descname">VariableNode</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model12VariableNode12VariableNodeERR12VariableNode" title="tomcat::model::VariableNode::VariableNode">VariableNode</a>&amp;&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model12VariableNode12VariableNodeERR12VariableNode" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model12VariableNodeaSERR12VariableNode">
+<span id="_CPPv3N6tomcat5model12VariableNodeaSERR12VariableNode"></span><span id="_CPPv2N6tomcat5model12VariableNodeaSERR12VariableNode"></span><span id="tomcat::model::VariableNode::assign-operator__VariableNodeRR"></span><span class="target" id="classtomcat_1_1model_1_1VariableNode_1aaa8a0a58a7afdaf27f85cd2c4ef6cae7"></span><a class="reference internal" href="#_CPPv4N6tomcat5model12VariableNodeE" title="tomcat::model::VariableNode">VariableNode</a> &amp;<code class="sig-name descname">operator=</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model12VariableNodeE" title="tomcat::model::VariableNode">VariableNode</a>&amp;&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model12VariableNodeaSERR12VariableNode" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model12VariableNode22get_outward_message_toERKNSt10shared_ptrI11MessageNodeEEii9Direction">
+<span id="_CPPv3NK6tomcat5model12VariableNode22get_outward_message_toERKNSt10shared_ptrI11MessageNodeEEii9Direction"></span><span id="_CPPv2NK6tomcat5model12VariableNode22get_outward_message_toERKNSt10shared_ptrI11MessageNodeEEii9Direction"></span><span id="tomcat::model::VariableNode::get_outward_message_to__std::shared_ptr:MessageNode:CR.i.i.DirectionC"></span><span class="target" id="classtomcat_1_1model_1_1VariableNode_1aa12d8d5c19c2c69ea0bfad977590e471"></span>Eigen::MatrixXd <code class="sig-name descname">get_outward_message_to</code><span class="sig-paren">(</span><em class="property">const</em> std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1MessageNode.html#_CPPv4N6tomcat5model11MessageNodeE" title="tomcat::model::MessageNode">MessageNode</a>&gt; &amp;<em>template_target_node</em>, int <em>template_time_step</em>, int <em>target_time_step</em>, Direction <em>direction</em><span class="sig-paren">)</span> <em class="property">const</em> <em class="property">override</em><a class="headerlink" href="#_CPPv4NK6tomcat5model12VariableNode22get_outward_message_toERKNSt10shared_ptrI11MessageNodeEEii9Direction" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Computes the element-wise product of all the incoming messages excluding the one that comes from the target node.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Message </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">template_target_node</span></code>: template instance of the node where the message should go to </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">template_time_step</span></code>: time step of this node where to get the incoming messages from. If the template node belongs to the repeatable structure, this information is needed to know which time step to address to retrieve the incoming messages. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">target_time_step</span></code>: real time step of the target node </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">direction</span></code>: direction of the message passing</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model12VariableNode9is_factorEv">
+<span id="_CPPv3NK6tomcat5model12VariableNode9is_factorEv"></span><span id="_CPPv2NK6tomcat5model12VariableNode9is_factorEv"></span><span id="tomcat::model::VariableNode::is_factorC"></span><span class="target" id="classtomcat_1_1model_1_1VariableNode_1aa4e5a80b5d8e71dcc3b0dbe5c5fbd6b9"></span>bool <code class="sig-name descname">is_factor</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em> <em class="property">override</em><a class="headerlink" href="#_CPPv4NK6tomcat5model12VariableNode9is_factorEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Whether the node is a factor node. The node instance type could be used to check this information but for better readability, this function was defined;</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>True if the node in an instance of a factor node. </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model12VariableNode15get_marginal_atEi">
+<span id="_CPPv3NK6tomcat5model12VariableNode15get_marginal_atEi"></span><span id="_CPPv2NK6tomcat5model12VariableNode15get_marginal_atEi"></span><span id="tomcat::model::VariableNode::get_marginal_at__iC"></span><span class="target" id="classtomcat_1_1model_1_1VariableNode_1ab6c017a19b8d00d4de2a99196a457492"></span>Eigen::MatrixXd <code class="sig-name descname">get_marginal_at</code><span class="sig-paren">(</span>int <em>time_step</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model12VariableNode15get_marginal_atEi" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Computes the marginal distribution for a given node in a certain point in time. The marginal is given by the multiplication of all the incoming messages to the node.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Marginal distribution </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">time_step</span></code>: time step for inference</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model12VariableNode11set_data_atEiRKN5Eigen8VectorXdE">
+<span id="_CPPv3N6tomcat5model12VariableNode11set_data_atEiRKN5Eigen8VectorXdE"></span><span id="_CPPv2N6tomcat5model12VariableNode11set_data_atEiRKN5Eigen8VectorXdE"></span><span id="tomcat::model::VariableNode::set_data_at__i.Eigen::VectorXdCR"></span><span class="target" id="classtomcat_1_1model_1_1VariableNode_1a1369df0bd798b8e2ec184c1c724e487b"></span>void <code class="sig-name descname">set_data_at</code><span class="sig-paren">(</span>int <em>time_step</em>, <em class="property">const</em> Eigen::VectorXd &amp;<em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model12VariableNode11set_data_atEiRKN5Eigen8VectorXdE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Stores data for the node in a given time step. If there’s data in a given time step, messages from this node in that time step are deterministic.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">time_step</span></code>: time step where the data must be set </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data</span></code>: vector with node’s values from several data sets </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model12VariableNode13erase_data_atEi">
+<span id="_CPPv3N6tomcat5model12VariableNode13erase_data_atEi"></span><span id="_CPPv2N6tomcat5model12VariableNode13erase_data_atEi"></span><span id="tomcat::model::VariableNode::erase_data_at__i"></span><span class="target" id="classtomcat_1_1model_1_1VariableNode_1afe050966d4e13d94a5ea611bbed8f9e0"></span>void <code class="sig-name descname">erase_data_at</code><span class="sig-paren">(</span>int <em>time_step</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model12VariableNode13erase_data_atEi" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>If there’s data assigned to a node in a given time step, remove it from there.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">time_step</span></code>: time step to remove the data from </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model12VariableNode15get_cardinalityEv">
+<span id="_CPPv3NK6tomcat5model12VariableNode15get_cardinalityEv"></span><span id="_CPPv2NK6tomcat5model12VariableNode15get_cardinalityEv"></span><span id="tomcat::model::VariableNode::get_cardinalityC"></span><span class="target" id="classtomcat_1_1model_1_1VariableNode_1a4f3ce8078e2ae18a670dc228b1d3e76b"></span>int <code class="sig-name descname">get_cardinality</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model12VariableNode15get_cardinalityEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="classtomcat_1_1TomcatMissionException.html" class="btn btn-neutral float-right" title="Class TomcatMissionException" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="classtomcat_1_1model_1_1TrainingFrequencyEstimator.html" class="btn btn-neutral float-left" title="Class TrainingFrequencyEstimator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

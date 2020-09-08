@@ -1,0 +1,117 @@
+
+.. _program_listing_file_src_cpp_model_pipeline_Pipeline.h:
+
+Program Listing for File Pipeline.h
+===================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_cpp_model_pipeline_Pipeline.h>` (``src/cpp/model/pipeline/Pipeline.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #pragma once
+   
+   #include <iostream>
+   #include <memory>
+   #include <string>
+   #include <vector>
+   
+   #include <boost/date_time/posix_time/posix_time.hpp>
+   
+   #include "../pgm/EvidenceSet.h"
+   #include "../utils/Definitions.h"
+   #include "DBNSaver.h"
+   #include "KFold.h"
+   #include "estimation/EstimationProcess.h"
+   #include "evaluation/EvaluationAggregator.h"
+   #include "training/DBNTrainer.h"
+   
+   namespace tomcat {
+       namespace model {
+   
+           class Pipeline {
+             public:
+               //------------------------------------------------------------------
+               // Constructors & Destructor
+               //------------------------------------------------------------------
+   
+               Pipeline(std::ostream& output_stream = std::cout);
+   
+               Pipeline(const std::string& id,
+                        std::ostream& output_stream = std::cout);
+   
+               ~Pipeline();
+   
+               //------------------------------------------------------------------
+               // Copy & Move constructors/assignments
+               //------------------------------------------------------------------
+   
+               // A pipeline cannot be copied or moved. This decision is just to
+               // avoid implementing an explicit copy of the data members to deal
+               // with the reference to the output stream. Given that a pipeline is
+               // just a wrapper for running experiments, it's rarely there will be
+               // a need for copying or move that would justify to make it
+               // possible.
+               Pipeline(const Pipeline&) = delete;
+   
+               Pipeline& operator=(const Pipeline&) = delete;
+   
+               Pipeline(Pipeline&&) = delete;
+   
+               Pipeline& operator=(Pipeline&&) = delete;
+   
+               //------------------------------------------------------------------
+               // Member functions
+               //------------------------------------------------------------------
+   
+               void execute();
+   
+               void display_results(
+                   const boost::posix_time::ptime& execution_start_time,
+                   const boost::posix_time::ptime& execution_end_time);
+   
+               //------------------------------------------------------------------
+               // Getters & Setters
+               //------------------------------------------------------------------
+               void set_data_splitter(const std::shared_ptr<KFold>& data_splitter);
+   
+               void set_model_trainner(
+                   const std::shared_ptr<DBNTrainer>& model_trainner);
+   
+               void set_model_saver(const std::shared_ptr<DBNSaver>& model_saver);
+   
+               void set_estimation_process(
+                   const std::shared_ptr<EstimationProcess>& estimation_process);
+   
+               void set_aggregator(
+                   const std::shared_ptr<EvaluationAggregator>& aggregator);
+   
+             private:
+               //------------------------------------------------------------------
+               // Member functions
+               //------------------------------------------------------------------
+   
+               void check();
+   
+               //------------------------------------------------------------------
+               // Data members
+               //------------------------------------------------------------------
+               std::string id;
+   
+               // Where to display pipeline execution's results.
+               std::ostream& output_stream;
+   
+               std::shared_ptr<KFold> data_splitter;
+   
+               std::shared_ptr<DBNTrainer> model_trainner;
+   
+               std::shared_ptr<DBNSaver> model_saver;
+   
+               std::shared_ptr<EstimationProcess> estimation_process;
+   
+               std::shared_ptr<EvaluationAggregator> aggregator;
+           };
+   
+       } // namespace model
+   } // namespace tomcat

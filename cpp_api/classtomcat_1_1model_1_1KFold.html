@@ -1,0 +1,312 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Class KFold &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Class Measure" href="classtomcat_1_1model_1_1Measure.html" />
+    <link rel="prev" title="Class GibbsSampler" href="classtomcat_1_1model_1_1GibbsSampler.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tomcat_openapi.html">Data models and message bus topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../developer/index.html">Developer documentation</a> &raquo;</li>
+        
+          <li><a href="index.html">C++ API</a> &raquo;</li>
+        
+      <li>Class KFold</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/cpp_api/classtomcat_1_1model_1_1KFold.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="class-kfold">
+<span id="exhale-class-classtomcat-1-1model-1-1kfold"></span><h1>Class KFold<a class="headerlink" href="#class-kfold" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Defined in <a class="reference internal" href="file_src_cpp_model_pipeline_KFold.h.html#file-src-cpp-model-pipeline-kfold-h"><span class="std std-ref">File KFold.h</span></a></p></li>
+</ul>
+<div class="section" id="class-documentation">
+<h2>Class Documentation<a class="headerlink" href="#class-documentation" title="Permalink to this headline">¶</a></h2>
+<dl class="cpp class">
+<dt id="_CPPv4N6tomcat5model5KFoldE">
+<span id="_CPPv3N6tomcat5model5KFoldE"></span><span id="_CPPv2N6tomcat5model5KFoldE"></span><span id="tomcat::model::KFold"></span><span class="target" id="classtomcat_1_1model_1_1KFold"></span><em class="property">class </em><code class="sig-prename descclassname">tomcat::model<code class="sig-prename descclassname">::</code></code><code class="sig-name descname">KFold</code><a class="headerlink" href="#_CPPv4N6tomcat5model5KFoldE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>This class is responsible for splitting data into disjoint folds where k-1 of them is used for training data and the remaining one for test data creating a list of this pair of data sets by repeating this logic for all the k folds. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Types</p>
+<dl class="cpp type">
+<dt id="_CPPv4N6tomcat5model5KFold5SplitE">
+<span id="_CPPv3N6tomcat5model5KFold5SplitE"></span><span id="_CPPv2N6tomcat5model5KFold5SplitE"></span><span id="tomcat::model::KFold::Split"></span><span class="target" id="classtomcat_1_1model_1_1KFold_1afdf7d5b2b2f1e7f62bd18c43d29c9c59"></span><em class="property">typedef </em>std::pair&lt;<a class="reference internal" href="classtomcat_1_1model_1_1EvidenceSet.html#_CPPv4N6tomcat5model11EvidenceSetE" title="tomcat::model::EvidenceSet">EvidenceSet</a>, <a class="reference internal" href="classtomcat_1_1model_1_1EvidenceSet.html#_CPPv4N6tomcat5model11EvidenceSetE" title="tomcat::model::EvidenceSet">EvidenceSet</a>&gt; <code class="sig-name descname">Split</code><a class="headerlink" href="#_CPPv4N6tomcat5model5KFold5SplitE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Functions</p>
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model5KFold5KFoldERK11EvidenceSetiNSt10shared_ptrI7gsl_rngEE">
+<span id="_CPPv3N6tomcat5model5KFold5KFoldERK11EvidenceSetiNSt10shared_ptrI7gsl_rngEE"></span><span id="_CPPv2N6tomcat5model5KFold5KFoldERK11EvidenceSetiNSt10shared_ptrI7gsl_rngEE"></span><span id="tomcat::model::KFold::KFold__EvidenceSetCR.i.std::shared_ptr:gsl_rng:"></span><span class="target" id="classtomcat_1_1model_1_1KFold_1ab13e5d45eca3dc03ae161307873ddc5f"></span><code class="sig-name descname">KFold</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="classtomcat_1_1model_1_1EvidenceSet.html#_CPPv4N6tomcat5model11EvidenceSetE" title="tomcat::model::EvidenceSet">EvidenceSet</a> &amp;<em>data</em>, int <em>num_folds</em>, std::shared_ptr&lt;gsl_rng&gt; <em>random_generator</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model5KFold5KFoldERK11EvidenceSetiNSt10shared_ptrI7gsl_rngEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Creates an instance of a <a class="reference internal" href="#classtomcat_1_1model_1_1KFold"><span class="std std-ref">KFold</span></a> data splitter.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">data</span></code>: data to be split </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num_folds</span></code>: number of splits </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">random_generator</span></code>: random number generator </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model5KFold5KFoldERK11EvidenceSetRK11EvidenceSet">
+<span id="_CPPv3N6tomcat5model5KFold5KFoldERK11EvidenceSetRK11EvidenceSet"></span><span id="_CPPv2N6tomcat5model5KFold5KFoldERK11EvidenceSetRK11EvidenceSet"></span><span id="tomcat::model::KFold::KFold__EvidenceSetCR.EvidenceSetCR"></span><span class="target" id="classtomcat_1_1model_1_1KFold_1a6bc0855202707ef234000d0375fa2b9d"></span><code class="sig-name descname">KFold</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="classtomcat_1_1model_1_1EvidenceSet.html#_CPPv4N6tomcat5model11EvidenceSetE" title="tomcat::model::EvidenceSet">EvidenceSet</a> &amp;<em>training_data</em>, <em class="property">const</em> <a class="reference internal" href="classtomcat_1_1model_1_1EvidenceSet.html#_CPPv4N6tomcat5model11EvidenceSetE" title="tomcat::model::EvidenceSet">EvidenceSet</a> &amp;<em>test_data</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model5KFold5KFoldERK11EvidenceSetRK11EvidenceSet" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model5KFoldD0Ev">
+<span id="_CPPv3N6tomcat5model5KFoldD0Ev"></span><span id="_CPPv2N6tomcat5model5KFoldD0Ev"></span><span id="tomcat::model::KFold::~KFold"></span><span class="target" id="classtomcat_1_1model_1_1KFold_1ac5dc6c2f01e032e3acf0935a85a88ee7"></span><code class="sig-name descname">~KFold</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model5KFoldD0Ev" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model5KFold5KFoldERK5KFold">
+<span id="_CPPv3N6tomcat5model5KFold5KFoldERK5KFold"></span><span id="_CPPv2N6tomcat5model5KFold5KFoldERK5KFold"></span><span id="tomcat::model::KFold::KFold__KFoldCR"></span><span class="target" id="classtomcat_1_1model_1_1KFold_1ab8dbb933e1078d6681b0eeea681d82d4"></span><code class="sig-name descname">KFold</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv4N6tomcat5model5KFold5KFoldERK5KFold" title="tomcat::model::KFold::KFold">KFold</a>&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model5KFold5KFoldERK5KFold" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model5KFoldaSERK5KFold">
+<span id="_CPPv3N6tomcat5model5KFoldaSERK5KFold"></span><span id="_CPPv2N6tomcat5model5KFoldaSERK5KFold"></span><span id="tomcat::model::KFold::assign-operator__KFoldCR"></span><span class="target" id="classtomcat_1_1model_1_1KFold_1abfe142b04ee3e08882c8e421ba24ad11"></span><a class="reference internal" href="#_CPPv4N6tomcat5model5KFoldE" title="tomcat::model::KFold">KFold</a> &amp;<code class="sig-name descname">operator=</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv4N6tomcat5model5KFoldE" title="tomcat::model::KFold">KFold</a>&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model5KFoldaSERK5KFold" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model5KFold5KFoldERR5KFold">
+<span id="_CPPv3N6tomcat5model5KFold5KFoldERR5KFold"></span><span id="_CPPv2N6tomcat5model5KFold5KFoldERR5KFold"></span><span id="tomcat::model::KFold::KFold__KFoldRR"></span><span class="target" id="classtomcat_1_1model_1_1KFold_1aefa78a401778808a3480eb99ed54bcf6"></span><code class="sig-name descname">KFold</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model5KFold5KFoldERR5KFold" title="tomcat::model::KFold::KFold">KFold</a>&amp;&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model5KFold5KFoldERR5KFold" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model5KFoldaSERR5KFold">
+<span id="_CPPv3N6tomcat5model5KFoldaSERR5KFold"></span><span id="_CPPv2N6tomcat5model5KFoldaSERR5KFold"></span><span id="tomcat::model::KFold::assign-operator__KFoldRR"></span><span class="target" id="classtomcat_1_1model_1_1KFold_1a249f061d101da4bca85aa4de4c0ada77"></span><a class="reference internal" href="#_CPPv4N6tomcat5model5KFoldE" title="tomcat::model::KFold">KFold</a> &amp;<code class="sig-name descname">operator=</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model5KFoldE" title="tomcat::model::KFold">KFold</a>&amp;&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model5KFoldaSERR5KFold" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model5KFold8get_infoERN8nlohmann4jsonE">
+<span id="_CPPv3NK6tomcat5model5KFold8get_infoERN8nlohmann4jsonE"></span><span id="_CPPv2NK6tomcat5model5KFold8get_infoERN8nlohmann4jsonE"></span><span id="tomcat::model::KFold::get_info__nlohmann::jsonRC"></span><span class="target" id="classtomcat_1_1model_1_1KFold_1a7ceaa0c4b209d0368ce81e365e117d9a"></span>void <code class="sig-name descname">get_info</code><span class="sig-paren">(</span>nlohmann::json &amp;<em>json</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model5KFold8get_infoERN8nlohmann4jsonE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Writes information about the splitter in a json object.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">json</span></code>: json object </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model5KFold10get_splitsEv">
+<span id="_CPPv3NK6tomcat5model5KFold10get_splitsEv"></span><span id="_CPPv2NK6tomcat5model5KFold10get_splitsEv"></span><span id="tomcat::model::KFold::get_splitsC"></span><span class="target" id="classtomcat_1_1model_1_1KFold_1a20bafa858184de4ad639c0cc1dab79ca"></span><em class="property">const</em> std::vector&lt;<a class="reference internal" href="#_CPPv4N6tomcat5model5KFold5SplitE" title="tomcat::model::KFold::Split">Split</a>&gt; &amp;<code class="sig-name descname">get_splits</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model5KFold10get_splitsEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="classtomcat_1_1model_1_1Measure.html" class="btn btn-neutral float-right" title="Class Measure" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="classtomcat_1_1model_1_1GibbsSampler.html" class="btn btn-neutral float-left" title="Class GibbsSampler" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

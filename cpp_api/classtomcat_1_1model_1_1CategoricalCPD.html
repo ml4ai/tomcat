@@ -1,0 +1,402 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Class CategoricalCPD &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Class ConstantNode" href="classtomcat_1_1model_1_1ConstantNode.html" />
+    <link rel="prev" title="Class Categorical" href="classtomcat_1_1model_1_1Categorical.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tomcat_openapi.html">Data models and message bus topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../developer/index.html">Developer documentation</a> &raquo;</li>
+        
+          <li><a href="index.html">C++ API</a> &raquo;</li>
+        
+      <li>Class CategoricalCPD</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/cpp_api/classtomcat_1_1model_1_1CategoricalCPD.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="class-categoricalcpd">
+<span id="exhale-class-classtomcat-1-1model-1-1categoricalcpd"></span><h1>Class CategoricalCPD<a class="headerlink" href="#class-categoricalcpd" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Defined in <a class="reference internal" href="file_src_cpp_model_pgm_cpd_CategoricalCPD.h.html#file-src-cpp-model-pgm-cpd-categoricalcpd-h"><span class="std std-ref">File CategoricalCPD.h</span></a></p></li>
+</ul>
+<div class="section" id="inheritance-relationships">
+<h2>Inheritance Relationships<a class="headerlink" href="#inheritance-relationships" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="base-type">
+<h3>Base Type<a class="headerlink" href="#base-type" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">public</span> <span class="pre">tomcat::model::CPD</span></code> (<a class="reference internal" href="classtomcat_1_1model_1_1CPD.html#exhale-class-classtomcat-1-1model-1-1cpd"><span class="std std-ref">Class CPD</span></a>)</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="class-documentation">
+<h2>Class Documentation<a class="headerlink" href="#class-documentation" title="Permalink to this headline">¶</a></h2>
+<dl class="cpp class">
+<dt id="_CPPv4N6tomcat5model14CategoricalCPDE">
+<span id="_CPPv3N6tomcat5model14CategoricalCPDE"></span><span id="_CPPv2N6tomcat5model14CategoricalCPDE"></span><span id="tomcat::model::CategoricalCPD"></span><span class="target" id="classtomcat_1_1model_1_1CategoricalCPD"></span><em class="property">class </em><code class="sig-prename descclassname">tomcat::model<code class="sig-prename descclassname">::</code></code><code class="sig-name descname">CategoricalCPD</code> : <em class="property">public</em> tomcat::model::<a class="reference internal" href="classtomcat_1_1model_1_1CPD.html#_CPPv4N6tomcat5model3CPDE" title="tomcat::model::CPD">CPD</a><a class="headerlink" href="#_CPPv4N6tomcat5model14CategoricalCPDE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A categorical <a class="reference internal" href="classtomcat_1_1model_1_1CPD.html#classtomcat_1_1model_1_1CPD"><span class="std std-ref">CPD</span></a> consists of a table containing the probabilities p(column | row). The number of rows is given by the product of the cardinalities of the parent nodes of the node that is sampled from this <a class="reference internal" href="classtomcat_1_1model_1_1CPD.html#classtomcat_1_1model_1_1CPD"><span class="std std-ref">CPD</span></a>. Each row represents a combination of possible assignments of the parent nodes ordered in ascending order with respect to the binary basis. A categorical <a class="reference internal" href="classtomcat_1_1model_1_1CPD.html#classtomcat_1_1model_1_1CPD"><span class="std std-ref">CPD</span></a> is used for discrete probabilities. The table is represented by a list of categorical distributions that contain a list of probabilities in itself.</p>
+<p>For instance,</p>
+<p>Let A and B be parents of the node C.</p>
+<p>A -&gt; C B -&gt; C</p>
+<p>Suppose A, B and C have cardinalities 2, 3 and 4 respectively.</p>
+<p>Let p(C = c | A = a, B = b) be p(c|a,b). A <a class="reference internal" href="#classtomcat_1_1model_1_1CategoricalCPD"><span class="std std-ref">CategoricalCPD</span></a> for C will be as follows, <p> |///| C | 0 | 1 | 2 | 3 | |————————————————</p>
+| | A | B |///////////////////////////////////////////| |————————————————| | 0 | 0 | p(0|0,0) | p(1|0,0) | p(2|0,0) | p(3|0,0) | |————————————————| | 0 | 1 | p(0|0,1) | p(1|0,1) | p(2|0,1) | p(3|0,1) | |————————————————| | 0 | 2 | p(0|0,2) | p(1|0,2) | p(2|0,2) | p(3|0,2) | |————————————————| | 1 | 0 | p(0|1,0) | p(1|1,0) | p(2|1,0) | p(3|1,0) | |————————————————| | 1 | 1 | p(0|1,1) | p(1|1,1) | p(2|1,1) | p(3|1,1) | |————————————————| | 1 | 2 | p(0|1,2) | p(1|1,2) | p(2|1,2) | p(3|1,2) | |————————————————| </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Functions</p>
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model14CategoricalCPD14CategoricalCPDERNSt6vectorINSt10shared_ptrI12NodeMetadataEEEERKNSt6vectorINSt10shared_ptrI11CategoricalEEEE">
+<span id="_CPPv3N6tomcat5model14CategoricalCPD14CategoricalCPDERNSt6vectorINSt10shared_ptrI12NodeMetadataEEEERKNSt6vectorINSt10shared_ptrI11CategoricalEEEE"></span><span id="_CPPv2N6tomcat5model14CategoricalCPD14CategoricalCPDERNSt6vectorINSt10shared_ptrI12NodeMetadataEEEERKNSt6vectorINSt10shared_ptrI11CategoricalEEEE"></span><span id="tomcat::model::CategoricalCPD::CategoricalCPD__std::vector:std::shared_ptr:NodeMetadata::R.std::vector:std::shared_ptr:Categorical::CR"></span><span class="target" id="classtomcat_1_1model_1_1CategoricalCPD_1a1b7934d7b0202d13772261ede5f2fb22"></span><code class="sig-name descname">CategoricalCPD</code><span class="sig-paren">(</span>std::vector&lt;std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1NodeMetadata.html#_CPPv4N6tomcat5model12NodeMetadataE" title="tomcat::model::NodeMetadata">NodeMetadata</a>&gt;&gt; &amp;<em>parent_node_order</em>, <em class="property">const</em> std::vector&lt;std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1Categorical.html#_CPPv4N6tomcat5model11CategoricalE" title="tomcat::model::Categorical">Categorical</a>&gt;&gt; &amp;<em>distributions</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model14CategoricalCPD14CategoricalCPDERNSt6vectorINSt10shared_ptrI12NodeMetadataEEEERKNSt6vectorINSt10shared_ptrI11CategoricalEEEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Creates an instance of a <a class="reference internal" href="classtomcat_1_1model_1_1Categorical.html#classtomcat_1_1model_1_1Categorical"><span class="std std-ref">Categorical</span></a> <a class="reference internal" href="classtomcat_1_1model_1_1CPD.html#classtomcat_1_1model_1_1CPD"><span class="std std-ref">CPD</span></a>.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">parent_node_order</span></code>: evaluation order of the parent nodes’ assignments for correct distribution indexing </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">distributions</span></code>: list of categorical distributions </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model14CategoricalCPD14CategoricalCPDERRNSt6vectorINSt10shared_ptrI12NodeMetadataEEEERKNSt6vectorINSt10shared_ptrI11CategoricalEEEE">
+<span id="_CPPv3N6tomcat5model14CategoricalCPD14CategoricalCPDERRNSt6vectorINSt10shared_ptrI12NodeMetadataEEEERKNSt6vectorINSt10shared_ptrI11CategoricalEEEE"></span><span id="_CPPv2N6tomcat5model14CategoricalCPD14CategoricalCPDERRNSt6vectorINSt10shared_ptrI12NodeMetadataEEEERKNSt6vectorINSt10shared_ptrI11CategoricalEEEE"></span><span id="tomcat::model::CategoricalCPD::CategoricalCPD__std::vector:std::shared_ptr:NodeMetadata::RR.std::vector:std::shared_ptr:Categorical::CR"></span><span class="target" id="classtomcat_1_1model_1_1CategoricalCPD_1a7805ca46e9fcf924cda92e6ddb2ade92"></span><code class="sig-name descname">CategoricalCPD</code><span class="sig-paren">(</span>std::vector&lt;std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1NodeMetadata.html#_CPPv4N6tomcat5model12NodeMetadataE" title="tomcat::model::NodeMetadata">NodeMetadata</a>&gt;&gt; &amp;&amp;<em>parent_node_order</em>, <em class="property">const</em> std::vector&lt;std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1Categorical.html#_CPPv4N6tomcat5model11CategoricalE" title="tomcat::model::Categorical">Categorical</a>&gt;&gt; &amp;<em>distributions</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model14CategoricalCPD14CategoricalCPDERRNSt6vectorINSt10shared_ptrI12NodeMetadataEEEERKNSt6vectorINSt10shared_ptrI11CategoricalEEEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Creates an instance of a <a class="reference internal" href="classtomcat_1_1model_1_1Categorical.html#classtomcat_1_1model_1_1Categorical"><span class="std std-ref">Categorical</span></a> <a class="reference internal" href="classtomcat_1_1model_1_1CPD.html#classtomcat_1_1model_1_1CPD"><span class="std std-ref">CPD</span></a>.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">parent_node_order</span></code>: evaluation order of the parent nodes’ assignments for correct distribution indexing </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">distributions</span></code>: list of categorical distributions </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model14CategoricalCPD14CategoricalCPDERNSt6vectorINSt10shared_ptrI12NodeMetadataEEEERKN5Eigen8MatrixXdE">
+<span id="_CPPv3N6tomcat5model14CategoricalCPD14CategoricalCPDERNSt6vectorINSt10shared_ptrI12NodeMetadataEEEERKN5Eigen8MatrixXdE"></span><span id="_CPPv2N6tomcat5model14CategoricalCPD14CategoricalCPDERNSt6vectorINSt10shared_ptrI12NodeMetadataEEEERKN5Eigen8MatrixXdE"></span><span id="tomcat::model::CategoricalCPD::CategoricalCPD__std::vector:std::shared_ptr:NodeMetadata::R.Eigen::MatrixXdCR"></span><span class="target" id="classtomcat_1_1model_1_1CategoricalCPD_1a2bfc8fc6072906b314c067202760fc2f"></span><code class="sig-name descname">CategoricalCPD</code><span class="sig-paren">(</span>std::vector&lt;std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1NodeMetadata.html#_CPPv4N6tomcat5model12NodeMetadataE" title="tomcat::model::NodeMetadata">NodeMetadata</a>&gt;&gt; &amp;<em>parent_node_order</em>, <em class="property">const</em> Eigen::MatrixXd &amp;<em>probabilities</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model14CategoricalCPD14CategoricalCPDERNSt6vectorINSt10shared_ptrI12NodeMetadataEEEERKN5Eigen8MatrixXdE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Creates an instance of a <a class="reference internal" href="classtomcat_1_1model_1_1Categorical.html#classtomcat_1_1model_1_1Categorical"><span class="std std-ref">Categorical</span></a> <a class="reference internal" href="classtomcat_1_1model_1_1CPD.html#classtomcat_1_1model_1_1CPD"><span class="std std-ref">CPD</span></a> by transforming a table of probabilities to a list of categorical distributions with constant probabilities.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">parent_node_order</span></code>: evaluation order of the parent nodes’ assignments for correct distribution indexing </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">probabilities</span></code>: matrix containing probabilities </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model14CategoricalCPD14CategoricalCPDERRNSt6vectorINSt10shared_ptrI12NodeMetadataEEEERKN5Eigen8MatrixXdE">
+<span id="_CPPv3N6tomcat5model14CategoricalCPD14CategoricalCPDERRNSt6vectorINSt10shared_ptrI12NodeMetadataEEEERKN5Eigen8MatrixXdE"></span><span id="_CPPv2N6tomcat5model14CategoricalCPD14CategoricalCPDERRNSt6vectorINSt10shared_ptrI12NodeMetadataEEEERKN5Eigen8MatrixXdE"></span><span id="tomcat::model::CategoricalCPD::CategoricalCPD__std::vector:std::shared_ptr:NodeMetadata::RR.Eigen::MatrixXdCR"></span><span class="target" id="classtomcat_1_1model_1_1CategoricalCPD_1a7dd1c149f9bcfc6464776d3290677733"></span><code class="sig-name descname">CategoricalCPD</code><span class="sig-paren">(</span>std::vector&lt;std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1NodeMetadata.html#_CPPv4N6tomcat5model12NodeMetadataE" title="tomcat::model::NodeMetadata">NodeMetadata</a>&gt;&gt; &amp;&amp;<em>parent_node_order</em>, <em class="property">const</em> Eigen::MatrixXd &amp;<em>probabilities</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model14CategoricalCPD14CategoricalCPDERRNSt6vectorINSt10shared_ptrI12NodeMetadataEEEERKN5Eigen8MatrixXdE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Creates an instance of a <a class="reference internal" href="classtomcat_1_1model_1_1Categorical.html#classtomcat_1_1model_1_1Categorical"><span class="std std-ref">Categorical</span></a> <a class="reference internal" href="classtomcat_1_1model_1_1CPD.html#classtomcat_1_1model_1_1CPD"><span class="std std-ref">CPD</span></a> by transforming a table of probabilities to a list of categorical distributions with constant probabilities.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">parent_node_order</span></code>: evaluation order of the parent nodes’ assignments for correct distribution indexing </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">probabilities</span></code>: matrix containing probabilities </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model14CategoricalCPDD0Ev">
+<span id="_CPPv3N6tomcat5model14CategoricalCPDD0Ev"></span><span id="_CPPv2N6tomcat5model14CategoricalCPDD0Ev"></span><span id="tomcat::model::CategoricalCPD::~CategoricalCPD"></span><span class="target" id="classtomcat_1_1model_1_1CategoricalCPD_1abe2ae12d254f637ced38c1d17a7f4e19"></span><code class="sig-name descname">~CategoricalCPD</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model14CategoricalCPDD0Ev" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model14CategoricalCPD14CategoricalCPDERK14CategoricalCPD">
+<span id="_CPPv3N6tomcat5model14CategoricalCPD14CategoricalCPDERK14CategoricalCPD"></span><span id="_CPPv2N6tomcat5model14CategoricalCPD14CategoricalCPDERK14CategoricalCPD"></span><span id="tomcat::model::CategoricalCPD::CategoricalCPD__CategoricalCPDCR"></span><span class="target" id="classtomcat_1_1model_1_1CategoricalCPD_1a5e4e0ec33e21d6354b9c516326eddef0"></span><code class="sig-name descname">CategoricalCPD</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv4N6tomcat5model14CategoricalCPD14CategoricalCPDERK14CategoricalCPD" title="tomcat::model::CategoricalCPD::CategoricalCPD">CategoricalCPD</a> &amp;<em>cpd</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model14CategoricalCPD14CategoricalCPDERK14CategoricalCPD" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model14CategoricalCPDaSERK14CategoricalCPD">
+<span id="_CPPv3N6tomcat5model14CategoricalCPDaSERK14CategoricalCPD"></span><span id="_CPPv2N6tomcat5model14CategoricalCPDaSERK14CategoricalCPD"></span><span id="tomcat::model::CategoricalCPD::assign-operator__CategoricalCPDCR"></span><span class="target" id="classtomcat_1_1model_1_1CategoricalCPD_1ada1094a6a7785f5d6527bc1b88128d4d"></span><a class="reference internal" href="#_CPPv4N6tomcat5model14CategoricalCPDE" title="tomcat::model::CategoricalCPD">CategoricalCPD</a> &amp;<code class="sig-name descname">operator=</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv4N6tomcat5model14CategoricalCPDE" title="tomcat::model::CategoricalCPD">CategoricalCPD</a> &amp;<em>cpd</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model14CategoricalCPDaSERK14CategoricalCPD" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model14CategoricalCPD14CategoricalCPDERR14CategoricalCPD">
+<span id="_CPPv3N6tomcat5model14CategoricalCPD14CategoricalCPDERR14CategoricalCPD"></span><span id="_CPPv2N6tomcat5model14CategoricalCPD14CategoricalCPDERR14CategoricalCPD"></span><span id="tomcat::model::CategoricalCPD::CategoricalCPD__CategoricalCPDRR"></span><span class="target" id="classtomcat_1_1model_1_1CategoricalCPD_1ac5e6ca763dfa9533ea7b43ef4b39b3ef"></span><code class="sig-name descname">CategoricalCPD</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model14CategoricalCPD14CategoricalCPDERR14CategoricalCPD" title="tomcat::model::CategoricalCPD::CategoricalCPD">CategoricalCPD</a> &amp;&amp;<em>cpd</em><span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model14CategoricalCPD14CategoricalCPDERR14CategoricalCPD" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model14CategoricalCPDaSERR14CategoricalCPD">
+<span id="_CPPv3N6tomcat5model14CategoricalCPDaSERR14CategoricalCPD"></span><span id="_CPPv2N6tomcat5model14CategoricalCPDaSERR14CategoricalCPD"></span><span id="tomcat::model::CategoricalCPD::assign-operator__CategoricalCPDRR"></span><span class="target" id="classtomcat_1_1model_1_1CategoricalCPD_1a0fd0dc968b06e6884604ecc6d03d2a90"></span><a class="reference internal" href="#_CPPv4N6tomcat5model14CategoricalCPDE" title="tomcat::model::CategoricalCPD">CategoricalCPD</a> &amp;<code class="sig-name descname">operator=</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model14CategoricalCPDE" title="tomcat::model::CategoricalCPD">CategoricalCPD</a> &amp;&amp;<em>cpd</em><span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model14CategoricalCPDaSERR14CategoricalCPD" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model14CategoricalCPD5cloneEv">
+<span id="_CPPv3NK6tomcat5model14CategoricalCPD5cloneEv"></span><span id="_CPPv2NK6tomcat5model14CategoricalCPD5cloneEv"></span><span id="tomcat::model::CategoricalCPD::cloneC"></span><span class="target" id="classtomcat_1_1model_1_1CategoricalCPD_1a2de12e65c7cbd1725f1d839388a3ea39"></span>std::unique_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1CPD.html#_CPPv4N6tomcat5model3CPDE" title="tomcat::model::CPD">CPD</a>&gt; <code class="sig-name descname">clone</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em> <em class="property">override</em><a class="headerlink" href="#_CPPv4NK6tomcat5model14CategoricalCPD5cloneEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Creates a new unique pointer from a concrete instance of a <a class="reference internal" href="classtomcat_1_1model_1_1CPD.html#classtomcat_1_1model_1_1CPD"><span class="std std-ref">CPD</span></a>.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Pointer to the new <a class="reference internal" href="classtomcat_1_1model_1_1CPD.html#classtomcat_1_1model_1_1CPD"><span class="std std-ref">CPD</span></a>. </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model14CategoricalCPD15get_descriptionEv">
+<span id="_CPPv3NK6tomcat5model14CategoricalCPD15get_descriptionEv"></span><span id="_CPPv2NK6tomcat5model14CategoricalCPD15get_descriptionEv"></span><span id="tomcat::model::CategoricalCPD::get_descriptionC"></span><span class="target" id="classtomcat_1_1model_1_1CategoricalCPD_1adb77f7ce01b91741087e8a1ade8d46ab"></span>std::string <code class="sig-name descname">get_description</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em> <em class="property">override</em><a class="headerlink" href="#_CPPv4NK6tomcat5model14CategoricalCPD15get_descriptionEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns a short description of the <a class="reference internal" href="classtomcat_1_1model_1_1CPD.html#classtomcat_1_1model_1_1CPD"><span class="std std-ref">CPD</span></a>.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><a class="reference internal" href="classtomcat_1_1model_1_1CPD.html#classtomcat_1_1model_1_1CPD"><span class="std std-ref">CPD</span></a>’s description. </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model14CategoricalCPD28add_to_sufficient_statisticsERKN5Eigen8VectorXdE">
+<span id="_CPPv3N6tomcat5model14CategoricalCPD28add_to_sufficient_statisticsERKN5Eigen8VectorXdE"></span><span id="_CPPv2N6tomcat5model14CategoricalCPD28add_to_sufficient_statisticsERKN5Eigen8VectorXdE"></span><span id="tomcat::model::CategoricalCPD::add_to_sufficient_statistics__Eigen::VectorXdCR"></span><span class="target" id="classtomcat_1_1model_1_1CategoricalCPD_1a739d5035fdf7cdc5d37ba2cbb3d7e073"></span>void <code class="sig-name descname">add_to_sufficient_statistics</code><span class="sig-paren">(</span><em class="property">const</em> Eigen::VectorXd &amp;<em>sample</em><span class="sig-paren">)</span> <em class="property">override</em><a class="headerlink" href="#_CPPv4N6tomcat5model14CategoricalCPD28add_to_sufficient_statisticsERKN5Eigen8VectorXdE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Adds a value to the sufficient statistics of this <a class="reference internal" href="classtomcat_1_1model_1_1CPD.html#classtomcat_1_1model_1_1CPD"><span class="std std-ref">CPD</span></a>.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">sample</span></code>: Sample to add to the sufficient statistics. </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model14CategoricalCPD21sample_from_conjugacyENSt10shared_ptrI7gsl_rngEERKNSt6vectorINSt10shared_ptrI4NodeEEEEi">
+<span id="_CPPv3NK6tomcat5model14CategoricalCPD21sample_from_conjugacyENSt10shared_ptrI7gsl_rngEERKNSt6vectorINSt10shared_ptrI4NodeEEEEi"></span><span id="_CPPv2NK6tomcat5model14CategoricalCPD21sample_from_conjugacyENSt10shared_ptrI7gsl_rngEERKNSt6vectorINSt10shared_ptrI4NodeEEEEi"></span><span id="tomcat::model::CategoricalCPD::sample_from_conjugacy__std::shared_ptr:gsl_rng:.std::vector:std::shared_ptr:Node::CR.iC"></span><span class="target" id="classtomcat_1_1model_1_1CategoricalCPD_1a697660ceafac8a77980bc33086392637"></span>Eigen::MatrixXd <code class="sig-name descname">sample_from_conjugacy</code><span class="sig-paren">(</span>std::shared_ptr&lt;gsl_rng&gt; <em>random_generator</em>, <em class="property">const</em> std::vector&lt;std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1Node.html#_CPPv4N6tomcat5model4NodeE" title="tomcat::model::Node">Node</a>&gt;&gt; &amp;<em>parent_nodes</em>, int <em>num_samples</em><span class="sig-paren">)</span> <em class="property">const</em> <em class="property">override</em><a class="headerlink" href="#_CPPv4NK6tomcat5model14CategoricalCPD21sample_from_conjugacyENSt10shared_ptrI7gsl_rngEERKNSt6vectorINSt10shared_ptrI4NodeEEEEi" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Samples using conjugacy properties and sufficient statistics stored in the <a class="reference internal" href="classtomcat_1_1model_1_1CPD.html#classtomcat_1_1model_1_1CPD"><span class="std std-ref">CPD</span></a>.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p></p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">random_generator</span></code>: random number generator </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model14CategoricalCPD27reset_sufficient_statisticsEv">
+<span id="_CPPv3N6tomcat5model14CategoricalCPD27reset_sufficient_statisticsEv"></span><span id="_CPPv2N6tomcat5model14CategoricalCPD27reset_sufficient_statisticsEv"></span><span id="tomcat::model::CategoricalCPD::reset_sufficient_statistics"></span><span class="target" id="classtomcat_1_1model_1_1CategoricalCPD_1a124dbd8cbfb41821cc7d23120deb4df8"></span>void <code class="sig-name descname">reset_sufficient_statistics</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">override</em><a class="headerlink" href="#_CPPv4N6tomcat5model14CategoricalCPD27reset_sufficient_statisticsEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Clear the values stored as sufficient statistics; </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Protected Functions</p>
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model14CategoricalCPD19clone_distributionsEv">
+<span id="_CPPv3N6tomcat5model14CategoricalCPD19clone_distributionsEv"></span><span id="_CPPv2N6tomcat5model14CategoricalCPD19clone_distributionsEv"></span><span id="tomcat::model::CategoricalCPD::clone_distributions"></span><span class="target" id="classtomcat_1_1model_1_1CategoricalCPD_1acf54e4d06b15ff00e464dbd153568997"></span>void <code class="sig-name descname">clone_distributions</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">override</em><a class="headerlink" href="#_CPPv4N6tomcat5model14CategoricalCPD19clone_distributionsEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Clones the distributions (and the nodes associated to them) of the <a class="reference internal" href="classtomcat_1_1model_1_1CPD.html#classtomcat_1_1model_1_1CPD"><span class="std std-ref">CPD</span></a>. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="classtomcat_1_1model_1_1ConstantNode.html" class="btn btn-neutral float-right" title="Class ConstantNode" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="classtomcat_1_1model_1_1Categorical.html" class="btn btn-neutral float-left" title="Class Categorical" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

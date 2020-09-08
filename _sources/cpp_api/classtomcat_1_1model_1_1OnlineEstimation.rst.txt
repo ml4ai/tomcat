@@ -1,0 +1,26 @@
+.. _exhale_class_classtomcat_1_1model_1_1OnlineEstimation:
+
+Class OnlineEstimation
+======================
+
+- Defined in :ref:`file_src_cpp_model_pipeline_estimation_OnlineEstimation.h`
+
+
+Inheritance Relationships
+-------------------------
+
+Base Types
+**********
+
+- ``public tomcat::model::EstimationProcess`` (:ref:`exhale_class_classtomcat_1_1model_1_1EstimationProcess`)
+- ``public Mosquitto`` (:ref:`exhale_class_classMosquitto`)
+
+
+Class Documentation
+-------------------
+
+
+.. doxygenclass:: tomcat::model::OnlineEstimation
+   :members:
+   :protected-members:
+   :undoc-members:

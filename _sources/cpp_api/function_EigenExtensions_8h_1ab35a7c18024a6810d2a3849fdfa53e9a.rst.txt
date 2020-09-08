@@ -1,0 +1,13 @@
+.. _exhale_function_EigenExtensions_8h_1ab35a7c18024a6810d2a3849fdfa53e9a:
+
+Function tomcat::model::standard_error(const std::vector<Eigen::MatrixXd>&)
+===========================================================================
+
+- Defined in :ref:`file_src_cpp_model_utils_EigenExtensions.h`
+
+
+Function Documentation
+----------------------
+
+
+.. doxygenfunction:: tomcat::model::standard_error(const std::vector<Eigen::MatrixXd>&)

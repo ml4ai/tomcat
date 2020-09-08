@@ -1,0 +1,54 @@
+
+.. _program_listing_file_src_cpp_model_pipeline_evaluation_Estimates.h:
+
+Program Listing for File Estimates.h
+====================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_cpp_model_pipeline_evaluation_Estimates.h>` (``src/cpp/model/pipeline/evaluation/Estimates.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #pragma once
+   
+   #include "../../utils/Definitions.h"
+   #include "Measure.h"
+   
+   namespace tomcat {
+       namespace model {
+   
+           class Estimates : public Measure {
+             public:
+   
+   
+               //------------------------------------------------------------------
+               // Constructors & Destructor
+               //------------------------------------------------------------------
+   
+               Estimates(std::shared_ptr<Estimator> estimator);
+   
+               ~Estimates();
+   
+               //------------------------------------------------------------------
+               // Copy & Move constructors/assignments
+               //------------------------------------------------------------------
+               Estimates(const Estimates& estimates);
+   
+               Estimates& operator=(const Estimates& estimates);
+   
+               Estimates(Estimates&&) = default;
+   
+               Estimates& operator=(Estimates&&) = default;
+   
+               //------------------------------------------------------------------
+               // Member functions
+               //------------------------------------------------------------------
+               std::vector<NodeEvaluation> evaluate(const EvidenceSet& test_data) const override;
+   
+               void get_info(nlohmann::json& json) const override;
+   
+           };
+   
+       } // namespace model
+   } // namespace tomcat

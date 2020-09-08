@@ -1,0 +1,25 @@
+.. _exhale_class_classtomcat_1_1model_1_1DirichletCPD:
+
+Class DirichletCPD
+==================
+
+- Defined in :ref:`file_src_cpp_model_pgm_cpd_DirichletCPD.h`
+
+
+Inheritance Relationships
+-------------------------
+
+Base Type
+*********
+
+- ``public tomcat::model::CPD`` (:ref:`exhale_class_classtomcat_1_1model_1_1CPD`)
+
+
+Class Documentation
+-------------------
+
+
+.. doxygenclass:: tomcat::model::DirichletCPD
+   :members:
+   :protected-members:
+   :undoc-members:

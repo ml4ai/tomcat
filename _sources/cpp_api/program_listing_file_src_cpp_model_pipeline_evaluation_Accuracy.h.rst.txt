@@ -1,0 +1,53 @@
+
+.. _program_listing_file_src_cpp_model_pipeline_evaluation_Accuracy.h:
+
+Program Listing for File Accuracy.h
+===================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_cpp_model_pipeline_evaluation_Accuracy.h>` (``src/cpp/model/pipeline/evaluation/Accuracy.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #pragma once
+   
+   #include "../../utils/Definitions.h"
+   #include "Measure.h"
+   
+   namespace tomcat {
+       namespace model {
+   
+           class Accuracy : public Measure {
+             public:
+               //------------------------------------------------------------------
+               // Constructors & Destructor
+               //------------------------------------------------------------------
+   
+               Accuracy(std::shared_ptr<Estimator> estimator,
+                        double threshold = 0.5);
+   
+               ~Accuracy();
+   
+               //------------------------------------------------------------------
+               // Copy & Move constructors/assignments
+               //------------------------------------------------------------------
+               Accuracy(const Accuracy& accuracy);
+   
+               Accuracy& operator=(const Accuracy& accuracy);
+   
+               Accuracy(Accuracy&&) = default;
+   
+               Accuracy& operator=(Accuracy&&) = default;
+   
+               //------------------------------------------------------------------
+               // Member functions
+               //------------------------------------------------------------------
+               std::vector<NodeEvaluation>
+               evaluate(const EvidenceSet& test_data) const override;
+   
+               void get_info(nlohmann::json& json) const override;
+           };
+   
+       } // namespace model
+   } // namespace tomcat

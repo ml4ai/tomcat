@@ -1,0 +1,16 @@
+.. _exhale_class_classtomcat_1_1model_1_1KFold:
+
+Class KFold
+===========
+
+- Defined in :ref:`file_src_cpp_model_pipeline_KFold.h`
+
+
+Class Documentation
+-------------------
+
+
+.. doxygenclass:: tomcat::model::KFold
+   :members:
+   :protected-members:
+   :undoc-members:

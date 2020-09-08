@@ -1,0 +1,52 @@
+
+.. _file_src_cpp_model_pipeline_estimation_SumProductEstimator.cpp:
+
+File SumProductEstimator.cpp
+============================
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp_model_pipeline_estimation>` (``src/cpp/model/pipeline/estimation``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. contents:: Contents
+   :local:
+   :backlinks: none
+
+Definition (``src/cpp/model/pipeline/estimation/SumProductEstimator.cpp``)
+--------------------------------------------------------------------------
+
+
+.. toctree::
+   :maxdepth: 1
+
+   program_listing_file_src_cpp_model_pipeline_estimation_SumProductEstimator.cpp.rst
+
+
+
+
+
+Includes
+--------
+
+
+- ``../../pgm/inference/FactorGraph.h``
+
+- ``../../pgm/inference/VariableNode.h``
+
+- ``SumProductEstimator.h`` (:ref:`file_src_cpp_model_pipeline_estimation_SumProductEstimator.h`)
+
+- ``iostream``
+
+
+
+
+
+
+Namespaces
+----------
+
+
+- :ref:`namespace_tomcat`
+
+- :ref:`namespace_tomcat__model`
+

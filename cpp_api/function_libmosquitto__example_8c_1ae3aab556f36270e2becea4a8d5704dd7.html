@@ -33,6 +33,7 @@
         <script src="../_static/language_data.js"></script>
         <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
         <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -171,7 +172,13 @@
 <h2>Function Documentation<a class="headerlink" href="#function-documentation" title="Permalink to this headline">¶</a></h2>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>doxygenfunction: Cannot find function “on_message” in doxygen xml output for project “ToMCAT” from directory: ./doxyoutput/xml</p>
+<p>doxygenfunction: Unable to resolve multiple matches for function “on_message” with arguments (struct mosquitto *, void *, const struct mosquitto_message *) in doxygen xml output for project “ToMCAT” from directory: ./doxyoutput/xml.
+Potential matches:
+</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="kt">void</span> <span class="n">on_message</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">topic</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">message</span><span class="p">)</span>
+<span class="o">-</span> <span class="kt">void</span> <span class="n">on_message</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">topic</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">message</span><span class="p">)</span> <span class="k">override</span>
+</pre></div>
+</div>
 </div>
 </div>
 </div>

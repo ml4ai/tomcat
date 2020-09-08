@@ -1,0 +1,13 @@
+.. _exhale_function_model_2utils_2FileHandler_8cpp_1a5ece735fb8497c7e9940a6bb35d64e36:
+
+Function tomcat::model::read_matrix_from_file(const string&)
+============================================================
+
+- Defined in :ref:`file_src_cpp_model_utils_FileHandler.cpp`
+
+
+Function Documentation
+----------------------
+
+
+.. doxygenfunction:: tomcat::model::read_matrix_from_file(const string&)

@@ -1,0 +1,158 @@
+
+.. _program_listing_file_src_cpp_model_pgm_inference_FactorGraph.h:
+
+Program Listing for File FactorGraph.h
+======================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_cpp_model_pgm_inference_FactorGraph.h>` (``src/cpp/model/pgm/inference/FactorGraph.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #pragma once
+   
+   #include <array>
+   #include <memory>
+   #include <string>
+   #include <utility>
+   #include <vector>
+   
+   #include <boost/graph/adjacency_list.hpp>
+   
+   #include "../../utils/Definitions.h"
+   #include "../DynamicBayesNet.h"
+   #include "MessageNode.h"
+   
+   namespace tomcat {
+       namespace model {
+   
+           class FactorGraph {
+             public:
+               //------------------------------------------------------------------
+               // Constructors & Destructor
+               //------------------------------------------------------------------
+   
+               FactorGraph();
+   
+               ~FactorGraph();
+   
+               //------------------------------------------------------------------
+               // Copy & Move constructors/assignments
+               //------------------------------------------------------------------
+               FactorGraph(const FactorGraph&) = default;
+   
+               FactorGraph& operator=(const FactorGraph&) = default;
+   
+               FactorGraph(FactorGraph&&) = default;
+   
+               FactorGraph& operator=(FactorGraph&&) = default;
+   
+               //------------------------------------------------------------------
+               // Static functions
+               //------------------------------------------------------------------
+   
+               static FactorGraph
+               create_from_unrolled_dbn(const DynamicBayesNet& dbn);
+   
+               //------------------------------------------------------------------
+               // Member functions
+               //------------------------------------------------------------------
+   
+               void add_node(const std::string& node_label,
+                             int cardinality,
+                             int time_step,
+                             const Eigen::MatrixXd& cpd,
+                             const CPD::TableOrderingMap& cpd_ordering_map);
+   
+               void add_edge(const std::string& source_node_label,
+                             int source_node_time_step,
+                             const std::string& target_node_label,
+                             int target_node_time_step);
+   
+               void store_topological_traversal_per_time_step();
+   
+               std::vector<std::shared_ptr<MessageNode>>
+               get_vertices_topological_order_in(
+                   int time_step, bool from_roots_to_leaves = true) const;
+   
+               std::vector<std::pair<std::shared_ptr<MessageNode>, bool>>
+               get_parents_of(const std::shared_ptr<MessageNode>& template_node,
+                              int time_step) const;
+   
+               std::vector<std::shared_ptr<MessageNode>> get_children_of(
+                   const std::shared_ptr<MessageNode>& template_node) const;
+   
+               Eigen::MatrixXd get_marginal_for(const std::string& node_label,
+                                                int time_step) const;
+   
+               void erase_incoming_messages_beyond(int time_step);
+   
+             private:
+               //------------------------------------------------------------------
+               // Types, Enums & Constants
+               //------------------------------------------------------------------
+   
+               // The graph is defined as bidirectional to speed up the access to
+               // the list of parents and children of a vertex. However, only
+               // single-direction edges will be created in reality. Also, a factor
+               // graph is theoretically defined as an undirected graph. However,
+               // since the potential functions are actually CPDs, to make the
+               // computation of the messages more straightforward, the directions
+               // of the edges in the original DBN are preserved.
+               typedef boost::adjacency_list<boost::vecS,
+                                             boost::vecS,
+                                             boost::bidirectionalS,
+                                             std::shared_ptr<MessageNode>>
+                   Graph;
+   
+               typedef std::unordered_map<std::string, int> IDMap;
+   
+               //------------------------------------------------------------------
+               // Member functions
+               //------------------------------------------------------------------
+   
+               int add_variable_node(const std::string& node_label,
+                                     int cardinality,
+                                     int time_step);
+   
+               int add_factor_node(const std::string& node_label,
+                                   int time_step,
+                                   const Eigen::MatrixXd& cpd,
+                                   const CPD::TableOrderingMap& cpd_ordering_map);
+   
+               //------------------------------------------------------------------
+               // Data members
+               //------------------------------------------------------------------
+               Graph graph;
+   
+               IDMap name_to_id;
+   
+               // Last time step represented by template nodes in the factor graph.
+               // A DBN can have a different structure up to the second time step
+               // in this implementation. For instance, in time step zero it's
+               // common to have priors which do not show up in the following time
+               // steps. Also, there could be the case that some node points to
+               // another in time step 1. The third time step (t = 2) would then be
+               // comprised by a structure of nodes that do not change over time
+               // anymore. So inference methods can loop over the structure of the
+               // time step 2 without the need to create concrete nodes. The
+               // repeatable time step is allowed to be less than 2 if the DBN is
+               // actually a single Bayes Net (only one time step) as this
+               // implementation is flexible enough to allow working with this kind
+               // of PGM. In that case, max_time_step would be 0.
+               int repeatable_time_step = 0;
+   
+               // The two data structures below store the topological orders for
+               // each one of the time-step sub-graphs. A reversed topological
+               // order here is defined as a traversal from the leaves to the
+               // roots.
+               std::array<std::vector<std::shared_ptr<MessageNode>>, 3>
+                   time_sliced_topological_order;
+   
+               std::array<std::vector<std::shared_ptr<MessageNode>>, 3>
+                   time_sliced_reversed_topological_order;
+           };
+   
+       } // namespace model
+   } // namespace tomcat

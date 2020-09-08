@@ -1,0 +1,110 @@
+
+.. _program_listing_file_src_cpp_model_pgm_Node.h:
+
+Program Listing for File Node.h
+===============================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_cpp_model_pgm_Node.h>` (``src/cpp/model/pgm/Node.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #pragma once
+   
+   #include <unordered_map>
+   
+   #include <eigen3/Eigen/Dense>
+   
+   #include "../utils/Definitions.h"
+   #include "NodeMetadata.h"
+   
+   namespace tomcat {
+       namespace model {
+   
+           class Node {
+             public:
+               //------------------------------------------------------------------
+               // Types, Enums & Constants
+               //------------------------------------------------------------------
+               typedef std::unordered_map<std::string, std::shared_ptr<Node>>
+                   NodeMap;
+   
+               //------------------------------------------------------------------
+               // Constructors & Destructor
+               //------------------------------------------------------------------
+   
+               Node();
+   
+               Node(std::shared_ptr<NodeMetadata> metadata);
+   
+               virtual ~Node();
+   
+               //------------------------------------------------------------------
+               // Copy & Move constructors/assignments
+               //------------------------------------------------------------------
+   
+               // Copy constructor and assignment should be deleted to avoid
+               // implicit slicing and loss of polymorphic behaviour in the
+               // subclasses. To deep copy, the clone method must be used.
+               Node(const Node&) = delete;
+   
+               Node& operator=(const Node&) = delete;
+   
+               Node(Node&&) = default;
+   
+               Node& operator=(Node&&) = default;
+   
+               //------------------------------------------------------------------
+               // Operator overload
+               //------------------------------------------------------------------
+               friend std::ostream& operator<<(std::ostream& os, const Node& node);
+   
+               //------------------------------------------------------------------
+               // Member functions
+               //------------------------------------------------------------------
+   
+               void print(std::ostream& os) const;
+   
+               int get_size() const;
+   
+               //------------------------------------------------------------------
+               // Pure virtual functions
+               //------------------------------------------------------------------
+   
+               virtual std::unique_ptr<Node> clone() const = 0;
+   
+               virtual std::string get_timed_name() const = 0;
+   
+               // virtual std::string get_timed_name(int time_step) const = 0;
+   
+               // --------------------------------------------------------
+               // Getters & Setters
+               // --------------------------------------------------------
+               const std::shared_ptr<NodeMetadata>& get_metadata() const;
+   
+               const Eigen::MatrixXd& get_assignment() const;
+   
+             protected:
+               //------------------------------------------------------------------
+               // Pure virtual functions
+               //------------------------------------------------------------------
+   
+               virtual std::string get_description() const = 0;
+   
+               //------------------------------------------------------------------
+               // Data members
+               //------------------------------------------------------------------
+   
+               // Metadata is a shared pointer because each timed instance of a
+               // node in the unrolled DBN will share the same metadata.
+               std::shared_ptr<NodeMetadata> metadata;
+   
+               // Multiple values can be assigned to a node (e.g. when the node is
+               // observable and data is provided). Each value is assigned to a row
+               // of the matrix.
+               Eigen::MatrixXd assignment;
+           };
+   
+       } // namespace model
+   } // namespace tomcat

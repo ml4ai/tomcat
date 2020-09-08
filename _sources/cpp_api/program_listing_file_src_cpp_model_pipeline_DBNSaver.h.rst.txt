@@ -1,0 +1,74 @@
+
+.. _program_listing_file_src_cpp_model_pipeline_DBNSaver.h:
+
+Program Listing for File DBNSaver.h
+===================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_cpp_model_pipeline_DBNSaver.h>` (``src/cpp/model/pipeline/DBNSaver.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #pragma once
+   
+   #include <memory>
+   #include <string>
+   
+   #include "../utils/Definitions.h"
+   #include "../pgm/DynamicBayesNet.h"
+   
+   namespace tomcat {
+       namespace model {
+   
+           class DBNSaver {
+             public:
+               //------------------------------------------------------------------
+               // Constructors & Destructor
+               //------------------------------------------------------------------
+   
+               DBNSaver(std::shared_ptr<DynamicBayesNet> model,
+                        std::string output_folder_path);
+   
+               ~DBNSaver();
+   
+               //------------------------------------------------------------------
+               // Copy & Move constructors/assignments
+               //------------------------------------------------------------------
+   
+               // Copy constructor and assignment should be deleted to avoid
+               // implicit slicing and loss of polymorphic behaviour in the
+               // subclasses. To deep copy, the clone method must be used.
+               DBNSaver(const DBNSaver&) = delete;
+   
+               DBNSaver& operator=(const DBNSaver&) = delete;
+   
+               DBNSaver(DBNSaver&&) = default;
+   
+               DBNSaver& operator=(DBNSaver&&) = default;
+   
+               //------------------------------------------------------------------
+               // Member functions
+               //------------------------------------------------------------------
+   
+               void prepare();
+   
+               void save();
+   
+             private:
+               //------------------------------------------------------------------
+               // Data members
+               //------------------------------------------------------------------
+               std::shared_ptr<DynamicBayesNet> model;
+   
+               // Folder where the model's parameters' files will be saved.
+               std::string output_folder_path;
+   
+               // Cross validation step. This is incremented at each call of the
+               // function save. It can be used to identify a folder with
+               // parameters for a specific cross validation step.
+               int cv_step = 0;
+           };
+   
+       } // namespace model
+   } // namespace tomcat

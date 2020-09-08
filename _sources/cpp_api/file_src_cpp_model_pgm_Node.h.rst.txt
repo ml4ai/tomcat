@@ -1,0 +1,77 @@
+
+.. _file_src_cpp_model_pgm_Node.h:
+
+File Node.h
+===========
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp_model_pgm>` (``src/cpp/model/pgm``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. contents:: Contents
+   :local:
+   :backlinks: none
+
+Definition (``src/cpp/model/pgm/Node.h``)
+-----------------------------------------
+
+
+.. toctree::
+   :maxdepth: 1
+
+   program_listing_file_src_cpp_model_pgm_Node.h.rst
+
+
+
+
+
+Includes
+--------
+
+
+- ``../utils/Definitions.h``
+
+- ``NodeMetadata.h`` (:ref:`file_src_cpp_model_pgm_NodeMetadata.h`)
+
+- ``eigen3/Eigen/Dense``
+
+- ``unordered_map``
+
+
+
+Included By
+-----------
+
+
+- :ref:`file_src_cpp_model_distribution_Categorical.h`
+
+- :ref:`file_src_cpp_model_distribution_Distribution.h`
+
+- :ref:`file_src_cpp_model_pgm_ConstantNode.h`
+
+- :ref:`file_src_cpp_model_pgm_RandomVariableNode.h`
+
+- :ref:`file_src_cpp_model_pgm_cpd_CPD.h`
+
+- :ref:`file_src_cpp_model_distribution_Continuous.h`
+
+- :ref:`file_src_cpp_model_pgm_Node.cpp`
+
+
+
+
+Namespaces
+----------
+
+
+- :ref:`namespace_tomcat`
+
+- :ref:`namespace_tomcat__model`
+
+
+Classes
+-------
+
+
+- :ref:`exhale_class_classtomcat_1_1model_1_1Node`
+

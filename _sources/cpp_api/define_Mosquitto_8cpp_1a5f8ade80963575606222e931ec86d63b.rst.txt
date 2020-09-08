@@ -1,0 +1,13 @@
+.. _exhale_define_Mosquitto_8cpp_1a5f8ade80963575606222e931ec86d63b:
+
+Define MAX_NUM_RECONNECTIONS
+============================
+
+- Defined in :ref:`file_src_cpp_model_utils_Mosquitto.cpp`
+
+
+Define Documentation
+--------------------
+
+
+.. doxygendefine:: MAX_NUM_RECONNECTIONS

@@ -1,0 +1,25 @@
+.. _dir_src_cpp_model_pipeline_training:
+
+
+Directory training
+==================
+
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp_model_pipeline>` (``src/cpp/model/pipeline``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+*Directory path:* ``src/cpp/model/pipeline/training``
+
+
+Files
+-----
+
+- :ref:`file_src_cpp_model_pipeline_training_DBNLoader.cpp`
+- :ref:`file_src_cpp_model_pipeline_training_DBNLoader.h`
+- :ref:`file_src_cpp_model_pipeline_training_DBNSamplingTrainer.cpp`
+- :ref:`file_src_cpp_model_pipeline_training_DBNSamplingTrainer.h`
+- :ref:`file_src_cpp_model_pipeline_training_DBNTrainer.cpp`
+- :ref:`file_src_cpp_model_pipeline_training_DBNTrainer.h`
+
+

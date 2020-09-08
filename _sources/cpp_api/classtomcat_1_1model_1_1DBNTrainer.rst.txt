@@ -1,0 +1,26 @@
+.. _exhale_class_classtomcat_1_1model_1_1DBNTrainer:
+
+Class DBNTrainer
+================
+
+- Defined in :ref:`file_src_cpp_model_pipeline_training_DBNTrainer.h`
+
+
+Inheritance Relationships
+-------------------------
+
+Derived Types
+*************
+
+- ``public tomcat::model::DBNLoader`` (:ref:`exhale_class_classtomcat_1_1model_1_1DBNLoader`)
+- ``public tomcat::model::DBNSamplingTrainer`` (:ref:`exhale_class_classtomcat_1_1model_1_1DBNSamplingTrainer`)
+
+
+Class Documentation
+-------------------
+
+
+.. doxygenclass:: tomcat::model::DBNTrainer
+   :members:
+   :protected-members:
+   :undoc-members:

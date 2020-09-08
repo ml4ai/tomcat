@@ -1,0 +1,13 @@
+.. _exhale_function_EigenExtensions_8cpp_1a645914fec34902c34832d843b9647146:
+
+Function tomcat::model::mean(const vector<Eigen::MatrixXd>&)
+============================================================
+
+- Defined in :ref:`file_src_cpp_model_utils_EigenExtensions.cpp`
+
+
+Function Documentation
+----------------------
+
+
+.. doxygenfunction:: tomcat::model::mean(const vector<Eigen::MatrixXd>&)

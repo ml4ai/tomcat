@@ -1,0 +1,13 @@
+.. _exhale_function_CPD_8cpp_1a5cba54b349806883f6717ddf9f621ea8:
+
+Function tomcat::model::operator<<(ostream&, const CPD&)
+========================================================
+
+- Defined in :ref:`file_src_cpp_model_pgm_cpd_CPD.cpp`
+
+
+Function Documentation
+----------------------
+
+
+.. doxygenfunction:: tomcat::model::operator<<(ostream&, const CPD&)

@@ -1,0 +1,333 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Program Listing for File CategoricalCPD.cpp &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tomcat_openapi.html">Data models and message bus topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Program Listing for File CategoricalCPD.cpp</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/cpp_api/program_listing_file_src_cpp_model_pgm_cpd_CategoricalCPD.cpp.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="program-listing-for-file-categoricalcpd-cpp">
+<span id="program-listing-file-src-cpp-model-pgm-cpd-categoricalcpd-cpp"></span><h1>Program Listing for File CategoricalCPD.cpp<a class="headerlink" href="#program-listing-for-file-categoricalcpd-cpp" title="Permalink to this headline">¶</a></h1>
+<p>↰ <a class="reference internal" href="file_src_cpp_model_pgm_cpd_CategoricalCPD.cpp.html#file-src-cpp-model-pgm-cpd-categoricalcpd-cpp"><span class="std std-ref">Return to documentation for file</span></a> (<code class="docutils literal notranslate"><span class="pre">src/cpp/model/pgm/cpd/CategoricalCPD.cpp</span></code>)</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;CategoricalCPD.h&quot;</span><span class="cp"></span>
+
+<span class="cp">#include</span> <span class="cpf">&quot;../ConstantNode.h&quot;</span><span class="cp"></span>
+
+<span class="k">namespace</span> <span class="n">tomcat</span> <span class="p">{</span>
+    <span class="k">namespace</span> <span class="n">model</span> <span class="p">{</span>
+
+        <span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+        <span class="c1">//----------------------------------------------------------------------</span>
+        <span class="c1">// Constructors &amp; Destructor</span>
+        <span class="c1">//----------------------------------------------------------------------</span>
+        <span class="n">CategoricalCPD</span><span class="o">::</span><span class="n">CategoricalCPD</span><span class="p">(</span>
+            <span class="n">vector</span><span class="o">&lt;</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">NodeMetadata</span><span class="o">&gt;&gt;&amp;</span> <span class="n">parent_node_order</span><span class="p">,</span>
+            <span class="k">const</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Categorical</span><span class="o">&gt;&gt;&amp;</span> <span class="n">distributions</span><span class="p">)</span>
+            <span class="o">:</span> <span class="n">CPD</span><span class="p">(</span><span class="n">parent_node_order</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">init_from_distributions</span><span class="p">(</span><span class="n">distributions</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="n">CategoricalCPD</span><span class="o">::</span><span class="n">CategoricalCPD</span><span class="p">(</span>
+            <span class="n">vector</span><span class="o">&lt;</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">NodeMetadata</span><span class="o">&gt;&gt;&amp;&amp;</span> <span class="n">parent_node_order</span><span class="p">,</span>
+            <span class="k">const</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Categorical</span><span class="o">&gt;&gt;&amp;</span> <span class="n">distributions</span><span class="p">)</span>
+            <span class="o">:</span> <span class="n">CPD</span><span class="p">(</span><span class="n">parent_node_order</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">init_from_distributions</span><span class="p">(</span><span class="n">distributions</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="n">CategoricalCPD</span><span class="o">::</span><span class="n">CategoricalCPD</span><span class="p">(</span>
+            <span class="n">vector</span><span class="o">&lt;</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">NodeMetadata</span><span class="o">&gt;&gt;&amp;</span> <span class="n">parent_node_order</span><span class="p">,</span>
+            <span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span> <span class="n">probabilities</span><span class="p">)</span>
+            <span class="o">:</span> <span class="n">CPD</span><span class="p">(</span><span class="n">parent_node_order</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">init_from_matrix</span><span class="p">(</span><span class="n">probabilities</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="n">CategoricalCPD</span><span class="o">::</span><span class="n">CategoricalCPD</span><span class="p">(</span>
+            <span class="n">vector</span><span class="o">&lt;</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">NodeMetadata</span><span class="o">&gt;&gt;&amp;&amp;</span> <span class="n">parent_node_order</span><span class="p">,</span>
+            <span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span> <span class="n">cpd_table</span><span class="p">)</span>
+            <span class="o">:</span> <span class="n">CPD</span><span class="p">(</span><span class="n">parent_node_order</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">init_from_matrix</span><span class="p">(</span><span class="n">cpd_table</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="n">CategoricalCPD</span><span class="o">::~</span><span class="n">CategoricalCPD</span><span class="p">()</span> <span class="p">{}</span>
+
+        <span class="c1">//----------------------------------------------------------------------</span>
+        <span class="c1">// Copy &amp; Move constructors/assignments</span>
+        <span class="c1">//----------------------------------------------------------------------</span>
+        <span class="n">CategoricalCPD</span><span class="o">::</span><span class="n">CategoricalCPD</span><span class="p">(</span><span class="k">const</span> <span class="n">CategoricalCPD</span><span class="o">&amp;</span> <span class="n">cpd</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">copy_cpd</span><span class="p">(</span><span class="n">cpd</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="n">CategoricalCPD</span><span class="o">&amp;</span> <span class="n">CategoricalCPD</span><span class="o">::</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">CategoricalCPD</span><span class="o">&amp;</span> <span class="n">cpd</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">copy_cpd</span><span class="p">(</span><span class="n">cpd</span><span class="p">);</span>
+            <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="c1">//----------------------------------------------------------------------</span>
+        <span class="c1">// Member functions</span>
+        <span class="c1">//----------------------------------------------------------------------</span>
+        <span class="kt">void</span> <span class="n">CategoricalCPD</span><span class="o">::</span><span class="n">init_from_distributions</span><span class="p">(</span>
+            <span class="k">const</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Categorical</span><span class="o">&gt;&gt;&amp;</span> <span class="n">distributions</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">distributions</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="n">distributions</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+            <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="nl">distribution</span> <span class="p">:</span> <span class="n">distributions</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="o">-&gt;</span><span class="n">distributions</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">distribution</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="kt">void</span> <span class="n">CategoricalCPD</span><span class="o">::</span><span class="n">init_from_matrix</span><span class="p">(</span><span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span> <span class="n">matrix</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">matrix</span><span class="p">.</span><span class="n">rows</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Categorical</span><span class="o">&gt;</span> <span class="n">distribution_ptr</span> <span class="o">=</span>
+                    <span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Categorical</span><span class="o">&gt;</span><span class="p">(</span>
+                        <span class="n">Categorical</span><span class="p">(</span><span class="n">move</span><span class="p">(</span><span class="n">matrix</span><span class="p">.</span><span class="n">row</span><span class="p">(</span><span class="n">i</span><span class="p">))));</span>
+                <span class="k">this</span><span class="o">-&gt;</span><span class="n">distributions</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">distribution_ptr</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">CPD</span><span class="o">&gt;</span> <span class="n">CategoricalCPD</span><span class="o">::</span><span class="n">clone</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
+            <span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">CategoricalCPD</span><span class="o">&gt;</span> <span class="n">new_cpd</span> <span class="o">=</span>
+                <span class="n">make_unique</span><span class="o">&lt;</span><span class="n">CategoricalCPD</span><span class="o">&gt;</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">);</span>
+            <span class="n">new_cpd</span><span class="o">-&gt;</span><span class="n">clone_distributions</span><span class="p">();</span>
+            <span class="k">return</span> <span class="n">new_cpd</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="kt">void</span> <span class="n">CategoricalCPD</span><span class="o">::</span><span class="n">clone_distributions</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">distribution</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">distributions</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Distribution</span><span class="o">&gt;</span> <span class="n">temp</span> <span class="o">=</span> <span class="n">distribution</span><span class="o">-&gt;</span><span class="n">clone</span><span class="p">();</span>
+                <span class="n">distribution</span> <span class="o">=</span> <span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">Categorical</span><span class="o">&gt;</span><span class="p">(</span><span class="n">temp</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="n">string</span> <span class="n">CategoricalCPD</span><span class="o">::</span><span class="n">get_description</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
+            <span class="n">stringstream</span> <span class="n">ss</span><span class="p">;</span>
+            <span class="n">ss</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Categorical CPD: {</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">probabilities</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">distributions</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">ss</span> <span class="o">&lt;&lt;</span> <span class="s">&quot; &quot;</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">probabilities</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="n">ss</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;}&quot;</span><span class="p">;</span>
+
+            <span class="k">return</span> <span class="n">ss</span><span class="p">.</span><span class="n">str</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="kt">void</span> <span class="n">CategoricalCPD</span><span class="o">::</span><span class="n">add_to_sufficient_statistics</span><span class="p">(</span>
+            <span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span> <span class="n">sample</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="n">invalid_argument</span><span class="p">(</span>
+                <span class="s">&quot;No conjugate prior with a categorical distribution.&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">CategoricalCPD</span><span class="o">::</span><span class="n">sample_from_conjugacy</span><span class="p">(</span>
+            <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">gsl_rng</span><span class="o">&gt;</span> <span class="n">random_generator</span><span class="p">,</span>
+            <span class="k">const</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&gt;&amp;</span> <span class="n">parent_nodes</span><span class="p">,</span>
+            <span class="kt">int</span> <span class="n">num_samples</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+            <span class="k">throw</span> <span class="n">invalid_argument</span><span class="p">(</span>
+                <span class="s">&quot;No conjugate prior with a categorical distribution.&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="kt">void</span> <span class="n">CategoricalCPD</span><span class="o">::</span><span class="n">reset_sufficient_statistics</span><span class="p">()</span> <span class="p">{</span>
+            <span class="c1">// Nothing to reset</span>
+        <span class="p">}</span>
+
+    <span class="p">}</span> <span class="c1">// namespace model</span>
+<span class="p">}</span> <span class="c1">// namespace tomcat</span>
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

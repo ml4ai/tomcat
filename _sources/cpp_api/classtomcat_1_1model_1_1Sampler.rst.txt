@@ -1,0 +1,26 @@
+.. _exhale_class_classtomcat_1_1model_1_1Sampler:
+
+Class Sampler
+=============
+
+- Defined in :ref:`file_src_cpp_model_sampling_Sampler.h`
+
+
+Inheritance Relationships
+-------------------------
+
+Derived Types
+*************
+
+- ``public tomcat::model::AncestralSampler`` (:ref:`exhale_class_classtomcat_1_1model_1_1AncestralSampler`)
+- ``public tomcat::model::GibbsSampler`` (:ref:`exhale_class_classtomcat_1_1model_1_1GibbsSampler`)
+
+
+Class Documentation
+-------------------
+
+
+.. doxygenclass:: tomcat::model::Sampler
+   :members:
+   :protected-members:
+   :undoc-members:

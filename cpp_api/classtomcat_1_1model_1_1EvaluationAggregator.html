@@ -1,0 +1,349 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Class EvaluationAggregator &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Class EvidenceSet" href="classtomcat_1_1model_1_1EvidenceSet.html" />
+    <link rel="prev" title="Class Estimator" href="classtomcat_1_1model_1_1Estimator.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tomcat_openapi.html">Data models and message bus topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../developer/index.html">Developer documentation</a> &raquo;</li>
+        
+          <li><a href="index.html">C++ API</a> &raquo;</li>
+        
+      <li>Class EvaluationAggregator</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/cpp_api/classtomcat_1_1model_1_1EvaluationAggregator.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="class-evaluationaggregator">
+<span id="exhale-class-classtomcat-1-1model-1-1evaluationaggregator"></span><h1>Class EvaluationAggregator<a class="headerlink" href="#class-evaluationaggregator" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Defined in <a class="reference internal" href="file_src_cpp_model_pipeline_evaluation_EvaluationAggregator.h.html#file-src-cpp-model-pipeline-evaluation-evaluationaggregator-h"><span class="std std-ref">File EvaluationAggregator.h</span></a></p></li>
+</ul>
+<div class="section" id="class-documentation">
+<h2>Class Documentation<a class="headerlink" href="#class-documentation" title="Permalink to this headline">¶</a></h2>
+<dl class="cpp class">
+<dt id="_CPPv4N6tomcat5model20EvaluationAggregatorE">
+<span id="_CPPv3N6tomcat5model20EvaluationAggregatorE"></span><span id="_CPPv2N6tomcat5model20EvaluationAggregatorE"></span><span id="tomcat::model::EvaluationAggregator"></span><span class="target" id="classtomcat_1_1model_1_1EvaluationAggregator"></span><em class="property">class </em><code class="sig-prename descclassname">tomcat::model<code class="sig-prename descclassname">::</code></code><code class="sig-name descname">EvaluationAggregator</code><a class="headerlink" href="#_CPPv4N6tomcat5model20EvaluationAggregatorE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>This class is responsible for computing and aggregating evaluations a set of measures and nodes’ estimates. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Types</p>
+<dl class="cpp enum">
+<dt id="_CPPv4N6tomcat5model20EvaluationAggregator6METHODE">
+<span id="_CPPv3N6tomcat5model20EvaluationAggregator6METHODE"></span><span id="_CPPv2N6tomcat5model20EvaluationAggregator6METHODE"></span><span class="target" id="classtomcat_1_1model_1_1EvaluationAggregator_1ae7ea5236d359d63247f542416a76b0a7"></span><em class="property">enum </em><code class="sig-name descname">METHOD</code><a class="headerlink" href="#_CPPv4N6tomcat5model20EvaluationAggregator6METHODE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt id="_CPPv4N6tomcat5model20EvaluationAggregator6METHOD14no_aggregationE">
+<span id="_CPPv3N6tomcat5model20EvaluationAggregator6METHOD14no_aggregationE"></span><span id="_CPPv2N6tomcat5model20EvaluationAggregator6METHOD14no_aggregationE"></span><span class="target" id="classtomcat_1_1model_1_1EvaluationAggregator_1ae7ea5236d359d63247f542416a76b0a7a38f81ec903302557554efd6791e0ad18"></span><em class="property">enumerator </em><code class="sig-name descname">no_aggregation</code><a class="headerlink" href="#_CPPv4N6tomcat5model20EvaluationAggregator6METHOD14no_aggregationE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt id="_CPPv4N6tomcat5model20EvaluationAggregator6METHOD7averageE">
+<span id="_CPPv3N6tomcat5model20EvaluationAggregator6METHOD7averageE"></span><span id="_CPPv2N6tomcat5model20EvaluationAggregator6METHOD7averageE"></span><span class="target" id="classtomcat_1_1model_1_1EvaluationAggregator_1ae7ea5236d359d63247f542416a76b0a7a63b42899bd930779e2fbdfd146073ed8"></span><em class="property">enumerator </em><code class="sig-name descname">average</code><a class="headerlink" href="#_CPPv4N6tomcat5model20EvaluationAggregator6METHOD7averageE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Functions</p>
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model20EvaluationAggregator20EvaluationAggregatorE6METHOD">
+<span id="_CPPv3N6tomcat5model20EvaluationAggregator20EvaluationAggregatorE6METHOD"></span><span id="_CPPv2N6tomcat5model20EvaluationAggregator20EvaluationAggregatorE6METHOD"></span><span id="tomcat::model::EvaluationAggregator::EvaluationAggregator__METHOD"></span><span class="target" id="classtomcat_1_1model_1_1EvaluationAggregator_1aa427062d09ca88408778025ed8a4b30e"></span><code class="sig-name descname">EvaluationAggregator</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model20EvaluationAggregator6METHODE" title="tomcat::model::EvaluationAggregator::METHOD">METHOD</a> <em>method</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model20EvaluationAggregator20EvaluationAggregatorE6METHOD" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Creates an instance of an evaluation aggregator.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">method</span></code>: method used to aggregate the evaluations dumped </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model20EvaluationAggregatorD0Ev">
+<span id="_CPPv3N6tomcat5model20EvaluationAggregatorD0Ev"></span><span id="_CPPv2N6tomcat5model20EvaluationAggregatorD0Ev"></span><span id="tomcat::model::EvaluationAggregator::~EvaluationAggregator"></span><span class="target" id="classtomcat_1_1model_1_1EvaluationAggregator_1a7466d9973258a7abbd793ca3e26695c4"></span><code class="sig-name descname">~EvaluationAggregator</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model20EvaluationAggregatorD0Ev" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model20EvaluationAggregator20EvaluationAggregatorERK20EvaluationAggregator">
+<span id="_CPPv3N6tomcat5model20EvaluationAggregator20EvaluationAggregatorERK20EvaluationAggregator"></span><span id="_CPPv2N6tomcat5model20EvaluationAggregator20EvaluationAggregatorERK20EvaluationAggregator"></span><span id="tomcat::model::EvaluationAggregator::EvaluationAggregator__EvaluationAggregatorCR"></span><span class="target" id="classtomcat_1_1model_1_1EvaluationAggregator_1a4661f95ce90ae65946749fc2504e2ab8"></span><code class="sig-name descname">EvaluationAggregator</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv4N6tomcat5model20EvaluationAggregator20EvaluationAggregatorERK20EvaluationAggregator" title="tomcat::model::EvaluationAggregator::EvaluationAggregator">EvaluationAggregator</a>&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model20EvaluationAggregator20EvaluationAggregatorERK20EvaluationAggregator" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model20EvaluationAggregatoraSERK20EvaluationAggregator">
+<span id="_CPPv3N6tomcat5model20EvaluationAggregatoraSERK20EvaluationAggregator"></span><span id="_CPPv2N6tomcat5model20EvaluationAggregatoraSERK20EvaluationAggregator"></span><span id="tomcat::model::EvaluationAggregator::assign-operator__EvaluationAggregatorCR"></span><span class="target" id="classtomcat_1_1model_1_1EvaluationAggregator_1a4680a1759f9681360f141556a51459e3"></span><a class="reference internal" href="#_CPPv4N6tomcat5model20EvaluationAggregatorE" title="tomcat::model::EvaluationAggregator">EvaluationAggregator</a> &amp;<code class="sig-name descname">operator=</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv4N6tomcat5model20EvaluationAggregatorE" title="tomcat::model::EvaluationAggregator">EvaluationAggregator</a>&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model20EvaluationAggregatoraSERK20EvaluationAggregator" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model20EvaluationAggregator20EvaluationAggregatorERR20EvaluationAggregator">
+<span id="_CPPv3N6tomcat5model20EvaluationAggregator20EvaluationAggregatorERR20EvaluationAggregator"></span><span id="_CPPv2N6tomcat5model20EvaluationAggregator20EvaluationAggregatorERR20EvaluationAggregator"></span><span id="tomcat::model::EvaluationAggregator::EvaluationAggregator__EvaluationAggregatorRR"></span><span class="target" id="classtomcat_1_1model_1_1EvaluationAggregator_1aa5b64f5ab93dea1ac6f684820d297ab7"></span><code class="sig-name descname">EvaluationAggregator</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model20EvaluationAggregator20EvaluationAggregatorERR20EvaluationAggregator" title="tomcat::model::EvaluationAggregator::EvaluationAggregator">EvaluationAggregator</a>&amp;&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model20EvaluationAggregator20EvaluationAggregatorERR20EvaluationAggregator" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model20EvaluationAggregatoraSERR20EvaluationAggregator">
+<span id="_CPPv3N6tomcat5model20EvaluationAggregatoraSERR20EvaluationAggregator"></span><span id="_CPPv2N6tomcat5model20EvaluationAggregatoraSERR20EvaluationAggregator"></span><span id="tomcat::model::EvaluationAggregator::assign-operator__EvaluationAggregatorRR"></span><span class="target" id="classtomcat_1_1model_1_1EvaluationAggregator_1a5da960794c0d622adbb7a06a0597277f"></span><a class="reference internal" href="#_CPPv4N6tomcat5model20EvaluationAggregatorE" title="tomcat::model::EvaluationAggregator">EvaluationAggregator</a> &amp;<code class="sig-name descname">operator=</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model20EvaluationAggregatorE" title="tomcat::model::EvaluationAggregator">EvaluationAggregator</a>&amp;&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model20EvaluationAggregatoraSERR20EvaluationAggregator" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model20EvaluationAggregator5resetEv">
+<span id="_CPPv3N6tomcat5model20EvaluationAggregator5resetEv"></span><span id="_CPPv2N6tomcat5model20EvaluationAggregator5resetEv"></span><span id="tomcat::model::EvaluationAggregator::reset"></span><span class="target" id="classtomcat_1_1model_1_1EvaluationAggregator_1a37db3848cb6f424a71c23d504664e004"></span>void <code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model20EvaluationAggregator5resetEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Prepares the aggregator to start again. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model20EvaluationAggregator11add_measureENSt10shared_ptrI7MeasureEE">
+<span id="_CPPv3N6tomcat5model20EvaluationAggregator11add_measureENSt10shared_ptrI7MeasureEE"></span><span id="_CPPv2N6tomcat5model20EvaluationAggregator11add_measureENSt10shared_ptrI7MeasureEE"></span><span id="tomcat::model::EvaluationAggregator::add_measure__std::shared_ptr:Measure:"></span><span class="target" id="classtomcat_1_1model_1_1EvaluationAggregator_1aaf1f9152cf8a05632d74a80d92e0fa71"></span>void <code class="sig-name descname">add_measure</code><span class="sig-paren">(</span>std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1Measure.html#_CPPv4N6tomcat5model7MeasureE" title="tomcat::model::Measure">Measure</a>&gt; <em>measure</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model20EvaluationAggregator11add_measureENSt10shared_ptrI7MeasureEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Adds a measure to the aggregator.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">measure</span></code>: measure </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model20EvaluationAggregator8evaluateERK11EvidenceSet">
+<span id="_CPPv3N6tomcat5model20EvaluationAggregator8evaluateERK11EvidenceSet"></span><span id="_CPPv2N6tomcat5model20EvaluationAggregator8evaluateERK11EvidenceSet"></span><span id="tomcat::model::EvaluationAggregator::evaluate__EvidenceSetCR"></span><span class="target" id="classtomcat_1_1model_1_1EvaluationAggregator_1a36e38254e6b0f2300d9caffdafa3f2b0"></span>void <code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="classtomcat_1_1model_1_1EvidenceSet.html#_CPPv4N6tomcat5model11EvidenceSetE" title="tomcat::model::EvidenceSet">EvidenceSet</a> &amp;<em>test_data</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model20EvaluationAggregator8evaluateERK11EvidenceSet" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Evaluates the nodes and store the results for future aggregation.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">test_data</span></code>: data to evaluate the measures </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model20EvaluationAggregator9aggregateEv">
+<span id="_CPPv3N6tomcat5model20EvaluationAggregator9aggregateEv"></span><span id="_CPPv2N6tomcat5model20EvaluationAggregator9aggregateEv"></span><span id="tomcat::model::EvaluationAggregator::aggregate"></span><span class="target" id="classtomcat_1_1model_1_1EvaluationAggregator_1a4b50a873d7ed2afa6c0c341e27901735"></span>void <code class="sig-name descname">aggregate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model20EvaluationAggregator9aggregateEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Aggregates evaluations previously computed. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model20EvaluationAggregator8get_infoERN8nlohmann4jsonE">
+<span id="_CPPv3NK6tomcat5model20EvaluationAggregator8get_infoERN8nlohmann4jsonE"></span><span id="_CPPv2NK6tomcat5model20EvaluationAggregator8get_infoERN8nlohmann4jsonE"></span><span id="tomcat::model::EvaluationAggregator::get_info__nlohmann::jsonRC"></span><span class="target" id="classtomcat_1_1model_1_1EvaluationAggregator_1a85b15eb840b94522074fd51ed6de7c2a"></span>void <code class="sig-name descname">get_info</code><span class="sig-paren">(</span>nlohmann::json &amp;<em>json</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model20EvaluationAggregator8get_infoERN8nlohmann4jsonE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Writes information about the splitter in a json object.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">json</span></code>: json object </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="classtomcat_1_1model_1_1EvidenceSet.html" class="btn btn-neutral float-right" title="Class EvidenceSet" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="classtomcat_1_1model_1_1Estimator.html" class="btn btn-neutral float-left" title="Class Estimator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

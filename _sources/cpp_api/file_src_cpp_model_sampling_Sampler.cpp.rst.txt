@@ -1,0 +1,54 @@
+
+.. _file_src_cpp_model_sampling_Sampler.cpp:
+
+File Sampler.cpp
+================
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp_model_sampling>` (``src/cpp/model/sampling``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. contents:: Contents
+   :local:
+   :backlinks: none
+
+Definition (``src/cpp/model/sampling/Sampler.cpp``)
+---------------------------------------------------
+
+
+.. toctree::
+   :maxdepth: 1
+
+   program_listing_file_src_cpp_model_sampling_Sampler.cpp.rst
+
+
+
+
+
+Includes
+--------
+
+
+- ``../utils/FileHandler.h``
+
+- ``Sampler.h`` (:ref:`file_src_cpp_model_sampling_AncestralSampler.h`)
+
+- ``array``
+
+- ``boost/filesystem.hpp``
+
+- ``fmt/format.h``
+
+
+
+
+
+
+Namespaces
+----------
+
+
+- :ref:`namespace_tomcat`
+
+- :ref:`namespace_tomcat__model`
+

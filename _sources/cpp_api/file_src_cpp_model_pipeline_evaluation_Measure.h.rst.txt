@@ -1,0 +1,83 @@
+
+.. _file_src_cpp_model_pipeline_evaluation_Measure.h:
+
+File Measure.h
+==============
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp_model_pipeline_evaluation>` (``src/cpp/model/pipeline/evaluation``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. contents:: Contents
+   :local:
+   :backlinks: none
+
+Definition (``src/cpp/model/pipeline/evaluation/Measure.h``)
+------------------------------------------------------------
+
+
+.. toctree::
+   :maxdepth: 1
+
+   program_listing_file_src_cpp_model_pipeline_evaluation_Measure.h.rst
+
+
+
+
+
+Includes
+--------
+
+
+- ``../../pgm/EvidenceSet.h``
+
+- ``../../utils/Definitions.h``
+
+- ``../../utils/Tensor3.h``
+
+- ``../estimation/Estimator.h``
+
+- ``memory``
+
+- ``nlohmann/json.hpp``
+
+- ``string``
+
+
+
+Included By
+-----------
+
+
+- :ref:`file_src_cpp_model_pipeline_evaluation_EvaluationAggregator.h`
+
+- :ref:`file_src_cpp_model_pipeline_evaluation_Accuracy.h`
+
+- :ref:`file_src_cpp_model_pipeline_evaluation_Estimates.h`
+
+- :ref:`file_src_cpp_model_pipeline_evaluation_F1Score.h`
+
+- :ref:`file_src_cpp_model_pipeline_evaluation_Measure.cpp`
+
+
+
+
+Namespaces
+----------
+
+
+- :ref:`namespace_tomcat`
+
+- :ref:`namespace_tomcat__model`
+
+
+Classes
+-------
+
+
+- :ref:`exhale_struct_structtomcat_1_1model_1_1ConfusionMatrix`
+
+- :ref:`exhale_struct_structtomcat_1_1model_1_1NodeEvaluation`
+
+- :ref:`exhale_class_classtomcat_1_1model_1_1Measure`
+

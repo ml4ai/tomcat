@@ -1,0 +1,25 @@
+.. _exhale_class_classtomcat_1_1model_1_1RandomVariableNode:
+
+Class RandomVariableNode
+========================
+
+- Defined in :ref:`file_src_cpp_model_pgm_RandomVariableNode.h`
+
+
+Inheritance Relationships
+-------------------------
+
+Base Type
+*********
+
+- ``public tomcat::model::Node`` (:ref:`exhale_class_classtomcat_1_1model_1_1Node`)
+
+
+Class Documentation
+-------------------
+
+
+.. doxygenclass:: tomcat::model::RandomVariableNode
+   :members:
+   :protected-members:
+   :undoc-members:

@@ -1,0 +1,54 @@
+
+.. _file_src_cpp_model_pgm_RandomVariableNode.cpp:
+
+File RandomVariableNode.cpp
+===========================
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp_model_pgm>` (``src/cpp/model/pgm``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. contents:: Contents
+   :local:
+   :backlinks: none
+
+Definition (``src/cpp/model/pgm/RandomVariableNode.cpp``)
+---------------------------------------------------------
+
+
+.. toctree::
+   :maxdepth: 1
+
+   program_listing_file_src_cpp_model_pgm_RandomVariableNode.cpp.rst
+
+
+
+
+
+Includes
+--------
+
+
+- ``RandomVariableNode.h`` (:ref:`file_src_cpp_model_pgm_RandomVariableNode.h`)
+
+- ``algorithm``
+
+- ``fmt/format.h``
+
+- ``iterator``
+
+- ``stdexcept``
+
+
+
+
+
+
+Namespaces
+----------
+
+
+- :ref:`namespace_tomcat`
+
+- :ref:`namespace_tomcat__model`
+

@@ -1,0 +1,144 @@
+
+.. _program_listing_file_src_cpp_model_pgm_inference_FactorNode.h:
+
+Program Listing for File FactorNode.h
+=====================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_cpp_model_pgm_inference_FactorNode.h>` (``src/cpp/model/pgm/inference/FactorNode.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #pragma once
+   
+   #include "MessageNode.h"
+   
+   #include "../../utils/Definitions.h"
+   #include "../cpd/CPD.h"
+   
+   namespace tomcat {
+       namespace model {
+   
+           class FactorNode : public MessageNode {
+             public:
+               //------------------------------------------------------------------
+               // Structs
+               //------------------------------------------------------------------
+               struct PotentialFunction {
+                   // The joint CPD table is implemented as a single matrix where
+                   // the rows are combinations of parents' assignments for a node
+                   // and the columns are the node's assignments. We need to now
+                   // the index of each parent in this table to be able to index
+                   // them correctly when performing reductions or transformations
+                   // in the matrix. This information is stored in the ordering
+                   // map.
+                   CPD::TableOrderingMap ordering_map;
+   
+                   // CPD table
+                   Eigen::MatrixXd matrix;
+   
+                   // Node's label in P(Node | ...)
+                   std::string main_node_label;
+   
+                   // The node's label can be the same as one of its parents. For
+                   // instance, if the CPD table defines a transition matrix. The
+                   // labels are the same but the time step. The matrix will need
+                   // to be rotated to deal with backward messages, so this
+                   // attribute keeps track of duplicate keys so the matrix can be
+                   // correctly indexed even when rotated. In this context, a
+                   // rotation means replacing the node position in the matrix  by
+                   // one of it's parents. Suppose a CPD defines the probability
+                   // P(S|S,Q), the rotation P(Q|S,S) will cause a problem if
+                   // duplicate keys are not correctly handled.
+                   std::string duplicate_key = "";
+   
+                   PotentialFunction() {}
+   
+                   PotentialFunction(const CPD::TableOrderingMap& ordering_map,
+                                     const Eigen::MatrixXd& matrix,
+                                     const std::string main_node_label)
+                       : ordering_map(ordering_map), matrix(matrix),
+                         main_node_label(main_node_label) {}
+   
+                   static std::string
+                   get_alternative_key_label(const std::string& label) {
+                       return label + "*";
+                   }
+               };
+   
+               //------------------------------------------------------------------
+               // Constructors & Destructor
+               //------------------------------------------------------------------
+   
+               FactorNode(const std::string& label,
+                          int time_step,
+                          const Eigen::MatrixXd& potential_function,
+                          const CPD::TableOrderingMap& ordering_map,
+                          const std::string cpd_node_label);
+   
+               ~FactorNode();
+   
+               //------------------------------------------------------------------
+               // Copy & Move constructors/assignments
+               //------------------------------------------------------------------
+               FactorNode(const FactorNode& node);
+   
+               FactorNode& operator=(const FactorNode& node);
+   
+               FactorNode(FactorNode&&) = default;
+   
+               FactorNode& operator=(FactorNode&&) = default;
+   
+               //------------------------------------------------------------------
+               // Static functions
+               //------------------------------------------------------------------
+   
+               static std::string compose_label(const std::string& original_label);
+   
+               //------------------------------------------------------------------
+               // Member functions
+               //------------------------------------------------------------------
+   
+               Eigen::MatrixXd get_outward_message_to(
+                   const std::shared_ptr<MessageNode>& template_target_node,
+                   int template_time_step,
+                   int target_time_step,
+                   Direction direction) const override;
+   
+               bool is_factor() const override;
+   
+             private:
+               //------------------------------------------------------------------
+               // Member functions
+               //------------------------------------------------------------------
+   
+               void adjust_potential_functions();
+   
+               void copy_node(const FactorNode& node);
+   
+               std::vector<Eigen::MatrixXd> get_incoming_messages_in_order(
+                   const std::string& ignore_label,
+                   int template_time_step,
+                   int target_time_step,
+                   const PotentialFunction& potential_function) const;
+   
+               //------------------------------------------------------------------
+               // Data members
+               //------------------------------------------------------------------
+               PotentialFunction original_potential_function;
+   
+               // The potential function here is represented as a matrix that
+               // corresponds to the conditional probability of a child node given
+               // its parents. When calculating messages, depending on the
+               // direction the message flows, the potential function matrix needs
+               // to be rotated so that the child become one of the parents. That's
+               // what this adjusted table is for. It will store all possible
+               // rotations of the potential function matrix according to the the
+               // node that should assume the child's position.
+               std::unordered_map<std::string, PotentialFunction>
+                   node_label_to_rotated_potential_function;
+           };
+   
+       } // namespace model
+   } // namespace tomcat

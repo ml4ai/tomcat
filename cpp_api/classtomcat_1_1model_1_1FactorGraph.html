@@ -1,0 +1,405 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Class FactorGraph &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Class FactorNode" href="classtomcat_1_1model_1_1FactorNode.html" />
+    <link rel="prev" title="Class F1Score" href="classtomcat_1_1model_1_1F1Score.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tomcat_openapi.html">Data models and message bus topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../developer/index.html">Developer documentation</a> &raquo;</li>
+        
+          <li><a href="index.html">C++ API</a> &raquo;</li>
+        
+      <li>Class FactorGraph</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/cpp_api/classtomcat_1_1model_1_1FactorGraph.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="class-factorgraph">
+<span id="exhale-class-classtomcat-1-1model-1-1factorgraph"></span><h1>Class FactorGraph<a class="headerlink" href="#class-factorgraph" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Defined in <a class="reference internal" href="file_src_cpp_model_pgm_inference_FactorGraph.h.html#file-src-cpp-model-pgm-inference-factorgraph-h"><span class="std std-ref">File FactorGraph.h</span></a></p></li>
+</ul>
+<div class="section" id="class-documentation">
+<h2>Class Documentation<a class="headerlink" href="#class-documentation" title="Permalink to this headline">¶</a></h2>
+<dl class="cpp class">
+<dt id="_CPPv4N6tomcat5model11FactorGraphE">
+<span id="_CPPv3N6tomcat5model11FactorGraphE"></span><span id="_CPPv2N6tomcat5model11FactorGraphE"></span><span id="tomcat::model::FactorGraph"></span><span class="target" id="classtomcat_1_1model_1_1FactorGraph"></span><em class="property">class </em><code class="sig-prename descclassname">tomcat::model<code class="sig-prename descclassname">::</code></code><code class="sig-name descname">FactorGraph</code><a class="headerlink" href="#_CPPv4N6tomcat5model11FactorGraphE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A factor graph is comprised of factor nodes and variable nodes and is used to compute marginalized distributions via exact inference with message passing algorithms. In this representation of the factor graph, nodes can be added up to time step 2, being the nodes and connections in the last time step assigned (repeatable time step) used as templates for message passing to future time steps. The nodes in the repeatable time step will store messages starting in this time step and beyond in a map. This solves the problem of having to unroll the graph, creating instances of nodes in specific future time steps to compute and store messages. Since the structure in the repeatable time step repeats indefinitely, the messages in future time steps can be processed in a loop over that structure. Since this graph does not contain concrete nodes for every time step, the instances of nodes in this graph are denominated template nodes. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Functions</p>
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model11FactorGraph11FactorGraphEv">
+<span id="_CPPv3N6tomcat5model11FactorGraph11FactorGraphEv"></span><span id="_CPPv2N6tomcat5model11FactorGraph11FactorGraphEv"></span><span id="tomcat::model::FactorGraph::FactorGraph"></span><span class="target" id="classtomcat_1_1model_1_1FactorGraph_1a6852e92292da3353fdfc68738b8417be"></span><code class="sig-name descname">FactorGraph</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model11FactorGraph11FactorGraphEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Creates an empty factor graph. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model11FactorGraphD0Ev">
+<span id="_CPPv3N6tomcat5model11FactorGraphD0Ev"></span><span id="_CPPv2N6tomcat5model11FactorGraphD0Ev"></span><span id="tomcat::model::FactorGraph::~FactorGraph"></span><span class="target" id="classtomcat_1_1model_1_1FactorGraph_1a9d8e274c6106b90afeea7f22890ab974"></span><code class="sig-name descname">~FactorGraph</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model11FactorGraphD0Ev" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model11FactorGraph11FactorGraphERK11FactorGraph">
+<span id="_CPPv3N6tomcat5model11FactorGraph11FactorGraphERK11FactorGraph"></span><span id="_CPPv2N6tomcat5model11FactorGraph11FactorGraphERK11FactorGraph"></span><span id="tomcat::model::FactorGraph::FactorGraph__FactorGraphCR"></span><span class="target" id="classtomcat_1_1model_1_1FactorGraph_1acc882174bd4fc53daaa514ff24003368"></span><code class="sig-name descname">FactorGraph</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv4N6tomcat5model11FactorGraph11FactorGraphERK11FactorGraph" title="tomcat::model::FactorGraph::FactorGraph">FactorGraph</a>&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model11FactorGraph11FactorGraphERK11FactorGraph" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model11FactorGraphaSERK11FactorGraph">
+<span id="_CPPv3N6tomcat5model11FactorGraphaSERK11FactorGraph"></span><span id="_CPPv2N6tomcat5model11FactorGraphaSERK11FactorGraph"></span><span id="tomcat::model::FactorGraph::assign-operator__FactorGraphCR"></span><span class="target" id="classtomcat_1_1model_1_1FactorGraph_1af8996e5d7d8463b860c8aa7ca7762fda"></span><a class="reference internal" href="#_CPPv4N6tomcat5model11FactorGraphE" title="tomcat::model::FactorGraph">FactorGraph</a> &amp;<code class="sig-name descname">operator=</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv4N6tomcat5model11FactorGraphE" title="tomcat::model::FactorGraph">FactorGraph</a>&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model11FactorGraphaSERK11FactorGraph" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model11FactorGraph11FactorGraphERR11FactorGraph">
+<span id="_CPPv3N6tomcat5model11FactorGraph11FactorGraphERR11FactorGraph"></span><span id="_CPPv2N6tomcat5model11FactorGraph11FactorGraphERR11FactorGraph"></span><span id="tomcat::model::FactorGraph::FactorGraph__FactorGraphRR"></span><span class="target" id="classtomcat_1_1model_1_1FactorGraph_1a1405ba269dbc9a88aba64bdd8bbeaba2"></span><code class="sig-name descname">FactorGraph</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model11FactorGraph11FactorGraphERR11FactorGraph" title="tomcat::model::FactorGraph::FactorGraph">FactorGraph</a>&amp;&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model11FactorGraph11FactorGraphERR11FactorGraph" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model11FactorGraphaSERR11FactorGraph">
+<span id="_CPPv3N6tomcat5model11FactorGraphaSERR11FactorGraph"></span><span id="_CPPv2N6tomcat5model11FactorGraphaSERR11FactorGraph"></span><span id="tomcat::model::FactorGraph::assign-operator__FactorGraphRR"></span><span class="target" id="classtomcat_1_1model_1_1FactorGraph_1a31fdbae755d053b66b13e0402a2b259c"></span><a class="reference internal" href="#_CPPv4N6tomcat5model11FactorGraphE" title="tomcat::model::FactorGraph">FactorGraph</a> &amp;<code class="sig-name descname">operator=</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model11FactorGraphE" title="tomcat::model::FactorGraph">FactorGraph</a>&amp;&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model11FactorGraphaSERR11FactorGraph" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model11FactorGraph8add_nodeERKNSt6stringEiiRKN5Eigen8MatrixXdERKN3CPD16TableOrderingMapE">
+<span id="_CPPv3N6tomcat5model11FactorGraph8add_nodeERKNSt6stringEiiRKN5Eigen8MatrixXdERKN3CPD16TableOrderingMapE"></span><span id="_CPPv2N6tomcat5model11FactorGraph8add_nodeERKNSt6stringEiiRKN5Eigen8MatrixXdERKN3CPD16TableOrderingMapE"></span><span id="tomcat::model::FactorGraph::add_node__ssCR.i.i.Eigen::MatrixXdCR.CPD::TableOrderingMapCR"></span><span class="target" id="classtomcat_1_1model_1_1FactorGraph_1a29d550722fe0ac9e677b34e70ad707ff"></span>void <code class="sig-name descname">add_node</code><span class="sig-paren">(</span><em class="property">const</em> std::string &amp;<em>node_label</em>, int <em>cardinality</em>, int <em>time_step</em>, <em class="property">const</em> Eigen::MatrixXd &amp;<em>cpd</em>, <em class="property">const</em> <a class="reference internal" href="classtomcat_1_1model_1_1CPD.html#_CPPv4N6tomcat5model3CPDE" title="tomcat::model::CPD">CPD</a>::<a class="reference internal" href="classtomcat_1_1model_1_1CPD.html#_CPPv4N6tomcat5model3CPD16TableOrderingMapE" title="tomcat::model::CPD::TableOrderingMap">TableOrderingMap</a> &amp;<em>cpd_ordering_map</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model11FactorGraph8add_nodeERKNSt6stringEiiRKN5Eigen8MatrixXdERKN3CPD16TableOrderingMapE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Adds a variable node and a parent factor node attached to it to the factor graph.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">node_label</span></code>: variable node’s label </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cardinality</span></code>: cardinality of the variable node </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">time_step</span></code>: time step where the nodes (variable and its factor) should be added (up to 2) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cpd</span></code>: cpd of the variable node given its parents. This will be converted into a potential function stored in the factor node created in this function. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cpd_ordering_map</span></code>: how parent nodes index the cpd table </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model11FactorGraph8add_edgeERKNSt6stringEiRKNSt6stringEi">
+<span id="_CPPv3N6tomcat5model11FactorGraph8add_edgeERKNSt6stringEiRKNSt6stringEi"></span><span id="_CPPv2N6tomcat5model11FactorGraph8add_edgeERKNSt6stringEiRKNSt6stringEi"></span><span id="tomcat::model::FactorGraph::add_edge__ssCR.i.ssCR.i"></span><span class="target" id="classtomcat_1_1model_1_1FactorGraph_1aad01af816f3267d94da790d26234abc7"></span>void <code class="sig-name descname">add_edge</code><span class="sig-paren">(</span><em class="property">const</em> std::string &amp;<em>source_node_label</em>, int <em>source_node_time_step</em>, <em class="property">const</em> std::string &amp;<em>target_node_label</em>, int <em>target_node_time_step</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model11FactorGraph8add_edgeERKNSt6stringEiRKNSt6stringEi" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Adds a link between a variable node and the parent factor node of another variable node.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">source_node_label</span></code>: source variable node’s label </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">source_node_time_step</span></code>: source variable node’s time step </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">target_node_label</span></code>: target variable node’s label </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">target_node_time_step</span></code>: target variable node’s time step </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model11FactorGraph41store_topological_traversal_per_time_stepEv">
+<span id="_CPPv3N6tomcat5model11FactorGraph41store_topological_traversal_per_time_stepEv"></span><span id="_CPPv2N6tomcat5model11FactorGraph41store_topological_traversal_per_time_stepEv"></span><span id="tomcat::model::FactorGraph::store_topological_traversal_per_time_step"></span><span class="target" id="classtomcat_1_1model_1_1FactorGraph_1ae18b1174314e654a16d9c9372e122040"></span>void <code class="sig-name descname">store_topological_traversal_per_time_step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model11FactorGraph41store_topological_traversal_per_time_stepEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Stores nodes int topological order (forward and backwards) for individual time steps up to the template time step. Some algorithms may require to process messages in a single time step before moving to the next one. By storing the traversal order beforehand, computational speed is reduced. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model11FactorGraph33get_vertices_topological_order_inEib">
+<span id="_CPPv3NK6tomcat5model11FactorGraph33get_vertices_topological_order_inEib"></span><span id="_CPPv2NK6tomcat5model11FactorGraph33get_vertices_topological_order_inEib"></span><span id="tomcat::model::FactorGraph::get_vertices_topological_order_in__i.bC"></span><span class="target" id="classtomcat_1_1model_1_1FactorGraph_1a8cdc74d12555173c38746fbece63215a"></span>std::vector&lt;std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1MessageNode.html#_CPPv4N6tomcat5model11MessageNodeE" title="tomcat::model::MessageNode">MessageNode</a>&gt;&gt; <code class="sig-name descname">get_vertices_topological_order_in</code><span class="sig-paren">(</span>int <em>time_step</em>, bool <em>from_roots_to_leaves</em> = true<span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model11FactorGraph33get_vertices_topological_order_inEib" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns the vertices in topological order in the sub-graph defined by the nodes in a specific time step.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Nodes in topological order within a time step </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">time_step</span></code>: time step of the sub-graph </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">from_roots_to_leaves</span></code>: whether the traversal is done in a top-down fashion</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model11FactorGraph14get_parents_ofERKNSt10shared_ptrI11MessageNodeEEi">
+<span id="_CPPv3NK6tomcat5model11FactorGraph14get_parents_ofERKNSt10shared_ptrI11MessageNodeEEi"></span><span id="_CPPv2NK6tomcat5model11FactorGraph14get_parents_ofERKNSt10shared_ptrI11MessageNodeEEi"></span><span id="tomcat::model::FactorGraph::get_parents_of__std::shared_ptr:MessageNode:CR.iC"></span><span class="target" id="classtomcat_1_1model_1_1FactorGraph_1a8adf6fa43927baa0c2bbc9f0066b1b72"></span>std::vector&lt;std::pair&lt;std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1MessageNode.html#_CPPv4N6tomcat5model11MessageNodeE" title="tomcat::model::MessageNode">MessageNode</a>&gt;, bool&gt;&gt; <code class="sig-name descname">get_parents_of</code><span class="sig-paren">(</span><em class="property">const</em> std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1MessageNode.html#_CPPv4N6tomcat5model11MessageNodeE" title="tomcat::model::MessageNode">MessageNode</a>&gt; &amp;<em>template_node</em>, int <em>time_step</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model11FactorGraph14get_parents_ofERKNSt10shared_ptrI11MessageNodeEEi" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns a list of pairs (parent, transition) for a given template node where parent is one of the node’s parents and transition indicates whether that parent comes from a previous time step or not. The latter is needed for when the retrieving parents for nodes in a time step greater than the repeatable time step of the graph, because the template parent node will have the same time step of the child node (they both come from the repeatable structure since this structure repeats beyond that point in time).</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Parents of the template node informed </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">node</span></code>: node in the factor graph </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">time_step</span></code>: real time step</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model11FactorGraph15get_children_ofERKNSt10shared_ptrI11MessageNodeEE">
+<span id="_CPPv3NK6tomcat5model11FactorGraph15get_children_ofERKNSt10shared_ptrI11MessageNodeEE"></span><span id="_CPPv2NK6tomcat5model11FactorGraph15get_children_ofERKNSt10shared_ptrI11MessageNodeEE"></span><span id="tomcat::model::FactorGraph::get_children_of__std::shared_ptr:MessageNode:CRC"></span><span class="target" id="classtomcat_1_1model_1_1FactorGraph_1aa7f84ba12cd85e2f0c5bddbb11b410cf"></span>std::vector&lt;std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1MessageNode.html#_CPPv4N6tomcat5model11MessageNodeE" title="tomcat::model::MessageNode">MessageNode</a>&gt;&gt; <code class="sig-name descname">get_children_of</code><span class="sig-paren">(</span><em class="property">const</em> std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1MessageNode.html#_CPPv4N6tomcat5model11MessageNodeE" title="tomcat::model::MessageNode">MessageNode</a>&gt; &amp;<em>template_node</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model11FactorGraph15get_children_ofERKNSt10shared_ptrI11MessageNodeEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns the children of a given node. The child nodes are not constrained to the node’s time step and can come from a posterior time step.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Children of the template node informed </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">node</span></code>: node in the factor graph</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model11FactorGraph16get_marginal_forERKNSt6stringEi">
+<span id="_CPPv3NK6tomcat5model11FactorGraph16get_marginal_forERKNSt6stringEi"></span><span id="_CPPv2NK6tomcat5model11FactorGraph16get_marginal_forERKNSt6stringEi"></span><span id="tomcat::model::FactorGraph::get_marginal_for__ssCR.iC"></span><span class="target" id="classtomcat_1_1model_1_1FactorGraph_1ad75298f07fa58bec688419c792073b9b"></span>Eigen::MatrixXd <code class="sig-name descname">get_marginal_for</code><span class="sig-paren">(</span><em class="property">const</em> std::string &amp;<em>node_label</em>, int <em>time_step</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model11FactorGraph16get_marginal_forERKNSt6stringEi" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns the marginal distribution for a given node in a certain point in time. The marginal is given by the multiplication of all the incoming messages to the node.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Marginal distribution </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">node_label</span></code>: node’s label </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">time_step</span></code>: time step of the node</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model11FactorGraph30erase_incoming_messages_beyondEi">
+<span id="_CPPv3N6tomcat5model11FactorGraph30erase_incoming_messages_beyondEi"></span><span id="_CPPv2N6tomcat5model11FactorGraph30erase_incoming_messages_beyondEi"></span><span id="tomcat::model::FactorGraph::erase_incoming_messages_beyond__i"></span><span class="target" id="classtomcat_1_1model_1_1FactorGraph_1ad4f5824b0b22f7bc0647d04b84d7b0bc"></span>void <code class="sig-name descname">erase_incoming_messages_beyond</code><span class="sig-paren">(</span>int <em>time_step</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model11FactorGraph30erase_incoming_messages_beyondEi" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Clears messages and beyond a given time step (not inclusive).</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">time_step</span></code>: time step </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Static Functions</p>
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model11FactorGraph24create_from_unrolled_dbnERK15DynamicBayesNet">
+<span id="_CPPv3N6tomcat5model11FactorGraph24create_from_unrolled_dbnERK15DynamicBayesNet"></span><span id="_CPPv2N6tomcat5model11FactorGraph24create_from_unrolled_dbnERK15DynamicBayesNet"></span><span id="tomcat::model::FactorGraph::create_from_unrolled_dbn__DynamicBayesNetCR"></span><span class="target" id="classtomcat_1_1model_1_1FactorGraph_1abbb17b84bd82345dc00c785720da5cd8"></span><a class="reference internal" href="#_CPPv4N6tomcat5model11FactorGraphE" title="tomcat::model::FactorGraph">FactorGraph</a> <code class="sig-name descname">create_from_unrolled_dbn</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="classtomcat_1_1model_1_1DynamicBayesNet.html#_CPPv4N6tomcat5model15DynamicBayesNetE" title="tomcat::model::DynamicBayesNet">DynamicBayesNet</a> &amp;<em>dbn</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model11FactorGraph24create_from_unrolled_dbnERK15DynamicBayesNet" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Creates a factor graph from a unrolled DBN by adding the nodes and connections up to time step 2 from the DBN structure.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Factor graph. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dbn</span></code>: unrolled dynamic Bayes net</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="classtomcat_1_1model_1_1FactorNode.html" class="btn btn-neutral float-right" title="Class FactorNode" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="classtomcat_1_1model_1_1F1Score.html" class="btn btn-neutral float-left" title="Class F1Score" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

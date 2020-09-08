@@ -1,0 +1,25 @@
+.. _exhale_class_classtomcat_1_1model_1_1GibbsSampler:
+
+Class GibbsSampler
+==================
+
+- Defined in :ref:`file_src_cpp_model_sampling_GibbsSampler.h`
+
+
+Inheritance Relationships
+-------------------------
+
+Base Type
+*********
+
+- ``public tomcat::model::Sampler`` (:ref:`exhale_class_classtomcat_1_1model_1_1Sampler`)
+
+
+Class Documentation
+-------------------
+
+
+.. doxygenclass:: tomcat::model::GibbsSampler
+   :members:
+   :protected-members:
+   :undoc-members:

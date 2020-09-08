@@ -1,0 +1,46 @@
+
+.. _file_src_cpp_model_pgm_inference_VariableNode.cpp:
+
+File VariableNode.cpp
+=====================
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp_model_pgm_inference>` (``src/cpp/model/pgm/inference``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. contents:: Contents
+   :local:
+   :backlinks: none
+
+Definition (``src/cpp/model/pgm/inference/VariableNode.cpp``)
+-------------------------------------------------------------
+
+
+.. toctree::
+   :maxdepth: 1
+
+   program_listing_file_src_cpp_model_pgm_inference_VariableNode.cpp.rst
+
+
+
+
+
+Includes
+--------
+
+
+- ``VariableNode.h`` (:ref:`file_src_cpp_model_pgm_RandomVariableNode.h`)
+
+
+
+
+
+
+Namespaces
+----------
+
+
+- :ref:`namespace_tomcat`
+
+- :ref:`namespace_tomcat__model`
+

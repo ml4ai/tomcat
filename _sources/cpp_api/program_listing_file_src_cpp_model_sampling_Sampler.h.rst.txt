@@ -1,0 +1,120 @@
+
+.. _program_listing_file_src_cpp_model_sampling_Sampler.h:
+
+Program Listing for File Sampler.h
+==================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_cpp_model_sampling_Sampler.h>` (``src/cpp/model/sampling/Sampler.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #pragma once
+   
+   #include <unordered_set>
+   
+   #include <nlohmann/json.hpp>
+   
+   #include "../pgm/DynamicBayesNet.h"
+   #include "../pgm/EvidenceSet.h"
+   #include "../utils/Definitions.h"
+   #include "../utils/Tensor3.h"
+   
+   namespace tomcat {
+       namespace model {
+   
+           class Sampler {
+             public:
+               //------------------------------------------------------------------
+               // Constructors & Destructor
+               //------------------------------------------------------------------
+               Sampler();
+   
+               Sampler(std::shared_ptr<DynamicBayesNet> model);
+   
+               virtual ~Sampler();
+   
+               //------------------------------------------------------------------
+               // Copy & Move constructors/assignments
+               //------------------------------------------------------------------
+   
+               // Copy constructor and assignment should be deleted to avoid
+               // implicit slicing and loss of polymorphic behaviour in the
+               // subclasses. To deep copy, the clone method must be used.
+               Sampler(const Sampler&) = delete;
+   
+               Sampler& operator=(const Sampler&) = delete;
+   
+               Sampler(Sampler&&) = default;
+   
+               Sampler& operator=(Sampler&&) = default;
+   
+               //------------------------------------------------------------------
+               // Member functions
+               //------------------------------------------------------------------
+   
+               void sample(std::shared_ptr<gsl_rng> random_generator,
+                           int num_samples);
+   
+               void add_data(EvidenceSet data);
+   
+               void save_samples_to_folder(const std::string& output_folder) const;
+   
+               //------------------------------------------------------------------
+               // Virtual functions
+               //------------------------------------------------------------------
+   
+               virtual Tensor3 get_samples(const std::string& node_label) const;
+   
+               //------------------------------------------------------------------
+               // Pure virtual functions
+               //------------------------------------------------------------------
+   
+               virtual void
+               sample_latent(std::shared_ptr<gsl_rng> random_generator,
+                             int num_samples) = 0;
+   
+               virtual void get_info(nlohmann::json& json) const = 0;
+   
+               // -----------------------------------------------------------------
+               // Getters & Setters
+               // -----------------------------------------------------------------
+               void set_num_in_plate_samples(int num_in_plate_samples);
+   
+               const std::shared_ptr<DynamicBayesNet>& get_model() const;
+   
+             protected:
+               //------------------------------------------------------------------
+               // Member functions
+               //------------------------------------------------------------------
+   
+               void copy_sampler(const Sampler& sampler);
+   
+               //------------------------------------------------------------------
+               // Data members
+               //------------------------------------------------------------------
+               std::shared_ptr<DynamicBayesNet> model;
+   
+               // Labels of the nodes that were sampled (this has to be filled in
+               // the derived classes).
+               std::unordered_set<std::string> sampled_node_labels;
+   
+               // The number of samples generated for in-plate nodes. If data is
+               // provided for some node, the number of data points has to be the
+               // same as the number of in-plate samples.
+               int num_in_plate_samples = 1;
+   
+               EvidenceSet data;
+   
+             private:
+               //------------------------------------------------------------------
+               // Member functions
+               //------------------------------------------------------------------
+   
+               void freeze_observable_nodes();
+   
+               void unfreeze_observable_nodes();
+           };
+       } // namespace model
+   } // namespace tomcat

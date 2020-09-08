@@ -1,0 +1,28 @@
+
+.. _program_listing_file_src_cpp_model_pipeline_training_DBNTrainer.cpp:
+
+Program Listing for File DBNTrainer.cpp
+=======================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_cpp_model_pipeline_training_DBNTrainer.cpp>` (``src/cpp/model/pipeline/training/DBNTrainer.cpp``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #include "DBNTrainer.h"
+   
+   namespace tomcat {
+       namespace model {
+   
+           using namespace std;
+   
+           //----------------------------------------------------------------------
+           // Constructors & Destructor
+           //----------------------------------------------------------------------
+           DBNTrainer::DBNTrainer() {}
+   
+           DBNTrainer::~DBNTrainer() {}
+   
+       } // namespace model
+   } // namespace tomcat

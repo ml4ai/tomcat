@@ -1,0 +1,95 @@
+
+.. _program_listing_file_src_cpp_model_pipeline_KFold.h:
+
+Program Listing for File KFold.h
+================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_cpp_model_pipeline_KFold.h>` (``src/cpp/model/pipeline/KFold.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #pragma once
+   
+   #include <memory>
+   #include <utility>
+   #include <vector>
+   
+   #include <gsl/gsl_rng.h>
+   #include <nlohmann/json.hpp>
+   
+   #include "../pgm/EvidenceSet.h"
+   #include "../utils/Definitions.h"
+   
+   namespace tomcat {
+       namespace model {
+   
+           class KFold {
+             public:
+               //------------------------------------------------------------------
+               // Types, Enums & Constants
+               //------------------------------------------------------------------
+               typedef std::pair<EvidenceSet, EvidenceSet> Split;
+   
+               //------------------------------------------------------------------
+               // Constructors & Destructor
+               //------------------------------------------------------------------
+   
+               KFold(const EvidenceSet& data,
+                     int num_folds,
+                     std::shared_ptr<gsl_rng> random_generator);
+   
+               KFold(const EvidenceSet& training_data,
+                     const EvidenceSet& test_data);
+   
+               ~KFold();
+   
+               //------------------------------------------------------------------
+               // Copy & Move constructors/assignments
+               //------------------------------------------------------------------
+               KFold(const KFold&) = default;
+   
+               KFold& operator=(const KFold&) = default;
+   
+               KFold(KFold&&) = default;
+   
+               KFold& operator=(KFold&&) = default;
+   
+               //------------------------------------------------------------------
+               // Member functions
+               //------------------------------------------------------------------
+   
+               void get_info(nlohmann::json& json) const;
+   
+               //------------------------------------------------------------------
+               // Getters & Setters
+               //------------------------------------------------------------------
+               const std::vector<Split>& get_splits() const;
+   
+             private:
+               //------------------------------------------------------------------
+               // Member functions
+               //------------------------------------------------------------------
+   
+               void split(const EvidenceSet& data,
+                          int num_folds,
+                          std::shared_ptr<gsl_rng> random_generator);
+   
+               std::vector<int> get_shuffled_indices(
+                   int num_data_points,
+                   std::shared_ptr<gsl_rng> random_generator) const;
+   
+               std::vector<int> get_fold_sizes(int num_data_points, int num_folds) const;
+   
+               //------------------------------------------------------------------
+               // Data members
+               //------------------------------------------------------------------
+   
+               // Data split in training and test sets. Populated in the creation
+               // of the class object.
+               std::vector<Split> splits;
+           };
+   
+       } // namespace model
+   } // namespace tomcat

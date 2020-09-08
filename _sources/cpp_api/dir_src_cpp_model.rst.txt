@@ -1,0 +1,31 @@
+.. _dir_src_cpp_model:
+
+
+Directory model
+===============
+
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp>` (``src/cpp``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+*Directory path:* ``src/cpp/model``
+
+Subdirectories
+--------------
+
+- :ref:`dir_src_cpp_model_distribution`
+- :ref:`dir_src_cpp_model_pgm`
+- :ref:`dir_src_cpp_model_pipeline`
+- :ref:`dir_src_cpp_model_sampling`
+- :ref:`dir_src_cpp_model_utils`
+
+
+Files
+-----
+
+- :ref:`file_src_cpp_model_main.cpp`
+- :ref:`file_src_cpp_model_Tomcat.cpp`
+- :ref:`file_src_cpp_model_Tomcat.h`
+
+

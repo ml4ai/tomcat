@@ -1,0 +1,427 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Class DynamicBayesNet &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Class Estimates" href="classtomcat_1_1model_1_1Estimates.html" />
+    <link rel="prev" title="Class Distribution" href="classtomcat_1_1model_1_1Distribution.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tomcat_openapi.html">Data models and message bus topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../developer/index.html">Developer documentation</a> &raquo;</li>
+        
+          <li><a href="index.html">C++ API</a> &raquo;</li>
+        
+      <li>Class DynamicBayesNet</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/cpp_api/classtomcat_1_1model_1_1DynamicBayesNet.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="class-dynamicbayesnet">
+<span id="exhale-class-classtomcat-1-1model-1-1dynamicbayesnet"></span><h1>Class DynamicBayesNet<a class="headerlink" href="#class-dynamicbayesnet" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Defined in <a class="reference internal" href="file_src_cpp_model_pgm_DynamicBayesNet.h.html#file-src-cpp-model-pgm-dynamicbayesnet-h"><span class="std std-ref">File DynamicBayesNet.h</span></a></p></li>
+</ul>
+<div class="section" id="class-documentation">
+<h2>Class Documentation<a class="headerlink" href="#class-documentation" title="Permalink to this headline">¶</a></h2>
+<dl class="cpp class">
+<dt id="_CPPv4N6tomcat5model15DynamicBayesNetE">
+<span id="_CPPv3N6tomcat5model15DynamicBayesNetE"></span><span id="_CPPv2N6tomcat5model15DynamicBayesNetE"></span><span id="tomcat::model::DynamicBayesNet"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet"></span><em class="property">class </em><code class="sig-prename descclassname">tomcat::model<code class="sig-prename descclassname">::</code></code><code class="sig-name descname">DynamicBayesNet</code><a class="headerlink" href="#_CPPv4N6tomcat5model15DynamicBayesNetE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Represents a Dynamic Bayes Net as a Directed Acyclic Graph. It is comprised of node templates that are replicated into concrete timed node instances when the DBN is unrolled. In this process, the nodes’s CPDs that depend on other nodes in the graph are updated to reference the concrete instances of the nodes they depend on. By doing this, it’s guaranteed that a sample from these CPDs will condition on the current assignments of the nodes in the DBN. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Types</p>
+<dl class="cpp type">
+<dt id="_CPPv4N6tomcat5model15DynamicBayesNet4EdgeE">
+<span id="_CPPv3N6tomcat5model15DynamicBayesNet4EdgeE"></span><span id="_CPPv2N6tomcat5model15DynamicBayesNet4EdgeE"></span><span id="tomcat::model::DynamicBayesNet::Edge"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1a9abaf11c4b6a3749caa4a23d6eb63ef4"></span><em class="property">typedef </em>std::pair&lt;std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1RandomVariableNode.html#_CPPv4N6tomcat5model18RandomVariableNodeE" title="tomcat::model::RandomVariableNode">RandomVariableNode</a>&gt;, std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1RandomVariableNode.html#_CPPv4N6tomcat5model18RandomVariableNodeE" title="tomcat::model::RandomVariableNode">RandomVariableNode</a>&gt;&gt; <code class="sig-name descname">Edge</code><a class="headerlink" href="#_CPPv4N6tomcat5model15DynamicBayesNet4EdgeE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Functions</p>
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model15DynamicBayesNet15DynamicBayesNetEv">
+<span id="_CPPv3N6tomcat5model15DynamicBayesNet15DynamicBayesNetEv"></span><span id="_CPPv2N6tomcat5model15DynamicBayesNet15DynamicBayesNetEv"></span><span id="tomcat::model::DynamicBayesNet::DynamicBayesNet"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1a5e6c25ee8ecc7aa5f1232ce1919852f3"></span><code class="sig-name descname">DynamicBayesNet</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model15DynamicBayesNet15DynamicBayesNetEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Creates an instance of a DBN. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model15DynamicBayesNet15DynamicBayesNetEi">
+<span id="_CPPv3N6tomcat5model15DynamicBayesNet15DynamicBayesNetEi"></span><span id="_CPPv2N6tomcat5model15DynamicBayesNet15DynamicBayesNetEi"></span><span id="tomcat::model::DynamicBayesNet::DynamicBayesNet__i"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1aaf819116d7471bdd745f4e6663c4fe76"></span><code class="sig-name descname">DynamicBayesNet</code><span class="sig-paren">(</span>int <em>num_node_templates</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model15DynamicBayesNet15DynamicBayesNetEi" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Creates an instance of a DBN and reserves space in the vector of node templates. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model15DynamicBayesNetD0Ev">
+<span id="_CPPv3N6tomcat5model15DynamicBayesNetD0Ev"></span><span id="_CPPv2N6tomcat5model15DynamicBayesNetD0Ev"></span><span id="tomcat::model::DynamicBayesNet::~DynamicBayesNet"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1af1c042a5215676f3a715772f0ce25da7"></span><code class="sig-name descname">~DynamicBayesNet</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model15DynamicBayesNetD0Ev" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model15DynamicBayesNet15DynamicBayesNetERK15DynamicBayesNet">
+<span id="_CPPv3N6tomcat5model15DynamicBayesNet15DynamicBayesNetERK15DynamicBayesNet"></span><span id="_CPPv2N6tomcat5model15DynamicBayesNet15DynamicBayesNetERK15DynamicBayesNet"></span><span id="tomcat::model::DynamicBayesNet::DynamicBayesNet__DynamicBayesNetCR"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1a106eda034865c35dcf6cd4cde502cdb4"></span><code class="sig-name descname">DynamicBayesNet</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv4N6tomcat5model15DynamicBayesNet15DynamicBayesNetERK15DynamicBayesNet" title="tomcat::model::DynamicBayesNet::DynamicBayesNet">DynamicBayesNet</a>&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model15DynamicBayesNet15DynamicBayesNetERK15DynamicBayesNet" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model15DynamicBayesNetaSERK15DynamicBayesNet">
+<span id="_CPPv3N6tomcat5model15DynamicBayesNetaSERK15DynamicBayesNet"></span><span id="_CPPv2N6tomcat5model15DynamicBayesNetaSERK15DynamicBayesNet"></span><span id="tomcat::model::DynamicBayesNet::assign-operator__DynamicBayesNetCR"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1ac1d67eccb3c2e04bb2871d52daeba9a9"></span><a class="reference internal" href="#_CPPv4N6tomcat5model15DynamicBayesNetE" title="tomcat::model::DynamicBayesNet">DynamicBayesNet</a> &amp;<code class="sig-name descname">operator=</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv4N6tomcat5model15DynamicBayesNetE" title="tomcat::model::DynamicBayesNet">DynamicBayesNet</a>&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model15DynamicBayesNetaSERK15DynamicBayesNet" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model15DynamicBayesNet15DynamicBayesNetERR15DynamicBayesNet">
+<span id="_CPPv3N6tomcat5model15DynamicBayesNet15DynamicBayesNetERR15DynamicBayesNet"></span><span id="_CPPv2N6tomcat5model15DynamicBayesNet15DynamicBayesNetERR15DynamicBayesNet"></span><span id="tomcat::model::DynamicBayesNet::DynamicBayesNet__DynamicBayesNetRR"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1a996f3ca96e9846159ae54aea6ae32434"></span><code class="sig-name descname">DynamicBayesNet</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model15DynamicBayesNet15DynamicBayesNetERR15DynamicBayesNet" title="tomcat::model::DynamicBayesNet::DynamicBayesNet">DynamicBayesNet</a>&amp;&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model15DynamicBayesNet15DynamicBayesNetERR15DynamicBayesNet" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model15DynamicBayesNetaSERR15DynamicBayesNet">
+<span id="_CPPv3N6tomcat5model15DynamicBayesNetaSERR15DynamicBayesNet"></span><span id="_CPPv2N6tomcat5model15DynamicBayesNetaSERR15DynamicBayesNet"></span><span id="tomcat::model::DynamicBayesNet::assign-operator__DynamicBayesNetRR"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1a8427779d732693d3eed2ef24fe690567"></span><a class="reference internal" href="#_CPPv4N6tomcat5model15DynamicBayesNetE" title="tomcat::model::DynamicBayesNet">DynamicBayesNet</a> &amp;<code class="sig-name descname">operator=</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model15DynamicBayesNetE" title="tomcat::model::DynamicBayesNet">DynamicBayesNet</a>&amp;&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model15DynamicBayesNetaSERR15DynamicBayesNet" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model15DynamicBayesNet17add_node_templateERK18RandomVariableNode">
+<span id="_CPPv3N6tomcat5model15DynamicBayesNet17add_node_templateERK18RandomVariableNode"></span><span id="_CPPv2N6tomcat5model15DynamicBayesNet17add_node_templateERK18RandomVariableNode"></span><span id="tomcat::model::DynamicBayesNet::add_node_template__RandomVariableNodeCR"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1afc70efc9a82f2138a398b48f50f23a76"></span>void <code class="sig-name descname">add_node_template</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="classtomcat_1_1model_1_1RandomVariableNode.html#_CPPv4N6tomcat5model18RandomVariableNodeE" title="tomcat::model::RandomVariableNode">RandomVariableNode</a> &amp;<em>node</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model15DynamicBayesNet17add_node_templateERK18RandomVariableNode" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Adds node to the DBN as a template. This function adds a deep copy of the node to the list of templates by cloning the node so that CPDs and nodes they depend on are also cloned. After unrolling the DBN some timed instance nodes may share the same <a class="reference internal" href="classtomcat_1_1model_1_1CPD.html#classtomcat_1_1model_1_1CPD"><span class="std std-ref">CPD</span></a> with some of the node templates so it’s necessary to have exclusive copies of these objects in the DBN to avoid conflict with other processes.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">node</span></code>: node to be stored in the DBN as a template </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model15DynamicBayesNet6unrollEib">
+<span id="_CPPv3N6tomcat5model15DynamicBayesNet6unrollEib"></span><span id="_CPPv2N6tomcat5model15DynamicBayesNet6unrollEib"></span><span id="tomcat::model::DynamicBayesNet::unroll__i.b"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1a5a1876ee2caa7a738034ee1f18487583"></span>void <code class="sig-name descname">unroll</code><span class="sig-paren">(</span>int <em>time_steps</em>, bool <em>force</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model15DynamicBayesNet6unrollEib" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Unrolls the DBN into time steps if nor previously unrolled into the same number of time steps. This process creates vertices and edges in the underlying graph structure by replicating nodes over time, storing them into vertices linked to each other according to the definitions in the nodes’ metadata. It also updates the CPDs that depend on other nodes with the concrete timed instances of such nodes.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">time_steps</span></code>: number of time steps to unroll into </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">force</span></code>: whether the DBN should be forced to unroll again even if it was previously unrolled over the same number of time steps. This is useful if the DBN needs to be unrolled in the same number of time steps as before but changed somehow (e.g. more nodes were added to it). </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model15DynamicBayesNet5checkEv">
+<span id="_CPPv3N6tomcat5model15DynamicBayesNet5checkEv"></span><span id="_CPPv2N6tomcat5model15DynamicBayesNet5checkEv"></span><span id="tomcat::model::DynamicBayesNet::check"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1af28c4ed40c37dbdf0a5e3cb05ed58821"></span>void <code class="sig-name descname">check</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model15DynamicBayesNet5checkEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Checks if the DBN is consistent and prepared to be unrolled. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model15DynamicBayesNet19get_parameter_nodesEv">
+<span id="_CPPv3N6tomcat5model15DynamicBayesNet19get_parameter_nodesEv"></span><span id="_CPPv2N6tomcat5model15DynamicBayesNet19get_parameter_nodesEv"></span><span id="tomcat::model::DynamicBayesNet::get_parameter_nodes"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1ac34b92ebf736c66bfc8c047ed3d8a8e9"></span>std::vector&lt;std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1Node.html#_CPPv4N6tomcat5model4NodeE" title="tomcat::model::Node">Node</a>&gt;&gt; <code class="sig-name descname">get_parameter_nodes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model15DynamicBayesNet19get_parameter_nodesEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns the list of timed-instance parameter nodes in the DBN.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Parameter nodes. </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model15DynamicBayesNet18get_nodes_by_labelERKNSt6stringE">
+<span id="_CPPv3NK6tomcat5model15DynamicBayesNet18get_nodes_by_labelERKNSt6stringE"></span><span id="_CPPv2NK6tomcat5model15DynamicBayesNet18get_nodes_by_labelERKNSt6stringE"></span><span id="tomcat::model::DynamicBayesNet::get_nodes_by_label__ssCRC"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1a3b804010c5fe4d8d9ded42fb9348335c"></span>std::vector&lt;std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1Node.html#_CPPv4N6tomcat5model4NodeE" title="tomcat::model::Node">Node</a>&gt;&gt; <code class="sig-name descname">get_nodes_by_label</code><span class="sig-paren">(</span><em class="property">const</em> std::string &amp;<em>node_abel</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model15DynamicBayesNet18get_nodes_by_labelERKNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns the list of timed instance nodes created from the template with with a specific label.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p></p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">label</span></code>: node’s label </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model15DynamicBayesNet27get_nodes_topological_orderEb">
+<span id="_CPPv3NK6tomcat5model15DynamicBayesNet27get_nodes_topological_orderEb"></span><span id="_CPPv2NK6tomcat5model15DynamicBayesNet27get_nodes_topological_orderEb"></span><span id="tomcat::model::DynamicBayesNet::get_nodes_topological_order__bC"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1aa7af1b9a8067642c159b63305df639bd"></span>std::vector&lt;std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1Node.html#_CPPv4N6tomcat5model4NodeE" title="tomcat::model::Node">Node</a>&gt;&gt; <code class="sig-name descname">get_nodes_topological_order</code><span class="sig-paren">(</span>bool <em>from_roots_to_leaves</em> = true<span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model15DynamicBayesNet27get_nodes_topological_orderEb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns timed node objects in topological order.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Times node objects in topological order. </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model15DynamicBayesNet19get_parent_nodes_ofERKNSt10shared_ptrI4NodeEEb">
+<span id="_CPPv3NK6tomcat5model15DynamicBayesNet19get_parent_nodes_ofERKNSt10shared_ptrI4NodeEEb"></span><span id="_CPPv2NK6tomcat5model15DynamicBayesNet19get_parent_nodes_ofERKNSt10shared_ptrI4NodeEEb"></span><span id="tomcat::model::DynamicBayesNet::get_parent_nodes_of__std::shared_ptr:Node:CR.bC"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1af23549354d46e91eaf7bc1b5af3be210"></span>std::vector&lt;std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1Node.html#_CPPv4N6tomcat5model4NodeE" title="tomcat::model::Node">Node</a>&gt;&gt; <code class="sig-name descname">get_parent_nodes_of</code><span class="sig-paren">(</span><em class="property">const</em> std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1Node.html#_CPPv4N6tomcat5model4NodeE" title="tomcat::model::Node">Node</a>&gt; &amp;<em>node</em>, bool <em>exclude_parameters</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model15DynamicBayesNet19get_parent_nodes_ofERKNSt10shared_ptrI4NodeEEb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns timed instances of the parents of a node <dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Time instances of a node’s parents. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">node</span></code>: timed instance of a node </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">exclude_parameters</span></code>: whether parameter nodes should be excluded from the list of parent nodes </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model15DynamicBayesNet18get_child_nodes_ofERKNSt10shared_ptrI4NodeEE">
+<span id="_CPPv3NK6tomcat5model15DynamicBayesNet18get_child_nodes_ofERKNSt10shared_ptrI4NodeEE"></span><span id="_CPPv2NK6tomcat5model15DynamicBayesNet18get_child_nodes_ofERKNSt10shared_ptrI4NodeEE"></span><span id="tomcat::model::DynamicBayesNet::get_child_nodes_of__std::shared_ptr:Node:CRC"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1ab6f9a1b6d468f1d75e8ff103f34a834e"></span>std::vector&lt;std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1Node.html#_CPPv4N6tomcat5model4NodeE" title="tomcat::model::Node">Node</a>&gt;&gt; <code class="sig-name descname">get_child_nodes_of</code><span class="sig-paren">(</span><em class="property">const</em> std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1Node.html#_CPPv4N6tomcat5model4NodeE" title="tomcat::model::Node">Node</a>&gt; &amp;<em>node</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model15DynamicBayesNet18get_child_nodes_ofERKNSt10shared_ptrI4NodeEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns timed instances of the children of a node <dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Time instances of a node’s children. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">node</span></code>: timed instance of a node </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model15DynamicBayesNet14save_to_folderERKNSt6stringE">
+<span id="_CPPv3NK6tomcat5model15DynamicBayesNet14save_to_folderERKNSt6stringE"></span><span id="_CPPv2NK6tomcat5model15DynamicBayesNet14save_to_folderERKNSt6stringE"></span><span id="tomcat::model::DynamicBayesNet::save_to_folder__ssCRC"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1a8f02c42bfec8204e27b854e56069444a"></span>void <code class="sig-name descname">save_to_folder</code><span class="sig-paren">(</span><em class="property">const</em> std::string &amp;<em>output_folder</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model15DynamicBayesNet14save_to_folderERKNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Saves model’s parameter values in individual files inside a given folder. The folder is created if it does not exist.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">output_folder</span></code>: folder where the files must be saved </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model15DynamicBayesNet16load_from_folderERKNSt6stringE">
+<span id="_CPPv3N6tomcat5model15DynamicBayesNet16load_from_folderERKNSt6stringE"></span><span id="_CPPv2N6tomcat5model15DynamicBayesNet16load_from_folderERKNSt6stringE"></span><span id="tomcat::model::DynamicBayesNet::load_from_folder__ssCR"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1a3d30c991dcdc037863bfc97d4caef8d2"></span>void <code class="sig-name descname">load_from_folder</code><span class="sig-paren">(</span><em class="property">const</em> std::string &amp;<em>input_folder</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model15DynamicBayesNet16load_from_folderERKNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Loads model’s parameter assignments from files previously saved in a specific folder. The actual parameter nodes are excluded from the model and the <a class="reference internal" href="classtomcat_1_1model_1_1CPD.html#classtomcat_1_1model_1_1CPD"><span class="std std-ref">CPD</span></a>’s that depend on them are updated with constant nodes containing values determined by the content of the files processed.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">input_folder</span></code>: folder where the files with the parameters’ values are saved </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model15DynamicBayesNet9get_edgesEv">
+<span id="_CPPv3NK6tomcat5model15DynamicBayesNet9get_edgesEv"></span><span id="_CPPv2NK6tomcat5model15DynamicBayesNet9get_edgesEv"></span><span id="tomcat::model::DynamicBayesNet::get_edgesC"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1a24e3fd0166e88ba0db9ebd1d25af1254"></span>std::vector&lt;<a class="reference internal" href="#_CPPv4N6tomcat5model15DynamicBayesNet4EdgeE" title="tomcat::model::DynamicBayesNet::Edge">Edge</a>&gt; <code class="sig-name descname">get_edges</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model15DynamicBayesNet9get_edgesEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns edges of the unrolled DBN</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Edges </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model15DynamicBayesNet14get_time_stepsEv">
+<span id="_CPPv3NK6tomcat5model15DynamicBayesNet14get_time_stepsEv"></span><span id="_CPPv2NK6tomcat5model15DynamicBayesNet14get_time_stepsEv"></span><span id="tomcat::model::DynamicBayesNet::get_time_stepsC"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1a49f1a2565fe01a7b9c2547ba751e009d"></span>int <code class="sig-name descname">get_time_steps</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model15DynamicBayesNet14get_time_stepsEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="classtomcat_1_1model_1_1Estimates.html" class="btn btn-neutral float-right" title="Class Estimates" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="classtomcat_1_1model_1_1Distribution.html" class="btn btn-neutral float-left" title="Class Distribution" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

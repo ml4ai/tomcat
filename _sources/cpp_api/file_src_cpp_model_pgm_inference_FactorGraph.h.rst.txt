@@ -1,0 +1,79 @@
+
+.. _file_src_cpp_model_pgm_inference_FactorGraph.h:
+
+File FactorGraph.h
+==================
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp_model_pgm_inference>` (``src/cpp/model/pgm/inference``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. contents:: Contents
+   :local:
+   :backlinks: none
+
+Definition (``src/cpp/model/pgm/inference/FactorGraph.h``)
+----------------------------------------------------------
+
+
+.. toctree::
+   :maxdepth: 1
+
+   program_listing_file_src_cpp_model_pgm_inference_FactorGraph.h.rst
+
+
+
+
+
+Includes
+--------
+
+
+- ``../../utils/Definitions.h``
+
+- ``../DynamicBayesNet.h``
+
+- ``MessageNode.h`` (:ref:`file_src_cpp_model_pgm_inference_MessageNode.h`)
+
+- ``array``
+
+- ``boost/graph/adjacency_list.hpp``
+
+- ``memory``
+
+- ``string``
+
+- ``utility``
+
+- ``vector``
+
+
+
+Included By
+-----------
+
+
+- :ref:`file_src_cpp_model_pipeline_estimation_SumProductEstimator.h`
+
+- :ref:`file_src_cpp_model_pgm_inference_FactorGraph.cpp`
+
+- :ref:`file_src_cpp_model_pipeline_estimation_SumProductEstimator.cpp`
+
+
+
+
+Namespaces
+----------
+
+
+- :ref:`namespace_tomcat`
+
+- :ref:`namespace_tomcat__model`
+
+
+Classes
+-------
+
+
+- :ref:`exhale_class_classtomcat_1_1model_1_1FactorGraph`
+

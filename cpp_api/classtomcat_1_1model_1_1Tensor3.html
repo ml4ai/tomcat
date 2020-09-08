@@ -1,0 +1,701 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Class Tensor3 &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Class Tomcat" href="classtomcat_1_1model_1_1Tomcat.html" />
+    <link rel="prev" title="Class SumProductEstimator" href="classtomcat_1_1model_1_1SumProductEstimator.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tomcat_openapi.html">Data models and message bus topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../developer/index.html">Developer documentation</a> &raquo;</li>
+        
+          <li><a href="index.html">C++ API</a> &raquo;</li>
+        
+      <li>Class Tensor3</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/cpp_api/classtomcat_1_1model_1_1Tensor3.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="class-tensor3">
+<span id="exhale-class-classtomcat-1-1model-1-1tensor3"></span><h1>Class Tensor3<a class="headerlink" href="#class-tensor3" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Defined in <a class="reference internal" href="file_src_cpp_model_utils_Tensor3.h.html#file-src-cpp-model-utils-tensor3-h"><span class="std std-ref">File Tensor3.h</span></a></p></li>
+</ul>
+<div class="section" id="class-documentation">
+<h2>Class Documentation<a class="headerlink" href="#class-documentation" title="Permalink to this headline">¶</a></h2>
+<dl class="cpp class">
+<dt id="_CPPv4N6tomcat5model7Tensor3E">
+<span id="_CPPv3N6tomcat5model7Tensor3E"></span><span id="_CPPv2N6tomcat5model7Tensor3E"></span><span id="tomcat::model::Tensor3"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3"></span><em class="property">class </em><code class="sig-prename descclassname">tomcat::model<code class="sig-prename descclassname">::</code></code><code class="sig-name descname">Tensor3</code><a class="headerlink" href="#_CPPv4N6tomcat5model7Tensor3E" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Class description here </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Functions</p>
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model7Tensor37Tensor3Ev">
+<span id="_CPPv3N6tomcat5model7Tensor37Tensor3Ev"></span><span id="_CPPv2N6tomcat5model7Tensor37Tensor3Ev"></span><span id="tomcat::model::Tensor3::Tensor3"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1aaf130dc9a5a9f23fee34dac6e7349234"></span><code class="sig-name descname">Tensor3</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model7Tensor37Tensor3Ev" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Creates an empty tensor. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model7Tensor37Tensor3ERKN5Eigen8MatrixXdE">
+<span id="_CPPv3N6tomcat5model7Tensor37Tensor3ERKN5Eigen8MatrixXdE"></span><span id="_CPPv2N6tomcat5model7Tensor37Tensor3ERKN5Eigen8MatrixXdE"></span><span id="tomcat::model::Tensor3::Tensor3__Eigen::MatrixXdCR"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1aa4b7b4d53d1554143a44ec71e8dc391b"></span><code class="sig-name descname">Tensor3</code><span class="sig-paren">(</span><em class="property">const</em> Eigen::MatrixXd &amp;<em>matrix</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model7Tensor37Tensor3ERKN5Eigen8MatrixXdE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Creates tensor with one matrix. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model7Tensor37Tensor3EKNSt6vectorIN5Eigen8MatrixXdEEE">
+<span id="_CPPv3N6tomcat5model7Tensor37Tensor3EKNSt6vectorIN5Eigen8MatrixXdEEE"></span><span id="_CPPv2N6tomcat5model7Tensor37Tensor3EKNSt6vectorIN5Eigen8MatrixXdEEE"></span><span id="tomcat::model::Tensor3::Tensor3__std::vector:Eigen::MatrixXd:C"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1aad45ff8350a9df4e7455e431b2029d12"></span><code class="sig-name descname">Tensor3</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3StENSt6vectorI7Tensor3EE" title="tomcat::model::Tensor3::std">std</a>::vector&lt;Eigen::MatrixXd&gt; <em>matrices</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model7Tensor37Tensor3EKNSt6vectorIN5Eigen8MatrixXdEEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Creates a tensor comprised of several matrices. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model7Tensor37Tensor3EPdiii">
+<span id="_CPPv3N6tomcat5model7Tensor37Tensor3EPdiii"></span><span id="_CPPv2N6tomcat5model7Tensor37Tensor3EPdiii"></span><span id="tomcat::model::Tensor3::Tensor3__doubleP.i.i.i"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1aaa3188c027621406c019e5a000fb9482"></span><code class="sig-name descname">Tensor3</code><span class="sig-paren">(</span>double *<em>buffer</em>, int <em>d1</em>, int <em>d2</em>, int <em>d3</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model7Tensor37Tensor3EPdiii" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Creates a tensor filled with data.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">buffer</span></code>: values to be stored in the tensor. There must be d1*d2*d3 elements in the buffer array. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">d1</span></code>: dimension of the first axis </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">d2</span></code>: dimension of the second axis </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">d3</span></code>: dimension of the third axis </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model7Tensor3D0Ev">
+<span id="_CPPv3N6tomcat5model7Tensor3D0Ev"></span><span id="_CPPv2N6tomcat5model7Tensor3D0Ev"></span><span id="tomcat::model::Tensor3::~Tensor3"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1a55c41e2fb228fb0ed66ccbb443863827"></span><code class="sig-name descname">~Tensor3</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model7Tensor3D0Ev" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model7Tensor37Tensor3ERK7Tensor3">
+<span id="_CPPv3N6tomcat5model7Tensor37Tensor3ERK7Tensor3"></span><span id="_CPPv2N6tomcat5model7Tensor37Tensor3ERK7Tensor3"></span><span id="tomcat::model::Tensor3::Tensor3__Tensor3CR"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1a3b6a2f9e3843c460740fe0ebf592451b"></span><code class="sig-name descname">Tensor3</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor37Tensor3ERK7Tensor3" title="tomcat::model::Tensor3::Tensor3">Tensor3</a>&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model7Tensor37Tensor3ERK7Tensor3" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model7Tensor3aSERK7Tensor3">
+<span id="_CPPv3N6tomcat5model7Tensor3aSERK7Tensor3"></span><span id="_CPPv2N6tomcat5model7Tensor3aSERK7Tensor3"></span><span id="tomcat::model::Tensor3::assign-operator__Tensor3CR"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1abb46999299036a375824cefe72746ecd"></span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3E" title="tomcat::model::Tensor3">Tensor3</a> &amp;<code class="sig-name descname">operator=</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3E" title="tomcat::model::Tensor3">Tensor3</a>&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model7Tensor3aSERK7Tensor3" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model7Tensor37Tensor3ERR7Tensor3">
+<span id="_CPPv3N6tomcat5model7Tensor37Tensor3ERR7Tensor3"></span><span id="_CPPv2N6tomcat5model7Tensor37Tensor3ERR7Tensor3"></span><span id="tomcat::model::Tensor3::Tensor3__Tensor3RR"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1ab5e1291383b329244fc9c95caeb19ccc"></span><code class="sig-name descname">Tensor3</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor37Tensor3ERR7Tensor3" title="tomcat::model::Tensor3::Tensor3">Tensor3</a>&amp;&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model7Tensor37Tensor3ERR7Tensor3" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model7Tensor3aSERR7Tensor3">
+<span id="_CPPv3N6tomcat5model7Tensor3aSERR7Tensor3"></span><span id="_CPPv2N6tomcat5model7Tensor3aSERR7Tensor3"></span><span id="tomcat::model::Tensor3::assign-operator__Tensor3RR"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1aa9ccfeb16ae5a2dbeb5cb4bd197fae31"></span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3E" title="tomcat::model::Tensor3">Tensor3</a> &amp;<code class="sig-name descname">operator=</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3E" title="tomcat::model::Tensor3">Tensor3</a>&amp;&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model7Tensor3aSERR7Tensor3" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model7Tensor3clEii">
+<span id="_CPPv3N6tomcat5model7Tensor3clEii"></span><span id="_CPPv2N6tomcat5model7Tensor3clEii"></span><span id="tomcat::model::Tensor3::call-operator__i.i"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1a5361b39c8d8fd30b93d59801a6cdffcd"></span>Eigen::MatrixXd <code class="sig-name descname">operator()</code><span class="sig-paren">(</span>int <em>i</em>, int <em>axis</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model7Tensor3clEii" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns assignable matrix for a given index of the first axis.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Assignable matrix. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">i</span></code>: index to select in the chosen axis </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">axis</span></code>: axis</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model7Tensor32atEii">
+<span id="_CPPv3NK6tomcat5model7Tensor32atEii"></span><span id="_CPPv2NK6tomcat5model7Tensor32atEii"></span><span id="tomcat::model::Tensor3::at__i.iC"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1ae1ba4506aefc40e0bcecf05463f396f3"></span>Eigen::VectorXd <code class="sig-name descname">at</code><span class="sig-paren">(</span>int <em>j</em>, int <em>k</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model7Tensor32atEii" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns a non-assignable vector for given indices of the second and third axes.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Non-assignable vector. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">j</span></code>: second axis’ index </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">k</span></code>: third axis’ index </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model7Tensor3clEiii">
+<span id="_CPPv3N6tomcat5model7Tensor3clEiii"></span><span id="_CPPv2N6tomcat5model7Tensor3clEiii"></span><span id="tomcat::model::Tensor3::call-operator__i.i.i"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1a9b9be1f78965cfeca29c108109187815"></span>double &amp;<code class="sig-name descname">operator()</code><span class="sig-paren">(</span>int <em>i</em>, int <em>j</em>, int <em>k</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model7Tensor3clEiii" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns an assignable number given indices of all axes.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Assignable number. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">i</span></code>: first axis’ index </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">j</span></code>: second axis’ index </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">k</span></code>: third axis’ index</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model7Tensor3plERK7Tensor3">
+<span id="_CPPv3NK6tomcat5model7Tensor3plERK7Tensor3"></span><span id="_CPPv2NK6tomcat5model7Tensor3plERK7Tensor3"></span><span id="tomcat::model::Tensor3::add-operator__Tensor3CRC"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1ae6f7b220c778f01e8fb72e9cdc189cc6"></span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3E" title="tomcat::model::Tensor3">Tensor3</a> <code class="sig-name descname">operator+</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3E" title="tomcat::model::Tensor3">Tensor3</a> &amp;<em>tensor</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model7Tensor3plERK7Tensor3" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns the tensor formed by the element-wise sum of two tensors.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Element-wise sum of two tensors. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">tensor</span></code>: another tensor</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model7Tensor3miERK7Tensor3">
+<span id="_CPPv3NK6tomcat5model7Tensor3miERK7Tensor3"></span><span id="_CPPv2NK6tomcat5model7Tensor3miERK7Tensor3"></span><span id="tomcat::model::Tensor3::sub-operator__Tensor3CRC"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1a444c345b7485c77b10c59c56ab47ed5f"></span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3E" title="tomcat::model::Tensor3">Tensor3</a> <code class="sig-name descname">operator-</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3E" title="tomcat::model::Tensor3">Tensor3</a> &amp;<em>tensor</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model7Tensor3miERK7Tensor3" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns the tensor formed by the element-wise subtraction of two tensors.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Element-wise subtraction of two tensors. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">tensor</span></code>: another tensor</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model7Tensor3dvEd">
+<span id="_CPPv3NK6tomcat5model7Tensor3dvEd"></span><span id="_CPPv2NK6tomcat5model7Tensor3dvEd"></span><span id="tomcat::model::Tensor3::div-operator__doubleC"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1acbe6cc44a920910327a02e428c7ba6dd"></span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3E" title="tomcat::model::Tensor3">Tensor3</a> <code class="sig-name descname">operator/</code><span class="sig-paren">(</span>double <em>value</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model7Tensor3dvEd" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns the tensor formed by the element-wise scalar division of a tensor.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Element-wise scalar division of a tensor. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">value</span></code>: value to divide the elements of a tensor</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model7Tensor3eqERKN5Eigen8VectorXdE">
+<span id="_CPPv3NK6tomcat5model7Tensor3eqERKN5Eigen8VectorXdE"></span><span id="_CPPv2NK6tomcat5model7Tensor3eqERKN5Eigen8VectorXdE"></span><span id="tomcat::model::Tensor3::eq-operator__Eigen::VectorXdCRC"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1ac3a6bc3678f34d31ee66955ec60ff080"></span>Eigen::MatrixXd <code class="sig-name descname">operator==</code><span class="sig-paren">(</span><em class="property">const</em> Eigen::VectorXd &amp;<em>value</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model7Tensor3eqERKN5Eigen8VectorXdE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns a 1 x m x n tensor comprised by ones where the coefficients along axis 0 are equal to value, and zero otherwise.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Binary tensor </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">value</span></code>: value to compare the coefficients of axis 0 with</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model7Tensor35clearEv">
+<span id="_CPPv3N6tomcat5model7Tensor35clearEv"></span><span id="_CPPv2N6tomcat5model7Tensor35clearEv"></span><span id="tomcat::model::Tensor3::clear"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1a845a06947f69d9482cb03e42c4feea00"></span>void <code class="sig-name descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model7Tensor35clearEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Clears the tensor; </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model7Tensor38is_emptyEv">
+<span id="_CPPv3NK6tomcat5model7Tensor38is_emptyEv"></span><span id="_CPPv2NK6tomcat5model7Tensor38is_emptyEv"></span><span id="tomcat::model::Tensor3::is_emptyC"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1ab771f3656f0f48f3bef6d7f086945763"></span>bool <code class="sig-name descname">is_empty</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model7Tensor38is_emptyEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Checks whether a tensor is empty. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model7Tensor39to_stringEv">
+<span id="_CPPv3NK6tomcat5model7Tensor39to_stringEv"></span><span id="_CPPv2NK6tomcat5model7Tensor39to_stringEv"></span><span id="tomcat::model::Tensor3::to_stringC"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1a566f94d87c203fd53a3013d3a75cedb6"></span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3StENSt6vectorI7Tensor3EE" title="tomcat::model::Tensor3::std">std</a>::string <code class="sig-name descname">to_string</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model7Tensor39to_stringEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns the content of the tensor as a string;</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>String with the tensor’s content. </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model7Tensor38get_sizeEv">
+<span id="_CPPv3NK6tomcat5model7Tensor38get_sizeEv"></span><span id="_CPPv2NK6tomcat5model7Tensor38get_sizeEv"></span><span id="tomcat::model::Tensor3::get_sizeC"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1a1ccfb0c14788cbb1b9546e5fb1279b3b"></span>int <code class="sig-name descname">get_size</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model7Tensor38get_sizeEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns the number of elements in the tensor.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>The number of elements in the tensor. </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model7Tensor39get_shapeEv">
+<span id="_CPPv3NK6tomcat5model7Tensor39get_shapeEv"></span><span id="_CPPv2NK6tomcat5model7Tensor39get_shapeEv"></span><span id="tomcat::model::Tensor3::get_shapeC"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1a979349fc572505e80836ea504d98478a"></span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3StENSt6vectorI7Tensor3EE" title="tomcat::model::Tensor3::std">std</a>::array&lt;int, 3&gt; <code class="sig-name descname">get_shape</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model7Tensor39get_shapeEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns 3D array containing the dimensions of the tensor.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Tensor’s dimensions. </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model7Tensor32atEiii">
+<span id="_CPPv3NK6tomcat5model7Tensor32atEiii"></span><span id="_CPPv2NK6tomcat5model7Tensor32atEiii"></span><span id="tomcat::model::Tensor3::at__i.i.iC"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1aa40861754681f0334cdabeaf81e1749a"></span>double <code class="sig-name descname">at</code><span class="sig-paren">(</span>int <em>i</em>, int <em>j</em>, int <em>k</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model7Tensor32atEiii" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns a non-assignable coefficient from a specific tensor index.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Non-assignable tensor coefficient. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">i</span></code>: first axis’ index </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">j</span></code>: second axis’ index </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">k</span></code>: third axis’ index</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model7Tensor35sliceEiii">
+<span id="_CPPv3NK6tomcat5model7Tensor35sliceEiii"></span><span id="_CPPv2NK6tomcat5model7Tensor35sliceEiii"></span><span id="tomcat::model::Tensor3::slice__i.i.iC"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1a3ca596f14385ee782d9134b58f02ab51"></span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3E" title="tomcat::model::Tensor3">Tensor3</a> <code class="sig-name descname">slice</code><span class="sig-paren">(</span>int <em>initial_index</em>, int <em>final_index</em>, int <em>axis</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model7Tensor35sliceEiii" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns a sliced copy of the tensor in a certain range.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Sliced copy of the original tensor. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">initial_index</span></code>: first index in the range (inclusive). The element in this index is kept. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">final_index</span></code>: last index in the range (exclusive). The element in this index is not kept. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">axis</span></code>: axis where the slicing must be done</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model7Tensor35sliceENSt6vectorIiEEi">
+<span id="_CPPv3NK6tomcat5model7Tensor35sliceENSt6vectorIiEEi"></span><span id="_CPPv2NK6tomcat5model7Tensor35sliceENSt6vectorIiEEi"></span><span id="tomcat::model::Tensor3::slice__std::vector:i:.iC"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1aec5c2503c181a431eb258198f2d5134a"></span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3E" title="tomcat::model::Tensor3">Tensor3</a> <code class="sig-name descname">slice</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3StENSt6vectorI7Tensor3EE" title="tomcat::model::Tensor3::std">std</a>::vector&lt;int&gt; <em>indices</em>, int <em>axis</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model7Tensor35sliceENSt6vectorIiEEi" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns a sliced copy of the tensor.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Sliced copy of the original tensor. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">indices</span></code>: indices to keep from the original tensor </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">axis</span></code>: axis where the slicing must be done</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model7Tensor34meanEv">
+<span id="_CPPv3NK6tomcat5model7Tensor34meanEv"></span><span id="_CPPv2NK6tomcat5model7Tensor34meanEv"></span><span id="tomcat::model::Tensor3::meanC"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1ae5b5fc04f85ded294a39e50098353ea0"></span>double <code class="sig-name descname">mean</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model7Tensor34meanEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns the mean of all the values in the tensor.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Mean. </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model7Tensor34meanEi">
+<span id="_CPPv3NK6tomcat5model7Tensor34meanEi"></span><span id="_CPPv2NK6tomcat5model7Tensor34meanEi"></span><span id="tomcat::model::Tensor3::mean__iC"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1a121f7dfaad61819b34784ff21c059f0a"></span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3E" title="tomcat::model::Tensor3">Tensor3</a> <code class="sig-name descname">mean</code><span class="sig-paren">(</span>int <em>axis</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model7Tensor34meanEi" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns the mean of all the values in the tensor in a given axis. This operation shrinks the number of elements in the axis where the operation is performed but it preserves the number of axes.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Mean. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">axis</span></code>: axis where the mean must be computed along</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model7Tensor37reshapeEiii">
+<span id="_CPPv3NK6tomcat5model7Tensor37reshapeEiii"></span><span id="_CPPv2NK6tomcat5model7Tensor37reshapeEiii"></span><span id="tomcat::model::Tensor3::reshape__i.i.iC"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1a9dedfe0d7d3c04d843810ed42b78fb06"></span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3E" title="tomcat::model::Tensor3">Tensor3</a> <code class="sig-name descname">reshape</code><span class="sig-paren">(</span>int <em>d1</em>, int <em>d2</em>, int <em>d3</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model7Tensor37reshapeEiii" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Reshapes the tensor if new dimensions are compatible with the number of elements in the tensor.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Reshaped tensor. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">d1</span></code>: dimension of the first axis </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">d2</span></code>: dimension of the second axis </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">d3</span></code>: dimension of the third axis</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model7Tensor36repeatEii">
+<span id="_CPPv3NK6tomcat5model7Tensor36repeatEii"></span><span id="_CPPv2NK6tomcat5model7Tensor36repeatEii"></span><span id="tomcat::model::Tensor3::repeat__i.iC"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1a3da9f02395d6cae14c098583b56a9c7c"></span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3E" title="tomcat::model::Tensor3">Tensor3</a> <code class="sig-name descname">repeat</code><span class="sig-paren">(</span>int <em>num_repetitions</em>, int <em>axis</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model7Tensor36repeatEii" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Repeats the elements of the tensor in a given axis by a certain amount of time.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Repeated tensor. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">num_repetitions</span></code>: number of repetitions </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">axis</span></code>: axis where the repetitions must occur</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model7Tensor33powEi">
+<span id="_CPPv3NK6tomcat5model7Tensor33powEi"></span><span id="_CPPv2NK6tomcat5model7Tensor33powEi"></span><span id="tomcat::model::Tensor3::pow__iC"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1a534650d23d0ad63ae38883d2384eff9c"></span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3E" title="tomcat::model::Tensor3">Tensor3</a> <code class="sig-name descname">pow</code><span class="sig-paren">(</span>int <em>power</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model7Tensor33powEi" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns a tensor formed by the elements of the original tensor to a given power.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Tensor formed by the elements of the original tensor to a given power. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">power</span></code>: power</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model7Tensor34sqrtEv">
+<span id="_CPPv3NK6tomcat5model7Tensor34sqrtEv"></span><span id="_CPPv2NK6tomcat5model7Tensor34sqrtEv"></span><span id="tomcat::model::Tensor3::sqrtC"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1ac348595d2fceb54b20e417a867836f9e"></span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3E" title="tomcat::model::Tensor3">Tensor3</a> <code class="sig-name descname">sqrt</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model7Tensor34sqrtEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns a tensor formed by the squared root of the elements of the original tensor.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Tensor formed by the squared root of the elements of the original tensor. </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model7Tensor314coeff_wise_andEi">
+<span id="_CPPv3NK6tomcat5model7Tensor314coeff_wise_andEi"></span><span id="_CPPv2NK6tomcat5model7Tensor314coeff_wise_andEi"></span><span id="tomcat::model::Tensor3::coeff_wise_and__iC"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1ac57ab966508946d738174c743670bc66"></span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3E" title="tomcat::model::Tensor3">Tensor3</a> <code class="sig-name descname">coeff_wise_and</code><span class="sig-paren">(</span>int <em>axis</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model7Tensor314coeff_wise_andEi" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns the bitwise-and of all the coefficients in a tensor in a given axis. All numbers greater greater 0 are considered as true for the purpose of this logical operation. Negative numbers are neutral and preserved in the final tensor. This operation shrinks the number of coefficients in the axis where the operation is performed but it preserves the number of axes.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Mean. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">axis</span></code>: axis where the bitwise-and must be computed along</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Static Functions</p>
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model7Tensor38constantEiiid">
+<span id="_CPPv3N6tomcat5model7Tensor38constantEiiid"></span><span id="_CPPv2N6tomcat5model7Tensor38constantEiiid"></span><span id="tomcat::model::Tensor3::constant__i.i.i.double"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1aab57839b53acc8680ed44bf8a4548e05"></span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3E" title="tomcat::model::Tensor3">Tensor3</a> <code class="sig-name descname">constant</code><span class="sig-paren">(</span>int <em>d1</em>, int <em>d2</em>, int <em>d3</em>, double <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model7Tensor38constantEiiid" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Creates a tensor filled with a constant value.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Tensor of constant values. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">d1</span></code>: dimension of the first axis </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">d2</span></code>: dimension of the second axis </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">d3</span></code>: dimension of the third axis </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">value</span></code>: constant value </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model7Tensor316matrix_to_stringERKN5Eigen8MatrixXdE">
+<span id="_CPPv3N6tomcat5model7Tensor316matrix_to_stringERKN5Eigen8MatrixXdE"></span><span id="_CPPv2N6tomcat5model7Tensor316matrix_to_stringERKN5Eigen8MatrixXdE"></span><span id="tomcat::model::Tensor3::matrix_to_string__Eigen::MatrixXdCR"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1a43ba399e9314c9e643e4ecad06019472"></span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3StENSt6vectorI7Tensor3EE" title="tomcat::model::Tensor3::std">std</a>::string <code class="sig-name descname">matrix_to_string</code><span class="sig-paren">(</span><em class="property">const</em> Eigen::MatrixXd &amp;<em>matrix</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model7Tensor316matrix_to_stringERKN5Eigen8MatrixXdE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns a string representation for a matrix;</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Matrix’s string representation. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">matrix</span></code>: matrix </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model7Tensor33sumENSt6vectorI7Tensor3EE">
+<span id="_CPPv3N6tomcat5model7Tensor33sumENSt6vectorI7Tensor3EE"></span><span id="_CPPv2N6tomcat5model7Tensor33sumENSt6vectorI7Tensor3EE"></span><span id="tomcat::model::Tensor3::sum__std::vector:Tensor3:"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1adf6e14934dfb30a8478d246b73b46640"></span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3E" title="tomcat::model::Tensor3">Tensor3</a> <code class="sig-name descname">sum</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3StENSt6vectorI7Tensor3EE" title="tomcat::model::Tensor3::std">std</a>::vector&lt;<a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3E" title="tomcat::model::Tensor3">Tensor3</a>&gt; <em>tensors</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model7Tensor33sumENSt6vectorI7Tensor3EE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Computes the element-wise sum of a list of tensors.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>: Element-wise sum of a list of tensors. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">tensors</span></code>: tensors</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model7Tensor34meanENSt6vectorI7Tensor3EE">
+<span id="_CPPv3N6tomcat5model7Tensor34meanENSt6vectorI7Tensor3EE"></span><span id="_CPPv2N6tomcat5model7Tensor34meanENSt6vectorI7Tensor3EE"></span><span id="tomcat::model::Tensor3::mean__std::vector:Tensor3:"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1a6141f045def433f74d35851a3aa3422c"></span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3E" title="tomcat::model::Tensor3">Tensor3</a> <code class="sig-name descname">mean</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3StENSt6vectorI7Tensor3EE" title="tomcat::model::Tensor3::std">std</a>::vector&lt;<a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3E" title="tomcat::model::Tensor3">Tensor3</a>&gt; <em>tensors</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model7Tensor34meanENSt6vectorI7Tensor3EE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Computes the element-wise mean of a list of tensors.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>: Element-wise mean of a list of tensors. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">tensors</span></code>: tensors</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model7Tensor3StENSt6vectorI7Tensor3EE">
+<span id="_CPPv3N6tomcat5model7Tensor3StENSt6vectorI7Tensor3EE"></span><span id="_CPPv2N6tomcat5model7Tensor3StENSt6vectorI7Tensor3EE"></span><span id="tomcat::model::Tensor3::std__std::vector:Tensor3:"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1abaaa9f1f80e11ef430c4f9dab893baa7"></span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3E" title="tomcat::model::Tensor3">Tensor3</a> <code class="sig-name descname">std</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3StENSt6vectorI7Tensor3EE" title="tomcat::model::Tensor3::std">std</a>::vector&lt;<a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3E" title="tomcat::model::Tensor3">Tensor3</a>&gt; <em>tensors</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model7Tensor3StENSt6vectorI7Tensor3EE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Computes the element-wise standard deviation of a list of tensors.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>: Element-wise standard deviation of a list of tensors. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">tensors</span></code>: tensors</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Static Attributes</p>
+<dl class="cpp var">
+<dt id="_CPPv4N6tomcat5model7Tensor33ALLE">
+<span id="_CPPv3N6tomcat5model7Tensor33ALLE"></span><span id="_CPPv2N6tomcat5model7Tensor33ALLE"></span><span id="tomcat::model::Tensor3::ALL__iC"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1a81aa0089d0bb54a48d9d40e0c7b9a5bf"></span><em class="property">const</em> int <code class="sig-name descname">ALL</code> = -1<a class="headerlink" href="#_CPPv4N6tomcat5model7Tensor33ALLE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Friends</p>
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model7Tensor3lsERNSt7ostreamERK7Tensor3">
+<span id="_CPPv3N6tomcat5model7Tensor3lsERNSt7ostreamERK7Tensor3"></span><span id="_CPPv2N6tomcat5model7Tensor3lsERNSt7ostreamERK7Tensor3"></span><span id="tomcat::model::Tensor3::lshift-operator__osR.Tensor3CR"></span><span class="target" id="classtomcat_1_1model_1_1Tensor3_1a162d16cce474241b3f2d1583fa5ba563"></span><em class="property">friend</em> <a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3StENSt6vectorI7Tensor3EE" title="tomcat::model::Tensor3::std">std</a>::ostream &amp;<code class="sig-name descname">operator&lt;&lt;</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3StENSt6vectorI7Tensor3EE" title="tomcat::model::Tensor3::std">std</a>::ostream &amp;<em>os</em>, <em class="property">const</em> <a class="reference internal" href="#_CPPv4N6tomcat5model7Tensor3E" title="tomcat::model::Tensor3">Tensor3</a> &amp;<em>tensor</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model7Tensor3lsERNSt7ostreamERK7Tensor3" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="classtomcat_1_1model_1_1Tomcat.html" class="btn btn-neutral float-right" title="Class Tomcat" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="classtomcat_1_1model_1_1SumProductEstimator.html" class="btn btn-neutral float-left" title="Class SumProductEstimator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

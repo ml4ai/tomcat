@@ -1,0 +1,16 @@
+.. _exhale_class_classtomcat_1_1model_1_1FactorGraph:
+
+Class FactorGraph
+=================
+
+- Defined in :ref:`file_src_cpp_model_pgm_inference_FactorGraph.h`
+
+
+Class Documentation
+-------------------
+
+
+.. doxygenclass:: tomcat::model::FactorGraph
+   :members:
+   :protected-members:
+   :undoc-members:

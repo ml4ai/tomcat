@@ -1,0 +1,105 @@
+
+.. _program_listing_file_src_cpp_model_distribution_Distribution.h:
+
+Program Listing for File Distribution.h
+=======================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_cpp_model_distribution_Distribution.h>` (``src/cpp/model/distribution/Distribution.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #pragma once
+   
+   #include <eigen3/Eigen/Dense>
+   #include <gsl/gsl_rng.h>
+   
+   #include "../pgm/Node.h"
+   #include "../utils/Definitions.h"
+   
+   namespace tomcat {
+       namespace model {
+   
+   #define EPSILON 10E-16
+   
+           class Distribution {
+             public:
+               //------------------------------------------------------------------
+               // Constructors & Destructor
+               //------------------------------------------------------------------
+   
+               Distribution();
+   
+               virtual ~Distribution();
+   
+               //------------------------------------------------------------------
+               // Copy & Move constructors/assignments
+               //------------------------------------------------------------------
+   
+               // Copy constructor and assignment should be deleted to avoid
+               // implicit slicing and loss of polymorphic behaviour in the
+               // subclasses. To deep copy, the clone method must be used.
+               Distribution(const Distribution&) = delete;
+   
+               Distribution& operator=(const Distribution&) = delete;
+   
+               Distribution(Distribution&&) = default;
+   
+               Distribution& operator=(Distribution&&) = default;
+   
+               //------------------------------------------------------------------
+               // Operator overload
+               //------------------------------------------------------------------
+               friend std::ostream& operator<<(std::ostream& os,
+                                               const Distribution& distribution);
+   
+               //------------------------------------------------------------------
+               // Member functions
+               //------------------------------------------------------------------
+   
+               void print(std::ostream& os) const;
+   
+               //------------------------------------------------------------------
+               // Pure virtual functions
+               //------------------------------------------------------------------
+   
+               virtual void update_dependencies(Node::NodeMap& parameter_nodes_map,
+                                                int time_step) = 0;
+   
+               virtual Eigen::VectorXd
+               sample(std::shared_ptr<gsl_rng> random_generator,
+                      int parameter_idx = 0) const = 0;
+   
+               virtual Eigen::VectorXd
+               sample(std::shared_ptr<gsl_rng> random_generator,
+                      int parameter_idx,
+                      const Eigen::VectorXd& weights) const = 0;
+   
+               virtual Eigen::VectorXd sample_from_conjugacy(
+                   std::shared_ptr<gsl_rng> random_generator,
+                   int parameter_idx,
+                   const Eigen::VectorXd& sufficient_statistics) const = 0;
+   
+               virtual double get_pdf(const Eigen::VectorXd& value,
+                                      int parameter_idx) const = 0;
+   
+               virtual std::unique_ptr<Distribution> clone() const = 0;
+   
+               virtual int get_sample_size() const = 0;
+   
+               virtual void
+               update_sufficient_statistics(const Eigen::VectorXd& sample) = 0;
+   
+               virtual Eigen::VectorXd get_values() const = 0;
+   
+             protected:
+               //------------------------------------------------------------------
+               // Pure virtual functions
+               //------------------------------------------------------------------
+   
+               virtual std::string get_description() const = 0;
+           };
+   
+       } // namespace model
+   } // namespace tomcat

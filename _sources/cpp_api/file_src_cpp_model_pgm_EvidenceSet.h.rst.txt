@@ -1,0 +1,83 @@
+
+.. _file_src_cpp_model_pgm_EvidenceSet.h:
+
+File EvidenceSet.h
+==================
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp_model_pgm>` (``src/cpp/model/pgm``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. contents:: Contents
+   :local:
+   :backlinks: none
+
+Definition (``src/cpp/model/pgm/EvidenceSet.h``)
+------------------------------------------------
+
+
+.. toctree::
+   :maxdepth: 1
+
+   program_listing_file_src_cpp_model_pgm_EvidenceSet.h.rst
+
+
+
+
+
+Includes
+--------
+
+
+- ``../utils/Definitions.h``
+
+- ``../utils/FileHandler.h``
+
+- ``nlohmann/json.hpp``
+
+- ``string``
+
+- ``unordered_map``
+
+
+
+Included By
+-----------
+
+
+- :ref:`file_src_cpp_model_main.cpp`
+
+- :ref:`file_src_cpp_model_pipeline_KFold.h`
+
+- :ref:`file_src_cpp_model_pipeline_Pipeline.h`
+
+- :ref:`file_src_cpp_model_pipeline_estimation_Estimator.h`
+
+- :ref:`file_src_cpp_model_pipeline_evaluation_EvaluationAggregator.h`
+
+- :ref:`file_src_cpp_model_pipeline_evaluation_Measure.h`
+
+- :ref:`file_src_cpp_model_pipeline_training_DBNTrainer.h`
+
+- :ref:`file_src_cpp_model_sampling_Sampler.h`
+
+- :ref:`file_src_cpp_model_pgm_EvidenceSet.cpp`
+
+
+
+
+Namespaces
+----------
+
+
+- :ref:`namespace_tomcat`
+
+- :ref:`namespace_tomcat__model`
+
+
+Classes
+-------
+
+
+- :ref:`exhale_class_classtomcat_1_1model_1_1EvidenceSet`
+

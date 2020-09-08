@@ -1,0 +1,29 @@
+.. _dir_src_cpp_model_pipeline_evaluation:
+
+
+Directory evaluation
+====================
+
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp_model_pipeline>` (``src/cpp/model/pipeline``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+*Directory path:* ``src/cpp/model/pipeline/evaluation``
+
+
+Files
+-----
+
+- :ref:`file_src_cpp_model_pipeline_evaluation_Accuracy.cpp`
+- :ref:`file_src_cpp_model_pipeline_evaluation_Accuracy.h`
+- :ref:`file_src_cpp_model_pipeline_evaluation_Estimates.cpp`
+- :ref:`file_src_cpp_model_pipeline_evaluation_Estimates.h`
+- :ref:`file_src_cpp_model_pipeline_evaluation_EvaluationAggregator.cpp`
+- :ref:`file_src_cpp_model_pipeline_evaluation_EvaluationAggregator.h`
+- :ref:`file_src_cpp_model_pipeline_evaluation_F1Score.cpp`
+- :ref:`file_src_cpp_model_pipeline_evaluation_F1Score.h`
+- :ref:`file_src_cpp_model_pipeline_evaluation_Measure.cpp`
+- :ref:`file_src_cpp_model_pipeline_evaluation_Measure.h`
+
+

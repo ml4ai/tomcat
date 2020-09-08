@@ -1,0 +1,16 @@
+.. _exhale_struct_structtomcat_1_1model_1_1NodeEvaluationAggregation:
+
+Struct NodeEvaluationAggregation
+================================
+
+- Defined in :ref:`file_src_cpp_model_pipeline_evaluation_EvaluationAggregator.h`
+
+
+Struct Documentation
+--------------------
+
+
+.. doxygenstruct:: tomcat::model::NodeEvaluationAggregation
+   :members:
+   :protected-members:
+   :undoc-members:

@@ -1,0 +1,90 @@
+
+.. _file_src_cpp_model_main.cpp:
+
+File main.cpp
+=============
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp_model>` (``src/cpp/model``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. contents:: Contents
+   :local:
+   :backlinks: none
+
+Definition (``src/cpp/model/main.cpp``)
+---------------------------------------
+
+
+.. toctree::
+   :maxdepth: 1
+
+   program_listing_file_src_cpp_model_main.cpp.rst
+
+
+
+
+
+Includes
+--------
+
+
+- ``Tomcat.h`` (:ref:`file_src_cpp_model_Tomcat.h`)
+
+- ``fstream``
+
+- ``pgm/EvidenceSet.h`` (:ref:`file_src_cpp_model_pgm_EvidenceSet.h`)
+
+- ``pipeline/DBNSaver.h`` (:ref:`file_src_cpp_model_pipeline_DBNSaver.h`)
+
+- ``pipeline/KFold.h`` (:ref:`file_src_cpp_model_pipeline_KFold.h`)
+
+- ``pipeline/Pipeline.h`` (:ref:`file_src_cpp_model_pipeline_Pipeline.h`)
+
+- ``pipeline/estimation/OfflineEstimation.h`` (:ref:`file_src_cpp_model_pipeline_estimation_OfflineEstimation.h`)
+
+- ``pipeline/estimation/SumProductEstimator.h`` (:ref:`file_src_cpp_model_pipeline_estimation_SumProductEstimator.h`)
+
+- ``pipeline/estimation/TrainingFrequencyEstimator.h`` (:ref:`file_src_cpp_model_pipeline_estimation_TrainingFrequencyEstimator.h`)
+
+- ``pipeline/evaluation/Accuracy.h`` (:ref:`file_src_cpp_model_pipeline_evaluation_Accuracy.h`)
+
+- ``pipeline/evaluation/Estimates.h`` (:ref:`file_src_cpp_model_pipeline_evaluation_Estimates.h`)
+
+- ``pipeline/evaluation/EvaluationAggregator.h`` (:ref:`file_src_cpp_model_pipeline_evaluation_EvaluationAggregator.h`)
+
+- ``pipeline/evaluation/F1Score.h`` (:ref:`file_src_cpp_model_pipeline_evaluation_F1Score.h`)
+
+- ``pipeline/training/DBNLoader.h`` (:ref:`file_src_cpp_model_pipeline_training_DBNLoader.h`)
+
+- ``pipeline/training/DBNSamplingTrainer.h`` (:ref:`file_src_cpp_model_pipeline_training_DBNSamplingTrainer.h`)
+
+- ``sampling/GibbsSampler.h`` (:ref:`file_src_cpp_model_sampling_GibbsSampler.h`)
+
+- ``sstream``
+
+- ``utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
+
+
+
+
+
+
+Functions
+---------
+
+
+- :ref:`exhale_function_main_8cpp_1aa9cff01175bbb32846bb71a64c4a3dd0`
+
+- :ref:`exhale_function_main_8cpp_1a148562e47aa8bffc2831fb7d83e5ad96`
+
+- :ref:`exhale_function_main_8cpp_1ae1a3fcdcef4a52896594340864831d1d`
+
+- :ref:`exhale_function_main_8cpp_1a4bd30523847e30994474f463432fb1d9`
+
+- :ref:`exhale_function_main_8cpp_1aaf7f71c4932b92ab4b02baa7e510c6f0`
+
+- :ref:`exhale_function_main_8cpp_1aa5b85ee0aa94c38d7a2bccd098a4cd6a`
+
+- :ref:`exhale_function_main_8cpp_1ae66f6b31b5ad750f1fe042a706a4e3d4`
+

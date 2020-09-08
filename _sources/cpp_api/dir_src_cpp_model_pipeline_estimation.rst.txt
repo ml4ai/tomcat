@@ -1,0 +1,31 @@
+.. _dir_src_cpp_model_pipeline_estimation:
+
+
+Directory estimation
+====================
+
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp_model_pipeline>` (``src/cpp/model/pipeline``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+*Directory path:* ``src/cpp/model/pipeline/estimation``
+
+
+Files
+-----
+
+- :ref:`file_src_cpp_model_pipeline_estimation_EstimationProcess.cpp`
+- :ref:`file_src_cpp_model_pipeline_estimation_EstimationProcess.h`
+- :ref:`file_src_cpp_model_pipeline_estimation_Estimator.cpp`
+- :ref:`file_src_cpp_model_pipeline_estimation_Estimator.h`
+- :ref:`file_src_cpp_model_pipeline_estimation_OfflineEstimation.cpp`
+- :ref:`file_src_cpp_model_pipeline_estimation_OfflineEstimation.h`
+- :ref:`file_src_cpp_model_pipeline_estimation_OnlineEstimation.cpp`
+- :ref:`file_src_cpp_model_pipeline_estimation_OnlineEstimation.h`
+- :ref:`file_src_cpp_model_pipeline_estimation_SumProductEstimator.cpp`
+- :ref:`file_src_cpp_model_pipeline_estimation_SumProductEstimator.h`
+- :ref:`file_src_cpp_model_pipeline_estimation_TrainingFrequencyEstimator.cpp`
+- :ref:`file_src_cpp_model_pipeline_estimation_TrainingFrequencyEstimator.h`
+
+

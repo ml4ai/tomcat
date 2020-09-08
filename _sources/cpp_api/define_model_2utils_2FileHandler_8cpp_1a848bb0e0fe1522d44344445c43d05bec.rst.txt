@@ -1,0 +1,13 @@
+.. _exhale_define_model_2utils_2FileHandler_8cpp_1a848bb0e0fe1522d44344445c43d05bec:
+
+Define MAXBUFSIZE
+=================
+
+- Defined in :ref:`file_src_cpp_model_utils_FileHandler.cpp`
+
+
+Define Documentation
+--------------------
+
+
+.. doxygendefine:: MAXBUFSIZE

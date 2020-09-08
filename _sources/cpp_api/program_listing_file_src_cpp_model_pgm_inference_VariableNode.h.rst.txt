@@ -1,0 +1,88 @@
+
+.. _program_listing_file_src_cpp_model_pgm_inference_VariableNode.h:
+
+Program Listing for File VariableNode.h
+=======================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_cpp_model_pgm_inference_VariableNode.h>` (``src/cpp/model/pgm/inference/VariableNode.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #pragma once
+   
+   #include "MessageNode.h"
+   
+   #include "../../utils/Definitions.h"
+   
+   namespace tomcat {
+       namespace model {
+   
+           class VariableNode : public MessageNode {
+             public:
+               //------------------------------------------------------------------
+               // Constructors & Destructor
+               //------------------------------------------------------------------
+   
+               VariableNode(const std::string& label,
+                            int time_step,
+                            int cardinality);
+   
+               ~VariableNode();
+   
+               //------------------------------------------------------------------
+               // Copy & Move constructors/assignments
+               //------------------------------------------------------------------
+               VariableNode(const VariableNode& node);
+   
+               VariableNode& operator=(const VariableNode& node);
+   
+               VariableNode(VariableNode&&) = default;
+   
+               VariableNode& operator=(VariableNode&&) = default;
+   
+               //------------------------------------------------------------------
+               // Member functions
+               //------------------------------------------------------------------
+   
+               Eigen::MatrixXd get_outward_message_to(
+                   const std::shared_ptr<MessageNode>& template_target_node,
+                   int template_time_step,
+                   int target_time_step,
+                   Direction direction) const override;
+   
+               bool is_factor() const override;
+   
+               Eigen::MatrixXd get_marginal_at(int time_step) const;
+   
+               void set_data_at(int time_step, const Eigen::VectorXd& data);
+   
+               void erase_data_at(int time_step);
+   
+               //------------------------------------------------------------------
+               // Getters & Setters
+               //------------------------------------------------------------------
+               int get_cardinality() const;
+   
+             private:
+               //------------------------------------------------------------------
+               // Member functions
+               //------------------------------------------------------------------
+   
+               void copy_node(const VariableNode& node);
+   
+               //------------------------------------------------------------------
+               // Data members
+               //------------------------------------------------------------------
+               int cardinality;
+   
+               // Stores observable data for the node per time slice. The rows of
+               // the data matrix contains a one-hot vector encode representing the
+               // value observed for a particular data point. The number of rows in
+               // the matrix is the number of data points observed.
+               std::unordered_map<int, Eigen::MatrixXd> data_per_time_slice;
+           };
+   
+       } // namespace model
+   } // namespace tomcat

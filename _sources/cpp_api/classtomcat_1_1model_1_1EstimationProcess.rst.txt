@@ -1,0 +1,26 @@
+.. _exhale_class_classtomcat_1_1model_1_1EstimationProcess:
+
+Class EstimationProcess
+=======================
+
+- Defined in :ref:`file_src_cpp_model_pipeline_estimation_EstimationProcess.h`
+
+
+Inheritance Relationships
+-------------------------
+
+Derived Types
+*************
+
+- ``public tomcat::model::OfflineEstimation`` (:ref:`exhale_class_classtomcat_1_1model_1_1OfflineEstimation`)
+- ``public tomcat::model::OnlineEstimation`` (:ref:`exhale_class_classtomcat_1_1model_1_1OnlineEstimation`)
+
+
+Class Documentation
+-------------------
+
+
+.. doxygenclass:: tomcat::model::EstimationProcess
+   :members:
+   :protected-members:
+   :undoc-members:

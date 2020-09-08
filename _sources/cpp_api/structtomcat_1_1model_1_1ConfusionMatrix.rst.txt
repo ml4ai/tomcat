@@ -1,0 +1,16 @@
+.. _exhale_struct_structtomcat_1_1model_1_1ConfusionMatrix:
+
+Struct ConfusionMatrix
+======================
+
+- Defined in :ref:`file_src_cpp_model_pipeline_evaluation_Measure.h`
+
+
+Struct Documentation
+--------------------
+
+
+.. doxygenstruct:: tomcat::model::ConfusionMatrix
+   :members:
+   :protected-members:
+   :undoc-members:

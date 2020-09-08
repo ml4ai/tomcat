@@ -1,0 +1,113 @@
+
+.. _program_listing_file_src_cpp_model_pipeline_evaluation_Measure.h:
+
+Program Listing for File Measure.h
+==================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_cpp_model_pipeline_evaluation_Measure.h>` (``src/cpp/model/pipeline/evaluation/Measure.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #pragma once
+   
+   #include <memory>
+   #include <string>
+   
+   #include <nlohmann/json.hpp>
+   
+   #include "../../pgm/EvidenceSet.h"
+   #include "../../utils/Definitions.h"
+   #include "../../utils/Tensor3.h"
+   #include "../estimation/Estimator.h"
+   
+   namespace tomcat {
+       namespace model {
+   
+           //------------------------------------------------------------------
+           // Structs
+           //------------------------------------------------------------------
+   
+           struct ConfusionMatrix {
+   
+               int true_positives = 0;
+   
+               int false_positives = 0;
+   
+               int true_negatives = 0;
+   
+               int false_negatives = 0;
+   
+               int get_total() const {
+                   return true_positives + true_negatives + false_positives +
+                          false_negatives;
+               }
+           };
+   
+           struct NodeEvaluation {
+   
+               std::string label;
+   
+               Eigen::VectorXd assignment;
+   
+               Eigen::MatrixXd evaluation;
+           };
+   
+           class Measure {
+             public:
+               //------------------------------------------------------------------
+               // Constructors & Destructor
+               //------------------------------------------------------------------
+   
+               Measure();
+   
+               Measure(std::shared_ptr<Estimator> estimator, double threshold = 0.5);
+   
+               virtual ~Measure();
+   
+               //------------------------------------------------------------------
+               // Copy & Move constructors/assignments
+               //------------------------------------------------------------------
+               Measure(const Measure&) = delete;
+   
+               Measure& operator=(const Measure&) = delete;
+   
+               Measure(Measure&&) = default;
+   
+               Measure& operator=(Measure&&) = default;
+   
+               //------------------------------------------------------------------
+               // Pure virtual functions
+               //------------------------------------------------------------------
+   
+               virtual std::vector<NodeEvaluation>
+               evaluate(const EvidenceSet& test_data) const = 0;
+   
+               virtual void get_info(nlohmann::json& json) const = 0;
+   
+             protected:
+               //------------------------------------------------------------------
+               // Member functions
+               //------------------------------------------------------------------
+   
+               void copy_measure(const Measure& measure);
+   
+               ConfusionMatrix
+               get_confusion_matrix(const NodeEstimates& estimates,
+                                    const EvidenceSet& test_data) const;
+   
+               //------------------------------------------------------------------
+               // Data members
+               //------------------------------------------------------------------
+               // The estimates computed and stored in the estimator will be used
+               // to evaluate the measure.
+               std::shared_ptr<Estimator> estimator;
+   
+               // Probability threshold for predicting or inferring the occurrence
+               // of an assignment as true
+               double threshold = 0.5;
+           };
+   
+       } // namespace model
+   } // namespace tomcat

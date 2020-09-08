@@ -1,0 +1,94 @@
+
+.. _program_listing_file_src_cpp_model_pipeline_estimation_EstimationProcess.h:
+
+Program Listing for File EstimationProcess.h
+============================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_cpp_model_pipeline_estimation_EstimationProcess.h>` (``src/cpp/model/pipeline/estimation/EstimationProcess.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #pragma once
+   
+   #include <memory>
+   
+   #include "../../utils/Definitions.h"
+   #include "Estimator.h"
+   
+   namespace tomcat {
+       namespace model {
+   
+           //------------------------------------------------------------------
+           // Forward declarations
+           //------------------------------------------------------------------
+   
+           //------------------------------------------------------------------
+           // Structs
+           //------------------------------------------------------------------
+   
+           class EstimationProcess {
+             public:
+               //------------------------------------------------------------------
+               // Types, Enums & Constants
+               //------------------------------------------------------------------
+   
+               //------------------------------------------------------------------
+               // Constructors & Destructor
+               //------------------------------------------------------------------
+   
+               EstimationProcess();
+   
+               virtual ~EstimationProcess();
+   
+               //------------------------------------------------------------------
+               // Copy & Move constructors/assignments
+               //------------------------------------------------------------------
+   
+               // Copy constructor and assignment should be deleted to avoid
+               // implicit slicing and loss of polymorphic behaviour in the
+               // subclasses. To deep copy, the clone method must be used.
+               EstimationProcess(const EstimationProcess&) = delete;
+   
+               EstimationProcess& operator=(const EstimationProcess&) = delete;
+   
+               EstimationProcess(EstimationProcess&&) = default;
+   
+               EstimationProcess& operator=(EstimationProcess&&) = default;
+   
+               //------------------------------------------------------------------
+               // Member functions
+               //------------------------------------------------------------------
+   
+               void set_training_data(const EvidenceSet& training_data);
+   
+               void add_estimator(std::shared_ptr<Estimator> estimator);
+   
+               //------------------------------------------------------------------
+               // Virtual functions
+               //------------------------------------------------------------------
+   
+               virtual void reset();
+   
+               //------------------------------------------------------------------
+               // Pure virtual functions
+               //------------------------------------------------------------------
+   
+               virtual void estimate(EvidenceSet test_data) = 0;
+   
+             protected:
+               //------------------------------------------------------------------
+               // Member functions
+               //------------------------------------------------------------------
+   
+               void copy_estimation(const EstimationProcess& estimation);
+   
+               //------------------------------------------------------------------
+               // Data members
+               //------------------------------------------------------------------
+               std::vector<std::shared_ptr<Estimator>> estimators;
+           };
+   
+       } // namespace model
+   } // namespace tomcat

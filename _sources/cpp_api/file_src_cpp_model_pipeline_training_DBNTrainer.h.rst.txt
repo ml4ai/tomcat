@@ -1,0 +1,69 @@
+
+.. _file_src_cpp_model_pipeline_training_DBNTrainer.h:
+
+File DBNTrainer.h
+=================
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp_model_pipeline_training>` (``src/cpp/model/pipeline/training``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. contents:: Contents
+   :local:
+   :backlinks: none
+
+Definition (``src/cpp/model/pipeline/training/DBNTrainer.h``)
+-------------------------------------------------------------
+
+
+.. toctree::
+   :maxdepth: 1
+
+   program_listing_file_src_cpp_model_pipeline_training_DBNTrainer.h.rst
+
+
+
+
+
+Includes
+--------
+
+
+- ``../../pgm/EvidenceSet.h``
+
+- ``../../utils/Definitions.h``
+
+- ``nlohmann/json.hpp``
+
+
+
+Included By
+-----------
+
+
+- :ref:`file_src_cpp_model_pipeline_Pipeline.h`
+
+- :ref:`file_src_cpp_model_pipeline_training_DBNLoader.h`
+
+- :ref:`file_src_cpp_model_pipeline_training_DBNSamplingTrainer.h`
+
+- :ref:`file_src_cpp_model_pipeline_training_DBNTrainer.cpp`
+
+
+
+
+Namespaces
+----------
+
+
+- :ref:`namespace_tomcat`
+
+- :ref:`namespace_tomcat__model`
+
+
+Classes
+-------
+
+
+- :ref:`exhale_class_classtomcat_1_1model_1_1DBNTrainer`
+

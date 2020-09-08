@@ -1,0 +1,633 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Program Listing for File DynamicBayesNet.cpp &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tomcat_openapi.html">Data models and message bus topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Program Listing for File DynamicBayesNet.cpp</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/cpp_api/program_listing_file_src_cpp_model_pgm_DynamicBayesNet.cpp.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="program-listing-for-file-dynamicbayesnet-cpp">
+<span id="program-listing-file-src-cpp-model-pgm-dynamicbayesnet-cpp"></span><h1>Program Listing for File DynamicBayesNet.cpp<a class="headerlink" href="#program-listing-for-file-dynamicbayesnet-cpp" title="Permalink to this headline">¶</a></h1>
+<p>↰ <a class="reference internal" href="file_src_cpp_model_pgm_DynamicBayesNet.cpp.html#file-src-cpp-model-pgm-dynamicbayesnet-cpp"><span class="std std-ref">Return to documentation for file</span></a> (<code class="docutils literal notranslate"><span class="pre">src/cpp/model/pgm/DynamicBayesNet.cpp</span></code>)</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;DynamicBayesNet.h&quot;</span><span class="cp"></span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;boost/filesystem.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;boost/graph/topological_sort.hpp&gt;</span><span class="cp"></span>
+
+<span class="cp">#include</span> <span class="cpf">&quot;../utils/FileHandler.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;ConstantNode.h&quot;</span><span class="cp"></span>
+
+<span class="k">namespace</span> <span class="n">tomcat</span> <span class="p">{</span>
+    <span class="k">namespace</span> <span class="n">model</span> <span class="p">{</span>
+
+        <span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+        <span class="c1">//----------------------------------------------------------------------</span>
+        <span class="c1">// Constructors &amp; Destructor</span>
+        <span class="c1">//----------------------------------------------------------------------</span>
+        <span class="n">DynamicBayesNet</span><span class="o">::</span><span class="n">DynamicBayesNet</span><span class="p">()</span> <span class="p">{}</span>
+
+        <span class="n">DynamicBayesNet</span><span class="o">::</span><span class="n">DynamicBayesNet</span><span class="p">(</span><span class="kt">int</span> <span class="n">num_node_templates</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">node_templates</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="n">num_node_templates</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="n">DynamicBayesNet</span><span class="o">::~</span><span class="n">DynamicBayesNet</span><span class="p">()</span> <span class="p">{}</span>
+
+        <span class="c1">//----------------------------------------------------------------------</span>
+        <span class="c1">// Member functions</span>
+        <span class="c1">//----------------------------------------------------------------------</span>
+        <span class="kt">void</span>
+        <span class="n">DynamicBayesNet</span><span class="o">::</span><span class="n">add_node_template</span><span class="p">(</span><span class="k">const</span> <span class="n">RandomVariableNode</span><span class="o">&amp;</span> <span class="n">node</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">RandomVariableNode</span> <span class="n">cloned_node</span> <span class="o">=</span>
+                <span class="o">*</span><span class="p">(</span><span class="k">dynamic_cast</span><span class="o">&lt;</span><span class="n">RandomVariableNode</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">clone</span><span class="p">().</span><span class="n">get</span><span class="p">()));</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">node_templates</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">cloned_node</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="kt">void</span> <span class="n">DynamicBayesNet</span><span class="o">::</span><span class="n">unroll</span><span class="p">(</span><span class="kt">int</span> <span class="n">time_steps</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">force</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">time_steps</span> <span class="o">!=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">time_steps</span> <span class="o">||</span> <span class="n">force</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="o">-&gt;</span><span class="n">reset</span><span class="p">();</span>
+                <span class="k">this</span><span class="o">-&gt;</span><span class="n">time_steps</span> <span class="o">=</span> <span class="n">time_steps</span><span class="p">;</span>
+                <span class="k">this</span><span class="o">-&gt;</span><span class="n">create_vertices_from_nodes</span><span class="p">();</span>
+                <span class="k">this</span><span class="o">-&gt;</span><span class="n">create_edges</span><span class="p">();</span>
+                <span class="k">this</span><span class="o">-&gt;</span><span class="n">update_cpd_templates_dependencies</span><span class="p">();</span>
+                <span class="k">this</span><span class="o">-&gt;</span><span class="n">set_nodes_cpd</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="kt">void</span> <span class="n">DynamicBayesNet</span><span class="o">::</span><span class="n">reset</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">time_steps</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">graph</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">name_to_id</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">parameter_nodes_map</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">label_to_nodes</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">nodes</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="kt">void</span> <span class="n">DynamicBayesNet</span><span class="o">::</span><span class="n">create_vertices_from_nodes</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="nl">node_template</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">node_templates</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">const</span> <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">NodeMetadata</span><span class="o">&gt;</span> <span class="n">metadata</span> <span class="o">=</span>
+                    <span class="n">node_template</span><span class="p">.</span><span class="n">get_metadata</span><span class="p">();</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">metadata</span><span class="o">-&gt;</span><span class="n">is_replicable</span><span class="p">())</span> <span class="p">{</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">t</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">-&gt;</span><span class="n">get_initial_time_step</span><span class="p">();</span>
+                         <span class="n">t</span> <span class="o">&lt;</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">time_steps</span><span class="p">;</span>
+                         <span class="n">t</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+
+                        <span class="n">VertexData</span> <span class="n">vertex_data</span> <span class="o">=</span>
+                            <span class="k">this</span><span class="o">-&gt;</span><span class="n">add_vertex</span><span class="p">(</span><span class="n">node_template</span><span class="p">,</span> <span class="n">t</span><span class="p">);</span>
+
+                        <span class="k">if</span> <span class="p">(</span><span class="n">vertex_data</span><span class="p">.</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">get_metadata</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">is_parameter</span><span class="p">())</span> <span class="p">{</span>
+                            <span class="n">string</span> <span class="n">node_name</span> <span class="o">=</span>
+                                <span class="n">vertex_data</span><span class="p">.</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">get_timed_name</span><span class="p">();</span>
+                            <span class="k">this</span><span class="o">-&gt;</span><span class="n">parameter_nodes_map</span><span class="p">[</span><span class="n">node_name</span><span class="p">]</span> <span class="o">=</span>
+                                <span class="n">vertex_data</span><span class="p">.</span><span class="n">node</span><span class="p">;</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="n">VertexData</span> <span class="n">vertex_data</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">add_vertex</span><span class="p">(</span>
+                        <span class="n">node_template</span><span class="p">,</span> <span class="n">metadata</span><span class="o">-&gt;</span><span class="n">get_initial_time_step</span><span class="p">());</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">vertex_data</span><span class="p">.</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">get_metadata</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">is_parameter</span><span class="p">())</span> <span class="p">{</span>
+                        <span class="k">this</span><span class="o">-&gt;</span><span class="n">parameter_nodes_map</span><span class="p">[</span><span class="n">vertex_data</span><span class="p">.</span><span class="n">node</span>
+                                                      <span class="o">-&gt;</span><span class="n">get_timed_name</span><span class="p">()]</span> <span class="o">=</span>
+                            <span class="n">vertex_data</span><span class="p">.</span><span class="n">node</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="n">VertexData</span>
+        <span class="n">DynamicBayesNet</span><span class="o">::</span><span class="n">add_vertex</span><span class="p">(</span><span class="k">const</span> <span class="n">RandomVariableNode</span><span class="o">&amp;</span> <span class="n">node_template</span><span class="p">,</span>
+                                    <span class="kt">int</span> <span class="n">time_step</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">vertex_id</span> <span class="o">=</span> <span class="n">boost</span><span class="o">::</span><span class="n">add_vertex</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">graph</span><span class="p">);</span>
+
+            <span class="n">VertexData</span> <span class="n">data</span><span class="p">;</span>
+            <span class="n">data</span><span class="p">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">make_shared</span><span class="o">&lt;</span><span class="n">RandomVariableNode</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node_template</span><span class="p">);</span>
+            <span class="n">data</span><span class="p">.</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">set_time_step</span><span class="p">(</span><span class="n">time_step</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">get_metadata</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">has_replicable_parameter_parent</span><span class="p">())</span> <span class="p">{</span>
+                <span class="c1">// If a node has parameter nodes that are replicable, its</span>
+                <span class="c1">// replicas do not share the same CPD&#39;s and therefore it cannot</span>
+                <span class="c1">// use the CPD pointer inherited from its template.</span>
+                <span class="n">data</span><span class="p">.</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">clone_cpd_templates</span><span class="p">();</span>
+            <span class="p">}</span>
+
+            <span class="c1">// Save mapping between the vertice id and it&#39;s name.</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">name_to_id</span><span class="p">[</span><span class="n">data</span><span class="p">.</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">get_timed_name</span><span class="p">()]</span> <span class="o">=</span> <span class="n">vertex_id</span><span class="p">;</span>
+
+            <span class="c1">// Include node as a property of the vertex in the graph.</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">graph</span><span class="p">[</span><span class="n">vertex_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">;</span>
+
+            <span class="c1">// Include node in the list of created nodes</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">label_to_nodes</span><span class="p">[</span><span class="n">data</span><span class="p">.</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">get_metadata</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">get_label</span><span class="p">()]</span>
+                <span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">node</span><span class="p">);</span>
+
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">nodes</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">node</span><span class="p">);</span>
+
+            <span class="k">return</span> <span class="n">data</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="kt">void</span> <span class="n">DynamicBayesNet</span><span class="o">::</span><span class="n">create_edges</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="nl">node_template</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">node_templates</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">const</span> <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">NodeMetadata</span><span class="o">&gt;</span> <span class="n">metadata</span> <span class="o">=</span>
+                    <span class="n">node_template</span><span class="p">.</span><span class="n">get_metadata</span><span class="p">();</span>
+
+                <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="nl">parent_link</span> <span class="p">:</span> <span class="n">metadata</span><span class="o">-&gt;</span><span class="n">get_parent_links</span><span class="p">())</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">metadata</span><span class="o">-&gt;</span><span class="n">is_replicable</span><span class="p">())</span> <span class="p">{</span>
+                        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">t</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">-&gt;</span><span class="n">get_initial_time_step</span><span class="p">();</span>
+                             <span class="n">t</span> <span class="o">&lt;</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">time_steps</span><span class="p">;</span>
+                             <span class="n">t</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+
+                            <span class="k">this</span><span class="o">-&gt;</span><span class="n">add_edge</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">parent_link</span><span class="p">.</span><span class="n">parent_node_metadata</span><span class="p">),</span>
+                                           <span class="o">*</span><span class="p">(</span><span class="n">node_template</span><span class="p">.</span><span class="n">get_metadata</span><span class="p">()),</span>
+                                           <span class="n">parent_link</span><span class="p">.</span><span class="n">time_crossing</span><span class="p">,</span>
+                                           <span class="n">t</span><span class="p">);</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                    <span class="k">else</span> <span class="p">{</span>
+                        <span class="k">this</span><span class="o">-&gt;</span><span class="n">add_edge</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">parent_link</span><span class="p">.</span><span class="n">parent_node_metadata</span><span class="p">),</span>
+                                       <span class="o">*</span><span class="p">(</span><span class="n">node_template</span><span class="p">.</span><span class="n">get_metadata</span><span class="p">()),</span>
+                                       <span class="n">parent_link</span><span class="p">.</span><span class="n">time_crossing</span><span class="p">,</span>
+                                       <span class="n">metadata</span><span class="o">-&gt;</span><span class="n">get_initial_time_step</span><span class="p">());</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="kt">void</span> <span class="n">DynamicBayesNet</span><span class="o">::</span><span class="n">add_edge</span><span class="p">(</span><span class="k">const</span> <span class="n">NodeMetadata</span><span class="o">&amp;</span> <span class="n">source_node_metadata</span><span class="p">,</span>
+                                       <span class="k">const</span> <span class="n">NodeMetadata</span><span class="o">&amp;</span> <span class="n">target_node_metadata</span><span class="p">,</span>
+                                       <span class="kt">bool</span> <span class="n">time_crossing</span><span class="p">,</span>
+                                       <span class="kt">int</span> <span class="n">target_time_step</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="kt">int</span> <span class="n">parent_time_step</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">source_node_metadata</span><span class="p">.</span><span class="n">is_replicable</span><span class="p">())</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">time_crossing</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="c1">// A replicable node (source) that shows up at time step t-1</span>
+                    <span class="c1">// and is linked to another node (target) that shpws up at</span>
+                    <span class="c1">// time step t.</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">source_node_metadata</span><span class="p">.</span><span class="n">get_initial_time_step</span><span class="p">()</span> <span class="o">&lt;=</span>
+                        <span class="n">target_time_step</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="n">parent_time_step</span> <span class="o">=</span> <span class="n">target_time_step</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="c1">// A replicable node (source) that shows up at time step t</span>
+                    <span class="c1">// and is linked to another node (target) that also shpws up</span>
+                    <span class="c1">// at time step t.</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">source_node_metadata</span><span class="p">.</span><span class="n">get_initial_time_step</span><span class="p">()</span> <span class="o">&lt;=</span>
+                        <span class="n">target_time_step</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="n">parent_time_step</span> <span class="o">=</span> <span class="n">target_time_step</span><span class="p">;</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">source_node_metadata</span><span class="p">.</span><span class="n">is_single_time_link</span><span class="p">())</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">time_crossing</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="c1">// A non-replicable node (source) that shows up once at</span>
+                        <span class="c1">// its predefined initial time step (t) and is linked</span>
+                        <span class="c1">// once to another node (target) that shpws up at time</span>
+                        <span class="c1">// step t.</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">source_node_metadata</span><span class="p">.</span><span class="n">get_initial_time_step</span><span class="p">()</span> <span class="o">==</span>
+                            <span class="n">target_time_step</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="n">parent_time_step</span> <span class="o">=</span> <span class="n">target_time_step</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                    <span class="k">else</span> <span class="p">{</span>
+                        <span class="c1">// A non-replicable node (source) that shows up once at</span>
+                        <span class="c1">// its predefined initial time step (t) and is linked</span>
+                        <span class="c1">// once to another node (target) that shpws up at time</span>
+                        <span class="c1">// step t+1.</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">source_node_metadata</span><span class="p">.</span><span class="n">get_initial_time_step</span><span class="p">()</span> <span class="o">==</span>
+                            <span class="n">target_time_step</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="n">parent_time_step</span> <span class="o">=</span> <span class="n">target_time_step</span><span class="p">;</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="c1">// A non-replicable node (source) that shows up once at</span>
+                    <span class="c1">// its predefined initial time step (t) and is linked</span>
+                    <span class="c1">// to replicas of another node (target) over all time steps</span>
+                    <span class="c1">// starting at t.</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">source_node_metadata</span><span class="p">.</span><span class="n">get_initial_time_step</span><span class="p">()</span> <span class="o">&lt;=</span>
+                        <span class="n">target_time_step</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="n">parent_time_step</span> <span class="o">=</span>
+                            <span class="n">source_node_metadata</span><span class="p">.</span><span class="n">get_initial_time_step</span><span class="p">();</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">parent_time_step</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kt">int</span> <span class="n">source_vertex_id</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">name_to_id</span><span class="p">.</span><span class="n">at</span><span class="p">(</span>
+                    <span class="n">source_node_metadata</span><span class="p">.</span><span class="n">get_timed_name</span><span class="p">(</span><span class="n">parent_time_step</span><span class="p">));</span>
+                <span class="kt">int</span> <span class="n">target_vertex_id</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">name_to_id</span><span class="p">.</span><span class="n">at</span><span class="p">(</span>
+                    <span class="n">target_node_metadata</span><span class="p">.</span><span class="n">get_timed_name</span><span class="p">(</span><span class="n">target_time_step</span><span class="p">));</span>
+                <span class="n">boost</span><span class="o">::</span><span class="n">add_edge</span><span class="p">(</span>
+                    <span class="n">source_vertex_id</span><span class="p">,</span> <span class="n">target_vertex_id</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">graph</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="kt">void</span> <span class="n">DynamicBayesNet</span><span class="o">::</span><span class="n">set_nodes_cpd</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">node</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">nodes</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">vector</span><span class="o">&lt;</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&gt;</span> <span class="n">parent_nodes</span> <span class="o">=</span>
+                    <span class="k">this</span><span class="o">-&gt;</span><span class="n">get_parent_nodes_of</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span>
+                <span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">parent_labels</span><span class="p">;</span>
+                <span class="n">parent_labels</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="n">parent_nodes</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+
+                <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="nl">parent_node</span> <span class="p">:</span> <span class="n">parent_nodes</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">string</span> <span class="n">label</span> <span class="o">=</span>
+                        <span class="n">parent_node</span><span class="o">-&gt;</span><span class="n">get_metadata</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">get_label</span><span class="p">();</span>
+                    <span class="n">parent_labels</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">label</span><span class="p">);</span>
+                <span class="p">}</span>
+
+                <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">RandomVariableNode</span><span class="o">&gt;</span> <span class="n">rv_node</span> <span class="o">=</span>
+                    <span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">RandomVariableNode</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+                <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">CPD</span><span class="o">&gt;</span> <span class="n">cpd</span> <span class="o">=</span> <span class="n">rv_node</span><span class="o">-&gt;</span><span class="n">get_cpd_for</span><span class="p">(</span><span class="n">parent_labels</span><span class="p">);</span>
+                <span class="n">rv_node</span><span class="o">-&gt;</span><span class="n">set_cpd</span><span class="p">(</span><span class="n">cpd</span><span class="p">);</span>
+                <span class="n">rv_node</span><span class="o">-&gt;</span><span class="n">reset_cpd_updated_status</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="kt">void</span> <span class="n">DynamicBayesNet</span><span class="o">::</span><span class="n">update_cpd_templates_dependencies</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="nl">node_template</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">node_templates</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">const</span> <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">NodeMetadata</span><span class="o">&gt;</span> <span class="n">metadata</span> <span class="o">=</span>
+                    <span class="n">node_template</span><span class="p">.</span><span class="n">get_metadata</span><span class="p">();</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">metadata</span><span class="o">-&gt;</span><span class="n">has_parameter_parents</span><span class="p">())</span> <span class="p">{</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">metadata</span><span class="o">-&gt;</span><span class="n">is_replicable</span><span class="p">()</span> <span class="o">&amp;&amp;</span>
+                        <span class="n">metadata</span><span class="o">-&gt;</span><span class="n">has_replicable_parameter_parent</span><span class="p">())</span> <span class="p">{</span>
+                        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">t</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">-&gt;</span><span class="n">get_initial_time_step</span><span class="p">();</span>
+                             <span class="n">t</span> <span class="o">&lt;</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">time_steps</span><span class="p">;</span>
+                             <span class="n">t</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+
+                            <span class="kt">int</span> <span class="n">vertex_id</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">name_to_id</span><span class="p">.</span><span class="n">at</span><span class="p">(</span>
+                                <span class="n">node_template</span><span class="p">.</span><span class="n">get_metadata</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">get_timed_name</span><span class="p">(</span>
+                                    <span class="n">t</span><span class="p">));</span>
+                            <span class="n">VertexData</span> <span class="n">vertex_data</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">graph</span><span class="p">[</span><span class="n">vertex_id</span><span class="p">];</span>
+                            <span class="n">vertex_data</span><span class="p">.</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">update_cpd_templates_dependencies</span><span class="p">(</span>
+                                <span class="k">this</span><span class="o">-&gt;</span><span class="n">parameter_nodes_map</span><span class="p">,</span> <span class="n">t</span><span class="p">);</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                    <span class="k">else</span> <span class="p">{</span>
+                        <span class="kt">int</span> <span class="n">t</span> <span class="o">=</span> <span class="n">node_template</span><span class="p">.</span><span class="n">get_metadata</span><span class="p">()</span>
+                                    <span class="o">-&gt;</span><span class="n">get_initial_time_step</span><span class="p">();</span>
+                        <span class="kt">int</span> <span class="n">vertex_id</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">name_to_id</span><span class="p">.</span><span class="n">at</span><span class="p">(</span>
+                            <span class="n">node_template</span><span class="p">.</span><span class="n">get_metadata</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">get_timed_name</span><span class="p">(</span><span class="n">t</span><span class="p">));</span>
+                        <span class="n">VertexData</span> <span class="n">vertex_data</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">graph</span><span class="p">[</span><span class="n">vertex_id</span><span class="p">];</span>
+                        <span class="n">vertex_data</span><span class="p">.</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">update_cpd_templates_dependencies</span><span class="p">(</span>
+                            <span class="k">this</span><span class="o">-&gt;</span><span class="n">parameter_nodes_map</span><span class="p">,</span> <span class="n">t</span><span class="p">);</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="kt">void</span> <span class="n">DynamicBayesNet</span><span class="o">::</span><span class="n">check</span><span class="p">()</span> <span class="p">{</span>
+            <span class="c1">// TODO - Implement the verifications needed to make sure the DBN is</span>
+            <span class="c1">//  valid and prepared to be unrolled.</span>
+            <span class="c1">//  Only allow conjugate priors</span>
+        <span class="p">}</span>
+
+        <span class="n">vector</span><span class="o">&lt;</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&gt;</span>
+        <span class="n">DynamicBayesNet</span><span class="o">::</span><span class="n">get_parameter_nodes</span><span class="p">()</span> <span class="p">{</span>
+            <span class="n">vector</span><span class="o">&lt;</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&gt;</span> <span class="n">parameter_nodes</span><span class="p">;</span>
+            <span class="n">parameter_nodes</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">parameter_nodes_map</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="nl">mapping</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">parameter_nodes_map</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">parameter_nodes</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">mapping</span><span class="p">.</span><span class="n">second</span><span class="p">);</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="n">parameter_nodes</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="n">vector</span><span class="o">&lt;</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&gt;</span> <span class="n">DynamicBayesNet</span><span class="o">::</span><span class="n">get_nodes_by_label</span><span class="p">(</span>
+            <span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">node_label</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">label_to_nodes</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">node_label</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="n">vector</span><span class="o">&lt;</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&gt;</span>
+        <span class="n">DynamicBayesNet</span><span class="o">::</span><span class="n">get_nodes_topological_order</span><span class="p">(</span>
+            <span class="kt">bool</span> <span class="n">from_roots_to_leaves</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+            <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">vertex_ids</span><span class="p">;</span>
+            <span class="n">boost</span><span class="o">::</span><span class="n">topological_sort</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">graph</span><span class="p">,</span>
+                                    <span class="n">back_inserter</span><span class="p">(</span><span class="n">vertex_ids</span><span class="p">));</span>
+
+            <span class="n">vector</span><span class="o">&lt;</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&gt;</span> <span class="n">nodes</span><span class="p">(</span><span class="n">vertex_ids</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+            <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">from_roots_to_leaves</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// The default behavior of the boost topological sort is to</span>
+                <span class="c1">// order from the leaves to the roots so if we want otherwise,</span>
+                <span class="c1">// the elements have to be inserted in reversed order in the</span>
+                <span class="c1">// final array.</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="n">vertex_ids</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="nl">vertex_id</span> <span class="p">:</span> <span class="n">vertex_ids</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">from_roots_to_leaves</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">nodes</span><span class="p">[</span><span class="n">i</span><span class="o">--</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">graph</span><span class="p">[</span><span class="n">vertex_id</span><span class="p">].</span><span class="n">node</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="n">nodes</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">graph</span><span class="p">[</span><span class="n">vertex_id</span><span class="p">].</span><span class="n">node</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="n">nodes</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="n">vector</span><span class="o">&lt;</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&gt;</span>
+        <span class="n">DynamicBayesNet</span><span class="o">::</span><span class="n">get_parent_nodes_of</span><span class="p">(</span><span class="k">const</span> <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&amp;</span> <span class="n">node</span><span class="p">,</span>
+                                             <span class="kt">bool</span> <span class="n">exclude_parameters</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+
+            <span class="kt">int</span> <span class="n">vertex_id</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">name_to_id</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">get_timed_name</span><span class="p">());</span>
+            <span class="n">vector</span><span class="o">&lt;</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&gt;</span> <span class="n">parent_nodes</span><span class="p">;</span>
+
+            <span class="n">Graph</span><span class="o">::</span><span class="n">in_edge_iterator</span> <span class="n">in_begin</span><span class="p">,</span> <span class="n">in_end</span><span class="p">;</span>
+            <span class="n">boost</span><span class="o">::</span><span class="n">tie</span><span class="p">(</span><span class="n">in_begin</span><span class="p">,</span> <span class="n">in_end</span><span class="p">)</span> <span class="o">=</span> <span class="n">in_edges</span><span class="p">(</span><span class="n">vertex_id</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">graph</span><span class="p">);</span>
+            <span class="k">while</span> <span class="p">(</span><span class="n">in_begin</span> <span class="o">!=</span> <span class="n">in_end</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kt">int</span> <span class="n">parent_vertex_id</span> <span class="o">=</span> <span class="n">source</span><span class="p">(</span><span class="o">*</span><span class="n">in_begin</span><span class="p">,</span> <span class="n">graph</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">graph</span><span class="p">[</span><span class="n">parent_vertex_id</span><span class="p">]</span>
+                         <span class="p">.</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">get_metadata</span><span class="p">()</span>
+                         <span class="o">-&gt;</span><span class="n">is_parameter</span><span class="p">()</span> <span class="o">||</span>
+                    <span class="o">!</span><span class="n">exclude_parameters</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">parent_nodes</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">graph</span><span class="p">[</span><span class="n">parent_vertex_id</span><span class="p">].</span><span class="n">node</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="n">in_begin</span><span class="o">++</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="n">parent_nodes</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="n">vector</span><span class="o">&lt;</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&gt;</span> <span class="n">DynamicBayesNet</span><span class="o">::</span><span class="n">get_child_nodes_of</span><span class="p">(</span>
+            <span class="k">const</span> <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&amp;</span> <span class="n">node</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+
+            <span class="kt">int</span> <span class="n">vertex_id</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">name_to_id</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">get_timed_name</span><span class="p">());</span>
+            <span class="n">vector</span><span class="o">&lt;</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&gt;</span> <span class="n">child_nodes</span><span class="p">;</span>
+
+            <span class="n">Graph</span><span class="o">::</span><span class="n">out_edge_iterator</span> <span class="n">out_begin</span><span class="p">,</span> <span class="n">out_end</span><span class="p">;</span>
+            <span class="n">boost</span><span class="o">::</span><span class="n">tie</span><span class="p">(</span><span class="n">out_begin</span><span class="p">,</span> <span class="n">out_end</span><span class="p">)</span> <span class="o">=</span> <span class="n">out_edges</span><span class="p">(</span><span class="n">vertex_id</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">graph</span><span class="p">);</span>
+            <span class="k">while</span> <span class="p">(</span><span class="n">out_begin</span> <span class="o">!=</span> <span class="n">out_end</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kt">int</span> <span class="n">child_vertex_id</span> <span class="o">=</span> <span class="n">target</span><span class="p">(</span><span class="o">*</span><span class="n">out_begin</span><span class="p">,</span> <span class="n">graph</span><span class="p">);</span>
+                <span class="n">child_nodes</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">graph</span><span class="p">[</span><span class="n">child_vertex_id</span><span class="p">].</span><span class="n">node</span><span class="p">);</span>
+                <span class="n">out_begin</span><span class="o">++</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="n">child_nodes</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="kt">void</span> <span class="n">DynamicBayesNet</span><span class="o">::</span><span class="n">save_to_folder</span><span class="p">(</span>
+            <span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">output_folder</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+
+            <span class="n">boost</span><span class="o">::</span><span class="n">filesystem</span><span class="o">::</span><span class="n">create_directories</span><span class="p">(</span><span class="n">output_folder</span><span class="p">);</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="nl">mapping</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">parameter_nodes_map</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">string</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">mapping</span><span class="p">.</span><span class="n">first</span> <span class="o">+</span> <span class="s">&quot;.txt&quot;</span><span class="p">;</span>
+                <span class="n">string</span> <span class="n">filepath</span> <span class="o">=</span> <span class="n">get_filepath</span><span class="p">(</span><span class="n">output_folder</span><span class="p">,</span> <span class="n">filename</span><span class="p">);</span>
+                <span class="n">save_matrix_to_file</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">mapping</span><span class="p">.</span><span class="n">second</span><span class="o">-&gt;</span><span class="n">get_assignment</span><span class="p">());</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="kt">void</span>
+        <span class="n">DynamicBayesNet</span><span class="o">::</span><span class="n">load_from_folder</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">input_folder</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="nl">file</span> <span class="p">:</span>
+                 <span class="n">boost</span><span class="o">::</span><span class="n">filesystem</span><span class="o">::</span><span class="n">directory_iterator</span><span class="p">(</span><span class="n">input_folder</span><span class="p">))</span> <span class="p">{</span>
+
+                <span class="n">string</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">file</span><span class="p">.</span><span class="n">path</span><span class="p">().</span><span class="n">filename</span><span class="p">().</span><span class="n">string</span><span class="p">();</span>
+                <span class="n">string</span> <span class="n">parameter_timed_name</span> <span class="o">=</span> <span class="n">remove_extension</span><span class="p">(</span><span class="n">filename</span><span class="p">);</span>
+                <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">assignment</span> <span class="o">=</span>
+                    <span class="n">read_matrix_from_file</span><span class="p">(</span><span class="n">file</span><span class="p">.</span><span class="n">path</span><span class="p">().</span><span class="n">string</span><span class="p">());</span>
+
+                <span class="c1">// Set loaded vector as assignment of the corresponding</span>
+                <span class="c1">// parameter node.</span>
+                <span class="n">RandomVariableNode</span><span class="o">*</span> <span class="n">parameter_node</span> <span class="o">=</span>
+                    <span class="k">dynamic_cast</span><span class="o">&lt;</span><span class="n">RandomVariableNode</span><span class="o">*&gt;</span><span class="p">(</span>
+                        <span class="k">this</span><span class="o">-&gt;</span><span class="n">parameter_nodes_map</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">parameter_timed_name</span><span class="p">)</span>
+                            <span class="p">.</span><span class="n">get</span><span class="p">());</span>
+                <span class="n">parameter_node</span><span class="o">-&gt;</span><span class="n">set_assignment</span><span class="p">(</span><span class="n">assignment</span><span class="p">);</span>
+                <span class="n">parameter_node</span><span class="o">-&gt;</span><span class="n">freeze</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="n">vector</span><span class="o">&lt;</span><span class="n">DynamicBayesNet</span><span class="o">::</span><span class="n">Edge</span><span class="o">&gt;</span> <span class="n">DynamicBayesNet</span><span class="o">::</span><span class="n">get_edges</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
+            <span class="n">Graph</span><span class="o">::</span><span class="n">edge_iterator</span> <span class="n">begin</span><span class="p">,</span> <span class="n">end</span><span class="p">;</span>
+            <span class="n">boost</span><span class="o">::</span><span class="n">tie</span><span class="p">(</span><span class="n">begin</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span> <span class="o">=</span> <span class="n">boost</span><span class="o">::</span><span class="n">edges</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">graph</span><span class="p">);</span>
+            <span class="n">vector</span><span class="o">&lt;</span><span class="n">Edge</span><span class="o">&gt;</span> <span class="n">edges</span><span class="p">;</span>
+            <span class="k">while</span> <span class="p">(</span><span class="n">begin</span> <span class="o">!=</span> <span class="n">end</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kt">int</span> <span class="n">source_vertex_id</span> <span class="o">=</span> <span class="n">boost</span><span class="o">::</span><span class="n">source</span><span class="p">(</span><span class="o">*</span><span class="n">begin</span><span class="p">,</span> <span class="n">graph</span><span class="p">);</span>
+                <span class="kt">int</span> <span class="n">target_vertex_id</span> <span class="o">=</span> <span class="n">boost</span><span class="o">::</span><span class="n">target</span><span class="p">(</span><span class="o">*</span><span class="n">begin</span><span class="p">,</span> <span class="n">graph</span><span class="p">);</span>
+
+                <span class="n">Edge</span> <span class="n">edge</span> <span class="o">=</span> <span class="n">make_pair</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">graph</span><span class="p">[</span><span class="n">source_vertex_id</span><span class="p">].</span><span class="n">node</span><span class="p">,</span>
+                    <span class="k">this</span><span class="o">-&gt;</span><span class="n">graph</span><span class="p">[</span><span class="n">target_vertex_id</span><span class="p">].</span><span class="n">node</span><span class="p">);</span>
+                <span class="n">edges</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">move</span><span class="p">(</span><span class="n">edge</span><span class="p">));</span>
+                <span class="n">begin</span><span class="o">++</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">return</span> <span class="n">edges</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="c1">//----------------------------------------------------------------------</span>
+        <span class="c1">// Getters &amp; Setters</span>
+        <span class="c1">//----------------------------------------------------------------------</span>
+
+        <span class="kt">int</span> <span class="n">DynamicBayesNet</span><span class="o">::</span><span class="n">get_time_steps</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">time_steps</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="p">}</span> <span class="c1">// namespace model</span>
+<span class="p">}</span> <span class="c1">// namespace tomcat</span>
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

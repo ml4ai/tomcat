@@ -1,0 +1,63 @@
+
+.. _file_src_cpp_model_pipeline_evaluation_Estimates.h:
+
+File Estimates.h
+================
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp_model_pipeline_evaluation>` (``src/cpp/model/pipeline/evaluation``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. contents:: Contents
+   :local:
+   :backlinks: none
+
+Definition (``src/cpp/model/pipeline/evaluation/Estimates.h``)
+--------------------------------------------------------------
+
+
+.. toctree::
+   :maxdepth: 1
+
+   program_listing_file_src_cpp_model_pipeline_evaluation_Estimates.h.rst
+
+
+
+
+
+Includes
+--------
+
+
+- ``../../utils/Definitions.h``
+
+- ``Measure.h`` (:ref:`file_src_cpp_model_pipeline_evaluation_Measure.h`)
+
+
+
+Included By
+-----------
+
+
+- :ref:`file_src_cpp_model_main.cpp`
+
+- :ref:`file_src_cpp_model_pipeline_evaluation_Estimates.cpp`
+
+
+
+
+Namespaces
+----------
+
+
+- :ref:`namespace_tomcat`
+
+- :ref:`namespace_tomcat__model`
+
+
+Classes
+-------
+
+
+- :ref:`exhale_class_classtomcat_1_1model_1_1Estimates`
+

@@ -1,0 +1,308 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Class DBNTrainer &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Class Dirichlet" href="classtomcat_1_1model_1_1Dirichlet.html" />
+    <link rel="prev" title="Class DBNSaver" href="classtomcat_1_1model_1_1DBNSaver.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tomcat_openapi.html">Data models and message bus topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../developer/index.html">Developer documentation</a> &raquo;</li>
+        
+          <li><a href="index.html">C++ API</a> &raquo;</li>
+        
+      <li>Class DBNTrainer</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/cpp_api/classtomcat_1_1model_1_1DBNTrainer.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="class-dbntrainer">
+<span id="exhale-class-classtomcat-1-1model-1-1dbntrainer"></span><h1>Class DBNTrainer<a class="headerlink" href="#class-dbntrainer" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Defined in <a class="reference internal" href="file_src_cpp_model_pipeline_training_DBNTrainer.h.html#file-src-cpp-model-pipeline-training-dbntrainer-h"><span class="std std-ref">File DBNTrainer.h</span></a></p></li>
+</ul>
+<div class="section" id="inheritance-relationships">
+<h2>Inheritance Relationships<a class="headerlink" href="#inheritance-relationships" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="derived-types">
+<h3>Derived Types<a class="headerlink" href="#derived-types" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">public</span> <span class="pre">tomcat::model::DBNLoader</span></code> (<a class="reference internal" href="classtomcat_1_1model_1_1DBNLoader.html#exhale-class-classtomcat-1-1model-1-1dbnloader"><span class="std std-ref">Class DBNLoader</span></a>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">public</span> <span class="pre">tomcat::model::DBNSamplingTrainer</span></code> (<a class="reference internal" href="classtomcat_1_1model_1_1DBNSamplingTrainer.html#exhale-class-classtomcat-1-1model-1-1dbnsamplingtrainer"><span class="std std-ref">Class DBNSamplingTrainer</span></a>)</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="class-documentation">
+<h2>Class Documentation<a class="headerlink" href="#class-documentation" title="Permalink to this headline">¶</a></h2>
+<dl class="cpp class">
+<dt id="_CPPv4N6tomcat5model10DBNTrainerE">
+<span id="_CPPv3N6tomcat5model10DBNTrainerE"></span><span id="_CPPv2N6tomcat5model10DBNTrainerE"></span><span id="tomcat::model::DBNTrainer"></span><span class="target" id="classtomcat_1_1model_1_1DBNTrainer"></span><em class="property">class </em><code class="sig-prename descclassname">tomcat::model<code class="sig-prename descclassname">::</code></code><code class="sig-name descname">DBNTrainer</code><a class="headerlink" href="#_CPPv4N6tomcat5model10DBNTrainerE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Class responsible for estimating a model’s parameters. </p>
+<p>Subclassed by <a class="reference internal" href="classtomcat_1_1model_1_1DBNLoader.html#classtomcat_1_1model_1_1DBNLoader"><span class="std std-ref">tomcat::model::DBNLoader</span></a>, <a class="reference internal" href="classtomcat_1_1model_1_1DBNSamplingTrainer.html#classtomcat_1_1model_1_1DBNSamplingTrainer"><span class="std std-ref">tomcat::model::DBNSamplingTrainer</span></a></p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Functions</p>
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model10DBNTrainer10DBNTrainerEv">
+<span id="_CPPv3N6tomcat5model10DBNTrainer10DBNTrainerEv"></span><span id="_CPPv2N6tomcat5model10DBNTrainer10DBNTrainerEv"></span><span id="tomcat::model::DBNTrainer::DBNTrainer"></span><span class="target" id="classtomcat_1_1model_1_1DBNTrainer_1ad87981e6008c4bd0a21c5ed6957ed35f"></span><code class="sig-name descname">DBNTrainer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model10DBNTrainer10DBNTrainerEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Creates an abstract trainer. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model10DBNTrainerD0Ev">
+<span id="_CPPv3N6tomcat5model10DBNTrainerD0Ev"></span><span id="_CPPv2N6tomcat5model10DBNTrainerD0Ev"></span><span id="tomcat::model::DBNTrainer::~DBNTrainer"></span><span class="target" id="classtomcat_1_1model_1_1DBNTrainer_1a20b90942efcb0f7f8121a45f22d0f8c3"></span><code class="sig-name descname">~DBNTrainer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model10DBNTrainerD0Ev" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model10DBNTrainer10DBNTrainerERK10DBNTrainer">
+<span id="_CPPv3N6tomcat5model10DBNTrainer10DBNTrainerERK10DBNTrainer"></span><span id="_CPPv2N6tomcat5model10DBNTrainer10DBNTrainerERK10DBNTrainer"></span><span id="tomcat::model::DBNTrainer::DBNTrainer__DBNTrainerCR"></span><span class="target" id="classtomcat_1_1model_1_1DBNTrainer_1a17514688991ae8eed1182f1e1b486702"></span><code class="sig-name descname">DBNTrainer</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv4N6tomcat5model10DBNTrainer10DBNTrainerERK10DBNTrainer" title="tomcat::model::DBNTrainer::DBNTrainer">DBNTrainer</a>&amp;<span class="sig-paren">)</span> = delete<a class="headerlink" href="#_CPPv4N6tomcat5model10DBNTrainer10DBNTrainerERK10DBNTrainer" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model10DBNTraineraSERK10DBNTrainer">
+<span id="_CPPv3N6tomcat5model10DBNTraineraSERK10DBNTrainer"></span><span id="_CPPv2N6tomcat5model10DBNTraineraSERK10DBNTrainer"></span><span id="tomcat::model::DBNTrainer::assign-operator__DBNTrainerCR"></span><span class="target" id="classtomcat_1_1model_1_1DBNTrainer_1a8b08ae1a2863da38a2937f4cc5a57f37"></span><a class="reference internal" href="#_CPPv4N6tomcat5model10DBNTrainerE" title="tomcat::model::DBNTrainer">DBNTrainer</a> &amp;<code class="sig-name descname">operator=</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv4N6tomcat5model10DBNTrainerE" title="tomcat::model::DBNTrainer">DBNTrainer</a>&amp;<span class="sig-paren">)</span> = delete<a class="headerlink" href="#_CPPv4N6tomcat5model10DBNTraineraSERK10DBNTrainer" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model10DBNTrainer10DBNTrainerERR10DBNTrainer">
+<span id="_CPPv3N6tomcat5model10DBNTrainer10DBNTrainerERR10DBNTrainer"></span><span id="_CPPv2N6tomcat5model10DBNTrainer10DBNTrainerERR10DBNTrainer"></span><span id="tomcat::model::DBNTrainer::DBNTrainer__DBNTrainerRR"></span><span class="target" id="classtomcat_1_1model_1_1DBNTrainer_1a15215c24bd11717127f1d6f0a377c7f7"></span><code class="sig-name descname">DBNTrainer</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model10DBNTrainer10DBNTrainerERR10DBNTrainer" title="tomcat::model::DBNTrainer::DBNTrainer">DBNTrainer</a>&amp;&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model10DBNTrainer10DBNTrainerERR10DBNTrainer" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model10DBNTraineraSERR10DBNTrainer">
+<span id="_CPPv3N6tomcat5model10DBNTraineraSERR10DBNTrainer"></span><span id="_CPPv2N6tomcat5model10DBNTraineraSERR10DBNTrainer"></span><span id="tomcat::model::DBNTrainer::assign-operator__DBNTrainerRR"></span><span class="target" id="classtomcat_1_1model_1_1DBNTrainer_1ae1454120388f92adf8a5fd1963bd2073"></span><a class="reference internal" href="#_CPPv4N6tomcat5model10DBNTrainerE" title="tomcat::model::DBNTrainer">DBNTrainer</a> &amp;<code class="sig-name descname">operator=</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model10DBNTrainerE" title="tomcat::model::DBNTrainer">DBNTrainer</a>&amp;&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model10DBNTraineraSERR10DBNTrainer" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model10DBNTrainer7prepareEv">
+<span id="_CPPv3N6tomcat5model10DBNTrainer7prepareEv"></span><span id="_CPPv2N6tomcat5model10DBNTrainer7prepareEv"></span><span id="tomcat::model::DBNTrainer::prepare"></span><span class="target" id="classtomcat_1_1model_1_1DBNTrainer_1a8af5af7938c14e6e5aadeb00b959dc69"></span>void <code class="sig-name descname">prepare</code><span class="sig-paren">(</span><span class="sig-paren">)</span> = 0<a class="headerlink" href="#_CPPv4N6tomcat5model10DBNTrainer7prepareEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Prepares the trainer to a series of calls to the function fit by performing necessary cleanups. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model10DBNTrainer3fitERK11EvidenceSet">
+<span id="_CPPv3N6tomcat5model10DBNTrainer3fitERK11EvidenceSet"></span><span id="_CPPv2N6tomcat5model10DBNTrainer3fitERK11EvidenceSet"></span><span id="tomcat::model::DBNTrainer::fit__EvidenceSetCR"></span><span class="target" id="classtomcat_1_1model_1_1DBNTrainer_1a0c548d74f4007af8edfd2e67bf61592a"></span>void <code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="classtomcat_1_1model_1_1EvidenceSet.html#_CPPv4N6tomcat5model11EvidenceSetE" title="tomcat::model::EvidenceSet">EvidenceSet</a> &amp;<em>training_data</em><span class="sig-paren">)</span> = 0<a class="headerlink" href="#_CPPv4N6tomcat5model10DBNTrainer3fitERK11EvidenceSet" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p><a class="reference internal" href="classtomcat_1_1model_1_1Estimates.html#classtomcat_1_1model_1_1Estimates"><span class="std std-ref">Estimates</span></a> the model’s parameters from training data. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model10DBNTrainer8get_infoERN8nlohmann4jsonE">
+<span id="_CPPv3NK6tomcat5model10DBNTrainer8get_infoERN8nlohmann4jsonE"></span><span id="_CPPv2NK6tomcat5model10DBNTrainer8get_infoERN8nlohmann4jsonE"></span><span id="tomcat::model::DBNTrainer::get_info__nlohmann::jsonRC"></span><span class="target" id="classtomcat_1_1model_1_1DBNTrainer_1aeea9f68f5d201b2f93947f8b1387a5d9"></span>void <code class="sig-name descname">get_info</code><span class="sig-paren">(</span>nlohmann::json &amp;<em>json</em><span class="sig-paren">)</span> <em class="property">const</em> = 0<a class="headerlink" href="#_CPPv4NK6tomcat5model10DBNTrainer8get_infoERN8nlohmann4jsonE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Writes information about the splitter in a json object.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">json</span></code>: json object </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="classtomcat_1_1model_1_1Dirichlet.html" class="btn btn-neutral float-right" title="Class Dirichlet" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="classtomcat_1_1model_1_1DBNSaver.html" class="btn btn-neutral float-left" title="Class DBNSaver" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

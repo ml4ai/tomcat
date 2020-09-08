@@ -1,0 +1,13 @@
+.. _exhale_function_NodeMetadata_8cpp_1a2142fd381c465dc2e2ca2a6747e3bf7a:
+
+Function tomcat::model::operator<<(ostream&, const NodeMetadata&)
+=================================================================
+
+- Defined in :ref:`file_src_cpp_model_pgm_NodeMetadata.cpp`
+
+
+Function Documentation
+----------------------
+
+
+.. doxygenfunction:: tomcat::model::operator<<(ostream&, const NodeMetadata&)

@@ -1,0 +1,13 @@
+.. _exhale_define_Definitions_8h_1a5482c4cb33a4ee0af18a78e9ccb70075:
+
+Define LOG_WARNING
+==================
+
+- Defined in :ref:`file_src_cpp_model_utils_Definitions.h`
+
+
+Define Documentation
+--------------------
+
+
+.. doxygendefine:: LOG_WARNING

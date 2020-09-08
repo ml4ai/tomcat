@@ -1,0 +1,330 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Class Pipeline &mdash; ToMCAT 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Class RandomVariableNode" href="classtomcat_1_1model_1_1RandomVariableNode.html" />
+    <link rel="prev" title="Class OnlineEstimation" href="classtomcat_1_1model_1_1OnlineEstimation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> ToMCAT
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tomcat_openapi.html">Data models and message bus topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ToMCAT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../developer/index.html">Developer documentation</a> &raquo;</li>
+        
+          <li><a href="index.html">C++ API</a> &raquo;</li>
+        
+      <li>Class Pipeline</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/cpp_api/classtomcat_1_1model_1_1Pipeline.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="class-pipeline">
+<span id="exhale-class-classtomcat-1-1model-1-1pipeline"></span><h1>Class Pipeline<a class="headerlink" href="#class-pipeline" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>Defined in <a class="reference internal" href="file_src_cpp_model_pipeline_Pipeline.h.html#file-src-cpp-model-pipeline-pipeline-h"><span class="std std-ref">File Pipeline.h</span></a></p></li>
+</ul>
+<div class="section" id="class-documentation">
+<h2>Class Documentation<a class="headerlink" href="#class-documentation" title="Permalink to this headline">¶</a></h2>
+<dl class="cpp class">
+<dt id="_CPPv4N6tomcat5model8PipelineE">
+<span id="_CPPv3N6tomcat5model8PipelineE"></span><span id="_CPPv2N6tomcat5model8PipelineE"></span><span id="tomcat::model::Pipeline"></span><span class="target" id="classtomcat_1_1model_1_1Pipeline"></span><em class="property">class </em><code class="sig-prename descclassname">tomcat::model<code class="sig-prename descclassname">::</code></code><code class="sig-name descname">Pipeline</code><a class="headerlink" href="#_CPPv4N6tomcat5model8PipelineE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>This class represents a pipeline where a model can be trained and tested according to some training procedure and evaluation metrics. A pipeline can also be used to publish estimates from a pre-trained model on the fly as data comes in real time. This can be achieved by using an online estimation process in the pipeline. This feature is one of the cores of the ToMCAT’s communication system as other modules can keep track of ToMCAT’s calculations on the fly. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Functions</p>
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model8Pipeline8PipelineERNSt7ostreamE">
+<span id="_CPPv3N6tomcat5model8Pipeline8PipelineERNSt7ostreamE"></span><span id="_CPPv2N6tomcat5model8Pipeline8PipelineERNSt7ostreamE"></span><span id="tomcat::model::Pipeline::Pipeline__osR"></span><span class="target" id="classtomcat_1_1model_1_1Pipeline_1a4b139b6fe645d623ad25392f168f0632"></span><code class="sig-name descname">Pipeline</code><span class="sig-paren">(</span>std::ostream &amp;<em>output_stream</em> = std::cout<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model8Pipeline8PipelineERNSt7ostreamE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Creates a pipeline with a randomly generated id; </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model8Pipeline8PipelineERKNSt6stringERNSt7ostreamE">
+<span id="_CPPv3N6tomcat5model8Pipeline8PipelineERKNSt6stringERNSt7ostreamE"></span><span id="_CPPv2N6tomcat5model8Pipeline8PipelineERKNSt6stringERNSt7ostreamE"></span><span id="tomcat::model::Pipeline::Pipeline__ssCR.osR"></span><span class="target" id="classtomcat_1_1model_1_1Pipeline_1ae14a6e55196968bdd4de3bfed29a3861"></span><code class="sig-name descname">Pipeline</code><span class="sig-paren">(</span><em class="property">const</em> std::string &amp;<em>id</em>, std::ostream &amp;<em>output_stream</em> = std::cout<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model8Pipeline8PipelineERKNSt6stringERNSt7ostreamE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Creates a pipeline with an associated id;</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">id</span></code>: pipeline’s id for tracking. </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model8PipelineD0Ev">
+<span id="_CPPv3N6tomcat5model8PipelineD0Ev"></span><span id="_CPPv2N6tomcat5model8PipelineD0Ev"></span><span id="tomcat::model::Pipeline::~Pipeline"></span><span class="target" id="classtomcat_1_1model_1_1Pipeline_1af787902af40c8d966446c88dfe7bd47f"></span><code class="sig-name descname">~Pipeline</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model8PipelineD0Ev" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model8Pipeline8PipelineERK8Pipeline">
+<span id="_CPPv3N6tomcat5model8Pipeline8PipelineERK8Pipeline"></span><span id="_CPPv2N6tomcat5model8Pipeline8PipelineERK8Pipeline"></span><span id="tomcat::model::Pipeline::Pipeline__PipelineCR"></span><span class="target" id="classtomcat_1_1model_1_1Pipeline_1af9e42e2a1d44586cfccdc7bc2c3868eb"></span><code class="sig-name descname">Pipeline</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv4N6tomcat5model8Pipeline8PipelineERK8Pipeline" title="tomcat::model::Pipeline::Pipeline">Pipeline</a>&amp;<span class="sig-paren">)</span> = delete<a class="headerlink" href="#_CPPv4N6tomcat5model8Pipeline8PipelineERK8Pipeline" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model8PipelineaSERK8Pipeline">
+<span id="_CPPv3N6tomcat5model8PipelineaSERK8Pipeline"></span><span id="_CPPv2N6tomcat5model8PipelineaSERK8Pipeline"></span><span id="tomcat::model::Pipeline::assign-operator__PipelineCR"></span><span class="target" id="classtomcat_1_1model_1_1Pipeline_1ad7b4d67f8907f1c1f982a1c3cac00f2c"></span><a class="reference internal" href="#_CPPv4N6tomcat5model8PipelineE" title="tomcat::model::Pipeline">Pipeline</a> &amp;<code class="sig-name descname">operator=</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv4N6tomcat5model8PipelineE" title="tomcat::model::Pipeline">Pipeline</a>&amp;<span class="sig-paren">)</span> = delete<a class="headerlink" href="#_CPPv4N6tomcat5model8PipelineaSERK8Pipeline" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model8Pipeline8PipelineERR8Pipeline">
+<span id="_CPPv3N6tomcat5model8Pipeline8PipelineERR8Pipeline"></span><span id="_CPPv2N6tomcat5model8Pipeline8PipelineERR8Pipeline"></span><span id="tomcat::model::Pipeline::Pipeline__PipelineRR"></span><span class="target" id="classtomcat_1_1model_1_1Pipeline_1a74031689ce493cfeb834aa9923e3354e"></span><code class="sig-name descname">Pipeline</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model8Pipeline8PipelineERR8Pipeline" title="tomcat::model::Pipeline::Pipeline">Pipeline</a>&amp;&amp;<span class="sig-paren">)</span> = delete<a class="headerlink" href="#_CPPv4N6tomcat5model8Pipeline8PipelineERR8Pipeline" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model8PipelineaSERR8Pipeline">
+<span id="_CPPv3N6tomcat5model8PipelineaSERR8Pipeline"></span><span id="_CPPv2N6tomcat5model8PipelineaSERR8Pipeline"></span><span id="tomcat::model::Pipeline::assign-operator__PipelineRR"></span><span class="target" id="classtomcat_1_1model_1_1Pipeline_1adc371e6ef910016a42be852a9c2cee7d"></span><a class="reference internal" href="#_CPPv4N6tomcat5model8PipelineE" title="tomcat::model::Pipeline">Pipeline</a> &amp;<code class="sig-name descname">operator=</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model8PipelineE" title="tomcat::model::Pipeline">Pipeline</a>&amp;&amp;<span class="sig-paren">)</span> = delete<a class="headerlink" href="#_CPPv4N6tomcat5model8PipelineaSERR8Pipeline" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model8Pipeline7executeEv">
+<span id="_CPPv3N6tomcat5model8Pipeline7executeEv"></span><span id="_CPPv2N6tomcat5model8Pipeline7executeEv"></span><span id="tomcat::model::Pipeline::execute"></span><span class="target" id="classtomcat_1_1model_1_1Pipeline_1a83fa414f2009ae172072e453db3836a7"></span>void <code class="sig-name descname">execute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model8Pipeline7executeEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Executes the pipeline. This operation splits the data set, trains a model, saves it (optional), estimate values over the trained model given unseen data, aggregate results (optional) and writes the outcomes of the execution to an output stream. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model8Pipeline15display_resultsERKN5boost10posix_time5ptimeERKN5boost10posix_time5ptimeE">
+<span id="_CPPv3N6tomcat5model8Pipeline15display_resultsERKN5boost10posix_time5ptimeERKN5boost10posix_time5ptimeE"></span><span id="_CPPv2N6tomcat5model8Pipeline15display_resultsERKN5boost10posix_time5ptimeERKN5boost10posix_time5ptimeE"></span><span id="tomcat::model::Pipeline::display_results__boost::posix_time::ptimeCR.boost::posix_time::ptimeCR"></span><span class="target" id="classtomcat_1_1model_1_1Pipeline_1ab2dea8b1b8115b081e99b1a2ec04278b"></span>void <code class="sig-name descname">display_results</code><span class="sig-paren">(</span><em class="property">const</em> boost::posix_time::ptime &amp;<em>execution_start_time</em>, <em class="property">const</em> boost::posix_time::ptime &amp;<em>execution_end_time</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model8Pipeline15display_resultsERKN5boost10posix_time5ptimeERKN5boost10posix_time5ptimeE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Writes information about the execution to an output stream.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">execution_start_time</span></code>: time when the pipeline execution started </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">execution_end_time</span></code>: time when the pipeline execution ended </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model8Pipeline17set_data_splitterERKNSt10shared_ptrI5KFoldEE">
+<span id="_CPPv3N6tomcat5model8Pipeline17set_data_splitterERKNSt10shared_ptrI5KFoldEE"></span><span id="_CPPv2N6tomcat5model8Pipeline17set_data_splitterERKNSt10shared_ptrI5KFoldEE"></span><span id="tomcat::model::Pipeline::set_data_splitter__std::shared_ptr:KFold:CR"></span><span class="target" id="classtomcat_1_1model_1_1Pipeline_1a91b737c3acc8759dbb2b53000cf688f5"></span>void <code class="sig-name descname">set_data_splitter</code><span class="sig-paren">(</span><em class="property">const</em> std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1KFold.html#_CPPv4N6tomcat5model5KFoldE" title="tomcat::model::KFold">KFold</a>&gt; &amp;<em>data_splitter</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model8Pipeline17set_data_splitterERKNSt10shared_ptrI5KFoldEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model8Pipeline18set_model_trainnerERKNSt10shared_ptrI10DBNTrainerEE">
+<span id="_CPPv3N6tomcat5model8Pipeline18set_model_trainnerERKNSt10shared_ptrI10DBNTrainerEE"></span><span id="_CPPv2N6tomcat5model8Pipeline18set_model_trainnerERKNSt10shared_ptrI10DBNTrainerEE"></span><span id="tomcat::model::Pipeline::set_model_trainner__std::shared_ptr:DBNTrainer:CR"></span><span class="target" id="classtomcat_1_1model_1_1Pipeline_1a1172ace92b60af194cd4b40bebac81d3"></span>void <code class="sig-name descname">set_model_trainner</code><span class="sig-paren">(</span><em class="property">const</em> std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1DBNTrainer.html#_CPPv4N6tomcat5model10DBNTrainerE" title="tomcat::model::DBNTrainer">DBNTrainer</a>&gt; &amp;<em>model_trainner</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model8Pipeline18set_model_trainnerERKNSt10shared_ptrI10DBNTrainerEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model8Pipeline15set_model_saverERKNSt10shared_ptrI8DBNSaverEE">
+<span id="_CPPv3N6tomcat5model8Pipeline15set_model_saverERKNSt10shared_ptrI8DBNSaverEE"></span><span id="_CPPv2N6tomcat5model8Pipeline15set_model_saverERKNSt10shared_ptrI8DBNSaverEE"></span><span id="tomcat::model::Pipeline::set_model_saver__std::shared_ptr:DBNSaver:CR"></span><span class="target" id="classtomcat_1_1model_1_1Pipeline_1a1348341c703694483bb5bc1cf3f2fe93"></span>void <code class="sig-name descname">set_model_saver</code><span class="sig-paren">(</span><em class="property">const</em> std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1DBNSaver.html#_CPPv4N6tomcat5model8DBNSaverE" title="tomcat::model::DBNSaver">DBNSaver</a>&gt; &amp;<em>model_saver</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model8Pipeline15set_model_saverERKNSt10shared_ptrI8DBNSaverEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model8Pipeline22set_estimation_processERKNSt10shared_ptrI17EstimationProcessEE">
+<span id="_CPPv3N6tomcat5model8Pipeline22set_estimation_processERKNSt10shared_ptrI17EstimationProcessEE"></span><span id="_CPPv2N6tomcat5model8Pipeline22set_estimation_processERKNSt10shared_ptrI17EstimationProcessEE"></span><span id="tomcat::model::Pipeline::set_estimation_process__std::shared_ptr:EstimationProcess:CR"></span><span class="target" id="classtomcat_1_1model_1_1Pipeline_1a3a42e1cf458b48317a0f2302c3f97d30"></span>void <code class="sig-name descname">set_estimation_process</code><span class="sig-paren">(</span><em class="property">const</em> std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1EstimationProcess.html#_CPPv4N6tomcat5model17EstimationProcessE" title="tomcat::model::EstimationProcess">EstimationProcess</a>&gt; &amp;<em>estimation_process</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model8Pipeline22set_estimation_processERKNSt10shared_ptrI17EstimationProcessEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model8Pipeline14set_aggregatorERKNSt10shared_ptrI20EvaluationAggregatorEE">
+<span id="_CPPv3N6tomcat5model8Pipeline14set_aggregatorERKNSt10shared_ptrI20EvaluationAggregatorEE"></span><span id="_CPPv2N6tomcat5model8Pipeline14set_aggregatorERKNSt10shared_ptrI20EvaluationAggregatorEE"></span><span id="tomcat::model::Pipeline::set_aggregator__std::shared_ptr:EvaluationAggregator:CR"></span><span class="target" id="classtomcat_1_1model_1_1Pipeline_1a5e2e7a31199288682c9a6ac13466588c"></span>void <code class="sig-name descname">set_aggregator</code><span class="sig-paren">(</span><em class="property">const</em> std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1EvaluationAggregator.html#_CPPv4N6tomcat5model20EvaluationAggregatorE" title="tomcat::model::EvaluationAggregator">EvaluationAggregator</a>&gt; &amp;<em>aggregator</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model8Pipeline14set_aggregatorERKNSt10shared_ptrI20EvaluationAggregatorEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="classtomcat_1_1model_1_1RandomVariableNode.html" class="btn btn-neutral float-right" title="Class RandomVariableNode" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="classtomcat_1_1model_1_1OnlineEstimation.html" class="btn btn-neutral float-left" title="Class OnlineEstimation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, University of Arizona
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

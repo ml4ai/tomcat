@@ -1,0 +1,141 @@
+
+.. _program_listing_file_src_cpp_model_utils_Tensor3.h:
+
+Program Listing for File Tensor3.h
+==================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_cpp_model_utils_Tensor3.h>` (``src/cpp/model/utils/Tensor3.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #pragma once
+   
+   #include <array>
+   #include <iostream>
+   #include <vector>
+   
+   #include <eigen3/Eigen/Dense>
+   
+   #include "../utils/Definitions.h"
+   
+   namespace tomcat {
+       namespace model {
+   
+           //------------------------------------------------------------------
+           // Forward declarations
+           //------------------------------------------------------------------
+   
+           //------------------------------------------------------------------
+           // Structs
+           //------------------------------------------------------------------
+   
+           class Tensor3 {
+             public:
+               //------------------------------------------------------------------
+               // Types, Enums & Constants
+               //------------------------------------------------------------------
+               static const int ALL = -1;
+   
+               //------------------------------------------------------------------
+               // Constructors & Destructor
+               //------------------------------------------------------------------
+   
+               Tensor3();
+   
+               Tensor3(const Eigen::MatrixXd& matrix);
+   
+               Tensor3(const std::vector<Eigen::MatrixXd> matrices);
+   
+               Tensor3(double* buffer, int d1, int d2, int d3);
+   
+               ~Tensor3();
+   
+               //------------------------------------------------------------------
+               // Copy & Move constructors/assignments
+               //------------------------------------------------------------------
+               Tensor3(const Tensor3&) = default;
+   
+               Tensor3& operator=(const Tensor3&) = default;
+   
+               Tensor3(Tensor3&&) = default;
+   
+               Tensor3& operator=(Tensor3&&) = default;
+   
+               //------------------------------------------------------------------
+               // Operator overload
+               //------------------------------------------------------------------
+               friend std::ostream& operator<<(std::ostream& os,
+                                               const Tensor3& tensor);
+   
+               Eigen::MatrixXd operator()(int i, int axis);
+   
+               Eigen::VectorXd at(int j, int k) const;
+   
+               double& operator()(int i, int j, int k);
+   
+               Tensor3 operator+(const Tensor3& tensor) const;
+   
+               Tensor3 operator-(const Tensor3& tensor) const;
+   
+               Tensor3 operator/(double value) const;
+   
+               Eigen::MatrixXd operator==(const Eigen::VectorXd& value) const;
+   
+               //------------------------------------------------------------------
+               // Static functions
+               //------------------------------------------------------------------
+               static Tensor3 constant(int d1, int d2, int d3, double value);
+   
+               static std::string matrix_to_string(const Eigen::MatrixXd& matrix);
+   
+               static Tensor3 sum(std::vector<Tensor3> tensors);
+   
+               static Tensor3 mean(std::vector<Tensor3> tensors);
+   
+               static Tensor3 std(std::vector<Tensor3> tensors);
+   
+               //------------------------------------------------------------------
+               // Member functions
+               //------------------------------------------------------------------
+   
+               void clear();
+   
+               bool is_empty() const;
+   
+               std::string to_string() const;
+   
+               int get_size() const;
+   
+               std::array<int, 3> get_shape() const;
+   
+               double at(int i, int j, int k) const;
+   
+               Tensor3 slice(int initial_index, int final_index, int axis) const;
+   
+               Tensor3 slice(std::vector<int> indices, int axis) const;
+   
+               double mean() const;
+   
+               Tensor3 mean(int axis) const;
+   
+               Tensor3 reshape(int d1, int d2, int d3) const;
+   
+               Tensor3 repeat(int num_repetitions, int axis) const;
+   
+               Tensor3 pow(int power) const;
+   
+               Tensor3 sqrt() const;
+   
+               Tensor3 coeff_wise_and(int axis) const;
+   
+             private:
+               //------------------------------------------------------------------
+               // Data members
+               //------------------------------------------------------------------
+               std::vector<Eigen::MatrixXd> tensor;
+           };
+   
+       } // namespace model
+   } // namespace tomcat
