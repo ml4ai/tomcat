@@ -9,7 +9,7 @@ export TOMCAT
 
 echo "Installing ToMCAT dependencies."
 
-COMMON_MACOS_DEPS="cmake boost doxygen ffmpeg gradle mosquitto nlohmann-json openssl yaml-cpp dlib openblas"
+COMMON_MACOS_DEPS="cmake boost doxygen ffmpeg gradle mosquitto nlohmann-json openssl gsl yaml-cpp dlib openblas"
 __install_dependencies_using_macports() {
     echo "'port' executable detected, assuming that MacPorts"
     echo "(https://www.macports.org) is installed and is the package manager."
@@ -20,7 +20,7 @@ __install_dependencies_using_macports() {
 
     if ! sudo port selfupdate; then exit 1; fi
 
-    local macports_deps="libfmt opencv4"
+    local macports_deps="libfmt opencv4 openblas eigen3"
     for dep in $COMMON_MACOS_DEPS $macports_deps; do
         if ! sudo port -N install $dep; then
             echo "Unable to install $dep using MacPorts. Exiting."
@@ -42,7 +42,7 @@ __install_dependencies_using_homebrew() {
 
     if ! brew update --verbose; then exit 1; fi
 
-    local homebrew_deps="fmt opencv"
+    local homebrew_deps="fmt opencv eigen"
     for dep in $COMMON_MACOS_DEPS $homebrew_deps; do
         brew install $dep
         # We do not require exit codes for Homebrew installs to be 0 since
@@ -89,7 +89,7 @@ __install_dependencies_using_apt() {
 
     if ! sudo apt-get update; then exit 1; fi
 
-    sudo apt-get install -y --allow-downgrades\
+    sudo apt-get install -y \
         cmake \
         gcc-9 \
         libfmt-dev \
@@ -107,7 +107,9 @@ __install_dependencies_using_apt() {
         libmosquitto-dev \
         libboost-all-dev \
         nlohmann-json3-dev \
-        libopencv-dev
+        libopencv-dev \
+        libeigen3-dev \
+        libgsl-dev
     if [[ $? -ne 0 ]]; then exit 1; fi
 
     # The versions of dlib available using apt are not compatible with

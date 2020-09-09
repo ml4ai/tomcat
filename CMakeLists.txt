@@ -18,16 +18,14 @@ set(CMAKE_CXX_FLAGS
 
 cmake_policy(SET CMP0074 NEW)
 
-
 add_subdirectory(external/malmo)
 
-option(BUILD_FACESENSOR "Enable building of the facesensor executable" ON)
+option(BUILD_FACESENSOR "Enable building of the faceSensor executable" ON)
 if(BUILD_FACESENSOR)
     add_subdirectory(external/OpenFace)
 endif()
 
 add_subdirectory(src/cpp)
-
 target_include_directories(runMission PRIVATE external/malmo/Malmo/src)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/tools/launch_minecraft

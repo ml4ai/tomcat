@@ -13,7 +13,7 @@ mkdir -p "$DATA_FOLDER/experiments/asist/formatted/singleplayer"
 mkdir -p "$DATA_FOLDER/experiments/asist/formatted/sparky"
 mkdir -p "$DATA_FOLDER/experiments/asist/formatted/falcon"
 
-# Creating folders to store data in a format compatible with the model implementation
+# Creating folders to store data in a format compatible with the models implementation
 mkdir -p "$DATA_FOLDER/evidence/asist/singleplayer"
 mkdir -p "$DATA_FOLDER/evidence/asist/sparky"
 mkdir -p "$DATA_FOLDER/evidence/asist/falcon"

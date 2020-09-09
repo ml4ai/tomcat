@@ -117,7 +117,7 @@ FALCON_AREA_ORDER = [
 
 class EvidenceSet:
     """
-    This class stores evidence data for the observable nodes used in the model
+    This class stores evidence data for the observable nodes used in the models
     """
 
     def __init__(self, lt_evidence, rm_evidence, tg_evidence, ty_evidence):
@@ -126,12 +126,18 @@ class EvidenceSet:
         self.tg_evidence = tg_evidence
         self.ty_evidence = ty_evidence
 
-        if len(self.lt_evidence.shape) == 2:
-            self.number_of_data_points, self.time_slices = lt_evidence.shape
+        if len(self.rm_evidence.shape) == 2:
+            self.number_of_data_points, self.time_slices = rm_evidence.shape
         else:
             self.number_of_data_points = 1
-            self.time_slices = len(lt_evidence)
+            self.time_slices = len(rm_evidence)
 
+    def cut(self, num_samples_to_keep):
+        self.lt_evidence = self.lt_evidence[0:num_samples_to_keep, :]
+        self.rm_evidence = self.rm_evidence[0:num_samples_to_keep, :]
+        self.tg_evidence = self.tg_evidence[0:num_samples_to_keep, :]
+        self.ty_evidence = self.ty_evidence[0:num_samples_to_keep, :]
+        self.number_of_data_points = num_samples_to_keep
 
 def convert_experiments_data_to_evidence_set(
     experiments_folder,
@@ -139,10 +145,11 @@ def convert_experiments_data_to_evidence_set(
     mission_map_id,
     time_gap,
     time_slices,
+    binary_area,
     show_progress=True,
 ):
     """
-    This function converts the raw data from the testbed to a format that can be handled by the ToMCAT model.
+    This function converts the raw data from the testbed to a format that can be handled by the ToMCAT models.
     Each row is composed by observations from a complete mission and each column represents the time step when
     that observation took place.
     """
@@ -165,21 +172,30 @@ def convert_experiments_data_to_evidence_set(
             time_gap,
             time_slices,
         )
+
+        if binary_area:
+            if mission_map_id == MissionMap.SPARKY:
+                rm[rm < 8] = 0
+                rm[rm >= 8] = 1
+            elif mission_map_id == MissionMap.FALCON:
+                rm[rm < 10] = 0
+                rm[rm >= 10] = 1
+
         lt_evidence_set.append(lt)
         rm_evidence_set.append(rm)
         tg_evidence_set.append(tg)
         ty_evidence_set.append(ty)
 
-    save_evidence_set(
+    save_individual_evidence_set(
         evidence_set_folder, LT_EVIDENCE_FILENAME, lt_evidence_set
     )
-    save_evidence_set(
+    save_individual_evidence_set(
         evidence_set_folder, RM_EVIDENCE_FILENAME, rm_evidence_set
     )
-    save_evidence_set(
+    save_individual_evidence_set(
         evidence_set_folder, TG_EVIDENCE_FILENAME, tg_evidence_set
     )
-    save_evidence_set(
+    save_individual_evidence_set(
         evidence_set_folder, TY_EVIDENCE_FILENAME, ty_evidence_set
     )
 
@@ -341,6 +357,8 @@ def get_number_of_areas(mission_map_id):
         return len(SPARKY_AREA_ORDER)
     elif mission_map_id == MissionMap.FALCON:
         return len(FALCON_AREA_ORDER)
+    elif mission_map_id == MissionMap.SHARED:
+        return 6
 
     return 0
 
@@ -386,7 +404,7 @@ def get_area_by_player_position(areas, x, y):
             return i, area["id"]
 
 
-def save_evidence_set(destiny_folder, filename, evidence_set):
+def save_individual_evidence_set(destiny_folder, filename, evidence_set):
     """
     This function saves an evidence set to a file
     """
@@ -396,6 +414,22 @@ def save_evidence_set(destiny_folder, filename, evidence_set):
         fmt="%i",
     )
 
+def save_evidence_set(destiny_folder, evidence_set):
+    if not os.path.isdir(destiny_folder):
+        os.mkdir(destiny_folder)
+
+    save_individual_evidence_set(
+        destiny_folder, LT_EVIDENCE_FILENAME, evidence_set.lt_evidence
+    )
+    save_individual_evidence_set(
+        destiny_folder, RM_EVIDENCE_FILENAME, evidence_set.rm_evidence
+    )
+    save_individual_evidence_set(
+        destiny_folder, TG_EVIDENCE_FILENAME, evidence_set.tg_evidence
+    )
+    save_individual_evidence_set(
+        destiny_folder, TY_EVIDENCE_FILENAME, evidence_set.ty_evidence
+    )
 
 def get_evidence_file_absolute_path(destiny_folder, filename):
     """
@@ -404,14 +438,16 @@ def get_evidence_file_absolute_path(destiny_folder, filename):
     return os.path.join(destiny_folder, filename + ".csv")
 
 
-def load_evidence_set(evidence_folder):
+def load_evidence_set(evidence_folder, no_light=False):
     """
     Loads evidence from files to matrices
     """
-    lt_evidence_set = np.loadtxt(
-        get_evidence_file_absolute_path(evidence_folder, LT_EVIDENCE_FILENAME),
-        dtype=np.int,
-    )
+    lt_evidence_set = np.array([])
+    if not no_light:
+        lt_evidence_set = np.loadtxt(
+            get_evidence_file_absolute_path(evidence_folder, LT_EVIDENCE_FILENAME),
+            dtype=np.int,
+        )
     rm_evidence_set = np.loadtxt(
         get_evidence_file_absolute_path(evidence_folder, RM_EVIDENCE_FILENAME),
         dtype=np.int,
@@ -430,19 +466,22 @@ def load_evidence_set(evidence_folder):
     )
 
 
+
 if __name__ == "__main__":
     TIME_GAP = 1
     TIME_SLICES = 600
-    # convert_experiments_data_to_evidence_set('../data/experiments/asist/formatted/singleplayer',
-    #                                          '../data/evidence/asist/singleplayer', MissionMap.SINGLEPLAYER, TIME_GAP,
+    # convert_experiments_data_to_evidence_set('../data/experiments/asist/formatted/sparky',
+    #                                          '../data/evidence/asist/sparky', MissionMap.SINGLEPLAYER, TIME_GAP,
     #                                          TIME_SLICES)
-    convert_experiments_data_to_evidence_set(
-        "../data/experiments/asist/formatted/falcon",
-        "../data/evidence/asist/falcon",
-        MissionMap.FALCON,
-        TIME_GAP,
-        TIME_SLICES,
-    )
+    #
+    # convert_experiments_data_to_evidence_set('../data/experiments/asist/formatted/falcon',
+    #                                          '../data/evidence/asist/falcon', MissionMap.FALCON, TIME_GAP,
+    #                                          TIME_SLICES)
+
+    convert_experiments_data_to_evidence_set('../data/experiments/asist/formatted/sparky',
+                                             '../data/evidence/asist/sparky/binary_area', MissionMap.SPARKY, TIME_GAP,
+                                             TIME_SLICES, True)
+
     convert_experiments_data_to_evidence_set('../data/experiments/asist/formatted/falcon',
-                                             '../data/evidence/asist/falcon', MissionMap.FALCON, TIME_GAP,
-                                             TIME_SLICES)
+                                             '../data/evidence/asist/falcon/binary_area', MissionMap.FALCON, TIME_GAP,
+                                             TIME_SLICES, True)
