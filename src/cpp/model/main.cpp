@@ -3,21 +3,21 @@
 #include <fstream>
 #include <sstream>
 
-#include "pgm/EvidenceSet.h"
-#include "pipeline/DBNSaver.h"
-#include "pipeline/KFold.h"
-#include "pipeline/Pipeline.h"
-#include "pipeline/estimation/OfflineEstimation.h"
-#include "pipeline/estimation/SumProductEstimator.h"
-#include "pipeline/estimation/TrainingFrequencyEstimator.h"
-#include "pipeline/evaluation/Accuracy.h"
-#include "pipeline/evaluation/Estimates.h"
-#include "pipeline/evaluation/EvaluationAggregator.h"
-#include "pipeline/evaluation/F1Score.h"
-#include "pipeline/training/DBNLoader.h"
-#include "pipeline/training/DBNSamplingTrainer.h"
-#include "sampling/GibbsSampler.h"
-#include "utils/Definitions.h"
+#include "model/pgm/EvidenceSet.h"
+#include "model/pipeline/DBNSaver.h"
+#include "model/pipeline/KFold.h"
+#include "model/pipeline/Pipeline.h"
+#include "model/pipeline/estimation/OfflineEstimation.h"
+#include "model/pipeline/estimation/SumProductEstimator.h"
+#include "model/pipeline/estimation/TrainingFrequencyEstimator.h"
+#include "model/pipeline/evaluation/Accuracy.h"
+#include "model/pipeline/evaluation/Estimates.h"
+#include "model/pipeline/evaluation/EvaluationAggregator.h"
+#include "model/pipeline/evaluation/F1Score.h"
+#include "model/pipeline/training/DBNLoader.h"
+#include "model/pipeline/training/DBNSamplingTrainer.h"
+#include "model/sampling/GibbsSampler.h"
+#include "model/utils/Definitions.h"
 
 using namespace tomcat::model;
 using namespace std;
