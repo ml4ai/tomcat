@@ -13,6 +13,9 @@ add_subdirectory(getSpecVersion)
 # Procedural generation module.
 add_subdirectory(pro_gen)
 
+# Probabilistic model
+add_subdirectory(model)
+
 # Optionally, build examples
 option(BUILD_EXAMPLES "Enable building of the example programs" OFF)
 if(BUILD_EXAMPLES)
