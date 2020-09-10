@@ -1,9 +1,14 @@
 package edu.arizona.tomcat.Utils;
 
+import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 import com.microsoft.Malmo.Schemas.EntityTypes;
 import edu.arizona.tomcat.World.TomcatEntity;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -56,67 +61,17 @@ public class WorldReader {
      */
     private void initMap(String filename) {
 
-        // Read file
-        Scanner file = null;
-
+        BufferedReader reader = null;
         try {
-            file = new Scanner((new File(filename)));
-        }
-        catch (FileNotFoundException e) {
+            reader = new BufferedReader(new FileReader(filename));
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
-        // Use file
-        while (file.hasNextLine()) {
-            String line = file.nextLine();
-            String[] entry = line.split("\t");
+        Gson gson = new Gson();
+        ArrayList<LinkedTreeMap<String, String>> blueprint = gson.fromJson(reader, ArrayList.class);
 
-            int x = Integer.parseInt(entry[0]);
-            int y = Integer.parseInt(entry[1]);
-            int z = Integer.parseInt(entry[2]);
-            BlockPos pos = new BlockPos(x, y, z);
-            String objectType = entry[3];
-
-            if (objectType.equals("block")) {
-                // Do stuff with block entries
-
-                String material = entry[4];
-                if (this.blockMap.containsKey(pos)) {
-                    this.blockMap.remove(pos);
-                } // When duplicate coordinates are encountered we remove and
-                // re-add so iteration order is correct
-
-                if (material.equals("door")) {
-                    // Doors are special adn we need to place a bottom and top
-                    // half
-                    IBlockState doorBottom = this.getBlockState("door_bottom");
-
-                    BlockPos topPos =
-                            new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
-                    IBlockState doorTop = this.getBlockState("door_top");
-
-                    this.blockMap.remove(
-                            topPos); // For a door we need to remove and re add the
-                    // block above the current as well
-                    this.blockMap.put(pos, doorBottom);
-                    this.blockMap.put(topPos, doorTop);
-                }
-                else {
-                    IBlockState state = getBlockState(material);
-                    this.blockMap.put(pos, state);
-                }
-            }
-            else if (objectType.equals("entity")) {
-                // Do stuff with entity entries
-
-                String type = entry[4];
-                TomcatEntity entity = this.getTomcatEntity(x, y, z, type);
-                this.entityList.add(entity);
-            }
-            else {
-                ;
-            }
-        }
+        System.out.println("Here");
     }
 
     /**
