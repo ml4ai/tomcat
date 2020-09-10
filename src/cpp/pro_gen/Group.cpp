@@ -98,18 +98,22 @@ void Group::toJSON(json& json_base) {
     }
 }
 
-string Group::toTSV() {
-    string retval = "";
-
-    for (auto aabb : this->aabbList) {
-        retval += aabb->toTSV();
+void Group::toAltJSON(json& json_base) {
+    for (auto& aabbPtr : this->aabbList) {
+        (*aabbPtr).toAltJSON(json_base);
     }
 
-    for (auto block : (this->getBlockList())) {
-        retval += (*block).toTSV() + "\n";
+    for (auto& blockPtr : this->getBlockList()) {
+        (*blockPtr).toJSON(json_base);
     }
 
-    return retval;
+    for (auto& entityPtr : this->getEntityList()) {
+        (*entityPtr).toJSON(json_base);
+    }
+
+    for (auto& objectPtr : this->getObjectList()) {
+        (*objectPtr).toAltJSON(json_base);
+    }
 }
 
 Group::~Group() {}

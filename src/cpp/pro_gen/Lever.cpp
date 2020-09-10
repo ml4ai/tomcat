@@ -7,7 +7,7 @@ Lever::Lever(Pos& pos, bool powered, string facing) : Block("lever", pos) {
     this->facing = facing;
 }
 
-json Lever::toJSON() {
+void Lever::toJSON(json& json_base) {
     json block_json;
 
     string isPowered = "";
@@ -26,7 +26,7 @@ json Lever::toJSON() {
                             {"material", this->getMaterial()},
                             {"powered", isPowered},
                             {"facing", this->facing}};
-    return block_json;
+    json_base["locations"].push_back(block_json);
 }
 
 Lever::~Lever() {}

@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
         po::value<string>(&jsonPath)->default_value("procedural.json"),
         "Specify where to save the JSON file with filename and extension.")(
         "tsv_path",
-        po::value<string>(&tsvPath)->default_value("procedural.tsv"),
+        po::value<string>(&tsvPath)->default_value("proceduralAltJSON.json"),
         "Specify where to save the TSV file with filename and extension.")(
         "seed",
         po::value<int>(&seed)->default_value(0),

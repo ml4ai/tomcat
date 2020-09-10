@@ -234,9 +234,8 @@ void AABB::toJSON(json& json_base) {
     }
 }
 
-string AABB::toTSV() {
+void AABB::toAltJSON(json& json_base) {
 
-    string retval = "";
     for (int x = (this->topLeft).getX(); x <= (this->bottomRight).getX(); x++) {
         for (int y = (this->topLeft).getY(); y <= (this->bottomRight).getY();
              y++) {
@@ -264,23 +263,25 @@ string AABB::toTSV() {
                 }
 
                 if (addCurrent) {
-                    retval += to_string(x) + "\t" + to_string(y) + "\t" +
-                              to_string(z) + "\t" + "block" + "\t" +
-                              (this->material) + "\n";
+                    Pos thisPos(x,y,z);
+                    Block thisBlock(this->material, thisPos);
+                    thisBlock.toJSON(json_base);
                 }
             }
         }
     }
 
-    for (auto& blockPtr : (this->blockList)) {
-        retval += (*blockPtr).toTSV() + "\n";
+    for (auto& blockPtr : this->getBlockList()) {
+        (*blockPtr).toJSON(json_base);
     }
 
-    for (auto& entityPtr : (this->entityList)) {
-        retval += (*entityPtr).toTSV() + "\n";
+    for (auto& entityPtr : this->getEntityList()) {
+        (*entityPtr).toJSON(json_base);
     }
 
-    return retval;
+    for (auto& objectPtr : this->getObjectList()) {
+        (*objectPtr).toAltJSON(json_base);
+    }
 }
 
 void AABB::generateAllDoorsInAABB() {

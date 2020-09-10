@@ -34,22 +34,33 @@ void World::addEntity(Entity& entity) { this->entityList.push_back(&entity); }
 
 void World::addObject(Object& object) { this->objectList.push_back(&object); }
 
-string World::toTSV() {
-    string retval = "";
+string World::toAltJSON() {
+    json world_json;
 
-    for (auto aabbPtr : (this->aabbList)) {
-        retval += (*aabbPtr).toTSV();
+    vector<json> location_list;
+    vector<json> entity_list;
+
+    world_json["locations"] = location_list;
+    world_json["entities"] = entity_list;
+
+    // Add AABBs to the JSON list
+    for (auto& aabbPtr : this->aabbList) {
+        (*aabbPtr).toAltJSON(world_json);
     }
 
-    for (auto& blockPtr : (this->blockList)) {
-        retval += (*blockPtr).toTSV() + "\n";
+    for (auto& blockPtr : this->getBlockList()) {
+        (*blockPtr).toJSON(world_json);
     }
 
-    for (auto& entityPtr : (this->entityList)) {
-        retval += (*entityPtr).toTSV() + "\n";
+    for (auto& entityPtr : this->getEntityList()) {
+        (*entityPtr).toJSON(world_json);
     }
 
-    return retval;
+    for (auto& objectPtr : this->getObjectList()) {
+        (*objectPtr).toAltJSON(world_json);
+    }
+
+    return world_json.dump(4);
 }
 
 string World::toJSON() {
@@ -83,7 +94,7 @@ string World::toJSON() {
     return world_json.dump(4);
 }
 
-void World::writeToFile(string jsonPath, string tsvPath) {
+void World::writeToFile(string jsonPath, string altJSONPath) {
     cout << "Writing to file..." << endl;
 
     // Write JSON
@@ -92,9 +103,9 @@ void World::writeToFile(string jsonPath, string tsvPath) {
     outputJSON.close();
 
     // Write TSV
-    ofstream outputTSV(tsvPath, ios::out);
-    outputTSV << this->toTSV();
-    outputTSV.close();
+    ofstream outputAltJSON(altJSONPath, ios::out);
+    outputAltJSON << this->toAltJSON();
+    outputAltJSON.close();
 }
 
 World::~World() {}

@@ -44,7 +44,7 @@ class Group : public AABB {
      *
      * @return std::string The TSV representation as a string
      */
-    std::string virtual toTSV();
+    void virtual toAltJSON(nlohmann::json& json_base);
 
     /**
      * @brief Construct a new Group object.

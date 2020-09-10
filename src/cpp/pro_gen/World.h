@@ -72,7 +72,7 @@ class World {
      *
      * @return string The TSV representation
      */
-    std::string virtual toTSV();
+    std::string virtual toAltJSON();
 
     /**
      * @brief Converts the world into a JSON representation with
@@ -88,7 +88,7 @@ class World {
      * @param jsonPath Path to store json
      * @param tsvPath Path to store tsv
      */
-    void writeToFile(std::string jsonPath, std::string tsvPath);
+    void writeToFile(std::string jsonPath, std::string altJSONPath);
 
     /**
      * @brief Construct a new World object

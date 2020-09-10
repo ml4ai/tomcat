@@ -7,7 +7,7 @@ class Lever : public Block{
         std::string facing;
 
     public:
-        nlohmann::json virtual toJSON();
+        void virtual toJSON(nlohmann::json& json_base);
         Lever(Pos& pos, bool powered = false, std::string facing = "null");
         ~Lever();
 
