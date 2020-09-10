@@ -90,7 +90,7 @@ void execute_experiment_1a(string data_dir, string output_dir, string output_jso
     output_file.open(output_json);
     Pipeline pipeline("experiment_1a", output_file);
     pipeline.set_data_splitter(data_splitter);
-    pipeline.set_model_trainner(trainer);
+    pipeline.set_model_trainer(trainer);
     pipeline.set_model_saver(saver);
     pipeline.set_estimation_process(offline_estimation);
     pipeline.set_aggregator(aggregator);
@@ -164,7 +164,7 @@ void execute_experiment_1b() {
         "../../data/evaluations/ta3/experiment_1b/evaluations.json");
     Pipeline pipeline("experiment_1b", output_file);
     pipeline.set_data_splitter(data_splitter);
-    pipeline.set_model_trainner(trainer);
+    pipeline.set_model_trainer(trainer);
     pipeline.set_model_saver(saver);
     pipeline.set_estimation_process(offline_estimation);
     pipeline.set_aggregator(aggregator);
@@ -250,7 +250,7 @@ void execute_experiment_1c_part_b() {
         "../../data/evaluations/ta3/experiment_1c/evaluations.json");
     Pipeline pipeline("experiment_1c", output_file);
     pipeline.set_data_splitter(data_splitter);
-    pipeline.set_model_trainner(loader);
+    pipeline.set_model_trainer(loader);
     pipeline.set_estimation_process(offline_estimation);
     pipeline.set_aggregator(aggregator);
     pipeline.execute();
@@ -320,7 +320,7 @@ void execute_experiment_1d(string data_dir, string output_dir) {
         output_file.open(filepath.str());
         Pipeline pipeline("experiment_1d", output_file);
         pipeline.set_data_splitter(data_splitter);
-        pipeline.set_model_trainner(loader);
+        pipeline.set_model_trainer(loader);
         pipeline.set_estimation_process(offline_estimation);
         pipeline.set_aggregator(aggregator);
         pipeline.execute();
