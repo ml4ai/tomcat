@@ -28,7 +28,8 @@ namespace po = boost::program_options;
 /**
  * 5 Cross validation with the falcon map in the engineering data.
  */
-void execute_experiment_1a() {
+void execute_experiment_1a(string data_dir, string output_dir, string output_json) {
+    cout << "Running experiment 1a" << endl;
     // Random Seed
     shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
 
@@ -37,7 +38,7 @@ void execute_experiment_1a() {
     tomcat.init_ta3_learnable_model();
 
     // Data
-    EvidenceSet data("../../data/samples/ta3/falcon/engineering");
+    EvidenceSet data(data_dir);
 
     // Data split
     int num_folds = 5;
@@ -53,7 +54,7 @@ void execute_experiment_1a() {
 
     // Saving
     shared_ptr<DBNSaver> saver = make_shared<DBNSaver>(DBNSaver(
-        tomcat.get_model(), "../../data/model/ta3/experiment_1a/fold{}"));
+        tomcat.get_model(), output_dir+"/fold{}"));
 
     // Estimation and evaluation
     shared_ptr<OfflineEstimation> offline_estimation =
@@ -65,6 +66,7 @@ void execute_experiment_1a() {
 
     vector<int> horizons = {1, 3, 5, 10, 15, 30};
     for (int horizon : horizons) {
+        cout << "Horizon: " << horizon << endl;
         shared_ptr<Estimator> estimator =
             make_shared<TrainingFrequencyEstimator>(tomcat.get_model(),
                                                     horizon);
@@ -85,8 +87,7 @@ void execute_experiment_1a() {
     }
 
     ofstream output_file;
-    output_file.open(
-        "../../data/evaluations/ta3/experiment_1a/evaluations.json");
+    output_file.open(output_json);
     Pipeline pipeline("experiment_1a", output_file);
     pipeline.set_data_splitter(data_splitter);
     pipeline.set_model_trainner(trainer);
@@ -100,6 +101,7 @@ void execute_experiment_1a() {
  * Training with the engineering data and test with the human subject data
  */
 void execute_experiment_1b() {
+    cout << "Running experiment 1b" << endl;
     // Random Seed
     shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
 
@@ -174,6 +176,7 @@ void execute_experiment_1b() {
  * equal samples up to time 100.
  */
 void execute_experiment_1c_part_a() {
+    cout << "Running experiment 1c part (a)" << endl;
     // Random Seed
     shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
 
@@ -200,6 +203,7 @@ void execute_experiment_1c_part_a() {
  * generated in part a.
  */
 void execute_experiment_1c_part_b() {
+    cout << "Running experiment 1c part (b)" << endl;
     // Random Seed
     shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
 
@@ -259,6 +263,7 @@ void execute_experiment_1c_part_b() {
  * threshold is 0.5 by default.
  */
 void execute_experiment_1d(string data_dir, string output_dir) {
+    cout << "Running experiment 1d" << endl;
     // Random Seed
     shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
 
@@ -280,6 +285,7 @@ void execute_experiment_1d(string data_dir, string output_dir) {
     vector<double> thresholds = {0.2, 0.3, 0.4, 0.5, 0.6, 0.7};
     vector<int> horizons = {1, 3, 5, 10, 15, 30};
     for (double threshold : thresholds) {
+        cout << "Threshold: " << threshold << endl;
         // Estimation and evaluation
         shared_ptr<OfflineEstimation> offline_estimation =
             make_shared<OfflineEstimation>();
@@ -289,6 +295,7 @@ void execute_experiment_1d(string data_dir, string output_dir) {
                 EvaluationAggregator::METHOD::no_aggregation);
 
         for (int horizon : horizons) {
+            cout << "Horizon: " << horizon << endl;
             shared_ptr<Estimator> estimator =
                 make_shared<TrainingFrequencyEstimator>(tomcat.get_model(),
                                                         horizon);
@@ -331,17 +338,19 @@ void execute_experiment_1xxx() {
 }
 
 int main(int argc, char* argv[]) {
-    //execute_experiment_1a();
     //execute_experiment_1b();
     //execute_experiment_1c_part_a();
     //execute_experiment_1c_part_b();
 
-    string data_dir, output_dir;
+    string data_dir, output_dir, evaluation_json;
     po::options_description desc("Allowed options");
     desc.add_options()
         ("help,h", "Produce this help message")
         ("data_dir", po::value<string>(&data_dir)->default_value("../../data/samples/ta3/falcon/engineering"), "Data directory")
         ("output_dir", po::value<string>(&output_dir)->default_value("../../data/model/ta3/experiment_1a/"), "Output directory")
+        ("evaluation_json",
+         po::value<string>(&evaluation_json)->default_value("../../data/evaluations/ta3/experiment_1a/evaluations.json"),
+         "Output directory")
     ;
 
     po::variables_map vm;
@@ -352,5 +361,6 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    execute_experiment_1a(data_dir, output_dir, evaluation_json);
     execute_experiment_1d(data_dir, output_dir);
 }
