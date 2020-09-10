@@ -104,7 +104,7 @@ void Group::toAltJSON(json& json_base) {
     }
 
     for (auto& blockPtr : this->getBlockList()) {
-        (*blockPtr).toJSON(json_base);
+        (*blockPtr).toAltJSON(json_base);
     }
 
     for (auto& entityPtr : this->getEntityList()) {

@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -44,14 +45,18 @@ public class WorldReader {
      * block to be placed is represented as the IBlockState object used
      * for the block type in its default state,
      */
-    public Map<BlockPos, IBlockState> getBlocksMap() { return this.blockMap; }
+    public Map<BlockPos, IBlockState> getBlocksMap() {
+        return this.blockMap;
+    }
 
     /**
      * Get the list of entities in the world
      *
      * @return The list of TomcatEntity objects
      */
-    public List<TomcatEntity> getEntityList() { return this.entityList; }
+    public List<TomcatEntity> getEntityList() {
+        return this.entityList;
+    }
 
     /**
      * This method is use to create the map representation of the world from the
@@ -69,13 +74,18 @@ public class WorldReader {
         }
 
         Gson gson = new Gson();
-        Map<String,ArrayList<LinkedTreeMap<String, String>>> blueprint = gson.fromJson(reader, Map.class);
+        Map<String, ArrayList<LinkedTreeMap<String, Map<String, String>>>> blueprint = gson.fromJson(reader, Map.class);
 
-        for (LinkedTreeMap<String, String> location : blueprint.get("locations")){
+        for (LinkedTreeMap<String, Map<String, String>> location : blueprint.get("locations")) {
 
-            for(String key: location.keySet()){
-                System.out.println("-----------------> "+ key);
-            }
+            Map<String, String> bound = location.get("bounds");
+            String type = bound.get("type");
+            String material = bound.get("material");
+            String x = bound.get("x");
+            String y = bound.get("y");
+            String z = bound.get("z");
+
+            System.out.println("---------------> " + x + y + z);
 
         }
 
@@ -96,12 +106,10 @@ public class WorldReader {
         if (type.equals("zombie")) {
             return new TomcatEntity(
                     UUID.randomUUID(), x, y, z, EntityTypes.ZOMBIE);
-        }
-        else if (type.equals("skeleton")) {
+        } else if (type.equals("skeleton")) {
             return new TomcatEntity(
                     UUID.randomUUID(), x, y, z, EntityTypes.SKELETON);
-        }
-        else {
+        } else {
             return new TomcatEntity(
                     UUID.randomUUID(), x, y, z, EntityTypes.VILLAGER);
         }
@@ -118,47 +126,33 @@ public class WorldReader {
     private IBlockState getBlockState(String material) {
         if (material.equals("planks")) {
             return Blocks.PLANKS.getDefaultState();
-        }
-        else if (material.equals("prismarine")) {
+        } else if (material.equals("prismarine")) {
             return Blocks.PRISMARINE.getDefaultState();
-        }
-        else if (material.equals("gold")) {
+        } else if (material.equals("gold")) {
             return Blocks.GOLD_BLOCK.getDefaultState();
-        }
-        else if (material.equals("door_top")) {
+        } else if (material.equals("door_top")) {
             return Blocks.DARK_OAK_DOOR.getStateFromMeta(9);
-        }
-        else if (material.equals("door_bottom")) {
+        } else if (material.equals("door_bottom")) {
             return Blocks.DARK_OAK_DOOR.getStateFromMeta(0);
-        }
-        else if (material.equals("lava")) {
+        } else if (material.equals("lava")) {
             return Blocks.LAVA.getDefaultState();
-        }
-        else if (material.equals("water")) {
+        } else if (material.equals("water")) {
             return Blocks.WATER.getDefaultState();
-        }
-        else if (material.equals("grass")) {
+        } else if (material.equals("grass")) {
             return Blocks.GRASS.getDefaultState();
-        }
-        else if (material.equals("sand")) {
+        } else if (material.equals("sand")) {
             return Blocks.SAND.getDefaultState();
-        }
-        else if (material.equals("cobblestone")) {
+        } else if (material.equals("cobblestone")) {
             return Blocks.COBBLESTONE.getDefaultState();
-        }
-        else if (material.equals("fence")) {
+        } else if (material.equals("fence")) {
             return Blocks.NETHER_BRICK_FENCE.getDefaultState();
-        }
-        else if (material.equals("lever")) {
+        } else if (material.equals("lever")) {
             return Blocks.LEVER.getDefaultState();
-        }
-        else if (material.equals("glowstone")) {
+        } else if (material.equals("glowstone")) {
             return Blocks.GLOWSTONE.getDefaultState();
-        }
-        else if (material.equals("air")) {
+        } else if (material.equals("air")) {
             return Blocks.AIR.getDefaultState();
-        }
-        else {
+        } else {
             return Blocks.QUARTZ_BLOCK.getDefaultState(); // For unknown block
         }
     }

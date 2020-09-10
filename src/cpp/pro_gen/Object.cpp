@@ -23,6 +23,6 @@ void Object::toJSON(json& json_base) {
     json_base["objects"].push_back(object_json);
 }
 
-void Object::toAltJSON(json& json_base) { this->block.toJSON(json_base); }
+void Object::toAltJSON(json& json_base) { this->block.toAltJSON(json_base); }
 
 Object::~Object() {}

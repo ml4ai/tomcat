@@ -265,14 +265,14 @@ void AABB::toAltJSON(json& json_base) {
                 if (addCurrent) {
                     Pos thisPos(x,y,z);
                     Block thisBlock(this->material, thisPos);
-                    thisBlock.toJSON(json_base);
+                    thisBlock.toAltJSON(json_base);
                 }
             }
         }
     }
 
     for (auto& blockPtr : this->getBlockList()) {
-        (*blockPtr).toJSON(json_base);
+        (*blockPtr).toAltJSON(json_base);
     }
 
     for (auto& entityPtr : this->getEntityList()) {

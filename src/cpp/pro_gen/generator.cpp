@@ -14,7 +14,7 @@ namespace po = boost::program_options;
 int main(int argc, char* argv[]) {
 
     int choice, seed;
-    string jsonPath, tsvPath;
+    string jsonPath, altJSONPath;
 
     // Handle options
     po::options_description general("Allowed options");
@@ -27,9 +27,10 @@ int main(int argc, char* argv[]) {
         "json_path",
         po::value<string>(&jsonPath)->default_value("procedural.json"),
         "Specify where to save the JSON file with filename and extension.")(
-        "tsv_path",
-        po::value<string>(&tsvPath)->default_value("proceduralAltJSON.json"),
-        "Specify where to save the TSV file with filename and extension.")(
+        "alt_json_path",
+        po::value<string>(&altJSONPath)
+            ->default_value("proceduralAltJSON.json"),
+        "Specify where to save the Alt JSON file with filename and extension.")(
         "seed",
         po::value<int>(&seed)->default_value(0),
         "The seed used to initialize the random "
@@ -66,14 +67,14 @@ int main(int argc, char* argv[]) {
     cout << "Generating world..." << endl;
     if (choice == 0) {
         ZombieWorld world(seed);
-        world.writeToFile(jsonPath, tsvPath);
+        world.writeToFile(jsonPath, altJSONPath);
     }
     else if (choice == 1) {
         int N = vm["N"].as<int>();
         int sep = vm["sep"].as<int>();
         int AABB_size = vm["AABB_size"].as<int>();
         GridWorld world(N, sep, AABB_size, seed);
-        world.writeToFile(jsonPath, tsvPath);
+        world.writeToFile(jsonPath, altJSONPath);
     }
     else {
         cout << "You choice is invalid" << endl;
@@ -81,6 +82,6 @@ int main(int argc, char* argv[]) {
     }
 
     cout << "Done. The generated files are in " << jsonPath << " and "
-         << tsvPath << endl;
+         << altJSONPath << endl;
     return 0;
 }

@@ -26,6 +26,29 @@ void Lever::toJSON(json& json_base) {
                             {"material", this->getMaterial()},
                             {"powered", isPowered},
                             {"facing", this->facing}};
+                            
+    json_base["locations"].push_back(block_json);
+}
+
+void Lever::toAltJSON(json& json_base) {
+    json block_json;
+
+    string isPowered = "";
+    if (this->powered) {
+        isPowered = "true";
+    }
+    else {
+        isPowered = "false";
+    }
+
+    block_json["bounds"] = {{"type", "block"},
+                            {"material", this->getMaterial()},
+                            {"x", to_string(this->getX())},
+                            {"y", to_string(this->getY())},
+                            {"z", to_string(this->getZ())},
+                            {"powered", isPowered},
+                            {"facing", this->facing}};
+
     json_base["locations"].push_back(block_json);
 }
 

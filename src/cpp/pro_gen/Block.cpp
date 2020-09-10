@@ -37,10 +37,16 @@ void Block::toJSON(json& json_base) {
     json_base["locations"].push_back(block_json);
 }
 
-string Block::toTSV() {
-    string retval =
-        (this->pos).toTSV() + "\t" + "block" + "\t" + (this->material);
-    return retval;
+void Block::toAltJSON(json& json_base) {
+    json block_json;
+
+    block_json["bounds"] = {{"type", "block"},
+                            {"material", this->getMaterial()},
+                            {"x", to_string(this->getX())},
+                            {"y", to_string(this->getY())},
+                            {"z", to_string(this->getZ())}};
+
+    json_base["locations"].push_back(block_json);
 }
 
 Block::~Block() {}
