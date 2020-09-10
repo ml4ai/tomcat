@@ -6,7 +6,7 @@
 
 #include <eigen3/Eigen/Dense>
 
-#include "../utils/Definitions.h"
+#include "model/utils/Definitions.h"
 
 namespace tomcat {
     namespace model {

@@ -3,14 +3,14 @@
 #include <boost/filesystem.hpp>
 #include <boost/graph/topological_sort.hpp>
 
-#include "../utils/FileHandler.h"
-#include "ConstantNode.h"
+#include "model/utils/FileHandler.h"
+#include "model/pgm/ConstantNode.h"
 
 namespace tomcat {
     namespace model {
 
         using namespace std;
-        
+
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------

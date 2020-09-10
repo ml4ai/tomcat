@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../utils/Definitions.h"
-#include "../../distribution/Dirichlet.h"
-#include "CPD.h"
+#include "model/utils/Definitions.h"
+#include "model/distribution/Dirichlet.h"
+#include "model/pgm/cpd/CPD.h"
 
 namespace tomcat {
     namespace model {

@@ -5,10 +5,10 @@
 
 #include <nlohmann/json.hpp>
 
-#include "../../pgm/EvidenceSet.h"
-#include "../../utils/Definitions.h"
-#include "../../utils/Tensor3.h"
-#include "../estimation/Estimator.h"
+#include "model/pgm/EvidenceSet.h"
+#include "model/utils/Definitions.h"
+#include "model/utils/Tensor3.h"
+#include "model/pipeline/estimation/Estimator.h"
 
 namespace tomcat {
     namespace model {

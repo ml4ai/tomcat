@@ -5,8 +5,8 @@
 
 #include <nlohmann/json.hpp>
 
-#include "../utils/Definitions.h"
-#include "../utils/FileHandler.h"
+#include "model/utils/Definitions.h"
+#include "model/utils/FileHandler.h"
 
 namespace tomcat {
     namespace model {

@@ -3,9 +3,9 @@
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/topological_sort.hpp>
 
-#include "../cpd/CPD.h"
-#include "FactorNode.h"
-#include "VariableNode.h"
+#include "model/pgm/cpd/CPD.h"
+#include "model/pgm/inference/FactorNode.h"
+#include "model/pgm/inference/VariableNode.h"
 
 namespace tomcat {
     namespace model {

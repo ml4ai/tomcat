@@ -9,10 +9,10 @@
 #include <eigen3/Eigen/Dense>
 #include <nlohmann/json.hpp>
 
-#include "../../pgm/DynamicBayesNet.h"
-#include "../../pgm/EvidenceSet.h"
-#include "../../utils/Definitions.h"
-#include "../../utils/Tensor3.h"
+#include "model/pgm/DynamicBayesNet.h"
+#include "model/pgm/EvidenceSet.h"
+#include "model/utils/Definitions.h"
+#include "model/utils/Tensor3.h"
 
 namespace tomcat {
     namespace model {
