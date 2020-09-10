@@ -33,11 +33,11 @@ Includes
 
 - ``memory``
 
-- ``pgm/DynamicBayesNet.h`` (:ref:`file_src_cpp_model_pgm_DynamicBayesNet.h`)
+- ``model/pgm/DynamicBayesNet.h`` (:ref:`file_src_cpp_model_pgm_DynamicBayesNet.h`)
+
+- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 - ``string``
-
-- ``utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 
 

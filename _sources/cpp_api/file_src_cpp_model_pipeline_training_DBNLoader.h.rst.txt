@@ -29,13 +29,13 @@ Includes
 --------
 
 
-- ``../../pgm/DynamicBayesNet.h``
-
-- ``../../utils/Definitions.h``
-
 - ``DBNTrainer.h`` (:ref:`file_src_cpp_model_pipeline_training_DBNTrainer.h`)
 
 - ``memory``
+
+- ``model/pgm/DynamicBayesNet.h`` (:ref:`file_src_cpp_model_pgm_DynamicBayesNet.h`)
+
+- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 - ``string``
 

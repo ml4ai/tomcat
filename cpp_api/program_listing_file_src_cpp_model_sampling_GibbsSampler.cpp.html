@@ -269,7 +269,7 @@
 
         <span class="kt">void</span> <span class="n">GibbsSampler</span><span class="o">::</span><span class="n">fill_initial_samples</span><span class="p">(</span>
             <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">gsl_rng</span><span class="o">&gt;</span> <span class="n">random_generator</span><span class="p">)</span> <span class="p">{</span>
-            <span class="c1">// Observable nodes are already frozen by the gibbs sampler thus</span>
+            <span class="c1">// Observable nodes are already frozen by the Gibbs sampler thus</span>
             <span class="c1">// there&#39;s no need to add them as data in the ancestral sampler.</span>
             <span class="n">AncestralSampler</span> <span class="n">initial_sampler</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">model</span><span class="p">);</span>
             <span class="n">initial_sampler</span><span class="p">.</span><span class="n">set_num_in_plate_samples</span><span class="p">(</span>

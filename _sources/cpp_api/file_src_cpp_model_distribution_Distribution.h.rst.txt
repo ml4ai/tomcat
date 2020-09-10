@@ -29,13 +29,13 @@ Includes
 --------
 
 
-- ``../pgm/Node.h``
-
-- ``../utils/Definitions.h``
-
 - ``eigen3/Eigen/Dense``
 
 - ``gsl/gsl_rng.h``
+
+- ``model/pgm/Node.h`` (:ref:`file_src_cpp_model_pgm_Node.h`)
+
+- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 
 
@@ -45,11 +45,11 @@ Included By
 
 - :ref:`file_src_cpp_model_distribution_Categorical.h`
 
-- :ref:`file_src_cpp_model_pgm_cpd_CPD.h`
-
 - :ref:`file_src_cpp_model_distribution_Continuous.h`
 
 - :ref:`file_src_cpp_model_distribution_Distribution.cpp`
+
+- :ref:`file_src_cpp_model_pgm_cpd_CPD.h`
 
 
 

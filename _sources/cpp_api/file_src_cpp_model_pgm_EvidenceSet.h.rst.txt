@@ -29,9 +29,9 @@ Includes
 --------
 
 
-- ``../utils/Definitions.h``
+- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
-- ``../utils/FileHandler.h``
+- ``model/utils/FileHandler.h`` (:ref:`file_src_cpp_model_utils_FileHandler.h`)
 
 - ``nlohmann/json.hpp``
 
@@ -47,9 +47,7 @@ Included By
 
 - :ref:`file_src_cpp_model_main.cpp`
 
-- :ref:`file_src_cpp_model_pipeline_KFold.h`
-
-- :ref:`file_src_cpp_model_pipeline_Pipeline.h`
+- :ref:`file_src_cpp_model_pgm_EvidenceSet.cpp`
 
 - :ref:`file_src_cpp_model_pipeline_estimation_Estimator.h`
 
@@ -57,11 +55,13 @@ Included By
 
 - :ref:`file_src_cpp_model_pipeline_evaluation_Measure.h`
 
+- :ref:`file_src_cpp_model_pipeline_KFold.h`
+
+- :ref:`file_src_cpp_model_pipeline_Pipeline.h`
+
 - :ref:`file_src_cpp_model_pipeline_training_DBNTrainer.h`
 
 - :ref:`file_src_cpp_model_sampling_Sampler.h`
-
-- :ref:`file_src_cpp_model_pgm_EvidenceSet.cpp`
 
 
 

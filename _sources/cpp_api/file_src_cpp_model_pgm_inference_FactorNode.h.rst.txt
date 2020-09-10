@@ -29,11 +29,11 @@ Includes
 --------
 
 
-- ``../../utils/Definitions.h``
-
-- ``../cpd/CPD.h``
-
 - ``MessageNode.h`` (:ref:`file_src_cpp_model_pgm_inference_MessageNode.h`)
+
+- ``model/pgm/cpd/CPD.h`` (:ref:`file_src_cpp_model_pgm_cpd_CPD.h`)
+
+- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 
 

@@ -29,11 +29,11 @@ Includes
 --------
 
 
-- ``../utils/Definitions.h``
-
-- ``NodeMetadata.h`` (:ref:`file_src_cpp_model_pgm_NodeMetadata.h`)
-
 - ``eigen3/Eigen/Dense``
+
+- ``model/pgm/NodeMetadata.h`` (:ref:`file_src_cpp_model_pgm_NodeMetadata.h`)
+
+- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 - ``unordered_map``
 
@@ -45,17 +45,17 @@ Included By
 
 - :ref:`file_src_cpp_model_distribution_Categorical.h`
 
+- :ref:`file_src_cpp_model_distribution_Continuous.h`
+
 - :ref:`file_src_cpp_model_distribution_Distribution.h`
 
 - :ref:`file_src_cpp_model_pgm_ConstantNode.h`
 
-- :ref:`file_src_cpp_model_pgm_RandomVariableNode.h`
-
 - :ref:`file_src_cpp_model_pgm_cpd_CPD.h`
 
-- :ref:`file_src_cpp_model_distribution_Continuous.h`
-
 - :ref:`file_src_cpp_model_pgm_Node.cpp`
+
+- :ref:`file_src_cpp_model_pgm_RandomVariableNode.h`
 
 
 

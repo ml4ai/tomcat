@@ -29,15 +29,15 @@ Includes
 --------
 
 
-- ``../../pgm/EvidenceSet.h``
-
-- ``../../utils/Definitions.h``
-
-- ``Measure.h`` (:ref:`file_src_cpp_model_pipeline_evaluation_Measure.h`)
-
 - ``iostream``
 
 - ``memory``
+
+- ``model/pgm/EvidenceSet.h`` (:ref:`file_src_cpp_model_pgm_EvidenceSet.h`)
+
+- ``model/pipeline/evaluation/Measure.h`` (:ref:`file_src_cpp_model_pipeline_evaluation_Measure.h`)
+
+- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 - ``unordered_map``
 
@@ -49,11 +49,11 @@ Included By
 -----------
 
 
-- :ref:`file_src_cpp_model_pipeline_Pipeline.h`
-
 - :ref:`file_src_cpp_model_main.cpp`
 
 - :ref:`file_src_cpp_model_pipeline_evaluation_EvaluationAggregator.cpp`
+
+- :ref:`file_src_cpp_model_pipeline_Pipeline.h`
 
 
 

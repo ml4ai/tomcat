@@ -29,7 +29,7 @@ Includes
 --------
 
 
-- ``Distribution.h`` (:ref:`file_src_cpp_model_distribution_Distribution.h`)
+- ``model/distribution/Distribution.h`` (:ref:`file_src_cpp_model_distribution_Distribution.h`)
 
 
 

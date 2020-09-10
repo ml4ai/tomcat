@@ -29,11 +29,11 @@ Includes
 --------
 
 
-- ``../../utils/EigenExtensions.h``
-
 - ``OnlineEstimation.h`` (:ref:`file_src_cpp_model_pipeline_estimation_OnlineEstimation.h`)
 
 - ``algorithm``
+
+- ``model/utils/EigenExtensions.h`` (:ref:`file_src_cpp_model_utils_EigenExtensions.h`)
 
 - ``sstream``
 

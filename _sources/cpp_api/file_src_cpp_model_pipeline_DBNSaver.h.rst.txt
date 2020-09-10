@@ -29,11 +29,11 @@ Includes
 --------
 
 
-- ``../pgm/DynamicBayesNet.h``
-
-- ``../utils/Definitions.h``
-
 - ``memory``
+
+- ``model/pgm/DynamicBayesNet.h`` (:ref:`file_src_cpp_model_pgm_DynamicBayesNet.h`)
+
+- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 - ``string``
 
@@ -45,9 +45,9 @@ Included By
 
 - :ref:`file_src_cpp_model_main.cpp`
 
-- :ref:`file_src_cpp_model_pipeline_Pipeline.h`
-
 - :ref:`file_src_cpp_model_pipeline_DBNSaver.cpp`
+
+- :ref:`file_src_cpp_model_pipeline_Pipeline.h`
 
 
 

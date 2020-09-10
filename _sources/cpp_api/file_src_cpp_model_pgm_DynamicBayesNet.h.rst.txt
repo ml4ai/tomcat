@@ -29,13 +29,13 @@ Includes
 --------
 
 
-- ``../utils/Definitions.h``
-
-- ``RandomVariableNode.h`` (:ref:`file_src_cpp_model_pgm_RandomVariableNode.h`)
-
 - ``boost/graph/adjacency_list.hpp``
 
 - ``memory``
+
+- ``model/pgm/RandomVariableNode.h`` (:ref:`file_src_cpp_model_pgm_RandomVariableNode.h`)
+
+- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 - ``string``
 
@@ -51,17 +51,17 @@ Included By
 
 - :ref:`file_src_cpp_model_Tomcat.h`
 
+- :ref:`file_src_cpp_model_pgm_DynamicBayesNet.cpp`
+
+- :ref:`file_src_cpp_model_pgm_inference_FactorGraph.h`
+
 - :ref:`file_src_cpp_model_pipeline_DBNSaver.h`
 
 - :ref:`file_src_cpp_model_pipeline_estimation_Estimator.h`
 
-- :ref:`file_src_cpp_model_pgm_inference_FactorGraph.h`
-
 - :ref:`file_src_cpp_model_pipeline_training_DBNLoader.h`
 
 - :ref:`file_src_cpp_model_sampling_Sampler.h`
-
-- :ref:`file_src_cpp_model_pgm_DynamicBayesNet.cpp`
 
 
 

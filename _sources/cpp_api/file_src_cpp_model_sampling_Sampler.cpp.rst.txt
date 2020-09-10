@@ -29,8 +29,6 @@ Includes
 --------
 
 
-- ``../utils/FileHandler.h``
-
 - ``Sampler.h`` (:ref:`file_src_cpp_model_sampling_AncestralSampler.h`)
 
 - ``array``
@@ -38,6 +36,8 @@ Includes
 - ``boost/filesystem.hpp``
 
 - ``fmt/format.h``
+
+- ``model/utils/FileHandler.h`` (:ref:`file_src_cpp_model_utils_FileHandler.h`)
 
 
 

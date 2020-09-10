@@ -29,9 +29,9 @@ Includes
 --------
 
 
-- ``../pgm/RandomVariableNode.h``
-
 - ``Continuous.h`` (:ref:`file_src_cpp_model_distribution_Continuous.h`)
+
+- ``model/pgm/RandomVariableNode.h`` (:ref:`file_src_cpp_model_pgm_RandomVariableNode.h`)
 
 
 

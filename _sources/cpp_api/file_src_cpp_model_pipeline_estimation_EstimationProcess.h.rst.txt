@@ -29,11 +29,11 @@ Includes
 --------
 
 
-- ``../../utils/Definitions.h``
-
-- ``Estimator.h`` (:ref:`file_src_cpp_model_pipeline_estimation_Estimator.h`)
-
 - ``memory``
+
+- ``model/pipeline/estimation/Estimator.h`` (:ref:`file_src_cpp_model_pipeline_estimation_Estimator.h`)
+
+- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 
 
@@ -41,13 +41,13 @@ Included By
 -----------
 
 
-- :ref:`file_src_cpp_model_pipeline_Pipeline.h`
+- :ref:`file_src_cpp_model_pipeline_estimation_EstimationProcess.cpp`
 
 - :ref:`file_src_cpp_model_pipeline_estimation_OfflineEstimation.h`
 
-- :ref:`file_src_cpp_model_pipeline_estimation_EstimationProcess.cpp`
-
 - :ref:`file_src_cpp_model_pipeline_estimation_OnlineEstimation.h`
+
+- :ref:`file_src_cpp_model_pipeline_Pipeline.h`
 
 
 

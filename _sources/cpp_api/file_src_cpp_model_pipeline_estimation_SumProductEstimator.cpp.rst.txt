@@ -29,13 +29,13 @@ Includes
 --------
 
 
-- ``../../pgm/inference/FactorGraph.h``
-
-- ``../../pgm/inference/VariableNode.h``
-
 - ``SumProductEstimator.h`` (:ref:`file_src_cpp_model_pipeline_estimation_SumProductEstimator.h`)
 
 - ``iostream``
+
+- ``model/pgm/inference/FactorGraph.h`` (:ref:`file_src_cpp_model_pgm_inference_FactorGraph.h`)
+
+- ``model/pgm/inference/VariableNode.h`` (:ref:`file_src_cpp_model_pgm_inference_VariableNode.h`)
 
 
 

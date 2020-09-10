@@ -29,9 +29,9 @@ Includes
 --------
 
 
-- ``../utils/Definitions.h``
+- ``model/sampling/Sampler.h`` (:ref:`file_src_cpp_model_sampling_Sampler.h`)
 
-- ``Sampler.h`` (:ref:`file_src_cpp_model_sampling_AncestralSampler.h`)
+- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 
 

@@ -10,7 +10,7 @@ Program Listing for File Distribution.cpp
 
 .. code-block:: cpp
 
-   #include "Distribution.h"
+   #include "model/distribution/Distribution.h"
    
    namespace tomcat {
        namespace model {

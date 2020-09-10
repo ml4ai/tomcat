@@ -29,13 +29,13 @@ Includes
 --------
 
 
-- ``../pgm/EvidenceSet.h``
-
-- ``../utils/Definitions.h``
-
 - ``gsl/gsl_rng.h``
 
 - ``memory``
+
+- ``model/pgm/EvidenceSet.h`` (:ref:`file_src_cpp_model_pgm_EvidenceSet.h`)
+
+- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 - ``nlohmann/json.hpp``
 
@@ -51,9 +51,9 @@ Included By
 
 - :ref:`file_src_cpp_model_main.cpp`
 
-- :ref:`file_src_cpp_model_pipeline_Pipeline.h`
-
 - :ref:`file_src_cpp_model_pipeline_KFold.cpp`
+
+- :ref:`file_src_cpp_model_pipeline_Pipeline.h`
 
 
 

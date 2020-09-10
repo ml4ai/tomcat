@@ -29,13 +29,13 @@ Includes
 --------
 
 
-- ``../pgm/ConstantNode.h``
-
-- ``../pgm/RandomVariableNode.h``
-
 - ``Categorical.h`` (:ref:`file_src_cpp_model_distribution_Categorical.h`)
 
 - ``gsl/gsl_randist.h``
+
+- ``model/pgm/ConstantNode.h`` (:ref:`file_src_cpp_model_pgm_ConstantNode.h`)
+
+- ``model/pgm/RandomVariableNode.h`` (:ref:`file_src_cpp_model_pgm_RandomVariableNode.h`)
 
 
 

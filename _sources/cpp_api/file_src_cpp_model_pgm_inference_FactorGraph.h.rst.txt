@@ -29,17 +29,17 @@ Includes
 --------
 
 
-- ``../../utils/Definitions.h``
-
-- ``../DynamicBayesNet.h``
-
-- ``MessageNode.h`` (:ref:`file_src_cpp_model_pgm_inference_MessageNode.h`)
-
 - ``array``
 
 - ``boost/graph/adjacency_list.hpp``
 
 - ``memory``
+
+- ``model/pgm/DynamicBayesNet.h`` (:ref:`file_src_cpp_model_pgm_DynamicBayesNet.h`)
+
+- ``model/pgm/inference/MessageNode.h`` (:ref:`file_src_cpp_model_pgm_inference_MessageNode.h`)
+
+- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 - ``string``
 
@@ -53,9 +53,9 @@ Included By
 -----------
 
 
-- :ref:`file_src_cpp_model_pipeline_estimation_SumProductEstimator.h`
-
 - :ref:`file_src_cpp_model_pgm_inference_FactorGraph.cpp`
+
+- :ref:`file_src_cpp_model_pipeline_estimation_SumProductEstimator.h`
 
 - :ref:`file_src_cpp_model_pipeline_estimation_SumProductEstimator.cpp`
 

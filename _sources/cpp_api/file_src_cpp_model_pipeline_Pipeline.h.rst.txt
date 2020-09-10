@@ -29,27 +29,27 @@ Includes
 --------
 
 
-- ``../pgm/EvidenceSet.h``
-
-- ``../utils/Definitions.h``
-
-- ``DBNSaver.h`` (:ref:`file_src_cpp_model_pipeline_DBNSaver.h`)
-
-- ``KFold.h`` (:ref:`file_src_cpp_model_pipeline_KFold.h`)
-
 - ``boost/date_time/posix_time/posix_time.hpp``
-
-- ``estimation/EstimationProcess.h`` (:ref:`file_src_cpp_model_pipeline_estimation_EstimationProcess.h`)
-
-- ``evaluation/EvaluationAggregator.h`` (:ref:`file_src_cpp_model_pipeline_evaluation_EvaluationAggregator.h`)
 
 - ``iostream``
 
 - ``memory``
 
-- ``string``
+- ``model/pgm/EvidenceSet.h`` (:ref:`file_src_cpp_model_pgm_EvidenceSet.h`)
 
-- ``training/DBNTrainer.h`` (:ref:`file_src_cpp_model_pipeline_training_DBNTrainer.h`)
+- ``model/pipeline/DBNSaver.h`` (:ref:`file_src_cpp_model_pipeline_DBNSaver.h`)
+
+- ``model/pipeline/KFold.h`` (:ref:`file_src_cpp_model_pipeline_KFold.h`)
+
+- ``model/pipeline/estimation/EstimationProcess.h`` (:ref:`file_src_cpp_model_pipeline_estimation_EstimationProcess.h`)
+
+- ``model/pipeline/evaluation/EvaluationAggregator.h`` (:ref:`file_src_cpp_model_pipeline_evaluation_EvaluationAggregator.h`)
+
+- ``model/pipeline/training/DBNTrainer.h`` (:ref:`file_src_cpp_model_pipeline_training_DBNTrainer.h`)
+
+- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
+
+- ``string``
 
 - ``vector``
 

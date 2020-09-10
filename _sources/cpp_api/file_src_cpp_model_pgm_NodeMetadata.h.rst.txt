@@ -29,11 +29,11 @@ Includes
 --------
 
 
-- ``../utils/Definitions.h``
-
 - ``iostream``
 
 - ``memory``
+
+- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 - ``string``
 

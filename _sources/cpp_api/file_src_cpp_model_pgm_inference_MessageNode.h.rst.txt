@@ -29,11 +29,11 @@ Includes
 --------
 
 
-- ``../../utils/Definitions.h``
-
 - ``eigen3/Eigen/Dense``
 
 - ``memory``
+
+- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 - ``string``
 
@@ -53,9 +53,9 @@ Included By
 
 - :ref:`file_src_cpp_model_pgm_inference_FactorNode.h`
 
-- :ref:`file_src_cpp_model_pgm_inference_VariableNode.h`
-
 - :ref:`file_src_cpp_model_pgm_inference_MessageNode.cpp`
+
+- :ref:`file_src_cpp_model_pgm_inference_VariableNode.h`
 
 
 

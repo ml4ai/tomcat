@@ -29,13 +29,13 @@ Includes
 --------
 
 
-- ``../utils/Definitions.h``
-
 - ``array``
 
 - ``eigen3/Eigen/Dense``
 
 - ``iostream``
+
+- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 - ``vector``
 
@@ -45,7 +45,7 @@ Included By
 -----------
 
 
-- :ref:`file_src_cpp_model_utils_FileHandler.h`
+- :ref:`file_src_cpp_model_pgm_EvidenceSet.cpp`
 
 - :ref:`file_src_cpp_model_pipeline_estimation_Estimator.h`
 
@@ -53,7 +53,7 @@ Included By
 
 - :ref:`file_src_cpp_model_sampling_Sampler.h`
 
-- :ref:`file_src_cpp_model_pgm_EvidenceSet.cpp`
+- :ref:`file_src_cpp_model_utils_FileHandler.h`
 
 - :ref:`file_src_cpp_model_utils_Tensor3.cpp`
 

@@ -29,12 +29,6 @@ Includes
 --------
 
 
-- ``../../distribution/Distribution.h``
-
-- ``../../utils/Definitions.h``
-
-- ``../Node.h``
-
 - ``eigen3/Eigen/Dense``
 
 - ``gsl/gsl_randist.h``
@@ -45,6 +39,12 @@ Includes
 
 - ``memory``
 
+- ``model/distribution/Distribution.h`` (:ref:`file_src_cpp_model_distribution_Distribution.h`)
+
+- ``model/pgm/Node.h`` (:ref:`file_src_cpp_model_pgm_Node.h`)
+
+- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
+
 - ``vector``
 
 
@@ -52,8 +52,6 @@ Includes
 Included By
 -----------
 
-
-- :ref:`file_src_cpp_model_pgm_RandomVariableNode.h`
 
 - :ref:`file_src_cpp_model_pgm_cpd_CategoricalCPD.h`
 
@@ -66,6 +64,8 @@ Included By
 - :ref:`file_src_cpp_model_pgm_inference_FactorGraph.cpp`
 
 - :ref:`file_src_cpp_model_pgm_inference_FactorNode.h`
+
+- :ref:`file_src_cpp_model_pgm_RandomVariableNode.h`
 
 
 

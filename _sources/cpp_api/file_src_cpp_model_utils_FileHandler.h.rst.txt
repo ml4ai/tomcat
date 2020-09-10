@@ -29,11 +29,11 @@ Includes
 --------
 
 
-- ``../utils/Definitions.h``
-
-- ``Tensor3.h`` (:ref:`file_src_cpp_model_utils_Tensor3.h`)
-
 - ``fstream``
+
+- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
+
+- ``model/utils/Tensor3.h`` (:ref:`file_src_cpp_model_utils_Tensor3.h`)
 
 - ``string``
 
@@ -43,9 +43,9 @@ Included By
 -----------
 
 
-- :ref:`file_src_cpp_model_pgm_EvidenceSet.h`
-
 - :ref:`file_src_cpp_model_pgm_DynamicBayesNet.cpp`
+
+- :ref:`file_src_cpp_model_pgm_EvidenceSet.h`
 
 - :ref:`file_src_cpp_model_sampling_Sampler.cpp`
 

@@ -29,17 +29,17 @@ Includes
 --------
 
 
-- ``../../pgm/DynamicBayesNet.h``
-
-- ``../../pgm/EvidenceSet.h``
-
-- ``../../utils/Definitions.h``
-
-- ``../../utils/Tensor3.h``
-
 - ``eigen3/Eigen/Dense``
 
 - ``memory``
+
+- ``model/pgm/DynamicBayesNet.h`` (:ref:`file_src_cpp_model_pgm_DynamicBayesNet.h`)
+
+- ``model/pgm/EvidenceSet.h`` (:ref:`file_src_cpp_model_pgm_EvidenceSet.h`)
+
+- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
+
+- ``model/utils/Tensor3.h`` (:ref:`file_src_cpp_model_utils_Tensor3.h`)
 
 - ``nlohmann/json.hpp``
 
@@ -59,13 +59,13 @@ Included By
 
 - :ref:`file_src_cpp_model_pipeline_estimation_EstimationProcess.h`
 
-- :ref:`file_src_cpp_model_pipeline_evaluation_Measure.h`
+- :ref:`file_src_cpp_model_pipeline_estimation_Estimator.cpp`
 
 - :ref:`file_src_cpp_model_pipeline_estimation_SumProductEstimator.h`
 
 - :ref:`file_src_cpp_model_pipeline_estimation_TrainingFrequencyEstimator.h`
 
-- :ref:`file_src_cpp_model_pipeline_estimation_Estimator.cpp`
+- :ref:`file_src_cpp_model_pipeline_evaluation_Measure.h`
 
 
 

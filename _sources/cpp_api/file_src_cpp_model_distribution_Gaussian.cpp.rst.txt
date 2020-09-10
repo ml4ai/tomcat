@@ -29,11 +29,11 @@ Includes
 --------
 
 
-- ``../pgm/ConstantNode.h``
-
 - ``Gaussian.h`` (:ref:`file_src_cpp_model_distribution_Gaussian.h`)
 
 - ``gsl/gsl_randist.h``
+
+- ``model/pgm/ConstantNode.h`` (:ref:`file_src_cpp_model_pgm_ConstantNode.h`)
 
 
 

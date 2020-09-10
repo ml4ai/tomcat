@@ -43,57 +43,57 @@ Included By
 
 - :ref:`file_src_cpp_model_distribution_Categorical.h`
 
-- :ref:`file_src_cpp_model_pgm_Node.h`
-
-- :ref:`file_src_cpp_model_pgm_NodeMetadata.h`
-
-- :ref:`file_src_cpp_model_distribution_Distribution.h`
-
-- :ref:`file_src_cpp_model_pgm_ConstantNode.h`
-
-- :ref:`file_src_cpp_model_pgm_RandomVariableNode.h`
-
-- :ref:`file_src_cpp_model_pgm_cpd_CPD.h`
-
 - :ref:`file_src_cpp_model_distribution_Continuous.h`
 
 - :ref:`file_src_cpp_model_distribution_Dirichlet.h`
 
-- :ref:`file_src_cpp_model_distribution_Gaussian.h`
+- :ref:`file_src_cpp_model_distribution_Distribution.h`
 
-- :ref:`file_src_cpp_model_pgm_DynamicBayesNet.h`
+- :ref:`file_src_cpp_model_distribution_Gaussian.h`
 
 - :ref:`file_src_cpp_model_Tomcat.h`
 
+- :ref:`file_src_cpp_model_main.cpp`
+
+- :ref:`file_src_cpp_model_pgm_Node.h`
+
+- :ref:`file_src_cpp_model_pgm_ConstantNode.h`
+
+- :ref:`file_src_cpp_model_pgm_cpd_CategoricalCPD.h`
+
+- :ref:`file_src_cpp_model_pgm_cpd_CPD.h`
+
+- :ref:`file_src_cpp_model_pgm_cpd_DirichletCPD.h`
+
+- :ref:`file_src_cpp_model_pgm_cpd_GaussianCPD.h`
+
+- :ref:`file_src_cpp_model_pgm_DynamicBayesNet.h`
+
 - :ref:`file_src_cpp_model_pgm_EvidenceSet.h`
 
-- :ref:`file_src_cpp_model_utils_FileHandler.h`
+- :ref:`file_src_cpp_model_pgm_inference_FactorGraph.h`
 
-- :ref:`file_src_cpp_model_utils_Tensor3.h`
+- :ref:`file_src_cpp_model_pgm_inference_MessageNode.h`
+
+- :ref:`file_src_cpp_model_pgm_inference_FactorNode.h`
+
+- :ref:`file_src_cpp_model_pgm_inference_VariableNode.h`
+
+- :ref:`file_src_cpp_model_pgm_NodeMetadata.h`
+
+- :ref:`file_src_cpp_model_pgm_RandomVariableNode.h`
 
 - :ref:`file_src_cpp_model_pipeline_DBNSaver.h`
-
-- :ref:`file_src_cpp_model_pipeline_KFold.h`
-
-- :ref:`file_src_cpp_model_pipeline_Pipeline.h`
 
 - :ref:`file_src_cpp_model_pipeline_estimation_EstimationProcess.h`
 
 - :ref:`file_src_cpp_model_pipeline_estimation_Estimator.h`
 
-- :ref:`file_src_cpp_model_pipeline_evaluation_EvaluationAggregator.h`
-
-- :ref:`file_src_cpp_model_pipeline_evaluation_Measure.h`
-
-- :ref:`file_src_cpp_model_pipeline_training_DBNTrainer.h`
-
 - :ref:`file_src_cpp_model_pipeline_estimation_OfflineEstimation.h`
 
+- :ref:`file_src_cpp_model_pipeline_estimation_OnlineEstimation.h`
+
 - :ref:`file_src_cpp_model_pipeline_estimation_SumProductEstimator.h`
-
-- :ref:`file_src_cpp_model_pgm_inference_FactorGraph.h`
-
-- :ref:`file_src_cpp_model_pgm_inference_MessageNode.h`
 
 - :ref:`file_src_cpp_model_pipeline_estimation_TrainingFrequencyEstimator.h`
 
@@ -101,33 +101,33 @@ Included By
 
 - :ref:`file_src_cpp_model_pipeline_evaluation_Estimates.h`
 
+- :ref:`file_src_cpp_model_pipeline_evaluation_EvaluationAggregator.h`
+
 - :ref:`file_src_cpp_model_pipeline_evaluation_F1Score.h`
+
+- :ref:`file_src_cpp_model_pipeline_evaluation_Measure.h`
+
+- :ref:`file_src_cpp_model_pipeline_KFold.h`
+
+- :ref:`file_src_cpp_model_pipeline_Pipeline.h`
+
+- :ref:`file_src_cpp_model_pipeline_training_DBNTrainer.h`
 
 - :ref:`file_src_cpp_model_pipeline_training_DBNLoader.h`
 
 - :ref:`file_src_cpp_model_pipeline_training_DBNSamplingTrainer.h`
 
-- :ref:`file_src_cpp_model_sampling_Sampler.h`
+- :ref:`file_src_cpp_model_sampling_AncestralSampler.h`
 
 - :ref:`file_src_cpp_model_sampling_GibbsSampler.h`
 
-- :ref:`file_src_cpp_model_main.cpp`
+- :ref:`file_src_cpp_model_sampling_Sampler.h`
 
-- :ref:`file_src_cpp_model_pgm_cpd_CategoricalCPD.h`
-
-- :ref:`file_src_cpp_model_pgm_cpd_DirichletCPD.h`
-
-- :ref:`file_src_cpp_model_pgm_cpd_GaussianCPD.h`
-
-- :ref:`file_src_cpp_model_pgm_inference_FactorNode.h`
-
-- :ref:`file_src_cpp_model_pgm_inference_VariableNode.h`
-
-- :ref:`file_src_cpp_model_pipeline_estimation_OnlineEstimation.h`
+- :ref:`file_src_cpp_model_utils_FileHandler.h`
 
 - :ref:`file_src_cpp_model_utils_Mosquitto.h`
 
-- :ref:`file_src_cpp_model_sampling_AncestralSampler.h`
+- :ref:`file_src_cpp_model_utils_Tensor3.h`
 
 
 

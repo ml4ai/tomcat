@@ -29,9 +29,9 @@ Includes
 --------
 
 
-- ``../../utils/Definitions.h``
-
 - ``MessageNode.h`` (:ref:`file_src_cpp_model_pgm_inference_MessageNode.h`)
+
+- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 
 
