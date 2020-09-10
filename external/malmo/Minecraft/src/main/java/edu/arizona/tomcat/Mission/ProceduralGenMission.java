@@ -43,8 +43,10 @@ public class ProceduralGenMission extends Mission {
     private void buildStructures(World world) {
         if (this.shouldBuild == true) {
             // Grab map representing world
-            WorldReader worldReader = new WorldReader("procedural.tsv");
-            Drawing drawing = new Drawing();
+            WorldReader worldReader = new WorldReader("proceduralAltJSON.json");
+
+
+            /*Drawing drawing = new Drawing();
             Map<BlockPos, IBlockState> worldMap = worldReader.getBlocksMap();
             List<TomcatEntity> entityList = worldReader.getEntityList();
 
@@ -64,7 +66,7 @@ public class ProceduralGenMission extends Mission {
                 e.printStackTrace();
             }
 
-            this.shouldBuild = false;
+            this.shouldBuild = false;*/
         }
         else {
             return;

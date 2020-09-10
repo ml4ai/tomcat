@@ -69,9 +69,17 @@ public class WorldReader {
         }
 
         Gson gson = new Gson();
-        ArrayList<LinkedTreeMap<String, String>> blueprint = gson.fromJson(reader, ArrayList.class);
+        Map<String,ArrayList<LinkedTreeMap<String, String>>> blueprint = gson.fromJson(reader, Map.class);
 
-        System.out.println("Here");
+        for (LinkedTreeMap<String, String> location : blueprint.get("locations")){
+
+            for(String key: location.keySet()){
+                System.out.println("-----------------> "+ key);
+            }
+
+        }
+
+
     }
 
     /**
