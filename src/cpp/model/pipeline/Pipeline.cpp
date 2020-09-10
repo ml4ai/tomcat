@@ -106,7 +106,7 @@ namespace tomcat {
 
         void Pipeline::set_model_trainer(
             const shared_ptr<DBNTrainer>& model_trainer) {
-            this->model_trainer = model_trainner;
+            this->model_trainer = model_trainer;
         }
 
         void Pipeline::set_model_saver(
