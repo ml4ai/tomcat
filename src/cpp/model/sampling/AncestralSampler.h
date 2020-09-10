@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Sampler.h"
+#include "model/sampling/Sampler.h"
 
-#include "../utils/Definitions.h"
+#include "model/utils/Definitions.h"
 
 namespace tomcat {
     namespace model {

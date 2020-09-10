@@ -5,9 +5,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "../../pgm/EvidenceSet.h"
-#include "../../utils/Definitions.h"
-#include "Measure.h"
+#include "model/pgm/EvidenceSet.h"
+#include "model/utils/Definitions.h"
+#include "model/pipeline/evaluation/Measure.h"
 
 namespace tomcat {
     namespace model {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../utils/Definitions.h"
+#include "model/utils/Definitions.h"
 
 #include "model/pgm/inference/FactorGraph.h"
 #include "model/pipeline/estimation/Estimator.h"
