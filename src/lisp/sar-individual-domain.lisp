@@ -26,22 +26,24 @@
                  (setf cl-user::*time-passed* (+ cl-user::*time-passed* cost)))
 
 (defdomain (sar-individual-domain :type pddl-domain :redefine-ok T) (
-    (:types human ;; Everything, including 'human' inherits from the base 'object' type
-            victim rescuer - human ;; The rescuer and the victims are humans.
-            room ;; Rooms (includes elevators and bathrooms)
-            building ;; Building (contains rooms)
-            goal
+    (:types 
+      human ;; Everything, including 'human' inherits from the base 'object' type
+      victim rescuer - human ;; The rescuer and the victims are humans.
+      room ;; Rooms (includes elevators and bathrooms)
+      building ;; Building (contains rooms)
+      goal
     )
    
-    (:predicates (in ?h - human ?r - room) ;; Indicates which room a human (rescuer, victim, etc) is inside
-                 (triaged ?v - victim) ;; Indicates that a victim has been triaged
-                 (searched ?t - rescuer ?r - room) ;; Indicates that a rescuer has checked a room
-                 (searching ?t - rescuer ?r - room)
-                 (spotted ?t - rescuer ?v - victim ?r - room) ;; Indicates that a rescuer has spotted the victim in a specific room
-                 (triaging ?t - rescuer ?v - victim) ;; Indicates that a rescuer is in the process of examining a victim
-                 (severe-injuries ?v - victim)
-                 (victims-cleared ?t - rescuer ?r - room)
-                 (marked-for-revisit ?r - room)
+    (:predicates 
+      (in ?h - human ?r - room) ;; Indicates which room a human (rescuer, victim, etc) is inside
+      (triaged ?v - victim) ;; Indicates that a victim has been triaged
+      (searched ?t - rescuer ?r - room) ;; Indicates that a rescuer has checked a room
+      (searching ?t - rescuer ?r - room)
+      (spotted ?t - rescuer ?v - victim ?r - room) ;; Indicates that a rescuer has spotted the victim in a specific room
+      (triaging ?t - rescuer ?v - victim) ;; Indicates that a rescuer is in the process of examining a victim
+      (severe-injuries ?v - victim)
+      (victims-cleared ?t - rescuer ?r - room)
+      (marked-for-revisit ?r - room)
     )
 
     (:action start-searching ;; Rescuer checks the room, any victims in the room are "spotted" 
@@ -88,7 +90,7 @@
 
 
     (:action move ;; Rescuer moves to another room
-      :parameters (?t - rescuer ?source ?destination - room)
+      :parameters (?t - rescuer ?source - room ?destination - room)
       :precondition (and (in ?t ?source) (not (in ?t ?destination)))
       :effect (and (in ?t ?destination) (not (in ?t ?source)))
       :cost (ceiling (/ (+ 1 (cl-user::shortest-path-cost cl-user::*s-paths* '?source '?destination)) 5.612))
@@ -226,7 +228,6 @@
              stop-triaging
              (triaging ?t ?v)
              (:task !stop-triaging-victim ?t ?v)
-
     )
 
     (:method (util-percept-victims ?t ?r) ;;Utility method

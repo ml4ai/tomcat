@@ -3,25 +3,28 @@
 (in-package :shop-user)
 (shop-trace :states :operators)
 (defdomain (simple-schedule-domain :type pddl-domain :redefine-ok T) (
-            (:types human)
-            (:predicates (raining)
-                         (work-today)
-                         (store-today)
-                         (homework-today)
-                         (movie-today)
-                         (went-to-school)
-                         (went-to-work)
-                         (did-chores)
-                         (did-homework)
-                         (stayed-for-tutoring)
-                         (ran)
-                         (played-videogames)
-                         (went-to-store)
-                         (watched-movie)
-                         (early-morning)
-                         (late-morning)
-                         (afternoon)
-                         (evening)
+            (:types 
+              human
+            )
+            (:predicates 
+              (raining)
+              (work-today)
+              (store-today)
+              (homework-today)
+              (movie-today)
+              (went-to-school)
+              (went-to-work)
+              (did-chores)
+              (did-homework)
+              (stayed-for-tutoring)
+              (ran)
+              (played-videogames)
+              (went-to-store)
+              (watched-movie)
+              (early-morning)
+              (late-morning)
+              (afternoon)
+              (evening)
             )
 
             (:action go-to-school
@@ -284,7 +287,6 @@
                      (:ordered (:task !play-videogames ?t)
                                (:task !!delete (evening))
                                (:task !!assert (early-morning)))
-
             )
 
             (:method (tuesday ?t)
@@ -671,7 +673,6 @@
                      (:ordered (:task !play-videogames ?t)
                                (:task !!delete (evening))
                                (:task !!assert (early-morning)))
-
             )
  
             (:method (wednesday ?t)
@@ -866,7 +867,6 @@
                      (:ordered (:task !do-chores ?t)
                                (:task !!delete (evening))
                                (:task !!assert (early-morning)))
- 
             )
 
             (:method (thursday ?t)
@@ -1157,8 +1157,6 @@
                      (:ordered (:task !play-videogames ?t)
                                (:task !!delete (evening))
                                (:task !!assert (early-morning)))
-
-
             )
 
             (:method (friday ?t)
@@ -1257,7 +1255,6 @@
                      (:ordered (:task !play-videogames ?t)
                                (:task !!delete (evening))
                                (:task !!assert (early-morning)))
- 
             )
  
   )
