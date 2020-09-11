@@ -2,8 +2,8 @@
 
 #include <boost/filesystem.hpp>
 
-#include "../utils/EigenExtensions.h"
-#include "../utils/Tensor3.h"
+#include "model/utils/EigenExtensions.h"
+#include "model/utils/Tensor3.h"
 
 namespace tomcat {
     namespace model {

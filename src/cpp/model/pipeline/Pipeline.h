@@ -7,13 +7,13 @@
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-#include "../pgm/EvidenceSet.h"
-#include "../utils/Definitions.h"
-#include "DBNSaver.h"
-#include "KFold.h"
-#include "estimation/EstimationProcess.h"
-#include "evaluation/EvaluationAggregator.h"
-#include "training/DBNTrainer.h"
+#include "model/pgm/EvidenceSet.h"
+#include "model/utils/Definitions.h"
+#include "model/pipeline/DBNSaver.h"
+#include "model/pipeline/KFold.h"
+#include "model/pipeline/estimation/EstimationProcess.h"
+#include "model/pipeline/evaluation/EvaluationAggregator.h"
+#include "model/pipeline/training/DBNTrainer.h"
 
 namespace tomcat {
     namespace model {
@@ -96,8 +96,8 @@ namespace tomcat {
             //------------------------------------------------------------------
             void set_data_splitter(const std::shared_ptr<KFold>& data_splitter);
 
-            void set_model_trainner(
-                const std::shared_ptr<DBNTrainer>& model_trainner);
+            void set_model_trainer(
+                const std::shared_ptr<DBNTrainer>& model_trainer);
 
             void set_model_saver(const std::shared_ptr<DBNSaver>& model_saver);
 
@@ -128,7 +128,7 @@ namespace tomcat {
 
             std::shared_ptr<KFold> data_splitter;
 
-            std::shared_ptr<DBNTrainer> model_trainner;
+            std::shared_ptr<DBNTrainer> model_trainer;
 
             std::shared_ptr<DBNSaver> model_saver;
 

@@ -6,7 +6,7 @@
 #include <vector>
 #include <unordered_map>
 
-#include "../utils/Definitions.h"
+#include "model/utils/Definitions.h"
 
 namespace tomcat {
     namespace model {

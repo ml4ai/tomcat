@@ -3,8 +3,8 @@
 #include <memory>
 #include <string>
 
-#include "../utils/Definitions.h"
-#include "../pgm/DynamicBayesNet.h"
+#include "model/utils/Definitions.h"
+#include "model/pgm/DynamicBayesNet.h"
 
 namespace tomcat {
     namespace model {

@@ -2,8 +2,8 @@
 
 #include "Node.h"
 
-#include "../utils/Definitions.h"
-#include "cpd/CPD.h"
+#include "model/utils/Definitions.h"
+#include "model/pgm/cpd/CPD.h"
 
 namespace tomcat {
     namespace model {

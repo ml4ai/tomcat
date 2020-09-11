@@ -1,12 +1,11 @@
-#include "DirichletCPD.h"
-
-#include "../ConstantNode.h"
+#include "model/pgm/cpd/DirichletCPD.h"
+#include "model/pgm/ConstantNode.h"
 
 namespace tomcat {
     namespace model {
 
         using namespace std;
-        
+
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------

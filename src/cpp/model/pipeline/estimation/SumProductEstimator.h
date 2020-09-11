@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../utils/Definitions.h"
+#include "model/utils/Definitions.h"
 
-#include "../../pgm/inference/FactorGraph.h"
-#include "Estimator.h"
+#include "model/pgm/inference/FactorGraph.h"
+#include "model/pipeline/estimation/Estimator.h"
 
 namespace tomcat {
     namespace model {

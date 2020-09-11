@@ -4,7 +4,7 @@
 #include <sstream>
 #include <thread>
 
-#include "../../utils/EigenExtensions.h"
+#include "model/utils/EigenExtensions.h"
 
 namespace tomcat {
     namespace model {

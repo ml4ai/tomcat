@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-#include "../../pgm/inference/FactorGraph.h"
-#include "../../pgm/inference/VariableNode.h"
+#include "model/pgm/inference/FactorGraph.h"
+#include "model/pgm/inference/VariableNode.h"
 
 namespace tomcat {
     namespace model {
