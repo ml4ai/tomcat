@@ -1,19 +1,16 @@
 package edu.arizona.tomcat.Utils;
 
 import com.google.gson.Gson;
-import com.google.gson.internal.LinkedTreeMap;
 import com.microsoft.Malmo.Schemas.EntityTypes;
 import edu.arizona.tomcat.World.TomcatEntity;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.*;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.*;
 
 /**
  * This class can be used to read a TSV file representing a world. The TSV
@@ -34,7 +31,7 @@ public class WorldReader {
 
         this.blockMap = new LinkedHashMap<BlockPos, IBlockState>();
         this.entityList = new ArrayList<TomcatEntity>();
-        this.initMap(filename);
+        this.initMaps(filename);
     }
 
     /**
@@ -60,11 +57,11 @@ public class WorldReader {
 
     /**
      * This method is use to create the map representation of the world from the
-     * TSV file.
+     * alternate JSON file.
      *
-     * @param filename The TSV file. Must be in Minecraft/run/
+     * @param filename The alternate JSON file. Must be in Minecraft/run/
      */
-    private void initMap(String filename) {
+    private void initMaps(String filename) {
 
         BufferedReader reader = null;
         try {
@@ -74,9 +71,19 @@ public class WorldReader {
         }
 
         Gson gson = new Gson();
-        Map<String, ArrayList<LinkedTreeMap<String, String>>> blueprint = gson.fromJson(reader, Map.class);
+        Map<String, ArrayList<Map<String, String>>> blueprint = gson.fromJson(reader, Map.class);
 
-        for (LinkedTreeMap<String, String> block : blueprint.get("blocks")) {
+        this.initBlockMap(blueprint.get("blocks"));
+        this.initEntityMap(blueprint.get("entities"));
+    }
+
+    /**
+     * Initializes the blockMap from the given list of blocks
+     *
+     * @param blockList List of blocks extracted from the alternate JSON
+     */
+    private void initBlockMap(ArrayList<Map<String, String>> blockList) {
+        for (Map<String, String> block : blockList) {
 
             String material = block.get("material");
             String x_string = block.get("x");
@@ -88,9 +95,7 @@ public class WorldReader {
             int z = Integer.parseInt(z_string);
             BlockPos pos = new BlockPos(x, y, z);
 
-            if (this.blockMap.containsKey(pos)) {
-                this.blockMap.remove(pos);
-            }
+            this.blockMap.remove(pos);
 
             if (material.equals("door")) {
                 // Doors are special and we need to place a bottom and top half
@@ -110,10 +115,16 @@ public class WorldReader {
                 IBlockState state = getBlockState(material);
                 this.blockMap.put(pos, state);
             }
-
         }
+    }
 
-        for (LinkedTreeMap<String, String> entity : blueprint.get("entities")) {
+    /**
+     * Initializes the entityMap from the given list of entities
+     *
+     * @param entityList List of entities extracted from the alternate JSON
+     */
+    private void initEntityMap(ArrayList<Map<String, String>> entityList) {
+        for (Map<String, String> entity : entityList) {
 
             String x_string = entity.get("x");
             String y_string = entity.get("y");
@@ -127,8 +138,6 @@ public class WorldReader {
             TomcatEntity thisEntity = this.getTomcatEntity(x, y, z, type);
             this.entityList.add(thisEntity);
         }
-
-
     }
 
     /**
