@@ -293,8 +293,7 @@ if [[ $MAIN_MISSION -eq 3 ]]; then
     "$TOMCAT"/build/bin/generator\
         --gen_type 0\
         --json_path "$TOMCAT"/external/malmo/Minecraft/run/procedural.json\
-        --alt_json_path
-            "$TOMCAT"/external/malmo/Minecraft/run/proceduralAltJSON.json
+        --alt_json_path "$TOMCAT"/external/malmo/Minecraft/run/proceduralAltJSON.json
 fi
 
 
