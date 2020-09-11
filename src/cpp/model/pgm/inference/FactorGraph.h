@@ -8,9 +8,9 @@
 
 #include <boost/graph/adjacency_list.hpp>
 
-#include "../../utils/Definitions.h"
-#include "../DynamicBayesNet.h"
-#include "MessageNode.h"
+#include "model/utils/Definitions.h"
+#include "model/pgm/DynamicBayesNet.h"
+#include "model/pgm/inference/MessageNode.h"
 
 namespace tomcat {
     namespace model {

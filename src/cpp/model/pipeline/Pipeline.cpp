@@ -32,8 +32,8 @@ namespace tomcat {
 
             vector<KFold::Split> splits = this->data_splitter->get_splits();
             for (const auto& [training_data, test_data] : splits) {
-                this->model_trainner->prepare();
-                this->model_trainner->fit(training_data);
+                this->model_trainer->prepare();
+                this->model_trainer->fit(training_data);
                 if (this->model_saver != nullptr) {
                     this->model_saver->save();
                 }
@@ -63,7 +63,7 @@ namespace tomcat {
                     "A data splitter was not provided to the pipeline.");
             }
 
-            if (this->model_trainner == nullptr) {
+            if (this->model_trainer == nullptr) {
                 throw TomcatModelException(
                     "A model trainer was not provided to the pipeline.");
             }
@@ -90,7 +90,7 @@ namespace tomcat {
             json["execution_end"] = final_timestamp;
             json["duration_in_seconds"] = duration_in_seconds;
             this->data_splitter->get_info(json["data_split"]);
-            this->model_trainner->get_info(json["training"]);
+            this->model_trainer->get_info(json["training"]);
             this->aggregator->get_info(json["evaluation"]);
 
             this->output_stream << setw(4) << json;
@@ -104,9 +104,9 @@ namespace tomcat {
             this->data_splitter = data_splitter;
         }
 
-        void Pipeline::set_model_trainner(
-            const shared_ptr<DBNTrainer>& model_trainner) {
-            this->model_trainner = model_trainner;
+        void Pipeline::set_model_trainer(
+            const shared_ptr<DBNTrainer>& model_trainer) {
+            this->model_trainer = model_trainer;
         }
 
         void Pipeline::set_model_saver(

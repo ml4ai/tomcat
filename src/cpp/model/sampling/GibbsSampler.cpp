@@ -107,7 +107,7 @@ namespace tomcat {
 
         void GibbsSampler::fill_initial_samples(
             shared_ptr<gsl_rng> random_generator) {
-            // Observable nodes are already frozen by the gibbs sampler thus
+            // Observable nodes are already frozen by the Gibbs sampler thus
             // there's no need to add them as data in the ancestral sampler.
             AncestralSampler initial_sampler(this->model);
             initial_sampler.set_num_in_plate_samples(

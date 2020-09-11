@@ -5,8 +5,8 @@
 
 #include "EstimationProcess.h"
 
-#include "../../utils/Definitions.h"
-#include "../../utils/Mosquitto.h"
+#include "model/utils/Definitions.h"
+#include "model/utils/Mosquitto.h"
 
 namespace tomcat {
     namespace model {

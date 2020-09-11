@@ -24,7 +24,7 @@ find_package(
              regex
              system
              thread
-  REQUIRED)
+             REQUIRED)
 
 # FMT is a library used for formatting.
 find_package(FMT REQUIRED)
@@ -42,50 +42,59 @@ file(GLOB tomcat_model_headers CONFIGURE_DEPENDS
      ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 
 # Header and cpp files
-add_library(tomcat_model_lib
-        STATIC
-        ${tomcat_model_headers}
-        pgm/NodeMetadata.cpp
-        pgm/Node.cpp
-        pgm/ConstantNode.cpp
-        pgm/RandomVariableNode.cpp
-        pgm/cpd/CPD.cpp
-        pgm/cpd/CategoricalCPD.cpp
-        pgm/cpd/GaussianCPD.cpp
-        pgm/cpd/DirichletCPD.cpp
-        pgm/DynamicBayesNet.cpp
-        sampling/Sampler.cpp
-        sampling/AncestralSampler.cpp
-        sampling/GibbsSampler.cpp
-        utils/FileHandler.cpp
-        utils/Tensor3.cpp
-        distribution/Distribution.cpp
-        distribution/Categorical.cpp
-        distribution/Continuous.cpp
-        distribution/Dirichlet.cpp
-        distribution/Gaussian.cpp
-        pipeline/training/DBNSamplingTrainer.cpp
-        pgm/EvidenceSet.cpp
-        pipeline/KFold.cpp
-        pipeline/training/DBNTrainer.cpp
-        pipeline/training/DBNLoader.cpp
-        pipeline/DBNSaver.cpp
-        pipeline/estimation/Estimator.cpp
-        pipeline/estimation/TrainingFrequencyEstimator.cpp
-        pipeline/estimation/SumProductEstimator.cpp
-        pipeline/estimation/EstimationProcess.cpp
-        pipeline/estimation/OfflineEstimation.cpp
-        pipeline/estimation/OnlineEstimation.cpp
-        pipeline/evaluation/Measure.cpp
-        pipeline/evaluation/Estimates.cpp
-        pipeline/evaluation/Accuracy.cpp
-        pipeline/evaluation/F1Score.cpp
-        pipeline/evaluation/EvaluationAggregator.cpp
-        pipeline/Pipeline.cpp
-        utils/EigenExtensions.cpp
-        utils/Mosquitto.cpp pgm/inference/MessageNode.cpp pgm/inference/MessageNode.h pgm/inference/FactorNode.cpp pgm/inference/FactorNode.h pgm/inference/VariableNode.cpp pgm/inference/VariableNode.h pgm/inference/FactorGraph.cpp pgm/inference/FactorGraph.h)
+add_library(
+  tomcat_model_lib STATIC
+  ${tomcat_model_headers}
+  pgm/NodeMetadata.cpp
+  pgm/Node.cpp
+  pgm/ConstantNode.cpp
+  pgm/RandomVariableNode.cpp
+  pgm/cpd/CPD.cpp
+  pgm/cpd/CategoricalCPD.cpp
+  pgm/cpd/GaussianCPD.cpp
+  pgm/cpd/DirichletCPD.cpp
+  pgm/DynamicBayesNet.cpp
+  sampling/Sampler.cpp
+  sampling/AncestralSampler.cpp
+  sampling/GibbsSampler.cpp
+  utils/FileHandler.cpp
+  utils/Tensor3.cpp
+  distribution/Distribution.cpp
+  distribution/Categorical.cpp
+  distribution/Continuous.cpp
+  distribution/Dirichlet.cpp
+  distribution/Gaussian.cpp
+  pipeline/training/DBNSamplingTrainer.cpp
+  pgm/EvidenceSet.cpp
+  pipeline/KFold.cpp
+  pipeline/training/DBNTrainer.cpp
+  pipeline/training/DBNLoader.cpp
+  pipeline/DBNSaver.cpp
+  pipeline/estimation/Estimator.cpp
+  pipeline/estimation/TrainingFrequencyEstimator.cpp
+  pipeline/estimation/SumProductEstimator.cpp
+  pipeline/estimation/EstimationProcess.cpp
+  pipeline/estimation/OfflineEstimation.cpp
+  pipeline/estimation/OnlineEstimation.cpp
+  pipeline/evaluation/Measure.cpp
+  pipeline/evaluation/Estimates.cpp
+  pipeline/evaluation/Accuracy.cpp
+  pipeline/evaluation/F1Score.cpp
+  pipeline/evaluation/EvaluationAggregator.cpp
+  pipeline/Pipeline.cpp
+  utils/EigenExtensions.cpp
+  utils/Mosquitto.cpp
+  pgm/inference/MessageNode.cpp
+  pgm/inference/MessageNode.h
+  pgm/inference/FactorNode.cpp
+  pgm/inference/FactorNode.h
+  pgm/inference/VariableNode.cpp
+  pgm/inference/VariableNode.h
+  pgm/inference/FactorGraph.cpp
+  pgm/inference/FactorGraph.h)
 
-target_include_directories(tomcat_model_lib PRIVATE ${Boost_INCLUDE_DIR})
+target_include_directories(tomcat_model_lib PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/../" ${Boost_INCLUDE_DIR})
 
 # Todo make code coverage work on Linux as well.
 if(APPLE
@@ -107,7 +116,9 @@ endif()
 
 add_executable(TomcatModel main.cpp Tomcat.cpp Tomcat.h)
 target_include_directories(TomcatModel PRIVATE ${Boost_INCLUDE_DIR}
-                                               ${Mosquitto_INCLUDE_DIRS})
+                                               ${Mosquitto_INCLUDE_DIRS}
+                                               "${CMAKE_CURRENT_SOURCE_DIR}/../"
+                                               )
 target_link_libraries(
   TomcatModel
   PRIVATE tomcat_model_lib

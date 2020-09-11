@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../utils/Definitions.h"
+#include "model/utils/Definitions.h"
 
-#include "EstimationProcess.h"
+#include "model/pipeline/estimation/EstimationProcess.h"
 
 namespace tomcat {
     namespace model {
