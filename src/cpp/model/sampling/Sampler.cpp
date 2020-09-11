@@ -2,8 +2,8 @@
 
 #include <array>
 
-#include <fmt/format.h>
 #include <boost/filesystem.hpp>
+#include <fmt/format.h>
 
 #include "../utils/FileHandler.h"
 
@@ -17,8 +17,7 @@ namespace tomcat {
         //----------------------------------------------------------------------
         Sampler::Sampler() {}
 
-        Sampler::Sampler(shared_ptr<DynamicBayesNet> model)
-            : model(model) {}
+        Sampler::Sampler(shared_ptr<DynamicBayesNet> model) : model(model) {}
 
         Sampler::~Sampler() {}
 
@@ -63,22 +62,30 @@ namespace tomcat {
         Tensor3 Sampler::get_samples(const string& node_label) const {
             vector<shared_ptr<Node>> nodes =
                 this->model->get_nodes_by_label(node_label);
+
+            // Get the max time step for which samples were generated
+            int max_time_step = this->max_time_step_to_sample > 0
+                                    ? min(this->max_time_step_to_sample,
+                                          this->model->get_time_steps() - 1)
+                                    : this->model->get_time_steps() - 1;
+
             if (!nodes.empty()) {
                 int d1 = nodes[0]->get_metadata()->get_sample_size();
                 int d2 = nodes[0]->get_size();
-                int d3 = this->model->get_time_steps();
+                int d3 = max_time_step + 1;
                 double* buffer = new double[d1 * d2 * d3];
                 fill_n(buffer, d1 * d2 * d3, NO_OBS);
                 for (auto& node : nodes) {
-                    Eigen::Matrix assignment = node->get_assignment();
-                    for (int i = 0; i < assignment.rows(); i++) {
-                        for (int j = 0; j < assignment.cols(); j++) {
-                            int t =
-                                dynamic_pointer_cast<RandomVariableNode>(
-                                    node)
-                                    ->get_time_step();
-                            int index = j * d2 * d3 + i * d3 + t;
-                            buffer[index] = assignment(i, j);
+                    shared_ptr<RandomVariableNode> rv_node =
+                        dynamic_pointer_cast<RandomVariableNode>(node);
+                    if (rv_node->get_time_step() <= max_time_step) {
+                        Eigen::Matrix assignment = node->get_assignment();
+                        for (int i = 0; i < assignment.rows(); i++) {
+                            for (int j = 0; j < assignment.cols(); j++) {
+                                int t = rv_node->get_time_step();
+                                int index = j * d2 * d3 + i * d3 + t;
+                                buffer[index] = assignment(i, j);
+                            }
                         }
                     }
                 }
@@ -91,8 +98,8 @@ namespace tomcat {
             }
         }
 
-        void Sampler::save_samples_to_folder(
-            const string& output_folder) const {
+        void
+        Sampler::save_samples_to_folder(const string& output_folder) const {
 
             boost::filesystem::create_directories(output_folder);
 
@@ -106,8 +113,7 @@ namespace tomcat {
         void Sampler::freeze_observable_nodes() {
             for (const auto& node_label : this->data.get_node_labels()) {
                 for (auto& node : this->model->get_nodes_by_label(node_label)) {
-                    dynamic_pointer_cast<RandomVariableNode>(node)
-                        ->freeze();
+                    dynamic_pointer_cast<RandomVariableNode>(node)->freeze();
                 }
             }
         }
@@ -115,8 +121,7 @@ namespace tomcat {
         void Sampler::unfreeze_observable_nodes() {
             for (const auto& node_label : this->data.get_node_labels()) {
                 for (auto& node : this->model->get_nodes_by_label(node_label)) {
-                    dynamic_pointer_cast<RandomVariableNode>(node)
-                        ->unfreeze();
+                    dynamic_pointer_cast<RandomVariableNode>(node)->unfreeze();
                 }
             }
         }
@@ -130,6 +135,10 @@ namespace tomcat {
 
         const shared_ptr<DynamicBayesNet>& Sampler::get_model() const {
             return model;
+        }
+
+        void Sampler::set_max_time_step_to_sample(int maxTimeStepToSample) {
+            this->max_time_step_to_sample = maxTimeStepToSample;
         }
 
     } // namespace model

@@ -87,6 +87,11 @@ namespace tomcat {
                         }
                     }
 
+//                    double mean_estimate =
+//                        estimates_in_time_step.colwise().mean()[0];
+//                    estimates_in_time_step = Eigen::MatrixXd::Constant(
+//                        1, 1, mean_estimate);
+
                     this->add_column_to_estimates(estimates,
                                                   estimates_in_time_step);
                 }
@@ -151,11 +156,11 @@ namespace tomcat {
                                 time_step,
                                 MessageNode::Direction::forward);
 
-//                        LOG("Forward");
-//                        LOG(MessageNode::get_name(node->get_label(),
-//                                                  time_step));
-//                        LOG(message);
-//                        LOG("");
+                        //                        LOG("Forward");
+                        //                        LOG(MessageNode::get_name(node->get_label(),
+                        //                                                  time_step));
+                        //                        LOG(message);
+                        //                        LOG("");
 
                         node->set_incoming_message_from(
                             parent_node->get_label(),
@@ -218,11 +223,11 @@ namespace tomcat {
                                     time_step,
                                     MessageNode::Direction::backwards);
 
-//                            LOG("Backward");
-//                            LOG(MessageNode::get_name(node->get_label(),
-//                                                      time_step));
-//                            LOG(message);
-//                            LOG("");
+                            //                            LOG("Backward");
+                            //                            LOG(MessageNode::get_name(node->get_label(),
+                            //                                                      time_step));
+                            //                            LOG(message);
+                            //                            LOG("");
 
                             node->set_incoming_message_from(
                                 child_vertex->get_label(),
@@ -304,9 +309,7 @@ namespace tomcat {
             json["inference_horizon"] = this->inference_horizon;
         }
 
-        string SumProductEstimator::get_name() const {
-            return "sum-product";
-        }
+        string SumProductEstimator::get_name() const { return "sum-product"; }
 
     } // namespace model
 } // namespace tomcat

@@ -42,9 +42,8 @@ namespace tomcat {
             this->iteration = sampler.iteration;
         }
 
-        void
-        GibbsSampler::sample_latent(shared_ptr<gsl_rng> random_generator,
-                                    int num_samples) {
+        void GibbsSampler::sample_latent(shared_ptr<gsl_rng> random_generator,
+                                         int num_samples) {
             // We will proceed from the root to the leaves so that child nodes
             // can update the sufficient statistics of parameter nodes correctly
             // given that parent nodes were already sampled.
@@ -54,12 +53,17 @@ namespace tomcat {
             vector<shared_ptr<Node>> latent_nodes;
             for (auto& node : this->model->get_nodes_topological_order()) {
                 if (node->get_metadata()->is_parameter()) {
-                    if (!dynamic_pointer_cast<RandomVariableNode>(node)
-                             ->is_frozen()) {
-                        // TODO - change this if we need to have a parameter
-                        // that depends on other parameters.
-                        parameter_nodes.push_back(node);
-                        latent_nodes.push_back(node);
+                    shared_ptr<RandomVariableNode> rv_node =
+                        dynamic_pointer_cast<RandomVariableNode>(node);
+                    if (!rv_node->is_frozen()) {
+                        if (this->max_time_step_to_sample < 0 ||
+                            rv_node->get_time_step() <=
+                                this->max_time_step_to_sample) {
+                            // TODO - change this if we need to have a parameter
+                            // that depends on other parameters.
+                            parameter_nodes.push_back(node);
+                            latent_nodes.push_back(node);
+                        }
                     }
                 }
                 else {
@@ -136,10 +140,10 @@ namespace tomcat {
             }
         }
 
-        void GibbsSampler::sample_data_node(
-            shared_ptr<gsl_rng> random_generator,
-            shared_ptr<Node> node,
-            bool discard) {
+        void
+        GibbsSampler::sample_data_node(shared_ptr<gsl_rng> random_generator,
+                                       shared_ptr<Node> node,
+                                       bool discard) {
 
             Eigen::MatrixXd weights = this->get_weights_for(node);
             vector<shared_ptr<Node>> parent_nodes =
@@ -183,8 +187,7 @@ namespace tomcat {
                         ->set_assignment(
                             Eigen::MatrixXd::Constant(node->get_size(), 1, i));
                     Eigen::VectorXd pdfs =
-                        dynamic_pointer_cast<RandomVariableNode>(
-                            child_node)
+                        dynamic_pointer_cast<RandomVariableNode>(child_node)
                             ->get_pdfs(this->model->get_parent_nodes_of(
                                 child_node, true));
 
@@ -219,9 +222,9 @@ namespace tomcat {
             return weights;
         }
 
-        void GibbsSampler::keep_sample(
-            const shared_ptr<RandomVariableNode>& node,
-            const Eigen::MatrixXd& sample) {
+        void
+        GibbsSampler::keep_sample(const shared_ptr<RandomVariableNode>& node,
+                                  const Eigen::MatrixXd& sample) {
             if (sample.rows() == 1) {
                 string node_label = node->get_metadata()->get_label();
                 this->sampled_node_labels.insert(node_label);

@@ -8,8 +8,7 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
-        AncestralSampler::AncestralSampler(
-            shared_ptr<DynamicBayesNet> model)
+        AncestralSampler::AncestralSampler(shared_ptr<DynamicBayesNet> model)
             : Sampler(model) {}
 
         AncestralSampler::~AncestralSampler() {}
@@ -30,13 +29,18 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void AncestralSampler::sample_latent(
-            shared_ptr<gsl_rng> random_generator, int num_samples) {
+        void
+        AncestralSampler::sample_latent(shared_ptr<gsl_rng> random_generator,
+                                        int num_samples) {
             vector<shared_ptr<Node>> nodes;
             for (auto& node : this->model->get_nodes_topological_order()) {
-                if (!dynamic_pointer_cast<RandomVariableNode>(node)
-                         ->is_frozen()) {
-                    nodes.push_back(node);
+                shared_ptr<RandomVariableNode> rv_node =
+                    dynamic_pointer_cast<RandomVariableNode>(node);
+                if (!rv_node->is_frozen()) {
+                    if (this->max_time_step_to_sample < 0 ||
+                        rv_node->get_time_step() <= this->max_time_step_to_sample) {
+                        nodes.push_back(node);
+                    }
                 }
             }
 
@@ -61,12 +65,15 @@ namespace tomcat {
                     dynamic_pointer_cast<RandomVariableNode>(node);
 
                 bool equal_samples = false;
-                if (rv_node->get_time_step() <= this->equal_samples_time_step_limit) {
+                if (rv_node->get_time_step() <=
+                    this->equal_samples_time_step_limit) {
                     equal_samples = true;
                 }
 
-                Eigen::MatrixXd assignment = rv_node->sample(
-                    random_generator, parent_nodes, real_num_samples, equal_samples);
+                Eigen::MatrixXd assignment = rv_node->sample(random_generator,
+                                                             parent_nodes,
+                                                             real_num_samples,
+                                                             equal_samples);
                 rv_node->set_assignment(assignment);
             }
         }
@@ -80,8 +87,7 @@ namespace tomcat {
         //----------------------------------------------------------------------
         void AncestralSampler::set_equal_samples_time_step_limit(
             int equal_samples_time_step_limit) {
-            this->equal_samples_time_step_limit =
-                equal_samples_time_step_limit;
+            this->equal_samples_time_step_limit = equal_samples_time_step_limit;
         }
 
     } // namespace model

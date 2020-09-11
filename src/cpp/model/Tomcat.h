@@ -70,12 +70,14 @@ namespace tomcat {
              * @param output_folder: folder where the samples must be saved
              * @param equal_until: max time step for equal samples. After this
              * time step, samples are not required to be the same.
+             * @param max_time_step: generate data up to this time step.
              */
             void
             generate_synthetic_data(std::shared_ptr<gsl_rng> random_generator,
                                     int num_samples,
                                     const std::string& output_folder,
-                                    int equal_until = -1);
+                                    int equal_until = -1,
+                                    int max_time_step = -1);
 
             //------------------------------------------------------------------
             // Getters & Setters

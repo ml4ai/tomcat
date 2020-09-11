@@ -23,7 +23,12 @@ using namespace tomcat::model;
 using namespace std;
 
 /**
- * 5 Cross validation with the falcon map in the engineering data.
+ * This source file implements the experiments described in details in the
+ * document experimentation.tex.
+ */
+
+/**
+ * Cross validation with the falcon map on engineering data.
  */
 void execute_experiment_1a() {
     // Random Seed
@@ -94,7 +99,7 @@ void execute_experiment_1a() {
 }
 
 /**
- * Training with the engineering data and test with the human subject data
+ * Training with engineering data and testing on human subject data
  */
 void execute_experiment_1b() {
     // Random Seed
@@ -133,7 +138,7 @@ void execute_experiment_1b() {
         make_shared<EvaluationAggregator>(
             EvaluationAggregator::METHOD::no_aggregation);
 
-    vector<int> horizons = {1}; //, 3, 5, 10, 15, 30};
+    vector<int> horizons = {1, 3, 5, 10, 15, 30};
     for (int horizon : horizons) {
         shared_ptr<Estimator> estimator =
             make_shared<TrainingFrequencyEstimator>(tomcat.get_model(),
@@ -167,10 +172,79 @@ void execute_experiment_1b() {
 }
 
 /**
+ * Same as exmperiment 1a but assuming different thresholds for discretizing an
+ * estimate to 0 or 1.
+ */
+void execute_experiment_1c() {
+    // Random Seed
+    shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+
+    // Model
+    Tomcat tomcat;
+    tomcat.init_ta3_learnable_model();
+
+    // Data
+    EvidenceSet data("../../data/samples/ta3/falcon/engineering");
+
+    // Data split
+    int num_folds = 5;
+    shared_ptr<KFold> data_splitter = make_shared<KFold>(data, num_folds, gen);
+
+    // Training
+    shared_ptr<DBNTrainer> loader = make_shared<DBNLoader>(DBNLoader(
+        tomcat.get_model(), "../../data/model/ta3/experiment_1a/fold{}"));
+
+    vector<double> thresholds = {0.2, 0.3, 0.4, 0.5, 0.6, 0.7};
+    vector<int> horizons = {1, 3, 5, 10, 15, 30};
+    for (double threshold : thresholds) {
+        // Estimation and evaluation
+        shared_ptr<OfflineEstimation> offline_estimation =
+            make_shared<OfflineEstimation>();
+
+        shared_ptr<EvaluationAggregator> aggregator =
+            make_shared<EvaluationAggregator>(
+                EvaluationAggregator::METHOD::no_aggregation);
+
+        for (int horizon : horizons) {
+            shared_ptr<Estimator> estimator =
+                make_shared<TrainingFrequencyEstimator>(tomcat.get_model(),
+                                                        horizon);
+            estimator->add_node(Tomcat::SG, Eigen::VectorXd::Constant(1, 1));
+            estimator->add_node(Tomcat::SY, Eigen::VectorXd::Constant(1, 1));
+            offline_estimation->add_estimator(estimator);
+            aggregator->add_measure(
+                make_shared<Accuracy>(estimator, threshold));
+            aggregator->add_measure(make_shared<F1Score>(estimator, threshold));
+
+            estimator =
+                make_shared<SumProductEstimator>(tomcat.get_model(), horizon);
+            estimator->add_node(Tomcat::SG, Eigen::VectorXd::Constant(1, 1));
+            estimator->add_node(Tomcat::SY, Eigen::VectorXd::Constant(1, 1));
+            offline_estimation->add_estimator(estimator);
+            aggregator->add_measure(
+                make_shared<Accuracy>(estimator, threshold));
+            aggregator->add_measure(make_shared<F1Score>(estimator, threshold));
+        }
+
+        stringstream filepath;
+        filepath << "../../data/evaluations/ta3/experiment_1c/evaluations_"
+                 << threshold << ".json";
+        ofstream output_file;
+        output_file.open(filepath.str());
+        Pipeline pipeline("experiment_1c", output_file);
+        pipeline.set_data_splitter(data_splitter);
+        pipeline.set_model_trainner(loader);
+        pipeline.set_estimation_process(offline_estimation);
+        pipeline.set_aggregator(aggregator);
+        pipeline.execute();
+    }
+}
+
+/**
  * Generates synthetic data using the trained model from experiment 1b with
  * equal samples up to time 100.
  */
-void execute_experiment_1c_part_a() {
+void execute_experiment_1d_part_a() {
     // Random Seed
     shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
 
@@ -188,15 +262,16 @@ void execute_experiment_1c_part_a() {
     tomcat.generate_synthetic_data(
         gen,
         num_samples,
-        "../../data/samples/ta3/falcon/synthetic/experiment_1c",
+        "../../data/samples/ta3/falcon/synthetic/experiment_1d",
         equal_until_time_step);
 }
 
 /**
  * Computes estimates for several values of inference horizons over the samples
- * generated in part a.
+ * generated in part a. Samples are shrunk up to time step 100 as we are
+ * interested in using the predictions at this time step.
  */
-void execute_experiment_1c_part_b() {
+void execute_experiment_1d_part_b() {
     // Random Seed
     shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
 
@@ -207,7 +282,7 @@ void execute_experiment_1c_part_b() {
     // Data
     EvidenceSet training_data; // Empty
     EvidenceSet test_data(
-        "../../data/samples/ta3/falcon/synthetic/experiment_1c");
+        "../../data/samples/ta3/falcon/synthetic/experiment_1d");
     test_data.keep_first(1);
     test_data.shrink_up_to(100);
 
@@ -240,8 +315,8 @@ void execute_experiment_1c_part_b() {
 
     ofstream output_file;
     output_file.open(
-        "../../data/evaluations/ta3/experiment_1c/evaluations.json");
-    Pipeline pipeline("experiment_1c", output_file);
+        "../../data/evaluations/ta3/experiment_1d/evaluations.json");
+    Pipeline pipeline("experiment_1d", output_file);
     pipeline.set_data_splitter(data_splitter);
     pipeline.set_model_trainner(loader);
     pipeline.set_estimation_process(offline_estimation);
@@ -251,11 +326,128 @@ void execute_experiment_1c_part_b() {
 }
 
 /**
- * Chooses a different threshold for prediction of an assignment occurrence in
- * the inference horizon using the model trained in the experiment 1. The
- * threshold is 0.5 by default.
+ * Generate samples with homogeneous world for each one of the possible time
+ * steps in ht emodel.
  */
-void execute_experiment_1d() {
+void execute_experiment_1e_part_a() {
+    // Model
+    Tomcat tomcat;
+    tomcat.init_ta3_learnable_model();
+
+    // Training
+    shared_ptr<DBNTrainer> loader = make_shared<DBNLoader>(
+        DBNLoader(tomcat.get_model(), "../../data/model/ta3/experiment_1b/"));
+    loader->fit({});
+
+    int num_samples = 1000;
+
+    for (int t = 0; t < tomcat.get_model()->get_time_steps(); t++) {
+        LOG(t);
+        // Random Seed
+        shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+
+        stringstream filepath;
+        filepath << "../../data/samples/ta3/falcon/synthetic/experiment_1e/"
+                    "homogeneous_up_to_"
+                 << t;
+        // Extend the max time step so that empirical probabilities can be
+        // estimated in a window as large as 100 time steps.
+        tomcat.generate_synthetic_data(
+            gen, num_samples, filepath.str(), t, t + 100);
+    }
+}
+
+/**
+ * Computes estimates over the last set of samples generated in part a. In that
+ * scenario, the whole world was fixed so we just need to estimate for one data
+ * sample over time (as they are all the same). The different homogeneous world
+ * samples generated in part a will serve to compute the empirical
+ * probabilities. We can use the last world configuration because the samples
+ * were generated in a deterministic fashion given that the random seed was
+ * always restarted before generating a new set of samples.
+ */
+void execute_experiment_1e_part_b() {
+    // Model
+    Tomcat tomcat;
+    tomcat.init_ta3_learnable_model();
+
+    // Data
+    stringstream data_filepath;
+    data_filepath << "../../data/samples/ta3/falcon/synthetic/"
+                     "experiment_1e/homogeneous_up_to_"
+                  << tomcat.get_model()->get_time_steps() - 1;
+    EvidenceSet training_data; // Empty
+    EvidenceSet test_data(data_filepath.str());
+    test_data.keep_first(1);
+
+    // Data split
+    shared_ptr<KFold> data_splitter =
+        make_shared<KFold>(training_data, test_data);
+
+    // Training
+    shared_ptr<DBNTrainer> loader = make_shared<DBNLoader>(
+        DBNLoader(tomcat.get_model(), "../../data/model/ta3/experiment_1b/"));
+    loader->fit({});
+
+    // Estimation and evaluation
+    shared_ptr<OfflineEstimation> offline_estimation =
+        make_shared<OfflineEstimation>();
+
+    shared_ptr<EvaluationAggregator> aggregator =
+        make_shared<EvaluationAggregator>(
+            EvaluationAggregator::METHOD::no_aggregation);
+
+    vector<int> horizons = {1, 3, 5, 10, 15, 30};
+    for (int horizon : horizons) {
+        shared_ptr<Estimator> estimator =
+            make_shared<SumProductEstimator>(tomcat.get_model(), horizon);
+        estimator->add_node(Tomcat::SG, Eigen::VectorXd::Constant(1, 1));
+        estimator->add_node(Tomcat::SY, Eigen::VectorXd::Constant(1, 1));
+        offline_estimation->add_estimator(estimator);
+        aggregator->add_measure(make_shared<Estimates>(estimator));
+    }
+
+    ofstream output_file;
+    output_file.open(
+        "../../data/evaluations/ta3/experiment_1e/evaluations.json");
+    Pipeline pipeline("experiment_1e", output_file);
+    pipeline.set_data_splitter(data_splitter);
+    pipeline.set_model_trainner(loader);
+    pipeline.set_estimation_process(offline_estimation);
+    pipeline.set_aggregator(aggregator);
+    pipeline.execute();
+    output_file.close();
+}
+
+/**
+ * Generates synthetic data the trained model from experiment 1b without
+ * freezing the world.
+ */
+void execute_experiment_1f_part_a() {
+    // Random Seed
+    shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+
+    // Model
+    Tomcat tomcat;
+    tomcat.init_ta3_learnable_model();
+
+    // Training
+    shared_ptr<DBNTrainer> loader = make_shared<DBNLoader>(
+        DBNLoader(tomcat.get_model(), "../../data/model/ta3/experiment_1b/"));
+    loader->fit({});
+
+    int num_samples = 1000;
+    tomcat.generate_synthetic_data(
+        gen,
+        num_samples,
+        "../../data/samples/ta3/falcon/synthetic/experiment_1f");
+}
+
+/**
+ * Computes the performance of the model on synthetic data for several values of
+ * the inference horizon.
+ */
+void execute_experiment_1f_part_b() {
     // Random Seed
     shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
 
@@ -264,57 +456,47 @@ void execute_experiment_1d() {
     tomcat.init_ta3_learnable_model();
 
     // Data
-    EvidenceSet data("../../data/samples/ta3/falcon/engineering");
+    EvidenceSet training_data;
+    EvidenceSet test_data(
+        "../../data/samples/ta3/falcon/synthetic/experiment_1f");
 
     // Data split
-    int num_folds = 5;
-    shared_ptr<KFold> data_splitter = make_shared<KFold>(data, num_folds, gen);
+    shared_ptr<KFold> data_splitter =
+        make_shared<KFold>(training_data, test_data);
 
     // Training
     shared_ptr<DBNTrainer> loader = make_shared<DBNLoader>(
-        DBNLoader(tomcat.get_model(), "../../data/model/ta3/experiment_1a/fold{}"));
+        tomcat.get_model(), "../../data/model/ta3/experiment_1b/");
 
-    vector<double> thresholds = {0.2, 0.3, 0.4, 0.5, 0.6, 0.7};
+    // Estimation and evaluation
+    shared_ptr<OfflineEstimation> offline_estimation =
+        make_shared<OfflineEstimation>();
+
+    shared_ptr<EvaluationAggregator> aggregator =
+        make_shared<EvaluationAggregator>(
+            EvaluationAggregator::METHOD::no_aggregation);
+
     vector<int> horizons = {1, 3, 5, 10, 15, 30};
-    for (double threshold : thresholds) {
-        // Estimation and evaluation
-        shared_ptr<OfflineEstimation> offline_estimation =
-            make_shared<OfflineEstimation>();
-
-        shared_ptr<EvaluationAggregator> aggregator =
-            make_shared<EvaluationAggregator>(
-                EvaluationAggregator::METHOD::no_aggregation);
-
-        for (int horizon : horizons) {
-            shared_ptr<Estimator> estimator =
-                make_shared<TrainingFrequencyEstimator>(tomcat.get_model(),
-                                                        horizon);
-            estimator->add_node(Tomcat::SG, Eigen::VectorXd::Constant(1, 1));
-            estimator->add_node(Tomcat::SY, Eigen::VectorXd::Constant(1, 1));
-            offline_estimation->add_estimator(estimator);
-            aggregator->add_measure(make_shared<Accuracy>(estimator, threshold));
-            aggregator->add_measure(make_shared<F1Score>(estimator, threshold));
-
-            estimator =
-                make_shared<SumProductEstimator>(tomcat.get_model(), horizon);
-            estimator->add_node(Tomcat::SG, Eigen::VectorXd::Constant(1, 1));
-            estimator->add_node(Tomcat::SY, Eigen::VectorXd::Constant(1, 1));
-            offline_estimation->add_estimator(estimator);
-            aggregator->add_measure(make_shared<Accuracy>(estimator, threshold));
-            aggregator->add_measure(make_shared<F1Score>(estimator, threshold));
-        }
-
-        stringstream filepath;
-        filepath << "../../data/evaluations/ta3/experiment_1d/evaluations_" << threshold << ".json";
-        ofstream output_file;
-        output_file.open(filepath.str());
-        Pipeline pipeline("experiment_1d", output_file);
-        pipeline.set_data_splitter(data_splitter);
-        pipeline.set_model_trainner(loader);
-        pipeline.set_estimation_process(offline_estimation);
-        pipeline.set_aggregator(aggregator);
-        pipeline.execute();
+    for (int horizon : horizons) {
+        shared_ptr<Estimator> estimator =
+            make_shared<SumProductEstimator>(tomcat.get_model(), horizon);
+        estimator->add_node(Tomcat::SG, Eigen::VectorXd::Constant(1, 1));
+        estimator->add_node(Tomcat::SY, Eigen::VectorXd::Constant(1, 1));
+        offline_estimation->add_estimator(estimator);
+        aggregator->add_measure(make_shared<Accuracy>(estimator));
+        aggregator->add_measure(make_shared<F1Score>(estimator));
+        aggregator->add_measure(make_shared<Estimates>(estimator));
     }
+
+    ofstream output_file;
+    output_file.open(
+        "../../data/evaluations/ta3/experiment_1f/evaluations.json");
+    Pipeline pipeline("experiment_1f", output_file);
+    pipeline.set_data_splitter(data_splitter);
+    pipeline.set_model_trainner(loader);
+    pipeline.set_estimation_process(offline_estimation);
+    pipeline.set_aggregator(aggregator);
+    pipeline.execute();
 }
 
 void execute_experiment_1xxx() {
@@ -328,9 +510,13 @@ void execute_experiment_1xxx() {
 }
 
 int main() {
-    //execute_experiment_1a();
-    //execute_experiment_1b();
-    //execute_experiment_1c_part_a();
-    //execute_experiment_1c_part_b();
-    execute_experiment_1d();
+    // execute_experiment_1a();
+    execute_experiment_1b();
+    // execute_experiment_1c_part_a();
+    // execute_experiment_1c_part_b();
+    //    execute_experiment_1d();
+    //    execute_experiment_1e_part_a();
+    //    execute_experiment_1e_part_b();
+    // execute_experiment_1f_part_a();
+    // execute_experiment_1f_part_b();
 }

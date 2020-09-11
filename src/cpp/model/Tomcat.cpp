@@ -209,11 +209,13 @@ namespace tomcat {
             shared_ptr<gsl_rng> random_generator,
             int num_samples,
             const string& output_folder,
-            int equal_until) {
+            int equal_until,
+            int max_time_step) {
 
             AncestralSampler sampler(model);
             sampler.set_num_in_plate_samples(1);
             sampler.set_equal_samples_time_step_limit(equal_until);
+            sampler.set_max_time_step_to_sample(max_time_step);
             sampler.sample(random_generator, num_samples);
             sampler.save_samples_to_folder(output_folder);
         }

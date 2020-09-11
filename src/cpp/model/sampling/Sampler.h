@@ -85,6 +85,7 @@ namespace tomcat {
              * Returns samples generated for a specific latent node.
              *
              * @param node_label: latent node label
+             *
              * @return Samples over time. A matrix of dimension (num_samples,
              * time_steps).
              */
@@ -119,6 +120,8 @@ namespace tomcat {
 
             const std::shared_ptr<DynamicBayesNet>& get_model() const;
 
+            void set_max_time_step_to_sample(int maxTimeStepToSample);
+
           protected:
             //------------------------------------------------------------------
             // Member functions
@@ -147,6 +150,8 @@ namespace tomcat {
 
             EvidenceSet data;
 
+            int max_time_step_to_sample = -1;
+
           private:
             //------------------------------------------------------------------
             // Member functions
@@ -161,6 +166,7 @@ namespace tomcat {
              * Unfreeze nodes that have data assigned to them.
              */
             void unfreeze_observable_nodes();
+
         };
     } // namespace model
 } // namespace tomcat
