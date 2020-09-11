@@ -5,8 +5,8 @@
 
 #include <gsl/gsl_rng.h>
 
-#include "pgm/DynamicBayesNet.h"
-#include "utils/Definitions.h"
+#include "model/pgm/DynamicBayesNet.h"
+#include "model/utils/Definitions.h"
 
 namespace tomcat {
     namespace model {

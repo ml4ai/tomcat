@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../utils/Definitions.h"
-#include "Continuous.h"
+#include "model/utils/Definitions.h"
+#include "model/distribution/Continuous.h"
 
 namespace tomcat {
     namespace model {

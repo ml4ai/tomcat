@@ -2,8 +2,8 @@
 
 #include "DBNTrainer.h"
 
-#include "../../utils/Definitions.h"
-#include "../../sampling/Sampler.h"
+#include "model/utils/Definitions.h"
+#include "model/sampling/Sampler.h"
 
 namespace tomcat {
     namespace model {

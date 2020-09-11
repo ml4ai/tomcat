@@ -1,10 +1,9 @@
-#include "CategoricalCPD.h"
-
-#include "../ConstantNode.h"
+#include "model/pgm/cpd/CategoricalCPD.h"
+#include "model/pgm/ConstantNode.h"
 
 namespace tomcat {
     namespace model {
-        
+
         using namespace std;
 
         //----------------------------------------------------------------------

@@ -3,8 +3,8 @@
 #include <fstream>
 #include <string>
 
-#include "../utils/Definitions.h"
-#include "Tensor3.h"
+#include "model/utils/Definitions.h"
+#include "model/utils/Tensor3.h"
 
 namespace tomcat {
     namespace model {

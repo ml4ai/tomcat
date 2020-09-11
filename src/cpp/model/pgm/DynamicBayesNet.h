@@ -7,8 +7,8 @@
 
 #include <boost/graph/adjacency_list.hpp>
 
-#include "../utils/Definitions.h"
-#include "RandomVariableNode.h"
+#include "model/utils/Definitions.h"
+#include "model/pgm/RandomVariableNode.h"
 
 namespace tomcat {
     namespace model {

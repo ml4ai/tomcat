@@ -4,8 +4,8 @@
 
 #include <eigen3/Eigen/Dense>
 
-#include "../utils/Definitions.h"
-#include "NodeMetadata.h"
+#include "model/utils/Definitions.h"
+#include "model/pgm/NodeMetadata.h"
 
 namespace tomcat {
     namespace model {

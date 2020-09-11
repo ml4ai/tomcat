@@ -3,6 +3,9 @@
 #include <fstream>
 #include <sstream>
 
+#include <boost/program_options.hpp>
+#include <fmt/format.h>
+
 #include "pgm/EvidenceSet.h"
 #include "pipeline/DBNSaver.h"
 #include "pipeline/KFold.h"
@@ -21,6 +24,10 @@
 
 using namespace tomcat::model;
 using namespace std;
+namespace po = boost::program_options;
+
+string DATA_ROOT_DIR = "../../data/samples";
+string OUTPUT_ROOT_DIR = "../../data/";
 
 /**
  * This source file implements the experiments described in details in the
@@ -39,7 +46,9 @@ void execute_experiment_1a() {
     tomcat.init_ta3_learnable_model();
 
     // Data
-    EvidenceSet data("../../data/samples/ta3/falcon/engineering");
+    string data_dir =
+        fmt::format("{}/ta3/falcon/engineering", DATA_ROOT_DIR);
+    EvidenceSet data(data_dir);
 
     // Data split
     int num_folds = 5;
@@ -54,8 +63,10 @@ void execute_experiment_1a() {
         num_samples);
 
     // Saving
-    shared_ptr<DBNSaver> saver = make_shared<DBNSaver>(DBNSaver(
-        tomcat.get_model(), "../../data/model/ta3/experiment_1a/fold{}"));
+    string model_dir =
+        fmt::format("{}/model/ta3/experiment_1a/fold{{}}", OUTPUT_ROOT_DIR);
+    shared_ptr<DBNSaver> saver =
+        make_shared<DBNSaver>(DBNSaver(tomcat.get_model(), model_dir));
 
     // Estimation and evaluation
     shared_ptr<OfflineEstimation> offline_estimation =
@@ -87,11 +98,12 @@ void execute_experiment_1a() {
     }
 
     ofstream output_file;
-    output_file.open(
-        "../../data/evaluations/ta3/experiment_1a/evaluations.json");
+    string filepath = fmt::format(
+        "{}/evaluations/ta3/experiment_1a/evaluations.json", OUTPUT_ROOT_DIR);
+    output_file.open(filepath);
     Pipeline pipeline("experiment_1a", output_file);
     pipeline.set_data_splitter(data_splitter);
-    pipeline.set_model_trainner(trainer);
+    pipeline.set_model_trainer(trainer);
     pipeline.set_model_saver(saver);
     pipeline.set_estimation_process(offline_estimation);
     pipeline.set_aggregator(aggregator);
@@ -110,8 +122,11 @@ void execute_experiment_1b() {
     tomcat.init_ta3_learnable_model();
 
     // Data
-    EvidenceSet training_data("../../data/samples/ta3/falcon/engineering");
-    EvidenceSet test_data("../../data/samples/ta3/falcon/human");
+    string data_dir =
+        fmt::format("{}/ta3/falcon/engineering", DATA_ROOT_DIR);
+    EvidenceSet training_data(data_dir);
+    data_dir = fmt::format("{}/ta3/falcon/human", DATA_ROOT_DIR);
+    EvidenceSet test_data(data_dir);
 
     // Data split
     shared_ptr<KFold> data_splitter =
@@ -127,8 +142,10 @@ void execute_experiment_1b() {
             num_samples));
 
     // Saving
-    shared_ptr<DBNSaver> saver = make_shared<DBNSaver>(
-        DBNSaver(tomcat.get_model(), "../../data/model/ta3/experiment_1b/"));
+    string model_dir =
+        fmt::format("{}/model/ta3/experiment_1b/", OUTPUT_ROOT_DIR);
+    shared_ptr<DBNSaver> saver =
+        make_shared<DBNSaver>(DBNSaver(tomcat.get_model(), model_dir));
 
     // Estimation and evaluation
     shared_ptr<OfflineEstimation> offline_estimation =
@@ -160,11 +177,12 @@ void execute_experiment_1b() {
     }
 
     ofstream output_file;
-    output_file.open(
-        "../../data/evaluations/ta3/experiment_1b/evaluations.json");
+    string filepath = fmt::format(
+        "{}/evaluations/ta3/experiment_1b/evaluations.json", OUTPUT_ROOT_DIR);
+    output_file.open(filepath);
     Pipeline pipeline("experiment_1b", output_file);
     pipeline.set_data_splitter(data_splitter);
-    pipeline.set_model_trainner(trainer);
+    pipeline.set_model_trainer(trainer);
     pipeline.set_model_saver(saver);
     pipeline.set_estimation_process(offline_estimation);
     pipeline.set_aggregator(aggregator);
@@ -184,15 +202,19 @@ void execute_experiment_1c() {
     tomcat.init_ta3_learnable_model();
 
     // Data
-    EvidenceSet data("../../data/samples/ta3/falcon/engineering");
+    string data_dir =
+        fmt::format("{}/ta3/falcon/engineering", DATA_ROOT_DIR);
+    EvidenceSet data(data_dir);
 
     // Data split
     int num_folds = 5;
     shared_ptr<KFold> data_splitter = make_shared<KFold>(data, num_folds, gen);
 
     // Training
-    shared_ptr<DBNTrainer> loader = make_shared<DBNLoader>(DBNLoader(
-        tomcat.get_model(), "../../data/model/ta3/experiment_1a/fold{}"));
+    string model_dir =
+        fmt::format("{}/model/ta3/experiment_1a/fold{{}}", OUTPUT_ROOT_DIR);
+    shared_ptr<DBNTrainer> loader =
+        make_shared<DBNLoader>(DBNLoader(tomcat.get_model(), model_dir));
 
     vector<double> thresholds = {0.2, 0.3, 0.4, 0.5, 0.6, 0.7};
     vector<int> horizons = {1, 3, 5, 10, 15, 30};
@@ -226,14 +248,15 @@ void execute_experiment_1c() {
             aggregator->add_measure(make_shared<F1Score>(estimator, threshold));
         }
 
-        stringstream filepath;
-        filepath << "../../data/evaluations/ta3/experiment_1c/evaluations_"
-                 << threshold << ".json";
         ofstream output_file;
-        output_file.open(filepath.str());
+        string filepath =
+            fmt::format("{}/evaluations/ta3/experiment_1a/evaluations_{}.json",
+                        OUTPUT_ROOT_DIR,
+                        threshold);
+        output_file.open(filepath);
         Pipeline pipeline("experiment_1c", output_file);
         pipeline.set_data_splitter(data_splitter);
-        pipeline.set_model_trainner(loader);
+        pipeline.set_model_trainer(loader);
         pipeline.set_estimation_process(offline_estimation);
         pipeline.set_aggregator(aggregator);
         pipeline.execute();
@@ -253,17 +276,18 @@ void execute_experiment_1d_part_a() {
     tomcat.init_ta3_learnable_model();
 
     // Training
-    shared_ptr<DBNTrainer> loader = make_shared<DBNLoader>(
-        DBNLoader(tomcat.get_model(), "../../data/model/ta3/experiment_1b/"));
+    string model_dir =
+        fmt::format("{}/model/ta3/experiment_1b", OUTPUT_ROOT_DIR);
+    shared_ptr<DBNTrainer> loader =
+        make_shared<DBNLoader>(DBNLoader(tomcat.get_model(), model_dir));
     loader->fit({});
 
     int num_samples = 10000;
     int equal_until_time_step = 100;
+    string samples_dir = fmt::format(
+        "{}/samples/ta3/falcon/synthetic/experiment_1d", OUTPUT_ROOT_DIR);
     tomcat.generate_synthetic_data(
-        gen,
-        num_samples,
-        "../../data/samples/ta3/falcon/synthetic/experiment_1d",
-        equal_until_time_step);
+        gen, num_samples, samples_dir, equal_until_time_step);
 }
 
 /**
@@ -281,8 +305,9 @@ void execute_experiment_1d_part_b() {
 
     // Data
     EvidenceSet training_data; // Empty
-    EvidenceSet test_data(
-        "../../data/samples/ta3/falcon/synthetic/experiment_1d");
+    string data_dir = fmt::format(
+        "{}/ta3/falcon/synthetic/experiment_1d", DATA_ROOT_DIR);
+    EvidenceSet test_data(data_dir);
     test_data.keep_first(1);
     test_data.shrink_up_to(100);
 
@@ -291,8 +316,10 @@ void execute_experiment_1d_part_b() {
         make_shared<KFold>(training_data, test_data);
 
     // Training
-    shared_ptr<DBNTrainer> loader = make_shared<DBNLoader>(
-        DBNLoader(tomcat.get_model(), "../../data/model/ta3/experiment_1b/"));
+    string model_dir =
+        fmt::format("{}/model/ta3/experiment_1b", OUTPUT_ROOT_DIR);
+    shared_ptr<DBNTrainer> loader =
+        make_shared<DBNLoader>(DBNLoader(tomcat.get_model(), model_dir));
     loader->fit({});
 
     // Estimation and evaluation
@@ -314,11 +341,12 @@ void execute_experiment_1d_part_b() {
     }
 
     ofstream output_file;
-    output_file.open(
-        "../../data/evaluations/ta3/experiment_1d/evaluations.json");
+    string filepath = fmt::format(
+        "{}/evaluations/ta3/experiment_1d/evaluations.json", OUTPUT_ROOT_DIR);
+    output_file.open(filepath);
     Pipeline pipeline("experiment_1d", output_file);
     pipeline.set_data_splitter(data_splitter);
-    pipeline.set_model_trainner(loader);
+    pipeline.set_model_trainer(loader);
     pipeline.set_estimation_process(offline_estimation);
     pipeline.set_aggregator(aggregator);
     pipeline.execute();
@@ -335,8 +363,10 @@ void execute_experiment_1e_part_a() {
     tomcat.init_ta3_learnable_model();
 
     // Training
-    shared_ptr<DBNTrainer> loader = make_shared<DBNLoader>(
-        DBNLoader(tomcat.get_model(), "../../data/model/ta3/experiment_1b/"));
+    string model_dir =
+        fmt::format("{}/model/ta3/experiment_1b", OUTPUT_ROOT_DIR);
+    shared_ptr<DBNTrainer> loader =
+        make_shared<DBNLoader>(DBNLoader(tomcat.get_model(), model_dir));
     loader->fit({});
 
     int num_samples = 1000;
@@ -346,14 +376,15 @@ void execute_experiment_1e_part_a() {
         // Random Seed
         shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
 
-        stringstream filepath;
-        filepath << "../../data/samples/ta3/falcon/synthetic/experiment_1e/"
-                    "homogeneous_up_to_"
-                 << t;
+        string samples_dir = fmt::format("{}/samples/ta3/falcon/synthetic/"
+                                         "experiment_1e/homogeneous_up_to_{}",
+                                         OUTPUT_ROOT_DIR,
+                                         t);
+
         // Extend the max time step so that empirical probabilities can be
         // estimated in a window as large as 100 time steps.
         tomcat.generate_synthetic_data(
-            gen, num_samples, filepath.str(), t, t + 100);
+            gen, num_samples, samples_dir, t, t + 100);
     }
 }
 
@@ -372,12 +403,13 @@ void execute_experiment_1e_part_b() {
     tomcat.init_ta3_learnable_model();
 
     // Data
-    stringstream data_filepath;
-    data_filepath << "../../data/samples/ta3/falcon/synthetic/"
-                     "experiment_1e/homogeneous_up_to_"
-                  << tomcat.get_model()->get_time_steps() - 1;
     EvidenceSet training_data; // Empty
-    EvidenceSet test_data(data_filepath.str());
+    int last_time_step = tomcat.get_model()->get_time_steps() - 1;
+    string data_dir = fmt::format(
+        "{}/ta3/falcon/synthetic/experiment_1e/homogeneous_up_to_{}",
+        DATA_ROOT_DIR,
+        last_time_step);
+    EvidenceSet test_data(data_dir);
     test_data.keep_first(1);
 
     // Data split
@@ -385,8 +417,10 @@ void execute_experiment_1e_part_b() {
         make_shared<KFold>(training_data, test_data);
 
     // Training
-    shared_ptr<DBNTrainer> loader = make_shared<DBNLoader>(
-        DBNLoader(tomcat.get_model(), "../../data/model/ta3/experiment_1b/"));
+    string model_dir =
+        fmt::format("{}/model/ta3/experiment_1b", OUTPUT_ROOT_DIR);
+    shared_ptr<DBNTrainer> loader =
+        make_shared<DBNLoader>(DBNLoader(tomcat.get_model(), model_dir));
     loader->fit({});
 
     // Estimation and evaluation
@@ -408,11 +442,12 @@ void execute_experiment_1e_part_b() {
     }
 
     ofstream output_file;
-    output_file.open(
-        "../../data/evaluations/ta3/experiment_1e/evaluations.json");
+    string filepath = fmt::format(
+        "{}/evaluations/ta3/experiment_1e/evaluations.json", OUTPUT_ROOT_DIR);
+    output_file.open(filepath);
     Pipeline pipeline("experiment_1e", output_file);
     pipeline.set_data_splitter(data_splitter);
-    pipeline.set_model_trainner(loader);
+    pipeline.set_model_trainer(loader);
     pipeline.set_estimation_process(offline_estimation);
     pipeline.set_aggregator(aggregator);
     pipeline.execute();
@@ -432,15 +467,16 @@ void execute_experiment_1f_part_a() {
     tomcat.init_ta3_learnable_model();
 
     // Training
-    shared_ptr<DBNTrainer> loader = make_shared<DBNLoader>(
-        DBNLoader(tomcat.get_model(), "../../data/model/ta3/experiment_1b/"));
+    string model_dir =
+        fmt::format("{}/model/ta3/experiment_1b", OUTPUT_ROOT_DIR);
+    shared_ptr<DBNTrainer> loader =
+        make_shared<DBNLoader>(DBNLoader(tomcat.get_model(), model_dir));
     loader->fit({});
 
     int num_samples = 1000;
-    tomcat.generate_synthetic_data(
-        gen,
-        num_samples,
-        "../../data/samples/ta3/falcon/synthetic/experiment_1f");
+    string samples_dir = fmt::format(
+        "{}/samples/ta3/falcon/synthetic/experiment_1f", OUTPUT_ROOT_DIR);
+    tomcat.generate_synthetic_data(gen, num_samples, samples_dir);
 }
 
 /**
@@ -457,16 +493,19 @@ void execute_experiment_1f_part_b() {
 
     // Data
     EvidenceSet training_data;
-    EvidenceSet test_data(
-        "../../data/samples/ta3/falcon/synthetic/experiment_1f");
+    string data_dir = fmt::format(
+        "{}/ta3/falcon/synthetic/experiment_1f", DATA_ROOT_DIR);
+    EvidenceSet test_data(data_dir);
 
     // Data split
     shared_ptr<KFold> data_splitter =
         make_shared<KFold>(training_data, test_data);
 
     // Training
-    shared_ptr<DBNTrainer> loader = make_shared<DBNLoader>(
-        tomcat.get_model(), "../../data/model/ta3/experiment_1b/");
+    string model_dir =
+        fmt::format("{}/model/ta3/experiment_1b", OUTPUT_ROOT_DIR);
+    shared_ptr<DBNTrainer> loader =
+        make_shared<DBNLoader>(tomcat.get_model(), model_dir);
 
     // Estimation and evaluation
     shared_ptr<OfflineEstimation> offline_estimation =
@@ -489,11 +528,12 @@ void execute_experiment_1f_part_b() {
     }
 
     ofstream output_file;
-    output_file.open(
-        "../../data/evaluations/ta3/experiment_1f/evaluations.json");
+    string filepath = fmt::format(
+        "{}/evaluations/ta3/experiment_1f/evaluations.json", OUTPUT_ROOT_DIR);
+    output_file.open(filepath);
     Pipeline pipeline("experiment_1f", output_file);
     pipeline.set_data_splitter(data_splitter);
-    pipeline.set_model_trainner(loader);
+    pipeline.set_model_trainer(loader);
     pipeline.set_estimation_process(offline_estimation);
     pipeline.set_aggregator(aggregator);
     pipeline.execute();
@@ -509,9 +549,103 @@ void execute_experiment_1xxx() {
     //    online_estimation->add_estimator(baseline_estimator);
 }
 
-int main() {
+void execute_experiment(const string& experiment_id) {
+    if (experiment_id == "1a") {
+        execute_experiment_1a();
+    }
+    else if (experiment_id == "1b") {
+        execute_experiment_1b();
+    }
+    else if (experiment_id == "1c") {
+        execute_experiment_1c();
+    }
+    else if (experiment_id == "1d") {
+        execute_experiment_1d_part_a();
+        execute_experiment_1d_part_b();
+    }
+    else if (experiment_id == "1d_a") {
+        execute_experiment_1d_part_a();
+    }
+    else if (experiment_id == "1d_b") {
+        execute_experiment_1d_part_b();
+    }
+    else if (experiment_id == "1e") {
+        execute_experiment_1e_part_a();
+        execute_experiment_1e_part_b();
+    }
+    else if (experiment_id == "1e_a") {
+        execute_experiment_1e_part_a();
+    }
+    else if (experiment_id == "1e_b") {
+        execute_experiment_1e_part_b();
+    }
+    else if (experiment_id == "1f") {
+        execute_experiment_1f_part_a();
+        execute_experiment_1f_part_b();
+    }
+    else if (experiment_id == "1f_a") {
+        execute_experiment_1f_part_a();
+    }
+    else if (experiment_id == "1f_b") {
+        execute_experiment_1f_part_b();
+    }
+    else {
+        throw TomcatModelException(
+            "There's no experiment with the informed ID.");
+    }
+}
+
+int main(int argc, char* argv[]) {
+    string experiment_id;
+    po::options_description desc("Allowed options");
+    desc.add_options()("help,h", "Produce this help message")(
+        "input_dir",
+        po::value<string>(&DATA_ROOT_DIR)->default_value("../../data/samples/"),
+        "Directory where input data is.")(
+        "output_dir",
+        po::value<string>(&OUTPUT_ROOT_DIR)->default_value("../../data/"),
+        "Output directory for generated data, model and evaluation.")(
+        "experiment_id",
+        po::value<string>(&experiment_id)->default_value("1a"),
+        "Mission ID or path to mission XML file.\n"
+        "  1a: ToMCAT-TA3 v1.0 - 5-CV on engineering data.\n"
+        "  1b: ToMCAT-TA3 v1.0 - Trains on engineering data, tests on "
+        "human "
+        "data.\n"
+        "  1c: ToMCAT-TA3 v1.0 - Experiment 1a with different thresholds.\n"
+        "  1d: ToMCAT-TA3 v1.0 - Experiments 1d_a + 1d_b.\n"
+        "  1d_a: ToMCAT-TA3 v1.0 - Generates samples with homogeneous "
+        "world up "
+        "to time step 100.\n"
+        "  1d_b: ToMCAT-TA3 v1.0 - Evaluates predictions at time step 100 "
+        "on "
+        "data generated in part a.\n"
+        "  1e: ToMCAT-TA3 v1.0 - Experiments 1e_a + 1e_b.\n"
+        "  1e_a: ToMCAT-TA3 v1.0 - Generates samples with homogeneous "
+        "world "
+        "for all time steps.\n"
+        "  1e_b: ToMCAT-TA3 v1.0 - Evaluates predictions at all time steps "
+        "the "
+        "data generated in part a.\n"
+        "  1f: ToMCAT-TA3 v1.0 - Experiments 1f_a + 1f_b.\n"
+        "  1f_a: ToMCAT-TA3 v1.0 - Generates data with no world "
+        "constraints.\n"
+        "  1f_b: ToMCAT-TA3 v1.0 - Evaluates predictions at all time steps "
+        "the "
+        "data generated in part a.\n");
+
+    po::variables_map vm;
+    po::store(po::parse_command_line(argc, argv, desc), vm);
+    po::notify(vm);
+    if (vm.count("help") || !vm.count("experiment_id")) {
+        cout << desc << "\n";
+        return 1;
+    }
+
+    execute_experiment(experiment_id);
+
     // execute_experiment_1a();
-    execute_experiment_1b();
+    // execute_experiment_1b();
     // execute_experiment_1c_part_a();
     // execute_experiment_1c_part_b();
     //    execute_experiment_1d();
