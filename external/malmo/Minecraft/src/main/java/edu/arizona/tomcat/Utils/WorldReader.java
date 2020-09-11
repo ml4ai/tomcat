@@ -80,15 +80,43 @@ public class WorldReader {
 
             Map<String, String> bound = location.get("bounds");
             String type = bound.get("type");
-            String material = bound.get("material");
-            String x = bound.get("x");
-            String y = bound.get("y");
-            String z = bound.get("z");
 
-            System.out.println("---------------> " + x + y + z);
+            if (type.equals("block")) {
+                String material = bound.get("material");
+                String x_string = bound.get("x");
+                String y_string = bound.get("y");
+                String z_string = bound.get("z");
+
+                int x = Integer.parseInt(x_string);
+                int y = Integer.parseInt(y_string);
+                int z = Integer.parseInt(z_string);
+                BlockPos pos = new BlockPos(x, y, z);
+
+                if (this.blockMap.containsKey(pos)) {
+                    this.blockMap.remove(pos);
+                }
+
+                if (material.equals("door")) {
+                    // Doors are special and we need to place a bottom and top half
+                    IBlockState doorBottom = this.getBlockState("door_bottom");
+
+                    BlockPos topPos =
+                            new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
+                    IBlockState doorTop = this.getBlockState("door_top");
+
+                    this.blockMap.remove(
+                            topPos); // For a door we need to remove and re add the
+                    // block above the current as well
+                    this.blockMap.put(pos, doorBottom);
+                    this.blockMap.put(topPos, doorTop);
+
+                } else {
+                    IBlockState state = getBlockState(material);
+                    this.blockMap.put(pos, state);
+                }
+            }
 
         }
-
 
     }
 

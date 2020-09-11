@@ -7,9 +7,11 @@ import edu.arizona.tomcat.Utils.WorldReader;
 import edu.arizona.tomcat.World.Drawing;
 import edu.arizona.tomcat.World.DrawingHandler;
 import edu.arizona.tomcat.World.TomcatEntity;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -46,29 +48,28 @@ public class ProceduralGenMission extends Mission {
             WorldReader worldReader = new WorldReader("proceduralAltJSON.json");
 
 
-            /*Drawing drawing = new Drawing();
+            Drawing drawing = new Drawing();
             Map<BlockPos, IBlockState> worldMap = worldReader.getBlocksMap();
-            List<TomcatEntity> entityList = worldReader.getEntityList();
+            /*List<TomcatEntity> entityList = worldReader.getEntityList();*/
 
             // Place blocks
             for (Map.Entry<BlockPos, IBlockState> entry : worldMap.entrySet()) {
                 world.setBlockState(entry.getKey(), entry.getValue());
             }
 
-            for (TomcatEntity entity : entityList) {
+            /*for (TomcatEntity entity : entityList) {
                 drawing.addObject(entity);
-            }
+            }*/
 
-            try {
+            /*try {
                 this.drawingHandler.draw(world, drawing);
             }
             catch (Exception e) {
                 e.printStackTrace();
-            }
+            }*/
 
-            this.shouldBuild = false;*/
-        }
-        else {
+            this.shouldBuild = false;
+        } else {
             return;
         }
     }
