@@ -44,6 +44,11 @@ class Block {
      */
     int getZ();
 
+    /**
+     * @brief Get the Pos object representation of the coordinates of the block
+     *
+     * @return Pos& The pos representation
+     */
     Pos& getPos();
 
     /**
@@ -68,18 +73,18 @@ class Block {
     void setZ(int z);
 
     /**
-     * @brief Gets the JSON representation of the various
-     * fields and values stored in an instance
+     * @brief Adds the JSON representation of this object to the
+     *        "locations" list of the base json
      *
-     * @return nlohmann::json The JSON representation
+     * @return nlohmann::json The base json
      */
     void virtual toJSON(nlohmann::json& json_base);
 
     /**
-     * @brief Gets a string representation of the various
-     * fields and values stored in an instance as a TSV
+     * @brief Adds the alternate JSON representation of this
+     * object to the "blocks" list of the base json.
      *
-     * @return string The TSV representation
+     * @return nlohmann::json The base json
      */
     void virtual toAltJSON(nlohmann::json& json_base);
 

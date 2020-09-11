@@ -1,15 +1,39 @@
 #pragma once
 #include "Block.h"
 
-class Lever : public Block{
-    private:
-        bool powered;
-        std::string facing;
+class Lever : public Block {
+  private:
+    bool powered;
+    std::string facing;
 
-    public:
-        void virtual toJSON(nlohmann::json& json_base);
-        void virtual toAltJSON(nlohmann::json& json_base);
-        Lever(Pos& pos, bool powered = false, std::string facing = "null");
-        ~Lever();
+  public:
+    /**
+     * @brief Adds the JSON representation of this object to the
+     *        "locations" lists of the base json
+     *
+     * @return nlohmann::json The base json
+     */
+    void virtual toJSON(nlohmann::json& json_base);
 
+    /**
+     * @brief Adds the alternate JSON representation of this object to the
+     *        "blocks" lists of the base json
+     *
+     * @return nlohmann::json The base json
+     */
+    void virtual toAltJSON(nlohmann::json& json_base);
+
+    /**
+     * @brief Construct a new Lever object
+     *
+     * @param pos The position of the block in the Minecraft world
+     * @param powered Should the lever be powered upon placement
+     * @param facing Which direction the lever should face
+     */
+    Lever(Pos& pos, bool powered = false, std::string facing = "null");
+
+    /**
+     * @brief Destroy the Lever object
+     */
+    ~Lever();
 };

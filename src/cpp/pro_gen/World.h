@@ -23,14 +23,14 @@ class World {
     /**
      * @brief Returns the vector that holds the AABBs
      *
-     * @return vector<AABB>& The AABB list
+     * @return vector<AABB*>& The AABB list
      */
     std::vector<AABB*>& getAABBList();
 
     /**
      * @brief Returns the vector that holds the Blocks
      *
-     * @return vector<Block>& The Block list
+     * @return vector<Block*>& The Block list
      */
     std::vector<Block*>& getBlockList();
 
@@ -41,6 +41,11 @@ class World {
      */
     std::vector<Entity*>& getEntityList();
 
+    /**
+     * @brief Returns the Object vector for this World
+     *
+     * @return std::vector<Object*>&  The object list
+     */
     std::vector<Object*>& getObjectList();
 
     /**
@@ -64,13 +69,18 @@ class World {
      */
     void addBlock(Block& block);
 
+    /**
+     * @brief Add an object to the vector of object held inside the world
+     *
+     * @param object The object to add
+     */
     void addObject(Object& object);
 
     /**
-     * @brief Gets a string representation of the various
-     * fields and values stores in an instance as a TSV
+     * @brief Converts the world into its alternate JSON representation with
+     * each entry indented by 4 and returns the string representation of it.
      *
-     * @return string The TSV representation
+     * @return string The JSON as a string
      */
     std::string virtual toAltJSON();
 
@@ -83,10 +93,11 @@ class World {
     std::string virtual toJSON();
 
     /**
-     * @brief Writes the world's JSON and TSV output to the given filepaths.
+     * @brief Writes the world's JSON and alternate JSON output to the given
+     * filepaths.
      *
      * @param jsonPath Path to store json
-     * @param tsvPath Path to store tsv
+     * @param altJSONPath Path to store the alternate json representation
      */
     void writeToFile(std::string jsonPath, std::string altJSONPath);
 

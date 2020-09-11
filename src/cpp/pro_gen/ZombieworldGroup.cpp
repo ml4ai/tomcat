@@ -1,5 +1,4 @@
 #include "ZombieworldGroup.h"
-#include <iostream>
 
 using namespace std;
 

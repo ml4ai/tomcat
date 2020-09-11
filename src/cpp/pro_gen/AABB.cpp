@@ -263,7 +263,7 @@ void AABB::toAltJSON(json& json_base) {
                 }
 
                 if (addCurrent) {
-                    Pos thisPos(x,y,z);
+                    Pos thisPos(x, y, z);
                     Block thisBlock(this->material, thisPos);
                     thisBlock.toAltJSON(json_base);
                 }
@@ -285,8 +285,6 @@ void AABB::toAltJSON(json& json_base) {
 }
 
 void AABB::generateAllDoorsInAABB() {
-    // Get edge midpoints for the AABB because that is where the doors will
-    // be placed
     vector<Pos> edges = this->getEdgeMidpointAtBase();
     Pos topEdgeMid(edges.at(0));
     Pos rightEdgeMid(edges.at(1));
@@ -299,7 +297,6 @@ void AABB::generateAllDoorsInAABB() {
     leftEdgeMid.shiftY(1);
     rightEdgeMid.shiftY(1);
 
-    // Add it to the AABB's doors
     this->addBlock(*(new Block("door", topEdgeMid)));
     this->addBlock(*(new Block("door", bottomEdgeMid)));
     this->addBlock(*(new Block("door", leftEdgeMid)));

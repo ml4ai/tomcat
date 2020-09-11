@@ -110,8 +110,11 @@ void ZombieWorld::generateBoundingWalls() {
     boundaryBottomRight.setY(13);
     boundaryBottomRight.shiftZ(4);
 
-    this->addAABB(*(new AABB(
-        to_string(0), "boundary", "cobblestone", boundaryTopLeft, boundaryBottomRight)));
+    this->addAABB(*(new AABB(to_string(0),
+                             "boundary",
+                             "cobblestone",
+                             boundaryTopLeft,
+                             boundaryBottomRight)));
 
     // Create Internal Separator 1
     Pos separator1BottomRight(boundaryBottomRight);
@@ -149,7 +152,7 @@ void ZombieWorld::generateBoundingWalls() {
     (*separatorWall2).generateBox("fence", 1, 1, 3, 2, 0, 0);
 }
 
-ZombieWorld::ZombieWorld(int seed){
+ZombieWorld::ZombieWorld(int seed) {
     this->setRandom(seed);
     this->generateAABBGrid();
     this->generateBoundingWalls();

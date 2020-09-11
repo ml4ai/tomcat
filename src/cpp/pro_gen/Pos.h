@@ -89,14 +89,6 @@ class Pos {
     nlohmann::json virtual toJSON();
 
     /**
-     * @brief Gets a string representation of the various
-     * fields and values stores in an instance as a TSV
-     *
-     * @return string The TSV representation
-     */
-    std::string toTSV();
-
-    /**
      * @brief Construct a new Pos object
      */
     Pos();

@@ -28,11 +28,9 @@ class ZombieworldPit : public AABB {
      * @brief Construct a new Pit object
      *
      * @param id The id to assign this Pit AABB
-     * @param material The base material the Pit is made of
      * @param topLeft The coordinates of the top left of the AABB from the
      * top view of the X-Z plane. Y coordinate should be lowest here.
-     * @param bottomRight The coordinates of the bottom right of the AABB
-     * from the top view of the X-Z plane. Y coordinate should be maximum here.
+     * @param fluid The fluid that the pit is filled with. water or lava
      */
     ZombieworldPit(std::string id, Pos& topLeft, std::string fluid);
 

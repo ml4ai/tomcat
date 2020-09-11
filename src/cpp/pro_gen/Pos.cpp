@@ -39,10 +39,4 @@ json Pos::toJSON() {
     return pos_json;
 }
 
-string Pos::toTSV() {
-    string retval = to_string(this->x) + "\t" + to_string(this->y) + "\t" +
-                    to_string(this->z);
-    return retval;
-}
-
 Pos::~Pos() {}

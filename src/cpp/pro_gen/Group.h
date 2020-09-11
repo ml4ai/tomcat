@@ -6,6 +6,11 @@ class Group : public AABB {
 
   private:
     std::vector<AABB*> aabbList;
+
+    /**
+     * @brief Recalculates the extremes of the group as a whole when a new AABB
+     * is added to the group.
+     */
     void recalculateGroupBoundaries();
 
   public:
@@ -37,12 +42,19 @@ class Group : public AABB {
      */
     AABB* getAABB(std::string id);
 
+    /**
+     * @brief Adds the JSON representation of this object to the
+     *        relevant lists of the base json
+     *
+     * @return nlohmann::json The base json
+     */
     void virtual toJSON(nlohmann::json& json_base);
 
     /**
-     * @brief Creates the TSV representation of the instance.
+     * @brief Adds the Alternate JSON representation of this object to the
+     *        relevant lists of the base json
      *
-     * @return std::string The TSV representation as a string
+     * @return nlohmann::json The base json
      */
     void virtual toAltJSON(nlohmann::json& json_base);
 

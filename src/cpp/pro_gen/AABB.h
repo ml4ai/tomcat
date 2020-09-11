@@ -80,6 +80,11 @@ class AABB {
      */
     std::vector<Entity*>& getEntityList();
 
+    /**
+     * @brief Get the object list specific to this AABB
+     *
+     * @return The reference to the object list
+     */
     std::vector<Object*>& getObjectList();
 
     /**
@@ -178,7 +183,7 @@ class AABB {
     void setBottomRight(Pos& bottomRight);
 
     /**
-     * @brief Set the base material
+     * @brief Set the base building material
      *
      * @param material  The base material
      */
@@ -202,6 +207,13 @@ class AABB {
      */
     void addEntity(Entity& entity);
 
+    /**
+     * @brief Add a specific object for this AABB to keep track of. Ideally this
+     * should be related to the AABB. No checks are implicitly performed within
+     * this method.
+     *
+     * @param object Object to be added
+     */
     void addObject(Object& object);
 
     /**
@@ -230,7 +242,6 @@ class AABB {
      * be. Defaults to 0
      * @param offsetNegZ How far away from the top wall should the position be.
      * Defaults to 0
-     * @param type The semantic name to give the block. Defaults to "normal".
      */
     void virtual generateBox(std::string material,
                              int offsetPosX = 0,
@@ -245,7 +256,7 @@ class AABB {
      * within the offset parameters
      *
      * @param n The number of blocks to add
-     * @param material The block'smaterial type
+     * @param material The block's material type
      * @param gen THe boost generation object to generate distributions from
      * @param offsetPosX How far away from the left wall should the position be.
      * Defaults to 0
@@ -271,26 +282,23 @@ class AABB {
                                  int offsetNegZ = 0);
 
     /**
-     * @brief Generate all 4 doors for an AABB. Door blocks are added to the
-     * AABB object.
-     *
-     * @param aabb The AABB for which doors are to be generated.
+     * @brief Generate 4 doors for the AABB at the midpoint.
      */
     void virtual generateAllDoorsInAABB();
 
     /**
-     * @brief Gets the JSON representation of the various
-     * fields and values stored in an instance
+     * @brief Adds the JSON representation of this object to the
+     *        "locations" list of the base json
      *
-     * @return nlohmann::json The JSON representation
+     * @return nlohmann::json The base json
      */
     void virtual toJSON(nlohmann::json& json_base);
 
     /**
-     * @brief Gets a string representation of the various
-     * fields and values stored in an instance as a TSV.
+     * @brief Adds the alternate block by block JSON representation of this
+     * object to the "blocks" list of the base json.
      *
-     * @return string The TSV representation
+     * @return nlohmann::json The base json
      */
     void virtual toAltJSON(nlohmann::json& json_base);
 

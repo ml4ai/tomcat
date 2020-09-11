@@ -3,12 +3,9 @@
 #include <nlohmann/json.hpp>
 
 /**
- * @brief This class represents an Entity in Minecraft. The type field
- * determines the kind of creature it is and the remaining integer values
- * represent the equipment to give it. Numbers are used to indicate stronger and
- * weaker materials for an entity and 0 should ideally mean nothing is to be put
- * in a certain equipment slot. The actual equpment is placed within the Java
- * code so the numbers are purely symbolic.
+ * @brief This class represents an Entity in Minecraft. The equipment is
+ * represented as a vector of size 5 with the helmet, chestplate, leggings,
+ * boots and weapon materials to assign
  */
 class Entity {
 
@@ -47,72 +44,72 @@ class Entity {
     int getZ();
 
     /**
-     * @brief Get the helmet's material level
+     * @brief Get the helmet's material
      *
-     * @return int The material level
+     * @return string The material
      */
     std::string getHelmet();
 
     /**
-     * @brief Get the chestplate's material level
+     * @brief Get the chestplate's material
      *
-     * @return int The material level
+     * @return string The material
      */
     std::string getChestplate();
 
     /**
-     * @brief Get the leggings' material level
+     * @brief Get the leggings' material
      *
-     * @return int The material level
+     * @return string The material
      */
     std::string getLeggings();
 
     /**
-     * @brief Get the boots' material level
+     * @brief Get the boots' material
      *
-     * @return int The material level
+     * @return string The material
      */
     std::string getBoots();
 
     /**
-     * @brief Get the weapon's material level
+     * @brief Get the weapon's material
      *
-     * @return int The material level
+     * @return string The material
      */
     std::string getWeapon();
 
     /**
-     * @brief Set the helmet's material level
+     * @brief Set the helmet's material
      *
-     * @param helmet The new material level
+     * @param helmet The new material
      */
     void setHelmet(std::string helmet);
 
     /**
-     * @brief Set the chestplate's material level
+     * @brief Set the chestplate's material
      *
-     * @param chestplate The new material level
+     * @param chestplate The new material
      */
     void setChestplate(std::string chestplate);
 
     /**
-     * @brief Set the leggings' material level
+     * @brief Set the leggings' material
      *
-     * @param leggings The new material level
+     * @param leggings The new material
      */
     void setLeggings(std::string leggings);
 
     /**
-     * @brief Set the boots' material level
+     * @brief Set the boots' material
      *
-     * @param boots The new material level
+     * @param boots The new material
      */
     void setBoots(std::string boots);
 
     /**
-     * @brief Set the weapon's material level
+     * @brief Set the weapon's material
      *
-     * @param weapon The new material level
+     * @param weapon The new material
      */
     void setWeapon(std::string weapon);
 
@@ -140,32 +137,32 @@ class Entity {
     /**
      * @brief Set the mob type
      *
-     * @param type The new type
+     * @param mobType The new type
      */
     void setMobType(std::string mobType);
 
     /**
-     * @brief Set values for all the equipment. If the size of the input vector
-     * is too small or large nothing happens.
+     * @brief Set materials for all the equipment. If the size of the input
+     * vector is too small or large nothing happens.
      *
      * @param equipment A vector of size 5 with the helmet, chestplate,
-     * leggings, boots and weapon values to assign.
+     * leggings, boots and weapon materials to assign
      */
     void setAllEquipment(std::vector<std::string>& equipment);
 
     /**
-     * @brief Gets the JSON representation of the various
-     * fields and values stored in an instance
+     * @brief Adds the JSON representation of this object to the
+     *        "entities" list of the base json
      *
-     * @return nlohmann::json The JSON representation
+     * @return nlohmann::json The base json
      */
     void virtual toJSON(nlohmann::json& json_base);
 
     /**
-     * @brief Gets a string representation of the various
-     * fields and values stored in an instance as a TSV
+     * @brief Adds the alternate JSON representation of this
+     * object to the "entities" list of the base json.
      *
-     * @return string The TSV representation
+     * @return nlohmann::json The base json
      */
     void virtual toAltJSON(nlohmann::json& json_base);
 

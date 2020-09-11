@@ -1,5 +1,4 @@
 #include "Object.h"
-#include <iostream>
 
 using namespace std;
 using json = nlohmann::json;
