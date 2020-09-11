@@ -167,7 +167,7 @@ class Entity {
      *
      * @return string The TSV representation
      */
-    std::string virtual toTSV();
+    void virtual toAltJSON(nlohmann::json& json_base);
 
     /**
      * @brief Construct a new Entity object. The material level values are

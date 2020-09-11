@@ -276,7 +276,7 @@ void AABB::toAltJSON(json& json_base) {
     }
 
     for (auto& entityPtr : this->getEntityList()) {
-        (*entityPtr).toJSON(json_base);
+        (*entityPtr).toAltJSON(json_base);
     }
 
     for (auto& objectPtr : this->getObjectList()) {

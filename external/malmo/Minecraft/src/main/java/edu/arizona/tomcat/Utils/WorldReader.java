@@ -74,49 +74,60 @@ public class WorldReader {
         }
 
         Gson gson = new Gson();
-        Map<String, ArrayList<LinkedTreeMap<String, Map<String, String>>>> blueprint = gson.fromJson(reader, Map.class);
+        Map<String, ArrayList<LinkedTreeMap<String, String>>> blueprint = gson.fromJson(reader, Map.class);
 
-        for (LinkedTreeMap<String, Map<String, String>> location : blueprint.get("locations")) {
+        for (LinkedTreeMap<String, String> block : blueprint.get("blocks")) {
 
-            Map<String, String> bound = location.get("bounds");
-            String type = bound.get("type");
+            String material = block.get("material");
+            String x_string = block.get("x");
+            String y_string = block.get("y");
+            String z_string = block.get("z");
 
-            if (type.equals("block")) {
-                String material = bound.get("material");
-                String x_string = bound.get("x");
-                String y_string = bound.get("y");
-                String z_string = bound.get("z");
+            int x = Integer.parseInt(x_string);
+            int y = Integer.parseInt(y_string);
+            int z = Integer.parseInt(z_string);
+            BlockPos pos = new BlockPos(x, y, z);
 
-                int x = Integer.parseInt(x_string);
-                int y = Integer.parseInt(y_string);
-                int z = Integer.parseInt(z_string);
-                BlockPos pos = new BlockPos(x, y, z);
+            if (this.blockMap.containsKey(pos)) {
+                this.blockMap.remove(pos);
+            }
 
-                if (this.blockMap.containsKey(pos)) {
-                    this.blockMap.remove(pos);
-                }
+            if (material.equals("door")) {
+                // Doors are special and we need to place a bottom and top half
+                IBlockState doorBottom = this.getBlockState("door_bottom");
 
-                if (material.equals("door")) {
-                    // Doors are special and we need to place a bottom and top half
-                    IBlockState doorBottom = this.getBlockState("door_bottom");
+                BlockPos topPos =
+                        new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
+                IBlockState doorTop = this.getBlockState("door_top");
 
-                    BlockPos topPos =
-                            new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
-                    IBlockState doorTop = this.getBlockState("door_top");
+                this.blockMap.remove(
+                        topPos); // For a door we need to remove and re add the
+                // block above the current as well
+                this.blockMap.put(pos, doorBottom);
+                this.blockMap.put(topPos, doorTop);
 
-                    this.blockMap.remove(
-                            topPos); // For a door we need to remove and re add the
-                    // block above the current as well
-                    this.blockMap.put(pos, doorBottom);
-                    this.blockMap.put(topPos, doorTop);
-
-                } else {
-                    IBlockState state = getBlockState(material);
-                    this.blockMap.put(pos, state);
-                }
+            } else {
+                IBlockState state = getBlockState(material);
+                this.blockMap.put(pos, state);
             }
 
         }
+
+        for (LinkedTreeMap<String, String> entity : blueprint.get("entities")) {
+
+            String x_string = entity.get("x");
+            String y_string = entity.get("y");
+            String z_string = entity.get("z");
+            String type = entity.get("mob_type");
+
+            int x = Integer.parseInt(x_string);
+            int y = Integer.parseInt(y_string);
+            int z = Integer.parseInt(z_string);
+
+            TomcatEntity thisEntity = this.getTomcatEntity(x, y, z, type);
+            this.entityList.add(thisEntity);
+        }
+
 
     }
 
@@ -180,6 +191,10 @@ public class WorldReader {
             return Blocks.GLOWSTONE.getDefaultState();
         } else if (material.equals("air")) {
             return Blocks.AIR.getDefaultState();
+        } else if (material.equals("gravel")) {
+            return Blocks.GRAVEL.getDefaultState();
+        } else if (material.equals("waterlily")) {
+            return Blocks.WATERLILY.getDefaultState();
         } else {
             return Blocks.QUARTZ_BLOCK.getDefaultState(); // For unknown block
         }

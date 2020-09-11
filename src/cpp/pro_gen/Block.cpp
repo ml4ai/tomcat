@@ -40,13 +40,12 @@ void Block::toJSON(json& json_base) {
 void Block::toAltJSON(json& json_base) {
     json block_json;
 
-    block_json["bounds"] = {{"type", "block"},
-                            {"material", this->getMaterial()},
-                            {"x", to_string(this->getX())},
-                            {"y", to_string(this->getY())},
-                            {"z", to_string(this->getZ())}};
+    block_json["material"] = this->getMaterial();
+    block_json["x"] = to_string(this->getX());
+    block_json["y"] = to_string(this->getY());
+    block_json["z"] = to_string(this->getZ());
 
-    json_base["locations"].push_back(block_json);
+    json_base["blocks"].push_back(block_json);
 }
 
 Block::~Block() {}

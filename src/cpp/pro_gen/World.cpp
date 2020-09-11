@@ -40,7 +40,7 @@ string World::toAltJSON() {
     vector<json> location_list;
     vector<json> entity_list;
 
-    world_json["locations"] = location_list;
+    world_json["blocks"] = location_list;
     world_json["entities"] = entity_list;
 
     // Add AABBs to the JSON list
@@ -49,11 +49,11 @@ string World::toAltJSON() {
     }
 
     for (auto& blockPtr : this->getBlockList()) {
-        (*blockPtr).toJSON(world_json);
+        (*blockPtr).toAltJSON(world_json);
     }
 
     for (auto& entityPtr : this->getEntityList()) {
-        (*entityPtr).toJSON(world_json);
+        (*entityPtr).toAltJSON(world_json);
     }
 
     for (auto& objectPtr : this->getObjectList()) {

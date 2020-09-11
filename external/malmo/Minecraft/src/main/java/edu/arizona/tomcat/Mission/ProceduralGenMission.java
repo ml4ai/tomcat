@@ -50,23 +50,22 @@ public class ProceduralGenMission extends Mission {
 
             Drawing drawing = new Drawing();
             Map<BlockPos, IBlockState> worldMap = worldReader.getBlocksMap();
-            /*List<TomcatEntity> entityList = worldReader.getEntityList();*/
+            List<TomcatEntity> entityList = worldReader.getEntityList();
 
             // Place blocks
             for (Map.Entry<BlockPos, IBlockState> entry : worldMap.entrySet()) {
                 world.setBlockState(entry.getKey(), entry.getValue());
             }
 
-            /*for (TomcatEntity entity : entityList) {
+            for (TomcatEntity entity : entityList) {
                 drawing.addObject(entity);
-            }*/
-
-            /*try {
-                this.drawingHandler.draw(world, drawing);
             }
-            catch (Exception e) {
+
+            try {
+                this.drawingHandler.draw(world, drawing);
+            } catch (Exception e) {
                 e.printStackTrace();
-            }*/
+            }
 
             this.shouldBuild = false;
         } else {

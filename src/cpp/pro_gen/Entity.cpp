@@ -80,21 +80,28 @@ void Entity::toJSON(json& json_base) {
     entity_json["boots"] = this->getBoots();
     entity_json["weapon"] = this->getWeapon();
 
-    entity_json["type"] = "entity";
     entity_json["mob_type"] = this->getMobType();
     entity_json["helmet"] = this->getHelmet();
 
     json_base["entities"].push_back(entity_json);
 }
 
-string Entity::toTSV() {
-    string retval =
-        (this->pos).toTSV() + "\t" + "entity" + "\t" + (this->mobType) + "\t";
+void Entity::toAltJSON(json& json_base) {
+    json entity_json;
 
-    for (auto& equipment : this->equipment) {
-        retval += equipment + "\t";
-    }
-    return retval;
+    entity_json["x"] =  to_string(this->getX());
+    entity_json["y"] =  to_string(this->getY());
+    entity_json["z"] =  to_string(this->getZ());
+
+    entity_json["chestplate"] = this->getChestplate();
+    entity_json["leggings"] = this->getLeggings();
+    entity_json["boots"] = this->getBoots();
+    entity_json["weapon"] = this->getWeapon();
+
+    entity_json["mob_type"] = this->getMobType();
+    entity_json["helmet"] = this->getHelmet();
+
+    json_base["entities"].push_back(entity_json);
 }
 
 Entity::~Entity() {}
