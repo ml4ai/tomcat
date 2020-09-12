@@ -114,7 +114,7 @@ if(APPLE
   endif()
 endif()
 
-add_executable(TomcatModel main.cpp Tomcat.cpp Tomcat.h)
+add_executable(TomcatModel main.cpp Tomcat.cpp Tomcat.h TomcatTA3.cpp TomcatTA3.h TomcatTA3V2.cpp TomcatTA3V2.h)
 target_include_directories(TomcatModel PRIVATE ${Boost_INCLUDE_DIR}
                                                ${Mosquitto_INCLUDE_DIRS}
                                                "${CMAKE_CURRENT_SOURCE_DIR}/../"

@@ -1,11 +1,11 @@
-#include "Tomcat.h"
-
 #include <fstream>
 #include <sstream>
 
 #include <boost/program_options.hpp>
 #include <fmt/format.h>
 
+#include "TomcatTA3.h"
+#include "TomcatTA3V2.h"
 #include "pgm/EvidenceSet.h"
 #include "pipeline/DBNSaver.h"
 #include "pipeline/KFold.h"
@@ -42,8 +42,8 @@ void execute_experiment_1a() {
     shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
 
     // Model
-    Tomcat tomcat;
-    tomcat.init_ta3_learnable_model();
+    TomcatTA3 tomcat;
+    tomcat.init();
 
     // Data
     string data_dir =
@@ -118,8 +118,8 @@ void execute_experiment_1b() {
     shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
 
     // Model
-    Tomcat tomcat;
-    tomcat.init_ta3_learnable_model();
+    TomcatTA3 tomcat;
+    tomcat.init();
 
     // Data
     string data_dir =
@@ -198,8 +198,8 @@ void execute_experiment_1c() {
     shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
 
     // Model
-    Tomcat tomcat;
-    tomcat.init_ta3_learnable_model();
+    TomcatTA3 tomcat;
+    tomcat.init();
 
     // Data
     string data_dir =
@@ -272,8 +272,8 @@ void execute_experiment_1d_part_a() {
     shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
 
     // Model
-    Tomcat tomcat;
-    tomcat.init_ta3_learnable_model();
+    TomcatTA3 tomcat;
+    tomcat.init();
 
     // Training
     string model_dir =
@@ -300,8 +300,8 @@ void execute_experiment_1d_part_b() {
     shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
 
     // Model
-    Tomcat tomcat;
-    tomcat.init_ta3_learnable_model();
+    TomcatTA3 tomcat;
+    tomcat.init();
 
     // Data
     EvidenceSet training_data; // Empty
@@ -359,8 +359,8 @@ void execute_experiment_1d_part_b() {
  */
 void execute_experiment_1e_part_a() {
     // Model
-    Tomcat tomcat;
-    tomcat.init_ta3_learnable_model();
+    TomcatTA3 tomcat;
+    tomcat.init();
 
     // Training
     string model_dir =
@@ -399,8 +399,8 @@ void execute_experiment_1e_part_a() {
  */
 void execute_experiment_1e_part_b() {
     // Model
-    Tomcat tomcat;
-    tomcat.init_ta3_learnable_model();
+    TomcatTA3 tomcat;
+    tomcat.init();
 
     // Data
     EvidenceSet training_data; // Empty
@@ -463,8 +463,8 @@ void execute_experiment_1f_part_a() {
     shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
 
     // Model
-    Tomcat tomcat;
-    tomcat.init_ta3_learnable_model();
+    TomcatTA3 tomcat;
+    tomcat.init();
 
     // Training
     string model_dir =
@@ -488,8 +488,8 @@ void execute_experiment_1f_part_b() {
     shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
 
     // Model
-    Tomcat tomcat;
-    tomcat.init_ta3_learnable_model();
+    TomcatTA3 tomcat;
+    tomcat.init();
 
     // Data
     EvidenceSet training_data;
@@ -536,6 +536,56 @@ void execute_experiment_1f_part_b() {
     pipeline.set_model_trainer(loader);
     pipeline.set_estimation_process(offline_estimation);
     pipeline.set_aggregator(aggregator);
+    pipeline.execute();
+}
+
+void execute_experiment_2a(){
+    // Random Seed
+    shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+
+    // Model
+    TomcatTA3V2 tomcat;
+    tomcat.init();
+
+    // Data
+    string data_dir =
+        fmt::format("{}/ta3/falcon/engineering", DATA_ROOT_DIR);
+    EvidenceSet training_data(data_dir);
+    data_dir = fmt::format("{}/ta3/falcon/human", DATA_ROOT_DIR);
+    EvidenceSet test_data(data_dir);
+
+    // Data split
+    shared_ptr<KFold> data_splitter =
+        make_shared<KFold>(training_data, test_data);
+
+    // Training
+    int burn_in = 50;
+    int num_samples = 100;
+    shared_ptr<DBNSamplingTrainer> trainer =
+        make_shared<DBNSamplingTrainer>(DBNSamplingTrainer(
+            gen,
+            make_shared<GibbsSampler>(tomcat.get_model(), burn_in),
+            num_samples));
+
+    // Saving
+    string model_dir =
+        fmt::format("{}/model/ta3/experiment_2a/", OUTPUT_ROOT_DIR);
+    shared_ptr<DBNSaver> saver =
+        make_shared<DBNSaver>(DBNSaver(tomcat.get_model(), model_dir));
+
+    // Estimation and evaluation
+    shared_ptr<OfflineEstimation> offline_estimation =
+        make_shared<OfflineEstimation>();
+
+    ofstream output_file;
+    string filepath = fmt::format(
+        "{}/evaluations/ta3/experiment_2a/evaluations.json", OUTPUT_ROOT_DIR);
+    output_file.open(filepath);
+    Pipeline pipeline("experiment_2a", output_file);
+    pipeline.set_data_splitter(data_splitter);
+    pipeline.set_model_trainer(trainer);
+    pipeline.set_model_saver(saver);
+    pipeline.set_estimation_process(offline_estimation);
     pipeline.execute();
 }
 
@@ -642,15 +692,9 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    execute_experiment(experiment_id);
+    //execute_experiment(experiment_id);
 
-    // execute_experiment_1a();
-    // execute_experiment_1b();
-    // execute_experiment_1c_part_a();
-    // execute_experiment_1c_part_b();
-    //    execute_experiment_1d();
-    //    execute_experiment_1e_part_a();
-    //    execute_experiment_1e_part_b();
-    // execute_experiment_1f_part_a();
-    // execute_experiment_1f_part_b();
+    execute_experiment_2a();
+
+
 }

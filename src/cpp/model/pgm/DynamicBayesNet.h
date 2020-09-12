@@ -5,10 +5,13 @@
 #include <utility>
 #include <vector>
 
-#include <boost/graph/adjacency_list.hpp>
+#include <fstream>
 
-#include "model/utils/Definitions.h"
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/graphviz.hpp>
+
 #include "model/pgm/RandomVariableNode.h"
+#include "model/utils/Definitions.h"
 
 namespace tomcat {
     namespace model {
@@ -20,6 +23,9 @@ namespace tomcat {
             // This needs to be a shared pointer because some of the nodes can
             // be parameter nodes sharable among some CPDs
             std::shared_ptr<RandomVariableNode> node;
+
+            // Node timed name here just for visualization purposes.
+            std::string label;
         };
 
         /**
@@ -179,15 +185,16 @@ namespace tomcat {
              */
             std::vector<Edge> get_edges() const;
 
+            /**
+             * Write the graph content in graphviz format.
+             *
+             * @param output_stream: output stream to write the graph.
+             */
+            void write_graphviz(std::ostream& output_stream) const;
+
             // --------------------------------------------------------
             // Getters & Setters
             // --------------------------------------------------------
-            //            const std::vector<std::shared_ptr<RandomVariableNode>>
-            //            get_nodes() const;
-            //
-            //            const std::vector<RandomVariableNode>&
-            //            get_node_templates() const;
-
             int get_time_steps() const;
 
           private:
