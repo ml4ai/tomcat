@@ -72,6 +72,11 @@ set_local_configuration() {
     # RECYCLE_MINECRAFT: 0 for never, 1 for main mission, 2 for multiple runs.
     export RECYCLE_MINECRAFT=${RECYCLE_MINECRAFT:-1}
 
+    # Enables replay of video right after mission ends. Defaults to 
+    # false (0); set to 1 for true. Note that changing this to true when 
+    # ENABLE_FFMPEG is false will do nothing. 
+    export ENABLE_POST_REPLAY=${ENABLE_POST_REPLAY:-0}
+
     # DEFAULT_MAIN_MISSION_TIME: Allows for short missions for testing.
     export DEFAULT_MAIN_MISSION_TIME=${DEFAULT_MAIN_MISSION_TIME:-600}
 

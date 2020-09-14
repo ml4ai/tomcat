@@ -141,6 +141,18 @@ kill_av_recording_and_mosquitto_sub() {
     pkill mosquitto_sub
 }
 
+# Function to replay video after the session has ended. 
+# Checks to see if there is a video, and plays the video if there is.
+
+play_video_after_session() {
+    echo "Playing video of mission"
+
+    if (( ENABLE_FFMPEG )); then 
+        if (( ENABLE_POST_REPLAY  )); then 
+            ffmpeg "${MISSION_OUTPUT_DIR}"/screen_video.mpg
+        fi
+    fi
+}
 
 # Function to cleanup things on exit or keyboard interrupt.
 session_cleanup() {
@@ -240,6 +252,7 @@ do_mission() {
         start_av_recording
     fi
 
+
     # Publish the Malmo observation messages to the message bus on the
     # topic observations/state.
     "${TOMCAT}"/build/bin/runMission\
@@ -270,6 +283,8 @@ do_mission() {
         mission_cleanup
         echo "Mission ${CURRENT_MISSION} ended with exit code 0."
         echo "All recorded data is in ${MISSION_OUTPUT_DIR}"
+        echo "ENABLE_POST_REPLAY is true, so playing screen recording"
+        play_video_after_session
         echo " "
     fi
 }
