@@ -91,7 +91,9 @@ namespace tomcat {
             json["duration_in_seconds"] = duration_in_seconds;
             this->data_splitter->get_info(json["data_split"]);
             this->model_trainer->get_info(json["training"]);
-            this->aggregator->get_info(json["evaluation"]);
+            if (this->aggregator) {
+                this->aggregator->get_info(json["evaluation"]);
+            }
 
             this->output_stream << setw(4) << json;
         }

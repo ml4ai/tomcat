@@ -1,12 +1,14 @@
 #pragma once
 
-#include <thread>
 #include <queue>
+#include <thread>
 
 #include "EstimationProcess.h"
 
 #include "model/utils/Definitions.h"
 #include "model/utils/Mosquitto.h"
+
+#include "model/pipeline/estimation/TA3MessageConverter.h"
 
 namespace tomcat {
     namespace model {
@@ -49,8 +51,11 @@ namespace tomcat {
              * Creates an online estimation process.
              *
              * @param estimator: type of estimation to be performed
+             * @param message_converter: responsible for converting a message
+             * from the message bus to data
              */
-            OnlineEstimation(MessageBrokerConfiguration config);
+            OnlineEstimation(MessageBrokerConfiguration config,
+                             const TA3MessageConverter& message_converter);
 
             ~OnlineEstimation();
 
@@ -115,6 +120,8 @@ namespace tomcat {
             // Data received from the message bus and stored to be processed by
             // the estimation threads.
             std::queue<EvidenceSet> data_to_process;
+
+            TA3MessageConverter message_converter;
         };
 
     } // namespace model

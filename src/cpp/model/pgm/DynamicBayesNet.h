@@ -160,23 +160,20 @@ namespace tomcat {
 
             /**
              * Saves model's parameter values in individual files inside a given
-             * folder. The folder is created if it does not exist.
+             * directory. The directory is created if it does not exist.
              *
-             * @param output_folder: folder where the files must be saved
+             * @param output_dir: folder where the files must be saved
              */
-            void save_to_folder(const std::string& output_folder) const;
+            void save_to(const std::string& output_dir) const;
 
             /**
              * Loads model's parameter assignments from files previously saved
-             * in a specific folder. The actual parameter nodes are excluded
-             * from the model and the CPD's that depend on them are updated
-             * with constant nodes containing values determined by the content
-             * of the files processed.
+             * in a specific directory and freeze the parameter nodes.
              *
-             * @param input_folder: folder where the files with the parameters'
+             * @param input_dir: directory where the files with the parameters'
              * values are saved
              */
-            void load_from_folder(const std::string& input_folder);
+            void load_from(const std::string& input_dir);
 
             /**
              * Returns edges of the unrolled DBN

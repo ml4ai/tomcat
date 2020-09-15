@@ -357,20 +357,20 @@ namespace tomcat {
         }
 
         void
-        DynamicBayesNet::save_to_folder(const string& output_folder) const {
+        DynamicBayesNet::save_to(const string& output_dir) const {
 
-            boost::filesystem::create_directories(output_folder);
+            boost::filesystem::create_directories(output_dir);
 
             for (const auto& mapping : this->parameter_nodes_map) {
                 string filename = mapping.first + ".txt";
-                string filepath = get_filepath(output_folder, filename);
+                string filepath = get_filepath(output_dir, filename);
                 save_matrix_to_file(filepath, mapping.second->get_assignment());
             }
         }
 
-        void DynamicBayesNet::load_from_folder(const string& input_folder) {
+        void DynamicBayesNet::load_from(const string& input_dir) {
             for (const auto& file :
-                 boost::filesystem::directory_iterator(input_folder)) {
+                 boost::filesystem::directory_iterator(input_dir)) {
 
                 string filename = file.path().filename().string();
                 string parameter_timed_name = remove_extension(filename);

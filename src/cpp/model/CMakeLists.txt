@@ -91,7 +91,7 @@ add_library(
   pgm/inference/VariableNode.cpp
   pgm/inference/VariableNode.h
   pgm/inference/FactorGraph.cpp
-  pgm/inference/FactorGraph.h)
+  pgm/inference/FactorGraph.h pipeline/estimation/TA3MessageConverter.cpp pipeline/estimation/TA3MessageConverter.h)
 
 target_include_directories(tomcat_model_lib PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/../" ${Boost_INCLUDE_DIR})

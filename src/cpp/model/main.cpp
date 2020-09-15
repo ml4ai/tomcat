@@ -6,11 +6,13 @@
 
 #include "TomcatTA3.h"
 #include "TomcatTA3V2.h"
+#include "model/pipeline/estimation/TA3MessageConverter.h"
 #include "pgm/EvidenceSet.h"
 #include "pipeline/DBNSaver.h"
 #include "pipeline/KFold.h"
 #include "pipeline/Pipeline.h"
 #include "pipeline/estimation/OfflineEstimation.h"
+#include "pipeline/estimation/OnlineEstimation.h"
 #include "pipeline/estimation/SumProductEstimator.h"
 #include "pipeline/estimation/TrainingFrequencyEstimator.h"
 #include "pipeline/evaluation/Accuracy.h"
@@ -46,8 +48,7 @@ void execute_experiment_1a() {
     tomcat.init();
 
     // Data
-    string data_dir =
-        fmt::format("{}/ta3/falcon/engineering", DATA_ROOT_DIR);
+    string data_dir = fmt::format("{}/ta3/falcon/engineering", DATA_ROOT_DIR);
     EvidenceSet data(data_dir);
 
     // Data split
@@ -122,8 +123,7 @@ void execute_experiment_1b() {
     tomcat.init();
 
     // Data
-    string data_dir =
-        fmt::format("{}/ta3/falcon/engineering", DATA_ROOT_DIR);
+    string data_dir = fmt::format("{}/ta3/falcon/engineering", DATA_ROOT_DIR);
     EvidenceSet training_data(data_dir);
     data_dir = fmt::format("{}/ta3/falcon/human", DATA_ROOT_DIR);
     EvidenceSet test_data(data_dir);
@@ -202,8 +202,7 @@ void execute_experiment_1c() {
     tomcat.init();
 
     // Data
-    string data_dir =
-        fmt::format("{}/ta3/falcon/engineering", DATA_ROOT_DIR);
+    string data_dir = fmt::format("{}/ta3/falcon/engineering", DATA_ROOT_DIR);
     EvidenceSet data(data_dir);
 
     // Data split
@@ -305,8 +304,8 @@ void execute_experiment_1d_part_b() {
 
     // Data
     EvidenceSet training_data; // Empty
-    string data_dir = fmt::format(
-        "{}/ta3/falcon/synthetic/experiment_1d", DATA_ROOT_DIR);
+    string data_dir =
+        fmt::format("{}/ta3/falcon/synthetic/experiment_1d", DATA_ROOT_DIR);
     EvidenceSet test_data(data_dir);
     test_data.keep_first(1);
     test_data.shrink_up_to(100);
@@ -493,8 +492,8 @@ void execute_experiment_1f_part_b() {
 
     // Data
     EvidenceSet training_data;
-    string data_dir = fmt::format(
-        "{}/ta3/falcon/synthetic/experiment_1f", DATA_ROOT_DIR);
+    string data_dir =
+        fmt::format("{}/ta3/falcon/synthetic/experiment_1f", DATA_ROOT_DIR);
     EvidenceSet test_data(data_dir);
 
     // Data split
@@ -539,7 +538,7 @@ void execute_experiment_1f_part_b() {
     pipeline.execute();
 }
 
-void execute_experiment_2a(){
+void execute_experiment_2a() {
     // Random Seed
     shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
 
@@ -548,8 +547,7 @@ void execute_experiment_2a(){
     tomcat.init();
 
     // Data
-    string data_dir =
-        fmt::format("{}/ta3/falcon/engineering", DATA_ROOT_DIR);
+    string data_dir = fmt::format("{}/ta3/falcon/engineering", DATA_ROOT_DIR);
     EvidenceSet training_data(data_dir);
     data_dir = fmt::format("{}/ta3/falcon/human", DATA_ROOT_DIR);
     EvidenceSet test_data(data_dir);
@@ -559,8 +557,8 @@ void execute_experiment_2a(){
         make_shared<KFold>(training_data, test_data);
 
     // Training
-    int burn_in = 50;
-    int num_samples = 100;
+    int burn_in = 1;
+    int num_samples = 1;
     shared_ptr<DBNSamplingTrainer> trainer =
         make_shared<DBNSamplingTrainer>(DBNSamplingTrainer(
             gen,
@@ -590,13 +588,47 @@ void execute_experiment_2a(){
 }
 
 void execute_experiment_1xxx() {
-    //    MessageBrokerConfiguration config;
-    //    config.timeout = 5;
-    //    config.address = "localhost";
-    //    config.port = 1883;
-    //    shared_ptr<OnlineEstimation> online_estimation =
-    //        make_shared<OnlineEstimation>(config);
-    //    online_estimation->add_estimator(baseline_estimator);
+    // Model
+    TomcatTA3 tomcat;
+    tomcat.init();
+
+    // Data
+    EvidenceSet training_data; // Empty
+    EvidenceSet test_data; // Empty
+
+    // Data split
+    shared_ptr<KFold> data_splitter =
+        make_shared<KFold>(training_data, test_data);
+
+    // Training
+    string model_dir =
+        fmt::format("{}/model/ta3/experiment_1b", OUTPUT_ROOT_DIR);
+    shared_ptr<DBNTrainer> loader =
+        make_shared<DBNLoader>(DBNLoader(tomcat.get_model(), model_dir));
+    loader->fit({});
+
+    // Estimation
+    MessageBrokerConfiguration config;
+    config.timeout = 20;
+    config.address = "localhost";
+    config.port = 1883;
+
+    TA3MessageConverter converter("../../data/maps/ta3/falcon_v1.0.json");
+    shared_ptr<OnlineEstimation> online_estimation =
+        make_shared<OnlineEstimation>(config, converter);
+
+    shared_ptr<Estimator> estimator =
+        make_shared<SumProductEstimator>(tomcat.get_model(), 1);
+    estimator->add_node(Tomcat::SG, Eigen::VectorXd::Constant(1, 1));
+    estimator->add_node(Tomcat::SY, Eigen::VectorXd::Constant(1, 1));
+    online_estimation->add_estimator(estimator);
+
+    Pipeline pipeline("experiment_1d");
+    pipeline.set_data_splitter(data_splitter);
+    pipeline.set_model_trainer(loader);
+    pipeline.set_estimation_process(online_estimation);
+    pipeline.execute();
+
 }
 
 void execute_experiment(const string& experiment_id) {
@@ -692,9 +724,12 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    //execute_experiment(experiment_id);
+    // execute_experiment(experiment_id);
 
-    execute_experiment_2a();
+     execute_experiment_1xxx();
 
+//    TA3MessageConverter converter("../../data/maps/ta3/falcon_v1.0.json");
+//    converter.convert_offline("../../data/messages/ta3/falcon",
+//                              "../../data/samples/ta3/falcon/converter");
 
 }

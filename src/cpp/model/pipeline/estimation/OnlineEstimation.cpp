@@ -3,6 +3,9 @@
 #include <algorithm>
 #include <sstream>
 #include <thread>
+#include <unordered_map>
+
+#include <nlohmann/json.hpp>
 
 #include "model/utils/EigenExtensions.h"
 
@@ -14,8 +17,10 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
-        OnlineEstimation::OnlineEstimation(MessageBrokerConfiguration config)
-            : config(config) {}
+        OnlineEstimation::OnlineEstimation(
+            MessageBrokerConfiguration config,
+            const TA3MessageConverter& message_converter)
+            : config(config), message_converter(message_converter) {}
 
         OnlineEstimation::~OnlineEstimation() {}
 
@@ -45,6 +50,7 @@ namespace tomcat {
             EstimationProcess::copy_estimation(estimation);
             Mosquitto::copy_wrapper(estimation);
             this->config = estimation.config;
+            this->message_converter = estimation.message_converter;
         }
 
         void OnlineEstimation::estimate(EvidenceSet test_data) {
@@ -52,8 +58,8 @@ namespace tomcat {
             this->connect(this->config.address, this->config.port, 60);
             this->subscribe(this->config.state_topic);
             this->subscribe(this->config.events_topic);
-            thread estimation_thread(
-                &OnlineEstimation::run_estimation_thread, this);
+            thread estimation_thread(&OnlineEstimation::run_estimation_thread,
+                                     this);
             this->loop();
             this->close();
             // Join because even if messages are not coming anymore, pending
@@ -89,9 +95,9 @@ namespace tomcat {
                          estimator->get_estimates_at(this->time_step)) {
                         string estimator_name = estimator->get_name();
                         replace(estimator_name.begin(),
-                                     estimator_name.end(),
-                                     ' ',
-                                     '_');
+                                estimator_name.end(),
+                                ' ',
+                                '_');
                         stringstream ss_topic;
                         ss_topic << this->config.estimates_topic << "/"
                                  << estimator_name << "/"
@@ -115,13 +121,19 @@ namespace tomcat {
 
         void OnlineEstimation::on_message(const string& topic,
                                           const string& message) {
-            // TODO: Convert message to data set.
-            Tensor3 data1(Eigen::MatrixXd::Ones(1, 1));
-            Tensor3 data2(Eigen::MatrixXd::Ones(1, 1));
-            EvidenceSet new_data;
-            new_data.add_data("TG", data1);
-            new_data.add_data("TY", data2);
-            this->data_to_process.push(new_data);
+
+            nlohmann::json json_message = nlohmann::json::parse(message);
+            json_message["topic"] = topic;
+            unordered_map<string, double> observations_per_node =
+                this->message_converter.convert_online(json_message);
+            if (!observations_per_node.empty()) {
+                EvidenceSet new_data;
+                for (const auto& [node_label, value] : observations_per_node) {
+                    Tensor3 data(Eigen::MatrixXd::Constant(1, 1, value));
+                    new_data.add_data(node_label, data);
+                }
+                this->data_to_process.push(new_data);
+            }
         }
 
         void OnlineEstimation::on_time_out() {
