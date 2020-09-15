@@ -5,10 +5,13 @@
 
 (in-package :shop-user)
 (defparameter *day-state* '((human me)
-                            (early-morning)))
+                            (raining)
+                            (have-homework)
+                            (work-today)))
 
-(defparameter *day* '((monday me) (monday me) (monday me) (monday me)))
+(defparameter *day* '((monday me)))
 
 (make-problem 'simple-schedule-problem *day-state* *day*)
 
 (find-plans 'simple-schedule-problem :which :all :optimize-cost nil :verbose :plans :plan-tree nil)
+
