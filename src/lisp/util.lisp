@@ -157,3 +157,28 @@
                                :if-exists :supersede)
       (format outstream "~a~%" v))
     t))
+
+(defun split-by-one-space (string)
+    "Returns a list of substrings of string
+divided by ONE space each.
+Note: Two consecutive spaces will be seen as
+if there were an empty string between them.
+Found on Common Lisp Cookbook"
+    (loop for i = 0 then (1+ j)
+          as j = (position #\Space string :start i)
+          collect (subseq string i j)
+          while j))
+
+(defun match-action-headers (act1 act2)
+  (equal (car (split-by-one-space act1)) (car (split-by-one-space act2))))
+
+(defun get-applicable-tasks-helper (action tasks)
+  (loop for x in tasks
+         collect (list (cdr (assoc :header x)) 
+                       (loop for y in (cdr (assoc :methods x))
+                             when (member-if #'(lambda (x) (match-action-headers x action))
+                                             (cdr (assoc :tasks y)))
+                             collect (list (cdr (assoc :header y)) (cdr (assoc :tasks y)))))))
+
+(defun get-applicable-tasks (action tasks)
+  (remove-if #'(lambda (x) (not (second x))) (get-applicable-tasks-helper action tasks)))
