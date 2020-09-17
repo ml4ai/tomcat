@@ -2,11 +2,11 @@
 
 #include <string>
 #include <unordered_map>
-#include <utility>
 #include <vector>
 
-#include <boost/optional.hpp>
 #include <nlohmann/json.hpp>
+
+#include "MessageConverter.h"
 
 #include "model/utils/Definitions.h"
 
@@ -14,9 +14,10 @@ namespace tomcat {
     namespace model {
 
         /**
-         * Class description here
+         * Converts messages from the TA3 testbed to a format that the model can
+         * process.
          */
-        class TA3MessageConverter {
+        class TA3MessageConverter : public MessageConverter {
           public:
             //------------------------------------------------------------------
             // Types, Enums & Constants
@@ -36,11 +37,6 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
-             * Creates an empty message converter.
-             */
-            TA3MessageConverter();
-
-            /**
              * Creates an instance of the TA3 message converter.
              *
              * @param map_config_filepath: path of the map configuration file
@@ -54,73 +50,24 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Copy & Move constructors/assignments
             //------------------------------------------------------------------
-            TA3MessageConverter(const TA3MessageConverter&) = default;
+            TA3MessageConverter(const TA3MessageConverter& converter);
 
             TA3MessageConverter&
-            operator=(const TA3MessageConverter&) = default;
+            operator=(const TA3MessageConverter& converter);
 
             TA3MessageConverter(TA3MessageConverter&&) = default;
 
             TA3MessageConverter& operator=(TA3MessageConverter&&) = default;
 
             //------------------------------------------------------------------
-            // Operator overload
-            //------------------------------------------------------------------
-
-            //------------------------------------------------------------------
-            // Static functions
-            //------------------------------------------------------------------
-
-            //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
 
-            /**
-             * Converts messages from files in a given folder to files for each
-             * observable node, consisting of tensors with the observations for
-             * each mission sample and time step in the mission.
-             *
-             * @param input_dir: directory where the testbed message files are
-             * stored
-             * @param output_dir: directory where node's observations over
-             * mission samples and time steps must be saved
-             */
             void convert_offline(const std::string& input_dir,
-                                 const std::string& output_dir);
+                                 const std::string& output_dir) override;
 
-            /**
-             * Parses a json message object and, if related to an observation of
-             * a given node, returns it values. If it's a world observation,
-             * updates the time step. Otherwise, ignore the message.
-             *
-             * @param message: json object as a string
-             *
-             * @return List of pairs containing a nodes' labels and observations
-             * for the current time step.
-             */
             std::unordered_map<std::string, double>
-            convert_online(const nlohmann::json& message);
-
-            //------------------------------------------------------------------
-            // Virtual functions
-            //------------------------------------------------------------------
-
-            //------------------------------------------------------------------
-            // Pure virtual functions
-            //------------------------------------------------------------------
-
-            //------------------------------------------------------------------
-            // Getters & Setters
-            //------------------------------------------------------------------
-
-          protected:
-            //------------------------------------------------------------------
-            // Member functions
-            //------------------------------------------------------------------
-
-            //------------------------------------------------------------------
-            // Data members
-            //------------------------------------------------------------------
+            convert_online(const nlohmann::json& message) override;
 
           private:
             //------------------------------------------------------------------
@@ -128,7 +75,7 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
-             * Fill the map of observations with default not observed values.
+             * Fills the map of observations with default not observed values.
              */
             void init_observations();
 
@@ -171,8 +118,7 @@ namespace tomcat {
              * @return Victim saving event observation.
              */
             void
-            fill_victim_saving_observation(
-                const nlohmann::json& json_message);
+            fill_victim_saving_observation(const nlohmann::json& json_message);
 
             /**
              * Returns observation related to being in a room or not.
@@ -209,11 +155,6 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------
-
-            // Number of seconds between observations
-            int time_gap = 1;
-
-            int time_step = 0;
 
             // Indicates whether a message informing about the mission start was
             // received. Messages received before the mission starts will be

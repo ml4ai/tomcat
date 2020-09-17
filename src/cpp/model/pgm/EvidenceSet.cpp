@@ -192,6 +192,10 @@ namespace tomcat {
             this->time_steps = time_step + 1;
         }
 
+        bool EvidenceSet::empty() const {
+            return this->num_data_points == 0;
+        }
+
         //----------------------------------------------------------------------
         // Getters & Setters
         //----------------------------------------------------------------------

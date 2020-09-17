@@ -1,10 +1,11 @@
 #include "TA3MessageConverter.h"
 
 #include <fstream>
+#include <iostream>
 #include <sstream>
-#include <unordered_map>
 
 #include <boost/filesystem.hpp>
+#include <boost/progress.hpp>
 #include <eigen3/Eigen/Dense>
 
 #include "model/utils/FileHandler.h"
@@ -18,11 +19,9 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
-        TA3MessageConverter::TA3MessageConverter() {}
-
         TA3MessageConverter::TA3MessageConverter(
             const std::string& map_config_filepath, int time_gap)
-            : time_gap(time_gap) {
+            : MessageConverter(time_gap) {
             this->init_observations();
             this->load_map_area_configuration(map_config_filepath);
         }
@@ -32,14 +31,16 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Copy & Move constructors/assignments
         //----------------------------------------------------------------------
+        TA3MessageConverter::TA3MessageConverter(
+            const TA3MessageConverter& converter) {
+            this->copy_converter(converter);
+        }
 
-        //----------------------------------------------------------------------
-        // Operator overload
-        //----------------------------------------------------------------------
-
-        //----------------------------------------------------------------------
-        // Static functions
-        //----------------------------------------------------------------------
+        TA3MessageConverter&
+        TA3MessageConverter::operator=(const TA3MessageConverter& converter) {
+            this->copy_converter(converter);
+            return *this;
+        }
 
         //----------------------------------------------------------------------
         // Member functions
@@ -83,14 +84,14 @@ namespace tomcat {
                 static_cast<bool (*)(const fs::path&)>(fs::is_regular_file));
             int d = 0;
             unordered_map<string, Eigen::MatrixXd> observations_per_node;
+            boost::progress_display progress(num_mission_trials);
 
             for (const auto& file : fs::directory_iterator(input_dir)) {
                 if (fs::is_regular_file(file)) {
-                    for (auto& message :
-                         this->get_sorted_messages_in(file.path().string())) {
+                    vector<nlohmann::json> messages =
+                        this->get_sorted_messages_in(file.path().string());
 
-                        LOG(message["@timestamp"]);
-
+                    for (auto& message : messages) {
                         for (const auto& [node_label, value] :
                              this->convert_online(message)) {
 
@@ -99,20 +100,24 @@ namespace tomcat {
                             if (!EXISTS(node_label, observations_per_node)) {
                                 observations_per_node[node_label] =
                                     Eigen::MatrixXd::Constant(
-                                        num_mission_trials, T, NO_OBS);
+                                        num_mission_trials, T+1, NO_OBS);
                             }
 
-                            if (this->time_step < T) {
+                            if (this->time_step <= T) {
                                 observations_per_node[node_label](
                                     d, this->time_step) = value;
                             }
                         }
 
-                        if (this->time_step >= T) {
+                        if (this->time_step > T) {
                             break;
                         }
                     }
                     d++;
+                    ++progress;
+                    this->time_step = 0;
+                    this->mission_started = false;
+                    this->init_observations();
                 }
             }
 
@@ -135,13 +140,6 @@ namespace tomcat {
                 string message;
                 getline(file_reader, message);
                 messages.push_back(nlohmann::json::parse(message));
-
-                //                nlohmann::json json_message =
-                //                nlohmann::json::parse(message); if
-                //                (json_message["topic"] ==
-                //                "observations/events/mission" ||){
-                //
-                //                }
             }
 
             std::sort(messages.begin(),
@@ -163,10 +161,10 @@ namespace tomcat {
                     message["data"]["mission_state"] == "Start") {
 
                     this->mission_started = true;
+                    observations_per_node = this->last_observations_per_node;
                 }
                 else if (message["topic"] == "trial") {
                     this->fill_training_condition_observation(message);
-                    observations_per_node = this->last_observations_per_node;
                 }
             }
 
@@ -176,7 +174,7 @@ namespace tomcat {
                         T - this->get_remaining_seconds_from(
                                 message["data"]["mission_timer"]);
 
-                    if (new_time_step == time_step + time_gap) {
+                    if (new_time_step == this->time_step + this->time_gap) {
                         // After the first time step, 0 represents not observing
                         // an event.
                         if (this->last_observations_per_node[ROOM] == NO_OBS) {
@@ -227,11 +225,9 @@ namespace tomcat {
 
             try {
                 minutes = stoi(time.substr(0, time.find(":")));
-                seconds =
-                    stoi(time.substr(time.find(":") + 1, time.size()));
+                seconds = stoi(time.substr(time.find(":") + 1, time.size()));
             }
-            catch(std::invalid_argument& e){
-
+            catch (std::invalid_argument& e) {
             }
 
             return seconds + minutes * 60;
@@ -291,10 +287,6 @@ namespace tomcat {
 
             this->last_observations_per_node[BEEP] = value;
         }
-
-        //----------------------------------------------------------------------
-        // Getters & Setters
-        //----------------------------------------------------------------------
 
     } // namespace model
 } // namespace tomcat

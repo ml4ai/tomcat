@@ -1,40 +1,19 @@
 #pragma once
 
-#include <queue>
+#include <memory>
 #include <thread>
+
+#include <nlohmann/json.hpp>
 
 #include "EstimationProcess.h"
 
+#include "model/converter/MessageConverter.h"
 #include "model/utils/Definitions.h"
 #include "model/utils/Mosquitto.h"
-
-#include "model/pipeline/estimation/TA3MessageConverter.h"
+#include "model/utils/SynchronizedQueue.h"
 
 namespace tomcat {
     namespace model {
-
-        /**
-         * This struct contains information needed to connect to a message
-         * broker to either subscribe or publish to a topic.
-         */
-        struct MessageBrokerConfiguration {
-            std::string address;
-            int port;
-
-            // If defined, the estimation thread will terminate after the number
-            // of seconds here defined without receiving any message.
-            int timeout = 9999;
-
-            // Topics to subscribe to
-            std::string state_topic = "observations/state";
-            std::string chat_topic = "observations/chat";
-            std::string events_topic = "observations/events/#";
-            std::string self_report_topic = "observations/self_reports";
-
-            // Topics to publish to
-            std::string estimates_topic = "tomcat/estimates";
-            std::string log_topic = "tomcat/log";
-        };
 
         /**
          * Class responsible for computing estimates for a model in an online
@@ -43,6 +22,34 @@ namespace tomcat {
          */
         class OnlineEstimation : public EstimationProcess, public Mosquitto {
           public:
+            //------------------------------------------------------------------
+            // Structs
+            //------------------------------------------------------------------
+
+            /**
+             * This struct contains information needed to connect to a message
+             * broker to either subscribe or publish to a topic.
+             */
+            struct MessageBrokerConfiguration {
+                std::string address;
+                int port;
+
+                // If defined, the estimation thread will terminate after the
+                // number of seconds here defined without receiving any message.
+                int timeout = 9999;
+
+                // Topics to subscribe to
+                std::string state_topic = "observations/state";
+                std::string chat_topic = "observations/chat";
+                std::string events_topic = "observations/events/#";
+                std::string self_report_topic = "observations/self_reports";
+                std::string trial_topic = "trial";
+
+                // Topics to publish to
+                std::string estimates_topic = "tomcat/estimates";
+                std::string log_topic = "tomcat/log";
+            };
+
             //------------------------------------------------------------------
             // Constructors & Destructor
             //------------------------------------------------------------------
@@ -54,8 +61,9 @@ namespace tomcat {
              * @param message_converter: responsible for converting a message
              * from the message bus to data
              */
-            OnlineEstimation(MessageBrokerConfiguration config,
-                             const TA3MessageConverter& message_converter);
+            OnlineEstimation(
+                MessageBrokerConfiguration config,
+                std::shared_ptr<MessageConverter> message_converter);
 
             ~OnlineEstimation();
 
@@ -66,9 +74,11 @@ namespace tomcat {
 
             OnlineEstimation& operator=(const OnlineEstimation& estimation);
 
-            OnlineEstimation(OnlineEstimation&&) = default;
+            // The synchronized queue used in this class has no move
+            // constructor, so let's not allow this class to be moved as well..
+            OnlineEstimation(OnlineEstimation&&) = delete;
 
-            OnlineEstimation& operator=(OnlineEstimation&&) = default;
+            OnlineEstimation& operator=(OnlineEstimation&&) = delete;
 
             //------------------------------------------------------------------
             // Member functions
@@ -105,6 +115,14 @@ namespace tomcat {
             void run_estimation_thread();
 
             /**
+             * Returns next set of observations from the pending messages in the
+             * queue.
+             *
+             * @return Evidence set.
+             */
+            EvidenceSet get_next_data_from_pending_messages();
+
+            /**
              * Publishes last computed estimates to the message bus.
              */
             void publish_last_estimates();
@@ -114,14 +132,14 @@ namespace tomcat {
             //------------------------------------------------------------------
             MessageBrokerConfiguration config;
 
+            std::shared_ptr<MessageConverter> message_converter;
+
             // Number of time steps the estimation already processed.
             int time_step;
 
-            // Data received from the message bus and stored to be processed by
-            // the estimation threads.
-            std::queue<EvidenceSet> data_to_process;
-
-            TA3MessageConverter message_converter;
+            // Messages received from the message bus and stored to be processed
+            // by the estimation threads.
+            SynchronizedQueue<nlohmann::json> messages_to_process;
         };
 
     } // namespace model

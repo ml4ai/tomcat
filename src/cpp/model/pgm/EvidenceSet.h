@@ -174,6 +174,13 @@ namespace tomcat {
              */
             void shrink_up_to(int time_step);
 
+            /**
+             * Indicates whether the set has data or not.
+             *
+             * @return True if the set has any data point.
+             */
+            bool empty() const;
+
             //------------------------------------------------------------------
             // Getters & Setters
             //------------------------------------------------------------------

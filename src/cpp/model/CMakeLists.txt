@@ -85,13 +85,14 @@ add_library(
   utils/EigenExtensions.cpp
   utils/Mosquitto.cpp
   pgm/inference/MessageNode.cpp
-  pgm/inference/MessageNode.h
   pgm/inference/FactorNode.cpp
-  pgm/inference/FactorNode.h
   pgm/inference/VariableNode.cpp
-  pgm/inference/VariableNode.h
   pgm/inference/FactorGraph.cpp
-  pgm/inference/FactorGraph.h pipeline/estimation/TA3MessageConverter.cpp pipeline/estimation/TA3MessageConverter.h)
+        converter/TA3MessageConverter.cpp
+        converter/MessageConverter.cpp
+Tomcat.cpp
+TomcatTA3.cpp
+TomcatTA3V2.cpp)
 
 target_include_directories(tomcat_model_lib PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/../" ${Boost_INCLUDE_DIR})
@@ -114,7 +115,7 @@ if(APPLE
   endif()
 endif()
 
-add_executable(TomcatModel main.cpp Tomcat.cpp Tomcat.h TomcatTA3.cpp TomcatTA3.h TomcatTA3V2.cpp TomcatTA3V2.h)
+add_executable(TomcatModel main.cpp)
 target_include_directories(TomcatModel PRIVATE ${Boost_INCLUDE_DIR}
                                                ${Mosquitto_INCLUDE_DIRS}
                                                "${CMAKE_CURRENT_SOURCE_DIR}/../"
@@ -129,3 +130,14 @@ target_link_libraries(
           fmt::fmt
           nlohmann_json::nlohmann_json
           ${Mosquitto_LIBRARIES})
+
+add_executable(TomcatConverter offline_message_converter.cpp)
+target_include_directories(TomcatConverter PRIVATE ${Boost_INCLUDE_DIR}
+        "${CMAKE_CURRENT_SOURCE_DIR}/../"
+        )
+target_link_libraries(
+        TomcatConverter
+        PRIVATE tomcat_model_lib
+        ${Boost_LIBRARIES}
+        Eigen3::Eigen
+        nlohmann_json::nlohmann_json)

@@ -259,6 +259,7 @@ namespace tomcat {
                                   Tensor3(opposite_assignment_matrix));
             Eigen::VectorXd estimates;
 
+            int time_step_before = this->next_time_step;
             for (int h = 1; h <= this->inference_horizon; h++) {
                 // Simulate new data coming and compute estimates in a regular
                 // way.
@@ -280,7 +281,7 @@ namespace tomcat {
                 }
             }
             // Adjust the time counter back to it's original position.
-            this->next_time_step -= (time_step + this->inference_horizon);
+            this->next_time_step = time_step_before;
             this->factor_graph.erase_incoming_messages_beyond(time_step);
 
             estimates = 1 - estimates.array();

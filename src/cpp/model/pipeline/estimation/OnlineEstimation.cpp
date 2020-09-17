@@ -19,7 +19,7 @@ namespace tomcat {
         //----------------------------------------------------------------------
         OnlineEstimation::OnlineEstimation(
             MessageBrokerConfiguration config,
-            const TA3MessageConverter& message_converter)
+            std::shared_ptr<MessageConverter> message_converter)
             : config(config), message_converter(message_converter) {}
 
         OnlineEstimation::~OnlineEstimation() {}
@@ -58,6 +58,7 @@ namespace tomcat {
             this->connect(this->config.address, this->config.port, 60);
             this->subscribe(this->config.state_topic);
             this->subscribe(this->config.events_topic);
+            this->subscribe(this->config.trial_topic);
             thread estimation_thread(&OnlineEstimation::run_estimation_thread,
                                      this);
             this->loop();
@@ -69,15 +70,14 @@ namespace tomcat {
         }
 
         void OnlineEstimation::run_estimation_thread() {
-            while (this->running || !this->data_to_process.empty()) {
+            while (this->running || !this->messages_to_process.empty()) {
                 // To avoid the overload of creating and destroying threads, so
                 // far the estimators will run in sequence. Later this can be
                 // improved by creating perennial threads for each one of the
                 // estimators and keep tracking of the data point they have
                 // processes in the list of available data.
-                if (!this->data_to_process.empty()) {
-                    EvidenceSet new_data = this->data_to_process.front();
-                    this->data_to_process.pop();
+                EvidenceSet new_data = get_next_data_from_pending_messages();
+                if (!new_data.empty()) {
                     for (auto estimator : this->estimators) {
                         estimator->estimate(new_data);
                     }
@@ -86,6 +86,26 @@ namespace tomcat {
                     this->time_step++;
                 }
             }
+        }
+
+        EvidenceSet OnlineEstimation::get_next_data_from_pending_messages() {
+            EvidenceSet new_data;
+
+            while (!this->messages_to_process.empty() && new_data.empty()) {
+                nlohmann::json message = this->messages_to_process.front();
+                this->messages_to_process.pop();
+                unordered_map<string, double> observations_per_node =
+                    this->message_converter->convert_online(message);
+                if (!observations_per_node.empty()) {
+                    for (const auto& [node_label, value] :
+                         observations_per_node) {
+                        Tensor3 data(Eigen::MatrixXd::Constant(1, 1, value));
+                        new_data.add_data(node_label, data);
+                    }
+                }
+            }
+
+            return new_data;
         }
 
         void OnlineEstimation::publish_last_estimates() {
@@ -124,16 +144,7 @@ namespace tomcat {
 
             nlohmann::json json_message = nlohmann::json::parse(message);
             json_message["topic"] = topic;
-            unordered_map<string, double> observations_per_node =
-                this->message_converter.convert_online(json_message);
-            if (!observations_per_node.empty()) {
-                EvidenceSet new_data;
-                for (const auto& [node_label, value] : observations_per_node) {
-                    Tensor3 data(Eigen::MatrixXd::Constant(1, 1, value));
-                    new_data.add_data(node_label, data);
-                }
-                this->data_to_process.push(new_data);
-            }
+            this->messages_to_process.push(json_message);
         }
 
         void OnlineEstimation::on_time_out() {
