@@ -76,6 +76,19 @@ void ZombieworldGroup::addLevers() {
         topEdgeMidpoint.shiftZ(-1);
 
         this->addBlock(*(new Lever(topEdgeMidpoint, false, "north")));
+
+        // Adds the connection representing this doorway
+        // This is an example and may have innacurate coordinates
+        this->addConnection(*(new Connection(
+            "c1", "entrance to second room", "door", "rectangle")));
+        vector<string> connectedLocations{"1", "2"};
+        this->getConnectionList().at(0)->addManyConnectedLocations(
+            connectedLocations);
+
+        Pos adjacent(topEdgeMidpoint);
+        adjacent.shiftX(1);
+        vector<Pos> coordinates{topEdgeMidpoint, adjacent};
+        this->getConnectionList().at(0)->addManyCoordinates(coordinates);
     }
 }
 

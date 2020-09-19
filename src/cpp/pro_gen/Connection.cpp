@@ -4,7 +4,7 @@ using namespace std;
 using json = nlohmann::json;
 
 Connection::Connection(string id, string name, string type, string boundType)
-    : id{id}, name{name}, type{type} {}
+    : id{id}, name{name}, type{type}, boundType{boundType} {}
 
 string Connection::getID() { return this->id; }
 

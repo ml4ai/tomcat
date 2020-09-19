@@ -1,11 +1,13 @@
 #pragma once
 
 #include "AABB.h"
+#include "Connection.h"
 
 class Group : public AABB {
 
   private:
     std::vector<AABB*> aabbList;
+    std::vector<Connection*> connectionList;
 
     /**
      * @brief Recalculates the extremes of the group as a whole when a new AABB
@@ -22,6 +24,14 @@ class Group : public AABB {
     void addAABB(AABB& aabb);
 
     /**
+     * @brief Add an connection to the vector of connection held inside the
+     * group
+     *
+     * @param connection The connection to add
+     */
+    void addConnection(Connection& connection);
+
+    /**
      * @brief Generates all doors in each AABB of this group
      */
     void generateAllDoorsInAABB();
@@ -32,6 +42,13 @@ class Group : public AABB {
      * @return std::vector<AABB*>& Reference to the AABB group kept track of.
      */
     std::vector<AABB*>& getAABBList();
+
+    /**
+     * @brief Returns the Connection vector for this Group
+     *
+     * @return std::vector<Connection*>&  The connection list
+     */
+    std::vector<Connection*>& getConnectionList();
 
     /**
      * @brief Get a particular AABB contained by this group. The AABB can be

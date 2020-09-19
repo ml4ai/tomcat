@@ -5,6 +5,10 @@ using json = nlohmann::json;
 Group::Group(string id)
     : AABB(id, "group", "air", *(new Pos()), *(new Pos()), true, false) {}
 
+vector<AABB*>& Group::getAABBList() { return this->aabbList; }
+
+vector<Connection*>& Group::getConnectionList() { return this->connectionList; }
+
 void Group::addAABB(AABB& aabb) {
     this->aabbList.push_back(&aabb);
     this->recalculateGroupBoundaries();
@@ -15,8 +19,6 @@ void Group::generateAllDoorsInAABB() {
         aabb->generateAllDoorsInAABB();
     }
 }
-
-vector<AABB*>& Group::getAABBList() { return this->aabbList; }
 
 AABB* Group::getAABB(string id) {
     for (auto& aabb : this->aabbList) {
@@ -79,6 +81,10 @@ void Group::recalculateGroupBoundaries() {
     this->setBottomRight(newBottomRight);
 }
 
+void Group::addConnection(Connection& connection) {
+    this->connectionList.push_back(&connection);
+}
+
 void Group::toJSON(json& json_base) {
     for (auto& aabbPtr : this->aabbList) {
         (*aabbPtr).toJSON(json_base);
@@ -94,6 +100,10 @@ void Group::toJSON(json& json_base) {
 
     for (auto& objectPtr : this->getObjectList()) {
         (*objectPtr).toJSON(json_base);
+    }
+
+    for (auto& connectionPtr : this->getConnectionList()) {
+        (*connectionPtr).toJSON(json_base);
     }
 }
 
