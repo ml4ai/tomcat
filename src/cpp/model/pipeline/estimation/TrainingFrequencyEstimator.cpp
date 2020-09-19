@@ -33,7 +33,7 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void TrainingFrequencyEstimator::estimate(EvidenceSet new_data) {
+        void TrainingFrequencyEstimator::estimate(const EvidenceSet& new_data) {
             for (auto& node_estimates : this->nodes_estimates) {
                 if (node_estimates.estimates.size() == 0) {
                     if (!this->training_data.has_data_for(

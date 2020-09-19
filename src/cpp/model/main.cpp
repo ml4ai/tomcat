@@ -48,7 +48,7 @@ void execute_experiment_1a() {
     tomcat.init();
 
     // Data
-    string data_dir = fmt::format("{}/ta3/falcon/engineering", DATA_ROOT_DIR);
+    string data_dir = fmt::format("{}/ta3/falcon/converter", DATA_ROOT_DIR);
     EvidenceSet data(data_dir);
 
     // Data split
@@ -82,16 +82,16 @@ void execute_experiment_1a() {
         shared_ptr<Estimator> estimator =
             make_shared<TrainingFrequencyEstimator>(tomcat.get_model(),
                                                     horizon);
-        estimator->add_node(Tomcat::SG, Eigen::VectorXd::Constant(1, 1));
-        estimator->add_node(Tomcat::SY, Eigen::VectorXd::Constant(1, 1));
+        estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
+        estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
         offline_estimation->add_estimator(estimator);
         aggregator->add_measure(make_shared<Accuracy>(estimator));
         aggregator->add_measure(make_shared<F1Score>(estimator));
 
         estimator =
             make_shared<SumProductEstimator>(tomcat.get_model(), horizon);
-        estimator->add_node(Tomcat::SG, Eigen::VectorXd::Constant(1, 1));
-        estimator->add_node(Tomcat::SY, Eigen::VectorXd::Constant(1, 1));
+        estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
+        estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
         offline_estimation->add_estimator(estimator);
         aggregator->add_measure(make_shared<Accuracy>(estimator));
         aggregator->add_measure(make_shared<F1Score>(estimator));
@@ -160,16 +160,16 @@ void execute_experiment_1b() {
         shared_ptr<Estimator> estimator =
             make_shared<TrainingFrequencyEstimator>(tomcat.get_model(),
                                                     horizon);
-        estimator->add_node(Tomcat::SG, Eigen::VectorXd::Constant(1, 1));
-        estimator->add_node(Tomcat::SY, Eigen::VectorXd::Constant(1, 1));
+        estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
+        estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
         offline_estimation->add_estimator(estimator);
         aggregator->add_measure(make_shared<Accuracy>(estimator));
         aggregator->add_measure(make_shared<F1Score>(estimator));
 
         estimator =
             make_shared<SumProductEstimator>(tomcat.get_model(), horizon);
-        estimator->add_node(Tomcat::SG, Eigen::VectorXd::Constant(1, 1));
-        estimator->add_node(Tomcat::SY, Eigen::VectorXd::Constant(1, 1));
+        estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
+        estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
         offline_estimation->add_estimator(estimator);
         aggregator->add_measure(make_shared<Accuracy>(estimator));
         aggregator->add_measure(make_shared<F1Score>(estimator));
@@ -230,8 +230,8 @@ void execute_experiment_1c() {
             shared_ptr<Estimator> estimator =
                 make_shared<TrainingFrequencyEstimator>(tomcat.get_model(),
                                                         horizon);
-            estimator->add_node(Tomcat::SG, Eigen::VectorXd::Constant(1, 1));
-            estimator->add_node(Tomcat::SY, Eigen::VectorXd::Constant(1, 1));
+            estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
+            estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
             offline_estimation->add_estimator(estimator);
             aggregator->add_measure(
                 make_shared<Accuracy>(estimator, threshold));
@@ -239,8 +239,8 @@ void execute_experiment_1c() {
 
             estimator =
                 make_shared<SumProductEstimator>(tomcat.get_model(), horizon);
-            estimator->add_node(Tomcat::SG, Eigen::VectorXd::Constant(1, 1));
-            estimator->add_node(Tomcat::SY, Eigen::VectorXd::Constant(1, 1));
+            estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
+            estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
             offline_estimation->add_estimator(estimator);
             aggregator->add_measure(
                 make_shared<Accuracy>(estimator, threshold));
@@ -333,8 +333,8 @@ void execute_experiment_1d_part_b() {
     for (int horizon : horizons) {
         shared_ptr<Estimator> estimator =
             make_shared<SumProductEstimator>(tomcat.get_model(), horizon);
-        estimator->add_node(Tomcat::SG, Eigen::VectorXd::Constant(1, 1));
-        estimator->add_node(Tomcat::SY, Eigen::VectorXd::Constant(1, 1));
+        estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
+        estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
         offline_estimation->add_estimator(estimator);
         aggregator->add_measure(make_shared<Estimates>(estimator));
     }
@@ -434,8 +434,8 @@ void execute_experiment_1e_part_b() {
     for (int horizon : horizons) {
         shared_ptr<Estimator> estimator =
             make_shared<SumProductEstimator>(tomcat.get_model(), horizon);
-        estimator->add_node(Tomcat::SG, Eigen::VectorXd::Constant(1, 1));
-        estimator->add_node(Tomcat::SY, Eigen::VectorXd::Constant(1, 1));
+        estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
+        estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
         offline_estimation->add_estimator(estimator);
         aggregator->add_measure(make_shared<Estimates>(estimator));
     }
@@ -518,8 +518,8 @@ void execute_experiment_1f_part_b() {
     for (int horizon : horizons) {
         shared_ptr<Estimator> estimator =
             make_shared<SumProductEstimator>(tomcat.get_model(), horizon);
-        estimator->add_node(Tomcat::SG, Eigen::VectorXd::Constant(1, 1));
-        estimator->add_node(Tomcat::SY, Eigen::VectorXd::Constant(1, 1));
+        estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
+        estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
         offline_estimation->add_estimator(estimator);
         aggregator->add_measure(make_shared<Accuracy>(estimator));
         aggregator->add_measure(make_shared<F1Score>(estimator));
@@ -609,8 +609,8 @@ void execute_experiment_1g_part_b() {
         for (int horizon : horizons) {
             shared_ptr<Estimator> estimator =
                 make_shared<SumProductEstimator>(tomcat.get_model(), horizon);
-            estimator->add_node(Tomcat::SG, Eigen::VectorXd::Constant(1, 1));
-            estimator->add_node(Tomcat::SY, Eigen::VectorXd::Constant(1, 1));
+            estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
+            estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
             offline_estimation->add_estimator(estimator);
             aggregator->add_measure(make_shared<Estimates>(estimator));
         }
@@ -713,8 +713,8 @@ void execute_experiment_1xxx() {
 
     shared_ptr<Estimator> estimator =
         make_shared<SumProductEstimator>(tomcat.get_model(), 1);
-    estimator->add_node(Tomcat::SG, Eigen::VectorXd::Constant(1, 1));
-    estimator->add_node(Tomcat::SY, Eigen::VectorXd::Constant(1, 1));
+    estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
+    estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
     online_estimation->add_estimator(estimator);
 
     Pipeline pipeline("experiment_1d");
@@ -817,9 +817,9 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // execute_experiment(experiment_id);
+    execute_experiment(experiment_id);
 
-    execute_experiment_1xxx();
+    //execute_experiment_1xxx();
 
 //    // Random Seed
 //    shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
@@ -856,8 +856,8 @@ int main(int argc, char* argv[]) {
 //    for (int horizon : horizons) {
 //        shared_ptr<Estimator> estimator =
 //            make_shared<SumProductEstimator>(tomcat.get_model(), horizon);
-//        estimator->add_node(Tomcat::SG, Eigen::VectorXd::Constant(1, 1));
-//        estimator->add_node(Tomcat::SY, Eigen::VectorXd::Constant(1, 1));
+//        estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
+//        estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
 //        offline_estimation->add_estimator(estimator);
 //        aggregator->add_measure(make_shared<Estimates>(estimator));
 //    }

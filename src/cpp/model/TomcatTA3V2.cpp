@@ -4,6 +4,7 @@
 #include "model/pgm/RandomVariableNode.h"
 #include "model/pgm/cpd/CategoricalCPD.h"
 #include "model/pgm/cpd/DirichletCPD.h"
+#include "model/converter/TA3MessageConverter.h"
 
 using namespace std;
 
@@ -50,20 +51,20 @@ namespace tomcat {
             nodes[STATE]->get_metadata()->add_parent_link(
                 nodes[STATE]->get_metadata(), true);
             nodes[STATE]->get_metadata()->add_parent_link(
-                nodes[Q]->get_metadata(), true);
+                nodes[TA3MessageConverter::Q]->get_metadata(), true);
             nodes[STATE]->get_metadata()->add_parent_link(
                 nodes[PBAE]->get_metadata(), true);
-            nodes[ROOM]->get_metadata()->add_parent_link(
+            nodes[TA3MessageConverter::ROOM]->get_metadata()->add_parent_link(
                 nodes[STATE]->get_metadata(), false);
-            nodes[SG]->get_metadata()->add_parent_link(
+            nodes[TA3MessageConverter::SG]->get_metadata()->add_parent_link(
                 nodes[STATE]->get_metadata(), false);
-            nodes[SY]->get_metadata()->add_parent_link(
+            nodes[TA3MessageConverter::SY]->get_metadata()->add_parent_link(
                 nodes[STATE]->get_metadata(), false);
-            nodes[BEEP]->get_metadata()->add_parent_link(
+            nodes[TA3MessageConverter::BEEP]->get_metadata()->add_parent_link(
                 nodes[PBAE]->get_metadata(), false);
             nodes[PBAE]->get_metadata()->add_parent_link(
                 nodes[THETA_PBAE]->get_metadata(), false);
-            nodes[Q]->get_metadata()->add_parent_link(
+            nodes[TA3MessageConverter::Q]->get_metadata()->add_parent_link(
                 nodes[THETA_Q]->get_metadata(), false);
 
             DynamicBayesNet dbn;
@@ -118,7 +119,7 @@ namespace tomcat {
                 this->create_training_condition_metadata();
             shared_ptr<CPD> training_condition_prior_cpd =
                 this->create_training_condition_prior_cpd(nodes[THETA_Q]);
-            nodes[Q] = this->create_node(training_condition_metadata,
+            nodes[TA3MessageConverter::Q] = this->create_node(training_condition_metadata,
                                          {training_condition_prior_cpd});
 
             // Player's Belief About the Environment
@@ -132,7 +133,7 @@ namespace tomcat {
                 this->create_beep_metadata();
             shared_ptr<CPD> beep_prior_cpd =
                 this->create_beep_cpd(pbae_metadata);
-            nodes[BEEP] = this->create_node(beep_metadata, {beep_prior_cpd});
+            nodes[TA3MessageConverter::BEEP] = this->create_node(beep_metadata, {beep_prior_cpd});
 
             // New State with more parents
             shared_ptr<NodeMetadata> state_metadata =
@@ -211,7 +212,7 @@ namespace tomcat {
         TomcatTA3V2::create_training_condition_metadata() const {
             shared_ptr<NodeMetadata> metadata = make_shared<NodeMetadata>(
                 NodeMetadata::create_multiple_time_link_metadata(
-                    Q, false, false, true, 1, 1, NUM_TRAINING_CONDITIONS));
+                    TA3MessageConverter::Q, false, false, true, 1, 1, NUM_TRAINING_CONDITIONS));
 
             return metadata;
         }
@@ -227,7 +228,7 @@ namespace tomcat {
         shared_ptr<NodeMetadata> TomcatTA3V2::create_beep_metadata() const {
             shared_ptr<NodeMetadata> metadata = make_shared<NodeMetadata>(
                 NodeMetadata::create_multiple_time_link_metadata(
-                    BEEP, true, false, true, 0, 1, NUM_BEEP_STATES));
+                    TA3MessageConverter::BEEP, true, false, true, 0, 1, NUM_BEEP_STATES));
 
             return metadata;
         }

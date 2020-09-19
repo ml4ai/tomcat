@@ -9,6 +9,7 @@ namespace tomcat {
     namespace model {
 
         using namespace std;
+        namespace fs = boost::filesystem;
 
         //----------------------------------------------------------------------
         // Constructors & Destructor
@@ -24,8 +25,7 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Operator overload
         //----------------------------------------------------------------------
-        const Tensor3&
-            EvidenceSet::operator[](const string& node_label) const {
+        const Tensor3& EvidenceSet::operator[](const string& node_label) const {
             return this->node_label_to_data.at(node_label);
         }
 
@@ -109,15 +109,14 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void
-        EvidenceSet::init_from_folder(const string& data_folder_path) {
-            for (const auto& file :
-                 boost::filesystem::directory_iterator(data_folder_path)) {
-
-                string filename = file.path().filename().string();
-                string node_label = remove_extension(filename);
-                Tensor3 data = read_tensor_from_file(file.path().string());
-                this->add_data(node_label, data);
+        void EvidenceSet::init_from_folder(const string& data_folder_path) {
+            for (const auto& file : fs::directory_iterator(data_folder_path)) {
+                if (fs::is_regular_file(file)) {
+                    string filename = file.path().filename().string();
+                    string node_label = remove_extension(filename);
+                    Tensor3 data = read_tensor_from_file(file.path().string());
+                    this->add_data(node_label, data);
+                }
             }
         }
 
@@ -179,22 +178,20 @@ namespace tomcat {
         }
 
         void EvidenceSet::keep_first(int num_samples) {
-            for(auto&[node_label, data] : this->node_label_to_data){
+            for (auto& [node_label, data] : this->node_label_to_data) {
                 data = data.slice(0, num_samples, 1);
             }
             this->num_data_points = num_samples;
         }
 
         void EvidenceSet::shrink_up_to(int time_step) {
-            for(auto&[node_label, data] : this->node_label_to_data){
+            for (auto& [node_label, data] : this->node_label_to_data) {
                 data = data.slice(0, time_step + 1, 2);
             }
             this->time_steps = time_step + 1;
         }
 
-        bool EvidenceSet::empty() const {
-            return this->num_data_points == 0;
-        }
+        bool EvidenceSet::empty() const { return this->num_data_points == 0; }
 
         //----------------------------------------------------------------------
         // Getters & Setters

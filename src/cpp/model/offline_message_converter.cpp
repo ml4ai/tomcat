@@ -33,11 +33,11 @@ int main(int argc, char* argv[]) {
         "Path to the json file containing the map configuration.")(
         "messages_dir",
         po::value<string>(&messages_dir)
-            ->default_value("../../data/messages/ta3/falcon"),
+            ->default_value("../../data/messages/ta3/falcon/"),
         "Directory where the files with the messages are stored.")(
         "output_dir",
         po::value<string>(&output_dir)
-            ->default_value("../../data/samples/ta3/falcon/converter"),
+            ->default_value("../../data/samples/ta3/falcon/converter/"),
         "Directory where the files with evidence extracted from the messages "
         "must be saved.");
 

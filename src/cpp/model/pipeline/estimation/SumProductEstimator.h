@@ -48,7 +48,7 @@ namespace tomcat {
             //------------------------------------------------------------------
             void prepare() override;
 
-            void estimate(EvidenceSet new_data) override;
+            void estimate(const EvidenceSet& new_data) override;
 
             void get_info(nlohmann::json& json) const override;
 
@@ -60,6 +60,16 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
+
+            /**
+             * Passes messages forward and backwards within a time step, and
+             * then move forward taking the messages from boundaries nodes in
+             * one time step to transition factors in the next time step.
+             *
+             * @param new_data: observed values for time steps not already
+             * processed by the method
+             */
+            void estimate_forward_in_time(const EvidenceSet& new_data);
 
             /**
              * Computes messages from parents to child nodes in a given time
@@ -113,6 +123,13 @@ namespace tomcat {
              */
             void add_column_to_estimates(NodeEstimates& estimates,
                                          const Eigen::VectorXd new_column);
+
+            /**
+             * Passes messages from transition factors in a time step to the
+             * previous time step, and then passes messages forward and backwards
+             * within that time step. Repeat until the first time step.
+             */
+            void estimate_backward_in_time(const EvidenceSet& new_data);
 
             //------------------------------------------------------------------
             // Data members

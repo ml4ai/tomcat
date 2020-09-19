@@ -286,7 +286,12 @@ namespace tomcat {
 
         vector<shared_ptr<Node>>
         DynamicBayesNet::get_nodes_by_label(const string& node_label) const {
-            return this->label_to_nodes.at(node_label);
+            vector<shared_ptr<Node>> nodes;
+            if (EXISTS(node_label, this->label_to_nodes)) {
+                nodes = this->label_to_nodes.at(node_label);
+            }
+
+            return nodes;
         }
 
         vector<shared_ptr<Node>> DynamicBayesNet::get_nodes_topological_order(

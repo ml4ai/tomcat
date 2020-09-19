@@ -129,7 +129,7 @@ namespace tomcat {
              * @param new_data: observed values for time steps not already
              * seen by the method
              */
-            virtual void estimate(EvidenceSet new_data) = 0;
+            virtual void estimate(const EvidenceSet& new_data) = 0;
 
             /**
              * Writes information about the splitter in a json object.

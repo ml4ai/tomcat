@@ -43,11 +43,20 @@ namespace tomcat {
             this->next_time_step = 0;
             this->factor_graph =
                 FactorGraph::create_from_unrolled_dbn(*this->model);
+            this->factor_graph.store_topological_traversal_per_time_step();
         }
 
-        void SumProductEstimator::estimate(EvidenceSet new_data) {
-            this->factor_graph.store_topological_traversal_per_time_step();
+        void SumProductEstimator::estimate(const EvidenceSet& new_data) {
+            this->estimate_forward_in_time(new_data);
 
+            // The following is only needed in case there's a need for
+            // re-estimating things in the past given observations in the future.
+            // So far there's no such requirement.
+            // this->estimate_backward_in_time(new_data);
+        }
+
+        void SumProductEstimator::estimate_forward_in_time(
+            const EvidenceSet& new_data) {
             for (int t = this->next_time_step;
                  t < this->next_time_step + new_data.get_time_steps();
                  t++) {
@@ -86,11 +95,6 @@ namespace tomcat {
                                 marginal.col(discrete_assignment);
                         }
                     }
-
-//                    double mean_estimate =
-//                        estimates_in_time_step.colwise().mean()[0];
-//                    estimates_in_time_step = Eigen::MatrixXd::Constant(
-//                        1, 1, mean_estimate);
 
                     this->add_column_to_estimates(estimates,
                                                   estimates_in_time_step);
@@ -302,6 +306,41 @@ namespace tomcat {
                 estimates.estimates.conservativeResize(num_rows, num_cols);
 
                 estimates.estimates.col(num_cols - 1) = new_column;
+            }
+        }
+
+        void SumProductEstimator::estimate_backward_in_time(
+            const EvidenceSet& new_data) {
+
+            for (int t = this->next_time_step - 1; t > 0; t--) {
+                unordered_set<shared_ptr<FactorNode>> transition_factors =
+                    this->factor_graph.get_transition_factors_at(t);
+
+                for (auto& factor : transition_factors) {
+                    // Pass message from transition factor backward in time, to
+                    // it's parents in a different time step.
+                    for (auto& [parent_node, transition] :
+                         this->factor_graph.get_parents_of(factor, t)) {
+                        if (transition) {
+                            Eigen::MatrixXd message =
+                                factor->get_outward_message_to(
+                                    parent_node,
+                                    t,
+                                    t - 1,
+                                    MessageNode::Direction::backwards);
+
+                            parent_node->set_incoming_message_from(
+                                factor->get_label(), t, t - 1, message);
+                        }
+                    }
+                }
+
+                // Adjust messages in the previous time slice to account for the
+                // new message that was passed backward.
+                this->compute_forward_messages(
+                    this->factor_graph, t - 1, new_data);
+                this->compute_backward_messages(
+                    this->factor_graph, t - 1, new_data);
             }
         }
 

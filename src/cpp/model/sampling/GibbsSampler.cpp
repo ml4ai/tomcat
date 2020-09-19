@@ -1,5 +1,7 @@
 #include "GibbsSampler.h"
 
+#include <unordered_set>
+
 // This is deprecated. The new version is in boost/timer/progress_display.hpp
 // but only available for boost 1.72
 #include <boost/progress.hpp>
@@ -145,13 +147,14 @@ namespace tomcat {
                                        shared_ptr<Node> node,
                                        bool discard) {
 
-            Eigen::MatrixXd weights = this->get_weights_for(node);
             vector<shared_ptr<Node>> parent_nodes =
                 this->model->get_parent_nodes_of(node, true);
             shared_ptr<RandomVariableNode> rv_node =
                 dynamic_pointer_cast<RandomVariableNode>(node);
 
             if (!rv_node->is_frozen()) {
+                Eigen::MatrixXd weights = this->get_weights_for(node);
+
                 Eigen::MatrixXd sample;
                 if (weights.size() == 0) {
                     sample = rv_node->sample(
@@ -178,6 +181,7 @@ namespace tomcat {
                 this->model->get_child_nodes_of(node);
             Eigen::MatrixXd weights = Eigen::MatrixXd::Zero(
                 node->get_size(), node->get_metadata()->get_cardinality());
+            unordered_set<int> not_obs_data_point_indices;
 
             for (auto& child_node : child_nodes) {
                 for (int i = 0; i < node->get_metadata()->get_cardinality();
@@ -190,6 +194,20 @@ namespace tomcat {
                         dynamic_pointer_cast<RandomVariableNode>(child_node)
                             ->get_pdfs(this->model->get_parent_nodes_of(
                                 child_node, true));
+
+                    // Identify rows in the child node's assignment where
+                    // there's no observation. This means that no data was
+                    // observed for the data point in the given index at the
+                    // child's time step.
+                    Eigen::MatrixXd child_assignment =
+                        child_node->get_assignment();
+                    for (int i = 0; i < child_assignment.rows(); i++) {
+                        if (child_assignment.row(i) ==
+                            Eigen::VectorXd::Constant(child_assignment.cols(),
+                                                      NO_OBS)) {
+                            not_obs_data_point_indices.insert(i);
+                        }
+                    }
 
                     if (node->get_size() == 1) {
                         // If an out-of-plate node is parent of an in-plate
@@ -218,6 +236,12 @@ namespace tomcat {
             Eigen::VectorXd sum_per_row = weights.rowwise().sum();
             weights =
                 (weights.array().colwise() / sum_per_row.array()).matrix();
+
+            // Set the weights in the unobserved data point indices to NO_OBS
+            for (const auto& i : not_obs_data_point_indices) {
+                weights.row(i) =
+                    Eigen::VectorXd::Constant(weights.cols(), NO_OBS);
+            }
 
             return weights;
         }

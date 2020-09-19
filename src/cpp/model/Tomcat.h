@@ -20,22 +20,6 @@ namespace tomcat {
         class Tomcat {
           public:
             //------------------------------------------------------------------
-            // Types, Enums & Constants
-            //------------------------------------------------------------------
-
-            // Node labels
-            inline static const std::string THETA_Q = "Theta_Q";
-            inline static const std::string THETA_S = "Theta_S";
-            inline static const std::string PI_RM = "Pi_RM";
-            inline static const std::string PI_SG = "Pi_SG";
-            inline static const std::string PI_SY = "Pi_SY";
-            inline static const std::string Q = "Training_Condition";
-            inline static const std::string STATE = "State";
-            inline static const std::string ROOM = "Room";
-            inline static const std::string SG = "Green";
-            inline static const std::string SY = "Yellow";
-
-            //------------------------------------------------------------------
             // Constructors & Destructor
             //------------------------------------------------------------------
 

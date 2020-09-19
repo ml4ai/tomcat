@@ -15,12 +15,11 @@ namespace tomcat {
             inline static const int NUM_TRAINING_CONDITIONS = 3;
             inline static const int NUM_BEEP_STATES = 3;
 
-            // Node labels
+            // Hidden variable labels
             inline static const std::string THETA_Q = "Theta_Q";
             inline static const std::string THETA_PBAE = "Theta_PBAE";
-            inline static const std::string Q = "TrainingCondition";
-            inline static const std::string BEEP = "Beep";
             inline static const std::string PBAE = "PBAE";
+            inline static const std::string SG = TA3MessageConverter::BEEP;
 
             //------------------------------------------------------------------
             // Constructors & Destructor

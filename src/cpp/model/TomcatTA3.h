@@ -10,6 +10,7 @@
 #include "model/pgm/DynamicBayesNet.h"
 #include "model/pgm/NodeMetadata.h"
 #include "model/utils/Definitions.h"
+#include "model/converter/TA3MessageConverter.h"
 
 namespace tomcat {
     namespace model {
@@ -25,15 +26,15 @@ namespace tomcat {
             inline static const int NUM_STATES = 4;
             inline static const int NUM_SECONDS = 600;
 
-            // Node labels
+            // Hidden variable labels
             inline static const std::string THETA_S = "Theta_S";
             inline static const std::string PI_RM = "Pi_RM";
             inline static const std::string PI_SG = "Pi_SG";
             inline static const std::string PI_SY = "Pi_SY";
             inline static const std::string STATE = "State";
-            inline static const std::string ROOM = "Room";
-            inline static const std::string SG = "Green";
-            inline static const std::string SY = "Yellow";
+            inline static const std::string ROOM = TA3MessageConverter::ROOM;
+            inline static const std::string SG = TA3MessageConverter::SG;
+            inline static const std::string SY = TA3MessageConverter::SY;
 
             //------------------------------------------------------------------
             // Constructors & Destructor

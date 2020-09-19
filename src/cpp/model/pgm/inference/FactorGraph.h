@@ -1,16 +1,19 @@
 #pragma once
 
 #include <array>
+#include <functional>
 #include <memory>
 #include <string>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
 #include <boost/graph/adjacency_list.hpp>
 
-#include "model/utils/Definitions.h"
 #include "model/pgm/DynamicBayesNet.h"
+#include "model/pgm/inference/FactorNode.h"
 #include "model/pgm/inference/MessageNode.h"
+#include "model/utils/Definitions.h"
 
 namespace tomcat {
     namespace model {
@@ -182,6 +185,18 @@ namespace tomcat {
              */
             void erase_incoming_messages_beyond(int time_step);
 
+            /**
+             * Returns factor nodes that are connected to nodes in a given time
+             * step and the previous one. Transition factor nodes from the repeatable time step are return
+             * whenever the given time step is greater than the repeatable one.
+             *
+             * @param time_step: factor nodes' time step
+             *
+             * @return Transition factor nodes in time step.
+             */
+            std::unordered_set<std::shared_ptr<FactorNode>>
+            get_transition_factors_at(int time_step) const;
+
           private:
             //------------------------------------------------------------------
             // Types, Enums & Constants
@@ -266,6 +281,12 @@ namespace tomcat {
 
             std::array<std::vector<std::shared_ptr<MessageNode>>, 3>
                 time_sliced_reversed_topological_order;
+
+            // Stores the factor nodes that link variable nodes in two different
+            // time steps.
+
+            std::array<std::unordered_set<std::shared_ptr<FactorNode>>, 3>
+                transition_factors_per_time_step;
         };
 
     } // namespace model

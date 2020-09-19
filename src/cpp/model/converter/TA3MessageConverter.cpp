@@ -82,14 +82,18 @@ namespace tomcat {
                 fs::directory_iterator(input_dir),
                 fs::directory_iterator(),
                 static_cast<bool (*)(const fs::path&)>(fs::is_regular_file));
-            int d = 0;
+            int d = 1;
             unordered_map<string, Eigen::MatrixXd> observations_per_node;
             boost::progress_display progress(num_mission_trials);
 
             for (const auto& file : fs::directory_iterator(input_dir)) {
-                if (fs::is_regular_file(file)) {
+                if (fs::is_regular_file(file) &&
+                    file.path().filename().string().find("TrialMessages") !=
+                        string::npos) {
                     vector<nlohmann::json> messages =
                         this->get_sorted_messages_in(file.path().string());
+
+                    LOG(file.path().filename());
 
                     for (auto& message : messages) {
                         for (const auto& [node_label, value] :
@@ -99,14 +103,28 @@ namespace tomcat {
                             // observed value
                             if (!EXISTS(node_label, observations_per_node)) {
                                 observations_per_node[node_label] =
-                                    Eigen::MatrixXd::Constant(
-                                        num_mission_trials, T+1, NO_OBS);
+                                    Eigen::MatrixXd::Constant(1, T + 1, NO_OBS);
+                            }
+
+                            // Append one more row for a new mission trial
+                            if (observations_per_node[node_label].rows() ==
+                                d - 1) {
+                                observations_per_node[node_label]
+                                    .conservativeResize(d, Eigen::NoChange);
+                                observations_per_node[node_label].row(d - 1) =
+                                    Eigen::MatrixXd::Constant(1, T + 1, NO_OBS);
                             }
 
                             if (this->time_step <= T) {
                                 observations_per_node[node_label](
-                                    d, this->time_step) = value;
+                                    d - 1, this->time_step) = value;
                             }
+
+                            //                            LOG(this->time_step);
+                            //                            if (this->time_step ==
+                            //                            599) {
+                            //                                LOG(observations_per_node[node_label]);
+                            //                            }
                         }
 
                         if (this->time_step > T) {
@@ -175,18 +193,14 @@ namespace tomcat {
                                 message["data"]["mission_timer"]);
 
                     if (new_time_step == this->time_step + this->time_gap) {
-                        // After the first time step, 0 represents not observing
-                        // an event.
-                        if (this->last_observations_per_node[ROOM] == NO_OBS) {
+                        // The nodes below are not observed in time step zero.
+                        // Starting from time step 1, they always emmit a valid
+                        // value until the mission ends (0 if no specific value
+                        // was detected).
+                        if (new_time_step == 1) {
                             this->last_observations_per_node[ROOM] = 0;
-                        }
-                        if (this->last_observations_per_node[SG] == NO_OBS) {
                             this->last_observations_per_node[SG] = 0;
-                        }
-                        if (this->last_observations_per_node[SY] == NO_OBS) {
                             this->last_observations_per_node[SY] = 0;
-                        }
-                        if (this->last_observations_per_node[BEEP] == NO_OBS) {
                             this->last_observations_per_node[BEEP] = 0;
                         }
 
@@ -199,6 +213,18 @@ namespace tomcat {
                         // a new message comes to change that.
                         this->last_observations_per_node[BEEP] = 0;
                         this->time_step = new_time_step;
+
+                        // If the player starts to rescue a yellow victim close
+                        // to the time limit to rescue this kind of victim (half
+                        // of the mission total time) and he doesn't finish
+                        // before this limit, there's no SUCCESSFUL or
+                        // UNSUCCESSFUL message reported by the testbed. I that
+                        // case, we need to reset the observation manually
+                        // here, otherwise, a true observation (value 1) will be
+                        // emitted until the end of the game.
+                        if (new_time_step > T / 2) {
+                            this->last_observations_per_node[SY] = 0;
+                        }
                     }
                 }
                 else if (message["topic"] ==
@@ -256,7 +282,7 @@ namespace tomcat {
         void TA3MessageConverter::fill_room_observation(
             const nlohmann::json& json_message) {
 
-            double value = 0;
+            int value = 0;
             if (json_message["data"].contains("locations")) {
                 string room_id = json_message["data"]["locations"][0]["id"];
                 if (EXISTS(room_id, this->map_area_configuration)) {

@@ -4,7 +4,6 @@
 #include <boost/graph/topological_sort.hpp>
 
 #include "model/pgm/cpd/CPD.h"
-#include "model/pgm/inference/FactorNode.h"
 #include "model/pgm/inference/VariableNode.h"
 
 namespace tomcat {
@@ -154,6 +153,9 @@ namespace tomcat {
                 shared_ptr<FactorNode> factor_node =
                     dynamic_pointer_cast<FactorNode>(
                         this->graph[target_vertex_id]);
+
+                this->transition_factors_per_time_step[target_node_time_step]
+                    .insert(factor_node);
             }
         }
 
@@ -257,9 +259,8 @@ namespace tomcat {
             return child_nodes;
         }
 
-        Eigen::MatrixXd
-        FactorGraph::get_marginal_for(const string& node_label,
-                                      int time_step) const {
+        Eigen::MatrixXd FactorGraph::get_marginal_for(const string& node_label,
+                                                      int time_step) const {
             Eigen::MatrixXd marginal(0, 0);
 
             string relative_name = MessageNode::get_name(
@@ -288,6 +289,12 @@ namespace tomcat {
                     node->erase_incoming_messages_beyond(time_step);
                 }
             }
+        }
+
+        unordered_set<shared_ptr<FactorNode>>
+        FactorGraph::get_transition_factors_at(int time_step) const {
+            int relative_time_step = min(time_step, this->repeatable_time_step);
+            return this->transition_factors_per_time_step[relative_time_step];
         }
 
     } // namespace model

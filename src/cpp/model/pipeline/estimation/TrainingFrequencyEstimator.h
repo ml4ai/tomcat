@@ -48,7 +48,7 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-            void estimate(EvidenceSet new_data) override;
+            void estimate(const EvidenceSet& new_data) override;
 
             void get_info(nlohmann::json& json) const override;
 
