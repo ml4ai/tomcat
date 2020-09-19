@@ -34,7 +34,7 @@ void Block::toJSON(json& json_base) {
     block_json["bounds"] = {{"type", "block"},
                             {"coordinates", coordinate_list}};
     block_json["material"] = this->getMaterial();
-    
+
     json_base["locations"].push_back(block_json);
 }
 

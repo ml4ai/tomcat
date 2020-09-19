@@ -89,9 +89,9 @@ void Entity::toJSON(json& json_base) {
 void Entity::toAltJSON(json& json_base) {
     json entity_json;
 
-    entity_json["x"] =  to_string(this->getX());
-    entity_json["y"] =  to_string(this->getY());
-    entity_json["z"] =  to_string(this->getZ());
+    entity_json["x"] = to_string(this->getX());
+    entity_json["y"] = to_string(this->getY());
+    entity_json["z"] = to_string(this->getZ());
 
     entity_json["chestplate"] = this->getChestplate();
     entity_json["leggings"] = this->getLeggings();

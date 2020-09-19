@@ -5,8 +5,8 @@
 #pragma once
 
 #include "AABB.h"
-#include "Group.h"
 #include "Connection.h"
+#include "Group.h"
 
 /**
  * @brief This class represents a Minecraft world as a
@@ -86,7 +86,8 @@ class World {
     void addObject(Object& object);
 
     /**
-     * @brief Add an connection to the vector of connection held inside the world
+     * @brief Add an connection to the vector of connection held inside the
+     * world
      *
      * @param connection The connection to add
      */
