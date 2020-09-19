@@ -214,10 +214,11 @@ void AABB::toJSON(json& json_base) {
     coordinates_list.push_back(this->topLeft.toJSON());
     coordinates_list.push_back(this->bottomRight.toJSON());
 
-    aabb_json["bounds"] = {{"id", this->getID()},
-                           {"type", "cuboid"},
-                           {"coordinates", coordinates_list},
-                           {"material", this->getMaterial()}};
+    aabb_json["bounds"] = {{"type", "cuboid"},
+                           {"coordinates", coordinates_list}};
+
+    aabb_json["id"] = this->getID();
+    aabb_json["material"] = this->getMaterial();
 
     json_base["locations"].push_back(aabb_json);
 

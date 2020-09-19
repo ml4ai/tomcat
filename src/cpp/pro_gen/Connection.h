@@ -19,16 +19,25 @@ class Connection {
     std::string getBoundType();
     std::vector<std::string>& getConnectedLocations();
     std::vector<Pos>& getCoordinates();
-    std::string setID(std::string newID);
-    std::string setName(std::string newName);
-    std::string setType(std::string newType);
-    std::string setBoundType(std::string newBoundType);
+    void setID(std::string newID);
+    void setName(std::string newName);
+    void setType(std::string newType);
+    void setBoundType(std::string newBoundType);
     void addConnectedLocation(std::string id);
     void addCoordinates(Pos& pos);
     void addManyConnectedLocations(std::vector<std::string>& idVector);
     void addManyCoordinates(std::vector<Pos>& posVector);
     void removeAllConnectedLocation();
     void removeAllCoordinates();
+
+    /**
+     * @brief Adds the JSON representation of this object to the
+     *        "locations" list of the base json
+     *
+     * @return nlohmann::json The base json
+     */
+    void virtual toJSON(nlohmann::json& json_base);
+
     Connection(std::string id,
                std::string name,
                std::string type,

@@ -22,10 +22,10 @@ void Lever::toJSON(json& json_base) {
     coordinate_list.push_back(this->pos.toJSON());
 
     block_json["bounds"] = {{"type", "block"},
-                            {"coordinates", coordinate_list},
-                            {"material", this->getMaterial()},
-                            {"powered", isPowered},
-                            {"facing", this->facing}};
+                            {"coordinates", coordinate_list}};
+    block_json["material"] = this->getMaterial();
+    block_json["powered"] = isPowered;
+    block_json["facing"] = this->facing;
 
     json_base["locations"].push_back(block_json);
 }

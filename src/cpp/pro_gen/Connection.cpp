@@ -1,6 +1,7 @@
 #include "Connection.h"
 
 using namespace std;
+using json = nlohmann::json;
 
 Connection::Connection(string id, string name, string type, string boundType)
     : id{id}, name{name}, type{type} {}
@@ -19,13 +20,13 @@ vector<string>& Connection::getConnectedLocations() {
 
 vector<Pos>& Connection::getCoordinates() { return this->coordinates; }
 
-string Connection::setID(string newID) { this->id = newID; }
+void Connection::setID(string newID) { this->id = newID; }
 
-string Connection::setName(string newName) { this->name = newName; }
+void Connection::setName(string newName) { this->name = newName; }
 
-string Connection::setType(string newType) { this->type = newType; }
+void Connection::setType(string newType) { this->type = newType; }
 
-string Connection::setBoundType(string newBoundType) {
+void Connection::setBoundType(string newBoundType) {
     this->boundType = newBoundType;
 }
 
@@ -49,5 +50,22 @@ void Connection::removeAllConnectedLocation() {
     this->connectedLocations.clear();
 }
 void Connection::removeAllCoordinates() { this->coordinates.clear(); }
+
+void Connection::toJSON(json& json_base) {
+    json connection_json;
+    vector<json> coordinate_list;
+    for (auto& pos : this->coordinates) {
+        coordinate_list.push_back(pos.toJSON());
+    }
+
+    connection_json["bounds"] = {{"type", this->getBoundType()},
+                                 {"coordinates", coordinate_list}};
+    connection_json["id"] = this->getID();
+    connection_json["name"] = this->getName();
+    connection_json["type"] = this->getType();
+    connection_json["connected_locations"] = this->connectedLocations;
+
+    json_base["connections"].push_back(connection_json);
+};
 
 Connection::~Connection(){};

@@ -26,6 +26,8 @@ vector<Entity*>& World::getEntityList() { return this->entityList; }
 
 vector<Object*>& World::getObjectList() { return this->objectList; }
 
+vector<Connection*>& World::getConnectionList() { return this->connectionList; }
+
 void World::addAABB(AABB& aabb) { (this->aabbList).push_back(&aabb); }
 
 void World::addBlock(Block& block) { (this->blockList).push_back(&block); }
@@ -33,6 +35,10 @@ void World::addBlock(Block& block) { (this->blockList).push_back(&block); }
 void World::addEntity(Entity& entity) { this->entityList.push_back(&entity); }
 
 void World::addObject(Object& object) { this->objectList.push_back(&object); }
+
+void World::addConnection(Connection& connection) {
+    this->connectionList.push_back(&connection);
+}
 
 string World::toAltJSON() {
     json world_json;
@@ -69,10 +75,12 @@ string World::toJSON() {
     vector<json> location_list;
     vector<json> entity_list;
     vector<json> object_list;
+    vector<json> connection_list;
 
     world_json["locations"] = location_list;
     world_json["entities"] = entity_list;
     world_json["objects"] = object_list;
+    world_json["connections"] = connection_list;
 
     // Add AABBs to the JSON list
     for (auto& aabbPtr : this->aabbList) {
@@ -89,6 +97,10 @@ string World::toJSON() {
 
     for (auto& objectPtr : this->getObjectList()) {
         (*objectPtr).toJSON(world_json);
+    }
+
+    for (auto& connectionPtr : this->getConnectionList()) {
+        (*connectionPtr).toJSON(world_json);
     }
 
     return world_json.dump(4);

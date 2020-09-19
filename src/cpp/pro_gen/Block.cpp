@@ -32,8 +32,9 @@ void Block::toJSON(json& json_base) {
     coordinate_list.push_back(this->pos.toJSON());
 
     block_json["bounds"] = {{"type", "block"},
-                            {"coordinates", coordinate_list},
-                            {"material", this->getMaterial()}};
+                            {"coordinates", coordinate_list}};
+    block_json["material"] = this->getMaterial();
+    
     json_base["locations"].push_back(block_json);
 }
 

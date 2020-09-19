@@ -6,6 +6,7 @@
 
 #include "AABB.h"
 #include "Group.h"
+#include "Connection.h"
 
 /**
  * @brief This class represents a Minecraft world as a
@@ -18,6 +19,7 @@ class World {
     std::vector<Block*> blockList;
     std::vector<Entity*> entityList;
     std::vector<Object*> objectList;
+    std::vector<Connection*> connectionList;
 
   public:
     /**
@@ -49,6 +51,13 @@ class World {
     std::vector<Object*>& getObjectList();
 
     /**
+     * @brief Returns the Connection vector for this World
+     *
+     * @return std::vector<Connection*>&  The connection list
+     */
+    std::vector<Connection*>& getConnectionList();
+
+    /**
      * @brief Add an AABB to the vector of AABB held inside the world
      *
      * @param aabb The AABB to add
@@ -75,6 +84,13 @@ class World {
      * @param object The object to add
      */
     void addObject(Object& object);
+
+    /**
+     * @brief Add an connection to the vector of connection held inside the world
+     *
+     * @param connection The connection to add
+     */
+    void addConnection(Connection& connection);
 
     /**
      * @brief Converts the world into its alternate JSON representation with
