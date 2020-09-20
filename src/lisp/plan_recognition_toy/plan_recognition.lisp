@@ -1,5 +1,11 @@
-(ql:quickload "shop3")
-(load "simple-schedule-domain.lisp")
+(prog (ql:quickload "shop3") 
+      (ql:quickload "cl-json")
+      (load "../util.lisp"))
+
+(load-lisp-domain (domain-file)
+                  (load domain-file))
+
+(load-json-domain (domain-file))
 
 (compute-posterior-prob (cats action state domain prior)
                         )
