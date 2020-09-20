@@ -16,7 +16,7 @@
        (load "../util.lisp"))
 
 (in-package :shop-user)
-(shop-trace :plans :operators :states)
+(shop-trace :tasks :states :plans)
 (defdomain (sar-individual-domain :type pddl-domain :redefine-ok T) (
     (:types human ;; Everything, including 'human' inherits from the base 'object' type
             victim rescuer - human ;; The rescuer and the victims are humans.
@@ -158,4 +158,4 @@
 
 ;; Find plans and graph the all.
 
-(find-plans 'sar-individual-problem :which :all :verbose nil :plan-tree nil)
+(find-plans 'sar-individual-problem :which :all :verbose :plans :plan-tree t)
