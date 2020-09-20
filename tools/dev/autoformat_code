@@ -4,7 +4,7 @@
 # Note - this script requires GNU Parallel, which can be installed by your OS
 # package manager (e.g. sudo apt-get install -y parallel).
 
-export TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
+export TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../" >/dev/null 2>&1 && pwd)"
 
 pushd ${TOMCAT} > /dev/null
     # Formatting Java code
