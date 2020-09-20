@@ -182,3 +182,13 @@ Found on Common Lisp Cookbook"
 
 (defun get-applicable-tasks (action tasks)
   (remove-if #'(lambda (x) (not (second x))) (get-applicable-tasks-helper action tasks)))
+
+(defun find-leading-actions (action action-set)
+  (reverse (member-if #'(lambda (x) (match-action-headers x action)) (reverse action-set))))
+
+(defun powerset (l)
+  (if (null l)
+      (list nil)
+      (let ((prev (powerset (cdr l))))
+	(append (mapcar #'(lambda (elt) (cons (car l) elt)) prev)
+		prev))))
