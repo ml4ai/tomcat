@@ -1,7 +1,7 @@
 (ql:quickload "shop3")
 
 (in-package :shop-user)
-;;(shop-trace :all)
+(shop-trace :tasks :states :plans)
 (defdomain (simple-schedule-domain :type pddl-domain :redefine-ok T) (
             (:types 
               human

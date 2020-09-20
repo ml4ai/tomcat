@@ -13,5 +13,4 @@
 
 (make-problem 'simple-schedule-problem *day-state* *day*)
 
-(find-plans 'simple-schedule-problem :which :all :optimize-cost nil :verbose :plans :plan-tree nil)
-
+(find-plans 'simple-schedule-problem :which :all :optimize-cost nil :verbose :plans :plan-tree t)
