@@ -6,6 +6,16 @@ Class World
 - Defined in :ref:`file_src_cpp_pro_gen_World.h`
 
 
+Inheritance Relationships
+-------------------------
+
+Derived Types
+*************
+
+- ``public GridWorld`` (:ref:`exhale_class_classGridWorld`)
+- ``public ZombieWorld`` (:ref:`exhale_class_classZombieWorld`)
+
+
 Class Documentation
 -------------------
 

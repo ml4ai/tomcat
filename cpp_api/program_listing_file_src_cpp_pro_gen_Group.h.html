@@ -161,26 +161,38 @@
 <span id="program-listing-file-src-cpp-pro-gen-group-h"></span><h1>Program Listing for File Group.h<a class="headerlink" href="#program-listing-for-file-group-h" title="Permalink to this headline">¶</a></h1>
 <p>↰ <a class="reference internal" href="file_src_cpp_pro_gen_Group.h.html#file-src-cpp-pro-gen-group-h"><span class="std std-ref">Return to documentation for file</span></a> (<code class="docutils literal notranslate"><span class="pre">src/cpp/pro_gen/Group.h</span></code>)</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
+
 <span class="cp">#include</span> <span class="cpf">&quot;AABB.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;Connection.h&quot;</span><span class="cp"></span>
 
 <span class="k">class</span> <span class="nc">Group</span> <span class="o">:</span> <span class="k">public</span> <span class="n">AABB</span> <span class="p">{</span>
 
   <span class="k">private</span><span class="o">:</span>
     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">AABB</span><span class="o">*&gt;</span> <span class="n">aabbList</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Connection</span><span class="o">*&gt;</span> <span class="n">connectionList</span><span class="p">;</span>
+
     <span class="kt">void</span> <span class="nf">recalculateGroupBoundaries</span><span class="p">();</span>
 
   <span class="k">public</span><span class="o">:</span>
     <span class="kt">void</span> <span class="n">addAABB</span><span class="p">(</span><span class="n">AABB</span><span class="o">&amp;</span> <span class="n">aabb</span><span class="p">);</span>
 
+    <span class="kt">void</span> <span class="nf">addConnection</span><span class="p">(</span><span class="n">Connection</span><span class="o">&amp;</span> <span class="n">connection</span><span class="p">);</span>
+
     <span class="kt">void</span> <span class="nf">generateAllDoorsInAABB</span><span class="p">();</span>
 
     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">AABB</span><span class="o">*&gt;&amp;</span> <span class="n">getAABBList</span><span class="p">();</span>
 
-    <span class="n">AABB</span><span class="o">*</span> <span class="nf">getAABB</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">);</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Connection</span><span class="o">*&gt;&amp;</span> <span class="n">getConnectionList</span><span class="p">();</span>
 
-    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">toTSV</span><span class="p">();</span>
+    <span class="n">AABB</span><span class="o">*</span> <span class="nf">getAABB</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">id</span><span class="p">);</span>
 
-    <span class="n">Group</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">);</span>
+    <span class="kt">void</span> <span class="k">virtual</span> <span class="n">toSemanticMapJSON</span><span class="p">(</span><span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span><span class="o">&amp;</span> <span class="n">json_base</span><span class="p">);</span>
+
+    <span class="kt">void</span> <span class="k">virtual</span> <span class="n">toLowLevelMapJSON</span><span class="p">(</span><span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span><span class="o">&amp;</span> <span class="n">json_base</span><span class="p">);</span>
+
+    <span class="n">Group</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">id</span><span class="p">);</span>
+
+    <span class="k">virtual</span> <span class="o">~</span><span class="n">Group</span><span class="p">();</span>
 <span class="p">};</span>
 </pre></div>
 </div>

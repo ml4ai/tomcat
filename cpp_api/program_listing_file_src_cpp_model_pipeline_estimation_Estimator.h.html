@@ -183,7 +183,7 @@
         <span class="c1">// Structs</span>
         <span class="c1">//------------------------------------------------------------------</span>
 
-        <span class="k">struct</span> <span class="n">NodeEstimates</span> <span class="p">{</span>
+        <span class="k">struct</span> <span class="nc">NodeEstimates</span> <span class="p">{</span>
 
             <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">label</span><span class="p">;</span>
 
@@ -236,15 +236,15 @@
             <span class="c1">// Virtual functions</span>
             <span class="c1">//------------------------------------------------------------------</span>
 
-            <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">prepare</span><span class="p">();</span>
+            <span class="k">virtual</span> <span class="kt">void</span> <span class="n">prepare</span><span class="p">();</span>
 
             <span class="c1">//------------------------------------------------------------------</span>
             <span class="c1">// Pure virtual functions</span>
             <span class="c1">//------------------------------------------------------------------</span>
 
-            <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">estimate</span><span class="p">(</span><span class="n">EvidenceSet</span> <span class="n">new_data</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">virtual</span> <span class="kt">void</span> <span class="n">estimate</span><span class="p">(</span><span class="n">EvidenceSet</span> <span class="n">new_data</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-            <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">get_info</span><span class="p">(</span><span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span><span class="o">&amp;</span> <span class="n">json</span><span class="p">)</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">virtual</span> <span class="kt">void</span> <span class="n">get_info</span><span class="p">(</span><span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span><span class="o">&amp;</span> <span class="n">json</span><span class="p">)</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
             <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">get_name</span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 

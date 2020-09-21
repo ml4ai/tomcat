@@ -162,6 +162,7 @@
 <p>↰ <a class="reference internal" href="file_src_cpp_pro_gen_Pos.cpp.html#file-src-cpp-pro-gen-pos-cpp"><span class="std std-ref">Return to documentation for file</span></a> (<code class="docutils literal notranslate"><span class="pre">src/cpp/pro_gen/Pos.cpp</span></code>)</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;Pos.h&quot;</span><span class="cp"></span>
 <span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="k">using</span> <span class="n">json</span> <span class="o">=</span> <span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span><span class="p">;</span>
 
 <span class="n">Pos</span><span class="o">::</span><span class="n">Pos</span><span class="p">()</span> <span class="p">{}</span>
 
@@ -187,10 +188,12 @@
 
 <span class="kt">void</span> <span class="n">Pos</span><span class="o">::</span><span class="n">shiftZ</span><span class="p">(</span><span class="kt">int</span> <span class="n">shift</span><span class="p">)</span> <span class="p">{</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">z</span> <span class="o">+=</span> <span class="n">shift</span><span class="p">;</span> <span class="p">}</span>
 
-<span class="n">string</span> <span class="n">Pos</span><span class="o">::</span><span class="n">toTSV</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">string</span> <span class="n">retval</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span> <span class="o">+</span> <span class="n">to_string</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">y</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span> <span class="o">+</span>
-                    <span class="n">to_string</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">z</span><span class="p">);</span>
-    <span class="k">return</span> <span class="n">retval</span><span class="p">;</span>
+<span class="n">json</span> <span class="n">Pos</span><span class="o">::</span><span class="n">toSemanticMapJSON</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">json</span> <span class="n">pos_json</span><span class="p">;</span>
+    <span class="n">pos_json</span><span class="p">[</span><span class="s">&quot;x&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getX</span><span class="p">();</span>
+    <span class="n">pos_json</span><span class="p">[</span><span class="s">&quot;y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getY</span><span class="p">();</span>
+    <span class="n">pos_json</span><span class="p">[</span><span class="s">&quot;z&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getZ</span><span class="p">();</span>
+    <span class="k">return</span> <span class="n">pos_json</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="n">Pos</span><span class="o">::~</span><span class="n">Pos</span><span class="p">()</span> <span class="p">{}</span>

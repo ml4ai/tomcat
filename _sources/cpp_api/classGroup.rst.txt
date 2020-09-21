@@ -15,6 +15,12 @@ Base Type
 - ``public AABB`` (:ref:`exhale_class_classAABB`)
 
 
+Derived Type
+************
+
+- ``public ZombieworldGroup`` (:ref:`exhale_class_classZombieworldGroup`)
+
+
 Class Documentation
 -------------------
 

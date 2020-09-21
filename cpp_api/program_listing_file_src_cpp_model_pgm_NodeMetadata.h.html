@@ -183,7 +183,7 @@
         <span class="c1">// Structs</span>
         <span class="c1">//------------------------------------------------------------------</span>
 
-        <span class="k">struct</span> <span class="n">ParentLink</span> <span class="p">{</span>
+        <span class="k">struct</span> <span class="nc">ParentLink</span> <span class="p">{</span>
 
             <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">NodeMetadata</span><span class="o">&gt;</span> <span class="n">parent_node_metadata</span><span class="p">;</span>
             <span class="c1">// Edges crossing time indicate a dependency with the parent node</span>
@@ -200,14 +200,14 @@
             <span class="n">NodeMetadata</span><span class="p">();</span>
 
             <span class="k">static</span> <span class="n">NodeMetadata</span>
-            <span class="nf">create_multiple_time_link_metadata</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">label</span><span class="p">,</span>
+            <span class="n">create_multiple_time_link_metadata</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">label</span><span class="p">,</span>
                                                <span class="kt">bool</span> <span class="n">replicable</span><span class="p">,</span>
                                                <span class="kt">bool</span> <span class="n">parameter</span><span class="p">,</span>
                                                <span class="kt">bool</span> <span class="n">in_plate</span><span class="p">,</span>
                                                <span class="kt">int</span> <span class="n">initial_time_step</span><span class="p">,</span>
                                                <span class="kt">int</span> <span class="n">sample_size</span><span class="p">,</span>
                                                <span class="kt">int</span> <span class="n">cardinality</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="n">NodeMetadata</span><span class="p">(</span><span class="n">label</span><span class="p">,</span>
+                <span class="k">return</span> <span class="nf">NodeMetadata</span><span class="p">(</span><span class="n">label</span><span class="p">,</span>
                                     <span class="n">replicable</span><span class="p">,</span>
                                     <span class="n">parameter</span><span class="p">,</span>
                                     <span class="nb">false</span><span class="p">,</span>
@@ -218,13 +218,13 @@
             <span class="p">}</span>
 
             <span class="k">static</span> <span class="n">NodeMetadata</span>
-            <span class="nf">create_single_time_link_metadata</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">label</span><span class="p">,</span>
+            <span class="n">create_single_time_link_metadata</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">label</span><span class="p">,</span>
                                              <span class="kt">bool</span> <span class="n">parameter</span><span class="p">,</span>
                                              <span class="kt">bool</span> <span class="n">in_plate</span><span class="p">,</span>
                                              <span class="kt">int</span> <span class="n">time_step</span><span class="p">,</span>
                                              <span class="kt">int</span> <span class="n">sample_size</span><span class="p">,</span>
                                              <span class="kt">int</span> <span class="n">cardinality</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">return</span> <span class="n">NodeMetadata</span><span class="p">(</span><span class="n">label</span><span class="p">,</span>
+                <span class="k">return</span> <span class="nf">NodeMetadata</span><span class="p">(</span><span class="n">label</span><span class="p">,</span>
                                     <span class="nb">false</span><span class="p">,</span>
                                     <span class="n">parameter</span><span class="p">,</span>
                                     <span class="nb">true</span><span class="p">,</span>

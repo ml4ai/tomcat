@@ -1,0 +1,30 @@
+
+.. _program_listing_file_src_cpp_pro_gen_ZombieworldPit.h:
+
+Program Listing for File ZombieworldPit.h
+=========================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_cpp_pro_gen_ZombieworldPit.h>` (``src/cpp/pro_gen/ZombieworldPit.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #pragma once
+   #include "AABB.h"
+   
+   class ZombieworldPit : public AABB {
+   
+     private:
+       std::mt19937_64 gen;
+       std::string fluid;
+   
+       void decorateWater();
+   
+       void decorateLava();
+   
+     public:
+       ZombieworldPit(std::string id, Pos& topLeft, std::string fluid);
+   
+       ~ZombieworldPit();
+   };

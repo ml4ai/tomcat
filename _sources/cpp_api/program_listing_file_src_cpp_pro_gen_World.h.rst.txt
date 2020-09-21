@@ -12,28 +12,52 @@ Program Listing for File World.h
 
    
    #pragma once
+   
    #include "AABB.h"
-   #include <nlohmann/json.hpp>
+   #include "Connection.h"
+   #include "Group.h"
    
    class World {
      private:
+       std::mt19937_64 gen;
        std::vector<AABB*> aabbList;
        std::vector<Block*> blockList;
+       std::vector<Entity*> entityList;
+       std::vector<Object*> objectList;
+       std::vector<Connection*> connectionList;
    
      public:
        std::vector<AABB*>& getAABBList();
    
        std::vector<Block*>& getBlockList();
    
+       std::vector<Entity*>& getEntityList();
+   
+       std::vector<Object*>& getObjectList();
+   
+       std::vector<Connection*>& getConnectionList();
+   
        void addAABB(AABB& aabb);
+   
+       void addEntity(Entity& entity);
    
        void addBlock(Block& block);
    
-       std::string virtual toTSV();
+       void addObject(Object& object);
    
-       std::string virtual toJSON();
+       void addConnection(Connection& connection);
+   
+       std::string virtual toLowLevelMapJSON();
+   
+       std::string virtual toSemanticMapJSON();
+   
+       void writeToFile(std::string jsonPath, std::string lowLevelMapJSONPath);
    
        World();
+   
+       std::mt19937_64& getRandom();
+   
+       void setRandom(int seed);
    
        virtual ~World();
    };

@@ -11,24 +11,36 @@ Program Listing for File Group.h
 .. code-block:: cpp
 
    #pragma once
+   
    #include "AABB.h"
+   #include "Connection.h"
    
    class Group : public AABB {
    
      private:
        std::vector<AABB*> aabbList;
+       std::vector<Connection*> connectionList;
+   
        void recalculateGroupBoundaries();
    
      public:
        void addAABB(AABB& aabb);
    
+       void addConnection(Connection& connection);
+   
        void generateAllDoorsInAABB();
    
        std::vector<AABB*>& getAABBList();
    
-       AABB* getAABB(int id);
+       std::vector<Connection*>& getConnectionList();
    
-       std::string toTSV();
+       AABB* getAABB(std::string id);
    
-       Group(int id);
+       void virtual toSemanticMapJSON(nlohmann::json& json_base);
+   
+       void virtual toLowLevelMapJSON(nlohmann::json& json_base);
+   
+       Group(std::string id);
+   
+       virtual ~Group();
    };

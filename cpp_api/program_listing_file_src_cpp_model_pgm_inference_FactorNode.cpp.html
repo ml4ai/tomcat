@@ -352,8 +352,8 @@
                 <span class="k">this</span><span class="o">-&gt;</span><span class="n">incoming_messages_per_time_slice</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">template_time_step</span><span class="p">)</span>
                     <span class="p">.</span><span class="n">size</span><span class="p">();</span>
             <span class="n">vector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&gt;</span> <span class="n">messages_in_order</span><span class="p">(</span><span class="n">num_messages</span><span class="p">);</span>
-            <span class="kt">int</span> <span class="n">added_duplicate_key_order</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-            <span class="kt">int</span> <span class="n">added_duplicate_key_time_step</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+            <span class="kt">int</span> <span class="n">added_duplicate_key_order</span> <span class="o">=</span> <span class="mi">-1</span><span class="p">;</span>
+            <span class="kt">int</span> <span class="n">added_duplicate_key_time_step</span> <span class="o">=</span> <span class="mi">-1</span><span class="p">;</span>
 
             <span class="n">MessageContainer</span> <span class="n">message_container</span> <span class="o">=</span>
                 <span class="k">this</span><span class="o">-&gt;</span><span class="n">incoming_messages_per_time_slice</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">template_time_step</span><span class="p">);</span>

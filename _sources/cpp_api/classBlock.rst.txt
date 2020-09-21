@@ -6,6 +6,15 @@ Class Block
 - Defined in :ref:`file_src_cpp_pro_gen_Block.h`
 
 
+Inheritance Relationships
+-------------------------
+
+Derived Type
+************
+
+- ``public Lever`` (:ref:`exhale_class_classLever`)
+
+
 Class Documentation
 -------------------
 

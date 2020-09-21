@@ -184,9 +184,9 @@
 <span class="cm">/* on_message is a &#39;callback&#39; function - it will be called for every</span>
 <span class="cm"> * message published on the topic named &#39;example_topic&#39; (see call to</span>
 <span class="cm"> * mosquitto_subscribe_callback in the &#39;main&#39; function below). */</span>
-<span class="kt">int</span> <span class="nf">on_message</span><span class="p">(</span><span class="k">struct</span> <span class="n">mosquitto</span><span class="o">*</span> <span class="n">mosq</span><span class="p">,</span>
+<span class="kt">int</span> <span class="nf">on_message</span><span class="p">(</span><span class="k">struct</span> <span class="nc">mosquitto</span><span class="o">*</span> <span class="n">mosq</span><span class="p">,</span>
                <span class="kt">void</span><span class="o">*</span> <span class="n">userdata</span><span class="p">,</span>
-               <span class="k">const</span> <span class="k">struct</span> <span class="n">mosquitto_message</span><span class="o">*</span> <span class="n">msg</span><span class="p">)</span> <span class="p">{</span>
+               <span class="k">const</span> <span class="k">struct</span> <span class="nc">mosquitto_message</span><span class="o">*</span> <span class="n">msg</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">printf</span><span class="p">(</span>
         <span class="s">&quot;%s %s (%d)</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">msg</span><span class="o">-&gt;</span><span class="n">topic</span><span class="p">,</span> <span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span><span class="p">)</span><span class="n">msg</span><span class="o">-&gt;</span><span class="n">payload</span><span class="p">,</span> <span class="n">msg</span><span class="o">-&gt;</span><span class="n">payloadlen</span><span class="p">);</span>
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>

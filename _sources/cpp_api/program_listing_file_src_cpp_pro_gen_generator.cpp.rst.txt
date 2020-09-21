@@ -10,8 +10,8 @@ Program Listing for File generator.cpp
 
 .. code-block:: cpp
 
-   #include "GridworldGenerator.h"
-   #include "ZombieworldGenerator.h"
+   #include "GridWorld.h"
+   #include "ZombieWorld.h"
    #include <boost/program_options.hpp>
    #include <fstream>
    #include <iostream>
@@ -19,43 +19,30 @@ Program Listing for File generator.cpp
    using namespace std;
    namespace po = boost::program_options;
    
-   void writeToFile(string jsonPath, string tsvPath, World& world) {
-       cout << "Writing to file..." << endl;
-   
-       // Write JSON
-       ofstream outputJSON(jsonPath, ios::out);
-       outputJSON << world.toJSON();
-       outputJSON.close();
-   
-       // Write TSV
-       ofstream outputTSV(tsvPath, ios::out);
-       outputTSV << world.toTSV();
-       outputTSV.close();
-   }
-   
    int main(int argc, char* argv[]) {
    
-       int choice, seed;
-       string jsonPath, tsvPath;
+       int world_type, seed;
+       string semantic_map_json_path, low_level_map_json_path;
    
        // Handle options
        po::options_description general("Allowed options");
        general.add_options()("help,h", "Show program options")(
-           "gen_type",
-           po::value<int>()->default_value(0),
-           "Choose the type of world to generate.\nZombieworld = 0\nGridworld = "
+           "world_type",
+           po::value<int>(&world_type)->default_value(0),
+           "Type of world to generate.\nZombieworld = 0\nGridworld = "
            "1")("help_gridworld",
-                "Show additional arguments specific to Gridworld.")(
-           "json_path",
-           po::value<string>()->default_value("procedural.json"),
-           "Specify where to save the JSON file with filename and extension.")(
-           "tsv_path",
-           po::value<string>()->default_value("procedural.tsv"),
-           "Specify where to save the TSV file with filename and extension.")(
+                "Show additional arguments specific to Gridworld generation.")(
+           "semantic_map_path",
+           po::value<string>(&semantic_map_json_path)
+               ->default_value("semantic_map.json"),
+           "Path to the output semantic map JSON file.")(
+           "low_level_map_path",
+           po::value<string>(&low_level_map_json_path)
+               ->default_value("low_level_map.json"),
+           "Path to the low level (more granular) map JSON file.")(
            "seed",
-           po::value<int>()->default_value(0),
-           "The seed used to initialize the random "
-           "object used within the generator.");
+           po::value<int>(&seed)->default_value(0),
+           "The seed used to initialize the random number generator.");
    
        po::options_description gridWorldOptions(
            "Allowed options for the Gridworld generator");
@@ -85,31 +72,25 @@ Program Listing for File generator.cpp
            return 0;
        }
    
-       choice = vm["gen_type"].as<int>();
-       seed = vm["seed"].as<int>();
-       jsonPath = vm["json_path"].as<string>();
-       tsvPath = vm["tsv_path"].as<string>();
-   
        cout << "Generating world..." << endl;
-       if (choice == 0) {
-           ZombieWorldGenerator zombieGen(seed);
-           World& world = zombieGen.getWorld();
-           writeToFile(jsonPath, tsvPath, world);
+       if (world_type == 0) {
+           ZombieWorld world(seed);
+           world.writeToFile(semantic_map_json_path, low_level_map_json_path);
        }
-       else if (choice == 1) {
+       else if (world_type == 1) {
            int N = vm["N"].as<int>();
            int sep = vm["sep"].as<int>();
            int AABB_size = vm["AABB_size"].as<int>();
-           GridworldGenerator gridGen(N, sep, AABB_size, seed);
-           World& world = gridGen.getWorld();
-           writeToFile(jsonPath, tsvPath, world);
+           GridWorld world(N, sep, AABB_size, seed);
+           world.writeToFile(semantic_map_json_path, low_level_map_json_path);
        }
        else {
-           cout << "You choice is invalid" << endl;
+           cout << "Invalid choice for world_type: " << world_type
+                << ". world_type must be either 0 or 1." << endl;
            return 1;
        }
    
-       cout << "Done. The generated files are in " << jsonPath << " and "
-            << tsvPath << endl;
+       cout << "Done. The generated files are in " << semantic_map_json_path
+            << " and " << low_level_map_json_path << endl;
        return 0;
    }

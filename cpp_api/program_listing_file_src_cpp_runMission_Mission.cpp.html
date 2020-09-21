@@ -274,7 +274,7 @@
 
     <span class="n">string</span> <span class="n">Mission</span><span class="o">::</span><span class="n">get_world_skeleton_from_xml</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">getenv</span><span class="p">(</span><span class="s">&quot;TOMCAT&quot;</span><span class="p">))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="n">TomcatMissionException</span><span class="p">(</span>
+            <span class="k">throw</span> <span class="nf">TomcatMissionException</span><span class="p">(</span>
                 <span class="s">&quot;The TOMCAT environment variable has not been set!</span><span class="se">\n</span><span class="s">&quot;</span>
                 <span class="s">&quot;Please set it to the location of your local copy of the &quot;</span>
                 <span class="s">&quot;tomcat</span><span class="se">\n</span><span class="s">&quot;</span>
@@ -293,12 +293,12 @@
             <span class="n">format</span><span class="p">(</span><span class="s">&quot;{}/data/worlds/{}&quot;</span><span class="p">,</span> <span class="n">getenv</span><span class="p">(</span><span class="s">&quot;TOMCAT&quot;</span><span class="p">),</span> <span class="n">world_dir</span><span class="p">);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">fs</span><span class="o">::</span><span class="n">exists</span><span class="p">(</span><span class="n">fs</span><span class="o">::</span><span class="n">path</span><span class="p">(</span><span class="n">world_dir_path</span><span class="p">)))</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="n">TomcatMissionException</span><span class="p">(</span>
+            <span class="k">throw</span> <span class="nf">TomcatMissionException</span><span class="p">(</span>
                 <span class="n">format</span><span class="p">(</span><span class="s">&quot;Requested world directory {} not found.</span><span class="se">\n</span><span class="s">&quot;</span>
                        <span class="s">&quot;Please download the world files by executing the &quot;</span>
                        <span class="s">&quot;{}/tools/download/tomcat_worlds script.</span><span class="se">\n</span><span class="s">&quot;</span>
                        <span class="s">&quot;Note: The world file for mission ID 2 (USAR &quot;</span>
-                       <span class="s">&quot;Singleplayer) is &quot;</span>
+                       <span class="s">&quot;Singleplayer)</span> <span class="n">is</span> <span class="s">&quot;</span>
                        <span class="s">&quot;currently only available to teams participating in &quot;</span>
                        <span class="s">&quot;DARPA&#39;s &quot;</span>
                        <span class="s">&quot;ASIST program.&quot;</span><span class="p">,</span>

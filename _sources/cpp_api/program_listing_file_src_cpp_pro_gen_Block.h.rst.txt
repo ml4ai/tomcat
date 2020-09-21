@@ -13,17 +13,15 @@ Program Listing for File Block.h
    
    #pragma once
    #include "Pos.h"
+   #include <nlohmann/json.hpp>
    
    class Block {
    
-     private:
-       std::string type;
+     protected:
        std::string material;
        Pos pos;
    
      public:
-       std::string getType();
-   
        std::string getMaterial();
    
        int getX();
@@ -32,9 +30,19 @@ Program Listing for File Block.h
    
        int getZ();
    
-       std::string virtual toTSV();
+       Pos& getPos();
    
-       Block(std::string material, Pos& pos, std::string type = "normal");
+       void setX(int x);
+   
+       void setY(int y);
+   
+       void setZ(int z);
+   
+       void virtual toSemanticMapJSON(nlohmann::json& json_base);
+   
+       void virtual toLowLevelMapJSON(nlohmann::json& json_base);
+   
+       Block(std::string material, Pos& pos);
    
        virtual ~Block();
    };

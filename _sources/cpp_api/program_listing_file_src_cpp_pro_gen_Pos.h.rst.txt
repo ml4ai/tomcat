@@ -12,8 +12,9 @@ Program Listing for File Pos.h
 
    
    #pragma once
-   #include <string>
    
+   #include <nlohmann/json.hpp>
+   #include <string>
    class Pos {
    
      private:
@@ -40,7 +41,7 @@ Program Listing for File Pos.h
    
        void shiftZ(int shift);
    
-       std::string toTSV();
+       nlohmann::json virtual toSemanticMapJSON();
    
        Pos();
    

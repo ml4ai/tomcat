@@ -170,6 +170,16 @@ Files
 .. toctree::
    :maxdepth: 5
 
+   file_src_cpp_pro_gen_Connection.cpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file_src_cpp_pro_gen_Connection.h.rst
+
+.. toctree::
+   :maxdepth: 5
+
    file_src_cpp_model_pgm_ConstantNode.cpp.rst
 
 .. toctree::
@@ -291,6 +301,16 @@ Files
    :maxdepth: 5
 
    file_src_cpp_model_utils_EigenExtensions.h.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file_src_cpp_pro_gen_Entity.cpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file_src_cpp_pro_gen_Entity.h.rst
 
 .. toctree::
    :maxdepth: 5
@@ -440,12 +460,12 @@ Files
 .. toctree::
    :maxdepth: 5
 
-   file_src_cpp_pro_gen_GridworldGenerator.cpp.rst
+   file_src_cpp_pro_gen_GridWorld.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file_src_cpp_pro_gen_GridworldGenerator.h.rst
+   file_src_cpp_pro_gen_GridWorld.h.rst
 
 .. toctree::
    :maxdepth: 5
@@ -466,6 +486,16 @@ Files
    :maxdepth: 5
 
    file_src_cpp_model_pipeline_KFold.h.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file_src_cpp_pro_gen_Lever.cpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file_src_cpp_pro_gen_Lever.h.rst
 
 .. toctree::
    :maxdepth: 5
@@ -540,6 +570,16 @@ Files
 .. toctree::
    :maxdepth: 5
 
+   file_src_cpp_pro_gen_Object.cpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file_src_cpp_pro_gen_Object.h.rst
+
+.. toctree::
+   :maxdepth: 5
+
    file_src_cpp_model_pipeline_estimation_OfflineEstimation.cpp.rst
 
 .. toctree::
@@ -570,32 +610,12 @@ Files
 .. toctree::
    :maxdepth: 5
 
-   file_src_cpp_pro_gen_Pit.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_pro_gen_Pit.h.rst
-
-.. toctree::
-   :maxdepth: 5
-
    file_src_cpp_pro_gen_Pos.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
    file_src_cpp_pro_gen_Pos.h.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_pro_gen_ProceduralGenerator.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_pro_gen_ProceduralGenerator.h.rst
 
 .. toctree::
    :maxdepth: 5
@@ -710,9 +730,29 @@ Files
 .. toctree::
    :maxdepth: 5
 
-   file_src_cpp_pro_gen_ZombieworldGenerator.cpp.rst
+   file_src_cpp_pro_gen_ZombieWorld.cpp.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file_src_cpp_pro_gen_ZombieworldGenerator.h.rst
+   file_src_cpp_pro_gen_ZombieWorld.h.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file_src_cpp_pro_gen_ZombieworldGroup.cpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file_src_cpp_pro_gen_ZombieworldGroup.h.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file_src_cpp_pro_gen_ZombieworldPit.cpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file_src_cpp_pro_gen_ZombieworldPit.h.rst

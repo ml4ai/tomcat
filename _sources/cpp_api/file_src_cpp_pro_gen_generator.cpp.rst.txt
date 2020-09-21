@@ -29,9 +29,9 @@ Includes
 --------
 
 
-- ``GridworldGenerator.h`` (:ref:`file_src_cpp_pro_gen_GridworldGenerator.h`)
+- ``GridWorld.h`` (:ref:`file_src_cpp_pro_gen_GridWorld.h`)
 
-- ``ZombieworldGenerator.h`` (:ref:`file_src_cpp_pro_gen_ZombieworldGenerator.h`)
+- ``ZombieWorld.h`` (:ref:`file_src_cpp_pro_gen_ZombieWorld.h`)
 
 - ``boost/program_options.hpp``
 
@@ -49,6 +49,4 @@ Functions
 
 
 - :ref:`exhale_function_generator_8cpp_1a0ddf1224851353fc92bfbff6f499fa97`
-
-- :ref:`exhale_function_generator_8cpp_1a1b0dc54f9d0172c17152bc1022903b00`
 

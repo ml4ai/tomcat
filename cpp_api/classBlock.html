@@ -40,7 +40,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Class GridworldGenerator" href="classGridworldGenerator.html" />
+    <link rel="next" title="Class Connection" href="classConnection.html" />
     <link rel="prev" title="Class AABB" href="classAABB.html" /> 
 </head>
 
@@ -168,6 +168,15 @@
 <ul class="simple">
 <li><p>Defined in <a class="reference internal" href="file_src_cpp_pro_gen_Block.h.html#file-src-cpp-pro-gen-block-h"><span class="std std-ref">File Block.h</span></a></p></li>
 </ul>
+<div class="section" id="inheritance-relationships">
+<h2>Inheritance Relationships<a class="headerlink" href="#inheritance-relationships" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="derived-type">
+<h3>Derived Type<a class="headerlink" href="#derived-type" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">public</span> <span class="pre">Lever</span></code> (<a class="reference internal" href="classLever.html#exhale-class-classlever"><span class="std std-ref">Class Lever</span></a>)</p></li>
+</ul>
+</div>
+</div>
 <div class="section" id="class-documentation">
 <h2>Class Documentation<a class="headerlink" href="#class-documentation" title="Permalink to this headline">¶</a></h2>
 <dl class="cpp class">
@@ -175,19 +184,9 @@
 <span id="_CPPv35Block"></span><span id="_CPPv25Block"></span><span id="Block"></span><span class="target" id="classBlock"></span><em class="property">class </em><code class="sig-name descname">Block</code><a class="headerlink" href="#_CPPv45Block" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>This file defines the members and methods implemented as part of the <a class="reference internal" href="#classBlock"><span class="std std-ref">Block</span></a> class. </p>
 <p>This class represents a Minecraft block </p>
+<p>Subclassed by <a class="reference internal" href="classLever.html#classLever"><span class="std std-ref">Lever</span></a></p>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Public Functions</p>
-<dl class="cpp function">
-<dt id="_CPPv4N5Block7getTypeEv">
-<span id="_CPPv3N5Block7getTypeEv"></span><span id="_CPPv2N5Block7getTypeEv"></span><span id="Block::getType"></span><span class="target" id="classBlock_1a8d89c35b33b297adb6b6dc9e6021f988"></span>std::string <code class="sig-name descname">getType</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Block7getTypeEv" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Get the type of the block. </p>
-<p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>string The block’s type </p>
-</dd>
-</dl>
-</p>
-</dd></dl>
-
 <dl class="cpp function">
 <dt id="_CPPv4N5Block11getMaterialEv">
 <span id="_CPPv3N5Block11getMaterialEv"></span><span id="_CPPv2N5Block11getMaterialEv"></span><span id="Block::getMaterial"></span><span class="target" id="classBlock_1a24366c36ec1b975f7ea8c91aa7c8561a"></span>std::string <code class="sig-name descname">getMaterial</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Block11getMaterialEv" title="Permalink to this definition">¶</a><br /></dt>
@@ -233,25 +232,85 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4N5Block5toTSVEv">
-<span id="_CPPv3N5Block5toTSVEv"></span><span id="_CPPv2N5Block5toTSVEv"></span><span id="Block::toTSV"></span><span class="target" id="classBlock_1aefb426e82c6fe455eb563c13a32e5c53"></span>std::string <code class="sig-name descname">toTSV</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Block5toTSVEv" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Gets a string representation of the various fields and values stores in an instance as a TSV. </p>
+<dt id="_CPPv4N5Block6getPosEv">
+<span id="_CPPv3N5Block6getPosEv"></span><span id="_CPPv2N5Block6getPosEv"></span><span id="Block::getPos"></span><span class="target" id="classBlock_1a203241b68223d23ff63639eb889f70cc"></span><a class="reference internal" href="classPos.html#_CPPv43Pos" title="Pos">Pos</a> &amp;<code class="sig-name descname">getPos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Block6getPosEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the <a class="reference internal" href="classPos.html#classPos"><span class="std std-ref">Pos</span></a> object representation of the coordinates of the block. </p>
 <p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>string The TSV representation </p>
+<dt><strong>Return</strong></dt><dd><p><a class="reference internal" href="classPos.html#classPos"><span class="std std-ref">Pos</span></a>&amp; The pos representation </p>
 </dd>
 </dl>
 </p>
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4N5Block5BlockENSt6stringER3PosNSt6stringE">
-<span id="_CPPv3N5Block5BlockENSt6stringER3PosNSt6stringE"></span><span id="_CPPv2N5Block5BlockENSt6stringER3PosNSt6stringE"></span><span id="Block::Block__ss.PosR.ss"></span><span class="target" id="classBlock_1a9420e46479025dd28584d43ffc0b35ae"></span><code class="sig-name descname">Block</code><span class="sig-paren">(</span>std::string <em>material</em>, <a class="reference internal" href="classPos.html#_CPPv43Pos" title="Pos">Pos</a> &amp;<em>pos</em>, std::string <em>type</em> = &quot;normal&quot;<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Block5BlockENSt6stringER3PosNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4N5Block4setXEi">
+<span id="_CPPv3N5Block4setXEi"></span><span id="_CPPv2N5Block4setXEi"></span><span id="Block::setX__i"></span><span class="target" id="classBlock_1ab9ac08d83a0e4ff7acb78029df4cc9e2"></span>void <code class="sig-name descname">setX</code><span class="sig-paren">(</span>int <em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Block4setXEi" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set the x value of this object. </p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">x</span></code>: The value to set to </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N5Block4setYEi">
+<span id="_CPPv3N5Block4setYEi"></span><span id="_CPPv2N5Block4setYEi"></span><span id="Block::setY__i"></span><span class="target" id="classBlock_1a57c1fcfd7d7cda4b9e21d69a25896c17"></span>void <code class="sig-name descname">setY</code><span class="sig-paren">(</span>int <em>y</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Block4setYEi" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set the y value of this object. </p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">y</span></code>: The value to set to </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N5Block4setZEi">
+<span id="_CPPv3N5Block4setZEi"></span><span id="_CPPv2N5Block4setZEi"></span><span id="Block::setZ__i"></span><span class="target" id="classBlock_1adc768411091f7d701acdeb77ad22c0b6"></span>void <code class="sig-name descname">setZ</code><span class="sig-paren">(</span>int <em>z</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Block4setZEi" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set the z value of this object. </p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">z</span></code>: The value to set to </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N5Block17toSemanticMapJSONERN8nlohmann4jsonE">
+<span id="_CPPv3N5Block17toSemanticMapJSONERN8nlohmann4jsonE"></span><span id="_CPPv2N5Block17toSemanticMapJSONERN8nlohmann4jsonE"></span><span id="Block::toSemanticMapJSON__nlohmann::jsonR"></span><span class="target" id="classBlock_1a10c921cf35e2be4f973260289f18345b"></span>void <code class="sig-name descname">toSemanticMapJSON</code><span class="sig-paren">(</span>nlohmann::json &amp;<em>json_base</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Block17toSemanticMapJSONERN8nlohmann4jsonE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Adds the JSON representation of this object to the “locations” list of the base json. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>nlohmann::json The base json </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N5Block17toLowLevelMapJSONERN8nlohmann4jsonE">
+<span id="_CPPv3N5Block17toLowLevelMapJSONERN8nlohmann4jsonE"></span><span id="_CPPv2N5Block17toLowLevelMapJSONERN8nlohmann4jsonE"></span><span id="Block::toLowLevelMapJSON__nlohmann::jsonR"></span><span class="target" id="classBlock_1ac0b120658a5584b2a533ea5d54f04eb8"></span>void <code class="sig-name descname">toLowLevelMapJSON</code><span class="sig-paren">(</span>nlohmann::json &amp;<em>json_base</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Block17toLowLevelMapJSONERN8nlohmann4jsonE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Adds the alternate JSON representation of this object to the “blocks” list of the base json. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>nlohmann::json The base json </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N5Block5BlockENSt6stringER3Pos">
+<span id="_CPPv3N5Block5BlockENSt6stringER3Pos"></span><span id="_CPPv2N5Block5BlockENSt6stringER3Pos"></span><span id="Block::Block__ss.PosR"></span><span class="target" id="classBlock_1a5364ed34a07b33668151bbe941062bda"></span><code class="sig-name descname">Block</code><span class="sig-paren">(</span>std::string <em>material</em>, <a class="reference internal" href="classPos.html#_CPPv43Pos" title="Pos">Pos</a> &amp;<em>pos</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Block5BlockENSt6stringER3Pos" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Construct a new <a class="reference internal" href="#classBlock"><span class="std std-ref">Block</span></a> object. </p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">material</span></code>: The material the block is made of </p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">pos</span></code>: The position of the block in the Minecraft world </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: The semantic type for this block which is not the same as its material. Defaults to “normal”. </p></li>
 </ul>
 </dd>
 </dl>
@@ -263,6 +322,19 @@
 <span id="_CPPv3N5BlockD0Ev"></span><span id="_CPPv2N5BlockD0Ev"></span><span id="Block::~Block"></span><span class="target" id="classBlock_1a19d1bd0e1cef6a865ed2745a2e648405"></span><code class="sig-name descname">~Block</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5BlockD0Ev" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Destroy the <a class="reference internal" href="#classBlock"><span class="std std-ref">Block</span></a> object. </p>
 </dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Protected Attributes</p>
+<dl class="cpp var">
+<dt id="_CPPv4N5Block8materialE">
+<span id="_CPPv3N5Block8materialE"></span><span id="_CPPv2N5Block8materialE"></span><span id="Block::material__ss"></span><span class="target" id="classBlock_1a1ae40889ded0cdcc0403da8afb5e6e8f"></span>std::string <code class="sig-name descname">material</code><a class="headerlink" href="#_CPPv4N5Block8materialE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt id="_CPPv4N5Block3posE">
+<span id="_CPPv3N5Block3posE"></span><span id="_CPPv2N5Block3posE"></span><span id="Block::pos__Pos"></span><span class="target" id="classBlock_1a68a710999034a3bbe39173ff7c5dbb7e"></span><a class="reference internal" href="classPos.html#_CPPv43Pos" title="Pos">Pos</a> <code class="sig-name descname">pos</code><a class="headerlink" href="#_CPPv4N5Block3posE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
 
 </div>
 </dd></dl>
@@ -278,7 +350,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="classGridworldGenerator.html" class="btn btn-neutral float-right" title="Class GridworldGenerator" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="classConnection.html" class="btn btn-neutral float-right" title="Class Connection" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="classAABB.html" class="btn btn-neutral float-left" title="Class AABB" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

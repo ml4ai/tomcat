@@ -172,7 +172,7 @@
 
     <span class="k">class</span> <span class="nc">TomcatMissionException</span> <span class="o">:</span> <span class="k">public</span> <span class="n">std</span><span class="o">::</span><span class="n">exception</span> <span class="p">{</span>
       <span class="k">public</span><span class="o">:</span>
-        <span class="k">enum</span> <span class="n">ErrorCode</span> <span class="p">{</span>
+        <span class="k">enum</span> <span class="nc">ErrorCode</span> <span class="p">{</span>
             <span class="n">CONNECTION_NOT_ESTABLISHED</span><span class="p">,</span>
             <span class="n">TOMCAT_ENV_VAR_NOT_SET</span><span class="p">,</span>
             <span class="n">ERROR_STARTING_MISSION</span><span class="p">,</span>
@@ -211,7 +211,7 @@
         <span class="kt">void</span> <span class="nf">send_command</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">command</span><span class="p">);</span>
 
       <span class="k">private</span><span class="o">:</span>
-        <span class="k">enum</span> <span class="n">MissionId</span> <span class="p">{</span>
+        <span class="k">enum</span> <span class="nc">MissionId</span> <span class="p">{</span>
             <span class="n">TUTORIAL</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
             <span class="n">ZOMBIE</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
             <span class="n">USAR_SINGLEPLAYER</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>

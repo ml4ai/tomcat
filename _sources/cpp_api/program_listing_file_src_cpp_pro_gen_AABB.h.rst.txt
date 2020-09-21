@@ -14,13 +14,15 @@ Program Listing for File AABB.h
    #pragma once
    
    #include "Block.h"
+   #include "Entity.h"
+   #include "Object.h"
    #include <random>
    #include <vector>
    
    class AABB {
    
-     private:
-       int id;
+     protected:
+       std::string id;
        std::string material;
        std::string type;
        Pos topLeft;
@@ -28,9 +30,11 @@ Program Listing for File AABB.h
        bool isHollow;
        bool hasRoof;
        std::vector<Block*> blockList;
+       std::vector<Entity*> entityList;
+       std::vector<Object*> objectList;
    
      public:
-       int getID();
+       std::string getID();
    
        std::string getMaterial();
    
@@ -42,17 +46,29 @@ Program Listing for File AABB.h
    
        std::vector<Block*>& getBlockList();
    
+       std::vector<Entity*>& getEntityList();
+   
+       std::vector<Object*>& getObjectList();
+   
        int getMidpointX();
    
        int getMidpointY();
    
        int getMidpointZ();
    
-       Pos virtual getRandomPosAtBase(std::mt19937_64& gen,
-                                      int offsetPosX = 1,
-                                      int offsetNegX = 1,
-                                      int offsetPosZ = 1,
-                                      int offsetNegZ = 1);
+       int getSizeX();
+   
+       int getSizeY();
+   
+       int getSizeZ();
+   
+       Pos virtual getRandomPos(std::mt19937_64& gen,
+                                int offsetPosX = 0,
+                                int offsetNegX = 0,
+                                int offsetPosY = 0,
+                                int offsetNegY = 0,
+                                int offsetPosZ = 0,
+                                int offsetNegZ = 0);
    
        std::vector<Pos> virtual getEdgeMidpointAtBase();
    
@@ -60,7 +76,13 @@ Program Listing for File AABB.h
    
        void setBottomRight(Pos& bottomRight);
    
+       void setMaterial(std::string material);
+   
        void addBlock(Block& block);
+   
+       void addEntity(Entity& entity);
+   
+       void addObject(Object& object);
    
        bool virtual isOverlapping(AABB& other);
    
@@ -70,8 +92,7 @@ Program Listing for File AABB.h
                                 int offsetPosY = 0,
                                 int offsetNegY = 0,
                                 int offsetPosZ = 0,
-                                int offsetNegZ = 0,
-                                std::string type = "normal");
+                                int offsetNegZ = 0);
    
        void virtual addRandomBlocks(int n,
                                     std::string material,
@@ -81,14 +102,15 @@ Program Listing for File AABB.h
                                     int offsetPosY = 0,
                                     int offsetNegY = 0,
                                     int offsetPosZ = 0,
-                                    int offsetNegZ = 0,
-                                    std::string type = "normal");
+                                    int offsetNegZ = 0);
    
        void virtual generateAllDoorsInAABB();
    
-       std::string virtual toTSV();
+       void virtual toSemanticMapJSON(nlohmann::json& json_base);
    
-       AABB(int id,
+       void virtual toLowLevelMapJSON(nlohmann::json& json_base);
+   
+       AABB(std::string id,
             std::string type,
             std::string material,
             Pos& topLeft,

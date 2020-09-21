@@ -177,7 +177,7 @@
 <span class="cp">#define EXISTS(member, container) (container.find(member) != container.end())</span>
 <span class="cp">#define EPSILON 10E-16</span>
 
-        <span class="k">struct</span> <span class="nl">TomcatModelException</span> <span class="p">:</span> <span class="k">public</span> <span class="n">std</span><span class="o">::</span><span class="n">exception</span> <span class="p">{</span>
+        <span class="k">struct</span> <span class="nc">TomcatModelException</span> <span class="o">:</span> <span class="k">public</span> <span class="n">std</span><span class="o">::</span><span class="n">exception</span> <span class="p">{</span>
             <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">message</span><span class="p">;</span>
 
             <span class="n">TomcatModelException</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">message</span><span class="p">)</span>
@@ -186,7 +186,7 @@
             <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">what</span><span class="p">()</span> <span class="k">const</span> <span class="k">throw</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">message</span><span class="p">.</span><span class="n">data</span><span class="p">();</span> <span class="p">}</span>
         <span class="p">};</span>
 
-        <span class="k">struct</span> <span class="n">Timer</span> <span class="p">{</span>
+        <span class="k">struct</span> <span class="nc">Timer</span> <span class="p">{</span>
 
             <span class="k">typedef</span> <span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">seconds</span> <span class="n">seconds</span><span class="p">;</span>
 

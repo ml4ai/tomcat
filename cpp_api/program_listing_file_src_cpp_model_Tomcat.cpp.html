@@ -373,7 +373,7 @@
             <span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">output_folder</span><span class="p">,</span>
             <span class="kt">int</span> <span class="n">equal_until</span><span class="p">)</span> <span class="p">{</span>
 
-            <span class="n">AncestralSampler</span> <span class="n">sampler</span><span class="p">(</span><span class="n">model</span><span class="p">);</span>
+            <span class="n">AncestralSampler</span> <span class="nf">sampler</span><span class="p">(</span><span class="n">model</span><span class="p">);</span>
             <span class="n">sampler</span><span class="p">.</span><span class="n">set_num_in_plate_samples</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
             <span class="n">sampler</span><span class="p">.</span><span class="n">set_equal_samples_time_step_limit</span><span class="p">(</span><span class="n">equal_until</span><span class="p">);</span>
             <span class="n">sampler</span><span class="p">.</span><span class="n">sample</span><span class="p">(</span><span class="n">random_generator</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">);</span>

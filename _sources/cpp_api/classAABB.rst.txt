@@ -13,7 +13,7 @@ Derived Types
 *************
 
 - ``public Group`` (:ref:`exhale_class_classGroup`)
-- ``public Pit`` (:ref:`exhale_class_classPit`)
+- ``public ZombieworldPit`` (:ref:`exhale_class_classZombieworldPit`)
 
 
 Class Documentation

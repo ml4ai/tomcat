@@ -162,9 +162,14 @@
 <p>↰ <a class="reference internal" href="file_src_cpp_pro_gen_Group.cpp.html#file-src-cpp-pro-gen-group-cpp"><span class="std std-ref">Return to documentation for file</span></a> (<code class="docutils literal notranslate"><span class="pre">src/cpp/pro_gen/Group.cpp</span></code>)</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;Group.h&quot;</span><span class="cp"></span>
 <span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="k">using</span> <span class="n">json</span> <span class="o">=</span> <span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span><span class="p">;</span>
 
-<span class="n">Group</span><span class="o">::</span><span class="n">Group</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">)</span>
+<span class="n">Group</span><span class="o">::</span><span class="n">Group</span><span class="p">(</span><span class="n">string</span> <span class="n">id</span><span class="p">)</span>
     <span class="o">:</span> <span class="n">AABB</span><span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="s">&quot;group&quot;</span><span class="p">,</span> <span class="s">&quot;air&quot;</span><span class="p">,</span> <span class="o">*</span><span class="p">(</span><span class="k">new</span> <span class="n">Pos</span><span class="p">()),</span> <span class="o">*</span><span class="p">(</span><span class="k">new</span> <span class="n">Pos</span><span class="p">()),</span> <span class="nb">true</span><span class="p">,</span> <span class="nb">false</span><span class="p">)</span> <span class="p">{}</span>
+
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">AABB</span><span class="o">*&gt;&amp;</span> <span class="n">Group</span><span class="o">::</span><span class="n">getAABBList</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">aabbList</span><span class="p">;</span> <span class="p">}</span>
+
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">Connection</span><span class="o">*&gt;&amp;</span> <span class="n">Group</span><span class="o">::</span><span class="n">getConnectionList</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">connectionList</span><span class="p">;</span> <span class="p">}</span>
 
 <span class="kt">void</span> <span class="n">Group</span><span class="o">::</span><span class="n">addAABB</span><span class="p">(</span><span class="n">AABB</span><span class="o">&amp;</span> <span class="n">aabb</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="o">-&gt;</span><span class="n">aabbList</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="o">&amp;</span><span class="n">aabb</span><span class="p">);</span>
@@ -173,15 +178,13 @@
 
 <span class="kt">void</span> <span class="n">Group</span><span class="o">::</span><span class="n">generateAllDoorsInAABB</span><span class="p">()</span> <span class="p">{</span>
     <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">aabb</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">aabbList</span><span class="p">)</span> <span class="p">{</span>
-        <span class="p">(</span><span class="o">*</span><span class="n">aabb</span><span class="p">).</span><span class="n">generateAllDoorsInAABB</span><span class="p">();</span>
+        <span class="n">aabb</span><span class="o">-&gt;</span><span class="n">generateAllDoorsInAABB</span><span class="p">();</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="n">vector</span><span class="o">&lt;</span><span class="n">AABB</span><span class="o">*&gt;&amp;</span> <span class="n">Group</span><span class="o">::</span><span class="n">getAABBList</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">aabbList</span><span class="p">;</span> <span class="p">}</span>
-
-<span class="n">AABB</span><span class="o">*</span> <span class="n">Group</span><span class="o">::</span><span class="n">getAABB</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">)</span> <span class="p">{</span>
+<span class="n">AABB</span><span class="o">*</span> <span class="n">Group</span><span class="o">::</span><span class="n">getAABB</span><span class="p">(</span><span class="n">string</span> <span class="n">id</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">aabb</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">aabbList</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">if</span> <span class="p">((</span><span class="o">*</span><span class="n">aabb</span><span class="p">).</span><span class="n">getID</span><span class="p">()</span> <span class="o">==</span> <span class="n">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">strcmp</span><span class="p">((</span><span class="o">*</span><span class="n">aabb</span><span class="p">).</span><span class="n">getID</span><span class="p">().</span><span class="n">c_str</span><span class="p">(),</span> <span class="n">id</span><span class="p">.</span><span class="n">c_str</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">return</span> <span class="n">aabb</span><span class="p">;</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -240,19 +243,51 @@
     <span class="k">this</span><span class="o">-&gt;</span><span class="n">setBottomRight</span><span class="p">(</span><span class="n">newBottomRight</span><span class="p">);</span>
 <span class="p">}</span>
 
-<span class="n">string</span> <span class="n">Group</span><span class="o">::</span><span class="n">toTSV</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">string</span> <span class="n">retval</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">;</span>
-
-    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">aabb</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">aabbList</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">retval</span> <span class="o">+=</span> <span class="p">(</span><span class="o">*</span><span class="n">aabb</span><span class="p">).</span><span class="n">toTSV</span><span class="p">();</span>
-    <span class="p">}</span>
-
-    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">block</span> <span class="p">:</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getBlockList</span><span class="p">()))</span> <span class="p">{</span>
-        <span class="n">retval</span> <span class="o">+=</span> <span class="p">(</span><span class="o">*</span><span class="n">block</span><span class="p">).</span><span class="n">toTSV</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="k">return</span> <span class="n">retval</span><span class="p">;</span>
+<span class="kt">void</span> <span class="n">Group</span><span class="o">::</span><span class="n">addConnection</span><span class="p">(</span><span class="n">Connection</span><span class="o">&amp;</span> <span class="n">connection</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">connectionList</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="o">&amp;</span><span class="n">connection</span><span class="p">);</span>
 <span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">Group</span><span class="o">::</span><span class="n">toSemanticMapJSON</span><span class="p">(</span><span class="n">json</span><span class="o">&amp;</span> <span class="n">json_base</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">aabbPtr</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">aabbList</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">(</span><span class="o">*</span><span class="n">aabbPtr</span><span class="p">).</span><span class="n">toSemanticMapJSON</span><span class="p">(</span><span class="n">json_base</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">blockPtr</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getBlockList</span><span class="p">())</span> <span class="p">{</span>
+        <span class="p">(</span><span class="o">*</span><span class="n">blockPtr</span><span class="p">).</span><span class="n">toSemanticMapJSON</span><span class="p">(</span><span class="n">json_base</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">entityPtr</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getEntityList</span><span class="p">())</span> <span class="p">{</span>
+        <span class="p">(</span><span class="o">*</span><span class="n">entityPtr</span><span class="p">).</span><span class="n">toSemanticMapJSON</span><span class="p">(</span><span class="n">json_base</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">objectPtr</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getObjectList</span><span class="p">())</span> <span class="p">{</span>
+        <span class="p">(</span><span class="o">*</span><span class="n">objectPtr</span><span class="p">).</span><span class="n">toSemanticMapJSON</span><span class="p">(</span><span class="n">json_base</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">connectionPtr</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getConnectionList</span><span class="p">())</span> <span class="p">{</span>
+        <span class="p">(</span><span class="o">*</span><span class="n">connectionPtr</span><span class="p">).</span><span class="n">toSemanticMapJSON</span><span class="p">(</span><span class="n">json_base</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">Group</span><span class="o">::</span><span class="n">toLowLevelMapJSON</span><span class="p">(</span><span class="n">json</span><span class="o">&amp;</span> <span class="n">json_base</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">aabbPtr</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">aabbList</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">(</span><span class="o">*</span><span class="n">aabbPtr</span><span class="p">).</span><span class="n">toLowLevelMapJSON</span><span class="p">(</span><span class="n">json_base</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">blockPtr</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getBlockList</span><span class="p">())</span> <span class="p">{</span>
+        <span class="p">(</span><span class="o">*</span><span class="n">blockPtr</span><span class="p">).</span><span class="n">toLowLevelMapJSON</span><span class="p">(</span><span class="n">json_base</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">entityPtr</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getEntityList</span><span class="p">())</span> <span class="p">{</span>
+        <span class="p">(</span><span class="o">*</span><span class="n">entityPtr</span><span class="p">).</span><span class="n">toLowLevelMapJSON</span><span class="p">(</span><span class="n">json_base</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">objectPtr</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getObjectList</span><span class="p">())</span> <span class="p">{</span>
+        <span class="p">(</span><span class="o">*</span><span class="n">objectPtr</span><span class="p">).</span><span class="n">toLowLevelMapJSON</span><span class="p">(</span><span class="n">json_base</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">Group</span><span class="o">::~</span><span class="n">Group</span><span class="p">()</span> <span class="p">{}</span>
 </pre></div>
 </div>
 </div>

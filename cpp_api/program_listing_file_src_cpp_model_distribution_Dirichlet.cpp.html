@@ -182,7 +182,7 @@
 
         <span class="n">Dirichlet</span><span class="o">::</span><span class="n">Dirichlet</span><span class="p">(</span><span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span> <span class="n">alpha</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">alpha</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                <span class="n">ConstantNode</span> <span class="n">parameter_node</span><span class="p">(</span><span class="n">alpha</span><span class="p">(</span><span class="n">i</span><span class="p">));</span>
+                <span class="n">ConstantNode</span> <span class="nf">parameter_node</span><span class="p">(</span><span class="n">alpha</span><span class="p">(</span><span class="n">i</span><span class="p">));</span>
                 <span class="k">this</span><span class="o">-&gt;</span><span class="n">parameters</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span>
                     <span class="n">make_shared</span><span class="o">&lt;</span><span class="n">ConstantNode</span><span class="o">&gt;</span><span class="p">(</span><span class="n">move</span><span class="p">(</span><span class="n">parameter_node</span><span class="p">)));</span>
             <span class="p">}</span>

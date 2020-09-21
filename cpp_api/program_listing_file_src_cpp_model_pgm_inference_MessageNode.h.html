@@ -181,7 +181,7 @@
             <span class="c1">// Structs</span>
             <span class="c1">//------------------------------------------------------------------</span>
 
-            <span class="k">struct</span> <span class="n">MessageContainer</span> <span class="p">{</span>
+            <span class="k">struct</span> <span class="nc">MessageContainer</span> <span class="p">{</span>
                 <span class="n">std</span><span class="o">::</span><span class="n">unordered_map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&gt;</span>
                     <span class="n">node_name_to_messages</span><span class="p">;</span>
 
@@ -213,7 +213,7 @@
             <span class="kr">inline</span> <span class="k">static</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">END_NODE_LABEL</span> <span class="o">=</span> <span class="s">&quot;end_factor&quot;</span><span class="p">;</span>
 
             <span class="c1">// Direction of the message being passed in the factor graph</span>
-            <span class="k">enum</span> <span class="n">Direction</span> <span class="p">{</span> <span class="n">backwards</span><span class="p">,</span> <span class="n">forward</span> <span class="p">};</span>
+            <span class="k">enum</span> <span class="nc">Direction</span> <span class="p">{</span> <span class="n">backwards</span><span class="p">,</span> <span class="n">forward</span> <span class="p">};</span>
 
             <span class="c1">//------------------------------------------------------------------</span>
             <span class="c1">// Constructors &amp; Destructor</span>
@@ -247,9 +247,9 @@
             <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">get_name</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">label</span><span class="p">,</span>
                                         <span class="kt">int</span> <span class="n">time_step</span><span class="p">);</span>
 
-            <span class="k">static</span> <span class="kt">bool</span> <span class="nf">is_prior</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">node_name</span><span class="p">);</span>
+            <span class="k">static</span> <span class="kt">bool</span> <span class="n">is_prior</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">node_name</span><span class="p">);</span>
 
-            <span class="k">static</span> <span class="kt">bool</span> <span class="nf">is_end_node</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">node_name</span><span class="p">);</span>
+            <span class="k">static</span> <span class="kt">bool</span> <span class="n">is_end_node</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">node_name</span><span class="p">);</span>
 
             <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;</span>
             <span class="n">strip</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">node_name</span><span class="p">);</span>
@@ -274,7 +274,7 @@
             <span class="c1">// Virtual functions</span>
             <span class="c1">//------------------------------------------------------------------</span>
 
-            <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">erase_incoming_messages_beyond</span><span class="p">(</span><span class="kt">int</span> <span class="n">time_step</span><span class="p">);</span>
+            <span class="k">virtual</span> <span class="kt">void</span> <span class="n">erase_incoming_messages_beyond</span><span class="p">(</span><span class="kt">int</span> <span class="n">time_step</span><span class="p">);</span>
 
             <span class="c1">//------------------------------------------------------------------</span>
             <span class="c1">// Pure virtual functions</span>
@@ -286,7 +286,7 @@
                 <span class="kt">int</span> <span class="n">target_time_step</span><span class="p">,</span>
                 <span class="n">Direction</span> <span class="n">direction</span><span class="p">)</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-            <span class="k">virtual</span> <span class="kt">bool</span> <span class="nf">is_factor</span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">virtual</span> <span class="kt">bool</span> <span class="n">is_factor</span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
             <span class="c1">//------------------------------------------------------------------</span>
             <span class="c1">// Getters &amp; Setters</span>

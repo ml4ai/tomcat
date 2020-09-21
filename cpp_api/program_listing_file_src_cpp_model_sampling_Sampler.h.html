@@ -215,17 +215,17 @@
             <span class="c1">// Virtual functions</span>
             <span class="c1">//------------------------------------------------------------------</span>
 
-            <span class="k">virtual</span> <span class="n">Tensor3</span> <span class="nf">get_samples</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">node_label</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+            <span class="k">virtual</span> <span class="n">Tensor3</span> <span class="n">get_samples</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">node_label</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
 
             <span class="c1">//------------------------------------------------------------------</span>
             <span class="c1">// Pure virtual functions</span>
             <span class="c1">//------------------------------------------------------------------</span>
 
             <span class="k">virtual</span> <span class="kt">void</span>
-            <span class="nf">sample_latent</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">gsl_rng</span><span class="o">&gt;</span> <span class="n">random_generator</span><span class="p">,</span>
+            <span class="n">sample_latent</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">gsl_rng</span><span class="o">&gt;</span> <span class="n">random_generator</span><span class="p">,</span>
                           <span class="kt">int</span> <span class="n">num_samples</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-            <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">get_info</span><span class="p">(</span><span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span><span class="o">&amp;</span> <span class="n">json</span><span class="p">)</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">virtual</span> <span class="kt">void</span> <span class="n">get_info</span><span class="p">(</span><span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span><span class="o">&amp;</span> <span class="n">json</span><span class="p">)</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
             <span class="c1">// -----------------------------------------------------------------</span>
             <span class="c1">// Getters &amp; Setters</span>

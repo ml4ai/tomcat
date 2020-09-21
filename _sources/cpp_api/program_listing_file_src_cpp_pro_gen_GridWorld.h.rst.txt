@@ -1,0 +1,35 @@
+
+.. _program_listing_file_src_cpp_pro_gen_GridWorld.h:
+
+Program Listing for File GridWorld.h
+====================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_cpp_pro_gen_GridWorld.h>` (``src/cpp/pro_gen/GridWorld.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #pragma once
+   
+   #include "World.h"
+   
+   class GridWorld : public World {
+   
+     private:
+       int N;
+       int sep;
+       int AABB_size;
+       void addRandomVictim(AABB& aabb, Pos& pos, double greenBias);
+   
+       void generateAABBGrid();
+   
+       void generateVictimInAABB(AABB& aabb);
+   
+       void generateBlocks();
+   
+     public:
+       GridWorld(int N, int separation, int AABB_size, int seed = 1);
+   
+       ~GridWorld();
+   };

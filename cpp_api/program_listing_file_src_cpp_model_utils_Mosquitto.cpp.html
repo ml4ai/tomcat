@@ -205,7 +205,7 @@
 <span class="c1">//----------------------------------------------------------------------</span>
 <span class="c1">// Static functions</span>
 <span class="c1">//----------------------------------------------------------------------</span>
-<span class="kt">void</span> <span class="n">Mosquitto</span><span class="o">::</span><span class="n">mosquitto_callback_on_connect</span><span class="p">(</span><span class="k">struct</span> <span class="n">mosquitto</span><span class="o">*</span> <span class="n">mqtt_client</span><span class="p">,</span>
+<span class="kt">void</span> <span class="n">Mosquitto</span><span class="o">::</span><span class="n">mosquitto_callback_on_connect</span><span class="p">(</span><span class="k">struct</span> <span class="nc">mosquitto</span><span class="o">*</span> <span class="n">mqtt_client</span><span class="p">,</span>
                                               <span class="kt">void</span><span class="o">*</span> <span class="n">wrapper_instance</span><span class="p">,</span>
                                               <span class="kt">int</span> <span class="n">error_code</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">Mosquitto</span><span class="o">*</span> <span class="n">mosquitto</span> <span class="o">=</span> <span class="p">(</span><span class="n">Mosquitto</span><span class="o">*</span><span class="p">)</span><span class="n">wrapper_instance</span><span class="p">;</span>
@@ -238,11 +238,11 @@
 <span class="p">}</span>
 
 <span class="kt">void</span> <span class="n">Mosquitto</span><span class="o">::</span><span class="n">mosquitto_callback_on_message</span><span class="p">(</span>
-    <span class="k">struct</span> <span class="n">mosquitto</span><span class="o">*</span> <span class="n">mqtt_client</span><span class="p">,</span>
+    <span class="k">struct</span> <span class="nc">mosquitto</span><span class="o">*</span> <span class="n">mqtt_client</span><span class="p">,</span>
     <span class="kt">void</span><span class="o">*</span> <span class="n">wrapper_instance</span><span class="p">,</span>
-    <span class="k">const</span> <span class="k">struct</span> <span class="n">mosquitto_message</span><span class="o">*</span> <span class="n">message</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">const</span> <span class="k">struct</span> <span class="nc">mosquitto_message</span><span class="o">*</span> <span class="n">message</span><span class="p">)</span> <span class="p">{</span>
 
-    <span class="n">string</span> <span class="n">topic</span><span class="p">(</span><span class="n">message</span><span class="o">-&gt;</span><span class="n">topic</span><span class="p">);</span>
+    <span class="n">string</span> <span class="nf">topic</span><span class="p">(</span><span class="n">message</span><span class="o">-&gt;</span><span class="n">topic</span><span class="p">);</span>
 
     <span class="c1">// Build message</span>
     <span class="n">stringstream</span> <span class="n">ss</span><span class="p">;</span>
@@ -326,7 +326,7 @@
     <span class="k">this</span><span class="o">-&gt;</span><span class="n">last_updated_time</span> <span class="o">=</span> <span class="n">chrono</span><span class="o">::</span><span class="n">steady_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span>
 
     <span class="k">do</span> <span class="p">{</span>
-        <span class="kt">int</span> <span class="n">error_code</span> <span class="o">=</span> <span class="n">mosquitto_loop</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">mqtt_client</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+        <span class="kt">int</span> <span class="n">error_code</span> <span class="o">=</span> <span class="n">mosquitto_loop</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">mqtt_client</span><span class="p">,</span> <span class="mi">-1</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
         <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">time_out</span><span class="p">())</span> <span class="p">{</span>
             <span class="k">this</span><span class="o">-&gt;</span><span class="n">on_time_out</span><span class="p">();</span>
             <span class="k">this</span><span class="o">-&gt;</span><span class="n">running</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>

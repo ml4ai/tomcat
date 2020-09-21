@@ -202,11 +202,11 @@
         <span class="c1">// The modules that are being used for tracking</span>
         <span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span> <span class="o">=</span> <span class="n">LandmarkDetector</span><span class="o">::</span><span class="n">CLNF</span><span class="p">();</span>
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">.</span><span class="n">loaded_successfully</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="n">runtime_error</span><span class="p">(</span><span class="s">&quot;Could not load the landmark detector.&quot;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="nf">runtime_error</span><span class="p">(</span><span class="s">&quot;Could not load the landmark detector.&quot;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">face_model</span><span class="p">.</span><span class="n">eye_model</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">throw</span> <span class="n">runtime_error</span><span class="p">(</span><span class="s">&quot;No eye model found&quot;</span><span class="p">);</span>
+            <span class="k">throw</span> <span class="nf">runtime_error</span><span class="p">(</span><span class="s">&quot;No eye model found&quot;</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="k">this</span><span class="o">-&gt;</span><span class="n">fps_tracker</span><span class="p">.</span><span class="n">AddFrame</span><span class="p">();</span>

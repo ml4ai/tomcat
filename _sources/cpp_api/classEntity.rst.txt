@@ -1,0 +1,16 @@
+.. _exhale_class_classEntity:
+
+Class Entity
+============
+
+- Defined in :ref:`file_src_cpp_pro_gen_Entity.h`
+
+
+Class Documentation
+-------------------
+
+
+.. doxygenclass:: Entity
+   :members:
+   :protected-members:
+   :undoc-members:

@@ -161,8 +161,9 @@
 <span id="program-listing-file-src-cpp-pro-gen-pos-h"></span><h1>Program Listing for File Pos.h<a class="headerlink" href="#program-listing-for-file-pos-h" title="Permalink to this headline">¶</a></h1>
 <p>↰ <a class="reference internal" href="file_src_cpp_pro_gen_Pos.h.html#file-src-cpp-pro-gen-pos-h"><span class="std std-ref">Return to documentation for file</span></a> (<code class="docutils literal notranslate"><span class="pre">src/cpp/pro_gen/Pos.h</span></code>)</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
-<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
 
+<span class="cp">#include</span> <span class="cpf">&lt;nlohmann/json.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
 <span class="k">class</span> <span class="nc">Pos</span> <span class="p">{</span>
 
   <span class="k">private</span><span class="o">:</span>
@@ -189,7 +190,7 @@
 
     <span class="kt">void</span> <span class="nf">shiftZ</span><span class="p">(</span><span class="kt">int</span> <span class="n">shift</span><span class="p">);</span>
 
-    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">toTSV</span><span class="p">();</span>
+    <span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span> <span class="k">virtual</span> <span class="n">toSemanticMapJSON</span><span class="p">();</span>
 
     <span class="n">Pos</span><span class="p">();</span>
 

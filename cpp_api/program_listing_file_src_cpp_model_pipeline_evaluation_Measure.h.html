@@ -179,7 +179,7 @@
         <span class="c1">// Structs</span>
         <span class="c1">//------------------------------------------------------------------</span>
 
-        <span class="k">struct</span> <span class="n">ConfusionMatrix</span> <span class="p">{</span>
+        <span class="k">struct</span> <span class="nc">ConfusionMatrix</span> <span class="p">{</span>
 
             <span class="kt">int</span> <span class="n">true_positives</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
@@ -195,7 +195,7 @@
             <span class="p">}</span>
         <span class="p">};</span>
 
-        <span class="k">struct</span> <span class="n">NodeEvaluation</span> <span class="p">{</span>
+        <span class="k">struct</span> <span class="nc">NodeEvaluation</span> <span class="p">{</span>
 
             <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">label</span><span class="p">;</span>
 
@@ -234,7 +234,7 @@
             <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">NodeEvaluation</span><span class="o">&gt;</span>
             <span class="n">evaluate</span><span class="p">(</span><span class="k">const</span> <span class="n">EvidenceSet</span><span class="o">&amp;</span> <span class="n">test_data</span><span class="p">)</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-            <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">get_info</span><span class="p">(</span><span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span><span class="o">&amp;</span> <span class="n">json</span><span class="p">)</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">virtual</span> <span class="kt">void</span> <span class="n">get_info</span><span class="p">(</span><span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span><span class="o">&amp;</span> <span class="n">json</span><span class="p">)</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
           <span class="k">protected</span><span class="o">:</span>
             <span class="c1">//------------------------------------------------------------------</span>

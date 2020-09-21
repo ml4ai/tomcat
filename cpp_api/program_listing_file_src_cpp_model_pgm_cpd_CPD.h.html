@@ -181,7 +181,7 @@
         <span class="c1">// Structs</span>
         <span class="c1">//------------------------------------------------------------------</span>
 
-        <span class="k">struct</span> <span class="n">ParentIndexing</span> <span class="p">{</span>
+        <span class="k">struct</span> <span class="nc">ParentIndexing</span> <span class="p">{</span>
             <span class="c1">// Order of the parent node&#39;s label for table indexing</span>
             <span class="kt">int</span> <span class="n">order</span><span class="p">;</span>
             <span class="kt">int</span> <span class="n">cardinality</span><span class="p">;</span>
@@ -281,14 +281,14 @@
             <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">CPD</span><span class="o">&gt;</span> <span class="n">clone</span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
             <span class="k">virtual</span> <span class="kt">void</span>
-            <span class="nf">add_to_sufficient_statistics</span><span class="p">(</span><span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span> <span class="n">sample</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="n">add_to_sufficient_statistics</span><span class="p">(</span><span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span> <span class="n">sample</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
             <span class="k">virtual</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">sample_from_conjugacy</span><span class="p">(</span>
                 <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">gsl_rng</span><span class="o">&gt;</span> <span class="n">random_generator</span><span class="p">,</span>
                 <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&gt;&amp;</span> <span class="n">parent_nodes</span><span class="p">,</span>
                 <span class="kt">int</span> <span class="n">num_samples</span><span class="p">)</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-            <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">reset_sufficient_statistics</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">virtual</span> <span class="kt">void</span> <span class="n">reset_sufficient_statistics</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
             <span class="c1">//------------------------------------------------------------------</span>
             <span class="c1">// Getters &amp; Setters</span>
@@ -316,7 +316,7 @@
 
             <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">get_description</span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-            <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">clone_distributions</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">virtual</span> <span class="kt">void</span> <span class="n">clone_distributions</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
             <span class="c1">//------------------------------------------------------------------</span>
             <span class="c1">// Data members</span>

@@ -221,12 +221,12 @@
 
         <span class="kt">void</span> <span class="n">Pipeline</span><span class="o">::</span><span class="n">check</span><span class="p">()</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">data_splitter</span> <span class="o">==</span> <span class="k">nullptr</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="n">TomcatModelException</span><span class="p">(</span>
+                <span class="k">throw</span> <span class="nf">TomcatModelException</span><span class="p">(</span>
                     <span class="s">&quot;A data splitter was not provided to the pipeline.&quot;</span><span class="p">);</span>
             <span class="p">}</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">model_trainer</span> <span class="o">==</span> <span class="k">nullptr</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">throw</span> <span class="n">TomcatModelException</span><span class="p">(</span>
+                <span class="k">throw</span> <span class="nf">TomcatModelException</span><span class="p">(</span>
                     <span class="s">&quot;A model trainer was not provided to the pipeline.&quot;</span><span class="p">);</span>
             <span class="p">}</span>
 

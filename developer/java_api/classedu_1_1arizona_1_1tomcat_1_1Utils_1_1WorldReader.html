@@ -75,8 +75,10 @@ $(function() {
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a0814cc52223132fa18c1bb6775198739"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldReader.html#a0814cc52223132fa18c1bb6775198739">WorldReader</a> (String filename)</td></tr>
 <tr class="separator:a0814cc52223132fa18c1bb6775198739"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a64a9040e54fa8c5db597f15b687f8bde"><td class="memItemLeft" align="right" valign="top">Map&lt; BlockPos, IBlockState &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldReader.html#a64a9040e54fa8c5db597f15b687f8bde">getMap</a> ()</td></tr>
-<tr class="separator:a64a9040e54fa8c5db597f15b687f8bde"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec96a379c8ffc260cb84be1e9054bdca"><td class="memItemLeft" align="right" valign="top">Map&lt; BlockPos, IBlockState &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldReader.html#aec96a379c8ffc260cb84be1e9054bdca">getBlocksMap</a> ()</td></tr>
+<tr class="separator:aec96a379c8ffc260cb84be1e9054bdca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3546549a5651d11de303a322ad1bea01"><td class="memItemLeft" align="right" valign="top">List&lt; <a class="el" href="classedu_1_1arizona_1_1tomcat_1_1World_1_1TomcatEntity.html">TomcatEntity</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldReader.html#a3546549a5651d11de303a322ad1bea01">getEntityList</a> ()</td></tr>
+<tr class="separator:a3546549a5651d11de303a322ad1bea01"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This class can be used to read a TSV file representing a world. The TSV entries are read into a hash map of coordinates and the block at those coordinates. </p>
@@ -115,8 +117,8 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a64a9040e54fa8c5db597f15b687f8bde"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a64a9040e54fa8c5db597f15b687f8bde">&#9670;&nbsp;</a></span>getMap()</h2>
+<a id="aec96a379c8ffc260cb84be1e9054bdca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aec96a379c8ffc260cb84be1e9054bdca">&#9670;&nbsp;</a></span>getBlocksMap()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -125,7 +127,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Map&lt;BlockPos, IBlockState&gt; edu.arizona.tomcat.Utils.WorldReader.getMap </td>
+          <td class="memname">Map&lt;BlockPos, IBlockState&gt; edu.arizona.tomcat.Utils.WorldReader.getBlocksMap </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -139,6 +141,33 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Get the map this <a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldReader.html">WorldReader</a> object uses to keep track of all the blocks in the world read from file.</p>
 <dl class="section return"><dt>Returns</dt><dd>The map of coordinates and the block at those coordinates. The block to be placed is represented as the IBlockState object used for the block type in its default state, </dd></dl>
+
+</div>
+</div>
+<a id="a3546549a5651d11de303a322ad1bea01"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3546549a5651d11de303a322ad1bea01">&#9670;&nbsp;</a></span>getEntityList()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">List&lt;<a class="el" href="classedu_1_1arizona_1_1tomcat_1_1World_1_1TomcatEntity.html">TomcatEntity</a>&gt; edu.arizona.tomcat.Utils.WorldReader.getEntityList </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the list of entities in the world</p>
+<dl class="section return"><dt>Returns</dt><dd>The list of TomcatEntity objects </dd></dl>
 
 </div>
 </div>

@@ -192,11 +192,11 @@
         <span class="p">}</span>
 
         <span class="kt">bool</span> <span class="n">MessageNode</span><span class="o">::</span><span class="n">is_prior</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">node_name</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="n">strip</span><span class="p">(</span><span class="n">node_name</span><span class="p">).</span><span class="n">first</span> <span class="o">==</span> <span class="n">PRIOR_NODE_LABEL</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nf">strip</span><span class="p">(</span><span class="n">node_name</span><span class="p">).</span><span class="n">first</span> <span class="o">==</span> <span class="n">PRIOR_NODE_LABEL</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="kt">bool</span> <span class="n">MessageNode</span><span class="o">::</span><span class="n">is_end_node</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">node_name</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="n">strip</span><span class="p">(</span><span class="n">node_name</span><span class="p">).</span><span class="n">first</span> <span class="o">==</span> <span class="n">END_NODE_LABEL</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nf">strip</span><span class="p">(</span><span class="n">node_name</span><span class="p">).</span><span class="n">first</span> <span class="o">==</span> <span class="n">END_NODE_LABEL</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="n">pair</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="n">MessageNode</span><span class="o">::</span><span class="n">strip</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">node_name</span><span class="p">)</span> <span class="p">{</span>
@@ -234,7 +234,7 @@
         <span class="p">}</span>
 
         <span class="n">string</span> <span class="n">MessageNode</span><span class="o">::</span><span class="n">get_name</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="n">get_name</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">label</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">time_step</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nf">get_name</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">label</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">time_step</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="kt">void</span> <span class="n">MessageNode</span><span class="o">::</span><span class="n">copy_node</span><span class="p">(</span><span class="k">const</span> <span class="n">MessageNode</span><span class="o">&amp;</span> <span class="n">node</span><span class="p">)</span> <span class="p">{</span>

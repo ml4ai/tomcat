@@ -128,7 +128,17 @@ Classes and Structs
 .. toctree::
    :maxdepth: 5
 
-   classGridworldGenerator.rst
+   classConnection.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   classEntity.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   classGridWorld.rst
 
 .. toctree::
    :maxdepth: 5
@@ -138,22 +148,22 @@ Classes and Structs
 .. toctree::
    :maxdepth: 5
 
+   classLever.rst
+
+.. toctree::
+   :maxdepth: 5
+
    classMosquitto.rst
 
 .. toctree::
    :maxdepth: 5
 
-   classPit.rst
+   classObject.rst
 
 .. toctree::
    :maxdepth: 5
 
    classPos.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   classProceduralGenerator.rst
 
 .. toctree::
    :maxdepth: 5
@@ -388,7 +398,17 @@ Classes and Structs
 .. toctree::
    :maxdepth: 5
 
-   classZombieWorldGenerator.rst
+   classZombieWorld.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   classZombieworldGroup.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   classZombieworldPit.rst
 
 Functions
 *********
@@ -614,11 +634,6 @@ Functions
 
    function_EigenExtensions_8cpp_1a6120b0f4fec91aaa18cdcf3e32fd6bbd.rst
 
-.. toctree::
-   :maxdepth: 5
-
-   function_generator_8cpp_1a1b0dc54f9d0172c17152bc1022903b00.rst
-
 Defines
 *******
 
@@ -676,6 +691,46 @@ Typedefs
    :maxdepth: 5
 
    typedef_WebcamSensor_8cpp_1a003fd4ac64eccf271f42243a2e99434e.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   typedef_AABB_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   typedef_Block_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   typedef_Connection_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   typedef_Entity_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   typedef_Group_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   typedef_Lever_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   typedef_Object_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   typedef_Pos_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d.rst
 
 .. toctree::
    :maxdepth: 5

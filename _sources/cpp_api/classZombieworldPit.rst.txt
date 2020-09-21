@@ -1,0 +1,25 @@
+.. _exhale_class_classZombieworldPit:
+
+Class ZombieworldPit
+====================
+
+- Defined in :ref:`file_src_cpp_pro_gen_ZombieworldPit.h`
+
+
+Inheritance Relationships
+-------------------------
+
+Base Type
+*********
+
+- ``public AABB`` (:ref:`exhale_class_classAABB`)
+
+
+Class Documentation
+-------------------
+
+
+.. doxygenclass:: ZombieworldPit
+   :members:
+   :protected-members:
+   :undoc-members:

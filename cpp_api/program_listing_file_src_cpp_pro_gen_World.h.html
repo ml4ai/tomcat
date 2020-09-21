@@ -161,28 +161,52 @@
 <span id="program-listing-file-src-cpp-pro-gen-world-h"></span><h1>Program Listing for File World.h<a class="headerlink" href="#program-listing-for-file-world-h" title="Permalink to this headline">¶</a></h1>
 <p>↰ <a class="reference internal" href="file_src_cpp_pro_gen_World.h.html#file-src-cpp-pro-gen-world-h"><span class="std std-ref">Return to documentation for file</span></a> (<code class="docutils literal notranslate"><span class="pre">src/cpp/pro_gen/World.h</span></code>)</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
+
 <span class="cp">#include</span> <span class="cpf">&quot;AABB.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;nlohmann/json.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;Connection.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;Group.h&quot;</span><span class="cp"></span>
 
 <span class="k">class</span> <span class="nc">World</span> <span class="p">{</span>
   <span class="k">private</span><span class="o">:</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">mt19937_64</span> <span class="n">gen</span><span class="p">;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">AABB</span><span class="o">*&gt;</span> <span class="n">aabbList</span><span class="p">;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Block</span><span class="o">*&gt;</span> <span class="n">blockList</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Entity</span><span class="o">*&gt;</span> <span class="n">entityList</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">*&gt;</span> <span class="n">objectList</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Connection</span><span class="o">*&gt;</span> <span class="n">connectionList</span><span class="p">;</span>
 
   <span class="k">public</span><span class="o">:</span>
     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">AABB</span><span class="o">*&gt;&amp;</span> <span class="n">getAABBList</span><span class="p">();</span>
 
     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Block</span><span class="o">*&gt;&amp;</span> <span class="n">getBlockList</span><span class="p">();</span>
 
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Entity</span><span class="o">*&gt;&amp;</span> <span class="n">getEntityList</span><span class="p">();</span>
+
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">*&gt;&amp;</span> <span class="n">getObjectList</span><span class="p">();</span>
+
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Connection</span><span class="o">*&gt;&amp;</span> <span class="n">getConnectionList</span><span class="p">();</span>
+
     <span class="kt">void</span> <span class="nf">addAABB</span><span class="p">(</span><span class="n">AABB</span><span class="o">&amp;</span> <span class="n">aabb</span><span class="p">);</span>
+
+    <span class="kt">void</span> <span class="nf">addEntity</span><span class="p">(</span><span class="n">Entity</span><span class="o">&amp;</span> <span class="n">entity</span><span class="p">);</span>
 
     <span class="kt">void</span> <span class="nf">addBlock</span><span class="p">(</span><span class="n">Block</span><span class="o">&amp;</span> <span class="n">block</span><span class="p">);</span>
 
-    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="k">virtual</span> <span class="n">toTSV</span><span class="p">();</span>
+    <span class="kt">void</span> <span class="nf">addObject</span><span class="p">(</span><span class="n">Object</span><span class="o">&amp;</span> <span class="n">object</span><span class="p">);</span>
 
-    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="k">virtual</span> <span class="n">toJSON</span><span class="p">();</span>
+    <span class="kt">void</span> <span class="nf">addConnection</span><span class="p">(</span><span class="n">Connection</span><span class="o">&amp;</span> <span class="n">connection</span><span class="p">);</span>
+
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="k">virtual</span> <span class="n">toLowLevelMapJSON</span><span class="p">();</span>
+
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="k">virtual</span> <span class="n">toSemanticMapJSON</span><span class="p">();</span>
+
+    <span class="kt">void</span> <span class="nf">writeToFile</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">jsonPath</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">lowLevelMapJSONPath</span><span class="p">);</span>
 
     <span class="n">World</span><span class="p">();</span>
+
+    <span class="n">std</span><span class="o">::</span><span class="n">mt19937_64</span><span class="o">&amp;</span> <span class="n">getRandom</span><span class="p">();</span>
+
+    <span class="kt">void</span> <span class="nf">setRandom</span><span class="p">(</span><span class="kt">int</span> <span class="n">seed</span><span class="p">);</span>
 
     <span class="k">virtual</span> <span class="o">~</span><span class="n">World</span><span class="p">();</span>
 <span class="p">};</span>

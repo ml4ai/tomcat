@@ -214,7 +214,7 @@
             <span class="c1">// Pure virtual functions</span>
             <span class="c1">//------------------------------------------------------------------</span>
 
-            <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">update_dependencies</span><span class="p">(</span><span class="n">Node</span><span class="o">::</span><span class="n">NodeMap</span><span class="o">&amp;</span> <span class="n">parameter_nodes_map</span><span class="p">,</span>
+            <span class="k">virtual</span> <span class="kt">void</span> <span class="n">update_dependencies</span><span class="p">(</span><span class="n">Node</span><span class="o">::</span><span class="n">NodeMap</span><span class="o">&amp;</span> <span class="n">parameter_nodes_map</span><span class="p">,</span>
                                              <span class="kt">int</span> <span class="n">time_step</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
             <span class="k">virtual</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span>
@@ -231,15 +231,15 @@
                 <span class="kt">int</span> <span class="n">parameter_idx</span><span class="p">,</span>
                 <span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span> <span class="n">sufficient_statistics</span><span class="p">)</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-            <span class="k">virtual</span> <span class="kt">double</span> <span class="nf">get_pdf</span><span class="p">(</span><span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span> <span class="n">value</span><span class="p">,</span>
+            <span class="k">virtual</span> <span class="kt">double</span> <span class="n">get_pdf</span><span class="p">(</span><span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span> <span class="n">value</span><span class="p">,</span>
                                    <span class="kt">int</span> <span class="n">parameter_idx</span><span class="p">)</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
             <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Distribution</span><span class="o">&gt;</span> <span class="n">clone</span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-            <span class="k">virtual</span> <span class="kt">int</span> <span class="nf">get_sample_size</span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">virtual</span> <span class="kt">int</span> <span class="n">get_sample_size</span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
             <span class="k">virtual</span> <span class="kt">void</span>
-            <span class="nf">update_sufficient_statistics</span><span class="p">(</span><span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span> <span class="n">sample</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="n">update_sufficient_statistics</span><span class="p">(</span><span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span> <span class="n">sample</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
             <span class="k">virtual</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span> <span class="n">get_values</span><span class="p">()</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
