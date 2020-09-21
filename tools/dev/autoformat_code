@@ -1,19 +1,29 @@
 #!/bin/bash
 
-# Usage: ./autoformat_code
+# Usage:
+#    ./autoformat_code
+
+# Alternate invocation (to restrict autoformatting to a particular directory:
+#    ./autoformat_code <directory_name>
+
 # Note - this script requires GNU Parallel, which can be installed by your OS
 # package manager (e.g. sudo apt-get install -y parallel).
 
 export TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../" >/dev/null 2>&1 && pwd)"
 
+
 pushd ${TOMCAT} > /dev/null
-    # Formatting Java code
-    find external/malmo/Minecraft/src/main/java -name *.java\
-      | parallel --bar clang-format -i {}
 
-    # Formatting C++ code
-    find external/malmo/Malmo/src -name *.h -o -name *.cpp\
-      | parallel --bar clang-format -i {}
+    if [[ $1 != "" ]]; then
+        find "$1" -name *.h -o -name *.cpp | parallel --bar clang-format -i {}
+    else
+        # Formatting Java code
+        find external/malmo/Minecraft/src/main/java -name *.java\
+        | parallel --bar clang-format -i {}
 
-    find src -name *.h -o -name *.cpp | parallel --bar clang-format -i {}
+        # Formatting C++ code
+        find src -name *.h -o -name *.cpp | parallel --bar clang-format -i {}
+    fi
+
+
 popd > /dev/null
