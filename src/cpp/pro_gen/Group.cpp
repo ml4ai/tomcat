@@ -1,8 +1,13 @@
 #include "Group.h"
 using namespace std;
+using json = nlohmann::json;
 
-Group::Group(int id)
+Group::Group(string id)
     : AABB(id, "group", "air", *(new Pos()), *(new Pos()), true, false) {}
+
+vector<AABB*>& Group::getAABBList() { return this->aabbList; }
+
+vector<Connection*>& Group::getConnectionList() { return this->connectionList; }
 
 void Group::addAABB(AABB& aabb) {
     this->aabbList.push_back(&aabb);
@@ -11,15 +16,13 @@ void Group::addAABB(AABB& aabb) {
 
 void Group::generateAllDoorsInAABB() {
     for (auto& aabb : this->aabbList) {
-        (*aabb).generateAllDoorsInAABB();
+        aabb->generateAllDoorsInAABB();
     }
 }
 
-vector<AABB*>& Group::getAABBList() { return this->aabbList; }
-
-AABB* Group::getAABB(int id) {
+AABB* Group::getAABB(string id) {
     for (auto& aabb : this->aabbList) {
-        if ((*aabb).getID() == id) {
+        if (strcmp((*aabb).getID().c_str(), id.c_str()) == 0) {
             return aabb;
         }
     }
@@ -78,16 +81,48 @@ void Group::recalculateGroupBoundaries() {
     this->setBottomRight(newBottomRight);
 }
 
-string Group::toTSV() {
-    string retval = "";
-
-    for (auto& aabb : this->aabbList) {
-        retval += (*aabb).toTSV();
-    }
-
-    for (auto& block : (this->getBlockList())) {
-        retval += (*block).toTSV() + "\n";
-    }
-
-    return retval;
+void Group::addConnection(Connection& connection) {
+    this->connectionList.push_back(&connection);
 }
+
+void Group::toSemanticMapJSON(json& json_base) {
+    for (auto& aabbPtr : this->aabbList) {
+        (*aabbPtr).toSemanticMapJSON(json_base);
+    }
+
+    for (auto& blockPtr : this->getBlockList()) {
+        (*blockPtr).toSemanticMapJSON(json_base);
+    }
+
+    for (auto& entityPtr : this->getEntityList()) {
+        (*entityPtr).toSemanticMapJSON(json_base);
+    }
+
+    for (auto& objectPtr : this->getObjectList()) {
+        (*objectPtr).toSemanticMapJSON(json_base);
+    }
+
+    for (auto& connectionPtr : this->getConnectionList()) {
+        (*connectionPtr).toSemanticMapJSON(json_base);
+    }
+}
+
+void Group::toLowLevelMapJSON(json& json_base) {
+    for (auto& aabbPtr : this->aabbList) {
+        (*aabbPtr).toLowLevelMapJSON(json_base);
+    }
+
+    for (auto& blockPtr : this->getBlockList()) {
+        (*blockPtr).toLowLevelMapJSON(json_base);
+    }
+
+    for (auto& entityPtr : this->getEntityList()) {
+        (*entityPtr).toLowLevelMapJSON(json_base);
+    }
+
+    for (auto& objectPtr : this->getObjectList()) {
+        (*objectPtr).toLowLevelMapJSON(json_base);
+    }
+}
+
+Group::~Group() {}

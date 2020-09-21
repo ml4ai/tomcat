@@ -1,24 +1,14 @@
-#include "Group.h"
-#include "Pit.h"
-#include "ProceduralGenerator.h"
+#pragma once
 
-class ZombieWorldGenerator : public ProceduralGenerator {
+#include "World.h"
+#include "ZombieworldGroup.h"
+#include "ZombieworldPit.h"
+
+class ZombieWorld : public World {
   private:
     int N = 3;
     int sep = 15;
     int AABB_size = 10;
-    /**
-     * @brief Adds a Group AABB object to the given coordinates suh=ch that
-     * certain numbered group objects have only 1 AABB and others have 2.
-     *
-     * @param idCtr The id to set the Group to. In this case also the count
-     * reached as of this Group.
-     * @param firstTopLeft The top left coordinates of the first AABB in the
-     * group
-     * @param firstBottomRight The top left coordinates of the second. AABB in
-     * the group
-     */
-    void addGroupOfAABB(int idCtr, Pos& firstTopLeft, Pos& firstBottomRight);
 
     /**
      * @brief A method to choose the AABB to add based on the idCtr. It
@@ -45,17 +35,6 @@ class ZombieWorldGenerator : public ProceduralGenerator {
      */
     void generateBoundingWalls();
 
-    /**
-     * @brief Decorates the AABB with doors, lights and levers
-     */
-    void decorate();
-
-    /**
-     * @brief Adds Levers to 2 room Group AABBs such that the levers are placed
-     * at the entrance to the second room.
-     */
-    void addLevers();
-
   public:
     /**
      * @brief Construct a new Zombie World Generator object with the internal
@@ -63,10 +42,10 @@ class ZombieWorldGenerator : public ProceduralGenerator {
      *
      * @param seed The seed to use for randomness.
      */
-    ZombieWorldGenerator(int seed = 1);
+    ZombieWorld(int seed = 1);
 
     /**
      * @brief Destroy the Zombie World Generator object
      */
-    ~ZombieWorldGenerator();
+    ~ZombieWorld();
 };
