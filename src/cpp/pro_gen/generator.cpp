@@ -25,7 +25,8 @@ int main(int argc, char* argv[]) {
         "1")("help_gridworld",
              "Show additional arguments specific to Gridworld generation.")(
         "semantic_map_path",
-        po::value<string>(&semantic_map_json_path)->default_value("semantic_map.json"),
+        po::value<string>(&semantic_map_json_path)
+            ->default_value("semantic_map.json"),
         "Path to the output semantic map JSON file.")(
         "low_level_map_path",
         po::value<string>(&low_level_map_json_path)
@@ -80,7 +81,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    cout << "Done. The generated files are in " << semantic_map_json_path << " and "
-         << low_level_map_json_path << endl;
+    cout << "Done. The generated files are in " << semantic_map_json_path
+         << " and " << low_level_map_json_path << endl;
     return 0;
 }

@@ -22,6 +22,8 @@ void Object::toSemanticMapJSON(json& json_base) {
     json_base["objects"].push_back(object_json);
 }
 
-void Object::toLowLevelMapJSON(json& json_base) { this->block.toLowLevelMapJSON(json_base); }
+void Object::toLowLevelMapJSON(json& json_base) {
+    this->block.toLowLevelMapJSON(json_base);
+}
 
 Object::~Object() {}

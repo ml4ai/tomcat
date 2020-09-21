@@ -114,7 +114,8 @@ class World {
      * filepaths.
      *
      * @param jsonPath Path to store json
-     * @param lowLevelMapJSONPath Path to store the alternate json representation
+     * @param lowLevelMapJSONPath Path to store the alternate json
+     * representation
      */
     void writeToFile(std::string jsonPath, std::string lowLevelMapJSONPath);
 
