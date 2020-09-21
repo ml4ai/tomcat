@@ -85,43 +85,43 @@ void Group::addConnection(Connection& connection) {
     this->connectionList.push_back(&connection);
 }
 
-void Group::toJSON(json& json_base) {
+void Group::toSemanticMapJSON(json& json_base) {
     for (auto& aabbPtr : this->aabbList) {
-        (*aabbPtr).toJSON(json_base);
+        (*aabbPtr).toSemanticMapJSON(json_base);
     }
 
     for (auto& blockPtr : this->getBlockList()) {
-        (*blockPtr).toJSON(json_base);
+        (*blockPtr).toSemanticMapJSON(json_base);
     }
 
     for (auto& entityPtr : this->getEntityList()) {
-        (*entityPtr).toJSON(json_base);
+        (*entityPtr).toSemanticMapJSON(json_base);
     }
 
     for (auto& objectPtr : this->getObjectList()) {
-        (*objectPtr).toJSON(json_base);
+        (*objectPtr).toSemanticMapJSON(json_base);
     }
 
     for (auto& connectionPtr : this->getConnectionList()) {
-        (*connectionPtr).toJSON(json_base);
+        (*connectionPtr).toSemanticMapJSON(json_base);
     }
 }
 
-void Group::toAltJSON(json& json_base) {
+void Group::toLowLevelMapJSON(json& json_base) {
     for (auto& aabbPtr : this->aabbList) {
-        (*aabbPtr).toAltJSON(json_base);
+        (*aabbPtr).toLowLevelMapJSON(json_base);
     }
 
     for (auto& blockPtr : this->getBlockList()) {
-        (*blockPtr).toAltJSON(json_base);
+        (*blockPtr).toLowLevelMapJSON(json_base);
     }
 
     for (auto& entityPtr : this->getEntityList()) {
-        (*entityPtr).toAltJSON(json_base);
+        (*entityPtr).toLowLevelMapJSON(json_base);
     }
 
     for (auto& objectPtr : this->getObjectList()) {
-        (*objectPtr).toAltJSON(json_base);
+        (*objectPtr).toLowLevelMapJSON(json_base);
     }
 }
 

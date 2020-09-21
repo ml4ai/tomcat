@@ -156,7 +156,7 @@ class Entity {
      *
      * @return nlohmann::json The base json
      */
-    void virtual toJSON(nlohmann::json& json_base);
+    void virtual toSemanticMapJSON(nlohmann::json& json_base);
 
     /**
      * @brief Adds the alternate JSON representation of this
@@ -164,7 +164,7 @@ class Entity {
      *
      * @return nlohmann::json The base json
      */
-    void virtual toAltJSON(nlohmann::json& json_base);
+    void virtual toLowLevelMapJSON(nlohmann::json& json_base);
 
     /**
      * @brief Construct a new Entity object. The material level values are

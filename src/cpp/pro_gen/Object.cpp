@@ -6,14 +6,14 @@ using json = nlohmann::json;
 Object::Object(string id, string type, Block& block)
     : id{id}, type{type}, block{block} {}
 
-void Object::toJSON(json& json_base) {
+void Object::toSemanticMapJSON(json& json_base) {
     json object_json;
 
     object_json["id"] = this->id;
     object_json["type"] = this->type;
 
     vector<json> coordinate_list;
-    coordinate_list.push_back(this->block.getPos().toJSON());
+    coordinate_list.push_back(this->block.getPos().toSemanticMapJSON());
 
     object_json["bounds"] = {{"type", "block"},
                              {"coordinates", coordinate_list},
@@ -22,6 +22,6 @@ void Object::toJSON(json& json_base) {
     json_base["objects"].push_back(object_json);
 }
 
-void Object::toAltJSON(json& json_base) { this->block.toAltJSON(json_base); }
+void Object::toLowLevelMapJSON(json& json_base) { this->block.toLowLevelMapJSON(json_base); }
 
 Object::~Object() {}

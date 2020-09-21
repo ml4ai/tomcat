@@ -65,7 +65,7 @@ class Group : public AABB {
      *
      * @return nlohmann::json The base json
      */
-    void virtual toJSON(nlohmann::json& json_base);
+    void virtual toSemanticMapJSON(nlohmann::json& json_base);
 
     /**
      * @brief Adds the Alternate JSON representation of this object to the
@@ -73,7 +73,7 @@ class Group : public AABB {
      *
      * @return nlohmann::json The base json
      */
-    void virtual toAltJSON(nlohmann::json& json_base);
+    void virtual toLowLevelMapJSON(nlohmann::json& json_base);
 
     /**
      * @brief Construct a new Group object.

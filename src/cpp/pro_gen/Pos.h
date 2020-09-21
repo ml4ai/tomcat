@@ -86,7 +86,7 @@ class Pos {
      *
      * @return nlohmann::json The JSON representation
      */
-    nlohmann::json virtual toJSON();
+    nlohmann::json virtual toSemanticMapJSON();
 
     /**
      * @brief Construct a new Pos object

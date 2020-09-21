@@ -207,12 +207,12 @@ void AABB::addRandomBlocks(int n,
     }
 }
 
-void AABB::toJSON(json& json_base) {
+void AABB::toSemanticMapJSON(json& json_base) {
     json aabb_json;
 
     vector<json> coordinates_list;
-    coordinates_list.push_back(this->topLeft.toJSON());
-    coordinates_list.push_back(this->bottomRight.toJSON());
+    coordinates_list.push_back(this->topLeft.toSemanticMapJSON());
+    coordinates_list.push_back(this->bottomRight.toSemanticMapJSON());
 
     aabb_json["bounds"] = {{"type", "cuboid"},
                            {"coordinates", coordinates_list}};
@@ -223,19 +223,19 @@ void AABB::toJSON(json& json_base) {
     json_base["locations"].push_back(aabb_json);
 
     for (auto& blockPtr : this->getBlockList()) {
-        (*blockPtr).toJSON(json_base);
+        (*blockPtr).toSemanticMapJSON(json_base);
     }
 
     for (auto& entityPtr : this->getEntityList()) {
-        (*entityPtr).toJSON(json_base);
+        (*entityPtr).toSemanticMapJSON(json_base);
     }
 
     for (auto& objectPtr : this->getObjectList()) {
-        (*objectPtr).toJSON(json_base);
+        (*objectPtr).toSemanticMapJSON(json_base);
     }
 }
 
-void AABB::toAltJSON(json& json_base) {
+void AABB::toLowLevelMapJSON(json& json_base) {
 
     for (int x = (this->topLeft).getX(); x <= (this->bottomRight).getX(); x++) {
         for (int y = (this->topLeft).getY(); y <= (this->bottomRight).getY();
@@ -266,22 +266,22 @@ void AABB::toAltJSON(json& json_base) {
                 if (addCurrent) {
                     Pos thisPos(x, y, z);
                     Block thisBlock(this->material, thisPos);
-                    thisBlock.toAltJSON(json_base);
+                    thisBlock.toLowLevelMapJSON(json_base);
                 }
             }
         }
     }
 
     for (auto& blockPtr : this->getBlockList()) {
-        (*blockPtr).toAltJSON(json_base);
+        (*blockPtr).toLowLevelMapJSON(json_base);
     }
 
     for (auto& entityPtr : this->getEntityList()) {
-        (*entityPtr).toAltJSON(json_base);
+        (*entityPtr).toLowLevelMapJSON(json_base);
     }
 
     for (auto& objectPtr : this->getObjectList()) {
-        (*objectPtr).toAltJSON(json_base);
+        (*objectPtr).toLowLevelMapJSON(json_base);
     }
 }
 

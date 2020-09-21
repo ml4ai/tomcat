@@ -7,7 +7,7 @@ Lever::Lever(Pos& pos, bool powered, string facing) : Block("lever", pos) {
     this->facing = facing;
 }
 
-void Lever::toJSON(json& json_base) {
+void Lever::toSemanticMapJSON(json& json_base) {
     json block_json;
 
     string isPowered = "";
@@ -19,7 +19,7 @@ void Lever::toJSON(json& json_base) {
     }
 
     vector<json> coordinate_list;
-    coordinate_list.push_back(this->pos.toJSON());
+    coordinate_list.push_back(this->pos.toSemanticMapJSON());
 
     block_json["bounds"] = {{"type", "block"},
                             {"coordinates", coordinate_list}};
@@ -30,7 +30,7 @@ void Lever::toJSON(json& json_base) {
     json_base["locations"].push_back(block_json);
 }
 
-void Lever::toAltJSON(json& json_base) {
+void Lever::toLowLevelMapJSON(json& json_base) {
     json block_json;
 
     string isPowered = "";

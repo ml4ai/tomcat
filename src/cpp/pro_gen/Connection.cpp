@@ -51,11 +51,11 @@ void Connection::removeAllConnectedLocation() {
 }
 void Connection::removeAllCoordinates() { this->coordinates.clear(); }
 
-void Connection::toJSON(json& json_base) {
+void Connection::toSemanticMapJSON(json& json_base) {
     json connection_json;
     vector<json> coordinate_list;
     for (auto& pos : this->coordinates) {
-        coordinate_list.push_back(pos.toJSON());
+        coordinate_list.push_back(pos.toSemanticMapJSON());
     }
 
     connection_json["bounds"] = {{"type", this->getBoundType()},

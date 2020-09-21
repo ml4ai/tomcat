@@ -40,7 +40,7 @@ void World::addConnection(Connection& connection) {
     this->connectionList.push_back(&connection);
 }
 
-string World::toAltJSON() {
+string World::toLowLevelMapJSON() {
     json world_json;
 
     vector<json> location_list;
@@ -51,25 +51,25 @@ string World::toAltJSON() {
 
     // Add AABBs to the JSON list
     for (auto& aabbPtr : this->aabbList) {
-        (*aabbPtr).toAltJSON(world_json);
+        (*aabbPtr).toLowLevelMapJSON(world_json);
     }
 
     for (auto& blockPtr : this->getBlockList()) {
-        (*blockPtr).toAltJSON(world_json);
+        (*blockPtr).toLowLevelMapJSON(world_json);
     }
 
     for (auto& entityPtr : this->getEntityList()) {
-        (*entityPtr).toAltJSON(world_json);
+        (*entityPtr).toLowLevelMapJSON(world_json);
     }
 
     for (auto& objectPtr : this->getObjectList()) {
-        (*objectPtr).toAltJSON(world_json);
+        (*objectPtr).toLowLevelMapJSON(world_json);
     }
 
     return world_json.dump(4);
 }
 
-string World::toJSON() {
+string World::toSemanticMapJSON() {
     json world_json;
 
     vector<json> location_list;
@@ -84,23 +84,23 @@ string World::toJSON() {
 
     // Add AABBs to the JSON list
     for (auto& aabbPtr : this->aabbList) {
-        (*aabbPtr).toJSON(world_json);
+        (*aabbPtr).toSemanticMapJSON(world_json);
     }
 
     for (auto& blockPtr : this->getBlockList()) {
-        (*blockPtr).toJSON(world_json);
+        (*blockPtr).toSemanticMapJSON(world_json);
     }
 
     for (auto& entityPtr : this->getEntityList()) {
-        (*entityPtr).toJSON(world_json);
+        (*entityPtr).toSemanticMapJSON(world_json);
     }
 
     for (auto& objectPtr : this->getObjectList()) {
-        (*objectPtr).toJSON(world_json);
+        (*objectPtr).toSemanticMapJSON(world_json);
     }
 
     for (auto& connectionPtr : this->getConnectionList()) {
-        (*connectionPtr).toJSON(world_json);
+        (*connectionPtr).toSemanticMapJSON(world_json);
     }
 
     return world_json.dump(4);
@@ -111,13 +111,13 @@ void World::writeToFile(string jsonPath, string altJSONPath) {
 
     // Write JSON
     ofstream outputJSON(jsonPath, ios::out);
-    outputJSON << this->toJSON();
+    outputJSON << this->toSemanticMapJSON();
     outputJSON.close();
 
     // Write TSV
-    ofstream outputAltJSON(altJSONPath, ios::out);
-    outputAltJSON << this->toAltJSON();
-    outputAltJSON.close();
+    ofstream outputLowLevelMapJSON(altJSONPath, ios::out);
+    outputLowLevelMapJSON << this->toLowLevelMapJSON();
+    outputLowLevelMapJSON.close();
 }
 
 World::~World() {}

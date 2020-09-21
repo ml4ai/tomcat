@@ -25,11 +25,11 @@ void Block::setY(int y) { this->pos.setY(y); }
 
 void Block::setZ(int z) { this->pos.setZ(z); }
 
-void Block::toJSON(json& json_base) {
+void Block::toSemanticMapJSON(json& json_base) {
 
     json block_json;
     vector<json> coordinate_list;
-    coordinate_list.push_back(this->pos.toJSON());
+    coordinate_list.push_back(this->pos.toSemanticMapJSON());
 
     block_json["bounds"] = {{"type", "block"},
                             {"coordinates", coordinate_list}};
@@ -38,7 +38,7 @@ void Block::toJSON(json& json_base) {
     json_base["locations"].push_back(block_json);
 }
 
-void Block::toAltJSON(json& json_base) {
+void Block::toLowLevelMapJSON(json& json_base) {
     json block_json;
 
     block_json["material"] = this->getMaterial();

@@ -68,10 +68,10 @@ void Entity::setAllEquipment(vector<string>& equipment) {
     }
 }
 
-void Entity::toJSON(json& json_base) {
+void Entity::toSemanticMapJSON(json& json_base) {
     json entity_json;
     vector<json> coordinate_list;
-    coordinate_list.push_back(this->pos.toJSON());
+    coordinate_list.push_back(this->pos.toSemanticMapJSON());
 
     entity_json["bounds"] = {{"coordinates", coordinate_list}};
 
@@ -86,7 +86,7 @@ void Entity::toJSON(json& json_base) {
     json_base["entities"].push_back(entity_json);
 }
 
-void Entity::toAltJSON(json& json_base) {
+void Entity::toLowLevelMapJSON(json& json_base) {
     json entity_json;
 
     entity_json["x"] = to_string(this->getX());

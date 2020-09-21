@@ -99,7 +99,7 @@ class World {
      *
      * @return string The JSON as a string
      */
-    std::string virtual toAltJSON();
+    std::string virtual toLowLevelMapJSON();
 
     /**
      * @brief Converts the world into a JSON representation with
@@ -107,16 +107,16 @@ class World {
      *
      * @return string The JSON as a string
      */
-    std::string virtual toJSON();
+    std::string virtual toSemanticMapJSON();
 
     /**
      * @brief Writes the world's JSON and alternate JSON output to the given
      * filepaths.
      *
      * @param jsonPath Path to store json
-     * @param altJSONPath Path to store the alternate json representation
+     * @param lowLevelMapJSONPath Path to store the alternate json representation
      */
-    void writeToFile(std::string jsonPath, std::string altJSONPath);
+    void writeToFile(std::string jsonPath, std::string lowLevelMapJSONPath);
 
     /**
      * @brief Construct a new World object

@@ -31,7 +31,7 @@ void Pos::shiftY(int shift) { this->y += shift; }
 
 void Pos::shiftZ(int shift) { this->z += shift; }
 
-json Pos::toJSON() {
+json Pos::toSemanticMapJSON() {
     json pos_json;
     pos_json["x"] = this->getX();
     pos_json["y"] = this->getY();
