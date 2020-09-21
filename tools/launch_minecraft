@@ -7,7 +7,7 @@ export TOMCAT
 
 source "$TOMCAT"/tools/configuration_helpers
 
-configure_session
+set_java_home
 
 cd "$TOMCAT"/external/malmo/Minecraft
 ./launchClient.sh
