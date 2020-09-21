@@ -38,7 +38,7 @@ public class ProceduralGenMission extends Mission {
     }
 
     /**
-     * This grabs the blueprint from the proceduralAltJSON.json file and uses a
+     * This grabs the blueprint from the low_level_map.json file and uses a
      * WorldReader object to parse it. It then uses the resulting hashmap to
      * place all the blocks at the right places.
      *
@@ -47,7 +47,7 @@ public class ProceduralGenMission extends Mission {
     private void buildStructures(World world) {
         if (this.shouldBuild) {
             // Grab map representing world
-            WorldReader worldReader = new WorldReader("proceduralAltJSON.json");
+            WorldReader worldReader = new WorldReader("low_level_map.json");
 
             Drawing drawing = new Drawing();
             Map<BlockPos, IBlockState> worldMap = worldReader.getBlocksMap();

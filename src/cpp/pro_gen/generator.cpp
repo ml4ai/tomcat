@@ -14,27 +14,26 @@ namespace po = boost::program_options;
 int main(int argc, char* argv[]) {
 
     int choice, seed;
-    string jsonPath, altJSONPath;
+    string semantic_map_json_path, low_level_map_json_path;
 
     // Handle options
     po::options_description general("Allowed options");
     general.add_options()("help,h", "Show program options")(
-        "gen_type",
+        "world_type",
         po::value<int>(&choice)->default_value(0),
-        "Choose the type of world to generate.\nZombieworld = 0\nGridworld = "
+        "Type of world to generate.\nZombieworld = 0\nGridworld = "
         "1")("help_gridworld",
-             "Show additional arguments specific to Gridworld.")(
-        "json_path",
-        po::value<string>(&jsonPath)->default_value("procedural.json"),
-        "Specify where to save the JSON file with filename and extension.")(
-        "alt_json_path",
-        po::value<string>(&altJSONPath)
-            ->default_value("proceduralAltJSON.json"),
-        "Specify where to save the Alt JSON file with filename and extension.")(
+             "Show additional arguments specific to Gridworld generation.")(
+        "semantic_map_path",
+        po::value<string>(&semantic_map_json_path)->default_value("semantic_map.json"),
+        "Path to the output semantic map JSON file.")(
+        "low_level_map_path",
+        po::value<string>(&low_level_map_json_path)
+            ->default_value("low_level_map.json"),
+        "Path to the low level (more granular) map JSON file.")(
         "seed",
         po::value<int>(&seed)->default_value(0),
-        "The seed used to initialize the random "
-        "object used within the generator.");
+        "The seed used to initialize the random number generator.");
 
     po::options_description gridWorldOptions(
         "Allowed options for the Gridworld generator");
@@ -67,21 +66,21 @@ int main(int argc, char* argv[]) {
     cout << "Generating world..." << endl;
     if (choice == 0) {
         ZombieWorld world(seed);
-        world.writeToFile(jsonPath, altJSONPath);
+        world.writeToFile(semantic_map_json_path, low_level_map_json_path);
     }
     else if (choice == 1) {
         int N = vm["N"].as<int>();
         int sep = vm["sep"].as<int>();
         int AABB_size = vm["AABB_size"].as<int>();
         GridWorld world(N, sep, AABB_size, seed);
-        world.writeToFile(jsonPath, altJSONPath);
+        world.writeToFile(semantic_map_json_path, low_level_map_json_path);
     }
     else {
-        cout << "You choice is invalid" << endl;
+        cout << "Your choice is invalid" << endl;
         return 1;
     }
 
-    cout << "Done. The generated files are in " << jsonPath << " and "
-         << altJSONPath << endl;
+    cout << "Done. The generated files are in " << semantic_map_json_path << " and "
+         << low_level_map_json_path << endl;
     return 0;
 }
