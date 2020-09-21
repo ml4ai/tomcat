@@ -13,14 +13,14 @@ namespace po = boost::program_options;
  */
 int main(int argc, char* argv[]) {
 
-    int choice, seed;
+    int world_type, seed;
     string semantic_map_json_path, low_level_map_json_path;
 
     // Handle options
     po::options_description general("Allowed options");
     general.add_options()("help,h", "Show program options")(
         "world_type",
-        po::value<int>(&choice)->default_value(0),
+        po::value<int>(&world_type)->default_value(0),
         "Type of world to generate.\nZombieworld = 0\nGridworld = "
         "1")("help_gridworld",
              "Show additional arguments specific to Gridworld generation.")(
@@ -65,11 +65,11 @@ int main(int argc, char* argv[]) {
     }
 
     cout << "Generating world..." << endl;
-    if (choice == 0) {
+    if (world_type == 0) {
         ZombieWorld world(seed);
         world.writeToFile(semantic_map_json_path, low_level_map_json_path);
     }
-    else if (choice == 1) {
+    else if (world_type == 1) {
         int N = vm["N"].as<int>();
         int sep = vm["sep"].as<int>();
         int AABB_size = vm["AABB_size"].as<int>();
@@ -77,7 +77,8 @@ int main(int argc, char* argv[]) {
         world.writeToFile(semantic_map_json_path, low_level_map_json_path);
     }
     else {
-        cout << "Your choice is invalid" << endl;
+        cout << "Invalid choice for world_type: " << world_type
+             << ". world_type must be either 0 or 1." << endl;
         return 1;
     }
 
