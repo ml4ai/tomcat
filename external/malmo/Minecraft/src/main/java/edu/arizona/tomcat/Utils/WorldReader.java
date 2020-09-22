@@ -10,8 +10,12 @@ import java.io.FileReader;
 import java.util.*;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
 /**
@@ -86,47 +90,35 @@ public class WorldReader {
      * @param blockList List of blocks extracted from the alternate JSON
      */
     private void initBlockMap(ArrayList<Map<String, String>> blockList) {
+        PropertyDirection FACING = BlockHorizontal.FACING;
+        PropertyBool OPEN = PropertyBool.create("open");
+        PropertyBool POWERED = PropertyBool.create("powered");
+
         for (Map<String, String> block : blockList) {
 
-            String material = block.get("material");
-            material = material.toUpperCase();
+            String material = block.get("material").toUpperCase();
 
-            String x_string = block.get("x");
-            String y_string = block.get("y");
-            String z_string = block.get("z");
-
-            int x = Integer.parseInt(x_string);
-            int y = Integer.parseInt(y_string);
-            int z = Integer.parseInt(z_string);
+            int x = Integer.parseInt(block.get("x")), y = Integer.parseInt(block.get("y")), z = Integer.parseInt(block.get("z"));
             BlockPos pos = new BlockPos(x, y, z);
 
             this.blockMap.remove(pos);
 
-            if (material.contains("DOOR")) {
-                // Doors are special and we need to place a bottom and top half
-                IBlockState doorBottom = Block.getBlockFromName(material).getStateFromMeta(0);
+            EnumFacing facing = EnumFacing.NORTH;
+            Boolean powered = Boolean.valueOf(false);
+            Boolean open = Boolean.valueOf(false);
 
-                BlockPos topPos =
-                        new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
-                IBlockState doorTop = Block.getBlockFromName(material).getStateFromMeta(9);
-
-                this.blockMap.remove(
-                        topPos); // For a door we need to remove and re add the
-                // block above the current as well
-
-                this.blockMap.put(pos, doorBottom);
-                this.blockMap.put(topPos, doorTop);
-            } else {
-                IBlockState state;
-                try {
-                    state = Block.getBlockFromName(material).getDefaultState();
-                } catch (Exception e) {
-                    state = Blocks.PLANKS.getDefaultState();
-                }
-                this.blockMap.put(pos, state);
+            try {
+                facing = EnumFacing.valueOf(block.get("facing").toUpperCase());
+                powered = Boolean.valueOf(block.get("powered"));
+                open = Boolean.valueOf(block.get("open"));
+            } catch (Exception e) {
+                ;
             }
+            this.registerState(material, pos, FACING, OPEN, POWERED, facing, powered, open);
+
         }
     }
+
 
     /**
      * Initializes the entityMap from the given list of entities
@@ -149,6 +141,48 @@ public class WorldReader {
             TomcatEntity thisEntity = new TomcatEntity(
                     UUID.randomUUID(), x, y, z, EntityTypes.valueOf(type));
             this.entityList.add(thisEntity);
+        }
+    }
+
+
+    private void registerState(String material, BlockPos pos, PropertyDirection FACING, PropertyBool OPEN, PropertyBool POWERED, EnumFacing facing, Boolean powered, Boolean open) {
+        if (material.contains("DOOR")) {
+            try {
+                // Doors are special and we need to place a bottom and top half
+                IBlockState doorBottom = Block.getBlockFromName(material).getStateFromMeta(0).withProperty(FACING, facing).withProperty(OPEN, open).withProperty(POWERED, powered);
+
+                BlockPos topPos =
+                        new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
+                IBlockState doorTop = Block.getBlockFromName(material).getStateFromMeta(9).withProperty(FACING, facing).withProperty(OPEN, open).withProperty(POWERED, powered);
+
+                this.blockMap.remove(
+                        topPos); // For a door we need to remove and re add the block above the current as well
+
+                this.blockMap.put(pos, doorBottom);
+                this.blockMap.put(topPos, doorTop);
+            } catch (Exception e) {
+                System.out.println("Oops! Looks like you forgot to specify some properties for this door");
+            }
+        } else {
+            IBlockState state;
+            try {
+                state = Block.getBlockFromName(material).getDefaultState().withProperty(FACING, facing).withProperty(OPEN, open).withProperty(POWERED, powered);
+            } catch (Exception e) {
+                try {
+                    state = Block.getBlockFromName(material).getDefaultState().withProperty(FACING, facing).withProperty(OPEN, open);
+                } catch (Exception e2) {
+                    try {
+                        state = Block.getBlockFromName(material).getDefaultState().withProperty(FACING, facing);
+                    } catch (Exception e3) {
+                        try {
+                            state = Block.getBlockFromName(material).getDefaultState();
+                        } catch (Exception e4) {
+                            state = Blocks.PLANKS.getDefaultState();
+                        }
+                    }
+                }
+            }
+            this.blockMap.put(pos, state);
         }
     }
 }

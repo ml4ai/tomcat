@@ -7,9 +7,11 @@ import edu.arizona.tomcat.Utils.WorldReader;
 import edu.arizona.tomcat.World.Drawing;
 import edu.arizona.tomcat.World.DrawingHandler;
 import edu.arizona.tomcat.World.TomcatEntity;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -56,21 +58,8 @@ public class ProceduralGenMission extends Mission {
             // Place blocks
             for (Map.Entry<BlockPos, IBlockState> entry : worldMap.entrySet()) {
                 world.setBlockState(entry.getKey(), entry.getValue());
-
-                // If it is a door and the block adjacent to it by -1 along z is
-                // an air block We close the door. Fixes Minecraft's confusion
-                // about what a closed and open door is
-                if (entry.getValue().equals(
-                        Blocks.DARK_OAK_DOOR.getStateFromMeta(9)) ||
-                    entry.getValue().equals(
-                        Blocks.DARK_OAK_DOOR.getStateFromMeta(0))) {
-                    BlockPos pos = entry.getKey().add(0, 0, -2);
-                    if (world.isAirBlock(pos)) {
-                        Blocks.DARK_OAK_DOOR.toggleDoor(
-                            world, entry.getKey(), true);
-                    }
-                }
             }
+
 
             for (TomcatEntity entity : entityList) {
                 drawing.addObject(entity);
@@ -78,8 +67,7 @@ public class ProceduralGenMission extends Mission {
 
             try {
                 this.drawingHandler.draw(world, drawing);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
