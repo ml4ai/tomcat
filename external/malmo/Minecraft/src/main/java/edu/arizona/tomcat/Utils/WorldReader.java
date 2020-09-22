@@ -89,6 +89,8 @@ public class WorldReader {
         for (Map<String, String> block : blockList) {
 
             String material = block.get("material");
+            material = material.toUpperCase();
+
             String x_string = block.get("x");
             String y_string = block.get("y");
             String z_string = block.get("z");
@@ -100,21 +102,27 @@ public class WorldReader {
 
             this.blockMap.remove(pos);
 
-            if (material.equals("door")) {
+            if (material.contains("DOOR")) {
                 // Doors are special and we need to place a bottom and top half
-                IBlockState doorBottom = this.getBlockState("door_bottom");
+                IBlockState doorBottom = Block.getBlockFromName(material).getStateFromMeta(0);
 
                 BlockPos topPos =
                         new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
-                IBlockState doorTop = this.getBlockState("door_top");
+                IBlockState doorTop = Block.getBlockFromName(material).getStateFromMeta(9);
 
                 this.blockMap.remove(
                         topPos); // For a door we need to remove and re add the
                 // block above the current as well
+
                 this.blockMap.put(pos, doorBottom);
                 this.blockMap.put(topPos, doorTop);
             } else {
-                IBlockState state = getBlockState(material);
+                IBlockState state;
+                try {
+                    state = Block.getBlockFromName(material).getDefaultState();
+                } catch (Exception e) {
+                    state = Blocks.PLANKS.getDefaultState();
+                }
                 this.blockMap.put(pos, state);
             }
         }
@@ -132,59 +140,15 @@ public class WorldReader {
             String y_string = entity.get("y");
             String z_string = entity.get("z");
             String type = entity.get("mob_type");
+            type = type.toUpperCase();
 
             int x = Integer.parseInt(x_string);
             int y = Integer.parseInt(y_string);
             int z = Integer.parseInt(z_string);
 
-            TomcatEntity thisEntity = this.getTomcatEntity(x, y, z, type);
+            TomcatEntity thisEntity = new TomcatEntity(
+                    UUID.randomUUID(), x, y, z, EntityTypes.valueOf(type));
             this.entityList.add(thisEntity);
-        }
-    }
-
-    /**
-     * Get the right TomcatEntity based on the type given. The UUID assigned is
-     * random and the entity is placed at the given coordinates
-     *
-     * @param x    X coordinate of entity
-     * @param y    Y coordinate of entity
-     * @param z    Z coordinate of entity
-     * @param type The type of entity
-     * @return The generated TomcatEntity object
-     */
-    private TomcatEntity getTomcatEntity(int x, int y, int z, String type) {
-        if (type.equals("zombie")) {
-            return new TomcatEntity(
-                    UUID.randomUUID(), x, y, z, EntityTypes.ZOMBIE);
-        } else if (type.equals("skeleton")) {
-            return new TomcatEntity(
-                    UUID.randomUUID(), x, y, z, EntityTypes.SKELETON);
-        } else {
-            return new TomcatEntity(
-                    UUID.randomUUID(), x, y, z, EntityTypes.VILLAGER);
-        }
-    }
-
-    /**
-     * Returns the block state relevant to the input string.
-     *
-     * @param material The material whose block state representation is
-     *                 required.
-     * @return The block state. The default block is a plank.
-     */
-    private IBlockState getBlockState(String material) {
-        material = material.toUpperCase();
-        System.out.println("------------------------> " + material);
-        if (material.equals("DOOR_TOP")) {
-            return Blocks.DARK_OAK_DOOR.getStateFromMeta(9);
-        } else if (material.equals("DOOR_BOTTOM")) {
-            return Blocks.DARK_OAK_DOOR.getStateFromMeta(0);
-        } else {
-            try {
-                return Block.getBlockFromName(material).getDefaultState();
-            } catch (Exception e){
-                return Blocks.PLANKS.getDefaultState();
-            }
         }
     }
 }
