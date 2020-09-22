@@ -60,7 +60,6 @@ public class ProceduralGenMission extends Mission {
                 world.setBlockState(entry.getKey(), entry.getValue());
             }
 
-
             for (TomcatEntity entity : entityList) {
                 drawing.addObject(entity);
             }

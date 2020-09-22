@@ -19,9 +19,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
 /**
- * This class can be used to read a TSV file representing a world. The TSV
+ * This class can be used to read a JSON file representing a world. The JSON
  * entries are read into a hash map of coordinates and the block at those
- * coordinates.
+ * coordinates. The same applies for entities.
  */
 public class WorldReader {
     private Map<BlockPos, IBlockState> blockMap;
@@ -31,7 +31,7 @@ public class WorldReader {
      * Constructor for this object. The instance creates the hash map at the
      * time of initialization.
      *
-     * @param filename The TSV file. Must be in Minecraft/run/
+     * @param filename The low level JSON file. Must be in Minecraft/run/
      */
     public WorldReader(String filename) {
 
@@ -63,7 +63,7 @@ public class WorldReader {
 
     /**
      * This method is use to create the map representation of the world from the
-     * alternate JSON file.
+     * low level JSON file.
      *
      * @param filename The alternate JSON file. Must be in Minecraft/run/
      */
@@ -87,13 +87,9 @@ public class WorldReader {
     /**
      * Initializes the blockMap from the given list of blocks
      *
-     * @param blockList List of blocks extracted from the alternate JSON
+     * @param blockList List of blocks extracted from the low level JSON
      */
     private void initBlockMap(ArrayList<Map<String, String>> blockList) {
-        PropertyDirection FACING = BlockHorizontal.FACING;
-        PropertyBool OPEN = PropertyBool.create("open");
-        PropertyBool POWERED = PropertyBool.create("powered");
-
         for (Map<String, String> block : blockList) {
 
             String material = block.get("material").toUpperCase();
@@ -105,7 +101,7 @@ public class WorldReader {
 
             EnumFacing facing = EnumFacing.NORTH;
             Boolean powered = Boolean.valueOf(false);
-            Boolean open = Boolean.valueOf(false);
+            Boolean open = Boolean.valueOf(false);  // Default values
 
             try {
                 facing = EnumFacing.valueOf(block.get("facing").toUpperCase());
@@ -114,7 +110,7 @@ public class WorldReader {
             } catch (Exception e) {
                 ;
             }
-            this.registerState(material, pos, FACING, OPEN, POWERED, facing, powered, open);
+            this.registerState(material, pos, facing, powered, open);
 
         }
     }
@@ -123,7 +119,7 @@ public class WorldReader {
     /**
      * Initializes the entityMap from the given list of entities
      *
-     * @param entityList List of entities extracted from the alternate JSON
+     * @param entityList List of entities extracted from the low level JSON
      */
     private void initEntityMap(ArrayList<Map<String, String>> entityList) {
         for (Map<String, String> entity : entityList) {
@@ -144,8 +140,21 @@ public class WorldReader {
         }
     }
 
+    /**
+     * This will add the block of the given material at the given position (into the block map) with the given properties set if applicable. It will try to create the block
+     * state with as many properties as applicable. Doors are handled automagically :)
+     *
+     * @param material - The material of the block
+     * @param pos - Where to place the block
+     * @param facing - Which way is the block facing
+     * @param powered - Is the block powered?
+     * @param open - Is the block open? Only applicable for doors/trapdoors
+     */
+    private void registerState(String material, BlockPos pos, EnumFacing facing, Boolean powered, Boolean open) {
+        PropertyDirection FACING = BlockHorizontal.FACING;
+        PropertyBool OPEN = PropertyBool.create("open");
+        PropertyBool POWERED = PropertyBool.create("powered");
 
-    private void registerState(String material, BlockPos pos, PropertyDirection FACING, PropertyBool OPEN, PropertyBool POWERED, EnumFacing facing, Boolean powered, Boolean open) {
         if (material.contains("DOOR")) {
             try {
                 // Doors are special and we need to place a bottom and top half
@@ -165,6 +174,7 @@ public class WorldReader {
             }
         } else {
             IBlockState state;
+            // Try to create the block state with as many properties as applicable
             try {
                 state = Block.getBlockFromName(material).getDefaultState().withProperty(FACING, facing).withProperty(OPEN, open).withProperty(POWERED, powered);
             } catch (Exception e) {
