@@ -143,10 +143,10 @@ public class WorldReader {
      * are handled automagically :)
      *
      * @param material - The material of the block
-     * @param pos - Where to place the block
-     * @param facing - Which way is the block facing
-     * @param powered - Is the block powered?
-     * @param open - Is the block open? Only applicable for doors/trapdoors
+     * @param pos      - Where to place the block
+     * @param facing   - Which way is the block facing
+     * @param powered  - Is the block powered?
+     * @param open     - Is the block open? Only applicable for doors/trapdoors
      */
     private void registerState(String material,
                                BlockPos pos,
@@ -176,7 +176,7 @@ public class WorldReader {
 
                 this.blockMap.remove(
                     topPos); // For a door we need to remove and re add the
-                             // block above the current as well
+                // block above the current as well
 
                 this.blockMap.put(pos, doorBottom);
                 this.blockMap.put(topPos, doorTop);
@@ -191,35 +191,38 @@ public class WorldReader {
             // Try to create the block state with as many properties as
             // applicable
             try {
-                state = Block.getBlockFromName(material)
-                            .getDefaultState()
-                            .withProperty(FACING, facing)
-                            .withProperty(OPEN, open)
-                            .withProperty(POWERED, powered);
+                state = Block.getBlockFromName(material).getDefaultState();
+                try {
+                    state = state.withProperty(POWERED, powered);
+                }
+                catch (Exception e) {
+                    System.out.println(
+                        "DEBUG: Could not apply POWERED property to " +
+                        material);
+                }
+
+                try {
+                    state = state.withProperty(FACING, facing);
+                }
+                catch (Exception e) {
+                    System.out.println(
+                        "DEBUG: Could not apply FACING property to " +
+                        material);
+                }
+
+                try {
+                    state = state.withProperty(OPEN, open);
+                }
+                catch (Exception e) {
+                    System.out.println(
+                        "DEBUG: Could not apply OPEN property to " + material);
+                }
             }
             catch (Exception e) {
-                try {
-                    state = Block.getBlockFromName(material)
-                                .getDefaultState()
-                                .withProperty(FACING, facing)
-                                .withProperty(OPEN, open);
-                }
-                catch (Exception e2) {
-                    try {
-                        state = Block.getBlockFromName(material)
-                                    .getDefaultState()
-                                    .withProperty(FACING, facing);
-                    }
-                    catch (Exception e3) {
-                        try {
-                            state = Block.getBlockFromName(material)
-                                        .getDefaultState();
-                        }
-                        catch (Exception e4) {
-                            state = Blocks.PLANKS.getDefaultState();
-                        }
-                    }
-                }
+                state = Blocks.PLANKS.getDefaultState();
+                System.out.println(
+                    "DEBUG: Defaulting to PLANKS for unrecognized material " +
+                    material);
             }
             this.blockMap.put(pos, state);
         }
