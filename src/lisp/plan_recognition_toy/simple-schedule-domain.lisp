@@ -21,10 +21,6 @@
               (played-videogames)
               (went-to-store)
               (watched-movie)
-              (early-morning)
-              (late-morning)
-              (afternoon)
-              (evening)
             )
 
             (:action go-to-school

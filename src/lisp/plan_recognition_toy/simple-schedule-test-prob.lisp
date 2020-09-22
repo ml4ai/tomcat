@@ -4,13 +4,8 @@
        (setf *random-state* (make-random-state t)))
 
 (in-package :shop-user)
-(defparameter *day-state* '((human me)
-                            (raining)
-                            (have-homework)
-                            (work-today)))
 
-(defparameter *day* '((monday me)))
-
-(make-problem 'simple-schedule-problem *day-state* *day*)
-
-(find-plans 'simple-schedule-problem :which :all :optimize-cost nil :verbose :plans :plan-tree t)
+(loop for i in '((monday me) (tuesday me) (wednesday me) (thursday me) (friday me))
+      do (loop for j in (cl-user::powerset '((raining) (have-homework) (work-today) (need-groceries) (found-movie)))
+               do (progn (make-problem 'simple-schedule-problem (append '((human me)) j) (list i)) 
+                         (find-plans 'simple-schedule-problem :which :all :optimize-cost nil :verbose :plans :plan-tree t))))
