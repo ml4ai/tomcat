@@ -5,9 +5,9 @@
 #pragma once
 
 #include "Block.h"
+#include "Door.h"
 #include "Entity.h"
 #include "Object.h"
-#include "Door.h"
 #include <random>
 #include <vector>
 

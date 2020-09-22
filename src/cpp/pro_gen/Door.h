@@ -32,7 +32,11 @@ class Door : public Block {
      * @param powered Should the door be powered upon placement
      * @param facing Which direction the door should face
      */
-    Door(Pos& pos, bool open = false, bool powered = false, std::string name="dark_oak_door", std::string facing = "south");
+    Door(Pos& pos,
+         bool open = false,
+         bool powered = false,
+         std::string name = "dark_oak_door",
+         std::string facing = "south");
 
     /**
      * @brief Destroy the Lever object

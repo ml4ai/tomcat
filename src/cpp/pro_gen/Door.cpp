@@ -21,7 +21,7 @@ void Door::toSemanticMapJSON(json& json_base) {
     else {
         isPowered = "false";
     }
-    
+
     if (this->open) {
         isOpen = "true";
     }
