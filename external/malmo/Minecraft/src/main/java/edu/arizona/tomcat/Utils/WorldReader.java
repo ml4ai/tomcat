@@ -3,10 +3,13 @@ package edu.arizona.tomcat.Utils;
 import com.google.gson.Gson;
 import com.microsoft.Malmo.Schemas.EntityTypes;
 import edu.arizona.tomcat.World.TomcatEntity;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
+
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -41,14 +44,18 @@ public class WorldReader {
      * block to be placed is represented as the IBlockState object used
      * for the block type in its default state,
      */
-    public Map<BlockPos, IBlockState> getBlocksMap() { return this.blockMap; }
+    public Map<BlockPos, IBlockState> getBlocksMap() {
+        return this.blockMap;
+    }
 
     /**
      * Get the list of entities in the world
      *
      * @return The list of TomcatEntity objects
      */
-    public List<TomcatEntity> getEntityList() { return this.entityList; }
+    public List<TomcatEntity> getEntityList() {
+        return this.entityList;
+    }
 
     /**
      * This method is use to create the map representation of the world from the
@@ -61,14 +68,13 @@ public class WorldReader {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(filename));
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
         Gson gson = new Gson();
         Map<String, ArrayList<Map<String, String>>> blueprint =
-            gson.fromJson(reader, Map.class);
+                gson.fromJson(reader, Map.class);
 
         this.initBlockMap(blueprint.get("blocks"));
         this.initEntityMap(blueprint.get("entities"));
@@ -99,16 +105,15 @@ public class WorldReader {
                 IBlockState doorBottom = this.getBlockState("door_bottom");
 
                 BlockPos topPos =
-                    new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
+                        new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
                 IBlockState doorTop = this.getBlockState("door_top");
 
                 this.blockMap.remove(
-                    topPos); // For a door we need to remove and re add the
+                        topPos); // For a door we need to remove and re add the
                 // block above the current as well
                 this.blockMap.put(pos, doorBottom);
                 this.blockMap.put(topPos, doorTop);
-            }
-            else {
+            } else {
                 IBlockState state = getBlockState(material);
                 this.blockMap.put(pos, state);
             }
@@ -150,15 +155,13 @@ public class WorldReader {
     private TomcatEntity getTomcatEntity(int x, int y, int z, String type) {
         if (type.equals("zombie")) {
             return new TomcatEntity(
-                UUID.randomUUID(), x, y, z, EntityTypes.ZOMBIE);
-        }
-        else if (type.equals("skeleton")) {
+                    UUID.randomUUID(), x, y, z, EntityTypes.ZOMBIE);
+        } else if (type.equals("skeleton")) {
             return new TomcatEntity(
-                UUID.randomUUID(), x, y, z, EntityTypes.SKELETON);
-        }
-        else {
+                    UUID.randomUUID(), x, y, z, EntityTypes.SKELETON);
+        } else {
             return new TomcatEntity(
-                UUID.randomUUID(), x, y, z, EntityTypes.VILLAGER);
+                    UUID.randomUUID(), x, y, z, EntityTypes.VILLAGER);
         }
     }
 
@@ -167,60 +170,21 @@ public class WorldReader {
      *
      * @param material The material whose block state representation is
      *                 required.
-     * @return The block state. Only default states are returned. The default
-     * block is Quartz.
+     * @return The block state. The default block is a plank.
      */
     private IBlockState getBlockState(String material) {
-        if (material.equals("planks")) {
-            return Blocks.PLANKS.getDefaultState();
-        }
-        else if (material.equals("prismarine")) {
-            return Blocks.PRISMARINE.getDefaultState();
-        }
-        else if (material.equals("gold")) {
-            return Blocks.GOLD_BLOCK.getDefaultState();
-        }
-        else if (material.equals("door_top")) {
+        material = material.toUpperCase();
+        System.out.println("------------------------> " + material);
+        if (material.equals("DOOR_TOP")) {
             return Blocks.DARK_OAK_DOOR.getStateFromMeta(9);
-        }
-        else if (material.equals("door_bottom")) {
+        } else if (material.equals("DOOR_BOTTOM")) {
             return Blocks.DARK_OAK_DOOR.getStateFromMeta(0);
-        }
-        else if (material.equals("lava")) {
-            return Blocks.LAVA.getDefaultState();
-        }
-        else if (material.equals("water")) {
-            return Blocks.WATER.getDefaultState();
-        }
-        else if (material.equals("grass")) {
-            return Blocks.GRASS.getDefaultState();
-        }
-        else if (material.equals("sand")) {
-            return Blocks.SAND.getDefaultState();
-        }
-        else if (material.equals("cobblestone")) {
-            return Blocks.COBBLESTONE.getDefaultState();
-        }
-        else if (material.equals("fence")) {
-            return Blocks.NETHER_BRICK_FENCE.getDefaultState();
-        }
-        else if (material.equals("lever")) {
-            return Blocks.LEVER.getDefaultState();
-        }
-        else if (material.equals("glowstone")) {
-            return Blocks.GLOWSTONE.getDefaultState();
-        }
-        else if (material.equals("air")) {
-            return Blocks.AIR.getDefaultState();
-        }
-        else if (material.equals("gravel")) {
-            return Blocks.GRAVEL.getDefaultState();
-        }
-        else if (material.equals("waterlily")) {
-            return Blocks.WATERLILY.getDefaultState();
-        }
-        else {
-            return Blocks.QUARTZ_BLOCK.getDefaultState(); // For unknown block
+        } else {
+            try {
+                return Block.getBlockFromName(material).getDefaultState();
+            } catch (Exception e){
+                return Blocks.PLANKS.getDefaultState();
+            }
         }
     }
 }
