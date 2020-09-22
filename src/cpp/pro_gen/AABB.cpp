@@ -298,10 +298,12 @@ void AABB::generateAllDoorsInAABB() {
     leftEdgeMid.shiftY(1);
     rightEdgeMid.shiftY(1);
 
-    this->addBlock(*(new Block("dark_oak_door", topEdgeMid)));
-    this->addBlock(*(new Block("dark_oak_door", bottomEdgeMid)));
-    this->addBlock(*(new Block("dark_oak_door", leftEdgeMid)));
-    this->addBlock(*(new Block("dark_oak_door", rightEdgeMid)));
+    this->addBlock(*(new Door(topEdgeMid, false, false)));
+    this->addBlock(*(new Door(bottomEdgeMid, false, false)));
+    this->addBlock(
+        *(new Door(leftEdgeMid, false, false, "dark_oak_door", "east")));
+    this->addBlock(
+        *(new Door(rightEdgeMid, false, false, "dark_oak_door", "east")));
 }
 
 AABB::~AABB() {}
