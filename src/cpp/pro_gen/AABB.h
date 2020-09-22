@@ -5,6 +5,8 @@
 #pragma once
 
 #include "Block.h"
+#include "Entity.h"
+#include "Object.h"
 #include <random>
 #include <vector>
 
@@ -14,8 +16,8 @@
  */
 class AABB {
 
-  private:
-    int id;
+  protected:
+    std::string id;
     std::string material;
     std::string type;
     Pos topLeft;
@@ -23,6 +25,8 @@ class AABB {
     bool isHollow;
     bool hasRoof;
     std::vector<Block*> blockList;
+    std::vector<Entity*> entityList;
+    std::vector<Object*> objectList;
 
   public:
     /**
@@ -30,7 +34,7 @@ class AABB {
      *
      * @return int The id
      */
-    int getID();
+    std::string getID();
 
     /**
      * @brief Get the AABB's material
@@ -65,9 +69,23 @@ class AABB {
     /**
      * @brief Get the block list specific to this AABB
      *
-     * @return vector<Block*>& The reference to the block list
+     * @return The reference to the block list
      */
     std::vector<Block*>& getBlockList();
+
+    /**
+     * @brief Get the entity list specific to this AABB
+     *
+     * @return The reference to the entity list
+     */
+    std::vector<Entity*>& getEntityList();
+
+    /**
+     * @brief Get the object list specific to this AABB
+     *
+     * @return The reference to the object list
+     */
+    std::vector<Object*>& getObjectList();
 
     /**
      * @brief Get the midpoint X value calculated between
@@ -94,26 +112,51 @@ class AABB {
     int getMidpointZ();
 
     /**
-     * @brief Gets a random position in the AABB such that
-     * the y coordinate of the returned value is set to
-     * the top left y value which is considered the base
+     * @brief Get the difference of the extreme x coordinates for this AABB
      *
-     * @param gen The boost generation object to generate the distributions
-     * @param offsetPosX How far away from the left wall should the position be.
-     * Defaults to 1
-     * @param offsetNegX How far away from the right wall should the position
-     * be. Defaults to 1
-     * @param offsetPosZ How far away from the bottom wall should the position
-     * be. Defaults to 1
-     * @param offsetNegZ How far away from the top wall should the position be.
-     * Defaults to 1
-     * @return Pos
+     * @return int The difference
      */
-    Pos virtual getRandomPosAtBase(std::mt19937_64& gen,
-                                   int offsetPosX = 1,
-                                   int offsetNegX = 1,
-                                   int offsetPosZ = 1,
-                                   int offsetNegZ = 1);
+    int getSizeX();
+
+    /**
+     * @brief Get the difference of the extreme y coordinates for this AABB
+     *
+     * @return int The difference
+     */
+    int getSizeY();
+
+    /**
+     * @brief Get the difference of the extreme z coordinates for this AABB
+     *
+     * @return int The difference
+     */
+    int getSizeZ();
+
+    /**
+     * @brief Get a random position in the AABB within the given offsets
+     *
+     * @param gen THe boost generation object to generate distributions from
+     * @param offsetPosX How far away from the left wall should the position be.
+     * Defaults to 0
+     * @param offsetNegX How far away from the right wall should the position
+     * be. Defaults to 0
+     * @param offsetPosY How far away from the left wall should the position be.
+     * Defaults to 0
+     * @param offsetNegY How far away from the right wall should the position
+     * be. Defaults to 0
+     * @param offsetPosZ How far away from the bottom wall should the position
+     * be. Defaults to 0
+     * @param offsetNegZ How far away from the top wall should the position be.
+     * Defaults to 0
+     * @return Pos The random position
+     */
+    Pos virtual getRandomPos(std::mt19937_64& gen,
+                             int offsetPosX = 0,
+                             int offsetNegX = 0,
+                             int offsetPosY = 0,
+                             int offsetNegY = 0,
+                             int offsetPosZ = 0,
+                             int offsetNegZ = 0);
 
     /**
      * @brief Get a list of the positions of the edge midpoints for this AABB.
@@ -140,6 +183,13 @@ class AABB {
     void setBottomRight(Pos& bottomRight);
 
     /**
+     * @brief Set the base building material
+     *
+     * @param material  The base material
+     */
+    void setMaterial(std::string material);
+
+    /**
      * @brief Add a specific block for this AABB to keep track of. Ideally this
      * should be related to the AABB. No checks are implicitly performed within
      * this method.
@@ -147,6 +197,24 @@ class AABB {
      * @param block Block to be added
      */
     void addBlock(Block& block);
+
+    /**
+     * @brief Add a specific entity for this AABB to keep track of. Ideally this
+     * should be related to the AABB. No checks are implicitly performed within
+     * this method.
+     *
+     * @param entity Entity to be added
+     */
+    void addEntity(Entity& entity);
+
+    /**
+     * @brief Add a specific object for this AABB to keep track of. Ideally this
+     * should be related to the AABB. No checks are implicitly performed within
+     * this method.
+     *
+     * @param object Object to be added
+     */
+    void addObject(Object& object);
 
     /**
      * @brief Checks to see if two AABBs overlapp on any of the axes
@@ -174,7 +242,6 @@ class AABB {
      * be. Defaults to 0
      * @param offsetNegZ How far away from the top wall should the position be.
      * Defaults to 0
-     * @param type The semantic name to give the block. Defaults to "normal".
      */
     void virtual generateBox(std::string material,
                              int offsetPosX = 0,
@@ -182,15 +249,14 @@ class AABB {
                              int offsetPosY = 0,
                              int offsetNegY = 0,
                              int offsetPosZ = 0,
-                             int offsetNegZ = 0,
-                             std::string type = "normal");
+                             int offsetNegZ = 0);
 
     /**
      * @brief Add n random blocks of the given type and material inside the AABB
      * within the offset parameters
      *
      * @param n The number of blocks to add
-     * @param material The block'smaterial type
+     * @param material The block's material type
      * @param gen THe boost generation object to generate distributions from
      * @param offsetPosX How far away from the left wall should the position be.
      * Defaults to 0
@@ -204,9 +270,7 @@ class AABB {
      * be. Defaults to 0
      * @param offsetNegZ How far away from the top wall should the position be.
      * Defaults to 0
-     * @param type The semantic name to give this block. Defaults to "normal".
      */
-
     void virtual addRandomBlocks(int n,
                                  std::string material,
                                  std::mt19937_64& gen,
@@ -215,24 +279,28 @@ class AABB {
                                  int offsetPosY = 0,
                                  int offsetNegY = 0,
                                  int offsetPosZ = 0,
-                                 int offsetNegZ = 0,
-                                 std::string type = "normal");
+                                 int offsetNegZ = 0);
 
     /**
-     * @brief Generate all 4 doors for an AABB. Door blocks are added to the
-     * AABB object.
-     *
-     * @param aabb The AABB for which doors are to be generated.
+     * @brief Generate 4 doors for the AABB at the midpoint.
      */
     void virtual generateAllDoorsInAABB();
 
     /**
-     * @brief Gets a string representation of the various
-     * fields and values stores in an instance as a TSV.
+     * @brief Adds the JSON representation of this object to the
+     *        "locations" list of the base json
      *
-     * @return string The TSV representation
+     * @return nlohmann::json The base json
      */
-    std::string virtual toTSV();
+    void virtual toSemanticMapJSON(nlohmann::json& json_base);
+
+    /**
+     * @brief Adds the alternate block by block JSON representation of this
+     * object to the "blocks" list of the base json.
+     *
+     * @return nlohmann::json The base json
+     */
+    void virtual toLowLevelMapJSON(nlohmann::json& json_base);
 
     /**
      * @brief Construct a new AABB object
@@ -250,7 +318,7 @@ class AABB {
      * @param hasRoof specify wether the AABB should have a roof or not.
      * Defaults to false.
      */
-    AABB(int id,
+    AABB(std::string id,
          std::string type,
          std::string material,
          Pos& topLeft,

@@ -3,8 +3,9 @@
  * implemented as part of the Pos class
  */
 #pragma once
-#include <string>
 
+#include <nlohmann/json.hpp>
+#include <string>
 /**
  * @brief This class represents a 3D coordinate
  */
@@ -80,12 +81,12 @@ class Pos {
     void shiftZ(int shift);
 
     /**
-     * @brief Gets a string representation of the various
-     * fields and values stores in an instance as a TSV
+     * @brief Gets the JSON representation of the various
+     * fields and values stored in an instance
      *
-     * @return string The TSV representation
+     * @return nlohmann::json The JSON representation
      */
-    std::string toTSV();
+    nlohmann::json virtual toSemanticMapJSON();
 
     /**
      * @brief Construct a new Pos object

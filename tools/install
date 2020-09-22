@@ -20,6 +20,8 @@ if ! "$TOMCAT"/tools/download/openjdk8; then
     exit 1
 fi
 
+set_java_home
+
 __build_tomcat() {
     pushd "${TOMCAT}"
         echo "Building ToMCAT in `pwd`"

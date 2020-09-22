@@ -4,8 +4,9 @@
  */
 #include "AABB.h"
 using namespace std;
+using json = nlohmann::json;
 
-AABB::AABB(int id,
+AABB::AABB(string id,
            string type,
            string material,
            Pos& topLeft,
@@ -15,7 +16,7 @@ AABB::AABB(int id,
     : id{id}, type{type}, material{material}, topLeft{topLeft},
       bottomRight{bottomRight}, isHollow{isHollow}, hasRoof{hasRoof} {}
 
-int AABB::getID() { return this->id; }
+string AABB::getID() { return this->id; }
 
 string AABB::getMaterial() { return this->material; }
 
@@ -26,6 +27,10 @@ Pos AABB::getTopLeft() { return this->topLeft; }
 Pos AABB::getBottomRight() { return this->bottomRight; }
 
 vector<Block*>& AABB::getBlockList() { return (this->blockList); }
+
+vector<Entity*>& AABB::getEntityList() { return this->entityList; }
+
+vector<Object*>& AABB::getObjectList() { return this->objectList; }
 
 int AABB::getMidpointX() {
     int mid_x = ((this->topLeft).getX() +
@@ -45,26 +50,43 @@ int AABB::getMidpointZ() {
     return mid_z;
 }
 
-Pos AABB::getRandomPosAtBase(mt19937_64& gen,
-                             int offsetPosX,
-                             int offsetNegX,
-                             int offsetPosZ,
-                             int offsetNegZ) {
+int AABB::getSizeX() {
+    return (this->bottomRight.getX() - this->topLeft.getX());
+}
+
+int AABB::getSizeY() {
+    return (this->bottomRight.getY() - this->topLeft.getY());
+}
+
+int AABB::getSizeZ() {
+    return (this->bottomRight.getY() - this->topLeft.getY());
+}
+
+Pos AABB::getRandomPos(mt19937_64& gen,
+                       int offsetPosX,
+                       int offsetNegX,
+                       int offsetPosY,
+                       int offsetNegY,
+                       int offsetPosZ,
+                       int offsetNegZ) {
 
     int startX = (this->topLeft).getX() + offsetPosX;
+    int startY = (this->topLeft).getY() + offsetPosY;
     int startZ = (this->topLeft).getZ() + offsetPosZ;
 
     int endX = (this->bottomRight).getX() - offsetNegX;
+    int endY = (this->bottomRight).getY() - offsetNegY;
     int endZ = (this->bottomRight).getZ() - offsetNegZ;
 
     uniform_int_distribution<> randXGen(startX, endX);
+    uniform_int_distribution<> randYGen(startY, endY);
     uniform_int_distribution<> randZGen(startZ, endZ);
 
     int randX = randXGen(gen);
+    int randY = randYGen(gen);
     int randZ = randZGen(gen);
 
-    int base = (this->topLeft).getY();
-    Pos pos(randX, base, randZ);
+    Pos pos(randX, randY, randZ);
 
     return pos;
 }
@@ -103,7 +125,13 @@ void AABB::setTopLeft(Pos& topLeft) { this->topLeft = topLeft; }
 
 void AABB::setBottomRight(Pos& bottomRight) { this->bottomRight = bottomRight; }
 
+void AABB::setMaterial(string material) { this->material = material; };
+
 void AABB::addBlock(Block& block) { (this->blockList).push_back(&block); }
+
+void AABB::addEntity(Entity& entity) { this->entityList.push_back(&entity); }
+
+void AABB::addObject(Object& object) { this->objectList.push_back(&object); }
 
 bool AABB::isOverlapping(AABB& other) {
     int xRange = (this->bottomRight.getX()) - (this->topLeft.getX());
@@ -127,8 +155,7 @@ void AABB::generateBox(string material,
                        int offsetPosY,
                        int offsetNegY,
                        int offsetPosZ,
-                       int offsetNegZ,
-                       string type) {
+                       int offsetNegZ) {
 
     int startX = this->getTopLeft().getX() + offsetPosX;
     int startY = this->getTopLeft().getY() + offsetPosY;
@@ -142,7 +169,7 @@ void AABB::generateBox(string material,
         for (int y = startY; y <= endY; y++) {
             for (int z = startZ; z <= endZ; z++) {
                 Pos pos(x, y, z);
-                this->addBlock(*(new Block(material, pos, type)));
+                this->addBlock(*(new Block(material, pos)));
             }
         }
     }
@@ -156,8 +183,7 @@ void AABB::addRandomBlocks(int n,
                            int offsetPosY,
                            int offsetNegY,
                            int offsetPosZ,
-                           int offsetNegZ,
-                           string type) {
+                           int offsetNegZ) {
 
     int startX = this->getTopLeft().getX() + offsetPosX;
     int startY = this->getTopLeft().getY() + offsetPosY;
@@ -176,14 +202,41 @@ void AABB::addRandomBlocks(int n,
         int y = randY(gen);
         int z = randZ(gen);
         Pos pos(x, y, z);
-        this->addBlock(*(new Block(material, pos, type)));
+        this->addBlock(*(new Block(material, pos)));
         n--;
     }
 }
 
-string AABB::toTSV() {
+void AABB::toSemanticMapJSON(json& json_base) {
+    json aabb_json;
 
-    string retval = "";
+    vector<json> coordinates_list;
+    coordinates_list.push_back(this->topLeft.toSemanticMapJSON());
+    coordinates_list.push_back(this->bottomRight.toSemanticMapJSON());
+
+    aabb_json["bounds"] = {{"type", "cuboid"},
+                           {"coordinates", coordinates_list}};
+
+    aabb_json["id"] = this->getID();
+    aabb_json["material"] = this->getMaterial();
+
+    json_base["locations"].push_back(aabb_json);
+
+    for (auto& blockPtr : this->getBlockList()) {
+        (*blockPtr).toSemanticMapJSON(json_base);
+    }
+
+    for (auto& entityPtr : this->getEntityList()) {
+        (*entityPtr).toSemanticMapJSON(json_base);
+    }
+
+    for (auto& objectPtr : this->getObjectList()) {
+        (*objectPtr).toSemanticMapJSON(json_base);
+    }
+}
+
+void AABB::toLowLevelMapJSON(json& json_base) {
+
     for (int x = (this->topLeft).getX(); x <= (this->bottomRight).getX(); x++) {
         for (int y = (this->topLeft).getY(); y <= (this->bottomRight).getY();
              y++) {
@@ -211,23 +264,28 @@ string AABB::toTSV() {
                 }
 
                 if (addCurrent) {
-                    retval += to_string(x) + "\t" + to_string(y) + "\t" +
-                              to_string(z) + "\t" + (this->material) + "\n";
+                    Pos thisPos(x, y, z);
+                    Block thisBlock(this->material, thisPos);
+                    thisBlock.toLowLevelMapJSON(json_base);
                 }
             }
         }
     }
 
-    for (auto& block : (this->blockList)) {
-        retval += (*block).toTSV() + "\n";
+    for (auto& blockPtr : this->getBlockList()) {
+        (*blockPtr).toLowLevelMapJSON(json_base);
     }
 
-    return retval;
+    for (auto& entityPtr : this->getEntityList()) {
+        (*entityPtr).toLowLevelMapJSON(json_base);
+    }
+
+    for (auto& objectPtr : this->getObjectList()) {
+        (*objectPtr).toLowLevelMapJSON(json_base);
+    }
 }
 
 void AABB::generateAllDoorsInAABB() {
-    // Get edge midpoints for the AABB because that is where the doors will
-    // be placed
     vector<Pos> edges = this->getEdgeMidpointAtBase();
     Pos topEdgeMid(edges.at(0));
     Pos rightEdgeMid(edges.at(1));
@@ -240,7 +298,6 @@ void AABB::generateAllDoorsInAABB() {
     leftEdgeMid.shiftY(1);
     rightEdgeMid.shiftY(1);
 
-    // Add it to the AABB's doors
     this->addBlock(*(new Block("door", topEdgeMid)));
     this->addBlock(*(new Block("door", bottomEdgeMid)));
     this->addBlock(*(new Block("door", leftEdgeMid)));

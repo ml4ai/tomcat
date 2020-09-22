@@ -1,10 +1,12 @@
 package edu.arizona.tomcat.Utils;
 
-import java.io.File;
+import com.google.gson.Gson;
+import com.microsoft.Malmo.Schemas.EntityTypes;
+import edu.arizona.tomcat.World.TomcatEntity;
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.io.FileReader;
+import java.util.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -15,7 +17,8 @@ import net.minecraft.util.math.BlockPos;
  * coordinates.
  */
 public class WorldReader {
-    private Map<BlockPos, IBlockState> map;
+    private Map<BlockPos, IBlockState> blockMap;
+    private List<TomcatEntity> entityList;
 
     /**
      * Constructor for this object. The instance creates the hash map at the
@@ -25,8 +28,9 @@ public class WorldReader {
      */
     public WorldReader(String filename) {
 
-        this.map = new LinkedHashMap<BlockPos, IBlockState>();
-        this.initMap(filename);
+        this.blockMap = new LinkedHashMap<BlockPos, IBlockState>();
+        this.entityList = new ArrayList<TomcatEntity>();
+        this.initMaps(filename);
     }
 
     /**
@@ -34,63 +38,127 @@ public class WorldReader {
      * in the world read from file.
      *
      * @return The map of coordinates and the block at those coordinates. The
-     *     block to be placed is represented as the IBlockState object used
+     * block to be placed is represented as the IBlockState object used
      * for the block type in its default state,
      */
-    public Map<BlockPos, IBlockState> getMap() { return this.map; }
+    public Map<BlockPos, IBlockState> getBlocksMap() { return this.blockMap; }
+
+    /**
+     * Get the list of entities in the world
+     *
+     * @return The list of TomcatEntity objects
+     */
+    public List<TomcatEntity> getEntityList() { return this.entityList; }
 
     /**
      * This method is use to create the map representation of the world from the
-     * TSV file.
+     * alternate JSON file.
      *
-     * @param filename The TSV file. Must be in Minecraft/run/
+     * @param filename The alternate JSON file. Must be in Minecraft/run/
      */
-    private void initMap(String filename) {
+    private void initMaps(String filename) {
 
-        // Read file
-        Scanner file = null;
-
+        BufferedReader reader = null;
         try {
-            file = new Scanner((new File(filename)));
+            reader = new BufferedReader(new FileReader(filename));
         }
         catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
-        // Use file
-        while (file.hasNextLine()) {
-            String line = file.nextLine();
-            String[] blockEntry = line.split("\t");
+        Gson gson = new Gson();
+        Map<String, ArrayList<Map<String, String>>> blueprint =
+            gson.fromJson(reader, Map.class);
 
-            int x = Integer.parseInt(blockEntry[0]);
-            int y = Integer.parseInt(blockEntry[1]);
-            int z = Integer.parseInt(blockEntry[2]);
+        this.initBlockMap(blueprint.get("blocks"));
+        this.initEntityMap(blueprint.get("entities"));
+    }
+
+    /**
+     * Initializes the blockMap from the given list of blocks
+     *
+     * @param blockList List of blocks extracted from the alternate JSON
+     */
+    private void initBlockMap(ArrayList<Map<String, String>> blockList) {
+        for (Map<String, String> block : blockList) {
+
+            String material = block.get("material");
+            String x_string = block.get("x");
+            String y_string = block.get("y");
+            String z_string = block.get("z");
+
+            int x = Integer.parseInt(x_string);
+            int y = Integer.parseInt(y_string);
+            int z = Integer.parseInt(z_string);
             BlockPos pos = new BlockPos(x, y, z);
 
-            if (this.map.containsKey(pos)) {
-                this.map.remove(pos);
-            } // When duplicate coordinates are encountered we remove and re-add
-              // so iteration order is correct
+            this.blockMap.remove(pos);
 
-            String material = blockEntry[3];
             if (material.equals("door")) {
-                // Doors are special adn we need to place a bottom and top half
+                // Doors are special and we need to place a bottom and top half
                 IBlockState doorBottom = this.getBlockState("door_bottom");
 
                 BlockPos topPos =
                     new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
                 IBlockState doorTop = this.getBlockState("door_top");
 
-                this.map.remove(
+                this.blockMap.remove(
                     topPos); // For a door we need to remove and re add the
-                             // block above the current as well
-                this.map.put(pos, doorBottom);
-                this.map.put(topPos, doorTop);
+                // block above the current as well
+                this.blockMap.put(pos, doorBottom);
+                this.blockMap.put(topPos, doorTop);
             }
             else {
                 IBlockState state = getBlockState(material);
-                this.map.put(pos, state);
+                this.blockMap.put(pos, state);
             }
+        }
+    }
+
+    /**
+     * Initializes the entityMap from the given list of entities
+     *
+     * @param entityList List of entities extracted from the alternate JSON
+     */
+    private void initEntityMap(ArrayList<Map<String, String>> entityList) {
+        for (Map<String, String> entity : entityList) {
+
+            String x_string = entity.get("x");
+            String y_string = entity.get("y");
+            String z_string = entity.get("z");
+            String type = entity.get("mob_type");
+
+            int x = Integer.parseInt(x_string);
+            int y = Integer.parseInt(y_string);
+            int z = Integer.parseInt(z_string);
+
+            TomcatEntity thisEntity = this.getTomcatEntity(x, y, z, type);
+            this.entityList.add(thisEntity);
+        }
+    }
+
+    /**
+     * Get the right TomcatEntity based on the type given. The UUID assigned is
+     * random and the entity is placed at the given coordinates
+     *
+     * @param x    X coordinate of entity
+     * @param y    Y coordinate of entity
+     * @param z    Z coordinate of entity
+     * @param type The type of entity
+     * @return The generated TomcatEntity object
+     */
+    private TomcatEntity getTomcatEntity(int x, int y, int z, String type) {
+        if (type.equals("zombie")) {
+            return new TomcatEntity(
+                UUID.randomUUID(), x, y, z, EntityTypes.ZOMBIE);
+        }
+        else if (type.equals("skeleton")) {
+            return new TomcatEntity(
+                UUID.randomUUID(), x, y, z, EntityTypes.SKELETON);
+        }
+        else {
+            return new TomcatEntity(
+                UUID.randomUUID(), x, y, z, EntityTypes.VILLAGER);
         }
     }
 
@@ -98,9 +166,9 @@ public class WorldReader {
      * Returns the block state relevant to the input string.
      *
      * @param material The material whose block state representation is
-     *     required.
+     *                 required.
      * @return The block state. Only default states are returned. The default
-     *     block is Quartz.
+     * block is Quartz.
      */
     private IBlockState getBlockState(String material) {
         if (material.equals("planks")) {
@@ -144,6 +212,12 @@ public class WorldReader {
         }
         else if (material.equals("air")) {
             return Blocks.AIR.getDefaultState();
+        }
+        else if (material.equals("gravel")) {
+            return Blocks.GRAVEL.getDefaultState();
+        }
+        else if (material.equals("waterlily")) {
+            return Blocks.WATERLILY.getDefaultState();
         }
         else {
             return Blocks.QUARTZ_BLOCK.getDefaultState(); // For unknown block
