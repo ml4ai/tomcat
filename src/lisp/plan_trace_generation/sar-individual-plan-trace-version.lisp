@@ -158,4 +158,4 @@
 
 ;; Find plans and graph the all.
 
-(find-plans 'sar-individual-problem :which :all :verbose :plans :plan-tree t)
+(print (fourth (multiple-value-list (find-plans 'sar-individual-problem :which :all :verbose :plans :plan-tree t))))

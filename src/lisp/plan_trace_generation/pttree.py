@@ -42,4 +42,19 @@ class PTTNode(dict):
             nodes = nodes + i.preorder()
         return nodes
 
+    def remove_recurse(self):
+        """This removes recursive nodes, it assumes that the nodes who have same
+        task as the root node are the recursive nodes and that they are always the
+        right most children"""
+        def remove_recurse_helper(node,key):
+            """This helps removes recursive nodes, it assumes that the nodes who have same
+            task as the root node are the recursive nodes and that they are always the
+            right most children"""
+            if node.children[-1].task == key:
+                r = node.children.pop()
+                node.children = node.children + r.children
+                node = remove_recurse_helper(node,key)
+            return node
 
+
+        return remove_recurse_helper(self,self.task)
