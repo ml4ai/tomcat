@@ -49,15 +49,25 @@ recursive tasks so that the plan trees represent the loops. The plan trace
 trees can be dumped into a JSON format.  
 
 Using the PTTree class, there is a script capable of parsing domain outputs and
-creating a list of plan trees and dumping the list into a JSON file.
+creating a list of plan trees and dumping the list into a JSON file. This script is 
+found in the `plan_trace_generation`.
 
-This script is found in the `plan_trace_generation` and is called by doing,
+The first step is to generate domain output in a text file. The planning domain
+must have specific objects traced and have the find plans function set to
+produce plan trees. See the top of `simple-sar-domain.lisp` where the shop
+trace is called and the bottom of the file where the find plans function is
+called. Here is an example of producing domain output from an appropriate
+domain,
+
+`sbcl --load simple-sar-domain.lisp --quit > simple-sar-plans.txt`
+
+After the parser can be ran on the txt file produced,
 
 `python plan_trace_parser.py <domain definition file>.lisp <name of output file>.json`
 
 Ex:
 
-`python plan_trace_parser.py simple-sar-domain.lisp simple-sar-plan-trees.json`
+`python plan_trace_parser.py simple-sar-domain.txt simple-sar-plan-trees.json`
 
 Message Conversion Code
 -----------------------
