@@ -58,3 +58,10 @@ class PTTNode(dict):
 
 
         return remove_recurse_helper(self,self.task)
+
+    def getleafNodes(self):
+        leafs = []
+        for i in self.preorder():
+            if not i.children:
+                leafs.append(i)
+        return leafs
