@@ -91,7 +91,12 @@ namespace LandmarkDetector {
     // camera at origin (0,0,0) The format returned is [Tx, Ty, Tz, Eul_x,
     // Eul_y, Eul_z]
     cv::Vec6f
-    GetPose(const CLNF& clnf_model, float fx, float fy, float cx, float cy);
+    GetPose(const CLNF& clnf_model, /**< CLNF model */
+            float fx,               /**< x-axis focal length of the camera */
+            float fy,               /**< y-axis focal length of the camera */
+            float cx,               /**< x-axis optical center of the camera */
+            float cy                /**< y-axis optical center of the camera */
+            );
 
     // Return the current estimate of the head pose in world coordinates with
     // camera at origin (0,0,0), but with rotation representing if the head is
