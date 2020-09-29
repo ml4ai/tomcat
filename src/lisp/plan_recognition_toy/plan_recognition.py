@@ -26,6 +26,8 @@ def likelihood(obs, given, plans):
         if i.task == given:
             total = total + 1
             leafSeq = i.getleafNodes()[:len(obs)]
+            if len(obs) > len(leafSeq):
+                continue
             for i in range(len(obs)):
                 if state_match(leafSeq[i].state,obs[i][0]) and leafSeq[i].task == obs[i][1]:
                     match = True
