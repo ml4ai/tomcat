@@ -7,6 +7,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # External dependencies
 
+# fmt is an open-source C++ formatting library
+find_package(FMT REQUIRED)
+
 # Eigen is a C++ library used for matrix and vector operations.
 find_package(Eigen3 REQUIRED NO_MODULE)
 
@@ -94,7 +97,7 @@ add_library(
   pgm/inference/FactorGraph.h)
 
 target_include_directories(tomcat_model_lib PRIVATE
-    "${CMAKE_CURRENT_SOURCE_DIR}/../" ${Boost_INCLUDE_DIR})
+    "${CMAKE_CURRENT_SOURCE_DIR}/../" ${Boost_INCLUDE_DIR} ${GSL_INCLUDE_DIRS})
 
 # Todo make code coverage work on Linux as well.
 if(APPLE
