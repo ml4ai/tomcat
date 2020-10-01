@@ -97,7 +97,7 @@ add_library(
   pgm/inference/FactorGraph.h)
 
 target_include_directories(tomcat_model_lib PRIVATE
-    "${CMAKE_CURRENT_SOURCE_DIR}/../" ${Boost_INCLUDE_DIR})
+    "${CMAKE_CURRENT_SOURCE_DIR}/../" ${Boost_INCLUDE_DIR} ${GSL_INCLUDE_DIRS})
 
 # Todo make code coverage work on Linux as well.
 if(APPLE
