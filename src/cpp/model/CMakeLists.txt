@@ -7,6 +7,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # External dependencies
 
+# fmt is an open-source C++ formatting library
+find_package(FMT REQUIRED)
+
 # Eigen is a C++ library used for matrix and vector operations.
 find_package(Eigen3 REQUIRED NO_MODULE)
 
