@@ -57,7 +57,7 @@ Functions
 
 - :ref:`exhale_function_EigenExtensions_8cpp_1a59006fb01646954fe0d2f71241913d26`
 
-- :ref:`exhale_function_EigenExtensions_8cpp_1a6120b0f4fec91aaa18cdcf3e32fd6bbd`
-
 - :ref:`exhale_function_EigenExtensions_8cpp_1a5226bf832dea3820bc823aafbb1d84b2`
+
+- :ref:`exhale_function_EigenExtensions_8cpp_1a6120b0f4fec91aaa18cdcf3e32fd6bbd`
 
