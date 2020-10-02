@@ -48,7 +48,7 @@ void execute_experiment_1a() {
     tomcat.init();
 
     // Data
-    string data_dir = fmt::format("{}/ta3/falcon/converter", DATA_ROOT_DIR);
+    string data_dir = fmt::format("{}/ta3/falcon/engineering", DATA_ROOT_DIR);
     EvidenceSet data(data_dir);
 
     // Data split
@@ -640,9 +640,9 @@ void execute_experiment_2a() {
     tomcat.init();
 
     // Data
-    string data_dir = fmt::format("{}/ta3/falcon/engineering", DATA_ROOT_DIR);
+    string data_dir = fmt::format("{}/ta3/falcon/converter/train", DATA_ROOT_DIR);
     EvidenceSet training_data(data_dir);
-    data_dir = fmt::format("{}/ta3/falcon/human", DATA_ROOT_DIR);
+    data_dir = fmt::format("{}/ta3/falcon/converter/test", DATA_ROOT_DIR);
     EvidenceSet test_data(data_dir);
 
     // Data split
@@ -650,23 +650,51 @@ void execute_experiment_2a() {
         make_shared<KFold>(training_data, test_data);
 
     // Training
-    int burn_in = 1;
-    int num_samples = 1;
-    shared_ptr<DBNSamplingTrainer> trainer =
-        make_shared<DBNSamplingTrainer>(DBNSamplingTrainer(
-            gen,
-            make_shared<GibbsSampler>(tomcat.get_model(), burn_in),
-            num_samples));
+//    int burn_in = 100;
+//    int num_samples = 500;
+//    shared_ptr<DBNSamplingTrainer> trainer =
+//        make_shared<DBNSamplingTrainer>(DBNSamplingTrainer(
+//            gen,
+//            make_shared<GibbsSampler>(tomcat.get_model(), burn_in),
+//            num_samples));
+    string model_dir = fmt::format(
+        "{}/model/ta3/experiment_2a", OUTPUT_ROOT_DIR);
+    shared_ptr<DBNTrainer> loader =
+        make_shared<DBNLoader>(DBNLoader(tomcat.get_model(), model_dir));
+    loader->fit({});
 
     // Saving
-    string model_dir =
-        fmt::format("{}/model/ta3/experiment_2a/", OUTPUT_ROOT_DIR);
-    shared_ptr<DBNSaver> saver =
-        make_shared<DBNSaver>(DBNSaver(tomcat.get_model(), model_dir));
+//    string model_dir =
+//        fmt::format("{}/model/ta3/experiment_2a/", OUTPUT_ROOT_DIR);
+//    shared_ptr<DBNSaver> saver =
+//        make_shared<DBNSaver>(DBNSaver(tomcat.get_model(), model_dir));
 
     // Estimation and evaluation
     shared_ptr<OfflineEstimation> offline_estimation =
         make_shared<OfflineEstimation>();
+
+    shared_ptr<EvaluationAggregator> aggregator =
+        make_shared<EvaluationAggregator>(
+            EvaluationAggregator::METHOD::no_aggregation);
+
+    vector<int> horizons = {1};//, 3, 5, 10, 15, 30};
+    for (int horizon : horizons) {
+        shared_ptr<Estimator> estimator =
+            make_shared<SumProductEstimator>(tomcat.get_model(), horizon);
+        estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
+        estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
+        offline_estimation->add_estimator(estimator);
+        aggregator->add_measure(make_shared<Estimates>(estimator));
+    }
+
+    shared_ptr<Estimator> estimator =
+        make_shared<SumProductEstimator>(tomcat.get_model(), 0);
+    estimator->add_node(TomcatTA3V2::Q, Eigen::VectorXd::Constant(1, 0));
+    estimator->add_node(TomcatTA3V2::Q, Eigen::VectorXd::Constant(1, 1));
+    estimator->add_node(TomcatTA3V2::Q, Eigen::VectorXd::Constant(1, 2));
+    estimator->add_node(TomcatTA3V2::Q, Eigen::VectorXd::Constant(1, 3));
+    offline_estimation->add_estimator(estimator);
+    aggregator->add_measure(make_shared<Estimates>(estimator));
 
     ofstream output_file;
     string filepath = fmt::format(
@@ -674,9 +702,11 @@ void execute_experiment_2a() {
     output_file.open(filepath);
     Pipeline pipeline("experiment_2a", output_file);
     pipeline.set_data_splitter(data_splitter);
-    pipeline.set_model_trainer(trainer);
-    pipeline.set_model_saver(saver);
+    pipeline.set_model_trainer(loader);
+//    pipeline.set_model_trainer(trainer);
+//    pipeline.set_model_saver(saver);
     pipeline.set_estimation_process(offline_estimation);
+    pipeline.set_aggregator(aggregator);
     pipeline.execute();
 }
 
@@ -818,6 +848,11 @@ int main(int argc, char* argv[]) {
     }
 
     execute_experiment(experiment_id);
+      //execute_experiment_2a();
+
+//    TomcatTA3V2 tomcat;
+//    tomcat.init();
+//    tomcat.get_model()->write_graphviz(cout);
 
     //execute_experiment_1xxx();
 

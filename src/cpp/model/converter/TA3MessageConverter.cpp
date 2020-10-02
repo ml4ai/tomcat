@@ -93,8 +93,6 @@ namespace tomcat {
                     vector<nlohmann::json> messages =
                         this->get_sorted_messages_in(file.path().string());
 
-                    LOG(file.path().filename());
-
                     for (auto& message : messages) {
                         for (const auto& [node_label, value] :
                              this->convert_online(message)) {
@@ -120,18 +118,20 @@ namespace tomcat {
                                     d - 1, this->time_step) = value;
                             }
 
-                            //                            LOG(this->time_step);
-                            //                            if (this->time_step ==
-                            //                            599) {
-                            //                                LOG(observations_per_node[node_label]);
-                            //                            }
                         }
 
                         if (this->time_step > T) {
                             break;
                         }
                     }
-                    d++;
+
+                    // The mission ended before the total amount of seconds expected. Discard this mission trial
+                    // and emit a message.
+                    if (this->time_step < T) {
+                        cerr << "Early stopping in file " << file.path().filename() << endl;
+                    } else {
+                        d++;
+                    }
                     ++progress;
                     this->time_step = 0;
                     this->mission_started = false;
@@ -299,7 +299,7 @@ namespace tomcat {
             const nlohmann::json& json_message) {
 
             const string value = json_message["data"]["condition"];
-            this->last_observations_per_node[Q] = stoi(value);
+            this->last_observations_per_node[Q] = stoi(value) - 1;
         }
 
         void TA3MessageConverter::fill_beep_observation(

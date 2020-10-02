@@ -90,7 +90,8 @@ namespace tomcat {
 
         bool VariableNode::is_factor() const { return false; }
 
-        Eigen::MatrixXd VariableNode::get_marginal_at(int time_step) const {
+        Eigen::MatrixXd VariableNode::get_marginal_at(int time_step,
+                                                      bool normalized) const {
             Eigen::MatrixXd marginal;
 
             for (const auto& [incoming_node_name, incoming_message] :
@@ -103,6 +104,15 @@ namespace tomcat {
                 else {
                     marginal = marginal.array() * incoming_message.array();
                 }
+            }
+
+            if (normalized) {
+                // Outliers can result in zero vector probabilities. Adding a
+                // noise to generate a uniform distribution after normalization.
+                marginal = marginal.array() + EPSILON;
+                Eigen::VectorXd sum_per_row = marginal.rowwise().sum().array();
+                marginal =
+                    (marginal.array().colwise() / sum_per_row.array()).matrix();
             }
 
             return marginal;

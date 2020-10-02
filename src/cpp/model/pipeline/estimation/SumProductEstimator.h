@@ -126,8 +126,9 @@ namespace tomcat {
 
             /**
              * Passes messages from transition factors in a time step to the
-             * previous time step, and then passes messages forward and backwards
-             * within that time step. Repeat until the first time step.
+             * previous time step, and then passes messages forward and
+             * backwards within that time step. Repeat until the first time
+             * step.
              */
             void estimate_backward_in_time(const EvidenceSet& new_data);
 

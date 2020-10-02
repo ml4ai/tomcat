@@ -69,7 +69,7 @@ namespace tomcat {
              *
              * @param data: observed values for the observable nodes over time.
              */
-            void add_data(EvidenceSet data);
+            void add_data(const EvidenceSet& data);
 
             /**
              * Saves generated samples to files in a specific folder.

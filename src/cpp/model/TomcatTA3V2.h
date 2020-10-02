@@ -12,14 +12,16 @@ namespace tomcat {
          */
         class TomcatTA3V2 : public TomcatTA3 {
           public:
-            inline static const int NUM_TRAINING_CONDITIONS = 3;
+            inline static const int NUM_TRAINING_CONDITIONS = 4;
             inline static const int NUM_BEEP_STATES = 3;
 
             // Hidden variable labels
-            inline static const std::string THETA_Q = "Theta_Q";
-            inline static const std::string THETA_PBAE = "Theta_PBAE";
+            inline static const std::string THETA_Q_PRIOR = "Theta_Q_Prior";
+            inline static const std::string THETA_PBAE_PRIOR = "Theta_PBAE_Prior";
+            inline static const std::string THETA_PBAE = "Theta_PBAE"; // Transition
             inline static const std::string PBAE = "PBAE";
-            inline static const std::string SG = TA3MessageConverter::BEEP;
+            inline static const std::string Q = TA3MessageConverter::Q;
+            inline static const std::string BEEP = TA3MessageConverter::BEEP;
 
             //------------------------------------------------------------------
             // Constructors & Destructor
@@ -81,18 +83,27 @@ namespace tomcat {
             create_theta_s_prior_cpds() const override;
 
             /**
-             * Creates metadata for the parameter node Theta_Q.
+             * Creates metadata for the parameter node Theta_Q_Prior.
              *
              * @return Node metadata.
              */
-            std::shared_ptr<NodeMetadata> create_theta_q_metadata() const;
+            std::shared_ptr<NodeMetadata> create_theta_q_prior_metadata() const;
 
             /**
-             * Creates metadata for the parameter node Theta_PBAE.
+             * Creates metadata for the parameter node Theta_PBAE_Prior.
              *
              * @return Node metadata.
              */
-            std::shared_ptr<NodeMetadata> create_theta_pbae_metadata() const;
+            std::shared_ptr<NodeMetadata>
+            create_theta_pbae_prior_metadata() const;
+
+            /**
+             * Creates metadatas for the parameter nodes Theta_PBAE.
+             *
+             * @return Node metadata.
+             */
+            std::vector<std::shared_ptr<NodeMetadata>>
+            create_theta_pbae_metadatas() const;
 
             /**
              * Creates metadata for the node Q.
@@ -125,11 +136,18 @@ namespace tomcat {
             std::shared_ptr<CPD> create_theta_q_prior_cpd() const;
 
             /**
-             * Creates prior distribution for the parameter node Theta_PBAE.
+             * Creates prior distribution for the parameter node Theta_PBAE_Prior.
              *
              * @return CPD
              */
-            std::shared_ptr<CPD> create_theta_pbae_prior_cpd() const;
+            std::shared_ptr<CPD> create_theta_pbae_prior_prior_cpd() const;
+
+            /**
+             * Creates prior distributions for the parameter nodes Theta_PBAE.
+             *
+             * @return CPD
+             */
+            std::vector<std::shared_ptr<CPD>> create_theta_pbae_prior_cpds() const;
 
             /**
              * Creates prior distribution for the node Q.

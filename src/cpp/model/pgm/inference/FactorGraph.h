@@ -172,11 +172,14 @@ namespace tomcat {
              *
              * @param node_label: node's label
              * @param time_step: time step of the node
+             * @param normalized: whether the multiplication of incoming
+             * messages must be normalized or not.
              *
              * @return Marginal distribution
              */
             Eigen::MatrixXd get_marginal_for(const std::string& node_label,
-                                             int time_step) const;
+                                             int time_step,
+                                             bool normalized) const;
 
             /**
              * Clears messages and beyond a given time step (not inclusive).
