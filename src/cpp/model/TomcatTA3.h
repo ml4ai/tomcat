@@ -7,10 +7,10 @@
 
 #include "Tomcat.h"
 
-#include "model/pgm/DynamicBayesNet.h"
-#include "model/pgm/NodeMetadata.h"
-#include "model/utils/Definitions.h"
-#include "model/converter/TA3MessageConverter.h"
+#include "pgm/DynamicBayesNet.h"
+#include "pgm/NodeMetadata.h"
+#include "utils/Definitions.h"
+#include "converter/TA3MessageConverter.h"
 
 namespace tomcat {
     namespace model {

@@ -8,7 +8,7 @@
 
 #include <eigen3/Eigen/Dense>
 
-#include "model/utils/Definitions.h"
+#include "utils/Definitions.h"
 
 namespace tomcat {
     namespace model {

@@ -8,7 +8,7 @@
 
 #include "MessageConverter.h"
 
-#include "model/utils/Definitions.h"
+#include "utils/Definitions.h"
 
 namespace tomcat {
     namespace model {

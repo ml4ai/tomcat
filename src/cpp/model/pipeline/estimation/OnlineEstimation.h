@@ -7,10 +7,10 @@
 
 #include "EstimationProcess.h"
 
-#include "model/converter/MessageConverter.h"
-#include "model/utils/Definitions.h"
-#include "model/utils/Mosquitto.h"
-#include "model/utils/SynchronizedQueue.h"
+#include "converter/MessageConverter.h"
+#include "utils/Definitions.h"
+#include "utils/Mosquitto.h"
+#include "utils/SynchronizedQueue.h"
 
 namespace tomcat {
     namespace model {

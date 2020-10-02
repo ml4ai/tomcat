@@ -10,10 +10,10 @@
 
 #include <boost/graph/adjacency_list.hpp>
 
-#include "model/pgm/DynamicBayesNet.h"
-#include "model/pgm/inference/FactorNode.h"
-#include "model/pgm/inference/MessageNode.h"
-#include "model/utils/Definitions.h"
+#include "pgm/DynamicBayesNet.h"
+#include "pgm/inference/FactorNode.h"
+#include "pgm/inference/MessageNode.h"
+#include "utils/Definitions.h"
 
 namespace tomcat {
     namespace model {

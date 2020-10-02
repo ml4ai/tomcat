@@ -2,8 +2,8 @@
 
 #include <memory>
 
-#include "model/utils/Definitions.h"
-#include "model/pipeline/estimation/Estimator.h"
+#include "utils/Definitions.h"
+#include "pipeline/estimation/Estimator.h"
 
 namespace tomcat {
     namespace model {

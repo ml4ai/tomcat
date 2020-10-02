@@ -2,7 +2,7 @@
 
 #include <unordered_set>
 
-#include "model/utils/Definitions.h"
+#include "utils/Definitions.h"
 
 #include "Estimator.h"
 

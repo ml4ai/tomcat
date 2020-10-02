@@ -6,7 +6,7 @@
 
 #include "TomcatTA3.h"
 #include "TomcatTA3V2.h"
-#include "model/converter/TA3MessageConverter.h"
+#include "converter/TA3MessageConverter.h"
 #include "pgm/EvidenceSet.h"
 #include "pipeline/DBNSaver.h"
 #include "pipeline/KFold.h"

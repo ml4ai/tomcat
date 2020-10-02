@@ -95,7 +95,7 @@ TomcatTA3.cpp
 TomcatTA3V2.cpp)
 
 target_include_directories(tomcat_model_lib PRIVATE
-    "${CMAKE_CURRENT_SOURCE_DIR}/../" ${Boost_INCLUDE_DIR})
+    "${CMAKE_CURRENT_SOURCE_DIR}" ${Boost_INCLUDE_DIR})
 
 # Todo make code coverage work on Linux as well.
 if(APPLE
@@ -118,7 +118,7 @@ endif()
 add_executable(TomcatModel main.cpp)
 target_include_directories(TomcatModel PRIVATE ${Boost_INCLUDE_DIR}
                                                ${Mosquitto_INCLUDE_DIRS}
-                                               "${CMAKE_CURRENT_SOURCE_DIR}/../"
+                                               "${CMAKE_CURRENT_SOURCE_DIR}"
                                                )
 target_link_libraries(
   TomcatModel

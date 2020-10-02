@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-#include "model/utils/EigenExtensions.h"
+#include "utils/EigenExtensions.h"
 
 namespace tomcat {
     namespace model {

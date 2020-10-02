@@ -1,5 +1,5 @@
-#include "model/pgm/cpd/CategoricalCPD.h"
-#include "model/pgm/ConstantNode.h"
+#include "pgm/cpd/CategoricalCPD.h"
+#include "pgm/ConstantNode.h"
 
 namespace tomcat {
     namespace model {

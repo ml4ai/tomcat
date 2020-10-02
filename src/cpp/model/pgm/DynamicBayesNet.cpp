@@ -3,8 +3,8 @@
 #include <boost/filesystem.hpp>
 #include <boost/graph/topological_sort.hpp>
 
-#include "model/pgm/ConstantNode.h"
-#include "model/utils/FileHandler.h"
+#include "pgm/ConstantNode.h"
+#include "utils/FileHandler.h"
 
 namespace tomcat {
     namespace model {

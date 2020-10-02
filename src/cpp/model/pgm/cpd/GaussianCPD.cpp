@@ -1,5 +1,5 @@
-#include "model/pgm/cpd/GaussianCPD.h"
-#include "model/pgm/ConstantNode.h"
+#include "pgm/cpd/GaussianCPD.h"
+#include "pgm/ConstantNode.h"
 
 namespace tomcat {
     namespace model {

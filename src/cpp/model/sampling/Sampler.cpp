@@ -5,7 +5,7 @@
 #include <boost/filesystem.hpp>
 #include <fmt/format.h>
 
-#include "model/utils/FileHandler.h"
+#include "utils/FileHandler.h"
 
 namespace tomcat {
     namespace model {

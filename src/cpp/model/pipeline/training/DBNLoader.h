@@ -5,8 +5,8 @@
 
 #include "DBNTrainer.h"
 
-#include "model/utils/Definitions.h"
-#include "model/pgm/DynamicBayesNet.h"
+#include "utils/Definitions.h"
+#include "pgm/DynamicBayesNet.h"
 
 namespace tomcat {
     namespace model {

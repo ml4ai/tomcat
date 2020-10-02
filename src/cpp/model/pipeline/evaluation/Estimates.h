@@ -1,7 +1,7 @@
 #pragma once
 
-#include "model/utils/Definitions.h"
-#include "model/pipeline/evaluation/Measure.h"
+#include "utils/Definitions.h"
+#include "pipeline/evaluation/Measure.h"
 
 namespace tomcat {
     namespace model {

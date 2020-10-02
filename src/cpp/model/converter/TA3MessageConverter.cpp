@@ -8,7 +8,7 @@
 #include <boost/progress.hpp>
 #include <eigen3/Eigen/Dense>
 
-#include "model/utils/FileHandler.h"
+#include "utils/FileHandler.h"
 
 using namespace std;
 namespace fs = boost::filesystem;

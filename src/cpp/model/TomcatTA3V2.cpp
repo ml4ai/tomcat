@@ -1,10 +1,10 @@
 #include "TomcatTA3V2.h"
 
-#include "model/converter/TA3MessageConverter.h"
-#include "model/pgm/NodeMetadata.h"
-#include "model/pgm/RandomVariableNode.h"
-#include "model/pgm/cpd/CategoricalCPD.h"
-#include "model/pgm/cpd/DirichletCPD.h"
+#include "converter/TA3MessageConverter.h"
+#include "pgm/NodeMetadata.h"
+#include "pgm/RandomVariableNode.h"
+#include "pgm/cpd/CategoricalCPD.h"
+#include "pgm/cpd/DirichletCPD.h"
 
 using namespace std;
 

@@ -7,7 +7,7 @@
 
 #include <boost/program_options.hpp>
 
-#include "model/converter/TA3MessageConverter.h"
+#include "converter/TA3MessageConverter.h"
 
 using namespace tomcat::model;
 using namespace std;

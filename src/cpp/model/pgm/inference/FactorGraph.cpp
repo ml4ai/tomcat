@@ -3,8 +3,8 @@
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/topological_sort.hpp>
 
-#include "model/pgm/cpd/CPD.h"
-#include "model/pgm/inference/VariableNode.h"
+#include "pgm/cpd/CPD.h"
+#include "pgm/inference/VariableNode.h"
 
 namespace tomcat {
     namespace model {
