@@ -6,9 +6,9 @@
 #include <nlohmann/json.hpp>
 
 #include "pgm/EvidenceSet.h"
+#include "pipeline/estimation/Estimator.h"
 #include "utils/Definitions.h"
 #include "utils/Tensor3.h"
-#include "pipeline/estimation/Estimator.h"
 
 namespace tomcat {
     namespace model {
@@ -48,6 +48,9 @@ namespace tomcat {
 
             Eigen::VectorXd assignment;
 
+            // If there's no fixed assignment and evaluations are raw estimates,
+            // there will be a vector of evaluations, one for each one of the
+            // possible node's assignments.
             Eigen::MatrixXd evaluation;
         };
 
@@ -76,7 +79,8 @@ namespace tomcat {
              * @param threshold: Probability threshold for predicting or
              * inferring the occurrence of an assignment as true
              */
-            Measure(std::shared_ptr<Estimator> estimator, double threshold = 0.5);
+            Measure(std::shared_ptr<Estimator> estimator,
+                    double threshold = 0.5);
 
             virtual ~Measure();
 
@@ -107,7 +111,7 @@ namespace tomcat {
             evaluate(const EvidenceSet& test_data) const = 0;
 
             /**
-             * Writes information about the splitter in a json object.
+             * Writes information about the measure in a json object.
              *
              * @param json: json object
              */
@@ -127,7 +131,13 @@ namespace tomcat {
 
             /**
              * Computes the confusion matrix between real values and estimates
-             * previously computed for a model.
+             * previously computed for a model. This assumes the estimates were
+             * computed for a fixed assignment. In that case, the problem can be
+             * reduced to a binary classification (the probability that the node
+             * assumes a given value or not). If the problem needs to compute
+             * some measure for a multiclass scenario, this needs to be
+             * implemented in one of the derived classes as it does not make
+             * sense for some measures (e.g. f1-score).
              *
              * @param estimates: estimates previously computed for the model
              * @param test_data: data with real values to compare the estimates

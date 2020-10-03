@@ -32,8 +32,7 @@ namespace tomcat {
         Accuracy::evaluate(const EvidenceSet& test_data) const {
             vector<NodeEvaluation> evaluations;
 
-            for (const auto& estimates :
-                 this->estimator->get_estimates()) {
+            for (const auto& estimates : this->estimator->get_estimates()) {
                 NodeEvaluation evaluation;
                 evaluation.label = estimates.label;
                 evaluation.assignment = estimates.assignment;

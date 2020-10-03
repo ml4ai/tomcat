@@ -33,8 +33,13 @@ namespace tomcat {
             Eigen::VectorXd assignment;
 
             // Probabilities or densities calculated for n data points over
-            // several time steps.
-            Eigen::MatrixXd estimates;
+            // several time steps. If an assignment is provided, there will be
+            // only one matrix in the vector containing the estimates for each
+            // one of the data points and time steps. If no assignment is given,
+            // there will be as many matrix estimates as the cardinality of the
+            // node. Insum, there will be estimates for each possible assignment
+            // the node can have.
+            std::vector<Eigen::MatrixXd> estimates;
         };
 
         /**
@@ -58,7 +63,8 @@ namespace tomcat {
              * @param inference_horizon: how many time steps in the future
              * estimations are going to be computed for
              */
-            Estimator(std::shared_ptr<DynamicBayesNet> model, int inference_horizon);
+            Estimator(std::shared_ptr<DynamicBayesNet> model,
+                      int inference_horizon);
 
             virtual ~Estimator();
 
@@ -113,9 +119,9 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
-            * Initializations before the computation of estimates.
-            *
-            */
+             * Initializations before the computation of estimates.
+             *
+             */
             virtual void prepare();
 
             //------------------------------------------------------------------
@@ -151,6 +157,8 @@ namespace tomcat {
             int get_inference_horizon() const;
 
             void set_training_data(const EvidenceSet& training_data);
+
+            const std::shared_ptr<DynamicBayesNet>& get_model() const;
 
           protected:
             //------------------------------------------------------------------

@@ -80,6 +80,13 @@ namespace tomcat {
              */
             virtual void reset();
 
+            /**
+             * Writes information about the estimation in a json object.
+             *
+             * @param json: json object
+             */
+            virtual void get_info(nlohmann::json& json) const;
+
             //------------------------------------------------------------------
             // Pure virtual functions
             //------------------------------------------------------------------
@@ -91,6 +98,12 @@ namespace tomcat {
              * the model
              */
             virtual void estimate(EvidenceSet test_data) = 0;
+
+            //------------------------------------------------------------------
+            // Getters & Setters
+            //------------------------------------------------------------------
+
+            void set_display_estimates(bool display_estimates);
 
           protected:
             //------------------------------------------------------------------
@@ -106,6 +119,9 @@ namespace tomcat {
             // Data members
             //------------------------------------------------------------------
             std::vector<std::shared_ptr<Estimator>> estimators;
+
+            // Whether the estimates should be displayed in the evaluation file.
+            bool display_estimates = false;
         };
 
     } // namespace model

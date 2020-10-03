@@ -52,5 +52,9 @@ namespace tomcat {
             }
         }
 
+        void OfflineEstimation::get_info(nlohmann::json& json) const {
+            json["process"] = "offline";
+        }
+
     } // namespace model
 } // namespace tomcat

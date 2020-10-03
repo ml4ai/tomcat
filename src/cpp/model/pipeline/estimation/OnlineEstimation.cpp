@@ -119,12 +119,29 @@ namespace tomcat {
                                 ' ',
                                 '_');
                         stringstream ss_topic;
-                        ss_topic << this->config.estimates_topic << "/"
-                                 << estimator_name << "/"
-                                 << node_estimates.label;
 
-                        this->publish(ss_topic.str(),
-                                      to_string(node_estimates.estimates));
+                        if (node_estimates.assignment.size() == 0) {
+                            // There will be estimates for each one of the possible node's assignments. We publish each
+                            // estimate in a different topic.
+                            for (int assignment = 0; assignment < node_estimates.estimates.size(); assignment++) {
+                                ss_topic << this->config.estimates_topic << "/"
+                                         << estimator_name << "/"
+                                         << node_estimates.label << "/"
+                                         << assignment;
+
+                                this->publish(ss_topic.str(),
+                                              to_string(node_estimates.estimates[assignment]));
+                            }
+                        } else {
+                            // Use the fixed assignment as a topic
+                            ss_topic << this->config.estimates_topic << "/"
+                                     << estimator_name << "/"
+                                     << node_estimates.label << "/"
+                                     << node_estimates.assignment;
+
+                            this->publish(ss_topic.str(),
+                                          to_string(node_estimates.estimates[0]));
+                        }
                     }
                 }
             }
@@ -149,6 +166,10 @@ namespace tomcat {
 
         void OnlineEstimation::on_time_out() {
             this->publish(this->config.log_topic, "time_out");
+        }
+
+        void OnlineEstimation::get_info(nlohmann::json& json) const {
+            json["process"] = "online";
         }
 
     } // namespace model

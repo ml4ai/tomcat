@@ -189,6 +189,15 @@ namespace tomcat {
              */
             void write_graphviz(std::ostream& output_stream) const;
 
+            /**
+             * Returns the cardinality of any node derived from a given label.
+             *
+             * @param node_label: template node's label
+             *
+             * @return Cardinality of the template node.
+             */
+            int get_cardinality_of(const std::string& node_label) const;
+
             // --------------------------------------------------------
             // Getters & Setters
             // --------------------------------------------------------

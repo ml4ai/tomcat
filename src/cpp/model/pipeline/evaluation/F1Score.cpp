@@ -32,8 +32,7 @@ namespace tomcat {
         F1Score::evaluate(const EvidenceSet& test_data) const {
             vector<NodeEvaluation> evaluations;
 
-            for (const auto& estimates :
-                 this->estimator->get_estimates()) {
+            for (const auto& estimates : this->estimator->get_estimates()) {
                 NodeEvaluation evaluation;
                 evaluation.label = estimates.label;
                 evaluation.assignment = estimates.assignment;
@@ -41,15 +40,21 @@ namespace tomcat {
                 ConfusionMatrix confusion_matrix =
                     this->get_confusion_matrix(estimates, test_data);
                 double precision = 0;
-                if (confusion_matrix.true_positives + confusion_matrix.false_positives > 0) {
+                if (confusion_matrix.true_positives +
+                        confusion_matrix.false_positives >
+                    0) {
                     precision = (double)confusion_matrix.true_positives /
-                                (confusion_matrix.true_positives + confusion_matrix.false_positives);
+                                (confusion_matrix.true_positives +
+                                 confusion_matrix.false_positives);
                 }
 
                 double recall = 0;
-                if (confusion_matrix.true_positives + confusion_matrix.false_negatives > 0) {
+                if (confusion_matrix.true_positives +
+                        confusion_matrix.false_negatives >
+                    0) {
                     recall = (double)confusion_matrix.true_positives /
-                                (confusion_matrix.true_positives + confusion_matrix.false_negatives);
+                             (confusion_matrix.true_positives +
+                              confusion_matrix.false_negatives);
                 }
 
                 double f1_score = 0;

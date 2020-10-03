@@ -41,6 +41,8 @@ namespace tomcat {
             //------------------------------------------------------------------
             void estimate(EvidenceSet test_data) override;
 
+            void get_info(nlohmann::json& json) const override;
+
           private:
             //------------------------------------------------------------------
             // Static functions

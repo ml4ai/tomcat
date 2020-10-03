@@ -95,6 +95,8 @@ namespace tomcat {
 
             void on_time_out() override;
 
+            void get_info(nlohmann::json& json) const override;
+
           private:
             //------------------------------------------------------------------
             // Member functions

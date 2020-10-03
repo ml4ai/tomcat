@@ -37,7 +37,7 @@ string OUTPUT_ROOT_DIR = "../../data/";
  */
 
 /**
- * Cross validation with the falcon map on engineering data.
+ * Cross validation with the falcon map.
  */
 void execute_experiment_1a() {
     // Random Seed
@@ -48,7 +48,7 @@ void execute_experiment_1a() {
     tomcat.init();
 
     // Data
-    string data_dir = fmt::format("{}/ta3/falcon/engineering", DATA_ROOT_DIR);
+    string data_dir = fmt::format("{}/ta3/falcon/human", DATA_ROOT_DIR);
     EvidenceSet data(data_dir);
 
     // Data split
@@ -95,7 +95,6 @@ void execute_experiment_1a() {
         offline_estimation->add_estimator(estimator);
         aggregator->add_measure(make_shared<Accuracy>(estimator));
         aggregator->add_measure(make_shared<F1Score>(estimator));
-        aggregator->add_measure(make_shared<Estimates>(estimator));
     }
 
     ofstream output_file;
@@ -173,7 +172,7 @@ void execute_experiment_1b() {
         offline_estimation->add_estimator(estimator);
         aggregator->add_measure(make_shared<Accuracy>(estimator));
         aggregator->add_measure(make_shared<F1Score>(estimator));
-        aggregator->add_measure(make_shared<Estimates>(estimator));
+//        aggregator->add_measure(make_shared<Estimates>(estimator));
     }
 
     ofstream output_file;
@@ -336,7 +335,7 @@ void execute_experiment_1d_part_b() {
         estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
         estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
         offline_estimation->add_estimator(estimator);
-        aggregator->add_measure(make_shared<Estimates>(estimator));
+//        aggregator->add_measure(make_shared<Estimates>(estimator));
     }
 
     ofstream output_file;
@@ -437,7 +436,7 @@ void execute_experiment_1e_part_b() {
         estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
         estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
         offline_estimation->add_estimator(estimator);
-        aggregator->add_measure(make_shared<Estimates>(estimator));
+//        aggregator->add_measure(make_shared<Estimates>(estimator));
     }
 
     ofstream output_file;
@@ -523,7 +522,7 @@ void execute_experiment_1f_part_b() {
         offline_estimation->add_estimator(estimator);
         aggregator->add_measure(make_shared<Accuracy>(estimator));
         aggregator->add_measure(make_shared<F1Score>(estimator));
-        aggregator->add_measure(make_shared<Estimates>(estimator));
+//        aggregator->add_measure(make_shared<Estimates>(estimator));
     }
 
     ofstream output_file;
@@ -612,7 +611,7 @@ void execute_experiment_1g_part_b() {
             estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
             estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
             offline_estimation->add_estimator(estimator);
-            aggregator->add_measure(make_shared<Estimates>(estimator));
+//            aggregator->add_measure(make_shared<Estimates>(estimator));
         }
 
         ofstream output_file;
@@ -684,7 +683,7 @@ void execute_experiment_2a() {
         estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
         estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
         offline_estimation->add_estimator(estimator);
-        aggregator->add_measure(make_shared<Estimates>(estimator));
+//        aggregator->add_measure(make_shared<Estimates>(estimator));
     }
 
     shared_ptr<Estimator> estimator =
@@ -694,7 +693,7 @@ void execute_experiment_2a() {
     estimator->add_node(TomcatTA3V2::Q, Eigen::VectorXd::Constant(1, 2));
     estimator->add_node(TomcatTA3V2::Q, Eigen::VectorXd::Constant(1, 3));
     offline_estimation->add_estimator(estimator);
-    aggregator->add_measure(make_shared<Estimates>(estimator));
+//    aggregator->add_measure(make_shared<Estimates>(estimator));
 
     ofstream output_file;
     string filepath = fmt::format(

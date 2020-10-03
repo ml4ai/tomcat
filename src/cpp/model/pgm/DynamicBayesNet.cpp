@@ -361,8 +361,7 @@ namespace tomcat {
             return child_nodes;
         }
 
-        void
-        DynamicBayesNet::save_to(const string& output_dir) const {
+        void DynamicBayesNet::save_to(const string& output_dir) const {
 
             boost::filesystem::create_directories(output_dir);
 
@@ -416,6 +415,13 @@ namespace tomcat {
                                   this->graph,
                                   boost::make_label_writer(boost::get(
                                       &VertexData::label, this->graph)));
+        }
+
+        int DynamicBayesNet::get_cardinality_of(
+            const std::string& node_label) const {
+            return this->label_to_nodes.at(node_label)[0]
+                ->get_metadata()
+                ->get_cardinality();
         }
 
         //----------------------------------------------------------------------

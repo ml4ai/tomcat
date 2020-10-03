@@ -120,9 +120,14 @@ namespace tomcat {
              *
              * @param estimates: estimates for a given node
              * @param new_column: new column with new estimates
+             * @param index: index of the assignment for which the estimates
+             * were computed. If there's a fixed assignment in the NodeEstimates
+             * data, the index is always zero as there'll be estimates just for
+             * a single assignment.
              */
             void add_column_to_estimates(NodeEstimates& estimates,
-                                         const Eigen::VectorXd new_column);
+                                         const Eigen::VectorXd new_column,
+                                         int index = 0);
 
             /**
              * Passes messages from transition factors in a time step to the
