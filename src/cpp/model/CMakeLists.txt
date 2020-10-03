@@ -133,7 +133,7 @@ target_link_libraries(
 
 add_executable(TomcatConverter offline_message_converter.cpp)
 target_include_directories(TomcatConverter PRIVATE ${Boost_INCLUDE_DIR}
-        "${CMAKE_CURRENT_SOURCE_DIR}/../"
+        "${CMAKE_CURRENT_SOURCE_DIR}"
         )
 target_link_libraries(
         TomcatConverter
