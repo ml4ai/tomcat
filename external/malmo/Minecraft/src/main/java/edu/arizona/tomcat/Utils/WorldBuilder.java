@@ -3,15 +3,9 @@ package edu.arizona.tomcat.Utils;
 import com.google.gson.Gson;
 import com.microsoft.Malmo.Schemas.EntityTypes;
 import com.microsoft.Malmo.Schemas.ItemType;
-import com.microsoft.Malmo.Schemas.Mission;
-import edu.arizona.tomcat.Mission.ProceduralGenMission;
 import edu.arizona.tomcat.World.Drawing;
 import edu.arizona.tomcat.World.DrawingHandler;
 import edu.arizona.tomcat.World.TomcatEntity;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.properties.PropertyBool;
@@ -19,13 +13,20 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * This class can be used to build a world from a JSON file
