@@ -6,6 +6,10 @@ import com.microsoft.Malmo.Schemas.ItemType;
 import edu.arizona.tomcat.World.Drawing;
 import edu.arizona.tomcat.World.DrawingHandler;
 import edu.arizona.tomcat.World.TomcatEntity;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.properties.PropertyBool;
@@ -20,20 +24,16 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.UUID;
-
 /**
  * This class can be used to build a world from a JSON file
  */
 public class WorldBuilder {
 
-    World world;
+    private World world;
+    private Map<BlockPos, IBlockState>
+        blockMap; // Stores info about the blocks we place
+    private Set<UUID>
+        entityUUIDSet; // Stores hte UUIDs o all the entities we place
 
     /**
      * This method is used to build the world represented by the file into the
@@ -44,6 +44,8 @@ public class WorldBuilder {
     public void build(String filename, World world) {
 
         this.world = world;
+        this.blockMap = new LinkedHashMap<BlockPos, IBlockState>();
+        this.entityUUIDSet = new HashSet<UUID>();
 
         // Read blueprint from JSON
         BufferedReader reader = null;
@@ -64,15 +66,27 @@ public class WorldBuilder {
     }
 
     /**
+     * Get the map of block positions to the block state at those positions for
+     * this world builder object.
+     *
+     * @return The block map of the generated world
+     */
+    public Map<BlockPos, IBlockState> getBlockMap() { return this.blockMap; }
+
+    /**
+     * Get the UUIDs of all the entities placed into the world
+     *
+     * @return The set of UUIDs
+     */
+    public Set<UUID> getEntityUUIDs() { return this.entityUUIDSet; }
+
+    /**
      * Place the blocks read from the blueprint into the world
      *
      * @param blockList List of blocks extracted from the low level JSON
      */
     private void placeBlocks(ArrayList<Map<String, String>> blockList) {
 
-        // Create a map of the blocks to place
-        Map<BlockPos, IBlockState> blockMap =
-            new LinkedHashMap<BlockPos, IBlockState>();
         for (Map<String, String> block : blockList) {
 
             String material = block.get("material").toUpperCase();
@@ -82,7 +96,7 @@ public class WorldBuilder {
                 z = Integer.parseInt(block.get("z"));
             BlockPos pos = new BlockPos(x, y, z);
 
-            blockMap.remove(pos);
+            this.blockMap.remove(pos);
 
             EnumFacing facing = EnumFacing.NORTH;
             Boolean powered = Boolean.valueOf(false);
@@ -96,11 +110,12 @@ public class WorldBuilder {
             catch (Exception e) {
                 ;
             }
-            this.registerState(blockMap, material, pos, facing, powered, open);
+            this.registerState(material, pos, facing, powered, open);
         }
 
         // Place the blocks into the world
-        for (Map.Entry<BlockPos, IBlockState> entry : blockMap.entrySet()) {
+        for (Map.Entry<BlockPos, IBlockState> entry :
+             this.blockMap.entrySet()) {
             this.world.setBlockState(entry.getKey(), entry.getValue());
         }
     }
@@ -127,6 +142,7 @@ public class WorldBuilder {
             String boots = entity.get("boots").toUpperCase();
 
             UUID id = UUID.randomUUID();
+            this.entityUUIDSet.add(id);
             TomcatEntity thisEntity =
                 new TomcatEntity(id, x, y, z, EntityTypes.valueOf(type));
 
@@ -179,15 +195,13 @@ public class WorldBuilder {
      * to create the block state with as many properties as applicable. Doors
      * are handled automagically :)
      *
-     * @param blockMap - The block map to register the state to
      * @param material - The material of the block
      * @param pos      - Where to place the block
      * @param facing   - Which way is the block facing
      * @param powered  - Is the block powered?
      * @param open     - Is the block open? Only applicable for doors/trapdoors
      */
-    private void registerState(Map<BlockPos, IBlockState> blockMap,
-                               String material,
+    private void registerState(String material,
                                BlockPos pos,
                                EnumFacing facing,
                                Boolean powered,
@@ -213,12 +227,12 @@ public class WorldBuilder {
                                           .withProperty(OPEN, open)
                                           .withProperty(POWERED, powered);
 
-                blockMap.remove(
+                this.blockMap.remove(
                     topPos); // For a door we need to remove and re add the
                 // block above the current as well
 
-                blockMap.put(pos, doorBottom);
-                blockMap.put(topPos, doorTop);
+                this.blockMap.put(pos, doorBottom);
+                this.blockMap.put(topPos, doorTop);
             }
             catch (Exception e) {
                 System.out.println(
@@ -263,7 +277,7 @@ public class WorldBuilder {
                     "DEBUG: Defaulting to PLANKS for unrecognized material " +
                     material);
             }
-            blockMap.put(pos, state);
+            this.blockMap.put(pos, state);
         }
     }
 }
