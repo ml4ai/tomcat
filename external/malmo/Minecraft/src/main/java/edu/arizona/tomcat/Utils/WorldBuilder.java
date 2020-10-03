@@ -8,12 +8,10 @@ import edu.arizona.tomcat.Mission.ProceduralGenMission;
 import edu.arizona.tomcat.World.Drawing;
 import edu.arizona.tomcat.World.DrawingHandler;
 import edu.arizona.tomcat.World.TomcatEntity;
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.properties.PropertyBool;
@@ -30,54 +28,57 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 /**
- * This class can be used to read a JSON file representing a world. The JSON
- * entries are read into a hash map of coordinates and the block at those
- * coordinates. The same applies for entities.
+ * This class can be used to build a world from a JSON file
  */
 public class WorldBuilder {
 
     World world;
 
-
     /**
-     * This method is use to create the map representation of the world from the
-     * low level JSON file.
+     * This method is used to build the world represented by the file into the
+     * instance of the world given to the method
      *
-     * @param filename The alternate JSON file. Must be in Minecraft/run/
+     * @param filename The world's JSON file. Must be in Minecraft/run/
      */
     public void build(String filename, World world) {
 
         this.world = world;
 
+        // Read blueprint from JSON
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(filename));
-        } catch (FileNotFoundException e) {
+        }
+        catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
         Gson gson = new Gson();
         Map<String, ArrayList<Map<String, String>>> blueprint =
-                gson.fromJson(reader, Map.class);
+            gson.fromJson(reader, Map.class);
 
+        // Use blueprint to place blocks and entities
         this.placeBlocks(blueprint.get("blocks"));
         this.placeEntities(blueprint.get("entities"));
     }
 
     /**
-     * Initializes the blockMap from the given list of blocks
+     * Place the blocks read from the blueprint into the world
      *
      * @param blockList List of blocks extracted from the low level JSON
      */
     private void placeBlocks(ArrayList<Map<String, String>> blockList) {
-        Map<BlockPos, IBlockState> blockMap = new LinkedHashMap<BlockPos, IBlockState>();
+
+        // Create a map of the blocks to place
+        Map<BlockPos, IBlockState> blockMap =
+            new LinkedHashMap<BlockPos, IBlockState>();
         for (Map<String, String> block : blockList) {
 
             String material = block.get("material").toUpperCase();
 
             int x = Integer.parseInt(block.get("x")),
-                    y = Integer.parseInt(block.get("y")),
-                    z = Integer.parseInt(block.get("z"));
+                y = Integer.parseInt(block.get("y")),
+                z = Integer.parseInt(block.get("z"));
             BlockPos pos = new BlockPos(x, y, z);
 
             blockMap.remove(pos);
@@ -90,27 +91,30 @@ public class WorldBuilder {
                 facing = EnumFacing.valueOf(block.get("facing").toUpperCase());
                 powered = Boolean.valueOf(block.get("powered"));
                 open = Boolean.valueOf(block.get("open"));
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 ;
             }
             this.registerState(blockMap, material, pos, facing, powered, open);
         }
 
+        // Place the blocks into the world
         for (Map.Entry<BlockPos, IBlockState> entry : blockMap.entrySet()) {
             this.world.setBlockState(entry.getKey(), entry.getValue());
         }
     }
 
     /**
-     * Initializes the entityMap from the given list of entities
+     * Place the entities read from the blueprint into the world
      *
      * @param entityList List of entities extracted from the low level JSON
      */
     private void placeEntities(ArrayList<Map<String, String>> entityList) {
         DrawingHandler drawingHandler = DrawingHandler.getInstance();
+
         for (Map<String, String> entity : entityList) {
 
-
+            // Create the relevant entity as a TomcatEntity
             int x = Integer.parseInt(entity.get("x"));
             int y = Integer.parseInt(entity.get("y"));
             int z = Integer.parseInt(entity.get("z"));
@@ -121,40 +125,50 @@ public class WorldBuilder {
             String leggings = entity.get("leggings").toUpperCase();
             String boots = entity.get("boots").toUpperCase();
 
-
             UUID id = UUID.randomUUID();
-            TomcatEntity thisEntity = new TomcatEntity(
-                    id, x, y, z, EntityTypes.valueOf(type));
+            TomcatEntity thisEntity =
+                new TomcatEntity(id, x, y, z, EntityTypes.valueOf(type));
 
+            // Place the entity into the world
             Drawing drawing = new Drawing();
             drawing.addObject(thisEntity);
 
             try {
                 drawingHandler.draw(world, drawing);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 e.printStackTrace();
             }
 
-
-            Entity curEntity = MinecraftServerHelper.getServer().getEntityFromUuid(id);
+            // Get the same entity back through its UUID so we can give it
+            // tools and armors
+            Entity curEntity =
+                MinecraftServerHelper.getServer().getEntityFromUuid(id);
 
             if (!weapon.equals("NONE")) {
-                InventoryHandler.addItemToMainHand(curEntity, ItemType.valueOf(weapon));
+                InventoryHandler.addItemToMainHand(curEntity,
+                                                   ItemType.valueOf(weapon));
             }
             if (!helmet.equals("NONE")) {
-                curEntity.setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(Item.getByNameOrId(helmet)));
+                curEntity.setItemStackToSlot(
+                    EntityEquipmentSlot.HEAD,
+                    new ItemStack(Item.getByNameOrId(helmet)));
             }
             if (!chestplate.equals("NONE")) {
-                curEntity.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(Item.getByNameOrId(chestplate)));
+                curEntity.setItemStackToSlot(
+                    EntityEquipmentSlot.CHEST,
+                    new ItemStack(Item.getByNameOrId(chestplate)));
             }
             if (!leggings.equals("NONE")) {
-                curEntity.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(Item.getByNameOrId(leggings)));
+                curEntity.setItemStackToSlot(
+                    EntityEquipmentSlot.LEGS,
+                    new ItemStack(Item.getByNameOrId(leggings)));
             }
             if (!boots.equals("NONE")) {
-                curEntity.setItemStackToSlot(EntityEquipmentSlot.FEET, new ItemStack(Item.getByNameOrId(boots)));
+                curEntity.setItemStackToSlot(
+                    EntityEquipmentSlot.FEET,
+                    new ItemStack(Item.getByNameOrId(boots)));
             }
-
-
         }
     }
 
@@ -164,13 +178,15 @@ public class WorldBuilder {
      * to create the block state with as many properties as applicable. Doors
      * are handled automagically :)
      *
+     * @param blockMap - The block map to register the state to
      * @param material - The material of the block
      * @param pos      - Where to place the block
      * @param facing   - Which way is the block facing
      * @param powered  - Is the block powered?
      * @param open     - Is the block open? Only applicable for doors/trapdoors
      */
-    private void registerState(Map<BlockPos, IBlockState> blockMap, String material,
+    private void registerState(Map<BlockPos, IBlockState> blockMap,
+                               String material,
                                BlockPos pos,
                                EnumFacing facing,
                                Boolean powered,
@@ -183,30 +199,32 @@ public class WorldBuilder {
             try {
                 // Doors are special and we need to place a bottom and top half
                 IBlockState doorBottom = Block.getBlockFromName(material)
-                        .getStateFromMeta(0)
-                        .withProperty(FACING, facing)
-                        .withProperty(OPEN, open)
-                        .withProperty(POWERED, powered);
+                                             .getStateFromMeta(0)
+                                             .withProperty(FACING, facing)
+                                             .withProperty(OPEN, open)
+                                             .withProperty(POWERED, powered);
 
                 BlockPos topPos =
-                        new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
+                    new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
                 IBlockState doorTop = Block.getBlockFromName(material)
-                        .getStateFromMeta(9)
-                        .withProperty(FACING, facing)
-                        .withProperty(OPEN, open)
-                        .withProperty(POWERED, powered);
+                                          .getStateFromMeta(9)
+                                          .withProperty(FACING, facing)
+                                          .withProperty(OPEN, open)
+                                          .withProperty(POWERED, powered);
 
                 blockMap.remove(
-                        topPos); // For a door we need to remove and re add the
+                    topPos); // For a door we need to remove and re add the
                 // block above the current as well
 
                 blockMap.put(pos, doorBottom);
                 blockMap.put(topPos, doorTop);
-            } catch (Exception e) {
-                System.out.println(
-                        "Oops! Looks like you forgot to specify some properties for this door");
             }
-        } else {
+            catch (Exception e) {
+                System.out.println(
+                    "Oops! Looks like you forgot to specify some properties for this door");
+            }
+        }
+        else {
             IBlockState state;
             // Try to create the block state with as many properties as
             // applicable
@@ -214,31 +232,35 @@ public class WorldBuilder {
                 state = Block.getBlockFromName(material).getDefaultState();
                 try {
                     state = state.withProperty(POWERED, powered);
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     System.out.println(
-                            "DEBUG: Could not apply POWERED property to " +
-                                    material);
+                        "DEBUG: Could not apply POWERED property to " +
+                        material);
                 }
 
                 try {
                     state = state.withProperty(FACING, facing);
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     System.out.println(
-                            "DEBUG: Could not apply FACING property to " +
-                                    material);
+                        "DEBUG: Could not apply FACING property to " +
+                        material);
                 }
 
                 try {
                     state = state.withProperty(OPEN, open);
-                } catch (Exception e) {
-                    System.out.println(
-                            "DEBUG: Could not apply OPEN property to " + material);
                 }
-            } catch (Exception e) {
+                catch (Exception e) {
+                    System.out.println(
+                        "DEBUG: Could not apply OPEN property to " + material);
+                }
+            }
+            catch (Exception e) {
                 state = Blocks.PLANKS.getDefaultState();
                 System.out.println(
-                        "DEBUG: Defaulting to PLANKS for unrecognized material " +
-                                material);
+                    "DEBUG: Defaulting to PLANKS for unrecognized material " +
+                    material);
             }
             blockMap.put(pos, state);
         }

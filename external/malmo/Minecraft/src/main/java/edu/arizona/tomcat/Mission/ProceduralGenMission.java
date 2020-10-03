@@ -5,9 +5,7 @@ import edu.arizona.tomcat.Mission.Goal.MissionGoal;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 import edu.arizona.tomcat.Utils.WorldBuilder;
 import edu.arizona.tomcat.World.DrawingHandler;
-
 import java.math.BigDecimal;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
@@ -30,11 +28,10 @@ public class ProceduralGenMission extends Mission {
     }
 
     /**
-     * This grabs the blueprint from the low_level_map.json file and uses a
-     * WorldReader object to parse it. It then uses the resulting hashmap to
-     * place all the blocks at the right places.
+     * This function uses a WorldBuilder object to build the world for this
+     * mission from the low_level_map.json file
      *
-     * @param world The world in which the blocks are to be placed.
+     * @param world The world to build in
      */
     private void buildStructures(World world) {
         if (this.shouldBuild) {
