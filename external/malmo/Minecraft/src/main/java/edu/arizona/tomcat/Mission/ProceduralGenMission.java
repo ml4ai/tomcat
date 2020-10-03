@@ -5,11 +5,10 @@ import edu.arizona.tomcat.Mission.Goal.MissionGoal;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
 import edu.arizona.tomcat.Utils.WorldBuilder;
 import edu.arizona.tomcat.World.DrawingHandler;
+import java.math.BigDecimal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
-
-import java.math.BigDecimal;
 
 public class ProceduralGenMission extends Mission {
 
