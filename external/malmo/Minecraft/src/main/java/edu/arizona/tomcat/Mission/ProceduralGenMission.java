@@ -3,22 +3,14 @@ package edu.arizona.tomcat.Mission;
 import com.microsoft.Malmo.Schemas.PosAndDirection;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
-import edu.arizona.tomcat.Utils.WorldReader;
-import edu.arizona.tomcat.World.Drawing;
+import edu.arizona.tomcat.Utils.WorldBuilder;
 import edu.arizona.tomcat.World.DrawingHandler;
-import edu.arizona.tomcat.World.TomcatEntity;
+
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import net.minecraft.block.BlockDoor;
-import net.minecraft.block.state.IBlockState;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 public class ProceduralGenMission extends Mission {
 
@@ -46,29 +38,9 @@ public class ProceduralGenMission extends Mission {
      */
     private void buildStructures(World world) {
         if (this.shouldBuild) {
-            // Grab map representing world
-            WorldReader worldReader = new WorldReader("low_level_map.json");
 
-            Drawing drawing = new Drawing();
-            Map<BlockPos, IBlockState> worldMap = worldReader.getBlocksMap();
-            List<TomcatEntity> entityList = worldReader.getEntityList();
-
-            // Place blocks
-            for (Map.Entry<BlockPos, IBlockState> entry : worldMap.entrySet()) {
-                world.setBlockState(entry.getKey(), entry.getValue());
-            }
-
-            for (TomcatEntity entity : entityList) {
-                drawing.addObject(entity);
-            }
-
-            try {
-                this.drawingHandler.draw(world, drawing);
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-
+            WorldBuilder worldBuilder = new WorldBuilder();
+            worldBuilder.build("low_level_map.json", world);
             this.shouldBuild = false;
         }
     }
