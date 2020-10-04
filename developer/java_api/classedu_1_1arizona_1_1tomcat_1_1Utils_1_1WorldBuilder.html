@@ -73,8 +73,8 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a2b433706683a310e4a7e2e94e743e2c3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldBuilder.html#a2b433706683a310e4a7e2e94e743e2c3">build</a> (String filename, World world)</td></tr>
-<tr class="separator:a2b433706683a310e4a7e2e94e743e2c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1f17ca29a7cb4d205ea82accdd3ccf2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldBuilder.html#ad1f17ca29a7cb4d205ea82accdd3ccf2">build</a> (String filename, World world, boolean saveBlockMap, boolean saveEntityUUIDs)</td></tr>
+<tr class="separator:ad1f17ca29a7cb4d205ea82accdd3ccf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48145599d6e9c47189376478c8ab38e8"><td class="memItemLeft" align="right" valign="top">Map&lt; BlockPos, IBlockState &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldBuilder.html#a48145599d6e9c47189376478c8ab38e8">getBlockMap</a> ()</td></tr>
 <tr class="separator:a48145599d6e9c47189376478c8ab38e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a83988fa6ceabb32050d207b396f6d645"><td class="memItemLeft" align="right" valign="top">Set&lt; UUID &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldBuilder.html#a83988fa6ceabb32050d207b396f6d645">getEntityUUIDs</a> ()</td></tr>
@@ -83,8 +83,8 @@ Public Member Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This class can be used to build a world from a JSON file </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a2b433706683a310e4a7e2e94e743e2c3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2b433706683a310e4a7e2e94e743e2c3">&#9670;&nbsp;</a></span>build()</h2>
+<a id="ad1f17ca29a7cb4d205ea82accdd3ccf2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad1f17ca29a7cb4d205ea82accdd3ccf2">&#9670;&nbsp;</a></span>build()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -102,7 +102,19 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">World&#160;</td>
-          <td class="paramname"><em>world</em>&#160;</td>
+          <td class="paramname"><em>world</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">boolean&#160;</td>
+          <td class="paramname"><em>saveBlockMap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">boolean&#160;</td>
+          <td class="paramname"><em>saveEntityUUIDs</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -120,6 +132,9 @@ Public Member Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">filename</td><td>The world's JSON file. Must be in Minecraft/run/ </td></tr>
+    <tr><td class="paramname">world</td><td>- The world to build in </td></tr>
+    <tr><td class="paramname">saveBlockMap</td><td>- Should the block map be saved after use (set to false to save memory) </td></tr>
+    <tr><td class="paramname">saveEntityUUIDs</td><td>- Should the set of entity UUIDs be saved after use (set to false to save memory) </td></tr>
   </table>
   </dd>
 </dl>
@@ -149,7 +164,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <p>Get the map of block positions to the block state at those positions for this world builder object.</p>
-<dl class="section return"><dt>Returns</dt><dd>The block map of the generated world </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The block map of the generated world or null if not saved </dd></dl>
 
 </div>
 </div>
@@ -176,7 +191,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <p>Get the UUIDs of all the entities placed into the world</p>
-<dl class="section return"><dt>Returns</dt><dd>The set of UUIDs </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The set of UUIDs or null if not saved </dd></dl>
 
 </div>
 </div>
