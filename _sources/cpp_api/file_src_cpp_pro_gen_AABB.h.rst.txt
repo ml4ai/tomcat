@@ -31,6 +31,8 @@ Includes
 
 - ``Block.h`` (:ref:`file_src_cpp_pro_gen_Block.h`)
 
+- ``Door.h`` (:ref:`file_src_cpp_pro_gen_Door.h`)
+
 - ``Entity.h`` (:ref:`file_src_cpp_pro_gen_Entity.h`)
 
 - ``Object.h`` (:ref:`file_src_cpp_pro_gen_Object.h`)

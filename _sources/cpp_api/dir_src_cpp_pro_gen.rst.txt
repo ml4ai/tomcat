@@ -21,6 +21,8 @@ Files
 - :ref:`file_src_cpp_pro_gen_Block.h`
 - :ref:`file_src_cpp_pro_gen_Connection.cpp`
 - :ref:`file_src_cpp_pro_gen_Connection.h`
+- :ref:`file_src_cpp_pro_gen_Door.cpp`
+- :ref:`file_src_cpp_pro_gen_Door.h`
 - :ref:`file_src_cpp_pro_gen_Entity.cpp`
 - :ref:`file_src_cpp_pro_gen_Entity.h`
 - :ref:`file_src_cpp_pro_gen_generator.cpp`

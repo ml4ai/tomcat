@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tomcat_docs: edu.arizona.tomcat.Utils.WorldReader Class Reference</title>
+<title>tomcat_docs: edu.arizona.tomcat.Utils.WorldBuilder Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -59,32 +59,32 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>edu</b></li><li class="navelem"><b>arizona</b></li><li class="navelem"><b>tomcat</b></li><li class="navelem"><b>Utils</b></li><li class="navelem"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldReader.html">WorldReader</a></li>  </ul>
+<li class="navelem"><b>edu</b></li><li class="navelem"><b>arizona</b></li><li class="navelem"><b>tomcat</b></li><li class="navelem"><b>Utils</b></li><li class="navelem"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldBuilder.html">WorldBuilder</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldReader-members.html">List of all members</a>  </div>
+<a href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldBuilder-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">edu.arizona.tomcat.Utils.WorldReader Class Reference</div>  </div>
+<div class="title">edu.arizona.tomcat.Utils.WorldBuilder Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0814cc52223132fa18c1bb6775198739"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldReader.html#a0814cc52223132fa18c1bb6775198739">WorldReader</a> (String filename)</td></tr>
-<tr class="separator:a0814cc52223132fa18c1bb6775198739"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec96a379c8ffc260cb84be1e9054bdca"><td class="memItemLeft" align="right" valign="top">Map&lt; BlockPos, IBlockState &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldReader.html#aec96a379c8ffc260cb84be1e9054bdca">getBlocksMap</a> ()</td></tr>
-<tr class="separator:aec96a379c8ffc260cb84be1e9054bdca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3546549a5651d11de303a322ad1bea01"><td class="memItemLeft" align="right" valign="top">List&lt; <a class="el" href="classedu_1_1arizona_1_1tomcat_1_1World_1_1TomcatEntity.html">TomcatEntity</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldReader.html#a3546549a5651d11de303a322ad1bea01">getEntityList</a> ()</td></tr>
-<tr class="separator:a3546549a5651d11de303a322ad1bea01"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b433706683a310e4a7e2e94e743e2c3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldBuilder.html#a2b433706683a310e4a7e2e94e743e2c3">build</a> (String filename, World world)</td></tr>
+<tr class="separator:a2b433706683a310e4a7e2e94e743e2c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48145599d6e9c47189376478c8ab38e8"><td class="memItemLeft" align="right" valign="top">Map&lt; BlockPos, IBlockState &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldBuilder.html#a48145599d6e9c47189376478c8ab38e8">getBlockMap</a> ()</td></tr>
+<tr class="separator:a48145599d6e9c47189376478c8ab38e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83988fa6ceabb32050d207b396f6d645"><td class="memItemLeft" align="right" valign="top">Set&lt; UUID &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldBuilder.html#a83988fa6ceabb32050d207b396f6d645">getEntityUUIDs</a> ()</td></tr>
+<tr class="separator:a83988fa6ceabb32050d207b396f6d645"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>This class can be used to read a TSV file representing a world. The TSV entries are read into a hash map of coordinates and the block at those coordinates. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a0814cc52223132fa18c1bb6775198739"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0814cc52223132fa18c1bb6775198739">&#9670;&nbsp;</a></span>WorldReader()</h2>
+<div class="textblock"><p>This class can be used to build a world from a JSON file </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a2b433706683a310e4a7e2e94e743e2c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b433706683a310e4a7e2e94e743e2c3">&#9670;&nbsp;</a></span>build()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -93,11 +93,21 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">edu.arizona.tomcat.Utils.WorldReader.WorldReader </td>
+          <td class="memname">void edu.arizona.tomcat.Utils.WorldBuilder.build </td>
           <td>(</td>
           <td class="paramtype">String&#160;</td>
-          <td class="paramname"><em>filename</em></td><td>)</td>
+          <td class="paramname"><em>filename</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">World&#160;</td>
+          <td class="paramname"><em>world</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -106,19 +116,18 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Constructor for this object. The instance creates the hash map at the time of initialization.</p>
+<p>This method is used to build the world represented by the file into the instance of the world given to the method</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">filename</td><td>The TSV file. Must be in Minecraft/run/ </td></tr>
+    <tr><td class="paramname">filename</td><td>The world's JSON file. Must be in Minecraft/run/ </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="aec96a379c8ffc260cb84be1e9054bdca"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aec96a379c8ffc260cb84be1e9054bdca">&#9670;&nbsp;</a></span>getBlocksMap()</h2>
+<a id="a48145599d6e9c47189376478c8ab38e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a48145599d6e9c47189376478c8ab38e8">&#9670;&nbsp;</a></span>getBlockMap()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -127,7 +136,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Map&lt;BlockPos, IBlockState&gt; edu.arizona.tomcat.Utils.WorldReader.getBlocksMap </td>
+          <td class="memname">Map&lt;BlockPos, IBlockState&gt; edu.arizona.tomcat.Utils.WorldBuilder.getBlockMap </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -139,13 +148,13 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Get the map this <a class="el" href="classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldReader.html">WorldReader</a> object uses to keep track of all the blocks in the world read from file.</p>
-<dl class="section return"><dt>Returns</dt><dd>The map of coordinates and the block at those coordinates. The block to be placed is represented as the IBlockState object used for the block type in its default state, </dd></dl>
+<p>Get the map of block positions to the block state at those positions for this world builder object.</p>
+<dl class="section return"><dt>Returns</dt><dd>The block map of the generated world </dd></dl>
 
 </div>
 </div>
-<a id="a3546549a5651d11de303a322ad1bea01"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3546549a5651d11de303a322ad1bea01">&#9670;&nbsp;</a></span>getEntityList()</h2>
+<a id="a83988fa6ceabb32050d207b396f6d645"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a83988fa6ceabb32050d207b396f6d645">&#9670;&nbsp;</a></span>getEntityUUIDs()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -154,7 +163,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">List&lt;<a class="el" href="classedu_1_1arizona_1_1tomcat_1_1World_1_1TomcatEntity.html">TomcatEntity</a>&gt; edu.arizona.tomcat.Utils.WorldReader.getEntityList </td>
+          <td class="memname">Set&lt;UUID&gt; edu.arizona.tomcat.Utils.WorldBuilder.getEntityUUIDs </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -166,13 +175,13 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Get the list of entities in the world</p>
-<dl class="section return"><dt>Returns</dt><dd>The list of TomcatEntity objects </dd></dl>
+<p>Get the UUIDs of all the entities placed into the world</p>
+<dl class="section return"><dt>Returns</dt><dd>The set of UUIDs </dd></dl>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>/home/runner/work/tomcat/tomcat/external/malmo/Minecraft/src/main/java/edu/arizona/tomcat/Utils/WorldReader.java</li>
+<li>/home/runner/work/tomcat/tomcat/external/malmo/Minecraft/src/main/java/edu/arizona/tomcat/Utils/WorldBuilder.java</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

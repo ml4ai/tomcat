@@ -1,13 +1,13 @@
 var searchData=
 [
-  ['getblocksmap',['getBlocksMap',['../classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldReader.html#aec96a379c8ffc260cb84be1e9054bdca',1,'edu::arizona::tomcat::Utils::WorldReader']]],
+  ['getblockmap',['getBlockMap',['../classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldBuilder.html#a48145599d6e9c47189376478c8ab38e8',1,'edu::arizona::tomcat::Utils::WorldBuilder']]],
   ['getcaption',['getCaption',['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1gui_1_1RichContentImage.html#a4e37a87fd232e56318e0edab303a592e',1,'edu::arizona::tomcat::Mission::gui::RichContentImage']]],
   ['getchoices',['getChoices',['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1gui_1_1SelfReportQuestion.html#a61051606d5a3e57111358e020d37b3a6',1,'edu::arizona::tomcat::Mission::gui::SelfReportQuestion']]],
   ['getdrops',['getDrops',['../classedu_1_1arizona_1_1tomcat_1_1ASISTBlocks_1_1BlockAsistIron.html#ac31b1f7849cfa0a742f531c2ed5c8f69',1,'edu::arizona::tomcat::ASISTBlocks::BlockAsistIron']]],
   ['getduration',['getDuration',['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1gui_1_1SelfReportResponses.html#a9bbb8912ca933f3e7682e7068030ee27',1,'edu.arizona.tomcat.Mission.gui.SelfReportResponses.getDuration()'],['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1gui_1_1SelfReportSingleResponse.html#a08ec027ee1a487496ee6ff8424a33d48',1,'edu.arizona.tomcat.Mission.gui.SelfReportSingleResponse.getDuration()']]],
   ['getelapsedtimeinseconds',['getElapsedTimeInSeconds',['../classedu_1_1arizona_1_1tomcat_1_1Utils_1_1Converter.html#a8930f41cb388f5be32e1c1f763169e61',1,'edu::arizona::tomcat::Utils::Converter']]],
   ['getentity',['getEntity',['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1Goal_1_1ApproachEntityGoal.html#a51592b5ce94df81a2664587944f290a2',1,'edu::arizona::tomcat::Mission::Goal::ApproachEntityGoal']]],
-  ['getentitylist',['getEntityList',['../classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldReader.html#a3546549a5651d11de303a322ad1bea01',1,'edu::arizona::tomcat::Utils::WorldReader']]],
+  ['getentityuuids',['getEntityUUIDs',['../classedu_1_1arizona_1_1tomcat_1_1Utils_1_1WorldBuilder.html#a83988fa6ceabb32050d207b396f6d645',1,'edu::arizona::tomcat::Utils::WorldBuilder']]],
   ['getheight',['getHeight',['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1gui_1_1RichContentImage.html#aedd1b8f80914b98c63cdddc0ddfc61fd',1,'edu::arizona::tomcat::Mission::gui::RichContentImage']]],
   ['getimages',['getImages',['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1gui_1_1RichContentPage.html#a9c63aac12dc3d949723ae1e81f9049d7',1,'edu::arizona::tomcat::Mission::gui::RichContentPage']]],
   ['getinitialtimestamp',['getInitialTimestamp',['../classedu_1_1arizona_1_1tomcat_1_1Mission_1_1gui_1_1SelfReportContent.html#acf9e25a0f70d848c746ce2a91d11b441',1,'edu::arizona::tomcat::Mission::gui::SelfReportContent']]],

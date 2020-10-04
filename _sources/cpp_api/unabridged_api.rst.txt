@@ -133,6 +133,11 @@ Classes and Structs
 .. toctree::
    :maxdepth: 5
 
+   classDoor.rst
+
+.. toctree::
+   :maxdepth: 5
+
    classEntity.rst
 
 .. toctree::
@@ -706,6 +711,11 @@ Typedefs
    :maxdepth: 5
 
    typedef_Connection_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   typedef_Door_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d.rst
 
 .. toctree::
    :maxdepth: 5

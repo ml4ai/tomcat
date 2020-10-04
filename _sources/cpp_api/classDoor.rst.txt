@@ -1,0 +1,25 @@
+.. _exhale_class_classDoor:
+
+Class Door
+==========
+
+- Defined in :ref:`file_src_cpp_pro_gen_Door.h`
+
+
+Inheritance Relationships
+-------------------------
+
+Base Type
+*********
+
+- ``public Block`` (:ref:`exhale_class_classBlock`)
+
+
+Class Documentation
+-------------------
+
+
+.. doxygenclass:: Door
+   :members:
+   :protected-members:
+   :undoc-members:

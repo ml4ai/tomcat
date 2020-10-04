@@ -285,6 +285,16 @@ Files
 .. toctree::
    :maxdepth: 5
 
+   file_src_cpp_pro_gen_Door.cpp.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file_src_cpp_pro_gen_Door.h.rst
+
+.. toctree::
+   :maxdepth: 5
+
    file_src_cpp_model_pgm_DynamicBayesNet.cpp.rst
 
 .. toctree::

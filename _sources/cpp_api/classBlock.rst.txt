@@ -9,9 +9,10 @@ Class Block
 Inheritance Relationships
 -------------------------
 
-Derived Type
-************
+Derived Types
+*************
 
+- ``public Door`` (:ref:`exhale_class_classDoor`)
 - ``public Lever`` (:ref:`exhale_class_classLever`)
 
 
