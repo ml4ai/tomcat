@@ -37,7 +37,7 @@ public class ProceduralGenMission extends Mission {
         if (this.shouldBuild) {
 
             WorldBuilder worldBuilder = new WorldBuilder();
-            worldBuilder.build("low_level_map.json", world);
+            worldBuilder.build("low_level_map.json", world, false, true);
             this.shouldBuild = false;
         }
     }

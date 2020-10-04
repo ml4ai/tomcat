@@ -31,17 +31,25 @@ public class WorldBuilder {
 
     private World world;
     private Map<BlockPos, IBlockState>
-        blockMap; // Stores info about the blocks we place
+            blockMap; // Stores info about the blocks we place
     private Set<UUID>
-        entityUUIDSet; // Stores hte UUIDs o all the entities we place
+            entityUUIDSet; // Stores hte UUIDs o all the entities we place
 
     /**
      * This method is used to build the world represented by the file into the
      * instance of the world given to the method
      *
-     * @param filename The world's JSON file. Must be in Minecraft/run/
+     * @param filename        The world's JSON file. Must be in Minecraft/run/
+     * @param world           - The world to build in
+     * @param saveBlockMap    - Should the block map be saved after use (set to
+     *     false to save memory)
+     * @param saveEntityUUIDs - Should the set of entity UUIDs be saved after
+     *     use (set to false to save memory)
      */
-    public void build(String filename, World world) {
+    public void build(String filename,
+                      World world,
+                      boolean saveBlockMap,
+                      boolean saveEntityUUIDs) {
 
         this.world = world;
         this.blockMap = new LinkedHashMap<BlockPos, IBlockState>();
@@ -58,25 +66,32 @@ public class WorldBuilder {
 
         Gson gson = new Gson();
         Map<String, ArrayList<Map<String, String>>> blueprint =
-            gson.fromJson(reader, Map.class);
+                gson.fromJson(reader, Map.class);
 
         // Use blueprint to place blocks and entities
         this.placeBlocks(blueprint.get("blocks"));
+        if (!saveBlockMap) {
+            this.blockMap = null;
+        }
+
         this.placeEntities(blueprint.get("entities"));
+        if (!saveEntityUUIDs) {
+            this.entityUUIDSet = null;
+        }
     }
 
     /**
      * Get the map of block positions to the block state at those positions for
      * this world builder object.
      *
-     * @return The block map of the generated world
+     * @return The block map of the generated world or null if not saved
      */
     public Map<BlockPos, IBlockState> getBlockMap() { return this.blockMap; }
 
     /**
      * Get the UUIDs of all the entities placed into the world
      *
-     * @return The set of UUIDs
+     * @return The set of UUIDs or null if not saved
      */
     public Set<UUID> getEntityUUIDs() { return this.entityUUIDSet; }
 
@@ -92,8 +107,8 @@ public class WorldBuilder {
             String material = block.get("material").toUpperCase();
 
             int x = Integer.parseInt(block.get("x")),
-                y = Integer.parseInt(block.get("y")),
-                z = Integer.parseInt(block.get("z"));
+                    y = Integer.parseInt(block.get("y")),
+                    z = Integer.parseInt(block.get("z"));
             BlockPos pos = new BlockPos(x, y, z);
 
             this.blockMap.remove(pos);
@@ -115,7 +130,7 @@ public class WorldBuilder {
 
         // Place the blocks into the world
         for (Map.Entry<BlockPos, IBlockState> entry :
-             this.blockMap.entrySet()) {
+                this.blockMap.entrySet()) {
             this.world.setBlockState(entry.getKey(), entry.getValue());
         }
     }
@@ -134,17 +149,20 @@ public class WorldBuilder {
             int x = Integer.parseInt(entity.get("x"));
             int y = Integer.parseInt(entity.get("y"));
             int z = Integer.parseInt(entity.get("z"));
+
             String type = entity.get("mob_type").toUpperCase();
-            String weapon = entity.get("weapon").toUpperCase();
-            String helmet = entity.get("helmet").toUpperCase();
-            String chestplate = entity.get("chestplate").toUpperCase();
-            String leggings = entity.get("leggings").toUpperCase();
-            String boots = entity.get("boots").toUpperCase();
+
+            Map<String, String> equipment = new HashMap<String, String>();
+            equipment.put("MAINHAND", entity.get("weapon").toUpperCase());
+            equipment.put("HEAD", entity.get("helmet").toUpperCase());
+            equipment.put("CHEST", entity.get("chestplate").toUpperCase());
+            equipment.put("LEGS", entity.get("leggings").toUpperCase());
+            equipment.put("FEET", entity.get("boots").toUpperCase());
 
             UUID id = UUID.randomUUID();
             this.entityUUIDSet.add(id);
             TomcatEntity thisEntity =
-                new TomcatEntity(id, x, y, z, EntityTypes.valueOf(type));
+                    new TomcatEntity(id, x, y, z, EntityTypes.valueOf(type));
 
             // Place the entity into the world
             Drawing drawing = new Drawing();
@@ -157,34 +175,28 @@ public class WorldBuilder {
                 e.printStackTrace();
             }
 
-            // Get the same entity back through its UUID so we can give it
-            // tools and armors
-            Entity curEntity =
-                MinecraftServerHelper.getServer().getEntityFromUuid(id);
+            this.equipEntity(
+                    equipment,
+                    MinecraftServerHelper.getServer().getEntityFromUuid(id));
+        }
+    }
 
-            if (!weapon.equals("NONE")) {
-                InventoryHandler.addItemToMainHand(curEntity,
-                                                   ItemType.valueOf(weapon));
+    /**
+     * Equips the given entity using the information in the equipmentMap
+     *
+     * @param equipmentMap - A map of what equipment goes where
+     * @param entity       - The entity to give the equipment to
+     */
+    private void equipEntity(Map<String, String> equipmentMap, Entity entity) {
+        for (Map.Entry<String, String> entry : equipmentMap.entrySet()) {
+            try {
+                entity.setItemStackToSlot(
+                        EntityEquipmentSlot.valueOf(entry.getKey()),
+                        new ItemStack(Item.getByNameOrId(entry.getValue())));
             }
-            if (!helmet.equals("NONE")) {
-                curEntity.setItemStackToSlot(
-                    EntityEquipmentSlot.HEAD,
-                    new ItemStack(Item.getByNameOrId(helmet)));
-            }
-            if (!chestplate.equals("NONE")) {
-                curEntity.setItemStackToSlot(
-                    EntityEquipmentSlot.CHEST,
-                    new ItemStack(Item.getByNameOrId(chestplate)));
-            }
-            if (!leggings.equals("NONE")) {
-                curEntity.setItemStackToSlot(
-                    EntityEquipmentSlot.LEGS,
-                    new ItemStack(Item.getByNameOrId(leggings)));
-            }
-            if (!boots.equals("NONE")) {
-                curEntity.setItemStackToSlot(
-                    EntityEquipmentSlot.FEET,
-                    new ItemStack(Item.getByNameOrId(boots)));
+            catch (Exception e) {
+                System.out.println("DEBUG: Could not give " + entry.getValue() +
+                        " to " + entry.getKey());
             }
         }
     }
@@ -214,21 +226,21 @@ public class WorldBuilder {
             try {
                 // Doors are special and we need to place a bottom and top half
                 IBlockState doorBottom = Block.getBlockFromName(material)
-                                             .getStateFromMeta(0)
-                                             .withProperty(FACING, facing)
-                                             .withProperty(OPEN, open)
-                                             .withProperty(POWERED, powered);
+                        .getStateFromMeta(0)
+                        .withProperty(FACING, facing)
+                        .withProperty(OPEN, open)
+                        .withProperty(POWERED, powered);
 
                 BlockPos topPos =
-                    new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
+                        new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
                 IBlockState doorTop = Block.getBlockFromName(material)
-                                          .getStateFromMeta(9)
-                                          .withProperty(FACING, facing)
-                                          .withProperty(OPEN, open)
-                                          .withProperty(POWERED, powered);
+                        .getStateFromMeta(9)
+                        .withProperty(FACING, facing)
+                        .withProperty(OPEN, open)
+                        .withProperty(POWERED, powered);
 
                 this.blockMap.remove(
-                    topPos); // For a door we need to remove and re add the
+                        topPos); // For a door we need to remove and re add the
                 // block above the current as well
 
                 this.blockMap.put(pos, doorBottom);
@@ -236,7 +248,7 @@ public class WorldBuilder {
             }
             catch (Exception e) {
                 System.out.println(
-                    "Oops! Looks like you forgot to specify some properties for this door");
+                        "Oops! Looks like you forgot to specify some properties for this door");
             }
         }
         else {
@@ -250,8 +262,8 @@ public class WorldBuilder {
                 }
                 catch (Exception e) {
                     System.out.println(
-                        "DEBUG: Could not apply POWERED property to " +
-                        material);
+                            "DEBUG: Could not apply POWERED property to " +
+                                    material);
                 }
 
                 try {
@@ -259,8 +271,8 @@ public class WorldBuilder {
                 }
                 catch (Exception e) {
                     System.out.println(
-                        "DEBUG: Could not apply FACING property to " +
-                        material);
+                            "DEBUG: Could not apply FACING property to " +
+                                    material);
                 }
 
                 try {
@@ -268,14 +280,14 @@ public class WorldBuilder {
                 }
                 catch (Exception e) {
                     System.out.println(
-                        "DEBUG: Could not apply OPEN property to " + material);
+                            "DEBUG: Could not apply OPEN property to " + material);
                 }
             }
             catch (Exception e) {
                 state = Blocks.PLANKS.getDefaultState();
                 System.out.println(
-                    "DEBUG: Defaulting to PLANKS for unrecognized material " +
-                    material);
+                        "DEBUG: Defaulting to PLANKS for unrecognized material " +
+                                material);
             }
             this.blockMap.put(pos, state);
         }
