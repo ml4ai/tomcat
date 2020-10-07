@@ -134,7 +134,7 @@ namespace tomcat {
 
             std::shared_ptr<EstimationProcess> estimation_process;
 
-            std::shared_ptr<EvaluationAggregator> aggregator;
+            std::shared_ptr<EvaluationAggregator> evaluation;
         };
 
     } // namespace model

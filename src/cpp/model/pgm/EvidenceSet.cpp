@@ -193,6 +193,10 @@ namespace tomcat {
 
         bool EvidenceSet::empty() const { return this->num_data_points == 0; }
 
+        void EvidenceSet::remove(const string& node_label) {
+            this->node_label_to_data.erase(node_label);
+        }
+
         //----------------------------------------------------------------------
         // Getters & Setters
         //----------------------------------------------------------------------

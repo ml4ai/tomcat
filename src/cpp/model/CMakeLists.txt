@@ -90,9 +90,9 @@ add_library(
   pgm/inference/FactorGraph.cpp
         converter/TA3MessageConverter.cpp
         converter/MessageConverter.cpp
-Tomcat.cpp
-TomcatTA3.cpp
-TomcatTA3V2.cpp)
+        experiments/Tomcat.cpp
+        experiments/TomcatTA3.cpp
+        experiments/TomcatTA3V2.cpp experiments/Experimentation.cpp experiments/Experimentation.h)
 
 target_include_directories(tomcat_model_lib PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}" ${Boost_INCLUDE_DIR})

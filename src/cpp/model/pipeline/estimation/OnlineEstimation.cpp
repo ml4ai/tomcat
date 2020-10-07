@@ -40,8 +40,8 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void OnlineEstimation::reset() {
-            EstimationProcess::reset();
+        void OnlineEstimation::prepare() {
+            EstimationProcess::prepare();
             this->time_step = 0;
         }
 
@@ -79,6 +79,23 @@ namespace tomcat {
                 EvidenceSet new_data = get_next_data_from_pending_messages();
                 if (!new_data.empty()) {
                     for (auto estimator : this->estimators) {
+                        // Todo - estimators should only do one estimation per node instead
+                        //  of having a list of nodes to estimate. Because the data may be
+                        //  visible for some, but not to others. For instance, if the
+                        //  estimator is trying to estimate a value for a non-repeatable
+                        //  node, no data for that node should be presented, otherwise the
+                        //  estimate will be 100% certain.
+                        //  While this is not changed and the estimator can have multiple
+                        //  nodes to estimate, we rely on the fact that a estimator with a
+                        //  single node will be created in the pipeline when the example
+                        //  above is the case.
+                        string node_label = estimator->get_estimates()[0].label;
+                        if (estimator->get_model()
+                                ->get_nodes_by_label(node_label)
+                                .size() == 1) {
+
+                            new_data.remove(node_label);
+                        }
                         estimator->estimate(new_data);
                     }
 
@@ -120,28 +137,42 @@ namespace tomcat {
                                 '_');
                         stringstream ss_topic;
 
-                        if (node_estimates.assignment.size() == 0) {
-                            // There will be estimates for each one of the possible node's assignments. We publish each
-                            // estimate in a different topic.
-                            for (int assignment = 0; assignment < node_estimates.estimates.size(); assignment++) {
-                                ss_topic << this->config.estimates_topic << "/"
-                                         << estimator_name << "/"
-                                         << node_estimates.label << "/"
-                                         << assignment;
+                        Eigen::VectorXd estimates_vector(node_estimates.estimates.size());
 
-                                this->publish(ss_topic.str(),
-                                              to_string(node_estimates.estimates[assignment]));
-                            }
-                        } else {
-                            // Use the fixed assignment as a topic
-                            ss_topic << this->config.estimates_topic << "/"
-                                     << estimator_name << "/"
-                                     << node_estimates.label << "/"
-                                     << node_estimates.assignment;
-
-                            this->publish(ss_topic.str(),
-                                          to_string(node_estimates.estimates[0]));
+                        int i = 0;
+                        for (const auto& estimates : node_estimates.estimates) {
+                            estimates_vector[i] = estimates(0, 0);
                         }
+
+                        ss_topic << this->config.estimates_topic << "/"
+                                 << estimator_name << "/"
+                                 << node_estimates.label;
+
+                        this->publish(ss_topic.str(),
+                                      to_string(estimates_vector));
+
+//                        if (node_estimates.assignment.size() == 0) {
+//                            // There will be estimates for each one of the possible node's assignments. We publish each
+//                            // estimate in a different topic.
+//                            for (int assignment = 0; assignment < node_estimates.estimates.size(); assignment++) {
+//                                ss_topic << this->config.estimates_topic << "/"
+//                                         << estimator_name << "/"
+//                                         << node_estimates.label << "/"
+//                                         << assignment;
+//
+//                                this->publish(ss_topic.str(),
+//                                              to_string(node_estimates.estimates[assignment]));
+//                            }
+//                        } else {
+//                            // Use the fixed assignment as a topic
+//                            ss_topic << this->config.estimates_topic << "/"
+//                                     << estimator_name << "/"
+//                                     << node_estimates.label << "/"
+//                                     << node_estimates.assignment;
+//
+//                            this->publish(ss_topic.str(),
+//                                          to_string(node_estimates.estimates[0]));
+//                        }
                     }
                 }
             }
@@ -169,6 +200,7 @@ namespace tomcat {
         }
 
         void OnlineEstimation::get_info(nlohmann::json& json) const {
+            EstimationProcess::get_info(json);
             json["process"] = "online";
         }
 

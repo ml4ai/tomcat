@@ -29,8 +29,20 @@ namespace tomcat {
             this->estimators.push_back(estimator);
         }
 
-        void EstimationProcess::reset() {
-            for(auto& estimator :this->estimators){
+        void EstimationProcess::keep_estimates() {
+            for(auto& estimator : this->estimators){
+               estimator->keep_estimates();
+            }
+        }
+
+        void EstimationProcess::clear_estimates() {
+            for(auto& estimator : this->estimators){
+                estimator->clear_estimates();
+            }
+        }
+
+        void EstimationProcess::prepare() {
+            for(auto& estimator : this->estimators){
                 estimator->prepare();
             }
         }
@@ -48,12 +60,20 @@ namespace tomcat {
                     estimator->get_info(json_estimator);
                     json_estimator["estimates"] = nlohmann::json::array();
 
-                    for(const auto& estimates_per_node : estimator->get_estimates()) {
+                    for(const auto& estimates_per_node : estimator->get_cumulative_estimates()) {
                         nlohmann::json json_estimate;
-                        json_estimate["values"] = nlohmann::json::array();
-                        for(const auto estimates_matrix : estimates_per_node.estimates){
-                            json_estimate["values"].push_back(to_string(estimates_matrix));
+                        json_estimate["executions"] = nlohmann::json::array();
+                        for(const auto& estimates_matrix_per_execution : estimates_per_node.estimates){
+                            nlohmann::json json_execution;
+                            json_execution["values"] = nlohmann::json::array();
+
+                            for(const auto& estimates_matrix : estimates_matrix_per_execution){
+                                json_execution["values"].push_back(to_string(estimates_matrix));
+                            }
+
+                            json_estimate["executions"].push_back(json_execution);
                         }
+
                         json_estimate["node_label"] = estimates_per_node.label;
                         json_estimate["node_assignment"] = to_string(estimates_per_node.assignment);
                         json_estimator["estimates"].push_back(json_estimate);

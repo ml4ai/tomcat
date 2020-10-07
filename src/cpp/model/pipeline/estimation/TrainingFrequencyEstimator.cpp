@@ -43,6 +43,8 @@ namespace tomcat {
                             node_estimates.label);
                     }
 
+                    vector<Eigen::VectorXd> assignments;
+
                     if (node_estimates.assignment.size() == 0) {
                         // If no assignment was provided, we compute the
                         // estimates for each one of the possible assignments
@@ -52,30 +54,20 @@ namespace tomcat {
 
                         for (int assignment = 0; assignment < cardinality;
                              assignment++) {
-                            Eigen::MatrixXd logical_data_in_horizon =
-                                this->training_data
-                                    .get_observations_in_window_for(
-                                        node_estimates.label,
-                                        node_estimates.assignment,
-                                        this->inference_horizon);
-
-                            Eigen::MatrixXd estimates(
-                                new_data.get_num_data_points(),
-                                logical_data_in_horizon.cols());
-                            estimates.row(0) =
-                                logical_data_in_horizon.colwise().mean();
-                            estimates = estimates.row(0).replicate(
-                                new_data.get_num_data_points(), 1);
-
-                            node_estimates.estimates.push_back(estimates);
+                            assignments.push_back(Eigen::VectorXd::Constant(1, assignment));
                         }
                     }
                     else {
+                        assignments.push_back(node_estimates.assignment);
+                    }
+
+                    for(const auto& assignment : assignments) {
                         Eigen::MatrixXd logical_data_in_horizon =
-                            this->training_data.get_observations_in_window_for(
-                                node_estimates.label,
-                                node_estimates.assignment,
-                                this->inference_horizon);
+                            this->training_data
+                                .get_observations_in_window_for(
+                                    node_estimates.label,
+                                    assignment,
+                                    this->inference_horizon);
 
                         Eigen::MatrixXd estimates(
                             new_data.get_num_data_points(),

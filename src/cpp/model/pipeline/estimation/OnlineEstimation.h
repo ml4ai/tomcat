@@ -86,7 +86,7 @@ namespace tomcat {
             void estimate(EvidenceSet test_data) override;
 
           protected:
-            void reset() override;
+            void prepare() override;
 
             void on_error(const std::string& error_message) override;
 

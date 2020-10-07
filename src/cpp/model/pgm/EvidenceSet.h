@@ -181,6 +181,13 @@ namespace tomcat {
              */
             bool empty() const;
 
+            /**
+             * Removes data for a given node.
+             *
+             * @param node_label: nodes' label
+             */
+            void remove(const std::string& node_label);
+
             //------------------------------------------------------------------
             // Getters & Setters
             //------------------------------------------------------------------

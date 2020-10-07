@@ -37,9 +37,32 @@ namespace tomcat {
             // only one matrix in the vector containing the estimates for each
             // one of the data points and time steps. If no assignment is given,
             // there will be as many matrix estimates as the cardinality of the
-            // node. Insum, there will be estimates for each possible assignment
-            // the node can have.
+            // node. In sum, there will be estimates for each possible
+            // assignment the node can have.
             std::vector<Eigen::MatrixXd> estimates;
+        };
+
+        /**
+         * This struct stores a node's label, assignment over which the
+         * estimator must perform its computations and a list of the multiple
+         * times estimates were calculated by the estimator.
+         */
+        struct CumulativeNodeEstimates {
+
+            std::string label;
+
+            Eigen::VectorXd assignment;
+
+            // The external vector represents the content for each one of the
+            // executions of the estimation process. In a cross-validation
+            // procedure,the size of this vector will be defined by the number
+            // of folds. The internal vector store estimates for each one of the
+            // possible node's assignments. This will only happen if no fixed
+            // assignment was provided, otherwise, this vector will have size 1
+            // as it will contain estimated for a single assignment only. Single
+            // assignments make sense when a inference horizon of size > 0 is
+            // used.
+            std::vector<std::vector<Eigen::MatrixXd>> estimates;
         };
 
         /**
@@ -107,12 +130,16 @@ namespace tomcat {
             std::vector<NodeEstimates> get_estimates_at(int time_step) const;
 
             /**
-             * Returns all the estimates computed so far, for all nodes
-             * processed by the estimator.
-             *
-             * @return Series of estimates for the nodes in the estimator.
+             * Store the last estimates computed in a list of cumulative
+             * estimates.
              */
-            std::vector<NodeEstimates> get_estimates() const;
+            void keep_estimates();
+
+            /**
+             * Clear last estimates and cumulative ones computed by the
+             * estimator.
+             */
+            void clear_estimates();
 
             //------------------------------------------------------------------
             // Virtual functions
@@ -154,6 +181,11 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Getters & Setters
             //------------------------------------------------------------------
+            std::vector<NodeEstimates> get_estimates() const;
+
+            std::vector<CumulativeNodeEstimates>
+            get_cumulative_estimates() const;
+
             int get_inference_horizon() const;
 
             void set_training_data(const EvidenceSet& training_data);
@@ -187,6 +219,10 @@ namespace tomcat {
 
             // List of nodes to estimate, their assignments and estimates
             std::vector<NodeEstimates> nodes_estimates;
+
+            // List of nodes to estimate, their assignments and cumulative
+            // estimates
+            std::vector<CumulativeNodeEstimates> cumulative_estimates;
 
             // An inference horizon determines if the task is a prediction (> 0)
             // or an inference (= 0). If it's a prediction, the horizon

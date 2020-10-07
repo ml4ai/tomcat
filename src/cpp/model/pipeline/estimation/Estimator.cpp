@@ -35,6 +35,11 @@ namespace tomcat {
             node_estimates.label = node_label;
             node_estimates.assignment = assignment;
             this->nodes_estimates.push_back(node_estimates);
+
+            CumulativeNodeEstimates cumulative_estimates;
+            cumulative_estimates.label = node_label;
+            cumulative_estimates.assignment = assignment;
+            this->cumulative_estimates.push_back(cumulative_estimates);
         }
 
         vector<NodeEstimates> Estimator::get_estimates_at(int time_step) const {
@@ -64,21 +69,6 @@ namespace tomcat {
             return estimates_per_node;
         }
 
-        vector<NodeEstimates> Estimator::get_estimates() const {
-            vector<NodeEstimates> estimates_per_node;
-            estimates_per_node.reserve(this->nodes_estimates.size());
-
-            for (const auto& node_estimate : this->nodes_estimates) {
-                NodeEstimates sliced_estimates;
-                sliced_estimates.label = node_estimate.label;
-                sliced_estimates.assignment = node_estimate.assignment;
-                sliced_estimates.estimates = node_estimate.estimates;
-                estimates_per_node.push_back(sliced_estimates);
-            }
-
-            return estimates_per_node;
-        }
-
         void Estimator::prepare() {
             // Clear estimates so they can be recalculated over the new
             // training data in the next call to the function estimate.
@@ -87,9 +77,52 @@ namespace tomcat {
             }
         }
 
+        void Estimator::keep_estimates() {
+            int i = 0;
+            for (const auto& estimates : this->nodes_estimates) {
+                this->cumulative_estimates[i].estimates.push_back(
+                    estimates.estimates);
+                i++;
+            }
+        }
+
+        void Estimator::clear_estimates() {
+            int i = 0;
+            for (auto& estimates : this->nodes_estimates) {
+                estimates.estimates.clear();
+                for (auto& cum_estimates : this->cumulative_estimates) {
+                    cum_estimates.estimates.clear();
+                }
+                i++;
+            }
+        }
+
         //----------------------------------------------------------------------
         // Getters & Setters
         //----------------------------------------------------------------------
+        vector<NodeEstimates> Estimator::get_estimates() const {
+            //            vector<NodeEstimates> estimates_per_node;
+            //            estimates_per_node.reserve(this->nodes_estimates.size());
+            //
+            //            for (const auto& node_estimate :
+            //            this->nodes_estimates) {
+            //                NodeEstimates sliced_estimates;
+            //                sliced_estimates.label = node_estimate.label;
+            //                sliced_estimates.assignment =
+            //                node_estimate.assignment;
+            //                sliced_estimates.estimates =
+            //                node_estimate.estimates;
+            //                estimates_per_node.push_back(sliced_estimates);
+            //            }
+            //
+            //            return estimates_per_node;
+            return this->nodes_estimates;
+        }
+
+        vector<CumulativeNodeEstimates> Estimator::get_cumulative_estimates() const {
+            return this->cumulative_estimates;
+        }
+
         void Estimator::set_training_data(const EvidenceSet& training_data) {
             this->training_data = training_data;
         }
@@ -97,6 +130,7 @@ namespace tomcat {
         int Estimator::get_inference_horizon() const {
             return inference_horizon;
         }
+
         const shared_ptr<DynamicBayesNet>& Estimator::get_model() const {
             return model;
         }

@@ -2,6 +2,8 @@
 
 #include <sstream>
 
+#include <boost/progress.hpp>
+
 #include "utils/EigenExtensions.h"
 
 namespace tomcat {
@@ -20,7 +22,7 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void EvaluationAggregator::reset() {
+        void EvaluationAggregator::clear_evaluations() {
             for (auto& evaluations : this->evaluations_per_measure) {
                 evaluations.clear();
             }
@@ -39,10 +41,14 @@ namespace tomcat {
 
         void EvaluationAggregator::evaluate(const EvidenceSet& test_data) {
             int i = 0;
+
+            cout << "Evaluating...";
+            boost::progress_display progress(this->measures.size());
             for (auto& measure : this->measures) {
                 this->evaluations_per_measure[i].push_back(
                     measure->evaluate(test_data));
                 i++;
+                ++progress;
             }
         }
 

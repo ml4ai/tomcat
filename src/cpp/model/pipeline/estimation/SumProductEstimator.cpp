@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include <boost/progress.hpp>
+
 #include "pgm/inference/FactorGraph.h"
 #include "pgm/inference/VariableNode.h"
 
@@ -57,8 +59,12 @@ namespace tomcat {
 
         void SumProductEstimator::estimate_forward_in_time(
             const EvidenceSet& new_data) {
+
+            int total_time = this->next_time_step + new_data.get_time_steps();
+            cout << "Sum-Product (h = " << this->inference_horizon << ")";
+            boost::progress_display progress(total_time);
             for (int t = this->next_time_step;
-                 t < this->next_time_step + new_data.get_time_steps();
+                 t < total_time;
                  t++) {
 
                 this->compute_forward_messages(this->factor_graph, t, new_data);
@@ -66,8 +72,6 @@ namespace tomcat {
                     this->factor_graph, t, new_data);
 
                 for (auto& estimates : this->nodes_estimates) {
-
-
                     if (this->inference_horizon > 0) {
                         int discrete_assignment = estimates.assignment[0];
 
@@ -111,6 +115,8 @@ namespace tomcat {
                         }
                     }
                 }
+
+                ++progress;
             }
 
             this->next_time_step += new_data.get_time_steps();

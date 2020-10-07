@@ -2,19 +2,11 @@
 
 #include <memory>
 
-#include "utils/Definitions.h"
 #include "pipeline/estimation/Estimator.h"
+#include "utils/Definitions.h"
 
 namespace tomcat {
     namespace model {
-
-        //------------------------------------------------------------------
-        // Forward declarations
-        //------------------------------------------------------------------
-
-        //------------------------------------------------------------------
-        // Structs
-        //------------------------------------------------------------------
 
         /**
          * Generic estimation process for a DBN model.
@@ -71,6 +63,19 @@ namespace tomcat {
              */
             void add_estimator(std::shared_ptr<Estimator> estimator);
 
+            /**
+             * Aks estimators to save the estimates computed. In a cross
+             * validation process, this method will be called multiple times. In
+             * the end, we will have a list of estimates calculated in each one
+             * of the cross validation steps.
+             */
+            void keep_estimates();
+
+            /**
+             * Clear cumulative estimates computed by the estimators.
+             */
+            void clear_estimates();
+
             //------------------------------------------------------------------
             // Virtual functions
             //------------------------------------------------------------------
@@ -78,7 +83,7 @@ namespace tomcat {
             /**
              * Prepares the estimation process to start again.
              */
-            virtual void reset();
+            virtual void prepare();
 
             /**
              * Writes information about the estimation in a json object.
@@ -122,6 +127,9 @@ namespace tomcat {
 
             // Whether the estimates should be displayed in the evaluation file.
             bool display_estimates = false;
+
+            // Estimates computed each time the estimation process is executed.
+            std::vector<CumulativeNodeEstimates> cumulative_estimates;
         };
 
     } // namespace model

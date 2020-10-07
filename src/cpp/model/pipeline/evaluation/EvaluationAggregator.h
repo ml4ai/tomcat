@@ -93,7 +93,7 @@ namespace tomcat {
             /**
              * Prepares the aggregator to start again.
              */
-            void reset();
+            void clear_evaluations();
 
             /**
              * Adds a measure to the aggregator.

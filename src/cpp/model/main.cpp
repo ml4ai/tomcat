@@ -4,9 +4,9 @@
 #include <boost/program_options.hpp>
 #include <fmt/format.h>
 
-#include "TomcatTA3.h"
-#include "TomcatTA3V2.h"
 #include "converter/TA3MessageConverter.h"
+#include "experiments/TomcatTA3.h"
+#include "experiments/TomcatTA3V2.h"
 #include "pgm/EvidenceSet.h"
 #include "pipeline/DBNSaver.h"
 #include "pipeline/KFold.h"
@@ -77,7 +77,7 @@ void execute_experiment_1a() {
         make_shared<EvaluationAggregator>(
             EvaluationAggregator::METHOD::no_aggregation);
 
-    vector<int> horizons = {1, 3, 5, 10, 15, 30};
+    vector<int> horizons = {1, 3, 5, 10, 15, 30, 50, 100};
     for (int horizon : horizons) {
         shared_ptr<Estimator> estimator =
             make_shared<TrainingFrequencyEstimator>(tomcat.get_model(),
@@ -111,7 +111,8 @@ void execute_experiment_1a() {
 }
 
 /**
- * Training with engineering data and testing on human subject data
+ * Same as experiment 1a but assuming different thresholds for discretizing an
+ * estimate to 0 or 1.
  */
 void execute_experiment_1b() {
     // Random Seed
@@ -122,14 +123,80 @@ void execute_experiment_1b() {
     tomcat.init();
 
     // Data
-    string data_dir = fmt::format("{}/ta3/falcon/engineering", DATA_ROOT_DIR);
-    EvidenceSet training_data(data_dir);
-    data_dir = fmt::format("{}/ta3/falcon/human", DATA_ROOT_DIR);
-    EvidenceSet test_data(data_dir);
+    string data_dir = fmt::format("{}/ta3/falcon/human", DATA_ROOT_DIR);
+    EvidenceSet data(data_dir);
 
     // Data split
-    shared_ptr<KFold> data_splitter =
-        make_shared<KFold>(training_data, test_data);
+    int num_folds = 5;
+    shared_ptr<KFold> data_splitter = make_shared<KFold>(data, num_folds, gen);
+
+    // Training
+    string model_dir =
+        fmt::format("{}/model/ta3/experiment_1a/fold{{}}", OUTPUT_ROOT_DIR);
+    shared_ptr<DBNTrainer> loader =
+        make_shared<DBNLoader>(DBNLoader(tomcat.get_model(), model_dir));
+
+    // Estimation and evaluation
+    shared_ptr<OfflineEstimation> offline_estimation =
+        make_shared<OfflineEstimation>();
+
+    shared_ptr<EvaluationAggregator> aggregator =
+        make_shared<EvaluationAggregator>(
+            EvaluationAggregator::METHOD::no_aggregation);
+
+    vector<double> thresholds = {0.2, 0.3, 0.4, 0.5, 0.6, 0.7};
+    vector<int> horizons = {1, 3, 5, 10, 15, 30, 50, 100};
+
+    for (int horizon : horizons) {
+        shared_ptr<Estimator> estimator =
+            make_shared<TrainingFrequencyEstimator>(tomcat.get_model(),
+                                                    horizon);
+        estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
+        estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
+        offline_estimation->add_estimator(estimator);
+        for (double threshold : thresholds) {
+            aggregator->add_measure(
+                make_shared<Accuracy>(estimator, threshold));
+            aggregator->add_measure(make_shared<F1Score>(estimator, threshold));
+        }
+
+        estimator =
+            make_shared<SumProductEstimator>(tomcat.get_model(), horizon);
+        estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
+        estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
+        offline_estimation->add_estimator(estimator);
+        for (double threshold : thresholds) {
+            aggregator->add_measure(
+                make_shared<Accuracy>(estimator, threshold));
+            aggregator->add_measure(make_shared<F1Score>(estimator, threshold));
+        }
+    }
+
+    ofstream output_file;
+    string filepath = fmt::format(
+        "{}/evaluations/ta3/experiment_1b/evaluations.json", OUTPUT_ROOT_DIR);
+    output_file.open(filepath);
+    Pipeline pipeline("experiment_1b", output_file);
+    pipeline.set_data_splitter(data_splitter);
+    pipeline.set_model_trainer(loader);
+    pipeline.set_estimation_process(offline_estimation);
+    pipeline.set_aggregator(aggregator);
+    pipeline.execute();
+}
+
+/**
+ * Trains the model using the complete training data.
+ */
+void execute_experiment_1c_part_a() {
+    // Random Seed
+    shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+
+    // Model
+    TomcatTA3 tomcat;
+    tomcat.init();
+
+    // Data
+    EvidenceSet training_data("../../data/samples/ta3/falcon/human");
 
     // Training
     int burn_in = 50;
@@ -141,8 +208,69 @@ void execute_experiment_1b() {
             num_samples));
 
     // Saving
+    shared_ptr<DBNSaver> saver = make_shared<DBNSaver>(
+        DBNSaver(tomcat.get_model(), "../../data/model/ta3/experiment_1c/"));
+
+    trainer->fit(training_data);
+    saver->save();
+}
+
+/**
+ * Generates synthetic data using the model trained in part a
+ */
+void execute_experiment_1c_part_b() {
+    // Random Seed
+    shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+
+    // Model
+    TomcatTA3 tomcat;
+    tomcat.init();
+
+    // Training
     string model_dir =
-        fmt::format("{}/model/ta3/experiment_1b/", OUTPUT_ROOT_DIR);
+        fmt::format("{}/model/ta3/experiment_1c", OUTPUT_ROOT_DIR);
+    shared_ptr<DBNTrainer> loader =
+        make_shared<DBNLoader>(DBNLoader(tomcat.get_model(), model_dir));
+    loader->fit({});
+
+    int num_samples = 1000;
+    string samples_dir = fmt::format(
+        "{}/samples/ta3/falcon/synthetic/experiment_1c", OUTPUT_ROOT_DIR);
+    tomcat.generate_synthetic_data(gen, num_samples, samples_dir);
+}
+
+/**
+ * Cross validation with the falcon map using synthetic data generated in part
+ * b.
+ */
+void execute_experiment_1c_part_c() {
+    // Random Seed
+    shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+
+    // Model
+    TomcatTA3 tomcat;
+    tomcat.init();
+
+    // Data
+    string data_dir =
+        fmt::format("{}/ta3/falcon/synthetic/experiment_1c", DATA_ROOT_DIR);
+    EvidenceSet data(data_dir);
+
+    // Data split
+    int num_folds = 5;
+    shared_ptr<KFold> data_splitter = make_shared<KFold>(data, num_folds, gen);
+
+    // Training
+    int burn_in = 50;
+    int num_samples = 100;
+    shared_ptr<DBNTrainer> trainer = make_shared<DBNSamplingTrainer>(
+        gen,
+        make_shared<GibbsSampler>(tomcat.get_model(), burn_in),
+        num_samples);
+
+    // Saving
+    string model_dir =
+        fmt::format("{}/model/ta3/experiment_1c/fold{{}}", OUTPUT_ROOT_DIR);
     shared_ptr<DBNSaver> saver =
         make_shared<DBNSaver>(DBNSaver(tomcat.get_model(), model_dir));
 
@@ -154,7 +282,7 @@ void execute_experiment_1b() {
         make_shared<EvaluationAggregator>(
             EvaluationAggregator::METHOD::no_aggregation);
 
-    vector<int> horizons = {1, 3, 5, 10, 15, 30};
+    vector<int> horizons = {1, 3, 5, 10, 15, 30, 50, 100};
     for (int horizon : horizons) {
         shared_ptr<Estimator> estimator =
             make_shared<TrainingFrequencyEstimator>(tomcat.get_model(),
@@ -172,93 +300,19 @@ void execute_experiment_1b() {
         offline_estimation->add_estimator(estimator);
         aggregator->add_measure(make_shared<Accuracy>(estimator));
         aggregator->add_measure(make_shared<F1Score>(estimator));
-//        aggregator->add_measure(make_shared<Estimates>(estimator));
     }
 
     ofstream output_file;
     string filepath = fmt::format(
-        "{}/evaluations/ta3/experiment_1b/evaluations.json", OUTPUT_ROOT_DIR);
+        "{}/evaluations/ta3/experiment_1c/evaluations.json", OUTPUT_ROOT_DIR);
     output_file.open(filepath);
-    Pipeline pipeline("experiment_1b", output_file);
+    Pipeline pipeline("experiment_1c", output_file);
     pipeline.set_data_splitter(data_splitter);
     pipeline.set_model_trainer(trainer);
     pipeline.set_model_saver(saver);
     pipeline.set_estimation_process(offline_estimation);
     pipeline.set_aggregator(aggregator);
     pipeline.execute();
-}
-
-/**
- * Same as exmperiment 1a but assuming different thresholds for discretizing an
- * estimate to 0 or 1.
- */
-void execute_experiment_1c() {
-    // Random Seed
-    shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
-
-    // Model
-    TomcatTA3 tomcat;
-    tomcat.init();
-
-    // Data
-    string data_dir = fmt::format("{}/ta3/falcon/engineering", DATA_ROOT_DIR);
-    EvidenceSet data(data_dir);
-
-    // Data split
-    int num_folds = 5;
-    shared_ptr<KFold> data_splitter = make_shared<KFold>(data, num_folds, gen);
-
-    // Training
-    string model_dir =
-        fmt::format("{}/model/ta3/experiment_1a/fold{{}}", OUTPUT_ROOT_DIR);
-    shared_ptr<DBNTrainer> loader =
-        make_shared<DBNLoader>(DBNLoader(tomcat.get_model(), model_dir));
-
-    vector<double> thresholds = {0.2, 0.3, 0.4, 0.5, 0.6, 0.7};
-    vector<int> horizons = {1, 3, 5, 10, 15, 30};
-    for (double threshold : thresholds) {
-        // Estimation and evaluation
-        shared_ptr<OfflineEstimation> offline_estimation =
-            make_shared<OfflineEstimation>();
-
-        shared_ptr<EvaluationAggregator> aggregator =
-            make_shared<EvaluationAggregator>(
-                EvaluationAggregator::METHOD::no_aggregation);
-
-        for (int horizon : horizons) {
-            shared_ptr<Estimator> estimator =
-                make_shared<TrainingFrequencyEstimator>(tomcat.get_model(),
-                                                        horizon);
-            estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
-            estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
-            offline_estimation->add_estimator(estimator);
-            aggregator->add_measure(
-                make_shared<Accuracy>(estimator, threshold));
-            aggregator->add_measure(make_shared<F1Score>(estimator, threshold));
-
-            estimator =
-                make_shared<SumProductEstimator>(tomcat.get_model(), horizon);
-            estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
-            estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
-            offline_estimation->add_estimator(estimator);
-            aggregator->add_measure(
-                make_shared<Accuracy>(estimator, threshold));
-            aggregator->add_measure(make_shared<F1Score>(estimator, threshold));
-        }
-
-        ofstream output_file;
-        string filepath =
-            fmt::format("{}/evaluations/ta3/experiment_1a/evaluations_{}.json",
-                        OUTPUT_ROOT_DIR,
-                        threshold);
-        output_file.open(filepath);
-        Pipeline pipeline("experiment_1c", output_file);
-        pipeline.set_data_splitter(data_splitter);
-        pipeline.set_model_trainer(loader);
-        pipeline.set_estimation_process(offline_estimation);
-        pipeline.set_aggregator(aggregator);
-        pipeline.execute();
-    }
 }
 
 /**
@@ -335,7 +389,7 @@ void execute_experiment_1d_part_b() {
         estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
         estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
         offline_estimation->add_estimator(estimator);
-//        aggregator->add_measure(make_shared<Estimates>(estimator));
+        //        aggregator->add_measure(make_shared<Estimates>(estimator));
     }
 
     ofstream output_file;
@@ -436,7 +490,7 @@ void execute_experiment_1e_part_b() {
         estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
         estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
         offline_estimation->add_estimator(estimator);
-//        aggregator->add_measure(make_shared<Estimates>(estimator));
+        //        aggregator->add_measure(make_shared<Estimates>(estimator));
     }
 
     ofstream output_file;
@@ -522,7 +576,7 @@ void execute_experiment_1f_part_b() {
         offline_estimation->add_estimator(estimator);
         aggregator->add_measure(make_shared<Accuracy>(estimator));
         aggregator->add_measure(make_shared<F1Score>(estimator));
-//        aggregator->add_measure(make_shared<Estimates>(estimator));
+        //        aggregator->add_measure(make_shared<Estimates>(estimator));
     }
 
     ofstream output_file;
@@ -611,7 +665,7 @@ void execute_experiment_1g_part_b() {
             estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
             estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
             offline_estimation->add_estimator(estimator);
-//            aggregator->add_measure(make_shared<Estimates>(estimator));
+            //            aggregator->add_measure(make_shared<Estimates>(estimator));
         }
 
         ofstream output_file;
@@ -639,61 +693,51 @@ void execute_experiment_2a() {
     tomcat.init();
 
     // Data
-    string data_dir = fmt::format("{}/ta3/falcon/converter/train", DATA_ROOT_DIR);
-    EvidenceSet training_data(data_dir);
-    data_dir = fmt::format("{}/ta3/falcon/converter/test", DATA_ROOT_DIR);
-    EvidenceSet test_data(data_dir);
+    string data_dir = fmt::format("{}/ta3/falcon/human", DATA_ROOT_DIR);
+    EvidenceSet data(data_dir);
 
     // Data split
-    shared_ptr<KFold> data_splitter =
-        make_shared<KFold>(training_data, test_data);
+    int num_folds = 5;
+    shared_ptr<KFold> data_splitter = make_shared<KFold>(data, num_folds, gen);
 
     // Training
-//    int burn_in = 100;
-//    int num_samples = 500;
-//    shared_ptr<DBNSamplingTrainer> trainer =
-//        make_shared<DBNSamplingTrainer>(DBNSamplingTrainer(
-//            gen,
-//            make_shared<GibbsSampler>(tomcat.get_model(), burn_in),
-//            num_samples));
-    string model_dir = fmt::format(
-        "{}/model/ta3/experiment_2a", OUTPUT_ROOT_DIR);
-    shared_ptr<DBNTrainer> loader =
-        make_shared<DBNLoader>(DBNLoader(tomcat.get_model(), model_dir));
-    loader->fit({});
+    int burn_in = 50;
+    int num_samples = 100;
+    shared_ptr<DBNTrainer> trainer = make_shared<DBNSamplingTrainer>(
+        gen,
+        make_shared<GibbsSampler>(tomcat.get_model(), burn_in),
+        num_samples);
 
     // Saving
-//    string model_dir =
-//        fmt::format("{}/model/ta3/experiment_2a/", OUTPUT_ROOT_DIR);
-//    shared_ptr<DBNSaver> saver =
-//        make_shared<DBNSaver>(DBNSaver(tomcat.get_model(), model_dir));
+    string model_dir =
+        fmt::format("{}/model/ta3/experiment_2a/fold{{}}", OUTPUT_ROOT_DIR);
+    shared_ptr<DBNSaver> saver =
+        make_shared<DBNSaver>(DBNSaver(tomcat.get_model(), model_dir));
 
     // Estimation and evaluation
     shared_ptr<OfflineEstimation> offline_estimation =
         make_shared<OfflineEstimation>();
+    offline_estimation->set_display_estimates(true);
 
     shared_ptr<EvaluationAggregator> aggregator =
         make_shared<EvaluationAggregator>(
             EvaluationAggregator::METHOD::no_aggregation);
 
-    vector<int> horizons = {1};//, 3, 5, 10, 15, 30};
+    vector<int> horizons = {0};
     for (int horizon : horizons) {
         shared_ptr<Estimator> estimator =
-            make_shared<SumProductEstimator>(tomcat.get_model(), horizon);
-        estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
-        estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
+            make_shared<TrainingFrequencyEstimator>(tomcat.get_model(),
+                                                    horizon);
+        estimator->add_node(TomcatTA3V2::Q, Eigen::VectorXd(0));
         offline_estimation->add_estimator(estimator);
-//        aggregator->add_measure(make_shared<Estimates>(estimator));
-    }
+        aggregator->add_measure(make_shared<Accuracy>(estimator));
 
-    shared_ptr<Estimator> estimator =
-        make_shared<SumProductEstimator>(tomcat.get_model(), 0);
-    estimator->add_node(TomcatTA3V2::Q, Eigen::VectorXd::Constant(1, 0));
-    estimator->add_node(TomcatTA3V2::Q, Eigen::VectorXd::Constant(1, 1));
-    estimator->add_node(TomcatTA3V2::Q, Eigen::VectorXd::Constant(1, 2));
-    estimator->add_node(TomcatTA3V2::Q, Eigen::VectorXd::Constant(1, 3));
-    offline_estimation->add_estimator(estimator);
-//    aggregator->add_measure(make_shared<Estimates>(estimator));
+        estimator =
+            make_shared<SumProductEstimator>(tomcat.get_model(), horizon);
+        estimator->add_node(TomcatTA3V2::Q, Eigen::VectorXd(0));
+        offline_estimation->add_estimator(estimator);
+        aggregator->add_measure(make_shared<Accuracy>(estimator));
+    }
 
     ofstream output_file;
     string filepath = fmt::format(
@@ -701,11 +745,10 @@ void execute_experiment_2a() {
     output_file.open(filepath);
     Pipeline pipeline("experiment_2a", output_file);
     pipeline.set_data_splitter(data_splitter);
-    pipeline.set_model_trainer(loader);
-//    pipeline.set_model_trainer(trainer);
-//    pipeline.set_model_saver(saver);
-    pipeline.set_estimation_process(offline_estimation);
+    pipeline.set_model_trainer(trainer);
+    pipeline.set_model_saver(saver);
     pipeline.set_aggregator(aggregator);
+    pipeline.set_estimation_process(offline_estimation);
     pipeline.execute();
 }
 
@@ -753,6 +796,130 @@ void execute_experiment_1xxx() {
     pipeline.execute();
 }
 
+/**
+ * Trains the model using the complete training data.
+ */
+void execute_experiment_2b_part_a() {
+    // Random Seed
+    shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+
+    // Model
+    TomcatTA3V2 tomcat;
+    tomcat.init();
+
+    // Data
+    EvidenceSet training_data("../../data/samples/ta3/falcon/human");
+
+    // Training
+    int burn_in = 50;
+    int num_samples = 100;
+    shared_ptr<DBNSamplingTrainer> trainer =
+        make_shared<DBNSamplingTrainer>(DBNSamplingTrainer(
+            gen,
+            make_shared<GibbsSampler>(tomcat.get_model(), burn_in),
+            num_samples));
+
+    // Saving
+    shared_ptr<DBNSaver> saver = make_shared<DBNSaver>(
+        DBNSaver(tomcat.get_model(), "../../data/model/ta3/experiment_2b/"));
+
+    trainer->fit(training_data);
+    saver->save();
+}
+
+/**
+ * Generates synthetic data using the model trained in part a
+ */
+void execute_experiment_2b_part_b() {
+    // Random Seed
+    shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+
+    // Model
+    TomcatTA3V2 tomcat;
+    tomcat.init();
+
+    // Training
+    string model_dir =
+        fmt::format("{}/model/ta3/experiment_2b", OUTPUT_ROOT_DIR);
+    shared_ptr<DBNTrainer> loader =
+        make_shared<DBNLoader>(DBNLoader(tomcat.get_model(), model_dir));
+    loader->fit({});
+
+    int num_samples = 1000;
+    string samples_dir = fmt::format(
+        "{}/samples/ta3/falcon/synthetic/experiment_2b", OUTPUT_ROOT_DIR);
+    tomcat.generate_synthetic_data(gen, num_samples, samples_dir);
+}
+
+void execute_experiment_2b_part_c() {
+    // Random Seed
+    shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+
+    // Model
+    TomcatTA3V2 tomcat;
+    tomcat.init();
+
+    // Data
+    string data_dir = fmt::format("{}/ta3/falcon/synthetic/experiment_2b", DATA_ROOT_DIR);
+    EvidenceSet data(data_dir);
+    data.keep_first(100);
+
+    // Data split
+    int num_folds = 5;
+    shared_ptr<KFold> data_splitter = make_shared<KFold>(data, num_folds, gen);
+
+    // Training
+    int burn_in = 50;
+    int num_samples = 100;
+    shared_ptr<DBNTrainer> trainer = make_shared<DBNSamplingTrainer>(
+        gen,
+        make_shared<GibbsSampler>(tomcat.get_model(), burn_in),
+        num_samples);
+
+    // Saving
+    string model_dir =
+        fmt::format("{}/model/ta3/experiment_2b/fold{{}}", OUTPUT_ROOT_DIR);
+    shared_ptr<DBNSaver> saver =
+        make_shared<DBNSaver>(DBNSaver(tomcat.get_model(), model_dir));
+
+    // Estimation and evaluation
+    shared_ptr<OfflineEstimation> offline_estimation =
+        make_shared<OfflineEstimation>();
+    offline_estimation->set_display_estimates(true);
+
+    shared_ptr<EvaluationAggregator> aggregator =
+        make_shared<EvaluationAggregator>(
+            EvaluationAggregator::METHOD::no_aggregation);
+
+    vector<int> horizons = {0};
+    for (int horizon : horizons) {
+        shared_ptr<Estimator> estimator =
+            make_shared<TrainingFrequencyEstimator>(tomcat.get_model(),
+                                                    horizon);
+        estimator->add_node(TomcatTA3V2::Q, Eigen::VectorXd(0));
+        offline_estimation->add_estimator(estimator);
+        aggregator->add_measure(make_shared<Accuracy>(estimator));
+
+        estimator =
+            make_shared<SumProductEstimator>(tomcat.get_model(), horizon);
+        estimator->add_node(TomcatTA3V2::Q, Eigen::VectorXd(0));
+        offline_estimation->add_estimator(estimator);
+        aggregator->add_measure(make_shared<Accuracy>(estimator));
+    }
+
+    ofstream output_file;
+    string filepath = fmt::format(
+        "{}/evaluations/ta3/experiment_2b/evaluations.json", OUTPUT_ROOT_DIR);
+    output_file.open(filepath);
+    Pipeline pipeline("experiment_2b", output_file);
+    pipeline.set_data_splitter(data_splitter);
+    pipeline.set_model_trainer(trainer);
+    pipeline.set_model_saver(saver);
+    pipeline.set_aggregator(aggregator);
+    pipeline.set_estimation_process(offline_estimation);
+    pipeline.execute();
+}
+
 void execute_experiment(const string& experiment_id) {
     if (experiment_id == "1a") {
         execute_experiment_1a();
@@ -761,7 +928,9 @@ void execute_experiment(const string& experiment_id) {
         execute_experiment_1b();
     }
     else if (experiment_id == "1c") {
-        execute_experiment_1c();
+        execute_experiment_1c_part_a();
+        execute_experiment_1c_part_b();
+        execute_experiment_1c_part_c();
     }
     else if (experiment_id == "1d") {
         execute_experiment_1d_part_a();
@@ -793,6 +962,9 @@ void execute_experiment(const string& experiment_id) {
     else if (experiment_id == "1f_b") {
         execute_experiment_1f_part_b();
     }
+    else if (experiment_id == "2a") {
+        execute_experiment_2a();
+    }
     else {
         throw TomcatModelException(
             "There's no experiment with the informed ID.");
@@ -810,7 +982,7 @@ int main(int argc, char* argv[]) {
         po::value<string>(&OUTPUT_ROOT_DIR)->default_value("../../data/"),
         "Output directory for generated data, model and evaluation.")(
         "experiment_id",
-        po::value<string>(&experiment_id)->default_value("1a"),
+        po::value<string>(&experiment_id)->default_value("2a"),
         "Mission ID or path to mission XML file.\n"
         "  1a: ToMCAT-TA3 v1.0 - 5-CV on engineering data.\n"
         "  1b: ToMCAT-TA3 v1.0 - Trains on engineering data, tests on "
@@ -846,64 +1018,77 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    execute_experiment(experiment_id);
-      //execute_experiment_2a();
+    execute_experiment_2a();
+//    execute_experiment_2b_part_b();
+    //execute_experiment_2b_part_c();
 
-//    TomcatTA3V2 tomcat;
-//    tomcat.init();
-//    tomcat.get_model()->write_graphviz(cout);
+    //    execute_experiment_1a();
+    //    LOG("Ca");
+    //    execute_experiment_1c_part_a();
+    //    LOG("Cb");
+    //    execute_experiment_1c_part_b();
+    //    LOG("Cc");
+    //    execute_experiment_1c_part_c();
 
-    //execute_experiment_1xxx();
+    // execute_experiment(experiment_id);
+    // execute_experiment_2a();
 
-//    // Random Seed
-//    shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
-//
-//    // Model
-//    TomcatTA3 tomcat;
-//    tomcat.init();
-//
-//    // Data
-//    EvidenceSet training_data;
-//    string data_dir =
-//        fmt::format("{}/ta3/falcon/converter/", DATA_ROOT_DIR);
-//    EvidenceSet test_data(data_dir);
-//
-//    // Data split
-//    shared_ptr<KFold> data_splitter =
-//        make_shared<KFold>(training_data, test_data);
-//
-//    // Training
-//    string model_dir =
-//        fmt::format("{}/model/ta3/experiment_1b", OUTPUT_ROOT_DIR);
-//    shared_ptr<DBNTrainer> loader =
-//        make_shared<DBNLoader>(tomcat.get_model(), model_dir);
-//
-//    // Estimation and evaluation
-//    shared_ptr<OfflineEstimation> offline_estimation =
-//        make_shared<OfflineEstimation>();
-//
-//    shared_ptr<EvaluationAggregator> aggregator =
-//        make_shared<EvaluationAggregator>(
-//            EvaluationAggregator::METHOD::no_aggregation);
-//
-//    vector<int> horizons = {1};
-//    for (int horizon : horizons) {
-//        shared_ptr<Estimator> estimator =
-//            make_shared<SumProductEstimator>(tomcat.get_model(), horizon);
-//        estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1, 1));
-//        estimator->add_node(TomcatTA3::SY, Eigen::VectorXd::Constant(1, 1));
-//        offline_estimation->add_estimator(estimator);
-//        aggregator->add_measure(make_shared<Estimates>(estimator));
-//    }
-//
-//    ofstream output_file;
-//    string filepath = fmt::format(
-//        "{}/evaluations/ta3/evaluations.json", OUTPUT_ROOT_DIR);
-//    output_file.open(filepath);
-//    Pipeline pipeline("online_check", output_file);
-//    pipeline.set_data_splitter(data_splitter);
-//    pipeline.set_model_trainer(loader);
-//    pipeline.set_estimation_process(offline_estimation);
-//    pipeline.set_aggregator(aggregator);
-//    pipeline.execute();
+    //    TomcatTA3V2 tomcat;
+    //    tomcat.init();
+    //    tomcat.get_model()->write_graphviz(cout);
+
+    // execute_experiment_1xxx();
+
+    //    // Random Seed
+    //    shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+    //
+    //    // Model
+    //    TomcatTA3 tomcat;
+    //    tomcat.init();
+    //
+    //    // Data
+    //    EvidenceSet training_data;
+    //    string data_dir =
+    //        fmt::format("{}/ta3/falcon/converter/", DATA_ROOT_DIR);
+    //    EvidenceSet test_data(data_dir);
+    //
+    //    // Data split
+    //    shared_ptr<KFold> data_splitter =
+    //        make_shared<KFold>(training_data, test_data);
+    //
+    //    // Training
+    //    string model_dir =
+    //        fmt::format("{}/model/ta3/experiment_1b", OUTPUT_ROOT_DIR);
+    //    shared_ptr<DBNTrainer> loader =
+    //        make_shared<DBNLoader>(tomcat.get_model(), model_dir);
+    //
+    //    // Estimation and evaluation
+    //    shared_ptr<OfflineEstimation> offline_estimation =
+    //        make_shared<OfflineEstimation>();
+    //
+    //    shared_ptr<EvaluationAggregator> aggregator =
+    //        make_shared<EvaluationAggregator>(
+    //            EvaluationAggregator::METHOD::no_aggregation);
+    //
+    //    vector<int> horizons = {1};
+    //    for (int horizon : horizons) {
+    //        shared_ptr<Estimator> estimator =
+    //            make_shared<SumProductEstimator>(tomcat.get_model(), horizon);
+    //        estimator->add_node(TomcatTA3::SG, Eigen::VectorXd::Constant(1,
+    //        1)); estimator->add_node(TomcatTA3::SY,
+    //        Eigen::VectorXd::Constant(1, 1));
+    //        offline_estimation->add_estimator(estimator);
+    //        aggregator->add_measure(make_shared<Estimates>(estimator));
+    //    }
+    //
+    //    ofstream output_file;
+    //    string filepath = fmt::format(
+    //        "{}/evaluations/ta3/evaluations.json", OUTPUT_ROOT_DIR);
+    //    output_file.open(filepath);
+    //    Pipeline pipeline("online_check", output_file);
+    //    pipeline.set_data_splitter(data_splitter);
+    //    pipeline.set_model_trainer(loader);
+    //    pipeline.set_estimation_process(offline_estimation);
+    //    pipeline.set_aggregator(aggregator);
+    //    pipeline.execute();
 }
