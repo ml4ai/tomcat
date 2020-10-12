@@ -10,8 +10,8 @@ namespace tomcat {
         //----------------------------------------------------------------------
         Measure::Measure() {}
 
-        Measure::Measure(shared_ptr<Estimator> estimator, double threshold)
-            : estimator(estimator), threshold(threshold) {}
+        Measure::Measure(shared_ptr<Estimator> estimator, double threshold, bool use_last_estimate)
+            : estimator(estimator), threshold(threshold), use_last_estimate(use_last_estimate) {}
 
         Measure::~Measure() {}
 
@@ -20,6 +20,8 @@ namespace tomcat {
         //----------------------------------------------------------------------
         void Measure::copy_measure(const Measure& measure) {
             this->estimator = measure.estimator;
+            this->threshold = measure.threshold;
+            this->use_last_estimate = measure.use_last_estimate;
         }
 
         ConfusionMatrix

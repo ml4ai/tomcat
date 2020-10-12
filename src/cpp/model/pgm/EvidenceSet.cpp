@@ -82,24 +82,31 @@ namespace tomcat {
 
         int EvidenceSet::get_first_time_with_observation(const Tensor3& data) {
 
-            int time_step = -1;
+            int time_step = 0;
             auto [d1, d2, d3] = data.get_shape();
             for (int k = 0; k < d3; k++) {
-                bool has_data = true;
-                for (int i = 0; i < d1; i++) {
-                    for (int j = 0; j < d2; j++) {
+                bool obs_data = false;
+                for (int j = 0; j < d2; j++) {
+                    // If every data in depth is non_observable, the given time
+                    // step k for the data point in row j is defined as non
+                    // observable.
+                    for (int i = 0; i < d1; i++) {
                         if (data.at(i, j, k) != NO_OBS) {
-                            has_data = false;
-                            time_step++;
+                            obs_data = true;
                             break;
                         }
                     }
-                    if (!has_data) {
+
+                    // Also, if at least one data point is non-observable at given time step,
+                    // no other data point should be.
+                    if (!obs_data) {
                         break;
                     }
                 }
-                if (!has_data) {
+                if (obs_data) {
                     break;
+                } else {
+                    time_step++;
                 }
             }
 

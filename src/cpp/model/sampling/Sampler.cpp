@@ -82,9 +82,30 @@ namespace tomcat {
                         Eigen::Matrix assignment = node->get_assignment();
                         for (int i = 0; i < assignment.rows(); i++) {
                             for (int j = 0; j < assignment.cols(); j++) {
-                                int t = rv_node->get_time_step();
-                                int index = j * d2 * d3 + i * d3 + t;
-                                buffer[index] = assignment(i, j);
+
+                                // If a node is not replicable, it means there's
+                                // only one instance of it in the unrolled DBN.
+                                // This means there will be sample just for one
+                                // time step, the one where the node shows up.
+                                // However, the semantics of these nodes is that
+                                // their assignments are applicable to all time
+                                // steps starting from their initial one. So we
+                                // replicate the samples to the remaining time
+                                // steps until the maximum number of time steps
+                                // sampled.
+                                if (!node->get_metadata()->is_replicable()) {
+                                    for (int t = rv_node->get_time_step();
+                                         t <= max_time_step;
+                                         t++) {
+                                        int index = j * d2 * d3 + i * d3 + t;
+                                        buffer[index] = assignment(i, j);
+                                    }
+                                }
+                                else {
+                                    int t = rv_node->get_time_step();
+                                    int index = j * d2 * d3 + i * d3 + t;
+                                    buffer[index] = assignment(i, j);
+                                }
                             }
                         }
                     }

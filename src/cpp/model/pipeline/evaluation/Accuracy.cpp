@@ -8,8 +8,10 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Constructors & Destructor
         //----------------------------------------------------------------------
-        Accuracy::Accuracy(shared_ptr<Estimator> estimator, double threshold)
-            : Measure(estimator, threshold) {}
+        Accuracy::Accuracy(shared_ptr<Estimator> estimator,
+                           double threshold,
+                           bool use_last_estimate)
+            : Measure(estimator, threshold, use_last_estimate) {}
 
         Accuracy::~Accuracy() {}
 
@@ -44,14 +46,32 @@ namespace tomcat {
                     // need to get the highest probability to decide the
                     // estimated assignment and then compare it against the true
                     // assignment.
+
+                    // Get matrix of true observations starting from the first
+                    // time step wth observed data.
+                    Tensor3 real_data_3d = test_data[evaluation.label];
+                    int first_valid_time_step =
+                        EvidenceSet::get_first_time_with_observation(
+                            real_data_3d);
+                    Eigen::MatrixXd real_data = real_data_3d(0, 0);
+
                     int num_right_inferences = 0;
+                    int total_inferences = 0;
                     int cols = estimates.estimates[0].cols();
-
+                    int t0 = this->use_last_estimate ? (cols - 1) : first_valid_time_step;
                     for (int d = 0; d < test_data.get_num_data_points(); d++) {
-                        vector<int> counts_per_assignment(
-                            estimates.estimates.size());
-
-                        for (int t = 0; t < cols; t++) {
+                        for (int t = t0; t < cols; t++) {
+                            // Each element of the vector estimates.estimates
+                            // represents a possible assignment a node can have
+                            // (0, 1, ..., cardinality - 1), and it contains a
+                            // matrix of estimated probability for such
+                            // assignment, where the rows index a data point and
+                            // the columns index a time step. We loop over the
+                            // elements of the vector for a given data point and
+                            // time, to compute the estimated assignment by
+                            // choosing the one with highest probability among
+                            // the other assignments' estimate for the same data
+                            // point and time step.
                             int inferred_assignment = 0;
                             double max_prob = 0;
                             for (int i = 0; i < estimates.estimates.size();
@@ -63,22 +83,16 @@ namespace tomcat {
                                 }
                             }
 
-                            counts_per_assignment[inferred_assignment]++;
-                        }
-
-                        int most_inferred_assignment = static_cast<int>(
-                            distance(counts_per_assignment.begin(),
-                                     max_element(counts_per_assignment.begin(),
-                                                 counts_per_assignment.end())));
-                        int true_assignment =
-                            test_data[estimates.label].at(0, d, 0);
-                        if (most_inferred_assignment == true_assignment) {
-                            num_right_inferences++;
+                            int true_assignment = real_data(d, t);
+                            if (inferred_assignment == true_assignment) {
+                                num_right_inferences++;
+                            }
+                            total_inferences++;
                         }
                     }
 
                     accuracy = (double) num_right_inferences /
-                               (double)(test_data.get_num_data_points());
+                               (double) total_inferences;
                 }
                 else {
                     ConfusionMatrix confusion_matrix =

@@ -48,9 +48,6 @@ namespace tomcat {
 
             Eigen::VectorXd assignment;
 
-            // If there's no fixed assignment and evaluations are raw estimates,
-            // there will be a vector of evaluations, one for each one of the
-            // possible node's assignments.
             Eigen::MatrixXd evaluation;
         };
 
@@ -78,9 +75,13 @@ namespace tomcat {
              * @param estimator: estimator used to compute the estimates
              * @param threshold: Probability threshold for predicting or
              * inferring the occurrence of an assignment as true
+             * @param use_last_estimates: whether only the estimate in the last
+             * time step should be used if the inference horizon of the
+             * estimator is 0
              */
             Measure(std::shared_ptr<Estimator> estimator,
-                    double threshold = 0.5);
+                    double threshold = 0.5,
+                    bool use_last_estimate = false);
 
             virtual ~Measure();
 
@@ -159,6 +160,11 @@ namespace tomcat {
             // Probability threshold for predicting or inferring the occurrence
             // of an assignment as true
             double threshold = 0.5;
+
+            // Whenever the inference horizon is 0 and this variable is true,
+            // the evaluation will be performed by using the last estimated
+            // probabilities.
+            bool use_last_estimate = false;
         };
 
     } // namespace model

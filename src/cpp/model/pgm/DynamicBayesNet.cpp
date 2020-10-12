@@ -373,22 +373,35 @@ namespace tomcat {
         }
 
         void DynamicBayesNet::load_from(const string& input_dir) {
+            // Parameters of the model should be in files with the same name as
+            // the parameters timed names. (eg. (Theta_S0,0).txt)
             for (const auto& file :
                  boost::filesystem::directory_iterator(input_dir)) {
+                // Ignore directories
+                if (boost::filesystem::is_regular_file(file)) {
+                    string filename = file.path().filename().string();
+                    string parameter_timed_name = remove_extension(filename);
 
-                string filename = file.path().filename().string();
-                string parameter_timed_name = remove_extension(filename);
-                Eigen::MatrixXd assignment =
-                    read_matrix_from_file(file.path().string());
+                    // Only process the file's content if a parameter with the
+                    // same name exists in the model.
+                    if (EXISTS(parameter_timed_name,
+                               this->parameter_nodes_map)) {
 
-                // Set loaded vector as assignment of the corresponding
-                // parameter node.
-                RandomVariableNode* parameter_node =
-                    dynamic_cast<RandomVariableNode*>(
-                        this->parameter_nodes_map.at(parameter_timed_name)
-                            .get());
-                parameter_node->set_assignment(assignment);
-                parameter_node->freeze();
+                        RandomVariableNode* parameter_node =
+                            dynamic_cast<RandomVariableNode*>(
+                                this->parameter_nodes_map
+                                    .at(parameter_timed_name)
+                                    .get());
+
+                        // We set the loaded matrix as the assignment of the
+                        // corresponding parameter node and freeze it so it
+                        // cannot be modified by sampling.
+                        Eigen::MatrixXd assignment =
+                            read_matrix_from_file(file.path().string());
+                        parameter_node->set_assignment(assignment);
+                        parameter_node->freeze();
+                    }
+                }
             }
         }
 

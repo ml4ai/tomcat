@@ -9,7 +9,14 @@ namespace tomcat {
         // Constructors & Destructor
         //----------------------------------------------------------------------
         F1Score::F1Score(shared_ptr<Estimator> estimator, double threshold)
-            : Measure(estimator, threshold) {}
+            : Measure(estimator, threshold) {
+
+            if (estimator->get_inference_horizon() == 0 and
+                estimator->get_estimates()[0].assignment.size() == 0) {
+                throw TomcatModelException(
+                    "F1 Score cannot be used for multiclass inference.");
+            }
+        }
 
         F1Score::~F1Score() {}
 

@@ -24,7 +24,7 @@ namespace tomcat {
              * inferring the occurrence of an assignment as true
              */
             Accuracy(std::shared_ptr<Estimator> estimator,
-                     double threshold = 0.5);
+                     double threshold = 0.5, bool use_last_estimate = false);
 
             ~Accuracy();
 

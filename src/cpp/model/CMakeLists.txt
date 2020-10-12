@@ -77,7 +77,6 @@ add_library(
   pipeline/estimation/OfflineEstimation.cpp
   pipeline/estimation/OnlineEstimation.cpp
   pipeline/evaluation/Measure.cpp
-  pipeline/evaluation/Estimates.cpp
   pipeline/evaluation/Accuracy.cpp
   pipeline/evaluation/F1Score.cpp
   pipeline/evaluation/EvaluationAggregator.cpp

@@ -16,7 +16,6 @@
 #include "pipeline/estimation/SumProductEstimator.h"
 #include "pipeline/estimation/TrainingFrequencyEstimator.h"
 #include "pipeline/evaluation/Accuracy.h"
-#include "pipeline/evaluation/Estimates.h"
 #include "pipeline/evaluation/EvaluationAggregator.h"
 #include "pipeline/evaluation/F1Score.h"
 #include "pipeline/training/DBNLoader.h"
@@ -701,8 +700,8 @@ void execute_experiment_2a() {
     shared_ptr<KFold> data_splitter = make_shared<KFold>(data, num_folds, gen);
 
     // Training
-    int burn_in = 50;
-    int num_samples = 100;
+    int burn_in = 100;
+    int num_samples = 500;
     shared_ptr<DBNTrainer> trainer = make_shared<DBNSamplingTrainer>(
         gen,
         make_shared<GibbsSampler>(tomcat.get_model(), burn_in),
@@ -860,7 +859,64 @@ void execute_experiment_2b_part_c() {
     tomcat.init();
 
     // Data
-    string data_dir = fmt::format("{}/ta3/falcon/synthetic/experiment_2b", DATA_ROOT_DIR);
+    string data_dir =
+        fmt::format("{}/ta3/falcon/synthetic/experiment_2b", DATA_ROOT_DIR);
+    EvidenceSet training(data_dir);
+    EvidenceSet test(data_dir);
+
+    // Data split
+    shared_ptr<KFold> data_splitter = make_shared<KFold>(training, test);
+
+    // Training
+    string model_dir =
+        fmt::format("{}/model/ta3/experiment_2b", OUTPUT_ROOT_DIR);
+    shared_ptr<DBNTrainer> loader =
+        make_shared<DBNLoader>(DBNLoader(tomcat.get_model(), model_dir));
+    loader->fit({});
+
+    // Estimation and evaluation
+    shared_ptr<OfflineEstimation> offline_estimation =
+        make_shared<OfflineEstimation>();
+    offline_estimation->set_display_estimates(true);
+
+    shared_ptr<EvaluationAggregator> aggregator =
+        make_shared<EvaluationAggregator>(
+            EvaluationAggregator::METHOD::no_aggregation);
+
+    shared_ptr<Estimator> estimator =
+        make_shared<TrainingFrequencyEstimator>(tomcat.get_model(), 0);
+    estimator->add_node(TomcatTA3V2::Q, Eigen::VectorXd(0));
+    offline_estimation->add_estimator(estimator);
+    aggregator->add_measure(make_shared<Accuracy>(estimator, 0.5, true));
+
+    estimator = make_shared<SumProductEstimator>(tomcat.get_model(), 0);
+    estimator->add_node(TomcatTA3V2::Q, Eigen::VectorXd(0));
+    offline_estimation->add_estimator(estimator);
+    aggregator->add_measure(make_shared<Accuracy>(estimator, 0.5, true));
+
+    ofstream output_file;
+    string filepath = fmt::format(
+        "{}/evaluations/ta3/experiment_2b/evaluations.json", OUTPUT_ROOT_DIR);
+    output_file.open(filepath);
+    Pipeline pipeline("experiment_2b", output_file);
+    pipeline.set_data_splitter(data_splitter);
+    pipeline.set_model_trainer(loader);
+    pipeline.set_aggregator(aggregator);
+    pipeline.set_estimation_process(offline_estimation);
+    pipeline.execute();
+}
+
+void execute_experiment_2b_part_d() {
+    // Random Seed
+    shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+
+    // Model
+    TomcatTA3V2 tomcat;
+    tomcat.init();
+
+    // Data
+    string data_dir =
+        fmt::format("{}/ta3/falcon/synthetic/experiment_2b", DATA_ROOT_DIR);
     EvidenceSet data(data_dir);
     data.keep_first(100);
 
@@ -885,36 +941,86 @@ void execute_experiment_2b_part_c() {
     // Estimation and evaluation
     shared_ptr<OfflineEstimation> offline_estimation =
         make_shared<OfflineEstimation>();
+
+    shared_ptr<EvaluationAggregator> aggregator =
+        make_shared<EvaluationAggregator>(
+            EvaluationAggregator::METHOD::no_aggregation);
+
+    shared_ptr<Estimator> estimator =
+        make_shared<TrainingFrequencyEstimator>(tomcat.get_model(), 0);
+    estimator->add_node(TomcatTA3V2::Q, Eigen::VectorXd(0));
+    offline_estimation->add_estimator(estimator);
+    aggregator->add_measure(make_shared<Accuracy>(estimator));
+
+    estimator = make_shared<SumProductEstimator>(tomcat.get_model(), 0);
+    estimator->add_node(TomcatTA3V2::Q, Eigen::VectorXd(0));
+    offline_estimation->add_estimator(estimator);
+    aggregator->add_measure(make_shared<Accuracy>(estimator));
+
+    ofstream output_file;
+    string filepath = fmt::format(
+        "{}/evaluations/ta3/experiment_2b/evaluations_d.json", OUTPUT_ROOT_DIR);
+    output_file.open(filepath);
+    Pipeline pipeline("experiment_2b", output_file);
+    pipeline.set_data_splitter(data_splitter);
+    pipeline.set_model_trainer(trainer);
+    pipeline.set_model_saver(saver);
+    pipeline.set_aggregator(aggregator);
+    pipeline.set_estimation_process(offline_estimation);
+    pipeline.execute();
+}
+
+// Test the model using the same data used to train it.
+void execute_experiment_2c() {
+    // Random Seed
+    shared_ptr<gsl_rng> gen(gsl_rng_alloc(gsl_rng_mt19937));
+
+    // Model
+    TomcatTA3V2 tomcat;
+    tomcat.init();
+
+    // Data
+    string data_dir = fmt::format("{}/ta3/falcon/human", DATA_ROOT_DIR);
+    EvidenceSet training(data_dir);
+    EvidenceSet test(data_dir);
+
+    // Data split
+    shared_ptr<KFold> data_splitter = make_shared<KFold>(training, test);
+
+    // Training
+    string model_dir =
+        fmt::format("{}/model/ta3/experiment_2b", OUTPUT_ROOT_DIR);
+    shared_ptr<DBNTrainer> loader =
+        make_shared<DBNLoader>(DBNLoader(tomcat.get_model(), model_dir));
+    loader->fit({});
+
+    // Estimation and evaluation
+    shared_ptr<OfflineEstimation> offline_estimation =
+        make_shared<OfflineEstimation>();
     offline_estimation->set_display_estimates(true);
 
     shared_ptr<EvaluationAggregator> aggregator =
         make_shared<EvaluationAggregator>(
             EvaluationAggregator::METHOD::no_aggregation);
 
-    vector<int> horizons = {0};
-    for (int horizon : horizons) {
-        shared_ptr<Estimator> estimator =
-            make_shared<TrainingFrequencyEstimator>(tomcat.get_model(),
-                                                    horizon);
-        estimator->add_node(TomcatTA3V2::Q, Eigen::VectorXd(0));
-        offline_estimation->add_estimator(estimator);
-        aggregator->add_measure(make_shared<Accuracy>(estimator));
+    shared_ptr<Estimator> estimator =
+        make_shared<TrainingFrequencyEstimator>(tomcat.get_model(), 0);
+    estimator->add_node(TomcatTA3V2::Q, Eigen::VectorXd(0));
+    offline_estimation->add_estimator(estimator);
+    aggregator->add_measure(make_shared<Accuracy>(estimator));
 
-        estimator =
-            make_shared<SumProductEstimator>(tomcat.get_model(), horizon);
-        estimator->add_node(TomcatTA3V2::Q, Eigen::VectorXd(0));
-        offline_estimation->add_estimator(estimator);
-        aggregator->add_measure(make_shared<Accuracy>(estimator));
-    }
+    estimator = make_shared<SumProductEstimator>(tomcat.get_model(), 0);
+    estimator->add_node(TomcatTA3V2::Q, Eigen::VectorXd(0));
+    offline_estimation->add_estimator(estimator);
+    aggregator->add_measure(make_shared<Accuracy>(estimator));
 
     ofstream output_file;
     string filepath = fmt::format(
-        "{}/evaluations/ta3/experiment_2b/evaluations.json", OUTPUT_ROOT_DIR);
+        "{}/evaluations/ta3/experiment_2c/evaluations.json", OUTPUT_ROOT_DIR);
     output_file.open(filepath);
-    Pipeline pipeline("experiment_2b", output_file);
+    Pipeline pipeline("experiment_2a", output_file);
     pipeline.set_data_splitter(data_splitter);
-    pipeline.set_model_trainer(trainer);
-    pipeline.set_model_saver(saver);
+    pipeline.set_model_trainer(loader);
     pipeline.set_aggregator(aggregator);
     pipeline.set_estimation_process(offline_estimation);
     pipeline.execute();
@@ -1018,9 +1124,10 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    execute_experiment_2a();
-//    execute_experiment_2b_part_b();
-    //execute_experiment_2b_part_c();
+    // execute_experiment_2c();
+    execute_experiment_2b_part_c();
+    // execute_experiment_2b_part_d();
+    // execute_experiment_2c();
 
     //    execute_experiment_1a();
     //    LOG("Ca");
