@@ -14,7 +14,7 @@ namespace po = boost::program_options;
 
 int main(int ac, char* av[]) {
     string exp_id, trial_id, playername, of_dir, file_path;
-    bool indent, visualize;
+    bool indent, visualize, emotion;
     // Boost command line options
     try {
 
@@ -38,7 +38,10 @@ int main(int ac, char* av[]) {
             "Enable visualization")(
             "file,f",
             po::value<string>(&file_path)->default_value("null"),
-            "Specify an input video/image file");
+            "Specify an input video/image file")(
+            "emotion",
+            po::bool_switch(&emotion)->default_value(false),
+            "Display discrete emotion");
 
         po::variables_map vm;
         po::store(po::parse_command_line(ac, av, desc), vm);
@@ -76,7 +79,7 @@ int main(int ac, char* av[]) {
 
     WebcamSensor camsensor;
     camsensor.initialize(
-        exp_id, trial_id, playername, indent, visualize, file_path);
+        exp_id, trial_id, playername, indent, visualize, file_path, emotion);
     camsensor.get_observation();
 
     return 0;

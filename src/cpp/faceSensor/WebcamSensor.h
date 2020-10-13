@@ -3,6 +3,7 @@
 #include <SequenceCapture.h>
 #include <VisualizationUtils.h>
 #include <Visualizer.h>
+#include <nlohmann/json.hpp>
 
 namespace tomcat {
 
@@ -17,7 +18,8 @@ namespace tomcat {
                         std::string pname,
                         bool ind,
                         bool vis,
-                        std::string file_path);
+                        std::string file_path,
+                        bool emo);
         void get_observation();
 
       private:
@@ -34,6 +36,8 @@ namespace tomcat {
         std::string playername;
         bool indent;
         bool visual;
+        bool emotion;
+        std::string get_emotion(nlohmann::json emotion);
     };
 
 } // namespace tomcat

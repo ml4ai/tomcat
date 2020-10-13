@@ -21,13 +21,15 @@ namespace tomcat {
                                   string pname,
                                   bool ind,
                                   bool vis,
-                                  string file_path) {
+                                  string file_path,
+                                  bool emo) {
         // Initialize the experiment ID, trial ID and player name
         this->exp_id = exp;
         this->trial_id = trial;
         this->playername = pname;
         this->indent = ind;
         this->visual = vis;
+        this->emotion = emo;
         if (file_path.compare("null") != 0) {
             this->arguments.insert(this->arguments.begin(), file_path);
             this->arguments.insert(this->arguments.begin(), "-f");
@@ -244,6 +246,15 @@ namespace tomcat {
             for (auto& [AU, occurrence] : AU_class) {
                 output["data"]["action_units"][AU]["occurrence"] = occurrence;
             }
+            
+            // Only classify emotion if the user specifies through command line option
+            // --emotion
+            if (this->emotion)
+            {   
+                json action_units = output["data"]["action_units"];
+                string emotion_label = get_emotion(action_units);
+                output["data"]["action_units"]["emotion"] = emotion_label;
+            }
 
             for (auto& [AU, intensity] : AU_reg) {
                 output["data"]["action_units"][AU]["intensity"] = intensity;
@@ -323,6 +334,35 @@ namespace tomcat {
         // Reset the models for the next video
         face_analyser.Reset();
         face_model.Reset();
+    }
+    
+    // Reference: Friesen, W. V., & Ekman, P. (1983). EMFACS-7: Emotional facial
+    // action coding system. Unpublished manuscript, University of California at 
+    // San Francisco, 2(36), 1.
+    // Refer to: https://en.wikipedia.org/wiki/Facial_Action_Coding_System
+    // and https://imotions.com/blog/facial-action-coding-system/
+    
+    string WebcamSensor::get_emotion(json au) {
+        string label;
+        
+        if (au["AU06"]["occurrence"] == 1 && au["AU12"]["occurrence"] == 1)
+            label = "happiness";
+        else if(au["AU01"]["occurrence"] == 1 && au["AU04"]["occurrence"] == 1 && au["AU15"]["occurrence"] == 1)
+            label = "sadness";
+        else if(au["AU01"]["occurrence"] == 1 && au["AU02"]["occurrence"] == 1 && au["AU05"]["occurrence"] == 1 && au["AU26"]["occurrence"] == 1)
+            label = "surprise";
+        else if(au["AU01"]["occurrence"] == 1 && au["AU02"]["occurrence"] == 1 && au["AU04"]["occurrence"] == 1 && au["AU05"]["occurrence"] == 1 && au["AU07"]["occurrence"] == 1 && au["AU20"]["occurrence"] == 1 && au["AU26"]["occurrence"] == 1)
+            label = "fear";
+        else if(au["AU04"]["occurrence"] == 1 && au["AU05"]["occurrence"] == 1 && au["AU07"]["occurrence"] == 1 && au["AU23"]["occurrence"] == 1)
+            label = "anger";
+        else if(au["AU09"]["occurrence"] == 1 && au["AU15"]["occurrence"] == 1 && au["AU17"]["occurrence"] == 1)
+            label = "disgust";
+        else if(au["AU12"]["occurrence"] == 1 && au["AU14"]["occurrence"] == 1)
+            label = "contempt";
+        else
+            label = "none";
+        
+        return label;
     }
 
 } // namespace tomcat
