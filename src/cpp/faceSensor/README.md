@@ -10,13 +10,15 @@ cd tomcat && ./tools/install
 ```
 
 For more information, visit: https://ml4ai.github.io/tomcat/installation.html
-
+<br />
+<br />
 ## Description
 
 The `faceSensor` executable uses the [OpenFace library](https://github.com/TadasBaltrusaitis/OpenFace) for facial 
 action unit recognition, face landmark detection, eye-gaze estimation and head pose estimation. The executable can process
 input webcam live as well as video or image files from the disk. 
-
+<br />
+<br />
 ## Instructions
 
 Navigate to the `build/` directory in the tomcat root directory and execute:
@@ -27,7 +29,8 @@ make -j faceSensor
 ./bin/faceSensor
 ```
 This will start processing the webcam live feed and output the facial features to the standard output in JSON format.
-
+<br />
+<br />
 #### Command Line Arguments
 
 One way of interacting with the `faceSensor` executable is through the following command line arguments:
@@ -41,39 +44,42 @@ One way of interacting with the `faceSensor` executable is through the following
   --indent                  Indent output JSON by four spaces (default false)
   --visualize               Enable visualization (default false)
   -f [ --file ] arg (=null) Specify an input video/image file
+  --emotion                 Display discrete emotion
 ```
 
 **NOTE:** When the `--visualize` flag is set to true, the executable also outputs the visualization of facial landmarks, 
 head pose and eye gaze tracking. To exit visualization and stop the processing of webcam/video, press the letter *q* or *Q*.
-
+<br />
+<br />
 #### Example Usage
 
-If you want to extract the facial features from **webcam** feed, set the experiment ID as `563e4567-e89b-12d3-a456-426655440000` 
-and set the trial ID as `123e4567-e89b-12d3-a456-426655440000`, execute the following command on the command line:
+If you want to extract the facial features from **webcam** feed, set the experiment ID as `563e4567-e89b-12d3-a456-426655440000`, set the trial ID as `123e4567-e89b-12d3-a456-426655440000`, and display the discrete emotion for each timestamp, execute the following command on the command line:
 
 ```
-./bin/faceSensor --exp_id 563e4567-e89b-12d3-a456-426655440000 --trial_id 123e4567-e89b-12d3-a456-426655440000
+./bin/faceSensor --exp_id 563e4567-e89b-12d3-a456-426655440000 --trial_id 123e4567-e89b-12d3-a456-426655440000 --emotion
 ```
 
 If you want to extract the facial features from a **video** file in the location `~/Downloads/video.mp4`, set the player name
-as `Aptiminer1` and enable visualization, execute the following command on the command line:
+as `Aptiminer1`, and enable visualization, execute the following command on the command line:
 
 ```
 ./bin/faceSensor -f ~/Downloads/video.mp4 --playername Aptiminer1 --visualize
 ```
 
 If you want to extract the facial features from an **image** file in the location `~/Downloads/image.jpg`, set the OpenFace 
-models directory as `~/git_repos/tomcat/data/OpenFace_models` and enable indentation of JSON output by four spaces, execute 
+models directory as `~/git_repos/tomcat/data/OpenFace_models`, and enable indentation of JSON output by four spaces, execute 
 the following command on the command line:
 
 ```
 ./bin/faceSensor -f ~/Downloads/image.jpg --mloc ~/git_repos/tomcat/data/OpenFace_models --indent
 ```
-
+<br />
+<br />
 ## Output Format
 
-The `faceSensor` executable uses the `nlohmann-json` library to output the action units, eye landmarks, gaze estimation 
-and pose estimation values. The following is an example JSON message with indentation enabled:
+The `faceSensor` executable uses the `nlohmann-json` library to output the action units (and the facial expression, if specified 
+through command line option `--emotion`), eye landmarks, gaze estimation and pose estimation values. The following is an 
+example JSON message with indentation and emotion display enabled:
 
 ```
 {
@@ -88,6 +94,11 @@ and pose estimation values. The following is an example JSON message with indent
                 "occurrence": 1.0
             },
             ...
+            "AU45": {
+                "intensity": 0.7400846556287861,
+                "occurrence": 0.0
+            },
+            "emotion": "contempt"
         },
         "frame": 1,
         "gaze": {
@@ -170,7 +181,8 @@ and pose estimation values. The following is an example JSON message with indent
 ```
 
 **NOTE:** This output is in accordance with output of the OpenFace executables (see https://github.com/TadasBaltrusaitis/OpenFace/wiki/Output-Format)
-
+<br />
+<br />
 The explanation of each element in the `data` block is given below:
 
 **`action_units`**
@@ -184,6 +196,8 @@ And the **occurrence** (0 represents absent, 1 represents present) of 18 action 
 
 `AU01_c, AU02_c, AU04_c, AU05_c, AU06_c, AU07_c, AU09_c, AU10_c, AU12_c, AU14_c, AU15_c, AU17_c, AU20_c, AU23_c, AU25_c, AU26_c, 
 AU28_c, AU45_c`
+
+`emotion` specifies the facial expression displayed as a combination of action units
 
 `frame` specifies the number of the frame (in case of sequences, ie, webcam and videos)
 
@@ -232,3 +246,18 @@ The explanation of each element in the `msg` block is given below:
 `trial_id` specifies the trial ID
 
 `version` specifies the version of faceSensor
+<br />
+<br />
+## FACS Emotion Classification
+
+The FACS configuration employed to classify each emotion category (Friesen & Ekman, 1983) is described below:
+
+| Emotion   	| Action Units    	| Description                                                                                                  	|
+|-----------	|-----------------	|--------------------------------------------------------------------------------------------------------------	|
+| Happiness 	| 6+12            	| Cheek raiser, Lip corner puller                                                                              	|
+| Sadness   	| 1+4+15          	| Inner brow raiser, Brow lowerer, Lip corner depressor                                                        	|
+| Surprise  	| 1+2+5+26        	| Inner brow raiser, Outer brow raiser, Upper lid raiser, Jaw drop                                             	|
+| Fear      	| 1+2+4+5+7+20+26 	| Inner brow raiser, Outer brow raiser, Brow lowerer, Upper lid raiser, Lid tightener, Lip stretcher, Jaw drop 	|
+| Anger     	| 4+5+7+23        	| Brow lowerer, Upper lid raiser, Lid tightener, Lip tightener                                                 	|
+| Disgust   	| 9+15+17         	| Nose wrinkler, Lip corner depressor, Chin raiser                                                             	|
+| Contempt  	| 12+14           	| Lip corner puller, Dimpler   
