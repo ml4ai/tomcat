@@ -10,15 +10,15 @@ cd tomcat && ./tools/install
 ```
 
 For more information, visit: https://ml4ai.github.io/tomcat/installation.html
-<br>
-<br>
+<br/>
+<br/>
 ## Description
 
 The `faceSensor` executable uses the [OpenFace library](https://github.com/TadasBaltrusaitis/OpenFace) for facial 
 action unit recognition, face landmark detection, eye-gaze estimation and head pose estimation. The executable can process
 input webcam live as well as video or image files from the disk. 
-<br>
-<br>
+<br/>
+<br/>
 ## Instructions
 
 Navigate to the `build/` directory in the tomcat root directory and execute:
@@ -29,8 +29,8 @@ make -j faceSensor
 ./bin/faceSensor
 ```
 This will start processing the webcam live feed and output the facial features to the standard output in JSON format.
-<br>
-<br>
+<br/>
+<br/>
 #### Command Line Arguments
 
 One way of interacting with the `faceSensor` executable is through the following command line arguments:
@@ -49,8 +49,8 @@ One way of interacting with the `faceSensor` executable is through the following
 
 **NOTE:** When the `--visualize` flag is set to true, the executable also outputs the visualization of facial landmarks, 
 head pose and eye gaze tracking. To exit visualization and stop the processing of webcam/video, press the letter *q* or *Q*.
-<br>
-<br>
+<br/>
+<br/>
 #### Example Usage
 
 If you want to extract the facial features from **webcam** feed, set the experiment ID as `563e4567-e89b-12d3-a456-426655440000`, set the trial ID as `123e4567-e89b-12d3-a456-426655440000`, and display the discrete emotion for each timestamp, execute the following command on the command line:
@@ -58,14 +58,14 @@ If you want to extract the facial features from **webcam** feed, set the experim
 ```
 ./bin/faceSensor --exp_id 563e4567-e89b-12d3-a456-426655440000 --trial_id 123e4567-e89b-12d3-a456-426655440000 --emotion
 ```
-<br>
+<br/>
 If you want to extract the facial features from a **video** file in the location `~/Downloads/video.mp4`, set the player name
 as `Aptiminer1`, and enable visualization, execute the following command on the command line:
 
 ```
 ./bin/faceSensor -f ~/Downloads/video.mp4 --playername Aptiminer1 --visualize
 ```
-<br>
+<br/>
 If you want to extract the facial features from an **image** file in the location `~/Downloads/image.jpg`, set the OpenFace 
 models directory as `~/git_repos/tomcat/data/OpenFace_models`, and enable indentation of JSON output by four spaces, execute 
 the following command on the command line:
@@ -75,8 +75,8 @@ the following command on the command line:
 ```
 
 Similarly, you can have other combinations.
-<br>
-<br>
+<br/>
+<br/>
 ## Output Format
 
 The `faceSensor` executable uses the `nlohmann-json` library to output the action units (and the facial expression, if specified 
@@ -183,8 +183,8 @@ example JSON message with indentation and emotion display enabled:
 ```
 
 **NOTE:** This output is in accordance with output of the OpenFace executables (see https://github.com/TadasBaltrusaitis/OpenFace/wiki/Output-Format).
-<br>
-<br>
+<br/>
+<br/>
 The explanation of each element in the `data` block is given below:
 
 **`action_units`**
@@ -248,8 +248,8 @@ The explanation of each element in the `msg` block is given below:
 `trial_id` specifies the trial ID
 
 `version` specifies the version of faceSensor
-<br>
-<br>
+<br/>
+<br/>
 ## FACS Emotion Classification
 
 The FACS configuration employed to classify each emotion category (Friesen & Ekman, 1983) is described below:
@@ -262,4 +262,30 @@ The FACS configuration employed to classify each emotion category (Friesen & Ekm
 | Fear      	| 1+2+4+5+7+20+26 	| Inner brow raiser, Outer brow raiser, Brow lowerer, Upper lid raiser, Lid tightener, Lip stretcher, Jaw drop 	|
 | Anger     	| 4+5+7+23        	| Brow lowerer, Upper lid raiser, Lid tightener, Lip tightener                                                 	|
 | Disgust   	| 9+15+17         	| Nose wrinkler, Lip corner depressor, Chin raiser                                                             	|
-| Contempt  	| 12+14           	| Lip corner puller, Dimpler   
+| Contempt  	| 12+14           	| Lip corner puller, Dimpler
+
+For more information, visit: https://en.wikipedia.org/wiki/Facial_Action_Coding_System
+<br/>
+<br/>
+#### Limitations
+
+1. When the AU prediction module of the OpenFace 2.0 toolkit was evaluated, it reportedly outperformed the more complex and 
+recent baseline mathods - including IRKR, LT, CNN, D-CNN, and CCNF - on the DISFA dataset. The mean concordance correlation 
+coefficient (CCC) across 12 AUs of OpenFace 2.0 was calculated to be 0.73 (Baltrusaitis et al., 2018). However, due to the 
+qualified accuracy of OpenFace, the faceSensor executable is expected to have some inherent limitations as well.
+
+2. The emotion classification approach employed by the sensor assumes that instances of an emotion category are expressed with 
+facial movements that vary, to some degree, around a prototypical set of movements. However, expressions of the same emotion 
+category vary substantially across different situations, people, gender, and cultures (Barrett et al., 2019). 
+
+
+## References
+
+Baltrusaitis, T., Zadeh, A., Lim, Y. C., & Morency, L. P. (2018, May). Openface 2.0: Facial behavior analysis toolkit. In _2018 
+13th IEEE International Conference on Automatic Face & Gesture Recognition (FG 2018)_ (pp. 59-66). IEEE.
+
+Barrett, L. F., Adolphs, R., Marsella, S., Martinez, A. M., & Pollak, S. D. (2019). Emotional expressions reconsidered: Challenges to 
+inferring emotion from human facial movements. _Psychological Science in the Public Interest, 20_, 1–68. doi:10.1177/1529100619832930
+
+Friesen, W. V., & Ekman, P. (1983). EMFACS-7: Emotional facial action coding system. _Unpublished manuscript, University of California 
+at San Francisco, 2(36)_, 1
