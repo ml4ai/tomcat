@@ -10,15 +10,15 @@ cd tomcat && ./tools/install
 ```
 
 For more information, visit: https://ml4ai.github.io/tomcat/installation.html
-<br />
-<br />
+<br>
+<br>
 ## Description
 
 The `faceSensor` executable uses the [OpenFace library](https://github.com/TadasBaltrusaitis/OpenFace) for facial 
 action unit recognition, face landmark detection, eye-gaze estimation and head pose estimation. The executable can process
 input webcam live as well as video or image files from the disk. 
-<br />
-<br />
+<br>
+<br>
 ## Instructions
 
 Navigate to the `build/` directory in the tomcat root directory and execute:
@@ -29,8 +29,8 @@ make -j faceSensor
 ./bin/faceSensor
 ```
 This will start processing the webcam live feed and output the facial features to the standard output in JSON format.
-<br />
-<br />
+<br>
+<br>
 #### Command Line Arguments
 
 One way of interacting with the `faceSensor` executable is through the following command line arguments:
@@ -49,8 +49,8 @@ One way of interacting with the `faceSensor` executable is through the following
 
 **NOTE:** When the `--visualize` flag is set to true, the executable also outputs the visualization of facial landmarks, 
 head pose and eye gaze tracking. To exit visualization and stop the processing of webcam/video, press the letter *q* or *Q*.
-<br />
-<br />
+<br>
+<br>
 #### Example Usage
 
 If you want to extract the facial features from **webcam** feed, set the experiment ID as `563e4567-e89b-12d3-a456-426655440000`, set the trial ID as `123e4567-e89b-12d3-a456-426655440000`, and display the discrete emotion for each timestamp, execute the following command on the command line:
@@ -58,14 +58,14 @@ If you want to extract the facial features from **webcam** feed, set the experim
 ```
 ./bin/faceSensor --exp_id 563e4567-e89b-12d3-a456-426655440000 --trial_id 123e4567-e89b-12d3-a456-426655440000 --emotion
 ```
-
+<br>
 If you want to extract the facial features from a **video** file in the location `~/Downloads/video.mp4`, set the player name
 as `Aptiminer1`, and enable visualization, execute the following command on the command line:
 
 ```
 ./bin/faceSensor -f ~/Downloads/video.mp4 --playername Aptiminer1 --visualize
 ```
-
+<br>
 If you want to extract the facial features from an **image** file in the location `~/Downloads/image.jpg`, set the OpenFace 
 models directory as `~/git_repos/tomcat/data/OpenFace_models`, and enable indentation of JSON output by four spaces, execute 
 the following command on the command line:
@@ -73,8 +73,10 @@ the following command on the command line:
 ```
 ./bin/faceSensor -f ~/Downloads/image.jpg --mloc ~/git_repos/tomcat/data/OpenFace_models --indent
 ```
-<br />
-<br />
+
+Similarly, you can have other combinations.
+<br>
+<br>
 ## Output Format
 
 The `faceSensor` executable uses the `nlohmann-json` library to output the action units (and the facial expression, if specified 
@@ -180,9 +182,9 @@ example JSON message with indentation and emotion display enabled:
 }
 ```
 
-**NOTE:** This output is in accordance with output of the OpenFace executables (see https://github.com/TadasBaltrusaitis/OpenFace/wiki/Output-Format)
-<br />
-<br />
+**NOTE:** This output is in accordance with output of the OpenFace executables (see https://github.com/TadasBaltrusaitis/OpenFace/wiki/Output-Format).
+<br>
+<br>
 The explanation of each element in the `data` block is given below:
 
 **`action_units`**
@@ -246,8 +248,8 @@ The explanation of each element in the `msg` block is given below:
 `trial_id` specifies the trial ID
 
 `version` specifies the version of faceSensor
-<br />
-<br />
+<br>
+<br>
 ## FACS Emotion Classification
 
 The FACS configuration employed to classify each emotion category (Friesen & Ekman, 1983) is described below:
