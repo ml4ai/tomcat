@@ -139,9 +139,6 @@ detect_os() {
         export MACPORTS_FOUND=`[ -x "$(command -v port)" ]; echo $?`
         export HOMEBREW_FOUND=`[ -x "$(command -v brew)" ]; echo $?`
 
-        # We download OpenJDK 1.8.0_232-b09 since the later versions of OpenJDK
-        # 1.8 do not work with malmo, and we don't want to deal with different
-        export JAVA_HOME="$TOMCAT"/external/jdk8u232-b09/Contents/Home
     elif [[ "$OSTYPE" == "linux-gnu" ]]; then
         echo "Linux detected."
         if [[ ! -f /etc/os-release ]]; then
@@ -156,13 +153,22 @@ detect_os() {
                                           | cut -d '=' -f2 \
                                           | cut -d '.' -f1)
         fi
-        export JAVA_HOME="$TOMCAT"/external/jdk8u232-b09/
     else
         echo "OSTYPE is not darwin* or linux-gnu. Most likely this operating "\
              "system is not supported. Exiting now."
         exit 1
     fi
 
+}
+
+# We download OpenJDK 1.8.0_232-b09 since the later versions of OpenJDK
+# 1.8 do not work with Malmo.
+set_java_home() {
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        export JAVA_HOME="$TOMCAT"/external/jdk8u232-b09/Contents/Home
+    else
+        export JAVA_HOME="$TOMCAT"/external/jdk8u232-b09/
+    fi
 }
 
 # Configure ffmpeg options for the webcam.

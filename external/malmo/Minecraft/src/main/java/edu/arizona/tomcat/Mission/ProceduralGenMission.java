@@ -3,21 +3,20 @@ package edu.arizona.tomcat.Mission;
 import com.microsoft.Malmo.Schemas.PosAndDirection;
 import edu.arizona.tomcat.Mission.Goal.MissionGoal;
 import edu.arizona.tomcat.Mission.gui.SelfReportContent;
-import edu.arizona.tomcat.Utils.WorldReader;
+import edu.arizona.tomcat.Utils.WorldBuilder;
+import edu.arizona.tomcat.World.DrawingHandler;
 import java.math.BigDecimal;
-import java.util.Map;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class ProceduralGenMission extends Mission {
 
-    public boolean shouldBuild;
+    private boolean shouldBuild;
 
     public ProceduralGenMission() {
         super();
+        this.drawingHandler = DrawingHandler.getInstance();
         this.id = ID.PROCEDURAL;
         this.shouldBuild = true;
     }
@@ -29,27 +28,17 @@ public class ProceduralGenMission extends Mission {
     }
 
     /**
-     * This grabs the TSV blueprint from the procedural.tsv file and uses a
-     * WorldReader object to parse it. It then uses the resulting hashmap to
-     * place all the blocks at the right places.
+     * This function uses a WorldBuilder object to build the world for this
+     * mission from the low_level_map.json file
      *
-     * @param world The world in whcih the blocks are to be placed.
+     * @param world The world to build in
      */
     private void buildStructures(World world) {
-        if (this.shouldBuild == true) {
-            // Grab map representing world
-            WorldReader worldReader = new WorldReader("procedural.tsv");
-            Map<BlockPos, IBlockState> worldMap = worldReader.getMap();
+        if (this.shouldBuild) {
 
-            // Place blocks
-            for (Map.Entry<BlockPos, IBlockState> entry : worldMap.entrySet()) {
-                world.setBlockState(entry.getKey(), entry.getValue());
-            }
-
+            WorldBuilder worldBuilder = new WorldBuilder();
+            worldBuilder.build("low_level_map.json", world, false, true);
             this.shouldBuild = false;
-        }
-        else {
-            return;
         }
     }
 

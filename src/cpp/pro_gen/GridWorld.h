@@ -1,7 +1,8 @@
 #pragma once
-#include "ProceduralGenerator.h"
 
-class GridworldGenerator : public ProceduralGenerator {
+#include "World.h"
+
+class GridWorld : public World {
 
   private:
     int N;
@@ -43,10 +44,10 @@ class GridworldGenerator : public ProceduralGenerator {
      * @param AABB_size The size of each cubic AABB
      * @param seed The random seed used internally.
      */
-    GridworldGenerator(int N, int separation, int AABB_size, int seed = 1);
+    GridWorld(int N, int separation, int AABB_size, int seed = 1);
 
     /**
      * @brief Destroy the Gridworld Generator object
      */
-    ~GridworldGenerator();
+    ~GridWorld();
 };
