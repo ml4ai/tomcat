@@ -33,9 +33,9 @@ Includes
 
 - ``gsl/gsl_rng.h``
 
-- ``model/pgm/Node.h`` (:ref:`file_src_cpp_model_pgm_Node.h`)
+- ``pgm/Node.h`` (:ref:`file_src_cpp_model_pgm_Node.h`)
 
-- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
+- ``utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 
 

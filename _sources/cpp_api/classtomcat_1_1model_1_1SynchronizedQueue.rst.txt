@@ -1,0 +1,16 @@
+.. _exhale_class_classtomcat_1_1model_1_1SynchronizedQueue:
+
+Template Class SynchronizedQueue
+================================
+
+- Defined in :ref:`file_src_cpp_model_utils_SynchronizedQueue.h`
+
+
+Class Documentation
+-------------------
+
+
+.. doxygenclass:: tomcat::model::SynchronizedQueue
+   :members:
+   :protected-members:
+   :undoc-members:

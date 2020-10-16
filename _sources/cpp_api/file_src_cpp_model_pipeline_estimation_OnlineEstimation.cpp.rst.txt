@@ -33,11 +33,15 @@ Includes
 
 - ``algorithm``
 
-- ``model/utils/EigenExtensions.h`` (:ref:`file_src_cpp_model_utils_EigenExtensions.h`)
+- ``nlohmann/json.hpp``
 
 - ``sstream``
 
 - ``thread``
+
+- ``unordered_map``
+
+- ``utils/EigenExtensions.h`` (:ref:`file_src_cpp_model_utils_EigenExtensions.h`)
 
 
 

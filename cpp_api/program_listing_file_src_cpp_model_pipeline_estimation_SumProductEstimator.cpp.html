@@ -164,8 +164,10 @@
 
 <span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
 
-<span class="cp">#include</span> <span class="cpf">&quot;model/pgm/inference/FactorGraph.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&quot;model/pgm/inference/VariableNode.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;boost/progress.hpp&gt;</span><span class="cp"></span>
+
+<span class="cp">#include</span> <span class="cpf">&quot;pgm/inference/FactorGraph.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;pgm/inference/VariableNode.h&quot;</span><span class="cp"></span>
 
 <span class="k">namespace</span> <span class="n">tomcat</span> <span class="p">{</span>
     <span class="k">namespace</span> <span class="n">model</span> <span class="p">{</span>
@@ -176,8 +178,11 @@
         <span class="c1">// Constructors &amp; Destructor</span>
         <span class="c1">//----------------------------------------------------------------------</span>
         <span class="n">SumProductEstimator</span><span class="o">::</span><span class="n">SumProductEstimator</span><span class="p">(</span>
-            <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">DynamicBayesNet</span><span class="o">&gt;</span> <span class="n">model</span><span class="p">,</span> <span class="kt">int</span> <span class="n">inference_horizon</span><span class="p">)</span>
-            <span class="o">:</span> <span class="n">Estimator</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">inference_horizon</span><span class="p">)</span> <span class="p">{}</span>
+            <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">DynamicBayesNet</span><span class="o">&gt;</span> <span class="n">model</span><span class="p">,</span>
+            <span class="kt">int</span> <span class="n">inference_horizon</span><span class="p">,</span>
+            <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">node_label</span><span class="p">,</span>
+            <span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span> <span class="n">assignment</span><span class="p">)</span>
+            <span class="o">:</span> <span class="n">Estimator</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">inference_horizon</span><span class="p">,</span> <span class="n">node_label</span><span class="p">,</span> <span class="n">assignment</span><span class="p">)</span> <span class="p">{}</span>
 
         <span class="n">SumProductEstimator</span><span class="o">::~</span><span class="n">SumProductEstimator</span><span class="p">()</span> <span class="p">{}</span>
 
@@ -205,53 +210,69 @@
             <span class="k">this</span><span class="o">-&gt;</span><span class="n">next_time_step</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
             <span class="k">this</span><span class="o">-&gt;</span><span class="n">factor_graph</span> <span class="o">=</span>
                 <span class="n">FactorGraph</span><span class="o">::</span><span class="n">create_from_unrolled_dbn</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">model</span><span class="p">);</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">factor_graph</span><span class="p">.</span><span class="n">store_topological_traversal_per_time_step</span><span class="p">();</span>
         <span class="p">}</span>
 
-        <span class="kt">void</span> <span class="n">SumProductEstimator</span><span class="o">::</span><span class="n">estimate</span><span class="p">(</span><span class="n">EvidenceSet</span> <span class="n">new_data</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="o">-&gt;</span><span class="n">factor_graph</span><span class="p">.</span><span class="n">store_topological_traversal_per_time_step</span><span class="p">();</span>
+        <span class="kt">void</span> <span class="n">SumProductEstimator</span><span class="o">::</span><span class="n">estimate</span><span class="p">(</span><span class="k">const</span> <span class="n">EvidenceSet</span><span class="o">&amp;</span> <span class="n">new_data</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">estimate_forward_in_time</span><span class="p">(</span><span class="n">new_data</span><span class="p">);</span>
 
-            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">t</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">next_time_step</span><span class="p">;</span>
-                 <span class="n">t</span> <span class="o">&lt;</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">next_time_step</span> <span class="o">+</span> <span class="n">new_data</span><span class="p">.</span><span class="n">get_time_steps</span><span class="p">();</span>
-                 <span class="n">t</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// The following is only needed in case there&#39;s a need for</span>
+            <span class="c1">// re-estimating things in the past given observations in the</span>
+            <span class="c1">// future. So far there&#39;s no such requirement.</span>
+            <span class="c1">// this-&gt;estimate_backward_in_time(new_data);</span>
+        <span class="p">}</span>
+
+        <span class="kt">void</span> <span class="n">SumProductEstimator</span><span class="o">::</span><span class="n">estimate_forward_in_time</span><span class="p">(</span>
+            <span class="k">const</span> <span class="n">EvidenceSet</span><span class="o">&amp;</span> <span class="n">new_data</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="kt">int</span> <span class="n">total_time</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">next_time_step</span> <span class="o">+</span> <span class="n">new_data</span><span class="p">.</span><span class="n">get_time_steps</span><span class="p">();</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Sum-Product (h = &quot;</span> <span class="o">&lt;&lt;</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">inference_horizon</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;)&quot;</span><span class="p">;</span>
+            <span class="n">boost</span><span class="o">::</span><span class="n">progress_display</span> <span class="n">progress</span><span class="p">(</span><span class="n">total_time</span><span class="p">);</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">t</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">next_time_step</span><span class="p">;</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">total_time</span><span class="p">;</span> <span class="n">t</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
 
                 <span class="k">this</span><span class="o">-&gt;</span><span class="n">compute_forward_messages</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">factor_graph</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">new_data</span><span class="p">);</span>
                 <span class="k">this</span><span class="o">-&gt;</span><span class="n">compute_backward_messages</span><span class="p">(</span>
                     <span class="k">this</span><span class="o">-&gt;</span><span class="n">factor_graph</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">new_data</span><span class="p">);</span>
 
-                <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">estimates</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">nodes_estimates</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span> <span class="n">estimates_in_time_step</span><span class="p">;</span>
-                    <span class="kt">int</span> <span class="n">discrete_assignment</span> <span class="o">=</span> <span class="n">estimates</span><span class="p">.</span><span class="n">assignment</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">inference_horizon</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="kt">int</span> <span class="n">discrete_assignment</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">estimates</span><span class="p">.</span><span class="n">assignment</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
 
-                    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">inference_horizon</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="n">estimates_in_time_step</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">get_predictions_for</span><span class="p">(</span>
-                            <span class="n">estimates</span><span class="p">.</span><span class="n">label</span><span class="p">,</span>
+                    <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span> <span class="n">estimates_in_time_step</span> <span class="o">=</span>
+                        <span class="k">this</span><span class="o">-&gt;</span><span class="n">get_predictions_for</span><span class="p">(</span>
+                            <span class="k">this</span><span class="o">-&gt;</span><span class="n">estimates</span><span class="p">.</span><span class="n">label</span><span class="p">,</span>
                             <span class="n">t</span><span class="p">,</span>
                             <span class="n">discrete_assignment</span><span class="p">,</span>
                             <span class="n">new_data</span><span class="p">.</span><span class="n">get_num_data_points</span><span class="p">());</span>
+
+                    <span class="k">this</span><span class="o">-&gt;</span><span class="n">add_column_to_estimates</span><span class="p">(</span><span class="n">estimates_in_time_step</span><span class="p">);</span>
+                <span class="p">}</span>
+                <span class="k">else</span> <span class="p">{</span>
+                    <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">marginal</span> <span class="o">=</span>
+                        <span class="k">this</span><span class="o">-&gt;</span><span class="n">factor_graph</span><span class="p">.</span><span class="n">get_marginal_for</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">estimates</span><span class="p">.</span><span class="n">label</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="n">marginal</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="n">marginal</span> <span class="o">=</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">::</span><span class="n">Constant</span><span class="p">(</span>
+                            <span class="n">new_data</span><span class="p">.</span><span class="n">get_num_data_points</span><span class="p">(),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">NO_OBS</span><span class="p">);</span>
                     <span class="p">}</span>
                     <span class="k">else</span> <span class="p">{</span>
-                        <span class="c1">// This could be incorporated to the marginal with</span>
-                        <span class="c1">// horizon but I prefered to let it separate as for</span>
-                        <span class="c1">// inference, it&#39;s possible to retrieve the whole</span>
-                        <span class="c1">// distribution. Conversely, with horizons this</span>
-                        <span class="c1">// implementation is limited to find the probability of</span>
-                        <span class="c1">// a given value in a binary node.</span>
-                        <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">marginal</span> <span class="o">=</span>
-                            <span class="n">factor_graph</span><span class="p">.</span><span class="n">get_marginal_for</span><span class="p">(</span><span class="n">estimates</span><span class="p">.</span><span class="n">label</span><span class="p">,</span> <span class="n">t</span><span class="p">);</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">estimates</span><span class="p">.</span><span class="n">assignment</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="kt">int</span> <span class="n">discrete_assignment</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">estimates</span><span class="p">.</span><span class="n">assignment</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+                            <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span> <span class="n">estimates_in_time_step</span> <span class="o">=</span>
+                                <span class="n">marginal</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="n">discrete_assignment</span><span class="p">);</span>
 
-                        <span class="k">if</span> <span class="p">(</span><span class="n">marginal</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="n">estimates_in_time_step</span> <span class="o">=</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">::</span><span class="n">Constant</span><span class="p">(</span>
-                                <span class="n">new_data</span><span class="p">.</span><span class="n">get_num_data_points</span><span class="p">(),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">NO_OBS</span><span class="p">);</span>
+                            <span class="k">this</span><span class="o">-&gt;</span><span class="n">add_column_to_estimates</span><span class="p">(</span><span class="n">estimates_in_time_step</span><span class="p">);</span>
                         <span class="p">}</span>
                         <span class="k">else</span> <span class="p">{</span>
-                            <span class="n">estimates_in_time_step</span> <span class="o">=</span>
-                                <span class="n">marginal</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="n">discrete_assignment</span><span class="p">);</span>
+                            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">col</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">col</span> <span class="o">&lt;</span> <span class="n">marginal</span><span class="p">.</span><span class="n">cols</span><span class="p">();</span> <span class="n">col</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span> <span class="n">estimates_in_time_step</span> <span class="o">=</span>
+                                    <span class="n">marginal</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="n">col</span><span class="p">);</span>
+                                <span class="k">this</span><span class="o">-&gt;</span><span class="n">add_column_to_estimates</span><span class="p">(</span><span class="n">estimates_in_time_step</span><span class="p">,</span> <span class="n">col</span><span class="p">);</span>
+                            <span class="p">}</span>
                         <span class="p">}</span>
                     <span class="p">}</span>
-
-                    <span class="k">this</span><span class="o">-&gt;</span><span class="n">add_column_to_estimates</span><span class="p">(</span><span class="n">estimates</span><span class="p">,</span>
-                                                  <span class="n">estimates_in_time_step</span><span class="p">);</span>
                 <span class="p">}</span>
+
+                <span class="o">++</span><span class="n">progress</span><span class="p">;</span>
             <span class="p">}</span>
 
             <span class="k">this</span><span class="o">-&gt;</span><span class="n">next_time_step</span> <span class="o">+=</span> <span class="n">new_data</span><span class="p">.</span><span class="n">get_time_steps</span><span class="p">();</span>
@@ -313,11 +334,17 @@
                                 <span class="n">time_step</span><span class="p">,</span>
                                 <span class="n">MessageNode</span><span class="o">::</span><span class="n">Direction</span><span class="o">::</span><span class="n">forward</span><span class="p">);</span>
 
-<span class="c1">//                        LOG(&quot;Forward&quot;);</span>
-<span class="c1">//                        LOG(MessageNode::get_name(node-&gt;get_label(),</span>
-<span class="c1">//                                                  time_step));</span>
-<span class="c1">//                        LOG(message);</span>
-<span class="c1">//                        LOG(&quot;&quot;);</span>
+                        <span class="c1">//                        LOG(&quot;Forward&quot;);</span>
+                        <span class="c1">//                        cout &lt;&lt; MessageNode::get_name(</span>
+                        <span class="c1">//                                    parent_node-&gt;get_label(),</span>
+                        <span class="c1">//                                    parent_incoming_messages_time_step)</span>
+                        <span class="c1">//                             &lt;&lt; &quot; -&gt; &quot;</span>
+                        <span class="c1">//                             &lt;&lt;</span>
+                        <span class="c1">//                             MessageNode::get_name(node-&gt;get_label(),</span>
+                        <span class="c1">//                                                      time_step)</span>
+                        <span class="c1">//                             &lt;&lt; &quot;\n&quot;;</span>
+                        <span class="c1">//                        LOG(message);</span>
+                        <span class="c1">//                        LOG(&quot;&quot;);</span>
 
                         <span class="n">node</span><span class="o">-&gt;</span><span class="n">set_incoming_message_from</span><span class="p">(</span>
                             <span class="n">parent_node</span><span class="o">-&gt;</span><span class="n">get_label</span><span class="p">(),</span>
@@ -361,12 +388,12 @@
                         <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">::</span><span class="n">Ones</span><span class="p">(</span><span class="n">num_rows</span><span class="p">,</span> <span class="n">num_cols</span><span class="p">));</span>
                 <span class="p">}</span>
                 <span class="k">else</span> <span class="p">{</span>
-                    <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="nl">child_vertex</span> <span class="p">:</span> <span class="n">child_nodes</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="nl">child_node</span> <span class="p">:</span> <span class="n">child_nodes</span><span class="p">)</span> <span class="p">{</span>
 
                         <span class="c1">// Relative distance in time from the node to the</span>
                         <span class="c1">// child. 0 if they are in the same time slice.</span>
-                        <span class="kt">int</span> <span class="n">time_diff</span> <span class="o">=</span> <span class="n">child_vertex</span><span class="o">-&gt;</span><span class="n">get_time_step</span><span class="p">()</span> <span class="o">-</span>
-                                        <span class="n">node</span><span class="o">-&gt;</span><span class="n">get_time_step</span><span class="p">();</span>
+                        <span class="kt">int</span> <span class="n">time_diff</span> <span class="o">=</span>
+                            <span class="n">child_node</span><span class="o">-&gt;</span><span class="n">get_time_step</span><span class="p">()</span> <span class="o">-</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">get_time_step</span><span class="p">();</span>
 
                         <span class="c1">// We compute the backward passing constrained to the</span>
                         <span class="c1">// fact that we are doing inference up to the time step</span>
@@ -374,20 +401,28 @@
                         <span class="c1">// a future time step.</span>
                         <span class="k">if</span> <span class="p">(</span><span class="n">time_diff</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
                             <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">message</span> <span class="o">=</span>
-                                <span class="n">child_vertex</span><span class="o">-&gt;</span><span class="n">get_outward_message_to</span><span class="p">(</span>
+                                <span class="n">child_node</span><span class="o">-&gt;</span><span class="n">get_outward_message_to</span><span class="p">(</span>
                                     <span class="n">node</span><span class="p">,</span>
                                     <span class="n">time_step</span><span class="p">,</span>
                                     <span class="n">time_step</span><span class="p">,</span>
                                     <span class="n">MessageNode</span><span class="o">::</span><span class="n">Direction</span><span class="o">::</span><span class="n">backwards</span><span class="p">);</span>
 
-<span class="c1">//                            LOG(&quot;Backward&quot;);</span>
-<span class="c1">//                            LOG(MessageNode::get_name(node-&gt;get_label(),</span>
-<span class="c1">//                                                      time_step));</span>
-<span class="c1">//                            LOG(message);</span>
-<span class="c1">//                            LOG(&quot;&quot;);</span>
+                            <span class="c1">//                            LOG(&quot;Backward&quot;);</span>
+                            <span class="c1">//                            cout &lt;&lt;</span>
+                            <span class="c1">//                            MessageNode::get_name(node-&gt;get_label(),</span>
+                            <span class="c1">//                                                          time_step)</span>
+                            <span class="c1">//                                 &lt;&lt; &quot; -&gt; &quot;</span>
+                            <span class="c1">//                                 &lt;&lt;</span>
+                            <span class="c1">//                                 MessageNode::get_name(</span>
+                            <span class="c1">//                                        child_node-&gt;get_label(),</span>
+                            <span class="c1">//                                        time_step)</span>
+                            <span class="c1">//</span>
+                            <span class="c1">//                                 &lt;&lt; &quot;\n&quot;;</span>
+                            <span class="c1">//                            LOG(message);</span>
+                            <span class="c1">//                            LOG(&quot;&quot;);</span>
 
                             <span class="n">node</span><span class="o">-&gt;</span><span class="n">set_incoming_message_from</span><span class="p">(</span>
-                                <span class="n">child_vertex</span><span class="o">-&gt;</span><span class="n">get_label</span><span class="p">(),</span>
+                                <span class="n">child_node</span><span class="o">-&gt;</span><span class="n">get_label</span><span class="p">(),</span>
                                 <span class="n">time_step</span><span class="p">,</span>
                                 <span class="n">time_step</span><span class="p">,</span>
                                 <span class="n">message</span><span class="p">);</span>
@@ -414,7 +449,7 @@
             <span class="n">EvidenceSet</span> <span class="n">horizon_data</span><span class="p">;</span>
             <span class="n">horizon_data</span><span class="p">.</span><span class="n">add_data</span><span class="p">(</span><span class="n">node_label</span><span class="p">,</span>
                                   <span class="n">Tensor3</span><span class="p">(</span><span class="n">opposite_assignment_matrix</span><span class="p">));</span>
-            <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span> <span class="n">estimates</span><span class="p">;</span>
+            <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span> <span class="n">estimated_probabilities</span><span class="p">;</span>
 
             <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">h</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">h</span> <span class="o">&lt;=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">inference_horizon</span><span class="p">;</span> <span class="n">h</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                 <span class="c1">// Simulate new data coming and compute estimates in a regular</span>
@@ -425,14 +460,14 @@
                 <span class="k">this</span><span class="o">-&gt;</span><span class="n">compute_backward_messages</span><span class="p">(</span>
                     <span class="k">this</span><span class="o">-&gt;</span><span class="n">factor_graph</span><span class="p">,</span> <span class="n">time_step</span> <span class="o">+</span> <span class="n">h</span><span class="p">,</span> <span class="n">horizon_data</span><span class="p">);</span>
 
-                <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">marginal</span> <span class="o">=</span>
-                    <span class="n">factor_graph</span><span class="p">.</span><span class="n">get_marginal_for</span><span class="p">(</span><span class="n">node_label</span><span class="p">,</span> <span class="n">time_step</span> <span class="o">+</span> <span class="n">h</span><span class="p">);</span>
+                <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">marginal</span> <span class="o">=</span> <span class="n">factor_graph</span><span class="p">.</span><span class="n">get_marginal_for</span><span class="p">(</span>
+                    <span class="n">node_label</span><span class="p">,</span> <span class="n">time_step</span> <span class="o">+</span> <span class="n">h</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="n">estimates</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="n">estimates</span> <span class="o">=</span> <span class="n">marginal</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="n">opposite_assignment</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">estimated_probabilities</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">estimated_probabilities</span> <span class="o">=</span> <span class="n">marginal</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="n">opposite_assignment</span><span class="p">);</span>
                 <span class="p">}</span>
                 <span class="k">else</span> <span class="p">{</span>
-                    <span class="n">estimates</span> <span class="o">=</span> <span class="n">estimates</span><span class="p">.</span><span class="n">array</span><span class="p">()</span> <span class="o">*</span>
+                    <span class="n">estimated_probabilities</span> <span class="o">=</span> <span class="n">estimated_probabilities</span><span class="p">.</span><span class="n">array</span><span class="p">()</span> <span class="o">*</span>
                                 <span class="n">marginal</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="n">opposite_assignment</span><span class="p">).</span><span class="n">array</span><span class="p">();</span>
                 <span class="p">}</span>
             <span class="p">}</span>
@@ -440,24 +475,61 @@
             <span class="k">this</span><span class="o">-&gt;</span><span class="n">next_time_step</span> <span class="o">-=</span> <span class="p">(</span><span class="n">time_step</span> <span class="o">+</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">inference_horizon</span><span class="p">);</span>
             <span class="k">this</span><span class="o">-&gt;</span><span class="n">factor_graph</span><span class="p">.</span><span class="n">erase_incoming_messages_beyond</span><span class="p">(</span><span class="n">time_step</span><span class="p">);</span>
 
-            <span class="n">estimates</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">estimates</span><span class="p">.</span><span class="n">array</span><span class="p">();</span>
+            <span class="n">estimated_probabilities</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">estimated_probabilities</span><span class="p">.</span><span class="n">array</span><span class="p">();</span>
 
-            <span class="k">return</span> <span class="n">estimates</span><span class="p">;</span>
+            <span class="k">return</span> <span class="n">estimated_probabilities</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="kt">void</span> <span class="n">SumProductEstimator</span><span class="o">::</span><span class="n">add_column_to_estimates</span><span class="p">(</span>
-
-            <span class="n">NodeEstimates</span><span class="o">&amp;</span> <span class="n">estimates</span><span class="p">,</span> <span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span> <span class="n">new_column</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">estimates</span><span class="p">.</span><span class="n">estimates</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                <span class="n">estimates</span><span class="p">.</span><span class="n">estimates</span> <span class="o">=</span> <span class="n">new_column</span><span class="p">;</span>
-            <span class="p">}</span>
-            <span class="k">else</span> <span class="p">{</span>
+            <span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span> <span class="n">new_column</span><span class="p">,</span>
+            <span class="kt">int</span> <span class="n">index</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">estimates</span><span class="p">.</span><span class="n">estimates</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// First estimates for a given assignment</span>
+                <span class="k">this</span><span class="o">-&gt;</span><span class="n">estimates</span><span class="p">.</span><span class="n">estimates</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">));</span>
+                <span class="k">this</span><span class="o">-&gt;</span><span class="n">estimates</span><span class="p">.</span><span class="n">estimates</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_column</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
                 <span class="c1">// Append new column to the existing estimates</span>
-                <span class="kt">int</span> <span class="n">num_rows</span> <span class="o">=</span> <span class="n">estimates</span><span class="p">.</span><span class="n">estimates</span><span class="p">.</span><span class="n">rows</span><span class="p">();</span>
-                <span class="kt">int</span> <span class="n">num_cols</span> <span class="o">=</span> <span class="n">estimates</span><span class="p">.</span><span class="n">estimates</span><span class="p">.</span><span class="n">cols</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
-                <span class="n">estimates</span><span class="p">.</span><span class="n">estimates</span><span class="p">.</span><span class="n">conservativeResize</span><span class="p">(</span><span class="n">num_rows</span><span class="p">,</span> <span class="n">num_cols</span><span class="p">);</span>
+                <span class="kt">int</span> <span class="n">num_rows</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">estimates</span><span class="p">.</span><span class="n">estimates</span><span class="p">[</span><span class="n">index</span><span class="p">].</span><span class="n">rows</span><span class="p">();</span>
+                <span class="kt">int</span> <span class="n">num_cols</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">estimates</span><span class="p">.</span><span class="n">estimates</span><span class="p">[</span><span class="n">index</span><span class="p">].</span><span class="n">cols</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+                <span class="k">this</span><span class="o">-&gt;</span><span class="n">estimates</span><span class="p">.</span><span class="n">estimates</span><span class="p">[</span><span class="n">index</span><span class="p">].</span><span class="n">conservativeResize</span><span class="p">(</span><span class="n">num_rows</span><span class="p">,</span>
+                                                              <span class="n">num_cols</span><span class="p">);</span>
+                <span class="k">this</span><span class="o">-&gt;</span><span class="n">estimates</span><span class="p">.</span><span class="n">estimates</span><span class="p">[</span><span class="n">index</span><span class="p">].</span><span class="n">col</span><span class="p">(</span><span class="n">num_cols</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="n">new_column</span><span class="p">;</span>
+            <span class="p">}</span>
 
-                <span class="n">estimates</span><span class="p">.</span><span class="n">estimates</span><span class="p">.</span><span class="n">col</span><span class="p">(</span><span class="n">num_cols</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="n">new_column</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="kt">void</span> <span class="n">SumProductEstimator</span><span class="o">::</span><span class="n">estimate_backward_in_time</span><span class="p">(</span>
+            <span class="k">const</span> <span class="n">EvidenceSet</span><span class="o">&amp;</span> <span class="n">new_data</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">t</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">next_time_step</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="n">t</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="n">t</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">unordered_set</span><span class="o">&lt;</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">FactorNode</span><span class="o">&gt;&gt;</span> <span class="n">transition_factors</span> <span class="o">=</span>
+                    <span class="k">this</span><span class="o">-&gt;</span><span class="n">factor_graph</span><span class="p">.</span><span class="n">get_transition_factors_at</span><span class="p">(</span><span class="n">t</span><span class="p">);</span>
+
+                <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">factor</span> <span class="p">:</span> <span class="n">transition_factors</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="c1">// Pass message from transition factor backward in time, to</span>
+                    <span class="c1">// it&#39;s parents in a different time step.</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="p">[</span><span class="n">parent_node</span><span class="p">,</span> <span class="n">transition</span><span class="p">]</span> <span class="o">:</span>
+                         <span class="k">this</span><span class="o">-&gt;</span><span class="n">factor_graph</span><span class="p">.</span><span class="n">get_parents_of</span><span class="p">(</span><span class="n">factor</span><span class="p">,</span> <span class="n">t</span><span class="p">))</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">transition</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">message</span> <span class="o">=</span>
+                                <span class="n">factor</span><span class="o">-&gt;</span><span class="n">get_outward_message_to</span><span class="p">(</span>
+                                    <span class="n">parent_node</span><span class="p">,</span>
+                                    <span class="n">t</span><span class="p">,</span>
+                                    <span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+                                    <span class="n">MessageNode</span><span class="o">::</span><span class="n">Direction</span><span class="o">::</span><span class="n">backwards</span><span class="p">);</span>
+
+                            <span class="n">parent_node</span><span class="o">-&gt;</span><span class="n">set_incoming_message_from</span><span class="p">(</span>
+                                <span class="n">factor</span><span class="o">-&gt;</span><span class="n">get_label</span><span class="p">(),</span> <span class="n">t</span><span class="p">,</span> <span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">message</span><span class="p">);</span>
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+
+                <span class="c1">// Adjust messages in the previous time slice to account for the</span>
+                <span class="c1">// new message that was passed backward.</span>
+                <span class="k">this</span><span class="o">-&gt;</span><span class="n">compute_forward_messages</span><span class="p">(</span>
+                    <span class="k">this</span><span class="o">-&gt;</span><span class="n">factor_graph</span><span class="p">,</span> <span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">new_data</span><span class="p">);</span>
+                <span class="k">this</span><span class="o">-&gt;</span><span class="n">compute_backward_messages</span><span class="p">(</span>
+                    <span class="k">this</span><span class="o">-&gt;</span><span class="n">factor_graph</span><span class="p">,</span> <span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">new_data</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -466,9 +538,7 @@
             <span class="n">json</span><span class="p">[</span><span class="s">&quot;inference_horizon&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">inference_horizon</span><span class="p">;</span>
         <span class="p">}</span>
 
-        <span class="n">string</span> <span class="n">SumProductEstimator</span><span class="o">::</span><span class="n">get_name</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="s">&quot;sum-product&quot;</span><span class="p">;</span>
-        <span class="p">}</span>
+        <span class="n">string</span> <span class="n">SumProductEstimator</span><span class="o">::</span><span class="n">get_name</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="s">&quot;sum-product&quot;</span><span class="p">;</span> <span class="p">}</span>
 
     <span class="p">}</span> <span class="c1">// namespace model</span>
 <span class="p">}</span> <span class="c1">// namespace tomcat</span>

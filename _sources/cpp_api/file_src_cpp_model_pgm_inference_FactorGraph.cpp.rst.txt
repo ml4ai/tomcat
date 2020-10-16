@@ -35,11 +35,9 @@ Includes
 
 - ``boost/graph/topological_sort.hpp``
 
-- ``model/pgm/cpd/CPD.h`` (:ref:`file_src_cpp_model_pgm_cpd_CPD.h`)
+- ``pgm/cpd/CPD.h`` (:ref:`file_src_cpp_model_pgm_cpd_CPD.h`)
 
-- ``model/pgm/inference/FactorNode.h`` (:ref:`file_src_cpp_model_pgm_inference_FactorNode.h`)
-
-- ``model/pgm/inference/VariableNode.h`` (:ref:`file_src_cpp_model_pgm_inference_VariableNode.h`)
+- ``pgm/inference/VariableNode.h`` (:ref:`file_src_cpp_model_pgm_inference_VariableNode.h`)
 
 
 

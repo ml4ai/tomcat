@@ -31,9 +31,9 @@ Includes
 
 - ``MessageNode.h`` (:ref:`file_src_cpp_model_pgm_inference_MessageNode.h`)
 
-- ``model/pgm/cpd/CPD.h`` (:ref:`file_src_cpp_model_pgm_cpd_CPD.h`)
+- ``pgm/cpd/CPD.h`` (:ref:`file_src_cpp_model_pgm_cpd_CPD.h`)
 
-- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
+- ``utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 
 
@@ -41,7 +41,7 @@ Included By
 -----------
 
 
-- :ref:`file_src_cpp_model_pgm_inference_FactorGraph.cpp`
+- :ref:`file_src_cpp_model_pgm_inference_FactorGraph.h`
 
 - :ref:`file_src_cpp_model_pgm_inference_FactorNode.cpp`
 

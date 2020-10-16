@@ -252,7 +252,8 @@
 
         <span class="kt">bool</span> <span class="n">VariableNode</span><span class="o">::</span><span class="n">is_factor</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">false</span><span class="p">;</span> <span class="p">}</span>
 
-        <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">VariableNode</span><span class="o">::</span><span class="n">get_marginal_at</span><span class="p">(</span><span class="kt">int</span> <span class="n">time_step</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">VariableNode</span><span class="o">::</span><span class="n">get_marginal_at</span><span class="p">(</span><span class="kt">int</span> <span class="n">time_step</span><span class="p">,</span>
+                                                      <span class="kt">bool</span> <span class="n">normalized</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
             <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">marginal</span><span class="p">;</span>
 
             <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="p">[</span><span class="n">incoming_node_name</span><span class="p">,</span> <span class="n">incoming_message</span><span class="p">]</span> <span class="o">:</span>
@@ -265,6 +266,15 @@
                 <span class="k">else</span> <span class="p">{</span>
                     <span class="n">marginal</span> <span class="o">=</span> <span class="n">marginal</span><span class="p">.</span><span class="n">array</span><span class="p">()</span> <span class="o">*</span> <span class="n">incoming_message</span><span class="p">.</span><span class="n">array</span><span class="p">();</span>
                 <span class="p">}</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">normalized</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// Outliers can result in zero vector probabilities. Adding a</span>
+                <span class="c1">// noise to generate a uniform distribution after normalization.</span>
+                <span class="n">marginal</span> <span class="o">=</span> <span class="n">marginal</span><span class="p">.</span><span class="n">array</span><span class="p">()</span> <span class="o">+</span> <span class="n">EPSILON</span><span class="p">;</span>
+                <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span> <span class="n">sum_per_row</span> <span class="o">=</span> <span class="n">marginal</span><span class="p">.</span><span class="n">rowwise</span><span class="p">().</span><span class="n">sum</span><span class="p">().</span><span class="n">array</span><span class="p">();</span>
+                <span class="n">marginal</span> <span class="o">=</span>
+                    <span class="p">(</span><span class="n">marginal</span><span class="p">.</span><span class="n">array</span><span class="p">().</span><span class="n">colwise</span><span class="p">()</span> <span class="o">/</span> <span class="n">sum_per_row</span><span class="p">.</span><span class="n">array</span><span class="p">()).</span><span class="n">matrix</span><span class="p">();</span>
             <span class="p">}</span>
 
             <span class="k">return</span> <span class="n">marginal</span><span class="p">;</span>

@@ -164,13 +164,14 @@
 
 <span class="cp">#include</span> <span class="cpf">&lt;boost/filesystem.hpp&gt;</span><span class="cp"></span>
 
-<span class="cp">#include</span> <span class="cpf">&quot;model/utils/EigenExtensions.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&quot;model/utils/Tensor3.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;utils/EigenExtensions.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;utils/Tensor3.h&quot;</span><span class="cp"></span>
 
 <span class="k">namespace</span> <span class="n">tomcat</span> <span class="p">{</span>
     <span class="k">namespace</span> <span class="n">model</span> <span class="p">{</span>
 
         <span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+        <span class="k">namespace</span> <span class="n">fs</span> <span class="o">=</span> <span class="n">boost</span><span class="o">::</span><span class="n">filesystem</span><span class="p">;</span>
 
         <span class="c1">//----------------------------------------------------------------------</span>
         <span class="c1">// Constructors &amp; Destructor</span>
@@ -186,8 +187,7 @@
         <span class="c1">//----------------------------------------------------------------------</span>
         <span class="c1">// Operator overload</span>
         <span class="c1">//----------------------------------------------------------------------</span>
-        <span class="k">const</span> <span class="n">Tensor3</span><span class="o">&amp;</span>
-            <span class="n">EvidenceSet</span><span class="o">::</span><span class="k">operator</span><span class="p">[](</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">node_label</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+        <span class="k">const</span> <span class="n">Tensor3</span><span class="o">&amp;</span> <span class="n">EvidenceSet</span><span class="o">::</span><span class="k">operator</span><span class="p">[](</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">node_label</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">node_label_to_data</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">node_label</span><span class="p">);</span>
         <span class="p">}</span>
 
@@ -244,24 +244,31 @@
 
         <span class="kt">int</span> <span class="n">EvidenceSet</span><span class="o">::</span><span class="n">get_first_time_with_observation</span><span class="p">(</span><span class="k">const</span> <span class="n">Tensor3</span><span class="o">&amp;</span> <span class="n">data</span><span class="p">)</span> <span class="p">{</span>
 
-            <span class="kt">int</span> <span class="n">time_step</span> <span class="o">=</span> <span class="mi">-1</span><span class="p">;</span>
+            <span class="kt">int</span> <span class="n">time_step</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
             <span class="k">auto</span> <span class="p">[</span><span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">,</span> <span class="n">d3</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">get_shape</span><span class="p">();</span>
             <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">d3</span><span class="p">;</span> <span class="n">k</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                <span class="kt">bool</span> <span class="n">has_data</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
-                <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">d1</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">d2</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="kt">bool</span> <span class="n">obs_data</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+                <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">d2</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="c1">// If every data in depth is non_observable, the given time</span>
+                    <span class="c1">// step k for the data point in row j is defined as non</span>
+                    <span class="c1">// observable.</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">d1</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">if</span> <span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="o">!=</span> <span class="n">NO_OBS</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="n">has_data</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
-                            <span class="n">time_step</span><span class="o">++</span><span class="p">;</span>
+                            <span class="n">obs_data</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
                             <span class="k">break</span><span class="p">;</span>
                         <span class="p">}</span>
                     <span class="p">}</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">has_data</span><span class="p">)</span> <span class="p">{</span>
+
+                    <span class="c1">// Also, if at least one data point is non-observable at given time step,</span>
+                    <span class="c1">// no other data point should be.</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">obs_data</span><span class="p">)</span> <span class="p">{</span>
                         <span class="k">break</span><span class="p">;</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">has_data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">obs_data</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">break</span><span class="p">;</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="n">time_step</span><span class="o">++</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
 
@@ -271,15 +278,14 @@
         <span class="c1">//----------------------------------------------------------------------</span>
         <span class="c1">// Member functions</span>
         <span class="c1">//----------------------------------------------------------------------</span>
-        <span class="kt">void</span>
-        <span class="n">EvidenceSet</span><span class="o">::</span><span class="n">init_from_folder</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">data_folder_path</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="nl">file</span> <span class="p">:</span>
-                 <span class="n">boost</span><span class="o">::</span><span class="n">filesystem</span><span class="o">::</span><span class="n">directory_iterator</span><span class="p">(</span><span class="n">data_folder_path</span><span class="p">))</span> <span class="p">{</span>
-
-                <span class="n">string</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">file</span><span class="p">.</span><span class="n">path</span><span class="p">().</span><span class="n">filename</span><span class="p">().</span><span class="n">string</span><span class="p">();</span>
-                <span class="n">string</span> <span class="n">node_label</span> <span class="o">=</span> <span class="n">remove_extension</span><span class="p">(</span><span class="n">filename</span><span class="p">);</span>
-                <span class="n">Tensor3</span> <span class="n">data</span> <span class="o">=</span> <span class="n">read_tensor_from_file</span><span class="p">(</span><span class="n">file</span><span class="p">.</span><span class="n">path</span><span class="p">().</span><span class="n">string</span><span class="p">());</span>
-                <span class="k">this</span><span class="o">-&gt;</span><span class="n">add_data</span><span class="p">(</span><span class="n">node_label</span><span class="p">,</span> <span class="n">data</span><span class="p">);</span>
+        <span class="kt">void</span> <span class="n">EvidenceSet</span><span class="o">::</span><span class="n">init_from_folder</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">data_folder_path</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="nl">file</span> <span class="p">:</span> <span class="n">fs</span><span class="o">::</span><span class="n">directory_iterator</span><span class="p">(</span><span class="n">data_folder_path</span><span class="p">))</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">fs</span><span class="o">::</span><span class="n">is_regular_file</span><span class="p">(</span><span class="n">file</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="n">string</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">file</span><span class="p">.</span><span class="n">path</span><span class="p">().</span><span class="n">filename</span><span class="p">().</span><span class="n">string</span><span class="p">();</span>
+                    <span class="n">string</span> <span class="n">node_label</span> <span class="o">=</span> <span class="n">remove_extension</span><span class="p">(</span><span class="n">filename</span><span class="p">);</span>
+                    <span class="n">Tensor3</span> <span class="n">data</span> <span class="o">=</span> <span class="n">read_tensor_from_file</span><span class="p">(</span><span class="n">file</span><span class="p">.</span><span class="n">path</span><span class="p">().</span><span class="n">string</span><span class="p">());</span>
+                    <span class="k">this</span><span class="o">-&gt;</span><span class="n">add_data</span><span class="p">(</span><span class="n">node_label</span><span class="p">,</span> <span class="n">data</span><span class="p">);</span>
+                <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
@@ -341,17 +347,23 @@
         <span class="p">}</span>
 
         <span class="kt">void</span> <span class="n">EvidenceSet</span><span class="o">::</span><span class="n">keep_first</span><span class="p">(</span><span class="kt">int</span> <span class="n">num_samples</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span><span class="p">[</span><span class="n">node_label</span><span class="p">,</span> <span class="n">data</span><span class="p">]</span> <span class="o">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">node_label_to_data</span><span class="p">){</span>
+            <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="p">[</span><span class="n">node_label</span><span class="p">,</span> <span class="n">data</span><span class="p">]</span> <span class="o">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">node_label_to_data</span><span class="p">)</span> <span class="p">{</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">this</span><span class="o">-&gt;</span><span class="n">num_data_points</span> <span class="o">=</span> <span class="n">num_samples</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="kt">void</span> <span class="n">EvidenceSet</span><span class="o">::</span><span class="n">shrink_up_to</span><span class="p">(</span><span class="kt">int</span> <span class="n">time_step</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span><span class="p">[</span><span class="n">node_label</span><span class="p">,</span> <span class="n">data</span><span class="p">]</span> <span class="o">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">node_label_to_data</span><span class="p">){</span>
+            <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="p">[</span><span class="n">node_label</span><span class="p">,</span> <span class="n">data</span><span class="p">]</span> <span class="o">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">node_label_to_data</span><span class="p">)</span> <span class="p">{</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">time_step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="k">this</span><span class="o">-&gt;</span><span class="n">time_steps</span> <span class="o">=</span> <span class="n">time_step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="kt">bool</span> <span class="n">EvidenceSet</span><span class="o">::</span><span class="n">empty</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">num_data_points</span> <span class="o">==</span> <span class="mi">0</span><span class="p">;</span> <span class="p">}</span>
+
+        <span class="kt">void</span> <span class="n">EvidenceSet</span><span class="o">::</span><span class="n">remove</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">node_label</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">node_label_to_data</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">node_label</span><span class="p">);</span>
         <span class="p">}</span>
 
         <span class="c1">//----------------------------------------------------------------------</span>

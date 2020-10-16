@@ -1,0 +1,79 @@
+
+.. _file_src_cpp_model_converter_TA3MessageConverter.h:
+
+File TA3MessageConverter.h
+==========================
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp_model_converter>` (``src/cpp/model/converter``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. contents:: Contents
+   :local:
+   :backlinks: none
+
+Definition (``src/cpp/model/converter/TA3MessageConverter.h``)
+--------------------------------------------------------------
+
+
+.. toctree::
+   :maxdepth: 1
+
+   program_listing_file_src_cpp_model_converter_TA3MessageConverter.h.rst
+
+
+
+
+
+Includes
+--------
+
+
+- ``MessageConverter.h`` (:ref:`file_src_cpp_model_converter_MessageConverter.h`)
+
+- ``nlohmann/json.hpp``
+
+- ``string``
+
+- ``unordered_map``
+
+- ``utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
+
+- ``vector``
+
+
+
+Included By
+-----------
+
+
+- :ref:`file_src_cpp_model_convert_messages.cpp`
+
+- :ref:`file_src_cpp_model_converter_TA3MessageConverter.cpp`
+
+- :ref:`file_src_cpp_model_experiments_Experimentation.h`
+
+- :ref:`file_src_cpp_model_experiments_TomcatTA3.h`
+
+- :ref:`file_src_cpp_model_experiments_TomcatTA3V2.cpp`
+
+- :ref:`file_src_cpp_model_run_online_tomcat.cpp`
+
+
+
+
+Namespaces
+----------
+
+
+- :ref:`namespace_tomcat`
+
+- :ref:`namespace_tomcat__model`
+
+
+Classes
+-------
+
+
+- :ref:`exhale_class_classtomcat_1_1model_1_1TA3MessageConverter`
+

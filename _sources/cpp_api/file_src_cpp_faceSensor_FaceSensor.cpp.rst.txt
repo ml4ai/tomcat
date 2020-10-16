@@ -48,13 +48,6 @@ Includes
 
 
 
-Namespaces
-----------
-
-
-- :ref:`namespace_std`
-
-
 Functions
 ---------
 

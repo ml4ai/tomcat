@@ -163,16 +163,19 @@
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
 
 <span class="cp">#include</span> <span class="cpf">&lt;array&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;functional&gt;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&lt;memory&gt;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;unordered_set&gt;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&lt;utility&gt;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
 
 <span class="cp">#include</span> <span class="cpf">&lt;boost/graph/adjacency_list.hpp&gt;</span><span class="cp"></span>
 
-<span class="cp">#include</span> <span class="cpf">&quot;model/utils/Definitions.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&quot;model/pgm/DynamicBayesNet.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&quot;model/pgm/inference/MessageNode.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;pgm/DynamicBayesNet.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;pgm/inference/FactorNode.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;pgm/inference/MessageNode.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;utils/Definitions.h&quot;</span><span class="cp"></span>
 
 <span class="k">namespace</span> <span class="n">tomcat</span> <span class="p">{</span>
     <span class="k">namespace</span> <span class="n">model</span> <span class="p">{</span>
@@ -234,9 +237,13 @@
                 <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">MessageNode</span><span class="o">&gt;&amp;</span> <span class="n">template_node</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
 
             <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">get_marginal_for</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">node_label</span><span class="p">,</span>
-                                             <span class="kt">int</span> <span class="n">time_step</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+                                             <span class="kt">int</span> <span class="n">time_step</span><span class="p">,</span>
+                                             <span class="kt">bool</span> <span class="n">normalized</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
 
             <span class="kt">void</span> <span class="nf">erase_incoming_messages_beyond</span><span class="p">(</span><span class="kt">int</span> <span class="n">time_step</span><span class="p">);</span>
+
+            <span class="n">std</span><span class="o">::</span><span class="n">unordered_set</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">FactorNode</span><span class="o">&gt;&gt;</span>
+            <span class="n">get_transition_factors_at</span><span class="p">(</span><span class="kt">int</span> <span class="n">time_step</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
 
           <span class="k">private</span><span class="o">:</span>
             <span class="c1">//------------------------------------------------------------------</span>
@@ -302,6 +309,12 @@
 
             <span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">MessageNode</span><span class="o">&gt;&gt;</span><span class="p">,</span> <span class="mi">3</span><span class="o">&gt;</span>
                 <span class="n">time_sliced_reversed_topological_order</span><span class="p">;</span>
+
+            <span class="c1">// Stores the factor nodes that link variable nodes in two different</span>
+            <span class="c1">// time steps.</span>
+
+            <span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unordered_set</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">FactorNode</span><span class="o">&gt;&gt;</span><span class="p">,</span> <span class="mi">3</span><span class="o">&gt;</span>
+                <span class="n">transition_factors_per_time_step</span><span class="p">;</span>
         <span class="p">};</span>
 
     <span class="p">}</span> <span class="c1">// namespace model</span>

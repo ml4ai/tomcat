@@ -31,9 +31,11 @@ Includes
 
 - ``EvaluationAggregator.h`` (:ref:`file_src_cpp_model_pipeline_evaluation_EvaluationAggregator.h`)
 
-- ``model/utils/EigenExtensions.h`` (:ref:`file_src_cpp_model_utils_EigenExtensions.h`)
+- ``boost/progress.hpp``
 
 - ``sstream``
+
+- ``utils/EigenExtensions.h`` (:ref:`file_src_cpp_model_utils_EigenExtensions.h`)
 
 
 

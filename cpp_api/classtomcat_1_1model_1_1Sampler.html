@@ -246,8 +246,8 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4N6tomcat5model7Sampler8add_dataE11EvidenceSet">
-<span id="_CPPv3N6tomcat5model7Sampler8add_dataE11EvidenceSet"></span><span id="_CPPv2N6tomcat5model7Sampler8add_dataE11EvidenceSet"></span><span id="tomcat::model::Sampler::add_data__EvidenceSet"></span><span class="target" id="classtomcat_1_1model_1_1Sampler_1af509c6c548584edcbed11642cc90b5c1"></span>void <code class="sig-name descname">add_data</code><span class="sig-paren">(</span><a class="reference internal" href="classtomcat_1_1model_1_1EvidenceSet.html#_CPPv4N6tomcat5model11EvidenceSetE" title="tomcat::model::EvidenceSet">EvidenceSet</a> <em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model7Sampler8add_dataE11EvidenceSet" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4N6tomcat5model7Sampler8add_dataERK11EvidenceSet">
+<span id="_CPPv3N6tomcat5model7Sampler8add_dataERK11EvidenceSet"></span><span id="_CPPv2N6tomcat5model7Sampler8add_dataERK11EvidenceSet"></span><span id="tomcat::model::Sampler::add_data__EvidenceSetCR"></span><span class="target" id="classtomcat_1_1model_1_1Sampler_1abc408fc9c7aaf8608f17157593e37f68"></span>void <code class="sig-name descname">add_data</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="classtomcat_1_1model_1_1EvidenceSet.html#_CPPv4N6tomcat5model11EvidenceSetE" title="tomcat::model::EvidenceSet">EvidenceSet</a> &amp;<em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model7Sampler8add_dataERK11EvidenceSet" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Adds data to the sampler.</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
@@ -259,11 +259,12 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4NK6tomcat5model7Sampler22save_samples_to_folderERKNSt6stringE">
-<span id="_CPPv3NK6tomcat5model7Sampler22save_samples_to_folderERKNSt6stringE"></span><span id="_CPPv2NK6tomcat5model7Sampler22save_samples_to_folderERKNSt6stringE"></span><span id="tomcat::model::Sampler::save_samples_to_folder__ssCRC"></span><span class="target" id="classtomcat_1_1model_1_1Sampler_1a31191243d09bd501e1f0d272c6f0ca0b"></span>void <code class="sig-name descname">save_samples_to_folder</code><span class="sig-paren">(</span><em class="property">const</em> std::string &amp;<em>output_folder</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model7Sampler22save_samples_to_folderERKNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4NK6tomcat5model7Sampler22save_samples_to_folderERKNSt6stringEKNSt13unordered_setINSt6stringEEE">
+<span id="_CPPv3NK6tomcat5model7Sampler22save_samples_to_folderERKNSt6stringEKNSt13unordered_setINSt6stringEEE"></span><span id="_CPPv2NK6tomcat5model7Sampler22save_samples_to_folderERKNSt6stringEKNSt13unordered_setINSt6stringEEE"></span><span id="tomcat::model::Sampler::save_samples_to_folder__ssCR.std::unordered_set:ss:CC"></span><span class="target" id="classtomcat_1_1model_1_1Sampler_1ac5ebf8d84df85d79d30f735b53e49e4e"></span>void <code class="sig-name descname">save_samples_to_folder</code><span class="sig-paren">(</span><em class="property">const</em> std::string &amp;<em>output_folder</em>, <em class="property">const</em> std::unordered_set&lt;std::string&gt; <em>excluding</em> = {}<span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model7Sampler22save_samples_to_folderERKNSt6stringEKNSt13unordered_setINSt6stringEEE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Saves generated samples to files in a specific folder. <dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">output_folder</span></code>: folder where the files should be saved. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">excluding</span></code>: list of node labels to exclude. </p></li>
 </ul>
 </dd>
 </dl>
@@ -278,7 +279,7 @@
 <dt><strong>Return</strong></dt><dd><p>Samples over time. A matrix of dimension (num_samples, time_steps). </p>
 </dd>
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">node_label</span></code>: latent node label </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">node_label</span></code>: latent node label</p></li>
 </ul>
 </dd>
 </dl>
@@ -321,6 +322,11 @@
 <span id="_CPPv3NK6tomcat5model7Sampler9get_modelEv"></span><span id="_CPPv2NK6tomcat5model7Sampler9get_modelEv"></span><span id="tomcat::model::Sampler::get_modelC"></span><span class="target" id="classtomcat_1_1model_1_1Sampler_1a455b58260f20b111917e542d4852fd34"></span><em class="property">const</em> std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1DynamicBayesNet.html#_CPPv4N6tomcat5model15DynamicBayesNetE" title="tomcat::model::DynamicBayesNet">DynamicBayesNet</a>&gt; &amp;<code class="sig-name descname">get_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model7Sampler9get_modelEv" title="Permalink to this definition">¶</a><br /></dt>
 <dd></dd></dl>
 
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model7Sampler27set_max_time_step_to_sampleEi">
+<span id="_CPPv3N6tomcat5model7Sampler27set_max_time_step_to_sampleEi"></span><span id="_CPPv2N6tomcat5model7Sampler27set_max_time_step_to_sampleEi"></span><span id="tomcat::model::Sampler::set_max_time_step_to_sample__i"></span><span class="target" id="classtomcat_1_1model_1_1Sampler_1a067e6721dbdd26ca1b91123b3e3e403c"></span>void <code class="sig-name descname">set_max_time_step_to_sample</code><span class="sig-paren">(</span>int <em>maxTimeStepToSample</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model7Sampler27set_max_time_step_to_sampleEi" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
 </div>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Protected Functions</p>
@@ -358,6 +364,11 @@
 <dl class="cpp var">
 <dt id="_CPPv4N6tomcat5model7Sampler4dataE">
 <span id="_CPPv3N6tomcat5model7Sampler4dataE"></span><span id="_CPPv2N6tomcat5model7Sampler4dataE"></span><span id="tomcat::model::Sampler::data__EvidenceSet"></span><span class="target" id="classtomcat_1_1model_1_1Sampler_1a7a19145930dea9d1d1b746014e3bcfeb"></span><a class="reference internal" href="classtomcat_1_1model_1_1EvidenceSet.html#_CPPv4N6tomcat5model11EvidenceSetE" title="tomcat::model::EvidenceSet">EvidenceSet</a> <code class="sig-name descname">data</code><a class="headerlink" href="#_CPPv4N6tomcat5model7Sampler4dataE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt id="_CPPv4N6tomcat5model7Sampler23max_time_step_to_sampleE">
+<span id="_CPPv3N6tomcat5model7Sampler23max_time_step_to_sampleE"></span><span id="_CPPv2N6tomcat5model7Sampler23max_time_step_to_sampleE"></span><span id="tomcat::model::Sampler::max_time_step_to_sample__i"></span><span class="target" id="classtomcat_1_1model_1_1Sampler_1abe914ff17ee3f64d1f9c4b3dacce0ff1"></span>int <code class="sig-name descname">max_time_step_to_sample</code> = -1<a class="headerlink" href="#_CPPv4N6tomcat5model7Sampler23max_time_step_to_sampleE" title="Permalink to this definition">¶</a><br /></dt>
 <dd></dd></dl>
 
 </div>

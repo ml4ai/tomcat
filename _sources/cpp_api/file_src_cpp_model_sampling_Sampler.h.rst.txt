@@ -29,17 +29,17 @@ Includes
 --------
 
 
-- ``model/pgm/DynamicBayesNet.h`` (:ref:`file_src_cpp_model_pgm_DynamicBayesNet.h`)
-
-- ``model/pgm/EvidenceSet.h`` (:ref:`file_src_cpp_model_pgm_EvidenceSet.h`)
-
-- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
-
-- ``model/utils/Tensor3.h`` (:ref:`file_src_cpp_model_utils_Tensor3.h`)
-
 - ``nlohmann/json.hpp``
 
+- ``pgm/DynamicBayesNet.h`` (:ref:`file_src_cpp_model_pgm_DynamicBayesNet.h`)
+
+- ``pgm/EvidenceSet.h`` (:ref:`file_src_cpp_model_pgm_EvidenceSet.h`)
+
 - ``unordered_set``
+
+- ``utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
+
+- ``utils/Tensor3.h`` (:ref:`file_src_cpp_model_utils_Tensor3.h`)
 
 
 

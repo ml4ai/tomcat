@@ -40,7 +40,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Class MessageNode" href="classtomcat_1_1model_1_1MessageNode.html" />
+    <link rel="next" title="Class MessageConverter" href="classtomcat_1_1model_1_1MessageConverter.html" />
     <link rel="prev" title="Class KFold" href="classtomcat_1_1model_1_1KFold.html" /> 
 </head>
 
@@ -174,7 +174,6 @@
 <h3>Derived Types<a class="headerlink" href="#derived-types" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">public</span> <span class="pre">tomcat::model::Accuracy</span></code> (<a class="reference internal" href="classtomcat_1_1model_1_1Accuracy.html#exhale-class-classtomcat-1-1model-1-1accuracy"><span class="std std-ref">Class Accuracy</span></a>)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">public</span> <span class="pre">tomcat::model::Estimates</span></code> (<a class="reference internal" href="classtomcat_1_1model_1_1Estimates.html#exhale-class-classtomcat-1-1model-1-1estimates"><span class="std std-ref">Class Estimates</span></a>)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">public</span> <span class="pre">tomcat::model::F1Score</span></code> (<a class="reference internal" href="classtomcat_1_1model_1_1F1Score.html#exhale-class-classtomcat-1-1model-1-1f1score"><span class="std std-ref">Class F1Score</span></a>)</p></li>
 </ul>
 </div>
@@ -185,7 +184,7 @@
 <dt id="_CPPv4N6tomcat5model7MeasureE">
 <span id="_CPPv3N6tomcat5model7MeasureE"></span><span id="_CPPv2N6tomcat5model7MeasureE"></span><span id="tomcat::model::Measure"></span><span class="target" id="classtomcat_1_1model_1_1Measure"></span><em class="property">class </em><code class="sig-prename descclassname">tomcat::model<code class="sig-prename descclassname">::</code></code><code class="sig-name descname">Measure</code><a class="headerlink" href="#_CPPv4N6tomcat5model7MeasureE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Represents some measurement that can be performed over estimates. </p>
-<p>Subclassed by <a class="reference internal" href="classtomcat_1_1model_1_1Accuracy.html#classtomcat_1_1model_1_1Accuracy"><span class="std std-ref">tomcat::model::Accuracy</span></a>, <a class="reference internal" href="classtomcat_1_1model_1_1Estimates.html#classtomcat_1_1model_1_1Estimates"><span class="std std-ref">tomcat::model::Estimates</span></a>, <a class="reference internal" href="classtomcat_1_1model_1_1F1Score.html#classtomcat_1_1model_1_1F1Score"><span class="std std-ref">tomcat::model::F1Score</span></a></p>
+<p>Subclassed by <a class="reference internal" href="classtomcat_1_1model_1_1Accuracy.html#classtomcat_1_1model_1_1Accuracy"><span class="std std-ref">tomcat::model::Accuracy</span></a>, <a class="reference internal" href="classtomcat_1_1model_1_1F1Score.html#classtomcat_1_1model_1_1F1Score"><span class="std std-ref">tomcat::model::F1Score</span></a></p>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Public Functions</p>
 <dl class="cpp function">
@@ -202,13 +201,14 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4N6tomcat5model7Measure7MeasureENSt10shared_ptrI9EstimatorEEd">
-<span id="_CPPv3N6tomcat5model7Measure7MeasureENSt10shared_ptrI9EstimatorEEd"></span><span id="_CPPv2N6tomcat5model7Measure7MeasureENSt10shared_ptrI9EstimatorEEd"></span><span id="tomcat::model::Measure::Measure__std::shared_ptr:Estimator:.double"></span><span class="target" id="classtomcat_1_1model_1_1Measure_1ae4bdf83a1313855ac0134d940e313ca1"></span><code class="sig-name descname">Measure</code><span class="sig-paren">(</span>std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1Estimator.html#_CPPv4N6tomcat5model9EstimatorE" title="tomcat::model::Estimator">Estimator</a>&gt; <em>estimator</em>, double <em>threshold</em> = 0.5<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model7Measure7MeasureENSt10shared_ptrI9EstimatorEEd" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4N6tomcat5model7Measure7MeasureENSt10shared_ptrI9EstimatorEEdb">
+<span id="_CPPv3N6tomcat5model7Measure7MeasureENSt10shared_ptrI9EstimatorEEdb"></span><span id="_CPPv2N6tomcat5model7Measure7MeasureENSt10shared_ptrI9EstimatorEEdb"></span><span id="tomcat::model::Measure::Measure__std::shared_ptr:Estimator:.double.b"></span><span class="target" id="classtomcat_1_1model_1_1Measure_1ab2a29b4dee3fb073be9759b428212c3f"></span><code class="sig-name descname">Measure</code><span class="sig-paren">(</span>std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1Estimator.html#_CPPv4N6tomcat5model9EstimatorE" title="tomcat::model::Estimator">Estimator</a>&gt; <em>estimator</em>, double <em>threshold</em> = 0.5, bool <em>use_last_estimate</em> = false<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model7Measure7MeasureENSt10shared_ptrI9EstimatorEEdb" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Creates an abstract measure.</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">estimator</span></code>: estimator used to compute the estimates </p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">threshold</span></code>: Probability threshold for predicting or inferring the occurrence of an assignment as true </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">use_last_estimates</span></code>: whether only the estimate in the last time step should be used if the inference horizon of the estimator is 0 </p></li>
 </ul>
 </dd>
 </dl>
@@ -242,10 +242,10 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4NK6tomcat5model7Measure8evaluateERK11EvidenceSet">
-<span id="_CPPv3NK6tomcat5model7Measure8evaluateERK11EvidenceSet"></span><span id="_CPPv2NK6tomcat5model7Measure8evaluateERK11EvidenceSet"></span><span id="tomcat::model::Measure::evaluate__EvidenceSetCRC"></span><span class="target" id="classtomcat_1_1model_1_1Measure_1a648fecea885520ed93a8f98aa871fc26"></span>std::vector&lt;<a class="reference internal" href="structtomcat_1_1model_1_1NodeEvaluation.html#_CPPv4N6tomcat5model14NodeEvaluationE" title="tomcat::model::NodeEvaluation">NodeEvaluation</a>&gt; <code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="classtomcat_1_1model_1_1EvidenceSet.html#_CPPv4N6tomcat5model11EvidenceSetE" title="tomcat::model::EvidenceSet">EvidenceSet</a> &amp;<em>test_data</em><span class="sig-paren">)</span> <em class="property">const</em> = 0<a class="headerlink" href="#_CPPv4NK6tomcat5model7Measure8evaluateERK11EvidenceSet" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3NK6tomcat5model7Measure8evaluateERK11EvidenceSet"></span><span id="_CPPv2NK6tomcat5model7Measure8evaluateERK11EvidenceSet"></span><span id="tomcat::model::Measure::evaluate__EvidenceSetCRC"></span><span class="target" id="classtomcat_1_1model_1_1Measure_1a1e35988ff7c9be30195e047583ed49f9"></span><a class="reference internal" href="structtomcat_1_1model_1_1NodeEvaluation.html#_CPPv4N6tomcat5model14NodeEvaluationE" title="tomcat::model::NodeEvaluation">NodeEvaluation</a> <code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="classtomcat_1_1model_1_1EvidenceSet.html#_CPPv4N6tomcat5model11EvidenceSetE" title="tomcat::model::EvidenceSet">EvidenceSet</a> &amp;<em>test_data</em><span class="sig-paren">)</span> <em class="property">const</em> = 0<a class="headerlink" href="#_CPPv4NK6tomcat5model7Measure8evaluateERK11EvidenceSet" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Calculates the measure over a data set.</p>
 <p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>Computed values for all of the nodes processed by the estimator. </p>
+<dt><strong>Return</strong></dt><dd><p>Evaluation for over the estimates computed by an estimator. </p>
 </dd>
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">test_data</span></code>: data to calculate the measure over</p></li>
@@ -258,7 +258,7 @@
 <dl class="cpp function">
 <dt id="_CPPv4NK6tomcat5model7Measure8get_infoERN8nlohmann4jsonE">
 <span id="_CPPv3NK6tomcat5model7Measure8get_infoERN8nlohmann4jsonE"></span><span id="_CPPv2NK6tomcat5model7Measure8get_infoERN8nlohmann4jsonE"></span><span id="tomcat::model::Measure::get_info__nlohmann::jsonRC"></span><span class="target" id="classtomcat_1_1model_1_1Measure_1a66af9724647ef79583f8eb635758e546"></span>void <code class="sig-name descname">get_info</code><span class="sig-paren">(</span>nlohmann::json &amp;<em>json</em><span class="sig-paren">)</span> <em class="property">const</em> = 0<a class="headerlink" href="#_CPPv4NK6tomcat5model7Measure8get_infoERN8nlohmann4jsonE" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Writes information about the splitter in a json object.</p>
+<dd><p>Writes information about the measure in a json object.</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">json</span></code>: json object </p></li>
@@ -285,15 +285,16 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4NK6tomcat5model7Measure20get_confusion_matrixERK13NodeEstimatesRK11EvidenceSet">
-<span id="_CPPv3NK6tomcat5model7Measure20get_confusion_matrixERK13NodeEstimatesRK11EvidenceSet"></span><span id="_CPPv2NK6tomcat5model7Measure20get_confusion_matrixERK13NodeEstimatesRK11EvidenceSet"></span><span id="tomcat::model::Measure::get_confusion_matrix__NodeEstimatesCR.EvidenceSetCRC"></span><span class="target" id="classtomcat_1_1model_1_1Measure_1a1375d5af33ac13d4df33f52b1bca2d4a"></span><a class="reference internal" href="structtomcat_1_1model_1_1ConfusionMatrix.html#_CPPv4N6tomcat5model15ConfusionMatrixE" title="tomcat::model::ConfusionMatrix">ConfusionMatrix</a> <code class="sig-name descname">get_confusion_matrix</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="structtomcat_1_1model_1_1NodeEstimates.html#_CPPv4N6tomcat5model13NodeEstimatesE" title="tomcat::model::NodeEstimates">NodeEstimates</a> &amp;<em>estimates</em>, <em class="property">const</em> <a class="reference internal" href="classtomcat_1_1model_1_1EvidenceSet.html#_CPPv4N6tomcat5model11EvidenceSetE" title="tomcat::model::EvidenceSet">EvidenceSet</a> &amp;<em>test_data</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model7Measure20get_confusion_matrixERK13NodeEstimatesRK11EvidenceSet" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Computes the confusion matrix between real values and estimates previously computed for a model.</p>
+<dt id="_CPPv4NK6tomcat5model7Measure20get_confusion_matrixERKN5Eigen8MatrixXdERKN5Eigen8MatrixXdEi">
+<span id="_CPPv3NK6tomcat5model7Measure20get_confusion_matrixERKN5Eigen8MatrixXdERKN5Eigen8MatrixXdEi"></span><span id="_CPPv2NK6tomcat5model7Measure20get_confusion_matrixERKN5Eigen8MatrixXdERKN5Eigen8MatrixXdEi"></span><span id="tomcat::model::Measure::get_confusion_matrix__Eigen::MatrixXdCR.Eigen::MatrixXdCR.iC"></span><span class="target" id="classtomcat_1_1model_1_1Measure_1a901fee20aa74b657bda7735f41d7bd48"></span><a class="reference internal" href="structtomcat_1_1model_1_1ConfusionMatrix.html#_CPPv4N6tomcat5model15ConfusionMatrixE" title="tomcat::model::ConfusionMatrix">ConfusionMatrix</a> <code class="sig-name descname">get_confusion_matrix</code><span class="sig-paren">(</span><em class="property">const</em> Eigen::MatrixXd &amp;<em>probabilities</em>, <em class="property">const</em> Eigen::MatrixXd &amp;<em>true_values</em>, int <em>fixed_assignment</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model7Measure20get_confusion_matrixERKN5Eigen8MatrixXdERKN5Eigen8MatrixXdEi" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Computes the confusion matrix between real values and estimates previously computed for a model. This assumes the estimates were computed for a fixed assignment. In that case, the problem can be reduced to a binary classification (the probability that the node assumes a given value or not). If the problem needs to compute some measure for a multiclass scenario, this needs to be implemented in one of the derived classes as it does not make sense for some measures (e.g. f1-score).</p>
 <p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p>Confusion matrix. </p>
 </dd>
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">estimates</span></code>: estimates previously computed for the model </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">test_data</span></code>: data with real values to compare the estimates against</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">probabilities</span></code>: estimated probabilities previously computed by an estimator </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">true_values</span></code>: data with true values to compare the estimates against </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fixed_assignment</span></code>: node’s assignment to compare the estimated probability against the real value (e.g. compare the probability that the node assumes the value x, where x is the fixed assignment). This transforms the evaluation in a binary classification.</p></li>
 </ul>
 </dd>
 </dl>
@@ -313,6 +314,11 @@
 <span id="_CPPv3N6tomcat5model7Measure9thresholdE"></span><span id="_CPPv2N6tomcat5model7Measure9thresholdE"></span><span id="tomcat::model::Measure::threshold__double"></span><span class="target" id="classtomcat_1_1model_1_1Measure_1a1a7142740c8cd3fac2961eef57d80f0a"></span>double <code class="sig-name descname">threshold</code> = 0.5<a class="headerlink" href="#_CPPv4N6tomcat5model7Measure9thresholdE" title="Permalink to this definition">¶</a><br /></dt>
 <dd></dd></dl>
 
+<dl class="cpp var">
+<dt id="_CPPv4N6tomcat5model7Measure17use_last_estimateE">
+<span id="_CPPv3N6tomcat5model7Measure17use_last_estimateE"></span><span id="_CPPv2N6tomcat5model7Measure17use_last_estimateE"></span><span id="tomcat::model::Measure::use_last_estimate__b"></span><span class="target" id="classtomcat_1_1model_1_1Measure_1aa3bd221d4e35b613881dd59c96b66ae4"></span>bool <code class="sig-name descname">use_last_estimate</code> = false<a class="headerlink" href="#_CPPv4N6tomcat5model7Measure17use_last_estimateE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
 </div>
 </dd></dl>
 
@@ -327,7 +333,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="classtomcat_1_1model_1_1MessageNode.html" class="btn btn-neutral float-right" title="Class MessageNode" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="classtomcat_1_1model_1_1MessageConverter.html" class="btn btn-neutral float-right" title="Class MessageConverter" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="classtomcat_1_1model_1_1KFold.html" class="btn btn-neutral float-left" title="Class KFold" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

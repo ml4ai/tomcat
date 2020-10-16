@@ -21,9 +21,9 @@ Classes
 
 - :ref:`exhale_struct_structtomcat_1_1model_1_1ConfusionMatrix`
 
-- :ref:`exhale_struct_structtomcat_1_1model_1_1FactorNode_1_1PotentialFunction`
+- :ref:`exhale_struct_structtomcat_1_1model_1_1CumulativeNodeEstimates`
 
-- :ref:`exhale_struct_structtomcat_1_1model_1_1MessageBrokerConfiguration`
+- :ref:`exhale_struct_structtomcat_1_1model_1_1FactorNode_1_1PotentialFunction`
 
 - :ref:`exhale_struct_structtomcat_1_1model_1_1MessageNode_1_1MessageContainer`
 
@@ -32,6 +32,8 @@ Classes
 - :ref:`exhale_struct_structtomcat_1_1model_1_1NodeEvaluation`
 
 - :ref:`exhale_struct_structtomcat_1_1model_1_1NodeEvaluationAggregation`
+
+- :ref:`exhale_struct_structtomcat_1_1model_1_1OnlineEstimation_1_1MessageBrokerConfiguration`
 
 - :ref:`exhale_struct_structtomcat_1_1model_1_1ParentIndexing`
 
@@ -73,8 +75,6 @@ Classes
 
 - :ref:`exhale_class_classtomcat_1_1model_1_1DynamicBayesNet`
 
-- :ref:`exhale_class_classtomcat_1_1model_1_1Estimates`
-
 - :ref:`exhale_class_classtomcat_1_1model_1_1EstimationProcess`
 
 - :ref:`exhale_class_classtomcat_1_1model_1_1Estimator`
@@ -82,6 +82,8 @@ Classes
 - :ref:`exhale_class_classtomcat_1_1model_1_1EvaluationAggregator`
 
 - :ref:`exhale_class_classtomcat_1_1model_1_1EvidenceSet`
+
+- :ref:`exhale_class_classtomcat_1_1model_1_1Experimentation`
 
 - :ref:`exhale_class_classtomcat_1_1model_1_1F1Score`
 
@@ -98,6 +100,8 @@ Classes
 - :ref:`exhale_class_classtomcat_1_1model_1_1KFold`
 
 - :ref:`exhale_class_classtomcat_1_1model_1_1Measure`
+
+- :ref:`exhale_class_classtomcat_1_1model_1_1MessageConverter`
 
 - :ref:`exhale_class_classtomcat_1_1model_1_1MessageNode`
 
@@ -117,9 +121,17 @@ Classes
 
 - :ref:`exhale_class_classtomcat_1_1model_1_1SumProductEstimator`
 
+- :ref:`exhale_class_classtomcat_1_1model_1_1SynchronizedQueue`
+
+- :ref:`exhale_class_classtomcat_1_1model_1_1TA3MessageConverter`
+
 - :ref:`exhale_class_classtomcat_1_1model_1_1Tensor3`
 
 - :ref:`exhale_class_classtomcat_1_1model_1_1Tomcat`
+
+- :ref:`exhale_class_classtomcat_1_1model_1_1TomcatTA3`
+
+- :ref:`exhale_class_classtomcat_1_1model_1_1TomcatTA3V2`
 
 - :ref:`exhale_class_classtomcat_1_1model_1_1TrainingFrequencyEstimator`
 

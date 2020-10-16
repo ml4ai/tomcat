@@ -294,15 +294,16 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4NK6tomcat5model11FactorGraph16get_marginal_forERKNSt6stringEi">
-<span id="_CPPv3NK6tomcat5model11FactorGraph16get_marginal_forERKNSt6stringEi"></span><span id="_CPPv2NK6tomcat5model11FactorGraph16get_marginal_forERKNSt6stringEi"></span><span id="tomcat::model::FactorGraph::get_marginal_for__ssCR.iC"></span><span class="target" id="classtomcat_1_1model_1_1FactorGraph_1ad75298f07fa58bec688419c792073b9b"></span>Eigen::MatrixXd <code class="sig-name descname">get_marginal_for</code><span class="sig-paren">(</span><em class="property">const</em> std::string &amp;<em>node_label</em>, int <em>time_step</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model11FactorGraph16get_marginal_forERKNSt6stringEi" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4NK6tomcat5model11FactorGraph16get_marginal_forERKNSt6stringEib">
+<span id="_CPPv3NK6tomcat5model11FactorGraph16get_marginal_forERKNSt6stringEib"></span><span id="_CPPv2NK6tomcat5model11FactorGraph16get_marginal_forERKNSt6stringEib"></span><span id="tomcat::model::FactorGraph::get_marginal_for__ssCR.i.bC"></span><span class="target" id="classtomcat_1_1model_1_1FactorGraph_1af3ebb0dd359a5db6041e31696687cfae"></span>Eigen::MatrixXd <code class="sig-name descname">get_marginal_for</code><span class="sig-paren">(</span><em class="property">const</em> std::string &amp;<em>node_label</em>, int <em>time_step</em>, bool <em>normalized</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model11FactorGraph16get_marginal_forERKNSt6stringEib" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Returns the marginal distribution for a given node in a certain point in time. The marginal is given by the multiplication of all the incoming messages to the node.</p>
 <p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p>Marginal distribution </p>
 </dd>
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">node_label</span></code>: node’s label </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">time_step</span></code>: time step of the node</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">time_step</span></code>: time step of the node </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">normalized</span></code>: whether the multiplication of incoming messages must be normalized or not.</p></li>
 </ul>
 </dd>
 </dl>
@@ -316,6 +317,21 @@
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">time_step</span></code>: time step </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model11FactorGraph25get_transition_factors_atEi">
+<span id="_CPPv3NK6tomcat5model11FactorGraph25get_transition_factors_atEi"></span><span id="_CPPv2NK6tomcat5model11FactorGraph25get_transition_factors_atEi"></span><span id="tomcat::model::FactorGraph::get_transition_factors_at__iC"></span><span class="target" id="classtomcat_1_1model_1_1FactorGraph_1aacc6da1bb199fd1f914c9b94897da3fc"></span>std::unordered_set&lt;std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1FactorNode.html#_CPPv4N6tomcat5model10FactorNodeE" title="tomcat::model::FactorNode">FactorNode</a>&gt;&gt; <code class="sig-name descname">get_transition_factors_at</code><span class="sig-paren">(</span>int <em>time_step</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model11FactorGraph25get_transition_factors_atEi" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns factor nodes that are connected to nodes in a given time step and the previous one. Transition factor nodes from the repeatable time step are return whenever the given time step is greater than the repeatable one.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Transition factor nodes in time step. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">time_step</span></code>: factor nodes’ time step</p></li>
 </ul>
 </dd>
 </dl>

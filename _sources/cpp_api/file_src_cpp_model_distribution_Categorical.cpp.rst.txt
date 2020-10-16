@@ -33,9 +33,9 @@ Includes
 
 - ``gsl/gsl_randist.h``
 
-- ``model/pgm/ConstantNode.h`` (:ref:`file_src_cpp_model_pgm_ConstantNode.h`)
+- ``pgm/ConstantNode.h`` (:ref:`file_src_cpp_model_pgm_ConstantNode.h`)
 
-- ``model/pgm/RandomVariableNode.h`` (:ref:`file_src_cpp_model_pgm_RandomVariableNode.h`)
+- ``pgm/RandomVariableNode.h`` (:ref:`file_src_cpp_model_pgm_RandomVariableNode.h`)
 
 
 

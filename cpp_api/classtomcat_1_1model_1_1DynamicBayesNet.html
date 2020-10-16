@@ -40,7 +40,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Class Estimates" href="classtomcat_1_1model_1_1Estimates.html" />
+    <link rel="next" title="Class EstimationProcess" href="classtomcat_1_1model_1_1EstimationProcess.html" />
     <link rel="prev" title="Class Distribution" href="classtomcat_1_1model_1_1Distribution.html" /> 
 </head>
 
@@ -321,12 +321,12 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4NK6tomcat5model15DynamicBayesNet14save_to_folderERKNSt6stringE">
-<span id="_CPPv3NK6tomcat5model15DynamicBayesNet14save_to_folderERKNSt6stringE"></span><span id="_CPPv2NK6tomcat5model15DynamicBayesNet14save_to_folderERKNSt6stringE"></span><span id="tomcat::model::DynamicBayesNet::save_to_folder__ssCRC"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1a8f02c42bfec8204e27b854e56069444a"></span>void <code class="sig-name descname">save_to_folder</code><span class="sig-paren">(</span><em class="property">const</em> std::string &amp;<em>output_folder</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model15DynamicBayesNet14save_to_folderERKNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Saves model’s parameter values in individual files inside a given folder. The folder is created if it does not exist.</p>
+<dt id="_CPPv4NK6tomcat5model15DynamicBayesNet7save_toERKNSt6stringE">
+<span id="_CPPv3NK6tomcat5model15DynamicBayesNet7save_toERKNSt6stringE"></span><span id="_CPPv2NK6tomcat5model15DynamicBayesNet7save_toERKNSt6stringE"></span><span id="tomcat::model::DynamicBayesNet::save_to__ssCRC"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1a2b4cedd97fee0ed591ba4b05f32dfa25"></span>void <code class="sig-name descname">save_to</code><span class="sig-paren">(</span><em class="property">const</em> std::string &amp;<em>output_dir</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model15DynamicBayesNet7save_toERKNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Saves model’s parameter values in individual files inside a given directory. The directory is created if it does not exist.</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">output_folder</span></code>: folder where the files must be saved </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output_dir</span></code>: folder where the files must be saved </p></li>
 </ul>
 </dd>
 </dl>
@@ -334,12 +334,12 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4N6tomcat5model15DynamicBayesNet16load_from_folderERKNSt6stringE">
-<span id="_CPPv3N6tomcat5model15DynamicBayesNet16load_from_folderERKNSt6stringE"></span><span id="_CPPv2N6tomcat5model15DynamicBayesNet16load_from_folderERKNSt6stringE"></span><span id="tomcat::model::DynamicBayesNet::load_from_folder__ssCR"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1a3d30c991dcdc037863bfc97d4caef8d2"></span>void <code class="sig-name descname">load_from_folder</code><span class="sig-paren">(</span><em class="property">const</em> std::string &amp;<em>input_folder</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model15DynamicBayesNet16load_from_folderERKNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Loads model’s parameter assignments from files previously saved in a specific folder. The actual parameter nodes are excluded from the model and the <a class="reference internal" href="classtomcat_1_1model_1_1CPD.html#classtomcat_1_1model_1_1CPD"><span class="std std-ref">CPD</span></a>’s that depend on them are updated with constant nodes containing values determined by the content of the files processed.</p>
+<dt id="_CPPv4N6tomcat5model15DynamicBayesNet9load_fromERKNSt6stringE">
+<span id="_CPPv3N6tomcat5model15DynamicBayesNet9load_fromERKNSt6stringE"></span><span id="_CPPv2N6tomcat5model15DynamicBayesNet9load_fromERKNSt6stringE"></span><span id="tomcat::model::DynamicBayesNet::load_from__ssCR"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1aedf98dd1a7d20bf19c073823de12b981"></span>void <code class="sig-name descname">load_from</code><span class="sig-paren">(</span><em class="property">const</em> std::string &amp;<em>input_dir</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model15DynamicBayesNet9load_fromERKNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Loads model’s parameter assignments from files previously saved in a specific directory and freeze the parameter nodes.</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">input_folder</span></code>: folder where the files with the parameters’ values are saved </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">input_dir</span></code>: directory where the files with the parameters’ values are saved </p></li>
 </ul>
 </dd>
 </dl>
@@ -352,6 +352,34 @@
 <dd><p>Returns edges of the unrolled DBN</p>
 <p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p>Edges </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model15DynamicBayesNet14write_graphvizERNSt7ostreamE">
+<span id="_CPPv3NK6tomcat5model15DynamicBayesNet14write_graphvizERNSt7ostreamE"></span><span id="_CPPv2NK6tomcat5model15DynamicBayesNet14write_graphvizERNSt7ostreamE"></span><span id="tomcat::model::DynamicBayesNet::write_graphviz__osRC"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1a119723da992791aeb2f306e11816ae52"></span>void <code class="sig-name descname">write_graphviz</code><span class="sig-paren">(</span>std::ostream &amp;<em>output_stream</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model15DynamicBayesNet14write_graphvizERNSt7ostreamE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Write the graph content in graphviz format.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">output_stream</span></code>: output stream to write the graph. </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model15DynamicBayesNet18get_cardinality_ofERKNSt6stringE">
+<span id="_CPPv3NK6tomcat5model15DynamicBayesNet18get_cardinality_ofERKNSt6stringE"></span><span id="_CPPv2NK6tomcat5model15DynamicBayesNet18get_cardinality_ofERKNSt6stringE"></span><span id="tomcat::model::DynamicBayesNet::get_cardinality_of__ssCRC"></span><span class="target" id="classtomcat_1_1model_1_1DynamicBayesNet_1a0770652089bd40cd5f0cdceb2cdd35f9"></span>int <code class="sig-name descname">get_cardinality_of</code><span class="sig-paren">(</span><em class="property">const</em> std::string &amp;<em>node_label</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model15DynamicBayesNet18get_cardinality_ofERKNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns the cardinality of any node derived from a given label.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>Cardinality of the template node. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">node_label</span></code>: template node’s label</p></li>
+</ul>
 </dd>
 </dl>
 </p>
@@ -376,7 +404,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="classtomcat_1_1model_1_1Estimates.html" class="btn btn-neutral float-right" title="Class Estimates" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="classtomcat_1_1model_1_1EstimationProcess.html" class="btn btn-neutral float-right" title="Class EstimationProcess" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="classtomcat_1_1model_1_1Distribution.html" class="btn btn-neutral float-left" title="Class Distribution" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

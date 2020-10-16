@@ -6,6 +6,16 @@ Class OnlineEstimation
 - Defined in :ref:`file_src_cpp_model_pipeline_estimation_OnlineEstimation.h`
 
 
+Nested Relationships
+--------------------
+
+
+Nested Types
+************
+
+- :ref:`exhale_struct_structtomcat_1_1model_1_1OnlineEstimation_1_1MessageBrokerConfiguration`
+
+
 Inheritance Relationships
 -------------------------
 

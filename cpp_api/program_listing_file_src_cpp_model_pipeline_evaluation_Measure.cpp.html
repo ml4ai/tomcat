@@ -172,8 +172,11 @@
         <span class="c1">//----------------------------------------------------------------------</span>
         <span class="n">Measure</span><span class="o">::</span><span class="n">Measure</span><span class="p">()</span> <span class="p">{}</span>
 
-        <span class="n">Measure</span><span class="o">::</span><span class="n">Measure</span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Estimator</span><span class="o">&gt;</span> <span class="n">estimator</span><span class="p">,</span> <span class="kt">double</span> <span class="n">threshold</span><span class="p">)</span>
-            <span class="o">:</span> <span class="n">estimator</span><span class="p">(</span><span class="n">estimator</span><span class="p">),</span> <span class="n">threshold</span><span class="p">(</span><span class="n">threshold</span><span class="p">)</span> <span class="p">{}</span>
+        <span class="n">Measure</span><span class="o">::</span><span class="n">Measure</span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Estimator</span><span class="o">&gt;</span> <span class="n">estimator</span><span class="p">,</span>
+                         <span class="kt">double</span> <span class="n">threshold</span><span class="p">,</span>
+                         <span class="kt">bool</span> <span class="n">use_last_estimate</span><span class="p">)</span>
+            <span class="o">:</span> <span class="n">estimator</span><span class="p">(</span><span class="n">estimator</span><span class="p">),</span> <span class="n">threshold</span><span class="p">(</span><span class="n">threshold</span><span class="p">),</span>
+              <span class="n">use_last_estimate</span><span class="p">(</span><span class="n">use_last_estimate</span><span class="p">)</span> <span class="p">{}</span>
 
         <span class="n">Measure</span><span class="o">::~</span><span class="n">Measure</span><span class="p">()</span> <span class="p">{}</span>
 
@@ -182,26 +185,34 @@
         <span class="c1">//----------------------------------------------------------------------</span>
         <span class="kt">void</span> <span class="n">Measure</span><span class="o">::</span><span class="n">copy_measure</span><span class="p">(</span><span class="k">const</span> <span class="n">Measure</span><span class="o">&amp;</span> <span class="n">measure</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="o">-&gt;</span><span class="n">estimator</span> <span class="o">=</span> <span class="n">measure</span><span class="p">.</span><span class="n">estimator</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">measure</span><span class="p">.</span><span class="n">threshold</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">use_last_estimate</span> <span class="o">=</span> <span class="n">measure</span><span class="p">.</span><span class="n">use_last_estimate</span><span class="p">;</span>
         <span class="p">}</span>
 
         <span class="n">ConfusionMatrix</span>
-        <span class="n">Measure</span><span class="o">::</span><span class="n">get_confusion_matrix</span><span class="p">(</span><span class="k">const</span> <span class="n">NodeEstimates</span><span class="o">&amp;</span> <span class="n">estimates</span><span class="p">,</span>
-                                      <span class="k">const</span> <span class="n">EvidenceSet</span><span class="o">&amp;</span> <span class="n">test_data</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
-
-            <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">ones</span> <span class="o">=</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">::</span><span class="n">Ones</span><span class="p">(</span>
-                <span class="n">estimates</span><span class="p">.</span><span class="n">estimates</span><span class="p">.</span><span class="n">rows</span><span class="p">(),</span> <span class="n">estimates</span><span class="p">.</span><span class="n">estimates</span><span class="p">.</span><span class="n">cols</span><span class="p">());</span>
-            <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">zeros</span> <span class="o">=</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">::</span><span class="n">Zero</span><span class="p">(</span>
-                <span class="n">estimates</span><span class="p">.</span><span class="n">estimates</span><span class="p">.</span><span class="n">rows</span><span class="p">(),</span> <span class="n">estimates</span><span class="p">.</span><span class="n">estimates</span><span class="p">.</span><span class="n">cols</span><span class="p">());</span>
+        <span class="n">Measure</span><span class="o">::</span><span class="n">get_confusion_matrix</span><span class="p">(</span><span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span> <span class="n">probabilities</span><span class="p">,</span>
+                                      <span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span> <span class="n">true_values</span><span class="p">,</span>
+                                      <span class="kt">int</span> <span class="n">fixed_assignment</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+            <span class="c1">// Since this method assumes the estimates were computed for a fixed</span>
+            <span class="c1">// node assignment, we can safely use the first element of the</span>
+            <span class="c1">// estimates.estimates vector, as there will be only one element in</span>
+            <span class="c1">// there.</span>
+            <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">ones</span> <span class="o">=</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">::</span><span class="n">Ones</span><span class="p">(</span><span class="n">probabilities</span><span class="p">.</span><span class="n">rows</span><span class="p">(),</span>
+                                                         <span class="n">probabilities</span><span class="p">.</span><span class="n">cols</span><span class="p">());</span>
+            <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">zeros</span> <span class="o">=</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">::</span><span class="n">Zero</span><span class="p">(</span><span class="n">probabilities</span><span class="p">.</span><span class="n">rows</span><span class="p">(),</span>
+                                                          <span class="n">probabilities</span><span class="p">.</span><span class="n">cols</span><span class="p">());</span>
 
             <span class="c1">// Preserve the first time steps with no observed values for the</span>
             <span class="c1">// estimate in analysis.</span>
-            <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">no_obs</span> <span class="o">=</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">::</span><span class="n">Constant</span><span class="p">(</span>
-                <span class="n">estimates</span><span class="p">.</span><span class="n">estimates</span><span class="p">.</span><span class="n">rows</span><span class="p">(),</span> <span class="n">estimates</span><span class="p">.</span><span class="n">estimates</span><span class="p">.</span><span class="n">cols</span><span class="p">(),</span> <span class="n">NO_OBS</span><span class="p">);</span>
-            <span class="n">no_obs</span> <span class="o">=</span>
-                <span class="p">(</span><span class="n">estimates</span><span class="p">.</span><span class="n">estimates</span><span class="p">.</span><span class="n">array</span><span class="p">()</span> <span class="o">==</span> <span class="n">NO_OBS</span><span class="p">).</span><span class="n">select</span><span class="p">(</span><span class="n">no_obs</span><span class="p">,</span> <span class="n">zeros</span><span class="p">);</span>
+            <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">no_obs</span> <span class="o">=</span>
+                <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">::</span><span class="n">Constant</span><span class="p">(</span><span class="n">probabilities</span><span class="p">.</span><span class="n">rows</span><span class="p">(),</span>
+                                          <span class="n">probabilities</span><span class="p">.</span><span class="n">cols</span><span class="p">(),</span>
+                                          <span class="n">NO_OBS</span><span class="p">);</span>
+            <span class="n">no_obs</span> <span class="o">=</span> <span class="p">(</span><span class="n">probabilities</span><span class="p">.</span><span class="n">array</span><span class="p">()</span> <span class="o">==</span> <span class="n">NO_OBS</span><span class="p">)</span>
+                         <span class="p">.</span><span class="n">select</span><span class="p">(</span><span class="n">no_obs</span><span class="p">,</span> <span class="n">zeros</span><span class="p">);</span>
 
             <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">discrete_estimates</span> <span class="o">=</span>
-                <span class="p">(</span><span class="n">estimates</span><span class="p">.</span><span class="n">estimates</span><span class="p">.</span><span class="n">array</span><span class="p">()</span> <span class="o">&gt;</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">threshold</span><span class="p">)</span>
+                <span class="p">(</span><span class="n">probabilities</span><span class="p">.</span><span class="n">array</span><span class="p">()</span> <span class="o">&gt;</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">threshold</span><span class="p">)</span>
                     <span class="p">.</span><span class="n">select</span><span class="p">(</span><span class="n">ones</span><span class="p">,</span> <span class="n">no_obs</span><span class="p">);</span>
 
             <span class="c1">// For a given assignment, transform the test data into 0s and 1s.</span>
@@ -209,8 +220,8 @@
             <span class="c1">// informed and 0 otherwise.</span>
             <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">observed_data_in_horizon</span> <span class="o">=</span>
                 <span class="n">EvidenceSet</span><span class="o">::</span><span class="n">get_observations_in_window</span><span class="p">(</span>
-                    <span class="n">test_data</span><span class="p">[</span><span class="n">estimates</span><span class="p">.</span><span class="n">label</span><span class="p">],</span>
-                    <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">::</span><span class="n">Constant</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">estimates</span><span class="p">.</span><span class="n">assignment</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span>
+                    <span class="n">true_values</span><span class="p">,</span>
+                    <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">::</span><span class="n">Constant</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">fixed_assignment</span><span class="p">),</span>
                     <span class="k">this</span><span class="o">-&gt;</span><span class="n">estimator</span><span class="o">-&gt;</span><span class="n">get_inference_horizon</span><span class="p">());</span>
 
             <span class="c1">// The first columns with NO_OBS value must not be counted as this</span>

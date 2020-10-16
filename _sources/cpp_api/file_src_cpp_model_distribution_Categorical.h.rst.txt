@@ -29,11 +29,11 @@ Includes
 --------
 
 
-- ``model/distribution/Distribution.h`` (:ref:`file_src_cpp_model_distribution_Distribution.h`)
+- ``distribution/Distribution.h`` (:ref:`file_src_cpp_model_distribution_Distribution.h`)
 
-- ``model/pgm/Node.h`` (:ref:`file_src_cpp_model_pgm_Node.h`)
+- ``pgm/Node.h`` (:ref:`file_src_cpp_model_pgm_Node.h`)
 
-- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
+- ``utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 
 

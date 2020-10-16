@@ -33,17 +33,23 @@ Includes
 
 - ``boost/graph/adjacency_list.hpp``
 
+- ``functional``
+
 - ``memory``
 
-- ``model/pgm/DynamicBayesNet.h`` (:ref:`file_src_cpp_model_pgm_DynamicBayesNet.h`)
+- ``pgm/DynamicBayesNet.h`` (:ref:`file_src_cpp_model_pgm_DynamicBayesNet.h`)
 
-- ``model/pgm/inference/MessageNode.h`` (:ref:`file_src_cpp_model_pgm_inference_MessageNode.h`)
+- ``pgm/inference/FactorNode.h`` (:ref:`file_src_cpp_model_pgm_inference_FactorNode.h`)
 
-- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
+- ``pgm/inference/MessageNode.h`` (:ref:`file_src_cpp_model_pgm_inference_MessageNode.h`)
 
 - ``string``
 
+- ``unordered_set``
+
 - ``utility``
+
+- ``utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 - ``vector``
 

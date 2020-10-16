@@ -31,11 +31,13 @@ Includes
 
 - ``SumProductEstimator.h`` (:ref:`file_src_cpp_model_pipeline_estimation_SumProductEstimator.h`)
 
+- ``boost/progress.hpp``
+
 - ``iostream``
 
-- ``model/pgm/inference/FactorGraph.h`` (:ref:`file_src_cpp_model_pgm_inference_FactorGraph.h`)
+- ``pgm/inference/FactorGraph.h`` (:ref:`file_src_cpp_model_pgm_inference_FactorGraph.h`)
 
-- ``model/pgm/inference/VariableNode.h`` (:ref:`file_src_cpp_model_pgm_inference_VariableNode.h`)
+- ``pgm/inference/VariableNode.h`` (:ref:`file_src_cpp_model_pgm_inference_VariableNode.h`)
 
 
 

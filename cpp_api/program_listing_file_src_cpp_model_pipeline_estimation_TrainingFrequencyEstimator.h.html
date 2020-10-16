@@ -164,7 +164,7 @@
 
 <span class="cp">#include</span> <span class="cpf">&lt;unordered_set&gt;</span><span class="cp"></span>
 
-<span class="cp">#include</span> <span class="cpf">&quot;model/utils/Definitions.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;utils/Definitions.h&quot;</span><span class="cp"></span>
 
 <span class="cp">#include</span> <span class="cpf">&quot;Estimator.h&quot;</span><span class="cp"></span>
 
@@ -177,31 +177,36 @@
             <span class="c1">// Constructors &amp; Destructor</span>
             <span class="c1">//------------------------------------------------------------------</span>
 
-            <span class="n">TrainingFrequencyEstimator</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">DynamicBayesNet</span><span class="o">&gt;</span> <span class="n">model</span><span class="p">,</span>
-                              <span class="kt">int</span> <span class="n">inference_horizon</span><span class="p">);</span>
+            <span class="n">TrainingFrequencyEstimator</span><span class="p">(</span>
+                <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">DynamicBayesNet</span><span class="o">&gt;</span> <span class="n">model</span><span class="p">,</span>
+                <span class="kt">int</span> <span class="n">inference_horizon</span><span class="p">,</span>
+                <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">node_label</span><span class="p">,</span>
+                <span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span> <span class="n">assignment</span> <span class="o">=</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
 
             <span class="o">~</span><span class="n">TrainingFrequencyEstimator</span><span class="p">();</span>
 
             <span class="c1">//------------------------------------------------------------------</span>
             <span class="c1">// Copy &amp; Move constructors/assignments</span>
             <span class="c1">//------------------------------------------------------------------</span>
-            <span class="n">TrainingFrequencyEstimator</span><span class="p">(</span><span class="k">const</span> <span class="n">TrainingFrequencyEstimator</span><span class="o">&amp;</span> <span class="n">estimator</span><span class="p">);</span>
+            <span class="n">TrainingFrequencyEstimator</span><span class="p">(</span>
+                <span class="k">const</span> <span class="n">TrainingFrequencyEstimator</span><span class="o">&amp;</span> <span class="n">estimator</span><span class="p">);</span>
 
-            <span class="n">TrainingFrequencyEstimator</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">TrainingFrequencyEstimator</span><span class="o">&amp;</span> <span class="n">estimator</span><span class="p">);</span>
+            <span class="n">TrainingFrequencyEstimator</span><span class="o">&amp;</span>
+            <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">TrainingFrequencyEstimator</span><span class="o">&amp;</span> <span class="n">estimator</span><span class="p">);</span>
 
             <span class="n">TrainingFrequencyEstimator</span><span class="p">(</span><span class="n">TrainingFrequencyEstimator</span><span class="o">&amp;&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
 
-            <span class="n">TrainingFrequencyEstimator</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">TrainingFrequencyEstimator</span><span class="o">&amp;&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+            <span class="n">TrainingFrequencyEstimator</span><span class="o">&amp;</span>
+            <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">TrainingFrequencyEstimator</span><span class="o">&amp;&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
 
             <span class="c1">//------------------------------------------------------------------</span>
             <span class="c1">// Member functions</span>
             <span class="c1">//------------------------------------------------------------------</span>
-            <span class="kt">void</span> <span class="nf">estimate</span><span class="p">(</span><span class="n">EvidenceSet</span> <span class="n">new_data</span><span class="p">)</span> <span class="k">override</span><span class="p">;</span>
+            <span class="kt">void</span> <span class="nf">estimate</span><span class="p">(</span><span class="k">const</span> <span class="n">EvidenceSet</span><span class="o">&amp;</span> <span class="n">new_data</span><span class="p">)</span> <span class="k">override</span><span class="p">;</span>
 
             <span class="kt">void</span> <span class="nf">get_info</span><span class="p">(</span><span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span><span class="o">&amp;</span> <span class="n">json</span><span class="p">)</span> <span class="k">const</span> <span class="k">override</span><span class="p">;</span>
 
             <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">get_name</span><span class="p">()</span> <span class="k">const</span> <span class="k">override</span><span class="p">;</span>
-
         <span class="p">};</span>
 
     <span class="p">}</span> <span class="c1">// namespace model</span>

@@ -17,10 +17,10 @@ Program Listing for File Measure.h
    
    #include <nlohmann/json.hpp>
    
-   #include "model/pgm/EvidenceSet.h"
-   #include "model/utils/Definitions.h"
-   #include "model/utils/Tensor3.h"
-   #include "model/pipeline/estimation/Estimator.h"
+   #include "pgm/EvidenceSet.h"
+   #include "pipeline/estimation/Estimator.h"
+   #include "utils/Definitions.h"
+   #include "utils/Tensor3.h"
    
    namespace tomcat {
        namespace model {
@@ -62,7 +62,9 @@ Program Listing for File Measure.h
    
                Measure();
    
-               Measure(std::shared_ptr<Estimator> estimator, double threshold = 0.5);
+               Measure(std::shared_ptr<Estimator> estimator,
+                       double threshold = 0.5,
+                       bool use_last_estimate = false);
    
                virtual ~Measure();
    
@@ -81,7 +83,7 @@ Program Listing for File Measure.h
                // Pure virtual functions
                //------------------------------------------------------------------
    
-               virtual std::vector<NodeEvaluation>
+               virtual NodeEvaluation
                evaluate(const EvidenceSet& test_data) const = 0;
    
                virtual void get_info(nlohmann::json& json) const = 0;
@@ -94,8 +96,9 @@ Program Listing for File Measure.h
                void copy_measure(const Measure& measure);
    
                ConfusionMatrix
-               get_confusion_matrix(const NodeEstimates& estimates,
-                                    const EvidenceSet& test_data) const;
+               get_confusion_matrix(const Eigen::MatrixXd& probabilities,
+                                    const Eigen::MatrixXd& true_values,
+                                    int fixed_assignment) const;
    
                //------------------------------------------------------------------
                // Data members
@@ -107,6 +110,11 @@ Program Listing for File Measure.h
                // Probability threshold for predicting or inferring the occurrence
                // of an assignment as true
                double threshold = 0.5;
+   
+               // Whenever the inference horizon is 0 and this variable is true,
+               // the evaluation will be performed by using the last estimated
+               // probabilities.
+               bool use_last_estimate = false;
            };
    
        } // namespace model

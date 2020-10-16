@@ -29,9 +29,9 @@ Includes
 --------
 
 
-- ``model/pipeline/evaluation/Measure.h`` (:ref:`file_src_cpp_model_pipeline_evaluation_Measure.h`)
+- ``pipeline/evaluation/Measure.h`` (:ref:`file_src_cpp_model_pipeline_evaluation_Measure.h`)
 
-- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
+- ``utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 
 
@@ -39,7 +39,7 @@ Included By
 -----------
 
 
-- :ref:`file_src_cpp_model_main.cpp`
+- :ref:`file_src_cpp_model_experiments_Experimentation.h`
 
 - :ref:`file_src_cpp_model_pipeline_evaluation_Accuracy.cpp`
 

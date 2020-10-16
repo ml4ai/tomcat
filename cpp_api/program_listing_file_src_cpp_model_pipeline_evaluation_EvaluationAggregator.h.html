@@ -167,9 +167,9 @@
 <span class="cp">#include</span> <span class="cpf">&lt;unordered_map&gt;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
 
-<span class="cp">#include</span> <span class="cpf">&quot;model/pgm/EvidenceSet.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&quot;model/utils/Definitions.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&quot;model/pipeline/evaluation/Measure.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;pgm/EvidenceSet.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;pipeline/evaluation/Measure.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;utils/Definitions.h&quot;</span><span class="cp"></span>
 
 <span class="k">namespace</span> <span class="n">tomcat</span> <span class="p">{</span>
     <span class="k">namespace</span> <span class="n">model</span> <span class="p">{</span>
@@ -185,12 +185,12 @@
             <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&gt;</span> <span class="n">aggregated_values</span><span class="p">;</span>
 
             <span class="c1">// The error is a single matrix because, depending on the measure</span>
-            <span class="c1">// chosen to evaluate nodes, the results can be matrices instead of a</span>
-            <span class="c1">// single number. In that case, if the method chosen for aggregating</span>
-            <span class="c1">// such evaluations is indeed a summarizer (it can just preserve</span>
-            <span class="c1">// the evaluations with no aggregation at all), the resultant error</span>
-            <span class="c1">// will be over a list of matrices, which will result in a single</span>
-            <span class="c1">// matrix.</span>
+            <span class="c1">// chosen to evaluate nodes, the results can be matrices instead of</span>
+            <span class="c1">// a single number. In that case, if the method chosen for</span>
+            <span class="c1">// aggregating such evaluations is indeed a summarizer (it can just</span>
+            <span class="c1">// preserve the evaluations with no aggregation at all), the</span>
+            <span class="c1">// resultant error will be over a list of matrices, which will</span>
+            <span class="c1">// result in a single matrix.</span>
             <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">errors</span><span class="p">;</span>
         <span class="p">};</span>
 
@@ -234,7 +234,7 @@
             <span class="c1">// Member functions</span>
             <span class="c1">//------------------------------------------------------------------</span>
 
-            <span class="kt">void</span> <span class="nf">reset</span><span class="p">();</span>
+            <span class="kt">void</span> <span class="nf">clear_evaluations</span><span class="p">();</span>
 
             <span class="kt">void</span> <span class="nf">add_measure</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Measure</span><span class="o">&gt;</span> <span class="n">measure</span><span class="p">);</span>
 
@@ -249,8 +249,8 @@
             <span class="c1">// Member functions</span>
             <span class="c1">//------------------------------------------------------------------</span>
 
-            <span class="n">Aggregation</span>
-            <span class="n">compute_aggregation</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&gt;&amp;</span> <span class="n">evaluations</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+            <span class="n">Aggregation</span> <span class="n">compute_aggregation</span><span class="p">(</span>
+                <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&gt;&amp;</span> <span class="n">evaluations</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
 
             <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">get_method_name</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
 
@@ -261,18 +261,18 @@
 
             <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Measure</span><span class="o">&gt;&gt;</span> <span class="n">measures</span><span class="p">;</span>
 
-            <span class="c1">// This stores a list of evaluations per node for a certain measure.</span>
-            <span class="c1">// A combination of measure and node can have multiple evaluations</span>
-            <span class="c1">// because the pipeline may call the evaluate function multiple</span>
-            <span class="c1">// times by using cross validation, for instance. The aggregator</span>
-            <span class="c1">// will store all the evaluations in this data structure and it will</span>
-            <span class="c1">// aggregate them only upon request.</span>
-            <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">NodeEvaluation</span><span class="o">&gt;&gt;&gt;</span>
+            <span class="c1">// This stores a list of evaluations for a certain measure.</span>
+            <span class="c1">// A measure can have multiple evaluations because the pipeline may</span>
+            <span class="c1">// call the evaluate function multiple times by using cross</span>
+            <span class="c1">// validation, for instance. The aggregator will store all the</span>
+            <span class="c1">// evaluations in this data structure and it will aggregate them</span>
+            <span class="c1">// only upon request.</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">NodeEvaluation</span><span class="o">&gt;&gt;</span>
                 <span class="n">evaluations_per_measure</span><span class="p">;</span>
 
             <span class="c1">// This stores the aggregated values for the evaluations previously</span>
             <span class="c1">// computed and kept.</span>
-            <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">NodeEvaluationAggregation</span><span class="o">&gt;&gt;</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">NodeEvaluationAggregation</span><span class="o">&gt;</span>
                 <span class="n">aggregations_per_measure</span><span class="p">;</span>
         <span class="p">};</span>
 

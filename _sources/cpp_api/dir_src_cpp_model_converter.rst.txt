@@ -1,0 +1,23 @@
+.. _dir_src_cpp_model_converter:
+
+
+Directory converter
+===================
+
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp_model>` (``src/cpp/model``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+*Directory path:* ``src/cpp/model/converter``
+
+
+Files
+-----
+
+- :ref:`file_src_cpp_model_converter_MessageConverter.cpp`
+- :ref:`file_src_cpp_model_converter_MessageConverter.h`
+- :ref:`file_src_cpp_model_converter_TA3MessageConverter.cpp`
+- :ref:`file_src_cpp_model_converter_TA3MessageConverter.h`
+
+

@@ -14,19 +14,11 @@ Program Listing for File EstimationProcess.h
    
    #include <memory>
    
-   #include "model/utils/Definitions.h"
-   #include "model/pipeline/estimation/Estimator.h"
+   #include "pipeline/estimation/Estimator.h"
+   #include "utils/Definitions.h"
    
    namespace tomcat {
        namespace model {
-   
-           //------------------------------------------------------------------
-           // Forward declarations
-           //------------------------------------------------------------------
-   
-           //------------------------------------------------------------------
-           // Structs
-           //------------------------------------------------------------------
    
            class EstimationProcess {
              public:
@@ -65,17 +57,29 @@ Program Listing for File EstimationProcess.h
    
                void add_estimator(std::shared_ptr<Estimator> estimator);
    
+               void keep_estimates();
+   
+               void clear_estimates();
+   
                //------------------------------------------------------------------
                // Virtual functions
                //------------------------------------------------------------------
    
-               virtual void reset();
+               virtual void prepare();
+   
+               virtual void get_info(nlohmann::json& json) const;
    
                //------------------------------------------------------------------
                // Pure virtual functions
                //------------------------------------------------------------------
    
-               virtual void estimate(EvidenceSet test_data) = 0;
+               virtual void estimate(const EvidenceSet& test_data) = 0;
+   
+               //------------------------------------------------------------------
+               // Getters & Setters
+               //------------------------------------------------------------------
+   
+               void set_display_estimates(bool display_estimates);
    
              protected:
                //------------------------------------------------------------------
@@ -84,10 +88,19 @@ Program Listing for File EstimationProcess.h
    
                void copy_estimation(const EstimationProcess& estimation);
    
+               void estimate(std::shared_ptr<Estimator> estimator,
+                             const EvidenceSet& test_data);
+   
                //------------------------------------------------------------------
                // Data members
                //------------------------------------------------------------------
                std::vector<std::shared_ptr<Estimator>> estimators;
+   
+               // Whether the estimates should be displayed in the evaluation file.
+               bool display_estimates = false;
+   
+               // Estimates computed each time the estimation process is executed.
+               std::vector<CumulativeNodeEstimates> cumulative_estimates;
            };
    
        } // namespace model

@@ -31,13 +31,19 @@ Includes
 
 - ``EstimationProcess.h`` (:ref:`file_src_cpp_model_pipeline_estimation_EstimationProcess.h`)
 
-- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
+- ``converter/MessageConverter.h`` (:ref:`file_src_cpp_model_converter_MessageConverter.h`)
 
-- ``model/utils/Mosquitto.h`` (:ref:`file_src_cpp_model_utils_Mosquitto.h`)
+- ``memory``
 
-- ``queue``
+- ``nlohmann/json.hpp``
 
 - ``thread``
+
+- ``utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
+
+- ``utils/Mosquitto.h`` (:ref:`file_src_cpp_model_utils_Mosquitto.h`)
+
+- ``utils/SynchronizedQueue.h`` (:ref:`file_src_cpp_model_utils_SynchronizedQueue.h`)
 
 
 
@@ -46,6 +52,8 @@ Included By
 
 
 - :ref:`file_src_cpp_model_pipeline_estimation_OnlineEstimation.cpp`
+
+- :ref:`file_src_cpp_model_run_online_tomcat.cpp`
 
 
 
@@ -63,7 +71,7 @@ Classes
 -------
 
 
-- :ref:`exhale_struct_structtomcat_1_1model_1_1MessageBrokerConfiguration`
+- :ref:`exhale_struct_structtomcat_1_1model_1_1OnlineEstimation_1_1MessageBrokerConfiguration`
 
 - :ref:`exhale_class_classtomcat_1_1model_1_1OnlineEstimation`
 

@@ -41,6 +41,8 @@ Included By
 
 - :ref:`file_src_cpp_model_pgm_EvidenceSet.cpp`
 
+- :ref:`file_src_cpp_model_pipeline_estimation_EstimationProcess.cpp`
+
 - :ref:`file_src_cpp_model_pipeline_estimation_OnlineEstimation.cpp`
 
 - :ref:`file_src_cpp_model_pipeline_evaluation_EvaluationAggregator.cpp`

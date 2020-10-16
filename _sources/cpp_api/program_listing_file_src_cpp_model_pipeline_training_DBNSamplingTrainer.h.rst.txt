@@ -14,8 +14,8 @@ Program Listing for File DBNSamplingTrainer.h
    
    #include "DBNTrainer.h"
    
-   #include "model/utils/Definitions.h"
-   #include "model/sampling/Sampler.h"
+   #include "utils/Definitions.h"
+   #include "sampling/Sampler.h"
    
    namespace tomcat {
        namespace model {

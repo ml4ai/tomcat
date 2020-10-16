@@ -1,0 +1,117 @@
+
+.. _program_listing_file_src_cpp_model_converter_TA3MessageConverter.h:
+
+Program Listing for File TA3MessageConverter.h
+==============================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_cpp_model_converter_TA3MessageConverter.h>` (``src/cpp/model/converter/TA3MessageConverter.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #pragma once
+   
+   #include <string>
+   #include <unordered_map>
+   #include <vector>
+   
+   #include <nlohmann/json.hpp>
+   
+   #include "MessageConverter.h"
+   
+   #include "utils/Definitions.h"
+   
+   namespace tomcat {
+       namespace model {
+   
+           class TA3MessageConverter : public MessageConverter {
+             public:
+               //------------------------------------------------------------------
+               // Types, Enums & Constants
+               //------------------------------------------------------------------
+               // Total number of time steps in a mission.
+               inline static const int T = 600;
+   
+               // Node labels
+               inline static const std::string ROOM = "Room";
+               inline static const std::string SG = "Green";
+               inline static const std::string SY = "Yellow";
+               inline static const std::string Q = "TrainingCondition";
+               inline static const std::string BEEP = "Beep";
+   
+               //------------------------------------------------------------------
+               // Constructors & Destructor
+               //------------------------------------------------------------------
+   
+               TA3MessageConverter(const std::string& map_config_filepath,
+                                   int time_gap = 1);
+   
+               ~TA3MessageConverter();
+   
+               //------------------------------------------------------------------
+               // Copy & Move constructors/assignments
+               //------------------------------------------------------------------
+               TA3MessageConverter(const TA3MessageConverter& converter);
+   
+               TA3MessageConverter&
+               operator=(const TA3MessageConverter& converter);
+   
+               TA3MessageConverter(TA3MessageConverter&&) = default;
+   
+               TA3MessageConverter& operator=(TA3MessageConverter&&) = default;
+   
+               //------------------------------------------------------------------
+               // Member functions
+               //------------------------------------------------------------------
+   
+               void convert_offline(const std::string& input_dir,
+                                    const std::string& output_dir) override;
+   
+               std::unordered_map<std::string, double>
+               convert_online(const nlohmann::json& message) override;
+   
+             private:
+               //------------------------------------------------------------------
+               // Member functions
+               //------------------------------------------------------------------
+   
+               void init_observations();
+   
+               void
+               load_map_area_configuration(const std::string& map_config_filepath);
+   
+               std::vector<nlohmann::json>
+               get_sorted_messages_in(const std::string& filepath);
+   
+               int get_remaining_seconds_from(const std::string& time);
+   
+               void
+               fill_victim_saving_observation(const nlohmann::json& json_message);
+   
+               void fill_room_observation(const nlohmann::json& json_message);
+   
+               void fill_beep_observation(const nlohmann::json& json_message);
+   
+               //------------------------------------------------------------------
+               // Data members
+               //------------------------------------------------------------------
+   
+               // Indicates whether a message informing about the mission start was
+               // received. Messages received before the mission starts will be
+               // ignored.
+               bool mission_started = false;
+   
+               // Stores the id of all possible areas in the map along with a flag
+               // indicating whether the area is a room or not (e.g, yard, hallway
+               // etc.).
+               std::unordered_map<std::string, bool> map_area_configuration;
+   
+               // Last observations per node.
+               std::unordered_map<std::string, double> last_observations_per_node;
+   
+               int training_condition = NO_OBS;
+           };
+   
+       } // namespace model
+   } // namespace tomcat

@@ -168,6 +168,15 @@
 <ul class="simple">
 <li><p>Defined in <a class="reference internal" href="file_src_cpp_model_pipeline_estimation_OnlineEstimation.h.html#file-src-cpp-model-pipeline-estimation-onlineestimation-h"><span class="std std-ref">File OnlineEstimation.h</span></a></p></li>
 </ul>
+<div class="section" id="nested-relationships">
+<h2>Nested Relationships<a class="headerlink" href="#nested-relationships" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="nested-types">
+<h3>Nested Types<a class="headerlink" href="#nested-types" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="structtomcat_1_1model_1_1OnlineEstimation_1_1MessageBrokerConfiguration.html#exhale-struct-structtomcat-1-1model-1-1onlineestimation-1-1messagebrokerconfiguration"><span class="std std-ref">Struct OnlineEstimation::MessageBrokerConfiguration</span></a></p></li>
+</ul>
+</div>
+</div>
 <div class="section" id="inheritance-relationships">
 <h2>Inheritance Relationships<a class="headerlink" href="#inheritance-relationships" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="base-types">
@@ -187,12 +196,13 @@
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Public Functions</p>
 <dl class="cpp function">
-<dt id="_CPPv4N6tomcat5model16OnlineEstimation16OnlineEstimationE26MessageBrokerConfiguration">
-<span id="_CPPv3N6tomcat5model16OnlineEstimation16OnlineEstimationE26MessageBrokerConfiguration"></span><span id="_CPPv2N6tomcat5model16OnlineEstimation16OnlineEstimationE26MessageBrokerConfiguration"></span><span id="tomcat::model::OnlineEstimation::OnlineEstimation__MessageBrokerConfiguration"></span><span class="target" id="classtomcat_1_1model_1_1OnlineEstimation_1a3a6a1cef9a7b3b9a5ae4ae0c21e0f672"></span><code class="sig-name descname">OnlineEstimation</code><span class="sig-paren">(</span><a class="reference internal" href="structtomcat_1_1model_1_1MessageBrokerConfiguration.html#_CPPv4N6tomcat5model26MessageBrokerConfigurationE" title="tomcat::model::MessageBrokerConfiguration">MessageBrokerConfiguration</a> <em>config</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model16OnlineEstimation16OnlineEstimationE26MessageBrokerConfiguration" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4N6tomcat5model16OnlineEstimation16OnlineEstimationE26MessageBrokerConfigurationNSt10shared_ptrI16MessageConverterEE">
+<span id="_CPPv3N6tomcat5model16OnlineEstimation16OnlineEstimationE26MessageBrokerConfigurationNSt10shared_ptrI16MessageConverterEE"></span><span id="_CPPv2N6tomcat5model16OnlineEstimation16OnlineEstimationE26MessageBrokerConfigurationNSt10shared_ptrI16MessageConverterEE"></span><span id="tomcat::model::OnlineEstimation::OnlineEstimation__MessageBrokerConfiguration.std::shared_ptr:MessageConverter:"></span><span class="target" id="classtomcat_1_1model_1_1OnlineEstimation_1a2653a734a7a456fc036e3000504ddfa7"></span><code class="sig-name descname">OnlineEstimation</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model16OnlineEstimation26MessageBrokerConfigurationE" title="tomcat::model::OnlineEstimation::MessageBrokerConfiguration">MessageBrokerConfiguration</a> <em>config</em>, std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1MessageConverter.html#_CPPv4N6tomcat5model16MessageConverterE" title="tomcat::model::MessageConverter">MessageConverter</a>&gt; <em>message_converter</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model16OnlineEstimation16OnlineEstimationE26MessageBrokerConfigurationNSt10shared_ptrI16MessageConverterEE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Creates an online estimation process.</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">estimator</span></code>: type of estimation to be performed </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">message_converter</span></code>: responsible for converting a message from the message bus to data </p></li>
 </ul>
 </dd>
 </dl>
@@ -216,17 +226,17 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N6tomcat5model16OnlineEstimation16OnlineEstimationERR16OnlineEstimation">
-<span id="_CPPv3N6tomcat5model16OnlineEstimation16OnlineEstimationERR16OnlineEstimation"></span><span id="_CPPv2N6tomcat5model16OnlineEstimation16OnlineEstimationERR16OnlineEstimation"></span><span id="tomcat::model::OnlineEstimation::OnlineEstimation__OnlineEstimationRR"></span><span class="target" id="classtomcat_1_1model_1_1OnlineEstimation_1af0012105a23a9d28798daf043c54c2e8"></span><code class="sig-name descname">OnlineEstimation</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model16OnlineEstimation16OnlineEstimationERR16OnlineEstimation" title="tomcat::model::OnlineEstimation::OnlineEstimation">OnlineEstimation</a>&amp;&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model16OnlineEstimation16OnlineEstimationERR16OnlineEstimation" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N6tomcat5model16OnlineEstimation16OnlineEstimationERR16OnlineEstimation"></span><span id="_CPPv2N6tomcat5model16OnlineEstimation16OnlineEstimationERR16OnlineEstimation"></span><span id="tomcat::model::OnlineEstimation::OnlineEstimation__OnlineEstimationRR"></span><span class="target" id="classtomcat_1_1model_1_1OnlineEstimation_1a7cc00e6b125713c0eb27c95e12fdb681"></span><code class="sig-name descname">OnlineEstimation</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model16OnlineEstimation16OnlineEstimationERR16OnlineEstimation" title="tomcat::model::OnlineEstimation::OnlineEstimation">OnlineEstimation</a>&amp;&amp;<span class="sig-paren">)</span> = delete<a class="headerlink" href="#_CPPv4N6tomcat5model16OnlineEstimation16OnlineEstimationERR16OnlineEstimation" title="Permalink to this definition">¶</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv4N6tomcat5model16OnlineEstimationaSERR16OnlineEstimation">
-<span id="_CPPv3N6tomcat5model16OnlineEstimationaSERR16OnlineEstimation"></span><span id="_CPPv2N6tomcat5model16OnlineEstimationaSERR16OnlineEstimation"></span><span id="tomcat::model::OnlineEstimation::assign-operator__OnlineEstimationRR"></span><span class="target" id="classtomcat_1_1model_1_1OnlineEstimation_1ada4e29a38ca1e54b6761ffa1bc6d5545"></span><a class="reference internal" href="#_CPPv4N6tomcat5model16OnlineEstimationE" title="tomcat::model::OnlineEstimation">OnlineEstimation</a> &amp;<code class="sig-name descname">operator=</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model16OnlineEstimationE" title="tomcat::model::OnlineEstimation">OnlineEstimation</a>&amp;&amp;<span class="sig-paren">)</span> = default<a class="headerlink" href="#_CPPv4N6tomcat5model16OnlineEstimationaSERR16OnlineEstimation" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N6tomcat5model16OnlineEstimationaSERR16OnlineEstimation"></span><span id="_CPPv2N6tomcat5model16OnlineEstimationaSERR16OnlineEstimation"></span><span id="tomcat::model::OnlineEstimation::assign-operator__OnlineEstimationRR"></span><span class="target" id="classtomcat_1_1model_1_1OnlineEstimation_1ab60c810442f43103f26dd123772afa5e"></span><a class="reference internal" href="#_CPPv4N6tomcat5model16OnlineEstimationE" title="tomcat::model::OnlineEstimation">OnlineEstimation</a> &amp;<code class="sig-name descname">operator=</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N6tomcat5model16OnlineEstimationE" title="tomcat::model::OnlineEstimation">OnlineEstimation</a>&amp;&amp;<span class="sig-paren">)</span> = delete<a class="headerlink" href="#_CPPv4N6tomcat5model16OnlineEstimationaSERR16OnlineEstimation" title="Permalink to this definition">¶</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4N6tomcat5model16OnlineEstimation8estimateE11EvidenceSet">
-<span id="_CPPv3N6tomcat5model16OnlineEstimation8estimateE11EvidenceSet"></span><span id="_CPPv2N6tomcat5model16OnlineEstimation8estimateE11EvidenceSet"></span><span id="tomcat::model::OnlineEstimation::estimate__EvidenceSet"></span><span class="target" id="classtomcat_1_1model_1_1OnlineEstimation_1aac7002b5280c3c0ec89ea499c1f48a70"></span>void <code class="sig-name descname">estimate</code><span class="sig-paren">(</span><a class="reference internal" href="classtomcat_1_1model_1_1EvidenceSet.html#_CPPv4N6tomcat5model11EvidenceSetE" title="tomcat::model::EvidenceSet">EvidenceSet</a> <em>test_data</em><span class="sig-paren">)</span> <em class="property">override</em><a class="headerlink" href="#_CPPv4N6tomcat5model16OnlineEstimation8estimateE11EvidenceSet" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4N6tomcat5model16OnlineEstimation8estimateERK11EvidenceSet">
+<span id="_CPPv3N6tomcat5model16OnlineEstimation8estimateERK11EvidenceSet"></span><span id="_CPPv2N6tomcat5model16OnlineEstimation8estimateERK11EvidenceSet"></span><span id="tomcat::model::OnlineEstimation::estimate__EvidenceSetCR"></span><span class="target" id="classtomcat_1_1model_1_1OnlineEstimation_1a1753bb64f3b4088091ba1762bc435824"></span>void <code class="sig-name descname">estimate</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="classtomcat_1_1model_1_1EvidenceSet.html#_CPPv4N6tomcat5model11EvidenceSetE" title="tomcat::model::EvidenceSet">EvidenceSet</a> &amp;<em>test_data</em><span class="sig-paren">)</span> <em class="property">override</em><a class="headerlink" href="#_CPPv4N6tomcat5model16OnlineEstimation8estimateERK11EvidenceSet" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Computes estimations for a model over a test data.</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
@@ -241,8 +251,8 @@
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Protected Functions</p>
 <dl class="cpp function">
-<dt id="_CPPv4N6tomcat5model16OnlineEstimation5resetEv">
-<span id="_CPPv3N6tomcat5model16OnlineEstimation5resetEv"></span><span id="_CPPv2N6tomcat5model16OnlineEstimation5resetEv"></span><span id="tomcat::model::OnlineEstimation::reset"></span><span class="target" id="classtomcat_1_1model_1_1OnlineEstimation_1a99036bf7e56b8c10a81c2233a9e59498"></span>void <code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">override</em><a class="headerlink" href="#_CPPv4N6tomcat5model16OnlineEstimation5resetEv" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4N6tomcat5model16OnlineEstimation7prepareEv">
+<span id="_CPPv3N6tomcat5model16OnlineEstimation7prepareEv"></span><span id="_CPPv2N6tomcat5model16OnlineEstimation7prepareEv"></span><span id="tomcat::model::OnlineEstimation::prepare"></span><span class="target" id="classtomcat_1_1model_1_1OnlineEstimation_1a0ce9673a7efe34ad5f603878bdd9e054"></span>void <code class="sig-name descname">prepare</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">override</em><a class="headerlink" href="#_CPPv4N6tomcat5model16OnlineEstimation7prepareEv" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Prepares the estimation process to start again. </p>
 </dd></dl>
 
@@ -278,7 +288,79 @@
 <dd><p>Function called when the client is enough time without receiving a new message. </p>
 </dd></dl>
 
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model16OnlineEstimation8get_infoERN8nlohmann4jsonE">
+<span id="_CPPv3NK6tomcat5model16OnlineEstimation8get_infoERN8nlohmann4jsonE"></span><span id="_CPPv2NK6tomcat5model16OnlineEstimation8get_infoERN8nlohmann4jsonE"></span><span id="tomcat::model::OnlineEstimation::get_info__nlohmann::jsonRC"></span><span class="target" id="classtomcat_1_1model_1_1OnlineEstimation_1a29387701b656a9afa468756510e8cb14"></span>void <code class="sig-name descname">get_info</code><span class="sig-paren">(</span>nlohmann::json &amp;<em>json</em><span class="sig-paren">)</span> <em class="property">const</em> <em class="property">override</em><a class="headerlink" href="#_CPPv4NK6tomcat5model16OnlineEstimation8get_infoERN8nlohmann4jsonE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Writes information about the estimation in a json object.</p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">json</span></code>: json object </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
 </div>
+<dl class="cpp struct">
+<dt id="_CPPv4N6tomcat5model16OnlineEstimation26MessageBrokerConfigurationE">
+<span id="_CPPv3N6tomcat5model16OnlineEstimation26MessageBrokerConfigurationE"></span><span id="_CPPv2N6tomcat5model16OnlineEstimation26MessageBrokerConfigurationE"></span><span id="tomcat::model::OnlineEstimation::MessageBrokerConfiguration"></span><span class="target" id="structtomcat_1_1model_1_1OnlineEstimation_1_1MessageBrokerConfiguration"></span><em class="property">struct </em><code class="sig-name descname">MessageBrokerConfiguration</code><a class="headerlink" href="#_CPPv4N6tomcat5model16OnlineEstimation26MessageBrokerConfigurationE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>This struct contains information needed to connect to a message broker to either subscribe or publish to a topic. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Members</p>
+<dl class="cpp var">
+<dt id="_CPPv4N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration7addressE">
+<span id="_CPPv3N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration7addressE"></span><span id="_CPPv2N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration7addressE"></span><span id="tomcat::model::OnlineEstimation::MessageBrokerConfiguration::address__ss"></span><span class="target" id="structtomcat_1_1model_1_1OnlineEstimation_1_1MessageBrokerConfiguration_1a557943114e632369ab809d97740bef4e"></span>std::string <code class="sig-name descname">address</code><a class="headerlink" href="#_CPPv4N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration7addressE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt id="_CPPv4N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration4portE">
+<span id="_CPPv3N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration4portE"></span><span id="_CPPv2N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration4portE"></span><span id="tomcat::model::OnlineEstimation::MessageBrokerConfiguration::port__i"></span><span class="target" id="structtomcat_1_1model_1_1OnlineEstimation_1_1MessageBrokerConfiguration_1adfe1907a9c805722dafa31cf89513fb5"></span>int <code class="sig-name descname">port</code><a class="headerlink" href="#_CPPv4N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration4portE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt id="_CPPv4N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration7timeoutE">
+<span id="_CPPv3N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration7timeoutE"></span><span id="_CPPv2N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration7timeoutE"></span><span id="tomcat::model::OnlineEstimation::MessageBrokerConfiguration::timeout__i"></span><span class="target" id="structtomcat_1_1model_1_1OnlineEstimation_1_1MessageBrokerConfiguration_1ac6c89396e6a08868f4af1f1d860afc25"></span>int <code class="sig-name descname">timeout</code> = 9999<a class="headerlink" href="#_CPPv4N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration7timeoutE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt id="_CPPv4N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration11state_topicE">
+<span id="_CPPv3N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration11state_topicE"></span><span id="_CPPv2N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration11state_topicE"></span><span id="tomcat::model::OnlineEstimation::MessageBrokerConfiguration::state_topic__ss"></span><span class="target" id="structtomcat_1_1model_1_1OnlineEstimation_1_1MessageBrokerConfiguration_1a051058853fd0124eda64a51da7dfef19"></span>std::string <code class="sig-name descname">state_topic</code> = &quot;observations/state&quot;<a class="headerlink" href="#_CPPv4N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration11state_topicE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt id="_CPPv4N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration10chat_topicE">
+<span id="_CPPv3N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration10chat_topicE"></span><span id="_CPPv2N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration10chat_topicE"></span><span id="tomcat::model::OnlineEstimation::MessageBrokerConfiguration::chat_topic__ss"></span><span class="target" id="structtomcat_1_1model_1_1OnlineEstimation_1_1MessageBrokerConfiguration_1ae9ac74e3f2f646324bd084c767d58c56"></span>std::string <code class="sig-name descname">chat_topic</code> = &quot;observations/chat&quot;<a class="headerlink" href="#_CPPv4N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration10chat_topicE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt id="_CPPv4N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration12events_topicE">
+<span id="_CPPv3N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration12events_topicE"></span><span id="_CPPv2N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration12events_topicE"></span><span id="tomcat::model::OnlineEstimation::MessageBrokerConfiguration::events_topic__ss"></span><span class="target" id="structtomcat_1_1model_1_1OnlineEstimation_1_1MessageBrokerConfiguration_1a8c922ed51760f9fc1c6cd7c6811fd640"></span>std::string <code class="sig-name descname">events_topic</code> = &quot;observations/events/#&quot;<a class="headerlink" href="#_CPPv4N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration12events_topicE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt id="_CPPv4N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration17self_report_topicE">
+<span id="_CPPv3N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration17self_report_topicE"></span><span id="_CPPv2N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration17self_report_topicE"></span><span id="tomcat::model::OnlineEstimation::MessageBrokerConfiguration::self_report_topic__ss"></span><span class="target" id="structtomcat_1_1model_1_1OnlineEstimation_1_1MessageBrokerConfiguration_1abb6af32d055e1006324c7c72a28d0b79"></span>std::string <code class="sig-name descname">self_report_topic</code> = &quot;observations/self_reports&quot;<a class="headerlink" href="#_CPPv4N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration17self_report_topicE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt id="_CPPv4N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration11trial_topicE">
+<span id="_CPPv3N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration11trial_topicE"></span><span id="_CPPv2N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration11trial_topicE"></span><span id="tomcat::model::OnlineEstimation::MessageBrokerConfiguration::trial_topic__ss"></span><span class="target" id="structtomcat_1_1model_1_1OnlineEstimation_1_1MessageBrokerConfiguration_1a8917d01ecae299c51af73dd745cf8488"></span>std::string <code class="sig-name descname">trial_topic</code> = &quot;trial&quot;<a class="headerlink" href="#_CPPv4N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration11trial_topicE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt id="_CPPv4N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration15estimates_topicE">
+<span id="_CPPv3N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration15estimates_topicE"></span><span id="_CPPv2N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration15estimates_topicE"></span><span id="tomcat::model::OnlineEstimation::MessageBrokerConfiguration::estimates_topic__ss"></span><span class="target" id="structtomcat_1_1model_1_1OnlineEstimation_1_1MessageBrokerConfiguration_1a54a9e10afe40536c22eddc4ee626ed16"></span>std::string <code class="sig-name descname">estimates_topic</code> = &quot;tomcat/estimates&quot;<a class="headerlink" href="#_CPPv4N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration15estimates_topicE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt id="_CPPv4N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration9log_topicE">
+<span id="_CPPv3N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration9log_topicE"></span><span id="_CPPv2N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration9log_topicE"></span><span id="tomcat::model::OnlineEstimation::MessageBrokerConfiguration::log_topic__ss"></span><span class="target" id="structtomcat_1_1model_1_1OnlineEstimation_1_1MessageBrokerConfiguration_1aba914b73e3785c925f54ab84f710f270"></span>std::string <code class="sig-name descname">log_topic</code> = &quot;tomcat/log&quot;<a class="headerlink" href="#_CPPv4N6tomcat5model16OnlineEstimation26MessageBrokerConfiguration9log_topicE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
 </dd></dl>
 
 </div>

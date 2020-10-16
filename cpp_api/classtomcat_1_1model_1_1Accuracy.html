@@ -186,8 +186,8 @@
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Public Functions</p>
 <dl class="cpp function">
-<dt id="_CPPv4N6tomcat5model8Accuracy8AccuracyENSt10shared_ptrI9EstimatorEEd">
-<span id="_CPPv3N6tomcat5model8Accuracy8AccuracyENSt10shared_ptrI9EstimatorEEd"></span><span id="_CPPv2N6tomcat5model8Accuracy8AccuracyENSt10shared_ptrI9EstimatorEEd"></span><span id="tomcat::model::Accuracy::Accuracy__std::shared_ptr:Estimator:.double"></span><span class="target" id="classtomcat_1_1model_1_1Accuracy_1ad9fcc74fd1e92f3f1422383831945af6"></span><code class="sig-name descname">Accuracy</code><span class="sig-paren">(</span>std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1Estimator.html#_CPPv4N6tomcat5model9EstimatorE" title="tomcat::model::Estimator">Estimator</a>&gt; <em>estimator</em>, double <em>threshold</em> = 0.5<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model8Accuracy8AccuracyENSt10shared_ptrI9EstimatorEEd" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4N6tomcat5model8Accuracy8AccuracyENSt10shared_ptrI9EstimatorEEdb">
+<span id="_CPPv3N6tomcat5model8Accuracy8AccuracyENSt10shared_ptrI9EstimatorEEdb"></span><span id="_CPPv2N6tomcat5model8Accuracy8AccuracyENSt10shared_ptrI9EstimatorEEdb"></span><span id="tomcat::model::Accuracy::Accuracy__std::shared_ptr:Estimator:.double.b"></span><span class="target" id="classtomcat_1_1model_1_1Accuracy_1a5d7c3d39d9b8d29c34f7c86495983965"></span><code class="sig-name descname">Accuracy</code><span class="sig-paren">(</span>std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1Estimator.html#_CPPv4N6tomcat5model9EstimatorE" title="tomcat::model::Estimator">Estimator</a>&gt; <em>estimator</em>, double <em>threshold</em> = 0.5, bool <em>use_last_estimate</em> = false<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model8Accuracy8AccuracyENSt10shared_ptrI9EstimatorEEdb" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Creates an accuracy measure.</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
@@ -226,10 +226,10 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4NK6tomcat5model8Accuracy8evaluateERK11EvidenceSet">
-<span id="_CPPv3NK6tomcat5model8Accuracy8evaluateERK11EvidenceSet"></span><span id="_CPPv2NK6tomcat5model8Accuracy8evaluateERK11EvidenceSet"></span><span id="tomcat::model::Accuracy::evaluate__EvidenceSetCRC"></span><span class="target" id="classtomcat_1_1model_1_1Accuracy_1a96ec08daf4840eb7dec6cb9ccbb32bae"></span>std::vector&lt;<a class="reference internal" href="structtomcat_1_1model_1_1NodeEvaluation.html#_CPPv4N6tomcat5model14NodeEvaluationE" title="tomcat::model::NodeEvaluation">NodeEvaluation</a>&gt; <code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="classtomcat_1_1model_1_1EvidenceSet.html#_CPPv4N6tomcat5model11EvidenceSetE" title="tomcat::model::EvidenceSet">EvidenceSet</a> &amp;<em>test_data</em><span class="sig-paren">)</span> <em class="property">const</em> <em class="property">override</em><a class="headerlink" href="#_CPPv4NK6tomcat5model8Accuracy8evaluateERK11EvidenceSet" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3NK6tomcat5model8Accuracy8evaluateERK11EvidenceSet"></span><span id="_CPPv2NK6tomcat5model8Accuracy8evaluateERK11EvidenceSet"></span><span id="tomcat::model::Accuracy::evaluate__EvidenceSetCRC"></span><span class="target" id="classtomcat_1_1model_1_1Accuracy_1a31d04952205200dd05b16fe04515cde9"></span><a class="reference internal" href="structtomcat_1_1model_1_1NodeEvaluation.html#_CPPv4N6tomcat5model14NodeEvaluationE" title="tomcat::model::NodeEvaluation">NodeEvaluation</a> <code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="classtomcat_1_1model_1_1EvidenceSet.html#_CPPv4N6tomcat5model11EvidenceSetE" title="tomcat::model::EvidenceSet">EvidenceSet</a> &amp;<em>test_data</em><span class="sig-paren">)</span> <em class="property">const</em> <em class="property">override</em><a class="headerlink" href="#_CPPv4NK6tomcat5model8Accuracy8evaluateERK11EvidenceSet" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Calculates the measure over a data set.</p>
 <p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>Computed values for all of the nodes processed by the estimator. </p>
+<dt><strong>Return</strong></dt><dd><p>Evaluation for over the estimates computed by an estimator. </p>
 </dd>
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">test_data</span></code>: data to calculate the measure over</p></li>
@@ -242,7 +242,7 @@
 <dl class="cpp function">
 <dt id="_CPPv4NK6tomcat5model8Accuracy8get_infoERN8nlohmann4jsonE">
 <span id="_CPPv3NK6tomcat5model8Accuracy8get_infoERN8nlohmann4jsonE"></span><span id="_CPPv2NK6tomcat5model8Accuracy8get_infoERN8nlohmann4jsonE"></span><span id="tomcat::model::Accuracy::get_info__nlohmann::jsonRC"></span><span class="target" id="classtomcat_1_1model_1_1Accuracy_1acbf1ef53dd58a040871a70ae3bc99fd7"></span>void <code class="sig-name descname">get_info</code><span class="sig-paren">(</span>nlohmann::json &amp;<em>json</em><span class="sig-paren">)</span> <em class="property">const</em> <em class="property">override</em><a class="headerlink" href="#_CPPv4NK6tomcat5model8Accuracy8get_infoERN8nlohmann4jsonE" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Writes information about the splitter in a json object.</p>
+<dd><p>Writes information about the measure in a json object.</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">json</span></code>: json object </p></li>

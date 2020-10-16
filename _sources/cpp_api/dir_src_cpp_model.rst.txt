@@ -14,7 +14,9 @@ Directory model
 Subdirectories
 --------------
 
+- :ref:`dir_src_cpp_model_converter`
 - :ref:`dir_src_cpp_model_distribution`
+- :ref:`dir_src_cpp_model_experiments`
 - :ref:`dir_src_cpp_model_pgm`
 - :ref:`dir_src_cpp_model_pipeline`
 - :ref:`dir_src_cpp_model_sampling`
@@ -24,8 +26,9 @@ Subdirectories
 Files
 -----
 
-- :ref:`file_src_cpp_model_main.cpp`
-- :ref:`file_src_cpp_model_Tomcat.cpp`
-- :ref:`file_src_cpp_model_Tomcat.h`
+- :ref:`file_src_cpp_model_convert_messages.cpp`
+- :ref:`file_src_cpp_model_run_experiments_v1.cpp`
+- :ref:`file_src_cpp_model_run_experiments_v2.cpp`
+- :ref:`file_src_cpp_model_run_online_tomcat.cpp`
 
 

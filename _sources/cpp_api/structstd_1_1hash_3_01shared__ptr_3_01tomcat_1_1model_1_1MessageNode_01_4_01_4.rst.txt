@@ -1,0 +1,16 @@
+.. _exhale_struct_structstd_1_1hash_3_01shared__ptr_3_01tomcat_1_1model_1_1MessageNode_01_4_01_4:
+
+Template Struct hash< shared_ptr< tomcat::model::MessageNode > >
+================================================================
+
+- Defined in :ref:`file_src_cpp_model_pgm_inference_MessageNode.h`
+
+
+Struct Documentation
+--------------------
+
+
+.. doxygenstruct:: std::hash< shared_ptr< tomcat::model::MessageNode > >
+   :members:
+   :protected-members:
+   :undoc-members:

@@ -35,9 +35,9 @@ Includes
 
 - ``boost/graph/topological_sort.hpp``
 
-- ``model/pgm/ConstantNode.h`` (:ref:`file_src_cpp_model_pgm_ConstantNode.h`)
+- ``pgm/ConstantNode.h`` (:ref:`file_src_cpp_model_pgm_ConstantNode.h`)
 
-- ``model/utils/FileHandler.h`` (:ref:`file_src_cpp_model_utils_FileHandler.h`)
+- ``utils/FileHandler.h`` (:ref:`file_src_cpp_model_utils_FileHandler.h`)
 
 
 

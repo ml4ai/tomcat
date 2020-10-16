@@ -1,0 +1,54 @@
+
+.. _file_src_cpp_model_experiments_TomcatTA3.cpp:
+
+File TomcatTA3.cpp
+==================
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp_model_experiments>` (``src/cpp/model/experiments``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. contents:: Contents
+   :local:
+   :backlinks: none
+
+Definition (``src/cpp/model/experiments/TomcatTA3.cpp``)
+--------------------------------------------------------
+
+
+.. toctree::
+   :maxdepth: 1
+
+   program_listing_file_src_cpp_model_experiments_TomcatTA3.cpp.rst
+
+
+
+
+
+Includes
+--------
+
+
+- ``TomcatTA3.h`` (:ref:`file_src_cpp_model_experiments_TomcatTA3.h`)
+
+- ``pgm/NodeMetadata.h`` (:ref:`file_src_cpp_model_pgm_NodeMetadata.h`)
+
+- ``pgm/RandomVariableNode.h`` (:ref:`file_src_cpp_model_pgm_RandomVariableNode.h`)
+
+- ``pgm/cpd/CategoricalCPD.h`` (:ref:`file_src_cpp_model_pgm_cpd_CategoricalCPD.h`)
+
+- ``pgm/cpd/DirichletCPD.h`` (:ref:`file_src_cpp_model_pgm_cpd_DirichletCPD.h`)
+
+
+
+
+
+
+Namespaces
+----------
+
+
+- :ref:`namespace_tomcat`
+
+- :ref:`namespace_tomcat__model`
+

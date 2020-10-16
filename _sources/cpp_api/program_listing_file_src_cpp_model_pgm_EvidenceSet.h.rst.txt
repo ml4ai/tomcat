@@ -17,8 +17,8 @@ Program Listing for File EvidenceSet.h
    
    #include <nlohmann/json.hpp>
    
-   #include "model/utils/Definitions.h"
-   #include "model/utils/FileHandler.h"
+   #include "utils/Definitions.h"
+   #include "utils/FileHandler.h"
    
    namespace tomcat {
        namespace model {
@@ -85,6 +85,10 @@ Program Listing for File EvidenceSet.h
                void keep_first(int num_samples);
    
                void shrink_up_to(int time_step);
+   
+               bool empty() const;
+   
+               void remove(const std::string& node_label);
    
                //------------------------------------------------------------------
                // Getters & Setters

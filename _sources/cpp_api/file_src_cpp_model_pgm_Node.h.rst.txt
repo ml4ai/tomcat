@@ -31,11 +31,11 @@ Includes
 
 - ``eigen3/Eigen/Dense``
 
-- ``model/pgm/NodeMetadata.h`` (:ref:`file_src_cpp_model_pgm_NodeMetadata.h`)
-
-- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
+- ``pgm/NodeMetadata.h`` (:ref:`file_src_cpp_model_pgm_NodeMetadata.h`)
 
 - ``unordered_map``
+
+- ``utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 
 

@@ -188,8 +188,9 @@
             <span class="n">boost</span><span class="o">::</span><span class="n">posix_time</span><span class="o">::</span><span class="n">ptime</span> <span class="n">start_time</span> <span class="o">=</span>
                 <span class="n">boost</span><span class="o">::</span><span class="n">posix_time</span><span class="o">::</span><span class="n">microsec_clock</span><span class="o">::</span><span class="n">universal_time</span><span class="p">();</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">aggregator</span> <span class="o">!=</span> <span class="k">nullptr</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="o">-&gt;</span><span class="n">aggregator</span><span class="o">-&gt;</span><span class="n">reset</span><span class="p">();</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">estimation_process</span><span class="o">-&gt;</span><span class="n">clear_estimates</span><span class="p">();</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">evaluation</span> <span class="o">!=</span> <span class="k">nullptr</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="o">-&gt;</span><span class="n">evaluation</span><span class="o">-&gt;</span><span class="n">clear_evaluations</span><span class="p">();</span>
             <span class="p">}</span>
 
             <span class="n">vector</span><span class="o">&lt;</span><span class="n">KFold</span><span class="o">::</span><span class="n">Split</span><span class="o">&gt;</span> <span class="n">splits</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">data_splitter</span><span class="o">-&gt;</span><span class="n">get_splits</span><span class="p">();</span>
@@ -200,17 +201,18 @@
                     <span class="k">this</span><span class="o">-&gt;</span><span class="n">model_saver</span><span class="o">-&gt;</span><span class="n">save</span><span class="p">();</span>
                 <span class="p">}</span>
 
-                <span class="k">this</span><span class="o">-&gt;</span><span class="n">estimation_process</span><span class="o">-&gt;</span><span class="n">reset</span><span class="p">();</span>
+                <span class="k">this</span><span class="o">-&gt;</span><span class="n">estimation_process</span><span class="o">-&gt;</span><span class="n">prepare</span><span class="p">();</span>
                 <span class="k">this</span><span class="o">-&gt;</span><span class="n">estimation_process</span><span class="o">-&gt;</span><span class="n">set_training_data</span><span class="p">(</span><span class="n">training_data</span><span class="p">);</span>
                 <span class="k">this</span><span class="o">-&gt;</span><span class="n">estimation_process</span><span class="o">-&gt;</span><span class="n">estimate</span><span class="p">(</span><span class="n">test_data</span><span class="p">);</span>
+                <span class="k">this</span><span class="o">-&gt;</span><span class="n">estimation_process</span><span class="o">-&gt;</span><span class="n">keep_estimates</span><span class="p">();</span>
 
-                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">aggregator</span> <span class="o">!=</span> <span class="k">nullptr</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">this</span><span class="o">-&gt;</span><span class="n">aggregator</span><span class="o">-&gt;</span><span class="n">evaluate</span><span class="p">(</span><span class="n">test_data</span><span class="p">);</span>
+                <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">evaluation</span> <span class="o">!=</span> <span class="k">nullptr</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">this</span><span class="o">-&gt;</span><span class="n">evaluation</span><span class="o">-&gt;</span><span class="n">evaluate</span><span class="p">(</span><span class="n">test_data</span><span class="p">);</span>
                 <span class="p">}</span>
             <span class="p">}</span>
 
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">aggregator</span> <span class="o">!=</span> <span class="k">nullptr</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="o">-&gt;</span><span class="n">aggregator</span><span class="o">-&gt;</span><span class="n">aggregate</span><span class="p">();</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">evaluation</span> <span class="o">!=</span> <span class="k">nullptr</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="o">-&gt;</span><span class="n">evaluation</span><span class="o">-&gt;</span><span class="n">aggregate</span><span class="p">();</span>
             <span class="p">}</span>
 
             <span class="n">boost</span><span class="o">::</span><span class="n">posix_time</span><span class="o">::</span><span class="n">ptime</span> <span class="n">end_time</span> <span class="o">=</span>
@@ -253,7 +255,10 @@
             <span class="n">json</span><span class="p">[</span><span class="s">&quot;duration_in_seconds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">duration_in_seconds</span><span class="p">;</span>
             <span class="k">this</span><span class="o">-&gt;</span><span class="n">data_splitter</span><span class="o">-&gt;</span><span class="n">get_info</span><span class="p">(</span><span class="n">json</span><span class="p">[</span><span class="s">&quot;data_split&quot;</span><span class="p">]);</span>
             <span class="k">this</span><span class="o">-&gt;</span><span class="n">model_trainer</span><span class="o">-&gt;</span><span class="n">get_info</span><span class="p">(</span><span class="n">json</span><span class="p">[</span><span class="s">&quot;training&quot;</span><span class="p">]);</span>
-            <span class="k">this</span><span class="o">-&gt;</span><span class="n">aggregator</span><span class="o">-&gt;</span><span class="n">get_info</span><span class="p">(</span><span class="n">json</span><span class="p">[</span><span class="s">&quot;evaluation&quot;</span><span class="p">]);</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">estimation_process</span><span class="o">-&gt;</span><span class="n">get_info</span><span class="p">(</span><span class="n">json</span><span class="p">[</span><span class="s">&quot;estimation&quot;</span><span class="p">]);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">evaluation</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="o">-&gt;</span><span class="n">evaluation</span><span class="o">-&gt;</span><span class="n">get_info</span><span class="p">(</span><span class="n">json</span><span class="p">[</span><span class="s">&quot;evaluation&quot;</span><span class="p">]);</span>
+            <span class="p">}</span>
 
             <span class="k">this</span><span class="o">-&gt;</span><span class="n">output_stream</span> <span class="o">&lt;&lt;</span> <span class="n">setw</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">json</span><span class="p">;</span>
         <span class="p">}</span>
@@ -283,7 +288,7 @@
 
         <span class="kt">void</span> <span class="n">Pipeline</span><span class="o">::</span><span class="n">set_aggregator</span><span class="p">(</span>
             <span class="k">const</span> <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">EvaluationAggregator</span><span class="o">&gt;&amp;</span> <span class="n">aggregator</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="o">-&gt;</span><span class="n">aggregator</span> <span class="o">=</span> <span class="n">aggregator</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">evaluation</span> <span class="o">=</span> <span class="n">aggregator</span><span class="p">;</span>
         <span class="p">}</span>
 
     <span class="p">}</span> <span class="c1">// namespace model</span>

@@ -29,9 +29,9 @@ Includes
 --------
 
 
-- ``model/distribution/Continuous.h`` (:ref:`file_src_cpp_model_distribution_Continuous.h`)
+- ``distribution/Continuous.h`` (:ref:`file_src_cpp_model_distribution_Continuous.h`)
 
-- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
+- ``utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 
 

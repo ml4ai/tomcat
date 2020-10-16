@@ -22,6 +22,7 @@ Files
 - :ref:`file_src_cpp_model_utils_FileHandler.h`
 - :ref:`file_src_cpp_model_utils_Mosquitto.cpp`
 - :ref:`file_src_cpp_model_utils_Mosquitto.h`
+- :ref:`file_src_cpp_model_utils_SynchronizedQueue.h`
 - :ref:`file_src_cpp_model_utils_Tensor3.cpp`
 - :ref:`file_src_cpp_model_utils_Tensor3.h`
 

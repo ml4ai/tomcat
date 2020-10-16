@@ -164,7 +164,9 @@
 
 <span class="cp">#include</span> <span class="cpf">&lt;sstream&gt;</span><span class="cp"></span>
 
-<span class="cp">#include</span> <span class="cpf">&quot;model/utils/EigenExtensions.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;boost/progress.hpp&gt;</span><span class="cp"></span>
+
+<span class="cp">#include</span> <span class="cpf">&quot;utils/EigenExtensions.h&quot;</span><span class="cp"></span>
 
 <span class="k">namespace</span> <span class="n">tomcat</span> <span class="p">{</span>
     <span class="k">namespace</span> <span class="n">model</span> <span class="p">{</span>
@@ -182,18 +184,13 @@
         <span class="c1">//----------------------------------------------------------------------</span>
         <span class="c1">// Member functions</span>
         <span class="c1">//----------------------------------------------------------------------</span>
-        <span class="kt">void</span> <span class="n">EvaluationAggregator</span><span class="o">::</span><span class="n">reset</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kt">void</span> <span class="n">EvaluationAggregator</span><span class="o">::</span><span class="n">clear_evaluations</span><span class="p">()</span> <span class="p">{</span>
             <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">evaluations</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">evaluations_per_measure</span><span class="p">)</span> <span class="p">{</span>
                 <span class="n">evaluations</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
             <span class="p">}</span>
-
-            <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">aggregations</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">aggregations_per_measure</span><span class="p">)</span> <span class="p">{</span>
-                <span class="n">aggregations</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
-            <span class="p">}</span>
         <span class="p">}</span>
 
-        <span class="kt">void</span>
-        <span class="n">EvaluationAggregator</span><span class="o">::</span><span class="n">add_measure</span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Measure</span><span class="o">&gt;</span> <span class="n">measure</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">void</span> <span class="n">EvaluationAggregator</span><span class="o">::</span><span class="n">add_measure</span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Measure</span><span class="o">&gt;</span> <span class="n">measure</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">this</span><span class="o">-&gt;</span><span class="n">measures</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">measure</span><span class="p">);</span>
             <span class="k">this</span><span class="o">-&gt;</span><span class="n">evaluations_per_measure</span><span class="p">.</span><span class="n">push_back</span><span class="p">({});</span>
             <span class="k">this</span><span class="o">-&gt;</span><span class="n">aggregations_per_measure</span><span class="p">.</span><span class="n">push_back</span><span class="p">({});</span>
@@ -201,40 +198,39 @@
 
         <span class="kt">void</span> <span class="n">EvaluationAggregator</span><span class="o">::</span><span class="n">evaluate</span><span class="p">(</span><span class="k">const</span> <span class="n">EvidenceSet</span><span class="o">&amp;</span> <span class="n">test_data</span><span class="p">)</span> <span class="p">{</span>
             <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Evaluating...&quot;</span><span class="p">;</span>
+            <span class="n">boost</span><span class="o">::</span><span class="n">progress_display</span> <span class="n">progress</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">measures</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
             <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">measure</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">measures</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="o">-&gt;</span><span class="n">evaluations_per_measure</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span>
                     <span class="n">measure</span><span class="o">-&gt;</span><span class="n">evaluate</span><span class="p">(</span><span class="n">test_data</span><span class="p">));</span>
                 <span class="n">i</span><span class="o">++</span><span class="p">;</span>
+                <span class="o">++</span><span class="n">progress</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
         <span class="kt">void</span> <span class="n">EvaluationAggregator</span><span class="o">::</span><span class="n">aggregate</span><span class="p">()</span> <span class="p">{</span>
             <span class="kt">int</span> <span class="n">m</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-            <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">evaluations</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">evaluations_per_measure</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">evaluations</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
-                    <span class="kt">int</span> <span class="n">num_nodes_evaluated</span> <span class="o">=</span> <span class="n">evaluations</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">size</span><span class="p">();</span>
+            <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">evaluations_per_execution</span> <span class="p">:</span>
+                 <span class="k">this</span><span class="o">-&gt;</span><span class="n">evaluations_per_measure</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">evaluations_per_execution</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+                    <span class="c1">// The evaluations are stored in the rows of a single</span>
+                    <span class="c1">// column. So we loop in a row-wise fashion to aggregate the</span>
+                    <span class="c1">// values.</span>
+                    <span class="n">NodeEvaluationAggregation</span> <span class="n">node_aggregation</span><span class="p">;</span>
+                    <span class="n">node_aggregation</span><span class="p">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">evaluations_per_execution</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">label</span><span class="p">;</span>
+                    <span class="n">node_aggregation</span><span class="p">.</span><span class="n">assignment</span> <span class="o">=</span>
+                        <span class="n">evaluations_per_execution</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">assignment</span><span class="p">;</span>
+                    <span class="n">vector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&gt;</span> <span class="n">evaluation_values</span><span class="p">;</span>
+                    <span class="n">evaluation_values</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="n">evaluations_per_execution</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
 
-                    <span class="c1">// The evaluations for a given node and assignment are</span>
-                    <span class="c1">// stored in the rows of a single column. So we loop in a</span>
-                    <span class="c1">// row-wise fashion to aggregate the values for a given</span>
-                    <span class="c1">// node.</span>
-                    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">num_nodes_evaluated</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="n">vector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&gt;</span> <span class="n">evaluations_per_node</span><span class="p">;</span>
-                        <span class="n">evaluations_per_node</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="n">evaluations</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
-
-                        <span class="n">NodeEvaluationAggregation</span> <span class="n">node_aggregation</span><span class="p">;</span>
-                        <span class="n">node_aggregation</span><span class="p">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">evaluations</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">j</span><span class="p">].</span><span class="n">label</span><span class="p">;</span>
-                        <span class="n">node_aggregation</span><span class="p">.</span><span class="n">assignment</span> <span class="o">=</span>
-                            <span class="n">evaluations</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">j</span><span class="p">].</span><span class="n">assignment</span><span class="p">;</span>
-                        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">evaluations</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="n">evaluations_per_node</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span>
-                                <span class="n">evaluations</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">].</span><span class="n">evaluation</span><span class="p">);</span>
-                        <span class="p">}</span>
-                        <span class="n">node_aggregation</span><span class="p">.</span><span class="n">aggregated_evaluation</span> <span class="o">=</span>
-                            <span class="k">this</span><span class="o">-&gt;</span><span class="n">compute_aggregation</span><span class="p">(</span><span class="n">evaluations_per_node</span><span class="p">);</span>
-                        <span class="k">this</span><span class="o">-&gt;</span><span class="n">aggregations_per_measure</span><span class="p">[</span><span class="n">m</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span>
-                            <span class="n">node_aggregation</span><span class="p">);</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="nl">evaluations</span> <span class="p">:</span> <span class="n">evaluations_per_execution</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="n">evaluation_values</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">evaluations</span><span class="p">.</span><span class="n">evaluation</span><span class="p">);</span>
                     <span class="p">}</span>
+
+                    <span class="n">node_aggregation</span><span class="p">.</span><span class="n">aggregated_evaluation</span> <span class="o">=</span>
+                        <span class="k">this</span><span class="o">-&gt;</span><span class="n">compute_aggregation</span><span class="p">(</span><span class="n">evaluation_values</span><span class="p">);</span>
+                    <span class="k">this</span><span class="o">-&gt;</span><span class="n">aggregations_per_measure</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">move</span><span class="p">(</span><span class="n">node_aggregation</span><span class="p">);</span>
                 <span class="p">}</span>
                 <span class="n">m</span><span class="o">++</span><span class="p">;</span>
             <span class="p">}</span>
@@ -268,35 +264,29 @@
         <span class="kt">void</span> <span class="n">EvaluationAggregator</span><span class="o">::</span><span class="n">get_info</span><span class="p">(</span><span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span><span class="o">&amp;</span> <span class="n">json</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
             <span class="n">json</span> <span class="o">=</span> <span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span><span class="o">::</span><span class="n">array</span><span class="p">();</span>
             <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">m</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">m</span> <span class="o">&lt;</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">measures</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">m</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                <span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span> <span class="n">json_aggregation</span><span class="p">;</span>
-                <span class="k">this</span><span class="o">-&gt;</span><span class="n">measures</span><span class="p">[</span><span class="n">m</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">get_info</span><span class="p">(</span><span class="n">json_aggregation</span><span class="p">[</span><span class="s">&quot;measure&quot;</span><span class="p">]);</span>
-                <span class="n">json_aggregation</span><span class="p">[</span><span class="s">&quot;aggregation&quot;</span><span class="p">][</span><span class="s">&quot;method&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">get_method_name</span><span class="p">();</span>
-                <span class="n">json_aggregation</span><span class="p">[</span><span class="s">&quot;aggregation&quot;</span><span class="p">][</span><span class="s">&quot;results&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span><span class="o">::</span><span class="n">array</span><span class="p">();</span>
+                <span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span> <span class="n">json_evaluation</span><span class="p">;</span>
+                <span class="k">this</span><span class="o">-&gt;</span><span class="n">measures</span><span class="p">[</span><span class="n">m</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">get_info</span><span class="p">(</span><span class="n">json_evaluation</span><span class="p">[</span><span class="s">&quot;measure&quot;</span><span class="p">]);</span>
+                <span class="n">json_evaluation</span><span class="p">[</span><span class="s">&quot;method&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">get_method_name</span><span class="p">();</span>
 
+                <span class="n">NodeEvaluationAggregation</span> <span class="n">aggregations</span> <span class="o">=</span>
+                    <span class="k">this</span><span class="o">-&gt;</span><span class="n">aggregations_per_measure</span><span class="p">[</span><span class="n">m</span><span class="p">];</span>
 
-                <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="nl">aggregations_per_node</span> <span class="p">:</span>
-                     <span class="k">this</span><span class="o">-&gt;</span><span class="n">aggregations_per_measure</span><span class="p">[</span><span class="n">m</span><span class="p">])</span> <span class="p">{</span>
-                    <span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span> <span class="n">json_result</span><span class="p">;</span>
-                    <span class="n">json_result</span><span class="p">[</span><span class="s">&quot;node_label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">aggregations_per_node</span><span class="p">.</span><span class="n">label</span><span class="p">;</span>
+                <span class="n">json_evaluation</span><span class="p">[</span><span class="s">&quot;node_label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">aggregations</span><span class="p">.</span><span class="n">label</span><span class="p">;</span>
 
-                    <span class="c1">// The Eigen::VectorXd class does not have a to_string</span>
-                    <span class="c1">// function.</span>
-                    <span class="n">json_result</span><span class="p">[</span><span class="s">&quot;node_assignment&quot;</span><span class="p">]</span> <span class="o">=</span>
-                        <span class="n">to_string</span><span class="p">(</span><span class="n">aggregations_per_node</span><span class="p">.</span><span class="n">assignment</span><span class="p">);</span>
+                <span class="n">json_evaluation</span><span class="p">[</span><span class="s">&quot;node_assignment&quot;</span><span class="p">]</span> <span class="o">=</span>
+                    <span class="n">to_string</span><span class="p">(</span><span class="n">aggregations</span><span class="p">.</span><span class="n">assignment</span><span class="p">);</span>
 
-                    <span class="n">json_result</span><span class="p">[</span><span class="s">&quot;aggregated_value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span><span class="o">::</span><span class="n">array</span><span class="p">();</span>
-                    <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="nl">aggregated_value</span> <span class="p">:</span>
-                         <span class="n">aggregations_per_node</span><span class="p">.</span><span class="n">aggregated_evaluation</span>
-                             <span class="p">.</span><span class="n">aggregated_values</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="n">json_result</span><span class="p">[</span><span class="s">&quot;aggregated_value&quot;</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span>
-                            <span class="n">to_string</span><span class="p">(</span><span class="n">aggregated_value</span><span class="p">));</span>
-                    <span class="p">}</span>
-                    <span class="n">json_result</span><span class="p">[</span><span class="s">&quot;error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_string</span><span class="p">(</span>
-                        <span class="n">aggregations_per_node</span><span class="p">.</span><span class="n">aggregated_evaluation</span><span class="p">.</span><span class="n">errors</span><span class="p">);</span>
-                    <span class="n">json_aggregation</span><span class="p">[</span><span class="s">&quot;aggregation&quot;</span><span class="p">][</span><span class="s">&quot;results&quot;</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span><span class="n">json_result</span><span class="p">);</span>
+                <span class="n">json_evaluation</span><span class="p">[</span><span class="s">&quot;error&quot;</span><span class="p">]</span> <span class="o">=</span>
+                    <span class="n">to_string</span><span class="p">(</span><span class="n">aggregations</span><span class="p">.</span><span class="n">aggregated_evaluation</span><span class="p">.</span><span class="n">errors</span><span class="p">);</span>
+
+                <span class="n">json_evaluation</span><span class="p">[</span><span class="s">&quot;aggregated_value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span><span class="o">::</span><span class="n">array</span><span class="p">();</span>
+                <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="nl">aggregated_value</span> <span class="p">:</span>
+                     <span class="n">aggregations</span><span class="p">.</span><span class="n">aggregated_evaluation</span><span class="p">.</span><span class="n">aggregated_values</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">json_evaluation</span><span class="p">[</span><span class="s">&quot;aggregated_value&quot;</span><span class="p">].</span><span class="n">push_back</span><span class="p">(</span>
+                        <span class="n">to_string</span><span class="p">(</span><span class="n">aggregated_value</span><span class="p">));</span>
                 <span class="p">}</span>
 
-                <span class="n">json</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">json_aggregation</span><span class="p">);</span>
+                <span class="n">json</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">json_evaluation</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
 

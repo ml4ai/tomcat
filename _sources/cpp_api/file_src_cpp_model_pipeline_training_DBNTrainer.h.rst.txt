@@ -29,11 +29,11 @@ Includes
 --------
 
 
-- ``model/pgm/EvidenceSet.h`` (:ref:`file_src_cpp_model_pgm_EvidenceSet.h`)
-
-- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
-
 - ``nlohmann/json.hpp``
+
+- ``pgm/EvidenceSet.h`` (:ref:`file_src_cpp_model_pgm_EvidenceSet.h`)
+
+- ``utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 
 

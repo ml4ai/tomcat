@@ -31,17 +31,17 @@ Includes
 
 - ``memory``
 
-- ``model/pgm/EvidenceSet.h`` (:ref:`file_src_cpp_model_pgm_EvidenceSet.h`)
-
-- ``model/pipeline/estimation/Estimator.h`` (:ref:`file_src_cpp_model_pipeline_estimation_Estimator.h`)
-
-- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
-
-- ``model/utils/Tensor3.h`` (:ref:`file_src_cpp_model_utils_Tensor3.h`)
-
 - ``nlohmann/json.hpp``
 
+- ``pgm/EvidenceSet.h`` (:ref:`file_src_cpp_model_pgm_EvidenceSet.h`)
+
+- ``pipeline/estimation/Estimator.h`` (:ref:`file_src_cpp_model_pipeline_estimation_Estimator.h`)
+
 - ``string``
+
+- ``utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
+
+- ``utils/Tensor3.h`` (:ref:`file_src_cpp_model_utils_Tensor3.h`)
 
 
 
@@ -50,8 +50,6 @@ Included By
 
 
 - :ref:`file_src_cpp_model_pipeline_evaluation_Accuracy.h`
-
-- :ref:`file_src_cpp_model_pipeline_evaluation_Estimates.h`
 
 - :ref:`file_src_cpp_model_pipeline_evaluation_EvaluationAggregator.h`
 

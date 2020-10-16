@@ -171,10 +171,10 @@
 <span class="cp">#include</span> <span class="cpf">&lt;eigen3/Eigen/Dense&gt;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&lt;nlohmann/json.hpp&gt;</span><span class="cp"></span>
 
-<span class="cp">#include</span> <span class="cpf">&quot;model/pgm/DynamicBayesNet.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&quot;model/pgm/EvidenceSet.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&quot;model/utils/Definitions.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&quot;model/utils/Tensor3.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;pgm/DynamicBayesNet.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;pgm/EvidenceSet.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;utils/Definitions.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;utils/Tensor3.h&quot;</span><span class="cp"></span>
 
 <span class="k">namespace</span> <span class="n">tomcat</span> <span class="p">{</span>
     <span class="k">namespace</span> <span class="n">model</span> <span class="p">{</span>
@@ -190,8 +190,31 @@
             <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span> <span class="n">assignment</span><span class="p">;</span>
 
             <span class="c1">// Probabilities or densities calculated for n data points over</span>
-            <span class="c1">// several time steps.</span>
-            <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">estimates</span><span class="p">;</span>
+            <span class="c1">// several time steps. If an assignment is provided, there will be</span>
+            <span class="c1">// only one matrix in the vector containing the estimates for each</span>
+            <span class="c1">// one of the data points and time steps. If no assignment is given,</span>
+            <span class="c1">// there will be as many matrix estimates as the cardinality of the</span>
+            <span class="c1">// node. In sum, there will be estimates for each possible</span>
+            <span class="c1">// assignment the node can have.</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&gt;</span> <span class="n">estimates</span><span class="p">;</span>
+        <span class="p">};</span>
+
+        <span class="k">struct</span> <span class="nc">CumulativeNodeEstimates</span> <span class="p">{</span>
+
+            <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">label</span><span class="p">;</span>
+
+            <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span> <span class="n">assignment</span><span class="p">;</span>
+
+            <span class="c1">// The external vector represents the content for each one of the</span>
+            <span class="c1">// executions of the estimation process. In a cross-validation</span>
+            <span class="c1">// procedure,the size of this vector will be defined by the number</span>
+            <span class="c1">// of folds. The internal vector store estimates for each one of the</span>
+            <span class="c1">// possible node&#39;s assignments. This will only happen if no fixed</span>
+            <span class="c1">// assignment was provided, otherwise, this vector will have size 1</span>
+            <span class="c1">// as it will contain estimated for a single assignment only. Single</span>
+            <span class="c1">// assignments make sense when a inference horizon of size &gt; 0 is</span>
+            <span class="c1">// used.</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&gt;&gt;</span> <span class="n">estimates</span><span class="p">;</span>
         <span class="p">};</span>
 
         <span class="k">class</span> <span class="nc">Estimator</span> <span class="p">{</span>
@@ -202,7 +225,10 @@
 
             <span class="n">Estimator</span><span class="p">();</span>
 
-            <span class="n">Estimator</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">DynamicBayesNet</span><span class="o">&gt;</span> <span class="n">model</span><span class="p">,</span> <span class="kt">int</span> <span class="n">inference_horizon</span><span class="p">);</span>
+            <span class="n">Estimator</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">DynamicBayesNet</span><span class="o">&gt;</span> <span class="n">model</span><span class="p">,</span>
+                      <span class="kt">int</span> <span class="n">inference_horizon</span><span class="p">,</span>
+                      <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">node_label</span><span class="p">,</span>
+                      <span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span> <span class="n">assignment</span> <span class="o">=</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
 
             <span class="k">virtual</span> <span class="o">~</span><span class="n">Estimator</span><span class="p">();</span>
 
@@ -225,12 +251,11 @@
             <span class="c1">// Member functions</span>
             <span class="c1">//------------------------------------------------------------------</span>
 
-            <span class="kt">void</span> <span class="nf">add_node</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">node_label</span><span class="p">,</span>
-                          <span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span> <span class="n">assignment</span><span class="p">);</span>
+            <span class="n">NodeEstimates</span> <span class="nf">get_estimates_at</span><span class="p">(</span><span class="kt">int</span> <span class="n">time_step</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
 
-            <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">NodeEstimates</span><span class="o">&gt;</span> <span class="n">get_estimates_at</span><span class="p">(</span><span class="kt">int</span> <span class="n">time_step</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+            <span class="kt">void</span> <span class="nf">keep_estimates</span><span class="p">();</span>
 
-            <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">NodeEstimates</span><span class="o">&gt;</span> <span class="n">get_estimates</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+            <span class="kt">void</span> <span class="nf">clear_estimates</span><span class="p">();</span>
 
             <span class="c1">//------------------------------------------------------------------</span>
             <span class="c1">// Virtual functions</span>
@@ -242,7 +267,7 @@
             <span class="c1">// Pure virtual functions</span>
             <span class="c1">//------------------------------------------------------------------</span>
 
-            <span class="k">virtual</span> <span class="kt">void</span> <span class="n">estimate</span><span class="p">(</span><span class="n">EvidenceSet</span> <span class="n">new_data</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">virtual</span> <span class="kt">void</span> <span class="n">estimate</span><span class="p">(</span><span class="k">const</span> <span class="n">EvidenceSet</span><span class="o">&amp;</span> <span class="n">new_data</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
             <span class="k">virtual</span> <span class="kt">void</span> <span class="n">get_info</span><span class="p">(</span><span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span><span class="o">&amp;</span> <span class="n">json</span><span class="p">)</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
@@ -251,9 +276,16 @@
             <span class="c1">//------------------------------------------------------------------</span>
             <span class="c1">// Getters &amp; Setters</span>
             <span class="c1">//------------------------------------------------------------------</span>
+            <span class="n">NodeEstimates</span> <span class="nf">get_estimates</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+
+            <span class="n">CumulativeNodeEstimates</span>
+            <span class="nf">get_cumulative_estimates</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+
             <span class="kt">int</span> <span class="nf">get_inference_horizon</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
 
             <span class="kt">void</span> <span class="nf">set_training_data</span><span class="p">(</span><span class="k">const</span> <span class="n">EvidenceSet</span><span class="o">&amp;</span> <span class="n">training_data</span><span class="p">);</span>
+
+            <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">DynamicBayesNet</span><span class="o">&gt;&amp;</span> <span class="n">get_model</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
 
           <span class="k">protected</span><span class="o">:</span>
             <span class="c1">//------------------------------------------------------------------</span>
@@ -277,8 +309,13 @@
             <span class="c1">// computations to avoid recalculations as new data is available.</span>
             <span class="n">EvidenceSet</span> <span class="n">test_data</span><span class="p">;</span>
 
-            <span class="c1">// List of nodes to estimate, their assignments and estimates</span>
-            <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">NodeEstimates</span><span class="o">&gt;</span> <span class="n">nodes_estimates</span><span class="p">;</span>
+            <span class="c1">// Node to compute estimates, its fixed assignment (optional if</span>
+            <span class="c1">// inference_horizon = 0) and estimates</span>
+            <span class="n">NodeEstimates</span> <span class="n">estimates</span><span class="p">;</span>
+
+            <span class="c1">// Node to compute estimates, its fixed assignment and cumulative</span>
+            <span class="c1">// estimates</span>
+            <span class="n">CumulativeNodeEstimates</span> <span class="n">cumulative_estimates</span><span class="p">;</span>
 
             <span class="c1">// An inference horizon determines if the task is a prediction (&gt; 0)</span>
             <span class="c1">// or an inference (= 0). If it&#39;s a prediction, the horizon</span>

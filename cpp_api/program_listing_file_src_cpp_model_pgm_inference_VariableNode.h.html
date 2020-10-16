@@ -164,7 +164,7 @@
 
 <span class="cp">#include</span> <span class="cpf">&quot;MessageNode.h&quot;</span><span class="cp"></span>
 
-<span class="cp">#include</span> <span class="cpf">&quot;model/utils/Definitions.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;utils/Definitions.h&quot;</span><span class="cp"></span>
 
 <span class="k">namespace</span> <span class="n">tomcat</span> <span class="p">{</span>
     <span class="k">namespace</span> <span class="n">model</span> <span class="p">{</span>
@@ -204,7 +204,8 @@
 
             <span class="kt">bool</span> <span class="nf">is_factor</span><span class="p">()</span> <span class="k">const</span> <span class="k">override</span><span class="p">;</span>
 
-            <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">get_marginal_at</span><span class="p">(</span><span class="kt">int</span> <span class="n">time_step</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
+            <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">get_marginal_at</span><span class="p">(</span><span class="kt">int</span> <span class="n">time_step</span><span class="p">,</span>
+                                            <span class="kt">bool</span> <span class="n">normalized</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
 
             <span class="kt">void</span> <span class="nf">set_data_at</span><span class="p">(</span><span class="kt">int</span> <span class="n">time_step</span><span class="p">,</span> <span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span> <span class="n">data</span><span class="p">);</span>
 

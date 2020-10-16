@@ -31,15 +31,19 @@ Includes
 
 - ``boost/graph/adjacency_list.hpp``
 
+- ``boost/graph/graphviz.hpp``
+
+- ``fstream``
+
 - ``memory``
 
-- ``model/pgm/RandomVariableNode.h`` (:ref:`file_src_cpp_model_pgm_RandomVariableNode.h`)
-
-- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
+- ``pgm/RandomVariableNode.h`` (:ref:`file_src_cpp_model_pgm_RandomVariableNode.h`)
 
 - ``string``
 
 - ``utility``
+
+- ``utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 - ``vector``
 
@@ -49,7 +53,9 @@ Included By
 -----------
 
 
-- :ref:`file_src_cpp_model_Tomcat.h`
+- :ref:`file_src_cpp_model_experiments_Tomcat.h`
+
+- :ref:`file_src_cpp_model_experiments_TomcatTA3.h`
 
 - :ref:`file_src_cpp_model_pgm_DynamicBayesNet.cpp`
 

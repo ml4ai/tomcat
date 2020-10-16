@@ -31,9 +31,9 @@ Includes
 
 - ``memory``
 
-- ``model/pipeline/estimation/Estimator.h`` (:ref:`file_src_cpp_model_pipeline_estimation_Estimator.h`)
+- ``pipeline/estimation/Estimator.h`` (:ref:`file_src_cpp_model_pipeline_estimation_Estimator.h`)
 
-- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
+- ``utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 
 

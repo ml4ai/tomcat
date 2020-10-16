@@ -170,8 +170,7 @@
         <span class="c1">//----------------------------------------------------------------------</span>
         <span class="c1">// Constructors &amp; Destructor</span>
         <span class="c1">//----------------------------------------------------------------------</span>
-        <span class="n">AncestralSampler</span><span class="o">::</span><span class="n">AncestralSampler</span><span class="p">(</span>
-            <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">DynamicBayesNet</span><span class="o">&gt;</span> <span class="n">model</span><span class="p">)</span>
+        <span class="n">AncestralSampler</span><span class="o">::</span><span class="n">AncestralSampler</span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">DynamicBayesNet</span><span class="o">&gt;</span> <span class="n">model</span><span class="p">)</span>
             <span class="o">:</span> <span class="n">Sampler</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="p">{}</span>
 
         <span class="n">AncestralSampler</span><span class="o">::~</span><span class="n">AncestralSampler</span><span class="p">()</span> <span class="p">{}</span>
@@ -192,28 +191,47 @@
         <span class="c1">//----------------------------------------------------------------------</span>
         <span class="c1">// Member functions</span>
         <span class="c1">//----------------------------------------------------------------------</span>
-        <span class="kt">void</span> <span class="n">AncestralSampler</span><span class="o">::</span><span class="n">sample_latent</span><span class="p">(</span>
-            <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">gsl_rng</span><span class="o">&gt;</span> <span class="n">random_generator</span><span class="p">,</span> <span class="kt">int</span> <span class="n">num_samples</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">vector</span><span class="o">&lt;</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&gt;</span> <span class="n">nodes</span><span class="p">;</span>
+        <span class="kt">void</span>
+        <span class="n">AncestralSampler</span><span class="o">::</span><span class="n">sample_latent</span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">gsl_rng</span><span class="o">&gt;</span> <span class="n">random_generator</span><span class="p">,</span>
+                                        <span class="kt">int</span> <span class="n">num_samples</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">vector</span><span class="o">&lt;</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&gt;</span> <span class="n">nodes_to_sample</span><span class="p">;</span>
+
+            <span class="c1">// We start by sampling nodes in the root and keep moving forward</span>
+            <span class="c1">// until we reach the leaves. Sampling a node depends on the values</span>
+            <span class="c1">// sampled from its parents. Therefore, a top-down topological order</span>
+            <span class="c1">// of the nodes is used here.</span>
             <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">node</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">model</span><span class="o">-&gt;</span><span class="n">get_nodes_topological_order</span><span class="p">())</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">RandomVariableNode</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-                         <span class="o">-&gt;</span><span class="n">is_frozen</span><span class="p">())</span> <span class="p">{</span>
-                    <span class="n">nodes</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+                <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">RandomVariableNode</span><span class="o">&gt;</span> <span class="n">rv_node</span> <span class="o">=</span>
+                    <span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">RandomVariableNode</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+
+                <span class="c1">// If a node is frozen, we don&#39;t generate samples for it as it</span>
+                <span class="c1">// already contains pre-defined samples.</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">rv_node</span><span class="o">-&gt;</span><span class="n">is_frozen</span><span class="p">())</span> <span class="p">{</span>
+
+                    <span class="c1">// If defined, we don&#39;t sample nodes after a given time</span>
+                    <span class="c1">// step. Otherwise, we proceed sampling for all the time</span>
+                    <span class="c1">// steps in the unrolled DBN.</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">max_time_step_to_sample</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span>
+                        <span class="n">rv_node</span><span class="o">-&gt;</span><span class="n">get_time_step</span><span class="p">()</span> <span class="o">&lt;=</span>
+                            <span class="k">this</span><span class="o">-&gt;</span><span class="n">max_time_step_to_sample</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="n">nodes_to_sample</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+                    <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>
 
-            <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">node</span> <span class="p">:</span> <span class="n">nodes</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">node</span> <span class="p">:</span> <span class="n">nodes_to_sample</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="o">-&gt;</span><span class="n">sampled_node_labels</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span>
                     <span class="n">node</span><span class="o">-&gt;</span><span class="n">get_metadata</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">get_label</span><span class="p">());</span>
-
                 <span class="k">const</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&gt;&amp;</span> <span class="n">parent_nodes</span> <span class="o">=</span>
                     <span class="k">this</span><span class="o">-&gt;</span><span class="n">model</span><span class="o">-&gt;</span><span class="n">get_parent_nodes_of</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span>
                 <span class="kt">int</span> <span class="n">real_num_samples</span> <span class="o">=</span> <span class="n">num_samples</span><span class="p">;</span>
+
                 <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">get_metadata</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">is_in_plate</span><span class="p">())</span> <span class="p">{</span>
                     <span class="c1">// Number of in-plate samples should match the number of</span>
-                    <span class="c1">// data points (num_in_plate_samples). If there&#39;s no data</span>
-                    <span class="c1">// point or just one, which will cause num_in_plate_samples</span>
-                    <span class="c1">// to be equals to 1, then we can generate multiple samples.</span>
+                    <span class="c1">// data points (num_in_plate_samples). If no data was</span>
+                    <span class="c1">// provided or there&#39;s just one data point was provided,</span>
+                    <span class="c1">// which will cause num_in_plate_samples to be equals to 1,</span>
+                    <span class="c1">// then we can generate multiple samples.</span>
                     <span class="n">real_num_samples</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">num_in_plate_samples</span> <span class="o">==</span> <span class="mi">1</span>
                                            <span class="o">?</span> <span class="nl">num_samples</span>
                                            <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">num_in_plate_samples</span><span class="p">;</span>
@@ -222,13 +240,22 @@
                 <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">RandomVariableNode</span><span class="o">&gt;</span> <span class="n">rv_node</span> <span class="o">=</span>
                     <span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">RandomVariableNode</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
 
+                <span class="c1">// Check whether the samples must be the same. It&#39;s possible to</span>
+                <span class="c1">// request samples to be equal up to a time step. That&#39;s what we</span>
+                <span class="c1">// call homogeneous samples up to a time t.</span>
                 <span class="kt">bool</span> <span class="n">equal_samples</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
-                <span class="k">if</span> <span class="p">(</span><span class="n">rv_node</span><span class="o">-&gt;</span><span class="n">get_time_step</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">equal_samples_time_step_limit</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">rv_node</span><span class="o">-&gt;</span><span class="n">get_time_step</span><span class="p">()</span> <span class="o">&lt;=</span>
+                    <span class="k">this</span><span class="o">-&gt;</span><span class="n">equal_samples_time_step_limit</span><span class="p">)</span> <span class="p">{</span>
                     <span class="n">equal_samples</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
                 <span class="p">}</span>
 
-                <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">assignment</span> <span class="o">=</span> <span class="n">rv_node</span><span class="o">-&gt;</span><span class="n">sample</span><span class="p">(</span>
-                    <span class="n">random_generator</span><span class="p">,</span> <span class="n">parent_nodes</span><span class="p">,</span> <span class="n">real_num_samples</span><span class="p">,</span> <span class="n">equal_samples</span><span class="p">);</span>
+                <span class="c1">// Generate a sample for the node given its parents&#39; assignments.</span>
+                <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span> <span class="n">assignment</span> <span class="o">=</span> <span class="n">rv_node</span><span class="o">-&gt;</span><span class="n">sample</span><span class="p">(</span><span class="n">random_generator</span><span class="p">,</span>
+                                                             <span class="n">parent_nodes</span><span class="p">,</span>
+                                                             <span class="n">real_num_samples</span><span class="p">,</span>
+                                                             <span class="n">equal_samples</span><span class="p">);</span>
+
+                <span class="c1">// A sample is stored as an assignment of the node.</span>
                 <span class="n">rv_node</span><span class="o">-&gt;</span><span class="n">set_assignment</span><span class="p">(</span><span class="n">assignment</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -242,8 +269,7 @@
         <span class="c1">//----------------------------------------------------------------------</span>
         <span class="kt">void</span> <span class="n">AncestralSampler</span><span class="o">::</span><span class="n">set_equal_samples_time_step_limit</span><span class="p">(</span>
             <span class="kt">int</span> <span class="n">equal_samples_time_step_limit</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">this</span><span class="o">-&gt;</span><span class="n">equal_samples_time_step_limit</span> <span class="o">=</span>
-                <span class="n">equal_samples_time_step_limit</span><span class="p">;</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">equal_samples_time_step_limit</span> <span class="o">=</span> <span class="n">equal_samples_time_step_limit</span><span class="p">;</span>
         <span class="p">}</span>
 
     <span class="p">}</span> <span class="c1">// namespace model</span>

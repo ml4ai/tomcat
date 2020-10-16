@@ -194,13 +194,15 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4N6tomcat5model9Estimator9EstimatorENSt10shared_ptrI15DynamicBayesNetEEi">
-<span id="_CPPv3N6tomcat5model9Estimator9EstimatorENSt10shared_ptrI15DynamicBayesNetEEi"></span><span id="_CPPv2N6tomcat5model9Estimator9EstimatorENSt10shared_ptrI15DynamicBayesNetEEi"></span><span id="tomcat::model::Estimator::Estimator__std::shared_ptr:DynamicBayesNet:.i"></span><span class="target" id="classtomcat_1_1model_1_1Estimator_1ab099610a8fc65be29ef72456daddc94f"></span><code class="sig-name descname">Estimator</code><span class="sig-paren">(</span>std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1DynamicBayesNet.html#_CPPv4N6tomcat5model15DynamicBayesNetE" title="tomcat::model::DynamicBayesNet">DynamicBayesNet</a>&gt; <em>model</em>, int <em>inference_horizon</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model9Estimator9EstimatorENSt10shared_ptrI15DynamicBayesNetEEi" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4N6tomcat5model9Estimator9EstimatorENSt10shared_ptrI15DynamicBayesNetEEiRKNSt6stringERKN5Eigen8VectorXdE">
+<span id="_CPPv3N6tomcat5model9Estimator9EstimatorENSt10shared_ptrI15DynamicBayesNetEEiRKNSt6stringERKN5Eigen8VectorXdE"></span><span id="_CPPv2N6tomcat5model9Estimator9EstimatorENSt10shared_ptrI15DynamicBayesNetEEiRKNSt6stringERKN5Eigen8VectorXdE"></span><span id="tomcat::model::Estimator::Estimator__std::shared_ptr:DynamicBayesNet:.i.ssCR.Eigen::VectorXdCR"></span><span class="target" id="classtomcat_1_1model_1_1Estimator_1a6999e25f80ac06b126ec1f424552cb7a"></span><code class="sig-name descname">Estimator</code><span class="sig-paren">(</span>std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1DynamicBayesNet.html#_CPPv4N6tomcat5model15DynamicBayesNetE" title="tomcat::model::DynamicBayesNet">DynamicBayesNet</a>&gt; <em>model</em>, int <em>inference_horizon</em>, <em class="property">const</em> std::string &amp;<em>node_label</em>, <em class="property">const</em> Eigen::VectorXd &amp;<em>assignment</em> = Eigen::VectorXd(0)<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model9Estimator9EstimatorENSt10shared_ptrI15DynamicBayesNetEEiRKNSt6stringERKN5Eigen8VectorXdE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Creates an abstract estimator.</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">model</span></code>: DBN </p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">inference_horizon</span></code>: how many time steps in the future estimations are going to be computed for </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">node_label</span></code>: label of the node estimates are going to be computed for </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">assignment</span></code>: fixed assignment (for instance, estimates = probability that the node assumes a value x, where x is the fixed assignment). This parameter is optional when the inference horizon is 0, but mandatory otherwise. </p></li>
 </ul>
 </dd>
 </dl>
@@ -233,27 +235,14 @@
 <dd></dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4N6tomcat5model9Estimator8add_nodeERKNSt6stringERKN5Eigen8VectorXdE">
-<span id="_CPPv3N6tomcat5model9Estimator8add_nodeERKNSt6stringERKN5Eigen8VectorXdE"></span><span id="_CPPv2N6tomcat5model9Estimator8add_nodeERKNSt6stringERKN5Eigen8VectorXdE"></span><span id="tomcat::model::Estimator::add_node__ssCR.Eigen::VectorXdCR"></span><span class="target" id="classtomcat_1_1model_1_1Estimator_1aa2f07cbc4945fddaed592eb06c19ac60"></span>void <code class="sig-name descname">add_node</code><span class="sig-paren">(</span><em class="property">const</em> std::string &amp;<em>node_label</em>, <em class="property">const</em> Eigen::VectorXd &amp;<em>assignment</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model9Estimator8add_nodeERKNSt6stringERKN5Eigen8VectorXdE" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Adds a new node to have its assignment estimated over time.</p>
-<p><dl class="simple">
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">node</span></code>: node’s label and assignment </p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd></dl>
-
-<dl class="cpp function">
 <dt id="_CPPv4NK6tomcat5model9Estimator16get_estimates_atEi">
-<span id="_CPPv3NK6tomcat5model9Estimator16get_estimates_atEi"></span><span id="_CPPv2NK6tomcat5model9Estimator16get_estimates_atEi"></span><span id="tomcat::model::Estimator::get_estimates_at__iC"></span><span class="target" id="classtomcat_1_1model_1_1Estimator_1ae2bf4e98068196486940fd8a55bd10cf"></span>std::vector&lt;<a class="reference internal" href="structtomcat_1_1model_1_1NodeEstimates.html#_CPPv4N6tomcat5model13NodeEstimatesE" title="tomcat::model::NodeEstimates">NodeEstimates</a>&gt; <code class="sig-name descname">get_estimates_at</code><span class="sig-paren">(</span>int <em>time_step</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model9Estimator16get_estimates_atEi" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Returns estimates at a given time step, for all nodes processed by the estimator.</p>
+<span id="_CPPv3NK6tomcat5model9Estimator16get_estimates_atEi"></span><span id="_CPPv2NK6tomcat5model9Estimator16get_estimates_atEi"></span><span id="tomcat::model::Estimator::get_estimates_at__iC"></span><span class="target" id="classtomcat_1_1model_1_1Estimator_1a71e27487588965e5489de6ab53b2815b"></span><a class="reference internal" href="structtomcat_1_1model_1_1NodeEstimates.html#_CPPv4N6tomcat5model13NodeEstimatesE" title="tomcat::model::NodeEstimates">NodeEstimates</a> <code class="sig-name descname">get_estimates_at</code><span class="sig-paren">(</span>int <em>time_step</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model9Estimator16get_estimates_atEi" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns estimates at a given time step.</p>
 <p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>Series of estimates for the nodes in the estimator. </p>
+<dt><strong>Return</strong></dt><dd><p>Estimates. </p>
 </dd>
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">time_step</span></code>: First time step to get the estimates from</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">time_step</span></code>: Time step to get the estimates from</p></li>
 </ul>
 </dd>
 </dl>
@@ -261,14 +250,15 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4NK6tomcat5model9Estimator13get_estimatesEv">
-<span id="_CPPv3NK6tomcat5model9Estimator13get_estimatesEv"></span><span id="_CPPv2NK6tomcat5model9Estimator13get_estimatesEv"></span><span id="tomcat::model::Estimator::get_estimatesC"></span><span class="target" id="classtomcat_1_1model_1_1Estimator_1a177a874e89de6c3de363989fcc71ee9a"></span>std::vector&lt;<a class="reference internal" href="structtomcat_1_1model_1_1NodeEstimates.html#_CPPv4N6tomcat5model13NodeEstimatesE" title="tomcat::model::NodeEstimates">NodeEstimates</a>&gt; <code class="sig-name descname">get_estimates</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model9Estimator13get_estimatesEv" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Returns all the estimates computed so far, for all nodes processed by the estimator.</p>
-<p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>Series of estimates for the nodes in the estimator. </p>
-</dd>
-</dl>
-</p>
+<dt id="_CPPv4N6tomcat5model9Estimator14keep_estimatesEv">
+<span id="_CPPv3N6tomcat5model9Estimator14keep_estimatesEv"></span><span id="_CPPv2N6tomcat5model9Estimator14keep_estimatesEv"></span><span id="tomcat::model::Estimator::keep_estimates"></span><span class="target" id="classtomcat_1_1model_1_1Estimator_1aa113a6cc0459e65ff72a666308cdbb51"></span>void <code class="sig-name descname">keep_estimates</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model9Estimator14keep_estimatesEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Store the last estimates computed in a list of cumulative estimates. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N6tomcat5model9Estimator15clear_estimatesEv">
+<span id="_CPPv3N6tomcat5model9Estimator15clear_estimatesEv"></span><span id="_CPPv2N6tomcat5model9Estimator15clear_estimatesEv"></span><span id="tomcat::model::Estimator::clear_estimates"></span><span class="target" id="classtomcat_1_1model_1_1Estimator_1ad300aad3bda5ff00252b45ada275062b"></span>void <code class="sig-name descname">clear_estimates</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model9Estimator15clear_estimatesEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Clear last estimates and cumulative estimates computed by the estimator. </p>
 </dd></dl>
 
 <dl class="cpp function">
@@ -278,12 +268,12 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4N6tomcat5model9Estimator8estimateE11EvidenceSet">
-<span id="_CPPv3N6tomcat5model9Estimator8estimateE11EvidenceSet"></span><span id="_CPPv2N6tomcat5model9Estimator8estimateE11EvidenceSet"></span><span id="tomcat::model::Estimator::estimate__EvidenceSet"></span><span class="target" id="classtomcat_1_1model_1_1Estimator_1a7196e9ef519da2e351e1af1573f7d6cc"></span>void <code class="sig-name descname">estimate</code><span class="sig-paren">(</span><a class="reference internal" href="classtomcat_1_1model_1_1EvidenceSet.html#_CPPv4N6tomcat5model11EvidenceSetE" title="tomcat::model::EvidenceSet">EvidenceSet</a> <em>new_data</em><span class="sig-paren">)</span> = 0<a class="headerlink" href="#_CPPv4N6tomcat5model9Estimator8estimateE11EvidenceSet" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4N6tomcat5model9Estimator8estimateERK11EvidenceSet">
+<span id="_CPPv3N6tomcat5model9Estimator8estimateERK11EvidenceSet"></span><span id="_CPPv2N6tomcat5model9Estimator8estimateERK11EvidenceSet"></span><span id="tomcat::model::Estimator::estimate__EvidenceSetCR"></span><span class="target" id="classtomcat_1_1model_1_1Estimator_1a9b7c583a30216a32d55dd255e21aa05a"></span>void <code class="sig-name descname">estimate</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="classtomcat_1_1model_1_1EvidenceSet.html#_CPPv4N6tomcat5model11EvidenceSetE" title="tomcat::model::EvidenceSet">EvidenceSet</a> &amp;<em>new_data</em><span class="sig-paren">)</span> = 0<a class="headerlink" href="#_CPPv4N6tomcat5model9Estimator8estimateERK11EvidenceSet" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Computes new estimates for the new data. New data consists of observed values for time steps after the last processed one.</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">new_data</span></code>: observed values for time steps not already seen by the method </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">new_data</span></code>: observed values for time steps not already seen by the estimator </p></li>
 </ul>
 </dd>
 </dl>
@@ -293,7 +283,7 @@
 <dl class="cpp function">
 <dt id="_CPPv4NK6tomcat5model9Estimator8get_infoERN8nlohmann4jsonE">
 <span id="_CPPv3NK6tomcat5model9Estimator8get_infoERN8nlohmann4jsonE"></span><span id="_CPPv2NK6tomcat5model9Estimator8get_infoERN8nlohmann4jsonE"></span><span id="tomcat::model::Estimator::get_info__nlohmann::jsonRC"></span><span class="target" id="classtomcat_1_1model_1_1Estimator_1ae39395fbc30ca420c4f07711114adfab"></span>void <code class="sig-name descname">get_info</code><span class="sig-paren">(</span>nlohmann::json &amp;<em>json</em><span class="sig-paren">)</span> <em class="property">const</em> = 0<a class="headerlink" href="#_CPPv4NK6tomcat5model9Estimator8get_infoERN8nlohmann4jsonE" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Writes information about the splitter in a json object.</p>
+<dd><p>Writes information about the estimator in a json object.</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">json</span></code>: json object </p></li>
@@ -315,6 +305,16 @@
 </dd></dl>
 
 <dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model9Estimator13get_estimatesEv">
+<span id="_CPPv3NK6tomcat5model9Estimator13get_estimatesEv"></span><span id="_CPPv2NK6tomcat5model9Estimator13get_estimatesEv"></span><span id="tomcat::model::Estimator::get_estimatesC"></span><span class="target" id="classtomcat_1_1model_1_1Estimator_1a2c9a9bb70de4d8792e1615867074e13a"></span><a class="reference internal" href="structtomcat_1_1model_1_1NodeEstimates.html#_CPPv4N6tomcat5model13NodeEstimatesE" title="tomcat::model::NodeEstimates">NodeEstimates</a> <code class="sig-name descname">get_estimates</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model9Estimator13get_estimatesEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model9Estimator24get_cumulative_estimatesEv">
+<span id="_CPPv3NK6tomcat5model9Estimator24get_cumulative_estimatesEv"></span><span id="_CPPv2NK6tomcat5model9Estimator24get_cumulative_estimatesEv"></span><span id="tomcat::model::Estimator::get_cumulative_estimatesC"></span><span class="target" id="classtomcat_1_1model_1_1Estimator_1adb41d28b1a69d40354a655554a1f5e5a"></span><a class="reference internal" href="structtomcat_1_1model_1_1CumulativeNodeEstimates.html#_CPPv4N6tomcat5model23CumulativeNodeEstimatesE" title="tomcat::model::CumulativeNodeEstimates">CumulativeNodeEstimates</a> <code class="sig-name descname">get_cumulative_estimates</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model9Estimator24get_cumulative_estimatesEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
 <dt id="_CPPv4NK6tomcat5model9Estimator21get_inference_horizonEv">
 <span id="_CPPv3NK6tomcat5model9Estimator21get_inference_horizonEv"></span><span id="_CPPv2NK6tomcat5model9Estimator21get_inference_horizonEv"></span><span id="tomcat::model::Estimator::get_inference_horizonC"></span><span class="target" id="classtomcat_1_1model_1_1Estimator_1aa728a13d5720b1526e644565d50e37b0"></span>int <code class="sig-name descname">get_inference_horizon</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model9Estimator21get_inference_horizonEv" title="Permalink to this definition">¶</a><br /></dt>
 <dd></dd></dl>
@@ -322,6 +322,11 @@
 <dl class="cpp function">
 <dt id="_CPPv4N6tomcat5model9Estimator17set_training_dataERK11EvidenceSet">
 <span id="_CPPv3N6tomcat5model9Estimator17set_training_dataERK11EvidenceSet"></span><span id="_CPPv2N6tomcat5model9Estimator17set_training_dataERK11EvidenceSet"></span><span id="tomcat::model::Estimator::set_training_data__EvidenceSetCR"></span><span class="target" id="classtomcat_1_1model_1_1Estimator_1aa009245ff02f4e7af6fef8d71acb6c91"></span>void <code class="sig-name descname">set_training_data</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="classtomcat_1_1model_1_1EvidenceSet.html#_CPPv4N6tomcat5model11EvidenceSetE" title="tomcat::model::EvidenceSet">EvidenceSet</a> &amp;<em>training_data</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model9Estimator17set_training_dataERK11EvidenceSet" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK6tomcat5model9Estimator9get_modelEv">
+<span id="_CPPv3NK6tomcat5model9Estimator9get_modelEv"></span><span id="_CPPv2NK6tomcat5model9Estimator9get_modelEv"></span><span id="tomcat::model::Estimator::get_modelC"></span><span class="target" id="classtomcat_1_1model_1_1Estimator_1aba638728302f802c359da020c373ad1c"></span><em class="property">const</em> std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1DynamicBayesNet.html#_CPPv4N6tomcat5model15DynamicBayesNetE" title="tomcat::model::DynamicBayesNet">DynamicBayesNet</a>&gt; &amp;<code class="sig-name descname">get_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model9Estimator9get_modelEv" title="Permalink to this definition">¶</a><br /></dt>
 <dd></dd></dl>
 
 </div>
@@ -352,8 +357,13 @@
 <dd></dd></dl>
 
 <dl class="cpp var">
-<dt id="_CPPv4N6tomcat5model9Estimator15nodes_estimatesE">
-<span id="_CPPv3N6tomcat5model9Estimator15nodes_estimatesE"></span><span id="_CPPv2N6tomcat5model9Estimator15nodes_estimatesE"></span><span id="tomcat::model::Estimator::nodes_estimates__std::vector:NodeEstimates:"></span><span class="target" id="classtomcat_1_1model_1_1Estimator_1a7518c3286acbb1e3e15aeed59fd80661"></span>std::vector&lt;<a class="reference internal" href="structtomcat_1_1model_1_1NodeEstimates.html#_CPPv4N6tomcat5model13NodeEstimatesE" title="tomcat::model::NodeEstimates">NodeEstimates</a>&gt; <code class="sig-name descname">nodes_estimates</code><a class="headerlink" href="#_CPPv4N6tomcat5model9Estimator15nodes_estimatesE" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4N6tomcat5model9Estimator9estimatesE">
+<span id="_CPPv3N6tomcat5model9Estimator9estimatesE"></span><span id="_CPPv2N6tomcat5model9Estimator9estimatesE"></span><span id="tomcat::model::Estimator::estimates__NodeEstimates"></span><span class="target" id="classtomcat_1_1model_1_1Estimator_1a027eaba7366e9d54fb8f5e5dbb63f1fc"></span><a class="reference internal" href="structtomcat_1_1model_1_1NodeEstimates.html#_CPPv4N6tomcat5model13NodeEstimatesE" title="tomcat::model::NodeEstimates">NodeEstimates</a> <code class="sig-name descname">estimates</code><a class="headerlink" href="#_CPPv4N6tomcat5model9Estimator9estimatesE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt id="_CPPv4N6tomcat5model9Estimator20cumulative_estimatesE">
+<span id="_CPPv3N6tomcat5model9Estimator20cumulative_estimatesE"></span><span id="_CPPv2N6tomcat5model9Estimator20cumulative_estimatesE"></span><span id="tomcat::model::Estimator::cumulative_estimates__CumulativeNodeEstimates"></span><span class="target" id="classtomcat_1_1model_1_1Estimator_1aaa0e4420acaee3c5d00a15e78dd8fe0c"></span><a class="reference internal" href="structtomcat_1_1model_1_1CumulativeNodeEstimates.html#_CPPv4N6tomcat5model23CumulativeNodeEstimatesE" title="tomcat::model::CumulativeNodeEstimates">CumulativeNodeEstimates</a> <code class="sig-name descname">cumulative_estimates</code><a class="headerlink" href="#_CPPv4N6tomcat5model9Estimator20cumulative_estimatesE" title="Permalink to this definition">¶</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="cpp var">

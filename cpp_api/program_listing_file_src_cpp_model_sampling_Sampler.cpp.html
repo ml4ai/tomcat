@@ -164,10 +164,10 @@
 
 <span class="cp">#include</span> <span class="cpf">&lt;array&gt;</span><span class="cp"></span>
 
-<span class="cp">#include</span> <span class="cpf">&lt;fmt/format.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&lt;boost/filesystem.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;fmt/format.h&gt;</span><span class="cp"></span>
 
-<span class="cp">#include</span> <span class="cpf">&quot;model/utils/FileHandler.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;utils/FileHandler.h&quot;</span><span class="cp"></span>
 
 <span class="k">namespace</span> <span class="n">tomcat</span> <span class="p">{</span>
     <span class="k">namespace</span> <span class="n">model</span> <span class="p">{</span>
@@ -179,8 +179,7 @@
         <span class="c1">//----------------------------------------------------------------------</span>
         <span class="n">Sampler</span><span class="o">::</span><span class="n">Sampler</span><span class="p">()</span> <span class="p">{}</span>
 
-        <span class="n">Sampler</span><span class="o">::</span><span class="n">Sampler</span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">DynamicBayesNet</span><span class="o">&gt;</span> <span class="n">model</span><span class="p">)</span>
-            <span class="o">:</span> <span class="n">model</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="p">{}</span>
+        <span class="n">Sampler</span><span class="o">::</span><span class="n">Sampler</span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">DynamicBayesNet</span><span class="o">&gt;</span> <span class="n">model</span><span class="p">)</span> <span class="o">:</span> <span class="n">model</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="p">{}</span>
 
         <span class="n">Sampler</span><span class="o">::~</span><span class="n">Sampler</span><span class="p">()</span> <span class="p">{}</span>
 
@@ -200,7 +199,7 @@
             <span class="k">this</span><span class="o">-&gt;</span><span class="n">unfreeze_observable_nodes</span><span class="p">();</span>
         <span class="p">}</span>
 
-        <span class="kt">void</span> <span class="n">Sampler</span><span class="o">::</span><span class="n">add_data</span><span class="p">(</span><span class="n">EvidenceSet</span> <span class="n">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">void</span> <span class="n">Sampler</span><span class="o">::</span><span class="n">add_data</span><span class="p">(</span><span class="k">const</span> <span class="n">EvidenceSet</span><span class="o">&amp;</span> <span class="n">data</span><span class="p">)</span> <span class="p">{</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">get_num_data_points</span><span class="p">()</span> <span class="o">==</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">num_in_plate_samples</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="o">-&gt;</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">;</span>
                 <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="nl">node_label</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">.</span><span class="n">get_node_labels</span><span class="p">())</span> <span class="p">{</span>
@@ -225,22 +224,51 @@
         <span class="n">Tensor3</span> <span class="n">Sampler</span><span class="o">::</span><span class="n">get_samples</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">node_label</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
             <span class="n">vector</span><span class="o">&lt;</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&gt;</span> <span class="n">nodes</span> <span class="o">=</span>
                 <span class="k">this</span><span class="o">-&gt;</span><span class="n">model</span><span class="o">-&gt;</span><span class="n">get_nodes_by_label</span><span class="p">(</span><span class="n">node_label</span><span class="p">);</span>
+
+            <span class="c1">// Get the max time step for which samples were generated</span>
+            <span class="kt">int</span> <span class="n">max_time_step</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">max_time_step_to_sample</span> <span class="o">&gt;</span> <span class="mi">0</span>
+                                    <span class="o">?</span> <span class="n">min</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">max_time_step_to_sample</span><span class="p">,</span>
+                                          <span class="k">this</span><span class="o">-&gt;</span><span class="n">model</span><span class="o">-&gt;</span><span class="n">get_time_steps</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                                    <span class="o">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">model</span><span class="o">-&gt;</span><span class="n">get_time_steps</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">nodes</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
                 <span class="kt">int</span> <span class="n">d1</span> <span class="o">=</span> <span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">get_metadata</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">get_sample_size</span><span class="p">();</span>
                 <span class="kt">int</span> <span class="n">d2</span> <span class="o">=</span> <span class="n">nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">get_size</span><span class="p">();</span>
-                <span class="kt">int</span> <span class="n">d3</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">model</span><span class="o">-&gt;</span><span class="n">get_time_steps</span><span class="p">();</span>
+                <span class="kt">int</span> <span class="n">d3</span> <span class="o">=</span> <span class="n">max_time_step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
                 <span class="kt">double</span><span class="o">*</span> <span class="n">buffer</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">double</span><span class="p">[</span><span class="n">d1</span> <span class="o">*</span> <span class="n">d2</span> <span class="o">*</span> <span class="n">d3</span><span class="p">];</span>
                 <span class="n">fill_n</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">d1</span> <span class="o">*</span> <span class="n">d2</span> <span class="o">*</span> <span class="n">d3</span><span class="p">,</span> <span class="n">NO_OBS</span><span class="p">);</span>
                 <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">node</span> <span class="p">:</span> <span class="n">nodes</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span> <span class="n">assignment</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">get_assignment</span><span class="p">();</span>
-                    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">assignment</span><span class="p">.</span><span class="n">rows</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">assignment</span><span class="p">.</span><span class="n">cols</span><span class="p">();</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                            <span class="kt">int</span> <span class="n">t</span> <span class="o">=</span>
-                                <span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">RandomVariableNode</span><span class="o">&gt;</span><span class="p">(</span>
-                                    <span class="n">node</span><span class="p">)</span>
-                                    <span class="o">-&gt;</span><span class="n">get_time_step</span><span class="p">();</span>
-                            <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">j</span> <span class="o">*</span> <span class="n">d2</span> <span class="o">*</span> <span class="n">d3</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">d3</span> <span class="o">+</span> <span class="n">t</span><span class="p">;</span>
-                            <span class="n">buffer</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">assignment</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">);</span>
+                    <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">RandomVariableNode</span><span class="o">&gt;</span> <span class="n">rv_node</span> <span class="o">=</span>
+                        <span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">RandomVariableNode</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">rv_node</span><span class="o">-&gt;</span><span class="n">get_time_step</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">max_time_step</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span> <span class="n">assignment</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">get_assignment</span><span class="p">();</span>
+                        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">assignment</span><span class="p">.</span><span class="n">rows</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">assignment</span><span class="p">.</span><span class="n">cols</span><span class="p">();</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+
+                                <span class="c1">// If a node is not replicable, it means there&#39;s</span>
+                                <span class="c1">// only one instance of it in the unrolled DBN.</span>
+                                <span class="c1">// This means there will be sample just for one</span>
+                                <span class="c1">// time step, the one where the node shows up.</span>
+                                <span class="c1">// However, the semantics of these nodes is that</span>
+                                <span class="c1">// their assignments are applicable to all time</span>
+                                <span class="c1">// steps starting from their initial one. So we</span>
+                                <span class="c1">// replicate the samples to the remaining time</span>
+                                <span class="c1">// steps until the maximum number of time steps</span>
+                                <span class="c1">// sampled.</span>
+                                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">get_metadata</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">is_replicable</span><span class="p">())</span> <span class="p">{</span>
+                                    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">t</span> <span class="o">=</span> <span class="n">rv_node</span><span class="o">-&gt;</span><span class="n">get_time_step</span><span class="p">();</span>
+                                         <span class="n">t</span> <span class="o">&lt;=</span> <span class="n">max_time_step</span><span class="p">;</span>
+                                         <span class="n">t</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                                        <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">j</span> <span class="o">*</span> <span class="n">d2</span> <span class="o">*</span> <span class="n">d3</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">d3</span> <span class="o">+</span> <span class="n">t</span><span class="p">;</span>
+                                        <span class="n">buffer</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">assignment</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">);</span>
+                                    <span class="p">}</span>
+                                <span class="p">}</span>
+                                <span class="k">else</span> <span class="p">{</span>
+                                    <span class="kt">int</span> <span class="n">t</span> <span class="o">=</span> <span class="n">rv_node</span><span class="o">-&gt;</span><span class="n">get_time_step</span><span class="p">();</span>
+                                    <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">j</span> <span class="o">*</span> <span class="n">d2</span> <span class="o">*</span> <span class="n">d3</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">d3</span> <span class="o">+</span> <span class="n">t</span><span class="p">;</span>
+                                    <span class="n">buffer</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">assignment</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">);</span>
+                                <span class="p">}</span>
+                            <span class="p">}</span>
                         <span class="p">}</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
@@ -254,22 +282,25 @@
         <span class="p">}</span>
 
         <span class="kt">void</span> <span class="n">Sampler</span><span class="o">::</span><span class="n">save_samples_to_folder</span><span class="p">(</span>
-            <span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">output_folder</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+            <span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">output_folder</span><span class="p">,</span>
+            <span class="k">const</span> <span class="n">unordered_set</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">excluding</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
 
             <span class="n">boost</span><span class="o">::</span><span class="n">filesystem</span><span class="o">::</span><span class="n">create_directories</span><span class="p">(</span><span class="n">output_folder</span><span class="p">);</span>
 
             <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="nl">node_label</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">sampled_node_labels</span><span class="p">)</span> <span class="p">{</span>
-                <span class="n">string</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">node_label</span> <span class="o">+</span> <span class="s">&quot;.txt&quot;</span><span class="p">;</span>
-                <span class="n">string</span> <span class="n">filepath</span> <span class="o">=</span> <span class="n">get_filepath</span><span class="p">(</span><span class="n">output_folder</span><span class="p">,</span> <span class="n">filename</span><span class="p">);</span>
-                <span class="n">save_tensor_to_file</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">get_samples</span><span class="p">(</span><span class="n">node_label</span><span class="p">));</span>
+                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">EXISTS</span><span class="p">(</span><span class="n">node_label</span><span class="p">,</span> <span class="n">excluding</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="n">string</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">node_label</span> <span class="o">+</span> <span class="s">&quot;.txt&quot;</span><span class="p">;</span>
+                    <span class="n">string</span> <span class="n">filepath</span> <span class="o">=</span> <span class="n">get_filepath</span><span class="p">(</span><span class="n">output_folder</span><span class="p">,</span> <span class="n">filename</span><span class="p">);</span>
+                    <span class="n">save_tensor_to_file</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span>
+                                        <span class="k">this</span><span class="o">-&gt;</span><span class="n">get_samples</span><span class="p">(</span><span class="n">node_label</span><span class="p">));</span>
+                <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
 
         <span class="kt">void</span> <span class="n">Sampler</span><span class="o">::</span><span class="n">freeze_observable_nodes</span><span class="p">()</span> <span class="p">{</span>
             <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="nl">node_label</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">.</span><span class="n">get_node_labels</span><span class="p">())</span> <span class="p">{</span>
                 <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">node</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">model</span><span class="o">-&gt;</span><span class="n">get_nodes_by_label</span><span class="p">(</span><span class="n">node_label</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">RandomVariableNode</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-                        <span class="o">-&gt;</span><span class="n">freeze</span><span class="p">();</span>
+                    <span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">RandomVariableNode</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">freeze</span><span class="p">();</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -277,8 +308,7 @@
         <span class="kt">void</span> <span class="n">Sampler</span><span class="o">::</span><span class="n">unfreeze_observable_nodes</span><span class="p">()</span> <span class="p">{</span>
             <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="nl">node_label</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">.</span><span class="n">get_node_labels</span><span class="p">())</span> <span class="p">{</span>
                 <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">node</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">model</span><span class="o">-&gt;</span><span class="n">get_nodes_by_label</span><span class="p">(</span><span class="n">node_label</span><span class="p">))</span> <span class="p">{</span>
-                    <span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">RandomVariableNode</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-                        <span class="o">-&gt;</span><span class="n">unfreeze</span><span class="p">();</span>
+                    <span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">RandomVariableNode</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">unfreeze</span><span class="p">();</span>
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">}</span>
@@ -292,6 +322,10 @@
 
         <span class="k">const</span> <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">DynamicBayesNet</span><span class="o">&gt;&amp;</span> <span class="n">Sampler</span><span class="o">::</span><span class="n">get_model</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
             <span class="k">return</span> <span class="n">model</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="kt">void</span> <span class="n">Sampler</span><span class="o">::</span><span class="n">set_max_time_step_to_sample</span><span class="p">(</span><span class="kt">int</span> <span class="n">maxTimeStepToSample</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">max_time_step_to_sample</span> <span class="o">=</span> <span class="n">maxTimeStepToSample</span><span class="p">;</span>
         <span class="p">}</span>
 
     <span class="p">}</span> <span class="c1">// namespace model</span>

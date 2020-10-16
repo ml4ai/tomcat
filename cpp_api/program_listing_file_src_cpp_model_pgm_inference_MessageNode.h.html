@@ -170,7 +170,7 @@
 
 <span class="cp">#include</span> <span class="cpf">&lt;eigen3/Eigen/Dense&gt;</span><span class="cp"></span>
 
-<span class="cp">#include</span> <span class="cpf">&quot;model/utils/Definitions.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;utils/Definitions.h&quot;</span><span class="cp"></span>
 
 <span class="k">namespace</span> <span class="n">tomcat</span> <span class="p">{</span>
     <span class="k">namespace</span> <span class="n">model</span> <span class="p">{</span>
@@ -239,6 +239,11 @@
             <span class="n">MessageNode</span><span class="p">(</span><span class="n">MessageNode</span><span class="o">&amp;&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
 
             <span class="n">MessageNode</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">MessageNode</span><span class="o">&amp;&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+
+            <span class="c1">//------------------------------------------------------------------</span>
+            <span class="c1">// Operator overload</span>
+            <span class="c1">//------------------------------------------------------------------</span>
+            <span class="kt">bool</span> <span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span> <span class="n">MessageNode</span><span class="o">&amp;</span> <span class="n">obj</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span>
 
             <span class="c1">//------------------------------------------------------------------</span>
             <span class="c1">// Static functions</span>
@@ -323,6 +328,17 @@
 
     <span class="p">}</span> <span class="c1">// namespace model</span>
 <span class="p">}</span> <span class="c1">// namespace tomcat</span>
+
+<span class="c1">// Hash for usage of this class in unordered sets.</span>
+<span class="k">namespace</span> <span class="n">std</span> <span class="p">{</span>
+    <span class="k">template</span> <span class="o">&lt;&gt;</span> <span class="k">struct</span> <span class="nc">hash</span><span class="o">&lt;</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">tomcat</span><span class="o">::</span><span class="n">model</span><span class="o">::</span><span class="n">MessageNode</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
+        <span class="kt">size_t</span> <span class="nf">operator</span><span class="p">()(</span><span class="k">const</span> <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">tomcat</span><span class="o">::</span><span class="n">model</span><span class="o">::</span><span class="n">MessageNode</span><span class="o">&gt;&amp;</span>
+        <span class="n">message_node</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="n">hash</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="p">{}(</span>
+                <span class="n">message_node</span><span class="o">-&gt;</span><span class="n">get_name</span><span class="p">());</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+<span class="p">}</span> <span class="c1">// namespace std</span>
 </pre></div>
 </div>
 </div>

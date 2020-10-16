@@ -17,10 +17,13 @@ Program Listing for File DynamicBayesNet.h
    #include <utility>
    #include <vector>
    
-   #include <boost/graph/adjacency_list.hpp>
+   #include <fstream>
    
-   #include "model/utils/Definitions.h"
-   #include "model/pgm/RandomVariableNode.h"
+   #include <boost/graph/adjacency_list.hpp>
+   #include <boost/graph/graphviz.hpp>
+   
+   #include "pgm/RandomVariableNode.h"
+   #include "utils/Definitions.h"
    
    namespace tomcat {
        namespace model {
@@ -32,6 +35,9 @@ Program Listing for File DynamicBayesNet.h
                // This needs to be a shared pointer because some of the nodes can
                // be parameter nodes sharable among some CPDs
                std::shared_ptr<RandomVariableNode> node;
+   
+               // Node timed name here just for visualization purposes.
+               std::string label;
            };
    
            class DynamicBayesNet {
@@ -89,21 +95,19 @@ Program Listing for File DynamicBayesNet.h
                std::vector<std::shared_ptr<Node>>
                get_child_nodes_of(const std::shared_ptr<Node>& node) const;
    
-               void save_to_folder(const std::string& output_folder) const;
+               void save_to(const std::string& output_dir) const;
    
-               void load_from_folder(const std::string& input_folder);
+               void load_from(const std::string& input_dir);
    
                std::vector<Edge> get_edges() const;
+   
+               void write_graphviz(std::ostream& output_stream) const;
+   
+               int get_cardinality_of(const std::string& node_label) const;
    
                // --------------------------------------------------------
                // Getters & Setters
                // --------------------------------------------------------
-               //            const std::vector<std::shared_ptr<RandomVariableNode>>
-               //            get_nodes() const;
-               //
-               //            const std::vector<RandomVariableNode>&
-               //            get_node_templates() const;
-   
                int get_time_steps() const;
    
              private:

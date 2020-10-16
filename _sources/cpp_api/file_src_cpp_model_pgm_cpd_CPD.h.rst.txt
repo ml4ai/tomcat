@@ -29,6 +29,8 @@ Includes
 --------
 
 
+- ``distribution/Distribution.h`` (:ref:`file_src_cpp_model_distribution_Distribution.h`)
+
 - ``eigen3/Eigen/Dense``
 
 - ``gsl/gsl_randist.h``
@@ -39,11 +41,9 @@ Includes
 
 - ``memory``
 
-- ``model/distribution/Distribution.h`` (:ref:`file_src_cpp_model_distribution_Distribution.h`)
+- ``pgm/Node.h`` (:ref:`file_src_cpp_model_pgm_Node.h`)
 
-- ``model/pgm/Node.h`` (:ref:`file_src_cpp_model_pgm_Node.h`)
-
-- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
+- ``utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 - ``vector``
 

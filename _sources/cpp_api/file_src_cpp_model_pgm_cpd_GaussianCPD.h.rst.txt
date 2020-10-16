@@ -29,11 +29,11 @@ Includes
 --------
 
 
-- ``model/distribution/Gaussian.h`` (:ref:`file_src_cpp_model_distribution_Gaussian.h`)
+- ``distribution/Gaussian.h`` (:ref:`file_src_cpp_model_distribution_Gaussian.h`)
 
-- ``model/pgm/cpd/CPD.h`` (:ref:`file_src_cpp_model_pgm_cpd_CPD.h`)
+- ``pgm/cpd/CPD.h`` (:ref:`file_src_cpp_model_pgm_cpd_CPD.h`)
 
-- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
+- ``utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 
 

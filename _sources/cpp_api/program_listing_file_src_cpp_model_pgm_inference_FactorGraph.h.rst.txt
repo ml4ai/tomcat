@@ -13,16 +13,19 @@ Program Listing for File FactorGraph.h
    #pragma once
    
    #include <array>
+   #include <functional>
    #include <memory>
    #include <string>
+   #include <unordered_set>
    #include <utility>
    #include <vector>
    
    #include <boost/graph/adjacency_list.hpp>
    
-   #include "model/utils/Definitions.h"
-   #include "model/pgm/DynamicBayesNet.h"
-   #include "model/pgm/inference/MessageNode.h"
+   #include "pgm/DynamicBayesNet.h"
+   #include "pgm/inference/FactorNode.h"
+   #include "pgm/inference/MessageNode.h"
+   #include "utils/Definitions.h"
    
    namespace tomcat {
        namespace model {
@@ -84,9 +87,13 @@ Program Listing for File FactorGraph.h
                    const std::shared_ptr<MessageNode>& template_node) const;
    
                Eigen::MatrixXd get_marginal_for(const std::string& node_label,
-                                                int time_step) const;
+                                                int time_step,
+                                                bool normalized) const;
    
                void erase_incoming_messages_beyond(int time_step);
+   
+               std::unordered_set<std::shared_ptr<FactorNode>>
+               get_transition_factors_at(int time_step) const;
    
              private:
                //------------------------------------------------------------------
@@ -152,6 +159,12 @@ Program Listing for File FactorGraph.h
    
                std::array<std::vector<std::shared_ptr<MessageNode>>, 3>
                    time_sliced_reversed_topological_order;
+   
+               // Stores the factor nodes that link variable nodes in two different
+               // time steps.
+   
+               std::array<std::unordered_set<std::shared_ptr<FactorNode>>, 3>
+                   transition_factors_per_time_step;
            };
    
        } // namespace model

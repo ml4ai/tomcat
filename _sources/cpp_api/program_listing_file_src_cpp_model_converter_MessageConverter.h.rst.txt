@@ -1,0 +1,82 @@
+
+.. _program_listing_file_src_cpp_model_converter_MessageConverter.h:
+
+Program Listing for File MessageConverter.h
+===========================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_src_cpp_model_converter_MessageConverter.h>` (``src/cpp/model/converter/MessageConverter.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #pragma once
+   
+   #include <string>
+   #include <unordered_map>
+   #include <vector>
+   
+   #include <nlohmann/json.hpp>
+   
+   #include "utils/Definitions.h"
+   
+   namespace tomcat {
+       namespace model {
+   
+           class MessageConverter {
+             public:
+               //------------------------------------------------------------------
+               // Constructors & Destructor
+               //------------------------------------------------------------------
+   
+               MessageConverter();
+   
+               MessageConverter(int time_gap);
+   
+               virtual ~MessageConverter();
+   
+               //------------------------------------------------------------------
+               // Copy & Move constructors/assignments
+               //------------------------------------------------------------------
+   
+               // Copy constructor and assignment should be deleted to avoid
+               // implicit slicing and loss of polymorphic behaviour in the
+               // subclasses. To deep copy, the clone method must be used.
+               MessageConverter(const MessageConverter&) = delete;
+   
+               MessageConverter& operator=(const MessageConverter&) = delete;
+   
+               MessageConverter(MessageConverter&&) = default;
+   
+               MessageConverter& operator=(MessageConverter&&) = default;
+   
+               //------------------------------------------------------------------
+               // Pure virtual functions
+               //------------------------------------------------------------------
+   
+               virtual void convert_offline(const std::string& input_dir,
+                                    const std::string& output_dir) = 0;
+   
+               virtual std::unordered_map<std::string, double>
+               convert_online(const nlohmann::json& message) = 0;
+   
+             protected:
+               //------------------------------------------------------------------
+               // Member functions
+               //------------------------------------------------------------------
+   
+               void copy_converter(const MessageConverter& converter);
+   
+               //------------------------------------------------------------------
+               // Data members
+               //------------------------------------------------------------------
+   
+               // Number of seconds between observations
+               int time_gap;
+   
+               // Next time step to gather observations from
+               int time_step = 0;
+           };
+   
+       } // namespace model
+   } // namespace tomcat

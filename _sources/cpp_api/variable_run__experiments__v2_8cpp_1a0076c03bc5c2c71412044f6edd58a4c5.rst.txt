@@ -1,0 +1,13 @@
+.. _exhale_variable_run__experiments__v2_8cpp_1a0076c03bc5c2c71412044f6edd58a4c5:
+
+Variable DATA_ROOT_DIR
+======================
+
+- Defined in :ref:`file_src_cpp_model_run_experiments_v2.cpp`
+
+
+Variable Documentation
+----------------------
+
+
+.. doxygenvariable:: DATA_ROOT_DIR

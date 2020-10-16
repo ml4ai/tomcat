@@ -33,21 +33,21 @@ Includes
 
 - ``memory``
 
-- ``model/pgm/DynamicBayesNet.h`` (:ref:`file_src_cpp_model_pgm_DynamicBayesNet.h`)
-
-- ``model/pgm/EvidenceSet.h`` (:ref:`file_src_cpp_model_pgm_EvidenceSet.h`)
-
-- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
-
-- ``model/utils/Tensor3.h`` (:ref:`file_src_cpp_model_utils_Tensor3.h`)
-
 - ``nlohmann/json.hpp``
+
+- ``pgm/DynamicBayesNet.h`` (:ref:`file_src_cpp_model_pgm_DynamicBayesNet.h`)
+
+- ``pgm/EvidenceSet.h`` (:ref:`file_src_cpp_model_pgm_EvidenceSet.h`)
 
 - ``set``
 
 - ``string``
 
 - ``unordered_set``
+
+- ``utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
+
+- ``utils/Tensor3.h`` (:ref:`file_src_cpp_model_utils_Tensor3.h`)
 
 - ``vector``
 
@@ -82,6 +82,8 @@ Namespaces
 Classes
 -------
 
+
+- :ref:`exhale_struct_structtomcat_1_1model_1_1CumulativeNodeEstimates`
 
 - :ref:`exhale_struct_structtomcat_1_1model_1_1NodeEstimates`
 

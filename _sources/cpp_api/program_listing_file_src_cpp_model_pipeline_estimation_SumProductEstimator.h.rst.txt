@@ -12,10 +12,10 @@ Program Listing for File SumProductEstimator.h
 
    #pragma once
    
-   #include "model/utils/Definitions.h"
+   #include "utils/Definitions.h"
    
-   #include "model/pgm/inference/FactorGraph.h"
-   #include "model/pipeline/estimation/Estimator.h"
+   #include "pgm/inference/FactorGraph.h"
+   #include "pipeline/estimation/Estimator.h"
    
    namespace tomcat {
        namespace model {
@@ -26,8 +26,11 @@ Program Listing for File SumProductEstimator.h
                // Constructors & Destructor
                //------------------------------------------------------------------
    
-               SumProductEstimator(std::shared_ptr<DynamicBayesNet> model,
-                                   int inference_horizon);
+               SumProductEstimator(
+                   std::shared_ptr<DynamicBayesNet> model,
+                   int inference_horizon,
+                   const std::string& node_label,
+                   const Eigen::VectorXd& assignment = Eigen::VectorXd(0));
    
                ~SumProductEstimator();
    
@@ -48,7 +51,7 @@ Program Listing for File SumProductEstimator.h
                //------------------------------------------------------------------
                void prepare() override;
    
-               void estimate(EvidenceSet new_data) override;
+               void estimate(const EvidenceSet& new_data) override;
    
                void get_info(nlohmann::json& json) const override;
    
@@ -60,6 +63,8 @@ Program Listing for File SumProductEstimator.h
                //------------------------------------------------------------------
                // Member functions
                //------------------------------------------------------------------
+   
+               void estimate_forward_in_time(const EvidenceSet& new_data);
    
                void compute_forward_messages(const FactorGraph& factor_graph,
                                              int time_step,
@@ -74,8 +79,10 @@ Program Listing for File SumProductEstimator.h
                                                    int assignment,
                                                    int num_data_points);
    
-               void add_column_to_estimates(NodeEstimates& estimates,
-                                            const Eigen::VectorXd new_column);
+               void add_column_to_estimates(const Eigen::VectorXd new_column,
+                                            int index = 0);
+   
+               void estimate_backward_in_time(const EvidenceSet& new_data);
    
                //------------------------------------------------------------------
                // Data members

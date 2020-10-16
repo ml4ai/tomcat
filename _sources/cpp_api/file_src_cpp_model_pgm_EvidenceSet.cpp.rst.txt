@@ -33,9 +33,9 @@ Includes
 
 - ``boost/filesystem.hpp``
 
-- ``model/utils/EigenExtensions.h`` (:ref:`file_src_cpp_model_utils_EigenExtensions.h`)
+- ``utils/EigenExtensions.h`` (:ref:`file_src_cpp_model_utils_EigenExtensions.h`)
 
-- ``model/utils/Tensor3.h`` (:ref:`file_src_cpp_model_utils_Tensor3.h`)
+- ``utils/Tensor3.h`` (:ref:`file_src_cpp_model_utils_Tensor3.h`)
 
 
 

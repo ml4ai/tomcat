@@ -37,7 +37,7 @@ Includes
 
 - ``fmt/format.h``
 
-- ``model/utils/FileHandler.h`` (:ref:`file_src_cpp_model_utils_FileHandler.h`)
+- ``utils/FileHandler.h`` (:ref:`file_src_cpp_model_utils_FileHandler.h`)
 
 
 

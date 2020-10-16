@@ -1,0 +1,22 @@
+.. _exhale_struct_structtomcat_1_1model_1_1OnlineEstimation_1_1MessageBrokerConfiguration:
+
+Struct OnlineEstimation::MessageBrokerConfiguration
+===================================================
+
+- Defined in :ref:`file_src_cpp_model_pipeline_estimation_OnlineEstimation.h`
+
+
+Nested Relationships
+--------------------
+
+This struct is a nested type of :ref:`exhale_class_classtomcat_1_1model_1_1OnlineEstimation`.
+
+
+Struct Documentation
+--------------------
+
+
+.. doxygenstruct:: tomcat::model::OnlineEstimation::MessageBrokerConfiguration
+   :members:
+   :protected-members:
+   :undoc-members:

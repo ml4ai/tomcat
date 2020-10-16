@@ -255,14 +255,15 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4NK6tomcat5model12VariableNode15get_marginal_atEi">
-<span id="_CPPv3NK6tomcat5model12VariableNode15get_marginal_atEi"></span><span id="_CPPv2NK6tomcat5model12VariableNode15get_marginal_atEi"></span><span id="tomcat::model::VariableNode::get_marginal_at__iC"></span><span class="target" id="classtomcat_1_1model_1_1VariableNode_1ab6c017a19b8d00d4de2a99196a457492"></span>Eigen::MatrixXd <code class="sig-name descname">get_marginal_at</code><span class="sig-paren">(</span>int <em>time_step</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model12VariableNode15get_marginal_atEi" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4NK6tomcat5model12VariableNode15get_marginal_atEib">
+<span id="_CPPv3NK6tomcat5model12VariableNode15get_marginal_atEib"></span><span id="_CPPv2NK6tomcat5model12VariableNode15get_marginal_atEib"></span><span id="tomcat::model::VariableNode::get_marginal_at__i.bC"></span><span class="target" id="classtomcat_1_1model_1_1VariableNode_1aedfadc14d6ac19a36749a93fc2a756f3"></span>Eigen::MatrixXd <code class="sig-name descname">get_marginal_at</code><span class="sig-paren">(</span>int <em>time_step</em>, bool <em>normalized</em><span class="sig-paren">)</span> <em class="property">const</em><a class="headerlink" href="#_CPPv4NK6tomcat5model12VariableNode15get_marginal_atEib" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Computes the marginal distribution for a given node in a certain point in time. The marginal is given by the multiplication of all the incoming messages to the node.</p>
 <p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p>Marginal distribution </p>
 </dd>
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">time_step</span></code>: time step for inference</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">time_step</span></code>: time step for inference </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">normalized</span></code>: whether the multiplication of incoming messages must be normalized or not.</p></li>
 </ul>
 </dd>
 </dl>

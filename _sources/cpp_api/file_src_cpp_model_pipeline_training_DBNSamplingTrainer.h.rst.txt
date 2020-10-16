@@ -31,9 +31,9 @@ Includes
 
 - ``DBNTrainer.h`` (:ref:`file_src_cpp_model_pipeline_training_DBNTrainer.h`)
 
-- ``model/sampling/Sampler.h`` (:ref:`file_src_cpp_model_sampling_Sampler.h`)
+- ``sampling/Sampler.h`` (:ref:`file_src_cpp_model_sampling_Sampler.h`)
 
-- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
+- ``utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 
 
@@ -41,7 +41,7 @@ Included By
 -----------
 
 
-- :ref:`file_src_cpp_model_main.cpp`
+- :ref:`file_src_cpp_model_experiments_Experimentation.h`
 
 - :ref:`file_src_cpp_model_pipeline_training_DBNSamplingTrainer.cpp`
 

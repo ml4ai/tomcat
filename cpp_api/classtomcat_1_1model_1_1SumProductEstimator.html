@@ -40,7 +40,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Class Tensor3" href="classtomcat_1_1model_1_1Tensor3.html" />
+    <link rel="next" title="Template Class SynchronizedQueue" href="classtomcat_1_1model_1_1SynchronizedQueue.html" />
     <link rel="prev" title="Class Sampler" href="classtomcat_1_1model_1_1Sampler.html" /> 
 </head>
 
@@ -186,13 +186,15 @@
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Public Functions</p>
 <dl class="cpp function">
-<dt id="_CPPv4N6tomcat5model19SumProductEstimator19SumProductEstimatorENSt10shared_ptrI15DynamicBayesNetEEi">
-<span id="_CPPv3N6tomcat5model19SumProductEstimator19SumProductEstimatorENSt10shared_ptrI15DynamicBayesNetEEi"></span><span id="_CPPv2N6tomcat5model19SumProductEstimator19SumProductEstimatorENSt10shared_ptrI15DynamicBayesNetEEi"></span><span id="tomcat::model::SumProductEstimator::SumProductEstimator__std::shared_ptr:DynamicBayesNet:.i"></span><span class="target" id="classtomcat_1_1model_1_1SumProductEstimator_1abc447c797b8e136b8082fb79cb6ea861"></span><code class="sig-name descname">SumProductEstimator</code><span class="sig-paren">(</span>std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1DynamicBayesNet.html#_CPPv4N6tomcat5model15DynamicBayesNetE" title="tomcat::model::DynamicBayesNet">DynamicBayesNet</a>&gt; <em>model</em>, int <em>inference_horizon</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model19SumProductEstimator19SumProductEstimatorENSt10shared_ptrI15DynamicBayesNetEEi" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4N6tomcat5model19SumProductEstimator19SumProductEstimatorENSt10shared_ptrI15DynamicBayesNetEEiRKNSt6stringERKN5Eigen8VectorXdE">
+<span id="_CPPv3N6tomcat5model19SumProductEstimator19SumProductEstimatorENSt10shared_ptrI15DynamicBayesNetEEiRKNSt6stringERKN5Eigen8VectorXdE"></span><span id="_CPPv2N6tomcat5model19SumProductEstimator19SumProductEstimatorENSt10shared_ptrI15DynamicBayesNetEEiRKNSt6stringERKN5Eigen8VectorXdE"></span><span id="tomcat::model::SumProductEstimator::SumProductEstimator__std::shared_ptr:DynamicBayesNet:.i.ssCR.Eigen::VectorXdCR"></span><span class="target" id="classtomcat_1_1model_1_1SumProductEstimator_1af9d57471f508d053829b95744d3f131f"></span><code class="sig-name descname">SumProductEstimator</code><span class="sig-paren">(</span>std::shared_ptr&lt;<a class="reference internal" href="classtomcat_1_1model_1_1DynamicBayesNet.html#_CPPv4N6tomcat5model15DynamicBayesNetE" title="tomcat::model::DynamicBayesNet">DynamicBayesNet</a>&gt; <em>model</em>, int <em>inference_horizon</em>, <em class="property">const</em> std::string &amp;<em>node_label</em>, <em class="property">const</em> Eigen::VectorXd &amp;<em>assignment</em> = Eigen::VectorXd(0)<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N6tomcat5model19SumProductEstimator19SumProductEstimatorENSt10shared_ptrI15DynamicBayesNetEEiRKNSt6stringERKN5Eigen8VectorXdE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Creates an instance of a sum-product estimator.</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">model</span></code>: DBN </p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">inference_horizon</span></code>: how many time steps in the future estimations are going to be computed for </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">node_label</span></code>: label of the node estimates are going to be computed for </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">assignment</span></code>: fixed assignment (for instance, estimates = probability that the node assumes a value x, where x is the fixed assignment). This parameter is optional when the inference horizon is 0, but mandatory otherwise. </p></li>
 </ul>
 </dd>
 </dl>
@@ -231,12 +233,12 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4N6tomcat5model19SumProductEstimator8estimateE11EvidenceSet">
-<span id="_CPPv3N6tomcat5model19SumProductEstimator8estimateE11EvidenceSet"></span><span id="_CPPv2N6tomcat5model19SumProductEstimator8estimateE11EvidenceSet"></span><span id="tomcat::model::SumProductEstimator::estimate__EvidenceSet"></span><span class="target" id="classtomcat_1_1model_1_1SumProductEstimator_1a268656413e61c9bf8b9e871efb877487"></span>void <code class="sig-name descname">estimate</code><span class="sig-paren">(</span><a class="reference internal" href="classtomcat_1_1model_1_1EvidenceSet.html#_CPPv4N6tomcat5model11EvidenceSetE" title="tomcat::model::EvidenceSet">EvidenceSet</a> <em>new_data</em><span class="sig-paren">)</span> <em class="property">override</em><a class="headerlink" href="#_CPPv4N6tomcat5model19SumProductEstimator8estimateE11EvidenceSet" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4N6tomcat5model19SumProductEstimator8estimateERK11EvidenceSet">
+<span id="_CPPv3N6tomcat5model19SumProductEstimator8estimateERK11EvidenceSet"></span><span id="_CPPv2N6tomcat5model19SumProductEstimator8estimateERK11EvidenceSet"></span><span id="tomcat::model::SumProductEstimator::estimate__EvidenceSetCR"></span><span class="target" id="classtomcat_1_1model_1_1SumProductEstimator_1a1cc9fcb414f0ffa2ce87e459f150f6a7"></span>void <code class="sig-name descname">estimate</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="classtomcat_1_1model_1_1EvidenceSet.html#_CPPv4N6tomcat5model11EvidenceSetE" title="tomcat::model::EvidenceSet">EvidenceSet</a> &amp;<em>new_data</em><span class="sig-paren">)</span> <em class="property">override</em><a class="headerlink" href="#_CPPv4N6tomcat5model19SumProductEstimator8estimateERK11EvidenceSet" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Computes new estimates for the new data. New data consists of observed values for time steps after the last processed one.</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">new_data</span></code>: observed values for time steps not already seen by the method </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">new_data</span></code>: observed values for time steps not already seen by the estimator </p></li>
 </ul>
 </dd>
 </dl>
@@ -246,7 +248,7 @@
 <dl class="cpp function">
 <dt id="_CPPv4NK6tomcat5model19SumProductEstimator8get_infoERN8nlohmann4jsonE">
 <span id="_CPPv3NK6tomcat5model19SumProductEstimator8get_infoERN8nlohmann4jsonE"></span><span id="_CPPv2NK6tomcat5model19SumProductEstimator8get_infoERN8nlohmann4jsonE"></span><span id="tomcat::model::SumProductEstimator::get_info__nlohmann::jsonRC"></span><span class="target" id="classtomcat_1_1model_1_1SumProductEstimator_1ab9ba7651acc202880f8f61b0e6d71c20"></span>void <code class="sig-name descname">get_info</code><span class="sig-paren">(</span>nlohmann::json &amp;<em>json</em><span class="sig-paren">)</span> <em class="property">const</em> <em class="property">override</em><a class="headerlink" href="#_CPPv4NK6tomcat5model19SumProductEstimator8get_infoERN8nlohmann4jsonE" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Writes information about the splitter in a json object.</p>
+<dd><p>Writes information about the estimator in a json object.</p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">json</span></code>: json object </p></li>
@@ -289,7 +291,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="classtomcat_1_1model_1_1Tensor3.html" class="btn btn-neutral float-right" title="Class Tensor3" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="classtomcat_1_1model_1_1SynchronizedQueue.html" class="btn btn-neutral float-right" title="Template Class SynchronizedQueue" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="classtomcat_1_1model_1_1Sampler.html" class="btn btn-neutral float-left" title="Class Sampler" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

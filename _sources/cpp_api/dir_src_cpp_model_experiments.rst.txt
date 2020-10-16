@@ -1,0 +1,27 @@
+.. _dir_src_cpp_model_experiments:
+
+
+Directory experiments
+=====================
+
+
+|exhale_lsh| :ref:`Parent directory <dir_src_cpp_model>` (``src/cpp/model``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+*Directory path:* ``src/cpp/model/experiments``
+
+
+Files
+-----
+
+- :ref:`file_src_cpp_model_experiments_Experimentation.cpp`
+- :ref:`file_src_cpp_model_experiments_Experimentation.h`
+- :ref:`file_src_cpp_model_experiments_Tomcat.cpp`
+- :ref:`file_src_cpp_model_experiments_Tomcat.h`
+- :ref:`file_src_cpp_model_experiments_TomcatTA3.cpp`
+- :ref:`file_src_cpp_model_experiments_TomcatTA3.h`
+- :ref:`file_src_cpp_model_experiments_TomcatTA3V2.cpp`
+- :ref:`file_src_cpp_model_experiments_TomcatTA3V2.h`
+
+

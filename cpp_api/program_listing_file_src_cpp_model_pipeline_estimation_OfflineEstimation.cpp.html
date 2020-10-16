@@ -191,27 +191,29 @@
         <span class="p">}</span>
 
         <span class="c1">//----------------------------------------------------------------------</span>
-        <span class="c1">// Static functions</span>
-        <span class="c1">//----------------------------------------------------------------------</span>
-        <span class="kt">void</span> <span class="n">OfflineEstimation</span><span class="o">::</span><span class="n">run_estimation_thread</span><span class="p">(</span>
-            <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Estimator</span><span class="o">&gt;</span> <span class="n">estimator</span><span class="p">,</span>
-            <span class="k">const</span> <span class="n">EvidenceSet</span><span class="o">&amp;</span> <span class="n">test_data</span><span class="p">)</span> <span class="p">{</span>
-
-            <span class="n">estimator</span><span class="o">-&gt;</span><span class="n">estimate</span><span class="p">(</span><span class="n">test_data</span><span class="p">);</span>
-        <span class="p">}</span>
-
-        <span class="c1">//----------------------------------------------------------------------</span>
         <span class="c1">// Member functions</span>
         <span class="c1">//----------------------------------------------------------------------</span>
-        <span class="kt">void</span> <span class="n">OfflineEstimation</span><span class="o">::</span><span class="n">estimate</span><span class="p">(</span><span class="n">EvidenceSet</span> <span class="n">test_data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">void</span> <span class="n">OfflineEstimation</span><span class="o">::</span><span class="n">estimate</span><span class="p">(</span><span class="k">const</span> <span class="n">EvidenceSet</span><span class="o">&amp;</span> <span class="n">test_data</span><span class="p">)</span> <span class="p">{</span>
             <span class="c1">// Execute each one of the estimators in a single thread.</span>
-            <span class="n">vector</span><span class="o">&lt;</span><span class="kr">thread</span><span class="o">&gt;</span> <span class="n">threads</span><span class="p">;</span>
-            <span class="n">threads</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">estimators</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
             <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="nl">estimator</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">estimators</span><span class="p">)</span> <span class="p">{</span>
                 <span class="kr">thread</span> <span class="nf">estimation_thread</span><span class="p">(</span>
-                    <span class="n">run_estimation_thread</span><span class="p">,</span> <span class="n">estimator</span><span class="p">,</span> <span class="n">test_data</span><span class="p">);</span>
+                    <span class="o">&amp;</span><span class="n">OfflineEstimation</span><span class="o">::</span><span class="n">run_estimation_thread</span><span class="p">,</span>
+                    <span class="k">this</span><span class="p">,</span>
+                    <span class="n">estimator</span><span class="p">,</span>
+                    <span class="n">test_data</span><span class="p">);</span>
                 <span class="n">estimation_thread</span><span class="p">.</span><span class="n">join</span><span class="p">();</span>
             <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="kt">void</span> <span class="n">OfflineEstimation</span><span class="o">::</span><span class="n">run_estimation_thread</span><span class="p">(</span>
+            <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Estimator</span><span class="o">&gt;</span> <span class="n">estimator</span><span class="p">,</span> <span class="k">const</span> <span class="n">EvidenceSet</span><span class="o">&amp;</span> <span class="n">test_data</span><span class="p">)</span> <span class="p">{</span>
+
+            <span class="n">EstimationProcess</span><span class="o">::</span><span class="n">estimate</span><span class="p">(</span><span class="n">estimator</span><span class="p">,</span> <span class="n">test_data</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="kt">void</span> <span class="n">OfflineEstimation</span><span class="o">::</span><span class="n">get_info</span><span class="p">(</span><span class="n">nlohmann</span><span class="o">::</span><span class="n">json</span><span class="o">&amp;</span> <span class="n">json</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+            <span class="n">EstimationProcess</span><span class="o">::</span><span class="n">get_info</span><span class="p">(</span><span class="n">json</span><span class="p">);</span>
+            <span class="n">json</span><span class="p">[</span><span class="s">&quot;process&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;offline&quot;</span><span class="p">;</span>
         <span class="p">}</span>
 
     <span class="p">}</span> <span class="c1">// namespace model</span>

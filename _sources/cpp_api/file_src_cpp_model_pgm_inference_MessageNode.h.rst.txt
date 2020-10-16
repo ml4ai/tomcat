@@ -33,13 +33,13 @@ Includes
 
 - ``memory``
 
-- ``model/utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
-
 - ``string``
 
 - ``unordered_map``
 
 - ``utility``
+
+- ``utils/Definitions.h`` (:ref:`file_src_cpp_model_utils_Definitions.h`)
 
 - ``vector``
 
@@ -64,6 +64,8 @@ Namespaces
 ----------
 
 
+- :ref:`namespace_std`
+
 - :ref:`namespace_tomcat`
 
 - :ref:`namespace_tomcat__model`
@@ -72,6 +74,8 @@ Namespaces
 Classes
 -------
 
+
+- :ref:`exhale_struct_structstd_1_1hash_3_01shared__ptr_3_01tomcat_1_1model_1_1MessageNode_01_4_01_4`
 
 - :ref:`exhale_struct_structtomcat_1_1model_1_1MessageNode_1_1MessageContainer`
 
