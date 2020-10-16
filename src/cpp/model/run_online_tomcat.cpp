@@ -79,7 +79,8 @@ void run_tomcat(const string& model_dir,
 int main(int argc, char* argv[]) {
     string model_dir;
     string map_config_filepath;
-    string broker_address unsigned int broker_port;
+    string broker_address;
+    unsigned int broker_port;
     unsigned int timeout;
 
     po::options_description desc("Allowed options");
