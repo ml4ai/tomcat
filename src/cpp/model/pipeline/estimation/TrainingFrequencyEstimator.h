@@ -2,7 +2,7 @@
 
 #include <unordered_set>
 
-#include "model/utils/Definitions.h"
+#include "utils/Definitions.h"
 
 #include "Estimator.h"
 
@@ -28,32 +28,43 @@ namespace tomcat {
              * @param model: DBN
              * @param inference_horizon: how many time steps in the future
              * estimations are going to be computed for
+             * @param node_label: label of the node estimates are going to be
+             * computed for
+             * @param assignment: fixed assignment (for instance, estimates =
+             * probability that the node assumes a value x, where x is the fixed
+             * assignment). This parameter is optional when the inference
+             * horizon is 0, but mandatory otherwise.
              */
-            TrainingFrequencyEstimator(std::shared_ptr<DynamicBayesNet> model,
-                              int inference_horizon);
+            TrainingFrequencyEstimator(
+                std::shared_ptr<DynamicBayesNet> model,
+                int inference_horizon,
+                const std::string& node_label,
+                const Eigen::VectorXd& assignment = Eigen::VectorXd(0));
 
             ~TrainingFrequencyEstimator();
 
             //------------------------------------------------------------------
             // Copy & Move constructors/assignments
             //------------------------------------------------------------------
-            TrainingFrequencyEstimator(const TrainingFrequencyEstimator& estimator);
+            TrainingFrequencyEstimator(
+                const TrainingFrequencyEstimator& estimator);
 
-            TrainingFrequencyEstimator& operator=(const TrainingFrequencyEstimator& estimator);
+            TrainingFrequencyEstimator&
+            operator=(const TrainingFrequencyEstimator& estimator);
 
             TrainingFrequencyEstimator(TrainingFrequencyEstimator&&) = default;
 
-            TrainingFrequencyEstimator& operator=(TrainingFrequencyEstimator&&) = default;
+            TrainingFrequencyEstimator&
+            operator=(TrainingFrequencyEstimator&&) = default;
 
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-            void estimate(EvidenceSet new_data) override;
+            void estimate(const EvidenceSet& new_data) override;
 
             void get_info(nlohmann::json& json) const override;
 
             std::string get_name() const override;
-
         };
 
     } // namespace model

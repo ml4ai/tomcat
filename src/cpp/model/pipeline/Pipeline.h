@@ -7,13 +7,13 @@
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-#include "model/pgm/EvidenceSet.h"
-#include "model/utils/Definitions.h"
-#include "model/pipeline/DBNSaver.h"
-#include "model/pipeline/KFold.h"
-#include "model/pipeline/estimation/EstimationProcess.h"
-#include "model/pipeline/evaluation/EvaluationAggregator.h"
-#include "model/pipeline/training/DBNTrainer.h"
+#include "pgm/EvidenceSet.h"
+#include "utils/Definitions.h"
+#include "pipeline/DBNSaver.h"
+#include "pipeline/KFold.h"
+#include "pipeline/estimation/EstimationProcess.h"
+#include "pipeline/evaluation/EvaluationAggregator.h"
+#include "pipeline/training/DBNTrainer.h"
 
 namespace tomcat {
     namespace model {
@@ -134,7 +134,7 @@ namespace tomcat {
 
             std::shared_ptr<EstimationProcess> estimation_process;
 
-            std::shared_ptr<EvaluationAggregator> aggregator;
+            std::shared_ptr<EvaluationAggregator> evaluation;
         };
 
     } // namespace model

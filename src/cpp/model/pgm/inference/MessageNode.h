@@ -8,7 +8,7 @@
 
 #include <eigen3/Eigen/Dense>
 
-#include "model/utils/Definitions.h"
+#include "utils/Definitions.h"
 
 namespace tomcat {
     namespace model {
@@ -93,6 +93,11 @@ namespace tomcat {
             MessageNode(MessageNode&&) = default;
 
             MessageNode& operator=(MessageNode&&) = default;
+
+            //------------------------------------------------------------------
+            // Operator overload
+            //------------------------------------------------------------------
+            bool operator==(const MessageNode& obj) const;
 
             //------------------------------------------------------------------
             // Static functions
@@ -269,3 +274,14 @@ namespace tomcat {
 
     } // namespace model
 } // namespace tomcat
+
+// Hash for usage of this class in unordered sets.
+namespace std {
+    template <> struct hash<shared_ptr<tomcat::model::MessageNode>> {
+        size_t operator()(const shared_ptr<tomcat::model::MessageNode>&
+        message_node) const {
+            return hash<string>{}(
+                message_node->get_name());
+        }
+    };
+} // namespace std

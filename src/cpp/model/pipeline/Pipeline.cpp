@@ -26,8 +26,9 @@ namespace tomcat {
             boost::posix_time::ptime start_time =
                 boost::posix_time::microsec_clock::universal_time();
 
-            if (this->aggregator != nullptr) {
-                this->aggregator->reset();
+            this->estimation_process->clear_estimates();
+            if (this->evaluation != nullptr) {
+                this->evaluation->clear_evaluations();
             }
 
             vector<KFold::Split> splits = this->data_splitter->get_splits();
@@ -38,17 +39,18 @@ namespace tomcat {
                     this->model_saver->save();
                 }
 
-                this->estimation_process->reset();
+                this->estimation_process->prepare();
                 this->estimation_process->set_training_data(training_data);
                 this->estimation_process->estimate(test_data);
+                this->estimation_process->keep_estimates();
 
-                if (this->aggregator != nullptr) {
-                    this->aggregator->evaluate(test_data);
+                if (this->evaluation != nullptr) {
+                    this->evaluation->evaluate(test_data);
                 }
             }
 
-            if (this->aggregator != nullptr) {
-                this->aggregator->aggregate();
+            if (this->evaluation != nullptr) {
+                this->evaluation->aggregate();
             }
 
             boost::posix_time::ptime end_time =
@@ -91,7 +93,10 @@ namespace tomcat {
             json["duration_in_seconds"] = duration_in_seconds;
             this->data_splitter->get_info(json["data_split"]);
             this->model_trainer->get_info(json["training"]);
-            this->aggregator->get_info(json["evaluation"]);
+            this->estimation_process->get_info(json["estimation"]);
+            if (this->evaluation) {
+                this->evaluation->get_info(json["evaluation"]);
+            }
 
             this->output_stream << setw(4) << json;
         }
@@ -121,7 +126,7 @@ namespace tomcat {
 
         void Pipeline::set_aggregator(
             const shared_ptr<EvaluationAggregator>& aggregator) {
-            this->aggregator = aggregator;
+            this->evaluation = aggregator;
         }
 
     } // namespace model

@@ -1,10 +1,18 @@
 package edu.arizona.tomcat.Events;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.microsoft.Malmo.MalmoMod;
 import edu.arizona.tomcat.Messaging.MqttService;
 import edu.arizona.tomcat.Mission.Mission;
 import edu.arizona.tomcat.Mission.ZombieMission;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockLever;
@@ -27,20 +35,12 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemPickupEvent;
 import net.minecraftforge.fml.relauncher.Side;
-import java.nio.file.Paths;
-import java.io.*;
-import java.nio.file.Files;
-import java.util.Map;
-import com.google.gson.GsonBuilder;
-import com.google.gson.Gson;
-import java.util.List;
-import java.util.HashMap;
 
 public class ForgeEventHandler {
 
     private FMLCommonHandler fmlCommonHandler = FMLCommonHandler.instance();
     private int zombieMissionVillagersSaved = 0;
-    
+
     private boolean devMode = false;
     private List<String> whitelist = null;
     private String dmPath = "devmode.json";
@@ -51,7 +51,7 @@ public class ForgeEventHandler {
 
     private static ForgeEventHandler instance = null;
     private ForgeEventHandler() {
-        Map<?,?> devMap = readDevModeJson();
+        Map<?, ?> devMap = readDevModeJson();
         this.devMode = getDevMode(devMap);
         this.whitelist = getWhitelist(devMap);
     }
@@ -85,56 +85,56 @@ public class ForgeEventHandler {
 
     /**
      * This method takes a string command name to add to the list of
-     * whitelisted commands, and modifies the config file accordingly. 
-     */ 
+     * whitelisted commands, and modifies the config file accordingly.
+     */
     public void addToWhitelist(String cmd) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         FileWriter fwriter = null;
-        Map<String,Object> jMap = new HashMap <String,Object>();
+        Map<String, Object> jMap = new HashMap<String, Object>();
         // this makes for 'set-like' operation; we can't use an actual set
         // because JSONs don't support sets.
         if (!this.whitelist.contains(cmd)) {
             this.whitelist.add(cmd);
-        } else {
+        }
+        else {
             return;
         }
-        jMap.put("devmode",this.devMode);
-        jMap.put("whitelist",this.whitelist);
+        jMap.put("devmode", this.devMode);
+        jMap.put("whitelist", this.whitelist);
 
         try {
             fwriter = new FileWriter(this.dmPath);
-            gson.toJson(jMap,fwriter);
+            gson.toJson(jMap, fwriter);
             fwriter.close();
-        } catch (IOException ex) {
+        }
+        catch (IOException ex) {
             ex.printStackTrace();
         }
-
     }
 
     public void removeFromWhitelist(String cmd) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         FileWriter fwriter = null;
-        Map<String,Object> jMap = new HashMap <String,Object>();
+        Map<String, Object> jMap = new HashMap<String, Object>();
         // this makes for 'set-like' operation; we can't use an actual set
         // because JSONs don't support sets.
         if (!this.whitelist.contains(cmd)) {
             this.whitelist.remove(cmd);
-        } else {
+        }
+        else {
             return;
         }
-        jMap.put("devmode",this.devMode);
-        jMap.put("whitelist",this.whitelist);
+        jMap.put("devmode", this.devMode);
+        jMap.put("whitelist", this.whitelist);
 
         try {
             fwriter = new FileWriter("devmode.json");
-            gson.toJson(jMap,fwriter);
+            gson.toJson(jMap, fwriter);
             fwriter.close();
-        } catch (IOException ex) {
+        }
+        catch (IOException ex) {
             ex.printStackTrace();
         }
-
-
-    
     }
 
     /**
@@ -145,16 +145,17 @@ public class ForgeEventHandler {
      *
      * @return devMap - the Map version of the JSON config.
      */
-    private Map<?,?> readDevModeJson() {
+    private Map<?, ?> readDevModeJson() {
         Gson gson = new Gson();
         Reader reader = null;
-        Map<?,?> devMap = null;
-        
+        Map<?, ?> devMap = null;
+
         try {
             reader = Files.newBufferedReader(Paths.get(this.dmPath));
             devMap = gson.fromJson(reader, Map.class);
             reader.close();
-        } catch (IOException ex) {
+        }
+        catch (IOException ex) {
             ex.printStackTrace();
         }
 
@@ -166,12 +167,12 @@ public class ForgeEventHandler {
      * from the developer mode JSON
      *
      * @param devMap - the Map version of the JSON config file.
-     */ 
-    private List<String> getWhitelist(Map<?,?> devMap) {
+     */
+    private List<String> getWhitelist(Map<?, ?> devMap) {
         List<String> list = null;
 
         if (devMap.get("whitelist") instanceof List<?>) {
-            list = (List<String>) devMap.get("whitelist");
+            list = (List<String>)devMap.get("whitelist");
         }
 
         return list;
@@ -179,20 +180,20 @@ public class ForgeEventHandler {
 
     /**
      * Helper function to pull the boolean devmode (enabled or disabled) from
-     * the devmap created from the developer mode JSON. 
+     * the devmap created from the developer mode JSON.
      *
      * @param devMap - the Map version of the JSON config file
      */
-    private boolean getDevMode(Map<?,?> devMap) {
+    private boolean getDevMode(Map<?, ?> devMap) {
         boolean devmode = false;
 
         if (devMap.get("devmode") instanceof Boolean) {
-            devmode = (Boolean) devMap.get("devmode");
+            devmode = (Boolean)devMap.get("devmode");
         }
 
         return devmode;
     }
-    
+
     /**
      * Called by checkExtraEvents at every tick to see if a villager has been
      * saved in the given mission
@@ -361,11 +362,12 @@ public class ForgeEventHandler {
         this.mqttService.publish(new Chat(event), "observations/chat");
     }
 
-    /** Command event handler
-     * 
-     *  Currently, just handles turning dev mode on/off and bus publishing; 
-     *  all commands are enabled in dev mode and all are disabled out of dev mode 
-     *  excluding those whitelisted for command block function.
+    /**
+     * Command event handler
+     *
+     *  Currently, just handles turning dev mode on/off and bus publishing;
+     *  all commands are enabled in dev mode and all are disabled out of dev
+     * mode excluding those whitelisted for command block function.
      */
     @SubscribeEvent
     public void handle(CommandEvent event) {
@@ -375,8 +377,11 @@ public class ForgeEventHandler {
                 if (event.isCancelable()) {
                     event.setCanceled(true);
                 }
-            } else {
-                this.mqttService.publish(new CommandExecuted(event), "observations/events/command_executed");
+            }
+            else {
+                this.mqttService.publish(
+                    new CommandExecuted(event),
+                    "observations/events/command_executed");
             }
         }
     }

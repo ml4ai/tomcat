@@ -2,13 +2,14 @@
 
 #include <boost/filesystem.hpp>
 
-#include "model/utils/EigenExtensions.h"
-#include "model/utils/Tensor3.h"
+#include "utils/EigenExtensions.h"
+#include "utils/Tensor3.h"
 
 namespace tomcat {
     namespace model {
 
         using namespace std;
+        namespace fs = boost::filesystem;
 
         //----------------------------------------------------------------------
         // Constructors & Destructor
@@ -24,8 +25,7 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Operator overload
         //----------------------------------------------------------------------
-        const Tensor3&
-            EvidenceSet::operator[](const string& node_label) const {
+        const Tensor3& EvidenceSet::operator[](const string& node_label) const {
             return this->node_label_to_data.at(node_label);
         }
 
@@ -82,24 +82,31 @@ namespace tomcat {
 
         int EvidenceSet::get_first_time_with_observation(const Tensor3& data) {
 
-            int time_step = -1;
+            int time_step = 0;
             auto [d1, d2, d3] = data.get_shape();
             for (int k = 0; k < d3; k++) {
-                bool has_data = true;
-                for (int i = 0; i < d1; i++) {
-                    for (int j = 0; j < d2; j++) {
+                bool obs_data = false;
+                for (int j = 0; j < d2; j++) {
+                    // If every data in depth is non_observable, the given time
+                    // step k for the data point in row j is defined as non
+                    // observable.
+                    for (int i = 0; i < d1; i++) {
                         if (data.at(i, j, k) != NO_OBS) {
-                            has_data = false;
-                            time_step++;
+                            obs_data = true;
                             break;
                         }
                     }
-                    if (!has_data) {
+
+                    // Also, if at least one data point is non-observable at given time step,
+                    // no other data point should be.
+                    if (!obs_data) {
                         break;
                     }
                 }
-                if (!has_data) {
+                if (obs_data) {
                     break;
+                } else {
+                    time_step++;
                 }
             }
 
@@ -109,15 +116,14 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void
-        EvidenceSet::init_from_folder(const string& data_folder_path) {
-            for (const auto& file :
-                 boost::filesystem::directory_iterator(data_folder_path)) {
-
-                string filename = file.path().filename().string();
-                string node_label = remove_extension(filename);
-                Tensor3 data = read_tensor_from_file(file.path().string());
-                this->add_data(node_label, data);
+        void EvidenceSet::init_from_folder(const string& data_folder_path) {
+            for (const auto& file : fs::directory_iterator(data_folder_path)) {
+                if (fs::is_regular_file(file)) {
+                    string filename = file.path().filename().string();
+                    string node_label = remove_extension(filename);
+                    Tensor3 data = read_tensor_from_file(file.path().string());
+                    this->add_data(node_label, data);
+                }
             }
         }
 
@@ -179,17 +185,23 @@ namespace tomcat {
         }
 
         void EvidenceSet::keep_first(int num_samples) {
-            for(auto&[node_label, data] : this->node_label_to_data){
+            for (auto& [node_label, data] : this->node_label_to_data) {
                 data = data.slice(0, num_samples, 1);
             }
             this->num_data_points = num_samples;
         }
 
         void EvidenceSet::shrink_up_to(int time_step) {
-            for(auto&[node_label, data] : this->node_label_to_data){
+            for (auto& [node_label, data] : this->node_label_to_data) {
                 data = data.slice(0, time_step + 1, 2);
             }
             this->time_steps = time_step + 1;
+        }
+
+        bool EvidenceSet::empty() const { return this->num_data_points == 0; }
+
+        void EvidenceSet::remove(const string& node_label) {
+            this->node_label_to_data.erase(node_label);
         }
 
         //----------------------------------------------------------------------

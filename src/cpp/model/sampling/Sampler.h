@@ -4,10 +4,10 @@
 
 #include <nlohmann/json.hpp>
 
-#include "model/pgm/DynamicBayesNet.h"
-#include "model/pgm/EvidenceSet.h"
-#include "model/utils/Definitions.h"
-#include "model/utils/Tensor3.h"
+#include "pgm/DynamicBayesNet.h"
+#include "pgm/EvidenceSet.h"
+#include "utils/Definitions.h"
+#include "utils/Tensor3.h"
 
 namespace tomcat {
     namespace model {
@@ -69,13 +69,16 @@ namespace tomcat {
              *
              * @param data: observed values for the observable nodes over time.
              */
-            void add_data(EvidenceSet data);
+            void add_data(const EvidenceSet& data);
 
             /**
              * Saves generated samples to files in a specific folder.
              * @param output_folder: folder where the files should be saved.
+             * @param excluding: list of node labels to exclude.
              */
-            void save_samples_to_folder(const std::string& output_folder) const;
+            void save_samples_to_folder(
+                const std::string& output_folder,
+                const std::unordered_set<std::string> excluding = {}) const;
 
             //------------------------------------------------------------------
             // Virtual functions
@@ -85,6 +88,7 @@ namespace tomcat {
              * Returns samples generated for a specific latent node.
              *
              * @param node_label: latent node label
+             *
              * @return Samples over time. A matrix of dimension (num_samples,
              * time_steps).
              */
@@ -119,6 +123,8 @@ namespace tomcat {
 
             const std::shared_ptr<DynamicBayesNet>& get_model() const;
 
+            void set_max_time_step_to_sample(int maxTimeStepToSample);
+
           protected:
             //------------------------------------------------------------------
             // Member functions
@@ -146,6 +152,8 @@ namespace tomcat {
             int num_in_plate_samples = 1;
 
             EvidenceSet data;
+
+            int max_time_step_to_sample = -1;
 
           private:
             //------------------------------------------------------------------

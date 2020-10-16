@@ -1,7 +1,7 @@
 #pragma once
 
-#include "model/utils/Definitions.h"
-#include "model/pipeline/evaluation/Measure.h"
+#include "pipeline/evaluation/Measure.h"
+#include "utils/Definitions.h"
 
 namespace tomcat {
     namespace model {
@@ -24,7 +24,8 @@ namespace tomcat {
              * inferring the occurrence of an assignment as true
              */
             Accuracy(std::shared_ptr<Estimator> estimator,
-                     double threshold = 0.5);
+                     double threshold = 0.5,
+                     bool use_last_estimate = false);
 
             ~Accuracy();
 
@@ -42,7 +43,7 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-            std::vector<NodeEvaluation>
+            NodeEvaluation
             evaluate(const EvidenceSet& test_data) const override;
 
             void get_info(nlohmann::json& json) const override;

@@ -2,7 +2,7 @@
 
 #include "MessageNode.h"
 
-#include "model/utils/Definitions.h"
+#include "utils/Definitions.h"
 
 namespace tomcat {
     namespace model {
@@ -73,10 +73,13 @@ namespace tomcat {
              * the incoming messages to the node.
              *
              * @param time_step: time step for inference
+             * @param normalized: whether the multiplication of incoming
+             * messages must be normalized or not.
              *
              * @return Marginal distribution
              */
-            Eigen::MatrixXd get_marginal_at(int time_step) const;
+            Eigen::MatrixXd get_marginal_at(int time_step,
+                                            bool normalized) const;
 
             /**
              * Stores data for the node in a given time step. If there's data in

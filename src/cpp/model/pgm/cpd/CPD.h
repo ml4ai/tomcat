@@ -8,9 +8,9 @@
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
 
-#include "model/distribution/Distribution.h"
-#include "model/utils/Definitions.h"
-#include "model/pgm/Node.h"
+#include "distribution/Distribution.h"
+#include "utils/Definitions.h"
+#include "pgm/Node.h"
 
 namespace tomcat {
     namespace model {
@@ -49,6 +49,9 @@ namespace tomcat {
          */
         class CPD {
           public:
+            //------------------------------------------------------------------
+            // Types, Enums & Constants
+            //------------------------------------------------------------------
             typedef std::unordered_map<std::string, ParentIndexing>
                 TableOrderingMap;
 

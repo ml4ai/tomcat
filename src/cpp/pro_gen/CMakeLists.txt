@@ -27,6 +27,7 @@ add_library(
   AABB.cpp
   World.cpp
   Block.cpp
+  Door.cpp
   Lever.cpp
   Entity.cpp
   Group.cpp

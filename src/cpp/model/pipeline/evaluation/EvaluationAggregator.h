@@ -5,9 +5,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "model/pgm/EvidenceSet.h"
-#include "model/utils/Definitions.h"
-#include "model/pipeline/evaluation/Measure.h"
+#include "pgm/EvidenceSet.h"
+#include "pipeline/evaluation/Measure.h"
+#include "utils/Definitions.h"
 
 namespace tomcat {
     namespace model {
@@ -26,12 +26,12 @@ namespace tomcat {
             std::vector<Eigen::MatrixXd> aggregated_values;
 
             // The error is a single matrix because, depending on the measure
-            // chosen to evaluate nodes, the results can be matrices instead of a
-            // single number. In that case, if the method chosen for aggregating
-            // such evaluations is indeed a summarizer (it can just preserve
-            // the evaluations with no aggregation at all), the resultant error
-            // will be over a list of matrices, which will result in a single
-            // matrix.
+            // chosen to evaluate nodes, the results can be matrices instead of
+            // a single number. In that case, if the method chosen for
+            // aggregating such evaluations is indeed a summarizer (it can just
+            // preserve the evaluations with no aggregation at all), the
+            // resultant error will be over a list of matrices, which will
+            // result in a single matrix.
             Eigen::MatrixXd errors;
         };
 
@@ -93,7 +93,7 @@ namespace tomcat {
             /**
              * Prepares the aggregator to start again.
              */
-            void reset();
+            void clear_evaluations();
 
             /**
              * Adds a measure to the aggregator.
@@ -136,8 +136,8 @@ namespace tomcat {
              *
              * @return Aggregated evaluations
              */
-            Aggregation
-            compute_aggregation(const std::vector<Eigen::MatrixXd>& evaluations) const;
+            Aggregation compute_aggregation(
+                const std::vector<Eigen::MatrixXd>& evaluations) const;
 
             /**
              * Returns the name of the aggregation method used;
@@ -153,18 +153,18 @@ namespace tomcat {
 
             std::vector<std::shared_ptr<Measure>> measures;
 
-            // This stores a list of evaluations per node for a certain measure.
-            // A combination of measure and node can have multiple evaluations
-            // because the pipeline may call the evaluate function multiple
-            // times by using cross validation, for instance. The aggregator
-            // will store all the evaluations in this data structure and it will
-            // aggregate them only upon request.
-            std::vector<std::vector<std::vector<NodeEvaluation>>>
+            // This stores a list of evaluations for a certain measure.
+            // A measure can have multiple evaluations because the pipeline may
+            // call the evaluate function multiple times by using cross
+            // validation, for instance. The aggregator will store all the
+            // evaluations in this data structure and it will aggregate them
+            // only upon request.
+            std::vector<std::vector<NodeEvaluation>>
                 evaluations_per_measure;
 
             // This stores the aggregated values for the evaluations previously
             // computed and kept.
-            std::vector<std::vector<NodeEvaluationAggregation>>
+            std::vector<NodeEvaluationAggregation>
                 aggregations_per_measure;
         };
 

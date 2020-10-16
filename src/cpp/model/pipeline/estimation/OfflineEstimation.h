@@ -1,8 +1,8 @@
 #pragma once
 
-#include "model/utils/Definitions.h"
+#include "utils/Definitions.h"
 
-#include "model/pipeline/estimation/EstimationProcess.h"
+#include "pipeline/estimation/EstimationProcess.h"
 
 namespace tomcat {
     namespace model {
@@ -39,11 +39,13 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-            void estimate(EvidenceSet test_data) override;
+            void estimate(const EvidenceSet& test_data) override;
+
+            void get_info(nlohmann::json& json) const override;
 
           private:
             //------------------------------------------------------------------
-            // Static functions
+            // Member functions
             //------------------------------------------------------------------
 
             /**
@@ -53,7 +55,7 @@ namespace tomcat {
              * @param estimator: estimator
              * @param test_data: data to estimate values over
              */
-            static void
+            void
             run_estimation_thread(std::shared_ptr<Estimator> estimator,
                                   const EvidenceSet& test_data);
         };

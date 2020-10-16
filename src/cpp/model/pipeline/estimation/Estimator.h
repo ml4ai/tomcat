@@ -9,10 +9,10 @@
 #include <eigen3/Eigen/Dense>
 #include <nlohmann/json.hpp>
 
-#include "model/pgm/DynamicBayesNet.h"
-#include "model/pgm/EvidenceSet.h"
-#include "model/utils/Definitions.h"
-#include "model/utils/Tensor3.h"
+#include "pgm/DynamicBayesNet.h"
+#include "pgm/EvidenceSet.h"
+#include "utils/Definitions.h"
+#include "utils/Tensor3.h"
 
 namespace tomcat {
     namespace model {
@@ -33,8 +33,36 @@ namespace tomcat {
             Eigen::VectorXd assignment;
 
             // Probabilities or densities calculated for n data points over
-            // several time steps.
-            Eigen::MatrixXd estimates;
+            // several time steps. If an assignment is provided, there will be
+            // only one matrix in the vector containing the estimates for each
+            // one of the data points and time steps. If no assignment is given,
+            // there will be as many matrix estimates as the cardinality of the
+            // node. In sum, there will be estimates for each possible
+            // assignment the node can have.
+            std::vector<Eigen::MatrixXd> estimates;
+        };
+
+        /**
+         * This struct stores a node's label, assignment over which the
+         * estimator must perform its computations and a list of the multiple
+         * times estimates were calculated by the estimator.
+         */
+        struct CumulativeNodeEstimates {
+
+            std::string label;
+
+            Eigen::VectorXd assignment;
+
+            // The external vector represents the content for each one of the
+            // executions of the estimation process. In a cross-validation
+            // procedure,the size of this vector will be defined by the number
+            // of folds. The internal vector store estimates for each one of the
+            // possible node's assignments. This will only happen if no fixed
+            // assignment was provided, otherwise, this vector will have size 1
+            // as it will contain estimated for a single assignment only. Single
+            // assignments make sense when a inference horizon of size > 0 is
+            // used.
+            std::vector<std::vector<Eigen::MatrixXd>> estimates;
         };
 
         /**
@@ -57,8 +85,17 @@ namespace tomcat {
              * @param model: DBN
              * @param inference_horizon: how many time steps in the future
              * estimations are going to be computed for
+             * @param node_label: label of the node estimates are going to be
+             * computed for
+             * @param assignment: fixed assignment (for instance, estimates =
+             * probability that the node assumes a value x, where x is the fixed
+             * assignment). This parameter is optional when the inference
+             * horizon is 0, but mandatory otherwise.
              */
-            Estimator(std::shared_ptr<DynamicBayesNet> model, int inference_horizon);
+            Estimator(std::shared_ptr<DynamicBayesNet> model,
+                      int inference_horizon,
+                      const std::string& node_label,
+                      const Eigen::VectorXd& assignment = Eigen::VectorXd(0));
 
             virtual ~Estimator();
 
@@ -82,40 +119,34 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
-             * Adds a new node to have its assignment estimated over time.
+             * Returns estimates at a given time step.
              *
-             * @param node: node's label and assignment
+             * @param time_step: Time step to get the estimates from
+             *
+             * @return Estimates.
              */
-            void add_node(const std::string& node_label,
-                          const Eigen::VectorXd& assignment);
+            NodeEstimates get_estimates_at(int time_step) const;
 
             /**
-             * Returns estimates at a given time step, for all nodes processed
-             * by the estimator.
-             *
-             * @param time_step: First time step to get the estimates
-             * from
-             *
-             * @return Series of estimates for the nodes in the estimator.
+             * Store the last estimates computed in a list of cumulative
+             * estimates.
              */
-            std::vector<NodeEstimates> get_estimates_at(int time_step) const;
+            void keep_estimates();
 
             /**
-             * Returns all the estimates computed so far, for all nodes
-             * processed by the estimator.
-             *
-             * @return Series of estimates for the nodes in the estimator.
+             * Clear last estimates and cumulative estimates computed by the
+             * estimator.
              */
-            std::vector<NodeEstimates> get_estimates() const;
+            void clear_estimates();
 
             //------------------------------------------------------------------
             // Virtual functions
             //------------------------------------------------------------------
 
             /**
-            * Initializations before the computation of estimates.
-            *
-            */
+             * Initializations before the computation of estimates.
+             *
+             */
             virtual void prepare();
 
             //------------------------------------------------------------------
@@ -127,12 +158,12 @@ namespace tomcat {
              * observed values for time steps after the last processed one.
              *
              * @param new_data: observed values for time steps not already
-             * seen by the method
+             * seen by the estimator
              */
-            virtual void estimate(EvidenceSet new_data) = 0;
+            virtual void estimate(const EvidenceSet& new_data) = 0;
 
             /**
-             * Writes information about the splitter in a json object.
+             * Writes information about the estimator in a json object.
              *
              * @param json: json object
              */
@@ -148,9 +179,16 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Getters & Setters
             //------------------------------------------------------------------
+            NodeEstimates get_estimates() const;
+
+            CumulativeNodeEstimates
+            get_cumulative_estimates() const;
+
             int get_inference_horizon() const;
 
             void set_training_data(const EvidenceSet& training_data);
+
+            const std::shared_ptr<DynamicBayesNet>& get_model() const;
 
           protected:
             //------------------------------------------------------------------
@@ -177,8 +215,13 @@ namespace tomcat {
             // computations to avoid recalculations as new data is available.
             EvidenceSet test_data;
 
-            // List of nodes to estimate, their assignments and estimates
-            std::vector<NodeEstimates> nodes_estimates;
+            // Node to compute estimates, its fixed assignment (optional if
+            // inference_horizon = 0) and estimates
+            NodeEstimates estimates;
+
+            // Node to compute estimates, its fixed assignment and cumulative
+            // estimates
+            CumulativeNodeEstimates cumulative_estimates;
 
             // An inference horizon determines if the task is a prediction (> 0)
             // or an inference (= 0). If it's a prediction, the horizon

@@ -17,5 +17,4 @@ public class CommandExecuted extends Event {
         this.parameters = event.getParameters();
         this.sender = event.getSender().getName();
     }
-
 }

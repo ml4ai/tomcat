@@ -2,8 +2,8 @@
 
 #include "MessageNode.h"
 
-#include "model/utils/Definitions.h"
-#include "model/pgm/cpd/CPD.h"
+#include "utils/Definitions.h"
+#include "pgm/cpd/CPD.h"
 
 namespace tomcat {
     namespace model {
