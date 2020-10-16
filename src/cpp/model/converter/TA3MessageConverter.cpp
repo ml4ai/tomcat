@@ -93,6 +93,8 @@ namespace tomcat {
                     vector<nlohmann::json> messages =
                         this->get_sorted_messages_in(file.path().string());
 
+                    this->training_condition = NO_OBS;
+
                     for (auto& message : messages) {
                         for (const auto& [node_label, value] :
                              this->convert_online(message)) {
@@ -118,18 +120,33 @@ namespace tomcat {
                                     d - 1, this->time_step) = value;
                             }
 
+                            // There are 4 training conditions but only the
+                            // first 3 are relevant for us.
+                            if (this->training_condition > 2) {
+                                break;
+                            }
                         }
 
-                        if (this->time_step > T) {
+                        if (this->time_step > T ||
+                            this->training_condition > 2) {
                             break;
                         }
                     }
 
-                    // The mission ended before the total amount of seconds expected. Discard this mission trial
-                    // and emit a message.
-                    if (this->time_step < T) {
-                        cerr << "Early stopping in file " << file.path().filename() << endl;
-                    } else {
+                    if (this->training_condition > 2) {
+                        // The training condition is invalid. Discard this
+                        // mission trial and emit a message.
+                        cerr << "Training condition > 2 in file "
+                             << file.path().filename() << endl;
+                    }
+                    else if (this->time_step < T) {
+                        // The mission ended before the total amount of seconds
+                        // expected. Discard this mission trial and emit a
+                        // message.
+                        cerr << "Early stopping in file "
+                             << file.path().filename() << endl;
+                    }
+                    else {
                         d++;
                     }
                     ++progress;
@@ -182,7 +199,8 @@ namespace tomcat {
                     observations_per_node = this->last_observations_per_node;
                 }
                 else if (message["topic"] == "trial") {
-                    this->fill_training_condition_observation(message);
+                    const string value = message["data"]["condition"];
+                    this->training_condition = stoi(value) - 1;
                 }
             }
 
@@ -202,6 +220,8 @@ namespace tomcat {
                             this->last_observations_per_node[SG] = 0;
                             this->last_observations_per_node[SY] = 0;
                             this->last_observations_per_node[BEEP] = 0;
+                            this->last_observations_per_node[Q] =
+                                this->training_condition;
                         }
 
                         observations_per_node =
@@ -293,13 +313,6 @@ namespace tomcat {
                     this->last_observations_per_node[ROOM] = value;
                 }
             }
-        }
-
-        void TA3MessageConverter::fill_training_condition_observation(
-            const nlohmann::json& json_message) {
-
-            const string value = json_message["data"]["condition"];
-            this->last_observations_per_node[Q] = stoi(value) - 1;
         }
 
         void TA3MessageConverter::fill_beep_observation(

@@ -41,6 +41,9 @@ find_package(Mosquitto 1.5 REQUIRED)
 file(GLOB tomcat_model_headers CONFIGURE_DEPENDS
      ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 
+file(GLOB tomcat_model_cpp CONFIGURE_DEPENDS
+        ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+
 # Header and cpp files
 add_library(
   tomcat_model_lib STATIC
@@ -91,7 +94,7 @@ add_library(
         converter/MessageConverter.cpp
         experiments/Tomcat.cpp
         experiments/TomcatTA3.cpp
-        experiments/TomcatTA3V2.cpp experiments/Experimentation.cpp experiments/Experimentation.h)
+        experiments/TomcatTA3V2.cpp experiments/Experimentation.cpp )
 
 target_include_directories(tomcat_model_lib PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}" ${Boost_INCLUDE_DIR})
@@ -114,23 +117,33 @@ if(APPLE
   endif()
 endif()
 
-add_executable(TomcatModel main.cpp)
-target_include_directories(TomcatModel PRIVATE ${Boost_INCLUDE_DIR}
-                                               ${Mosquitto_INCLUDE_DIRS}
-                                               "${CMAKE_CURRENT_SOURCE_DIR}"
-                                               )
-target_link_libraries(
-  TomcatModel
-  PRIVATE tomcat_model_lib
-          ${Boost_LIBRARIES}
-          Eigen3::Eigen
-          GSL::gsl
-          GSL::gslcblas
-          fmt::fmt
-          nlohmann_json::nlohmann_json
-          ${Mosquitto_LIBRARIES})
+set(EXPERIMENT_INCLUDES ${Boost_INCLUDE_DIR} ${Mosquitto_INCLUDE_DIRS} "${CMAKE_CURRENT_SOURCE_DIR}")
+set(EXPERIMENT_LIBS tomcat_model_lib
+                    ${Boost_LIBRARIES}
+                    Eigen3::Eigen
+                    GSL::gsl
+                    GSL::gslcblas
+                    fmt::fmt
+                    nlohmann_json::nlohmann_json
+                    ${Mosquitto_LIBRARIES})
 
-add_executable(TomcatConverter offline_message_converter.cpp)
+# Target for online ToMCAT
+add_executable(TomcatModelOnline run_online_tomcat.cpp)
+target_include_directories(TomcatModelOnline PRIVATE ${EXPERIMENT_INCLUDES})
+target_link_libraries(TomcatModelOnline PRIVATE ${EXPERIMENT_LIBS})
+
+# Target for experiments with model v1.0
+add_executable(TomcatModelV1 run_experiments_v1.cpp)
+target_include_directories(TomcatModelV1 PRIVATE ${EXPERIMENT_INCLUDES})
+target_link_libraries(TomcatModelV1 PRIVATE ${EXPERIMENT_LIBS})
+
+# Target for experiments with model v2.0
+add_executable(TomcatModelV2 run_experiments_v2.cpp)
+target_include_directories(TomcatModelV2 PRIVATE ${EXPERIMENT_INCLUDES})
+target_link_libraries(TomcatModelV2 PRIVATE ${EXPERIMENT_LIBS})
+
+# Target for data conversion
+add_executable(TomcatConverter convert_messages.cpp)
 target_include_directories(TomcatConverter PRIVATE ${Boost_INCLUDE_DIR}
         "${CMAKE_CURRENT_SOURCE_DIR}"
         )

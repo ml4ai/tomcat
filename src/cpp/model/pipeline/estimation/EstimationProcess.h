@@ -102,7 +102,7 @@ namespace tomcat {
              * @param test_data: Test data used to compute the estimations for
              * the model
              */
-            virtual void estimate(EvidenceSet test_data) = 0;
+            virtual void estimate(const EvidenceSet& test_data) = 0;
 
             //------------------------------------------------------------------
             // Getters & Setters
@@ -119,6 +119,17 @@ namespace tomcat {
              * Copies data members from another estimation process.
              */
             void copy_estimation(const EstimationProcess& estimation);
+
+            /**
+             * Computes estimations for a model over a test data using a given
+             * estimator.
+             *
+             * @param estimator: estimator
+             * @param test_data: test data used to compute the estimations for
+             * the model
+             */
+            void estimate(std::shared_ptr<Estimator> estimator,
+                          const EvidenceSet& test_data);
 
             //------------------------------------------------------------------
             // Data members

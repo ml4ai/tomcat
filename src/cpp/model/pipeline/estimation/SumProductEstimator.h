@@ -25,9 +25,18 @@ namespace tomcat {
              * @param model: DBN
              * @param inference_horizon: how many time steps in the future
              * estimations are going to be computed for
+             * @param node_label: label of the node estimates are going to be
+             * computed for
+             * @param assignment: fixed assignment (for instance, estimates =
+             * probability that the node assumes a value x, where x is the fixed
+             * assignment). This parameter is optional when the inference
+             * horizon is 0, but mandatory otherwise.
              */
-            SumProductEstimator(std::shared_ptr<DynamicBayesNet> model,
-                                int inference_horizon);
+            SumProductEstimator(
+                std::shared_ptr<DynamicBayesNet> model,
+                int inference_horizon,
+                const std::string& node_label,
+                const Eigen::VectorXd& assignment = Eigen::VectorXd(0));
 
             ~SumProductEstimator();
 
@@ -118,15 +127,13 @@ namespace tomcat {
             /**
              * Appends the estimates matrix with a new column.
              *
-             * @param estimates: estimates for a given node
              * @param new_column: new column with new estimates
              * @param index: index of the assignment for which the estimates
              * were computed. If there's a fixed assignment in the NodeEstimates
              * data, the index is always zero as there'll be estimates just for
              * a single assignment.
              */
-            void add_column_to_estimates(NodeEstimates& estimates,
-                                         const Eigen::VectorXd new_column,
+            void add_column_to_estimates(const Eigen::VectorXd new_column,
                                          int index = 0);
 
             /**

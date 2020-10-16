@@ -105,10 +105,10 @@ namespace tomcat {
              *
              * @param test_data: data to calculate the measure over
              *
-             * @return Computed values for all of the nodes processed by the
+             * @return Evaluation for over the estimates computed by an
              * estimator.
              */
-            virtual std::vector<NodeEvaluation>
+            virtual NodeEvaluation
             evaluate(const EvidenceSet& test_data) const = 0;
 
             /**
@@ -140,15 +140,22 @@ namespace tomcat {
              * implemented in one of the derived classes as it does not make
              * sense for some measures (e.g. f1-score).
              *
-             * @param estimates: estimates previously computed for the model
-             * @param test_data: data with real values to compare the estimates
-             * against
+             * @param probabilities: estimated probabilities previously computed
+             * by an estimator
+             * @param true_values: data with true values to compare the
+             * estimates against
+             * @param fixed_assignment: node's assignment to compare the
+             * estimated probability against the real value (e.g. compare the
+             * probability that the node assumes the value x, where x is the
+             * fixed assignment). This transforms the evaluation in a binary
+             * classification.
              *
              * @return Confusion matrix.
              */
             ConfusionMatrix
-            get_confusion_matrix(const NodeEstimates& estimates,
-                                 const EvidenceSet& test_data) const;
+            get_confusion_matrix(const Eigen::MatrixXd& probabilities,
+                                 const Eigen::MatrixXd& true_values,
+                                 int fixed_assignment) const;
 
             //------------------------------------------------------------------
             // Data members

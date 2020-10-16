@@ -12,7 +12,7 @@ namespace tomcat {
          */
         class TomcatTA3V2 : public TomcatTA3 {
           public:
-            inline static const int NUM_TRAINING_CONDITIONS = 4;
+            inline static const int NUM_TRAINING_CONDITIONS = 3;
             inline static const int NUM_BEEP_STATES = 3;
 
             // Hidden variable labels

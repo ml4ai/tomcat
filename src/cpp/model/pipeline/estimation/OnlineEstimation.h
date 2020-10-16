@@ -83,7 +83,7 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-            void estimate(EvidenceSet test_data) override;
+            void estimate(const EvidenceSet& test_data) override;
 
           protected:
             void prepare() override;

@@ -74,8 +74,11 @@ namespace tomcat {
             /**
              * Saves generated samples to files in a specific folder.
              * @param output_folder: folder where the files should be saved.
+             * @param excluding: list of node labels to exclude.
              */
-            void save_samples_to_folder(const std::string& output_folder) const;
+            void save_samples_to_folder(
+                const std::string& output_folder,
+                const std::unordered_set<std::string> excluding = {}) const;
 
             //------------------------------------------------------------------
             // Virtual functions
@@ -166,7 +169,6 @@ namespace tomcat {
              * Unfreeze nodes that have data assigned to them.
              */
             void unfreeze_observable_nodes();
-
         };
     } // namespace model
 } // namespace tomcat

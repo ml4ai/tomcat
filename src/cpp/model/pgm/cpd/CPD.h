@@ -49,6 +49,9 @@ namespace tomcat {
          */
         class CPD {
           public:
+            //------------------------------------------------------------------
+            // Types, Enums & Constants
+            //------------------------------------------------------------------
             typedef std::unordered_map<std::string, ParentIndexing>
                 TableOrderingMap;
 

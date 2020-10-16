@@ -131,18 +131,6 @@ namespace tomcat {
             void fill_room_observation(const nlohmann::json& json_message);
 
             /**
-             * Returns observation about the training condition used in the
-             * experiment.
-             *
-             * @param json_message: json message containing information about
-             * the training condition.
-             *
-             * @return Training condition observation.
-             */
-            void fill_training_condition_observation(
-                const nlohmann::json& json_message);
-
-            /**
              * Returns observation about the beep event.
              *
              * @param json_message: json message containing information about
@@ -168,6 +156,8 @@ namespace tomcat {
 
             // Last observations per node.
             std::unordered_map<std::string, double> last_observations_per_node;
+
+            int training_condition = NO_OBS;
         };
 
     } // namespace model

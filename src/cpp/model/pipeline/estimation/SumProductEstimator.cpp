@@ -16,8 +16,11 @@ namespace tomcat {
         // Constructors & Destructor
         //----------------------------------------------------------------------
         SumProductEstimator::SumProductEstimator(
-            shared_ptr<DynamicBayesNet> model, int inference_horizon)
-            : Estimator(model, inference_horizon) {}
+            shared_ptr<DynamicBayesNet> model,
+            int inference_horizon,
+            const std::string& node_label,
+            const Eigen::VectorXd& assignment)
+            : Estimator(model, inference_horizon, node_label, assignment) {}
 
         SumProductEstimator::~SumProductEstimator() {}
 
@@ -63,54 +66,45 @@ namespace tomcat {
             int total_time = this->next_time_step + new_data.get_time_steps();
             cout << "Sum-Product (h = " << this->inference_horizon << ")";
             boost::progress_display progress(total_time);
-            for (int t = this->next_time_step;
-                 t < total_time;
-                 t++) {
+            for (int t = this->next_time_step; t < total_time; t++) {
 
                 this->compute_forward_messages(this->factor_graph, t, new_data);
                 this->compute_backward_messages(
                     this->factor_graph, t, new_data);
 
-                for (auto& estimates : this->nodes_estimates) {
-                    if (this->inference_horizon > 0) {
-                        int discrete_assignment = estimates.assignment[0];
+                if (this->inference_horizon > 0) {
+                    int discrete_assignment = this->estimates.assignment[0];
 
-                        Eigen::VectorXd estimates_in_time_step = this->get_predictions_for(
-                            estimates.label,
+                    Eigen::VectorXd estimates_in_time_step =
+                        this->get_predictions_for(
+                            this->estimates.label,
                             t,
                             discrete_assignment,
                             new_data.get_num_data_points());
 
-                        this->add_column_to_estimates(estimates,
-                                                      estimates_in_time_step);
+                    this->add_column_to_estimates(estimates_in_time_step);
+                }
+                else {
+                    Eigen::MatrixXd marginal =
+                        this->factor_graph.get_marginal_for(this->estimates.label, t, true);
+
+                    if (marginal.size() == 0) {
+                        marginal = Eigen::MatrixXd::Constant(
+                            new_data.get_num_data_points(), 1, NO_OBS);
                     }
                     else {
-                        Eigen::MatrixXd marginal =
-                            factor_graph.get_marginal_for(
-                                estimates.label, t, true);
+                        if (this->estimates.assignment.size() != 0) {
+                            int discrete_assignment = this->estimates.assignment[0];
+                            Eigen::VectorXd estimates_in_time_step =
+                                marginal.col(discrete_assignment);
 
-                        if (marginal.size() == 0) {
-                            marginal = Eigen::MatrixXd::Constant(
-                                new_data.get_num_data_points(), 1, NO_OBS);
+                            this->add_column_to_estimates(estimates_in_time_step);
                         }
                         else {
-                            if (estimates.assignment.size() != 0) {
-                                int discrete_assignment =
-                                    estimates.assignment[0];
+                            for (int col = 0; col < marginal.cols(); col++) {
                                 Eigen::VectorXd estimates_in_time_step =
-                                    marginal.col(discrete_assignment);
-
-                                this->add_column_to_estimates(estimates,
-                                                              estimates_in_time_step);
-                            }
-                            else {
-                                for (int col = 0; col < marginal.cols();
-                                     col++) {
-                                    Eigen::VectorXd estimates_in_time_step = marginal.col(col);
-                                    this->add_column_to_estimates(estimates,
-                                                                  estimates_in_time_step,
-                                                                  col);
-                                }
+                                    marginal.col(col);
+                                this->add_column_to_estimates(estimates_in_time_step, col);
                             }
                         }
                     }
@@ -293,7 +287,7 @@ namespace tomcat {
             EvidenceSet horizon_data;
             horizon_data.add_data(node_label,
                                   Tensor3(opposite_assignment_matrix));
-            Eigen::VectorXd estimates;
+            Eigen::VectorXd estimated_probabilities;
 
             for (int h = 1; h <= this->inference_horizon; h++) {
                 // Simulate new data coming and compute estimates in a regular
@@ -307,11 +301,11 @@ namespace tomcat {
                 Eigen::MatrixXd marginal = factor_graph.get_marginal_for(
                     node_label, time_step + h, false);
 
-                if (estimates.size() == 0) {
-                    estimates = marginal.col(opposite_assignment);
+                if (estimated_probabilities.size() == 0) {
+                    estimated_probabilities = marginal.col(opposite_assignment);
                 }
                 else {
-                    estimates = estimates.array() *
+                    estimated_probabilities = estimated_probabilities.array() *
                                 marginal.col(opposite_assignment).array();
                 }
             }
@@ -319,29 +313,27 @@ namespace tomcat {
             this->next_time_step -= (time_step + this->inference_horizon);
             this->factor_graph.erase_incoming_messages_beyond(time_step);
 
-            estimates = 1 - estimates.array();
+            estimated_probabilities = 1 - estimated_probabilities.array();
 
-            return estimates;
+            return estimated_probabilities;
         }
 
         void SumProductEstimator::add_column_to_estimates(
-            NodeEstimates& estimates, const Eigen::VectorXd new_column, int index) {
-            if (estimates.estimates.size() < index + 1) {
-                estimates.estimates.push_back(Eigen::MatrixXd(0, 0));
-            }
-
-
-            if (estimates.estimates[index].size() == 0) {
-                estimates.estimates[index] = new_column;
-            }
-            else {
+            const Eigen::VectorXd new_column,
+            int index) {
+            if (this->estimates.estimates.size() < index + 1) {
+                // First estimates for a given assignment
+                this->estimates.estimates.push_back(Eigen::MatrixXd(0, 0));
+                this->estimates.estimates[index] = new_column;
+            } else {
                 // Append new column to the existing estimates
-                int num_rows = estimates.estimates[index].rows();
-                int num_cols = estimates.estimates[index].cols() + 1;
-                estimates.estimates[index].conservativeResize(num_rows, num_cols);
-
-                estimates.estimates[index].col(num_cols - 1) = new_column;
+                int num_rows = this->estimates.estimates[index].rows();
+                int num_cols = this->estimates.estimates[index].cols() + 1;
+                this->estimates.estimates[index].conservativeResize(num_rows,
+                                                              num_cols);
+                this->estimates.estimates[index].col(num_cols - 1) = new_column;
             }
+
         }
 
         void SumProductEstimator::estimate_backward_in_time(

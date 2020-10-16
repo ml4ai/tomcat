@@ -10,8 +10,11 @@ namespace tomcat {
         //----------------------------------------------------------------------
         Measure::Measure() {}
 
-        Measure::Measure(shared_ptr<Estimator> estimator, double threshold, bool use_last_estimate)
-            : estimator(estimator), threshold(threshold), use_last_estimate(use_last_estimate) {}
+        Measure::Measure(shared_ptr<Estimator> estimator,
+                         double threshold,
+                         bool use_last_estimate)
+            : estimator(estimator), threshold(threshold),
+              use_last_estimate(use_last_estimate) {}
 
         Measure::~Measure() {}
 
@@ -25,28 +28,29 @@ namespace tomcat {
         }
 
         ConfusionMatrix
-        Measure::get_confusion_matrix(const NodeEstimates& estimates,
-                                      const EvidenceSet& test_data) const {
+        Measure::get_confusion_matrix(const Eigen::MatrixXd& probabilities,
+                                      const Eigen::MatrixXd& true_values,
+                                      int fixed_assignment) const {
             // Since this method assumes the estimates were computed for a fixed
             // node assignment, we can safely use the first element of the
             // estimates.estimates vector, as there will be only one element in
             // there.
-            Eigen::MatrixXd ones = Eigen::MatrixXd::Ones(
-                estimates.estimates[0].rows(), estimates.estimates[0].cols());
-            Eigen::MatrixXd zeros = Eigen::MatrixXd::Zero(
-                estimates.estimates[0].rows(), estimates.estimates[0].cols());
+            Eigen::MatrixXd ones = Eigen::MatrixXd::Ones(probabilities.rows(),
+                                                         probabilities.cols());
+            Eigen::MatrixXd zeros = Eigen::MatrixXd::Zero(probabilities.rows(),
+                                                          probabilities.cols());
 
             // Preserve the first time steps with no observed values for the
             // estimate in analysis.
             Eigen::MatrixXd no_obs =
-                Eigen::MatrixXd::Constant(estimates.estimates[0].rows(),
-                                          estimates.estimates[0].cols(),
+                Eigen::MatrixXd::Constant(probabilities.rows(),
+                                          probabilities.cols(),
                                           NO_OBS);
-            no_obs =
-                (estimates.estimates[0].array() == NO_OBS).select(no_obs, zeros);
+            no_obs = (probabilities.array() == NO_OBS)
+                         .select(no_obs, zeros);
 
             Eigen::MatrixXd discrete_estimates =
-                (estimates.estimates[0].array() > this->threshold)
+                (probabilities.array() > this->threshold)
                     .select(ones, no_obs);
 
             // For a given assignment, transform the test data into 0s and 1s.
@@ -54,8 +58,8 @@ namespace tomcat {
             // informed and 0 otherwise.
             Eigen::MatrixXd observed_data_in_horizon =
                 EvidenceSet::get_observations_in_window(
-                    test_data[estimates.label],
-                    Eigen::VectorXd::Constant(1, estimates.assignment(0, 0)),
+                    true_values,
+                    Eigen::VectorXd::Constant(1, fixed_assignment),
                     this->estimator->get_inference_horizon());
 
             // The first columns with NO_OBS value must not be counted as this

@@ -85,9 +85,17 @@ namespace tomcat {
              * @param model: DBN
              * @param inference_horizon: how many time steps in the future
              * estimations are going to be computed for
+             * @param node_label: label of the node estimates are going to be
+             * computed for
+             * @param assignment: fixed assignment (for instance, estimates =
+             * probability that the node assumes a value x, where x is the fixed
+             * assignment). This parameter is optional when the inference
+             * horizon is 0, but mandatory otherwise.
              */
             Estimator(std::shared_ptr<DynamicBayesNet> model,
-                      int inference_horizon);
+                      int inference_horizon,
+                      const std::string& node_label,
+                      const Eigen::VectorXd& assignment = Eigen::VectorXd(0));
 
             virtual ~Estimator();
 
@@ -111,23 +119,13 @@ namespace tomcat {
             //------------------------------------------------------------------
 
             /**
-             * Adds a new node to have its assignment estimated over time.
+             * Returns estimates at a given time step.
              *
-             * @param node: node's label and assignment
+             * @param time_step: Time step to get the estimates from
+             *
+             * @return Estimates.
              */
-            void add_node(const std::string& node_label,
-                          const Eigen::VectorXd& assignment);
-
-            /**
-             * Returns estimates at a given time step, for all nodes processed
-             * by the estimator.
-             *
-             * @param time_step: First time step to get the estimates
-             * from
-             *
-             * @return Series of estimates for the nodes in the estimator.
-             */
-            std::vector<NodeEstimates> get_estimates_at(int time_step) const;
+            NodeEstimates get_estimates_at(int time_step) const;
 
             /**
              * Store the last estimates computed in a list of cumulative
@@ -136,7 +134,7 @@ namespace tomcat {
             void keep_estimates();
 
             /**
-             * Clear last estimates and cumulative ones computed by the
+             * Clear last estimates and cumulative estimates computed by the
              * estimator.
              */
             void clear_estimates();
@@ -160,12 +158,12 @@ namespace tomcat {
              * observed values for time steps after the last processed one.
              *
              * @param new_data: observed values for time steps not already
-             * seen by the method
+             * seen by the estimator
              */
             virtual void estimate(const EvidenceSet& new_data) = 0;
 
             /**
-             * Writes information about the splitter in a json object.
+             * Writes information about the estimator in a json object.
              *
              * @param json: json object
              */
@@ -181,9 +179,9 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Getters & Setters
             //------------------------------------------------------------------
-            std::vector<NodeEstimates> get_estimates() const;
+            NodeEstimates get_estimates() const;
 
-            std::vector<CumulativeNodeEstimates>
+            CumulativeNodeEstimates
             get_cumulative_estimates() const;
 
             int get_inference_horizon() const;
@@ -217,12 +215,13 @@ namespace tomcat {
             // computations to avoid recalculations as new data is available.
             EvidenceSet test_data;
 
-            // List of nodes to estimate, their assignments and estimates
-            std::vector<NodeEstimates> nodes_estimates;
+            // Node to compute estimates, its fixed assignment (optional if
+            // inference_horizon = 0) and estimates
+            NodeEstimates estimates;
 
-            // List of nodes to estimate, their assignments and cumulative
+            // Node to compute estimates, its fixed assignment and cumulative
             // estimates
-            std::vector<CumulativeNodeEstimates> cumulative_estimates;
+            CumulativeNodeEstimates cumulative_estimates;
 
             // An inference horizon determines if the task is a prediction (> 0)
             // or an inference (= 0). If it's a prediction, the horizon
