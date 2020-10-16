@@ -15,6 +15,7 @@ Program Listing for File WebcamSensor.h
    #include <SequenceCapture.h>
    #include <VisualizationUtils.h>
    #include <Visualizer.h>
+   #include <nlohmann/json.hpp>
    
    namespace tomcat {
    
@@ -29,7 +30,8 @@ Program Listing for File WebcamSensor.h
                            std::string pname,
                            bool ind,
                            bool vis,
-                           std::string file_path);
+                           std::string file_path,
+                           bool emo);
            void get_observation();
    
          private:
@@ -46,6 +48,8 @@ Program Listing for File WebcamSensor.h
            std::string playername;
            bool indent;
            bool visual;
+           bool emotion;
+           std::string get_emotion(nlohmann::json emotion);
        };
    
    } // namespace tomcat

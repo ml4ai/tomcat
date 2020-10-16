@@ -176,7 +176,7 @@
 
 <span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">ac</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">av</span><span class="p">[])</span> <span class="p">{</span>
     <span class="n">string</span> <span class="n">exp_id</span><span class="p">,</span> <span class="n">trial_id</span><span class="p">,</span> <span class="n">playername</span><span class="p">,</span> <span class="n">of_dir</span><span class="p">,</span> <span class="n">file_path</span><span class="p">;</span>
-    <span class="kt">bool</span> <span class="n">indent</span><span class="p">,</span> <span class="n">visualize</span><span class="p">;</span>
+    <span class="kt">bool</span> <span class="n">indent</span><span class="p">,</span> <span class="n">visualize</span><span class="p">,</span> <span class="n">emotion</span><span class="p">;</span>
     <span class="c1">// Boost command line options</span>
     <span class="k">try</span> <span class="p">{</span>
 
@@ -200,7 +200,10 @@
             <span class="s">&quot;Enable visualization&quot;</span><span class="p">)(</span>
             <span class="s">&quot;file,f&quot;</span><span class="p">,</span>
             <span class="n">po</span><span class="o">::</span><span class="n">value</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">file_path</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">default_value</span><span class="p">(</span><span class="s">&quot;null&quot;</span><span class="p">),</span>
-            <span class="s">&quot;Specify an input video/image file&quot;</span><span class="p">);</span>
+            <span class="s">&quot;Specify an input video/image file&quot;</span><span class="p">)(</span>
+            <span class="s">&quot;emotion&quot;</span><span class="p">,</span>
+            <span class="n">po</span><span class="o">::</span><span class="n">bool_switch</span><span class="p">(</span><span class="o">&amp;</span><span class="n">emotion</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">default_value</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span>
+            <span class="s">&quot;Display discrete emotion&quot;</span><span class="p">);</span>
 
         <span class="n">po</span><span class="o">::</span><span class="n">variables_map</span> <span class="n">vm</span><span class="p">;</span>
         <span class="n">po</span><span class="o">::</span><span class="n">store</span><span class="p">(</span><span class="n">po</span><span class="o">::</span><span class="n">parse_command_line</span><span class="p">(</span><span class="n">ac</span><span class="p">,</span> <span class="n">av</span><span class="p">,</span> <span class="n">desc</span><span class="p">),</span> <span class="n">vm</span><span class="p">);</span>
@@ -238,7 +241,7 @@
 
     <span class="n">WebcamSensor</span> <span class="n">camsensor</span><span class="p">;</span>
     <span class="n">camsensor</span><span class="p">.</span><span class="n">initialize</span><span class="p">(</span>
-        <span class="n">exp_id</span><span class="p">,</span> <span class="n">trial_id</span><span class="p">,</span> <span class="n">playername</span><span class="p">,</span> <span class="n">indent</span><span class="p">,</span> <span class="n">visualize</span><span class="p">,</span> <span class="n">file_path</span><span class="p">);</span>
+        <span class="n">exp_id</span><span class="p">,</span> <span class="n">trial_id</span><span class="p">,</span> <span class="n">playername</span><span class="p">,</span> <span class="n">indent</span><span class="p">,</span> <span class="n">visualize</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">emotion</span><span class="p">);</span>
     <span class="n">camsensor</span><span class="p">.</span><span class="n">get_observation</span><span class="p">();</span>
 
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>

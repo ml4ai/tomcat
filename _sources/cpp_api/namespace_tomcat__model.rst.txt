@@ -152,6 +152,8 @@ Functions
 
 - :ref:`exhale_function_EigenExtensions_8h_1aa6c62c2b0887a5f34ba4a6639c113dd0`
 
+- :ref:`exhale_function_Tensor3_8cpp_1a272c8c134c3b893ec70fe25756bbda76`
+
 - :ref:`exhale_function_Distribution_8cpp_1afae751bfa59cdf4360900d46653be580`
 
 - :ref:`exhale_function_CPD_8cpp_1a5cba54b349806883f6717ddf9f621ea8`
@@ -160,27 +162,25 @@ Functions
 
 - :ref:`exhale_function_NodeMetadata_8cpp_1a2142fd381c465dc2e2ca2a6747e3bf7a`
 
-- :ref:`exhale_function_Tensor3_8cpp_1a272c8c134c3b893ec70fe25756bbda76`
+- :ref:`exhale_function_model_2utils_2FileHandler_8h_1a9964704840fc9540ab7258b2bec863c2`
 
 - :ref:`exhale_function_model_2utils_2FileHandler_8cpp_1a5ece735fb8497c7e9940a6bb35d64e36`
 
-- :ref:`exhale_function_model_2utils_2FileHandler_8h_1a9964704840fc9540ab7258b2bec863c2`
+- :ref:`exhale_function_model_2utils_2FileHandler_8h_1af0a9554f9050a94cddb8499dec292337`
 
 - :ref:`exhale_function_model_2utils_2FileHandler_8cpp_1a908007333f05643963c24650e59adabe`
 
-- :ref:`exhale_function_model_2utils_2FileHandler_8h_1af0a9554f9050a94cddb8499dec292337`
+- :ref:`exhale_function_model_2utils_2FileHandler_8h_1a20d2265f3184b3860b4a507698720f9a`
 
 - :ref:`exhale_function_model_2utils_2FileHandler_8cpp_1aceb6e073d610a9854ca73f9110c6b016`
 
-- :ref:`exhale_function_model_2utils_2FileHandler_8h_1a20d2265f3184b3860b4a507698720f9a`
+- :ref:`exhale_function_model_2utils_2FileHandler_8h_1a797ae82eb1109078b376416ec77fea87`
 
 - :ref:`exhale_function_model_2utils_2FileHandler_8cpp_1a50261d06144e0490d5f49b75cfe2c4b1`
 
-- :ref:`exhale_function_model_2utils_2FileHandler_8h_1a797ae82eb1109078b376416ec77fea87`
+- :ref:`exhale_function_model_2utils_2FileHandler_8h_1a49193f3ef1475d7e7e2e4308fda9a145`
 
 - :ref:`exhale_function_model_2utils_2FileHandler_8cpp_1ad59b4c1d341918d2ddeb0d140c1e39ee`
-
-- :ref:`exhale_function_model_2utils_2FileHandler_8h_1a49193f3ef1475d7e7e2e4308fda9a145`
 
 - :ref:`exhale_function_EigenExtensions_8cpp_1a59006fb01646954fe0d2f71241913d26`
 

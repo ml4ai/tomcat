@@ -35,6 +35,8 @@ Includes
 
 - ``Visualizer.h``
 
+- ``nlohmann/json.hpp``
+
 
 
 Included By
