@@ -313,8 +313,5 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-//    execute_experiment(experiment_id);
-    execute_experiment_2b();
-    execute_experiment_2d_part_b();
-    execute_experiment_2d_part_c();
+    execute_experiment(experiment_id);
 }
