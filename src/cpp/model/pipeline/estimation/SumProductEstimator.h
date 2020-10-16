@@ -1,9 +1,9 @@
 #pragma once
 
-#include "model/utils/Definitions.h"
+#include "utils/Definitions.h"
 
-#include "model/pgm/inference/FactorGraph.h"
-#include "model/pipeline/estimation/Estimator.h"
+#include "pgm/inference/FactorGraph.h"
+#include "pipeline/estimation/Estimator.h"
 
 namespace tomcat {
     namespace model {
@@ -25,9 +25,18 @@ namespace tomcat {
              * @param model: DBN
              * @param inference_horizon: how many time steps in the future
              * estimations are going to be computed for
+             * @param node_label: label of the node estimates are going to be
+             * computed for
+             * @param assignment: fixed assignment (for instance, estimates =
+             * probability that the node assumes a value x, where x is the fixed
+             * assignment). This parameter is optional when the inference
+             * horizon is 0, but mandatory otherwise.
              */
-            SumProductEstimator(std::shared_ptr<DynamicBayesNet> model,
-                                int inference_horizon);
+            SumProductEstimator(
+                std::shared_ptr<DynamicBayesNet> model,
+                int inference_horizon,
+                const std::string& node_label,
+                const Eigen::VectorXd& assignment = Eigen::VectorXd(0));
 
             ~SumProductEstimator();
 
@@ -48,7 +57,7 @@ namespace tomcat {
             //------------------------------------------------------------------
             void prepare() override;
 
-            void estimate(EvidenceSet new_data) override;
+            void estimate(const EvidenceSet& new_data) override;
 
             void get_info(nlohmann::json& json) const override;
 
@@ -60,6 +69,16 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
+
+            /**
+             * Passes messages forward and backwards within a time step, and
+             * then move forward taking the messages from boundaries nodes in
+             * one time step to transition factors in the next time step.
+             *
+             * @param new_data: observed values for time steps not already
+             * processed by the method
+             */
+            void estimate_forward_in_time(const EvidenceSet& new_data);
 
             /**
              * Computes messages from parents to child nodes in a given time
@@ -108,11 +127,22 @@ namespace tomcat {
             /**
              * Appends the estimates matrix with a new column.
              *
-             * @param estimates: estimates for a given node
              * @param new_column: new column with new estimates
+             * @param index: index of the assignment for which the estimates
+             * were computed. If there's a fixed assignment in the NodeEstimates
+             * data, the index is always zero as there'll be estimates just for
+             * a single assignment.
              */
-            void add_column_to_estimates(NodeEstimates& estimates,
-                                         const Eigen::VectorXd new_column);
+            void add_column_to_estimates(const Eigen::VectorXd new_column,
+                                         int index = 0);
+
+            /**
+             * Passes messages from transition factors in a time step to the
+             * previous time step, and then passes messages forward and
+             * backwards within that time step. Repeat until the first time
+             * step.
+             */
+            void estimate_backward_in_time(const EvidenceSet& new_data);
 
             //------------------------------------------------------------------
             // Data members

@@ -5,10 +5,10 @@
 
 #include <nlohmann/json.hpp>
 
-#include "model/pgm/EvidenceSet.h"
-#include "model/utils/Definitions.h"
-#include "model/utils/Tensor3.h"
-#include "model/pipeline/estimation/Estimator.h"
+#include "pgm/EvidenceSet.h"
+#include "pipeline/estimation/Estimator.h"
+#include "utils/Definitions.h"
+#include "utils/Tensor3.h"
 
 namespace tomcat {
     namespace model {
@@ -75,8 +75,13 @@ namespace tomcat {
              * @param estimator: estimator used to compute the estimates
              * @param threshold: Probability threshold for predicting or
              * inferring the occurrence of an assignment as true
+             * @param use_last_estimates: whether only the estimate in the last
+             * time step should be used if the inference horizon of the
+             * estimator is 0
              */
-            Measure(std::shared_ptr<Estimator> estimator, double threshold = 0.5);
+            Measure(std::shared_ptr<Estimator> estimator,
+                    double threshold = 0.5,
+                    bool use_last_estimate = false);
 
             virtual ~Measure();
 
@@ -100,14 +105,14 @@ namespace tomcat {
              *
              * @param test_data: data to calculate the measure over
              *
-             * @return Computed values for all of the nodes processed by the
+             * @return Evaluation for over the estimates computed by an
              * estimator.
              */
-            virtual std::vector<NodeEvaluation>
+            virtual NodeEvaluation
             evaluate(const EvidenceSet& test_data) const = 0;
 
             /**
-             * Writes information about the splitter in a json object.
+             * Writes information about the measure in a json object.
              *
              * @param json: json object
              */
@@ -127,17 +132,30 @@ namespace tomcat {
 
             /**
              * Computes the confusion matrix between real values and estimates
-             * previously computed for a model.
+             * previously computed for a model. This assumes the estimates were
+             * computed for a fixed assignment. In that case, the problem can be
+             * reduced to a binary classification (the probability that the node
+             * assumes a given value or not). If the problem needs to compute
+             * some measure for a multiclass scenario, this needs to be
+             * implemented in one of the derived classes as it does not make
+             * sense for some measures (e.g. f1-score).
              *
-             * @param estimates: estimates previously computed for the model
-             * @param test_data: data with real values to compare the estimates
-             * against
+             * @param probabilities: estimated probabilities previously computed
+             * by an estimator
+             * @param true_values: data with true values to compare the
+             * estimates against
+             * @param fixed_assignment: node's assignment to compare the
+             * estimated probability against the real value (e.g. compare the
+             * probability that the node assumes the value x, where x is the
+             * fixed assignment). This transforms the evaluation in a binary
+             * classification.
              *
              * @return Confusion matrix.
              */
             ConfusionMatrix
-            get_confusion_matrix(const NodeEstimates& estimates,
-                                 const EvidenceSet& test_data) const;
+            get_confusion_matrix(const Eigen::MatrixXd& probabilities,
+                                 const Eigen::MatrixXd& true_values,
+                                 int fixed_assignment) const;
 
             //------------------------------------------------------------------
             // Data members
@@ -149,6 +167,11 @@ namespace tomcat {
             // Probability threshold for predicting or inferring the occurrence
             // of an assignment as true
             double threshold = 0.5;
+
+            // Whenever the inference horizon is 0 and this variable is true,
+            // the evaluation will be performed by using the last estimated
+            // probabilities.
+            bool use_last_estimate = false;
         };
 
     } // namespace model

@@ -115,16 +115,29 @@ namespace tomcat {
             int sample_size = this->distributions[0]->get_sample_size();
 
             Eigen::MatrixXd samples(distribution_indices.size(), sample_size);
-            int i = 0;
+            int sample_index = 0;
             for (const auto& distribution_idx : distribution_indices) {
-                Eigen::VectorXd assignment =
-                    this->distributions[distribution_idx]->sample(
-                        random_generator, i);
-                samples.row(i) = move(assignment);
-                i++;
+                if (distribution_idx == NO_OBS) {
+                    // This happens if the mission ended sooner for a specific
+                    // data point but not for the others. All the samples from
+                    // nodes in time step greater than the end of the mission
+                    // for that particular data point will be set to NO_OBS to
+                    // avoid updating the sufficient statistics of the parameter
+                    // nodes.
+                    samples.row(sample_index) =
+                        Eigen::VectorXd::Constant(1, 1, NO_OBS);
+                }
+                else {
+                    Eigen::VectorXd assignment =
+                        this->distributions[distribution_idx]->sample(
+                            random_generator, sample_index);
+                    samples.row(sample_index) = move(assignment);
+                }
+                sample_index++;
 
                 if (equal_samples) {
-                    // We generate one sample and replicate to the others
+                    // We generate one sample and replicate to the others. See
+                    // below.
                     break;
                 }
             }
@@ -134,8 +147,8 @@ namespace tomcat {
             // if the node is a parent of an in-plate node, it always yields a
             // single sample. This information is encoded in the distribution
             // indices size.
-            for (; i < distribution_indices.size(); i++) {
-                samples.row(i) = samples.row(0);
+            for (; sample_index < distribution_indices.size(); sample_index++) {
+                samples.row(sample_index) = samples.row(0);
             }
 
             return samples;
@@ -161,9 +174,25 @@ namespace tomcat {
                     // in-plate nodes can have multiple assignments. The value
                     // of a non-in-plate node must be broadcasted.
                     int row = matrix.rows() == 1 ? 0 : i;
+                    int parent_assignment_for_data_point =
+                        static_cast<int>(matrix(row, 0));
 
-                    indices[i] += static_cast<int>(matrix(row, 0)) *
-                                  indexing.right_cumulative_cardinality;
+                    if (parent_assignment_for_data_point == NO_OBS) {
+                        // The mission ended sooner for this sample. Mark index
+                        // of the distribution as NO_OBS so we don't use this
+                        // sample to update the posterior of the parameters for
+                        // time steps greater than the mission ending for this
+                        // sample.
+                        indices[i] = NO_OBS;
+                    }
+                    else {
+                        // The formula to find the index if p1 * rcc_p1 + p2 *
+                        // rcc_p2 ... where pi is the i-th parent of a node and
+                        // rcc_p2 is the multiplication of the cardinalities of
+                        // the parents pj, such that j > i.
+                        indices[i] += parent_assignment_for_data_point *
+                                      indexing.right_cumulative_cardinality;
+                    }
                 }
             }
 
@@ -197,12 +226,27 @@ namespace tomcat {
             Eigen::MatrixXd samples(distribution_indices.size(), sample_size);
             int sample_index = 0;
             for (const auto& distribution_idx : distribution_indices) {
-                Eigen::VectorXd assignment =
-                    this->distributions[distribution_idx]->sample(
-                        random_generator,
-                        sample_index,
-                        weights.row(sample_index));
-                samples.row(sample_index) = move(assignment);
+                Eigen::VectorXd data_point_weights = weights.row(sample_index);
+
+                if (distribution_idx == NO_OBS ||
+                    data_point_weights ==
+                        Eigen::VectorXd::Constant(data_point_weights.size(),
+                                                  NO_OBS)) {
+                    // This happens if we stop observing values for a specific
+                    // data point sooner than the others. We set the sample for
+                    // NO_OBS to avoid updating the sufficient statistics of the
+                    // parameter nodes given this nodes' assignment in that
+                    // particular data point.
+                    samples.row(sample_index) =
+                        Eigen::VectorXd::Constant(1, 1, NO_OBS);
+                }
+                else {
+
+                    Eigen::VectorXd assignment =
+                        this->distributions[distribution_idx]->sample(
+                            random_generator, sample_index, data_point_weights);
+                    samples.row(sample_index) = move(assignment);
+                }
                 sample_index++;
 
                 if (equal_samples) {
@@ -233,11 +277,24 @@ namespace tomcat {
             Eigen::VectorXd pdfs(distribution_indices.size());
             int sample_index = 0;
             for (const auto& distribution_idx : distribution_indices) {
-                shared_ptr<Distribution> distribution =
-                    this->distributions[distribution_idx];
-                double pdf = distribution->get_pdf(
-                    node.get_assignment().row(sample_index), sample_index);
-                pdfs(sample_index) = pdf;
+                Eigen::VectorXd data_point_node_assignment =
+                    node.get_assignment().row(sample_index);
+
+                if (distribution_idx == NO_OBS ||
+                    data_point_node_assignment ==
+                        Eigen::VectorXd::Constant(
+                            data_point_node_assignment.size(), NO_OBS)) {
+                    // There's no pdf for a node that was not observed in a
+                    // given time step and data point.
+                    pdfs(sample_index) = 0;
+                }
+                else {
+                    shared_ptr<Distribution> distribution =
+                        this->distributions[distribution_idx];
+                    double pdf = distribution->get_pdf(
+                        node.get_assignment().row(sample_index), sample_index);
+                    pdfs(sample_index) = pdf;
+                }
                 sample_index++;
             }
 
@@ -253,10 +310,19 @@ namespace tomcat {
 
             int sample_index = 0;
             for (const auto& distribution_idx : distribution_indices) {
+                // Do not include data points with no observation in the time
+                // step being processed in the parameter nodes' sufficient
+                // statistics update.
                 Eigen::VectorXd assignment =
                     cpd_owner_assignments.row(sample_index);
-                this->distributions[distribution_idx]
-                    ->update_sufficient_statistics(assignment);
+                if (distribution_idx != NO_OBS &&
+                    assignment !=
+                        Eigen::VectorXd::Constant(assignment.size(), NO_OBS)) {
+                    this->distributions[distribution_idx]
+                        ->update_sufficient_statistics(assignment);
+                } else {
+                    LOG(assignment);
+                }
                 sample_index++;
             }
         }

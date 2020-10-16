@@ -44,7 +44,7 @@ namespace tomcat {
             // replace it with the current number.
             string final_folder_path =
                 fmt::format(this->input_folder_path, ++this->cv_step);
-            this->model->load_from_folder(final_folder_path);
+            this->model->load_from(final_folder_path);
         }
 
         void DBNLoader::get_info(nlohmann::json& json) const {

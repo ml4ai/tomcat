@@ -4,12 +4,12 @@
 #include <sstream>
 
 #include <boost/filesystem.hpp>
-namespace fs = boost::filesystem;
 
 namespace tomcat {
     namespace model {
 
         using namespace std;
+        namespace fs = boost::filesystem;
 
 #define MAXBUFSIZE static_cast<int>(1e6)
 #define DELIMITER ' '

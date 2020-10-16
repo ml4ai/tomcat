@@ -1,4 +1,4 @@
-#include "model/distribution/Distribution.h"
+#include "distribution/Distribution.h"
 
 namespace tomcat {
     namespace model {

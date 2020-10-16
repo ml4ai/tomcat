@@ -26,7 +26,7 @@ namespace tomcat {
             // replace it with the current number.
             string final_folder_path =
                 fmt::format(this->output_folder_path, ++this->cv_step);
-            this->model->save_to_folder(final_folder_path);
+            this->model->save_to(final_folder_path);
         }
 
     } // namespace model

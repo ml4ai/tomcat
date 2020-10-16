@@ -2,11 +2,15 @@
 
 #include <memory>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
 
 #include <gsl/gsl_rng.h>
 
-#include "model/pgm/DynamicBayesNet.h"
-#include "model/utils/Definitions.h"
+#include "pgm/DynamicBayesNet.h"
+#include "pgm/NodeMetadata.h"
+#include "utils/Definitions.h"
 
 namespace tomcat {
     namespace model {
@@ -16,20 +20,6 @@ namespace tomcat {
          */
         class Tomcat {
           public:
-            //------------------------------------------------------------------
-            // Types, Enums & Constants
-            //------------------------------------------------------------------
-
-            // Node labels
-            inline static const std::string THETA_S = "Theta_S";
-            inline static const std::string PI_RM = "Pi_RM";
-            inline static const std::string PI_SG = "Pi_SG";
-            inline static const std::string PI_SY = "Pi_SY";
-            inline static const std::string STATE = "State";
-            inline static const std::string ROOM = "Room";
-            inline static const std::string SG = "Green";
-            inline static const std::string SY = "Yellow";
-
             //------------------------------------------------------------------
             // Constructors & Destructor
             //------------------------------------------------------------------
@@ -44,23 +34,30 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Copy & Move constructors/assignments
             //------------------------------------------------------------------
-            Tomcat(const Tomcat&) = default;
 
-            Tomcat& operator=(const Tomcat&) = default;
+            // Copy constructor and assignment should be deleted to avoid
+            // implicit slicing and loss of polymorphic behaviour in the
+            // subclasses. To deep copy, the clone method must be used.
+            Tomcat(const Tomcat&) = delete;
+
+            Tomcat& operator=(const Tomcat&) = delete;
 
             Tomcat(Tomcat&&) = default;
 
             Tomcat& operator=(Tomcat&&) = default;
 
             //------------------------------------------------------------------
-            // Member functions
+            // Pure virtual functions
             //------------------------------------------------------------------
 
             /**
-             * Initializes ToMCAT as the v1.0 of the model for the TA3 testbed
-             * as a DBN.
+             * Creates unrolled DBN for the model.
              */
-            void init_ta3_learnable_model();
+            virtual void init() = 0;
+
+            //------------------------------------------------------------------
+            // Member functions
+            //------------------------------------------------------------------
 
             /**
              * Generates synthetic data for the instantiated model.
@@ -70,19 +67,42 @@ namespace tomcat {
              * @param output_folder: folder where the samples must be saved
              * @param equal_until: max time step for equal samples. After this
              * time step, samples are not required to be the same.
+             * @param max_time_step: generate data up to this time step.
+             * @param excluding: labels of nodes which samples must not be saved
              */
             void
             generate_synthetic_data(std::shared_ptr<gsl_rng> random_generator,
                                     int num_samples,
                                     const std::string& output_folder,
-                                    int equal_until = -1);
+                                    int equal_until = -1,
+                                    int max_time_step = -1,
+                                    std::unordered_set<std::string> excluding = {});
 
             //------------------------------------------------------------------
             // Getters & Setters
             //------------------------------------------------------------------
             const std::shared_ptr<DynamicBayesNet>& get_model() const;
 
-          private:
+          protected:
+            //------------------------------------------------------------------
+            // Member functions
+            //------------------------------------------------------------------
+
+            /*
+             * Copies the data members from another ToMCAT's instance
+             */
+            void copy_tomcat(const Tomcat& tomcat);
+
+            /**
+             * Create a random variable node for a given metadata and list of
+             * CPDs.
+             *
+             * @return Random variable node.
+             */
+            std::shared_ptr<RandomVariableNode>
+            create_node(std::shared_ptr<NodeMetadata> metadata,
+                        std::vector<std::shared_ptr<CPD>> cpds) const;
+
             //------------------------------------------------------------------
             // Data members
             //------------------------------------------------------------------

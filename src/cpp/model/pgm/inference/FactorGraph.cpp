@@ -3,9 +3,8 @@
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/topological_sort.hpp>
 
-#include "model/pgm/cpd/CPD.h"
-#include "model/pgm/inference/FactorNode.h"
-#include "model/pgm/inference/VariableNode.h"
+#include "pgm/cpd/CPD.h"
+#include "pgm/inference/VariableNode.h"
 
 namespace tomcat {
     namespace model {
@@ -26,6 +25,7 @@ namespace tomcat {
         FactorGraph::create_from_unrolled_dbn(const DynamicBayesNet& dbn) {
             FactorGraph factor_graph;
 
+            // Add nodes
             for (const auto& node : dbn.get_nodes_topological_order()) {
                 if (!node->get_metadata()->is_parameter()) {
                     shared_ptr<RandomVariableNode> random_variable =
@@ -43,17 +43,79 @@ namespace tomcat {
                 }
             }
 
+            // Contains the non replicable multi link nodes and the time step of
+            // the original copy.
+            unordered_map<string, int> non_replicable_multi_link_mapping;
+
+            // Edges
             for (const auto& [source_node, target_node] : dbn.get_edges()) {
                 if (source_node->get_time_step() <= 2 &&
                     !source_node->get_metadata()->is_parameter() &&
                     target_node->get_time_step() <= 2 &&
                     !target_node->get_metadata()->is_parameter()) {
 
-                    factor_graph.add_edge(
-                        source_node->get_metadata()->get_label(),
-                        source_node->get_time_step(),
-                        target_node->get_metadata()->get_label(),
-                        target_node->get_time_step());
+                    // Non replicable multi link nodes show in the first or
+                    // second time step of an unrolled DBN but connects with
+                    // other nodes in all future time steps. We create copies of
+                    // these nodes in the factor graph for future time steps to
+                    // serve as an aggregation of backward messages that arrived
+                    // on them in previous time steps. By following this
+                    // procedure, we don't need to pass messages to previous
+                    // time slices to do inference on these nodes.
+                    if (!source_node->get_metadata()->is_replicable() &&
+                        !source_node->get_metadata()->is_single_time_link() &&
+                        target_node->get_time_step() >
+                            source_node->get_time_step()) {
+
+                        int cardinality =
+                            source_node->get_metadata()->get_cardinality();
+                        string label = source_node->get_metadata()->get_label();
+                        // The cpd table is the identity to make sure all
+                        // messages aggregated in the previous copy of the
+                        // node will be fully passed to the copy in the next
+                        // time step.
+                        Eigen::MatrixXd cpd_table =
+                            Eigen::MatrixXd::Identity(cardinality, cardinality);
+                        ParentIndexing indexing(0, cardinality, 1);
+                        CPD::TableOrderingMap ordering_map;
+                        ordering_map[label] = indexing;
+
+                        // Instead of linking the source and target crossing
+                        // time. A new copy of the source is created in the same
+                        // time slice as the target and they are linked. Later,
+                        // the copies will be linked across time.
+                        factor_graph.add_node(label,
+                                              cardinality,
+                                              target_node->get_time_step(),
+                                              cpd_table,
+                                              ordering_map);
+
+                        factor_graph.add_edge(
+                            label,
+                            target_node->get_time_step(),
+                            target_node->get_metadata()->get_label(),
+                            target_node->get_time_step());
+
+                        non_replicable_multi_link_mapping[label] =
+                            source_node->get_time_step();
+                    }
+                    else {
+                        factor_graph.add_edge(
+                            source_node->get_metadata()->get_label(),
+                            source_node->get_time_step(),
+                            target_node->get_metadata()->get_label(),
+                            target_node->get_time_step());
+                    }
+                }
+            }
+
+            for (const auto& [node_label, time_step] :
+                 non_replicable_multi_link_mapping) {
+                // Link, over time, the new message nodes created for non
+                // replicable multi link random variable nodes.
+
+                for (int t = time_step + 1; t <= 2; t++) {
+                    factor_graph.add_edge(node_label, t - 1, node_label, t);
                 }
             }
 
@@ -154,6 +216,9 @@ namespace tomcat {
                 shared_ptr<FactorNode> factor_node =
                     dynamic_pointer_cast<FactorNode>(
                         this->graph[target_vertex_id]);
+
+                this->transition_factors_per_time_step[target_node_time_step]
+                    .insert(factor_node);
             }
         }
 
@@ -228,6 +293,7 @@ namespace tomcat {
                         string real_parent_name =
                             MessageNode::get_name(parent_node->get_label(),
                                                   this->repeatable_time_step);
+
                         int real_parent_vertex_id =
                             this->name_to_id.at(real_parent_name);
                         parent_node = this->graph[real_parent_vertex_id];
@@ -257,9 +323,9 @@ namespace tomcat {
             return child_nodes;
         }
 
-        Eigen::MatrixXd
-        FactorGraph::get_marginal_for(const string& node_label,
-                                      int time_step) const {
+        Eigen::MatrixXd FactorGraph::get_marginal_for(const string& node_label,
+                                                      int time_step,
+                                                      bool normalized) const {
             Eigen::MatrixXd marginal(0, 0);
 
             string relative_name = MessageNode::get_name(
@@ -274,7 +340,7 @@ namespace tomcat {
 
                 marginal =
                     dynamic_pointer_cast<VariableNode>(this->graph[vertex_id])
-                        ->get_marginal_at(time_step);
+                        ->get_marginal_at(time_step, normalized);
             }
 
             return marginal;
@@ -288,6 +354,12 @@ namespace tomcat {
                     node->erase_incoming_messages_beyond(time_step);
                 }
             }
+        }
+
+        unordered_set<shared_ptr<FactorNode>>
+        FactorGraph::get_transition_factors_at(int time_step) const {
+            int relative_time_step = min(time_step, this->repeatable_time_step);
+            return this->transition_factors_per_time_step[relative_time_step];
         }
 
     } // namespace model

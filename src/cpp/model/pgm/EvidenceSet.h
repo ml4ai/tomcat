@@ -5,8 +5,8 @@
 
 #include <nlohmann/json.hpp>
 
-#include "model/utils/Definitions.h"
-#include "model/utils/FileHandler.h"
+#include "utils/Definitions.h"
+#include "utils/FileHandler.h"
 
 namespace tomcat {
     namespace model {
@@ -173,6 +173,20 @@ namespace tomcat {
              * @param time_slice: max time step included in the data.
              */
             void shrink_up_to(int time_step);
+
+            /**
+             * Indicates whether the set has data or not.
+             *
+             * @return True if the set has any data point.
+             */
+            bool empty() const;
+
+            /**
+             * Removes data for a given node.
+             *
+             * @param node_label: nodes' label
+             */
+            void remove(const std::string& node_label);
 
             //------------------------------------------------------------------
             // Getters & Setters

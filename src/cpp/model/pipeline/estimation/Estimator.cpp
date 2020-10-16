@@ -12,8 +12,23 @@ namespace tomcat {
         //----------------------------------------------------------------------
         Estimator::Estimator() {}
 
-        Estimator::Estimator(shared_ptr<DynamicBayesNet> model, int inference_horizon)
-            : model(model), inference_horizon(inference_horizon) {}
+        Estimator::Estimator(shared_ptr<DynamicBayesNet> model,
+                             int inference_horizon,
+                             const std::string& node_label,
+                             const Eigen::VectorXd& assignment)
+            : model(model), inference_horizon(inference_horizon) {
+
+            if (inference_horizon > 0 && assignment.size() == 0) {
+                throw TomcatModelException(
+                    "An assignment must be given for estimations with "
+                    "inference horizon greater than 0.");
+            }
+
+            this->estimates.label = node_label;
+            this->estimates.assignment = assignment;
+            this->cumulative_estimates.label = node_label;
+            this->cumulative_estimates.assignment = assignment;
+        }
 
         Estimator::~Estimator() {}
 
@@ -24,75 +39,73 @@ namespace tomcat {
             this->model = estimator.model;
             this->training_data = estimator.training_data;
             this->test_data = estimator.test_data;
-            this->nodes_estimates = estimator.nodes_estimates;
+            this->estimates = estimator.estimates;
+            this->cumulative_estimates = estimator.cumulative_estimates;
             this->inference_horizon = estimator.inference_horizon;
         }
 
-        void Estimator::add_node(const string& node_label,
-                                 const Eigen::VectorXd& assignment) {
-            NodeEstimates node_estimates;
-            node_estimates.label = node_label;
-            node_estimates.assignment = assignment;
-            this->nodes_estimates.push_back(node_estimates);
-        }
-
-        vector<NodeEstimates>
-        Estimator::get_estimates_at(int time_step) const {
-            vector<NodeEstimates> estimates_per_node;
-            estimates_per_node.reserve(this->nodes_estimates.size());
-
-            for (const auto& node_estimate : this->nodes_estimates) {
-                if (node_estimate.estimates.cols() <= time_step) {
-                    stringstream ss;
-                    ss << "The chosen estimator can only calculate estimates "
-                          "up to time step "
-                       << time_step;
-                    throw out_of_range(ss.str());
-                }
-
-                NodeEstimates sliced_estimates;
-                sliced_estimates.label = node_estimate.label;
-                sliced_estimates.assignment = node_estimate.assignment;
-                sliced_estimates.estimates =
-                    node_estimate.estimates.col(time_step);
-                estimates_per_node.push_back(sliced_estimates);
+        NodeEstimates Estimator::get_estimates_at(int time_step) const {
+            if (this->estimates.estimates[0].cols() <= time_step) {
+                stringstream ss;
+                ss << "The chosen estimator can only calculate estimates "
+                      "up to time step "
+                   << time_step;
+                throw out_of_range(ss.str());
             }
 
-            return estimates_per_node;
-        }
-
-        vector<NodeEstimates> Estimator::get_estimates() const {
-            vector<NodeEstimates> estimates_per_node;
-            estimates_per_node.reserve(this->nodes_estimates.size());
-
-            for (const auto& node_estimate : this->nodes_estimates) {
-                NodeEstimates sliced_estimates;
-                sliced_estimates.label = node_estimate.label;
-                sliced_estimates.assignment = node_estimate.assignment;
-                sliced_estimates.estimates = node_estimate.estimates;
-                estimates_per_node.push_back(sliced_estimates);
+            NodeEstimates sliced_estimates;
+            sliced_estimates.label = this->estimates.label;
+            sliced_estimates.assignment = this->estimates.assignment;
+            for (const auto& estimates_per_assignment :
+                 this->estimates.estimates) {
+                sliced_estimates.estimates.push_back(
+                    estimates_per_assignment.col(time_step));
             }
 
-            return estimates_per_node;
+            return sliced_estimates;
         }
 
         void Estimator::prepare() {
             // Clear estimates so they can be recalculated over the new
             // training data in the next call to the function estimate.
-            for (auto& node_estimates : this->nodes_estimates) {
-                node_estimates.estimates = Eigen::MatrixXd(0, 0);
+            this->estimates.estimates.clear();
+        }
+
+        void Estimator::keep_estimates() {
+            this->cumulative_estimates.estimates.push_back({});
+            int i = this->cumulative_estimates.estimates.size() - 1;
+            for (const auto& estimate : this->estimates.estimates) {
+                this->cumulative_estimates.estimates[i].push_back(estimate);
             }
+        }
+
+        void Estimator::clear_estimates() {
+            int i = 0;
+            this->estimates.estimates.clear();
+            this->cumulative_estimates.estimates.clear();
         }
 
         //----------------------------------------------------------------------
         // Getters & Setters
         //----------------------------------------------------------------------
+        NodeEstimates Estimator::get_estimates() const {
+            return this->estimates;
+        }
+
+        CumulativeNodeEstimates Estimator::get_cumulative_estimates() const {
+            return this->cumulative_estimates;
+        }
+
         void Estimator::set_training_data(const EvidenceSet& training_data) {
             this->training_data = training_data;
         }
 
         int Estimator::get_inference_horizon() const {
             return inference_horizon;
+        }
+
+        const shared_ptr<DynamicBayesNet>& Estimator::get_model() const {
+            return model;
         }
     } // namespace model
 } // namespace tomcat

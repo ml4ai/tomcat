@@ -1,5 +1,5 @@
-#include "model/pgm/cpd/DirichletCPD.h"
-#include "model/pgm/ConstantNode.h"
+#include "pgm/cpd/DirichletCPD.h"
+#include "pgm/ConstantNode.h"
 
 namespace tomcat {
     namespace model {

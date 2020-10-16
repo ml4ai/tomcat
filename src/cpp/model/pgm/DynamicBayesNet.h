@@ -5,10 +5,13 @@
 #include <utility>
 #include <vector>
 
-#include <boost/graph/adjacency_list.hpp>
+#include <fstream>
 
-#include "model/utils/Definitions.h"
-#include "model/pgm/RandomVariableNode.h"
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/graphviz.hpp>
+
+#include "pgm/RandomVariableNode.h"
+#include "utils/Definitions.h"
 
 namespace tomcat {
     namespace model {
@@ -20,6 +23,9 @@ namespace tomcat {
             // This needs to be a shared pointer because some of the nodes can
             // be parameter nodes sharable among some CPDs
             std::shared_ptr<RandomVariableNode> node;
+
+            // Node timed name here just for visualization purposes.
+            std::string label;
         };
 
         /**
@@ -154,23 +160,20 @@ namespace tomcat {
 
             /**
              * Saves model's parameter values in individual files inside a given
-             * folder. The folder is created if it does not exist.
+             * directory. The directory is created if it does not exist.
              *
-             * @param output_folder: folder where the files must be saved
+             * @param output_dir: folder where the files must be saved
              */
-            void save_to_folder(const std::string& output_folder) const;
+            void save_to(const std::string& output_dir) const;
 
             /**
              * Loads model's parameter assignments from files previously saved
-             * in a specific folder. The actual parameter nodes are excluded
-             * from the model and the CPD's that depend on them are updated
-             * with constant nodes containing values determined by the content
-             * of the files processed.
+             * in a specific directory and freeze the parameter nodes.
              *
-             * @param input_folder: folder where the files with the parameters'
+             * @param input_dir: directory where the files with the parameters'
              * values are saved
              */
-            void load_from_folder(const std::string& input_folder);
+            void load_from(const std::string& input_dir);
 
             /**
              * Returns edges of the unrolled DBN
@@ -179,15 +182,25 @@ namespace tomcat {
              */
             std::vector<Edge> get_edges() const;
 
+            /**
+             * Write the graph content in graphviz format.
+             *
+             * @param output_stream: output stream to write the graph.
+             */
+            void write_graphviz(std::ostream& output_stream) const;
+
+            /**
+             * Returns the cardinality of any node derived from a given label.
+             *
+             * @param node_label: template node's label
+             *
+             * @return Cardinality of the template node.
+             */
+            int get_cardinality_of(const std::string& node_label) const;
+
             // --------------------------------------------------------
             // Getters & Setters
             // --------------------------------------------------------
-            //            const std::vector<std::shared_ptr<RandomVariableNode>>
-            //            get_nodes() const;
-            //
-            //            const std::vector<RandomVariableNode>&
-            //            get_node_templates() const;
-
             int get_time_steps() const;
 
           private:

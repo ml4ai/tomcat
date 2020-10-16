@@ -3,8 +3,8 @@
 #include <boost/filesystem.hpp>
 #include <boost/graph/topological_sort.hpp>
 
-#include "model/utils/FileHandler.h"
-#include "model/pgm/ConstantNode.h"
+#include "pgm/ConstantNode.h"
+#include "utils/FileHandler.h"
 
 namespace tomcat {
     namespace model {
@@ -92,6 +92,7 @@ namespace tomcat {
             VertexData data;
             data.node = make_shared<RandomVariableNode>(node_template);
             data.node->set_time_step(time_step);
+            data.label = data.node->get_timed_name();
 
             if (data.node->get_metadata()->has_replicable_parameter_parent()) {
                 // If a node has parameter nodes that are replicable, its
@@ -222,8 +223,7 @@ namespace tomcat {
                 parent_labels.reserve(parent_nodes.size());
 
                 for (const auto& parent_node : parent_nodes) {
-                    string label =
-                        parent_node->get_metadata()->get_label();
+                    string label = parent_node->get_metadata()->get_label();
                     parent_labels.push_back(label);
                 }
 
@@ -273,8 +273,7 @@ namespace tomcat {
             //  Only allow conjugate priors
         }
 
-        vector<shared_ptr<Node>>
-        DynamicBayesNet::get_parameter_nodes() {
+        vector<shared_ptr<Node>> DynamicBayesNet::get_parameter_nodes() {
             vector<shared_ptr<Node>> parameter_nodes;
             parameter_nodes.reserve(this->parameter_nodes_map.size());
 
@@ -285,17 +284,20 @@ namespace tomcat {
             return parameter_nodes;
         }
 
-        vector<shared_ptr<Node>> DynamicBayesNet::get_nodes_by_label(
-            const string& node_label) const {
-            return this->label_to_nodes.at(node_label);
+        vector<shared_ptr<Node>>
+        DynamicBayesNet::get_nodes_by_label(const string& node_label) const {
+            vector<shared_ptr<Node>> nodes;
+            if (EXISTS(node_label, this->label_to_nodes)) {
+                nodes = this->label_to_nodes.at(node_label);
+            }
+
+            return nodes;
         }
 
-        vector<shared_ptr<Node>>
-        DynamicBayesNet::get_nodes_topological_order(
+        vector<shared_ptr<Node>> DynamicBayesNet::get_nodes_topological_order(
             bool from_roots_to_leaves) const {
             vector<int> vertex_ids;
-            boost::topological_sort(this->graph,
-                                    back_inserter(vertex_ids));
+            boost::topological_sort(this->graph, back_inserter(vertex_ids));
 
             vector<shared_ptr<Node>> nodes(vertex_ids.size());
             int i = 0;
@@ -359,36 +361,47 @@ namespace tomcat {
             return child_nodes;
         }
 
-        void DynamicBayesNet::save_to_folder(
-            const string& output_folder) const {
+        void DynamicBayesNet::save_to(const string& output_dir) const {
 
-            boost::filesystem::create_directories(output_folder);
+            boost::filesystem::create_directories(output_dir);
 
             for (const auto& mapping : this->parameter_nodes_map) {
                 string filename = mapping.first + ".txt";
-                string filepath = get_filepath(output_folder, filename);
+                string filepath = get_filepath(output_dir, filename);
                 save_matrix_to_file(filepath, mapping.second->get_assignment());
             }
         }
 
-        void
-        DynamicBayesNet::load_from_folder(const string& input_folder) {
+        void DynamicBayesNet::load_from(const string& input_dir) {
+            // Parameters of the model should be in files with the same name as
+            // the parameters timed names. (eg. (Theta_S0,0).txt)
             for (const auto& file :
-                 boost::filesystem::directory_iterator(input_folder)) {
+                 boost::filesystem::directory_iterator(input_dir)) {
+                // Ignore directories
+                if (boost::filesystem::is_regular_file(file)) {
+                    string filename = file.path().filename().string();
+                    string parameter_timed_name = remove_extension(filename);
 
-                string filename = file.path().filename().string();
-                string parameter_timed_name = remove_extension(filename);
-                Eigen::MatrixXd assignment =
-                    read_matrix_from_file(file.path().string());
+                    // Only process the file's content if a parameter with the
+                    // same name exists in the model.
+                    if (EXISTS(parameter_timed_name,
+                               this->parameter_nodes_map)) {
 
-                // Set loaded vector as assignment of the corresponding
-                // parameter node.
-                RandomVariableNode* parameter_node =
-                    dynamic_cast<RandomVariableNode*>(
-                        this->parameter_nodes_map.at(parameter_timed_name)
-                            .get());
-                parameter_node->set_assignment(assignment);
-                parameter_node->freeze();
+                        RandomVariableNode* parameter_node =
+                            dynamic_cast<RandomVariableNode*>(
+                                this->parameter_nodes_map
+                                    .at(parameter_timed_name)
+                                    .get());
+
+                        // We set the loaded matrix as the assignment of the
+                        // corresponding parameter node and freeze it so it
+                        // cannot be modified by sampling.
+                        Eigen::MatrixXd assignment =
+                            read_matrix_from_file(file.path().string());
+                        parameter_node->set_assignment(assignment);
+                        parameter_node->freeze();
+                    }
+                }
             }
         }
 
@@ -401,12 +414,27 @@ namespace tomcat {
                 int target_vertex_id = boost::target(*begin, graph);
 
                 Edge edge = make_pair(this->graph[source_vertex_id].node,
-                    this->graph[target_vertex_id].node);
+                                      this->graph[target_vertex_id].node);
                 edges.push_back(move(edge));
                 begin++;
             }
 
             return edges;
+        }
+
+        void
+        DynamicBayesNet::write_graphviz(std::ostream& output_stream) const {
+            boost::write_graphviz(output_stream,
+                                  this->graph,
+                                  boost::make_label_writer(boost::get(
+                                      &VertexData::label, this->graph)));
+        }
+
+        int DynamicBayesNet::get_cardinality_of(
+            const std::string& node_label) const {
+            return this->label_to_nodes.at(node_label)[0]
+                ->get_metadata()
+                ->get_cardinality();
         }
 
         //----------------------------------------------------------------------

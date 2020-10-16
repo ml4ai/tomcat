@@ -20,6 +20,13 @@ namespace tomcat {
         MessageNode::~MessageNode() {}
 
         //----------------------------------------------------------------------
+        // Operator overload
+        //----------------------------------------------------------------------
+        bool MessageNode::operator==(const MessageNode& obj) const {
+            return this->get_name() == obj.get_name();
+        }
+
+        //----------------------------------------------------------------------
         // Static functions
         //----------------------------------------------------------------------
         string MessageNode::get_name(const string& label,

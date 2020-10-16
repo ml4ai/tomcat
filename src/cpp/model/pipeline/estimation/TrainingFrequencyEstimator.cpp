@@ -11,8 +11,11 @@ namespace tomcat {
         // Constructors & Destructor
         //----------------------------------------------------------------------
         TrainingFrequencyEstimator::TrainingFrequencyEstimator(
-            shared_ptr<DynamicBayesNet> model, int inference_horizon)
-            : Estimator(model, inference_horizon) {}
+            shared_ptr<DynamicBayesNet> model,
+            int inference_horizon,
+            const std::string& node_label,
+            const Eigen::VectorXd& assignment)
+            : Estimator(model, inference_horizon, node_label, assignment) {}
 
         TrainingFrequencyEstimator::~TrainingFrequencyEstimator() {}
 
@@ -33,20 +36,38 @@ namespace tomcat {
         //----------------------------------------------------------------------
         // Member functions
         //----------------------------------------------------------------------
-        void TrainingFrequencyEstimator::estimate(EvidenceSet new_data) {
-            for (auto& node_estimates : this->nodes_estimates) {
-                if (node_estimates.estimates.size() == 0) {
-                    if (!this->training_data.has_data_for(
-                            node_estimates.label)) {
-                        throw TomcatModelException(
-                            "No training data was provided to the node " +
-                            node_estimates.label);
-                    }
+        void TrainingFrequencyEstimator::estimate(const EvidenceSet& new_data) {
+            if (this->estimates.estimates.size() == 0) {
+                if (!this->training_data.has_data_for(this->estimates.label)) {
+                    throw TomcatModelException(
+                        "No training data was provided to the node " +
+                            this->estimates.label);
+                }
 
+                vector<Eigen::VectorXd> assignments;
+
+                if (this->estimates.assignment.size() == 0) {
+                    // If no assignment was provided, we compute the
+                    // estimates for each one of the possible assignments
+                    // the node can have.
+                    int cardinality =
+                        this->model->get_cardinality_of(this->estimates.label);
+
+                    for (int assignment = 0; assignment < cardinality;
+                         assignment++) {
+                        assignments.push_back(
+                            Eigen::VectorXd::Constant(1, assignment));
+                    }
+                }
+                else {
+                    assignments.push_back(this->estimates.assignment);
+                }
+
+                for (const auto& assignment : assignments) {
                     Eigen::MatrixXd logical_data_in_horizon =
                         this->training_data.get_observations_in_window_for(
-                            node_estimates.label,
-                            node_estimates.assignment,
+                            this->estimates.label,
+                            assignment,
                             this->inference_horizon);
 
                     Eigen::MatrixXd estimates(new_data.get_num_data_points(),
@@ -55,8 +76,7 @@ namespace tomcat {
                     estimates = estimates.row(0).replicate(
                         new_data.get_num_data_points(), 1);
 
-                    node_estimates.estimates = estimates;
-
+                    this->estimates.estimates.push_back(estimates);
                 }
             }
         }

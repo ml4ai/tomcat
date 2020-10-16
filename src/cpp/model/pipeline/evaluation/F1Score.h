@@ -1,7 +1,7 @@
 #pragma once
 
-#include "model/utils/Definitions.h"
-#include "model/pipeline/evaluation/Measure.h"
+#include "pipeline/evaluation/Measure.h"
+#include "utils/Definitions.h"
 
 namespace tomcat {
     namespace model {
@@ -42,7 +42,7 @@ namespace tomcat {
             //------------------------------------------------------------------
             // Member functions
             //------------------------------------------------------------------
-            std::vector<NodeEvaluation>
+            NodeEvaluation
             evaluate(const EvidenceSet& test_data) const override;
 
             void get_info(nlohmann::json& json) const override;

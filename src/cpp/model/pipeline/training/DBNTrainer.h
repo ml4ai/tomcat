@@ -2,8 +2,8 @@
 
 #include <nlohmann/json.hpp>
 
-#include "model/pgm/EvidenceSet.h"
-#include "model/utils/Definitions.h"
+#include "pgm/EvidenceSet.h"
+#include "utils/Definitions.h"
 
 namespace tomcat {
     namespace model {
