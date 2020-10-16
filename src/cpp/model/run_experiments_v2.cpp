@@ -190,7 +190,6 @@ void execute_experiment_2d_part_b() {
     Experimentation experimentation(
         gen, "2d_cv", Experimentation::MODEL_VERSION::v2, data, 5);
 
-    experimentation.display_estimates();
     experimentation.train_using_gibbs(50, 100);
     string model_dir = fmt::format("{}/model/ta3/2d", OUTPUT_ROOT_DIR);
     experimentation.save_model(model_dir);
@@ -202,6 +201,7 @@ void execute_experiment_2d_part_b() {
 
     string evaluations_dir =
         fmt::format("{}/evaluations/ta3/2d/cv", OUTPUT_ROOT_DIR);
+    experimentation.display_estimates();
     experimentation.train_and_evaluate(evaluations_dir);
 }
 
@@ -313,5 +313,8 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    execute_experiment(experiment_id);
+//    execute_experiment(experiment_id);
+    execute_experiment_2b();
+    execute_experiment_2d_part_b();
+    execute_experiment_2d_part_c();
 }

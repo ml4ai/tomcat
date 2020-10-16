@@ -72,13 +72,10 @@ namespace tomcat {
         }
 
         void Estimator::keep_estimates() {
-            int i = 0;
+            this->cumulative_estimates.estimates.push_back({});
+            int i = this->cumulative_estimates.estimates.size() - 1;
             for (const auto& estimate : this->estimates.estimates) {
-                if (this->cumulative_estimates.estimates.size() < i + 1) {
-                    this->cumulative_estimates.estimates.push_back({});
-                }
                 this->cumulative_estimates.estimates[i].push_back(estimate);
-                i++;
             }
         }
 
