@@ -1,26 +1,25 @@
-;; Another redo of crafting an axe. 
-;; Salena T Ashton 15 Oct 2020
 
-;; Differences:
-   ;; Use of conditional preconditions, effects, and/or goals
-   ;; Soft Goals and preferences in preconditions and/or goals
+#| Differences:
+    Use of conditional preconditions, effects, and/or goals
+    Soft Goals and preferences in preconditions and/or goals
 
-;; This domain enables the crafting of an axe with a blade made from wood,
-   ;; stone or iron. This domain has the greatest amount of low-level tasks
-   ;; that respect the physics of the Minecraft domain. Additional files will
-   ;; introduce heuristics or otherwise relaxed problems. 
+This domain enables the crafting of an axe with a blade made from wood,
+   stone or iron. This domain has the greatest amount of low-level tasks
+   that respect the physics of the Minecraft domain. Additional files will
+   introduce heuristics or otherwise relaxed problems. 
 
-;; This domain does not currently deplete inventory when ingredients or tools
-   ;; are used. That update will be in a future domain.
+This domain does not currently deplete inventory when ingredients or tools
+  are used. That update will be in a future domain.
 
-;; to do:   preferences and weapons?
-         ;; Cost functions or penalties
-         ;; Added constraints
+ to do: Syntax for SHOP3
+        preferences and weapons?
+        Cost functions or penalties
+        Added constraints
 
-;; for now, the crafting of a bow will need to be enough. When I get this
-;; working, the arrow can be developed. Easier to assume a bow comes with arrow
-;; for two reasons: It's the only item in this domain that requires three
-;; different ingredients and the only item to require feathers.
+For now, the crafting of a bow will need to be enough. When I get this
+  working, the arrow can be developed. Easier to assume a bow comes with arrow
+  for two reasons: It's the only item in this domain that requires three
+  different ingredients and the only item to require feathers.|#
 
 (progn (ql:quickload "shop3"))
 
@@ -30,7 +29,7 @@
   (:types (ingredients tool weapon junk - object)
           (wood metal stone animal - ingredients)
             (logs planks sticks - wood)
-            (stone flint - stone) ;; can subtype have same name as parent type?
+          (stone flint - stone) ; can subtype have same name as parent type?
             (ore ingot - metal)
             (strings cobwebs - animal)
 
@@ -41,8 +40,9 @@
           ;; for now, crafting a bow yields a bow and arrow.
           (sword bow flintSteal - weapon) 
 
-          ;; junk items introduced since crafting is similar to tools/weapons
-          (fishingRod gate loom - junk) ;; items not needed for mission, later for uncertainty
+          ;; Junk items introduced since crafting is similar to tools/weapons
+          ;; Items not needed for mission, later for uncertainty
+          (fishingRod gate loom - junk) 
     )
 
   (:predicates (has-ingredient ?h - ingredients)
@@ -60,14 +60,14 @@
                (is-useless ?j - junk)
     )
 
-  ;; mine raw ingredients wood, fuel, stone, flint, and iron ore
-  ;;simplified so that any type pickaxe will mine iron ore
+  ;;; mine raw ingredients wood, fuel, stone, flint, and iron ore simplified so that 
+    ;;; any type pickaxe will mine iron ore
   (:action mine-something
     :parameters (has-ingredient ?m - ingredient)
-    :precondition ()   ;; none. There is conditional effect below.
+    :precondition ()   ; none. There is conditional effect below.
     :effect (and (when (not has-pickaxe ?px)
                        (and (has-ingredient wood)
-                            (has-ingredient fuel)));; calling wood fuel for simplicity
+                            (has-ingredient fuel))); calling wood fuel for simplicity
                  (when (has-pickaxe ?px) 
                        (and (has-ingredient stone)
                             (has-ingredient flint)))
@@ -77,7 +77,7 @@
     );; end action mine-something
 
   
-  ;; simplified action that crafts sticks and wood with one action
+  ;;; simplified action that crafts sticks and wood with one action
   (:action craft-wood
     :parameters (has-ingredient ?logs ?planks ?sticks - wood)
     :precondition (has-ingredient ?logs)
@@ -101,11 +101,11 @@
     :effect (has-ingredient ?ore)
     )
 
-  ;; craft flint and steel. This action is repeated twice because flint and
-     ;; steel can be used for a tool or weapon. 
-     ;; As a tool, I spell it flintSteel.
-     ;; As a weapon, I spell it flintSteal. 
-     ;; ??? Should I make this distinction or let the agent do so?  
+  ;;; Craft flint and steel. This action is repeated twice because flint and
+     ;;; steel can be used for a tool or weapon. 
+     ;;; As a tool, I spell it flintSteel.
+     ;;; As a weapon, I spell it flintSteal. 
+     ;;; ??? Should I make this distinction or let the agent do so?  
   (:action craft-flintSteel
     :parameters (has-tool ?flint - tool
                  has-ingredient ?flint ?ingot - ingredient)
@@ -122,7 +122,7 @@
     :effect (has-weapon ?flint)
     )
 
-  ;; crafts axes with blades made of wood, stone or iron
+  ;;; crafts axes with blades made of wood, stone or iron
   (:action craft-axe
     :parameters (has-ingredient ?sticks ?planks - wood 
                  has-ingredient ?stone - stone 
@@ -141,7 +141,7 @@
                                (has-tool ?iron-axe))))
     )
 
-  ;; crafts hoes with blades made of wood, stone or iron
+  ;;; crafts hoes with blades made of wood, stone or iron
   (:action craft-hoe
     :parameters (has-ingredient ?sticks ?planks - wood 
                  has-ingredient ?stone - stone 
@@ -160,7 +160,7 @@
                                (has-tool ?iron-hoe))))
     )
 
-  ;; crafts shovel with blades made of wood, stone or iron
+  ;;; crafts shovel with blades made of wood, stone or iron
   (:action craft-shovel
     :parameters (has-ingredient ?sticks ?planks - wood 
                  has-ingredient ?stone - stone 
@@ -179,9 +179,9 @@
                                (has-tool ?iron-shovel))))
     )
   
-  ;; crafts pickaxes with blades made of wood, stone or iron
-  ;; pickaxes are needed to mine stone and ore, so that is why this action has
-     ;; a more specific subtype
+  ;;; crafts pickaxes with blades made of wood, stone or iron
+  ;;; pickaxes are needed to mine stone and ore, so that is why this action has
+     ;;; a more specific subtype
   (:action craft-pickaxe
     :parameters (has-ingredient ?sticks ?planks - wood 
                  has-ingredient ?stone - stone 
@@ -198,5 +198,8 @@
                                (has-pickaxe ?stone-pickaxe))
                          (when (has-ingredient ?ingot)
                                (has-pickaxe ?iron-pickaxe))))
-    )
-  );; end defdomain
+    )  
+  ); end defdomain
+  
+
+
