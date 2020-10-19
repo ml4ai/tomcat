@@ -30,8 +30,6 @@ Classes
 
 - :ref:`exhale_class_classtomcat_1_1TomcatMissionException`
 
-- :ref:`exhale_class_classtomcat_1_1WebcamSensor`
-
 
 Functions
 ---------

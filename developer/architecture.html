@@ -267,16 +267,12 @@ message bus on various topics.</p>
 </div>
 <div class="section" id="facial-landmark-gaze-pose-and-au-detection">
 <h3>Facial Landmark, Gaze, Pose, and AU detection<a class="headerlink" href="#facial-landmark-gaze-pose-and-au-detection" title="Permalink to this headline">¶</a></h3>
-<p>We leverage <a class="reference external" href="https://github.com/TadasBaltrusaitis/OpenFace">OpenFace</a> to create an executable (<code class="docutils literal notranslate"><span class="pre">faceSensor</span></code>, whose code
-resides in <code class="docutils literal notranslate"><span class="pre">src/cpp/faceSensor</span></code>) that outputs JSON messages containing
-information about a player’s gaze, pose, action units, and face landmarks,
-either from a webcam feed or from a video file. These messages are output to
-standard output, from where they can be either redirected to a file, piped to
-an MQTT client (e.g. <code class="docutils literal notranslate"><span class="pre">mosquitto_sub</span></code>) for publication to a message bus, or
-used for other downstream applications.</p>
-<p>Note: We vendorize OpenFace under <code class="docutils literal notranslate"><span class="pre">external/OpenFace</span></code> since (i) it’s not
-available using a package manager, and (ii) we have made some modifications
-(mainly ergonomic) to it to suit our purposes.</p>
+<p>We leverage <a class="reference external" href="https://github.com/TadasBaltrusaitis/OpenFace">OpenFace</a> to create an executable called <a class="reference external" href="https://github.com/ml4ai/tomcat-faceAnalyzer">faceAnalyzer</a> that
+outputs JSON messages containing information about a player’s gaze, pose,
+action units, and face landmarks, either from a webcam feed or from a video
+file. These messages are output to standard output, from where they can be
+either redirected to a file, piped to an MQTT client (e.g. <code class="docutils literal notranslate"><span class="pre">mosquitto_sub</span></code>)
+for publication to a message bus, or used for other downstream applications.</p>
 </div>
 </div>
 </div>

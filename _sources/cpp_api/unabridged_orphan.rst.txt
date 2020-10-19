@@ -31,11 +31,6 @@ Directories
 .. toctree::
    :maxdepth: 5
 
-   dir_src_cpp_faceSensor.rst
-
-.. toctree::
-   :maxdepth: 5
-
    dir_src_cpp_getSpecVersion.rst
 
 .. toctree::
@@ -400,11 +395,6 @@ Files
 .. toctree::
    :maxdepth: 5
 
-   file_src_cpp_faceSensor_FaceSensor.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
    file_src_cpp_model_pgm_inference_FactorGraph.cpp.rst
 
 .. toctree::
@@ -665,11 +655,6 @@ Files
 .. toctree::
    :maxdepth: 5
 
-   file_src_cpp_faceSensor_README.md.rst
-
-.. toctree::
-   :maxdepth: 5
-
    file_src_cpp_model_run_experiments_v1.cpp.rst
 
 .. toctree::
@@ -786,16 +771,6 @@ Files
    :maxdepth: 5
 
    file_src_cpp_model_pgm_inference_VariableNode.h.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_faceSensor_WebcamSensor.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_faceSensor_WebcamSensor.h.rst
 
 .. toctree::
    :maxdepth: 5
