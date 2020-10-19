@@ -94,8 +94,6 @@ set_local_configuration() {
     # for convenience.
 
     export RM="/bin/rm -rf"
-
-    export OPENFACE_MODELS_DIR=${OPENFACE_MODELS_DIR:-"$TOMCAT"/data/OpenFace_models}
 }
 
 # Detect the OS, set some useful environment variables.
