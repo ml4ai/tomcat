@@ -20,10 +20,3 @@ Namespaces
 - :ref:`namespace_std__chrono`
 
 - :ref:`namespace_std__this_thread`
-
-
-Classes
--------
-
-
-- :ref:`exhale_struct_structstd_1_1hash_3_01shared__ptr_3_01tomcat_1_1model_1_1MessageNode_01_4_01_4`

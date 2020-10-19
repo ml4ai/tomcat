@@ -13,13 +13,6 @@ Namespace tomcat
 
 
 
-Namespaces
-----------
-
-
-- :ref:`namespace_tomcat__model`
-
-
 Classes
 -------
 

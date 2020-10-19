@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>&lt;no title&gt; &mdash; ToMCAT 0.1 documentation</title>
+  <title>Software Components &mdash; ToMCAT 0.1 documentation</title>
   
 
   
@@ -38,7 +38,9 @@
 
     
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Team" href="team.html" />
+    <link rel="prev" title="Welcome to ToMCAT" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -84,9 +86,9 @@
             
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="software.html">Software Components</a></li>
-<li class="toctree-l1"><a class="reference internal" href="software.html#indices-and-tables">Indices and tables</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Software Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="team.html">Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="become_a_participant.html">Become a participant</a></li>
 <li class="toctree-l1"><a class="reference internal" href="developer/index.html">Developer documentation</a></li>
@@ -139,13 +141,13 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>&lt;no title&gt;</li>
+      <li>Software Components</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/CMakeLists.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/software.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -158,37 +160,41 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <p>project(tomcat_docs)</p>
-<p>set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} “${CMAKE_CURRENT_SOURCE_DIR}/cmake/”)</p>
-<p>find_package(Sphinx REQUIRED)</p>
-<p>set(SPHINX_SOURCE ${CMAKE_CURRENT_SOURCE_DIR})
-set(SPHINX_BUILD ${CMAKE_CURRENT_BINARY_DIR})
-set(SPHINX_INDEX_FILE ${SPHINX_BUILD}/index.html)</p>
-<p>set(OPENAPI_SPEC_YAML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/spec.yml)
-set(OPENAPI_SPEC_HTML_FILE ${CMAKE_CURRENT_SOURCE_DIR}/spec.html)</p>
-<p>add_custom_command(
-OUTPUT ${OPENAPI_SPEC_HTML_FILE}
-COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/swagger-yaml-to-html.py ${OPENAPI_SPEC_YAML_FILE} ${OPENAPI_SPEC_HTML_FILE}
-WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/spec.yml
-MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/spec.yml
-COMMENT “Generating OpenAPI-like spec”)</p>
-<p>add_custom_command(
-OUTPUT ${SPHINX_INDEX_FILE}
-COMMAND ${SPHINX_EXECUTABLE} -b html ${SPHINX_SOURCE} ${SPHINX_BUILD}
-WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/index.rst ${DOXYGEN_INDEX_FILE} ${OPENAPI_SPEC_HTML_FILE}
-MAIN_DEPENDENCY ${SPHINX_SOURCE}/conf.py
-COMMENT “Generating documentation with Sphinx”)</p>
-<p>add_custom_target(sphinx DEPENDS ${SPHINX_INDEX_FILE})
-add_subdirectory(developer/java_api)
-add_custom_target(docs DEPENDS sphinx java_apidocs)</p>
+  <div class="section" id="software-components">
+<h1>Software Components<a class="headerlink" href="#software-components" title="Permalink to this headline">¶</a></h1>
+<p>There are a number of open-source software modules being developed as part of
+the ToMCAT project:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/ml4ai/tomcat">Minecraft-based virtual testbed</a>.</p></li>
+<li><p><a class="reference external" href="https://github.com/ml4ai/tomcat-text">Natural language processing (text)</a>.</p></li>
+<li><p><a class="reference external" href="https://github.com/ml4ai/tomcat-speech">Natural language processing (speech)</a>.</p></li>
+<li><p><a class="reference external" href="https://github.com/ml4ai/tomcat-faceAnalyzer">Face analysis</a>.</p></li>
+<li><p><a class="reference external" href="https://github.com/ml4ai/tomcat-tmm">Team Mind Module</a>.</p></li>
+</ul>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
 
 
            </div>
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="team.html" class="btn btn-neutral float-right" title="Team" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to ToMCAT" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
