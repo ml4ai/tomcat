@@ -66,6 +66,7 @@ the Zombie Invasion.
    :maxdepth: 1
    :caption: Contents:
 
+   software
    team
    become_a_participant
    developer/index
