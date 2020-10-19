@@ -14,7 +14,7 @@
   Updates and Temporary Notes:
   16 Oct: domain crafts only wooden axe and wooden pickaxe.
           needs shop3 syntax!
-
+  19 Oct: added wooden sword
 |#
 
  
@@ -25,19 +25,21 @@
 (in-package :shop-user)
 
 (defdomain (craftAxe-2 :type pddl-domain :redefine-okay T :action-costs) ()
-  (:types (ingredients tool - object)
+  (:types (ingredients tool weapon- object)
           (sticks planks wood - ingredients)
           (wood-axe wood-pickaxe - tool)
+          (wood-sword - weapon)
     )
 
   (:predicates (wood ?w planks ?p sticks ?s - ingredients)
                (wood-axe ?wa wood-pickaxe ?wp - tool)
+               (wood-sword ?ws - weapon)
     );end predicates
 
   (:functions (inventory-wood ?iw - ingredients)
               (inventory-planks ?ip - ingredients)
               (inventory-sticks ?is - ingredients)
-              (total-cost)
+; Do I need this after all?              (total-cost)
               ); end functions
 
 
@@ -91,6 +93,18 @@
                  (decrease (inventory-sticks ?is) ?2)
                  (= (wood-pickaxe ?wp) ?1))
     ); end action craft-wood-pickaxe
+
+
+  ;; crafting a wooden sword
+  (:action craft-sword
+    :parameters (wood-sword ?ws - weapon
+                inventory-planks ?ip inventory-sticks ?is - ingredients)
+    :precondition (and (>= (inventory-planks ?ip) ?2)
+                       (>= (inventory-sticks ?is) ?1))
+    :effect (and (decrease (inventory-planks ?ip) ?2)
+                 (decrease (inventory-sticks ?is) ?1)
+                 (= (wood-sword ?ws) ?1))
+    ); end action craft-wood-sword
 
 );end defdomain
                        

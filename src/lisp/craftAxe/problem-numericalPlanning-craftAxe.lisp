@@ -11,7 +11,7 @@
   Updates and temporary Notes:
   16 Oct: domain crafts only wooden axe and wooden pickaxe. Needs
           shop3 syntax!
-
+  19 Oct: crafts wooden sword. Uncomment to change goal (below)
 |#
 
 (define (problem craft-tool)
@@ -28,9 +28,12 @@
          (= (wood-axe wa) 0)
          (= (wood-pickaxe wp) 0))
 
+;;;; uncomment to craft an axe and a pickaxe  
   (:goal (and (>= (wood-axe wa) 1)
               (>= (wood-pickaxe wp) 1)))
 
+;;;; uncomment to craft a sword
+  (:goal (>= (wood-sword ws) 1))
   ); end define problem craft-tool
 
 
