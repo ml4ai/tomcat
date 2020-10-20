@@ -1,5 +1,6 @@
 
 #| Differences:
+    Small Problem included with domain file.
 
 This domain enables the crafting of a wood, stone, or iron axe, hoe, or pickaxe 
     using boolean-valued actions.
@@ -7,8 +8,8 @@ This domain enables the crafting of a wood, stone, or iron axe, hoe, or pickaxe
 This domain does not track inventory when ingredients or tools are used. Further
     development of craftAxe will be in numeric and other planning domains.
 
- to do: Syntax for SHOP3
-
+To Do: Syntax for SHOP3
+|#
 
 (progn (ql:quickload "shop3"))
 
@@ -258,5 +259,13 @@ This domain does not track inventory when ingredients or tools are used. Further
     :precondition(and (has-flint ?fl)
                       (has-ingot ?i))
     :effect (has-flint-steal ?flsteal))
-
 ); end defdomain
+
+
+
+(defproblem craft-wood-axe
+    ((wood sticks) (wood planks) (ingredients - wood) (tool wood-axe) 
+     (has-wood wood) (has-planks planks) (has-sticks sticks) (has-wood-axe wood-axe))
+
+    ((has-wood-axe wood-axe)))
+
