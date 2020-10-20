@@ -25,7 +25,7 @@
       'wooden' = any crafted wood for blade type
 |#
 
-(define (domain craft-iron-axe)
+(define (domain craft-iron-axe-domain)
   (:requirements :strips :typing)
   (:types
     object fuel tool blade 
