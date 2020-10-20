@@ -25,80 +25,94 @@ For now, the crafting of a bow will need to be enough. When I get this
 
 (in-package :shop-user)
 
-(defdomain (craftAxe-2 :type pddl-domain :redefine-okay T) ()
-  (:types (ingredients tool weapon junk - object)
-          (wood metal stone animal - ingredients)
-            (logs planks sticks - wood)
-          (stone flint - stone) ; can subtype have same name as parent type?
-            (ore ingot - metal)
-            (strings cobwebs - animal)
+(defdomain (domain-classical-craft :type pddl-domain :redefine-okay T) ()
+  (:types (ingredients tool weapon - object)
+          (wood stone ore ingot flint strings cobwebs - ingredients)
+            (planks sticks - wood)
 
           ;; flintSteel spelled this way is used only for a tool
           (axe hoe pickaxe shovel flintSteel furnace - tool)
 
           ;; flintSteal mispelled this way is used only as a weapon
           ;; for now, crafting a bow yields a bow and arrow.
-          (sword bow flintSteal - weapon) 
+          (sword bow flintSteal - weapon))
 
-          ;; Junk items introduced since crafting is similar to tools/weapons
-          ;; Items not needed for mission, later for uncertainty
-          (fishingRod gate loom - junk) 
-    )
+  (:predicates (has-wood ?w 
+                has-stone ?s
+                has-ore ?o
+                has-ingot ?i
+                has-fuel ?f - ingredients)
+               
+               (has-planks ?p
+                has-sticks ?st -wood)
 
-  (:predicates (has-ingredient ?h - ingredients)
-               ;; Later, when agent places numbered items on table, the number
-               ;; will indicate what they plan to craft. All items in this
-               ;; domain require two different ingredient types. The difference
-               ;; between is-crafted and has-tool/has-weapon is that the former
-               ;; doesn't tell you agent intent. The latter tells you exactly
-               ;; what the agent has in hand.
-               (is-crafted ?c1 ?c2 - ingredients) 
-               (has-tool ?t - tool)
-               (has-pickaxe ?px - pickaxe)
-               (has-weapon ?w - weapon)
-               ;; These junk items have similar recipes to tools and weapons. 
-               (is-useless ?j - junk)
-    )
+               (has-wood-pickaxe ?wpx
+                has-stone-pickaxe ?spx 
+                has-wood-axe ?wa 
+                has-stone-axe ?sa
+                has-furnace - ?furnace - tool)
+               
+               (has-weapon ?w - weapon))
 
-  ;;; mine raw ingredients wood, fuel, stone, flint, and iron ore simplified so that 
-    ;;; any type pickaxe will mine iron ore
-  (:action mine-something
-    :parameters (has-ingredient ?m - ingredient)
-    :precondition ()   ; none. There is conditional effect below.
-    :effect (and (when (not has-pickaxe ?px)
-                       (and (has-ingredient wood)
-                            (has-ingredient fuel))); calling wood fuel for simplicity
-                 (when (has-pickaxe ?px) 
-                       (and (has-ingredient stone)
-                            (has-ingredient flint)))
-                 (when (and (has-pickaxe ?px) 
-                           (has-ingredient stone)
-                       (has-ingredient ore))))
-    );; end action mine-something
 
+  (:action mine-wood
+    :parameters (has-wood ?w - ingredients)
+    :precondition ()   
+    :effect (has-wood ?w))
+
+
+  (:action mine-stone
+    :parameters (has-stone ?s - ingredients
+                 has-wood-pickaxe ?wpx- tool)
+    :precondition (or (has-wood-pickaxe ?wpx)
+                      (has-stone-pickaxe ?spx)
+    :effect (has-stone ?s))
   
-  ;;; simplified action that crafts sticks and wood with one action
-  (:action craft-wood
-    :parameters (has-ingredient ?logs ?planks ?sticks - wood)
-    :precondition (has-ingredient ?logs)
-    :effect (and (has-ingredient ?planks)
-                 (has-ingredient ?sticks)
-    )
+
+  (:action mine-ore
+    :parameters (has-ore ?o - ingredients
+                 has-stone-pickaxe ?spx - tool)
+    :precondition (has-stone-pickaxe ?spx)
+    :effects (has-ore ?o))
+
+
+  (:action mine-fuel
+    :parameters (has-fuel ?f - ingredients)
+    :precondition ()
+    :effects (has-fuel ?f))
+
+
+  (:action craft-planks
+    :parameters (has-wood ?w - ingredient
+                has-planks ?p - wood)
+    :precondition (has-wood ?w)
+    :effect (has-planks ?p))
+
+
+  (:action craft-sticks
+    :parameters (has-planks ?p - wood
+                has-sticks ?st - wood)
+    :precondition (has-planks ?p)
+    :effect (has-sticks ?st))
+
+
 
   ;; builds a furnace for smelting metal ores
   (:action build-furnace
-    :parameters (has-tool furnace - tool
-                 has-ingredients ?stone - stone)
-    :precondition (has-ingredients ?stone)
-    :effect (has-tool furnace)
+    :parameters (has-furnace ?furnace - tool
+                 has-stone ?s - ingredients)
+    :precondition (has-stone ?s)
+    :effect (has-furnace ?furnace)
 
   ;; craft ingots from iron ore
   (:action craft-ingot
-    :parameters (has-tool furnace - tool 
-                 has-ingredient ?fuel ?ore - ingredient) 
-    :precondition (and (has-tool furnace)
-                       (has-ingredient ?fuel ?ore))
-    :effect (has-ingredient ?ore)
+    :parameters (has-furnace ?furnace - tool 
+                 has-fuel ?f
+                 has-ore ?o - ingredient) 
+    :precondition (and (has-furnace ?furnace)
+                       (has-fuel ?f)
+                       (has-ore ?o))
+    :effect (has-ingot ?i
     )
 
   ;;; Craft flint and steel. This action is repeated twice because flint and
@@ -122,24 +136,22 @@ For now, the crafting of a bow will need to be enough. When I get this
     :effect (has-weapon ?flint)
     )
 
-  ;;; crafts axes with blades made of wood, stone or iron
-  (:action craft-axe
-    :parameters (has-ingredient ?sticks ?planks - wood 
-                 has-ingredient ?stone - stone 
-                 has-ingredient ?ingot - metal
-                 has-tool ?tool - tool)
-    :precondition (and (has-ingredient ?sticks)
-                       (exists (or (?planks - ingredient)
-                                   (?stone - stone)
-                                   (?ingot - metal))))
-    :effect (forall (?sticks - ingredient)
-                    (and (when (has-ingredient ?planks)
-                               (has-tool ?wood-axe))
-                         (when (has-ingredient ?stone)
-                               (has-tool ?stone-axe))
-                         (when (has-ingredient ?ingot)
-                               (has-tool ?iron-axe))))
-    )
+  (:action craft-wood-axe
+    :parameters (has-sticks ?st 
+                 has-planks ?p - wood 
+                 has-wood-axe ?wa - tool)
+    :precondition (and (has-sticks ?st)
+                       (has-planks ?p))
+    :effect (has-wood-axe ?wa)))
+
+  (:action craft-stone-axe
+    :parameters (has-sticks ?st 
+                 has-stone ?s - ingredients 
+                 has-stone-axe ?sa - tool)
+    :precondition (and (has-sticks ?st)
+                       (has-stone)?s)
+    :effect (has-stone-axe ?sa)))
+
 
   ;;; crafts hoes with blades made of wood, stone or iron
   (:action craft-hoe
@@ -179,26 +191,13 @@ For now, the crafting of a bow will need to be enough. When I get this
                                (has-tool ?iron-shovel))))
     )
   
-  ;;; crafts pickaxes with blades made of wood, stone or iron
-  ;;; pickaxes are needed to mine stone and ore, so that is why this action has
-     ;;; a more specific subtype
-  (:action craft-pickaxe
-    :parameters (has-ingredient ?sticks ?planks - wood 
-                 has-ingredient ?stone - stone 
-                 has-ingredient ?ingot - metal
-                 has-pickaxe ?px - pickaxe) 
-    :precondition (and (has-ingredient ?sticks)
-                       (exists (or (?planks - wood)
-                                   (?stone - stone)
-                                   (?ingot - metal))))
-    :effect (forall (?sticks - ingredient)
-                    (and (when (has-ingredient ?planks)
-                               (has-pickaxe ?wood-pickaxe))
-                         (when (has-ingredient ?stone)
-                               (has-pickaxe ?stone-pickaxe))
-                         (when (has-ingredient ?ingot)
-                               (has-pickaxe ?iron-pickaxe))))
-    )  
+  (:action craft-wood-pickaxe
+    :parameters (has-sticks ?st 
+                 has-planks ?p - wood
+                 has-wood-pickaxe ?wpx - tool)
+    :precondition (and (has-sticks ?st)
+                       (has-planks ?p)
+    :effect (has-wood-pickaxe ?wpx)))  
   ); end defdomain
   
 
