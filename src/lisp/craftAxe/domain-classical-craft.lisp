@@ -1,7 +1,5 @@
 
 #| Differences:
-    Use of conditional preconditions, effects, and/or goals
-    Soft Goals and preferences in preconditions and/or goals
 
 This domain enables the crafting of an axe with a blade made from wood,
    stone or iron. This domain has the greatest amount of low-level tasks
@@ -9,11 +7,10 @@ This domain enables the crafting of an axe with a blade made from wood,
    introduce heuristics or otherwise relaxed problems. 
 
 This domain does not currently deplete inventory when ingredients or tools
-  are used. That update will be in a future domain.
+  are used. That happens in numerical-planning domain.
 
  to do: Syntax for SHOP3
         preferences and weapons?
-        Cost functions or penalties
         Added constraints
 
 For now, the crafting of a bow will need to be enough. When I get this
@@ -63,7 +60,10 @@ For now, the crafting of a bow will need to be enough. When I get this
                 has-furnace - ?furnace 
                 has-flint-steel ?flsteel- tool)
                
-               (has-flint-steal ?w - weapon))
+               (has-wood-sword ?wsw
+                has-stone-sword ?stsw
+                has-iron-sword ?isw
+                has-flint-steal ?w - weapon))
 
  ;;; Mining Actions
   (:action mine-wood
@@ -137,8 +137,6 @@ For now, the crafting of a bow will need to be enough. When I get this
     )
 
 
-
-
  ;;; Crafting Axes
   (:action craft-wood-axe
     :parameters (has-sticks ?st 
@@ -197,58 +195,58 @@ For now, the crafting of a bow will need to be enough. When I get this
   
   
   
-  
-  
-  
-  
-  ;;; crafts hoes with blades made of wood, stone or iron
-  (:action craft-hoe
-    :parameters (has-sticks ?st - wood
-                 has- - ingredients
-                 has-hoe ?h - tool)
+  ;;; Crafting hoes 
+  (:action craft-wood-hoe
+    :parameters (has-sticks ?st
+                 has-planks ?p - wood
+                 has-wood-hoe ?wh - tool)
     :precondition (and (has-sticks ?st)
-                       (has-)
-    :effect (has-hoe ?h)))  
+                       (has-planks ?p)
+    :effect (has-wood-hoe ?wh)))  
   
-  (:action craft-hoe
+  (:action craft-stone-hoe
     :parameters (has-sticks ?st - wood
-                 has- - ingredients
-                 has-hoe ?h - tool)
+                 has-stone ?s- ingredients
+                 has-stone-hoe ?sh - tool)
     :precondition (and (has-sticks ?st)
-                       (has-)
-    :effect (has-hoe ?h)))  
+                       (has-stone ?s)
+    :effect (has-stone-hoe ?sh)))  
   
-  (:action craft-hoe
+  (:action craft-iron-hoe
     :parameters (has-sticks ?st - wood
-                 has- - ingredients
-                 has-hoe ?h - tool)
+                 has-ingot ?i- ingredients
+                 has-iron-hoe ?ih - tool)
     :precondition (and (has-sticks ?st)
-                       (has-)
-    :effect (has-hoe ?h)))  
+                       (has-ingot ?i)
+    :effect (has-iron-hoe ?ih)))  
   
+ 
+;;; Crafting Swords
+  (:action craft-wood-sword
+    :parameters (has-sticks ?st
+                 has-planks ?p - wood
+                 has-wood-sword ?wsw - weapon)
+    :precondition (and (has-sticks ?st)
+                       (has-planks ?p)
+    :effect (has-wood-sword ?wsw)))  
   
 
-  ;;; crafts shovel with blades made of wood, stone or iron
-  (:action craft-shovel
-    :parameters (has-ingredient ?sticks ?planks - wood 
-                 has-ingredient ?stone - stone 
-                 has-ingredient ?ingot - metal
-                 has-tool ?tool - tool)
-    :precondition (and (has-ingredient ?sticks)
-                       (exists (or (?planks - ingredient)
-                                   (?stone - stone)
-                                   (?ingot - metal))))
-    :effect (forall (?sticks - ingredient)
-                    (and (when (has-ingredient ?planks)
-                               (has-tool ?wood-shovel))
-                         (when (has-ingredient ?stone)
-                               (has-tool ?stone-shovel))
-                         (when (has-ingredient ?ingot)
-                               (has-tool ?iron-shovel))))
-    )
+  (:action craft-stone-sword
+    :parameters (has-sticks ?st - wood
+                 has-stone ?s - ingredients
+                 has-stone-sword ?ssw - weapon)
+    :precondition (and (has-sticks ?st)
+                       (has-stone ?s)
+    :effect (has-stone-sword ?ssw)))  
   
+  (:action craft-iron-sword
+    :parameters (has-sticks ?st - wood
+                 has-ingot ?i - ingredients
+                 has-iron-sword ?isw - weapon)
+    :precondition (and (has-sticks ?st)
+                       (has-ingot ?i)
+    :effect (has-iron-sword ?isw)))  
   
-
 
   ;;; Craft flint and steel. This action is repeated twice because flint and
      ; steel can be used for a tool or weapon. 

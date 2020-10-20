@@ -5,53 +5,33 @@
          ; Syntax for SHOP3
            
 (define (problem craft-wood-axe
-  (:domain problem-craft-tool-weapon-domain.lisp)
+  (:domain domain-classical-craft.lisp)
 
   ;; no need for pickaxe or weapon parameters
-  (:objects has-ingredient ?h - ingredients
-            is-crafted ?c1 ?c2 - ingredients
-            has-tool ?t - tool) 
+  (:objects st p - wood
+            wa - tool)
   (:init  ()    )
-  (:goal (has-tool wood-axe))
+  (:goal (has-wood-axe wa))
+  );end problem craft-wood-axe
+  
+  ;;comment out if you want to use problem below
   ); end problem craft-wood-axe
-;-------------------------------------------------------------------  
-           
-           
-(define (problem craft-stone-axe ; from scratch
-  (:domain problem-craft-tool-weapon-domain.lisp)
-
-  (:objects has-ingredient ?wood ?stone ?sticks ?planks - ingredients
-            is-crafted ?c1 ?c2 - ingredients
-            has-tool ?t - tool
-            has-pickaxe ?px - pickaxe) 
-  (:init  ()    )
-  (:goal (has-tool stone-axe))
-  ); end problem craft-stone-axe
 
 ;-------------------------------------------------------------------  
-           
-(define (problem craft-iron-axe ;from scratch
-  (:domain problem-craft-tool-weapon-domain.lisp)
 
-  (:objects has-ingredient ?wood ?stone ?sticks ?planks ?ingot - ingredients
-            is-crafted ?c1 ?c2 - ingredients
-            has-tool ?t - tool
-            has-pickaxe ?px - pickaxe) 
-  (:init  ()    )
-  (:goal (has-tool iron-axe))
-  ); end problem craft-iron-axe
+#|
+(define (problem craft-stone-pickaxe
+  (:domain domain-classical-craft.lisp)
 
-;-------------------------------------------------------------------  
-(define (problem craft-pickaxe ;from scratch
-  (:domain problem-craft-tool-weapon-domain.lisp)
+  (:objects sticks planks - wood
+            stone - ingredients
+            spx - tool)
 
-  (:objects has-ingredient ?wood ?stone ?sticks ?planks ?ingot - ingredients
-            is-crafted ?c1 ?c2 - ingredients
-            has-tool ?t - tool
-            has-pickaxe ?px - pickaxe
-            )
-  (:init  ()    )
-  (:goal (has-pickaxe pickaxe))
-  ); end problem craft-pickaxe
+  (:init ()  )
 
-;--------------------------------------------------------------------  
+  (:goal (has-stone-pickaxe spx))
+  ); end problem craft-stone-pickaxe
+
+  ;;comment out if you want to use problem above
+  ); end problem craft-wood-axe
+|#
