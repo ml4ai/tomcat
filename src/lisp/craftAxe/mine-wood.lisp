@@ -2,35 +2,41 @@
 #|Created: 19 October 2020  
 
    Purpose: To test run with Shop 3.
+   For now: reference to shop3 manual in comments. Delete later.
 |#
 
 
-(progn (ql:quickload "shop3"))
+(progn (ql:quickload "shop3")
+       )
+(in-package :shop-user) ;pg 5
+;; for debugging, try (shop trace :tasks) only, then find plans again. pg 10
+(shop-trace :tasks :states :plans) ;pg 9 methods axioms operators goals all effects
 
-(in-package :shop-user)
-(shop-trace :tasks :states :plans)
-
-(defdomain (mine-wood :type pddl-domain :redefine-okay T :action-costs) ()
-  (:types (wood - ingredients)
+(defdomain (mine-wood :type pddl-domain) (
+    (:types 
+      ingredients - object
+      wood - ingredients
     )
 
-  (:predicates (has-wood ?w - ingredients)
-    );end predicates
+    (:predicates (has-wood ?iw - ingredients)
+    )
 
   ;;; mine wood. Very simple for now.
-  (:action mine-wood
-    :parameters ((wood ?w - ingredients)
-                 (has-wood ?w - ingredients)
-    :precondition ()   ; none. There is conditional effect below.
-    :effect (increase (has-wood ?w) ?1)
-            ); end action mine-wood                               
+    (:action get-wood
+      :parameters ((wood ?w - ingredients)
+                   (has-wood ?iw - ingredients))
+      :precondition ()  
+      :effect (increase (has-wood ?iw) ?1)
+    )
+    )
 ); end defdomain
 
 (defproblem mine-wood-problem
-  ((ingredients wood)
-   (has-wood ?w))
-  (= ((has-wood w) ?4))
-  );end problem
-  (find-plans 'mine-wood-problem :which :all :verbose :plans :plan-tree nil)
+            ((ingredients wood)
+             (has-wood iw))
+             (= ((has-wood iw) 4))
+);end problem
+
+(find-plans 'mine-wood-problem :which :all :verbose :plans :plan-tree t);1,2,3,t, nil
 
 
