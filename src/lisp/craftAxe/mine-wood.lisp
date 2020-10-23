@@ -1,3 +1,11 @@
+;;;; This domain currently crafts a wood axe. Domain and problem are defined 
+   ; in this same file. (See below))
+
+;;; Notes to self: 
+   ; No arithmetic in shop3, increment like in knights-tour example (n1 n2 n3)
+   ; Numeric fluents
+   ; Updated 23 Oct 2020
+
 (progn (ql:quickload "shop3"))
 
 (in-package :shop-user)
@@ -66,28 +74,10 @@
 ); end defdomain
 
 
-
-
-
-
-
 (defproblem craft-wood-axe-problem
             ((wood w) (planks p) (sticks s) (wood-axe wa) 
              (has-wood hw) (has-planks hp) (has-sticks hs) (has-wood-axe hwa))
             ((craft-wood-axe wa)))
 
 (find-plans 'craft-wood-axe-problem :which :all :verbose :plans :plan-tree t)
-
-
-
-
-
-
-
-
-
-
-
-
-
 
