@@ -21,27 +21,7 @@ Directories
 .. toctree::
    :maxdepth: 5
 
-   dir_src_cpp_examples.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   dir_src_cpp_examples_libmosquitto_example.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   dir_src_cpp_getSpecVersion.rst
-
-.. toctree::
-   :maxdepth: 5
-
    dir_src_cpp_pro_gen.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   dir_src_cpp_runMission.rst
 
 Files
 *****
@@ -100,22 +80,7 @@ Files
 .. toctree::
    :maxdepth: 5
 
-   file_src_cpp_runMission_FileHandler.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_runMission_FileHandler.h.rst
-
-.. toctree::
-   :maxdepth: 5
-
    file_src_cpp_pro_gen_generator.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_getSpecVersion_getSpecVersion.cpp.rst
 
 .. toctree::
    :maxdepth: 5
@@ -150,21 +115,6 @@ Files
 .. toctree::
    :maxdepth: 5
 
-   file_src_cpp_examples_libmosquitto_example_libmosquitto_example.c.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_runMission_Mission.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_runMission_Mission.h.rst
-
-.. toctree::
-   :maxdepth: 5
-
    file_src_cpp_pro_gen_Object.cpp.rst
 
 .. toctree::
@@ -181,21 +131,6 @@ Files
    :maxdepth: 5
 
    file_src_cpp_pro_gen_Pos.h.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_examples_libmosquitto_example_README.md.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_runMission_runMission.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_runMission_utils.h.rst
 
 .. toctree::
    :maxdepth: 5

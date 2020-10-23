@@ -9,32 +9,7 @@ Namespaces
 .. toctree::
    :maxdepth: 5
 
-   namespace_boost__program_options.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   namespace_malmo.rst
-
-.. toctree::
-   :maxdepth: 5
-
    namespace_std.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   namespace_std__chrono.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   namespace_std__this_thread.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   namespace_tomcat.rst
 
 Classes and Structs
 *******************
@@ -93,21 +68,6 @@ Classes and Structs
 .. toctree::
    :maxdepth: 5
 
-   classtomcat_1_1FileHandler.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   classtomcat_1_1Mission.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   classtomcat_1_1TomcatMissionException.rst
-
-.. toctree::
-   :maxdepth: 5
-
    classWorld.rst
 
 .. toctree::
@@ -132,62 +92,7 @@ Functions
 .. toctree::
    :maxdepth: 5
 
-   function_runMission_8cpp_1a9501ceee8084de9223727b590efdc465.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   function_runMission_8cpp_1a67585f7c8b402e3a0bd288020ef776a2.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   function_runMission_8cpp_1a4c30e5933c30c69fe3d583b975a28746.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   function_libmosquitto__example_8c_1a0ddf1224851353fc92bfbff6f499fa97.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   function_getSpecVersion_8cpp_1a0ddf1224851353fc92bfbff6f499fa97.rst
-
-.. toctree::
-   :maxdepth: 5
-
    function_generator_8cpp_1a0ddf1224851353fc92bfbff6f499fa97.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   function_runMission_8cpp_1ac0f2228420376f4db7e1274f2b41667c.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   function_runMission_8cpp_1a4c7aa67e53816957235574e13064f20f.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   function_libmosquitto__example_8c_1ae3aab556f36270e2becea4a8d5704dd7.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   function_runMission_8cpp_1aa732c79c5780d31e5072dba7c547cc2e.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   function_utils_8h_1a97a69eb875c2e5b7f80a069611a7cc5c.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   function_utils_8h_1ab55ff1cc063128c1e8ab3e3c8af2d5aa.rst
 
 Typedefs
 ********
@@ -242,8 +147,3 @@ Typedefs
    :maxdepth: 5
 
    typedef_World_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   typedef_Mission_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d.rst

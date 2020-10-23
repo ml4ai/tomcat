@@ -188,9 +188,9 @@
 </div>
 <div class="section" id="building-upon-project-malmo">
 <h2>Building upon Project Malmo<a class="headerlink" href="#building-upon-project-malmo" title="Permalink to this headline">¶</a></h2>
-<p>ToMCAT extends <cite>Project Malmo</cite> to provide a platform to study human behavior in
-a virtual environment, with a focus on studying human-human and human-machine
-teaming.</p>
+<p>ToMCAT extends <a class="reference external" href="https://github.com/microsoft/malmo">Project Malmo</a> to provide a platform to study human behavior
+in a virtual environment, with a focus on studying human-human and
+human-machine teaming.</p>
 <p>The core of Project Malmo consisted of two components: a static C++ library and
 a Java mod for Minecraft. Together, these components exposed an API for
 communicating with Minecraft over a TCP socket, thus enabling researchers to
@@ -201,18 +201,16 @@ learning research.</p>
 rather than serving as a reinforcement learning research platform to teach AI
 agents to perform complex tasks in Minecraft, we focus on learning about how
 <em>humans</em> think and behave. We have vendorized the source of Project Malmo
-(<code class="docutils literal notranslate"><span class="pre">external/malmo</span></code>) and modified it to suit our purposes:
-1. The original Java mod (<code class="docutils literal notranslate"><span class="pre">external/malmo/Minecraft</span></code>) has been extended to</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>allow human control by default</p></li>
-<li><p>add software instrumentation to capture human actions in the Minecraft
-environment.</p></li>
+(<code class="docutils literal notranslate"><span class="pre">external/malmo</span></code>) and modified it to suit our purposes:</p>
+<ol class="arabic simple">
+<li><p>The original Java mod (<code class="docutils literal notranslate"><span class="pre">external/malmo/Minecraft</span></code>) has been extended to</p>
+<ul class="simple">
+<li><p>allow human control by default,</p></li>
+<li><p>add software instrumentation to capture human actions in the Minecraft environment, and</p></li>
 <li><p>add ‘missions’ (and documentation on how to implement new ones) to support
 developing machine social intelligence.</p></li>
 </ul>
-</div></blockquote>
-<ol class="arabic simple" start="2">
+</li>
 <li><p>The original C++ code for the Malmo static library has not been changed
 significantly (besides a bit of modernization and code formatting). We use
 this library to create an executable, <code class="docutils literal notranslate"><span class="pre">runMission</span></code> that serves as the driver
@@ -238,7 +236,7 @@ studying humans, it is desirable to record events that do not necessary
 happen at regular time intervals (e.g. opening a door, flipping a lever,
 attacking a mob). These kinds of events are accessible through the Forge API,
 and ToMCAT exposes a subset of these (see the <a class="reference external" href="../tomcat_openapi.html">documentation on events and
-data models</a> and <a href="#id1"><span class="problematic" id="id2">`instructions on how to implement new missions and events`_</span></a>
+data models</a> and <a class="reference external" href="missions.html">instructions on how to implement new missions and events</a>
 for more details).</p></li>
 </ul>
 </div>

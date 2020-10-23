@@ -11,12 +11,3 @@ Namespace std
 
 
 
-
-
-Namespaces
-----------
-
-
-- :ref:`namespace_std__chrono`
-
-- :ref:`namespace_std__this_thread`

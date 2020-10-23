@@ -97,7 +97,11 @@
 <li class="toctree-l2"><a class="reference internal" href="message_bus.html">Working with the MQTT message bus</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Guide to developing ToMCAT missions</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#building-the-environment">Building the environment</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#setting-up-the-mission-skeleton">Setting up the mission skeleton</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setting-up-the-mission-skeleton">Setting up the mission skeleton</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#java">Java</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#c">C++</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#defining-event-handlers">Defining event handlers</a></li>
 </ul>
 </li>
@@ -216,7 +220,8 @@ achieved with procedural generation.</p></li>
 <p>After building the mission environment as described above, the next step is to
 define the mission behavior, - for example, the mission time limit, the
 behaviour of mobs, and handling in-game events of interest.</p>
-<p>### Java</p>
+<div class="section" id="java">
+<h3>Java<a class="headerlink" href="#java" title="Permalink to this headline">¶</a></h3>
 <p>On the Java side, we will create some scaffolding code in the folder
 <code class="docutils literal notranslate"><span class="pre">external/malmo/Minecraft/src/main/java/edu/arizona/tomcat/Mission</span></code>.</p>
 <p>To create a new mission called do the following steps outlined below. We’ll
@@ -233,7 +238,9 @@ position in the <code class="docutils literal notranslate"><span class="pre">get
 methods in <code class="docutils literal notranslate"><span class="pre">MissionFactory.java</span></code> for the example mission.</p></li>
 <li><p>Create a class <code class="docutils literal notranslate"><span class="pre">Client/ExampleClientMission.java</span></code></p></li>
 </ul>
-<p>### C++</p>
+</div>
+<div class="section" id="c">
+<h3>C++<a class="headerlink" href="#c" title="Permalink to this headline">¶</a></h3>
 <p>If you want to be able to run the mission using the <code class="docutils literal notranslate"><span class="pre">tools/run_session</span></code> script
 in order to automatically set up A/V recording and the message bus, you’ll need
 to add some code to the C++ side as well.</p>
@@ -250,6 +257,7 @@ to add some code to the C++ side as well.</p>
 <li><p>Add a line to the comments in <code class="docutils literal notranslate"><span class="pre">tools/configuration_helpers</span></code> describing the
 <code class="docutils literal notranslate"><span class="pre">MAIN_MISSION</span></code> environment variable about <code class="docutils literal notranslate"><span class="pre">ExampleMission</span></code>.</p></li>
 </ul>
+</div>
 </div>
 <div class="section" id="defining-event-handlers">
 <h2>Defining event handlers<a class="headerlink" href="#defining-event-handlers" title="Permalink to this headline">¶</a></h2>

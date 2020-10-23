@@ -14,10 +14,7 @@ Directory cpp
 Subdirectories
 --------------
 
-- :ref:`dir_src_cpp_examples`
-- :ref:`dir_src_cpp_getSpecVersion`
 - :ref:`dir_src_cpp_pro_gen`
-- :ref:`dir_src_cpp_runMission`
 
 
 

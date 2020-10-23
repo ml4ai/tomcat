@@ -1,7 +1,7 @@
 .. _exhale_function_generator_8cpp_1a0ddf1224851353fc92bfbff6f499fa97:
 
-Function main(int, char \*)
-===========================
+Function main
+=============
 
 - Defined in :ref:`file_src_cpp_pro_gen_generator.cpp`
 
