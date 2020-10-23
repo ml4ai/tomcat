@@ -1,42 +1,93 @@
+(progn (ql:quickload "shop3"))
 
-#|Created: 19 October 2020  
+(in-package :shop-user)
+(shop-trace :tasks :states :plans)
+(defdomain (mine-wood :type pddl-domain :redefine-ok T) (
+    (:types
+      tool ingredients - object
+      wood planks sticks - ingredients
+      wood-axe - tool
+    ); end of types
 
-   Purpose: To test run with Shop 3.
-   For now: reference to shop3 manual in comments. Delete later.
-|#
+    (:predicates
+      (has-wood ?w - ingredients)
+      (has-planks ?p - ingredients)
+      (has-sticks ?s - ingredients)
+      (has-wood-axe ?wa - tool)
+;      (has-wood-pickaxe ?wpx - tool)
+    ); end predicates
 
 
-(progn (ql:quickload "shop3")
-       )
-(in-package :shop-user) ;pg 5
-;; for debugging, try (shop trace :tasks) only, then find plans again. pg 10
-(shop-trace :tasks :states :plans) ;pg 9 methods axioms operators goals all effects
+    (:action mine-wood
+      :parameters (?w - ingredients)
+      :precondition ()
+      :effect (has-wood ?w)
+    ); end action mine-wood
 
-(defdomain (mine-wood :type pddl-domain) (
-    (:types 
-      ingredients - object
-      wood - ingredients
-    )
+    (:action craft-planks
+      :parameters (?w ?p - ingredients)
+      :precondition (has-wood ?w)
+      :effect (has-planks ?p)
+    ); end action craft-planks
 
-    (:predicates (has-wood ?iw - ingredients)
-    )
+    (:action craft-sticks
+      :parameters (?p ?s - ingredients)
+      :precondition (has-planks ?p)
+      :effect (has-sticks ?s)
+      ); end craft-sticks
 
-  ;;; mine wood. Very simple for now.
-    (:action get-wood
-      :parameters ((wood ?w - ingredients)
-                   (has-wood ?iw - ingredients))
-      :precondition ()  
-      :effect (increase (has-wood ?iw) ?1)
-    )
-    )
+    (:action craft-wood-axe
+      :parameters (?p ?s - ingredients ?wa - tool)
+      :precondition (and (has-sticks ?s)
+                         (has-planks ?p))
+      :effect (has-wood-axe ?wa)
+      );end craft-wood-axe
+
+    (:method (craft-wood-axe ?wa)
+       mine-wood
+       (not (has-wood ?w))
+       (:ordered (:task !mine-wood ?w)
+                 (:task craft-axe ?wa))
+
+       craft-planks
+       (and (has-wood ?w) (not (has-planks ?p)))
+       (:ordered (:task !craft-planks ?w ?p)
+                 (:task craft-wood-axe ?wa))
+
+       craft-sticks
+       (and (has-planks ?p) (not (has-sticks?s)))
+       (:ordered (:task !craft-sticks ?p ?s)
+                 (:task craft-wood-axe ?wa))
+
+       mission-done
+       ()
+       ()
+    );end method craft-axe
 ); end defdomain
 
-(defproblem mine-wood-problem
-            ((ingredients wood)
-             (has-wood iw))
-             (= ((has-wood iw) 4))
-);end problem
 
-(find-plans 'mine-wood-problem :which :all :verbose :plans :plan-tree t);1,2,3,t, nil
+
+
+
+
+
+(defproblem craft-wood-axe-problem
+            ((wood w) (planks p) (sticks s) (wood-axe wa) 
+             (has-wood hw) (has-planks hp) (has-sticks hs) (has-wood-axe hwa))
+            ((craft-wood-axe wa)))
+
+(find-plans 'craft-wood-axe-problem :which :all :verbose :plans :plan-tree t)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
