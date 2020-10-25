@@ -40,7 +40,25 @@ __install_dependencies_using_homebrew() {
 
     echo "Installing ToMCAT dependencies using Homebrew."
 
-    if ! brew update --verbose; then exit 1; fi
+    # =========================================================================
+    # 2020-10-21: There seems to be a problem with Homebrew on the Github
+    # Actions macOS runner:
+    # https://github.com/actions/virtual-environments/issues/1811. This block
+    # of code is a *temporary* workaround, and should be removed soon. Probably
+    # by December 2020 at the latest. - Adarsh
+    # -------------------------------------------------------------------------
+    if (( CI )); then
+        brew uninstall openssl@1.0.2t
+        brew uninstall python@2.7.17
+        brew untap local/openssl
+        brew untap local/python2
+    fi
+    # ==========================================================================
+
+    if ! brew update --verbose; then
+        echo "The command 'brew update' failed. Exiting now."
+        exit 1
+    fi
 
     local homebrew_deps="fmt"
     for dep in $COMMON_MACOS_DEPS $homebrew_deps; do
@@ -64,11 +82,6 @@ __install_dependencies_using_homebrew() {
         if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
     fi
 
-    if (( CI )); then
-      # On a CI runner, we will install lcov to provide code coverage estimates.
-      brew install lcov;
-      if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
-    fi;
 
 }
 
