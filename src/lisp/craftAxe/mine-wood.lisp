@@ -4,11 +4,9 @@
 ;;; Notes to self: 
    ; No arithmetic in shop3, increment like in knights-tour example (n1 n2 n3)
    ; Numeric fluents
-   ; Updated 23 Oct 2020
-;;; The code runs the plan now, but...
-    ; I need to finish some sort of action in the beginning so that
-       ; mine-wood is not skipped.
-
+   ; Updated 25 Oct 2020
+;;; The code runs the plan now, and I will build up from here to include
+   ; building of other tools and weapons from stone and iron.
 
 (progn (ql:quickload "shop3"))
 
@@ -30,15 +28,9 @@
 ;      (has-wood-pickaxe ?wpx - tool)
     ); end predicates
 
-;    (:action begin-mission
-;      :parameters (?b - ingredients)
-;      :precondition (to-begin ?b)
-;      :effect ()
-;      );end action begin-mission
-
     (:action mine-wood
-      :parameters (?b ?w - ingredients)
-      :precondition (to-begin ?b)
+      :parameters (?w - ingredients)
+      :precondition (not (has-wood ?w))
       :effect (has-wood ?w)
     ); end action mine-wood
 
@@ -63,14 +55,10 @@
 
 
     (:method (craft-wood-axe ?wa)
- ;      begin-mission
- ;      (not (to-begin ?b))
- ;      (:ordered (:task !to-begin ?b)
- ;                (:task craft-axe ?wa))      
        mine-wood
        (not (has-wood ?w))
        (:ordered (:task !mine-wood ?w)
-                 (:task craft-axe ?wa))
+                 (:task craft-wood-axe ?wa))
 
        craft-planks
        (and (has-wood ?w) (not (has-planks ?p)))
@@ -91,11 +79,8 @@
 
 
 (defproblem craft-wood-axe-problem
-          ;  ((begin b)
-          ;   (to-begin b)) 
-          ;   (has-wood w) (has-planks p) (has-sticks s) (has-wood-axe wa))
           ((wood w)
-           (has-wood w)) 
+           (not (has-wood w))) 
           ((craft-wood-axe wa)))
 
 (find-plans 'craft-wood-axe-problem :which :all :verbose :plans :plan-tree t)
