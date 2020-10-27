@@ -14,16 +14,18 @@
 (progn (ql:quickload "shop3"))
 
 (in-package :shop-user)
-(shop-trace :tasks :states :plans)
-(defdomain (mine-wood.lisp :type pddl-domain :redefine-ok T) (
+(shop-trace ;:goals ;uncomment to see unify/binding or debugging
+            ;:tasks ;uncomment to see tasks, primitive and compound
+            :states 
+            :plans)
+(defdomain (craft-wood-tools.lisp :type pddl-domain :redefine-ok T) (
     (:types
       tool ingredients - object
-      wood planks sticks begin - ingredients
+      wood planks sticks - ingredients
       wood-axe wood-pickaxe wood-hoe wood-shovel - tool
     ); end of types
 
     (:predicates
-      (to-begin ?b - ingredients)
       (has-wood ?w - ingredients)
       (has-planks ?p - ingredients)
       (has-sticks ?s - ingredients)
@@ -41,13 +43,15 @@
 
     (:action craft-planks
       :parameters (?w ?p - ingredients)
-      :precondition (has-wood ?w)
+      :precondition (and (has-wood ?w)
+                         (not (has-planks ?p)))
       :effect (has-planks ?p)
     ); end action craft-planks
 
     (:action craft-sticks
       :parameters (?p ?s - ingredients)
-      :precondition (has-planks ?p)
+      :precondition (and (has-planks ?p)
+                         (not (has-sticks ?s)))
       :effect (has-sticks ?s)
     ); end craft-sticks
 
@@ -99,7 +103,7 @@
        mission-done
        ()
        ()
-    );end method craft-axe
+    );end method craft-wood-axe
 
     (:method (craft-wood-pickaxe ?wpa)
        mine-wood
@@ -120,7 +124,7 @@
        mission-done
        ()
        ()
-    );end method craft-pickaxe
+    );end method craft-wood-pickaxe
 
     (:method (craft-wood-hoe ?wh)
        mine-wood
@@ -141,7 +145,7 @@
        mission-done
        ()
        ()
-    );end method craft-hoe
+    );end method craft-wood-hoe
 
     (:method (craft-wood-shovel ?ws)
        mine-wood
@@ -162,7 +166,7 @@
        mission-done
        ()
        ()
-    );end method craft-pickaxe
+    );end method craft-wood-shovel
   )   
 ); end defdomain
 
