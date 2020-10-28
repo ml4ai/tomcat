@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Script to download/sync ASIST data.
+# Note: This does not work with Python 3.8 (as of 2020-10-01), but it does work
+# with Python 3.7.
+
+# Set the ROOTDIR environment variable, assuming that the directory structure
+# mirrors that of the git repository.
+ROOTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
+export ROOTDIR
+
+GCS_DIR=study-1_2020.08
+DATA_DIR="$ROOTDIR"/data/$GCS_DIR
+
+mkdir -p $DATA_DIR
+gsutil -m rsync -r -x ".*\.mp4$|.*\.png$|.*\.zip$|.*\.PNG$|.*\.csv$|.*\.tsv$" \
+    gs://studies.aptima.com/$GCS_DIR $DATA_DIR

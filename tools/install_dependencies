@@ -9,7 +9,7 @@ export TOMCAT
 
 echo "Installing ToMCAT dependencies."
 
-COMMON_MACOS_DEPS="cmake boost doxygen ffmpeg gradle mosquitto nlohmann-json openssl gsl yaml-cpp dlib openblas"
+COMMON_MACOS_DEPS="cmake boost doxygen ffmpeg gradle mosquitto nlohmann-json openssl yaml-cpp"
 __install_dependencies_using_macports() {
     echo "'port' executable detected, assuming that MacPorts"
     echo "(https://www.macports.org) is installed and is the package manager."
@@ -20,7 +20,7 @@ __install_dependencies_using_macports() {
 
     if ! sudo port selfupdate; then exit 1; fi
 
-    local macports_deps="libfmt opencv4 openblas eigen3"
+    local macports_deps="libfmt"
     for dep in $COMMON_MACOS_DEPS $macports_deps; do
         if ! sudo port -N install $dep; then
             echo "Unable to install $dep using MacPorts. Exiting."
@@ -40,9 +40,27 @@ __install_dependencies_using_homebrew() {
 
     echo "Installing ToMCAT dependencies using Homebrew."
 
-    if ! brew update --verbose; then exit 1; fi
+    # =========================================================================
+    # 2020-10-21: There seems to be a problem with Homebrew on the Github
+    # Actions macOS runner:
+    # https://github.com/actions/virtual-environments/issues/1811. This block
+    # of code is a *temporary* workaround, and should be removed soon. Probably
+    # by December 2020 at the latest. - Adarsh
+    # -------------------------------------------------------------------------
+    if (( CI )); then
+        brew uninstall openssl@1.0.2t
+        brew uninstall python@2.7.17
+        brew untap local/openssl
+        brew untap local/python2
+    fi
+    # ==========================================================================
 
-    local homebrew_deps="fmt opencv eigen"
+    if ! brew update --verbose; then
+        echo "The command 'brew update' failed. Exiting now."
+        exit 1
+    fi
+
+    local homebrew_deps="fmt"
     for dep in $COMMON_MACOS_DEPS $homebrew_deps; do
         brew install $dep
         # We do not require exit codes for Homebrew installs to be 0 since
@@ -64,11 +82,6 @@ __install_dependencies_using_homebrew() {
         if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
     fi
 
-    if (( CI )); then
-      # On a CI runner, we will install lcov to provide code coverage estimates.
-      brew install lcov;
-      if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
-    fi;
 
 }
 
@@ -99,25 +112,15 @@ __install_dependencies_using_apt() {
         mosquitto \
         mosquitto-clients \
         curl \
-        libopenblas-dev \
         openssl \
         zlib1g-dev \
         libbz2-dev \
         libyaml-cpp-dev \
         libmosquitto-dev \
         libboost-all-dev \
-        nlohmann-json3-dev \
-        libopencv-dev \
-        libeigen3-dev \
-        libgsl-dev
+        nlohmann-json3-dev
     if [[ $? -ne 0 ]]; then exit 1; fi
 
-    # The versions of dlib available using apt are not compatible with
-    # OpenCV 4, so we install the latest version from master.
-    if ! "$TOMCAT"/tools/install_from_source/dlib; then
-        echo "Failed to install dlib from source."
-        exit 1
-    fi
 }
 
 __install_dependencies() {

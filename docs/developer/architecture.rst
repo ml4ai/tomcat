@@ -8,9 +8,9 @@ Design and Architecture
 Building upon Project Malmo
 ---------------------------
 
-ToMCAT extends `Project Malmo` to provide a platform to study human behavior in
-a virtual environment, with a focus on studying human-human and human-machine
-teaming.
+ToMCAT extends `Project Malmo`_ to provide a platform to study human behavior
+in a virtual environment, with a focus on studying human-human and
+human-machine teaming.
 
 The core of Project Malmo consisted of two components: a static C++ library and
 a Java mod for Minecraft. Together, these components exposed an API for
@@ -24,10 +24,11 @@ rather than serving as a reinforcement learning research platform to teach AI
 agents to perform complex tasks in Minecraft, we focus on learning about how
 *humans* think and behave. We have vendorized the source of Project Malmo
 (``external/malmo``) and modified it to suit our purposes:
+
 1. The original Java mod (``external/malmo/Minecraft``) has been extended to
-   - allow human control by default
-   - add software instrumentation to capture human actions in the Minecraft
-     environment.
+
+   - allow human control by default,
+   - add software instrumentation to capture human actions in the Minecraft environment, and
    - add 'missions' (and documentation on how to implement new ones) to support
      developing machine social intelligence.
 2. The original C++ code for the Malmo static library has not been changed
@@ -90,22 +91,18 @@ message bus on various topics.
 Facial Landmark, Gaze, Pose, and AU detection
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-We leverage `OpenFace`_ to create an executable (``faceSensor``, whose code
-resides in ``src/cpp/faceSensor``) that outputs JSON messages containing
-information about a player's gaze, pose, action units, and face landmarks,
-either from a webcam feed or from a video file. These messages are output to
-standard output, from where they can be either redirected to a file, piped to
-an MQTT client (e.g. ``mosquitto_sub``) for publication to a message bus, or
-used for other downstream applications.
-
-Note: We vendorize OpenFace under ``external/OpenFace`` since (i) it's not
-available using a package manager, and (ii) we have made some modifications
-(mainly ergonomic) to it to suit our purposes.
+We leverage `OpenFace`_ to create an executable called `faceAnalyzer`_ that
+outputs JSON messages containing information about a player's gaze, pose,
+action units, and face landmarks, either from a webcam feed or from a video
+file. These messages are output to standard output, from where they can be
+either redirected to a file, piped to an MQTT client (e.g. ``mosquitto_sub``)
+for publication to a message bus, or used for other downstream applications.
 
 .. _documentation on events and data models: ../tomcat_openapi.html
-.. _instructions on how to implement new events: missions.html
+.. _instructions on how to implement new missions and events: missions.html
 .. _Project Malmo: https://github.com/microsoft/malmo
 .. _ffmpeg: http://ffmpeg.org
 .. _pacat: https://linux.die.net/man/1/pacat
 .. _BlackHole: https://github.com/ExistentialAudio/BlackHole
 .. _OpenFace: https://github.com/TadasBaltrusaitis/OpenFace
+.. _faceAnalyzer: https://github.com/ml4ai/tomcat-faceAnalyzer

@@ -106,3 +106,6 @@ javac.*.args
 
 # .env files that can hold local configurations
 .env
+
+# Preventing people from accidentally committing ASIST human subjects data to the repo.
+HSR*

@@ -41,7 +41,8 @@ After building the mission environment as described above, the next step is to
 define the mission behavior, - for example, the mission time limit, the
 behaviour of mobs, and handling in-game events of interest.
 
-### Java
+Java
+^^^^
 
 On the Java side, we will create some scaffolding code in the folder
 ``external/malmo/Minecraft/src/main/java/edu/arizona/tomcat/Mission``.
@@ -60,7 +61,8 @@ reader to the other missions in that directory (e.g. ``TutorialMission``,
   methods in ``MissionFactory.java`` for the example mission.
 - Create a class ``Client/ExampleClientMission.java``
 
-### C++
+C++
+^^^
 
 If you want to be able to run the mission using the ``tools/run_session`` script
 in order to automatically set up A/V recording and the message bus, you'll need
