@@ -95,43 +95,34 @@
     );end craft-wood-shovel
 
 
-
-
-
-
-
-
-
-
-
 ;;; Craft Stone Items
     (:action craft-stone-axe
-      :parameters (?st ?p ?s - ingredients ?sta - tool)
-      :precondition (and (has-planks ?p) (has-sticks ?s)
-                         (has-stone-axe ?sta)
+      :parameters (?st ?s - ingredients ?sta - tool)
+      :precondition (and (has-sticks ?s)
+                         (has-stone ?st)
                          (not (has-stone-axe ?sta)))
       :effect (has-stone-axe ?sta)
     );end craft-stone-axe
 
     (:action craft-stone-pickaxe
-      :parameters (?st ?p ?s - ingredients ?stpa - tool)
-      :precondition (and (has-planks ?p) (has-sticks ?s)
+      :parameters (?st ?s - ingredients ?stpa - tool)
+      :precondition (and (has-sticks ?s)
                          (has-stone-pickaxe ?stpa)
                          (not (has-stone-pickaxe ?stpa)))
       :effect (has-stone-pickaxe ?stpa)
     );end craft-stone-pickaxe
 
     (:action craft-stone-hoe
-      :parameters (?st ?p ?s - ingredients ?sth - tool)
-      :precondition (and (has-planks ?p) (has-sticks ?s)
+      :parameters (?st ?s - ingredients ?sth - tool)
+      :precondition (and (has-sticks ?s)
                          (has-stone-hoe ?sth)
                          (not (has-stone-hoe ?sth)))
       :effect (has-stone-hoe ?sth)
     );end craft-stone-hoe
 
     (:action craft-stone-shovel
-      :parameters (?st ?p ?s - ingredients ?sts - tool)
-      :precondition (and (has-planks ?p) (has-sticks ?s)
+      :parameters (?st ?s - ingredients ?sts - tool)
+      :precondition (and (has-sticks ?s)
                          (has-stone-shovel ?sts)
                          (not (has-stone-shovel ?sts)))
       :effect (has-stone-shovel ?sts)
@@ -306,119 +297,23 @@
        (and (has-planks ?p) (has-sticks ?s)
             (not (has-wood-pickaxe ?wpa)))
        (:ordered (:task !craft-wood-pickaxe ?p ?s ?wpa)
-                 (:task craft-wood-pickaxe ?wpa))
+                 (:task craft-stone-axe ?sta))
 
        mine-stone
-       (and (has-wood-pickaxe ?wpa) (not (have-stone ?st)))
-       (:ordered (:task !mine-stone ?st)
+       (and (not (has-stone ?st)) (has-wood-pickaxe ?wpa))
+       (:ordered (:task !mine-stone ?st ?wpa)
                  (:task craft-stone-axe ?sta))
        
        craft-stone-axe
-       (and (has-planks ?p) (has-sticks ?s) 
-            (has-wood-pickaxe ?wpa) (has-stone ?st)
+       (and (has-sticks ?s) (has-stone ?st)
             (not (has-stone-axe ?sta)))
-       (:ordered (:task !craft-stone-axe ?p ?s ?wpa ?st ?sta)
+       (:ordered (:task !craft-stone-axe ?s ?st ?sta)
                  (:task craft-stone-axe ?sta))
 
        mission-done
        ()
        ()
     );end method craft-stone-axe
-
-    
-    (:method (craft-stone-pickaxe ?stpa)
-       mine-wood
-       (not (has-wood ?w))
-       (:ordered (:task !mine-wood ?w)
-                 (:task craft-stone-pickaxe ?stpa))
-
-       craft-planks
-       (and (has-wood ?w) (not (has-planks ?p)))
-       (:ordered (:task !craft-planks ?w ?p)
-                 (:task craft-stone-pickaxe ?stpa))
-
-       craft-sticks
-       (and (has-planks ?p) (not (has-sticks ?s)))
-       (:ordered (:task !craft-sticks ?p ?s)
-                 (:task craft-stone-pickaxe ?stpa))
-
-       craft-wood-pickaxe 
-       (and (has-planks ?p) (has-sticks ?s) 
-            (not (has-wood-pickaxe ?wpa)))
-       (:task craft-wood-pickaxe ?wpa)
-       
-       mine-stone
-       (and (has-wood-pickaxe ?wpa) (not (have-stone ?st)))
-       (:ordered (:task !mine-stone ?st)
-                 (:task craft-stone-pickaxe ?stpa))
-            
-       mission-done
-       ()
-       ()
-    );end method craft-stone-pickaxe
-
-    (:method (craft-stone-hoe ?sth)
-       mine-wood
-       (not (has-wood ?w))
-       (:ordered (:task !mine-wood ?w)
-                 (:task craft-stone-hoe ?sth))
-
-       craft-planks
-       (and (has-wood ?w) (not (has-planks ?p)))
-       (:ordered (:task !craft-planks ?w ?p)
-                 (:task craft-stone-hoe ?sth))
-
-       craft-sticks
-       (and (has-planks ?p) (not (has-sticks ?s)))
-       (:ordered (:task !craft-sticks ?p ?s)
-                 (:task craft-stone-hoe ?sth))
-
-       craft-wood-pickaxe 
-       (and (has-planks ?p) (has-sticks ?s) 
-            (not (has-wood-pickaxe ?wpa)))
-       (:task craft-wood-pickaxe ?wpa)
-       
-       mine-stone
-       (and (has-wood-pickaxe ?wpa) (not (have-stone ?st)))
-       (:ordered (:task !mine-stone ?st)
-                 (:task craft-stone-hoe ?sth))
-            
-       mission-done
-       ()
-       ()
-    );end method craft-stone-hoe
-
-
-    (:method (craft-stone-shovel ?sts)
-       mine-wood
-       (not (has-wood ?w))
-       (:ordered (:task !mine-wood ?w)
-                 (:task craft-stone-shovel ?sts))
-
-       craft-planks
-       (and (has-wood ?w) (not (has-planks ?p)))
-       (:ordered (:task !craft-planks ?w ?p)
-                 (:task craft-stone-shovel ?sts))
-
-       craft-sticks
-       (and (has-planks ?p) (not (has-sticks ?s)))
-       (:ordered (:task !craft-sticks ?p ?s)
-                 (:task craft-stone-shovel ?sts))
-
-       craft-wood-pickaxe 
-       (and (has-planks ?p) (has-sticks ?s) 
-            (not (has-wood-pickaxe ?wpa)))
-       (:task craft-wood-pickaxe ?wpa)
-       
-       mine-stone
-       (and (has-wood-pickaxe ?wpa) (not (have-stone ?st)))
-       (:ordered (:task !mine-stone ?st)
-                 (:task craft-stone-shovel ?sts))
-            
-       mission-done
-       ()
-       ()
-    );end method craft-stone-shovel
   )   
 ); end defdomain
 
@@ -428,13 +323,10 @@
     ; in commentary. A single ';' refers to following line only.
 ;(defproblem craft-wood-<enter tool desired>-problem
 (defproblem craft-stone-shovel-problem
-          ((wood w) (wood-pickaxe wpa) (stone st)
+          ((wood w) (wood-pickaxe wpa) (stone st) (stone-axe sta)
            (NIL))
         ; ((craft-wood-<enter tool desired> <enter variable desired>)))
-          ((mine-stone st)))
+          ((craft-stone-axe sta)))
 
 (find-plans 'craft-stone-shovel-problem :which :all :verbose :plans :plan-tree t)
-
-
-
 
