@@ -1,3 +1,8 @@
+;;;; Craft wood and stone tools in minecraft realm.
+     ; See directions at end of file.
+     ; Domain and problem are both defined in this file.
+
+; Updated 31 October 2020
 
 (progn (ql:quickload "shop3"))
 
@@ -107,7 +112,7 @@
     (:action craft-stone-pickaxe
       :parameters (?st ?s - ingredients ?stpa - tool)
       :precondition (and (has-sticks ?s)
-                         (has-stone-pickaxe ?stpa)
+                         (has-stone ?st)
                          (not (has-stone-pickaxe ?stpa)))
       :effect (has-stone-pickaxe ?stpa)
     );end craft-stone-pickaxe
@@ -115,7 +120,7 @@
     (:action craft-stone-hoe
       :parameters (?st ?s - ingredients ?sth - tool)
       :precondition (and (has-sticks ?s)
-                         (has-stone-hoe ?sth)
+                         (has-stone ?st)
                          (not (has-stone-hoe ?sth)))
       :effect (has-stone-hoe ?sth)
     );end craft-stone-hoe
@@ -123,7 +128,7 @@
     (:action craft-stone-shovel
       :parameters (?st ?s - ingredients ?sts - tool)
       :precondition (and (has-sticks ?s)
-                         (has-stone-shovel ?sts)
+                         (has-stone ?st)
                          (not (has-stone-shovel ?sts)))
       :effect (has-stone-shovel ?sts)
     );end craft-stone-shovel
@@ -186,7 +191,6 @@
     );end method craft-wood-pickaxe
 
 
-
     (:method (craft-wood-hoe ?wh)
        mine-wood
        (not (has-wood ?w))
@@ -241,7 +245,6 @@
        ()
        ()
     );end method craft-wood-shovel
-
 
 
     (:method (mine-stone ?st)
@@ -314,19 +317,136 @@
        ()
        ()
     );end method craft-stone-axe
+
+
+    (:method (craft-stone-pickaxe ?stpa)
+       mine-wood
+       (not (has-wood ?w))
+       (:ordered (:task !mine-wood ?w)
+                 (:task craft-stone-pickaxe ?stpa))
+
+       craft-planks
+       (and (has-wood ?w) (not (has-planks ?p)))
+       (:ordered (:task !craft-planks ?w ?p) 
+                 (:task craft-stone-pickaxe ?stpa))
+
+       craft-sticks
+       (and (has-planks ?p) (not (has-sticks ?s)))
+       (:ordered (:task !craft-sticks ?p ?s) 
+                 (:task craft-stone-pickaxe ?stpa))
+
+       craft-wood-pickaxe
+       (and (has-planks ?p) (has-sticks ?s) 
+            (not (has-wood-pickaxe ?wpa)))
+       (:ordered (:task !craft-wood-pickaxe ?p ?s ?wpa)
+                 (:task craft-stone-pickaxe ?stpa))
+
+       mine-stone
+       (and (not (has-stone ?st)) (has-wood-pickaxe ?wpa))
+       (:ordered (:task !mine-stone ?st ?wpa)
+                 (:task craft-stone-pickaxe ?stpa))
+    
+       craft-stone-pickaxe
+       (and (has-sticks ?s) (has-stone ?st)
+            (not (has-stone-pickaxe ?stpa)))
+       (:ordered (:task !craft-stone-pickaxe ?s ?st ?stpa)
+                 (:task craft-stone-pickaxe ?stpa))
+       mission-done
+       ()
+       ()
+    );end method craft-stone-pickaxe
+
+
+    (:method (craft-stone-hoe ?sth)
+       mine-wood
+       (not (has-wood ?w))
+       (:ordered (:task !mine-wood ?w)
+                 (:task craft-stone-hoe ?sth))
+
+       craft-planks
+       (and (has-wood ?w) (not (has-planks ?p)))
+       (:ordered (:task !craft-planks ?w ?p)
+                 (:task craft-stone-hoe ?sth))
+
+       craft-sticks
+       (and (has-planks ?p) (not (has-sticks ?s)))
+       (:ordered (:task !craft-sticks ?p ?s)
+                 (:task craft-stone-hoe ?sth))
+
+       craft-wood-pickaxe
+       (and (has-planks ?p) (has-sticks ?s)
+            (not (has-wood-pickaxe ?wpa)))
+       (:ordered (:task !craft-wood-pickaxe ?p ?s ?wpa)
+                 (:task craft-stone-hoe ?sth))
+
+       mine-stone
+       (and (not (has-stone ?st)) (has-wood-pickaxe ?wpa))
+       (:ordered (:task !mine-stone ?st ?wpa)
+                 (:task craft-stone-hoe ?sth))
+
+       craft-stone-hoe
+       (and (has-sticks ?s) (has-stone ?st)
+            (not (has-stone-hoe ?sth)))
+       (:ordered (:task !craft-stone-hoe ?s ?st ?sth)
+                 (:task craft-stone-hoe ?sth))
+       mission-done
+       ()
+       ()
+    );end method craft-stone-hoe
+
+
+    (:method (craft-stone-shovel ?sts)
+       mine-wood
+       (not (has-wood ?w))
+       (:ordered (:task !mine-wood ?w)
+                 (:task craft-stone-shovel ?sts))
+
+       craft-planks
+       (and (has-wood ?w) (not (has-planks ?p)))
+       (:ordered (:task !craft-planks ?w ?p)
+                 (:task craft-stone-shovel ?sts))
+
+       craft-sticks
+       (and (has-planks ?p) (not (has-sticks ?s)))
+       (:ordered (:task !craft-sticks ?p ?s)
+                 (:task craft-stone-shovel ?sts))
+
+       craft-wood-pickaxe
+       (and (has-planks ?p) (has-sticks ?s)
+            (not (has-wood-pickaxe ?wpa)))
+       (:ordered (:task !craft-wood-pickaxe ?p ?s ?wpa)
+                 (:task craft-stone-shovel ?sts))
+
+       mine-stone
+       (and (not (has-stone ?st)) (has-wood-pickaxe ?wpa))
+       (:ordered (:task !mine-stone ?st ?wpa)
+                 (:task craft-stone-shovel ?sts))
+
+       craft-stone-hoe
+       (and (has-sticks ?s) (has-stone ?st)
+            (not (has-stone-shovel ?sts)))
+       (:ordered (:task !craft-stone-shovel ?s ?st ?sts)
+                 (:task craft-stone-shovel ?sts))
+       mission-done
+       ()
+       ()
+    );end method craft-stone-pickaxe
   )   
 ); end defdomain
 
 
 
-;;; To craft a wood tool, redefine the problem as described
+;;; To craft a tool, redefine the problem as described
     ; in commentary. A single ';' refers to following line only.
-;(defproblem craft-wood-<enter tool desired>-problem
+;(defproblem craft-<enter tool desired>-problem
 (defproblem craft-stone-shovel-problem
-          ((wood w) (wood-pickaxe wpa) (stone st) (stone-axe sta)
+          ((wood w) (wood-pickaxe wpa) (stone st) (stone-shovel sts)
            (NIL))
-        ; ((craft-wood-<enter tool desired> <enter variable desired>)))
-          ((craft-stone-axe sta)))
+        ; ((craft--<enter tool desired> <enter variable desired>)))
+          ((craft-stone-shovel sts)))
 
 (find-plans 'craft-stone-shovel-problem :which :all :verbose :plans :plan-tree t)
 
+
+;;; To run program in terminal, enter following line in command line:
+  ; "sbcl --load craft-stone-tools.lisp --quit"
