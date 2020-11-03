@@ -440,9 +440,9 @@
     ; in commentary. A single ';' refers to following line only.
 ;(defproblem craft-<enter tool desired>-problem
 (defproblem craft-stone-shovel-problem
-          ((wood w) (wood-pickaxe wpa) (stone st) (stone-shovel sts)
-           (NIL))
-        ; ((craft--<enter tool desired> <enter variable desired>)))
+          ; initializing with predicates. Don't use NIL
+          ((wood w) (wood-pickaxe wpa) (stone st) (stone-shovel sts))
+            ; ((craft--<enter tool desired> <enter variable desired>)))
           ((craft-stone-shovel sts)))
 
 (find-plans 'craft-stone-shovel-problem :which :all :verbose :plans :plan-tree t)
