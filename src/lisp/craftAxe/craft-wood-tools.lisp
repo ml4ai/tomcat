@@ -1,21 +1,11 @@
-;;;; This domain currently crafts wooden tools. Domain and problem are defined 
-   ; in this same file. (See below))
-
-;; TO RUN PROGRAM: on terminal, enter command:
- ;                              sbcl --load craft-wood-tools.lisp --quit
-
-;;; Notes to self: 
-   ; No arithmetic in shop3, increment like in knights-tour example (n1 n2 n3)
-   ; Numeric fluents
-   ; Updated 26 Oct 2020
-;;; The code runs the plan now, and I will build up from here to include
-   ; building of other tools and weapons from stone and iron.
+;;;; Domain crafts wooden tools only.  
+;;;; Updated 31 October 2020
 
 (progn (ql:quickload "shop3"))
 
 (in-package :shop-user)
 (shop-trace ;:goals ;uncomment to see unify/binding or debugging
-            ;:tasks ;uncomment to see tasks, primitive and compound
+            :tasks ;uncomment to see tasks, primitive and compound
             :states 
             :plans)
 (defdomain (craft-wood-tools.lisp :type pddl-domain :redefine-ok T) (
@@ -35,6 +25,8 @@
       (has-wood-shovel ?ws - tool)
     ); end predicates
 
+
+;;; Primitive tasks used for methods
     (:action mine-wood
       :parameters (?w - ingredients)
       :precondition (not (has-wood ?w))
@@ -65,25 +57,29 @@
     (:action craft-wood-pickaxe
       :parameters (?p ?s - ingredients ?wpa - tool)
       :precondition (and (has-sticks ?s)
-                         (has-planks ?p))
+                         (has-planks ?p)
+                         (not (has-wood-pickaxe ?wpa)))
       :effect (has-wood-pickaxe ?wpa)
     );end craft-wood-pickaxe
 
     (:action craft-wood-hoe
       :parameters (?p ?s - ingredients ?wh - tool)
       :precondition (and (has-sticks ?s)
-                         (has-planks ?p))
-      :effect (has-wood-pickaxe ?wh)
+                         (has-planks ?p)
+                         (not (has-wood-hoe ?wh)))
+      :effect (has-wood-hoe ?wh)
     );end craft-wood-hoe
 
     (:action craft-wood-shovel
       :parameters (?p ?s - ingredients ?ws - tool)
       :precondition (and (has-sticks ?s)
-                         (has-planks ?p))
+                         (has-planks ?p)
+                         )
       :effect (has-wood-shovel ?ws)
     );end craft-wood-shovel
 
 
+;;; Tasks and methods for crafting tools
     (:method (craft-wood-axe ?wa)
        mine-wood
        (not (has-wood ?w))
@@ -98,6 +94,12 @@
        craft-sticks
        (and (has-planks ?p) (not (has-sticks ?s)))
        (:ordered (:task !craft-sticks ?p ?s)
+                 (:task craft-wood-axe ?wa))
+
+       craft-wood-axe
+       (and (has-planks ?p) (has-sticks ?s)
+            (not (has-wood-axe ?wa)))
+       (:ordered (:task !craft-wood-axe ?p ?s ?wa)
                  (:task craft-wood-axe ?wa))
 
        mission-done
@@ -121,6 +123,12 @@
        (:ordered (:task !craft-sticks ?p ?s)
                  (:task craft-wood-pickaxe ?wpa))
 
+       craft-wood-pickaxe
+       (and (has-planks ?p) (has-sticks ?s)
+            (not (has-wood-pickaxe ?wpa)))
+       (:ordered (:task !craft-wood-pickaxe ?p ?s ?wpa)
+                 (:task craft-wood-pickaxe ?wpa))
+
        mission-done
        ()
        ()
@@ -140,6 +148,12 @@
        craft-sticks
        (and (has-planks ?p) (not (has-sticks ?s)))
        (:ordered (:task !craft-sticks ?p ?s)
+                 (:task craft-wood-hoe ?wh))
+
+       craft-wood-hoe
+       (and (has-planks ?p) (has-sticks ?s) 
+            (not (has-wood-hoe ?wh)))
+       (:ordered (:task !craft-wood-hoe ?p ?s ?wh)
                  (:task craft-wood-hoe ?wh))
 
        mission-done
@@ -163,6 +177,12 @@
        (:ordered (:task !craft-sticks ?p ?s)
                  (:task craft-wood-shovel ?ws))
 
+       craft-wood-shovel
+       (and (has-planks ?p) (has-sticks ?s)
+            (not (has-wood-shovel ?ws)))
+       (:ordered (:task !craft-wood-shovel ?p ?s ?ws)
+                 (:task craft-wood-shovel ?ws))
+
        mission-done
        ()
        ()
@@ -171,18 +191,16 @@
 ); end defdomain
 
 
-
 ;;; To craft a wooden tool, redefine the problem as described
     ; in commentary. A single ';' refers to following line only.
 ;(defproblem craft-wood-<enter tool desired>-problem
+; add relevant predicates. To start with nothing, use (NIL)
 (defproblem craft-wood-shovel-problem
-          ((wood w)
-           (not (has-wood w))) 
+          ((wood w) (wood-pickaxe wpa)
+           (NIL)) 
         ; ((craft-wood-<enter tool desired> <enter variable desired>)))
-          ((craft-wood-shovel ws)))
+          ((craft-wood-pickaxe wpa)))
 
 (find-plans 'craft-wood-shovel-problem :which :all :verbose :plans :plan-tree t)
-
-
 
 

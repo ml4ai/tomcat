@@ -1,4 +1,4 @@
-Updated 26 October 2020
+Updated 31 October 2020
 
 Uses: SHOP3, SBCL, ASDF and Quicklisp.
 
