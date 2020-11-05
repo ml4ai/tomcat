@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+
+# A helper script to automate installing, uninstalling, and launching BORIS.
+# Author: Adarsh Pyarelal (adarsh@arizona.edu)
+
+set -eo pipefail
+
+if [[ ! "$OSTYPE" == "darwin"* ]]; then
+    echo "This script only works on macOS. Exiting now."
+    exit 1
+fi
+
+USAGE="Usage:
+    boris_helper -h                      Display this help message.
+    boris_helper install                 Install BORIS.
+    boris_helper uninstall               Uninstall BORIS.
+    boris_helper launch                  Launch BORIS."
+
+# Parse options
+while getopts ":h" opt; do
+    case ${opt} in
+        h)
+            echo "$USAGE"
+            exit 0
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG" 1>&2
+            echo ""
+            echo "$USAGE" 1>&2
+            exit 1
+            ;;
+    esac
+done
+
+SUBCOMMAND=$1
+
+APP_NAME=BORIS
+DMG=boris-7.9.19-macos.dmg
+VOLUME_NAME="$APP_NAME 7.9.19"
+DMG_URL=https://github.com/olivierfriard/BORIS/releases/download/v7.9.19/$DMG
+ESTIMATED_SECONDS=20
+
+case "$SUBCOMMAND" in
+    install)
+        if [[ -d /Applications/$APP_NAME.app ]]; then
+            echo "Detected the directory /Applications/$APP_NAME.app - it looks"\
+                 "like $APP_NAME is already installed."
+            exit 0
+        fi
+
+        if [[ ! -f $DMG ]]; then
+            echo "Downloading $DMG ..."
+            curl -LO $DMG_URL
+        fi
+
+        if [[ -f $DMG ]]; then
+            echo "Mounting the $APP_NAME disk image..."
+            hdiutil attach $DMG
+        fi
+
+        if [[ -d "/Volumes/$VOLUME_NAME" ]]; then
+            echo "Copying $APP_NAME.app to /Applications...this will take"
+            echo "about $ESTIMATED_SECONDS seconds."
+            time cp -R "/Volumes/$VOLUME_NAME/$APP_NAME.app" /Applications
+
+            echo "Unmounting the $APP_NAME disk image..."
+            hdiutil unmount "/Volumes/$VOLUME_NAME"
+        fi
+
+        echo "Finished installing $APP_NAME. Removing $DMG"
+        /bin/rm $DMG
+
+        echo "$APP_NAME installation complete!"
+        ;;
+    uninstall)
+        echo "Uninstalling $APP_NAME..."
+        /bin/rm -rf /Applications/$APP_NAME.app
+        echo "$APP_NAME uninstallation complete!"
+        ;;
+    "")
+        echo "Invalid command: boris_helper requires an argument."\
+             "Valid arguments: [install|uninstall|launch]" 1>&2
+        exit 1
+        ;;
+    launch)
+        if [[ ! -d /Applications/$APP_NAME.app ]]; then
+            echo "$APP_NAME is not installed. Please run './boris_helper install'"\
+                 "to install it."
+            exit 1
+        fi
+        echo "Launching $APP_NAME."
+        open -a $APP_NAME.app
+        ;;
+esac
+
+exit 0
