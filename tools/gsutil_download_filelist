@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+# Script to download files from the ASIST GCS bucket that are listed in another
+# text file and separated by newlines.
+
+# Usage:
+#    ./gsutil_download_filelist <input_filelist> <output_directory>
+
+# Author: Adarsh Pyarelal (adarsh@arizona.edu)
+
+set -euo pipefail
+
+INPUT_LIST=$1
+OUTPUT_DIR=$2
+
+mkdir -p $OUTPUT_DIR
+while read filename; do
+    gsutil cp $filename $OUTPUT_DIR/
+done < $INPUT_LIST
