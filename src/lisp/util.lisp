@@ -2,7 +2,9 @@
 
 (progn (ql:quickload "shop3")
        (ql:quickload "shop3/plan-grapher")
-       (ql:quickload "cl-json"))
+       (ql:quickload "cl-json")
+       (ql:quickload "queues")
+       (require :queues.simple-queue))
 
 (defun bulk-copy (infile outfile)
   (with-open-file (instream infile :direction :input :element-type '(unsigned-byte 8)
@@ -45,11 +47,11 @@
                   (rest (assoc-if #'(lambda(x) (symbol-equals-keyword x loc-x)) 
                                   var)))))
 
-(defun check-for-victim (query prob)
+(defun check-for-victim (query)
   (let* ((vic-db (load-json-database "sar_victim_status.json"))
          (v-list (remove-if #'(lambda(x) (not (equalp (cdr (second x)) (symbol-name query)))) vic-db)))
-    (loop for i in v-list when (< (random 1.0) prob)
-          collect (first i))))
+    (nshuffle (loop for i in v-list
+          collect (first i)))))
 
 (defun severely-injured (query)
   (let ((vic-db (load-json-database "sar_victim_status.json")))
@@ -61,6 +63,24 @@
 
 (defun triage-successful (prob)
   (< (random 1.0) prob))
+
+(defun found-victim (prob)
+  (< (random 1.0) prob))
+
+(defun triage-cost (victim success)
+  (if (severely-injured victim)
+    (if success
+      15
+      (random 15))
+    (if success
+      8
+      (random 8))))
+
+(defun nshuffle (sequence)
+  (loop for i from (length sequence) downto 2
+        do (rotatef (elt sequence (random i))
+                    (elt sequence (1- i))))
+  sequence)
 
 ;; See if list of symbols are equal by name alone (regardless of package)
 (defun equall (l1 l2)
@@ -96,3 +116,79 @@
                                                  (string-downcase 
                                                    (symbol-name goal))) :direction :input) 
                                (read s))))
+
+(defun create-room-queue (filename)
+  (queue-up-list (with-open-file 
+                   (s (make-pathname :name filename) :direction :input) 
+                   (read s))))
+
+
+(defun queue-up-list (lst)
+  (let ((q (queues::make-queue ':simple-queue)))
+    (loop for x in lst do (queues::qpush q x))
+     q))
+
+(defun load-object-from-file (filename)
+  (with-open-file
+    (s (make-pathname :name filename) :direction :input)
+    (read s)))
+
+(defun get-next-room (current-room room-list)
+  (first (cdr (member-if #'(lambda (x) (symbol-equals-keyword x current-room)) room-list))))
+
+(defun add-to-room-list (roomname filename)
+  (let ((v (with-open-file (instream filename :direction :input
+                                     :if-does-not-exist nil)
+             (if (not instream)
+               (list roomname)
+               (append (read instream) (list roomname))))))
+    (with-open-file (outstream filename :direction :output
+                               :if-exists :supersede)
+      (format outstream "~a~%" v))
+    t))
+
+(defun remove-from-room-list (roomname filename)
+  (let ((v (with-open-file (instream filename :direction :input
+                                     :if-does-not-exist nil)
+             (if (not instream)
+               (list roomname)
+               (remove roomname (read instream))))))
+    (with-open-file (outstream filename :direction :output
+                               :if-exists :supersede)
+      (format outstream "~a~%" v))
+    t))
+
+(defun split-by-one-space (string)
+    "Returns a list of substrings of string
+divided by ONE space each.
+Note: Two consecutive spaces will be seen as
+if there were an empty string between them.
+Found on Common Lisp Cookbook"
+    (loop for i = 0 then (1+ j)
+          as j = (position #\Space string :start i)
+          collect (subseq string i j)
+          while j))
+
+(defun match-action-headers (act1 act2)
+  (equal (car (split-by-one-space act1)) (car (split-by-one-space act2))))
+
+(defun get-applicable-tasks-helper (action tasks)
+  (loop for x in tasks
+         collect (list (cdr (assoc :header x)) 
+                       (loop for y in (cdr (assoc :methods x))
+                             when (member-if #'(lambda (x) (match-action-headers x action))
+                                             (cdr (assoc :tasks y)))
+                             collect (list (cdr (assoc :header y)) (cdr (assoc :tasks y)))))))
+
+(defun get-applicable-tasks (action tasks)
+  (remove-if #'(lambda (x) (not (second x))) (get-applicable-tasks-helper action tasks)))
+
+(defun find-leading-actions (action action-set)
+  (reverse (member-if #'(lambda (x) (match-action-headers x action)) (reverse action-set))))
+
+(defun powerset (l)
+  (if (null l)
+      (list nil)
+      (let ((prev (powerset (cdr l))))
+	(append (mapcar #'(lambda (elt) (cons (car l) elt)) prev)
+		prev))))

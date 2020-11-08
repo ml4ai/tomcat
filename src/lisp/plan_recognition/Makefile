@@ -7,18 +7,19 @@
 #
 # The parser requires Python 3.6 or higher.
 #
-# Any edits to the files in tomcat/src/pddl/plan_trace_generation may cause
+# Any edits to the files in tomcat/src/lisp/plan_trace_generation or
+# tomcat/src/lisp/plan_recognition_toy  may cause
 # unexpected output or cause the make command to fail.
 # =============================================================================
 
 
-all: sar-individual-plan-traces.json
+all: simple-schedule-plan-traces.json
 
 # =============================================================================
 # Parse plan output
 # =============================================================================
 
-sar-individual-plan-traces.json: sar-individual-plan-trace-parser.py sar-individual-plan-output.txt
+simple-schedule-plan-traces.json: ../plan_trace_generation/plan_trace_parser.py simple-schedule-plans.txt
 	python $^ $@
 
 
@@ -26,5 +27,6 @@ sar-individual-plan-traces.json: sar-individual-plan-trace-parser.py sar-individ
 # Get plan output
 # =============================================================================
 
-sar-individual-plan-output.txt: sar-individual-plan-trace-version.lisp
+simple-schedule-plans.txt: simple-schedule-test-prob.lisp
 	sbcl --load $^ --quit > $@
+
