@@ -1,5 +1,10 @@
 
 #| Numerical Planning for same domain and problem of craftAxe
+   This file does not run in SHOP3. To run a file through SHOP3, please
+       look at craft-stone-tools.lisp and craft-wood-tools.lisp files.
+   I would like to keep this file for the numerical planning aspect of 
+       the domain so I can later refactor, if needed.
+
    Created: 16 October 2020  
 
    Purpose: To craft an axe made from wood, stone, or iron. This domain 
