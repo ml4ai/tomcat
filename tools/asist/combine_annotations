@@ -33,26 +33,68 @@ stats = {
     "n_video_files": 0,
 }
 
+
+class Event(object):
+    def __init__(self, event):
+        self.timestamp = event[0]
+        self.participant = event[1]
+        self.response = event[2]
+        self.comment = event[4]
+
+    def __hash__(self):
+        return hash(
+            (self.timestamp, self.participant, self.response, self.comment)
+        )
+
+
+class Observation(object):
+    def __init__(self, label, observation):
+        self.label = label
+        self.media_files = observation["media_info"]["length"].keys()
+        self.events = {Event(event) for event in observation["events"]}
+
+    def __hash__(self):
+        return hash(self.label)
+
+
 class BorisProject(object):
     def __init__(self, filepath):
         debug(f"Processing file {filepath}")
-        with open(filepath) as f:
+        self.filepath = filepath
+
+        with open(self.filepath) as f:
             project = json.load(f)
-            observations = project["observations"]
-            debug(f"Number of observations: {len(observations)}")
-            for label, observation in observations.items():
-                stats["n_observations"] += 1
-                debug(f"Processing observation '{label}'")
-                media_files = observation["file"]["1"]
-                for video_file_path in observation["media_info"]["length"]:
-                    stats["n_video_files"] += 1
-                    print("\t"+video_file_path)
-        # Increment the number of project files processed.
-        stats["n_project_files"] += 1
+            self.observations = {
+                Observation(label, obs)
+                for label, obs in project["observations"].items()
+            }
 
-for filepath in glob(f"{args.input_dir}/*"):
-    project = BorisProject(filepath)
+    def __hash__(self):
+        return hash(self.filepath)
 
-logging.debug("Summary statistics")
-logging.debug("------------------")
-logging.debug(stats)
+
+class MergedDataset(object):
+    def __init__(self, input_dir):
+        self.projects = {BorisProject(f) for f in glob(f"{input_dir}/*")}
+        self.validate()
+
+    def validate(self):
+        debug("Running validation.")
+        for project in self.projects:
+            for observation in project.observations:
+                if len(observation.events) != 15 * len(
+                    observation.media_files
+                ):
+                    warning(
+                        f"Observation {observation.label} (in file {project.filepath}) has "
+                        f"{len(observation.events)} events for "
+                        f"{len(observation.media_files)} media files (expected "
+                        f"number of events: {15*len(observation.media_files)})."
+                    )
+
+    def print_summary_stats(self):
+        logging.debug("Summary statistics")
+        logging.debug("------------------")
+        logging.debug(stats)
+
+md = MergedDataset(args.input_dir)
