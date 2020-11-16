@@ -7,6 +7,11 @@ import json
 from pprint import pprint
 import argparse
 from glob import glob
+import logging
+from logging import debug, info, warning, error
+
+# Set logging level
+logging.basicConfig(level=logging.DEBUG)
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -21,17 +26,33 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-for filepath in glob(f"{args.input_dir}/*")[0:1]:
-    print("filepath: ", filepath)
-    with open(filepath) as f:
-        project = json.load(f)
-        observations = project["observations"]
-        for label, observation in observations.items():
-            print(label)
-            media_files = observation["file"]["1"]
-            for k in observation["media_info"]["length"]:
-                print("\t"+k)
-            # for event in observation["events"]:
-                # timestamp = event[0]
-                # participant_id = event[1]
-                # print(participant_id)
+# Summary statistics
+stats = {
+    "n_project_files": 0,
+    "n_observations": 0,
+    "n_video_files": 0,
+}
+
+class BorisProject(object):
+    def __init__(self, filepath):
+        debug(f"Processing file {filepath}")
+        with open(filepath) as f:
+            project = json.load(f)
+            observations = project["observations"]
+            debug(f"Number of observations: {len(observations)}")
+            for label, observation in observations.items():
+                stats["n_observations"] += 1
+                debug(f"Processing observation '{label}'")
+                media_files = observation["file"]["1"]
+                for video_file_path in observation["media_info"]["length"]:
+                    stats["n_video_files"] += 1
+                    print("\t"+video_file_path)
+        # Increment the number of project files processed.
+        stats["n_project_files"] += 1
+
+for filepath in glob(f"{args.input_dir}/*"):
+    project = BorisProject(filepath)
+
+logging.debug("Summary statistics")
+logging.debug("------------------")
+logging.debug(stats)
