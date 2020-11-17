@@ -166,7 +166,11 @@ class MergedDataset(object):
                         }
                         records.append(record)
 
-        return pd.DataFrame(records)
+        df = pd.DataFrame(records)
+
+        # We round the timestamps to 3 decimal places since that is the
+        # precision that Boris provides.
+        return df.round(3)
 
     def validate(self):
         """Validate the dataset"""
