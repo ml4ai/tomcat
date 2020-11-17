@@ -2,6 +2,7 @@
 
 # Script to combine annotations of incident commander inquiries from the Fall
 # 2020 ASIST experiment.
+# Author: Adarsh Pyarelal (adarsh@arizona.edu)
 
 import json
 from pprint import pprint
@@ -29,75 +30,100 @@ def first_true(iterable, default=False, pred=None):
     return next(filter(pred, iterable), default)
 
 
-@dataclass
+@dataclass(frozen=True)
 class MediaFile:
+    """Class to represent an MP4 video file corresponding to a trial."""
+
+    # Path to the media file
     path: str
+
+    # Length (in seconds) of the media file
     length: float
 
-    def __post_init__(self):
-        self.trial = self.path.split("Trial-")[1].split("_")[0]
 
-
+@dataclass(frozen=True)
 class Event(object):
-    def __init__(self, event, timestamp, media_file):
-        self.timestamp = timestamp
-        self.participant = event[1]
-        self.code = event[2]
-        self.comment = event[4]
-        self.media_file = media_file
+    """Class to represent a BORIS event."""
 
-    def __repr__(self):
-        return str(
-            {
-                "timestamp": self.timestamp,
-                "participant": self.participant,
-                "code": self.code,
-                "comment": self.comment,
-            }
-        )
+    timestamp: float
+    code: str
+    comment: str
+
+
+@dataclass
+class Trial(object):
+    """Class to represent a trial (i.e. a mission)"""
+
+    media_file: MediaFile
+
+    def __post_init__(self):
+        self.trial_number = self.media_file.path.split("Trial-")[1].split("_")[
+            0
+        ]
+        self.participant: str = self.media_file.path.split("Member-")[1].split(
+            "_"
+        )[0]
+        self.events = []
 
 
 class Observation(object):
+    """Class to represent a BORIS observation."""
+
     def __init__(self, label, observation):
-        self.label = label
+        self.label: str = label
 
         # In the list comprehension below, we ensure that the filepath must end
         # with ".mp4". This is to deal with cases in which 'video_list.txt' was
         # erroneously added as a media file.
         self.media_files = [
-            MediaFile(filepath, length)
-            for filepath, length in observation["media_info"]["length"].items()
+            MediaFile(filepath, observation["media_info"]["length"][filepath])
+            for filepath in observation["file"]["1"]
             if filepath.endswith(".mp4")
         ]
+
         self.cumulative_times = list(
             accumulate([f.length for f in self.media_files])
         )
-        self.events = [
-            Event(event, *self.__get_timestamp_and_media_file(event))
-            for event in observation["events"]
-        ]
 
-    def __get_timestamp_and_media_file(self, event):
-        aggregate_timestamp = event[0]
-        # Figure out which video the event belongs to.
-        media_file_index = first_true(
-            enumerate(self.cumulative_times),
-            pred=lambda tup: tup[1] > aggregate_timestamp,
-        )[0]
-        if media_file_index != 0:
-            timestamp = (
-                aggregate_timestamp
-                - self.cumulative_times[media_file_index - 1]
+        self.trials = {
+            media_file.path: Trial(media_file)
+            for media_file in self.media_files
+        }
+
+        for event in observation["events"]:
+            aggregate_timestamp = event[0]
+            # Figure out which video the event belongs to.
+            media_file_index = first_true(
+                enumerate(self.cumulative_times),
+                pred=lambda tup: tup[1] > aggregate_timestamp,
+            )[0]
+
+            if media_file_index != 0:
+                timestamp = (
+                    aggregate_timestamp
+                    - self.cumulative_times[media_file_index - 1]
+                )
+            else:
+                timestamp = aggregate_timestamp
+
+            media_file = self.media_files[media_file_index]
+
+            code = event[2]
+
+            # We call the strip() method on the comment string to deal with the
+            # cases in which there are newline characters accidentally entered
+            # into the comment field.
+            comment = event[4].strip()
+
+            self.trials[media_file.path].events.append(
+                Event(timestamp, code, comment)
             )
-        else:
-            timestamp = aggregate_timestamp
-
-        media_file = self.media_files[media_file_index]
-        return timestamp, media_file
 
 
 @dataclass
 class BorisProject:
+    """Class to represent a BORIS project."""
+
     filepath: str
 
     def __post_init__(self):
@@ -106,44 +132,56 @@ class BorisProject:
             self.observations = {
                 Observation(label, obs)
                 for label, obs in project["observations"].items()
+                if len(obs["events"]) != 0
             }
 
 
 class MergedDataset(object):
+    """Class to represent a dataset constructed by combining multiple BORIS
+    projects."""
+
     def __init__(self, input_dir):
         self.projects = [BorisProject(f) for f in glob(f"{input_dir}/*")]
         self.validate()
 
     def validate(self):
+        """Validate the dataset:
+        - Check whether each trial has the expected number of events. (TODO)
+        - Check if any trial has been annotated multiple times. (TODO)
+        """
+
+        # Number of expected events per trial
+        n_expected_events = 15
+
         debug("Running validation.")
         for project in self.projects:
             for observation in project.observations:
-                # We check to see if there are 15 events per media file
-                if len(observation.events) != 15 * len(
-                    observation.media_files
-                ):
-                    info(
-                        f"Observation {observation.label} (in file {project.filepath}) has "
-                        f"{len(observation.events)} events for "
-                        f"{len(observation.media_files)} media files (expected "
-                        f"number of events: {15*len(observation.media_files)})."
-                        " This could be for a number of reasons (e.g., the "
-                        "trial ended early), and is not necessarily something "
-                        "you need to worry about."
-                    )
+                for trial in observation.trials.values():
+                    # We check to see if there are 15 events per trial
+                    if len(trial.events) != n_expected_events:
+                        info(
+                            f"Trial {trial.trial_number} in observation "
+                            f"{observation.label} (in file: {project.filepath}) "
+                            f"has {len(trial.events)} events instead of the "
+                            f"expected number ({n_expected_events}). "
+                            "This could be for a number of reasons (e.g., the "
+                            "trial ended early), and is not necessarily something "
+                            "you need to worry about."
+                        )
 
     def to_tsv(self, output_filepath):
         records = []
         for project in self.projects:
             for observation in project.observations:
-                for event in observation.events:
-                    record = {
-                        "trial": event.media_file.trial,
-                        "timestamp": event.timestamp,
-                        "event_code": event.code,
-                        "comment": event.comment,
-                    }
-                    records.append(record)
+                for trial in observation.trials.values():
+                    for event in trial.events:
+                        record = {
+                            "trial": trial.trial_number,
+                            "timestamp": event.timestamp,
+                            "event_code": event.code,
+                            "comment": event.comment,
+                        }
+                        records.append(record)
 
         df = pd.DataFrame(records)
         df.to_csv(output_filepath, sep="\t", index=False)
@@ -151,8 +189,9 @@ class MergedDataset(object):
 
 if __name__ == "__main__":
     # Set logging level
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
 
+    # Parse command line arguments
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "input_dir",
@@ -166,5 +205,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    # Construct MergedDataset object
     md = MergedDataset(args.input_dir)
+
+    # Output to TSV
     md.to_tsv(args.output_file)
