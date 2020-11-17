@@ -180,12 +180,12 @@ class MergedDataset(object):
 
         info("Running validation on merged dataset...")
 
-
         # Check if each trial has the expected number of events.
-        for key, group in self.dataframe.groupby(["trial", "filepath"]):
+        gb = self.dataframe.groupby(["trial"])
+        for key, group in gb:
             if len(group) != n_expected_events:
                 info(
-                    f"Trial {key[0]} in file {key[1]} has {len(group)} events, "
+                    f"Trial {key} in file(s) {set(group['filepath'])} has {len(group)} events, "
                     f"when we expected {n_expected_events}. "
                     "This could be for a number of reasons (e.g., the "
                     "trial ended early), and is not necessarily something "
@@ -194,6 +194,24 @@ class MergedDataset(object):
 
         info(f"Total number of events: {len(self.dataframe)}")
         info(f"Total number of trials: {len(self.dataframe.groupby('trial'))}")
+
+        assignment_df = pd.read_table(
+            "assignment_sheet.tsv", index_col="File name"
+        )
+        for filename in assignment_df.index:
+            trial_number = filename.split("Trial-")[1].split("_")[0]
+            if (
+                trial_number not in gb.groups
+                and assignment_df.loc[filename]["Completed"] == "Yes"
+            ):
+                info(
+                    f"Trial number {trial_number} is marked as 'Completed' in "
+                    f"the signup sheet by "
+                    f"{assignment_df.loc[filename]['Signup']} "
+                    f"({assignment_df.loc[filename]['Team']}), "
+                    "but we could not find the annotations for it in the "
+                    "annotation files."
+                )
 
     def to_tsv(self, output_filepath):
         self.dataframe.to_csv(output_filepath, sep="\t", index=False)
