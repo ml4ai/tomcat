@@ -9,59 +9,97 @@ import argparse
 from glob import glob
 import logging
 from logging import debug, info, warning, error
+import pandas as pd
+from itertools import groupby, accumulate, takewhile
+from dataclasses import dataclass
 
-# Set logging level
-logging.basicConfig(level=logging.DEBUG)
+def first_true(iterable, default=False, pred=None):
+    """Returns the first true value in the iterable.
 
-parser = argparse.ArgumentParser()
-parser.add_argument(
-    "input_dir",
-    help="Directory containing the annotation files (i.e. BORIS project files in JSON format)",
-)
+    If no true value is found, returns *default*
 
-parser.add_argument(
-    "output_file",
-    help="Output file",
-)
+    If *pred* is not None, returns the first item
+    for which pred(item) is true.
 
-args = parser.parse_args()
+    Copied from https://docs.python.org/3/library/itertools.html#itertools-recipes
+    """
+    # first_true([a,b,c], x) --> a or b or c or x
+    # first_true([a,b], x, f) --> a if f(a) else b if f(b) else x
+    return next(filter(pred, iterable), default)
 
-# Summary statistics
-stats = {
-    "n_project_files": 0,
-    "n_observations": 0,
-    "n_video_files": 0,
-}
+
+@dataclass
+class MediaFile:
+    path: str
+    length: float
+
+    def __post_init__(self):
+        self.trial = self.path.split("Trial-")[1].split("_")[0]
 
 
 class Event(object):
-    def __init__(self, event):
-        self.timestamp = event[0]
+    def __init__(self, event, timestamp, media_file):
+        self.timestamp = timestamp
         self.participant = event[1]
-        self.response = event[2]
+        self.code = event[2]
         self.comment = event[4]
+        self.media_file = media_file
 
-    def __hash__(self):
-        return hash(
-            (self.timestamp, self.participant, self.response, self.comment)
+    def __repr__(self):
+        return str(
+            {
+                "timestamp": self.timestamp,
+                "participant": self.participant,
+                "code": self.code,
+                "comment": self.comment,
+            }
         )
 
 
 class Observation(object):
     def __init__(self, label, observation):
         self.label = label
-        self.media_files = observation["media_info"]["length"].keys()
-        self.events = {Event(event) for event in observation["events"]}
 
-    def __hash__(self):
-        return hash(self.label)
+        # In the list comprehension below, we ensure that the filepath must end
+        # with ".mp4". This is to deal with cases in which 'video_list.txt' was
+        # erroneously added as a media file.
+        self.media_files = [
+            MediaFile(filepath, length)
+            for filepath, length in observation["media_info"]["length"].items()
+            if filepath.endswith(".mp4")
+        ]
+        self.cumulative_times = list(
+            accumulate([f.length for f in self.media_files])
+        )
+        self.events = [
+            Event(event, *self.__get_timestamp_and_media_file(event))
+            for event in observation["events"]
+        ]
+
+    def __get_timestamp_and_media_file(self, event):
+        aggregate_timestamp = event[0]
+        # Figure out which video the event belongs to.
+        media_file_index = first_true(
+            enumerate(self.cumulative_times),
+            pred=lambda tup: tup[1] > aggregate_timestamp,
+        )[0]
+        if media_file_index != 0:
+            timestamp = (
+                aggregate_timestamp
+                - self.cumulative_times[media_file_index - 1]
+            )
+        else:
+            timestamp = aggregate_timestamp
+
+        media_file = self.media_files[media_file_index]
+        return timestamp, media_file
 
 
-class BorisProject(object):
-    def __init__(self, filepath):
-        debug(f"Processing file {filepath}")
-        self.filepath = filepath
+@dataclass
+class BorisProject:
+    filepath: str
 
+    def __post_init__(self):
         with open(self.filepath) as f:
             project = json.load(f)
             self.observations = {
@@ -69,13 +107,10 @@ class BorisProject(object):
                 for label, obs in project["observations"].items()
             }
 
-    def __hash__(self):
-        return hash(self.filepath)
-
 
 class MergedDataset(object):
     def __init__(self, input_dir):
-        self.projects = {BorisProject(f) for f in glob(f"{input_dir}/*")}
+        self.projects = [BorisProject(f) for f in glob(f"{input_dir}/*")]
         self.validate()
 
     def validate(self):
@@ -85,16 +120,45 @@ class MergedDataset(object):
                 if len(observation.events) != 15 * len(
                     observation.media_files
                 ):
-                    warning(
+                    info(
                         f"Observation {observation.label} (in file {project.filepath}) has "
                         f"{len(observation.events)} events for "
                         f"{len(observation.media_files)} media files (expected "
                         f"number of events: {15*len(observation.media_files)})."
                     )
 
-    def print_summary_stats(self):
-        logging.debug("Summary statistics")
-        logging.debug("------------------")
-        logging.debug(stats)
+    def to_tsv(self, output_filepath):
+        records = []
+        for project in self.projects:
+            for observation in project.observations:
+                for event in observation.events:
+                    record = {
+                            "trial": event.media_file.trial,
+                            "timestamp": event.timestamp,
+                            "event_code": event.code,
+                            "comment": event.comment
+                    }
+                    records.append(record)
 
-md = MergedDataset(args.input_dir)
+        df = pd.DataFrame(records)
+        df.to_csv(output_filepath, sep="\t", index=False)
+
+if __name__ == "__main__":
+    # Set logging level
+    logging.basicConfig(level=logging.DEBUG)
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "input_dir",
+        help="Directory containing the annotation files (i.e. BORIS project files in JSON format)",
+    )
+
+    parser.add_argument(
+        "output_file",
+        help="Output file",
+    )
+
+    args = parser.parse_args()
+
+    md = MergedDataset(args.input_dir)
+    md.to_tsv(args.output_file)
