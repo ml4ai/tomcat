@@ -1,2 +1,2 @@
-This directory contains potentially throwaway scripts written specifically for
-the ASIST program.
+This directory contains scripts written specifically for collaboration on the
+ASIST program.
