@@ -13,6 +13,7 @@ import pandas as pd
 from itertools import groupby, accumulate, takewhile
 from dataclasses import dataclass
 
+
 def first_true(iterable, default=False, pred=None):
     """Returns the first true value in the iterable.
 
@@ -117,6 +118,7 @@ class MergedDataset(object):
         debug("Running validation.")
         for project in self.projects:
             for observation in project.observations:
+                # We check to see if there are 15 events per media file
                 if len(observation.events) != 15 * len(
                     observation.media_files
                 ):
@@ -125,6 +127,9 @@ class MergedDataset(object):
                         f"{len(observation.events)} events for "
                         f"{len(observation.media_files)} media files (expected "
                         f"number of events: {15*len(observation.media_files)})."
+                        " This could be for a number of reasons (e.g., the "
+                        "trial ended early), and is not necessarily something "
+                        "you need to worry about."
                     )
 
     def to_tsv(self, output_filepath):
@@ -133,15 +138,16 @@ class MergedDataset(object):
             for observation in project.observations:
                 for event in observation.events:
                     record = {
-                            "trial": event.media_file.trial,
-                            "timestamp": event.timestamp,
-                            "event_code": event.code,
-                            "comment": event.comment
+                        "trial": event.media_file.trial,
+                        "timestamp": event.timestamp,
+                        "event_code": event.code,
+                        "comment": event.comment,
                     }
                     records.append(record)
 
         df = pd.DataFrame(records)
         df.to_csv(output_filepath, sep="\t", index=False)
+
 
 if __name__ == "__main__":
     # Set logging level
