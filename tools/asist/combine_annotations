@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# Minimum Python version to run this script: 3.6
+
 # Script to combine annotations of incident commander inquiries from the Fall
 # 2020 ASIST experiment.
 # Author: Adarsh Pyarelal (adarsh@arizona.edu)
