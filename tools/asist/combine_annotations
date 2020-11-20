@@ -152,19 +152,25 @@ class MergedDataset(object):
     def construct_dataframe(self):
         # Construct pandas dataframe to hold the data
         records = []
+        all_trial_ids = set()
         for project in self.projects:
             for observation in project.observations:
-                for trial in observation.trials.values():
-                    for event in trial.events:
-                        record = {
-                            "trial": trial.trial_number,
-                            "timestamp": event.timestamp,
-                            "event_code": event.code,
-                            "comment": event.comment,
-                            "filepath": project.filepath,
-                            "observation_label": observation.label,
-                        }
-                        records.append(record)
+                for trial_id, trial in observation.trials.items():
+
+                    # If we encounter annotations for a trial that we already
+                    # have events for, we ignore them.
+                    if trial_id not in all_trial_ids:
+                        all_trial_ids.add(trial_id)
+                        for event in trial.events:
+                            record = {
+                                "trial": trial.trial_number,
+                                "timestamp": event.timestamp,
+                                "event_code": event.code,
+                                "comment": event.comment,
+                                "filepath": project.filepath,
+                                "observation_label": observation.label,
+                            }
+                            records.append(record)
 
         df = pd.DataFrame(records)
 
@@ -183,7 +189,7 @@ class MergedDataset(object):
         # Check if each trial has the expected number of events.
         gb = self.dataframe.groupby(["trial"])
         for key, group in gb:
-            if len(group) != n_expected_events:
+            if len(group) < n_expected_events:
                 info(
                     f"Trial {key} in file(s) {set(group['filepath'])} has {len(group)} events, "
                     f"when we expected {n_expected_events}. "
@@ -191,6 +197,14 @@ class MergedDataset(object):
                     "trial ended early), and is not necessarily something "
                     "to worry about."
                 )
+            elif len(group) > n_expected_events:
+                warning(
+                    f"Trial {key} in file(s) {set(group['filepath'])} has {len(group)} events, "
+                    f"when we expected {n_expected_events}."
+                    "This is likely because of duplicated observation labels"
+                )
+            else:
+                pass
 
         info(f"Total number of events: {len(self.dataframe)}")
         info(f"Total number of trials: {len(self.dataframe.groupby('trial'))}")
