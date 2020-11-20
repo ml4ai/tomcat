@@ -1,0 +1,257 @@
+#!/usr/bin/env python
+
+# Minimum Python version to run this script: 3.6
+
+# Script to combine annotations of incident commander inquiries from the Fall
+# 2020 ASIST experiment.
+# Author: Adarsh Pyarelal (adarsh@arizona.edu)
+
+import json
+from pprint import pprint
+import argparse
+from glob import glob
+import logging
+from logging import debug, info, warning, error
+import pandas as pd
+from itertools import groupby, accumulate, takewhile
+from dataclasses import dataclass
+
+
+def first_true(iterable, default=False, pred=None):
+    """Returns the first true value in the iterable.
+
+    If no true value is found, returns *default*
+
+    If *pred* is not None, returns the first item
+    for which pred(item) is true.
+
+    Copied from https://docs.python.org/3/library/itertools.html#itertools-recipes
+    """
+    # first_true([a,b,c], x) --> a or b or c or x
+    # first_true([a,b], x, f) --> a if f(a) else b if f(b) else x
+    return next(filter(pred, iterable), default)
+
+
+@dataclass(frozen=True)
+class MediaFile:
+    """Class to represent an MP4 video file corresponding to a trial."""
+
+    # Path to the media file
+    path: str
+
+    # Length (in seconds) of the media file
+    length: float
+
+
+@dataclass(frozen=True)
+class Event(object):
+    """Class to represent a BORIS event."""
+
+    timestamp: float
+    code: str
+    comment: str
+
+
+@dataclass
+class Trial(object):
+    """Class to represent a trial (i.e. a mission)"""
+
+    media_file: MediaFile
+
+    def __post_init__(self):
+        self.trial_number = self.media_file.path.split("Trial-")[1].split("_")[
+            0
+        ]
+        self.participant: str = self.media_file.path.split("Member-")[1].split(
+            "_"
+        )[0]
+        self.events = []
+
+
+class Observation(object):
+    """Class to represent a BORIS observation."""
+
+    def __init__(self, label, observation):
+        self.label: str = label
+
+        # In the list comprehension below, we ensure that the filepath must end
+        # with ".mp4". This is to deal with cases in which 'video_list.txt' was
+        # erroneously added as a media file.
+        self.media_files = [
+            MediaFile(filepath, observation["media_info"]["length"][filepath])
+            for filepath in observation["file"]["1"]
+            if filepath.endswith(".mp4")
+        ]
+
+        self.cumulative_times = list(
+            accumulate([f.length for f in self.media_files])
+        )
+
+        self.trials = {
+            media_file.path: Trial(media_file)
+            for media_file in self.media_files
+        }
+
+        for event in observation["events"]:
+            aggregate_timestamp = event[0]
+            # Figure out which video the event belongs to.
+            media_file_index = first_true(
+                enumerate(self.cumulative_times),
+                pred=lambda tup: tup[1] > aggregate_timestamp,
+            )[0]
+
+            if media_file_index != 0:
+                timestamp = (
+                    aggregate_timestamp
+                    - self.cumulative_times[media_file_index - 1]
+                )
+            else:
+                timestamp = aggregate_timestamp
+
+            media_file = self.media_files[media_file_index]
+
+            code = event[2]
+
+            # We call the strip() method on the comment string to deal with the
+            # cases in which there are newline characters accidentally entered
+            # into the comment field.
+            comment = event[4].strip()
+
+            self.trials[media_file.path].events.append(
+                Event(timestamp, code, comment)
+            )
+
+
+@dataclass
+class BorisProject:
+    """Class to represent a BORIS project."""
+
+    filepath: str
+
+    def __post_init__(self):
+        debug(f"Processing file: {self.filepath}...")
+        with open(self.filepath) as f:
+            project = json.load(f)
+            self.observations = {
+                Observation(label, obs)
+                for label, obs in project["observations"].items()
+                if len(obs["events"]) != 0
+            }
+
+
+class MergedDataset(object):
+    """Class to represent a dataset constructed by combining multiple BORIS
+    projects."""
+
+    def __init__(self, input_dir):
+        info(f"Constructing merged dataset from files in {input_dir}...")
+        self.projects = [BorisProject(f) for f in glob(f"{input_dir}/*")]
+        self.dataframe = self.construct_dataframe()
+        self.validate()
+
+    def construct_dataframe(self):
+        # Construct pandas dataframe to hold the data
+        records = []
+        all_trial_ids = set()
+        for project in self.projects:
+            for observation in project.observations:
+                for trial_id, trial in observation.trials.items():
+
+                    # If we encounter annotations for a trial that we already
+                    # have events for, we ignore them.
+                    if trial_id not in all_trial_ids:
+                        all_trial_ids.add(trial_id)
+                        for event in trial.events:
+                            record = {
+                                "trial": trial.trial_number,
+                                "timestamp": event.timestamp,
+                                "event_code": event.code,
+                                "comment": event.comment,
+                                "filepath": project.filepath,
+                                "observation_label": observation.label,
+                            }
+                            records.append(record)
+
+        df = pd.DataFrame(records)
+
+        # We round the timestamps to 3 decimal places since that is the
+        # precision that Boris provides.
+        return df.round(3)
+
+    def validate(self):
+        """Validate the dataset"""
+
+        # Number of expected events per trial
+        n_expected_events = 15
+
+        info("Running validation on merged dataset...")
+
+        # Check if each trial has the expected number of events.
+        gb = self.dataframe.groupby(["trial"])
+        for key, group in gb:
+            if len(group) < n_expected_events:
+                info(
+                    f"Trial {key} in file(s) {set(group['filepath'])} has {len(group)} events, "
+                    f"when we expected {n_expected_events}. "
+                    "This could be for a number of reasons (e.g., the "
+                    "trial ended early), and is not necessarily something "
+                    "to worry about."
+                )
+            elif len(group) > n_expected_events:
+                warning(
+                    f"Trial {key} in file(s) {set(group['filepath'])} has {len(group)} events, "
+                    f"when we expected {n_expected_events}."
+                    "This is likely because of duplicated observation labels"
+                )
+            else:
+                pass
+
+        info(f"Total number of events: {len(self.dataframe)}")
+        info(f"Total number of trials: {len(self.dataframe.groupby('trial'))}")
+
+        assignment_df = pd.read_table(
+            "assignment_sheet.tsv", index_col="File name"
+        )
+        for filename in assignment_df.index:
+            trial_number = filename.split("Trial-")[1].split("_")[0]
+            if (
+                trial_number not in gb.groups
+                and assignment_df.loc[filename]["Completed"] == "Yes"
+            ):
+                info(
+                    f"Trial number {trial_number} is marked as 'Completed' in "
+                    f"the signup sheet by "
+                    f"{assignment_df.loc[filename]['Signup']} "
+                    f"({assignment_df.loc[filename]['Team']}), "
+                    "but we could not find the annotations for it in the "
+                    "annotation files."
+                )
+
+    def to_tsv(self, output_filepath):
+        self.dataframe.to_csv(output_filepath, sep="\t", index=False)
+        info(f"Finished writing events to {output_filepath}!")
+
+
+if __name__ == "__main__":
+    # Set logging level
+    logging.basicConfig(level=logging.INFO)
+
+    # Parse command line arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "input_dir",
+        help="Directory containing the annotation files (i.e. BORIS project files in JSON format)",
+    )
+
+    parser.add_argument(
+        "output_file",
+        help="Output file",
+    )
+
+    args = parser.parse_args()
+
+    # Construct MergedDataset object
+    md = MergedDataset(args.input_dir)
+
+    # Output to TSV
+    md.to_tsv(args.output_file)
