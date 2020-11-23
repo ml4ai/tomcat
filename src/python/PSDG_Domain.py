@@ -26,8 +26,6 @@ class PSDG_Domain:
                 not all(isinstance(e, str) for e in i["subtasks"])
             ):
                 raise ValueError("Subtasks must be a list of strings")
-            if not "t_prob" in i:
-                i["t_prob"] = 1
             self.methods.append(i)
         self.actions = []
         for i in actions:
@@ -52,7 +50,6 @@ class PSDG_Domain:
                     subtasks,
                     i_state,
                     i["preconditions"],
-                    i["t_prob"],
                 )
             )
         self.psdg = PSDG(Nonterminal("P"), prods)

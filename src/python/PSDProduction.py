@@ -15,14 +15,9 @@ class PSDProduction(Production, ProbabilisticMixIn):
     :see also: ``Production``
     """
 
-    def __init__(self, lhs, rhs, current_s, precond, t_prob=1.0):
+    def __init__(self, lhs, rhs, current_s, precond):
         self.precond = precond
-        self.t_prob = t_prob
-        if self.precond(current_s):
-            p = t_prob
-        else:
-            p = 1 - t_prob
-
+        p = self.precond(current_s):
         ProbabilisticMixIn.__init__(self, prob=p)
         Production.__init__(self, lhs, rhs)
 
@@ -46,8 +41,5 @@ class PSDProduction(Production, ProbabilisticMixIn):
         return hash((self._lhs, self._rhs, self.prob()))
 
     def update_prob(self, state):
-        if self.precond(state):
-            p = self.t_prob
-        else:
-            p = 1 - self.t_prob
+        p = self.precond(state):
         self.set_prob(p)
