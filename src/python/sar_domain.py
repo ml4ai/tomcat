@@ -7,6 +7,7 @@ def searchHallway(state):
         yellow = random.poisson(0.2, 1)[0]
         state["num_of_yellow_victims_found_in_adj_room"] += yellow
         state["num_of_yellow_victims_found_total"] += yellow
+
     state["num_of_green_victims_found_in_adj_room"] += green
     state["num_of_green_victims_found_total"] += green
     state["time"] += random.poisson(5.5, 1)[0]
@@ -22,6 +23,7 @@ def searchRoom(state):
         state["num_of_yellow_victims_found_in_current_room"] += yellow
         state["num_of_yellow_victims_found_in_adj_room"] += yellow_adj
         state["num_of_yellow_victims_found_total"] += yellow + yellow_adj
+
     green_adj = random.poisson(0.5, 1)[0]
     state["num_of_green_victims_found_in_current_room"] += green
     state["num_of_green_victims_found_in_adj_room"] += green_adj
@@ -46,14 +48,14 @@ def triageYellow(state):
 
 
 def move(state):
-    state["num_of_green_victims_seen_in_current_room"] = 0
-    state["num_of_yellow_victims_seen_in_current_room"] = 0
+    state["num_of_green_victims_found_in_current_room"] = 0
+    state["num_of_yellow_victims_found_in_current_room"] = 0
     state["num_of_green_victims_found_in_adj_room"] = 0
     state["num_of_yellow_victims_found_in_adj_room"] = 0
     state["num_of_green_victims_triaged_in_current_room"] = 0
     state["num_of_yellow_victims_triaged_in_current_room"] = 0
     state["current_loc"] = state["next_loc"].pop()
-    state["time"] = random.poisson(5.6, 1)[0]
+    state["time"] += random.poisson(5.6, 1)[0]
     state["times_searched"] = 0
     return state
 
@@ -87,7 +89,7 @@ def willSearchHall_YF(state):
             and state["num_of_green_victims_found_in_adj_room"]
         ):
             return 0
-        return 1 / (e * math.factorial(state["times_search"]))
+        return 1 / (e * math.factorial(state["times_searched"]))
     return 0
 
 
@@ -120,7 +122,7 @@ def willSearchRoom_YF(state):
             and state["num_of_green_victims_found_in_adj_room"]
         ):
             return 0
-        return 1 / (e * math.factorial(state["times_search"]))
+        return 1 / (e * math.factorial(state["times_searched"]))
     return 0
 
 
@@ -153,7 +155,7 @@ def willTriageGreen_YF(state):
 
 
 def willMove_YF(state):
-    if state["time"] >= 600 or state["next_loc"].empty():
+    if state["time"] >= 600 or not state["next_loc"]:
         return 0
     if willTriageGreen_YF(state) or willTriageYellow_YF(state):
         return 0
@@ -201,5 +203,5 @@ methods = [
         "subtasks": ["!triageGreen", "YF"],
     },
     {"task": "YF", "preconditions": willMove_YF, "subtasks": ["!move", "YF"],},
-    {"task": "YF", "preconditions": willExit_YF, "subtasks": ["!exit", "YF"],},
+    {"task": "YF", "preconditions": willExit_YF, "subtasks": ["!exit"],},
 ]
