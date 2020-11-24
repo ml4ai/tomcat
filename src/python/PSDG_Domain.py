@@ -135,6 +135,7 @@ class PSDG_Domain:
             )
             state_seqs.append(self.states)
             self.c_state = copy.deepcopy(self.i_state)
+            self.psdg.update_prods(self.c_state)
 
         if output_options == "a":
             return plans
