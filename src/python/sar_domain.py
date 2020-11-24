@@ -12,6 +12,7 @@ def searchHallway(state):
     state["num_of_green_victims_found_total"] += green
     state["time"] += random.poisson(5.5, 1)[0]
     state["times_searched"] += 1
+    state["recent_search"] = 1
     return state
 
 
@@ -30,6 +31,7 @@ def searchRoom(state):
     state["num_of_green_victims_found_total"] += green + green_adj
     state["time"] += random.poisson(5.5, 1)[0]
     state["times_searched"] += 1
+    state["recent_search"] = 1
     return state
 
 
@@ -37,6 +39,7 @@ def triageGreen(state):
     state["num_of_green_victims_triaged_total"] += 1
     state["num_of_green_victims_triaged_in_current_room"] += 1
     state["time"] += 8
+    state["recent_search"] = 0
     return state
 
 
@@ -44,6 +47,7 @@ def triageYellow(state):
     state["num_of_yellow_victims_triaged_total"] += 1
     state["num_of_yellow_victims_triaged_in_current_room"] += 1
     state["time"] += 15
+    state["recent_search"] = 0
     return state
 
 
@@ -57,6 +61,7 @@ def move(state):
     state["current_loc"] = state["next_loc"].pop(0)
     state["time"] += random.poisson(5.6, 1)[0]
     state["times_searched"] = 0
+    state["recent_search"] = 0
     return state
 
 
@@ -75,6 +80,8 @@ def default(state):
 # Yellow First preconditions
 def willSearchHall_YF(state):
     if state["time"] >= 600:
+        return 0
+    if state["recent_search"]:
         return 0
     if state["current_loc"] in state["hallways"]:
         if not state["times_searched"]:
@@ -95,6 +102,8 @@ def willSearchHall_YF(state):
 
 def willSearchRoom_YF(state):
     if state["time"] >= 600:
+        return 0
+    if state["recent_search"]:
         return 0
     if state["current_loc"] in state["rooms"]:
         if not state["times_searched"]:
