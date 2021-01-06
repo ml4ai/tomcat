@@ -1,7 +1,6 @@
 #pragma once
 #include "Pos.h"
 #include <nlohmann/json.hpp>
-#include <memory>
 
 /**
  * @brief This class represents an Entity in Minecraft. The equipment is

@@ -5,7 +5,6 @@
 #pragma once
 #include "Pos.h"
 #include <nlohmann/json.hpp>
-#include <memory>
 
 /**
  * @brief This class represents a Minecraft block

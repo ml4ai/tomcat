@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Pos.h"
-#include <memory>
 
 /**
  * @brief This class represents a Connection for semantically representing
@@ -116,7 +115,7 @@ class Connection {
     void addManyConnectedLocations(std::vector<std::string>& idVector);
 
     /**
-     * @brief Add many oordinate to the bounds' coordinate list. Remember to
+     * @brief Add many coordinates to the bounds' coordinate list. Remember to
      * make sure that the number of coordinates you have match the bound type
      * you set.
      *
