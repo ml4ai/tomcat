@@ -19,17 +19,17 @@ void ZombieWorld::chooseZombieworldAABB(int idCtr,
             this->addAABB(move(zWorldPit));
         }
         else if (rand > 25 && rand <= 75) {
-            auto zWorldPit = make_unique<ZombieworldPit>(to_string(idCtr), topLeft, "air");
+            auto zWorldPit = make_unique<ZombieworldPit>(to_string(idCtr), newTopLeft, "water");
             this->addAABB(move(zWorldPit));
         }
         else {
-            auto zWorldPit = make_unique<ZombieworldPit>(to_string(idCtr), topLeft, "air");
+            auto zWorldPit = make_unique<ZombieworldPit>(to_string(idCtr), newTopLeft, "lava");
             this->addAABB(move(zWorldPit));
         }
     }
     else {
-        auto zWorldPit = make_unique<ZombieworldPit>(to_string(idCtr), topLeft, "air");
-        this->addAABB(move(zWorldPit));
+        auto zWorldGroup = make_unique<ZombieworldGroup>(to_string(idCtr), topLeft, bottomRight);
+        this->addAABB(move(zWorldGroup));
     }
 }
 
