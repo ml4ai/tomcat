@@ -12,9 +12,9 @@ class ZombieWorld : public World {
 
     /**
      * @brief A method to choose the AABB to add based on the idCtr. It
-     *        alternates between a Pit and Group type of AABB. Pit objects are further
-     *        randomly chosen from Lava and Water Pits or Air. Air AABBs are for when
-     *        nothing is to be added at a certain position.
+     *        alternates between a Pit and Group type of AABB. Pit objects are
+     * further randomly chosen from Lava and Water Pits or Air. Air AABBs are
+     * for when nothing is to be added at a certain position.
      *
      * @param idCtr The id to set the Group to. In this case also the count
      *        reached as of this Group.

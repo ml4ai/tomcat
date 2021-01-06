@@ -101,7 +101,8 @@ class World {
 
     /**
      * @brief Converts the world into its alternate JSON representation with
-     *        each entry indented by 4 and returns the string representation of it.
+     *        each entry indented by 4 and returns the string representation of
+     * it.
      *
      * @return string The JSON as a string.
      */
@@ -109,7 +110,8 @@ class World {
 
     /**
      * @brief Converts the world into a JSON representation with
-     *        each entry indented by 4 and returns the string representation of it.
+     *        each entry indented by 4 and returns the string representation of
+     * it.
      *
      * @return string The JSON as a string.
      */

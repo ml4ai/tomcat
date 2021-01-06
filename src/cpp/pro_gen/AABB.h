@@ -165,8 +165,8 @@ class AABB {
 
     /**
      * @brief Get a list of the positions of the edge midpoints for this AABB.
-     *        The Y value for all these Pos objects is equal to the Y value of the
-     *        AABB's top left field which is considered the base.
+     *        The Y value for all these Pos objects is equal to the Y value of
+     * the AABB's top left field which is considered the base.
      *
      * @return vector<Pos> The list of coordinates as: top, right, bottom and
      *         left edge midpoints.
@@ -196,8 +196,8 @@ class AABB {
 
     /**
      * @brief Add a specific block for this AABB to keep track of. Ideally this
-     *        should be related to the AABB. No checks are implicitly performed within
-     *        this method.
+     *        should be related to the AABB. No checks are implicitly performed
+     * within this method.
      *
      * @param block Block to be added
      */
@@ -205,8 +205,8 @@ class AABB {
 
     /**
      * @brief Add a specific entity for this AABB to keep track of. Ideally this
-     *        should be related to the AABB. No checks are implicitly performed within
-     *        this method.
+     *        should be related to the AABB. No checks are implicitly performed
+     * within this method.
      *
      * @param entity Entity to be added
      */
@@ -214,8 +214,8 @@ class AABB {
 
     /**
      * @brief Add a specific object for this AABB to keep track of. Ideally this
-     *        should be related to the AABB. No checks are implicitly performed within
-     *        this method.
+     *        should be related to the AABB. No checks are implicitly performed
+     * within this method.
      *
      * @param object Object to be added
      */
@@ -317,7 +317,8 @@ class AABB {
      * @param topLeft The coordinates of the top left of the AABB from the
      *        top view of the X-Z plane. Y coordinate should be lowest here.
      * @param bottomRight The coordinates of the bottom right of the AABB
-     *        from the top view of the X-Z plane. Y coordinate should be maximum here.
+     *        from the top view of the X-Z plane. Y coordinate should be maximum
+     * here.
      * @param isHollow Specify wether the AABB should be hollow or not. Defaults
      *        to true.
      * @param hasRoof specify wether the AABB should have a roof or not.

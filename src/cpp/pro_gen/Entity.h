@@ -4,8 +4,8 @@
 
 /**
  * @brief This class represents an Entity in Minecraft. The equipment is
- *        represented as a vector of size 5 with the helmet, chestplate, leggings,
- *        boots and weapon materials to assign.
+ *        represented as a vector of size 5 with the helmet, chestplate,
+ * leggings, boots and weapon materials to assign.
  */
 class Entity {
 
