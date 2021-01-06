@@ -16,13 +16,9 @@ AABB::AABB(string id,
     : id{id}, type{type}, material{material}, topLeft{topLeft},
       bottomRight{bottomRight}, isHollow{isHollow}, hasRoof{hasRoof} {}
 
-AABB::AABB(string id,
-           string type,
-           string material,
-           bool isHollow,
-           bool hasRoof)
-    : id{id}, type{type}, material{material}, topLeft(0,0,0),
-      bottomRight(0,0,0), isHollow{isHollow}, hasRoof{hasRoof} {}
+AABB::AABB(string id, string type, string material, bool isHollow, bool hasRoof)
+    : id{id}, type{type}, material{material}, topLeft(0, 0, 0),
+      bottomRight(0, 0, 0), isHollow{isHollow}, hasRoof{hasRoof} {}
 
 string AABB::getID() { return this->id; }
 
@@ -135,11 +131,17 @@ void AABB::setBottomRight(Pos& bottomRight) { this->bottomRight = bottomRight; }
 
 void AABB::setMaterial(string material) { this->material = material; };
 
-void AABB::addBlock(unique_ptr<Block> block) { (this->blockList).push_back(move(block)); }
+void AABB::addBlock(unique_ptr<Block> block) {
+    (this->blockList).push_back(move(block));
+}
 
-void AABB::addEntity(unique_ptr<Entity> entity) { this->entityList.push_back(move(entity)); }
+void AABB::addEntity(unique_ptr<Entity> entity) {
+    this->entityList.push_back(move(entity));
+}
 
-void AABB::addObject(unique_ptr<Object> object) { this->objectList.push_back(move(object)); }
+void AABB::addObject(unique_ptr<Object> object) {
+    this->objectList.push_back(move(object));
+}
 
 bool AABB::isOverlapping(AABB& other) {
     int xRange = (this->bottomRight.getX()) - (this->topLeft.getX());
@@ -308,11 +310,12 @@ void AABB::generateAllDoorsInAABB() {
     leftEdgeMid.shiftY(1);
     rightEdgeMid.shiftY(1);
 
-
     auto topDoor = make_unique<Door>(topEdgeMid, false, false);
     auto bottomDoor = make_unique<Door>(bottomEdgeMid, false, false);
-    auto leftDoor = make_unique<Door>(leftEdgeMid, false, false, "dark_oak_door", "east");
-    auto rightDoor = make_unique<Door>(rightEdgeMid, false, false, "dark_oak_door", "east");
+    auto leftDoor =
+        make_unique<Door>(leftEdgeMid, false, false, "dark_oak_door", "east");
+    auto rightDoor =
+        make_unique<Door>(rightEdgeMid, false, false, "dark_oak_door", "east");
 
     this->addBlock(move(topDoor));
     this->addBlock(move(bottomDoor));

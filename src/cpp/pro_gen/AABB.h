@@ -8,9 +8,9 @@
 #include "Door.h"
 #include "Entity.h"
 #include "Object.h"
+#include <memory>
 #include <random>
 #include <vector>
-#include <memory>
 
 /**
  * @brief This class represents an Axis Aligned Bounding Box
@@ -32,68 +32,71 @@ class AABB {
 
   public:
     /**
-     * @brief Get the AABB's id
+     * @brief Get the AABB's id.
      *
-     * @return int The id
+     * @return int The id.
      */
     std::string getID();
 
     /**
-     * @brief Get the AABB's material
+     * @brief Get the AABB's material.
      *
-     * @return string The material name
+     * @return string The material name.
      */
     std::string getMaterial();
 
     /**
-     * @brief Get the AABB type
+     * @brief Get the AABB type.
      *
-     * @return string The type
+     * @return string The type.
      */
     std::string getType();
 
     /**
      * @brief Returns a copy of the Pos object used to represent
-     * the top left of the AABB from the top view of the X-Z plane
+     * the top left of the AABB from the top view of the X-Z plane.
      *
-     * @return Pos The copy of the top left coordinate
+     * @return Pos The copy of the top left coordinate.
      */
     Pos getTopLeft();
 
     /**
      * @brief Returns a copy of the Pos object used to represent
-     * the bottom right of the AABB from the top view of the X-Z plane
+     * the bottom right of the AABB from the top view of the X-Z plane.
      *
-     * @return Pos The copy of the bottom right coordinate
+     * @return Pos The copy of the bottom right coordinate.
      */
     Pos getBottomRight();
 
     /**
-     * @brief Get the block list specific to this AABB
+     * @brief Get the block list specific to this AABB. Do not transfer
+     * ownership  of any unique_ptr as it may cause scope issues.
      *
-     * @return The reference to the block list
+     * @return The reference to the block list.
      */
     std::vector<std::unique_ptr<Block>>& getBlockList();
 
     /**
-     * @brief Get the entity list specific to this AABB
+     * @brief Get the entity list specific to this AABB. Do not transfer
+     * ownership  of any unique_ptr as it may cause scope issues.
      *
-     * @return The reference to the entity list
+     * @return The reference to the entity list.
      */
     std::vector<std::unique_ptr<Entity>>& getEntityList();
 
     /**
-     * @brief Get the object list specific to this AABB
+     * @brief Get the object list specific to this AABB. Do not transfer
+     * ownership  of any unique_ptr as it may cause scope issues.
      *
-     * @return The reference to the object list
+     * @return The reference to the object list.
      */
     std::vector<std::unique_ptr<Object>>& getObjectList();
 
     /**
      * @brief Get the midpoint X value calculated between
-     * the top left and bottom right x values
+     * the top left and bottom right x values.
      *
-     * @return int The midpoint X coordinate
+     * @return int The midpoint X coordinate.
      */
     int getMidpointX();
 
@@ -329,7 +332,8 @@ class AABB {
          bool hasRoof = false);
 
     /**
-     * @brief Construct a new AABB object
+     * @brief Construct a new AABB object. Use this contructor when you know the
+     * top left and bottom right positions will change in the future.
      *
      * @param id The id associated with this AABB
      * @param type A semantic name describing the type and/or purpose of the
