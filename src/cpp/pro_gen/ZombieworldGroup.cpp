@@ -43,7 +43,8 @@ void ZombieworldGroup::addLights() {
 
 void ZombieworldGroup::createAABB(Pos& firstTopLeft, Pos& firstBottomRight) {
 
-    auto first = make_unique<AABB>("1", "room", "planks", firstTopLeft, firstBottomRight, true, true);
+    auto first = make_unique<AABB>(
+        "1", "room", "planks", firstTopLeft, firstBottomRight, true, true);
     this->addAABB(move(first));
 
     string id = this->getID();
@@ -59,12 +60,12 @@ void ZombieworldGroup::createAABB(Pos& firstTopLeft, Pos& firstBottomRight) {
         secondBottomRight.shiftZ(9);
 
         auto second = make_unique<AABB>("2",
-                                 "room",
-                                 "planks",
-                                 secondTopLeft,
-                                 secondBottomRight,
-                                 true,
-                                 true);
+                                        "room",
+                                        "planks",
+                                        secondTopLeft,
+                                        secondBottomRight,
+                                        true,
+                                        true);
         this->addAABB(move(second));
     }
 }
@@ -79,7 +80,7 @@ void ZombieworldGroup::addLevers() {
         topEdgeMidpoint.shiftX(-1);
         topEdgeMidpoint.shiftZ(-1);
 
-        auto lever = make_unique<Lever>(topEdgeMidpoint, false, "north"); 
+        auto lever = make_unique<Lever>(topEdgeMidpoint, false, "north");
         this->addBlock(move(lever));
 
         // Adds the connection representing this doorway
@@ -87,7 +88,7 @@ void ZombieworldGroup::addLevers() {
         auto connection = make_unique<Connection>(
             "c1", "entrance to second room", "door", "rectangle");
         this->addConnection(move(connection));
-        
+
         vector<string> connectedLocations{"1", "2"};
         this->getConnectionList().at(0)->addManyConnectedLocations(
             connectedLocations);
