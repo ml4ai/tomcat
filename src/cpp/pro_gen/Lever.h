@@ -1,5 +1,6 @@
 #pragma once
 #include "Block.h"
+#include <memory>
 
 class Lever : public Block {
   private:

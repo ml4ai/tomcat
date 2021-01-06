@@ -1,5 +1,6 @@
 #pragma once
 #include "AABB.h"
+#include <memory>
 
 /**
  * @brief This class represents a special AABB of type = "pit". It is not hollow

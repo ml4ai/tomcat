@@ -3,6 +3,7 @@
 #include "World.h"
 #include "ZombieworldGroup.h"
 #include "ZombieworldPit.h"
+#include <memory>
 
 class ZombieWorld : public World {
   private:

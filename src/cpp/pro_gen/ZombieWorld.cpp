@@ -15,22 +15,21 @@ void ZombieWorld::chooseZombieworldAABB(int idCtr,
 
         // Choose between an air, water or lava pit
         if (rand <= 25) {
-            this->addAABB(
-                *(new ZombieworldPit(to_string(idCtr), topLeft, "air")));
+            auto zWorldPit = make_unique<ZombieworldPit>(to_string(idCtr), topLeft, "air");
+            this->addAABB(move(zWorldPit));
         }
-
         else if (rand > 25 && rand <= 75) {
-            this->addAABB(
-                *(new ZombieworldPit(to_string(idCtr), newTopLeft, "water")));
+            auto zWorldPit = make_unique<ZombieworldPit>(to_string(idCtr), topLeft, "air");
+            this->addAABB(move(zWorldPit));
         }
         else {
-            this->addAABB(
-                *(new ZombieworldPit(to_string(idCtr), newTopLeft, "lava")));
+            auto zWorldPit = make_unique<ZombieworldPit>(to_string(idCtr), topLeft, "air");
+            this->addAABB(move(zWorldPit));
         }
     }
     else {
-        this->addAABB(
-            *(new ZombieworldGroup(to_string(idCtr), topLeft, bottomRight)));
+        auto zWorldPit = make_unique<ZombieworldPit>(to_string(idCtr), topLeft, "air");
+        this->addAABB(move(zWorldPit));
     }
 }
 
@@ -42,8 +41,8 @@ void ZombieWorld::generateAABBGrid() {
     Pos prevTopLeft(1, 3, 1);
     Pos prevBottomRight(AABB_size, 3 + AABB_size / 2, AABB_size);
 
-    this->addAABB(*(
-        new ZombieworldGroup(to_string(idCtr), prevTopLeft, prevBottomRight)));
+    auto firstAABB = make_unique<ZombieworldGroup>(to_string(idCtr), prevTopLeft, prevBottomRight);
+    this->addAABB(move(firstAABB));
 
     // Use relative coordinates for the "previous" AABB to generate the rest
     // at each step
@@ -96,8 +95,8 @@ void ZombieWorld::generateAABBGrid() {
 }
 
 void ZombieWorld::generateBoundingWalls() {
-    AABB firstAABB = *(this->getAABBList().front());
-    AABB lastAABB = *(this->getAABBList().back());
+    AABB& firstAABB = *(this->getAABBList().front().get());
+    AABB& lastAABB = *(this->getAABBList().back().get());
 
     // Create boundary
     Pos boundaryTopLeft(firstAABB.getTopLeft());
@@ -110,11 +109,12 @@ void ZombieWorld::generateBoundingWalls() {
     boundaryBottomRight.setY(13);
     boundaryBottomRight.shiftZ(4);
 
-    this->addAABB(*(new AABB(to_string(0),
+    auto boundary = make_unique<AABB>(to_string(0),
                              "boundary",
                              "cobblestone",
                              boundaryTopLeft,
-                             boundaryBottomRight)));
+                             boundaryBottomRight);
+    this->addAABB(move(boundary));
 
     // Create Internal Separator 1
     Pos separator1BottomRight(boundaryBottomRight);
@@ -124,15 +124,17 @@ void ZombieWorld::generateBoundingWalls() {
     separator1TopLeft.shiftZ(-50);
     separator1TopLeft.setY(boundaryTopLeft.getY());
 
-    this->addAABB(*(new AABB(to_string(-1),
+    auto separator1 = make_unique<AABB>(to_string(-1),
                              "wall",
                              "cobblestone",
                              separator1TopLeft,
                              separator1BottomRight,
-                             false)));
+                             false);
 
-    AABB* separatorWall1 = this->getAABBList().back();
-    (*separatorWall1).generateBox("fence", 0, 0, 3, 2, 1, 1);
+    this->addAABB(move(separator1));
+
+    auto& separatorWall1 = *(this->getAABBList().back().get());
+    separatorWall1.generateBox("fence", 0, 0, 3, 2, 1, 1);
 
     // Create Internal Separator 2
     Pos separator2BottomRight(separator1TopLeft);
@@ -142,14 +144,16 @@ void ZombieWorld::generateBoundingWalls() {
     separator2TopLeft.shiftX(-25);
     separator2TopLeft.setY(boundaryTopLeft.getY());
 
-    this->addAABB(*(new AABB(to_string(-2),
+    auto separator2 = make_unique<AABB>(to_string(-2),
                              "wall",
                              "cobblestone",
                              separator2TopLeft,
                              separator2BottomRight,
-                             false)));
-    AABB* separatorWall2 = (this->getAABBList().back());
-    (*separatorWall2).generateBox("fence", 1, 1, 3, 2, 0, 0);
+                             false);
+    this->addAABB(move(separator2));
+
+    auto& separatorWall2 = *(this->getAABBList().back().get());
+    separatorWall2.generateBox("fence", 1, 1, 3, 2, 0, 0);
 }
 
 ZombieWorld::ZombieWorld(int seed) {

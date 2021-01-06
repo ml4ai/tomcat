@@ -16,6 +16,14 @@ AABB::AABB(string id,
     : id{id}, type{type}, material{material}, topLeft{topLeft},
       bottomRight{bottomRight}, isHollow{isHollow}, hasRoof{hasRoof} {}
 
+AABB::AABB(string id,
+           string type,
+           string material,
+           bool isHollow,
+           bool hasRoof)
+    : id{id}, type{type}, material{material}, topLeft(0,0,0),
+      bottomRight(0,0,0), isHollow{isHollow}, hasRoof{hasRoof} {}
+
 string AABB::getID() { return this->id; }
 
 string AABB::getMaterial() { return this->material; }
@@ -26,11 +34,11 @@ Pos AABB::getTopLeft() { return this->topLeft; }
 
 Pos AABB::getBottomRight() { return this->bottomRight; }
 
-vector<Block*>& AABB::getBlockList() { return (this->blockList); }
+vector<unique_ptr<Block>>& AABB::getBlockList() { return (this->blockList); }
 
-vector<Entity*>& AABB::getEntityList() { return this->entityList; }
+vector<unique_ptr<Entity>>& AABB::getEntityList() { return this->entityList; }
 
-vector<Object*>& AABB::getObjectList() { return this->objectList; }
+vector<unique_ptr<Object>>& AABB::getObjectList() { return this->objectList; }
 
 int AABB::getMidpointX() {
     int mid_x = ((this->topLeft).getX() +
@@ -127,11 +135,11 @@ void AABB::setBottomRight(Pos& bottomRight) { this->bottomRight = bottomRight; }
 
 void AABB::setMaterial(string material) { this->material = material; };
 
-void AABB::addBlock(Block& block) { (this->blockList).push_back(&block); }
+void AABB::addBlock(unique_ptr<Block> block) { (this->blockList).push_back(move(block)); }
 
-void AABB::addEntity(Entity& entity) { this->entityList.push_back(&entity); }
+void AABB::addEntity(unique_ptr<Entity> entity) { this->entityList.push_back(move(entity)); }
 
-void AABB::addObject(Object& object) { this->objectList.push_back(&object); }
+void AABB::addObject(unique_ptr<Object> object) { this->objectList.push_back(move(object)); }
 
 bool AABB::isOverlapping(AABB& other) {
     int xRange = (this->bottomRight.getX()) - (this->topLeft.getX());
@@ -169,7 +177,8 @@ void AABB::generateBox(string material,
         for (int y = startY; y <= endY; y++) {
             for (int z = startZ; z <= endZ; z++) {
                 Pos pos(x, y, z);
-                this->addBlock(*(new Block(material, pos)));
+                auto curBlock = make_unique<Block>(material, pos);
+                this->addBlock(move(curBlock));
             }
         }
     }
@@ -202,7 +211,8 @@ void AABB::addRandomBlocks(int n,
         int y = randY(gen);
         int z = randZ(gen);
         Pos pos(x, y, z);
-        this->addBlock(*(new Block(material, pos)));
+        auto curBlock = make_unique<Block>(material, pos);
+        this->addBlock(move(curBlock));
         n--;
     }
 }
@@ -298,12 +308,16 @@ void AABB::generateAllDoorsInAABB() {
     leftEdgeMid.shiftY(1);
     rightEdgeMid.shiftY(1);
 
-    this->addBlock(*(new Door(topEdgeMid, false, false)));
-    this->addBlock(*(new Door(bottomEdgeMid, false, false)));
-    this->addBlock(
-        *(new Door(leftEdgeMid, false, false, "dark_oak_door", "east")));
-    this->addBlock(
-        *(new Door(rightEdgeMid, false, false, "dark_oak_door", "east")));
+
+    auto topDoor = make_unique<Door>(topEdgeMid, false, false);
+    auto bottomDoor = make_unique<Door>(bottomEdgeMid, false, false);
+    auto leftDoor = make_unique<Door>(leftEdgeMid, false, false, "dark_oak_door", "east");
+    auto rightDoor = make_unique<Door>(rightEdgeMid, false, false, "dark_oak_door", "east");
+
+    this->addBlock(move(topDoor));
+    this->addBlock(move(bottomDoor));
+    this->addBlock(move(leftDoor));
+    this->addBlock(move(rightDoor));
 }
 
 AABB::~AABB() {}

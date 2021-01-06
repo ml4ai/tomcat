@@ -6,6 +6,7 @@
 
 #include <nlohmann/json.hpp>
 #include <string>
+#include <memory>
 /**
  * @brief This class represents a 3D coordinate
  */
@@ -108,7 +109,6 @@ class Pos {
      *
      * @param other The object whose fields are to be copied
      */
-    Pos(const Pos& other);
 
     /**
      * @brief Destroy the Pos object

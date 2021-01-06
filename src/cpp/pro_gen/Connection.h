@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Pos.h"
+#include <memory>
 
 /**
  * @brief This class represents a Connection for semantically representing

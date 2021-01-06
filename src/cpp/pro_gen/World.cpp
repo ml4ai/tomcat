@@ -18,27 +18,25 @@ void World::setRandom(int seed) {
     this->gen = newGen;
 }
 
-vector<AABB*>& World::getAABBList() { return (this->aabbList); }
+vector<unique_ptr<AABB>>& World::getAABBList() { return (this->aabbList); }
 
-vector<Block*>& World::getBlockList() { return (this->blockList); }
+vector<unique_ptr<Block>>& World::getBlockList() { return (this->blockList); }
 
-vector<Entity*>& World::getEntityList() { return this->entityList; }
+vector<unique_ptr<Entity>>& World::getEntityList() { return this->entityList; }
 
-vector<Object*>& World::getObjectList() { return this->objectList; }
+vector<unique_ptr<Object>>& World::getObjectList() { return this->objectList; }
 
-vector<Connection*>& World::getConnectionList() { return this->connectionList; }
+vector<unique_ptr<Connection>>& World::getConnectionList() { return this->connectionList; }
 
-void World::addAABB(AABB& aabb) { (this->aabbList).push_back(&aabb); }
+void World::addAABB(unique_ptr<AABB> aabb) { (this->aabbList).push_back(move(aabb)); }
 
-void World::addBlock(Block& block) { (this->blockList).push_back(&block); }
+void World::addBlock(unique_ptr<Block> block) { (this->blockList).push_back(move(block)); }
 
-void World::addEntity(Entity& entity) { this->entityList.push_back(&entity); }
+void World::addEntity(unique_ptr<Entity> entity) { this->entityList.push_back(move(entity)); }
 
-void World::addObject(Object& object) { this->objectList.push_back(&object); }
+void World::addObject(unique_ptr<Object> object) { this->objectList.push_back(move(object)); }
 
-void World::addConnection(Connection& connection) {
-    this->connectionList.push_back(&connection);
-}
+void World::addConnection(unique_ptr<Connection> connection) {this->connectionList.push_back(move(connection));}
 
 string World::toLowLevelMapJSON() {
     json world_json;

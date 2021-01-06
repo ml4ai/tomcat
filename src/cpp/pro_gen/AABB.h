@@ -10,6 +10,7 @@
 #include "Object.h"
 #include <random>
 #include <vector>
+#include <memory>
 
 /**
  * @brief This class represents an Axis Aligned Bounding Box
@@ -25,9 +26,9 @@ class AABB {
     Pos bottomRight;
     bool isHollow;
     bool hasRoof;
-    std::vector<Block*> blockList;
-    std::vector<Entity*> entityList;
-    std::vector<Object*> objectList;
+    std::vector<std::unique_ptr<Block>> blockList;
+    std::vector<std::unique_ptr<Entity>> entityList;
+    std::vector<std::unique_ptr<Object>> objectList;
 
   public:
     /**
@@ -72,21 +73,21 @@ class AABB {
      *
      * @return The reference to the block list
      */
-    std::vector<Block*>& getBlockList();
+    std::vector<std::unique_ptr<Block>>& getBlockList();
 
     /**
      * @brief Get the entity list specific to this AABB
      *
      * @return The reference to the entity list
      */
-    std::vector<Entity*>& getEntityList();
+    std::vector<std::unique_ptr<Entity>>& getEntityList();
 
     /**
      * @brief Get the object list specific to this AABB
      *
      * @return The reference to the object list
      */
-    std::vector<Object*>& getObjectList();
+    std::vector<std::unique_ptr<Object>>& getObjectList();
 
     /**
      * @brief Get the midpoint X value calculated between
@@ -197,7 +198,7 @@ class AABB {
      *
      * @param block Block to be added
      */
-    void addBlock(Block& block);
+    void addBlock(std::unique_ptr<Block> block);
 
     /**
      * @brief Add a specific entity for this AABB to keep track of. Ideally this
@@ -206,7 +207,7 @@ class AABB {
      *
      * @param entity Entity to be added
      */
-    void addEntity(Entity& entity);
+    void addEntity(std::unique_ptr<Entity> entity);
 
     /**
      * @brief Add a specific object for this AABB to keep track of. Ideally this
@@ -215,7 +216,7 @@ class AABB {
      *
      * @param object Object to be added
      */
-    void addObject(Object& object);
+    void addObject(std::unique_ptr<Object> object);
 
     /**
      * @brief Checks to see if two AABBs overlapp on any of the axes
@@ -324,6 +325,24 @@ class AABB {
          std::string material,
          Pos& topLeft,
          Pos& bottomRight,
+         bool isHollow = true,
+         bool hasRoof = false);
+
+    /**
+     * @brief Construct a new AABB object
+     *
+     * @param id The id associated with this AABB
+     * @param type A semantic name describing the type and/or purpose of the
+     * AABB
+     * @param material The material this AABB is built out of
+     * @param isHollow Specify wether the AABB should be hollow or not. Defaults
+     * to true.
+     * @param hasRoof specify wether the AABB should have a roof or not.
+     * Defaults to false.
+     */
+    AABB(std::string id,
+         std::string type,
+         std::string material,
          bool isHollow = true,
          bool hasRoof = false);
 
