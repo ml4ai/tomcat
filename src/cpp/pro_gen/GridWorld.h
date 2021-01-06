@@ -1,7 +1,6 @@
 #pragma once
 
 #include "World.h"
-#include <memory>
 
 class GridWorld : public World {
 

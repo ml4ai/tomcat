@@ -2,12 +2,13 @@
 using namespace std;
 using json = nlohmann::json;
 
-Group::Group(string id)
-    : AABB(id, "group", "air", true, false) {}
+Group::Group(string id) : AABB(id, "group", "air", true, false) {}
 
 vector<unique_ptr<AABB>>& Group::getAABBList() { return this->aabbList; }
 
-vector<unique_ptr<Connection>>& Group::getConnectionList() { return this->connectionList; }
+vector<unique_ptr<Connection>>& Group::getConnectionList() {
+    return this->connectionList;
+}
 
 void Group::addAABB(unique_ptr<AABB> aabb) {
     this->aabbList.push_back(move(aabb));

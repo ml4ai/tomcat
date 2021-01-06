@@ -4,9 +4,9 @@ using namespace std;
 using json = nlohmann::json;
 
 Object::Object(string id, string type, unique_ptr<Block> block)
-    : id{id}, type{type}{
-        this->block = move(block);
-    }
+    : id{id}, type{type} {
+    this->block = move(block);
+}
 
 void Object::toSemanticMapJSON(json& json_base) {
     json object_json;

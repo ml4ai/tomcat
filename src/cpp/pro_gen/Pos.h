@@ -1,12 +1,12 @@
 /**
  * @brief This file defines the members and methods
- * implemented as part of the Pos class
+ *        implemented as part of the Pos class
  */
 #pragma once
 
+#include <memory>
 #include <nlohmann/json.hpp>
 #include <string>
-#include <memory>
 /**
  * @brief This class represents a 3D coordinate
  */
@@ -83,7 +83,7 @@ class Pos {
 
     /**
      * @brief Gets the JSON representation of the various
-     * fields and values stored in an instance
+     *        fields and values stored in an instance
      *
      * @return nlohmann::json The JSON representation
      */
@@ -105,7 +105,7 @@ class Pos {
 
     /**
      * @brief Construct a new Pos object as a copy
-     * of the given Pos object
+     *        of the given Pos object
      *
      * @param other The object whose fields are to be copied
      */

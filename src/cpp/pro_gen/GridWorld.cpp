@@ -30,13 +30,8 @@ void GridWorld::generateAABBGrid() {
     Pos topLeft(1, 3, 1);
     Pos bottomRight(AABB_size, 3 + AABB_size, AABB_size);
 
-    auto firstAABB = make_unique<AABB>(to_string(idCtr),
-                             "room",
-                             material,
-                             topLeft,
-                             bottomRight,
-                             true,
-                             false);
+    auto firstAABB = make_unique<AABB>(
+        to_string(idCtr), "room", material, topLeft, bottomRight, true, false);
     this->addAABB(move(firstAABB));
     auto prevAABB = this->getAABBList().back().get();
 
@@ -53,16 +48,15 @@ void GridWorld::generateAABBGrid() {
 
             Pos newBottomRight(
                 AABB_size, 3 + AABB_size, newTopLeft.getZ() + AABB_size);
-            
+
             auto curAABB = make_unique<AABB>(to_string(idCtr),
-                                     "room",
-                                     material,
-                                     newTopLeft,
-                                     newBottomRight,
-                                     true,
-                                     false);
+                                             "room",
+                                             material,
+                                             newTopLeft,
+                                             newBottomRight,
+                                             true,
+                                             false);
             this->addAABB(move(curAABB));
-            prevAABB = this->getAABBList().back().get();
         }
         else {
             // Condition for the next AABB in the current row
@@ -73,15 +67,15 @@ void GridWorld::generateAABBGrid() {
             newBottomRight.setX(newTopLeft.getX() + AABB_size);
 
             auto curAABB = make_unique<AABB>(to_string(idCtr),
-                                     "room",
-                                     material,
-                                     newTopLeft,
-                                     newBottomRight,
-                                     true,
-                                     false);
+                                             "room",
+                                             material,
+                                             newTopLeft,
+                                             newBottomRight,
+                                             true,
+                                             false);
             this->addAABB(move(curAABB));
-            prevAABB = this->getAABBList().back().get();
         }
+        prevAABB = this->getAABBList().back().get();
     }
 }
 
@@ -95,9 +89,6 @@ void GridWorld::generateVictimInAABB(AABB& aabb) {
 
     if (randInteger <= 75) {
         addRandomVictim(aabb, randPos, 0.60);
-    }
-    else {
-        ;
     }
 }
 
