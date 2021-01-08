@@ -60,8 +60,8 @@ ax.add_collection(p)
 # Some settings
 ax.set_aspect("equal")
 ax.yaxis.set_ticks_position("right")
-ax.xaxis.set_label_coords(0.5,-0.1)
-ax.yaxis.set_label_coords(1.150,0.5)
+ax.xaxis.set_label_coords(0.5, -0.1)
+ax.yaxis.set_label_coords(1.150, 0.5)
 
 plt.margins(0, 0)
 plt.gca().invert_xaxis()
