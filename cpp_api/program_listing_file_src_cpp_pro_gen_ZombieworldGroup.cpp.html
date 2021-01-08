@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Program Listing for File ZombieworldGroup.cpp &mdash; ToMCAT 0.1 documentation</title>
   
@@ -17,7 +17,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -30,7 +33,6 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/language_data.js"></script>
         <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
         <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
     
@@ -52,7 +54,7 @@
           
 
           
-            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> ToMCAT
+            <a href="../index.html" class="icon icon-home"> ToMCAT
           
 
           
@@ -133,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -144,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../_sources/cpp_api/program_listing_file_src_cpp_pro_gen_ZombieworldGroup.cpp.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -181,19 +185,21 @@
 <span class="p">}</span>
 
 <span class="kt">void</span> <span class="n">ZombieworldGroup</span><span class="o">::</span><span class="n">addEntities</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">AABB</span><span class="o">*</span> <span class="n">aabbTwo</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getAABB</span><span class="p">(</span><span class="s">&quot;2&quot;</span><span class="p">);</span>
+    <span class="k">auto</span> <span class="n">aabbTwo</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getAABB</span><span class="p">(</span><span class="s">&quot;2&quot;</span><span class="p">);</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">aabbTwo</span> <span class="o">!=</span> <span class="k">nullptr</span><span class="p">)</span> <span class="p">{</span>
 
         <span class="kt">int</span> <span class="n">sizeY</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="n">aabbTwo</span><span class="p">).</span><span class="n">getSizeY</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
         <span class="n">Pos</span> <span class="n">randomPos</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="n">aabbTwo</span><span class="p">).</span><span class="n">getRandomPos</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">gen</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sizeY</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-        <span class="p">(</span><span class="o">*</span><span class="n">aabbTwo</span><span class="p">).</span><span class="n">addEntity</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="k">new</span> <span class="n">Entity</span><span class="p">(</span><span class="s">&quot;villager&quot;</span><span class="p">,</span> <span class="n">randomPos</span><span class="p">)));</span>
+        <span class="k">auto</span> <span class="n">curEntity</span> <span class="o">=</span> <span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Entity</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;villager&quot;</span><span class="p">,</span> <span class="n">randomPos</span><span class="p">);</span>
+        <span class="p">(</span><span class="o">*</span><span class="n">aabbTwo</span><span class="p">).</span><span class="n">addEntity</span><span class="p">(</span><span class="n">move</span><span class="p">(</span><span class="n">curEntity</span><span class="p">));</span>
     <span class="p">}</span>
 
-    <span class="n">AABB</span><span class="o">*</span> <span class="n">aabbOne</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getAABB</span><span class="p">(</span><span class="s">&quot;1&quot;</span><span class="p">);</span> <span class="c1">// 1 sub AABB definitely exists</span>
+    <span class="k">auto</span> <span class="n">aabbOne</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getAABB</span><span class="p">(</span><span class="s">&quot;1&quot;</span><span class="p">);</span> <span class="c1">// 1 sub AABB definitely exists</span>
     <span class="kt">int</span> <span class="n">sizeY</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="n">aabbOne</span><span class="p">).</span><span class="n">getSizeY</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
     <span class="n">Pos</span> <span class="n">randomPos</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="n">aabbOne</span><span class="p">).</span><span class="n">getRandomPos</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">gen</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sizeY</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-    <span class="k">this</span><span class="o">-&gt;</span><span class="n">addEntity</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="k">new</span> <span class="n">Entity</span><span class="p">(</span><span class="s">&quot;zombie&quot;</span><span class="p">,</span> <span class="n">randomPos</span><span class="p">)));</span>
+    <span class="k">auto</span> <span class="n">curEntity</span> <span class="o">=</span> <span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Entity</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;zombie&quot;</span><span class="p">,</span> <span class="n">randomPos</span><span class="p">);</span>
+    <span class="p">(</span><span class="o">*</span><span class="n">aabbOne</span><span class="p">).</span><span class="n">addEntity</span><span class="p">(</span><span class="n">move</span><span class="p">(</span><span class="n">curEntity</span><span class="p">));</span>
 <span class="p">}</span>
 
 <span class="kt">void</span> <span class="n">ZombieworldGroup</span><span class="o">::</span><span class="n">addLights</span><span class="p">()</span> <span class="p">{</span>
@@ -203,8 +209,10 @@
 <span class="p">}</span>
 
 <span class="kt">void</span> <span class="n">ZombieworldGroup</span><span class="o">::</span><span class="n">createAABB</span><span class="p">(</span><span class="n">Pos</span><span class="o">&amp;</span> <span class="n">firstTopLeft</span><span class="p">,</span> <span class="n">Pos</span><span class="o">&amp;</span> <span class="n">firstBottomRight</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">this</span><span class="o">-&gt;</span><span class="n">addAABB</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="k">new</span> <span class="n">AABB</span><span class="p">(</span>
-        <span class="s">&quot;1&quot;</span><span class="p">,</span> <span class="s">&quot;room&quot;</span><span class="p">,</span> <span class="s">&quot;planks&quot;</span><span class="p">,</span> <span class="n">firstTopLeft</span><span class="p">,</span> <span class="n">firstBottomRight</span><span class="p">,</span> <span class="nb">true</span><span class="p">,</span> <span class="nb">true</span><span class="p">)));</span>
+
+    <span class="k">auto</span> <span class="n">first</span> <span class="o">=</span> <span class="n">make_unique</span><span class="o">&lt;</span><span class="n">AABB</span><span class="o">&gt;</span><span class="p">(</span>
+        <span class="s">&quot;1&quot;</span><span class="p">,</span> <span class="s">&quot;room&quot;</span><span class="p">,</span> <span class="s">&quot;planks&quot;</span><span class="p">,</span> <span class="n">firstTopLeft</span><span class="p">,</span> <span class="n">firstBottomRight</span><span class="p">,</span> <span class="nb">true</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">addAABB</span><span class="p">(</span><span class="n">move</span><span class="p">(</span><span class="n">first</span><span class="p">));</span>
 
     <span class="n">string</span> <span class="n">id</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getID</span><span class="p">();</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">strcmp</span><span class="p">(</span><span class="n">id</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span> <span class="s">&quot;1&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">strcmp</span><span class="p">(</span><span class="n">id</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span> <span class="s">&quot;7&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">||</span>
@@ -218,18 +226,19 @@
         <span class="n">secondBottomRight</span><span class="p">.</span><span class="n">shiftX</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
         <span class="n">secondBottomRight</span><span class="p">.</span><span class="n">shiftZ</span><span class="p">(</span><span class="mi">9</span><span class="p">);</span>
 
-        <span class="k">this</span><span class="o">-&gt;</span><span class="n">addAABB</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="k">new</span> <span class="n">AABB</span><span class="p">(</span><span class="s">&quot;2&quot;</span><span class="p">,</span>
-                                 <span class="s">&quot;room&quot;</span><span class="p">,</span>
-                                 <span class="s">&quot;planks&quot;</span><span class="p">,</span>
-                                 <span class="n">secondTopLeft</span><span class="p">,</span>
-                                 <span class="n">secondBottomRight</span><span class="p">,</span>
-                                 <span class="nb">true</span><span class="p">,</span>
-                                 <span class="nb">true</span><span class="p">)));</span>
+        <span class="k">auto</span> <span class="n">second</span> <span class="o">=</span> <span class="n">make_unique</span><span class="o">&lt;</span><span class="n">AABB</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;2&quot;</span><span class="p">,</span>
+                                        <span class="s">&quot;room&quot;</span><span class="p">,</span>
+                                        <span class="s">&quot;planks&quot;</span><span class="p">,</span>
+                                        <span class="n">secondTopLeft</span><span class="p">,</span>
+                                        <span class="n">secondBottomRight</span><span class="p">,</span>
+                                        <span class="nb">true</span><span class="p">,</span>
+                                        <span class="nb">true</span><span class="p">);</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">addAABB</span><span class="p">(</span><span class="n">move</span><span class="p">(</span><span class="n">second</span><span class="p">));</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="kt">void</span> <span class="n">ZombieworldGroup</span><span class="o">::</span><span class="n">addLevers</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">AABB</span><span class="o">*</span> <span class="n">aabbTwo</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getAABB</span><span class="p">(</span><span class="s">&quot;2&quot;</span><span class="p">);</span>
+    <span class="k">auto</span> <span class="n">aabbTwo</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getAABB</span><span class="p">(</span><span class="s">&quot;2&quot;</span><span class="p">);</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">aabbTwo</span> <span class="o">!=</span> <span class="k">nullptr</span><span class="p">)</span> <span class="p">{</span>
 
@@ -238,12 +247,15 @@
         <span class="n">topEdgeMidpoint</span><span class="p">.</span><span class="n">shiftX</span><span class="p">(</span><span class="mi">-1</span><span class="p">);</span>
         <span class="n">topEdgeMidpoint</span><span class="p">.</span><span class="n">shiftZ</span><span class="p">(</span><span class="mi">-1</span><span class="p">);</span>
 
-        <span class="k">this</span><span class="o">-&gt;</span><span class="n">addBlock</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="k">new</span> <span class="n">Lever</span><span class="p">(</span><span class="n">topEdgeMidpoint</span><span class="p">,</span> <span class="nb">false</span><span class="p">,</span> <span class="s">&quot;north&quot;</span><span class="p">)));</span>
+        <span class="k">auto</span> <span class="n">lever</span> <span class="o">=</span> <span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Lever</span><span class="o">&gt;</span><span class="p">(</span><span class="n">topEdgeMidpoint</span><span class="p">,</span> <span class="nb">false</span><span class="p">,</span> <span class="s">&quot;north&quot;</span><span class="p">);</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">addBlock</span><span class="p">(</span><span class="n">move</span><span class="p">(</span><span class="n">lever</span><span class="p">));</span>
 
         <span class="c1">// Adds the connection representing this doorway</span>
         <span class="c1">// This is an example and may have innacurate coordinates</span>
-        <span class="k">this</span><span class="o">-&gt;</span><span class="n">addConnection</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="k">new</span> <span class="n">Connection</span><span class="p">(</span>
-            <span class="s">&quot;c1&quot;</span><span class="p">,</span> <span class="s">&quot;entrance to second room&quot;</span><span class="p">,</span> <span class="s">&quot;door&quot;</span><span class="p">,</span> <span class="s">&quot;rectangle&quot;</span><span class="p">)));</span>
+        <span class="k">auto</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Connection</span><span class="o">&gt;</span><span class="p">(</span>
+            <span class="s">&quot;c1&quot;</span><span class="p">,</span> <span class="s">&quot;entrance to second room&quot;</span><span class="p">,</span> <span class="s">&quot;door&quot;</span><span class="p">,</span> <span class="s">&quot;rectangle&quot;</span><span class="p">);</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">addConnection</span><span class="p">(</span><span class="n">move</span><span class="p">(</span><span class="n">connection</span><span class="p">));</span>
+
         <span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">connectedLocations</span><span class="p">{</span><span class="s">&quot;1&quot;</span><span class="p">,</span> <span class="s">&quot;2&quot;</span><span class="p">};</span>
         <span class="k">this</span><span class="o">-&gt;</span><span class="n">getConnectionList</span><span class="p">().</span><span class="n">at</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">addManyConnectedLocations</span><span class="p">(</span>
             <span class="n">connectedLocations</span><span class="p">);</span>
@@ -265,28 +277,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2019, University of Arizona
+        &#169; Copyright 2019, University of Arizona.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

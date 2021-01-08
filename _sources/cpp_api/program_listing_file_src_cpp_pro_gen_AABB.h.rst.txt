@@ -17,6 +17,7 @@ Program Listing for File AABB.h
    #include "Door.h"
    #include "Entity.h"
    #include "Object.h"
+   #include <memory>
    #include <random>
    #include <vector>
    
@@ -30,9 +31,9 @@ Program Listing for File AABB.h
        Pos bottomRight;
        bool isHollow;
        bool hasRoof;
-       std::vector<Block*> blockList;
-       std::vector<Entity*> entityList;
-       std::vector<Object*> objectList;
+       std::vector<std::unique_ptr<Block>> blockList;
+       std::vector<std::unique_ptr<Entity>> entityList;
+       std::vector<std::unique_ptr<Object>> objectList;
    
      public:
        std::string getID();
@@ -45,11 +46,11 @@ Program Listing for File AABB.h
    
        Pos getBottomRight();
    
-       std::vector<Block*>& getBlockList();
+       std::vector<std::unique_ptr<Block>>& getBlockList();
    
-       std::vector<Entity*>& getEntityList();
+       std::vector<std::unique_ptr<Entity>>& getEntityList();
    
-       std::vector<Object*>& getObjectList();
+       std::vector<std::unique_ptr<Object>>& getObjectList();
    
        int getMidpointX();
    
@@ -79,11 +80,11 @@ Program Listing for File AABB.h
    
        void setMaterial(std::string material);
    
-       void addBlock(Block& block);
+       void addBlock(std::unique_ptr<Block> block);
    
-       void addEntity(Entity& entity);
+       void addEntity(std::unique_ptr<Entity> entity);
    
-       void addObject(Object& object);
+       void addObject(std::unique_ptr<Object> object);
    
        bool virtual isOverlapping(AABB& other);
    
@@ -116,6 +117,12 @@ Program Listing for File AABB.h
             std::string material,
             Pos& topLeft,
             Pos& bottomRight,
+            bool isHollow = true,
+            bool hasRoof = false);
+   
+       AABB(std::string id,
+            std::string type,
+            std::string material,
             bool isHollow = true,
             bool hasRoof = false);
    

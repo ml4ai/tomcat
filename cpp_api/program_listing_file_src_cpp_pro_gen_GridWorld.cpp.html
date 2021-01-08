@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Program Listing for File GridWorld.cpp &mdash; ToMCAT 0.1 documentation</title>
   
@@ -17,7 +17,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -30,7 +33,6 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/language_data.js"></script>
         <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
         <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
     
@@ -52,7 +54,7 @@
           
 
           
-            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> ToMCAT
+            <a href="../index.html" class="icon icon-home"> ToMCAT
           
 
           
@@ -133,6 +135,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -144,7 +148,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../_sources/cpp_api/program_listing_file_src_cpp_pro_gen_GridWorld.cpp.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -172,12 +176,14 @@
     <span class="kt">double</span> <span class="n">greenProbability</span> <span class="o">=</span> <span class="n">greenBias</span> <span class="o">*</span> <span class="mi">100</span><span class="p">;</span>
     <span class="kt">int</span> <span class="n">randomInt</span> <span class="o">=</span> <span class="n">dist</span><span class="p">(</span><span class="n">gen</span><span class="p">);</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">randomInt</span> <span class="o">&lt;=</span> <span class="n">greenProbability</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">Block</span> <span class="nf">block</span><span class="p">(</span><span class="s">&quot;prismarine&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="p">);</span>
-        <span class="n">aabb</span><span class="p">.</span><span class="n">addObject</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="k">new</span> <span class="n">Object</span><span class="p">(</span><span class="s">&quot;vg1&quot;</span><span class="p">,</span> <span class="s">&quot;green_victim&quot;</span><span class="p">,</span> <span class="n">block</span><span class="p">)));</span>
+        <span class="k">auto</span> <span class="n">block</span> <span class="o">=</span> <span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Block</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;prismarine&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="p">);</span>
+        <span class="k">auto</span> <span class="n">curObj</span> <span class="o">=</span> <span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;vg1&quot;</span><span class="p">,</span> <span class="s">&quot;green_victim&quot;</span><span class="p">,</span> <span class="n">move</span><span class="p">(</span><span class="n">block</span><span class="p">));</span>
+        <span class="n">aabb</span><span class="p">.</span><span class="n">addObject</span><span class="p">(</span><span class="n">move</span><span class="p">(</span><span class="n">curObj</span><span class="p">));</span>
     <span class="p">}</span>
     <span class="k">else</span> <span class="p">{</span>
-        <span class="n">Block</span> <span class="nf">block</span><span class="p">(</span><span class="s">&quot;gold&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="p">);</span>
-        <span class="n">aabb</span><span class="p">.</span><span class="n">addObject</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="k">new</span> <span class="n">Object</span><span class="p">(</span><span class="s">&quot;vg1&quot;</span><span class="p">,</span> <span class="s">&quot;yellow_victim&quot;</span><span class="p">,</span> <span class="n">block</span><span class="p">)));</span>
+        <span class="k">auto</span> <span class="n">block</span> <span class="o">=</span> <span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Block</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;gold&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="p">);</span>
+        <span class="k">auto</span> <span class="n">curObj</span> <span class="o">=</span> <span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;vg1&quot;</span><span class="p">,</span> <span class="s">&quot;yellow_victim&quot;</span><span class="p">,</span> <span class="n">move</span><span class="p">(</span><span class="n">block</span><span class="p">));</span>
+        <span class="n">aabb</span><span class="p">.</span><span class="n">addObject</span><span class="p">(</span><span class="n">move</span><span class="p">(</span><span class="n">curObj</span><span class="p">));</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
@@ -191,14 +197,10 @@
     <span class="n">Pos</span> <span class="nf">topLeft</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
     <span class="n">Pos</span> <span class="nf">bottomRight</span><span class="p">(</span><span class="n">AABB_size</span><span class="p">,</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">AABB_size</span><span class="p">,</span> <span class="n">AABB_size</span><span class="p">);</span>
 
-    <span class="k">this</span><span class="o">-&gt;</span><span class="n">addAABB</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="k">new</span> <span class="n">AABB</span><span class="p">(</span><span class="n">to_string</span><span class="p">(</span><span class="n">idCtr</span><span class="p">),</span>
-                             <span class="s">&quot;room&quot;</span><span class="p">,</span>
-                             <span class="n">material</span><span class="p">,</span>
-                             <span class="n">topLeft</span><span class="p">,</span>
-                             <span class="n">bottomRight</span><span class="p">,</span>
-                             <span class="nb">true</span><span class="p">,</span>
-                             <span class="nb">false</span><span class="p">)));</span>
-    <span class="n">AABB</span> <span class="n">prevAABB</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getAABBList</span><span class="p">().</span><span class="n">back</span><span class="p">());</span>
+    <span class="k">auto</span> <span class="n">firstAABB</span> <span class="o">=</span> <span class="n">make_unique</span><span class="o">&lt;</span><span class="n">AABB</span><span class="o">&gt;</span><span class="p">(</span>
+        <span class="n">to_string</span><span class="p">(</span><span class="n">idCtr</span><span class="p">),</span> <span class="s">&quot;room&quot;</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="n">topLeft</span><span class="p">,</span> <span class="n">bottomRight</span><span class="p">,</span> <span class="nb">true</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">addAABB</span><span class="p">(</span><span class="n">move</span><span class="p">(</span><span class="n">firstAABB</span><span class="p">));</span>
+    <span class="k">auto</span> <span class="n">prevAABB</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getAABBList</span><span class="p">().</span><span class="n">back</span><span class="p">().</span><span class="n">get</span><span class="p">();</span>
 
     <span class="c1">// Use relative coordinates for the &quot;previous&quot; AABB to generate the rest at</span>
     <span class="c1">// each step</span>
@@ -209,36 +211,38 @@
             <span class="c1">// Condition for when a row in the grid is complete and we move onto</span>
             <span class="c1">// the next one</span>
             <span class="n">Pos</span> <span class="nf">newTopLeft</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-            <span class="n">newTopLeft</span><span class="p">.</span><span class="n">setZ</span><span class="p">(</span><span class="n">prevAABB</span><span class="p">.</span><span class="n">getBottomRight</span><span class="p">().</span><span class="n">getZ</span><span class="p">()</span> <span class="o">+</span> <span class="n">sep</span><span class="p">);</span>
+            <span class="n">newTopLeft</span><span class="p">.</span><span class="n">setZ</span><span class="p">((</span><span class="o">*</span><span class="n">prevAABB</span><span class="p">).</span><span class="n">getBottomRight</span><span class="p">().</span><span class="n">getZ</span><span class="p">()</span> <span class="o">+</span> <span class="n">sep</span><span class="p">);</span>
 
             <span class="n">Pos</span> <span class="nf">newBottomRight</span><span class="p">(</span>
                 <span class="n">AABB_size</span><span class="p">,</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">AABB_size</span><span class="p">,</span> <span class="n">newTopLeft</span><span class="p">.</span><span class="n">getZ</span><span class="p">()</span> <span class="o">+</span> <span class="n">AABB_size</span><span class="p">);</span>
-            <span class="k">this</span><span class="o">-&gt;</span><span class="n">addAABB</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="k">new</span> <span class="n">AABB</span><span class="p">(</span><span class="n">to_string</span><span class="p">(</span><span class="n">idCtr</span><span class="p">),</span>
-                                     <span class="s">&quot;room&quot;</span><span class="p">,</span>
-                                     <span class="n">material</span><span class="p">,</span>
-                                     <span class="n">newTopLeft</span><span class="p">,</span>
-                                     <span class="n">newBottomRight</span><span class="p">,</span>
-                                     <span class="nb">true</span><span class="p">,</span>
-                                     <span class="nb">false</span><span class="p">)));</span>
-            <span class="n">prevAABB</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getAABBList</span><span class="p">().</span><span class="n">back</span><span class="p">());</span>
+
+            <span class="k">auto</span> <span class="n">curAABB</span> <span class="o">=</span> <span class="n">make_unique</span><span class="o">&lt;</span><span class="n">AABB</span><span class="o">&gt;</span><span class="p">(</span><span class="n">to_string</span><span class="p">(</span><span class="n">idCtr</span><span class="p">),</span>
+                                             <span class="s">&quot;room&quot;</span><span class="p">,</span>
+                                             <span class="n">material</span><span class="p">,</span>
+                                             <span class="n">newTopLeft</span><span class="p">,</span>
+                                             <span class="n">newBottomRight</span><span class="p">,</span>
+                                             <span class="nb">true</span><span class="p">,</span>
+                                             <span class="nb">false</span><span class="p">);</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">addAABB</span><span class="p">(</span><span class="n">move</span><span class="p">(</span><span class="n">curAABB</span><span class="p">));</span>
         <span class="p">}</span>
         <span class="k">else</span> <span class="p">{</span>
             <span class="c1">// Condition for the next AABB in the current row</span>
-            <span class="n">Pos</span> <span class="n">newTopLeft</span> <span class="o">=</span> <span class="n">prevAABB</span><span class="p">.</span><span class="n">getTopLeft</span><span class="p">();</span>
-            <span class="n">newTopLeft</span><span class="p">.</span><span class="n">setX</span><span class="p">(</span><span class="n">prevAABB</span><span class="p">.</span><span class="n">getBottomRight</span><span class="p">().</span><span class="n">getX</span><span class="p">()</span> <span class="o">+</span> <span class="n">sep</span><span class="p">);</span>
+            <span class="n">Pos</span> <span class="n">newTopLeft</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="n">prevAABB</span><span class="p">).</span><span class="n">getTopLeft</span><span class="p">();</span>
+            <span class="n">newTopLeft</span><span class="p">.</span><span class="n">setX</span><span class="p">((</span><span class="o">*</span><span class="n">prevAABB</span><span class="p">).</span><span class="n">getBottomRight</span><span class="p">().</span><span class="n">getX</span><span class="p">()</span> <span class="o">+</span> <span class="n">sep</span><span class="p">);</span>
 
-            <span class="n">Pos</span> <span class="n">newBottomRight</span> <span class="o">=</span> <span class="n">prevAABB</span><span class="p">.</span><span class="n">getBottomRight</span><span class="p">();</span>
+            <span class="n">Pos</span> <span class="n">newBottomRight</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="n">prevAABB</span><span class="p">).</span><span class="n">getBottomRight</span><span class="p">();</span>
             <span class="n">newBottomRight</span><span class="p">.</span><span class="n">setX</span><span class="p">(</span><span class="n">newTopLeft</span><span class="p">.</span><span class="n">getX</span><span class="p">()</span> <span class="o">+</span> <span class="n">AABB_size</span><span class="p">);</span>
 
-            <span class="k">this</span><span class="o">-&gt;</span><span class="n">addAABB</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="k">new</span> <span class="n">AABB</span><span class="p">(</span><span class="n">to_string</span><span class="p">(</span><span class="n">idCtr</span><span class="p">),</span>
-                                     <span class="s">&quot;room&quot;</span><span class="p">,</span>
-                                     <span class="n">material</span><span class="p">,</span>
-                                     <span class="n">newTopLeft</span><span class="p">,</span>
-                                     <span class="n">newBottomRight</span><span class="p">,</span>
-                                     <span class="nb">true</span><span class="p">,</span>
-                                     <span class="nb">false</span><span class="p">)));</span>
-            <span class="n">prevAABB</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">getAABBList</span><span class="p">().</span><span class="n">back</span><span class="p">());</span>
+            <span class="k">auto</span> <span class="n">curAABB</span> <span class="o">=</span> <span class="n">make_unique</span><span class="o">&lt;</span><span class="n">AABB</span><span class="o">&gt;</span><span class="p">(</span><span class="n">to_string</span><span class="p">(</span><span class="n">idCtr</span><span class="p">),</span>
+                                             <span class="s">&quot;room&quot;</span><span class="p">,</span>
+                                             <span class="n">material</span><span class="p">,</span>
+                                             <span class="n">newTopLeft</span><span class="p">,</span>
+                                             <span class="n">newBottomRight</span><span class="p">,</span>
+                                             <span class="nb">true</span><span class="p">,</span>
+                                             <span class="nb">false</span><span class="p">);</span>
+            <span class="k">this</span><span class="o">-&gt;</span><span class="n">addAABB</span><span class="p">(</span><span class="n">move</span><span class="p">(</span><span class="n">curAABB</span><span class="p">));</span>
         <span class="p">}</span>
+        <span class="n">prevAABB</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getAABBList</span><span class="p">().</span><span class="n">back</span><span class="p">().</span><span class="n">get</span><span class="p">();</span>
     <span class="p">}</span>
 <span class="p">}</span>
 
@@ -253,13 +257,9 @@
     <span class="k">if</span> <span class="p">(</span><span class="n">randInteger</span> <span class="o">&lt;=</span> <span class="mi">75</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">addRandomVictim</span><span class="p">(</span><span class="n">aabb</span><span class="p">,</span> <span class="n">randPos</span><span class="p">,</span> <span class="mf">0.60</span><span class="p">);</span>
     <span class="p">}</span>
-    <span class="k">else</span> <span class="p">{</span>
-        <span class="p">;</span>
-    <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="kt">void</span> <span class="n">GridWorld</span><span class="o">::</span><span class="n">generateBlocks</span><span class="p">()</span> <span class="p">{</span>
-
     <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="nl">aabb</span> <span class="p">:</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getAABBList</span><span class="p">())</span> <span class="p">{</span>
         <span class="p">(</span><span class="o">*</span><span class="n">aabb</span><span class="p">).</span><span class="n">generateAllDoorsInAABB</span><span class="p">();</span>
         <span class="n">generateVictimInAABB</span><span class="p">(</span><span class="o">*</span><span class="n">aabb</span><span class="p">);</span>
@@ -286,28 +286,25 @@
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2019, University of Arizona
+        &#169; Copyright 2019, University of Arizona.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

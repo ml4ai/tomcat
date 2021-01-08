@@ -1,0 +1,13 @@
+.. _exhale_variable_namespacepro__gen__vizualizer_1a1f069c273eec9eba1cd125795b4fdf43:
+
+Variable pro_gen_vizualizer::x
+==============================
+
+- Defined in :ref:`file_src_cpp_pro_gen_pro_gen_vizualizer.py`
+
+
+Variable Documentation
+----------------------
+
+
+.. doxygenvariable:: pro_gen_vizualizer::x

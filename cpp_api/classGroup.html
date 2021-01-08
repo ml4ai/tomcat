@@ -3,9 +3,9 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Class Group &mdash; ToMCAT 0.1 documentation</title>
   
@@ -17,7 +17,10 @@
 
   
   
+
   
+  
+
   
 
   
@@ -30,7 +33,6 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/language_data.js"></script>
         <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
         <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
     
@@ -54,7 +56,7 @@
           
 
           
-            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> ToMCAT
+            <a href="../index.html" class="icon icon-home"> ToMCAT
           
 
           
@@ -135,6 +137,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -150,7 +154,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../_sources/cpp_api/classGroup.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -193,12 +197,12 @@
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Public Functions</p>
 <dl class="cpp function">
-<dt id="_CPPv4N5Group7addAABBER4AABB">
-<span id="_CPPv3N5Group7addAABBER4AABB"></span><span id="_CPPv2N5Group7addAABBER4AABB"></span><span id="Group::addAABB__AABBR"></span><span class="target" id="classGroup_1a69d779709e7eed44cda8d09702cddc34"></span>void <code class="sig-name descname">addAABB</code><span class="sig-paren">(</span><a class="reference internal" href="classAABB.html#_CPPv44AABB" title="AABB">AABB</a> &amp;<em>aabb</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Group7addAABBER4AABB" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4N5Group7addAABBENSt10unique_ptrI4AABBEE">
+<span id="_CPPv3N5Group7addAABBENSt10unique_ptrI4AABBEE"></span><span id="_CPPv2N5Group7addAABBENSt10unique_ptrI4AABBEE"></span><span id="Group::addAABB__std::unique_ptr:AABB:"></span><span class="target" id="classGroup_1aa8620a33d4ab12b59bf3c38a7fd05503"></span>void <code class="sig-name descname">addAABB</code><span class="sig-paren">(</span>std::unique_ptr&lt;<a class="reference internal" href="classAABB.html#_CPPv44AABB" title="AABB">AABB</a>&gt; <em>aabb</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Group7addAABBENSt10unique_ptrI4AABBEE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Adds an <a class="reference internal" href="classAABB.html#classAABB"><span class="std std-ref">AABB</span></a> that will be part of this <a class="reference internal" href="classAABB.html#classAABB"><span class="std std-ref">AABB</span></a> group. </p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">aabb</span></code>: The <a class="reference internal" href="classAABB.html#classAABB"><span class="std std-ref">AABB</span></a> to add </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">aabb</span></code>: The <a class="reference internal" href="classAABB.html#classAABB"><span class="std std-ref">AABB</span></a> to add. </p></li>
 </ul>
 </dd>
 </dl>
@@ -206,12 +210,12 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4N5Group13addConnectionER10Connection">
-<span id="_CPPv3N5Group13addConnectionER10Connection"></span><span id="_CPPv2N5Group13addConnectionER10Connection"></span><span id="Group::addConnection__ConnectionR"></span><span class="target" id="classGroup_1a04aaf95f453f6c43c362e484fa686851"></span>void <code class="sig-name descname">addConnection</code><span class="sig-paren">(</span><a class="reference internal" href="classConnection.html#_CPPv410Connection" title="Connection">Connection</a> &amp;<em>connection</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Group13addConnectionER10Connection" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4N5Group13addConnectionENSt10unique_ptrI10ConnectionEE">
+<span id="_CPPv3N5Group13addConnectionENSt10unique_ptrI10ConnectionEE"></span><span id="_CPPv2N5Group13addConnectionENSt10unique_ptrI10ConnectionEE"></span><span id="Group::addConnection__std::unique_ptr:Connection:"></span><span class="target" id="classGroup_1a77eb3628d4e25217621f6f95021ec03e"></span>void <code class="sig-name descname">addConnection</code><span class="sig-paren">(</span>std::unique_ptr&lt;<a class="reference internal" href="classConnection.html#_CPPv410Connection" title="Connection">Connection</a>&gt; <em>connection</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Group13addConnectionENSt10unique_ptrI10ConnectionEE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Add an connection to the vector of connection held inside the group. </p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">connection</span></code>: The connection to add </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">connection</span></code>: The connection to add. </p></li>
 </ul>
 </dd>
 </dl>
@@ -226,8 +230,8 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N5Group11getAABBListEv">
-<span id="_CPPv3N5Group11getAABBListEv"></span><span id="_CPPv2N5Group11getAABBListEv"></span><span id="Group::getAABBList"></span><span class="target" id="classGroup_1a1f2fa7100a01b3187d57b86900be94dc"></span>std::vector&lt;<a class="reference internal" href="classAABB.html#_CPPv44AABB" title="AABB">AABB</a>*&gt; &amp;<code class="sig-name descname">getAABBList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Group11getAABBListEv" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Gets the list of AABBs this group keeps track of. </p>
+<span id="_CPPv3N5Group11getAABBListEv"></span><span id="_CPPv2N5Group11getAABBListEv"></span><span id="Group::getAABBList"></span><span class="target" id="classGroup_1a928d30c510acf16b89c62c628e746d14"></span>std::vector&lt;std::unique_ptr&lt;<a class="reference internal" href="classAABB.html#_CPPv44AABB" title="AABB">AABB</a>&gt;&gt; &amp;<code class="sig-name descname">getAABBList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Group11getAABBListEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Gets the list of AABBs this group keeps track of. Do not transfer ownership of any unique_ptr as it may cause scope issues. </p>
 <p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p>std::vector&lt;AABB*&gt;&amp; Reference to the <a class="reference internal" href="classAABB.html#classAABB"><span class="std std-ref">AABB</span></a> group kept track of. </p>
 </dd>
@@ -237,10 +241,10 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N5Group17getConnectionListEv">
-<span id="_CPPv3N5Group17getConnectionListEv"></span><span id="_CPPv2N5Group17getConnectionListEv"></span><span id="Group::getConnectionList"></span><span class="target" id="classGroup_1aaef33d26cb127f8510d4b6b1a98246d6"></span>std::vector&lt;<a class="reference internal" href="classConnection.html#_CPPv410Connection" title="Connection">Connection</a>*&gt; &amp;<code class="sig-name descname">getConnectionList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Group17getConnectionListEv" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Returns the <a class="reference internal" href="classConnection.html#classConnection"><span class="std std-ref">Connection</span></a> vector for this <a class="reference internal" href="#classGroup"><span class="std std-ref">Group</span></a>. </p>
+<span id="_CPPv3N5Group17getConnectionListEv"></span><span id="_CPPv2N5Group17getConnectionListEv"></span><span id="Group::getConnectionList"></span><span class="target" id="classGroup_1a27d00ab0d73e14b0f94ccaa8fca6da7d"></span>std::vector&lt;std::unique_ptr&lt;<a class="reference internal" href="classConnection.html#_CPPv410Connection" title="Connection">Connection</a>&gt;&gt; &amp;<code class="sig-name descname">getConnectionList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Group17getConnectionListEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Returns the <a class="reference internal" href="classConnection.html#classConnection"><span class="std std-ref">Connection</span></a> vector for this <a class="reference internal" href="#classGroup"><span class="std std-ref">Group</span></a>. Do not transfer ownership of any unique_ptr as it may cause scope issues. </p>
 <p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>std::vector&lt;Connection*&gt;&amp; The connection list </p>
+<dt><strong>Return</strong></dt><dd><p>std::vector&lt;Connection*&gt;&amp; The connection list. </p>
 </dd>
 </dl>
 </p>
@@ -249,12 +253,12 @@
 <dl class="cpp function">
 <dt id="_CPPv4N5Group7getAABBENSt6stringE">
 <span id="_CPPv3N5Group7getAABBENSt6stringE"></span><span id="_CPPv2N5Group7getAABBENSt6stringE"></span><span id="Group::getAABB__ss"></span><span class="target" id="classGroup_1a68eabfd411ba71a3424eb5509986b83f"></span><a class="reference internal" href="classAABB.html#_CPPv44AABB" title="AABB">AABB</a> *<code class="sig-name descname">getAABB</code><span class="sig-paren">(</span>std::string <em>id</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Group7getAABBENSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Get a particular <a class="reference internal" href="classAABB.html#classAABB"><span class="std std-ref">AABB</span></a> contained by this group. The <a class="reference internal" href="classAABB.html#classAABB"><span class="std std-ref">AABB</span></a> can be identified by its ID. </p>
+<dd><p>Get a particular <a class="reference internal" href="classAABB.html#classAABB"><span class="std std-ref">AABB</span></a> contained by this group. The <a class="reference internal" href="classAABB.html#classAABB"><span class="std std-ref">AABB</span></a> can be identified by its ID. A unique pointer already owns this, so do not assign new ownership. </p>
 <p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>AABB* Pointer to the relevant <a class="reference internal" href="classAABB.html#classAABB"><span class="std std-ref">AABB</span></a> or nullptr if it doesn’t exist </p>
+<dt><strong>Return</strong></dt><dd><p>AABB* Pointer to the relevant <a class="reference internal" href="classAABB.html#classAABB"><span class="std std-ref">AABB</span></a> or nullptr if it doesn’t exist. </p>
 </dd>
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">id</span></code>: The id of the <a class="reference internal" href="classAABB.html#classAABB"><span class="std std-ref">AABB</span></a> to find </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">id</span></code>: The id of the <a class="reference internal" href="classAABB.html#classAABB"><span class="std std-ref">AABB</span></a> to find. </p></li>
 </ul>
 </dd>
 </dl>
@@ -266,7 +270,7 @@
 <span id="_CPPv3N5Group17toSemanticMapJSONERN8nlohmann4jsonE"></span><span id="_CPPv2N5Group17toSemanticMapJSONERN8nlohmann4jsonE"></span><span id="Group::toSemanticMapJSON__nlohmann::jsonR"></span><span class="target" id="classGroup_1ae6b4511833f6efa4eb7d7783a2a86a08"></span>void <code class="sig-name descname">toSemanticMapJSON</code><span class="sig-paren">(</span>nlohmann::json &amp;<em>json_base</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Group17toSemanticMapJSONERN8nlohmann4jsonE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Adds the JSON representation of this object to the relevant lists of the base json. </p>
 <p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>nlohmann::json The base json </p>
+<dt><strong>Return</strong></dt><dd><p>nlohmann::json The base json. </p>
 </dd>
 </dl>
 </p>
@@ -277,7 +281,7 @@
 <span id="_CPPv3N5Group17toLowLevelMapJSONERN8nlohmann4jsonE"></span><span id="_CPPv2N5Group17toLowLevelMapJSONERN8nlohmann4jsonE"></span><span id="Group::toLowLevelMapJSON__nlohmann::jsonR"></span><span class="target" id="classGroup_1acb170b9015b5ca8a035f77e5a7016bff"></span>void <code class="sig-name descname">toLowLevelMapJSON</code><span class="sig-paren">(</span>nlohmann::json &amp;<em>json_base</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5Group17toLowLevelMapJSONERN8nlohmann4jsonE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Adds the Alternate JSON representation of this object to the relevant lists of the base json. </p>
 <p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>nlohmann::json The base json </p>
+<dt><strong>Return</strong></dt><dd><p>nlohmann::json The base json. </p>
 </dd>
 </dl>
 </p>
@@ -313,37 +317,29 @@
            
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="classLever.html" class="btn btn-neutral float-right" title="Class Lever" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="classGridWorld.html" class="btn btn-neutral float-left" title="Class GridWorld" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="classLever.html" class="btn btn-neutral float-right" title="Class Lever" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="classGridWorld.html" class="btn btn-neutral float-left" title="Class GridWorld" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        
-        &copy; Copyright 2019, University of Arizona
+        &#169; Copyright 2019, University of Arizona.
 
     </p>
   </div>
     
     
     
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
     provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 

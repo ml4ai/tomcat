@@ -18,14 +18,14 @@ Program Listing for File Object.h
      private:
        std::string id;
        std::string type;
-       Block block;
+       std::unique_ptr<Block> block;
    
      public:
        void virtual toSemanticMapJSON(nlohmann::json& json_base);
    
        void virtual toLowLevelMapJSON(nlohmann::json& json_base);
    
-       Object(std::string id, std::string type, Block& block);
+       Object(std::string id, std::string type, std::unique_ptr<Block> block);
    
        ~Object();
    };

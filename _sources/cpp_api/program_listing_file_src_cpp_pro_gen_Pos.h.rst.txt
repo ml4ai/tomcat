@@ -13,6 +13,7 @@ Program Listing for File Pos.h
    
    #pragma once
    
+   #include <memory>
    #include <nlohmann/json.hpp>
    #include <string>
    class Pos {
@@ -46,8 +47,6 @@ Program Listing for File Pos.h
        Pos();
    
        Pos(int x, int y, int z);
-   
-       Pos(const Pos& other);
    
        ~Pos();
    };

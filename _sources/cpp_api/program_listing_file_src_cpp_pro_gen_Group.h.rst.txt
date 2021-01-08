@@ -18,21 +18,21 @@ Program Listing for File Group.h
    class Group : public AABB {
    
      private:
-       std::vector<AABB*> aabbList;
-       std::vector<Connection*> connectionList;
+       std::vector<std::unique_ptr<AABB>> aabbList;
+       std::vector<std::unique_ptr<Connection>> connectionList;
    
        void recalculateGroupBoundaries();
    
      public:
-       void addAABB(AABB& aabb);
+       void addAABB(std::unique_ptr<AABB> aabb);
    
-       void addConnection(Connection& connection);
+       void addConnection(std::unique_ptr<Connection> connection);
    
        void generateAllDoorsInAABB();
    
-       std::vector<AABB*>& getAABBList();
+       std::vector<std::unique_ptr<AABB>>& getAABBList();
    
-       std::vector<Connection*>& getConnectionList();
+       std::vector<std::unique_ptr<Connection>>& getConnectionList();
    
        AABB* getAABB(std::string id);
    

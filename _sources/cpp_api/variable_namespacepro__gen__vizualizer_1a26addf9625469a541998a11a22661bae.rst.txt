@@ -1,0 +1,13 @@
+.. _exhale_variable_namespacepro__gen__vizualizer_1a26addf9625469a541998a11a22661bae:
+
+Variable pro_gen_vizualizer::rect
+=================================
+
+- Defined in :ref:`file_src_cpp_pro_gen_pro_gen_vizualizer.py`
+
+
+Variable Documentation
+----------------------
+
+
+.. doxygenvariable:: pro_gen_vizualizer::rect

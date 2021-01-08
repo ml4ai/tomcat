@@ -16,36 +16,37 @@ Program Listing for File World.h
    #include "AABB.h"
    #include "Connection.h"
    #include "Group.h"
+   #include <memory>
    
    class World {
      private:
        std::mt19937_64 gen;
-       std::vector<AABB*> aabbList;
-       std::vector<Block*> blockList;
-       std::vector<Entity*> entityList;
-       std::vector<Object*> objectList;
-       std::vector<Connection*> connectionList;
+       std::vector<std::unique_ptr<AABB>> aabbList;
+       std::vector<std::unique_ptr<Block>> blockList;
+       std::vector<std::unique_ptr<Entity>> entityList;
+       std::vector<std::unique_ptr<Object>> objectList;
+       std::vector<std::unique_ptr<Connection>> connectionList;
    
      public:
-       std::vector<AABB*>& getAABBList();
+       std::vector<std::unique_ptr<AABB>>& getAABBList();
    
-       std::vector<Block*>& getBlockList();
+       std::vector<std::unique_ptr<Block>>& getBlockList();
    
-       std::vector<Entity*>& getEntityList();
+       std::vector<std::unique_ptr<Entity>>& getEntityList();
    
-       std::vector<Object*>& getObjectList();
+       std::vector<std::unique_ptr<Object>>& getObjectList();
    
-       std::vector<Connection*>& getConnectionList();
+       std::vector<std::unique_ptr<Connection>>& getConnectionList();
    
-       void addAABB(AABB& aabb);
+       void addAABB(std::unique_ptr<AABB> aabb);
    
-       void addEntity(Entity& entity);
+       void addEntity(std::unique_ptr<Entity> entity);
    
-       void addBlock(Block& block);
+       void addBlock(std::unique_ptr<Block> block);
    
-       void addObject(Object& object);
+       void addObject(std::unique_ptr<Object> object);
    
-       void addConnection(Connection& connection);
+       void addConnection(std::unique_ptr<Connection> connection);
    
        std::string virtual toLowLevelMapJSON();
    
