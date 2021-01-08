@@ -1,6 +1,6 @@
 /**
  * @brief This file defines the members and methods
- * implemented as part of the AABB class
+ *        implemented as part of the AABB class
  */
 #pragma once
 
@@ -8,12 +8,13 @@
 #include "Door.h"
 #include "Entity.h"
 #include "Object.h"
+#include <memory>
 #include <random>
 #include <vector>
 
 /**
  * @brief This class represents an Axis Aligned Bounding Box
- * as seen from the top-view of the Minecraft X-Z plane.
+ *        as seen from the top-view of the Minecraft X-Z plane.
  */
 class AABB {
 
@@ -25,80 +26,83 @@ class AABB {
     Pos bottomRight;
     bool isHollow;
     bool hasRoof;
-    std::vector<Block*> blockList;
-    std::vector<Entity*> entityList;
-    std::vector<Object*> objectList;
+    std::vector<std::unique_ptr<Block>> blockList;
+    std::vector<std::unique_ptr<Entity>> entityList;
+    std::vector<std::unique_ptr<Object>> objectList;
 
   public:
     /**
-     * @brief Get the AABB's id
+     * @brief Get the AABB's id.
      *
-     * @return int The id
+     * @return int The id.
      */
     std::string getID();
 
     /**
-     * @brief Get the AABB's material
+     * @brief Get the AABB's material.
      *
-     * @return string The material name
+     * @return string The material name.
      */
     std::string getMaterial();
 
     /**
-     * @brief Get the AABB type
+     * @brief Get the AABB type.
      *
-     * @return string The type
+     * @return string The type.
      */
     std::string getType();
 
     /**
      * @brief Returns a copy of the Pos object used to represent
-     * the top left of the AABB from the top view of the X-Z plane
+     *        the top left of the AABB from the top view of the X-Z plane.
      *
-     * @return Pos The copy of the top left coordinate
+     * @return Pos The copy of the top left coordinate.
      */
     Pos getTopLeft();
 
     /**
      * @brief Returns a copy of the Pos object used to represent
-     * the bottom right of the AABB from the top view of the X-Z plane
+     *        the bottom right of the AABB from the top view of the X-Z plane.
      *
-     * @return Pos The copy of the bottom right coordinate
+     * @return Pos The copy of the bottom right coordinate.
      */
     Pos getBottomRight();
 
     /**
-     * @brief Get the block list specific to this AABB
+     * @brief Get the block list specific to this AABB. Do not transfer
+     *        ownership  of any unique_ptr as it may cause scope issues.
      *
-     * @return The reference to the block list
+     * @return The reference to the block list.
      */
-    std::vector<Block*>& getBlockList();
+    std::vector<std::unique_ptr<Block>>& getBlockList();
 
     /**
-     * @brief Get the entity list specific to this AABB
+     * @brief Get the entity list specific to this AABB. Do not transfer
+     *        ownership  of any unique_ptr as it may cause scope issues.
      *
-     * @return The reference to the entity list
+     * @return The reference to the entity list.
      */
-    std::vector<Entity*>& getEntityList();
+    std::vector<std::unique_ptr<Entity>>& getEntityList();
 
     /**
-     * @brief Get the object list specific to this AABB
+     * @brief Get the object list specific to this AABB. Do not transfer
+     *        ownership  of any unique_ptr as it may cause scope issues.
      *
-     * @return The reference to the object list
+     * @return The reference to the object list.
      */
-    std::vector<Object*>& getObjectList();
+    std::vector<std::unique_ptr<Object>>& getObjectList();
 
     /**
      * @brief Get the midpoint X value calculated between
-     * the top left and bottom right x values
+     *        the top left and bottom right x values.
      *
-     * @return int The midpoint X coordinate
+     * @return int The midpoint X coordinate.
      */
     int getMidpointX();
 
     /**
      * @brief Get the midpoint Y value calculated between
-     * the top left and bottom right y values
+     *        the top left and bottom right y values
      *
      * @return int The midpoint Y coordinate
      */
@@ -106,7 +110,7 @@ class AABB {
 
     /**
      * @brief Get the midpoint Z value calculated between
-     * the top left and bottom right z values
+     *        the top left and bottom right z values
      *
      * @return int The midpoint Z coordinate
      */
@@ -138,17 +142,17 @@ class AABB {
      *
      * @param gen THe boost generation object to generate distributions from
      * @param offsetPosX How far away from the left wall should the position be.
-     * Defaults to 0
+     *        Defaults to 0
      * @param offsetNegX How far away from the right wall should the position
-     * be. Defaults to 0
+     *        be. Defaults to 0
      * @param offsetPosY How far away from the left wall should the position be.
-     * Defaults to 0
+     *        Defaults to 0
      * @param offsetNegY How far away from the right wall should the position
-     * be. Defaults to 0
+     *        be. Defaults to 0
      * @param offsetPosZ How far away from the bottom wall should the position
-     * be. Defaults to 0
+     *        be. Defaults to 0
      * @param offsetNegZ How far away from the top wall should the position be.
-     * Defaults to 0
+     *        Defaults to 0
      * @return Pos The random position
      */
     Pos virtual getRandomPos(std::mt19937_64& gen,
@@ -161,11 +165,11 @@ class AABB {
 
     /**
      * @brief Get a list of the positions of the edge midpoints for this AABB.
-     * The Y value for all these Pos objects is equal to the Y value of the
-     * AABB's top left field which is considered the base.
+     *        The Y value for all these Pos objects is equal to the Y value of
+     * the AABB's top left field which is considered the base.
      *
      * @return vector<Pos> The list of coordinates as: top, right, bottom and
-     * left edge midpoints.
+     *         left edge midpoints.
      */
     std::vector<Pos> virtual getEdgeMidpointAtBase();
 
@@ -192,30 +196,30 @@ class AABB {
 
     /**
      * @brief Add a specific block for this AABB to keep track of. Ideally this
-     * should be related to the AABB. No checks are implicitly performed within
-     * this method.
+     *        should be related to the AABB. No checks are implicitly performed
+     * within this method.
      *
      * @param block Block to be added
      */
-    void addBlock(Block& block);
+    void addBlock(std::unique_ptr<Block> block);
 
     /**
      * @brief Add a specific entity for this AABB to keep track of. Ideally this
-     * should be related to the AABB. No checks are implicitly performed within
-     * this method.
+     *        should be related to the AABB. No checks are implicitly performed
+     * within this method.
      *
      * @param entity Entity to be added
      */
-    void addEntity(Entity& entity);
+    void addEntity(std::unique_ptr<Entity> entity);
 
     /**
      * @brief Add a specific object for this AABB to keep track of. Ideally this
-     * should be related to the AABB. No checks are implicitly performed within
-     * this method.
+     *        should be related to the AABB. No checks are implicitly performed
+     * within this method.
      *
      * @param object Object to be added
      */
-    void addObject(Object& object);
+    void addObject(std::unique_ptr<Object> object);
 
     /**
      * @brief Checks to see if two AABBs overlapp on any of the axes
@@ -228,21 +232,21 @@ class AABB {
 
     /**
      * @brief Generate a box made of s specific material inside the AABB with
-     * the ability to specify offsets.
+     *        the ability to specify offsets.
      *
      * @param material The material to make this box out of
      * @param offsetPosX How far away from the left wall should the position be.
-     * Defaults to 0
+     *        Defaults to 0
      * @param offsetNegX How far away from the right wall should the position
-     * be. Defaults to 0
+     *        be. Defaults to 0
      * @param offsetPosY How far away from the left wall should the position be.
-     * Defaults to 0
+     *        Defaults to 0
      * @param offsetNegY How far away from the right wall should the position
-     * be. Defaults to 0
+     *        be. Defaults to 0
      * @param offsetPosZ How far away from the bottom wall should the position
-     * be. Defaults to 0
+     *        be. Defaults to 0
      * @param offsetNegZ How far away from the top wall should the position be.
-     * Defaults to 0
+     *        Defaults to 0
      */
     void virtual generateBox(std::string material,
                              int offsetPosX = 0,
@@ -254,23 +258,23 @@ class AABB {
 
     /**
      * @brief Add n random blocks of the given type and material inside the AABB
-     * within the offset parameters
+     *        within the offset parameters
      *
      * @param n The number of blocks to add
      * @param material The block's material type
      * @param gen THe boost generation object to generate distributions from
      * @param offsetPosX How far away from the left wall should the position be.
-     * Defaults to 0
+     *        Defaults to 0
      * @param offsetNegX How far away from the right wall should the position
-     * be. Defaults to 0
+     *        be. Defaults to 0
      * @param offsetPosY How far away from the left wall should the position be.
-     * Defaults to 0
+     *        Defaults to 0
      * @param offsetNegY How far away from the right wall should the position
-     * be. Defaults to 0
+     *        be. Defaults to 0
      * @param offsetPosZ How far away from the bottom wall should the position
-     * be. Defaults to 0
+     *        be. Defaults to 0
      * @param offsetNegZ How far away from the top wall should the position be.
-     * Defaults to 0
+     *        Defaults to 0
      */
     void virtual addRandomBlocks(int n,
                                  std::string material,
@@ -297,7 +301,7 @@ class AABB {
 
     /**
      * @brief Adds the alternate block by block JSON representation of this
-     * object to the "blocks" list of the base json.
+     *        object to the "blocks" list of the base json.
      *
      * @return nlohmann::json The base json
      */
@@ -308,22 +312,42 @@ class AABB {
      *
      * @param id The id associated with this AABB
      * @param type A semantic name describing the type and/or purpose of the
-     * AABB
+     *        AABB
      * @param material The material this AABB is built out of
      * @param topLeft The coordinates of the top left of the AABB from the
-     * top view of the X-Z plane. Y coordinate should be lowest here.
+     *        top view of the X-Z plane. Y coordinate should be lowest here.
      * @param bottomRight The coordinates of the bottom right of the AABB
-     * from the top view of the X-Z plane. Y coordinate should be maximum here.
+     *        from the top view of the X-Z plane. Y coordinate should be maximum
+     * here.
      * @param isHollow Specify wether the AABB should be hollow or not. Defaults
-     * to true.
+     *        to true.
      * @param hasRoof specify wether the AABB should have a roof or not.
-     * Defaults to false.
+     *        Defaults to false.
      */
     AABB(std::string id,
          std::string type,
          std::string material,
          Pos& topLeft,
          Pos& bottomRight,
+         bool isHollow = true,
+         bool hasRoof = false);
+
+    /**
+     * @brief Construct a new AABB object. Use this contructor when you know the
+     *        top left and bottom right positions will change in the future.
+     *
+     * @param id The id associated with this AABB
+     * @param type A semantic name describing the type and/or purpose of the
+     *        AABB
+     * @param material The material this AABB is built out of
+     * @param isHollow Specify wether the AABB should be hollow or not. Defaults
+     *        to true.
+     * @param hasRoof specify wether the AABB should have a roof or not.
+     *        Defaults to false.
+     */
+    AABB(std::string id,
+         std::string type,
+         std::string material,
          bool isHollow = true,
          bool hasRoof = false);
 
