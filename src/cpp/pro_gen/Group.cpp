@@ -2,15 +2,16 @@
 using namespace std;
 using json = nlohmann::json;
 
-Group::Group(string id)
-    : AABB(id, "group", "air", *(new Pos()), *(new Pos()), true, false) {}
+Group::Group(string id) : AABB(id, "group", "air", true, false) {}
 
-vector<AABB*>& Group::getAABBList() { return this->aabbList; }
+vector<unique_ptr<AABB>>& Group::getAABBList() { return this->aabbList; }
 
-vector<Connection*>& Group::getConnectionList() { return this->connectionList; }
+vector<unique_ptr<Connection>>& Group::getConnectionList() {
+    return this->connectionList;
+}
 
-void Group::addAABB(AABB& aabb) {
-    this->aabbList.push_back(&aabb);
+void Group::addAABB(unique_ptr<AABB> aabb) {
+    this->aabbList.push_back(move(aabb));
     this->recalculateGroupBoundaries();
 }
 
@@ -23,7 +24,7 @@ void Group::generateAllDoorsInAABB() {
 AABB* Group::getAABB(string id) {
     for (auto& aabb : this->aabbList) {
         if (strcmp((*aabb).getID().c_str(), id.c_str()) == 0) {
-            return aabb;
+            return aabb.get();
         }
     }
     return nullptr;
@@ -81,8 +82,8 @@ void Group::recalculateGroupBoundaries() {
     this->setBottomRight(newBottomRight);
 }
 
-void Group::addConnection(Connection& connection) {
-    this->connectionList.push_back(&connection);
+void Group::addConnection(unique_ptr<Connection> connection) {
+    this->connectionList.push_back(move(connection));
 }
 
 void Group::toSemanticMapJSON(json& json_base) {

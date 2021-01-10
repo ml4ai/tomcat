@@ -11,8 +11,6 @@ Pos::Pos() {}
 
 Pos::Pos(int x, int y, int z) : x{x}, y{y}, z{z} {}
 
-Pos::Pos(const Pos& other) : x{other.x}, y{other.y}, z{other.z} {}
-
 int Pos::getX() { return this->x; }
 
 int Pos::getY() { return this->y; }

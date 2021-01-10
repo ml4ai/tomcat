@@ -18,19 +18,21 @@ void ZombieworldGroup::decorate(Pos& firstTopLeft, Pos& firstBottomRight) {
 }
 
 void ZombieworldGroup::addEntities() {
-    AABB* aabbTwo = this->getAABB("2");
+    auto aabbTwo = this->getAABB("2");
 
     if (aabbTwo != nullptr) {
 
         int sizeY = (*aabbTwo).getSizeY() - 1;
         Pos randomPos = (*aabbTwo).getRandomPos(this->gen, 1, 1, sizeY, 1, 1);
-        (*aabbTwo).addEntity(*(new Entity("villager", randomPos)));
+        auto curEntity = make_unique<Entity>("villager", randomPos);
+        (*aabbTwo).addEntity(move(curEntity));
     }
 
-    AABB* aabbOne = this->getAABB("1"); // 1 sub AABB definitely exists
+    auto aabbOne = this->getAABB("1"); // 1 sub AABB definitely exists
     int sizeY = (*aabbOne).getSizeY() - 1;
     Pos randomPos = (*aabbOne).getRandomPos(this->gen, 1, 1, sizeY, 1, 1);
-    this->addEntity(*(new Entity("zombie", randomPos)));
+    auto curEntity = make_unique<Entity>("zombie", randomPos);
+    (*aabbOne).addEntity(move(curEntity));
 }
 
 void ZombieworldGroup::addLights() {
@@ -40,8 +42,10 @@ void ZombieworldGroup::addLights() {
 }
 
 void ZombieworldGroup::createAABB(Pos& firstTopLeft, Pos& firstBottomRight) {
-    this->addAABB(*(new AABB(
-        "1", "room", "planks", firstTopLeft, firstBottomRight, true, true)));
+
+    auto first = make_unique<AABB>(
+        "1", "room", "planks", firstTopLeft, firstBottomRight, true, true);
+    this->addAABB(move(first));
 
     string id = this->getID();
     if (!(strcmp(id.c_str(), "1") == 0 || strcmp(id.c_str(), "7") == 0 ||
@@ -55,18 +59,19 @@ void ZombieworldGroup::createAABB(Pos& firstTopLeft, Pos& firstBottomRight) {
         secondBottomRight.shiftX(3);
         secondBottomRight.shiftZ(9);
 
-        this->addAABB(*(new AABB("2",
-                                 "room",
-                                 "planks",
-                                 secondTopLeft,
-                                 secondBottomRight,
-                                 true,
-                                 true)));
+        auto second = make_unique<AABB>("2",
+                                        "room",
+                                        "planks",
+                                        secondTopLeft,
+                                        secondBottomRight,
+                                        true,
+                                        true);
+        this->addAABB(move(second));
     }
 }
 
 void ZombieworldGroup::addLevers() {
-    AABB* aabbTwo = this->getAABB("2");
+    auto aabbTwo = this->getAABB("2");
 
     if (aabbTwo != nullptr) {
 
@@ -75,12 +80,15 @@ void ZombieworldGroup::addLevers() {
         topEdgeMidpoint.shiftX(-1);
         topEdgeMidpoint.shiftZ(-1);
 
-        this->addBlock(*(new Lever(topEdgeMidpoint, false, "north")));
+        auto lever = make_unique<Lever>(topEdgeMidpoint, false, "north");
+        this->addBlock(move(lever));
 
         // Adds the connection representing this doorway
         // This is an example and may have innacurate coordinates
-        this->addConnection(*(new Connection(
-            "c1", "entrance to second room", "door", "rectangle")));
+        auto connection = make_unique<Connection>(
+            "c1", "entrance to second room", "door", "rectangle");
+        this->addConnection(move(connection));
+
         vector<string> connectedLocations{"1", "2"};
         this->getConnectionList().at(0)->addManyConnectedLocations(
             connectedLocations);

@@ -5,7 +5,7 @@
 
 /**
  * @brief This class represents a very specific building that is used in the
- * Zombie mission
+ *        Zombie mission
  */
 class ZombieworldGroup : public Group {
   private:
@@ -13,11 +13,11 @@ class ZombieworldGroup : public Group {
 
     /**
      * @brief Create the Group object with either 1 or 2 rooms depending on the
-     * id number
+     *        id number
      * @param firstTopLeft The top left coordinate for the first AABB in the
-     * group
+     *        group
      * @param firstBottomRight The bottom right coordinate for the first AABB in
-     * the group
+     *        the group
      */
     void createAABB(Pos& firstTopLeft, Pos& firstBottomRight);
 
@@ -28,41 +28,41 @@ class ZombieworldGroup : public Group {
 
     /**
      * @brief Add levers to the buildings with two rooms such that the lever is
-     * at the entrance to the second room.
+     *        at the entrance to the second room.
      */
     void addLevers();
 
     /**
      * @brief Add mobs to this building. A single room building gets zombies
-     * while double room buildings get one villager and one zombie.
+     *        while double room buildings get one villager and one zombie.
      */
     void addEntities();
 
     /**
      * @brief Global directive method that creates the AABB and then decorates
-     * them.
+     *        them.
      *
      * @param firstTopLeft The top left coordinate for the first AABB in the
-     * group
+     *        group
      * @param firstBottomRight The bottom right coordinate for the first AABB in
-     * the group
+     *        the group
      */
     void decorate(Pos& firstTopLeft, Pos& firstBottomRight);
 
   public:
     /**
-     * @brief Construct a new Zombieworld Group object
+     * @brief Construct a new Zombieworld Group object.
      *
-     * @param id The id to give this group
+     * @param id The id to give this group.
      * @param firstTopLeft The top left coordinate for the first AABB in the
-     * group
+     *        group.
      * @param firstBottomRight The bottom right coordinate for the first AABB in
-     * the group
+     *        the group.
      */
     ZombieworldGroup(std::string id, Pos& firstTopLeft, Pos& firstBottomRight);
 
     /**
-     * @brief Destroy the Zombieworld Group object
+     * @brief Destroy the Zombieworld Group object.
      */
     ~ZombieworldGroup();
 };
