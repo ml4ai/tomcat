@@ -36,7 +36,7 @@ class PSDProduction(Production, ProbabilisticMixIn):
             " [1.0]" if (self.prob() == 1.0) else " [%g]" % self.prob()
         )
 
-    def __eq__(self, other: PSDProduction) -> bool:
+    def __eq__(self, other: 'PSDProduction') -> bool:
         return (
             type(self) == type(other)
             and self._lhs == other._lhs
@@ -44,7 +44,7 @@ class PSDProduction(Production, ProbabilisticMixIn):
             and self.prob() == other.prob()
         )
 
-    def __ne__(self, other: PSDProduction) -> bool:
+    def __ne__(self, other: 'PSDProduction')  -> bool:
         return not self == other
 
     def __hash__(self) -> int:
