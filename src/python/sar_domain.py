@@ -4,14 +4,15 @@ from PSDG_Domain import PSDG_Action, PSDG_Method
 # Actions
 ## SearchHallway
 def searchHallway_effect(state):
-    green = random.poisson(0.5, 1)[0]
-    if state["time"] < 420:
-        yellow = random.poisson(0.2, 1)[0]
-        state["num_of_yellow_victims_found_in_adj_room"] += yellow
-        state["num_of_yellow_victims_found_total"] += yellow
+    if state['next_loc'][0] in state["rooms"]:
+        green = random.poisson(0.5, 1)[0]
+        if state["time"] < 420:
+            yellow = random.poisson(0.2, 1)[0]
+            state["num_of_yellow_victims_found_in_adj_room"] += yellow
+            state["num_of_yellow_victims_found_total"] += yellow
 
-    state["num_of_green_victims_found_in_adj_room"] += green
-    state["num_of_green_victims_found_total"] += green
+        state["num_of_green_victims_found_in_adj_room"] += green
+        state["num_of_green_victims_found_total"] += green
     state["time"] += random.poisson(5.5, 1)[0]
     state["times_searched"] += 1
     state["recent_search"] = 1
@@ -58,6 +59,10 @@ def searchHallway_trans_prob(state_0, state_1):
         yellow_found
     )
 
+    if state_0['next_loc'][0] in state_0["hallways"]:
+        if yellow_found > 0 or green_found > 0:
+            return 0.0
+
     time_elasped = state_1["time"] - state_0["time"]
 
     time_elasped_prob = (5.5 ** time_elasped * e ** (-5.5)) / math.factorial(
@@ -78,15 +83,26 @@ def searchRoom_effect(state):
     green = random.poisson(1.5, 1)[0]
     if state["time"] < 420:
         yellow = random.poisson(1, 1)[0]
-        yellow_adj = random.poisson(0.2, 1)[0]
         state["num_of_yellow_victims_found_in_current_room"] += yellow
-        state["num_of_yellow_victims_found_in_adj_room"] += yellow_adj
+
+        if state['next_loc'][0] in state['rooms']:
+            yellow_adj = random.poisson(0.2, 1)[0]
+            state["num_of_yellow_victims_found_in_adj_room"] += yellow_adj
+        else:
+            yellow_adj = 0
+
         state["num_of_yellow_victims_found_total"] += yellow + yellow_adj
 
-    green_adj = random.poisson(0.5, 1)[0]
     state["num_of_green_victims_found_in_current_room"] += green
-    state["num_of_green_victims_found_in_adj_room"] += green_adj
+
+    if state['next_loc'][0] in state['rooms']:
+        green_adj = random.poisson(0.5, 1)[0]
+        state["num_of_green_victims_found_in_adj_room"] += green_adj
+    else:
+        green_adj = 0
+
     state["num_of_green_victims_found_total"] += green + green_adj
+
     state["time"] += random.poisson(5.5, 1)[0]
     state["times_searched"] += 1
     state["recent_search"] = 1
@@ -140,6 +156,10 @@ def searchRoom_trans_prob(state_0, state_1):
 
     if yellow_found_adj >= 1 and state_0["time"] >= 420:
         return 0.0
+
+    if state_0['next_loc'][0] in state_0["hallways"]:
+        if yellow_found_adj > 0 or green_found_adj > 0:
+            return 0.0
 
     yellow_found_adj_prob = (
         0.2 ** yellow_found_adj * e ** (-0.2)
@@ -283,10 +303,10 @@ def move_trans_prob(state_0, state_1):
     if state_0["next_loc"][0] != state_1["current_loc"]:
         return 0.0
 
-    if state["times_search"] != 0:
+    if state_1["times_searched"] != 0:
         return 0.0
 
-    if state["recent_search"] != 0:
+    if state_1["recent_search"] != 0:
         return 0.0
 
     time_elasped = state_1["time"] - state_0["time"]
@@ -294,6 +314,8 @@ def move_trans_prob(state_0, state_1):
     time_elasped_prob = (5.6 ** time_elasped * e ** (-5.6)) / math.factorial(
         time_elasped
     )
+
+    return time_elasped_prob
 
 
 move = PSDG_Action("!move", move_effect, move_trans_prob)
@@ -561,11 +583,11 @@ triageGreen_O = PSDG_Method("O", willTriageGreen_O, ["!triageGreen", "O"])
 def willMove_O(state):
     if state["time"] >= 600 or not state["next_loc"]:
         return 0
-    if willTriageGreen_YF(state) or willTriageYellow_YF(state):
+    if willTriageGreen_O(state) or willTriageYellow_O(state):
         return 0
     if state["current_loc"] in state["hallways"]:
-        return 1 - willSearchHall_YF(state)
-    return 1 - willSearchRoom_YF(state)
+        return 1 - willSearchHall_O(state)
+    return 1 - willSearchRoom_O(state)
 
 
 move_O = PSDG_Method("O", willMove_O, ["!move", "O"])
@@ -577,11 +599,11 @@ def willExit_O(state):
     if state["time"] >= 600:
         return 1
     if (
-        willMove_YF(state)
-        or willTriageGreen_YF(state)
-        or willTriageYellow_YF(state)
-        or willSearchRoom_YF(state)
-        or willSearchHall_YF(state)
+        willMove_O(state)
+        or willTriageGreen_O(state)
+        or willTriageYellow_O(state)
+        or willSearchRoom_O(state)
+        or willSearchHall_O(state)
     ):
         return 0
     return 1
