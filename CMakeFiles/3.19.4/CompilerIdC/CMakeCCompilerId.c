@@ -225,36 +225,6 @@
   # define COMPILER_VERSION_PATCH DEC(__ARMCOMPILER_VERSION     % 10000)
 # define COMPILER_VERSION_INTERNAL DEC(__ARMCOMPILER_VERSION)
 
-#elif defined(__clang__) && defined(__INTEL_DPCPP_COMPILER__)
-# define COMPILER_ID "IntelDPCPP"
-# if defined(_MSC_VER)
-#  define SIMULATE_ID "MSVC"
-# endif
-# define COMPILER_VERSION_MAJOR DEC(__clang_major__)
-# define COMPILER_VERSION_MINOR DEC(__clang_minor__)
-# define COMPILER_VERSION_PATCH DEC(__clang_patchlevel__)
-# if defined(_MSC_VER)
-   /* _MSC_VER = VVRR */
-#  define SIMULATE_VERSION_MAJOR DEC(_MSC_VER / 100)
-#  define SIMULATE_VERSION_MINOR DEC(_MSC_VER % 100)
-# endif
-# define COMPILER_VERSION_TWEAK DEC(__INTEL_DPCPP_COMPILER__)
-
-#elif defined(__clang__) && defined(__INTEL_CLANG_COMPILER)
-# define COMPILER_ID "IntelClang"
-# if defined(_MSC_VER)
-#  define SIMULATE_ID "MSVC"
-# endif
-# define COMPILER_VERSION_MAJOR DEC(__clang_major__)
-# define COMPILER_VERSION_MINOR DEC(__clang_minor__)
-# define COMPILER_VERSION_PATCH DEC(__clang_patchlevel__)
-# if defined(_MSC_VER)
-   /* _MSC_VER = VVRR */
-#  define SIMULATE_VERSION_MAJOR DEC(_MSC_VER / 100)
-#  define SIMULATE_VERSION_MINOR DEC(_MSC_VER % 100)
-# endif
-# define COMPILER_VERSION_TWEAK DEC(__INTEL_CLANG_COMPILER)
-
 #elif defined(__clang__)
 # define COMPILER_ID "Clang"
 # if defined(_MSC_VER)
@@ -357,7 +327,7 @@ char const* info_simulate = "INFO" ":" "simulate[" SIMULATE_ID "]";
 char const* qnxnto = "INFO" ":" "qnxnto[]";
 #endif
 
-#if defined(__CRAYXE) || defined(__CRAYXC)
+#if defined(_CRAYC) || defined(__cray__)
 char const *info_cray = "INFO" ":" "compiler_wrapper[CrayPrgEnv]";
 #endif
 
@@ -711,7 +681,7 @@ int main(int argc, char* argv[])
 #ifdef SIMULATE_VERSION_MAJOR
   require += info_simulate_version[argc];
 #endif
-#if defined(__CRAYXE) || defined(__CRAYXC)
+#if defined(_CRAYC) || defined(__cray__)
   require += info_cray[argc];
 #endif
   require += info_language_dialect_default[argc];
