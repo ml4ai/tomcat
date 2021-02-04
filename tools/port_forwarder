@@ -1,43 +1,178 @@
 #!/usr/bin/env python
 #
-# Author: Joseph Astier
+# Authors: Joseph Astier, Adarsh Pyarelal
 # Date: 2020 October
 #
-# job manager for command line tasks.
-# Feel free to add new jobs
+# port_forwarder.  This script manages forwarding ports from this
+# machine to the same ports on a destination machine, by starting an ssh
+# process that will maintain the port forwarding in the background.
 #
+# Usage
+# -----
+#
+# Run the following command to see the help message with usage instructions.
+#
+#    port_forwarder -h
+#
+# Examples
+# --------
+#    - Forward ports 10000 and 10001 from localhost to laplace:
+#
+#         ./port_forwarder start laplace 10000 10001
+#
+#    - Stop forwarding ports 10000 and 10001:
+#
+#         ./port_forwarder stop 10000 10001
+#
+#    - Stop forwarding all ports:
+#
+#         ./port_forwarder stop all
+#
+#    - Display all forwarded ports:
+#
+#         ./port_forwarder status all
 
 import os
+import re
+import sys
+import argparse
+import subprocess as sp
 
-# Jobs to perform.  If it runs on the command line, it will run here.
-jobs = (
-    './single_port_forwarder.py -d laplace -p 64738 start',
-)
+
+def ssh_cmd(port, host):
+    return [
+        "ssh",
+        "-o",
+        "ConnectTimeout=7",
+        "-NfL",
+        f"{port}:localhost:{port}",
+        host,
+    ]
 
 
-# used for reporting results
-passStr = ' OK '
-failStr = 'FAIL'
+def create_port_forwarding_dict():
+    forwarded_ports = {}
+    for line in sp.run(["ps", "x"], capture_output=True).stdout.splitlines():
+        tokens = line.split()
+        pid = tokens[0]
+        cmd = tokens[4:]
 
-# run one job at a time
-def run_job(t):
-    print('JOB:  '+t)
-    retval = (failStr, passStr)[(os.system(t)== 0)]
-    print('RESULT: ' + retval + '\n')
-    return (retval, t)
+        # Check if the command starts with 'ssh'
+        if cmd[0] == b"ssh":
+            for i, part in enumerate(cmd):
 
-# run all the jobs.
-results = map(run_job, jobs)
-run = len(results)
-ok = sum(map(lambda (a,b): (0,1)[a==passStr], results))
-failed = run-ok
+                # Get the part of the command that contains the -L flag
+                if part.startswith(b"-") and b"L" in part:
 
-# report the results in a concise way
-print('Summary: ')
-for g in results:
-    print(g[0] + ' ' + g[1])
-print('Jobs run : ' + str(run))
-print('OK       : ' + str(ok))
-print('Failed   : ' + str(failed))
-if(failed == 0):
-    print('All jobs were run successfully.')
+                    # Get the components of the argument provided to the -L flag
+                    source_port, destination_server, destination_port = cmd[
+                        i + 1
+                    ].split(b":")
+                    forwarded_ports[int(source_port)] = {
+                        "destination_server": destination_server,
+                        "destination_port": int(destination_port),
+                        "host": cmd[i + 2],
+                        "pid": int(pid),
+                    }
+
+    return forwarded_ports
+
+
+class PortForwarder(object):
+    def __init__(self):
+        self.forwarded_ports = create_port_forwarding_dict()
+
+    def print_port_forwarding_status(self, port):
+        print(
+            f"Port {port} is currently forwarded to",
+            f"{self.forwarded_ports[port]['destination_port']}",
+            "on host",
+            self.forwarded_ports[port]["host"].decode("utf-8"),
+            f"(PID: {self.forwarded_ports[port]['pid']})",
+        )
+
+    def start(self, args):
+        """ Start port forwarding for one or more ports. """
+        for port in args.ports:
+            if port in self.forwarded_ports:
+                self.print_port_forwarding_status(port)
+            else:
+                print(f"Forwarding port {port} to {args.host}:{port}...")
+                sp.run(ssh_cmd(port, args.host))
+
+    def stop(self, args):
+        """ Stop port forwarding for one or more ports. """
+        ports_to_stop = (
+            self.forwarded_ports.keys()
+            if args.ports[0] == "all"
+            else map(int, args.ports)
+        )
+
+        for port in ports_to_stop:
+            if port not in self.forwarded_ports:
+                print(
+                    "Port {port} is not currently forwarded",
+                    "(or at least this script cannot detect that it is forwarded).",
+                )
+            else:
+                pid = self.forwarded_ports[int(port)]["pid"]
+                sp.run(["kill", str(pid)])
+                print(
+                    f"Port {port} is no longer being forwarded (stopped PID {pid})."
+                )
+
+    def status(self, args):
+        """ Report port forwarding status for one or more ports. """
+        ports_to_report = (
+            self.forwarded_ports.keys()
+            if args.ports[0] == "all"
+            else map(int, args.ports)
+        )
+
+        for port in ports_to_report:
+            if port in self.forwarded_ports:
+                self.print_port_forwarding_status(port)
+            else:
+                print(f"Port {port} is currently not forwarded.")
+
+
+if __name__ == "__main__":
+    forwarder = PortForwarder()
+
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(
+        help="Port forwarding action to perform."
+    )
+
+    # Create subparser for the start command
+    parser_start = subparsers.add_parser("start", help="Start port forwarding")
+    parser_start.add_argument("host", help="Host")
+    parser_start.add_argument(
+        "ports", type=int, nargs="+", help="Ports to start forwarding."
+    )
+    parser_start.set_defaults(func=forwarder.start)
+
+    # Create subparser for the stop command
+    parser_stop = subparsers.add_parser("stop", help="Stop port forwarding")
+    parser_stop.add_argument(
+        "ports",
+        nargs="+",
+        help="Ports to stop forwarding "
+        "('all' = stop forwarding all currently forwarded ports)",
+    )
+    parser_stop.set_defaults(func=forwarder.stop)
+
+    # Create subparser for the status command
+    parser_status = subparsers.add_parser(
+        "status", help="Check port forwarding status"
+    )
+    parser_status.add_argument(
+        "ports",
+        nargs="+",
+        help="Ports to check the status of port forwarding for."
+        "('all' = display status of all currently forwarded ports)",
+    )
+    parser_status.set_defaults(func=forwarder.status)
+
+    args = parser.parse_args()
+    args.func(args)
