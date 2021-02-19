@@ -3,9 +3,9 @@
 """
 Filename: pro_gen_vizualizer.py
 Author: Adi Banerjee
-Purpose: This program will vizualize the procedurally generated map from the low_level_map.json file. 
+Purpose: This program will vizualize the procedurally generated map from the low_level_map.json file.
          It does not accept alternate filenames. The vizualized map is saved in the same directory as
-         script with the name "vizualized_plt.png"
+         script with the name "visualized_plt.pdf"
 """
 
 import matplotlib.patches as patches
@@ -13,6 +13,8 @@ from matplotlib.collections import PatchCollection
 import matplotlib.pyplot as plt
 import numpy as np
 import json
+
+plt.rc('text', usetex=True)
 
 # Colours to use for each material
 color_index = {
@@ -65,8 +67,8 @@ ax.yaxis.set_label_coords(1.150, 0.5)
 
 plt.margins(0, 0)
 plt.gca().invert_xaxis()
-plt.xlabel("X-axis")
-plt.ylabel("Z-axis")
+plt.xlabel("$X$")
+plt.ylabel("$Z$")
 plt.tight_layout()
 
-plt.savefig("vizualized_plt.png")
+plt.savefig("map.png", dpi=150)
