@@ -5,7 +5,7 @@ using namespace std;
 ZombieworldGroup::ZombieworldGroup(string id,
                                    Pos& firstTopLeft,
                                    Pos& firstBottomRight)
-    : Group(id) {
+    : AABB(id) {
     this->decorate(firstTopLeft, firstBottomRight);
 }
 
@@ -18,7 +18,7 @@ void ZombieworldGroup::decorate(Pos& firstTopLeft, Pos& firstBottomRight) {
 }
 
 void ZombieworldGroup::addEntities() {
-    auto aabbTwo = this->getAABB("2");
+    auto aabbTwo = this->getSubAABB("2");
 
     if (aabbTwo != nullptr) {
 
@@ -28,7 +28,7 @@ void ZombieworldGroup::addEntities() {
         (*aabbTwo).addEntity(move(curEntity));
     }
 
-    auto aabbOne = this->getAABB("1"); // 1 sub AABB definitely exists
+    auto aabbOne = this->getSubAABB("1"); // 1 sub AABB definitely exists
     int sizeY = (*aabbOne).getSizeY() - 1;
     Pos randomPos = (*aabbOne).getRandomPos(this->gen, 1, 1, sizeY, 1, 1);
     auto curEntity = make_unique<Entity>("zombie", randomPos);
@@ -71,7 +71,7 @@ void ZombieworldGroup::createAABB(Pos& firstTopLeft, Pos& firstBottomRight) {
 }
 
 void ZombieworldGroup::addLevers() {
-    auto aabbTwo = this->getAABB("2");
+    auto aabbTwo = this->getSubAABB("2");
 
     if (aabbTwo != nullptr) {
 

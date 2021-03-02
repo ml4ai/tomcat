@@ -8,6 +8,7 @@
 #include "Door.h"
 #include "Entity.h"
 #include "Object.h"
+#include "Connection.h"
 #include <memory>
 #include <random>
 #include <vector>
@@ -29,6 +30,10 @@ class AABB {
     std::vector<std::unique_ptr<Block>> blockList;
     std::vector<std::unique_ptr<Entity>> entityList;
     std::vector<std::unique_ptr<Object>> objectList;
+    std::vector<std::unique_ptr<AABB>> aabbList;
+    std::vector<std::unique_ptr<Connection>> connectionList;
+
+    void recalculateOverallBoundary();
 
   public:
     /**
@@ -291,6 +296,48 @@ class AABB {
      */
     void virtual generateAllDoorsInAABB();
 
+        /**
+     * @brief Adds an AABB that will be part of this AABB group.
+     *
+     * @param aabb The AABB to add.
+     */
+    void addAABB(std::unique_ptr<AABB> aabb);
+
+    /**
+     * @brief Add an connection to the vector of connection held inside the
+     *        group.
+     *
+     * @param connection The connection to add.
+     */
+    void addConnection(std::unique_ptr<Connection> connection);
+
+    /**
+     * @brief Gets the list of AABBs this group keeps track of. Do not transfer
+     *        ownership  of any unique_ptr as it may cause scope issues.
+     *
+     * @return std::vector<AABB*>& Reference to the AABB group kept track of.
+     */
+    std::vector<std::unique_ptr<AABB>>& getAABBList();
+
+    /**
+     * @brief Returns the Connection vector for this Group. Do not transfer
+     *        ownership  of any unique_ptr as it may cause scope issues.
+     *
+     * @return std::vector<Connection*>&  The connection list.
+     */
+    std::vector<std::unique_ptr<Connection>>& getConnectionList();
+
+    /**
+     * @brief Get a particular AABB contained by this group. The AABB can be
+     *        identified by its ID. A unique pointer already
+     *        owns this, so do not assign new ownership.
+     *
+     * @param id The id of the AABB to find.
+     * @return AABB* Pointer to the relevant AABB or nullptr if it doesn't
+     *         exist.
+     */
+    AABB* getSubAABB(std::string id);
+
     /**
      * @brief Adds the JSON representation of this object to the
      *        "locations" list of the base json
@@ -337,19 +384,8 @@ class AABB {
      *        top left and bottom right positions will change in the future.
      *
      * @param id The id associated with this AABB
-     * @param type A semantic name describing the type and/or purpose of the
-     *        AABB
-     * @param material The material this AABB is built out of
-     * @param isHollow Specify wether the AABB should be hollow or not. Defaults
-     *        to true.
-     * @param hasRoof specify wether the AABB should have a roof or not.
-     *        Defaults to false.
      */
-    AABB(std::string id,
-         std::string type,
-         std::string material,
-         bool isHollow = true,
-         bool hasRoof = false);
+    AABB(std::string id);
 
     /**
      * @brief Destroy the AABB object
