@@ -106,6 +106,10 @@ public class WorldBuilder {
 
             String material = block.get("material").toUpperCase();
 
+            if(material.equals("BLANK")){
+                continue;
+            }
+
             int x = Integer.parseInt(block.get("x")),
                 y = Integer.parseInt(block.get("y")),
                 z = Integer.parseInt(block.get("z"));

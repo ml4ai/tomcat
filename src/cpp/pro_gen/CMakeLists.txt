@@ -30,7 +30,6 @@ add_library(
   Door.cpp
   Lever.cpp
   Entity.cpp
-  Group.cpp
   Connection.cpp
   ZombieworldPit.cpp
   ZombieworldGroup.cpp

@@ -16,9 +16,18 @@ AABB::AABB(string id,
     : id{id}, type{type}, material{material}, topLeft{topLeft},
       bottomRight{bottomRight}, isHollow{isHollow}, hasRoof{hasRoof} {}
 
-AABB::AABB(string id, string type, string material, bool isHollow, bool hasRoof)
-    : id{id}, type{type}, material{material}, topLeft(0, 0, 0),
-      bottomRight(0, 0, 0), isHollow{isHollow}, hasRoof{hasRoof} {}
+AABB::AABB(string id)
+    : id{id}, type{"blank_canvas"}, material{"blank"}, topLeft(0, 0, 0),
+      bottomRight(0, 0, 0), isHollow{true}, hasRoof{false} {}
+
+void AABB::addAABB(unique_ptr<AABB> aabb) {
+    this->aabbList.push_back(move(aabb));
+    this->recalculateOverallBoundary();
+}
+
+void AABB::addConnection(unique_ptr<Connection> connection) {
+    this->connectionList.push_back(move(connection));
+}
 
 string AABB::getID() { return this->id; }
 
@@ -35,6 +44,21 @@ vector<unique_ptr<Block>>& AABB::getBlockList() { return (this->blockList); }
 vector<unique_ptr<Entity>>& AABB::getEntityList() { return this->entityList; }
 
 vector<unique_ptr<Object>>& AABB::getObjectList() { return this->objectList; }
+
+vector<unique_ptr<AABB>>& AABB::getAABBList() { return this->aabbList; }
+
+vector<unique_ptr<Connection>>& AABB::getConnectionList() {
+    return this->connectionList;
+}
+
+AABB* AABB::getSubAABB(string id) {
+    for (auto& aabb : this->aabbList) {
+        if (strcmp((*aabb).getID().c_str(), id.c_str()) == 0) {
+            return aabb.get();
+        }
+    }
+    return nullptr;
+}
 
 int AABB::getMidpointX() {
     int mid_x = ((this->topLeft).getX() +
@@ -219,6 +243,90 @@ void AABB::addRandomBlocks(int n,
     }
 }
 
+void AABB::generateAllDoorsInAABB() {
+    if (strcmp(this->type.c_str(), "blank_canvas") != 0) {
+        vector<Pos> edges = this->getEdgeMidpointAtBase();
+        Pos topEdgeMid(edges.at(0));
+        Pos rightEdgeMid(edges.at(1));
+        Pos bottomEdgeMid(edges.at(2));
+        Pos leftEdgeMid(edges.at(3));
+
+        // Since points are at base we want them to be at base + 1
+        topEdgeMid.shiftY(1);
+        bottomEdgeMid.shiftY(1);
+        leftEdgeMid.shiftY(1);
+        rightEdgeMid.shiftY(1);
+
+        auto topDoor = make_unique<Door>(topEdgeMid, false, false);
+        auto bottomDoor = make_unique<Door>(bottomEdgeMid, false, false);
+        auto leftDoor = make_unique<Door>(
+            leftEdgeMid, false, false, "dark_oak_door", "east");
+        auto rightDoor = make_unique<Door>(
+            rightEdgeMid, false, false, "dark_oak_door", "east");
+
+        this->addBlock(move(topDoor));
+        this->addBlock(move(bottomDoor));
+        this->addBlock(move(leftDoor));
+        this->addBlock(move(rightDoor));
+    }
+
+    for (auto& aabb : this->aabbList) {
+        aabb->generateAllDoorsInAABB();
+    }
+}
+
+void AABB::recalculateOverallBoundary() {
+
+    int minX, minY, minZ;
+    int maxX, maxY, maxZ;
+    bool isFirst = true;
+
+    for (auto& aabb : this->aabbList) {
+
+        Pos topLeft = (*aabb).getTopLeft();
+        int x1 = topLeft.getX(), y1 = topLeft.getY(), z1 = topLeft.getZ();
+
+        Pos bottomRight = (*aabb).getBottomRight();
+        int x2 = bottomRight.getX(), y2 = bottomRight.getY(),
+            z2 = bottomRight.getZ();
+
+        if (isFirst) {
+            minX = x1;
+            minY = y1;
+            minZ = z1;
+            maxX = x2;
+            maxY = y2;
+            maxZ = z2;
+            isFirst = false;
+        }
+
+        if (x1 < minX) {
+            minX = x1;
+        }
+        if (y1 < minY) {
+            minY = y1;
+        }
+        if (z1 < minZ) {
+            minZ = z1;
+        }
+        if (x2 > maxX) {
+            maxX = x2;
+        }
+        if (y2 > maxY) {
+            maxY = y2;
+        }
+        if (z2 > maxZ) {
+            maxZ = z2;
+        }
+    }
+
+    Pos newTopLeft(minX, minY, minZ);
+    Pos newBottomRight(maxX, maxY, maxZ);
+
+    this->setTopLeft(newTopLeft);
+    this->setBottomRight(newBottomRight);
+}
+
 void AABB::toSemanticMapJSON(json& json_base) {
     json aabb_json;
 
@@ -233,6 +341,10 @@ void AABB::toSemanticMapJSON(json& json_base) {
     aabb_json["material"] = this->getMaterial();
 
     json_base["locations"].push_back(aabb_json);
+
+    for (auto& aabbPtr : this->aabbList) {
+        (*aabbPtr).toSemanticMapJSON(json_base);
+    }
 
     for (auto& blockPtr : this->getBlockList()) {
         (*blockPtr).toSemanticMapJSON(json_base);
@@ -284,6 +396,10 @@ void AABB::toLowLevelMapJSON(json& json_base) {
         }
     }
 
+    for (auto& aabbPtr : this->aabbList) {
+        (*aabbPtr).toLowLevelMapJSON(json_base);
+    }
+
     for (auto& blockPtr : this->getBlockList()) {
         (*blockPtr).toLowLevelMapJSON(json_base);
     }
@@ -295,32 +411,6 @@ void AABB::toLowLevelMapJSON(json& json_base) {
     for (auto& objectPtr : this->getObjectList()) {
         (*objectPtr).toLowLevelMapJSON(json_base);
     }
-}
-
-void AABB::generateAllDoorsInAABB() {
-    vector<Pos> edges = this->getEdgeMidpointAtBase();
-    Pos topEdgeMid(edges.at(0));
-    Pos rightEdgeMid(edges.at(1));
-    Pos bottomEdgeMid(edges.at(2));
-    Pos leftEdgeMid(edges.at(3));
-
-    // Since points are at base we want them to be at base + 1
-    topEdgeMid.shiftY(1);
-    bottomEdgeMid.shiftY(1);
-    leftEdgeMid.shiftY(1);
-    rightEdgeMid.shiftY(1);
-
-    auto topDoor = make_unique<Door>(topEdgeMid, false, false);
-    auto bottomDoor = make_unique<Door>(bottomEdgeMid, false, false);
-    auto leftDoor =
-        make_unique<Door>(leftEdgeMid, false, false, "dark_oak_door", "east");
-    auto rightDoor =
-        make_unique<Door>(rightEdgeMid, false, false, "dark_oak_door", "east");
-
-    this->addBlock(move(topDoor));
-    this->addBlock(move(bottomDoor));
-    this->addBlock(move(leftDoor));
-    this->addBlock(move(rightDoor));
 }
 
 AABB::~AABB() {}
