@@ -28,7 +28,6 @@ Files
 - :ref:`file_src_cpp_pro_gen_generator.cpp`
 - :ref:`file_src_cpp_pro_gen_GridWorld.cpp`
 - :ref:`file_src_cpp_pro_gen_GridWorld.h`
-- :ref:`file_src_cpp_pro_gen_installation.md`
 - :ref:`file_src_cpp_pro_gen_Lever.cpp`
 - :ref:`file_src_cpp_pro_gen_Lever.h`
 - :ref:`file_src_cpp_pro_gen_Object.cpp`
@@ -36,6 +35,7 @@ Files
 - :ref:`file_src_cpp_pro_gen_Pos.cpp`
 - :ref:`file_src_cpp_pro_gen_Pos.h`
 - :ref:`file_src_cpp_pro_gen_pro_gen_vizualizer.py`
+- :ref:`file_src_cpp_pro_gen_README.md`
 - :ref:`file_src_cpp_pro_gen_World.cpp`
 - :ref:`file_src_cpp_pro_gen_World.h`
 - :ref:`file_src_cpp_pro_gen_ZombieWorld.cpp`

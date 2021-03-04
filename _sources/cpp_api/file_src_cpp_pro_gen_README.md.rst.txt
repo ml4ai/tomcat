@@ -1,8 +1,8 @@
 
-.. _file_src_cpp_pro_gen_installation.md:
+.. _file_src_cpp_pro_gen_README.md:
 
-File installation.md
-====================
+File README.md
+==============
 
 |exhale_lsh| :ref:`Parent directory <dir_src_cpp_pro_gen>` (``src/cpp/pro_gen``)
 
@@ -12,14 +12,14 @@ File installation.md
    :local:
    :backlinks: none
 
-Definition (``src/cpp/pro_gen/installation.md``)
-------------------------------------------------
+Definition (``src/cpp/pro_gen/README.md``)
+------------------------------------------
 
 
 .. toctree::
    :maxdepth: 1
 
-   program_listing_file_src_cpp_pro_gen_installation.md.rst
+   program_listing_file_src_cpp_pro_gen_README.md.rst
 
 
 

@@ -95,11 +95,6 @@ Files
 .. toctree::
    :maxdepth: 5
 
-   file_src_cpp_pro_gen_installation.md.rst
-
-.. toctree::
-   :maxdepth: 5
-
    file_src_cpp_pro_gen_Lever.cpp.rst
 
 .. toctree::
@@ -131,6 +126,11 @@ Files
    :maxdepth: 5
 
    file_src_cpp_pro_gen_pro_gen_vizualizer.py.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   file_src_cpp_pro_gen_README.md.rst
 
 .. toctree::
    :maxdepth: 5
