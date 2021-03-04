@@ -5,10 +5,10 @@
 #pragma once
 
 #include "Block.h"
+#include "Connection.h"
 #include "Door.h"
 #include "Entity.h"
 #include "Object.h"
-#include "Connection.h"
 #include <memory>
 #include <random>
 #include <vector>
@@ -39,7 +39,7 @@ class AABB {
     /**
      * @brief Get the AABB's id.
      *
-     * @return int The id.
+     * @return string The id.
      */
     std::string getID();
 
@@ -96,6 +96,22 @@ class AABB {
      * @return The reference to the object list.
      */
     std::vector<std::unique_ptr<Object>>& getObjectList();
+
+    /**
+     * @brief Gets the list of AABBs this AABB is the parent of. Do not transfer
+     *        ownership  of any unique_ptr as it may cause scope issues.
+     *
+     * @return std::vector<AABB*>& Reference to the list of children AABBs.
+     */
+    std::vector<std::unique_ptr<AABB>>& getAABBList();
+
+    /**
+     * @brief Returns the Connection vector for this AABB. Do not transfer
+     *        ownership  of any unique_ptr as it may cause scope issues.
+     *
+     * @return std::vector<Connection*>&  The connection list.
+     */
+    std::vector<std::unique_ptr<Connection>>& getConnectionList();
 
     /**
      * @brief Get the midpoint X value calculated between
@@ -179,6 +195,17 @@ class AABB {
     std::vector<Pos> virtual getEdgeMidpointAtBase();
 
     /**
+     * @brief Get a particular AABB contained by this AABB. The AABB can be
+     *        identified by its ID. A unique pointer already
+     *        owns this, so do not assign new ownership.
+     *
+     * @param id The id of the AABB to find.
+     * @return AABB* Pointer to the relevant AABB or nullptr if it doesn't
+     *         exist.
+     */
+    AABB* getSubAABB(std::string id);
+
+    /**
      * @brief Set the top left coordinate of the AABB
      *
      * @param topLeft Pos object top left is to be set to
@@ -225,6 +252,21 @@ class AABB {
      * @param object Object to be added
      */
     void addObject(std::unique_ptr<Object> object);
+
+    /**
+     * @brief Adds an AABB that will be part of this AABB's child list.
+     *
+     * @param aabb The AABB to add.
+     */
+    void addAABB(std::unique_ptr<AABB> aabb);
+
+    /**
+     * @brief Add an connection to the vector of connection held inside the
+     *        aabb.
+     *
+     * @param connection The connection to add.
+     */
+    void addConnection(std::unique_ptr<Connection> connection);
 
     /**
      * @brief Checks to see if two AABBs overlapp on any of the axes
@@ -295,48 +337,6 @@ class AABB {
      * @brief Generate 4 doors for the AABB at the midpoint.
      */
     void virtual generateAllDoorsInAABB();
-
-        /**
-     * @brief Adds an AABB that will be part of this AABB group.
-     *
-     * @param aabb The AABB to add.
-     */
-    void addAABB(std::unique_ptr<AABB> aabb);
-
-    /**
-     * @brief Add an connection to the vector of connection held inside the
-     *        group.
-     *
-     * @param connection The connection to add.
-     */
-    void addConnection(std::unique_ptr<Connection> connection);
-
-    /**
-     * @brief Gets the list of AABBs this group keeps track of. Do not transfer
-     *        ownership  of any unique_ptr as it may cause scope issues.
-     *
-     * @return std::vector<AABB*>& Reference to the AABB group kept track of.
-     */
-    std::vector<std::unique_ptr<AABB>>& getAABBList();
-
-    /**
-     * @brief Returns the Connection vector for this Group. Do not transfer
-     *        ownership  of any unique_ptr as it may cause scope issues.
-     *
-     * @return std::vector<Connection*>&  The connection list.
-     */
-    std::vector<std::unique_ptr<Connection>>& getConnectionList();
-
-    /**
-     * @brief Get a particular AABB contained by this group. The AABB can be
-     *        identified by its ID. A unique pointer already
-     *        owns this, so do not assign new ownership.
-     *
-     * @param id The id of the AABB to find.
-     * @return AABB* Pointer to the relevant AABB or nullptr if it doesn't
-     *         exist.
-     */
-    AABB* getSubAABB(std::string id);
 
     /**
      * @brief Adds the JSON representation of this object to the
