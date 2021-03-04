@@ -244,35 +244,36 @@ void AABB::addRandomBlocks(int n,
 }
 
 void AABB::generateAllDoorsInAABB() {
-    vector<Pos> edges = this->getEdgeMidpointAtBase();
-    Pos topEdgeMid(edges.at(0));
-    Pos rightEdgeMid(edges.at(1));
-    Pos bottomEdgeMid(edges.at(2));
-    Pos leftEdgeMid(edges.at(3));
+    if (strcmp(this->type.c_str(), "blank_canvas") != 0) {
+        vector<Pos> edges = this->getEdgeMidpointAtBase();
+        Pos topEdgeMid(edges.at(0));
+        Pos rightEdgeMid(edges.at(1));
+        Pos bottomEdgeMid(edges.at(2));
+        Pos leftEdgeMid(edges.at(3));
 
-    // Since points are at base we want them to be at base + 1
-    topEdgeMid.shiftY(1);
-    bottomEdgeMid.shiftY(1);
-    leftEdgeMid.shiftY(1);
-    rightEdgeMid.shiftY(1);
+        // Since points are at base we want them to be at base + 1
+        topEdgeMid.shiftY(1);
+        bottomEdgeMid.shiftY(1);
+        leftEdgeMid.shiftY(1);
+        rightEdgeMid.shiftY(1);
 
-    auto topDoor = make_unique<Door>(topEdgeMid, false, false);
-    auto bottomDoor = make_unique<Door>(bottomEdgeMid, false, false);
-    auto leftDoor =
-        make_unique<Door>(leftEdgeMid, false, false, "dark_oak_door", "east");
-    auto rightDoor =
-        make_unique<Door>(rightEdgeMid, false, false, "dark_oak_door", "east");
+        auto topDoor = make_unique<Door>(topEdgeMid, false, false);
+        auto bottomDoor = make_unique<Door>(bottomEdgeMid, false, false);
+        auto leftDoor = make_unique<Door>(
+            leftEdgeMid, false, false, "dark_oak_door", "east");
+        auto rightDoor = make_unique<Door>(
+            rightEdgeMid, false, false, "dark_oak_door", "east");
 
-    this->addBlock(move(topDoor));
-    this->addBlock(move(bottomDoor));
-    this->addBlock(move(leftDoor));
-    this->addBlock(move(rightDoor));
+        this->addBlock(move(topDoor));
+        this->addBlock(move(bottomDoor));
+        this->addBlock(move(leftDoor));
+        this->addBlock(move(rightDoor));
+    }
 
     for (auto& aabb : this->aabbList) {
         aabb->generateAllDoorsInAABB();
     }
 }
-
 
 void AABB::recalculateOverallBoundary() {
 
