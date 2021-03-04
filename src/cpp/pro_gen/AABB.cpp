@@ -17,7 +17,7 @@ AABB::AABB(string id,
       bottomRight{bottomRight}, isHollow{isHollow}, hasRoof{hasRoof} {}
 
 AABB::AABB(string id)
-    : id{id}, type{"blank_canvas"}, material{"air"}, topLeft(0, 0, 0),
+    : id{id}, type{"blank_canvas"}, material{"blank"}, topLeft(0, 0, 0),
       bottomRight(0, 0, 0), isHollow{true}, hasRoof{false} {}
 
 void AABB::addAABB(unique_ptr<AABB> aabb) {
