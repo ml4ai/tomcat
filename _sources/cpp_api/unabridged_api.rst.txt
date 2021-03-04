@@ -53,11 +53,6 @@ Classes and Structs
 .. toctree::
    :maxdepth: 5
 
-   classGroup.rst
-
-.. toctree::
-   :maxdepth: 5
-
    classLever.rst
 
 .. toctree::
@@ -196,11 +191,6 @@ Typedefs
    :maxdepth: 5
 
    typedef_Entity_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   typedef_Group_8cpp_1ab701e3ac61a85b337ec5c1abaad6742d.rst
 
 .. toctree::
    :maxdepth: 5

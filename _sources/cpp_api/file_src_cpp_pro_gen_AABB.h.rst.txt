@@ -31,6 +31,8 @@ Includes
 
 - ``Block.h`` (:ref:`file_src_cpp_pro_gen_Block.h`)
 
+- ``Connection.h`` (:ref:`file_src_cpp_pro_gen_Connection.h`)
+
 - ``Door.h`` (:ref:`file_src_cpp_pro_gen_Door.h`)
 
 - ``Entity.h`` (:ref:`file_src_cpp_pro_gen_Entity.h`)
@@ -53,7 +55,7 @@ Included By
 
 - :ref:`file_src_cpp_pro_gen_World.h`
 
-- :ref:`file_src_cpp_pro_gen_Group.h`
+- :ref:`file_src_cpp_pro_gen_ZombieworldGroup.h`
 
 - :ref:`file_src_cpp_pro_gen_ZombieworldPit.h`
 

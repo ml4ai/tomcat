@@ -178,7 +178,7 @@
 <div class="section" id="base-type">
 <h3>Base Type<a class="headerlink" href="#base-type" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">public</span> <span class="pre">Group</span></code> (<a class="reference internal" href="classGroup.html#exhale-class-classgroup"><span class="std std-ref">Class Group</span></a>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">public</span> <span class="pre">AABB</span></code> (<a class="reference internal" href="classAABB.html#exhale-class-classaabb"><span class="std std-ref">Class AABB</span></a>)</p></li>
 </ul>
 </div>
 </div>
@@ -186,14 +186,14 @@
 <h2>Class Documentation<a class="headerlink" href="#class-documentation" title="Permalink to this headline">¶</a></h2>
 <dl class="cpp class">
 <dt id="_CPPv416ZombieworldGroup">
-<span id="_CPPv316ZombieworldGroup"></span><span id="_CPPv216ZombieworldGroup"></span><span id="ZombieworldGroup"></span><span class="target" id="classZombieworldGroup"></span><em class="property">class </em><code class="sig-name descname">ZombieworldGroup</code> : <em class="property">public</em> <a class="reference internal" href="classGroup.html#_CPPv45Group" title="Group">Group</a><a class="headerlink" href="#_CPPv416ZombieworldGroup" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv316ZombieworldGroup"></span><span id="_CPPv216ZombieworldGroup"></span><span id="ZombieworldGroup"></span><span class="target" id="classZombieworldGroup"></span><em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">ZombieworldGroup</span></code> <span class="pre">:</span> <em class="property"><span class="pre">public</span></em> <a class="reference internal" href="classAABB.html#_CPPv44AABB" title="AABB"><span class="pre">AABB</span></a><a class="headerlink" href="#_CPPv416ZombieworldGroup" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>This class represents a very specific building that is used in the Zombie mission. </p>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric">Public Functions</p>
 <dl class="cpp function">
 <dt id="_CPPv4N16ZombieworldGroup16ZombieworldGroupENSt6stringER3PosR3Pos">
-<span id="_CPPv3N16ZombieworldGroup16ZombieworldGroupENSt6stringER3PosR3Pos"></span><span id="_CPPv2N16ZombieworldGroup16ZombieworldGroupENSt6stringER3PosR3Pos"></span><span id="ZombieworldGroup::ZombieworldGroup__ss.PosR.PosR"></span><span class="target" id="classZombieworldGroup_1a3dbd20b1e5dee6ae273b3cf5d867345f"></span><code class="sig-name descname">ZombieworldGroup</code><span class="sig-paren">(</span>std::string <em>id</em>, <a class="reference internal" href="classPos.html#_CPPv43Pos" title="Pos">Pos</a> &amp;<em>firstTopLeft</em>, <a class="reference internal" href="classPos.html#_CPPv43Pos" title="Pos">Pos</a> &amp;<em>firstBottomRight</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16ZombieworldGroup16ZombieworldGroupENSt6stringER3PosR3Pos" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Construct a new Zombieworld <a class="reference internal" href="classGroup.html#classGroup"><span class="std std-ref">Group</span></a> object. </p>
+<span id="_CPPv3N16ZombieworldGroup16ZombieworldGroupENSt6stringER3PosR3Pos"></span><span id="_CPPv2N16ZombieworldGroup16ZombieworldGroupENSt6stringER3PosR3Pos"></span><span id="ZombieworldGroup::ZombieworldGroup__ss.PosR.PosR"></span><span class="target" id="classZombieworldGroup_1a3dbd20b1e5dee6ae273b3cf5d867345f"></span><code class="sig-name descname"><span class="pre">ZombieworldGroup</span></code><span class="sig-paren">(</span><span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <em><span class="pre">id</span></em>, <a class="reference internal" href="classPos.html#_CPPv43Pos" title="Pos"><span class="pre">Pos</span></a> <span class="pre">&amp;</span><em><span class="pre">firstTopLeft</span></em>, <a class="reference internal" href="classPos.html#_CPPv43Pos" title="Pos"><span class="pre">Pos</span></a> <span class="pre">&amp;</span><em><span class="pre">firstBottomRight</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16ZombieworldGroup16ZombieworldGroupENSt6stringER3PosR3Pos" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Construct a new Zombieworld Group object. </p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">id</span></code>: The id to give this group. </p></li>
@@ -207,8 +207,8 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N16ZombieworldGroupD0Ev">
-<span id="_CPPv3N16ZombieworldGroupD0Ev"></span><span id="_CPPv2N16ZombieworldGroupD0Ev"></span><span id="ZombieworldGroup::~ZombieworldGroup"></span><span class="target" id="classZombieworldGroup_1a0c26d9b215ed542ef530886ac6b66b35"></span><code class="sig-name descname">~ZombieworldGroup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16ZombieworldGroupD0Ev" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Destroy the Zombieworld <a class="reference internal" href="classGroup.html#classGroup"><span class="std std-ref">Group</span></a> object. </p>
+<span id="_CPPv3N16ZombieworldGroupD0Ev"></span><span id="_CPPv2N16ZombieworldGroupD0Ev"></span><span id="ZombieworldGroup::~ZombieworldGroup"></span><span class="target" id="classZombieworldGroup_1a0c26d9b215ed542ef530886ac6b66b35"></span><code class="sig-name descname"><span class="pre">~ZombieworldGroup</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N16ZombieworldGroupD0Ev" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Destroy the Zombieworld Group object. </p>
 </dd></dl>
 
 </div>

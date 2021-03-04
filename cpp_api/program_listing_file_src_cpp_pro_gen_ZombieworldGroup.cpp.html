@@ -172,7 +172,7 @@
 <span class="n">ZombieworldGroup</span><span class="o">::</span><span class="n">ZombieworldGroup</span><span class="p">(</span><span class="n">string</span> <span class="n">id</span><span class="p">,</span>
                                    <span class="n">Pos</span><span class="o">&amp;</span> <span class="n">firstTopLeft</span><span class="p">,</span>
                                    <span class="n">Pos</span><span class="o">&amp;</span> <span class="n">firstBottomRight</span><span class="p">)</span>
-    <span class="o">:</span> <span class="n">Group</span><span class="p">(</span><span class="n">id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="o">:</span> <span class="n">AABB</span><span class="p">(</span><span class="n">id</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">this</span><span class="o">-&gt;</span><span class="n">decorate</span><span class="p">(</span><span class="n">firstTopLeft</span><span class="p">,</span> <span class="n">firstBottomRight</span><span class="p">);</span>
 <span class="p">}</span>
 
@@ -185,7 +185,7 @@
 <span class="p">}</span>
 
 <span class="kt">void</span> <span class="n">ZombieworldGroup</span><span class="o">::</span><span class="n">addEntities</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">auto</span> <span class="n">aabbTwo</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getAABB</span><span class="p">(</span><span class="s">&quot;2&quot;</span><span class="p">);</span>
+    <span class="k">auto</span> <span class="n">aabbTwo</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getSubAABB</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">id</span> <span class="o">+</span> <span class="s">&quot;_internal_room_2&quot;</span><span class="p">);</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">aabbTwo</span> <span class="o">!=</span> <span class="k">nullptr</span><span class="p">)</span> <span class="p">{</span>
 
@@ -195,7 +195,7 @@
         <span class="p">(</span><span class="o">*</span><span class="n">aabbTwo</span><span class="p">).</span><span class="n">addEntity</span><span class="p">(</span><span class="n">move</span><span class="p">(</span><span class="n">curEntity</span><span class="p">));</span>
     <span class="p">}</span>
 
-    <span class="k">auto</span> <span class="n">aabbOne</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getAABB</span><span class="p">(</span><span class="s">&quot;1&quot;</span><span class="p">);</span> <span class="c1">// 1 sub AABB definitely exists</span>
+    <span class="k">auto</span> <span class="n">aabbOne</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getSubAABB</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">id</span> <span class="o">+</span> <span class="s">&quot;_internal_room_1&quot;</span><span class="p">);</span> <span class="c1">// This room definitely exists</span>
     <span class="kt">int</span> <span class="n">sizeY</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="n">aabbOne</span><span class="p">).</span><span class="n">getSizeY</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
     <span class="n">Pos</span> <span class="n">randomPos</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="n">aabbOne</span><span class="p">).</span><span class="n">getRandomPos</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">gen</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sizeY</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
     <span class="k">auto</span> <span class="n">curEntity</span> <span class="o">=</span> <span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Entity</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;zombie&quot;</span><span class="p">,</span> <span class="n">randomPos</span><span class="p">);</span>
@@ -211,7 +211,7 @@
 <span class="kt">void</span> <span class="n">ZombieworldGroup</span><span class="o">::</span><span class="n">createAABB</span><span class="p">(</span><span class="n">Pos</span><span class="o">&amp;</span> <span class="n">firstTopLeft</span><span class="p">,</span> <span class="n">Pos</span><span class="o">&amp;</span> <span class="n">firstBottomRight</span><span class="p">)</span> <span class="p">{</span>
 
     <span class="k">auto</span> <span class="n">first</span> <span class="o">=</span> <span class="n">make_unique</span><span class="o">&lt;</span><span class="n">AABB</span><span class="o">&gt;</span><span class="p">(</span>
-        <span class="s">&quot;1&quot;</span><span class="p">,</span> <span class="s">&quot;room&quot;</span><span class="p">,</span> <span class="s">&quot;planks&quot;</span><span class="p">,</span> <span class="n">firstTopLeft</span><span class="p">,</span> <span class="n">firstBottomRight</span><span class="p">,</span> <span class="nb">true</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">id</span> <span class="o">+</span> <span class="s">&quot;_internal_room_1&quot;</span><span class="p">,</span> <span class="s">&quot;room&quot;</span><span class="p">,</span> <span class="s">&quot;planks&quot;</span><span class="p">,</span> <span class="n">firstTopLeft</span><span class="p">,</span> <span class="n">firstBottomRight</span><span class="p">,</span> <span class="nb">true</span><span class="p">,</span> <span class="nb">true</span><span class="p">);</span>
     <span class="k">this</span><span class="o">-&gt;</span><span class="n">addAABB</span><span class="p">(</span><span class="n">move</span><span class="p">(</span><span class="n">first</span><span class="p">));</span>
 
     <span class="n">string</span> <span class="n">id</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getID</span><span class="p">();</span>
@@ -226,7 +226,7 @@
         <span class="n">secondBottomRight</span><span class="p">.</span><span class="n">shiftX</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
         <span class="n">secondBottomRight</span><span class="p">.</span><span class="n">shiftZ</span><span class="p">(</span><span class="mi">9</span><span class="p">);</span>
 
-        <span class="k">auto</span> <span class="n">second</span> <span class="o">=</span> <span class="n">make_unique</span><span class="o">&lt;</span><span class="n">AABB</span><span class="o">&gt;</span><span class="p">(</span><span class="s">&quot;2&quot;</span><span class="p">,</span>
+        <span class="k">auto</span> <span class="n">second</span> <span class="o">=</span> <span class="n">make_unique</span><span class="o">&lt;</span><span class="n">AABB</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">id</span> <span class="o">+</span> <span class="s">&quot;_internal_room_2&quot;</span><span class="p">,</span>
                                         <span class="s">&quot;room&quot;</span><span class="p">,</span>
                                         <span class="s">&quot;planks&quot;</span><span class="p">,</span>
                                         <span class="n">secondTopLeft</span><span class="p">,</span>
@@ -238,7 +238,7 @@
 <span class="p">}</span>
 
 <span class="kt">void</span> <span class="n">ZombieworldGroup</span><span class="o">::</span><span class="n">addLevers</span><span class="p">()</span> <span class="p">{</span>
-    <span class="k">auto</span> <span class="n">aabbTwo</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getAABB</span><span class="p">(</span><span class="s">&quot;2&quot;</span><span class="p">);</span>
+    <span class="k">auto</span> <span class="n">aabbTwo</span> <span class="o">=</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">getSubAABB</span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">id</span> <span class="o">+</span> <span class="s">&quot;_internal_room_2&quot;</span><span class="p">);</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">aabbTwo</span> <span class="o">!=</span> <span class="k">nullptr</span><span class="p">)</span> <span class="p">{</span>
 
@@ -256,7 +256,7 @@
             <span class="s">&quot;c1&quot;</span><span class="p">,</span> <span class="s">&quot;entrance to second room&quot;</span><span class="p">,</span> <span class="s">&quot;door&quot;</span><span class="p">,</span> <span class="s">&quot;rectangle&quot;</span><span class="p">);</span>
         <span class="k">this</span><span class="o">-&gt;</span><span class="n">addConnection</span><span class="p">(</span><span class="n">move</span><span class="p">(</span><span class="n">connection</span><span class="p">));</span>
 
-        <span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">connectedLocations</span><span class="p">{</span><span class="s">&quot;1&quot;</span><span class="p">,</span> <span class="s">&quot;2&quot;</span><span class="p">};</span>
+        <span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">connectedLocations</span><span class="p">{</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">id</span> <span class="o">+</span> <span class="s">&quot;_internal_room_1&quot;</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">id</span> <span class="o">+</span> <span class="s">&quot;_internal_room_2&quot;</span><span class="p">};</span>
         <span class="k">this</span><span class="o">-&gt;</span><span class="n">getConnectionList</span><span class="p">().</span><span class="n">at</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">addManyConnectedLocations</span><span class="p">(</span>
             <span class="n">connectedLocations</span><span class="p">);</span>
 

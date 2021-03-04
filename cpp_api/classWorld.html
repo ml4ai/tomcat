@@ -187,7 +187,7 @@
 <h2>Class Documentation<a class="headerlink" href="#class-documentation" title="Permalink to this headline">¶</a></h2>
 <dl class="cpp class">
 <dt id="_CPPv45World">
-<span id="_CPPv35World"></span><span id="_CPPv25World"></span><span id="World"></span><span class="target" id="classWorld"></span><em class="property">class </em><code class="sig-name descname">World</code><a class="headerlink" href="#_CPPv45World" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv35World"></span><span id="_CPPv25World"></span><span id="World"></span><span class="target" id="classWorld"></span><em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">World</span></code><a class="headerlink" href="#_CPPv45World" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>This file defines the members and methods implemented as part of the <a class="reference internal" href="#classWorld"><span class="std std-ref">World</span></a> class. </p>
 <p>This class represents a Minecraft world as a list of axis aligned bounding boxes and blocks. </p>
 <p>Subclassed by <a class="reference internal" href="classGridWorld.html#classGridWorld"><span class="std std-ref">GridWorld</span></a>, <a class="reference internal" href="classZombieWorld.html#classZombieWorld"><span class="std std-ref">ZombieWorld</span></a></p>
@@ -195,7 +195,7 @@
 <p class="breathe-sectiondef-title rubric">Public Functions</p>
 <dl class="cpp function">
 <dt id="_CPPv4N5World11getAABBListEv">
-<span id="_CPPv3N5World11getAABBListEv"></span><span id="_CPPv2N5World11getAABBListEv"></span><span id="World::getAABBList"></span><span class="target" id="classWorld_1ac30c451b9ec28028e513f1ff00414d8f"></span>std::vector&lt;std::unique_ptr&lt;<a class="reference internal" href="classAABB.html#_CPPv44AABB" title="AABB">AABB</a>&gt;&gt; &amp;<code class="sig-name descname">getAABBList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World11getAABBListEv" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N5World11getAABBListEv"></span><span id="_CPPv2N5World11getAABBListEv"></span><span id="World::getAABBList"></span><span class="target" id="classWorld_1ac30c451b9ec28028e513f1ff00414d8f"></span><span class="pre">std</span><span class="pre">::</span><span class="pre">vector</span><span class="pre">&lt;</span><span class="pre">std</span><span class="pre">::</span><span class="pre">unique_ptr</span><span class="pre">&lt;</span><a class="reference internal" href="classAABB.html#_CPPv44AABB" title="AABB"><span class="pre">AABB</span></a><span class="pre">&gt;</span><span class="pre">&gt;</span> <span class="pre">&amp;</span><code class="sig-name descname"><span class="pre">getAABBList</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World11getAABBListEv" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Returns the vector that holds the AABBs. Do not transfer ownership of any unique_ptr as it may cause scope issues. </p>
 <p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p>vector&lt;AABB*&gt;&amp; The <a class="reference internal" href="classAABB.html#classAABB"><span class="std std-ref">AABB</span></a> list. </p>
@@ -206,7 +206,7 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N5World12getBlockListEv">
-<span id="_CPPv3N5World12getBlockListEv"></span><span id="_CPPv2N5World12getBlockListEv"></span><span id="World::getBlockList"></span><span class="target" id="classWorld_1acbee725bea79419a3b557d0f5d111c81"></span>std::vector&lt;std::unique_ptr&lt;<a class="reference internal" href="classBlock.html#_CPPv45Block" title="Block">Block</a>&gt;&gt; &amp;<code class="sig-name descname">getBlockList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World12getBlockListEv" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N5World12getBlockListEv"></span><span id="_CPPv2N5World12getBlockListEv"></span><span id="World::getBlockList"></span><span class="target" id="classWorld_1acbee725bea79419a3b557d0f5d111c81"></span><span class="pre">std</span><span class="pre">::</span><span class="pre">vector</span><span class="pre">&lt;</span><span class="pre">std</span><span class="pre">::</span><span class="pre">unique_ptr</span><span class="pre">&lt;</span><a class="reference internal" href="classBlock.html#_CPPv45Block" title="Block"><span class="pre">Block</span></a><span class="pre">&gt;</span><span class="pre">&gt;</span> <span class="pre">&amp;</span><code class="sig-name descname"><span class="pre">getBlockList</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World12getBlockListEv" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Returns the vector that holds the Blocks. Do not transfer ownership of any unique_ptr as it may cause scope issues. </p>
 <p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p>vector&lt;Block*&gt;&amp; The <a class="reference internal" href="classBlock.html#classBlock"><span class="std std-ref">Block</span></a> list. </p>
@@ -217,7 +217,7 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N5World13getEntityListEv">
-<span id="_CPPv3N5World13getEntityListEv"></span><span id="_CPPv2N5World13getEntityListEv"></span><span id="World::getEntityList"></span><span class="target" id="classWorld_1a634dcfbd4ca9c5e59db703382fb45949"></span>std::vector&lt;std::unique_ptr&lt;<a class="reference internal" href="classEntity.html#_CPPv46Entity" title="Entity">Entity</a>&gt;&gt; &amp;<code class="sig-name descname">getEntityList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World13getEntityListEv" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N5World13getEntityListEv"></span><span id="_CPPv2N5World13getEntityListEv"></span><span id="World::getEntityList"></span><span class="target" id="classWorld_1a634dcfbd4ca9c5e59db703382fb45949"></span><span class="pre">std</span><span class="pre">::</span><span class="pre">vector</span><span class="pre">&lt;</span><span class="pre">std</span><span class="pre">::</span><span class="pre">unique_ptr</span><span class="pre">&lt;</span><a class="reference internal" href="classEntity.html#_CPPv46Entity" title="Entity"><span class="pre">Entity</span></a><span class="pre">&gt;</span><span class="pre">&gt;</span> <span class="pre">&amp;</span><code class="sig-name descname"><span class="pre">getEntityList</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World13getEntityListEv" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Returns the <a class="reference internal" href="classEntity.html#classEntity"><span class="std std-ref">Entity</span></a> vector for this <a class="reference internal" href="#classWorld"><span class="std std-ref">World</span></a>. Do not transfer ownership of any unique_ptr as it may cause scope issues. </p>
 <p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p>std::vector&lt;Entity*&gt;&amp; The <a class="reference internal" href="classEntity.html#classEntity"><span class="std std-ref">Entity</span></a> list. </p>
@@ -228,7 +228,7 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N5World13getObjectListEv">
-<span id="_CPPv3N5World13getObjectListEv"></span><span id="_CPPv2N5World13getObjectListEv"></span><span id="World::getObjectList"></span><span class="target" id="classWorld_1a645397eaadd5c59c4790ffdef73d836a"></span>std::vector&lt;std::unique_ptr&lt;<a class="reference internal" href="classObject.html#_CPPv46Object" title="Object">Object</a>&gt;&gt; &amp;<code class="sig-name descname">getObjectList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World13getObjectListEv" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N5World13getObjectListEv"></span><span id="_CPPv2N5World13getObjectListEv"></span><span id="World::getObjectList"></span><span class="target" id="classWorld_1a645397eaadd5c59c4790ffdef73d836a"></span><span class="pre">std</span><span class="pre">::</span><span class="pre">vector</span><span class="pre">&lt;</span><span class="pre">std</span><span class="pre">::</span><span class="pre">unique_ptr</span><span class="pre">&lt;</span><a class="reference internal" href="classObject.html#_CPPv46Object" title="Object"><span class="pre">Object</span></a><span class="pre">&gt;</span><span class="pre">&gt;</span> <span class="pre">&amp;</span><code class="sig-name descname"><span class="pre">getObjectList</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World13getObjectListEv" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Returns the <a class="reference internal" href="classObject.html#classObject"><span class="std std-ref">Object</span></a> vector for this <a class="reference internal" href="#classWorld"><span class="std std-ref">World</span></a>. Do not transfer ownership of any unique_ptr as it may cause scope issues. </p>
 <p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p>std::vector&lt;Object*&gt;&amp; The object list. </p>
@@ -239,7 +239,7 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N5World17getConnectionListEv">
-<span id="_CPPv3N5World17getConnectionListEv"></span><span id="_CPPv2N5World17getConnectionListEv"></span><span id="World::getConnectionList"></span><span class="target" id="classWorld_1a4632e8be5e3c372b1a4aea6ac7f76b27"></span>std::vector&lt;std::unique_ptr&lt;<a class="reference internal" href="classConnection.html#_CPPv410Connection" title="Connection">Connection</a>&gt;&gt; &amp;<code class="sig-name descname">getConnectionList</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World17getConnectionListEv" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N5World17getConnectionListEv"></span><span id="_CPPv2N5World17getConnectionListEv"></span><span id="World::getConnectionList"></span><span class="target" id="classWorld_1a4632e8be5e3c372b1a4aea6ac7f76b27"></span><span class="pre">std</span><span class="pre">::</span><span class="pre">vector</span><span class="pre">&lt;</span><span class="pre">std</span><span class="pre">::</span><span class="pre">unique_ptr</span><span class="pre">&lt;</span><a class="reference internal" href="classConnection.html#_CPPv410Connection" title="Connection"><span class="pre">Connection</span></a><span class="pre">&gt;</span><span class="pre">&gt;</span> <span class="pre">&amp;</span><code class="sig-name descname"><span class="pre">getConnectionList</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World17getConnectionListEv" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Returns the <a class="reference internal" href="classConnection.html#classConnection"><span class="std std-ref">Connection</span></a> vector for this <a class="reference internal" href="#classWorld"><span class="std std-ref">World</span></a>. Do not transfer ownership of any unique_ptr as it may cause scope issues. </p>
 <p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p>std::vector&lt;Connection*&gt;&amp; The connection list. </p>
@@ -250,7 +250,7 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N5World7addAABBENSt10unique_ptrI4AABBEE">
-<span id="_CPPv3N5World7addAABBENSt10unique_ptrI4AABBEE"></span><span id="_CPPv2N5World7addAABBENSt10unique_ptrI4AABBEE"></span><span id="World::addAABB__std::unique_ptr:AABB:"></span><span class="target" id="classWorld_1a0c158d83bbc8db34c971d8b9ebca866a"></span>void <code class="sig-name descname">addAABB</code><span class="sig-paren">(</span>std::unique_ptr&lt;<a class="reference internal" href="classAABB.html#_CPPv44AABB" title="AABB">AABB</a>&gt; <em>aabb</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World7addAABBENSt10unique_ptrI4AABBEE" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N5World7addAABBENSt10unique_ptrI4AABBEE"></span><span id="_CPPv2N5World7addAABBENSt10unique_ptrI4AABBEE"></span><span id="World::addAABB__std::unique_ptr:AABB:"></span><span class="target" id="classWorld_1a0c158d83bbc8db34c971d8b9ebca866a"></span><span class="pre">void</span> <code class="sig-name descname"><span class="pre">addAABB</span></code><span class="sig-paren">(</span><span class="pre">std</span><span class="pre">::</span><span class="pre">unique_ptr</span><span class="pre">&lt;</span><a class="reference internal" href="classAABB.html#_CPPv44AABB" title="AABB"><span class="pre">AABB</span></a><span class="pre">&gt;</span> <em><span class="pre">aabb</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World7addAABBENSt10unique_ptrI4AABBEE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Add an <a class="reference internal" href="classAABB.html#classAABB"><span class="std std-ref">AABB</span></a> to the vector of <a class="reference internal" href="classAABB.html#classAABB"><span class="std std-ref">AABB</span></a> held inside the world. </p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
@@ -263,7 +263,7 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N5World9addEntityENSt10unique_ptrI6EntityEE">
-<span id="_CPPv3N5World9addEntityENSt10unique_ptrI6EntityEE"></span><span id="_CPPv2N5World9addEntityENSt10unique_ptrI6EntityEE"></span><span id="World::addEntity__std::unique_ptr:Entity:"></span><span class="target" id="classWorld_1aa9a86a9c6fe5e757a0457e32fe60059c"></span>void <code class="sig-name descname">addEntity</code><span class="sig-paren">(</span>std::unique_ptr&lt;<a class="reference internal" href="classEntity.html#_CPPv46Entity" title="Entity">Entity</a>&gt; <em>entity</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World9addEntityENSt10unique_ptrI6EntityEE" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N5World9addEntityENSt10unique_ptrI6EntityEE"></span><span id="_CPPv2N5World9addEntityENSt10unique_ptrI6EntityEE"></span><span id="World::addEntity__std::unique_ptr:Entity:"></span><span class="target" id="classWorld_1aa9a86a9c6fe5e757a0457e32fe60059c"></span><span class="pre">void</span> <code class="sig-name descname"><span class="pre">addEntity</span></code><span class="sig-paren">(</span><span class="pre">std</span><span class="pre">::</span><span class="pre">unique_ptr</span><span class="pre">&lt;</span><a class="reference internal" href="classEntity.html#_CPPv46Entity" title="Entity"><span class="pre">Entity</span></a><span class="pre">&gt;</span> <em><span class="pre">entity</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World9addEntityENSt10unique_ptrI6EntityEE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Add an <a class="reference internal" href="classEntity.html#classEntity"><span class="std std-ref">Entity</span></a> for this world to keep track of. </p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
@@ -276,7 +276,7 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N5World8addBlockENSt10unique_ptrI5BlockEE">
-<span id="_CPPv3N5World8addBlockENSt10unique_ptrI5BlockEE"></span><span id="_CPPv2N5World8addBlockENSt10unique_ptrI5BlockEE"></span><span id="World::addBlock__std::unique_ptr:Block:"></span><span class="target" id="classWorld_1a754bb624e9b829fdf710370b46870bf0"></span>void <code class="sig-name descname">addBlock</code><span class="sig-paren">(</span>std::unique_ptr&lt;<a class="reference internal" href="classBlock.html#_CPPv45Block" title="Block">Block</a>&gt; <em>block</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World8addBlockENSt10unique_ptrI5BlockEE" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N5World8addBlockENSt10unique_ptrI5BlockEE"></span><span id="_CPPv2N5World8addBlockENSt10unique_ptrI5BlockEE"></span><span id="World::addBlock__std::unique_ptr:Block:"></span><span class="target" id="classWorld_1a754bb624e9b829fdf710370b46870bf0"></span><span class="pre">void</span> <code class="sig-name descname"><span class="pre">addBlock</span></code><span class="sig-paren">(</span><span class="pre">std</span><span class="pre">::</span><span class="pre">unique_ptr</span><span class="pre">&lt;</span><a class="reference internal" href="classBlock.html#_CPPv45Block" title="Block"><span class="pre">Block</span></a><span class="pre">&gt;</span> <em><span class="pre">block</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World8addBlockENSt10unique_ptrI5BlockEE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Add a <a class="reference internal" href="classBlock.html#classBlock"><span class="std std-ref">Block</span></a> to the vector of <a class="reference internal" href="classBlock.html#classBlock"><span class="std std-ref">Block</span></a> held inside the world. </p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
@@ -289,7 +289,7 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N5World9addObjectENSt10unique_ptrI6ObjectEE">
-<span id="_CPPv3N5World9addObjectENSt10unique_ptrI6ObjectEE"></span><span id="_CPPv2N5World9addObjectENSt10unique_ptrI6ObjectEE"></span><span id="World::addObject__std::unique_ptr:Object:"></span><span class="target" id="classWorld_1ab5216483870de832328503412aac4d64"></span>void <code class="sig-name descname">addObject</code><span class="sig-paren">(</span>std::unique_ptr&lt;<a class="reference internal" href="classObject.html#_CPPv46Object" title="Object">Object</a>&gt; <em>object</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World9addObjectENSt10unique_ptrI6ObjectEE" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N5World9addObjectENSt10unique_ptrI6ObjectEE"></span><span id="_CPPv2N5World9addObjectENSt10unique_ptrI6ObjectEE"></span><span id="World::addObject__std::unique_ptr:Object:"></span><span class="target" id="classWorld_1ab5216483870de832328503412aac4d64"></span><span class="pre">void</span> <code class="sig-name descname"><span class="pre">addObject</span></code><span class="sig-paren">(</span><span class="pre">std</span><span class="pre">::</span><span class="pre">unique_ptr</span><span class="pre">&lt;</span><a class="reference internal" href="classObject.html#_CPPv46Object" title="Object"><span class="pre">Object</span></a><span class="pre">&gt;</span> <em><span class="pre">object</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World9addObjectENSt10unique_ptrI6ObjectEE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Add an object to the vector of object held inside the world. </p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
@@ -302,7 +302,7 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N5World13addConnectionENSt10unique_ptrI10ConnectionEE">
-<span id="_CPPv3N5World13addConnectionENSt10unique_ptrI10ConnectionEE"></span><span id="_CPPv2N5World13addConnectionENSt10unique_ptrI10ConnectionEE"></span><span id="World::addConnection__std::unique_ptr:Connection:"></span><span class="target" id="classWorld_1a6a86d205693cef2c96fa0177e4e59d6f"></span>void <code class="sig-name descname">addConnection</code><span class="sig-paren">(</span>std::unique_ptr&lt;<a class="reference internal" href="classConnection.html#_CPPv410Connection" title="Connection">Connection</a>&gt; <em>connection</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World13addConnectionENSt10unique_ptrI10ConnectionEE" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N5World13addConnectionENSt10unique_ptrI10ConnectionEE"></span><span id="_CPPv2N5World13addConnectionENSt10unique_ptrI10ConnectionEE"></span><span id="World::addConnection__std::unique_ptr:Connection:"></span><span class="target" id="classWorld_1a6a86d205693cef2c96fa0177e4e59d6f"></span><span class="pre">void</span> <code class="sig-name descname"><span class="pre">addConnection</span></code><span class="sig-paren">(</span><span class="pre">std</span><span class="pre">::</span><span class="pre">unique_ptr</span><span class="pre">&lt;</span><a class="reference internal" href="classConnection.html#_CPPv410Connection" title="Connection"><span class="pre">Connection</span></a><span class="pre">&gt;</span> <em><span class="pre">connection</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World13addConnectionENSt10unique_ptrI10ConnectionEE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Add an connection to the vector of connection held inside the world. </p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
@@ -315,7 +315,7 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N5World17toLowLevelMapJSONEv">
-<span id="_CPPv3N5World17toLowLevelMapJSONEv"></span><span id="_CPPv2N5World17toLowLevelMapJSONEv"></span><span id="World::toLowLevelMapJSON"></span><span class="target" id="classWorld_1ab3202a444cc92af6a03f1c69d78a67d1"></span>std::string <code class="sig-name descname">toLowLevelMapJSON</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World17toLowLevelMapJSONEv" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N5World17toLowLevelMapJSONEv"></span><span id="_CPPv2N5World17toLowLevelMapJSONEv"></span><span id="World::toLowLevelMapJSON"></span><span class="target" id="classWorld_1ab3202a444cc92af6a03f1c69d78a67d1"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <code class="sig-name descname"><span class="pre">toLowLevelMapJSON</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World17toLowLevelMapJSONEv" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Converts the world into its alternate JSON representation with each entry indented by 4 and returns the string representation of it. </p>
 <p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p>string The JSON as a string. </p>
@@ -326,7 +326,7 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N5World17toSemanticMapJSONEv">
-<span id="_CPPv3N5World17toSemanticMapJSONEv"></span><span id="_CPPv2N5World17toSemanticMapJSONEv"></span><span id="World::toSemanticMapJSON"></span><span class="target" id="classWorld_1a99a94ede4e8f747436dd1579e73f071b"></span>std::string <code class="sig-name descname">toSemanticMapJSON</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World17toSemanticMapJSONEv" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N5World17toSemanticMapJSONEv"></span><span id="_CPPv2N5World17toSemanticMapJSONEv"></span><span id="World::toSemanticMapJSON"></span><span class="target" id="classWorld_1a99a94ede4e8f747436dd1579e73f071b"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <code class="sig-name descname"><span class="pre">toSemanticMapJSON</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World17toSemanticMapJSONEv" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Converts the world into a JSON representation with each entry indented by 4 and returns the string representation of it. </p>
 <p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p>string The JSON as a string. </p>
@@ -337,7 +337,7 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N5World11writeToFileENSt6stringENSt6stringE">
-<span id="_CPPv3N5World11writeToFileENSt6stringENSt6stringE"></span><span id="_CPPv2N5World11writeToFileENSt6stringENSt6stringE"></span><span id="World::writeToFile__ss.ss"></span><span class="target" id="classWorld_1afa54ea20cfe6133bd27671f1193d8a4f"></span>void <code class="sig-name descname">writeToFile</code><span class="sig-paren">(</span>std::string <em>jsonPath</em>, std::string <em>lowLevelMapJSONPath</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World11writeToFileENSt6stringENSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N5World11writeToFileENSt6stringENSt6stringE"></span><span id="_CPPv2N5World11writeToFileENSt6stringENSt6stringE"></span><span id="World::writeToFile__ss.ss"></span><span class="target" id="classWorld_1afa54ea20cfe6133bd27671f1193d8a4f"></span><span class="pre">void</span> <code class="sig-name descname"><span class="pre">writeToFile</span></code><span class="sig-paren">(</span><span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <em><span class="pre">jsonPath</span></em>, <span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <em><span class="pre">lowLevelMapJSONPath</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World11writeToFileENSt6stringENSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Writes the world’s JSON and alternate JSON output to the given filepaths. </p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
@@ -351,13 +351,13 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N5World5WorldEv">
-<span id="_CPPv3N5World5WorldEv"></span><span id="_CPPv2N5World5WorldEv"></span><span id="World::World"></span><span class="target" id="classWorld_1afa39d4e6f714a7a3691ac0c656f5e8a8"></span><code class="sig-name descname">World</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World5WorldEv" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N5World5WorldEv"></span><span id="_CPPv2N5World5WorldEv"></span><span id="World::World"></span><span class="target" id="classWorld_1afa39d4e6f714a7a3691ac0c656f5e8a8"></span><code class="sig-name descname"><span class="pre">World</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World5WorldEv" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Construct a new <a class="reference internal" href="#classWorld"><span class="std std-ref">World</span></a> object. </p>
 </dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv4N5World9getRandomEv">
-<span id="_CPPv3N5World9getRandomEv"></span><span id="_CPPv2N5World9getRandomEv"></span><span id="World::getRandom"></span><span class="target" id="classWorld_1a01b5fc55fe894ca643039f703898b0a2"></span>std::mt19937_64 &amp;<code class="sig-name descname">getRandom</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World9getRandomEv" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N5World9getRandomEv"></span><span id="_CPPv2N5World9getRandomEv"></span><span id="World::getRandom"></span><span class="target" id="classWorld_1a01b5fc55fe894ca643039f703898b0a2"></span><span class="pre">std</span><span class="pre">::</span><span class="pre">mt19937_64</span> <span class="pre">&amp;</span><code class="sig-name descname"><span class="pre">getRandom</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World9getRandomEv" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Get the random object used by this generator. </p>
 <p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p>std::mt19937_64&amp; The random object. </p>
@@ -368,7 +368,7 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N5World9setRandomEi">
-<span id="_CPPv3N5World9setRandomEi"></span><span id="_CPPv2N5World9setRandomEi"></span><span id="World::setRandom__i"></span><span class="target" id="classWorld_1a50d16c35a45be987974c4882fb4e9506"></span>void <code class="sig-name descname">setRandom</code><span class="sig-paren">(</span>int <em>seed</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World9setRandomEi" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N5World9setRandomEi"></span><span id="_CPPv2N5World9setRandomEi"></span><span id="World::setRandom__i"></span><span class="target" id="classWorld_1a50d16c35a45be987974c4882fb4e9506"></span><span class="pre">void</span> <code class="sig-name descname"><span class="pre">setRandom</span></code><span class="sig-paren">(</span><span class="pre">int</span> <em><span class="pre">seed</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5World9setRandomEi" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Set the seed the random object used by this class is initialized with. </p>
 <p><dl class="simple">
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
@@ -381,7 +381,7 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N5WorldD0Ev">
-<span id="_CPPv3N5WorldD0Ev"></span><span id="_CPPv2N5WorldD0Ev"></span><span id="World::~World"></span><span class="target" id="classWorld_1a8c73fba541a5817fff65147ba47cd827"></span><code class="sig-name descname">~World</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5WorldD0Ev" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N5WorldD0Ev"></span><span id="_CPPv2N5WorldD0Ev"></span><span id="World::~World"></span><span class="target" id="classWorld_1a8c73fba541a5817fff65147ba47cd827"></span><em class="property"><span class="pre">virtual</span></em> <code class="sig-name descname"><span class="pre">~World</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N5WorldD0Ev" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Destroy the <a class="reference internal" href="#classWorld"><span class="std std-ref">World</span></a> object. </p>
 </dd></dl>
 

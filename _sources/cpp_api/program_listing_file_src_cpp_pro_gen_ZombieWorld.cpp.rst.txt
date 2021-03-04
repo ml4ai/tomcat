@@ -25,27 +25,38 @@ Program Listing for File ZombieWorld.cpp
            uniform_int_distribution<> dist(1, 100);
            int rand = dist(gen);
    
-           // Choose between an air, water or lava pit
+           // Choose between a blank box, water or lava pit
            if (rand <= 25) {
+   
+                // A blank material type means nothing is placed
+                // Note that anytime I add this object, it'll have an id =  "blank_box"
+                // this won't be unique accross and is generally bad practice.
+                // However, I know that I will never need to uniquely reference this again
+                // so I didn't bother making it's id unique
+   
                auto zWorldPit =
-                   make_unique<ZombieworldPit>(to_string(idCtr), topLeft, "air");
+                   make_unique<ZombieworldPit>("blank_box", topLeft, "blank");
+   
                this->addAABB(move(zWorldPit));
            }
            else if (rand > 25 && rand <= 75) {
                auto zWorldPit = make_unique<ZombieworldPit>(
-                   to_string(idCtr), newTopLeft, "water");
+                   "pool_of_water_" + to_string(this->water_pool_count), newTopLeft, "water");
                this->addAABB(move(zWorldPit));
+               this->water_pool_count++;
            }
            else {
                auto zWorldPit = make_unique<ZombieworldPit>(
-                   to_string(idCtr), newTopLeft, "lava");
+                   "pool_of_lava_" + to_string(this->lava_pool_count), newTopLeft, "lava");
                this->addAABB(move(zWorldPit));
+               this->lava_pool_count++;
            }
        }
        else {
            auto zWorldGroup = make_unique<ZombieworldGroup>(
-               to_string(idCtr), topLeft, bottomRight);
+               "building_" + to_string(this->building_count), topLeft, bottomRight);
            this->addAABB(move(zWorldGroup));
+           this->building_count++;
        }
    }
    
@@ -58,8 +69,9 @@ Program Listing for File ZombieWorld.cpp
        Pos prevBottomRight(AABB_size, 3 + AABB_size / 2, AABB_size);
    
        auto firstAABB = make_unique<ZombieworldGroup>(
-           to_string(idCtr), prevTopLeft, prevBottomRight);
+           "building_"+to_string(this->building_count), prevTopLeft, prevBottomRight);
        this->addAABB(move(firstAABB));
+       this->building_count++;
    
        // Use relative coordinates for the "previous" AABB to generate the rest
        // at each step
@@ -126,7 +138,7 @@ Program Listing for File ZombieWorld.cpp
        boundaryBottomRight.setY(13);
        boundaryBottomRight.shiftZ(4);
    
-       auto boundary = make_unique<AABB>(to_string(0),
+       auto boundary = make_unique<AABB>("enclosing_boundary",
                                          "boundary",
                                          "cobblestone",
                                          boundaryTopLeft,
@@ -141,7 +153,7 @@ Program Listing for File ZombieWorld.cpp
        separator1TopLeft.shiftZ(-50);
        separator1TopLeft.setY(boundaryTopLeft.getY());
    
-       auto separator1 = make_unique<AABB>(to_string(-1),
+       auto separator1 = make_unique<AABB>("internal_separator_1",
                                            "wall",
                                            "cobblestone",
                                            separator1TopLeft,
@@ -161,7 +173,7 @@ Program Listing for File ZombieWorld.cpp
        separator2TopLeft.shiftX(-25);
        separator2TopLeft.setY(boundaryTopLeft.getY());
    
-       auto separator2 = make_unique<AABB>(to_string(-2),
+       auto separator2 = make_unique<AABB>("internal_separator_2",
                                            "wall",
                                            "cobblestone",
                                            separator2TopLeft,

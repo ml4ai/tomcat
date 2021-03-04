@@ -15,7 +15,6 @@ Program Listing for File World.h
    
    #include "AABB.h"
    #include "Connection.h"
-   #include "Group.h"
    #include <memory>
    
    class World {

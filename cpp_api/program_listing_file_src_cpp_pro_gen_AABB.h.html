@@ -168,6 +168,7 @@
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#pragma once</span>
 
 <span class="cp">#include</span> <span class="cpf">&quot;Block.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;Connection.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;Door.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;Entity.h&quot;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&quot;Object.h&quot;</span><span class="cp"></span>
@@ -188,6 +189,10 @@
     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Block</span><span class="o">&gt;&gt;</span> <span class="n">blockList</span><span class="p">;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Entity</span><span class="o">&gt;&gt;</span> <span class="n">entityList</span><span class="p">;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;&gt;</span> <span class="n">objectList</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">AABB</span><span class="o">&gt;&gt;</span> <span class="n">aabbList</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Connection</span><span class="o">&gt;&gt;</span> <span class="n">connectionList</span><span class="p">;</span>
+
+    <span class="kt">void</span> <span class="nf">recalculateOverallBoundary</span><span class="p">();</span>
 
   <span class="k">public</span><span class="o">:</span>
     <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">getID</span><span class="p">();</span>
@@ -205,6 +210,10 @@
     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Entity</span><span class="o">&gt;&gt;&amp;</span> <span class="n">getEntityList</span><span class="p">();</span>
 
     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;&gt;&amp;</span> <span class="n">getObjectList</span><span class="p">();</span>
+
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">AABB</span><span class="o">&gt;&gt;&amp;</span> <span class="n">getAABBList</span><span class="p">();</span>
+
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Connection</span><span class="o">&gt;&gt;&amp;</span> <span class="n">getConnectionList</span><span class="p">();</span>
 
     <span class="kt">int</span> <span class="nf">getMidpointX</span><span class="p">();</span>
 
@@ -228,6 +237,8 @@
 
     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Pos</span><span class="o">&gt;</span> <span class="k">virtual</span> <span class="n">getEdgeMidpointAtBase</span><span class="p">();</span>
 
+    <span class="n">AABB</span><span class="o">*</span> <span class="nf">getSubAABB</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">id</span><span class="p">);</span>
+
     <span class="kt">void</span> <span class="nf">setTopLeft</span><span class="p">(</span><span class="n">Pos</span><span class="o">&amp;</span> <span class="n">topLeft</span><span class="p">);</span>
 
     <span class="kt">void</span> <span class="nf">setBottomRight</span><span class="p">(</span><span class="n">Pos</span><span class="o">&amp;</span> <span class="n">bottomRight</span><span class="p">);</span>
@@ -239,6 +250,10 @@
     <span class="kt">void</span> <span class="nf">addEntity</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Entity</span><span class="o">&gt;</span> <span class="n">entity</span><span class="p">);</span>
 
     <span class="kt">void</span> <span class="nf">addObject</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span> <span class="n">object</span><span class="p">);</span>
+
+    <span class="kt">void</span> <span class="nf">addAABB</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">AABB</span><span class="o">&gt;</span> <span class="n">aabb</span><span class="p">);</span>
+
+    <span class="kt">void</span> <span class="nf">addConnection</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Connection</span><span class="o">&gt;</span> <span class="n">connection</span><span class="p">);</span>
 
     <span class="kt">bool</span> <span class="k">virtual</span> <span class="n">isOverlapping</span><span class="p">(</span><span class="n">AABB</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">);</span>
 
@@ -274,11 +289,7 @@
          <span class="kt">bool</span> <span class="n">isHollow</span> <span class="o">=</span> <span class="nb">true</span><span class="p">,</span>
          <span class="kt">bool</span> <span class="n">hasRoof</span> <span class="o">=</span> <span class="nb">false</span><span class="p">);</span>
 
-    <span class="n">AABB</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">id</span><span class="p">,</span>
-         <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">type</span><span class="p">,</span>
-         <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">material</span><span class="p">,</span>
-         <span class="kt">bool</span> <span class="n">isHollow</span> <span class="o">=</span> <span class="nb">true</span><span class="p">,</span>
-         <span class="kt">bool</span> <span class="n">hasRoof</span> <span class="o">=</span> <span class="nb">false</span><span class="p">);</span>
+    <span class="n">AABB</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">id</span><span class="p">);</span>
 
     <span class="k">virtual</span> <span class="o">~</span><span class="n">AABB</span><span class="p">();</span>
 <span class="p">};</span>

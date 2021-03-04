@@ -95,12 +95,7 @@ Files
 .. toctree::
    :maxdepth: 5
 
-   file_src_cpp_pro_gen_Group.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_pro_gen_Group.h.rst
+   file_src_cpp_pro_gen_installation.md.rst
 
 .. toctree::
    :maxdepth: 5

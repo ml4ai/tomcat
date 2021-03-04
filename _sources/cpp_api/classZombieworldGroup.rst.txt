@@ -12,7 +12,7 @@ Inheritance Relationships
 Base Type
 *********
 
-- ``public Group`` (:ref:`exhale_class_classGroup`)
+- ``public AABB`` (:ref:`exhale_class_classAABB`)
 
 
 Class Documentation
