@@ -1,0 +1,114 @@
+domain sar {
+  requirements = {
+    reward-deterministic,
+    integer-valued
+  };
+
+  pvariables {
+    YELLOW-POINT-VALUE : {non-fluent, int, default = 50};
+    GREEN-POINT-VALUE : {non-fluent, int, default = 10};
+    YELLOW-DEATH-TIME : {non-fluent, int, default = 420};
+    END-GAME-TIME : {non-fluent, int, default = 600};
+
+    time : {state-fluent, int, default = 0};
+    num_of_yellow_victims_found_in_adj_room : {state-fluent, int, default = 0};
+    num_of_green_victims_found_in_adj_room : {state-fluent, int, default = 0};
+    times_searched : {state-fluent, int, default = 0};
+    num_of_yellow_victims_found_in_current_room : {state-fluent, int, default = 0}; 
+    num_of_green_victims_found_in_current_room : {state-fluent, int, default = 0};
+    num_of_yellow_victims_triaged_in_current_room : {state-fluent, int, default = 0}; 
+    num_of_green_victims_triaged_in_current_room : {state-fluent, int, default = 0};
+
+    search : {action-fluent, bool, default = false};
+    triageGreen : {action-fluent, bool, default = false};
+    triageYellow: {action-fluent, bool, default = false};
+    move : {action-fluent, bool, default = false};
+    exit : {action-fluent, bool, default = false};
+  };
+
+  cpfs {
+    time' = 
+      if search then time + Poisson(5.5)
+      else if triageGreen then time + 8
+      else if triageYellow then time + 15
+      else if move then time + Poisson(5.6)
+      else time;
+
+    num_of_yellow_victims_found_in_adj_room' = 
+      if (search ^ (time < YELLOW-DEATH-TIME)) 
+        then num_of_yellow_victims_found_in_adj_room + Poisson(0.2/(1+times_searched))
+      else if move
+        then 0
+      else num_of_yellow_victims_found_in_adj_room;
+
+    num_of_green_victims_found_in_adj_room' = 
+      if search 
+        then num_of_green_victims_found_in_adj_room + Poisson(0.5/(1+times_searched))
+      else if move
+        then 0
+      else num_of_green_victims_found_in_adj_room;
+
+    times_searched' = 
+      if move
+        then 0
+      else times_searched + search;
+
+    num_of_yellow_victims_found_in_current_room' = 
+      if (search ^ (time < YELLOW-DEATH-TIME)) 
+        then num_of_yellow_victims_found_in_current_room + Poisson(1/(1+times_searched))
+      else if move
+        then 0
+      else num_of_yellow_victims_found_in_current_room;
+
+    num_of_green_victims_found_in_current_room' = 
+      if search 
+        then num_of_green_victims_found_in_current_room + Poisson(1.5/(1+times_searched))
+      else if move
+        then 0
+      else num_of_green_victims_found_in_current_room;
+
+    num_of_yellow_victims_triaged_in_current_room' = 
+      if move
+        then 0
+      else num_of_yellow_victims_triaged_in_current_room + triageYellow;
+
+    num_of_green_victims_triaged_in_current_room' = 
+      if move
+        then 0
+      else num_of_green_victims_triaged_in_current_room + triageGreen;
+
+
+  };
+
+  reward = (triageYellow * YELLOW-POINT-VALUE) + (triageGreen * GREEN-POINT-VALUE); 
+
+  state-invariants {
+    time >= 0;
+    times_searched >= 0;
+    num_of_yellow_victims_found_in_adj_room >= 0;
+    num_of_green_victims_found_in_adj_room >= 0;
+    num_of_yellow_victims_found_in_current_room >= 0;
+    num_of_green_victims_found_in_current_room >= 0;
+    num_of_yellow_victims_triaged_in_current_room >= 0;
+    num_of_green_victims_triaged_in_current_room >= 0;
+    num_of_yellow_victims_triaged_in_current_room
+      <= num_of_yellow_victims_found_in_current_room;
+
+    num_of_green_victims_triaged_in_current_room
+      <= num_of_green_victims_found_in_current_room;
+
+
+  };
+
+  action-preconditions {
+    ((num_of_yellow_victims_found_in_current_room -
+      num_of_yellow_victims_triaged_in_current_room) == 0) 
+        => ~triageYellow;
+
+    ((num_of_green_victims_found_in_current_room -
+      num_of_green_victims_triaged_in_current_room) == 0) 
+        => ~triageGreen;
+
+    (time < END-GAME-TIME) => ~exit;  
+  };
+}
