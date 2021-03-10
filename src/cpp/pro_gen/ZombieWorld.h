@@ -9,6 +9,9 @@ class ZombieWorld : public World {
     int N = 3;
     int sep = 15;
     int AABB_size = 10;
+    int building_count = 0;
+    int lava_pool_count = 0;
+    int water_pool_count = 0;
 
     /**
      * @brief A method to choose the AABB to add based on the idCtr. It
