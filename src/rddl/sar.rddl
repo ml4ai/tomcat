@@ -4,6 +4,10 @@ domain sar {
     integer-valued
   };
 
+  types {
+    test : object; //satisfies some erroneous artifact of the parser. 
+  }; 
+
   pvariables {
     YELLOW-POINT-VALUE : {non-fluent, int, default = 50};
     GREEN-POINT-VALUE : {non-fluent, int, default = 10};
