@@ -28,52 +28,52 @@ domain sar {
 
   cpfs {
     time' = 
-      if search then time + Poisson(5.5)
-      else if triageGreen then time + 8
-      else if triageYellow then time + 15
-      else if move then time + Poisson(5.6)
+      if (search) then time + Poisson(5.5)
+      else if (triageGreen) then time + 8
+      else if (triageYellow) then time + 15
+      else if (move) then time + Poisson(5.6)
       else time;
 
     num_of_yellow_victims_found_in_adj_room' = 
       if (search ^ (time < YELLOW-DEATH-TIME)) 
         then num_of_yellow_victims_found_in_adj_room + Poisson(0.2/(1+times_searched))
-      else if move
+      else if (move)
         then 0
       else num_of_yellow_victims_found_in_adj_room;
 
     num_of_green_victims_found_in_adj_room' = 
-      if search 
+      if (search) 
         then num_of_green_victims_found_in_adj_room + Poisson(0.5/(1+times_searched))
-      else if move
+      else if (move)
         then 0
       else num_of_green_victims_found_in_adj_room;
 
     times_searched' = 
-      if move
+      if (move)
         then 0
       else times_searched + search;
 
     num_of_yellow_victims_found_in_current_room' = 
       if (search ^ (time < YELLOW-DEATH-TIME)) 
         then num_of_yellow_victims_found_in_current_room + Poisson(1/(1+times_searched))
-      else if move
+      else if (move)
         then 0
       else num_of_yellow_victims_found_in_current_room;
 
     num_of_green_victims_found_in_current_room' = 
-      if search 
+      if (search) 
         then num_of_green_victims_found_in_current_room + Poisson(1.5/(1+times_searched))
-      else if move
+      else if (move)
         then 0
       else num_of_green_victims_found_in_current_room;
 
     num_of_yellow_victims_triaged_in_current_room' = 
-      if move
+      if (move)
         then 0
       else num_of_yellow_victims_triaged_in_current_room + triageYellow;
 
     num_of_green_victims_triaged_in_current_room' = 
-      if move
+      if (move)
         then 0
       else num_of_green_victims_triaged_in_current_room + triageGreen;
 
