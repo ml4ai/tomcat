@@ -357,6 +357,10 @@ void AABB::toSemanticMapJSON(json& json_base) {
     for (auto& objectPtr : this->getObjectList()) {
         (*objectPtr).toSemanticMapJSON(json_base);
     }
+
+    for (auto& connectionPtr : this->getConnectionList()) {
+        (*connectionPtr).toSemanticMapJSON(json_base);
+    }
 }
 
 void AABB::toLowLevelMapJSON(json& json_base) {

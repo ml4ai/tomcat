@@ -16,7 +16,7 @@ import json
 
 
 # Read the low_level_map.json file
-semantic_json = "./build/semantic_map.json"
+semantic_json = "./semantic_map.json"
 with open(semantic_json) as f:
     data = json.load(f)
 locations = data["locations"]

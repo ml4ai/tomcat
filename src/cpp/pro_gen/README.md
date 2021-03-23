@@ -2,7 +2,9 @@
 
 * Cmake 3.10 or above 
 * Boost 1.69
+* nlohmann_json
 * Python 3.7+ for the vizualiser
+* matplotlib, numpy, and pygraphviz for the vizualiser
 
 ## Installation Steps
 
