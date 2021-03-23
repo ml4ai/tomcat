@@ -14,49 +14,45 @@ import matplotlib.pyplot as plt
 import numpy as np
 import json
 
-plt.rc('text', usetex=True)
-
-# Colours to use for each material
-color_index = {
-    "planks": "#cc7904",
-    "glowstone": "#a4aba9",
-    "cobblestone": "#8f8e89",
-    "lava": "#e81f15",
-    "water": "#1569e8",
-    "sand": "#ffd080",
-    "gravel": "#face2f",
-}
-
 
 # Read the low_level_map.json file
-low_level_json = "./low_level_map.json"
-with open(low_level_json) as f:
+semantic_json = "./build/semantic_map.json"
+with open(semantic_json) as f:
     data = json.load(f)
-blocks = data["blocks"]
+locations = data["locations"]
 
-# Create the plot and set some parameters
+
 fig, ax = plt.subplots()
-rect_size = 2
-
-# Add all blocks as patches to a list
 patch_list = []
-for block in blocks:
-    if block["material"] in color_index:
-        color = color_index.get(block["material"], None)
+for location in locations:
+    if location["bounds"]["type"] == "cuboid" and not location["id"] == "blank_box":
+            coordinate_list = location["bounds"]["coordinates"]
+            top_left_coords = coordinate_list[0]
+            bottom_right_coords = coordinate_list[1]
+            x1 = int(top_left_coords["x"])
+            z1 = int(top_left_coords["z"])
+            x2 = int(bottom_right_coords["x"])
+            z2 = int(bottom_right_coords["z"])
+            width = abs(x2 - x1)
+            height = abs(z2 - z1)
 
-        x, y = int(block["x"]), int(block["z"])
-        rect = patches.Rectangle(
-            (x, y),
-            rect_size,
-            rect_size,
-            color=color,
-        )  # Create rectangular patch of the color
+            rect = patches.Rectangle(
+                (x1, z1),
+                width,
+                height,
+                linewidth=1,
+                edgecolor="black",
+                fill=False
+            )
 
-        patch_list.append(rect)
+            patch_list.append(rect)
 
+            patch_center_z = z1 + height/2
+            ax.annotate(location["id"], (x2, patch_center_z), color='blue', weight='bold', 
+                fontsize=3, ha='center', va='center')
 
 # Use patch collection to add the patches to plot
-p = PatchCollection(patch_list, alpha=0.1, match_original=True)
+p = PatchCollection(patch_list, match_original=True)
 ax.add_collection(p)
 
 # Some settings
@@ -67,8 +63,8 @@ ax.yaxis.set_label_coords(1.150, 0.5)
 
 plt.margins(0, 0)
 plt.gca().invert_xaxis()
-plt.xlabel("$X$")
-plt.ylabel("$Z$")
-plt.tight_layout()
+plt.xlabel("X")
+plt.ylabel("Z")
 
-plt.savefig("map.png", dpi=150)
+plt.savefig("vizualized_plt.pdf")
+plt.close()
