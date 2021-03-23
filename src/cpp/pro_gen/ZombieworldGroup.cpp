@@ -5,7 +5,7 @@ using namespace std;
 ZombieworldGroup::ZombieworldGroup(string id,
                                    Pos& firstTopLeft,
                                    Pos& firstBottomRight)
-    : Group(id) {
+    : AABB(id) {
     this->decorate(firstTopLeft, firstBottomRight);
 }
 
@@ -18,7 +18,7 @@ void ZombieworldGroup::decorate(Pos& firstTopLeft, Pos& firstBottomRight) {
 }
 
 void ZombieworldGroup::addEntities() {
-    auto aabbTwo = this->getAABB("2");
+    auto aabbTwo = this->getSubAABB(this->id + "_internal_room_2");
 
     if (aabbTwo != nullptr) {
 
@@ -28,7 +28,7 @@ void ZombieworldGroup::addEntities() {
         (*aabbTwo).addEntity(move(curEntity));
     }
 
-    auto aabbOne = this->getAABB("1"); // 1 sub AABB definitely exists
+    auto aabbOne = this->getSubAABB(this->id + "_internal_room_1"); // This room definitely exists
     int sizeY = (*aabbOne).getSizeY() - 1;
     Pos randomPos = (*aabbOne).getRandomPos(this->gen, 1, 1, sizeY, 1, 1);
     auto curEntity = make_unique<Entity>("zombie", randomPos);
@@ -44,7 +44,7 @@ void ZombieworldGroup::addLights() {
 void ZombieworldGroup::createAABB(Pos& firstTopLeft, Pos& firstBottomRight) {
 
     auto first = make_unique<AABB>(
-        "1", "room", "planks", firstTopLeft, firstBottomRight, true, true);
+        this->id + "_internal_room_1", "room", "planks", firstTopLeft, firstBottomRight, true, true);
     this->addAABB(move(first));
 
     string id = this->getID();
@@ -59,7 +59,7 @@ void ZombieworldGroup::createAABB(Pos& firstTopLeft, Pos& firstBottomRight) {
         secondBottomRight.shiftX(3);
         secondBottomRight.shiftZ(9);
 
-        auto second = make_unique<AABB>("2",
+        auto second = make_unique<AABB>(this->id + "_internal_room_2",
                                         "room",
                                         "planks",
                                         secondTopLeft,
@@ -71,7 +71,7 @@ void ZombieworldGroup::createAABB(Pos& firstTopLeft, Pos& firstBottomRight) {
 }
 
 void ZombieworldGroup::addLevers() {
-    auto aabbTwo = this->getAABB("2");
+    auto aabbTwo = this->getSubAABB(this->id + "_internal_room_2");
 
     if (aabbTwo != nullptr) {
 
@@ -89,7 +89,7 @@ void ZombieworldGroup::addLevers() {
             "c1", "entrance to second room", "door", "rectangle");
         this->addConnection(move(connection));
 
-        vector<string> connectedLocations{"1", "2"};
+        vector<string> connectedLocations{this->id + "_internal_room_1", this->id + "_internal_room_2"};
         this->getConnectionList().at(0)->addManyConnectedLocations(
             connectedLocations);
 

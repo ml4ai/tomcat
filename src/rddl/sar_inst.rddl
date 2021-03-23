@@ -1,0 +1,33 @@
+non-fluents nf_sar_inst {
+  domain = sar;
+
+  objects { //Satisfies some erroneous artifact of the parser
+    test : {x};
+  };
+
+  non-fluents {
+     YELLOW-POINT-VALUE = 50;
+     GREEN-POINT-VALUE = 10;
+     YELLOW-DEATH-TIME = 420;
+     END-GAME-TIME = 600;
+  };
+}
+
+instance sar_inst {
+  domain = sar;
+  non-fluents = nf_sar_inst;
+  init-state {
+    time = 0;
+    num_of_yellow_victims_found_in_adj_room = 0;
+    num_of_green_victims_found_in_adj_room = 0;
+    times_searched = 0;
+    num_of_yellow_victims_found_in_current_room = 0;
+    num_of_green_victims_found_in_current_room = 0;
+    num_of_yellow_victims_triaged_in_current_room = 0;
+    num_of_green_victims_triaged_in_current_room = 0;
+  };
+
+  max-nondef-actions = 1;
+  horizon  = terminate-when (exit);
+  discount = 1.0;
+}

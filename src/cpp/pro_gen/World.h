@@ -6,7 +6,6 @@
 
 #include "AABB.h"
 #include "Connection.h"
-#include "Group.h"
 #include <memory>
 
 /**

@@ -1,4 +1,6 @@
 from nltk import Production, ProbabilisticMixIn
+from nltk import Nonterminal
+from typing import Union, List, Set, Dict, Tuple, Optional, Callable
 
 
 class PSDProduction(Production, ProbabilisticMixIn):
@@ -15,23 +17,26 @@ class PSDProduction(Production, ProbabilisticMixIn):
     :see also: ``Production``
     """
 
-    def __init__(self, lhs, rhs, current_s, precond, t_prob=1.0):
+    def __init__(
+        self,
+        lhs: Nonterminal,
+        rhs: List[Union[Nonterminal, str]],
+        current_s: Dict,
+        precond: Callable[[Dict], Dict],
+    ) -> None:
         self.precond = precond
-        self.t_prob = t_prob
-        if self.precond(current_s):
-            p = t_prob
-        else:
-            p = 1 - t_prob
-
+        p = self.precond(current_s)
         ProbabilisticMixIn.__init__(self, prob=p)
         Production.__init__(self, lhs, rhs)
 
-    def __str__(self):
+    def __str__(self, omit_probs: bool = False) -> str:
+        if omit_probs:
+            return super().__str__()
         return super().__str__() + (
             " [1.0]" if (self.prob() == 1.0) else " [%g]" % self.prob()
         )
 
-    def __eq__(self, other):
+    def __eq__(self, other: 'PSDProduction') -> bool:
         return (
             type(self) == type(other)
             and self._lhs == other._lhs
@@ -39,15 +44,12 @@ class PSDProduction(Production, ProbabilisticMixIn):
             and self.prob() == other.prob()
         )
 
-    def __ne__(self, other):
+    def __ne__(self, other: 'PSDProduction')  -> bool:
         return not self == other
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash((self._lhs, self._rhs, self.prob()))
 
-    def update_prob(self, state):
-        if self.precond(state):
-            p = self.t_prob
-        else:
-            p = 1 - self.t_prob
+    def update_prob(self, state: Dict) -> None:
+        p = self.precond(state)
         self.set_prob(p)

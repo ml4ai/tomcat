@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Group.h"
+#include "AABB.h"
 #include "Lever.h"
 
 /**
  * @brief This class represents a very specific building that is used in the
  *        Zombie mission
  */
-class ZombieworldGroup : public Group {
+class ZombieworldGroup : public AABB {
   private:
     std::mt19937_64 gen;
 
