@@ -340,11 +340,16 @@ void AABB::toSemanticMapJSON(json& json_base) {
     aabb_json["id"] = this->getID();
     aabb_json["material"] = this->getMaterial();
 
-    json_base["locations"].push_back(aabb_json);
+ 
 
+    vector<string> child_locations;
     for (auto& aabbPtr : this->aabbList) {
         (*aabbPtr).toSemanticMapJSON(json_base);
+        child_locations.push_back(aabbPtr->getID());
     }
+
+    aabb_json["child_locations"] = child_locations;
+    json_base["locations"].push_back(aabb_json);
 
     for (auto& blockPtr : this->getBlockList()) {
         (*blockPtr).toSemanticMapJSON(json_base);
