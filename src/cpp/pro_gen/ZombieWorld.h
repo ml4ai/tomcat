@@ -23,8 +23,13 @@ class ZombieWorld : public World {
      *        reached as of this Group.
      * @param topLeft The top left coordinates for the AABB to be added.
      * @param bottomRight The bottom right coordinates for the AABB to be added.
+     * @param enclosing_boundary The enclosing boundary AABB where this
+     *        algortihm puts the other buildings
      */
-    void chooseZombieworldAABB(int idCtr, Pos& topLeft, Pos& bottomRight);
+    void chooseZombieworldAABB(int idCtr,
+                               Pos& topLeft,
+                               Pos& bottomRight,
+                               std::unique_ptr<AABB>& enclosing_boundary);
 
     /**
      * @brief Calls internal methods to create and place different AABBs at the

@@ -12,13 +12,17 @@ AABB::AABB(string id,
            Pos& topLeft,
            Pos& bottomRight,
            bool isHollow,
-           bool hasRoof)
+           bool hasRoof,
+           bool autoAdjust)
     : id{id}, type{type}, material{material}, topLeft{topLeft},
-      bottomRight{bottomRight}, isHollow{isHollow}, hasRoof{hasRoof} {}
+      bottomRight{bottomRight}, isHollow{isHollow}, hasRoof{hasRoof},
+      autoAdjust{autoAdjust} {}
 
 AABB::AABB(string id)
     : id{id}, type{"blank_canvas"}, material{"blank"}, topLeft(0, 0, 0),
-      bottomRight(0, 0, 0), isHollow{true}, hasRoof{false} {}
+      bottomRight(0, 0, 0), isHollow{true}, hasRoof{false} {
+          this->autoAdjust = true;
+      }
 
 void AABB::addAABB(unique_ptr<AABB> aabb) {
     this->aabbList.push_back(move(aabb));
@@ -277,54 +281,57 @@ void AABB::generateAllDoorsInAABB() {
 
 void AABB::recalculateOverallBoundary() {
 
-    int minX, minY, minZ;
-    int maxX, maxY, maxZ;
-    bool isFirst = true;
+    if (this->autoAdjust) {
 
-    for (auto& aabb : this->aabbList) {
+        int minX, minY, minZ;
+        int maxX, maxY, maxZ;
+        bool isFirst = true;
 
-        Pos topLeft = (*aabb).getTopLeft();
-        int x1 = topLeft.getX(), y1 = topLeft.getY(), z1 = topLeft.getZ();
+        for (auto& aabb : this->aabbList) {
 
-        Pos bottomRight = (*aabb).getBottomRight();
-        int x2 = bottomRight.getX(), y2 = bottomRight.getY(),
-            z2 = bottomRight.getZ();
+            Pos topLeft = (*aabb).getTopLeft();
+            int x1 = topLeft.getX(), y1 = topLeft.getY(), z1 = topLeft.getZ();
 
-        if (isFirst) {
-            minX = x1;
-            minY = y1;
-            minZ = z1;
-            maxX = x2;
-            maxY = y2;
-            maxZ = z2;
-            isFirst = false;
+            Pos bottomRight = (*aabb).getBottomRight();
+            int x2 = bottomRight.getX(), y2 = bottomRight.getY(),
+                z2 = bottomRight.getZ();
+
+            if (isFirst) {
+                minX = x1;
+                minY = y1;
+                minZ = z1;
+                maxX = x2;
+                maxY = y2;
+                maxZ = z2;
+                isFirst = false;
+            }
+
+            if (x1 < minX) {
+                minX = x1;
+            }
+            if (y1 < minY) {
+                minY = y1;
+            }
+            if (z1 < minZ) {
+                minZ = z1;
+            }
+            if (x2 > maxX) {
+                maxX = x2;
+            }
+            if (y2 > maxY) {
+                maxY = y2;
+            }
+            if (z2 > maxZ) {
+                maxZ = z2;
+            }
         }
 
-        if (x1 < minX) {
-            minX = x1;
-        }
-        if (y1 < minY) {
-            minY = y1;
-        }
-        if (z1 < minZ) {
-            minZ = z1;
-        }
-        if (x2 > maxX) {
-            maxX = x2;
-        }
-        if (y2 > maxY) {
-            maxY = y2;
-        }
-        if (z2 > maxZ) {
-            maxZ = z2;
-        }
+        Pos newTopLeft(minX, minY, minZ);
+        Pos newBottomRight(maxX, maxY, maxZ);
+
+        this->setTopLeft(newTopLeft);
+        this->setBottomRight(newBottomRight);
     }
-
-    Pos newTopLeft(minX, minY, minZ);
-    Pos newBottomRight(maxX, maxY, maxZ);
-
-    this->setTopLeft(newTopLeft);
-    this->setBottomRight(newBottomRight);
 }
 
 void AABB::toSemanticMapJSON(json& json_base) {
@@ -339,8 +346,6 @@ void AABB::toSemanticMapJSON(json& json_base) {
 
     aabb_json["id"] = this->getID();
     aabb_json["material"] = this->getMaterial();
-
- 
 
     vector<string> child_locations;
     for (auto& aabbPtr : this->aabbList) {

@@ -27,6 +27,7 @@ class AABB {
     Pos bottomRight;
     bool isHollow;
     bool hasRoof;
+    bool autoAdjust;
     std::vector<std::unique_ptr<Block>> blockList;
     std::vector<std::unique_ptr<Entity>> entityList;
     std::vector<std::unique_ptr<Object>> objectList;
@@ -238,7 +239,7 @@ class AABB {
     /**
      * @brief Add a specific entity for this AABB to keep track of. Ideally this
      *        should be related to the AABB. No checks are implicitly performed
-     * within this method.
+     *        within this method.
      *
      * @param entity Entity to be added
      */
@@ -365,11 +366,13 @@ class AABB {
      *        top view of the X-Z plane. Y coordinate should be lowest here.
      * @param bottomRight The coordinates of the bottom right of the AABB
      *        from the top view of the X-Z plane. Y coordinate should be maximum
-     * here.
+     *        here.
      * @param isHollow Specify wether the AABB should be hollow or not. Defaults
      *        to true.
      * @param hasRoof specify wether the AABB should have a roof or not.
      *        Defaults to false.
+     * @param autoAdjust Wheter or not you want the boundary to auto adjust to
+     *        its children. Defaults to true.
      */
     AABB(std::string id,
          std::string type,
@@ -377,7 +380,8 @@ class AABB {
          Pos& topLeft,
          Pos& bottomRight,
          bool isHollow = true,
-         bool hasRoof = false);
+         bool hasRoof = false,
+         bool autoAdjust = true);
 
     /**
      * @brief Construct a new AABB object. Use this contructor when you know the
