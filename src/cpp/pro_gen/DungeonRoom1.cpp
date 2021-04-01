@@ -28,7 +28,15 @@ void DungeonRoom1::addBrokenWalls() {
 }
 
 void DungeonRoom1::decorate() {
-    this->addRandomBlocks(25, "lava", this->gen, 1, 1, 0, 5, 1, 1);
+    this->addRandomBlocks(5, "lava", this->gen, 2, 2, 0, 5, 2, 2);
+        this->generateBox(
+        "barrier",
+        1,
+        1,
+        5,
+        0,
+        1,
+        1); // Puts an invisible blockade on the roof so mobs don't fly out
 }
 
 void DungeonRoom1::setFields(Pos& topLeft) {

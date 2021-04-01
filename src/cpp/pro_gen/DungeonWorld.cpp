@@ -90,8 +90,8 @@ DungeonWorld::DungeonWorld(int seed, int N) {
 
                 // Ends of the coridoor are changed to air
                 // so they are open
-                coridoor->generateBox("air", 0, 7);
-                coridoor->generateBox("air", 7, 0);
+                coridoor->generateBox("air", 0, 7, 1);
+                coridoor->generateBox("air", 7, 0, 1);
 
                 // Add this to the overall boundary
                 enclosing_boundary_aabb->addAABB(move(coridoor));

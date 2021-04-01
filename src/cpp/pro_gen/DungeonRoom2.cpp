@@ -12,7 +12,7 @@ DungeonRoom2::DungeonRoom2(string id, Pos& topLeft) : AABB(id) {
 
 void DungeonRoom2::addEntities() {
     for (int i = 0; i <= 2; i++) {
-        Pos randomPos(this->getRandomPos(this->gen,1,1,1,1,1));
+        Pos randomPos(this->getRandomPos(this->gen, 1, 1, 1, 1, 1));
         auto curEntity = make_unique<Entity>("wither_skeleton", randomPos);
         this->addEntity(move(curEntity));
     }
@@ -35,6 +35,14 @@ void DungeonRoom2::decorate() {
     this->addRandomBlocks(9, "web", this->gen, 0, 0, 0, 1, 0, 11);
     this->addRandomBlocks(5, "leaves", this->gen, 0, 0, 0, 1, 11, 0);
     this->addRandomBlocks(5, "web", this->gen, 11, 0, 0, 1, 0, 0);
+    this->generateBox(
+        "barrier",
+        1,
+        1,
+        5,
+        0,
+        1,
+        1); // Puts an invisible blockade on the roof so mobs don't fly out
 }
 
 void DungeonRoom2::setFields(Pos& topLeft) {
