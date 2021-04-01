@@ -96,6 +96,7 @@ f.close()
 
 # Use the dot file to create the digraph
 G = pgv.AGraph("tempDotFile.dot")
+G.graph_attr["rankdir"] = "LR"
 G.layout(prog="dot")
 G.draw("map_graph.pdf")
 
