@@ -25,6 +25,9 @@ add_library(
   ZombieworldPit.cpp
   ZombieworldGroup.cpp
   ZombieWorld.cpp
+  DungeonWorld.cpp
+  DungeonRoom1.cpp
+  DungeonRoom2.cpp
   GridWorld.cpp)
 
 target_link_libraries(progen ${Boost_LIBRARIES} nlohmann_json::nlohmann_json)
