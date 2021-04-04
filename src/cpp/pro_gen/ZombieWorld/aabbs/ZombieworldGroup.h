@@ -1,7 +1,8 @@
 #pragma once
 
-#include "AABB.h"
-#include "Lever.h"
+#include "../../core/AABB.h"
+#include "../../core/Door.h"
+#include "../blocks/Lever.h"
 
 /**
  * @brief This class represents a very specific building that is used in the

@@ -1,6 +1,12 @@
 #pragma once
 #include "Block.h"
 
+/**
+ * @brief This represents a door in Minecraft. This is included among the core
+ * modules because it is used in generateAllDoorsInAABB(), which ends up being a
+ * fairly commonly used method across the sample algorithms.
+ *
+ */
 class Door : public Block {
   private:
     bool powered;

@@ -1,5 +1,4 @@
 #include "ZombieWorld.h"
-#include <iostream>
 using namespace std;
 
 void ZombieWorld::chooseZombieworldAABB(int idCtr,

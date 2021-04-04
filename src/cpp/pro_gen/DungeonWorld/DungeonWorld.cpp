@@ -1,6 +1,4 @@
 #include "DungeonWorld.h"
-#include "DungeonRoom1.h"
-#include "DungeonRoom2.h"
 using namespace std;
 
 DungeonWorld::DungeonWorld(int seed, int N) {

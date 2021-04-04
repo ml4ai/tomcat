@@ -1,6 +1,8 @@
 #pragma once
 
-#include "World.h"
+#include "../core/World.h"
+#include "aabbs/DungeonRoom1.h"
+#include "aabbs/DungeonRoom2.h"
 
 class DungeonWorld : public World {
   private:

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "World.h"
-#include "ZombieworldGroup.h"
-#include "ZombieworldPit.h"
+#include "../core/World.h"
+#include "aabbs/ZombieworldGroup.h"
+#include "aabbs/ZombieworldPit.h"
 
 class ZombieWorld : public World {
   private:

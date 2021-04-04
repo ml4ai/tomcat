@@ -1,12 +1,12 @@
 #pragma once
 
-#include "AABB.h"
+#include "../../core/AABB.h"
 
 /**
  * @brief This class represents a very specific building that is used in the
  *        Zombie mission
  */
-class DungeonRoom1 : public AABB {
+class DungeonRoom2 : public AABB {
   private:
     std::mt19937_64 gen;
 
@@ -25,7 +25,7 @@ class DungeonRoom1 : public AABB {
     void decorate();
 
     /**
-     * @brief Add some reward blocks (gold) to the room
+     * @brief Add some reward blocks (diamond) to the room
      */
     void addRewards();
 
@@ -42,16 +42,16 @@ class DungeonRoom1 : public AABB {
 
   public:
     /**
-     * @brief Construct a new Dungeon Room 1 object
+     * @brief Construct a new Dungeon Room 2 object
      *
      * @param id The id for this room (keep it unique for each instance)
      * @param topLeft The top left. Remember the y coordinate for this is the
      * lowest
      */
-    DungeonRoom1(std::string id, Pos& topLeft);
+    DungeonRoom2(std::string id, Pos& topLeft);
 
     /**
-     * @brief Destroy the Zombieworld Group object.
+     * @brief Destroy the Dungeon Room 2 object
      */
-    ~DungeonRoom1();
+    ~DungeonRoom2();
 };

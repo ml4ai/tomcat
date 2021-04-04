@@ -1,6 +1,6 @@
-#include "DungeonWorld.h"
-#include "GridWorld.h"
-#include "ZombieWorld.h"
+#include "DungeonWorld/DungeonWorld.h"
+#include "GridWorld/GridWorld.h"
+#include "ZombieWorld/ZombieWorld.h"
 #include <boost/program_options.hpp>
 #include <fstream>
 #include <iostream>

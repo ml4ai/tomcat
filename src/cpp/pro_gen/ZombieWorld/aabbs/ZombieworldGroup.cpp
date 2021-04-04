@@ -1,4 +1,5 @@
 #include "ZombieworldGroup.h"
+#include <iostream>
 
 using namespace std;
 
@@ -17,6 +18,7 @@ void ZombieworldGroup::decorate(Pos& firstTopLeft, Pos& firstBottomRight) {
     this->addEntities();
 }
 
+
 void ZombieworldGroup::addEntities() {
     auto aabbTwo = this->getSubAABB(this->id + "_internal_room_2");
 
@@ -28,7 +30,8 @@ void ZombieworldGroup::addEntities() {
         (*aabbTwo).addEntity(move(curEntity));
     }
 
-    auto aabbOne = this->getSubAABB(this->id + "_internal_room_1"); // This room definitely exists
+    auto aabbOne = this->getSubAABB(
+        this->id + "_internal_room_1"); // This room definitely exists
     int sizeY = (*aabbOne).getSizeY() - 1;
     Pos randomPos = (*aabbOne).getRandomPos(this->gen, 1, 1, sizeY, 1, 1);
     auto curEntity = make_unique<Entity>("zombie", randomPos);
@@ -43,8 +46,13 @@ void ZombieworldGroup::addLights() {
 
 void ZombieworldGroup::createAABB(Pos& firstTopLeft, Pos& firstBottomRight) {
 
-    auto first = make_unique<AABB>(
-        this->id + "_internal_room_1", "room", "planks", firstTopLeft, firstBottomRight, true, true);
+    auto first = make_unique<AABB>(this->id + "_internal_room_1",
+                                   "room",
+                                   "planks",
+                                   firstTopLeft,
+                                   firstBottomRight,
+                                   true,
+                                   true);
     this->addAABB(move(first));
 
     string id = this->getID();
@@ -89,7 +97,8 @@ void ZombieworldGroup::addLevers() {
             "c1", "entrance to second room", "door", "rectangle");
         this->addConnection(move(connection));
 
-        vector<string> connectedLocations{this->id + "_internal_room_1", this->id + "_internal_room_2"};
+        vector<string> connectedLocations{this->id + "_internal_room_1",
+                                          this->id + "_internal_room_2"};
         this->getConnectionList().at(0)->addManyConnectedLocations(
             connectedLocations);
 
