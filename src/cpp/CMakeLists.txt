@@ -5,7 +5,7 @@ add_subdirectory(runMission)
 add_subdirectory(getSpecVersion)
 
 # Procedural generation module.
-add_subdirectory(pro_gen)
+add_subdirectory(mcglib)
 
 # Optionally, build examples
 option(BUILD_EXAMPLES "Enable building of the example programs" OFF)
