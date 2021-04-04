@@ -6,7 +6,7 @@ build
 # IDEs
 .idea
 .vscode
-.code-workspace
+*.code-workspace
 cmake-build-debug
 
 # Prerequisites
