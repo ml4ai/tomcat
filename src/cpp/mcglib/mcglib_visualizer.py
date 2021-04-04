@@ -26,6 +26,7 @@ parser.add_argument(
     default="f",
     type=str,
 )
+
 parser.add_argument(
     "--font_size", help="Size of label fonts. Defaults to 3.", default=3, type=int
 )
@@ -34,6 +35,13 @@ parser.add_argument(
     "--font_color",
     help="Color of label fonts. Defaults to blue.",
     default="blue",
+    type=str,
+)
+
+parser.add_argument(
+    "--background",
+    help="Sets the background color of the plot. Defaults to white.",
+    default="white",
     type=str,
 )
 
@@ -144,8 +152,8 @@ p = PatchCollection(patch_list, match_original=True)
 ax.add_collection(p)
 
 # Some settings
-if args.color_patches[0].lower() == "t":
-    fig.patch.set_facecolor('#252533')
+if is_color_like(args.background):
+    fig.patch.set_facecolor(args.background)
 ax.set_aspect("equal")
 ax.yaxis.set_ticks_position("right")
 ax.xaxis.set_label_coords(0.5, -0.1)
