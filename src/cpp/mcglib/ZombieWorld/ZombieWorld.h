@@ -24,7 +24,7 @@ class ZombieWorld : public World {
      * @param topLeft The top left coordinates for the AABB to be added.
      * @param bottomRight The bottom right coordinates for the AABB to be added.
      * @param enclosing_boundary The enclosing boundary AABB where this
-     *        algortihm puts the other buildings
+     *        algorithm puts the other buildings
      */
     void chooseZombieworldAABB(int idCtr,
                                Pos& topLeft,

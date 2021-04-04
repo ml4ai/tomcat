@@ -92,7 +92,7 @@ void ZombieworldGroup::addLevers() {
         this->addBlock(move(lever));
 
         // Adds the connection representing this doorway
-        // This is an example and may have innacurate coordinates
+        // This is an example and may have inaccurate coordinates
         auto connection = make_unique<Connection>(
             "c1", "entrance to second room", "door", "rectangle");
         this->addConnection(move(connection));

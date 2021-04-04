@@ -84,7 +84,7 @@ class Connection {
 
     /**
      * @brief Set the bound type of this connection to a new type. Remember to
-     * update the coordinates of the bound assocaited accordingly since no
+     * update the coordinates of the bound associated accordingly since no
      * implicit checks are performed.
      *
      * @param newBoundType The new bound type to set to.

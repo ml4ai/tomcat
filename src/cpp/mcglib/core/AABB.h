@@ -230,7 +230,7 @@ class AABB {
     /**
      * @brief Add a specific block for this AABB to keep track of. Ideally this
      *        should be related to the AABB. No checks are implicitly performed
-     * within this method.
+     *        within this method.
      *
      * @param block Block to be added
      */
@@ -279,7 +279,7 @@ class AABB {
     bool virtual isOverlapping(AABB& other);
 
     /**
-     * @brief Generate a box made of s specific material inside the AABB with
+     * @brief Generate a box made of a specific material inside the AABB with
      *        the ability to specify offsets.
      *
      * @param material The material to make this box out of
@@ -371,7 +371,7 @@ class AABB {
      *        to true.
      * @param hasRoof specify wether the AABB should have a roof or not.
      *        Defaults to false.
-     * @param autoAdjust Wheter or not you want the boundary to auto adjust to
+     * @param autoAdjust Whether or not you want the boundary to auto adjust to
      *        its children. Defaults to true.
      */
     AABB(std::string id,

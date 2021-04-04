@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
     dungeonWorldOptions.add_options()(
         "dungeon_N",
         po::value<int>()->default_value(8),
-        "Number of AABB per axis. Esentially, dungeon_N*dungeon_N is the "
+        "Number of AABB per axis. Essentially, dungeon_N*dungeon_N is the "
         "maximum number of dungeon rooms.");
 
     po::options_description all("Allowed options");

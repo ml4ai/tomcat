@@ -3,7 +3,7 @@
 """
 Filename: mcglib_visualizer.py
 Author: Adi Banerjee
-Purpose: This program will vizualize the procedurally generated map from the semantic_map.json file. 
+Purpose: This program will visualize the procedurally generated map from the semantic_map.json file. 
          It does not accept alternate filenames. The visualized map is saved in the same directory as
          script with the name "map_plot.pdf". A graph of the structures is also drawn and saved as "map_graph.pdf".
 """
@@ -86,7 +86,7 @@ patch_list = []  # The rectangular patches for each building will be stored here
 edge_list = []  # Edges for our graph
 
 for location in locations:
-    # We dont wan't to draw blocks or blank boxes since
+    # We don't want to draw blocks or blank boxes since
     if location["bounds"]["type"] != "block" and not location["id"] == "blank_box":
 
         child_locations = location["child_locations"]
@@ -102,7 +102,7 @@ for location in locations:
         x2 = int(bottom_right_coords["x"])
         z2 = int(bottom_right_coords["z"])
 
-        # The width and height of the rectanglular patch that will represent it
+        # The width and height of the rectangular patch that will represent it
         width = abs(x2 - x1)
         height = abs(z2 - z1)
 

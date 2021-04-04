@@ -1,6 +1,11 @@
 #pragma once
 #include "Block.h"
 
+/**
+ * @brief Represents an object. An object contains a block, and so this class is
+ * mainly used to faclitate deeper semantic separation than the Block class.
+ *
+ */
 class Object {
 
   private:

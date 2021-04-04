@@ -4,7 +4,7 @@
 
 /**
  * @brief This class represents a very specific building that is used in the
- *        Zombie mission
+ *        DungeonWorld
  */
 class DungeonRoom2 : public AABB {
   private:

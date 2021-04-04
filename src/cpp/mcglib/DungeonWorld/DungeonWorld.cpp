@@ -32,7 +32,7 @@ DungeonWorld::DungeonWorld(int seed, int N) {
     this->addAABB(move(enclosing_boundary));
 
     // Get the reference to the enclosing boundary back so we can add our
-    // dungeon rooms as sub-abbs to this
+    // dungeon rooms as sub-aabs to this
     auto& enclosing_boundary_aabb = this->getAABBList().front();
 
     int ctr = 1;         // Room number
@@ -67,32 +67,32 @@ DungeonWorld::DungeonWorld(int seed, int N) {
             if (reference_arr[i][j] != 0 && (j >= 1 && j <= N - 2) &&
                 reference_arr[i][j - 1] != 0) {
 
-                // Where the coridoor starts and ends
+                // Where the corridor starts and ends
                 Pos coridoorStart(curPos);
-                Pos coridoorEnd(coridoorStart);
-                coridoorEnd.shiftZ(7);
-                coridoorEnd.shiftY(4);
+                Pos corridorEnd(coridoorStart);
+                corridorEnd.shiftZ(7);
+                corridorEnd.shiftY(4);
                 coridoorStart.shiftX(-7);
                 coridoorStart.shiftZ(3);
 
-                // Make the coridoor
-                auto coridoor = make_unique<AABB>(
-                    "dungeon_room_" + to_string(ctr) + "_coridoor",
-                    "coridoor",
+                // Make the corridor
+                auto corridor = make_unique<AABB>(
+                    "dungeon_room_" + to_string(ctr) + "_corridor",
+                    "corridor",
                     "stonebrick",
                     coridoorStart,
-                    coridoorEnd,
+                    corridorEnd,
                     true,
                     false,
                     false);
 
-                // Ends of the coridoor are changed to air
+                // Ends of the corridor are changed to air
                 // so they are open
-                coridoor->generateBox("air", 0, 7, 1);
-                coridoor->generateBox("air", 7, 0, 1);
+                corridor->generateBox("air", 0, 7, 1);
+                corridor->generateBox("air", 7, 0, 1);
 
                 // Add this to the overall boundary
-                enclosing_boundary_aabb->addAABB(move(coridoor));
+                enclosing_boundary_aabb->addAABB(move(corridor));
             }
 
             // Go to the next position. We do this even if we placed nothing
