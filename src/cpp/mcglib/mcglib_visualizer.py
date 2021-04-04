@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 
 """
-Filename: pro_gen_vizualizer.py
+Filename: mcglib_visualizer.py
 Author: Adi Banerjee
 Purpose: This program will vizualize the procedurally generated map from the semantic_map.json file. 
-         It does not accept alternate filenames. The vizualized map is saved in the same directory as
+         It does not accept alternate filenames. The visualized map is saved in the same directory as
          script with the name "map_plot.pdf". A graph of the structures is also drawn and saved as "map_graph.pdf".
 """
 
@@ -25,7 +25,7 @@ parser.add_argument(
     type=bool,
 )
 parser.add_argument(
-    "--font-size", help="Size of label fonts. Defaults to 3.", default=3, type=int
+    "--font_size", help="Size of label fonts. Defaults to 3.", default=3, type=int
 )
 parser.add_argument(
     "--rankdir",
@@ -33,7 +33,8 @@ parser.add_argument(
     default="LR",
     type=str,
 )
-parser.parse_args()
+args = parser.parse_args()
+
 
 # Colours to use for each material
 color_index = {
@@ -91,7 +92,7 @@ for location in locations:
             (x2, patch_center_z),
             color="blue",
             weight="bold",
-            fontsize=3,
+            fontsize=args.font_size,
             ha="center",
             va="center",
         )
@@ -125,9 +126,12 @@ f.close()
 
 # Use the dot file to create the digraph
 G = pgv.AGraph("tempDotFile.dot")
-G.graph_attr["rankdir"] = "LR"
+if args.rankdir == "TB":
+    G.graph_attr["rankdir"] = args.rankdir
+else:
+    G.graph_attr["rankdir"] = "LR"
 G.layout(prog="dot")
 G.draw("map_graph.pdf")
 
 # Remove the dot file
-# os.remove("tempDotFile.dot")
+os.remove("tempDotFile.dot")
