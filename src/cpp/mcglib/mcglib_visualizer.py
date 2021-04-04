@@ -46,6 +46,13 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "--axis_color",
+    help="Sets the color of the axes. Defaults to black.",
+    default="black",
+    type=str,
+)
+
+parser.add_argument(
     "--rankdir",
     help='Sets direction of graph layout. If rankdir="TB", the graph is laid out from top to bottom, i.e., directed edges tend to go from top to bottom. By default, graphs are laid out from left to right ("LR").',
     default="LR",
@@ -154,6 +161,13 @@ ax.add_collection(p)
 # Some settings
 if is_color_like(args.background):
     fig.patch.set_facecolor(args.background)
+if is_color_like(args.axis_color):
+    ax.spines["bottom"].set_color(args.axis_color)
+    ax.spines["right"].set_color(args.axis_color)
+    ax.xaxis.label.set_color(args.axis_color)
+    ax.yaxis.label.set_color(args.axis_color)
+    ax.tick_params(axis='x', colors=args.axis_color)
+    ax.tick_params(axis='y', colors=args.axis_color)
 ax.set_aspect("equal")
 ax.yaxis.set_ticks_position("right")
 ax.xaxis.set_label_coords(0.5, -0.1)
