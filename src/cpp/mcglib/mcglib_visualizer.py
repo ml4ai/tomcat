@@ -17,6 +17,7 @@ import pygraphviz as pgv
 import os
 import argparse
 
+# Get command line arguments
 parser = argparse.ArgumentParser()
 parser.add_argument(
     "--color_patches",
@@ -48,12 +49,13 @@ color_index = {
 }
 
 # Read the semantic_map.json file
-semantic_json = "./build/semantic_map.json"
+semantic_json = "./semantic_map.json"
 with open(semantic_json) as f:
     data = json.load(f)
 locations = data["locations"]
 
 
+# Visualization Logic
 fig, ax = plt.subplots()
 patch_list = []  # The rectangular patches for each building will be stored here
 edge_list = []  # Edges for our graph
@@ -80,9 +82,16 @@ for location in locations:
         height = abs(z2 - z1)
 
         # Make and add the patch to our list
-        rect = patches.Rectangle(
-            (x1, z1), width, height, linewidth=1, edgecolor="black", fill=False
-        )
+        if(args.color_patches):
+            patch_color = color_index.get(location["material"], False)
+            rect = patches.Rectangle(
+                (x1, z1), width, height, linewidth=1, edgecolor="black", fill=patch_color
+            )
+        else:
+            rect = patches.Rectangle(
+                (x1, z1), width, height, linewidth=1, edgecolor="black", fill=False
+            )
+
         patch_list.append(rect)
 
         # Annotate the patch with the name of the location
