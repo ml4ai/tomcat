@@ -144,6 +144,8 @@ p = PatchCollection(patch_list, match_original=True)
 ax.add_collection(p)
 
 # Some settings
+if args.color_patches[0].lower() == "t":
+    fig.patch.set_facecolor('#252533')
 ax.set_aspect("equal")
 ax.yaxis.set_ticks_position("right")
 ax.xaxis.set_label_coords(0.5, -0.1)
