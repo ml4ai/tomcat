@@ -15,18 +15,47 @@ import numpy as np
 import json
 import pygraphviz as pgv
 import os
+import argparse
 
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--color_patches",
+    help="Color the plotted patches (for supported materials). Defaults to False.",
+    default=False,
+    type=bool,
+)
+parser.add_argument(
+    "--font-size", help="Size of label fonts. Defaults to 3.", default=3, type=int
+)
+parser.add_argument(
+    "--rankdir",
+    help='Sets direction of graph layout. If rankdir="TB", the graph is laid out from top to bottom, i.e., directed edges tend to go from top to bottom. By default, graphs are laid out from left to right ("LR").',
+    default="LR",
+    type=str,
+)
+parser.parse_args()
+
+# Colours to use for each material
+color_index = {
+    "planks": "#cc7904",
+    "glowstone": "#a4aba9",
+    "cobblestone": "#8f8e89",
+    "lava": "#e81f15",
+    "water": "#1569e8",
+    "sand": "#ffd080",
+    "gravel": "#face2f",
+}
 
 # Read the semantic_map.json file
-semantic_json = "./semantic_map.json"
+semantic_json = "./build/semantic_map.json"
 with open(semantic_json) as f:
     data = json.load(f)
 locations = data["locations"]
 
 
 fig, ax = plt.subplots()
-patch_list = [] # The rectangular patches for each building will be stored here
-edge_list = [] # Edges for our graph
+patch_list = []  # The rectangular patches for each building will be stored here
+edge_list = []  # Edges for our graph
 
 for location in locations:
     # We dont wan't to draw blocks or blank boxes since
@@ -101,4 +130,4 @@ G.layout(prog="dot")
 G.draw("map_graph.pdf")
 
 # Remove the dot file
-os.remove("tempDotFile.dot")
+# os.remove("tempDotFile.dot")
