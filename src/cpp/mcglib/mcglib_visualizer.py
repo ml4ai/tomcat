@@ -101,7 +101,7 @@ for location in locations:
 
         child_locations = location["child_locations"]
         for child_location in child_locations:
-            edge_list.append(location["id"] + " -> " + child_location)
+            edge_list.append((location["id"], child_location))
 
         # Find the coordinates of the AABB
         coordinate_list = location["bounds"]["coordinates"]
@@ -181,6 +181,7 @@ ax.add_collection(p)
 # Some settings
 if is_color_like(args.background):
     fig.patch.set_facecolor(args.background)
+
 if is_color_like(args.axis_color):
     ax.spines["bottom"].set_color(args.axis_color)
     ax.spines["right"].set_color(args.axis_color)
@@ -202,22 +203,15 @@ plt.savefig("map_plot.pdf")
 plt.close()
 
 # Here we create the graph
-# Create a dot file representation
-f = open("tempDotFile.dot", "w")
-f.write("digraph sample {\n\t")
-for edge in edge_list:
-    f.write(edge + "\n\t")
-f.write("}")
-f.close()
 
 # Use the dot file to create the digraph
-G = pgv.AGraph("tempDotFile.dot")
+G = pgv.AGraph()
+G.add_edges_from(edge_list)
+
 if args.rankdir == "TB":
     G.graph_attr["rankdir"] = args.rankdir
 else:
     G.graph_attr["rankdir"] = "LR"
+
 G.layout(prog="dot")
 G.draw("map_graph.pdf")
-
-# Remove the dot file
-os.remove("tempDotFile.dot")
