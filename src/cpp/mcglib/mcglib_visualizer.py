@@ -207,11 +207,13 @@ plt.close()
 # Use the dot file to create the digraph
 G = pgv.AGraph()
 G.add_edges_from(edge_list)
+G.node_attr["shape"] = "rectangle"
+G.node_attr["style"] = "rounded"
 
-if args.rankdir == "TB":
+if args.rankdir == "LR":
     G.graph_attr["rankdir"] = args.rankdir
 else:
-    G.graph_attr["rankdir"] = "LR"
+    G.graph_attr["rankdir"] = "TB"
 
 G.layout(prog="dot")
 G.draw("map_graph.pdf")
