@@ -3,7 +3,7 @@
 """
 Filename: mcglib_visualizer.py
 Author: Adi Banerjee
-Purpose: This program will visualize the procedurally generated map from the semantic_map.json file. 
+Purpose: This program will visualize the procedurally generated map from the semantic_map.json file.
          It does not accept alternate filenames. The visualized map is saved in the same directory as
          script with the name "map_plot.pdf". A graph of the structures is also drawn and saved as "map_graph.pdf".
 """
@@ -28,7 +28,10 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    "--font_size", help="Size of label fonts. Defaults to 3.", default=3, type=int
+    "--font_size",
+    help="Size of label fonts. Defaults to 3.",
+    default=3,
+    type=int,
 )
 
 parser.add_argument(
@@ -54,7 +57,9 @@ parser.add_argument(
 
 parser.add_argument(
     "--rankdir",
-    help='Sets direction of graph layout. If rankdir="TB", the graph is laid out from top to bottom, i.e., directed edges tend to go from top to bottom. By default, graphs are laid out from left to right ("LR").',
+    help=("Sets direction of graph layout. If rankdir='TB', the graph is laid "
+        "out from top to bottom, i.e., directed edges tend to go from top to "
+        "bottom. By default, graphs are laid out from left to right ('LR')."),
     default="LR",
     type=str,
 )
@@ -82,12 +87,17 @@ locations.reverse()
 
 # Visualization Logic
 fig, ax = plt.subplots()
-patch_list = []  # The rectangular patches for each building will be stored here
+patch_list = (
+    []
+)  # The rectangular patches for each building will be stored here
 edge_list = []  # Edges for our graph
 
 for location in locations:
     # We don't want to draw blocks or blank boxes since
-    if location["bounds"]["type"] != "block" and not location["id"] == "blank_box":
+    if (
+        location["bounds"]["type"] != "block"
+        and not location["id"] == "blank_box"
+    ):
 
         child_locations = location["child_locations"]
         for child_location in child_locations:
@@ -112,7 +122,12 @@ for location in locations:
 
             if location["material"] == "blank":
                 rect = patches.Rectangle(
-                    (x1, z1), width, height, linewidth=1, edgecolor="black", fill=False
+                    (x1, z1),
+                    width,
+                    height,
+                    linewidth=1,
+                    edgecolor="black",
+                    fill=False,
                 )
             else:
                 rect = patches.Rectangle(
@@ -125,7 +140,12 @@ for location in locations:
                 )
         else:
             rect = patches.Rectangle(
-                (x1, z1), width, height, linewidth=1, edgecolor="black", fill=False
+                (x1, z1),
+                width,
+                height,
+                linewidth=1,
+                edgecolor="black",
+                fill=False,
             )
 
         patch_list.append(rect)
@@ -166,8 +186,8 @@ if is_color_like(args.axis_color):
     ax.spines["right"].set_color(args.axis_color)
     ax.xaxis.label.set_color(args.axis_color)
     ax.yaxis.label.set_color(args.axis_color)
-    ax.tick_params(axis='x', colors=args.axis_color)
-    ax.tick_params(axis='y', colors=args.axis_color)
+    ax.tick_params(axis="x", colors=args.axis_color)
+    ax.tick_params(axis="y", colors=args.axis_color)
 ax.set_aspect("equal")
 ax.yaxis.set_ticks_position("right")
 ax.xaxis.set_label_coords(0.5, -0.1)
