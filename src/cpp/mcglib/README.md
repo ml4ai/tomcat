@@ -96,3 +96,9 @@ required dependencies listed at the top of this file:
 There are also various program options available for the visualizer. You can
 learn about them by running `python3 mcg_visualizer.py -h` or `python3
 mcg_visualizer.py --help`.
+
+## JSON Spec
+
+For each algorithm, the library outputs two JSON representations of the generated world:
+* `semantic_map.json`: provides a high level description of the modules placed according to the spec outlined in [semantic_map_spec.pdf](semantic_map_spec.pdf)
+* `low_level_map.json`: provides a low level description of the world such that there is only a list of blocks. This mainly affects AABBs since all the blocks they are composed of are just added to the final list of blocks. All high level information about what the blocks represent is lost.
