@@ -171,7 +171,7 @@ void AABB::addObject(unique_ptr<Object> object) {
     this->objectList.push_back(move(object));
 }
 
-bool AABB::isOverlapping(AABB& other) {
+bool AABB::intersects(AABB& other) {
     int xRange = (this->bottomRight.getX()) - (this->topLeft.getX());
     int yRange = (this->bottomRight.getY()) - (this->topLeft.getY());
     int zRange = (this->bottomRight.getZ()) - (this->topLeft.getZ());

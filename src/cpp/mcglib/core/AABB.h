@@ -270,13 +270,14 @@ class AABB {
     void addConnection(std::unique_ptr<Connection> connection);
 
     /**
-     * @brief Checks to see if two AABBs overlapp on any of the axes
+     * @brief Checks to see if two AABBs overlap with each other (including
+     * the case where one AABB is fully contained within the other.
      *
      * @param other The AABB to compare to
      * @return true When the AABBs do overlap
      * @return false When the AABBs don't overlap
      */
-    bool virtual isOverlapping(AABB& other);
+    bool virtual intersects(AABB& other);
 
     /**
      * @brief Generate a box made of a specific material inside the AABB with
