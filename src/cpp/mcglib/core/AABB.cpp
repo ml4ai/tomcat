@@ -21,8 +21,8 @@ AABB::AABB(string id,
 AABB::AABB(string id)
     : id{id}, type{"blank_canvas"}, material{"blank"}, topLeft(0, 0, 0),
       bottomRight(0, 0, 0), isHollow{true}, hasRoof{false} {
-          this->autoAdjust = true;
-      }
+    this->autoAdjust = true;
+}
 
 void AABB::addAABB(unique_ptr<AABB> aabb) {
     this->aabbList.push_back(move(aabb));
@@ -172,18 +172,26 @@ void AABB::addObject(unique_ptr<Object> object) {
 }
 
 bool AABB::intersects(AABB& other) {
-    int xRange = (this->bottomRight.getX()) - (this->topLeft.getX());
-    int yRange = (this->bottomRight.getY()) - (this->topLeft.getY());
-    int zRange = (this->bottomRight.getZ()) - (this->topLeft.getZ());
+    int thisX1 = this->topLeft.getX();
+    int thisX2 = this->bottomRight.getX();
+    int thisY1 = this->topLeft.getY();
+    int thisY2 = this->bottomRight.getY();
+    int thisZ1 = this->topLeft.getZ();
+    int thisZ2 = this->bottomRight.getZ();
 
-    if ((abs(other.topLeft.getX() - this->topLeft.getX()) < xRange) ||
-        (abs(other.topLeft.getY() - this->topLeft.getY()) < yRange) ||
-        (abs(other.topLeft.getZ() - this->topLeft.getZ()) < zRange)) {
+    int otherX1 = other.topLeft.getX();
+    int otherX2 = other.bottomRight.getX();
+    int otherY1 = other.topLeft.getY();
+    int otherY2 = other.bottomRight.getY();
+    int otherZ1 = other.topLeft.getZ();
+    int otherZ2 = other.bottomRight.getZ();
 
-        return true;
+    if (thisX2 < otherX1 || otherX2 < thisX1 || thisY2 < otherY1 ||
+        otherY2 < thisY1 || thisZ2 < otherZ1 || otherZ2 < thisZ1) {
+        return false;
     }
     else {
-        return false;
+        return true;
     }
 }
 
