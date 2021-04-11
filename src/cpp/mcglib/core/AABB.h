@@ -368,9 +368,9 @@ class AABB {
      * @param bottomRight The coordinates of the bottom right of the AABB
      *        from the top view of the X-Z plane. Y coordinate should be maximum
      *        here.
-     * @param isHollow Specify wether the AABB should be hollow or not. Defaults
+     * @param isHollow Specify whether the AABB should be hollow or not. Defaults
      *        to true.
-     * @param hasRoof specify wether the AABB should have a roof or not.
+     * @param hasRoof specify whether the AABB should have a roof or not.
      *        Defaults to false.
      * @param autoAdjust Whether or not you want the boundary to auto adjust to
      *        its children. Defaults to true.
