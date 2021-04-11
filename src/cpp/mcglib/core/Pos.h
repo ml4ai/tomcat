@@ -8,7 +8,7 @@
 #include <nlohmann/json.hpp>
 #include <string>
 /**
- * @brief This class represents a 3D coordinate
+ * @brief This class represents a point in a 3D integer lattice.
  */
 class Pos {
 
