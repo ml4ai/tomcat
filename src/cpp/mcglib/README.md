@@ -72,15 +72,12 @@ it creates. Saving them can be fairly memory intensive.
 ## Creating your first algorithm
 
 A more detailed tutorial will be added. Examples of algorithms can be found in
-`GridWorld/GridWorld.cpp`, `ZombieWorld/ZombieWorld.cpp`,
-`DungeonWorld/DungeonWorld.cpp`.
+`worlds/GridWorld/GridWorld.cpp`, `worlds/ZombieWorld/ZombieWorld.cpp`,
+`worlds/DungeonWorld/DungeonWorld.cpp`.
 
-Decide on an algorithm/file name and then add a line to `CmakeLists.txt` after
-`${mcglib_dungeonworld}` as `<your file name>.cpp`. Add it before the closing
-parenthesis.
-Also remember to add a program option for your new algorithm in `generator.cpp`.
+Decide on an algorithm name and then create a folder with the algorithm files in a directory under `worlds`, similar to the example algoithms. 
 
-When you're ready to see the JSON output, navigate into the `build` directory
+When you're ready to output the resulting JSONs, remember to add a program option for your new algorithm in `generator.cpp`. Then, navigate into the `build` directory
 again, and run `cmake .. && make -j`. The `generator` executable should be
 created again which you can now use with your new program option.
 
