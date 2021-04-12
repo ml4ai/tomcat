@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../core/AABB.h"
-#include "../../core/Door.h"
+#include "../../../core/AABB.h"
+#include "../../../core/Door.h"
 #include "../blocks/Lever.h"
 
 /**

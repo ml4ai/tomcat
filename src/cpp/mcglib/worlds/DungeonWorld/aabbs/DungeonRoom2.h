@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../core/AABB.h"
+#include "../../../core/AABB.h"
 
 /**
  * @brief This class represents a very specific building that is used in the

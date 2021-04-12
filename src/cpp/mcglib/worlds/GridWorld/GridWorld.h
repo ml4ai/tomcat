@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../core/World.h"
+#include "../../core/World.h"
 
 class GridWorld : public World {
 

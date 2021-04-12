@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../core/World.h"
+#include "../../core/World.h"
 #include "aabbs/ZombieworldGroup.h"
 #include "aabbs/ZombieworldPit.h"
 
