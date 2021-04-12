@@ -76,7 +76,7 @@ string World::toLowLevelMapJSON() {
         (*objectPtr).toLowLevelMapJSON(world_json);
     }
 
-    return world_json.dump(4);
+    return world_json.dump();
 }
 
 string World::toSemanticMapJSON() {
@@ -113,7 +113,7 @@ string World::toSemanticMapJSON() {
         (*connectionPtr).toSemanticMapJSON(world_json);
     }
 
-    return world_json.dump(4);
+    return world_json.dump();
 }
 
 void World::writeToFile(string jsonPath, string altJSONPath) {
