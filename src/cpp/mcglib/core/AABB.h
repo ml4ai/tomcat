@@ -368,8 +368,8 @@ class AABB {
      * @param bottomRight The coordinates of the bottom right of the AABB
      *        from the top view of the X-Z plane. Y coordinate should be maximum
      *        here.
-     * @param isHollow Specify whether the AABB should be hollow or not. Defaults
-     *        to true.
+     * @param isHollow Specify whether the AABB should be hollow or not.
+     *        Defaults to true.
      * @param hasRoof specify whether the AABB should have a roof or not.
      *        Defaults to false.
      * @param autoAdjust Whether or not you want the boundary to auto adjust to
@@ -387,6 +387,12 @@ class AABB {
     /**
      * @brief Construct a new AABB object. Use this contructor when you know the
      *        top left and bottom right positions will change in the future.
+     *        Here, since the autoAdjust defaults to true and the base material is
+     *        "blank", it is effectively a blank canvas. It will resize when children
+     *        AABB are added to it, and since it's base material is blank, the
+     *        WorldBuilder java class won't place anything at locations marked with a
+     *        material of type "blank." All of this can of course be achieved with the
+     *        other constructor, but this one makes the process more convenient.
      *
      * @param id The id associated with this AABB
      */
