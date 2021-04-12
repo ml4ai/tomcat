@@ -91,11 +91,6 @@ class Pos {
 
     /**
      * @brief Construct a new Pos object
-     */
-    Pos();
-
-    /**
-     * @brief Construct a new Pos object
      *
      * @param x The x coordinate
      * @param y The y coordinate

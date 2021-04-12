@@ -7,8 +7,6 @@
 using namespace std;
 using json = nlohmann::json;
 
-Pos::Pos() {}
-
 Pos::Pos(int x, int y, int z) : x{x}, y{y}, z{z} {}
 
 int Pos::getX() { return this->x; }
