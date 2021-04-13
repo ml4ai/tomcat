@@ -44,6 +44,32 @@ class Entity {
     int getZ();
 
     /**
+     * @brief Set the x coordinate.
+     *
+     * @param x The new coordinate.
+     */
+    void setX(int x);
+
+    /**
+     * @brief Set the y coordinate.
+     *
+     * @param y The new coordinate.
+     */
+    void setY(int y);
+
+    /**
+     * @brief Set the z coordinate.
+     *
+     * @param z The new coordinate.
+     */
+    void setZ(int z);
+
+
+    //===========================================
+    // Minecraft entity equipment-related methods
+    //===========================================
+
+    /**
      * @brief Get the helmet's material.
      *
      * @return string The material.
@@ -113,26 +139,6 @@ class Entity {
      */
     void setWeapon(std::string weapon);
 
-    /**
-     * @brief Set the x coordinate.
-     *
-     * @param x The new coordinate.
-     */
-    void setX(int x);
-
-    /**
-     * @brief Set the y coordinate.
-     *
-     * @param y The new coordinate.
-     */
-    void setY(int y);
-
-    /**
-     * @brief Set the z coordinate.
-     *
-     * @param z The new coordinate.
-     */
-    void setZ(int z);
 
     /**
      * @brief Set the mob type.
