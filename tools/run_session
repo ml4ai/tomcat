@@ -290,7 +290,7 @@ fi
 # If the main mission is 3 (i.e. procedural generation) then we run the
 # generator before starting the mission.
 if [[ $MAIN_MISSION -eq 3 ]]; then
-    "$TOMCAT"/build/bin/generator\
+    "$TOMCAT"/build/bin/mcgen\
         --world_type 0\
         --semantic_map_path "$TOMCAT"/external/malmo/Minecraft/run/semantic_map.json\
         --low_level_map_path "$TOMCAT"/external/malmo/Minecraft/run/low_level_map.json
