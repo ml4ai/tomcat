@@ -1,5 +1,6 @@
 #pragma once
-#include "../../../core/Block.h"
+
+#include "mcglib/Block.h"
 
 class Lever : public Block {
   private:

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../core/World.h"
+#include "mcglib/World.h"
 #include "aabbs/DungeonRoom1.h"
 #include "aabbs/DungeonRoom2.h"
 

@@ -2,9 +2,10 @@
  * @file World.cpp
  * @brief This file implements the methods in the World class.
  */
-#include "World.h"
 #include <fstream>
 #include <iostream>
+
+#include "mcglib/World.h"
 
 using namespace std;
 using json = nlohmann::json;

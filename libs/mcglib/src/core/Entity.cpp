@@ -1,4 +1,4 @@
-#include "Entity.h"
+#include "mcglib/Entity.h"
 using namespace std;
 using json = nlohmann::json;
 

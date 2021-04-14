@@ -1,4 +1,4 @@
-#include "Connection.h"
+#include "mcglib/Connection.h"
 
 using namespace std;
 using json = nlohmann::json;

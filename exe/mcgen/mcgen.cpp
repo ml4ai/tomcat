@@ -1,6 +1,5 @@
 #include "worlds/DungeonWorld/DungeonWorld.h"
 #include "worlds/GridWorld/GridWorld.h"
-#include "worlds/TutorialWorld/TutorialWorld.h"
 #include "worlds/ZombieWorld/ZombieWorld.h"
 #include <boost/program_options.hpp>
 #include <fstream>
@@ -23,10 +22,11 @@ int main(int argc, char* argv[]) {
     general.add_options()("help,h", "Show program options")(
         "world_type",
         po::value<int>(&world_type)->default_value(0),
-        "Type of world to generate.\nZombieWorld = 0\nGridWorld = "
-        "1\nDungeonWorld = "
-        "2\nTutorialWorld = "
-        "3")("help_gridworld",
+        "Type of world to generate.\n"
+        "ZombieWorld = 0\n"
+        "GridWorld = 1\n"
+        "DungeonWorld = 2\n"
+        )("help_gridworld",
              "Show additional arguments specific to GridWorld generation.")(
         "help_dungeonworld",
         "Show additional arguments specific to DungeonWorld generation.")(
@@ -98,10 +98,6 @@ int main(int argc, char* argv[]) {
         int N = vm["dungeon_N"].as<int>();
         seed = vm["seed"].as<int>();
         DungeonWorld world(seed, N);
-        world.writeToFile(semantic_map_json_path, low_level_map_json_path);
-    }
-    else if (world_type == 3) {
-        TutorialWorld world;
         world.writeToFile(semantic_map_json_path, low_level_map_json_path);
     }
     else {

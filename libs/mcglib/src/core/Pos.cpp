@@ -3,7 +3,7 @@
  * @brief This file implements the methods in the Pos class.
  */
 
-#include "Pos.h"
+#include "mcglib/Pos.h"
 using namespace std;
 using json = nlohmann::json;
 
