@@ -94,6 +94,28 @@ int AABB::getSizeZ() {
     return (this->bottomRight.getY() - this->topLeft.getY());
 }
 
+void AABB::shiftX(int shift){
+    this->topLeft.shiftX(shift);
+    this->bottomRight.shiftX(shift);
+}
+
+void AABB::shiftY(int shift){
+    this->topLeft.shiftY(shift);
+    this->bottomRight.shiftY(shift);
+}
+
+void AABB::shiftZ(int shift){
+    this->topLeft.shiftZ(shift);
+    this->bottomRight.shiftZ(shift);
+}
+
+void AABB::shift(int shiftX, int shiftY, int shiftZ){
+    this->shiftX(shiftX);
+    this->shiftY(shiftY);
+    this->shiftZ(shiftZ);
+}
+
+
 Pos AABB::getRandomPos(mt19937_64& gen,
                        int offsetPosX,
                        int offsetNegX,

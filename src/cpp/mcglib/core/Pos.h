@@ -82,6 +82,15 @@ class Pos {
     void shiftZ(int shift);
 
     /**
+     * @brief Shift the x,y and z values by given amounts
+     *
+     * @param shiftX The amount to shift x by which may be positive or negative
+     * @param shiftY The amount to shift x by which may be positive or negative
+     * @param shiftZ The amount to shift x by which may be positive or negative
+     */
+    void shift(int shiftX, int shiftY, int shiftZ);
+
+    /**
      * @brief Gets the JSON representation of the various
      *        fields and values stored in an instance
      *

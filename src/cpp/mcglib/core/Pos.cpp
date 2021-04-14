@@ -27,6 +27,12 @@ void Pos::shiftY(int shift) { this->y += shift; }
 
 void Pos::shiftZ(int shift) { this->z += shift; }
 
+void Pos::shift(int shiftX, int shiftY, int shiftZ) {
+    this->shiftX(shiftX);
+    this->shiftY(shiftY);
+    this->shiftZ(shiftZ);
+}
+
 json Pos::toSemanticMapJSON() {
     json pos_json;
     pos_json["x"] = this->getX();

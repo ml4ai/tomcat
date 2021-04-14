@@ -341,6 +341,36 @@ class AABB {
     void virtual generateAllDoorsInAABB();
 
     /**
+     * @brief Translate the AABB by the given amount in the X axis
+     * 
+     * @param shift The amount to shift by which may be positive or negative
+     */
+    void shiftX(int shift);
+
+        /**
+     * @brief Translate the AABB by the given amount in the Y axis
+     * 
+     * @param shift The amount to shift by which may be positive or negative
+     */
+    void shiftY(int shift);
+
+        /**
+     * @brief Translate the AABB by the given amount in the Z axis
+     * 
+     * @param shift The amount to shift by which may be positive or negative
+     */
+    void shiftZ(int shift);
+
+    /**
+     * @brief Translates the AABB by the given amounts in the X, Y and Z axes
+     * 
+     * @param shiftX The amount to shift by in X which may be positive or negative
+     * @param shiftY The amount to shift by in Y which may be positive or negative
+     * @param shiftZ The amount to shift by in Z which may be positive or negative
+     */
+    void shift(int shiftX, int shiftY, int shiftZ);
+
+    /**
      * @brief Adds the JSON representation of this object to the
      *        "locations" list of the base json
      *
