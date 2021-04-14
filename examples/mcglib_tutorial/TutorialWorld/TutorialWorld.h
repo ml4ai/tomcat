@@ -1,4 +1,4 @@
-#include "../../core/World.h"
+#include "mcglib/World.h"
 #include "aabbs/House.h"
 
 class TutorialWorld : public World {

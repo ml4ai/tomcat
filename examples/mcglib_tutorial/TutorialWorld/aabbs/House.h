@@ -1,6 +1,7 @@
 #pragma once
-#include "../../../core/AABB.h"
-#include "../../../core/Entity.h"
+
+#include "mcglib/AABB.h"
+#include "mcglib/Entity.h"
 
 class House : public AABB{
 
