@@ -1,11 +1,14 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 
 """
 Filename: mcglib_visualizer.py
 Author: Adi Banerjee
 Purpose: This program will visualize the procedurally generated map from the semantic_map.json file.
          It does not accept alternate filenames. The visualized map is saved in the same directory as
-         script with the name "map_plot.pdf". A graph of the structures is also drawn and saved as "map_graph.pdf".
+         script with the name "map_plot.pdf". A graph of the structures is also
+         drawn and saved as "map_graph.pdf".
+
+Python 3 is required to run this script.
 """
 
 import matplotlib.patches as patches
