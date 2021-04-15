@@ -23,6 +23,18 @@ int Entity::getY() { return this->pos.getY(); }
 
 int Entity::getZ() { return this->pos.getZ(); }
 
+void Entity::shiftX(int shift) { this->pos.shiftX(shift); }
+
+void Entity::shiftY(int shift) { this->pos.shiftY(shift); }
+
+void Entity::shiftZ(int shift) { this->pos.shiftZ(shift); }
+
+void Entity::shift(int shiftX, int shiftY, int shiftZ) {
+    this->shiftX(shiftX);
+    this->shiftY(shiftY);
+    this->shiftZ(shiftZ);
+}
+
 string Entity::getHelmet() { return this->equipment.at(0); }
 
 string Entity::getChestplate() { return this->equipment.at(1); }

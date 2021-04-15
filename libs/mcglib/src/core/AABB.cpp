@@ -94,27 +94,98 @@ int AABB::getSizeZ() {
     return (this->bottomRight.getY() - this->topLeft.getY());
 }
 
-void AABB::shiftX(int shift){
+void AABB::shiftX(int shift) {
+
     this->topLeft.shiftX(shift);
     this->bottomRight.shiftX(shift);
+
+    for (auto& aabbPtr : this->aabbList) {
+        aabbPtr->shiftX(shift);
+    }
+
+    for (auto& blockPtr : this->getBlockList()) {
+        blockPtr->shiftX(shift);
+    }
+
+    for (auto& entityPtr : this->getEntityList()) {
+        entityPtr->shiftX(shift);
+    }
+
+    for (auto& objectPtr : this->getObjectList()) {
+        objectPtr->shiftX(shift);
+    }
+
+    this->connectionList.clear();
 }
 
-void AABB::shiftY(int shift){
+void AABB::shiftY(int shift) {
     this->topLeft.shiftY(shift);
     this->bottomRight.shiftY(shift);
+
+    for (auto& aabbPtr : this->aabbList) {
+        aabbPtr->shiftY(shift);
+    }
+
+    for (auto& blockPtr : this->getBlockList()) {
+        blockPtr->shiftY(shift);
+    }
+
+    for (auto& entityPtr : this->getEntityList()) {
+        entityPtr->shiftY(shift);
+    }
+
+    for (auto& objectPtr : this->getObjectList()) {
+        objectPtr->shiftY(shift);
+    }
+
+    this->connectionList.clear();
 }
 
-void AABB::shiftZ(int shift){
+void AABB::shiftZ(int shift) {
     this->topLeft.shiftZ(shift);
     this->bottomRight.shiftZ(shift);
+
+    for (auto& aabbPtr : this->aabbList) {
+        aabbPtr->shiftZ(shift);
+    }
+
+    for (auto& blockPtr : this->getBlockList()) {
+        blockPtr->shiftZ(shift);
+    }
+
+    for (auto& entityPtr : this->getEntityList()) {
+        entityPtr->shiftZ(shift);
+    }
+
+    for (auto& objectPtr : this->getObjectList()) {
+        objectPtr->shiftZ(shift);
+    }
+
+    this->connectionList.clear();
 }
 
-void AABB::shift(int shiftX, int shiftY, int shiftZ){
-    this->shiftX(shiftX);
-    this->shiftY(shiftY);
-    this->shiftZ(shiftZ);
-}
+void AABB::shift(int shiftX, int shiftY, int shiftZ) {
+    this->topLeft.shift(shiftX, shiftY, shiftZ);
+    this->bottomRight.shift(shiftX, shiftY, shiftZ);
 
+    for (auto& aabbPtr : this->aabbList) {
+        aabbPtr->shift(shiftX, shiftY, shiftZ);
+    }
+
+    for (auto& blockPtr : this->getBlockList()) {
+        blockPtr->shift(shiftX, shiftY, shiftZ);
+    }
+
+    for (auto& entityPtr : this->getEntityList()) {
+        entityPtr->shift(shiftX, shiftY, shiftZ);
+    }
+
+    for (auto& objectPtr : this->getObjectList()) {
+        objectPtr->shift(shiftX, shiftY, shiftZ);
+    }
+
+    this->connectionList.clear();
+}
 
 Pos AABB::getRandomPos(mt19937_64& gen,
                        int offsetPosX,

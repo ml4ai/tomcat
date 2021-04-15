@@ -8,6 +8,18 @@ Object::Object(string id, string type, unique_ptr<Block> block)
     this->block = move(block);
 }
 
+void Object::shiftX(int shift) { this->block->shiftX(shift); }
+
+void Object::shiftY(int shift) { this->block->shiftY(shift); }
+
+void Object::shiftZ(int shift) { this->block->shiftZ(shift); }
+
+void Object::shift(int shiftX, int shiftY, int shiftZ) {
+    this->shiftX(shiftX);
+    this->shiftY(shiftY);
+    this->shiftZ(shiftZ);
+}
+
 void Object::toSemanticMapJSON(json& json_base) {
     json object_json;
 
