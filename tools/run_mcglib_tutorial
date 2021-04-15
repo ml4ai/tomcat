@@ -10,10 +10,16 @@ export TOMCAT
 
 source "$TOMCAT"/tools/configuration_helpers
 
+# Disable FFMPEG recording
+export ENABLE_FFMPEG=0
+
+# Don't make the window full screen automatically
+export TOMCAT_FULL_SCREEN=0
+
 configure_session
 
 do_mission() {
-    export CURRENT_MISSION="mcglib_tutorial"
+    export CURRENT_MISSION="mcg_tutorial"
     echo " "
     echo "Running mission ${CURRENT_MISSION} in ${TOMCAT}."
     echo " "
@@ -54,8 +60,8 @@ do_mission() {
     fi
 }
 
-pushd "$TOMCAT"/libs/mcglib/build >/dev/null
-    ./bin/mcglib_tutorial
+pushd "$TOMCAT"/libs/mcg/build >/dev/null
+    ./bin/mcg_tutorial
     cp low_level_map.json "$TOMCAT"/external/malmo/Minecraft/run/low_level_map.json\
 popd
 
