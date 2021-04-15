@@ -18,3 +18,7 @@ add_library(
 
 target_include_directories(mcglib PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
 target_link_libraries(mcglib ${Boost_LIBRARIES} nlohmann_json::nlohmann_json)
+option(BUILD_EXAMPLES "Enable building of the example programs" OFF)
+if(BUILD_EXAMPLES)
+  add_subdirectory(examples)
+endif()

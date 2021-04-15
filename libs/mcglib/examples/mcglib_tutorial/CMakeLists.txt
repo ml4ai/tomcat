@@ -10,10 +10,6 @@ file(GLOB_RECURSE mcglib_tutorial_sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOUR
 
 add_executable(mcglib_tutorial ${mcglib_tutorial_sources})
 
-target_include_directories(mcglib_tutorial PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/mcglib/include)
-
-if(NOT mcglib)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../../libs/mcglib ${CMAKE_CURRENT_BINARY_DIR}/lib)
-endif()
+target_include_directories(mcglib_tutorial PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../include)
 
 target_link_libraries(mcglib_tutorial mcglib nlohmann_json::nlohmann_json)
