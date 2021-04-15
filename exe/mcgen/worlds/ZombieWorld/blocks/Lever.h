@@ -1,6 +1,6 @@
 #pragma once
 
-#include "mcglib/Block.h"
+#include "mcg/Block.h"
 
 class Lever : public Block {
   private:

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "mcglib/AABB.h"
-#include "mcglib/Door.h"
+#include "mcg/AABB.h"
+#include "mcg/Door.h"
 #include "../blocks/Lever.h"
 
 /**

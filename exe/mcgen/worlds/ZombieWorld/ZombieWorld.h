@@ -1,6 +1,6 @@
 #pragma once
 
-#include "mcglib/World.h"
+#include "mcg/World.h"
 #include "aabbs/ZombieworldGroup.h"
 #include "aabbs/ZombieworldPit.h"
 

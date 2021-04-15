@@ -2,7 +2,7 @@
  * @file AABB.cpp
  * @brief This file implements the methods in the AABB class.
  */
-#include "mcglib/AABB.h"
+#include "mcg/AABB.h"
 using namespace std;
 using json = nlohmann::json;
 

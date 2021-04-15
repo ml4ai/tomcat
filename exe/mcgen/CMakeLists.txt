@@ -8,5 +8,5 @@ file(GLOB_RECURSE mcgen_sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*.
 
 add_executable(mcgen ${mcgen_sources})
 
-target_include_directories(mcgen PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/mcglib/include)
-target_link_libraries(mcgen mcglib nlohmann_json::nlohmann_json)
+target_include_directories(mcgen PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/mcg/include)
+target_link_libraries(mcgen mcg nlohmann_json::nlohmann_json)

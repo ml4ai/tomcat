@@ -2,7 +2,7 @@
  * @file Block.cpp
  * @brief This file implements the methods in the Block class.
  */
-#include "mcglib/Block.h"
+#include "mcg/Block.h"
 
 using namespace std;
 using json = nlohmann::json;

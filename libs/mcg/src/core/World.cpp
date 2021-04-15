@@ -5,7 +5,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "mcglib/World.h"
+#include "mcg/World.h"
 
 using namespace std;
 using json = nlohmann::json;

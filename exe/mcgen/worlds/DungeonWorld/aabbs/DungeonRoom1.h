@@ -1,6 +1,6 @@
 #pragma once
 
-#include "mcglib/AABB.h"
+#include "mcg/AABB.h"
 
 /**
  * @brief This class represents a very specific building that is used in the

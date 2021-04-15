@@ -1,1 +1,1 @@
-add_subdirectory(mcglib)
+add_subdirectory(mcg)

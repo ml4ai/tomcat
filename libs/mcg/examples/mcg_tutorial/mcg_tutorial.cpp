@@ -1,8 +1,8 @@
 #include <memory>
 
-#include "mcglib/AABB.h"
-#include "mcglib/Entity.h"
-#include "mcglib/World.h"
+#include "mcg/AABB.h"
+#include "mcg/Entity.h"
+#include "mcg/World.h"
 
 using namespace std;
 

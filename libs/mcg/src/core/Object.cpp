@@ -1,4 +1,4 @@
-#include "mcglib/Object.h"
+#include "mcg/Object.h"
 
 using namespace std;
 using json = nlohmann::json;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "mcglib/World.h"
+#include "mcg/World.h"
 
 class GridWorld : public World {
 
