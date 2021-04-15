@@ -61,10 +61,13 @@ class TutorialWorld : public World {
 };
 
 /**
- * @brief Create the world and write the JSON and TSV output to file.
+ * Create the world and write the JSON and TSV output to file.
  */
 int main(int argc, char* argv[]) {
     TutorialWorld world;
-    world.writeToFile("semantic_map.json", "low_level_map.json");
+    world.writeToFile(
+        "semantic_map.json",
+        "low_level_map.json"
+    );
     return 0;
 }
