@@ -1,51 +1,72 @@
-#include "TutorialWorld/TutorialWorld.h"
-#include <boost/program_options.hpp>
-#include <fstream>
-#include <iostream>
+#include <memory>
+
+#include "mcglib/AABB.h"
+#include "mcglib/Entity.h"
+#include "mcglib/World.h"
 
 using namespace std;
-namespace po = boost::program_options;
 
-/**
- * @brief Directive method to create the world and write the JSON and TSV
- * output to file.
- */
-int main(int argc, char* argv[]) {
+class House : public AABB {
 
-    int world_type, seed;
-    string semantic_map_json_path, low_level_map_json_path;
+  private:
+    std::mt19937_64 gen;
 
-    // Handle options
-    po::options_description general("Allowed options");
-    general.add_options()("help,h", "Show program options")(
-        "semantic_map_path",
-        po::value<string>(&semantic_map_json_path)
-            ->default_value("semantic_map.json"),
-        "Path to the output semantic map JSON file.")(
-        "low_level_map_path",
-        po::value<string>(&low_level_map_json_path)
-            ->default_value("low_level_map.json"),
-        "Path to the low level (more granular) map JSON file.");
+  public:
+    House(string id, Pos& topLeft) : AABB(id) {
+        // Set the base material to be a log
+        this->setMaterial("log");
 
+        // Define the object's boundaries
+        Pos bottomRight(topLeft);
+        bottomRight.shift(5, 4, 5);
+        this->setTopLeft(topLeft);
+        this->setBottomRight(bottomRight);
 
-    po::options_description all("Allowed options");
-    all.add(general);
+        this->shiftX(5);
+        // The floor should be made of planks
+        this->generateBox("planks", 1, 1, 0, 4, 1, 1);
 
-    po::variables_map vm;
-    po::store(po::command_line_parser(argc, argv).options(all).run(), vm);
-    po::notify(vm);
+        // Add windows
+        this->generateBox("glass", 0, 5, 1, 1, 1, 1);
+        this->generateBox("glass", 5, 0, 1, 1, 1, 1);
+        this->generateBox("glass", 1, 1, 1, 1, 0, 5);
 
-    if (vm.count("help")) {
-        cout << general << endl;
-        return 0;
+        // Add a roof
+        this->hasRoof = true;
+
+        // Add a friend
+        Pos randomPos = this->getRandomPos(this->gen, 1, 1, 1, 2, 1, 1);
+        auto villager = make_unique<Entity>("villager", randomPos);
+        this->addEntity(move(villager));
     }
 
+    ~House(){};
+};
+
+class TutorialWorld : public World {
+
+  public:
+    TutorialWorld() {
+        Pos topLeft(1, 3, 1);
+        auto room1 = make_unique<House>("room_1", topLeft);
+
+        auto room2 = make_unique<House>("room_2", topLeft);
+
+        auto enclosing_aabb = make_unique<AABB>("enclosing_aabb");
+        enclosing_aabb->addAABB(move(room1));
+        enclosing_aabb->addAABB(move(room2));
+
+        this->addAABB(move(enclosing_aabb));
+    };
+
+    ~TutorialWorld(){};
+};
+
+/**
+ * @brief Create the world and write the JSON and TSV output to file.
+ */
+int main(int argc, char* argv[]) {
     TutorialWorld world;
-    world.writeToFile(semantic_map_json_path, low_level_map_json_path);
-
-    cout << "Generating world..." << endl;
-
-    cout << "Done. The generated files are in " << semantic_map_json_path
-         << " and " << low_level_map_json_path << endl;
+    world.writeToFile("semantic_map.json", "low_level_map.json");
     return 0;
 }

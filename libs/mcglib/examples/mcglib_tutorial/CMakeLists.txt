@@ -6,9 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 find_package(nlohmann_json REQUIRED)
 
-file(GLOB_RECURSE mcglib_tutorial_sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-
-add_executable(mcglib_tutorial ${mcglib_tutorial_sources})
+add_executable(mcglib_tutorial mcglib_tutorial.cpp)
 
 target_include_directories(mcglib_tutorial PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../include)
 
