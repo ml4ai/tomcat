@@ -38,4 +38,3 @@ option(BUILD_EXAMPLES "Enable building of the example programs" OFF)
 if(BUILD_EXAMPLES)
   add_subdirectory(examples)
 endif()
-
