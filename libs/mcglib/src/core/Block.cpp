@@ -25,6 +25,18 @@ void Block::setY(int y) { this->pos.setY(y); }
 
 void Block::setZ(int z) { this->pos.setZ(z); }
 
+void Block::shiftX(int shift) { this->pos.shiftX(shift); }
+
+void Block::shiftY(int shift) { this->pos.shiftY(shift); }
+
+void Block::shiftZ(int shift) { this->pos.shiftZ(shift); }
+
+void Block::shift(int shiftX, int shiftY, int shiftZ) {
+    this->shiftX(shiftX);
+    this->shiftY(shiftY);
+    this->shiftZ(shiftZ);
+}
+
 void Block::toSemanticMapJSON(json& json_base) {
 
     json block_json;

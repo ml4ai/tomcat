@@ -64,6 +64,37 @@ class Entity {
      */
     void setZ(int z);
 
+    /**
+     * @brief Shift the x value by a given amount
+     *
+     * @param shift The amount to shift by which may be positive or negative
+     */
+    void shiftX(int shift);
+
+    /**
+     * @brief Shift the y value by a given amount
+     *
+     * @param shift The amount to shift by which may be positive or negative
+     */
+    void shiftY(int shift);
+
+    /**
+     * @brief Shift the z value by a given amount
+     *
+     * @param shift The amount to shift by which may be positive or negative
+     */
+    void shiftZ(int shift);
+
+    /**
+     * @brief Shift the x,y and z values by given amounts
+     *
+     * @param shiftX The amount to shift x by which may be positive or negative
+     * @param shiftY The amount to shift x by which may be positive or negative
+     * @param shiftZ The amount to shift x by which may be positive or negative
+     */
+    void shift(int shiftX, int shiftY, int shiftZ);
+
+
 
     //===========================================
     // Minecraft entity equipment-related methods
