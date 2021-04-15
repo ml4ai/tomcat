@@ -22,7 +22,6 @@ class Room : public AABB {
         this->setTopLeft(topLeft);
         this->setBottomRight(bottomRight);
 
-        this->shiftX(5);
         // The floor should be made of planks
         this->generateBox("planks", 1, 1, 0, 4, 1, 1);
 
@@ -36,8 +35,8 @@ class Room : public AABB {
 
         // Add a friend
         Pos randomPos = this->getRandomPos(this->gen, 1, 1, 1, 2, 1, 1);
-        auto villager = make_unique<Entity>("villager", randomPos);
-        this->addEntity(move(villager));
+        auto zombie = make_unique<Entity>("zombie", randomPos);
+        this->addEntity(move(zombie));
     }
 
     ~Room(){};
@@ -50,6 +49,7 @@ class TutorialWorld : public World {
         Pos topLeft(1, 3, 1);
         auto room1 = make_unique<Room>("room_1", topLeft);
         auto room2 = make_unique<Room>("room_2", topLeft);
+        room2->shiftX(5);
 
         auto house = make_unique<AABB>("house");
         house->addAABB(move(room1));
