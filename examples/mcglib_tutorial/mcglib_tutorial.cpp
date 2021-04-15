@@ -29,6 +29,7 @@ int main(int argc, char* argv[]) {
 
 
     po::options_description all("Allowed options");
+    all.add(general);
 
     po::variables_map vm;
     po::store(po::command_line_parser(argc, argv).options(all).run(), vm);
@@ -38,6 +39,9 @@ int main(int argc, char* argv[]) {
         cout << general << endl;
         return 0;
     }
+
+    TutorialWorld world;
+    world.writeToFile(semantic_map_json_path, low_level_map_json_path);
 
     cout << "Generating world..." << endl;
 

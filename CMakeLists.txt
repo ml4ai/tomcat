@@ -33,3 +33,9 @@ option(BUILD_DOCS "Build documentation" OFF)
 if(BUILD_DOCS)
   add_subdirectory(docs)
 endif()
+
+option(BUILD_EXAMPLES "Enable building of the example programs" OFF)
+if(BUILD_EXAMPLES)
+  add_subdirectory(examples)
+endif()
+

@@ -1,0 +1,2 @@
+add_subdirectory(libmosquitto_example)
+add_subdirectory(mcglib_tutorial)
