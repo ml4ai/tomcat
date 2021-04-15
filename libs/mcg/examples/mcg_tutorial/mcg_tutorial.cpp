@@ -1,4 +1,3 @@
-#include <memory>
 #include "mcg/AABB.h"
 #include "mcg/Entity.h"
 #include "mcg/World.h"
