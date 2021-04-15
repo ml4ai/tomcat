@@ -6,13 +6,13 @@
 
 using namespace std;
 
-class House : public AABB {
+class Room : public AABB {
 
   private:
     std::mt19937_64 gen;
 
   public:
-    House(string id, Pos& topLeft) : AABB(id) {
+    Room(string id, Pos& topLeft) : AABB(id) {
         // Set the base material to be a log
         this->setMaterial("log");
 
@@ -40,7 +40,7 @@ class House : public AABB {
         this->addEntity(move(villager));
     }
 
-    ~House(){};
+    ~Room(){};
 };
 
 class TutorialWorld : public World {
@@ -48,15 +48,13 @@ class TutorialWorld : public World {
   public:
     TutorialWorld() {
         Pos topLeft(1, 3, 1);
-        auto room1 = make_unique<House>("room_1", topLeft);
+        auto room1 = make_unique<Room>("room_1", topLeft);
+        auto room2 = make_unique<Room>("room_2", topLeft);
 
-        auto room2 = make_unique<House>("room_2", topLeft);
-
-        auto enclosing_aabb = make_unique<AABB>("enclosing_aabb");
-        enclosing_aabb->addAABB(move(room1));
-        enclosing_aabb->addAABB(move(room2));
-
-        this->addAABB(move(enclosing_aabb));
+        auto house = make_unique<AABB>("house");
+        house->addAABB(move(room1));
+        house->addAABB(move(room2));
+        this->addAABB(move(house));
     };
 
     ~TutorialWorld(){};
