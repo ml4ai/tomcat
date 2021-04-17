@@ -3,7 +3,7 @@
 Class Door
 ==========
 
-- Defined in :ref:`file_src_cpp_pro_gen_Door.h`
+- Defined in :ref:`file_libs_mcg_include_mcg_Door.h`
 
 
 Inheritance Relationships

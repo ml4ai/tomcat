@@ -1,0 +1,57 @@
+
+.. _program_listing_file_libs_mcg_include_mcg_Block.h:
+
+Program Listing for File Block.h
+================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_libs_mcg_include_mcg_Block.h>` (``libs/mcg/include/mcg/Block.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   
+   #pragma once
+   #include "Pos.h"
+   #include <nlohmann/json.hpp>
+   
+   class Block {
+   
+     protected:
+       std::string material;
+       Pos pos;
+   
+     public:
+       std::string getMaterial();
+   
+       int getX();
+   
+       int getY();
+   
+       int getZ();
+   
+       Pos& getPos();
+   
+       void setX(int x);
+   
+       void setY(int y);
+   
+       void setZ(int z);
+   
+       void shiftX(int shift);
+   
+       void shiftY(int shift);
+   
+       void shiftZ(int shift);
+   
+       void shift(int shiftX, int shiftY, int shiftZ);
+   
+   
+       void virtual toSemanticMapJSON(nlohmann::json& json_base);
+   
+       void virtual toLowLevelMapJSON(nlohmann::json& json_base);
+   
+       Block(std::string material, Pos& pos);
+   
+       virtual ~Block();
+   };

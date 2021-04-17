@@ -1,0 +1,27 @@
+.. _dir_libs_mcg_include_mcg:
+
+
+Directory mcg
+=============
+
+
+|exhale_lsh| :ref:`Parent directory <dir_libs_mcg_include>` (``libs/mcg/include``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+*Directory path:* ``libs/mcg/include/mcg``
+
+
+Files
+-----
+
+- :ref:`file_libs_mcg_include_mcg_AABB.h`
+- :ref:`file_libs_mcg_include_mcg_Block.h`
+- :ref:`file_libs_mcg_include_mcg_Connection.h`
+- :ref:`file_libs_mcg_include_mcg_Door.h`
+- :ref:`file_libs_mcg_include_mcg_Entity.h`
+- :ref:`file_libs_mcg_include_mcg_Object.h`
+- :ref:`file_libs_mcg_include_mcg_Pos.h`
+- :ref:`file_libs_mcg_include_mcg_World.h`
+
+

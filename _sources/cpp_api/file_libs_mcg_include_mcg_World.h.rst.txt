@@ -1,0 +1,48 @@
+
+.. _file_libs_mcg_include_mcg_World.h:
+
+File World.h
+============
+
+|exhale_lsh| :ref:`Parent directory <dir_libs_mcg_include_mcg>` (``libs/mcg/include/mcg``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. contents:: Contents
+   :local:
+   :backlinks: none
+
+Definition (``libs/mcg/include/mcg/World.h``)
+---------------------------------------------
+
+
+.. toctree::
+   :maxdepth: 1
+
+   program_listing_file_libs_mcg_include_mcg_World.h.rst
+
+
+
+
+
+Includes
+--------
+
+
+- ``AABB.h`` (:ref:`file_libs_mcg_include_mcg_AABB.h`)
+
+- ``Connection.h`` (:ref:`file_libs_mcg_include_mcg_Connection.h`)
+
+- ``memory``
+
+
+
+
+
+
+Classes
+-------
+
+
+- :ref:`exhale_class_classWorld`
+

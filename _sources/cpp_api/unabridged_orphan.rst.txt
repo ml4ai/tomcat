@@ -11,17 +11,22 @@ Directories
 .. toctree::
    :maxdepth: 5
 
-   dir_src.rst
+   dir_libs.rst
 
 .. toctree::
    :maxdepth: 5
 
-   dir_src_cpp.rst
+   dir_libs_mcg.rst
 
 .. toctree::
    :maxdepth: 5
 
-   dir_src_cpp_pro_gen.rst
+   dir_libs_mcg_include.rst
+
+.. toctree::
+   :maxdepth: 5
+
+   dir_libs_mcg_include_mcg.rst
 
 Files
 *****
@@ -30,144 +35,39 @@ Files
 .. toctree::
    :maxdepth: 5
 
-   file_src_cpp_pro_gen_AABB.cpp.rst
+   file_libs_mcg_include_mcg_AABB.h.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file_src_cpp_pro_gen_AABB.h.rst
+   file_libs_mcg_include_mcg_Block.h.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file_src_cpp_pro_gen_Block.cpp.rst
+   file_libs_mcg_include_mcg_Connection.h.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file_src_cpp_pro_gen_Block.h.rst
+   file_libs_mcg_include_mcg_Door.h.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file_src_cpp_pro_gen_Connection.cpp.rst
+   file_libs_mcg_include_mcg_Entity.h.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file_src_cpp_pro_gen_Connection.h.rst
+   file_libs_mcg_include_mcg_Object.h.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file_src_cpp_pro_gen_Door.cpp.rst
+   file_libs_mcg_include_mcg_Pos.h.rst
 
 .. toctree::
    :maxdepth: 5
 
-   file_src_cpp_pro_gen_Door.h.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_pro_gen_Entity.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_pro_gen_Entity.h.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_pro_gen_generator.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_pro_gen_GridWorld.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_pro_gen_GridWorld.h.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_pro_gen_Lever.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_pro_gen_Lever.h.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_pro_gen_Object.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_pro_gen_Object.h.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_pro_gen_Pos.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_pro_gen_Pos.h.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_pro_gen_pro_gen_vizualizer.py.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_pro_gen_README.md.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_pro_gen_World.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_pro_gen_World.h.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_pro_gen_ZombieWorld.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_pro_gen_ZombieWorld.h.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_pro_gen_ZombieworldGroup.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_pro_gen_ZombieworldGroup.h.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_pro_gen_ZombieworldPit.cpp.rst
-
-.. toctree::
-   :maxdepth: 5
-
-   file_src_cpp_pro_gen_ZombieworldPit.h.rst
+   file_libs_mcg_include_mcg_World.h.rst

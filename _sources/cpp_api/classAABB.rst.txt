@@ -3,17 +3,7 @@
 Class AABB
 ==========
 
-- Defined in :ref:`file_src_cpp_pro_gen_AABB.h`
-
-
-Inheritance Relationships
--------------------------
-
-Derived Types
-*************
-
-- ``public ZombieworldGroup`` (:ref:`exhale_class_classZombieworldGroup`)
-- ``public ZombieworldPit`` (:ref:`exhale_class_classZombieworldPit`)
+- Defined in :ref:`file_libs_mcg_include_mcg_AABB.h`
 
 
 Class Documentation

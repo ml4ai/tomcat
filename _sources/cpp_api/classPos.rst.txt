@@ -3,7 +3,7 @@
 Class Pos
 =========
 
-- Defined in :ref:`file_src_cpp_pro_gen_Pos.h`
+- Defined in :ref:`file_libs_mcg_include_mcg_Pos.h`
 
 
 Class Documentation

@@ -3,7 +3,7 @@
 Class Connection
 ================
 
-- Defined in :ref:`file_src_cpp_pro_gen_Connection.h`
+- Defined in :ref:`file_libs_mcg_include_mcg_Connection.h`
 
 
 Class Documentation

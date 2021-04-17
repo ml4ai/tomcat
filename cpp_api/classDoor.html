@@ -171,7 +171,7 @@
   <div class="section" id="class-door">
 <span id="exhale-class-classdoor"></span><h1>Class Door<a class="headerlink" href="#class-door" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
-<li><p>Defined in <a class="reference internal" href="file_src_cpp_pro_gen_Door.h.html#file-src-cpp-pro-gen-door-h"><span class="std std-ref">File Door.h</span></a></p></li>
+<li><p>Defined in <a class="reference internal" href="file_libs_mcg_include_mcg_Door.h.html#file-libs-mcg-include-mcg-door-h"><span class="std std-ref">File Door.h</span></a></p></li>
 </ul>
 <div class="section" id="inheritance-relationships">
 <h2>Inheritance Relationships<a class="headerlink" href="#inheritance-relationships" title="Permalink to this headline">¶</a></h2>
@@ -187,50 +187,51 @@
 <dl class="cpp class">
 <dt id="_CPPv44Door">
 <span id="_CPPv34Door"></span><span id="_CPPv24Door"></span><span id="Door"></span><span class="target" id="classDoor"></span><em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">Door</span></code> <span class="pre">:</span> <em class="property"><span class="pre">public</span></em> <a class="reference internal" href="classBlock.html#_CPPv45Block" title="Block"><span class="pre">Block</span></a><a class="headerlink" href="#_CPPv44Door" title="Permalink to this definition">¶</a><br /></dt>
-<dd><div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric">Public Functions</p>
+<dd><p>This represents a door in Minecraft. This is included among the core modules because it is used in generateAllDoorsInAABB(), which ends up being a fairly commonly used method across the sample algorithms. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
 <dl class="cpp function">
 <dt id="_CPPv4N4Door17toSemanticMapJSONERN8nlohmann4jsonE">
-<span id="_CPPv3N4Door17toSemanticMapJSONERN8nlohmann4jsonE"></span><span id="_CPPv2N4Door17toSemanticMapJSONERN8nlohmann4jsonE"></span><span id="Door::toSemanticMapJSON__nlohmann::jsonR"></span><span class="target" id="classDoor_1aeca5e1df385a622b18fc10b9aa9a34ef"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">void</span> <code class="sig-name descname"><span class="pre">toSemanticMapJSON</span></code><span class="sig-paren">(</span><span class="pre">nlohmann</span><span class="pre">::</span><span class="pre">json</span> <span class="pre">&amp;</span><em><span class="pre">json_base</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4Door17toSemanticMapJSONERN8nlohmann4jsonE" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N4Door17toSemanticMapJSONERN8nlohmann4jsonE"></span><span id="_CPPv2N4Door17toSemanticMapJSONERN8nlohmann4jsonE"></span><span id="Door::toSemanticMapJSON__nlohmann::jsonR"></span><span class="target" id="classDoor_1a5e36559623c9046bbc6a605f78ba7abe"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">void</span> <code class="sig-name descname"><span class="pre">toSemanticMapJSON</span></code><span class="sig-paren">(</span><span class="pre">nlohmann</span><span class="pre">::</span><span class="pre">json</span> <span class="pre">&amp;</span><em><span class="pre">json_base</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4Door17toSemanticMapJSONERN8nlohmann4jsonE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Adds the JSON representation of this object to the “locations” lists of the base json. </p>
-<p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>nlohmann::json The base json. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>nlohmann::json The base json. </p>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv4N4Door17toLowLevelMapJSONERN8nlohmann4jsonE">
-<span id="_CPPv3N4Door17toLowLevelMapJSONERN8nlohmann4jsonE"></span><span id="_CPPv2N4Door17toLowLevelMapJSONERN8nlohmann4jsonE"></span><span id="Door::toLowLevelMapJSON__nlohmann::jsonR"></span><span class="target" id="classDoor_1a006a51484e42e3ac8c55c26fd97168d1"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">void</span> <code class="sig-name descname"><span class="pre">toLowLevelMapJSON</span></code><span class="sig-paren">(</span><span class="pre">nlohmann</span><span class="pre">::</span><span class="pre">json</span> <span class="pre">&amp;</span><em><span class="pre">json_base</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4Door17toLowLevelMapJSONERN8nlohmann4jsonE" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N4Door17toLowLevelMapJSONERN8nlohmann4jsonE"></span><span id="_CPPv2N4Door17toLowLevelMapJSONERN8nlohmann4jsonE"></span><span id="Door::toLowLevelMapJSON__nlohmann::jsonR"></span><span class="target" id="classDoor_1a03fa03e3cf3910a8e19aa67d7de078d9"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">void</span> <code class="sig-name descname"><span class="pre">toLowLevelMapJSON</span></code><span class="sig-paren">(</span><span class="pre">nlohmann</span><span class="pre">::</span><span class="pre">json</span> <span class="pre">&amp;</span><em><span class="pre">json_base</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4Door17toLowLevelMapJSONERN8nlohmann4jsonE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Adds the alternate JSON representation of this object to the “blocks” lists of the base json. </p>
-<p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>nlohmann::json The base json. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>nlohmann::json The base json. </p>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv4N4Door4DoorER3PosbbNSt6stringENSt6stringE">
 <span id="_CPPv3N4Door4DoorER3PosbbNSt6stringENSt6stringE"></span><span id="_CPPv2N4Door4DoorER3PosbbNSt6stringENSt6stringE"></span><span id="Door::Door__PosR.b.b.ss.ss"></span><span class="target" id="classDoor_1a139703365e1af3951c93fd540b76eb01"></span><code class="sig-name descname"><span class="pre">Door</span></code><span class="sig-paren">(</span><a class="reference internal" href="classPos.html#_CPPv43Pos" title="Pos"><span class="pre">Pos</span></a> <span class="pre">&amp;</span><em><span class="pre">pos</span></em>, <span class="pre">bool</span> <em><span class="pre">open</span></em> <span class="pre">=</span> <span class="pre">false</span>, <span class="pre">bool</span> <em><span class="pre">powered</span></em> <span class="pre">=</span> <span class="pre">false</span>, <span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <em><span class="pre">name</span></em> <span class="pre">=</span> <span class="pre">&quot;dark_oak_door&quot;</span>, <span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <em><span class="pre">facing</span></em> <span class="pre">=</span> <span class="pre">&quot;south&quot;</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4Door4DoorER3PosbbNSt6stringENSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Construct a new <a class="reference internal" href="#classDoor"><span class="std std-ref">Door</span></a> object. </p>
-<p><dl class="simple">
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">pos</span></code>: The position of the block in the Minecraft world. </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">open</span></code>: Is the door open. </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">powered</span></code>: Should the door be powered upon placement. </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">facing</span></code>: Which direction the door should face. </p></li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pos</strong> – The position of the block in the Minecraft world. </p></li>
+<li><p><strong>open</strong> – Is the door open. </p></li>
+<li><p><strong>powered</strong> – Should the door be powered upon placement. </p></li>
+<li><p><strong>facing</strong> – Which direction the door should face. </p></li>
 </ul>
 </dd>
 </dl>
-</p>
 </dd></dl>
 
 <dl class="cpp function">
 <dt id="_CPPv4N4DoorD0Ev">
 <span id="_CPPv3N4DoorD0Ev"></span><span id="_CPPv2N4DoorD0Ev"></span><span id="Door::~Door"></span><span class="target" id="classDoor_1a3dbbbd7a49698a8461d3c22df60bd2d3"></span><code class="sig-name descname"><span class="pre">~Door</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4DoorD0Ev" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Destroy the <a class="reference internal" href="classLever.html#classLever"><span class="std std-ref">Lever</span></a> object. </p>
+<dd><p>Destroy the Lever object. </p>
 </dd></dl>
 
 </div>

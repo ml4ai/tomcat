@@ -1,0 +1,52 @@
+
+.. _file_libs_mcg_include_mcg_Entity.h:
+
+File Entity.h
+=============
+
+|exhale_lsh| :ref:`Parent directory <dir_libs_mcg_include_mcg>` (``libs/mcg/include/mcg``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. contents:: Contents
+   :local:
+   :backlinks: none
+
+Definition (``libs/mcg/include/mcg/Entity.h``)
+----------------------------------------------
+
+
+.. toctree::
+   :maxdepth: 1
+
+   program_listing_file_libs_mcg_include_mcg_Entity.h.rst
+
+
+
+
+
+Includes
+--------
+
+
+- ``Pos.h`` (:ref:`file_libs_mcg_include_mcg_Pos.h`)
+
+- ``nlohmann/json.hpp``
+
+
+
+Included By
+-----------
+
+
+- :ref:`file_libs_mcg_include_mcg_AABB.h`
+
+
+
+
+Classes
+-------
+
+
+- :ref:`exhale_class_classEntity`
+

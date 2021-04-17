@@ -3,7 +3,7 @@
 Class Object
 ============
 
-- Defined in :ref:`file_src_cpp_pro_gen_Object.h`
+- Defined in :ref:`file_libs_mcg_include_mcg_Object.h`
 
 
 Class Documentation

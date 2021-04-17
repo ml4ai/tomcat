@@ -1,0 +1,52 @@
+
+.. _program_listing_file_libs_mcg_include_mcg_Pos.h:
+
+Program Listing for File Pos.h
+==============================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_libs_mcg_include_mcg_Pos.h>` (``libs/mcg/include/mcg/Pos.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   
+   #pragma once
+   
+   #include <memory>
+   #include <nlohmann/json.hpp>
+   #include <string>
+   class Pos {
+   
+     private:
+       int x;
+       int y;
+       int z;
+   
+     public:
+       int getX();
+   
+       int getY();
+   
+       int getZ();
+   
+       void setX(int x);
+   
+       void setY(int y);
+   
+       void setZ(int z);
+   
+       void shiftX(int shift);
+   
+       void shiftY(int shift);
+   
+       void shiftZ(int shift);
+   
+       void shift(int shiftX, int shiftY, int shiftZ);
+   
+       nlohmann::json virtual toSemanticMapJSON();
+   
+       Pos(int x, int y, int z);
+   
+       ~Pos();
+   };

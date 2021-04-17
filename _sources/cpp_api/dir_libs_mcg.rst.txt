@@ -1,0 +1,20 @@
+.. _dir_libs_mcg:
+
+
+Directory mcg
+=============
+
+
+|exhale_lsh| :ref:`Parent directory <dir_libs>` (``libs``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+*Directory path:* ``libs/mcg``
+
+Subdirectories
+--------------
+
+- :ref:`dir_libs_mcg_include`
+
+
+

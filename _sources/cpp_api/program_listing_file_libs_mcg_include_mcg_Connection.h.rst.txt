@@ -1,0 +1,68 @@
+
+.. _program_listing_file_libs_mcg_include_mcg_Connection.h:
+
+Program Listing for File Connection.h
+=====================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_libs_mcg_include_mcg_Connection.h>` (``libs/mcg/include/mcg/Connection.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #pragma once
+   
+   #include "Pos.h"
+   
+   class Connection {
+   
+     private:
+       std::string id;
+       std::string name;
+       std::string type;
+       std::string boundType;
+       std::vector<std::string> connectedLocations;
+       std::vector<Pos> coordinates;
+   
+     public:
+       std::string getID();
+   
+       std::string getName();
+   
+       std::string getType();
+   
+       std::string getBoundType();
+   
+       std::vector<std::string>& getConnectedLocations();
+   
+       std::vector<Pos>& getCoordinates();
+   
+       void setID(std::string newID);
+   
+       void setName(std::string newName);
+   
+       void setType(std::string newType);
+   
+       void setBoundType(std::string newBoundType);
+   
+       void addConnectedLocation(std::string id);
+   
+       void addCoordinates(Pos& pos);
+   
+       void addManyConnectedLocations(std::vector<std::string>& idVector);
+   
+       void addManyCoordinates(std::vector<Pos>& posVector);
+   
+       void removeAllConnectedLocation();
+   
+       void removeAllCoordinates();
+   
+       void virtual toSemanticMapJSON(nlohmann::json& json_base);
+   
+       Connection(std::string id,
+                  std::string name,
+                  std::string type,
+                  std::string boundType);
+   
+       ~Connection();
+   };

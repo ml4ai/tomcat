@@ -1,0 +1,39 @@
+
+.. _program_listing_file_libs_mcg_include_mcg_Object.h:
+
+Program Listing for File Object.h
+=================================
+
+|exhale_lsh| :ref:`Return to documentation for file <file_libs_mcg_include_mcg_Object.h>` (``libs/mcg/include/mcg/Object.h``)
+
+.. |exhale_lsh| unicode:: U+021B0 .. UPWARDS ARROW WITH TIP LEFTWARDS
+
+.. code-block:: cpp
+
+   #pragma once
+   #include "Block.h"
+   
+   class Object {
+   
+     private:
+       std::string id;
+       std::string type;
+       std::unique_ptr<Block> block;
+   
+     public:
+       void shiftX(int shift);
+   
+       void shiftY(int shift);
+   
+       void shiftZ(int shift);
+   
+       void shift(int shiftX, int shiftY, int shiftZ);
+   
+       void virtual toSemanticMapJSON(nlohmann::json& json_base);
+   
+       void virtual toLowLevelMapJSON(nlohmann::json& json_base);
+   
+       Object(std::string id, std::string type, std::unique_ptr<Block> block);
+   
+       ~Object();
+   };
