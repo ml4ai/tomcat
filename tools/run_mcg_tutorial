@@ -60,7 +60,7 @@ do_mission() {
     fi
 }
 
-pushd "$TOMCAT"/libs/mcg/build >/dev/null
+pushd "$TOMCAT"/build >/dev/null
     ./bin/mcg_tutorial
     cp low_level_map.json "$TOMCAT"/external/malmo/Minecraft/run/low_level_map.json
 popd
