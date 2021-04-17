@@ -20,7 +20,7 @@ document.
   * To compile and build the library without the tutorial world, do either one of the following:
     * In the `tomcat` directory, run `./tools/install`
     * From the `tomcat` directory,create and move into `build` with `mkdir build && cd build`. Then, run `cmake .. && make -j` 
-  * To compile it with the tutorial world, use:
+  * To compile it with the tutorial world:
     * In the `tomcat` directory, run `mkdir build & cd build`. Then, run `cmake .. -DBUILD_EXAMPLES=ON && make -j`
 * To compile and build just the library:
   * In `libs/mcg/` run `mkdir build && cd build`. Then run `cmake .. && make -j`
