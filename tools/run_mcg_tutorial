@@ -1,0 +1,70 @@
+#!/bin/bash
+set -u
+
+# =============================================================================
+
+# Set the TOMCAT environment variable, assuming that the directory structure
+# mirrors that of the git repository.
+TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" >/dev/null 2>&1 && pwd)"
+export TOMCAT
+
+source "$TOMCAT"/tools/configuration_helpers
+
+# Disable FFMPEG recording
+export ENABLE_FFMPEG=0
+
+# Don't make the window full screen automatically
+export TOMCAT_FULL_SCREEN=0
+
+configure_session
+
+do_mission() {
+    export CURRENT_MISSION="mcg_tutorial"
+    echo " "
+    echo "Running mission ${CURRENT_MISSION} in ${TOMCAT}."
+    echo " "
+    mission_log="$TOMCAT_TMP_DIR"/mission_"$CURRENT_MISSION".log
+
+    if ! "${TOMCAT}"/tools/check_minecraft; then
+        echo "Main mission cannot find or create a viable Minecraft process."
+        cleanup
+        exit 1
+    fi
+
+
+    runMission_args="--mission 3"
+
+    # Publish the Malmo observation messages to the message bus on the
+    # topic observations/state.
+    "${TOMCAT}"/build/bin/runMission\
+    $runMission_args\
+    2> "${mission_log}" &
+    pid_runMission=$!
+    echo "Process ID corresponding to ./bin/runMission is"\
+            "$pid_runMission ... waiting for it to complete."
+
+    # Set up a background job to kill the mission if Minecraft dies.
+    ${TOMCAT}/tools/kill_me_if_no_minecraft $pid_runMission < /dev/null &
+
+    wait $pid_runMission
+    mission_status=$?
+
+    if [[ ${mission_status} -eq 0 ]]; then
+        mission_status=$(grep -c "Error starting mission" "${mission_log}")
+    fi
+
+    if [[ ${mission_status} -eq 0 ]]; then
+        echo "Mission ${CURRENT_MISSION} ended with exit code 0."
+        echo "All recorded data is in ${MISSION_OUTPUT_DIR}"
+        echo " "
+    fi
+}
+
+pushd "$TOMCAT"/build >/dev/null
+    ./bin/mcg_tutorial
+    cp low_level_map.json "$TOMCAT"/external/malmo/Minecraft/run/low_level_map.json
+popd
+
+do_mission
+
+exit 0
