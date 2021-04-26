@@ -1,0 +1,220 @@
+srcdir = @srcdir@
+VPATH  = @srcdir@
+
+# If this is a selfupdate, we never want to run any tools from the target
+# prefix (could be broken or wrong architecture), otherwise try to use the
+# tools from the target prefix for generating man pages if they exist
+ifeq ($(SELFUPDATING),1)
+ASCIIDOC=
+XSLTPROC=
+else
+ASCIIDOC=    $(wildcard ${prefix}/bin/asciidoc)
+XSLTPROC=    $(wildcard ${prefix}/bin/xsltproc)
+DOCBOOK_XSL= $(wildcard ${prefix}/share/xsl/docbook-xsl-nons/manpages/docbook.xsl)
+endif
+
+ASCIIDOCFLAGS=	-f asciidoc.conf -a manversion=${MACPORTS_VERSION} -a revdate=${MACPORTS_VERSION}
+XSLTFLAGS=	-nonet
+
+MAN1=	\
+		port-activate.1 \
+		port-archive.1 \
+		port-archivefetch.1 \
+		port-build.1 \
+		port-bump.1 \
+		port-cat.1 \
+		port-cd.1 \
+		port-checksum.1 \
+		port-clean.1 \
+		port-configure.1 \
+		port-contents.1 \
+		port-deactivate.1 \
+		port-dependents.1 \
+		port-deps.1 \
+		port-destroot.1 \
+		port-diagnose.1 \
+		port-dir.1 \
+		port-distcheck.1 \
+		port-distfiles.1 \
+		port-dmg.1 \
+		port-echo.1 \
+		port-edit.1 \
+		port-exit.1 \
+		port-extract.1 \
+		port-fetch.1 \
+		port-file.1 \
+		port-gohome.1 \
+		port-help.1 \
+		port-info.1 \
+		port-install.1 \
+		port-installed.1 \
+		port-lint.1 \
+		port-list.1 \
+		port-livecheck.1 \
+		port-load.1 \
+		port-location.1 \
+		port-log.1 \
+		port-logfile.1 \
+		port-mdmg.1 \
+		port-mirror.1 \
+		port-mpkg.1 \
+		port-notes.1 \
+		port-outdated.1 \
+		port-patch.1 \
+		port-pkg.1 \
+		port-platform.1 \
+		port-provides.1 \
+		port-quit.1 \
+		port-rdependents.1 \
+		port-rdeps.1 \
+		port-reclaim.1 \
+		port-reload.1 \
+		port-rev-upgrade.1 \
+		port-search.1 \
+		port-select.1 \
+		port-selfupdate.1 \
+		port-setrequested.1 \
+		port-setunrequested.1 \
+		port-space.1 \
+		port-sync.1 \
+		port-test.1 \
+		port-unarchive.1 \
+		port-uninstall.1 \
+		port-unload.1 \
+		port-unsetrequested.1 \
+		port-upgrade.1 \
+		port-url.1 \
+		port-usage.1 \
+		port-variants.1 \
+		port-version.1 \
+		port-work.1 \
+		port.1 \
+
+MAN5=		\
+		macports.conf.5 \
+		pubkeys.conf.5 \
+		sources.conf.5 \
+		variants.conf.5 \
+
+MAN7=		portfile.7 portstyle.7 porthier.7 portgroup.7 portundocumented.7
+MAN=		${MAN1} ${MAN5} ${MAN7}
+
+# Filter man pages with existing source files
+MANTXT=		$(wildcard ${MAN:%=%.txt})
+MANSOELIM= 	$(wildcard ${MAN:%=%.soelim})
+# Only those can be transformed into XML and HTML
+MANXML=		${MANTXT:.txt=.xml}
+MANHTML=	${MANTXT:.txt=.html} ${MANSOELIM:.soelim=.html}
+
+CONF=		archive_sites.conf macports.conf pubkeys.conf sources.conf variants.conf
+INSTALLDIR=	${prefix}
+TOPSRCDIR=	..
+
+ifneq ($(MAKECMDGOALS),distclean)
+include ../Mk/macports.autoconf.mk
+endif
+
+all: man
+
+# Update "include::" dependencies
+.dep: $(wildcard *.txt) asciidoc-deps.tcl
+	$(INTREE_TCLSH) ./asciidoc-deps.tcl *.txt > $@
+
+ifneq ($(MAKECMDGOALS),clean)
+-include .dep
+endif
+
+.PHONY: man xml html
+
+man: ${MAN} ${MAN:%=%.gz}
+
+xml: ${MANXML}
+
+html: ${MANHTML}
+
+clean:
+	rm -f ${MANTXT:%.txt=%.html} ${MANSOELIM:%.soelim=%.html}
+	rm -f ${MANTXT:%.txt=%.xml}
+	rm -f *.{1,5,7}.gz
+	rm -f .dep
+
+test:
+
+distclean: clean
+	rm -f macports.conf base.mtree macosx.mtree prefix.mtree pubkeys.conf
+	rm -f Makefile
+
+%.1.gz: %.1
+	gzip -c $^ > $@
+
+%.5.gz: %.5
+	gzip -c $^ > $@
+
+%.7.gz: %.7
+	gzip -c $^ > $@
+
+%: %.soelim
+	ln -f $< $@
+
+%.html: %.soelim
+	ln -sf $(shell basename $$(awk '{print $$2}' < $<)).html $@
+
+# Define these rules only if both asciidoc and xsltproc are available
+ifneq ($(and $(ASCIIDOC),$(XSLTPROC),$(DOCBOOK_XSL)),)
+%: %.xml manpage.xsl
+	$(XSLTPROC) $(XSLTFLAGS) manpage.xsl $<
+
+%.xml: %.txt asciidoc.conf
+	$(ASCIIDOC) $(ASCIIDOCFLAGS) -d manpage -b docbook $<
+
+%.html: %.txt asciidoc.conf
+	$(ASCIIDOC) $(ASCIIDOCFLAGS) -d manpage -b xhtml11 $<
+else
+man: ${MAN} ${MAN:%=%.gz}
+	@echo "* Warning: Using pre-generated man pages only."
+	@echo "* asciidoc, xsltproc (port libxslt) and docbook-xsl-nons are required to generate man pages from source."
+
+%.xml %.html: | %.txt
+	@echo "* In order to modify and generate output from these source files,"
+	@echo "* please install the required tools into ${prefix} with"
+	@echo "*   sudo ${prefix}/bin/port install asciidoc libxslt docbook-xsl-nons"
+	@echo "* or as an alternative, specify external paths for the tools"
+	@echo "*   make ASCIIDOC=.../bin/asciidoc XSLTPROC=../bin/xsltproc DOCBOOK_XSL=installed"
+	@exit 1
+endif
+
+install: all
+	$(INSTALL) -d -o "${DSTUSR}" -g "${DSTGRP}" -m "${DSTMODE}" "${DESTDIR}${INSTALLDIR}"
+	$(INSTALL) -d -o "${DSTUSR}" -g "${DSTGRP}" -m "${DSTMODE}" "${DESTDIR}${mpconfigdir}"
+
+	< prefix.mtree $(MTREE) -U -e -p "${DESTDIR}${INSTALLDIR}" > /dev/null
+	< base.mtree $(MTREE) -U -e -p "${DESTDIR}${INSTALLDIR}" > /dev/null
+ifeq (darwin,@OS_PLATFORM@)
+ifneq (8,@OS_MAJOR@)
+# Tiger's chmod doesn't accept -h
+# mtree with umask 0077 doesn't get the permissions of the symlink right
+	chmod -h 755 "${DESTDIR}${INSTALLDIR}/man"
+endif
+endif
+
+	for f in ${CONF}; do \
+		$(INSTALL) -o "${DSTUSR}" -g "${DSTGRP}" -m 444 "$$f" "${DESTDIR}${mpconfigdir}/$${f}.default"; \
+		if test ! -e "${DESTDIR}${mpconfigdir}/$$f" ; then \
+			set -x; \
+			$(INSTALL) -o "${DSTUSR}" -g "${DSTGRP}" -m 644 "$$f" "${DESTDIR}${mpconfigdir}"; \
+		fi; \
+	done
+
+	# delete old uncompressed man pages if they exist
+	for m in ${MAN1}; do rm -f "${DESTDIR}${INSTALLDIR}/share/man/man1/$$m" ; done
+	for m in ${MAN5}; do rm -f "${DESTDIR}${INSTALLDIR}/share/man/man5/$$m" ; done
+	for m in ${MAN7}; do rm -f "${DESTDIR}${INSTALLDIR}/share/man/man7/$$m" ; done
+
+	$(INSTALL) -d -o "${DSTUSR}" -g "${DSTGRP}" -m "${DSTMODE}" "${DESTDIR}${INSTALLDIR}/share/macports/install"
+	$(INSTALL)    -o "${DSTUSR}" -g "${DSTGRP}" -m 644 base.mtree "${DESTDIR}${INSTALLDIR}/share/macports/install/"
+	$(INSTALL)    -o "${DSTUSR}" -g "${DSTGRP}" -m 644 prefix.mtree "${DESTDIR}${INSTALLDIR}/share/macports/install/"
+	$(INSTALL)    -o "${DSTUSR}" -g "${DSTGRP}" -m 644 macosx.mtree "${DESTDIR}${INSTALLDIR}/share/macports/install/"
+
+	for page in ${MAN1} ${MAN5} ${MAN7}; do \
+		$(INSTALL) -o "${DSTUSR}" -g "${DSTGRP}" -m 444 "$${page}.gz" "${DESTDIR}${INSTALLDIR}/share/man/man$$(echo $$page | sed -e 's/.*\.//')"; \
+	done

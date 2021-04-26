@@ -1,0 +1,87 @@
+srcdir = @srcdir@
+VPATH  = @srcdir@
+
+include ../../Mk/macports.autoconf.mk
+
+# This Makefile will only be run on Darwin systems; we can safely use
+# Apple-specifics here
+SRCS = \
+	access.c \
+	close.c \
+	darwintrace.c \
+	dup2.c \
+	mkdir.c \
+	open.c \
+	proc.c \
+	readdir.c \
+	readlink.c \
+	rename.c \
+	rmdir.c \
+	sip_copy_proc.c \
+	stat.c \
+	unlink.c
+
+OBJS = $(SRCS:%.c=%.o)
+
+ifneq ($(HAVE_STRLCAT),yes)
+COMPAT_OBJS+= $(srcdir)/../compat/strlcat.o
+endif
+ifneq ($(HAVE_STRLCPY),yes)
+COMPAT_OBJS+= $(srcdir)/../compat/strlcpy.o
+endif
+
+CPPFLAGS+= -I$(srcdir)/../compat
+LIBS+= $(COMPAT_OBJS)
+
+SHLIB_NAME = darwintrace$(SHLIB_SUFFIX)
+INSTALLDIR = $(TCL_PACKAGE_PATH)/darwintrace1.0
+
+# Yes, we know having $ signs in identifiers is not a very good idea; in the
+# case of darwintrace we still need them, though.
+CFLAGS_PEDANTIC =
+CFLAGS += -fPIC $(UNIVERSAL_ARCHFLAGS)
+SHLIB_LDFLAGS += $(UNIVERSAL_ARCHFLAGS)
+ifeq (darwin,@OS_PLATFORM@)
+SHLIB_LDFLAGS += -install_name $(INSTALLDIR)/$(SHLIB_NAME)
+endif
+
+# Generate dependency information
+%.d : %.c
+	$(CC) -MM -MP $(CPPFLAGS) $< > $@
+
+.PHONY: all clean distclean install test codesign
+all:: $(SHLIB_NAME)
+
+# Copy sip_copy_proc.{c,h} from pextlib1.0 where they are also needed
+sip_copy_proc.c: ../pextlib1.0/sip_copy_proc.c sip_copy_proc.h 
+	cp $< $@
+
+sip_copy_proc.h: ../pextlib1.0/sip_copy_proc.h
+	cp $< $@
+
+# This won't be automatically detected during the first run of make, where the
+# .d files do not exist yet
+proc.c: sip_copy_proc.h
+
+$(SHLIB_NAME):: $(OBJS)
+	$(SHLIB_LD) $(OBJS) -o $(SHLIB_NAME) $(SHLIB_LDFLAGS) $(LIBS)
+
+clean::
+	rm -f $(OBJS) $(SHLIB_NAME) so_locations sip_copy_proc.c sip_copy_proc.h $(SRCS:%.c=%.d)
+
+distclean:: clean
+	rm -f Makefile
+
+install:: all
+	$(INSTALL) -d -o "$(DSTUSR)" -g "$(DSTGRP)" -m "$(DSTMODE)" "$(DESTDIR)$(INSTALLDIR)"
+	$(INSTALL)    -o "$(DSTUSR)" -g "$(DSTGRP)" -m 444 "$(SHLIB_NAME)" "$(DESTDIR)$(INSTALLDIR)"
+
+test::
+
+ifeq (,$(findstring clean,$(MAKECMDGOALS)))
+# Include dependency information
+-include $(SRCS:%.c=%.d)
+endif
+
+codesign:: $(SHLIB_NAME)
+	../codesign.sh $?

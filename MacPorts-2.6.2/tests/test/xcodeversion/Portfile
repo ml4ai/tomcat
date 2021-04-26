@@ -1,0 +1,29 @@
+PortSystem 1.0
+
+name        xcodeversion
+version     1
+categories  test
+maintainers pguyot@kallisys.net
+description Test port for \$xcodeversion
+homepage    https://www.macports.org/
+platforms   darwin
+supported_archs noarch
+configure.cxx_stdlib
+
+long_description ${description}
+
+distfiles
+use_configure no
+build       {}
+destroot    {
+    system "touch ${destroot}${prefix}/lib/${name}"
+}
+
+test {
+    if {$xcodeversion != "" && [vercmp $xcodeversion 2.1] >= 0} {
+        ui_msg "xcodeversion >= 2.1"
+    } else {
+        ui_msg "xcodeversion = $xcodeversion"
+    }
+    ui_msg "xcodebuildcmd = $xcodebuildcmd"
+}

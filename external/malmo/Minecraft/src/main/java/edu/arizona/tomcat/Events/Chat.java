@@ -13,4 +13,6 @@ public class Chat extends Event {
         this.playerName = event.getPlayer().getName();
         this.message = event.getMessage();
     }
+
+
 }

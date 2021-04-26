@@ -1,0 +1,116 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+package require tcltest 2
+package require reclaim 1.0
+package require msgcat
+namespace import tcltest::*
+
+set pwd [file dirname [file normalize $argv0]]
+
+source ../macports_test_autoconf.tcl
+package require macports 1.0
+
+source ./library.tcl
+
+# clean leftovers from interrupted tests
+file delete -force $pwd/tmpdir
+# use a local, temporary prefix for testing
+init_tmp_prefix $pwd $pwd/tmpdir
+
+array set ui_options {}
+set ui_options(ports_noninteractive) yes
+mportinit ui_options
+
+set setup_testdir {
+    set saved_portdbpath ${macports::portdbpath}
+    set macports::portdbpath [makeDirectory "reclaim_test_tmpdir"]
+    set lastreclaimfile [makeFile "0" "last_reclaim" ${macports::portdbpath}]
+    set distfiles_path [makeDirectory "distfiles" ${macports::portdbpath}]
+    set turdfile [makeFile "should be kept" ".turd_MacPorts" ${distfiles_path}]
+    set testfile [makeFile "should be deleted" "test.txt" ${distfiles_path}]
+
+    # mock UI questions mechanism
+    proc returnD {args} {
+        return "d"
+    }
+    set saved_questions_alternative {}
+    if {[info exists macports::ui_options(questions_alternative)]} {
+        set saved_questions_alternative ${macports::ui_options(questions_alternative)}
+    }
+    set macports::ui_options(questions_alternative) "returnD"
+}
+
+set cleanup_testdir {
+    set macports::portdbpath ${saved_portdbpath}
+    if {$saved_questions_alternative ne {}} {
+        set macports::ui_options(questions_alternative) $saved_questions_alternative
+    }
+}
+
+test remove_distfiles {
+    Test for distfiles being successfully removed.
+} -setup $setup_testdir -body {
+    reclaim::remove_distfiles
+    return [file exists $testfile]
+} -result 0 -cleanup $cleanup_testdir
+
+test remove_distfiles_keeps_turd_file {
+    Test for .turd_MacPorts files being kept by distfile removal.
+} -setup $setup_testdir -body {
+    reclaim::remove_distfiles
+    return [file exists $turdfile]
+} -result 1 -cleanup $cleanup_testdir
+
+test update_last_run {
+    Tests for last_reclaim file being updated.
+} -setup $setup_testdir -body {
+    proc _get_last_reclaim_time {fname} {
+        set fd [open $fname r]
+        set timestamp [gets $fd]
+        close $fd
+
+        return $timestamp
+    }
+    set old_time [_get_last_reclaim_time $lastreclaimfile]
+    reclaim::update_last_run
+    set new_time [_get_last_reclaim_time $lastreclaimfile]
+
+    if {$new_time == $old_time} {
+        return "$new_time == $old_time"
+    }
+
+    return "pass"
+} -result "pass" -cleanup $cleanup_testdir
+
+
+test walk_files {
+    Tests if walking through the files, and deleting distfiles, ignoring normal files, and removing directory trees works.
+} -setup {
+    set dir [makeDirectory "reclaim_test_walk_files_tmpdir"]
+    set subdir [makeDirectory "subdir" $dir]
+
+    set bad_dist [list \
+        [makeFile "to be deleted" "bad_distfile.txt" $subdir] \
+        [makeFile "to be deleted" "bad_distfile2.txt" $dir]]
+    set good_dist [list \
+        [makeFile "to be kept" "good_distfile.txt" $dir]]
+} -body {
+    set errors [list]
+    set unused_list [list]
+    reclaim::walk_files $dir $good_dist unused_list 
+
+    foreach badfile $bad_dist {
+        if {[lsearch -exact $unused_list $badfile] == -1} {
+            lappend error "$badfile should be deleted"
+        }
+    }
+    foreach goodfile [concat $good_dist [list $dir]] {
+        if {[lsearch -exact $unused_list $goodfile] != -1} {
+            lappend error "$goodfile should be kept"
+        }
+    }
+
+    return $errors
+} -result {}
+
+cleanupTests

@@ -1,0 +1,164 @@
+
+srcdir      = @srcdir@
+VPATH       = @srcdir@
+
+PATH		= @PATH_CLEANED@
+SUBDIR		= vendor src tests doc
+DISTDIR		= dist
+DISTVER		=
+DISTTAG		= v${DISTVER}
+DISTNAME	= MacPorts-${DISTVER}
+DISTGPGID	=
+
+
+include Mk/macports.autoconf.mk
+
+
+all:: Mk/macports.autoconf.mk
+
+Mk/macports.autoconf.mk: Mk/macports.autoconf.mk.in src/config.h.in Makefile.in doc/Makefile.in src/Makefile.in src/cregistry/Makefile.in src/darwintracelib1.0/Makefile.in src/machista1.0/Makefile.in src/macports1.0/Makefile.in src/mpcommon1.0/Makefile.in src/package1.0/Makefile.in src/pextlib1.0/Makefile.in src/port/Makefile.in src/port1.0/Makefile.in src/programs/Makefile.in src/programs/daemondo/Makefile.in src/registry2.0/Makefile.in tests/Makefile.in vendor/Makefile.in config.status
+	./config.status
+	${MAKE} clean
+
+config.status: configure
+	@if test -f ./config.status ; then	\
+		set -x ;						\
+		./config.status --recheck ;		\
+	else								\
+		set -x ;						\
+		echo "Source tree not configured. Use ./configure" ; \
+	fi
+
+include $(srcdir)/Mk/macports.subdir.mk
+
+install::
+	[ ! -f "$(DESTDIR)${sysconfdir}/macports/mp_version" ] || rm -vf "$(DESTDIR)${sysconfdir}/macports/mp_version"
+	$(INSTALL) -d -o "${DSTUSR}" -g "${DSTGRP}" -m "${DSTMODE}" "$(DESTDIR)${datadir}/macports/"
+	$(INSTALL)    -o "${DSTUSR}" -g "${DSTGRP}" -m 444 setupenv.bash  "$(DESTDIR)${datadir}/macports/"
+	$(INSTALL)    -o "${DSTUSR}" -g "${DSTGRP}" -m 444 $(srcdir)/macports-pubkey.pem  "$(DESTDIR)${datadir}/macports/"
+# Only run these scripts when not building in a destroot
+ifeq ($(DESTDIR),)
+# create run user if it doesn't exist
+	@if test -n "${DSCL}" -a -n "${DSEDITGROUP}" ; then \
+        if ! ${DSCL} -q . -read "/Groups/${RUNUSR}" > /dev/null 2>&1 ; then \
+            if test `id -u` -eq 0; then \
+                echo "Creating group \"${RUNUSR}\"" ; \
+                ${DSEDITGROUP} -q -o create "${RUNUSR}" ; \
+            else \
+                echo "Not creating group \"${RUNUSR}\" (not root)" ; \
+            fi ; \
+        fi ; \
+        if ! ${DSCL} -q . -list "/Users/${RUNUSR}" > /dev/null 2>&1 ; then \
+            if test `id -u` -eq 0; then \
+                echo "Creating user \"${RUNUSR}\"" ; \
+                NEXTUID=501; \
+                while test -n "`${DSCL} -q /Search -search /Users UniqueID $$NEXTUID`"; do \
+                    let "NEXTUID=NEXTUID+1"; \
+                done; \
+                ${DSCL} -q . -create "/Users/${RUNUSR}" UniqueID $$NEXTUID ; \
+                \
+                ${DSCL} -q . -delete "/Users/${RUNUSR}" AuthenticationAuthority ; \
+                ${DSCL} -q . -delete "/Users/${RUNUSR}" PasswordPolicyOptions ; \
+                ${DSCL} -q . -delete "/Users/${RUNUSR}" dsAttrTypeNative:KerberosKeys ; \
+                ${DSCL} -q . -delete "/Users/${RUNUSR}" dsAttrTypeNative:ShadowHashData ; \
+                \
+                ${DSCL} -q . -create "/Users/${RUNUSR}" RealName MacPorts ; \
+                ${DSCL} -q . -create "/Users/${RUNUSR}" Password \* ; \
+                ${DSCL} -q . -create "/Users/${RUNUSR}" PrimaryGroupID $$(${DSCL} -q . -read "/Groups/${RUNUSR}" PrimaryGroupID | /usr/bin/awk '{print $$2}') ; \
+                ${DSCL} -q . -create "/Users/${RUNUSR}" NFSHomeDirectory "${localstatedir}/macports/home" ; \
+                ${DSCL} -q . -create "/Users/${RUNUSR}" UserShell /usr/bin/false ; \
+            else \
+                echo "Not creating user \"${RUNUSR}\" (not root)" ; \
+            fi ; \
+        fi ; \
+        if test "$$(${DSCL} -q . -read "/Users/${RUNUSR}" NFSHomeDirectory)" = "NFSHomeDirectory: /var/empty" ; then \
+            if test `id -u` -eq 0; then \
+                echo "Updating home directory location for user \"${RUNUSR}\"" ; \
+                ${DSCL} -q . -create "/Users/${RUNUSR}" NFSHomeDirectory "${localstatedir}/macports/home" ; \
+            else \
+                echo "Not updating home directory location for user \"${RUNUSR}\" (not root)" ; \
+            fi ; \
+        fi ; \
+        if test `sw_vers -productVersion | /usr/bin/awk -F . '{print $$2}'` -eq 4 -a `id -u` -eq 0; then \
+            GID=`${DSCL} -q . -read "/Groups/${RUNUSR}" PrimaryGroupID | /usr/bin/awk '{print $$2}'` ; \
+            if test "`${DSCL} -q . -read "/Users/${RUNUSR}" PrimaryGroupID 2>/dev/null | /usr/bin/awk '{print $$2}'`" != "$$GID"; then \
+                echo "Fixing PrimaryGroupID for user \"${RUNUSR}\"" ; \
+                ${DSCL} -q . -create "/Users/${RUNUSR}" PrimaryGroupID $$GID ; \
+                ${DSCL} -q . -create "/Users/${RUNUSR}" RealName MacPorts ; \
+            fi ; \
+        fi ; \
+    else \
+        echo "Can't find ${DSCL} / ${DSEDITGROUP}, not creating user \"${RUNUSR}\"" ; \
+    fi
+# Add [default] tag to the central MacPorts repository, if it isn't already
+	$(TCLSH) $(srcdir)/src/upgrade_sources_conf_default.tcl "${prefix}"
+# Convert image directories (and direct mode installs) to image archives
+	$(TCLSH) $(srcdir)/src/images_to_archives.tcl
+	$(TCLSH) $(srcdir)/src/dedup_portfiles.tcl
+# Set cxx_stdlib_overridden for known ports so they don't appear broken
+	$(TCLSH) $(srcdir)/src/cxx_stdlib_overridden.tcl
+endif
+ifndef SELFUPDATING
+	@echo ""; echo "Congratulations, you have successfully installed the MacPorts system. To get the Portfiles and update the system, add ${prefix}/bin to your PATH and run:"; echo ""
+	@echo "sudo port -v selfupdate"; echo ""
+	@echo "Please read \"man port\", the MacPorts guide at https://guide.macports.org/ and Wiki at https://trac.macports.org/ for full documentation."; echo ""
+else
+	@echo ""; echo "Congratulations, you have successfully upgraded the MacPorts system."; echo ""
+	@if [ "@OS_PLATFORM@" = "darwin" -a "@OS_MAJOR@" -ge 10 -a "@OS_MAJOR@" -le 12 ] ; then \
+	    echo "The default C++ standard library for your platform changed in MacPorts 2.6.0. It is recommended to run 'sudo port rev-upgrade' to reinstall any C++-based ports that are currently using the old version."; \
+	    echo ""; \
+	fi
+endif
+	@echo "Installing the \"mpstats\" port will enable submission of anonymous information about your system and installed ports to our database for statistical purposes: <https://ports.macports.org/>"; echo ""
+
+group::
+	@echo "creating a macports group..." && sudo dseditgroup -o create -n . macports && echo "done! use './configure --with-install-group=macports --with-shared-directory' if you haven't already"
+
+rmgroup::
+	@echo "deleting macports group..." && sudo dseditgroup -o delete -n . macports && echo "done! use 'make group' to re-create"
+
+
+clean::
+	rm -rf docs
+
+distclean::
+	rm -f config.log config.status configure.lineno
+	rm -rf autom4te.cache ${DISTDIR}
+	rm -f Makefile Mk/macports.autoconf.mk
+	rm -f Doxyfile
+	rm -f setupenv.bash
+	rm -f portmgr/dmg/postflight
+
+dist:
+	@[ -n "${DISTVER}" ] || { echo "Usage: make dist DISTVER=2.3.4"; exit 1; }
+	mkdir -p ${DISTDIR}
+	git archive --format=tar --prefix=${DISTNAME}/ ${DISTTAG} | gzip -cn > ${DISTDIR}/${DISTNAME}.tar.gz
+	git archive --format=tar --prefix=${DISTNAME}/ ${DISTTAG} | bzip2 -c > ${DISTDIR}/${DISTNAME}.tar.bz2
+	rm -f ${DISTDIR}/${DISTNAME}.chk.txt
+	cd $(DISTDIR) && for tarball in ${DISTNAME}.tar.{gz,bz2}; do \
+		for type in -md5 -sha1 -ripemd160 -sha256; do \
+			openssl dgst $$type $$tarball; \
+		done >> ${DISTNAME}.chk.txt; \
+		if [ -n "${DISTGPGID}" ]; then \
+			gpg --sign --detach-sig --armor --local-user ${DISTGPGID} $$tarball; \
+		fi; \
+	done
+
+
+docs:
+	@[ -e "${prefix}/bin/doxygen" -a -e "${prefix}/bin/dot" ] \
+		|| { echo "Install doxygen and graphviz with MacPorts in ${prefix} first."; exit 1; }
+	${prefix}/bin/doxygen
+
+test::
+
+# Order of subdirs is important, e.g. pextlib depends on registry. We don't
+# want things getting rebuilt after they're signed just because a dependency
+# has a later mtime because it was also signed.
+codesign::
+	@for subdir in vendor src/darwintracelib1.0 src/machista1.0 src/macports1.0 src/registry2.0 src/pextlib1.0 src/programs/daemondo ; do\
+		echo ===\> making $@ in ${DIRPRFX}$$subdir; \
+		( cd $$subdir && $(MAKE) DIRPRFX=${DIRPRFX}$$subdir/ $@) || exit 1; \
+	done
+
+.PHONY: dist _gettag _pkgdist _dopkg docs codesign

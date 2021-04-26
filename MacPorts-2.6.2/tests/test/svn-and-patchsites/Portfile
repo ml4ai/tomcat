@@ -1,0 +1,41 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+PortSystem          1.0
+
+name                svn-and-patchsites
+version             2
+
+categories          test
+maintainers         nomaintainer
+platforms           darwin
+supported_archs     noarch
+configure.cxx_stdlib
+
+homepage            https://www.macports.org/
+description         Test port for svn+distant patchfiles functionalities
+long_description    ${description}
+
+# Set svn.cmd to true to avoid a dependency on the SVN binary, reset
+# depends_fetch to avoid the automatically added SVN dependency
+fetch.type          svn
+svn.cmd             true
+svn.url             file://[pwd]/svn/repository
+depends_fetch
+
+# Use a local file to avoid hitting the network
+patch_sites         file://[pwd]
+patchfiles          patch
+checksums           patch md5 d41d8cd98f00b204e9800998ecf8427e
+
+# disable the patch phase because the patches would never apply
+patch		{}
+extract		{}
+configure	{}
+build		{}
+destroot	{
+	system "touch ${destroot}${prefix}/lib/${name}"
+}
+
+test {
+	# test is actually running the fetch target
+}

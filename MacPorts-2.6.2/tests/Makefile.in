@@ -1,0 +1,21 @@
+srcdir = @srcdir@
+VPATH  = @srcdir@
+
+include ../Mk/macports.autoconf.mk
+
+all:: ../Mk/macports.autoconf.mk
+
+install::
+
+# Run all regression tests
+# tclsh test.tcl -h for more options.
+test::
+	$(TCLSH) $(srcdir)/test.tcl -nocolor
+
+clean::
+
+distclean:: clean
+	rm -f Makefile
+	rm -f test.tcl
+	rm -f test/library.tcl
+	rm -f test/trace/test.tcl

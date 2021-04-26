@@ -43,6 +43,7 @@ public class ForgeEventHandler {
 
     private boolean devMode = false;
     private List<String> whitelist = null;
+
     private String dmPath = "devmode.json";
 
     private Block getBlock(PlayerInteractEvent.RightClickBlock event) {

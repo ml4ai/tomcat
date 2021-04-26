@@ -1,0 +1,73 @@
+'\" t
+.TH "PORT\-RECLAIM" "1" "2\&.6\&.0" "MacPorts 2\&.6\&.0" "MacPorts Manual"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+port-reclaim \- Reclaims disk space\&.
+.SH "SYNOPSIS"
+.sp
+.nf
+\fBport\fR [\fB\-vdNy\fR] \fBreclaim\fR
+    [\-\-enable\-reminders] [\-\-disable\-reminders]
+.fi
+.SH "DESCRIPTION"
+.sp
+\fBport reclaim\fR will find files that can be removed to reclaim disk space by uninstalling inactive ports on your system as well as unnecessary unrequested ports, and removing unneeded or unused installation files\&. The user is then provided interactive options for files to remove\&. No files are removed initially, until the user selects them from the provided list\&.
+.SH "OPTIONS"
+.PP
+\fB\-\-enable\-reminders\fR
+.RS 4
+Enable regular reminders to run
+\fBport reclaim\fR\&. Using this option will only update the configuration; the reclaim process will not be run\&.
+.RE
+.PP
+\fB\-\-disable\-reminders\fR
+.RS 4
+Disable reminders to run
+\fBport reclaim\fR\&. Using this option will only update the configuration; the reclaim process will not be run\&.
+.RE
+.SH "GLOBAL OPTIONS"
+.sp
+Please see the section \fBGLOBAL OPTIONS\fR in the \fBport\fR(1) man page for a description of global port options\&.
+.PP
+\fB\-N\fR
+.RS 4
+Non\-interactive mode, uninstall ports and remove distfiles without asking for confirmation\&.
+.RE
+.PP
+\fB\-y\fR
+.RS 4
+Perform a dry run\&. No ports will be uninstalled and distfiles will not be removed from disk, even if confirmed by the user\&.
+.RE
+.SH "SEE ALSO"
+.sp
+\fBport\fR(1), \fBport-uninstall\fR(1), \fBport-clean\fR(1),
+.SH "AUTHORS"
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+(C) 2014 The MacPorts Project
+Kyle Sammons <ksammons@macports\&.org>
+.fi
+.if n \{\
+.RE
+.\}

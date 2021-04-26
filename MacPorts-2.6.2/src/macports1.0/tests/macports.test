@@ -1,0 +1,1055 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+package require tcltest 2
+namespace import tcltest::*
+::tcltest::configure {*}$::argv
+
+set pwd [file dirname [file normalize $argv0]]
+
+source ../macports_test_autoconf.tcl
+
+# constraint for darwin platform
+testConstraint darwin [expr {$macports::autoconf::os_platform eq "darwin"}]
+
+package require macports 1.0
+package require Thread
+
+source ./library.tcl
+
+# clean leftovers from interrupted tests
+file delete -force $pwd/tmpdir
+# use a local, temporary prefix for testing
+init_tmp_prefix $pwd $pwd/tmpdir
+
+# Debug options
+array set ui_options {}
+set ui_options(ports_noninteractive) yes
+mportinit ui_options
+
+
+test mportclose {
+    Mport close unit test.
+} -setup {
+    set mport [mportopen file://${pwd}]
+} -body {
+    if {[catch {mportclose $mport}] != 0} {
+       return "FAIL: cannot run mportclose"
+    }
+    if {[ditem_key $mport workername] ne ""} {
+       return "FAIL: port not closed"
+    }
+    return "Mport close successful."
+} -cleanup {
+    catch {mportclose $mport}
+} -result "Mport close successful."
+
+
+test mportinfo {
+    Mport info unit test.
+} -setup {
+    set mport [mportopen file://${pwd}]
+} -body {
+    set res [mportinfo $mport]
+    catch {array set PortInfo $res}
+    if {![info exists PortInfo(canonical_active_variants)]} {
+        return "FAIL: cannot get ::PortInfo"
+    }
+    return "Mport info successful."
+} -cleanup {
+    mportclose $mport
+} -result "Mport info successful."
+
+
+test worker_init {
+    Worker init unit test.
+} -setup {
+    set name [interp create]
+    set portpath $pwd/portpath
+    set porturl https://www.macports.org
+    set portbuildpath $pwd/build
+    set options {a b}
+    set variations {1 2}
+} -body {
+    macports::worker_init $name $portpath $porturl $portbuildpath $options $variations
+    if {$name ne "interp0"} {
+       return "FAIL: wrong workername"
+    }
+    if {[catch {$name eval source Portfile} result]} {
+       return "FAIL: cannot load Portfile"
+    }
+    if {[$name eval findBinary ls] ne "/bin/ls"} {
+       return "FAIL: alias not created"
+    }
+    if {[$name eval return \$os_arch] ne $macports::os_arch} {
+       return "FAIL: var not set"
+    }
+    return "Worker init successful."
+} -result "Worker init successful."
+
+
+test init_logging {
+    Init logging unit test.
+} -constraints {
+    root
+} -setup {
+    set mport [mportopen file://${pwd}]
+} -body {
+    if {[macports::init_logging $mport] != 0} {
+       return "FAIL: incorrect channels"
+    }
+    return "Init logging successful."
+} -cleanup {
+    mportclose $mport
+} -result "Init logging successful."
+
+
+test ui_isset {
+    Ui is set unit test.
+} -body {
+    namespace eval macports {
+    array set ui_options { test yes }
+    }
+    if {[macports::ui_isset test] != 1} {
+       return "FAIL: set option not detected"
+    }
+    if {[macports::ui_isset port] != 0} {
+       return "FAIL: unset option detected"
+    }
+    return "ui_isset successful."
+} -result "ui_isset successful."
+
+
+test global_option_isset {
+    Global option is set unit test.
+} -body {
+    namespace eval macports {
+    array set global_options { test yes }
+    }
+    if {[macports::global_option_isset test] != 1} {
+       return "FAIL: set option not detected"
+    }
+    if {[macports::global_option_isset port] != 0} {
+       return "FAIL: unset option detected"
+    }
+    return "Global option isset successful."
+} -result "Global option isset successful."
+
+
+test ch_logging {
+    Channel logging unit test. Assumes main.log filename.
+} -constraints {
+    root
+} -setup {
+    set mport [mportopen file://${pwd}]
+
+    set portname [_mportkey $mport subport]
+    set portpath [_mportkey $mport portpath]
+    set logname [macports::getportlogpath $portpath $portname]
+    file delete -force $logname
+
+} -body {
+    if {[macports::ch_logging $mport] != 0} {
+       return "FAIL: channels not set"
+    }
+    if {![file exists $logname]} {
+       return "FAIL: logname dir missing"
+    }
+    if {![file exists $logname/main.log]} {
+       return "FAIL: main.log missing"
+    }
+    return "Channel logging successful."
+
+} -cleanup {
+    mportclose $mport
+} -result "Channel logging successful."
+
+
+test push_log {
+    Push log unit test.
+} -constraints {
+    root
+} -setup {
+    set mport [mportopen file://${pwd}]
+    set ::logenabled 1
+} -body {
+    if {[catch {macports::push_log $mport}] != 0} {
+       return "FAIL: cannot push log"
+    }
+    if {[lindex $::logstack 0] != [list $::debuglog $::debuglogname]} {
+       return "FAIL: incorrect logstack"
+    }
+    return "Push log successful."
+} -cleanup {
+    mportclose $mport
+} -result "Push log successful."
+
+
+test pop_log {
+    Pop log unit test.
+} -setup {
+    set ::logenabled 1
+    set ::logstack [open $pwd/logstack w+]
+    set ::debuglog [open $pwd/log w+]
+    set mport [mportopen file://${pwd}]
+    if {[catch {macports::push_log $mport}] != 0} {
+       return "FAIL: cannot push log"
+    }
+} -body {
+    macports::pop_log
+    if {$::debuglog ne $::logstack} {
+	return "FAIL: cannot pop log"
+    }
+    return "Pop log successful."
+} -cleanup {
+    unset ::logenabled
+    unset ::logstack
+    unset ::debuglog
+    mportclose $mport
+    file delete -force $pwd/log
+    file delete -force $pwd/logstack
+} -result "Pop log successful."
+
+
+test set_phase {
+    Set phase unit test.
+} -body {
+    set res [set_phase test]
+    if {$macports::current_phase ne "test"} {
+	return "FAIL: phase not set"
+    }
+    return "Set phase successful."
+} -result "Set phase successful."
+
+
+test ui_message {
+    UI message unit test.
+} -setup {
+    set fd [open $pwd/message w]
+    set fd2 [open $pwd/log w]
+    set macports::channels(0) $fd
+    set macports::current_phase test
+    set ::debuglog $fd2
+} -body {
+    set res [ui_message 0 prefix args]
+    close $fd
+    close $fd2
+
+    set fd [open $pwd/message r]
+    set fd2 [open $pwd/log r]
+    set line [read $fd]
+    if {$line ne "prefixargs\n"} {
+        return "FAIL: wrong message: $line"
+    }
+    set line [read $fd2]
+    if {$line ne ":0:test args\n"} {
+        return "FAIL: wrong log: $line"
+    }
+    close $fd
+    close $fd2
+
+    set fd [open $pwd/message w]
+    set fd2 [open $pwd/log w]
+    set res [ui_message 0 prefix -nonewline arg]
+    close $fd
+    close $fd2
+
+    set fd [open $pwd/message r]
+    set fd2 [open $pwd/log r]
+    set line [read $fd]
+    if {$line ne "prefixarg"} {
+        return "FAIL: wrong message: $line"
+    }
+    set line [read $fd2]
+    if {$line ne ":0:test arg"} {
+        return "FAIL: wrong log: $line"
+    }
+    close $fd
+    close $fd2
+
+    return "UI message successful."
+} -cleanup {
+    file delete -force $pwd/log
+    file delete -force $pwd/message
+} -result "UI message successful."
+
+
+# test ui_init
+
+
+test ui_prefix_default {
+    UI prefix default unit test.
+} -body {
+    if {[macports::ui_prefix_default debug] ne {DEBUG: }} {
+	return "FAIL: wrong prefix"
+    }
+    if {[macports::ui_prefix_default error] ne {Error: }} {
+	return "FAIL: wrong prefix"
+    }
+    if {[macports::ui_prefix_default warn] ne {Warning: }} {
+	return "FAIL: wrong prefix"
+    }
+    if {[macports::ui_prefix_default default] ne {}} {
+	return "FAIL: wrong prefix"
+    }
+    return "UI prefix default successful."
+} -result "UI prefix default successful."
+
+
+test ui_channels_default {
+    UI channels default unit test.
+} -setup {
+    set macports::ui_options(ports_debug) yes
+    set macports::ui_options(ports_verbose) yes
+    set macports::ui_options(ports_quiet) yes
+} -body {
+    if {[macports::ui_channels_default debug] ne {stderr}} {
+	return "FAIL: stderr not set"
+    }
+    if {[macports::ui_channels_default info] ne {stdout}} {
+	return "FAIL: stdout not set"
+    }
+    if {[macports::ui_channels_default notice] ne {}} {
+	return "FAIL: channel not set"
+    }
+    if {[macports::ui_channels_default msg] ne {stdout}} {
+	return "FAIL: channel not set"
+    }
+    if {[macports::ui_channels_default warn] ne {stderr}} {
+	return "FAIL: channel not set"
+    }
+    if {[macports::ui_channels_default error] ne {stderr}} {
+	return "FAIL: channel not set"
+    }
+    if {[macports::ui_channels_default default] ne {stdout}} {
+	return "FAIL: channel not set"
+    }
+    return "UI channels default successful."
+} -result "UI channels default successful."
+
+
+test ui_warn_once {
+    UI warn once unit test.
+} -setup {
+    # suppress test warning to avoid noise on terminal output
+    set channel_saved $macports::channels(warn)
+    set macports::channels(warn) {}
+} -body {
+    set res [ui_warn_once 0 test]
+
+    if {$macports::warning_done(0) != 1} {
+	return "FAIL: warning flag not set"
+    }
+    return "UI warn once successful."
+} -cleanup {
+    set macports::channels(warn) $channel_saved
+} -result "UI warn once successful."
+
+
+# Replace puts to catch errors 
+# test puts
+
+
+test findBinary {
+    Find binary unit test.
+} -body {
+    if {[macports::findBinary pwd ls] ne "/bin/pwd"} {
+       return "FAIL: wrong binary"
+    }
+    if {[macports::findBinary pwd /bin/ls] ne "/bin/ls"} {
+       return "FAIL: wrong binary"
+    }
+    return "Find binary successful."
+} -result "Find binary successful."
+
+
+test binaryInPath {
+    Binary in path unit test.
+} -body {
+    if {[catch {macports::binaryInPath zz}] != 1} {
+       return "FAIL: invalid binary found"
+    }
+    if {[macports::binaryInPath ls] ne "/bin/ls"} {
+       return "FAIL: wrong binary found"
+    }
+    return "Binary in path successful."
+} -result "Binary in path successful."
+
+
+test getoption {
+    Get option unit test.
+} -body {
+    set macports::test macports
+    if {[macports::getoption test] ne "macports"} {
+	return "FAIL: cannot get option"
+    }
+    return "Get option successful."
+} -result "Get option successful."
+
+
+test setxcodeinfo {
+    Set Xcode info unit test.
+} -constraints {
+    root
+} -setup {
+    unset macports::xcodeversion
+} -body {
+    if {[macports::setxcodeinfo a b c] ne ""} {
+       return "FAIL: xcode binary not found"
+    }
+    if {![info exists macports::xcodeversion]} {
+       return "FAIL: xcodeversion unset"
+    }
+    return "Set Xcode version successful."
+} -result "Set Xcode version successful."
+
+
+test set_developer_dir {
+    Set developer dir unit test. Tests only for correct xcode-select dir.
+} -constraints {
+    root
+} -body {
+    unset macports::developer_dir
+
+    if {[macports::set_developer_dir a b c] ne ""} {
+       return "FAIL: cannot set dev dir"
+    }
+    if {![info exists macports::developer_dir]} {
+       return "FAIL: developer_dir var no set"
+    }
+    return "Set developer dir successful."
+} -result "Set developer dir successful."
+
+
+test _is_valid_developer_dir {
+    Check valid dev dir unit test.
+} -constraints {
+    darwin
+} -body {
+    if {[macports::_is_valid_developer_dir $macports::developer_dir] != 1} {
+       return "FAIL: valid dir not detected"
+    }
+    return "Valid dev dir successful."
+} -result "Valid dev dir successful."
+
+
+# test mportinit
+
+
+test mportopen_installed {
+    Mport installed unit test.
+} -constraints {
+    root
+} -setup {
+    set subport gcc_select
+    set version 0.1
+    set revision 4
+
+    set mport [mportopen file://${pwd}]
+
+    # run destroot
+    mportexec $mport destroot
+
+    if {[catch {mportexec $mport activate}] != 0} {
+        ui_debug "$::errorInfo"
+        return "FAIL: cannot install port"
+    }
+
+    set variants {}
+    set options {}
+
+} -body {
+    set res [mportopen_installed $subport $version $revision $variants $options]
+    if {![string match "ditem_*" $res]} {
+       return "FAIL: installed port not opened"
+    }
+
+    if {[catch {mportclose $res}] != 0} {
+       return "FAIL: cannot close port"
+    }
+    if {[catch {mportclose $res}] != 1} {
+       return "FAIL: installed port not closed"
+    }
+    return "Installed port open successful."
+
+} -cleanup {
+    if {[catch {mportexec $mport uninstall}] != 0} {
+        return "FAIL: cannot uninstall port"
+    }
+    mportclose $mport
+
+    file delete -force $pwd/work
+    file delete -force $pwd/$subport
+    cd $pwd
+} -result "Installed port open successful."
+
+
+test mportshutdown {
+    Mport shutdown unit test.
+} -setup {
+    unset macports::ping_cache
+
+    set time [expr [clock seconds] - 86100]
+    set time_exp [expr [clock seconds] - 87000]
+    set macports::portdbpath $pwd/portdbpath
+    set macports::ping_cache(host1) [list test $time]
+    set macports::ping_cache(host2) [list test $time_exp]
+
+    file mkdir $macports::portdbpath
+    close [open $macports::portdbpath/pingtimes w+]
+
+} -body {
+    if {[mportshutdown] ne ""} {
+       return "FAIL: errors occured"
+    }
+
+    set res ""
+    append res "host1 \{test " $time "\}"
+    set fd [open $macports::portdbpath/pingtimes r]
+
+    if {[gets $fd] ne $res} {
+       return "FAIL: wrong value saved"
+    }
+    close $fd
+    return "Mportshutdown successful."
+
+} -cleanup {
+    file delete -force $macports::portdbpath
+} -result "Mportshutdown successful."
+
+
+test copy_xcode_plist {
+    Copy xcode plist unit test.
+} -constraints {
+    root
+} -body {
+    set target $pwd/target
+
+    if {[macports::copy_xcode_plist $target] ne ""} {
+       return "FAIL: cannot copy xcode plist"
+    }
+    if {![file exists $target/Library/Preferences/com.apple.dt.Xcode.plist]} {
+       return "FAIL: missing plist file"
+    }
+    return "Copy xcode plist successful."
+} -cleanup {
+    file delete -force $target
+} -result "Copy xcode plist successful."
+
+
+test create_thread {
+    Create thread unit test.
+} -body {
+    unset macports::portinterp_options
+    set macports::portinterp_options {a b}
+
+    set res [macports::create_thread]
+    if {![string match "tid0x*" $res]} {
+       return "FAIL: cannot create thread"
+    }
+    return "Create thread successful."
+} -result "Create thread successful."
+
+
+test get_tar_flags {
+    Get tar flags unit test.
+} -body {
+    if {[macports::get_tar_flags .tbz2] ne "-j"} {
+	return "FAIL: wrong flaga (-j)"
+    }
+    if {[macports::get_tar_flags .tgz] ne "-z"} {
+	return "FAIL: wrong flaga (-z)"
+    }
+    return "Get tar flags successful."
+} -result "Get tar flags successful."
+
+
+test fetch_port {
+    Fetch port unit test.
+} -body {
+    set url http://packages.macports.org/db_select/db_select-0.1_3.darwin_14.noarch.tbz2
+    set res [macports::fetch_port $url]
+    if {$res ne "${pwd}/portdbpath/portdirs/db_select-0.1_3"} {
+	return "FAIL: cannot fetch port"
+    }
+    return "Fetch port successful."
+} -cleanup {
+    file delete -force $pwd/portdbpath
+} -result "Fetch port successful."
+
+
+test getprotocol {
+    Get protocol unit test.
+} -body {
+    if {[macports::getprotocol https://www.macports.org] ne "https"} {
+       return "FAIL: wrong protocol"
+    }
+    return "Get protocol successful."
+} -result "Get protocol successful."
+
+
+test getportdir {
+    Get port directory unit test.
+} -setup {
+    close [open $pwd/local_file w+]
+} -body {
+    set url http://packages.macports.org/db_select/db_select-0.1_3.darwin_14.noarch.tbz2
+    set res [macports::getportdir $url]
+    set expected ${pwd}/portdbpath/portdirs/db_select-0.1_3
+    if {$res ne $expected} {
+	    return "FAIL: incorrect port directory $res (expected $expected)"
+    }
+
+    set url file://${pwd}/local_file
+    set res [macports::getportdir $url]
+    set expected ${pwd}/portdbpath/portdirs/local_file
+    if {$res ne $expected} {
+	    return "FAIL: incorrect local port directory $res (expected $expected)"
+    }
+    return "Get port dir successful."
+} -cleanup {
+    file delete -force $pwd/portdbpath
+    file delete -force $pwd/local_file
+} -result "Get port dir successful."
+
+
+test getportresourcepath {
+    Get port resource path. Doesn't check for 'file' protocol.
+} -body {
+    set macports::portdbpath $pwd/portdbpath
+    set url "http://packages.macports.org/db_select/db_select-0.1_3.darwin_14.noarch.tbz2"
+    set default_path $pwd/portdbpath/sources/rsync.macports.org/macports/release/tarballs/ports/_resources
+    set fallback_path $pwd/portdbpath/sources/packages.macports.org/db_select/db_select-0.1_3.darwin_14.noarch.tbz2/_resources
+
+    if {[macports::getportresourcepath $url "" yes] ne $default_path} {
+       return "FAIL: wrong resource path"
+    }
+    if {[macports::getportresourcepath $url "" no] ne $fallback_path} {
+       return "FAIL: wrong fallback path"
+    }
+    if {[macports::getportresourcepath $url "test" no] ne "${fallback_path}/test"} {
+       return "FAIL: wrong fallback path with subdir"
+    }
+
+    return "Get resource path successful."
+} -result "Get resource path successful."
+
+
+test getdefaultportresourcepath {
+    Get default port resource path unit test.
+} -body {
+    set path test/path
+    set macports::sources_default file://$pwd
+    if {[macports::getdefaultportresourcepath $path] ne "${pwd}/_resources/${path}"} {
+       return "FAIL: wrong file res path"
+    }
+
+    set macports::sources_default http://$pwd
+    set default_source_url [lindex ${macports::sources_default} 0]
+    set right_path [macports::getsourcepath $default_source_url]/_resources/test/path
+    if {[macports::getdefaultportresourcepath $path] ne $right_path} {
+       return "FAIL: wrong http res path"
+    }
+    return "Default res path successful."
+} -result "Default res path successful."
+
+
+# test mportopen
+
+# FIXME way too brittle
+test mporttraverse {
+    Mport traverse unit test. Uses first line of the Portfile.
+} -setup {
+    file mkdir $pwd/porttree
+    file mkdir $pwd/porttree/cat1/gcc_select
+    file mkdir $pwd/porttree/cat2/gcc_select
+
+    file copy -force $pwd/Portfile $pwd/porttree/cat1/gcc_select/Portfile
+    file copy -force $pwd/Portfile $pwd/porttree/cat2/gcc_select/Portfile
+
+    proc test_proc {file} {
+       global pwd res
+       set fd [open ${pwd}/porttree/${file}/Portfile r]
+       gets $fd line
+       # Assumes this will be "PortSystem 1.0"
+       append res [lindex [split $line " "] 1]
+       close $fd
+    }
+
+    global res
+    set res ""
+} -body {
+    mporttraverse test_proc $pwd/porttree
+    if {$res ne "1.01.0"} {
+       return "FAIL: porttree not traversed"
+    }
+    return "Mport traverse successful."
+} -cleanup {
+    file delete -force $pwd/porttree
+} -result "Mport traverse successful."
+
+
+# test _mportsearchpath
+# test _mportinstalled
+# test _mportactive
+# test _portnameactive
+# test _mportispresent
+# test _mporterrorifconflictsinstalled
+# test _mportexec
+# test mportexec
+# test _upgrade_mport_deps
+# test getsourcepath
+# test _source_is_snapshot
+# test getportbuildpath
+# test getportlogpath
+# test getportworkpath_from_buildpath
+# test getportworkpath_from_portdir
+# test getindex
+
+
+# The test files might themselves be under version control, so the test
+# repositories need to live somewhere else.
+# TODO: Replace with "file tempfile" when we move to Tcl 8.6.
+package require fileutil 1.5.1-
+set tempdir [::fileutil::tempdir]
+
+
+testConstraint hasSvn [expr {
+    ![catch {macports::findBinary svn} svn] &&
+    ![catch {macports::findBinary svnadmin} svnadmin]
+}]
+
+test GetVCSUpdateCmd-svn {
+    Tests GetVCSUpdateCmd on a valid Subversion repository
+} -constraints {
+    hasSvn
+} -setup {
+    set repo [makeDirectory macports-test-svn-repo $tempdir]
+    exec -ignorestderr $svnadmin create $repo
+    set wc [makeDirectory macports-test-svn-wc $tempdir]
+    # This URL should probably be encoded.
+    exec -ignorestderr $svn checkout file://$repo $wc
+} -body {
+    string map [list $svn SVN $wc WC] [macports::GetVCSUpdateCmd $wc]
+} -cleanup {
+    removeDirectory macports-test-svn-wc $tempdir
+    removeDirectory macports-test-svn-repo $tempdir
+} -result {Subversion {SVN update --non-interactive} WC}
+
+
+testConstraint hasGit [expr {![catch {macports::findBinary git} git]}]
+set git_vcsupdate_fixture {
+    set repo [makeDirectory macports-test-git-repo $tempdir]
+    exec -ignorestderr $git init $repo
+    rename exec _save_exec
+
+    proc exec {cmd args} {
+        global gitversion
+        if {$cmd ne [macports::findBinary git] || [lindex $args 0] ne "--version"} {
+            return [_save_exec -ignorestderr $cmd {*}$args]
+        }
+        return "git version $gitversion (Apple Git-23)"
+    }
+}
+set git_vcsupdate_cleanup {
+    removeDirectory macports-test-git-repo $tempdir
+    rename exec ""
+    rename _save_exec exec
+}
+
+test GetVCSUpdateCmd-git {
+    Tests GetVCSUpdateCmd on a valid Git repository with Git >= 2.9.0
+} -constraints {
+    hasGit
+} -setup $git_vcsupdate_fixture -body {
+    global gitversion
+    set gitversion "2.10.1"
+    string map [list $git GIT $repo REPO] [macports::GetVCSUpdateCmd $repo]
+} -cleanup $git_vcsupdate_cleanup -result {Git {GIT pull --rebase --autostash} REPO}
+
+test GetVCSUpdateCmd-git-noautostash {
+    Tests GetVCSUpdateCmd on a valid Git repository with Git < 2.9.0
+} -constraints {
+    hasGit
+} -setup $git_vcsupdate_fixture -body {
+    global giversion
+    set gitversion "1.8.2"
+    string map [list $git GIT $repo REPO] [macports::GetVCSUpdateCmd $repo]
+} -cleanup $git_vcsupdate_cleanup -result {Git {GIT pull --rebase} REPO}
+
+testConstraint hasGitSvn [expr {
+    ![catch {macports::findBinary git} git] &&
+    [file readable [file join [exec -ignorestderr $git --exec-path] git-svn]]
+}]
+
+test GetVCSUpdateCmd-gitsvn {
+    Tests GetVCSUpdateCmd on a valid git-svn repository
+} -constraints {
+    hasGitSvn
+} -setup {
+    set repo [makeDirectory macports-test-git-svn-repo $tempdir]
+    exec -ignorestderr $git svn init http://localhost $repo
+} -body {
+    string map [list $git GIT $repo REPO] [macports::GetVCSUpdateCmd $repo]
+} -cleanup {
+    removeDirectory macports-test-git-svn-repo $tempdir
+} -result {git-svn {GIT svn rebase} REPO}
+
+
+test GetVCSUpdateCmd-none {
+    Tests GetVCSUpdateCmd on directories that aren't recognized repositories
+} -setup {
+    set repo [makeDirectory macports-test-non-repo $tempdir]
+} -body {
+    macports::GetVCSUpdateCmd $repo
+} -cleanup {
+    removeDirectory macports-test-non-repo $tempdir
+} -result {}
+
+
+# test updatevcs
+# test mportsync
+# test mportsearch
+# test mportlookup
+# test mportlistall
+# test _mports_load_quickindex
+# test mports_generate_quickindex
+
+
+# test _mportkey
+# test mportdepends
+# test _mport_supports_archs
+# test _mport_archs
+# test _active_supports_archs
+# test _active_archs
+# test _explain_arch_mismatch
+# test _mport_has_deptypes
+# test _target_needs_deps
+# test _deptypes_for_target
+# test selfupdate
+# test upgrade
+# test _upgrade
+# test _upgrade_dependencies
+
+
+test mportselect {
+    Mport select unit test.
+} -setup {
+    set macports::prefix $pwd/prefix
+
+    file mkdir $macports::prefix/etc/select/group
+    set f1 [open $macports::prefix/etc/select/group/file1 w+]
+    set f2 [open $macports::prefix/etc/select/group/file2 w+]
+    set f3 [open $macports::prefix/srcs w+]
+    puts $f1 "srcs\n"
+    close $f1
+    close $f2
+    close $f3
+
+    set fd [open $macports::prefix/etc/select/group/base w+]
+    puts $fd "a\nb"
+    close $fd
+} -body {
+    if {[mportselect list group] ne {file1 file2}} {
+       return "FAIL: files not listed"
+    }
+    if {[mportselect set group file1] ne ""} {
+       reutrn "FAIL: cannot set links"
+    }
+    if {![file exists $macports::prefix/a]} {
+       return "FAIL: link not created"
+    }
+    if {[mportselect show group] ne "file1"} {
+       return "FAIL: file not selected"
+    }
+    return "Mport select successful."
+
+} -cleanup {
+    file delete -force $macports::prefix
+} -result "Mport select successful."
+
+
+test gettmpdir {
+    Get tmp dir unit test.
+} -body {
+    global env
+    set env(TMPDIR) temporal
+    if {[macports::gettmpdir] ne "temporal"} {
+       return "FAIL: set temp dir not detected"
+    }
+    unset env(TMPDIR)
+    if {[macports::gettmpdir] ne "/tmp"} {
+       return "FAIL: default value not set"
+    }
+    return "Get tmp dir successful."
+} -result "Get tmp dir successful."
+
+
+test arch_runnable {
+    Arch runnable unit test.
+} -body {
+    set macports::os_major 12
+    set macports::os_arch i386
+    set macports::os_platform darwin
+    if {[macports::arch_runnable ppc1] != no} {
+       return "FAIL: major:12 arch:i386 arch:ppc* not detected"
+    }
+    if {[macports::arch_runnable ppc64] != no} {
+       return "FAIL: major:12 arch:i386 arch:ppc64 not detected"
+    }
+    set macports::os_major 7
+    set macports::os_arch i386
+    set macports::os_platform darwin
+    if {[macports::arch_runnable x86_64] != no} {
+       return "FAIL: major:7 arch:i386 arch:x86_64 not detected"
+    }
+    set macports::os_major 12
+    set macports::os_arch i386
+    set macports::os_platform darwin
+    if {[macports::arch_runnable x86_64] != yes} {
+       return "FAIL: major:12 arch:i386 arch:x86_64 not detected"
+    }
+    return "Arch runnable successful."
+} -result "Arch runnable successful."
+
+
+# test revupgrade
+# test revupgrade_scanandrebuild
+
+
+test path_is_in_prefix {
+    Path is in prefix unit test.
+} -body {
+    set macports::applications_dir appdir
+    if {[macports::path_is_in_prefix appdir/test/port] != yes} {
+       return "FAIL: application dir not detected"
+    }
+    set macports::prefix prefix
+    if {[macports::path_is_in_prefix prefix/test/port] != yes} {
+       return "FAIL: prefix not detected"
+    }
+    if {[macports::path_is_in_prefix test/port] != no} {
+       return "FAIL: no prefix detected"
+    }
+    return "Path prefix successful."
+} -result "Path prefix successful."
+
+
+test revupgrade_handle_special_paths {
+    Revupgrade handle special paths unit test.
+} -body {
+    set res [macports::revupgrade_handle_special_paths fname test_path]
+    if {$res ne "test_path"} {
+       return "FAIL: wrong path"
+    }
+    set res [macports::revupgrade_handle_special_paths fname @loader_path/test_load]
+    if {$res ne "./test_load"} {
+       return "FAIL: wrong load path"
+    }
+    return "Revupgrade handle special path successful."
+} -result "Revupgrade handle special path successful."
+
+
+# test revupgrade_buildgraph
+
+
+test get_pingtime {
+    Get ping time unit test.
+} -setup {
+    set time [expr [clock seconds] - 86300]
+    set macports::ping_cache(macports.org) [list MacPorts $time]
+    set macports::host_blacklist macports_blacklist
+    set macports::preferred_hosts macports_pref
+} -body {
+    if {[macports::get_pingtime macports.org] ne "MacPorts"} {
+       return "FAIL: wrong ping time"
+    }
+    if {[macports::get_pingtime macports_blacklist] != -1} {
+       return "FAIL: wrong time for blacklisted host"
+    }
+    if {[macports::get_pingtime macports_pref] != 1} {
+       return "FAIL: wrong time for preferred host"
+    }
+    return "Get ping time successful."
+} -result "Get ping time successful."
+
+
+test set_pingtime {
+    Set ping time unit test.
+} -body {
+    set macports::ping_cache(macports) {}
+    if {[lindex [macports::set_pingtime macports 007] 0] != 007} {
+       return "FAIL: ping time not set"
+    }
+    return "Set ping time successful."
+} -result "Set ping time successful."
+
+
+test get_archive_sites_conf_values {
+    Get archive sites conf values unit test.
+} -setup {
+    file mkdir $pwd/archive_sites
+    set fd [open $pwd/archive_sites/archive_sites.conf w+]
+    puts $fd "name fondu"
+    puts $fd "urls macports.org"
+    puts $fd "type tgz"
+    close $fd
+
+    set macports::autoconf::macports_conf_path $pwd/archive_sites
+    unset -nocomplain macports::archive_sites_conf_values
+} -body {
+    set res [macports::get_archive_sites_conf_values]
+    puts $res
+    if {[lindex [split $res " "] 1] ne "macports.org:nosubdir"} {
+       return "FAIL: name not set"
+    }
+    if {[lindex [split $res " "] 3] ne "tgz"} {
+       return "FAIL: wrong type set"
+    }
+
+    set macports::archive_sites_conf_values {a b c}
+    if {[macports::get_archive_sites_conf_values] ne {a b c}} {
+       return "FAIL: wrong  result for bad conf file"
+    }
+    return "Get archive sites conf values successful."
+
+} -cleanup {
+    file delete -force $pwd/archive_sites
+} -result "Get archive sites conf values successful."
+
+
+set shellescapeTests [list \
+    "using \\backslashes" \
+    " spaces " \
+    "and	tabs" \
+    "quotes need to be \"supported\", too" \
+    "… and not only 'double-quotes'" \
+    "other meta chars such as \$dollar," \
+    "!bang, ;semicolon, :colon," \
+    "\$(subshells) and similar must be kept" \
+    ">redirects <& must be ignored as well as ampersands &"]
+test shellescaping {
+    Check whether shell escaping using macports::shellescape works correctly when passed to Pextlib's system extension.
+} -setup {
+    set outputfile "shellescapetestoutput.txt"
+    makeFile "" $outputfile
+
+} -body {
+    set first "yes"
+    foreach test $shellescapeTests {
+        if {$first eq "yes"} {
+            system "echo [macports::shellescape $test]  >$outputfile"
+            set first "no"
+        } else {
+            system "echo [macports::shellescape $test] >>$outputfile"
+        }
+    }
+
+    set fd [open $outputfile r]
+    set output [read -nonewline $fd]
+    close $fd
+    return $output
+} -cleanup {
+    removeFile $outputfile
+} -result [join $shellescapeTests "\n"]
+
+cleanupTests

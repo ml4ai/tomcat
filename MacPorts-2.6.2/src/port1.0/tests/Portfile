@@ -1,0 +1,39 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+PortSystem 1.0
+
+name                emptyport
+version             0.2
+categories          sysutils
+platforms           darwin
+license             BSD
+maintainers         nomaintainer
+supported_archs     noarch
+description         Nothing
+long_description    ${description}
+
+homepage            https://github.com/kelseyhightower/nocode
+distfiles
+
+patch {
+    foreach patch $patchfiles {
+        set fd [open ${filespath}/${patch} r]
+        set var [gets $fd]
+        close $fd
+        set fd [open ${workpath}/${distname}/test_patch w+]
+        puts $fd $var
+        close $fd
+    }
+}
+configure {}
+build {}
+destroot {
+    install -d -m755 ${destroot}${prefix}/share
+    install -d -m755 ${destroot}${prefix}/share/${name}
+    touch ${destroot}${prefix}/share/${name}/EMPTY
+}
+test {
+    touch ${worksrcpath}/README
+    file delete -force ${worksrcpath}/README
+}
+
+livecheck.type  none
