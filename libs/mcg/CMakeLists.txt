@@ -26,3 +26,6 @@ option(BUILD_EXAMPLES "Enable building of the example programs" OFF)
 if(BUILD_EXAMPLES)
   add_subdirectory(examples)
 endif()
+
+install(TARGETS mcg DESTINATION lib) 
+install(FILES ${mcg_headers} DESTINATION include/mcg) 

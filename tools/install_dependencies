@@ -75,7 +75,7 @@ __install_dependencies_using_homebrew() {
 
     # We enable system audio recording ononly on macOS Catalina or above
     if (( ENABLE_SYSTEM_AUDIO_RECORDING )); then
-        brew cask install blackhole
+        brew install --cask blackhole
         if [[ $? -ne 0 && $? -ne 1 ]]; then exit 1; fi
 
         brew install switchaudio-osx
