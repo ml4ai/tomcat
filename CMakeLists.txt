@@ -20,7 +20,10 @@ cmake_policy(SET CMP0074 NEW)
 
 add_subdirectory(external/malmo)
 
-add_subdirectory(src/cpp)
+add_subdirectory(libs)
+
+add_subdirectory(exe)
+
 target_include_directories(runMission PRIVATE external/malmo/Malmo/src)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/tools/launch_minecraft
@@ -29,4 +32,9 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/tools/launch_minecraft
 option(BUILD_DOCS "Build documentation" OFF)
 if(BUILD_DOCS)
   add_subdirectory(docs)
+endif()
+
+option(BUILD_EXAMPLES "Enable building of the example programs" OFF)
+if(BUILD_EXAMPLES)
+  add_subdirectory(examples)
 endif()

@@ -4,6 +4,11 @@ Usage
 To run an experimental session, run the following command from the `tomcat` directory.
 
     ./tools/run_session
+    
+By default, the above command runs the tutorial mission followed by the hand-crafted Zombie mission. To run the procedurally generated version of the Zombie mission (which is still in its early stages of development), run the following command from the `tomcat` directory.
+
+    MAIN_MISSION=3 ./tools/run_session
+
 
 The data from the session will be saved in the folder:
 
