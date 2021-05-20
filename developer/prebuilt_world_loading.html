@@ -4,7 +4,8 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Pre-Built World Loading Tutorial &mdash; ToMCAT 0.1 documentation</title>
@@ -13,6 +14,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
 
   
@@ -30,6 +33,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
@@ -182,9 +186,9 @@
            <div itemprop="articleBody">
             
   <p><strong>Author:</strong> Aditya Banerjee <strong>Date:</strong> 2019-12-7</p>
-<div class="section" id="pre-built-world-loading-tutorial">
+<section id="pre-built-world-loading-tutorial">
 <h1>Pre-Built World Loading Tutorial<a class="headerlink" href="#pre-built-world-loading-tutorial" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="loading-pre-built-worlds">
+<section id="loading-pre-built-worlds">
 <h2>Loading Pre-Built Worlds<a class="headerlink" href="#loading-pre-built-worlds" title="Permalink to this headline">¶</a></h2>
 <p><strong>Pre-requisites: Make sure you are able to run Minecraft and the default mission before attempting this tutorial.</strong></p>
 <p><strong>Aim:</strong> To load pre-built Minecraft worlds into the XML missions.</p>
@@ -226,8 +230,8 @@ the tutorial go to the line <code class="docutils literal notranslate"><span cla
 </pre></div>
 </div>
 <p>7.	That’s it! You should be inside the world I built.</p>
-</div>
-<div class="section" id="creating-a-world-to-load">
+</section>
+<section id="creating-a-world-to-load">
 <h2>Creating A World to Load<a class="headerlink" href="#creating-a-world-to-load" title="Permalink to this headline">¶</a></h2>
 <p>1.	Simply launch Minecraft from inside the build folder using:</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="o">/</span><span class="n">launch_minecraft</span><span class="p">.</span><span class="n">sh</span>
@@ -252,15 +256,15 @@ These modes are the  only options available during world creation, but spectator
 <p>It is possible to load the world into the XML from this saves directory itself; however it is not recommended.
 Many worlds will be created each time a mission is run, and this directory will become hard to manage.
 It is better to save it elsewhere and then load it in from that path.</p>
-</div>
-<div class="section" id="final-notes">
+</section>
+<section id="final-notes">
 <h2>Final Notes<a class="headerlink" href="#final-notes" title="Permalink to this headline">¶</a></h2>
 <p>I intentionally left <code class="docutils literal notranslate"><span class="pre">file_gen_skeleton</span></code> as a very basic XML with no real mission elements. It is meant to serve as a foundation to build missions without needing to change or delete much.
 When you’ve finished going through this documentation, you may add as much as you want to <code class="docutils literal notranslate"><span class="pre">file_gen_skeleton</span></code> to implement your mission. There is no need to follow
 the tutorial’s XML modification restrictions at that time.</p>
 <p>Note however, it is better to set trivial paramaters through in-game commands while playing the world so that the XML can be more streamlined in its implementation of the mission itself. The goal of this endeavour is to move the trivial tasks of building and setting daytime etc. away from the XML.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

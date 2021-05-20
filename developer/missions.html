@@ -4,7 +4,8 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Guide to developing ToMCAT missions &mdash; ToMCAT 0.1 documentation</title>
@@ -13,6 +14,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
 
   
@@ -30,6 +33,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
@@ -185,7 +189,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="guide-to-developing-tomcat-missions">
+  <section id="guide-to-developing-tomcat-missions">
 <h1>Guide to developing ToMCAT missions<a class="headerlink" href="#guide-to-developing-tomcat-missions" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
@@ -198,7 +202,7 @@ scenarios as ‘missions’.</p>
 <p>In this section, we will go over how to design and implement a ToMCAT mission.
 All file and directory paths are relative to the root of the <code class="docutils literal notranslate"><span class="pre">ml4ai/tomcat</span></code>
 repo.</p>
-<div class="section" id="building-the-environment">
+<section id="building-the-environment">
 <h2>Building the environment<a class="headerlink" href="#building-the-environment" title="Permalink to this headline">¶</a></h2>
 <p>You have a couple of options when it comes to setting up the mission
 environment.
@@ -218,13 +222,13 @@ In an experiment context, it is usually desirable to have parametric control
 over the experimental conditions and stochasticity, both of which can be
 achieved with procedural generation.</p></li>
 </ul>
-</div>
-<div class="section" id="setting-up-the-mission-skeleton">
+</section>
+<section id="setting-up-the-mission-skeleton">
 <h2>Setting up the mission skeleton<a class="headerlink" href="#setting-up-the-mission-skeleton" title="Permalink to this headline">¶</a></h2>
 <p>After building the mission environment as described above, the next step is to
 define the mission behavior, - for example, the mission time limit, the
 behaviour of mobs, and handling in-game events of interest.</p>
-<div class="section" id="java">
+<section id="java">
 <h3>Java<a class="headerlink" href="#java" title="Permalink to this headline">¶</a></h3>
 <p>On the Java side, we will create some scaffolding code in the folder
 <code class="docutils literal notranslate"><span class="pre">external/malmo/Minecraft/src/main/java/edu/arizona/tomcat/Mission</span></code>.</p>
@@ -242,8 +246,8 @@ position in the <code class="docutils literal notranslate"><span class="pre">get
 methods in <code class="docutils literal notranslate"><span class="pre">MissionFactory.java</span></code> for the example mission.</p></li>
 <li><p>Create a class <code class="docutils literal notranslate"><span class="pre">Client/ExampleClientMission.java</span></code></p></li>
 </ul>
-</div>
-<div class="section" id="c">
+</section>
+<section id="c">
 <h3>C++<a class="headerlink" href="#c" title="Permalink to this headline">¶</a></h3>
 <p>If you want to be able to run the mission using the <code class="docutils literal notranslate"><span class="pre">tools/run_session</span></code> script
 in order to automatically set up A/V recording and the message bus, you’ll need
@@ -261,9 +265,9 @@ to add some code to the C++ side as well.</p>
 <li><p>Add a line to the comments in <code class="docutils literal notranslate"><span class="pre">tools/configuration_helpers</span></code> describing the
 <code class="docutils literal notranslate"><span class="pre">MAIN_MISSION</span></code> environment variable about <code class="docutils literal notranslate"><span class="pre">ExampleMission</span></code>.</p></li>
 </ul>
-</div>
-</div>
-<div class="section" id="defining-event-handlers">
+</section>
+</section>
+<section id="defining-event-handlers">
 <h2>Defining event handlers<a class="headerlink" href="#defining-event-handlers" title="Permalink to this headline">¶</a></h2>
 <p>Given that you are implementing a custom mission, it’s likely that there are
 certain in-game events that you will want to (i) record for downstream
@@ -308,8 +312,8 @@ implemented topics and message data models <a class="reference external" href="h
 to add the message schema and topic for that event to <code class="docutils literal notranslate"><span class="pre">docs/spec.yml</span></code>,
 following the pattern of the other messages and topics that are already in
 there.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

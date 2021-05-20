@@ -4,7 +4,8 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Notes for The Mission Worlds &mdash; ToMCAT 0.1 documentation</title>
@@ -13,6 +14,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
 
   
@@ -30,6 +33,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
@@ -163,7 +167,7 @@
            <div itemprop="articleBody">
             
   <p><strong>Author:</strong> Aditya Banerjee <strong>Date:</strong> 2019-12-7</p>
-<div class="section" id="notes-for-the-mission-worlds">
+<section id="notes-for-the-mission-worlds">
 <h1>Notes for The Mission Worlds<a class="headerlink" href="#notes-for-the-mission-worlds" title="Permalink to this headline">¶</a></h1>
 <p>Before reading through the notes, it might be helpful to familiarize yourself
 with Minecraft’s in-game command system at:</p>
@@ -173,7 +177,7 @@ with Minecraft’s in-game command system at:</p>
 <p>The worlds used are also updated often, so the number attached to world
 names represent the current version. <code class="docutils literal notranslate"><span class="pre">x_x_x</span></code>is simply a placeholder for this
 number.</p>
-<div class="section" id="tutorial-mission-world">
+<section id="tutorial-mission-world">
 <h2>Tutorial Mission World<a class="headerlink" href="#tutorial-mission-world" title="Permalink to this headline">¶</a></h2>
 <p>This is the world used for the Tutorial Mission, and it can
 be downloaded from this Drive link as the <code class="docutils literal notranslate"><span class="pre">tutorial_x_x_x</span></code> folder:</p>
@@ -201,8 +205,8 @@ coordinates in the  <code class="docutils literal notranslate"><span class="pre"
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">setworldspawn</span> <span class="o">&lt;</span><span class="n">x</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">y</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">z</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="search-and-rescue-mission-world">
+</section>
+<section id="search-and-rescue-mission-world">
 <h2>Search and Rescue Mission World<a class="headerlink" href="#search-and-rescue-mission-world" title="Permalink to this headline">¶</a></h2>
 <p>This is the world used for the Search and Rescue(SAR) Mission, and it can
 be downloaded from this Drive link as the <code class="docutils literal notranslate"><span class="pre">sar_x_x_x</span></code> folder:</p>
@@ -229,8 +233,8 @@ coordinates in the  <code class="docutils literal notranslate"><span class="pre"
 Wooden doors wern’t used in order to prevent mobs from randomly opening doors
 by themselves (this could be a non-issue depending on the mob you are using). The doors can, however, be opened by a player who can right-click the lever next to the door and open it. This is true for all the doors in the mission except the “final door” in a structure. This final door is meant to be opened programatically once the player has successfully killed/saved (depends on the mob) the mob in the chamber.</p>
 <p><strong>NOTE:</strong> Some of the smaller structures have no “final doors”.</p>
-</div>
-<div class="section" id="common-mission-implementation-notes">
+</section>
+<section id="common-mission-implementation-notes">
 <h2>Common  Mission Implementation Notes<a class="headerlink" href="#common-mission-implementation-notes" title="Permalink to this headline">¶</a></h2>
 <p>The day-night and weather cycles were turned off to keep the
 environment constant. The <code class="docutils literal notranslate"><span class="pre">/time</span> <span class="pre">set</span></code> and <code class="docutils literal notranslate"><span class="pre">/weather</span></code>commands can still be used
@@ -246,8 +250,8 @@ randomly. Mobs can still be spawned using the <code class="docutils literal notr
 entity <em>inside</em> the structure, not on top of it.</p>
 <p><strong>A Potential Issue</strong></p>
 <p>Once the world has been downloaded and loaded into Minecraft, the player should spawn at the coordinates I set in-game using the <code class="docutils literal notranslate"><span class="pre">/setworldspawn</span></code> command. In case this doesn’t work, however, <code class="docutils literal notranslate"><span class="pre">&lt;Placement/&gt;</span></code> in the  XML can be modified with <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">=</span> <span class="pre">&quot;&quot;</span> <span class="pre">y</span> <span class="pre">=</span> <span class="pre">&quot;&quot;</span>&#160; <span class="pre">z</span> <span class="pre">=</span> <span class="pre">&quot;&quot;</span> <span class="pre">yaw</span> <span class="pre">=</span> <span class="pre">&quot;&quot;</span> </code> (whatever coordinates you need for that world) to fix the issue.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

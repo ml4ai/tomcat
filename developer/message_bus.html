@@ -4,7 +4,8 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Working with the MQTT message bus &mdash; ToMCAT 0.1 documentation</title>
@@ -13,6 +14,8 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
 
   
@@ -30,6 +33,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
@@ -190,7 +194,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="working-with-the-mqtt-message-bus">
+  <section id="working-with-the-mqtt-message-bus">
 <h1>Working with the MQTT message bus<a class="headerlink" href="#working-with-the-mqtt-message-bus" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
@@ -220,13 +224,13 @@ systems.</p>
 <p>The message broker that we use in ToMCAT is <a class="reference external" href="https://mosquitto.org">Mosquitto</a>. Communication with
 the message broker can be done using an executable or a client library. We will
 go over both these methods.</p>
-<div class="section" id="starting-up-the-mosquitto-message-broker">
+<section id="starting-up-the-mosquitto-message-broker">
 <h2>Starting up the Mosquitto message broker<a class="headerlink" href="#starting-up-the-mosquitto-message-broker" title="Permalink to this headline">¶</a></h2>
 <p>The invocation to start up the Mosquitto message broker depends on the
 operating system and the package manager you’re using (keep in mind that
 running the <code class="docutils literal notranslate"><span class="pre">tools/install</span></code> script will automatically install Mosquitto for
 you).</p>
-<div class="section" id="macos">
+<section id="macos">
 <h3>MacOS<a class="headerlink" href="#macos" title="Permalink to this headline">¶</a></h3>
 <p>If you installed Mosquitto using MacPorts, you can start it up in the
 background with the default settings by invoking::</p>
@@ -237,14 +241,14 @@ background with the default settings by invoking::</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">$</span><span class="p">(</span><span class="n">brew</span> <span class="o">--</span><span class="n">prefix</span><span class="p">)</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">mosquitto</span> <span class="o">&amp;</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="ubuntu">
+</section>
+<section id="ubuntu">
 <h3>Ubuntu<a class="headerlink" href="#ubuntu" title="Permalink to this headline">¶</a></h3>
 <p>If you’re on Ubuntu, Mosquitto will automatically start up as a background
 service after installation, so you don’t need to start it up manually.</p>
-</div>
-</div>
-<div class="section" id="message-topics-and-topic-hierarchies">
+</section>
+</section>
+<section id="message-topics-and-topic-hierarchies">
 <h2>Message topics and topic hierarchies<a class="headerlink" href="#message-topics-and-topic-hierarchies" title="Permalink to this headline">¶</a></h2>
 <p>Message brokers route messages to/from client applications based on the topics
 that the applications published/subscribed to. Topics follow a hierarchical
@@ -258,12 +262,12 @@ implemented in ToMCAT).</p>
 <p>If a client application subscribed to <code class="docutils literal notranslate"><span class="pre">observations/events/#</span></code>, they would
 receive the messages from both the <code class="docutils literal notranslate"><span class="pre">observations/events/entity_death</span></code> and
 <code class="docutils literal notranslate"><span class="pre">observations/events/mob_attacked</span></code> topics.</p>
-</div>
-<div class="section" id="publishing-subscribing">
+</section>
+<section id="publishing-subscribing">
 <h2>Publishing/subscribing<a class="headerlink" href="#publishing-subscribing" title="Permalink to this headline">¶</a></h2>
 <p>There are two ways to publish/subscribe to topics on a message bus - using
 client executables, or using a client library in your own program.</p>
-<div class="section" id="using-client-executables">
+<section id="using-client-executables">
 <h3>Using client executables<a class="headerlink" href="#using-client-executables" title="Permalink to this headline">¶</a></h3>
 <p>Using a client executable is a simple, no-frills method to work with a message
 bus. Let’s go through a small exercise in publishing/subscribing using client
@@ -336,8 +340,8 @@ standard output.</p>
 setup with MQTT client executables and pipes. Hopefully, this simple exercise
 has helped you get an intuitive sense of how a message-based communication
 system works.</p>
-</div>
-<div class="section" id="using-a-client-library">
+</section>
+<section id="using-a-client-library">
 <h3>Using a client library<a class="headerlink" href="#using-a-client-library" title="Permalink to this headline">¶</a></h3>
 <p>For more complex scenarios, it may be necessary to use a client library instead
 of a client executable. One example of such a scenario would be when a client
@@ -370,8 +374,8 @@ like <code class="docutils literal notranslate"><span class="pre">ffmpeg</span><
 could be achieved by having a program running in the background on a client
 machine that acts as a controller - it would listen for a particular message on
 a particular topic that would prompt it to start the required program.</p>
-</div>
-<div class="section" id="when-to-use-a-client-executable-versus-a-client-library">
+</section>
+<section id="when-to-use-a-client-executable-versus-a-client-library">
 <h3>When to use a client executable versus a client library<a class="headerlink" href="#when-to-use-a-client-executable-versus-a-client-library" title="Permalink to this headline">¶</a></h3>
 <p>For when a client application does not need to publish to more than one topic,
 using the <code class="docutils literal notranslate"><span class="pre">mosquitto_pub</span></code> and <code class="docutils literal notranslate"><span class="pre">mosquitto_sub</span></code> executables provides a couple
@@ -380,9 +384,9 @@ switch message brokers in the future - say, if you wanted to use <a class="refer
 Kafka</a> for your streaming architecture rather than Mosquitto. Other advantages
 include not having to need to compile/link C/C++ programs, manage Java
 dependencies, or create a Python virtual environment for development.</p>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
            </div>

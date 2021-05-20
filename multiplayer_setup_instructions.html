@@ -4,7 +4,8 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Multiplayer setup instructions &mdash; ToMCAT 0.1 documentation</title>
@@ -13,6 +14,8 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/collapsible-lists/css/tree_view.css" type="text/css" />
 
   
@@ -30,6 +33,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -162,10 +166,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="multiplayer-setup-instructions">
+  <section id="multiplayer-setup-instructions">
 <h1>Multiplayer setup instructions<a class="headerlink" href="#multiplayer-setup-instructions" title="Permalink to this headline">¶</a></h1>
 <p>Instructions for running a ToMCAT mission with two or more players involved.</p>
-<div class="section" id="multiplayer-configuration-file">
+<section id="multiplayer-configuration-file">
 <h2>Multiplayer configuration file<a class="headerlink" href="#multiplayer-configuration-file" title="Permalink to this headline">¶</a></h2>
 <p>To build a connection between the mission server and clients, it is necessary
 to specify their IP addresses and the port numbers in the
@@ -173,8 +177,8 @@ to specify their IP addresses and the port numbers in the
 object structure inside and add the clients that will be connected, no more and
 no less. That’s because the ToMCAT mission will start only when all the clients
 listed in this file are connected.</p>
-</div>
-<div class="section" id="create-mission-instance-on-server-side">
+</section>
+<section id="create-mission-instance-on-server-side">
 <h2>Create mission instance on server side<a class="headerlink" href="#create-mission-instance-on-server-side" title="Permalink to this headline">¶</a></h2>
 <p>The server agent does not actively participate in the mission, but it is needed
 to create an instance of the mission on the server side. We will hide the
@@ -185,8 +189,8 @@ instance.</p>
 </div>
 <p>Here, <code class="docutils literal notranslate"><span class="pre">-port</span></code> specifies the port number for the server, which should be the
 same as the one in the configuration file.</p>
-</div>
-<div class="section" id="create-mission-instances-on-client-side">
+</section>
+<section id="create-mission-instances-on-client-side">
 <h2>Create mission instances on client side<a class="headerlink" href="#create-mission-instances-on-client-side" title="Permalink to this headline">¶</a></h2>
 <p>To run the mission on a client machine, use this command:</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="o">/</span><span class="n">external</span><span class="o">/</span><span class="n">malmo</span><span class="o">/</span><span class="n">Minecraft</span><span class="o">/</span><span class="n">launchClient</span><span class="p">.</span><span class="n">sh</span> <span class="o">-</span><span class="n">port</span> <span class="n">x</span>
@@ -194,8 +198,8 @@ same as the one in the configuration file.</p>
 </div>
 <p>Here, the <code class="docutils literal notranslate"><span class="pre">-port</span></code> option specifies the port numbers for the clients. Those
 numbers need to be consistent with the ones in the configuration file as well.</p>
-</div>
-<div class="section" id="starting-the-mission">
+</section>
+<section id="starting-the-mission">
 <h2>Starting the mission<a class="headerlink" href="#starting-the-mission" title="Permalink to this headline">¶</a></h2>
 <p>After the server and all the client instances are ready, run this command on
 the server side to start your mission:</p>
@@ -204,8 +208,8 @@ the server side to start your mission:</p>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">--mission</span></code> flag specifies the mission to launch and the <code class="docutils literal notranslate"><span class="pre">--multiplayer</span></code>
 flag will treat the mission as a multiplayer one.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
