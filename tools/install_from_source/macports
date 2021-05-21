@@ -1,15 +1,24 @@
 #!/bin/bash
 
+# Script to install MacPorts from source.
+set -euo pipefail
+
 install_macports() {
-  local version=2.6.2
+
+  # Version 2.7.0 is the latest as of May 21, 2021.
+  local version=2.7.0
+
   curl -O https://distfiles.macports.org/MacPorts/MacPorts-$version.tar.bz2
-  if [[ $? -ne 0 ]]; then exit 1; fi
-  if ! tar xf MacPorts-$version.tar.bz2; then exit 1; fi
+
+  tar xf MacPorts-$version.tar.bz2
+
   pushd MacPorts-$version > /dev/null
-    if ! ./configure; then exit 1; fi
-    if ! make -j; then exit 1; fi
-    if ! sudo make -j install; then exit 1; fi
+    ./configure
+    make -j
+    make -j install
   popd > /dev/null
+
+  # Remove the .tar.bz2 file
   /bin/rm -rf Macports-$version*
 }
 
