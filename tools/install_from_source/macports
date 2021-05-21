@@ -15,7 +15,7 @@ install_macports() {
   pushd MacPorts-$version > /dev/null
     ./configure
     make -j
-    make -j install
+    sudo make -j install
   popd > /dev/null
 
   # Remove the .tar.bz2 file
