@@ -100,6 +100,7 @@ set_local_configuration() {
 detect_os() {
     if [[ "$OSTYPE" == "darwin"* ]]; then
         echo "macOS detected."
+        export MACOS_MAJOR_VERSION=$(sw_vers -productVersion | cut -d '.' -f1)
         export MACOS_MINOR_VERSION=$(sw_vers -productVersion | cut -d '.' -f2)
 
         # We set the path to MacPorts so that users don't necessarily need to
@@ -114,7 +115,7 @@ detect_os() {
             export PATH="$PATH:/opt/local/bin:/opt/local/sbin"
         fi
 
-        if (( MACOS_MINOR_VERSION < 15 )); then
+        if (( MACOS_MAJOR_VERSION == 10 && MACOS_MINOR_VERSION < 15 )); then
             echo "macOS version older than 10.15 (Catalina). "\
                 "System audio recording will be disabled."
             export ENABLE_SYSTEM_AUDIO_RECORDING=0
