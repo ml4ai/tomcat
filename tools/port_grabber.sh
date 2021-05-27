@@ -6,9 +6,8 @@ log_file="/tmp/$USER/tomcat/minecraft.log";
 # Wait till the log file actually exists
 echo "Looking for log file...";
 
-while [ ! -f $log_file ]
-do
-  continue;
+while [ ! -f $log_file ]; do
+  sleep 1;
 done
 
 # Once it exists, grab the port when it is printed to the file
@@ -28,15 +27,13 @@ tail -f $log_file |
       
       # If the port id non-empty, then we are done.
       # So, we print and exit
-      if [ -n "$lan_port" ]
-      then
+      if [ -n "$lan_port" ]; then
         echo "Port ID: $lan_port";
         exit 0;
       fi
 
       # Exit if there is no file at any point
-      if [ ! -f $log_file ]
-      then
+      if [ ! -f $log_file ]; then
         echo "Exiting because there is no log file to grab a port from.";
         exit 0;
       fi
