@@ -28,7 +28,7 @@ tail -f $log_file |
       # If the port id non-empty, then we are done.
       # So, message is published to the topic lan_port_id and exit
       if [ -n "$lan_port" ]; then
-        echo $lan_port | mosquitto_pub -t lan_port_id -l
+        echo "{\"portid\": \"$lan_port\"}" | mosquitto_pub -t lan_port_id -l
         exit 0;
       fi
 
