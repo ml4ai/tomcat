@@ -94,6 +94,11 @@ set_local_configuration() {
     # for convenience.
 
     export RM="/bin/rm -rf"
+
+    # By default the, we don't want to open to LAN.
+    # That is, it is not the host by default.
+
+    export IS_HOST=1
 }
 
 # Detect the OS, set some useful environment variables.
