@@ -129,10 +129,10 @@ public class ZombieMission extends Mission {
                 BufferedReader br = new BufferedReader(new FileReader("/tmp/shambhavisingh/tomcat/Minecraft.log"));
                 try {
                     while ((portID = br.readLine()) != null) {
-                        if (portID.contains("[Server thread/INFO]: [tomcat: Local game hosted on port ")) {
+                        if (portID.contains("[Server thread /INFO]: [tomcat: Local game hosted on port ")) {
                             System.out.println("-----------------------------------------------------> GOT IT");
                             System.out.println("----------------------------------------------------->" + portID);
-                            portID = portID.substring(68, 73);
+                            portID = portID.substring(68);
                             break;
                         }
                     }
@@ -148,7 +148,10 @@ public class ZombieMission extends Mission {
             System.out.println("-----------------------------------------------------> GOT IT RIGHT HERE");
             System.out.println(portID);
         }
+
     }
+
+
     /**
      * Create unique IDs for each one of the villagers
      */
