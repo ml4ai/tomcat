@@ -126,16 +126,20 @@ public class WorldBuilder {
 
             EnumFacing facing = EnumFacing.NORTH;
             Boolean powered = Boolean.valueOf(false);
-            Boolean open = Boolean.valueOf(false); // Default values
+            Boolean open = Boolean.valueOf(false);
+            String half = "";
+            String hinge = "";// Default values
 
             try {
                 facing = EnumFacing.valueOf(block.get("facing").toUpperCase());
                 powered = Boolean.valueOf(block.get("powered"));
                 open = Boolean.valueOf(block.get("open"));
+                half = block.get("half");
+                hinge = block.get("hinge");
             } catch (Exception e) {
                 ;
             }
-            this.registerState(material, pos, facing, powered, open);
+            this.registerState(material, pos, facing, powered, open, half, hinge);
         }
 
         // Place the blocks into the world
@@ -225,7 +229,7 @@ public class WorldBuilder {
                                BlockPos pos,
                                EnumFacing facing,
                                Boolean powered,
-                               Boolean open) {
+                               Boolean open, String half, String hinge) {
         PropertyDirection FACING = BlockHorizontal.FACING;
         PropertyBool OPEN = PropertyBool.create("open");
         PropertyBool POWERED = PropertyBool.create("powered");
@@ -237,28 +241,24 @@ public class WorldBuilder {
                 PropertyEnum<BlockDoor.EnumHingePosition> HINGE = PropertyEnum.<BlockDoor.EnumHingePosition>create("hinge", BlockDoor.EnumHingePosition.class);
 
                 // Doors are special and we need to place a bottom and top half
-                IBlockState doorBottom = Block.getBlockFromName(material).getBlockState().getBaseState()
-                        .withProperty(HALF, BlockDoor.EnumDoorHalf.LOWER)
-                        .withProperty(HINGE, BlockDoor.EnumHingePosition.LEFT)
+                IBlockState door = Block.getBlockFromName(material).getBlockState().getBaseState()
+                        .withProperty(HALF, BlockDoor.EnumDoorHalf.valueOf(half))
+                        .withProperty(HINGE, BlockDoor.EnumHingePosition.valueOf(hinge))
                         .withProperty(FACING, facing)
                         .withProperty(OPEN, open)
                         .withProperty(POWERED, powered);
 
-                BlockPos topPos =
-                        new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
-                IBlockState doorTop = Block.getBlockFromName(material).getBlockState().getBaseState()
-                        .withProperty(HALF, BlockDoor.EnumDoorHalf.UPPER)
-                        .withProperty(HINGE, BlockDoor.EnumHingePosition.LEFT)
-                        .withProperty(FACING, facing)
-                        .withProperty(OPEN, open)
-                        .withProperty(POWERED, powered);
+                BlockPos topPos =  null;
+                if(half.equals("lower")) {
+                    topPos =
+                            new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
 
-                this.blockMap.remove(
-                        topPos); // For a door we need to remove and re add the
-                // block above the current as well
+                    this.blockMap.remove(
+                            topPos); // For a door we need to remove and re add the
+                    // block above the current as well
+                }
 
-                this.blockMap.put(pos, doorBottom);
-                this.blockMap.put(topPos, doorTop);
+                this.blockMap.put(pos, door);
             } catch (Exception e) {
                 System.out.println(
                         "Oops! Looks like you forgot to specify some properties for this door");
