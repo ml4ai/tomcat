@@ -55,7 +55,10 @@ SPEC_VERSION=$("$TOMCAT"/build/bin/getSpecVersion --spec "$TOMCAT"/docs/spec.yml
 
 if [[ $? -ne 0 ]]; then exit 1; fi
 
+port_file="$TOMCAT/tools/port_grabber.sh"
 
+"$port_file" |
+ {
 start_av_recording() {
     ffmpeg\
     -f ${FFMPEG_FMT_WEBCAM}\
@@ -332,3 +335,4 @@ fi
 echo "Session successfully completed. Thank you!"
 
 exit 0
+}
