@@ -120,6 +120,7 @@ public class ZombieMission extends Mission {
      * Print portID to the terminal
      */
     private void lanID() {
+
         if (counter == 0) {
             Minecraft.getMinecraft().player.sendChatMessage("/publish");
             System.out.println("-----------------------------------------------------> OPENING TO LAN");
@@ -166,7 +167,9 @@ public class ZombieMission extends Mission {
     @Override
     protected void updateScene(World world) {
         this.initializer.init(world);
-        if(portID.equals("")) {
+
+        boolean isHost = System.getenv("IS_HOST").equals("1")? true: false;
+        if(isHost && portID.equals("")) {
             //ForgeEventHandler addCommand = ForgeEventHandler.getInstance();
             //addCommand.addToWhitelist("publish");
             lanID();
