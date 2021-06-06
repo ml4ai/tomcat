@@ -234,11 +234,11 @@ you).</p>
 <h3>MacOS<a class="headerlink" href="#macos" title="Permalink to this headline">¶</a></h3>
 <p>If you installed Mosquitto using MacPorts, you can start it up in the
 background with the default settings by invoking::</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">mosquitto</span> <span class="o">&amp;</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">port</span> <span class="n">load</span> <span class="n">mosquitto</span>
 </pre></div>
 </div>
 <p>If you used Homebrew, you can do::</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">$</span><span class="p">(</span><span class="n">brew</span> <span class="o">--</span><span class="n">prefix</span><span class="p">)</span><span class="o">/</span><span class="n">sbin</span><span class="o">/</span><span class="n">mosquitto</span> <span class="o">&amp;</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">brew</span> <span class="n">services</span> <span class="n">start</span> <span class="n">mosquitto</span>
 </pre></div>
 </div>
 </section>
