@@ -52,11 +52,11 @@ MacOS
 If you installed Mosquitto using MacPorts, you can start it up in the
 background with the default settings by invoking:::
 
-    mosquitto &
+    port load mosquitto
 
 If you used Homebrew, you can do:::
 
-    $(brew --prefix)/sbin/mosquitto &
+    brew services start mosquitto
 
 Ubuntu
 ^^^^^^
