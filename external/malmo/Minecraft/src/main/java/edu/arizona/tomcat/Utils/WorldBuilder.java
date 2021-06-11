@@ -132,13 +132,36 @@ public class WorldBuilder {
 
             try {
                 facing = EnumFacing.valueOf(block.get("facing").toUpperCase());
-                powered = Boolean.valueOf(block.get("powered"));
-                open = Boolean.valueOf(block.get("open"));
-                half = block.get("half");
-                hinge = block.get("hinge");
+
             } catch (Exception e) {
                 ;
             }
+            try {
+                powered = Boolean.valueOf(block.get("powered"));
+
+            } catch (Exception e) {
+                ;
+            }
+            try {
+                open = Boolean.valueOf(block.get("open"));
+
+            } catch (Exception e) {
+                ;
+            }
+            try {
+                half = block.get("half").toUpperCase();
+
+            } catch (Exception e) {
+                ;
+            }
+            try {
+                hinge = block.get("hinge").toUpperCase();
+
+            } catch (Exception e) {
+                ;
+            }
+
+
             this.registerState(material, pos, facing, powered, open, half, hinge);
         }
 
@@ -235,34 +258,46 @@ public class WorldBuilder {
         PropertyBool POWERED = PropertyBool.create("powered");
 
         if (material.contains("DOOR")) {
+            PropertyEnum<BlockDoor.EnumDoorHalf> HALF = PropertyEnum.<BlockDoor.EnumDoorHalf>create("half", BlockDoor.EnumDoorHalf.class);
+            PropertyEnum<BlockDoor.EnumHingePosition> HINGE = PropertyEnum.<BlockDoor.EnumHingePosition>create("hinge", BlockDoor.EnumHingePosition.class);
+
+            System.out.println("--------------------------------> " + half);
+            IBlockState door = Block.getBlockFromName(material).getBlockState().getBaseState()
+                    .withProperty(HALF, BlockDoor.EnumDoorHalf.valueOf(half));
             try {
-
-                PropertyEnum<BlockDoor.EnumDoorHalf> HALF = PropertyEnum.<BlockDoor.EnumDoorHalf>create("half", BlockDoor.EnumDoorHalf.class);
-                PropertyEnum<BlockDoor.EnumHingePosition> HINGE = PropertyEnum.<BlockDoor.EnumHingePosition>create("hinge", BlockDoor.EnumHingePosition.class);
-
-                // Doors are special and we need to place a bottom and top half
-                IBlockState door = Block.getBlockFromName(material).getBlockState().getBaseState()
-                        .withProperty(HALF, BlockDoor.EnumDoorHalf.valueOf(half))
-                        .withProperty(HINGE, BlockDoor.EnumHingePosition.valueOf(hinge))
-                        .withProperty(FACING, facing)
-                        .withProperty(OPEN, open)
-                        .withProperty(POWERED, powered);
-
-                BlockPos topPos =  null;
-                if(half.equals("lower")) {
-                    topPos =
-                            new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
-
-                    this.blockMap.remove(
-                            topPos); // For a door we need to remove and re add the
-                    // block above the current as well
-                }
-
-                this.blockMap.put(pos, door);
+                door = door.withProperty(HINGE, BlockDoor.EnumHingePosition.valueOf(hinge));
             } catch (Exception e) {
-                System.out.println(
-                        "Oops! Looks like you forgot to specify some properties for this door");
+                System.out.println(e);
             }
+            try {
+                door = door.withProperty(FACING, facing);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            try {
+                door = door.withProperty(OPEN, open);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            try {
+                door = door.withProperty(POWERED, powered);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+
+
+            BlockPos topPos = null;
+            if (half.equals("lower")) {
+                topPos =
+                        new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
+
+                this.blockMap.remove(
+                        topPos); // For a door we need to remove and re add the
+                // block above the current as well
+            }
+
+            this.blockMap.put(pos, door);
+
         } else {
             IBlockState state;
             // Try to create the block state with as many properties as
@@ -272,30 +307,30 @@ public class WorldBuilder {
                 try {
                     state = state.withProperty(POWERED, powered);
                 } catch (Exception e) {
-                    System.out.println(
-                            "DEBUG: Could not apply POWERED property to " +
-                                    material);
+                    //System.out.println(
+                      //      "DEBUG: Could not apply POWERED property to " +
+                        //            material);
                 }
 
                 try {
                     state = state.withProperty(FACING, facing);
                 } catch (Exception e) {
-                    System.out.println(
-                            "DEBUG: Could not apply FACING property to " +
-                                    material);
+                   // System.out.println(
+                     //       "DEBUG: Could not apply FACING property to " +
+                       //             material);
                 }
 
                 try {
                     state = state.withProperty(OPEN, open);
                 } catch (Exception e) {
-                    System.out.println(
-                            "DEBUG: Could not apply OPEN property to " + material);
+                    //System.out.println(
+                      //      "DEBUG: Could not apply OPEN property to " + material);
                 }
             } catch (Exception e) {
                 state = Blocks.PLANKS.getDefaultState();
-                System.out.println(
-                        "DEBUG: Defaulting to PLANKS for unrecognized material " +
-                                material);
+               // System.out.println(
+                 //       "DEBUG: Defaulting to PLANKS for unrecognized material " +
+                   //             material);
             }
             this.blockMap.put(pos, state);
         }

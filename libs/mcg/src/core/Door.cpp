@@ -62,12 +62,12 @@ void Door::toLowLevelMapJSON(json& json_base) {
     block_json_lower["open"] = this->open;
     block_json_lower["powered"] = isPowered;
     block_json_lower["facing"] = this->facing;
-    block_json_upper["half"] = "lower";
-    block_json_upper["hinge"] = this->hinge;
+    block_json_lower["half"] = "lower";
+    block_json_lower["hinge"] = this->hinge;
 
     block_json_upper["material"] = this->getMaterial();
     block_json_upper["x"] = to_string(this->getX());
-    block_json_upper["y"] = to_string(this->getY());
+    block_json_upper["y"] = to_string(this->getY() + 1);
     block_json_upper["z"] = to_string(this->getZ());
     block_json_upper["open"] = this->open;
     block_json_upper["powered"] = isPowered;
