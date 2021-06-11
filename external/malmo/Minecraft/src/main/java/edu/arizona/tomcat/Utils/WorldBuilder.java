@@ -130,6 +130,7 @@ public class WorldBuilder {
             String half = "";
             String hinge = "";// Default values
 
+            // Not all properties are present in all blocks
             try {
                 facing = EnumFacing.valueOf(block.get("facing").toUpperCase());
 
@@ -247,6 +248,8 @@ public class WorldBuilder {
      * @param facing   - Which way is the block facing
      * @param powered  - Is the block powered?
      * @param open     - Is the block open? Only applicable for doors/trapdoors
+     * @param half     - The half of the door
+     * @param hinge    - The position of the door's hinge
      */
     private void registerState(String material,
                                BlockPos pos,
@@ -261,39 +264,17 @@ public class WorldBuilder {
             PropertyEnum<BlockDoor.EnumDoorHalf> HALF = PropertyEnum.<BlockDoor.EnumDoorHalf>create("half", BlockDoor.EnumDoorHalf.class);
             PropertyEnum<BlockDoor.EnumHingePosition> HINGE = PropertyEnum.<BlockDoor.EnumHingePosition>create("hinge", BlockDoor.EnumHingePosition.class);
 
-            System.out.println("--------------------------------> " + half);
+            // Grab the basic door
             IBlockState door = Block.getBlockFromName(material).getBlockState().getBaseState()
                     .withProperty(HALF, BlockDoor.EnumDoorHalf.valueOf(half));
-            try {
-                door = door.withProperty(HINGE, BlockDoor.EnumHingePosition.valueOf(hinge));
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-            try {
+
+            // Apply properties based on the door half
+            if (half.equals("LOWER")) {
                 door = door.withProperty(FACING, facing);
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-            try {
                 door = door.withProperty(OPEN, open);
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-            try {
+            } else {
+                door = door.withProperty(HINGE, BlockDoor.EnumHingePosition.valueOf(hinge));
                 door = door.withProperty(POWERED, powered);
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-
-
-            BlockPos topPos = null;
-            if (half.equals("lower")) {
-                topPos =
-                        new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
-
-                this.blockMap.remove(
-                        topPos); // For a door we need to remove and re add the
-                // block above the current as well
             }
 
             this.blockMap.put(pos, door);
@@ -307,30 +288,30 @@ public class WorldBuilder {
                 try {
                     state = state.withProperty(POWERED, powered);
                 } catch (Exception e) {
-                    //System.out.println(
-                      //      "DEBUG: Could not apply POWERED property to " +
-                        //            material);
+                    System.out.println(
+                            "DEBUG: Could not apply POWERED property to " +
+                                    material);
                 }
 
                 try {
                     state = state.withProperty(FACING, facing);
                 } catch (Exception e) {
-                   // System.out.println(
-                     //       "DEBUG: Could not apply FACING property to " +
-                       //             material);
+                    System.out.println(
+                            "DEBUG: Could not apply FACING property to " +
+                                    material);
                 }
 
                 try {
                     state = state.withProperty(OPEN, open);
                 } catch (Exception e) {
-                    //System.out.println(
-                      //      "DEBUG: Could not apply OPEN property to " + material);
+                    System.out.println(
+                            "DEBUG: Could not apply OPEN property to " + material);
                 }
             } catch (Exception e) {
                 state = Blocks.PLANKS.getDefaultState();
-               // System.out.println(
-                 //       "DEBUG: Defaulting to PLANKS for unrecognized material " +
-                   //             material);
+                System.out.println(
+                        "DEBUG: Defaulting to PLANKS for unrecognized material " +
+                                material);
             }
             this.blockMap.put(pos, state);
         }
