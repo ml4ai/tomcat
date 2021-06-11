@@ -57,8 +57,6 @@ if [[ $? -ne 0 ]]; then exit 1; fi
 
 port_file="$TOMCAT/tools/port_grabber.sh"
 
-"$port_file" |
- {
 start_av_recording() {
     ffmpeg\
     -f ${FFMPEG_FMT_WEBCAM}\
@@ -123,6 +121,7 @@ start_av_recording() {
     fi
     echo "Recording player's screen. Process ID = ${pid_screen_recording}"
 }
+
 
 # On macOS, it was discovered that quitting Minecraft with Cmd+Q does not send
 # a normal signal like SIGINT or SIGTERM, instead it sends an 'Apple Event'
@@ -200,7 +199,6 @@ mission_cleanup() {
 
     echo -e '\n'
 }
-
 # A function to handle cleanup when a user interrupts the script with Ctrl+C
 user_interrupt() {
     echo "Detected keyboard interrupt."
@@ -212,7 +210,9 @@ user_interrupt() {
 trap user_interrupt SIGINT SIGTERM
 
 
-do_mission() {
+"$port_file" &
+{
+    do_mission() {
     export CURRENT_MISSION="$1"
     echo " "
     echo "Running mission ${CURRENT_MISSION} in ${TOMCAT}."
@@ -276,7 +276,7 @@ do_mission() {
         echo " "
     fi
 }
-
+}
 echo TOMCAT_DEBUG_ECHO: $TOMCAT_DEBUG_ECHO
 if (( DO_TUTORIAL_MISSION )); then
     do_mission 0
@@ -301,7 +301,6 @@ fi
 
 
 if (( DO_MAIN_MISSION )); then do_mission ${MAIN_MISSION}; fi
-
 
 echo "Finished running all sessions in ${TOMCAT}."
 echo "Doing our final cleanup."
@@ -335,4 +334,3 @@ fi
 echo "Session successfully completed. Thank you!"
 
 exit 0
-}
