@@ -125,6 +125,7 @@ public class ZombieMission extends Mission {
             Minecraft.getMinecraft().player.sendChatMessage("/publish");
             System.out.println("-----------------------------------------------------> OPENING TO LAN");
         }
+        /**
         if (counter == 1) {
             try {
                 BufferedReader br = new BufferedReader(new FileReader("/tmp/shambhavisingh/tomcat/Minecraft.log"));
@@ -149,6 +150,7 @@ public class ZombieMission extends Mission {
             System.out.println("-----------------------------------------------------> GOT IT RIGHT HERE");
             System.out.println(portID);
         }
+        */
 
     }
 
