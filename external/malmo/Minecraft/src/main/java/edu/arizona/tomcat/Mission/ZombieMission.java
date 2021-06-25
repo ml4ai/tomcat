@@ -225,8 +225,4 @@ public class ZombieMission extends Mission {
         return selfReportContent;
     }
 
-    @Override
-    protected void onPlayerDeath(EntityPlayer player) {
-        this.onTimeOut();
-    }
 }

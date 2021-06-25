@@ -20,6 +20,7 @@ import edu.arizona.tomcat.World.DrawingHandler;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -66,6 +67,10 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     protected MissionInitializer initializer;
     private ForgeEventHandler forgeEventHandler =
         ForgeEventHandler.getInstance();
+    // This variable has to be static because objects are inserted in it in a
+    // method called by a Minecraft event and updating an object variable does
+    // not work.
+    private static Set<EntityPlayer> deadPlayers = new HashSet<EntityPlayer>();
 
     /**
      * Abstract constructor for initialization of the drawing handler
@@ -95,10 +100,6 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
         }
     }
 
-    /**
-     * Method called after if the player dies
-     */
-    protected void onPlayerDeath(EntityPlayer player) { this.cleanup(); }
 
     /**
      * Adds listener to be notified upon relevant mission events
@@ -258,6 +259,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
         this.removeEntities(world);
         this.updateCurrentPhase(world);
         this.updateScene(world);
+        this.respawnPlayersAfterDeath();
         this.showSelfReportScreen(world);
     }
 
@@ -559,6 +561,31 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
         }
         else {
             this.levelOfDifficulty = DIFFICULTY.HARD;
+        }
+    }
+
+    protected void onPlayerDeath(EntityPlayer player) {
+        this.revivePlayer(player);
+    }
+
+    private void revivePlayer(EntityPlayer player) {
+        player.isDead = false;
+        player.setHealth(player.getMaxHealth());
+        deadPlayers.add(player);
+    }
+
+    private void respawnPlayersAfterDeath() {
+        for (Object playerObject : deadPlayers.toArray()) {
+            EntityPlayer player = (EntityPlayer)playerObject;
+
+            player.rotationYaw = 0;
+            player.rotationPitch = 0;
+            player.setPositionAndUpdate(-623, 4, 1584);
+
+            if (player.isBurning()) {
+                player.extinguish();
+            }
+            deadPlayers.remove(player);
         }
     }
 }

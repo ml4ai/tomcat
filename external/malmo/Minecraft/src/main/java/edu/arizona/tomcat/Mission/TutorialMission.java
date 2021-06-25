@@ -50,10 +50,7 @@ public class TutorialMission extends Mission {
     private UUID skeletonUUID;
     private UUID zombieUUID;
     private UUID villagerUUID;
-    // This variable has to be static because objects are inserted in it in a
-    // method called by a Minecraft event and updating an object variable does
-    // not work.
-    private static Set<EntityPlayer> deadPlayers = new HashSet<EntityPlayer>();
+
 
     public static final int NUMBER_OF_VILLAGERS = 1;
 
@@ -279,7 +276,6 @@ public class TutorialMission extends Mission {
         this.spawnSkeletonInTheArena(world);
         this.spawnZombieInsideTheBuilding(world);
         this.spawnVillagerInsideTheBuilding(world);
-        this.respawnPlayersAfterDeath();
     }
 
     /**
@@ -515,31 +511,5 @@ public class TutorialMission extends Mission {
     protected SelfReportContent getSelfReportContent(EntityPlayerMP player,
                                                      World world) {
         return null;
-    }
-
-    @Override
-    protected void onPlayerDeath(EntityPlayer player) {
-        this.revivePlayer(player);
-    }
-
-    private void revivePlayer(EntityPlayer player) {
-        player.isDead = false;
-        player.setHealth(player.getMaxHealth());
-        deadPlayers.add(player);
-    }
-
-    private void respawnPlayersAfterDeath() {
-        for (Object playerObject : deadPlayers.toArray()) {
-            EntityPlayer player = (EntityPlayer)playerObject;
-
-            player.rotationYaw = 0;
-            player.rotationPitch = 0;
-            player.setPositionAndUpdate(-623, 4, 1584);
-
-            if (player.isBurning()) {
-                player.extinguish();
-            }
-            deadPlayers.remove(player);
-        }
     }
 }
