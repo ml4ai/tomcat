@@ -1,5 +1,8 @@
 # Build directory for CMake
 
+#TexturePack
+*._Soartex_Fanver
+
 build
 *.swp
 
