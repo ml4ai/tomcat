@@ -124,35 +124,9 @@ public class ZombieMission extends Mission {
 
         if (counter == 0) {
             Minecraft.getMinecraft().player.sendChatMessage("/publish");
+            counter++;
             System.out.println("-----------------------------------------------------> OPENING TO LAN");
         }
-        /**
-        if (counter == 1) {
-            try {
-                BufferedReader br = new BufferedReader(new FileReader("/tmp/shambhavisingh/tomcat/Minecraft.log"));
-                try {
-                    while ((portID = br.readLine()) != null) {
-                        if (portID.contains("[Server thread /INFO]: [tomcat: Local game hosted on port ")) {
-                            System.out.println("-----------------------------------------------------> GOT IT");
-                            System.out.println("----------------------------------------------------->" + portID);
-                            portID = portID.substring(68);
-                            break;
-                        }
-                    }
-                    br.close();
-                } catch (FileNotFoundException e) {
-                    System.out.println("-----------------------------------------------------> FILE NOT FOUND");
-                    e.printStackTrace();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("-----------------------------------------------------> IOE");
-            }
-            System.out.println("-----------------------------------------------------> GOT IT RIGHT HERE");
-            System.out.println(portID);
-        }
-        */
-
     }
 
 
@@ -173,11 +147,8 @@ public class ZombieMission extends Mission {
 
         boolean isHost = System.getenv("IS_HOST").equals("1")? true: false;
         if(isHost && portID.equals("")) {
-            //ForgeEventHandler addCommand = ForgeEventHandler.getInstance();
-            //addCommand.addToWhitelist("publish");
             lanID();
         }
-        counter++;
     }
 
     @Override
