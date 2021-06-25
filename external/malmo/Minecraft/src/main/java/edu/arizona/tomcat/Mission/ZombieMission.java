@@ -48,6 +48,7 @@ public class ZombieMission extends Mission {
         super.init(world);
         this.initializer = new ZombieMissionInitializer(
             this.levelOfDifficulty, this.villagersIds, this.drawingHandler);
+        this.setSpawnPoint(22,64,73);
 
     }
 

@@ -17,6 +17,8 @@ import edu.arizona.tomcat.Utils.Converter;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.Utils.MinecraftVanillaAIHandler;
 import edu.arizona.tomcat.World.DrawingHandler;
+
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,6 +73,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     // method called by a Minecraft event and updating an object variable does
     // not work.
     private static Set<EntityPlayer> deadPlayers = new HashSet<EntityPlayer>();
+    protected PosAndDirection spawnPoint = new PosAndDirection();
 
     /**
      * Abstract constructor for initialization of the drawing handler
@@ -568,6 +571,12 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
         this.revivePlayer(player);
     }
 
+    protected void setSpawnPoint(long x, long y, long z){
+        this.spawnPoint.setX(new BigDecimal(x));
+        this.spawnPoint.setY(new BigDecimal(y));
+        this.spawnPoint.setZ(new BigDecimal(z));
+    }
+
     private void revivePlayer(EntityPlayer player) {
         player.isDead = false;
         player.setHealth(player.getMaxHealth());
@@ -580,7 +589,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
 
             player.rotationYaw = 0;
             player.rotationPitch = 0;
-            player.setPositionAndUpdate(-623, 4, 1584);
+            player.setPositionAndUpdate(spawnPoint.getX().intValue(), spawnPoint.getY().intValue(), spawnPoint.getZ().intValue());
 
             if (player.isBurning()) {
                 player.extinguish();

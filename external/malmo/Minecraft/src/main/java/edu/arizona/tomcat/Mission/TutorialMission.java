@@ -70,6 +70,7 @@ public class TutorialMission extends Mission {
     @Override
     public void init(World world) {
         super.init(world);
+        this.setSpawnPoint(-623,4,1584);
     }
 
     @Override
