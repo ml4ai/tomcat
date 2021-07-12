@@ -1,114 +1,225 @@
-<!DOCTYPE html>
-<html lang="en">
-<div style="background-color: bisque; height: 40px">
-  <head>
-    <h2 class="mt-5">ToMCAT</h2>
-  </head>
+<head> <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> </head>
+<body>
+<div class="container">
+<div class = "row">
+<div class = "col">
+Minecraft is a sandbox construction game in which players can control the environment. The Minecraft world for this game will require players to pick roles. You are tasked with search and rescue in this scenario. Keep the channels of communication open. Since this is a rescue site, be careful as you clear rubble and identify the critical victims.
+
+<p> Some of the tools you will have access to include a medkit, a stretcher, and a hammer. Using the map, identify the zone the team wishes to work on, and proceed to clear the floor and the rooms. As you orient yourself in the environment, pay attention to doors and windows.
+</p>
+<p> Player roles include a medic, and engineer and a searcher. You can pick your roles based on the game's requirements. Pay attention to the clock. Keep the game's objectives in sight as you proceed.
+</p>
 </div>
-  <body>
-    <header>
-      Please click the 'Start recording' button and then read the text that appears below aloud. Once you are done, click the 'Stop recording' button.
-    </header>
-    <main>
+</div>
+</div>
+<div class="wrapper">
 
-		<h3 style="font-family:courier;">Instructions:</h3>
-			<ol style="font-family:courier;">
-						Minecraft is a sandbox construction game in which players can control the environment. The Minecraft world for this game will require players to pick roles. You are tasked with search and rescue in this scenario. Keep the channels of communication open. Since this is a rescue site, be careful as you clear rubble and identify the critical victims.
+      <header>
+        <h1>Web dictaphone</h1>
+      </header>
 
-Some of the tools you will have access to include a medkit, a stretcher, and a hammer. Using the map, identify the zone the team wishes to work on, and proceed to clear the floor and the rooms. As you orient yourself in the environment, pay attention to doors and windows.
+      <section class="main-controls">
+        <canvas class="visualizer" height="60px"></canvas>
+        <div id="buttons">
+          <button class="record">Record</button>
+          <button class="stop">Stop</button>
+        </div>
+      </section>
 
-Player roles include a medic, and engineer and a searcher. You can pick your roles based on the game's requirements. Pay attention to the clock. Keep the game's objectives in sight as you proceed.
-			</ol>
-      <ul id="recordings"></ul>
-        <div class="controls">
-        <button type="button" id="record">Start Recording</button>
-            <button type="button" id="stop">Stop Recording</button>
+      <section class="sound-clips">
 
 
-      </div>
-    </main>
+      </section>
 
-    <script>
-      window.addEventListener('DOMContentLoaded', () => {
-        const recordButton = document.getElementById('record');
-        const endButton = document.getElementById('stop');
-        const list = document.getElementById('recordings');
-        if ('MediaRecorder' in window) {
-          recordButton.addEventListener('click', async () => {
-            try {
-              const stream = await navigator.mediaDevices.getUserMedia({
-                audio: true,
-                video: false
-              });
-              const mimeType = 'audio/webm';
-              let chunks = [];
-              const recorder = new MediaRecorder(stream, { type: mimeType });
-              recorder.addEventListener('dataavailable', event => {
-                if (typeof event.data === 'undefined') return;
-                if (event.data.size === 0) return;
-                chunks.push(event.data);
-              });
-              recorder.addEventListener('stop', () => {
-                const recording = new Blob(chunks, {
-                  type: mimeType
-                });
-                renderRecording(recording, list);
-                chunks = [];
-              });
-              recorder.start();
-              endButton.addEventListener('click', () => {
-                recorder.stop();
-              });
-            } catch {
-              renderError(
-                'You denied access to the microphone so this demo will not work.'
-              );
-            }
-          });
+    </div>
+
+    <label for="toggle">❔</label>
+    <input type="checkbox" id="toggle">
+    <aside>
+      <h2>Information</h2>
+
+      <p>Web dictaphone is built using <a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator.getUserMedia">getUserMedia</a> and the <a href="https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder_API">MediaRecorder API</a>, which provides an easier way to capture Media streams.</p>
+
+      <p>Icon courtesy of <a href="http://findicons.com/search/microphone">Find Icons</a>. Thanks to <a href="http://soledadpenades.com/">Sole</a> for the Oscilloscope code!</p>
+    </aside>
+<script>
+// set up basic variables for app
+
+const record = document.querySelector('.record');
+const stop = document.querySelector('.stop');
+const soundClips = document.querySelector('.sound-clips');
+const canvas = document.querySelector('.visualizer');
+const mainSection = document.querySelector('.main-controls');
+
+// disable stop button while not recording
+
+stop.disabled = true;
+
+// visualiser setup - create web audio api context and canvas
+
+let audioCtx;
+const canvasCtx = canvas.getContext("2d");
+
+//main block for doing the audio recording
+
+if (navigator.mediaDevices.getUserMedia) {
+  console.log('getUserMedia supported.');
+
+  const constraints = { audio: true };
+  let chunks = [];
+
+  let onSuccess = function(stream) {
+    const mediaRecorder = new MediaRecorder(stream);
+
+    visualize(stream);
+
+    record.onclick = function() {
+      mediaRecorder.start();
+      console.log(mediaRecorder.state);
+      console.log("recorder started");
+      record.style.background = "red";
+
+      stop.disabled = false;
+      record.disabled = true;
+    }
+
+    stop.onclick = function() {
+      mediaRecorder.stop();
+      console.log(mediaRecorder.state);
+      console.log("recorder stopped");
+      record.style.background = "";
+      record.style.color = "";
+      // mediaRecorder.requestData();
+
+      stop.disabled = true;
+      record.disabled = false;
+    }
+
+    mediaRecorder.onstop = function(e) {
+      console.log("data available after MediaRecorder.stop() called.");
+
+      const clipName = prompt('Enter a name for your sound clip?','My unnamed clip');
+
+      const clipContainer = document.createElement('article');
+      const clipLabel = document.createElement('p');
+      const audio = document.createElement('audio');
+      const deleteButton = document.createElement('button');
+
+      clipContainer.classList.add('clip');
+      audio.setAttribute('controls', '');
+      deleteButton.textContent = 'Delete';
+      deleteButton.className = 'delete';
+
+      if(clipName === null) {
+        clipLabel.textContent = 'My unnamed clip';
+      } else {
+        clipLabel.textContent = clipName;
+      }
+
+      clipContainer.appendChild(audio);
+      clipContainer.appendChild(clipLabel);
+      clipContainer.appendChild(deleteButton);
+      soundClips.appendChild(clipContainer);
+
+      audio.controls = true;
+      const blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
+      chunks = [];
+      const audioURL = window.URL.createObjectURL(blob);
+      audio.src = audioURL;
+      console.log("recorder stopped");
+
+      deleteButton.onclick = function(e) {
+        let evtTgt = e.target;
+        evtTgt.parentNode.parentNode.removeChild(evtTgt.parentNode);
+      }
+
+      clipLabel.onclick = function() {
+        const existingName = clipLabel.textContent;
+        const newClipName = prompt('Enter a new name for your sound clip?');
+        if(newClipName === null) {
+          clipLabel.textContent = existingName;
         } else {
-          renderError(
-            "Sorry, your browser doesn't support the MediaRecorder API, so this demo will not work."
-          );
+          clipLabel.textContent = newClipName;
         }
-      });
+      }
+    }
 
-      function renderError(message) {
-        const main = document.querySelector('main');
-        main.innerHTML = `<div class="error"><p>${message}</p></div>`;
+    mediaRecorder.ondataavailable = function(e) {
+      chunks.push(e.data);
+    }
+  }
+
+  let onError = function(err) {
+    console.log('The following error occured: ' + err);
+  }
+
+  navigator.mediaDevices.getUserMedia(constraints).then(onSuccess, onError);
+
+} else {
+   console.log('getUserMedia not supported on your browser!');
+}
+
+function visualize(stream) {
+  if(!audioCtx) {
+    audioCtx = new AudioContext();
+  }
+
+  const source = audioCtx.createMediaStreamSource(stream);
+
+  const analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 2048;
+  const bufferLength = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
+
+  source.connect(analyser);
+  //analyser.connect(audioCtx.destination);
+
+  draw()
+
+  function draw() {
+    const WIDTH = canvas.width
+    const HEIGHT = canvas.height;
+
+    requestAnimationFrame(draw);
+
+    analyser.getByteTimeDomainData(dataArray);
+
+    canvasCtx.fillStyle = 'rgb(200, 200, 200)';
+    canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
+
+    canvasCtx.lineWidth = 2;
+    canvasCtx.strokeStyle = 'rgb(0, 0, 0)';
+
+    canvasCtx.beginPath();
+
+    let sliceWidth = WIDTH * 1.0 / bufferLength;
+    let x = 0;
+
+
+    for(let i = 0; i < bufferLength; i++) {
+
+      let v = dataArray[i] / 128.0;
+      let y = v * HEIGHT/2;
+
+      if(i === 0) {
+        canvasCtx.moveTo(x, y);
+      } else {
+        canvasCtx.lineTo(x, y);
       }
 
-      function renderRecording(blob, list) {
-        const blobUrl = URL.createObjectURL(blob);
-        const li = document.createElement('li');
-        const audio = document.createElement('audio');
-        const anchor = document.createElement('a');
-        anchor.setAttribute('href', blobUrl);
-        const now = new Date();
-        anchor.setAttribute(
-          'download',
-          `recording-${now.getFullYear()}-${(now.getMonth() + 1)
-            .toString()
-            .padStart(2, '0')}-${now
-            .getDay()
-            .toString()
-            .padStart(2, '0')}--${now
-            .getHours()
-            .toString()
-            .padStart(2, '0')}-${now
-            .getMinutes()
-            .toString()
-            .padStart(2, '0')}-${now
-            .getSeconds()
-            .toString()
-            .padStart(2, '0')}.webm`
-        );
-        anchor.innerText = 'Download';
-        audio.setAttribute('src', blobUrl);
-        audio.setAttribute('controls', 'controls');
-        li.appendChild(audio);
-        li.appendChild(anchor);
-        list.appendChild(li);
-      }
-    </script>
-  </body>
-</html>
+      x += sliceWidth;
+    }
+
+    canvasCtx.lineTo(canvas.width, canvas.height/2);
+    canvasCtx.stroke();
+
+  }
+}
+
+window.onresize = function() {
+  canvas.width = mainSection.offsetWidth;
+}
+
+window.onresize();
+</script>
+</body>
