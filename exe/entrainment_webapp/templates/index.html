@@ -21,8 +21,8 @@ Player roles include a medic, and engineer and a searcher. You can pick your rol
 			</ol>
       <ul id="recordings"></ul>
         <div class="controls">
-        <button type="button" id="mic">Get Microphone</button>
         <button type="button" id="record">Start Recording</button>
+            <button type="button" id="stop">Stop Recording</button>
 
 
       </div>
@@ -30,13 +30,11 @@ Player roles include a medic, and engineer and a searcher. You can pick your rol
 
     <script>
       window.addEventListener('DOMContentLoaded', () => {
-        const getMic = document.getElementById('mic');
         const recordButton = document.getElementById('record');
-        const endButton = document.getElementById('end');
+        const endButton = document.getElementById('stop');
         const list = document.getElementById('recordings');
         if ('MediaRecorder' in window) {
-          getMic.addEventListener('click', async () => {
-            getMic.setAttribute('hidden', 'hidden');
+          recordButton.addEventListener('click', async () => {
             try {
               const stream = await navigator.mediaDevices.getUserMedia({
                 audio: true,
@@ -57,14 +55,9 @@ Player roles include a medic, and engineer and a searcher. You can pick your rol
                 renderRecording(recording, list);
                 chunks = [];
               });
-              recordButton.addEventListener('click', () => {
-                if (recorder.state === 'inactive') {
-                  recorder.start();
-                  recordButton.innerText = 'Stop Recording';
-                } else {
-                  recorder.stop();
-                  recordButton.innerText = 'Start Recording';
-                }
+              recorder.start();
+              endButton.addEventListener('click', () => {
+                recorder.stop();
               });
             } catch {
               renderError(
