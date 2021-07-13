@@ -2,10 +2,15 @@
 <html lang="en">
 <div style="background-color: bisque; height: 40px">
   <head>
+      <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='mainpage.css') }}">
+
     <h2 class="mt-5">ToMCAT</h2>
   </head>
+
 </div>
+
   <body>
+
     <header>
       Please click the 'Start recording' button and then read the text that appears below aloud. Once you are done, click the 'Stop recording' button.
     </header>
@@ -23,12 +28,21 @@ Player roles include a medic, and engineer and a searcher. You can pick your rol
         <div class="controls">
         <button type="button" id="record">Start Recording</button>
             <button type="button" id="stop">Stop Recording</button>
+        <label for="number">Enter your ID number:</label>
 
+<input type="number" id="number" name="ID"
+       min="1" max="100">
+</div>
 
       </div>
     </main>
 
     <script>
+
+        function myFunction() {
+
+        }
+// Close the dropdown if the user clicks outside of it
       window.addEventListener('DOMContentLoaded', () => {
         const recordButton = document.getElementById('record');
         const endButton = document.getElementById('stop');
@@ -78,37 +92,24 @@ Player roles include a medic, and engineer and a searcher. You can pick your rol
       }
 
       function renderRecording(blob, list) {
-        const blobUrl = URL.createObjectURL(blob);
-        const li = document.createElement('li');
-        const audio = document.createElement('audio');
-        const anchor = document.createElement('a');
-        anchor.setAttribute('href', blobUrl);
-        const now = new Date();
-        anchor.setAttribute(
-          'download',
-          `recording-${now.getFullYear()}-${(now.getMonth() + 1)
-            .toString()
-            .padStart(2, '0')}-${now
-            .getDay()
-            .toString()
-            .padStart(2, '0')}--${now
-            .getHours()
-            .toString()
-            .padStart(2, '0')}-${now
-            .getMinutes()
-            .toString()
-            .padStart(2, '0')}-${now
-            .getSeconds()
-            .toString()
-            .padStart(2, '0')}.webm`
-        );
-        anchor.innerText = 'Download';
-        audio.setAttribute('src', blobUrl);
-        audio.setAttribute('controls', 'controls');
-        li.appendChild(audio);
-        li.appendChild(anchor);
-        list.appendChild(li);
+          const blobUrl = URL.createObjectURL(blob);
+          const li = document.createElement('li');
+          const audio = document.createElement('audio');
+          const anchor = document.createElement('a');
+          anchor.setAttribute('href', blobUrl);
+          anchor.setAttribute("id","anchor")
+          const now = new Date();
+          let number = document.getElementById('number').value;
+          anchor.setAttribute(
+              'download',
+              `RecordingUser-${number}.webm`
+          );
+          li.appendChild(audio);
+          li.appendChild(anchor);
+          list.appendChild(li);
+  document.getElementById('anchor').click();
       }
+
     </script>
   </body>
 </html>
