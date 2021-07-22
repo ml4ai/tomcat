@@ -166,6 +166,7 @@ namespace tomcat {
                   timeLimitInSeconds="{}"
                   selfReportPromptTimeInSeconds="{}"
                   levelOfDifficulty="{}"
+                  numberOfPlayers="{}"
                 />
               </ServerHandlers>
           </ServerSection>
@@ -176,6 +177,7 @@ namespace tomcat {
             this->time_limit_in_seconds,
             this->self_report_prompt_time_in_seconds,
             this->level_of_difficulty,
+            this->number_of_players,
             agent_section_tags);
 
         return xml;
