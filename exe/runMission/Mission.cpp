@@ -28,6 +28,7 @@ namespace tomcat {
                      unsigned int time_limit_in_seconds,
                      unsigned int self_report_prompt_time_in_seconds,
                      unsigned int level_of_difficulty,
+                     unsigned int number_of_players,
                      int port_number,
                      bool record_observations,
                      bool record_commands,
@@ -40,6 +41,7 @@ namespace tomcat {
         this->self_report_prompt_time_in_seconds =
             self_report_prompt_time_in_seconds;
         this->level_of_difficulty = level_of_difficulty;
+        this->number_of_players = number_of_players;
         this->port_number = port_number;
         this->record_observations = record_observations;
         this->record_commands = record_commands;
