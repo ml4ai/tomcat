@@ -43,7 +43,8 @@ public class TomcatDecoratorImplementation
             this.decorator.getMission().intValue(),
             this.decorator.getTimeLimitInSeconds().intValue(),
             this.decorator.getSelfReportPromptTimeInSeconds().intValue(),
-            this.decorator.getLevelOfDifficulty().intValue());
+            this.decorator.getLevelOfDifficulty().intValue()),
+            this.decorator.getNumberOfPlayers().intValue());
 
     }
 
