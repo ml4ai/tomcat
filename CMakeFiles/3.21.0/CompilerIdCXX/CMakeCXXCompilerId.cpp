@@ -5,6 +5,12 @@
 # error "A C compiler has been selected for C++."
 #endif
 
+#if !defined(__has_include)
+/* If the compiler does not have __has_include, pretend the answer is
+   always no.  */
+#  define __has_include(x) 0
+#endif
+
 
 /* Version number components: V=Version, R=Revision, P=Patch
    Version date components:   YYYY=Year, MM=Month,   DD=Day  */
@@ -71,7 +77,7 @@
 #endif
 /* __INTEL_LLVM_COMPILER = VVVVRP prior to 2021.2.0, VVVVRRPP for 2021.2.0 and
  * later.  Look for 6 digit vs. 8 digit version number to decide encoding.
- * VVVV is no smaller than the current year when a versio is released.
+ * VVVV is no smaller than the current year when a version is released.
  */
 #if __INTEL_LLVM_COMPILER < 1000000L
 # define COMPILER_VERSION_MAJOR DEC(__INTEL_LLVM_COMPILER/100)
@@ -222,8 +228,29 @@
 # define COMPILER_VERSION_MINOR DEC(__TI_COMPILER_VERSION__/1000   % 1000)
 # define COMPILER_VERSION_PATCH DEC(__TI_COMPILER_VERSION__        % 1000)
 
-#elif defined(__FUJITSU) || defined(__FCC_VERSION) || defined(__fcc_version)
+#elif defined(__CLANG_FUJITSU)
+# define COMPILER_ID "FujitsuClang"
+# define COMPILER_VERSION_MAJOR DEC(__FCC_major__)
+# define COMPILER_VERSION_MINOR DEC(__FCC_minor__)
+# define COMPILER_VERSION_PATCH DEC(__FCC_patchlevel__)
+# define COMPILER_VERSION_INTERNAL_STR __clang_version__
+
+
+#elif defined(__FUJITSU)
 # define COMPILER_ID "Fujitsu"
+# if defined(__FCC_version__)
+#   define COMPILER_VERSION __FCC_version__
+# elif defined(__FCC_major__)
+#   define COMPILER_VERSION_MAJOR DEC(__FCC_major__)
+#   define COMPILER_VERSION_MINOR DEC(__FCC_minor__)
+#   define COMPILER_VERSION_PATCH DEC(__FCC_patchlevel__)
+# endif
+# if defined(__fcc_version)
+#   define COMPILER_VERSION_INTERNAL DEC(__fcc_version)
+# elif defined(__FCC_VERSION)
+#   define COMPILER_VERSION_INTERNAL DEC(__FCC_VERSION)
+# endif
+
 
 #elif defined(__ghs__)
 # define COMPILER_ID "GHS"
@@ -273,6 +300,22 @@
   # define COMPILER_VERSION_MINOR DEC(__ARMCOMPILER_VERSION/10000 % 100)
   # define COMPILER_VERSION_PATCH DEC(__ARMCOMPILER_VERSION     % 10000)
 # define COMPILER_VERSION_INTERNAL DEC(__ARMCOMPILER_VERSION)
+
+#elif defined(__clang__) && __has_include(<hip/hip_version.h>)
+# define COMPILER_ID "ROCMClang"
+# if defined(_MSC_VER)
+#  define SIMULATE_ID "MSVC"
+# elif defined(__clang__)
+#  define SIMULATE_ID "Clang"
+# elif defined(__GNUC__)
+#  define SIMULATE_ID "GNU"
+# endif
+# if defined(__clang__) && __has_include(<hip/hip_version.h>)
+#  include <hip/hip_version.h>
+#  define COMPILER_VERSION_MAJOR DEC(HIP_VERSION_MAJOR)
+#  define COMPILER_VERSION_MINOR DEC(HIP_VERSION_MINOR)
+#  define COMPILER_VERSION_PATCH DEC(HIP_VERSION_PATCH)
+# endif
 
 #elif defined(__clang__)
 # define COMPILER_ID "Clang"
@@ -377,6 +420,9 @@ char const *info_cray = "INFO" ":" "compiler_wrapper[CrayPrgEnv]";
 /* Identify known platforms by name.  */
 #if defined(__linux) || defined(__linux__) || defined(linux)
 # define PLATFORM_ID "Linux"
+
+#elif defined(__MSYS__)
+# define PLATFORM_ID "MSYS"
 
 #elif defined(__CYGWIN__)
 # define PLATFORM_ID "Cygwin"
@@ -629,8 +675,12 @@ char const *info_cray = "INFO" ":" "compiler_wrapper[CrayPrgEnv]";
   ('0' + ((n)>>4  & 0xF)), \
   ('0' + ((n)     & 0xF))
 
+/* Construct a string literal encoding the version number. */
+#ifdef COMPILER_VERSION
+char const* info_version = "INFO" ":" "compiler_version[" COMPILER_VERSION "]";
+
 /* Construct a string literal encoding the version number components. */
-#ifdef COMPILER_VERSION_MAJOR
+#elif defined(COMPILER_VERSION_MAJOR)
 char const info_version[] = {
   'I', 'N', 'F', 'O', ':',
   'c','o','m','p','i','l','e','r','_','v','e','r','s','i','o','n','[',
@@ -654,6 +704,8 @@ char const info_version_internal[] = {
   'c','o','m','p','i','l','e','r','_','v','e','r','s','i','o','n','_',
   'i','n','t','e','r','n','a','l','[',
   COMPILER_VERSION_INTERNAL,']','\0'};
+#elif defined(COMPILER_VERSION_INTERNAL_STR)
+char const* info_version_internal = "INFO" ":" "compiler_version_internal[" COMPILER_VERSION_INTERNAL_STR "]";
 #endif
 
 /* Construct a string literal encoding the version number components. */
