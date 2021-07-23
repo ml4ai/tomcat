@@ -41,19 +41,19 @@ case "$SUBCOMMAND" in
                  "like Mumble is already installed."
         fi
 
-        if [[ ! -f Mumble-1.3.2.dmg ]]; then
+        if [[ ! -f Mumble-${VERSION}.dmg ]]; then
             echo "Downloading Mumble-${VERSION}.dmg..."
-            curl -LO https://dl.mumble.info/stable/Mumble-1.3.2.dmg
+            curl -LO https://dl.mumble.info/stable/Mumble-${VERSION}.dmg
         fi
 
         if [[ -f Mumble-${VERSION}.dmg ]]; then
             echo "Mounting the Mumble disk image..."
-            hdiutil attach Mumble-1.3.2.dmg
+            hdiutil attach Mumble-${VERSION}.dmg
         fi
 
         if [[ -d "/Volumes/Mumble ${VERSION}" ]]; then
             echo "Copying Mumble.app to /Applications..."
-            cp -R "/Volumes/Mumble 1.3.2/Mumble.app" /Applications
+            cp -R "/Volumes/Mumble ${VERSION}/Mumble.app" /Applications
 
             echo "Unmounting the Mumble disk image..."
             hdiutil unmount "/Volumes/Mumble ${VERSION}"
