@@ -5,12 +5,16 @@
 
 set -euo pipefail
 
-if [[ ! -d murmur-static_x86-1.3.2 ]]; then
-    curl -LO https://www.mumble.info/downloads/linux-static-server
+VERSION=1.3.4
+MURMUR_DOWNLOAD_URL=https://dl.mumble.info/latest/stable/server-linux-x86
+
+if [[ ! -d murmur-static_x86-${VERSION} ]]; then
+    echo "Downloading murmur..."
+    curl -LO ${MURMUR_DOWNLOAD_URL} 
     tar -xvjf linux-static-server
 fi
 
-pushd murmur-static_x86-1.3.2
+pushd murmur-static_x86-${VERSION}
     sudo mkdir -p /usr/local/murmur
     sudo cp -r * /usr/local/murmur/
     sudo cp murmur.ini /etc/murmur.ini
