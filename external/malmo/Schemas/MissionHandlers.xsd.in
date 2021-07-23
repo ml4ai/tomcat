@@ -2583,6 +2583,7 @@
       <xs:attribute name="timeLimitInSeconds" type="xs:integer" use="optional" default="100"/>
       <xs:attribute name="selfReportPromptTimeInSeconds" type="xs:integer" use="optional" default="180"/>
       <xs:attribute name="levelOfDifficulty" type="xs:integer" use="optional" default="5"/>
+      <xs:attribute name="numberOfPlayers" type="xs:integer" use="optional" default="2"/>
     </xs:complexType>
   </xs:element>
   
