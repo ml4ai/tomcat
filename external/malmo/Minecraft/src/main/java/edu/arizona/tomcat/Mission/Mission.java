@@ -543,6 +543,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     setSelfReportPromptTimeInSeconds(long selfReportPromptTimeInSeconds) {
         this.selfReportPromptTimeInSeconds = selfReportPromptTimeInSeconds;
     }
+    
 
     /**
      * Defines the time interval to wait until prompting a self-report screen to
@@ -560,5 +561,8 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
         else {
             this.levelOfDifficulty = DIFFICULTY.HARD;
         }
+    }
+    public void setNumberOfPlayers(int numberOfPlayers) {
+        this.numberOfPlayers = numberOfPlayers;
     }
 }
