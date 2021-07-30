@@ -92,6 +92,7 @@ namespace tomcat {
         unsigned int time_limit_in_seconds;
         unsigned int self_report_prompt_time_in_seconds;
         unsigned int level_of_difficulty;
+        unsigned int number_of_players;
         int port_number;
         bool record_observations;
         bool record_commands;
