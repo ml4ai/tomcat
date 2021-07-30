@@ -56,6 +56,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     protected long initialWorldTime;
     protected long worldTimeOnPause;
     protected long pausedTime;
+    protected int numberOfPlayers;
     protected DIFFICULTY levelOfDifficulty;
     protected DrawingHandler drawingHandler;
     protected EmotionHandler.Emotion currentEmotion;
