@@ -14,12 +14,14 @@ public class MissionHandler {
     public void setMission(int id,
                            int timeLimitInSeconds,
                            int selfReportPromptTimeInSeconds,
-                           int levelOfDifficulty) {
+                           int levelOfDifficulty,
+                           int numberOfPlayers) {
         this.mission = MissionFactory.create(id);
         this.mission.setTimeLimitInSeconds(timeLimitInSeconds);
         this.mission.setSelfReportPromptTimeInSeconds(
             selfReportPromptTimeInSeconds);
         this.mission.setLevelOfDifficulty(levelOfDifficulty);
+        this.mission.setNumberOfPlayers(numberOfPlayers);
     }
 
     /**
