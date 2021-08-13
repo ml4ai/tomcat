@@ -21,7 +21,6 @@ public class MissionHandler {
         this.mission.setSelfReportPromptTimeInSeconds(
             selfReportPromptTimeInSeconds);
         this.mission.setLevelOfDifficulty(levelOfDifficulty);
-        this.mission.setNumberOfPlayers(numberOfPlayers);
     }
 
     /**
