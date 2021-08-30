@@ -1,0 +1,39 @@
+<style>
+    body{
+        line-height: 30px;
+	width:1080px;
+}
+</style>
+
+  <body>
+    <h2 class="mt-5" style="background-color: gold">ToMCAT</h2>
+    <header>
+      Please click the 'Start recording' button and then read the text that appears below aloud. Once you are done, click the 'Stop recording' button.
+    </header>
+    <main>
+
+		<h3 style="font-family:Serif;">Instructions:</h3>
+			<ol style="font-family:Serif;">
+						Minecraft is a sandbox construction game in which players can control the environment. The Minecraft world for this game will require players to pick roles. You are tasked with search and rescue in this scenario. Keep the channels of communication open. Since this is a rescue site, be careful as you clear rubble and identify the critical victims.
+
+Some of the tools you will have access to include a medkit, a stretcher, and a hammer. Using the map, identify the zone the team wishes to work on, and proceed to clear the floor and the rooms. As you orient yourself in the environment, pay attention to doors and windows.
+
+Player roles include a medic, and engineer and a searcher. You can pick your roles based on the game's requirements. Pay attention to the clock. Keep the game's objectives in sight as you proceed.
+			</ol>
+<button id = "connectButton" type="button">Start Recording</button>
+
+        <label for="participantId">Enter your ID number:</label>
+<input type="number" id="participantId" name="ID"
+       min="1" max="100">
+<br>
+Recording: <span id="connectedIndicator">No</span>
+<br>
+<button id="stop" >Stop Recording</button>
+<span id="transcript"></span>
+        </main>
+  </body>
+<script>
+    {% include 'app.js' %}
+</script>
+
+
