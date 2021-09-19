@@ -1,75 +1,35 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>bugs.txt &mdash; ToMCAT 0.1 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/collapsible-lists/css/tree_view.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/collapsible-lists/css/tree_view.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
         <script src="_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="index.html" class="icon icon-home"> ToMCAT
-          
-
-          
           </a>
-
-          
-            
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -77,18 +37,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="software.html">Software Components</a></li>
@@ -101,73 +50,32 @@
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">ToMCAT</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-        
       <li>bugs.txt</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="_sources/KB-notes.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <section id="bugs-txt">
-<h1>bugs.txt<a class="headerlink" href="#bugs-txt" title="Permalink to this headline">¶</a></h1>
+<h1>bugs.txt<a class="headerlink" href="#bugs-txt" title="Permalink to this headline"></a></h1>
 <p>If TOMCAT env var is not set when we do runExperiment, we get an abort. Could we
 check that it is set via the getenv() system call and exit with a better error
 message?</p>
@@ -214,69 +122,53 @@ kobus&#64;alpine:~/projects/ASIST/mission/run_session_try_2/tomcat$ echo $?
 <p>Install</p>
 <p>Run
 Launch should be faster and integrated with running the mission</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">Scripts</span> <span class="n">should</span> <span class="n">be</span> <span class="n">in</span> <span class="n">one</span> <span class="n">place</span> <span class="n">and</span> <span class="n">robust</span> <span class="n">to</span> <span class="n">how</span> <span class="n">they</span> <span class="n">are</span> <span class="n">called</span><span class="p">.</span> 
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">Scripts</span><span class="w"> </span><span class="n">should</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="n">one</span><span class="w"> </span><span class="n">place</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">robust</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">how</span><span class="w"> </span><span class="n">they</span><span class="w"> </span><span class="n">are</span><span class="w"> </span><span class="n">called</span><span class="p">.</span><span class="w"> </span>
 
-<span class="n">It</span> <span class="n">is</span> <span class="n">not</span> <span class="n">clear</span> <span class="n">how</span> <span class="n">and</span> <span class="n">when</span> <span class="n">the</span> <span class="n">env</span> <span class="n">var</span> <span class="n">TOMCAT</span> <span class="n">is</span> <span class="n">or</span> <span class="n">should</span> <span class="n">be</span> <span class="n">used</span><span class="p">.</span>
+<span class="n">It</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">not</span><span class="w"> </span><span class="n">clear</span><span class="w"> </span><span class="n">how</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">when</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">env</span><span class="w"> </span><span class="n">var</span><span class="w"> </span><span class="n">TOMCAT</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">or</span><span class="w"> </span><span class="n">should</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">used</span><span class="p">.</span><span class="w"></span>
 </pre></div>
 </div>
 <p>Game
 It is not clear that “you” are quite wide and that it is your right arm that
 you see. Getting through a tight passage might be on more thing to do in the
 tutorial mission.</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="s">&quot;e&quot;</span> <span class="n">key</span> <span class="o">---</span> <span class="n">I</span> <span class="n">assume</span> <span class="k">for</span> <span class="n">us</span><span class="p">.</span> <span class="n">Easy</span> <span class="n">to</span> <span class="n">hit</span> <span class="n">instead</span> <span class="n">of</span> <span class="s">&quot;w&quot;</span><span class="p">.</span> <span class="n">Any</span> <span class="n">options</span> <span class="n">as</span> <span class="n">to</span>
-<span class="n">how</span> <span class="n">the</span> <span class="n">keys</span> <span class="n">work</span><span class="o">?</span> 
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="s">&quot;e&quot;</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="o">---</span><span class="w"> </span><span class="n">I</span><span class="w"> </span><span class="n">assume</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">us</span><span class="p">.</span><span class="w"> </span><span class="n">Easy</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">hit</span><span class="w"> </span><span class="n">instead</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="s">&quot;w&quot;</span><span class="p">.</span><span class="w"> </span><span class="n">Any</span><span class="w"> </span><span class="n">options</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">to</span><span class="w"></span>
+<span class="n">how</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">keys</span><span class="w"> </span><span class="n">work</span><span class="o">?</span><span class="w"> </span>
 
-<span class="n">Short</span> <span class="n">delay</span> <span class="n">after</span> <span class="n">success</span><span class="o">?</span> 
+<span class="n">Short</span><span class="w"> </span><span class="n">delay</span><span class="w"> </span><span class="n">after</span><span class="w"> </span><span class="n">success</span><span class="o">?</span><span class="w"> </span>
 
-<span class="n">Success</span> <span class="k">for</span> <span class="n">seeing</span> <span class="n">creatures</span> <span class="n">is</span> <span class="n">not</span> <span class="n">clear</span><span class="p">.</span> 
+<span class="n">Success</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">seeing</span><span class="w"> </span><span class="n">creatures</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">not</span><span class="w"> </span><span class="n">clear</span><span class="p">.</span><span class="w"> </span>
 
-<span class="n">What</span> <span class="n">is</span> <span class="n">the</span> <span class="n">amphitheatre</span> <span class="n">is</span> <span class="n">not</span> <span class="n">so</span> <span class="n">clear</span><span class="p">.</span> <span class="n">Gate</span> <span class="n">latch</span> <span class="n">also</span><span class="p">.</span>
+<span class="n">What</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">amphitheatre</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">not</span><span class="w"> </span><span class="n">so</span><span class="w"> </span><span class="n">clear</span><span class="p">.</span><span class="w"> </span><span class="n">Gate</span><span class="w"> </span><span class="n">latch</span><span class="w"> </span><span class="n">also</span><span class="p">.</span><span class="w"></span>
 </pre></div>
 </div>
 </section>
 
 
            </div>
-           
           </div>
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2019, University of Arizona.
-
-    </p>
+    <p>&#169; Copyright 2019, University of Arizona.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

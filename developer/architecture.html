@@ -1,77 +1,37 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Design and Architecture &mdash; ToMCAT 0.1 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
         <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Working with the MQTT message bus" href="message_bus.html" />
     <link rel="prev" title="Contributing" href="CONTRIBUTING.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html" class="icon icon-home"> ToMCAT
-          
-
-          
           </a>
-
-          
-            
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -79,18 +39,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../software.html">Software Components</a></li>
@@ -123,79 +72,37 @@
 <li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">ToMCAT</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="index.html">Developer documentation</a> &raquo;</li>
-        
       <li>Design and Architecture</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../_sources/developer/architecture.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <section id="design-and-architecture">
-<h1>Design and Architecture<a class="headerlink" href="#design-and-architecture" title="Permalink to this headline">¶</a></h1>
+<h1>Design and Architecture<a class="headerlink" href="#design-and-architecture" title="Permalink to this headline"></a></h1>
 <div class="toctree-wrapper compound">
 </div>
 <section id="building-upon-project-malmo">
-<h2>Building upon Project Malmo<a class="headerlink" href="#building-upon-project-malmo" title="Permalink to this headline">¶</a></h2>
+<h2>Building upon Project Malmo<a class="headerlink" href="#building-upon-project-malmo" title="Permalink to this headline"></a></h2>
 <p>ToMCAT extends <a class="reference external" href="https://github.com/microsoft/malmo">Project Malmo</a> to provide a platform to study human behavior
 in a virtual environment, with a focus on studying human-human and
 human-machine teaming.</p>
@@ -249,7 +156,7 @@ for more details).</p></li>
 </ul>
 </section>
 <section id="automation">
-<h2>Automation<a class="headerlink" href="#automation" title="Permalink to this headline">¶</a></h2>
+<h2>Automation<a class="headerlink" href="#automation" title="Permalink to this headline"></a></h2>
 <p>We place a heavy premium on automation, and thus eschew support for Windows and
 non-LAN multiplayer in favor of maintaining a set of robust scripts (in the
 <code class="docutils literal notranslate"><span class="pre">tools</span></code> directory) and a procedural generation module (<code class="docutils literal notranslate"><span class="pre">src/cpp/pro_gen</span></code>)
@@ -258,22 +165,22 @@ complex documentation they need to read to get set up. Our software is
 currently tested on macOS and Ubuntu with a continuous integration pipeline.</p>
 </section>
 <section id="sensors">
-<h2>Sensors<a class="headerlink" href="#sensors" title="Permalink to this headline">¶</a></h2>
+<h2>Sensors<a class="headerlink" href="#sensors" title="Permalink to this headline"></a></h2>
 <section id="audio-and-video">
-<h3>Audio and Video<a class="headerlink" href="#audio-and-video" title="Permalink to this headline">¶</a></h3>
+<h3>Audio and Video<a class="headerlink" href="#audio-and-video" title="Permalink to this headline"></a></h3>
 <p>We implement sensors to record video and audio of the human player and the game
 itself. The video and audio of the player and the video of the game are
 captured using <a class="reference external" href="http://ffmpeg.org">ffmpeg</a>, and the audio of the game is captured using <a class="reference external" href="https://linux.die.net/man/1/pacat">pacat</a>
 (Linux) or <a class="reference external" href="https://github.com/ExistentialAudio/BlackHole">BlackHole</a> (macOS).</p>
 </section>
 <section id="in-game-observations-and-events">
-<h3>In-game observations and events<a class="headerlink" href="#in-game-observations-and-events" title="Permalink to this headline">¶</a></h3>
+<h3>In-game observations and events<a class="headerlink" href="#in-game-observations-and-events" title="Permalink to this headline"></a></h3>
 <p>We implement capturing in-game observations and events related to the human
 players and the missions they are conducting. These are published to an MQTT
 message bus on various topics.</p>
 </section>
 <section id="facial-landmark-gaze-pose-and-au-detection">
-<h3>Facial Landmark, Gaze, Pose, and AU detection<a class="headerlink" href="#facial-landmark-gaze-pose-and-au-detection" title="Permalink to this headline">¶</a></h3>
+<h3>Facial Landmark, Gaze, Pose, and AU detection<a class="headerlink" href="#facial-landmark-gaze-pose-and-au-detection" title="Permalink to this headline"></a></h3>
 <p>We leverage <a class="reference external" href="https://github.com/TadasBaltrusaitis/OpenFace">OpenFace</a> to create an executable called <a class="reference external" href="https://github.com/ml4ai/tomcat-faceAnalyzer">faceAnalyzer</a> that
 outputs JSON messages containing information about a player’s gaze, pose,
 action units, and face landmarks, either from a webcam feed or from a video
@@ -286,50 +193,33 @@ for publication to a message bus, or used for other downstream applications.</p>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="message_bus.html" class="btn btn-neutral float-right" title="Working with the MQTT message bus" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="CONTRIBUTING.html" class="btn btn-neutral float-left" title="Contributing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="message_bus.html" class="btn btn-neutral float-right" title="Working with the MQTT message bus" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2019, University of Arizona.
-
-    </p>
+    <p>&#169; Copyright 2019, University of Arizona.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>
