@@ -166,7 +166,6 @@ namespace tomcat {
                   timeLimitInSeconds="{}"
                   selfReportPromptTimeInSeconds="{}"
                   levelOfDifficulty="{}"
-                  numberOfPlayers="{}"
                 />
               </ServerHandlers>
           </ServerSection>
