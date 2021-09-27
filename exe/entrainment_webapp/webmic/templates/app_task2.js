@@ -30,12 +30,7 @@ function makeSocket(destination) {
     // Listen for messages
     ws.onopen = function(event) {
         connectedAtLeastOnce=true;
-
         document.getElementById("connectedIndicator").innerHTML = "Yes";
-        // if (document.getElementById("connectedIndicator").innerHTML == "Yes") {
-        //     document.getElementById("exp").style.visibility = "visible";
-        // }
-
 
         var connectButton = document.getElementById("connectButton");
         connectButton.disabled = true;
@@ -93,11 +88,10 @@ document.getElementById("connectButton").onclick = function() {
 
     var context = getAudioContext();
     var destination = "{{ ws_url }}" +
-                      "?id=" + ID +
+                      "?id=" + ID +"Task2"+
                       "&sampleRate=" + context.sampleRate;
     socket = new PersistentSocket(destination);
     initRecording(context);
-
 };
 
 //================= CONFIG =================

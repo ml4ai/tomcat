@@ -1,0 +1,52 @@
+<style>
+    body{
+        line-height: 28px;
+	width:78%;
+        font-size: 21px;
+        font-family: Serif;
+}
+</style>
+
+  <body>
+    <h2 class="mt-5" style="background-color: gold;text-align: center;width: 135%">ToMCAT Study</h2>
+    <header style="font-family: Serif;font-size: 22px;width: 110%">
+        <h3 style="font-family:Serif;font-size: 30px;text-align: center;width: 128%">Recording Task-1: Reading Task</h3>
+When you press ’Start Recording’ and enter your ID number, a short passage will appear.  Please read the passage using a pace and voice that feels natural to you.
+        </header>
+
+
+    <main>
+<button  id = "connectButton" type="button"  >Start Recording</button>
+
+        <label for="participantId">Enter your ID number:</label>
+<input type="number" id="participantId" name="ID"
+       min="1" max="10000">
+<br>
+Recording: <span id="connectedIndicator">No</span>
+<br>
+<button id="stop" >Stop Recording</button>
+<span id="transcript"></span>
+
+        </main>
+
+
+
+<div id = "exp" style="visibility: hidden">
+			<ol style="font-family:Serif;font-size: 25px">
+                Minecraft is a sandbox construction game in which players can control the environment. The Minecraft world for this game will require players to pick roles. You are tasked with search and rescue in this scenario. Keep the channels of communication open. Since this is a rescue site, be careful as you clear rubble and identify the critical victims.
+
+Some of the tools you will have access to include a medkit, a stretcher, and a hammer. Using the map, identify the zone the team wishes to work on, and proceed to clear the floor and the rooms. As you orient yourself in the environment, pay attention to doors and windows.
+
+Player roles include a medic, and engineer and a searcher. You can pick your roles based on the game's requirements. Pay attention to the clock. Keep the game's objectives in sight as you proceed.
+			</ol>
+</div>
+<p>
+    Thank you for completing the first task. Please go ahead and click "Next" to move on to the second task. <a href="index_2.html">Next</a>
+</p>
+  </body>
+<script>
+
+    {% include 'app.js' %}
+</script>
+
+
