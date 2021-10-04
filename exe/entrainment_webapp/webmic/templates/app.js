@@ -99,7 +99,6 @@ document.getElementById("connectButton").onclick = function() {
     socket = new PersistentSocket(destination);
     initRecording(context);
 
-    document.getElementById("stop").onclick = context.close();
 };
 
 
