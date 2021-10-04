@@ -58,6 +58,7 @@ function makeSocket(destination) {
     ws.onclose = function(event) {
         document.getElementById("connectedIndicator").innerHTML =
             "No";
+
         if (!connectedAtLeastOnce) {
             setTimeout(function() { ws = makeSocket(destination); }, 5000);
         }
@@ -98,7 +99,9 @@ document.getElementById("connectButton").onclick = function() {
     socket = new PersistentSocket(destination);
     initRecording(context);
 
+    document.getElementById("stop").onclick = context.close();
 };
+
 
 //================= CONFIG =================
 // Stream Audio
@@ -143,3 +146,5 @@ function initRecording(context) {
 
     navigator.mediaDevices.getUserMedia(constraints).then(handleSuccess);
 }
+
+

@@ -17,6 +17,10 @@ app = Flask(__name__)
 def main():
     return render_template("index_0.html", ws_url=ws_url)
 
+@app.route("/index_0.html")
+def zeroth_page():
+    return render_template("index_0.html", ws_url=ws_url)
+
 @app.route("/index_1.html")
 def first_page():
     return render_template("index_1.html",ws_url=ws_url)
