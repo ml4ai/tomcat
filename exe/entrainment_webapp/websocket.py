@@ -15,6 +15,7 @@ from audio_stream import AudioStream
 from logging import debug, info
 import numpy as np
 from soundfile import SoundFile
+import os.path
 
 RECORDING_IN_PROGRESS = True
 async def consumer_handler(websocket, path):
@@ -27,14 +28,20 @@ async def consumer_handler(websocket, path):
         participant_id = str(uuid4())
     await websocket.send(json.dumps({"participantId": participant_id}))
 
+
     info(f"Participant {participant_id} is now connected.")
 
     sample_rate = int(query_params["sampleRate"][0])
     audio_stream = AudioStream()
 
+    add = 0
+
+    while os.path.exists(f"recordings/participant_{participant_id}_{str(add)}.wav") :
+        add+=1
+
 
     with SoundFile(
-        f"recordings/participant_{participant_id}.wav",
+        f"recordings/participant_{participant_id}_{add}.wav",
         "w",
         sample_rate,
         n_channels,
