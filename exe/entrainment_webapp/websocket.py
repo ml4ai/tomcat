@@ -34,14 +34,13 @@ async def consumer_handler(websocket, path):
     sample_rate = int(query_params["sampleRate"][0])
     audio_stream = AudioStream()
 
-    add = 0
 
-    while os.path.exists(f"recordings/participant_{participant_id}_{str(add)}.wav") :
-        add+=1
+    if os.path.exists(f"recordings/participant_{participant_id}.wav") :
+        os.remove(f"recordings/participant_{participant_id}.wav")
 
 
     with SoundFile(
-        f"recordings/participant_{participant_id}_{add}.wav",
+        f"recordings/participant_{participant_id}.wav",
         "w",
         sample_rate,
         n_channels,

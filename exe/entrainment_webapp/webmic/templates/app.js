@@ -30,12 +30,7 @@ function makeSocket(destination) {
     // Listen for messages
     ws.onopen = function(event) {
         connectedAtLeastOnce=true;
-
         document.getElementById("connectedIndicator").innerHTML = "Yes";
-        // if (document.getElementById("connectedIndicator").innerHTML == "Yes") {
-        //     document.getElementById("exp").style.visibility = "visible";
-        // }
-
 
         var connectButton = document.getElementById("connectButton");
         connectButton.disabled = true;
@@ -58,7 +53,6 @@ function makeSocket(destination) {
     ws.onclose = function(event) {
         document.getElementById("connectedIndicator").innerHTML =
             "No";
-
         if (!connectedAtLeastOnce) {
             setTimeout(function() { ws = makeSocket(destination); }, 5000);
         }
@@ -98,9 +92,7 @@ document.getElementById("connectButton").onclick = function() {
                       "&sampleRate=" + context.sampleRate;
     socket = new PersistentSocket(destination);
     initRecording(context);
-
 };
-
 
 //================= CONFIG =================
 // Stream Audio
