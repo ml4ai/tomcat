@@ -23,6 +23,7 @@ Current
 - [Savannah Boyd](https://cals.arizona.edu/fcs/grad/savannah_boyd)
 - [Chinmai Basavaraj](https://www.cs.arizona.edu/person/chinmai-basavaraj-0)
 - [Loren Champlin](https://ischool.arizona.edu/people/loren-champlin)
+- [Eric Duong](https://github.com/eduongAZ)
 - Md Messal
 - [John Culnan](https://linguistics.arizona.edu/user/john-culnan)
 - [Meghavarshini Krishnaswamy](https://linguistics.arizona.edu/user/meghavarshini-krishnaswamy)
@@ -31,6 +32,7 @@ Current
 - [Remo Nitschke](https://linguistics.arizona.edu/user/remo-nitschke)
 - [Valeria Pfeifer](https://psychology.arizona.edu/users/valeria-pfeifer)
 - [Paulo Soares](https://www.cs.arizona.edu/person/paulo-soares)
+- [Caleb Jones Shibu](https://github.com/CalebUAz)
 - Yuwei Wang
 - [Manujinda Wathugala](https://www.cs.arizona.edu/person/manujinda-wathugala)
 - [Ayesha Qamar](https://www.linkedin.com/in/ayesha-qamar-559556197)
@@ -52,7 +54,7 @@ Current
 Project Alumni
 --------------
 
-Undergraduates: 
+Undergraduates:
 - Lize Chen
 - Jiangfeng Li
 - Da Long
