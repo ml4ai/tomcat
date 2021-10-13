@@ -11,6 +11,7 @@ the ToMCAT project:
 * `Face analysis <https://github.com/ml4ai/tomcat-faceAnalyzer>`_.
 * `Team Mind Module <https://github.com/ml4ai/tomcat-tmm>`_.
 * `LAN Multiplayer Ping Pong <https://github.com/ml4ai/multiplayer-ping-pong>`_.
+* `Multi-Subject Finger Tapping <https://github.com/ml4ai/MultiSubject-FingerTapping-Task>`_.
 
 Indices and tables
 ==================
