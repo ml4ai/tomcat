@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # We cannot call this directly because we need TOMCAT and TOMCAT_TMP_DIR. If we
-# want to do this, then we need to arrange for setting those vars. 
+# want to do this, then we need to arrange for setting those vars.
 
-set -u 
+set -u
 
 # Set the TOMCAT environment variable, assuming that the directory structure
 # mirrors that of the git repository.
@@ -19,24 +19,25 @@ cd ${TOMCAT}/external/malmo/Minecraft
 
 echo $$ > "${TOMCAT_TMP_DIR}/wrap_launch.pid"
 
-echo "Running: launchClient.sh in ${TOMCAT}/external/malmo/Minecraft" 
+echo "Running: launchClient.sh in ${TOMCAT}/external/malmo/Minecraft"
 ./launchClient.sh < /dev/null >& ${minecraft_log} &
 bg_pid=$!
 echo $bg_pid > ${TOMCAT_TMP_DIR}/minecraft_launch.pid
-echo "Minecraft is starting up in the background."  
+echo "Minecraft is starting up in the background."
 
 wait $bg_pid > /dev/null
+echo "----------------------------------------------------------> $JAVA_HOME"
 
 launch_status=$?
 
 # In theory, we should have the logical status here, but launchClient
 # does not necessarly return failure, and making it do the right thing is
-# tricky. 
+# tricky.
 
 
 if [[ $launch_status -eq 0 ]]; then
     have_problem=`grep -c 'BUILD FAILED' ${minecraft_log}`
-    if [[ ${have_problem} -ne 0 ]]; then 
+    if [[ ${have_problem} -ne 0 ]]; then
         launch_status=1
     fi
 fi
@@ -44,9 +45,9 @@ fi
 if [[ $launch_status -ne 0 ]]; then
     echo " " >> ${minecraft_log}
     echo "launchClient FAILED" >> ${minecraft_log}
-else 
-    echo "Wait on launchClient process is done."  
+else
+    echo "Wait on launchClient process is done."
     /bin/rm -f ${minecraft_log}
-fi 
+fi
 
 exit ${launch_status}
