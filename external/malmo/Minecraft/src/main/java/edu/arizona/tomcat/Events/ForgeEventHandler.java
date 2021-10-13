@@ -44,7 +44,7 @@ public class ForgeEventHandler {
     private boolean devMode = false;
     private List<String> whitelist = null;
 
-    private String dmPath = "devmode.json";
+    private String dmPath = "config.json";
 
     private Block getBlock(PlayerInteractEvent.RightClickBlock event) {
         return event.getWorld().getBlockState(event.getPos()).getBlock();
@@ -129,7 +129,7 @@ public class ForgeEventHandler {
         jMap.put("whitelist", this.whitelist);
 
         try {
-            fwriter = new FileWriter("devmode.json");
+            fwriter = new FileWriter("config.json");
             gson.toJson(jMap, fwriter);
             fwriter.close();
         }
