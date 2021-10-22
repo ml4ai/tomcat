@@ -1,3 +1,0 @@
-# Normalize EOLs by default, to avoid falling back on committers'
-# "core.autocrlf" settings.
-* text=auto
