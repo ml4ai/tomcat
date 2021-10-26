@@ -12,6 +12,7 @@ Developer documentation
    Client_Server_Communication
    prebuilt_world_loading
    minecraft_forge_events
+   deploying_to_ta3_testbed
    ../cpp_api/index
    java_api/index
 
