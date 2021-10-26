@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Developer documentation &mdash; ToMCAT 0.1 documentation</title>
+  <title>Steps for deploying a component to the TA3 testbed &mdash; ToMCAT 0.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
@@ -21,8 +21,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Contributing" href="CONTRIBUTING.html" />
-    <link rel="prev" title="Become a participant" href="../become_a_participant.html" /> 
+    <link rel="next" title="C++ API" href="../cpp_api/index.html" />
+    <link rel="prev" title="Events available through the Minecraft Forge event bus (for MC v1.11.2)" href="minecraft_forge_events.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -46,7 +46,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../software.html#indices-and-tables">Indices and tables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Developer documentation</a><ul>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Developer documentation</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="CONTRIBUTING.html">Contributing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="architecture.html">Design and Architecture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="message_bus.html">Working with the MQTT message bus</a></li>
@@ -54,7 +54,7 @@
 <li class="toctree-l2"><a class="reference internal" href="Client_Server_Communication.html">Message Exchange between Client and Server in Minecraft Forge</a></li>
 <li class="toctree-l2"><a class="reference internal" href="prebuilt_world_loading.html">Pre-Built World Loading Tutorial</a></li>
 <li class="toctree-l2"><a class="reference internal" href="minecraft_forge_events.html">Events available through the Minecraft Forge event bus (for MC v1.11.2)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="deploying_to_ta3_testbed.html">Steps for deploying a component to the TA3 testbed</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Steps for deploying a component to the TA3 testbed</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../cpp_api/index.html">C++ API</a></li>
 </ul>
 </li>
@@ -77,9 +77,10 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Developer documentation</li>
+          <li><a href="index.html">Developer documentation</a> &raquo;</li>
+      <li>Steps for deploying a component to the TA3 testbed</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/developer/index.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/developer/deploying_to_ta3_testbed.md.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -87,38 +88,50 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="developer-documentation">
-<h1>Developer documentation<a class="headerlink" href="#developer-documentation" title="Permalink to this headline"></a></h1>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+  <section id="steps-for-deploying-a-component-to-the-ta3-testbed">
+<h1>Steps for deploying a component to the TA3 testbed<a class="headerlink" href="#steps-for-deploying-a-component-to-the-ta3-testbed" title="Permalink to this headline"></a></h1>
+<ul class="simple">
+<li><p>Create a PR into the master/main branch with the necessary changes. Also, if
+there is a file like <code class="docutils literal notranslate"><span class="pre">VERSION</span></code> or <code class="docutils literal notranslate"><span class="pre">version.sbt</span></code> that contains the version
+number, bump the version number in it appropriately.</p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="CONTRIBUTING.html">Contributing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="architecture.html">Design and Architecture</a></li>
-<li class="toctree-l1"><a class="reference internal" href="message_bus.html">Working with the MQTT message bus</a></li>
-<li class="toctree-l1"><a class="reference internal" href="missions.html">Guide to developing ToMCAT missions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Client_Server_Communication.html">Message Exchange between Client and Server in Minecraft Forge</a></li>
-<li class="toctree-l1"><a class="reference internal" href="prebuilt_world_loading.html">Pre-Built World Loading Tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="minecraft_forge_events.html">Events available through the Minecraft Forge event bus (for MC v1.11.2)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="deploying_to_ta3_testbed.html">Steps for deploying a component to the TA3 testbed</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../cpp_api/index.html">C++ API</a></li>
+<li><p>Bugfixes will increment the patch version number (e.g. 3.0.1 to 3.0.2).</p></li>
+<li><p>New backwards-compatible features and improvements will update the minor
+version number (e.g. 3.0.1 to 3.1.0). Here, backwards-compatible means
+that the format of the JSON messages either does not change or changes in
+a way that code that could process the previous format can also process
+the new format. For example, adding a key in the <code class="docutils literal notranslate"><span class="pre">data</span></code> part of the
+message would be backwards-compatible, while removing an existing key
+would not.</p></li>
+<li><p>Backwards-incompatible changes should bump the major version number (e.g.
+3.0.1 –&gt; 4.0.0)</p></li>
 </ul>
-</div>
-<p>Welcome to the developer documentation for ToMCAT. We collect here a miscellany
-of notes as institutional knowledge to help current developers and help new
-developers get up-to-speed rapidly.</p>
-<p>If you are a developer and you find yourself writing a lengthy email describing
-how to implement a particular feature or debug a particularly ornery bug in the
-ToMCAT codebase, consider adding it to the ToMCAT developer documentation so
-that it can help future developers.</p>
-<p>The API for the Java component of ToMCAT can be found here: <a class="reference external" href="java_api/index.html">Java API</a></p>
+</li>
+<li><p>Once the CI tests pass, merge the PR into the main branch.</p></li>
+<li><p>Create a release on Github.</p></li>
+<li><p>Switch to the main/master branch, run <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">pull</span></code> to make sure you have the
+latest code, then run <code class="docutils literal notranslate"><span class="pre">./scripts/deploy_to_gitlab</span></code>.</p></li>
+<li><p>Go into the TA3 testbed repo</p></li>
+<li><p>Switch to the <code class="docutils literal notranslate"><span class="pre">develop</span></code> branch</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">pull</span></code> to make sure you have the latest code from the <code class="docutils literal notranslate"><span class="pre">develop</span></code>
+branch.</p></li>
+<li><p>Make a new branch off of <code class="docutils literal notranslate"><span class="pre">develop</span></code></p></li>
+<li><p>Update the agent version number in the <code class="docutils literal notranslate"><span class="pre">docker-compose.yml</span></code> file (or multiple
+files if you have different ones for Linux and macOS) in your agent directory
+under the <code class="docutils literal notranslate"><span class="pre">Agents</span></code> directory. The agent version number should match the
+version you just deployed to the Gitlab container registry.</p></li>
+<li><p>Push your changes to the testbed upstream repository</p></li>
+<li><p>Go to the testbed repo webpage in your browser, and then create a merge
+request to merge your branch into the <code class="docutils literal notranslate"><span class="pre">develop</span></code> branch.</p></li>
+</ul>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../become_a_participant.html" class="btn btn-neutral float-left" title="Become a participant" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="CONTRIBUTING.html" class="btn btn-neutral float-right" title="Contributing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="minecraft_forge_events.html" class="btn btn-neutral float-left" title="Events available through the Minecraft Forge event bus (for MC v1.11.2)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../cpp_api/index.html" class="btn btn-neutral float-right" title="C++ API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
