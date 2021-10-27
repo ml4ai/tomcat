@@ -28,5 +28,7 @@ Steps for deploying a component to the TA3 testbed
   under the `Agents` directory. The agent version number should match the
   version you just deployed to the Gitlab container registry.
 - Push your changes to the testbed upstream repository
+- Check the changes to the code and make sure your edits are there.
 - Go to the testbed repo webpage in your browser, and then create a merge
   request to merge your branch into the `develop` branch.
+- Include a link to the GitHub release you created in the testbed merge request.
