@@ -1,5 +1,4 @@
 package edu.arizona.tomcat.Mission;
-
 import com.microsoft.Malmo.Schemas.PosAndDirection;
 import edu.arizona.tomcat.Messaging.TomcatClientServerHandler;
 import edu.arizona.tomcat.Messaging.TomcatMessageData;
@@ -19,6 +18,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
+import net.minecraft.client.Minecraft;
+import edu.arizona.tomcat.Events.ForgeEventHandler;
+import net.minecraftforge.client.ClientCommandHandler;
+
+import java.io.*;
 
 public class ZombieMission extends Mission {
 
@@ -27,12 +31,16 @@ public class ZombieMission extends Mission {
 
     private UUID[] villagersIds;
     private int numberOfVillagersSaved;
+    private String portID = "";
+    private int counter = 0;
+
 
     public ZombieMission() {
         super();
         this.id = ID.ZOMBIE;
         this.numberOfVillagersSaved = 0;
         this.createVillagersIDs();
+
     }
 
     @Override
@@ -40,6 +48,7 @@ public class ZombieMission extends Mission {
         super.init(world);
         this.initializer = new ZombieMissionInitializer(
             this.levelOfDifficulty, this.villagersIds, this.drawingHandler);
+
     }
 
     public int getNumberOfVillagersSaved() {
@@ -50,6 +59,7 @@ public class ZombieMission extends Mission {
     protected void beforePhaseTrasition() {
         // No action to be taken
     }
+
 
     @Override
     protected void afterLastPhaseCompletion() {
@@ -105,6 +115,47 @@ public class ZombieMission extends Mission {
     }
 
     /**
+     * Goal is to run the "/publish" command to open it to LAN
+     * and get the portID
+     * Print portID to the terminal
+     */
+    private void lanID() {
+
+        if (counter == 0) {
+            Minecraft.getMinecraft().player.sendChatMessage("/publish");
+            System.out.println("-----------------------------------------------------> OPENING TO LAN");
+        }
+        /**
+        if (counter == 1) {
+            try {
+                BufferedReader br = new BufferedReader(new FileReader("/tmp/shambhavisingh/tomcat/Minecraft.log"));
+                try {
+                    while ((portID = br.readLine()) != null) {
+                        if (portID.contains("[Server thread /INFO]: [tomcat: Local game hosted on port ")) {
+                            System.out.println("-----------------------------------------------------> GOT IT");
+                            System.out.println("----------------------------------------------------->" + portID);
+                            portID = portID.substring(68);
+                            break;
+                        }
+                    }
+                    br.close();
+                } catch (FileNotFoundException e) {
+                    System.out.println("-----------------------------------------------------> FILE NOT FOUND");
+                    e.printStackTrace();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("-----------------------------------------------------> IOE");
+            }
+            System.out.println("-----------------------------------------------------> GOT IT RIGHT HERE");
+            System.out.println(portID);
+        }
+        */
+
+    }
+
+
+    /**
      * Create unique IDs for each one of the villagers
      */
 
@@ -118,6 +169,14 @@ public class ZombieMission extends Mission {
     @Override
     protected void updateScene(World world) {
         this.initializer.init(world);
+
+        boolean isHost = System.getenv("IS_HOST").equals("1")? true: false;
+        if(isHost && portID.equals("")) {
+            //ForgeEventHandler addCommand = ForgeEventHandler.getInstance();
+            //addCommand.addToWhitelist("publish");
+            lanID();
+        }
+        counter++;
     }
 
     @Override
@@ -172,7 +231,7 @@ public class ZombieMission extends Mission {
     }
 
     @Override
-    protected void onPlayerDeath(EntityPlayer plauer) {
+    protected void onPlayerDeath(EntityPlayer player) {
         this.onTimeOut();
     }
 }

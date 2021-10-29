@@ -32,9 +32,10 @@ options_description load_options() {
         "Level of difficulty.\n"
         "  3: Easy\n"
         "  5: Medium\n"
-        "  7: Hard")("time_limit",
-                     value<unsigned int>()->default_value(20),
-                     "Time limit for mission (in seconds).")(
+        "  7: Hard")(
+        "time_limit",
+        value<unsigned int>()->default_value(20),
+        "Time limit for mission (in seconds).")(
         "self_report_interval",
         value<unsigned int>()->default_value(180),
         "Self-report prompt interval time (in seconds).")(

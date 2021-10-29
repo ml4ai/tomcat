@@ -17,6 +17,9 @@ import edu.arizona.tomcat.Utils.Converter;
 import edu.arizona.tomcat.Utils.MinecraftServerHelper;
 import edu.arizona.tomcat.Utils.MinecraftVanillaAIHandler;
 import edu.arizona.tomcat.World.DrawingHandler;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,6 +59,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     protected long initialWorldTime;
     protected long worldTimeOnPause;
     protected long pausedTime;
+    protected String numberOfPlayers;
     protected DIFFICULTY levelOfDifficulty;
     protected DrawingHandler drawingHandler;
     protected EmotionHandler.Emotion currentEmotion;
@@ -66,7 +70,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     protected MissionInitializer initializer;
     private ForgeEventHandler forgeEventHandler =
         ForgeEventHandler.getInstance();
-
+    private String dmPath = "config.json";
     /**
      * Abstract constructor for initialization of the drawing handler
      */
@@ -80,6 +84,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
         this.missionSentToClients = false;
         this.entitiesToRemove = new HashMap<Entity, Long>();
         MinecraftForge.EVENT_BUS.register(this);
+
     }
 
     @SubscribeEvent
@@ -148,6 +153,16 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     public void update(World world) {
         // These two initializations need to be here because the clients are not
         // yet ready in the init method in a multiplayer setting
+        /*
+        BufferedReader reader = null;
+        reader = Files.newBufferedReader(Paths.get(this.dmPath));
+        while((numberOfPlayers = reader.readLine()) != null){
+            if(numberOfPlayers.contains("numberOfPlayers")){
+                System.out.println("------------------------------------>" + numberOfPlayers);
+                break;
+            }
+
+         */
         this.initMissionOnClients();
         if (this.missionPaused) {
             this.freezeWorld(world);
@@ -543,6 +558,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
     setSelfReportPromptTimeInSeconds(long selfReportPromptTimeInSeconds) {
         this.selfReportPromptTimeInSeconds = selfReportPromptTimeInSeconds;
     }
+    
 
     /**
      * Defines the time interval to wait until prompting a self-report screen to
@@ -550,7 +566,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
      * @param selfReportPromptTimeInSeconds - Time to wait until show a
      * self-report screen
      */
-    public void setLevelOfDifficulty(int levelOfDifficulty) {
+    public void setLevelOfDifficulty(int levelOfDifficulty) {x
         if (levelOfDifficulty <= 3) {
             this.levelOfDifficulty = DIFFICULTY.EASY;
         }

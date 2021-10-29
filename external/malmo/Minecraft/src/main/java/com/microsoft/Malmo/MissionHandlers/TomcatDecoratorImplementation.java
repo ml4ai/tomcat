@@ -8,6 +8,8 @@ import edu.arizona.tomcat.Mission.MissionHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
 
 /**
@@ -42,6 +44,7 @@ public class TomcatDecoratorImplementation
             this.decorator.getTimeLimitInSeconds().intValue(),
             this.decorator.getSelfReportPromptTimeInSeconds().intValue(),
             this.decorator.getLevelOfDifficulty().intValue());
+
     }
 
     @Override

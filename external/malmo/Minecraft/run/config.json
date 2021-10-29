@@ -1,0 +1,9 @@
+{
+  "devmode": false,
+  "numberOfPlayers": 2,
+  "whitelist": [
+    "setblock",
+    "fill",
+    "publish"
+  ]
+}
