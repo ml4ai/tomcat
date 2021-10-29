@@ -1,4 +1,0 @@
-include entrainment_webapp/schema.sql
-graft entrainment_webapp/static
-graft entrainment_webapp/templates
-global-exclude *.pyc
