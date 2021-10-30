@@ -20,6 +20,7 @@ import json
 from dateutil.parser import parse
 import argparse
 import paho.mqtt.client as mqtt
+import pytz
 
 MQTTC = mqtt.Client()
 
@@ -65,8 +66,9 @@ if __name__ == "__main__":
                 messages.append(jline)
 
         print("Sorting messages...")
+        utc=pytz.UTC
         sorted_messages = sorted(
-            messages, key=lambda x: parse(x["header"]["timestamp"])
+            messages, key=lambda x: parse(x["header"]["timestamp"]).replace(tzinfo=utc)
         )
 
         print(f"Publishing {len(sorted_messages)} messages...")

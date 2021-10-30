@@ -566,7 +566,7 @@ public abstract class Mission implements FeedbackListener, PhaseListener {
      * @param selfReportPromptTimeInSeconds - Time to wait until show a
      * self-report screen
      */
-    public void setLevelOfDifficulty(int levelOfDifficulty) {x
+    public void setLevelOfDifficulty(int levelOfDifficulty) {
         if (levelOfDifficulty <= 3) {
             this.levelOfDifficulty = DIFFICULTY.EASY;
         }

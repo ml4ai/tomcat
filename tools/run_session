@@ -34,6 +34,9 @@ if [[ ! $(pgrep -l mosquitto | head -n1 | cut -d' ' -f2) == mosquitto ]]; then
     "$MOSQUITTO" &> ${TOMCAT_TMP_DIR}/mosquitto.log &
 fi
 
+# Run port_grabber script to detect the port the server is using
+
+
 # On macOS, uuidgen produces uppercase UUIDS, so we pipe the output
 # through 'tr' to get uniform behavior on macOS and Linux.
 SESSION_UUID=$(uuidgen | tr '[:upper:]' '[:lower:]')
@@ -54,8 +57,6 @@ SPEC_VERSION=$("$TOMCAT"/build/bin/getSpecVersion --spec "$TOMCAT"/docs/spec.yml
     "$SPEC_VERSION" > "$SESSION_OUTPUT_DIR"/metadata.json
 
 if [[ $? -ne 0 ]]; then exit 1; fi
-
-port_file="$TOMCAT/tools/port_grabber.sh"
 
 start_av_recording() {
     ffmpeg\
@@ -143,6 +144,21 @@ kill_av_recording_and_mosquitto_sub() {
     pkill mosquitto_sub
 }
 
+start_port_grabber() {
+    # Monitor port open for connections
+    "${TOMCAT}"/tools/port_grabber.sh & pid_port_grabber=$!
+    echo "Monitoring lan port. Process ID = ${pid_port_grabber}"
+}
+
+kill_port_grabber() {
+    ps ${pid_port_grabber} >& /dev/null
+    if [[ $? -eq 0 ]]; then
+      echo "Killing port grabber process ${pid_port_grabber}"
+      kill -15 ${pid_port_grabber} >& /dev/null
+      sleep 2
+      kill -9 ${pid_port_grabber} >& /dev/null
+    fi
+}
 
 # Function to cleanup things on exit or keyboard interrupt.
 session_cleanup() {
@@ -170,8 +186,8 @@ session_cleanup() {
 
 
 mission_cleanup() {
-
     kill_av_recording_and_mosquitto_sub
+    kill_port_grabber
     echo "Checking output files..."
 
     files_to_check=("messages.txt")
@@ -210,9 +226,7 @@ user_interrupt() {
 trap user_interrupt SIGINT SIGTERM
 
 
-"$port_file" &
-{
-    do_mission() {
+do_mission() {
     export CURRENT_MISSION="$1"
     echo " "
     echo "Running mission ${CURRENT_MISSION} in ${TOMCAT}."
@@ -228,6 +242,8 @@ trap user_interrupt SIGINT SIGTERM
         cleanup
         exit 1
     fi
+
+    start_port_grabber
 
     runMission_args="--mission ${CURRENT_MISSION}\
                      --record_observations\
@@ -246,7 +262,7 @@ trap user_interrupt SIGINT SIGTERM
     # Publish the Malmo observation messages to the message bus on the
     # topic observations/state.
     "${TOMCAT}"/build/bin/runMission\
-    $runMission_args\
+    ${runMission_args}\
     2> "${mission_log}" &
     pid_runMission=$!
 
@@ -276,7 +292,7 @@ trap user_interrupt SIGINT SIGTERM
         echo " "
     fi
 }
-}
+
 echo TOMCAT_DEBUG_ECHO: $TOMCAT_DEBUG_ECHO
 if (( DO_TUTORIAL_MISSION )); then
     do_mission 0

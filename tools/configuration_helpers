@@ -310,6 +310,7 @@ configure_session() {
     set_local_configuration
     detect_ci
     detect_os
+    set_java_home
     if (( ENABLE_FFMPEG )); then
         __configure_webcam
         __configure_audio_recording

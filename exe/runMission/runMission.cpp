@@ -135,6 +135,7 @@ int main(int argc, const char* argv[]) {
         }
     }
     else {
+        cerr << "Error with mission parameters";
         return EXIT_FAILURE;
     }
 
