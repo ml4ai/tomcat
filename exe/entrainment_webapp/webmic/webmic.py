@@ -15,27 +15,27 @@ app = Flask(__name__)
 
 @app.route("/")
 def main():
-    return render_template("index_0.html", ws_url=ws_url)
+    return render_template("first_page.html", ws_url=ws_url)
 
-@app.route("/index_0.html")
-def zeroth_page():
-    return render_template("index_0.html", ws_url=ws_url)
-
-@app.route("/index_1.html")
+@app.route("/first_page.html")
 def first_page():
-    return render_template("index_1.html",ws_url=ws_url)
+    return render_template("first_page.html" ,ws_url = ws_url)
 
-@app.route("/index_2.html")
+@app.route("/second_page.html")
 def second_page():
-    return render_template("index_2.html",ws_url=ws_url)
+    return render_template("second_page.html",ws_url=ws_url)
 
-@app.route("/index_3.html")
+@app.route("/third_page.html")
 def third_page():
-    return render_template("index_3.html",ws_url=ws_url)
+    return render_template("third_page.html",ws_url=ws_url)
 
-@app.route("/index_4.html")
+@app.route("/fourth_page.html")
 def fourth_page():
-    return render_template("index_4.html",ws_url=ws_url)
+    return render_template("fourth_page.html",ws_url=ws_url)
+
+@app.route("/fifth_page.html")
+def fifth_page():
+    return render_template("fifth_page.html",ws_url=ws_url)
 
 
 
