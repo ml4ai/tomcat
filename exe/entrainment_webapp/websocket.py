@@ -38,8 +38,11 @@ async def consumer_handler(websocket, path):
     if os.path.exists(f"recordings/participant_{participant_id}.wav") :
         os.remove(f"recordings/participant_{participant_id}.wav")
 
+    if os.path.exists(f"recordings") == False:
+        os.mkdir("recordings")
 
     with SoundFile(
+
         f"recordings/participant_{participant_id}.wav",
         "w",
         sample_rate,
