@@ -29,8 +29,8 @@ tell spacesLibrary
 end tell
 
 -- Run webapp
-do shell script "python " & TOMCAT_DIRECTORY_PATH & "/exe/entrainment_webapp/websocket.py > /dev/null 2>&1 &"
-do shell script "python " & TOMCAT_DIRECTORY_PATH & "/exe/entrainment_webapp/webmic/webmic.py > /dev/null 2>&1 &"
+do shell script "cd " & TOMCAT_DIRECTORY_PATH & "/exe/entrainment_webapp/webmic; python webmic.py; > /dev/null 2>&1 &"
+do shell script "cd " & TOMCAT_DIRECTORY_PATH & "/exe/entrainment_webapp; python server.py; > /dev/null 2>&1 &"
 
 -- Open Chrome
 tell application "Google Chrome"
