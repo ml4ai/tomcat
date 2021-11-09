@@ -1,12 +1,17 @@
 #/bin/bash
 
-if [ ! -d "compiled" ] 
-then
-	mkdir compiled
-fi
+# Get directory of script
+SOURCE="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
-#Compile config library
-osacompile -o compiled/config_library.scpt config_library.scpt
+pushd $SOURCE/..
+	if [ ! -d "compiled" ] 
+	then
+		mkdir compiled
+	fi
 
-#Compile spaces library
-osacompile -o compiled/spaces_library.scpt spaces_library.scpt
+	#Compile config library
+	osacompile -o compiled/config_library.scpt libraries/config_library.scpt
+
+	#Compile spaces library
+	osacompile -o compiled/spaces_library.scpt libraries/spaces_library.scpt
+popd $SOURCE

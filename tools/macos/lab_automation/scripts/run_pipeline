@@ -1,10 +1,15 @@
 #/bin/bash
 
-# Compile Libraries
-./compile_libraries
+# Get directory of script
+SOURCE="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
-# Launch Minecraft and Client Map
-./start_minecraft
+pushd $SOURCE/..
+	# Compile Libraries
+	scripts/compile_libraries
 
-# Launch Speech Task Webapp
-./start_entrainment_webapp
+	# Launch Minecraft and Client Map
+	./start_minecraft
+
+	# Launch Speech Task Webapp
+	#./start_entrainment_webapp
+popd
