@@ -11,5 +11,8 @@ pushd $SOURCE/..
 	./start_minecraft
 
 	# Launch Speech Task Webapp
-	#./start_entrainment_webapp
+	./start_entrainment_webapp
+
+	# Launch Physio Programs
+	./start_physio_programs
 popd
