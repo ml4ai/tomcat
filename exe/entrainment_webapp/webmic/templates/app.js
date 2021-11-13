@@ -80,23 +80,7 @@ class PersistentSocket {
 let socket,
     sampleRate;
 
-document.getElementById("connectButton").onclick = function() {
-    // Get parameters from URL query string
-    const params = new URLSearchParams(window.location.search);
-    const StopButton = document.getElementById('stop');
-    const participantId = params.get("id");
-    let ID = document.getElementById('participantId').value.toString();
 
-    StopButton.addEventListener('click', function () {
-        context.close()
-    });
-    var context = getAudioContext();
-    var destination = "{{ ws_url }}" +
-                      "?id=" + ID +
-                      "&sampleRate=" + context.sampleRate;
-    socket = new PersistentSocket(destination);
-    initRecording(context);
-};
 
 //================= CONFIG =================
 // Stream Audio
