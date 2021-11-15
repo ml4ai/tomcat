@@ -1,0 +1,63 @@
+<style>
+    body{
+        line-height: 30px;
+	width:78%;
+}
+</style>
+  <body>
+
+
+    <header style="font-size: 21px;font-family: Serif;">
+        <h1 class="mt-5" style="background-color: gold;text-align: center;width: 135%;font-size: 30px">ToMCAT Study</h1>
+        <h2 style="font-family:Serif;font-size: 30px;text-align: center;width: 135%">Task-2: Map Task</h2>
+        <h3 style="font-family:Serif;font-size: 25px;text-align: center;width: 135%">Instructions:</h3>
+        When you press ‘start recording’ and enter your ID number, the map for this map task task will appear. Please proceed with the map task once you are ready.
+
+        </header>
+    <div></div>
+    <main>
+
+<button  id = "connectButton" type="button" >Start Recording</button>
+
+        <label for="participantId">Enter your ID number:</label>
+<input type="number" id="participantId" name="ID"
+       min="1" max="100">
+<br>
+Recording: <span id="connectedIndicator">No</span>
+<br>
+
+<span id="transcript"></span>
+        </main>
+  </body>
+<body>    </body>
+<div ID="exp" style="visibility: hidden">
+<img src="/static/maptask.jpg" >
+
+
+</div>
+<main><button id="stop" >Stop Recording</button></main>
+<p>
+    Please go ahead and click ‘Next’ to move on. <a href="end_page.html">Next</a>
+</p>
+    <p><a href = "task2_intro.html">Back</a></p>
+
+<script>
+    document.getElementById("connectButton").onclick = function() {
+    // Get parameters from URL query string
+    const params = new URLSearchParams(window.location.search);
+    const StopButton = document.getElementById('stop');
+    const participantId = params.get("id");
+    let ID = document.getElementById('participantId').value.toString();
+
+    StopButton.addEventListener('click', function () {
+        context.close()
+    });
+    var context = getAudioContext();
+    var destination = "{{ ws_url }}" +
+                      "?id=" + ID + "Task2" +
+                      "&sampleRate=" + context.sampleRate;
+    socket = new PersistentSocket(destination);
+    initRecording(context);
+};
+    {% include 'app.js' %}
+</script>
