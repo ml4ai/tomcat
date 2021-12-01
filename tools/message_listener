@@ -1,0 +1,64 @@
+#!/usr/bin/env python
+
+# Author: Minh Duong (minhhongduong@email.arizona.edu)
+
+import os
+import json
+from dateutil.parser import parse
+import argparse
+import paho.mqtt.client as mqtt
+
+class Listener:
+    def __init__(self, host, port, server):
+        self.host = host
+        self.port = port
+        self.server = server
+
+    def on_message(self, client, userdata, message):
+        port_dict = json.loads(message.payload)
+        port = port_dict['port_id']
+    
+        cmd = "python port_forwarder start " + self.server + " " + str(port)
+        os.system(cmd)
+
+        self.display_port_number(port)
+
+    def display_port_number(self, port):
+        # open a black window (not full screen) (800x600)
+        # display the port number in the middle in white
+        pass
+
+    def listen(self):
+        client = mqtt.Client()
+        client.connect(self.host, port = self.port)
+        client.on_message = self.on_message
+        client.subscribe("lan_port_id")
+        print("Waiting for a port to be published on topic lan_port_id...")
+        client.loop_forever()
+
+if __name__ == "__main__":
+    # Argument parsing
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "-m",
+        "--host",
+        help="Host that the mosquitto message broker is running on.",
+        default="localhost",
+    )
+    parser.add_argument(
+        "-p",
+        "--port",
+        type=int,
+        help="Port that the mosquitto message broker is running on.",
+        default=1883,
+    )
+    parser.add_argument(
+        "-s",
+        "--server",
+        help="Target server.",
+        default="localhost",
+    )
+    args = parser.parse_args()
+
+    listener = Listener(args.host, args.port, args.server)
+    listener.listen()
