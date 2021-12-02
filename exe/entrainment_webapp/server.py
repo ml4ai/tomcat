@@ -35,15 +35,15 @@ async def consumer_handler(websocket, path):
     audio_stream = AudioStream()
 
 
-    if os.path.exists(f"recordings/participant_{participant_id}.wav") :
-        os.remove(f"recordings/participant_{participant_id}.wav")
+    if os.path.exists(f"webmic/recordings/participant_{participant_id}.wav") :
+        os.remove(f"webmic/recordings/participant_{participant_id}.wav")
 
-    if os.path.exists(f"recordings") == False:
-        os.mkdir("recordings")
+    if os.path.exists(f"webmic/recordings") == False:
+        os.mkdir("webmic/recordings")
 
     with SoundFile(
 
-        f"recordings/participant_{participant_id}.wav",
+        f"webmic/recordings/participant_{participant_id}.wav",
         "w",
         sample_rate,
         n_channels,
