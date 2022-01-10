@@ -9,7 +9,8 @@
     linktocpage=true,
     breaklinks=true,
     linkcolor=RoyalBlue,
-    urlcolor=RoyalBlue
+    urlcolor=RoyalBlue,
+    citecolor=RoyalBlue
 ]{hyperref}
 \def\sectionautorefname{§}
 
@@ -68,7 +69,9 @@
 \checkandfixthelayout
 
 % Bibliography management
-\usepackage{biblatex}
+\usepackage[%
+    style=authoryear-comp
+]{biblatex}
 \addbibresource{bibliography.bib}
 
 % ======================================================================
@@ -84,69 +87,37 @@
 
 \chapter{Introduction}
 \textbf{Adarsh Pyarelal}
-\section{Structure}
+
+\section{Purpose and structure}
+\begin{itemize}
+    \item What is the purpose of this preregistration document? Talk about how
+        each of the preregistrations is meant to serve as a `seedling' for a
+        paper.
+    \item How is the document structured?
+\end{itemize}
+
 \section{Author contributions}
+\begin{itemize}
+    \item Describe the authorship process and attribution method.
+\end{itemize}
+
+\section{Overview}
+\begin{itemize}
+    \item What is the broad challenge we are trying to address with the work
+        described in these preregistrations?
+    \item Describe the architecture of the ToMCAT ASI and ACs. Provide one or
+        more architecture diagrams.
+    \item Give a brief summary of the preregistrations and how they contribute
+        to the overall architecture.
+\end{itemize}
 % Talk about structure of preregistration document, purpose (paper seedlings),
 % author contributions.
 
-\chapter{Dialogue act classification}
-\textbf{Ruihong Huang}
-\section{Introduction}
-
-\begin{itemize}
-    \item Why is dialogue act classification a useful capability for an AI
-        agent? How does it contribute to machine theory of mind/machine theory
-        of teams?
-    \item What are the existing state of the art approaches to this problem?
-        Cite relevant papers.
-\end{itemize}
-
-\section{Approach}
-\begin{itemize}
-    \item What is our approach to dialogue act classification in study 3?
-        Provide details including:
-        \begin{itemize}
-            \item What data is required for this work? If any of the required
-                inputs are present in the table of Study 3 variables in the
-                \href{https://docs.google.com/document/d/1GF7VsNF9R95IAaj6mVZUDV2mAX5ok1Bh6Tcm8zDpIkg/edit#heading=h.1ksv4uv}{TA3
-                Study 3 preregistration document (table 3)}, please list those
-                variables with the standardized verbose variable names in the table.
-        \end{itemize}
-    \item Why do we believe it will improve upon the state of the art?
-\end{itemize}
-
-\section{Evaluation}
-
-\chapter{Interdependence detection}
-\section{Introduction}
-\section{Approach}
-\section{Evaluation}
-
-\chapter{Multimodal sentiment analysis}
-\textbf{John Culnan}
-\section{Introduction}
-Previous work: \cite{culnan-etal-2021-ire}
-\section{Approach}
-\section{Evaluation}
-
-\chapter{Online entrainment detection}
-\textbf{Meghavarshini Krishnaswamy, Andrew Wedel, Adam Ussishkin}
-\section{Introduction}
-\section{Approach}
-\section{Evaluation}
-
-\chapter{Online multi-agent plan recognition}
-\textbf{Loren Champlin}
-\section{Introduction}
-\section{Approach}
-\section{Evaluation}
-
-\chapter{Probabilistic modeling of team dynamics}
-\textbf{Paulo Soares, Kobus Barnard, Emily Butler}
-\section{Introduction}
-\section{Approach}
-\subsection{Model}
-\section{Evaluation}
+\input{sections/da_classification}
+\input{sections/interdependence_detection}
+\input{sections/entrainment_detection}
+\input{sections/plan_recognition}
+\input{sections/probabilistic_modeling}
 
 % hypotheses
 % - TMM model can predict behavior
