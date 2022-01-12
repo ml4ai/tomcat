@@ -27,6 +27,7 @@ Steps for deploying a component to the TA3 testbed
   files if you have different ones for Linux and macOS) in your agent directory
   under the `Agents` directory. The agent version number should match the
   version you just deployed to the Gitlab container registry.
+- Update the `releaseNotes.md` (located in the top-level `testbed` directory) file with a summary of the changes.
 - Push your changes to the testbed upstream repository
 - Check the changes to the code and make sure your edits are there.
 - Go to the testbed repo webpage in your browser, and then create a merge
