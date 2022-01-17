@@ -5,9 +5,13 @@
     \item Why is this a useful capability for an AI
         agent? How does it contribute to machine theory of mind/machine theory
         of teams?
+        %% Not sure, maybe we need some inout here from the theory of mind people here?
+        %% - Remo
     \item What are the existing state of the art approaches to this problem
         (cite relevant papers), and what are their limitations? 
+        %% Same as above
     \item What is our approach, and how will it address those limitations?
+        %% 
 \end{itemize}
 
 \section{Approach}
@@ -19,11 +23,19 @@
                 \href{https://docs.google.com/document/d/1GF7VsNF9R95IAaj6mVZUDV2mAX5ok1Bh6Tcm8zDpIkg/edit#heading=h.1ksv4uv}{TA3
                 Study 3 preregistration document (table 3)}, please list those
                 variables with the standardized verbose variable names in the table.
+                %% V1 = MinecraftEntity_Event_Dialogue_Event_Dialogagent
         \end{itemize}
 \end{itemize}
 
 \section{Evaluation}
-\begin{itemize}
-    \item How will we evaluate our approach?
+We will evaluate via manual evaluation by human annotators. We will hire human annotators to evaluate a representative chunk of utterances. Annotators will receive transcripts with Event Extractions available for each utterance. We then ask them to evaluate whether the present Event Extraction Labels are precise and whether any labels are \emph{missing} in the Event Extractions. This way we can calculate precision and recall for a chunk of data, allowing us to calculate a representative F1 score.
+We will also run a seperate evaluation for precision,\footnote{For reasons of economy, we restrict this evaluation to precision. Our expert team-members can judge produced labels for precision at a much higher speed than they can annotate utterances for labels.} done by team members who are familiar with our dialog agent labels.
+\subsection{Potential Evaluation Problems}
+There are two potential issues we may face with this mode of evaluation. 
+
+Annotators may be primed by presence of extraction labels. If an annotator is asked to decide whether utterance X qualifies for label Y, they are more likely to assing label Y if the dialog agent already has done so. We could potentially avoid this effect by seperating the tasks of annotation and evaluation. Annotators are asked to only annotate and the evaluation is then done automatically by comparing label output of the dialog agent to the label output of the annotator. Here we run the risk of clerical errors by annotators muddying the data. Since the argument structure of our dialog agent labels can be quite complex, we believe that our proposed course of action is the lesser evil.
+
+At time of writing the dialog agent contains 149 event labels it can assign. A possible risk of hired annotators is that they simply cannot reliably evaluate that number of labels. Even with a provided annotated list of labels (containing small descriptions), we will have to assume that some false negatives\footnote{Due to the setup, we anticipate very few false positives and a larger amount of false negatives in the human evaluation. We assume that it is easier for an annotator to review whether a complex label is correct than to assign a complex label where none is given.} will occur. For this reason, we will run a seperate evaluation for precision only, done by expert members of the team who should have high familiarity with our labels.
+
 \end{itemize}
 
