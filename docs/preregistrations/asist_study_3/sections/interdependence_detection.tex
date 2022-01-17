@@ -1,29 +1,55 @@
-\chapter{Interdependence detection}
+\chapter{Speech Analysis and Event Extraction}
 \textbf{Remo Nitschke, Yuwei Wang}
 \section{Introduction}
-\begin{itemize}
-    \item Why is this a useful capability for an AI
-        agent? How does it contribute to machine theory of mind/machine theory
-        of teams?
-    \item What are the existing state of the art approaches to this problem
-        (cite relevant papers), and what are their limitations? 
-    \item What is our approach, and how will it address those limitations?
-\end{itemize}
+
+For humans, verbal and non-verbal communication are insightful indicators of social processes. Within the scope of ASIST, team-building and communication within teams is of heightened interest. We maintain, that in order to develop a model of human agents and human teams, surveying verbal communication is essential. Our DialogAgent is designed with this goal in mind: Extract information from player dialog that can be useful in order to create a model of the player's mental state.
+
+An AI agent needs to formulate a model of the humans and teams it advises. In order to construct such a model, language data provides essential insights. As raw natural language data is ``messy", we believe it is necessary to pre-process and vet this data into chunks that are informative and pertinent to the AI. This is done via our DialogAgent which provides Dialog Act Labels and Event Extractions for player utterances. The Dialog Act Labels inform on the \emph{type} of utterance, whereas the Event Extractions inform on the semantic \emph{content} of the utterance. In this section we discuss the engine that constructs the Event Extractions.
+
+
 
 \section{Approach}
+
+%% Note to Adarsh: I think we could insert the diagram from Study 2 prereg here (page 2)
+
+Raw communication audio captured during the experiments is processed through our SpeechAnalyzer which provides transcriptions (transcriptions: MinecraftEntity_Observation_Asr_Speechanalyzer). The transcriptions are run through our DialogAgent which contains an extensive rule-based event extraction system (ODIN) \citep{valenzuela-escarcega-etal-2016-odins}. Much of modern information extraction and event extraction is done via neural nets, see \citet{Ahmad2021GATEGA,Du2020EventEB}. We are opting for a rule-based system because:
+\begin{enumerate}
+ \item It allows us to be more flexible with our extraction labels. We can quickly add or remove labels if we see the need to do so.
+ \item It allows for high precision for the labels we are interested in. Rules can be crafted to be precise (albeit at the cost of coverage).
+ \item Rules do not require us to create, maintain, and annotate extensive datasets. This is especially pertinent within the scope of ASIST, as domain specific terms can change between Studies. It would be near impossible for us to train a neural agent on the new terms of the next study before the data is published.
+\end{enumerate}
+
+Our rule based framework returns nested labels and their spans. The nesting of labels represents the argument structure of the event. The extracted events are returned as JSON objects (event extractions:MinecraftEntity_Event_Dialogue_Event_Dialogagent). 
+
+
+%% Note to Adarsh: This is just a draft writeup if we want the IDC in the pre-reg:
+%% Event extractions are then entered into a queue together with TAMU dialog act classifier labels for the utterance, player location data (location data: MinecraftEntity_Event_Location_Locationmonitor), victim triage status (triage status: MinecraftEntity_Event_Triage_Simulator), and rubble interactions (rubble interaction: MinecraftEntity_Event_Rubbledestroyed_Simulator). This queue feeds our InterdependenceAgent which aims to recognize interconnected utterances (speech acts), such as: players asking for help and other players providing said help, players negotiating plans, players responding negatively or positively to commands.
+
+\subsection{List of Variables}
 \begin{itemize}
-    \item Provide details on our approach, including:
-        \begin{itemize}
-            \item What data is required for this work? If any of the required
-                inputs are present in the table of Study 3 variables in the
-                \href{https://docs.google.com/document/d/1GF7VsNF9R95IAaj6mVZUDV2mAX5ok1Bh6Tcm8zDpIkg/edit#heading=h.1ksv4uv}{TA3
-                Study 3 preregistration document (table 3)}, please list those
-                variables with the standardized verbose variable names in the table.
-        \end{itemize}
+    \item Input Variables
+    \begin{itemize}
+        \item transcriptions: MinecraftEntity_Observation_Asr_Speechanalyzer
+        %the following only if we want idc in pre reg:
+        %\item location data: MinecraftEntity_Event_Location_Locationmonitor
+        % \item triage status: MinecraftEntity_Event_Triage_Simulator
+        %\item rubble interaction: MinecraftEntity_Event_Rubbledestroyed_Simulator
+    \end{itemize}
+    \item Output Variables
+    \begin{itemize}
+        \item Event Extractions: MinecraftEntity_Event_Dialogue_Event_Dialogagent
+    \end{itemize}
 \end{itemize}
+
 
 \section{Evaluation}
-\begin{itemize}
-    \item How will we evaluate our approach?
-\end{itemize}
+We will evaluate via manual evaluation by human annotators. We will hire human annotators to evaluate a representative chunk of utterances. Annotators will receive transcripts with Event Extractions available for each utterance. We then ask them to evaluate whether the present Event Extraction Labels are precise and whether any labels are \emph{missing} in the Event Extractions. This way we can calculate precision and recall for a chunk of data, allowing us to calculate a representative F1 score.
+We will also run a seperate evaluation for precision,\footnote{For reasons of economy, we restrict this evaluation to precision. Our expert team-members can judge produced labels for precision at a much higher speed than they can annotate utterances for labels.} done by team members who are familiar with our dialog agent labels.
+\subsection{Potential Evaluation Problems}
+There are two potential issues we may face with this mode of evaluation. 
 
+Annotators may be primed by presence of extraction labels. If an annotator is asked to decide whether utterance X qualifies for label Y, they are more likely to assing label Y if the dialog agent already has done so. We could potentially avoid this effect by seperating the tasks of annotation and evaluation. Annotators are asked to only annotate and the evaluation is then done automatically by comparing label output of the dialog agent to the label output of the annotator. Here we run the risk of clerical errors by annotators muddying the data. Since the argument structure of our dialog agent labels can be quite complex, we believe that our proposed course of action is the lesser evil.
+
+At time of writing the dialog agent contains 149 event labels it can assign. A possible risk of hired annotators is that they simply cannot reliably evaluate that number of labels. Even with a provided annotated list of labels (containing small descriptions), we will have to assume that some false negatives\footnote{Due to the setup, we anticipate very few false positives and a larger amount of false negatives in the human evaluation. We assume that it is easier for an annotator to review whether a complex label is correct than to assign a complex label where none is given.} will occur. For this reason, we will run a seperate evaluation for precision only, done by expert members of the team who should have high familiarity with our labels.
+
+\end{itemize}
