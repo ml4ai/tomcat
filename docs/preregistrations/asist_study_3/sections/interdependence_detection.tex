@@ -1,6 +1,7 @@
-\chapter{Interdependence detection}
+\chapter{Speech Analysis and Event Extraction}
 \textbf{Remo Nitschke, Yuwei Wang}
 \section{Introduction}
+
 \begin{itemize}
     \item Why is this a useful capability for an AI
         agent? How does it contribute to machine theory of mind/machine theory
@@ -15,6 +16,18 @@
 \end{itemize}
 
 \section{Approach}
+
+%% Note to Adarsh: I think we could insert the diagram from Study 2 prereg here (page 2)
+
+Raw communication audio captured during the experiments is processed through our SpeechAnalyzer which provides transcriptions (transcriptions: MinecraftEntity_Observation_Asr_Speechanalyzer). The transcriptions are run through our DialogAgent which contains an extensive rule-based event extraction system. The extracted events are returned as JSON objects (event extractions:MinecraftEntity_Event_Dialogue_Event_Dialogagent). 
+
+
+%% Note to Adarsh: This is just a draft writeup if we want the IDC in the pre-reg:
+%% Event extractions are then entered into a queue together with TAMU dialog act classifier labels for the utterance, player location data (location data: MinecraftEntity_Event_Location_Locationmonitor), victim triage status (triage status: MinecraftEntity_Event_Triage_Simulator), and rubble interactions (rubble interaction: MinecraftEntity_Event_Rubbledestroyed_Simulator). This queue feeds our InterdependenceAgent which aims to recognize interconnected utterances (speech acts), such as: players asking for help and other players providing said help, players negotiating plans, players responding negatively or positively to commands.
+
+
+Input: MinecraftEntity_Observation_Asr_Speechanalyzer
+Output: MinecraftEntity_Event_Dialogue_Event_Dialogagent
 \begin{itemize}
     \item Provide details on our approach, including:
         \begin{itemize}
