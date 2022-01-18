@@ -49,16 +49,27 @@ capability that we believe is important for artificial social intelligence, and
 is currently integrated or will be integrated in the near future into our ASI
 agent that will be evaluated in ASIST study 3 or future ASIST experiments.
 
-\begin{itemize}
-    \item Describe the architecture of the ToMCAT ASI and ACs. Provide one or
-        more architecture diagrams.
-    \item Give a brief summary of the preregistrations and how they contribute
-        to the overall architecture.
-\end{itemize}
+For ASIST Study 3, we will deploy three Dockerized components. Two of them can
+be classified as `analytical components' in the parlance of the ASIST program,
+and one as an `ASI', i.e. an AI agent imbued with artificial social
+intelligence. The current delineation between ACs and ASIs has been made based
+on container boundaries. In principle, the two ACs devoted to speech and
+natural language processing (see \autoref{fig:nlp-architecture}) could be
+bundled and deployed as part of our ASI, but we opt to keep them separate as we
+expect that the resulting modularity will be beneficial for future
+applications.
 
 \begin{figure}
     \centering
     \includegraphics[width=6.5in]{images/nlp_architecture}
     \caption{Architecture of our multi-participant dialogue analysis system.}
+    \label{fig:nlp-architecture}
 \end{figure}
 
+%Give a brief summary of the preregistrations and how they contribute to the overall architecture.
+
+The component preregistrations in this document span a broad spectrum of
+research topics, but work together to form a cohesive suite of ASI
+capabilities. 
+
+% TODO complete this paragraph
