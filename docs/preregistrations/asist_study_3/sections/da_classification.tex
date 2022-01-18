@@ -61,6 +61,7 @@ Cloud Speech API to convert the utterances into text. This provides noisy text
 in return which might harm the performance of the DA classifier. To compensate
 for this, we will use acoustic features from the raw speech as well.
 
+\section{Approach}
 A Bi-LSTM based baseline model is already trained with clean transcripts. The
 same model is trained again with the ASR generated transcripts and the
 performance dropped significantly due to ASR noise and the highly overlapping
