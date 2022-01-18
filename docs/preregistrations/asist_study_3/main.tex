@@ -16,12 +16,15 @@
 
 
 % Fonts
-\usepackage[osf]{newpxtext}
-\usepackage{newpxmath}
-\usepackage[utf8]{inputenc}
+\usepackage{fontspec}
+\setmainfont[Numbers = {OldStyle, Proportional}]{TeX Gyre Pagella}
+
+%\usepackage{amssymb}
+\usepackage{unicode-math}
+\setmathfont{TeX Gyre Pagella Math}
 
 % Typography
-\usepackage{microtype}
+\usepackage[tracking]{microtype}
 
 % Images
 \usepackage{graphicx}

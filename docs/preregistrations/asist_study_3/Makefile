@@ -1,2 +1,2 @@
 all:
-	latexmk -pdflatex=xelatex -pdf -outdir=build main.tex
+	latexmk -lualatex -outdir=build main.tex
