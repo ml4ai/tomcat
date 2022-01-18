@@ -1,0 +1,42 @@
+\chapter{Closed-loop communication detection}
+\label{ch:clc}
+\textbf{Yuwei Wang}
+
+\section{Introduction}
+
+\section{Approach}
+
+We are going to build a rule-based dialogue agent to detect Closed-loop communication events and test the agent using the TA3 dataset.
+The existing ToMCAT dialogue system is currently able to analyze spoken
+conversations in real-time, to extract entities and events of interest with a
+powerful rule-based framework \citep{valenzuela-escarcega-etal-2016-odins}, classify
+dialogue acts, and detect sentiment. To extend this system and detect
+closed-loop communication, we are going to create a separate worker and detect
+the relevant labels based on the three phases of closed-loop communication
+within several speech turns, namely, the call-out, check-back, and
+closing-the-loop phases \citep{Hargestam.ea:2013}. For example, we can
+navigate the call-out phase with Odin labels like ``HelpRequest", and then look
+for the ``Move" label in the next 5 speech turns, if we can detect this
+check-back phase, keep on looking for additional Closed-loop phase with an
+``Acknowledge" label, and return a ``CallOut-CheckBack-Close" extraction. If the
+Closed-loop phase is not detected at all, a “CallOut-CheckBack” extraction can
+be returned. If both phase 2 and phase 3 are not detected, exit the detecting
+loop after 5 steps from the call-out phase and return ``OpenLoop" extraction.
+
+We will firstly implement this agent with a small set of test data, extracted
+from the TA3 dataset, and then evaluate the performance of this agent for its
+precision, recall, and F1 score, and then explore whether data-driven methods
+could improve the score of its performance.
+
+\section{Evaluation}
+
+The agent of the Closed-loop communication detector will be evaluated with a
+subset from the TA3 transcripts. Human annotators will be trained to detect the
+3 phases of closed-loop communication, and whether the loop is closed or not.
+The interrater reliability of the annotators will be measured using Cohen’s
+kappa. When the percentage of agreement between annotators reaches 80\%, and K
+> .70, annotators could start work on the formal annotation of the data. The
+precision, recall, and F1 score will be used to evaluate the performance of our
+primary closed-loop communication agent. When improvement on the agent applied,
+we can further compare the performance of our primary rule-based model with the
+improved model of rule-based and data-driven combined.

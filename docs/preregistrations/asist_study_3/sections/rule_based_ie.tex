@@ -1,12 +1,26 @@
-\chapter{Speech Analysis and Event Extraction}
-\textbf{Remo Nitschke, Yuwei Wang}
+\chapter{Rule-based entity and event extraction}
+\label{ch:rule_based_ie}
+\textbf{Remo Nitschke}
+
 \section{Introduction}
 
-For humans, verbal and non-verbal communication are insightful indicators of social processes. Within the scope of ASIST, team-building and communication within teams is of heightened interest. We maintain, that in order to develop a model of human agents and human teams, surveying verbal communication is essential. Our DialogAgent is designed with this goal in mind: Extract information from player dialog that can be useful in order to create a model of the player's mental state.
+For humans, verbal and non-verbal communication are insightful indicators of
+social processes. Within the scope of ASIST, team-building and communication
+within teams is of heightened interest. We maintain, that in order to develop a
+model of human agents and human teams, surveying verbal communication is
+essential. Our DialogAgent is designed with this goal in mind: Extract
+information from player dialog that can be useful in order to create a model of
+the player's mental state.
 
-An AI agent needs to formulate a model of the humans and teams it advises. In order to construct such a model, language data provides essential insights. As raw natural language data is ``messy", we believe it is necessary to pre-process and vet this data into chunks that are informative and pertinent to the AI. This is done via our DialogAgent which provides Dialog Act Labels and Event Extractions for player utterances. The Dialog Act Labels inform on the \emph{type} of utterance, whereas the Event Extractions inform on the semantic \emph{content} of the utterance. In this section we discuss the engine that constructs the Event Extractions.
-
-
+An AI agent needs to formulate a model of the humans and teams it advises. In
+order to construct such a model, language data provides essential insights. As
+raw natural language data is ``messy", we believe it is necessary to
+pre-process and vet this data into chunks that are informative and pertinent to
+the AI. This is done via our DialogAgent which provides Dialog Act Labels and
+Event Extractions for player utterances. The Dialog Act Labels inform on the
+\emph{type} of utterance, whereas the Event Extractions inform on the semantic
+\emph{content} of the utterance. In this section we discuss the engine that
+constructs the Event Extractions.
 
 \section{Approach}
 
