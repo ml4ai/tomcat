@@ -1,13 +1,42 @@
 \chapter{Entrainment detection}
-\textbf{Meghavarshini Krishnaswamy, Andrew Wedel, Adam Ussishkin}
-\section{Introduction}
-    Entrainment (also referred to as `synchronization', `coordination', or `alignment') is the adaption of verbal and non-verbal actions by conversation partners to more closely resemble one another \parencite{borrie2014}. Its role in communication as been described as ``key for supporting important pragmatic aspects of conversation, including taking turns, interaction smoothness, building rapport, fostering social bonds, and maintaining interpersonal relationships''\parencite{borrie2019}. A time-sensitive cooperative task utilizing verbal communication would require participants to optimize their information channel. This makes entrainment a useful metric for assessing the degree of cooperation among team-mates.
+\label{ch:entrainment}
 
-    In speech, entrainment has been observed and analysed using rhythm and timing, pitch, vowel identity and acoustic features \parencite{reichel2018prosodic,borrie2019syncing}. Speech entrainment occurs in correlation with entrainment at other linguistic levels such as an increase in shared vocabulary and sentence structures \parencite{rahimi2017entrainment}. The focus of previous literature has mainly been on two-party conversations, while entrainment in multi-party conversations has mainly focussed on work-level and sentence-level entrainment. 
+\textbf{Meghavarshini Krishnaswamy, Andrew Wedel, Adam Ussishkin} \section{Introduction}
 
-    Recent research on vocal entrainment has shifted from regression-based analysis to encoding-based neural networks for a few reasons: to model the non-linear relationship between vocalic features, to capture the complexity and diversity of both entrainment and disentrainment \parencite{nasir2020}. Further, most of research on entrainment uses manually processed transcriptions and gold labels for the extraction of vocalic features. 
+    Entrainment (also referred to as `synchronization', `coordination', or
+    `alignment') is the adaption of verbal and non-verbal actions by
+    conversation partners to more closely resemble one another
+    \parencite{borrie2014}. Its role in communication as been described as
+    ``key for supporting important pragmatic aspects of conversation, including
+    taking turns, interaction smoothness, building rapport, fostering social
+    bonds, and maintaining interpersonal relationships''\parencite{borrie2019}.
+    A time-sensitive cooperative task utilizing verbal communication would
+    require participants to optimize their information channel. This makes
+    entrainment a useful metric for assessing the degree of cooperation among
+    team-mates.
 
-    In order to expand the scale of research, it is important to examine the effect of ASR-based feature extraction on entrainment detection. Our approach will focus on assessing entrainment detection with ASR-based transcripts, and to see if the existing setup is conducive to observing entrainment as a function of duration. 
+    In speech, entrainment has been observed and analysed using rhythm and
+    timing, pitch, vowel identity and acoustic features
+    \parencite{reichel2018prosodic,borrie2019syncing}. Speech entrainment
+    occurs in correlation with entrainment at other linguistic levels such as
+    an increase in shared vocabulary and sentence structures
+    \parencite{rahimi2017entrainment}. The focus of previous literature has
+    mainly been on two-party conversations, while entrainment in multi-party
+    conversations has mainly focussed on work-level and sentence-level
+    entrainment. 
+
+    Recent research on vocal entrainment has shifted from regression-based
+    analysis to encoding-based neural networks for a few reasons: to model the
+    non-linear relationship between vocalic features, to capture the complexity
+    and diversity of both entrainment and disentrainment \parencite{nasir2020}.
+    Further, most of research on entrainment uses manually processed
+    transcriptions and gold labels for the extraction of vocalic features. 
+
+    In order to expand the scale of research, it is important to examine the
+    effect of ASR-based feature extraction on entrainment detection. Our
+    approach will focus on assessing entrainment detection with ASR-based
+    transcripts, and to see if the existing setup is conducive to observing
+    entrainment as a function of duration. 
 
 \section{Approach}
 \begin{itemize}
@@ -22,19 +51,28 @@
                \item MinecraftEntity\_Event\_Dialogue\_Event\_Dialogagent
         \end{itemize}
     \item Our objectives (in decreasing order of priority):
-\begin{itemize} 
-    \item Build a working statistical model for assessing entrainment while utilizing the vocalic features extracted by the ToMCAT-speechanalyzer system.         
-    \item Train an encoding-based model using the methodology outlined in \textcite{nasir2020} for a simple classification task that identifies entrainment and directionality in a given conversation.
-    \item Assess if the current Speechanalyzer system is set up to study entrainment trends as a time series. 
-\end{itemize} 
+    \begin{itemize} 
+        \item Build a working statistical model for assessing entrainment while
+            utilizing the vocalic features extracted by the ToMCAT-speechanalyzer
+            system.         
+        \item Train an encoding-based model using the methodology outlined in
+            \textcite{nasir2020} for a simple classification task that identifies
+            entrainment and directionality in a given conversation.
+        \item Assess if the current Speechanalyzer system is set up to study
+            entrainment trends as a time series. 
+    \end{itemize} 
 \end{itemize}
 
 \section{Evaluation}
+
 Evaluation would be done along three lines:
+
 \begin{itemize}
-
-    \item Localized entrainment: Are there observable similarities between utterances by different speakers that occurred next to each other than utterances at different points in time?
-    \item Global entrainment: after a given period of objective-oriented speech, are participants aligned more closely? 
-    \item Entrainment along a time-series: is the current setup able to calculate trends in entrainment as a function of time?
-
+    \item Localized entrainment: Are there observable similarities between
+        utterances by different speakers that occurred next to each other than
+        utterances at different points in time?
+    \item Global entrainment: after a given period of objective-oriented
+        speech, are participants aligned more closely? 
+    \item Entrainment along a time-series: is the current setup able to
+        calculate trends in entrainment as a function of time?
 \end{itemize}

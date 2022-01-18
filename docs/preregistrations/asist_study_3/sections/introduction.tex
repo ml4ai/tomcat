@@ -52,8 +52,8 @@ is currently integrated or will be integrated in the near future into our ASI
 agent that will be evaluated in ASIST study 3 or future ASIST experiments.
 
 For ASIST Study 3, we will deploy three Dockerized components. Two of them can
-be classified as `analytical components' in the parlance of the ASIST program,
-and one as an `ASI', i.e. an AI agent imbued with artificial social
+be classified as `analytical components' (ACs) in the parlance of the ASIST
+program, and one as an `ASI', i.e. an AI agent imbued with artificial social
 intelligence. The current delineation between ACs and ASIs has been made based
 on container boundaries. In principle, the two ACs devoted to speech and
 natural language processing (see \autoref{fig:nlp-architecture}) could be
@@ -72,6 +72,30 @@ applications.
 
 The component preregistrations in this document span a broad spectrum of
 research topics, but work together to form a cohesive suite of ASI
-capabilities. 
+capabilities.
 
-% TODO complete this paragraph
+Chapters \ref{ch:rule_based_ie} and \ref{ch:sentiment_analysis} focus on
+gleaning information from individual natural language utterances. Chapter
+\ref{ch:rule_based_ie} discusses our rule-based system for extracting entities
+and events from natural language text, and \autoref{ch:sentiment_analysis}
+describes our approach to detecting sentiment and personality traits using both
+text and speech information.
+
+In chapters \ref{ch:da_classification} and \ref{ch:clc}, we move
+beyond analyzing utterances individually to analyzing them \emph{in context},
+that is, we consider windows containing multiple utterances to detect
+longer-range phenomena. Chapter \ref{ch:da_classification} uses context to identify
+dialogue acts, and \autoref{ch:clc} uses it to automatically detect
+closed-loop communication. Chapter \ref{ch:da_classification} also discusses
+using multiple modalities (speech and text) to classify dialogue acts.
+
+In \autoref{ch:entrainment}, we discuss our approach to detecting real-time
+conversational alignment, or \emph{entrainment} between teammates. In
+\autoref{ch:plan_recognition}, we describe our approach to multi-agent plan
+recognition. The analyses described in this chapter will be performed offline
+for ASIST Study 3, but we expect them to be integrated into online components
+for ASIST Study 4 and future experiments.
+
+Finally, we describe our probabilistic modeling approach to machine theory of
+mind (MToM) and machine theory of teams (MToT) in \autoref{ch:pgm}, along with
+our planned interventions in ASIST Study 3 and their rationale.
