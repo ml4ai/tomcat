@@ -19,6 +19,8 @@
 \usepackage{fontspec}
 \setmainfont[Numbers = {OldStyle, Proportional}]{TeX Gyre Pagella}
 
+\usepackage{amsmath}
+\DeclareMathOperator*{\argmax}{arg\,max}
 %\usepackage{amssymb}
 \usepackage{unicode-math}
 \setmathfont{TeX Gyre Pagella Math}
@@ -35,8 +37,6 @@
 
 % The calc package is required for calculating readable text widths
 \usepackage{calc}
-
-\DeclareMathOperator*{\argmax}{arg\,max}
 
 % Set outer and spine margins A wide right margin is chosen both for legibility
 % of the typeblock and for tight integration of marginfigures and margin
@@ -118,6 +118,7 @@
 
 % Bibliography management
 \usepackage[%
+    backend=bibtex,
     style=numeric-comp,
     sorting=none,
     natbib
