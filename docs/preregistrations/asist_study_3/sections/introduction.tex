@@ -26,15 +26,38 @@ the performance of artificial agents, not about theories about the world (e.g.,
 human behaviour) and/or (ii) the evaluation of the evidence for or against the
 hypotheses is not doing using NHST.
 
-For this reason, while we endeavor to specify our analyses and capabilities in
-as much detail as we can, we do not specify specific social science-style
-hypotheses to be tested\footnote{Whether TA1 performers \emph{should} be
-    specifying formal, quantitative hypotheses is another discussion.}.
+For these reasons, for each capability or analysis we declare, we also specify
+what form of hypothesis is tested and what the evaluation method will be. Our
+hypotheses take three forms:
 
-One of the primary motivations for this preregistration document from the
-perspective of a TA1 performer team is to accelerate the writing up of
-manuscripts for publication by using the structure provided by the
-preregistration process to plan ahead for publications.
+\begin{enumerate}
+
+    \item Hypotheses about technical performance take the following form:
+        Including component \emph{X} will do better for achieving \emph{Y} than
+        not including \emph{X}, where \emph{X} is some technological component
+        (e.g., algorithm, system component, modeling approach) and \emph{Y} is
+        some specified goal such as prediction accuracy or computational
+        efficiency.
+
+    \item Hypotheses about human behavior in the context of experimental
+        manipulation take the following form: Doing \emph{X} to group A will
+        predict more/less \emph{Y} compared to group B with no \emph{X}, where
+        \emph{X} is an experimental manipulation applied to one group (A) but
+        not to a comparison group (B) and \emph{Y} is an outcome variable
+        (either latent or observed).
+
+    \item Hypotheses about human behavior without experimental manipulation
+        take the following form: Entities (e.g., individuals, teams) with
+        higher \emph{X} will do more/less \emph{Y} than entities with lower
+        \emph{X}, where \emph{X} is a predictor variable (either latent or
+        observed) and \emph{Y} is an outcome variable (either latent or
+        observed).
+
+\end{enumerate}
+
+By specifying our hypotheses in one of these forms and being explicit about the evaluation to be used for each we will achieve the central goals of preregistration, which are avoiding post-diction and hindsight bias by not 1) using the same data to generate and test a hypothesis, and 2) not “cherry-picking” results after the fact from a large set of unspecified analyses or procedures.
+
+Another primary motivation for this preregistration document from the perspective of a TA1 team is to accelerate the writing of manuscripts for publication by using the structure provided by the preregistration process to plan ahead for publications. Each of the sections in this document is a ‘component preregistation’ that corresponds to a publication ‘seedling’, with the content optimized for what we call ‘copy-pasteability’, that is, the ability to be copied verbatim into a manuscript for publication with minimal changes. This is intended to reduce duplicate effort between writing up preregistrations and publications.
 
 Each of the sections in this document is a `component preregistation' that
 corresponds to a publication `seedling', with the content optimized for what we
