@@ -78,6 +78,10 @@ the Zombie Invasion.
 
 The Github repository for ToMCAT can be found `here <https://github.com/ml4ai/tomcat>`_.
 
+**We're hiring!** We are looking to hire a research programmer for the project!
+Please see the job posting for details:
+https://arizona.csod.com/ux/ats/careersite/4/home/requisition/8678?c=arizona
+
 **Presentations**
 
 `Site Visit, 9-25-2019 <http://vanga.sista.arizona.edu/tomcat/presentations/site_visit_09_25_2019.pdf>`_
