@@ -11,6 +11,7 @@ Class Documentation
 
 
 .. doxygenclass:: Entity
+   :project: ToMCAT
    :members:
    :protected-members:
    :undoc-members:
