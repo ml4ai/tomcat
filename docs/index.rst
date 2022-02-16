@@ -26,7 +26,7 @@ local agents communicate with their respective humans, as well as with a
 This site contains documentation and resources on the overall project, as well
 as the C++ API and links to the Java API and other ToMCAT components.
 
-The ToMCAT project is funded by a 4-year, $7.5M DARPA grant as part of the Artificial
+The ToMCAT project is funded by a 4.5 year, $7.5M DARPA grant as part of the Artificial
 Social Intelligence for Successful Teams (ASIST) program.
 
 The images below show a few example screenshots from our inaugural 'mission',
