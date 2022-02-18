@@ -4,7 +4,7 @@ Steps for deploying a component to the TA3 testbed
 - Create a PR into the master/main branch with the necessary changes. Also, if
   there is a file like `VERSION` or `version.sbt` that contains the version
   number, bump the version number in it appropriately.
-    - Bugfixes will increment the patch version number (e.g. 3.0.1 to 3.0.2). 
+    - Bugfixes will increment the patch version number (e.g. 3.0.1 to 3.0.2).
     - New backwards-compatible features and improvements will update the minor
       version number (e.g. 3.0.1 to 3.1.0). Here, backwards-compatible means
       that the format of the JSON messages either does not change or changes in
@@ -33,3 +33,5 @@ Steps for deploying a component to the TA3 testbed
 - Go to the testbed repo webpage in your browser, and then create a merge
   request to merge your branch into the `develop` branch.
 - Include a link to the GitHub release you created in the testbed merge request.
+- Once the your merge request is accepted, delete the branch in the testbed
+  repo.
