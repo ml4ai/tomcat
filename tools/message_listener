@@ -7,6 +7,7 @@ import json
 from dateutil.parser import parse
 import argparse
 import paho.mqtt.client as mqtt
+from tkinter import * 
 
 class Listener:
     def __init__(self, host, port, server):
@@ -25,7 +26,19 @@ class Listener:
 
     def display_port_number(self, port):
         # open a black window (not full screen) (800x600)
-        # display the port number in the middle in white
+        # display the port number in the middle in white, black background
+        # centered, bigger
+        g = Tk()
+        g.title('Port id')
+        g.geometry("800x600")
+
+        t = Text(g, font =("Helvetica", 150), pady = 220, fg = "white", bg = "black")
+        t.tag_configure("tag_name", justify='center')
+        t.insert("1.0", str(port))
+        t.tag_add("tag_name", "1.0", "end")
+        t.pack()
+
+        g.mainloop()
         pass
 
     def listen(self):
