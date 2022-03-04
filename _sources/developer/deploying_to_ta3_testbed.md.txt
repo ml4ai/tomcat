@@ -24,14 +24,16 @@ Steps for deploying a component to the TA3 testbed
   branch.
 - Make a new branch off of `develop`
 - Update the agent version number in the `docker-compose.yml` file (or multiple
-  files if you have different ones for Linux and macOS) in your agent directory
-  under the `Agents` directory. The agent version number should match the
-  version you just deployed to the Gitlab container registry.
-- Update the `releaseNotes.md` (located in the top-level `testbed` directory) file with a summary of the changes.
+  file(s) in your agent directory under the `Agents` directory. The agent
+  version number should match the version you just deployed to the Gitlab
+  container registry.
+- Update the `releaseNotes.md` (located in the top-level `testbed` directory)
+  file with a summary of the changes.
 - Push your changes to the testbed upstream repository
 - Check the changes to the code and make sure your edits are there.
 - Go to the testbed repo webpage in your browser, and then create a merge
   request to merge your branch into the `develop` branch.
-- Include a link to the GitHub release you created in the testbed merge request.
+- Include a link to the GitHub release you created in the testbed merge
+  request.
 - Once the your merge request is accepted, delete the branch in the testbed
   repo.

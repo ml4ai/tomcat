@@ -117,15 +117,17 @@ latest code, then run <code class="docutils literal notranslate"><span class="pr
 branch.</p></li>
 <li><p>Make a new branch off of <code class="docutils literal notranslate"><span class="pre">develop</span></code></p></li>
 <li><p>Update the agent version number in the <code class="docutils literal notranslate"><span class="pre">docker-compose.yml</span></code> file (or multiple
-files if you have different ones for Linux and macOS) in your agent directory
-under the <code class="docutils literal notranslate"><span class="pre">Agents</span></code> directory. The agent version number should match the
-version you just deployed to the Gitlab container registry.</p></li>
-<li><p>Update the <code class="docutils literal notranslate"><span class="pre">releaseNotes.md</span></code> (located in the top-level <code class="docutils literal notranslate"><span class="pre">testbed</span></code> directory) file with a summary of the changes.</p></li>
+file(s) in your agent directory under the <code class="docutils literal notranslate"><span class="pre">Agents</span></code> directory. The agent
+version number should match the version you just deployed to the Gitlab
+container registry.</p></li>
+<li><p>Update the <code class="docutils literal notranslate"><span class="pre">releaseNotes.md</span></code> (located in the top-level <code class="docutils literal notranslate"><span class="pre">testbed</span></code> directory)
+file with a summary of the changes.</p></li>
 <li><p>Push your changes to the testbed upstream repository</p></li>
 <li><p>Check the changes to the code and make sure your edits are there.</p></li>
 <li><p>Go to the testbed repo webpage in your browser, and then create a merge
 request to merge your branch into the <code class="docutils literal notranslate"><span class="pre">develop</span></code> branch.</p></li>
-<li><p>Include a link to the GitHub release you created in the testbed merge request.</p></li>
+<li><p>Include a link to the GitHub release you created in the testbed merge
+request.</p></li>
 <li><p>Once the your merge request is accepted, delete the branch in the testbed
 repo.</p></li>
 </ul>
