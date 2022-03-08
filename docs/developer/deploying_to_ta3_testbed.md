@@ -23,10 +23,10 @@ Steps for deploying a component to the TA3 testbed
 - Run `git pull` to make sure you have the latest code from the `develop`
   branch.
 - Make a new branch off of `develop`
-- Update the agent version number in the `docker-compose.yml` file (or multiple
-  file(s) in your agent directory under the `Agents` directory. The agent
-  version number should match the version you just deployed to the Gitlab
-  container registry.
+- Update the agent version number in the `docker-compose.yml` file (or `.env`
+  file if you are using that to set the version numbers) in your agent
+  directory under the `Agents` directory. The agent version number should match
+  the version you just deployed to the Gitlab container registry.
 - Update the `releaseNotes.md` (located in the top-level `testbed` directory)
   file with a summary of the changes.
 - Push your changes to the testbed upstream repository
