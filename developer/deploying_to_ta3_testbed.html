@@ -116,10 +116,10 @@ latest code, then run <code class="docutils literal notranslate"><span class="pr
 <li><p>Run <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">pull</span></code> to make sure you have the latest code from the <code class="docutils literal notranslate"><span class="pre">develop</span></code>
 branch.</p></li>
 <li><p>Make a new branch off of <code class="docutils literal notranslate"><span class="pre">develop</span></code></p></li>
-<li><p>Update the agent version number in the <code class="docutils literal notranslate"><span class="pre">docker-compose.yml</span></code> file (or multiple
-file(s) in your agent directory under the <code class="docutils literal notranslate"><span class="pre">Agents</span></code> directory. The agent
-version number should match the version you just deployed to the Gitlab
-container registry.</p></li>
+<li><p>Update the agent version number in the <code class="docutils literal notranslate"><span class="pre">docker-compose.yml</span></code> file (or <code class="docutils literal notranslate"><span class="pre">.env</span></code>
+file if you are using that to set the version numbers) in your agent
+directory under the <code class="docutils literal notranslate"><span class="pre">Agents</span></code> directory. The agent version number should match
+the version you just deployed to the Gitlab container registry.</p></li>
 <li><p>Update the <code class="docutils literal notranslate"><span class="pre">releaseNotes.md</span></code> (located in the top-level <code class="docutils literal notranslate"><span class="pre">testbed</span></code> directory)
 file with a summary of the changes.</p></li>
 <li><p>Push your changes to the testbed upstream repository</p></li>
