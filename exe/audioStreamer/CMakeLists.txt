@@ -18,14 +18,13 @@ find_package(
     log
     REQUIRED
 )
-#find_package(SMILEapi REQUIRED)
-#find_package(portaudio REQUIRED)
 add_executable(audioStreamer 
 	audioStreamer.cpp	
 )
 target_include_directories(audioStreamer PRIVATE 
 	${portaudio_INCLUDE_DIRS}
-	${Boost_INCLUDE_DIRS})
+	${Boost_INCLUDE_DIRS}
+)
 target_link_libraries(
     audioStreamer
     ${Boost_LIBRARIES}
