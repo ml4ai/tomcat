@@ -339,7 +339,9 @@ int main(int argc, char* argv[])
 
     printf("testfile\n"); fflush(stdout);
 
-    auto const port = argv[1];
+    auto const host = argv[1];
+    auto const port = argv[2];
+    auto const text = argv[3];
 
     net::io_context ioc;
 
@@ -388,10 +390,9 @@ int main(int argc, char* argv[])
     {
         Pa_Sleep(1000);
         printf("index = %d\n", data.frameIndex ); fflush(stdout);
-        std::make_shared<session>(ioc)->run("localhost", port, "sth here");
+        std::make_shared<session>(ioc)->run(host, port, text)
 
-        // Run the I/O service. The call will return when
-        // the socket is closed.
+        // Run the I/O service
         ioc.run();
 
     }
