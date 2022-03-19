@@ -6,10 +6,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_definitions(BOOST_DATE_TIME_POSIX_TIME_STD_CONFIG)
 
-#add_subdirectory(portaudio portbinary EXCLUDE_FROM_ALL)
-#find_package(portaudio)
-
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+find_package(portaudio REQUIRED)
 
 add_definitions(-DBOOST_LOG_DYN_LINK)
 find_package(
@@ -19,21 +17,19 @@ find_package(
     log
     REQUIRED
 )
+
 add_executable(audioStreamer 
 	audioStreamer.cpp	
 )
-target_include_directories(audioStreamer PRIVATE 
-	${portaudio_INCLUDE_DIRS}
-	${Boost_INCLUDE_DIRS}
-    "/opt/local/include" # workaround for Macports portaudio
-)
 
-# Workaround for MacPorts portaudio
-target_link_directories(audioStreamer PRIVATE "/opt/local/lib")
+target_include_directories(audioStreamer PRIVATE 
+    ${portaudio_INCLUDE_DIR}
+	${Boost_INCLUDE_DIRS}
+)
 
 target_link_libraries(
     audioStreamer
     ${Boost_LIBRARIES}
-    portaudio
+    ${portaudio_LIBRARY}
     -pthread
 )
