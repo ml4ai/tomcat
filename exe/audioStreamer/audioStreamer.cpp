@@ -10,6 +10,7 @@
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/beast/core.hpp>
 #include <boost/beast/websocket.hpp>
+#include <boost/log/trivial.hpp>
 #include <boost/program_options.hpp>
 
 #include "portaudio.h"
@@ -27,7 +28,9 @@ void signal_callback_handler(int signum) { RUNNING = false; }
 
 class WebsocketClient {
   public:
-    WebsocketClient(string ws_host, string ws_port, string player_name,
+    WebsocketClient(string ws_host,
+                    string ws_port,
+                    string player_name,
                     int sample_rate) {
         this->ws_host = ws_host;
         this->ws_port = ws_port;
@@ -114,9 +117,13 @@ int main(int argc, char* argv[]) {
         variables_map vm;
         store(parse_command_line(argc, argv, desc), vm);
         notify(vm);
+        if (vm.count("help")) {
+            cout << desc << "\n";
+            return 1;
+        }
     }
     catch (const error& ex) {
-        std::cout << "Error parsing arguments!" << std::endl;
+        BOOST_LOG_TRIVIAL(error) << "Error parsing arguments!";
         return -1;
     }
 
@@ -132,15 +139,15 @@ int main(int argc, char* argv[]) {
     // Initialize PortAudio
     err = Pa_Initialize();
     if (err != paNoError) {
-        std::cout << "Failure initializing PortAudio" << std::endl;
-        std::cout << "Error was: " << Pa_GetErrorText(err) << std::endl;
+        BOOST_LOG_TRIVIAL(error)
+            << "Failure initializing PortAudio: " << Pa_GetErrorText(err);
     }
 
     // Set inputParameters
     inputParameters.device = Pa_GetDefaultInputDevice();
     if (inputParameters.device == paNoDevice) {
-        std::cout << "Failure getting default audio device" << std::endl;
-        std::cout << "Error was: " << Pa_GetErrorText(err) << std::endl;
+        BOOST_LOG_TRIVIAL(error)
+            << "Failure getting default audio device: " << Pa_GetErrorText(err);
     }
     inputParameters.channelCount = 1;
     inputParameters.sampleFormat = paInt16;
@@ -152,13 +159,13 @@ int main(int argc, char* argv[]) {
     err = Pa_OpenStream(
         &stream, &inputParameters, NULL, sample_rate, 8196, NULL, NULL, NULL);
     if (err != paNoError) {
-        std::cout << "Failure initializing PortAudio stream" << std::endl;
-        std::cout << "Error was: " << Pa_GetErrorText(err) << std::endl;
+        BOOST_LOG_TRIVIAL(error) << "Failure initializing PortAudio stream: "
+                                 << Pa_GetErrorText(err);
     }
     err = Pa_StartStream(stream);
     if (err != paNoError) {
-        std::cout << "Failure starting PortAudio stream" << std::endl;
-        std::cout << "Error was: " << Pa_GetErrorText(err) << std::endl;
+        BOOST_LOG_TRIVIAL(error)
+            << "Failure starting PortAudio stream: " << Pa_GetErrorText(err);
     }
 
     while ((err = Pa_IsStreamActive(stream)) == 1 && RUNNING) {
@@ -170,15 +177,15 @@ int main(int argc, char* argv[]) {
     // Stop PortAudio stream
     err = Pa_StopStream(stream);
     if (err != paNoError) {
-        std::cout << "Failure stopping PortAudio stream" << std::endl;
-        std::cout << "Error was: " << Pa_GetErrorText(err) << std::endl;
+        BOOST_LOG_TRIVIAL(error)
+            << "Failure stopping PortAudio stream: " << Pa_GetErrorText(err);
     }
 
     // Shutdown PortAudio
     err = Pa_Terminate();
     if (err != paNoError) {
-        std::cout << "Failure shutting down PortAudio" << std::endl;
-        std::cout << "Error was: " << Pa_GetErrorText(err) << std::endl;
+        BOOST_LOG_TRIVIAL(error)
+            << "Failure shutting down PortAudio: " << Pa_GetErrorText(err);
     }
 
     // Shutdown websocket client
