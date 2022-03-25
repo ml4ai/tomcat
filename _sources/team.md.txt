@@ -27,6 +27,7 @@ Current
 - Md Messal
 - [John Culnan](https://linguistics.arizona.edu/user/john-culnan)
 - [Meghavarshini Krishnaswamy](https://linguistics.arizona.edu/user/meghavarshini-krishnaswamy)
+- Stephen Kim
 - [Justin Lieffers](https://w3.physics.arizona.edu/people/justin-lieffers)
 - [Peter Lovett](https://www.cs.arizona.edu/person/peter-lovett)
 - [Remo Nitschke](https://linguistics.arizona.edu/user/remo-nitschke)
@@ -48,8 +49,9 @@ Current
 
 **Research Programmers**:
 
-- [Vincent Raymond](https://github.com/vincentraymond-ua)
 - [Joseph Astier](https://github.com/jastier)
+- [Vincent Raymond](https://github.com/vincentraymond-ua)
+- [Rick Champlin](https://github.com/rchamplin)
 
 Project Alumni
 --------------
