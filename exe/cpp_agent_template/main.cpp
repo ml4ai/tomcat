@@ -2,37 +2,20 @@
 //
 // This is a Paho MQTT C++ client, sample application.
 //
-// This application is an MQTT publisher/subscriber using the C++
-// asynchronous client interface, demonstrating how you can share a client
-// between multiple threads.
-//
-// The app will count the number of "data" messages arriving at the broker
-// and then emit "events" with updated counts. A data message is any on a
-// "data/#" topic, and counts are emitted on the "events/count" topic. It
-// emits an event count around once every ten data messages.
-//
-// Note that this is a fairly contrived example, and it could be done much
-// more easily in a single thread. It is meant to demonstrate how you can
-// share a client amonst threads if and when that's a proper thing to do.
-//
-// At this time, there is a single callback or consumer queue for all
-// incoming messages, so you would typically only have one thead receiving
-// messages, although it _could_ send messages to multiple threads for
-// processing, perhaps based on the topics. It could be common, however, to
-// want to have multiple threads for publishing.
+// This application is an MQTT subscriber using the C++ asynchronous client
+// interface, employing callbacks to receive messages and status updates.
 //
 // The sample demonstrates:
-//  - Creating a client and accessing it from a shared_ptr<>
-//  - Using one thread to receive incoming messages from the broker and
-//    another thread to publish messages to it.
 //  - Connecting to an MQTT server/broker.
 //  - Subscribing to a topic
-//  - Using the asynchronous consumer
-//  - Publishing messages.
+//  - Receiving messages through the callback API
+//  - Receiving network disconnect updates and attempting manual reconnects.
+//  - Using a "clean session" and manually re-subscribing to topics on
+//    reconnect.
 //
 
 /*******************************************************************************
- * Copyright (c) 2020 Frank Pagliughi <fpagliughi@mindspring.com>
+ * Copyright (c) 2013-2020 Frank Pagliughi <fpagliughi@mindspring.com>
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -53,157 +36,179 @@
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
-#include <memory>
 #include <string>
 #include <thread>
 
 using namespace std;
-using namespace std::chrono;
 
-const std::string DFLT_SERVER_ADDRESS("tcp://localhost:1883");
-const std::string CLIENT_ID("multithr_pub_sub_cpp");
+const string SERVER_ADDRESS("tcp://localhost:1883");
+const string CLIENT_ID("paho_cpp_async_subcribe");
+const string TOPIC("hello");
+
+const int QOS = 1;
+const int N_RETRY_ATTEMPTS = 5;
 
 /////////////////////////////////////////////////////////////////////////////
 
-/**
- * A thread-safe counter that can be used to occasionally signal a waiter on
- * every 10th increment.
- */
-class multithr_counter {
-    using guard = std::unique_lock<std::mutex>;
+// Callbacks for the success or failures of requested actions.
+// This could be used to initiate further action, but here we just log the
+// results to the console.
 
-    size_t count_;
-    bool closed_;
-    mutable bool ready_;
-    mutable std::condition_variable cond_;
-    mutable std::mutex lock_;
+class action_listener : public virtual mqtt::iaction_listener {
+    string name_;
+
+    void on_failure(const mqtt::token& tok) override {
+        cout << name_ << " failure";
+        if (tok.get_message_id() != 0)
+            cout << " for token: [" << tok.get_message_id() << "]" << endl;
+        cout << endl;
+    }
+
+    void on_success(const mqtt::token& tok) override {
+        cout << name_ << " success";
+        if (tok.get_message_id() != 0)
+            cout << " for token: [" << tok.get_message_id() << "]" << endl;
+        auto top = tok.get_topics();
+        if (top && !top->empty())
+            cout << "\ttoken topic: '" << (*top)[0] << "', ..." << endl;
+        cout << endl;
+    }
 
   public:
-    // Declare a pointer type for sharing a counter between threads
-    using ptr_t = std::shared_ptr<multithr_counter>;
-
-    // Create a new thread-safe counter with an initial count of zero.
-    multithr_counter() : count_(0), closed_(false), ready_(false) {}
-
-    // Determines if the counter has been closed.
-    bool closed() const {
-        guard g(lock_);
-        return closed_;
-    }
-
-    // Close the counter and signal all waiters.
-    void close() {
-        guard g(lock_);
-        closed_ = ready_ = true;
-        cond_.notify_all();
-    }
-
-    // Increments the count, and then signals once every 10 messages.
-    void incr() {
-        guard g(lock_);
-        if (closed_)
-            throw string("Counter is closed");
-        if (++count_ % 10 == 0) {
-            ready_ = true;
-            g.unlock();
-            cond_.notify_all();
-        }
-    }
-
-    // This will block the caller until at least 10 new messages received.
-    size_t get_count() const {
-        guard g(lock_);
-        cond_.wait(g, [this] { return ready_; });
-        ready_ = false;
-        return count_;
-    }
+    action_listener(const string& name) : name_(name) {}
 };
 
 /////////////////////////////////////////////////////////////////////////////
 
-// The MQTT publisher function will run in its own thread.
-// It runs until the receiver thread closes the counter object.
-void publisher_func(mqtt::async_client_ptr cli,
-                    multithr_counter::ptr_t counter) {
-    while (true) {
-        size_t n = counter->get_count();
-        if (counter->closed())
-            break;
+/**
+ * Local callback & listener class for use with the client connection.
+ * This is primarily intended to receive messages, but it will also monitor
+ * the connection to the broker. If the connection is lost, it will attempt
+ * to restore the connection and re-subscribe to the topic.
+ */
+class callback : public virtual mqtt::callback,
+                 public virtual mqtt::iaction_listener
 
-        string payload = std::to_string(n);
-        cli->publish("events/count", payload)->wait();
+{
+    // Counter for the number of connection retries
+    int nretry_;
+    // The MQTT client
+    mqtt::async_client& cli_;
+    // Options to use if we need to reconnect
+    mqtt::connect_options& connOpts_;
+    // An action listener to display the result of actions.
+    action_listener subListener_;
+
+    // This deomonstrates manually reconnecting to the broker by calling
+    // connect() again. This is a possibility for an application that keeps
+    // a copy of it's original connect_options, or if the app wants to
+    // reconnect with different options.
+    // Another way this can be done manually, if using the same options, is
+    // to just call the async_client::reconnect() method.
+    void reconnect() {
+        this_thread::sleep_for(chrono::milliseconds(2500));
+        try {
+            cli_.connect(connOpts_, nullptr, *this);
+        }
+        catch (const mqtt::exception& exc) {
+            cerr << "Error: " << exc.what() << endl;
+            exit(1);
+        }
     }
-}
+
+    // Re-connection failure
+    void on_failure(const mqtt::token& tok) override {
+        cout << "Connection attempt failed" << endl;
+        if (++nretry_ > N_RETRY_ATTEMPTS)
+            exit(1);
+        reconnect();
+    }
+
+    // (Re)connection success
+    // Either this or connected() can be used for callbacks.
+    void on_success(const mqtt::token& tok) override {}
+
+    // (Re)connection success
+    void connected(const string& cause) override {
+        cout << "\nConnection success" << endl;
+        cout << "\nSubscribing to topic '" << TOPIC << "'\n"
+             << "\tfor client " << CLIENT_ID << " using QoS" << QOS << "\n"
+             << "\nPress Q<Enter> to quit\n"
+             << endl;
+
+        cli_.subscribe(TOPIC, QOS, nullptr, subListener_);
+    }
+
+    // Callback for when the connection is lost.
+    // This will initiate the attempt to manually reconnect.
+    void connection_lost(const string& cause) override {
+        cout << "\nConnection lost" << endl;
+        if (!cause.empty())
+            cout << "\tcause: " << cause << endl;
+
+        cout << "Reconnecting..." << endl;
+        nretry_ = 0;
+        reconnect();
+    }
+
+    // Callback for when a message arrives.
+    void message_arrived(mqtt::const_message_ptr msg) override {
+        cout << "Message arrived" << endl;
+        cout << "\ttopic: '" << msg->get_topic() << "'" << endl;
+        cout << "\tpayload: '" << msg->to_string() << "'\n" << endl;
+    }
+
+    void delivery_complete(mqtt::delivery_token_ptr token) override {}
+
+  public:
+    callback(mqtt::async_client& cli, mqtt::connect_options& connOpts)
+        : nretry_(0), cli_(cli), connOpts_(connOpts),
+          subListener_("Subscription") {}
+};
 
 /////////////////////////////////////////////////////////////////////////////
 
 int main(int argc, char* argv[]) {
-    string address = (argc > 1) ? string(argv[1]) : DFLT_SERVER_ADDRESS;
+    // A subscriber often wants the server to remember its messages when its
+    // disconnected. In that case, it needs a unique ClientID and a
+    // non-clean session.
 
-    // Create an MQTT client using a smart pointer to be shared among threads.
-    auto cli = std::make_shared<mqtt::async_client>(address, CLIENT_ID);
+    mqtt::async_client cli(SERVER_ADDRESS, CLIENT_ID);
 
-    // Make a counter object also with a shared pointer.
-    auto counter = std::make_shared<multithr_counter>();
+    mqtt::connect_options connOpts;
+    connOpts.set_clean_session(false);
 
-    // Connect options for a persistent session and automatic reconnects.
-    auto connOpts = mqtt::connect_options_builder()
-                        .clean_session(false)
-                        .automatic_reconnect(seconds(2), seconds(30))
-                        .finalize();
+    // Install the callback(s) before connecting.
+    callback cb(cli, connOpts);
+    cli.set_callback(cb);
 
-    auto TOPICS = mqtt::string_collection::create({"data/#", "command"});
-    const vector<int> QOS{0, 1};
+    // Start the connection.
+    // When completed, the callback will subscribe to topic.
 
     try {
-        // Start consuming _before_ connecting, because we could get a flood
-        // of stored messages as soon as the connection completes since
-        // we're using a persistent (non-clean) session with the broker.
-        cli->start_consuming();
+        cout << "Connecting to the MQTT server..." << flush;
+        cli.connect(connOpts, nullptr, cb);
+    }
+    catch (const mqtt::exception& exc) {
+        cerr << "\nERROR: Unable to connect to MQTT server: '" << SERVER_ADDRESS
+             << "'" << exc << endl;
+        return 1;
+    }
 
-        cout << "Connecting to the MQTT server at " << address << "..."
-             << flush;
-        auto rsp = cli->connect(connOpts)->get_connect_response();
-        cout << "OK\n" << endl;
+    // Just block till user tells us to quit.
 
-        // Subscribe if this is a new session with the server
-        if (!rsp.is_session_present())
-            cli->subscribe(TOPICS, QOS);
+    while (tolower(cin.get()) != 'q')
+        ;
 
-        // Start the publisher thread
+    // Disconnect
 
-        std::thread publisher(publisher_func, cli, counter);
-
-        // Consume messages in this thread
-
-        while (true) {
-            auto msg = cli->consume_message();
-
-            if (!msg)
-                continue;
-
-            if (msg->get_topic() == "command" && msg->to_string() == "exit") {
-                cout << "Exit command received" << endl;
-                break;
-            }
-
-            cout << msg->get_topic() << ": " << msg->to_string() << endl;
-            counter->incr();
-        }
-
-        // Close the counter and wait for the publisher thread to complete
-        cout << "\nShutting down..." << flush;
-        counter->close();
-        publisher.join();
-
-        // Disconnect
-
-        cout << "OK\nDisconnecting..." << flush;
-        cli->disconnect();
+    try {
+        cout << "\nDisconnecting from the MQTT server..." << flush;
+        cli.disconnect()->wait();
         cout << "OK" << endl;
     }
     catch (const mqtt::exception& exc) {
-        cerr << exc.what() << endl;
+        cerr << exc << endl;
         return 1;
     }
 
