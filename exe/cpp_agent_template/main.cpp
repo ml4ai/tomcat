@@ -4,13 +4,18 @@
 #include <memory>
 #include <string>
 #include <thread>
+#include <csignal>
+#include <functional>
 
 #include <boost/log/trivial.hpp>
 #include <boost/program_options.hpp>
+#include <boost/json.hpp>
 namespace po = boost::program_options;
+namespace json = boost::json;
 
 using namespace std;
 using namespace std::chrono;
+
 
 void publisher_func(mqtt::async_client_ptr cli) {
     while (true) {
@@ -27,13 +32,17 @@ void subscriber_func(mqtt::async_client_ptr cli) {
             continue;
         }
 
-        cout << msg->get_topic() << ": " << msg->to_string() << endl;
+        json::value jv = json::parse(msg->to_string());
+        cout << jv << endl;
+        //cout << msg->get_topic() << ": " << msg->to_string() << endl;
+
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////
 
 int main(int argc, char* argv[]) {
+
     string mqtt_host;
     int mqtt_port;
     po::options_description desc{"Options"};
@@ -70,8 +79,8 @@ int main(int argc, char* argv[]) {
                         .automatic_reconnect(seconds(2), seconds(30))
                         .finalize();
 
-    auto TOPICS = mqtt::string_collection::create({"data/#", "command"});
-    const vector<int> QOS{0, 1};
+    auto topics = mqtt::string_collection::create({"test"});
+    const vector<int> QOS{2};
 
     try {
         // Start consuming _before_ connecting, because we could get a flood
@@ -86,7 +95,7 @@ int main(int argc, char* argv[]) {
 
         // Subscribe if this is a new session with the server
         if (!rsp.is_session_present()) {
-            cli->subscribe(TOPICS, QOS);
+            cli->subscribe(topics, QOS);
         }
 
         // Start the publisher thread

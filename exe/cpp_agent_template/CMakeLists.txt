@@ -10,6 +10,7 @@ find_package(
     chrono
     program_options
     coroutine
+    json
     log
     REQUIRED
 )
