@@ -1,26 +1,28 @@
 #include "mqtt/async_client.h"
 #include <chrono>
+#include <csignal>
+#include <fstream>
+#include <functional>
 #include <iostream>
 #include <memory>
 #include <string>
 #include <thread>
-#include <csignal>
-#include <functional>
 
+#include "file.hpp"
+#include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/program_options.hpp>
-#include <boost/json.hpp>
+
 namespace po = boost::program_options;
 namespace json = boost::json;
 
 using namespace std;
 using namespace std::chrono;
 
-
 void publisher_func(mqtt::async_client_ptr cli) {
     while (true) {
         this_thread::sleep_for(seconds(1));
-        cli->publish("heartbeats", "heartbeats")->wait();
+        cli->publish("status/agent", "ok")->wait();
     }
 }
 
@@ -34,41 +36,35 @@ void subscriber_func(mqtt::async_client_ptr cli) {
 
         json::value jv = json::parse(msg->to_string());
         cout << jv << endl;
-        //cout << msg->get_topic() << ": " << msg->to_string() << endl;
-
+        // cout << msg->get_topic() << ": " << msg->to_string() << endl;
     }
 }
 
-/////////////////////////////////////////////////////////////////////////////
+json::value parse_json_file(char const* filename) {
+    file f(filename, "r");
+    json::stream_parser p;
+    json::error_code ec;
+    do {
+        char buf[4096];
+        auto const nread = f.read(buf, sizeof(buf));
+        p.write(buf, nread, ec);
+    } while (!f.eof());
+    if (ec)
+        return nullptr;
+    p.finish(ec);
+    if (ec)
+        return nullptr;
+    return p.release();
+}
 
 int main(int argc, char* argv[]) {
 
-    string mqtt_host;
-    int mqtt_port;
-    po::options_description desc{"Options"};
-    desc.add_options()("help,h", "Help screen")(
-        "mqtt_host,t",
-        po::value<string>(&mqtt_host)->default_value("localhost"),
-        "The host address of the MQTT broker")(
-        "mqtt_port,p",
-        po::value<int>(&mqtt_port)->default_value(1883),
-        "The port of the MQTT broker");
+    json::value config = parse_json_file("config.json");
+    cout << config << endl;
+    json::object obj = config.as_object();
 
-    po::variables_map vm;
-    try {
-        po::store(po::parse_command_line(argc, argv, desc), vm);
-    }
-    catch (const exception& e) {
-        BOOST_LOG_TRIVIAL(error) << "Error parsing arguments!" << e.what();
-        return -1;
-    }
-    po::notify(vm);
-    if (vm.count("help")) {
-        cout << desc << "\n";
-        return 1;
-    }
-
-    string address = "tcp://" + mqtt_host + ":" + to_string(mqtt_port);
+    json::string address = "tcp://";
+    address+= obj.at("mqtt_host").as_string();// + ":" + obj.at("mqtt_port").as_uint64();
 
     // Create an MQTT client using a smart pointer to be shared among threads.
     auto cli = make_shared<mqtt::async_client>(address, "agent");
