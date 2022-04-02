@@ -40,34 +40,16 @@ void subscriber_func(mqtt::async_client_ptr cli) {
     }
 }
 
-json::value parse_json_file(char const* filename) {
-    file f(filename, "r");
-    json::stream_parser p;
-    json::error_code ec;
-    do {
-        char buf[4096];
-        auto const nread = f.read(buf, sizeof(buf));
-        p.write(buf, nread, ec);
-    } while (!f.eof());
-    if (ec)
-        return nullptr;
-    p.finish(ec);
-    if (ec)
-        return nullptr;
-    return p.release();
-}
 
 int main(int argc, char* argv[]) {
 
     json::value config = parse_json_file("config.json");
-    cout << config << endl;
-    json::object obj = config.as_object();
 
-    json::string address = "tcp://";
-    address+= obj.at("mqtt_host").as_string();// + ":" + obj.at("mqtt_port").as_uint64();
+    string address = "tcp://" + value_to<string>(config.at("mqtt_host")) + ":" +
+                     to_string(value_to<int>(config.at("mqtt_port")));
 
     // Create an MQTT client using a smart pointer to be shared among threads.
-    auto cli = make_shared<mqtt::async_client>(address, "agent");
+    auto client = make_shared<mqtt::async_client>(address, "agent");
 
     // Connect options for a persistent session and automatic reconnects.
     auto connOpts = mqtt::connect_options_builder()
@@ -82,36 +64,35 @@ int main(int argc, char* argv[]) {
         // Start consuming _before_ connecting, because we could get a flood
         // of stored messages as soon as the connection completes since
         // we're using a persistent (non-clean) session with the broker.
-        cli->start_consuming();
+        client->start_consuming();
 
-        cout << "Connecting to the MQTT server at " << address << "..."
-             << flush;
-        auto rsp = cli->connect(connOpts)->get_connect_response();
-        cout << "OK\n" << endl;
+        BOOST_LOG_TRIVIAL(info) << "Connecting to the MQTT broker at " << address << "...";
+        auto rsp = client->connect(connOpts)->get_connect_response();
+        BOOST_LOG_TRIVIAL(info) << "Connected.";
 
         // Subscribe if this is a new session with the server
         if (!rsp.is_session_present()) {
-            cli->subscribe(topics, QOS);
+            client->subscribe(topics, QOS);
         }
 
         // Start the publisher thread
 
-        thread publisher(publisher_func, cli);
+        thread publisher(publisher_func, client);
 
         // Consume messages in this thread
-        thread subscriber(subscriber_func, cli);
+        thread subscriber(subscriber_func, client);
 
         publisher.join();
         subscriber.join();
 
         // Disconnect
 
-        cout << "OK\nDisconnecting..." << flush;
-        // cli->disconnect();
-        cout << "OK" << endl;
+        BOOST_LOG_TRIVIAL(info) << "Disconnecting...";
+        client->disconnect();
+        BOOST_LOG_TRIVIAL(info) << "Disconnected";
     }
     catch (const mqtt::exception& exc) {
-        cerr << exc.what() << endl;
+        BOOST_LOG_TRIVIAL(error) << exc.what();
         return 1;
     }
 

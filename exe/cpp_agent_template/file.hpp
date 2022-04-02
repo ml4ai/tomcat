@@ -14,154 +14,128 @@
 #include <cstdio>
 #include <string>
 
-class file
-{
+class file {
     FILE* f_ = nullptr;
     long size_ = 0;
 
-    void
-    fail(boost::json::error_code& ec)
-    {
-        ec.assign( errno, boost::json::generic_category() );
+    void fail(boost::json::error_code& ec) {
+        ec.assign(errno, boost::json::generic_category());
     }
 
-public:
-    ~file()
-    {
-        if(f_)
+  public:
+    ~file() {
+        if (f_)
             std::fclose(f_);
     }
 
     file() = default;
 
-    file( file&& other ) noexcept
-        : f_(other.f_)
-    {
-        other.f_ = nullptr;
-    }
+    file(file&& other) noexcept : f_(other.f_) { other.f_ = nullptr; }
 
-    file( char const* path, char const* mode )
-    {
-        open( path, mode );
-    }
+    file(char const* path, char const* mode) { open(path, mode); }
 
-    file&
-    operator=(file&& other) noexcept
-    {
+    file& operator=(file&& other) noexcept {
         close();
         f_ = other.f_;
         other.f_ = nullptr;
         return *this;
     }
 
-    void
-    close()
-    {
-        if(f_)
-        {
+    void close() {
+        if (f_) {
             std::fclose(f_);
             f_ = nullptr;
             size_ = 0;
         }
     }
 
-    void
-    open(
-        char const* path,
-        char const* mode,
-        boost::json::error_code& ec)
-    {
+    void open(char const* path, char const* mode, boost::json::error_code& ec) {
         close();
 #if defined(_MSC_VER)
-# pragma warning( push )
-# pragma warning( disable : 4996 )
+#pragma warning(push)
+#pragma warning(disable : 4996)
 #endif
-        f_ = std::fopen( path, mode );
+        f_ = std::fopen(path, mode);
 #if defined(_MSC_VER)
-# pragma warning( pop )
+#pragma warning(pop)
 #endif
-        if( ! f_ )
+        if (!f_)
             return fail(ec);
-        if( std::fseek( f_, 0, SEEK_END ) != 0)
+        if (std::fseek(f_, 0, SEEK_END) != 0)
             return fail(ec);
-        size_ = std::ftell( f_ );
-        if( size_ == -1 )
-        {
+        size_ = std::ftell(f_);
+        if (size_ == -1) {
             size_ = 0;
             return fail(ec);
         }
-        if( std::fseek( f_, 0, SEEK_SET ) != 0)
+        if (std::fseek(f_, 0, SEEK_SET) != 0)
             return fail(ec);
     }
 
-    void
-    open(
-        char const* path,
-        char const* mode)
-    {
+    void open(char const* path, char const* mode) {
         boost::json::error_code ec;
         open(path, mode, ec);
-        if(ec)
+        if (ec)
             throw boost::json::system_error(ec);
     }
 
-    long
-    size() const noexcept
-    {
-        return size_;
-    }
+    long size() const noexcept { return size_; }
 
-    bool
-    eof() const noexcept
-    {
-        return std::feof( f_ ) != 0;
-    }
+    bool eof() const noexcept { return std::feof(f_) != 0; }
 
     std::size_t
-    read( char* data, std::size_t size, boost::json::error_code& ec)
-    {
-        auto const nread = std::fread( data, 1, size, f_ );
-        if( std::ferror(f_) )
-            ec.assign( errno, boost::json::generic_category() );
+    read(char* data, std::size_t size, boost::json::error_code& ec) {
+        auto const nread = std::fread(data, 1, size, f_);
+        if (std::ferror(f_))
+            ec.assign(errno, boost::json::generic_category());
         return nread;
     }
 
-    std::size_t
-    read( char* data, std::size_t size )
-    {
+    std::size_t read(char* data, std::size_t size) {
         boost::json::error_code ec;
-        auto const nread = read( data, size, ec );
-        if(ec)
+        auto const nread = read(data, size, ec);
+        if (ec)
             throw boost::json::system_error(ec);
         return nread;
     }
 };
 
-inline
-std::string
-read_file( char const* path, boost::json::error_code& ec )
-{
+inline std::string read_file(char const* path, boost::json::error_code& ec) {
     file f;
-    f.open( path, "r", ec );
-    if(ec)
+    f.open(path, "r", ec);
+    if (ec)
         return {};
     std::string s;
-    s.resize( f.size() );
-    s.resize( f.read( &s[0], s.size(), ec) );
-    if(ec)
+    s.resize(f.size());
+    s.resize(f.read(&s[0], s.size(), ec));
+    if (ec)
         return {};
     return s;
 }
 
-inline
-std::string
-read_file( char const* path )
-{
+inline std::string read_file(char const* path) {
     boost::json::error_code ec;
-    auto s = read_file( path, ec);
-    if(ec)
+    auto s = read_file(path, ec);
+    if (ec)
         throw boost::json::system_error(ec);
     return s;
+}
+
+boost::json::value parse_json_file(char const* filename) {
+    file f(filename, "r");
+    boost::json::stream_parser p;
+    boost::json::error_code ec;
+    do {
+        char buf[4096];
+        auto const nread = f.read(buf, sizeof(buf));
+        p.write(buf, nread, ec);
+    } while (!f.eof());
+    if (ec)
+        return nullptr;
+    p.finish(ec);
+    if (ec)
+        return nullptr;
+    return p.release();
 }
 
 #endif
