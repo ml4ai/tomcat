@@ -12,9 +12,11 @@
 #include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/program_options.hpp>
+#include <filesystem>
 
 namespace po = boost::program_options;
 namespace json = boost::json;
+//namespace fs = boost::filesystem;
 
 using namespace std;
 using namespace std::chrono;
@@ -40,13 +42,47 @@ void subscriber_func(mqtt::async_client_ptr cli) {
     }
 }
 
-
 int main(int argc, char* argv[]) {
 
-    json::value config = parse_json_file("config.json");
+    po::options_description generic("Generic options");
 
-    string address = "tcp://" + value_to<string>(config.at("mqtt_host")) + ":" +
-                     to_string(value_to<int>(config.at("mqtt_port")));
+    string config_path;
+    generic.add_options()("help,h", "Display this help message")(
+        "version,v", "Display the version number")(
+        "config,c", po::value<string>(&config_path)->default_value("config.ini"));
+
+    po::options_description config("Configuration");
+
+    config.add_options()("mqtt.host",
+                         po::value<string>()->default_value("localhost"),
+                         "MQTT broker host")(
+        "mqtt.port", po::value<int>()->default_value(1883), "MQTT broker port");
+
+    po::options_description cmdline_options;
+    cmdline_options.add(generic).add(config);
+
+    po::variables_map vm;
+    po::store(po::parse_command_line(argc, argv, cmdline_options), vm);
+    po::notify(vm);
+
+    if (vm.count("help")) {
+        std::cout << cmdline_options;
+        return 1;
+    }
+
+    if (filesystem::exists(config_path)) {
+        po::store(po::parse_config_file(config_path.c_str(), config), vm);
+    }
+    else {
+        BOOST_LOG_TRIVIAL(error) << "Specified config file '" << config_path << "' does not exist!";
+        return EXIT_FAILURE;
+    }
+
+    po::notify(vm);
+
+
+    string address = "tcp://" + vm["mqtt.host"].as<string>() + ":" +
+                     to_string(vm["mqtt.port"].as<int>());
 
     // Create an MQTT client using a smart pointer to be shared among threads.
     auto client = make_shared<mqtt::async_client>(address, "agent");
@@ -66,7 +102,8 @@ int main(int argc, char* argv[]) {
         // we're using a persistent (non-clean) session with the broker.
         client->start_consuming();
 
-        BOOST_LOG_TRIVIAL(info) << "Connecting to the MQTT broker at " << address << "...";
+        BOOST_LOG_TRIVIAL(info)
+            << "Connecting to the MQTT broker at " << address << "...";
         auto rsp = client->connect(connOpts)->get_connect_response();
         BOOST_LOG_TRIVIAL(info) << "Connected.";
 
