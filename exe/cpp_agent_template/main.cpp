@@ -8,20 +8,19 @@
 #include <string>
 #include <thread>
 
-#include "file.hpp"
+#include <boost/filesystem.hpp>
 #include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/program_options.hpp>
-#include <filesystem>
 
 namespace po = boost::program_options;
 namespace json = boost::json;
-//namespace fs = boost::filesystem;
+namespace fs = boost::filesystem;
 
 using namespace std;
 using namespace std::chrono;
 
-void publisher_func(mqtt::async_client_ptr cli) {
+void heartbeat_publisher_func(mqtt::async_client_ptr cli) {
     while (true) {
         this_thread::sleep_for(seconds(1));
         cli->publish("status/agent", "ok")->wait();
@@ -49,7 +48,9 @@ int main(int argc, char* argv[]) {
     string config_path;
     generic.add_options()("help,h", "Display this help message")(
         "version,v", "Display the version number")(
-        "config,c", po::value<string>(&config_path)->default_value("config.ini"));
+        "config,c",
+        po::value<string>(&config_path)->default_value("config.ini"),
+        "Path to (optional) config file.");
 
     po::options_description config("Configuration");
 
@@ -66,20 +67,20 @@ int main(int argc, char* argv[]) {
     po::notify(vm);
 
     if (vm.count("help")) {
-        std::cout << cmdline_options;
+        cout << cmdline_options;
         return 1;
     }
 
-    if (filesystem::exists(config_path)) {
+    if (fs::exists(config_path)) {
         po::store(po::parse_config_file(config_path.c_str(), config), vm);
     }
     else {
-        BOOST_LOG_TRIVIAL(error) << "Specified config file '" << config_path << "' does not exist!";
+        BOOST_LOG_TRIVIAL(error)
+            << "Specified config file '" << config_path << "' does not exist!";
         return EXIT_FAILURE;
     }
 
     po::notify(vm);
-
 
     string address = "tcp://" + vm["mqtt.host"].as<string>() + ":" +
                      to_string(vm["mqtt.port"].as<int>());
@@ -114,7 +115,7 @@ int main(int argc, char* argv[]) {
 
         // Start the publisher thread
 
-        thread publisher(publisher_func, client);
+        thread publisher(heartbeat_publisher_func, client);
 
         // Consume messages in this thread
         thread subscriber(subscriber_func, client);
