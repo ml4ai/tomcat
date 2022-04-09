@@ -3,40 +3,98 @@
 \textbf{Yuwei Wang}
 
 \section{Introduction}
+Good teamwork and communication enable a group of team agents (which could be human or non-human AI agents) to perform beyond the sum of their parts\citep{roberts2022state}. Especially during high-stakes crisis situations, miscommunication is a common cause of adverse events\citep{taylor2014description}\citep{davis2017operative}. Closed-loop communication(CLC) is often recommended in the team research literature (military and medical communication and training) as a communication behavior that can guarantee the accuracy of information exchange\citep{marzuki2019closed}. Currently, CLC in spoken dialogue is identified via retrospective analyses involving manual transcription and annotation. However, given the potentially catastrophic consequences of poor team communication\citep{flin2004identifying} - especially in complex, fast-paced, and high-stakes environments such as urban search and rescue scenarios - we argue that there is an urgent need for AI technologies that can detect and repair the breakdowns in CLC as they happen. To address this need, we propose to develop an AI system for detecting the presence or absence of CLC procedures in spoken dialogue within teams of humans collaborating on shared tasks.
+Currently, most real-time natural language understanding(NLU) and responding systems(e.g. Question and answering\citep{hawkins2017you}, incremental decision-making\citep{devault2011detecting}) are limited to conversing with a single human at a time. On the other hand, there are numerous analyses of multi-participant spoken dialogue in the academic literature - however, their analyses are primarily performed offline rather than in real-time. 
+The dialogue system we are building in the Theory of Mind-based Cognitive Architecture for teams(ToMCAT) project addresses both of these limitations. The existing ToMCAT speech analyzer is currently able to analyze spoken conversations in real-time to extract entities and events of interest with a powerful rule-based framework\citep{valenzuela-escarcega-etal-2016-odins}, classify dialogue acts, and detect sentiment. We propose to extend this system to detect closed-loop communication as well. We will start by implementing a set of rules in the module to detect multi-parties CLC procedures. Taking the Study 3 data as the training and developing dataset, we will be able to revise our detection rules and build a CLC detector for real-time conversations.
 
 \section{Approach}
+In closed-loop communication protocol, there are three distinct phases\citep{Hargestam.ea:2013}(\autoref{fig:clc-three-phases}, \autoref{tab:clc-three-phases}): 
+\begin{itemize}
+    \item The sender initiates a message (the Call-out phase).
+    \item The receiver acknowledges the message, usually by paraphrasing or repeating the main information of the message (the Check-back phase).
+    \item The sender verifies that the message has been received and interpreted correctly(Closed-loop).
+\end{itemize}
+\begin{figure}
+    \centering
+    \includegraphics[width=2.5in]{images/clc-three-phases}
+    \caption{Three phases of closed-loop communication}
+    \label{fig:clc-three-phases}
+\end{figure}
 
-We are going to build a rule-based dialogue agent to detect Closed-loop communication events and test the agent using the TA3 dataset.
-The existing ToMCAT dialogue system is currently able to analyze spoken
-conversations in real-time, to extract entities and events of interest with a
-powerful rule-based framework \citep{valenzuela-escarcega-etal-2016-odins}, classify
-dialogue acts, and detect sentiment. To extend this system and detect
-closed-loop communication, we are going to create a separate worker and detect
-the relevant labels based on the three phases of closed-loop communication
-within several speech turns, namely, the call-out, check-back, and
-closing-the-loop phases \citep{Hargestam.ea:2013}. For example, we can
-navigate the call-out phase with Odin labels like ``HelpRequest", and then look
-for the ``Move" label in the next 5 speech turns, if we can detect this
-check-back phase, keep on looking for additional Closed-loop phase with an
-``Acknowledge" label, and return a ``CallOut-CheckBack-Close" extraction. If the
-Closed-loop phase is not detected at all, a “CallOut-CheckBack” extraction can
-be returned. If both phase 2 and phase 3 are not detected, exit the detecting
-loop after 5 steps from the call-out phase and return ``OpenLoop" extraction.
+\begin{table*}[tb]
+\centering
+\begin{tabular}{lll}
+    \toprule
+    Role & Utterance & Phase \\\midrule
+   Green & “This is Green. I’m finishing this side, blue, could you check the central for victims?” & Call-out\\
+   Blue & “This is Blue. Okay. I’ll go check the central for victims.” & Check-back\\
+   Green & “All right, thank you, Blue.” & Closed-loop\\
+    \bottomrule
+\end{tabular}
+\caption{An example of the three phases of closed-loop communication. This example is extracted from Study2 data, while Green is the sender of the request message, and Blue is the receiver of the request message.}
+\label{tab:clc-three-phases}
+\end{table*}
 
-We will firstly implement this agent with a small set of test data, extracted
-from the TA3 dataset, and then evaluate the performance of this agent for its
-precision, recall, and F1 score, and then explore whether data-driven methods
-could improve the score of its performance.
+We are going to develop a procedure to dynamically detect the three phases of CLC. First, the Call-out phase will be detected by rules in our speech analyzer, labels including HelpRequest, Instruction, and NeedAction are used as triggers for Call-out. Next, we examine five utterances followed by other team members. If we find acknowledgement by other team members as well as the same semantic labels as in the Call-out message, then this indicates there is a Check-back phase. Finally, within five utterances following the Check-back, if we see the sender verified the information of the Check-back with the Agreement label, we can determine that this is a closed-loop communication. The triggers and argument rules of CLC detection are illustrated in \autoref{tab:clc-triggers-labels}, and an algorithm for CLC detection is shown in Algorithm 1.
+
+\begin{table*}[tb]
+\centering
+\begin{tabular}{lp{1in}lll}
+    \toprule
+    Role & Utterance & Trigger Rules: mentioned text & Argument Rules: mentioned text & CLC label \\\midrule
+   Green & “This is Green. I’m finishing this side, blue, could you check the central for victims?” & Instruction: could you check & Action: check \newline Location: central \newline Victim: victims & 1a\\
+   Blue & “This is Blue. Okay. I’ll go check the central for victims.” & Agreement: okay & Action: check \newline Location: central \newline Victim: victims \newline Blue:blue & 1b\\
+   Green & “All right, thank you, Blue.” & Agreement: All right &  & 1c\\
+    \bottomrule
+\end{tabular}
+\caption{The trigger and argument rules of CLC detection}
+\label{tab:clc-triggers-labels}
+\end{table*}
+\subsection{List of Variables}
+\begin{itemize}
+    \item Input Variables
+    \begin{itemize}
+        \item transcriptions: MinecraftEntity\_Observation\_Asr\_Speechanalyzer
+    \end{itemize}
+    \item Output Variables
+    \begin{itemize}
+        \item Event Extractions: MinecraftEntity\_Event\_Dialogue\_Event\_Dialogagent
+    \end{itemize}
+\end{itemize}
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\begin{document}
+\begin{algorithm}
+\caption{The algorithm for CLC detection}\label{alg:CLC}
+\begin{algorithmic}[1]
+\State $CLC-labels \gets []$
+\Function{CallOut}{utterance} 
+     \If{any(label in [‘HelpRequest’, ‘NeedAction’, ‘Instruction’] for label in $utterance$}
+     \State $CLC-labels \gets 1a$
+     \EndIf
+     \EndFunction
+
+\Function{CheckBack}{utterance} in range (5)
+
+    \If{'Acknowledgement' in labels of next $utterance$
+     \If{any(label in CallOut.arguments for label in next $utterance$}
+        \State $CLC-labels \gets 1b$
+        \EndIf
+        } else
+    \State $CLC-labels \gets 0.5b$
+    \EndIf
+    \EndFunction
+\Function{CloseLoop}{utterance} in range (5)
+     \If{'Acknowledgement' in labels of next $utterance$}
+     \State $CLC-labels \gets 1c$
+     \EndIf
+     \EndFunction
+\end{algorithmic}
+\end{algorithm}
 
 \section{Evaluation}
+The performance of the closed-loop communication detector will be evaluated by human annotators. Annotators will be trained to evaluate the automatically extracted CLC dialogues with the CLC coding scheme in Table 2. For a weak check-back that only acknowledge the call-out with the ‘Agreement’ label but no repeating information is found, the check-back should be labeled as ‘0.5b’ instead of the complete check-back label ‘1b’.
+The inter-rater reliability of the annotators will be measured using Cohen’s kappa. When the percentage of agreement between annotators reaches 80\%, and K>.70, annotators could start work on the formal annotation of the data. The precision and F1 score will be used to evaluate the performance of our CLC detector. We will improve the detecting rules and algorithms according to the evaluation. The precision should reach a minimum of 90\% and F1 reach a minimum of 80\% after improvement on the CLC detector has been fully applied.
 
-The agent of the Closed-loop communication detector will be evaluated with a
-subset from the TA3 transcripts. Human annotators will be trained to detect the
-3 phases of closed-loop communication, and whether the loop is closed or not.
-The interrater reliability of the annotators will be measured using Cohen’s
-kappa. When the percentage of agreement between annotators reaches 80\%, and K
-> .70, annotators could start work on the formal annotation of the data. The
-precision, recall, and F1 score will be used to evaluate the performance of our
-primary closed-loop communication agent. When improvement on the agent applied,
-we can further compare the performance of our primary rule-based model with the
-improved model of rule-based and data-driven combined.
+
