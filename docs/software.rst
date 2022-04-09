@@ -11,6 +11,7 @@ the ToMCAT project:
 * `Face analysis <https://github.com/ml4ai/tomcat-faceAnalyzer>`_.
 * `Team Mind Module <https://github.com/ml4ai/tomcat-tmm>`_.
 * `Baseline tasks <https://github.com/ml4ai/tomcat-baseline-tasks>`_.
+* `Experiment equipment setup <https://github.com/ml4ai/tomcat-equipment-wiki/wiki>`_.
 
 Indices and tables
 ==================
