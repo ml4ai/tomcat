@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 #include <thread>
+#include <future>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/json.hpp>
@@ -13,8 +14,10 @@
 /** Class that represents our agent/AC */
 class Agent {
     std::shared_ptr<mqtt::async_client> mqtt_client;
-    std::thread heartbeat_publisher;
+    //std::thread heartbeat_publisher;
     bool running = true;
+
+    std::future<void> _future;
 
     /** Disconnect from the MQTT broker */
     void disconnect();

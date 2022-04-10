@@ -31,8 +31,10 @@ Agent::Agent(std::string address) {
 
     mqtt_client->subscribe("agent/dialog", 2);
 
+    _future = std::async(std::launch::async, &Agent::publish_heartbeats, this);
     /** Start publishing heartbeat messages */
-    this->heartbeat_publisher = thread(&Agent::publish_heartbeats, this);
+    // this->heartbeat_publisher = thread(&Agent::publish_heartbeats, this);
+    //ĸkkk
 };
 
 /** Disconnect from the MQTT broker */
@@ -68,9 +70,7 @@ void Agent::publish_heartbeats() {
  * the broker. */
 Agent::~Agent() {
     this->running = false;
-    if (this->heartbeat_publisher.joinable()) {
-        BOOST_LOG_TRIVIAL(info) << "Shutting down heartbeat thread...";
-        this->heartbeat_publisher.join();
-    }
+    _future.get();
+
     this->disconnect();
 }
