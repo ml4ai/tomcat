@@ -63,5 +63,5 @@ void Agent::publish_heartbeats() {
 
 void Agent::stop() {
     running = false;
-    heartbeat_future.get();
+    heartbeat_future.wait();
 }
