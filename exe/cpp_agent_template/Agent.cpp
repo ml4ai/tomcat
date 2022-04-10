@@ -1,11 +1,14 @@
 #include "Agent.hpp"
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/json.hpp>
+#include <boost/log/trivial.hpp>
 
 using namespace std;
 namespace json = boost::json;
 using namespace std::chrono;
 
 /** Get current UTC timestamp in ISO-8601 format. */
-std::string get_timestamp() {
+string get_timestamp() {
     return boost::posix_time::to_iso_extended_string(
                boost::posix_time::microsec_clock::universal_time()) +
            "Z";
@@ -31,17 +34,9 @@ Agent::Agent(std::string address) {
 
     mqtt_client->subscribe("agent/dialog", 2);
 
-    _future = std::async(std::launch::async, &Agent::publish_heartbeats, this);
     /** Start publishing heartbeat messages */
-    // this->heartbeat_publisher = thread(&Agent::publish_heartbeats, this);
-    //ĸkkk
+    heartbeat_future = async(launch::async, &Agent::publish_heartbeats, this);
 };
-
-/** Disconnect from the MQTT broker */
-void Agent::disconnect() {
-    BOOST_LOG_TRIVIAL(info) << "Disconnecting from MQTT broker...";
-    this->mqtt_client->disconnect()->wait();
-}
 
 /** Function that publishes heartbeat messages while the agent is running */
 void Agent::publish_heartbeats() {
@@ -60,17 +55,13 @@ void Agent::publish_heartbeats() {
                             {"version", "0.0.1"}}},
                           {"data", {{"state", "ok"}}}};
 
-        this->mqtt_client
+        mqtt_client
             ->publish("status/tomcat-CDC/heartbeats", json::serialize(jv))
             ->wait();
     }
 }
 
-/** Destructor for the class that cleans up threads and disconnects from
- * the broker. */
-Agent::~Agent() {
-    this->running = false;
-    _future.get();
-
-    this->disconnect();
+void Agent::stop() {
+    running = false;
+    heartbeat_future.get();
 }

@@ -7,11 +7,11 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
+#include <boost/log/trivial.hpp>
 
 #include "ReferenceAgent.hpp"
 
 namespace po = boost::program_options;
-namespace json = boost::json;
 namespace fs = boost::filesystem;
 
 using namespace std;
@@ -82,10 +82,12 @@ int main(int argc, char* argv[]) {
     signal(SIGINT, signal_handler);
 
     ReferenceAgent agent(address);
+
     while (true) {
         if (gSignalStatus == SIGINT) {
             BOOST_LOG_TRIVIAL(info)
                 << "Keyboard interrupt detected (Ctrl-C), shutting down.";
+            agent.stop();
             break;
         }
         else {
