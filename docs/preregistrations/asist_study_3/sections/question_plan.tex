@@ -4,64 +4,87 @@
 
 \section{Introduction}
 
-As people interact with each other, they display observable behaviors (speech, body language, expressed emotion, or interaction with the environment) that may suggest unobservable behaviors (thoughts, feelings, plans, or beliefs). The process of inferring these unobservable behaviors is called Theory of Mind (ToM) and is often studied through the analysis of body language, spoken natural language, human development, social cultural differences or non-neurotypical human cognition. When humans ask questions to obtain information, they most likely do so with an intent, a plan, or desire.
+As people interact with each other, they display observable behaviors (speech,
+body language, expressed emotion, or interaction with the environment) that may
+suggest unobservable behaviors (thoughts, feelings, plans, or beliefs). The
+process of inferring these unobservable behaviors is called \textit{Theory of
+Mind} (ToM) and is often studied through the analysis of body language, spoken natural language, human development, social cultural differences or non-neurotypical human cognition. When humans ask questions to obtain information, they most likely do so with an intent, a plan, or desire.
 
-The term planning in Artificial Intelligence research does not necessarily have the same meaning as it would with human ToM. Within AI, a classical plan, also called flat, is a sequence of states and actions that an agent can execute to reach a goal. These plans, composed of simple actions, can be represented with a flat data structure such as a list. As plans become more complex or abstract, require constraints, or have multiple levels of abstraction within the same plan, they are best represented by a hierarchical task network (HTN), which is a tree of possible plans.
+The term \textit{planning} in Artificial Intelligence research does not have
+the same meaning as it would with human ToM. Within AI, a \textit{classical
+plan}, also called flat, is a sequence of states and simple actions that an
+agent can execute to reach a goal. These plans can be represented with a flat
+data structure such as a list. As plans become more complex, require
+constraints, or have multiple levels of abstraction within the same plan, they
+are best represented by a \textit{hierarchical task network} (HTN), which is a tree of possible plans.
 
-Research Question 1: How do spoken questions reveal another person’s plan or intent?
-We will investigate whether verbalized question-asking can infer a human’s ToM when uttered in a simulated search-and-rescue (SAR) scenario within the Minecraft environment, designed by ASIST.
-
-Research Question 2: Can those who listen to these questions accurately decide if the plan is simple, sequential, or hierarchical?
-
-The results of this investigation will guide further research into the broader research question: do questions have hidden goals that infer plans that are flat or hierarchical? When are uttered questions best represented with classical planning or HTN data structures?  Can the distinction of such structures improve predictive performance for Automated Social Intelligence (ASI) agent intervention.
+\begin{enumerate}
+    \item How do spoken questions reveal another person’s plan or intent? We will investigate whether verbalized question-asking can infer a human’s ToM
+when uttered in a simulated search-and-rescue (SAR) scenario within the
+Minecraft environment, as designed by ASIST.
+    \item Can those who listen to these questions accurately decide if the plan is simple, sequential, or hierarchical? The results of this investigation will guide further research about how to
+infer and best represent a human's plans as either flat or hierarchical. Can
+the distinction of such structures improve predictive performance for Automated
+Social Intelligence (ASI) agent intervention?
+\end{enumerate}
 
 
 Existing literature about HTNs, ToM, psycholinguistics and question-answering
 are abundant, as are papers about question generation for information
-retrieval. Fewer papers exist about question-asking and even fewer papers focus on the intersection of ToM for human beings and the HTN mapping of dialog acts. Hawkins and Goodman \citet{hawkins2017you} approach question-asking as evidence of the questioner’s hidden goals. They categorize questions into binary question-answer pairs, pragmatic question-answer pairs where the most socially-acceptable response does not strictly answer the literal question asked, and probabilistic question-answer pairs, where the most probable answer is the expected value of a set of likely answers.
-
-Within the SAR scenario of ASIST’s Minecraft environment, human players will
+retrieval. Few papers focus on the intersection of ToM for human beings and the HTN mapping of dialog acts. Hawkins and Goodman \citep{hawkins2017you} approach question-asking as evidence of the questioner’s hidden goals. They categorize questions into binary question-answer pairs, pragmatic question-answer pairs where the most socially-acceptable response does not strictly answer the literal question asked, and probabilistic question-answer pairs, where the most probable answer is the expected value of a set of likely answers. Within the SAR scenario of ASIST’s Minecraft environment, human players will
 verbalize plans, suggestions, or ideas to each other. Sometimes these plans or
 requests are fulfilled and other times they are violated, forgotten or
-disregarded. Baldoni et al \citet{baldoni_2018} represent social interactions of AI agents with first-order logic; this representation includes question-asking, termed commitment initiation. This representation can also express action sequence and constraints of actions and plans.
+disregarded. Baldoni et al \citep{baldoni_2018} discuss social interactions
+of AI agents with first-order logic; this representation includes
+question-asking and the life cycle of agent commitments. This representation can also express action sequence and constraints of actions and plans.
 
 
 
 \section{Approach}
 
-We assume that questions have hidden goals that infer plans. As teams ask more questions of each other, human team ToM converges toward cooperative behavior.
-We will investigate whether question-asking is associated with team planning, defined as a set of goals, strategies, or tasks that are executed. We define coordination as behaviors and utterances to create a common plan or strategy. We further define cooperation as team behaviors that implement an already-agreed up on plan.
+We assume that questions have hidden goals and infer plans. As teams ask more questions of each other, human team ToM converges toward cooperative behavior.
+We will investigate whether question-asking is associated with \textit{team
+planning}, defined as a set of goals, strategies, or tasks that are executed.
+We define \textit{coordination} as behaviors and utterances to create a common
+plan or strategy. We define \textit{cooperation} as team behaviors that implement an already-agreed up on plan.
 
-Two human annotators will code all uttered questions between teammates who are
-tasked with the mission search for, locate, and diagnose victims in a Minecraft
-SAR scenario. We use the qualitative coding procedure known as Grounded Theory,
-as defined by Corbin and Strauss, \citet{corbin_strass_2015}. More
-specifically, and as defined by Saldana, \citet{saldana_2015}, we will use a Grounded Theory hybrid of In-vivo Coding for action behaviors, Process Coding for a state or action across some interval of time, and Causal Coding theory for categorical coding procedures.
+Two human annotators will code all uttered questions between teammates within the Minecraft SAR scenario.
+We use the qualitative coding procedure known as Grounded Theory,
+as defined by Corbin and Strauss, \citep{corbin_strass_2015}. 
 
-In cases where questions have co-reference or other contextual dependencies, only that direct dependency will be coded for local semantic meaning.
+More specifically, and as defined by Saldana, \citep{saldana_2015}, we will use a Grounded Theory hybrid of In-vivo Coding and Process Coding for a state or action across some interval of time. These \textit{grounded-in-data} labels are known as \textit{concept-level} labels, which are the smallest pieces of data that encode a question-asking phenomena of interest.
 
-\subsection{Data}
-
-Label development for this pre-registration investigation will come from the annotations of ASIST Study 3 Spiral 2 pilot video observations: 419, 420, 421, 422, 423 and 424. Due to the expensive costs of human annotation and strict adherence to grounded theory methodology, this experiment is limited to six videos.  Future testing of these labels will be on the real data, released after 29 March 2022. These six pilot videos are of three distinct teams that play two missions each.  
-
-Two human annotators will generate concept-level labels, which are defined as the smallest pieces of data that can be used to explain an action, interaction, condition, context, or consequence of having uttered a question. Data analyses will not be performed over the raw data from the videos; they will be performed over the concept-level labels. These labels are not pre-determined, mapped to any type of human plan, thus giving a more solid, grounded analytical meaning to any emergent categories. 
-
-
-After the generation of these concept labels, we will investigate the connectivity and causality of each label to discover possible relationships and similarities. Densely-connected concept labels will suggest themselves as subcategories and categories. Sparsely-connected labels will not be discarded; they will be used to evaluate variability within patterns and categories that emerge. As subcategories and patterns emerge, they will describe the presence or absence of team actions, interactions, conditions, and consequences of question-asking. 
+We then will use a Grounded Theory Causal Coding to investigate the connectivity and causality of each concept label to discover possible relationships between presence or absence of team actions, interactions, conditions, and consequences of question-asking. Densely-connected concept labels suggest subcategories and categories. Sparsely-connected labels will not be discarded; they will be used to consider variability within patterns and categories that emerge. In cases where questions have co-reference or other contextual dependencies, only that direct dependency will be coded for local semantic meaning.
 
 We make the following considerations when creating codes: 
 \begin{itemize}
     \item Frequency will not dictate importance, causality, or connectivity of a concept
     \item Labels will be stemmed and minimally normalized 
-    \item How do the labels explain the rate of question-asking across time, between any subset of a team, between the same team across the two different missions, and across all six videos? Does this explanation infer predictibility power?
+    \item Capturing the phenomena of question-asking across time, between any subset of a team, between the same team across the two different missions. 
 \end{itemize}
 
-When all concepts, subcategories, categories can reasonably explain the phenomena of the video observations, one or two super-categories or theories of team plan will emerge. Though we have a priori assumptions as to what these team plans could be, we do not presume them. Categories that emerge from denser concept connections are currently assumed to have greater predictive power and ToM inference potential.
+To avoid annotator and researcher biases and any \textit{a priori} belief on
+which team ToM strategies may be used, concept and category labels are not
+pre-determined. Annotator agreement must reach a Kappa Score of 80\% or higher. This also gives a more solid, grounded analytical meaning to any emergent categories. 
+
+When all concepts, subcategories, categories can reasonably explain the phenomena of the video observations, one or two super-categories, \textit{theories of team plan}, will emerge. We currently assume that a theory of team plan would have greater predictive power and ToM inference potential. 
+
+Label development for this pre-registration investigation are based on ASIST Study 3 Spiral 2 pilot video observations: 419, 420, 421, 422, 423 and 424. These six pilot videos are of three distinct teams that play two missions each. Due to the expensive costs of human annotation and strict adherence to grounded theory methodology, this experiment is limited to six videos. 
+
+Future testing of these labels will be on the real data, released after 29 March 2022, in future pre-registrations and experiments. 
+
+
+
+
 
 
 \section{Evaluation}
 
-Because of the small sample size of this investigation, we do not evaluate at this time. Instead, we investigate correlation of concept-level labels through data visualization. Below is a list of possible visualizations for the investigation of a specific observation:
+Because of the small sample size of this investigation, we do not evaluate at
+this time. Instead, we investigate word frequencies, clustering patterns, and
+correlation of annotator-generated labels through data visualization. Below is
+a list of possible visualizations we may consider:
+
 \begin{itemize}
     \item Connectivity of concept-level labels: radial diagrams, arc diagrams, matrix diagrams or graph networks
     \item Frequency patterns of words or concept labels (normalized, word count / total number of words in that question): scatterplots or histograms
@@ -69,22 +92,13 @@ Because of the small sample size of this investigation, we do not evaluate at th
     \item Concept-level subcategorization(s): clustering, PCA (concept labels possibly projected onto subcategorical spaces), or hierarchical visualizations.
 \end{itemize}
 
-Future research beyond this proposal will address the TA3’s Process Measure ASI-M5: Coordinative Communications to measure teamwork, which will include additional video observations for real data in Study 3, and continued investigation of whether human plans and ToM are best represented by classical planning or HTN planning. 
 
-Future measures of evaluation may include:
-\begin{itemize}
-    \item Reproducibility: Are the labels and categories explainable and verifiable? 
-    \item Do the sets of concept-level labels have at least a Kappa Cohen score of 0.8 between the two annotators?
-    \item Precision and recall metrics of the concept-level and category patterns:
-    \begin{itemize}
-        \item To describe human ToM and plans
-        \item Generalizability for real data with no ASI interventions
-        \item Generalizability for real data with higher ASI interventions.
-    \end{itemize}
-    \item Variation of Pattern Development: Quantification of pattern variance 
-\end{itemize}
+These visualizations will serve as a preliminary analysis of how uttered questions, with their hidden goals, could map  human ToM to AI planning data structures.
 
-\vspace{15pt}
+Future measures may include U-Tests, t-tests (only if we annotate a large-enough sample), precision and recall of the
+concept-level and category patterns to describe the generalizability for real data with no ASI interventions, generalizability for
+real data with higher ASI interventions, and the variance of patterns in label categories. Another possible measure, from future research, would be the F1 Score to explain how
+well these labels describe observations without ASI interventions, when compared to
+high-intervention observations. This future investigatin would address the TA3’s Process Measure ASI-M5: Coordinative Communications   to measure teamwork, include additional video observations for real data in Study 3, and continue our investigation of whether human plans and ToM are best represented by classical planning or HTN planning.
 
-Given the categorical nature of label development, usefulness and evaluations of these visualizations will serve as a preliminary indicator of whether questions are best represented by flat or HTN structures. Results from these visualizations will guide continued research into human ToM and human plan representation.
 
