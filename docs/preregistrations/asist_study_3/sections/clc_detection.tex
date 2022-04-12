@@ -14,12 +14,13 @@ In closed-loop communication protocol, there are three distinct phases\citep{Har
     \item The receiver acknowledges the message, usually by paraphrasing or repeating the main information of the message (the Check-back phase).
     \item The sender verifies that the message has been received and interpreted correctly(Closed-loop).
 \end{itemize}
-\begin{figure}
-    \centering
-    \includegraphics[width=2.5in]{images/clc-three-phases}
-    \caption{Three phases of closed-loop communication}
-    \label{fig:clc-three-phases}
-\end{figure}
+
+%\begin{figure}
+%    \centering
+%    \includegraphics[width=2.5in]{images/clc-three-phases}
+%    \caption{Three phases of closed-loop communication}
+%    \label{fig:clc-three-phases}
+%\end{figure}
 
 \begin{table*}[tb]
 \centering
@@ -62,9 +63,6 @@ We are going to develop a procedure to dynamically detect the three phases of CL
     \end{itemize}
 \end{itemize}
 
-\usepackage{algorithm}
-\usepackage{algpseudocode}
-\begin{document}
 \begin{algorithm}
 \caption{The algorithm for CLC detection}\label{alg:CLC}
 \begin{algorithmic}[1]
