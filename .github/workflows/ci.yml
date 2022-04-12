@@ -23,9 +23,9 @@ jobs:
       with:
         java-version: '8.0.232'
 
-    - name: Continuous Integration
-      run: |
-        ./tools/install
-        if [[ $OSTYPE == "linux-gnu" ]]; then
-          xvfb-run --auto-servernum ./tools/run_session
-        fi
+    #- name: Continuous Integration
+      #run: |
+        ##./tools/install
+        ##if [[ $OSTYPE == "linux-gnu" ]]; then
+          ##xvfb-run --auto-servernum ./tools/run_session
+        ##fi
