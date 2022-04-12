@@ -78,6 +78,40 @@ point. A schematic representing our approach is shown in Fig
     \end{sidecaption}
 \end{figure}
 
+Final experiments to run with our model are based on an initial analysis of two
+versions of our existing model's results on a subset of the Study 3 Spiral 3
+pilot data. In this initial analysis, we compared results when the model was
+trained using information on the distribution of class labels (i.e. class weights)
+with results from the model trained without such distributional data. For the
+Study 3 Spiral 3 pilot data, the model trained with class weights achieved an F1
+of 58.78 for emotion (similar to the F1 reached on the test partition of MELD for
+emotion recognition); without class weights, however, the model performed better,
+reaching an F1 of 72.64. For dominant personality trait identification, the
+results similarly showed improvement when the model did not include class weights
+(F1 of 21.58 for Study 3 Spiral 3 data with class weights, F1 of 37.65 for this
+data without class weights). These scores were calculated by using annotations
+for emotion and sentiment by two researchers as gold labels, as well as TIPI
+survey results for personality trait identification gold labels.
+
+Results of both tasks may not have been representative of the true performance of
+the model, as the Spiral 3 data used participants within the research team rather
+than naive participants; it is possible these participants did not respond to the
+TIPI in the same way that naive participants would have, and this group of pilot
+participants may have been calmer or more neutral in their speech due to their
+previous experience with the missions and data collection procedure. To determine
+whether this is the case, data from Study 3 will need to be annotated, with results
+from a portion of Study 3 participants compared to the results of Spiral 3
+participants.
+
+Furthermore, while the model trained without use of information on the distribution
+of gold labels in the training datasets outperformed the model trained with this
+information, the model without distributional information did not make predictions
+for all possible emotions and traits. In order to rectify this and attempt to
+further improve the quality of model predictions, the distribution of data points
+across all emotions and traits in the ASIST-specific data rather than pretraining
+datasets will be incorporated into this model, as such information may provide an
+additional boost to model performance.
+
 The study 3 data that will be incorporated into our models are the
 pre-experiment TIPI survey
 (Participant\_CognitiveTenItemPersonalityInventory\_Survey\_PreExperiment),
