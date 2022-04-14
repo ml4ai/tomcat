@@ -1,129 +1,205 @@
 \chapter{Probabilistic modeling of team dynamics}
 \label{ch:pgm}
 \textbf{Paulo Soares, Kobus Barnard, Emily Butler}
+
 \section{Introduction}
-\begin{itemize}
-    \item Why is this a useful capability for an AI
-        agent? How does it contribute to machine theory of mind/machine theory
-        of teams?
-    \item What are the existing state of the art approaches to this problem
-        (cite relevant papers), and what are their limitations? 
-    \item What is our approach, and how will it address those limitations?
-\end{itemize}
+Human teams are interpersonal dynamic systems, where the individual team members
+become subsumed by the collective whole in support of some shared goal or
+function (Andrzej, K. Nowak et al., 2020; Cooke et al., 2013a; Eiler et al.,
+2017; Fusaroli et al., 2014; Gorman et al., 2010; Wiltshire et al., 2017, 2019).
+All higher-order team behavior, such as cooperation or competition, emerges from
+coordination, which refers to causal interdependencies over time both within and
+between the individual team members (Butner et al., 2014). At the individual
+level, there are a number of sub-processes within each person, such as biology,
+attention, cognition, emotion and motor behavior that mutually influence each
+other to give rise to the person’s overall state at a given time (Butler, 2011,
+2017). Similarly, at the interpersonal level, the individuals interact with each
+other to give rise to the team’s overall state (Andrzej, K. Nowak et al., 2020;
+Butler, 2011, 2017; Cooke et al., 2013b; Gorman et al., 2010; Letsky et al.,
+2008).
+
+One challenge for predicting team behavior and outcomes is that coordination
+within the system, at both individual and collective levels, often results in
+non-linear state changes over time. For example, a team may be unsuccessfully
+trying to reach an agreement until one member reframes the problem in a way that
+suddenly broadens everyone’s perspective, leading to immediate group consensus.
+The non-linear change in the team’s state of agreement could be predicted by the
+first person’s increased mental coordination in their mapping of the problem
+(increased within-person coordination), which colloquially might be described as
+“having the pieces fall into place,” followed by the team’s increased group
+coordination as all members adopt the new perspective (increased between-person
+coordination). Thus being able to recognize ongoing changes in coordination (in
+this example in the domain of mental contents) could help an artificially
+intelligent agent predict subsequent non-linear changes in team states and
+performance outcomes. 
+
+One important aspect of social coordination is that it is not mode- specific
+(Eiler et al., 2017). Instead, coordination can be observed at every level of
+the system, including neural, physiological, motor, perceptual, cognitive,
+affective and linguistic levels simultaneously. It can also be observed at
+multiple time-scales (Wiltshire et al., 2019). For example, during a
+conversation, neural events transpire on the order of milliseconds, speech
+production and gestures over seconds, and the conversation itself on the order
+of minutes (Hasson et al., 2012). As such, observing coordination for the
+purpose of prediction should be possible at any time resolution and any
+modality, although different modes will change at different rates and thus must
+be assessed at different time resolutions. For example, during a conversation
+coordination between the electrical activity of people’s brains may be best
+observed in milliseconds, while coordination of the semantic content of their
+speech may be best observed at the level of speech turns.
+
+Social coordination has been operationalized in many ways, often with approaches
+that are mode or time-resolution specific. We prefer a more general approach,
+since the same representation can be used to index coordination for any aspect
+of the interpersonal system, from individual brain activity to collective
+behavior sequences. One advantage of this for developing a socially intelligent
+artificial agent is that the agent can learn about coordination from any
+available observable information, which has important real-world consequences
+for how useful such an agent will be, since it will not be constrained to
+situations similar to those in which it is developed. The fundamental concept
+that needs to be captured by a general representation of coordination is the
+predictive interdependencies over time among the components of the system. See
+the “Modeling” section below for the details of our representation.
+
+We also prefer measures that are easily interpretable. Although coordination
+should be observable from any measure of the interpersonal system, some measures
+will map more closely to intuitive domains of coordination than others. For
+example, coordination of speech behavior is theoretically observable from any
+derived measure of vocal signals during a conversation. Along these lines, work
+with natural language processing has made use of dozens of automatically
+extracted features from speech for categorizing a broad range of targets, such
+as personality types or emotional expression (CITE OpenSmile). Although
+successful categorization has been achieved using various subsets of the
+features, it is unclear what aspect of human behavior contributed to the
+results, making it impossible to go from the results to theoretically based
+interventions. For the present research, therefore, we focus on coordination of
+two vocal features that map directly to pitch and loudness of human speech (see
+Methods for details), both of which could be targeted by an intervention as
+simple as asking a person to speak softly. 
+
+Finally, we also prefer models that are predictive and interpretable. XXXXXXX
+
+\section{Hypotheses}
+The proposed research will use data from ASIST Study 3, to be conducted in the Spring of 2022. Participants will take part in 3-person teams and will play a game where they attempt to save virtual victims in a Mindcraft Search and Rescue scenario. We will test the following hypotheses:
+
+1) Including coordination as a node in a probabilistic graphical model
+\textbf{will improve} prediction of team process and effect measures (see Measures for details)  as compared to a comparable model that does not include coordination.
+
+2) Teams with higher coordination will have higher scores on measures of team process and effects (see Measures for details) than teams with lower coordination.
+
+3) The agent has a set of three interventions to encourage oral communication among
+team members. Teams where the agent intervenes will have higher coordination,
+and higher scores on measures of team process and effects (see Measures for
+details), than teams where the agent does not do this. For teams selected for
+intervention will get interventions contingent on activities and also on how
+many interventions have been done so far to avoid intervening too much.  The
+interventions are:
+\begin{enumerate}
+    \item
+    If a team member places a marker block (a form of communication provided in
+    the game) but does not say they did, then the agent will suggest that they
+    tell their team members that they placed it. 
+    \item
+    For some teams, if a team member needs help (to stabilize a victim or exit a
+    blocked room) but does not say they do, then the agent will suggest that
+    they tell their team members that they need assistance. 
+    \item
+    For some teams, if a team member asked for help but did not get a reply from
+    any of the other team members, then the agent will suggest that they tell
+    the others again that help is needed. 
+\end{enumerate}
 
 \section{Approach}
 
-Our agent is comprised of a \emph{cognitive} and a \emph{memory} module. The agent uses the cognitive module to reason about the participant minds probabilistically. The quality of a team is explicitly represented in the architecture as a latent random variable and it is closely related to the score of the team. The team quality is directly affected by how coordinated the team is. A visual representation of the cognitive module is illustrated in Figure \ref{fig:pgm}. 
+\subsection{Design}
+Our analyses to test Hypotheses 1 and 2 will make use of data from all of the
+participants in the study (e.g., all possible between- and within- participant
+conditions). As such, testing whether including coordination in the model
+improves prediction of team process and effects measures (Hypothesis 1) and
+testing the association between coordination and team process and effects
+measures (Hypothesis 2) will each be based on 224 missions (8 conditions X 14
+teams X 2 missions). Our analyses to test Hypothesis 3 will make use of data
+from the ``No-Advisor” and ``UAZ-Agent” conditions, and so testing the effect of
+our intervention (Hypothesis 3) will be based on 28 ``No-Advisor” control
+missions (14 teams X 2 missions) compared to 28 ``UAZ-agent” intervention
+missions (14 teams X 2 missions).
 
-\begin{figure}[htb]
-\centering
-\includegraphics[width=\textwidth]{images/pgm}	
-\caption{Cognitive module represented as a dynamic Bayes network. For simplicity, only the two first time steps are represented in the image. The model encodes the assumption that different levels of coordination among teammates directly affect the team quality. Moreover, the team quality is closely related to the score earned by the team and amount of time spent in different areas of the map.}
-\label{fig:pgm}
-\end{figure}
+\subsection{Measures}
+\textbf{Coordination indicators}. As discussed above, team coordination is
+theoretically observable across modalities and time resolutions for all of the
+components of the interpersonal system. Given the constraints of what will be
+measured for ASIST Study 3, we will focus on two vocalic measures that are to be
+provided in real-time (every 10ms) during the missions as indicators for
+modeling linguistic coordination. The first, ``F0final\_sma" is the smoothed
+moving average of fundamental frequency. It corresponds to a speaker’s pitch.
+The second, ``wav\_RMSenergy\_sma" is the Root Mean Square energy measure, which
+provides an estimate of the intensity of the sound, which correlates with what
+humans perceive as loudness. 
 
-For intervention purposes, the agent also possesses a memory module to keep track of relevant information that will later be given/reminded to the participants. The agent will decide the right moment to communicate with the team, based on inferences and predictions of the team quality. For instance, to decide whether participants should stop their current task to go help another teammate to wake up a critical victim, the agent might estimate the amount of time taken for the participants to get where the critical victim is, and check if the score earned with the critical victim is superior to the score potentially earned if the participants continue to perform their current tasks. 
+\textbf{Team Process and Effects Measures}. We will include 5 team process
+measures and 2 team effects measures, each taken from the full set of measures
+that will be available for ASIST Study 3. This subset was chosen due to either:
+1) having theoretical connections to coordination (i.e., synchronization,
+coordinative communications, belief differences) or 2) involving the use of
+markers for communication, which is the direct target of our intervention
+(threat room and victim type communication), or 3) representing a global measure
+of team effectiveness (score and error rate).
 
-The list of variables used as evidence for both modules is presented in Table \ref{tab:pgm_evidence_list}. 
-
-\begin{table*}[tb]
-\centering
-\begin{tabular}{ll}
-    \toprule
-    Variable & Description \\\midrule
-    MinecraftEntity\_Event\_Scoreboard\_Simulator & Used to determine the current score of the team. \\
-    MinecraftEntity\_Event\_Triage\_Simulator & Used to compute how many points were earned in different parts of the map. \\
-    MinecraftEntity\_Event\_Proximityvictiminteraction\_Simulator & Used to remove a victim from the list of unstabilized critical victims previously observed. \\
-    MinecraftEntity\_Event\_Playerfrozenstatechange\_Simulator & Used to keep track of trapped participants. \\
-    MinecraftEntity\_Event\_Markerplaced\_Simulator & Used to keep track of threat room and victim identification. \\
-    MinecraftEntity\_Event\_Markerremoved\_Simulator & Used to keep track of threat room and victim identification. \\
-    MinecraftEntity\_Event\_Markerdestroyed\_Simulator & Used to keep track of threat room and victim identification. \\
-    MinecraftEntity\_Event\_Victimpickedup\_Simulator & Used to determine whether to inform the participant about the victim type or not. \\
-    MinecraftEntity\_Event\_Victimplaced\_Simulator & Used to determine whether the victim was placed in an incorrect safe zone. \\
-    MinecraftEntity\_Event\_Rubbledestroyed\_Simulator & Used to reassess whether any previously observed trapped victims became reachable. \\   
-    MinecraftEntity\_Event\_Missionstate\_Simulator & Used to identify the beginning and end of a mission. \\
-    MinecraftEntity\_Trial\_Startstop\_Testbedcontroller & Used to collect information about the players and identify the mission map. \\
-    MinecraftEntity\_Observation\_Fov\_Fovtool & Used to determine trapped victims that were observed by the participants. \\
-    MinecraftEntity\_Observation\_State\_Simulator & Used to determine the location of the participants in the map. \\
-    Audio & Used to extract vocalic features from the communication among the participants. \\
-    \bottomrule
-\end{tabular}
-\caption{List of variables used as evidence by the agent.}
-\label{tab:pgm_evidence_list}
-\end{table*}
-
-\subsection{Interventions}
-
-By reasoning about what the participants are doing, an agent can provide valuable information to instill them to adopt better strategies, encourage them whenever they are doing a good work and remind them about important events they might have forgotten. 
-            
-Therefore, the objective of our agent is to improve the final team score by reasoning about the quality of the team and acting to avoid its degradation throughout the mission. To accomplish that objective, our agent is equipped with the following list of interventions
-
-\subsubsection{Global Interventions}
-
-\begin{description}
-    \item[\textbf{Team Quality:}] based on the current agent's belief about the team quality, the agent informs the teammates about their performance so far.
-        
-    \emph{Rationale}: Participants might not have a notion of how well they are performing until they have been told, especially in early stages of the mission. Knowing about their performance compared to other teams is likely to encourage weak teams to change their strategy to achieve better performance. 
-    
-    \item[\textbf{Stabilization Postponement:}] when a critical victim is spotted by the medic, the agent estimates how long it would take the closest player to arrive at the victim location. If it’s spotted by another specialist, the agent estimates how long it would take the medic to arrive at the location. In case it takes a large amount of time, the agent suggests to the team to mark the victim, move on and hold that rescue for a while. The agent keeps track of marked victims to alert players at appropriate times in the future. 
-        
-    \emph{Rationale}: If it takes a lot of time to rescue a single critical victim, it is more reasonable that the participants do not get distracted from their current tasks, and focus on saving the critical victims later when they are doing other tasks nearby.
-   
-    \item[\textbf{Remaining Time:}] the agent alerts the team about how many minutes they have left until the end of the mission.
-        
-    \emph{Rationale}: The team might not be paying attention to the timer. Reminding them about the time they have left might encourage them to switch to a better strategy close to the end of the mission. For instance, move all pending victims to the safe zones.
-    
-    \item[\textbf{Team Coordination:}] based on the entropy of the vocalic features of the participants, the agent infers how coordinated the team is and lets them know as soon as the level drops below a certain threshold.  
-        
-    \emph{Rationale}: When people talk to each other cooperatively, they begin to exhibit 'entrainment', in which physical, gestural and speech behaviors begin to align more closely. In phonetic aspects of speech, entrainment can appear in, for example, speech rate, loudness, voice quality, vowel production, intonation, and many other dimensions of variation. Conversely, when interlocutors are not cooperative or have a negative attitude toward their interaction, they can fail to entrain or even exhibit 'disentrainment', in which their speech patterns become more distinct. Turning this around, analyzing measures of entrainment between interlocutors can help us predict whether they are successfully cooperating and whether they have a positive attitude toward each other.
-\end{description}
-    
-\subsubsection{Targeted Interventions}
-
-\begin{description}
-    \item[\textbf{Exploration Diversity:}] based on the amount of time a given participant has spent in a specific section of the map, the agent suggests the participant to explore a different part of the map if keeping exploring the current area longer is likely to degrade the team’s quality.
-        
-    \emph{Rationale}: There’s an optimal expected amount of time that each specialist is supposed to spend in different parts of the map. E.g. After clearing rubles in a certain area, the engineer should move to other parts of the map; going back to cleared areas sporadically for tasks that require team cooperation. If the amount of time spent in a certain area is too far from that expected optimum, it is expected that most of the required tasks for that area have already been completed and the participant should move to a different part of the map.
-    
-    \item[\textbf{Victim Reachability:}] the agent keeps track of all unreachable victims spotted by the medic and updates their status whenever the engineer clears the path towards them. The agent uses that information to inform the medic whenever they are nearby now reachable victims but deviate from rescuing them.
-        
-    \emph{Rationale}: The medic is likely to not remember all the victims seen along the way, even less their current reachability status. If the agent believes the medic does not know about their proximity to a reachable victim, it must inform the medic right away so the victim can be rescued.
-    
-    \item[\textbf{Threat Room Identification:}] the agent reminds engineers to place markers in the threat rooms in case they have forgotten to do so.
-        
-    \emph{Rationale}: Only the engineer knows about threat rooms in the beginning. If the engineer passes or enters such a room and does not mark it as a threat, the agent must remind the participant to do so to reduce the chance that others get trapped unnecessarily.
-
-	\item[\textbf{Victim Identification:}] the agent reminds the medic to place the correct marker nearby a stabilized victim if no marker has been placed. Even so, the agent will keep track of non-marked victims to let whoever is transporting the victim know about its correct type.
-        
-    \emph{Rationale}: If the medic does not identify the victim right before or after stabilization, the participants will not be able to tell which type of injury that victim has and will not be able to move it to the correct safe zone later.
-    
-    \item[\textbf{Critical Victim Proximity:}] this intervention is a result of the stabilization postponement global intervention. When the agent detects that the medic and another participant are close enough to an unstabilized previously spotted critical victim, it reminds those participants about that victim's existence.
-        
-    \emph{Rationale}: See Stabilization Postponement global intervention.    
-    
-    \item[\textbf{Rescue Postponement:}] when a participant other than the engineer gets trapped in a room, let the engineer knows whether to rescue the other participant right away or whether it can wait for a while. 
-        
-    \emph{Rationale}: If the task the engineer is currently doing is more likely to improve the team score than going in rescue of another team member, the agent must let the engineer know about that.
-
-\end{description}
+The team process outcome measures are:
+\begin{itemize}
+    \item
+    ASI-M2 Synchronization (e.g., inter-subtask latency); \textbf{Measure}: Mean latency
+    between subtasks of teamwork tasks per trial. Specifically, the mean latency
+    between victim discovery and victim rescue computed as the average over all
+    correctly rescued victims (time of delivery of victim to correct rescue site
+    - time victim was discovered). Where time victim was discovered = the
+    earliest (or minimum) of (1) Transporter signalling device for the room
+    containing the victim, or (2) Medic completes stabilization of the victim.
  
+    \item
+    ASI-M5 Coordinative Communications; \textbf{Measure}: A quantitative characterization
+    of the complexity of team communication using entropy in the dynamical
+    system. Entropy is defined as the level of irregularity in the flow of
+    communications between team members.(i.e., Team Communication Dynamics).
+    Typical components of the measure are: (1) Intensity and distributions of
+    team communications are calculated using calculations of over message
+    frequency, duration, and intra-team variance. (2) Temporal patterns of team
+    communications are captured using timestamped communication events and
+    analyzed with recurrence quantification analysis.
 
+    \item
+    Rutgers Threat Room Communication AC; \textbf{Measure}: \% of threat rooms that had a
+    threat room marker block outside its entrance at some point during the
+    mission.  
 
-%\begin{itemize}
-%
-%    \item Provide details on our approach, including:
-%        \begin{itemize}
-%            \item What data is required for this work? If any of the required
-%                inputs are present in the table of Study 3 variables in the
-%                \href{https://docs.google.com/document/d/1GF7VsNF9R95IAaj6mVZUDV2mAX5ok1Bh6Tcm8zDpIkg/edit#heading=h.1ksv4uv}{TA3
-%                Study 3 preregistration document (table 3)}, please list those
-%                variables with the standardized verbose variable names in the table.
-%            \item What interventions will we be testing and why?
-%        \end{itemize}
-%\end{itemize}
+    \item
+    Rutgers Victim Type Communication AC; \textbf{Measure}: count of victim
+    type marker blocks placed near the correct type of A or B victims.
+    
+    \item
+    Rutgers Belief Difference AC; \textbf{Measure}: entropy of beliefs about victim
+    distribution by comparing three models in which (1) players share
+    information perfectly, (2) players don't share any information, and (3)
+    players only share information via marker blocks.  
+\end{itemize}
+
+The team effects measures are: 
+
+\begin{itemize}
+    \item
+    ASI-M1 ASI Utility (score) 
+    \item
+
+    ASI-M3 Error Rate; \textbf{Measure}: Percentage of
+    subtasks of teamwork tasks that are completed per trial, measured as below.
+    Specifically, the percentage of discovered victims who are not evacuated.
+    Measure = 1 - (\# victims rescued / \# victims discovered)
+\end{itemize}
+
+\subsection{Modeling}
+
+\subsection{Intervention}
 
 \section{Evaluation}
-\begin{itemize}
-    \item How will we evaluate our approach?
-\end{itemize}
+
 
