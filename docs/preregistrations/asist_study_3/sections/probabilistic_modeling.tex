@@ -193,29 +193,54 @@ The team effects measures are:
 \end{itemize}
 
 \subsection{Modeling}
-    Our probabilistic model for this experiment (see  Figure~\ref{XXX}) models outcome measures and
-    team score conditioned on a team efficacy latent construct, $E$. These
-    conditional distributions are learned from training data. This provides a
-    baseline model. To study the effect of modeling the level of coordination,
-    $C\in[0,1]$, we
-    extend this model to condition our coordination model on 
-    $E$. To pre-register a single approach, we model coordination as being
-    constant for the second half of the second
-    trial. This allows for the team to develop some rapport and interventions to
-    have an effect. 
+    We develop a probabilistic model for measurement outcomes. In addition to
+    reflecting an explanatory story, a key property of this approach relevant to
+    evaluation as discussed below is all estimates are probability
+    distributions. In needed, these can be distilled into point estimates by
+    either averaging the distribution (MMSE loss) or using the maximum (MAP
+    loss). 
 
-    \textbf{Coordination.} We are developing a comprehensive probabilistic model for
-    coordination, with a simple case exhibited as part of Figure~\ref{XXX}.
-    While in the general case coordination influences multiple diverse
-    modalities at different time scales, here we consider a single time scale
-    and two vocalic features. 
+    Our probabilistic model for this experiment (see  Figure~\ref{fig:pgm})
+    models outcome measures, $M^i$, conditioned on a coordination latent construct, $C$. 
+%
+    \begin{figure}
+    \label{fig:pgm}
+    \includegraphics[width=6in]{images/prereg-pgm.pdf}
+    \caption{Probabilistic graphical model (pgm) for investigating coordination.
+    Circles (nodes) are stochastic variables. 
+    Open circles are latent variables, shaded circles are potentially observed
+    variables, and arrows represent variables conditioned on parents.
+    Coordination, $C$, is posited to influence team efficacy measures, $M^i$.
+    We do not use plate notation here because the conditioning arrows are
+    measure specific). These are different linear functions learned from data with potentially
+    different emission distributions (e.g., normal or Poisson), depending on the
+    measurement construct. \\
+    $~~~~~~~~$ Coordination is exhibited by variables influencing other variables in the
+    next time step. We do not draw all possible arrows here, because, for
+    vocalics, we assume that all  such influence comes from the previous speaker.
+    Here we illustrate person 1 speaking, followed by person 2, and then person 3.  }
+    \end{figure}
+%
+    The distributions $p(M^i|C)$ are typically linear functions learned from data
+    with normal or Poisson emission distribution. Using a simple prior on $C$,
+    provides a baseline model.
 
-    Our underlying axiom is that higher coordination is associated with causally
-    driven increased mutual information (statistical dependence) between
-    relevant observed variables. Here we consider latent attributes for vocalic
-    style for person $p$, denoted by $A^{p}$, which has as evidence, $O^{p,1}$,
-    being the mean of normally distributed pitch of speech over a speech turn
-    and similarly $O^{p,2}$ for speech intensity. If person 2 speaks after
+    \textbf{Coordination.}
+    We would like to study the effect of including coordination in this model.
+    We are developing a comprehensive probabilistic model for coordination, with
+    a simple case exhibited as part of Figure~\ref{fig:pgm}.  While in the
+    general case coordination influences multiple diverse modalities at
+    different time scales, here we consider a single time scale and two vocalic
+    features.  Our underlying axiom is that higher coordination is associated
+    with causally driven increased mutual information (statistical dependence)
+    between relevant observed variables. Here we consider latent attributes for
+    vocalic style for person $p$, denoted by $A^{p}$, which has as evidence,
+    $O^{p,1}$, being the mean of normally distributed pitch of speech over a
+    speech turn and similarly $O^{p,2}$ for speech intensity.  We further assume
+    that the speech style of each person is only influenced by the previous
+    speaker.
+
+    If person 2 speaks after
     person 1, then the degree that their vocalic style follows that of person 1
     indicates coordination. Formally, we blend the non-coordinated distribution
     mean, $\mu^2_t$, for the second person, with the fully dependent mean,
@@ -223,6 +248,11 @@ The team effects measures are:
     \begin{equation}
     \mu^2_{t+1} = (1-c) \mu^2_t + c\mu^1_t ~.
     \end{equation}
+
+    To pre-register a single approach, we model coordination as being
+    constant for the second half of the second
+    trial. This allows for the team to develop some rapport and interventions to
+    have an effect. 
 
 \subsection{Intervention}
 
