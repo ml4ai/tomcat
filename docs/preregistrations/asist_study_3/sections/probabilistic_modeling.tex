@@ -1,4 +1,4 @@
-\chapter{Probabilistic modeling of team dynamics}
+\chapter{Probabilistic modeling of team coordination}
 \label{ch:pgm}
 \textbf{Paulo Soares, Kobus Barnard, Emily Butler}
 
@@ -73,7 +73,7 @@ two vocal features that map directly to pitch and loudness of human speech (see
 Methods for details), both of which could be targeted by an intervention as
 simple as asking a person to speak softly. 
 
-Finally, we also prefer models that are predictive and interpretable. XXXXXXX
+%%% Finally, we also prefer models that are predictive and interpretable. XXXXXXX
 
 \section{Hypotheses}
 The proposed research will use data from ASIST Study 3, to be conducted in the Spring of 2022. Participants will take part in 3-person teams and will play a game where they attempt to save virtual victims in a Mindcraft Search and Rescue scenario. We will test the following hypotheses:
@@ -183,7 +183,7 @@ The team effects measures are:
 
 \begin{itemize}
     \item
-    ASI-M1 ASI Utility (score) 
+    ASI-M1 ASI Utility (SAR game score) 
     \item
 
     ASI-M3 Error Rate; \textbf{Measure}: Percentage of
@@ -193,29 +193,54 @@ The team effects measures are:
 \end{itemize}
 
 \subsection{Modeling}
-    Our probabilistic model for this experiment (see  Figure~\ref{XXX}) models outcome measures and
-    team score conditioned on a team efficacy latent construct, $E$. These
-    conditional distributions are learned from training data. This provides a
-    baseline model. To study the effect of modeling the level of coordination,
-    $C\in[0,1]$, we
-    extend this model to condition our coordination model on 
-    $E$. To pre-register a single approach, we model coordination as being
-    constant for the second half of the second
-    trial. This allows for the team to develop some rapport and interventions to
-    have an effect. 
+    We develop a probabilistic model for measurement outcomes. In addition to
+    reflecting an explanatory story, a key property of this approach relevant to
+    evaluation as discussed below is all estimates are probability
+    distributions. In needed, these can be distilled into point estimates by
+    either averaging the distribution (MMSE loss) or using the maximum (MAP
+    loss). 
 
-    \textbf{Coordination.} We are developing a comprehensive probabilistic model for
-    coordination, with a simple case exhibited as part of Figure~\ref{XXX}.
-    While in the general case coordination influences multiple diverse
-    modalities at different time scales, here we consider a single time scale
-    and two vocalic features. 
+    Our probabilistic model for this experiment (see  Figure~\ref{fig:pgm})
+    models outcome measures, $M^i$, conditioned on a coordination latent construct, $C$. 
+%
+    \begin{figure}
+    \label{fig:pgm}
+    \includegraphics[width=6in]{images/prereg-pgm.pdf}
+    \caption{Probabilistic graphical model (pgm) for investigating coordination.
+    Circles (nodes) are stochastic variables. 
+    Open circles are latent variables, shaded circles are potentially observed
+    variables, and arrows represent variables conditioned on parents.
+    Coordination, $C$, is posited to influence team efficacy measures, $M^i$.
+    We do not use plate notation here because the conditioning arrows are
+    measure specific). These are different linear functions learned from data with potentially
+    different emission distributions (e.g., normal or Poisson), depending on the
+    measurement construct. \\
+    $~~~~~~~~$ Coordination is exhibited by variables influencing other variables in the
+    next time step. We do not draw all possible arrows here, because, for
+    vocalics, we assume that all  such influence comes from the previous speaker.
+    Here we illustrate person 1 speaking, followed by person 2, and then person 3.  }
+    \end{figure}
+%
+    The distributions $p(M^i|C)$ are typically linear functions learned from data
+    with normal or Poisson emission distribution. Using a simple prior on $C$,
+    provides a baseline model.
 
-    Our underlying axiom is that higher coordination is associated with causally
-    driven increased mutual information (statistical dependence) between
-    relevant observed variables. Here we consider latent attributes for vocalic
-    style for person $p$, denoted by $A^{p}$, which has as evidence, $O^{p,1}$,
-    being the mean of normally distributed pitch of speech over a speech turn
-    and similarly $O^{p,2}$ for speech intensity. If person 2 speaks after
+    \textbf{Coordination.}
+    We would like to study the effect of including coordination in this model.
+    We are developing a comprehensive probabilistic model for coordination, with
+    a simple case exhibited as part of Figure~\ref{fig:pgm}.  While in the
+    general case coordination influences multiple diverse modalities at
+    different time scales, here we consider a single time scale and two vocalic
+    features.  Our underlying axiom is that higher coordination is associated
+    with causally driven increased mutual information (statistical dependence)
+    between relevant observed variables. Here we consider latent attributes for
+    vocalic style for person $p$, denoted by $A^{p}$, which has as evidence,
+    $O^{p,1}$, being the mean of normally distributed pitch of speech over a
+    speech turn and similarly $O^{p,2}$ for speech intensity.  We further assume
+    that the speech style of each person is only influenced by the previous
+    speaker.
+
+    If person 2 speaks after
     person 1, then the degree that their vocalic style follows that of person 1
     indicates coordination. Formally, we blend the non-coordinated distribution
     mean, $\mu^2_t$, for the second person, with the fully dependent mean,
@@ -223,6 +248,11 @@ The team effects measures are:
     \begin{equation}
     \mu^2_{t+1} = (1-c) \mu^2_t + c\mu^1_t ~.
     \end{equation}
+
+    To pre-register a single approach, we model coordination as being
+    constant for the second half of the second
+    trial. This allows for the team to develop some rapport and interventions to
+    have an effect. 
 
 \subsection{Intervention}
 
@@ -332,25 +362,34 @@ State transition rules are detailed in the Figure \ref{fig:help request_reply_in
 
 \section{Evaluation}
 
-Where applicable, we use leave-one-out cross validation where we repeatedly fit the
-parameters of the model on all but one experimental run, and evaluate on the
-held out experiment run where a different team played. 
-
-\textbf{Hypothesis 1}: modeling coordination improves outcome prediction.
-For hypothesis 1 we train two different models (with and without coordination)
-on the same training sets in the cross validation splits. We then apply that
-model to held out data. The result in either case is a distribution for each
-outcome variable. Given the actual value of the outcome variable treated as a
-real number, we will evaluate predictive accuracy by using the mean of the
-distribution compared to the actual value and compute the squared error over all
-test splits. For completeness, for any categorical outcomes we would compare the
-value with maximal probability with the observed one. 
+\textbf{Hypothesis 1}: modeling coordination improves outcome prediction.  For
+hypothesis 1 we train two different models (with and without coordination) on
+the same training sets in the cross validation splits. We then apply that model
+to held out data. The result in either case is a distribution for each outcome
+variable. Given the actual value of the outcome variable treated as a real
+number, we will evaluate predictive accuracy by using the mean of the
+distribution (MMSE loss) compared to the actual value and compute the squared
+error over all test splits in a leave one out cross validation scenario. For
+completeness, for any categorical outcomes we would compare the value with
+maximal probability with the observed one. 
 
 \textbf{Hypothesis 2}: increased coordination predicts higher outcome scores.
-and higher values on team effects and processes. XXX
-
+Here we are interested in the learned model. In particular, we posit that the
+slopes in the sub-models for the measures, i.e., $p(M^i|C)$ will be positive. We
+will estimate the posterior distribution of those slopes over relevant data. The
+mean and variance of that distribution will give some idea as to the validity of
+the claim that coordination and a particular measure are positively correlated.
+Sampling this distribution will reveal intervals that capture the probability
+that this is valid within various ranges. 
 
 \textbf{Hypothesis 3}: intervening on team communication predicts higher
-coordination, and higher outcome scores. XXX
+coordination and SAR game scores. Here we have two distinct data cases. Each leads to
+a probability distribution for coordination and score. Specifically, each run
+contributes multiple samples to one of those distributions. We sample those
+distributions to evaluate the hypotheses. Intuitively, it is easy to estimate
+how often the statement is true ignoring the effect size, and the expected
+difference, and the probability that it exceeds a desired value.  
+
+
 
 
