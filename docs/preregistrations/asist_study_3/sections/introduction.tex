@@ -77,6 +77,86 @@ content section displayed under its title heading in addition to the table at
 the beginning of this document. Authorship is ascribed to those who have
 contributed substantially to the ideation or writing of the content.
 
+\section{Experimental environment and task}
+
+All the component preregistrations in this document share the same experimental
+environment and task, so we describe it only once here in this section in order
+to minimize redundancy.
+
+The experimental environment is a virtual Minecraft-based testbed developed by
+researchers from Aptima, Inc. and Arizona State University, who are part of the
+testing and evaluation team on ASIST. 
+The task is a simulated urban search and
+rescue mission, in which three human participants and an AI advisor team up to
+rescue victims of a building collapse. The objective of the task is to maximize
+the total number of points earned by the team, where points are earned by
+rescuing victims.
+
+Each of the three human participants has a unique role
+(Engineer, Medic, Transporter), and the victims can have different levels of
+injury.
+The task also includes perturbations in the form of threat rooms,
+and unexpected rubble collapses, and mechanisms to generate interdependence
+between the human teammates, thus encouraging them to communicate and
+coordinate with each other.
+The complete details of the experiment and task can be found in the Study 3
+preregistration \cite{Huang.ea:2022}.
+
+\section{System Overview}
+\label{ch:system}
+
+Broadly speaking, we are aiming to develop a suite of open-source technologies
+for artificial social intelligence. For ASIST Study 3, we are particularly
+interested in studying team coordination and communication.
+
+For ASIST Study 3, we will deploy five containerized components. Four of them
+can be classified as `analytical components' (ACs) in the parlance of the ASIST
+program, and one as an `ASI', i.e. an AI agent imbued with artificial social
+intelligence and designed to provide helpful interventions. In principle, the
+four ACs could be bundled and deployed as part of our ASI, but we opt to keep
+them separate as we expect that the resulting modularity will be beneficial for
+future applications and results in additional system robustness.
+
+
+\subsection{Analytical Components}
+
+We list the analytical components we are deploying for ASIST Study 3 in
+\autoref{tab:study_3_acs}. The system architecture into which they fit is shown
+in \autoref{fig:nlp-architecture}.
+
+\begin{table}
+    \small
+    \begin{tabularx}{5.5in}{llXl}
+        \toprule
+        Component           & Inputs                        & Outputs                                & Chapter\\\midrule
+        ASR Agent           & Raw audio                     & Transcriptions, word-level timings     & \\
+        SpeechAnalyzer      & Raw audio, transcriptions     & Sentiment and personality trait labels & \autoref{ch:sentiment_analysis}\\
+        DialogAgent         & Transcriptions, chat messages & Structured events                      & \autoref{ch:rule_based_ie}\\
+        DialogActClassifier & Transcriptions                & Dialog act labels                      & \autoref{ch:da_classification}\\
+        \bottomrule
+    \end{tabularx}
+    \caption{%
+        Analytical components we are deploying for ASIST Study 3, along with
+        their inputs, outputs, and correspnding sections in this document that
+        describe their capability in greater detail.
+    }
+    \label{tab:study_3_acs}
+\end{table}
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=6in]{images/nlp_architecture}
+    \caption{Architecture of our multi-participant dialogue analysis system.}
+    \label{fig:nlp-architecture}
+\end{figure}
+
+\subsection{Artificial Social Intelligence}
+
+The outputs of the aforementioned analytical components are among the inputs to
+our artificial social intelligence agent, ToMCAT. The core capabilities and
+planned interventions of our agent are described in \autoref{ch:pgm}.
+
 \section{Document overview}
 
 %Give a brief summary of the preregistrations and how they contribute to the
@@ -91,12 +171,10 @@ believe is important for artificial social intelligence, and is currently
 integrated or will be integrated in the near future into our ASI agent that
 will be evaluated in ASIST study 3 or future ASIST experiments.
 
-We begin by giving a brief overview of the software components we are deploying
-for ASIST Study 3 in \autoref{ch:system}. This is followed by our plan for
-modeling team coordination and implementing associated interventions in
-\autoref{ch:pgm}.  We then proceed to describe some of the capabilities that
-are lower on the `software stack' that either currently provide outputs that
-our AI agent or will do so in the future.
+We begin by describing our plan for modeling team coordination and implementing
+associated interventions in \autoref{ch:pgm}.  We then proceed to describe some
+of the capabilities that are lower on the `software stack' that either
+currently provide outputs that our AI agent or will do so in the future.
 
 \autoref{ch:rule_based_ie} and \autoref{ch:sentiment_analysis} focus on
 gleaning information from \emph{individual} natural language utterances.
