@@ -226,9 +226,109 @@ The team effects measures are:
 
 \subsection{Intervention}
 
+The agent has a set of 3 interventions that were designed to encourage oral communication among team members. The interventions are
+
+\begin{enumerate}
+	\item \textbf{Marker Block:} the agent intervenes whenever a team member places a marker block, but do not let their team mates know about it.
+	\item \textbf{Help Request:} the agent intervenes whenever a team member needs assistance, but do not ask for it.
+	\item \textbf{Help Request Reply:} the agent intervenes whenever a team member asked for help, but any of the other team members replied.
+\end{enumerate}
+
+The agent uses a state machine to determine when to watch/monitor, activate or cancel a specific intervention. The general idea is illustrated in \ref{fig:intervention_state_machine}. Different events in the game might trigger different interventions and state transitions. These events and the rules associated with them are detailed in the following subsections and the list of topics the agent uses to detect these events and other relevant information about the missions are listed in Table \ref{tab:intervention_variables}.
+
+\begin{table}
+    \small
+    \centering
+    \begin{tabularx}{6in}{lp{1.2in}X}
+        \toprule
+        Topic & Publisher & Purpose\\
+        \midrule  
+    	trial & simulator & Determine a mission start and end \\
+    	observations/events/mission & simulator & Determine the list of team members and mission order \\    
+    	agent/dialog & UAZ Dialog Agent & Determined what relevant information was said by the team members \\
+    	observations/events/player/triage & simulator & Determine interaction with a victim \\    
+    	observations/events/player/victim\_picked\_up & simulator & Determine interaction with a victim \\
+    	observations/events/player/marker\_placed & simulator & Determine a marker placement \\
+    	observations/events/player/marker\_removed & simulator & Determine a marker removal \\  
+    	observations/state & simulator & Determine the team members' positions \\	
+    	observations/events/player/role\_selected & simulator & Determine the team member's role \\
+    	observations/events/player/rubble\_collapse & simulator & Determine if an obstacle is blocking an exit \\
+    	observations/events/player/tool\_used & simulator & Determine if an obstacle is being destroyed \\
+    	observations/events/player/proximity & IHMC Proximity AC agent & Determine the team member's area \\
+    	observations/events/player/rubble\_destroyed & simulator & Determine an exit was unblocked \\   
+    	agent/pygl\_fov/player/3d/summary & FoV Tool & Determine objects in the team members' field of view \\    	
+        \bottomrule
+    \end{tabularx}
+    \caption{%
+        List of testbed message topics the agent is subscribed to.
+    }
+    \label{tab:intervention_variables}
+\end{table}
+
+\subsubsection{Marker Block}
+
+The agent will start to monitor an intervention of this kind whenever a team member places one of the following markers:
+\begin{itemize}
+	\item Critical Victim
+	\item Regular Victim
+	\item Rubble
+	\item SOS
+\end{itemize}
+
+These are the types that convey the need for other team members assistance. Therefore, it is important that the team knows when markers of these kinds are placed. 
+
+Despite the fact that markers show up in the interactive map, the verbalization of a marker placement is essential to drive the team members' attention to the map as they might not be looking at the map at the time of placement. 
+
+Once the agent starts to watch this intervention, it can either cancel or activate it depending on the next actions of the team member who placed the marker in the first place. If the intervention is activated, the agent will send a message to the team member who placed the marker with the following content
+
+\begin{quote} 
+    \centering 
+    \emph{``[Player color], let your teammates know about the [marker type] marker you recently placed.''}
+\end{quote}
+
+The agent only intervenes once for each watched marker. This means that once the intervention gets activated, the agent removes it from the queue of watched interventions. The rules for switching to one state or another are detailed in the Figure \ref{fig:marker_block_intervention_flow_chart}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=6.5in]{images/marker_block_intervention_flow_chart.pdf}
+    \caption{State transition rules for a marker-block intervention. This intervention gets activated whenever the team member that placed the original marker $X$ switches location in the map (e.g. from room A to room B), interacts with a victim (e.g. picks up a victim) or places another marker of different type or same type as X but far enough. The intervention is canceled if its objective is fulfilled or its object destroyed, that is, if the team member speaks about X or removes it respectively.}
+    \label{fig:marker_block_intervention_flow_chart}
+\end{figure}
 
 
 
+\subsubsection{Help Request}
+
+The agent will start to monitor for an intervention of this kind whenever a team member notices they are blocked inside a room or when they are close enough to a critical victim. These two events require team members to request assistance from others.
+
+The agent considers a team member noticed rubble blocking their way out of a room if the obstructed exit is in the team member's field of view and within a range of 5 blocks from the team member's position. The same rule is applied for inference of critical victim perception. 
+
+The activation or canceling of this intervention depends on the next actions taken by the team member that needs help and amount of time passed since the agent started to monitor this intervention. If the intervention is activated, the agent will send a message to the team member who needs help with one of the following contents
+
+\begin{quote} 
+    \centering 
+    \emph{``[Player color], it seems you need some help to rescue a critical victim. Ask your teammates for assistance.''}
+\end{quote}
+
+\begin{quote} 
+    \centering 
+    \emph{``[Player color], it seems you need some help to exit this room. Ask your teammates for assistance.''}
+\end{quote}
+
+The rules for state transitions are illustrated in the Figure \ref{fig:help request_intervention_state_machine}.
+
+\subsubsection{Help Request Reply}
+
+The agent will start to monitor for an intervention of this kind whenever a team member asks for help. The agent detects when a team member asked for help by using the rule-based entity and event extractions \ref{ch:rule_based_ie}.
+
+The transition to an active or canceled state, depends on the next actions taken by the team member that asked for help, subsequent utterances of other team members and amount of time passed since help was requested. If the intervention is activated, the agent will send a message to the team member who asked for help with the following content
+
+\begin{quote} 
+    \centering 
+    \emph{``[Player color], it's been a while since you asked for help. Remind your teammates.''}
+\end{quote}
+
+State transition rules are detailed in the Figure \ref{fig:help request_reply_intervention_state_machine}.
 
 \section{Evaluation}
 
