@@ -197,9 +197,64 @@ The team effects measures are:
 \end{itemize}
 
 \subsection{Modeling}
+    Our probabilistic model for this experiment (see  Figure~\ref{XXX}) models outcome measures and
+    team score conditioned on a team efficacy latent construct, $E$. These
+    conditional distributions are learned from training data. This provides a
+    baseline model. To study the effect of modeling the level of coordination,
+    $C\in[0,1]$, we
+    extend this model to condition our coordination model on 
+    $E$. To pre-register a single approach, we model coordination as being
+    constant for the second half of the second
+    trial. This allows for the team to develop some rapport and interventions to
+    have an effect. 
+
+    \textbf{Coordination.} We are developing a comprehensive probabilistic model for
+    coordination, with a simple case exhibited as part of Figure~\ref{XXX}.
+    While in the general case coordination influences multiple diverse
+    modalities at different time scales, here we consider a single time scale
+    and two vocalic features. 
+
+    Our underlying axiom is that higher coordination is associated with causally
+    driven increased mutual information (statistical dependence) between
+    relevant observed variables. Here we consider latent attributes for vocalic
+    style for person $p$, denoted by $A^{p}$, which has as evidence, $O^{p,1}$,
+    being the mean of normally distributed pitch of speech over a speech turn
+    and similarly $O^{p,2}$ for speech intensity. If person 2 speaks after
+    person 1, then the degree that their vocalic style follows that of person 1
+    indicates coordination. Formally, we blend the non-coordinated distribution
+    mean, $\mu^2_t$, for the second person, with the fully dependent mean,
+    $\mu^1_t$, for the mean for the second person at time $t+1$ by
+    \begin{equation}
+    \mu^2_{t+1} = (1-c) \mu^2_t + c\mu^1_t ~.
+    \end{equation}
 
 \subsection{Intervention}
 
+
+
+
+
 \section{Evaluation}
+
+Where applicable, we use leave-one-out cross validation where we repeatedly fit the
+parameters of the model on all but one experimental run, and evaluate on the
+held out experiment run where a different team played. 
+
+\textbf{Hypothesis 1}: modeling coordination improves outcome prediction.
+For hypothesis 1 we train two different models (with and without coordination)
+on the same training sets in the cross validation splits. We then apply that
+model to held out data. The result in either case is a distribution for each
+outcome variable. Given the actual value of the outcome variable treated as a
+real number, we will evaluate predictive accuracy by using the mean of the
+distribution compared to the actual value and compute the squared error over all
+test splits. For completeness, for any categorical outcomes we would compare the
+value with maximal probability with the observed one. 
+
+\textbf{Hypothesis 2}: increased coordination predicts higher outcome scores.
+and higher values on team effects and processes. XXX
+
+
+\textbf{Hypothesis 3}: intervening on team communication predicts higher
+coordination, and higher outcome scores. XXX
 
 
