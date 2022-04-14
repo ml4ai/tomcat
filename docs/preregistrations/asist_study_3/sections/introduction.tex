@@ -19,12 +19,12 @@ The goal of the preregistration process as originally devised
 \citep{Nosek.ea:2018} is to separate hypothesis-generating (exploratory)
 research from hypothesis-testing (confirmatory) research when Null Hypothesis
 Significant Testing (NHST) is used as the evaluation method. A large portion of
-the activities engaged in by TA1 performers in ASIST does not fit neatly into
-the paradigm either because: (i) the `hypotheses' are about the value of
-technological components (e.g., models, algorithms, and systems) for improving
-the performance of artificial agents, not about theories about the world (e.g.,
-human behaviour) and/or (ii) the evaluation of the evidence for or against the
-hypotheses is not doing using NHST.
+the activities engaged in by TA1 (Agent Architectures) performers in ASIST does
+not fit neatly into the paradigm either because: (i) the `hypotheses' are about
+the value of technological components (e.g., models, algorithms, and systems)
+for improving the performance of artificial agents, not about theories about
+the world (e.g., human behaviour) and/or (ii) the evaluation of the evidence
+for or against the hypotheses is not done using NHST.
 
 For these reasons, for each capability or analysis we declare, we also specify
 what form of hypothesis is tested and what the evaluation method will be. Our
@@ -32,21 +32,21 @@ hypotheses take three forms:
 
 \begin{enumerate}
 
-    \item Hypotheses about technical performance take the following form:
+    \item Hypotheses about \emph{technical performance} take the following form:
         Including component \emph{X} will do better for achieving \emph{Y} than
         not including \emph{X}, where \emph{X} is some technological component
         (e.g., algorithm, system component, modeling approach) and \emph{Y} is
         some specified goal such as prediction accuracy or computational
         efficiency.
 
-    \item Hypotheses about human behavior in the context of experimental
-        manipulation take the following form: Doing \emph{X} to group A will
+    \item Hypotheses about \emph{human behavior in the context of experimental
+        manipulation} take the following form: Doing \emph{X} to group A will
         predict more/less \emph{Y} compared to group B with no \emph{X}, where
         \emph{X} is an experimental manipulation applied to one group (A) but
         not to a comparison group (B) and \emph{Y} is an outcome variable
         (either latent or observed).
 
-    \item Hypotheses about human behavior without experimental manipulation
+    \item Hypotheses about \emph{human behavior without experimental manipulation}
         take the following form: Entities (e.g., individuals, teams) with
         higher \emph{X} will do more/less \emph{Y} than entities with lower
         \emph{X}, where \emph{X} is a predictor variable (either latent or
@@ -55,9 +55,22 @@ hypotheses take three forms:
 
 \end{enumerate}
 
-By specifying our hypotheses in one of these forms and being explicit about the evaluation to be used for each we will achieve the central goals of preregistration, which are avoiding post-diction and hindsight bias by not 1) using the same data to generate and test a hypothesis, and 2) not “cherry-picking” results after the fact from a large set of unspecified analyses or procedures.
+By specifying our hypotheses in one of these forms and being explicit about the
+evaluation to be used for each we will achieve the central goals of
+preregistration, which are avoiding post-diction and hindsight bias by not (i)
+using the same data to generate and test a hypothesis, and (ii) not
+``cherry-picking" results after the fact from a large set of unspecified
+analyses or procedures.
 
-Another primary motivation for this preregistration document from the perspective of a TA1 team is to accelerate the writing of manuscripts for publication by using the structure provided by the preregistration process to plan ahead for publications. Each of the sections in this document is a ‘component preregistation’ that corresponds to a publication ‘seedling’, with the content optimized for what we call ‘copy-pasteability’, that is, the ability to be copied verbatim into a manuscript for publication with minimal changes. This is intended to reduce duplicate effort between writing up preregistrations and publications.
+Another primary motivation for this preregistration document from the
+perspective of a TA1 team is to accelerate the writing of manuscripts for
+publication by using the structure provided by the preregistration process to
+plan ahead for publications. Each of the sections in this document is a
+`component preregistation' that corresponds to a publication ‘seedling’, with
+the content optimized for what we call `copy-pasteability', that is, the
+ability to be copied verbatim into a manuscript for publication with minimal
+changes. This is intended to reduce duplicate effort between writing up
+preregistrations and publications.
 
 Since our team is relatively large, there is little overlap in the author lists
 for the individual component preregistrations. Thus, each component
@@ -75,15 +88,13 @@ capability that we believe is important for artificial social intelligence, and
 is currently integrated or will be integrated in the near future into our ASI
 agent that will be evaluated in ASIST study 3 or future ASIST experiments.
 
-For ASIST Study 3, we will deploy three Dockerized components. Two of them can
-be classified as `analytical components' (ACs) in the parlance of the ASIST
+For ASIST Study 3, we will deploy five containerized components. Four of them
+can be classified as `analytical components' (ACs) in the parlance of the ASIST
 program, and one as an `ASI', i.e. an AI agent imbued with artificial social
-intelligence. The current delineation between ACs and ASIs has been made based
-on container boundaries. In principle, the two ACs devoted to speech and
-natural language processing (see \autoref{fig:nlp-architecture}) could be
-bundled and deployed as part of our ASI, but we opt to keep them separate as we
-expect that the resulting modularity will be beneficial for future
-applications.
+intelligence and designed to provide helpful interventions.  In principle, the
+four ACs could be bundled and deployed as part of our ASI, but we opt to keep
+them separate as we expect that the resulting modularity will be beneficial for
+future applications and results in additional system robustness.
 
 \begin{figure}
     \centering
@@ -92,7 +103,8 @@ applications.
     \label{fig:nlp-architecture}
 \end{figure}
 
-%Give a brief summary of the preregistrations and how they contribute to the overall architecture.
+%Give a brief summary of the preregistrations and how they contribute to the
+%overall architecture.
 
 The component preregistrations in this document span a broad spectrum of
 research topics, but work together to form a cohesive suite of ASI
