@@ -10,26 +10,30 @@ program, team-building and communication within teams is of heightened
 interest. We assert that understanding the semantics of verbal communication is
 essential to develop a model of human individuals and teams. Our `DialogAgent'
 AC is designed with the goal of extracting information from player dialog
-that can be useful in order to create a model of players' mental states.
+that can help build and update a model of players' mental states. The outputs
+of the DialogAgent AC are consumed by the ToMCAT ASI (\autoref{ch:pgm}).
 
-Raw natural language data is messy by nature - in order for a machine to
-reason about its semantics, it must be processed
-to extract structured information. The DialogAgent leverages Odin
-\cite{valenzuela-escarcega-etal-2016-odins}, a powerful
-information extraction system, in order to do this.
 
 \section{Approach}
 
-%% Note to Adarsh: I think we could insert the diagram from Study 2 prereg here (page 2)
+The DialogAgent processes natural language texts from two sources: utterances
+spoken by players, and text chats sent using the Minecraft chat
+interface\footnote{For ASIST Study 3, participants are discouraged from using
+    text chat, but it is not programmatically disallowed - for this reason, we
+    still monitor it. Performer teams who use the outputs of the DialogAgent
+    should inspect the \texttt{data.participant\_id} key in the DialogAgent
+    output messages to make sure that it is not \texttt{Server}, which
+correspnods to chat messages sent by the testbed infrastructure rather than
+humans.}.
 
-Raw communication audio captured during the experiments is processed through
-our SpeechAnalyzer which provides transcriptions (transcriptions:
-MinecraftEntity\_Observation\_Asr\_Speechanalyzer). The transcriptions are run
-through our DialogAgent which contains an extensive rule-based event extraction
-system (ODIN) . Much of modern
-information extraction and event extraction is done via neural nets, see
-\citet{Ahmad2021GATEGA,Du2020EventEB}. We are opting for a rule-based system
-because:
+Raw natural language data is messy by nature - in order for a machine to reason
+about its semantics, it must be processed to extract structured information.
+In order to do this, the DialogAgent leverages Odin
+\cite{valenzuela-escarcega-etal-2016-odins}, a powerful rule-based information
+extraction system developed at UArizona.  While much of modern information
+extraction and event extraction is done using neural networks
+\cite{Ahmad2021GATEGA, Du2020EventEB}, we opt for a rule-based system
+for the following reasons:
 
 \begin{enumerate}
 
@@ -37,17 +41,19 @@ because:
      quickly add or remove labels if we see the need to do so.
 
  \item It allows for high precision for the labels we are interested in. Rules
-     can be crafted to be precise (albeit at the cost of coverage).
+     can be crafted to be precise (albeit at the cost of recall).
 
  \item Rules do not require us to create, maintain, and annotate extensive
-     datasets. This is especially pertinent within the scope of ASIST, as
-     domain specific terms can change between Studies. It would be near
-     impossible for us to train a neural agent on the new terms of the next
-     study before the data is published.
+     datasets. This is especially pertinent to the ASIST program, with the
+     relatively fast cadence of changes to the experimental task and domain,
+     along with the concomitant changes to domain-specific vocabulary of
+     interest.  It would be near-impossible for us to annotate data and train a
+     neural agent on the new vocabulary of a study prior to its actual
+     execution and the release of the data from it. 
 
 \end{enumerate}
 
-Our rule based framework returns nested labels and their spans. The nesting of
+Our rule-based framework returns nested labels and their spans. The nesting of
 labels represents the argument structure of the event. The extracted events are
 returned as JSON objects (event extractions:
 MinecraftEntity\_Event\_Dialogue\_Event\_Dialogagent). 
@@ -58,10 +64,6 @@ MinecraftEntity\_Event\_Dialogue\_Event\_Dialogagent).
     \item Input Variables
     \begin{itemize}
         \item transcriptions: MinecraftEntity\_Observation\_Asr\_Speechanalyzer
-        %the following only if we want idc in pre reg:
-        %\item location data: MinecraftEntity_Event_Location_Locationmonitor
-        % \item triage status: MinecraftEntity_Event_Triage_Simulator
-        %\item rubble interaction: MinecraftEntity_Event_Rubbledestroyed_Simulator
     \end{itemize}
     \item Output Variables
     \begin{itemize}
