@@ -262,25 +262,32 @@ The team effects measures are:
 
 \section{Evaluation}
 
-Where applicable, we use leave-one-out cross validation where we repeatedly fit the
-parameters of the model on all but one experimental run, and evaluate on the
-held out experiment run where a different team played. 
-
-\textbf{Hypothesis 1}: modeling coordination improves outcome prediction.
-For hypothesis 1 we train two different models (with and without coordination)
-on the same training sets in the cross validation splits. We then apply that
-model to held out data. The result in either case is a distribution for each
-outcome variable. Given the actual value of the outcome variable treated as a
-real number, we will evaluate predictive accuracy by using the mean of the
-distribution compared to the actual value and compute the squared error over all
-test splits. For completeness, for any categorical outcomes we would compare the
-value with maximal probability with the observed one. 
+\textbf{Hypothesis 1}: modeling coordination improves outcome prediction.  For
+hypothesis 1 we train two different models (with and without coordination) on
+the same training sets in the cross validation splits. We then apply that model
+to held out data. The result in either case is a distribution for each outcome
+variable. Given the actual value of the outcome variable treated as a real
+number, we will evaluate predictive accuracy by using the mean of the
+distribution (MMSE loss) compared to the actual value and compute the squared
+error over all test splits in a leave one out cross validation scenario. For
+completeness, for any categorical outcomes we would compare the value with
+maximal probability with the observed one. 
 
 \textbf{Hypothesis 2}: increased coordination predicts higher outcome scores.
-and higher values on team effects and processes. XXX
-
+Here we are interested in the learned model. In particular, we posit that the
+slopes in the sub-models for the measures, i.e., $p(M^i|C)$ will be positive. We
+will estimate the posterior distribution of those slopes over relevant data. The
+mean and variance of that distribution will give some idea as to the validity of
+the claim that coordination and a particular measure are positively correlated.
+Sampling this distribution will reveal intervals that capture the probability
+that this is valid within various ranges. 
 
 \textbf{Hypothesis 3}: intervening on team communication predicts higher
-coordination, and higher outcome scores. XXX
+coordination and SAR game scores. Here we have two distinct data cases. Each leads to
+a probability distribution for coordination and score. Specifically, each run
+contributes multiple samples to one of those distributions. We sample those
+distributions to evaluate the hypotheses. Intuitively, it is easy to estimate
+how often the statement is true ignoring the effect size, and the expected
+difference, and the probability that it exceeds a desired value.  
 
 
