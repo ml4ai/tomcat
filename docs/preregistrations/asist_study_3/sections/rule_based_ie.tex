@@ -9,22 +9,9 @@ significant insight into social processes. Within the scope of the ASIST
 program, team-building and communication within teams is of heightened
 interest. We assert that understanding the semantics of verbal communication is
 essential to develop a model of human individuals and teams. Our `DialogAgent'
-AC is designed with the goal of extracting information from player dialog
-that can help build and update a model of players' mental states. The outputs
-of the DialogAgent AC are consumed by the ToMCAT ASI (\autoref{ch:pgm}).
-
-
-\section{Approach}
-
-The DialogAgent processes natural language texts from two sources: utterances
-spoken by players, and text chats sent using the Minecraft chat
-interface\footnote{For ASIST Study 3, participants are discouraged from using
-    text chat, but it is not programmatically disallowed - for this reason, we
-    still monitor it. Performer teams who use the outputs of the DialogAgent
-    should inspect the \texttt{data.participant\_id} key in the DialogAgent
-    output messages to make sure that it is not \texttt{Server}, which
-correspnods to chat messages sent by the testbed infrastructure rather than
-humans.}.
+AC is designed with the goal of extracting information from player dialog that
+can help build and update a model of players' mental states. The outputs of the
+DialogAgent AC are consumed by the ToMCAT ASI (\autoref{ch:pgm}).
 
 Raw natural language data is messy by nature - in order for a machine to reason
 about its semantics, it must be processed to extract structured information.
@@ -32,8 +19,8 @@ In order to do this, the DialogAgent leverages Odin
 \cite{valenzuela-escarcega-etal-2016-odins}, a powerful rule-based information
 extraction system developed at UArizona.  While much of modern information
 extraction and event extraction is done using neural networks
-\cite{Ahmad2021GATEGA, Du2020EventEB}, we opt for a rule-based system
-for the following reasons:
+\cite{Ahmad2021GATEGA, Du2020EventEB}, we opt for a rule-based system for the
+following reasons:
 
 \begin{enumerate}
 
@@ -53,24 +40,26 @@ for the following reasons:
 
 \end{enumerate}
 
-Our rule-based framework returns nested labels and their spans. The nesting of
-labels represents the argument structure of the event. The extracted events are
-returned as JSON objects (event extractions:
-MinecraftEntity\_Event\_Dialogue\_Event\_Dialogagent). 
 
+\section{Approach}
 
-\subsection{List of Variables}
-\begin{itemize}
-    \item Input Variables
-    \begin{itemize}
-        \item transcriptions: MinecraftEntity\_Observation\_Asr\_Speechanalyzer
-    \end{itemize}
-    \item Output Variables
-    \begin{itemize}
-        \item Event Extractions: MinecraftEntity\_Event\_Dialogue\_Event\_Dialogagent
-    \end{itemize}
-\end{itemize}
+The DialogAgent processes natural language texts from two sources: utterances
+spoken by players, and text chats sent using the Minecraft chat
+interface\footnote{For ASIST Study 3, participants are discouraged from using
+    text chat, but it is not programmatically disallowed - for this reason, we
+    still monitor it. Performer teams who use the outputs of the DialogAgent
+    should inspect the \texttt{data.participant\_id} key in the DialogAgent
+    output messages to make sure that it is not \texttt{Server}, which
+correspnods to chat messages sent by the testbed infrastructure rather than
+humans.}.
 
+Our rule-based framework extracts \emph{events} from natural language. These
+can be either \emph{simple} events, that do not have any arguments, or
+\emph{complex} events, that can take other events as arguments. Each event is
+associated with a unique span of text and is assigned one or more labels by the
+rule that extracts it. The labels we are using are organized into an ontology.
+If a rule assigns a label to an event from this ontology, the parents of that
+label in the ontology are also assigned as labels for that event.
 
 \section{Evaluation}
 
