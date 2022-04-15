@@ -26,10 +26,10 @@ suddenly broadens everyone’s perspective, leading to immediate group consensus
 The non-linear change in the team’s state of agreement could be predicted by the
 first person’s increased mental coordination in their mapping of the problem
 (increased within-person coordination), which colloquially might be described as
-“having the pieces fall into place,” followed by the team’s increased group
+`having the pieces fall into place', followed by the team’s increased group
 coordination as all members adopt the new perspective (increased between-person
 coordination). Thus being able to recognize ongoing changes in coordination (in
-this example in the domain of mental contents) could help an artificially
+the domain of mental contents in this example) could help an artificially
 intelligent agent predict subsequent non-linear changes in team states and
 performance outcomes. 
 
@@ -48,168 +48,197 @@ coordination between the electrical activity of people’s brains may be best
 observed in milliseconds, while coordination of the semantic content of their
 speech may be best observed at the level of speech turns.
 
-Social coordination has been operationalized in many ways, often with approaches
-that are mode or time-resolution specific. We prefer a more general approach,
-since the same representation can be used to index coordination for any aspect
-of the interpersonal system, from individual brain activity to collective
-behavior sequences. One advantage of this for developing a socially intelligent
-artificial agent is that the agent can learn about coordination from any
-available observable information, which has important real-world consequences
-for how useful such an agent will be, since it will not be constrained to
-situations similar to those in which it is developed. The fundamental concept
-that needs to be captured by a general representation of coordination is the
-predictive interdependencies over time among the components of the system. See
-the “Modeling” section below for the details of our representation.
+Social coordination has been operationalized in many ways, often with
+approaches that are mode or time-resolution specific. We prefer a more general
+approach, since the same representation can be used to index coordination for
+any aspect of the interpersonal system, from individual brain activity to
+collective behavior sequences. One advantage of this for developing a socially
+intelligent artificial agent is that the agent can learn about coordination
+from any available observable information, which has important real-world
+consequences for how useful such an agent will be, since it will not be
+constrained to situations similar to those in which it is developed. The
+fundamental concept that needs to be captured by a general representation of
+coordination is the predictive interdependencies over time among the components
+of the system. See \autoref{subsec:modeling} for the details of our
+representation.
 
 We also prefer measures that are easily interpretable. Although coordination
-should be observable from any measure of the interpersonal system, some measures
-will map more closely to intuitive domains of coordination than others. For
-example, coordination of speech behavior is theoretically observable from any
-derived measure of vocal signals during a conversation. Along these lines, work
-with natural language processing has made use of dozens of automatically
-extracted features from speech for categorizing a broad range of targets, such
-as personality types or emotional expression \citep{eyben2010opensmile}. Although
-successful categorization has been achieved using various subsets of the
-features, it is unclear what aspect of human behavior contributed to the
-results, making it impossible to go from the results to theoretically based
-interventions. For the present research, therefore, we focus on coordination of
-two vocal features that map directly to pitch and loudness of human speech (see
-Methods for details), both of which could be targeted by an intervention as
-simple as asking a person to speak softly. 
+should be observable from any measure of the interpersonal system, some
+measures will map more closely to intuitive domains of coordination than
+others. For example, coordination of speech behavior is theoretically
+observable from any derived measure of vocal signals during a conversation.
+Along these lines, our SpeechAnalyzer AC uses vocalic features extracted using
+the OpenSMILE library \cite{eyben2010opensmile} in conjunction with raw
+utterance texts to identify sentiment and personality traits for utterances
+(see \autoref{ch:sentiment_analysis} for details).
+
+Although the SpeechAnalyzer AC has demonstrated promising results on pilot data
+using various subsets of the vocalic features, it is unclear what aspect of
+human behavior contributed to the results, making it impossible to go from the
+results to theoretically based interventions. For the present research,
+therefore, we focus on coordination of two vocalic features that map directly
+to pitch and loudness of human speech (see \autoref{subsec:measures} for
+details), both of which could be targeted by an intervention as simple as
+asking a person to speak softly. 
 
 %%% Finally, we also prefer models that are predictive and interpretable. XXXXXXX
 
 \section{Hypotheses}
-The proposed research will use data from ASIST Study 3, to be conducted in the Spring of 2022. Participants will take part in 3-person teams and will play a game where they attempt to save virtual victims in a Minecraft Search and Rescue scenario. We will test the following hypotheses:
 
-1) Including coordination as a node in a probabilistic graphical model
-will improve prediction of team process and effect measures (see Measures for details)  as compared to a comparable model that does not include coordination.
+We will test the following hypotheses:\\
 
-2) Teams with higher coordination will have higher scores on measures of team process and effects (see Measures for details) than teams with lower coordination.
+\noindent 1) Including coordination as a node in a probabilistic graphical
+model will improve prediction of team process and effect measures (see Measures
+for details)  as compared to a comparable model that does not include
+coordination.\\
 
-3) The agent will have a set of three interventions to encourage oral communication 
-among team members. Teams where the agent intervenes will have higher
-coordination, and higher scores on measures of team process and effects (see
-Measures for details), than teams where the agent does not intervene. 
-Teams selected for intervention will receive them contingent on their
-activities, as well as on the number of interventions they have received so far
-(see Interventions for more detail).  The interventions are:
+\noindent 2) Teams with higher coordination will have higher scores on measures
+of team process and effects (see \autoref{subsec:measures} for details) than
+teams with lower coordination.\\
+
+\noindent 3) The agent will have a set of three interventions to encourage oral
+communication among team members. Teams where the agent intervenes will have
+higher coordination, and higher scores on measures of team process and effects
+(see \autoref{subsec:measures} for details), than teams where the agent does
+not intervene.  Teams selected for intervention will receive them contingent on
+their activities, as well as on the number of interventions they have received
+so far (see \autoref{subsec:interventions} for more detail).  The interventions
+are:
+
 \begin{enumerate}
-    \item
-    If a team member places a marker block (a form of communication provided in
-    the game) but does not say they did, then the agent will suggest that they
-    tell their team members that they placed it. 
-    \item
-    For some teams, if a team member needs help (to stabilize a victim or exit a
-    blocked room) but does not say they do, then the agent will suggest that
-    they tell their team members that they need assistance. 
-    \item
-    For some teams, if a team member asked for help but did not get a reply from
-    any of the other team members, then the agent will suggest that they tell
-    the others again that help is needed. 
+
+    \item If a team member places a marker block (a form of communication
+        provided in the game) but does not say they did, then the agent
+        will suggest that they tell their team members that they placed it. 
+
+    \item For some teams, if a team member needs help (to stabilize a
+        victim or exit a blocked room) but does not say they do, then the
+        agent will suggest that they tell their team members that they need
+        assistance. 
+
+    \item For some teams, if a team member asked for help but did not get a
+        reply from any of the other team members, then the agent will
+        suggest that they tell the others again that help is needed. 
+
 \end{enumerate}
+
 
 \section{Approach}
 
 \subsection{Design}
+
 Our analyses to test Hypotheses 1 and 2 will make use of data from all of the
 participants in the study (e.g., all possible between- and within- participant
 conditions). As such, testing whether including coordination in the model
 improves prediction of team process and effects measures (Hypothesis 1) and
 testing the association between coordination and team process and effects
-measures (Hypothesis 2) will each be based on 224 missions (8 conditions X 14
-teams X 2 missions). Our analyses to test Hypothesis 3 will make use of data
-from the ``No-Advisor” and ``UAZ-Agent” conditions, and so testing the effect of
-our intervention (Hypothesis 3) will be based on 28 ``No-Advisor” control
-missions (14 teams X 2 missions) compared to 28 ``UAZ-agent” intervention
-missions (14 teams X 2 missions).
+measures (Hypothesis 2) will each be based on 224 missions (8 conditions
+$\times$ 14 teams $\times$ 2 missions). Our analyses to test Hypothesis 3 will
+make use of data from the `No-Advisor' and `UAZ-Agent' conditions, and so
+testing the effect of our intervention (Hypothesis 3) will be based on 28
+`No-Advisor' control missions (14 teams $\times$ 2 missions) compared to 28
+`UAZ-agent' intervention missions (14 teams $\times$ 2 missions).
 
 \subsection{Measures}
-\textbf{Coordination Indicators}. As discussed above, team coordination is
+\label{subsec:measures}
+
+\paragraph{Coordination Indicators} As discussed above, team coordination is
 theoretically observable across modalities and time resolutions for all of the
 components of the interpersonal system. Given the constraints of what will be
-measured for ASIST Study 3, we will focus on two vocalic measures that are to be
-provided in real-time (every 10ms) during the missions as indicators for
-modeling linguistic coordination. The first, ``F0final\_sma" is the smoothed
-moving average of fundamental frequency. It corresponds to a speaker’s pitch.
-The second, ``wav\_RMSenergy\_sma" is the Root Mean Square energy measure, which
-provides an estimate of the intensity of the sound, which correlates with what
-humans perceive as loudness. 
+measured for ASIST Study 3, we will focus on two vocalic measures that are to
+be computed in real-time (every 10 milliseconds) during the missions as
+indicators for modeling linguistic coordination. The first,
+\texttt{F0final\_sma} is the smoothed moving average of fundamental frequency.
+It corresponds to a speaker’s pitch.  The second, \texttt{wav\_RMSenergy\_sma}
+is the Root Mean Square energy measure, which provides an estimate of the
+intensity of the sound, which correlates with what humans perceive as loudness. 
 
-\textbf{Team Process and Effects Measures}. We will include 5 team process
-measures and 2 team effects measures, each taken from the full set of measures
-that will be available for ASIST Study 3. This subset was chosen due to either:
-1) having theoretical connections to coordination (i.e., synchronization,
-coordinative communications, belief differences) or 2) involving the use of
-markers for communication, which is the direct target of our intervention
-(threat room and victim type communication), or 3) representing a global measure
-of team effectiveness (score and error rate).
+\paragraph{Team Process and Effects Measures} We will include five team process
+measures and two team effects measures, each taken from the full set of
+measures that will be available for ASIST Study 3. This subset was chosen due
+to either: (i) having theoretical connections to coordination (i.e.,
+synchronization, coordinative communications, belief differences), (ii)
+involving the use of markers for communication, which is the direct target of
+our intervention (threat room and victim type communication), or (iii)
+representing a global measure of team effectiveness (score and error rate).
 
-The team process measures are:
+\noindent The team process measures we hope to both predict and influence are:
+
 \begin{itemize}
-    \item
-    ASI-M2 Synchronization (e.g., inter-subtask latency); \textbf{Measure}: Mean latency
-    between subtasks of teamwork tasks per trial. Specifically, the mean latency
-    between victim discovery and victim rescue computed as the average over all
-    correctly rescued victims (time of delivery of victim to correct rescue site
-    - time victim was discovered). Where time victim was discovered = the
-    earliest (or minimum) of (1) Transporter signalling device for the room
-    containing the victim, or (2) Medic completes stabilization of the victim.
+
+    \item \textbf{ASI-M2 Synchronization} (e.g., inter-subtask latency);
+        Mean latency between subtasks of teamwork tasks per
+        trial. Specifically, the mean latency between victim discovery and
+        victim rescue computed as the average over all correctly rescued
+        victims (time of delivery of victim to correct rescue site - time
+        victim was discovered). Where time victim was discovered = the earliest
+        (or minimum) of (1) Transporter signalling device for the room
+        containing the victim, or (2) Medic completes stabilization of the
+        victim.
  
-    \item
-    ASI-M5 Coordinative Communications; \textbf{Measure}: A quantitative characterization
-    of the complexity of team communication using entropy in the dynamical
-    system. Entropy is defined as the level of irregularity in the flow of
-    communications between team members.(i.e., Team Communication Dynamics).
-    Typical components of the measure are: (1) Intensity and distributions of
-    team communications are calculated using calculations of over message
-    frequency, duration, and intra-team variance. (2) Temporal patterns of team
-    communications are captured using timestamped communication events and
-    analyzed with recurrence quantification analysis.
+    \item \textbf{ASI-M5 Coordinative Communications} A quantitative
+        characterization of the complexity of team communication using entropy
+        in the dynamical system. Entropy is defined as the level of
+        irregularity in the flow of communications between team members.(i.e.,
+        Team Communication Dynamics).  Typical components of the measure are:
+        (1) Intensity and distributions of team communications are calculated
+        using calculations of over message frequency, duration, and intra-team
+        variance. (2) Temporal patterns of team communications are captured
+        using timestamped communication events and analyzed with recurrence
+        quantification analysis.
 
-    \item
-    Rutgers Threat Room Communication AC; \textbf{Measure}: \% of threat rooms that had a
-    threat room marker block outside its entrance at some point during the
-    mission.  
+    \item \textbf{Rutgers Threat Room Communication AC}: \% of threat
+        rooms that had a threat room marker block outside its entrance at some
+        point during the mission.  
 
-    \item
-    Rutgers Victim Type Communication AC; \textbf{Measure}: count of victim
-    type marker blocks placed near the correct type of A or B victims.
+    \item \textbf{Rutgers Victim Type Communication AC}: count of
+        victim type marker blocks placed near the correct type of A or B
+        victims.
     
-    \item
-    Rutgers Belief Difference AC; \textbf{Measure}: entropy of beliefs about victim
-    distribution by comparing three models in which (1) players share
-    information perfectly, (2) players don't share any information, and (3)
-    players only share information via marker blocks.  
+    \item \textbf{Rutgers Belief Difference AC}: entropy of beliefs about
+        victim distribution by comparing three models in which (1) players
+        share information perfectly, (2) players don't share any information,
+        and (3) players only share information via marker blocks.  
+
 \end{itemize}
 
-The team effects measures are: 
+\noindent The team effects measures we hope to predict and influence are: 
 
 \begin{itemize}
-    \item
-    ASI-M1 ASI Utility (SAR game score) 
-    \item
 
-    ASI-M3 Error Rate; \textbf{Measure}: Percentage of
-    subtasks of teamwork tasks that are completed per trial, measured as below.
-    Specifically, the percentage of discovered victims who are not evacuated.
-    Measure = 1 - (\# victims rescued / \# victims discovered)
+    \item \textbf{ASI-M1 ASI Utility}: SAR game score 
+
+    \item \textbf{ASI-M3 Error Rate}: Percentage of subtasks of teamwork tasks
+        that are completed per trial, measured as below.  Specifically, the
+        percentage of discovered victims who are not evacuated\footnote{We
+            believe that this measure could be improved if instead of using the
+            number of victims rescued/discovered, we use the total score of the
+            victims rescued/discovered. This is because different victims are
+            worth different numbers of points, and it would be reasonable for a
+            team to ignore low point value victims in favor of high point value
+        victims.}. 
+
+        \begin{align}
+            \text{Error rate} = 1 - \frac{\text{\# victims rescued}}{\text{\# victims discovered}}
+        \end{align}
+
 \end{itemize}
 
 \subsection{Modeling}
+\label{subsec:modeling}
 
     We develop a probabilistic model for coordination and outcome measurements.
-    This approach has the advantages that 1) it reflects an explanatory story
-    about coordination, and 2) when it comes to evaluation, all estimates are
+    This approach has the advantages that (i) it reflects an explanatory story
+    about coordination, and (ii) when it comes to evaluation, all estimates are
     probability distributions, rather than point estimates.  If needed, these
     can be distilled into point estimates by either averaging the distribution
-    (MMSE loss) or using the maximum (MAP loss). 
+    (MMSE loss) or using the maximum (MAP\footnote{Maximum a posteriori} loss). 
+    Our probabilistic model for this experiment (see  \autoref{fig:pgm}) models
+    outcome measures, $M^i$, conditioned on a coordination latent construct,
+    $C$. 
 
-    Our probabilistic model for this experiment (see  Figure~\ref{fig:pgm})
-    models outcome measures, $M^i$, conditioned on a coordination latent construct, $C$. 
 %
     \begin{figure}
-        \label{fig:pgm}
         \includegraphics[width=\textwidth]{images/prereg-pgm.pdf}
         \caption{%
             Probabilistic graphical model (PGM) for investigating coordination.
@@ -227,18 +256,18 @@ The team effects measures are:
             comes from the previous speaker.  Here we illustrate person 1
             speaking, followed by person 2, and then person 3.
         }
+        \label{fig:pgm}
     \end{figure}
 %
     The distributions $p(M^i|C)$ are typically linear functions learned from data
-    with normal or Poisson emission distribution. Using a simple prior on $C$
+    with normal or Poisson emission distributions. Using a simple prior on $C$
     provides a baseline model.
 
-    \textbf{Coordination.}
-    We would like to study the effect of including coordination in this model.
-    We are developing a comprehensive probabilistic model for coordination, with
-    a simple case exhibited as part of Figure~\ref{fig:pgm}.  We will compare
-    the predictive utility of that model with coordination to a simple baseline
-    model without it.
+    \paragraph{Coordination} We would like to study the effect of including
+    coordination in this model.  We are developing a comprehensive
+    probabilistic model for coordination, with a simple case exhibited as part
+    of \autoref{fig:pgm}.  We will compare the predictive utility of that model
+    with coordination to a simple baseline model without it.
 
     While in the general case coordination influences multiple diverse
     modalities at different time scales, here we consider a single time scale
@@ -256,34 +285,59 @@ The team effects measures are:
     non-coordinated distribution mean, $\mu^2_t$, for the second person, with
     the fully dependent mean, $\mu^1_t$, for the mean for the second person at
     time $t+1$ by
-    \begin{equation}
-    \mu^2_{t+1} = (1-c) \mu^2_t + c\mu^1_t ~.
-    \end{equation}
+
+    \begin{align}
+        \mu^2_{t+1} = (1-c) \mu^2_t + c\mu^1_t ~.
+    \end{align}
 
     To pre-register a single approach, we model coordination as being constant
     for the second half of each trial. This allows for the team to develop some
     rapport and interventions to have an effect. 
 
-\subsection{Intervention}
+\subsection{Interventions}
+\label{subsec:interventions}
 
-The agent has a set of 3 interventions designed to encourage oral communication among team members. The interventions are
+The agent has a set of three interventions designed to encourage oral
+communication among team members. The interventions are:
 
 \begin{enumerate}
-	\item \textbf{Marker Block:} the agent intervenes whenever a team member places a marker block but does not let their teammates know about it.
-	\item \textbf{Help Request:} the agent intervenes whenever a team member needs assistance but does not ask for it.
-	\item \textbf{Help-Request Reply:} the agent intervenes whenever a team member asks for help, but any of the other team members replies.
+
+    \item \textbf{Marker Block:} the agent intervenes whenever a team member
+        places a marker block but does not let their teammates know about it.
+
+    \item \textbf{Help Request:} the agent intervenes whenever a team member
+        needs assistance but does not ask for it.
+
+    \item \textbf{Help-Request Reply:} the agent intervenes whenever a team
+        member asks for help, but any of the other team members replies.
+
 \end{enumerate}
 
-The agent uses a state machine to determine when to watch/monitor, activate or cancel a specific intervention. Different events in the game might trigger different interventions and state transitions. The general idea is illustrated in Figure \ref{fig:marker_block_intervention_flow_chart}. 
+The agent uses a state machine to determine when to watch/monitor, activate or
+cancel a specific intervention. Different events in the game might trigger
+different interventions and state transitions. The general idea is illustrated
+in \autoref{fig:marker_block_intervention_flow_chart_general}.  The data comes
+from different streams.  \autoref{tab:intervention_variables} contains a list
+of topics the agent uses to gather relevant information about the missions.
+The following subsections detail the specific events and rules associated with
+each intervention the agent implements.
 
-The data comes from different streams. The Table \ref{tab:intervention_variables} contains a list of topics the agent uses to gather relevant information about the missions.
 %
-\begin{figure}
+\begin{marginfigure}[-3.5in]
     \centering
-    \includegraphics[width=3in]{images/intervention_flow_chart_overview.pdf}
-    \caption{Intervention states and possible transitions. Based on specific events, the agent can start to watch a specific intervention at any moment. That intervention can either become active (delivered to particular team members) or canceled if it is no longer relevant. An active intervention can be watched again for possible reactivation (recurrent intervention), or it can be canceled if it needs to be delivered just a single time (single-shot intervention).}
-    \label{fig:marker_block_intervention_flow_chart}
-\end{figure}
+    \includegraphics[width=\textwidth]{images/intervention_flow_chart_overview.pdf}
+    \caption{%
+        Intervention states and possible transitions. Based on specific events,
+        the agent can start to watch a specific intervention at any moment.
+        That intervention can either become active (delivered to particular
+        team members) or canceled if it is no longer relevant. An active
+        intervention can be watched again for possible reactivation (recurrent
+        intervention), or it can be canceled if it needs to be delivered just a
+        single time (single-shot intervention).
+    }
+    \label{fig:marker_block_intervention_flow_chart_general}
+\end{marginfigure}
+
 %
 %
 \begin{table}
@@ -316,11 +370,12 @@ The data comes from different streams. The Table \ref{tab:intervention_variables
 \end{table}
 %
 
-The following subsections detail the specific events and rules associated with each intervention the agent implements.
 
 \subsubsection{Marker Block}
 
-The agent will start to monitor an intervention of this kind whenever a team member places one of the following markers:
+The agent will start to consider an intervention of this kind whenever a team
+member places one of the following markers:
+
 \begin{itemize}
 	\item Critical Victim
 	\item Regular Victim
@@ -328,21 +383,29 @@ The agent will start to monitor an intervention of this kind whenever a team mem
 	\item SOS
 \end{itemize}
 
-These markers instill the need for other team members' assistance. Therefore, ideally, the team must know when markers of these kinds are placed. Although markers show up in the interactive map, the verbalization of a marker placement is essential to drive the team member's attention to the map as they might not be looking at the map at the time of placement. 
-
-If the intervention is activated, the agent will send a message to the team member who placed the marker with the following content
+These markers communicate the need for assistance from other team members.
+Thus, the team must ideally know when markers of these kinds are placed.
+Although markers show up in the interactive map, the verbalization of a marker
+placement ensures that team member actually pay attention to where the marker
+is placed on the map, as they might miss the marker due to them not looking at
+the map at the time of placement.  If the intervention is activated, the agent
+will send the following message to the team member who placed the marker with the following
+content:
 
 \begin{quote} 
-    \centering 
-    \emph{``[Player color], let your teammates know about the [marker type] marker you recently placed.''}
+    \emph{``[Player color], let your teammates know about the [marker type]
+    marker you recently placed."}
 \end{quote}
 
-The agent only intervenes once for each watched marker. This means that once the intervention gets activated, the agent removes it from the queue of watched interventions. The rules for switching to one state or another are detailed in Figure \ref{fig:marker_block_intervention_flow_chart}.
+The agent only intervenes once for each watched marker. This means that once
+the intervention gets activated, the agent removes it from the queue of watched
+interventions. The rules for switching to one state or another are detailed in
+\autoref{fig:marker_block_intervention_flow_chart}.
 
 %
 \begin{figure}
     \centering
-    \includegraphics[width=6in]{images/marker_block_intervention_flow_chart.pdf}
+    \includegraphics[width=\textwidth]{images/marker_block_intervention_flow_chart.pdf}
     \caption{%
         State transition rules for a marker-block intervention. The agent only
         intervenes once for each watched marker.This means that once the
@@ -355,28 +418,36 @@ The agent only intervenes once for each watched marker. This means that once the
 
 \subsubsection{Help Request}
 
-The agent will start to monitor for an intervention of this kind whenever a team member notices they are locked inside a room or when they are close enough to a critical victim. These two events require team members to request assistance from others.
+The agent will start to monitor for an intervention of this kind whenever a
+team member notices they are trapped inside a threat room or when they are
+close enough to a critical victim. These two events require team members to
+request assistance from others.
 
-The agent considers a team member noticed rubble blocking their way out of a room if the obstructed exit is in the team member's field of view and within five blocks from the team member's position. The same rule is applied for the inference of critical victim perception. 
-
-If the intervention is activated, the agent will send a message to the team member who needs help with one of the following contents
+The agent considers a team member to have noticed rubble blocking their way out
+of a room if the obstructed exit is in the team member's field of view and
+within five blocks of their position. The same rule is applied to determine
+whether they perceived a critical victim or not. If the intervention is
+activated, the agent will send one of the following messages to the team member
+who needs help:
 
 \begin{quote} 
-    \centering 
-    \emph{``[Player color], it seems you need some help to rescue a critical victim. Ask your teammates for assistance.''}
+    \emph{``[Player color], it seems you need some help to rescue a critical
+    victim. Ask your teammates for assistance.''}
 \end{quote}
 
 \begin{quote} 
-    \centering 
-    \emph{``[Player color], it seems you need some help to exit this room. Ask your teammates for assistance.''}
+    \emph{``[Player color], it seems you need some help to exit this room. Ask
+    your teammates for assistance.''}
 \end{quote}
 
-The rules for state transitions are illustrated in Figure \ref{fig:help_request_intervention_flow_chart_re} and Figure \ref{fig:help_request_intervention_flow_chart_cv}.
+\noindent The rules for state transitions are illustrated in
+\autoref{fig:help_request_intervention_flow_chart_re} and
+\autoref{fig:help_request_intervention_flow_chart_cv}.
 
 %
 \begin{figure}
     \centering
-    \includegraphics[width=6in]{images/help_request_intervention_flow_chart_cv.pdf}
+    \includegraphics[width=\textwidth]{images/help_request_intervention_flow_chart_cv.pdf}
     \caption{%
         State transition rules for a help-request-for-critical-victim
         intervention. The agent can intervene multiple times if the objective
@@ -391,7 +462,7 @@ The rules for state transitions are illustrated in Figure \ref{fig:help_request_
 %
 \begin{figure}
     \centering
-    \includegraphics[width=6in]{images/help_request_intervention_flow_chart_re.pdf}
+    \includegraphics[width=\textwidth]{images/help_request_intervention_flow_chart_re.pdf}
     \caption{%
         State transition rules for a help-request-for-room-escape intervention.
         The agent can intervene multiple times if the objective of the
@@ -408,17 +479,16 @@ The rules for state transitions are illustrated in Figure \ref{fig:help_request_
 The agent will start to monitor for an intervention of this kind whenever a
 team member asks for help. The agent uses the rule-based entity and event
 extractions \ref{ch:rule_based_ie} to detect when a team member asks for help.
-
-If the intervention is activated, the agent will send a message to the team
-member who asked for help with the following content
+If the intervention is activated, the agent will send the following message to the team
+member who asked for help:
 
 \begin{quote} 
-    \centering 
-    \emph{``[Player color], it's been a while since you asked for help. Remind your teammates.''}
+    \emph{``[Player color], it's been a while since you asked for help. Remind
+    your teammates."}
 \end{quote}
 
-State transition rules are detailed in Figure
-\ref{fig:help_request_reply_intervention_flow_chart}.
+\noindent State transition rules are illustrated in
+\autoref{fig:help_request_reply_intervention_flow_chart}.
 
 %
 \begin{figure}
@@ -437,7 +507,7 @@ State transition rules are detailed in Figure
 
 \section{Evaluation}
 
-\textbf{Hypothesis 1}: modeling coordination improves outcome prediction.  For
+\textbf{Hypothesis 1: modeling coordination improves outcome prediction.}  For
 hypothesis 1 we train two different models (with and without coordination) on
 the same training sets in the cross validation splits. We then apply each model
 to held out data. The result in either case is a distribution for each outcome
@@ -448,7 +518,7 @@ error over all test splits in a leave one out cross validation scenario. For
 completeness, for any categorical outcomes we would compare the value with
 maximal probability (MAP loss) with the observed one. 
 
-\textbf{Hypothesis 2}: increased coordination predicts higher outcome measures.
+\noindent \textbf{Hypothesis 2: increased coordination predicts higher outcome measures.}
 Here we are interested in the learned model, and cross-validation is not
 critical, as the model is not trained on predicting higher outcome measures.  In
 particular, we posit that the slopes in the sub-models for the measures, i.e.,
@@ -459,8 +529,8 @@ particular measure are positively correlated.  Sampling this distribution will
 reveal intervals that capture the probability that this is valid within various
 ranges. 
 
-\textbf{Hypothesis 3}: intervening on team communication predicts higher
-coordination and outcome measures. Here we have two distinct data cases. Each
+\noindent \textbf{Hypothesis 3: intervening on team communication predicts higher
+coordination and outcome measures.} Here we have two distinct data cases. Each
 case leads to a probability distribution for coordination and outcome measures.
 Specifically, each trial contributes multiple samples to one of those
 distributions. We sample those distributions to evaluate the hypotheses within

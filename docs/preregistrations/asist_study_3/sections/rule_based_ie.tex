@@ -40,6 +40,14 @@ following reasons:
 
 \end{enumerate}
 
+\section{Hypotheses}
+
+We will test the following hypothesis: 
+
+- Our rule-based event extraction system will be able to achieve a minimum
+precision of 91\% for simple labels and 75\% for complex labels, as defined in
+\autoref{subsec:rule_evaluation}
+
 \section{Approach}
 
 The DialogAgent processes natural language texts from two sources: utterances
@@ -109,17 +117,23 @@ F1 score.
 
 \subsection{Precision Evaluation for the Entire Label-Set}
 
-We will also run a seperate evaluation for precision,\footnote{For reasons of
+We will also run a separate evaluation for precision\footnote{For reasons of
 economy, we restrict this evaluation to precision. Our expert team-members can
 judge produced labels for precision at a much higher speed than they can
-annotate utterances for labels.} done by team members and hired annotators who
+annotate utterances for labels.}, done by team members and hired annotators who
 are familiar with our DialogAgent labels.
 
 
 \subsubsection{Preliminary Precision Evaluation} 
-We have done a preliminary evalution of 1700 labels for precision already, and have found that the ``simple" labels are highly precise.
-``Simple" labels. In our preliminary evalution, simple labels yielded between 91-100\% precision.\footnote{This is for labels that had more than 20 entries in our evaluation}
-``Complex" labels are found to yield between 75-94\% precision.\footnote{This is for labels that had more than 10 entries in our evaluation}
+\label{subsec:rule_evaluation}
+
+We have done a preliminary evalution of 1700 labels from the pilot data for
+precision already, and have found that the ``simple" labels are highly precise.
+``Simple" labels. In our preliminary evalution, simple labels yielded between
+91-100\% precision.\footnote{This is for labels that had more than 20 entries
+in our evaluation} ``Complex" labels are found to yield between 75-94\%
+precision.\footnote{This is for labels that had more than 10 entries in our
+evaluation}
 
 \subsection{Potential Evaluation Problems}
 
