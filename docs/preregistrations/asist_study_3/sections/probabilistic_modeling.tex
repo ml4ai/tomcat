@@ -2,17 +2,21 @@
 \label{ch:pgm}
 \textbf{Paulo Soares, Kobus Barnard, Emily Butler}
 
-\section{Introduction}
-Human teams are interpersonal dynamic systems, where the individual team members
-become subsumed by the collective whole in support of some shared goal or
-function \citep{nowak2020insync, cooke2013Ainteractive, eiler2017interaction, fusaroli2014dialog, gorman2010team, wiltshire2017problem, wiltshire2019multiscale}.
-All higher-order team behavior, such as cooperation or competition, emerges from
-coordination, which refers to causal interdependencies over time both within and
-between the individual team members \citep{butner2014modeling}. At the individual
-level, there are a number of sub-processes within each person, such as biology,
-attention, cognition, emotion and motor behavior that mutually influence each
-other to give rise to the person’s overall state at a given time \citep{butler2011temporal,butler2017emotions}. Similarly, at the interpersonal level, the individuals interact with each
-other to give rise to the team’s overall state \citep{nowak2020insync, butler2011temporal, butler2017emotions, cooke2013Binteractive, gorman2010team, letsky2008macrocognition}.
+\section{Introduction} Human teams are interpersonal dynamic systems, where the
+individual team members become subsumed by the collective whole in support of
+some shared goal or function \citep{nowak2020insync, cooke2013Ainteractive,
+eiler2017interaction, fusaroli2014dialog, gorman2010team, wiltshire2017problem,
+wiltshire2019multiscale}.  All higher-order team behavior, such as cooperation
+or competition, emerges from coordination, which refers to causal
+interdependencies over time both within and between the individual team members
+\citep{butner2014modeling}. At the individual level, there are a number of
+sub-processes within each person, such as biology, attention, cognition,
+emotion and motor behavior that mutually influence each other to give rise to
+the person’s overall state at a given time
+\citep{butler2011temporal,butler2017emotions}. Similarly, at the interpersonal
+level, the individuals interact with each other to give rise to the team’s
+overall state \citep{nowak2020insync, butler2011temporal, butler2017emotions,
+cooke2013Binteractive, gorman2010team, letsky2008macrocognition}.
 
 One challenge for predicting team behavior and outcomes is that coordination
 within the system, at both individual and collective levels, often results in
@@ -193,6 +197,7 @@ The team effects measures are:
 \end{itemize}
 
 \subsection{Modeling}
+
     We develop a probabilistic model for coordination and outcome measurements.
     This approach has the advantages that 1) it reflects an explanatory story
     about coordination, and 2) when it comes to evaluation, all estimates are
@@ -204,21 +209,24 @@ The team effects measures are:
     models outcome measures, $M^i$, conditioned on a coordination latent construct, $C$. 
 %
     \begin{figure}
-    \label{fig:pgm}
-    \includegraphics[width=6in]{images/prereg-pgm.pdf}
-    \caption{Probabilistic graphical model (pgm) for investigating coordination.
-    Circles (nodes) are stochastic variables. 
-    Open circles are latent variables, shaded circles are potentially observed
-    variables, and arrows represent variables conditioned on parents.
-    Coordination, $C$, is posited to influence team efficacy measures, $M^i$.
-    We do not use plate notation here because the conditioning arrows are
-    measure specific). These are different linear functions learned from data with potentially
-    different emission distributions (e.g., normal or Poisson), depending on the
-    measurement construct. \\
-    $~~~~~~~~$ Coordination is exhibited by variables influencing other variables in the
-    next time step. We do not draw all possible arrows here, because, for
-    vocalics, we assume that all  such influence comes from the previous speaker.
-    Here we illustrate person 1 speaking, followed by person 2, and then person 3.  }
+        \label{fig:pgm}
+        \includegraphics[width=\textwidth]{images/prereg-pgm.pdf}
+        \caption{%
+            Probabilistic graphical model (PGM) for investigating coordination.
+            Circles (nodes) are stochastic variables.  Open circles are latent
+            variables, shaded circles are potentially observed variables, and
+            arrows represent variables conditioned on parents.  Coordination,
+            $C$, is posited to influence team efficacy measures, $M^i$.  We do
+            not use plate notation here because the conditioning arrows are
+            measure specific). These are different linear functions learned
+            from data with potentially different emission distributions (e.g.,
+            normal or Poisson), depending on the measurement construct. \\
+            $~~~~~~~~$ Coordination is exhibited by variables influencing other
+            variables in the next time step. We do not draw all possible arrows
+            here, because, for vocalics, we assume that all  such influence
+            comes from the previous speaker.  Here we illustrate person 1
+            speaking, followed by person 2, and then person 3.
+        }
     \end{figure}
 %
     The distributions $p(M^i|C)$ are typically linear functions learned from data
@@ -334,8 +342,13 @@ The agent only intervenes once for each watched marker. This means that once the
 %
 \begin{figure}
     \centering
-    \includegraphics[width=6.5in]{images/marker_block_intervention_flow_chart.pdf}
-    \caption{State transition rules for a marker-block intervention. The agent only intervenes once for each watched marker.This means that once the intervention gets activated, the agent removes it from the queue of watched interventions.}
+    \includegraphics[width=6in]{images/marker_block_intervention_flow_chart.pdf}
+    \caption{%
+        State transition rules for a marker-block intervention. The agent only
+        intervenes once for each watched marker.This means that once the
+        intervention gets activated, the agent removes it from the queue of
+        watched interventions.
+    }
     \label{fig:marker_block_intervention_flow_chart}
 \end{figure}
 %
@@ -363,8 +376,14 @@ The rules for state transitions are illustrated in Figure \ref{fig:help_request_
 %
 \begin{figure}
     \centering
-    \includegraphics[width=6.5in]{images/help_request_intervention_flow_chart_cv.pdf}
-    \caption{State transition rules for a help-request-for-critical-victim intervention. The agent can intervene multiple times if the objective of the intervention is not fulfilled. This means that once the intervention gets activated, the agent moves it back to the queue of watched interventions.}
+    \includegraphics[width=6in]{images/help_request_intervention_flow_chart_cv.pdf}
+    \caption{%
+        State transition rules for a help-request-for-critical-victim
+        intervention. The agent can intervene multiple times if the objective
+        of the intervention is not fulfilled. This means that once the
+        intervention gets activated, the agent moves it back to the queue of
+        watched interventions.
+    }
     \label{fig:help_request_intervention_flow_chart_cv}
 \end{figure}
 %
@@ -372,30 +391,46 @@ The rules for state transitions are illustrated in Figure \ref{fig:help_request_
 %
 \begin{figure}
     \centering
-    \includegraphics[width=6.5in]{images/help_request_intervention_flow_chart_re.pdf}
-    \caption{State transition rules for a help-request-for-room-escape intervention. The agent can intervene multiple times if the objective of the intervention is not fulfilled. This means that once the intervention gets activated, the agent moves it back to the queue of watched interventions.}
+    \includegraphics[width=6in]{images/help_request_intervention_flow_chart_re.pdf}
+    \caption{%
+        State transition rules for a help-request-for-room-escape intervention.
+        The agent can intervene multiple times if the objective of the
+        intervention is not fulfilled. This means that once the intervention
+        gets activated, the agent moves it back to the queue of watched
+        interventions.
+    }
     \label{fig:help_request_intervention_flow_chart_re}
 \end{figure}
 %
 
 \subsubsection{Help Request Reply}
 
-The agent will start to monitor for an intervention of this kind whenever a team member asks for help. The agent uses the rule-based entity and event extractions \ref{ch:rule_based_ie} to detect when a team member asks for help.
+The agent will start to monitor for an intervention of this kind whenever a
+team member asks for help. The agent uses the rule-based entity and event
+extractions \ref{ch:rule_based_ie} to detect when a team member asks for help.
 
-If the intervention is activated, the agent will send a message to the team member who asked for help with the following content
+If the intervention is activated, the agent will send a message to the team
+member who asked for help with the following content
 
 \begin{quote} 
     \centering 
     \emph{``[Player color], it's been a while since you asked for help. Remind your teammates.''}
 \end{quote}
 
-State transition rules are detailed in Figure \ref{fig:help_request_reply_intervention_flow_chart}.
+State transition rules are detailed in Figure
+\ref{fig:help_request_reply_intervention_flow_chart}.
 
 %
 \begin{figure}
     \centering
-    \includegraphics[width=4.5in]{images/help_request_reply_intervention_flow_chart.pdf}
-    \caption{State transition rules for a help-request-for-room-escape intervention. The agent can intervene multiple times if the objective of the intervention is not fulfilled. This means that once the intervention gets activated, the agent moves it back to the queue of watched interventions.}
+    \includegraphics[width=\textwidth]{images/help_request_reply_intervention_flow_chart.pdf}
+    \caption{%
+        State transition rules for a help-request-for-room-escape intervention.
+        The agent can intervene multiple times if the objective of the
+        intervention is not fulfilled. This means that once the intervention
+        gets activated, the agent moves it back to the queue of watched
+        interventions.
+    }
     \label{fig:help_request_reply_intervention_flow_chart}
 \end{figure}
 %
@@ -431,7 +466,3 @@ Specifically, each trial contributes multiple samples to one of those
 distributions. We sample those distributions to evaluate the hypotheses within
 the Bayesian hypothesis testing paradigm.  For each outcome measure we will
 evaluate the probability that the claim is true for each outcome measure.
-
-
-
-
