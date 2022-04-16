@@ -161,7 +161,7 @@ measures that will be available for ASIST Study 3. This subset was chosen due
 to either: (i) having theoretical connections to coordination (i.e.,
 synchronization, coordinative communications, belief differences), (ii)
 involving the use of markers for communication, which is the direct target of
-our intervention (threat room and victim type communication), or (iii)
+our intervention (threat room and victim type communication) \ps{We have more interventions. Moreover, we don't intervene on threat marker blocks anymore.}, or (iii)
 representing a global measure of team effectiveness (score and error rate).
 
 \noindent The team process measures we hope to both predict and influence are:
@@ -191,7 +191,7 @@ representing a global measure of team effectiveness (score and error rate).
 
     \item \textbf{Rutgers Threat Room Communication AC}: \% of threat
         rooms that had a threat room marker block outside its entrance at some
-        point during the mission.  
+        point during the mission. \ps{Maybe by increasing coordination, the number of overall markers will increase too. However, we do not encourage the players to talk about threat markers anymore. The agent only intervenes on markers that instill assistance from another player.}  
 
     \item \textbf{Rutgers Victim Type Communication AC}: count of
         victim type marker blocks placed near the correct type of A or B
@@ -235,7 +235,7 @@ representing a global measure of team effectiveness (score and error rate).
     probability distributions, rather than point estimates.  If needed, these
     can be distilled into point estimates by either averaging the distribution
     (MMSE loss) or using the maximum (MAP\footnote{Maximum a posteriori} loss). 
-    Our probabilistic model for this experiment (see  \autoref{fig:pgm}) models
+    Our probabilistic model for this experiment (see \autoref{fig:pgm}) models
     outcome measures, $M^i$, conditioned on a coordination latent construct,
     $C$. 
 
@@ -319,11 +319,10 @@ communication among team members. The interventions are:
 The agent uses a state machine to determine when to watch/monitor, activate or
 cancel a specific intervention. Different events in the game might trigger
 different interventions and state transitions. The general idea is illustrated
-in \autoref{fig:marker_block_intervention_flow_chart_general}.  The data comes
-from different streams.  \autoref{tab:intervention_variables} contains a list
-of topics the agent uses to gather relevant information about the missions.
-The following subsections detail the specific events and rules associated with
-each intervention the agent implements.
+in \autoref{fig:marker_block_intervention_flow_chart_general}.  
+
+The topics the agent uses to gather relevant information about the missions is listed in \autoref{tab:intervention_variables}.
+The following subsections detail how we use the data to trigger specific events associated with each intervention the agent implements.
 
 %
 \begin{marginfigure}
@@ -389,20 +388,17 @@ member places one of the following markers:
 These markers communicate the need for assistance from other team members.
 Thus, the team must ideally know when markers of these kinds are placed.
 Although markers show up in the interactive map, the verbalization of a marker
-placement ensures that team member actually pay attention to where the marker
+placement encourages that team members pay attention to where the marker
 is placed on the map, as they might miss the marker due to them not looking at
 the map at the time of placement.  If the intervention is activated, the agent
-will send the following message to the team member who placed the marker with the following
-content:
+will send the following message to the team member who placed the marker:
 
 \begin{quote} 
     \emph{``[Player color], let your teammates know about the [marker type]
     marker you recently placed."}
 \end{quote}
 
-The agent only intervenes once for each watched marker. This means that once
-the intervention gets activated, the agent removes it from the queue of watched
-interventions. The rules for switching to one state or another are detailed in
+The rules for switching to one state or another are detailed in
 \autoref{fig:marker_block_intervention_flow_chart}.
 
 %
@@ -411,8 +407,8 @@ interventions. The rules for switching to one state or another are detailed in
     \includegraphics[width=\textwidth]{images/marker_block_intervention_flow_chart.pdf}
     \caption{%
         State transition rules for a marker-block intervention. The agent only
-        intervenes once for each watched marker.This means that once the
-        intervention gets activated, the agent removes it from the queue of
+        intervenes once for each watched marker. This means that once the
+        intervention gets activated and delivered to the target team member, the agent removes it from the queue of
         watched interventions.
     }
     \label{fig:marker_block_intervention_flow_chart}
@@ -444,8 +440,8 @@ who needs help:
 \end{quote}
 
 \noindent The rules for state transitions are illustrated in
-\autoref{fig:help_request_intervention_flow_chart_re} and
-\autoref{fig:help_request_intervention_flow_chart_cv}.
+\autoref{fig:help_request_intervention_flow_chart_cv} and
+\autoref{fig:help_request_intervention_flow_chart_re}.
 
 %
 \begin{figure}
@@ -481,7 +477,7 @@ who needs help:
 
 The agent will start to monitor for an intervention of this kind whenever a
 team member asks for help. The agent uses the rule-based entity and event
-extractions \ref{ch:rule_based_ie} to detect when a team member asks for help.
+extractions (see \autoref{ch:rule_based_ie}) to detect when a team member asks for help.
 If the intervention is activated, the agent will send the following message to the team
 member who asked for help:
 
@@ -498,7 +494,7 @@ member who asked for help:
     \centering
     \includegraphics[width=\textwidth]{images/help_request_reply_intervention_flow_chart.pdf}
     \caption{%
-        State transition rules for a help-request-for-room-escape intervention.
+        State transition rules for a help-request-reply intervention.
         The agent can intervene multiple times if the objective of the
         intervention is not fulfilled. This means that once the intervention
         gets activated, the agent moves it back to the queue of watched
@@ -538,5 +534,5 @@ coordination and outcome measures.} Here we have two distinct data cases. Each
 case leads to a probability distribution for coordination and outcome measures.
 Specifically, each trial contributes multiple samples to one of those
 distributions. We sample those distributions to evaluate the hypotheses within
-the Bayesian hypothesis testing paradigm.  For each outcome measure we will
-evaluate the probability that the claim is true for each outcome measure.
+the Bayesian hypothesis testing paradigm.  For each outcome measure, we will
+evaluate the probability that the claim is true.
