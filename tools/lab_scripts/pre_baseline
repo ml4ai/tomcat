@@ -1,0 +1,45 @@
+#!/bin/bash
+
+set -u
+
+# Set the TOMCAT environment variable, assuming that the directory structure
+# mirrors that of the git repository.
+TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../" >/dev/null 2>&1 && pwd)"
+export TOMCAT
+
+###############################################################################
+
+# Creating a temporary directory to store log messages reported by Minecraft
+# while launching
+TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
+mkdir -p "${TOMCAT_TMP_DIR}"
+MISSION_LOG="$TOMCAT_TMP_DIR"/minecraft.log
+export MISSION_LOG
+
+echo " "
+echo "Launching Minecraft"
+echo " "
+
+"${TOMCAT}"/tools/launch_minecraft &>"${MISSION_LOG}" &
+pid_minecraft=$!
+
+echo "Process ID corresponding to ./tools/launch_minecraft is" \
+  "$pid_minecraft... waiting for it to complete."
+echo " "
+
+# The script below will keep looking for the player name in the mission log
+# file.
+player_name=$(${TOMCAT}/tools/lab_scripts/player_name_grabber $pid_minecraft)
+echo $player_name
+
+if [ -n "$player_name" ]; then
+  # Open the client map and fill with the player name
+  $(osascript applescripts/fill_player_name_on_client_map.scpt $player_name)
+  sleep 10
+  $(osascript applescripts/resize_minecraft_window.scpt)
+else
+  echo "Player name not found."
+  exit 1
+fi
+
+exit 0

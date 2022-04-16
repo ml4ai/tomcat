@@ -1,0 +1,37 @@
+#!/bin/bash
+
+pid_needing_minecraft=$1
+
+# Wait till the log file actually exists
+while [ ! -f $MISSION_LOG ]; do
+  sleep 1;
+done
+
+# Once it exists, grab the player name when it is printed to the file
+# Grab the tail -f output of the log file and pipe it into
+# the subshell generated
+tail -f $MISSION_LOG |
+  {
+    # Exit if minecraft crashed during the launching process
+    ps ${pid_needing_minecraft} >& /dev/null 
+    if [[ $? -ne 0 ]]; then break; fi 
+
+    while read cur_line; do
+      # Use sed to match the pattern and remove it, leaving
+      # only the player name.
+      player_name=$(sed -n -e 's/^.*\[Client\ thread\/INFO\]:\ Setting\ user:\ //p' <<< "$cur_line");
+
+      # If the player name is non-empty, then we are done.
+      if [ -n "$player_name" ]; then
+        echo $player_name
+        exit 0;
+      fi
+
+      # Exit if there is no file at any point
+      if [ ! -f $MISSION_LOG ]; then
+        # echo "Exiting because there is no log file to grab a player name from.";
+        exit 0;
+      fi
+    done
+}
+
