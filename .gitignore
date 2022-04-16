@@ -111,3 +111,6 @@ javac.*.args
 
 # Preventing people from accidentally committing ASIST human subjects data to the repo.
 HSR*
+
+# Texpad
+*.texpadtmp/
