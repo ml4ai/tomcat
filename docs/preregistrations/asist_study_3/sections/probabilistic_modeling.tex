@@ -1,6 +1,6 @@
 \chapter{Probabilistic modeling of team coordination}
 \label{ch:pgm}
-\textbf{Paulo Soares, Kobus Barnard, Emily Butler, Adarsh Pyarelal}
+\textbf{Emily Butler, Kobus Barnard, Paulo Soares, Adarsh Pyarelal}
 
 \section{Introduction} Human teams are interpersonal dynamic systems, where the
 individual team members become subsumed by the collective whole in support of
@@ -90,11 +90,13 @@ We will test the following hypotheses:\\
 \noindent 1) Including coordination as a node in a probabilistic graphical
 model will improve prediction of team process and effect measures (see Measures
 for details)  as compared to a comparable model that does not include
-coordination.\\
+coordination. Using the nomenclature in the introduction, this is a
+\textit{technical performance} hypothesis.\\
 
 \noindent 2) Teams with higher coordination will have higher scores on measures
 of team process and effects (see \autoref{subsec:measures} for details) than
-teams with lower coordination.\\
+teams with lower coordination. This is a
+\textit{human behavior without experimental manipulation} hypothesis. \\
 
 \noindent 3) The agent will have a set of three interventions to encourage oral
 communication among team members. Teams where the agent intervenes will have
@@ -106,7 +108,6 @@ so far (see \autoref{subsec:interventions} for more detail).  The interventions
 are:
 
 \begin{enumerate}
-
     \item If a team member places a marker block (a form of communication
         provided in the game) but does not say they did, then the agent
         will suggest that they tell their team members that they placed it. 
@@ -119,9 +120,10 @@ are:
     \item For some teams, if a team member asked for help but did not get a
         reply from any of the other team members, then the agent will
         suggest that they tell the others again that help is needed. 
-
 \end{enumerate}
 
+\noindent This is a
+\textit{human behavior in the context of experimental manipulation} hypothesis.
 
 \section{Approach}
 
@@ -294,6 +296,7 @@ representing a global measure of team effectiveness (score and error rate).
     for the second half of each trial. This allows for the team to develop some
     rapport and interventions to have an effect. 
 
+\clearpage
 \subsection{Interventions}
 \label{subsec:interventions}
 
@@ -323,7 +326,7 @@ The following subsections detail the specific events and rules associated with
 each intervention the agent implements.
 
 %
-\begin{marginfigure}[-3.5in]
+\begin{marginfigure}
     \centering
     \includegraphics[width=\textwidth]{images/intervention_flow_chart_overview.pdf}
     \caption{%
@@ -505,6 +508,7 @@ member who asked for help:
 \end{figure}
 %
 
+%\clearpage
 \section{Evaluation}
 
 \textbf{Hypothesis 1: modeling coordination improves outcome prediction.}  For
@@ -516,7 +520,7 @@ number, we will evaluate predictive accuracy by using the mean of the
 distribution (MMSE loss) compared to the actual value, and compute the squared
 error over all test splits in a leave one out cross validation scenario. For
 completeness, for any categorical outcomes we would compare the value with
-maximal probability (MAP loss) with the observed one. 
+maximal probability (MAP loss) with the observed one. \\
 
 \noindent \textbf{Hypothesis 2: increased coordination predicts higher outcome measures.}
 Here we are interested in the learned model, and cross-validation is not
@@ -527,7 +531,7 @@ those slopes over relevant data. The mean and variance of that distribution will
 give some idea as to the validity of the claim that coordination and a
 particular measure are positively correlated.  Sampling this distribution will
 reveal intervals that capture the probability that this is valid within various
-ranges. 
+ranges. \\
 
 \noindent \textbf{Hypothesis 3: intervening on team communication predicts higher
 coordination and outcome measures.} Here we have two distinct data cases. Each
