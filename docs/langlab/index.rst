@@ -1,5 +1,5 @@
-ToMCAT Undergraduate Documentation
-==================================
+Lang Lab Documentation
+======================
 
 .. toctree::
    :maxdepth: 1
@@ -13,8 +13,6 @@ ToMCAT Undergraduate Documentation
    EEG-software-setup
    Eyetracking
    Troubleshooting
-
-How can we help?
 
 ### During the Lab session
 

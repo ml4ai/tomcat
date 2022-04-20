@@ -62,6 +62,7 @@ the Zombie Invasion.
   </table>
   <br>
 
+
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
@@ -72,9 +73,8 @@ the Zombie Invasion.
    developer/index
    tomcat_openapi
    installation
-   equipment/index
+   langlab/index
    usage
-   CONTRIBUTING
 
 
 The Github repository for ToMCAT can be found `here <https://github.com/ml4ai/tomcat>`_.
