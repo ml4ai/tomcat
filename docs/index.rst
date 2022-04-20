@@ -72,6 +72,7 @@ the Zombie Invasion.
    developer/index
    tomcat_openapi
    installation
+   equipment
    usage
    CONTRIBUTING
 
@@ -85,7 +86,6 @@ The wiki for the ToMCAT equipment for the Lang Lab can be found `here <https://g
 **Presentations**
 
 `Site Visit, 9-25-2019 <http://vanga.sista.arizona.edu/tomcat/presentations/site_visit_09_25_2019.pdf>`_
-
 
 
 Indices and tables
