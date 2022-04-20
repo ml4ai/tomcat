@@ -15,16 +15,31 @@
 
     Automated entrainment detection typically compares featural similarities between adjacent inter-pausal units or IPUs (in this case, speech units separated by a 50ms pause) of two interlocutors, to those from different parts of the discourse. If entrainment is taking place, an IPU should show greater featural similarity to the immediately preceding IPU from the conversation partner than to one in a different part of the discourse. The automated system therefore needs to successfully identify adjacent IPUs across paired interlocutors and compare them to two distant IPUs. For a multi-party conversation, the model needs to differentiate between IPUs in an entrainment context from those that are between conversation partners who are not immediately interacting.
 
-    For this study, we replicate the feed-forward encoder, i-vector modelling and `triplet network-based entrainment distance measures' for entrainment detection proposed and designed by \citeauthor{nasir2020}, 2020. First, i-vectors are extracted for each IPU spoken by each speaker. Next, triplets are created by taking two adjacent IPUs by different speakers (positive match for entrainment), and combining them with a randomly chosen IPU by the second speaker from a different location in the discourse (negative match for entrainment, but one that shares acoustic similarities with the given inter-pausal unit). These are then used to train the triplet network model (shown in \ref{fig:sentiment_model_schematics}), such that in the embedding space, the positive match for entrainment is closer to the IPU being assessed than the negative match \cite{hoffer2015deep}.
+    For this study, we replicate the feed-forward encoder, i-vector modelling
+    and `triplet network-based entrainment distance measures' for entrainment
+    detection proposed and designed by \citeauthor{nasir2020}, 2020. First,
+    i-vectors are extracted for each IPU spoken by each speaker. Next, triplets
+    are created by taking two adjacent IPUs by different speakers (positive
+    match for entrainment), and combining them with a randomly chosen IPU by
+    the second speaker from a different location in the discourse (negative
+    match for entrainment, but one that shares acoustic similarities with the
+    given inter-pausal unit). These are then used to train the triplet network
+    model (shown in \ref{fig:triplet_model}), such that in the embedding space,
+    the positive match for entrainment is closer to the IPU being assessed than
+    the negative match \cite{hoffer2015deep}.
 
 
-    \begin{figure}
-    \begin{sidecaption}{Representation of the triplet model proposed by \citeauthor{nasir2020}, 2020 [Pg17]. Here, ``Speaker 1 (anchor)'' and `Speaker 2 (positive)' refer to the site of entrainment, while `negative' refers to a non-entrainment utterance}
+\begin{figure}
+    \begin{sidecaption}{%
+            Representation of the triplet model proposed by
+            \citeauthor{nasir2020}, 2020 [Pg17]. Here, `Speaker 1 (anchor)' and
+            `Speaker 2 (positive)' refer to the site of entrainment, while
+            `negative' refers to a non-entrainment utterance
+    }[fig:triplet_model]
     \centering
     \includegraphics[width=0.6\textwidth]{images/triplet-model.png}
-    \label{fig:sentiment_model_schematics}
     \end{sidecaption}
-    \end{figure}
+\end{figure}
 
     For the entrainment detection and other qualitative assessments, we will utilize the following data and labels from Study-3:
             \begin{itemize}               
