@@ -241,8 +241,7 @@ representing a global measure of team effectiveness (score and error rate).
 
 %
     \begin{figure}
-        \includegraphics[width=\textwidth]{images/prereg-pgm.pdf}
-        \caption{%
+        \begin{sidecaption}{%
             Probabilistic graphical model (PGM) for investigating coordination.
             Circles (nodes) are stochastic variables.  Open circles are latent
             variables, shaded circles are potentially observed variables, and
@@ -258,7 +257,9 @@ representing a global measure of team effectiveness (score and error rate).
             comes from the previous speaker.  Here we illustrate person 1
             speaking, followed by person 2, and then person 3.
         }
+        \includegraphics[width=\textwidth]{images/prereg-pgm.pdf}
         \label{fig:pgm}
+        \end{sidecaption}
     \end{figure}
 %
     The distributions $p(M^i|C)$ are typically linear functions learned from data
@@ -403,15 +404,15 @@ The rules for switching to one state or another are detailed in
 
 %
 \begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{images/marker_block_intervention_flow_chart.pdf}
-    \caption{%
+    \begin{sidecaption}{%
         State transition rules for a marker-block intervention. The agent only
         intervenes once for each watched marker. This means that once the
-        intervention gets activated and delivered to the target team member, the agent removes it from the queue of
-        watched interventions.
+        intervention gets activated and delivered to the target team member,
+        the agent removes it from the queue of watched interventions.
     }
+    \includegraphics[width=\textwidth]{images/marker_block_intervention_flow_chart.pdf}
     \label{fig:marker_block_intervention_flow_chart}
+    \end{sidecaption}
 \end{figure}
 %
 
@@ -445,31 +446,31 @@ who needs help:
 
 %
 \begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{images/help_request_intervention_flow_chart_cv.pdf}
-    \caption{%
+    \begin{sidecaption}{%
         State transition rules for a help-request-for-critical-victim
         intervention. The agent can intervene multiple times if the objective
         of the intervention is not fulfilled. This means that once the
         intervention gets activated, the agent moves it back to the queue of
         watched interventions.
     }
+    \includegraphics[width=\textwidth]{images/help_request_intervention_flow_chart_cv.pdf}
     \label{fig:help_request_intervention_flow_chart_cv}
+    \end{sidecaption}
 \end{figure}
 %
 
 %
 \begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{images/help_request_intervention_flow_chart_re.pdf}
-    \caption{%
+    \begin{sidecaption}{%
         State transition rules for a help-request-for-room-escape intervention.
         The agent can intervene multiple times if the objective of the
         intervention is not fulfilled. This means that once the intervention
         gets activated, the agent moves it back to the queue of watched
         interventions.
     }
+    \includegraphics[width=\textwidth]{images/help_request_intervention_flow_chart_re.pdf}
     \label{fig:help_request_intervention_flow_chart_re}
+    \end{sidecaption}
 \end{figure}
 %
 
@@ -491,16 +492,16 @@ member who asked for help:
 
 %
 \begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{images/help_request_reply_intervention_flow_chart.pdf}
-    \caption{%
+    \begin{sidecaption}{%
         State transition rules for a help-request-reply intervention.
         The agent can intervene multiple times if the objective of the
         intervention is not fulfilled. This means that once the intervention
         gets activated, the agent moves it back to the queue of watched
         interventions.
     }
+    \includegraphics[width=\textwidth]{images/help_request_reply_intervention_flow_chart.pdf}
     \label{fig:help_request_reply_intervention_flow_chart}
+    \end{sidecaption}
 \end{figure}
 %
 
