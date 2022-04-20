@@ -2,14 +2,14 @@
 
 set -u
 
-if [ -z ${BASH_SOURCE[0]+x} ]; then
+if [ -z ${BASH_SOURCE[0]:+x} ]; then
   # The script is not being sourced. The root directory has to be passed as
   # an argument
-  if [ -z ${1+x} ]; then
+  if [ -z "$1" ]; then
     echo "ToMCAT root directory not provided as an argument to the script."
     exit 1
   else
-    TOMCAT = ${1}
+    TOMCAT = "$1"
   fi
 else
   # Set the TOMCAT environment variable, assuming that the directory structure
@@ -24,7 +24,7 @@ export TOMCAT
 # Creating a temporary directory to store log messages reported by Minecraft
 # while launching
 TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
-mkdir -p "${TOMCAT_TMP_DIR}"
+mkdir -p "$TOMCAT_TMP_DIR"
 MISSION_LOG="$TOMCAT_TMP_DIR"/minecraft.log
 export MISSION_LOG
 
@@ -32,7 +32,7 @@ echo " "
 echo "Launching Minecraft"
 echo " "
 
-"${TOMCAT}"/tools/launch_minecraft &>"${MISSION_LOG}" &
+"$TOMCAT"/tools/launch_minecraft &>"${MISSION_LOG}" &
 pid_minecraft=$!
 
 echo "Process ID corresponding to ./tools/launch_minecraft is" \
@@ -41,7 +41,8 @@ echo " "
 
 # The script below will keep looking for the player name in the mission log
 # file.
-player_name=$(${TOMCAT}/tools/lab_scripts/player_name_grabber $pid_minecraft)
+echo "$TOMCAT"
+player_name="$("$TOMCAT"/tools/lab_scripts/player_name_grabber $pid_minecraft)"
 echo $player_name
 
 if [ -n "$player_name" ]; then
