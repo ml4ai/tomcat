@@ -1,14 +1,22 @@
-Welcome to the ToMCAT equipment wiki!
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ToMCAT Undergraduate Documentation
+==================================
 
-How can we help? Select topic below
+.. toctree::
+   :maxdepth: 1
+   :caption: Contents:
 
-`Lab Session Overview: What to do
-when? <https://github.com/val-pf/tomcat-equipment-wiki/wiki/session-overview>`__
+   Session-overview
+   equipment-setup
+   Cap-building-(making-a-montage)
+   cleaning-procedure
+   Dry-run-(streaming-noisy-data)
+   EEG-software-setup
+   Eyetracking
+   Troubleshooting
+
+How can we help?
+
 ### During the Lab session
-
-`Cap
-setup <https://github.com/val-pf/tomcat-equipment-wiki/wiki/equipment-setup>`__
 
 `putting the cap on (fNIRS &
 EEG) <https://github.com/val-pf/tomcat-equipment-wiki/wiki/equipment-setup#putting-cap-on-participant>`__
@@ -16,23 +24,14 @@ EEG) <https://github.com/val-pf/tomcat-equipment-wiki/wiki/equipment-setup#putti
 `Heart Rate & Skin
 Conductance <https://github.com/val-pf/tomcat-equipment-wiki/wiki/equipment-setup#skin-conductance-gsr--heart-rate-ecg>`__
 
-`Eye
-tracker <https://github.com/val-pf/tomcat-equipment-wiki/wiki/eyetracking>`__
-
-`software <https://github.com/val-pf/tomcat-equipment-wiki/wiki/EEG-software-setup>`__
-
-`Cleaning <https://github.com/val-pf/tomcat-equipment-wiki/wiki/cleaning-procedure>`__
-
-`Troubleshooting <https://github.com/val-pf/tomcat-equipment-wiki/wiki/troubleshooting>`__
-
-other equipment guides
-~~~~~~~~~~~~~~~~~~~~~~
+Other equipment guides
+----------------------
 
 [Cap building]
 
 `Eyetracking software download <https://docs.pupil-labs.com/core/>`__
 
-docs and others
+Docs and others
 ^^^^^^^^^^^^^^^
 
 *Check below for Tutorials on Skin Conductance (GSR) and Heart-Rate

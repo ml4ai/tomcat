@@ -1,3 +1,6 @@
+Cleaning procedure
+==================
+
 Removing cap
 ------------
 

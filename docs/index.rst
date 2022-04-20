@@ -72,7 +72,7 @@ the Zombie Invasion.
    developer/index
    tomcat_openapi
    installation
-   equipment
+   equipment/index
    usage
    CONTRIBUTING
 

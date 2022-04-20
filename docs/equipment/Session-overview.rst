@@ -1,3 +1,6 @@
+Lab session overview: What to do when?
+======================================
+
 You are running your first session?! Don’t panic, here’s the *big
 picture* order step by step!
 

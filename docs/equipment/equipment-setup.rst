@@ -1,3 +1,6 @@
+Cap setup
+=========
+
 This is a general setup guide. For troubleshooting, check here:
 `Troubleshooting <https://github.com/val-pf/tomcat-equipment-wiki/wiki/Troubleshooting>`__
 
@@ -129,9 +132,9 @@ Heart Rate
       (eye-symbol)
    -  zoom out if needed
 
-.. |measuring the headsize| image:: https://github.com/val-pf/tomcat-equipment-wiki/blob/main/head_measurement.jpg
-.. |Cap setup| image:: https://github.com/val-pf/tomcat-equipment-wiki/blob/main/cap_setup.jpg
-.. |completed cap| image:: https://github.com/val-pf/tomcat-equipment-wiki/blob/main/cap.jpg
-.. |hook up| image:: https://github.com/val-pf/tomcat-equipment-wiki/blob/main/connetions.jpg
-.. |calibration| image:: https://github.com/val-pf/tomcat-equipment-wiki/blob/main/fnirs_calibration.jpg
-.. |brain vision| image:: https://github.com/val-pf/tomcat-equipment-wiki/blob/main/bv2.png
+.. |measuring the headsize| image:: head_measurement.jpg
+.. |Cap setup| image:: cap_setup.jpg
+.. |completed cap| image:: cap.jpg
+.. |hook up| image:: connetions.jpg
+.. |calibration| image:: fnirs_calibration.jpg
+.. |brain vision| image:: bv2.png
