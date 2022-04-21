@@ -9,7 +9,6 @@ During the Lab session
 * :doc:`Cap setup<equipment-setup>`
 * :ref:`Putting the cap on (fNIRS & EEG)<putting cap on participant>`
 * :ref:`Heart rate & skin conductance<skin conductance and hr>`
-* :ref:`Heart rate & skin conductance<skin conductance and hr>`
 * :doc:`Eye tracker<Eyetracking>`
 * :doc:`Software<EEG-software-setup>`
 * :doc:`Troubleshooting`
