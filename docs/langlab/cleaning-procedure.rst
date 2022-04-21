@@ -52,18 +52,23 @@ Clean in kitchen
 
 8. Place electrodes and cap on the drying rack in the lab
 
-cleaning skin conductance & heart rate sensors
+Cleaning skin conductance & heart rate sensors
 ----------------------------------------------
 
 *Hang cleaned sensors on the rack next to the shelf in the back of the
-lab* ##### Skin Conductance \* cannot get wet \* use tissue to get all
-gel residue off \* make sure no residue is remaining
+lab* 
+
+Skin Conductance
+''''''''''''''''
+
+* Cannot get wet
+* Use tissue to get all gel residue off
+  * Make sure no residue is remaining
 
 Heart Rate
 ''''''''''
 
--  use damp cloth to gently wipe
--  use tissue / kitchen towel to dry
+-  Use damp cloth to gently wipe
+-  Use tissue / kitchen towel to dry
 
-`Cleaning the eyetracker <https://github.com/val-pf/tomcat-equipment-wiki/wiki/eyetracking#to-finish>`__
---------------------------------------------------------------------------------------------------------
+:ref:`Cleaning the eyetracker<cleaning the eyetracker>`

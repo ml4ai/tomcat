@@ -19,6 +19,8 @@ Needs to be above the cap and not interfering with electrodes!
   * make sure the center camera is capturing the entire iMAC screen
 6. Start recording with big “R” button on the left of the big window
 
+.. _cleaning the eyetracker:
+
 To finish
 ---------
 

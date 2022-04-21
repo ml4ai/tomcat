@@ -79,10 +79,6 @@ the Zombie Invasion.
 
 The Github repository for ToMCAT can be found `here <https://github.com/ml4ai/tomcat>`_.
 
-**ToMCAT equipment wiki**
-
-The wiki for the ToMCAT equipment for the Lang Lab can be found `here <https://github.com/val-pf/tomcat-equipment-wiki/wiki>`_.
-
 **Presentations**
 
 `Site Visit, 9-25-2019 <http://vanga.sista.arizona.edu/tomcat/presentations/site_visit_09_25_2019.pdf>`_

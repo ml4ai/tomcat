@@ -2,7 +2,7 @@ Equipment setup
 ===============
 
 This is a general setup guide. For troubleshooting, check here:
-`Troubleshooting <https://github.com/val-pf/tomcat-equipment-wiki/wiki/Troubleshooting>`__
+:doc:`Troubleshooting`
 
 Measuring head size
 -------------------

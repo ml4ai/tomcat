@@ -153,4 +153,4 @@ eyetracking troubleshooting
 others
 ------
 
-.. |nirs| image:: https://github.com/val-pf/tomcat-equipment-wiki/blob/main/nirsport2.jpg
+.. |nirs| image:: nirsport2.jpg
