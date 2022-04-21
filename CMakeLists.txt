@@ -18,9 +18,9 @@ set(CMAKE_CXX_FLAGS
 
 cmake_policy(SET CMP0074 NEW)
 
-#add_subdirectory(external/malmo)
+add_subdirectory(external/malmo)
 
-#add_subdirectory(libs)
+add_subdirectory(libs)
 
 add_subdirectory(exe)
 
