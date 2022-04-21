@@ -15,7 +15,7 @@ tail -f $minecraft_log_file |
   {
     # Exit if minecraft crashed during the launching process
     ps ${pid_needing_minecraft} >& /dev/null 
-    if [[ $? -ne 0 ]]; then break; fi 
+    if [[ $? -ne 0 ]]; then exit 1; fi
 
     while read cur_line; do
       # Use sed to match the pattern and remove it, leaving
