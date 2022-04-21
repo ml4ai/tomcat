@@ -9,7 +9,7 @@ if [ -z ${BASH_SOURCE[0]:+x} ]; then
     echo "ToMCAT root directory not provided as an argument to the script."
     exit 1
   else
-    TOMCAT = "$1"
+    TOMCAT="$1"
   fi
 else
   # Set the TOMCAT environment variable, assuming that the directory structure
@@ -32,7 +32,10 @@ echo " "
 echo "Launching Minecraft"
 echo " "
 
-"$TOMCAT"/tools/launch_minecraft &>"${MISSION_LOG}" &
+#"$TOMCAT"/tools/launch_minecraft &>"${MISSION_LOG}" &
+#pid_minecraft=$!
+
+$(osascript applescripts/launch_minecraft.scpt)
 pid_minecraft=$!
 
 echo "Process ID corresponding to ./tools/launch_minecraft is" \
