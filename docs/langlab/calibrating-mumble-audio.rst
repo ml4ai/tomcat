@@ -23,13 +23,13 @@ Set-up instructions for Mumble Audio Wizard
 8. Positional Audio: click ‘Next’ |image9|\ 
 9. Click ‘Finish’ on the last page: |image10|\ 
 
-.. |image1| image:: mumble_audio_wizard/mumble_audio_wizard/1.png
-.. |image2| image:: mumble_audio_wizard/mumble_audio_wizard/2.png
-.. |image3| image:: mumble_audio_wizard/mumble_audio_wizard/3.png
-.. |image4| image:: mumble_audio_wizard/mumble_audio_wizard/4.png
-.. |image5| image:: mumble_audio_wizard/mumble_audio_wizard/5.png
-.. |image6| image:: mumble_audio_wizard/mumble_audio_wizard/6.png
-.. |image7| image:: mumble_audio_wizard/mumble_audio_wizard/7.png
-.. |image8| image:: mumble_audio_wizard/mumble_audio_wizard/8.png
-.. |image9| image:: mumble_audio_wizard/mumble_audio_wizard/9.png
-.. |image10| image:: mumble_audio_wizard/mumble_audio_wizard/10.png
+.. |image1| image:: ./mumble_audio_wizard/1.png
+.. |image2| image:: ./mumble_audio_wizard/2.png
+.. |image3| image:: ./mumble_audio_wizard/3.png
+.. |image4| image:: ./mumble_audio_wizard/4.png
+.. |image5| image:: ./mumble_audio_wizard/5.png
+.. |image6| image:: ./mumble_audio_wizard/6.png
+.. |image7| image:: ./mumble_audio_wizard/7.png
+.. |image8| image:: ./mumble_audio_wizard/8.png
+.. |image9| image:: ./mumble_audio_wizard/9.png
+.. |image10| image:: ./mumble_audio_wizard/10.png
