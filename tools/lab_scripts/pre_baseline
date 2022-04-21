@@ -27,7 +27,7 @@ echo " "
 # Call the apple script to create a new desktop and start minecraft there.
 # Encapsulating the launching in an applescript solves issues with trying to
 # start minecraft in a remote display.
-$(osascript "$TOMCAT"/tools/lab_scripts/applescripts/launch_minecraft.scpt "$TOMCAT" minecraft_log_file pid_log_file)
+$(osascript "$TOMCAT"/tools/lab_scripts/applescripts/launch_minecraft.scpt "$TOMCAT" "$minecraft_log_file" "$pid_log_file")
 
 # The applescript will open a terminal and launch minecraft. Wait a bit to make
 # sure the process started.
@@ -41,7 +41,7 @@ echo " "
 
 # The script below will keep looking for the player name in the mission log
 # file.
-player_name="$("$TOMCAT"/tools/lab_scripts/player_name_grabber $pid_minecraft $minecraft_log_file)"
+player_name="$("./$TOMCAT"/tools/lab_scripts/player_name_grabber "$pid_minecraft" "$minecraft_log_file")"
 
 if [ -n "$player_name" ]; then
   echo "Player name: ${player_name}"
