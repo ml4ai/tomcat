@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to stream noise &mdash; ToMCAT 0.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Software" href="EEG-software-setup.html" />
+    <link rel="prev" title="Cleaning procedure" href="cleaning-procedure.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> ToMCAT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../software.html">Software Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../software.html#indices-and-tables">Indices and tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tomcat_openapi.html">Data models and message bus topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Lang Lab Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="undergrad.html">Lang Lab Undergraduate Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="calibrating-mumble-audio.html">Set-up instructions for Mumble Audio Wizard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="equipment-setup.html">Equipment setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Cap-building-%28making-a-montage%29.html">Cap building (making a montage)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cleaning-procedure.html">Cleaning procedure</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">How to stream noise</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#eyetracker-imac">Eyetracker (iMac)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fnirs-imac">fNIRS (iMac)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#eeg-windows">EEG (Windows)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#after-recording">After recording</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="EEG-software-setup.html">Software</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Eyetracking.html">Eye tracker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Troubleshooting.html">Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ToMCAT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Lang Lab Documentation</a> &raquo;</li>
+      <li>How to stream noise</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/langlab/Dry-run-(streaming-noisy-data).rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="how-to-stream-noise">
+<h1>How to stream noise<a class="headerlink" href="#how-to-stream-noise" title="Permalink to this headline"></a></h1>
+<p>(i.e., no participant needed)</p>
+<section id="eyetracker-imac">
+<h2>Eyetracker (iMac)<a class="headerlink" href="#eyetracker-imac" title="Permalink to this headline"></a></h2>
+<ol class="arabic simple">
+<li><p>Connect device via USB</p></li>
+<li><p>Open “pupil capture” application on desktop of iMac</p></li>
+<li><p>Hit the record button (R on left bottom of screen)</p></li>
+</ol>
+</section>
+<section id="fnirs-imac">
+<h2>fNIRS (iMac)<a class="headerlink" href="#fnirs-imac" title="Permalink to this headline"></a></h2>
+<ol class="arabic">
+<li><p>Connect sources &amp; detectors to NIRSport (white box)</p></li>
+<li><p>Open Aurora application on desktop of iMac</p></li>
+<li><p>Select montage (1Person)</p></li>
+<li><p>OPTIONAL: run calibration (triangle button on calibration screen)</p></li>
+<li><p>Click on diagram symbol, then start recording by clicking the circle</p>
+<p><img alt="calibration" src="../_images/calibration2.jpg" /></p>
+</li>
+</ol>
+</section>
+<section id="eeg-windows">
+<h2>EEG (Windows)<a class="headerlink" href="#eeg-windows" title="Permalink to this headline"></a></h2>
+<ol class="arabic simple">
+<li><p>Connect battery (grey box) to amp (other grey box) by placing
+underneath and plugging teal cord in (arrows up)</p></li>
+<li><p>Connect electrode set and ground to amp</p></li>
+<li><p>Open LSL streaming app on Windows machine (up to 3 instances)</p></li>
+<li><p>Enter the device serial number and click ‘link’, start with leopard,
+then lion, then tiger</p></li>
+<li><p>If failed, unlink all devices from LSL, close all instances of LSL
+and repeat until all 3 devices are connected</p></li>
+</ol>
+</section>
+<section id="after-recording">
+<h2>After recording<a class="headerlink" href="#after-recording" title="Permalink to this headline"></a></h2>
+<p><strong>ALWAYS unplug the EEG batteries from each Amp and connect back to
+their chargers</strong></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cleaning-procedure.html" class="btn btn-neutral float-left" title="Cleaning procedure" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="EEG-software-setup.html" class="btn btn-neutral float-right" title="Software" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019, University of Arizona.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
