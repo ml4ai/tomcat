@@ -16,7 +16,8 @@ Lang Lab Documentation
    Troubleshooting
 
 To contribute to the documentation, you can add/edit files in the ``docs``
-directory of the repository: https://github.com/ml4ai/tomcat/tree/master/docs
+directory of the ml4ai/tomcat repository:
+https://github.com/ml4ai/tomcat/tree/master/docs
 
 You should be able to add documentation in either Markdown (extension: .md) or
 ReStructuredText (extension: .rst) format. ReStructuredText is a bit more
