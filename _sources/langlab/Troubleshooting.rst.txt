@@ -4,24 +4,27 @@ Troubleshooting
 You finally have the participants in, but something just doesn’t work.
 Find some common strategies to trouble shoot here
 
-| **STAY CALM! We are all humans, and the calmer you are the calmer the
-  participant will be**
-| **Do not blame yourself, your colleagues and/or the participant(s)** #
-  General TIPS \* **Assure the participant(s) that the issues are not
-  their fault or reason for concern.** \* Ask others for help. Sometimes
-  a fresh pair of eyes can see more clearly. \* Keep calm and
-  systematically try to narrow down what the source of the problem could
-  be. If it is a technical problem, we need to have as much information
-  as possible to fix it, so investigate. \* If you can, take a
-  screenshot of any abnormality/error message so we know what exactly
-  the problem looked like. > on iMAC: shift + command + 3 (will
-  automatically save to desktop)
-| > on PC: Control + Alt + PrtScn (need to paste into program,
-  e.g. Paint) \* If one thing doesn’t work, so be it. Let’s focus on the
-  other parts of data collection. If the entire setup is not working and
-  your team cannot find a solution, consider sending the participants
-  home with full pay. \* Always update the lab manager/PIs about
-  persisting or recurring problems with the equipment.
+**STAY CALM! We are all humans, and the calmer you are the calmer the participant will be**
+
+**Do not blame yourself, your colleagues and/or the participant(s)**
+
+General TIPS 
+------------
+
+* **Assure the participant(s) that the issues are not their fault or reason for concern.**
+
+* Ask others for help. Sometimes a fresh pair of eyes can see more clearly.
+* Keep calm and systematically try to narrow down what the source of the
+  problem could be. If it is a technical problem, we need to have as much
+  information as possible to fix it, so investigate.
+* If you can, take a screenshot of any abnormality/error message so we know
+  what exactly the problem looked like.
+    * on iMAC: shift + command + 3 (will automatically save to desktop)
+    * on PC: Control + Alt + PrtScn (need to paste into program, e.g. Paint)
+* If one thing doesn’t work, so be it. Let’s focus on the other parts of data
+  collection. If the entire setup is not working and your team cannot find a
+  solution, consider sending the participants home with full pay.
+* Always update the lab manager/PIs about persisting or recurring problems with the equipment.
 
 EEG troubleshooting
 -------------------
