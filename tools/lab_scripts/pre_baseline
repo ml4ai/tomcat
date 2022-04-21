@@ -41,7 +41,7 @@ echo " "
 
 # The script below will keep looking for the player name in the mission log
 # file.
-player_name="$("./$TOMCAT"/tools/lab_scripts/player_name_grabber "$pid_minecraft" "$minecraft_log_file")"
+player_name="$("$TOMCAT"/tools/lab_scripts/player_name_grabber "$pid_minecraft" "$minecraft_log_file")"
 
 if [ -n "$player_name" ]; then
   echo "Player name: ${player_name}"
