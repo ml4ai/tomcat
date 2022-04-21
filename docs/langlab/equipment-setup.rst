@@ -7,10 +7,11 @@ This is a general setup guide. For troubleshooting, check here:
 Measuring head size
 -------------------
 
-| measure head by pulling tape around circumference of head, widest part
-  of head – above eyebrows & parallel to the ground – most women: 56cm;
-  most men: 58cm >Most frequent sizes: 54, 56, 58, 60
-| >Available sizes: 50, 52, 54, 56, 58, 60, 62
+measure head by pulling tape around circumference of head, widest part of head
+– above eyebrows & parallel to the ground – most women: 56cm; most men: 58cm
+
+* Most frequent sizes: 54, 56, 58, 60
+* Available sizes: 50, 52, 54, 56, 58, 60, 62
 
 *Finding a cap’s size: last two digits on top row of cap label specify
 the size* |measuring the headsize|
@@ -18,18 +19,21 @@ the size* |measuring the headsize|
 Setup of the cap (holds EEG/fNIRS)
 ----------------------------------
 
-|Cap setup| 1. Put cap on Styrofoam head, and separate out electrodes -
-Lower numbers will be on the left (1-16), higher numbers on the right
-(17-32) - Slide electrodes in holders & match up numbers - Make sure
-cables run downwards-backwards - Put Velcro ties on both sides when done
-(1-16 in one bundle, 17-32 in the second) 2. Take out optodes and push
-them into correct color numbers - Red = sources, blue = detectors,
-doesn’t matter which ones you start with - Easier if you stand up, can
-also put fingers under cap to help - White optode holder = “phantom
-head” - Accelerometer on left, D8 on right of Cz) 3. Put in ground
-electrode (black holder) |completed cap| ### You have completed the cap
-setup! Now, the cap needs to be placed on the participant’s head.
+|Cap setup|
 
+1. Put cap on Styrofoam head, and separate out electrodes
+  * Lower numbers will be on the left (1-16), higher numbers on the right (17-32)
+  * Slide electrodes in holders & match up numbers
+  * Make sure cables run downwards-backwards
+  * Put Velcro ties on both sides when done (1-16 in one bundle, 17-32 in the second)
+2. Take out optodes and push them into correct color numbers
+  * Red = sources, blue = detectors, doesn’t matter which ones you start with
+  * Easier if you stand up, can also put fingers under cap to help
+  * White optode holder = "phantom head"
+  * Accelerometer on left, D8 on right of Cz)
+3. Put in ground electrode (black holder) |completed cap|
+
+**You have completed the cap setup!** Now, the cap needs to be placed on the participant’s head.
 
 .. _putting cap on participant:
 
@@ -70,18 +74,16 @@ Find PID for Aurora and grant it priority
 --------------
 
 #. Measure cap position to make sure it is centered
-   *  Measure from ear to ear, take half of the distance = green 24
-      should be there
-   *  Measure from nasion (between eyebrows) to inion (bump at back of
-      head) and Cz (green 24) should be at middle point
-
+  * Measure from ear to ear, take half of the distance = green 24 should be there
+  * Measure from nasion (between eyebrows) to inion (bump at back of
+    head) and Cz (green 24) should be at middle point
 #. Start BrainVision Recorder on desktop PC , hit lightbulb symbol for
    lights, eye for traces |brain vision|
 #. Put tips on syringes & start putting gel in opening of electrodes –
    try to aim down and under electrode, then wiggle in circles until it
    turns green
-   *  Optional: open photobooth app so participant can see
-   *  Normal for colors of electrode lights to change as you move
+  * Optional: open photobooth app so participant can see
+  * Normal for colors of electrode lights to change as you move
 
 
 .. _skin conductance and hr:
