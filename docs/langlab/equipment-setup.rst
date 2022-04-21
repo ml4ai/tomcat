@@ -4,8 +4,8 @@ Cap setup
 This is a general setup guide. For troubleshooting, check here:
 `Troubleshooting <https://github.com/val-pf/tomcat-equipment-wiki/wiki/Troubleshooting>`__
 
-Measuring Headsize
-------------------
+Measuring head size
+-------------------
 
 | measure head by pulling tape around circumference of head, widest part
   of head – above eyebrows & parallel to the ground – most women: 56cm;
@@ -30,7 +30,8 @@ head” - Accelerometer on left, D8 on right of Cz) 3. Put in ground
 electrode (black holder) |completed cap| ### You have completed the cap
 setup! Now, the cap needs to be placed on the participant’s head.
 
---------------
+
+.. _putting cap on participant:
 
 Putting cap on participant
 --------------------------
@@ -82,7 +83,8 @@ Find PID for Aurora and grant it priority
    *  Optional: open photobooth app so participant can see
    *  Normal for colors of electrode lights to change as you move
 
---------------
+
+.. _skin conductance and hr:
 
 Skin Conductance (GSR) & Heart Rate (ECG)
 -----------------------------------------
