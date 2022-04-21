@@ -94,36 +94,36 @@ Skin Conductance (GSR) & Heart Rate (ECG)
 *Make sure battery is connected to EEG-Amp. Turn on PC, open Brain
 Vision Recorder app*
 
-### Skin Conductance
+Skin Conductance
+~~~~~~~~~~~~~~~~
 
 #. Grab two white wires, add a good amount of white gel to the center.
 #. Attach tape to sensors and attach to participant’s scapula (shoulder blade)
    leaving about two fingers' distance between sensors.
-   * Make sure wires face up and go over shoulder.
+  * Make sure wires face up and go over shoulder.
 #. Attach wires to box with two holes
-   * double-click GSR in Brain Vision software in trace mode (eye-symbol)
-   * zoom in if needed
+  * double-click GSR in Brain Vision software in trace mode (eye-symbol)
+  * zoom in if needed
 
 Heart Rate
 ~~~~~~~~~~
 
 #. Grab black wire (ground) and two colored wires
 #. use double-sided circles (stickers), remove only white backing
-   *  put electrode with thinner side on the sticky end
+   * put electrode with thinner side on the sticky end
 #. Attach on participant
-   *  black wire: under left collarbone with wire facing up and over the
-      shoulder
-   *  colored wires:
-      *  one under the right collarbone -> goes in MINUS
-      *  the second one below ground under chest (left side) -> goes in
-         PLUS
+   * black wire: under left collarbone with wire facing up and over the
+     shoulder
+   * colored wires:
+     * one under the right collarbone -> goes in MINUS
+     * the second one below ground under chest (left side) -> goes in PLUS
 #. **FILL all three electrodes with ABRALYT gel (grey, grainy gel)**
-   *  cover each electrode with tape to avoid staining participant’s
+   * cover each electrode with tape to avoid staining participant’s
       clothes
 #. Attach to box with three holes, ground in middle
-   *  Double-click ECG in Brain Vision software in trace mode
-      (eye-symbol)
-   *  Zoom out if needed
+   * Double-click ECG in Brain Vision software in trace mode
+     (eye-symbol)
+   * Zoom out if needed
 
 .. |measuring the headsize| image:: head_measurement.jpg
 .. |Cap setup| image:: cap_setup.jpg
