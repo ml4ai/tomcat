@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -u
+
+create_directory_structure() {
+  local server_root_dir=$1
+
+  __create_directory $server_root_dir
+  __create_directory $server_root_dir/baseline_tasks
+  __create_directory $server_root_dir/lion
+  __create_directory $server_root_dir/tiger
+  __create_directory $server_root_dir/leopard
+}
+
+__create_directory() {
+  local directory=$1
+
+  if [[ -d "$directory" ]]; then
+    printf "\e[31m - Directory $directory found. Skipping directory creation.\e[0m\n"
+  else
+    mkdir -p "$directory" < /dev/null
+    if [[ $? -eq 0 ]]; then
+      printf "\e[32m - Directory $directory created.\e[0m\n"
+    else
+      printf "\e[31m - Error while creating directory $directory.\e[0m\n"
+      exit 1
+    fi
+  fi
+}
