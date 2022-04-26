@@ -21,7 +21,6 @@ Current
 
 - [Salena Ashton](https://github.com/SalenaAshton)
 - [Savannah Boyd](https://cals.arizona.edu/fcs/grad/savannah_boyd)
-- [Chinmai Basavaraj](https://www.cs.arizona.edu/person/chinmai-basavaraj-0)
 - [Loren Champlin](https://ischool.arizona.edu/people/loren-champlin)
 - [Eric Duong](https://github.com/eduongAZ)
 - Md Messal
@@ -49,6 +48,7 @@ Current
 
 **Postdocs**:
 
+- [Chinmai Basavaraj](https://www.cs.arizona.edu/person/chinmai-basavaraj-0)
 - [John Culnan](https://linguistics.arizona.edu/user/john-culnan)
 - Payal Khosla
 - [Liang Zhang](https://www.linkedin.com/in/liang-leon-zhang/)
