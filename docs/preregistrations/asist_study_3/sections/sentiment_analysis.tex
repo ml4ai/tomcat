@@ -100,7 +100,7 @@ point. A schematic representing our approach is shown in
 The experiments we propose to run with our model are based on an initial
 analysis of two versions of our existing model's results on a subset of the
 Study 3 Spiral 3 pilot data. The results of this initial analysis are shown in
-Table \ref{tab:spiral3_analysis} In this initial analysis, we compared models
+\autoref{tab:spiral3_analysis} In this initial analysis, we compared models
 trained with and without information about the distribution of class labels in
 the training (non-ASIST) datasets (i.e., with and without class weights).  For
 the Study 3 Spiral 3 pilot data, the model trained with class weights achieved
@@ -112,19 +112,20 @@ weights performed better, reaching an F1 score of 72.64.
     \small
     \centering
     \begin{tabular}{lcc}
-        \hline
+        \toprule
         Model type & Emotion & Personality Trait \\
-        \hline
+        \midrule
         Class weights & 58.78 & 21.58 \\
         No class weights & 72.64 & 37.65 \\
-        \hline
+        \bottomrule
     \end{tabular}
-    \caption{Performance of trained models with and without class weights on
-    emotion and dominant personality trait tasks. Numbers shown are F1 scores
-    for emotion and personality trait. Gold labels for personality traits are
-    determined using results of the Ten Item Personality Inventory survey,
-    while gold labels for emotion were created through annotation of data
-    points by two researchers.
+    \caption{%
+        Performance of trained models with and without class weights on
+        emotion and dominant personality trait tasks. Numbers shown are F1 scores
+        for emotion and personality trait. Gold labels for personality traits are
+        determined using results of the Ten Item Personality Inventory survey,
+        while gold labels for emotion were created through annotation of data
+        points by two researchers.
     }
     \label{tab:spiral3_analysis}
 \end{table}
