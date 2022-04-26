@@ -17,6 +17,19 @@ Current
 - [Adam Ussishkin](http://ussishkin.org)
 - [Andrew Wedel](https://www.andywedel.com)
 
+**Postdocs**:
+
+- [Chinmai Basavaraj](https://www.cs.arizona.edu/person/chinmai-basavaraj-0)
+- [John Culnan](https://linguistics.arizona.edu/user/john-culnan)
+- Payal Khosla
+- [Liang Zhang](https://www.linkedin.com/in/liang-leon-zhang/)
+
+**Research Programmers**:
+
+- [Joseph Astier](https://github.com/jastier)
+- [Vincent Raymond](https://github.com/vincentraymond-ua)
+- [Rick Champlin](https://github.com/rchamplin)
+
 **PhD Students:**
 
 - [Salena Ashton](https://github.com/SalenaAshton)
@@ -45,19 +58,6 @@ Current
 - Aditya Jadhav
 - Vatsav Setupathi
 - Shambhavi Singh
-
-**Postdocs**:
-
-- [Chinmai Basavaraj](https://www.cs.arizona.edu/person/chinmai-basavaraj-0)
-- [John Culnan](https://linguistics.arizona.edu/user/john-culnan)
-- Payal Khosla
-- [Liang Zhang](https://www.linkedin.com/in/liang-leon-zhang/)
-
-**Research Programmers**:
-
-- [Joseph Astier](https://github.com/jastier)
-- [Vincent Raymond](https://github.com/vincentraymond-ua)
-- [Rick Champlin](https://github.com/rchamplin)
 
 Project Alumni
 --------------
