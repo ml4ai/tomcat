@@ -93,47 +93,47 @@
 <h1>Message Exchange between Client and Server in Minecraft Forge<a class="headerlink" href="#message-exchange-between-client-and-server-in-minecraft-forge" title="Permalink to this headline"></a></h1>
 <p>If we need to trigger an action in the client side from the server or
 vice-versa, we need to create two message classes with the following structure:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">InventoryMessage</span> <span class="kd">implements</span> <span class="n">IMessage</span> <span class="p">{</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">class</span> <span class="nc">InventoryMessage</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">IMessage</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 
-    <span class="kd">public</span> <span class="n">ItemStack</span> <span class="n">itemStack</span><span class="p">;</span> <span class="c1">// Any object(s) that we want to serialize</span>
-		
-	<span class="kd">public</span> <span class="nf">InventoryMessage</span><span class="p">()</span> <span class="p">{</span> <span class="p">}</span>
+<span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="n">ItemStack</span><span class="w"> </span><span class="n">itemStack</span><span class="p">;</span><span class="w"> </span><span class="c1">// Any object(s) that we want to serialize</span><span class="w"></span>
+<span class="w">		</span>
+<span class="w">	</span><span class="kd">public</span><span class="w"> </span><span class="nf">InventoryMessage</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
 
-	<span class="kd">public</span> <span class="nf">InventoryMessage</span><span class="p">(</span><span class="n">ItemStack</span> <span class="n">itemStack</span><span class="p">)</span> <span class="p">{</span>
-		<span class="k">this</span><span class="p">.</span><span class="na">itemStack</span> <span class="o">=</span> <span class="n">itemStack</span><span class="p">;</span>
-	<span class="p">}</span>
+<span class="w">	</span><span class="kd">public</span><span class="w"> </span><span class="nf">InventoryMessage</span><span class="p">(</span><span class="n">ItemStack</span><span class="w"> </span><span class="n">itemStack</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">		</span><span class="k">this</span><span class="p">.</span><span class="na">itemStack</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itemStack</span><span class="p">;</span><span class="w"></span>
+<span class="w">	</span><span class="p">}</span><span class="w"></span>
 
-	<span class="nd">@Override</span>
-	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">fromBytes</span><span class="p">(</span><span class="n">ByteBuf</span> <span class="n">buf</span><span class="p">)</span> <span class="p">{</span>
-		<span class="k">this</span><span class="p">.</span><span class="na">itemStack</span> <span class="o">=</span> <span class="n">ByteBufUtils</span><span class="p">.</span><span class="na">readItemStack</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span>			
-	<span class="p">}</span>
+<span class="w">	</span><span class="nd">@Override</span><span class="w"></span>
+<span class="w">	</span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">fromBytes</span><span class="p">(</span><span class="n">ByteBuf</span><span class="w"> </span><span class="n">buf</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">		</span><span class="k">this</span><span class="p">.</span><span class="na">itemStack</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ByteBufUtils</span><span class="p">.</span><span class="na">readItemStack</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span><span class="w">			</span>
+<span class="w">	</span><span class="p">}</span><span class="w"></span>
 
-	<span class="nd">@Override</span>
-	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">toBytes</span><span class="p">(</span><span class="n">ByteBuf</span> <span class="n">buf</span><span class="p">)</span> <span class="p">{</span>
-		<span class="n">ByteBufUtils</span><span class="p">.</span><span class="na">writeItemStack</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="na">itemStack</span><span class="p">);</span>			
-	<span class="p">}</span>				
+<span class="w">	</span><span class="nd">@Override</span><span class="w"></span>
+<span class="w">	</span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">toBytes</span><span class="p">(</span><span class="n">ByteBuf</span><span class="w"> </span><span class="n">buf</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">		</span><span class="n">ByteBufUtils</span><span class="p">.</span><span class="na">writeItemStack</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">itemStack</span><span class="p">);</span><span class="w">			</span>
+<span class="w">	</span><span class="p">}</span><span class="w">				</span>
 
-<span class="p">}</span>
+<span class="p">}</span><span class="w"></span>
 
-<span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">InventoryMessageHandler</span> <span class="kd">implements</span> <span class="n">IMessageHandler</span><span class="o">&lt;</span><span class="n">InventoryMessage</span><span class="p">,</span> <span class="n">IMessage</span><span class="o">&gt;</span> <span class="p">{</span>
-		
-  <span class="nd">@Override</span>
-  <span class="kd">public</span> <span class="n">IMessage</span> <span class="nf">onMessage</span><span class="p">(</span><span class="kd">final</span> <span class="n">InventoryMessage</span> <span class="n">message</span><span class="p">,</span> <span class="kd">final</span> <span class="n">MessageContext</span> <span class="n">ctx</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">IThreadListener</span> <span class="n">mainThread</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>			
-    <span class="k">if</span> <span class="p">(</span><span class="n">ctx</span><span class="p">.</span><span class="na">side</span> <span class="o">==</span> <span class="n">Side</span><span class="p">.</span><span class="na">CLIENT</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">mainThread</span> <span class="o">=</span> <span class="n">Minecraft</span><span class="p">.</span><span class="na">getMinecraft</span><span class="p">();</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-      <span class="n">mainThread</span> <span class="o">=</span> <span class="p">(</span><span class="n">WorldServer</span><span class="p">)</span><span class="n">ctx</span><span class="p">.</span><span class="na">getServerHandler</span><span class="p">().</span><span class="na">playerEntity</span><span class="p">.</span><span class="na">world</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="n">mainThread</span><span class="p">.</span><span class="na">addScheduledTask</span><span class="p">(</span><span class="k">new</span> <span class="n">Runnable</span><span class="p">()</span> <span class="p">{</span>
-      <span class="nd">@Override</span>
-      <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="p">()</span> <span class="p">{</span>
-        <span class="c1">// Do stuff here</span>
-      <span class="p">}</span>
-    <span class="p">});</span>    
-    <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
-  <span class="p">}</span>
-<span class="p">}</span>
+<span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kd">class</span> <span class="nc">InventoryMessageHandler</span><span class="w"> </span><span class="kd">implements</span><span class="w"> </span><span class="n">IMessageHandler</span><span class="o">&lt;</span><span class="n">InventoryMessage</span><span class="p">,</span><span class="w"> </span><span class="n">IMessage</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">		</span>
+<span class="w">  </span><span class="nd">@Override</span><span class="w"></span>
+<span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="n">IMessage</span><span class="w"> </span><span class="nf">onMessage</span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">InventoryMessage</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">MessageContext</span><span class="w"> </span><span class="n">ctx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">IThreadListener</span><span class="w"> </span><span class="n">mainThread</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span><span class="w">			</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ctx</span><span class="p">.</span><span class="na">side</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">Side</span><span class="p">.</span><span class="na">CLIENT</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="n">mainThread</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Minecraft</span><span class="p">.</span><span class="na">getMinecraft</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="n">mainThread</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">WorldServer</span><span class="p">)</span><span class="n">ctx</span><span class="p">.</span><span class="na">getServerHandler</span><span class="p">().</span><span class="na">playerEntity</span><span class="p">.</span><span class="na">world</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="n">mainThread</span><span class="p">.</span><span class="na">addScheduledTask</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Runnable</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="nd">@Override</span><span class="w"></span>
+<span class="w">      </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">run</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// Do stuff here</span><span class="w"></span>
+<span class="w">      </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">});</span><span class="w">    </span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 <p>In the message class we store all the information we need to pass from one side
@@ -142,8 +142,8 @@ performed in the target side.
 Those classes must be registered so they can be triggered when needed, this can
 be done in the class MalmoMod after other similar registrations with the
 following piece of code:</p>
-<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// The target side can be SERVER or CLIENT. If we need both, we just register this function twice, onde for each side.</span>
-<span class="n">MalmoMod</span><span class="p">.</span><span class="na">network</span><span class="p">.</span><span class="na">registerMessage</span><span class="p">(</span><span class="n">InventoryMessageHandler</span><span class="p">.</span><span class="na">class</span><span class="p">,</span> <span class="n">InventoryMessage</span><span class="p">.</span><span class="na">class</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Side</span><span class="p">.</span><span class="na">SERVER</span><span class="p">);</span>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="c1">// The target side can be SERVER or CLIENT. If we need both, we just register this function twice, onde for each side.</span><span class="w"></span>
+<span class="n">MalmoMod</span><span class="p">.</span><span class="na">network</span><span class="p">.</span><span class="na">registerMessage</span><span class="p">(</span><span class="n">InventoryMessageHandler</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="n">InventoryMessage</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">Side</span><span class="p">.</span><span class="na">SERVER</span><span class="p">);</span><span class="w"></span>
 </pre></div>
 </div>
 <p>Finally, to send a message from the client to the server we use method
