@@ -1,5 +1,6 @@
 Become a participant
 ====================
 
-We will soon be collecting data about human players collaborating with the ToMCAT
-agent in the Minecraft virtual environment. Stay tuned for further details!
+We are looking for participants! See the flyer below for details:
+
+![ToMCAT Recruitment Flyer](https://vanga.sista.arizona.edu/tomcat/assets/img/tomcat_recruitment_flyer.png)
