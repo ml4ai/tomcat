@@ -4,17 +4,16 @@
 
 \section{Introduction}
 
-Good teamwork and communication can enable a team of agents (human or otherwise
-to perform beyond the sum of their parts\citep{roberts2022state}\ap{Add a space
-before each \texttt{\\citep} command}. In particular, 
+Good teamwork and communication can enable a team of agents (human or otherwise)
+to perform beyond the sum of their parts \citep{roberts2022state}. In particular, 
 during high-stakes crisis situations, miscommunication is a common cause of
-adverse events\citep{taylor2014description,davis2017operative}. Closed-loop
-communication(CLC) is often recommended in the team research literature
+adverse events \citep{taylor2014description,davis2017operative}. Closed-loop
+communication (CLC) is often recommended in the team research literature
 as a communication behavior that can guarantee the accuracy of information
-exchange\citep{marzuki2019closed}. Currently, CLC in spoken dialogue is
+exchange \citep{marzuki2019closed}. Currently, CLC in spoken dialogue is
 identified via retrospective analyses involving manual transcription and
 annotation. However, given the potentially catastrophic consequences of poor
-team communication\citep{flin2004identifying} - especially in complex,
+team communication \citep{flin2004identifying} - especially in complex,
 fast-paced, and high-stakes environments such as urban search and rescue
 scenarios - we argue that there is an urgent need for AI technologies that can
 detect and repair the breakdowns in CLC as they happen. To address this need,
@@ -22,16 +21,12 @@ we propose to develop an AI system for detecting the presence or absence of CLC
 procedures in spoken dialogue within teams of humans collaborating on shared
 tasks.
 
-Currently, most real-time natural language understanding(NLU)\ap{Add a space
-before each opening parenthesis.} and responding systems(e.g. Question and
-answering\citep{hawkins2017you}\ap{The Google Scholar BibTeX entry is a bit
-    lacking - the bibliography entry seems incomplete. Can you get the BibTeX
-    entry from the corresponding PsyArXiv paper instead? The instructions here
-might help you: \url{https://adarsh.cc/posts/citations.html}}, incremental
-decision-making\citep{devault2011detecting}) are limited to conversing with a
+Currently, most real-time natural language understanding (NLU) and responding systems(e.g. Question and
+answering \citep{hawkins_goodman_2017}, incremental
+decision-making \citep{devault2011detecting}) are limited to conversing with a
 single human at a time. On the other hand, there are numerous analyses of
 multi-participant spoken dialogue in the academic literature - however, their
-analyses are primarily performed offline rather than in real-time. 
+analyses are primarily performed offline rather than in real-time, and the communicative events in their multi-party conversations are manually coded rather than automatically extracted by information extraction (IE) methods \citep{jagannath2022speech}.
 
 The ASR Agent in conjunction with the DialogAgent (see \autoref{ch:rule_based_ie})
 enables us to extract events of interest in real time from spoken dialogue,
@@ -50,8 +45,7 @@ corresponding to the utterances.
 \section{Approach}
 
 While there are different definitions of closed-loop communication in the
-literature\ap{Add citations for the papers with the different definitions of
-CLC.}, for our module we adopt the definition proposed by
+literature (\citet{abd2018closed}, \citet{yee2017role}), for our module we adopt the definition proposed by
 \citet{Hargestam.ea:2013}.  In this definition of CLC, there are three distinct
 phases (see \autoref{tab:clc-three-phases}): 
 
