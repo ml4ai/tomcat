@@ -82,6 +82,17 @@ where each utterance has one (out of 11) general and zero or more (out of 40)
 specific tags. Once the experimentation is done, we will use a transfer
 learning approach to train and test the model for study-2 data. 
 
+MRDA data is a multiparty multilabel dialog act corpus. So, each utterance in
+the dataset may have multiple tags associated with it which poses a problem for
+building an efficient model that could correctly capture the dialog acts. One approach
+to solve this multi-label problem is randomly choosing a label from 
+the label combinations. However, this approach often does not reflect the most
+prominent purpose of each utterance. So, we have drawn inspiration from label
+disambiguation from related corpus and carefully looked at examples to come up
+with a set of precedence rules for the labels and thus solved the multi-label
+challenge. This approach significantly improves the performance of our baseline
+model on MRDA data.
+
 \section{Evaluation}
 
 To evaluate our approach, we will use F1 score as the evaluation metric. For
