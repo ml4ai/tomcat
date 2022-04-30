@@ -26,7 +26,7 @@ local agents communicate with their respective humans, as well as with a
 This site contains documentation and resources on the overall project, as well
 as the C++ API and links to the Java API and other ToMCAT components.
 
-The ToMCAT project is funded by a 4-year, $7.5M DARPA grant as part of the Artificial
+The ToMCAT project is funded by a 4.5 year, $7.5M DARPA grant as part of the Artificial
 Social Intelligence for Successful Teams (ASIST) program.
 
 The images below show a few example screenshots from our inaugural 'mission',
@@ -62,6 +62,7 @@ the Zombie Invasion.
   </table>
   <br>
 
+
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
@@ -72,8 +73,8 @@ the Zombie Invasion.
    developer/index
    tomcat_openapi
    installation
+   langlab/index
    usage
-   CONTRIBUTING
 
 
 The Github repository for ToMCAT can be found `here <https://github.com/ml4ai/tomcat>`_.
@@ -81,7 +82,6 @@ The Github repository for ToMCAT can be found `here <https://github.com/ml4ai/to
 **Presentations**
 
 `Site Visit, 9-25-2019 <http://vanga.sista.arizona.edu/tomcat/presentations/site_visit_09_25_2019.pdf>`_
-
 
 
 Indices and tables

@@ -1,0 +1,34 @@
+#!/usr/bin/osascript
+
+-- Get current path
+set _current_path to ""
+tell application "Finder"
+        set _current_path to POSIX path of (container of (path to me) as string)
+end tell
+
+-- Load spaces library
+property _spaces_library_path : ""
+set _spaces_library_path to _current_path & "compiled/spaces_library.scpt"
+set spacesLibrary to (load script POSIX file _spaces_library_path)
+
+tell spacesLibrary
+	go_to_space(3)
+end tell
+
+-- Launch applications
+tell application "Mumble.app" to activate
+tell application "Aurora.app" to activate
+tell application "Pupil Capture.app" to activate
+
+-- Set coordinates 
+tell application "System Events" to tell application process "Aurora"
+        tell window 1
+                set {size, position} to {{1258, 1329}, {1, 25}}
+        end tell
+end tell
+
+tell application "System Events" to tell application process "Pupil Capture"
+        tell window 1
+                set {size, position} to {{1272, 748}, {1267, 25}}
+        end tell
+end tell

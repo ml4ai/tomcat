@@ -1,0 +1,18 @@
+#/bin/bash
+
+# Get directory of script
+SOURCE="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+pushd $SOURCE/..
+	# Compile Libraries
+	scripts/compile_libraries
+
+	# Launch Minecraft and Client Map
+	./start_minecraft
+
+	# Launch Speech Task Webapp
+	./start_entrainment_webapp
+
+	# Launch Physio Programs
+	./start_physio_programs
+popd

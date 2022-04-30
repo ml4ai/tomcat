@@ -67,10 +67,7 @@ external/malmo/Minecraft/run/
 data/*
 
 # Images
-*.png
 *.svg
-*.jpeg
-*.jpg
 
 # PDFs
 *.pdf
@@ -81,9 +78,6 @@ data/*
 *.zip
 
 # Misc
-src/pddl/#sar-individual-domain.pddl#  
-src/pddl/#sar-individual-domain.shop#
-src/pddl/sar-individual-domain.shop
 .ipynb_checkpoints
 __pycache__
 

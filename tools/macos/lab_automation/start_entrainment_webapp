@@ -1,0 +1,45 @@
+#!/usr/bin/osascript
+
+-- Get current path
+set _current_path to ""
+tell application "Finder"
+        set _current_path to POSIX path of (container of (path to me) as string)
+end tell
+
+-- Load configuration library
+property _configuration_library_path : ""
+set _configuration_library_path to _current_path & "compiled/config_library.scpt"
+set configLibrary to (load script POSIX file _configuration_library_path)
+
+-- Load spaces library
+property _spaces_library_path : ""
+set _spaces_library_path to _current_path & "compiled/spaces_library.scpt"
+set spacesLibrary to (load script POSIX file _spaces_library_path)
+
+-- Get Tomcat directory
+set TOMCAT_DIRECTORY_PATH to ""
+tell configLibrary
+        initialize()
+        set TOMCAT_DIRECTORY_PATH to get_config_value("TOMCAT_DIRECTORY_PATH")
+end tell
+
+-- Switch to speech task space
+tell spacesLibrary
+        go_to_space(2)
+end tell
+
+-- Run webapp
+do shell script "cd " & TOMCAT_DIRECTORY_PATH & "/exe/entrainment_webapp/webmic; python webmic.py; > /dev/null 2>&1 &"
+do shell script "cd " & TOMCAT_DIRECTORY_PATH & "/exe/entrainment_webapp; python server.py; > /dev/null 2>&1 &"
+
+-- Open Chrome
+tell application "Google Chrome"
+	activate
+	open location "http://localhost:8000"
+	activate
+end tell
+
+-- Fullscreen Chrome
+tell application "System Events"
+	keystroke "f" using {command down, control down}
+end tell

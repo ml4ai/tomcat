@@ -1,0 +1,2 @@
+TOMCAT_DIRECTORY_PATH=~/Desktop/tomcat/tomcat
+PLANNING_SLIDES_PATH=test2
