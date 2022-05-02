@@ -8,7 +8,8 @@ add_compile_definitions(BOOST_DATE_TIME_POSIX_TIME_STD_CONFIG)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 find_package(portaudio REQUIRED)
-
+find_package(PahoMqttCpp REQUIRED)
+find_package(nlohmann_json REQUIRED)
 add_definitions(-DBOOST_LOG_DYN_LINK)
 find_package(
     Boost 
@@ -19,7 +20,9 @@ find_package(
 )
 
 add_executable(audioStreamer 
-	audioStreamer.cpp	
+	src/main.cpp
+	src/AudioStreamer.cpp	
+	src/WebsocketClient.cpp
 )
 
 target_include_directories(audioStreamer PRIVATE 
@@ -31,5 +34,7 @@ target_link_libraries(
     audioStreamer
     ${Boost_LIBRARIES}
     ${portaudio_LIBRARY}
+    nlohmann_json::nlohmann_json
+    PahoMqttCpp::paho-mqttpp3
     -pthread
 )
