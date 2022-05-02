@@ -69,8 +69,12 @@ void AudioStreamer::StartStreaming() {
 }
 
 void AudioStreamer::StopStreaming() {
-    PaError err;
+    running = false;
+    
+    // Join loop thread
+    portaudio_stream_thread.join();
 
+    PaError err;
     // Stop PortAudio stream
     err = Pa_StopStream(stream);
     if (err != paNoError) {
@@ -87,6 +91,7 @@ void AudioStreamer::StopStreaming() {
 
     // shutdown websocket client
     ws_client->Shutdown();
+    
 }
 
 void AudioStreamer::Loop() {
