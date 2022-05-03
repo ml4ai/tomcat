@@ -30,7 +30,7 @@ __start_server() {
   local data_dir="$EXPERIMENT_DIR/baseline_tasks"
   mkdir -p "$data_dir" >/dev/null
 
-  local command="cd $SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks; "
+  local command="cd $HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks; "
   command+="python3 run_server.py -s $data_dir"
   x-terminal-emulator -x bash -c "$command"
 }
