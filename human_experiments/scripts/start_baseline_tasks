@@ -114,7 +114,7 @@ __start_baseline_tasks() {
     __start_server
   fi
 
-  yes_no_question "${PADDING}Do you want to start the ${EMPH}clients?${NC}?"
+  yes_no_question "${PADDING}Do you want to start the ${EMPH}clients?${NC}"
   if [[ $? -eq 0 ]]; then
     __start_clients "${PADDING} "
   fi

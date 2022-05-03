@@ -113,8 +113,10 @@ fi
 
 if [[ $GOTO -le 11 ]]; then
   echo " "
-  wait_for_key "[11] Type [quit] to finish the experiment and close open applications: " "quit"
-  source_clean_up
+  local text="[11] Type [${EMPH}quit${NC}] to finish the experiment and close "
+  text+="open applications: "
+  wait_for_key "$text" "quit"
+  source clean_up
 fi
 
 exit 0
