@@ -5,9 +5,9 @@ set -u
 source configuration_helpers
 
 if [[ -z ${1+x} ]]; then
-  padding=""
+  PADDING=""
 else
-  padding=$1
+  PADDING=$1
 fi
 
 __start_sensor() {
@@ -42,9 +42,9 @@ __start_fnirs() {
 }
 
 __start_sensors_on_client() {
-  local client_name=$2
-  local client_address=$3
-  local padding=$4
+  local client_name=$1
+  local client_address=$2
+  local padding=$3
 
   yes_no_question "${padding}Do you want to start the systems on ${EMPH}$client_name?${NC}"
   if [[ $? -eq 0 ]]; then
@@ -56,6 +56,6 @@ __start_sensors_on_client() {
   fi
 }
 
-__start_sensors_on_client "lion" "lion.local" "$padding"
-__start_sensors_on_client "tiger" "tiger.local" "$padding"
-__start_sensors_on_client "leopard" "leopard.local" "$padding"
+__start_sensors_on_client "lion" "lion.local" "$PADDING"
+__start_sensors_on_client "tiger" "tiger.local" "$PADDING"
+__start_sensors_on_client "leopard" "leopard.local" "$PADDING"
