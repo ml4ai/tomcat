@@ -27,6 +27,7 @@ create_data_directory_structure "$experiment_dir_tom" "  "
 echo -e " Creating experiment directory structure for ${EMPH}CAT...${NC}"
 create_data_directory_structure "$experiment_dir_cat" "  "
 
+echo " "
 yes_no_question "[2] Do you want to check ${EMPH}NFS${NC} status?"
 if [[ $? -eq 0 ]]; then
   echo -e " Checking status for ${EMPH}TOM...${NC}"
@@ -35,49 +36,58 @@ if [[ $? -eq 0 ]]; then
   source check_nfs $experiment_dir_cat "  "
 fi
 
+echo " "
 yes_no_question "[3] Do you want to start ${EMPH}Mumble?${NC}"
-if [[ $? -eq 0]]; then
+if [[ $? -eq 0 ]]; then
   source start_mumble " "
 fi
 
+echo " "
 yes_no_question "[4] Do you want to start ${EMPH}fNIRS and Eye-tracker systems?${NC}"
-if [[ $? -eq 0]]; then
+if [[ $? -eq 0 ]]; then
   source start_sensors " "
 fi
 
+echo " "
 yes_no_question "[5] Do you want to start ${EMPH}Face and Screen Recording?${NC}"
-if [[ $? -eq 0]]; then
+if [[ $? -eq 0 ]]; then
   source start_ffmpeg $experiment_dir_cat " "
 fi
 
+echo " "
 yes_no_question "[6] Do you want to start the ${EMPH}Testbed?${NC}"
-if [[ $? -eq 0]]; then
+if [[ $? -eq 0] ]; then
   source start_testbed $experiment_dir_cat " "
 fi
 
+echo " "
 yes_no_question "[7] Do you want to start the ${EMPH}Baseline Tasks?${NC}"
-if [[ $? -eq 0]]; then
+if [[ $? -eq 0 ]]; then
   source start_baseline_tasks $experiment_dir_cat " "
 fi
 
+echo " "
 yes_no_question "[8] Do you want to start the ${EMPH}Minecraft?${NC}"
-if [[ $? -eq 0]]; then
+if [[ $? -eq 0 ]]; then
   echo " Please, start it manually."
 #  source start_minecraft $experiment_dir_cat " "
 fi
 
+echo " "
 yes_no_question "[9] Do you want to open the ${EMPH}Final Survey?${NC}"
-if [[ $? -eq 0]]; then
+if [[ $? -eq 0 ]]; then
   echo " Please, open it manually."
 #  source open_final_survey $experiment_dir_cat " "
 fi
 
+echo " "
 yes_no_question "[10] Do you want to finish the ${EMPH}Final Survey?${NC}"
-if [[ $? -eq 0]]; then
+if [[ $? -eq 0 ]]; then
   echo " Please, open it manually."
 #  source open_final_survey $experiment_dir_cat " "
 fi
 
+echo " "
 wait_for_key "[11] Type [quit] to finish the experiment and close open applications: " "quit"
 source_clean_up
 

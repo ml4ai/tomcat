@@ -40,7 +40,7 @@ __check_nfs_on_client() {
       echo "${padding} [TEST 3]"
       ssh $EXPERIMENT_USER@$client_address "rsync ~/img.png \$HOME$nfs_dir && echo $?" | sed "s/0/${padding} OK/"
       echo " "
-      yes_no_question "${padding}Do you want to repeat the tests?"
+      yes_no_question "${padding}Do you want to ${EMPH}repeat${NC} the tests?"
     done  
   fi
 }
