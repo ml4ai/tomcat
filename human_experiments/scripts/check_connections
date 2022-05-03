@@ -16,6 +16,8 @@ __check_connection_to_client(){
     read -r
     ssh -q $EXPERIMENT_USER@$client_address exit
   done
+
+  echo -e "${GREEN}Connection to ${EMPH}$client_name${GREEN} successfully established.${NC}"
 }
 
 echo "Checking connection with client machines..."
