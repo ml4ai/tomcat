@@ -20,7 +20,7 @@ namespace http = beast::http;           // from <boost/beast/http.hpp>
 namespace websocket = beast::websocket; // from <boost/beast/websocket.hpp>
 namespace net = boost::asio;            // from <boost/asio.hpp>
 using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
-using namespace boost::program_options;
+namespace po = boost::program_options;
 using namespace std;
 
 bool RUNNING = true;
@@ -38,12 +38,14 @@ class WebsocketClient {
         this->player_name = player_name;
         this->sample_rate = sample_rate;
     }
+
     ~WebsocketClient() {
         if (this->running) {
-            this->Shutdown();
+            this->shutdown();
         }
     }
-    void Connect() {
+
+    void connect() {
         // Look up the domain name
         auto const results = resolver.resolve(this->ws_host, this->ws_port);
 
@@ -69,7 +71,7 @@ class WebsocketClient {
     void SendChunk(vector<int16_t> chunk) {
         this->ws.write(net::buffer(chunk));
     }
-    void Shutdown() {
+    void shutdown() {
         this->ws.close(websocket::close_code::normal);
         this->running = false;
     }
@@ -83,7 +85,7 @@ class WebsocketClient {
     string ws_host;
     string ws_port;
 
-    // Connection context
+    // connection context
     net::io_context ioc;
     tcp::resolver resolver{ioc};
     websocket::stream<tcp::socket> ws{ioc};
@@ -99,30 +101,30 @@ int main(int argc, char* argv[]) {
     string player_name;
     // Process command line options
     try {
-        options_description desc{"Options"};
+        po::options_description desc{"Options"};
         desc.add_options()("help,h", "Help screen")(
             "sample_rate",
-            value<int>(&sample_rate)->default_value(48000),
+            po::value<int>(&sample_rate)->default_value(48000),
             "Sample rate for audio recording")(
             "ws_host",
-            value<string>(&ws_host)->default_value("0.0.0.0"),
+            po::value<string>(&ws_host)->default_value("0.0.0.0"),
             "The host address of the websocket server")(
             "ws_port",
-            value<string>(&ws_port)->default_value("8888"),
+            po::value<string>(&ws_port)->default_value("8888"),
             "The port of the websocket server")(
             "player_name",
-            value<string>(&player_name)->default_value("PLAYER"),
+            po::value<string>(&player_name)->default_value("PLAYER"),
             "The name of the player");
 
-        variables_map vm;
-        store(parse_command_line(argc, argv, desc), vm);
-        notify(vm);
+        po::variables_map vm;
+        po::store(po::parse_command_line(argc, argv, desc), vm);
+        po::notify(vm);
         if (vm.count("help")) {
             cout << desc << "\n";
             return 1;
         }
     }
-    catch (const error& ex) {
+    catch (const po::error& ex) {
         BOOST_LOG_TRIVIAL(error) << "Error parsing arguments!";
         return -1;
     }
@@ -130,7 +132,15 @@ int main(int argc, char* argv[]) {
     // Initialize Websocket Client
     WebsocketClient* client =
         new WebsocketClient(ws_host, ws_port, player_name, sample_rate);
-    client->Connect();
+
+    try {
+        client->connect();
+    }
+    catch (const boost::system::system_error& e) {
+        BOOST_LOG_TRIVIAL(error) << "Unable to connect to websocket server at "
+                                 << ws_host << ":" << ws_port << "!";
+        return EXIT_FAILURE;
+    }
 
     PaStreamParameters inputParameters;
     PaStream* stream;
@@ -181,14 +191,14 @@ int main(int argc, char* argv[]) {
             << "Failure stopping PortAudio stream: " << Pa_GetErrorText(err);
     }
 
-    // Shutdown PortAudio
+    // shutdown PortAudio
     err = Pa_Terminate();
     if (err != paNoError) {
         BOOST_LOG_TRIVIAL(error)
             << "Failure shutting down PortAudio: " << Pa_GetErrorText(err);
     }
 
-    // Shutdown websocket client
-    client->Shutdown();
+    // shutdown websocket client
+    client->shutdown();
     free(client);
 }

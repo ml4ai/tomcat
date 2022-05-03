@@ -18,7 +18,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'ToMCAT'
-copyright = '2019, University of Arizona'
+copyright = '2022, University of Arizona'
 author = 'University of Arizona'
 
 # The full version, including alpha/beta/rc tags
