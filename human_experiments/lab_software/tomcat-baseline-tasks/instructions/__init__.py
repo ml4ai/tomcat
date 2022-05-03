@@ -1,0 +1,11 @@
+from .affective_task_instruction_individual import \
+    affective_task_instruction_individual
+from .affective_task_instruction_team import affective_task_instruction_team
+from .exit_instruction import exit_instruction
+from .finger_tapping_task_instruction import finger_tapping_task_instruction
+from .introduction_instruction import introduction_instruction
+from .ping_pong_task_competitive_instruction import \
+    ping_pong_task_competitive_instruction
+from .ping_pong_task_cooperative_instruction import \
+    ping_pong_task_cooperative_instruction
+from .wait_for_experimenter import wait_for_experimenter
