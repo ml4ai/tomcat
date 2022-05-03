@@ -1,0 +1,2 @@
+from .client_latency_test import ClientLatencyTest
+from .server_latency_test import ServerLatencyTest
