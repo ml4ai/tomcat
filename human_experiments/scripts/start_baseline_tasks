@@ -48,13 +48,13 @@ start_ai() {
   local log_path=$EXPERIMENT_DIR/tmp/baseline_tasks_cheetah.log
 
   while [[ $? -eq 0 ]]; do
-    local command="cd $SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks "
+    local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks "
     command+="&& $PYTHON run_client_experimenter.py -n AI  &> \$HOME$log_path &"
     ssh $EXPERIMENT_USER@$client_address "$command"
 
     local status=0
     if [[ $? -eq 0 ]]; then
-      command="cd $SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks "
+      command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks "
       command+="&& $PYTHON run_client_ai.py &> \$HOME$log_path &"
       ssh $EXPERIMENT_USER@$client_address "$command"
       status=$?
@@ -89,7 +89,7 @@ __start_on_client() {
     local log_path=$EXPERIMENT_DIR/tmp/baseline_tasks_$client_name.log
 
     while [[ $? -eq 0 ]]; do
-      local command="cd $SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks "
+      local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks "
       command+="&& $PYTHON run_client.py -n $participant_id  &> \$HOME$log_path &"
       ssh $EXPERIMENT_USER@$client_address "$command"
 

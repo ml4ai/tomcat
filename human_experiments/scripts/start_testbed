@@ -58,7 +58,7 @@ __launch_testbed(){
 
   echo -e "${PADDING}Launching ${EMPH}Testbed...${NC}"
   while [[ $testbed_launched == "n" ]]; do
-    pushd $SYSTEMS_DIR/testbed/Local >/dev/null
+    pushd $HOME/$SYSTEMS_DIR/testbed/Local >/dev/null
     testbed_up_core.sh -i &> $log_path &
     __monitor_testbed_launch $log_path $!
 
