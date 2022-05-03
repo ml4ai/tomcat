@@ -32,7 +32,7 @@ __start_server() {
 
   local command="cd $HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks; "
   command+="python3 run_server.py -s $data_dir"
-  x-terminal-emulator -x bash -c "$command"
+  gnome-terminal -- bash -c "$command"
 }
 
 __start_clients() {
