@@ -1,0 +1,37 @@
+#!/bin/bash
+
+set -u
+
+source configuration_helpers
+
+create_data_directory_structure() {
+  local data_root_dir=$1
+  local padding=$2
+
+  __create_directory $data_root_dir "$padding"
+  __create_directory $data_root_dir/tmp "$padding"
+  __create_directory $data_root_dir/lion "$padding"
+  __create_directory $data_root_dir/tiger "$padding"
+  __create_directory $data_root_dir/leopard "$padding"
+}
+
+__create_directory() {
+  local directory=$1
+  local padding=$2
+
+  if [[ -d "$directory" ]]; then
+    text="${padding}${YELLOW}Directory ${EMPH}$directory${YELLOW} found. "
+    text+="Skipping directory creation.\n"
+    text+="${padding}WARNING: If you proceed with the experiment, data saved "
+    text+="in the above directory will be overridden.${NC}"
+    echo -e "$text"
+  else
+    mkdir -p "$directory" < /dev/null
+    if [[ $? -eq 0 ]]; then
+      echo -e "${padding}${GREEN}Directory ${EMPH}$directory${GREEN} created.${NC}"
+    else
+      printf "${padding}${RED}Error while creating directory ${EMPH}$directory.${NC}"
+      exit 1
+    fi
+  fi
+}

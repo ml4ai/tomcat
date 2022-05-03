@@ -1,0 +1,59 @@
+#!/bin/bash
+
+set -u
+
+# Set the TOMCAT environment variable, assuming that the directory structure
+# mirrors that of the git repository.
+TOMCAT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../" >/dev/null 2>&1 && pwd)"
+
+export TOMCAT
+
+###############################################################################
+
+# Creating a temporary directory to store log messages reported by Minecraft
+# while launching
+TOMCAT_TMP_DIR="/tmp/$USER/tomcat"
+mkdir -p "$TOMCAT_TMP_DIR"
+MISSION_LOG="$TOMCAT_TMP_DIR"/minecraft.log
+export MISSION_LOG
+
+minecraft_log_file="/tmp/$USER/tomcat/minecraft.log"
+pid_log_file="/tmp/$USER/tomcat/minecraft.log"
+
+echo " "
+echo "Launching Minecraft"
+echo " "
+
+# Call the apple script to create a new desktop and start minecraft there.
+# Encapsulating the launching in an applescript solves issues with trying to
+# start minecraft in a remote display.
+$(osascript "$TOMCAT"/tools/lab_scripts/applescripts/launch_minecraft.scpt "$TOMCAT" "$minecraft_log_file" "$pid_log_file")
+
+# The applescript will open a terminal and launch minecraft. Wait a bit to make
+# sure the process started.
+sleep 1
+
+pid_minecraft=$(cat "$pid_log_file")
+
+echo "Process ID corresponding to ./tools/launch_minecraft is" \
+  "$pid_minecraft... waiting for it to complete."
+echo " "
+
+# The script below will keep looking for the player name in the mission log
+# file.
+player_name="$("$TOMCAT"/tools/lab_scripts/player_name_grabber "$pid_minecraft" "$minecraft_log_file")"
+
+if [ -n "$player_name" ]; then
+  echo "Player name: ${player_name}"
+  echo " "
+
+  # Open the client map and fill with the player name
+  $(osascript "$TOMCAT"/tools/lab_scripts/applescripts/fill_player_name_on_client_map.scpt $player_name)
+  sleep 10
+  $(osascript "$TOMCAT"/tools/lab_scripts/applescripts/resize_minecraft_window.scpt)
+else
+  echo "Player name not found."
+  exit 1
+fi
+
+exit 0

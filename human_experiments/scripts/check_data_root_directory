@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -u
+
+source configuration_helpers
+
+text="The experiment data folder will be created under "
+text+="${EMPH}${DATA_ROOT_DIR}${NC}. Do you want to change this directory?"
+yes_no_question "$text"
+
+if [[ $? -eq 0 ]]; then
+  read -e -p "New directory: " -r DATA_ROOT_DIR
+  export DATA_ROOT_DIR
+
+  text="${GREEN}The experiment data folder was successfully changed to "
+  text+="${EMPH}${DATA_ROOT_DIR}${NC}."
+  echo -e $text
+fi
+

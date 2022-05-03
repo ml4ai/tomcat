@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -u
+
+source configuration_helpers
+
+__check_connection_to_client(){
+  local client_name=$1
+  local client_address=$2
+
+  error_text="Could not connect to ${EMPH}$client_name${NC}. Press any key to retry?"
+
+  ssh -q $EXPERIMENT_USER@$client_address exit
+  while [[ $? -ne 0 ]]; do
+    echo -n "$error_text"
+    read -r
+    ssh -q $EXPERIMENT_USER@$client_address exit
+  done
+
+  echo -e "${GREEN}Connection to ${EMPH}$client_name${GREEN} successfully established.${NC}"
+}
+
+echo "Checking connection with client machines..."
+__check_connection_to_client "Lion" "lion.local"
+__check_connection_to_client "Tiger" "tiger.local"
+__check_connection_to_client "Leopard" "leopard.local"
+__check_connection_to_client "Cheetah" "cheetah.local"

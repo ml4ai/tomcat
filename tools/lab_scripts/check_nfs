@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -u
+
+check_nfs() {
+  local server_root_dir=$1
+
+#  __check_nfs_on_client "lion" $LION_ADDRESS
+  __check_nfs_on_client "tiger" $TIGER_ADDRESS
+#  __check_nfs_on_client "leopard" $LEOPARD_ADDRESS
+}
+
+__check_nfs_on_client() {
+  local client_name=$1
+  local client_address=$2
+
+  check_nfs=""
+  while [[ "$check_nfs" != "y" ]] && [[ "$check_nfs" != "n" ]]; do
+    echo -n " - Do you wish to check NFS status on $client_name? [y/n]: "
+    read -r check_nfs
+  done
+
+  if [[ "$check_nfs" == "y" ]]; then
+    echo " - Checking NFS on $client_name..."
+    ssh $USERNAME@$client_address "dd if=/dev/zero of=$server_root_dir/$client_name/multipleFilesTest bs=4096 count=1000000" | echo " - "
+    ssh $USERNAME@$client_address "dd if=/dev/zero of=$server_root_dir/$client_name/singleFileTest bs=4096 count=1" | echo " - "
+    ssh $USERNAME@$client_address "rsync ~/img.png $server_root_dir/$client_name" | echo " - "
+  fi
+}

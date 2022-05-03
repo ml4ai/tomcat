@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# This scripts checks if the required environment variables to execute a
+# complete experiment session were set.
+
+set -u
+
+source configuration_helpers
+
+status=0
+
+# Systems
+if [[ -z ${SYSTEMS_DIR+x} ]]; then
+  text="${RED}Please set the variable ${EMPH}SYSTEMS_DIR${NC}${RED} with the "
+  text+="directory where the different systems (e.g. testbed) are located."
+  echo -e $text
+  status=1
+fi
+
+# User
+if [[ -z ${EXPERIMENT_USER+x} ]]; then
+  text="${RED}Please set the variable ${EMPH}EXPERIMENT_USER${NC}${RED} with a "
+  text+="username with enough privilege to connect to the client machines.${NC}"
+  echo -e $text
+  status=1
+fi
+
+# Root directory for experiments
+if [[ -z ${DATA_ROOT_DIR+x} ]]; then
+  text="${RED}Please set the variable ${EMPH}DATA_ROOT_DIR${NC}${RED} with the "
+  text+="directory where experiment data should be saved at. The experiments "
+  text+="data directories will be saved under ${EMPH}/data/[tom/cat]/DATA_ROOT_DIR"
+  text+="${NC}."
+  echo -e $text
+  status=1
+fi
+
+if [[ $status -ne 0 ]]; then
+  exit 1;
+fi

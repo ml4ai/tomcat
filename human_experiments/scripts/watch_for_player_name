@@ -1,0 +1,44 @@
+#!/bin/bash
+
+set -u
+
+server_root_dir=$1
+client_name=$2
+client_address=$3
+
+log_path=$server_root_dir/$client_name/minecraft.log
+pid_path=$server_root_dir/$client_name/minecraft.pid
+player_path=$server_root_dir/$client_name/player_name.txt
+
+# Wait till the pid file actually exists
+while [ ! -f $pid_path ]; do
+  sleep 1;
+done
+
+# Wait till the log file actually exists
+while [ ! -f $log_path ]; do
+  sleep 1;
+done
+
+minecraft_pid=$(cat $pid_path)
+
+tail -f $log_path | {
+  # # Exit if minecraft crashed during the launching process
+  # has_entry=$(ssh $EXPERIMENT_USER@$client_address "ps $minecraft_pid > /dev/null && echo $?")
+  # if [[ $has_entry -ne 0 ]]; then 
+  #   exit 1
+  # fi
+
+  while read curr_line; do
+    player_name="$(sed -n -e 's/^.*\[Client\ thread\/INFO\]:\ Setting\ user:\ //p' <<< "$curr_line")";
+
+    if [ -n "$player_name" ]; then
+      echo $player_name > $player_path            
+      exit 0;
+    fi
+
+    if [ ! -f $log_path ]; then    
+      exit 1;
+    fi
+  done
+}
