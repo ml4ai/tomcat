@@ -28,7 +28,7 @@ echo -e " Creating experiment directory structure for ${EMPH}CAT...${NC}"
 create_data_directory_structure "$experiment_dir_cat" "  "
 
 yes_no_question "[2] Do you want to check ${EMPH}NFS${NC} status?"
-if [[ $? -eq 0]]; then
+if [[ $? -eq 0 ]]; then
   echo -e " Checking status for ${EMPH}TOM...${NC}"
   source check_nfs $experiment_dir_tom "  "
   echo -e " Checking status for ${EMPH}CAT...${NC}"
