@@ -120,7 +120,7 @@ __start_baseline_tasks() {
 
   yes_no_question "${PADDING}Do you want to start the ${EMPH}AI?${NC}"
     if [[ $? -eq 0 ]]; then
-      __start_clients "${PADDING} "
+      __start_ai "${PADDING} "
     fi
 }
 
