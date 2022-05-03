@@ -34,11 +34,11 @@ __check_nfs_on_client() {
     while [[ $? -eq 0 ]]; do
       echo "${padding}Checking NFS on $client_name..."
       echo "${padding} [TEST 1]"
-      ssh $EXPERIMENT_USER@$client_address "dd if=/dev/zero of=\$HOME$nfs_dir/multipleFilesTest bs=4096 count=1000000" 2>&1 | sed "'s/^/${padding} /'"
+      ssh $EXPERIMENT_USER@$client_address "dd if=/dev/zero of=\$HOME$nfs_dir/multipleFilesTest bs=4096 count=1000000" 2>&1 | sed "s/^/${padding} /"
       echo "${padding} [TEST 2]"
-      ssh $EXPERIMENT_USER@$client_address "dd if=/dev/zero of=\$HOME$nfs_dir/singleFileTest bs=4096 count=1" 2>&1 | sed "'s/^/${padding} /'"
+      ssh $EXPERIMENT_USER@$client_address "dd if=/dev/zero of=\$HOME$nfs_dir/singleFileTest bs=4096 count=1" 2>&1 | sed "s/^/${padding} /"
       echo "${padding} [TEST 3]"
-      ssh $EXPERIMENT_USER@$client_address "rsync ~/img.png \$HOME$nfs_dir && echo $?" | sed "'s/0/${padding} OK/'"
+      ssh $EXPERIMENT_USER@$client_address "rsync ~/img.png \$HOME$nfs_dir && echo $?" | sed "s/0/${padding} OK/"
       echo " "
       yes_no_question "${padding}Do you want to repeat the tests?"
     done  
