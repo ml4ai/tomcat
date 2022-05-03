@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -u
+
+enable_wifi() {
+  local device="$(networksetup -listallhardwareports | awk '$3==\"Wi-Fi\" {getline;print}' | awk '{print $2}')"
+  networksetup -setairportpower $device "on"
+}
+
+disable_wifi() {
+  local device="$(networksetup -listallhardwareports | awk '$3==\"Wi-Fi\" {getline;print}' | awk '{print $2}')"    
+  networksetup -setairportpower $device "off"
+}
+
+check_wifi() {
+  local device="$(networksetup -listallhardwareports | awk '$3==\"Wi-Fi\" {getline;print}' | awk '{print $2}')"
+  networksetup -getairportpower " & $device & " | awk '{print $4}'
+}

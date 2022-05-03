@@ -1,0 +1,79 @@
+#!/bin/bash
+
+set -u
+
+source configuration_helpers
+
+SECONDS_TO_WAIT=300
+
+if [[ -z ${1+x} ]]; then
+  # In case the script is executed standalone.
+  text="${RED}Please provide an experiment directory as the first argument of "
+  text+="the call to this script.${NC}"
+  echo -e "$text"
+  exit 1
+fi
+EXPERIMENT_DIR=$1
+
+if [[ -z ${2+x} ]]; then
+  PADDING=""
+else
+  PADDING=$2
+fi
+
+__monitor_testbed_launch() {
+  local log_path=$1
+  local testbed_pid=$2
+
+  # Wait till the log file actually exists
+  while [ ! -f $log_path ]; do
+    sleep 1
+  done
+
+  local num_seconds=0
+  while [ $num_seconds -lt $SECONDS_TO_WAIT ]; do
+    ps $testbed_pid >&/dev/null
+    if [[ $? -ne 0 ]]; then
+      return 1
+    fi
+
+    if [[ -e "${log_path}" ]]; then
+      have_line="$(grep -c 'Testbed successfully launched.' ${log_path})"
+      if [[ ${have_line} -ne 0 ]]; then
+        return 0
+      fi
+    else
+      return 1
+    fi
+
+    sleep 1
+    let num_seconds+=1
+  done
+}
+
+__launch_testbed(){
+  # Bring the testbed up and save logs
+  log_path=$EXPERIMENT_DIR/tmp/testbed.log
+  testbed_launched="n"
+
+  echo -e "${PADDING}Launching ${EMPH}Testbed...${NC}"
+  while [[ $testbed_launched == "n" ]]; do
+    pushd $SYSTEMS_DIR/testbed/Local >/dev/null
+    testbed_up_core.sh -i &> $log_path &
+    __monitor_testbed_launch $log_path $!
+
+    if [[ $? -eq 0 ]]; then
+      testbed_launched="y"
+      echo -e "${PADDING}${Green} Testbed successfully launched.${NC}"
+    else
+      text="${PADDING}$${RED} Error while launching the testbed. Check the log file in "
+      text+="${EMPH}$log_path${RED} for more detail.${NC}"
+      echo -e "$text"
+      echo -n "${PADDING}Press any key to retry launching: "
+      read -r
+    fi
+    popd >/dev/null
+  done
+}
+
+__launch_testbed

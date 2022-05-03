@@ -1,0 +1,42 @@
+#!/bin/bash
+
+RED="\033[31m"
+GREEN="\033[32m"
+YELLOW="\033[33m"
+EMPH="\033[36m" # Emphasize color: cyan
+NC="\033[0m"
+
+# Retrieve the absolute path of the scripts
+#export SCRIPTS_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd)"
+
+yes_no_question() {
+  local question="$1 [y/n]: "
+  local ans=""
+  while [[ "$ans" != "y" ]] && [[ "$ans" != "n" ]]; do
+    echo -n -e "$question"
+    read -r ans
+  done
+
+  if [[ $ans == "y" ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+wait_for_key() {
+  local text="$1"
+  local key="$2"
+
+  local ans=""
+  while [[ "$ans" != "$key" ]]; do
+    echo -n -e "$text"
+    read -r ans
+  done
+}
+
+create_new_desktop_on_client(){
+  local client_address=$1
+  local command="osascript $SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/new_desktop.scpt"
+  ssh $EXPERIMENT_USER@$client_address "$command"
+}

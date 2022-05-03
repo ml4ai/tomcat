@@ -1,0 +1,50 @@
+#!/bin/bash
+
+set -u
+
+source configuration_helpers
+
+if [[ -z ${1+x} ]]; then
+  # In case the script is executed standalone.
+  text="${RED}Please provide an experiment directory as the first argument of "
+  text+="the call to this script.${NC}"
+  echo -e "$text"
+  exit 1
+fi
+experiment_dir=$1
+
+if [[ -z ${2+x} ]]; then
+  padding=""
+else
+  padding=$2
+fi
+
+__check_nfs_on_client() {
+  local experiment_dir=$1
+  local client_name=$2
+  local client_address=$3
+  local padding=$4
+
+  yes_no_question "${padding}Do you want to check the status on ${EMPH}$client_name?${NC}"
+  if [[ $? -eq 0 ]]; then
+    # Create NFS folder
+    local nfs_dir=$experiment_dir/$client_name/nfs
+    mkdir -p "$nfs_dir" > /dev/null
+
+    while [[ $? -eq 0 ]]; do
+      echo "${padding}Checking NFS on $client_name..."
+      echo "${padding} [TEST 1]"
+      ssh $EXPERIMENT_USER@$client_address "dd if=/dev/zero of=\$HOME$nfs_dir/multipleFilesTest bs=4096 count=1000000" 2>&1 | sed 's/^/${padding} /'
+      echo "${padding} [TEST 2]"
+      ssh $EXPERIMENT_USER@$client_address "dd if=/dev/zero of=\$HOME$nfs_dir/singleFileTest bs=4096 count=1" 2>&1 | sed 's/^/${padding} /'
+      echo "${padding} [TEST 3]"
+      ssh $EXPERIMENT_USER@$client_address "rsync ~/img.png \$HOME$nfs_dir && echo $?" | sed 's/0/${padding} OK/'
+      echo " "
+      yes_no_question "${padding}Do you want to repeat the tests?"
+    done  
+  fi
+}
+
+__check_nfs_on_client $experiment_dir "lion" "lion.local" "$padding"
+__check_nfs_on_client $experiment_dir "tiger" "tiger.local" "$padding"
+__check_nfs_on_client $experiment_dir "leopard" "leopard.local" "$padding"
