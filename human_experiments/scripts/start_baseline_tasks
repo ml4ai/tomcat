@@ -42,7 +42,7 @@ __start_clients() {
   __start_on_client "leopard" "leopard.local" $LEOPARD_PARTICIPANT_ID "$padding"
 }
 
-start_ai() {
+__start_ai() {
   local padding=$1
 
   local log_path=$EXPERIMENT_DIR/tmp/baseline_tasks_cheetah.log
