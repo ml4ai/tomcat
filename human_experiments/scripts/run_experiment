@@ -6,7 +6,13 @@ data_dir_prefix_tom=/data/tom
 data_dir_prefix_cat=/data/cat
 
 if [[ -z ${DEVELOP+x} ]]; then
-  export DEVELOP=0  
+  export DEVELOP=0
+fi
+
+if [[ -z ${GOTO+x} ]]; then
+  # The step to jump to after the first step. If not provided, it starts from
+  # the next step after the first one.
+  GOTO=2
 fi
 
 source configuration_helpers
@@ -27,68 +33,88 @@ create_data_directory_structure "$experiment_dir_tom" "  "
 echo -e " Creating experiment directory structure for ${EMPH}CAT...${NC}"
 create_data_directory_structure "$experiment_dir_cat" "  "
 
-echo " "
-yes_no_question "[2] Do you want to check ${EMPH}NFS${NC} status?"
-if [[ $? -eq 0 ]]; then
-  echo -e " Checking status for ${EMPH}TOM...${NC}"
-  source check_nfs $experiment_dir_tom "  "
-  echo -e " Checking status for ${EMPH}CAT...${NC}"
-  source check_nfs $experiment_dir_cat "  "
+if [[ $GOTO -le 2 ]]; then
+  echo " "
+  yes_no_question "[2] Do you want to check ${EMPH}NFS${NC} status?"
+  if [[ $? -eq 0 ]]; then
+    echo -e " Checking status for ${EMPH}TOM...${NC}"
+    source check_nfs $experiment_dir_tom "  "
+    echo -e " Checking status for ${EMPH}CAT...${NC}"
+    source check_nfs $experiment_dir_cat "  "
+  fi
 fi
 
-echo " "
-yes_no_question "[3] Do you want to start ${EMPH}Mumble?${NC}"
-if [[ $? -eq 0 ]]; then
-  source start_mumble " "
+if [[ $GOTO -le 3 ]]; then
+  echo " "
+  yes_no_question "[3] Do you want to start ${EMPH}Mumble?${NC}"
+  if [[ $? -eq 0 ]]; then
+    source start_mumble " "
+  fi
 fi
 
-echo " "
-yes_no_question "[4] Do you want to start ${EMPH}fNIRS and Eye-tracker systems?${NC}"
-if [[ $? -eq 0 ]]; then
-  source start_sensors " "
+if [[ $GOTO -le 4 ]]; then
+  echo " "
+  yes_no_question "[4] Do you want to start ${EMPH}fNIRS and Eye-tracker systems?${NC}"
+  if [[ $? -eq 0 ]]; then
+    source start_sensors " "
+  fi
 fi
 
-echo " "
-yes_no_question "[5] Do you want to start ${EMPH}Face and Screen Recording?${NC}"
-if [[ $? -eq 0 ]]; then
-  source start_ffmpeg $experiment_dir_cat " "
+if [[ $GOTO -le 5 ]]; then
+  echo " "
+  yes_no_question "[5] Do you want to start ${EMPH}Face and Screen Recording?${NC}"
+  if [[ $? -eq 0 ]]; then
+    source start_ffmpeg $experiment_dir_cat " "
+  fi
 fi
 
-echo " "
-yes_no_question "[6] Do you want to start the ${EMPH}Testbed?${NC}"
-if [[ $? -eq 0] ]; then
-  source start_testbed $experiment_dir_cat " "
+if [[ $GOTO -le 6 ]]; then
+  echo " "
+  yes_no_question "[6] Do you want to start the ${EMPH}Testbed?${NC}"
+  if [[ $? -eq 0 ]]; then
+    source start_testbed $experiment_dir_cat " "
+  fi
 fi
 
-echo " "
-yes_no_question "[7] Do you want to start the ${EMPH}Baseline Tasks?${NC}"
-if [[ $? -eq 0 ]]; then
-  source start_baseline_tasks $experiment_dir_cat " "
+if [[ $GOTO -le 7 ]]; then
+  echo " "
+  yes_no_question "[7] Do you want to start the ${EMPH}Baseline Tasks?${NC}"
+  if [[ $? -eq 0 ]]; then
+    source start_baseline_tasks $experiment_dir_cat " "
+  fi
 fi
 
-echo " "
-yes_no_question "[8] Do you want to start the ${EMPH}Minecraft?${NC}"
-if [[ $? -eq 0 ]]; then
-  echo " Please, start it manually."
-#  source start_minecraft $experiment_dir_cat " "
+if [[ $GOTO -le 8 ]]; then
+  echo " "
+  yes_no_question "[8] Do you want to start the ${EMPH}Minecraft?${NC}"
+  if [[ $? -eq 0 ]]; then
+    echo " Please, start it manually."
+  #  source start_minecraft $experiment_dir_cat " "
+  fi
 fi
 
-echo " "
-yes_no_question "[9] Do you want to open the ${EMPH}Final Survey?${NC}"
-if [[ $? -eq 0 ]]; then
-  echo " Please, open it manually."
-#  source open_final_survey $experiment_dir_cat " "
+if [[ $GOTO -le 9 ]]; then
+  echo " "
+  yes_no_question "[9] Do you want to open the ${EMPH}Final Survey?${NC}"
+  if [[ $? -eq 0 ]]; then
+    echo " Please, open it manually."
+  #  source open_final_survey $experiment_dir_cat " "
+  fi
 fi
 
-echo " "
-yes_no_question "[10] Do you want to finish the ${EMPH}Final Survey?${NC}"
-if [[ $? -eq 0 ]]; then
-  echo " Please, open it manually."
-#  source open_final_survey $experiment_dir_cat " "
+if [[ $GOTO -le 10 ]]; then
+  echo " "
+  yes_no_question "[10] Do you want to finish the ${EMPH}Final Survey?${NC}"
+  if [[ $? -eq 0 ]]; then
+    echo " Please, open it manually."
+  #  source open_final_survey $experiment_dir_cat " "
+  fi
 fi
 
-echo " "
-wait_for_key "[11] Type [quit] to finish the experiment and close open applications: " "quit"
-source_clean_up
+if [[ $GOTO -le 11 ]]; then
+  echo " "
+  wait_for_key "[11] Type [quit] to finish the experiment and close open applications: " "quit"
+  source_clean_up
+fi
 
 exit 0
