@@ -44,6 +44,7 @@ __start_clients() {
 
 __start_ai() {
   local padding=$1
+  local client_address="cheetah.local"
 
   local log_path=$EXPERIMENT_DIR/tmp/baseline_tasks_cheetah.log
 
