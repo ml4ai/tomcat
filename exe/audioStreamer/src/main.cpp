@@ -14,6 +14,7 @@
 #include <boost/beast/core.hpp>
 #include <boost/beast/websocket.hpp>
 #include <boost/log/trivial.hpp>
+#include <boost/log/utility/setup/console.hpp>
 #include <boost/program_options.hpp>
 
 #include "AudioStreamer.h"
@@ -31,16 +32,19 @@ void run_mqtt(string mqtt_host, string mqtt_port, string player_name,
               AudioStreamer& streamer);
 
 int main(int argc, char* argv[]) {
+    // Create signal handler
     signal(SIGINT, signal_callback_handler);
 
+    // Enable Boost logging
+    boost::log::add_console_log(std::cout,
+                                boost::log::keywords::auto_flush = true);
     int sample_rate;
-    bool use_mqtt;
-    bool save_recording;
-    string mqtt_host;
-    string mqtt_port;
-    string ws_host;
-    string ws_port;
     string player_name;
+    bool save_audio;
+    string recordings_directory;
+    bool use_mqtt;
+    string mqtt_host, mqtt_port;
+    string ws_host, ws_port;
 
     // Process command line options
     try {
@@ -49,13 +53,17 @@ int main(int argc, char* argv[]) {
             "sample_rate",
             po::value<int>(&sample_rate)->default_value(48000),
             "Sample rate for audio recording")(
-            "save_recording",
-            po::value<bool>(&save_recording)->default_value(false),
+            "save_audio",
+            po::value<bool>(&save_audio)->default_value(false),
             "Whether or not the audioStreamer will save recorded audio to .wav "
-            "file")("use_mqtt",
-                    po::value<bool>(&use_mqtt)->default_value(false),
-                    "Whether or not the audioStreamer will wait for a Trial "
-                    "Start message to begin streaming")(
+            "file")("recording_directory",
+                    po::value<string>(&recordings_directory)
+                        ->default_value("recordings"),
+                    "The directory to save audio files too")(
+            "use_mqtt",
+            po::value<bool>(&use_mqtt)->default_value(false),
+            "Whether or not the audioStreamer will wait for a Trial "
+            "Start message to begin streaming")(
             "mqtt_host",
             po::value<string>(&mqtt_host)->default_value("0.0.0.0"),
             "The host address of the MQTT broker")(
@@ -86,14 +94,23 @@ int main(int argc, char* argv[]) {
     }
 
     // Create audio streamer
-    AudioStreamer streamer(ws_host, ws_port, player_name, sample_rate);
+    AudioStreamer streamer(ws_host,
+                           ws_port,
+                           player_name,
+                           sample_rate,
+                           save_audio,
+                           recordings_directory);
     if (use_mqtt) {
+        BOOST_LOG_TRIVIAL(info) << "Starting audioStreamer in MQTT mode";
         run_mqtt(mqtt_host, mqtt_port, player_name, streamer);
     }
     else {
+        BOOST_LOG_TRIVIAL(info) << "Starting audioStreamer in normal mode "
+                                   "(CTRL-C will stop streaming)";
         run(streamer);
     }
-
+    BOOST_LOG_TRIVIAL(info)
+        << "Close signal recieved, shutting down audio streaming.";
     exit(0);
 }
 
@@ -119,25 +136,40 @@ void run_mqtt(string mqtt_host, string mqtt_port, string player_name,
     connOpts.set_keep_alive_interval(20);
     connOpts.set_clean_session(true);
 
-    mqtt_client.connect(connOpts);
-    mqtt_client.subscribe("trial", 2);
+    try {
+        mqtt_client.connect(connOpts);
+        mqtt_client.subscribe("trial", 2);
 
-    // Consume messages
-    while (!SHUTDOWN) {
-        auto msg = mqtt_client.consume_message();
-        string payload = msg->get_payload_str();
-        nlohmann::json message = nlohmann::json::parse(payload);
+        BOOST_LOG_TRIVIAL(info) << "Connection to MQTT broker successful, "
+                                   "awaiting Trial Start message";
 
-        string sub_type = message["msg"]["sub_type"];
-        if (sub_type == "start") {
-            streamer.StartStreaming();
+        // Consume messages
+        while (!SHUTDOWN) {
+            auto msg = mqtt_client.consume_message();
+            string payload = msg->get_payload_str();
+            nlohmann::json message = nlohmann::json::parse(payload);
+
+            string sub_type = message["msg"]["sub_type"];
+            if (sub_type == "start") {
+                BOOST_LOG_TRIVIAL(info)
+                    << "Trial start message recieved, starting audio stream. ";
+                streamer.GenerateAudioFilename(message);
+                streamer.StartStreaming();
+            }
+            else if (sub_type == "stop") {
+                BOOST_LOG_TRIVIAL(info)
+                    << "Trial stop message recieved, stopping audio stream. ";
+                streamer.StopStreaming();
+            }
         }
-        else if (sub_type == "stop") {
-            streamer.StopStreaming();
-        }
+
+        // Shutdown MQTT connection
+        mqtt_client.stop_consuming();
+        mqtt_client.disconnect();
     }
-
-    // Shutdown MQTT connection
-    mqtt_client.stop_consuming();
-    mqtt_client.disconnect();
+    catch (const mqtt::exception& e) {
+        BOOST_LOG_TRIVIAL(error)
+            << "Failure in MQTT client. Error was: " << e.what();
+        return;
+    }
 }

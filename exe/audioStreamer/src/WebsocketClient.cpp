@@ -23,34 +23,56 @@ WebsocketClient::~WebsocketClient() {
 }
 
 void WebsocketClient::Connect() {
-    // Look up the domain name
-    auto const results = resolver.resolve(ws_host, ws_port);
+    try {
+        // Look up the domain name
+        auto const results = resolver.resolve(ws_host, ws_port);
 
-    // Make the connection on the IP address we get from a lookup
-    net::connect(ws.next_layer(), results.begin(), results.end());
+        // Make the connection on the IP address we get from a lookup
+        net::connect(ws.next_layer(), results.begin(), results.end());
 
-    // Set a decorator to change the User-Agent of the handshake
-    ws.set_option(
-        websocket::stream_base::decorator([](websocket::request_type& req) {
-            req.set(http::field::user_agent,
-                    string(BOOST_BEAST_VERSION_STRING) +
-                        " websocket-client-coro");
-        }));
+        // Set a decorator to change the User-Agent of the handshake
+        ws.set_option(
+            websocket::stream_base::decorator([](websocket::request_type& req) {
+                req.set(http::field::user_agent,
+                        string(BOOST_BEAST_VERSION_STRING) +
+                            " websocket-client-coro");
+            }));
 
-    // Perform the websocket handshake
-    ws.handshake(ws_host,
-                 "/?sampleRate=" + to_string(sample_rate) +
-                     "&id=" + player_name);
-    ws.binary(true);
+        // Perform the websocket handshake
+        ws.handshake(ws_host,
+                     "/?sampleRate=" + to_string(sample_rate) +
+                         "&id=" + player_name);
+        ws.binary(true);
 
-    running = true;
+        running = true;
+    }
+    catch (const std::exception& e) {
+        BOOST_LOG_TRIVIAL(error)
+            << "Failure connecting to Websocket Server. Audio will still be "
+               "recorded, but will not be sent over Websocket.";
+        BOOST_LOG_TRIVIAL(error) << " Error was: " << e.what();
+    }
 }
 
 void WebsocketClient::SendChunk(vector<int16_t> chunk) {
-    ws.write(net::buffer(chunk));
+    if (running) {
+        try {
+            ws.write(net::buffer(chunk));
+        }
+        catch (const std::exception& e) {
+            BOOST_LOG_TRIVIAL(error)
+                << "Failure sending audio chunk. Websocket connection will be "
+                   "shutdown.";
+            BOOST_LOG_TRIVIAL(error) << " Error was: " << e.what();
+
+            Shutdown();
+        }
+    }
 }
 
 void WebsocketClient::Shutdown() {
-    ws.close(websocket::close_code::normal);
+    if (running) {
+        ws.close(websocket::close_code::normal);
+    }
     running = false;
 }
