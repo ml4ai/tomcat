@@ -4,30 +4,30 @@
 
 \section{Introduction}
 
-Good teamwork and communication can enable a team of agents (human or otherwise)
-to perform beyond the sum of their parts \citep{roberts2022state}. In particular, 
-during high-stakes crisis situations, miscommunication is a common cause of
-adverse events \citep{taylor2014description,davis2017operative}. Closed-loop
-communication (CLC) is often recommended in the team research literature
-as a communication behavior that can guarantee the accuracy of information
-exchange \citep{marzuki2019closed}. Currently, CLC in spoken dialogue is
-identified via retrospective analyses involving manual transcription and
-annotation. However, given the potentially catastrophic consequences of poor
-team communication \citep{flin2004identifying} - especially in complex,
->>>>>>> a18ea3780531305de45c519ad042651957e97963
-fast-paced, and high-stakes environments such as urban search and rescue
-scenarios - we argue that there is an urgent need for AI technologies that can
-detect and repair the breakdowns in CLC as they happen. To address this need,
-we propose to develop an AI system for detecting the presence or absence of CLC
-procedures in spoken dialogue within teams of humans collaborating on shared
-tasks.
+Good teamwork and communication can enable a team of agents (human or
+otherwise) to perform beyond the sum of their parts \citep{roberts2022state}.
+In particular, during high-stakes crisis situations, miscommunication is a
+common cause of adverse events
+\citep{taylor2014description,davis2017operative}. Closed-loop communication
+(CLC) is often recommended in the team research literature as a communication
+behavior that can guarantee the accuracy of information exchange
+\citep{marzuki2019closed}. Currently, CLC in spoken dialogue is identified via
+retrospective analyses involving manual transcription and annotation. However,
+given the potentially catastrophic consequences of poor team communication
+\citep{flin2004identifying} - especially in complex, fast-paced, and
+high-stakes environments such as urban search and rescue scenarios - we argue
+that there is an urgent need for AI technologies that can detect and repair the
+breakdowns in CLC as they happen. To address this need, we propose to develop
+an AI system for detecting the presence or absence of CLC procedures in spoken
+dialogue within teams of humans collaborating on shared tasks.
 
-Currently, most real-time natural language understanding (NLU) and responding systems(e.g. Question and
-answering \citep{hawkins_goodman_2017}, incremental
-decision-making \citep{devault2011detecting}) are limited to conversing with a
-single human at a time. On the other hand, there are numerous analyses of
-multi-participant spoken dialogue in the academic literature - however, their
-analyses are primarily performed offline rather than in real-time, and the communicative events in their multi-party conversations are manually coded rather than automatically extracted by information extraction (IE) methods \citep{jagannath2022speech}.
+Currently, most real-time natural language understanding (NLU) and responding
+systems are limited to conversing with a single human at a time. On the other
+hand, there are numerous analyses of multi-participant spoken dialogue in the
+academic literature - however, these are primarily performed offline rather
+than in real-time, and the communicative events in their multi-party
+conversations are manually coded rather than automatically extracted using
+information extraction (IE) methods (e.g., \citep{jagannath2022speech}).
 
 The ASR Agent in conjunction with the DialogAgent (see \autoref{ch:rule_based_ie})
 enables us to extract events of interest in real time from spoken dialogue,
@@ -37,7 +37,6 @@ about multi-utterance context. For this reason, we are developing a separate dow
 CLC detection component that utilizes the outputs of the DialogAgent, but also
 reasons about context and state more deeply.
 
-
 We will implement a set of CLC detection rules that reason about the events
 extracted by the DialogAgent as well as the identity of the speakers
 corresponding to the utterances.
@@ -46,9 +45,9 @@ corresponding to the utterances.
 \section{Approach}
 
 While there are different definitions of closed-loop communication in the
-literature (\citet{abd2018closed}, \citet{yee2017role}), for our module we adopt the definition proposed by
-\citet{Hargestam.ea:2013}.  In this definition of CLC, there are three distinct
-phases (see \autoref{tab:clc-three-phases}): 
+literature (\citet{abd2018closed}, \citet{yee2017role}), for our module we
+adopt the definition proposed by \citet{Hargestam.ea:2013}.  In this definition
+of CLC, there are three distinct phases (see \autoref{tab:clc-three-phases}): 
 
 \begin{itemize}
 
@@ -156,7 +155,17 @@ in Algorithm 1.
 \end{algorithm}
 
 \section{Evaluation}
-The performance of the closed-loop communication detector will be evaluated by human annotators. Annotators will be trained to evaluate the automatically extracted CLC dialogues with the CLC coding scheme in Table 2. For a weak check-back that only acknowledge the call-out with the ‘Agreement’ label but no repeating information is found, the check-back should be labeled as ‘0.5b’ instead of the complete check-back label ‘1b’.
-The inter-rater reliability of the annotators will be measured using Cohen’s kappa. When the percentage of agreement between annotators reaches 80\%, and K>.70, annotators could start work on the formal annotation of the data. The precision and F1 score will be used to evaluate the performance of our CLC detector. We will improve the detecting rules and algorithms according to the evaluation. The precision should reach a minimum of 90\% and F1 reach a minimum of 80\% after improvement on the CLC detector has been fully applied.
 
-
+The performance of the closed-loop communication detector will be evaluated by
+human annotators. Annotators will be trained to evaluate the automatically
+extracted CLC dialogues with the CLC coding scheme in Table 2. For a weak
+check-back that only acknowledge the call-out with the ‘Agreement’ label but no
+repeating information is found, the check-back should be labeled as ‘0.5b’
+instead of the complete check-back label ‘1b’.  The inter-rater reliability of
+the annotators will be measured using Cohen’s kappa. When the percentage of
+agreement between annotators reaches 80\%, and K>.70, annotators could start
+work on the formal annotation of the data. The precision and F1 score will be
+used to evaluate the performance of our CLC detector. We will improve the
+detecting rules and algorithms according to the evaluation. The precision
+should reach a minimum of 90\% and F1 reach a minimum of 80\% after improvement
+on the CLC detector has been fully applied.
