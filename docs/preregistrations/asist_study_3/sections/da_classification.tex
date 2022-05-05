@@ -1,33 +1,34 @@
 \chapter{Dialogue act classification}
 \label{ch:da_classification}
-\textbf{Ruihong Huang, Ayesha Qamar, Md Messal Monem Miah}
+\textbf{Ruihong Huang, Ayesha Qamar, Md Messal Monem Miah, Adarsh Pyarelal}
 
 \section{Introduction}
 
-In the Theory of Mind-based Cognitive Architecture for Teams (ToMCAT) project,
-we are working on building an AI agent that will assist the players by taking
-their speech and facial expressions as input. Speech being a core part of the
-inputs, the agents will need to be capable of natural language understanding to
+Spoken natural language is the primary medium of communicating and coordinating
+within the 3-person teams that will be participating in ASIST Study 3.  Given
+this, AI agents will need to be capable of natural language understanding to
 process the conversations to make informed and prompt decisions. Identifying
-Dialog Acts (DA) is one of the primary aspects of natural language
-understanding. dialog Act (DA) can be identified as a method of defining the
+dialog acts (DAs) is one of the primary aspects of natural language
+understanding. A dialog act can be identified as a method of defining the
 semantic content and communicative function of a single utterance of dialog
-\citep{Searle:1969}. Examples include request, question, acknowledgment etc.
+\citep{Searle:1969}. Examples of dialog acts include `request', `question',
+`acknowledgment', etc.
 Dialog acts can provide important information about the user dialog turns and
-set of possible system actions, and the frequencies and patterns of DAs spoken
-by different speakers could also potentially indicate the roles they play such
-as leader, follower etc., Thus, it is a useful capability for this AI agent and
-many conversational agents in general.
+set of possible system actions. The patterns of dialog acts
+of different speakers could also potentially indicate the roles they play in a
+team, e.g., leader, follower, etc., Thus, it is a necessary capability for our
+ToMCAT architecture as well as for conversational agents in general.
 
-Acknowledging the importance of DA classification in natural language
-understanding, extensive research has been conducted on DA classification.
-These research works have taken different approaches in terms of dataset,
-machine learning model and input to the models. The most popular datasets that
-are being used are Switchboard Corpus (SwDA) and ICSI Meeting Recorder Dialog
-Act Corpus (MRDA). Most of the approaches use textual utterances from dialog
-transcripts as input to the model. Statistical machine learning models such as
-Support Vector Machines (SVMs) \citep{Henderson.ea:2012}, Hidden Markov Models
-(HMMs) \citep{Stolcke.ea:2000}, Conditional Random Fields (CRFs)
+
+Extensive research has been conducted on dialog act classification due to its
+importance in natural language understanding.  These research works have taken
+different approaches in terms of datasets, machine learning models and input to
+the models. The most popular datasets that are being used are the Switchboard
+Corpus (SwDA) and ICSI Meeting Recorder Dialog Act Corpus (MRDA)
+\citep{Shriberg.ea:2004}. Most of the approaches use textual utterances from
+dialog transcripts as input to the model. Statistical machine learning models
+such as Support Vector Machines (SVMs) \citep{Henderson.ea:2012}, Hidden Markov
+Models (HMMs) \citep{Stolcke.ea:2000}, Conditional Random Fields (CRFs)
 \citep{Zimmermann:2009} are employed for identifying DAs. Deep learning models
 are also gaining popularity in DA classification. \citet{Liu.ea:2017} presented
 both CNN models and hierarchical CNN+CNN and CNN+RNN models to classify dialog
@@ -77,7 +78,7 @@ threading structure and DAs of a dialog in a multitask learning setting since
 we expect the two tasks to benefit each other.
 
 Currently we are using a multi-party dialog dataset MRDA
-\citep{Shriberg.ea:2004} that consists of 75 meetings each about an hour long,
+ that consists of 75 meetings each about an hour long,
 where each utterance has one (out of 11) general and zero or more (out of 40)
 specific tags. Once the experimentation is done, we will use a transfer
 learning approach to train and test the model for study-2 data. 
