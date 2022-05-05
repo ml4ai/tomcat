@@ -5,7 +5,7 @@
 \section{Introduction}
 
 Spoken natural language is the primary medium of communicating and coordinating
-within the 3-person teams that will be participating in ASIST Study 3.  Given
+within the 3-person teams that will be participating in ASIST Study-3.  Given
 this, AI agents will need to be capable of natural language understanding to
 process the conversations to make informed and prompt decisions. Identifying
 dialog acts (DAs) is one of the primary aspects of natural language
@@ -66,8 +66,8 @@ purpose of the DA under consideration. It is necessary to have both general
 To address these limitations, we will design and implement a deep neural
 network based DA classifier to process input utterances in real time. This will
 allow downstream AI agents to use dialog act information in order to provide
-timely interventions. We will test this capability offline on Study 3 data and
-deploy it online during Study 4 data collection.  The noisy text output from
+timely interventions. We will test this capability offline on Study-3 data and
+deploy it online during Study-4 data collection.  The noisy text output from
 the ASR agent \autoref{ch:asr} makes DA classification challenging. To
 compensate for this, we will use acoustic features from the raw speech as
 additional inputs to our system.
@@ -109,7 +109,7 @@ performance of our baseline model on the MRDA dataset.
 To evaluate our approach, we will use F1 score as the evaluation metric. For
 multiclass classification problems, especially where the classes are highly
 imbalanced, the F1 score provides more insight than accuracy. We will annotate
-utterances from Study 3 with dialog acts so that our current system that has
+utterances from Study-3 with dialog acts so that our current system that has
 been trained on the MRDA dataset can be fine-tuned for ASIST data. The baseline
 model that we are currently using is a hierarchical LSTM. The macro F1 score
 for this model on the MRDA data is 0.41. However, when we evaluated the model
