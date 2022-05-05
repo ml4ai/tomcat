@@ -526,28 +526,29 @@ member who asked for help:
 hypothesis 1 we train two different models (with and without coordination) on
 the same training sets in the cross validation splits. We then apply each model
 to held out data. The result in either case is a distribution for each outcome
-variable. Given the actual value of the outcome variable treated as a real
-number, we will evaluate predictive accuracy by using the mean of the
-distribution (MMSE loss) compared to the actual value, and compute the squared
-error over all test splits in a leave one out cross validation scenario. For
-completeness, for any categorical outcomes we would compare the value with
-maximal probability (MAP loss) with the observed one. \\
+variable. While we could work with these distributions, here the use case of
+getting a single estimate via MMSE loss (MAP loss for any categorical outcomes)
+better mimics the implied use case where there is an actual (single) prediction
+made by the model.
+
+Given the actual value of the outcome variable treated as a real number, we can
+compare pair-wise estimates from the two models across training data instances
+in a leave-one-out scenario. We will report the percentage average improvement
+of one model over the other. We will accept the hypothesis as supported if 95\%
+of the estimates favor the coordination model. \\
 
 \noindent \textbf{Hypothesis 2: increased coordination predicts higher outcome measures.}
 Here we are interested in the learned model, and cross-validation is not
 critical, as the model is not trained on predicting higher outcome measures.  In
-particular, we posit that the slopes in the sub-models for the measures, i.e.,
-$p(M^i|C)$ will be positive. We will estimate the posterior distribution of
-those slopes over relevant data. The mean and variance of that distribution will
-give some idea as to the validity of the claim that coordination and a
-particular measure are positively correlated.  Sampling this distribution will
-reveal intervals that capture the probability that this is valid within various
-ranges. \\
+particular, we posit that the slopes (expressed as angles) in the sub-models for the measures, i.e.,
+$p(M^i|C)$ will be positive. We will sample the posterior distribution of
+those slopes over relevant data to estimate Cohen's d. We will accept that
+hypothesis as supported if the value is greater than $0.1$ \\
 
-\noindent \textbf{Hypothesis 3: intervening on team communication predicts higher
-coordination and outcome measures.} Here we have two distinct data cases. Each
-case leads to a probability distribution for coordination and outcome measures.
-Specifically, each trial contributes multiple samples to one of those
-distributions. We sample those distributions to evaluate the hypotheses within
-the Bayesian hypothesis testing paradigm.  For each outcome measure, we will
-evaluate the probability that the claim is true.
+\noindent \textbf{Hypothesis 3: intervening on team communication predicts
+higher coordination and outcome measures.} Here we have two distinct data cases.
+Each case leads to a probability distribution for coordination and outcome
+measures.  Specifically, each trial contributes multiple samples to one of those
+distributions. We will again sample those distributions to evaluate the hypotheses
+within the Bayesian hypothesis testing paradigm using Cohen's d. We will accept
+the hypothesis as supported when the value is greater than $0.1$. 
