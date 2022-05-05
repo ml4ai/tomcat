@@ -1,33 +1,33 @@
 \chapter{Closed-loop communication detection}
 \label{ch:clc}
-\textbf{Yuwei Wang}
+\textbf{Yuwei Wang, Adarsh Pyarelal}
 
 \section{Introduction}
 
 Good teamwork and communication can enable a team of agents (human or
-otherwise) to perform beyond the sum of their parts \citep{roberts2022state}.
+otherwise) to perform beyond the sum of their parts \cite{roberts2022state}.
 In particular, during high-stakes crisis situations, miscommunication is a
-common cause of adverse events
-\citep{taylor2014description,davis2017operative}. Closed-loop communication
-(CLC) is often recommended in the team research literature as a communication
-behavior that can guarantee the accuracy of information exchange
-\citep{marzuki2019closed}. Currently, CLC in spoken dialogue is identified via
-retrospective analyses involving manual transcription and annotation. However,
-given the potentially catastrophic consequences of poor team communication
-\citep{flin2004identifying} - especially in complex, fast-paced, and
-high-stakes environments such as urban search and rescue scenarios - we argue
-that there is an urgent need for AI technologies that can detect and repair the
-breakdowns in CLC as they happen. To address this need, we propose to develop
-an AI system for detecting the presence or absence of CLC procedures in spoken
-dialogue within teams of humans collaborating on shared tasks.
+common cause of adverse events \cite{taylor2014description,
+davis2017operative}. Closed-loop communication (CLC) is often recommended in
+the team research literature as a communication behavior that can guarantee the
+accuracy of information exchange \cite{marzuki2019closed}. Currently, CLC in
+spoken dialogue is identified via retrospective analyses involving manual
+transcription and annotation. However, given the potentially catastrophic
+consequences of poor team communication \cite{flin2004identifying} - especially
+in complex, fast-paced, and high-stakes environments such as urban search and
+rescue scenarios - we argue that there is an urgent need for AI technologies
+that can detect and repair breakdowns in CLC as they happen. To address this
+need, we propose to develop an AI system for detecting the presence or absence
+of CLC procedures in spoken dialogue within teams of humans collaborating on
+shared tasks.
 
-Currently, most real-time natural language understanding (NLU) and responding
-systems are limited to conversing with a single human at a time. On the other
-hand, there are numerous analyses of multi-participant spoken dialogue in the
-academic literature - however, these are primarily performed offline rather
-than in real-time, and the communicative events in their multi-party
-conversations are manually coded rather than automatically extracted using
-information extraction (IE) methods (e.g., \citep{jagannath2022speech}).
+Currently, most real-time dialogue systems are limited to conversing with a
+single human at a time. On the other hand, there are numerous analyses of
+multi-participant spoken dialogue in the academic literature - however, these
+are primarily performed offline rather than in real-time, and the communicative
+events in their multi-party conversations are manually coded rather than
+automatically extracted using information extraction (IE) methods (e.g.,
+\citep{jagannath2022speech}).
 
 The ASR Agent in conjunction with the DialogAgent (see \autoref{ch:rule_based_ie})
 enables us to extract events of interest in real time from spoken dialogue,
@@ -45,9 +45,9 @@ corresponding to the utterances.
 \section{Approach}
 
 While there are different definitions of closed-loop communication in the
-literature (\citet{abd2018closed}, \citet{yee2017role}), for our module we
-adopt the definition proposed by \citet{Hargestam.ea:2013}.  In this definition
-of CLC, there are three distinct phases (see \autoref{tab:clc-three-phases}): 
+literature \cite{abd2018closed, yee2017role}, for our module we adopt the
+definition proposed by \citet{Hargestam.ea:2013}.  In this definition of CLC,
+there are three distinct phases (see \autoref{tab:clc-three-phases}): 
 
 \begin{itemize}
 
@@ -84,20 +84,53 @@ of CLC, there are three distinct phases (see \autoref{tab:clc-three-phases}):
     \label{tab:clc-three-phases}
 \end{table}
 
-We are going to develop a procedure to dynamically detect the three phases of
-CLC. First, the Call-out phase will be detected by rules in the DialogAgent.
-Labels including HelpRequest, Instruction, and NeedAction are used as
-triggers for this event. Next, we examine the a window of the subsequent five
-utterances in the dialogue.
+We will implement the following algorithm to detect the three phases of CLC.
+First, the Call-out phase will be detected by the presence of one of the
+following three labels in an utterance: HelpRequest, Instruction, or
+NeedAction.  Next, we examine a window of the subsequent five utterances in
+the dialogue for other specific labels.
 
-If we find acknowledgement by other team members as well as the same
-semantic labels as in the Call-out message, then this indicates there is a
-Check-back phase. Finally, within five utterances following the Check-back, if
-we see the sender verified the information of the Check-back with the Agreement
-label, we can determine that this is a closed-loop communication. The triggers
-and argument rules of CLC detection are illustrated in
-in Algorithm 1.
+If we find acknowledgement (label: `Acknowledgment') in utterances from other
+team members with this 5-utterance window, as well as the same semantic labels
+as were present in the Call-out message, then we deem the utterance as
+constituting the Check-back phase. Finally, within five utterances following
+the Check-back, if we see that the initiator of the loop verified the
+information of the Check-back with the `Agreement' label, we determine that
+this is an instance of closed-loop communication. The triggers and argument
+rules of CLC detection are illustrated in \autoref{alg:CLC} below.
 
+\begin{algorithm}
+    \caption{Rule-based CLC detection}\label{alg:CLC}
+    \begin{algorithmic}[1]
+        \State $L_w$ \gets []
+        \Comment{$L_w$Set of CLC labels detected in utterance window $w$}
+
+        \LComment{$L_\text{CallOut}$: Set of CallOut labels}
+        \State $L_\text{CallOut}$ \gets \{\texttt{HelpRequest}, \texttt{NeedAction}, \texttt{Instruction}\}
+        \Function{CallOut}{$L_u$}  \Comment{$L_u$: Set of labels in utterance $u$}
+            \If{$L_\text{CallOut} \cap L_u \neq \emptyset$}
+                \State $L_w$.append(\texttt{1a})
+            \EndIf
+        \EndFunction
+
+        \Function{CheckBack}{utterance} in range (5)
+
+            \If{\texttt{Acknowledgement} in labels of next $utterance$}
+                \If{any($l$ in CallOut.arguments for $l$ in next $utterance$)}
+                    \State $CLC-labels \gets 1b$
+                \EndIf
+            \Else
+                \State $CLC-labels \gets 0.5b$
+            \EndIf
+        \EndFunction
+
+        \Function{CloseLoop}{utterance} in range (5)
+            \If{'Acknowledgement' in labels of next $utterance$}
+                \State $CLC-labels \gets 1c$
+            \EndIf
+        \EndFunction
+    \end{algorithmic}
+\end{algorithm}
 
 %\begin{table*}[tb]
     %\centering
@@ -112,47 +145,6 @@ in Algorithm 1.
     %\caption{The trigger and argument rules of CLC detection}
     %\label{tab:clc-triggers-labels}
 %\end{table*}
-
-\subsection{List of Variables}
-
-\begin{itemize}
-    \item Input Variables
-    \begin{itemize}
-        \item transcriptions: MinecraftEntity\_Observation\_Asr\_Speechanalyzer
-    \end{itemize}
-    \item Output Variables
-    \begin{itemize}
-        \item Event Extractions: MinecraftEntity\_Event\_Dialogue\_Event\_Dialogagent
-    \end{itemize}
-\end{itemize}
-
-\begin{algorithm}
-    \caption{The algorithm for CLC detection}\label{alg:CLC}
-    \begin{algorithmic}[1]
-        \State $CLC-labels \gets []$
-        \Function{CallOut}{utterance} 
-            \If{any(label in [‘HelpRequest’, ‘NeedAction’, ‘Instruction’] for label in $utterance$}
-            \State $CLC-labels \gets 1a$
-            \EndIf
-            \EndFunction
-
-        \Function{CheckBack}{utterance} in range (5)
-
-            \If{'Acknowledgement' in labels of next $utterance$
-            \If{any(label in CallOut.arguments for label in next $utterance$}
-                \State $CLC-labels \gets 1b$
-                \EndIf
-                } else
-            \State $CLC-labels \gets 0.5b$
-            \EndIf
-            \EndFunction
-        \Function{CloseLoop}{utterance} in range (5)
-            \If{'Acknowledgement' in labels of next $utterance$}
-            \State $CLC-labels \gets 1c$
-            \EndIf
-            \EndFunction
-    \end{algorithmic}
-\end{algorithm}
 
 \section{Evaluation}
 
