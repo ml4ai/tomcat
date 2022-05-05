@@ -117,47 +117,32 @@ rules of CLC detection are illustrated in \autoref{alg:CLC} below.
 
             \If{\texttt{Acknowledgement} in labels of next $utterance$}
                 \If{any($l$ in CallOut.arguments for $l$ in next $utterance$)}
-                    \State $CLC-labels \gets 1b$
+                \State $L_w$.append(\texttt{1b})
                 \EndIf
             \Else
-                \State $CLC-labels \gets 0.5b$
+                \State $L_w$.append(\texttt{0.5b})
             \EndIf
         \EndFunction
 
         \Function{CloseLoop}{utterance} in range (5)
-            \If{'Acknowledgement' in labels of next $utterance$}
-                \State $CLC-labels \gets 1c$
+        \If{\texttt{Acknowledgement} in labels of next $utterance$}
+                \State $L_w$.append(\texttt{1c})
             \EndIf
         \EndFunction
     \end{algorithmic}
 \end{algorithm}
 
-%\begin{table*}[tb]
-    %\centering
-    %\begin{tabular}{lp{1in}lll}
-        %\toprule
-        %Role  & Utterance         & Trigger Rules: mentioned text & Argument Rules: mentioned text                                                       & CLC label \\\midrule
-        %Green & \utteranceone{}   & Instruction: could you check  & Action: check \newline Location: central \newline Victim: victims                    & 1a\\
-        %Blue  & \utterancetwo{}   & Agreement: okay               & Action: check \newline Location: central \newline Victim: victims \newline Blue:blue & 1b\\
-        %Green & \utterancethree{} & Agreement: All right          &                                                                                      & 1c\\
-        %\bottomrule
-    %\end{tabular}
-    %\caption{The trigger and argument rules of CLC detection}
-    %\label{tab:clc-triggers-labels}
-%\end{table*}
-
 \section{Evaluation}
 
 The performance of the closed-loop communication detector will be evaluated by
 human annotators. Annotators will be trained to evaluate the automatically
-extracted CLC dialogues with the CLC coding scheme in Table 2. For a weak
-check-back that only acknowledge the call-out with the ‘Agreement’ label but no
-repeating information is found, the check-back should be labeled as ‘0.5b’
-instead of the complete check-back label ‘1b’.  The inter-rater reliability of
-the annotators will be measured using Cohen’s kappa. When the percentage of
-agreement between annotators reaches 80\%, and K>.70, annotators could start
-work on the formal annotation of the data. The precision and F1 score will be
-used to evaluate the performance of our CLC detector. We will improve the
-detecting rules and algorithms according to the evaluation. The precision
-should reach a minimum of 90\% and F1 reach a minimum of 80\% after improvement
-on the CLC detector has been fully applied.
+extracted CLC dialogues with the CLC coding scheme in
+\autoref{tab:clc-three-phases}. For a weak check-back that only acknowledged
+the call-out with the ‘Agreement’ label but does not repeat any of the semantic
+information, the check-back will be labeled as ‘0.5b’ instead of the complete
+check-back label `1b'.  The inter-rater reliability of the annotators will be
+measured using Cohen’s kappa coefficent. When the agreement between annotators
+reaches 80\%, and $\kappa.70$, annotators will start work on the formal
+annotation of the data. The precision and F1 score will be used to evaluate the
+performance of our CLC detector. We will improve the detection algorithms based
+on the evaluation. 
