@@ -1,6 +1,7 @@
 \chapter{Question-Asking and Plan Inference}
 \label{ch:question_plan}
-\textbf{Salena Ashton, Stephen Kim, Loren Champlin, Liang Zhang, Clayton Morrison}
+\textbf{Salena Ashton, Stephen Kim, Loren Rieffer-Champlin, Liang Zhang,
+Adarsh Pyarelal, Clayton Morrison}
 
 \section{Introduction}
 
@@ -51,9 +52,12 @@ We define \textit{coordination} as behaviors and utterances to create a common
 plan or strategy. We define \textit{cooperation} as team behaviors that implement an already-agreed up on plan.
 
 To capture hidden goals, inferred plans, and patterns that may represent human
-ToM, we will annotate ASIST Study 3 Spiral 2 pilot video observations: 418, 419, 420, 421, 422, and 423.
-These six pilot videos are of three distinct missions each for two distinct
-teams. Due to the expensive costs of human annotation and strict adherence to grounded theory methodology, this experiment is limited to six videos. 
+ToM, we will annotate six ASIST Study 3 Spiral 2 pilot video observations and
+six HSR ASIST Study 3 videos released between March 29 and May 5, for a total
+of at least twelve videos. These videos are of three distinct missions for each
+team. Due to the expensive costs of taxonomy label development with strict
+adherence to grounded theory methodology, this stage of the experiment is
+limited to no less than twelve videos. 
 
 Two human annotators will code all uttered questions between teammates within the Minecraft SAR scenario.
 We use the qualitative coding procedure known as Grounded Theory,
@@ -63,27 +67,32 @@ More specifically, and as defined by Saldana, \citep{saldana_2021}, we will use 
 
 We will use a Grounded Theory Causal Coding to investigate the connectivity and causality of each concept label to discover possible relationships between presence or absence of team actions, interactions, conditions, and consequences of question-asking. Densely-connected concept labels suggest subcategories and categories. Sparsely-connected labels will not be discarded; they will be used to consider variability within patterns and categories that emerge. In cases where questions have co-reference or other contextual dependencies, only that direct dependency will be coded for local semantic meaning.
 
-\vspace{15pt}
+\vspace{10pt}
 
 We make the following considerations when creating codes: 
 
 \begin{itemize}
     \item Frequency will not dictate importance, causality, or connectivity of a concept
-    \item Labels will be stemmed and minimally normalized 
+    \item Each question will have at least one annotation and up to four
+      annotations:
+    \begin{itemize}
+        \item Primitive actions (ground truth). Ex: breakRubble,
+          requestStabilizedVictimCarry.
+        \item Abstraction Levels of actions (of primitive actions) Respective
+          examples: respondRubbleRequest or createVictimAccess, collaborateStabilizedVictim
+    \end{itemize}
+    \item Labels will be stemmed and minimally normalized
     \item Capturing the phenomena of question-asking across time, between any subset of a team, between the same team across the two different missions. 
 \end{itemize}
 
-\vspace{15pt}
+\vspace{10pt}
 
 To avoid annotator and researcher biases and any \textit{a priori} belief on
 which team ToM strategies may be used, concept and category labels are not
 pre-determined. Annotator agreement must reach a Kappa Score of 80\% or higher. This also gives a more solid, grounded analytical meaning to any emergent categories. 
 
-When all concepts, subcategories, categories can reasonably explain the phenomena of the video observations, one or two super-categories, \textit{theories of team plan}, will emerge. We currently assume that a theory of team plan would have greater predictive power and ToM inference potential. 
-
-Future testing of these labels will be on the real data, released after 29 March 2022, in future pre-registrations and experiments. 
-
-
+After the development of labels and taxonomy, the investigation of team ToM and
+question-asking will scale for additional videos. When all concepts, subcategories, categories can reasonably explain the phenomena of the video observations, one or two super-categories, \textit{theories of team plan}, will emerge. We currently assume that a theory of team plan would have greater predictive power and ToM inference potential. 
 
 
 
@@ -104,9 +113,27 @@ a list of possible visualizations we may consider:
 \end{itemize}
 
 
-These visualizations will serve as a preliminary analysis of how uttered questions, with their hidden goals, could map  human ToM to AI planning data structures.
+These visualizations serve as a preliminary analysis of how uttered
+questions, with their hidden goals, could map human ToM to AI planning data
+structures. Tthe following visualization shows the distribution of
+qustions asked across time for two pilot study teams. 
 
-Future measures may include Mann-Whitney U-Tests, t-tests (only if we annotate a large-enough sample), precision and recall of the
+
+\vspace{5pt}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/prelim_percent_questions.pdf}
+    \caption{Questions asked during three missions of two distinct teams across
+    time. Black indicates questions asked toward the beginning of each mission
+  and red indicates questions asked toward the end of each mission. This 
+suggests that teams ask more questions toward the beginning of the
+first mission and the end of the last mission.}
+\end{figure}
+
+\vspace{5pt}
+
+Such visualizations, based on twelve videos, will lead to further insight through this investigation. Future measures may include Mann-Whitney U-Tests, t-tests (only if we annotate a large-enough sample), precision and recall of the
 concept-level and category patterns to describe the generalizability for real data with no ASI interventions, generalizability for
 real data with higher ASI interventions, and the variance of patterns in label categories. Another possible measure, from future research, would be the F1 Score to explain how
 well these labels describe observations without ASI interventions, when compared to
