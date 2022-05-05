@@ -21,41 +21,55 @@ ToMCAT architecture as well as for conversational agents in general.
 
 
 Extensive research has been conducted on dialog act classification due to its
-importance in natural language understanding.  These research works have taken
+importance in natural language understanding. These research works have taken
 different approaches in terms of datasets, machine learning models and input to
-the models. The most popular datasets that are being used are the Switchboard
+the models. The most widely used datasets are the Switchboard
 Corpus (SwDA) and ICSI Meeting Recorder Dialog Act Corpus (MRDA)
 \citep{Shriberg.ea:2004}. Most of the approaches use textual utterances from
-dialog transcripts as input to the model. Statistical machine learning models
-such as Support Vector Machines (SVMs) \citep{Henderson.ea:2012}, Hidden Markov
-Models (HMMs) \citep{Stolcke.ea:2000}, Conditional Random Fields (CRFs)
-\citep{Zimmermann:2009} are employed for identifying DAs. Deep learning models
-are also gaining popularity in DA classification. \citet{Liu.ea:2017} presented
-both CNN models and hierarchical CNN+CNN and CNN+RNN models to classify dialog
-acts and showed that RNN/Bi-LSTM on top of CNN model performs better than other
-models in consideration. \citet{Shen.ea:2016} presented that Neural Attention
-Model with context information performed well on the SwDA dataset.
-\citet{Raheja.ea:2019} achieved state-of-the-art result using context-aware
-self-attention model on MRDA corpus. Another approach for DA classification is
-incorporating both lexical and acoustic features. \citet{Ortega.ea:2018} showed
-that their Lexico-Acoustic neural network models can outperform the similar
-models taking only lexical information as input.
+dialog transcripts as input to their models. Initial efforts to identify DAs
+used classic statistical machine learning models
+such as support vector machines (SVMs) \citep{Henderson.ea:2012}, hidden Markov
+models (HMMs) \citep{Stolcke.ea:2000}, and conditional random fields (CRFs)
+\citep{Zimmermann:2009}.
 
-Even though these approaches provide excellent results on DA classification,
-they lack in various aspects. First of all, most of these models require clean
+More recently, deep learning models have been gaining in popularity for DA
+classification. \citet{Liu.ea:2017} presented both CNN models and hierarchical
+CNN+CNN\footnote{CNN: Convolutional neural network.} and CNN+RNN\footnote{RNN:
+Recurrent neural network} models to classify dialog acts and showed that a
+RNN/Bi-LSTM\footnote{LSTM: Long short-term memory (a type of neural network
+architecture).} on top of a CNN model performs better than the other models
+they considered.  \citet{Shen.ea:2016} showed that a neural attention model
+with context information performed well on the SwDA dataset.
+\citet{Raheja.ea:2019} achieved state-of-the-art results using a context-aware
+self-attention model on the MRDA corpus. Another approach for DA classification
+involves incorporating both lexical and acoustic features. This approach is
+motivated by the fact that humans use vocalic features to express specific
+dialog acts - for example, people often raise their pitch slightly at the end
+of a question. \citet{Ortega.ea:2018} showed that their lexico-acoustic neural
+network models outperformed similar models that took only lexical information
+as input.
+
+While these approaches provide excellent results on DA classification, they are
+lacking in some important aspects.
+First, most of these models require clean
 transcripts as input. Achieving clean transcripts requires manual annotation,
-which is both time consuming and costly. As a result, DA classification in real
-time is not possible. Another limitation is the lack of explicit addressing to
-multiparty dialogs where mechanisms to incorporate speaker identification and
-determining the discourse structure is also crucial. Apart from these
-limitations, these approaches often use only 5 types of high level tags for DA
-classification, which do not entirely explain the DA under question. It is
-necessary to have both general and specific tags to completely understand a DA.
+which is both time consuming and costly. As a result, these models cannot be
+used for DA classification in real time where the only transcripts available
+are imperfect ones produced by automatic speech recognition (ASR) systems.
+Second, the approaches do not explicitly address dialogs where mechanisms to
+incorporate speaker identification and determining the discourse structure are
+also crucial.
+Finally, the aforementioned approaches often use only 5 types of high-level
+tags for DA classification, which frequently do not entirely explain the
+purpose of the DA under consideration. It is necessary to have both general
+(high-level) and specific tags to truly understand a DA.
 
-We are going to develop a Deep neural network based DA classifier to process
-the input utterances in real time which is more aligned with the main goal of
-the project that is building an AI agent to be an effective teammate of a
-Minecraft player. As the players will play online simultaneously, the agent
+To address these limitations, we will design and implement a deep neural
+network based DA classifier to process input utterances in real time. This will
+allow downstream AI agents to use dialog act information in order to provide
+timely interventions. We will test this capability offline on Study 3 data and
+deploy it online during Study 4 data collection.
+
 needs to understand the conversations of the player as the game progresses. For
 the agent to be real time, we cannot rely on manual transcription. Instead we
 have used a publicly available Automatic Speech Recognizer (ASR), named Google
