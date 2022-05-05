@@ -7,8 +7,8 @@ This document serves the purpose of declaring the following:
 
 \begin{itemize}
     \item the capabilities we aim to demonstrate for our online agent
-        components in ASIST Study 3, and how we will evaluate them.
-    \item the offline analyses we plan to perform on ASIST Study 3 data
+        components in ASIST Study-3, and how we will evaluate them.
+    \item the offline analyses we plan to perform on ASIST Study-3 data
         in preparation for online deployment in Study 4.
 \end{itemize}
 
@@ -99,7 +99,7 @@ The task also includes perturbations in the form of threat rooms,
 and unexpected rubble collapses, and mechanisms to generate interdependence
 between the human teammates, thus encouraging them to communicate and
 coordinate with each other.
-The complete details of the experiment and task can be found in the Study 3
+The complete details of the experiment and task can be found in the Study-3
 preregistration \cite{Huang.ea:2022}.
 
 In order to facilitate the development of our hypotheses, the evaluation team
@@ -111,21 +111,21 @@ the rest of the document.
 \label{ch:system}
 
 Broadly speaking, we are aiming to develop a suite of open-source technologies
-for artificial social intelligence. For ASIST Study 3, we are particularly
+for artificial social intelligence. For ASIST Study-3, we are particularly
 interested in studying team coordination and communication.
 
-For ASIST Study 3, we will deploy five containerized components. Four of them
+For ASIST Study-3, we will deploy four containerized components. Three of them
 can be classified as `analytical components' (ACs) in the parlance of the ASIST
 program, and one as an `ASI', i.e. an AI agent imbued with artificial social
 intelligence and designed to provide helpful interventions. In principle, the
-four ACs could be bundled and deployed as part of our ASI, but we opt to keep
+three ACs could be bundled and deployed as part of our ASI, but we opt to keep
 them separate as we expect that the resulting modularity will be beneficial for
 future applications and results in additional system robustness.
 
 
 \subsection{Analytical Components}
 
-We list the analytical components we are deploying for ASIST Study 3 in
+We list the analytical components we are deploying for ASIST Study-3 in
 \autoref{tab:study_3_acs}. The system architecture into which they fit is shown
 in \autoref{fig:nlp-architecture}.
 
@@ -137,11 +137,10 @@ in \autoref{fig:nlp-architecture}.
         ASR Agent           & Raw audio                     & Transcriptions, word-level timings     & \\
         SpeechAnalyzer      & Raw audio, transcriptions     & Sentiment and personality trait labels & \autoref{ch:sentiment_analysis}\\
         DialogAgent         & Transcriptions, chat messages & Structured events                      & \autoref{ch:rule_based_ie}\\
-        DialogActClassifier & Transcriptions                & Dialog act labels                      & \autoref{ch:da_classification}\\
         \bottomrule
     \end{tabularx}
     \caption{%
-        Analytical components we are deploying for ASIST Study 3, along with
+        Analytical components we are deploying for ASIST Study-3, along with
         their inputs, outputs, and correspnding sections in this document that
         describe their capability in greater detail.
     }
@@ -174,7 +173,7 @@ communication and coordination.
 Each of the component preregistrations demonstrates a capability that we
 believe is important for artificial social intelligence, and is currently
 integrated or will be integrated in the near future into our ASI agent that
-will be evaluated in ASIST study 3 or future ASIST experiments.
+will be evaluated in ASIST Study-3 or future ASIST experiments.
 
 We begin by describing our plan for modeling team coordination and implementing
 associated interventions in \autoref{ch:pgm}.  We then proceed to describe some
@@ -204,5 +203,5 @@ question asking and inferring human plans and intentions.
 
 The capabilities described in \autoref{ch:clc}, \autoref{ch:entrainment},
 \autoref{ch:plan_recognition}, and \autoref{ch:question_plan} will be evaluated
-offline for ASIST Study 3, but we expect them to be integrated into online
+offline for ASIST Study-3, but we expect them to be integrated into online
 components for ASIST Study 4 and future experiments.
