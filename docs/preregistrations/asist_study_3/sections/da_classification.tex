@@ -19,7 +19,6 @@ of different speakers could also potentially indicate the roles they play in a
 team, e.g., leader, follower, etc., Thus, it is a necessary capability for our
 ToMCAT architecture as well as for conversational agents in general.
 
-
 Extensive research has been conducted on dialog act classification due to its
 importance in natural language understanding. These research works have taken
 different approaches in terms of datasets, machine learning models and input to
@@ -44,13 +43,13 @@ with context information performed well on the SwDA dataset.
 self-attention model on the MRDA corpus. Another approach for DA classification
 involves incorporating both lexical and acoustic features. This approach is
 motivated by the fact that humans use vocalic features to express specific
-dialog acts - for example, people often raise their pitch slightly at the end
-of a question. \citet{Ortega.ea:2018} showed that their lexico-acoustic neural
+dialog acts - for example, raising their pitch slightly at the end
+of questions. \citet{Ortega.ea:2018} showed that their lexico-acoustic neural
 network models outperformed similar models that took only lexical information
 as input.
 
 While these approaches provide excellent results on DA classification, they are
-lacking in some important aspects.
+lacking in some critical aspects.
 First, most of these models require clean
 transcripts as input. Achieving clean transcripts requires manual annotation,
 which is both time consuming and costly. As a result, these models cannot be
@@ -68,16 +67,13 @@ To address these limitations, we will design and implement a deep neural
 network based DA classifier to process input utterances in real time. This will
 allow downstream AI agents to use dialog act information in order to provide
 timely interventions. We will test this capability offline on Study 3 data and
-deploy it online during Study 4 data collection.
-
-needs to understand the conversations of the player as the game progresses. For
-the agent to be real time, we cannot rely on manual transcription. Instead we
-have used a publicly available Automatic Speech Recognizer (ASR), named Google
-Cloud Speech API to convert the utterances into text. This provides noisy text
-in return which might harm the performance of the DA classifier. To compensate
-for this, we will use acoustic features from the raw speech as well.
+deploy it online during Study 4 data collection.  The noisy text output from
+the ASR agent \autoref{ch:asr} makes DA classification challenging. To
+compensate for this, we will use acoustic features from the raw speech as
+additional inputs to our system.
 
 \section{Approach}
+
 A Bi-LSTM based baseline model is already trained with clean transcripts. The
 same model is trained again with the ASR generated transcripts and the
 performance dropped significantly due to ASR noise and the highly overlapping
@@ -91,86 +87,87 @@ then linking them together. We will aim to eventually jointly learn both the
 threading structure and DAs of a dialog in a multitask learning setting since
 we expect the two tasks to benefit each other.
 
-Currently we are using a multi-party dialog dataset MRDA
- that consists of 75 meetings each about an hour long,
-where each utterance has one (out of 11) general and zero or more (out of 40)
-specific tags. Once the experimentation is done, we will use a transfer
-learning approach to train and test the model for study-2 data. 
+Currently we are using the MRDA dataset, which consists of 75 meetings, each of
+which is approximately an hour long. Each utterance has one (out of 11)
+`general' and zero or more (out of 40) `specific' tags. Once the Study-3
+human/ASI advisor dataset is collected, we will use a transfer learning
+approach to train and test the model for Study-3 data.
 
-MRDA data is a multiparty multilabel dialog act corpus. So, each utterance in
-the dataset may have multiple tags associated with it which poses a problem for
-building an efficient model that could correctly capture the dialog acts. One approach
-to solve this multi-label problem is randomly choosing a label from 
-the label combinations. However, this approach often does not reflect the most
-prominent purpose of each utterance. So, we have drawn inspiration from label
-disambiguation from related corpus and carefully looked at examples to come up
-with a set of precedence rules for the labels and thus solved the multi-label
-challenge. This approach significantly improves the performance of our baseline
-model on MRDA data.
+As mentioned above, each utterance in the MRDA dataset may have multiple tags
+associated with it, which poses a challenge for building an efficient model to
+correctly identify the dialog acts corresponding to the utterances.  One
+approach to solve this multi-label problem is to randomly choose a label from
+the set of labels for a given utterance. However, this approach often does not
+reflect the most prominent purpose of each utterance. Drawing inspiration from
+label disambiguation from related corpora, we carefully looked at examples to
+come up with a set of precedence rules for the labels in the MRDA dataset, thus
+addressing the multi-label challenge. This approach significantly improves the
+performance of our baseline model on the MRDA dataset.
 
 \section{Evaluation}
 
 To evaluate our approach, we will use F1 score as the evaluation metric. For
 multiclass classification problems, especially where the classes are highly
-imbalanced, F1 score provides more insight than accuracy.  We also intend to
-annotate ASIST data for dialog Acts so that the system trained on MRDA can be
-fine-tuned on ASIST. The baseline model that we are currently using is a sequential
-model consisting of a hierarchical LSTM. The macro F1 score for this model on MRDA
-data is 40.77. However, when we evaluate the trained model on ASIST study 3 data, 
-the accuracy and F1 score both degrade. The performance of the model on raw ASIST
-data in terms of accuracy and macro F1 score is 30\% and 9.705 respectively. 
-One of the key factors behind this performance degradation is noisy transcripts 
-generated by the ASR. In order to solve this issue we have to manually correct the
-transcriptions generated by the ASR. After correcting the transcripts, we have
-observed a significant improvement of the model performance both in terms of accuracy
-and F1 score. The accuracy and macro F1 score for the cleaned ASIST study 3 data are 
-37\% and 18.86 respectively. Highlights of the results on some important classes are 
-shown in the tables below. The first table is contains the result for noisy transcripts 
-and the second table contains the results for corrected transcripts.
+imbalanced, the F1 score provides more insight than accuracy. We will annotate
+utterances from Study 3 with dialog acts so that our current system that has
+been trained on the MRDA dataset can be fine-tuned for ASIST.  The baseline
+model that we are currently using is a hierarchical LSTM. The macro F1 score
+for this model on the MRDA data is 40.77.  However, when we evaluated the model
+on Study-3 pilot data, the accuracy and F1 score both degrade. The performance
+of the model on raw Study-3 pilot and no-advisor data in terms of accuracy and
+macro F1 score is 30\% and 9.705 respectively. The performance of the baseline
+model is summarized in \autoref{tab:da_baseline_results}.
 
-\begin{center}
-\begin{tabular}{||c c c c||}
- \hline
- Label & Precision & Recall & F1 Score\\ [0.5ex]
- \hline\hline
- Yes/No Question & 0.80 & 0.39  & 0.52\\
- \hline
- Statement & 0.36 & 0.73 & 0.48\\
- \hline
- Command \& Suggestion & 0.52 & 0.46 & 0.49\\
- \hline
- Commitment & 0.33 & 0.01 & 0.01\\
- \hline
- Accept & 0.45 & 0.40 &  0.42 \\
- \hline
-  Reject & 0.38 & 0.33 & 0.35\\
- \hline
-  Understanding Check & 0.18 & 0.34 & 0.24\\
- \hline
-\end{tabular}
-\end{center}
+\begin{table}
+    \begin{tabular}{lrr}
+        \toprule
+        Dataset                                     & Macro F1 Score & Precision \\\midrule
+        MRDA                                        & 40.77          & \\
+        Study-3 pilot + no-advisor data             & 9.70          & 0.37 \\
+        Study-3 pilot + no-advisor data (corrected) & 18.86          & 0.30 \\
+        \bottomrule
+    \end{tabular}
+    \caption{%
+        Performance of our baseline model trained on the MRDA dataset on the
+        task of classifying dialog acts in the MRDA dataset as well as the
+        ASIST Study-3 pilot and no-advisor data.
+    }
+    \label{tab:da_baseline_results}
+\end{table}
 
-\begin{center}
-\begin{tabular}{||c c c c||}
- \hline
- Label & Precision & Recall & F1 Score\\ [0.5ex]
- \hline\hline
- Yes/No Question & 0.50 & 0.01 & 0.01\\
- \hline
- Statement & 0.32 & 0.73 & 0.44\\
- \hline
- Command \& Suggestion & 0.47 & 0.47 & 0.47\\
- \hline
- Commitment & 1.00 & 0.01 & 0.01\\
- \hline
- Accept & 0.39 & 0.31 &  0.34 \\
- \hline
-  Reject & 0.50 & 0.35 & 0.41\\
- \hline
-  Understanding Check & 0.18 & 0.34 & 0.24\\
- \hline
-\end{tabular}
-\end{center}
+One of the key factors behind this performance degradation is the noisiness of
+transcriptions generated by the ASR system. One of our goals for our proposed
+analysis is to empirically characterize the effect of imperfect ASR on
+automated DA classification.  After correcting the transcripts from the pilot
+data, we observed a significant improvement on both accuracy and F1 score. The
+accuracy and macro F1 score for the cleaned ASIST study 3 data are 37\% and
+18.86 respectively. Highlights of the results on some important classes are
+shown in \autoref{tab:da_results}.
+
+\begin{table}
+    \centering
+    \begin{tabular}{l cc cc cc}
+        \toprule
+                            & \multicolumn{2}{c}{Precision} & \multicolumn{2}{c}{Recall} & \multicolumn{2}{c}{F1 Score}\\
+                                \cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7}
+       Label                & Corrected & Original & Corrected & Original & Corrected & Original\\
+                             \midrule
+        Yes/No Question      & 0.80     & 0.50      & 0.39     & 0.01      & 0.52     & 0.01\\
+        Statement            & 0.36     & 0.32      & 0.73     & 0.73      & 0.48     & 0.44\\
+        Command/Suggestion   & 0.52     & 0.47      & 0.46     & 0.47      & 0.49     & 0.47\\
+        Commitment           & 0.33     & 1.00      & 0.01     & 0.01      & 0.01     & 0.01\\
+        Accept               & 0.45     & 0.39      & 0.40     & 0.31      & 0.42     & 0.34\\
+        Reject               & 0.38     & 0.50      & 0.33     & 0.35      & 0.35     & 0.41\\
+        Understanding Check  & 0.18     & 0.18      & 0.34     & 0.34      & 0.24     & 0.24\\
+        \bottomrule
+    \end{tabular}
+    \caption{%
+        Precision, recall, and F1 score for our dialog act classification
+        system on ASIST Study-3 pilot data utterances (original and corrected).
+    }
+    \label{tab:da_results}
+\end{table}
+
 
 We can observe significant improvement for almost all of the interesting tags when the
 utterances are corrected manually. Especially for the yes-no question class we can 
