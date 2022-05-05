@@ -81,8 +81,6 @@ to pitch and loudness of human speech (see \autoref{subsec:measures} for
 details), both of which could be targeted by an intervention as simple as
 asking a person to speak softly. 
 
-%%% Finally, we also prefer models that are predictive and interpretable. XXXXXXX
-
 \section{Hypotheses}
 
 We will test the following hypotheses:\\
@@ -112,12 +110,12 @@ are:
         provided in the game) but does not say they did, then the agent
         will suggest that they tell their team members that they placed it. 
 
-    \item For some teams, if a team member needs help (to stabilize a
+    \item If a team member needs help (to stabilize a
         victim or exit a blocked room) but does not say they do, then the
         agent will suggest that they tell their team members that they need
         assistance. 
 
-    \item For some teams, if a team member asked for help but did not get a
+    \item If a team member asked for help but did not get a
         reply from any of the other team members, then the agent will
         suggest that they tell the others again that help is needed. 
 \end{enumerate}
@@ -161,7 +159,12 @@ measures that will be available for ASIST Study 3. This subset was chosen due
 to either: (i) having theoretical connections to coordination (i.e.,
 synchronization, coordinative communications, belief differences), (ii)
 involving the use of markers for communication, which is the direct target of
-our intervention (threat room and victim type communication) \ps{We have more interventions. Moreover, we don't intervene on threat marker blocks anymore.}, or (iii)
+our intervention
+%%% (threat room and victim type communication)
+%%% \ps{We have more interventions. Moreover, we don't intervene on threat marker blocks anymore.}, 
+%%% I have edited the sentence a bit. We do not need to specifically address all
+%%% our interventions. 
+or (iii)
 representing a global measure of team effectiveness (score and error rate).
 
 \noindent The team process measures we hope to both predict and influence are:
@@ -191,7 +194,13 @@ representing a global measure of team effectiveness (score and error rate).
 
     \item \textbf{Rutgers Threat Room Communication AC}: \% of threat
         rooms that had a threat room marker block outside its entrance at some
-        point during the mission. \ps{Maybe by increasing coordination, the number of overall markers will increase too. However, we do not encourage the players to talk about threat markers anymore. The agent only intervenes on markers that instill assistance from another player.}  
+        point during the mission.
+        %
+        \ps{Maybe by increasing coordination, the number of overall markers will increase too.     However, we do not encourage the players to talk about threat markers anymore. The agent only intervenes on markers that instill assistance from another player.}  
+        %
+        \kobus{We are not declaring the details of what we expect. These are not
+        our measures. We are simply testing whether they are indicative of
+        coordination.}
 
     \item \textbf{Rutgers Victim Type Communication AC}: count of
         victim type marker blocks placed near the correct type of A or B
@@ -292,11 +301,21 @@ representing a global measure of team effectiveness (score and error rate).
         \mu^2_{t+1} = (1-c) \mu^2_t + c\mu^1_t ~.
     \end{align}
 
-    To pre-register a single approach, we model coordination as being constant
-    for the second half of each trial. This allows for the team to develop some
-    rapport and interventions to have an effect. 
+    In general, coordination can drift, or even switch, in time, but
+    coordination needs to be somewhat stable over time, as it is defined over a
+    period of time. More pragmatically, if coordination has complete freedom,
+    the model will surely overfit. 
 
-\clearpage
+    It is also possible that there are multiple coordinating processes in s
+    system. However, for a given coordination processes, observations of
+    different modalities and time scales are all linked to the same latent
+    coordination obeying a single temporal assumption. 
+
+    To pre-register a single approach, we will assume a single coordination
+    process that drifts slowly during the first half of each trial, and is
+    constant for the second half of each trial. This allows for the team to
+    develop some rapport and for interventions to have an effect. 
+
 \subsection{Interventions}
 \label{subsec:interventions}
 
