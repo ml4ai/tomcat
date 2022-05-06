@@ -29,12 +29,9 @@ __monitor_testbed_launch() {
   echo -e "${padding}Monitoring launch..."
 
   # Wait till the log file actually exists
-  if [ ! -f $log_path ]; then
-    local text="${padding}${RED}The log file ${EMPH}$log_path${RED} does not "
-    text+="exist.${NC}"
-    echo -e "$text"
-    return 1
-  fi
+  while [ ! -f $log_path ]; do
+    sleep 1
+  done
 
   local num_seconds=0
   while [ $num_seconds -lt $SECONDS_TO_WAIT ]; do

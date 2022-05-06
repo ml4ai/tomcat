@@ -71,7 +71,7 @@ __start_ai() {
       text+="Check the log file in ${EMPH}$log_path${RED} for more information.${NC}"
       echo -e "$text"
     fi
-    yes_no_question "${padding}Do you want to retry to establish connection?"
+    yes_no_question "${padding}Do you want to ${EMPH}retry${NC} to establish connection?"
   done
 }
 

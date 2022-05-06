@@ -39,7 +39,7 @@ __start_on_client() {
 
     local minecraft_launched="n"
 
-    echo -e "${padding}Launching ${EMPH}Minecraft${NC} on ${EMPH}$client_name${NC}..."
+    echo -e "${padding} Launching ${EMPH}Minecraft${NC} on ${EMPH}$client_name${NC}..."
     # Remove files to avoid thinking Minecraft was successfully launched because
     # of a previous successful launching
     rm $log_path &>/dev/null
@@ -60,20 +60,14 @@ __monitor_launch_on_client() {
   echo -e "${padding}Monitoring launch on ${EMPH}$client_name${NC}..."
 
   # Wait until the pid file exists
-  if [ ! -f $pid_path ]; then
-    local text="${padding}${RED}The pid file ${EMPH}$pid_path${RED} does not "
-    text+="exist.${NC}"
-    echo -e "$text"
-    return 1
-  fi
+  while [ ! -f $pid_path ]; do
+    sleep 1
+  done
 
   # Wait until the log file exists
-  if [ ! -f $log_path ]; then
-    local text="${padding}${RED}The log file ${EMPH}$log_path${RED} does not "
-    text+="exist.${NC}"
-    echo -e "$text"
-    return 1
-  fi
+  while [ ! -f $log_path ]; do
+    sleep 1
+  done
 
   local minecraft_pid=$(cat $pid_path)
 
