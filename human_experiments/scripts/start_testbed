@@ -24,11 +24,17 @@ fi
 __monitor_testbed_launch() {
   local log_path=$1
   local testbed_pid=$2
+  local padding=$3
+
+  echo -e "${PADDING}Monitoring launch..."
 
   # Wait till the log file actually exists
-  while [ ! -f $log_path ]; do
-    sleep 1
-  done
+  if [ ! -f $log_path ]; then
+    local text="${padding}${RED}The log file ${EMPH}$log_path${RED} does not "
+    text+="exist.${NC}"
+    echo -e "$text"
+    return 1
+  fi
 
   local num_seconds=0
   while [ $num_seconds -lt $SECONDS_TO_WAIT ]; do
@@ -51,7 +57,7 @@ __monitor_testbed_launch() {
   done
 }
 
-__launch_testbed(){
+__launch_testbed() {
   # Bring the testbed up and save logs
   local log_path=$EXPERIMENT_DIR/tmp/testbed.log
   local testbed_launched="n"
@@ -59,8 +65,11 @@ __launch_testbed(){
   echo -e "${PADDING}Launching ${EMPH}Testbed...${NC}"
   while [[ $testbed_launched == "n" ]]; do
     pushd $HOME/$SYSTEMS_DIR/testbed/Local >/dev/null
-    testbed_up_core.sh -i &> $log_path &
-    __monitor_testbed_launch $log_path $!
+    sudo ./testbed_up_core.sh -i &>$log_path &
+
+    # Wait for a while to guarantee the log file was created
+    sleep 1
+    __monitor_testbed_launch $log_path $! "$PADDING"
 
     if [[ $? -eq 0 ]]; then
       testbed_launched="y"
@@ -69,7 +78,7 @@ __launch_testbed(){
       text="${PADDING}$${RED} Error while launching the testbed. Check the log file in "
       text+="${EMPH}$log_path${RED} for more detail.${NC}"
       echo -e "$text"
-      echo -n "${PADDING}Press any key to ${EMPH}relaunch:${NC} "
+      echo -n -e "${PADDING}Press any key to ${EMPH}relaunch:${NC} "
       read -r
     fi
     popd >/dev/null
