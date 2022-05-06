@@ -126,12 +126,12 @@ __monitor_launch() {
       all_launched="n"
     fi
 
-    __monitor_launch "tiger" "tiger.local" "$padding "
+    __monitor_launch_on_client "tiger" "tiger.local" "$padding "
     if [[ $? -ne 0 ]]; then
       all_launched="n"
     fi
 
-    __monitor_launch "leopard" "leopard.local" "$padding "
+    __monitor_launch_on_client "leopard" "leopard.local" "$padding "
     if [[ $? -ne 0 ]]; then
       all_launched="n"
     fi
