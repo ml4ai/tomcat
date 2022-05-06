@@ -27,6 +27,7 @@ enable_wifi() {
       echo -e "${padding}${RED} The WiFi on ${EMPH}$client_name${RED} was ${EMPH}NOT${RED} enabled.${NC}"
       echo -n "${padding}Press any key to retry enabling it: "
       read -r
+      ssh $EXPERIMENT_USER@$client_address "$command"
     fi
   done
 }
@@ -44,7 +45,7 @@ disable_wifi() {
   ssh $EXPERIMENT_USER@$client_address "$command"
 
   local disabled="n"
-  while [[ disabled != "y" ]]; do
+  while [[ $disabled != "y" ]]; do
     __check_wifi $client_name $client_address
     if [[ $? -eq 1 ]]; then
       echo -e "${padding}${GREEN} The WiFi on ${EMPH}$client_name${GREEN} was successfully ${EMPH}disabled${NC}."
@@ -53,6 +54,7 @@ disable_wifi() {
       echo -e "${padding}${RED} The WiFi on ${EMPH}$client_name${RED} was ${EMPH}NOT${RED} disabled.${NC}"
       echo -n "${padding}Press any key to retry disabling it: "
       read -r
+      ssh $EXPERIMENT_USER@$client_address "$command"
     fi
   done
 }
