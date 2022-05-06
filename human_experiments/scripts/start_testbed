@@ -26,7 +26,7 @@ __monitor_testbed_launch() {
   local testbed_pid=$2
   local padding=$3
 
-  echo -e "${PADDING}Monitoring launch..."
+  echo -e "${padding}Monitoring launch..."
 
   # Wait till the log file actually exists
   if [ ! -f $log_path ]; then
@@ -69,11 +69,11 @@ __launch_testbed() {
 
     # Wait for a while to guarantee the log file was created
     sleep 1
-    __monitor_testbed_launch $log_path $! "$PADDING"
+    __monitor_testbed_launch $log_path $! "$PADDING "
 
     if [[ $? -eq 0 ]]; then
       testbed_launched="y"
-      echo -e "${PADDING}${Green} Testbed successfully launched.${NC}"
+      echo -e "${PADDING}${GREEN} Testbed successfully launched.${NC}"
     else
       text="${PADDING}$${RED} Error while launching the testbed. Check the log file in "
       text+="${EMPH}$log_path${RED} for more detail.${NC}"
