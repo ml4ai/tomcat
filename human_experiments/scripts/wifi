@@ -2,17 +2,76 @@
 
 set -u
 
+source configuration_helpers
+
 enable_wifi() {
-  local device="$(networksetup -listallhardwareports | awk '$3==\"Wi-Fi\" {getline;print}' | awk '{print $2}')"
-  networksetup -setairportpower $device "on"
+  local client_name=$1
+  local client_address=$2
+  local padding=$3
+
+  echo -e "${padding}Enabling ${EMPH}WiFi${NC} on ${EMPH}$client_name${NC}..."
+
+  local command="device=\$(networksetup -listallhardwareports | "
+  command+="awk '\$3==\"Wi-Fi\" {getline;print}' | awk '{print \$2}') && "
+  command+="networksetup -setairportpower \$device \"on\""
+
+  ssh $EXPERIMENT_USER@$client_address "$command"
+
+  local enabled="n"
+  while [[ $enabled != "y" ]]; do
+    __check_wifi $client_name $client_address
+    if [[ $? -eq 0 ]]; then
+      echo -e "${padding}${GREEN} The WiFi on ${EMPH}$client_name${GREEN} was successfully ${EMPH}enabled${NC}."
+      enabled="y"
+    else
+      echo -e "${padding}${RED} The WiFi on ${EMPH}$client_name${RED} was ${EMPH}NOT${RED} enabled.${NC}"
+      echo -n "${padding}Press any key to retry enabling it: "
+      read -r
+    fi
+  done
 }
 
 disable_wifi() {
-  local device="$(networksetup -listallhardwareports | awk '$3==\"Wi-Fi\" {getline;print}' | awk '{print $2}')"    
-  networksetup -setairportpower $device "off"
+  local client_name=$1
+  local client_address=$2
+  local padding=$3
+
+  echo -e "${padding}Disabling ${EMPH}WiFi${NC} on ${EMPH}$client_name${NC}..."
+
+  local command="device=\$(networksetup -listallhardwareports | "
+  command+="awk '\$3==\"Wi-Fi\" {getline;print}' | awk '{print \$2}') && "
+  command+="networksetup -setairportpower \$device \"off\""
+  ssh $EXPERIMENT_USER@$client_address "$command"
+
+  local disabled="n"
+  while [[ disabled != "y" ]]; do
+    __check_wifi $client_name $client_address
+    if [[ $? -eq 1 ]]; then
+      echo -e "${padding}${GREEN} The WiFi on ${EMPH}$client_name${GREEN} was successfully ${EMPH}disabled${NC}."
+      disabled="y"
+    else
+      echo -e "${padding}${RED} The WiFi on ${EMPH}$client_name${RED} was ${EMPH}NOT${RED} disabled.${NC}"
+      echo -n "${padding}Press any key to retry disabling it: "
+      read -r
+    fi
+  done
 }
 
-check_wifi() {
-  local device="$(networksetup -listallhardwareports | awk '$3==\"Wi-Fi\" {getline;print}' | awk '{print $2}')"
-  networksetup -getairportpower " & $device & " | awk '{print $4}'
+__check_wifi() {
+  local client_name=$1
+  local client_address=$2
+
+  local command="device=\$(networksetup -listallhardwareports | "
+  command+="awk '\$3==\"Wi-Fi\" {getline;print}' | awk '{print \$2}') && "
+  command+="networksetup -getairportpower \$device | awk '{print \$4}'"
+
+  local status=$(ssh $EXPERIMENT_USER@$client_address "$command")
+
+  shopt -s nocasematch
+  if [[ $status == "on" ]]; then
+    return 0
+  else
+    return 1
+  fi
+  shopt -u nocasematch
 }
