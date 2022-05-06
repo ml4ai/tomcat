@@ -35,9 +35,12 @@ __open_on_client() {
   if [[ $? -eq 0 ]]; then
     enable_wifi $client_name $client_address "$padding "
 
+    echo -e "${padding}Waiting 5 seconds to connect to the proper WiFi..."
+    sleep 5
+
     # Open the survey
     local command="osascript \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/open_final_survey.scpt "
-    command+="${FINAL_SURVEY_URL} $participant_id $player_name $client_name"
+    command+="\'$FINAL_SURVEY_URL\' $participant_id $player_name $client_name"
     ssh $EXPERIMENT_USER@$client_address "$command"
   fi
 }
@@ -46,7 +49,7 @@ __open_final_surveys() {
   local padding=$1
 
   source collect_player_names "$EXPERIMENT_DIR" "$padding"
-  source collect_participant_ids "$padding "
+  source collect_participant_ids "$padding"
   echo -e "${padding}Opening the ${EMPH}Final Survey...${NC}"
 
   __open_on_client "lion" "lion.local" $LION_PARTICIPANT_ID $LION_PLAYER_NAME "$padding "
