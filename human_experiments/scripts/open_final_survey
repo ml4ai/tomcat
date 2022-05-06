@@ -2,26 +2,53 @@
 
 set -u
 
-open_final_survey() {
-  __open_final_survey_on_client $1 "lion" $LION_ADDRESS $LION_PARTICIPANT_ID
-  __open_final_survey_on_client $1 "tiger" $TIGER_ADDRESS $TIGER_PARTICIPANT_ID
-  __open_final_survey_on_client $1 "leopard" $LEOPARD_ADDRESS $LEOPARD_PARTICIPANT_ID
-}
+#!/bin/bash
 
-__open_final_survey_on_client() {
-  local server_root_dir=$1
-  local client_name=$2
-  local client_address=$3
-  local participant_id=$4
+set -u
 
-  open_survey=""
-  while [[ "$open_survey" != "y" ]] && [[ "$open_survey" != "n" ]]; do
-    read -p " - Do you wish to open the final survey on $client_name? [y/n]: " -r open_survey
-  done
+source configuration_helpers
 
-  if [[ "$open_survey" == "y" ]]; then  
-    local mc_player_name=$(cat $server_root_dir/$client_name/player_name.txt)
-    # Open sensors applications in a new desktop
-    ssh $EXPERIMENT_USER@$client_address "osascript \$HOME/tomcat/tools/lab_scripts/applescripts/open_final_survey.scpt $participant_id $mc_player_name $client_name"
+if [[ -z ${1+x} ]]; then
+  # In case the script is executed standalone.
+  text="${RED}Please provide an experiment directory as the first argument of "
+  text+="the call to this script.${NC}"
+  echo -e "$text"
+  exit 1
+fi
+EXPERIMENT_DIR=$1
+
+if [[ -z ${2+x} ]]; then
+  PADDING=""
+else
+  PADDING=$2
+fi
+
+__open_on_client() {
+  local client_name=$1
+  local client_address=$2
+  local participant_id=$3
+  local player_name=$4
+  local padding=$5
+
+  yes_no_question "${padding}Do you want to open the final survey on ${EMPH}$client_name?${NC}"
+  if [[ $? -eq 0 ]]; then
+    # Open the client map
+    local command="osascript \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/open_final_survey.scpt "
+    command+="$FINAL_SURVEY_URL $participant_id $player_name $client_name"
+    ssh $EXPERIMENT_USER@$client_address "$command"
   fi
 }
+
+__open_final_surveys() {
+  source collect_player_names "$EXPERIMENT_DIR"
+  source collect_participant_ids
+
+  echo -e "${PADDING}Opening the ${EMPH}Final Survey...${NC}"
+  __open_on_client "lion" "lion.local" $LION_PARTICIPANT_ID $LION_PLAYER_NAME "$PADDING "
+  __open_on_client "tiger" "tiger.local" $TIGER_PARTICIPANT_ID $TIGER_PLAYER_NAME "$PADDING "
+  __open_on_client "leopard" "leopard.local" $LEOPARD_PARTICIPANT_ID $LEOPARD_PLAYER_NAME "$PADDING "
+}
+
+__open_final_surveys
+
+

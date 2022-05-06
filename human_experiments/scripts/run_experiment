@@ -96,8 +96,7 @@ if [[ $GOTO -le 9 ]]; then
   echo " "
   yes_no_question "[9] Do you want to open the ${EMPH}Final Survey?${NC}"
   if [[ $? -eq 0 ]]; then
-    echo " Please, open it manually."
-  #  source open_final_survey $experiment_dir_cat " "
+    source open_final_survey $experiment_dir_cat " "
   fi
 fi
 
