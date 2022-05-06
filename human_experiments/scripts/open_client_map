@@ -1,0 +1,45 @@
+#!/bin/bash
+
+set -u
+
+source configuration_helpers
+
+if [[ -z ${1+x} ]]; then
+  # In case the script is executed standalone.
+  text="${RED}Please provide an experiment directory as the first argument of "
+  text+="the call to this script.${NC}"
+  echo -e "$text"
+  exit 1
+fi
+EXPERIMENT_DIR=$1
+
+if [[ -z ${2+x} ]]; then
+  PADDING=""
+else
+  PADDING=$2
+fi
+
+__open_on_client() {
+  local client_name=$1
+  local client_address=$2
+  local player_name=$3
+  local padding=$4
+
+  yes_no_question "${padding}Do you want to open the client map on ${EMPH}$client_name?${NC}"
+  if [[ $? -eq 0 ]]; then
+    # Open the client map
+    local command="osascript \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/open_client_map.scpt $CLIENT_MAP_URL $player_name"
+    ssh $EXPERIMENT_USER@$client_address "$command"
+  fi
+}
+
+__open_client_maps() {
+  source collect_player_names "$EXPERIMENT_DIR"
+
+  echo -e "${PADDING}Opening the ${EMPH}Client Maps...${NC}"
+  __open_on_client "lion" "lion.local" $LION_PLAYER_NAME "$PADDING "
+  __open_on_client "tiger" "tiger.local" $TIGER_PLAYER_NAME "$PADDING "
+  __open_on_client "leopard" "leopard.local" $LEOPARD_PLAYER_NAME "$PADDING "
+}
+
+__open_client_maps

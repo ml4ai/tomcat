@@ -86,10 +86,9 @@ fi
 
 if [[ $GOTO -le 8 ]]; then
   echo " "
-  yes_no_question "[8] Do you want to start the ${EMPH}Minecraft?${NC}"
+  yes_no_question "[8] Do you want to start ${EMPH}Minecraft?${NC}"
   if [[ $? -eq 0 ]]; then
-    echo " Please, start it manually."
-  #  source start_minecraft $experiment_dir_cat " "
+    source start_minecraft $experiment_dir_cat " "
   fi
 fi
 
