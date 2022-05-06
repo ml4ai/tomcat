@@ -2,149 +2,173 @@
 
 set -u
 
-start_minecraft() {
-  __start_minecraft_on_client $1 "lion" $LION_ADDRESS
-  __start_minecraft_on_client $1 "tiger" $TIGER_ADDRESS
-  __start_minecraft_on_client $1 "leopard" $LEOPARD_ADDRESS
+source configuration_helpers
 
-  local all_launched=1
-  while [[ $all_launched -ne 0 ]]; do
-    all_launched=0
+SECONDS_TO_WAIT=300
 
-    __monitor_launch_on_client $1 "lion"
-    if [[ $? -eq 1 ]]; then
-      local restart_minecraft=""
-      while [[ "$restart_minecraft" != "y" ]] && [[ "$restart_minecraft" != "n" ]]; do
-        read -p " - Do you wish to relaunch Minecraft on lion? [y/n]: " -r restart_minecraft
-      done
+if [[ -z ${1+x} ]]; then
+  # In case the script is executed standalone.
+  text="${RED}Please provide an experiment directory as the first argument of "
+  text+="the call to this script.${NC}"
+  echo -e "$text"
+  exit 1
+fi
+EXPERIMENT_DIR=$1
 
-      if [[ $restart_minecraft == "y" ]]; then
-        __start_minecraft_on_client $1 "lion" $LION_ADDRESS
-        all_launched=1
-      fi
-    fi
+if [[ -z ${2+x} ]]; then
+  PADDING=""
+else
+  PADDING=$2
+fi
 
-    __monitor_launch_on_client $1 "tiger"
-    if [[ $? -eq 1 ]]; then
-      local restart_minecraft=""
-      while [[ "$restart_minecraft" != "y" ]] && [[ "$restart_minecraft" != "n" ]]; do
-        read -p " - Do you wish to retry to start Minecraft on tiger? [y/n]: " -r restart_minecraft
-      done
+__start_on_client() {
+  local client_name=$1
+  local client_address=$2
+  local padding=$3
 
-      if [[ $restart_minecraft == "y" ]]; then
-        __start_minecraft_on_client $1 "tiger" $TIGER_ADDRESS
-        all_launched=1
-      fi
-    fi
-
-    __monitor_launch_on_client $1 "leopard"
-    if [[ $? -eq 1 ]]; then
-      local restart_minecraft=""
-      while [[ "$restart_minecraft" != "y" ]] && [[ "$restart_minecraft" != "n" ]]; do
-        read -p " - Do you wish to retry to start Minecraft on leopard? [y/n]: " -r restart_minecraft
-      done
-
-      if [[ $restart_minecraft == "y" ]]; then
-        __start_minecraft_on_client $1 "leopard" $LEOPARD_ADDRESS
-        all_launched=1
-      fi
-    fi
-  done
-
-  __open_client_map_on_client $1 "lion" $LION_ADDRESS
-  __open_client_map_on_client $1 "tiger" $TIGER_ADDRESS
-  __open_client_map_on_client $1 "leopard" $LEOPARD_ADDRESS
-}
-
-__start_minecraft_on_client() {
-  local server_root_dir=$1
-  local client_name=$2
-  local client_address=$3
-
-  start_minecraft=""
-  while [[ "$start_minecraft" != "y" ]] && [[ "$start_minecraft" != "n" ]]; do
-    read -p " - Do you wish to start Minecraft on $client_name? [y/n]: " -r start_minecraft
-  done
-
-  if [[ "$start_minecraft" == "y" ]]; then  
-    local log_path=$server_root_dir/$client_name/minecraft.log
-    local pid_path=$server_root_dir/$client_name/minecraft.pid
-
+  yes_no_question "${padding}Do you want to start Minecraft on ${EMPH}$client_name?${NC}"
+  if [[ $? -eq 0 ]]; then
     # Start Minecraft on a new desktop
-    ssh $EXPERIMENT_USER@$client_address "osascript \$HOME/tomcat/tools/lab_scripts/applescripts/new_desktop.scpt"
-    
-    # Remove files to avoid thinking Minecraft was sucessfully launched because of a previous
-    # sucessful launching 
-    rm $log_path 2> /dev/null
-    rm $pid_path 2> /dev/null
-    ssh $EXPERIMENT_USER@$client_address "osascript \$HOME/tomcat/tools/lab_scripts/applescripts/launch_minecraft.scpt \$HOME$log_path \$HOME$pid_path"
-    $TOMCAT/tools/lab_scripts/watch_for_player_name "$server_root_dir" "$client_name" "$client_address" &
+    create_new_desktop_on_client $client_address
+
+    local common_file_path="$EXPERIMENT_DIR/tmp/minecraft_$client_name"
+    local log_path="$common_file_path".log
+    local pid_path="$common_file_path".pid
+    local command="osascript \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/launch_minecraft.scpt "
+    command+="\$HOME/$SYSTEMS_DIR \$HOME$log_path \$HOME$pid_path"
+
+    local minecraft_launched="n"
+
+    echo -e "${padding}Launching ${EMPH}Minecraft${NC} on ${EMPH}$client_name${NC}..."
+    # Remove files to avoid thinking Minecraft was successfully launched because
+    # of a previous successful launching
+    rm $log_path &>/dev/null
+    rm $pid_path &>/dev/null
+    ssh $EXPERIMENT_USER@$client_address "$command"
   fi
 }
 
 __monitor_launch_on_client() {
-  local server_root_dir=$1
-  local client_name=$2
+  local client_name=$1
+  local client_address=$2
+  local padding=$3
 
-  local log_path=$server_root_dir/$client_name/minecraft.log
-  local pid_path=$server_root_dir/$client_name/minecraft.pid
+  local common_file_path="$EXPERIMENT_DIR/tmp/minecraft_$client_name"
+  local log_path="$common_file_path".log
+  local pid_path="$common_file_path".pid
 
-  # Wait till the pid file actually exists
-  while [ ! -f $pid_path ]; do
-    sleep 1;
-  done
+  echo -e "${padding}Monitoring launch on ${EMPH}$client_name${NC}..."
 
-  # Wait till the log file actually exists
-  while [ ! -f $log_path ]; do
-    sleep 1;
-  done
+  # Wait until the pid file exists
+  if [ ! -f $pid_path ]; then
+    local text="${padding}${RED}The pid file ${EMPH}$pid_path${RED} does not "
+    text+="exist.${NC}"
+    echo -e "$text"
+    return 1
+  fi
+
+  # Wait until the log file exists
+  if [ ! -f $log_path ]; then
+    local text="${padding}${RED}The log file ${EMPH}$log_path${RED} does not "
+    text+="exist.${NC}"
+    echo -e "$text"
+    return 1
+  fi
 
   local minecraft_pid=$(cat $pid_path)
 
-  local num_seconds_to_wait=300
   local num_seconds=0
-  while [ $num_seconds -lt $num_seconds_to_wait ]; do 
-    if [[ -e "${log_path}" ]]; then 
-      launch_client_failed=`grep -c 'launchClient FAILED' ${log_path}`
-      if [[ ${launch_client_failed} -ne 0 ]]; then                     
-        printf "\e[31m - Error while launching Minecraft. Check the log file in $log_path for more detail.\e[0m\n" 
+  while [ $num_seconds -lt $SECONDS_TO_WAIT ]; do
+    if [[ -e "$log_path" ]]; then
+      launch_client_failed=$(grep -c 'launchClient FAILED' ${log_path})
+      if [[ ${launch_client_failed} -ne 0 ]]; then
+        local text="${padding}${RED}Error while launching Minecraft. Check the "
+        text+="log file in ${EMPH}$log_path${RED} for more detail.${NC}"
+        echo -e "$text"
         return 1
       fi
 
-      have_line=`grep -c 'CLIENT enter state: DORMANT' ${log_path}`
-      if [[ ${have_line} -ne 0 ]]; then 
-        printf "\e[32m - Testbed successfully launched on $client_name.\e[0m\n"
+      have_line=$(grep -c 'CLIENT enter state: DORMANT' ${log_path})
+      if [[ ${have_line} -ne 0 ]]; then
+        local text="${padding}${GREEN}Minecraft successfully launched on "
+        text+="${EMPH}$client_name.${NC}"
+        echo -e "$text"
         return 0
       fi
-    else 
-      printf "\e[31m - Error while launching Minecraft. The log file $log_path does not exist anymore.\e[0m\n" 
+    else
+      local text="${padding}${RED}Error while launching Minecraft. The log file "
+      text+="${EMPH}$log_path${RED} does not exist anymore.${NC}"
+      echo -e "$text"
       return 1
-    fi 
+    fi
 
     sleep 1
-    let num_seconds+=1    
-  done 
-}
-
-__open_client_map_on_client() {
-  local server_root_dir=$1
-  local client_name=$2
-  local client_address=$3
-
-  open=""
-  while [[ "$open" != "y" ]] && [[ "$open" != "n" ]]; do
-    read -p " - Do you wish to open the Client Map on $client_name? [y/n]: " -r open
+    let num_seconds+=1
   done
 
-  if [[ "$open" == "y" ]]; then  
-    local player_path=$server_root_dir/$client_name/player_name.txt
-    
-    local player_name="$(cat $player_path)"
+  local text="${padding}${RED}Minecraft is still launching after "
+  text+="${EMPTH}$SECONDS_TO_WAIT.${NC}"
+  echo -e "$text"
 
-    # Open the client map
-    ssh $EXPERIMENT_USER@$client_address "osascript \$HOME/tomcat/tools/lab_scripts/applescripts/open_client_map.scpt $player_name"
+  # TODO - kill minecraft on the client machine
+  text="${padding}${RED} Please manually kill the minecraft process "
+  text+="on ${EMPH}$client_name.${NC}"
+  echo -e "$text"
 
-    # Resize and reposition Minecraft
-    ssh $EXPERIMENT_USER@$client_address "osascript \$HOME/tomcat/tools/lab_scripts/applescripts/resize_minecraft_window.scpt"
-  fi
+  return 1
 }
+
+__monitor_launch() {
+  local padding=$1
+
+  echo -e "${padding}Monitoring launch..."
+
+  local all_launched="n"
+  while [[ $all_launched != "y" ]]; do
+    all_launched="y"
+
+    __monitor_launch_on_client "lion" "lion.local" "$padding "
+    if [[ $? -ne 0 ]]; then
+      all_launched="n"
+    fi
+
+    __monitor_launch "tiger" "tiger.local" "$padding "
+    if [[ $? -ne 0 ]]; then
+      all_launched="n"
+    fi
+
+    __monitor_launch "leopard" "leopard.local" "$padding "
+    if [[ $? -ne 0 ]]; then
+      all_launched="n"
+    fi
+  done
+}
+
+__resize_and_reposition_on_client() {
+  local client_address=$1
+
+  local command="osascript \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/resize_minecraft_window.scpt"
+  ssh $EXPERIMENT_USER@$client_address "$command"
+}
+
+__resize_and_reposition_minecraft() {
+  __resize_and_reposition_on_client "lion.local"
+  __resize_and_reposition_on_client "tiger.local"
+  __resize_and_reposition_on_client "leopard.local"
+}
+
+__start_minecraft() {
+  echo -e "${PADDING}Launching ${EMPH}Minecraft...${NC}"
+  __start_on_client "lion" "lion.local" "$PADDING "
+  __start_on_client "tiger" "tiger.local" "$PADDING "
+  __start_on_client "leopard" "leopard.local" "$PADDING "
+
+  # Wait for a while so that the files containing the log and pid have time to
+  # be created
+  sleep 1
+  __monitor_launch "$PADDING "
+  __resize_and_reposition_minecraft
+  source open_client_map $EXPERIMENT_DIR
+}
+
+__start_minecraft

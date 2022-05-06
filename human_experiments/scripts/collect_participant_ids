@@ -4,29 +4,29 @@ set -u
 
 source configuration_helpers
 
-if [[ -z ${2+x} ]]; then
+if [[ -z ${1+x} ]]; then
   PADDING=""
 else
-  PADDING=$2
+  PADDING=$1
 fi
 
 if [[ -z ${LION_PARTICIPANT_ID+x} ]]; then
-  echo -n -e "${PADDING}Enter the participant ID on ${EMPH}Lion${NC}: "
+  echo -n -e "${PADDING}Enter the participant ID on ${EMPH}lion${NC}: "
   read -r LION_PARTICIPANT_ID
   export LION_PARTICIPANT_ID
-  echo -e "${PADDING}${GREEN} The participant ID on ${EMPH}Lion${GREEN} was successfully set to ${EMPH}${LION_PARTICIPANT_ID}${NC}."
+  echo -e "${PADDING}${GREEN} The participant ID on ${EMPH}lion${GREEN} was successfully set to ${EMPH}${LION_PARTICIPANT_ID}${NC}."
 fi
 
 if [[ -z ${TIGER_PARTICIPANT_ID+x} ]]; then
-  echo -n -e "${PADDING}Enter the participant ID on ${EMPH}Tiger${NC}: "
+  echo -n -e "${PADDING}Enter the participant ID on ${EMPH}tiger${NC}: "
   read -r TIGER_PARTICIPANT_ID
   export TIGER_PARTICIPANT_ID
-  echo -e "${PADDING}${GREEN} The participant ID on ${EMPH}Tiger${GREEN} was successfully set to ${EMPH}${TIGER_PARTICIPANT_ID}${NC}."
+  echo -e "${PADDING}${GREEN} The participant ID on ${EMPH}tiger${GREEN} was successfully set to ${EMPH}${TIGER_PARTICIPANT_ID}${NC}."
 fi
 
 if [[ -z ${LEOPARD_PARTICIPANT_ID+x} ]]; then
-  echo -n -e "${PADDING}Enter the participant ID on ${EMPH}Leopard${NC}: "
+  echo -n -e "${PADDING}Enter the participant ID on ${EMPH}leopard${NC}: "
   read -r LEOPARD_PARTICIPANT_ID
   export LEOPARD_PARTICIPANT_ID
-  echo -e "${PADDING}${GREEN} The participant ID on ${EMPH}Leopard${GREEN} was successfully set to ${EMPH}${LEOPARD_PARTICIPANT_ID}${NC}."
+  echo -e "${PADDING}${GREEN} The participant ID on ${EMPH}leopard${GREEN} was successfully set to ${EMPH}${LEOPARD_PARTICIPANT_ID}${NC}."
 fi

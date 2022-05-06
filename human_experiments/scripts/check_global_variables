@@ -35,6 +35,14 @@ if [[ -z ${DATA_ROOT_DIR+x} ]]; then
   status=1
 fi
 
+# Client map URL
+if [[ -z ${CLIENT_MAP_URL+x} ]]; then
+  text="${RED}Please set the variable ${EMPH}CLIENT_MAP_URL${NC}${RED} with the "
+  text+="URL of the client map".
+  echo -e $text
+  status=1
+fi
+
 if [[ $status -ne 0 ]]; then
   exit 1;
 fi

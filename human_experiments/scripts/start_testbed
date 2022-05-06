@@ -53,8 +53,8 @@ __monitor_testbed_launch() {
 
 __launch_testbed(){
   # Bring the testbed up and save logs
-  log_path=$EXPERIMENT_DIR/tmp/testbed.log
-  testbed_launched="n"
+  local log_path=$EXPERIMENT_DIR/tmp/testbed.log
+  local testbed_launched="n"
 
   echo -e "${PADDING}Launching ${EMPH}Testbed...${NC}"
   while [[ $testbed_launched == "n" ]]; do
@@ -69,7 +69,7 @@ __launch_testbed(){
       text="${PADDING}$${RED} Error while launching the testbed. Check the log file in "
       text+="${EMPH}$log_path${RED} for more detail.${NC}"
       echo -e "$text"
-      echo -n "${PADDING}Press any key to retry launching: "
+      echo -n "${PADDING}Press any key to ${EMPH}relaunch:${NC} "
       read -r
     fi
     popd >/dev/null
