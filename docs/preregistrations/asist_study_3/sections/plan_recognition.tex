@@ -39,9 +39,9 @@ current state of the problem domain for that method to be used for task
 decomposition. If a methods preconditions are satisfied, then that method is
 said to be applicable \citep{Russell_Norvig_2021}. \autoref{fig:pr1} further illustrates the concepts of compound tasks, actions, methods, and task decomposition. In the illustration, both methods could applicable or only one of them could be applicable given the current state of the problem domain. In the former case, an automated planner must choose one of the methods for decomposition, leading to two different possible plans. Further details on HTN planning processes can be found in the automated planning literature. (e.g., the SHOP2 paper by \citet{Nau_2003}). 
 
-\begin{figure}[h]
+\begin{figure}
     \centering
-    \includegraphics[width=1\textwidth]{images/htn_concepts}
+    \includegraphics[width=\textwidth]{images/htn_concepts}
     \caption{The compound task \textit{Travel to C} is shown to have two different methods for accomplishing the same task.} 
     \label{fig:pr1}
 \end{figure}
@@ -60,9 +60,9 @@ task hierarchies are the plan explanations that give insight on the
 relationship between actions and the decision-making process of the agents.
 \autoref{fig:pr2} illustrates the general concept of our online MAPR approach.
 
-\begin{figure}[h]
+\begin{figure}
     \centering
-    \includegraphics[width=1\textwidth]{images/pr_as_planning}
+    \includegraphics[width=\textwidth]{images/pr_as_planning}
     \caption{In this illustration compound task are represented as groups of upper-case letters and actions are singular lower-case letters. Multiple potential task hierarchies can be generated for the same observed plan.} 
     \label{fig:pr2}
 \end{figure}
