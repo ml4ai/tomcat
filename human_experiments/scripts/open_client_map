@@ -36,12 +36,12 @@ __open_on_client() {
 __open_client_maps() {
   local padding=$1
 
-  echo -e "${padding} Opening the ${EMPH}Client Maps...${NC}"
-  source collect_player_names "$EXPERIMENT_DIR" "$padding  "
+  source collect_player_names "$EXPERIMENT_DIR" "$padding"
+  echo -e "${padding}Opening the ${EMPH}Client Maps...${NC}"
 
-  __open_on_client "lion" "lion.local" $LION_PLAYER_NAME "$padding  "
-  __open_on_client "tiger" "tiger.local" $TIGER_PLAYER_NAME "$padding  "
-  __open_on_client "leopard" "leopard.local" $LEOPARD_PLAYER_NAME "$padding  "
+  __open_on_client "lion" "lion.local" $LION_PLAYER_NAME "$padding "
+  __open_on_client "tiger" "tiger.local" $TIGER_PLAYER_NAME "$padding "
+  __open_on_client "leopard" "leopard.local" $LEOPARD_PLAYER_NAME "$padding "
 }
 
 __open_client_maps "$PADDING"
