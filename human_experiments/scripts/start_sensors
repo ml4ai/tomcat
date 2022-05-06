@@ -3,6 +3,7 @@
 set -u
 
 source configuration_helpers
+source wifi
 
 if [[ -z ${1+x} ]]; then
   PADDING=""
@@ -53,6 +54,7 @@ __start_sensors_on_client() {
 
     __start_eye_tracker $client_address "$padding "
     __start_fnirs $client_address "$padding "
+    disable_wifi $client_name $client_address "$padding "
   fi
 }
 
