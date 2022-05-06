@@ -102,7 +102,7 @@ fi
 
 if [[ $GOTO -le 10 ]]; then
   echo " "
-  local text="[10] Type [${EMPH}quit${NC}] to finish the experiment and close "
+  text="[10] Type [${EMPH}quit${NC}] to finish the experiment and close "
   text+="open applications: "
   wait_for_key "$text" "quit"
   source clean_up

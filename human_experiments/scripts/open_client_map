@@ -28,18 +28,20 @@ __open_on_client() {
   yes_no_question "${padding}Do you want to open the client map on ${EMPH}$client_name?${NC}"
   if [[ $? -eq 0 ]]; then
     # Open the client map
-    local command="osascript \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/open_client_map.scpt $CLIENT_MAP_URL $player_name"
+    local command="osascript \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/open_client_map.scpt ${CLIENT_MAP_URL} $player_name"
     ssh $EXPERIMENT_USER@$client_address "$command"
   fi
 }
 
 __open_client_maps() {
-  echo -e "${PADDING} Opening the ${EMPH}Client Maps...${NC}"
-  source collect_player_names "$EXPERIMENT_DIR" "$PADDING  "
+  local padding=$1
 
-  __open_on_client "lion" "lion.local" $LION_PLAYER_NAME "$PADDING  "
-  __open_on_client "tiger" "tiger.local" $TIGER_PLAYER_NAME "$PADDING  "
-  __open_on_client "leopard" "leopard.local" $LEOPARD_PLAYER_NAME "$PADDING  "
+  echo -e "${padding} Opening the ${EMPH}Client Maps...${NC}"
+  source collect_player_names "$EXPERIMENT_DIR" "$padding  "
+
+  __open_on_client "lion" "lion.local" $LION_PLAYER_NAME "$padding  "
+  __open_on_client "tiger" "tiger.local" $TIGER_PLAYER_NAME "$padding  "
+  __open_on_client "leopard" "leopard.local" $LEOPARD_PLAYER_NAME "$padding  "
 }
 
-__open_client_maps
+__open_client_maps "$PADDING"
