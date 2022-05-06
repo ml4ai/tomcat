@@ -47,6 +47,8 @@ __monitor_testbed_launch() {
       return 1
     fi
 
+    # TODO - fix this because the process might end but the writer buffer
+    #  to the log file might still be running I guess
     ps $testbed_pid >&/dev/null
     if [[ $? -ne 0 ]]; then
       return 1
