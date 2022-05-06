@@ -25,25 +25,49 @@ The most recent online MAPR approach by \citet{Argenta_Doyle_2017} uses an autom
 Our proposed method for online MAPR is also a \textit{plan recognition as planning} approach. Rather than make assumptions that limit the problems our approach can solve, we try to overcome the challenges of computational complexity by developing a highly efficient automated planning algorithm specialized towards doing online MAPR. Our automated planning algorithm combines the well-known Simple Hierarchical Ordered Planner (SHOP2) proposed by \citet{Nau_2003} and the Monte Carlos Tree Search (MCTS) single-agent plan recognition algorithm proposed by \citet{Kantharaju_Ontanon_Geib_2019}. We also draw heavy inspiration from known parsing algorithms for Probabilistic Context-Free Grammars (PCFG) \citep{Collins_2011}. As suggested by its partial adaption of the SHOP2 algorithm, our approach assumes that the agents' actions relate through a set of hierarchical structures or what is known as a hierarchical task network (HTN) \citep{Nau_2003,Russell_Norvig_2021}. As such, our approach produces the most likely task hierarchy, which is an instance of a HTN under specific initial conditions. These task hierarchies represent how actions relate to each other at different levels of granularity of complexity by showing how high-level actions (also known as compound tasks) can be decomposed into low-level actions. 
 
 \section{Approach}
-In a HTN domain representation, compound tasks are high-level actions that are composed of lower-level actions. These lower-level actions may be compound task themselves that need to be further decomposed or non-decomposable actions, which are sometimes referred to as primitive tasks or just actions \citep{Russell_Norvig_2021}. Depending on how abstractly a compound task is defined, there may be multiple sets of lower-level actions that could be combined to create the same compound task. These different sets of actions are known as ``methods", since they are different ways of decomposing the compound task \citep{Russell_Norvig_2021}. Additionally, methods typically have preconditions, which are specific conditions that must be satisfied by the current state of the problem domain for that method to be used for task decomposition. If a methods preconditions are satisfied, then that method is said to be applicable \citep{Russell_Norvig_2021}. Figure \ref{pr_fig:1} further illustrates the concepts of compound tasks, actions, methods, and task decomposition. In the illustration, both methods could applicable or only one of them could be applicable given the current state of the problem domain. In the former case, an automated planner must choose one of the methods for decomposition, leading to two different possible plans. Further details on HTN planning processes can be found in the automated planning literature. (e.g., the SHOP2 paper by \citet{Nau_2003}). 
+In a HTN domain representation, compound tasks are high-level actions that are
+composed of lower-level actions. These lower-level actions may be compound task
+themselves that need to be further decomposed or non-decomposable actions,
+which are sometimes referred to as primitive tasks or just actions
+\citep{Russell_Norvig_2021}. Depending on how abstractly a compound task is
+defined, there may be multiple sets of lower-level actions that could be
+combined to create the same compound task. These different sets of actions are
+known as ``methods", since they are different ways of decomposing the compound
+task \citep{Russell_Norvig_2021}. Additionally, methods typically have
+preconditions, which are specific conditions that must be satisfied by the
+current state of the problem domain for that method to be used for task
+decomposition. If a methods preconditions are satisfied, then that method is
+said to be applicable \citep{Russell_Norvig_2021}. \autoref{fig:pr1} further illustrates the concepts of compound tasks, actions, methods, and task decomposition. In the illustration, both methods could applicable or only one of them could be applicable given the current state of the problem domain. In the former case, an automated planner must choose one of the methods for decomposition, leading to two different possible plans. Further details on HTN planning processes can be found in the automated planning literature. (e.g., the SHOP2 paper by \citet{Nau_2003}). 
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\textwidth]{images/htn_concepts}
     \caption{The compound task \textit{Travel to C} is shown to have two different methods for accomplishing the same task.} 
-    \label{pr_fig:1}
+    \label{fig:pr1}
 \end{figure}
 
-Our approach uses a HTN domain representation and an automated HTN planner to model the logical reasoning and decision-making process of a team of human agents. Compound tasks and methods are engineered in such a way as to represent the latent decisions that agents must make to complete their mission. From a generative perspective, these latent decisions are then what leads to the actions we observe from the human agents. With this concept in mind, we can have an automated planner generate a plan that matches the observed actions while recording the methods and task decompositions involved. As suggested in the introduction, this record is produced in the form of a task hierarchy which shows how compound task can be decomposed into the actions we observe. These task hierarchies are the plan explanations that give insight on the relationship between actions and the decision-making process of the agents. Figure \ref{pr_fig:2} illustrates the general concept of our online MAPR approach.
+Our approach uses a HTN domain representation and an automated HTN planner to
+model the logical reasoning and decision-making process of a team of human
+agents. Compound tasks and methods are engineered in such a way as to represent
+the latent decisions that agents must make to complete their mission. From a
+generative perspective, these latent decisions are then what leads to the
+actions we observe from the human agents. With this concept in mind, we can
+have an automated planner generate a plan that matches the observed actions
+while recording the methods and task decompositions involved. As suggested in
+the introduction, this record is produced in the form of a task hierarchy which
+shows how compound task can be decomposed into the actions we observe. These
+task hierarchies are the plan explanations that give insight on the
+relationship between actions and the decision-making process of the agents.
+\autoref{fig:pr2} illustrates the general concept of our online MAPR approach.
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\textwidth]{images/pr_as_planning}
     \caption{In this illustration compound task are represented as groups of upper-case letters and actions are singular lower-case letters. Multiple potential task hierarchies can be generated for the same observed plan.} 
-    \label{pr_fig:2}
+    \label{fig:pr2}
 \end{figure}
 
-As seen in figure \ref{pr_fig:2}, it is possible that there are multiple plan explanations for same observed actions. However, rather than obtain all potential plan explanations given an observed sequence of actions, our approach should be yielding the most likely plan explanation. With this in mind, our approach assigns a conditional probability $p(m | \bigcap_{n \in M_t} c_n(s), s)$ for a method $m \in M_t$ for a compound task $t$. $c_n(s)$ denotes a function that is 1 if $n \in M_t$ is applicable to $t$ for the current state $s$, and 0 otherwise. The conditional probabilities are then defined as,
+As seen in  \autoref{fig:pr2}, it is possible that there are multiple plan explanations for same observed actions. However, rather than obtain all potential plan explanations given an observed sequence of actions, our approach should be yielding the most likely plan explanation. With this in mind, our approach assigns a conditional probability $p(m | \bigcap_{n \in M_t} c_n(s), s)$ for a method $m \in M_t$ for a compound task $t$. $c_n(s)$ denotes a function that is 1 if $n \in M_t$ is applicable to $t$ for the current state $s$, and 0 otherwise. The conditional probabilities are then defined as,
 
 \begin{equation} \label{pr_eq:1}
 p(m | \bigcap_{n \in M_t} c_n(s), s) = \begin{cases} \alpha  & c_m(s) = 1 \\ 0 & c_m(s) = 0 \\ \end{cases}
