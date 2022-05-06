@@ -1,0 +1,225 @@
+\documentclass[oneside,9pt]{memoir}
+
+% Colors
+\usepackage[dvipsnames]{xcolor}
+\usepackage[scaled=0.8]{beramono}
+
+% hyperref
+\usepackage[%
+    colorlinks=true,
+    linktocpage=true,
+    breaklinks=true,
+    linkcolor=NavyBlue,
+    urlcolor=NavyBlue,
+    citecolor=NavyBlue
+]{hyperref}
+\def\chapterautorefname{§}
+\def\sectionautorefname{§}
+\def\subsectionautorefname{§}
+\def\subsubsectionautorefname{§}
+
+\setcounter{secnumdepth}{3}
+
+
+% Fonts
+\usepackage{fontspec}
+\setmainfont[Numbers = {OldStyle, Proportional}]{TeX Gyre Pagella}
+
+\usepackage{amsmath}
+\DeclareMathOperator*{\argmax}{arg\,max}
+%\usepackage{amssymb}
+\usepackage{unicode-math}
+\setmathfont{TeX Gyre Pagella Math}
+
+\usepackage{algorithm}
+\usepackage[italicComments=false]{algpseudocodex}
+
+\newcommand{\algorithmautorefname}{Algorithm}
+
+% Typography
+\usepackage[tracking]{microtype}
+
+% Images
+\usepackage{graphicx}
+
+% ======================================================================
+% Memoir package - layout and styling
+% ======================================================================
+
+% The calc package is required for calculating readable text widths
+\usepackage{calc}
+
+% Set outer and spine margins A wide right margin is chosen both for legibility
+% of the typeblock and for tight integration of marginfigures and margin
+% footnotes.
+
+% Calculate widths in pts
+\setlxvchars[\normalfont\normalsize] % about 66 characters per column
+\setxlvchars[\normalfont\footnotesize] % about 45 characters per column
+
+% Set left and right margins
+\setlrmarginsandblock{1.15in}{3.5in}{*}
+% Set upper and lower margins
+\setulmarginsandblock{1.1in}{1.1in}{*}
+
+% Set properties of margin notes, sidecaptioned floats, and footnotes in the
+% margin.
+\setmarginnotes{0.2in}{2.15in}{2\onelineskip}
+\setsidecaps{0.2in}{2.15in}
+\sidecapmargin{outer}
+\renewcommand*{\sidecapstyle}{\normalfont\footnotesize}
+\setsidecappos{c}
+
+
+% Set footnotes in the margin rather than at the foot of the page
+\footnotesinmargin
+\setsidefeet{\marginparsep}{1.9in}{0.2in}{0pt}{\flushleftright\footnotesize}{*}
+
+% Integrate the counters of the sidefootnotes and footnotes in margin.
+\letcountercounter{sidefootnote}{footnote}
+\setlength{\footmarkwidth}{0em}
+\setlength{\footmarksep}{-\footmarkwidth}
+\setlength{\footparindent}{1em}
+\sideparmargin{outer}
+
+\renewcommand*{\sideparfont}{\color{Maroon}\emphshape}
+\renewcommand*{\sideparvshift}{2\baselineskip}
+\marginparmargin{outer}
+
+% Style the entries in the Table of Contents
+\renewcommand*{\cftchapterfont}{\scshape\MakeTextLowercase}
+\renewcommand*{\cftpartfont}{\color{Maroon}\scshape\MakeTextLowercase}
+\captionstyle[\centering]{\footnotesize}
+\captionnamefont{\footnotesize\color{Maroon}}
+
+%% Bringhurst chapter and head styles with a Pedersen-type chapter number
+\makechapterstyle{bringhurst}{%
+	\renewcommand{\chapterheadstart}{} 
+	\renewcommand{\printchaptername}{} 
+	\renewcommand{\chapternamenum}{} 
+	\setlength{\midchapskip}{15mm}
+	\renewcommand*{\printchapternum}{%
+        \begin{marginfigure}[0pt]
+          \resizebox{!}{\midchapskip}{\color{Maroon}\emph{\thechapter}}
+        \end{marginfigure}
+      }
+	\renewcommand{\afterchapternum}{} 
+	\renewcommand{\printchaptertitle}[1]{%
+	  \raggedright\Large\scshape\MakeLowercase{##1}}
+	\renewcommand{\afterchaptertitle}{%
+	  \vskip\onelineskip \hrule\vskip\onelineskip}
+}
+\setlength{\cftsubsectionindent}{0.6in}
+\chapterstyle{bringhurst}
+\headstyles{bringhurst}
+
+\tightlists
+
+% Headers and footers - page numbers, section headings, etc.
+\makepagestyle{tufte}
+\createmark{chapter}{left}{nonumber}{}{}
+\makeoddhead{tufte}{}{}{\scshape\MakeTextLowercase{\leftmark}~~|~~\thepage}
+\makeevenhead{tufte}{\thepage~~|~~\scshape\MakeTextLowercase{\rightmark}}{}{}
+ \makerunningwidth{tufte}[8in]{8in}
+\aliaspagestyle{chapter}{empty}
+\nouppercaseheads
+\pagestyle{tufte}
+
+\linespread{1.1}
+\checkandfixthelayout
+
+% Bibliography management
+\usepackage[%
+    backend=biber,
+    style=numeric-comp,
+    sorting=none,
+    natbib
+]{biblatex}
+\addbibresource{bibliography.bib}
+
+\usepackage[backgroundcolor=white, bordercolor=white, textsize=small]{todonotes}
+
+% Added by Paulo Soares
+\newcommand{\ps}[1]{\todo{\textcolor{Cyan}{PS: #1}}}
+\newcommand{\ap}[1]{\todo{\textcolor{Maroon}{\small AP: \emph{#1}}}}
+\newcommand{\kobus}[1]{\todo{\textcolor{Red}{Kobus: #1}}}
+
+% ======================================================================
+% Creating the title page
+% ======================================================================
+
+\begin{document}
+\thispagestyle{empty}
+\begin{center}
+    {\LARGE ToMCAT Study 3 Preregistration}\\
+    \bigskip
+    \textbf{Abstract}
+\end{center}
+
+    In this document we declare a number of artificial social intelligence
+    (ASI) capabilities being developed for ASIST Study 3 by the ToMCAT (Theory
+    of Mind-based Cognitive Architecture for Teams) team. We also declare a few
+    offline analyses that we will perform with Study 3 data, with the goal of
+    leveraging insights gleaned from the analyses to build ASI components for
+    future studies. Given the importance of spoken natural language
+    communication understanding for human social intelligence, we place
+    significant emphasis on related capabilities.
+
+\begin{center}
+
+    \bigskip
+
+    \textbf{Authors}
+
+    \bigskip
+
+    \begin{tabular}{ll}
+        \toprule
+        Name                       & Institution \\\midrule
+        Salena Ashton              & University of Arizona\\
+        Joseph Astier              & University of Arizona\\
+        Loren Champlin             & University of Arizona\\
+        John Culnan                & University of Arizona\\        
+        Kobus Barnard              & University of Arizona\\
+        Emily Butler               & University of Arizona\\
+        Ruihong Huang              & Texas A\& M University \\
+        Cheonkam Jeong             & University of Arizona\\
+        Stephen Kim                & University of Arizona\\
+        Meghavarshini Krishnaswamy & University of Arizona\\
+        Clayton Morrison           & University of Arizona\\
+        Md Messal Monem            & Texas A\& M University \\
+        Remo Nitschke              & University of Arizona\\
+        Adarsh Pyarelal            & University of Arizona\\
+        Ayesha Qamar               & Texas A\& M University \\
+        Vincent Raymond            & University of Arizona\\
+        Paulo Soares               & University of Arizona\\
+        Adam Ussishkin             & University of Arizona\\
+        Yuwei Wang                 & University of Arizona\\
+        Andrew Wedel               & University of Arizona\\
+        Liang Zhang                & University of Arizona\\
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+\newpage
+\tableofcontents* 
+
+\input{sections/introduction}
+\input{sections/probabilistic_modeling}
+\input{sections/asr}
+\input{sections/rule_based_ie}
+\input{sections/sentiment_analysis}
+\input{sections/clc_detection}
+\input{sections/da_classification}
+\input{sections/entrainment_detection}
+\input{sections/plan_recognition}
+\input{sections/question_plan}
+\appendix
+\input{sections/vocab}
+
+% hypotheses?
+% - TMM model can predict behavior
+% - TMM agent interventions improve performance
+% - Closed loop communication is predictive of team performance
+\printbibliography
+\end{document}
