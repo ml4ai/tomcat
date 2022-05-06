@@ -3,7 +3,6 @@
 set -u
 
 source configuration_helpers
-source collect_participant_ids
 
 # We have to specify the full path of the python interpreter in the clients,
 # otherwise it will get the usr/bin option that does not contain all the
@@ -109,6 +108,8 @@ __start_on_client() {
 }
 
 __start_baseline_tasks() {
+  source collect_participant_ids "${PADDING} "
+
   yes_no_question "${PADDING}Do you want to start the ${EMPH}server?${NC}"
   if [[ $? -eq 0 ]]; then
     __start_server

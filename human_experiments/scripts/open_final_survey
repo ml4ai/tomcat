@@ -43,15 +43,14 @@ __open_on_client() {
 }
 
 __open_final_surveys() {
-  source collect_player_names "$EXPERIMENT_DIR"
-  source collect_participant_ids
-
   echo -e "${PADDING}Opening the ${EMPH}Final Survey...${NC}"
+
+  source collect_player_names "$EXPERIMENT_DIR" "${PADDING} "
+  source collect_participant_ids "${PADDING} "
+
   __open_on_client "lion" "lion.local" $LION_PARTICIPANT_ID $LION_PLAYER_NAME "$PADDING "
   __open_on_client "tiger" "tiger.local" $TIGER_PARTICIPANT_ID $TIGER_PLAYER_NAME "$PADDING "
   __open_on_client "leopard" "leopard.local" $LEOPARD_PARTICIPANT_ID $LEOPARD_PLAYER_NAME "$PADDING "
 }
 
 __open_final_surveys
-
-
