@@ -38,11 +38,6 @@ __monitor_testbed_launch() {
 
   local num_seconds=0
   while [ $num_seconds -lt $SECONDS_TO_WAIT ]; do
-    ps $testbed_pid >&/dev/null
-    if [[ $? -ne 0 ]]; then
-      return 1
-    fi
-
     if [[ -e "${log_path}" ]]; then
       have_line="$(grep -c 'Testbed successfully launched.' ${log_path})"
       if [[ ${have_line} -ne 0 ]]; then
@@ -52,9 +47,16 @@ __monitor_testbed_launch() {
       return 1
     fi
 
+    ps $testbed_pid >&/dev/null
+    if [[ $? -ne 0 ]]; then
+      return 1
+    fi
+
     sleep 1
     let num_seconds+=1
   done
+
+  return 1
 }
 
 __launch_testbed() {
@@ -75,7 +77,7 @@ __launch_testbed() {
       testbed_launched="y"
       echo -e "${PADDING}${GREEN} Testbed successfully launched.${NC}"
     else
-      text="${PADDING}$${RED} Error while launching the testbed. Check the log file in "
+      text="${PADDING}${RED} Error while launching the testbed. Check the log file in "
       text+="${EMPH}$log_path${RED} for more detail.${NC}"
       echo -e "$text"
       echo -n -e "${PADDING}Press any key to ${EMPH}relaunch:${NC} "
