@@ -5,7 +5,7 @@ set -u
 source configuration_helpers
 
 text="The experiment data folder will be created under "
-text+="${EMPH}${DATA_ROOT_DIR}${NC}. Do you want to change this directory?"
+text+="${EMPH}${DATA_ROOT_DIR}${NC}. Do you want to ${EMPH}CHANGE${NC} this directory?"
 yes_no_question "$text"
 
 if [[ $? -eq 0 ]]; then

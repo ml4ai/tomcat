@@ -32,7 +32,7 @@ __check_nfs_on_client() {
     mkdir -p "$nfs_dir" > /dev/null
 
     while [[ $? -eq 0 ]]; do
-      echo "${padding}Checking ${EMPH}NFS${NC} on ${EMPH}$client_name...${NC}"
+      echo -e "${padding}Checking ${EMPH}NFS${NC} on ${EMPH}$client_name...${NC}"
       echo "${padding} [TEST 1]"
       ssh $EXPERIMENT_USER@$client_address "dd if=/dev/zero of=\$HOME$nfs_dir/multipleFilesTest bs=4096 count=1000000" 2>&1 | sed "s/^/${padding} /"
       echo "${padding} [TEST 2]"
