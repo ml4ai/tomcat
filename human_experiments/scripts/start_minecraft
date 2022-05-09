@@ -57,15 +57,13 @@ __monitor_launch_on_client() {
   local log_path="$common_file_path".log
   local pid_path="$common_file_path".pid
 
-  # Wait until the pid file exists
-  while [ ! -f $pid_path ]; do
-    sleep 1
-  done
-
-  # Wait until the log file exists
-  while [ ! -f $log_path ]; do
-    sleep 1
-  done
+  if [[ ! -e "$log_path" ]]; then
+    # Minecraft was not launched on the client
+    local text="${padding}${YELLOW}Minecraft was never launched on "
+    text+="${EMPH}$client_name.${NC}"
+    echo -e "$text"
+    return 0
+  fi
 
   local minecraft_pid=$(cat $pid_path)
 

@@ -26,15 +26,16 @@ __stop_face_and_screen_recording() {
   local client_address=$2
   local padding=$3
 
+  local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/ && "
+  command+="./kill_ffmpeg"
+
   echo -e "${padding}Stopping ${EMPH}Face and Screen Recording${NC}..."
   local stopped="n"
   while [[ $stopped != "y" ]]; do
-    ssh $EXPERIMENT_USER@$client_address "pkill ffmpeg" >/dev/null
+    ssh $EXPERIMENT_USER@$client_address "$command" >/dev/null
     if [[ $? -eq 0 ]]; then
-      echo -e "${padding}${GREEN} ${EMPH}Face and Screen Recording${GREEN} successfully stopped${NC}."
       stopped="y"
     else
-      echo -e "${padding}${RED} Failed to stop ${EMPH}Face and Screen Recording${NC}."
       yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}."
       if [[ $? -ne 0 ]]; then
         break
@@ -48,24 +49,31 @@ __stop_minecraft() {
   local client_address=$2
   local padding=$3
 
-  local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/ && "
-  command+="./kill_minecraft $EXPERIMENT_DIR ${padding}"
+  local pid_filepath=$HOME/$EXPERIMENT_DIR/tmp/minecraft_$client_name.pid
+  if [[ -e "$pid_filepath" ]]; then
+    local minecraft_pid=$(cat $pid_filepath)
 
-  echo -e "${padding}Stopping ${EMPH}Minecraft${NC}..."
-  local stopped="n"
-  while [[ $stopped != "y" ]]; do
-    ssh $EXPERIMENT_USER@$client_address "$command" >/dev/null
-    if [[ $? -eq 0 ]]; then
-      echo -e "${padding}${GREEN} ${EMPH}Minecraft${GREEN} successfully stopped${NC}."
-      stopped="y"
-    else
-      echo -e "${padding}${RED} Failed to stop ${EMPH}Minecraft${NC}."
-      yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}."
-      if [[ $? -ne 0 ]]; then
-        break
+    local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/ && "
+    command+="./kill_minecraft $minecraft_pid ${padding}"
+
+    echo -e "${padding}Stopping ${EMPH}Minecraft${NC}..."
+    local stopped="n"
+    while [[ $stopped != "y" ]]; do
+      ssh $EXPERIMENT_USER@$client_address "$command" >/dev/null
+      if [[ $? -eq 0 ]]; then
+        echo -e "${padding}${GREEN} ${EMPH}Minecraft${GREEN} successfully stopped${NC}."
+        stopped="y"
+      else
+        echo -e "${padding}${RED} Failed to stop ${EMPH}Minecraft${NC}."
+        yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}."
+        if [[ $? -ne 0 ]]; then
+          break
+        fi
       fi
-    fi
-  done
+    done
+  else
+    echo -e "${padding}${YELLOW} PID file not found for Minecraft in the client machine${NC}."
+  fi
 }
 
 __close_application() {
@@ -184,7 +192,7 @@ __cleanup() {
   __cleanup_on_client "tiger" "tiger.local" "$padding "
   __cleanup_on_client "leopard" "leopard.local" "$padding "
 
-  source stop_testbed "$EXPERIMENT_DIR" "$padding"
+  source stop_testbed "$EXPERIMENT_DIR" "$padding "
   __freeze_experiment_data "$padding "
   __backup_experiment_data "$padding "
 }

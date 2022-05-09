@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -u
+
+source configuration_helpers
+
+if [[ -z ${1+x} ]]; then
+  PADDING=""
+else
+  PADDING=$1
+fi
+
+ffmpeg_alive=$(ps aux | grep -c ffmpeg)
+if [[ $ffmpeg_alive -ne 0 ]]; then
+  pkill ffmpeg
+  if [[ $? -eq 0 ]]; then
+    echo -e "${PADDING}${GREEN} ${EMPH}Face and Screen Recording${GREEN} successfully stopped${NC}."
+  else
+    echo -e "${PADDING}${RED} Failed to stop ${EMPH}Face and Screen Recording${NC}."
+    exit 1
+  fi
+else
+  echo -e "${PADDING}${YELLOW} No process for ${EMPH}Face and Screen Recording${GREEN} found to kill${NC}."
+fi
+
+exit 0
