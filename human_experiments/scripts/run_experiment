@@ -116,7 +116,7 @@ if [[ $GOTO -le 11 ]]; then
   text="[11] Type [${EMPH}quit${NC}] to end the experiment and close "
   text+="all open applications and processes: "
   wait_for_key "$text" "quit"
-  source end_experiment
+  source end_experiment $experiment_dir_cat " "
 fi
 
 exit 0
