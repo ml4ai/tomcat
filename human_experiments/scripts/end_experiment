@@ -90,11 +90,11 @@ __close_application() {
   while [[ $closed != "y" ]]; do
     ssh $EXPERIMENT_USER@$client_address "$command" >/dev/null
     if [[ $? -eq 0 ]]; then
-      echo -e "${padding}${GREEN} ${EMPH}$app_name${GREEN} successfully closed${NC}."
+      echo -e "${padding}${GREEN}${EMPH}$app_name${GREEN} successfully closed${NC}."
       closed="y"
     else
-      echo -e "${padding}${RED} Failed to close ${EMPH}$app_name${NC}."
-      yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}."
+      echo -e "${padding}${RED}Failed to close ${EMPH}$app_name${NC}."
+      yes_no_question "${padding}Do you want to ${EMPH}RETRY${NC}."
       if [[ $? -ne 0 ]]; then
         break
       fi
