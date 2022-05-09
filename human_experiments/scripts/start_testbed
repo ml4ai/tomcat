@@ -26,7 +26,7 @@ __monitor_testbed_launch() {
   local testbed_pid=$2
   local padding=$3
 
-  echo -e "${padding}Monitoring launch..."
+  echo -e "${padding}Waiting for launch..."
 
   # Wait till the log file actually exists
   while [ ! -f $log_path ]; do
@@ -60,7 +60,8 @@ __monitor_testbed_launch() {
 
 __launch_testbed() {
   # Bring the testbed up and save logs
-  local log_path=$EXPERIMENT_DIR/tmp/testbed.log
+  local padding=$1
+  local log_path=$EXPERIMENT_DIR/tmp/testbed_up.log
   local testbed_launched="n"
 
   echo -e "${PADDING}Launching ${EMPH}Testbed...${NC}"
@@ -70,20 +71,20 @@ __launch_testbed() {
 
     # Wait for a while to guarantee the log file was created
     sleep 1
-    __monitor_testbed_launch $log_path $! "$PADDING "
+    __monitor_testbed_launch $log_path $! "$padding "
 
     if [[ $? -eq 0 ]]; then
       testbed_launched="y"
-      echo -e "${PADDING}${GREEN} Testbed successfully launched.${NC}"
+      echo -e "${padding}${GREEN} Testbed successfully launched.${NC}"
     else
-      text="${PADDING}${RED} Error while launching the testbed. Check the log file in "
-      text+="${EMPH}$log_path${RED} for more detail.${NC}"
+      text="${padding}${RED} Error while launching the testbed. Check the log file in "
+      text+="${EMPH}$log_path${RED} for more details.${NC}"
       echo -e "$text"
-      echo -n -e "${PADDING}Press any key to ${EMPH}relaunch:${NC} "
+      echo -n -e "${padding}Press any key to ${EMPH}relaunch:${NC} "
       read -r
     fi
     popd >/dev/null
   done
 }
 
-__launch_testbed
+__launch_testbed "$PADDING"

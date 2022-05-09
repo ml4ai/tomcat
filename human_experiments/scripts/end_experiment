@@ -27,7 +27,7 @@ __stop_face_and_screen_recording() {
   echo -e "${padding}Stopping ${EMPH}Face and Screen Recording${NC}..."
   local stopped="n"
   while [[ $stopped != "y" ]]; do
-    ssh $EXPERIMENT_USER@$client_address "kill -p ffmpeg" >/dev/null
+    ssh $EXPERIMENT_USER@$client_address "pkill ffmpeg" >/dev/null
     if [[ $? -eq 0 ]]; then
       echo -e "${padding}${GREEN} ${EMPH}Face and Screen Recording${GREEN} successfully stopped${NC}."
       stopped="y"
@@ -173,6 +173,74 @@ __backup_experiment_data() {
   # and IVILAB servers
 }
 
+__monitor_testbed_stop() {
+  local log_path=$1
+  local testbed_pid=$2
+  local padding=$3
+
+  echo -e "${padding}Waiting for stop..."
+
+  # Wait till the log file actually exists
+  while [ ! -f $log_path ]; do
+    sleep 1
+  done
+
+  local num_seconds=0
+  while [ $num_seconds -lt $SECONDS_TO_WAIT ]; do
+    if [[ -e "${log_path}" ]]; then
+      have_line="$(grep -c 'Removing network asist_net' ${log_path})"
+      if [[ ${have_line} -ne 0 ]]; then
+        return 0
+      fi
+    else
+      return 1
+    fi
+
+    # TODO - fix this because the process might end but the writer buffer
+    #  to the log file might still be running I guess
+    ps $testbed_pid >&/dev/null
+    if [[ $? -ne 0 ]]; then
+      return 1
+    fi
+
+    sleep 1
+    let num_seconds+=1
+  done
+
+  return 1
+}
+
+__stop_testbed() {
+  local padding=$1
+
+  # Bring the testbed up and save logs
+  local log_path=$EXPERIMENT_DIR/tmp/testbed_down.log
+  local testbed_stopped="n"
+
+  echo -e "${padding}Stopping the ${EMPH}Testbed${NC}..."
+  while [[ $testbed_stopped == "n" ]]; do
+    pushd $HOME/$SYSTEMS_DIR/testbed/Local >/dev/null
+      sudo ./testbed_down.sh &>$log_path &
+
+      # Wait for a while to guarantee the log file was created
+      sleep 1
+      __monitor_testbed_stop $log_path $! "$padding "
+
+      if [[ $? -eq 0 ]]; then
+        testbed_stopped="y"
+        echo -e "${PADDING}${GREEN} Testbed successfully stopped.${NC}"
+      else
+        text="${PADDING}${RED} Error while stopping the testbed. Check the log file in "
+        text+="${EMPH}$log_path${RED} for more details.${NC}"
+        echo -e "$text"
+        echo -n -e "${PADDING}Press any key to ${EMPH}RETRY${NC}: "
+        read -r
+      fi
+    popd >/dev/null
+  done
+
+}
+
 __cleanup() {
   local padding=$1
   echo -e "${padding}Ending ${EMPH}experiment${NC}..."
@@ -180,6 +248,8 @@ __cleanup() {
   __cleanup_on_client "lion" "lion.local" "$padding "
   __cleanup_on_client "tiger" "tiger.local" "$padding "
   __cleanup_on_client "leopard" "leopard.local" "$padding "
+
+  __stop_testbed "$padding"
   __freeze_experiment_data "$padding "
   __backup_experiment_data "$padding "
 }
