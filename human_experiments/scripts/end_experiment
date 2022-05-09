@@ -27,7 +27,7 @@ __stop_face_and_screen_recording() {
   local padding=$3
 
   local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/ && "
-  command+="./kill_ffmpeg ${padding}"
+  command+="./kill_ffmpeg \"$padding\""
 
   echo -e "${padding}Stopping ${EMPH}Face and Screen Recording${NC}..."
   local stopped="n"
@@ -54,7 +54,7 @@ __stop_minecraft() {
     local minecraft_pid=$(cat $pid_filepath)
 
     local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/ && "
-    command+="./kill_minecraft $minecraft_pid ${padding}"
+    command+="./kill_minecraft $minecraft_pid \"$padding\""
 
     echo -e "${padding}Stopping ${EMPH}Minecraft${NC}..."
     local stopped="n"
