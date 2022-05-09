@@ -30,8 +30,10 @@ PLAYER_NAME=""
 __read_player_name() {
   local minecraft_log_file=$1
 
-  local player_name_line=$(grep -h "\[Client thread\/INFO\]\: Setting user" "$minecraft_log_file")
-  PLAYER_NAME=$(sed -n -e 's/^.*\[Client\ thread\/INFO\]:\ Setting\ user:\ //p' <<<"$player_name_line")
+  if [[ -e "$minecraft_log_file" ]]; then
+    local player_name_line=$(grep -h "\[Client thread\/INFO\]\: Setting user" "$minecraft_log_file")
+    PLAYER_NAME=$(sed -n -e 's/^.*\[Client\ thread\/INFO\]:\ Setting\ user:\ //p' <<<"$player_name_line")
+  fi
 }
 
 if [[ -z ${LION_PLAYER_NAME+x} ]]; then
