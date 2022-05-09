@@ -27,12 +27,12 @@ __stop_face_and_screen_recording() {
   local padding=$3
 
   local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/ && "
-  command+="./kill_ffmpeg"
+  command+="./kill_ffmpeg ${padding}"
 
   echo -e "${padding}Stopping ${EMPH}Face and Screen Recording${NC}..."
   local stopped="n"
   while [[ $stopped != "y" ]]; do
-    ssh $EXPERIMENT_USER@$client_address "$command" >/dev/null
+    ssh $EXPERIMENT_USER@$client_address "$command"
     if [[ $? -eq 0 ]]; then
       stopped="y"
     else
