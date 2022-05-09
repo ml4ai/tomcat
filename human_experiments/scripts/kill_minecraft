@@ -21,32 +21,27 @@ else
   PADDING=$2
 fi
 
-ps ffmpeg | grep
-
-
 to_kill=""
 
-if [[ -e "${minecraft_pid}" ]]; then
-  ps ${MINECRAFT_PID} >&/dev/null
-  if [[ $? -eq 0 ]]; then
-    # Linux often provides a way to get the process tree (e.g., using
-    # the -H argument), but macOS does not. Rather than get more
-    # packages, and reason about variations, we will build our own tree,
-    # with the knowledge that it will only be children and grand
-    # children.
+ps ${MINECRAFT_PID} >&/dev/null
+if [[ $? -eq 0 ]]; then
+  # Linux often provides a way to get the process tree (e.g., using
+  # the -H argument), but macOS does not. Rather than get more
+  # packages, and reason about variations, we will build our own tree,
+  # with the knowledge that it will only be children and grand
+  # children.
 
-    to_kill="${to_kill} ${MINECRAFT_PID}"
+  to_kill="${to_kill} ${MINECRAFT_PID}"
 
-    children=$(ps -u ${USER} -o pid,ppid | grep " ${MINECRAFT_PID}" | sed 's#^\([0-9][0-9]*\).*#\1#')
+  children=$(ps -u ${USER} -o pid,ppid | grep " ${MINECRAFT_PID}" | sed 's#^\([0-9][0-9]*\).*#\1#')
 
-    if [[ -n "${children}" ]]; then
-      to_kill="${to_kill} ${children}"
+  if [[ -n "${children}" ]]; then
+    to_kill="${to_kill} ${children}"
 
-      for child in "${children}"; do
-        grand_children=$(ps -u ${USER} -o pid,ppid | grep " ${child}" | sed 's#^\([0-9][0-9]*\).*#\1#')
-        to_kill="${to_kill} ${grand_children}"
-      done
-    fi
+    for child in "${children}"; do
+      grand_children=$(ps -u ${USER} -o pid,ppid | grep " ${child}" | sed 's#^\([0-9][0-9]*\).*#\1#')
+      to_kill="${to_kill} ${grand_children}"
+    done
   fi
 fi
 
@@ -76,3 +71,5 @@ if [[ -n "${to_kill}" ]]; then
     fi
   done
 fi
+
+exit 0

@@ -10,17 +10,17 @@ else
   PADDING=$1
 fi
 
-ffmpeg_alive=$(ps aux | grep -c ffmpeg)
-if [[ $ffmpeg_alive -ne 0 ]]; then
+have_ffmpeg=$(ps aux | grep -c ffmpeg)
+if [[ $have_ffmpeg -ne 0 ]]; then
   pkill ffmpeg
   if [[ $? -eq 0 ]]; then
-    echo -e "${PADDING}${GREEN} ${EMPH}Face and Screen Recording${GREEN} successfully stopped${NC}."
+    echo -e "${PADDING}${GREEN} ${EMPH}ffmpeg${GREEN} process successfully killed${NC}."
   else
-    echo -e "${PADDING}${RED} Failed to stop ${EMPH}Face and Screen Recording${NC}."
+    echo -e "${PADDING}${RED} Failed to kill ${EMPH}ffmpeg${NC} process."
     exit 1
   fi
 else
-  echo -e "${PADDING}${YELLOW} No process for ${EMPH}Face and Screen Recording${GREEN} found to kill${NC}."
+  echo -e "${PADDING}${YELLOW} No ${EMPH}ffmpeg${GREEN} found to kill${NC}."
 fi
 
 exit 0
