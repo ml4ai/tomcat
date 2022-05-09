@@ -49,7 +49,7 @@ __stop_minecraft() {
   local client_address=$2
   local padding=$3
 
-  local pid_filepath=$HOME/$EXPERIMENT_DIR/tmp/minecraft_$client_name.pid
+  local pid_filepath=$EXPERIMENT_DIR/tmp/minecraft_$client_name.pid
   if [[ -e "$pid_filepath" ]]; then
     local minecraft_pid=$(cat $pid_filepath)
 
@@ -72,7 +72,9 @@ __stop_minecraft() {
       fi
     done
   else
-    echo -e "${padding}${YELLOW}PID file not found for Minecraft on ${EMPH}$client_name${NC}."
+    local text="${padding}${YELLOW}PID file ${EMPH}$pid_filepath${NC} not "
+    text+="found for Minecraft on ${EMPH}$client_name${NC}."
+    echo -e "$text"
   fi
 }
 
