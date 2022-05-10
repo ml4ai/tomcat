@@ -59,7 +59,7 @@ __stop_minecraft() {
     echo -e "${padding}Stopping ${EMPH}Minecraft${NC}..."
     local stopped="n"
     while [[ $stopped != "y" ]]; do
-      ssh $EXPERIMENT_USER@$client_address "$command" >/dev/null
+      ssh $EXPERIMENT_USER@$client_address "$command"
       if [[ $? -eq 0 ]]; then
         echo -e "${padding}${GREEN} ${EMPH}Minecraft${GREEN} successfully stopped${NC}."
         stopped="y"
@@ -84,22 +84,14 @@ __close_application() {
   local app_name=$3
   local padding=$4
 
-  local command="osascript \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/close_application.scpt "
-  command+="\"$app_name\""
-  local closed="n"
-  while [[ $closed != "y" ]]; do
-    ssh $EXPERIMENT_USER@$client_address "$command" >/dev/null
-    if [[ $? -eq 0 ]]; then
-      echo -e "${padding}${GREEN}${EMPH}$app_name${GREEN} successfully closed${NC}."
-      closed="y"
-    else
-      echo -e "${padding}${RED}Failed to close ${EMPH}$app_name${NC}."
-      yes_no_question "${padding}Do you want to ${EMPH}RETRY${NC}."
-      if [[ $? -ne 0 ]]; then
-        break
-      fi
-    fi
-  done
+  ssh $EXPERIMENT_USER@$client_address "tell application \"${app_name}\" to quit" &>/dev/null
+  echo -e "${padding}${GREEN}${EMPH}$app_name${GREEN} successfully closed${NC}."
+
+  # The apple script returns exit code 1 because closing an application is an
+  # interruption. So, we do not check for a return code and assume the
+  # application was closed. In all the tests performed, the applications closed
+  # properly. In case they don't close, it's ok because they will close when the
+  # machines are powered off.
 }
 
 __close_applications() {

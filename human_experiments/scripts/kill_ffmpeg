@@ -20,7 +20,7 @@ if [[ $have_ffmpeg -eq 0 ]]; then
     exit 1
   fi
 else
-  echo -e "${PADDING}${YELLOW} No ${EMPH}ffmpeg${GREEN} found to kill${NC}."
+  echo -e "${PADDING}${YELLOW} No ${EMPH}ffmpeg${YELLOW} process found to kill${NC}."
 fi
 
 exit 0
