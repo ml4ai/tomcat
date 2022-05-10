@@ -54,7 +54,7 @@ __stop_minecraft() {
     local minecraft_pid=$(cat $pid_filepath)
 
     local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/ && "
-    command+="./kill_minecraft $minecraft_pid \"$padding\""
+    command+="./kill_minecraft $minecraft_pid \"$padding \""
 
     echo -e "${padding}Stopping ${EMPH}Minecraft${NC}..."
     local stopped="n"
@@ -84,7 +84,9 @@ __close_application() {
   local app_name=$3
   local padding=$4
 
-  ssh $EXPERIMENT_USER@$client_address "tell application \"${app_name}\" to quit" &>/dev/null
+  local command="osascript \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/close_application.scpt "
+  command+="\"$app_name\""
+  ssh $EXPERIMENT_USER@$client_address "$command" &>/dev/null
   echo -e "${padding}${GREEN}${EMPH}$app_name${GREEN} successfully closed${NC}."
 
   # The apple script returns exit code 1 because closing an application is an
