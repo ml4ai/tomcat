@@ -21,12 +21,12 @@ else
   PADDING=$2
 fi
 
-__monitor_testbed_launch() {
+__monitor_testbed_stop() {
   local log_path=$1
   local testbed_pid=$2
   local padding=$3
 
-  echo -e "${padding}Waiting for launch..."
+  echo -e "${padding}Waiting for stop..."
 
   # Wait till the log file actually exists
   while [ ! -f $log_path ]; do
@@ -36,7 +36,7 @@ __monitor_testbed_launch() {
   local num_seconds=0
   while [ $num_seconds -lt $SECONDS_TO_WAIT ]; do
     if [[ -e "${log_path}" ]]; then
-      have_line="$(grep -c 'Testbed successfully launched.' ${log_path})"
+      have_line="$(grep -c 'Removing network asist_net' ${log_path})"
       if [[ ${have_line} -ne 0 ]]; then
         return 0
       fi
@@ -58,33 +58,32 @@ __monitor_testbed_launch() {
   return 1
 }
 
-__launch_testbed() {
-  # Bring the testbed up and save logs
+__stop_testbed() {
   local padding=$1
-  local log_path=$EXPERIMENT_DIR/tmp/testbed_up.log
+  local log_path=$EXPERIMENT_DIR/tmp/testbed_down.log
   local testbed_launched="n"
 
-  echo -e "${PADDING}Launching ${EMPH}Testbed...${NC}"
+  echo -e "${PADDING}Stopping ${EMPH}Testbed...${NC}"
   while [[ $testbed_launched == "n" ]]; do
     pushd $HOME/$SYSTEMS_DIR/testbed/Local >/dev/null
-    sudo ./testbed_up_core.sh -i &>$log_path &
+    sudo ./testbed_down.sh &>$log_path &
 
     # Wait for a while to guarantee the log file was created
     sleep 1
-    __monitor_testbed_launch $log_path $! "$padding "
+    __monitor_testbed_stop $log_path $! "$padding "
 
     if [[ $? -eq 0 ]]; then
       testbed_launched="y"
-      echo -e "${padding}${GREEN} Testbed successfully launched.${NC}"
+      echo -e "${padding}${GREEN} Testbed successfully stopped.${NC}"
     else
-      text="${padding}${RED} Error while launching the testbed. Check the log file in "
+      text="${padding}${RED} Error while stopping the testbed. Check the log file in "
       text+="${EMPH}$log_path${RED} for more details.${NC}"
       echo -e "$text"
-      echo -n -e "${padding}Press any key to ${EMPH}relaunch:${NC} "
+      echo -n -e "${padding}Press any key to ${EMPH}RETRY:${NC} "
       read -r
     fi
     popd >/dev/null
   done
 }
 
-__launch_testbed "$PADDING"
+__stop_testbed "$PADDING"

@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -u
+
+source configuration_helpers
+
+if [[ -z ${1+x} ]]; then
+  PADDING=""
+else
+  PADDING=$1
+fi
+
+have_ffmpeg=$(pgrep -x ffmpeg &> /dev/null; echo $?)
+if [[ $have_ffmpeg -eq 0 ]]; then
+  pkill ffmpeg
+  if [[ $? -eq 0 ]]; then
+    echo -e "${PADDING}${GREEN} ${EMPH}ffmpeg${GREEN} process successfully killed${NC}."
+  else
+    echo -e "${PADDING}${RED} Failed to kill ${EMPH}ffmpeg${NC} process."
+    exit 1
+  fi
+else
+  echo -e "${PADDING}${YELLOW} No ${EMPH}ffmpeg${YELLOW} process found to kill${NC}."
+fi
+
+exit 0
