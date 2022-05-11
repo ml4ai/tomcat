@@ -46,7 +46,6 @@ wait_for_connection() {
     ssh $EXPERIMENT_USER@$client_address "$command" &> /dev/null
     if [[ $? -eq 0 ]]; then
       echo -e "${padding}${GREEN} The internet connection was successfully established."
-      return 0
     fi
 
     sleep 1
@@ -56,7 +55,11 @@ wait_for_connection() {
   local text="${padding}${RED} The internet connection could not be "
   text+="established. Page ${FINAL_SURVEY_URL} is unreachable."
   echo -e "$text"
-  return 1
+
+  text="${padding}${YELLOW} Choose a network to connect manually and press "
+  text+="any key to proceed: "
+  echo -e -n "$text"
+  read -r
 }
 
 disable_wifi() {

@@ -3,6 +3,7 @@
 set -u
 
 source configuration_helpers
+source wifi
 
 SECONDS_TO_WAIT=300
 
@@ -28,6 +29,9 @@ __start_on_client() {
 
   yes_no_question "${padding}Do you want to start Minecraft on ${EMPH}$client_name?${NC}"
   if [[ $? -eq 0 ]]; then
+    enable_wifi $client_name $client_address "$padding "
+    wait_for_connection $client_name $client_address "$padding "
+
     # Start Minecraft on a new desktop
     create_new_desktop_on_client $client_address
 
@@ -122,16 +126,22 @@ __monitor_launch() {
     __monitor_launch_on_client "lion" "lion.local" "$padding "
     if [[ $? -ne 0 ]]; then
       all_launched="n"
+    else
+      disable_wifi "lion" "lion.local" "$padding "
     fi
 
     __monitor_launch_on_client "tiger" "tiger.local" "$padding "
     if [[ $? -ne 0 ]]; then
       all_launched="n"
+    else
+      disable_wifi "tiger" "tiger.local" "$padding "
     fi
 
     __monitor_launch_on_client "leopard" "leopard.local" "$padding "
     if [[ $? -ne 0 ]]; then
       all_launched="n"
+    else
+      disable_wifi "leopard" "leopard.local" "$padding "
     fi
   done
 }
