@@ -104,20 +104,28 @@ if [[ $GOTO -le 9 ]]; then
   fi
 fi
 
+if [[ $GOTO -le 10 ]]; then
+  echo " "
+  yes_no_question "[10] Do you want to open the ${EMPH}Client Map${NC}?"
+  if [[ $? -eq 0 ]]; then
+    source open_client_map $experiment_dir_cat " "
+  fi
+fi
+
 # TODO - Place client map phase here out of the minecraft script
 # TODO - Open Minecraft on the server
 
-if [[ $GOTO -le 10 ]]; then
+if [[ $GOTO -le 11 ]]; then
   echo " "
-  yes_no_question "[10] Do you want to open the ${EMPH}Final Survey${NC}?"
+  yes_no_question "[11] Do you want to open the ${EMPH}Final Survey${NC}?"
   if [[ $? -eq 0 ]]; then
     source open_final_survey $experiment_dir_cat " "
   fi
 fi
 
-if [[ $GOTO -le 11 ]]; then
+if [[ $GOTO -le 12 ]]; then
   echo " "
-  text="[11] Type [${EMPH}quit${NC}] to end the experiment and close "
+  text="[12] Type [${EMPH}quit${NC}] to end the experiment and close "
   text+="all open applications and processes: "
   wait_for_key "$text" "quit"
   source end_experiment $experiment_dir_cat " "
