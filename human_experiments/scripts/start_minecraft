@@ -52,10 +52,9 @@ __start_on_client() {
   fi
 }
 
-__monitor_launch_on_client() {
+__monitor_launch_on_machine() {
   local client_name=$1
-  local client_address=$2
-  local padding=$3
+  local padding=$2
 
   local common_file_path="$EXPERIMENT_DIR/tmp/minecraft_$client_name"
   local log_path="$common_file_path".log
@@ -123,27 +122,29 @@ __monitor_launch() {
   while [[ $all_launched != "y" ]]; do
     all_launched="y"
 
-    __monitor_launch_on_client "lion" "lion.local" "$padding "
+    __monitor_launch_on_machine "lion" "$padding "
     if [[ $? -ne 0 ]]; then
       all_launched="n"
     else
       disable_wifi "lion" "lion.local" "$padding "
     fi
 
-    __monitor_launch_on_client "tiger" "tiger.local" "$padding "
+    __monitor_launch_on_machine "tiger" "$padding "
     if [[ $? -ne 0 ]]; then
       all_launched="n"
     else
       disable_wifi "tiger" "tiger.local" "$padding "
     fi
 
-    __monitor_launch_on_client "leopard" "leopard.local" "$padding "
+    __monitor_launch_on_machine "leopard" "$padding "
     if [[ $? -ne 0 ]]; then
       all_launched="n"
     else
       disable_wifi "leopard" "leopard.local" "$padding "
     fi
   done
+
+  __monitor_launch_on_machine "server" "$padding "
 }
 
 __resize_and_reposition_on_client() {
@@ -165,11 +166,30 @@ __resize_and_reposition_minecraft() {
   __resize_and_reposition_on_client "leopard" "leopard.local"
 }
 
+__start_locally() {
+  local padding=$1
+
+  echo -e "${padding}Launching ${EMPH}Minecraft${NC} locally..."
+
+  local common_file_path="$EXPERIMENT_DIR/tmp/minecraft_server"
+  local log_path="$common_file_path".log
+  local pid_path="$common_file_path".pid
+
+  # Remove files to avoid thinking Minecraft was successfully launched because
+  # of a previous successful launching
+  rm $log_path &>/dev/null
+  rm $pid_path &>/dev/null
+
+  $HOME/$SYSTEMS_DIR/tomcat/tools/launch_minecraft &>$log_path &
+  echo $! >$pid_path
+}
+
 __start_minecraft() {
   echo -e "${PADDING}Launching ${EMPH}Minecraft...${NC}"
   __start_on_client "lion" "lion.local" "$PADDING "
   __start_on_client "tiger" "tiger.local" "$PADDING "
   __start_on_client "leopard" "leopard.local" "$PADDING "
+  __start_locally "$PADDING "
 
   # Wait for a while so that the files containing the log and pid have time to
   # be created

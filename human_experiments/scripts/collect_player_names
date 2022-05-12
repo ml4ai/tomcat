@@ -78,3 +78,11 @@ if [[ -z ${LEOPARD_PLAYER_NAME+x} ]]; then
     echo -e "${PADDING}${GREEN}The player name on ${EMPH}leopard${GREEN} is ${EMPH}${LEOPARD_PLAYER_NAME}.${NC}"
   fi
 fi
+
+# Get player name from the server instance
+__read_player_name "$EXPERIMENT_DIR/tmp/minecraft_server.log"
+export SERVER_PLAYER_NAME=$PLAYER_NAME
+
+if [[ ! -z ${SERVER_PLAYER_NAME} ]]; then
+  echo -e "${PADDING}${GREEN}The player name on ${EMPH}server${GREEN} is ${EMPH}${SERVER_PLAYER_NAME}.${NC}"
+fi
