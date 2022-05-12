@@ -2,6 +2,10 @@
 
 set -u
 
+# This is the uber script that drives a full experiment. Each step of the
+# experimental design is included in form of questions, such that no
+# CS experience should be necessary to execute all the steps required.
+
 data_dir_prefix_tom=/data/tom
 data_dir_prefix_cat=/data/cat
 
@@ -28,25 +32,25 @@ experiment_dir_tom=$data_dir_prefix_tom/$DATA_ROOT_DIR/exp_"$experiment_id"
 experiment_dir_cat=$data_dir_prefix_cat/$DATA_ROOT_DIR/exp_"$experiment_id"
 
 source create_data_directory_structure
-echo -e " Creating experiment directory structure for ${EMPH}TOM...${NC}"
+echo -e " Creating experiment ${EMPH}directory structure${NC} for ${EMPH}TOM${NC}..."
 create_data_directory_structure "$experiment_dir_tom" "  "
-echo -e " Creating experiment directory structure for ${EMPH}CAT...${NC}"
+echo -e " Creating experiment ${EMPH}directory structure${NC} for ${EMPH}CAT${NC}..."
 create_data_directory_structure "$experiment_dir_cat" "  "
 
 if [[ $GOTO -le 2 ]]; then
   echo " "
   yes_no_question "[2] Do you want to check ${EMPH}NFS${NC} status?"
   if [[ $? -eq 0 ]]; then
-    echo -e " Checking status for ${EMPH}TOM...${NC}"
+    echo -e " Checking ${EMPH}NFS${NC} status for ${EMPH}TOM${NC}..."
     source check_nfs $experiment_dir_tom "  "
-    echo -e " Checking status for ${EMPH}CAT...${NC}"
+    echo -e " Checking ${EMPH}NFS${NC} status for ${EMPH}CAT${NC}..."
     source check_nfs $experiment_dir_cat "  "
   fi
 fi
 
 if [[ $GOTO -le 3 ]]; then
   echo " "
-  yes_no_question "[3] Do you want to start ${EMPH}Mumble?${NC}"
+  yes_no_question "[3] Do you want to start ${EMPH}Mumble${NC}?"
   if [[ $? -eq 0 ]]; then
     source start_mumble " "
   fi
@@ -54,7 +58,7 @@ fi
 
 if [[ $GOTO -le 4 ]]; then
   echo " "
-  yes_no_question "[4] Do you want to start ${EMPH}fNIRS and Eye-tracker systems?${NC}"
+  yes_no_question "[4] Do you want to start ${EMPH}fNIRS and Eye-tracker systems${NC}?"
   if [[ $? -eq 0 ]]; then
     source start_sensors " "
   fi
@@ -62,7 +66,7 @@ fi
 
 if [[ $GOTO -le 5 ]]; then
   echo " "
-  yes_no_question "[5] Do you want to start ${EMPH}Face and Screen Recording?${NC}"
+  yes_no_question "[5] Do you want to start ${EMPH}Face and Screen Recording${NC}?"
   if [[ $? -eq 0 ]]; then
     source start_ffmpeg $experiment_dir_cat " "
   fi
@@ -70,7 +74,7 @@ fi
 
 if [[ $GOTO -le 6 ]]; then
   echo " "
-  yes_no_question "[6] Do you want to start the ${EMPH}Testbed?${NC}"
+  yes_no_question "[6] Do you want to start the ${EMPH}Testbed${NC}?"
   if [[ $? -eq 0 ]]; then
     source start_testbed $experiment_dir_cat " "
   fi
@@ -78,7 +82,7 @@ fi
 
 if [[ $GOTO -le 7 ]]; then
   echo " "
-  yes_no_question "[7] Do you want to start ${EMPH}Lab Recorder?${NC}"
+  yes_no_question "[7] Do you want to start ${EMPH}Lab Recorder${NC}?"
   if [[ $? -eq 0 ]]; then
     source start_lab_recorder $experiment_dir_cat " "
   fi
@@ -86,7 +90,7 @@ fi
 
 if [[ $GOTO -le 8 ]]; then
   echo " "
-  yes_no_question "[8] Do you want to start the ${EMPH}Baseline Tasks?${NC}"
+  yes_no_question "[8] Do you want to start the ${EMPH}Baseline Tasks${NC}?"
   if [[ $? -eq 0 ]]; then
     source start_baseline_tasks $experiment_dir_cat " "
   fi
@@ -94,7 +98,7 @@ fi
 
 if [[ $GOTO -le 9 ]]; then
   echo " "
-  yes_no_question "[9] Do you want to start ${EMPH}Minecraft?${NC}"
+  yes_no_question "[9] Do you want to start ${EMPH}Minecraft${NC}?"
   if [[ $? -eq 0 ]]; then
     source start_minecraft $experiment_dir_cat " "
   fi
@@ -105,7 +109,7 @@ fi
 
 if [[ $GOTO -le 10 ]]; then
   echo " "
-  yes_no_question "[10] Do you want to open the ${EMPH}Final Survey?${NC}"
+  yes_no_question "[10] Do you want to open the ${EMPH}Final Survey${NC}?"
   if [[ $? -eq 0 ]]; then
     source open_final_survey $experiment_dir_cat " "
   fi

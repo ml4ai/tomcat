@@ -9,7 +9,7 @@ FRAME_RATE=10
 if [[ -z ${1+x} ]]; then
   # In case the script is executed standalone.
   text="${RED}Please provide an experiment directory as the first argument of "
-  text+="the call to this script.${NC}"
+  text+="the call to this script."
   echo -e "$text"
   exit 1
 fi
@@ -39,10 +39,10 @@ __start_face_recording() {
   local image_dir="$EXPERIMENT_DIR/$client_name/face_images"
   mkdir -p "$image_dir" >/dev/null
 
-  echo -e "${padding}Starting ${EMPH}Face Recording...${NC}"
+  echo -e "${padding}Starting ${EMPH}Face Recording${NC}..."
   __start_recording $client_address "stream_webcam.scpt" "\$HOME$image_dir"
   if [[ $? -eq 0 ]]; then
-    echo -e "${padding}${GREEN} ${EMPH}Face Recording${GREEN} successfully started.${NC}"
+    echo -e "${padding}${GREEN} ${EMPH}Face Recording${GREEN} successfully started${NC}."
   fi
 }
 
@@ -53,10 +53,10 @@ __start_screen_recording() {
     local image_dir="$EXPERIMENT_DIR/$client_name/screenshots"
     mkdir -p "$image_dir" >/dev/null
 
-    echo -e "${padding}Starting ${EMPH}Screen Recording...${NC}"
+    echo -e "${padding}Starting ${EMPH}Screen Recording${NC}..."
     __start_recording $client_address "record_screen.scpt" "\$HOME$image_dir"
     if [[ $? -eq 0 ]]; then
-      echo -e "${padding}${GREEN} ${EMPH}Screen Recording${GREEN} successfully started.${NC}"
+      echo -e "${padding}${GREEN} ${EMPH}Screen Recording${GREEN} successfully started."
     fi
 }
 
@@ -65,7 +65,7 @@ __start_ffmpeg_on_client() {
   local client_address=$2
   local padding=$3
 
-  yes_no_question "${padding}Do you want to start recording on ${EMPH}$client_name?${NC}"
+  yes_no_question "${padding}Do you want to start recording on ${EMPH}$client_name${NC}?"
   if [[ $? -eq 0 ]]; then
     __start_face_recording $client_address "$padding "
     __start_screen_recording $client_address "$padding "

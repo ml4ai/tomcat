@@ -8,7 +8,7 @@ source wifi
 if [[ -z ${1+x} ]]; then
   # In case the script is executed standalone.
   text="${RED}Please provide an experiment directory as the first argument of "
-  text+="the call to this script.${NC}"
+  text+="the call to this script."
   echo -e "$text"
   exit 1
 fi
@@ -27,7 +27,7 @@ __open_on_client() {
   local player_name=$4
   local padding=$5
 
-  yes_no_question "${padding}Do you want to open the final survey on ${EMPH}$client_name?${NC}"
+  yes_no_question "${padding}Do you want to open the final survey on ${EMPH}$client_name${NC}?"
   if [[ $? -eq 0 ]]; then
     enable_wifi $client_name $client_address "$padding "
     wait_for_connection $client_name $client_address "$padding "
@@ -44,7 +44,7 @@ __open_final_surveys() {
 
   source collect_player_names "$EXPERIMENT_DIR" "$padding"
   source collect_participant_ids "$padding"
-  echo -e "${padding}Opening the ${EMPH}Final Survey...${NC}"
+  echo -e "${padding}Opening the ${EMPH}Final Survey${NC}..."
 
   __open_on_client "lion" "lion.local" $LION_PARTICIPANT_ID $LION_PLAYER_NAME "$padding "
   __open_on_client "tiger" "tiger.local" $TIGER_PARTICIPANT_ID $TIGER_PLAYER_NAME "$padding "

@@ -24,10 +24,10 @@ __start_eye_tracker() {
   local client_address=$1
   local padding=$2
 
-  echo -e "${padding}Starting ${EMPH}Eye-tracker...${NC}"
+  echo -e "${padding}Starting ${EMPH}Eye-tracker${NC}..."
   __start_sensor $client_address "launch_pupil_capture.scpt"
   if [[ $? -eq 0 ]]; then
-    echo -e "${padding}${GREEN} ${EMPH}Eye-tracker${GREEN} system successfully launched.${NC}"
+    echo -e "${padding}${GREEN} ${EMPH}Eye-tracker${GREEN} system successfully launched."
   fi
 }
 
@@ -35,10 +35,10 @@ __start_fnirs() {
   local client_address=$1
   local padding=$2
 
-  echo -e "${padding}Starting ${EMPH}fNIRS...${NC}"
+  echo -e "${padding}Starting ${EMPH}fNIRS${NC}..."
   __start_sensor $client_address "launch_aurora.scpt"
   if [[ $? -eq 0 ]]; then
-    echo -e "${padding}${GREEN} ${EMPH}fNIRS${GREEN} system successfully launched.${NC}"
+    echo -e "${padding}${GREEN} ${EMPH}fNIRS${GREEN} system successfully launched."
   fi
 }
 
@@ -47,7 +47,7 @@ __start_sensors_on_client() {
   local client_address=$2
   local padding=$3
 
-  yes_no_question "${padding}Do you want to start the systems on ${EMPH}$client_name?${NC}"
+  yes_no_question "${padding}Do you want to start the systems on ${EMPH}$client_name${NC}?"
   if [[ $? -eq 0 ]]; then
     # Open sensors applications in a new desktop
     create_new_desktop_on_client $client_address

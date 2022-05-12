@@ -3,11 +3,8 @@
 RED="\033[31m"
 GREEN="\033[32m"
 YELLOW="\033[33m"
-EMPH="\033[36m" # Emphasize color: cyan
+EMPH="\033[35m" # Emphasize color: purple
 NC="\033[0m"
-
-# Retrieve the absolute path of the scripts
-#export SCRIPTS_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd)"
 
 yes_no_question() {
   local question="$1 [y/n]: "

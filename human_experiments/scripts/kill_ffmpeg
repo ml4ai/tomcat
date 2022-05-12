@@ -4,6 +4,8 @@ set -u
 
 source configuration_helpers
 
+# This script must be executed in the client side.
+
 if [[ -z ${1+x} ]]; then
   PADDING=""
 else
@@ -14,13 +16,13 @@ have_ffmpeg=$(pgrep -x ffmpeg &> /dev/null; echo $?)
 if [[ $have_ffmpeg -eq 0 ]]; then
   pkill ffmpeg
   if [[ $? -eq 0 ]]; then
-    echo -e "${PADDING}${GREEN} ${EMPH}ffmpeg${GREEN} process successfully killed${NC}."
+    echo -e "${PADDING}${GREEN}${EMPH}ffmpeg${GREEN} process successfully killed."
   else
-    echo -e "${PADDING}${RED} Failed to kill ${EMPH}ffmpeg${NC} process."
+    echo -e "${PADDING}${RED}Failed to kill ${EMPH}ffmpeg${RED} process."
     exit 1
   fi
 else
-  echo -e "${PADDING}${YELLOW} No ${EMPH}ffmpeg${YELLOW} process found to kill${NC}."
+  echo -e "${PADDING}${YELLOW}No ${EMPH}ffmpeg${YELLOW} process found to kill."
 fi
 
 exit 0

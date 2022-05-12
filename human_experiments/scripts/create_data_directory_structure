@@ -23,14 +23,14 @@ __create_directory() {
     text="${padding}${YELLOW}Directory ${EMPH}$directory${YELLOW} found. "
     text+="Skipping directory creation.\n"
     text+="${padding}WARNING: If you proceed with the experiment, data saved "
-    text+="in the above directory will be overridden.${NC}"
+    text+="in the above directory will be overridden."
     echo -e "$text"
   else
     mkdir -p "$directory" < /dev/null
     if [[ $? -eq 0 ]]; then
-      echo -e "${padding}${GREEN}Directory ${EMPH}$directory${GREEN} created.${NC}"
+      echo -e "${padding}${GREEN}Directory ${EMPH}$directory${GREEN} created."
     else
-      printf "${padding}${RED}Error while creating directory ${EMPH}$directory.${NC}"
+      printf "${padding}${RED}Error while creating directory ${EMPH}$directory${NC}."
       exit 1
     fi
   fi

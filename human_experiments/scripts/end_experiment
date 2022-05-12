@@ -9,7 +9,7 @@ source configuration_helpers
 if [[ -z ${1+x} ]]; then
   # In case the script is executed standalone.
   text="${RED}Please provide an experiment directory as the first argument of "
-  text+="the call to this script.${NC}"
+  text+="the call to this script."
   echo -e "$text"
   exit 1
 fi
@@ -27,7 +27,7 @@ __stop_face_and_screen_recording() {
   local padding=$3
 
   local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/ && "
-  command+="./kill_ffmpeg \"$padding\""
+  command+="./kill_ffmpeg \"$padding \""
 
   echo -e "${padding}Stopping ${EMPH}Face and Screen Recording${NC}..."
   local stopped="n"
@@ -36,7 +36,7 @@ __stop_face_and_screen_recording() {
     if [[ $? -eq 0 ]]; then
       stopped="y"
     else
-      yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}."
+      yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"
       if [[ $? -ne 0 ]]; then
         break
       fi
@@ -61,19 +61,19 @@ __stop_minecraft() {
     while [[ $stopped != "y" ]]; do
       ssh $EXPERIMENT_USER@$client_address "$command"
       if [[ $? -eq 0 ]]; then
-        echo -e "${padding}${GREEN} ${EMPH}Minecraft${GREEN} successfully stopped${NC}."
+        echo -e "${padding}${GREEN} ${EMPH}Minecraft${GREEN} successfully stopped."
         stopped="y"
       else
         echo -e "${padding}${RED} Failed to stop ${EMPH}Minecraft${NC}."
-        yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}."
+        yes_no_question "${padding} Do you want to ${EMPH}RETRY${RED}?"
         if [[ $? -ne 0 ]]; then
           break
         fi
       fi
     done
   else
-    local text="${padding}${YELLOW}PID file ${EMPH}$pid_filepath${NC} not "
-    text+="found for Minecraft on ${EMPH}$client_name${NC}."
+    local text="${padding}${YELLOW}PID file ${EMPH}$pid_filepath${YELLOW} not "
+    text+="found for Minecraft on ${EMPH}$client_name${YELLOW}."
     echo -e "$text"
   fi
 }
@@ -87,7 +87,7 @@ __close_application() {
   local command="osascript \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/close_application.scpt "
   command+="\"$app_name\""
   ssh $EXPERIMENT_USER@$client_address "$command" &>/dev/null
-  echo -e "${padding}${GREEN}${EMPH}$app_name${GREEN} successfully closed${NC}."
+  echo -e "${padding}${GREEN}${EMPH}$app_name${GREEN} successfully closed."
 
   # The apple script returns exit code 1 because closing an application is an
   # interruption. So, we do not check for a return code and assume the
@@ -121,10 +121,10 @@ __close_extra_desktops() {
   while [[ $closed != "y" ]]; do
     ssh $EXPERIMENT_USER@$client_address "$command" >/dev/null
     if [[ $? -eq 0 ]]; then
-      echo -e "${padding}${GREEN} ${EMPH}Extra desktops${GREEN} successfully closed${NC}."
+      echo -e "${padding}${GREEN} ${EMPH}Extra desktops${GREEN} successfully closed."
       closed="y"
     else
-      echo -e "${padding}${RED} Failed to close ${EMPH}extra desktops${NC}."
+      echo -e "${padding}${RED} Failed to close ${EMPH}extra desktops${RED}."
       yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"
       if [[ $? -ne 0 ]]; then
         break
@@ -138,7 +138,7 @@ __cleanup_on_client() {
   local client_address=$2
   local padding=$3
 
-  yes_no_question "${padding}Do you want to ${EMPH}end the experiment${NC} on ${EMPH}$client_name?${NC}"
+  yes_no_question "${padding}Do you want to ${EMPH}END${NC} the experiment on ${EMPH}$client_name${NC}?"
   if [[ $? -eq 0 ]]; then
     __stop_face_and_screen_recording $client_name $client_address "$padding "
     __stop_minecraft $client_name $client_address "$padding "
@@ -158,10 +158,10 @@ __freeze_experiment_data() {
   while [[ $frozen != "y" ]]; do
     chmod a=r "$EXPERIMENT_DIR" >/dev/null
     if [[ $? -eq 0 ]]; then
-      echo -e "${padding}${GREEN} Data successfully frozen${NC}."
+      echo -e "${padding}${GREEN} Data successfully frozen."
       frozen="y"
     else
-      echo -e "${padding}${RED} Failed to freeze data${NC}."
+      echo -e "${padding}${RED} Failed to freeze data."
       yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"
       if [[ $? -ne 0 ]]; then
         break
@@ -174,6 +174,7 @@ __backup_experiment_data() {
   local padding=$1
 
   echo -e "${padding}${EMPH}Backing up${NC} data..."
+  echo -e "${padding}${YELLOW} Yet to be implemented!"
 
   # TODO
   # here comes a call to Kobus' script to synchronize data between CAT, TOM
@@ -182,7 +183,7 @@ __backup_experiment_data() {
 
 __cleanup() {
   local padding=$1
-  echo -e "${padding}Ending ${EMPH}experiment${NC}..."
+  echo -e "${padding}Ending experiment..."
 
   __cleanup_on_client "lion" "lion.local" "$padding "
   __cleanup_on_client "tiger" "tiger.local" "$padding "

@@ -5,9 +5,9 @@ set -u
 source configuration_helpers
 
 if [[ -z ${1+x} ]]; then
-  padding=""
+  PADDING=""
 else
-  padding=$1
+  PADDING=$1
 fi
 
 __start_mumble_on_client() {
@@ -15,7 +15,7 @@ __start_mumble_on_client() {
   local client_address=$2
   local padding=$3
 
-  yes_no_question "${padding}Do you want to start Mumble on ${EMPH}$client_name?${NC}"
+  yes_no_question "${padding}Do you want to start ${EMPH}Mumble${NC} on ${EMPH}$client_name${NC}?"
   if [[ $? -eq 0 ]]; then
     # Start Mumble in a new desktop in the client machines
     create_new_desktop_on_client $client_address
@@ -23,13 +23,13 @@ __start_mumble_on_client() {
   fi
 }
 
-__start_mumble_on_client "lion" "lion.local" "$padding"
-__start_mumble_on_client "tiger" "tiger.local" "$padding"
-__start_mumble_on_client "leopard" "leopard.local" "$padding"
+__start_mumble_on_client "lion" "lion.local" "$PADDING"
+__start_mumble_on_client "tiger" "tiger.local" "$PADDING"
+__start_mumble_on_client "leopard" "leopard.local" "$PADDING"
 
 # The applescript does not work on the mumble interface and there's no
 # available command-line option to establish the connection programmatically.
 # Therefore, the process has to be done manually using a remote desktop client.
-text="${padding}${YELLOW}Use ${EMPH}Remmina${YELLOW} to connect the client "
-text+="machines to the server in the Mumble interface.${NC}"
+text="${PADDING}${YELLOW}Use ${EMPH}Remmina${YELLOW} to connect the client "
+text+="machines to the server in the ${EMPH}Mumble${YELLOW} interface."
 echo -e "$text"

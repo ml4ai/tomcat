@@ -8,8 +8,8 @@ source configuration_helpers
 
 if [[ -z ${1+x} ]]; then
   # In case the script is executed standalone.
-  text="${RED}Please provide the minecraft process ID to the "
-  text+="the call to this script.${NC}"
+  text="${RED}Please provide a minecraft process ID to the "
+  text+="the call to this script."
   echo -e "$text"
   exit 1
 fi
@@ -57,7 +57,7 @@ if [[ -n "${to_kill}" ]]; then
       sleep 1
     else
       text="${PADDING}${YELLOW}Process ${EMPH}${proc}${YELLOW} no longer "
-      text+="exists, so we don't need to kill it${NC}."
+      text+="exists."
       echo -e "$text"
     fi
   done

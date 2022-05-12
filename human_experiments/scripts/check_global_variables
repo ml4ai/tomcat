@@ -20,7 +20,7 @@ fi
 # User
 if [[ -z ${EXPERIMENT_USER+x} ]]; then
   text="${RED}Please set the variable ${EMPH}EXPERIMENT_USER${NC}${RED} with a "
-  text+="username with enough privilege to connect to the client machines.${NC}"
+  text+="username with enough privilege to connect to the client machines."
   echo -e $text
   status=1
 fi
