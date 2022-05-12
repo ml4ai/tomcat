@@ -53,7 +53,7 @@ class ServerAffectiveTask:
             image_paths = [path for path in image_paths if "Team" in path]
             file_name_length = 11
         else:
-            image_paths = [path for path in image_paths if "Indivijual" in path]
+            image_paths = [path for path in image_paths if "individual" in path]
             file_name_length = 17
 
         data = {}
