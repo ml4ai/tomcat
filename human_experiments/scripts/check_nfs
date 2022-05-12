@@ -25,8 +25,11 @@ __check_nfs_on_client() {
   local client_address=$3
   local padding=$4
 
-  yes_no_question "${padding}Do you want to check the status on ${EMPH}$client_name${NC}?"
-  if [[ $? -eq 0 ]]; then
+  if [[ $ALL -ne 1 ]]; then
+    yes_no_question "${padding}Do you want to check the status on ${EMPH}$client_name${NC}?"
+    padding="$padding "
+  fi
+  if [[ $ALL -eq 1 ]] || [[ $? -eq 0 ]]; then
     # Create NFS folder
     local nfs_dir=$experiment_dir/$client_name/nfs
     mkdir -p "$nfs_dir" > /dev/null
@@ -40,7 +43,7 @@ __check_nfs_on_client() {
       echo "${padding} [TEST 3]"
       ssh $EXPERIMENT_USER@$client_address "rsync ~/img.png \$HOME$nfs_dir && echo $?" | sed "s/0/${padding} OK/"
       echo " "
-      yes_no_question "${padding}Do you want to ${EMPH}repeat${NC} the tests?"
+      yes_no_question "${padding}Do you want to ${EMPH}REPEAT${NC} the tests?"
     done  
   fi
 }
