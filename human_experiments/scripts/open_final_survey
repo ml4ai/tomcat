@@ -27,15 +27,24 @@ __open_on_client() {
   local player_name=$4
   local padding=$5
 
-  yes_no_question "${padding}Do you want to open the final survey on ${EMPH}$client_name${NC}?"
-  if [[ $? -eq 0 ]]; then
+  if [[ $ALL -ne 1 ]]; then
+    yes_no_question "${padding}Do you want to open the final survey on ${EMPH}$client_name${NC}?"
+    ans=$?
+    padding="$padding "
+  fi
+  if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
     enable_wifi $client_name $client_address "$padding "
     wait_for_connection $client_name $client_address "$padding "
 
     # Open the survey
     local command="osascript \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/open_final_survey.scpt "
     command+="'$FINAL_SURVEY_URL' $participant_id $player_name $client_name"
-    ssh $EXPERIMENT_USER@$client_address "$command" > /dev/null
+    ssh $EXPERIMENT_USER@$client_address "$command" >/dev/null
+    if [[ $? -eq 0 ]]; then
+      echo -e "${padding}${EMPH}Final survey${GREEN} opened successfully."
+    else
+      echo -e "${padding}${RED}Failed to open the ${EMPH}Final Survey${RED}."
+    fi
   fi
 }
 

@@ -28,7 +28,7 @@ __start_recording() {
 
   local command="osascript \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/$script_name "
   command+="$image_dir $FRAME_RATE"
-  ssh $EXPERIMENT_USER@$client_address "$command" > /dev/null
+  ssh $EXPERIMENT_USER@$client_address "$command" >/dev/null
   return $?
 }
 
@@ -47,17 +47,17 @@ __start_face_recording() {
 }
 
 __start_screen_recording() {
-    local client_address=$1
-    local padding=$2
+  local client_address=$1
+  local padding=$2
 
-    local image_dir="$EXPERIMENT_DIR/$client_name/screenshots"
-    mkdir -p "$image_dir" >/dev/null
+  local image_dir="$EXPERIMENT_DIR/$client_name/screenshots"
+  mkdir -p "$image_dir" >/dev/null
 
-    echo -e "${padding}Starting ${EMPH}Screen Recording${NC}..."
-    __start_recording $client_address "record_screen.scpt" "\$HOME$image_dir"
-    if [[ $? -eq 0 ]]; then
-      echo -e "${padding}${GREEN} ${EMPH}Screen Recording${GREEN} successfully started."
-    fi
+  echo -e "${padding}Starting ${EMPH}Screen Recording${NC}..."
+  __start_recording $client_address "record_screen.scpt" "\$HOME$image_dir"
+  if [[ $? -eq 0 ]]; then
+    echo -e "${padding}${GREEN} ${EMPH}Screen Recording${GREEN} successfully started."
+  fi
 }
 
 __start_ffmpeg_on_client() {
@@ -65,10 +65,14 @@ __start_ffmpeg_on_client() {
   local client_address=$2
   local padding=$3
 
-  yes_no_question "${padding}Do you want to start recording on ${EMPH}$client_name${NC}?"
-  if [[ $? -eq 0 ]]; then
-    __start_face_recording $client_address "$padding "
-    __start_screen_recording $client_address "$padding "
+  if [[ $ALL -ne 1 ]]; then
+    yes_no_question "${padding}Do you want to start recording on ${EMPH}$client_name${NC}?"
+    ans=$?
+    padding="$padding "
+  fi
+  if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    __start_face_recording $client_address "$padding"
+    __start_screen_recording $client_address "$padding"
   fi
 }
 

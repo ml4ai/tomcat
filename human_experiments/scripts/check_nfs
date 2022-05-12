@@ -27,9 +27,10 @@ __check_nfs_on_client() {
 
   if [[ $ALL -ne 1 ]]; then
     yes_no_question "${padding}Do you want to check the status on ${EMPH}$client_name${NC}?"
+    ans=$?
     padding="$padding "
   fi
-  if [[ $ALL -eq 1 ]] || [[ $? -eq 0 ]]; then
+  if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
     # Create NFS folder
     local nfs_dir=$experiment_dir/$client_name/nfs
     mkdir -p "$nfs_dir" > /dev/null

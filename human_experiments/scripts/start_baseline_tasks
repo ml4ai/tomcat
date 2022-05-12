@@ -81,8 +81,12 @@ __start_on_client() {
   local participant_id=$3
   local padding=$4
 
-  yes_no_question "${padding}Do you want to start the baseline tasks on ${EMPH}$client_name${NC}?"
-  if [[ $? -eq 0 ]]; then
+  if [[ $ALL -ne 1 ]]; then
+    yes_no_question "${padding}Do you want to start the baseline tasks on ${EMPH}$client_name${NC}?"
+    ans=$?
+    padding="$padding "
+  fi
+  if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
     # Start baseline task on a new desktop
     create_new_desktop_on_client $client_address
 
@@ -121,9 +125,9 @@ __start_baseline_tasks() {
   fi
 
   yes_no_question "${PADDING}Do you want to start the ${EMPH}AI${NC}?"
-    if [[ $? -eq 0 ]]; then
-      __start_ai "${PADDING} "
-    fi
+  if [[ $? -eq 0 ]]; then
+    __start_ai "${PADDING} "
+  fi
 }
 
 __start_baseline_tasks

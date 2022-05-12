@@ -15,11 +15,20 @@ __start_mumble_on_client() {
   local client_address=$2
   local padding=$3
 
-  yes_no_question "${padding}Do you want to start ${EMPH}Mumble${NC} on ${EMPH}$client_name${NC}?"
-  if [[ $? -eq 0 ]]; then
+  if [[ $ALL -ne 1 ]]; then
+    yes_no_question "${padding}Do you want to start ${EMPH}Mumble${NC} on ${EMPH}$client_name${NC}?"
+    ans=$?
+    padding="$padding "
+  fi
+  if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
     # Start Mumble in a new desktop in the client machines
     create_new_desktop_on_client $client_address
-    ssh $EXPERIMENT_USER@$client_address "open -a Mumble"
+    ssh $EXPERIMENT_USER@$client_address "open -a Mumble" >/dev/null
+    if [[ $? -eq 0 ]]; then
+      echo -e "${padding}${EMPH}Mumble${GREEN} opened successfully."
+    else
+      echo -e "${padding}${RED}Failed to open the ${EMPH}Mumble${RED}."
+    fi
   fi
 }
 

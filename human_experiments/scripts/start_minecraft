@@ -27,10 +27,14 @@ __start_on_client() {
   local client_address=$2
   local padding=$3
 
-  yes_no_question "${padding}Do you want to start Minecraft on ${EMPH}$client_name${NC}?"
-  if [[ $? -eq 0 ]]; then
-    enable_wifi $client_name $client_address "$padding "
-    wait_for_connection $client_name $client_address "$padding "
+  if [[ $ALL -ne 1 ]]; then
+    yes_no_question "${padding}Do you want to start ${EMPH}Minecraft${NC} on ${EMPH}$client_name${NC}?"
+    ans=$?
+    padding="$padding "
+  fi
+  if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    enable_wifi $client_name $client_address "$padding"
+    wait_for_connection $client_name $client_address "$padding"
 
     # Start Minecraft on a new desktop
     create_new_desktop_on_client $client_address
@@ -43,7 +47,7 @@ __start_on_client() {
 
     local minecraft_launched="n"
 
-    echo -e "${padding} Launching ${EMPH}Minecraft${NC} on ${EMPH}$client_name${NC}..."
+    echo -e "${padding}Launching ${EMPH}Minecraft${NC} on ${EMPH}$client_name${NC}..."
     # Remove files to avoid thinking Minecraft was successfully launched because
     # of a previous successful launching
     rm $log_path &>/dev/null
@@ -63,7 +67,7 @@ __monitor_launch_on_machine() {
   if [[ ! -e "$pid_path" ]]; then
     # Minecraft was not launched on the client
     local text="${padding}${YELLOW}${EMPH}Minecraft${YELLOW} was never launched on "
-    text+="${EMPH}$client_name${NC}."
+    text+="${EMPH}$client_name${YELLOW}."
     echo -e "$text"
     return 0
   fi

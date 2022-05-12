@@ -138,12 +138,16 @@ __cleanup_on_client() {
   local client_address=$2
   local padding=$3
 
-  yes_no_question "${padding}Do you want to ${EMPH}END${NC} the experiment on ${EMPH}$client_name${NC}?"
-  if [[ $? -eq 0 ]]; then
-    __stop_face_and_screen_recording $client_name $client_address "$padding "
-    __stop_minecraft $client_name $client_address "$padding "
-    __close_applications $client_name $client_address "$padding "
-    __close_extra_desktops $client_name $client_address "$padding "
+  if [[ $ALL -ne 1 ]]; then
+    yes_no_question "${padding}Do you want to ${EMPH}END${NC} the experiment on ${EMPH}$client_name${NC}?"
+    ans=$?
+    padding="$padding "
+  fi
+  if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    __stop_face_and_screen_recording $client_name $client_address "$padding"
+    __stop_minecraft $client_name $client_address "$padding"
+    __close_applications $client_name $client_address "$padding"
+    __close_extra_desktops $client_name $client_address "$padding"
   fi
 
 }
