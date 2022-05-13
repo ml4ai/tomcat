@@ -21,10 +21,11 @@ __start_sensor() {
 }
 
 __start_eye_tracker() {
-  local client_address=$1
-  local padding=$2
+  local client_name=$1
+  local client_address=$2
+  local padding=$3
 
-  echo -e "${padding}Starting ${EMPH}Eye-tracker${NC}..."
+  echo -e "${padding}Starting ${EMPH}Eye-tracker${NC} on ${EMPH}$client_name${NC}..."
   __start_sensor $client_address "launch_pupil_capture.scpt"
   if [[ $? -eq 0 ]]; then
     echo -e "${padding}${GREEN} ${EMPH}Eye-tracker${GREEN} system successfully launched.${NC}"
@@ -32,10 +33,11 @@ __start_eye_tracker() {
 }
 
 __start_fnirs() {
-  local client_address=$1
-  local padding=$2
+  local client_name=$1
+  local client_address=$2
+  local padding=$3
 
-  echo -e "${padding}Starting ${EMPH}fNIRS${NC}..."
+  echo -e "${padding}Starting ${EMPH}fNIRS${NC} on ${EMPH}$client_name${NC}..."
   __start_sensor $client_address "launch_aurora.scpt"
   if [[ $? -eq 0 ]]; then
     echo -e "${padding}${GREEN} ${EMPH}fNIRS${GREEN} system successfully launched.${NC}"
@@ -56,8 +58,8 @@ __start_sensors_on_client() {
     # Open sensors applications in a new desktop
     create_new_desktop_on_client $client_address
 
-    __start_eye_tracker $client_address "$padding"
-    __start_fnirs $client_address "$padding"
+    __start_eye_tracker $client_name $client_address "$padding"
+    __start_fnirs $client_name $client_address "$padding"
     disable_wifi $client_name $client_address "$padding"
   fi
 }

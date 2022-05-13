@@ -184,7 +184,7 @@ __start_locally() {
   rm $log_path &>/dev/null
   rm $pid_path &>/dev/null
 
-  sudo $HOME/$SYSTEMS_DIR/tomcat/tools/launch_minecraft &>$log_path &
+  $HOME/$SYSTEMS_DIR/tomcat/tools/launch_minecraft &>$log_path &
   echo $! >$pid_path
 }
 

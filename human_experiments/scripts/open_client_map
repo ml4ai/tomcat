@@ -32,12 +32,14 @@ __open_on_client() {
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
     # Open the client map
+    echo -e "${padding}Opening the ${EMPH}Client Map${NC} on ${EMPH}$client_name${NC}..."
+
     local command="osascript \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/open_client_map.scpt '$CLIENT_MAP_URL' $player_name"
     ssh $EXPERIMENT_USER@$client_address "$command" >/dev/null
     if [[ $? -eq 0 ]]; then
-      echo -e "${padding}${EMPH}Client Map${GREEN} opened successfully.${NC}"
+      echo -e "${padding} ${EMPH}Client Map${GREEN} opened successfully.${NC}"
     else
-      echo -e "${padding}${RED}Failed to open the ${EMPH}Client Map${RED}.${NC}"
+      echo -e "${padding} ${RED}Failed to open the ${EMPH}Client Map${RED}.${NC}"
     fi
   fi
 }
