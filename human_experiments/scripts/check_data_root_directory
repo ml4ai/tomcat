@@ -13,7 +13,7 @@ if [[ $? -eq 0 ]]; then
   export DATA_ROOT_DIR
 
   text="${GREEN}The experiment data folder was successfully changed to "
-  text+="${EMPH}${DATA_ROOT_DIR}${NC}."
+  text+="${EMPH}${DATA_ROOT_DIR}${GREEN}.${NC}"
   echo -e $text
 fi
 

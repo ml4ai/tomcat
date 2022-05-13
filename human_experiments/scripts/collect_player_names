@@ -42,12 +42,12 @@ if [[ -z ${LION_PLAYER_NAME+x} ]]; then
   export LION_PLAYER_NAME=$PLAYER_NAME
 
   if [[ -z ${LION_PLAYER_NAME} ]]; then
-    echo -n -e "${PADDING}${RED}The player name on ${EMPH}lion${RED} was not found. Please, enter the name manually:${NC} "
+    echo -n -e "${PADDING}${RED}The player name on ${EMPH}lion${RED} was not found. Please, enter the name manually: ${NC}"
     read -r LION_PLAYER_NAME
     export LION_PLAYER_NAME
-    echo -e "${PADDING}${GREEN} The player name on ${EMPH}lion${GREEN} was successfully set to ${EMPH}${LION_PLAYER_NAME}.${NC}"
+    echo -e "${PADDING}${GREEN} The player name on ${EMPH}lion${GREEN} was successfully set to ${EMPH}${LION_PLAYER_NAME}${GREEN}.${NC}"
   else
-    echo -e "${PADDING}${GREEN}The player name on ${EMPH}lion${GREEN} is ${EMPH}${LION_PLAYER_NAME}.${NC}"
+    echo -e "${PADDING}${GREEN}The player name on ${EMPH}lion${GREEN} is ${EMPH}${LION_PLAYER_NAME}${GREEN}.${NC}"
   fi
 fi
 
@@ -56,12 +56,12 @@ if [[ -z ${TIGER_PLAYER_NAME+x} ]]; then
   export TIGER_PLAYER_NAME=$PLAYER_NAME
 
   if [[ -z ${TIGER_PLAYER_NAME} ]]; then
-    echo -n -e "${PADDING}${RED}The player name on ${EMPH}tiger${RED} was not found. Please, enter the name manually:${NC} "
+    echo -n -e "${PADDING}${RED}The player name on ${EMPH}tiger${RED} was not found. Please, enter the name manually: ${NC}"
     read -r TIGER_PLAYER_NAME
     export TIGER_PLAYER_NAME
-    echo -e "${PADDING}${GREEN} The player name on ${EMPH}tiger${GREEN} was successfully set to ${EMPH}${TIGER_PLAYER_NAME}.${NC}"
+    echo -e "${PADDING}${GREEN} The player name on ${EMPH}tiger${GREEN} was successfully set to ${EMPH}${TIGER_PLAYER_NAME}${GREEN}.${NC}"
   else
-    echo -e "${PADDING}${GREEN}The player name on ${EMPH}tiger${GREEN} is ${EMPH}${TIGER_PLAYER_NAME}.${NC}"
+    echo -e "${PADDING}${GREEN}The player name on ${EMPH}tiger${GREEN} is ${EMPH}${TIGER_PLAYER_NAME}${GREEN}.${NC}"
   fi
 fi
 
@@ -70,19 +70,21 @@ if [[ -z ${LEOPARD_PLAYER_NAME+x} ]]; then
   export LEOPARD_PLAYER_NAME=$PLAYER_NAME
 
   if [[ -z ${LEOPARD_PLAYER_NAME} ]]; then
-    echo -n -e "${PADDING}${RED}The player name on ${EMPH}leopard${RED} was not found. Please, enter the name manually:${NC} "
+    echo -n -e "${PADDING}${RED}The player name on ${EMPH}leopard${RED} was not found. Please, enter the name manually: ${NC}"
     read -r LEOPARD_PLAYER_NAME
     export LEOPARD_PLAYER_NAME
-    echo -e "${PADDING}${GREEN} The player name on ${EMPH}leopard${GREEN} was successfully set to ${EMPH}${LEOPARD_PLAYER_NAME}.${NC}"
+    echo -e "${PADDING}${GREEN} The player name on ${EMPH}leopard${GREEN} was successfully set to ${EMPH}${LEOPARD_PLAYER_NAME}${GREEN}.${NC}"
   else
-    echo -e "${PADDING}${GREEN}The player name on ${EMPH}leopard${GREEN} is ${EMPH}${LEOPARD_PLAYER_NAME}.${NC}"
+    echo -e "${PADDING}${GREEN}The player name on ${EMPH}leopard${GREEN} is ${EMPH}${LEOPARD_PLAYER_NAME}${GREEN}.${NC}"
   fi
 fi
 
 # Get player name from the server instance
-__read_player_name "$EXPERIMENT_DIR/tmp/minecraft_server.log"
-export SERVER_PLAYER_NAME=$PLAYER_NAME
+if [[ -z ${SERVER_PLAYER_NAME+x} ]]; then
+  __read_player_name "$EXPERIMENT_DIR/tmp/minecraft_server.log"
+  export SERVER_PLAYER_NAME=$PLAYER_NAME
 
-if [[ ! -z ${SERVER_PLAYER_NAME} ]]; then
-  echo -e "${PADDING}${GREEN}The player name on ${EMPH}server${GREEN} is ${EMPH}${SERVER_PLAYER_NAME}.${NC}"
+  if [[ ! -z ${SERVER_PLAYER_NAME} ]]; then
+    echo -e "${PADDING}${GREEN}The player name on ${EMPH}server${GREEN} is ${EMPH}${SERVER_PLAYER_NAME}${GREEN}.${NC}"
+  fi
 fi

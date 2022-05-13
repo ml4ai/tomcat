@@ -2,6 +2,58 @@
 
 set -u
 
+source configuration_helpers
+
+# This is the uber script that drives a full experiment. Each step of the
+# experimental design is included in form of questions, such that no
+# CS experience should be necessary to execute all the steps required.
+
+__help() {
+  # Display Help
+  echo
+  echo "This the Uber Script to run a complete experiment in the lab."
+  echo
+  echo "The steps are described below. The first step is always executed to "
+  echo "guarantee that data is saved to the correct directory. You can jump "
+  echo "to a specific step by setting the variable GOTO to the desired step "
+  echo "before calling the script (e.g. GOTO=5 ./run_experiment)"
+  echo
+  echo "[1]:  Set the experiment time"
+  echo "[2]:  Checks the NFS status"
+  echo "[3]:  Starts Mumble"
+  echo "[4]:  Starts fNIRS and Eye-tracker systems"
+  echo "[5]:  Starts Face and Screen recording"
+  echo "[6]:  Starts the Testbed"
+  echo "[7]:  Starts the Lab Recorder"
+  echo "[8]:  Starts the Baseline Tasks"
+  echo "[9]:  Starts Minecraft"
+  echo "[10]: Starts the Client Map"
+  echo "[11]: Opens the Final Survey"
+  echo "[12]: Ends the experiment (cleanup and backup phase)"
+  echo
+  echo "Syntax: run_experiment [-h|a]"
+  echo "options:"
+  echo "h     Print this Help."
+  echo "a     Starts the components in all of the client machines without "
+  echo "      asking the experimenter to confirm."
+  echo
+}
+
+ALL=0
+while getopts ":ha" option; do
+  case $option in
+    h) # display Help
+      __help
+      exit;;
+    a) # skip client confirmation
+      ALL=1
+      ;;
+    \?) # Invalid option
+      echo -e "${RED}Error: Invalid option"
+      exit;;
+  esac
+done
+
 data_dir_prefix_tom=/data/tom
 data_dir_prefix_cat=/data/cat
 
@@ -15,12 +67,11 @@ if [[ -z ${GOTO+x} ]]; then
   GOTO=2
 fi
 
-source configuration_helpers
 source check_global_variables
 source check_data_root_directory
 source check_connections
 
-echo -n -e "[1] Enter the experiment ${EMPH}time${NC}: "
+echo -n -e "[1] Enter the experiment ${EMPH}time${NC} (e.g. 09): "
 read -r experiment_time
 experiment_id=$(date +%Y_%m_%d_$experiment_time)
 
@@ -28,25 +79,25 @@ experiment_dir_tom=$data_dir_prefix_tom/$DATA_ROOT_DIR/exp_"$experiment_id"
 experiment_dir_cat=$data_dir_prefix_cat/$DATA_ROOT_DIR/exp_"$experiment_id"
 
 source create_data_directory_structure
-echo -e " Creating experiment directory structure for ${EMPH}TOM...${NC}"
+echo -e " Creating experiment ${EMPH}directory structure${NC} for ${EMPH}TOM${NC}..."
 create_data_directory_structure "$experiment_dir_tom" "  "
-echo -e " Creating experiment directory structure for ${EMPH}CAT...${NC}"
+echo -e " Creating experiment ${EMPH}directory structure${NC} for ${EMPH}CAT${NC}..."
 create_data_directory_structure "$experiment_dir_cat" "  "
 
 if [[ $GOTO -le 2 ]]; then
   echo " "
   yes_no_question "[2] Do you want to check ${EMPH}NFS${NC} status?"
   if [[ $? -eq 0 ]]; then
-    echo -e " Checking status for ${EMPH}TOM...${NC}"
+    echo -e " Checking ${EMPH}NFS${NC} status for ${EMPH}TOM${NC}..."
     source check_nfs $experiment_dir_tom "  "
-    echo -e " Checking status for ${EMPH}CAT...${NC}"
+    echo -e " Checking ${EMPH}NFS${NC} status for ${EMPH}CAT${NC}..."
     source check_nfs $experiment_dir_cat "  "
   fi
 fi
 
 if [[ $GOTO -le 3 ]]; then
   echo " "
-  yes_no_question "[3] Do you want to start ${EMPH}Mumble?${NC}"
+  yes_no_question "[3] Do you want to start ${EMPH}Mumble${NC}?"
   if [[ $? -eq 0 ]]; then
     source start_mumble " "
   fi
@@ -54,7 +105,7 @@ fi
 
 if [[ $GOTO -le 4 ]]; then
   echo " "
-  yes_no_question "[4] Do you want to start ${EMPH}fNIRS and Eye-tracker systems?${NC}"
+  yes_no_question "[4] Do you want to start ${EMPH}fNIRS and Eye-tracker systems${NC}?"
   if [[ $? -eq 0 ]]; then
     source start_sensors " "
   fi
@@ -62,7 +113,7 @@ fi
 
 if [[ $GOTO -le 5 ]]; then
   echo " "
-  yes_no_question "[5] Do you want to start ${EMPH}Face and Screen Recording?${NC}"
+  yes_no_question "[5] Do you want to start ${EMPH}Face and Screen Recording${NC}?"
   if [[ $? -eq 0 ]]; then
     source start_ffmpeg $experiment_dir_cat " "
   fi
@@ -70,7 +121,7 @@ fi
 
 if [[ $GOTO -le 6 ]]; then
   echo " "
-  yes_no_question "[6] Do you want to start the ${EMPH}Testbed?${NC}"
+  yes_no_question "[6] Do you want to start the ${EMPH}Testbed${NC}?"
   if [[ $? -eq 0 ]]; then
     source start_testbed $experiment_dir_cat " "
   fi
@@ -78,7 +129,7 @@ fi
 
 if [[ $GOTO -le 7 ]]; then
   echo " "
-  yes_no_question "[7] Do you want to start ${EMPH}Lab Recorder?${NC}"
+  yes_no_question "[7] Do you want to start ${EMPH}Lab Recorder${NC}?"
   if [[ $? -eq 0 ]]; then
     source start_lab_recorder $experiment_dir_cat " "
   fi
@@ -86,7 +137,7 @@ fi
 
 if [[ $GOTO -le 8 ]]; then
   echo " "
-  yes_no_question "[8] Do you want to start the ${EMPH}Baseline Tasks?${NC}"
+  yes_no_question "[8] Do you want to start the ${EMPH}Baseline Tasks${NC}?"
   if [[ $? -eq 0 ]]; then
     source start_baseline_tasks $experiment_dir_cat " "
   fi
@@ -94,26 +145,34 @@ fi
 
 if [[ $GOTO -le 9 ]]; then
   echo " "
-  yes_no_question "[9] Do you want to start ${EMPH}Minecraft?${NC}"
+  yes_no_question "[9] Do you want to start ${EMPH}Minecraft${NC}?"
   if [[ $? -eq 0 ]]; then
     source start_minecraft $experiment_dir_cat " "
+  fi
+fi
+
+if [[ $GOTO -le 10 ]]; then
+  echo " "
+  yes_no_question "[10] Do you want to open the ${EMPH}Client Map${NC}?"
+  if [[ $? -eq 0 ]]; then
+    source open_client_map $experiment_dir_cat " "
   fi
 fi
 
 # TODO - Place client map phase here out of the minecraft script
 # TODO - Open Minecraft on the server
 
-if [[ $GOTO -le 10 ]]; then
+if [[ $GOTO -le 11 ]]; then
   echo " "
-  yes_no_question "[10] Do you want to open the ${EMPH}Final Survey?${NC}"
+  yes_no_question "[11] Do you want to open the ${EMPH}Final Survey${NC}?"
   if [[ $? -eq 0 ]]; then
     source open_final_survey $experiment_dir_cat " "
   fi
 fi
 
-if [[ $GOTO -le 11 ]]; then
+if [[ $GOTO -le 12 ]]; then
   echo " "
-  text="[11] Type [${EMPH}quit${NC}] to end the experiment and close "
+  text="[12] Type [${EMPH}quit${NC}] to end the experiment and close "
   text+="all open applications and processes: "
   wait_for_key "$text" "quit"
   source end_experiment $experiment_dir_cat " "

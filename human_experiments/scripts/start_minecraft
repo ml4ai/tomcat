@@ -27,10 +27,14 @@ __start_on_client() {
   local client_address=$2
   local padding=$3
 
-  yes_no_question "${padding}Do you want to start Minecraft on ${EMPH}$client_name?${NC}"
-  if [[ $? -eq 0 ]]; then
-    enable_wifi $client_name $client_address "$padding "
-    wait_for_connection $client_name $client_address "$padding "
+  if [[ $ALL -ne 1 ]]; then
+    yes_no_question "${padding}Do you want to start ${EMPH}Minecraft${NC} on ${EMPH}$client_name${NC}?"
+    ans=$?
+    padding="$padding "
+  fi
+  if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    enable_wifi $client_name $client_address "$padding"
+    wait_for_connection $client_name $client_address "$padding"
 
     # Start Minecraft on a new desktop
     create_new_desktop_on_client $client_address
@@ -43,7 +47,7 @@ __start_on_client() {
 
     local minecraft_launched="n"
 
-    echo -e "${padding} Launching ${EMPH}Minecraft${NC} on ${EMPH}$client_name${NC}..."
+    echo -e "${padding}Launching ${EMPH}Minecraft${NC} on ${EMPH}$client_name${NC}..."
     # Remove files to avoid thinking Minecraft was successfully launched because
     # of a previous successful launching
     rm $log_path &>/dev/null
@@ -62,8 +66,8 @@ __monitor_launch_on_machine() {
 
   if [[ ! -e "$pid_path" ]]; then
     # Minecraft was not launched on the client
-    local text="${padding}${YELLOW}Minecraft was never launched on "
-    text+="${EMPH}$client_name.${NC}"
+    local text="${padding}${YELLOW}${EMPH}Minecraft${YELLOW} was never launched on "
+    text+="${EMPH}$client_name${YELLOW}.${NC}"
     echo -e "$text"
     return 0
   fi
@@ -75,7 +79,7 @@ __monitor_launch_on_machine() {
     if [[ -e "$log_path" ]]; then
       launch_client_failed=$(grep -c 'launchClient FAILED' ${log_path})
       if [[ ${launch_client_failed} -ne 0 ]]; then
-        local text="${padding}${RED}Error while launching Minecraft on ${EMPH}"
+        local text="${padding}${RED}Error while launching ${EMPH}Minecraft${RED} on ${EMPH}"
         text+="${client_name}${RED}. Check the log file in ${EMPH}$log_path${RED} "
         text+="for more details.${NC}"
         echo -e "$text"
@@ -84,13 +88,13 @@ __monitor_launch_on_machine() {
 
       have_line=$(grep -c 'CLIENT enter state: DORMANT' ${log_path})
       if [[ ${have_line} -ne 0 ]]; then
-        local text="${padding}${GREEN}Minecraft successfully launched on "
-        text+="${EMPH}$client_name.${NC}"
+        local text="${padding}${EMPH}Minecraft${GREEN} successfully launched on "
+        text+="${EMPH}$client_name${GREEN}.${NC}"
         echo -e "$text"
         return 0
       fi
     else
-      local text="${padding}${RED}Error while launching Minecraft on ${EMPH}"
+      local text="${padding}${RED}Error while launching ${EMPH}Minecraft${RED} on ${EMPH}"
       text+="${client_name}${RED}. The log file ${EMPH}$log_path${RED} "
       text+="does not exist anymore.${NC}"
       echo -e "$text"
@@ -102,12 +106,12 @@ __monitor_launch_on_machine() {
   done
 
   local text="${padding}${RED}Minecraft is still launching after "
-  text+="${EMPTH}$SECONDS_TO_WAIT.${NC}"
+  text+="${EMPTH}$SECONDS_TO_WAIT${RED}.${NC}"
   echo -e "$text"
 
   # TODO - kill minecraft on the client machine
   text="${padding}${RED} Please manually kill the minecraft process "
-  text+="on ${EMPH}$client_name.${NC}"
+  text+="on ${EMPH}$client_name${RED}.${NC}"
   echo -e "$text"
 
   return 1
@@ -185,18 +189,20 @@ __start_locally() {
 }
 
 __start_minecraft() {
-  echo -e "${PADDING}Launching ${EMPH}Minecraft...${NC}"
-  __start_on_client "lion" "lion.local" "$PADDING "
-  __start_on_client "tiger" "tiger.local" "$PADDING "
-  __start_on_client "leopard" "leopard.local" "$PADDING "
-  __start_locally "$PADDING "
+  local padding=$1
+
+  echo -e "${PADDING}Launching ${EMPH}Minecraft${NC}..."
+  __start_on_client "lion" "lion.local" "$padding "
+  __start_on_client "tiger" "tiger.local" "$padding "
+  __start_on_client "leopard" "leopard.local" "$padding "
+  __start_locally "$padding "
 
   # Wait for a while so that the files containing the log and pid have time to
   # be created
   sleep 1
-  __monitor_launch "$PADDING "
+  __monitor_launch "$padding "
   __resize_and_reposition_minecraft
-  source open_client_map $EXPERIMENT_DIR
+  source collect_player_names "$EXPERIMENT_DIR" "$padding "
 }
 
-__start_minecraft
+__start_minecraft "$PADDING"

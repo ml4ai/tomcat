@@ -64,7 +64,7 @@ __launch_testbed() {
   local log_path=$EXPERIMENT_DIR/tmp/testbed_up.log
   local testbed_launched="n"
 
-  echo -e "${PADDING}Launching ${EMPH}Testbed...${NC}"
+  echo -e "${padding}Launching ${EMPH}Testbed${NC}..."
   while [[ $testbed_launched == "n" ]]; do
     pushd $HOME/$SYSTEMS_DIR/testbed/Local >/dev/null
     sudo ./testbed_up_core.sh -i &>$log_path &
@@ -75,12 +75,12 @@ __launch_testbed() {
 
     if [[ $? -eq 0 ]]; then
       testbed_launched="y"
-      echo -e "${padding}${GREEN} Testbed successfully launched.${NC}"
+      echo -e "${padding}${GREEN} ${EMPH}Testbed${GREEN} successfully launched.${NC}"
     else
-      text="${padding}${RED} Error while launching the testbed. Check the log file in "
+      text="${padding}${RED} Error while launching the ${EMPH}testbed${RED}. Check the log file in "
       text+="${EMPH}$log_path${RED} for more details.${NC}"
       echo -e "$text"
-      echo -n -e "${padding}Press any key to ${EMPH}relaunch:${NC} "
+      echo -n -e "${padding} Press any key to ${EMPH}RETRY${NC}: "
       read -r
     fi
     popd >/dev/null
