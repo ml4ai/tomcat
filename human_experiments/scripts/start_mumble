@@ -25,9 +25,9 @@ __start_mumble_on_client() {
     create_new_desktop_on_client $client_address
     ssh $EXPERIMENT_USER@$client_address "open -a Mumble" >/dev/null
     if [[ $? -eq 0 ]]; then
-      echo -e "${padding}${EMPH}Mumble${GREEN} opened successfully."
+      echo -e "${padding}${EMPH}Mumble${GREEN} opened successfully.${NC}"
     else
-      echo -e "${padding}${RED}Failed to open the ${EMPH}Mumble${RED}."
+      echo -e "${padding}${RED}Failed to open the ${EMPH}Mumble${RED}.${NC}"
     fi
   fi
 }
@@ -40,5 +40,5 @@ __start_mumble_on_client "leopard" "leopard.local" "$PADDING"
 # available command-line option to establish the connection programmatically.
 # Therefore, the process has to be done manually using a remote desktop client.
 text="${PADDING}${YELLOW}Use ${EMPH}Remmina${YELLOW} to connect the client "
-text+="machines to the server in the ${EMPH}Mumble${YELLOW} interface."
+text+="machines to the server in the ${EMPH}Mumble${YELLOW} interface.${NC}"
 echo -e "$text"

@@ -7,7 +7,7 @@ source configuration_helpers
 if [[ -z ${1+x} ]]; then
   # In case the script is executed standalone.
   text="${RED}Please provide an experiment directory as the first argument of "
-  text+="the call to this script."
+  text+="the call to this script.${NC}"
   echo -e "$text"
   exit 1
 fi
@@ -43,7 +43,6 @@ __check_nfs_on_client() {
       ssh $EXPERIMENT_USER@$client_address "dd if=/dev/zero of=\$HOME$nfs_dir/singleFileTest bs=4096 count=1" 2>&1 | sed "s/^/${padding} /"
       echo "${padding} [TEST 3]"
       ssh $EXPERIMENT_USER@$client_address "rsync ~/img.png \$HOME$nfs_dir && echo $?" | sed "s/0/${padding} OK/"
-      echo " "
       yes_no_question "${padding}Do you want to ${EMPH}REPEAT${NC} the tests?"
     done  
   fi

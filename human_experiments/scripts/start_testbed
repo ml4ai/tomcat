@@ -9,7 +9,7 @@ SECONDS_TO_WAIT=300
 if [[ -z ${1+x} ]]; then
   # In case the script is executed standalone.
   text="${RED}Please provide an experiment directory as the first argument of "
-  text+="the call to this script."
+  text+="the call to this script.${NC}"
   echo -e "$text"
   exit 1
 fi
@@ -75,12 +75,12 @@ __launch_testbed() {
 
     if [[ $? -eq 0 ]]; then
       testbed_launched="y"
-      echo -e "${padding}${GREEN} ${EMPH}Testbed${GREEN} successfully launched."
+      echo -e "${padding}${GREEN} ${EMPH}Testbed${GREEN} successfully launched.${NC}"
     else
       text="${padding}${RED} Error while launching the ${EMPH}testbed${RED}. Check the log file in "
       text+="${EMPH}$log_path${RED} for more details.${NC}"
       echo -e "$text"
-      echo -n -e "${padding}Press any key to ${EMPH}RETRY${NC}: "
+      echo -n -e "${padding} Press any key to ${EMPH}RETRY${NC}: "
       read -r
     fi
     popd >/dev/null

@@ -204,4 +204,4 @@ __start_minecraft() {
   __resize_and_reposition_minecraft
 }
 
-__start_minecraft $PADDING
+__start_minecraft "$PADDING"

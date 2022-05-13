@@ -12,7 +12,7 @@ PYTHON="/usr/local/bin/python3"
 if [[ -z ${1+x} ]]; then
   # In case the script is executed standalone.
   text="${RED}Please provide an experiment directory as the first argument of "
-  text+="the call to this script"
+  text+="the call to this script.${NC}"
   echo -e "$text"
   exit 1
 fi
@@ -64,11 +64,11 @@ __start_ai() {
 
     if [[ $? -eq 0 ]]; then
       local text="${padding}${YELLOW}Check the server to see if the "
-      text+="connection was successfully established."
+      text+="connection was successfully established.${NC}"
       echo -e "$text"
     else
       local text="${padding}${RED}Error while stating AI. "
-      text+="Check the log file in ${EMPH}$log_path${RED} for more information."
+      text+="Check the log file in ${EMPH}$log_path${RED} for more information.${NC}"
       echo -e "$text"
     fi
     yes_no_question "${padding}Do you want to ${EMPH}RETRY${NC}?"
@@ -99,11 +99,11 @@ __start_on_client() {
 
       if [[ $? -eq 0 ]]; then
         local text="${padding}${YELLOW}Check the server to see if the "
-        text+="connection was successfully established."
+        text+="connection was successfully established.${NC}"
         echo -e "$text"
       else
         local text="${padding}${RED}Error while trying to start client. "
-        text+="Check the log file in ${EMPH}$log_path${RED} for more information."
+        text+="Check the log file in ${EMPH}$log_path${RED} for more information.${NC}"
         echo -e "$text"
       fi
       yes_no_question "${padding}Do you want to ${EMPH}RETRY${NC}?"

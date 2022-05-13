@@ -18,12 +18,12 @@ enable_wifi() {
   local enabled="n"
   while [[ $enabled != "y" ]]; do
     ssh $EXPERIMENT_USER@$client_address "$command"
-    __check_wifi $client_name $client_address
+    __check_wifi $client_address
     if [[ $? -eq 0 ]]; then
-      echo -e "${padding}${GREEN} The WiFi on ${EMPH}$client_name${GREEN} was successfully ${EMPH}ENABLED${GREEN}."
+      echo -e "${padding}${GREEN} The WiFi was successfully ${EMPH}ENABLED${GREEN}.${NC}"
       enabled="y"
     else
-      echo -e "${padding}${RED} The WiFi on ${EMPH}$client_name${RED} was ${EMPH}NOT${RED} enabled."
+      echo -e "${padding}${RED} The WiFi was ${EMPH}NOT${RED} enabled.${NC}"
       echo -e -n "${padding}Press any key to ${EMPH}RETRY${NC}: "
       read -r
     fi
@@ -41,11 +41,11 @@ wait_for_connection() {
   local command="ping -c 1 www.arizona.edu"
 
   # Keep pinging the final survey URL until it's reachable or timeout
-  echo -e "${padding}Waiting for the internet connection to be established..."
+  echo -e "${padding}Waiting for the internet connection to be established on ${EMPH}$client_name${NC}..."
   while [[ $seconds -le $seconds_to_wait ]]; do
     ssh $EXPERIMENT_USER@$client_address "$command" &> /dev/null
     if [[ $? -eq 0 ]]; then
-      echo -e "${padding}${GREEN} The internet connection was successfully established."
+      echo -e "${padding}${GREEN} The internet connection was successfully established.${NC}"
     fi
 
     sleep 1
@@ -53,11 +53,11 @@ wait_for_connection() {
   done
 
   local text="${padding}${RED} The internet connection could not be "
-  text+="established. ${EMPH}www.arizona.edu${RED} is unreachable."
+  text+="established. ${EMPH}www.arizona.edu${RED} is unreachable.${NC}"
   echo -e "$text"
 
   text="${padding}${YELLOW} Choose a network to connect manually and press "
-  text+="any key to proceed: "
+  text+="any key to proceed: ${NC}"
   echo -e -n "$text"
   read -r
 }
@@ -76,12 +76,12 @@ disable_wifi() {
   local disabled="n"
   while [[ $disabled != "y" ]]; do
     ssh $EXPERIMENT_USER@$client_address "$command"
-    __check_wifi $client_name $client_address
+    __check_wifi $client_address
     if [[ $? -eq 1 ]]; then
-      echo -e "${padding}${GREEN} The WiFi on ${EMPH}$client_name${GREEN} was successfully ${EMPH}DISABLED${NC}."
+      echo -e "${padding}${GREEN} The WiFi was successfully ${EMPH}DISABLED${NC}."
       disabled="y"
     else
-      echo -e "${padding}${RED} The WiFi on ${EMPH}$client_name${RED} was ${EMPH}NOT${RED} disabled."
+      echo -e "${padding}${RED} The WiFi was ${EMPH}NOT${RED} disabled."
       echo -e -n "${padding}Press any key to ${EMPH}RETRY${NC}: "
       read -r
     fi
@@ -89,8 +89,7 @@ disable_wifi() {
 }
 
 __check_wifi() {
-  local client_name=$1
-  local client_address=$2
+  local client_address=$1
 
   local command="device=\$(networksetup -listallhardwareports | "
   command+="awk '\$3==\"Wi-Fi\" {getline;print}' | awk '{print \$2}') && "
