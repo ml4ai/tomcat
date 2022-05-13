@@ -10,7 +10,7 @@ SECONDS_TO_WAIT=300
 if [[ -z ${1+x} ]]; then
   # In case the script is executed standalone.
   text="${RED}Please provide an experiment directory as the first argument of "
-  text+="the call to this script."
+  text+="the call to this script.${NC}"
   echo -e "$text"
   exit 1
 fi
@@ -67,7 +67,7 @@ __monitor_launch_on_machine() {
   if [[ ! -e "$pid_path" ]]; then
     # Minecraft was not launched on the client
     local text="${padding}${YELLOW}${EMPH}Minecraft${YELLOW} was never launched on "
-    text+="${EMPH}$client_name${YELLOW}."
+    text+="${EMPH}$client_name${YELLOW}.${NC}"
     echo -e "$text"
     return 0
   fi
@@ -81,7 +81,7 @@ __monitor_launch_on_machine() {
       if [[ ${launch_client_failed} -ne 0 ]]; then
         local text="${padding}${RED}Error while launching ${EMPH}Minecraft${RED} on ${EMPH}"
         text+="${client_name}${RED}. Check the log file in ${EMPH}$log_path${RED} "
-        text+="for more details."
+        text+="for more details.${NC}"
         echo -e "$text"
         return 1
       fi
@@ -89,14 +89,14 @@ __monitor_launch_on_machine() {
       have_line=$(grep -c 'CLIENT enter state: DORMANT' ${log_path})
       if [[ ${have_line} -ne 0 ]]; then
         local text="${padding}${EMPH}Minecraft${GREEN} successfully launched on "
-        text+="${EMPH}$client_name${GREEN}."
+        text+="${EMPH}$client_name${GREEN}.${NC}"
         echo -e "$text"
         return 0
       fi
     else
       local text="${padding}${RED}Error while launching ${EMPH}Minecraft${RED} on ${EMPH}"
       text+="${client_name}${RED}. The log file ${EMPH}$log_path${RED} "
-      text+="does not exist anymore."
+      text+="does not exist anymore.${NC}"
       echo -e "$text"
       return 1
     fi
@@ -106,12 +106,12 @@ __monitor_launch_on_machine() {
   done
 
   local text="${padding}${RED}Minecraft is still launching after "
-  text+="${EMPTH}$SECONDS_TO_WAIT${RED}."
+  text+="${EMPTH}$SECONDS_TO_WAIT${RED}.${NC}"
   echo -e "$text"
 
   # TODO - kill minecraft on the client machine
   text="${padding}${RED} Please manually kill the minecraft process "
-  text+="on ${EMPH}$client_name${RED}."
+  text+="on ${EMPH}$client_name${RED}.${NC}"
   echo -e "$text"
 
   return 1
@@ -184,7 +184,7 @@ __start_locally() {
   rm $log_path &>/dev/null
   rm $pid_path &>/dev/null
 
-  $HOME/$SYSTEMS_DIR/tomcat/tools/launch_minecraft &>$log_path &
+  sudo $HOME/$SYSTEMS_DIR/tomcat/tools/launch_minecraft &>$log_path &
   echo $! >$pid_path
 }
 
