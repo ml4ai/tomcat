@@ -202,6 +202,7 @@ __start_minecraft() {
   sleep 1
   __monitor_launch "$padding "
   __resize_and_reposition_minecraft
+  source collect_player_names "$EXPERIMENT_DIR" "$padding "
 }
 
 __start_minecraft "$PADDING"

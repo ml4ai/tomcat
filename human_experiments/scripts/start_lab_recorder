@@ -7,7 +7,7 @@ source configuration_helpers
 if [[ -z ${1+x} ]]; then
   # In case the script is executed standalone.
   text="${RED}Please provide an experiment directory as the first argument of "
-  text+="the call to this script."
+  text+="the call to this script.${NC}"
   echo -e "$text"
   exit 1
 fi

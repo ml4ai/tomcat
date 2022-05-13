@@ -30,7 +30,7 @@ if [[ -z ${DATA_ROOT_DIR+x} ]]; then
   text="${RED}Please set the variable ${EMPH}DATA_ROOT_DIR${NC}${RED} with the "
   text+="directory where experiment data should be saved at. The experiments "
   text+="data directories will be saved under ${EMPH}/data/[tom/cat]/DATA_ROOT_DIR"
-  text+="${NC}."
+  text+="${RED}.${NC}"
   echo -e $text
   status=1
 fi
@@ -38,7 +38,7 @@ fi
 # Client map URL
 if [[ -z ${CLIENT_MAP_URL+x} ]]; then
   text="${RED}Please set the variable ${EMPH}CLIENT_MAP_URL${NC}${RED} with the "
-  text+="URL of the client map".
+  text+="URL of the client map.${NC}"
   echo -e $text
   status=1
 fi

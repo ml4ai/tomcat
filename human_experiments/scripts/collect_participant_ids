@@ -14,19 +14,19 @@ if [[ -z ${LION_PARTICIPANT_ID+x} ]]; then
   echo -n -e "${PADDING}Enter the participant ID on ${EMPH}lion${NC}: "
   read -r LION_PARTICIPANT_ID
   export LION_PARTICIPANT_ID
-  echo -e "${PADDING}${GREEN} The participant ID on ${EMPH}lion${GREEN} was successfully set to ${EMPH}${LION_PARTICIPANT_ID}${NC}."
+  echo -e "${PADDING}${GREEN} The participant ID on ${EMPH}lion${GREEN} was successfully set to ${EMPH}${LION_PARTICIPANT_ID}${GREEN}.${NC}"
 fi
 
 if [[ -z ${TIGER_PARTICIPANT_ID+x} ]]; then
   echo -n -e "${PADDING}Enter the participant ID on ${EMPH}tiger${NC}: "
   read -r TIGER_PARTICIPANT_ID
   export TIGER_PARTICIPANT_ID
-  echo -e "${PADDING}${GREEN} The participant ID on ${EMPH}tiger${GREEN} was successfully set to ${EMPH}${TIGER_PARTICIPANT_ID}${NC}."
+  echo -e "${PADDING}${GREEN} The participant ID on ${EMPH}tiger${GREEN} was successfully set to ${EMPH}${TIGER_PARTICIPANT_ID}${GREEN}.${NC}"
 fi
 
 if [[ -z ${LEOPARD_PARTICIPANT_ID+x} ]]; then
   echo -n -e "${PADDING}Enter the participant ID on ${EMPH}leopard${NC}: "
   read -r LEOPARD_PARTICIPANT_ID
   export LEOPARD_PARTICIPANT_ID
-  echo -e "${PADDING}${GREEN} The participant ID on ${EMPH}leopard${GREEN} was successfully set to ${EMPH}${LEOPARD_PARTICIPANT_ID}${NC}."
+  echo -e "${PADDING}${GREEN} The participant ID on ${EMPH}leopard${GREEN} was successfully set to ${EMPH}${LEOPARD_PARTICIPANT_ID}${GREEN}.${NC}"
 fi
