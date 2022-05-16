@@ -41,7 +41,7 @@ __start_clients() {
   __start_on_client "leopard" "leopard.local" $LEOPARD_PARTICIPANT_ID "$padding"
 }
 
-__start_ai() {
+__start_competitive_ping_pong() {
   local padding=$1
   local client_address="cheetah.local"
 
@@ -124,9 +124,14 @@ __start_baseline_tasks() {
     __start_clients "${PADDING} "
   fi
 
-  yes_no_question "${PADDING}Do you want to start the ${EMPH}AI${NC}?"
+  yes_no_question "${PADDING}Do you want to start ${EMPH}Competitive Ping-Pong${NC}?"
   if [[ $? -eq 0 ]]; then
-    __start_ai "${PADDING} "
+    __start_competitive_ping_pong "${PADDING} "
+  fi
+
+  yes_no_question "${PADDING}Do you want to start ${EMPH}Cooperative Ping-Pong${NC}?"
+  if [[ $? -eq 0 ]]; then
+    __start_competitive_ping_pong "${PADDING} "
   fi
 }
 
