@@ -33,6 +33,10 @@ __start_on_client() {
     padding="$padding "
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
+    # Close instructive video if it's being displayed
+    local command="osascript -e \"tell application \\\"QuickTime\\\" to quit\""
+    ssh $EXPERIMENT_USER@$client_address "$command"
+
     enable_wifi $client_name $client_address "$padding"
     wait_for_connection $client_name $client_address "$padding"
 
@@ -42,7 +46,7 @@ __start_on_client() {
     local common_file_path="$EXPERIMENT_DIR/tmp/minecraft_$client_name"
     local log_path="$common_file_path".log
     local pid_path="$common_file_path".pid
-    local command="osascript \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/launch_minecraft.scpt "
+    command="osascript \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/launch_minecraft.scpt "
     command+="\$HOME/$SYSTEMS_DIR \$HOME$log_path \$HOME$pid_path"
 
     local minecraft_launched="n"
