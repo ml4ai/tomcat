@@ -40,12 +40,17 @@ def export_messages(host: str, port: int, trial_id: str, out_filepath: str):
 
     num_messages = 0
     num_malformed_messages = 0
-    last_page = []
+    last_page = None
 
     with open(out_filepath, "a") as f:
         while True:
-            results = es.search(pit=pit, size=1000, sort=sort, query=query, search_after=last_page,
-                                track_total_hits=False)
+            if last_page is None:
+                # The first search does not use search after
+                results = es.search(pit=pit, size=1000, sort=sort, query=query, track_total_hits=False)
+            else:
+                results = es.search(pit=pit, size=1000, sort=sort, query=query, track_total_hits=False,
+                                    search_after=last_page)
+
             if len(results["hits"]["hits"]) == 0:
                 break
             for hit in results["hits"]["hits"]:
