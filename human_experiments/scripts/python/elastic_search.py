@@ -46,9 +46,9 @@ def export_messages(host: str, port: int, trial_id: str, out_filepath: str):
         while True:
             if last_page is None:
                 # The first search does not use search after
-                results = es.search(pit=pit, size=1000, sort=sort, query=query, track_total_hits=False)
+                results = es.search(index="_all", size=1000, sort=sort, query=query, track_total_hits=False)
             else:
-                results = es.search(pit=pit, size=1000, sort=sort, query=query, track_total_hits=False,
+                results = es.search(index="_all", size=1000, sort=sort, query=query, track_total_hits=False,
                                     search_after=last_page)
 
             if len(results["hits"]["hits"]) == 0:
