@@ -35,7 +35,7 @@ def export_messages(host: str, port: int, trial_id: str, out_filepath: str):
 
     sort = [
         {"@timestamp": "asc"},
-        {"topic": {"order": "asc", "ignore_unmapped": True}}
+        {"topic": {"order": "asc", "unmapped_type": str}}
     ]
 
     num_messages = 0
