@@ -26,6 +26,8 @@ def export_messages(host: str, port: int, trial_id: str, out_filepath: str):
 
     # The body property deserializes the ObjectApiResponse to a dict
     pit = es.open_point_in_time(index="_all", keep_alive="2m").body
+    print(pit)
+    return
 
     query = {
         "match": {
