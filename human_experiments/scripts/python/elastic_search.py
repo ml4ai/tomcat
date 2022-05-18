@@ -23,7 +23,7 @@ def export_messages(host: str, port: int, trial_id: str, out_filepath: str):
 
     # We keep the PIT alive for 2 minutes. That should be enough to export
     # all the messages from a trial.
-    pit = es.open_point_in_time(index="*", keep_alive="2m")
+    pit = es.open_point_in_time(index="_all", keep_alive="2m")
 
     query = {
         "match": {
