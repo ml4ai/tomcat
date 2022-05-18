@@ -23,7 +23,9 @@ def export_messages(host: str, port: int, trial_id: str, out_filepath: str):
 
     # We keep the PIT alive for 2 minutes. That should be enough to export
     # all the messages from a trial.
-    pit = es.open_point_in_time(index="_all", keep_alive="2m")
+
+    # The body property deserializes the ObjectApiResponse to a dict
+    pit = es.open_point_in_time(index="_all", keep_alive="2m").body
 
     query = {
         "match": {
@@ -44,9 +46,9 @@ def export_messages(host: str, port: int, trial_id: str, out_filepath: str):
         while True:
             results = es.search(pit=pit, size=1000, sort=sort, query=query, search_after=last_page,
                                 track_total_hits=False)
-            if len(results['hits']['hits']) == 0:
+            if len(results["hits"]["hits"]) == 0:
                 break
-            for hit in results['hits']['hits']:
+            for hit in results["hits"]["hits"]:
                 try:
                     f.write(json.dumps(hit["_source"]) + "\n")
                     num_messages += 1
