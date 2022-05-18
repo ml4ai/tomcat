@@ -1,7 +1,9 @@
 import csv
+import numpy as np
 import json
 import threading
-import time
+from time import time, monotonic
+from datetime import datetime
 import psutil
 
 import pygame
@@ -30,9 +32,10 @@ class ServerFingerTappingTask:
 
         data_path = data_save_path + "/finger_tapping"
 
-        csv_file_name = data_path + '/' + str(int(time.time()))
+        csv_file_name = data_path + '/' + str(int(time()))
 
-        header = ['time', 'monotonic_time', 'boot_time', 'state']
+        header = ['time', 'monotonic_time', 'human_readable_time', 'lion_state', 
+                'leopard_state', 'tiger_state', 'event_type', 'countdown_timer']
         
         self._csv_file = open(csv_file_name + ".csv", 'w', newline='')
         self._csv_writer = csv.DictWriter(self._csv_file, delimiter=';', fieldnames = header)
@@ -61,6 +64,15 @@ class ServerFingerTappingTask:
         from_client_commands_thread.start()
 
         print("[STATUS] Running finger tapping task")
+
+        log_first_timestap = True #Log timestamp as soon as the experiment starts
+
+        if log_first_timestap == True:
+            self._csv_writer.writerow({"time" : time(), "monotonic_time" : monotonic(), 
+                                    "human_readable_time": datetime.utcnow().isoformat() + "Z",
+                                    "lion_state" : None, "leopard_state" : None, 'tiger_state' : None, 
+                                    "event_type" : "start_fingertapping_task", "countdown_timer": None})
+            log_first_timestap == False   
 
         # Wait for threads to finish
         to_client_update_state_thread.join()
@@ -103,10 +115,27 @@ class ServerFingerTappingTask:
             seconds_to_send = int(counter_target) - int(seconds)
             data["seconds"] = 1 if seconds_to_send <= 0 else seconds_to_send
 
+            current_time = time()
+            monotonic_time = monotonic()
+
+            # Parse data for better CSV file
+            if data["reveal"] == 1:
+                event_type = 'team'
+            else:
+                event_type = 'individual'
+
+            keys = []
+            values = []
+            for key, value in data['state'].items():
+                keys = np.append(keys, key)
+                values = np.append(values, value)    
+
             # Record state of the game
             if session_index >= 0:
-                self._csv_writer.writerow({"time" : time.time(), "monotonic_time" : time.monotonic(), 
-                                            "boot_time" : psutil.boot_time(), "state" : json.dumps(data)})
+                self._csv_writer.writerow({"time" : current_time, "monotonic_time" : monotonic_time, 
+                                            "human_readable_time" : datetime.utcnow().isoformat() + "Z", 
+                                            "lion_state" : values[0], "leopard_state" : values[1], 'tiger_state': values[2], 
+                                            "event_type": event_type, 'countdown_timer': data["seconds"]})
 
             send(self._to_client_connections, data)
 
