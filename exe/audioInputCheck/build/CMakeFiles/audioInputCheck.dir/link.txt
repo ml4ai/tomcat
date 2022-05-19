@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/audioInputCheck.dir/main.cpp.o -o audioInputCheck  -pthread /home/myke/portaudio/lib/libportaudio.a -ljack -lpthread /usr/lib/x86_64-linux-gnu/libasound.so -lm -lpthread /usr/lib/x86_64-linux-gnu/libasound.so -lm 
