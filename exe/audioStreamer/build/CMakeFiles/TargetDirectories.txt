@@ -1,0 +1,3 @@
+/home/myke/tomcat/exe/audioStreamer/build/CMakeFiles/rebuild_cache.dir
+/home/myke/tomcat/exe/audioStreamer/build/CMakeFiles/edit_cache.dir
+/home/myke/tomcat/exe/audioStreamer/build/CMakeFiles/audioStreamer.dir

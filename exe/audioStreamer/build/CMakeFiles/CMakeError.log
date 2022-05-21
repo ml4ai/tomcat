@@ -1,0 +1,60 @@
+Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
+Change Dir: /home/myke/tomcat/exe/audioStreamer/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_bf89e/fast && /usr/bin/make  -f CMakeFiles/cmTC_bf89e.dir/build.make CMakeFiles/cmTC_bf89e.dir/build
+make[1]: Entering directory '/home/myke/tomcat/exe/audioStreamer/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_bf89e.dir/src.c.o
+/usr/bin/cc -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_bf89e.dir/src.c.o -c /home/myke/tomcat/exe/audioStreamer/build/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_bf89e
+/home/myke/bin/cmake -E cmake_link_script CMakeFiles/cmTC_bf89e.dir/link.txt --verbose=1
+/usr/bin/cc CMakeFiles/cmTC_bf89e.dir/src.c.o -o cmTC_bf89e 
+/usr/bin/ld: CMakeFiles/cmTC_bf89e.dir/src.c.o: in function `main':
+src.c:(.text+0x46): undefined reference to `pthread_create'
+/usr/bin/ld: src.c:(.text+0x52): undefined reference to `pthread_detach'
+/usr/bin/ld: src.c:(.text+0x5e): undefined reference to `pthread_cancel'
+/usr/bin/ld: src.c:(.text+0x6f): undefined reference to `pthread_join'
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_bf89e.dir/build.make:99: cmTC_bf89e] Error 1
+make[1]: Leaving directory '/home/myke/tomcat/exe/audioStreamer/build/CMakeFiles/CMakeTmp'
+make: *** [Makefile:127: cmTC_bf89e/fast] Error 2
+
+
+Source file was:
+#include <pthread.h>
+
+static void* test_func(void* data)
+{
+  return data;
+}
+
+int main(void)
+{
+  pthread_t thread;
+  pthread_create(&thread, NULL, test_func, NULL);
+  pthread_detach(thread);
+  pthread_cancel(thread);
+  pthread_join(thread, NULL);
+  pthread_atfork(NULL, NULL, NULL);
+  pthread_exit(NULL);
+
+  return 0;
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/myke/tomcat/exe/audioStreamer/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_c16aa/fast && /usr/bin/make  -f CMakeFiles/cmTC_c16aa.dir/build.make CMakeFiles/cmTC_c16aa.dir/build
+make[1]: Entering directory '/home/myke/tomcat/exe/audioStreamer/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_c16aa.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create -o CMakeFiles/cmTC_c16aa.dir/CheckFunctionExists.c.o -c /home/myke/share/cmake-3.21/Modules/CheckFunctionExists.c
+Linking C executable cmTC_c16aa
+/home/myke/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c16aa.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create CMakeFiles/cmTC_c16aa.dir/CheckFunctionExists.c.o -o cmTC_c16aa  -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_c16aa.dir/build.make:99: cmTC_c16aa] Error 1
+make[1]: Leaving directory '/home/myke/tomcat/exe/audioStreamer/build/CMakeFiles/CMakeTmp'
+make: *** [Makefile:127: cmTC_c16aa/fast] Error 2
+
+
+
