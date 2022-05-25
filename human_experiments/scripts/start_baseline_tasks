@@ -41,33 +41,25 @@ __start_clients() {
   __start_on_client "leopard" "leopard.local" $LEOPARD_PARTICIPANT_ID "$padding"
 }
 
-__start_ai() {
+__start_on_cheetah() {
   local padding=$1
+  local python_script_name=$2
+  local log_suffix=$3
   local client_address="cheetah.local"
 
-  local log_path=$EXPERIMENT_DIR/tmp/baseline_tasks_cheetah.log
+  local log_path="$EXPERIMENT_DIR/tmp/baseline_tasks_cheetah_${log_suffix}.log"
 
   while [[ $? -eq 0 ]]; do
     local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks "
-    command+="&& $PYTHON run_client_experimenter.py -n AI  &> \$HOME$log_path &"
+    command+="&& $PYTHON ${python_script_name} -n AI  &> \$HOME$log_path &"
     ssh $EXPERIMENT_USER@$client_address "$command"
 
-    local status=0
     if [[ $? -eq 0 ]]; then
-      command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks "
-      command+="&& $PYTHON run_client_ai.py &> \$HOME$log_path &"
-      ssh $EXPERIMENT_USER@$client_address "$command"
-      status=$?
-    else
-      status=1
-    fi
-
-    if [[ $? -eq 0 ]]; then
-      local text="${padding}${YELLOW}Check the server to see if the "
-      text+="connection was successfully established.${NC}"
+      local text="${padding}${YELLOW}Check the server to see if the process"
+      text+="started successfully.${NC}"
       echo -e "$text"
     else
-      local text="${padding}${RED}Error while stating AI. "
+      local text="${padding}${RED}Error while starting the process. "
       text+="Check the log file in ${EMPH}$log_path${RED} for more information.${NC}"
       echo -e "$text"
     fi
@@ -112,22 +104,29 @@ __start_on_client() {
 }
 
 __start_baseline_tasks() {
-  source collect_participant_ids "${PADDING} "
+  local padding=$1
 
-  yes_no_question "${PADDING}Do you want to start the ${EMPH}server${NC}?"
+  source collect_participant_ids "${padding} "
+
+  yes_no_question "${padding}Do you want to start the ${EMPH}server${NC}?"
   if [[ $? -eq 0 ]]; then
     __start_server
   fi
 
-  yes_no_question "${PADDING}Do you want to start the ${EMPH}clients${NC}?"
+  yes_no_question "${padding}Do you want to start the ${EMPH}clients${NC}?"
   if [[ $? -eq 0 ]]; then
-    __start_clients "${PADDING} "
+    __start_clients "${padding} "
   fi
 
-  yes_no_question "${PADDING}Do you want to start the ${EMPH}AI${NC}?"
+  yes_no_question "${padding}Do you want to start ${EMPH}Competitive Ping-Pong${NC}?"
   if [[ $? -eq 0 ]]; then
-    __start_ai "${PADDING} "
+    __start_on_cheetah "${padding} " "run_client_experimenter.py" "competitive_ping_pong"
+  fi
+
+  yes_no_question "${padding}Do you want to start ${EMPH}Cooperative Ping-Pong${NC}?"
+  if [[ $? -eq 0 ]]; then
+    __start_on_cheetah "${padding} " "run_client_ai.py" "cooperative_ping_pong"
   fi
 }
 
-__start_baseline_tasks
+__start_baseline_tasks "$PADDING"
