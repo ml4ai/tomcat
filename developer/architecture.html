@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Design and Architecture &mdash; ToMCAT 0.1 documentation</title>
@@ -15,6 +15,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
         <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
@@ -100,11 +101,11 @@
            <div itemprop="articleBody">
              
   <section id="design-and-architecture">
-<h1>Design and Architecture<a class="headerlink" href="#design-and-architecture" title="Permalink to this headline"></a></h1>
+<h1>Design and Architecture<a class="headerlink" href="#design-and-architecture" title="Permalink to this heading"></a></h1>
 <div class="toctree-wrapper compound">
 </div>
 <section id="building-upon-project-malmo">
-<h2>Building upon Project Malmo<a class="headerlink" href="#building-upon-project-malmo" title="Permalink to this headline"></a></h2>
+<h2>Building upon Project Malmo<a class="headerlink" href="#building-upon-project-malmo" title="Permalink to this heading"></a></h2>
 <p>ToMCAT extends <a class="reference external" href="https://github.com/microsoft/malmo">Project Malmo</a> to provide a platform to study human behavior
 in a virtual environment, with a focus on studying human-human and
 human-machine teaming.</p>
@@ -158,7 +159,7 @@ for more details).</p></li>
 </ul>
 </section>
 <section id="automation">
-<h2>Automation<a class="headerlink" href="#automation" title="Permalink to this headline"></a></h2>
+<h2>Automation<a class="headerlink" href="#automation" title="Permalink to this heading"></a></h2>
 <p>We place a heavy premium on automation, and thus eschew support for Windows and
 non-LAN multiplayer in favor of maintaining a set of robust scripts (in the
 <code class="docutils literal notranslate"><span class="pre">tools</span></code> directory) and a procedural generation module (<code class="docutils literal notranslate"><span class="pre">src/cpp/pro_gen</span></code>)
@@ -167,22 +168,22 @@ complex documentation they need to read to get set up. Our software is
 currently tested on macOS and Ubuntu with a continuous integration pipeline.</p>
 </section>
 <section id="sensors">
-<h2>Sensors<a class="headerlink" href="#sensors" title="Permalink to this headline"></a></h2>
+<h2>Sensors<a class="headerlink" href="#sensors" title="Permalink to this heading"></a></h2>
 <section id="audio-and-video">
-<h3>Audio and Video<a class="headerlink" href="#audio-and-video" title="Permalink to this headline"></a></h3>
+<h3>Audio and Video<a class="headerlink" href="#audio-and-video" title="Permalink to this heading"></a></h3>
 <p>We implement sensors to record video and audio of the human player and the game
 itself. The video and audio of the player and the video of the game are
 captured using <a class="reference external" href="http://ffmpeg.org">ffmpeg</a>, and the audio of the game is captured using <a class="reference external" href="https://linux.die.net/man/1/pacat">pacat</a>
 (Linux) or <a class="reference external" href="https://github.com/ExistentialAudio/BlackHole">BlackHole</a> (macOS).</p>
 </section>
 <section id="in-game-observations-and-events">
-<h3>In-game observations and events<a class="headerlink" href="#in-game-observations-and-events" title="Permalink to this headline"></a></h3>
+<h3>In-game observations and events<a class="headerlink" href="#in-game-observations-and-events" title="Permalink to this heading"></a></h3>
 <p>We implement capturing in-game observations and events related to the human
 players and the missions they are conducting. These are published to an MQTT
 message bus on various topics.</p>
 </section>
 <section id="facial-landmark-gaze-pose-and-au-detection">
-<h3>Facial Landmark, Gaze, Pose, and AU detection<a class="headerlink" href="#facial-landmark-gaze-pose-and-au-detection" title="Permalink to this headline"></a></h3>
+<h3>Facial Landmark, Gaze, Pose, and AU detection<a class="headerlink" href="#facial-landmark-gaze-pose-and-au-detection" title="Permalink to this heading"></a></h3>
 <p>We leverage <a class="reference external" href="https://github.com/TadasBaltrusaitis/OpenFace">OpenFace</a> to create an executable called <a class="reference external" href="https://github.com/ml4ai/tomcat-faceAnalyzer">faceAnalyzer</a> that
 outputs JSON messages containing information about a player’s gaze, pose,
 action units, and face landmarks, either from a webcam feed or from a video

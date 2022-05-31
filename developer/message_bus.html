@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Working with the MQTT message bus &mdash; ToMCAT 0.1 documentation</title>
@@ -15,6 +15,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
         <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
@@ -104,7 +105,7 @@
            <div itemprop="articleBody">
              
   <section id="working-with-the-mqtt-message-bus">
-<h1>Working with the MQTT message bus<a class="headerlink" href="#working-with-the-mqtt-message-bus" title="Permalink to this headline"></a></h1>
+<h1>Working with the MQTT message bus<a class="headerlink" href="#working-with-the-mqtt-message-bus" title="Permalink to this heading"></a></h1>
 <div class="toctree-wrapper compound">
 </div>
 <p>In this section, we will briefly cover the basics of message buses and how to
@@ -134,13 +135,13 @@ systems.</p>
 the message broker can be done using an executable or a client library. We will
 go over both these methods.</p>
 <section id="starting-up-the-mosquitto-message-broker">
-<h2>Starting up the Mosquitto message broker<a class="headerlink" href="#starting-up-the-mosquitto-message-broker" title="Permalink to this headline"></a></h2>
+<h2>Starting up the Mosquitto message broker<a class="headerlink" href="#starting-up-the-mosquitto-message-broker" title="Permalink to this heading"></a></h2>
 <p>The invocation to start up the Mosquitto message broker depends on the
 operating system and the package manager you’re using (keep in mind that
 running the <code class="docutils literal notranslate"><span class="pre">tools/install</span></code> script will automatically install Mosquitto for
 you).</p>
 <section id="macos">
-<h3>MacOS<a class="headerlink" href="#macos" title="Permalink to this headline"></a></h3>
+<h3>MacOS<a class="headerlink" href="#macos" title="Permalink to this heading"></a></h3>
 <p>If you installed Mosquitto using MacPorts, you can start it up in the
 background with the default settings by invoking::</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">port</span><span class="w"> </span><span class="n">load</span><span class="w"> </span><span class="n">mosquitto</span><span class="w"></span>
@@ -152,13 +153,13 @@ background with the default settings by invoking::</p>
 </div>
 </section>
 <section id="ubuntu">
-<h3>Ubuntu<a class="headerlink" href="#ubuntu" title="Permalink to this headline"></a></h3>
+<h3>Ubuntu<a class="headerlink" href="#ubuntu" title="Permalink to this heading"></a></h3>
 <p>If you’re on Ubuntu, Mosquitto will automatically start up as a background
 service after installation, so you don’t need to start it up manually.</p>
 </section>
 </section>
 <section id="message-topics-and-topic-hierarchies">
-<h2>Message topics and topic hierarchies<a class="headerlink" href="#message-topics-and-topic-hierarchies" title="Permalink to this headline"></a></h2>
+<h2>Message topics and topic hierarchies<a class="headerlink" href="#message-topics-and-topic-hierarchies" title="Permalink to this heading"></a></h2>
 <p>Message brokers route messages to/from client applications based on the topics
 that the applications published/subscribed to. Topics follow a hierarchical
 pattern, with levels in the hierarchy separated by slashes (<code class="docutils literal notranslate"><span class="pre">/</span></code>). For
@@ -173,11 +174,11 @@ receive the messages from both the <code class="docutils literal notranslate"><s
 <code class="docutils literal notranslate"><span class="pre">observations/events/mob_attacked</span></code> topics.</p>
 </section>
 <section id="publishing-subscribing">
-<h2>Publishing/subscribing<a class="headerlink" href="#publishing-subscribing" title="Permalink to this headline"></a></h2>
+<h2>Publishing/subscribing<a class="headerlink" href="#publishing-subscribing" title="Permalink to this heading"></a></h2>
 <p>There are two ways to publish/subscribe to topics on a message bus - using
 client executables, or using a client library in your own program.</p>
 <section id="using-client-executables">
-<h3>Using client executables<a class="headerlink" href="#using-client-executables" title="Permalink to this headline"></a></h3>
+<h3>Using client executables<a class="headerlink" href="#using-client-executables" title="Permalink to this heading"></a></h3>
 <p>Using a client executable is a simple, no-frills method to work with a message
 bus. Let’s go through a small exercise in publishing/subscribing using client
 executables.</p>
@@ -251,7 +252,7 @@ has helped you get an intuitive sense of how a message-based communication
 system works.</p>
 </section>
 <section id="using-a-client-library">
-<h3>Using a client library<a class="headerlink" href="#using-a-client-library" title="Permalink to this headline"></a></h3>
+<h3>Using a client library<a class="headerlink" href="#using-a-client-library" title="Permalink to this heading"></a></h3>
 <p>For more complex scenarios, it may be necessary to use a client library instead
 of a client executable. One example of such a scenario would be when a client
 application needs to publish a variety of messages to different topics. While
@@ -285,7 +286,7 @@ machine that acts as a controller - it would listen for a particular message on
 a particular topic that would prompt it to start the required program.</p>
 </section>
 <section id="when-to-use-a-client-executable-versus-a-client-library">
-<h3>When to use a client executable versus a client library<a class="headerlink" href="#when-to-use-a-client-executable-versus-a-client-library" title="Permalink to this headline"></a></h3>
+<h3>When to use a client executable versus a client library<a class="headerlink" href="#when-to-use-a-client-executable-versus-a-client-library" title="Permalink to this heading"></a></h3>
 <p>For when a client application does not need to publish to more than one topic,
 using the <code class="docutils literal notranslate"><span class="pre">mosquitto_pub</span></code> and <code class="docutils literal notranslate"><span class="pre">mosquitto_sub</span></code> executables provides a couple
 of advantages over using a client library. For one, it makes it easier to

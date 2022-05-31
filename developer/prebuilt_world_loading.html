@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pre-Built World Loading Tutorial &mdash; ToMCAT 0.1 documentation</title>
@@ -15,6 +15,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
         <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
@@ -96,9 +97,9 @@
              
   <p><strong>Author:</strong> Aditya Banerjee <strong>Date:</strong> 2019-12-7</p>
 <section id="pre-built-world-loading-tutorial">
-<h1>Pre-Built World Loading Tutorial<a class="headerlink" href="#pre-built-world-loading-tutorial" title="Permalink to this headline"></a></h1>
+<h1>Pre-Built World Loading Tutorial<a class="headerlink" href="#pre-built-world-loading-tutorial" title="Permalink to this heading"></a></h1>
 <section id="loading-pre-built-worlds">
-<h2>Loading Pre-Built Worlds<a class="headerlink" href="#loading-pre-built-worlds" title="Permalink to this headline"></a></h2>
+<h2>Loading Pre-Built Worlds<a class="headerlink" href="#loading-pre-built-worlds" title="Permalink to this heading"></a></h2>
 <p><strong>Pre-requisites: Make sure you are able to run Minecraft and the default mission before attempting this tutorial.</strong></p>
 <p><strong>Aim:</strong> To load pre-built Minecraft worlds into the XML missions.</p>
 <p><strong>Purpose:</strong>  The pre-built world can have handmade structures which will help speed up mission development by shifting some load away from the XML. It is easier to build more complex environments by hand than through the XML. It will also allow us to set environment variables and command blocks in the world and control some aspects of the mission.</p>
@@ -141,7 +142,7 @@ the tutorial go to the line <code class="docutils literal notranslate"><span cla
 <p>7.	That’s it! You should be inside the world I built.</p>
 </section>
 <section id="creating-a-world-to-load">
-<h2>Creating A World to Load<a class="headerlink" href="#creating-a-world-to-load" title="Permalink to this headline"></a></h2>
+<h2>Creating A World to Load<a class="headerlink" href="#creating-a-world-to-load" title="Permalink to this heading"></a></h2>
 <p>1.	Simply launch Minecraft from inside the build folder using:</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">.</span><span class="o">/</span><span class="n">launch_minecraft</span><span class="p">.</span><span class="n">sh</span><span class="w"></span>
 </pre></div>
@@ -167,7 +168,7 @@ Many worlds will be created each time a mission is run, and this directory will 
 It is better to save it elsewhere and then load it in from that path.</p>
 </section>
 <section id="final-notes">
-<h2>Final Notes<a class="headerlink" href="#final-notes" title="Permalink to this headline"></a></h2>
+<h2>Final Notes<a class="headerlink" href="#final-notes" title="Permalink to this heading"></a></h2>
 <p>I intentionally left <code class="docutils literal notranslate"><span class="pre">file_gen_skeleton</span></code> as a very basic XML with no real mission elements. It is meant to serve as a foundation to build missions without needing to change or delete much.
 When you’ve finished going through this documentation, you may add as much as you want to <code class="docutils literal notranslate"><span class="pre">file_gen_skeleton</span></code> to implement your mission. There is no need to follow
 the tutorial’s XML modification restrictions at that time.</p>
