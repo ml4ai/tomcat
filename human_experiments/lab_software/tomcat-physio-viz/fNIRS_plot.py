@@ -1,132 +1,111 @@
-#pip install --upgrade protobuf
-
-import matplotlib.pyplot as plt
-import numpy as np
-from time import sleep
-#from pylsl import StreamInlet, resolve_stream
-from IPython.display import display, clear_output
-import matplotlib.style as mplstyle
-import matplotlib
+from cProfile import label
+from PyQt5 import QtWidgets, QtCore
+from pyqtgraph import PlotWidget, plot
+import pyqtgraph as pg
+import sys  # We need sys so that we can pass argv to QApplication
 import os
-import multiprocessing
+from random import randint
 from time import process_time
+import numpy as np
 
-def plot(ax, fig, buffer1, buffer2, buffer3, p, q, r, channel_list):
-            for i in range(0, 60):
-                if i<=19:
-                    
-                    #ax[0].title.set_text('fNIRS Lion')
-                    ax[i].axis("off")
-                    ax[i].cla()
-                    ax[i].plot(buffer1[:,p+40], linewidth='0.5', color="r") #HbO values are channels 40 to 60
-                    ax[i].plot(buffer1[:,p+60], linewidth='0.5', color="b") #Hbr values are channels 60 to 80
-                    ax[i].set_ylim([-50, 50])
-                    ax[i].set_ylabel(channel_list[i], fontsize=8, rotation=0, labelpad=10)
-                    ax[i].set_xticks([])
-                    ax[i].set_yticks([]) 
-                    
-                    p += 1  
-                    if p == 19:
-                        p = 0             
-    
-                elif i > 19 and i<=39:
-                    #ax[20].title.set_text('fNIRS Lion')
-                    ax[i].axis("off")
-                    ax[i].cla()
-                    ax[i].plot(buffer2[:,q+40], linewidth='0.5', color="r") #HbO values are channels 40 to 60
-                    ax[i].plot(buffer2[:,q+60], linewidth='0.5', color="b") #Hbr values are channels 60 to 80
-                    ax[i].set_ylim([-50, 50])
-                    ax[i].set_ylabel(channel_list[i], fontsize=8, rotation=0, labelpad=10)  
-                    ax[i].set_xticks([])
-                    ax[i].set_yticks([])
-                    
-                    q += 1
-                    if q == 19:
-                        q = 0       
-                                                                                  
-                elif i >= 40:
-                    #ax[40].title.set_text('fNIRS Lion')
-                    ax[i].axis("off")
-                    ax[i].cla()
-                    ax[i].plot(buffer3[:,r+40], linewidth='0.5', color="r") #HbO values are channels 40 to 60
-                    ax[i].plot(buffer3[:,r+60], linewidth='0.5', color="b") #Hbr values are channels 60 to 80
-                    ax[i].set_ylim([-50, 50])
-                    ax[i].set_ylabel(channel_list[i], fontsize=8, rotation=0, labelpad=10)
-                    ax[i].set_xticks([])
-                    ax[i].set_yticks([])
-                     
-                    r += 1
-                    if r == 19:
-                       r = 0                 
-            
-            #plt.subplot_tool()                    
-            plt.subplots_adjust(left=0.05, bottom=0.005, right=0.995, top=0.995, wspace=0.200, hspace=0.200)
-            fig.tight_layout(pad=3.0)
-            fig.canvas.draw()
-            fig.canvas.flush_events()    
-            clear_output(wait = True)
-            display(fig)
-                    
-def main():            
-    #st.markdown("<h1 style='text-align: center; color: grey;'>ToMCAT Physio Visualization</h1>", unsafe_allow_html=True)
-    
-    #initilize interactive plots
-    plt.ion()
+class MainWindow(QtWidgets.QMainWindow):
 
-    #initlize streams
-    #streams = resolve_stream('type', 'NIRS')
-    #inlet = StreamInlet(streams[0])
+    def __init__(self, *args, **kwargs):
 
-    #make use of buffer to store data from 80 channels
-    buffer1 = np.empty([1,80])
-    buffer2 = np.empty([1,80])
-    buffer3 = np.empty([1,80])
+        #initlize streams
+        #streams = resolve_stream('type', 'NIRS')
+        #inlet = StreamInlet(streams[0])
 
-    #channel list as source-detector combinations
-    channel_list = ['S1-D1', 'S1-D2', 'S2-D1', 'S2-D3', 'S3-D1', 'S3-D3', 'S3-D4', 'S4-D2', 'S4-D4', 
-                    'S4-D5', 'S5-D3', 'S5-D4', 'S5-D6', 'S6-D4', 'S6-D6', 'S6-D7', 'S7-D5', 'S7-D7',
-                    'S8-D6', 'S8-D7'] * 3
+        self.channel_list = ['S1-D1', 'S1-D2', 'S2-D1', 'S2-D3', 'S3-D1', 'S3-D3', 'S3-D4', 'S4-D2', 'S4-D4', 
+                            'S4-D5', 'S5-D3', 'S5-D4', 'S5-D6', 'S6-D4', 'S6-D6', 'S6-D7', 'S7-D5', 'S7-D7',
+                            'S8-D6', 'S8-D7']
 
-    #initlize figure 
-    mplstyle.use('fast')
+        #initialize plots
+        super(MainWindow, self).__init__(*args, **kwargs)
 
-    fig, ax = plt.subplots(60)
-    fig.set_size_inches(18.5, 10)
-    fig.suptitle('ToMCAT Physio Visualization', fontsize=16, y = 0.92)
-    
-    #fig.set_dpi(10)
-    
-    p, q, r = 0, 0, 0
-    
-    while True:
-        #sample1,time = inlet1.pull_sample()
-        #sample2,time = inlet2.pull_sample()
-        #sample3,time = inlet3.pull_sample()
-        sample1 = np.random.randint(low = -30, high = 30, size = 81) #development done with random num generator
-        sample2 = np.random.randint(low = -30, high = 30, size = 81)
-        sample3 = np.random.randint(low = -30, high = 30, size = 81)
+        self.setWindowTitle("fNIRS device 1")
+
+        self.graphWidgetLayout = pg.GraphicsLayoutWidget()
+        self.graphWidgetLayout.resize(900,2500) 
+        self.setCentralWidget(self.graphWidgetLayout)
         
-        buffer1 = np.append(buffer1, np.asarray([sample1[1:]]), axis = 0)
-        buffer2 = np.append(buffer2, np.asarray([sample2[1:]]), axis = 0)
-        buffer3 = np.append(buffer3, np.asarray([sample3[1:]]), axis = 0)
+        # Enable antialiasing for prettier plots
+        pg.setConfigOptions(antialias=True)
+
+        self.x = [0]
+        self.y = [[0] for i in range(len(self.channel_list))] #HbO
+        self.y1 = [[0] for i in range(len(self.channel_list))] #HbR
+
+        self.graphWidgetLayout.setBackground('w')
+
+        self.pen = pg.mkPen(color=(255, 0, 0), width=5) #red for HbO
+        self.pen1 = pg.mkPen(color=(0, 0, 255), width=5) #blue for HbR
+
+        self.ch = []
+        self.ch1 = []
+
+        label_style = {"color": (255, 0, 0), "font-size": "14pt"}
+
+        for self.idx, self.channel in enumerate(self.channel_list):
+            #create 20 subplots
+            self.channel = self.graphWidgetLayout.addPlot(row = self.idx, col = 0)
+            #self.channel.showAxes('left', showValues=False)
+
+            if self.idx < 19:
+                self.channel.hideAxis('bottom')
+
+            self.channel.setLabel('left', self.channel_list[self.idx], **label_style)
         
-        if buffer1.shape[0] >= 300:
-            #Clearning buffer
-            buffer1 = np.empty([1,80])
-            buffer2 = np.empty([1,80])
-            buffer3 = np.empty([1,80])
-            
-            for i in range(0, 60):
-            #Clearning plots
-                ax[i].cla()
-                
+            self.ch.append(self.channel)
+            self.ch1.append(self.channel)
+
+        self.plots()
+    
+    def plots(self):
+        #draw 
+        self.dataLine = [[] for i in range(20)]
+        self.dataLine1 = [[] for i in range(20)]
+
+        for self.idx, (self.ch, self.ch1) in enumerate(zip(self.ch, self.ch1)):
+            self.ch = self.ch.plot(x = self.x, y = self.y[self.idx], pen = self.pen)
+            self.ch1 = self.ch1.plot(x = self.x, y = self.y1[self.idx], pen = self.pen1)
+    
+            self.dataLine[self.idx].append(self.ch)
+            self.dataLine1[self.idx].append(self.ch1)
+
+        self.srate = 10 #10.2Hz for NIRS data
+        self.timer = QtCore.QTimer()
+        self.timer.setInterval(1000/self.srate) #why? https://stackoverflow.com/questions/59094207/how-to-set-pyqt5-qtimer-to-update-in-specified-interval
+        self.timer.timeout.connect(self.update_plot_data)
+        self.timer.start()
+        
+
+    def update_plot_data(self):
+        #update data
         start = process_time()
-        
-        p1 = multiprocessing.Process(target = plot(ax, fig, buffer1, buffer2, buffer3, p, q, r, channel_list))
-        
-        p1.start()
+        if len(self.x) >= 100:
+            self.x = self.x[1:]  # Remove the first x element.
+            
+            for i in range(len(self.channel_list)):
+                self.y[i] = self.y[i][1:]  # Remove the first
+                self.y1[i] = self.y1[i][1:]  # Remove the first
+
+        #sample,time = inlet1.pull_sample() #get continuos streams from LSL
+        self.sample = np.random.randint(low = -30, high = 30, size = 81)
+
+        self.x.append(self.x[-1] + 1)  # Add a new value 1 higher than the last.
+
+        for i in range(len(self.channel_list)):
+            self.y[i].append(self.sample[i+40])  # Add a new random value.
+            self.y1[i].append(self.sample[i+60])
+
+        for i in range(0,len(self.channel_list)):
+            self.dataLine[i][0].setData(self.x, self.y[i])
+            self.dataLine1[i][0].setData(self.x, self.y1[i])
         
         print(process_time() - start)
-       
-if __name__ == '__main__':
-    main()  
+
+app = QtWidgets.QApplication(sys.argv)
+w = MainWindow()
+w.show()
+sys.exit(app.exec_())
