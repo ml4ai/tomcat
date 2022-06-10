@@ -1,10 +1,8 @@
 import csv
 import numpy as np
-import json
 import threading
 from time import time, monotonic
 from datetime import datetime
-import psutil
 
 import pygame
 from common import record_metadata, request_clients_end

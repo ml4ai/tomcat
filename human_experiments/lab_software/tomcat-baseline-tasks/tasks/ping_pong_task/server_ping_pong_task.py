@@ -1,9 +1,9 @@
 import csv
 import json
 import threading
-import time
+from time import time, monotonic
+from datetime import datetime
 
-import psutil
 import pygame
 from common import record_metadata, request_clients_end
 from config import CLIENT_WINDOW_HEIGHT, CLIENT_WINDOW_WIDTH, UPDATE_RATE
@@ -92,9 +92,24 @@ class ServerPingPongTask:
 
         csv_data_path = data_save_path + "/ping_pong"
 
-        csv_file_name = csv_data_path + '/' + session_name + '_' + str(int(time.time()))
+        csv_file_name = csv_data_path + '/' + session_name + '_' + str(int(time()))
         
-        header = ['time', 'monotonic_time', 'boot_time', 'state']
+        header = [
+            "time",
+            "monotonic_time",
+            "human_readable_time",
+            "score_left",
+            "score_right",
+            "started",
+            "ball_x",
+            "ball_y"
+        ]
+
+        for client_name in self._paddles.keys():
+            header.append(client_name + "_x")
+            header.append(client_name + "_y")
+
+        header.append("seconds")
 
         self._csv_file = open(csv_file_name + ".csv", 'w', newline='')
         self._csv_writer = csv.DictWriter(self._csv_file, delimiter=';', fieldnames = header)
@@ -225,6 +240,18 @@ class ServerPingPongTask:
                     self._ball.rect.y = self._game_y_lower_bound + 1
                     self._ball.velocity[1] = -self._ball.velocity[1]
 
+            # Track game state
+            game_state = {
+                "time" : time(),
+                "monotonic_time" : monotonic(),
+                "human_readable_time" : datetime.utcnow().isoformat() + "Z",
+                "score_left" : self._score_left,
+                "score_right" : self._score_right,
+                "started" : game_started,
+                "ball_x" : self._ball.rect.x,
+                "ball_y" : self._ball.rect.y
+            }
+
             data = {}
             data["type"] = "state"
             data["score_left"] = self._score_left
@@ -232,16 +259,20 @@ class ServerPingPongTask:
             data["started"] = game_started
             data["state"] = {}
             data["state"]["ball"] = (self._ball.rect.x, self._ball.rect.y)
+
             for client_name, paddle in self._paddles.items():
                 data["state"][client_name] = (paddle.rect.x, paddle.rect.y)
+                game_state[client_name + "_x"] = paddle.rect.x
+                game_state[client_name + "_y"] = paddle.rect.y
 
             seconds_to_send = int(counter_target) - int(seconds)
             data["seconds"] = 1 if seconds_to_send <= 0 else seconds_to_send
+            game_state["seconds"] = data["seconds"]
 
-            # Record state of the game
-            self._csv_writer.writerow({"time" : time.time(), "monotonic_time" : time.monotonic(),  
-                                        "boot_time" : psutil.boot_time(), "state" : json.dumps(data)})
+            # Record game data
+            self._csv_writer.writerow(game_state)
 
+            # Send game data to clients
             send(self._to_client_connections, data)
 
             seconds = (pygame.time.get_ticks() - start_ticks) / 1000.0

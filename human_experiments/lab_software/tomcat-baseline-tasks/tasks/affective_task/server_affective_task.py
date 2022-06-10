@@ -1,8 +1,7 @@
 import csv
-import json
-import os
-from time import sleep, time, monotonic, ctime
 from datetime import datetime
+from time import monotonic, sleep, time
+
 import psutil
 from common import record_metadata, request_clients_end
 from network import receive, send
@@ -13,6 +12,7 @@ from .config_affective_task import (BLANK_SCREEN_MILLISECONDS,
                                     INDIVIDUAL_RATING_TIMER, TEAM_IMAGE_TIMER,
                                     TEAM_RATING_TIMER)
 from .utils import get_image_paths
+
 
 class ServerAffectiveTask:
     def __init__(self, 
