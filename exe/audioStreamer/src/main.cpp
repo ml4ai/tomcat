@@ -134,13 +134,16 @@ void run_mqtt(string mqtt_host, string mqtt_port, string player_name,
     string client_id = player_name + "_audioStreamer";
     mqtt::async_client mqtt_client(server_address, client_id);
 
-    auto connOpts = mqtt::connect_options_builder()
-                        .clean_session(true)
-                        .automatic_reconnect(chrono::seconds(2), chrono::seconds(30))
-                        .finalize();
-  
+    auto connOpts =
+        mqtt::connect_options_builder()
+            .clean_session(true)
+            .automatic_reconnect(chrono::seconds(2), chrono::seconds(30))
+            .finalize();
+
     try {
-	mqtt_client.set_message_callback([&](mqtt::const_message_ptr msg) { mqtt_process_message(msg, streamer); });
+        mqtt_client.set_message_callback([&](mqtt::const_message_ptr msg) {
+            mqtt_process_message(msg, streamer);
+        });
         mqtt_client.connect(connOpts)->get_connect_response();
         mqtt_client.subscribe("trial", 2);
 
@@ -148,15 +151,16 @@ void run_mqtt(string mqtt_host, string mqtt_port, string player_name,
                                    "awaiting Trial Start message";
 
         // Consume messages
-    	chrono::milliseconds duration(1);
+        chrono::milliseconds duration(1);
         while (!SHUTDOWN) {
-        	// Yield main thread until exit
-		this_thread::yield();
-		this_thread::sleep_for(duration);
+            // Yield main thread until exit
+            this_thread::yield();
+            this_thread::sleep_for(duration);
         }
 
-	// Shutdown stream if active
-	streamer.StopStreaming(); // AudioStreamer will check if stream is active when function is called
+        // Shutdown stream if active
+        streamer.StopStreaming(); // AudioStreamer will check if stream is
+                                  // active when function is called
 
         // Shutdown MQTT connection
         mqtt_client.stop_consuming();
@@ -169,21 +173,21 @@ void run_mqtt(string mqtt_host, string mqtt_port, string player_name,
     }
 }
 
-void mqtt_process_message(mqtt::const_message_ptr msg, AudioStreamer& streamer){
-            string payload = msg->get_payload_str();
-            nlohmann::json message = nlohmann::json::parse(payload);
+void mqtt_process_message(mqtt::const_message_ptr msg,
+                          AudioStreamer& streamer) {
+    string payload = msg->get_payload_str();
+    nlohmann::json message = nlohmann::json::parse(payload);
 
-            string sub_type = message["msg"]["sub_type"];
-            if (sub_type == "start") {
-                BOOST_LOG_TRIVIAL(info)
-                    << "Trial start message recieved, starting audio stream. ";
-                streamer.GenerateAudioFilename(message);
-                streamer.StartStreaming();
-            }
-            else if (sub_type == "stop") {
-                BOOST_LOG_TRIVIAL(info)
-                    << "Trial stop message recieved, stopping audio stream. ";
-                streamer.StopStreaming();
-            }
-	
+    string sub_type = message["msg"]["sub_type"];
+    if (sub_type == "start") {
+        BOOST_LOG_TRIVIAL(info)
+            << "Trial start message recieved, starting audio stream. ";
+        streamer.GenerateAudioFilename(message);
+        streamer.StartStreaming();
+    }
+    else if (sub_type == "stop") {
+        BOOST_LOG_TRIVIAL(info)
+            << "Trial stop message recieved, stopping audio stream. ";
+        streamer.StopStreaming();
+    }
 }
