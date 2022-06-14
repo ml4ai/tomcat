@@ -6,7 +6,7 @@
 #include <thread>
 #include <unistd.h>
 
-#include <mqtt/client.h>
+#include <mqtt/async_client.h>
 #include <nlohmann/json.hpp>
 
 #include <boost/asio/connect.hpp>
@@ -25,11 +25,13 @@ namespace po = boost::program_options;
 using namespace std;
 
 bool SHUTDOWN = false;
+
 void signal_callback_handler(int signum) { SHUTDOWN = true; }
 
 void run(AudioStreamer& streamer);
 void run_mqtt(string mqtt_host, string mqtt_port, string player_name,
               AudioStreamer& streamer);
+void mqtt_process_message(mqtt::const_message_ptr msg, AudioStreamer& streamer);
 
 int main(int argc, char* argv[]) {
     // Create signal handler
@@ -130,22 +132,44 @@ void run_mqtt(string mqtt_host, string mqtt_port, string player_name,
     // Connect to MQTT broker
     string server_address = "tcp://" + mqtt_host + ":" + mqtt_port;
     string client_id = player_name + "_audioStreamer";
-    mqtt::client mqtt_client(server_address, client_id);
+    mqtt::async_client mqtt_client(server_address, client_id);
 
-    mqtt::connect_options connOpts;
-    connOpts.set_keep_alive_interval(20);
-    connOpts.set_clean_session(true);
-
+    auto connOpts = mqtt::connect_options_builder()
+                        .clean_session(true)
+                        .automatic_reconnect(chrono::seconds(2), chrono::seconds(30))
+                        .finalize();
+  
     try {
-        mqtt_client.connect(connOpts);
+	mqtt_client.set_message_callback([&](mqtt::const_message_ptr msg) { mqtt_process_message(msg, streamer); });
+        mqtt_client.connect(connOpts)->get_connect_response();
         mqtt_client.subscribe("trial", 2);
 
         BOOST_LOG_TRIVIAL(info) << "Connection to MQTT broker successful, "
                                    "awaiting Trial Start message";
 
         // Consume messages
+    	chrono::milliseconds duration(1);
         while (!SHUTDOWN) {
-            auto msg = mqtt_client.consume_message();
+        	// Yield main thread until exit
+		this_thread::yield();
+		this_thread::sleep_for(duration);
+        }
+
+	// Shutdown stream if active
+	streamer.StopStreaming(); // AudioStreamer will check if stream is active when function is called
+
+        // Shutdown MQTT connection
+        mqtt_client.stop_consuming();
+        mqtt_client.disconnect();
+    }
+    catch (const mqtt::exception& e) {
+        BOOST_LOG_TRIVIAL(error)
+            << "Failure in MQTT client. Error was: " << e.what();
+        return;
+    }
+}
+
+void mqtt_process_message(mqtt::const_message_ptr msg, AudioStreamer& streamer){
             string payload = msg->get_payload_str();
             nlohmann::json message = nlohmann::json::parse(payload);
 
@@ -161,15 +185,5 @@ void run_mqtt(string mqtt_host, string mqtt_port, string player_name,
                     << "Trial stop message recieved, stopping audio stream. ";
                 streamer.StopStreaming();
             }
-        }
-
-        // Shutdown MQTT connection
-        mqtt_client.stop_consuming();
-        mqtt_client.disconnect();
-    }
-    catch (const mqtt::exception& e) {
-        BOOST_LOG_TRIVIAL(error)
-            << "Failure in MQTT client. Error was: " << e.what();
-        return;
-    }
+	
 }
