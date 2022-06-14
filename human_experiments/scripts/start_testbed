@@ -24,6 +24,9 @@ fi
 __monitor_testbed_launch() {
   local log_path=$1
   local testbed_pid=$2
+  local padding=$3
+
+  echo -e "${padding}Waiting for launch..."
 
   # Wait till the log file actually exists
   while [ ! -f $log_path ]; do
@@ -32,11 +35,6 @@ __monitor_testbed_launch() {
 
   local num_seconds=0
   while [ $num_seconds -lt $SECONDS_TO_WAIT ]; do
-    ps $testbed_pid >&/dev/null
-    if [[ $? -ne 0 ]]; then
-      return 1
-    fi
-
     if [[ -e "${log_path}" ]]; then
       have_line="$(grep -c 'Testbed successfully launched.' ${log_path})"
       if [[ ${have_line} -ne 0 ]]; then
@@ -46,34 +44,47 @@ __monitor_testbed_launch() {
       return 1
     fi
 
+    # TODO - fix this because the process might end but the writer buffer
+    #  to the log file might still be running I guess
+    ps $testbed_pid >&/dev/null
+    if [[ $? -ne 0 ]]; then
+      return 1
+    fi
+
     sleep 1
     let num_seconds+=1
   done
+
+  return 1
 }
 
-__launch_testbed(){
+__launch_testbed() {
   # Bring the testbed up and save logs
-  local log_path=$EXPERIMENT_DIR/tmp/testbed.log
+  local padding=$1
+  local log_path=$EXPERIMENT_DIR/tmp/testbed_up.log
   local testbed_launched="n"
 
-  echo -e "${PADDING}Launching ${EMPH}Testbed...${NC}"
+  echo -e "${padding}Launching ${EMPH}Testbed${NC}..."
   while [[ $testbed_launched == "n" ]]; do
     pushd $HOME/$SYSTEMS_DIR/testbed/Local >/dev/null
-    testbed_up_core.sh -i &> $log_path &
-    __monitor_testbed_launch $log_path $!
+    sudo ./testbed_up_core.sh -i &>$log_path &
+
+    # Wait for a while to guarantee the log file was created
+    sleep 1
+    __monitor_testbed_launch $log_path $! "$padding "
 
     if [[ $? -eq 0 ]]; then
       testbed_launched="y"
-      echo -e "${PADDING}${Green} Testbed successfully launched.${NC}"
+      echo -e "${padding}${GREEN} ${EMPH}Testbed${GREEN} successfully launched.${NC}"
     else
-      text="${PADDING}$${RED} Error while launching the testbed. Check the log file in "
-      text+="${EMPH}$log_path${RED} for more detail.${NC}"
+      text="${padding}${RED} Error while launching the ${EMPH}testbed${RED}. Check the log file in "
+      text+="${EMPH}$log_path${RED} for more details.${NC}"
       echo -e "$text"
-      echo -n "${PADDING}Press any key to ${EMPH}relaunch:${NC} "
+      echo -n -e "${padding} Press any key to ${EMPH}RETRY${NC}: "
       read -r
     fi
     popd >/dev/null
   done
 }
 
-__launch_testbed
+__launch_testbed "$PADDING"

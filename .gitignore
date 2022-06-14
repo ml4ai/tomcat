@@ -102,6 +102,10 @@ javac.*.args
 
 # .env files that can hold local configurations
 .env
+.venv
 
 # Preventing people from accidentally committing ASIST human subjects data to the repo.
 HSR*
+
+# Texpad
+*.texpadtmp/

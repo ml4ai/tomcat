@@ -1,0 +1,66 @@
+#!/bin/bash
+
+# Adapted from tools/kill_minecraft. I am using the kill all version
+# since killing by pid was not working at the level of grandchild processes.
+
+set -u
+
+source configuration_helpers
+
+if [[ -z ${1+x} ]]; then
+  PADDING=""
+else
+  PADDING=$1
+fi
+
+to_kill=""
+
+ps_tmp=$(ps -u ${USER} | grep java | grep -i 'malmomod' | grep -i 'gradlestart' | sed "s/^ *[0-9][0-9]* *\([0-9][0-9]*\)  *.*/\1/")
+if [[ $? -ne 0 ]]; then exit 1; fi
+
+if [[ -n "${ps_tmp}" ]]; then
+  to_kill="${to_kill} ${ps_tmp}"
+fi
+
+ps_tmp=$(ps -u ${USER} | grep java | grep -i 'gradlewrappermain' | grep -i 'runclient' | sed "s/^ *[0-9][0-9]* *\([0-9][0-9]*\)  *.*/\1/")
+if [[ $? -ne 0 ]]; then exit 1; fi
+
+if [[ -n "${ps_tmp}" ]]; then
+  to_kill="${to_kill} ${ps_tmp}"
+fi
+
+ps_tmp=$(ps -u ${USER} | grep java | grep -i 'gradledaemon' | sed "s/^ *[0-9][0-9]* *\([0-9][0-9]*\)  *.*/\1/")
+if [[ $? -ne 0 ]]; then exit 1; fi
+
+if [[ -n "${ps_tmp}" ]]; then
+  to_kill="${to_kill} ${ps_tmp}"
+fi
+
+if [[ -n "${to_kill}" ]]; then
+  # We sleep between operations to get off the CPU and give programs a chance
+  # to cleanup.
+
+  for proc in ${to_kill}; do
+    ps ${proc} >&/dev/null
+    if [[ $? -eq 0 ]]; then
+      kill -15 ${proc}
+      echo -e "${PADDING}${GREEN}Process ${EMPH}${proc}${GREEN} killed.${NC}"
+      sleep 1
+    else
+      text="${PADDING}${YELLOW}Process ${EMPH}${proc}${YELLOW} no longer "
+      text+="exists.${NC}"
+      echo -e "$text"
+    fi
+  done
+
+  for proc in ${to_kill}; do
+    ps ${proc} >&/dev/null
+    if [[ $? -eq 0 ]]; then
+      kill -9 ${proc}
+      echo -e "${PADDING}${GREEN}Process ${EMPH}${proc}${GREEN} killed.${NC}"
+      sleep 1
+    fi
+  done
+fi
+
+exit 0

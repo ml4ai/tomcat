@@ -30,7 +30,7 @@ __create_directory() {
     if [[ $? -eq 0 ]]; then
       echo -e "${padding}${GREEN}Directory ${EMPH}$directory${GREEN} created.${NC}"
     else
-      printf "${padding}${RED}Error while creating directory ${EMPH}$directory.${NC}"
+      printf "${padding}${RED}Error while creating directory ${EMPH}$directory${RED}.${NC}"
       exit 1
     fi
   fi

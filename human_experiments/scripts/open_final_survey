@@ -2,10 +2,6 @@
 
 set -u
 
-#!/bin/bash
-
-set -u
-
 source configuration_helpers
 source wifi
 
@@ -31,27 +27,37 @@ __open_on_client() {
   local player_name=$4
   local padding=$5
 
-  yes_no_question "${padding}Do you want to open the final survey on ${EMPH}$client_name?${NC}"
-  if [[ $? -eq 0 ]]; then
+  if [[ $ALL -ne 1 ]]; then
+    yes_no_question "${padding}Do you want to open the final survey on ${EMPH}$client_name${NC}?"
+    ans=$?
+    padding="$padding "
+  fi
+  if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
     enable_wifi $client_name $client_address "$padding "
+    wait_for_connection $client_name $client_address "$padding "
 
     # Open the survey
     local command="osascript \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/open_final_survey.scpt "
-    command+="$FINAL_SURVEY_URL $participant_id $player_name $client_name"
-    ssh $EXPERIMENT_USER@$client_address "$command"
+    command+="'$FINAL_SURVEY_URL' $participant_id $player_name $client_name"
+    ssh $EXPERIMENT_USER@$client_address "$command" >/dev/null
+    if [[ $? -eq 0 ]]; then
+      echo -e "${padding}${EMPH}Final survey${GREEN} opened successfully.${NC}"
+    else
+      echo -e "${padding}${RED}Failed to open the ${EMPH}Final Survey${RED}.${NC}"
+    fi
   fi
 }
 
 __open_final_surveys() {
-  source collect_player_names "$EXPERIMENT_DIR"
-  source collect_participant_ids
+  local padding=$1
 
-  echo -e "${PADDING}Opening the ${EMPH}Final Survey...${NC}"
-  __open_on_client "lion" "lion.local" $LION_PARTICIPANT_ID $LION_PLAYER_NAME "$PADDING "
-  __open_on_client "tiger" "tiger.local" $TIGER_PARTICIPANT_ID $TIGER_PLAYER_NAME "$PADDING "
-  __open_on_client "leopard" "leopard.local" $LEOPARD_PARTICIPANT_ID $LEOPARD_PLAYER_NAME "$PADDING "
+  source collect_player_names "$EXPERIMENT_DIR" "$padding"
+  source collect_participant_ids "$padding"
+  echo -e "${padding}Opening the ${EMPH}Final Survey${NC}..."
+
+  __open_on_client "lion" "lion.local" $LION_PARTICIPANT_ID $LION_PLAYER_NAME "$padding "
+  __open_on_client "tiger" "tiger.local" $TIGER_PARTICIPANT_ID $TIGER_PLAYER_NAME "$padding "
+  __open_on_client "leopard" "leopard.local" $LEOPARD_PARTICIPANT_ID $LEOPARD_PLAYER_NAME "$padding "
 }
 
-__open_final_surveys
-
-
+__open_final_surveys "$PADDING"
