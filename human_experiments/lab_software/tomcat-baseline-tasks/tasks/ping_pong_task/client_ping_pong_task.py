@@ -27,10 +27,12 @@ class ClientPingPongTask:
         self._paddle_height = cfg.PADDLE_HEIGHT
         self._paddle_width = cfg.PADDLE_WIDTH
 
-        self._game_y_lower_bound = int((CLIENT_WINDOW_HEIGHT - WINDOW_HEIGHT) / 2)
+        self._game_y_lower_bound = int(
+            (CLIENT_WINDOW_HEIGHT - WINDOW_HEIGHT) / 2)
         self._game_y_upper_bound = self._game_y_lower_bound + WINDOW_HEIGHT
 
-        self._game_x_lower_bound = int((CLIENT_WINDOW_WIDTH - WINDOW_WIDTH) / 2)
+        self._game_x_lower_bound = int(
+            (CLIENT_WINDOW_WIDTH - WINDOW_WIDTH) / 2)
         self._game_x_upper_bound = self._game_x_lower_bound + WINDOW_WIDTH
 
         self._running = False
@@ -38,7 +40,8 @@ class ClientPingPongTask:
     def run(self):
         self._running = True
 
-        client_input_thread = threading.Thread(target=self._client_input_handle, daemon=True)
+        client_input_thread = threading.Thread(
+            target=self._client_input_handle, daemon=True)
         client_input_thread.start()
 
         pygame.event.set_grab(True)
@@ -64,7 +67,8 @@ class ClientPingPongTask:
                 if data["request"] == "end":
                     self._running = False
 
-                    render_blank_screen(self._screen, BLANK_SCREEN_COUNT_DOWN_MILLISECONDS)
+                    render_blank_screen(
+                        self._screen, BLANK_SCREEN_COUNT_DOWN_MILLISECONDS)
 
                     # display game score
                     score_left = data["score_left"]
@@ -80,7 +84,8 @@ class ClientPingPongTask:
                         message = f"Tie (left {score_left} - right {score_right})"
 
                     score_message = font.render(message, 1, COLOR_FOREGROUND)
-                    score_message_rect = score_message.get_rect(center=(CLIENT_WINDOW_WIDTH / 2, CLIENT_WINDOW_HEIGHT / 2))
+                    score_message_rect = score_message.get_rect(
+                        center=(CLIENT_WINDOW_WIDTH / 2, CLIENT_WINDOW_HEIGHT / 2))
                     self._screen.blit(score_message, score_message_rect)
 
                     pygame.display.flip()
@@ -97,14 +102,14 @@ class ClientPingPongTask:
                     object = Ball(BALL_SIZE)
                     object.rect.x, object.rect.y = position
                 elif name == self._client_name:
-                    object = Paddle(position, 
-                                    paddle_width=self._paddle_width, 
-                                    paddle_height=self._paddle_height, 
+                    object = Paddle(position,
+                                    paddle_width=self._paddle_width,
+                                    paddle_height=self._paddle_height,
                                     color=COLOR_PLAYER)
                 else:
-                    object = Paddle(position, 
-                                    paddle_width=self._paddle_width, 
-                                    paddle_height=self._paddle_height, 
+                    object = Paddle(position,
+                                    paddle_width=self._paddle_width,
+                                    paddle_height=self._paddle_height,
                                     color=COLOR_FOREGROUND)
 
                 all_sprites_list.add(object)
@@ -133,23 +138,28 @@ class ClientPingPongTask:
             # Display scores:
             font = pygame.font.Font(None, 74)
             text_score_left = font.render(str(score_left), 1, COLOR_FOREGROUND)
-            text_score_left_rect = text_score_left.get_rect(center=(self._game_x_lower_bound, self._game_y_lower_bound - 20))
+            text_score_left_rect = text_score_left.get_rect(
+                center=(self._game_x_lower_bound, self._game_y_lower_bound - 20))
             self._screen.blit(text_score_left, text_score_left_rect)
 
-            text_score_right = font.render(str(score_right), 1, COLOR_FOREGROUND)
-            text_score_right_rect = text_score_right.get_rect(center=(self._game_x_upper_bound, self._game_y_lower_bound - 20))
+            text_score_right = font.render(
+                str(score_right), 1, COLOR_FOREGROUND)
+            text_score_right_rect = text_score_right.get_rect(
+                center=(self._game_x_upper_bound, self._game_y_lower_bound - 20))
             self._screen.blit(text_score_right, text_score_right_rect)
 
             # Display timer
             timer = font.render(str(seconds), 1, COLOR_DIM)
-            timer_rect = timer.get_rect(center=(CLIENT_WINDOW_WIDTH / 2, self._game_y_lower_bound - 20))
+            timer_rect = timer.get_rect(
+                center=(CLIENT_WINDOW_WIDTH / 2, self._game_y_lower_bound - 20))
             self._screen.blit(timer, timer_rect)
 
             # Display starting message
             if not game_started:
                 font = pygame.font.Font(None, 50)
                 timer = font.render(COUNT_DOWN_MESSAGE, 1, COLOR_DIM)
-                timer_rect = timer.get_rect(center=(CLIENT_WINDOW_WIDTH / 2, self._game_y_upper_bound + 30))
+                timer_rect = timer.get_rect(
+                    center=(CLIENT_WINDOW_WIDTH / 2, self._game_y_upper_bound + 30))
                 self._screen.blit(timer, timer_rect)
 
             pygame.display.flip()
