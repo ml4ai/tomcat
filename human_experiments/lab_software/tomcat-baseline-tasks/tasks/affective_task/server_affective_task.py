@@ -34,6 +34,7 @@ class ServerAffectiveTask:
         self._csv_writer.writeheader()
 
         metadata = {}
+        metadata["participant_ids"] = list(from_client_connections.values())
         metadata["blank_screen_milliseconds"] = BLANK_SCREEN_MILLISECONDS
         metadata["cross_screen_milliseconds"] = CROSS_SCREEN_MILLISECONDS
         metadata["individual_image_timer"] = INDIVIDUAL_IMAGE_TIMER
