@@ -14,6 +14,7 @@ from .utils import (Button, render_image_center,
 
 from common import render_text_center
 
+
 class ClientAffectiveTask:
     def __init__(self, from_server, to_server, screen):
         self._from_server = from_server
@@ -53,73 +54,103 @@ class ClientAffectiveTask:
             # show a blank screen and a cross before showing an image
             render_blank_screen(self._screen, BLANK_SCREEN_MILLISECONDS)
 
-            render_image_center("./tasks/affective_task/images/plus.png", self._screen, refresh=True)
+            render_image_center(
+                "./tasks/affective_task/images/plus.png", self._screen, refresh=True)
             wait(CROSS_SCREEN_MILLISECONDS)
 
             if collaboration:
-                # displaying a slide asking subjects not to discuss 
+                # displaying a slide asking subjects not to discuss
                 render_blank_screen(self._screen, BLANK_SCREEN_MILLISECONDS)
-                display_msg_affective_disscussion(self._screen, "Observe",DISPLAY_AFFEC_DISCUSSION_MILLISECONDS/2)
+                display_msg_affective_disscussion(
+                    self._screen, "Observe", DISPLAY_AFFEC_DISCUSSION_MILLISECONDS/2)
                 render_blank_screen(self._screen, BLANK_SCREEN_MILLISECONDS)
 
                 # show an image for team task for the team to analyze seperately
-                render_image_center(state["image_path"], self._screen, refresh=True)
-                render_text_center("Quiet", (950, 50), self._screen, font_size = 45 , x_offset = 0, y_offset=450)
-                timer(state["image_timer"], [], "Team: " if collaboration else "Individual: ", self._screen)
+                render_image_center(
+                    state["image_path"], self._screen, refresh=True)
+                render_text_center(
+                    "Quiet", (950, 50), self._screen, font_size=45, x_offset=0, y_offset=450)
+                timer(state["image_timer"], [
+                ], "Team: " if collaboration else "Individual: ", self._screen)
 
-                # displaying a slide asking subjects to discuss 
+                # displaying a slide asking subjects to discuss
                 render_blank_screen(self._screen, BLANK_SCREEN_MILLISECONDS)
-                display_msg_affective_disscussion(self._screen, "Discuss",DISPLAY_AFFEC_DISCUSSION_MILLISECONDS/2)
+                display_msg_affective_disscussion(
+                    self._screen, "Discuss", DISPLAY_AFFEC_DISCUSSION_MILLISECONDS/2)
                 render_blank_screen(self._screen, BLANK_SCREEN_MILLISECONDS)
 
                 # show the same image again for team task for the team to dicuss their findings
-                render_image_center(state["image_path"], self._screen, refresh=True)
-                render_text_center("Discuss", (950, 50), self._screen, font_size = 45 , x_offset = 0, y_offset=450)
+                render_image_center(
+                    state["image_path"], self._screen, refresh=True)
+                render_text_center(
+                    "Discuss", (950, 50), self._screen, font_size=45, x_offset=0, y_offset=450)
                 timer(state["discussion_timer"], [], "Team: ", self._screen)
 
             else:
                 # show an image for individual task
-                render_image_center(state["image_path"], self._screen, refresh=True)
+                render_image_center(
+                    state["image_path"], self._screen, refresh=True)
                 # show timer above image until timer runs out
-                timer(state["image_timer"], [], "Team: " if collaboration else "Individual: ", self._screen)
+                timer(state["image_timer"], [
+                ], "Team: " if collaboration else "Individual: ", self._screen)
 
             if collaboration:
                 if state["selected"]:
                     # slide before that shows up based on the client that is selected before the buttons are displayed
-                    render_blank_screen(self._screen, BLANK_SCREEN_MILLISECONDS)
-                    display_msg_affective_disscussion(self._screen, "You have been selected for rating the images",DISPLAY_AFFEC_DISCUSSION_MILLISECONDS)
-                    render_blank_screen(self._screen, BLANK_SCREEN_MILLISECONDS)
+                    render_blank_screen(
+                        self._screen, BLANK_SCREEN_MILLISECONDS)
+                    display_msg_affective_disscussion(
+                        self._screen, "You have been selected for rating the images", DISPLAY_AFFEC_DISCUSSION_MILLISECONDS)
+                    render_blank_screen(
+                        self._screen, BLANK_SCREEN_MILLISECONDS)
                 else:
-                    render_blank_screen(self._screen, 2 * BLANK_SCREEN_MILLISECONDS + DISPLAY_AFFEC_DISCUSSION_MILLISECONDS)
+                    render_blank_screen(
+                        self._screen, 2 * BLANK_SCREEN_MILLISECONDS + DISPLAY_AFFEC_DISCUSSION_MILLISECONDS)
 
             # show valence and arousal scoring
-            render_image_center("./tasks/affective_task/images/buttons_images/Valence.jpg", 
-                                self._screen, 
-                                y_offset=-150, 
+            render_image_center("./tasks/affective_task/images/buttons_images/Valence.jpg",
+                                self._screen,
+                                y_offset=-150,
                                 refresh=True)
-            render_image_center("./tasks/affective_task/images/buttons_images/Arousal.jpg", 
-                                self._screen, 
+            render_image_center("./tasks/affective_task/images/buttons_images/Arousal.jpg",
+                                self._screen,
                                 y_offset=200)
 
-            render_text_center("Valence score", (400, 50), self._screen, y_offset=-270)
-            render_text_center("Upset", (250, 50), self._screen, font_size=30, x_offset=-530, y_offset=-120)
-            render_text_center("Happy", (250, 50), self._screen, font_size = 30, x_offset=530, y_offset=-120)
+            render_text_center("Valence score", (400, 50),
+                               self._screen, y_offset=-270)
+            render_text_center("Upset", (250, 50), self._screen,
+                               font_size=30, x_offset=-530, y_offset=-120)
+            render_text_center("Happy", (250, 50), self._screen,
+                               font_size=30, x_offset=530, y_offset=-120)
 
-            render_text_center("-2", (300, 50), self._screen, font_size=25, x_offset=-340, y_offset=-55)
-            render_text_center("-1", (300, 50), self._screen, font_size=25, x_offset=-165, y_offset=-55)
-            render_text_center("0", (300, 50), self._screen, font_size=25, x_offset = 0, y_offset=-55)
-            render_text_center("+1", (300, 50), self._screen, font_size=25, x_offset=165, y_offset=-55)
-            render_text_center("+2", (300, 50), self._screen, font_size=25, x_offset=335, y_offset=-55)
+            render_text_center("-2", (300, 50), self._screen,
+                               font_size=25, x_offset=-340, y_offset=-55)
+            render_text_center("-1", (300, 50), self._screen,
+                               font_size=25, x_offset=-165, y_offset=-55)
+            render_text_center("0", (300, 50), self._screen,
+                               font_size=25, x_offset=0, y_offset=-55)
+            render_text_center("+1", (300, 50), self._screen,
+                               font_size=25, x_offset=165, y_offset=-55)
+            render_text_center("+2", (300, 50), self._screen,
+                               font_size=25, x_offset=335, y_offset=-55)
 
-            render_text_center("Arousal score", (400, 50), self._screen, y_offset=80)
-            render_text_center("Calm", (300, 50), self._screen, font_size=30, x_offset=-540, y_offset=220)
-            render_text_center("Excitation", (300, 50), self._screen, font_size=30, x_offset=530,y_offset=220)
+            render_text_center("Arousal score", (400, 50),
+                               self._screen, y_offset=80)
+            render_text_center("Calm", (300, 50), self._screen,
+                               font_size=30, x_offset=-540, y_offset=220)
+            render_text_center("Excitation", (300, 50), self._screen,
+                               font_size=30, x_offset=530, y_offset=220)
 
-            render_text_center("-2", (300, 50), self._screen, font_size=25, x_offset=-340, y_offset=290)
-            render_text_center("-1", (300, 50), self._screen, font_size=25, x_offset=-165, y_offset=290)
-            render_text_center("0", (300, 50), self._screen, font_size=25, x_offset=0, y_offset=290)
-            render_text_center("+1", (300, 50), self._screen, font_size=25, x_offset=165, y_offset=290)
-            render_text_center("+2", (300, 50), self._screen, font_size=25, x_offset=335, y_offset=290)
+            render_text_center("-2", (300, 50), self._screen,
+                               font_size=25, x_offset=-340, y_offset=290)
+            render_text_center("-1", (300, 50), self._screen,
+                               font_size=25, x_offset=-165, y_offset=290)
+            render_text_center("0", (300, 50), self._screen,
+                               font_size=25, x_offset=0, y_offset=290)
+            render_text_center("+1", (300, 50), self._screen,
+                               font_size=25, x_offset=165, y_offset=290)
+            render_text_center("+2", (300, 50), self._screen,
+                               font_size=25, x_offset=335, y_offset=290)
 
             remove_button_frame = not state["selected"]
 
@@ -130,7 +161,8 @@ class ClientAffectiveTask:
                 button.unselect(remove_button_frame)
 
             # center cursor
-            set_cursor_position(CLIENT_WINDOW_WIDTH / 2, CLIENT_WINDOW_HEIGHT / 2)
+            set_cursor_position(CLIENT_WINDOW_WIDTH / 2,
+                                CLIENT_WINDOW_HEIGHT / 2)
 
             if state["selected"]:
                 cursor_visibility(True)
@@ -216,23 +248,27 @@ class ClientAffectiveTask:
                         if data["type"] == "update":
                             update = data["update"]
                             if update["rating_type"] == "arousal":
-                                arousal_buttons[update["rating_index"]].select()
+                                arousal_buttons[update["rating_index"]].select(
+                                )
                                 for j, button in enumerate(arousal_buttons):
                                     if j != update["rating_index"]:
                                         button.unselect(no_frame=True)
                             else:
-                                valence_buttons[update["rating_index"]].select()
+                                valence_buttons[update["rating_index"]].select(
+                                )
                                 for j, button in enumerate(valence_buttons):
                                     if j != update["rating_index"]:
                                         button.unselect(no_frame=True)
                         elif data["type"] == "update_end":
                             return True
                         else:
-                            raise RuntimeError("Cannot handle message type: " + data["type"])
+                            raise RuntimeError(
+                                "Cannot handle message type: " + data["type"])
 
                     return False
 
-            timer(state["rating_timer"], [button_response], "Rating ends in: ", self._screen, display_timer = 2)
+            timer(state["rating_timer"], [button_response],
+                  "Rating ends in: ", self._screen, display_timer=2)
 
             if state["selected"]:
                 cursor_visibility(False)
