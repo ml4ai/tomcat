@@ -41,7 +41,7 @@ Agent::Agent(std::string address) {
 /** Function that publishes heartbeat messages while the agent is running */
 void Agent::publish_heartbeats() {
     while (this->running) {
-        this_thread::sleep_for(seconds(1));
+        this_thread::sleep_for(seconds(10));
 
         string timestamp = get_timestamp();
         json::value jv = {{"header",
