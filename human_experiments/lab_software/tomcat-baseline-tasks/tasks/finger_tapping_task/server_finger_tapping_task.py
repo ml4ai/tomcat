@@ -78,7 +78,7 @@ class ServerFingerTappingTask:
             for participant in self._state.keys():
                 csv_entry[participant] = None
 
-            self._csv_writer.writerow({csv_entry})
+            self._csv_writer.writerow(csv_entry)
 
             log_first_timestap == False
 
