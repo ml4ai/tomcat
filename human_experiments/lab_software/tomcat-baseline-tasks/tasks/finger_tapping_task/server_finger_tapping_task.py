@@ -72,10 +72,14 @@ class ServerFingerTappingTask:
         log_first_timestap = True  # Log timestamp as soon as the experiment starts
 
         if log_first_timestap == True:
-            self._csv_writer.writerow({"time": time(), "monotonic_time": monotonic(),
-                                       "human_readable_time": datetime.utcnow().isoformat() + "Z",
-                                       "lion_state": None, "leopard_state": None, 'tiger_state': None,
-                                       "event_type": "start_fingertapping_task", "countdown_timer": None})
+            csv_entry = {"time": time(), "monotonic_time": monotonic(),
+                         "human_readable_time": datetime.utcnow().isoformat() + "Z",
+                         "event_type": "start_fingertapping_task", "countdown_timer": None}
+            for participant in self._state.keys():
+                csv_entry[participant] = None
+
+            self._csv_writer.writerow({csv_entry)
+
             log_first_timestap == False
 
         # Wait for threads to finish
