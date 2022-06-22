@@ -268,22 +268,9 @@ be done with a client library).</p>
 which uses the <a class="reference external" href="https://www.eclipse.org/paho/clients/java/">Eclipse Paho Java client library</a>. The functionality is
 wrapped in the <a class="reference external" href="https://ml4ai.github.io/tomcat/developer/java_api/classedu_1_1arizona_1_1tomcat_1_1Messaging_1_1MqttService.html">MqttService</a> singleton class. Eclipse Paho provides client
 libraries in a number of languages. However, for our purposes, when we are
-writing non-Java programs, we’ll use the <a class="reference external" href="https://mosquitto.org/man/libmosquitto-3.html">libmosquitto</a> client library
-(instead of, say the Paho C++ or Python client libraries), for a couple of
-reasons including static typing and easier dependency installation.</p>
-<p>For a simple example program that uses the <a class="reference external" href="https://mosquitto.org/man/libmosquitto-3.html">libmosquitto</a> client library, see
-<a class="reference external" href="https://github.com/ml4ai/tomcat/tree/master/src/cpp/examples/libmosquitto_example">src/cpp/examples/libmosquitto_example</a>. The <code class="docutils literal notranslate"><span class="pre">README.md</span></code> file in there
-describes the steps to compile and run the example program. The source file
-itself, <code class="docutils literal notranslate"><span class="pre">libmosquitto_example.c</span></code> has comments explaining the components of
-the program, which demonstrates the usage of a callback function, which can be
-used to asynchronously process events.</p>
-<p>As an example, in a multiplayer experiment in which there is a server machine
-that communicates with client machines (that human participants would use to
-play Minecraft), there is a need to synchronize starting up certain programs
-like <code class="docutils literal notranslate"><span class="pre">ffmpeg</span></code>, <code class="docutils literal notranslate"><span class="pre">faceSensor</span></code> at the same time on all client machines. This
-could be achieved by having a program running in the background on a client
-machine that acts as a controller - it would listen for a particular message on
-a particular topic that would prompt it to start the required program.</p>
+writing non-Java programs, we’ll use the <a class="reference external" href="https://www.eclipse.org/paho/clients/cpp">Eclipse Paho C++ client library</a>.</p>
+<p>For an example program that uses the client library, see
+the <a class="reference external" href="https://github.com/ml4ai/tomcat/tree/master/exe/cpp_agent_template">C++ agent template</a>.</p>
 </section>
 <section id="when-to-use-a-client-executable-versus-a-client-library">
 <h3>When to use a client executable versus a client library<a class="headerlink" href="#when-to-use-a-client-executable-versus-a-client-library" title="Permalink to this heading"></a></h3>
@@ -294,6 +281,9 @@ switch message brokers in the future - say, if you wanted to use <a class="refer
 Kafka</a> for your streaming architecture rather than Mosquitto. Other advantages
 include not having to need to compile/link C/C++ programs, manage Java
 dependencies, or create a Python virtual environment for development.</p>
+<p>On the other hand, a client library offers numerous advantages as your use case
+becomes more complex - e.g., if you need to publish to multiple topics, or use
+multithreading/multiprocessing.</p>
 </section>
 </section>
 </section>
