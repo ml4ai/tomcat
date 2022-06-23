@@ -26,16 +26,30 @@ def run_evaluation(args):
 
                     if "did not get an answer" in explanation:
                         intervention_type = "Help-Request Reply"
+                        ACs_used = {"uaz_dialog_agent"}
                     elif "did not ask" in explanation:
                         intervention_type = "Help Request"
+                        ACs_used = {
+                            "uaz_dialog_agent",
+                            "AC_CMU_TA1_PyGLFoVAgent",
+                            "AC_IHMC_TA2_Player-Proximity",
+                        }
                     elif "placed a marker" in explanation:
                         intervention_type = "Marker Block"
+                        ACs_used = {
+                            "uaz_dialog_agent",
+                            "AC_IHMC_TA2_Location-Monitor",
+                        }
                     elif "ensure" in explanation:
                         intervention_type = "Motivational"
+                        ACs_used = {}
                     else:
-                        raise(Exception("Unknown intervention type: ", explanation))
-                    print(intervention_type, "|", explanation)
-
+                        raise (
+                            ValueError(
+                                "Could not determine intervention type: ",
+                                explanation,
+                            )
+                        )
 
 
 if __name__ == "__main__":
