@@ -4,12 +4,16 @@
 
 import json
 from glob import glob
+import logging
+from logging import info
 import argparse
+
+logging.basicConfig(level=logging.WARN)
 
 
 def run_evaluation(args):
     for filepath in (glob(args.data_dir + "/*T00*UAZ*.metadata"))[0:1]:
-        print(filepath)
+        info(f"Processing {filepath}")
         with open(filepath) as f:
             for line in f:
                 message = json.loads(line)
@@ -25,23 +29,40 @@ def run_evaluation(args):
                     intervention_type = ""
 
                     if "did not get an answer" in explanation:
-                        intervention_type = "Help-Request Reply"
+                        intervention_type = "help_request_reply"
                         ACs_used = {"uaz_dialog_agent"}
                     elif "did not ask" in explanation:
-                        intervention_type = "Help Request"
+                        if "critical victim" in explanation:
+                            intervention_type = (
+                                "help_request_for_critical_victim"
+                            )
+                            ACs_used = {
+                                "uaz_dialog_agent",
+                                "AC_CMU_TA1_PyGLFoVAgent",
+                                "AC_IHMC_TA2_Player-Proximity",
+                            }
+                        elif "threat room" in explanation:
+                            intervention_type = "help_request_for_room_escape"
+                            ACs_used = {
+                                "uaz_dialog_agent",
+                                "AC_CMU_TA1_PyGLFoVAgent",
+                                "AC_IHMC_TA2_Player-Proximity",
+                            }
+                        else:
+                            raise (
+                                ValueError(
+                                    f"Could not determine help request intervention type for explanation '{explanation}'"
+                                )
+                            )
+
+                    elif "placed a marker" in explanation:
+                        intervention_type = "marker_block"
                         ACs_used = {
                             "uaz_dialog_agent",
-                            "AC_CMU_TA1_PyGLFoVAgent",
                             "AC_IHMC_TA2_Player-Proximity",
                         }
-                    elif "placed a marker" in explanation:
-                        intervention_type = "Marker Block"
-                        ACs_used = {
-                            "uaz_dialog_agent",
-                            "AC_IHMC_TA2_Location-Monitor",
-                        }
                     elif "ensure" in explanation:
-                        intervention_type = "Motivational"
+                        intervention_type = "motivational"
                         ACs_used = {}
                     else:
                         raise (
@@ -50,6 +71,7 @@ def run_evaluation(args):
                                 explanation,
                             )
                         )
+                    info(intervention_type + "|" + explanation)
 
 
 if __name__ == "__main__":
