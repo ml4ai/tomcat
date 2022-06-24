@@ -106,7 +106,6 @@ def run_evaluation(args):
     write("Intervention types")
     write("------------------")
     write(pd.Series(intervention_type_counts, name="Count").to_markdown())
-
     write("")
     write("AC Use Counts")
     write("-------------")
