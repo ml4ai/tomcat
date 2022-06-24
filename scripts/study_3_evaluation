@@ -5,14 +5,23 @@
 import json
 from glob import glob
 import logging
-from logging import info
+from logging import info, debug
 import argparse
+from tqdm import tqdm
+import pandas as pd
+from datetime import datetime
 
 logging.basicConfig(level=logging.WARN)
 
 
 def run_evaluation(args):
-    for filepath in (glob(args.data_dir + "/*T00*UAZ*.metadata"))[0:1]:
+    ac_use_counts = {}
+    n_interventions = 0
+    intervention_type_counts = {}
+    output_file = open(args.output, "w")
+    n_files_processed = 0
+    for filepath in tqdm(glob(args.data_dir + "/*T00*UAZ*.metadata")):
+        n_files_processed += 1
         info(f"Processing {filepath}")
         with open(filepath) as f:
             for line in f:
@@ -22,6 +31,7 @@ def run_evaluation(args):
                     and message["topic"]
                     == "agent/intervention/ASI_UAZ_TA1_ToMCAT/chat"
                 ):
+                    n_interventions += 1
                     explanation = message["data"]["explanation"][
                         "info"
                     ].replace("This intervention was triggered", "")
@@ -30,7 +40,10 @@ def run_evaluation(args):
 
                     if "did not get an answer" in explanation:
                         intervention_type = "help_request_reply"
-                        ACs_used = {"uaz_dialog_agent"}
+                        ACs_used = {
+                            "uaz_dialog_agent",
+                            "AC_IHMC_TA2_Player-Proximity",
+                        }
                     elif "did not ask" in explanation:
                         if "critical victim" in explanation:
                             intervention_type = (
@@ -51,7 +64,9 @@ def run_evaluation(args):
                         else:
                             raise (
                                 ValueError(
-                                    f"Could not determine help request intervention type for explanation '{explanation}'"
+                                    "Could not determine help request "
+                                    "intervention type for explanation "
+                                    f"'{explanation}'"
                                 )
                             )
 
@@ -71,7 +86,37 @@ def run_evaluation(args):
                                 explanation,
                             )
                         )
-                    info(intervention_type + "|" + explanation)
+                    intervention_type_counts[intervention_type] = (
+                        intervention_type_counts.get(intervention_type, 0) + 1
+                    )
+                    debug(intervention_type + "|" + explanation)
+                    for ac in ACs_used:
+                        ac_use_counts[ac] = ac_use_counts.get(ac, 0) + 1
+
+    def write(line):
+        output_file.write(line + "\n")
+
+    write(f"Study 3 evaluation report (generated {datetime.utcnow().isoformat()+'Z'})")
+    write("=================================================================")
+    write("")
+    write(f"Total number of files processed: {n_files_processed}")
+    write("")
+    write(f"Total number of interventions: {n_interventions}")
+    write("")
+    write("Intervention types")
+    write("------------------")
+    write(pd.Series(intervention_type_counts, name="Count").to_markdown())
+
+    write("")
+    write("AC Use Counts")
+    write("-------------")
+    write(
+        pd.Series(
+            ac_use_counts, name="Number of interventions participated in"
+        ).to_markdown()
+    )
+
+    output_file.close()
 
 
 if __name__ == "__main__":
@@ -83,6 +128,11 @@ if __name__ == "__main__":
         "--data_dir",
         help="Directory containing .metadata files",
         default="/media/mule/projects/tomcat/protected/study-3_2022",
+    )
+    parser.add_argument(
+        "--output",
+        help="Path to output report file",
+        default="study_3_evaluation.txt",
     )
 
     args = parser.parse_args()
