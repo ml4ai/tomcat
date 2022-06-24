@@ -132,7 +132,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output",
         help="Path to output report file",
-        default="study_3_evaluation.txt",
+        default="study_3_evaluation.md",
     )
 
     args = parser.parse_args()
