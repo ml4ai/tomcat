@@ -1,0 +1,21 @@
+lib/
+obj/
+\.hg/
+\.hgignore
+\.hgtags
+\test/unit/mqttpp-unittest
+.deps/
+.libs/
+*.vp*
+aclocal.m4
+# AC_CONFIG_AUX_DIR created by /bootstrap
+autotools_build/
+autom4te.cache/
+config.*
+configure
+libtool
+Makefile.in
+*.la
+*.lo
+*.o
+*.stamp
