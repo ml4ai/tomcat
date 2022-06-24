@@ -31,7 +31,8 @@ class ClientAIPingPongTask:
     def run(self):
         self._running = True
 
-        client_input_thread = threading.Thread(target=self._client_input_handle, daemon=True)
+        client_input_thread = threading.Thread(
+            target=self._client_input_handle, daemon=True)
         client_input_thread.start()
 
         print("[STATUS] Running ping pong task")
@@ -72,7 +73,8 @@ class ClientAIPingPongTask:
             ball_y = self._ball_y_position + BALL_SIZE / 2.0
             paddle_y = self._paddle_y_position + self._paddle_height / 2.0
 
-            y_change = max(-self._paddle_max_speed, min(self._paddle_max_speed, int(ball_y) - int(paddle_y)))
+            y_change = max(-self._paddle_max_speed,
+                           min(self._paddle_max_speed, int(ball_y) - int(paddle_y)))
 
             if y_change != 0:
                 data = {}

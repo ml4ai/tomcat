@@ -142,7 +142,7 @@ if __name__ == "__main__":
             to_client_connections = to_client_connections + list(to_client_connection_team.values())
 
         session_name = "competitive_" + str(session_id)
-        process = Process(target=_run_ping_pong, args=(to_client_connections, from_client_connection_pair, session_name, args.save))
+        process = Process(target=_run_ping_pong, args=(to_client_connections, from_client_connection_pair, session_name, True, args.save))
         ping_pong_processes.append(process)
 
     for process in ping_pong_processes:
