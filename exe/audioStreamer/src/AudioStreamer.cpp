@@ -1,14 +1,16 @@
-#include <filesystem>
-#include <string>
-#include <thread>
-#include <vector>
+#include "AudioStreamer.h"
+#include "WebsocketClient.h"
 
 #include "portaudio.h"
 #include <nlohmann/json.hpp>
 #include <sndfile.hh>
 
-#include "AudioStreamer.h"
-#include "WebsocketClient.h"
+#include <boost/log/trivial.hpp>
+
+#include <filesystem>
+#include <string>
+#include <thread>
+#include <vector>
 
 using namespace std;
 

@@ -1,13 +1,13 @@
 #pragma once
+#include "WebsocketClient.h"
+
+#include "portaudio.h"
+#include <sndfile.hh>
+#include <nlohmann/json.hpp>
+
 #include <string>
 #include <thread>
 #include <vector>
-
-#include "portaudio.h"
-#include <nlohmann/json.hpp>
-#include <sndfile.hh>
-
-#include "WebsocketClient.h"
 
 class AudioStreamer {
   public:

@@ -1,25 +1,14 @@
-#include <cstdlib>
-#include <iostream>
-#include <mutex>
-#include <signal.h>
-#include <string>
-#include <thread>
-#include <unistd.h>
+#include "AudioStreamer.h"
 
 #include <mqtt/async_client.h>
 #include <nlohmann/json.hpp>
-
-#include <boost/asio/connect.hpp>
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/beast/core.hpp>
-#include <boost/beast/websocket.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/log/utility/setup/console.hpp>
 #include <boost/program_options.hpp>
 
-#include "AudioStreamer.h"
-#include "WebsocketClient.h"
-#include "portaudio.h"
+#include <signal.h>
+#include <string>
+#include <thread>
 
 namespace po = boost::program_options;
 using namespace std;
