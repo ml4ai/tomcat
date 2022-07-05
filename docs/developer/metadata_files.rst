@@ -1,6 +1,7 @@
 Working with .metadata files
 ============================
 
+*Author: Adarsh Pyarelal*
 
 .. toctree::
    :maxdepth: 1
@@ -114,8 +115,61 @@ topic (the ``-c`` flag below disables pretty-printing):
    jq -c 'select(.topic=="topic_name")' < input.metadata | wc -l
 
 
+Offline analyses with .metadata files
+-------------------------------------
+
 While you can use ``jq`` for quick exploration at the command line, for more
-detailed analysis you should write up a script in Python or a program in C++.
+detailed offline analysis you should write scripts in Python or programs in
+C++. We use the term *offline* to refer to an analysis that does not require a
+message broker to be running - that is, your programs operate directly on the
+files themselves rather than consuming the messages from a message bus.
+
+Online analyses with .metadata files
+------------------------------------
+
+In contrast to offline analysis, you can also run *online* analyses with
+``.metadata`` files using a *replayer* program that reads in messages from a
+``.metadata`` files and re-publishes them to the message bus. The
+`elkless_replayer`_ is an example of such a program. Replays are essential to
+be able to develop and test testbed components that work with the message bus.
+
+Here are some of my tips for working with the ``elkless_replayer``.
+
+- Clone the ``ml4ai/tomcat`` repo in order to be able to pull updates to the
+  replayer whenever necessary.
+- Add the path to the directory containing the script to your ``PATH``
+  environment variable so that you can invoke it from any directory.
+- Create a virtual environment in which you can install
+  necessary Python packages (I have one named ``tomcat`` that I use for all my
+  ``tomcat`` Python programming tasks). For the ``elkless_replayer`` you can install the
+  prerequisites by running the following in your virtual environment:
+
+  .. code::
+
+      pip install paho-mqtt tqdm
+
+- To see the help message and the command line options, run:
+
+  .. code::
+
+      elkless_replayer -h
+
+- By default, the ``elkless_replayer`` replays messages in the order they are
+  in the ``.metadata`` file. This should work for the majority of ``.metadata``
+  files. However, for some files that have been run through the TA3 replay
+  process, the timestamps have been adjusted, and the correction process might
+  make the messages in the ``.metadata`` file not sorted correctly by their
+  ``@timestamp`` key. In this scenario (and perhaps in others if you wish), you
+  can have the replayer sort the messages by their ``.header.timestamp`` value
+  prior to publishing them.
+- The default behavior of the replayer is to publish messages as fast as
+  possible. This is good if your testbed component can handle it, or if you
+  want to do some quick testing without worrying too much about the timing
+  between messages. However, for a replay that is more faithful to
+  the original experimental trial, you can use The ``-r`` (for 'real-time')
+  flag, which tells the replayer to insert delays between publishing
+  messages that approximate the delays between messages in the original trial.
 
 .. _here: message_bus
 .. _jq: https://stedolan.github.io/jq/
+.. _elkless_replayer: https://github.com/ml4ai/tomcat/blob/master/tools/elkless_replayer
