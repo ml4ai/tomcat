@@ -40,8 +40,6 @@ class ServerRestState:
 
         self._csv_writer.writerow(csv_entry)
 
-
-        
         sleep(0.1)
 
         while(True):
@@ -59,4 +57,3 @@ class ServerRestState:
                 break
             else:
                 print("[ERROR] Rest state clients didn't send STOP message for Rest state server to terminate")
-
