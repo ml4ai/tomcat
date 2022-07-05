@@ -33,16 +33,14 @@ class ServerRestState:
         print("[STATUS] Running rest state")
         send(self._to_client_connections, data)
 
-        log_first_timestap = True  # Log timestamp as soon as the experiment starts
 
-        if log_first_timestap == True:
-            csv_entry = {"time": time(), "monotonic_time": monotonic(),
-                         "human_readable_time": datetime.utcnow().isoformat() + "Z",
-                         "event_type": "start_rest_state"}
+        csv_entry = {"time": time(), "monotonic_time": monotonic(),
+                        "human_readable_time": datetime.utcnow().isoformat() + "Z",
+                        "event_type": "start_rest_state"}
 
-            self._csv_writer.writerow(csv_entry)
+        self._csv_writer.writerow(csv_entry)
 
-            log_first_timestap == False
+
         
         sleep(0.1)
 
