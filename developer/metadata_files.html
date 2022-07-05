@@ -21,7 +21,9 @@
         <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Guide to developing ToMCAT missions" href="missions.html" />
+    <link rel="prev" title="Working with the MQTT message bus" href="message_bus.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -40,12 +42,29 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../software.html">Software Components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../software.html#indices-and-tables">Indices and tables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
-<li class="toctree-l1"><a class="reference internal" href="index.html">Developer documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Developer documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="CONTRIBUTING.html">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html">Design and Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="message_bus.html">Working with the MQTT message bus</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Working with .metadata files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#json-key-reference-convention">JSON key reference convention</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#metadata-file-contents-and-format"><code class="docutils literal notranslate"><span class="pre">.metadata</span></code> file contents and format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#quick-exploration-with-jq">Quick exploration with <code class="docutils literal notranslate"><span class="pre">jq</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="missions.html">Guide to developing ToMCAT missions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Client_Server_Communication.html">Message Exchange between Client and Server in Minecraft Forge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prebuilt_world_loading.html">Pre-Built World Loading Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="minecraft_forge_events.html">Events available through the Minecraft Forge event bus (for MC v1.11.2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deploying_to_ta3_testbed.html">Steps for deploying a component to the TA3 testbed</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cpp_api/index.html">C++ API</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../tomcat_openapi.html">Data models and message bus topics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../langlab/index.html">Lang Lab Documentation</a></li>
@@ -66,6 +85,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Developer documentation</a> &raquo;</li>
       <li>Working with .metadata files</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/developer/metadata_files.rst.txt" rel="nofollow"> View page source</a>
@@ -89,6 +109,14 @@ message bus (if you are not familiar with the concept of a message bus, see
 <h2>JSON key reference convention<a class="headerlink" href="#json-key-reference-convention" title="Permalink to this heading"></a></h2>
 <p>In the rest of this writeup, we use the following convention to refer to values
 in JSON objects. Consider the following example JSON object:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">     </span><span class="nt">&quot;key1&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;value1&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">     </span><span class="nt">&quot;key2&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">         </span><span class="nt">&quot;key3&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;value2&quot;</span><span class="w"></span>
+<span class="w">     </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+</div>
 <p>In the above, the value at <code class="docutils literal notranslate"><span class="pre">.key1</span></code> is <code class="docutils literal notranslate"><span class="pre">value1</span></code>. We extend this pattern for
 nested objects, so the value at <code class="docutils literal notranslate"><span class="pre">.key2.key3</span></code> is <code class="docutils literal notranslate"><span class="pre">value2</span></code>.</p>
 </section>
@@ -146,11 +174,23 @@ manager (e.g., <code class="docutils literal notranslate"><span class="pre">apt<
 <p>The output of <code class="docutils literal notranslate"><span class="pre">jq</span></code> can be piped into further invocations of <code class="docutils literal notranslate"><span class="pre">jq</span></code> or to
 other command-line tools in order to compose pipelines.  Here are some
 potentially useful <code class="docutils literal notranslate"><span class="pre">jq</span></code> recipes for working with <code class="docutils literal notranslate"><span class="pre">.metadata</span></code> files.</p>
-<p>Pretty-print all the messages in a <code class="docutils literal notranslate"><span class="pre">.metadata</span></code> file on a particular topic:</p>
-<p>Print all the <code class="docutils literal notranslate"><span class="pre">.header.timestamp</span></code> values for messages on a particular topic:</p>
-<p>Create a new <code class="docutils literal notranslate"><span class="pre">.metadata</span></code> file containing only the messages on a certain
+<p><strong>Pretty-printing</strong> Pretty-print all the messages in a <code class="docutils literal notranslate"><span class="pre">.metadata</span></code> file on a particular topic:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>jq &#39;select(.topic==&quot;topic_name&quot;)&#39; &lt; input.metadata
+</pre></div>
+</div>
+<p><strong>Selecting fields</strong>: Print all the <code class="docutils literal notranslate"><span class="pre">.header.timestamp</span></code> values for messages on a particular topic:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>jq &#39;select(.topic==&quot;topic_name&quot;)&#39; &lt; input.metadata | jq &#39;.header.timestamp&#39;
+</pre></div>
+</div>
+<p><strong>Filtering</strong>: Create a new <code class="docutils literal notranslate"><span class="pre">.metadata</span></code> file containing only the messages on a certain
 topic (the <code class="docutils literal notranslate"><span class="pre">-c</span></code> flag below disables pretty-printing):</p>
-<p>Count the number of messages on a given topic:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>jq -c &#39;select(.topic==&quot;topic_name&quot;)&#39; &lt; input.metadata &gt;  output.metadata
+</pre></div>
+</div>
+<p><strong>Unix tool composition</strong>: Count the number of messages on a given topic:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span>jq -c &#39;select(.topic==&quot;topic_name&quot;)&#39; &lt; input.metadata | wc -l
+</pre></div>
+</div>
 <p>While you can use <code class="docutils literal notranslate"><span class="pre">jq</span></code> for quick exploration at the command line, for more
 detailed analysis you should write up a script in Python or a program in C++.</p>
 </section>
@@ -159,7 +199,10 @@ detailed analysis you should write up a script in Python or a program in C++.</p
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="message_bus.html" class="btn btn-neutral float-left" title="Working with the MQTT message bus" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="missions.html" class="btn btn-neutral float-right" title="Guide to developing ToMCAT missions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 
