@@ -20,7 +20,8 @@ JSON key reference convention
 In the rest of this writeup, we use the following convention to refer to values
 in JSON objects. Consider the following example JSON object:
 
-.. code-block:: json
+.. code:: json
+
     {
         "key1": "value1",
         "key2": {
@@ -86,26 +87,30 @@ The output of ``jq`` can be piped into further invocations of ``jq`` or to
 other command-line tools in order to compose pipelines.  Here are some
 potentially useful ``jq`` recipes for working with ``.metadata`` files.
 
-Pretty-print all the messages in a ``.metadata`` file on a particular topic:
+**Pretty-printing** Pretty-print all the messages in a ``.metadata`` file on a particular topic:
 
-.. code-block::
+.. code::
+
    jq 'select(.topic=="topic_name")' < input.metadata
 
-Print all the ``.header.timestamp`` values for messages on a particular topic:
+**Selecting fields**: Print all the ``.header.timestamp`` values for messages on a particular topic:
 
-.. code-block::
+.. code::
+
    jq 'select(.topic=="topic_name")' < input.metadata | jq '.header.timestamp'
 
-Create a new ``.metadata`` file containing only the messages on a certain
+**Filtering**: Create a new ``.metadata`` file containing only the messages on a certain
 topic (the ``-c`` flag below disables pretty-printing):
 
-.. code-block::
+.. code::
+
    jq -c 'select(.topic=="topic_name")' < input.metadata >  output.metadata
 
 
-Count the number of messages on a given topic:
+**Unix tool composition**: Count the number of messages on a given topic:
 
-.. code-block::
+.. code::
+
    jq -c 'select(.topic=="topic_name")' < input.metadata | wc -l
 
 
