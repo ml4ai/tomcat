@@ -53,27 +53,13 @@ def process_files(args):
 
                     if "did not get an answer" in explanation:
                         intervention_type = "help_request_reply"
-                        ACs_used = {
-                            "uaz_dialog_agent",
-                            "AC_IHMC_TA2_Player-Proximity",
-                        }
                     elif "did not ask" in explanation:
                         if "critical victim" in explanation:
                             intervention_type = (
                                 "help_request_for_critical_victim"
                             )
-                            ACs_used = {
-                                "uaz_dialog_agent",
-                                "AC_CMU_TA1_PyGLFoVAgent",
-                                "AC_IHMC_TA2_Player-Proximity",
-                            }
                         elif "threat room" in explanation:
                             intervention_type = "help_request_for_room_escape"
-                            ACs_used = {
-                                "uaz_dialog_agent",
-                                "AC_CMU_TA1_PyGLFoVAgent",
-                                "AC_IHMC_TA2_Player-Proximity",
-                            }
                         else:
                             raise (
                                 ValueError(
@@ -85,13 +71,8 @@ def process_files(args):
 
                     elif "placed a marker" in explanation:
                         intervention_type = "marker_block"
-                        ACs_used = {
-                            "uaz_dialog_agent",
-                            "AC_IHMC_TA2_Player-Proximity",
-                        }
                     elif "ensure" in explanation:
                         intervention_type = "motivational"
-                        ACs_used = {}
                     else:
                         raise (
                             ValueError(
