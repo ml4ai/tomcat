@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Working with .metadata files &mdash; ToMCAT 0.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/collapsible-lists/css/tree_view.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/collapsible-lists/js/CollapsibleLists.compressed.js"></script>
+        <script src="../_static/collapsible-lists/js/apply-collapsible-lists.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> ToMCAT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../software.html">Software Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../software.html#indices-and-tables">Indices and tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../team.html">Team</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../become_a_participant.html">Become a participant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Developer documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tomcat_openapi.html">Data models and message bus topics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../langlab/index.html">Lang Lab Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ToMCAT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Working with .metadata files</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/developer/metadata_files.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="working-with-metadata-files">
+<h1>Working with .metadata files<a class="headerlink" href="#working-with-metadata-files" title="Permalink to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p>In this writeup, we will describe the <code class="docutils literal notranslate"><span class="pre">.metadata</span></code> files produced by the TA3
+testbed and how to work with them.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">.metadata</span></code> file contains all the messages that were published on the MQTT
+message bus (if you are not familiar with the concept of a message bus, see
+<a class="reference external" href="message_bus">here</a> for a brief introduction) during a particular trial.</p>
+<section id="json-key-reference-convention">
+<h2>JSON key reference convention<a class="headerlink" href="#json-key-reference-convention" title="Permalink to this heading"></a></h2>
+<p>In the rest of this writeup, we use the following convention to refer to values
+in JSON objects. Consider the following example JSON object:</p>
+<p>In the above, the value at <code class="docutils literal notranslate"><span class="pre">.key1</span></code> is <code class="docutils literal notranslate"><span class="pre">value1</span></code>. We extend this pattern for
+nested objects, so the value at <code class="docutils literal notranslate"><span class="pre">.key2.key3</span></code> is <code class="docutils literal notranslate"><span class="pre">value2</span></code>.</p>
+</section>
+<section id="metadata-file-contents-and-format">
+<h2><code class="docutils literal notranslate"><span class="pre">.metadata</span></code> file contents and format<a class="headerlink" href="#metadata-file-contents-and-format" title="Permalink to this heading"></a></h2>
+<p>The first line of a <code class="docutils literal notranslate"><span class="pre">.metadata</span></code> file contains metadata about the trial itself,
+and is generated by the TA3-developed mechanism that exports the data from the
+Elasticsearch database in which the messages are stored. This metadata is also
+used by the TA3 application that can be used to import .metadata files into an
+Elastic database. For now, ToMCAT team members can ignore this line.</p>
+<p>The subsequent lines of the file are the messages published on the bus during a
+trial. Each line of the file corresponds to a single message. The messages
+themselves are in JSON format, with the following objects: <code class="docutils literal notranslate"><span class="pre">.header</span></code>,
+<code class="docutils literal notranslate"><span class="pre">.msg</span></code>, and <code class="docutils literal notranslate"><span class="pre">.data</span></code>. We describe them and their subcomponents below.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">.header</span></code> : A common header for all messages on the testbed.
+- <code class="docutils literal notranslate"><span class="pre">.header.timestamp</span></code>: Timestamp of when the message was published.
+- <code class="docutils literal notranslate"><span class="pre">.header.message_type</span></code>: The type of message
+- <code class="docutils literal notranslate"><span class="pre">.header.version</span></code>: A version number that tells downstream applications how to parse the <code class="docutils literal notranslate"><span class="pre">.msg</span></code> portion of the message.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.msg</span></code> : This component contains metadata about the experiment, trial, and the message itself.
+- <code class="docutils literal notranslate"><span class="pre">.msg.experiment_id</span></code>: The experiment ID.
+- <code class="docutils literal notranslate"><span class="pre">.msg.trial_id</span></code>: The trial ID.
+- <code class="docutils literal notranslate"><span class="pre">.msg.timestamp</span></code>: Timestamp of when the message was generated (this is</p>
+<blockquote>
+<div><p>usually the same or almost the same as the <code class="docutils literal notranslate"><span class="pre">.header.timestamp</span></code>)</p>
+</div></blockquote>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">.msg.source</span></code>: The ID of the testbed component that published the
+message.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.msg.sub_type</span></code>: The sub-type of the message (for components that publish
+more than one type of message).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.msg.version</span></code>: A version number that tells downstream applications how
+to parse the <code class="docutils literal notranslate"><span class="pre">.data</span></code> portion of the message.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.data</span></code>: This component contains the actual data published by the testbed
+component. The contents of this object depend on the functionality of the
+testbed component in question.</p></li>
+</ul>
+<p>In addition to these objects, the export process for the
+<code class="docutils literal notranslate"><span class="pre">.metadata</span></code> files adds two additional keys that were not part of the
+original message:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">.topic</span></code>: The topic that the message was originally published on.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.&#64;timestamp</span></code>: The timestamp marking when the message was ingested by the
+Elastic stack.</p></li>
+</ul>
+</section>
+<section id="quick-exploration-with-jq">
+<h2>Quick exploration with <code class="docutils literal notranslate"><span class="pre">jq</span></code><a class="headerlink" href="#quick-exploration-with-jq" title="Permalink to this heading"></a></h2>
+<p>For quick exploration of <code class="docutils literal notranslate"><span class="pre">.metadata</span></code> files, you can use <a class="reference external" href="https://stedolan.github.io/jq/">jq</a>, which is kind of
+like a JSON-aware <code class="docutils literal notranslate"><span class="pre">grep</span></code>. If you are working on the <code class="docutils literal notranslate"><span class="pre">kraken</span></code> compute VM,
+<code class="docutils literal notranslate"><span class="pre">jq</span></code> is already installed on it. If not, you can install it using a package
+manager (e.g., <code class="docutils literal notranslate"><span class="pre">apt</span></code>, MacPorts, etc.).</p>
+<p>The output of <code class="docutils literal notranslate"><span class="pre">jq</span></code> can be piped into further invocations of <code class="docutils literal notranslate"><span class="pre">jq</span></code> or to
+other command-line tools in order to compose pipelines.  Here are some
+potentially useful <code class="docutils literal notranslate"><span class="pre">jq</span></code> recipes for working with <code class="docutils literal notranslate"><span class="pre">.metadata</span></code> files.</p>
+<p>Pretty-print all the messages in a <code class="docutils literal notranslate"><span class="pre">.metadata</span></code> file on a particular topic:</p>
+<p>Print all the <code class="docutils literal notranslate"><span class="pre">.header.timestamp</span></code> values for messages on a particular topic:</p>
+<p>Create a new <code class="docutils literal notranslate"><span class="pre">.metadata</span></code> file containing only the messages on a certain
+topic (the <code class="docutils literal notranslate"><span class="pre">-c</span></code> flag below disables pretty-printing):</p>
+<p>Count the number of messages on a given topic:</p>
+<p>While you can use <code class="docutils literal notranslate"><span class="pre">jq</span></code> for quick exploration at the command line, for more
+detailed analysis you should write up a script in Python or a program in C++.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, University of Arizona.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
