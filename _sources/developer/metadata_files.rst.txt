@@ -146,7 +146,7 @@ Here are some of my tips for working with the ``elkless_replayer``.
 
   .. code::
 
-      pip install paho-mqtt tqdm
+      pip install paho-mqtt tqdm python-dateutil
 
 - To see the help message and the command line options, run:
 
