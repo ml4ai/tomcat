@@ -13,6 +13,90 @@ from datetime import datetime
 
 logging.basicConfig(level=logging.WARN)
 
+#topics used to determine TA3 survey metrics
+topicsToIndex = [
+    "agent/intervention/ASI_UAZ_TA1_ToMCAT/chat",
+    "agent/asr/final",
+    "minecraft/chat",
+    "observations/events/player/marker_placed"
+    ]
+
+## Helper Functions
+# get participant-color key from trial topic message
+def getPlayerInfo(msg):
+
+    players = [None, None, None] #0 is red, 1 is grn, 2 is blu
+    for client in msg['data']['client_info']:
+        if 'RED' in client['playername']:
+            players[0] = client
+        elif 'GREEN' in client['playername']:
+            players[1] = client
+        elif 'BLUE' in client['playername']:
+            players[2] = client
+        else:
+            print("setPlayerInfo error")
+            print(message)
+            exit()
+        
+    return players
+
+#Determine which player a message is relevant to
+#0 is red, 1 is grn, 2 is blue, -1 is undetermined
+def getMessageDest(msg):
+    #determine minecraft/chat player from 'sender'
+    if msg['topic'] == 'minecraft/chat':
+        if 'RED' in msg['data']['sender']:
+            return 0
+        if 'GREEN' in msg['data']['sender']:
+            return 1
+        if 'BLUE' in msg['data']['sender']:
+            return 2
+        return -1;
+        
+    #determine agent/intervention... player from message content
+    if msg['topic'] == "agent/intervention/ASI_UAZ_TA1_ToMCAT/chat":
+        if 'Red' in msg['content']:
+            return 0
+        if 'Blue' in msg['content']:
+            return 1
+        if 'Green' in msg['content']:
+            return 2
+        return -1
+    #determine agent/asr/final player from 'participant_id'
+    if (
+            msg['topic'] == 'agent/asr/final'
+            or msg['topic'] == 'observations/events/player/marker_placed'
+    ):
+        pass #todo
+    #determine observations/events... from 'participant_id'
+    else:
+        print("butt")
+    return
+
+
+#Determine the type of intervention ToM performed
+#Returns -1 if it can't
+def getInterventionType(msg):
+    if message['topic'] != 'agent/intervention/ASI_UAZ_TA1_ToMCAT/chat':
+        return -1
+
+    explanation = message["data"]["explanation"]["info"]
+    if "did not get an answer" in explanation:
+        return "help_request_reply"
+    if "did not ask" in explanation:
+        if "critical victim" in explanation:
+            return "help_request_for_critical_victim"
+        elif "threat room" in explanation:
+            return "help_request_for_room_escape"
+        else:
+            return -1
+    if "placed a marker" in explanation:
+        return "marker_block"
+    if "ensure" in explanation:
+        return "motivational"
+
+    return -1
+    
 
 def run_evaluation(args):
     ac_use_counts = {}
@@ -20,12 +104,48 @@ def run_evaluation(args):
     intervention_type_counts = {}
     output_file = open(args.output, "w")
     n_files_processed = 0
+    #List of events for each player. Contains both interventions and player activity
+
+    
+    #players matches participant ID's to colors
+    #players[0] is red, players[1] is green
+    players = [None, None, None]
+    filled_player_info = False #true when players is filled from trial topic
+    events = [[],[],[]] #events[0] is red, etc. 
+
+
     for filepath in tqdm(glob(args.data_dir + "/*T00*UAZ*.metadata")):
         n_files_processed += 1
         info(f"Processing {filepath}")
         with open(filepath) as f:
             for line in f:
                 message = json.loads(line)
+
+                #Temporary for looking at things
+                if(
+                    "topic" in message
+                    and message["topic"] == "agent/asr/final"
+                ):
+                    print(message)
+
+                
+                #Use the first agent topic message to match player info
+                if (
+                    filled_player_info == False
+                    and "topic" in message
+                   and message["topic"] == "trial"
+                ):
+                    players = getPlayerInfo(message)
+                    filled_player_info = True
+                    
+                #Index messages into lists for compliance eval
+                if (
+                    "topic" in message
+                    and message["topic"] in topicsToIndex
+                ): 
+                    #print("yes")
+                    pass
+                #Adarsh's code to tally interventions
                 if (
                     "topic" in message
                     and message["topic"]
@@ -136,3 +256,5 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     run_evaluation(args)
+
+
