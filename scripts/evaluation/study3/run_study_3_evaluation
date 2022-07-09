@@ -20,9 +20,11 @@ topicsToIndex = [
     "minecraft/chat",
     "observations/events/player/marker_placed"
     ]
-
 ## Helper Functions
-# get participant-color key from trial topic message
+
+#get participant-color key from trial topic message
+#I probably won't use this
+#but im not comfortable removing it yet
 def getPlayerInfo(msg):
 
     players = [None, None, None] #0 is red, 1 is grn, 2 is blu
@@ -41,37 +43,57 @@ def getPlayerInfo(msg):
     return players
 
 #Determine which player a message is relevant to
-#0 is red, 1 is grn, 2 is blue, -1 is undetermined
+#-1 is undetermined
+#0  is ignore (server messages in text chat)
 def getMessageDest(msg):
     #determine minecraft/chat player from 'sender'
     if msg['topic'] == 'minecraft/chat':
         if 'RED' in msg['data']['sender']:
-            return 0
+            return 'RED'
         if 'GREEN' in msg['data']['sender']:
-            return 1
+            return 'GREEN'
         if 'BLUE' in msg['data']['sender']:
-            return 2
+            return 'BLUE'
+        if 'Server' in msg['data']['sender']:
+            return 0
         return -1;
         
     #determine agent/intervention... player from message content
     if msg['topic'] == "agent/intervention/ASI_UAZ_TA1_ToMCAT/chat":
-        if 'Red' in msg['content']:
-            return 0
-        if 'Blue' in msg['content']:
-            return 1
-        if 'Green' in msg['content']:
-            return 2
+        if 'Red' in msg['data']['content']:
+            return 'RED'
+        if 'Blue' in msg['data']['content']:
+            return 'GREEN'
+        if 'Green' in msg['data']['content']:
+            return 'BLUE'
+        if 'Hi, Team.' in msg['data']['content']:
+            return 0 #Right now I'm ignoring Tom's intro message. 
         return -1
     #determine agent/asr/final player from 'participant_id'
-    if (
-            msg['topic'] == 'agent/asr/final'
-            or msg['topic'] == 'observations/events/player/marker_placed'
-    ):
-        pass #todo
-    #determine observations/events... from 'participant_id'
+    if msg['topic'] == 'agent/asr/final':
+            
+        if 'RED' in msg['data']['participant_id']:
+            return 'RED'
+        if 'GREEN' in msg['data']['participant_id']:
+            return 'GREEN'
+        if 'BLUE' in msg['data']['participant_id']:
+            return 'BLUE'
+    
+        else:
+            return -1
+
+    #determine observations/.../marker_placed player from playername
+    if msg['topic'] == 'observations/events/player/marker_placed':
+        if 'RED' in msg['data']['playername']:
+            return 'RED'
+        if 'GREEN' in msg['data']['playername']:
+            return 'GREEN'
+        if 'BLUE' in msg['data']['playername']:
+            return 'BLUE'
+    
     else:
-        print("butt")
-    return
+        return -1
+    return -1
 
 
 #Determine the type of intervention ToM performed
@@ -96,8 +118,21 @@ def getInterventionType(msg):
         return "motivational"
 
     return -1
-    
 
+#Analyze a sequence of events to assess compliance
+#todo
+def analyze_compliance(events, color):
+    #Sort by timestamp
+    #todo
+    def get_time(msg):
+        return datetime.strptime(msg, "")
+
+    print(events[0]['@timestamp'])
+
+    #Analyze messages
+    for message in events:
+        pass
+    
 def run_evaluation(args):
     ac_use_counts = {}
     n_interventions = 0
@@ -111,7 +146,7 @@ def run_evaluation(args):
     #players[0] is red, players[1] is green
     players = [None, None, None]
     filled_player_info = False #true when players is filled from trial topic
-    events = [[],[],[]] #events[0] is red, etc. 
+    events = {'RED':[], 'BLUE':[], 'GREEN':[]} #events[0] is red, etc. 
 
 
     for filepath in tqdm(glob(args.data_dir + "/*T00*UAZ*.metadata")):
@@ -122,14 +157,15 @@ def run_evaluation(args):
                 message = json.loads(line)
 
                 #Temporary for looking at things
-                if(
-                    "topic" in message
-                    and message["topic"] == "agent/asr/final"
-                ):
-                    print(message)
+                #if(
+                #    "topic" in message
+                #    and message["topic"] == "agent/asr/final"
+                #):
+                #    print(message)
 
                 
                 #Use the first agent topic message to match player info
+                #may not need this code
                 if (
                     filled_player_info == False
                     and "topic" in message
@@ -142,9 +178,22 @@ def run_evaluation(args):
                 if (
                     "topic" in message
                     and message["topic"] in topicsToIndex
-                ): 
-                    #print("yes")
-                    pass
+                ):
+                    #ignore some messages
+                    if getMessageDest(message) == 0:
+                        pass
+                    #if we can't determine the relevant player
+                    elif getMessageDest(message) == -1:
+                        print("message index fail")
+                        print(getMessageDest(message))
+                        print(message)
+                        exit()
+
+                    else:
+                        events[getMessageDest(message)].append(message)
+                    
+
+
                 #Adarsh's code to tally interventions
                 if (
                     "topic" in message
@@ -213,6 +262,9 @@ def run_evaluation(args):
                     for ac in ACs_used:
                         ac_use_counts[ac] = ac_use_counts.get(ac, 0) + 1
 
+    for player in events.keys():
+        analyze_compliance(events[player],player)
+    
     def write(line):
         output_file.write(line + "\n")
 
