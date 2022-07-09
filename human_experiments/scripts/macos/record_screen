@@ -1,0 +1,15 @@
+#!/usr/bin/osascript
+
+on run argv
+	set thePath to (item 1 of argv)
+	set theFrameRate to (item 2 of argv)
+	set theLogPath to thePath & "/ffmpeg.log"
+	set theCommand to "ffmpeg -f avfoundation -i 'Capture screen 0' -pix_fmt rgb24 -r " & theFrameRate & " -s 1280x720"
+	set theOutputPath to thePath & "/output%06d.png"
+	set theBashCommand to theCommand & " " & theOutputPath & " &> " & theLogPath -- This won't print to the terminal but it will hang
+	
+	tell application "Terminal"
+		do script theBashCommand
+		set miniaturized of window 1 to true
+	end tell
+end run
