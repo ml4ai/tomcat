@@ -11,7 +11,7 @@ from common import metadata_message_generator
 TRIAL_TOPIC = "trial"
 AGENT_DIALOG_TOPIC = "agent/dialog"
 INTERVENTION_TOPIC = "agent/intervention/ASI_UAZ_TA1_ToMCAT/chat"
-
+MINECRAFT_CHAT_TOPIC = "minecraft/chat"
 
 CHECK_UTTERANCE_TIME_WINDOW_SECONDS = 10
 
@@ -296,17 +296,19 @@ if __name__ == "__main__":
                 # end parsing after the trial has ended
                 else:
                     break
+
             # only start monitoring after trial has started
             elif not trial_started:
                 continue
 
             # parse ToMCAT intervention message
-            if "topic" in message and message["topic"] == INTERVENTION_TOPIC:
+            elif "topic" in message and message["topic"] == INTERVENTION_TOPIC:
                 # ensure player identification consistency
                 assert set(message["data"]["receivers"]).issubset(
                     player_information.values())
 
-                interventions = extract_intervention(message, timestamp)
+                interventions = extract_intervention(
+                    message, timestamp)
 
                 for intervention in interventions:
                     watch_interventions.append(intervention)
@@ -320,40 +322,68 @@ if __name__ == "__main__":
                     }
 
             # parse dialog agent message to check for compliance
-            if "topic" in message and message["topic"] == AGENT_DIALOG_TOPIC:
-                if message["data"]["participant_id"] == "Server":
-                    continue
-
+            elif "topic" in message and message["topic"] == AGENT_DIALOG_TOPIC and message["data"]["participant_id"] != "Server":
                 # ensure player identification consistency
                 assert message["data"]["participant_id"] in player_information.keys()
 
                 # check for any intervention that has been complied by the subject
                 complied_interventions = []
                 for intervention in watch_interventions:
-                    compliance_match_reason = None
-
                     if player_information[message["data"]["participant_id"]] == intervention.for_subject:
+                        compliance_found = False
+
                         # check if the utterance label matches the compliance criteria
                         for compliance_tag in intervention.compliance_criteria:
                             for labels in message["data"]["extractions"]:
                                 if compliance_tag in labels:
                                     complied_interventions.append(intervention)
-                                    compliance_match_reason = f"utterance label matchs compliance tag: {compliance_tag}"
+
+                                    # record compliance information
+                                    report[metadata_file_name][intervention.type][intervention.timestamp]["compliance"] = {
+                                        "timestamp": timestamp,
+                                        "reason": f"utterance label matchs compliance tag: {compliance_tag}"
+                                    }
+
+                                    compliance_found = True
                                     break
-                            if compliance_match_reason is not None:
+                            if compliance_found:
                                 break
+
                         # check if the utterance text contains any word that matches the compliance criteria
                         else:
                             if compliance_tag in message["data"]["text"]:
                                 complied_interventions.append(intervention)
-                                compliance_match_reason = f"utterance text matchs compliance tag: {compliance_tag}"
 
+                                # record compliance information
+                                report[metadata_file_name][intervention.type][intervention.timestamp]["compliance"] = {
+                                    "timestamp": timestamp,
+                                    "reason": f"utterance text matchs compliance tag: {compliance_tag}"
+                                }
+
+                # remove interventions that are complied from the watch list
                 for intervention in complied_interventions:
                     watch_interventions.remove(intervention)
 
-                    report[metadata_file_name][intervention.type][intervention.timestamp]["compliance"] = {
-                        "timestamp": timestamp,
-                        "reason": compliance_match_reason
-                    }
+            # parse minecraft chat messages to check for compliance
+            elif "topic" in message and message["topic"] == MINECRAFT_CHAT_TOPIC and message["data"]["sender"] != "Server":
+                # ensure player identification consistency
+                assert message["data"]["sender"] in player_information.values()
+
+                # check for any intervention that has been complied by the subject
+                complied_interventions = []
+                for intervention in watch_interventions:
+                    if message["data"]["sender"] == intervention.for_subject:
+                        # check if the utterance text contains any word that matches the compliance criteria
+                        if compliance_tag in message["data"]["text"]:
+                            complied_interventions.append(intervention)
+
+                            # record compliance information
+                            report[metadata_file_name][intervention.type][intervention.timestamp]["compliance"] = {
+                                "timestamp": timestamp,
+                                "reason": f"minecraft chat text matchs compliance tag: {compliance_tag}"
+                            }
+
+                for intervention in complied_interventions:
+                    watch_interventions.remove(intervention)
 
     log_report(args.output_dir, report)
