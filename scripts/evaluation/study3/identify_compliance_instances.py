@@ -268,7 +268,7 @@ if __name__ == "__main__":
 
     report = {}
 
-    for filepath in tqdm(glob(args.data_dir + "/*T00*UAZ*.metadata")):
+    for filepath in glob(args.data_dir + "/*T00*UAZ*.metadata"):
         metadata_file_name = os.path.basename(filepath)
         report[metadata_file_name] = {}
 
@@ -276,6 +276,7 @@ if __name__ == "__main__":
         watch_interventions: list[Intervention] = []
 
         # sort messages in the metadata
+        print("Sorting messages ...")
         messages = []
         for message in metadata_message_generator(filepath):
             messages.append(message)
@@ -287,7 +288,7 @@ if __name__ == "__main__":
         trial_started = False
 
         # parse messages
-        for message in sorted_messages:
+        for message in tqdm(sorted_messages):
             timestamp = parse(message["msg"]["timestamp"])
 
             # resolve expired interventions
