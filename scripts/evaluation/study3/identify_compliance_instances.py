@@ -108,6 +108,28 @@ class MarkerBlockVictimBIntervention(Intervention):
                                     "TypeBMarker"]
 
 
+class MarkerBlockRubbleIntervention(Intervention):
+    def __init__(self, timestamp: datetime, for_subject: str) -> None:
+        super().__init__(timestamp, for_subject)
+        self.type = "marker_block_rubble"
+        self.expiration = timestamp + \
+            timedelta(seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS)
+        self.compliance_criteria = ["Obstacle",
+                                    "RubbleMarker",
+                                    "rubble"]
+
+
+class MarkerBlockNoVictimIntervention(Intervention):
+    def __init__(self, timestamp: datetime, for_subject: str) -> None:
+        super().__init__(timestamp, for_subject)
+        self.type = "marker_block_no_victim"
+        self.expiration = timestamp + \
+            timedelta(seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS)
+        self.compliance_criteria = ["NoVictim",
+                                    "NoVictimMarkerBlock",
+                                    "no victim"]
+
+
 def extract_player_information(message) -> dict[str, str]:
     player_information = {}
     for player_data in message["data"]["client_info"]:
@@ -149,6 +171,26 @@ def extract_intervention(message, timestamp: datetime) -> list[Intervention]:
     elif "placed a marker" in explanation and "critical victim marker" in content:
         for receiver in message["data"]["receivers"]:
             intervention = MarkerBlockCriticalVictimIntervention(
+                timestamp, receiver)
+            interventions.append(intervention)
+    elif "placed a marker" in explanation and "A marker" in content:
+        for receiver in message["data"]["receivers"]:
+            intervention = MarkerBlockVictimAIntervention(
+                timestamp, receiver)
+            interventions.append(intervention)
+    elif "placed a marker" in explanation and "B marker" in content:
+        for receiver in message["data"]["receivers"]:
+            intervention = MarkerBlockVictimBIntervention(
+                timestamp, receiver)
+            interventions.append(intervention)
+    elif "placed a marker" in explanation and "rubble marker" in content:
+        for receiver in message["data"]["receivers"]:
+            intervention = MarkerBlockRubbleIntervention(
+                timestamp, receiver)
+            interventions.append(intervention)
+    elif "placed a marker" in explanation and "no victim marker" in content:
+        for receiver in message["data"]["receivers"]:
+            intervention = MarkerBlockNoVictimIntervention(
                 timestamp, receiver)
             interventions.append(intervention)
     else:
@@ -201,11 +243,11 @@ def log_report(output_dir: str, report: dict) -> None:
             file.write('\n')
 
         file.write(
-                "--------------------------------------------------------------\n")
+            "--------------------------------------------------------------\n")
         file.write(f"Number of interventions: {num_interventions}\n")
         file.write(f"Number of compliances: {num_compliances}\n")
         file.write(
-                "--------------------------------------------------------------\n")
+            "--------------------------------------------------------------\n")
 
 
 if __name__ == "__main__":
