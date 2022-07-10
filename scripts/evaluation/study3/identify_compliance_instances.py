@@ -12,7 +12,7 @@ AGENT_DIALOG_TOPIC = "agent/dialog"
 INTERVENTION_TOPIC = "agent/intervention/ASI_UAZ_TA1_ToMCAT/chat"
 
 
-CHECK_UTTERANCE_TIME_WINDOW_SECONDS = 20
+CHECK_UTTERANCE_TIME_WINDOW_SECONDS = 10
 
 
 class Intervention:
@@ -33,7 +33,8 @@ class HelpRequestCritcalVictimIntervention(Intervention):
         self.expiration = timestamp + \
             timedelta(seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS)
         self.compliance_criteria = ["CriticalVictim",
-                                    "CriticalMarkerBlock"]
+                                    "CriticalMarkerBlock",
+                                    "critical"]
 
 
 class HelpRequestRoomEscapeIntervention(Intervention):
@@ -71,7 +72,8 @@ class MarkerBlockRegularVictimIntervention(Intervention):
         self.expiration = timestamp + \
             timedelta(seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS)
         self.compliance_criteria = ["RegularVictim",
-                                    "RegularMarkerBlock"]
+                                    "RegularMarkerBlock",
+                                    "regular"]
 
 
 class MarkerBlockCriticalVictimIntervention(Intervention):
@@ -81,7 +83,8 @@ class MarkerBlockCriticalVictimIntervention(Intervention):
         self.expiration = timestamp + \
             timedelta(seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS)
         self.compliance_criteria = ["CriticalVictim",
-                                    "CriticalMarkerBlock"]
+                                    "CriticalMarkerBlock",
+                                    "critical"]
 
 
 class MarkerBlockVictimAIntervention(Intervention):
@@ -264,15 +267,22 @@ if __name__ == "__main__":
 
                 # check for any intervention that has been complied by the subject
                 complied_interventions = []
-                for labels in message["data"]["extractions"]:
-                    for intervention in watch_interventions:
-                        # check if the message's subject matches the intervention's target subject
-                        if intervention.for_player == player_information[message["data"]["participant_id"]]:
-                            # check compliance criteria for intervention about utterance
-                            for compliance_label in intervention.compliance_criteria:
-                                if compliance_label in labels and intervention not in complied_interventions:
-                                    complied_interventions.append(
-                                        intervention)
+                for intervention in watch_interventions:
+                    if player_information[message["data"]["participant_id"]] == intervention.for_player:
+                        # check if the utterance label matches the compliance criteria
+                        intervention_found = False
+                        for compliance_tag in intervention.compliance_criteria:
+                            for labels in message["data"]["extractions"]:
+                                if compliance_tag in labels:
+                                    complied_interventions.append(intervention)
+                                    intervention_found = True
+                                    break
+                            if intervention_found:
+                                break
+                        # check if the utterance text contains any word that matches the compliance criteria
+                        else:
+                            if compliance_tag in message["data"]["text"]:
+                                complied_interventions.append(intervention)
 
                 for intervention in complied_interventions:
                     watch_interventions.remove(intervention)
