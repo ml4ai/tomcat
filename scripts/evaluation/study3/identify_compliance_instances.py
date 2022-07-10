@@ -57,6 +57,65 @@ class HelpRequestRoomEscapeIntervention(Intervention):
                                     "SOSMarker"]
 
 
+class HelpRequestReplyIntervention(Intervention):
+    def __init__(self, timestamp: datetime, for_player: str) -> None:
+        super().__init__(timestamp, for_player)
+        self.type = InterventionType.UTTERANCE
+        self.description = "help_request_reply"
+        self.expiration = timestamp + \
+            timedelta(seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS)
+        self.compliance_criteria = ["Stuck",
+                                    "HelpRequest",
+                                    "NeedAction",
+                                    "NeedItem",
+                                    "NeedRole",
+                                    "SOSMarker"]
+
+
+class MarkerBlockRegularVictimIntervention(Intervention):
+    def __init__(self, timestamp: datetime, for_player: str) -> None:
+        super().__init__(timestamp, for_player)
+        self.type = InterventionType.UTTERANCE
+        self.description = "marker_block_regular_victim"
+        self.expiration = timestamp + \
+            timedelta(seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS)
+        self.compliance_criteria = ["RegularVictim",
+                                    "RegularMarkerBlock"]
+
+
+class MarkerBlockCriticalVictimIntervention(Intervention):
+    def __init__(self, timestamp: datetime, for_player: str) -> None:
+        super().__init__(timestamp, for_player)
+        self.type = InterventionType.UTTERANCE
+        self.description = "marker_block_critical_victim"
+        self.expiration = timestamp + \
+            timedelta(seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS)
+        self.compliance_criteria = ["CriticalVictim",
+                                    "CriticalMarkerBlock"]
+
+
+class MarkerBlockVictimAIntervention(Intervention):
+    def __init__(self, timestamp: datetime, for_player: str) -> None:
+        super().__init__(timestamp, for_player)
+        self.type = InterventionType.UTTERANCE
+        self.description = "marker_block_victim_a"
+        self.expiration = timestamp + \
+            timedelta(seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS)
+        self.compliance_criteria = ["VictimTypeA",
+                                    "TypeAMarker"]
+
+
+class MarkerBlockVictimBIntervention(Intervention):
+    def __init__(self, timestamp: datetime, for_player: str) -> None:
+        super().__init__(timestamp, for_player)
+        self.type = InterventionType.UTTERANCE
+        self.description = "marker_block_victim_b"
+        self.expiration = timestamp + \
+            timedelta(seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS)
+        self.compliance_criteria = ["VictimTypeB",
+                                    "TypeBMarker"]
+
+
 def extract_player_information(message) -> dict[str, str]:
     player_information = {}
     for player_data in message["data"]["client_info"]:
@@ -69,10 +128,13 @@ def extract_player_information(message) -> dict[str, str]:
 def extract_intervention(message, timestamp: datetime) -> list[Intervention]:
     explanation = message["data"]["explanation"]["info"].replace(
         "This intervention was triggered ", "")
+    content = message["data"]["content"]
 
     interventions = []
 
-    if "did not ask" in explanation:
+    if "to ensure" in explanation:
+        return interventions
+    elif "did not ask" in explanation:
         if "critical victim" in explanation:
             for receiver in message["data"]["receivers"]:
                 intervention = HelpRequestCritcalVictimIntervention(
@@ -83,6 +145,20 @@ def extract_intervention(message, timestamp: datetime) -> list[Intervention]:
                 intervention = HelpRequestRoomEscapeIntervention(
                     timestamp, receiver)
                 interventions.append(intervention)
+    elif "did not get an answer" in explanation:
+        for receiver in message["data"]["receivers"]:
+            intervention = HelpRequestReplyIntervention(timestamp, receiver)
+            interventions.append(intervention)
+    elif "placed a marker" in explanation and "regular victim marker" in content:
+        for receiver in message["data"]["receivers"]:
+            intervention = MarkerBlockRegularVictimIntervention(
+                timestamp, receiver)
+            interventions.append(intervention)
+    elif "placed a marker" in explanation and "critical victim marker" in content:
+        for receiver in message["data"]["receivers"]:
+            intervention = MarkerBlockCriticalVictimIntervention(
+                timestamp, receiver)
+            interventions.append(intervention)
     else:
         print("[INFO] Event is ignored: " +
               message["data"]["explanation"]["info"])
@@ -118,7 +194,17 @@ if __name__ == "__main__":
         "num_intervention_help_request_for_critical_victim": 0,
         "num_complied_intervention_help_request_for_critical_victim": 0,
         "num_intervention_help_request_for_room_escape": 0,
-        "num_complied_intervention_help_request_for_room_escape": 0
+        "num_complied_intervention_help_request_for_room_escape": 0,
+        "num_intervention_help_request_reply": 0,
+        "num_complied_intervention_help_request_reply": 0,
+        "num_intervention_marker_block_regular_victim": 0,
+        "num_complied_intervention_marker_block_regular_victim": 0,
+        "num_intervention_marker_block_critical_victim": 0,
+        "num_complied_intervention_marker_block_critical_victim": 0,
+        "num_intervention_marker_block_victim_a": 0,
+        "num_compiled_intervention_marker_block_victim_a": 0,
+        "num_intervention_marker_block_victim_b": 0,
+        "num_compiled_intervention_marker_block_victim_b": 0
     }
 
     for filepath in glob(args.data_dir + "/*T00*UAZ*.metadata"):
@@ -164,6 +250,19 @@ if __name__ == "__main__":
                         report["num_intervention_help_request_for_critical_victim"] += 1
                     elif isinstance(intervention, HelpRequestRoomEscapeIntervention):
                         report["num_intervention_help_request_for_room_escape"] += 1
+                    elif isinstance(intervention, HelpRequestReplyIntervention):
+                        report["num_intervention_help_request_reply"] += 1
+                    elif isinstance(intervention, MarkerBlockRegularVictimIntervention):
+                        report["num_intervention_marker_block_regular_victim"] += 1
+                    elif isinstance(intervention, MarkerBlockCriticalVictimIntervention):
+                        report["num_intervention_marker_block_critical_victim"] += 1
+                    elif isinstance(intervention, MarkerBlockVictimAIntervention):
+                        report["num_intervention_marker_block_victim_a"] += 1
+                    elif isinstance(intervention, MarkerBlockVictimBIntervention):
+                        report["num_intervention_marker_block_victim_b"] += 1
+                    else:
+                        raise RuntimeError(
+                            "Failed to determine intervention type")
 
                 report["num_interventions"] += len(interventions)
 
@@ -195,6 +294,19 @@ if __name__ == "__main__":
                         report["num_complied_intervention_help_request_for_critical_victim"] += 1
                     elif isinstance(intervention, HelpRequestRoomEscapeIntervention):
                         report["num_complied_intervention_help_request_for_room_escape"] += 1
+                    elif isinstance(intervention, HelpRequestReplyIntervention):
+                        report["num_complied_intervention_help_request_reply"] += 1
+                    elif isinstance(intervention, MarkerBlockRegularVictimIntervention):
+                        report["num_complied_intervention_marker_block_regular_victim"] += 1
+                    elif isinstance(intervention, MarkerBlockCriticalVictimIntervention):
+                        report["num_complied_intervention_marker_block_critical_victim"] += 1
+                    elif isinstance(intervention, MarkerBlockVictimAIntervention):
+                        report["num_complied_intervention_marker_block_victim_a"] += 1
+                    elif isinstance(intervention, MarkerBlockVictimBIntervention):
+                        report["num_complied_intervention_marker_block_victim_b"] += 1
+                    else:
+                        raise RuntimeError(
+                            "Failed to determine intervention type")
 
                     report["num_compiled_interventions"] += 1
 
