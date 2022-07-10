@@ -275,9 +275,19 @@ if __name__ == "__main__":
         player_information: dict[str, str] = {}
         watch_interventions: list[Intervention] = []
 
+        # sort messages in the metadata
+        messages = []
+        for message in metadata_message_generator(filepath):
+            messages.append(message)
+
+        sorted_messages = sorted(
+            messages, key=lambda x: parse(x["msg"]["timestamp"])
+        )
+
         trial_started = False
 
-        for message in metadata_message_generator(filepath):
+        # parse messages
+        for message in sorted_messages:
             timestamp = parse(message["msg"]["timestamp"])
 
             # resolve expired interventions
