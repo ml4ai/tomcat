@@ -15,11 +15,6 @@ INTERVENTION_TOPIC = "agent/intervention/ASI_UAZ_TA1_ToMCAT/chat"
 CHECK_UTTERANCE_TIME_WINDOW_SECONDS = 20
 
 
-class InterventionType(Enum):
-    UTTERANCE = 1
-    MARKER_PLACEMENT = 2
-
-
 class Intervention:
     def __init__(self,
                  timestamp: datetime,
@@ -34,7 +29,6 @@ class Intervention:
 class HelpRequestCritcalVictimIntervention(Intervention):
     def __init__(self, timestamp: datetime, for_player: str) -> None:
         super().__init__(timestamp, for_player)
-        self.type = InterventionType.UTTERANCE
         self.description = "help_request_for_critical_victim"
         self.expiration = timestamp + \
             timedelta(seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS)
@@ -45,7 +39,6 @@ class HelpRequestCritcalVictimIntervention(Intervention):
 class HelpRequestRoomEscapeIntervention(Intervention):
     def __init__(self, timestamp: datetime, for_player: str) -> None:
         super().__init__(timestamp, for_player)
-        self.type = InterventionType.UTTERANCE
         self.description = "help_request_for_room_escape"
         self.expiration = timestamp + \
             timedelta(seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS)
@@ -60,7 +53,6 @@ class HelpRequestRoomEscapeIntervention(Intervention):
 class HelpRequestReplyIntervention(Intervention):
     def __init__(self, timestamp: datetime, for_player: str) -> None:
         super().__init__(timestamp, for_player)
-        self.type = InterventionType.UTTERANCE
         self.description = "help_request_reply"
         self.expiration = timestamp + \
             timedelta(seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS)
@@ -75,7 +67,6 @@ class HelpRequestReplyIntervention(Intervention):
 class MarkerBlockRegularVictimIntervention(Intervention):
     def __init__(self, timestamp: datetime, for_player: str) -> None:
         super().__init__(timestamp, for_player)
-        self.type = InterventionType.UTTERANCE
         self.description = "marker_block_regular_victim"
         self.expiration = timestamp + \
             timedelta(seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS)
@@ -86,7 +77,6 @@ class MarkerBlockRegularVictimIntervention(Intervention):
 class MarkerBlockCriticalVictimIntervention(Intervention):
     def __init__(self, timestamp: datetime, for_player: str) -> None:
         super().__init__(timestamp, for_player)
-        self.type = InterventionType.UTTERANCE
         self.description = "marker_block_critical_victim"
         self.expiration = timestamp + \
             timedelta(seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS)
@@ -97,7 +87,6 @@ class MarkerBlockCriticalVictimIntervention(Intervention):
 class MarkerBlockVictimAIntervention(Intervention):
     def __init__(self, timestamp: datetime, for_player: str) -> None:
         super().__init__(timestamp, for_player)
-        self.type = InterventionType.UTTERANCE
         self.description = "marker_block_victim_a"
         self.expiration = timestamp + \
             timedelta(seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS)
@@ -108,7 +97,6 @@ class MarkerBlockVictimAIntervention(Intervention):
 class MarkerBlockVictimBIntervention(Intervention):
     def __init__(self, timestamp: datetime, for_player: str) -> None:
         super().__init__(timestamp, for_player)
-        self.type = InterventionType.UTTERANCE
         self.description = "marker_block_victim_b"
         self.expiration = timestamp + \
             timedelta(seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS)
@@ -281,11 +269,10 @@ if __name__ == "__main__":
                         # check if the message's subject matches the intervention's target subject
                         if intervention.for_player == player_information[message["data"]["participant_id"]]:
                             # check compliance criteria for intervention about utterance
-                            if intervention.type == InterventionType.UTTERANCE:
-                                for compliance_label in intervention.compliance_criteria:
-                                    if compliance_label in labels and intervention not in complied_interventions:
-                                        complied_interventions.append(
-                                            intervention)
+                            for compliance_label in intervention.compliance_criteria:
+                                if compliance_label in labels and intervention not in complied_interventions:
+                                    complied_interventions.append(
+                                        intervention)
 
                 for intervention in complied_interventions:
                     watch_interventions.remove(intervention)
