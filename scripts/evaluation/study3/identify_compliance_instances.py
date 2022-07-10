@@ -1,8 +1,10 @@
 import argparse
+import os
 from datetime import datetime, timedelta
 from glob import glob
 
 from dateutil.parser import parse
+from tqdm import tqdm
 
 from common import metadata_message_generator
 
@@ -161,26 +163,49 @@ def log_report(output_dir: str, report: dict) -> None:
         num_interventions = 0
         num_compliances = 0
 
-        for intervention_type, interventions in report.items():
-            num_interventions += len(interventions)
+        for file_name, file_interventions in report.items():
+            file.write(
+                "--------------------------------------------------------------\n")
+            file.write(file_name + "\n")
+            file.write(
+                "--------------------------------------------------------------\n\n")
 
-            file.write(f"{intervention_type}: {len(interventions)}\n")
+            for intervention_type, interventions in file_interventions.items():
+                num_interventions += len(interventions)
 
-            for timestamp, intervention in interventions.items():
-                if intervention["compliance"] is not None:
-                    num_compliances += 1
+                # count number of compliances for this intervention type
+                num_compliances_for_intervention_type = 0
+                for intervention in interventions.values():
+                    if intervention["compliance"] is not None:
+                        num_compliances_for_intervention_type += 1
 
-                    file.write(timestamp.isoformat() +
-                               " for subject " +
-                               intervention["for_subject"] +
-                               ", " +
-                               intervention["compliance"]["timestamp"].isoformat() +
-                               ' ' +
-                               intervention["compliance"]["reason"] +
-                               '\n')
+                file.write(
+                    f"{intervention_type}: {len(interventions)}, with {num_compliances_for_intervention_type} compliances\n")
 
+                # report compliances
+                for timestamp, intervention in interventions.items():
+                    if intervention["compliance"] is not None:
+                        num_compliances += 1
+
+                        file.write(timestamp.isoformat() +
+                                   " for subject " +
+                                   intervention["for_subject"] +
+                                   ", " +
+                                   intervention["compliance"]["timestamp"].isoformat() +
+                                   ' ' +
+                                   intervention["compliance"]["reason"] +
+                                   '\n')
+
+                file.write('\n')
+
+            file.write('\n')
+
+        file.write(
+                "--------------------------------------------------------------\n")
         file.write(f"Number of interventions: {num_interventions}\n")
         file.write(f"Number of compliances: {num_compliances}\n")
+        file.write(
+                "--------------------------------------------------------------\n")
 
 
 if __name__ == "__main__":
@@ -201,7 +226,10 @@ if __name__ == "__main__":
 
     report = {}
 
-    for filepath in glob(args.data_dir + "/*T00*UAZ*.metadata"):
+    for filepath in tqdm(glob(args.data_dir + "/*T00*UAZ*.metadata")):
+        metadata_file_name = os.path.basename(filepath)
+        report[metadata_file_name] = {}
+
         player_information: dict[str, str] = {}
         watch_interventions: list[Intervention] = []
 
@@ -241,10 +269,10 @@ if __name__ == "__main__":
                 for intervention in interventions:
                     watch_interventions.append(intervention)
 
-                    if intervention.type not in report:
-                        report[intervention.type] = {}
+                    if intervention.type not in report[metadata_file_name]:
+                        report[metadata_file_name][intervention.type] = {}
 
-                    report[intervention.type][intervention.timestamp] = {
+                    report[metadata_file_name][intervention.type][intervention.timestamp] = {
                         "for_subject": intervention.for_subject,
                         "compliance": None
                     }
@@ -281,7 +309,7 @@ if __name__ == "__main__":
                 for intervention in complied_interventions:
                     watch_interventions.remove(intervention)
 
-                    report[intervention.type][intervention.timestamp]["compliance"] = {
+                    report[metadata_file_name][intervention.type][intervention.timestamp]["compliance"] = {
                         "timestamp": timestamp,
                         "reason": compliance_match_reason
                     }
