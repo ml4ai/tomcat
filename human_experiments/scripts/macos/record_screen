@@ -17,4 +17,4 @@ end run
 
 -- If your executing it manually: "./record_screen <path> 10"
 -- In case you "zsh: permission denied: ./record_screen" error message 
--- Do "chmod u+x record_screen"
+-- Do "chmod u+x record_screen" and execute again
