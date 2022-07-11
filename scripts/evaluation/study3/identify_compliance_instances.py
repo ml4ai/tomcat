@@ -398,7 +398,7 @@ if __name__ == "__main__":
                         # check if the utterance label matches the compliance criteria
                         for compliance_tag in intervention.compliance_criteria:
                             for labels in message["data"]["extractions"]:
-                                if compliance_tag in labels:
+                                if compliance_tag in labels["labels"]:
                                     complied_interventions.append(intervention)
 
                                     # record compliance information
