@@ -4,8 +4,10 @@ import argparse
 import os
 from datetime import datetime, timedelta
 from glob import glob
-from typing import Dict, List
+from turtle import pd
+from typing import Dict, List, Tuple
 
+import pandas as pd
 from dateutil.parser import parse
 from tqdm import tqdm
 
@@ -16,13 +18,17 @@ AGENT_DIALOG_TOPIC = "agent/dialog"
 INTERVENTION_TOPIC = "agent/intervention/ASI_UAZ_TA1_ToMCAT/chat"
 MINECRAFT_CHAT_TOPIC = "minecraft/chat"
 
-CHECK_UTTERANCE_TIME_WINDOW_SECONDS = 10
+DEFAULT_CHECK_UTTERANCE_TIME_WINDOW_SECONDS = 10
 
 
 class Intervention:
-    def __init__(self, timestamp: datetime, for_subject: str) -> None:
+    def __init__(self,
+                 timestamp: datetime,
+                 for_subject: str,
+                 seconds_window: int) -> None:
         self.timestamp = timestamp
         self.for_subject = for_subject
+        self.expiration = timestamp + timedelta(seconds=seconds_window)
 
     def __eq__(self, __o: object) -> bool:
         return (
@@ -32,12 +38,12 @@ class Intervention:
 
 
 class HelpRequestCriticalVictimIntervention(Intervention):
-    def __init__(self, timestamp: datetime, for_subject: str) -> None:
-        super().__init__(timestamp, for_subject)
+    def __init__(self,
+                 timestamp: datetime,
+                 for_subject: str,
+                 seconds_window: int) -> None:
+        super().__init__(timestamp, for_subject, seconds_window)
         self.type = "help_request_for_critical_victim"
-        self.expiration = timestamp + timedelta(
-            seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS
-        )
         self.compliance_criteria = [
             "CriticalVictim",
             "CriticalMarkerBlock",
@@ -46,11 +52,14 @@ class HelpRequestCriticalVictimIntervention(Intervention):
 
 
 class HelpRequestRoomEscapeIntervention(Intervention):
-    def __init__(self, timestamp: datetime, for_subject: str) -> None:
-        super().__init__(timestamp, for_subject)
+    def __init__(self,
+                 timestamp: datetime,
+                 for_subject: str,
+                 seconds_window: int) -> None:
+        super().__init__(timestamp, for_subject, seconds_window)
         self.type = "help_request_for_room_escape"
         self.expiration = timestamp + timedelta(
-            seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS
+            seconds=DEFAULT_CHECK_UTTERANCE_TIME_WINDOW_SECONDS
         )
         self.compliance_criteria = [
             "Stuck",
@@ -65,11 +74,14 @@ class HelpRequestRoomEscapeIntervention(Intervention):
 
 
 class HelpRequestReplyIntervention(Intervention):
-    def __init__(self, timestamp: datetime, for_subject: str) -> None:
-        super().__init__(timestamp, for_subject)
+    def __init__(self,
+                 timestamp: datetime,
+                 for_subject: str,
+                 seconds_window: int) -> None:
+        super().__init__(timestamp, for_subject, seconds_window)
         self.type = "help_request_reply"
         self.expiration = timestamp + timedelta(
-            seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS
+            seconds=DEFAULT_CHECK_UTTERANCE_TIME_WINDOW_SECONDS
         )
         self.compliance_criteria = [
             "Stuck",
@@ -84,11 +96,14 @@ class HelpRequestReplyIntervention(Intervention):
 
 
 class MarkerBlockRegularVictimIntervention(Intervention):
-    def __init__(self, timestamp: datetime, for_subject: str) -> None:
-        super().__init__(timestamp, for_subject)
+    def __init__(self,
+                 timestamp: datetime,
+                 for_subject: str,
+                 seconds_window: int) -> None:
+        super().__init__(timestamp, for_subject, seconds_window)
         self.type = "marker_block_regular_victim"
         self.expiration = timestamp + timedelta(
-            seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS
+            seconds=DEFAULT_CHECK_UTTERANCE_TIME_WINDOW_SECONDS
         )
         self.compliance_criteria = [
             "RegularVictim",
@@ -98,11 +113,14 @@ class MarkerBlockRegularVictimIntervention(Intervention):
 
 
 class MarkerBlockCriticalVictimIntervention(Intervention):
-    def __init__(self, timestamp: datetime, for_subject: str) -> None:
-        super().__init__(timestamp, for_subject)
+    def __init__(self,
+                 timestamp: datetime,
+                 for_subject: str,
+                 seconds_window: int) -> None:
+        super().__init__(timestamp, for_subject, seconds_window)
         self.type = "marker_block_critical_victim"
         self.expiration = timestamp + timedelta(
-            seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS
+            seconds=DEFAULT_CHECK_UTTERANCE_TIME_WINDOW_SECONDS
         )
         self.compliance_criteria = [
             "CriticalVictim",
@@ -112,11 +130,14 @@ class MarkerBlockCriticalVictimIntervention(Intervention):
 
 
 class MarkerBlockVictimAIntervention(Intervention):
-    def __init__(self, timestamp: datetime, for_subject: str) -> None:
-        super().__init__(timestamp, for_subject)
+    def __init__(self,
+                 timestamp: datetime,
+                 for_subject: str,
+                 seconds_window: int) -> None:
+        super().__init__(timestamp, for_subject, seconds_window)
         self.type = "marker_block_victim_a"
         self.expiration = timestamp + timedelta(
-            seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS
+            seconds=DEFAULT_CHECK_UTTERANCE_TIME_WINDOW_SECONDS
         )
         self.compliance_criteria = [
             "VictimTypeA",
@@ -127,11 +148,14 @@ class MarkerBlockVictimAIntervention(Intervention):
 
 
 class MarkerBlockVictimBIntervention(Intervention):
-    def __init__(self, timestamp: datetime, for_subject: str) -> None:
-        super().__init__(timestamp, for_subject)
+    def __init__(self,
+                 timestamp: datetime,
+                 for_subject: str,
+                 seconds_window: int) -> None:
+        super().__init__(timestamp, for_subject, seconds_window)
         self.type = "marker_block_victim_b"
         self.expiration = timestamp + timedelta(
-            seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS
+            seconds=DEFAULT_CHECK_UTTERANCE_TIME_WINDOW_SECONDS
         )
         self.compliance_criteria = [
             "VictimTypeB",
@@ -142,21 +166,31 @@ class MarkerBlockVictimBIntervention(Intervention):
 
 
 class MarkerBlockRubbleIntervention(Intervention):
-    def __init__(self, timestamp: datetime, for_subject: str) -> None:
-        super().__init__(timestamp, for_subject)
+    def __init__(self,
+                 timestamp: datetime,
+                 for_subject: str,
+                 seconds_window: int) -> None:
+        super().__init__(timestamp, for_subject, seconds_window)
         self.type = "marker_block_rubble"
         self.expiration = timestamp + timedelta(
-            seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS
+            seconds=DEFAULT_CHECK_UTTERANCE_TIME_WINDOW_SECONDS
         )
-        self.compliance_criteria = ["Obstacle", "RubbleMarker", "rubble"]
+        self.compliance_criteria = [
+            "Obstacle",
+            "RubbleMarker",
+            "rubble"
+        ]
 
 
 class MarkerBlockNoVictimIntervention(Intervention):
-    def __init__(self, timestamp: datetime, for_subject: str) -> None:
-        super().__init__(timestamp, for_subject)
+    def __init__(self,
+                 timestamp: datetime,
+                 for_subject: str,
+                 seconds_window: int) -> None:
+        super().__init__(timestamp, for_subject, seconds_window)
         self.type = "marker_block_no_victim"
         self.expiration = timestamp + timedelta(
-            seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS
+            seconds=DEFAULT_CHECK_UTTERANCE_TIME_WINDOW_SECONDS
         )
         self.compliance_criteria = [
             "NoVictim",
@@ -167,11 +201,14 @@ class MarkerBlockNoVictimIntervention(Intervention):
 
 
 class MarkerBlockSOSIntervention(Intervention):
-    def __init__(self, timestamp: datetime, for_subject: str) -> None:
-        super().__init__(timestamp, for_subject)
+    def __init__(self,
+                 timestamp: datetime,
+                 for_subject: str,
+                 seconds_window: int) -> None:
+        super().__init__(timestamp, for_subject, seconds_window)
         self.type = "marker_block_sos"
         self.expiration = timestamp + timedelta(
-            seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS
+            seconds=DEFAULT_CHECK_UTTERANCE_TIME_WINDOW_SECONDS
         )
         self.compliance_criteria = [
             "Stuck",
@@ -185,17 +222,19 @@ class MarkerBlockSOSIntervention(Intervention):
         ]
 
 
-def extract_player_information(message) -> Dict[str, str]:
+def extract_player_information(message) -> Tuple[Dict[str, str], Dict[str, str]]:
     player_information = {}
+    player_callsign = {}
     for player_data in message["data"]["client_info"]:
-        player_information[player_data["playername"]] = player_data[
-            "participant_id"
-        ]
+        player_information[player_data["playername"]
+                           ] = player_data["participant_id"]
+        player_callsign[player_data["participant_id"]
+                        ] = player_data["callsign"]
 
-    return player_information
+    return player_information, player_callsign
 
 
-def extract_intervention(message, timestamp: datetime) -> List[Intervention]:
+def extract_intervention(message, timestamp: datetime, seconds_window: int) -> List[Intervention]:
     explanation = message["data"]["explanation"]["info"].replace(
         "This intervention was triggered ", ""
     )
@@ -209,26 +248,24 @@ def extract_intervention(message, timestamp: datetime) -> List[Intervention]:
         if "critical victim" in explanation:
             for receiver in message["data"]["receivers"]:
                 intervention = HelpRequestCriticalVictimIntervention(
-                    timestamp, receiver
-                )
+                    timestamp, receiver, seconds_window)
                 interventions.append(intervention)
         if "threat room" in explanation:
             for receiver in message["data"]["receivers"]:
                 intervention = HelpRequestRoomEscapeIntervention(
-                    timestamp, receiver
-                )
+                    timestamp, receiver, seconds_window)
                 interventions.append(intervention)
     elif "did not get an answer" in explanation:
         for receiver in message["data"]["receivers"]:
-            intervention = HelpRequestReplyIntervention(timestamp, receiver)
+            intervention = HelpRequestReplyIntervention(
+                timestamp, receiver, seconds_window)
             interventions.append(intervention)
     elif (
         "placed a marker" in explanation and "regular victim marker" in content
     ):
         for receiver in message["data"]["receivers"]:
             intervention = MarkerBlockRegularVictimIntervention(
-                timestamp, receiver
-            )
+                timestamp, receiver, seconds_window)
             interventions.append(intervention)
     elif (
         "placed a marker" in explanation
@@ -236,28 +273,33 @@ def extract_intervention(message, timestamp: datetime) -> List[Intervention]:
     ):
         for receiver in message["data"]["receivers"]:
             intervention = MarkerBlockCriticalVictimIntervention(
-                timestamp, receiver
+                timestamp, receiver, seconds_window
             )
             interventions.append(intervention)
     elif "placed a marker" in explanation and "A marker" in content:
         for receiver in message["data"]["receivers"]:
-            intervention = MarkerBlockVictimAIntervention(timestamp, receiver)
+            intervention = MarkerBlockVictimAIntervention(
+                timestamp, receiver, seconds_window)
             interventions.append(intervention)
     elif "placed a marker" in explanation and "B marker" in content:
         for receiver in message["data"]["receivers"]:
-            intervention = MarkerBlockVictimBIntervention(timestamp, receiver)
+            intervention = MarkerBlockVictimBIntervention(
+                timestamp, receiver, seconds_window)
             interventions.append(intervention)
     elif "placed a marker" in explanation and "rubble marker" in content:
         for receiver in message["data"]["receivers"]:
-            intervention = MarkerBlockRubbleIntervention(timestamp, receiver)
+            intervention = MarkerBlockRubbleIntervention(
+                timestamp, receiver, seconds_window)
             interventions.append(intervention)
     elif "placed a marker" in explanation and "no victim marker" in content:
         for receiver in message["data"]["receivers"]:
-            intervention = MarkerBlockNoVictimIntervention(timestamp, receiver)
+            intervention = MarkerBlockNoVictimIntervention(
+                timestamp, receiver, seconds_window)
             interventions.append(intervention)
     elif "placed a marker" in explanation and "sos marker" in content:
         for receiver in message["data"]["receivers"]:
-            intervention = MarkerBlockSOSIntervention(timestamp, receiver)
+            intervention = MarkerBlockSOSIntervention(
+                timestamp, receiver, seconds_window)
             interventions.append(intervention)
     else:
         print(
@@ -270,18 +312,21 @@ def extract_intervention(message, timestamp: datetime) -> List[Intervention]:
     return interventions
 
 
-def log_report(output_dir: str, report: Dict) -> None:
-    with open(output_dir + "/compliance_instances_report.txt", "w") as file:
-        intervention_compliance_count = {}
+def report_compliance(output_dir: str,
+                      report: Dict,
+                      report_specifics: bool = False) -> None:
+    num_seconds_window = report["seconds_window"]
 
-        for file_name, file_interventions in report.items():
-            file.write(
-                "--------------------------------------------------------------\n"
-            )
-            file.write(file_name + "\n")
-            file.write(
-                "--------------------------------------------------------------\n\n"
-            )
+    with open(output_dir + f"/compliance_report_{num_seconds_window}_seconds.md", "w") as file:
+        intervention_compliance_count = {}
+        player_compliance_count = {}
+
+        for file_name, file_interventions in report["compliance_data"].items():
+            if report_specifics:
+                file.write(file_name + "\n")
+                file.write(
+                    "--------------------------------------------------------------\n\n"
+                )
 
             for intervention_type, interventions in file_interventions.items():
                 if intervention_type not in intervention_compliance_count:
@@ -297,63 +342,132 @@ def log_report(output_dir: str, report: Dict) -> None:
                 # count number of compliances for this intervention type
                 num_compliances_for_intervention_type = 0
                 for intervention in interventions.values():
+                    if intervention["subject_callsign"] not in player_compliance_count:
+                        player_compliance_count[intervention["subject_callsign"]] = {
+                        }
+
+                    if intervention_type not in player_compliance_count[intervention["subject_callsign"]]:
+                        player_compliance_count[intervention["subject_callsign"]][intervention_type] = {
+                            "num_interventions": 0,
+                            "num_compliances": 0,
+                        }
+
+                    player_compliance_count[
+                        intervention["subject_callsign"]
+                    ][intervention_type]["num_interventions"] += 1
+
                     if intervention["compliance"] is not None:
+                        player_compliance_count[
+                            intervention["subject_callsign"]
+                        ][intervention_type]["num_compliances"] += 1
+
                         num_compliances_for_intervention_type += 1
 
                 intervention_compliance_count[intervention_type][
                     "num_compliances"
                 ] += num_compliances_for_intervention_type
 
-                file.write(
-                    f"{intervention_type}: {len(interventions)}, with {num_compliances_for_intervention_type} compliances\n"
-                )
+                if intervention_compliance_count[intervention_type]["num_interventions"] > 0:
+                    intervention_compliance_count[intervention_type]["compliance_statistics"] = \
+                        float(intervention_compliance_count[intervention_type]["num_compliances"]) / \
+                        float(
+                            intervention_compliance_count[intervention_type]["num_interventions"])
+                else:
+                    intervention_compliance_count[intervention_type]["compliance_statistics"] = 0.0
 
-                # report compliances
-                for timestamp, intervention in interventions.items():
-                    if intervention["compliance"] is not None:
-                        file.write(
-                            timestamp.isoformat()
-                            + " for subject "
-                            + intervention["for_subject"]
-                            + ", "
-                            + intervention["compliance"][
-                                "timestamp"
-                            ].isoformat()
-                            + " "
-                            + intervention["compliance"]["reason"]
-                            + "\n"
-                        )
+                if report_specifics:
+                    file.write(
+                        f"{intervention_type}: {len(interventions)}, with {num_compliances_for_intervention_type} compliances\n"
+                    )
 
+                    # report compliances
+                    for timestamp, intervention in interventions.items():
+                        if intervention["compliance"] is not None:
+                            file.write(
+                                timestamp.isoformat()
+                                + " for subject "
+                                + intervention["for_subject"]
+                                + ", "
+                                + intervention["compliance"][
+                                    "timestamp"
+                                ].isoformat()
+                                + " "
+                                + intervention["compliance"]["reason"]
+                                + "\n"
+                            )
+
+                    file.write("\n")
+
+            if report_specifics:
                 file.write("\n")
 
-            file.write("\n")
-
         file.write(
-            "--------------------------------------------------------------\n"
+            "Compliance by intervention types\n"
+            "--------------------------------\n\n"
         )
 
-        total_num_interventions = 0
-        total_num_compliances = 0
-        for (
-            intervention_type,
-            interventions,
-        ) in intervention_compliance_count.items():
+        df = pd.DataFrame(data=intervention_compliance_count).T
+        file.write(df.to_markdown())
+        file.write("\n\n")
+
+        file.write(
+            "Compliance by player\n"
+            "--------------------\n\n"
+        )
+
+        for callsign, interventions in player_compliance_count.items():
+            for intervention_type, intervention_count in interventions.items():
+                if intervention_count["num_interventions"] > 0:
+                    player_compliance_count[callsign][intervention_type]["compliance_statistics"] = \
+                        float(intervention_count["num_compliances"]) / \
+                        float(intervention_count["num_interventions"])
+                else:
+                    player_compliance_count[callsign][intervention_type]["compliance_statistics"] = 0.0
+
+            df_player = pd.DataFrame(data=interventions).T
+
+            player_num_interventions = df_player["num_interventions"].sum()
+            player_num_compliances = df_player["num_compliances"].sum()
+
+            if player_num_interventions > 0:
+                player_compliance_percentage = (
+                    float(player_num_compliances) / float(player_num_interventions)
+                )
+            else:
+                player_compliance_percentage = 0.0
+
+            file.write("Player callsign: " + callsign + "\n")
             file.write(
-                f"{intervention_type}: total "
-                + str(interventions["num_interventions"])
-                + " interventions, "
-                + str(interventions["num_compliances"])
-                + " compliances.\n"
-            )
+                f"Interventions for {callsign}: {player_num_interventions}\n")
+            file.write(
+                f"Overall {callsign} compliances: {player_num_compliances} / {player_num_interventions} ")
+            file.write("({:.2%})\n\n".format(player_compliance_percentage))
 
-            total_num_interventions += interventions["num_interventions"]
-            total_num_compliances += interventions["num_compliances"]
+            file.write(df_player.to_markdown())
+            file.write("\n\n")
 
-        file.write(f"Number of interventions: {total_num_interventions}\n")
-        file.write(f"Number of compliances: {total_num_compliances}\n")
         file.write(
-            "--------------------------------------------------------------\n"
+            "Overall statistics\n"
+            "------------------\n\n"
         )
+
+        num_interventions = df["num_interventions"].sum()
+        num_compliances = df["num_compliances"].sum()
+
+        if num_interventions > 0:
+            compliance_percentage = (
+                float(num_compliances) / float(num_interventions)
+            )
+        else:
+            compliance_percentage = 0.0
+
+        file.write("Compliance check window: "
+                   + str(num_seconds_window)
+                   + " seconds\n")
+        file.write(f"Interventions considered: {num_interventions}\n")
+        file.write(
+            f"Overall compliances: {num_compliances} / {num_interventions} ")
+        file.write("({:.2%})\n".format(compliance_percentage))
 
 
 if __name__ == "__main__":
@@ -371,35 +485,55 @@ if __name__ == "__main__":
         help="Output directory",
         default=".",
     )
+    parser.add_argument(
+        "--sort",
+        help="Sort messages in metadata file",
+        action='store_true',
+        default=False
+    )
+    parser.add_argument(
+        "--seconds",
+        type=int,
+        help="Number of seconds to check for intervention compliance",
+        default=DEFAULT_CHECK_UTTERANCE_TIME_WINDOW_SECONDS
+    )
+    parser.add_argument(
+        "--report_specifics",
+        help="Report specifics about compliance instances",
+        action='store_true',
+        default=False
+    )
     args = parser.parse_args()
 
     report = {}
+    report["seconds_window"] = args.seconds
+    report["compliance_data"] = {}
 
     for filepath in tqdm(glob(args.data_dir + "/*T00*UAZ*.metadata")):
         metadata_file_name = os.path.basename(filepath)
-        report[metadata_file_name] = {}
+        report["compliance_data"][metadata_file_name] = {}
 
         player_information: Dict[str, str] = {}
+        player_callsign: Dict[str, str] = {}
         watch_interventions: List[Intervention] = []
 
         # sort messages in the metadata
-        print("Sorting messages in file " + metadata_file_name)
-        messages = []
-        for message in metadata_message_generator(filepath):
-            messages.append(message)
+        if args.sort:
+            print("Sorting messages in file " + metadata_file_name)
+            json_messages = []
+            for message in metadata_message_generator(filepath):
+                json_messages.append(message)
 
-        sorted_messages = sorted(
-            messages, key=lambda x: parse(x["msg"]["timestamp"])
-        )
+            messages = sorted(
+                json_messages, key=lambda x: parse(x["msg"]["timestamp"])
+            )
+        else:
+            messages = metadata_message_generator(filepath)
 
         trial_started = False
 
         # parse messages
-        total_num_messages = len(sorted_messages)
-        pbar = tqdm(total=total_num_messages)
-        for message in sorted_messages:
-            pbar.update()
-
+        for message in messages:
             timestamp = parse(message["msg"]["timestamp"])
 
             # resolve expired interventions
@@ -414,13 +548,12 @@ if __name__ == "__main__":
             if "topic" in message and message["topic"] == TRIAL_TOPIC:
                 # extract player information
                 if message["msg"]["sub_type"] == "start":
-                    player_information = extract_player_information(message)
+                    player_information, player_callsign = extract_player_information(
+                        message)
                     trial_started = True
                     continue
                 # end parsing after the trial has ended
                 else:
-                    pbar.n = total_num_messages
-                    pbar.close()
                     break
 
             # only start monitoring after trial has started
@@ -434,18 +567,21 @@ if __name__ == "__main__":
                     player_information.values()
                 )
 
-                interventions = extract_intervention(message, timestamp)
+                interventions = extract_intervention(
+                    message, timestamp, args.seconds)
 
                 for intervention in interventions:
                     watch_interventions.append(intervention)
 
-                    if intervention.type not in report[metadata_file_name]:
-                        report[metadata_file_name][intervention.type] = {}
+                    if intervention.type not in report["compliance_data"][metadata_file_name]:
+                        report["compliance_data"][metadata_file_name][intervention.type] = {
+                        }
 
-                    report[metadata_file_name][intervention.type][
+                    report["compliance_data"][metadata_file_name][intervention.type][
                         intervention.timestamp
                     ] = {
                         "for_subject": intervention.for_subject,
+                        "subject_callsign": player_callsign[intervention.for_subject],
                         "compliance": None,
                     }
 
@@ -471,7 +607,7 @@ if __name__ == "__main__":
                                     complied_interventions.append(intervention)
 
                                     # record compliance information
-                                    report[metadata_file_name][
+                                    report["compliance_data"][metadata_file_name][
                                         intervention.type
                                     ][intervention.timestamp]["compliance"] = {
                                         "timestamp": timestamp,
@@ -489,7 +625,7 @@ if __name__ == "__main__":
                                 complied_interventions.append(intervention)
 
                                 # record compliance information
-                                report[metadata_file_name][intervention.type][
+                                report["compliance_data"][metadata_file_name][intervention.type][
                                     intervention.timestamp
                                 ]["compliance"] = {
                                     "timestamp": timestamp,
@@ -518,7 +654,7 @@ if __name__ == "__main__":
                             complied_interventions.append(intervention)
 
                             # record compliance information
-                            report[metadata_file_name][intervention.type][
+                            report["compliance_data"][metadata_file_name][intervention.type][
                                 intervention.timestamp
                             ]["compliance"] = {
                                 "timestamp": timestamp,
@@ -528,4 +664,4 @@ if __name__ == "__main__":
                 for intervention in complied_interventions:
                     watch_interventions.remove(intervention)
 
-    log_report(args.output_dir, report)
+    report_compliance(args.output_dir, report, args.report_specifics)
