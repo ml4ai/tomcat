@@ -4,8 +4,9 @@ on run argv
 	set thePath to (item 1 of argv)
 	set theFrameRate to (item 2 of argv)
 	set theLogPath to thePath & "/ffmpeg.log"
-	set theCommand to "ffmpeg -f avfoundation -i 'Capture screen 0' -pix_fmt rgb24 -r " & theFrameRate & " -s 1280x720"
-	set theOutputPath to thePath & "/output%06d.png"
+	set theTimestamp to "\"settb=AVTB,setpts='trunc(PTS/1K)*1K+st(1,trunc(RTCTIME/1K))-1K*trunc(ld(1)/1K)', drawtext=text='%{localtime}.%{eif\\:1M*t-1K*trunc(t*1K)\\:d}':fontsize=54:fontcolor=red@0.9:x=10:y=1400\""
+	set theCommand to "ffmpeg -f avfoundation -i 'Capture screen 1' -pix_fmt rgb24 -r " & theFrameRate & " -s 1280x720" & " -vf " & theTimestamp & " -strftime 1"
+	set theOutputPath to thePath & "/%Y-%m-%d_%H-%M-%S.%s.png"
 	set theBashCommand to theCommand & " " & theOutputPath & " &> " & theLogPath -- This won't print to the terminal but it will hang
 	
 	tell application "Terminal"
@@ -13,3 +14,7 @@ on run argv
 		set miniaturized of window 1 to true
 	end tell
 end run
+
+-- If your executing it manually: "./record_screen <path> 10"
+-- In case you "zsh: permission denied: ./record_screen" error message 
+-- Do "chmod u+x record_screen"
