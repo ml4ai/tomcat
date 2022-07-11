@@ -13,76 +13,76 @@ from datetime import datetime
 
 logging.basicConfig(level=logging.WARN)
 
-#Time for a player to comply, in seconds
+# Time for a player to comply, in seconds
 COMPLIANCE_INTERVAL = 60
 
-#Topics used to determine TA3 survey metrics
+# Topics used to determine TA3 survey metrics
 topicsToIndex = [
     "agent/intervention/ASI_UAZ_TA1_ToMCAT/chat",
     "agent/asr/final",
     "minecraft/chat",
-    "observations/events/player/marker_placed"
-    ]
+    "observations/events/player/marker_placed",
+]
 
-#Determine which player a message is relevant to
-#-1 is undetermined
-#0  is ignore (example: server messages in text chat)
+# Determine which player a message is relevant to
+# -1 is undetermined
+# 0  is ignore (example: server messages in text chat)
 def getMessageDest(msg):
-    #determine minecraft/chat player from 'sender'
-    if msg['topic'] == 'minecraft/chat':
-        if 'RED' in msg['data']['sender']:
-            return 'RED'
-        if 'GREEN' in msg['data']['sender']:
-            return 'GREEN'
-        if 'BLUE' in msg['data']['sender']:
-            return 'BLUE'
-        if 'Server' in msg['data']['sender']:
+    # determine minecraft/chat player from 'sender'
+    if msg["topic"] == "minecraft/chat":
+        if "RED" in msg["data"]["sender"]:
+            return "RED"
+        if "GREEN" in msg["data"]["sender"]:
+            return "GREEN"
+        if "BLUE" in msg["data"]["sender"]:
+            return "BLUE"
+        if "Server" in msg["data"]["sender"]:
             return 0
-        return -1;
-        
-    #determine intervention player from message content
-    if msg['topic'] == "agent/intervention/ASI_UAZ_TA1_ToMCAT/chat":
-        if 'Red' in msg['data']['content']:
-            return 'RED'
-        if 'Blue' in msg['data']['content']:
-            return 'GREEN'
-        if 'Green' in msg['data']['content']:
-            return 'BLUE'
-        if 'Hi, Team.' in msg['data']['content']:
-            return 0 #Ignore tom's intro message 
         return -1
-    
-    #determine agent/asr/final player from 'participant_id'
-    if msg['topic'] == 'agent/asr/final':
-            
-        if 'RED' in msg['data']['participant_id']:
-            return 'RED'
-        if 'GREEN' in msg['data']['participant_id']:
-            return 'GREEN'
-        if 'BLUE' in msg['data']['participant_id']:
-            return 'BLUE'
-    
+
+    # determine intervention player from message content
+    if msg["topic"] == "agent/intervention/ASI_UAZ_TA1_ToMCAT/chat":
+        if "Red" in msg["data"]["content"]:
+            return "RED"
+        if "Blue" in msg["data"]["content"]:
+            return "GREEN"
+        if "Green" in msg["data"]["content"]:
+            return "BLUE"
+        if "Hi, Team." in msg["data"]["content"]:
+            return 0  # Ignore tom's intro message
+        return -1
+
+    # determine agent/asr/final player from 'participant_id'
+    if msg["topic"] == "agent/asr/final":
+
+        if "RED" in msg["data"]["participant_id"]:
+            return "RED"
+        if "GREEN" in msg["data"]["participant_id"]:
+            return "GREEN"
+        if "BLUE" in msg["data"]["participant_id"]:
+            return "BLUE"
+
         else:
             return -1
 
-    #determine observations/.../marker_placed player from playername
-    if msg['topic'] == 'observations/events/player/marker_placed':
-        if 'RED' in msg['data']['playername']:
-            return 'RED'
-        if 'GREEN' in msg['data']['playername']:
-            return 'GREEN'
-        if 'BLUE' in msg['data']['playername']:
-            return 'BLUE'
-    
+    # determine observations/.../marker_placed player from playername
+    if msg["topic"] == "observations/events/player/marker_placed":
+        if "RED" in msg["data"]["playername"]:
+            return "RED"
+        if "GREEN" in msg["data"]["playername"]:
+            return "GREEN"
+        if "BLUE" in msg["data"]["playername"]:
+            return "BLUE"
+
     else:
         return -1
     return -1
 
 
-#Determine the type of intervention ToM performed
-#Returns -1 in case of failure
+# Determine the type of intervention ToM performed
+# Returns -1 in case of failure
 def getInterventionType(message):
-    if message['topic'] != 'agent/intervention/ASI_UAZ_TA1_ToMCAT/chat':
+    if message["topic"] != "agent/intervention/ASI_UAZ_TA1_ToMCAT/chat":
         return -1
 
     explanation = message["data"]["explanation"]["info"]
@@ -102,81 +102,73 @@ def getInterventionType(message):
 
     return -1
 
-#Check a message to see if its player complies with an intervention
-#0 - did not comply
-#1 - complied
-#2 - ToM intervened again before player complied
-#-1- error
+
+# Check a message to see if its player complies with an intervention
+# 0 - did not comply
+# 1 - complied
+# 2 - ToM intervened again before player complied
+# -1- error
 def player_complies(intervention, response, intervention_type):
-    if response['topic'] == 'agent/intervention/ASI_UAZ_TA1_ToMCAT/chat':
+    if response["topic"] == "agent/intervention/ASI_UAZ_TA1_ToMCAT/chat":
         return 2
     if intervention_type == "marker_block":
-        if response['topic'] == 'observations/events/player/marker_placed':
+        if response["topic"] == "observations/events/player/marker_placed":
             return 1
         return 0
     if intervention_type == "motivational":
-        return 0 #not considered
-    if(
+        return 0  # not considered
+    if (
         intervention_type == "help_request_for_critical_victim"
         or intervention_type == "help_request_for_room_escape"
         or intervention_type == "help_request_reply"
     ):
-        if(
-            response['topic'] == 'minecraft/chat'
-            or response['topic'] == 'agent/asr/final'
+        if (
+            response["topic"] == "minecraft/chat"
+            or response["topic"] == "agent/asr/final"
         ):
             return 1
         return 0
     return -1
-    
-#Analyze a sequence of events to assess compliance
+
+
+# Analyze a sequence of events to assess compliance
 def analyze_compliance(events):
 
-    #store intervention msg, compliance, response msg/NA
+    # store intervention msg, compliance, response msg/NA
     results = []
 
-    #Sort by timestamp
+    # Sort by timestamp
     def get_datetime(message):
-        #truncate precision <1ms
-        full_timestamp = message['header']['timestamp']
-        start_decimal = full_timestamp.find('.')
-        #some timestamps only have precision to 1s
+        # truncate precision <1ms
+        full_timestamp = message["header"]["timestamp"]
+        start_decimal = full_timestamp.find(".")
+        # some timestamps only have precision to 1s
         if start_decimal == -1:
-            return datetime.strptime(
-                full_timestamp,
-                "%Y-%m-%dT%H:%M:%SZ"
-            )
-        cut_timestamp = full_timestamp[0:start_decimal+3]
-        return datetime.strptime(
-            cut_timestamp,
-            "%Y-%m-%dT%H:%M:%S.%f"
-        )
+            return datetime.strptime(full_timestamp, "%Y-%m-%dT%H:%M:%SZ")
+        cut_timestamp = full_timestamp[0 : start_decimal + 3]
+        return datetime.strptime(cut_timestamp, "%Y-%m-%dT%H:%M:%S.%f")
+
     events.sort(key=get_datetime)
 
-    #Analyze messages
+    # Analyze messages
     for i in range(len(events)):
-        if events[i]['topic'] == 'agent/intervention/ASI_UAZ_TA1_ToMCAT/chat':
+        if events[i]["topic"] == "agent/intervention/ASI_UAZ_TA1_ToMCAT/chat":
             intervention_type = getInterventionType(events[i])
             j = i + 1
             tdelta = get_datetime(events[j]) - get_datetime(events[i])
             complied = 0
-            response = 'NA'
-            while (
-                j < len(events)
-                and tdelta.seconds <= COMPLIANCE_INTERVAL
-            ):
+            response = "NA"
+            while j < len(events) and tdelta.seconds <= COMPLIANCE_INTERVAL:
                 complied = player_complies(
-                    events[i],
-                    events[j],
-                    intervention_type
+                    events[i], events[j], intervention_type
                 )
                 if complied == -1:
                     print("error determining compliance")
                     print(events[i])
-                    print(events[j]['topic'])
+                    print(events[j]["topic"])
                     print(intervention_type)
-                    #exit()
-                    input('?')
+                    # exit()
+                    input("?")
                 elif complied == 1:
                     response = events[j]
                     break
@@ -184,24 +176,28 @@ def analyze_compliance(events):
                     response = events[j]
                     break
 
-                j = j+1
+                j = j + 1
                 if j < len(events):
                     tdelta = get_datetime(events[j]) - get_datetime(events[i])
 
             results.append(
-                {'intervention':events[i], 'compliance':complied, 'response':response }
+                {
+                    "intervention": events[i],
+                    "compliance": complied,
+                    "response": response,
+                }
             )
     return results
-                
-    
+
+
 def run_evaluation(args):
     ac_use_counts = {}
     n_interventions = 0
     intervention_type_counts = {}
     output_file = open(args.output, "w")
     n_files_processed = 0
-    #List of events for each player. 
-    events = {'RED':[], 'BLUE':[], 'GREEN':[]}
+    # List of events for each player.
+    events = {"RED": [], "BLUE": [], "GREEN": []}
     compliance_msg_pairs = {}
     for filepath in tqdm(glob(args.data_dir + "/*T00*UAZ*.metadata")):
         n_files_processed += 1
@@ -210,15 +206,12 @@ def run_evaluation(args):
             for line in f:
                 message = json.loads(line)
 
-                #Index messages into lists for compliance eval
-                if (
-                    "topic" in message
-                    and message["topic"] in topicsToIndex
-                ):
-                    #ignore some messages
+                # Index messages into lists for compliance eval
+                if "topic" in message and message["topic"] in topicsToIndex:
+                    # ignore some messages
                     if getMessageDest(message) == 0:
                         pass
-                    #if we can't determine the relevant player
+                    # if we can't determine the relevant player
                     elif getMessageDest(message) == -1:
                         print("message index fail")
                         print(getMessageDest(message))
@@ -228,7 +221,7 @@ def run_evaluation(args):
                     else:
                         events[getMessageDest(message)].append(message)
 
-                #Adarsh's code to count interventions
+                # Adarsh's code to count interventions
                 if (
                     "topic" in message
                     and message["topic"]
@@ -296,30 +289,44 @@ def run_evaluation(args):
                     for ac in ACs_used:
                         ac_use_counts[ac] = ac_use_counts.get(ac, 0) + 1
 
-    n_interventions_considered = n_interventions - intervention_type_counts['motivational']
+    n_interventions_considered = (
+        n_interventions - intervention_type_counts["motivational"]
+    )
     n_complied_total = 0
     n_complied_by_player = {}
     n_complied_by_itype = {}
-    not_analyzed_by_player = {'RED': 0, 'GREEN':0, 'BLUE':0} #not considering compliance for motivational category
+    not_analyzed_by_player = {
+        "RED": 0,
+        "GREEN": 0,
+        "BLUE": 0,
+    }  # not considering compliance for motivational category
     for player in events.keys():
         nc = 0
-        #'intervention' 'compliance' 'response' 
+        #'intervention' 'compliance' 'response'
         compliance_msg_pairs[player] = analyze_compliance(events[player])
         for msg_pair in compliance_msg_pairs[player]:
-            
-            itype = getInterventionType(msg_pair['intervention'])
-            if itype == 'motivational':
-                not_analyzed_by_player['player'] = not_analyzed_by_player['player'] + 1
 
-            if msg_pair['compliance'] == 1:
+            itype = getInterventionType(msg_pair["intervention"])
+            if itype == "motivational":
+                not_analyzed_by_player["player"] = (
+                    not_analyzed_by_player["player"] + 1
+                )
+
+            if msg_pair["compliance"] == 1:
                 n_complied_total += 1
-                n_complied_by_player[player] = n_complied_by_player.get(player,0) + 1
-                n_complied_by_itype[itype] = n_complied_by_itype.get(itype, 0) + 1
-            
+                n_complied_by_player[player] = (
+                    n_complied_by_player.get(player, 0) + 1
+                )
+                n_complied_by_itype[itype] = (
+                    n_complied_by_itype.get(itype, 0) + 1
+                )
+
     def write(line):
         output_file.write(line + "\n")
 
-    write(f"Study 3 evaluation report (generated {datetime.utcnow().isoformat()+'Z'})")
+    write(
+        f"Study 3 evaluation report (generated {datetime.utcnow().isoformat()+'Z'})"
+    )
     write("=================================================================")
     write("")
     write(f"Total number of files processed: {n_files_processed}")
@@ -343,19 +350,25 @@ def run_evaluation(args):
     write("-------------")
     write("")
     write(f"Interventions considered: {n_interventions_considered}")
-    write(f"Overall Compliance: {n_complied_total} / {n_interventions_considered} ( {(100*n_complied_total/n_interventions_considered):3.2f} % )")
+    write(
+        f"Overall Compliance: {n_complied_total} / {n_interventions_considered} ( {(100*n_complied_total/n_interventions_considered):3.2f} % )"
+    )
     write("")
     write("Interventions by Player")
     write("-------------")
     for player in n_complied_by_player.keys():
-        write(f"{player} {n_complied_by_player[player]} / {len(compliance_msg_pairs[player]) - not_analyzed_by_player[player]}"+
-              f"( {(100*n_complied_by_player[player]/(len(compliance_msg_pairs[player]))-not_analyzed_by_player[player]):3.2f} % )") 
-    
+        write(
+            f"{player} {n_complied_by_player[player]} / {len(compliance_msg_pairs[player]) - not_analyzed_by_player[player]}"
+            + f"( {(100*n_complied_by_player[player]/(len(compliance_msg_pairs[player]))-not_analyzed_by_player[player]):3.2f} % )"
+        )
+
     write("")
     write("Interventions by Type")
     write("-------------")
     for itype in n_complied_by_itype.keys():
-        write(f"{itype}: {n_complied_by_itype[itype]} / {intervention_type_counts[itype]} ( {(100*n_complied_by_itype[itype]/intervention_type_counts[itype]):3.2f} % )") 
+        write(
+            f"{itype}: {n_complied_by_itype[itype]} / {intervention_type_counts[itype]} ( {(100*n_complied_by_itype[itype]/intervention_type_counts[itype]):3.2f} % )"
+        )
     output_file.close()
 
 
@@ -377,5 +390,3 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     run_evaluation(args)
-
-
