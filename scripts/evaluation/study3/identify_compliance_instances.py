@@ -58,9 +58,6 @@ class HelpRequestRoomEscapeIntervention(Intervention):
                  seconds_window: int) -> None:
         super().__init__(timestamp, for_subject, seconds_window)
         self.type = "help_request_for_room_escape"
-        self.expiration = timestamp + timedelta(
-            seconds=DEFAULT_CHECK_UTTERANCE_TIME_WINDOW_SECONDS
-        )
         self.compliance_criteria = [
             "Stuck",
             "HelpRequest",
@@ -80,9 +77,6 @@ class HelpRequestReplyIntervention(Intervention):
                  seconds_window: int) -> None:
         super().__init__(timestamp, for_subject, seconds_window)
         self.type = "help_request_reply"
-        self.expiration = timestamp + timedelta(
-            seconds=DEFAULT_CHECK_UTTERANCE_TIME_WINDOW_SECONDS
-        )
         self.compliance_criteria = [
             "Stuck",
             "HelpRequest",
@@ -102,9 +96,6 @@ class MarkerBlockRegularVictimIntervention(Intervention):
                  seconds_window: int) -> None:
         super().__init__(timestamp, for_subject, seconds_window)
         self.type = "marker_block_regular_victim"
-        self.expiration = timestamp + timedelta(
-            seconds=DEFAULT_CHECK_UTTERANCE_TIME_WINDOW_SECONDS
-        )
         self.compliance_criteria = [
             "RegularVictim",
             "RegularMarkerBlock",
@@ -119,9 +110,6 @@ class MarkerBlockCriticalVictimIntervention(Intervention):
                  seconds_window: int) -> None:
         super().__init__(timestamp, for_subject, seconds_window)
         self.type = "marker_block_critical_victim"
-        self.expiration = timestamp + timedelta(
-            seconds=DEFAULT_CHECK_UTTERANCE_TIME_WINDOW_SECONDS
-        )
         self.compliance_criteria = [
             "CriticalVictim",
             "CriticalMarkerBlock",
@@ -136,9 +124,6 @@ class MarkerBlockVictimAIntervention(Intervention):
                  seconds_window: int) -> None:
         super().__init__(timestamp, for_subject, seconds_window)
         self.type = "marker_block_victim_a"
-        self.expiration = timestamp + timedelta(
-            seconds=DEFAULT_CHECK_UTTERANCE_TIME_WINDOW_SECONDS
-        )
         self.compliance_criteria = [
             "VictimTypeA",
             "TypeAMarker",
@@ -154,9 +139,6 @@ class MarkerBlockVictimBIntervention(Intervention):
                  seconds_window: int) -> None:
         super().__init__(timestamp, for_subject, seconds_window)
         self.type = "marker_block_victim_b"
-        self.expiration = timestamp + timedelta(
-            seconds=DEFAULT_CHECK_UTTERANCE_TIME_WINDOW_SECONDS
-        )
         self.compliance_criteria = [
             "VictimTypeB",
             "TypeBMarker",
@@ -172,9 +154,6 @@ class MarkerBlockRubbleIntervention(Intervention):
                  seconds_window: int) -> None:
         super().__init__(timestamp, for_subject, seconds_window)
         self.type = "marker_block_rubble"
-        self.expiration = timestamp + timedelta(
-            seconds=DEFAULT_CHECK_UTTERANCE_TIME_WINDOW_SECONDS
-        )
         self.compliance_criteria = [
             "Obstacle",
             "RubbleMarker",
@@ -189,9 +168,6 @@ class MarkerBlockNoVictimIntervention(Intervention):
                  seconds_window: int) -> None:
         super().__init__(timestamp, for_subject, seconds_window)
         self.type = "marker_block_no_victim"
-        self.expiration = timestamp + timedelta(
-            seconds=DEFAULT_CHECK_UTTERANCE_TIME_WINDOW_SECONDS
-        )
         self.compliance_criteria = [
             "NoVictim",
             "NoVictimMarkerBlock",
@@ -207,9 +183,6 @@ class MarkerBlockSOSIntervention(Intervention):
                  seconds_window: int) -> None:
         super().__init__(timestamp, for_subject, seconds_window)
         self.type = "marker_block_sos"
-        self.expiration = timestamp + timedelta(
-            seconds=DEFAULT_CHECK_UTTERANCE_TIME_WINDOW_SECONDS
-        )
         self.compliance_criteria = [
             "Stuck",
             "HelpRequest",
