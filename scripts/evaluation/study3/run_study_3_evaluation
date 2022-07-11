@@ -24,29 +24,6 @@ topicsToIndex = [
     "observations/events/player/marker_placed"
     ]
 
-
-## Helper Functions
-
-#get participant-color key from trial topic message
-#I probably won't use this
-#but im not comfortable removing it yet
-def getPlayerInfo(msg):
-
-    players = [None, None, None] #0 is red, 1 is grn, 2 is blu
-    for client in msg['data']['client_info']:
-        if 'RED' in client['playername']:
-            players[0] = client
-        elif 'GREEN' in client['playername']:
-            players[1] = client
-        elif 'BLUE' in client['playername']:
-            players[2] = client
-        else:
-            print("setPlayerInfo error")
-            print(message)
-            exit()
-        
-    return players
-
 #Determine which player a message is relevant to
 #-1 is undetermined
 #0  is ignore (example: server messages in text chat)
@@ -103,7 +80,7 @@ def getMessageDest(msg):
 
 
 #Determine the type of intervention ToM performed
-#Returns -1 if it can't
+#Returns -1 in case of failure
 def getInterventionType(message):
     if message['topic'] != 'agent/intervention/ASI_UAZ_TA1_ToMCAT/chat':
         return -1
@@ -153,16 +130,26 @@ def player_complies(intervention, response, intervention_type):
     return -1
     
 #Analyze a sequence of events to assess compliance
-def analyze_compliance(events, color):
+def analyze_compliance(events):
 
-    #store intervention msg, compliance (Y/N/I), response msg/NA
+    #store intervention msg, compliance, response msg/NA
     results = []
 
     #Sort by timestamp
     def get_datetime(message):
+        #truncate precision <1ms
+        full_timestamp = message['header']['timestamp']
+        start_decimal = full_timestamp.find('.')
+        #some timestamps only have precision to 1s
+        if start_decimal == -1:
+            return datetime.strptime(
+                full_timestamp,
+                "%Y-%m-%dT%H:%M:%SZ"
+            )
+        cut_timestamp = full_timestamp[0:start_decimal+3]
         return datetime.strptime(
-            message['@timestamp'],
-            "%Y-%m-%dT%H:%M:%S.%fZ"
+            cut_timestamp,
+            "%Y-%m-%dT%H:%M:%S.%f"
         )
     events.sort(key=get_datetime)
 
@@ -200,9 +187,7 @@ def analyze_compliance(events, color):
                 j = j+1
                 if j < len(events):
                     tdelta = get_datetime(events[j]) - get_datetime(events[i])
-                    
-            #Format data
-            #store intervention msg, compliance (Y/N/I), response msg/NA
+
             results.append(
                 {'intervention':events[i], 'compliance':complied, 'response':response }
             )
@@ -315,17 +300,22 @@ def run_evaluation(args):
     n_complied_total = 0
     n_complied_by_player = {}
     n_complied_by_itype = {}
+    not_analyzed_by_player = {'RED': 0, 'GREEN':0, 'BLUE':0} #not considering compliance for motivational category
     for player in events.keys():
         nc = 0
         #'intervention' 'compliance' 'response' 
-        compliance_msg_pairs[player] = analyze_compliance(events[player],player)
+        compliance_msg_pairs[player] = analyze_compliance(events[player])
         for msg_pair in compliance_msg_pairs[player]:
+            
+            itype = getInterventionType(msg_pair['intervention'])
+            if itype == 'motivational':
+                not_analyzed_by_player['player'] = not_analyzed_by_player['player'] + 1
+
             if msg_pair['compliance'] == 1:
                 n_complied_total += 1
-                itype = getInterventionType(msg_pair['intervention'])
                 n_complied_by_player[player] = n_complied_by_player.get(player,0) + 1
                 n_complied_by_itype[itype] = n_complied_by_itype.get(itype, 0) + 1
-        
+            
     def write(line):
         output_file.write(line + "\n")
 
@@ -358,9 +348,10 @@ def run_evaluation(args):
     write("Interventions by Player")
     write("-------------")
     for player in n_complied_by_player.keys():
-        write(f"{player} {n_complied_by_player[player]} / {len(compliance_msg_pairs[player])} ( {(100*n_complied_by_player[player]/len(compliance_msg_pairs[player])):3.2f} % )") 
+        write(f"{player} {n_complied_by_player[player]} / {len(compliance_msg_pairs[player]) - not_analyzed_by_player[player]}"+
+              f"( {(100*n_complied_by_player[player]/(len(compliance_msg_pairs[player]))-not_analyzed_by_player[player]):3.2f} % )") 
     
-
+    write("")
     write("Interventions by Type")
     write("-------------")
     for itype in n_complied_by_itype.keys():
