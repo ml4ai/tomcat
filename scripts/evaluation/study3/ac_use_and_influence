@@ -34,7 +34,7 @@ def run_evaluation(args):
     df.n_interventions = df.n_interventions.astype(int)
     df.influence_level = df.influence_level.astype(str)
 
-    for filepath in tqdm(glob(args.data_dir + "/*T00*UAZ*.metadata")):
+    for filepath in tqdm(glob(args.data_dir + "/HSRData_TrialMessages*Trial-T00*UAZ*.metadata")):
         n_files_processed += 1
         info(f"Processing {filepath}")
         with open(filepath) as f:
