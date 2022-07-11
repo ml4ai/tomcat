@@ -8,6 +8,7 @@ Developer documentation
    CONTRIBUTING
    architecture
    message_bus
+   metadata_files
    missions
    Client_Server_Communication
    prebuilt_world_loading

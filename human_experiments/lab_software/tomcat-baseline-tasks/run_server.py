@@ -57,6 +57,10 @@ if __name__ == "__main__":
     parser.add_argument("-s", "--save", default=DEFAULT_DATA_SAVE_PATH, help="Specify where to save data")
     args = parser.parse_args()
 
+    data_path = args.save + "/rest_state"
+    if not os.path.exists(data_path):
+        os.makedirs(data_path)
+
     data_path = args.save + "/finger_tapping"
     if not os.path.exists(data_path):
         os.makedirs(data_path)
@@ -78,7 +82,8 @@ if __name__ == "__main__":
     _send_start(list(server.to_client_connections.values()))
 
     server_rest_state = ServerRestState(list(server.to_client_connections.values()), 
-                                        server.from_client_connections)
+                                        server.from_client_connections, 
+                                        data_save_path=args.save)
     server_rest_state.run()
 
     # Finger tapping task
