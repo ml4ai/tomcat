@@ -4,7 +4,6 @@ import argparse
 import os
 from datetime import datetime, timedelta
 from glob import glob
-from turtle import pd
 from typing import Dict, List, Tuple
 
 import pandas as pd
@@ -509,7 +508,7 @@ if __name__ == "__main__":
     report["seconds_window"] = args.seconds
     report["compliance_data"] = {}
 
-    for filepath in tqdm(glob(args.data_dir + "/*T00*UAZ*.metadata")):
+    for filepath in tqdm(glob(args.data_dir + "/HSRData*TrialMessages_Trial-T00*UAZ*.metadata")):
         metadata_file_name = os.path.basename(filepath)
         report["compliance_data"][metadata_file_name] = {}
 
