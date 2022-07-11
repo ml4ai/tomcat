@@ -148,7 +148,10 @@ def process_message(i: int, message: dict, sorted_messages, args) -> None:
     topic = "topic-not-available"
 
     if "topic" in message:
-        topic = message.pop("topic")
+        if args.with_topic:
+            topic = message["topic"]
+        else:
+            topic = message.pop("topic")
     else:
         warning(
             f"No topic for message {json.dumps(message)}!"
@@ -191,6 +194,12 @@ def make_argument_parser():
             "Output file to collect messages published to the bus during "
             "the replay."
         ),
+    )
+
+    parser.add_argument(
+        "--with_topic",
+        action="store_true",
+        help = "Include the message topics in replay."
     )
 
     mqtt_options = parser.add_argument_group(
