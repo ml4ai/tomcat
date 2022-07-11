@@ -151,9 +151,9 @@ represented by classical planning or HTN planning.
 \section{Results}
 
 \subsection{Label Development and Taxonomy}
-We investigated the connection between question-asking and hidden goals of the question-asker with strict qualitative coding approach known as Grounded Theory, ensuring that our annotations were not biased by prior research, pre-determined labels, or theories about player strategy and ToM. This data-driven, robust method captures player intention and team strategies of interest and naturally lends itself to further quantitative analysis. 
+We investigated the connection between question-asking and hidden goals of the question-asker with strict qualitative coding approach known as Grounded Theory, ensuring that our annotations were not biased by prior research, pre-determined labels, or theories about player strategy and ToM. This data-driven, robust method captures player intention, team strategy, and naturally lends itself to quantitative analysis. 
 
-Two independent annotators\footnote{Ashton and Kim} viewed six study-3 pilot videos using no set of labels. Videos were selected from no-human intervention videos, at random, and three teams were chosen as a sequence (team 217, 218 and 219). The continuous disambiguation of unsupervised labels led to extensive documentation of verb, noun and modifier use agreement for the annotation of six different study-3 real data videos\footnote{Ashton and Reiffer-Champlin}, which then lead to Theoretical Saturation\footnote{When unsupervised label development from fully-autonomous annotators allows for additional labels, yet very few are created. It is this point that shows how the existing label schema fully capture the events, data and phenomena observed.}  At saturation, our unsupervised labels yield 21 verb labels, 24 noun labels, 25 modifier labels. Without replacement, this yields 12,600 possible label combinations, yet Ashton demonstrated theoretical saturation through the independent construction of less than 100 labels from two autonomous annotators.
+Two independent annotators\footnote{Ashton and Kim} viewed six study-3 pilot videos with unconstrained, unsupervised labels. Videos were selected from no-human intervention videos, at random, and three teams were chosen as a sequence (team 217, 218 and 219). The continuous disambiguation of unsupervised labels, using lexical definitions, led to extensive documentation of which labels are to be used for the capturing of specific phenomena in observations.\footnote{For example, when an annotator should use the verb 'ask', 'clarify', or 'request'.} The lexical development of labels was used for the annotation of six different study-3 real data videos\footnote{Ashton and Reiffer-Champlin}, which then lead to Theoretical Saturation \footnote{Theoretical saturation is the point when few additional labels are created, regardless of fully-autonomous annotators' ability to create new ones. Saturation demonstrates that the existing label schema fully capture the events and phenomena observed.} and converged around 21 verb labels, 24 noun labels, 25 modifier labels. Without replacement, this yields 12,600 possible label combinations, yet Ashton demonstrated theoretical saturation through the independent construction of less than 100 labels from two autonomous annotators.
 
 
 \subsection{Data Cleaning and Annotator Agreement}
@@ -163,11 +163,7 @@ We achieved an unweighted Cohen Kappa\footnote{In order to adhere to the robust 
 
 \subsection{Emergent Categories, Team Theories, and Preliminary Patterns}
 
-More than 400 unconstrained labels developed in stage 1 annotation, then 100 labels that resulted from stage 2 annotations were then analyzed for emergent categories and preliminary patterns. Frequency of labels \emph{do not} dictate the importance of a label but do alter probabilistic analysis. The data were minimally lemmatized.\footnote{The data were minimally lemmatized and aspects of label concept granularities were resolved using conditional probability. For example, the conditional probabilities of questions, given a player intention would change if "critical" and "victim" were labeled as "victim". Therefore, these and similar granularities were maintained. Other conditional probabilities, such as "location" and "room" did not significantly change, so after the data were cleaned, a global replacement of "room" to "location", and similar replacements were made. Global placement after post processing is not reflected in the Kappa score in order to maintain raw data and researcher integrity.} Data visualization and preliminary analysis focus on three key features of the data: 'questionLabel'\footnote{Code representation of the question utterance and no further context except for co-reference resolution. Some questions were spoken as statements with inflection. Other questions were actually demands shrouded with politeness. All three types of questions were coded for this investigation.}, 'abstractLabel'\footnote{Code representation of player intention. This was captured by taking the question into context. For example, if the question were represented by 'requestBreakRubble', the intent behind a request could have been 'collaborateCriticalWake' or 'navigateLocation'. AbstractLabel is not the representation of \emph{why} a question had been asked; it is the \emph{intention} of the player who asked the question.}, and 'utterance', the word of interest uttered in a question.
-
-The data were minimally lemmatized and aspects of label concept granularities were resolved using conditional probability. For example, the conditional probabilities of questions, given a player intention would change if "critical" and "victim" were labeled as "victim". Therefore, these and similar granularities were maintained. Other conditional probabilities, such as "location" and "room" did not significantly change, so after the data were cleaned, a global replacement of "room" to "location", and similar replacements were made. Global placement after post processing is not reflected in the Kappa score in order to maintain raw data and researcher integrity.
-
-We did not regard label frequency as criteria for label usefulness. Instead, from these emergent categories, we chose specific words that optimized intention or belief among player interaction\footnote{For example: \emph{ask}, \emph{request}, \emph{suggest}, and \emph{clarify} are all actions that show the goal of obtaining information, but clarify asks for additional information needed before acting upon a goal or task, request is an initiation of commitment to another player with the optional accept/ reject response that suggest would not imply, and ask is a general desire for information.}. 
+About 100 labels that resulted from real data annotations were analyzed for emergent categories and preliminary patterns. Frequency of labels \emph{did not} dictate importance, data were minimally lemmatized and label concept granularities were resolved using Bayes' Theorem.\footnote{For example, the conditional probabilities of questions given a player intention,  and the probability of intention, given a question, were calculated. Then possible granularity of labels, such as replacing "critical" and "regular victim" with one label, "victim" were considered . If the probabilities changed with this replacement, the granularity of the two original labels remained. Global placement after post processing is not reflected in the Kappa score in order to maintain raw data and researcher integrity.} Data visualization and preliminary analysis focus on three key features of the data: 'questionLabel'\footnote{Code representation of the question utterance and no further context except for co-reference resolution. Some questions were spoken as statements with inflection. Other questions were actually demands shrouded with politeness. All three types of questions were coded for this investigation.}, 'abstractLabel'\footnote{Code representation of player intention. This was captured by taking the question into context. For example, if the question were represented by 'requestBreakRubble', the intent behind a request could have been 'collaborateCriticalWake' or 'navigateLocation'. AbstractLabel is not the representation of \emph{why} a question had been asked; it is the \emph{intention} of the player who asked the question.}, and 'utterance', the word of interest uttered in a question. From the emergent categories, we chose specific words that optimized intention or belief among player interaction\footnote{For example: \emph{ask}, \emph{request}, \emph{suggest}, and \emph{clarify} are all actions that show the goal of obtaining information, but clarify asks for additional information needed before acting upon a goal or task, request is an initiation of commitment to another player with the optional accept/ reject response that suggest would not imply, and ask is a general desire for information.}. 
 
 The following themes emerge from the data:
 \begin{itemize}
@@ -181,16 +177,17 @@ The following themes emerge from the data:
 
 \subsection{Discussion and Future Research}
 
-The ultimate goal of this registration is two-fold: find enough evidence to warrant the continued investigation of question-asking through causal reasoning to discern player intention and to algorithmitize player intention from player utterance transcriptions of player without human annotator dependency. Due to the small sample size, we do not offer conclusive evaluations at this time. However, from these 12 video annotations, we \emph{can warrant} the further investigation of question-asking and inferred goals or intentions among human team players.
-
+The ultimate goal of this registration is two-fold: find enough evidence to warrant the continued investigation of question-asking through causal reasoning to discern player intention and to algorithmitize this intent from utterance transcriptions of player without human annotator dependency. Due to the small sample size, we do not offer conclusive evaluations at this time. However, from these 12 video annotations, we \emph{warrant} the further investigation of question-asking and inferred goals among human team players.
+\vspace{15pt}
 Future research will include the following tasks:
 \begin{itemize}
-    \item Scale for additional data: Ashton is currently building a model that maps words\footnote{Bag of Words and other models, at word and sentence level.} to intentions and will compare these results to models developed by the University of Arizona ToMCAT's NLP work group, including the use of ODIN and ASR.
-    \item Additional human annotation of data to compare models in earlier stages until the automation of linking intention with natural language is reproducible.
+    \item Scale for additional data: Ashton is currently building a model that maps words\footnote{Bag of Words and other models, at word and sentence level.} to intentions.
+    \item Natural generation model: Use the above model to re-create the labels generated by Ashton and Champlin. We will compare these results to models developed by the University of Arizona ToMCAT's NLP work group, including the use of ODIN and ASR.
+    \item Additional human annotation of data to compare models in earlier stages until the automation of linking intention with natural language is credible and reproducible.
     \item Compare and contrast emerging team ToM from no-intervention observations to high-intervention observations with quantitative analyses and causal inference models.
 \end{itemize}
 
-It is through these analyses that we will investigate the intent behind players who ask questions and develop models with various data structures to decide the structure of a person's goal or intention. The intention of these models will develop into additional applications that can improve predictive performance for Artificial Social Intelligent agent intervention.
+It is through these models and analyses that we will investigate the intent of players who ask questions. Additional applications that can improve predictive performance for Artificial Social Intelligent agent intervention.
 
 
 \section{Figures}
@@ -203,8 +200,7 @@ It is through these analyses that we will investigate the intent behind players 
     \caption{Player question utterances, represented by question labels and displayed by each team and the most probable question labels.}
 \end{figure}
 
-Most common questions: requests for teammates to come; clarification of a victim's status for transport (shown by the word 'stabilized' and not by 'victim' (an unstabilized victim); clarification of any victim's location and common questions about location.
-Notice that team 219, who scored the highest of the three, asked more questions to clarify communication with each other. Previous assumptions about players who prioritized the clearing of rubble, navigation strategy or dividing up tasks is not supported in this preliminary investigation.
+Figure 1 shows the highest probability of questions to be asked: requests for teammates to come, clarification of a victim's status for transport, shown by the word 'stabilized' and not by 'victim' (an unstabilized victim), and clarification of any victim's location. Notice that team 219, who scored the highest of the three, asked more questions to clarify communication with each other. Previous assumptions about players who prioritized the clearing of rubble, navigation strategy or dividing up tasks is not supported in this preliminary investigation.
 
 
 \vspace{30pt}
@@ -215,9 +211,7 @@ Notice that team 219, who scored the highest of the three, asked more questions 
     \caption{Player intention, represented by abstract labels and displayed by each team and the most probable abstract label. }
 \end{figure}
 
-The most common intentions, expressed by questions and other utterances, visual cues, context, and player interaction (represented as an abstract label) are collaborating with teammates about waking critical victims and carrying stabilized victims to the proper sick bay. 
-
-Team 219, who scored some of the highest combined scores in many of the observations, not just the ones annotated, compared to 218, who scored some of the lowest in the data, intended to collaborate on carrying stabilized victims to the proper sick bay. The difference in score is found in more granular actions: while team 219 often requested for collaborative tasks, team 218 would more often demand or tell others what tasks to perform (as seen in figure 1).
+Figure 2 shows the highest probability of intentions, expressed by questions, visual cues, context, and player interaction (represented as an abstract label). These include collaborating with teammates about waking critical victims and carrying stabilized victims to the proper sick bay. Team 219, who scored some of the highest combined scores in many of the observations, not just the ones annotated, compared to 218, who scored some of the lowest in the data, intended to collaborate on carrying stabilized victims to the proper sick bay. The difference in score is found in more granular actions: while team 219 often requested for collaborative tasks, team 218 would more often demand or tell others what tasks to perform (as seen in figure 1).
 
 \clearpage
 
@@ -229,13 +223,11 @@ Team 219, who scored some of the highest combined scores in many of the observat
     \caption{Conditional probability of questions asked, given the player's intention.}
 \end{figure}
 
-It is trivial to see the request of teammates to come to a particular location in order to wake up a critical, and so it is no surprise to see this is the most common reason for 'requestDestination' questions to be asked. It is far more interesting to see (figure 4) that 'requestDestination' is more than 80\% to be asked only for the intent of waking a victim.
+Figures 3 and 4 show that what is assumed to be trivial isn't always trivial. For example, figure 3 shows that given a player's intention to wake a critical, they are 55\% likely to ask another player to join them (trivial). It is far more interesting to see (figure 4) that given the question utterence 'requestDestination', it is more than 80\% likely to be asked only for the intent of waking a critical victim.
 
-What is most interesting is the variation of questions that can be asked, given player intention. Notice that more than 40\% of questions that could be asked are marked 'other.' To include each instance would make a noisy and sparse visual. It is this variation that matters: players will not necessarily ask expected questions (or any question at all) just because they have intention. 
+What is most interesting is the variation of questions that can be asked, given player intention. More than 40\% of questions that could be asked are marked 'other.'\footnote{Abstracted into 'other' category for clarity of this visual.} It is this variation that matters: players will not necessarily ask expected questions (or any question at all) just because they have intention. The most likely questions that \emph{are vocalized} have one aspect in common: they all have verbs that are collaborative in nature: request, clarify, collaborate. Verbs that are less collaborative in nature, (direct, suggest, inform) do not show up as the most common questions.
 
-The most likely questions that \emph{are vocalized} have one aspect in common: they all have verbs that are collaborative in nature: request, clarify, collaborate. Verbs that are less collaborative in nature, (direct, suggest, inform) do not show up as the most common questions.
-
-This suggests that when players feel like they are part of the team, they are more likely to ask questions that have a give-and-take nature.
+This suggests that when players feel like they are part of the team, they are more likely to ask questions that have a give-and-take dialog.
 
 \clearpage
 
@@ -248,7 +240,7 @@ This suggests that when players feel like they are part of the team, they are mo
 
 
 
-I remind the reader that we did not take label frequency into account when determining emergent categories and behavior patterns. To do so would bias the researcher and annotators. The probability of a question that clarifies the stabilized victim's status has a theoretical probability\footnote{It is not justified to claim 100\% probability.} approaching 100\% intent to collaborate with others on where to deliver that victim. Players were most likely to ask for unique information from the engineer when they wanted to prioritize locations or learn about threat rooms. When the GPS systems failed, more than half of the time players asked about threat rooms than they did victims, rubble, or other events.
+Figure 4 shows that a question to clarify the stabilized victim's status has a theoretical probability\footnote{It is not justified to claim 100\% probability.} approaching 100\% intent to collaborate with others on where to deliver that victim. Players were most likely to ask for unique information from the engineer when they wanted to prioritize locations or learn about threat rooms. When the GPS systems failed, more than half of the time players asked about threat rooms, not victims, rubble, or other events.
 
 
 
@@ -258,11 +250,10 @@ I remind the reader that we did not take label frequency into account when deter
 \begin{figure}[h!]
     \centering
     \fbox{\includegraphics[width=0.8\textwidth]{../images/QuestionTiming_STA.pdf}}
-    \caption{Questions asked with respect to time.}
+    \caption{Questions asked with respect to time. Time is represented continuously as color within the histogram. Video observations and question count are represented as a histogram. }
     \end{figure}
     
-    How to read this visual:
-Team 218 (videos 635 and 636) asked the fewest questions and scored the lowest combined point. this figure shows the lowest count of questions as a histogram. Video 636 is colored red in more than 66\% of its bars. This means that of any questions the team did ask, more than 66\% of them were asked toward the end of the mission. Compare this to team 1 (videos 633 and 634), who were relatively quiet players and asked the most questions in the beginning of each mission. Team 3 asked the most questions; as can be seen from the more even distribution of red and black, they asked questions at a consistent \emph{rate} throughout their missions.
+Figure 5 demonstrates questions asked across time. Team 218 (videos 635 and 636) asked the fewest questions and scored the lowest combined point. Video 636 is colored red in more than 66\% of its bars, meaning that more than 66\% of questions were asked toward the end of the mission. Compare this to team 1 (videos 633 and 634), who were relatively quiet players and asked the most questions in the beginning of each mission. Team 3 asked the most questions. The even distribution of red and black demonstrates how they asked questions at a \emph{consistent rate} throughout their missions.
 
 
 \clearpage
@@ -278,7 +269,9 @@ Team 218 (videos 635 and 636) asked the fewest questions and scored the lowest c
     \fbox{\includegraphics[width=0.8\textwidth]{"../images/Intent_to_Utterances_Link_STA.pdf"}}
     \caption{Conditional probabilities of words to be uttered in a question, given the player's intention.}
     \end{figure}
-    Figure 6 shows how some words infer intentions that are of no surprise (ie. 'information' utterances show shareInformationUnique intention). However, The words 'say', 'type', or 'come' are not domain-specific to the Minecraft environment or easily linked to collaboration intent, as opposed to words like 'victim' or 'rubble'. Figure 7 shows the probability of a word utterance, given the player intention. Returning to the collaboration of critical victims, given that intention the two most likely words to be uttered are 'want' and 'information.' From figure 6, given the word 'come', the intention is most likely to be 'collaborateCriticalVictim.'
+    Figure 6 shows how some words can infer trivial player intention (ie. 'information' utterances show 'shareInformationUnique' intention). However, words such as 'say', 'type', or 'come' are not domain-specific to the Minecraft environment-- yet show team collaboration about critical victims. 'Say' is the stemmed keyword that shows teammate communication and clarification (ie "Did you say ...") Compare this to words like 'critical' or 'area', which do not show team collaboration as much as it shows individual intention.  
+    
+    Figure 7 shows the probability of a word utterance, given the player intention. Returning to the intent of 'collaborateCriticalWake' from figure 7, the two most likely words to be uttered are 'want' and 'information.' From figure 6, only the words 'come', 'critical', and 'help' tie back to this intent. 
 
 
 
