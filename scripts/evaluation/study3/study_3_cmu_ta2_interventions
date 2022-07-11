@@ -1,0 +1,119 @@
+#!/usr/bin/env python
+
+"""Script to generate CSV for CMU-TA2's analysis of interventions in Study 3."""
+
+import json
+from glob import glob
+import logging
+from logging import info, debug
+import argparse
+from tqdm import tqdm
+import pandas as pd
+from datetime import datetime
+from dateutil.parser import parse
+from pathlib import Path
+import pandas as pd
+
+logging.basicConfig(level=logging.WARN)
+
+
+def process_files(args):
+    dicts = []
+    for filepath in tqdm(glob(args.data_dir + "/*T00*UAZ*.metadata")):
+        path = Path(filepath)
+        trial = filepath.rpartition("Trial-")[2].split("_")[0]
+        team = filepath.rpartition("Team-")[2].split("_")[0]
+
+        info(f"Processing {filepath}")
+        start_time = None
+        with open(filepath) as f:
+            for line in f:
+                message = json.loads(line)
+                if "topic" not in message:
+                    continue
+
+                if (
+                    message["topic"] == "trial"
+                    and message["msg"]["sub_type"] == "start"
+                ):
+                    start_time = parse(message["header"]["timestamp"])
+
+                if (
+                    message["topic"]
+                    == "agent/intervention/ASI_UAZ_TA1_ToMCAT/chat"
+                ):
+                    elapsed_time = (
+                        parse(message["header"]["timestamp"]) - start_time
+                    )
+                    explanation = message["data"]["explanation"][
+                        "info"
+                    ].replace("This intervention was triggered", "")
+
+                    intervention_type = None
+
+                    if "did not get an answer" in explanation:
+                        intervention_type = "help_request_reply"
+                    elif "did not ask" in explanation:
+                        if "critical victim" in explanation:
+                            intervention_type = (
+                                "help_request_for_critical_victim"
+                            )
+                        elif "threat room" in explanation:
+                            intervention_type = "help_request_for_room_escape"
+                        else:
+                            raise (
+                                ValueError(
+                                    "Could not determine help request "
+                                    "intervention type for explanation "
+                                    f"'{explanation}'"
+                                )
+                            )
+
+                    elif "placed a marker" in explanation:
+                        intervention_type = "marker_block"
+                    elif "ensure" in explanation:
+                        intervention_type = "motivational"
+                    else:
+                        raise (
+                            ValueError(
+                                "Could not determine intervention type: ",
+                                explanation,
+                            )
+                        )
+
+                    receivers = message["data"]["receivers"]
+                    target = "individual" if len(receivers) == 1 else "team"
+                    _dict = {
+                        "elapsed_time": elapsed_time,
+                        "global_time": message["header"]["timestamp"],
+                        "team": team,
+                        "trial": trial,
+                        "intervention_type": intervention_type,
+                        "intervention_content": message["data"]["content"],
+                        "target": target,
+                    }
+
+                    dicts.append(_dict)
+
+    df = pd.DataFrame(dicts, dtype=str)
+    df.to_csv(args.output, index=False)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    parser.add_argument(
+        "--data_dir",
+        help="Directory containing .metadata files",
+        default="/media/mule/projects/tomcat/protected/study-3_2022",
+    )
+    parser.add_argument(
+        "--output",
+        help="Path to output CSV file",
+        default="study3_cmu_ta2.csv",
+    )
+
+    args = parser.parse_args()
+    process_files(args)
