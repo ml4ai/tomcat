@@ -363,7 +363,7 @@ def report_compliance(
                     > 0
                 ):
                     intervention_compliance_count[intervention_type][
-                        "compliance_statistics"
+                        "compliance_statistics (%)"
                     ] = (
                         100
                         * float(
@@ -379,7 +379,7 @@ def report_compliance(
                     )
                 else:
                     intervention_compliance_count[intervention_type][
-                        "compliance_statistics"
+                        "compliance_statistics (%)"
                     ] = 0.0
 
                 if report_specifics:
@@ -423,7 +423,7 @@ def report_compliance(
             for intervention_type, intervention_count in interventions.items():
                 if intervention_count["num_interventions"] > 0:
                     player_compliance_count[callsign][intervention_type][
-                        "compliance_statistics"
+                        "compliance_statistics (%)"
                     ] = (
                         100
                         * float(intervention_count["num_compliances"])
@@ -431,7 +431,7 @@ def report_compliance(
                     )
                 else:
                     player_compliance_count[callsign][intervention_type][
-                        "compliance_statistics"
+                        "compliance_statistics (%)"
                     ] = 0.0
 
             df_player = pd.DataFrame(data=interventions).T
