@@ -49,7 +49,9 @@ class HelpRequestRoomEscapeIntervention(Intervention):
                                     "NeedAction",
                                     "NeedItem",
                                     "NeedRole",
-                                    "SOSMarker"]
+                                    "SOSMarker",
+                                    "help",
+                                    "stuck"]
 
 
 class HelpRequestReplyIntervention(Intervention):
@@ -63,7 +65,9 @@ class HelpRequestReplyIntervention(Intervention):
                                     "NeedAction",
                                     "NeedItem",
                                     "NeedRole",
-                                    "SOSMarker"]
+                                    "SOSMarker",
+                                    "help",
+                                    "stuck"]
 
 
 class MarkerBlockRegularVictimIntervention(Intervention):
@@ -95,7 +99,9 @@ class MarkerBlockVictimAIntervention(Intervention):
         self.expiration = timestamp + \
             timedelta(seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS)
         self.compliance_criteria = ["VictimTypeA",
-                                    "TypeAMarker"]
+                                    "TypeAMarker",
+                                    "victim A",
+                                    "A victim"]
 
 
 class MarkerBlockVictimBIntervention(Intervention):
@@ -105,7 +111,9 @@ class MarkerBlockVictimBIntervention(Intervention):
         self.expiration = timestamp + \
             timedelta(seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS)
         self.compliance_criteria = ["VictimTypeB",
-                                    "TypeBMarker"]
+                                    "TypeBMarker",
+                                    "victim B",
+                                    "B victim"]
 
 
 class MarkerBlockRubbleIntervention(Intervention):
@@ -127,7 +135,24 @@ class MarkerBlockNoVictimIntervention(Intervention):
             timedelta(seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS)
         self.compliance_criteria = ["NoVictim",
                                     "NoVictimMarkerBlock",
-                                    "no victim"]
+                                    "no victim",
+                                    "empty"]
+
+
+class MarkerBlockSOSIntervention(Intervention):
+    def __init__(self, timestamp: datetime, for_subject: str) -> None:
+        super().__init__(timestamp, for_subject)
+        self.type = "marker_block_sos"
+        self.expiration = timestamp + \
+            timedelta(seconds=CHECK_UTTERANCE_TIME_WINDOW_SECONDS)
+        self.compliance_criteria = ["Stuck",
+                                    "HelpRequest",
+                                    "NeedAction",
+                                    "NeedItem",
+                                    "NeedRole",
+                                    "SOSMarker",
+                                    "help",
+                                    "stuck"]
 
 
 def extract_player_information(message) -> dict[str, str]:
@@ -193,17 +218,23 @@ def extract_intervention(message, timestamp: datetime) -> list[Intervention]:
             intervention = MarkerBlockNoVictimIntervention(
                 timestamp, receiver)
             interventions.append(intervention)
+    elif "placed a marker" in explanation and "sos marker" in content:
+        for receiver in message["data"]["receivers"]:
+            intervention = MarkerBlockSOSIntervention(
+                timestamp, receiver)
+            interventions.append(intervention)
     else:
-        print("[INFO] Event is ignored: " +
-              message["data"]["explanation"]["info"])
+        print("[INFO] Event is ignored. Explanation: " +
+              message["data"]["explanation"]["info"] +
+              " Content: " +
+              message["data"]["content"])
 
     return interventions
 
 
 def log_report(output_dir: str, report: dict) -> None:
     with open(output_dir + "/compliance_instances_report.txt", 'w') as file:
-        num_interventions = 0
-        num_compliances = 0
+        intervention_compliance_count = {}
 
         for file_name, file_interventions in report.items():
             file.write(
@@ -213,7 +244,13 @@ def log_report(output_dir: str, report: dict) -> None:
                 "--------------------------------------------------------------\n\n")
 
             for intervention_type, interventions in file_interventions.items():
-                num_interventions += len(interventions)
+                if intervention_type not in intervention_compliance_count:
+                    intervention_compliance_count[intervention_type] = {
+                        "num_interventions": 0,
+                        "num_compliances": 0
+                    }
+
+                intervention_compliance_count[intervention_type]["num_interventions"] += len(interventions)
 
                 # count number of compliances for this intervention type
                 num_compliances_for_intervention_type = 0
@@ -221,14 +258,14 @@ def log_report(output_dir: str, report: dict) -> None:
                     if intervention["compliance"] is not None:
                         num_compliances_for_intervention_type += 1
 
+                intervention_compliance_count[intervention_type]["num_compliances"] += num_compliances_for_intervention_type
+
                 file.write(
                     f"{intervention_type}: {len(interventions)}, with {num_compliances_for_intervention_type} compliances\n")
 
                 # report compliances
                 for timestamp, intervention in interventions.items():
                     if intervention["compliance"] is not None:
-                        num_compliances += 1
-
                         file.write(timestamp.isoformat() +
                                    " for subject " +
                                    intervention["for_subject"] +
@@ -244,8 +281,20 @@ def log_report(output_dir: str, report: dict) -> None:
 
         file.write(
             "--------------------------------------------------------------\n")
-        file.write(f"Number of interventions: {num_interventions}\n")
-        file.write(f"Number of compliances: {num_compliances}\n")
+
+        total_num_interventions = 0
+        total_num_compliances = 0
+        for intervention_type, interventions in intervention_compliance_count.items():
+            file.write(f"{intervention_type}: total " +
+                       str(interventions["num_interventions"]) +
+                       " interventions, " + str(interventions["num_compliances"]) +
+                       " compliances.\n")
+
+            total_num_interventions += interventions["num_interventions"]
+            total_num_compliances += interventions["num_compliances"]
+
+        file.write(f"Number of interventions: {total_num_interventions}\n")
+        file.write(f"Number of compliances: {total_num_compliances}\n")
         file.write(
             "--------------------------------------------------------------\n")
 
@@ -276,7 +325,7 @@ if __name__ == "__main__":
         watch_interventions: list[Intervention] = []
 
         # sort messages in the metadata
-        print("Sorting messages ...")
+        print("Sorting messages in file " + metadata_file_name)
         messages = []
         for message in metadata_message_generator(filepath):
             messages.append(message)
@@ -288,7 +337,11 @@ if __name__ == "__main__":
         trial_started = False
 
         # parse messages
-        for message in tqdm(sorted_messages):
+        total_num_messages = len(sorted_messages)
+        pbar = tqdm(total=total_num_messages)
+        for message in sorted_messages:
+            pbar.update()
+
             timestamp = parse(message["msg"]["timestamp"])
 
             # resolve expired interventions
@@ -306,6 +359,8 @@ if __name__ == "__main__":
                     continue
                 # end parsing after the trial has ended
                 else:
+                    pbar.n = total_num_messages
+                    pbar.close()
                     break
 
             # only start monitoring after trial has started
@@ -334,9 +389,6 @@ if __name__ == "__main__":
 
             # parse dialog agent message to check for compliance
             elif "topic" in message and message["topic"] == AGENT_DIALOG_TOPIC and message["data"]["participant_id"] != "Server":
-                # ensure player identification consistency
-                assert message["data"]["participant_id"] in player_information.keys()
-
                 # check for any intervention that has been complied by the subject
                 complied_interventions = []
                 for intervention in watch_interventions:
@@ -377,13 +429,10 @@ if __name__ == "__main__":
 
             # parse minecraft chat messages to check for compliance
             elif "topic" in message and message["topic"] == MINECRAFT_CHAT_TOPIC and message["data"]["sender"] != "Server":
-                # ensure player identification consistency
-                assert message["data"]["sender"] in player_information.values()
-
                 # check for any intervention that has been complied by the subject
                 complied_interventions = []
                 for intervention in watch_interventions:
-                    if message["data"]["sender"] == intervention.for_subject:
+                    if player_information[message["data"]["sender"]] == intervention.for_subject:
                         # check if the utterance text contains any word that matches the compliance criteria
                         if compliance_tag in message["data"]["text"]:
                             complied_interventions.append(intervention)
