@@ -4,6 +4,7 @@ import argparse
 import os
 from datetime import datetime, timedelta
 from glob import glob
+from typing import Dict, List
 
 from dateutil.parser import parse
 from tqdm import tqdm
@@ -184,7 +185,7 @@ class MarkerBlockSOSIntervention(Intervention):
         ]
 
 
-def extract_player_information(message) -> dict[str, str]:
+def extract_player_information(message) -> Dict[str, str]:
     player_information = {}
     for player_data in message["data"]["client_info"]:
         player_information[player_data["playername"]] = player_data[
@@ -194,7 +195,7 @@ def extract_player_information(message) -> dict[str, str]:
     return player_information
 
 
-def extract_intervention(message, timestamp: datetime) -> list[Intervention]:
+def extract_intervention(message, timestamp: datetime) -> List[Intervention]:
     explanation = message["data"]["explanation"]["info"].replace(
         "This intervention was triggered ", ""
     )
@@ -269,7 +270,7 @@ def extract_intervention(message, timestamp: datetime) -> list[Intervention]:
     return interventions
 
 
-def log_report(output_dir: str, report: dict) -> None:
+def log_report(output_dir: str, report: Dict) -> None:
     with open(output_dir + "/compliance_instances_report.txt", "w") as file:
         intervention_compliance_count = {}
 
@@ -378,8 +379,8 @@ if __name__ == "__main__":
         metadata_file_name = os.path.basename(filepath)
         report[metadata_file_name] = {}
 
-        player_information: dict[str, str] = {}
-        watch_interventions: list[Intervention] = []
+        player_information: Dict[str, str] = {}
+        watch_interventions: List[Intervention] = []
 
         # sort messages in the metadata
         print("Sorting messages in file " + metadata_file_name)
