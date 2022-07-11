@@ -372,7 +372,7 @@ if __name__ == "__main__":
 
     report = {}
 
-    for filepath in glob(args.data_dir + "/*T00*UAZ*.metadata"):
+    for filepath in tqdm(glob(args.data_dir + "/*T00*UAZ*.metadata")):
         metadata_file_name = os.path.basename(filepath)
         report[metadata_file_name] = {}
 
