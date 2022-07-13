@@ -13,6 +13,7 @@ from tqdm import tqdm
 from common import metadata_message_generator
 
 TRIAL_TOPIC = "trial"
+MISSION_TOPIC = "observations/state"
 AGENT_DIALOG_TOPIC = "agent/dialog"
 INTERVENTION_TOPIC = "agent/intervention/ASI_UAZ_TA1_ToMCAT/chat"
 MINECRAFT_CHAT_TOPIC = "minecraft/chat"
@@ -388,16 +389,14 @@ def report_compliance(
                     )
 
                     # report compliances
-                    for timestamp, intervention in interventions.items():
+                    for intervention in interventions.values():
                         if intervention["compliance"] is not None:
                             file.write(
-                                timestamp.isoformat()
+                                intervention["mission_timer"]
                                 + " for subject "
-                                + intervention["for_subject"]
+                                + intervention["subject_callsign"]
                                 + ", "
-                                + intervention["compliance"][
-                                    "timestamp"
-                                ].isoformat()
+                                + intervention["compliance"]["mission_timer"]
                                 + " "
                                 + intervention["compliance"]["reason"]
                                 + "\n"
@@ -520,6 +519,7 @@ if __name__ == "__main__":
     report = {}
     report["seconds_window"] = args.seconds
     report["compliance_data"] = {}
+    mission_timer = None
 
     for filepath in tqdm(
         glob(args.data_dir + "/HSRData*TrialMessages_Trial-T00*UAZ*.metadata")
@@ -576,6 +576,10 @@ if __name__ == "__main__":
             elif not trial_started:
                 continue
 
+            if "topic" in message and message["topic"] == MISSION_TOPIC:
+                # extract mission timer
+                mission_timer = message["data"]["mission_timer"].replace(' ', '')
+
             # parse ToMCAT intervention message
             elif "topic" in message and message["topic"] == INTERVENTION_TOPIC:
                 # ensure player identification consistency
@@ -605,6 +609,7 @@ if __name__ == "__main__":
                         "subject_callsign": player_callsign[
                             intervention.for_subject
                         ],
+                        "mission_timer": mission_timer,
                         "compliance": None,
                     }
 
@@ -638,6 +643,7 @@ if __name__ == "__main__":
                                         "compliance"
                                     ] = {
                                         "timestamp": timestamp,
+                                        "mission_timer": mission_timer,
                                         "reason": f"utterance label matchs compliance tag: {compliance_tag}",
                                     }
 
@@ -656,6 +662,7 @@ if __name__ == "__main__":
                                     intervention.type
                                 ][intervention.timestamp]["compliance"] = {
                                     "timestamp": timestamp,
+                                    "mission_timer": mission_timer,
                                     "reason": f"utterance text matchs compliance tag: {compliance_tag}",
                                 }
 
@@ -685,6 +692,7 @@ if __name__ == "__main__":
                                 intervention.type
                             ][intervention.timestamp]["compliance"] = {
                                 "timestamp": timestamp,
+                                "mission_timer": mission_timer,
                                 "reason": f"minecraft chat text matchs compliance tag: {compliance_tag}",
                             }
 
