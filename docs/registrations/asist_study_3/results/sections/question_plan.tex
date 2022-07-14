@@ -5,25 +5,20 @@ Adarsh Pyarelal, Clayton Morrison}
 
 \section{Introduction}
 
-In the SAR scenario implemented for ASIST Study 3, teams of human
-players engage in cooperative behavior to search for, stabilize, and rescue
-victims within a collapsed building. As human players verbalize plans, make
+In the SAR scenario implemented for ASIST Study 3, teams of human players
+engage in cooperative behavior to search for, stabilize, and rescue victims
+within a collapsed building. As human players verbalize plans, make
 suggestions, or tell each other what to do, they also ask questions that can
 infer hidden goals or intentions. Teammates reduce their individual knowledge
-asymmetry by asking and answering questions. \ap{This sounds like we are using ToM as a tool for this analysis. Is
-that what you mean? If yes, how are we using ToM?  SA: Deleted}
-\footnote{In this section, we use the term 'Theory of Mind' to refer to the
-    capacity to infer another's thoughts, feelings, beliefs or
-intentions.}We will investigate how uttered questions can infer another
-person's goal or intention. 
+asymmetry by asking and answering questions.  We will investigate how uttered
+questions can infer another person's goal or intention. 
 
 This investigation will guide future research into knowledge engineering and
 representation of tasks, goals, and hidden intentions. While simple human goals
 may be represented with classical AI planning, we believe that complex goals with 
-constraints or multiple levels of abstraction may be best\ap{This is a strong
-claim. Can you back it up with evidence? Or is it an assumption? If it is an
-assumption, declare it explicitly as such.  SA: I used the words 'may be' but now I added 'we believe'} represented by a
-\emph{hierarchical task network} (HTN), which is a tree of possible
+constraints or multiple levels of abstraction may be best
+represented by a \emph{hierarchical task network} (HTN)\ap{Add a definition of
+HTN here}, which is a tree of possible
 plans.\footnote{Technically, the plans produced by HTN planners can also be
     represented with flat lists - however, in this section, we use the term
 `plan' to refer to the actual `plan tree' that contains the task decompositions
@@ -34,51 +29,50 @@ We will investigate the following research questions for Study 3:
 \begin{enumerate}
     \item How do spoken questions reveal another person's plan or intent? 
     \item Can people listen to spoken questions and accurately decide if the
-        other person's plan is sequential or hierarchical?\ap{Are not
-        all plans sequential? What is the difference between simple and
-        sequential plans? Prior to stating this research question, it would be good
-        to provide definitions of all three of these types of plans.} Can the
+        other person's plan is sequential or hierarchical? Can the
         distinction between such structures improve predictive performance for
-        Artificial Social Intelligence (ASI) agent intervention \ap{What does
-            it mean to improve predictive performance for agent intervention?
-        The connection is not obvious, you should clarify.  SA: Maybe shave this off of the registration, for now?}?
+        Artificial Social Intelligence (ASI) agent intervention?
 \end{enumerate}
 
 %%%%%
 
-The current literature for the intersection of ToM and question-\emph{asking} is sparse. Hawkins and Goodman address this scarcity and the trend of past research to focus on the optimization of answer-giving, usually through answer sets or query matching. \citep{hawkins_goodman_2017}. \ap{Cite references} \ap{Optimization of what?  SA: Done} Researchers assumed that people
-prefer concise questions and answers. However, people do not engage in dialogue
-using question or answer sets. They may ask open-ended questions, meander in
-speech without purpose, and use indirect speech acts to express mutual goals or
-build rapport with each other. 
+The current literature for the intersection of theory of mind (ToM) and
+question-\emph{asking} is sparse. \citet{hawkins_goodman_2017} address this
+scarcity and the trend of past research to focus on the optimization of
+answer-giving, usually through answer sets or query matching.  prefer concise
+questions and answers. However, in reality, people do not ask questions
+expecting an answer from a predetermined set of answers.
+They may ask open-ended questions, meander in speech without
+purpose, and use indirect speech acts to express mutual goals or build rapport
+with each other. 
 
-
-Hawkins and Goodman connect question-asking and intention \emph{because} of the
-scarcity of “empirical evidence about how social context affects the
-questioner’s choice." They redefined the meaning of a question as "the
-interpretation and response of a hidden (or uttered) goal, to be discerned by
-another person, typically a dialog partner" \citep{hawkins_goodman_2017}.
+\cite{hawkins_goodman_2017} connect question-asking and intention
+\emph{because} of the scarcity of ``empirical evidence about how social context
+affects the questioner’s choice." They redefined the meaning of a question as
+"the interpretation and response of a hidden (or uttered) goal, to be discerned
+by another person, typically a dialog partner"\ap{Where is this from? Is it
+verbatim?} \citep{hawkins_goodman_2017}.
 Hawkins and Goodman describe speech acts and question-answer dialog as a form
-of \emph{information asymmetry}: A questioner has a goal but needs information
+of \emph{information asymmetry}: a questioner has a goal but needs information,
 while an answerer has information but does not know the questioner’s goal. The
 type of questions then asked will depend on context, social inference, and
 signals in a dialog setting. The significance of their work is in the
-decoupling of the inferred goal from the explicit meaning of the question to
-model context and avoid assumptions. \footnote{Their work was limited to
-epistemic questions and cooperative behavior.}
+decoupling of the inferred goal from the explicit meaning of the question. This
+helps model context and avoid assumptions \footnote{Their work was limited to
+epistemic questions and cooperative behavior.}.
 
-Deciphering a person’s goal or intention from their answer to a question,
-instead of the question itself, may be another way to understand intent. While
-Hawkins and Goodman define questions as hidden goals or intentions, Mehdi
-Alaima et al define the act of asking questions as ‘the providing of
-information or knowledge to reinforce knowledge one way or another,"
-independently paralleling the definition given by Hawkins and Goodman. "When
-information is missing, or contradicts what one knows, a knowledge goal will
-arise, often leading to the generation of questions. The person is then made
-aware of the information needs, and motivated to formulate a question to obtain
-the missing knowledge,” \citep{alaimi_2020}. Building on the claims of Hawkins
-and Goodman, and Alaima et al, we investigate question-asking within the SAR
-scenario of ASIST’s Minecraft environment. 
+Examining someone's answer to a question rather than the question itself may be
+another way to understand intent. While \cite{hawkings_goodman_2017} define questions as
+hidden goals or intentions, Mehdi Alaima et al\ap{use citet} define the act of asking
+questions as ‘the providing of information or knowledge to reinforce knowledge
+one way or another,"\ap{fix mismatched quotes, check whether this is verbatim.} independently paralleling the definition given by Hawkins
+and Goodman \ap{use citet}. "When information is missing, or contradicts what one knows, a
+knowledge goal will arise, often leading to the generation of questions. The
+person is then made aware of the information needs, and motivated to formulate
+a question to obtain the missing knowledge,” \citep{alaimi_2020}\ap{fix
+reference}. Building on
+the claims of Hawkins and Goodman\ap{citet}, and Alaima et al\ap{citet}, we investigate
+question-asking within the SAR scenario of ASIST’s Minecraft environment. 
 
 
 \section{Approach}
