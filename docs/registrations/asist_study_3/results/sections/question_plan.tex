@@ -10,20 +10,19 @@ players engage in cooperative behavior to search for, stabilize, and rescue
 victims within a collapsed building. As human players verbalize plans, make
 suggestions, or tell each other what to do, they also ask questions that can
 infer hidden goals or intentions. Teammates reduce their individual knowledge
-asymmetry by asking and answering questions. Using Theory of Mind
-(ToM),\ap{This sounds like we are using ToM as a tool for this analysis. Is
-that what you mean? If yes, how are we using ToM?}
+asymmetry by asking and answering questions. \ap{This sounds like we are using ToM as a tool for this analysis. Is
+that what you mean? If yes, how are we using ToM?  SA: Deleted}
 \footnote{In this section, we use the term 'Theory of Mind' to refer to the
     capacity to infer another's thoughts, feelings, beliefs or
-intentions.}, we will investigate how uttered questions can infer another
+intentions.}We will investigate how uttered questions can infer another
 person's goal or intention. 
 
 This investigation will guide future research into knowledge engineering and
 representation of tasks, goals, and hidden intentions. While simple human goals
-may be represented with classical AI planning, complex goals that have
+may be represented with classical AI planning, we believe that complex goals with 
 constraints or multiple levels of abstraction may be best\ap{This is a strong
 claim. Can you back it up with evidence? Or is it an assumption? If it is an
-assumption, declare it explicitly as such.} represented by a
+assumption, declare it explicitly as such.  SA: I used the words 'may be' but now I added 'we believe'} represented by a
 \emph{hierarchical task network} (HTN), which is a tree of possible
 plans.\footnote{Technically, the plans produced by HTN planners can also be
     represented with flat lists - however, in this section, we use the term
@@ -35,25 +34,24 @@ We will investigate the following research questions for Study 3:
 \begin{enumerate}
     \item How do spoken questions reveal another person's plan or intent? 
     \item Can people listen to spoken questions and accurately decide if the
-        other person's plan is simple, sequential, or hierarchical?\ap{Are not
+        other person's plan is sequential or hierarchical?\ap{Are not
         all plans sequential? What is the difference between simple and
         sequential plans? Prior to stating this research question, it would be good
         to provide definitions of all three of these types of plans.} Can the
         distinction between such structures improve predictive performance for
         Artificial Social Intelligence (ASI) agent intervention \ap{What does
             it mean to improve predictive performance for agent intervention?
-        The connection is not obvious, you should clarify.}?
+        The connection is not obvious, you should clarify.  SA: Maybe shave this off of the registration, for now?}?
 \end{enumerate}
 
 %%%%%
 
-Previous research \ap{Cite references} into question-\emph{answering, not asking,} centered on
-optimization \ap{Optimization of what?} because researchers assumed that people
-prefer concise questions and answers. However, people do not engage in dialog
+The current literature for the intersection of ToM and question-\emph{asking} is sparse. Hawkins and Goodman address this scarcity and the trend of past research to focus on the optimization of answer-giving, usually through answer sets or query matching. \citep{hawkins_goodman_2017}. \ap{Cite references} \ap{Optimization of what?  SA: Done} Researchers assumed that people
+prefer concise questions and answers. However, people do not engage in dialogue
 using question or answer sets. They may ask open-ended questions, meander in
 speech without purpose, and use indirect speech acts to express mutual goals or
-build rapport with each other. The current literature regarding ToM and
-question-answering is sparse but even more so for question \emph{asking}. 
+build rapport with each other. 
+
 
 Hawkins and Goodman connect question-asking and intention \emph{because} of the
 scarcity of “empirical evidence about how social context affects the
@@ -335,44 +333,8 @@ following possible tasks:
     }
     \end{figure}
     
-%2 Figure 1 
-\begin{figure}[h!]
-    \centering
-    \fbox{\includegraphics[width=0.9\textwidth]{../images/questionLabelProbability_STA.pdf}}
-    \caption{%
-        Player question utterances, represented by question labels and
-        displayed by each team and the most probable question labels. This
-        shows the highest probability of questions to be asked: requests for
-        teammates to come, clarification of a victim's status for transport,
-        shown by the word 'stabilized' and not by 'victim' (an unstabilized
-        victim), and clarification of any victim's location. Notice that team
-        219, who scored the highest of the three, asked more questions to
-        clarify communication with each other. Previous assumptions about
-        players who prioritized the clearing of rubble, navigation strategy or
-        dividing up tasks is not supported in this preliminary investigation.
-    }
-\end{figure}
 
-%3 Figure 2
-\begin{figure}[h!]
-    \centering
-    \fbox{\includegraphics[width=0.9\textwidth]{../images/abstractLabelProbability_STA.pdf}}
-    \caption{%
-        Player intention, represented by abstract labels and displayed by each
-        team and the most probable abstract label. This shows the highest
-        probability of intentions, expressed by questions, visual cues,
-        context, and player interaction (represented as an abstract label).
-        These include collaborating with teammates about waking critical
-        victims and carrying stabilized victims to the proper sick bay. Team
-        219, who scored some of the highest combined scores in many of the
-        observations, not just the ones annotated, compared to 218, who scored
-        some of the lowest in the data, intended to collaborate on carrying
-        stabilized victims to the proper sick bay. The difference in score is
-        found in more granular actions: while team 219 often requested for
-        collaborative tasks, team 218 would more often demand or tell others
-        what tasks to perform (as seen in figure 1).
-    }
-\end{figure}
+
 
 %4 Figure 3
 \begin{figure}[h!]
