@@ -20,6 +20,8 @@ MINECRAFT_CHAT_TOPIC = "minecraft/chat"
 
 DEFAULT_CHECK_UTTERANCE_TIME_WINDOW_SECONDS = 10
 
+MISSION_SECONDS = 900
+
 
 class Intervention:
     def __init__(
@@ -289,6 +291,17 @@ def extract_intervention(
     return interventions
 
 
+def compute_elapsed_time(timer: str) -> str:
+    minutes = int(timer[:timer.find(":")])
+    seconds = int(timer[timer.find(":") + 1:])
+    elapsed_seconds = MISSION_SECONDS - (seconds + minutes * 60)
+
+    elapsed_minutes = int(elapsed_seconds / 60)
+    elapsed_seconds = elapsed_seconds % 60
+
+    return f"{elapsed_minutes}:{elapsed_seconds}"
+
+
 def report_compliance(
     output_dir: str, report: Dict, report_specifics: bool = False
 ) -> None:
@@ -392,11 +405,11 @@ def report_compliance(
                     for intervention in interventions.values():
                         if intervention["compliance"] is not None:
                             file.write(
-                                intervention["mission_timer"]
+                                intervention["mission_time"]
                                 + " for subject "
                                 + intervention["subject_callsign"]
                                 + ", "
-                                + intervention["compliance"]["mission_timer"]
+                                + intervention["compliance"]["mission_time"]
                                 + " "
                                 + intervention["compliance"]["reason"]
                                 + "\n"
@@ -519,7 +532,7 @@ if __name__ == "__main__":
     report = {}
     report["seconds_window"] = args.seconds
     report["compliance_data"] = {}
-    mission_timer = None
+    mission_time = ""
 
     for filepath in tqdm(
         glob(args.data_dir + "/HSRData*TrialMessages_Trial-T00*UAZ*.metadata")
@@ -578,7 +591,8 @@ if __name__ == "__main__":
 
             if "topic" in message and message["topic"] == MISSION_TOPIC:
                 # extract mission timer
-                mission_timer = message["data"]["mission_timer"].replace(' ', '')
+                if ':' in message["data"]["mission_timer"]:
+                    mission_time = compute_elapsed_time(message["data"]["mission_timer"].replace(' ', ''))
 
             # parse ToMCAT intervention message
             elif "topic" in message and message["topic"] == INTERVENTION_TOPIC:
@@ -609,7 +623,7 @@ if __name__ == "__main__":
                         "subject_callsign": player_callsign[
                             intervention.for_subject
                         ],
-                        "mission_timer": mission_timer,
+                        "mission_time": mission_time,
                         "compliance": None,
                     }
 
@@ -643,7 +657,7 @@ if __name__ == "__main__":
                                         "compliance"
                                     ] = {
                                         "timestamp": timestamp,
-                                        "mission_timer": mission_timer,
+                                        "mission_time": mission_time,
                                         "reason": f"utterance label matchs compliance tag: {compliance_tag}",
                                     }
 
@@ -662,7 +676,7 @@ if __name__ == "__main__":
                                     intervention.type
                                 ][intervention.timestamp]["compliance"] = {
                                     "timestamp": timestamp,
-                                    "mission_timer": mission_timer,
+                                    "mission_time": mission_time,
                                     "reason": f"utterance text matchs compliance tag: {compliance_tag}",
                                 }
 
@@ -692,7 +706,7 @@ if __name__ == "__main__":
                                 intervention.type
                             ][intervention.timestamp]["compliance"] = {
                                 "timestamp": timestamp,
-                                "mission_timer": mission_timer,
+                                "mission_time": mission_time,
                                 "reason": f"minecraft chat text matchs compliance tag: {compliance_tag}",
                             }
 
