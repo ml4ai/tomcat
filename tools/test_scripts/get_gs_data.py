@@ -10,8 +10,6 @@ import json
 # Download testbed data from the Google Cloud and validate using the Testbed 
 # test script for this agent
 
-BUCKET = 'studies.aptima.com/study-3_2022'
-
 def get_gs_filenames(gs_query):
     gs_filenames = []
     proc = subprocess.run(['gsutil', 'ls', gs_query], capture_output=True)
@@ -27,29 +25,29 @@ def get_gs_filenames(gs_query):
 
 # Download all .metadata files in a single dataset into a local
 # directory of the same name.  Existing directories are clobbered.
-def download_dataset(dataset_name):
+def download_dataset(dataset_name, args):
 
-    # Delete the local dataset directory if it exists
+    # Delete the local dataset directory always
     proc = subprocess.run(['rm','-rf', dataset_name])
     if not proc.returncode == 0:
         print(f'Could not delete directory {dataset_name}')
         print(proc.stderr.decode('utf-8'))
-        return
+        return 0
+
+    # List the files in the cloud dataset
+    gs_query = f'gs://{args.bucket}/*{dataset_name}*.metadata'
+    gs_filenames = get_gs_filenames(gs_query)
+    n_filenames = len(gs_filenames)
+    if n_filenames == 0:
+        print(f'{dataset_name}: No data files found.')
+        return 0
 
     # Create the local dataset directory
     proc_ = subprocess.run(['mkdir', dataset_name])
     if not proc.returncode == 0:
         print(f'Could not create directory {dataset_name}')
         print(proc.stderr.decode('utf-8'))
-        return
-
-    # List the files in the cloud dataset
-    gs_query = f'gs://{BUCKET}/*{dataset_name}*.metadata'
-    gs_filenames = get_gs_filenames(gs_query)
-    n_filenames = len(gs_filenames)
-    if n_filenames == 0:
-        print(f'{dataset_name}: No data files found.')
-        return
+        return 0
 
     if n_filenames == 1:
         print(f'{dataset_name}: Downloading 1 data file...')
@@ -60,23 +58,37 @@ def download_dataset(dataset_name):
     dataset_dir = f'./{dataset_name}'
     proc = subprocess.run(['gsutil', '-m', 'cp', gs_query, dataset_dir])
     if not proc.returncode == 0:
-        print(f'Could not download {gs_filename}')
+        print(f'Could not download {dataset_name}')
         print(proc.stderr.decode('utf-8'))
+        return 0
+
+    return n_filenames
 
 # download metadata studies and test files
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
-        description='Google cloud storage Testbed dataset downloader')
+        description='Google cloud storage Testbed dataset downloader'
+    )
 
+    parser.add_argument(
+        '-b',
+        '--bucket',
+        default = 'studies.aptima.com/study-3_2022',
+        help = 'Name of Good Cloud bucket'
+    )
     parser.add_argument(
         'datasets', 
         action='store', 
         nargs = '+',
-        help = 'One or more dataset names, e.g. \"TM000nnn\"')
+        help = 'One or more dataset names, e.g. \"TM000nnn\"'
+    )
 
     args = parser.parse_args(sys.argv[1:])
 
     # Download all the Testbed datasets specified by the user
+    n_files_downloaded = 0
     for dataset in args.datasets:
-        download_dataset(dataset)
+        n_files_downloaded +=download_dataset(dataset, args)
+
+    print(f'Files downloaded: {n_files_downloaded}')
