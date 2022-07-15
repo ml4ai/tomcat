@@ -308,96 +308,60 @@ following possible tasks:
 \section{Figures and Additional Preliminary Analyses}
 %%%%%%%%%%%%%%% Visuals  %%%%%%%%%%%%
 
-%5 Figure 1
+% Question-Timing
 \begin{figure}[h!]
     \centering
     \fbox{\includegraphics[width=0.9\textwidth]{../images/QuestionTiming_STA.pdf}}
-    \caption{%
-        Questions asked with respect to time. Time is represented continuously
-        as color within the histogram. Video observations and question count
-        are represented as a histogram. Team 218 (videos 635 and 636) asked the
-        fewest questions and scored the lowest combined point. Video 636 is
-        colored red in more than 66\% of its bars, meaning that more than 66\%
-        of questions were asked toward the end of the mission. Compare this to
-        team 1 (videos 633 and 634), who were relatively quiet players and
-        asked the most questions in the beginning of each mission. Team 3 asked
-        the most questions. The even distribution of red and black demonstrates
-        how they asked questions at a \emph{consistent rate} throughout their
-        missions.
-    }
+    \caption{Time = color within histogram. Team 218 (videos 635 and 636) asked the
+        fewest questions, scored the lowest combined points, and asked 66\%
+        of questions toward the end of the mission. Team 3 (videos 637 and 638) asked
+        the most questions and asked questions at a \emph{consistent rate} throughout their missions.}
     \end{figure}
     
+% p(Question)
+\begin{figure}[h!]
+    \centering
+    \fbox{\includegraphics[width=0.9\textwidth]{../images/questionLabelProbability_STA.pdf}}
+    \caption{The most common questions were about where to go (requestDestination) and clarifying location (clarifyLocation). Team 219 scored the highest and asked the most questions about clarifying the type of a stabilized victim (clarifyStabilizedStatus).}
+    \end{figure}
 
+% p(Intent)
+\begin{figure}[h!]
+    \centering
+    \fbox{\includegraphics[width=0.9\textwidth]{../images/abstractLabelProbability_STA.pdf}}
+    \caption{The most common intention centered on carrying stabilized victims (collaborateCarryStabilized). Intent does not show correlation to team score like questions do, as can be seen with similarities between teams, regardless of score.}
+    \end{figure}
 
-
-%4 Figure 3
+% p(Question | Intent)
 \begin{figure}[h!]
     \centering
     \fbox{\includegraphics[width=0.9\textwidth]{../images/questionLabel_ConditionalProbability_STA.pdf}}
-    \caption{%
-        Conditional probability of questions asked, given the player's
-        intention. Variation of questions that can be asked, given player
-        intention. More than 40\% of questions that could be asked are marked
-        'other,' (abstracted into 'other' category for clarity of this visual).
-        It is this variation that matters: players will not necessarily ask
-        expected questions (or any question at all) just because they have
-        intention. The most likely questions that \emph{are vocalized} have one
-        aspect in common: they all have verbs that are collaborative in nature:
-        request, clarify, collaborate. Verbs that are less collaborative in
-        nature, (direct, suggest, inform) do not show up as the most common
-        questions. This suggests that when players feel like they are part of
-        the team, they are more likely to ask questions that have a
-        give-and-take dialog.
-    }
+    \caption{Probabilities of questions to be asked center on three intentions (see figure). When teams collaborate to wake a critical victim, they request or clarify --not suggest or tell-- a teammate to come to a particular destination.('Clarify' and 'request' infer two-way dialog of commitment creation whereas 'direct' or 'suggest' are creation commitments or demands that do not give the listener a chance to respond.)}
 \end{figure}
 
-%5 Figure 4
+%p(Intent | Question)
 \begin{figure}[h!]
     \centering
     \fbox{\includegraphics[width=0.9\textwidth]{../images/abstractLabel_ConditionalProbability_STA.pdf}}
-    \caption{%
-        Conditional probability of player intention, given the question that is
-        asked. Players were most likely to ask for unique information from the
-        engineer when they wanted to prioritize locations or learn about threat
-        rooms. When the GPS systems failed, more than half of the time players
-        asked about threat rooms, not victims, rubble, or other events. For
-        example, the previous figure shows that when a player's intention is to
+    \caption{When a player's intention is to
         wake a critical, they are 55\% likely to ask another player to join
-        them (trivial). It is far more interesting to see in this figure that
-        when the question utterance 'requestDestination', it is more than 80\%
-        likely to be asked only for the intent of waking a critical victim.
-    }
+        them (trivial). Yet given question utterance 'requestDestination', the intent is more than 80\% likely to be waking a critical victim. }
 \end{figure}
 
 
     
-%7 Figure 6
+% p(Word Utterance | Intent)
 \begin{figure}[h!]
     \centering
     \fbox{\includegraphics[width=0.9\textwidth]{../images/QuestionUtterances_Link_STA.pdf}}
-    \caption{%
-        Conditional probabilities of player intention, given the words that a
-        player speaks when asking a question. While some words can infer
-        trivial player intention (ie. 'information' utterances show
-        'shareInformationUnique' intention), other words such as 'say', 'type',
-        or 'come' are not domain-specific to the Minecraft environment-- yet
-        show team collaboration about critical victims. 'Say' is the stemmed
-        keyword that shows teammate communication and clarification (ie.
-        \emph{"Did you say} ...") Compare this to words like 'critical' or
-        'area', which do not show team collaboration as much as it shows
-        individual intention. 
-    }
+    \caption{Players who collaborate to wake critical victims will most likely say 'come' or 'want.' When they work together to carry victims, they will most likely say 'type' (or mark) to identify the victim type.}
     \end{figure}
 
-%1 Figure 7
+% p(Intent | Word Utterance)
 \begin{figure}[h!]
     \centering
     \fbox{\includegraphics[width=0.9\textwidth]{"../images/Intent_to_Utterances_Link_STA.pdf"}}
-    \caption{%
-        Conditional probabilities of words to be uttered in a question, given
-        the player's intention. Returning to the intent of
-        'collaborateCriticalWake', the two most likely words to be uttered are
-        'want' and 'information.' From the previous figure, only the words
-        'come', 'critical', and 'help' tie back to this intent.
-    }
+    \caption{Non domain-specific words that show collaboration: 'say', 'type',
+        or 'come'. Words like 'critical' or 'area' do not show team collaboration as much as it shows individual intent. 
+         }
 \end{figure}
