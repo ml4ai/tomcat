@@ -66,7 +66,11 @@ def download_dataset(dataset_name, args):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
-        description='Google cloud storage Testbed dataset downloader'
+        description=(
+            'Google cloud storage Testbed dataset downloader.  This script '
+            'will download Testbed datasets (TM000nnn) into local '
+            'directories of the same name.'
+        )
     )
 
     parser.add_argument(
