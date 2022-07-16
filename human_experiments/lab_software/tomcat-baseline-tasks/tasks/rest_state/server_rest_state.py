@@ -40,8 +40,6 @@ class ServerRestState:
 
         self._csv_writer.writerow(csv_entry)
 
-
-        
         sleep(0.1)
 
         while(True):
