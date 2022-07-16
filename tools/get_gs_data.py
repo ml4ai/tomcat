@@ -7,20 +7,18 @@ import json
 
 # Authors:  Joseph Astier, Adarsh Pyarelal
 
-# Download testbed data from the Google Cloud and validate using the Testbed 
-# test script for this agent
-
+# List the filenames in the Google Cloud for this query
 def get_gs_filenames(gs_query):
-    gs_filenames = []
     proc = subprocess.run(['gsutil', 'ls', gs_query], capture_output=True)
-    if proc.returncode == 0:
-        output=proc.stdout.decode('utf-8')
-        output_lines = output.split('\n')
-        for line in output_lines:
-            if len(line) > 0:
-                gs_filenames.append(line)
+    if not proc.returncode == 0:
+        print(f'Problem reading query: {gs_querr}')
+        print(proc.stderr.decode('utf-8'))
+        return []
 
-    return gs_filenames
+    output = proc.stdout.decode('utf-8')
+    lines = output.split('\n')
+    # return .metadata files
+    return list(filter(lambda x: x.endswith('.metadata'), lines))
 
 
 # Download all .metadata files in a single dataset into a local
@@ -89,6 +87,6 @@ if __name__ == '__main__':
     # Download all the Testbed datasets specified by the user
     n_files_downloaded = 0
     for dataset in args.datasets:
-        n_files_downloaded +=download_dataset(dataset, args)
+        n_files_downloaded += download_dataset(dataset, args)
 
     print(f'Files downloaded: {n_files_downloaded}')
