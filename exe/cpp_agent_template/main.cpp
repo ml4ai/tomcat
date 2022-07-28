@@ -30,18 +30,20 @@ int main(int argc, char* argv[]) {
     po::options_description generic("Generic options");
 
     string config_path;
-    generic.add_options()("help,h", "Display this help message")(
-        "version,v",
-        "Display the version number")("config,c",
-                                      po::value<string>(&config_path),
-                                      "Path to (optional) config file.");
+    string input_topic = "";
+    string output_topic = "";
+    generic.add_options()
+        ("help,h", "Display this help message")
+        ("version,v","Display the version number")
+	("config,c",po::value<string>(&config_path),"Path to (optional) config file.")
+	("input,i",po::value<string>(&input_topic),"Input subscription topic")
+	("output,o",po::value<string>(&output_topic),"Output publication topic");
 
     po::options_description config("Configuration");
 
-    config.add_options()("mqtt.host",
-                         po::value<string>()->default_value("localhost"),
-                         "MQTT broker host")(
-        "mqtt.port", po::value<int>()->default_value(1883), "MQTT broker port");
+    config.add_options()
+        ("mqtt.host",po::value<string>()->default_value("localhost"),"MQTT broker host")
+	("mqtt.port", po::value<int>()->default_value(1883), "MQTT broker port");
 
     po::options_description cmdline_options;
     cmdline_options.add(generic).add(config);
@@ -81,7 +83,7 @@ int main(int argc, char* argv[]) {
 
     signal(SIGINT, signal_handler);
 
-    ReferenceAgent agent(address);
+    ReferenceAgent agent(address, input_topic, output_topic);
 
     while (true) {
         if (gSignalStatus == SIGINT) {

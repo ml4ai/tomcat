@@ -21,4 +21,12 @@ void ReferenceAgent::process(mqtt::const_message_ptr msg) {
     // Uncomment the line below to print the message
 }
 
-ReferenceAgent::ReferenceAgent(string address) : Agent(address){};
+ReferenceAgent::ReferenceAgent(
+    string address,
+    string input_topic,
+    string output_topic
+) : Agent(address){
+    cout << "Reference Agent" << endl;
+    cout << " Input topic: " << input_topic << endl;
+    cout << " Output topic: " << output_topic << endl;
+};
