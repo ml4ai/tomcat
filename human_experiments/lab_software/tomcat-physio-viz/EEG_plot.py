@@ -12,12 +12,12 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, *args, **kwargs):
         #initlize streams
 
-        #self.sample = resolve_stream('type', 'NIRS')
+        #self.sample = resolve_stream('type', 'EEG')
         #self.inlet = StreamInlet(self.streams[device_id])
 
-        self.channel_list = ['S1-D1', 'S1-D2', 'S2-D1', 'S2-D3', 'S3-D1', 'S3-D3', 'S3-D4', 'S4-D2', 'S4-D4', 
-                            'S4-D5', 'S5-D3', 'S5-D4', 'S5-D6', 'S6-D4', 'S6-D6', 'S6-D7', 'S7-D5', 'S7-D7',
-                            'S8-D6', 'S8-D7']
+        self.channel_list = ['AFF1h', 'AFF5h' 'F7', 'FC5', 'FC1', 'C3', 'T7', 'TP9', 'CP5', 'CP1', 'Pz', 
+        'P3', 'P7', 'PO9', 'O1', 'Oz', 'O2', 'PO10', 'P8', 'P4', 'TP10', 'CP6', 'CP2', 'Cz', 'C4', 'T8', 
+        'FC6', 'FC2', 'FCz', 'F8', 'AFF6h', 'AFF2h', 'AUX_GSR', 'AUX_EKG']
 
         #initialize plots
 
@@ -35,49 +35,42 @@ class MainWindow(QtWidgets.QMainWindow):
         pg.setConfigOptions(antialias=True)
 
         self.x = [0]
-        self.y = [[0] for i in range(len(self.channel_list))] #HbO
-        self.y1 = [[0] for i in range(len(self.channel_list))] #HbR
+        self.y = [[0] for i in range(len(self.channel_list))] #34 channel data
 
         self.graphWidgetLayout.setBackground('w')
 
-        self.pen = pg.mkPen(color=(255, 0, 0), width=5) #red for HbO
-        self.pen1 = pg.mkPen(color=(0, 0, 255), width=5) #blue for HbR
+        self.pen = pg.mkPen(color=(0, 0, 0), width=5) #black
 
         self.ch = []
-        self.ch1 = []
 
         label_style = {"color": (255, 0, 0), "font-size": "14pt"}
 
         for self.idx, self.channel in enumerate(self.channel_list):
-            #create 20 subplots
+            #create 33 subplots
 
             self.channel = self.graphWidgetLayout.addPlot(row = self.idx, col = 0)
             #self.channel.showAxes('left', showValues=False)
 
-            if self.idx < 19:
+            if self.idx < 32:
                 self.channel.hideAxis('bottom')
 
             self.channel.setLabel('left', self.channel_list[self.idx], **label_style)
         
             self.ch.append(self.channel)
-            self.ch1.append(self.channel)
 
         self.plots()
     
     def plots(self):
         #draw 
 
-        self.dataLine = [[] for i in range(20)]
-        self.dataLine1 = [[] for i in range(20)]
+        self.dataLine = [[] for i in range(33)]
 
-        for self.idx, (self.ch, self.ch1) in enumerate(zip(self.ch, self.ch1)):
+        for self.idx, self.ch in enumerate(self.ch):
             self.ch = self.ch.plot(x = self.x, y = self.y[self.idx], pen = self.pen)
-            self.ch1 = self.ch1.plot(x = self.x, y = self.y1[self.idx], pen = self.pen1)
     
             self.dataLine[self.idx].append(self.ch)
-            self.dataLine1[self.idx].append(self.ch1)
 
-        self.srate = 10 #10.2Hz for NIRS data
+        self.srate = 500 #500Hz for EEG data
         self.timer = QtCore.QTimer()
         self.timer.setInterval(round(1000/self.srate)) #why? https://stackoverflow.com/questions/59094207/how-to-set-pyqt5-qtimer-to-update-in-specified-interval
         self.timer.timeout.connect(self.update_plot_data)
@@ -92,24 +85,21 @@ class MainWindow(QtWidgets.QMainWindow):
             
             for i in range(len(self.channel_list)):
                 self.y[i] = self.y[i][1:]  # Remove the first
-                self.y1[i] = self.y1[i][1:]  # Remove the first
 
         #self.sample,time = self.inlet.pull_sample() #get continuos streams from LSL
-        self.sample = np.random.randint(low = -30, high = 30, size = 81)
+        self.sample = np.random.randint(low = -30, high = 30, size = 34)
 
         self.x.append(self.x[-1] + 1)  # Add a new value 1 higher than the last.
 
         for i in range(len(self.channel_list)):
-            self.y[i].append(self.sample[i+40])  # Add a new value.
-            self.y1[i].append(self.sample[i+60])
+            self.y[i].append(self.sample[i])  # Add a new value.
 
         for i in range(0,len(self.channel_list)):
             self.dataLine[i][0].setData(self.x, self.y[i])
-            self.dataLine1[i][0].setData(self.x, self.y1[i])
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Plotting fNIRS signals via LSL')
-    parser.add_argument("--d", required=True, help="Enter number of fNIRS devices")
+    parser = argparse.ArgumentParser(description='Plotting EEG signals via LSL')
+    parser.add_argument("--d", required=True, help="Enter number of EEG devices")
     arg = parser.parse_args()
     device_id = int(arg.d)
 
