@@ -1,13 +1,13 @@
 #include "ReferenceAgent.hpp"
 
-#include "boost/json.hpp"
+#include <nlohmann/json.hpp>
 #include <iostream>
 
 using namespace std;
-namespace json = boost::json;
+using json = nlohmann::json;
 
 void ReferenceAgent::process(mqtt::const_message_ptr msg) {
-    json::object jv = json::parse(msg->to_string()).as_object();
+    json jv = json::parse(msg->to_string());
 
     // Uncomment the line below to print the message
     cout << jv << endl;

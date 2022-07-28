@@ -1,10 +1,10 @@
 #include "Agent.hpp"
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/json.hpp>
+#include <nlohmann/json.hpp>
 #include <boost/log/trivial.hpp>
 
 using namespace std;
-namespace json = boost::json;
+using json = nlohmann::json;
 using namespace std::chrono;
 
 /** Get current UTC timestamp in ISO-8601 format. */
@@ -44,7 +44,7 @@ void Agent::publish_heartbeats() {
         this_thread::sleep_for(seconds(10));
 
         string timestamp = get_timestamp();
-        json::value jv = {{"header",
+        json jv = {{"header",
                            {{"timestamp", timestamp},
                             {"message_type", "status"},
                             {"version", "0.1"}}},
@@ -56,7 +56,7 @@ void Agent::publish_heartbeats() {
                           {"data", {{"state", "ok"}}}};
 
         mqtt_client
-            ->publish("status/tomcat-CDC/heartbeats", json::serialize(jv))
+            ->publish("status/tomcat-CDC/heartbeats", jv.dump())
             ->wait();
     }
 }
