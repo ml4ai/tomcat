@@ -7,6 +7,10 @@ using namespace std;
 using json = nlohmann::json;
 
 void ReferenceAgent::process(mqtt::const_message_ptr msg) {
+
+    string topic = msg->get_topic();
+
+    cout << "Message received on topic " << topic << endl;
     string msgstr = msg->to_string();
 
     try {
@@ -25,7 +29,7 @@ ReferenceAgent::ReferenceAgent(
     string address,
     string input_topic,
     string output_topic
-) : Agent(address){
+) : Agent(address, input_topic, output_topic){
     cout << "Reference Agent" << endl;
     cout << " Input topic: " << input_topic << endl;
     cout << " Output topic: " << output_topic << endl;

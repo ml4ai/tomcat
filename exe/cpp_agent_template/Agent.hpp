@@ -7,6 +7,9 @@
 
 #include <mqtt/async_client.h>
 
+using namespace std;
+
+
 /** Class that represents our agent */
 class Agent {
     std::shared_ptr<mqtt::async_client> mqtt_client;
@@ -27,7 +30,7 @@ class Agent {
 
   public:
     /** Constructor */
-    Agent(std::string address);
+    Agent(string address, string input_topic, string output_topic);
 
     /** Stop the agent */
     void stop();

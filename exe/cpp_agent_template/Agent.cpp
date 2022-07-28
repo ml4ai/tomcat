@@ -14,7 +14,7 @@ string get_timestamp() {
            "Z";
 }
 
-Agent::Agent(std::string address) {
+Agent::Agent(string address, string input_topic, string output_topic) {
     // Create an MQTT client using a smart pointer to be shared among
     // threads.
     this->mqtt_client = make_shared<mqtt::async_client>(address, "agent");
@@ -32,7 +32,7 @@ Agent::Agent(std::string address) {
     auto rsp = this->mqtt_client->connect(connOpts)->get_connect_response();
     BOOST_LOG_TRIVIAL(info) << "Connected to the MQTT broker at " << address;
 
-    mqtt_client->subscribe("agent/dialog", 2);
+    mqtt_client->subscribe(input_topic, 2);
 
     /** Start publishing heartbeat messages */
     heartbeat_future = async(launch::async, &Agent::publish_heartbeats, this);
