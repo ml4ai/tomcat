@@ -13,14 +13,16 @@ void ReferenceAgent::process(mqtt::const_message_ptr msg) {
     cout << "Message received on topic " << topic << endl;
     string msgstr = msg->to_string();
 
-//    try {
+    try {
 	json::object jv = json::parse(msgstr).as_object();
         cout << jv << endl;
-//    }
-//    catch (nlohmann::detail::parse_error) {
-//        cout << "Could not parse " << msgstr << endl;
-
-//    }
+    }
+    catch(exception const& e)
+    {
+        std::cerr <<
+            "Could not process message.  Caught exception: "
+            << e.what() << std::endl;
+    }
 
     // Uncomment the line below to print the message
 }
