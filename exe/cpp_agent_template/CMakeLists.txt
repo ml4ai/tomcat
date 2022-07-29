@@ -13,6 +13,7 @@ find_package(
     program_options
     coroutine
     log
+    json
     REQUIRED
 )
 add_executable(main main.cpp Agent.cpp ReferenceAgent.cpp)
