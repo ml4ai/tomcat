@@ -15,7 +15,10 @@ void ReferenceAgent::process(mqtt::const_message_ptr msg) {
 
     try {
 	json::object jv = json::parse(msgstr).as_object();
-        cout << jv << endl;
+        cout << msgstr << endl;
+        string processed_input = "Processed " + msgstr;
+
+        mqtt_client->publish(output_topic, processed_input);
     }
     catch(exception const& e)
     {
@@ -24,14 +27,15 @@ void ReferenceAgent::process(mqtt::const_message_ptr msg) {
             << e.what() << std::endl;
     }
 
-    // Uncomment the line below to print the message
 }
 
 ReferenceAgent::ReferenceAgent(
     string address,
     string input_topic,
     string output_topic
-) : Agent(address, input_topic, output_topic){
+) : Agent(address, input_topic, output_topic),
+        input_topic(input_topic), 
+        output_topic(output_topic) {
     cout << "Reference Agent" << endl;
     cout << " Input topic: " << input_topic << endl;
     cout << " Output topic: " << output_topic << endl;
