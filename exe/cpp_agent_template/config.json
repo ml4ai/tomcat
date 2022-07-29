@@ -1,0 +1,18 @@
+{
+  "mqtt": {
+    "host": "localhost",
+    "port": 1883
+  },
+  "subscriptions": {
+    "input1": "agent/template_agent_input1",
+    "input2": "agent/template_agent_input2",
+    "trial": "trial",
+    "rollcall_request": "agent/control/rollcall/request"
+  },
+  "publications": {
+    "rollcall_response": "agent/control/rollcall/response",
+    "heartbeats": "status/template_agent/heartbeats",
+    "output": "agent/template_agent_output",
+    "version_info": "agent/template_agent/versioninfo"
+  }
+}
