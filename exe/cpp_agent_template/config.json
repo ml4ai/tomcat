@@ -3,16 +3,17 @@
     "host": "localhost",
     "port": 1883
   },
+  "publications": {
+    "heartbeats": "status/template_agent/heartbeats",
+    "output": "agent/template_agent_output",
+    "rollcall_response": "agent/control/rollcall/response",
+    "version_info": "agent/template_agent/versioninfo"
+  },
   "subscriptions": {
     "input1": "agent/template_agent_input1",
     "input2": "agent/template_agent_input2",
-    "trial": "trial",
-    "rollcall_request": "agent/control/rollcall/request"
+    "rollcall_request": "agent/control/rollcall/request",
+    "trial": "trial"
   },
-  "publications": {
-    "rollcall_response": "agent/control/rollcall/response",
-    "heartbeats": "status/template_agent/heartbeats",
-    "output": "agent/template_agent_output",
-    "version_info": "agent/template_agent/versioninfo"
-  }
+  "version":"1.0.0"
 }
