@@ -57,8 +57,11 @@ def read_muliple_csv_files(path, csvfiles, total_time, file_name, sid):
         
         if file_name == 'affective':
             #Affective task, the csv file name contains subject ID
-            continue
-        if file_name == 'ping_pong':
+            if 'team_' in csvfile:
+                #the team affective task has the subject name as rows
+                df = df.dropna()
+                check_subject_id(set(df['subject_id'].values.tolist()), sid)
+        elif file_name == 'ping_pong':
             if 'competitive_0' in csvfile:
                 df = df.iloc[: , :-1]
                 print(colored('\t Two participants competeting against Human','magenta'))
@@ -71,9 +74,10 @@ def read_muliple_csv_files(path, csvfiles, total_time, file_name, sid):
                 df = df.iloc[: , :-1]
                 read_csv_column_name(df, sid, -6, file_name)
 
-        if file_name == 'rest_state':
+        elif file_name == 'rest_state':
+            #rest state doesnt have any subject information
             continue
-        if file_name == 'finger_tapping':
+        elif file_name == 'finger_tapping':
             #finger tapping, last three columns name have subject ID
             read_csv_column_name(df, sid, -3, file_name)
 
