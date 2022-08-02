@@ -10,3 +10,5 @@ SECONDS_COUNT_DOWN = 2 #10.0
 SQUARE_WIDTH = 200
 
 COUNT_DOWN_MESSAGE = "Practice session: Press SPACEBAR and observe the squares"
+
+TOTAL_TIME = sum(SECONDS_PER_SESSION)
