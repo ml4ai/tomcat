@@ -6,16 +6,21 @@
 #include <queue>
 
 #include <boost/filesystem.hpp>
-#include <boost/program_options.hpp>
+#include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
+#include <boost/program_options.hpp>
 
 #include "ReferenceAgent.hpp"
+
+// An extendable base class for Testbed Agents
+// Authors:   Joseph Astier, Adarsh Pyareral
 
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
 
 using namespace std;
 using namespace std::chrono;
+//using namespace boost::json;
 
 namespace {
     volatile std::sig_atomic_t gSignalStatus;
@@ -26,46 +31,41 @@ void signal_handler(int signal) { gSignalStatus = signal; }
 
 int main(int argc, char* argv[]) {
 
-    // Setting up program options
-    po::options_description generic("Generic options");
+    // Setting up program options from command line arguments
+    po::options_description options("Configuration");
 
-    string config_path;
-    string input_topic = "";
-    string output_topic = "";
-    generic.add_options()
+    options.add_options()
         ("help,h", "Display this help message")
-        ("version,v","Display the version number")
-	("config,c",po::value<string>(&config_path),"Path to (optional) config file.")
-	("input,i",po::value<string>(&input_topic),"Input subscription topic")
-	("output,o",po::value<string>(&output_topic),"Output publication topic");
-
-    po::options_description config("Configuration");
-
-    config.add_options()
+        ("version,v", "Display the version number")
+        ("config,c",po::value<string>()->default_value("./config.json"),"Specify a config file")
         ("mqtt.host",po::value<string>()->default_value("localhost"),"MQTT broker host")
-	("mqtt.port", po::value<int>()->default_value(1883), "MQTT broker port");
+	("mqtt.port", po::value<int>()->default_value(1883), "MQTT broker port")
 
-    po::options_description cmdline_options;
-    cmdline_options.add(generic).add(config);
+    ;
+
+//    po::options_description cmdline_options;
+//    cmdline_options.add(generic).add(config);
 
     po::variables_map vm;
-    po::store(po::parse_command_line(argc, argv, cmdline_options), vm);
+    po::store(po::parse_command_line(argc, argv, options), vm);
 
     // We run notify this first time to pick up the -c/--config option
     po::notify(vm);
 
     // Print a help message
     if (vm.count("help")) {
-        cout << cmdline_options;
+        cout << options << endl;
         return 1;
     }
 
+    /*
     // If the -c/--config option is passed to the program on the command line,
     // we check for the existence of the specified config file and load the
     // options from it.
     if (vm.count("config")) {
+	string config_path = vm["config"].as<string>();
         if (fs::exists(config_path)) {
-            po::store(po::parse_config_file(config_path.c_str(), config), vm);
+            po::store(po::parse_config_file(config_path, options), vm);
         }
         else {
             BOOST_LOG_TRIVIAL(error) << "Specified config file '" << config_path
@@ -97,5 +97,6 @@ int main(int argc, char* argv[]) {
         }
     }
 
+    */
     return EXIT_SUCCESS;
 }

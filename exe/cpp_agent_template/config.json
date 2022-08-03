@@ -15,5 +15,6 @@
     "rollcall_request": "agent/control/rollcall/request",
     "trial": "trial"
   },
+  "version_adarsh":"1.2.3",
   "version":"1.0.0"
 }
