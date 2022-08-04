@@ -1,4 +1,4 @@
-#include "Agent.hpp"
+#include "AgentBase.hpp"
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
@@ -14,7 +14,7 @@ string get_timestamp() {
            "Z";
 }
 
-Agent::Agent(string address, string input_topic, string output_topic) {
+AgentBase::AgentBase(string address, string input_topic, string output_topic) {
     // Create an MQTT client using a smart pointer to be shared among
     // threads.
     this->mqtt_client = make_shared<mqtt::async_client>(address, "agent");
@@ -35,11 +35,11 @@ Agent::Agent(string address, string input_topic, string output_topic) {
     mqtt_client->subscribe(input_topic, 2);
 
     /** Start publishing heartbeat messages */
-    heartbeat_future = async(launch::async, &Agent::publish_heartbeats, this);
+    heartbeat_future = async(launch::async, &AgentBase::publish_heartbeats, this);
 };
 
 /** Function that publishes heartbeat messages while the agent is running */
-void Agent::publish_heartbeats() {
+void AgentBase::publish_heartbeats() {
     while (this->running) {
         this_thread::sleep_for(seconds(10));
 
@@ -61,7 +61,7 @@ void Agent::publish_heartbeats() {
     }
 }
 
-void Agent::stop() {
+void AgentBase::stop() {
     running = false;
     heartbeat_future.wait();
 }

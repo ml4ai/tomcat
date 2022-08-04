@@ -33,7 +33,7 @@ ReferenceAgent::ReferenceAgent(
     string address,
     string input_topic,
     string output_topic
-) : Agent(address, input_topic, output_topic),
+) : AgentBase(address, input_topic, output_topic),
         input_topic(input_topic), 
         output_topic(output_topic) {
     cout << "Reference Agent" << endl;

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Agent.hpp"
+#include "AgentBase.hpp"
 
 using namespace std;
 
-class ReferenceAgent : public Agent {
+class ReferenceAgent : public AgentBase {
     void process(mqtt::const_message_ptr msg) override;
     string input_topic = "";
     string output_topic = "";

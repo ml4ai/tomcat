@@ -11,7 +11,7 @@ using namespace std;
 
 
 /** Class that represents our agent */
-class Agent {
+class AgentBase {
 
     /** Flag to specify whether the agent is running or not */
     bool running = true;
@@ -31,7 +31,7 @@ class Agent {
     std::shared_ptr<mqtt::async_client> mqtt_client;
 
     /** Constructor */
-    Agent(string address, string input_topic, string output_topic);
+    AgentBase(string address, string input_topic, string output_topic);
 
     /** Stop the agent */
     void stop();
