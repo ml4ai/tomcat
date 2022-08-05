@@ -2,7 +2,7 @@ from PyQt5 import QtWidgets, QtCore
 from pyqtgraph import PlotWidget, plot
 import pyqtgraph as pg
 import sys  
-#from pylsl import StreamInlet, resolve_stream
+from pylsl import StreamInlet, resolve_stream
 from random import randint                       
 import numpy as np
 import argparse
@@ -12,8 +12,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, *args, **kwargs):
         #initlize streams
 
-        #self.sample = resolve_stream('type', 'EEG')
-        #self.inlet = StreamInlet(self.streams[device_id])
+        self.streams = resolve_stream('type', 'EEG')
+        self.inlet = StreamInlet(self.streams[device_id])
 
         self.channel_list = ['AFF1h', 'AFF5h' 'F7', 'FC5', 'FC1', 'C3', 'T7', 'TP9', 'CP5', 'CP1', 'Pz', 
         'P3', 'P7', 'PO9', 'O1', 'Oz', 'O2', 'PO10', 'P8', 'P4', 'TP10', 'CP6', 'CP2', 'Cz', 'C4', 'T8', 
@@ -23,8 +23,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         super(MainWindow, self).__init__(*args, **kwargs)
 
-        #device_name = self.streams[device_id].hostname()
-        self.setWindowTitle(device_id)
+        device_name = self.streams[device_id].name()
+        self.setWindowTitle(device_name)
 
         self.graphWidgetLayout = pg.GraphicsLayoutWidget()
         self.graphWidgetLayout.resize(900,2500) 
@@ -39,11 +39,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.graphWidgetLayout.setBackground('w')
 
-        self.pen = pg.mkPen(color=(0, 0, 0), width=5) #black
+        self.pen = pg.mkPen(color=(0, 0, 0), width=2) #black
 
         self.ch = []
 
-        label_style = {"color": (255, 0, 0), "font-size": "14pt"}
+        label_style = {"color": (255, 0, 0), "font-size": "10pt"}
 
         for self.idx, self.channel in enumerate(self.channel_list):
             #create 33 subplots
@@ -86,8 +86,8 @@ class MainWindow(QtWidgets.QMainWindow):
             for i in range(len(self.channel_list)):
                 self.y[i] = self.y[i][1:]  # Remove the first
 
-        #self.sample,time = self.inlet.pull_sample() #get continuos streams from LSL
-        self.sample = np.random.randint(low = -30, high = 30, size = 34)
+        self.sample,time = self.inlet.pull_sample() #get continuos streams from LSL
+        #self.sample = np.random.randint(low = -30, high = 30, size = 34)
 
         self.x.append(self.x[-1] + 1)  # Add a new value 1 higher than the last.
 
