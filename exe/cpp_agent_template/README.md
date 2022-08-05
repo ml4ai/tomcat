@@ -39,7 +39,7 @@ Configuration:
   --mqtt.port arg (=1883)               MQTT broker port
 ```
 
-Additional settings are made in the configuration file:
+Additional settings are made in a JSON configuration file:
 
 ```
 {
