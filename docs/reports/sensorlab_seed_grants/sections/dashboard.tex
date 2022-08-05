@@ -1,0 +1,153 @@
+\section{Dashboard}
+
+The Tomcat-Dashboard is a cross-platform user interface for controlling and visualizing scientific experiments.
+
+\subsection{Installing dependencies}
+
+The following software components are  dependencies required to build and run the dashboard.
+
+\begin{enumerate}
+    \item cmake: Build software used for generating cross-platform Makefiles
+    \item Mosquitto: MQTT message bus broker
+    \item paho.mqtt.cpp: Client library for MQTT message bus integration
+    \item nlohmann-json:  Library for creating and parsing JSON messages
+    \item wxWidgets: Cross-platform application and GUI development library
+    \item Boost: Multipurpose library
+\end{enumerate}
+
+\subsubsection{macOS}
+
+On macOS, all dependencies can be installed using the MacPorts package manager.
+
+\begin{lstlisting}
+port install cmake mosquitto paho.mqtt.cpp nlohmann-json wxWidgets-3.2 boost
+\end{lstlisting}
+
+\subsubsection{Ubuntu}
+
+Similarly, from Ubuntu 21.10 onwards, all dependencies can be installed through
+the apt-get package manager.
+
+\begin{lstlisting}
+apt-get install cmake mosquitto
+apt-get install libpaho-mqtt-dev libpaho-mqttpp-dev libssl-dev
+apt-get install nlohmann-json3-dev libboost-all-dev
+apt-get install libwxgtk3.0-gtk3-dev
+\end{lstlisting}
+
+Note: The paho.mqtt.cpp library  is not available through  apt-get before
+Ubuntu 21.10. If using a prior version of Ubuntu, the library will need to be
+built from source.
+
+Building
+
+The Tomcat-Dashboard uses CMake to generate cross-platform Makefiles. This
+makes it easy to build the program once all dependencies are installed. After
+cloning the repository, to build the dashboard, run the following from the root
+directory.
+
+\begin{lstlisting}
+mkdir build && cd build
+cmake ..
+make
+\end{lstlisting}
+
+
+Running
+Launch MQTT broker
+The Tomcat-Dashboard connects to an MQTT message bus for processing incoming data and communication between components. Before running the dashboard, an MQTT broker must be launched.
+MacOS
+mosquitto -p 1883
+
+Ubuntu
+service mosquitto start
+Configure MQTT broker
+By default, the dashboard will attempt to connect to an MQTT broker running on
+port 1883 of localhost. This can be configured in the conf/app.json file by
+modifying the |mqtt\_host| and mqtt\_port fields.
+
+mqtt_host: (default=0.0.0.0) The host that the MQTT broker is running on
+mqtt_port: (default=1883) The port that the MQTT broker is running on
+Run dashboard
+
+\begin{lstlisting}
+./gui
+\end{lstlisting}
+
+
+
+Visualization
+ASR
+Example ASR Message:
+{
+  "data": {
+    "text": "I am going to save a green victim.",
+    "is_final": true,
+    "id": "59678a5f-9c5b-451f-8506-04bc020f2cf3",
+    "participant_id": "participant_1",
+    "start_timestamp": "2021-01-19T23:27:57.978016Z",
+    "end_timestamp" : "2021-01-19T23:27:58.633076Z",
+
+   },
+  "header": {
+    "timestamp": "2021-01-19T23:27:58.633076Z",
+    "message_type": "observation",
+    "version": "0.1"
+  },
+  "msg": {
+    "timestamp": "2021-01-19T23:27:58.633967Z",
+    "experiment_id": "e2a3cb96-5f2f-11eb-8971-18810ee8274e",
+    "trial_id": "256d1b4a-d81d-465d-8ef0-2162ff96e204",
+    "version": "3.3.2",
+    "source": "speech_analyzer_agent",
+    "sub_type": "asr:transcription"
+  }
+}
+
+
+Usage
+To visualize incoming ASR utterances, navigate to the “ASR” tab in the menu sidebar. At the start of the trial, the right-side panel will display the text “Waiting for ASR messages…”.
+Image 1: ASR visualization at trial start
+
+As the trial progresses, and ASR messages come in, they will fill the panel one line at a time. In addition to the utterance text itself, each line will also contain a timestamp of when the utterance was generated, and a participant id colored to match the associated color of the participant.
+Image 2: ASR visualization during ongoing trial
+This color can be Red, Blue, or Green, and the mapping between color and participant comes from the Trial Start message.
+Charting
+Chart Configuration
+The data being charted can be configured by modifying the “ChartWidget” section in conifg/conf.json.
+
+"ChartWidget":{
+             	"topics":[
+                    	"score"
+            	],
+            	"x_axis_field": "Time",
+            	"x_axis_label": "Time",
+            	"y_axis_field": "Score",
+            	"y_axis_label": "Score",
+            	"panel_name": "CHART_PANEL"
+ }
+
+The dashboard will listen for incoming messages on any topics listed in the “topics” field. When processing messages, it will then check for the fields defined by “x_axis_field” and “y_axis_field”, create an x/y point, and add that point to the chart. “x_axis_label” and “y_axis_label” are used to add a label to the x-axis and y_axis of the chart. Finally, “panel_name” is used internally by the dashboard, and should not be modified.
+Example Chart Message
+{
+    	"data":{
+            	"Time": 0.2,
+            	"Score": 10
+    	}
+}
+
+
+
+Note:
+1. The “Time” and “Score” fields are not at the root level of the JSON message, but a part of the “data” field. This is to keep the formatting consistent with for other message types used by the dashboard.
+2. Each message should contain exactly one x/y pair. Other fields can be included, but will be ignored
+3. Data points should be either an integer or float value
+
+Usage
+To visualize data being charted, navigate to the “Chart” tab in the menu sidebar. At the start of the trial, the right-side panel will display an empty graph. If a label for the x-axis or y-axis was defined in the configuration, those labels will be displayed on the axes.  By default, the graph will be centered around point (0,0)
+Image 3: Chart visualization before trial start
+
+When adding a data point, if the data point is outside the visible range, the chart will automatically fit the data and adjust the x-axis and y-axis so that the new data point can be seen.
+
+
+Image 4: Chart visualization during ongoing trial
