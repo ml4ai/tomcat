@@ -30,12 +30,14 @@ void ReferenceAgent::process(mqtt::const_message_ptr msg) {
 }
 
 ReferenceAgent::ReferenceAgent(
-    string address,
+    string host,
+    int port,
     string input_topic,
     string output_topic
-) : AgentBase(address, input_topic, output_topic),
+) : AgentBase(host, port, input_topic, output_topic),
         input_topic(input_topic), 
-        output_topic(output_topic) {
+        output_topic(output_topic) 
+{
     cout << "Reference Agent" << endl;
     cout << " Input topic: " << input_topic << endl;
     cout << " Output topic: " << output_topic << endl;

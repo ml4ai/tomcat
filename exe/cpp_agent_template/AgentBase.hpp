@@ -31,7 +31,7 @@ class AgentBase {
     std::shared_ptr<mqtt::async_client> mqtt_client;
 
     /** Constructor */
-    AgentBase(string address, string input_topic, string output_topic);
+    AgentBase(string host, int port, string input_topic, string output_topic);
 
     /** Stop the agent */
     void stop();

@@ -14,9 +14,16 @@ string get_timestamp() {
            "Z";
 }
 
-AgentBase::AgentBase(string address, string input_topic, string output_topic) {
+AgentBase::AgentBase(
+    string host,
+    int port,
+    string input_topic,
+    string output_topic
+) {
     // Create an MQTT client using a smart pointer to be shared among
     // threads.
+    string address = "tcp://" + host + ": " + to_string(port);
+
     this->mqtt_client = make_shared<mqtt::async_client>(address, "agent");
 
     // Connect options for a non-persistent session and automatic

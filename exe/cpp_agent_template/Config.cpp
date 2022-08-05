@@ -1,4 +1,4 @@
-#include "Configurator.hpp"
+#include "Config.hpp"
 
 #include <boost/filesystem.hpp>
 #include <boost/json.hpp>
@@ -12,7 +12,7 @@ namespace fs = boost::filesystem;
 
 using namespace std;
 
-string Configurator::parse_args(int argc, char* argv[]) {
+string Config::parse_args(int argc, char* argv[]) {
 
     // set up options
     po::options_description options = describe_options();
@@ -46,7 +46,7 @@ string Configurator::parse_args(int argc, char* argv[]) {
 
 
 // return an options description of all command line inputs
-po::options_description Configurator::describe_options(){
+po::options_description Config::describe_options(){
 
     po::options_description options("Configuration");
     options.add_options()
@@ -72,7 +72,7 @@ po::options_description Configurator::describe_options(){
 
 // read the JSON config file
 // TODO return JSON object
-string Configurator::parse_config_file(string filename){
+string Config::parse_config_file(string filename){
 
     // Read the config file as plaintext
     if (fs::exists(filename)) {

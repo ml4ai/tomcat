@@ -12,7 +12,7 @@ using namespace std;
 
 
 // This class handles configuring the Agents from file and user input
-class Configurator {
+class Config {
 
     public:
 	// return a JSON object based on command line arguments

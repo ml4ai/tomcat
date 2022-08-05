@@ -11,6 +11,7 @@
 #include <boost/program_options.hpp>
 
 #include "ReferenceAgent.hpp"
+#include "Config.hpp"
 
 // An extendable base class for Testbed Agents
 // Authors:   Joseph Astier, Adarsh Pyareral
@@ -31,59 +32,23 @@ void signal_handler(int signal) { gSignalStatus = signal; }
 
 int main(int argc, char* argv[]) {
 
-    // Setting up program options from command line arguments
-    po::options_description options("Configuration");
+    // get configuration
+    Config config;
+    string configuration = config.parse_args(argc, argv);
 
-    options.add_options()
-        ("help,h", "Display this help message")
-        ("version,v", "Display the version number")
-        ("config,c",po::value<string>()->default_value("./config.json"),"Specify a config file")
-        ("mqtt.host",po::value<string>()->default_value("localhost"),"MQTT broker host")
-	("mqtt.port", po::value<int>()->default_value(1883), "MQTT broker port")
+    cout << "Configuration:" << endl;
+    cout << configuration << endl;
 
-    ;
+    // glean these from JSON configuration
+    string host = "localhost";
+    int port = 1883;
+    string input_topic = "input";
+    string output_topic = "output";
 
-//    po::options_description cmdline_options;
-//    cmdline_options.add(generic).add(config);
 
-    po::variables_map vm;
-    po::store(po::parse_command_line(argc, argv, options), vm);
-
-    // We run notify this first time to pick up the -c/--config option
-    po::notify(vm);
-
-    // Print a help message
-    if (vm.count("help")) {
-        cout << options << endl;
-        return 1;
-    }
-
-    /*
-    // If the -c/--config option is passed to the program on the command line,
-    // we check for the existence of the specified config file and load the
-    // options from it.
-    if (vm.count("config")) {
-	string config_path = vm["config"].as<string>();
-        if (fs::exists(config_path)) {
-            po::store(po::parse_config_file(config_path, options), vm);
-        }
-        else {
-            BOOST_LOG_TRIVIAL(error) << "Specified config file '" << config_path
-                                     << "' does not exist!";
-            return EXIT_FAILURE;
-        }
-    }
-
-    // We run the notify function a second time in order to process the config
-    // file
-    po::notify(vm);
-
-    string address = "tcp://" + vm["mqtt.host"].as<string>() + ":" +
-                     to_string(vm["mqtt.port"].as<int>());
+    ReferenceAgent agent(host, port, input_topic, output_topic);
 
     signal(SIGINT, signal_handler);
-
-    ReferenceAgent agent(address, input_topic, output_topic);
 
     while (true) {
         if (gSignalStatus == SIGINT) {
@@ -97,6 +62,5 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    */
     return EXIT_SUCCESS;
 }
