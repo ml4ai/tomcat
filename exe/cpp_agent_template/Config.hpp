@@ -22,6 +22,6 @@ class Config {
 	// describe options
 	po::options_description describe_options();
 
-        // parse config file
-        string parse_config_file(string filename);
+        // return the contents of a file as plaintext
+        string read_text_file(string filename);
 };

@@ -1,6 +1,7 @@
 #include "Config.hpp"
 
 #include <boost/filesystem.hpp>
+#include <boost/iostreams/device/file.hpp>
 #include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/program_options.hpp>
@@ -30,7 +31,7 @@ string Config::parse_args(int argc, char* argv[]) {
 
     // parse the config file
     string config_filename = vm["config"].as<string>();
-    string config_file_json = parse_config_file(config_filename);
+    string config_text =read_text_file(config_filename);
 
     // if the user wants the software version, show it and exit
     if (vm.count("version")) {
@@ -41,7 +42,7 @@ string Config::parse_args(int argc, char* argv[]) {
     // Compose JSON with completed configuration
     // ...
 
-    return config_file_json;
+    return config_text;
 }
 
 
@@ -70,27 +71,24 @@ po::options_description Config::describe_options(){
 }
 
 
-// read the JSON config file
-// TODO return JSON object
-string Config::parse_config_file(string filename){
+// return the contents of the file as a single plaintext string
+string Config::read_text_file(string filename){
+
 
     // Read the config file as plaintext
-    if (fs::exists(filename)) {
-
-        // read the JSON and return it
-        //  ...
-
-	// TODO replace this dummy value with the file contents
-	string file_json = 
-	    "{\"input_topic\": \"foo\", \"output_topic\": \"bar\"}";
-	return file_json;
-    }
-    else {
+    ifstream ifs(filename);
+    if(!ifs) {
         BOOST_LOG_TRIVIAL(error) 
-            << "Specified config file '" 
+            << "Could not read logfile '" 
             << filename
-            << "' does not exist!"
         ;
         exit(EXIT_FAILURE);
     }
+
+    // concatenate all lines in the text file
+    std::string text;
+    for (std::string line; std::getline(ifs, line); ) {
+	text += line;
+    }
+    return text;
 }
