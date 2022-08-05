@@ -21,7 +21,6 @@ namespace fs = boost::filesystem;
 
 using namespace std;
 using namespace std::chrono;
-//using namespace boost::json;
 
 namespace {
     volatile std::sig_atomic_t gSignalStatus;
@@ -34,10 +33,10 @@ int main(int argc, char* argv[]) {
 
     // get configuration
     Config config;
-    string configuration = config.parse_args(argc, argv);
+    boost::json::value c = config.parse_args(argc, argv);
 
     cout << "Configuration:" << endl;
-    cout << configuration << endl;
+    cout << c << endl;
 
     // glean these from JSON configuration
     string host = "localhost";

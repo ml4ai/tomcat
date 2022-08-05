@@ -13,7 +13,7 @@ namespace fs = boost::filesystem;
 
 using namespace std;
 
-string Config::parse_args(int argc, char* argv[]) {
+boost::json::value Config::parse_args(int argc, char* argv[]) {
 
     // set up options
     po::options_description options = describe_options();
@@ -31,7 +31,7 @@ string Config::parse_args(int argc, char* argv[]) {
 
     // parse the config file
     string config_filename = vm["config"].as<string>();
-    string config_text =read_text_file(config_filename);
+    boost::json::value config_json = parse_config_file(config_filename);
 
     // if the user wants the software version, show it and exit
     if (vm.count("version")) {
@@ -42,7 +42,7 @@ string Config::parse_args(int argc, char* argv[]) {
     // Compose JSON with completed configuration
     // ...
 
-    return config_text;
+    return config_json;
 }
 
 
@@ -71,24 +71,30 @@ po::options_description Config::describe_options(){
 }
 
 
-// return the contents of the file as a single plaintext string
-string Config::read_text_file(string filename){
-
+// return the contents of the config file as a JSON object
+boost::json::value Config:: parse_config_file(string filename){
 
     // Read the config file as plaintext
     ifstream ifs(filename);
     if(!ifs) {
-        BOOST_LOG_TRIVIAL(error) 
-            << "Could not read logfile '" 
-            << filename
-        ;
+        BOOST_LOG_TRIVIAL(error) << "Could not read file: " << filename;
         exit(EXIT_FAILURE);
     }
 
-    // concatenate all lines in the text file
-    std::string text;
+    boost::json::stream_parser p;
+    error_code ec;
+
+    // compose JSON from all lines in config file.  The file can
+    // be in pretty or compact JSON format.
     for (std::string line; std::getline(ifs, line); ) {
-	text += line;
+        p.write_some(line, ec);
+	if(ec) {
+            BOOST_LOG_TRIVIAL(error) << "JSON error parsing: " << line;
+            exit(EXIT_FAILURE);
+        }
     }
-    return text;
+    ifs.close();
+
+    assert(p.done());
+    return p.release();
 }

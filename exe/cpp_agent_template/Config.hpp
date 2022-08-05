@@ -16,12 +16,12 @@ class Config {
 
     public:
 	// return a JSON object based on command line arguments
-        string parse_args(int argc, char* argv[]);
+        boost::json::value parse_args(int argc, char* argv[]);
 
     private:
 	// describe options
 	po::options_description describe_options();
 
         // return the contents of a file as plaintext
-        string read_text_file(string filename);
+        boost::json::value parse_config_file(string filename);
 };
