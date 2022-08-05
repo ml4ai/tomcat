@@ -13,6 +13,7 @@ void ReferenceAgent::process(mqtt::const_message_ptr msg) {
     cout << "Message received on topic " << topic << endl;
     string msgstr = msg->to_string();
 
+    /*
     try {
 	json::object jv = json::parse(msgstr).as_object();
         cout << msgstr << endl;
@@ -26,19 +27,13 @@ void ReferenceAgent::process(mqtt::const_message_ptr msg) {
             "Could not process message.  Caught exception: "
             << e.what() << std::endl;
     }
+    */
 
 }
 
-ReferenceAgent::ReferenceAgent(
-    string host,
-    int port,
-    string input_topic,
-    string output_topic
-) : AgentBase(host, port, input_topic, output_topic),
-        input_topic(input_topic), 
-        output_topic(output_topic) 
+ReferenceAgent::ReferenceAgent(json::object config): AgentBase(config)
 {
-    cout << "Reference Agent" << endl;
-    cout << " Input topic: " << input_topic << endl;
-    cout << " Output topic: " << output_topic << endl;
+//    cout << "Reference Agent" << endl;
+//    cout << " Input topic: " << input_topic << endl;
+//    cout << " Output topic: " << output_topic << endl;
 };

@@ -11,13 +11,14 @@
 #include <boost/program_options.hpp>
 
 #include "ReferenceAgent.hpp"
-#include "Config.hpp"
+#include "Configurator.hpp"
 
 // An extendable base class for Testbed Agents
 // Authors:   Joseph Astier, Adarsh Pyareral
 
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
+namespace json = boost::json;
 
 using namespace std;
 using namespace std::chrono;
@@ -32,20 +33,13 @@ void signal_handler(int signal) { gSignalStatus = signal; }
 int main(int argc, char* argv[]) {
 
     // get configuration
-    Config config;
-    boost::json::value c = config.parse_args(argc, argv);
+    Configurator configurator;
+    json::object config = configurator.parse_args(argc, argv);
 
     cout << "Configuration:" << endl;
-    cout << c << endl;
+    cout << config << endl;
 
-    // glean these from JSON configuration
-    string host = "localhost";
-    int port = 1883;
-    string input_topic = "input";
-    string output_topic = "output";
-
-
-    ReferenceAgent agent(host, port, input_topic, output_topic);
+    ReferenceAgent agent(config);
 
     signal(SIGINT, signal_handler);
 

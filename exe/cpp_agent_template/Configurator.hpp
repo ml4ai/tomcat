@@ -8,20 +8,25 @@
 // Authors:   Joseph Astier, Adarsh Pyareral
 
 namespace po = boost::program_options;
+namespace json = boost::json;
+
 using namespace std;
 
 
 // This class handles configuring the Agents from file and user input
-class Config {
+class Configurator {
 
     public:
-	// return a JSON object based on command line arguments
-        boost::json::value parse_args(int argc, char* argv[]);
+        // return a JSON object based on command line arguments
+        json::object parse_args(int argc, char* argv[]);
 
     private:
-	// describe options
-	po::options_description describe_options();
+        // describe options
+        po::options_description describe_options();
 
         // return the contents of a file as plaintext
-        boost::json::value parse_config_file(string filename);
+        json::object parse_config_file(string filename);
+
+	// Check that required configuration fields are present
+	void validate(json::object config);
 };

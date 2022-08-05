@@ -14,12 +14,12 @@ string get_timestamp() {
            "Z";
 }
 
-AgentBase::AgentBase(
-    string host,
-    int port,
-    string input_topic,
-    string output_topic
-) {
+
+// 
+AgentBase::AgentBase(json::object config): config(config) {
+    string host = json::value_to<string>(config.at("host"));
+    int port = json::value_to<int>(config.at("port"));
+
     // Create an MQTT client using a smart pointer to be shared among
     // threads.
     string address = "tcp://" + host + ": " + to_string(port);
@@ -39,11 +39,13 @@ AgentBase::AgentBase(
     auto rsp = this->mqtt_client->connect(connOpts)->get_connect_response();
     BOOST_LOG_TRIVIAL(info) << "Connected to the MQTT broker at " << address;
 
-    mqtt_client->subscribe(input_topic, 2);
+    // Subscribe to the config subscriptions
+    // TODO
+    //mqtt_client->subscribe(input_topic, 2);
 
-    /** Start publishing heartbeat messages */
+    // Start publishing heartbeat messages 
     heartbeat_future = async(launch::async, &AgentBase::publish_heartbeats, this);
-};
+}
 
 /** Function that publishes heartbeat messages while the agent is running */
 void AgentBase::publish_heartbeats() {

@@ -18,7 +18,7 @@ find_package(
 add_executable(
     main main.cpp 
     AgentBase.cpp 
-    Config.cpp
+    Configurator.cpp
     ReferenceAgent.cpp
 )
 target_link_libraries(main PahoMqttCpp::paho-mqttpp3 ${Boost_LIBRARIES})

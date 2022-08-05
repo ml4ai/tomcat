@@ -4,14 +4,20 @@
 #include <string>
 #include <thread>
 #include <future>
+#include <boost/json.hpp>
 
 #include <mqtt/async_client.h>
+
+namespace json = boost::json;
 
 using namespace std;
 
 
 /** Class that represents our agent */
 class AgentBase {
+
+    /** configuration settings */
+    json::object config;
 
     /** Flag to specify whether the agent is running or not */
     bool running = true;
@@ -31,7 +37,7 @@ class AgentBase {
     std::shared_ptr<mqtt::async_client> mqtt_client;
 
     /** Constructor */
-    AgentBase(string host, int port, string input_topic, string output_topic);
+    AgentBase(json::object config);
 
     /** Stop the agent */
     void stop();

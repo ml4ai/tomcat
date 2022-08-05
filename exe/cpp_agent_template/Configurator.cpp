@@ -1,4 +1,4 @@
-#include "Config.hpp"
+#include "Configurator.hpp"
 
 #include <boost/filesystem.hpp>
 #include <boost/iostreams/device/file.hpp>
@@ -10,10 +10,11 @@
 
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
+namespace json = boost::json;
 
 using namespace std;
 
-boost::json::value Config::parse_args(int argc, char* argv[]) {
+json::object Configurator::parse_args(int argc, char* argv[]) {
 
     // set up options
     po::options_description options = describe_options();
@@ -29,9 +30,15 @@ boost::json::value Config::parse_args(int argc, char* argv[]) {
         exit(EXIT_SUCCESS);
     }
 
-    // parse the config file
+    // parse the config file as JSON
     string config_filename = vm["config"].as<string>();
-    boost::json::value config_json = parse_config_file(config_filename);
+    json::object config = parse_config_file(config_filename);
+
+    // Compose JSON with completed configuration
+    // ...
+
+    // Validate configuration
+    validate(config);
 
     // if the user wants the software version, show it and exit
     if (vm.count("version")) {
@@ -39,15 +46,17 @@ boost::json::value Config::parse_args(int argc, char* argv[]) {
         exit(EXIT_SUCCESS);
     }
 
-    // Compose JSON with completed configuration
-    // ...
+    return config;
+}
 
-    return config_json;
+// Test that required fields are present.  
+void Configurator::validate(json::object config){
 }
 
 
+
 // return an options description of all command line inputs
-po::options_description Config::describe_options(){
+po::options_description Configurator::describe_options(){
 
     po::options_description options("Configuration");
     options.add_options()
@@ -72,7 +81,7 @@ po::options_description Config::describe_options(){
 
 
 // return the contents of the config file as a JSON object
-boost::json::value Config:: parse_config_file(string filename){
+json::object Configurator:: parse_config_file(string filename){
 
     // Read the config file as plaintext
     ifstream ifs(filename);
@@ -81,12 +90,12 @@ boost::json::value Config:: parse_config_file(string filename){
         exit(EXIT_FAILURE);
     }
 
-    boost::json::stream_parser p;
+    json::stream_parser p;
     error_code ec;
 
     // compose JSON from all lines in config file.  The file can
     // be in pretty or compact JSON format.
-    for (std::string line; std::getline(ifs, line); ) {
+    for (string line; std::getline(ifs, line); ) {
         p.write_some(line, ec);
 	if(ec) {
             BOOST_LOG_TRIVIAL(error) << "JSON error parsing: " << line;
@@ -96,5 +105,5 @@ boost::json::value Config:: parse_config_file(string filename){
     ifs.close();
 
     assert(p.done());
-    return p.release();
+    return p.release().as_object();
 }
