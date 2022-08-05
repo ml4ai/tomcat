@@ -5,7 +5,10 @@ A framework for rapid development of Message Bus Agents in C++.
 This framework handles those message bus operations that are common to all agents, allowing the developer to focus solely on the  
 input processing and output generation specific to their agent.  
 
-To build:
+### Requirements
+You must have Boost version 1.75 or later installed for the JSON library.
+
+### Building the agent
 
 ```
 mkdir build
@@ -14,17 +17,12 @@ cmake ..
 make -j
 ```
 
-To run the program (assuming you are in the build directory)
+To run the agent (assuming you are in the build directory)
 
 ```
 ./main
 ```
 
-To see available options:
-
-```
-./main -h
-```
 
 ## Configuration
 
