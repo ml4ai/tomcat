@@ -10,11 +10,9 @@
     "version_info": "agent/template_agent/versioninfo"
   },
   "subscriptions": {
-    "input1": "agent/template_agent_input1",
-    "input2": "agent/template_agent_input2",
+    "input": "agent/template_agent_input",
     "rollcall_request": "agent/control/rollcall/request",
     "trial": "trial"
   },
-  "version_adarsh":"1.2.3",
   "version":"1.0.0"
 }
