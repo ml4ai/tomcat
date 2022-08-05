@@ -62,4 +62,4 @@ Additional settings are made in the configuration file:
 }
 ```
 
-For settings that exist in both the command line options and the config file, the command line input will be used.
+If a setting that exists in the configuration file is also specified on the command line, the command line input is used.
