@@ -1,7 +1,5 @@
-Report of Result for Closed-Loop Communication Detection
-
-
-Introduction
+\section{Task 2: Closed loop communication (CLC) detector}
+\subsection{Introduction}
 
 Closed-loop communication (CLC) is often recommended in the team research
 literature as a communication behavior that can guarantee the accuracy of
@@ -18,13 +16,15 @@ about multi-utterance context. For this reason, we are developing a separate
 downstream CLC detection component that utilizes the outputs of the
 DialogAgent, but also reasons about context and state more deeply.
 
-Approach
+\subsection{Approach}
 
 There are three distinct phases in a complete Closed-loop communication:
 
-• Call-out: The sender initiates a message.
-• Check-back: The receiver acknowledges the message, usually by paraphrasing or repeating the main information of the message.
-• Closed-loop: The sender verifies that the message has been received and interpreted correctly.
+\begin{enumerate}
+    \item Call-out: The sender initiates a message.
+    \item Check-back: The receiver acknowledges the message, usually by paraphrasing or repeating the main information of the message.
+    \item Closed-loop: The sender verifies that the message has been received and interpreted correctly.
+\end{enumerate}
 
 Our rule-based EE system uses the Odin (Valenzuela-Escárcega et al., 2016)
 event extraction framework, and currently contains 420 active rules that can
@@ -44,7 +44,7 @@ the Check-back with the Agreement label, we can determine that this is a
 closed-loop communication. The final score of the Closed-loop communication
 detected is the sum of the scores of the three phases.
 
-Evaluation
+\subsection{Evaluation}
 
 To evaluate the algorithm of CLC detection, we conducted a CLC annotation task
 for 3239 of the dialogue utterances from our ASIST Study-3 transcriptions, and
@@ -52,7 +52,7 @@ the rule-based CLC extractions and scores are tested on the golden annotation
 regarding the precision, recall, and F1.
 
 
-Results
+\subsection{Results}
 
 Our CLC detection system extracted 978 closed-loop communication patterns,
 scoring from 1.0, for which only the Call-out is detected but no Check-backs
@@ -76,21 +76,20 @@ precision. This indicates that our rule-based CLC detection system can pick as
 many of the phases as it can, but it also included too much noise so that it’s
 not precise. 
 
-Error Analysis
+\subsection{Error Analysis}
 
 This result is caused by three major reasons: Firstly, for the Call-out phase,
 there’s a competing nature between precision and recall. For example, the
-Call-out is usually a question initiated by the initiator, but there're also a
-fair amount of questions
-[2;2R[3;1R[>0;95;0c]10;rgb:d8d8/dede/e9e9]11;rgb:2e2e/3434/4040that
-don’t necessarily initiate a CLC session, like “shall we go”, “where are you”.
-Secondly, when we look for recursive labels between Call-out and potential
-Check-backs, overgeneralization could easily happen to introduce noise. A lot
-of the time, the recursive labels are just very common labels like Room or
-Victim, but the speakers are actually talking about different things. Finally,
-the overmatching of the Close-loop phase is generally caused by only looking
-for a simple acknowledgment or a Gratitude label. But they are also very common
-labels that will easily cause overmatching.
+Call-out is usually a question initiated by the initiator, but there are also a
+fair amount of questions that don’t necessarily initiate a CLC session, like
+``shall we go'', ``where are you''.  Secondly, when we look for recursive labels
+between Call-out and potential Check-backs, overgeneralization could easily
+happen to introduce noise. A lot of the time, the recursive labels are just
+very common labels like Room or Victim, but the speakers are actually talking
+about different things. Finally, the overmatching of the Close-loop phase is
+generally caused by only looking for a simple acknowledgment or a Gratitude
+label. But they are also very common labels that will easily cause
+overmatching.
 
 
 
@@ -127,7 +126,7 @@ Overall
 
 Table 1  Evaluation of the rule-based CLC detection system
 
-Conclusion
+\subsection{Conclusion}
 
 As a creative method to break the limit of single utterances and building a
 multi-speaker, multi-event extraction system in the context, this project made
@@ -136,11 +135,3 @@ for now, we see many areas that we should work on to adjust the current system.
 For further development of the system, we’re also planning to introduce the
 machine learning way to deal with the issues that rule-based system has issues
 on. 
-
-Reference
-
-Marco A. Valenzuela-Escárcega, Gus Hahn-Powell, and Mihai Surdeanu. 2016.
-Odin’s runes: A rule language for information extraction. In Proceedings of the
-Tenth International Conference on Language Resources and Evaluation (LREC’16),
-pages 322–329, Portorož, Slovenia. European Language Resources Association
-(ELRA).  \section{Closed Loop Communication detection}
