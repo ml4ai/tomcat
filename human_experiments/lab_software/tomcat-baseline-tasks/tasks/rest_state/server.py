@@ -4,7 +4,7 @@ from datetime import datetime
 from common import request_clients_end
 from network import receive, send
 
-from .config_rest_state import REST_TIMER
+from .config import REST_TIMER
 
 
 class ServerRestState:

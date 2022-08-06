@@ -1,10 +1,7 @@
-from common import (cursor_visibility, render_blank_screen,
-                    set_cursor_position, wait)
-from config import CLIENT_WINDOW_HEIGHT, CLIENT_WINDOW_WIDTH
+from common import (render_blank_screen, wait)
 from network import receive, send
 
-from .config_rest_state import (BLANK_SCREEN_MILLISECONDS,
-                                    CROSS_SCREEN_MILLISECONDS)
+from .config import (BLANK_SCREEN_MILLISECONDS, CROSS_SCREEN_MILLISECONDS)
 from .utils import timer
 
 class ClientRestState:

@@ -1,2 +1,2 @@
-from .client_affective_task import ClientAffectiveTask
-from .server_affective_task import ServerAffectiveTask
+from .client import ClientAffectiveTask
+from .server import ServerAffectiveTask

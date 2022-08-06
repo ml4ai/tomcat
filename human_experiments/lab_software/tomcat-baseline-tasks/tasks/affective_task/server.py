@@ -5,7 +5,7 @@ from time import monotonic, sleep, time
 from common import record_metadata, request_clients_end
 from network import receive, send
 
-from .config_affective_task import (BLANK_SCREEN_MILLISECONDS,
+from .config import (BLANK_SCREEN_MILLISECONDS,
                                     CROSS_SCREEN_MILLISECONDS,
                                     DISCUSSION_TIMER, INDIVIDUAL_IMAGE_TIMER,
                                     INDIVIDUAL_RATING_TIMER, TEAM_IMAGE_TIMER,

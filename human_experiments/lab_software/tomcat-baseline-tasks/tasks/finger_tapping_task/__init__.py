@@ -1,2 +1,2 @@
-from .client_finger_tapping_task import ClientFingerTappingTask
-from .server_finger_tapping_task import ServerFingerTappingTask
+from .client import ClientFingerTappingTask
+from .server import ServerFingerTappingTask

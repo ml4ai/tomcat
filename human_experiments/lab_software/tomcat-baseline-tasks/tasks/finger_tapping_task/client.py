@@ -6,7 +6,7 @@ from common import (COLOR_BACKGROUND, COLOR_DIM, COLOR_FOREGROUND,
 from config import UPDATE_RATE
 from network import receive, send
 
-from .config_finger_tapping_task import COUNT_DOWN_MESSAGE, SQUARE_WIDTH
+from .config import COUNT_DOWN_MESSAGE, SQUARE_WIDTH
 from .utils import PlayerSquare
 
 
