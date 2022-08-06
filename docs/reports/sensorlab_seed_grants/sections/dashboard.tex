@@ -1,78 +1,136 @@
-The Tomcat-Dashboard is a cross-platform user interface for controlling and
-visualizing scientific experiments.
+\chapter{Development of an open-source dashboard for team communication experiments}
 
-\subsection{Installing dependencies}
+The goal of this task was to create an open-source dashboard for controlling
+and visualizing team communication experiments in real-time - i.e., to put a
+more user-friendly interface on our existing backend infrastructure so that
+other researchers at UArizona can utilize it more easily.
 
-The following software components are  dependencies required to build and run the dashboard.
+\section{Milestones}
+
+We were able to partially complete Milestone 1 (real-time visualization of
+automated transcriptions, dialog act classifications, and sentiment labels).
+Specifically, we are able to now visualize automated transcriptions in
+real-time (see \autoref{fig:asr_viz}).
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/asr_viz}
+    \caption{ASR visualization during ongoing trial.}
+    \label{fig:asr_viz}
+\end{figure}
+
+We did not implement visualization of dialog act classifications and sentiment
+labels, but given our now-increased expertise in working with our visualization
+libraries, we expect that it will not be too hard to implement those additions. 
+
+We were not able to complete Milestone 2, since this milestone depended on the
+development of the WASD sensors (\autoref{sec:wasd}), which we were not able to
+complete on time.
+
+In addition to these milestones, we implemented a generic interface for
+real-time visualization of scalar values in dynamically updating charts.
+
+\subsection{Prerequisites}
+
+The following software components are required to build and run the dashboard.
 
 \begin{enumerate}
-    \item cmake: Build software used for generating cross-platform Makefiles
-    \item Mosquitto: MQTT message bus broker
-    \item paho.mqtt.cpp: Client library for MQTT message bus integration
-    \item nlohmann-json:  Library for creating and parsing JSON messages
+    \item CMake: Build system for generating cross-platform Makefiles
+    \item An MQTT message broker. We used Mosquitto for our testing.
+    \item paho.mqtt.cpp: MQTT client library 
+    \item nlohmann-json: Library for creating and parsing JSON messages
     \item wxWidgets: Cross-platform application and GUI development library
-    \item Boost: Multipurpose library
+    \item Boost: Collection of miscellaneous C++ libraries.
 \end{enumerate}
 
 \subsubsection{macOS}
 
-On macOS, all dependencies can be installed using the MacPorts package manager.
+On macOS, if you are using the MacPorts package manager, you can install the
+dependencies by invoking the following:
 
 \begin{minted}{shell}
-port install cmake mosquitto paho.mqtt.cpp nlohmann-json wxWidgets-3.2 boost
+port install \
+    cmake \
+    mosquitto \
+    paho.mqtt.cpp \
+    nlohmann-json \
+    wxWidgets-3.2 \
+    boost
+\end{minted}
+
+You will also need to activate \texttt{wxWidgets-3.2} by running:
+
+\begin{minted}{shell}
+port select --set wxWidgets wxWidgets-3.2
 \end{minted}
 
 \subsubsection{Ubuntu}
 
 Similarly, from Ubuntu 21.10 onwards, all dependencies can be installed through
-the apt-get package manager.
+the \texttt{apt} package manager.
 
 \begin{minted}{shell}
-apt install cmake mosquitto
-apt install libpaho-mqtt-dev libpaho-mqttpp-dev libssl-dev
-apt install nlohmann-json3-dev libboost-all-dev
-apt install libwxgtk3.0-gtk3-dev
+apt install \
+        cmake \
+        mosquitto \
+        libpaho-mqtt-dev \
+        libpaho-mqttpp-dev \
+        libssl-dev \
+        nlohmann-json3-dev \
+        libboost-all-dev \
+        libwxgtk3.0-gtk3-dev
 \end{minted}
 
-Note: The paho.mqtt.cpp library  is not available through  apt-get before
-Ubuntu 21.10. If using a prior version of Ubuntu, the library will need to be
-built from source.
+Note: The \texttt{paho.mqtt.cpp} library  is not available through \texttt{apt}
+prior to Ubuntu 21.10. If using an earlier version of Ubuntu, the library will
+need to be installed from source.
 
-Building
+\subsection{Building}
 
-The Tomcat-Dashboard uses CMake to generate cross-platform Makefiles. This
+The ToMCAT Dashboard uses CMake to generate cross-platform Makefiles. This
 makes it easy to build the program once all dependencies are installed. After
 cloning the repository, to build the dashboard, run the following from the root
 directory.
 
 \begin{minted}{shell}
-mkdir build && cd build
+mkdir -p build
+cd build
 cmake ..
-make
+make -j
 \end{minted}
 
 
-Running
-Launch MQTT broker
-The Tomcat-Dashboard connects to an MQTT message bus for processing incoming data and communication between components. Before running the dashboard, an MQTT broker must be launched.
-MacOS
+\subsection{Running the dashboard}
 
-mosquitto -p 1883
+\subsubsection{Launch MQTT broker}
 
-Ubuntu
+The ToMCAT Dashboard connects to an MQTT message bus for processing incoming
+data and communication between components. Before running the dashboard, an
+MQTT broker must be launched, if one is not already running.  You may need to
+prefix the invocations below with \mintinline{shell}{sudo}.
 
-\begin{minted}{shell}
-service mosquitto start
-\end{minted}
+\begin{itemize}
+    \item If you have MacOS with MacPorts: \mintinline{shell}{port load mosquitto}
+    \item Ubuntu: \mintinline{shell}{service mosquitto start}
+\end{itemize}
 
-Configure MQTT broker
+\subsubsection{Configure MQTT broker}
+
 By default, the dashboard will attempt to connect to an MQTT broker running on
-port 1883 of localhost. This can be configured in the conf/app.json file by
-modifying the mqtt\_host and mqtt\_port fields.
+port 1883 of localhost. This can be configured in the \texttt{config/app.json} file by
+modifying the following values:
 
-mqtt\_host: (default=0.0.0.0) The host that the MQTT broker is running on
-mqtt\_port: (default=1883) The port that the MQTT broker is running on
-Run dashboard
+\begin{itemize}
+
+    \item \texttt{mqtt\_host}: (default=0.0.0.0) The host that the MQTT broker
+        is running on.
+
+    \item \texttt{mqtt\_port}: (default=1883) The port that the MQTT broker is
+        running on.
+
+\end{itemize}
+
+\subsubsection{Run dashboard}
 
 \begin{minted}{shell}
 ./gui
@@ -80,8 +138,10 @@ Run dashboard
 
 
 
-Visualization
-ASR
+\subsection{Visualization}
+
+\subsubsection{ASR}
+
 Example ASR Message:
 
 \begin{minted}{JSON}
@@ -92,7 +152,7 @@ Example ASR Message:
     "id": "59678a5f-9c5b-451f-8506-04bc020f2cf3",
     "participant_id": "participant_1",
     "start_timestamp": "2021-01-19T23:27:57.978016Z",
-    "end_timestamp" : "2021-01-19T23:27:58.633076Z",
+    "end_timestamp" : "2021-01-19T23:27:58.633076Z"
    },
   "header": {
     "timestamp": "2021-01-19T23:27:58.633076Z",
@@ -112,12 +172,22 @@ Example ASR Message:
 
 
 Usage
-To visualize incoming ASR utterances, navigate to the ``ASR” tab in the menu sidebar. At the start of the trial, the right-side panel will display the text ``Waiting for ASR messages…”.
+
+To visualize incoming ASR utterances, navigate to the ``ASR" tab in the menu
+sidebar. At the start of the trial, the panel on the right will display the text
+``Waiting for ASR messages…''.
+
 Image 1: ASR visualization at trial start
 
-As the trial progresses, and ASR messages come in, they will fill the panel one line at a time. In addition to the utterance text itself, each line will also contain a timestamp of when the utterance was generated, and a participant id colored to match the associated color of the participant.
+As the trial progresses, and ASR messages come in, they will fill the panel one
+line at a time. In addition to the utterance text itself, each line will also
+contain a timestamp of when the utterance was generated, and a participant id
+colored to match the associated color of the participant.
+
 Image 2: ASR visualization during ongoing trial
+
 This color can be Red, Blue, or Green, and the mapping between color and participant comes from the Trial Start message.
+
 Charting
 Chart Configuration
 The data being charted can be configured by modifying the ``ChartWidget” section in conifg/conf.json.
