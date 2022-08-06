@@ -20,6 +20,7 @@
 \def\subsubsectionautorefname{§}
 
 \setcounter{secnumdepth}{3}
+\settocdepth{subsection}
 
 
 % Fonts
@@ -140,59 +141,6 @@
 
 \usepackage[backgroundcolor=white, bordercolor=white, textsize=small]{todonotes}
 
-% =========================
-% Support for code listings
-% =========================
-\usepackage{listings}
-
-% Solarized colors for code listings
-\definecolor{sbase03}{HTML}{002B36}
-\definecolor{sbase02}{HTML}{073642}
-\definecolor{sbase01}{HTML}{586E75}
-\definecolor{sbase00}{HTML}{657B83}
-\definecolor{sbase0}{HTML}{839496}
-\definecolor{sbase1}{HTML}{93A1A1}
-\definecolor{sbase2}{HTML}{EEE8D5}
-\definecolor{sbase3}{HTML}{FDF6E3}
-\definecolor{syellow}{HTML}{B58900}
-\definecolor{sorange}{HTML}{CB4B16}
-\definecolor{sred}{HTML}{DC322F}
-\definecolor{smagenta}{HTML}{D33682}
-\definecolor{sviolet}{HTML}{6C71C4}
-\definecolor{sblue}{HTML}{268BD2}
-\definecolor{scyan}{HTML}{2AA198}
-\definecolor{sgreen}{HTML}{859900}
-
-
-% Support for easier inline verbatims/commands
-% So you can type |command| instead of \lstinline|command|
-\lstMakeShortInline[basicstyle=\ttfamily]|
-
-\lstset{
- % How/what to match
-    columns=flexible,
-    sensitive=true,
-    % Border 
-    frame=single,
-    % Put extra space under caption
-    belowcaptionskip=1\baselineskip,
-    % Colors
-    backgroundcolor=\color{sbase3},
-    basicstyle=\small\color{sbase00}\ttfamily,
-    keywordstyle=\color{scyan},
-    commentstyle=\itshape\color{sbase1},
-    stringstyle=\color{sblue},
-    numberstyle=\scriptsize\color{sviolet},
-    identifierstyle=\color{sbase00},
-    % Break long lines into multiple lines?
-    breaklines=true,
-    tabsize=2,
-    literate={~} {\texthome}{1},
-    framesep=10pt,
-    xleftmargin=10pt,
-    xrightmargin=10pt
-}
-
 % =============
 % Custom macros
 % =============
@@ -200,8 +148,6 @@
 \newcommand{\texthome}{\raisebox{0.5ex}{\texttildelow}}
 
 \usepackage[cachedir=build, outputdir=build]{minted}
-
-
 
 % ======================================================================
 % Creating the title page
@@ -214,7 +160,7 @@
 \maketitle
 \tableofcontents* 
 
-\input{sections/introduction}
+\input{sections/summary}
 \chapter{Automated real-time detection of closed-loop communication in spoken dialogue}
 \input{sections/wasd}
 \input{sections/clc}
