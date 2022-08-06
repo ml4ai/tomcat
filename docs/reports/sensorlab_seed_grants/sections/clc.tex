@@ -3,18 +3,15 @@
 
 Closed-loop communication (CLC) is often recommended in the team research
 literature as a communication behavior that can guarantee the accuracy of
-information exchange. In this project, we developed a rule-based natural
-language process (NLP) algorithm for detecting the presence or absence of CLC
-procedures in spoken dialogue within teams of humans collaborating on shared
-tasks.
+information exchange. In this project, we developed a rule-based algorithm
+based on event extraction from natural language for detecting the presence or
+absence of CLC procedures in spoken dialogue within teams of humans
+collaborating on shared tasks.
 
 The ASR Agent in conjunction with the DialogAgent developed by the ToMCAT team
-enables us to extract events of interest in real-time from spoken dialogue,
-which goes a long way towards addressing both of these limitations. However,
-the DialogAgent at the level of individual utterances, and does not reason
-about multi-utterance context. For this reason, we are developing a separate
-downstream CLC detection component that utilizes the outputs of the
-DialogAgent, but also reasons about context and state more deeply.
+enables us to extract events of interest in real-time from spoken dialogue.
+However, the DialogAgent works at the level of individual utterances, and does
+not reason about multi-utterance context. 
 
 \subsection{Approach}
 
