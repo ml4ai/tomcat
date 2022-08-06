@@ -22,11 +22,13 @@ There are three distinct phases in a complete Closed-loop communication:
 
 \begin{enumerate}
     \item Call-out: The sender initiates a message.
-    \item Check-back: The receiver acknowledges the message, usually by paraphrasing or repeating the main information of the message.
-    \item Closed-loop: The sender verifies that the message has been received and interpreted correctly.
+    \item Check-back: The receiver acknowledges the message, usually by
+        paraphrasing or repeating the main information of the message.
+    \item Closed-loop: The sender verifies that the message has been received
+        and interpreted correctly.
 \end{enumerate}
 
-Our rule-based EE system uses the Odin (Valenzuela-Escárcega et al., 2016)
+Our rule-based EE system uses the Odin \cite{valenzuela-escarcega-etal-2016-odins}
 event extraction framework, and currently contains 420 active rules that can
 extract from simple to complex events, as well as entities and sentiment. Based
 on these event rules, we develop an algorithm to detect the three phases of
@@ -65,16 +67,16 @@ CLC scores assigned by our detection system shows that the CLC detection system
 doesn’t give significantly higher scores for CLC detection than the annotators
 (p > 1). 
 
-Table 1 shows the results of our evaluation. Because the participants in our
-game tasks are not specifically trained to use Closed-loop communication, there
-is a relative rear distribution of the CLC pattern. We can see from the table
-that although the overall F1 is as high as 0.79, the score is largely boosted
-by the NA labels. Those are the utterances that don’t recognize by the
-annotators and our system as a part of the closed-loop communication.  However,
-for the individual phases of the CLC, we do see higher recall scores than
-precision. This indicates that our rule-based CLC detection system can pick as
-many of the phases as it can, but it also included too much noise so that it’s
-not precise. 
+\autoref{tab:clc} shows the results of our evaluation. Because the participants
+in our game tasks are not specifically trained to use Closed-loop
+communication, there is a relative rear distribution of the CLC pattern. We can
+see from the table that although the overall F1 is as high as 0.79, the score
+is largely boosted by the NA labels. Those are the utterances that don’t
+recognize by the annotators and our system as a part of the closed-loop
+communication.  However, for the individual phases of the CLC, we do see higher
+recall scores than precision. This indicates that our rule-based CLC detection
+system can pick as many of the phases as it can, but it also included too much
+noise so that it’s not precise. 
 
 \subsection{Error Analysis}
 
@@ -93,38 +95,21 @@ overmatching.
 
 
 
-Precision
-Recall
-F1
-Support
-NA
-0.985
-0.722
-0.833
-3084
-Call-out
-0.123
-0.774
-0.212
-155
-Check-back
-0.118
-0.721
-0.203
-147
-Close-loop
-0.021
-0.550
-0.041
-20
-Overall
-0.949
-0.702
-0.798
-3239
-
-
-Table 1  Evaluation of the rule-based CLC detection system
+\begin{table}
+    \centering
+    \begin{tabular}{lrrrr}
+        \toprule
+                   & Precision & Recall & $F_1$ & Support\\\midrule
+        NA         & 0.985     & 0.722  & 0.833 & 3084\\
+        Call-out   & 0.123     & 0.774  & 0.212 & 155 \\
+        Check-back & 0.118     & 0.721  & 0.203 & 147\\
+        Close-loop & 0.021     & 0.550  & 0.041 & 20\\
+        Overall    & 0.949     & 0.702  & 0.798 & 3239\\
+        \bottomrule
+    \end{tabular}
+    \caption{Evaluation of the rule-based CLC detection system}
+    \label{tab:clc}
+\end{table}
 
 \subsection{Conclusion}
 

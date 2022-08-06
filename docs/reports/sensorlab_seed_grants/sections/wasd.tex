@@ -4,23 +4,78 @@ The goal of this task was to develop a wearable audio streaming device to
 study spoken team dialog while bypassing the problem of audio source
 separation.
 
-This is a non-trivial task, and was broken down into a few intermediate steps.
+Specifically, we wanted to write a program that would capture audio chunks on a
+Raspberry Pi Zero 2 W device using a USB microphone, and stream the chunks to a
+server over websockets. The chunks would then be fed to an automatic speech
+recognition system to produce real-time transcriptions that could then be used
+for further downstream analysis.
+
+Unfortunately, while made a good deal of progress on this task, we were not
+able to fully meet our proposed milestones. However, we did accomplish the
+following:
+
+
+\begin{itemize}
+    \item \textbf{Hardware expertise development.} We were able to set up and get familiar with the Raspberry Pi
+        devices, and setting up networking on Ubuntu in order to work with them
+        wirelessly.
+
+    \item \textbf{Software expertise development.} We developed general
+        expertise in C and C++, and specific expertise in the mature libraries
+        we chose for websockets (Boost.Beast) and audio recording (PortAudio).
+        Notably, we learned to work with the quirks of using PortAudio on the
+        Raspberry Pi.  We also developed a good understanding of writing
+        programs to perform asynchronous I/O, which is necessary for performant
+        audio streaming.
+
+    \item \textbf{Dealing with audio on the Pi.} We also learned more on how to
+        deal with audio recording on the Raspberry Pi, which turns out to be a
+        non-trivial task due to the lack of documentation and the differences
+        between the Linux distro on the Pi and the relatively heavier-weight
+        Linux distros we are used to (e.g., Ubuntu).
+        The undergraduate RA (Minh) developed a program to print all possible audio
+        devices on the Pi, and at the same time, configure ALSA to choose the
+        right default audio input device that is needed.
+
+    \item \textbf{audioStreamer.} With the help of our research programmer
+        (Vincent), we were able to develop an audio streaming program
+        (\texttt{audioStreamer}) that can be started and stopped using control
+        messages coming over an MQTT message bus. 
+
+\end{itemize}
+
+Some of the challenges we faced and lessons learned are listed below.
 
 \begin{enumerate}
-    \item Write a program to 
+
+    \item \textbf{Hardware limitations} The Rasberry Pi took a fair amount of
+        work to set up and interface with. This, coupled with its limited
+        memory and processing power made it so that it was a non-trivial task
+        to program on it (despite it being one of the more accessible
+        single-board computers out there). 
+
+        While we were able to get the
+        \texttt{audioStreamer} program to compile fine on our laptop and
+        desktop computers, the C++ libraries we used for the additional
+        capabilities related to communicating with a message bus resulted in
+        the compilation time on the Raspberry Pi being excessively long for
+        regular development. We are exploring ways to mitigate this, such as
+        precompiling non-audio hardware related code on a separate machine, and
+        splitting up the code into smaller translation units to better leverage
+        incremental compilation.
+
+    \item Since we are dealing with a resource-limited device like the Pi, we
+        chose to build our programs in C++ for efficient resource usage.
+        However, C++ itself has a steep learning curve, as do the libraries we
+        used (Boost.Beast for websockets and PortAudio for audio capture).
+        While the undegraduate research assistant (Minh) on the project learned a lot
+        from this task, the fact remains that the level of programming
+        expertise required to perform this task within the proposed time frame
+        is considerable.
+
+        
 \end{enumerate}
 
-I was tasked to design a program, called AudioStreamer, that records the audio
-and sends those audio chunks to a server, which will then go through a speech
-analyzer. The program is also needed to be able to run in a Raspberry Pi, which
-has limited memory and processing power, as well as requires a lot of set up to
-work.
-
-I have little experience with C and C++ prior to the task. Portaudio and the
-Boost.Beast library, which correspond to the recording and the networking parts
-of the program, are also difficult to learn for me. Fortunately, with the help
-of Vincent Raymond, the program is eventually completed. It runs well on Mac
-devices with sufficient memory and processing power.
 
 However, the work is not done, as the Pi is using a Linux distro with very
 different setup and has very limited performance. Initially, when I tried to
