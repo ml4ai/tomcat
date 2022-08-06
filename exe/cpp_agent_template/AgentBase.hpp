@@ -22,7 +22,7 @@ class AgentBase {
     /** Flag to specify whether the agent is running or not */
     bool running = true;
 
-    /** std::future object to hold the result of the async heartbeat operation
+    /** std::future object holds the result of the async heartbeat operation
      */
     std::future<void> heartbeat_future;
 

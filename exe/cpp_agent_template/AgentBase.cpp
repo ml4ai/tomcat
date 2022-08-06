@@ -17,13 +17,14 @@ string get_timestamp() {
 
 // 
 AgentBase::AgentBase(json::object config): config(config) {
-    string host = json::value_to<string>(config.at("host"));
-    int port = json::value_to<int>(config.at("port"));
 
-    // Create an MQTT client using a smart pointer to be shared among
-    // threads.
+    // set up MQTT params for broker connection
+    json::object mqtt = json::value_to<json::object>(config.at("mqtt"));
+    string host = json::value_to<string>(mqtt.at("host"));
+    int port = json::value_to<int>(mqtt.at("port"));
     string address = "tcp://" + host + ": " + to_string(port);
 
+    // Create an MQTT client smart pointer to be shared among threads.
     this->mqtt_client = make_shared<mqtt::async_client>(address, "agent");
 
     // Connect options for a non-persistent session and automatic
