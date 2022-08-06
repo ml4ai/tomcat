@@ -10,15 +10,18 @@ server over websockets. The chunks would then be fed to an automatic speech
 recognition system to produce real-time transcriptions that could then be used
 for further downstream analysis.
 
+\subsection{Accomplishments and lessons learned}
+
 Unfortunately, while made a good deal of progress on this task, we were not
 able to fully meet our proposed milestones. However, we did accomplish the
 following:
 
 
 \begin{itemize}
-    \item \textbf{Hardware expertise development.} We were able to set up and get familiar with the Raspberry Pi
-        devices, and setting up networking on Ubuntu in order to work with them
-        wirelessly.
+
+    \item \textbf{Hardware expertise development.} We were able to set up and
+        get familiar with the Raspberry Pi devices, and setting up networking
+        on Ubuntu in order to work with them wirelessly.
 
     \item \textbf{Software expertise development.} We developed general
         expertise in C and C++, and specific expertise in the mature libraries
@@ -64,46 +67,33 @@ Some of the challenges we faced and lessons learned are listed below.
         splitting up the code into smaller translation units to better leverage
         incremental compilation.
 
-    \item Since we are dealing with a resource-limited device like the Pi, we
-        chose to build our programs in C++ for efficient resource usage.
-        However, C++ itself has a steep learning curve, as do the libraries we
-        used (Boost.Beast for websockets and PortAudio for audio capture).
-        While the undegraduate research assistant (Minh) on the project learned a lot
-        from this task, the fact remains that the level of programming
-        expertise required to perform this task within the proposed time frame
-        is considerable.
+    \item \textbf{Steep learning curve.} Since we are dealing with a
+        resource-limited device like the Pi, we chose to build our programs in
+        C++ for efficient resource usage.  However, C++ itself has a steep
+        learning curve, as do the libraries we used (Boost.Beast for websockets
+        and PortAudio for audio capture).  While the undegraduate research
+        assistant (Minh) on the project learned a lot from this task, the fact
+        remains that the level of programming expertise required to perform
+        this task within the proposed time frame is considerable.
 
         
 \end{enumerate}
 
 
-However, the work is not done, as the Pi is using a Linux distro with very
-different setup and has very limited performance. Initially, when I tried to
-build the program and run, Portaudio could not find the correct recording
-device attached to the Pi. Thus I created a small Portaudio program that prints
-out all possible audio devices on the Pi, and, at the same time, tried to
-configure ALSA to make it choose the right default audio input device that I
-need. Eventually, those changes made the program works on the Pi. However, the
-program is stuck after running on the Pi for 1 - 2 seconds (which does not
-occur on other Linux or Mac devices). After some changes to the program, I
-found out that the problem occurs on the synchronous sending call to
-Boost.Beast. Subsequently, the program needs to be edited so that it uses
-Portaudio and Boost.Beast asynchronously.
+\subsection{Current state and future goals}
 
-After the first version of the program, Vincent also updated it to include more
-features, namely the program can now listen to incoming messages and changes
-its mode differently. However, these changes make the program quite large it
-takes too long to build, and the Raspberry Pi does not have enough memory for
-parallel compilation. Thus it is necessary to splitting up the program or to
-compile it first on another machine and transfer it back to the Pi.
+We are currently pushing forward on two fronts:
 
-Current situation and objective
+\begin{itemize}
 
-As of right now, although the program runs well on other machines, it cannot be
-built on the Raspberry Pi because of its limited memory and processing power.
-Thus the program needs to be split, or built on another machine and then
-transferred back to the Pi. I am also currently setting up the ASR agent, which
-is the endpoint that the audio is sent to, to test the AudioStreamer program.
-After that, it is also necessary to test the working program on the Pi to check
-if it runs properly without the problem of the previous version and to change
-the Portaudio and Boost.Beast calls to become asynchronous.
+    \item We are looking into ways to speed up the compilation of the
+        audioStreamer program on the Pi.
+
+    \item In parallel, we are improving the robustness and documentation for
+        our ASR agent so that it can be more easily run by researchers outside
+        our group.
+
+\end{itemize}
+
+The undegrad RA is now being funded on one of the PI's other grants (ToMCAT) to
+continue developing the WASD.
