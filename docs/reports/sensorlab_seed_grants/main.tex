@@ -1,0 +1,170 @@
+\documentclass[oneside,9pt]{memoir}
+
+% Colors
+\usepackage[dvipsnames]{xcolor}
+
+
+
+% hyperref
+\usepackage[%
+    colorlinks=true,
+    linktocpage=true,
+    breaklinks=true,
+    linkcolor=NavyBlue,
+    urlcolor=NavyBlue,
+    citecolor=NavyBlue
+]{hyperref}
+\def\chapterautorefname{§}
+\def\sectionautorefname{§}
+\def\subsectionautorefname{§}
+\def\subsubsectionautorefname{§}
+
+\setcounter{secnumdepth}{3}
+\settocdepth{subsection}
+
+
+% Fonts
+\usepackage{fontspec}
+\setmainfont[Numbers = {OldStyle, Proportional}]{TeX Gyre Pagella}
+\setmonofont[Scale=MatchLowercase]{Menlo}
+
+\usepackage{amsmath}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\usepackage{unicode-math}
+\setmathfont{TeX Gyre Pagella Math}
+
+\usepackage{algorithm}
+\usepackage[italicComments=false]{algpseudocodex}
+
+\newcommand{\algorithmautorefname}{Algorithm}
+
+% Typography
+\usepackage[tracking]{microtype}
+
+% Images
+\usepackage{graphicx}
+
+% ======================================================================
+% Memoir package - layout and styling
+% ======================================================================
+
+% The calc package is required for calculating readable text widths
+\usepackage{calc}
+
+% Set outer and spine margins A wide right margin is chosen both for legibility
+% of the typeblock and for tight integration of marginfigures and margin
+% footnotes.
+
+% Calculate widths in pts
+\setlxvchars[\normalfont\normalsize] % about 66 characters per column
+\setxlvchars[\normalfont\footnotesize] % about 45 characters per column
+
+% Set left and right margins
+\setlrmarginsandblock{1.15in}{3.5in}{*}
+% Set upper and lower margins
+\setulmarginsandblock{1.1in}{1.1in}{*}
+
+% Set properties of margin notes, sidecaptioned floats, and footnotes in the
+% margin.
+\setmarginnotes{0.2in}{2.15in}{2\onelineskip}
+\setsidecaps{0.2in}{2.15in}
+\sidecapmargin{outer}
+\renewcommand*{\sidecapstyle}{\normalfont\footnotesize}
+\setsidecappos{c}
+
+
+% Set footnotes in the margin rather than at the foot of the page
+\footnotesinmargin
+\setsidefeet{\marginparsep}{1.9in}{0.2in}{0pt}{\flushleftright\footnotesize}{*}
+
+% Integrate the counters of the sidefootnotes and footnotes in margin.
+\letcountercounter{sidefootnote}{footnote}
+\setlength{\footmarkwidth}{0em}
+\setlength{\footmarksep}{-\footmarkwidth}
+\setlength{\footparindent}{1em}
+\sideparmargin{outer}
+
+\renewcommand*{\sideparfont}{\color{Maroon}\emphshape}
+\renewcommand*{\sideparvshift}{2\baselineskip}
+\marginparmargin{outer}
+
+% Style the entries in the Table of Contents
+\renewcommand*{\cftchapterfont}{\scshape\MakeTextLowercase}
+\renewcommand*{\cftpartfont}{\color{Maroon}\scshape\MakeTextLowercase}
+\captionstyle[\centering]{\footnotesize}
+\captionnamefont{\footnotesize\color{Maroon}}
+
+%% Bringhurst chapter and head styles with a Pedersen-type chapter number
+\makechapterstyle{bringhurst}{%
+	\renewcommand{\chapterheadstart}{} 
+	\renewcommand{\printchaptername}{} 
+	\renewcommand{\chapternamenum}{} 
+	\setlength{\midchapskip}{15mm}
+	\renewcommand*{\printchapternum}{%
+        \begin{marginfigure}[0pt]
+          \resizebox{!}{\midchapskip}{\color{Maroon}\emph{\thechapter}}
+        \end{marginfigure}
+      }
+	\renewcommand{\afterchapternum}{} 
+	\renewcommand{\printchaptertitle}[1]{%
+	  \raggedright\Large\scshape\MakeLowercase{##1}}
+	\renewcommand{\afterchaptertitle}{%
+	  \vskip\onelineskip \hrule\vskip\onelineskip}
+}
+\setlength{\cftsubsectionindent}{0.6in}
+\chapterstyle{bringhurst}
+\headstyles{bringhurst}
+
+\tightlists
+
+% Headers and footers - page numbers, section headings, etc.
+\makepagestyle{tufte}
+\createmark{chapter}{left}{nonumber}{}{}
+\makeoddhead{tufte}{}{}{\scshape\MakeTextLowercase{\leftmark}~~|~~\thepage}
+\makeevenhead{tufte}{\thepage~~|~~\scshape\MakeTextLowercase{\rightmark}}{}{}
+ \makerunningwidth{tufte}[8in]{8in}
+\aliaspagestyle{chapter}{empty}
+\nouppercaseheads
+\pagestyle{tufte}
+
+\linespread{1.1}
+\checkandfixthelayout
+
+% Bibliography management
+\usepackage[%
+    backend=biber,
+    style=numeric-comp,
+    sorting=none,
+    natbib
+]{biblatex}
+\addbibresource{bibliography.bib}
+
+\usepackage[backgroundcolor=white, bordercolor=white, textsize=small]{todonotes}
+
+% =============
+% Custom macros
+% =============
+\usepackage{textcomp}
+\newcommand{\texthome}{\raisebox{0.5ex}{\texttildelow}}
+
+\usepackage[cachedir=build, outputdir=build]{minted}
+
+% ======================================================================
+% Creating the title page
+% ======================================================================
+
+\title{SensorLab Seed Grant Report}
+\author{\emph{Yuwei Wang, Vincent Raymond, Minh Duong, Adarsh Pyarelal}}
+\begin{document}
+\thispagestyle{empty}
+\maketitle
+\tableofcontents* 
+
+\input{sections/summary}
+\chapter{Automated real-time detection of closed-loop communication in spoken dialogue}
+\input{sections/wasd}
+\input{sections/clc}
+\input{sections/dashboard}
+
+\printbibliography
+\end{document}

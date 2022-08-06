@@ -1,0 +1,69 @@
+\chapter{Summary}
+
+In this report we describe the activities performed and milestones met for the
+following SensorLab seed grants:
+
+\begin{enumerate}
+    \item Automated real-time detection of closed-loop communication in spoken
+        dialogue (SensorLab Student Seed Grant).
+    \item Development of an open-source dashboard for team communication
+        experiments (SensorLab Seed Grant).
+\end{enumerate}
+
+The projects were designed to be complementary to each other, and intended to
+enable studies of real-time spoken team communication in ambulatory settings.
+See \autoref{fig:architecture} for an overview of the proposed architecture.
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{figures/architecture.pdf}
+    \caption{%
+        Proposed architecture for the SensorLab Student Seed Grant
+        project. The dashboard is not pictured in this architecture, but would be
+        integrated into it.
+    }
+    \label{fig:architecture}
+\end{figure}
+
+
+\paragraph{Progress on milestones} The scope of our proposed tasks was
+ambitious, and we were unfortunately not able to finish the development of the
+wearable audio streaming device (WASD) (\autoref{sec:wasd}).  However, we are
+happy to report that we were able to (i) develop and evaluate a rule-based
+closed-loop communication detection algorithm (\autoref{sec:clc}) and (ii)
+develop a prototype of the proposed dashboard for visualizing and controlling
+team communication experiments (\autoref{ch:dashboard}).
+
+\paragraph{Training} The projects have contributed to training and skill
+development for 3 undergraduates, 3 master's students, and a research
+programmer.
+
+\paragraph{Software} The project have resulted in open-source codebases for the
+software components, listed below.
+
+\begin{itemize}
+
+    \item The code for the dashboard is available at
+        \url{https://github.com/ml4ai/tomcat-dashboard}.
+    \item The code for the audioStreamer program is available at
+        \url{https://github.com/ml4ai/tomcat/tree/master/exe/audioStreamer}.
+
+\end{itemize}
+
+The code for the closed loop communication detection algorithm is not yet up on
+a public repository, but will be put up eventually. We are also happy to share
+it sooner upon request.
+
+\section{Current status and future work}
+
+\paragraph{Extramural funding} In order to develop a competitive external NSF
+grant proposal involving the SensorLab, further work needs to be done to
+complete the development of the WASD. We plan to continue working with the
+Raspberry Pi devices purchased with this seed grant in order to finish
+developing and testing the audio streaming pipeline.
+
+Simultaneously, we will improve our closed-loop communication detection system,
+exploring both refining the existing rule-based system, as well as a machine
+learning approach.
+
+Once pilot data collection starts in earnest, the dashboard will prove a
+valuable tool for experiment control, visualization, and troubleshooting.

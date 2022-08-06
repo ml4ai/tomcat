@@ -1,0 +1,167 @@
+\section{Task 2: Closed loop communication (CLC) detector}
+\label{sec:clc}
+
+Closed-loop communication (CLC) is often recommended in the team research
+literature as a communication behavior that can guarantee the accuracy of
+information exchange. In this project, we developed a rule-based algorithm to
+automatically detect closed-loop communication in teams communicating via
+natural language.
+We built upon existing technologies from the ToMCAT project, including modules
+for automatic speech recognition (ASR) and event extraction from natural language in real
+time.
+
+\subsection{Milestones}
+
+We were able to meet the first milestone for this task, however, we did so
+using data from ASIST Study 3
+\cite{huang_freeman_cooke_colonna-romano_wood_buchanan_caufman_2022} rather
+than ASIST Study 2
+\cite{huang_freeman_cooke_dubrow_colonna-romano_wood_buchanan_caufman_2021}, as
+this data was of higher quality. Specifically, the quality of the ASR
+transcriptions was much higher due to the switch to a different Google Cloud
+Speech model that is able to handle background noise much better, along with
+speech context hints in the forms of commonly occurring phrases in the domain.
+In this experiment, teams of three humans collaborate to save victims of an
+office building collapse in an urban search and rescue mission simulated in
+Minecraft.
+
+We also preregistered our closed-loop communication detection approach on OSF
+\cite{pyarelal_2022} prior to the collection of ASIST Study 3 data, to support
+greater transparency and open science.
+
+However, we were not able to meet the second milestone for this task, as it
+depended on the development of the WASD (\autoref{sec:wasd}), which we were not able
+to complete in time to collect pilot data with two humans.
+
+\subsection{Approach}
+
+There are three distinct phases in a complete Closed-loop communication:
+
+\begin{enumerate}
+    \item Call-out: The sender initiates a message.
+    \item Check-back: The receiver acknowledges the message, usually by
+        paraphrasing or repeating the main information of the message.
+    \item Closed-loop: The sender verifies that the message has been received
+        and interpreted correctly.
+\end{enumerate}
+
+Our rule-based event extraction system leverages the Odin framework
+\cite{valenzuela-escarcega-etal-2016-odins}. It currently contains 420 active
+rules that can extract from simple to complex events, as well as entities and
+sentiment. Based on these event rules, we develop an algorithm to detect the
+three phases of CLC:
+
+\begin{enumerate}
+
+    \item First, the Call-out phase will be detected by rules in the
+        DialogAgent.  Labels including HelpRequest, Instruction, and NeedAction
+        are used as triggers for this event.
+
+    \item Next, we examine a window of the five subsequent utterances in the
+        dialog. If we find Move or Commitment labels by other team members as
+        well as the same semantic labels as in the Call-out message, then this
+        indicates there is a Check-back phase. However, we also care about what
+        we term `weak' Check-back situations, where the team member
+        acknowledges the Call-out but does repeat the main information of the
+        Call-out message. We assign the weak version of Check-back a 0.5 score,
+        compared to the full score of 1. 
+
+    \item Finally, within a window of five utterances, if we see the sender
+        verified the information of the Check-back with the Agreement label, we
+        can determine that this is a CLC communication event. The overall final
+        score of the event is the sum of the scores of the three phases.
+
+\end{enumerate}
+
+\subsection{Evaluation}
+
+To evaluate our algorithm, we annotated 3239 of the utterances from ASIST Study
+3 dialog transcriptions and compared the outputs of our algorithm against the
+annotations to compute precision, recall, and $F_1$ scores.
+
+
+\subsection{Results}
+
+Our CLC detection system extracted 978 closed-loop communication events,
+with scores ranging from 1.0, corresponding to events in which only the
+Call-out is detected but not the Check-back
+and Closed-loop, to 4.0, for which two team members had checked back to one
+call-out, and the initiator closed the loop at the end. However, our annotators
+only detected 155 closed-loop communication patterns, indicating that the
+rule-based CLC detection system in its current form suffers from a large rate
+of false positives. We are exploring ways to mitigate this issue, including
+making the conditions for CLC detection more stringent.
+A \emph{t}-test between the CLC scores marked by the annotators and the
+CLC scores assigned by our detection system shows that the CLC detection system
+does not give significantly higher scores for CLC detection than the annotators
+($p > 1$). 
+
+\autoref{tab:clc} shows the results of our evaluation. Because the participants
+in our game tasks are not specifically trained to use Closed-loop
+communication, CLC events are relatively rare in our data. We can
+see from the table that although the overall $F_1$ is as high as 0.79, the score
+is largely boosted by the `NA' labels, which correspond to utterances that are
+not recognized by the annotators and our system as part of CLC events.
+However, for the individual phases of the CLC, we do see higher
+recall scores than precision. This indicates that our rule-based CLC detection
+system detects CLC events fairly reliably when they are present, but also
+labels a fairly large number of utterances as part of CLC events when they are
+not.
+
+\subsection{Error Analysis}
+
+We identified three major reasons for the low performance of our initial
+rule-based CLC detection system.
+
+\begin{enumerate}
+
+    \item Firstly, for the Call-out phase,
+there is a competing nature between precision and recall.
+
+    \item For example, the Call-out is usually a question initiated by the
+        initiator, but there are also a fair amount of questions that do not
+        necessarily initiate a CLC session, such as ``shall we go'', and
+        ``where are you''.
+
+    \item Secondly, when we look for recursive labels between Call-out and
+        potential Check-backs, overgeneralization could easily happen to
+        introduce noise. A lot of the time, the recursive labels are just very
+        common labels like Room or Victim, but the speakers are actually
+        talking about different things. We would need to increase the
+        strictness of the rules to account for this.
+
+    \item Finally, the overmatching of the Close-loop phase is generally caused
+        by only looking for a simple `Acknowledgment' or `Gratitude' label.
+        However, these are also very common labels in the data, which led to
+        overmatching.
+
+\end{enumerate}
+
+
+
+\begin{table}
+    \centering
+    \begin{tabular}{lrrrr}
+        \toprule
+                   & Precision & Recall & $F_1$ & Support\\\midrule
+        NA         & 0.985     & 0.722  & 0.833 & 3084\\
+        Call-out   & 0.123     & 0.774  & 0.212 & 155 \\
+        Check-back & 0.118     & 0.721  & 0.203 & 147\\
+        Close-loop & 0.021     & 0.550  & 0.041 & 20\\
+        Overall    & 0.949     & 0.702  & 0.798 & 3239\\
+        \bottomrule
+    \end{tabular}
+    \caption{Results of the evaluation of our rule-based CLC detection system}
+    \label{tab:clc}
+\end{table}
+
+\subsection{Conclusion and future plans}
+
+In this project, we explored a novel method to automatically detect closed loop
+communication in spoken dialog. However, the performance of our algorithm is
+not as high as we would have hoped. Specifically, the precision is too low to
+inspire trust for downstream applications. We see many areas that we can work
+on to improve the current system.  Besides tightening the rules, we are also
+planning to explore machine learning approaches to deal with some of the issues
+with the rule-based system. The annotations we performed for this task can
+serve as valuable training data for a machine learning classifier.
