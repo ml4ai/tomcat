@@ -19,7 +19,7 @@ find_package(
 )
 add_executable(
     main main.cpp 
-    AgentBase.cpp 
+    BaseAgent.cpp 
     Configurator.cpp
     ReferenceAgent.cpp
 )

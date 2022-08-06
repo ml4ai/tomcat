@@ -1,4 +1,4 @@
-#include "AgentBase.hpp"
+#include "BaseAgent.hpp"
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
@@ -16,7 +16,7 @@ string get_timestamp() {
 
 
 // 
-AgentBase::AgentBase(json::object config): config(config) {
+BaseAgent::BaseAgent(json::object config): config(config) {
 
     // set up MQTT params for broker connection
     json::object mqtt = json::value_to<json::object>(config.at("mqtt"));
@@ -45,11 +45,11 @@ AgentBase::AgentBase(json::object config): config(config) {
     //mqtt_client->subscribe(input_topic, 2);
 
     // Start publishing heartbeat messages 
-    heartbeat_future = async(launch::async, &AgentBase::publish_heartbeats, this);
+    heartbeat_future = async(launch::async, &BaseAgent::publish_heartbeats, this);
 }
 
 /** Function that publishes heartbeat messages while the agent is running */
-void AgentBase::publish_heartbeats() {
+void BaseAgent::publish_heartbeats() {
     while (this->running) {
         this_thread::sleep_for(seconds(10));
 
@@ -71,7 +71,7 @@ void AgentBase::publish_heartbeats() {
     }
 }
 
-void AgentBase::stop() {
+void BaseAgent::stop() {
     running = false;
     heartbeat_future.wait();
 }

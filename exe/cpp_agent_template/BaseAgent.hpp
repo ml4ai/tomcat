@@ -13,8 +13,8 @@ namespace json = boost::json;
 using namespace std;
 
 
-/** Class that represents our agent */
-class AgentBase {
+/** Class that handles general tasks */
+class BaseAgent {
 
     /** configuration settings */
     json::object config;
@@ -37,7 +37,7 @@ class AgentBase {
     std::shared_ptr<mqtt::async_client> mqtt_client;
 
     /** Constructor */
-    AgentBase(json::object config);
+    BaseAgent(json::object config);
 
     /** Stop the agent */
     void stop();

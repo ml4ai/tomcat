@@ -1,13 +1,13 @@
 #pragma once
 
 #include <boost/json.hpp>
-#include "AgentBase.hpp"
+#include "BaseAgent.hpp"
 
 using namespace std;
 namespace json = boost::json;
 
 
-class ReferenceAgent : public AgentBase {
+class ReferenceAgent : public BaseAgent {
 
     public:
 

@@ -6,6 +6,7 @@
 using namespace std;
 namespace json = boost::json;
 
+/** this is the method input messages are processed by the agent */
 void ReferenceAgent::process(mqtt::const_message_ptr msg) {
 
     string topic = msg->get_topic();
@@ -31,9 +32,9 @@ void ReferenceAgent::process(mqtt::const_message_ptr msg) {
 
 }
 
-ReferenceAgent::ReferenceAgent(json::object config): AgentBase(config)
+ReferenceAgent::ReferenceAgent(json::object config): BaseAgent(config)
 {
-//    cout << "Reference Agent" << endl;
+    cout << "Reference Agent" << endl;
 //    cout << " Input topic: " << input_topic << endl;
 //    cout << " Output topic: " << output_topic << endl;
 };
