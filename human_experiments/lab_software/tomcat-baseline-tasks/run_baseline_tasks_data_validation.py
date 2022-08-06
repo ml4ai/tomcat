@@ -5,10 +5,10 @@ import argparse
 import pandas as pd
 from termcolor import colored
 from time import sleep, ctime
-from tasks.finger_tapping_task.config_finger_tapping_task import TOTAL_TIME as total_time_finger_tapping 
-from tasks.rest_state.config_rest_state import TOTAL_TIME as total_time_rest_state
-from tasks.affective_task.config_affective_task import TOTAL_TIME as total_time_affective_task
-from tasks.ping_pong_task.config_ping_pong_task import TOTAL_TIME as total_time_ping_pong_task
+from tasks.finger_tapping_task.config import TOTAL_TIME as total_time_finger_tapping 
+from tasks.rest_state.config import TOTAL_TIME as total_time_rest_state
+from tasks.affective_task.config import TOTAL_TIME as total_time_affective_task
+from tasks.ping_pong_task.config import TOTAL_TIME as total_time_ping_pong_task
 
 def check_subject_id(subject_id, sid):
     num_sub = len(subject_id)

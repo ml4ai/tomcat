@@ -5,8 +5,8 @@ from config import CLIENT_WINDOW_HEIGHT, CLIENT_WINDOW_WIDTH
 from network import receive, send
 
 from .config import (BLANK_SCREEN_MILLISECONDS,
-                                    CROSS_SCREEN_MILLISECONDS,
-                                    DISPLAY_AFFEC_DISCUSSION_MILLISECONDS)
+                    CROSS_SCREEN_MILLISECONDS,
+                    DISPLAY_AFFEC_DISCUSSION_MILLISECONDS)
 
 from .utils import (Button, render_image_center,
                     submit_button, timer,
