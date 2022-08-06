@@ -102,40 +102,36 @@ make -j
 
 \subsection{Running the dashboard}
 
-\subsubsection{Launch MQTT broker}
+\begin{enumerate}
 
-The ToMCAT Dashboard connects to an MQTT message bus for processing incoming
-data and communication between components. Before running the dashboard, an
-MQTT broker must be launched, if one is not already running.  You may need to
-prefix the invocations below with \mintinline{shell}{sudo}.
+    \item \textbf{Launch MQTT broker} The ToMCAT Dashboard connects to an MQTT
+        message bus for processing incoming data and communication between
+        components. Before running the dashboard, an MQTT broker must be
+        launched, if one is not already running.  You may need to prefix the
+        invocations below with \mintinline{shell}{sudo}.
 
-\begin{itemize}
-    \item If you have MacOS with MacPorts: \mintinline{shell}{port load mosquitto}
-    \item Ubuntu: \mintinline{shell}{service mosquitto start}
-\end{itemize}
+        \begin{itemize}
+            \item If you have MacOS with MacPorts: \mintinline{shell}{port load mosquitto}
+            \item Ubuntu: \mintinline{shell}{service mosquitto start}
+        \end{itemize}
 
-\subsubsection{Configure MQTT broker}
+    \item \textbf{Configure MQTT broker} By default, the dashboard will attempt
+        to connect to an MQTT broker running on port 1883 of localhost. This
+        can be configured in the \texttt{config/app.json} file by modifying the
+        following values:
 
-By default, the dashboard will attempt to connect to an MQTT broker running on
-port 1883 of localhost. This can be configured in the \texttt{config/app.json} file by
-modifying the following values:
+        \begin{itemize}
 
-\begin{itemize}
+            \item \texttt{mqtt\_host}: (default=0.0.0.0) The host that the MQTT broker
+                is running on.
 
-    \item \texttt{mqtt\_host}: (default=0.0.0.0) The host that the MQTT broker
-        is running on.
+            \item \texttt{mqtt\_port}: (default=1883) The port that the MQTT broker is
+                running on.
 
-    \item \texttt{mqtt\_port}: (default=1883) The port that the MQTT broker is
-        running on.
+        \end{itemize}
 
-\end{itemize}
-
-\subsubsection{Run dashboard}
-
-\begin{minted}{shell}
-./gui
-\end{minted}
-
+    \item \textbf{Run dashboard} \mintinline{shell}{./gui}
+\end{enumerate}
 
 
 \subsection{Visualization}
@@ -171,7 +167,7 @@ Example ASR Message:
 \end{minted}
 
 
-Usage
+\subsection{Usage}
 
 To visualize incoming ASR utterances, navigate to the ``ASR" tab in the menu
 sidebar. At the start of the trial, the panel on the right will display the text
@@ -182,26 +178,28 @@ Image 1: ASR visualization at trial start
 As the trial progresses, and ASR messages come in, they will fill the panel one
 line at a time. In addition to the utterance text itself, each line will also
 contain a timestamp of when the utterance was generated, and a participant id
-colored to match the associated color of the participant.
+colored to match the associated color of the participant. See
+\autoref{fig:asr_viz} for an example.
 
-Image 2: ASR visualization during ongoing trial
+This color can be Red, Blue, or Green, and the mapping between color and
+participant comes from the Trial Start message.
 
-This color can be Red, Blue, or Green, and the mapping between color and participant comes from the Trial Start message.
+\subsection{Charting}
 
-Charting
-Chart Configuration
+\subsection{Chart Configuration}
+
 The data being charted can be configured by modifying the ``ChartWidget” section in conifg/conf.json.
 
 \begin{minted}{JSON}
 "ChartWidget":{
-                 "topics":[
-                        "score"
-                ],
-                "x_axis_field": "Time",
-                "x_axis_label": "Time",
-                "y_axis_field": "Score",
-                "y_axis_label": "Score",
-                "panel_name": "CHART_PANEL"
+    "topics":[
+        "score"
+    ],
+    "x_axis_field": "Time",
+    "x_axis_label": "Time",
+    "y_axis_field": "Score",
+    "y_axis_label": "Score",
+    "panel_name": "CHART_PANEL"
  }
 \end{minted}
 
@@ -215,25 +213,42 @@ Message
 
 \begin{minted}{JSON}
 {
-        "data":{
-                "Time": 0.2,
-                "Score": 10
-        }
+    "data":{
+        "Time": 0.2,
+        "Score": 10
+    }
 }
 \end{minted}
 
 
 
-Note:
-1. The ``Time” and ``Score” fields are not at the root level of the JSON message, but a part of the ``data” field. This is to keep the formatting consistent with for other message types used by the dashboard.
-2. Each message should contain exactly one x/y pair. Other fields can be included, but will be ignored
-3. Data points should be either an integer or float value
+Notes:
+\begin{enumerate}
 
-Usage
-To visualize data being charted, navigate to the ``Chart” tab in the menu sidebar. At the start of the trial, the right-side panel will display an empty graph. If a label for the x-axis or y-axis was defined in the configuration, those labels will be displayed on the axes.  By default, the graph will be centered around point (0,0)
+    \item The ``Time” and ``Score” fields are not at the root level of the JSON
+        message, but a part of the ``data” field. This is to keep the
+        formatting consistent with for other message types used by the
+        dashboard.
+
+    \item Each message should contain exactly one x/y pair. Other fields can be
+        included, but will be ignored
+
+    \item Data points should be either an integer or float value
+
+\end{enumerate}
+
+\subsection{Usage}
+
+To visualize data being charted, navigate to the ``Chart” tab in the menu
+sidebar. At the start of the trial, the right-side panel will display an empty
+graph. If a label for the x-axis or y-axis was defined in the configuration,
+those labels will be displayed on the axes.  By default, the graph will be
+centered around point (0,0)
+
 Image 3: Chart visualization before trial start
 
-When adding a data point, if the data point is outside the visible range, the chart will automatically fit the data and adjust the x-axis and y-axis so that the new data point can be seen.
-
+When adding a data point, if the data point is outside the visible range, the
+chart will automatically fit the data and adjust the x-axis and y-axis so that
+the new data point can be seen.
 
 Image 4: Chart visualization during ongoing trial
