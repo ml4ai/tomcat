@@ -4,7 +4,7 @@ import pygame
 
 from common import render_text_center
 
-from ..config_rest_state import REST_TIMER
+from ..config import REST_TIMER
 
 REFRESH_RATE = 20
 

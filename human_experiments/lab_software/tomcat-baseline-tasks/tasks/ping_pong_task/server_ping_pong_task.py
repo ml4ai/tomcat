@@ -9,7 +9,7 @@ from common import record_metadata, request_clients_end
 from config import CLIENT_WINDOW_HEIGHT, CLIENT_WINDOW_WIDTH, UPDATE_RATE
 from network import receive, send
 
-from .config_ping_pong_task import (COUNT_DOWN_MESSAGE, SECONDS_COUNT_DOWN,
+from .config import (COUNT_DOWN_MESSAGE, SECONDS_COUNT_DOWN,
                                     SESSION_TIME_SECONDS)
 from .utils import (BALL_SIZE, LEFT_TEAM, RIGHT_TEAM, WINDOW_HEIGHT,
                     WINDOW_WIDTH, Ball, Paddle)
