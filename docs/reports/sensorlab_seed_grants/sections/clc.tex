@@ -1,4 +1,5 @@
 \section{Task 2: Closed loop communication (CLC) detector}
+\label{sec:clc}
 
 Closed-loop communication (CLC) is often recommended in the team research
 literature as a communication behavior that can guarantee the accuracy of
@@ -65,11 +66,10 @@ three phases of CLC:
         Call-out message. We assign the weak version of Check-back a 0.5 score,
         compared to the full score of 1. 
 
-    \item Finally, within five utterances window, if we see the sender verified
-        the information of the Check-back with the Agreement label, we can
-        determine that this is a closed-loop communication. The final score of
-        the Closed-loop communication detected is the sum of the scores of the
-        three phases.
+    \item Finally, within a window of five utterances, if we see the sender
+        verified the information of the Check-back with the Agreement label, we
+        can determine that this is a CLC communication event. The overall final
+        score of the event is the sum of the scores of the three phases.
 
 \end{enumerate}
 
