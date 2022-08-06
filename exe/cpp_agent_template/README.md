@@ -60,4 +60,4 @@ Additional settings are made in a JSON configuration file:
 }
 ```
 
-If a setting that exists in the configuration file is also specified on the command line, the command line input is used.
+If a field in the config file is also specified on the command line, the command line value is used.
