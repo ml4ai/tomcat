@@ -30,7 +30,8 @@ __help() {
   echo "[10]: Starts Minecraft"
   echo "[11]: Starts the Client Map"
   echo "[12]: Opens the Final Survey"
-  echo "[13]: Ends the experiment (cleanup and backup phase)"
+  echo "[13]: Stop the Lab Recorder recordings and Kill the Lab Recorder Instances on CAT"
+  echo "[14]: Ends the experiment (cleanup and backup phase)"
   echo
   echo "Syntax: run_experiment [-h|a]"
   echo "options:"
@@ -70,7 +71,7 @@ fi
 
 source check_global_variables
 source check_data_root_directory
-source check_connections
+#source check_connections
 
 echo -n -e "[1] Enter the experiment ${EMPH}time${NC} (e.g. 09): "
 read -r experiment_time
@@ -181,7 +182,16 @@ fi
 
 if [[ $GOTO -le 13 ]]; then
   echo " "
-  text="[13] Type [${EMPH}quit${NC}] to end the experiment and close "
+  yes_no_question "[13] Do you want to stop ${EMPH}Lab Recorder recordings and Kill the Lab Recorder Instances on CAT${NC}?"
+  if [[ $? -eq 0 ]]; then
+    source stop_lab_recorder
+  fi
+fi
+
+
+if [[ $GOTO -le 14 ]]; then
+  echo " "
+  text="[14] Type [${EMPH}quit${NC}] to end the experiment and close "
   text+="all open applications and processes: "
   wait_for_key "$text" "quit"
   source end_experiment $experiment_dir_cat " "
