@@ -19,6 +19,18 @@ class BaseAgent {
     /** configuration settings */
     json::object config;
 
+    /** Heartbeats publication topic */
+    string heartbeats_topic;
+
+    /** Rollcall Response publication topic */
+    string rollcall_response_topic;
+
+    /** Version Info publication topic */
+    string version_info_topic;
+
+    /** Agent output publication topic */
+    string agent_publication_topic;
+
     /** Flag to specify whether the agent is running or not */
     bool running = true;
 

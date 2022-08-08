@@ -47,12 +47,12 @@ Additional settings are made in a JSON configuration file:
   },
   "publications": {
     "heartbeats": "status/template_agent/heartbeats",
-    "output": "agent/template_agent_output",
+    "agent_output": "agent/template_agent_output",
     "rollcall_response": "agent/control/rollcall/response",
     "version_info": "agent/template_agent/versioninfo"
   },
   "subscriptions": {
-    "input": "agent/template_agent_input",
+    "agent_input": "agent/template_agent_input",
     "rollcall_request": "agent/control/rollcall/request",
     "trial": "trial"
   },

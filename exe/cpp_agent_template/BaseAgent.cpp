@@ -24,6 +24,17 @@ BaseAgent::BaseAgent(json::object config): config(config) {
     int port = json::value_to<int>(mqtt.at("port"));
     string address = "tcp://" + host + ": " + to_string(port);
 
+    // Ingest publication topics from the configuration
+    json::object publications =
+       json::value_to<json::object>(config.at("publications"));
+    heartbeats_topic = json::value_to<string>(mqtt.at("heartbeats"));
+    rollcall_response_topic = 
+        json::value_to<string>(mqtt.at("rollcall_response"));
+    version_info_topic = 
+        json::value_to<string>(mqtt.at("version_info"));
+    agent_publication_topic = 
+        json::value_to<string>(mqtt.at("agent_output"));
+
     // Create an MQTT client smart pointer to be shared among threads.
     this->mqtt_client = make_shared<mqtt::async_client>(address, "agent");
 
@@ -66,7 +77,7 @@ void BaseAgent::publish_heartbeats() {
                           {"data", {{"state", "ok"}}}};
 
         mqtt_client
-            ->publish("status/tomcat-CDC/heartbeats", json::serialize(jv))
+            ->publish(heartbeats_topic, json::serialize(jv))
             ->wait();
     }
 }
