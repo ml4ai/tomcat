@@ -19,4 +19,62 @@ else
   PADDING=$2
 fi
 
-# TODO
+echo " "
+echo -e "${YELLOW}WARNING: All Prior Instances of LabRecorder running on CAT will be KILLED!${NC}"
+yes_no_question "${YELLOW}DO YOU WANT TO CONTINUE?${NC}"
+if [[ $? -ne 0 ]]; then
+  echo " "
+  echo -e "${RED}Starting LabRecorder - ABORTED!${NC}"
+  echo " "
+  exit 1
+fi
+
+
+#Set var to where the app LabRecorder path/app is located on CAT.
+LAB_RECORDER_APP="/usr/LabRecorder/./LabRecorder"
+
+#Set vars with Lion, Tigar and Leopard unique config path/file located on git. 
+LION_CONFIG_FILE="~/git/ML4AI/tomcat/human_experiments/config/LabRecorder_config/LabRecorder_Lion_22345.cfg"
+TIGER_CONFIG_FILE="~/git/ML4AI/tomcat/human_experiments/config/LabRecorder_config/LabRecorder_Tiger_22346.cfg"
+LEOPARD_CONFIG_FILE="~/git/ML4AI/tomcat/human_experiments/config/LabRecorder_config/LabRecorder_Leopard_22347.cfg"
+
+#Set vars with Lion, Tigar and Leopard data (StorageLocation) path/file. 
+LION_STORAGE_LOCATION="${EXPERIMENT_DIR}/lion/ses-001/eeg/lion_ses-001_task-Default_run-001_eeg.xdf"
+TIGER_STORAGE_LOCATION="${EXPERIMENT_DIR}/tiger/ses-001/eeg/tiger_ses-001_task-Default_run-001_eeg.xdf"
+LEOPARD_STORAGE_LOCATION="${EXPERIMENT_DIR}/leopard/ses-001/eeg/leopard_ses-001_task-Default_run-001_eeg.xdf"
+
+
+echo " "
+echo -e "Configuring LabRecorder's Config Files with Data Path/File:"
+echo -e "${GREEN}Lion: ${LION_STORAGE_LOCATION}${NC}"
+echo -e "${GREEN}Tiger: ${TIGER_STORAGE_LOCATION}${NC}"
+echo -e "${GREEN}Leopard: ${LEOPARD_STORAGE_LOCATION}${NC}"
+
+#Change (string find and replace) "StorageLocation=" line in Lion, Tiger and Leopards
+#unique configuration files to have the Storage Location of the xdf file specified in this experiment.  
+ssh cat@10.192.234.250 sed -i 's#StorageLocation=.*#StorageLocation='${LION_STORAGE_LOCATION}'#' ${LION_CONFIG_FILE}
+ssh cat@10.192.234.250 sed -i 's#StorageLocation=.*#StorageLocation='${TIGER_STORAGE_LOCATION}'#' ${TIGER_CONFIG_FILE}
+ssh cat@10.192.234.250 sed -i 's#StorageLocation=.*#StorageLocation='${LEOPARD_STORAGE_LOCATION}'#' ${LEOPARD_CONFIG_FILE}
+
+
+#Kill any prior instances of LabRecorder on CAT so that fresh instances can be opened.
+ssh cat@10.192.234.250 pkill LabRecorder
+echo " "
+echo -e "${YELLOW}KILLED: any Prior Instances of LabRecorder running on CAT!${NC}"
+
+
+#Will need to open 3 fresh instances of LabRecorder to gaurentee they using correct config file,
+#connecting to correct streams and using Experiment Dir and Data File for this Experiment.  
+echo " "
+echo -e "Opening 3 Instances of LabRecorder on CAT:"
+ssh cat@10.192.234.250 "DISPLAY=:1 ${LAB_RECORDER_APP} -c ${LION_CONFIG_FILE} &>/dev/null &" 
+ssh cat@10.192.234.250 "DISPLAY=:1 ${LAB_RECORDER_APP} -c ${TIGER_CONFIG_FILE} &>/dev/null &" 
+ssh cat@10.192.234.250 "DISPLAY=:1 ${LAB_RECORDER_APP} -c ${LEOPARD_CONFIG_FILE} &>/dev/null &" 
+echo " "
+ssh cat@10.192.234.250 ps -F -C LabRecorder 
+echo " "
+echo -e "${YELLOW}Verify that you have 3 LabRecorder Windows open on CAT and that they are all recording the correct streams!${NC}"
+echo -e "${EMPH}(The 3 Windows on CAT might be stacked on top of each other so, "
+echo -e "you will have to use CAT's mouse to seperate them!)${NC}"
+echo " "
+
