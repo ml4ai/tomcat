@@ -12,8 +12,5 @@ TrialStartProcessor::TrialStartProcessor(json::object config):
 
 }
 
-
-void TrialStartProcessor::handle_message(string topic, json::object message){
+void TrialStartProcessor::process(string topic, json::object message){
 }
-
-

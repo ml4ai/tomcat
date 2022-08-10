@@ -5,7 +5,6 @@
 #include "Message.hpp"
 
 namespace json = boost::json;
-
 using namespace std;
 
 
@@ -17,8 +16,8 @@ class Processor : Message{
     /** Constructor */
     Processor(string name, json::object config);
 
-    /** handler call */
-    virtual void handle_message(string topic, json::object message) {};
+    /** handle message */
+    virtual void process(string topic, json::object message) {};
 
     /** processor call */
 };

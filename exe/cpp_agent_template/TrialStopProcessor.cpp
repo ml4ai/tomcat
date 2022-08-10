@@ -12,8 +12,5 @@ TrialStopProcessor::TrialStopProcessor(json::object config):
 
 }
 
-
-void TrialStopProcessor::handle_message(string topic, json::object message){
+void TrialStopProcessor::process(string topic, json::object message){
 }
-
-

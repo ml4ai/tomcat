@@ -13,6 +13,5 @@ ReferenceProcessor::ReferenceProcessor(json::object config):
 
 }
 
-void ReferenceProcessor::handle_message(string topic, json::object message){
+void ReferenceProcessor::process(string topic, json::object message){
 }
-

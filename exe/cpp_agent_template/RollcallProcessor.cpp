@@ -13,6 +13,6 @@ RollcallProcessor::RollcallProcessor(json::object config):
 
 }
 
-void RollcallProcessor::handle_message(string topic, json::object message){
+void RollcallProcessor::process(string topic, json::object message){
 }
 

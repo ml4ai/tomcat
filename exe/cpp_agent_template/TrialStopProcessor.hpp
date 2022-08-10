@@ -4,13 +4,11 @@
 #include <boost/json.hpp>
 #include "Processor.hpp"
 
-
 namespace json = boost::json;
-
 using namespace std;
 
 
-/** trial message */
+/** trial stop message */
 class TrialStopProcessor: public Processor {
 
     public:
@@ -18,6 +16,6 @@ class TrialStopProcessor: public Processor {
     /** Constructor */
     TrialStopProcessor(json::object config);
 
-    /** handler call */
-    void handle_message(string topic, json::object message);
+    /** handle message */
+    void process(string topic, json::object message);
 };
