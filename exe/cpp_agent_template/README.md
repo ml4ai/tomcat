@@ -43,22 +43,49 @@ Additional settings are made in a JSON configuration file:
 
 ```
 {
-  "mqtt": {
-    "host": "localhost",
-    "port": 1883
+  "agent_input": {
+    "message_type": "chat",
+    "sub_type": "Event:Chat",
+    "topic": "minecraft/chat"
   },
-  "publications": {
-    "heartbeats": "status/template_agent/heartbeats",
-    "agent_output": "agent/template_agent_output",
-    "rollcall_response": "agent/control/rollcall/response",
-    "version_info": "agent/template_agent/versioninfo"
+  "agent_output": {
+    "message_type": "agent",
+    "sub_type": "template_agent",
+    "topic": "agent/template_agent_output"
   },
-  "subscriptions": {
-    "agent_input": "agent/template_agent_input",
-    "rollcall_request": "agent/control/rollcall/request",
-    "trial": "trial"
+  "heartbeat": {
+    "message_type": "status",
+    "sub_type": "heartbeat",
+    "topic": "status/template_agent/heartbeats"
   },
-  "version":"1.0.0"
+  "rollcall_request": {
+    "message_type": "agent",
+    "sub_type": "rollcall:request",
+    "topic": "agent/control/rollcall/request"
+  },
+  "rollcall_response": {
+    "message_type": "agent",
+    "sub_type": "rollcall:response",
+    "topic": "agent/control/rollcall/response"
+  },
+  "trial_start": {
+    "message_type": "trial",
+    "sub_type": "start",
+    "topic": "trial"
+  },
+  "trial_stop": {
+    "message_type": "trial",
+    "sub_type": "stop",
+    "topic": "trial"
+  },
+  "version_info": {
+    "message_type": "agent",
+    "sub_type": "versioninfo",
+    "topic": "agent/template_agent/versioninfo"
+  },
+  "version": "1.0.0",
+  "notes": "Preliminary C++ template agent",
+  "publication_source": "template_agent"
 }
 ```
 
