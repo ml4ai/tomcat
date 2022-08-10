@@ -44,6 +44,8 @@ class BaseAgent {
     /** Function that publishes heartbeat messages while the agent is running */
     void publish_heartbeats();
 
+  private:
+    void init_publishers(json::object config);
 
   public:
     std::shared_ptr<mqtt::async_client> mqtt_client;

@@ -1,8 +1,4 @@
 {
-  "mqtt": {
-    "host": "localhost",
-    "port": 1883
-  },
   "publications": {
     "heartbeats": "status/template_agent/heartbeats",
     "agent_output": "agent/template_agent_output",
@@ -16,3 +12,7 @@
   },
   "version":"1.0.0"
 }
+
+
+
+

@@ -34,23 +34,33 @@ json::object Configurator::parse_args(int argc, char* argv[]) {
     string config_filename = vm["config"].as<string>();
     json::object config = parse_config_file(config_filename);
 
-    // Compose JSON with completed configuration
-    // ...
-
     // Validate configuration
-    validate(config);
+    config = validate(config);
+
+    // add or override user specified fields.
+    json::value mqtt = {
+        {"host", vm["mqtt.host"].as<string>()},
+	{"port", vm["mqtt.port"].as<int>()}
+    };
+    config["mqtt"] = mqtt;
 
     // if the user wants the software version, show it and exit
     if (vm.count("version")) {
-        cout << "version_from_config_file" << endl;
+	string version = json::value_to<string>(config.at("version"));
+        cout << version << endl;
         exit(EXIT_SUCCESS);
     }
 
     return config;
 }
 
-// Test that required fields are present.  
-void Configurator::validate(json::object config){
+// Check that all needed fields are in the config
+json::object Configurator::validate(json::object config){
+
+    // exi(EXIT_FAILURE) if any required fields do not exist.
+    
+    // config should have subscriptions, publications, and version number
+    return config;
 }
 
 

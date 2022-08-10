@@ -12,6 +12,8 @@
 
 #include "ReferenceAgent.hpp"
 #include "Configurator.hpp"
+#include "TrialMessageHandler.hpp"
+#include "RollcallMessageHandler.hpp"
 
 // An extendable base class for Testbed Agents
 // Authors:   Joseph Astier, Adarsh Pyareral

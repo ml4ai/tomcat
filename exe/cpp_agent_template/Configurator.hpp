@@ -13,7 +13,7 @@ namespace json = boost::json;
 using namespace std;
 
 
-// This class handles configuring the Agents from file and user input
+// This class creates a configuration based on the config file and user input
 class Configurator {
 
     public:
@@ -28,5 +28,5 @@ class Configurator {
         json::object parse_config_file(string filename);
 
 	// Check that required configuration fields are present
-	void validate(json::object config);
+	json::object validate(json::object config);
 };

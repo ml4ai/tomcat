@@ -15,25 +15,38 @@ string get_timestamp() {
 }
 
 
+// Ingest publication topics from the configuration
+void BaseAgent::init_publishers(json::object config){
+    const json::value* publications_maybe = config.if_contains("publications");
+    if(publications_maybe) {
+        json::object publications = 
+            json::value_to<json::object>(*publications_maybe);
+
+	cout << "Publications: " << publications << endl;
+
+	// init heartbeat publisher
+
+    heartbeats_topic = json::value_to<string>(publications.at("heartbeats"));
+    rollcall_response_topic = 
+        json::value_to<string>(publications.at("rollcall_response"));
+    version_info_topic = 
+        json::value_to<string>(publications.at("version_info"));
+    agent_publication_topic = 
+        json::value_to<string>(publications.at("agent_output"));
+    }
+
+}
+
 // 
 BaseAgent::BaseAgent(json::object config): config(config) {
+    // set up publishers
+    init_publishers(config);
 
     // set up MQTT params for broker connection
     json::object mqtt = json::value_to<json::object>(config.at("mqtt"));
     string host = json::value_to<string>(mqtt.at("host"));
     int port = json::value_to<int>(mqtt.at("port"));
     string address = "tcp://" + host + ": " + to_string(port);
-
-    // Ingest publication topics from the configuration
-    json::object publications =
-       json::value_to<json::object>(config.at("publications"));
-    heartbeats_topic = json::value_to<string>(mqtt.at("heartbeats"));
-    rollcall_response_topic = 
-        json::value_to<string>(mqtt.at("rollcall_response"));
-    version_info_topic = 
-        json::value_to<string>(mqtt.at("version_info"));
-    agent_publication_topic = 
-        json::value_to<string>(mqtt.at("agent_output"));
 
     // Create an MQTT client smart pointer to be shared among threads.
     this->mqtt_client = make_shared<mqtt::async_client>(address, "agent");
