@@ -4,13 +4,10 @@
 #include <boost/json.hpp>
 #include "Message.hpp"
 
-
 namespace json = boost::json;
-
 using namespace std;
 
 
-/** trial message */
 class HeartbeatMessage: public Message {
 
     public:
@@ -26,5 +23,4 @@ class HeartbeatMessage: public Message {
 
     /** JSON serialization */
     json::value to_json_value(string timestamp);
-    
 };

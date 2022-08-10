@@ -5,7 +5,6 @@
 using namespace std;
 namespace json = boost::json;
 
-// name, e.g. "rollcall_request"
 Message::Message(string name, json::object config) {
     this->name = name;
 
@@ -16,7 +15,4 @@ Message::Message(string name, json::object config) {
     topic = json::value_to<string>(info.at("topic"));
     message_type = json::value_to<string>(info.at("message_type"));
     sub_type = json::value_to<string>(info.at("sub_type"));
-
-
 }
-
