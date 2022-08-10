@@ -5,6 +5,8 @@ A framework for rapid development of Message Bus Agents in C++.
 This framework handles those message bus operations that are common to all agents, allowing the developer to focus solely on the  
 input processing and output generation specific to their agent.  
 
+This software does not publish null JSON values.
+
 ### Requirements
 You must have Boost version 1.75 or later installed for the JSON library.
 

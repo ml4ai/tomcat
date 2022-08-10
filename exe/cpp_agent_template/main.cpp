@@ -10,10 +10,8 @@
 #include <boost/log/trivial.hpp>
 #include <boost/program_options.hpp>
 
-#include "ReferenceAgent.hpp"
 #include "Configurator.hpp"
-#include "TrialMessageHandler.hpp"
-#include "RollcallMessageHandler.hpp"
+#include "Coordinator.hpp"
 
 // An extendable base class for Testbed Agents
 // Authors:   Joseph Astier, Adarsh Pyareral
@@ -41,7 +39,7 @@ int main(int argc, char* argv[]) {
     cout << "Configuration:" << endl;
     cout << config << endl;
 
-    ReferenceAgent agent(config);
+    Coordinator coordinator(config);
 
     signal(SIGINT, signal_handler);
 
@@ -49,7 +47,7 @@ int main(int argc, char* argv[]) {
         if (gSignalStatus == SIGINT) {
             BOOST_LOG_TRIVIAL(info)
                 << "Keyboard interrupt detected (Ctrl-C), shutting down.";
-            agent.stop();
+            coordinator.stop();
             break;
         }
         else {
