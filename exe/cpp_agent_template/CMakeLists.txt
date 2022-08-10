@@ -19,14 +19,15 @@ find_package(
 )
 add_executable(
     main main.cpp
-    BaseMessageHandler.cpp
     Configurator.cpp
     Coordinator.cpp
     HeartbeatMessage.cpp
     Message.cpp
     MessageQueue.cpp
-    RollcallMessageHandler.cpp
-    TrialStartMessageHandler.cpp
-    TrialStopMessageHandler.cpp
+    Processor.cpp
+    ReferenceProcessor.cpp
+    RollcallProcessor.cpp
+    TrialStartProcessor.cpp
+    TrialStopProcessor.cpp
 )
 target_link_libraries(main PahoMqttCpp::paho-mqttpp3 ${Boost_LIBRARIES})

@@ -2,11 +2,11 @@
 #include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
 
-#include "BaseMessageHandler.hpp"
+#include "Processor.hpp"
 #include "HeartbeatMessage.hpp"
-#include "RollcallMessageHandler.hpp"
-#include "TrialStartMessageHandler.hpp"
-#include "TrialStopMessageHandler.hpp"
+#include "RollcallProcessor.hpp"
+#include "TrialStartProcessor.hpp"
+#include "TrialStopProcessor.hpp"
 #include "Coordinator.hpp"
 
 /* This class :
@@ -38,10 +38,10 @@ Coordinator::Coordinator(json::object config) {
     heartbeat = new HeartbeatMessage(config);
 
     // create handlers for our subscribed messages
-    BaseMessageHandler handlers[] = {
-        RollcallMessageHandler(config),
-        TrialStartMessageHandler(config),
-        TrialStopMessageHandler(config)
+    Processor handlers[] = {
+        RollcallProcessor(config),
+        TrialStartProcessor(config),
+        TrialStopProcessor(config)
     };
 
     // set up MQTT params for broker connection

@@ -8,7 +8,7 @@
 
 #include <mqtt/async_client.h>
 
-#include "BaseMessageHandler.hpp"
+#include "Processor.hpp"
 #include "HeartbeatMessage.hpp"
 
 namespace json = boost::json;

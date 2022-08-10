@@ -2,7 +2,7 @@
 
 #include <string>
 #include <boost/json.hpp>
-#include "BaseMessageHandler.hpp"
+#include "Processor.hpp"
 
 
 namespace json = boost::json;
@@ -11,13 +11,13 @@ using namespace std;
 
 
 /** trial message */
-class TrialStopMessageHandler: public BaseMessageHandler {
+class RollcallProcessor: public Processor {
 
     public:
 
     /** Constructor */
-    TrialStopMessageHandler(json::object config);
-
-    /** handler call */
+    RollcallProcessor(json::object config);
+    
+    /** handle message */
     void handle_message(string topic, json::object message);
 };

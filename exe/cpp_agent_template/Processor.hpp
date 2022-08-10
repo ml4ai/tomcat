@@ -10,12 +10,12 @@ using namespace std;
 
 
 /** A base class for subscribed message handlers */
-class BaseMessageHandler : Message{
+class Processor : Message{
 
   public:
 
     /** Constructor */
-    BaseMessageHandler(string name, json::object config);
+    Processor(string name, json::object config);
 
     /** handler call */
     virtual void handle_message(string topic, json::object message) {};
