@@ -9,7 +9,7 @@ using namespace std;
 
 
 /** A base class for subscribed message handlers */
-class Processor : Message{
+class Processor : public Message{
 
   public:
 

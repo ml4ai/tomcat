@@ -2,12 +2,13 @@
 #include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
 
-#include "Processor.hpp"
+#include "Coordinator.hpp"
 #include "HeartbeatMessage.hpp"
+#include "Processor.hpp"
+#include "ReferenceProcessor.hpp"
 #include "RollcallProcessor.hpp"
 #include "TrialStartProcessor.hpp"
 #include "TrialStopProcessor.hpp"
-#include "Coordinator.hpp"
 
 /* This class :
  *   Maintains the MQTT broker connection
@@ -38,10 +39,11 @@ Coordinator::Coordinator(json::object config) {
     heartbeat = new HeartbeatMessage(config);
 
     // create handlers for our subscribed messages
-    Processor handlers[] = {
+    Processor processors[] = {
         RollcallProcessor(config),
         TrialStartProcessor(config),
-        TrialStopProcessor(config)
+        TrialStopProcessor(config),
+	ReferenceProcessor(config)
     };
 
     // set up MQTT params for broker connection
@@ -66,9 +68,12 @@ Coordinator::Coordinator(json::object config) {
     auto rsp = this->mqtt_client->connect(connOpts)->get_connect_response();
     BOOST_LOG_TRIVIAL(info) << "Connected to the MQTT broker at " << address;
 
-    // Subscribe to the config subscriptions
-    // TODO
-    //mqtt_client->subscribe(input_topic, 2);
+    // Subscribe to the processor topics
+    for(int i = 0; i < std::size(processors); i ++) {
+	string topic = processors[i].topic;
+        mqtt_client->subscribe(topic, 2);
+        cout << "Subscribed to: " << topic << endl;
+    }
 
     // Start publishing heartbeat messages 
     heartbeat_future = async(

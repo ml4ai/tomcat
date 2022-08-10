@@ -7,7 +7,7 @@ namespace json = boost::json;
 
 
 ReferenceProcessor::ReferenceProcessor(json::object config):
-    Processor("rollcall_request", config) 
+    Processor("reference_agent_input", config) 
 {
 
 
