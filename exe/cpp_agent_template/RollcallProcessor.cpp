@@ -6,13 +6,4 @@ using namespace std;
 namespace json = boost::json;
 
 
-RollcallProcessor::RollcallProcessor(json::object config):
-    Processor("rollcall_request", config) 
-{
-
-
-}
-
-void RollcallProcessor::process(string topic, json::object message){
-}
 

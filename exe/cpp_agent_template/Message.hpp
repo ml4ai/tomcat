@@ -10,7 +10,7 @@ using namespace std;
 class Message{
 
     public:
-	string name;  // Arbitrary for this code only
+	string name = "not set";  // Arbitrary for this code only
 	string message_type;   // header.message_type
 	string sub_type;   // msg.sub_type
 	string version;  // this software version, from config file
@@ -18,4 +18,5 @@ class Message{
 
 	// Constructor
 	Message(string name, json::object config);
+
 };

@@ -6,12 +6,3 @@ using namespace std;
 namespace json = boost::json;
 
 
-ReferenceProcessor::ReferenceProcessor(json::object config):
-    Processor("reference_agent_input", config) 
-{
-
-
-}
-
-void ReferenceProcessor::process(string topic, json::object message){
-}

@@ -11,10 +11,6 @@ using namespace std;
 class TrialStartProcessor: public Processor {
 
     public:
+    string get_name(){ return "trial_start";}
 
-    /** Constructor */
-    TrialStartProcessor(json::object config);
-
-    /** handle message */
-    void process(string topic, json::object message);
 };

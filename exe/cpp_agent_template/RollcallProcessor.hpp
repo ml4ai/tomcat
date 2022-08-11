@@ -10,11 +10,6 @@ using namespace std;
 
 class RollcallProcessor: public Processor {
 
-    public:
+    string get_name(){ return "rollcall_request";}
 
-    /** Constructor */
-    RollcallProcessor(json::object config);
-    
-    /** handle message */
-    void process(string topic, json::object message);
 };

@@ -12,10 +12,6 @@ using namespace std;
 class ReferenceProcessor: public Processor {
 
     public:
-
-    /** Constructor */
-    ReferenceProcessor(json::object config);
+    string get_name(){ return "reference_agent_input";}
     
-    /** handle message */
-    void process(string topic, json::object message);
 };

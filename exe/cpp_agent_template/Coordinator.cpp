@@ -3,12 +3,14 @@
 #include <boost/log/trivial.hpp>
 
 #include "Coordinator.hpp"
+#include "PublishedMessage.hpp"
 #include "HeartbeatMessage.hpp"
 #include "Processor.hpp"
 #include "ReferenceProcessor.hpp"
 #include "RollcallProcessor.hpp"
 #include "TrialStartProcessor.hpp"
 #include "TrialStopProcessor.hpp"
+
 
 /* This class :
  *   Maintains the MQTT broker connection
@@ -38,13 +40,10 @@ Coordinator::Coordinator(json::object config) {
 
     heartbeat = new HeartbeatMessage(config);
 
-    // create handlers for our subscribed messages
-    Processor processors[] = {
-        RollcallProcessor(config),
-        TrialStartProcessor(config),
-        TrialStopProcessor(config),
-	ReferenceProcessor(config)
-    };
+    // configure message processors
+    for(int i = 0; i < N_PROCESSORS; i ++) {
+        processors[i]->configure(config);
+    }
 
     // set up MQTT params for broker connection
     json::object mqtt = json::value_to<json::object>(config.at("mqtt"));
@@ -62,17 +61,19 @@ Coordinator::Coordinator(json::object config) {
                         .automatic_reconnect(seconds(2), seconds(30))
                         .finalize();
 
-    mqtt_client->set_message_callback(
-        [&](mqtt::const_message_ptr msg) { process(msg); });
+    mqtt_client->set_message_callback([&](mqtt::const_message_ptr msg) {
+        for(int i = 0; i < N_PROCESSORS; i ++) {
+            processors[i]->process(msg);
+        }
+    });
 
     auto rsp = this->mqtt_client->connect(connOpts)->get_connect_response();
     BOOST_LOG_TRIVIAL(info) << "Connected to the MQTT broker at " << address;
 
     // Subscribe to the processor topics
-    for(int i = 0; i < std::size(processors); i ++) {
-	string topic = processors[i].topic;
-        mqtt_client->subscribe(topic, 2);
-        cout << "Subscribed to: " << topic << endl;
+    for(int i = 0; i < N_PROCESSORS; i ++) {
+        mqtt_client->subscribe(processors[i]->topic, 2);
+	cout << "Subscribed to: " << processors[i]->topic << endl;
     }
 
     // Start publishing heartbeat messages 
@@ -87,20 +88,7 @@ Coordinator::Coordinator(json::object config) {
 void Coordinator::publish_heartbeats() {
     while (this->running) {
         this_thread::sleep_for(seconds(10));
-	json::value jv = heartbeat->to_json_value(get_timestamp());
-
-/*
-	json::value jv = {{"header",
-                           {{"timestamp", timestamp},
-                            {"message_type", "status"},
-                            {"version", "0.1"}}},
-                          {"msg",
-                           {{"timestamp", timestamp},
-                            {"sub_type", "heartbeat"},
-                            {"source", "tomcat-CDC"},
-                            {"version", "0.0.1"}}},
-                          {"data", {{"state", "ok"}}}};
-*/
+	json::value jv = heartbeat->json_value(get_timestamp());
 
         mqtt_client
             ->publish(heartbeat->topic, json::serialize(jv))

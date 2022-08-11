@@ -23,6 +23,7 @@ add_executable(
     Coordinator.cpp
     HeartbeatMessage.cpp
     Message.cpp
+    PublishedMessage.cpp
     MessageQueue.cpp
     Processor.cpp
     ReferenceProcessor.cpp

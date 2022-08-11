@@ -6,11 +6,7 @@ using namespace std;
 namespace json = boost::json;
 
 
-TrialStopProcessor::TrialStopProcessor(json::object config):
-    Processor("trial_stop", config) 
-{
-
+string TrialStopProcessor::get_name() { 
+    return "trial_stop";
 }
 
-void TrialStopProcessor::process(string topic, json::object message){
-}

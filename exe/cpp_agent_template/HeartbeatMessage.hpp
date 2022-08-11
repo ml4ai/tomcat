@@ -2,25 +2,22 @@
 
 #include <string>
 #include <boost/json.hpp>
-#include "Message.hpp"
+#include "PublishedMessage.hpp"
 
 namespace json = boost::json;
 using namespace std;
 
 
-class HeartbeatMessage: public Message {
+class HeartbeatMessage: public PublishedMessage {
 
     public:
 
     /** state */
-    string state = "ok";
+    string state = "code development";  // "ok"
 
-    /** publication source */
-    string source;
+    /** Data unique to the HeartbeatMessage */
+    json::value data_json_value() override;
 
     /** Constructor */
     HeartbeatMessage(json::object config);
-
-    /** JSON serialization */
-    json::value to_json_value(string timestamp);
 };
