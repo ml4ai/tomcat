@@ -1,5 +1,5 @@
 {
-  "reference_agent_input": {
+  "reference_agent_input_message": {
     "message_type": "agent",
     "sub_type": "reference_agent_input_sub_type",
     "topic": "reference_agent_input_topic"

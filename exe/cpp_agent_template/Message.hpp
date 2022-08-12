@@ -20,16 +20,16 @@ class Message{
 	Message(string name, json::object config);
 
     struct CommonHeader {
-        string timestamp,
-        string message_type,
-	string version   // testbed version
+        string timestamp;
+        string message_type;
+	string version;  // testbed version
     };
 
     struct CommonMsg {
-        string experiment_id,
-        string timestamp,
-        string source,
-        string sub_type,
-        string version,  // this software version
+        string experiment_id;
+        string timestamp;
+        string source;
+        string sub_type;
+        string version;  // this software version
     };
 };

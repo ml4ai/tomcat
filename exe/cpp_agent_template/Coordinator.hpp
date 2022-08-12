@@ -10,7 +10,7 @@
 
 #include "Processor.hpp"
 #include "HeartbeatMessage.hpp"
-#include "ReferenceProcessor.hpp"
+#include "ReferenceAgentInputProcessor.hpp"
 #include "RollcallRequestProcessor.hpp"
 #include "TrialStartProcessor.hpp"
 #include "TrialStopProcessor.hpp"
@@ -24,18 +24,13 @@ using namespace std;
 class Coordinator {
 
     /** Processors for subscribed message topics */
-    TrialStartProcessor trial_start_processor;
-    TrialStopProcessor trial_stop_processor;
-    ReferenceProcessor reference_processor;
-    RollcallRequestProcessor rollcall_processor;
+    TrialStartProcessor p0;
+    TrialStopProcessor p1;
+    ReferenceAgentInputProcessor p2;
+    RollcallRequestProcessor p3;
 
     static const int N_PROCESSORS = 4;
-    Processor *processors[N_PROCESSORS] = {
-        &trial_start_processor,
-        &trial_stop_processor,
-        &reference_processor,
-        &rollcall_processor
-    };
+    Processor *processors[N_PROCESSORS] = {&p0, &p1, &p2, &p3};
 
     /** config state */
     json::object config;

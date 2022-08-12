@@ -27,7 +27,7 @@ add_executable(
     MessageQueue.cpp
     Processor.cpp
     ReferenceAgentMessage.cpp
-    ReferenceProcessor.cpp
+    ReferenceAgentInputProcessor.cpp
     RollcallRequestProcessor.cpp
     RollcallResponseMessage.cpp
     TrialStartProcessor.cpp
