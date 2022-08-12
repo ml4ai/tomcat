@@ -1,11 +1,11 @@
 #include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
-#include "RollcallProcessor.hpp"
+#include "RollcallRequestProcessor.hpp"
 
 using namespace std;
 namespace json = boost::json;
 
 
-void RollcallProcessor::process(json::object read_from_bus) {
-  cout << "RollcallProcessor::process" << endl;
+void RollcallRequestProcessor::process(json::object read_from_bus) {
+  cout << "RollcallRequestProcessor::process" << endl;
 }

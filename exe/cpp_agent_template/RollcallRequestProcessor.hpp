@@ -8,7 +8,7 @@ namespace json = boost::json;
 using namespace std;
 
 
-class RollcallProcessor: public Processor {
+class RollcallRequestProcessor: public Processor {
 
     string get_name(){ return "rollcall_request";}
 

@@ -6,11 +6,6 @@
 #include "PublishedMessage.hpp"
 #include "HeartbeatMessage.hpp"
 #include "Processor.hpp"
-#include "ReferenceProcessor.hpp"
-#include "RollcallProcessor.hpp"
-#include "TrialStartProcessor.hpp"
-#include "TrialStopProcessor.hpp"
-
 
 /* This class :
  *   Maintains the MQTT broker connection
