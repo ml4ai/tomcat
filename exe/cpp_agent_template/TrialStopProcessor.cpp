@@ -6,7 +6,6 @@ using namespace std;
 namespace json = boost::json;
 
 
-string TrialStopProcessor::get_name() { 
-    return "trial_stop";
+void TrialStopProcessor::process(json::object read_from_bus) {
+  cout << "TrialStopProcessor::process" << endl;
 }
-

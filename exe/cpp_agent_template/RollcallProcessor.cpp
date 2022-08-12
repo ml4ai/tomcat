@@ -6,4 +6,6 @@ using namespace std;
 namespace json = boost::json;
 
 
-
+void RollcallProcessor::process(json::object read_from_bus) {
+  cout << "RollcallProcessor::process" << endl;
+}

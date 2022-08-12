@@ -5,4 +5,7 @@
 using namespace std;
 namespace json = boost::json;
 
+void TrialStartProcessor::process(json::object read_from_bus) {
+  cout << "TrialStartProcessor::process" << endl;
+}
 

@@ -36,5 +36,5 @@ class Processor{
     void configure(json::object config);
 
     /** process known good message json */
-    void process(json::object header, json::object msg, json::object data);
+    virtual void process(json::object read_from_bus) = 0;
 };

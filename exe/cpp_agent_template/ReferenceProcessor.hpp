@@ -14,4 +14,5 @@ class ReferenceProcessor: public Processor {
     public:
     string get_name(){ return "reference_agent_input";}
     
+    void process(json::object read_from_bus);
 };

@@ -70,14 +70,14 @@ void Processor::process(mqtt::const_message_ptr m_ptr){
         cout << "JSON parse error code: " << ec << endl;
  	return;
     }
-    json::object obj = json::value_to<json::object>(json_parser.release());
+    json::object message = json::value_to<json::object>(json_parser.release());
    
     /* get the message header object */
-    if(!obj.contains("header")) {
+    if(!message.contains("header")) {
         cout << "Message has no header object" << endl;
         return;
     }
-    json::object header = json::value_to<json::object>(obj.at("header"));
+    json::object header = json::value_to<json::object>(message.at("header"));
 
     /* test that the header message_type matches the configuration */
     if(!test_key_value(header, "message_type", message_type)) {
@@ -85,11 +85,11 @@ void Processor::process(mqtt::const_message_ptr m_ptr){
     }
 
     /* get the msg object and test that it is ours */
-    if(!obj.contains("msg")) {
+    if(!message.contains("msg")) {
         cout << "Message has no msg object" << endl;
         return;
     }
-    json::object msg = json::value_to<json::object>(obj.at("msg"));
+    json::object msg = json::value_to<json::object>(message.at("msg"));
 
     /* test that the msg sub_type matches the configuration */
     if(!test_key_value(msg, "sub_type", sub_type)) {
@@ -97,19 +97,15 @@ void Processor::process(mqtt::const_message_ptr m_ptr){
     }
 
     /* get the data object */
-    if(!obj.contains("data")) {
+    if(!message.contains("data")) {
         cout << "Message has no data object" << endl;
         return;
     }
-    json::object data = json::value_to<json::object>(obj.at("data"));
+    json::object data = json::value_to<json::object>(message.at("data"));
 
-    /* If all the message objects exist and match the configuration, respond
-     * to the message */
-    process(header, msg, data);
-}
-
-void Processor::process(json::object header, json::object msg, json::object data){
-    cout << get_name() << " valid message" << endl;
+    /* If all the message objects exist and match the configuration, process
+     * the JSON message */
+    process(message);
 }
 
 
