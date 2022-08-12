@@ -8,7 +8,7 @@ from common import record_metadata, request_clients_end
 from config import UPDATE_RATE
 from network import receive, send
 
-from .config_finger_tapping_task import (COUNT_DOWN_MESSAGE,
+from .config import (COUNT_DOWN_MESSAGE,
                                          SECONDS_COUNT_DOWN,
                                          SECONDS_PER_SESSION, SESSION,
                                          SQUARE_WIDTH)

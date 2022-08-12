@@ -8,6 +8,7 @@ import logging
 from logging import info, debug
 import argparse
 from tqdm import tqdm
+import numpy as np
 import pandas as pd
 from datetime import datetime
 
@@ -20,7 +21,20 @@ def run_evaluation(args):
     intervention_type_counts = {}
     output_file = open(args.output, "w")
     n_files_processed = 0
-    for filepath in tqdm(glob(args.data_dir + "/*T00*UAZ*.metadata")):
+
+    df = pd.DataFrame(
+        index=[
+            "uaz_dialog_agent",
+            "AC_IHMC_TA2_Player-Proximity",
+            "AC_CMU_TA1_PyGLFoVAgent",
+        ],
+        columns=["n_interventions", "influence_level"],
+    )
+    df.n_interventions = np.zeros(len(df.index))
+    df.n_interventions = df.n_interventions.astype(int)
+    df.influence_level = df.influence_level.astype(str)
+
+    for filepath in tqdm(glob(args.data_dir + "/HSRData_TrialMessages*Trial-T00*UAZ*.metadata")):
         n_files_processed += 1
         info(f"Processing {filepath}")
         with open(filepath) as f:
@@ -91,12 +105,33 @@ def run_evaluation(args):
                     )
                     debug(intervention_type + "|" + explanation)
                     for ac in ACs_used:
-                        ac_use_counts[ac] = ac_use_counts.get(ac, 0) + 1
+                        df.at[ac, "n_interventions"] = (
+                            df.loc[ac].get("n_interventions", 0) + 1
+                        )
+                        # ac_use_counts[ac] = ac_use_counts.get(ac, 0) + 1
+
+    influence_levels = [
+        "Weak influence",
+        "Moderate influence",
+        "Strong influence",
+    ]
+
+    inds = np.digitize(
+        df.n_interventions,
+        bins=range(
+            1, n_interventions, n_interventions // len(influence_levels)
+        ),
+    )
+    for ac, ind in zip(df.index, inds):
+        df.at[ac, "influence_level"] = influence_levels[ind - 1]
+
 
     def write(line):
         output_file.write(line + "\n")
 
-    write(f"Study 3 evaluation report (generated {datetime.utcnow().isoformat()+'Z'})")
+    write(
+        f"Study 3 evaluation report (generated {datetime.utcnow().isoformat()+'Z'})"
+    )
     write("=================================================================")
     write("")
     write(f"Total number of files processed: {n_files_processed}")
@@ -107,12 +142,10 @@ def run_evaluation(args):
     write("------------------")
     write(pd.Series(intervention_type_counts, name="Count").to_markdown())
     write("")
-    write("AC Use Counts")
-    write("-------------")
+    write("AC Use Counts and Influence Levels")
+    write("----------------------------------")
     write(
-        pd.Series(
-            ac_use_counts, name="Number of interventions participated in"
-        ).to_markdown()
+        df.to_markdown()
     )
 
     output_file.close()

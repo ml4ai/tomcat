@@ -4,7 +4,7 @@ import pygame
 
 from common import render_text_center
 
-from ..config_affective_task import DISCUSSION_TIMER
+from ..config import DISCUSSION_TIMER
 
 REFRESH_RATE = 20
 

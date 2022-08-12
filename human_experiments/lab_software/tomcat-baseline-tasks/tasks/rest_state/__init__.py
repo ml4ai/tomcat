@@ -1,2 +1,2 @@
-from .client_rest_state import ClientRestState
-from .server_rest_state import ServerRestState
+from .client import ClientRestState
+from .server import ServerRestState

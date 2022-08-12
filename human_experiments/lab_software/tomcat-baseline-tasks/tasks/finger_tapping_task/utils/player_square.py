@@ -1,5 +1,5 @@
 import pygame
-from ..config_finger_tapping_task import SQUARE_WIDTH
+from ..config import SQUARE_WIDTH
 
 
 class PlayerSquare(pygame.sprite.Sprite):
