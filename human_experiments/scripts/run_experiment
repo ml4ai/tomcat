@@ -30,7 +30,7 @@ __help() {
   echo "[10]: Starts Minecraft"
   echo "[11]: Starts the Client Map"
   echo "[12]: Opens the Final Survey"
-  echo "[13]: Stop the Lab Recorder recordings and Kill the Lab Recorder Instances on CAT"
+  echo "[13]: Stop the LabRecorder recordings and kill the LabRecorder instances on CAT"
   echo "[14]: Ends the experiment (cleanup and backup phase)"
   echo
   echo "Syntax: run_experiment [-h|a]"
@@ -71,7 +71,7 @@ fi
 
 source check_global_variables
 source check_data_root_directory
-#source check_connections
+source check_connections
 
 echo -n -e "[1] Enter the experiment ${EMPH}time${NC} (e.g. 09): "
 read -r experiment_time
@@ -182,7 +182,7 @@ fi
 
 if [[ $GOTO -le 13 ]]; then
   echo " "
-  yes_no_question "[13] Do you want to stop ${EMPH}Lab Recorder recordings and Kill the Lab Recorder Instances on CAT${NC}?"
+  yes_no_question "[13] Do you want to stop ${EMPH}LabRecorder recordings and kill the LabRecorder instances on CAT${NC}?"
   if [[ $? -eq 0 ]]; then
     source stop_lab_recorder
   fi
