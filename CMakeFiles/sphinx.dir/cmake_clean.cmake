@@ -1,5 +1,5 @@
 file(REMOVE_RECURSE
-  "../spec.html"
+  "/home/runner/work/tomcat/tomcat/docs/spec.html"
   "CMakeFiles/sphinx"
   "index.html"
 )

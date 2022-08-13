@@ -373,13 +373,14 @@
 #  define COMPILER_VERSION_TWEAK DEC(_MSC_BUILD)
 # endif
 
-#elif defined(__VISUALDSPVERSION__) || defined(__ADSPBLACKFIN__) || defined(__ADSPTS__) || defined(__ADSP21000__)
+#elif defined(_ADI_COMPILER)
 # define COMPILER_ID "ADSP"
-#if defined(__VISUALDSPVERSION__)
-  /* __VISUALDSPVERSION__ = 0xVVRRPP00 */
-# define COMPILER_VERSION_MAJOR HEX(__VISUALDSPVERSION__>>24)
-# define COMPILER_VERSION_MINOR HEX(__VISUALDSPVERSION__>>16 & 0xFF)
-# define COMPILER_VERSION_PATCH HEX(__VISUALDSPVERSION__>>8  & 0xFF)
+#if defined(__VERSIONNUM__)
+  /* __VERSIONNUM__ = 0xVVRRPPTT */
+#  define COMPILER_VERSION_MAJOR DEC(__VERSIONNUM__ >> 24 & 0xFF)
+#  define COMPILER_VERSION_MINOR DEC(__VERSIONNUM__ >> 16 & 0xFF)
+#  define COMPILER_VERSION_PATCH DEC(__VERSIONNUM__ >> 8 & 0xFF)
+#  define COMPILER_VERSION_TWEAK DEC(__VERSIONNUM__ & 0xFF)
 #endif
 
 #elif defined(__IAR_SYSTEMS_ICC__) || defined(__IAR_SYSTEMS_ICC)
@@ -531,6 +532,9 @@ char const *info_cray = "INFO" ":" "compiler_wrapper[CrayPrgEnv]";
 #  define PLATFORM_ID "Integrity"
 # endif
 
+# elif defined(_ADI_COMPILER)
+#  define PLATFORM_ID "ADSP"
+
 #else /* unknown platform */
 # define PLATFORM_ID
 
@@ -658,6 +662,12 @@ char const *info_cray = "INFO" ":" "compiler_wrapper[CrayPrgEnv]";
 # else /* unknown architecture */
 #  define ARCHITECTURE_ID ""
 # endif
+
+# elif defined(__ADSPSHARC__)
+#  define ARCHITECTURE_ID "SHARC"
+
+# elif defined(__ADSPBLACKFIN__)
+#  define ARCHITECTURE_ID "Blackfin"
 
 #else
 #  define ARCHITECTURE_ID
