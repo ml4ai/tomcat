@@ -47,12 +47,15 @@ class Coordinator {
     /** Function that processes incoming messages */
     virtual void process(mqtt::const_message_ptr msg) {};
 
-    /** Function that publishes heartbeat messages while the agent is running */
+    /** Function that publishes heartbeat messages on an interval */
     void publish_heartbeats();
 
 
   public:
     std::shared_ptr<mqtt::async_client> mqtt_client;
+
+    /** publisher */
+    void publish(string topic, json::value message);
 
     /** Destructor */
     ~Coordinator();

@@ -3,6 +3,7 @@
 #include <mqtt/async_client.h>
 
 #include "Processor.hpp"
+#include "Coordinator.hpp"
 #include "Utils.hpp"
 
 using namespace std;
@@ -12,18 +13,37 @@ namespace json = boost::json;
 /** Read the the topic, header.message_type, and msg.sub_type fields
  *  from the configuration.  The processor can't run without these 
  *  values */
-void Processor::configure(json::object config){
-    // use the configuration object that matches our hard-coded name
+void Processor::configure(Coordinator * c, json::object config){
+    coordinator = c; 
 
+    // get configuration for reading from the Message Bus
     string sub_name = get_subscription_name();
     if(!utils.parse_configuration(sub_name, config, &sub_config)) {
-        cout << sub_name << " configuration parse error" << endl;
+        cerr << sub_name << " configuration parse error" << endl;
 	exit(EXIT_FAILURE);
     }
 
+    // get configuration for writing to the Message Bus
     string pub_name = get_publication_name();
     if(!utils.parse_configuration(pub_name, config, &pub_config)) {
-        cout << pub_name << " configuration parse error" << endl;
+        cerr << pub_name << " configuration parse error" << endl;
+	exit(EXIT_FAILURE);
+    }
+
+    // this software version
+    if(config.contains("version")){
+        version = json::value_to<std::string>(config.at("version"));
+    } else {
+        cerr << "Configuration missing 'version' field" << endl;
+	exit(EXIT_FAILURE);
+    }
+
+    // this software publication source 
+    if(config.contains("publication_source")){
+        source = 
+            json::value_to<std::string>(config.at("publication_source"));
+    } else {
+        cerr << "Configuration missing 'source' field" << endl;
 	exit(EXIT_FAILURE);
     }
 }
@@ -32,57 +52,69 @@ void Processor::configure(json::object config){
 /** Check that the message is valid json, has the header, msg, and data objects
  *  and that the topic, message_type and sub_type match our configuration.  If
  *  everything checks out, respond to the message */
-void Processor::process(mqtt::const_message_ptr m_ptr){
+void Processor::process_traffic(string m_topic, mqtt::const_message_ptr m_ptr){
 
     /* test that the topic matches the subscription configuration */
-    string m_topic = m_ptr->get_topic();
     if(m_topic.compare(sub_config.topic) != 0) {
         return;
     }
 
-    /* convert the message to a JSON object  */
+    /* convert m_prt to a JSON message  */
     json_parser.reset();
     error_code ec;
     json_parser.write(m_ptr->get_payload_str(), ec);
     if(ec) {
-        cout << "msg.topic: " << m_topic << endl;
-        cout << "JSON parse error code: " << ec << endl;
+        cerr << "msg.topic: " << m_topic << endl;
+        cerr << "JSON parse error code: " << ec << endl;
  	return;
     }
     json::object message = json::value_to<json::object>(json_parser.release());
-   
-    /* get the message header object */
-    if(!message.contains("header")) {
-        cout << "Message has no header object" << endl;
-        return;
-    }
+
+    /* Get message components */
     json::object header = json::value_to<json::object>(message.at("header"));
-
-    /* test that the header message_type matches the configuration */
-    if(!utils.value_matches(header, "message_type", sub_config.message_type)) {
-	return;
-    }
-
-    /* get the msg object and test that it is ours */
-    if(!message.contains("msg")) {
-        cout << "Message has no msg object" << endl;
-        return;
-    }
     json::object msg = json::value_to<json::object>(message.at("msg"));
-
-    /* test that the msg sub_type matches the configuration */
-    if(!utils.value_matches(msg, "sub_type", sub_config.sub_type)) {
-	return;
-    }
-
-    /* get the data object */
-    if(!message.contains("data")) {
-        cout << "Message has no data object" << endl;
-        return;
-    }
     json::object data = json::value_to<json::object>(message.at("data"));
 
-    /* If all the message objects exist and match the configuration, process
-     * the JSON message */
-    process(header, msg, data);
+    /* test message_type and sub_type match the subscription configuration */
+    if(!utils.value_matches(header, "message_type", sub_config.message_type) ||
+       !utils.value_matches(msg, "sub_type", sub_config.sub_type)) 
+    {
+	return;
+    }
+
+    process_subscribed_message(header, msg, data);
 }
+
+
+// create the header component of a message to be published
+json::value Processor::header(string timestamp, json::object sub_header) {
+
+    string testbed_version = "1.0";
+    if (sub_header.contains("version")) { 
+	testbed_version = json::value_to<string>(sub_header.at("version"));
+    }
+
+    json::value header = {
+	{"timestamp", timestamp},
+        {"message_type", pub_config.message_type},
+	{"version", testbed_version}
+    };
+
+    return header;
+}
+
+// create the msg component of a message to be published
+json::value Processor::msg(string timestamp, json::object sub_msg) {
+    json::value msg = {
+	{"timestamp", timestamp},
+	{"version", version}
+    };
+
+    return msg;
+}
+
+void Processor::publish(json::value message) {
+    cout << "Publishing on " << pub_config.topic << endl;
+    coordinator->publish(pub_config.topic, message);
+}
+

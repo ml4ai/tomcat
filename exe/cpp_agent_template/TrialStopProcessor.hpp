@@ -16,7 +16,7 @@ class TrialStopProcessor: public Processor {
     string get_subscription_name(){ return "trial_stop";}
     string get_publication_name(){ return "";}  // no publication
 
-    void process(
+    void process_subscribed_message(
         json::object common_header,
         json::object common_message,
         json::object data

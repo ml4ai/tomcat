@@ -37,7 +37,7 @@ Coordinator::Coordinator(json::object config) {
 
     // configure message processors
     for(int i = 0; i < N_PROCESSORS; i ++) {
-        processors[i]->configure(config);
+        processors[i]->configure(this, config);
     }
 
     heartbeat_message = new HeartbeatMessage(config);
@@ -49,7 +49,10 @@ Coordinator::Coordinator(json::object config) {
     string address = "tcp://" + host + ": " + to_string(port);
 
     // Create an MQTT client smart pointer to be shared among threads.
-    this->mqtt_client = make_shared<mqtt::async_client>(address, "agent");
+    this->mqtt_client = make_shared<mqtt::async_client>(
+        address, 
+	"cpp_template_agent"
+    );
 
     // Connect options for a non-persistent session and automatic
     // reconnects.
@@ -60,7 +63,7 @@ Coordinator::Coordinator(json::object config) {
 
     mqtt_client->set_message_callback([&](mqtt::const_message_ptr msg) {
         for(int i = 0; i < N_PROCESSORS; i ++) {
-            processors[i]->process(msg);
+            processors[i]->process_traffic(msg->get_topic(), msg);
         }
     });
 
@@ -85,6 +88,11 @@ Coordinator::Coordinator(json::object config) {
 	&Coordinator::publish_heartbeats, 
 	this
     );
+}
+
+void Coordinator::publish(string topic, json::value jv){
+    string foo = json::value_to<std::string>(jv);
+    mqtt_client->publish(topic, foo);
 }
 
 /** Function that publishes heartbeat messages while the agent is running */

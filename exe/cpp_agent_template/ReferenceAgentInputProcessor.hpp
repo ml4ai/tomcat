@@ -15,7 +15,7 @@ class ReferenceAgentInputProcessor: public Processor {
     string get_subscription_name(){ return "reference_agent_input";}
     string get_publication_name(){ return "reference_agent_output";}
 
-    void process(
+    void process_subscribed_message(
         json::object common_header,
         json::object common_message,
         json::object data
