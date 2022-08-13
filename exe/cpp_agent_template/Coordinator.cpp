@@ -1,6 +1,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
+#include <set>
 
 #include "Coordinator.hpp"
 #include "PublishedMessage.hpp"
@@ -24,8 +25,9 @@ string get_timestamp() {
            "Z";
 }
 
+
 Coordinator::~Coordinator() {
-    delete(heartbeat);
+   delete heartbeat_message;
 }
 
 // 
@@ -33,12 +35,12 @@ Coordinator::Coordinator(json::object config) {
 
     this->config = config;
 
-    heartbeat = new HeartbeatMessage(config);
-
     // configure message processors
     for(int i = 0; i < N_PROCESSORS; i ++) {
         processors[i]->configure(config);
     }
+
+    heartbeat_message = new HeartbeatMessage(config);
 
     // set up MQTT params for broker connection
     json::object mqtt = json::value_to<json::object>(config.at("mqtt"));
@@ -65,10 +67,16 @@ Coordinator::Coordinator(json::object config) {
     auto rsp = this->mqtt_client->connect(connOpts)->get_connect_response();
     BOOST_LOG_TRIVIAL(info) << "Connected to the MQTT broker at " << address;
 
-    // Subscribe to the processor topics
+
+    // Subscribe to the processor subscription topics
+    std::set<string> topics;
     for(int i = 0; i < N_PROCESSORS; i ++) {
-        mqtt_client->subscribe(processors[i]->topic, 2);
-	cout << "Subscribed to: " << processors[i]->topic << endl;
+	topics.insert(processors[i]->sub_config.topic);
+    }
+    for(std::set<string>::iterator i=topics.begin(); i!=topics.end(); ++i) {
+	string topic = *i;
+        mqtt_client->subscribe(topic, 2);
+        cout << "Subscribed to: " << topic << endl;
     }
 
     // Start publishing heartbeat messages 
@@ -83,10 +91,10 @@ Coordinator::Coordinator(json::object config) {
 void Coordinator::publish_heartbeats() {
     while (this->running) {
         this_thread::sleep_for(seconds(10));
-	json::value jv = heartbeat->json_value(get_timestamp());
+	json::value jv = heartbeat_message->json_value(get_timestamp());
 
         mqtt_client
-            ->publish(heartbeat->topic, json::serialize(jv))
+            ->publish(heartbeat_message->topic, json::serialize(jv))
             ->wait();
     }
 }

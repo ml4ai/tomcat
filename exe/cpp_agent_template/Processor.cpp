@@ -3,6 +3,7 @@
 #include <mqtt/async_client.h>
 
 #include "Processor.hpp"
+#include "Utils.hpp"
 
 using namespace std;
 namespace json = boost::json;
@@ -13,40 +14,18 @@ namespace json = boost::json;
  *  values */
 void Processor::configure(json::object config){
     // use the configuration object that matches our hard-coded name
-    string name = get_name();
-    if(config.contains(name)) {
-        json::object info = json::value_to<json::object>(config.at(name));
-	if(info.contains("topic")) {
-            topic = json::value_to<string>(info.at("topic"));
-	} else {
-	    cout << name << " configuration missing 'topic' field " << endl;
-	    exit(EXIT_FAILURE);
-	}
 
-	if(info.contains("message_type")) {
-            message_type = json::value_to<string>(info.at("message_type"));
-	} else {
-	    cout << name << " configuration missing 'message_type' field " << endl;
-	    exit(EXIT_FAILURE);
-	}
-
-	if(info.contains("sub_type")) {
-            sub_type = json::value_to<string>(info.at("sub_type"));
-	} else {
-	    cout << name << " configuration missing 'sub_type' field " << endl;
-	    exit(EXIT_FAILURE);
-	}
-
-    } else {
-        cout << "Config object does not have entry for '" << name << "'" << endl;
+    string sub_name = get_subscription_name();
+    if(!utils.parse_configuration(sub_name, config, &sub_config)) {
+        cout << sub_name << " configuration parse error" << endl;
 	exit(EXIT_FAILURE);
     }
 
-    cout << "CONFIGURATION:" << endl;
-    cout << " name:         " << name << endl;
-    cout << " topic:        " << topic << endl;
-    cout << " message_type: " << message_type << endl;
-    cout << " sub_type:     " << sub_type << endl;
+    string pub_name = get_publication_name();
+    if(!utils.parse_configuration(pub_name, config, &pub_config)) {
+        cout << pub_name << " configuration parse error" << endl;
+	exit(EXIT_FAILURE);
+    }
 }
 
 
@@ -55,9 +34,9 @@ void Processor::configure(json::object config){
  *  everything checks out, respond to the message */
 void Processor::process(mqtt::const_message_ptr m_ptr){
 
-    /* test that the topic matches the configuration */
+    /* test that the topic matches the subscription configuration */
     string m_topic = m_ptr->get_topic();
-    if(m_topic.compare(topic) != 0) {
+    if(m_topic.compare(sub_config.topic) != 0) {
         return;
     }
 
@@ -80,7 +59,7 @@ void Processor::process(mqtt::const_message_ptr m_ptr){
     json::object header = json::value_to<json::object>(message.at("header"));
 
     /* test that the header message_type matches the configuration */
-    if(!test_key_value(header, "message_type", message_type)) {
+    if(!utils.value_matches(header, "message_type", sub_config.message_type)) {
 	return;
     }
 
@@ -92,7 +71,7 @@ void Processor::process(mqtt::const_message_ptr m_ptr){
     json::object msg = json::value_to<json::object>(message.at("msg"));
 
     /* test that the msg sub_type matches the configuration */
-    if(!test_key_value(msg, "sub_type", sub_type)) {
+    if(!utils.value_matches(msg, "sub_type", sub_config.sub_type)) {
 	return;
     }
 
@@ -105,26 +84,5 @@ void Processor::process(mqtt::const_message_ptr m_ptr){
 
     /* If all the message objects exist and match the configuration, process
      * the JSON message */
-    process(message);
+    process(header, msg, data);
 }
-
-
-/* test for matching key value in a json object */
-bool Processor::test_key_value(json::object obj, string key, string value) {
-    /* test that key exists */
-    if(!obj.contains(key)) {
-        return false;
-    }
-
-    /* test value */
-    string keyval = json::value_to<string>(obj.at(key));
-
-    if(value.compare(keyval) == 0) {
-        return true;
-    }
-
-    return false;
-}
-
-
-

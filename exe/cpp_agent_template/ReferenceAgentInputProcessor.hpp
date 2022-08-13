@@ -12,7 +12,12 @@ using namespace std;
 class ReferenceAgentInputProcessor: public Processor {
 
     public:
-    string get_name(){ return "reference_agent_input_message";}
-    
-    void process(json::object read_from_bus);
+    string get_subscription_name(){ return "reference_agent_input";}
+    string get_publication_name(){ return "reference_agent_output";}
+
+    void process(
+        json::object common_header,
+        json::object common_message,
+        json::object data
+    ) override;
 };

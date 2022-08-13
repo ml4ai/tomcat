@@ -32,6 +32,7 @@ add_executable(
     RollcallResponseMessage.cpp
     TrialStartProcessor.cpp
     TrialStopProcessor.cpp
+    Utils.cpp
     VersionInfoMessage.cpp
 )
 target_link_libraries(main PahoMqttCpp::paho-mqttpp3 ${Boost_LIBRARIES})
