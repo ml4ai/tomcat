@@ -25,8 +25,6 @@ void HeartbeatProducer::configure(
     std::shared_ptr<mqtt::async_client> mqtt_client
 ) {
 
-    this->config = config;
-
     this->mqtt_client = mqtt_client;
 
     /** get publication configuration */

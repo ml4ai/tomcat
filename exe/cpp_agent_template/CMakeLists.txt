@@ -24,7 +24,7 @@ add_executable(
     HeartbeatProducer.cpp
     MessageQueue.cpp
     Processor.cpp
-    ReferenceAgentInputProcessor.cpp
+    ReferenceAgentProcessor.cpp
     RollcallRequestProcessor.cpp
     TrialStartProcessor.cpp
     TrialStopProcessor.cpp

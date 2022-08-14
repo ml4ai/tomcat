@@ -10,7 +10,7 @@
 
 #include "Processor.hpp"
 #include "HeartbeatProducer.hpp"
-#include "ReferenceAgentInputProcessor.hpp"
+#include "ReferenceAgentProcessor.hpp"
 #include "RollcallRequestProcessor.hpp"
 #include "TrialStartProcessor.hpp"
 #include "TrialStopProcessor.hpp"
@@ -27,7 +27,7 @@ class Coordinator {
     /** Processors for subscribed message topics */
     TrialStartProcessor p0;
     TrialStopProcessor p1;
-    ReferenceAgentInputProcessor p2;
+    ReferenceAgentProcessor p2;
     RollcallRequestProcessor p3;
     static const int N_PROCESSORS = 4;
     Processor *processors[N_PROCESSORS] = {&p0, &p1, &p2, &p3};

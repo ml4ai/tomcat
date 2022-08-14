@@ -9,10 +9,6 @@
 #include <mqtt/async_client.h>
 
 #include "Processor.hpp"
-#include "ReferenceAgentInputProcessor.hpp"
-#include "RollcallRequestProcessor.hpp"
-#include "TrialStartProcessor.hpp"
-#include "TrialStopProcessor.hpp"
 #include "Utils.hpp"
 
 namespace json = boost::json;
@@ -25,9 +21,6 @@ class HeartbeatProducer {
 
     /** configuration */
     Utils::Configuration pub_config;
-
-    /** config state */
-    json::object config;
 
     // publication source
     string source;
