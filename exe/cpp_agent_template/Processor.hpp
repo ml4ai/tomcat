@@ -36,7 +36,7 @@ class Processor{
     public:
 
     // subscribed and published message fields
-    Utils::Configuration pub_config, sub_config;
+    Utils::Configuration input_config, output_config;
 
     /** used by this program only */
     virtual string get_subscription_name() { return ""; }

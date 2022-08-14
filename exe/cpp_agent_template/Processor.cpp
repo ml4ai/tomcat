@@ -24,7 +24,7 @@ void Processor::configure(
     // subscription name nonempty, otherwise skip 
     string sub_name = get_subscription_name();
     if(!sub_name.empty() &&
-        !utils.parse_configuration(sub_name, config, &sub_config)) {
+        !utils.parse_configuration(sub_name, config, &input_config)) {
         cerr << sub_name << " configuration parse error" << endl;
 	exit(EXIT_FAILURE);
     }
@@ -33,7 +33,7 @@ void Processor::configure(
     // subscription name nonempty, otherwise skip 
     string pub_name = get_publication_name();
     if(!pub_name.empty() &&
-        !utils.parse_configuration(pub_name, config, &pub_config)) {
+        !utils.parse_configuration(pub_name, config, &output_config)) {
         cerr << pub_name << " configuration parse error" << endl;
 	exit(EXIT_FAILURE);
     }
@@ -63,7 +63,7 @@ void Processor::configure(
 void Processor::process_traffic(string m_topic, mqtt::const_message_ptr m_ptr){
 
     /* test that the topic matches the subscription configuration */
-    if(m_topic.compare(sub_config.topic) != 0) {
+    if(m_topic.compare(input_config.topic) != 0) {
         return;
     }
 
@@ -85,8 +85,8 @@ void Processor::process_traffic(string m_topic, mqtt::const_message_ptr m_ptr){
     json::object data = json::value_to<json::object>(message.at("data"));
 
     /* test message_type and sub_type match the subscription configuration */
-    if(!utils.value_matches(header, "message_type", sub_config.message_type) ||
-       !utils.value_matches(msg, "sub_type", sub_config.sub_type)) 
+    if(!utils.value_matches(header, "message_type", input_config.message_type) ||
+       !utils.value_matches(msg, "sub_type", input_config.sub_type)) 
     {
 	return;
     }
@@ -106,7 +106,7 @@ json::value Processor::header(string timestamp, json::object input_header) {
 
     json::value header = {
         {"timestamp", timestamp},
-        {"message_type", pub_config.message_type},
+        {"message_type", output_config.message_type},
         {"version", testbed_version}
     };
 
@@ -119,7 +119,7 @@ json::value Processor::msg(string timestamp, json::object input_msg) {
     json::object msg;
     msg["timestamp"] = timestamp;
     msg["source"] = source;
-    msg["sub_type"] = pub_config.sub_type;
+    msg["sub_type"] = output_config.sub_type;
     msg["version"] = version;
 
     // msg fields that may or may not be present
@@ -140,6 +140,6 @@ json::value Processor::msg(string timestamp, json::object input_msg) {
 }
 
 void Processor::publish(json::value jv) {
-    cout << "Publishing on " << pub_config.topic << endl;
-    mqtt_client->publish(pub_config.topic, json::serialize(jv));
+    cout << "Publishing on " << output_config.topic << endl;
+    mqtt_client->publish(output_config.topic, json::serialize(jv));
 }

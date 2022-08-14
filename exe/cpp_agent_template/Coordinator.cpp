@@ -59,7 +59,7 @@ Coordinator::Coordinator(json::object config) {
     // Subscribe to the processor input topics
     std::set<string> input;
     for(int i = 0; i < N_PROCESSORS; i ++) {
-	string topic = processors[i]->sub_config.topic;
+	string topic = processors[i]->input_config.topic;
 	if(!topic.empty()) {
 	    input.insert(topic);
 	}
@@ -73,7 +73,7 @@ Coordinator::Coordinator(json::object config) {
     // report processor output topics
     std::set<string> output;
     for(int i = 0; i < N_PROCESSORS; i ++) {
-	string topic = processors[i]->pub_config.topic;
+	string topic = processors[i]->output_config.topic;
 	if(!topic.empty()) {
 	    output.insert(topic);
 	}

@@ -44,7 +44,7 @@ void HeartbeatProducer::publish_heartbeats() {
 	json::value jv = get_heartbeat();
 
         mqtt_client
-            ->publish(pub_config.topic, json::serialize(jv))
+            ->publish(output_config.topic, json::serialize(jv))
             ->wait();
     }
 }
