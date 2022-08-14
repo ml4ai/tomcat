@@ -10,10 +10,10 @@ using namespace std;
 
 class RollcallRequestProcessor: public Processor {
 
-    string get_subscription_name(){ return "rollcall_request";}
-    string get_publication_name(){ return "rollcall_response";}
+    string get_subscription_name() override;
+    string get_publication_name() override;
 
-    void process_subscribed_message(
+    void process_input_message(
         json::object sub_header,
         json::object sub_msg,
         json::object sub_data

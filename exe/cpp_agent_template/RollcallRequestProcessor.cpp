@@ -7,61 +7,37 @@ using namespace std;
 namespace json = boost::json;
 
 
-void RollcallRequestProcessor::process_subscribed_message(
-    json::object sub_header,
-    json::object sub_msg,
-    json::object sub_data
+string RollcallRequestProcessor::get_subscription_name(){
+    return "rollcall_request";
+}
+
+string RollcallRequestProcessor::get_publication_name(){
+    return "rollcall_response";
+}
+
+/* Process the rollcall request input from the message bus */
+void RollcallRequestProcessor::process_input_message(
+    json::object input_header,
+    json::object input_msg,
+    json::object input_data
 ) {
-    cout << "RollcallRequestProcessor::process_subscribed_message" << endl;
 
     // compose a rollcall response message
-    string timestamp = "foo";
-    int uptime_seconds = 1234;
+
+    string timestamp = utils.get_timestamp();
+    int uptime_seconds = 1234;  // TODO get actual uptime
 
     json::value message = {
-        {"header", header(timestamp, sub_header)},
-	{"msg", msg(timestamp, sub_msg)},
-	{"data", 
-            {"rollcall_id", sub_data.at("rollcall_id")},
+        {"header", 
+            header(timestamp, input_header)},
+	{"msg",
+            msg(timestamp, input_msg)},
+	{"data",  {
+            {"rollcall_id", input_data.at("rollcall_id")},
 	    {"status", "up"},
-	    {"uptime", uptime_seconds}
-	}
+	    {"uptime", uptime_seconds},
+	    {"version", version}}}
     };
 
     publish(message);
-
-    /*
-
-    json::value header = header(timestamp, pub_config);
-    json::value msg = msg(timestamp, pub_config, sub_msg);
-
-    header["message_type"] = pub_config.message_type;
-    header["timestamp"] = timestamp;
-    header["version"] = version;
-
-    json::object msg;
-    msg["experiment_id"] = sub_msg.at("experiment_id");
-    msg["timestamp"] = timestamp;
-    msg["source"] = source;
-    msg["sub_type"] = pub_config.sub_type;
-    msg["version"] = version;
-
-    // msg fields that may or may not be present
-    if(sub_msg.contains("trial_id")) {
-        msg["trial_id"] = sub_msg.at("trial_id");
-    }
-    if(sub_msg.contains("replay_root_id")) {
-        msg["replay_root_id"] = sub_msg.at("replay_root_id");
-    }
-    if(sub_msg.contains("replay_id")) {
-        msg["replay_id"] = sub_msg.at("replay_id");
-    }
-
-    json::object data;
-    data["rollcall_id"] = sub_data.at("rollcall_id");
-    data["status"] = "up";
-    data["uptime"] = uptime_seconds;
-    */
-
-
 }

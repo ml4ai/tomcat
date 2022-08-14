@@ -13,8 +13,12 @@ namespace json = boost::json;
 /** Read the the topic, header.message_type, and msg.sub_type fields
  *  from the configuration.  The processor can't run without these 
  *  values */
-void Processor::configure(Coordinator * c, json::object config){
-    coordinator = c; 
+void Processor::configure(
+    json::object config,
+    std::shared_ptr<mqtt::async_client> mqtt_client
+) {
+
+    this->mqtt_client = mqtt_client;
 
     // get configuration for reading from the Message Bus
     string sub_name = get_subscription_name();
@@ -70,6 +74,7 @@ void Processor::process_traffic(string m_topic, mqtt::const_message_ptr m_ptr){
     }
     json::object message = json::value_to<json::object>(json_parser.release());
 
+
     /* Get message components */
     json::object header = json::value_to<json::object>(message.at("header"));
     json::object msg = json::value_to<json::object>(message.at("msg"));
@@ -82,39 +87,55 @@ void Processor::process_traffic(string m_topic, mqtt::const_message_ptr m_ptr){
 	return;
     }
 
-    process_subscribed_message(header, msg, data);
+    /* if the traffic message matches our config, this is input data for us */
+    process_input_message(header, msg, data);
 }
 
 
 // create the header component of a message to be published
-json::value Processor::header(string timestamp, json::object sub_header) {
+// bus_header is from the message that was read from the Message Bus
+json::value Processor::header(string timestamp, json::object bus_header) {
 
     string testbed_version = "1.0";
-    if (sub_header.contains("version")) { 
-	testbed_version = json::value_to<string>(sub_header.at("version"));
+    if (bus_header.contains("version")) { 
+	testbed_version = json::value_to<string>(bus_header.at("version"));
     }
 
     json::value header = {
-	{"timestamp", timestamp},
+        {"timestamp", timestamp},
         {"message_type", pub_config.message_type},
-	{"version", testbed_version}
+        {"version", testbed_version}
     };
 
     return header;
 }
 
 // create the msg component of a message to be published
-json::value Processor::msg(string timestamp, json::object sub_msg) {
-    json::value msg = {
-	{"timestamp", timestamp},
-	{"version", version}
-    };
+// bus_msg is from the message that was read from the Message Bus
+json::value Processor::msg(string timestamp, json::object bus_msg) {
+
+    json::object msg;
+    msg["experiment_id"] = bus_msg.at("experiment_id");
+    msg["timestamp"] = timestamp;
+    msg["source"] = source;
+    msg["sub_type"] = pub_config.sub_type;
+    msg["version"] = version;
+
+    // msg fields that may or may not be present
+    if(bus_msg.contains("trial_id")) {
+        msg["trial_id"] = bus_msg.at("trial_id");
+    }
+    if(bus_msg.contains("replay_root_id")) {
+        msg["replay_root_id"] = bus_msg.at("replay_root_id");
+    }
+    if(bus_msg.contains("replay_id")) {
+        msg["replay_id"] = bus_msg.at("replay_id");
+    }
 
     return msg;
 }
 
-void Processor::publish(json::value message) {
+void Processor::publish(json::value jv) {
     cout << "Publishing on " << pub_config.topic << endl;
-    coordinator->publish(pub_config.topic, message);
+    mqtt_client->publish(pub_config.topic, json::serialize(jv));
 }
-

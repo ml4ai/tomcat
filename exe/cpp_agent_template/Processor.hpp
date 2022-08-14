@@ -16,10 +16,12 @@ class Processor{
 
     private:
 
-    Utils utils;
     json::stream_parser json_parser;
 
     protected:
+
+    // routines called by any class
+    Utils utils;
     
     // publication source
     string source;
@@ -27,9 +29,10 @@ class Processor{
     // this software version
     string version;
 
-    Coordinator *coordinator;
+    /** publication to the Message Bus */
+    std::shared_ptr<mqtt::async_client> mqtt_client;
 
-    void publish(json::value message);
+    void publish(json::value jv);
 
     public:
 
@@ -40,14 +43,17 @@ class Processor{
     virtual string get_subscription_name() = 0;
     virtual string get_publication_name() = 0;
 
-    /** set fields needed to identify messages to process */
-    void configure(Coordinator* coordinator, json::object config);
+    /** setup before running */
+    void configure(
+        json::object config,
+        std::shared_ptr<mqtt::async_client> mqtt_client
+    );
 
     /** handle any message bus traffic */
     void process_traffic(string topic, mqtt::const_message_ptr msg);
 
-    /** process a message directed at us */
-    virtual void process_subscribed_message(
+    /** process a message read from the Message Bus */
+    virtual void process_input_message(
         json::object sub_header,
         json::object sub_msg,
         json::object sub_data
