@@ -32,14 +32,17 @@ void signal_handler(int signal) { gSignalStatus = signal; }
 
 int main(int argc, char* argv[]) {
 
+    cout << "Starting C++ Template Agent..." << endl;
+    
     // get configuration
     Configurator configurator;
     json::object config = configurator.parse_args(argc, argv);
 
-    cout << "Configuration:" << endl;
-    cout << config << endl;
+    string version = json::value_to<string>(config.at("version"));
 
     Coordinator coordinator(config);
+
+    cout << "C++ Template Agent version " << version << " running." << endl;
 
     signal(SIGINT, signal_handler);
 

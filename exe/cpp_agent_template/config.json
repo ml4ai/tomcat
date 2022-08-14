@@ -40,6 +40,5 @@
     "topic": "agent/reference_agent/versioninfo"
   },
   "version": "1.0.0",
-  "notes": "Preliminary C++ template agent",
   "publication_source": "reference_agent"
 }
