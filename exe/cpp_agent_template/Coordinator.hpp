@@ -9,11 +9,12 @@
 #include <mqtt/async_client.h>
 
 #include "Processor.hpp"
-#include "HeartbeatMessage.hpp"
+#include "HeartbeatProducer.hpp"
 #include "ReferenceAgentInputProcessor.hpp"
 #include "RollcallRequestProcessor.hpp"
 #include "TrialStartProcessor.hpp"
 #include "TrialStopProcessor.hpp"
+#include "Utils.hpp"
 
 namespace json = boost::json;
 
@@ -31,8 +32,8 @@ class Coordinator {
     static const int N_PROCESSORS = 4;
     Processor *processors[N_PROCESSORS] = {&p0, &p1, &p2, &p3};
 
-    /** published heartbeat */
-    HeartbeatMessage *heartbeat_message = nullptr;
+    /** general functions */
+    Utils utils;
 
     /** config state */
     json::object config;
@@ -40,25 +41,14 @@ class Coordinator {
     /** Flag to specify whether the agent is running or not */
     bool running = true;
 
-    /** std::future object holds the result of the async heartbeat operation
-     */
-    std::future<void> heartbeat_future;
-
     /** Function that processes incoming messages */
     virtual void process(mqtt::const_message_ptr msg) {};
 
-    /** Function that publishes heartbeat messages on an interval */
-    void publish_heartbeats();
-
+    /** heartbeats every 10 s */
+    HeartbeatProducer heartbeat_producer;
 
   public:
     std::shared_ptr<mqtt::async_client> mqtt_client;
-
-    /** publisher */
-    void publish(string topic, json::value message);
-
-    /** Destructor */
-    ~Coordinator();
 
     /** Constructor */
     Coordinator(json::object config);

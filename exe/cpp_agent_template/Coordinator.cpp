@@ -18,34 +18,15 @@ using namespace std;
 namespace json = boost::json;
 using namespace std::chrono;
 
-/** Get current UTC timestamp in ISO-8601 format. */
-string get_timestamp() {
-    return boost::posix_time::to_iso_extended_string(
-               boost::posix_time::microsec_clock::universal_time()) +
-           "Z";
-}
 
-
-Coordinator::~Coordinator() {
-   delete heartbeat_message;
-}
-
-// 
 Coordinator::Coordinator(json::object config) {
 
     this->config = config;
 
-    // configure message processors
-    for(int i = 0; i < N_PROCESSORS; i ++) {
-        processors[i]->configure(this, config);
-    }
-
-    heartbeat_message = new HeartbeatMessage(config);
-
     // set up MQTT params for broker connection
-    json::object mqtt = json::value_to<json::object>(config.at("mqtt"));
-    string host = json::value_to<string>(mqtt.at("host"));
-    int port = json::value_to<int>(mqtt.at("port"));
+    json::object mqtt_config = json::value_to<json::object>(config.at("mqtt"));
+    string host = json::value_to<string>(mqtt_config.at("host"));
+    int port = json::value_to<int>(mqtt_config.at("port"));
     string address = "tcp://" + host + ": " + to_string(port);
 
     // Create an MQTT client smart pointer to be shared among threads.
@@ -70,6 +51,12 @@ Coordinator::Coordinator(json::object config) {
     auto rsp = this->mqtt_client->connect(connOpts)->get_connect_response();
     BOOST_LOG_TRIVIAL(info) << "Connected to the MQTT broker at " << address;
 
+    // configure message processors
+    for(int i = 0; i < N_PROCESSORS; i ++) {
+        processors[i]->configure(config, mqtt_client);
+    }
+    heartbeat_producer.configure(config, mqtt_client);
+
 
     // Subscribe to the processor subscription topics
     std::set<string> topics;
@@ -81,33 +68,8 @@ Coordinator::Coordinator(json::object config) {
         mqtt_client->subscribe(topic, 2);
         cout << "Subscribed to: " << topic << endl;
     }
-
-    // Start publishing heartbeat messages 
-    heartbeat_future = async(
-        launch::async, 
-	&Coordinator::publish_heartbeats, 
-	this
-    );
-}
-
-void Coordinator::publish(string topic, json::value jv){
-    string foo = json::value_to<std::string>(jv);
-    mqtt_client->publish(topic, foo);
-}
-
-/** Function that publishes heartbeat messages while the agent is running */
-void Coordinator::publish_heartbeats() {
-    while (this->running) {
-        this_thread::sleep_for(seconds(10));
-	json::value jv = heartbeat_message->json_value(get_timestamp());
-
-        mqtt_client
-            ->publish(heartbeat_message->topic, json::serialize(jv))
-            ->wait();
-    }
 }
 
 void Coordinator::stop() {
-    running = false;
-    heartbeat_future.wait();
+    heartbeat_producer.stop();
 }
