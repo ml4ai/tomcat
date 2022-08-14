@@ -87,18 +87,17 @@ void Processor::process_traffic(string m_topic, mqtt::const_message_ptr m_ptr){
 	return;
     }
 
-    /* if the traffic message matches our config, this is input data for us */
+    /* if the traffic message matches our config, process it as input */
     process_input_message(header, msg, data);
 }
 
 
-// create the header component of a message to be published
-// bus_header is from the message that was read from the Message Bus
-json::value Processor::header(string timestamp, json::object bus_header) {
+// create a common header struct based on Message Bus input
+json::value Processor::header(string timestamp, json::object input_header) {
 
     string testbed_version = "1.0";
-    if (bus_header.contains("version")) { 
-	testbed_version = json::value_to<string>(bus_header.at("version"));
+    if (input_header.contains("version")) { 
+	testbed_version = json::value_to<string>(input_header.at("version"));
     }
 
     json::value header = {
@@ -110,26 +109,25 @@ json::value Processor::header(string timestamp, json::object bus_header) {
     return header;
 }
 
-// create the msg component of a message to be published
-// bus_msg is from the message that was read from the Message Bus
-json::value Processor::msg(string timestamp, json::object bus_msg) {
+// create a common msg struct based on Message Bus input 
+json::value Processor::msg(string timestamp, json::object input_msg) {
 
     json::object msg;
-    msg["experiment_id"] = bus_msg.at("experiment_id");
+    msg["experiment_id"] = input_msg.at("experiment_id");
     msg["timestamp"] = timestamp;
     msg["source"] = source;
     msg["sub_type"] = pub_config.sub_type;
     msg["version"] = version;
 
     // msg fields that may or may not be present
-    if(bus_msg.contains("trial_id")) {
-        msg["trial_id"] = bus_msg.at("trial_id");
+    if(input_msg.contains("trial_id")) {
+        msg["trial_id"] = input_msg.at("trial_id");
     }
-    if(bus_msg.contains("replay_root_id")) {
-        msg["replay_root_id"] = bus_msg.at("replay_root_id");
+    if(input_msg.contains("replay_root_id")) {
+        msg["replay_root_id"] = input_msg.at("replay_root_id");
     }
-    if(bus_msg.contains("replay_id")) {
-        msg["replay_id"] = bus_msg.at("replay_id");
+    if(input_msg.contains("replay_id")) {
+        msg["replay_id"] = input_msg.at("replay_id");
     }
 
     return msg;
