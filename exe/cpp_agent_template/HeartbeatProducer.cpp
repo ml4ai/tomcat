@@ -4,8 +4,6 @@
 #include <set>
 
 #include "HeartbeatProducer.hpp"
-#include "PublishedMessage.hpp"
-#include "HeartbeatMessage.hpp"
 #include "Processor.hpp"
 #include "Utils.hpp"
 

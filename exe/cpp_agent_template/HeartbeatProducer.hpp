@@ -9,7 +9,6 @@
 #include <mqtt/async_client.h>
 
 #include "Processor.hpp"
-#include "HeartbeatMessage.hpp"
 #include "ReferenceAgentInputProcessor.hpp"
 #include "RollcallRequestProcessor.hpp"
 #include "TrialStartProcessor.hpp"

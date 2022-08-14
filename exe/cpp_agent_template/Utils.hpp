@@ -12,20 +12,7 @@ class Utils {
 
     public:
 
-    struct CommonHeader {
-        string timestamp;
-        string message_type;
-        string version;  // testbed version
-    };
-
-    struct CommonMsg {
-        string experiment_id;
-        string timestamp;
-        string source;
-        string sub_type;
-        string version;  // this software version
-    };
-
+    // config file fields 
     struct Configuration {
         string name; 
         string message_type;
@@ -33,6 +20,7 @@ class Utils {
         string topic;
     };
 
+    // populate a Configuration struct from JSON config 
     bool parse_configuration(
         string name, 
         json::object config, 

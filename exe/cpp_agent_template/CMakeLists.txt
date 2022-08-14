@@ -21,19 +21,13 @@ add_executable(
     main main.cpp
     Configurator.cpp
     Coordinator.cpp
-    HeartbeatMessage.cpp
     HeartbeatProducer.cpp
-    Message.cpp
-    PublishedMessage.cpp
     MessageQueue.cpp
     Processor.cpp
-    ReferenceAgentMessage.cpp
     ReferenceAgentInputProcessor.cpp
     RollcallRequestProcessor.cpp
-    RollcallResponseMessage.cpp
     TrialStartProcessor.cpp
     TrialStopProcessor.cpp
     Utils.cpp
-    VersionInfoMessage.cpp
 )
 target_link_libraries(main PahoMqttCpp::paho-mqttpp3 ${Boost_LIBRARIES})

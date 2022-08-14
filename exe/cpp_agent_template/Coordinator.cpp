@@ -4,8 +4,6 @@
 #include <set>
 
 #include "Coordinator.hpp"
-#include "PublishedMessage.hpp"
-#include "HeartbeatMessage.hpp"
 #include "Processor.hpp"
 
 /* This class :

@@ -3,7 +3,6 @@
 #include <string>
 #include <boost/json.hpp>
 #include <mqtt/async_client.h>
-#include "Message.hpp"
 #include "Utils.hpp"
 
 namespace json = boost::json;
