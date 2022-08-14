@@ -5,10 +5,10 @@
 using namespace std;
 namespace json = boost::json;
 
-void ReferenceAgentInputProcessor::process_subscribed_message(
-    json::object common_header,
-    json::object common_message,
-    json::object data
+void ReferenceAgentInputProcessor::process_input_message(
+    json::object input_header,
+    json::object input_msg,
+    json::object input_data
 ) {
-  cout << "ReferenceAgentInputProcessor::process_subscribed_message" << endl;
+  cout << "ReferenceAgentInputProcessor::process_input_message" << endl;
 }

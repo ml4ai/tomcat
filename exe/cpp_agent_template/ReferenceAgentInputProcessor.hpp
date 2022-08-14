@@ -15,9 +15,9 @@ class ReferenceAgentInputProcessor: public Processor {
     string get_subscription_name(){ return "reference_agent_input";}
     string get_publication_name(){ return "reference_agent_output";}
 
-    void process_subscribed_message(
-        json::object common_header,
-        json::object common_message,
-        json::object data
+    void process_input_message(
+        json::object input_header,
+        json::object input_msg,
+        json::object input_data
     ) override;
 };

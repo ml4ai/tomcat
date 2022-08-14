@@ -5,11 +5,11 @@
 using namespace std;
 namespace json = boost::json;
 
-void TrialStartProcessor::process_subscribed_message(
-    json::object common_header,
-    json::object common_message,
-    json::object data
+void TrialStartProcessor::process_input_message(
+    json::object input_header,
+    json::object input_msg,
+    json::object input_data
 ) {
-  cout << "TrialStartProcessor::process_subscribed_message" << endl;
+  cout << "TrialStartProcessor::process_input_message" << endl;
 }
 
