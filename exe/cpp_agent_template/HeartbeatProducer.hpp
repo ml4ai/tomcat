@@ -9,7 +9,6 @@
 #include <mqtt/async_client.h>
 
 #include "Processor.hpp"
-#include "Utils.hpp"
 
 namespace json = boost::json;
 
@@ -17,22 +16,26 @@ using namespace std;
 
 
 /** Class that handles general tasks */
-class HeartbeatProducer {
+class HeartbeatProducer : public Processor {
 
-    /** configuration */
-    Utils::Configuration pub_config;
+    public:
 
-    // publication source
-    string source;
+    string get_publication_name() override {return "heartbeat";}
 
-    // This software version
-    string version;
+    void start() override;
+    void stop() override;
 
-    /** publication to the Message Bus */
-    std::shared_ptr<mqtt::async_client> mqtt_client;
+    void process_input_message(
+        json::object sub_header,
+        json::object sub_msg,
+        json::object sub_data
+    ) override;
 
-    /** Flag to specify whether the agent is running or not */
-    bool running = true;
+    void set_input(json::object input_header, json::object input_msg);
+
+    /** because this class does not respond to messages directly,
+     *  we must keep a copy of a passed-in message */
+    json::object input_header, input_msg;
 
     /** std::future object holds the result of the async heartbeat operation
      */
@@ -41,20 +44,8 @@ class HeartbeatProducer {
     /** Function that publishes heartbeat messages on an interval */
     void publish_heartbeats();
 
-    /** get timestamp, etc */
-    Utils utils;
-
     /** create outgoing JSON value for heartbeat */
     json::value get_heartbeat();
 
   public:
-
-    /** Start producing heartbeats */
-    void configure(
-        json::object config, 
-	std::shared_ptr<mqtt::async_client> mqtt_client
-    );
-
-    /** Stop the agent */
-    void stop();
 };

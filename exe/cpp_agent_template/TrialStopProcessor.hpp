@@ -13,8 +13,7 @@ class TrialStopProcessor: public Processor {
 
     public:
 
-    string get_subscription_name(){ return "trial_stop";}
-    string get_publication_name(){ return "";}  // no publication
+    string get_subscription_name() override { return "trial_stop";}
 
     void process_input_message(
         json::object input_header,

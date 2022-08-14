@@ -6,15 +6,6 @@
 using namespace std;
 namespace json = boost::json;
 
-
-string ReferenceAgentProcessor::get_subscription_name(){
-    return "reference_agent_input";
-}
-
-string ReferenceAgentProcessor::get_publication_name(){
-    return "reference_agent_output";
-}
-
 /* Process the input */
 void ReferenceAgentProcessor::process_input_message(
     json::object input_header,
@@ -22,7 +13,6 @@ void ReferenceAgentProcessor::process_input_message(
     json::object input_data
 ) {
 
-    // compose a response
 
     string timestamp = utils.get_timestamp();
 

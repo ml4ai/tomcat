@@ -2,18 +2,8 @@
 #include <boost/log/trivial.hpp>
 #include "RollcallRequestProcessor.hpp"
 
-
 using namespace std;
 namespace json = boost::json;
-
-
-string RollcallRequestProcessor::get_subscription_name(){
-    return "rollcall_request";
-}
-
-string RollcallRequestProcessor::get_publication_name(){
-    return "rollcall_response";
-}
 
 /* Process the rollcall request input from the message bus */
 void RollcallRequestProcessor::process_input_message(

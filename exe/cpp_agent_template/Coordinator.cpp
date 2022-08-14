@@ -56,15 +56,32 @@ Coordinator::Coordinator(json::object config) {
     heartbeat_producer.configure(config, mqtt_client);
 
 
-    // Subscribe to the processor subscription topics
-    std::set<string> topics;
+    // Subscribe to the processor input topics
+    std::set<string> input;
     for(int i = 0; i < N_PROCESSORS; i ++) {
-	topics.insert(processors[i]->sub_config.topic);
+	string topic = processors[i]->sub_config.topic;
+	if(!topic.empty()) {
+	    input.insert(topic);
+	}
     }
-    for(std::set<string>::iterator i=topics.begin(); i!=topics.end(); ++i) {
+    for(std::set<string>::iterator i=input.begin(); i!=input.end(); ++i){
 	string topic = *i;
         mqtt_client->subscribe(topic, 2);
         cout << "Subscribed to: " << topic << endl;
+    }
+
+    // report processor output topics
+    std::set<string> output;
+    for(int i = 0; i < N_PROCESSORS; i ++) {
+	string topic = processors[i]->pub_config.topic;
+	if(!topic.empty()) {
+	    output.insert(topic);
+	}
+    }
+    for(std::set<string>::iterator i=output.begin(); i!=output.end(); ++i) {
+	string topic = *i;
+        mqtt_client->subscribe(topic, 2);
+        cout << "Publishing on: " << topic << endl;
     }
 }
 

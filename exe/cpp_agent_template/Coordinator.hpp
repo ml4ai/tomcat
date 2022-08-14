@@ -29,8 +29,11 @@ class Coordinator {
     TrialStopProcessor p1;
     ReferenceAgentProcessor p2;
     RollcallRequestProcessor p3;
-    static const int N_PROCESSORS = 4;
-    Processor *processors[N_PROCESSORS] = {&p0, &p1, &p2, &p3};
+    HeartbeatProducer heartbeat_producer;
+    static const int N_PROCESSORS = 5;
+    Processor *processors[N_PROCESSORS] = {
+        &p0, &p1, &p2, &p3, &heartbeat_producer
+    };
 
     /** general functions */
     Utils utils;
@@ -45,7 +48,6 @@ class Coordinator {
     virtual void process(mqtt::const_message_ptr msg) {};
 
     /** heartbeats every 10 s */
-    HeartbeatProducer heartbeat_producer;
 
   public:
     std::shared_ptr<mqtt::async_client> mqtt_client;

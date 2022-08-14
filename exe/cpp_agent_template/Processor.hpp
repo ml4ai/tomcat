@@ -39,14 +39,19 @@ class Processor{
     Utils::Configuration pub_config, sub_config;
 
     /** used by this program only */
-    virtual string get_subscription_name() = 0;
-    virtual string get_publication_name() = 0;
+    virtual string get_subscription_name() { return ""; }
+    virtual string get_publication_name() { return ""; }
 
     /** setup before running */
     void configure(
         json::object config,
         std::shared_ptr<mqtt::async_client> mqtt_client
     );
+
+    /** Flag to specify whether the processor is running or not */
+    bool running = true;
+    virtual void start(){ running = true;}
+    virtual void stop(){ running = false;}
 
     /** handle any message bus traffic */
     void process_traffic(string topic, mqtt::const_message_ptr msg);
@@ -56,8 +61,7 @@ class Processor{
         json::object sub_header,
         json::object sub_msg,
         json::object sub_data
-    ) = 0;
-
+    ) {}
 
     /* compose a publication header based on subscribed header */
     json::value header(string timestamp, json::object sub_header);

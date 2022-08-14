@@ -20,16 +20,20 @@ void Processor::configure(
 
     this->mqtt_client = mqtt_client;
 
-    // get configuration for reading from the Message Bus
+    // get configuration for reading from the Message Bus if 
+    // subscription name nonempty, otherwise skip 
     string sub_name = get_subscription_name();
-    if(!utils.parse_configuration(sub_name, config, &sub_config)) {
+    if(!sub_name.empty() &&
+        !utils.parse_configuration(sub_name, config, &sub_config)) {
         cerr << sub_name << " configuration parse error" << endl;
 	exit(EXIT_FAILURE);
     }
 
-    // get configuration for writing to the Message Bus
+    // get configuration for writing to the Message Bus if 
+    // subscription name nonempty, otherwise skip 
     string pub_name = get_publication_name();
-    if(!utils.parse_configuration(pub_name, config, &pub_config)) {
+    if(!pub_name.empty() &&
+        !utils.parse_configuration(pub_name, config, &pub_config)) {
         cerr << pub_name << " configuration parse error" << endl;
 	exit(EXIT_FAILURE);
     }
@@ -113,13 +117,15 @@ json::value Processor::header(string timestamp, json::object input_header) {
 json::value Processor::msg(string timestamp, json::object input_msg) {
 
     json::object msg;
-    msg["experiment_id"] = input_msg.at("experiment_id");
     msg["timestamp"] = timestamp;
     msg["source"] = source;
     msg["sub_type"] = pub_config.sub_type;
     msg["version"] = version;
 
     // msg fields that may or may not be present
+    if(input_msg.contains("experiment_id")) {
+        msg["experiment_id"] = input_msg.at("experiment_id");
+    }
     if(input_msg.contains("trial_id")) {
         msg["trial_id"] = input_msg.at("trial_id");
     }
