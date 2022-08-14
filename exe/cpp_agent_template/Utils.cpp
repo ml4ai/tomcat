@@ -1,9 +1,17 @@
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include "Utils.hpp"
 #include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
 
 using namespace std;
 namespace json = boost::json;
+
+/** Get current UTC timestamp in ISO-8601 format. */
+string Utils::get_timestamp() {
+    return boost::posix_time::to_iso_extended_string(
+               boost::posix_time::microsec_clock::universal_time()) +
+           "Z";
+}
 
 
 // return true if all the configuration fields were found 

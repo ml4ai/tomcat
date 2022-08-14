@@ -40,4 +40,6 @@ class Utils {
     );
 
     bool value_matches(json::object obj, string key, string value); 
+
+    string get_timestamp();
 };
