@@ -12,7 +12,6 @@ class Utils {
 
     public:
 
-    bool value_matches(json::object obj, string key, string value); 
     bool value_matches(json::object obj1, json::object obj2, string key); 
 
     json::object get_object(string name, json::object source);

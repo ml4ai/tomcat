@@ -36,19 +36,6 @@ std::string Utils::get_string(string name, json::object source){
     }
 }
 
-/* return true if object value matches input */
-bool Utils::value_matches(json::object obj, string key, string value) {
-    /* test that key exists */
-    if(!obj.contains(key)) {
-        return false;
-    }
-
-    /* test value */
-    string keyval = json::value_to<string>(obj.at(key));
-
-    return (value.compare(keyval) == 0);
-}
-
 /* return true if the same values of two objects match */
 bool Utils::value_matches(json::object obj1, json::object obj2, string key){
 
