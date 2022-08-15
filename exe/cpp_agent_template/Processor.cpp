@@ -74,6 +74,22 @@ json::value Processor::header(
     return header;
 }
 
+// create an output message common header
+json::object Processor::header(
+    string timestamp,
+    json::object output_config,
+    json::object input_header) 
+{
+    string testbed_version = utils.get_string("version", input_header);
+
+    json::object header;
+    header["timestamp"] = timestamp;
+    header["message_type"] = output_config.at("message_type");
+    header["version"] = testbed_version.empty()? "1.0": testbed_version;
+
+    return header;
+}
+
 // create an output message common msg
 json::value Processor::msg(
         string timestamp, 
@@ -84,6 +100,35 @@ json::value Processor::msg(
     msg["timestamp"] = timestamp;
     msg["source"] = source;
     msg["sub_type"] = output_sub_type;
+    msg["version"] = version;
+
+    // msg fields that may or may not be present
+    if(input_msg.contains("experiment_id")) {
+        msg["experiment_id"] = input_msg.at("experiment_id");
+    }
+    if(input_msg.contains("trial_id")) {
+        msg["trial_id"] = input_msg.at("trial_id");
+    }
+    if(input_msg.contains("replay_root_id")) {
+        msg["replay_root_id"] = input_msg.at("replay_root_id");
+    }
+    if(input_msg.contains("replay_id")) {
+        msg["replay_id"] = input_msg.at("replay_id");
+    }
+
+    return msg;
+}
+
+// create an output message common msg
+json::value Processor::msg(
+        string timestamp, 
+        json::object output_config, 
+        json::object input_msg
+) {
+    json::object msg;
+    msg["timestamp"] = timestamp;
+    msg["source"] = source;
+    msg["sub_type"] = output_config.at("sub_type");
     msg["version"] = version;
 
     // msg fields that may or may not be present

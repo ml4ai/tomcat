@@ -27,5 +27,6 @@ add_executable(
     ReferenceAgentProcessor.cpp
     RollcallRequestProcessor.cpp
     Utils.cpp
+    VersionInfoProcessor.cpp
 )
 target_link_libraries(main PahoMqttCpp::paho-mqttpp3 ${Boost_LIBRARIES})

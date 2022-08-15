@@ -14,24 +14,22 @@ string Utils::get_timestamp() {
 }
 
 
-// return the named object if it is found in the source otherwise
-// return an empty object
-json::object Utils::get_object(string name, json::object source){
-    if(source.contains(name)) {
-        return json::value_to<json::object>(source.at(name));
+// return the key value or an empty object if not found
+json::object Utils::get_object(string key, json::object source){
+    if(source.contains(key)) {
+        return json::value_to<json::object>(source.at(key));
     } else {
-       cerr << name << " object not found." << endl;
+//       cerr << key << " object not found." << endl;
        return json::object();
     }
 }
 
-// return the configuration element for the given name. 
-// Showtopper if not found
-std::string Utils::get_string(string name, json::object source){
-    if(source.contains(name)) {
-        return json::value_to<std::string>(source.at(name));
+// return the key value or an empty string if not found
+std::string Utils::get_string(string key, json::object source){
+    if(source.contains(key)) {
+        return json::value_to<std::string>(source.at(key));
     } else {
-       cerr << name << " string not found." << endl;
+//       cerr << key << " string not found." << endl;
        return "";
     }
 }

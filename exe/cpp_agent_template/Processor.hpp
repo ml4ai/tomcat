@@ -70,10 +70,24 @@ class Processor{
         json::object input_header
     );
 
+    /* compose output header based on input header */
+    json::object header(
+        string timestamp,
+        json::object output_config,
+        json::object input_header
+    );
+
     /* compose output msg based on input msg */
     json::value msg(
         string timestamp,
         string output_sub_type,
+        json::object input_msg
+    );
+
+    /* compose output msg based on input msg */
+    json::value msg(
+        string timestamp,
+        json::object output_config,
         json::object input_msg
     );
 };

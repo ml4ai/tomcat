@@ -12,6 +12,7 @@
 #include "HeartbeatProducer.hpp"
 #include "ReferenceAgentProcessor.hpp"
 #include "RollcallRequestProcessor.hpp"
+#include "VersionInfoProcessor.hpp"
 #include "Utils.hpp"
 
 namespace json = boost::json;
@@ -25,10 +26,11 @@ class Coordinator {
     /** Processors for subscribed message topics */
     ReferenceAgentProcessor p0;
     RollcallRequestProcessor p1;
+    VersionInfoProcessor p2;
     HeartbeatProducer heartbeat_producer;
-    static const int N_PROCESSORS = 3;
+    static const int N_PROCESSORS = 4;
     Processor *processors[N_PROCESSORS] = {
-        &p0, &p1, &heartbeat_producer
+        &p0, &p1, &p2, &heartbeat_producer
     };
 
     /** general functions */

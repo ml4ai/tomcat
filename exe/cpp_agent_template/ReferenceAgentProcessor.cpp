@@ -17,8 +17,6 @@ void ReferenceAgentProcessor::configure(json::object config) {
     // output
     output_config = utils.get_object("reference_agent_output", config);
     output_topic = utils.get_string("topic", output_config);
-    output_message_type = utils.get_string("message_type", output_config);
-    output_sub_type = utils.get_string("sub_type", output_config);
     cout << "ReferenceAgentProcessor publishing on " << output_topic << endl;
 }
 
@@ -47,12 +45,11 @@ void ReferenceAgentProcessor::process_input_message(
 
     json::value message = {
         {"header", 
-            header(timestamp, output_message_type, input_header)},
+            header(timestamp, output_config, input_header)},
 	{"msg",
-            msg(timestamp, output_sub_type, input_msg)},
+            msg(timestamp, output_config, input_msg)},
 	{"data",  {
-            // your data here
-	    {"version", version}}}
+	    {"your_data", "goes here"}}}
     };
 
     publish(output_topic, message);
