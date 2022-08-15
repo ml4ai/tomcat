@@ -11,6 +11,11 @@ void RollcallRequestProcessor::process_input_message(
     json::object input_msg,
     json::object input_data
 ) {
+    /* message sub_type must match configuration for processing */
+    if(!utils.value_matches(input_msg, "sub_type", input_config.sub_type))
+    {
+        return;
+    }
 
     // compose a rollcall response message
 

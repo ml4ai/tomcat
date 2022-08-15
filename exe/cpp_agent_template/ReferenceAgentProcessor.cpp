@@ -13,6 +13,12 @@ void ReferenceAgentProcessor::process_input_message(
     json::object input_data
 ) {
 
+    /* message sub_type must match configuration for processing */
+    if(!utils.value_matches(input_msg, "sub_type", input_config.sub_type))
+    {
+        return;
+    }
+
 
     string timestamp = utils.get_timestamp();
 

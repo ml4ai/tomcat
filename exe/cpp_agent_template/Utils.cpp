@@ -50,5 +50,5 @@ bool Utils::value_matches(json::object obj, string key, string value) {
     /* test value */
     string keyval = json::value_to<string>(obj.at(key));
 
-    return (value.compare(keyval) == 0)
+    return (value.compare(keyval) == 0);
 }

@@ -60,7 +60,7 @@ void Processor::configure(
 /** Check that the message is valid json, has the header, msg, and data objects
  *  and that the topic, message_type and sub_type match our configuration.  If
  *  everything checks out, respond to the message */
-void Processor::process_traffic(string m_topic, mqtt::const_message_ptr m_ptr){
+void Processor::process_message(string m_topic, mqtt::const_message_ptr m_ptr){
 
     /* test that the topic matches the subscription configuration */
     if(m_topic.compare(input_config.topic) != 0) {
@@ -79,18 +79,13 @@ void Processor::process_traffic(string m_topic, mqtt::const_message_ptr m_ptr){
     json::object message = json::value_to<json::object>(json_parser.release());
 
     /* Get message components */
+    /* TODO test that these exist */
     json::object header = json::value_to<json::object>(message.at("header"));
     json::object msg = json::value_to<json::object>(message.at("msg"));
     json::object data = json::value_to<json::object>(message.at("data"));
 
-    /* message_type and sub_type must match configuration for processing */
-    if(!utils.value_matches(header, "message_type", input_config.message_type) 
-        || !utils.value_matches(msg, "sub_type", input_config.sub_type)) 
-    {
-	return;
-    }
-
-    /* if the traffic message matches our config, process it as input */
+    /* if the message is valid JSON and the topic topic matches our config, 
+     * continue processing */
     process_input_message(header, msg, data);
 }
 

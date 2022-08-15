@@ -42,7 +42,7 @@ Coordinator::Coordinator(json::object config) {
 
     mqtt_client->set_message_callback([&](mqtt::const_message_ptr msg) {
         for(int i = 0; i < N_PROCESSORS; i ++) {
-            processors[i]->process_traffic(msg->get_topic(), msg);
+            processors[i]->process_message(msg->get_topic(), msg);
         }
     });
 
@@ -53,7 +53,6 @@ Coordinator::Coordinator(json::object config) {
     for(int i = 0; i < N_PROCESSORS; i ++) {
         processors[i]->configure(config, mqtt_client);
     }
-    heartbeat_producer.configure(config, mqtt_client);
 
 
     // Subscribe to the processor input topics

@@ -20,6 +20,7 @@ class HeartbeatProducer : public Processor {
 
     public:
 
+    string get_subscription_name() override {return "trial_start";}
     string get_publication_name() override {return "heartbeat";}
 
     void start() override;

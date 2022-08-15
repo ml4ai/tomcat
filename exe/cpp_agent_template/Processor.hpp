@@ -54,7 +54,7 @@ class Processor{
     virtual void stop(){ running = false;}
 
     /** handle any message bus traffic */
-    void process_traffic(string topic, mqtt::const_message_ptr msg);
+    void process_message(string topic, mqtt::const_message_ptr msg);
 
     /** process a message read from the Message Bus */
     virtual void process_input_message(
