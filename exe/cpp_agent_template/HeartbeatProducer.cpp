@@ -49,18 +49,21 @@ void HeartbeatProducer::process_input_message(
 
     json::object input_header = utils.get_object("header", input_message);
     json::object input_msg = utils.get_object("msg", input_message);
-    json::object input_data = utils.get_object("data", input_message);
 
     cout << "HeartbeatProducer::process_input_message" << endl;
-    if(utils.value_matches(trial_start_config, input_header, "message_type") &&
-        utils.value_matches(trial_start_config, input_msg, "sub_type")) {
+    if(trial_start_config.at("message_type") != input_header.at("message_type"))
+    {
+        return;
+    }
+    // trial start
+    if(trial_start_config.at("sub_type") == input_msg.at("sub_type")){
         cout << "HeartbeatProducer::trial start" << endl;
         this->input_header = input_header; // TODO make copies
         this->input_msg = input_msg;
 	return;
     }
-    if(utils.value_matches(trial_stop_config, input_header, "message_type") &&
-        utils.value_matches(trial_stop_config, input_msg, "sub_type")) {
+    // trial stop
+    if(trial_stop_config.at("sub_type") == input_msg.at("sub_type")){
         cout << "HeartbeatProducer::trial stop" << endl;
         this->input_header = input_header; // TODO make copies
         this->input_msg = input_msg;

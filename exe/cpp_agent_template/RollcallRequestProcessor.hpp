@@ -11,14 +11,14 @@ using namespace std;
 class RollcallRequestProcessor: public Processor {
 
     // input
-    json::object rollcall_request_config;
-    string rollcall_request_topic;
+    json::object input_config;
+    string input_topic;
 
     // output
-    json::object rollcall_response_config;
-    string rollcall_response_topic;
-    string rollcall_response_message_type;
-    string rollcall_response_sub_type;
+    json::object output_config;
+    string output_topic;
+    string output_message_type;
+    string output_sub_type;
 
     void process_input_message(string topic,json::object message) override;
     void configure(json::object config) override;

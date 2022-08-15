@@ -22,5 +22,4 @@ class ReferenceAgentProcessor: public Processor {
 
     void process_input_message(string topic,json::object message) override;
     void configure(json::object config) override;
-
 };

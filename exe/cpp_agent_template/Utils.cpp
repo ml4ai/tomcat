@@ -14,43 +14,6 @@ string Utils::get_timestamp() {
 }
 
 
-// return true if all the configuration fields were found 
-bool Utils::parse_configuration(
-    string name,
-    json::object config,
-    Configuration *c
-) {
-    if(name.empty()) {  // empty name means skip this configuration
-        return true;
-    }
-    if(!config.contains(name)) {
-        return false;
-    }
-    json::object info = json::value_to<json::object>(config.at(name));
-    if(!info.contains("topic") ||
-       !info.contains("message_type") || 
-       !info.contains("sub_type") 
-    ) {
-        return false;
-    }
-    c->topic = json::value_to<string>(info.at("topic"));
-    c->message_type = json::value_to<string>(info.at("message_type"));
-    c->sub_type = json::value_to<string>(info.at("sub_type"));
-    c->name = name;
-    return true;
-}
-
-// return the configuration element for the given name. 
-// Showtopper if not found
-json::object Utils::get_config(string name, json::object config){
-    if(config.contains(name)) {
-        return json::value_to<json::object>(config.at(name));
-    } else {
-       cerr << name << " configuration not found" << endl;
-       exit(EXIT_FAILURE);
-    }
-}
-
 // return the named object if it is found in the source otherwise
 // return an empty object
 json::object Utils::get_object(string name, json::object source){
@@ -86,20 +49,14 @@ bool Utils::value_matches(json::object obj, string key, string value) {
     return (value.compare(keyval) == 0);
 }
 
-/* return true if object value matches input */
+/* return true if the same values of two objects match */
 bool Utils::value_matches(json::object obj1, json::object obj2, string key){
+
     /* test that key exists */
-    if(!obj1.contains(key)) {
-        return false;
-    }
-    /* test that key exists */
-    if(!obj2.contains(key)) {
+    if(!obj1.contains(key) || !obj2.contains(key)) {
         return false;
     }
 
     /* test value */
-    string val1 = json::value_to<string>(obj1.at(key));
-    string val2 = json::value_to<string>(obj2.at(key));
-
-    return (val1.compare(val2) == 0);
+    return (obj1.at(key) == obj2.at(key));
 }

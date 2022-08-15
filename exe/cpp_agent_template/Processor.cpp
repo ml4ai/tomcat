@@ -20,43 +20,11 @@ void Processor::configure(
     this->config = config;
     this->mqtt_client = mqtt_client;
 
-
-    /*
-    // get configuration for reading from the Message Bus if 
-    // subscription name nonempty, otherwise skip 
-    string sub_name = get_subscription_name();
-    if(!sub_name.empty() &&
-        !utils.parse_configuration(sub_name, config, &input_config)) {
-        cerr << sub_name << " configuration parse error" << endl;
-	exit(EXIT_FAILURE);
-    }
-
-    // get configuration for writing to the Message Bus if 
-    // subscription name nonempty, otherwise skip 
-    string pub_name = get_publication_name();
-    if(!pub_name.empty() &&
-        !utils.parse_configuration(pub_name, config, &output_config)) {
-        cerr << pub_name << " configuration parse error" << endl;
-	exit(EXIT_FAILURE);
-    }
-    */
-
     // this software version
-    if(config.contains("version")){
-        version = json::value_to<std::string>(config.at("version"));
-    } else {
-        cerr << "Configuration missing 'version' field" << endl;
-	exit(EXIT_FAILURE);
-    }
+    version = utils.get_string("version", config);
 
     // this software publication source 
-    if(config.contains("publication_source")){
-        source = 
-            json::value_to<std::string>(config.at("publication_source"));
-    } else {
-        cerr << "Configuration missing 'source' field" << endl;
-	exit(EXIT_FAILURE);
-    }
+    source = utils.get_string("publication_source", config);
 
     // extending classes configure now
     configure(config);
@@ -66,7 +34,10 @@ void Processor::configure(
 /** Check that the message is valid json, has the header, msg, and data objects
  *  and that the topic, message_type and sub_type match our configuration.  If
  *  everything checks out, respond to the message */
-void Processor::process_message(string m_topic, mqtt::const_message_ptr m_ptr){
+void Processor::process_message(
+    string m_topic,
+    mqtt::const_message_ptr m_ptr
+){
 
     /* convert m_prt to a JSON message  */
     json_parser.reset();
@@ -75,7 +46,7 @@ void Processor::process_message(string m_topic, mqtt::const_message_ptr m_ptr){
     if(ec) {
         cerr << "msg.topic: " << m_topic << endl;
         cerr << "JSON parse error code: " << ec << endl;
- 	return;
+        return;
     }
     json::object message = json::value_to<json::object>(json_parser.release());
 
@@ -83,30 +54,15 @@ void Processor::process_message(string m_topic, mqtt::const_message_ptr m_ptr){
     process_input_message(m_topic, message);
 }
 
-
-// create a common header struct based on Message Bus input
-json::value Processor::header(string timestamp, json::object input_header) {
-
-    string testbed_version = "1.0";
-    if (input_header.contains("version")) { 
-	testbed_version = json::value_to<string>(input_header.at("version"));
-    }
-
-    json::value header = {
-        {"timestamp", timestamp},
-        {"message_type", output_config.message_type},
-        {"version", testbed_version}
-    };
-
-    return header;
-}
-
-// create a common header struct based on Message Bus input
-json::value Processor::header(string timestamp, string output_message_type, json::object input_header) {
-
-    string testbed_version = "1.0";
-    if (input_header.contains("version")) { 
-	testbed_version = json::value_to<string>(input_header.at("version"));
+// create an output message common header
+json::value Processor::header(
+    string timestamp,
+    string output_message_type,
+    json::object input_header) 
+{
+    string testbed_version = utils.get_string("version", input_header);
+    if (testbed_version.empty()) {
+        testbed_version = "1.0";
     }
 
     json::value header = {
@@ -118,35 +74,12 @@ json::value Processor::header(string timestamp, string output_message_type, json
     return header;
 }
 
-// create a common msg struct based on Message Bus input 
-json::value Processor::msg(string timestamp, json::object input_msg) {
-
-    json::object msg;
-    msg["timestamp"] = timestamp;
-    msg["source"] = source;
-    msg["sub_type"] = output_config.sub_type;
-    msg["version"] = version;
-
-    // msg fields that may or may not be present
-    if(input_msg.contains("experiment_id")) {
-        msg["experiment_id"] = input_msg.at("experiment_id");
-    }
-    if(input_msg.contains("trial_id")) {
-        msg["trial_id"] = input_msg.at("trial_id");
-    }
-    if(input_msg.contains("replay_root_id")) {
-        msg["replay_root_id"] = input_msg.at("replay_root_id");
-    }
-    if(input_msg.contains("replay_id")) {
-        msg["replay_id"] = input_msg.at("replay_id");
-    }
-
-    return msg;
-}
-
-// create a common msg struct based on Message Bus input 
-json::value Processor::msg(string timestamp, string output_sub_type, json::object input_msg) {
-
+// create an output message common msg
+json::value Processor::msg(
+        string timestamp, 
+        string output_sub_type, 
+        json::object input_msg
+) {
     json::object msg;
     msg["timestamp"] = timestamp;
     msg["source"] = source;

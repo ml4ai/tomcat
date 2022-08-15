@@ -43,7 +43,6 @@ void ReferenceAgentProcessor::process_input_message(
         return;
     }
 
-
     string timestamp = utils.get_timestamp();
 
     json::value message = {
@@ -52,7 +51,7 @@ void ReferenceAgentProcessor::process_input_message(
 	{"msg",
             msg(timestamp, output_sub_type, input_msg)},
 	{"data",  {
-            {"reference_agent_data_key", "reference_agent_data_value"},
+            // your data here
 	    {"version", version}}}
     };
 

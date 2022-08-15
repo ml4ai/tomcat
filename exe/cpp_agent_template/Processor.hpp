@@ -38,9 +38,6 @@ class Processor{
 
     public:
 
-    // subscribed and published message fields
-    Utils::Configuration input_config, output_config;
-
     /** used by this program only */
     virtual string get_subscription_name() { return ""; }
     virtual string get_publication_name() { return ""; }
@@ -61,32 +58,22 @@ class Processor{
     /** handle any message bus traffic */
     void process_message(string topic, mqtt::const_message_ptr msg);
 
-    /** process a message read from the Message Bus */
-    virtual void process_input_message(
-        json::object input_header,
-        json::object input_msg,
-        json::object input_data
-    ) {}
-
-    /** process a message read from the Message Bus */
-    virtual void process_input_message(
-        string topic, 
-        json::object input_header,
-        json::object input_msg,
-        json::object input_data
-    ) {}
-
     virtual void process_input_message(
         string topic, 
         json::object input_message
     ) {}
 
+    /* compose output header based on input header */
+    json::value header(
+        string timestamp,
+        string output_message_type,
+        json::object input_header
+    );
 
-    /* compose a publication header based on subscribed header */
-    json::value header(string timestamp, json::object input_header);
-    json::value header(string timestamp, string output_message_type, json::object input_header);
-
-    /* compose a publication msg based on subscribed msg */
-    json::value msg(string timestamp, json::object input_msg);
-    json::value msg(string timestamp, string output_sub_type, json::object input_msg);
+    /* compose output msg based on input msg */
+    json::value msg(
+        string timestamp,
+        string output_sub_type,
+        json::object input_msg
+    );
 };
