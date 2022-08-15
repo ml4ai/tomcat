@@ -26,9 +26,9 @@ class HeartbeatProducer : public Processor {
     void stop() override;
 
     void process_input_message(
-        json::object sub_header,
-        json::object sub_msg,
-        json::object sub_data
+        json::object input_header,
+        json::object input_msg,
+        json::object input_data
     ) override;
 
     void set_input(json::object input_header, json::object input_msg);

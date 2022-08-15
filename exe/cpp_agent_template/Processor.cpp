@@ -78,15 +78,14 @@ void Processor::process_traffic(string m_topic, mqtt::const_message_ptr m_ptr){
     }
     json::object message = json::value_to<json::object>(json_parser.release());
 
-
     /* Get message components */
     json::object header = json::value_to<json::object>(message.at("header"));
     json::object msg = json::value_to<json::object>(message.at("msg"));
     json::object data = json::value_to<json::object>(message.at("data"));
 
-    /* test message_type and sub_type match the subscription configuration */
-    if(!utils.value_matches(header, "message_type", input_config.message_type) ||
-       !utils.value_matches(msg, "sub_type", input_config.sub_type)) 
+    /* message_type and sub_type must match configuration for processing */
+    if(!utils.value_matches(header, "message_type", input_config.message_type) 
+        || !utils.value_matches(msg, "sub_type", input_config.sub_type)) 
     {
 	return;
     }

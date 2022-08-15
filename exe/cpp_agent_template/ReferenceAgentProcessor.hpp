@@ -14,8 +14,8 @@ class ReferenceAgentProcessor: public Processor {
     string get_publication_name() override {return "reference_agent_output";}
 
     void process_input_message(
-        json::object sub_header,
-        json::object sub_msg,
-        json::object sub_data
+        json::object input_header,
+        json::object input_msg,
+        json::object input_data
     ) override;
 };

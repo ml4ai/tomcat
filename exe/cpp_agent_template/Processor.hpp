@@ -58,14 +58,14 @@ class Processor{
 
     /** process a message read from the Message Bus */
     virtual void process_input_message(
-        json::object sub_header,
-        json::object sub_msg,
-        json::object sub_data
+        json::object input_header,
+        json::object input_msg,
+        json::object input_data
     ) {}
 
     /* compose a publication header based on subscribed header */
-    json::value header(string timestamp, json::object sub_header);
+    json::value header(string timestamp, json::object input_header);
 
     /* compose a publication msg based on subscribed msg */
-    json::value msg(string timestamp, json::object sub_msg);
+    json::value msg(string timestamp, json::object input_msg);
 };
