@@ -12,8 +12,6 @@
 #include "HeartbeatProducer.hpp"
 #include "ReferenceAgentProcessor.hpp"
 #include "RollcallRequestProcessor.hpp"
-#include "TrialStartProcessor.hpp"
-#include "TrialStopProcessor.hpp"
 #include "Utils.hpp"
 
 namespace json = boost::json;
@@ -25,14 +23,12 @@ using namespace std;
 class Coordinator {
 
     /** Processors for subscribed message topics */
-    TrialStartProcessor p0;
-    TrialStopProcessor p1;
-    ReferenceAgentProcessor p2;
-    RollcallRequestProcessor p3;
+    ReferenceAgentProcessor p0;
+    RollcallRequestProcessor p1;
     HeartbeatProducer heartbeat_producer;
-    static const int N_PROCESSORS = 5;
+    static const int N_PROCESSORS = 3;
     Processor *processors[N_PROCESSORS] = {
-        &p0, &p1, &p2, &p3, &heartbeat_producer
+        &p0, &p1, &heartbeat_producer
     };
 
     /** general functions */

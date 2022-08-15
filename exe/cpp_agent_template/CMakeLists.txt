@@ -26,8 +26,6 @@ add_executable(
     Processor.cpp
     ReferenceAgentProcessor.cpp
     RollcallRequestProcessor.cpp
-    TrialStartProcessor.cpp
-    TrialStopProcessor.cpp
     Utils.cpp
 )
 target_link_libraries(main PahoMqttCpp::paho-mqttpp3 ${Boost_LIBRARIES})
