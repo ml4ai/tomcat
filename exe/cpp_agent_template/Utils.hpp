@@ -28,6 +28,12 @@ class Utils {
     );
 
     bool value_matches(json::object obj, string key, string value); 
+    bool value_matches(json::object obj1, json::object obj2, string key); 
+
+    json::object get_config(string name, json::object config);
+
+    json::object get_object(string name, json::object source);
+    string get_string(string name, json::object source);
 
     string get_timestamp();
 };

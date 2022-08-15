@@ -17,22 +17,27 @@ using namespace std;
 
 /** Class that handles general tasks */
 class HeartbeatProducer : public Processor {
+    private:
+
+    // input
+    json::object trial_start_config, trial_stop_config;
+    string trial_topic;
+
+    // output
+    json::object heartbeat_config;
+    json::object version_info_config;
+    string heartbeat_topic;
+    string heartbeat_message_type;
+    string heartbeat_sub_type;
+
 
     public:
-
-    string get_subscription_name() override {return "trial_start";}
-    string get_publication_name() override {return "heartbeat";}
-
     void start() override;
     void stop() override;
 
-    void process_input_message(
-        json::object input_header,
-        json::object input_msg,
-        json::object input_data
-    ) override;
+    void process_input_message(string topic,json::object message) override;
 
-    void set_input(json::object input_header, json::object input_msg);
+    void configure(json::object config) override;
 
     /** because this class does not respond to messages directly,
      *  we must keep a copy of a passed-in message */

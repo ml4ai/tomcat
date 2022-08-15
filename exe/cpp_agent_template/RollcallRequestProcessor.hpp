@@ -10,12 +10,16 @@ using namespace std;
 
 class RollcallRequestProcessor: public Processor {
 
-    string get_subscription_name() override { return "rollcall_request"; }
-    string get_publication_name() override { return "rollcall_response"; }
+    // input
+    json::object rollcall_request_config;
+    string rollcall_request_topic;
 
-    void process_input_message(
-        json::object input_header,
-        json::object input_msg,
-        json::object input_data
-    ) override;
+    // output
+    json::object rollcall_response_config;
+    string rollcall_response_topic;
+    string rollcall_response_message_type;
+    string rollcall_response_sub_type;
+
+    void process_input_message(string topic,json::object message) override;
+    void configure(json::object config) override;
 };

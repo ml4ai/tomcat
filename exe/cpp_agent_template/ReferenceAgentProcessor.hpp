@@ -10,12 +10,17 @@ using namespace std;
 
 class ReferenceAgentProcessor: public Processor {
 
-    string get_subscription_name() override {return "reference_agent_input";}
-    string get_publication_name() override {return "reference_agent_output";}
+    // input
+    json::object input_config;
+    string input_topic;
 
-    void process_input_message(
-        json::object input_header,
-        json::object input_msg,
-        json::object input_data
-    ) override;
+    // output
+    json::object output_config;
+    string output_topic;
+    string output_message_type;
+    string output_sub_type;
+
+    void process_input_message(string topic,json::object message) override;
+    void configure(json::object config) override;
+
 };

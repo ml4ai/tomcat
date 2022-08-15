@@ -13,20 +13,67 @@ using namespace std;
 namespace json = boost::json;
 using namespace std::chrono;
 
+void HeartbeatProducer::configure(json::object config) {
 
-/* Process the rollcall request input from the message bus */
+    // input
+    trial_start_config = utils.get_object("trial_start", config);
+    trial_stop_config = utils.get_object("trial_stop", config);
+
+    trial_topic = utils.get_string("topic", trial_start_config);
+    cout << "HeartbeatProducer subscribing to " << trial_topic << endl;
+    mqtt_client->subscribe(trial_topic, 2);
+
+    // output
+    heartbeat_config = utils.get_object("heartbeat", config);
+    version_info_config = utils.get_object("version_info", config);
+    heartbeat_topic = utils.get_string("topic", heartbeat_config);
+    heartbeat_message_type = utils.get_string("message_type", heartbeat_config);
+    heartbeat_sub_type = utils.get_string("sub_type", heartbeat_config);
+
+    cout << "HeartbeatProducer publishing on " << heartbeat_topic << endl;
+
+    // subscribe
+
+    // the beat goes on
+    start();
+}
+
+/* watch for trial start and stop messages */
 void HeartbeatProducer::process_input_message(
-    json::object input_header,
-    json::object input_msg,
-    json::object input_data
+    string topic,
+    json::object input_message
 ) {
+    if(trial_topic.compare(topic) != 0) {
+        return;
+    }
+
+    json::object input_header = utils.get_object("header", input_message);
+    json::object input_msg = utils.get_object("msg", input_message);
+    json::object input_data = utils.get_object("data", input_message);
+
     cout << "HeartbeatProducer::process_input_message" << endl;
+    if(utils.value_matches(trial_start_config, input_header, "message_type") &&
+        utils.value_matches(trial_start_config, input_msg, "sub_type")) {
+        cout << "HeartbeatProducer::trial start" << endl;
+        this->input_header = input_header; // TODO make copies
+        this->input_msg = input_msg;
+	return;
+    }
+    if(utils.value_matches(trial_stop_config, input_header, "message_type") &&
+        utils.value_matches(trial_stop_config, input_msg, "sub_type")) {
+        cout << "HeartbeatProducer::trial stop" << endl;
+        this->input_header = input_header; // TODO make copies
+        this->input_msg = input_msg;
+	return;
+    }
 }
 
 
 // start the beat
 void HeartbeatProducer::start() {
     running = true;
+
+    cout << "HeartbeatProducer::start()" << endl;
 
     // Start publishing heartbeat messages 
     heartbeat_future = async(
@@ -44,17 +91,9 @@ void HeartbeatProducer::publish_heartbeats() {
 	json::value jv = get_heartbeat();
 
         mqtt_client
-            ->publish(output_config.topic, json::serialize(jv))
+            ->publish(heartbeat_topic, json::serialize(jv))
             ->wait();
     }
-}
-
-void HeartbeatProducer::set_input(
-    json::object input_header, 
-    json::object input_msg) 
-{
-    this->input_header = input_header; // TODO make copies
-    this->input_msg = input_msg;
 }
 
 /** create the heartbeat message.  The msg object will have more fields 
@@ -65,9 +104,9 @@ json::value HeartbeatProducer::get_heartbeat() {
 
     json::value jv = {
         {"header",
-            header(timestamp, input_header)},
+            header(timestamp, heartbeat_message_type, input_header)},
         {"msg", 
-            msg(timestamp, input_msg)},
+            msg(timestamp, heartbeat_sub_type, input_msg)},
 	{"data", {
             {"state", "not_set"}}}  // TODO set the state
     };

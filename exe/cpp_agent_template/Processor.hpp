@@ -31,7 +31,10 @@ class Processor{
     /** publication to the Message Bus */
     std::shared_ptr<mqtt::async_client> mqtt_client;
 
-    void publish(json::value jv);
+    /** configuration read from file */
+    json::object config;
+
+    void publish(string topic, json::value jv);
 
     public:
 
@@ -41,6 +44,8 @@ class Processor{
     /** used by this program only */
     virtual string get_subscription_name() { return ""; }
     virtual string get_publication_name() { return ""; }
+
+    virtual void configure(json::object config){};
 
     /** setup before running */
     void configure(
@@ -63,9 +68,25 @@ class Processor{
         json::object input_data
     ) {}
 
+    /** process a message read from the Message Bus */
+    virtual void process_input_message(
+        string topic, 
+        json::object input_header,
+        json::object input_msg,
+        json::object input_data
+    ) {}
+
+    virtual void process_input_message(
+        string topic, 
+        json::object input_message
+    ) {}
+
+
     /* compose a publication header based on subscribed header */
     json::value header(string timestamp, json::object input_header);
+    json::value header(string timestamp, string output_message_type, json::object input_header);
 
     /* compose a publication msg based on subscribed msg */
     json::value msg(string timestamp, json::object input_msg);
+    json::value msg(string timestamp, string output_sub_type, json::object input_msg);
 };

@@ -1,12 +1,12 @@
 {
   "reference_agent_input": {
-    "message_type": "agent",
+    "message_type": "reference_agent_input_message_type",
     "sub_type": "reference_agent_input_sub_type",
-    "topic": "reference_agent_input_topic"
+    "topic": "agent/reference_agent_input"
   },
   "reference_agent_output": {
-    "message_type": "agent",
-    "sub_type": "reference_agent",
+    "message_type": "reference_agent_output_message_type",
+    "sub_type": "reference_agent_output_sub_type",
     "topic": "agent/reference_agent_output"
   },
   "heartbeat": {

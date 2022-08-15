@@ -17,9 +17,11 @@ void Processor::configure(
     json::object config,
     std::shared_ptr<mqtt::async_client> mqtt_client
 ) {
-
+    this->config = config;
     this->mqtt_client = mqtt_client;
 
+
+    /*
     // get configuration for reading from the Message Bus if 
     // subscription name nonempty, otherwise skip 
     string sub_name = get_subscription_name();
@@ -37,6 +39,7 @@ void Processor::configure(
         cerr << pub_name << " configuration parse error" << endl;
 	exit(EXIT_FAILURE);
     }
+    */
 
     // this software version
     if(config.contains("version")){
@@ -54,6 +57,9 @@ void Processor::configure(
         cerr << "Configuration missing 'source' field" << endl;
 	exit(EXIT_FAILURE);
     }
+
+    // extending classes configure now
+    configure(config);
 }
 
 
@@ -61,11 +67,6 @@ void Processor::configure(
  *  and that the topic, message_type and sub_type match our configuration.  If
  *  everything checks out, respond to the message */
 void Processor::process_message(string m_topic, mqtt::const_message_ptr m_ptr){
-
-    /* test that the topic matches the subscription configuration */
-    if(m_topic.compare(input_config.topic) != 0) {
-        return;
-    }
 
     /* convert m_prt to a JSON message  */
     json_parser.reset();
@@ -78,15 +79,8 @@ void Processor::process_message(string m_topic, mqtt::const_message_ptr m_ptr){
     }
     json::object message = json::value_to<json::object>(json_parser.release());
 
-    /* Get message components */
-    /* TODO test that these exist */
-    json::object header = json::value_to<json::object>(message.at("header"));
-    json::object msg = json::value_to<json::object>(message.at("msg"));
-    json::object data = json::value_to<json::object>(message.at("data"));
-
-    /* if the message is valid JSON and the topic topic matches our config, 
-     * continue processing */
-    process_input_message(header, msg, data);
+    /* process message as input */
+    process_input_message(m_topic, message);
 }
 
 
@@ -101,6 +95,23 @@ json::value Processor::header(string timestamp, json::object input_header) {
     json::value header = {
         {"timestamp", timestamp},
         {"message_type", output_config.message_type},
+        {"version", testbed_version}
+    };
+
+    return header;
+}
+
+// create a common header struct based on Message Bus input
+json::value Processor::header(string timestamp, string output_message_type, json::object input_header) {
+
+    string testbed_version = "1.0";
+    if (input_header.contains("version")) { 
+	testbed_version = json::value_to<string>(input_header.at("version"));
+    }
+
+    json::value header = {
+        {"timestamp", timestamp},
+        {"message_type", output_message_type},
         {"version", testbed_version}
     };
 
@@ -133,7 +144,33 @@ json::value Processor::msg(string timestamp, json::object input_msg) {
     return msg;
 }
 
-void Processor::publish(json::value jv) {
-    cout << "Publishing on " << output_config.topic << endl;
-    mqtt_client->publish(output_config.topic, json::serialize(jv));
+// create a common msg struct based on Message Bus input 
+json::value Processor::msg(string timestamp, string output_sub_type, json::object input_msg) {
+
+    json::object msg;
+    msg["timestamp"] = timestamp;
+    msg["source"] = source;
+    msg["sub_type"] = output_sub_type;
+    msg["version"] = version;
+
+    // msg fields that may or may not be present
+    if(input_msg.contains("experiment_id")) {
+        msg["experiment_id"] = input_msg.at("experiment_id");
+    }
+    if(input_msg.contains("trial_id")) {
+        msg["trial_id"] = input_msg.at("trial_id");
+    }
+    if(input_msg.contains("replay_root_id")) {
+        msg["replay_root_id"] = input_msg.at("replay_root_id");
+    }
+    if(input_msg.contains("replay_id")) {
+        msg["replay_id"] = input_msg.at("replay_id");
+    }
+
+    return msg;
+}
+
+void Processor::publish(string topic, json::value jv) {
+    cout << "Publishing on " << topic << endl;
+    mqtt_client->publish(topic, json::serialize(jv));
 }
