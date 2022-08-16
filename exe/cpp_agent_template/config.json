@@ -1,43 +1,43 @@
 {
   "reference_agent_input": {
+    "topic": "agent/reference_agent_input",
     "message_type": "reference_agent_input_message_type",
-    "sub_type": "reference_agent_input_sub_type",
-    "topic": "agent/reference_agent_input"
+    "sub_type": "reference_agent_input_sub_type"
   },
   "reference_agent_output": {
+    "topic": "agent/reference_agent_output",
     "message_type": "reference_agent_output_message_type",
-    "sub_type": "reference_agent_output_sub_type",
-    "topic": "agent/reference_agent_output"
-  },
-  "heartbeat": {
-    "message_type": "status",
-    "sub_type": "heartbeat",
-    "topic": "status/reference_agent/heartbeats"
+    "sub_type": "reference_agent_output_sub_type"
   },
   "rollcall_request": {
+    "topic": "agent/control/rollcall/request",
     "message_type": "agent",
-    "sub_type": "rollcall:request",
-    "topic": "agent/control/rollcall/request"
+    "sub_type": "rollcall:request"
   },
   "rollcall_response": {
+    "topic": "agent/control/rollcall/response",
     "message_type": "agent",
-    "sub_type": "rollcall:response",
-    "topic": "agent/control/rollcall/response"
+    "sub_type": "rollcall:response"
   },
   "trial_start": {
+    "topic": "trial",
     "message_type": "trial",
-    "sub_type": "start",
-    "topic": "trial"
+    "sub_type": "start"
   },
   "trial_stop": {
+    "topic": "trial",
     "message_type": "trial",
-    "sub_type": "stop",
-    "topic": "trial"
+    "sub_type": "stop"
+  },
+  "heartbeat": {
+    "topic": "status/reference_agent/heartbeats",
+    "message_type": "status",
+    "sub_type": "heartbeat"
   },
   "version_info": {
+    "topic": "agent/reference_agent/versioninfo",
     "message_type": "agent",
-    "sub_type": "versioninfo",
-    "topic": "agent/reference_agent/versioninfo"
+    "sub_type": "versioninfo"
   },
   "version": "1.0.0",
   "publication_source": "reference_agent"
