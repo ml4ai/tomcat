@@ -19,14 +19,14 @@ find_package(
 )
 add_executable(
     main main.cpp
+    BaseAgent.cpp
+    ReferenceAgent.cpp
+    RollcallAgent.cpp
+    VersionInfoAgent.cpp
+    HeartbeatAgent.cpp
     Configurator.cpp
     Coordinator.cpp
-    HeartbeatProducer.cpp
     MessageQueue.cpp
-    Processor.cpp
-    ReferenceAgentProcessor.cpp
-    RollcallRequestProcessor.cpp
     Utils.cpp
-    VersionInfoProcessor.cpp
 )
 target_link_libraries(main PahoMqttCpp::paho-mqttpp3 ${Boost_LIBRARIES})
