@@ -3,6 +3,7 @@
 #include <boost/log/trivial.hpp>
 #include "Coordinator.hpp"
 #include "Processor.hpp"
+#include <set>
 
 /* This class :
  *   Maintains the MQTT broker connection
@@ -39,20 +40,52 @@ Coordinator::Coordinator(json::object config) {
                         .finalize();
 
     mqtt_client->set_message_callback([&](mqtt::const_message_ptr msg) {
-        for(int i = 0; i < N_PROCESSORS; i ++) {
-            processors[i]->process_message(msg->get_topic(), msg);
+        for(int i = 0; i < N_AGENTS; i ++) {
+            agents[i]->process_message(msg->get_topic(), msg);
         }
     });
 
     auto rsp = this->mqtt_client->connect(connOpts)->get_connect_response();
     BOOST_LOG_TRIVIAL(info) << "Connected to the MQTT broker at " << address;
 
-    // configure message processors
-    for(int i = 0; i < N_PROCESSORS; i ++) {
-        processors[i]->configure(config, mqtt_client);
+    // configure agents
+    for(int i = 0; i < N_AGENTS; i ++) {
+        agents[i]->configure(config, mqtt_client);
     }
+
+    // Subscribe to and report subscription topics
+    std::set<string> input;
+    for(int i = 0; i < N_AGENTS; i ++) {
+	input.insert(agents[i]->get_input_topic());
+    }
+    for(std::set<string>::iterator i=input.begin(); i!=input.end(); ++i) {
+	string input_topic = *i;
+        mqtt_client->subscribe(input_topic, 2);
+        cout << "Subscribed to: " << input_topic << endl;
+    }
+
+    // report publication topics
+    std::set<string> output;
+    for(int i = 0; i < N_AGENTS; i ++) {
+	output.insert(agents[i]->get_output_topic());
+    }
+    for(std::set<string>::iterator i=output.begin(); i!=output.end(); ++i) {
+	string output_topic = *i;
+        mqtt_client->subscribe(output_topic, 2);
+        cout << "Publishing on: " << output_topic << endl;
+    }
+
+
 }
 
 void Coordinator::stop() {
-    heartbeat_producer.stop();
+    for(int i = 0; i < N_AGENTS; i ++) {
+        agents[i]-> stop();
+    }
+}
+
+void Coordinator::start() {
+    for(int i = 0; i < N_AGENTS; i ++) {
+        agents[i]-> start();
+    }
 }

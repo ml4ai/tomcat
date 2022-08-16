@@ -41,6 +41,7 @@ int main(int argc, char* argv[]) {
     string version = json::value_to<string>(config.at("version"));
 
     Coordinator coordinator(config);
+    coordinator.start();
 
     cout << "C++ Template Agent version " << version << " running." << endl;
 
