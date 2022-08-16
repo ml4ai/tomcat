@@ -20,19 +20,18 @@ __help() {
   echo
   echo "[1]:  Set the experiment time"
   echo "[2]:  Checks the NFS status"
-  echo "[3]:  Starts Mumble"
-  echo "[4]:  Starts fNIRS and Eye-tracker systems"
-  echo "[5]:  Starts the Testbed"
-  echo "[6]:  Starts the Lab Recorder"
-  echo "[7]:  Starts Face and Screen recording"
-  echo "[8]:  Starts the Baseline Tasks"
-  echo "[9]:  Plays Instructive Video"
-  echo "[10]: Starts Minecraft"
-  echo "[11]: Opens the Client Map"
-  echo "[12]: Starts the Audio Streamer"
-  echo "[13]: Opens the Final Survey"
-  echo "[14]: Stop the LabRecorder recordings and kill the LabRecorder instances on CAT"
-  echo "[15]: Ends the experiment (cleanup and backup phase)"
+  echo "[3]:  Starts fNIRS and Eye-tracker systems"
+  echo "[4]:  Starts the Testbed"
+  echo "[5]:  Starts the Lab Recorder"
+  echo "[6]:  Starts Face and Screen recording"
+  echo "[7]:  Starts the Baseline Tasks"
+  echo "[8]:  Plays Instructive Video"
+  echo "[9]: Starts Minecraft"
+  echo "[10]: Opens the Client Map"
+  echo "[11]: Starts the Audio Streamer"
+  echo "[12]: Opens the Final Survey"
+  echo "[13]: Stop the LabRecorder recordings and kill the LabRecorder instances on CAT"
+  echo "[14]: Ends the experiment (cleanup and backup phase)"
   echo
   echo "Syntax: run_experiment [-h|a]"
   echo "options:"
@@ -101,104 +100,96 @@ fi
 
 if [[ $GOTO -le 3 ]]; then
   echo " "
-  yes_no_question "[3] Do you want to start ${EMPH}Mumble${NC}?"
-  if [[ $? -eq 0 ]]; then
-    source start_mumble " "
-  fi
-fi
-
-if [[ $GOTO -le 4 ]]; then
-  echo " "
-  yes_no_question "[4] Do you want to start ${EMPH}fNIRS and Eye-tracker systems${NC}?"
+  yes_no_question "[3] Do you want to start ${EMPH}fNIRS and Eye-tracker systems${NC}?"
   if [[ $? -eq 0 ]]; then
     source start_sensors " "
   fi
 fi
 
-if [[ $GOTO -le 5 ]]; then
+if [[ $GOTO -le 4 ]]; then
   echo " "
-  yes_no_question "[5] Do you want to start the ${EMPH}Testbed${NC}?"
+  yes_no_question "[4] Do you want to start the ${EMPH}Testbed${NC}?"
   if [[ $? -eq 0 ]]; then
     source start_testbed "$experiment_dir_cat" " "
   fi
 fi
 
-if [[ $GOTO -le 6 ]]; then
+if [[ $GOTO -le 5 ]]; then
   echo " "
-  yes_no_question "[6] Do you want to start ${EMPH}Lab Recorder${NC}?"
+  yes_no_question "[5] Do you want to start ${EMPH}Lab Recorder${NC}?"
   if [[ $? -eq 0 ]]; then
     source start_lab_recorder "$experiment_dir_cat" " "
   fi
 fi
 
-if [[ $GOTO -le 7 ]]; then
+if [[ $GOTO -le 6 ]]; then
   echo " "
-  yes_no_question "[7] Do you want to start ${EMPH}Face and Screen Recording${NC}?"
+  yes_no_question "[6] Do you want to start ${EMPH}Face and Screen Recording${NC}?"
   if [[ $? -eq 0 ]]; then
     source start_ffmpeg "$experiment_dir_cat" " "
   fi
 fi
 
-if [[ $GOTO -le 8 ]]; then
+if [[ $GOTO -le 7 ]]; then
   echo " "
-  yes_no_question "[8] Do you want to start the ${EMPH}Baseline Tasks${NC}?"
+  yes_no_question "[7] Do you want to start the ${EMPH}Baseline Tasks${NC}?"
   if [[ $? -eq 0 ]]; then
     source start_baseline_tasks "$experiment_dir_cat" " "
   fi
 fi
 
-if [[ $GOTO -le 9 ]]; then
+if [[ $GOTO -le 8 ]]; then
   echo " "
-  yes_no_question "[9] Do you want to play the ${EMPH}Instructive Video${NC}?"
+  yes_no_question "[8] Do you want to play the ${EMPH}Instructive Video${NC}?"
   if [[ $? -eq 0 ]]; then
     source play_instructive_video " "
   fi
 fi
 
-if [[ $GOTO -le 10 ]]; then
+if [[ $GOTO -le 9 ]]; then
   echo " "
-  yes_no_question "[10] Do you want to start ${EMPH}Minecraft${NC}?"
+  yes_no_question "[9] Do you want to start ${EMPH}Minecraft${NC}?"
   if [[ $? -eq 0 ]]; then
     source start_minecraft "$experiment_dir_cat" " "
   fi
 fi
 
-if [[ $GOTO -le 11 ]]; then
+if [[ $GOTO -le 10 ]]; then
   echo " "
-  yes_no_question "[11] Do you want to open the ${EMPH}Client Map${NC}?"
+  yes_no_question "[10] Do you want to open the ${EMPH}Client Map${NC}?"
   if [[ $? -eq 0 ]]; then
     source open_client_map "$experiment_dir_cat" " "
   fi
 fi
 
-if [[ $GOTO -le 12 ]]; then
+if [[ $GOTO -le 11 ]]; then
   echo " "
-  yes_no_question "[12] Do you want to start the ${EMPH}Audio Streamer${NC}?"
+  yes_no_question "[11] Do you want to start the ${EMPH}Audio Streamer${NC}?"
   if [[ $? -eq 0 ]]; then
     source start_audio_streamer "$experiment_dir_cat" " "
   fi
 fi
 
-if [[ $GOTO -le 13 ]]; then
+if [[ $GOTO -le 12 ]]; then
   echo " "
-  yes_no_question "[13] Do you want to open the ${EMPH}Final Survey${NC}?"
+  yes_no_question "[12] Do you want to open the ${EMPH}Final Survey${NC}?"
   if [[ $? -eq 0 ]]; then
     source open_final_survey "$experiment_dir_cat" " "
   fi
 fi
 
-if [[ $GOTO -le 14 ]]; then
+if [[ $GOTO -le 13 ]]; then
   echo " "
-  yes_no_question "[14] Do you want to stop ${EMPH}LabRecorder recordings and kill the LabRecorder instances on CAT${NC}?"
+  yes_no_question "[13] Do you want to stop ${EMPH}LabRecorder recordings and kill the LabRecorder instances on CAT${NC}?"
   if [[ $? -eq 0 ]]; then
     source stop_lab_recorder
   fi
 fi
 
 
-if [[ $GOTO -le 15 ]]; then
+if [[ $GOTO -le 14 ]]; then
   echo " "
-  text="[15] Type [${EMPH}quit${NC}] to end the experiment and close "
+  text="[14] Type [${EMPH}quit${NC}] to end the experiment and close "
   text+="all open applications and processes: "
   wait_for_key "$text" "quit"
   source end_experiment "$experiment_dir_cat" " "
