@@ -15,8 +15,14 @@ json::object RollcallAgent::get_output_config(json::object config){
 }    
 
 json::object RollcallAgent::get_output_data(json::object input_data){ 
+
+    int uptime = 1234;  // TODO compute actual
+
     json::object output_data;
-    output_data["rollcall_response_data"] = "goes here";
+    output_data["rollcall_id"] = get_string("rollcall_id", input_data);
+    output_data["status"] = "up";
+    output_data["uptime"] = uptime;
+    output_data["version"] = version;
 
     return output_data;
 }
