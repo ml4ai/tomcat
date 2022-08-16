@@ -18,7 +18,7 @@ json::object HeartbeatAgent::get_input_config(json::object config){
 }
 
 json::object HeartbeatAgent::get_output_config(json::object config){
-    return get_object("version_info", config);
+    return get_object("heartbeat", config);
 }
 
 json::object HeartbeatAgent::get_output_data(json::object input_data){
