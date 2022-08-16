@@ -44,6 +44,30 @@ __stop_face_and_screen_recording() {
   done
 }
 
+__stop_audio_streamer() {
+  local client_name=$1
+  local client_address=$2
+  local padding=$3
+
+  local pid_path="$EXPERIMENT_DIR/tmp/audio_streamer_$client_name.pid"
+  local audio_streamer_pid=$(cat "$pid_path")
+  local command="kill $audio_streamer_pid \"$padding \""
+
+  echo -e "${padding}Stopping ${EMPH}Audio Streamer${NC}..."
+  local stopped="n"
+  while [[ $stopped != "y" ]]; do
+    ssh $EXPERIMENT_USER@$client_address "$command"
+    if [[ $? -eq 0 ]]; then
+      stopped="y"
+    else
+      yes_no_question "${padding} Do you want to ${EMPH}RETRY${NC}?"
+      if [[ $? -ne 0 ]]; then
+        break
+      fi
+    fi
+  done
+}
+
 __stop_minecraft() {
   local client_name=$1
   local client_address=$2
@@ -136,6 +160,7 @@ __cleanup_on_client() {
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
     __stop_face_and_screen_recording $client_name $client_address "$padding"
+    __stop_audio_streamer $client_name $client_address "$padding"
     __stop_minecraft $client_name $client_address "$padding"
     __close_applications $client_name $client_address "$padding"
     __close_extra_desktops $client_name $client_address "$padding"

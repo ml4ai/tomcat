@@ -56,7 +56,7 @@ __start_screen_recording() {
   mkdir -p "$image_dir" >/dev/null
 
   echo -e "${padding}Starting ${EMPH}Screen Recording${NC} on ${EMPH}$client_name${NC}?"
-  __start_recording $client_address "record_screen.scpt" "\$HOME$image_dir"
+  __start_recording $client_address "record_screen.sh" "\$HOME$image_dir"
   if [[ $? -eq 0 ]]; then
     echo -e "${padding}${EMPH} Screen Recording${GREEN} successfully started.${NC}"
   fi

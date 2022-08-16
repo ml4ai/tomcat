@@ -28,10 +28,11 @@ __help() {
   echo "[8]:  Starts the Baseline Tasks"
   echo "[9]:  Plays Instructive Video"
   echo "[10]: Starts Minecraft"
-  echo "[11]: Starts the Client Map"
-  echo "[12]: Opens the Final Survey"
-  echo "[13]: Stop the LabRecorder recordings and kill the LabRecorder instances on CAT"
-  echo "[14]: Ends the experiment (cleanup and backup phase)"
+  echo "[11]: Opens the Client Map"
+  echo "[12]: Starts the Audio Streamer"
+  echo "[13]: Opens the Final Survey"
+  echo "[14]: Stop the LabRecorder recordings and kill the LabRecorder instances on CAT"
+  echo "[15]: Ends the experiment (cleanup and backup phase)"
   echo
   echo "Syntax: run_experiment [-h|a]"
   echo "options:"
@@ -170,29 +171,34 @@ if [[ $GOTO -le 11 ]]; then
   fi
 fi
 
-# TODO - Place client map phase here out of the minecraft script
-# TODO - Open Minecraft on the server
-
 if [[ $GOTO -le 12 ]]; then
   echo " "
-  yes_no_question "[12] Do you want to open the ${EMPH}Final Survey${NC}?"
+  yes_no_question "[12] Do you want to start the ${EMPH}Audio Streamer${NC}?"
   if [[ $? -eq 0 ]]; then
-    source open_final_survey "$experiment_dir_cat" " "
+    source start_audio_streamer "$experiment_dir_cat" " "
   fi
 fi
 
 if [[ $GOTO -le 13 ]]; then
   echo " "
-  yes_no_question "[13] Do you want to stop ${EMPH}LabRecorder recordings and kill the LabRecorder instances on CAT${NC}?"
+  yes_no_question "[13] Do you want to open the ${EMPH}Final Survey${NC}?"
+  if [[ $? -eq 0 ]]; then
+    source open_final_survey "$experiment_dir_cat" " "
+  fi
+fi
+
+if [[ $GOTO -le 14 ]]; then
+  echo " "
+  yes_no_question "[14] Do you want to stop ${EMPH}LabRecorder recordings and kill the LabRecorder instances on CAT${NC}?"
   if [[ $? -eq 0 ]]; then
     source stop_lab_recorder
   fi
 fi
 
 
-if [[ $GOTO -le 14 ]]; then
+if [[ $GOTO -le 15 ]]; then
   echo " "
-  text="[14] Type [${EMPH}quit${NC}] to end the experiment and close "
+  text="[15] Type [${EMPH}quit${NC}] to end the experiment and close "
   text+="all open applications and processes: "
   wait_for_key "$text" "quit"
   source end_experiment "$experiment_dir_cat" " "
