@@ -36,9 +36,13 @@ MqttAgent::MqttAgent(json::object config) {
                         .automatic_reconnect(seconds(2), seconds(30))
                         .finalize();
 
-    mqtt_client->set_message_callback([&](mqtt::const_message_ptr msg) {
+    mqtt_client->set_message_callback([&](mqtt::const_message_ptr message_ptr) {
         for(int i = 0; i < N_MESSAGE_HANDLERS; i ++) {
-            message_handlers[i]->process_message(msg->get_topic(), msg);
+            message_handlers[i]->process_message(
+                message_ptr->get_topic(),
+                message_ptr
+            );
+	    
         }
     });
 

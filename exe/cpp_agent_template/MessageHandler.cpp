@@ -6,7 +6,6 @@
 
 
 #include "MessageHandler.hpp"
-#include "Coordinator.hpp"
 
 using namespace std;
 namespace json = boost::json;
@@ -19,8 +18,7 @@ string MessageHandler::get_timestamp() {
 }
 
 
-/** Read the the topic, header.message_type, and msg.sub_type fields
- *  from the config file by name */
+// Set parameters using the config file input. 
 void MessageHandler::configure(
     json::object config,
     std::shared_ptr<mqtt::async_client> mqtt_client
@@ -30,23 +28,22 @@ void MessageHandler::configure(
 
     this->config = config;
 
-    string input_config_name = get_input_config_name();
-    json::object input_config = get_value<json::object>(input_config_name, config);
+
+    json::object input_config = 
+        get_value<json::object>(get_input_config_name(), config);
     input_topic = get_value<string>("topic", input_config);
     input_message_type = get_value<string>("message_type", input_config);
     input_sub_type = get_value<string>("sub_type", input_config);
 
-    string output_config_name = get_output_config_name();
-    json::object output_config = get_value<json::object>(output_config_name, config);
+    json::object output_config = 
+        get_value<json::object>(get_output_config_name(), config);
     output_topic = get_value<string>("topic", output_config);
-    output_message_type = get_value<string>("message_type", output_config);
-    output_sub_type = get_value<string>("sub_type", output_config);
 
-    // this software version
-    version = get_value<string>("version", config);
-
-    // this software publication source 
-    source = get_value<string>("agent_name", config);
+    // 
+    header["message_type"] = get_value<string>("message_type", output_config);
+    msg["sub_type"] = get_value<string>("sub_type", output_config);
+    msg["version"] = get_value<string>("version", config);
+    msg["source"] = get_value<string>("agent_name", config);
 }
 
 
@@ -102,78 +99,75 @@ void MessageHandler::process_json_message(json::object json_message){
         return;
     }
 
+    json::object input_data = get_value<json::object>("data", json_message);
+
     // Message is our input, publish a response
-    publish(create_output_message(
-        input_header,
-	input_msg,
-	get_value<json::object>("data", json_message)
-    ));
+    publish(get_message(input_header, input_msg, input_data));
 }
 
-// Return an output message based on the input message
-json::object MessageHandler::create_output_message(
+// Create message for publication
+json::object MessageHandler::get_message(
     json::object input_header,
     json::object input_msg,
     json::object input_data)
 {
-    // compose response to the input message
     string timestamp = get_timestamp();
 
-    json::object output_message;
-    output_message["header"] = create_output_header(timestamp, input_header);
-    output_message["msg"] = create_output_msg(timestamp, input_msg);
-    output_message["data"] = create_output_data(input_data); // agent specific
+    json::object message;
+    message["header"] = get_header(header, input_header, timestamp);
+    message["msg"] = get_msg(msg, input_header, timestamp);
+    message["data"] = get_data(input_data);
 
-    return output_message; // ready to publish
+    return message;
 }
 
-// create an output message common header object
-json::object MessageHandler::create_output_header(
-    string timestamp,
-    json::object input_header) 
+// load the fields of the output header object
+json::object MessageHandler::get_header(
+    json::object output_header,
+    json::object input_header,
+    string timestamp)
 {
-    string testbed_version = get_value<string>("version", input_header);
+    string version_maybe = get_value<string>("version", input_header);
+    string version = version_maybe.empty()? "1.0": version_maybe;
 
-    json::object header;
-    header["timestamp"] = timestamp;
-    header["message_type"] = output_message_type;
-    header["version"] = testbed_version.empty()? "1.0": testbed_version;
+    output_header["timestamp"] = timestamp;
+    output_header["version"] = version;
 
-    return header;
+    return output_header;
 }
 
-// create an output message common msg object
-json::object MessageHandler::create_output_msg(
-        string timestamp, 
-        json::object input_msg
-) {
-    json::object output_msg;
+
+// load the fields of the output msg object
+json::object MessageHandler::get_msg(
+    json::object output_msg,
+    json::object input_msg,
+    string timestamp)
+{
     output_msg["timestamp"] = timestamp;
-    output_msg["source"] = source;
-    output_msg["sub_type"] = output_sub_type;
-    output_msg["version"] = version;
 
     // only include these fields if they are present in the input
-    if(input_msg.contains("experiment_id")) {
-        output_msg["experiment_id"] = input_msg.at("experiment_id");
-    }
-    if(input_msg.contains("trial_id")) {
-        output_msg["trial_id"] = input_msg.at("trial_id");
-    }
-    if(input_msg.contains("replay_root_id")) {
-        output_msg["replay_root_id"] = input_msg.at("replay_root_id");
-    }
-    if(input_msg.contains("replay_id")) {
-        output_msg["replay_id"] = input_msg.at("replay_id");
-    }
+    copy_or_erase(input_msg, output_msg, "experiment_id");
+    copy_or_erase(input_msg, output_msg, "trial_id");
+    copy_or_erase(input_msg, output_msg, "replay_root_id");
+    copy_or_erase(input_msg, output_msg, "replay_id");
 
     return output_msg;
 }
 
-void MessageHandler::publish(json::value jv) {
-    mqtt_client->publish(output_topic, json::serialize(jv));
+// Add the key/value pair from src into dst.  If src does not have the
+// key, erase that field from dst.
+void MessageHandler::copy_or_erase(
+    json::object src,
+    json::object dst,
+    string key)
+{
+    if(src.contains(key)) {
+        dst[key] = src.at(key);
+    } else {
+	dst.erase(key);
+    }
 }
 
-json::object MessageHandler::create_output_data(json::object input_data) {
-    return json::object();
+void MessageHandler::publish(json::value jv) {
+    mqtt_client->publish(output_topic, json::serialize(jv));
 }

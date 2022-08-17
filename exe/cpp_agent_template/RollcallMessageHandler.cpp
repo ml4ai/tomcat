@@ -6,15 +6,25 @@
 using namespace std;
 namespace json = boost::json;
 
-json::object RollcallMessageHandler::create_output_data(json::object input_data){ 
+// Set parameters using the config file input. 
+void RollcallMessageHandler::configure(
+    json::object config,
+    std::shared_ptr<mqtt::async_client> mqtt_client
+) {
+
+    MessageHandler::configure(config, mqtt_client);
+
+    data["version"] = get_value<string>("version", config);
+    data["status"] = "up";  // always?
+}
+
+
+json::object RollcallMessageHandler::get_data(json::object input_data){
 
     int uptime = 1234;  // TODO compute actual
 
-    json::object output_data;
-    output_data["rollcall_id"] = get_value<string>("rollcall_id", input_data);
-    output_data["status"] = "up";
-    output_data["uptime"] = uptime;
-    output_data["version"] = version;
+    data["rollcall_id"] = get_value<string>("rollcall_id", input_data);
+    data["uptime"] = uptime;
 
-    return output_data;
+    return data;
 }

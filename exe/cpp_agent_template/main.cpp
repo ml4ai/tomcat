@@ -52,7 +52,9 @@ int main(int argc, char* argv[]) {
         if (gSignalStatus == SIGINT) {
             BOOST_LOG_TRIVIAL(info)
                 << "Keyboard interrupt detected (Ctrl-C), shutting down.";
-            coordinator.stop();
+
+	    // will be agent.stop, FileAgent and MQTT agent will exend
+            mqtt_agent.stop();
             break;
         }
         else {

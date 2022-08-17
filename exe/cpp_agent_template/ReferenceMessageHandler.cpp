@@ -6,11 +6,23 @@
 using namespace std;
 namespace json = boost::json;
 
-json::object ReferenceMessageHandler::create_output_data(
-    json::object input_data)
-{
-    json::object output_data;
-    output_data["reference_agent_data"] = "goes here";
+// Set parameters using the config file input.  Runs once at startup
+void ReferenceMessageHandler::configure(
+    json::object config,
+    std::shared_ptr<mqtt::async_client> mqtt_client
+) {
 
-    return output_data;
+    MessageHandler::configure(config, mqtt_client);
+
+    // add anything needed from the config file
+}
+
+// return data for the subscribed input
+json::object ReferenceMessageHandler::get_data(json::object input_data) {
+
+    // add anything needed from the subscribed input data
+
+    data["reference_agent_data"] = "goes here";
+
+    return data;
 }

@@ -11,27 +11,34 @@ using namespace std;
 namespace json = boost::json;
 using namespace std::chrono;
 
-HeartbeatProducer::HeartbeatProducer() {
-    output_data["state"] = "ok";
-    output_data["active"] = running;   
-    output_data["status"] = "not configured";
-}
+void HeartbeatProducer::configure(
+    json::object config,
+    std::shared_ptr<mqtt::async_client> mqtt_client
+) {
+    MessageHandler::configure(config, mqtt_client);
 
-json::object HeartbeatProducer::create_output_data(json::object input_data){
-    return output_data;
-}
+    string input_config_name = get_input_config_name();
+    json::object input_config = get_value<json::object>("trial_start", config);
+    json::object output_config = get_value<json::object>("heartbeat", config);
 
-// set the status vars.  Updated heartbeat is published immediately
-void HeartbeatProducer::set_status(string state, bool active, string status) {
 
-    running = active;
-    
-    output_data["state"] = state;
-    output_data["active"] = running;   
-    output_data["status"] = status;
+    string message_type = get_value<string>("message_type", output_config);
+    heartbeat_header["timestamp"] = "not set";
+    heartbeat_header["message_type"] =
+        get_value<string>("message_type", input_config);
+    heartbeat_header["version"] = 1.0;
+
+    heartbeat_msg["timestamp"] = "not set";
+    heartbeat_msg["source"] = get_value<string>("agent_name", config);
+    heartbeat_msg["version"] = get_value<string>("version", config);
+
+    heartbeat_data["state"] = "Configuring";
+    heartbeat_data["active"] = running;   
+    heartbeat_data["status"] = "ok";
 
     publish_heartbeat();
 }
+
 
 // we override this method because we have to watch the trial comms differently
 void HeartbeatProducer::process_json_message(json::object json_message){
@@ -49,6 +56,10 @@ void HeartbeatProducer::process_json_message(json::object json_message){
     // used for subsequent heartbeat messages.
     input_msg = get_value<json::object>("msg", json_message);
 
+    cout << "HeartbeatProducer::process_json_message" << endl;
+    cout << "Input header: " << input_header << endl;
+    cout << "Input msg: " << input_msg << endl;
+
     // publish a heartbeat right away
     publish_heartbeat();
 }
@@ -57,7 +68,9 @@ void HeartbeatProducer::process_json_message(json::object json_message){
 void HeartbeatProducer::start() {
     running = true;
 
-    set_status("ok", running, "I am processing messages");
+    heartbeat_data["state"] = "ok";
+    heartbeat_data["active"] = running;   
+    heartbeat_data["status"] = "I am processing messages";
 
     // Start publishing on the beat
     heartbeat_future = async(
@@ -87,7 +100,7 @@ void HeartbeatProducer::publish_heartbeat() {
 json::object HeartbeatProducer::get_heartbeat(){
 
     // compose output message
-    json::object output_message = create_output_message(
+    json::object output_message = get_message(
         input_header,
 	input_msg,
 	json::object()
@@ -95,6 +108,26 @@ json::object HeartbeatProducer::get_heartbeat(){
 
     return output_message;
 }
+
+json::object HeartbeatProducer::get_message(
+    json::object input_header,
+    json::object input_msg,
+    json::object input_data)
+{
+    string ts = get_timestamp();
+
+    cout << "HeartbeatProducer::get_message" << endl;
+    cout << "Input header: " << input_header << endl;
+    cout << "Input msg: " << input_msg << endl;
+
+    json::object message;
+    message["header"] = get_header(heartbeat_header, input_header, ts);
+    message["msg"] = get_msg(heartbeat_msg, input_msg, ts);
+    message["data"] = heartbeat_data;
+
+    return message;
+}
+
 
 void HeartbeatProducer::stop() {
     running = false;

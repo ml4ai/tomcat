@@ -14,5 +14,12 @@ class ReferenceMessageHandler: public MessageHandler {
 
     string get_output_config_name() override {return "reference_agent_output";}
 
-    json::object create_output_data(json::object config) override;
+    json::object get_data(json::object input_data) override;
+
+    void configure(
+        json::object config,
+        std::shared_ptr<mqtt::async_client> mqtt_client
+    ) override;
+
+    json::object data;
 };

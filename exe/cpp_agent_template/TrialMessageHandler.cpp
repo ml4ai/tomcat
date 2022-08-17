@@ -13,20 +13,21 @@ void TrialMessageHandler::configure(
 
     MessageHandler::configure(config, mqtt_client);    
 
-    output_data["agent_name"] = get_value<string>("agent_name", config);
-    output_data["owner"] = get_value<string>("owner", config);
-    output_data["version"] = get_value<string>("version", config);
-    output_data["source"] = get_value<json::array>("source", config);
-    output_data["config"] = get_value<json::array>("config", config);
-    output_data["dependencies"] = 
+    // static data never changes
+    data["agent_name"] = get_value<string>("agent_name", config);
+    data["owner"] = get_value<string>("owner", config);
+    data["version"] = get_value<string>("version", config);
+    data["source"] = get_value<json::array>("source", config);
+    data["config"] = get_value<json::array>("config", config);
+    data["dependencies"] = 
         get_value<json::array>("dependencies", config);
-    output_data["publishes"] = {
+    data["publishes"] = {
         get_value<json::object>("reference_agent_output", config),
         get_value<json::object>("rollcall_response", config),
         get_value<json::object>("heartbeat", config),
         get_value<json::object>("version_info", config)
     };
-    output_data["subscribes"] = {
+    data["subscribes"] = {
         get_value<json::object>("reference_agent_input", config),
         get_value<json::object>("rollcall_request", config),
         get_value<json::object>("trial_start", config),
@@ -34,7 +35,3 @@ void TrialMessageHandler::configure(
     };
 }
 
-json::object TrialMessageHandler::create_output_data(json::object input_data){ 
-
-    return output_data;
-}

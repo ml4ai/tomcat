@@ -24,14 +24,8 @@ class MessageHandler {
 
     // publication
     string output_topic;
-    string output_message_type;
-    string output_sub_type;
-
-    // this software publication msg.source field
-    string source;
-
-    // this software version
-    string version;
+    json::object header; // Message Bus Common Header 
+    json::object msg; // Message Bus Common Msg
 
     // publication to the Message Bus
     std::shared_ptr<mqtt::async_client> mqtt_client;
@@ -42,20 +36,41 @@ class MessageHandler {
     // publish value on output_topic
     void publish(json::value jv);
 
-    // header object for output message
-    json::object create_output_header(
-        string timestamp,
-       	json::object input_header
-    );
-
     // timestamps
     string get_timestamp();
 
-    // msg object for output message
-    json::object create_output_msg(string timestamp, json::object input_msg);
+    // return the message for publication
+    virtual json::object get_message(
+        json::object input_header,
+        json::object input_msg,
+        json::object input_data
+    );
 
-    // agent-specific data object for output message
-    virtual json::object create_output_data(json::object input_data);
+    // return the header object for publication
+    virtual json::object get_header(
+	json::object output_header,
+       	json::object input_header,
+        string timestamp
+    );
+
+    // return the msg object for publication
+    virtual json::object get_msg(
+	json::object output_msg,
+       	json::object input_msg,
+        string timestamp
+    );
+
+    // return the data object for publication
+    virtual json::object get_data(json::object input_data) {
+        return json::object();
+    }
+
+    // copy key value from src to dst or erase key from dst if not found
+    void copy_or_erase(
+        json::object dst,
+        json::object src,
+        string key
+    );
 
     // Return the input configuration config name, e.g. "trial_start"
     virtual string get_input_config_name(){ return "";}
@@ -65,13 +80,6 @@ class MessageHandler {
 
     // called with the successfully JSON parsed MQTT message payload
     virtual void process_json_message(json::object json_message);
-
-    // create an output message based on the input
-    json::object create_output_message(
-        json::object input_header,
-        json::object input_msg,
-        json::object input_data
-    );
 
     // try to find class T value for key in object
     template <class T>

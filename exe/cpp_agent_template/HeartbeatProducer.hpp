@@ -18,22 +18,31 @@ using namespace std;
 /** Class that handles general tasks */
 class HeartbeatProducer : public MessageHandler {
     
-    json::object output_data;
+    // threaded so we keep our own objects
+    json::object heartbeat_header;
+    json::object heartbeat_msg;
+    json::object heartbeat_data;
 
     public:
-
-    HeartbeatProducer();
-    ~HeartbeatProducer(){}
 
     void start() override;
 
     void stop() override;
 
+    void configure(
+        json::object config,
+        std::shared_ptr<mqtt::async_client> mqtt_client
+    ) override;
+
     string get_input_config_name() override { return "trial_start";}
 
     string get_output_config_name() override { return "heartbeat";}
 
-    json::object create_output_data(json::object input_data) override;
+    json::object get_message(
+        json::object input_header,
+        json::object input_msg,
+        json::object input_data
+    ) override;
 
     void process_json_message(json::object json_message) override;
 
