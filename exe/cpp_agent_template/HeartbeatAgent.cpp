@@ -17,14 +17,6 @@ HeartbeatAgent::HeartbeatAgent() {
     output_data["status"] = "not configured";
 }
 
-json::object HeartbeatAgent::get_input_config(json::object config){
-    return get_value<json::object>("trial_start", config);
-}
-
-json::object HeartbeatAgent::get_output_config(json::object config){
-    return get_value<json::object>("heartbeat", config);
-}
-
 json::object HeartbeatAgent::create_output_data(json::object input_data){
     return output_data;
 }
@@ -57,15 +49,13 @@ void HeartbeatAgent::process_json_message(json::object json_message){
     // used for subsequent heartbeat messages.
     input_msg = get_value<json::object>("msg", json_message);
 
-    // publish a heartbeat right away based on new objects
+    // publish a heartbeat right away
     publish_heartbeat();
 }
 
 // start the beat
 void HeartbeatAgent::start() {
     running = true;
-
-    cout << "HeartbeatAgent::start()" << endl;
 
     set_status("ok", running, "I am processing messages");
 
@@ -91,7 +81,6 @@ void HeartbeatAgent::publish_heartbeats() {
 
 // publish an immediate heartbeat
 void HeartbeatAgent::publish_heartbeat() {
-
     publish(get_heartbeat());
 }
 

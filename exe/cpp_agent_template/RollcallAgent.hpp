@@ -10,9 +10,9 @@ using namespace std;
 
 class RollcallAgent: public BaseAgent {
 
-    json::object get_input_config(json::object config) override;
+    string get_input_config_name() override { return "rollcall_request";}
 
-    json::object get_output_config(json::object config) override;
+    string get_output_config_name() override { return "rollcall_response";}
 
     json::object create_output_data(json::object config) override;
 };

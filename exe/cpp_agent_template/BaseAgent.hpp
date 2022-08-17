@@ -57,13 +57,13 @@ class BaseAgent {
     // agent-specific data object for output message
     virtual json::object create_output_data(json::object input_data);
 
-    // get Message Bus subscription parameters
-    virtual json::object get_input_config(json::object config);
+    // Return the input configuration config name, e.g. "trial_start"
+    virtual string get_input_config_name(){ return "";}
 
-    // get Message Bus publication parameters 
-    virtual json::object get_output_config(json::object config);
+    // return the output configuration config name, e.g. "heartbeat"
+    virtual string get_output_config_name(){ return "";}
 
-    // called with the parsed MQTT message payload
+    // called with the successfully JSON parsed MQTT message payload
     virtual void process_json_message(json::object json_message);
 
     // create an output message based on the input
@@ -73,18 +73,19 @@ class BaseAgent {
         json::object input_data
     );
 
-    // try to find key in object, if not found return default T
+    // try to find class T value for key in object
     template <class T>
     T get_value(string key, json::object object){
         if(object.contains(key)) {
             return json::value_to<T>(object.at(key));
         } else {
-            return T();
+            return T(); // return a default value if not found
         }
     }
 
     public:
 
+    // set global variables based on config input
     virtual void configure(
         json::object config,
         std::shared_ptr<mqtt::async_client> mqtt_client

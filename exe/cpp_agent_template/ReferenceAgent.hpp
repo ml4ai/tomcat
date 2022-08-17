@@ -10,9 +10,9 @@ using namespace std;
 
 class ReferenceAgent: public BaseAgent {
 
-    json::object get_input_config(json::object config) override;
+    string get_input_config_name() override {return "reference_agent_input";}
 
-    json::object get_output_config(json::object config) override;
+    string get_output_config_name() override {return "reference_agent_output";}
 
     json::object create_output_data(json::object config) override;
 };

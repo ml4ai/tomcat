@@ -6,14 +6,6 @@
 using namespace std;
 namespace json = boost::json;
 
-json::object RollcallAgent::get_input_config(json::object config){
-    return get_value<json::object>("rollcall_request", config);
-}    
-
-json::object RollcallAgent::get_output_config(json::object config){
-    return get_value<json::object>("rollcall_response", config);
-}    
-
 json::object RollcallAgent::create_output_data(json::object input_data){ 
 
     int uptime = 1234;  // TODO compute actual

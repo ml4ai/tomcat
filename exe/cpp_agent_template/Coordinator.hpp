@@ -22,16 +22,13 @@ using namespace std;
 /** Class that handles general tasks */
 class Coordinator {
 
-    /** Processors for subscribed message topics */
-    ReferenceAgent p0;
-    VersionInfoAgent p1;
-    RollcallAgent p2;
-    HeartbeatAgent heartbeat;
+    /** Agents for subscribed message topics */
+    ReferenceAgent a0;
+    VersionInfoAgent a1;
+    RollcallAgent a2;
+    HeartbeatAgent a3;
     static const int N_AGENTS = 4;
-    BaseAgent *agents[N_AGENTS] = {&p0, &p1, &p2, &heartbeat};
-
-    /** config state */
-    json::object config;
+    BaseAgent *agents[N_AGENTS] = {&a0, &a1, &a2, &a3};
 
     /** Flag to specify whether the agent is running or not */
     bool running = true;

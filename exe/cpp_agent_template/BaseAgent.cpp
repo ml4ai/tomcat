@@ -20,8 +20,7 @@ string BaseAgent::get_timestamp() {
 
 
 /** Read the the topic, header.message_type, and msg.sub_type fields
- *  from the configuration.  The processor can't run without these 
- *  values */
+ *  from the config file by name */
 void BaseAgent::configure(
     json::object config,
     std::shared_ptr<mqtt::async_client> mqtt_client
@@ -31,12 +30,14 @@ void BaseAgent::configure(
 
     this->config = config;
 
-    json::object input_config = get_input_config(config);
+    string input_config_name = get_input_config_name();
+    json::object input_config = get_value<json::object>(input_config_name, config);
     input_topic = get_value<string>("topic", input_config);
     input_message_type = get_value<string>("message_type", input_config);
     input_sub_type = get_value<string>("sub_type", input_config);
 
-    json::object output_config = get_output_config(config);
+    string output_config_name = get_output_config_name();
+    json::object output_config = get_value<json::object>(output_config_name, config);
     output_topic = get_value<string>("topic", output_config);
     output_message_type = get_value<string>("message_type", output_config);
     output_sub_type = get_value<string>("sub_type", output_config);
@@ -82,7 +83,7 @@ void BaseAgent::process_message(
     process_json_message(json_message);
 }
 
-// called when we know the message is valid json
+// Screen the input message by our config parameters and then respond.
 void BaseAgent::process_json_message(json::object json_message){
 
     // header.message_type must match our configuration
@@ -101,20 +102,15 @@ void BaseAgent::process_json_message(json::object json_message){
         return;
     }
 
-    json::object input_data = get_value<json::object>("data", json_message);
-
-    // At this point we know the message is our input 
-    json::object output_message = create_output_message(
+    // Message is our input, publish a response
+    publish(create_output_message(
         input_header,
 	input_msg,
-	input_data
-    );
-
-    // publish the output message
-    publish(output_message);
+	get_value<json::object>("data", json_message)
+    ));
 }
 
-// Respond to the input message
+// Return an output message based on the input message
 json::object BaseAgent::create_output_message(
     json::object input_header,
     json::object input_msg,
@@ -145,7 +141,6 @@ json::object BaseAgent::create_output_header(
 
     return header;
 }
-
 
 // create an output message common msg object
 json::object BaseAgent::create_output_msg(
@@ -179,13 +174,6 @@ void BaseAgent::publish(json::value jv) {
     mqtt_client->publish(output_topic, json::serialize(jv));
 }
 
-// extending class overrides 
-json::object BaseAgent::get_input_config(json::object config) {
-    return json::object();
-}
-json::object BaseAgent::get_output_config(json::object config) {
-    return json::object();
-}
 json::object BaseAgent::create_output_data(json::object input_data) {
     return json::object();
 }

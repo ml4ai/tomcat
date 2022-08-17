@@ -2,11 +2,8 @@
 #include <boost/log/trivial.hpp>
 #include "VersionInfoAgent.hpp"
 
-
-
 using namespace std;
 namespace json = boost::json;
-
 
 
 void VersionInfoAgent::configure(
@@ -35,18 +32,7 @@ void VersionInfoAgent::configure(
         get_value<json::object>("trial_start", config),
         get_value<json::object>("trial_stop", config)
     };
-
-
-
 }
-
-json::object VersionInfoAgent::get_input_config(json::object config){
-    return get_value<json::object>("trial_start", config);
-}    
-
-json::object VersionInfoAgent::get_output_config(json::object config){
-    return get_value<json::object>("version_info", config);
-}    
 
 json::object VersionInfoAgent::create_output_data(json::object input_data){ 
 

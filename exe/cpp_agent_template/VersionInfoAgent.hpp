@@ -10,17 +10,16 @@ using namespace std;
 
 class VersionInfoAgent: public BaseAgent {
 
-    json::object get_input_config(json::object config) override;
+    string get_input_config_name() override { return "trial_start";}
 
-    json::object get_output_config(json::object config) override;
+    string get_output_config_name() override { return "version_info";}
 
     json::object create_output_data(json::object config) override;
-
-    json::object output_data = json::object();
 
     void configure(
         json::object config,
         std::shared_ptr<mqtt::async_client> mqtt_client
     ) override ;
 
+    json::object output_data;
 };

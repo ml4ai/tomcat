@@ -25,21 +25,19 @@ class HeartbeatAgent : public BaseAgent {
     HeartbeatAgent();
     ~HeartbeatAgent(){}
 
-
     void start() override;
 
     void stop() override;
 
-    json::object get_input_config(json::object config) override;
+    string get_input_config_name() override { return "trial_start";}
 
-    json::object get_output_config(json::object config) override;
+    string get_output_config_name() override { return "heartbeat";}
 
     json::object create_output_data(json::object input_data) override;
 
     void process_json_message(json::object json_message) override;
 
     void set_status(string state, bool active, string status);
-
 
     /** because this class does not respond to messages directly,
      *  we must keep a copy of a passed-in message */
@@ -58,5 +56,4 @@ class HeartbeatAgent : public BaseAgent {
 
     /** create outgoing JSON value for heartbeat */
     json::object get_heartbeat();
-
 };

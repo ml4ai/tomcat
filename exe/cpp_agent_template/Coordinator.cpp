@@ -4,11 +4,11 @@
 #include "Coordinator.hpp"
 #include <set>
 
-/* This class :
- *   Maintains the MQTT broker connection
- *   Publishes heartbeats on a beat interval
- *   Dispatches messages to their respective handlers
- */
+// This class :
+//   Maintains the MQTT broker connection
+//   Maintains agents 
+//   Subscribes (reads) from and publishes (writes) to the Message Bus
+//
 
 using namespace std;
 namespace json = boost::json;
@@ -16,8 +16,6 @@ using namespace std::chrono;
 
 
 Coordinator::Coordinator(json::object config) {
-
-    this->config = config;
 
     // set up MQTT params for broker connection
     json::object mqtt_config = json::value_to<json::object>(config.at("mqtt"));
@@ -73,8 +71,6 @@ Coordinator::Coordinator(json::object config) {
         mqtt_client->subscribe(output_topic, 2);
         cout << "Publishing on: " << output_topic << endl;
     }
-
-
 }
 
 void Coordinator::stop() {
