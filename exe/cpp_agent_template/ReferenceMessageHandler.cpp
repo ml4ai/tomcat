@@ -15,14 +15,18 @@ void ReferenceMessageHandler::configure(
     MessageHandler::configure(config, mqtt_client);
 
     // add anything needed from the config file
+    data["configure_time"] = get_timestamp();
 }
 
 // return data for the subscribed input
 json::object ReferenceMessageHandler::get_data(json::object input_data) {
 
     // add anything needed from the subscribed input data
+    data["data_from_input"] = "updates with_input";
 
-    data["reference_agent_data"] = "goes here";
+    // show persistent state 
+    counter ++;
+    data["counter"] = counter;
 
     return data;
 }

@@ -21,5 +21,7 @@ class ReferenceMessageHandler: public MessageHandler {
         std::shared_ptr<mqtt::async_client> mqtt_client
     ) override;
 
-    json::object data;
+    json::object data = json::object();
+
+    int counter = 0; // dummy state data
 };
