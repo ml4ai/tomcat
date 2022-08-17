@@ -49,7 +49,7 @@ MqttAgent::MqttAgent(json::object config) {
     auto rsp = this->mqtt_client->connect(connOpts)->get_connect_response();
     BOOST_LOG_TRIVIAL(info) << "Connected to the MQTT broker at " << address;
 
-    // configure message_handlers
+    // configure and start message_handlers
     for(int i = 0; i < N_MESSAGE_HANDLERS; i ++) {
         message_handlers[i]->configure(config, mqtt_client);
     }

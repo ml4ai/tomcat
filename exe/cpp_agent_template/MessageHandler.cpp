@@ -17,7 +17,6 @@ string MessageHandler::get_timestamp() {
            "Z";
 }
 
-
 // Set parameters using the config file input. 
 void MessageHandler::configure(
     json::object config,
@@ -28,22 +27,19 @@ void MessageHandler::configure(
 
     this->config = config;
 
-
     json::object input_config = 
-        get_value<json::object>(get_input_config_name(), config);
-    input_topic = get_value<string>("topic", input_config);
-    input_message_type = get_value<string>("message_type", input_config);
-    input_sub_type = get_value<string>("sub_type", input_config);
+        val<json::object>(get_input_config_name(), config);
+    input_topic = val<string>("topic", input_config);
+    input_message_type = val<string>("message_type", input_config);
+    input_sub_type = val<string>("sub_type", input_config);
 
     json::object output_config = 
-        get_value<json::object>(get_output_config_name(), config);
-    output_topic = get_value<string>("topic", output_config);
-
-    // 
-    header["message_type"] = get_value<string>("message_type", output_config);
-    msg["sub_type"] = get_value<string>("sub_type", output_config);
-    msg["version"] = get_value<string>("version", config);
-    msg["source"] = get_value<string>("agent_name", config);
+        val<json::object>(get_output_config_name(), config);
+    output_topic = val<string>("topic", output_config);
+    output_message_type = val<string>("message_type", output_config);
+    output_sub_type = val<string>("sub_type", output_config);
+    version = val<string>("version", config);
+    source = val<string>("agent_name", config);
 }
 
 
@@ -73,99 +69,106 @@ void MessageHandler::process_message(
     }
 
     // at this point the message is on our topic and valid JSON
-    json::object json_message = 
+    json::object input_message = 
         json::value_to<json::object>(json_parser.release());
 
-    // compose an output message from the json message
-    process_json_message(json_message);
+    process_message(input_message);
 }
 
-// Screen the input message by our config parameters and then respond.
-void MessageHandler::process_json_message(json::object json_message){
+void MessageHandler::process_message(json::object input_message) {
+    process_header(input_message, json::object(), get_timestamp());
+}
 
-    // header.message_type must match our configuration
+void MessageHandler::process_header(
+    json::object input_message,
+    json::object output_message,
+    string timestamp
+){
     json::object input_header = 
-        get_value<json::object>("header", json_message);
-    string message_type = get_value<string>("message_type", input_header);
-    if(input_message_type.compare(message_type)) {
+        val<json::object>("header", input_message);
+
+    if(!valid_input_header(input_header)){
         return;
     }
 
-    // either of the msg.sub_types must match our configuration
+    // if the input header has no testbed version number, default to 1.0
+    string version_maybe = val<string>("version", input_header);
+    string testbed_version = version_maybe.empty()? "1.0": version_maybe;
+
+    json::object header;
+    header["timestamp"] = timestamp;
+    header["message_type"] = output_message_type;
+    header["version"] = testbed_version;
+
+    output_message["header"] = header;
+
+    process_msg(input_message, output_message, timestamp);
+}
+
+// true if header.message_type matches our configuration
+bool MessageHandler::valid_input_header(json::object input_header) {
+    string message_type = val<string>("message_type", input_header);
+    return (input_message_type.compare(message_type) == 0);
+}
+
+// true if msg.sub_type matches our configuration
+bool MessageHandler::valid_input_msg(json::object input_msg) {
+    string sub_type = val<string>("sub_type", input_msg);
+    return (input_sub_type.compare(sub_type) == 0);
+}
+
+
+void MessageHandler::process_msg(
+    json::object input_message,
+    json::object output_message,
+    string timestamp
+){
+    // msg.sub_type must match our configuration
     json::object input_msg = 
-        get_value<json::object>("msg", json_message);
-    string sub_type = get_value<string>("sub_type", input_msg);
-    if(input_sub_type.compare(sub_type)) {
+        val<json::object>("msg", input_message);
+
+    if(!valid_input_msg(input_msg)) {
         return;
     }
 
-    json::object input_data = get_value<json::object>("data", json_message);
-
-    // Message is our input, publish a response
-    publish(get_message(input_header, input_msg, input_data));
-}
-
-// Create message for publication
-json::object MessageHandler::get_message(
-    json::object input_header,
-    json::object input_msg,
-    json::object input_data)
-{
-    string timestamp = get_timestamp();
-
-    json::object message;
-    message["header"] = get_header(header, input_header, timestamp);
-    message["msg"] = get_msg(msg, input_header, timestamp);
-    message["data"] = get_data(input_data);
-
-    return message;
-}
-
-// load the fields of the output header object
-json::object MessageHandler::get_header(
-    json::object output_header,
-    json::object input_header,
-    string timestamp)
-{
-    string version_maybe = get_value<string>("version", input_header);
-    string version = version_maybe.empty()? "1.0": version_maybe;
-
-    output_header["timestamp"] = timestamp;
-    output_header["version"] = version;
-
-    return output_header;
-}
-
-
-// load the fields of the output msg object
-json::object MessageHandler::get_msg(
-    json::object output_msg,
-    json::object input_msg,
-    string timestamp)
-{
-    output_msg["timestamp"] = timestamp;
-
-    // only include these fields if they are present in the input
-    copy_or_erase(input_msg, output_msg, "experiment_id");
-    copy_or_erase(input_msg, output_msg, "trial_id");
-    copy_or_erase(input_msg, output_msg, "replay_root_id");
-    copy_or_erase(input_msg, output_msg, "replay_id");
-
-    return output_msg;
-}
-
-// Add the key/value pair from src into dst.  If src does not have the
-// key, erase that field from dst.
-void MessageHandler::copy_or_erase(
-    json::object src,
-    json::object dst,
-    string key)
-{
-    if(src.contains(key)) {
-        dst[key] = src.at(key);
-    } else {
-	dst.erase(key);
+    json::object msg;
+    msg["source"] = source;
+    msg["version"] = version;
+    msg["timestamp"] = timestamp;
+    
+    // add these fields if they exist in the input and have values
+    string experiment_id = val<string>("experiment_id", input_msg);
+    if(!experiment_id.empty()) {
+        msg["experiment_id"] = experiment_id;
     }
+    string trial_id = val<string>("trial_id", input_msg);
+    if(!trial_id.empty()) {
+        msg["trial_id"] = trial_id;
+    }
+    string replay_root_id = val<string>("replay_root_id", input_msg);
+    if(!replay_root_id.empty()) {
+        msg["replay_root_id"] = replay_root_id;
+    }
+    string replay_id = val<string>("replay_id", input_msg);
+    if(!replay_id.empty()) {
+        msg["replay_id"] = replay_id;
+    }
+
+    output_message["msg"] = msg;
+
+    process_data(input_message, output_message);
+}
+
+void MessageHandler::process_data(
+    json::object input_message,
+    json::object output_message
+){
+    json::object input_data = 
+        val<json::object>("data", input_message);
+
+    output_message["data"] = get_data(input_data);
+
+    publish(output_message);
 }
 
 void MessageHandler::publish(json::value jv) {

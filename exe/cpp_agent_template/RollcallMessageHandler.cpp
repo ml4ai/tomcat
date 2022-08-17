@@ -14,7 +14,7 @@ void RollcallMessageHandler::configure(
 
     MessageHandler::configure(config, mqtt_client);
 
-    data["version"] = get_value<string>("version", config);
+    data["version"] = val<string>("version", config);
     data["status"] = "up";  // always?
 }
 
@@ -23,7 +23,7 @@ json::object RollcallMessageHandler::get_data(json::object input_data){
 
     int uptime = 1234;  // TODO compute actual
 
-    data["rollcall_id"] = get_value<string>("rollcall_id", input_data);
+    data["rollcall_id"] = val<string>("rollcall_id", input_data);
     data["uptime"] = uptime;
 
     return data;
