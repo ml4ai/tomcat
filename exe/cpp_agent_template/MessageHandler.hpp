@@ -10,7 +10,7 @@ using namespace std;
 class Coordinator;
 
 // A base class for subscribed message handlers
-class BaseAgent {
+class MessageHandler {
 
     private:
 

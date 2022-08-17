@@ -2,13 +2,13 @@
 
 #include <string>
 #include <boost/json.hpp>
-#include "BaseAgent.hpp"
+#include "MessageHandler.hpp"
 
 namespace json = boost::json;
 using namespace std;
 
 
-class VersionInfoAgent: public BaseAgent {
+class TrialMessageHandler: public MessageHandler {
 
     string get_input_config_name() override { return "trial_start";}
 

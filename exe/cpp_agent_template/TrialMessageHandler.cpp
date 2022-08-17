@@ -1,17 +1,17 @@
 #include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
-#include "VersionInfoAgent.hpp"
+#include "TrialMessageHandler.hpp"
 
 using namespace std;
 namespace json = boost::json;
 
 
-void VersionInfoAgent::configure(
+void TrialMessageHandler::configure(
     json::object config,
     std::shared_ptr<mqtt::async_client> mqtt_client
 ) {
 
-    BaseAgent::configure(config, mqtt_client);    
+    MessageHandler::configure(config, mqtt_client);    
 
     output_data["agent_name"] = get_value<string>("agent_name", config);
     output_data["owner"] = get_value<string>("owner", config);
@@ -34,7 +34,7 @@ void VersionInfoAgent::configure(
     };
 }
 
-json::object VersionInfoAgent::create_output_data(json::object input_data){ 
+json::object TrialMessageHandler::create_output_data(json::object input_data){ 
 
     return output_data;
 }

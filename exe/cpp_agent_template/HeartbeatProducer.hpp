@@ -8,7 +8,7 @@
 
 #include <mqtt/async_client.h>
 
-#include "BaseAgent.hpp"
+#include "MessageHandler.hpp"
 
 namespace json = boost::json;
 
@@ -16,14 +16,14 @@ using namespace std;
 
 
 /** Class that handles general tasks */
-class HeartbeatAgent : public BaseAgent {
+class HeartbeatProducer : public MessageHandler {
     
     json::object output_data;
 
     public:
 
-    HeartbeatAgent();
-    ~HeartbeatAgent(){}
+    HeartbeatProducer();
+    ~HeartbeatProducer(){}
 
     void start() override;
 

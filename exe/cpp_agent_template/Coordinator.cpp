@@ -6,7 +6,7 @@
 
 // This class :
 //   Maintains the MQTT broker connection
-//   Maintains agents 
+//   Maintains message handlers 
 //   Subscribes (reads) from and publishes (writes) to the Message Bus
 //
 
@@ -37,23 +37,23 @@ Coordinator::Coordinator(json::object config) {
                         .finalize();
 
     mqtt_client->set_message_callback([&](mqtt::const_message_ptr msg) {
-        for(int i = 0; i < N_AGENTS; i ++) {
-            agents[i]->process_message(msg->get_topic(), msg);
+        for(int i = 0; i < N_MESSAGE_HANDLERS; i ++) {
+            message_handlers[i]->process_message(msg->get_topic(), msg);
         }
     });
 
     auto rsp = this->mqtt_client->connect(connOpts)->get_connect_response();
     BOOST_LOG_TRIVIAL(info) << "Connected to the MQTT broker at " << address;
 
-    // configure agents
-    for(int i = 0; i < N_AGENTS; i ++) {
-        agents[i]->configure(config, mqtt_client);
+    // configure message_handlers
+    for(int i = 0; i < N_MESSAGE_HANDLERS; i ++) {
+        message_handlers[i]->configure(config, mqtt_client);
     }
 
     // Subscribe to and report subscription topics
     std::set<string> input;
-    for(int i = 0; i < N_AGENTS; i ++) {
-	input.insert(agents[i]->get_input_topic());
+    for(int i = 0; i < N_MESSAGE_HANDLERS; i ++) {
+	input.insert(message_handlers[i]->get_input_topic());
     }
     for(std::set<string>::iterator i=input.begin(); i!=input.end(); ++i) {
 	string input_topic = *i;
@@ -63,8 +63,8 @@ Coordinator::Coordinator(json::object config) {
 
     // report publication topics
     std::set<string> output;
-    for(int i = 0; i < N_AGENTS; i ++) {
-	output.insert(agents[i]->get_output_topic());
+    for(int i = 0; i < N_MESSAGE_HANDLERS; i ++) {
+	output.insert(message_handlers[i]->get_output_topic());
     }
     for(std::set<string>::iterator i=output.begin(); i!=output.end(); ++i) {
 	string output_topic = *i;
@@ -74,13 +74,13 @@ Coordinator::Coordinator(json::object config) {
 }
 
 void Coordinator::stop() {
-    for(int i = 0; i < N_AGENTS; i ++) {
-        agents[i]-> stop();
+    for(int i = 0; i < N_MESSAGE_HANDLERS; i ++) {
+        message_handlers[i]-> stop();
     }
 }
 
 void Coordinator::start() {
-    for(int i = 0; i < N_AGENTS; i ++) {
-        agents[i]-> start();
+    for(int i = 0; i < N_MESSAGE_HANDLERS; i ++) {
+        message_handlers[i]-> start();
     }
 }

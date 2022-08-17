@@ -2,13 +2,13 @@
 
 #include <string>
 #include <boost/json.hpp>
-#include "BaseAgent.hpp"
+#include "MessageHandler.hpp"
 
 namespace json = boost::json;
 using namespace std;
 
 
-class RollcallAgent: public BaseAgent {
+class RollcallMessageHandler: public MessageHandler {
 
     string get_input_config_name() override { return "rollcall_request";}
 

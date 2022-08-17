@@ -3,7 +3,7 @@
 #include <boost/log/trivial.hpp>
 #include <set>
 
-#include "HeartbeatAgent.hpp"
+#include "HeartbeatProducer.hpp"
 
 /* This class Publishes heartbeats on a beat interval */
 
@@ -11,18 +11,18 @@ using namespace std;
 namespace json = boost::json;
 using namespace std::chrono;
 
-HeartbeatAgent::HeartbeatAgent() {
+HeartbeatProducer::HeartbeatProducer() {
     output_data["state"] = "ok";
     output_data["active"] = running;   
     output_data["status"] = "not configured";
 }
 
-json::object HeartbeatAgent::create_output_data(json::object input_data){
+json::object HeartbeatProducer::create_output_data(json::object input_data){
     return output_data;
 }
 
 // set the status vars.  Updated heartbeat is published immediately
-void HeartbeatAgent::set_status(string state, bool active, string status) {
+void HeartbeatProducer::set_status(string state, bool active, string status) {
 
     running = active;
     
@@ -34,7 +34,7 @@ void HeartbeatAgent::set_status(string state, bool active, string status) {
 }
 
 // we override this method because we have to watch the trial comms differently
-void HeartbeatAgent::process_json_message(json::object json_message){
+void HeartbeatProducer::process_json_message(json::object json_message){
 
     // header.message_type must match our configuration
     input_header = get_value<json::object>("header", json_message);
@@ -54,7 +54,7 @@ void HeartbeatAgent::process_json_message(json::object json_message){
 }
 
 // start the beat
-void HeartbeatAgent::start() {
+void HeartbeatProducer::start() {
     running = true;
 
     set_status("ok", running, "I am processing messages");
@@ -62,13 +62,13 @@ void HeartbeatAgent::start() {
     // Start publishing on the beat
     heartbeat_future = async(
         launch::async, 
-	&HeartbeatAgent::publish_heartbeats, 
+	&HeartbeatProducer::publish_heartbeats, 
 	this
     );
 }
 
 /** Function that publishes heartbeat messages while the agent is running */
-void HeartbeatAgent::publish_heartbeats() {
+void HeartbeatProducer::publish_heartbeats() {
     while (this->running) {
         this_thread::sleep_for(seconds(10));
 	json::value jv = get_heartbeat();
@@ -80,11 +80,11 @@ void HeartbeatAgent::publish_heartbeats() {
 }
 
 // publish an immediate heartbeat
-void HeartbeatAgent::publish_heartbeat() {
+void HeartbeatProducer::publish_heartbeat() {
     publish(get_heartbeat());
 }
 
-json::object HeartbeatAgent::get_heartbeat(){
+json::object HeartbeatProducer::get_heartbeat(){
 
     // compose output message
     json::object output_message = create_output_message(
@@ -96,7 +96,7 @@ json::object HeartbeatAgent::get_heartbeat(){
     return output_message;
 }
 
-void HeartbeatAgent::stop() {
+void HeartbeatProducer::stop() {
     running = false;
     heartbeat_future.wait();
 }

@@ -5,14 +5,14 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 
-#include "BaseAgent.hpp"
+#include "MessageHandler.hpp"
 #include "Coordinator.hpp"
 
 using namespace std;
 namespace json = boost::json;
 
 /** Get current UTC timestamp in ISO-8601 format. */
-string BaseAgent::get_timestamp() {
+string MessageHandler::get_timestamp() {
     return boost::posix_time::to_iso_extended_string(
                boost::posix_time::microsec_clock::universal_time()) +
            "Z";
@@ -21,7 +21,7 @@ string BaseAgent::get_timestamp() {
 
 /** Read the the topic, header.message_type, and msg.sub_type fields
  *  from the config file by name */
-void BaseAgent::configure(
+void MessageHandler::configure(
     json::object config,
     std::shared_ptr<mqtt::async_client> mqtt_client
 ) {
@@ -51,7 +51,7 @@ void BaseAgent::configure(
 
 
 // Called by the MQTT client when traffic is received on a subscribed topic
-void BaseAgent::process_message(
+void MessageHandler::process_message(
     string message_topic,
     mqtt::const_message_ptr message_ptr
 ){
@@ -84,7 +84,7 @@ void BaseAgent::process_message(
 }
 
 // Screen the input message by our config parameters and then respond.
-void BaseAgent::process_json_message(json::object json_message){
+void MessageHandler::process_json_message(json::object json_message){
 
     // header.message_type must match our configuration
     json::object input_header = 
@@ -111,7 +111,7 @@ void BaseAgent::process_json_message(json::object json_message){
 }
 
 // Return an output message based on the input message
-json::object BaseAgent::create_output_message(
+json::object MessageHandler::create_output_message(
     json::object input_header,
     json::object input_msg,
     json::object input_data)
@@ -128,7 +128,7 @@ json::object BaseAgent::create_output_message(
 }
 
 // create an output message common header object
-json::object BaseAgent::create_output_header(
+json::object MessageHandler::create_output_header(
     string timestamp,
     json::object input_header) 
 {
@@ -143,7 +143,7 @@ json::object BaseAgent::create_output_header(
 }
 
 // create an output message common msg object
-json::object BaseAgent::create_output_msg(
+json::object MessageHandler::create_output_msg(
         string timestamp, 
         json::object input_msg
 ) {
@@ -170,10 +170,10 @@ json::object BaseAgent::create_output_msg(
     return output_msg;
 }
 
-void BaseAgent::publish(json::value jv) {
+void MessageHandler::publish(json::value jv) {
     mqtt_client->publish(output_topic, json::serialize(jv));
 }
 
-json::object BaseAgent::create_output_data(json::object input_data) {
+json::object MessageHandler::create_output_data(json::object input_data) {
     return json::object();
 }

@@ -19,11 +19,11 @@ find_package(
 )
 add_executable(
     main main.cpp
-    BaseAgent.cpp
-    ReferenceAgent.cpp
-    RollcallAgent.cpp
-    VersionInfoAgent.cpp
-    HeartbeatAgent.cpp
+    MessageHandler.cpp
+    ReferenceMessageHandler.cpp
+    RollcallMessageHandler.cpp
+    TrialMessageHandler.cpp
+    HeartbeatProducer.cpp
     Configurator.cpp
     Coordinator.cpp
     MessageQueue.cpp

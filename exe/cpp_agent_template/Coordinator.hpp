@@ -8,11 +8,11 @@
 
 #include <mqtt/async_client.h>
 
-#include "BaseAgent.hpp"
-#include "ReferenceAgent.hpp"
-#include "VersionInfoAgent.hpp"
-#include "RollcallAgent.hpp"
-#include "HeartbeatAgent.hpp"
+#include "MessageHandler.hpp"
+#include "ReferenceMessageHandler.hpp"
+#include "TrialMessageHandler.hpp"
+#include "RollcallMessageHandler.hpp"
+#include "HeartbeatProducer.hpp"
 
 namespace json = boost::json;
 
@@ -22,13 +22,14 @@ using namespace std;
 /** Class that handles general tasks */
 class Coordinator {
 
-    /** Agents for subscribed message topics */
-    ReferenceAgent a0;
-    VersionInfoAgent a1;
-    RollcallAgent a2;
-    HeartbeatAgent a3;
-    static const int N_AGENTS = 4;
-    BaseAgent *agents[N_AGENTS] = {&a0, &a1, &a2, &a3};
+    /** handlers for subscribed messages */
+    ReferenceMessageHandler h0;
+    TrialMessageHandler h1;
+    RollcallMessageHandler h2;
+    HeartbeatProducer h3;
+    static const int N_MESSAGE_HANDLERS = 4;
+    MessageHandler *message_handlers[N_MESSAGE_HANDLERS] = 
+        {&h0, &h1, &h2, &h3};
 
     /** Flag to specify whether the agent is running or not */
     bool running = true;

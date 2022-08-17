@@ -1,12 +1,12 @@
 #include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
-#include "RollcallAgent.hpp"
+#include "RollcallMessageHandler.hpp"
 
 
 using namespace std;
 namespace json = boost::json;
 
-json::object RollcallAgent::create_output_data(json::object input_data){ 
+json::object RollcallMessageHandler::create_output_data(json::object input_data){ 
 
     int uptime = 1234;  // TODO compute actual
 
