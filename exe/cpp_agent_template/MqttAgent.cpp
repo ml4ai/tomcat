@@ -1,7 +1,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
-#include "Coordinator.hpp"
+#include "MqttAgent.hpp"
 #include <set>
 
 // This class :
@@ -15,7 +15,7 @@ namespace json = boost::json;
 using namespace std::chrono;
 
 
-Coordinator::Coordinator(json::object config) {
+MqttAgent::MqttAgent(json::object config) {
 
     // set up MQTT params for broker connection
     json::object mqtt_config = json::value_to<json::object>(config.at("mqtt"));
@@ -73,13 +73,13 @@ Coordinator::Coordinator(json::object config) {
     }
 }
 
-void Coordinator::stop() {
+void MqttAgent::stop() {
     for(int i = 0; i < N_MESSAGE_HANDLERS; i ++) {
         message_handlers[i]-> stop();
     }
 }
 
-void Coordinator::start() {
+void MqttAgent::start() {
     for(int i = 0; i < N_MESSAGE_HANDLERS; i ++) {
         message_handlers[i]-> start();
     }

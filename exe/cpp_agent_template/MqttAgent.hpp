@@ -19,8 +19,8 @@ namespace json = boost::json;
 using namespace std;
 
 
-/** Class that handles general tasks */
-class Coordinator {
+/** Class that manages a MQTT broker connection and message handlers */
+class MqttAgent {
 
     /** handlers for subscribed messages */
     ReferenceMessageHandler h0;
@@ -40,7 +40,7 @@ class Coordinator {
   public:
 
     /** Constructor */
-    Coordinator(json::object config);
+    MqttAgent(json::object config);
 
     /** Stop the agent */
     void stop();

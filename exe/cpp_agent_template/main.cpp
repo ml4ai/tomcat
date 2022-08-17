@@ -11,7 +11,7 @@
 #include <boost/program_options.hpp>
 
 #include "Configurator.hpp"
-#include "Coordinator.hpp"
+#include "MqttAgent.hpp"
 
 // An extendable base class for Testbed Agents
 // Authors:   Joseph Astier, Adarsh Pyareral
@@ -40,8 +40,9 @@ int main(int argc, char* argv[]) {
 
     string version = json::value_to<string>(config.at("version"));
 
-    Coordinator coordinator(config);
-    coordinator.start();
+    // run this or the file agent based on config input
+    MqttAgent mqtt_agent(config);
+    mqtt_agent.start();
 
     cout << "C++ Template Agent version " << version << " running." << endl;
 

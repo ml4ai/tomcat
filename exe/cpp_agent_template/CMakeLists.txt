@@ -25,7 +25,7 @@ add_executable(
     TrialMessageHandler.cpp
     HeartbeatProducer.cpp
     Configurator.cpp
-    Coordinator.cpp
+    MqttAgent.cpp
     MessageQueue.cpp
 )
 target_link_libraries(main PahoMqttCpp::paho-mqttpp3 ${Boost_LIBRARIES})
