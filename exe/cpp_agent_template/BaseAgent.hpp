@@ -3,7 +3,6 @@
 #include <string>
 #include <boost/json.hpp>
 #include <mqtt/async_client.h>
-#include "Utils.hpp"
 
 namespace json = boost::json;
 using namespace std;
@@ -11,7 +10,7 @@ using namespace std;
 class Coordinator;
 
 // A base class for subscribed message handlers
-class BaseAgent : public Utils {
+class BaseAgent {
 
     private:
 
@@ -28,8 +27,6 @@ class BaseAgent : public Utils {
     string output_message_type;
     string output_sub_type;
 
-
-    
     // this software publication msg.source field
     string source;
 
@@ -42,19 +39,23 @@ class BaseAgent : public Utils {
     // configuration data for all agents
     json::object config;
 
-    void publish(string topic, json::value jv);
+    // publish value on output_topic
+    void publish(json::value jv);
 
     // header object for output message
-    json::object get_output_header(
+    json::object create_output_header(
         string timestamp,
        	json::object input_header
     );
 
+    // timestamps
+    string get_timestamp();
+
     // msg object for output message
-    json::object get_output_msg(string timestamp, json::object input_msg);
+    json::object create_output_msg(string timestamp, json::object input_msg);
 
     // agent-specific data object for output message
-    virtual json::object get_output_data(json::object input_data);
+    virtual json::object create_output_data(json::object input_data);
 
     // get Message Bus subscription parameters
     virtual json::object get_input_config(json::object config);
@@ -65,16 +66,26 @@ class BaseAgent : public Utils {
     // called with the parsed MQTT message payload
     virtual void process_json_message(json::object json_message);
 
-    // create an output message from input and publish it
-    virtual void process_input_message(
+    // create an output message based on the input
+    json::object create_output_message(
         json::object input_header,
         json::object input_msg,
         json::object input_data
     );
 
+    // try to find key in object, if not found return default T
+    template <class T>
+    T get_value(string key, json::object object){
+        if(object.contains(key)) {
+            return json::value_to<T>(object.at(key));
+        } else {
+            return T();
+        }
+    }
+
     public:
 
-    void configure(
+    virtual void configure(
         json::object config,
         std::shared_ptr<mqtt::async_client> mqtt_client
     );

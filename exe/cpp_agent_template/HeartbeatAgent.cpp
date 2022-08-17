@@ -4,8 +4,6 @@
 #include <set>
 
 #include "HeartbeatAgent.hpp"
-#include "Processor.hpp"
-#include "Utils.hpp"
 
 /* This class Publishes heartbeats on a beat interval */
 
@@ -13,57 +11,55 @@ using namespace std;
 namespace json = boost::json;
 using namespace std::chrono;
 
+HeartbeatAgent::HeartbeatAgent() {
+    output_data["state"] = "ok";
+    output_data["active"] = running;   
+    output_data["status"] = "not configured";
+}
+
 json::object HeartbeatAgent::get_input_config(json::object config){
-    return get_object("trial_start", config);
+    return get_value<json::object>("trial_start", config);
 }
 
 json::object HeartbeatAgent::get_output_config(json::object config){
-    return get_object("heartbeat", config);
+    return get_value<json::object>("heartbeat", config);
 }
 
-json::object HeartbeatAgent::get_output_data(json::object input_data){
-    json::object output_data;
-    output_data["heartbeat_data"] = "goes here";
-
+json::object HeartbeatAgent::create_output_data(json::object input_data){
     return output_data;
 }
 
+// set the status vars.  Updated heartbeat is published immediately
+void HeartbeatAgent::set_status(string state, bool active, string status) {
 
+    running = active;
+    
+    output_data["state"] = state;
+    output_data["active"] = running;   
+    output_data["status"] = status;
 
-/*
-void HeartbeatAgent::process_input_message(
-    string topic,
-    json::object input_message
-) {
-    if(input_topic.compare(topic) != 0) {
-        return;
-    }
-
-    json::object input_header = utils.get_object("header", input_message);
-    json::object input_msg = utils.get_object("msg", input_message);
-
-    cout << "HeartbeatAgent::process_input_message" << endl;
-    if(trial_start_config.at("message_type") != input_header.at("message_type"))
-    {
-        return;
-    }
-    // trial start
-    if(trial_start_config.at("sub_type") == input_msg.at("sub_type")){
-        cout << "HeartbeatAgent::trial start" << endl;
-        this->input_header = input_header; // TODO make copies
-        this->input_msg = input_msg;
-	return;
-    }
-    // trial stop
-    if(trial_stop_config.at("sub_type") == input_msg.at("sub_type")){
-        cout << "HeartbeatAgent::trial stop" << endl;
-        this->input_header = input_header; // TODO make copies
-        this->input_msg = input_msg;
-	return;
-    }
+    publish_heartbeat();
 }
-*/
 
+// we override this method because we have to watch the trial comms differently
+void HeartbeatAgent::process_json_message(json::object json_message){
+
+    // header.message_type must match our configuration
+    input_header = get_value<json::object>("header", json_message);
+    string message_type = get_value<string>("message_type", input_header);
+    if(input_message_type.compare(message_type)) {
+        return;
+    }
+
+    // We don't branch on sub_type.  
+
+    // The header and msg objects from any trial message are recorded and
+    // used for subsequent heartbeat messages.
+    input_msg = get_value<json::object>("msg", json_message);
+
+    // publish a heartbeat right away based on new objects
+    publish_heartbeat();
+}
 
 // start the beat
 void HeartbeatAgent::start() {
@@ -71,14 +67,15 @@ void HeartbeatAgent::start() {
 
     cout << "HeartbeatAgent::start()" << endl;
 
-    // Start publishing heartbeat messages 
+    set_status("ok", running, "I am processing messages");
+
+    // Start publishing on the beat
     heartbeat_future = async(
         launch::async, 
 	&HeartbeatAgent::publish_heartbeats, 
 	this
     );
 }
-
 
 /** Function that publishes heartbeat messages while the agent is running */
 void HeartbeatAgent::publish_heartbeats() {
@@ -92,12 +89,22 @@ void HeartbeatAgent::publish_heartbeats() {
     }
 }
 
-json::value HeartbeatAgent::get_heartbeat(){
+// publish an immediate heartbeat
+void HeartbeatAgent::publish_heartbeat() {
 
-    json::object heartbeat_message;
-    heartbeat_message["heartbeat_message"] = "goes here";
+    publish(get_heartbeat());
+}
 
-    return heartbeat_message;
+json::object HeartbeatAgent::get_heartbeat(){
+
+    // compose output message
+    json::object output_message = create_output_message(
+        input_header,
+	input_msg,
+	json::object()
+    );
+
+    return output_message;
 }
 
 void HeartbeatAgent::stop() {

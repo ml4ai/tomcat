@@ -14,5 +14,5 @@ class ReferenceAgent: public BaseAgent {
 
     json::object get_output_config(json::object config) override;
 
-    json::object get_output_data(json::object config) override;
+    json::object create_output_data(json::object config) override;
 };

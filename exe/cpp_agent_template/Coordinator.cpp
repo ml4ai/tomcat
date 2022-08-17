@@ -2,7 +2,6 @@
 #include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
 #include "Coordinator.hpp"
-#include "Processor.hpp"
 #include <set>
 
 /* This class :
