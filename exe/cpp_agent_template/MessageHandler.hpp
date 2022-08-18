@@ -2,7 +2,6 @@
 
 #include <string>
 #include <boost/json.hpp>
-#include <mqtt/async_client.h>
 
 namespace json = boost::json;
 using namespace std;
@@ -26,7 +25,7 @@ using namespace std;
 //     "experiment_id": field not included empty in input
 //   },
 //   "data": {
-//     // anything goes 
+//       json::object // anything goes
 //   }
 // }
 
@@ -36,11 +35,16 @@ class Agent;
 // A base class for subscribed message handlers
 class MessageHandler {
 
-    private:
-
-    json::stream_parser json_parser;
 
     protected:
+
+    MessageHandler(){} // TODO make private
+    MessageHandler(Agent* agent): agent(agent){}
+    ~MessageHandler(){}
+
+    // owner
+    Agent *agent = nullptr;
+   
     // subscription configuration
     string input_topic;
     string input_message_type;
@@ -55,9 +59,6 @@ class MessageHandler {
 
     // Flag to specify whether the processor is running or not 
     bool running = false;
-
-    // MQTT client for Message Bus comms
-    std::shared_ptr<mqtt::async_client> mqtt_client;
 
     // copy src string value if nonempty else delete dst key
     json::object update_nonempty_string(
@@ -87,39 +88,37 @@ class MessageHandler {
         return json::object();
     }
 
-    void publish(json::value jv);
+    void publish(json::object output_message);
+
+    void write(json::value jv);
     string get_timestamp();
     virtual bool valid_input_header(json::object input_header);
     virtual bool valid_input_msg(json::object input_msg);
-    virtual void process_message(json::object input_message);
-    void process_header(
+    virtual void process_header(
         json::object input_message,
         json::object output_message,
 	string timestamp
     );
-    void process_msg(
+    virtual void process_msg(
         json::object input_message,
         json::object output_message,
 	string timestamp
     );
-    void process_data(
+    virtual void process_data(
         json::object input_message,
         json::object output_message
     );
 
     public:
 
-    void process_message(string topic, mqtt::const_message_ptr msg);
+    virtual void process_message(string topic, json::object message);
 
-    virtual void configure(
-        json::object config,
-        std::shared_ptr<mqtt::async_client> mqtt_client
-    );
+    virtual void configure(json::object config, Agent *agent);
 
-    // disable agent publishing
+    // enable agent
     virtual void start() { running = true;}
 
-    // enable agent publishing
+    // disable agent
     virtual void stop() { running = false;}
 
     // return the running flag

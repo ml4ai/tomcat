@@ -1,18 +1,16 @@
 #include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
 #include "ReferenceMessageHandler.hpp"
+#include "Agent.hpp"
 
 
 using namespace std;
 namespace json = boost::json;
 
 // Set parameters using the config file input.  Runs once at startup
-void ReferenceMessageHandler::configure(
-    json::object config,
-    std::shared_ptr<mqtt::async_client> mqtt_client
-) {
+void ReferenceMessageHandler::configure(json::object config, Agent *agent) {
 
-    MessageHandler::configure(config, mqtt_client);
+    MessageHandler::configure(config, agent);
 
     // add anything needed from the config file
     data["configure_time"] = get_timestamp();

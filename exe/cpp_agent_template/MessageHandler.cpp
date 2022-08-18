@@ -4,6 +4,7 @@
 #include <mqtt/async_client.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
+#include "Agent.hpp"
 
 #include "MessageHandler.hpp"
 
@@ -17,12 +18,10 @@ string MessageHandler::get_timestamp() {
     ) + "Z";
 }
 
-// Set parameters using the config file input. 
-void MessageHandler::configure(
-    json::object config,
-    std::shared_ptr<mqtt::async_client> mqtt_client
-) {
-    this->mqtt_client = mqtt_client;
+// Set parameters using the configuration
+void MessageHandler::configure(json::object config, Agent *agent) {
+
+    this->agent = agent;
 
     // configure input 
     json::object input_config = 
@@ -41,43 +40,21 @@ void MessageHandler::configure(
     source = val<string>("agent_name", config);
 }
 
-
-// Called by the MQTT client when traffic is received on a subscribed topic
 void MessageHandler::process_message(
-    string message_topic,
-    mqtt::const_message_ptr message_ptr
-){
+    string topic,
+    json::object input_message
+) {
+
     if(!running) {
         return;
     }
 
     /* topic must match our configuration */
-    if(input_topic.compare(message_topic)) {
+    if(input_topic.compare(topic)) {
         return;
     }
 
-    /* input message must be valid JSON  */
-    json_parser.reset();
-    error_code ec;
-    json_parser.write(message_ptr->get_payload_str(), ec);
-    if(ec) {
-        cerr << "Error reading form topic: " << message_topic << endl;
-	cerr << "Message is not valid JSON." << endl;
-        cerr << "JSON parse error code: " << ec << endl;
-        return;
-    }
-
-    // at this point the message is on our topic and valid JSON
-    json::object input_message = 
-        json::value_to<json::object>(json_parser.release());
-
-    process_message(input_message);
-}
-
-void MessageHandler::process_message(json::object input_message) {
-    json::object output_message;
-    output_message["topic"] = output_topic;
-    process_header(input_message, output_message, get_timestamp());
+    process_header(input_message, json::object(), get_timestamp());
 }
 
 void MessageHandler::process_header(
@@ -157,11 +134,7 @@ void MessageHandler::process_data(
 
     output_message["data"] = get_data(input_data);
 
-    publish(output_message);
-}
-
-void MessageHandler::publish(json::value jv) {
-    mqtt_client->publish(output_topic, json::serialize(jv));
+    agent->write(output_topic, output_message);
 }
 
 // copy string, delete key from dst if string is empty

@@ -7,10 +7,11 @@
 namespace json = boost::json;
 using namespace std;
 
+class Agent;
 
 class TrialMessageHandler: public MessageHandler {
 
-    json::object data;
+    json::object data;  // version info data
 
     public:
 
@@ -20,9 +21,5 @@ class TrialMessageHandler: public MessageHandler {
 
     json::object get_data(json::object input_data) override { return data; }
 
-    void configure(
-        json::object config,
-        std::shared_ptr<mqtt::async_client> mqtt_client
-    ) override ;
-
+    void configure(json::object config, Agent *agent) override ;
 };

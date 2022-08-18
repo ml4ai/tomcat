@@ -19,6 +19,7 @@ find_package(
 )
 add_executable(
     main main.cpp
+    Agent.cpp
     MessageHandler.cpp
     ReferenceMessageHandler.cpp
     RollcallMessageHandler.cpp

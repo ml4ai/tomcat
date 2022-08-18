@@ -7,6 +7,7 @@
 namespace json = boost::json;
 using namespace std;
 
+class Agent;
 
 class RollcallMessageHandler: public MessageHandler {
 
@@ -16,10 +17,7 @@ class RollcallMessageHandler: public MessageHandler {
 
     json::object get_data(json::object input_data) override;
 
-    void configure(
-        json::object config,
-        std::shared_ptr<mqtt::async_client> mqtt_client
-    ) override;
+    void configure(json::object config, Agent *agent) override;
 
     json::object data;
 };

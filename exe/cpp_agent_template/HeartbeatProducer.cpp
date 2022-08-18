@@ -4,6 +4,7 @@
 #include <set>
 
 #include "HeartbeatProducer.hpp"
+#include "Agent.hpp"
 
 /* This class Publishes heartbeats on a beat interval */
 
@@ -11,32 +12,30 @@ using namespace std;
 namespace json = boost::json;
 using namespace std::chrono;
 
-void HeartbeatProducer::configure(
-    json::object config,
-    std::shared_ptr<mqtt::async_client> mqtt_client
-) {
+void HeartbeatProducer::configure(json::object config, Agent *agent) {
 
-    MessageHandler::configure(config, mqtt_client);
+    MessageHandler::configure(config, agent);
 
-    data["state"] = "Configuring";
-    data["active"] = running;   
-    data["status"] = "ok";
-
-    // we don't have message bus input at startup so we have to spoof some
-    json::object phony;
+    // spoof input message until we get a trial start
     json::object header;
     header["message_type"] = input_message_type;
-    phony["header"] = header;
+    input_message["header"] = header;
+    input_message["msg"] = json::object();
+    input_message["data"] = json::object();
 
     // send a heartbeat immediately to advise we are in startup
-    process_message(phony);
+    process_message(input_topic, input_message);
 }
 
 // copy the input for our async publications
-void HeartbeatProducer::process_message(json::object input_message) {
+void HeartbeatProducer::process_header(
+    json::object input_message,
+    json::object output_message,
+    string timestamp
+){
     this->input_message = input_message;
 
-    MessageHandler::process_message(input_message);
+    MessageHandler::process_header(input_message, output_message, timestamp);
 }
 
 /** Function that publishes heartbeat messages while the agent is running */
@@ -44,7 +43,7 @@ void HeartbeatProducer::publish_heartbeats() {
 
     while (this->running) {
         this_thread::sleep_for(seconds(10));
-	process_message(input_message);
+	process_message(input_topic, input_message);
     }
 }
 
@@ -58,7 +57,7 @@ void HeartbeatProducer::start() {
     data["status"] = "I am processing messages";
 
     // respond immediately
-    process_message(input_message);
+    process_message(input_topic, input_message);
 
     // Start threaded publishing
     heartbeat_future = async(
@@ -77,7 +76,7 @@ void HeartbeatProducer::stop() {
     data["status"] = "Stopped";
 
     // send feedback now
-    process_message(input_message);
+    process_message(input_topic, input_message);
 
     heartbeat_future.wait();
 }
