@@ -53,26 +53,16 @@ Additional settings are made in a JSON configuration file:
   ],
   "publishes": [
     {
-      "topic": "agent/reference_agent_output_1",
-      "message_type": "reference_agent_output_message_type_1",
-      "sub_type": "reference_agent_output_sub_type_1"
-    },
-    {
-      "topic": "agent/reference_agent_output_2",
-      "message_type": "reference_agent_output_message_type_2",
-      "sub_type": "reference_agent_output_sub_type_2"
+      "topic": "agent/reference_agent_output",
+      "message_type": "reference_agent_output_message_type",
+      "sub_type": "reference_agent_output_sub_type"
     }
   ],
   "subscribes": [
     {
-      "topic": "agent/reference_agent_input_1",
-      "message_type": "reference_agent_input_message_type_1",
-      "sub_type": "reference_agent_input_sub_type_1"
-    },
-    {
-      "topic": "agent/reference_agent_input_2",
-      "message_type": "reference_agent_input_message_type_2",
-      "sub_type": "reference_agent_input_sub_type_2"
+      "topic": "agent/reference_agent_input",
+      "message_type": "reference_agent_input_message_type",
+      "sub_type": "reference_agent_input_sub_type"
     }
   ]
 }
