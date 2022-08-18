@@ -43,49 +43,38 @@ Additional settings are made in a JSON configuration file:
 
 ```
 {
-  "agent_input": {
-    "message_type": "chat",
-    "sub_type": "Event:Chat",
-    "topic": "minecraft/chat"
-  },
-  "agent_output": {
-    "message_type": "agent",
-    "sub_type": "template_agent",
-    "topic": "agent/template_agent_output"
-  },
-  "heartbeat": {
-    "message_type": "status",
-    "sub_type": "heartbeat",
-    "topic": "status/template_agent/heartbeats"
-  },
-  "rollcall_request": {
-    "message_type": "agent",
-    "sub_type": "rollcall:request",
-    "topic": "agent/control/rollcall/request"
-  },
-  "rollcall_response": {
-    "message_type": "agent",
-    "sub_type": "rollcall:response",
-    "topic": "agent/control/rollcall/response"
-  },
-  "trial_start": {
-    "message_type": "trial",
-    "sub_type": "start",
-    "topic": "trial"
-  },
-  "trial_stop": {
-    "message_type": "trial",
-    "sub_type": "stop",
-    "topic": "trial"
-  },
-  "version_info": {
-    "message_type": "agent",
-    "sub_type": "versioninfo",
-    "topic": "agent/template_agent/versioninfo"
-  },
+  "agent_name": "AC_UAZ_TA1_ReferenceAgent",
+  "owner": "University of Arizona",
   "version": "1.0.0",
-  "notes": "Preliminary C++ template agent",
-  "publication_source": "template_agent"
+  "config": [],
+  "dependencies": [],
+  "source": [
+    "https://gitlab.asist.aptima.com:5050/asist/testbed/AC_UAZ_TA1_ReferenceAgent:i.j.k"
+  ],
+  "publishes": [
+    {
+      "topic": "agent/reference_agent_output_1",
+      "message_type": "reference_agent_output_message_type_1",
+      "sub_type": "reference_agent_output_sub_type_1"
+    },
+    {
+      "topic": "agent/reference_agent_output_2",
+      "message_type": "reference_agent_output_message_type_2",
+      "sub_type": "reference_agent_output_sub_type_2"
+    }
+  ],
+  "subscribes": [
+    {
+      "topic": "agent/reference_agent_input_1",
+      "message_type": "reference_agent_input_message_type_1",
+      "sub_type": "reference_agent_input_sub_type_1"
+    },
+    {
+      "topic": "agent/reference_agent_input_2",
+      "message_type": "reference_agent_input_message_type_2",
+      "sub_type": "reference_agent_input_sub_type_2"
+    }
+  ]
 }
 ```
 
