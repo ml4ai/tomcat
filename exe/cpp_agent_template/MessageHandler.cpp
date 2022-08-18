@@ -24,8 +24,6 @@ void MessageHandler::configure(
 ) {
     this->mqtt_client = mqtt_client;
 
-    this->config = config;
-
     // configure input 
     json::object input_config = 
         val<json::object>(get_input_config_name(), config);

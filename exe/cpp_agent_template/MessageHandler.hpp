@@ -9,28 +9,29 @@ using namespace std;
 
 // input / output message format:
 // {
-//   "topic": "trial",
+//   "topic": topic
 //   "header": {
-//     "version": testbed version or 0.1 if not in input,
-//     "message_type": "trial",
-//     "timestamp": "2022-03-24T18:33:18.8040Z"
+//     "version": testbed version or 0.1 if not in input
+//     "message_type": message_type
+//     "timestamp": UTC timestamp in ISO-8601 format
 //   },
 //   "msg": {
-//     "trial_id": field not included if not in input,
-//     "timestamp": "2022-03-24T18:33:18.8040Z",
-//     "replay_parent_type": field not included if not in input,
-//     "replay_id": field not included if not in input,
+//     "trial_id": field not included if empty in input
+//     "timestamp": UTC timestamp in ISO-8601 format
+//     "replay_id": field not included if empty in input
 //     "version": agent version
-//     "replay_parent_id": field not included if not in input,
-//     "sub_type": "start",
+//     "replay_root_id": field not included empty in input
+//     "sub_type": sub_type
 //     "source": agent name
-//     "experiment_id": field not included if not in input
+//     "experiment_id": field not included empty in input
 //   },
 //   "data": {
 //     // anything goes 
 //   }
 // }
 
+
+class Agent;
 
 // A base class for subscribed message handlers
 class MessageHandler {
@@ -64,9 +65,6 @@ class MessageHandler {
        	json::object dst,
        	string key
     );
-
-    // configuration data for all agents
-    json::object config;
 
     // Return the input configuration config name, e.g. "trial_start"
     virtual string get_input_config_name(){ return "";}
