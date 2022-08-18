@@ -20,13 +20,10 @@ find_package(
 add_executable(
     main main.cpp
     Agent.cpp
-    MessageHandler.cpp
-    ReferenceMessageHandler.cpp
-    RollcallMessageHandler.cpp
-    TrialMessageHandler.cpp
-    HeartbeatProducer.cpp
-    Configurator.cpp
     MqttAgent.cpp
+    FileAgent.cpp
+    MessageHandler.cpp
+    Configurator.cpp
     MessageQueue.cpp
 )
 target_link_libraries(main PahoMqttCpp::paho-mqttpp3 ${Boost_LIBRARIES})

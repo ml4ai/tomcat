@@ -23,22 +23,26 @@ void MessageHandler::configure(json::object config, Agent *agent) {
 
     this->agent = agent;
 
-    // configure input 
-    json::object input_config = 
-        val<json::object>(get_input_config_name(), config);
-    input_topic = val<string>("topic", input_config);
-    input_message_type = val<string>("message_type", input_config);
-    input_sub_type = val<string>("sub_type", input_config);
+    this->config = config;
 
-    // configure output 
-    json::object output_config = 
-        val<json::object>(get_output_config_name(), config);
-    output_topic = val<string>("topic", output_config);
-    output_message_type = val<string>("message_type", output_config);
-    output_sub_type = val<string>("sub_type", output_config);
-    version = val<string>("version", config);
-    source = val<string>("agent_name", config);
+    // find subscriptions
+    json::array subs = val<json::array>(config, "subscribes");
+
+    cout << "subs" << subs.size() << endl;
+
+
+
 }
+
+bool MessageHandler::is_subscribed(string topic){
+    for(string t : subscriptions) {
+        if(t.compare(topic) == 0) {
+	    return true;
+	}
+    }
+    return false;
+}
+	
 
 void MessageHandler::process_message(
     string topic,
@@ -50,7 +54,7 @@ void MessageHandler::process_message(
     }
 
     /* topic must match our configuration */
-    if(input_topic.compare(topic)) {
+    if(!is_subscribed(topic)) {
         return;
     }
 
@@ -63,19 +67,19 @@ void MessageHandler::process_header(
     string timestamp
 ){
     json::object input_header = 
-        val<json::object>("header", input_message);
+        val<json::object>(input_message, "header");
 
     if(!valid_input_header(input_header)){
         return;
     }
 
     // if the input header has no testbed version number, default to 1.0
-    string version_maybe = val<string>("version", input_header);
+    string version_maybe = val<string>(input_header, "version");
     string testbed_version = version_maybe.empty()? "1.0": version_maybe;
 
     json::object header;
     header["timestamp"] = timestamp;
-    header["message_type"] = output_message_type;
+    header["message_type"] = get_output_message_type(); // user specific
     header["version"] = testbed_version;
 
     output_message["header"] = header;
@@ -85,14 +89,23 @@ void MessageHandler::process_header(
 
 // true if header.message_type matches our configuration
 bool MessageHandler::valid_input_header(json::object input_header) {
-    string message_type = val<string>("message_type", input_header);
+
+    return true;
+    /*
+    string message_type = val<string>(input_header, "message_type");
     return (input_message_type.compare(message_type) == 0);
+    */
 }
 
 // true if msg.sub_type matches our configuration
 bool MessageHandler::valid_input_msg(json::object input_msg) {
-    string sub_type = val<string>("sub_type", input_msg);
+    
+    return true;
+
+    /*
+    string sub_type = val<string>(input_msg, "sub_type");
     return (input_sub_type.compare(sub_type) == 0);
+    */
 }
 
 
@@ -103,15 +116,15 @@ void MessageHandler::process_msg(
 ){
     // msg.sub_type must match our configuration
     json::object input_msg = 
-        val<json::object>("msg", input_message);
+        val<json::object>(input_message, "msg");
 
     if(!valid_input_msg(input_msg)) {
         return;
     }
 
     json::object msg;
-    msg["source"] = source;
-    msg["version"] = version;
+    msg["source"] = "template_source";
+    msg["version"] = "template_version";
     msg["timestamp"] = timestamp;
 
     // these may be empty
@@ -130,11 +143,17 @@ void MessageHandler::process_data(
     json::object output_message
 ){
     json::object input_data = 
-        val<json::object>("data", input_message);
+        val<json::object>(input_message, "data");
 
-    output_message["data"] = get_data(input_data);
+    /** Data processing happens here */
 
-    agent->write(output_topic, output_message);
+    // default just to show something is the versioninfo data
+    output_message["data"] = config;
+
+    // output topic from config
+
+
+    agent->write("template_agent_topic", output_message);
 }
 
 // copy string, delete key from dst if string is empty
@@ -143,8 +162,8 @@ json::object MessageHandler::update_nonempty_string(
     json::object dst,
     string key
 ) {
-    dst[key] = val<string>(key, src);
-    if(val<string>(key, dst).empty()) {
+    dst[key] = val<string>(src, key);
+    if(val<string>(dst, key).empty()) {
         dst.erase(key);
     }
     return dst;

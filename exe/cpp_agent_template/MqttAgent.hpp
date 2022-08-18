@@ -25,6 +25,8 @@ class MqttAgent : public Agent {
     /** Constructor */
     MqttAgent(json::object config);
 
+    ~MqttAgent(){}
+
     /* send output to the message bus */
     void write(string topic, json::object message) override;
 };

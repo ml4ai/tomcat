@@ -12,18 +12,7 @@ namespace json = boost::json;
 using namespace std::chrono;
 
 
-MqttAgent::MqttAgent(json::object config) {
-
-    // set up message handlers
-    ReferenceMessageHandler h0;
-    TrialMessageHandler h1;
-    RollcallMessageHandler h2;
-    HeartbeatProducer h3;
-
-    message_handlers.push_back(&h0);
-    message_handlers.push_back(&h1);
-    message_handlers.push_back(&h2);
-    message_handlers.push_back(&h3);
+MqttAgent::MqttAgent(json::object config) : Agent() {
 
     configure(config);
 
@@ -65,7 +54,6 @@ MqttAgent::MqttAgent(json::object config) {
         json::object message = 
 	    json::value_to<json::object>(json_parser.release());
 
-	// let the message handlers take it from here
 	process_message(topic, message);
     });
 

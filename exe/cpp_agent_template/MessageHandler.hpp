@@ -38,24 +38,15 @@ class MessageHandler {
 
     protected:
 
-    MessageHandler(){} // TODO make private
-    MessageHandler(Agent* agent): agent(agent){}
-    ~MessageHandler(){}
 
     // owner
     Agent *agent = nullptr;
    
-    // subscription configuration
-    string input_topic;
-    string input_message_type;
-    string input_sub_type;
+    // Message Bus configuration
+    json::object config;
 
-    // publication configuration
-    string output_topic;
-    string output_message_type;
-    string output_sub_type;
-    string version;
-    string source;
+    // last message received
+    json::object prev_message;
 
     // Flag to specify whether the processor is running or not 
     bool running = false;
@@ -67,15 +58,11 @@ class MessageHandler {
        	string key
     );
 
-    // Return the input configuration config name, e.g. "trial_start"
-    virtual string get_input_config_name(){ return "";}
-
-    // return the output configuration config name, e.g. "heartbeat"
-    virtual string get_output_config_name(){ return "";}
+    vector<string> subscriptions, publications;
 
     // return any value for key
     template <class T>
-    T val(string key, json::object object){
+    T val(json::object object, string key){
         if(object.contains(key)) {
             return json::value_to<T>(object.at(key));
         } else {
@@ -83,50 +70,50 @@ class MessageHandler {
         }
     }
 
-    // return output data element for extending class
-    virtual json::object get_data(json::object input_data) {
-        return json::object();
-    }
-
     void publish(json::object output_message);
 
     void write(json::value jv);
     string get_timestamp();
-    virtual bool valid_input_header(json::object input_header);
-    virtual bool valid_input_msg(json::object input_msg);
-    virtual void process_header(
+    bool valid_input_header(json::object input_header);
+    bool valid_input_msg(json::object input_msg);
+    void process_header(
         json::object input_message,
         json::object output_message,
 	string timestamp
     );
-    virtual void process_msg(
+    void process_msg(
         json::object input_message,
         json::object output_message,
 	string timestamp
     );
-    virtual void process_data(
+    void process_data(
         json::object input_message,
         json::object output_message
     );
 
+    bool is_subscribed(string topic);
+
     public:
 
-    virtual void process_message(string topic, json::object message);
+    virtual string get_output_message_type(){ return "not set"; }
+    virtual string get_output_sub_type(){ return "not set"; }
 
-    virtual void configure(json::object config, Agent *agent);
+    void process_message(string topic, json::object message);
+
+    void configure(json::object config, Agent *agent);
+
+    // Return the input topics
+    vector<string> get_subscriptions(){return subscriptions;}
+
+    // Return the output topics
+    vector<string> get_publications(){return publications;}
 
     // enable agent
-    virtual void start() { running = true;}
+    void start() { running = true;}
 
     // disable agent
-    virtual void stop() { running = false;}
+    void stop() { running = false;}
 
     // return the running flag
     bool is_running() { return running; }
-
-    // return our publication topic;
-    string get_output_topic() { return output_topic; }
-
-    // return our subscription topic;
-    string get_input_topic() { return input_topic; }
 };
