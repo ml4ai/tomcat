@@ -13,8 +13,8 @@ namespace json = boost::json;
 /** Get current UTC timestamp in ISO-8601 format. */
 string MessageHandler::get_timestamp() {
     return boost::posix_time::to_iso_extended_string(
-               boost::posix_time::microsec_clock::universal_time()) +
-           "Z";
+        boost::posix_time::microsec_clock::universal_time()
+    ) + "Z";
 }
 
 // Set parameters using the config file input. 
@@ -136,24 +136,12 @@ void MessageHandler::process_msg(
     msg["source"] = source;
     msg["version"] = version;
     msg["timestamp"] = timestamp;
-    
-    // add these fields if they exist in the input and have values
-    string experiment_id = val<string>("experiment_id", input_msg);
-    if(!experiment_id.empty()) {
-        msg["experiment_id"] = experiment_id;
-    }
-    string trial_id = val<string>("trial_id", input_msg);
-    if(!trial_id.empty()) {
-        msg["trial_id"] = trial_id;
-    }
-    string replay_root_id = val<string>("replay_root_id", input_msg);
-    if(!replay_root_id.empty()) {
-        msg["replay_root_id"] = replay_root_id;
-    }
-    string replay_id = val<string>("replay_id", input_msg);
-    if(!replay_id.empty()) {
-        msg["replay_id"] = replay_id;
-    }
+
+    // these may be empty
+    msg = update_nonempty_string(input_msg, msg, "experiment_id");
+    msg = update_nonempty_string(input_msg, msg, "trial_id");
+    msg = update_nonempty_string(input_msg, msg, "replay_root_id");
+    msg = update_nonempty_string(input_msg, msg, "replay_id");
 
     output_message["msg"] = msg;
 
@@ -174,4 +162,17 @@ void MessageHandler::process_data(
 
 void MessageHandler::publish(json::value jv) {
     mqtt_client->publish(output_topic, json::serialize(jv));
+}
+
+// copy string, delete key from dst if string is empty
+json::object MessageHandler::update_nonempty_string(
+    json::object src,
+    json::object dst,
+    string key
+) {
+    dst[key] = val<string>(key, src);
+    if(val<string>(key, dst).empty()) {
+        dst.erase(key);
+    }
+    return dst;
 }

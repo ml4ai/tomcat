@@ -58,6 +58,13 @@ class MessageHandler {
     // MQTT client for Message Bus comms
     std::shared_ptr<mqtt::async_client> mqtt_client;
 
+    // copy src string value if nonempty else delete dst key
+    json::object update_nonempty_string(
+        json::object src,
+       	json::object dst,
+       	string key
+    );
+
     // configuration data for all agents
     json::object config;
 
