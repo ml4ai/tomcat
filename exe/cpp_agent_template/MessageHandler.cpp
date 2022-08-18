@@ -77,7 +77,9 @@ void MessageHandler::process_message(
 }
 
 void MessageHandler::process_message(json::object input_message) {
-    process_header(input_message, json::object(), get_timestamp());
+    json::object output_message;
+    output_message["topic"] = output_topic;
+    process_header(input_message, output_message, get_timestamp());
 }
 
 void MessageHandler::process_header(
