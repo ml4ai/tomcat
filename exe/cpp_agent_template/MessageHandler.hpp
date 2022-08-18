@@ -7,7 +7,30 @@
 namespace json = boost::json;
 using namespace std;
 
-class Coordinator;
+// input / output message format:
+// {
+//   "topic": "trial",
+//   "header": {
+//     "version": testbed version or 0.1 if not in input,
+//     "message_type": "trial",
+//     "timestamp": "2022-03-24T18:33:18.8040Z"
+//   },
+//   "msg": {
+//     "trial_id": field not included if not in input,
+//     "timestamp": "2022-03-24T18:33:18.8040Z",
+//     "replay_parent_type": field not included if not in input,
+//     "replay_id": field not included if not in input,
+//     "version": agent version
+//     "replay_parent_id": field not included if not in input,
+//     "sub_type": "start",
+//     "source": agent name
+//     "experiment_id": field not included if not in input
+//   },
+//   "data": {
+//     // anything goes 
+//   }
+// }
+
 
 // A base class for subscribed message handlers
 class MessageHandler {

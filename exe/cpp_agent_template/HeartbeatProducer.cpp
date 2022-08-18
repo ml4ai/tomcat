@@ -57,7 +57,7 @@ void HeartbeatProducer::start() {
     data["active"] = running;   
     data["status"] = "I am processing messages";
 
-    // send feedback now
+    // respond immediately
     process_message(input_message);
 
     // Start threaded publishing

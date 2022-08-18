@@ -22,17 +22,18 @@ void MessageHandler::configure(
     json::object config,
     std::shared_ptr<mqtt::async_client> mqtt_client
 ) {
-
     this->mqtt_client = mqtt_client;
 
     this->config = config;
 
+    // configure input 
     json::object input_config = 
         val<json::object>(get_input_config_name(), config);
     input_topic = val<string>("topic", input_config);
     input_message_type = val<string>("message_type", input_config);
     input_sub_type = val<string>("sub_type", input_config);
 
+    // configure output 
     json::object output_config = 
         val<json::object>(get_output_config_name(), config);
     output_topic = val<string>("topic", output_config);
