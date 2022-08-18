@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Authors: Joseph Astier, Adarsh Pyarelal
+
+# quick simulation of two complete trials
+
+./elkless_replayer trial_start.metadata
+./elkless_replayer reference_agent_input.metadata
+./elkless_replayer rollcall_request.metadata
+./elkless_replayer trial_stop.metadata
+
+./elkless_replayer trial_start.metadata
+./elkless_replayer reference_agent_input.metadata
+./elkless_replayer rollcall_request.metadata
+./elkless_replayer trial_stop.metadata
