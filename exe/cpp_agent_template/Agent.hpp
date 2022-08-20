@@ -13,7 +13,7 @@ class Agent {
 
     public:
 
-    MessageHandler message_handler;
+    MessageHandler message_handler = MessageHandler(this);
 
     Agent(json::object config);
     ~Agent(){}

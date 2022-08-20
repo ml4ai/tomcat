@@ -55,7 +55,7 @@ class MessageHandler {
 
     // return any value for key
     template <class T>
-    T val(json::object src, string key){
+    T val(const json::object &src, const string key) {
         if(src.contains(key)) {
             return json::value_to<T>(src.at(key));
         } else {
@@ -65,7 +65,10 @@ class MessageHandler {
 
     // return any value for key with fallback
     template <class T>
-    T val_or_else(json::object src, string key, T fallback){
+    T val_or_else(const json::object src,
+                  const string key,
+                  const T fallback) {
+
         if(src.contains(key)) {
             return json::value_to<T>(src.at(key));
         } else {
@@ -73,43 +76,18 @@ class MessageHandler {
         }
     }
 
-    // copy value from src to dest, erase field in dst if not found
-    json::object val_or_erase(json::object src, json::object dst, string key){
-        if(src.contains(key)) {
-	    dst[key] = src.at(key);
-        } else {
-            if(dst.contains(key)) {
-	        dst.erase(key);
-	    }
-        }
-	return dst;
-    }
-
     void publish(json::object output_message);
 
     void write(json::value jv);
     string get_timestamp();
-    bool valid_input_header(json::object input_header);
-    bool valid_input_msg(json::object input_msg);
-    void process_header(
-        json::object input_message,
-        json::object output_message,
-	string timestamp
-    );
-    void process_msg(
-        json::object input_message,
-        json::object output_message,
-	string timestamp
-    );
-    void process_data(
-        json::object input_message,
-        json::object output_message
-    );
-
 
     public:
 
-    virtual void configure(json::object config, Agent* agent);
+    MessageHandler(Agent* agent);
+    MessageHandler(){}
+    ~MessageHandler(){}
+
+    virtual void configure(json::object config);
 
     virtual vector<string> get_input_topics() { return input_topics;}
     virtual vector<string> get_output_topics() { return output_topics;}

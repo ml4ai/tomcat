@@ -11,6 +11,12 @@
 using namespace std;
 namespace json = boost::json;
 
+
+MessageHandler::MessageHandler(Agent *agent): agent(agent) {
+}
+
+
+
 /** Get current UTC timestamp in ISO-8601 format. */
 string MessageHandler::get_timestamp() {
     return boost::posix_time::to_iso_extended_string(
@@ -20,11 +26,7 @@ string MessageHandler::get_timestamp() {
 
 
 // Set parameters using the configuration
-void MessageHandler::configure( json::object config, Agent *agent) {
-
-	cout << "MessageHandler::configure( json::object config, Agent *agent)" << endl;
-
-    this->agent = agent;
+void MessageHandler::configure( json::object config) {
 
     version_info_data = config;   // TODO Will want this class info
 
@@ -52,10 +54,20 @@ void MessageHandler::process_message(string topic, json::object in_message) {
     out_msg["source"] = source;
     out_msg["version"] = version;
     out_msg["timestamp"] = timestamp;
-    out_msg = val_or_erase(in_msg, out_msg, "experiment_id");
-    out_msg = val_or_erase(in_msg, out_msg, "trial_id");
-    out_msg = val_or_erase(in_msg, out_msg, "replay_root_id");
-    out_msg = val_or_erase(in_msg, out_msg, "replay_id");
+
+    // add these if they exist and are non-empty
+    if(!val<string>(in_msg, "experiment_id").empty()) {
+        out_msg["experiment_id"] = in_msg.at("experiment_id");
+    }
+    if(!val<string>(in_msg, "trial_id").empty()) {
+        out_msg["trial_id"] = in_msg.at("trial_id");
+    }
+    if(!val<string>(in_msg, "replay_id").empty()) {
+        out_msg["replay_id"] = in_msg.at("replay_id");
+    }
+    if(!val<string>(in_msg, "replay_root_id").empty()) {
+        out_msg["replay_root_id"] = in_msg.at("replay_root_id");
+    }
 
     // if trial start send version info
     if((string("trial").compare(topic) == 0) &&
