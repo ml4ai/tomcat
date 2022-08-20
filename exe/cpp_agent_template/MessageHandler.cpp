@@ -18,153 +18,81 @@ string MessageHandler::get_timestamp() {
     ) + "Z";
 }
 
+
 // Set parameters using the configuration
-void MessageHandler::configure(json::object config, Agent *agent) {
+void MessageHandler::configure( json::object config, Agent *agent) {
+
+	cout << "MessageHandler::configure( json::object config, Agent *agent)" << endl;
 
     this->agent = agent;
 
-    this->config = config;
+    version_info_data = config;   // TODO Will want this class info
 
-    // find subscriptions
-    json::array subs = val<json::array>(config, "subscribes");
+    input_topics.push_back("agent/control/rollcall/request");
+    input_topics.push_back("trial");
 
-    cout << "subs" << subs.size() << endl;
-
-
-
+    version = val_or_else<string>(config, "version", "not set");
+    source = val_or_else<string>(config, "agent_name", "not set");
 }
 
-bool MessageHandler::is_subscribed(string topic){
-    for(string t : subscriptions) {
-        if(t.compare(topic) == 0) {
-	    return true;
-	}
-    }
-    return false;
-}
-	
+void MessageHandler::process_message(string topic, json::object in_message) {
+    json::object in_header = val<json::object>(in_message,"header");
+    json::object in_msg = val<json::object>(in_message,"msg");
+    json::object in_data = val<json::object>(in_message,"data");
+    string in_message_type = val<string>(in_header, "message_type");
+    string in_sub_type = val<string>(in_msg, "sub_type");
 
-void MessageHandler::process_message(
-    string topic,
-    json::object input_message
-) {
+    string timestamp = get_timestamp();
 
-    if(!running) {
-        return;
-    }
+    json::object out_header;
+    out_header["timestamp"] = timestamp;
+    out_header["version"] = val_or_else<string>(in_header, "version", "1.0");
 
-    /* topic must match our configuration */
-    if(!is_subscribed(topic)) {
-        return;
-    }
+    json::object out_msg;
+    out_msg["source"] = source;
+    out_msg["version"] = version;
+    out_msg["timestamp"] = timestamp;
+    out_msg = val_or_erase(in_msg, out_msg, "experiment_id");
+    out_msg = val_or_erase(in_msg, out_msg, "trial_id");
+    out_msg = val_or_erase(in_msg, out_msg, "replay_root_id");
+    out_msg = val_or_erase(in_msg, out_msg, "replay_id");
 
-    process_header(input_message, json::object(), get_timestamp());
-}
+    // if trial start send version info
+    if((string("trial").compare(topic) == 0) &&
+        (string("trial").compare(in_message_type) == 0) &&
+        (string("start").compare(in_sub_type) == 0))
+    {
+	out_header["message_type"] = "agent";
+	out_msg["sub_type"] = "versioninfo";
 
-void MessageHandler::process_header(
-    json::object input_message,
-    json::object output_message,
-    string timestamp
-){
-    json::object input_header = 
-        val<json::object>(input_message, "header");
+	json::object out_message;
+	out_message["header"] = out_header;
+	out_message["msg"] = out_msg;
+	out_message["data"] = version_info_data;
 
-    if(!valid_input_header(input_header)){
-        return;
+	agent->write("agent/reference_agent/versioninfo", out_message);
     }
 
-    // if the input header has no testbed version number, default to 1.0
-    string version_maybe = val<string>(input_header, "version");
-    string testbed_version = version_maybe.empty()? "1.0": version_maybe;
+    // if rollcall request send rollcall response
+    if((string("agent/control/rollcall/request").compare(topic) == 0) &&
+        (string("agent").compare(in_message_type) == 0) &&
+        (string("rollcall:request").compare(in_sub_type) == 0))
+    {
+	out_header["message_type"] = "agent";
+	out_msg["sub_type"] = "rollcall:response";
 
-    json::object header;
-    header["timestamp"] = timestamp;
-    header["message_type"] = get_output_message_type(); // user specific
-    header["version"] = testbed_version;
+	json::object out_data;
+	out_data["version"] = version;
+	out_data["uptime"] = 1234; // TODO get real
+	out_data["status"] = "up";
+	out_data["rollcall_id"] = 
+            val_or_else<string>(in_data, "rollcall_id", "not set");
 
-    output_message["header"] = header;
+	json::object out_message;
+	out_message["header"] = out_header;
+	out_message["msg"] = out_msg;
+	out_message["data"] = out_data;
 
-    process_msg(input_message, output_message, timestamp);
-}
-
-// true if header.message_type matches our configuration
-bool MessageHandler::valid_input_header(json::object input_header) {
-
-    return true;
-    /*
-    string message_type = val<string>(input_header, "message_type");
-    return (input_message_type.compare(message_type) == 0);
-    */
-}
-
-// true if msg.sub_type matches our configuration
-bool MessageHandler::valid_input_msg(json::object input_msg) {
-    
-    return true;
-
-    /*
-    string sub_type = val<string>(input_msg, "sub_type");
-    return (input_sub_type.compare(sub_type) == 0);
-    */
-}
-
-
-void MessageHandler::process_msg(
-    json::object input_message,
-    json::object output_message,
-    string timestamp
-){
-    // msg.sub_type must match our configuration
-    json::object input_msg = 
-        val<json::object>(input_message, "msg");
-
-    if(!valid_input_msg(input_msg)) {
-        return;
+	agent->write("agent/reference_agent/versioninfo", out_message);
     }
-
-    json::object msg;
-    msg["source"] = "template_source";
-    msg["version"] = "template_version";
-    msg["timestamp"] = timestamp;
-
-    // these may be empty
-    msg = update_nonempty_string(input_msg, msg, "experiment_id");
-    msg = update_nonempty_string(input_msg, msg, "trial_id");
-    msg = update_nonempty_string(input_msg, msg, "replay_root_id");
-    msg = update_nonempty_string(input_msg, msg, "replay_id");
-
-    output_message["msg"] = msg;
-
-    process_data(input_message, output_message);
-}
-
-void MessageHandler::process_data(
-    json::object input_message,
-    json::object output_message
-){
-    json::object input_data = 
-        val<json::object>(input_message, "data");
-
-    /** Data processing happens here */
-
-    // default just to show something is the versioninfo data
-    output_message["data"] = config;
-
-    // output topic from config
-
-
-    agent->write("template_agent_topic", output_message);
-}
-
-// copy string, delete key from dst if string is empty
-json::object MessageHandler::update_nonempty_string(
-    json::object src,
-    json::object dst,
-    string key
-) {
-    dst[key] = val<string>(src, key);
-    if(val<string>(dst, key).empty()) {
-        dst.erase(key);
-    }
-    return dst;
 }

@@ -35,39 +35,54 @@ class Agent;
 // A base class for subscribed message handlers
 class MessageHandler {
 
-
     protected:
+
+    vector<string> input_topics, output_topics;
+
+    // this software version
+    string version = "not_set";
+
+    // config agent name
+    string source = "not_set";
+
 
 
     // owner
     Agent *agent = nullptr;
-   
-    // Message Bus configuration
-    json::object config;
 
-    // last message received
-    json::object prev_message;
-
-    // Flag to specify whether the processor is running or not 
-    bool running = false;
-
-    // copy src string value if nonempty else delete dst key
-    json::object update_nonempty_string(
-        json::object src,
-       	json::object dst,
-       	string key
-    );
-
-    vector<string> subscriptions, publications;
+    // config
+    json::object version_info_data;
 
     // return any value for key
     template <class T>
-    T val(json::object object, string key){
-        if(object.contains(key)) {
-            return json::value_to<T>(object.at(key));
+    T val(json::object src, string key){
+        if(src.contains(key)) {
+            return json::value_to<T>(src.at(key));
         } else {
             return T(); // return a default value if not found
         }
+    }
+
+    // return any value for key with fallback
+    template <class T>
+    T val_or_else(json::object src, string key, T fallback){
+        if(src.contains(key)) {
+            return json::value_to<T>(src.at(key));
+        } else {
+            return fallback; // return fallback if not found
+        }
+    }
+
+    // copy value from src to dest, erase field in dst if not found
+    json::object val_or_erase(json::object src, json::object dst, string key){
+        if(src.contains(key)) {
+	    dst[key] = src.at(key);
+        } else {
+            if(dst.contains(key)) {
+	        dst.erase(key);
+	    }
+        }
+	return dst;
     }
 
     void publish(json::object output_message);
@@ -91,29 +106,13 @@ class MessageHandler {
         json::object output_message
     );
 
-    bool is_subscribed(string topic);
 
     public:
 
-    virtual string get_output_message_type(){ return "not set"; }
-    virtual string get_output_sub_type(){ return "not set"; }
+    virtual void configure(json::object config, Agent* agent);
+
+    virtual vector<string> get_input_topics() { return input_topics;}
+    virtual vector<string> get_output_topics() { return output_topics;}
 
     void process_message(string topic, json::object message);
-
-    void configure(json::object config, Agent *agent);
-
-    // Return the input topics
-    vector<string> get_subscriptions(){return subscriptions;}
-
-    // Return the output topics
-    vector<string> get_publications(){return publications;}
-
-    // enable agent
-    void start() { running = true;}
-
-    // disable agent
-    void stop() { running = false;}
-
-    // return the running flag
-    bool is_running() { return running; }
 };

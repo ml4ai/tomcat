@@ -12,9 +12,7 @@ namespace json = boost::json;
 using namespace std::chrono;
 
 
-MqttAgent::MqttAgent(json::object config) : Agent() {
-
-    configure(config);
+MqttAgent::MqttAgent(json::object config) : Agent(config) {
 
     // set up MQTT params for broker connection
     json::object mqtt_config = json::value_to<json::object>(config.at("mqtt"));
@@ -60,15 +58,10 @@ MqttAgent::MqttAgent(json::object config) : Agent() {
     auto rsp = this->mqtt_client->connect(connOpts)->get_connect_response();
     BOOST_LOG_TRIVIAL(info) << "Connected to the MQTT broker at " << address;
 
-    // Subscribe to input topics
-    for(string topic : get_input_topics()) {
-        mqtt_client->subscribe(topic, 2);
-        cout << "Subscribed to: " << topic << endl;
-    }
-
-    // report output topics
-    for(string topic : get_output_topics()) {
-        cout << "Publishing on: " << topic << endl;
+    // subscribe to topics
+    for(string i : message_handler.get_input_topics()) {
+        mqtt_client->subscribe(i, 2);
+	cout << "subscribed to: " << i << endl;
     }
 
     start();
@@ -76,6 +69,7 @@ MqttAgent::MqttAgent(json::object config) : Agent() {
 
 
 void MqttAgent::write(string topic, json::object message) {
+    cout << "MqttAgent::write on " << topic << ": " << message << endl;
     mqtt_client->publish(topic, json::serialize(message));
 }
 
