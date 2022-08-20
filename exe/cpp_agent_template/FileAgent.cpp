@@ -1,20 +1,22 @@
 #include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
+#include <iostream>
+#include "Agent.hpp"
 #include "FileAgent.hpp"
 
 using namespace std;
 namespace json = boost::json;
-using namespace std::chrono;
 
 
-FileAgent::FileAgent(json::object config): Agent(config) {
-
+FileAgent::FileAgent(const json::object &config) : Agent(config){
 
 }
 
+
 // write to filesystem
-void FileAgent::write(string topic, json::object message) {
+void FileAgent::write(const string topic, json::object &message) {
+
     message["topic"] = topic;
 
-    cout << "FileAgent::Writing " << message << endl;
+    cout << "FileAgent::Write:  " << message << endl;
 }

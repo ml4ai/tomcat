@@ -45,49 +45,42 @@ class MessageHandler {
     // config agent name
     string source = "not_set";
 
-
-
     // owner
     Agent *agent = nullptr;
 
-    // config
+    // version info message data
     json::object version_info_data;
 
-    // return any value for key
+    // return T value for key or default T if key not found
     template <class T>
     T val(const json::object &src, const string key) {
         if(src.contains(key)) {
             return json::value_to<T>(src.at(key));
         } else {
-            return T(); // return a default value if not found
+            return T(); 
         }
     }
 
-    // return any value for key with fallback
+    // return T value for key or fallback T if key not found
     template <class T>
-    T val_or_else(const json::object src,
+    T val_or_else(const json::object &src,
                   const string key,
                   const T fallback) {
 
         if(src.contains(key)) {
             return json::value_to<T>(src.at(key));
         } else {
-            return fallback; // return fallback if not found
+            return fallback;
         }
     }
 
-    void publish(json::object output_message);
-
-    void write(json::value jv);
     string get_timestamp();
 
     public:
 
-    MessageHandler(Agent* agent);
+    MessageHandler(Agent* agent, const json::object &config);
     MessageHandler(){}
     ~MessageHandler(){}
-
-    virtual void configure(json::object config);
 
     virtual vector<string> get_input_topics() { return input_topics;}
     virtual vector<string> get_output_topics() { return output_topics;}

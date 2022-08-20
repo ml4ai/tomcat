@@ -12,7 +12,16 @@ using namespace std;
 namespace json = boost::json;
 
 
-MessageHandler::MessageHandler(Agent *agent): agent(agent) {
+MessageHandler::MessageHandler(Agent *agent,
+                               const json::object &config): agent(agent) 
+{
+    version_info_data = config;   // TODO Will want this class info
+
+    input_topics.push_back("agent/control/rollcall/request");
+    input_topics.push_back("trial");
+
+    version = val_or_else<string>(config, "version", "not set");
+    source = val_or_else<string>(config, "agent_name", "not set");
 }
 
 
@@ -24,18 +33,6 @@ string MessageHandler::get_timestamp() {
     ) + "Z";
 }
 
-
-// Set parameters using the configuration
-void MessageHandler::configure( json::object config) {
-
-    version_info_data = config;   // TODO Will want this class info
-
-    input_topics.push_back("agent/control/rollcall/request");
-    input_topics.push_back("trial");
-
-    version = val_or_else<string>(config, "version", "not set");
-    source = val_or_else<string>(config, "agent_name", "not set");
-}
 
 void MessageHandler::process_message(string topic, json::object in_message) {
     json::object in_header = val<json::object>(in_message,"header");

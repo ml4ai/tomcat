@@ -1,13 +1,6 @@
 #pragma once
 
-#include <memory>
-#include <string>
-#include <thread> // TODO needed?
-#include <future> // TODO needed?
 #include <boost/json.hpp>
-
-#include <mqtt/async_client.h>
-
 #include "Agent.hpp"
 
 namespace json = boost::json;
@@ -21,10 +14,10 @@ class FileAgent : public Agent {
     public:
 
     /** Constructor */
-    FileAgent(json::object config);
+    FileAgent(const json::object &config);
 
     ~FileAgent(){}
 
-    /* send output to the message bus */
-    void write(string topic, json::object message) override;
+    /* write output to the filesystem */
+    void write(const string topic, json::object &message) override;
 };

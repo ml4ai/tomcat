@@ -1,15 +1,12 @@
 #pragma once
 
-#include <memory>
-#include <string>
+#include <iostream>
 #include <boost/json.hpp>
-
 #include <mqtt/async_client.h>
-
 #include "Agent.hpp"
+#include "MessageHandler.hpp"
 
 namespace json = boost::json;
-
 using namespace std;
 
 
@@ -22,11 +19,14 @@ class MqttAgent : public Agent {
 
   public:
 
+    void start() override;
+    void stop() override;
+
     /** Constructor */
-    MqttAgent(json::object config);
+    MqttAgent(const json::object &config);
 
     ~MqttAgent(){}
 
     /* send output to the message bus */
-    void write(string topic, json::object message) override;
+    void write(const string topic, json::object &message) override;
 };

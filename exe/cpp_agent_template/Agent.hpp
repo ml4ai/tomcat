@@ -9,28 +9,22 @@ using namespace std;
 
 
 class Agent {
-    Agent(){}
+
+    protected:
+
+    MessageHandler message_handler;
 
     public:
 
-    MessageHandler message_handler = MessageHandler(this);
-
-    Agent(json::object config);
+    Agent(const json::object &config);
     ~Agent(){}
-    
 
-    // Stop the agent
-    virtual void stop(){}
+    // start the agent
+    virtual void start() {}
 
-    // Start the agent
-    virtual void start(){}
+    // stop the agent
+    virtual void stop() {}
 
-    // configure agents
-    void configure(json::object config);
-
-    // message handler input 
-    void process_message(string topic, json::object message);
-
-    // message handler output
-    virtual void write(string topic, json::object message) = 0;
+    // output dispatch 
+    virtual void write(const string topic, json::object &message) {}
 };

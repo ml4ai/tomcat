@@ -1,7 +1,11 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
+#include "Agent.hpp"
 #include "MqttAgent.hpp"
+#include "MessageHandler.hpp"
+#include <iostream>
+
 
 // This class :
 //   Maintains the MQTT broker connection
@@ -12,7 +16,8 @@ namespace json = boost::json;
 using namespace std::chrono;
 
 
-MqttAgent::MqttAgent(json::object config) : Agent(config) {
+MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
+
 
     // set up MQTT params for broker connection
     json::object mqtt_config = json::value_to<json::object>(config.at("mqtt"));
@@ -52,7 +57,7 @@ MqttAgent::MqttAgent(json::object config) : Agent(config) {
         json::object message = 
 	    json::value_to<json::object>(json_parser.release());
 
-	process_message(topic, message);
+	message_handler.process_message(topic, message);
     });
 
     auto rsp = this->mqtt_client->connect(connOpts)->get_connect_response();
@@ -67,9 +72,15 @@ MqttAgent::MqttAgent(json::object config) : Agent(config) {
     start();
 }
 
-
-void MqttAgent::write(string topic, json::object message) {
+void MqttAgent::write(const string topic, json::object &message) {
     cout << "MqttAgent::write on " << topic << ": " << message << endl;
     mqtt_client->publish(topic, json::serialize(message));
 }
 
+void MqttAgent::start() {
+
+}
+
+void MqttAgent::stop() {
+
+}
