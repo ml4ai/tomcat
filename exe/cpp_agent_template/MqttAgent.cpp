@@ -63,7 +63,6 @@ MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
     BOOST_LOG_TRIVIAL(info) << "Connected to the MQTT broker at " << address;
 
     // advise of subscribed topics
-    cout << endl;
     cout << "Subscription topics:" << endl;
     for(string i : get_read_topics()) {
         mqtt_client->subscribe(i, 2);
@@ -71,12 +70,10 @@ MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
     }
 
     // advise of published topics
-    cout << endl;
     cout << "Publication topics:" << endl;
     for(string i : get_write_topics()) {
 	cout << "    " << i << endl;
     }
-    cout << endl;
 
     start();
 }

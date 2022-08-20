@@ -13,13 +13,21 @@ ReferenceMessageHandler::ReferenceMessageHandler(
     const json::object &config): BaseMessageHandler(agent, config)
 {
 
-    // get config subscribes and publishes arrays
+    // get subscription topics
+    json::array subs = val<json::array>(config, "subscribes");
+    for(size_t i = 0;  i < subs.size(); i++) {
+	json::value element = subs.at(i);
+	string topic = json::value_to<std::string>(element.at("topic"));
+        input_topics.push_back(topic);
+    }
 
-    input_topics.push_back("agent/reference_agent_input_1");
-    input_topics.push_back("agent/reference_agent_input_2");
-
-    output_topics.push_back("agent/reference_agent_output_1");
-    output_topics.push_back("agent/reference_agent_output_2");
+    // get publication topics
+    json::array pubs = val<json::array>(config, "publishes");
+    for(size_t i = 0 ;  i < pubs.size() ; i++) {
+	json::value element = pubs.at(i);
+	string topic = json::value_to<std::string>(element.at("topic"));
+        output_topics.push_back(topic);
+    }
 }
 
 void ReferenceMessageHandler::process_message(const string topic, 
