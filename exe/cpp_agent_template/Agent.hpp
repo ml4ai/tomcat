@@ -1,7 +1,7 @@
 #pragma once
 
 #include <boost/json.hpp>
-#include "BaseMessageHandler.hpp"
+#include "ReferenceMessageHandler.hpp"
 
 namespace json = boost::json;
 
@@ -10,9 +10,7 @@ using namespace std;
 
 class Agent {
 
-    protected:
-
-    BaseMessageHandler message_handler;
+    ReferenceMessageHandler message_handler;
 
     public:
 
@@ -25,6 +23,11 @@ class Agent {
     // stop the agent
     virtual void stop() {}
 
-    // output dispatch 
+    // input
+    vector<string> get_read_topics();
+    void read(const string topic, const json::object &message);
+
+    // output
+    vector<string> get_write_topics();
     virtual void write(const string topic, json::object &message) {}
 };

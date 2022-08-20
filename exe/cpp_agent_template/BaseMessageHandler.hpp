@@ -37,8 +37,6 @@ class BaseMessageHandler {
 
     protected:
 
-    vector<string> input_topics, output_topics;
-
     // this software version
     string version = "not_set";
 
@@ -82,8 +80,8 @@ class BaseMessageHandler {
     BaseMessageHandler(){}
     ~BaseMessageHandler(){}
 
-    virtual vector<string> get_input_topics() { return input_topics;}
-    virtual vector<string> get_output_topics() { return output_topics;}
+    virtual vector<string> get_input_topics();
+    virtual vector<string> get_output_topics();
 
-    void process_message(string topic, json::object message);
+    virtual void process_message(const string topic, const json::object &message);
 };

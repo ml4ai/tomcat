@@ -3,7 +3,6 @@
 #include <boost/log/trivial.hpp>
 #include "Agent.hpp"
 #include "MqttAgent.hpp"
-#include "BaseMessageHandler.hpp"
 #include <iostream>
 
 
@@ -57,16 +56,21 @@ MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
         json::object message = 
 	    json::value_to<json::object>(json_parser.release());
 
-	message_handler.process_message(topic, message);
+	read(topic, message);
     });
 
     auto rsp = this->mqtt_client->connect(connOpts)->get_connect_response();
     BOOST_LOG_TRIVIAL(info) << "Connected to the MQTT broker at " << address;
 
-    // subscribe to topics
-    for(string i : message_handler.get_input_topics()) {
+    // advise of subscribed topics
+    for(string i : get_read_topics()) {
         mqtt_client->subscribe(i, 2);
 	cout << "subscribed to: " << i << endl;
+    }
+
+    // advise of published topics
+    for(string i : get_write_topics()) {
+	cout << "publishing on: " << i << endl;
     }
 
     start();
