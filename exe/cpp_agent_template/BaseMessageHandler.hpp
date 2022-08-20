@@ -33,7 +33,7 @@ using namespace std;
 class Agent;
 
 // A base class for subscribed message handlers
-class MessageHandler {
+class BaseMessageHandler {
 
     protected:
 
@@ -78,9 +78,9 @@ class MessageHandler {
 
     public:
 
-    MessageHandler(Agent* agent, const json::object &config);
-    MessageHandler(){}
-    ~MessageHandler(){}
+    BaseMessageHandler(Agent* agent, const json::object &config);
+    BaseMessageHandler(){}
+    ~BaseMessageHandler(){}
 
     virtual vector<string> get_input_topics() { return input_topics;}
     virtual vector<string> get_output_topics() { return output_topics;}

@@ -3,7 +3,7 @@
 #include <boost/log/trivial.hpp>
 #include "Agent.hpp"
 #include "MqttAgent.hpp"
-#include "MessageHandler.hpp"
+#include "BaseMessageHandler.hpp"
 #include <iostream>
 
 

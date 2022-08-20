@@ -6,13 +6,13 @@
 
 #include "Agent.hpp"
 
-#include "MessageHandler.hpp"
+#include "BaseMessageHandler.hpp"
 
 using namespace std;
 namespace json = boost::json;
 
 
-MessageHandler::MessageHandler(Agent *agent,
+BaseMessageHandler::BaseMessageHandler(Agent *agent,
                                const json::object &config): agent(agent) 
 {
     version_info_data = config;   // TODO Will want this class info
@@ -27,14 +27,14 @@ MessageHandler::MessageHandler(Agent *agent,
 
 
 /** Get current UTC timestamp in ISO-8601 format. */
-string MessageHandler::get_timestamp() {
+string BaseMessageHandler::get_timestamp() {
     return boost::posix_time::to_iso_extended_string(
         boost::posix_time::microsec_clock::universal_time()
     ) + "Z";
 }
 
 
-void MessageHandler::process_message(string topic, json::object in_message) {
+void BaseMessageHandler::process_message(string topic, json::object in_message) {
     json::object in_header = val<json::object>(in_message,"header");
     json::object in_msg = val<json::object>(in_message,"msg");
     json::object in_data = val<json::object>(in_message,"data");

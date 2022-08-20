@@ -1,7 +1,7 @@
 #pragma once
 
 #include <boost/json.hpp>
-#include "MessageHandler.hpp"
+#include "BaseMessageHandler.hpp"
 
 namespace json = boost::json;
 
@@ -12,7 +12,7 @@ class Agent {
 
     protected:
 
-    MessageHandler message_handler;
+    BaseMessageHandler message_handler;
 
     public:
 

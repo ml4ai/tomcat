@@ -1,7 +1,7 @@
 #include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
 #include "Agent.hpp"
-#include "MessageHandler.hpp"
+#include "BaseMessageHandler.hpp"
 #include <iostream>
 
 
@@ -12,6 +12,6 @@ namespace json = boost::json;
 
 Agent::Agent(const json::object &config) {
 
-    message_handler = MessageHandler(this, config);
+    message_handler = BaseMessageHandler(this, config);
 }
 

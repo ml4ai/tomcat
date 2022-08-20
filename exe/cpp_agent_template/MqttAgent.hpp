@@ -4,7 +4,6 @@
 #include <boost/json.hpp>
 #include <mqtt/async_client.h>
 #include "Agent.hpp"
-#include "MessageHandler.hpp"
 
 namespace json = boost::json;
 using namespace std;
