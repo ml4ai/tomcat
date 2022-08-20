@@ -11,6 +11,8 @@ class Agent;
 
 class ReferenceMessageHandler: public BaseMessageHandler {
 
+    vector<string> input_topics, output_topics;
+
     public:
 
     ReferenceMessageHandler(Agent* agent, const json::object &config);
