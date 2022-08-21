@@ -24,10 +24,10 @@ class Agent {
     virtual void stop() {}
 
     // input
-    vector<string> get_read_topics();
+    vector<string> get_input_topics();
     void read(const string topic, const json::object &message);
 
     // output
-    vector<string> get_write_topics();
+    vector<string> get_output_topics();
     virtual void write(const string topic, json::object &message) {}
 };

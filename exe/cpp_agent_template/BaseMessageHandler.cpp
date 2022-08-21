@@ -3,6 +3,7 @@
 #include <boost/json/array.hpp>
 #include <mqtt/async_client.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <set>
 
 #include "Agent.hpp"
 
@@ -11,73 +12,17 @@
 using namespace std;
 namespace json = boost::json;
 
-/*
-{
-  "agent_name": "AC_UAZ_TA1_ReferenceAgent",
-  "owner": "University of Arizona",
-  "version": "1.0.0",
-  "config": [],
-  "dependencies": [],
-  "source": [
-    "https://gitlab.asist.aptima.com:5050/asist/testbed/AC_UAZ_TA1_ReferenceAgent:i.j.k"
-  ],
-  "publishes": [
-    {
-      "topic": "agent/reference_agent_output",
-      "message_type": "reference_agent_output_message_type",
-      "sub_type": "reference_agent_output_sub_type"
-    },
-    {
-      "topic": "agent/control/rollcall/response",
-      "message_type": "agent",
-      "sub_type": "rollcall:response"
-    },
-    {
-      "topic": "status/reference_agent/heartbeats",
-      "message_type": "status",
-      "sub_type": "heartbeat"
-    },
-    {
-      "topic": "agent/reference_agent/versioninfo",
-      "message_type": "agent",
-      "sub_type": "versioninfo"
-    }
-  ],
-  "subscribes": [
-    {
-      "topic": "agent/reference_agent_input",
-      "message_type": "reference_agent_input_message_type",
-      "sub_type": "reference_agent_input_sub_type"
-    },
-    {
-      "topic": "agent/control/rollcall/request",
-      "message_type": "agent",
-      "sub_type": "rollcall:request"
-    },
-    {
-      "topic": "trial",
-      "message_type": "trial",
-      "sub_type": "start"
-    },
-    {
-      "topic": "trial",
-      "message_type": "trial",
-      "sub_type": "stop"
-    }
-  ]
-}
-*/
 
 BaseMessageHandler::BaseMessageHandler(
         Agent *agent,
         const json::object &config): agent(agent) 
 {
 
-    // set up the version info data
-
     agent_name = val_or_else<string>(config, "agent_name", "not_set");
     version = val_or_else<string>(config, "version", "not_set");
     owner = val_or_else<string>(config, "owner", "not_set");
+
+    // set up the version info data
     string source = TESTBED + string("/") + agent_name + string(":") + version;
 
     json::value jv = {
@@ -123,7 +68,7 @@ BaseMessageHandler::BaseMessageHandler(
 
     version_info_data = json::value_to<json::object>(jv);
 
-    // add config elements
+    // add config subscriptions and publications
     append_array(config, version_info_data, "publishes");
     append_array(config, version_info_data, "subscribes");
 }
@@ -141,19 +86,26 @@ void BaseMessageHandler::append_array(const json::object &src,
     dst[key] = dst_array;
 }
 
-vector<string>BaseMessageHandler::get_input_topics() {
-    vector<string> input_topics;
-    input_topics.push_back("agent/control/rollcall/request");
-    input_topics.push_back("trial");
-    return input_topics;
-}
 
-vector<string>BaseMessageHandler::get_output_topics() {
-    vector<string> output_topics;
-    output_topics.push_back("agent/reference_agent/versioninfo");
-    output_topics.push_back("status/reference_agent/heartbeats");
-    output_topics.push_back("agent/control/rollcall/response");
-    return output_topics;
+vector<string> BaseMessageHandler::get_topics(const string which) {
+
+    set<string> topics;
+
+    json::array arr = val<json::array>(version_info_data, which);
+    for(size_t i = 0 ;  i < arr.size() ; i++) {
+        json::value element = arr.at(i);
+        string topic = json::value_to<std::string>(element.at("topic"));
+	if(!topic.empty()) {
+            topics.insert(topic);
+	}
+    }
+
+    vector<string> ret;
+    for(auto& topic : topics) {
+        ret.push_back(topic);
+    }
+
+    return ret;
 }
 
 /** Get current UTC timestamp in ISO-8601 format. */
@@ -163,64 +115,88 @@ string BaseMessageHandler::get_timestamp() {
     ) + "Z";
 }
 
+// TODO use json::value in place of const?
+json::object BaseMessageHandler::get_output_header(
+		const json::object &input_header,
+                const string timestamp) {
+
+    json::object output_header;
+    output_header["timestamp"] = timestamp;
+    output_header["version"] = 
+        val_or_else<string>(input_header, "version", "1.0");
+
+    return output_header;
+}
+
+// TODO use json::value in place of const?
+json::object BaseMessageHandler::get_output_msg(const json::object &input_msg,
+                                                const string timestamp) {
+
+    json::object output_msg;
+    output_msg["source"] = agent_name;
+    output_msg["version"] = version;
+    output_msg["timestamp"] = timestamp;
+
+    // add these if they exist and are non-empty
+    if(!val<string>(input_msg, "experiment_id").empty()) {
+        output_msg["experiment_id"] = input_msg.at("experiment_id");
+    }
+    if(!val<string>(input_msg, "trial_id").empty()) {
+        output_msg["trial_id"] = input_msg.at("trial_id");
+    }
+    if(!val<string>(input_msg, "replay_id").empty()) {
+        output_msg["replay_id"] = input_msg.at("replay_id");
+    }
+    if(!val<string>(input_msg, "replay_root_id").empty()) {
+        output_msg["replay_root_id"] = input_msg.at("replay_root_id");
+    }
+
+    return output_msg;
+}
 
 void BaseMessageHandler::process_message(const string topic,
-                                         const json::object &in_message) {
-    json::object in_header = val<json::object>(in_message,"header");
-    json::object in_msg = val<json::object>(in_message,"msg");
-    json::object in_data = val<json::object>(in_message,"data");
-    string in_message_type = val<string>(in_header, "message_type");
-    string in_sub_type = val<string>(in_msg, "sub_type");
+                                         const json::object &input_message) {
+
+    json::object input_header = val<json::object>(input_message,"header");
+    json::object input_msg = val<json::object>(input_message,"msg");
+    string input_message_type = val<string>(input_header, "message_type");
+    string in_sub_type = val<string>(input_msg, "sub_type");
 
     string timestamp = get_timestamp();
 
-    json::object out_header;
-    out_header["timestamp"] = timestamp;
-    out_header["version"] = val_or_else<string>(in_header, "version", "1.0");
-
-    json::object out_msg;
-    out_msg["source"] = agent_name;
-    out_msg["version"] = version;
-    out_msg["timestamp"] = timestamp;
-
-    // add these if they exist and are non-empty
-    if(!val<string>(in_msg, "experiment_id").empty()) {
-        out_msg["experiment_id"] = in_msg.at("experiment_id");
-    }
-    if(!val<string>(in_msg, "trial_id").empty()) {
-        out_msg["trial_id"] = in_msg.at("trial_id");
-    }
-    if(!val<string>(in_msg, "replay_id").empty()) {
-        out_msg["replay_id"] = in_msg.at("replay_id");
-    }
-    if(!val<string>(in_msg, "replay_root_id").empty()) {
-        out_msg["replay_root_id"] = in_msg.at("replay_root_id");
-    }
 
     // if trial start send version info
     if((topic.compare(TRIAL_TOPIC) == 0) &&
-        (in_message_type.compare(TRIAL_MESSAGE_TYPE) == 0) &&
+        (input_message_type.compare(TRIAL_MESSAGE_TYPE) == 0) &&
         (in_sub_type.compare(TRIAL_SUB_TYPE_START) == 0))
     {
-	out_header["message_type"] = VERSION_INFO_MESSAGE_TYPE;
-	out_msg["sub_type"] = VERSION_INFO_SUB_TYPE;
+        json::object output_header = get_output_header(input_header, timestamp);
+	output_header["message_type"] = VERSION_INFO_MESSAGE_TYPE;
 
-	json::object out_message;
-	out_message["header"] = out_header;
-	out_message["msg"] = out_msg;
-	out_message["data"] = version_info_data;
+        json::object output_msg = get_output_msg(input_msg, timestamp);
+	output_msg["sub_type"] = VERSION_INFO_SUB_TYPE;
 
-	agent->write(VERSION_INFO_TOPIC, out_message);
+	json::object output_message;
+	output_message["header"] = output_header;
+	output_message["msg"] = output_msg;
+	output_message["data"] = version_info_data;
+
+	agent->write(VERSION_INFO_TOPIC, output_message);
     }
 
     // if rollcall request send rollcall response
-    if((topic.compare(ROLLCALL_REQUEST_TOPIC) == 0) &&
-        (in_message_type.compare(ROLLCALL_REQUEST_MESSAGE_TYPE) == 0) &&
+    else if((topic.compare(ROLLCALL_REQUEST_TOPIC) == 0) &&
+        (input_message_type.compare(ROLLCALL_REQUEST_MESSAGE_TYPE) == 0) &&
         (in_sub_type.compare(ROLLCALL_REQUEST_SUB_TYPE) == 0))
     {
-	out_header["message_type"] = ROLLCALL_RESPONSE_MESSAGE_TYPE;
+        json::object output_header = 
+            get_output_header(input_message, timestamp);
+	output_header["message_type"] = ROLLCALL_RESPONSE_MESSAGE_TYPE;
 
-	out_msg["sub_type"] = ROLLCALL_RESPONSE_SUB_TYPE;
+        json::object output_msg = get_output_msg(input_message, timestamp);
+	output_msg["sub_type"] = ROLLCALL_RESPONSE_SUB_TYPE;
+
+        json::object in_data = val<json::object>(input_message,"data");
 
 	json::object out_data;
 	out_data["version"] = version;
@@ -229,11 +205,11 @@ void BaseMessageHandler::process_message(const string topic,
 	out_data["rollcall_id"] = 
             val_or_else<string>(in_data, "rollcall_id", "not set");
 
-	json::object out_message;
-	out_message["header"] = out_header;
-	out_message["msg"] = out_msg;
-	out_message["data"] = out_data;
+	json::object output_message;
+	output_message["header"] = output_header;
+	output_message["msg"] = output_msg;
+	output_message["data"] = out_data;
 
-	agent->write(ROLLCALL_RESPONSE_TOPIC, out_message);
+	agent->write(ROLLCALL_RESPONSE_TOPIC, output_message);
     }
 }

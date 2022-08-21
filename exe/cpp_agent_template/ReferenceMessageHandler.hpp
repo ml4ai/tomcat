@@ -19,9 +19,6 @@ class ReferenceMessageHandler: public BaseMessageHandler {
     ReferenceMessageHandler(){}
     ~ReferenceMessageHandler(){}
 
-    vector<string> get_input_topics() override;
-    vector<string> get_output_topics() override;
-
     void process_message(const string topic,
                          const json::object &message) override;
 };

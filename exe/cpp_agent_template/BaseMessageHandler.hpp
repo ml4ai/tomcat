@@ -68,7 +68,7 @@ class BaseMessageHandler {
     // owner
     Agent *agent = nullptr;
 
-    // version info message data
+    // version info message data sent at trial start
     json::object version_info_data;
 
     // return T value for key or default T if key not found
@@ -100,14 +100,21 @@ class BaseMessageHandler {
                       json::object &dst,
                       const string key);
 
+    json::object get_output_header(const json::object &input_header,
+		                   const string timestamp);
+
+    json::object get_output_msg(const json::object &input_msg,
+		                const string timestamp);
+
+
     public:
 
     BaseMessageHandler(Agent* agent, const json::object &config);
     BaseMessageHandler(){}
     ~BaseMessageHandler(){}
 
-    virtual vector<string> get_input_topics();
-    virtual vector<string> get_output_topics();
+    vector<string> get_topics(string which);
 
-    virtual void process_message(const string topic, const json::object &message);
+    virtual void process_message(const string topic,
+		                 const json::object &message);
 };

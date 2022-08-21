@@ -16,10 +16,10 @@ void Agent::read(const string topic, const json::object &message) {
     message_handler.process_message(topic, message);
 }
 
-vector<string> Agent::get_read_topics() {
-    return message_handler.get_input_topics();
+vector<string> Agent::get_input_topics() {
+    return message_handler.get_topics("subscribes");
 }
 
-vector<string> Agent::get_write_topics() {
-    return message_handler.get_output_topics();
+vector<string> Agent::get_output_topics() {
+    return message_handler.get_topics("publishes");
 }

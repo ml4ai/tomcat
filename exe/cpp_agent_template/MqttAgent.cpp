@@ -64,14 +64,14 @@ MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
 
     // advise of subscribed topics
     cout << "Subscription topics:" << endl;
-    for(string i : get_read_topics()) {
+    for(string i : get_input_topics()) {
         mqtt_client->subscribe(i, 2);
 	cout << "    " << i << endl;
     }
 
     // advise of published topics
     cout << "Publication topics:" << endl;
-    for(string i : get_write_topics()) {
+    for(string i : get_output_topics()) {
 	cout << "    " << i << endl;
     }
 
