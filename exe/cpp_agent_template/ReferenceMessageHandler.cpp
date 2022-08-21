@@ -10,7 +10,7 @@ namespace json = boost::json;
 
 ReferenceMessageHandler::ReferenceMessageHandler(
     Agent *agent,
-    const json::object &config): BaseMessageHandler(agent, config)
+    const json::object &config) :  BaseMessageHandler(agent, config)
 {
 
     // get subscription topics

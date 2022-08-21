@@ -71,10 +71,71 @@ namespace json = boost::json;
 BaseMessageHandler::BaseMessageHandler(Agent *agent,
                                const json::object &config): agent(agent) 
 {
-    version_info_data = config;   // TODO Will want this class info
-
     version = val_or_else<string>(config, "version", "not set");
     source = val_or_else<string>(config, "agent_name", "not set");
+
+    // The version info data is the config plus the publications
+    // and subscriptions handled by this base class
+    version_info_data = config;
+
+    // subscriptions
+    json::object trial_start;
+    trial_start["topic"] = TRIAL_TOPIC;
+    trial_start["message_type"] = TRIAL_MESSAGE_TYPE;
+    trial_start["sub_type"] = TRIAL_SUB_TYPE_START;
+
+    json::object trial_stop;
+    trial_stop["topic"] = TRIAL_TOPIC;
+    trial_stop["message_type"] = TRIAL_MESSAGE_TYPE;
+    trial_stop["sub_type"] = TRIAL_SUB_TYPE_START;
+
+    json::object rollcall_request;
+    rollcall_request["topic"] = ROLLCALL_REQUEST_TOPIC;
+    rollcall_request["message_type"] = ROLLCALL_REQUEST_MESSAGE_TYPE;
+    rollcall_request["sub_type"] = ROLLCALL_REQUEST_SUB_TYPE;
+
+    // base publications
+    json::object rollcall_response;
+    rollcall_response["topic"] = ROLLCALL_RESPONSE_TOPIC;
+    rollcall_response["message_type"] = ROLLCALL_RESPONSE_MESSAGE_TYPE;
+    rollcall_response["sub_type"] = ROLLCALL_RESPONSE_SUB_TYPE;
+    
+    json::object heartbeat;
+    heartbeat["topic"] = HEARTBEAT_TOPIC;
+    heartbeat["message_type"] = HEARTBEAT_MESSAGE_TYPE;
+    heartbeat["sub_type"] = HEARTBEAT_SUB_TYPE;
+
+    json::object version_info;
+    version_info["topic"] = VERSION_INFO_TOPIC;
+    version_info["message_type"] = VERSION_INFO_MESSAGE_TYPE;
+    version_info["sub_type"] = VERSION_INFO_SUB_TYPE;
+
+    // append our subscriptions to the config subcriptions
+    json::array subs = val<json::array>(config, "subcriptions");
+    subs.emplace_back(trial_start);
+    subs.emplace_back(trial_stop);
+    subs.emplace_back(rollcall_request);
+    version_info_data["subcriptions"] = pubs;
+
+    // append our publications to the config publications
+    json::array pubs = val<json::array>(config, "publishes");
+    pubs.emplace_back(rollcall_response);
+    pubs.emplace_back(heartbeat);
+    pubs.emplace_back(version_info);
+    version_info_data["publishes"] = pubs;
+}
+
+void BaseMessageHandler::add_message(json::array &arr,
+                                     string topic,
+                                     string message_type,
+                                     string sub_type) {
+
+    json::object element;
+    element["topic"] = topic;
+    element["message_type"] = message_type;
+    element["sub_type"] = sub_type;
+
+    arr.emplace_back(element);
 }
 
 vector<string>BaseMessageHandler::get_input_topics() {
@@ -134,28 +195,29 @@ void BaseMessageHandler::process_message(const string topic,
     }
 
     // if trial start send version info
-    if((string("trial").compare(topic) == 0) &&
-        (string("trial").compare(in_message_type) == 0) &&
-        (string("start").compare(in_sub_type) == 0))
+    if((topic.compare(TRIAL_TOPIC) == 0) &&
+        (in_message_type.compare(TRIAL_MESSAGE_TYPE) == 0) &&
+        (in_sub_type.compare(TRIAL_SUB_TYPE_START) == 0))
     {
-	out_header["message_type"] = "agent";
-	out_msg["sub_type"] = "versioninfo";
+	out_header["message_type"] = VERSION_INFO_MESSAGE_TYPE;
+	out_msg["sub_type"] = VERSION_INFO_SUB_TYPE;
 
 	json::object out_message;
 	out_message["header"] = out_header;
 	out_message["msg"] = out_msg;
 	out_message["data"] = version_info_data;
 
-	agent->write("agent/reference_agent/versioninfo", out_message);
+	agent->write(VERSION_INFO_TOPIC, out_message);
     }
 
     // if rollcall request send rollcall response
-    if((string("agent/control/rollcall/request").compare(topic) == 0) &&
-        (string("agent").compare(in_message_type) == 0) &&
-        (string("rollcall:request").compare(in_sub_type) == 0))
+    if((topic.compare(ROLLCALL_REQUEST_TOPIC) == 0) &&
+        (in_message_type.compare(ROLLCALL_REQUEST_MESSAGE_TYPE) == 0) &&
+        (in_sub_type.compare(ROLLCALL_REQUEST_SUB_TYPE) == 0))
     {
-	out_header["message_type"] = "agent";
-	out_msg["sub_type"] = "rollcall:response";
+	out_header["message_type"] = ROLLCALL_RESPONSE_MESSAGE_TYPE;
+
+	out_msg["sub_type"] = ROLLCALL_RESPONSE_SUB_TYPE;
 
 	json::object out_data;
 	out_data["version"] = version;
@@ -169,6 +231,6 @@ void BaseMessageHandler::process_message(const string topic,
 	out_message["msg"] = out_msg;
 	out_message["data"] = out_data;
 
-	agent->write("agent/reference_agent/versioninfo", out_message);
+	agent->write(ROLLCALL_RESPONSE_TOPIC, out_message);
     }
 }

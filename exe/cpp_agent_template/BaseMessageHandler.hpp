@@ -8,10 +8,9 @@ using namespace std;
 
 // input / output message format:
 // {
-//   "topic": topic
 //   "header": {
 //     "version": testbed version or 0.1 if not in input
-//     "message_type": message_type
+//     "message_type": MESSAGE_TYPE
 //     "timestamp": UTC timestamp in ISO-8601 format
 //   },
 //   "msg": {
@@ -20,7 +19,7 @@ using namespace std;
 //     "replay_id": field not included if empty in input
 //     "version": agent version
 //     "replay_root_id": field not included empty in input
-//     "sub_type": sub_type
+//     "sub_type": SUB_TYPE
 //     "source": agent name
 //     "experiment_id": field not included empty in input
 //   },
@@ -29,6 +28,28 @@ using namespace std;
 //   }
 // }
 
+// subscriptions
+#define TRIAL_TOPIC "trial"
+#define TRIAL_MESSAGE_TYPE "trial"
+#define TRIAL_SUB_TYPE_START "start"
+#define TRIAL_SUB_TYPE_STOP "stop"
+
+#define ROLLCALL_REQUEST_TOPIC "agent/control/rollcall/request"
+#define ROLLCALL_REQUEST_MESSAGE_TYPE "agent"
+#define ROLLCALL_REQUEST_SUB_TYPE "rollcall:request"
+
+// publications
+#define HEARTBEAT_TOPIC "status/reference_agent/heartbeats"
+#define HEARTBEAT_MESSAGE_TYPE "status"
+#define HEARTBEAT_SUB_TYPE "heartbeat"
+
+#define ROLLCALL_RESPONSE_TOPIC "agent/control/rollcall/response"
+#define ROLLCALL_RESPONSE_MESSAGE_TYPE "agent"
+#define ROLLCALL_RESPONSE_SUB_TYPE "rollcall:response"
+
+#define VERSION_INFO_TOPIC "agent/reference_agent/versioninfo"
+#define VERSION_INFO_MESSAGE_TYPE "agent"
+#define VERSION_INFO_SUB_TYPE "versioninfo"
 
 class Agent;
 
@@ -71,6 +92,12 @@ class BaseMessageHandler {
             return fallback;
         }
     }
+
+    //TODO experimental use only
+    void add_message(json::array &arr,
+                     string topic,
+                     string message_type,
+                     string sub_type);
 
     string get_timestamp();
 
