@@ -68,74 +68,77 @@ namespace json = boost::json;
 }
 */
 
-BaseMessageHandler::BaseMessageHandler(Agent *agent,
-                               const json::object &config): agent(agent) 
+BaseMessageHandler::BaseMessageHandler(
+        Agent *agent,
+        const json::object &config): agent(agent) 
 {
-    version = val_or_else<string>(config, "version", "not set");
-    source = val_or_else<string>(config, "agent_name", "not set");
 
-    // The version info data is the config plus the publications
-    // and subscriptions handled by this base class
-    version_info_data = config;
+    // set up the version info data
 
-    // subscriptions
-    json::object trial_start;
-    trial_start["topic"] = TRIAL_TOPIC;
-    trial_start["message_type"] = TRIAL_MESSAGE_TYPE;
-    trial_start["sub_type"] = TRIAL_SUB_TYPE_START;
+    agent_name = val_or_else<string>(config, "agent_name", "not_set");
+    version = val_or_else<string>(config, "version", "not_set");
+    owner = val_or_else<string>(config, "owner", "not_set");
+    string source = TESTBED + string("/") + agent_name + string(":") + version;
 
-    json::object trial_stop;
-    trial_stop["topic"] = TRIAL_TOPIC;
-    trial_stop["message_type"] = TRIAL_MESSAGE_TYPE;
-    trial_stop["sub_type"] = TRIAL_SUB_TYPE_START;
+    json::value jv = {
+        { "agent_name", agent_name },
+	{ "version", version },
+	{ "owner", owner },
+	{ "source", { source } },
+	{ "subscribes", {
+            {
+                { "topic", TRIAL_TOPIC },
+                { "message_type", TRIAL_MESSAGE_TYPE },
+                { "sub_type", TRIAL_SUB_TYPE_START }
+            }, 
+            {
+                { "topic", TRIAL_TOPIC },
+                { "message_type", TRIAL_MESSAGE_TYPE },
+                { "sub_type", TRIAL_SUB_TYPE_STOP }
+            }, 
+            {
+                { "topic", ROLLCALL_REQUEST_TOPIC },
+                { "message_type", ROLLCALL_REQUEST_MESSAGE_TYPE },
+                { "sub_type", ROLLCALL_REQUEST_SUB_TYPE }
+            }
+        }},
+	{ "publishes" , {
+            {
+                { "topic", ROLLCALL_RESPONSE_TOPIC },
+                { "message_type", ROLLCALL_RESPONSE_MESSAGE_TYPE },
+                { "sub_type", ROLLCALL_RESPONSE_SUB_TYPE }
+            }, 
+            {
+                { "topic", VERSION_INFO_TOPIC },
+                { "message_type", VERSION_INFO_MESSAGE_TYPE },
+                { "sub_type", VERSION_INFO_SUB_TYPE }
+            }, 
+            {
+                { "topic", HEARTBEAT_TOPIC },
+                { "message_type", HEARTBEAT_MESSAGE_TYPE },
+                { "sub_type", HEARTBEAT_SUB_TYPE }
+            }
+	}}
+    };
 
-    json::object rollcall_request;
-    rollcall_request["topic"] = ROLLCALL_REQUEST_TOPIC;
-    rollcall_request["message_type"] = ROLLCALL_REQUEST_MESSAGE_TYPE;
-    rollcall_request["sub_type"] = ROLLCALL_REQUEST_SUB_TYPE;
+    version_info_data = json::value_to<json::object>(jv);
 
-    // base publications
-    json::object rollcall_response;
-    rollcall_response["topic"] = ROLLCALL_RESPONSE_TOPIC;
-    rollcall_response["message_type"] = ROLLCALL_RESPONSE_MESSAGE_TYPE;
-    rollcall_response["sub_type"] = ROLLCALL_RESPONSE_SUB_TYPE;
-    
-    json::object heartbeat;
-    heartbeat["topic"] = HEARTBEAT_TOPIC;
-    heartbeat["message_type"] = HEARTBEAT_MESSAGE_TYPE;
-    heartbeat["sub_type"] = HEARTBEAT_SUB_TYPE;
-
-    json::object version_info;
-    version_info["topic"] = VERSION_INFO_TOPIC;
-    version_info["message_type"] = VERSION_INFO_MESSAGE_TYPE;
-    version_info["sub_type"] = VERSION_INFO_SUB_TYPE;
-
-    // append our subscriptions to the config subcriptions
-    json::array subs = val<json::array>(config, "subcriptions");
-    subs.emplace_back(trial_start);
-    subs.emplace_back(trial_stop);
-    subs.emplace_back(rollcall_request);
-    version_info_data["subcriptions"] = pubs;
-
-    // append our publications to the config publications
-    json::array pubs = val<json::array>(config, "publishes");
-    pubs.emplace_back(rollcall_response);
-    pubs.emplace_back(heartbeat);
-    pubs.emplace_back(version_info);
-    version_info_data["publishes"] = pubs;
+    // add config elements
+    append_array(config, version_info_data, "publishes");
+    append_array(config, version_info_data, "subscribes");
 }
 
-void BaseMessageHandler::add_message(json::array &arr,
-                                     string topic,
-                                     string message_type,
-                                     string sub_type) {
+// append the dst array to the src array at key
+void BaseMessageHandler::append_array(const json::object &src,
+                                      json::object &dst,
+                                      const string key){
 
-    json::object element;
-    element["topic"] = topic;
-    element["message_type"] = message_type;
-    element["sub_type"] = sub_type;
-
-    arr.emplace_back(element);
+    json::array src_array = val<json::array>(src, key);
+    json::array dst_array = val<json::array>(dst, key);
+    for(size_t i = 0 ;  i < src_array.size() ; i++) {
+	dst_array.emplace_back(src_array.at(i));
+    }
+    dst[key] = dst_array;
 }
 
 vector<string>BaseMessageHandler::get_input_topics() {
@@ -176,7 +179,7 @@ void BaseMessageHandler::process_message(const string topic,
     out_header["version"] = val_or_else<string>(in_header, "version", "1.0");
 
     json::object out_msg;
-    out_msg["source"] = source;
+    out_msg["source"] = agent_name;
     out_msg["version"] = version;
     out_msg["timestamp"] = timestamp;
 

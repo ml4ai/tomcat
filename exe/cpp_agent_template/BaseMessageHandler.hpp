@@ -28,6 +28,8 @@ using namespace std;
 //   }
 // }
 
+#define TESTBED "https://gitlab.asist.aptima.com:5050/asist/testbed"
+
 // subscriptions
 #define TRIAL_TOPIC "trial"
 #define TRIAL_MESSAGE_TYPE "trial"
@@ -58,11 +60,10 @@ class BaseMessageHandler {
 
     protected:
 
-    // this software version
+    // values read from config file
     string version = "not_set";
-
-    // config agent name
-    string source = "not_set";
+    string agent_name = "not_set";
+    string owner = "not_set";
 
     // owner
     Agent *agent = nullptr;
@@ -93,13 +94,11 @@ class BaseMessageHandler {
         }
     }
 
-    //TODO experimental use only
-    void add_message(json::array &arr,
-                     string topic,
-                     string message_type,
-                     string sub_type);
-
     string get_timestamp();
+
+    void append_array(const json::object &src,
+                      json::object &dst,
+                      const string key);
 
     public:
 
