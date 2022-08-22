@@ -18,7 +18,6 @@ using namespace std::chrono;
 
 MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
 
-    message_handler.configure(config);
     heartbeat_producer.configure(config);
 
     cout << "Initializing C++ Template MQTT Agent..." << endl;
@@ -57,7 +56,7 @@ MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
         error_code ec;
         json_parser.write(m_ptr->get_payload_str(), ec);
         if(ec) {
-            cerr << "Error reading form topic: " << topic << endl;
+            cerr << "Error reading from topic: " << topic << endl;
             cerr << "Message is not valid JSON." << endl;
             cerr << "JSON parse error code: " << ec << endl;
             return;
@@ -66,10 +65,9 @@ MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
 	// Send message to handlers
         json::object input_message = 
 	    json::value_to<json::object>(json_parser.release());
-	message_handler.process_message(topic, input_message);
+	process_message(topic, input_message);
 	heartbeat_producer.process_message(topic, input_message);
     });
-
 
     try {
         auto rsp = mqtt_client->connect(connOpts)->get_connect_response();
@@ -79,21 +77,11 @@ MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
         exit(EXIT_FAILURE);
     }
 
-
-
     BOOST_LOG_TRIVIAL(info) << "Connected to the MQTT broker at " << address;
 
-    // advise of subscribed topics
-    cout << "Subscription topics:" << endl;
-    for(string i : message_handler.get_input_topics()) {
+    // subscribe to input topics
+    for(string i : get_input_topics()) {
         mqtt_client->subscribe(i, 2);
-	cout << "    " << i << endl;
-    }
-
-    // advise of published topics
-    cout << "Publication topics:" << endl;
-    for(string i : message_handler.get_output_topics()) {
-	cout << "    " << i << endl;
     }
 }
 

@@ -59,11 +59,6 @@ void BaseMessageHandler::configure(const json::object &config) {
                 { "topic", VERSION_INFO_TOPIC },
                 { "message_type", VERSION_INFO_MESSAGE_TYPE },
                 { "sub_type", VERSION_INFO_SUB_TYPE }
-            }, 
-            {
-                { "topic", HEARTBEAT_TOPIC },
-                { "message_type", HEARTBEAT_MESSAGE_TYPE },
-                { "sub_type", HEARTBEAT_SUB_TYPE }
             }
 	}}
     };
@@ -154,18 +149,22 @@ json::object BaseMessageHandler::create_output_msg(
     output_msg["version"] = version;
     output_msg["timestamp"] = timestamp;
 
-    // add these if they exist and are non-empty
-    if(!val<string>(input_msg, "experiment_id").empty()) {
-        output_msg["experiment_id"] = input_msg.at("experiment_id");
+    // add these only if they exist and are non-empty
+    string experiment_id = val<string>(input_msg, "experiment_id");
+    if(!experiment_id.empty()) {
+        output_msg["experiment_id"] = experiment_id;
     }
-    if(!val<string>(input_msg, "trial_id").empty()) {
-        output_msg["trial_id"] = input_msg.at("trial_id");
+    string trial_id = val<string>(input_msg, "trial_id");
+    if(!trial_id.empty()) {
+        output_msg["trial_id"] = trial_id;
     }
-    if(!val<string>(input_msg, "replay_id").empty()) {
-        output_msg["replay_id"] = input_msg.at("replay_id");
+    string replay_id = val<string>(input_msg, "replay_id");
+    if(!replay_id.empty()) {
+        output_msg["replay_id"] = replay_id;
     }
-    if(!val<string>(input_msg, "replay_root_id").empty()) {
-        output_msg["replay_root_id"] = input_msg.at("replay_root_id");
+    string replay_root_id = val<string>(input_msg, "replay_root_id");
+    if(!replay_root_id.empty()) {
+        output_msg["replay_root_id"] = replay_root_id;
     }
 
     return output_msg;

@@ -14,6 +14,13 @@ using namespace std;
 
 class Agent;
 
+
+// publications
+#define HEARTBEAT_TOPIC "status/reference_agent/heartbeats"
+#define HEARTBEAT_MESSAGE_TYPE "status"
+#define HEARTBEAT_SUB_TYPE "heartbeat"
+
+
 /** Class that handles general tasks */
 class HeartbeatProducer : public BaseMessageHandler {
 

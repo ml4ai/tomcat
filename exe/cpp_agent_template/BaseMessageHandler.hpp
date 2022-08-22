@@ -41,11 +41,6 @@ using namespace std;
 #define ROLLCALL_REQUEST_MESSAGE_TYPE "agent"
 #define ROLLCALL_REQUEST_SUB_TYPE "rollcall:request"
 
-// publications
-#define HEARTBEAT_TOPIC "status/reference_agent/heartbeats"
-#define HEARTBEAT_MESSAGE_TYPE "status"
-#define HEARTBEAT_SUB_TYPE "heartbeat"
-
 #define ROLLCALL_RESPONSE_TOPIC "agent/control/rollcall/response"
 #define ROLLCALL_RESPONSE_MESSAGE_TYPE "agent"
 #define ROLLCALL_RESPONSE_SUB_TYPE "rollcall:response"
@@ -73,10 +68,13 @@ class BaseMessageHandler {
     // version info message data sent at trial start
     json::object version_info_data = json::object();
 
-    // return T value for key or default T if key not found
+    // return T value for key or default T if key not found or value is null
     template <class T>
     T val(const json::object &src, const string key) {
         if(src.contains(key)) {
+	    if(src.at(key) == nullptr) {
+                return T(); 
+	    }
             return json::value_to<T>(src.at(key));
         } else {
             return T(); 

@@ -11,17 +11,24 @@ using namespace std;
 // interface for write method
 class Agent {
 
+    
+    ReferenceMessageHandler message_handler = ReferenceMessageHandler(this);
+
     protected:
 
 
-    ReferenceMessageHandler message_handler = ReferenceMessageHandler(this);
 
+    void process_message(const string topic, const json::object &message);
 
     string version;
 
     Agent(const json::object &config);
 
+    vector<string>get_input_topics();
+    vector<string>get_output_topics();
+
     public:
+
 
     virtual void write(const string topic, json::object &message) = 0;
 };

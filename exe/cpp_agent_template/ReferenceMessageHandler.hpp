@@ -15,6 +15,9 @@ class ReferenceMessageHandler: public BaseMessageHandler {
 
     public:
 
+
+
+
     ReferenceMessageHandler(Agent* agent) : BaseMessageHandler(agent) {}
 
     void process_message(const string topic,

@@ -2,6 +2,8 @@
 
 #include <boost/json.hpp>
 #include "Agent.hpp"
+#include <fstream>
+
 
 namespace json = boost::json;
 
@@ -11,9 +13,19 @@ using namespace std;
 /** Agent class that manages MQTT traffic  */
 class FileAgent : public Agent {
 
+    void process_line(const string line);
+
+    ofstream output_file = ofstream();
+    ifstream input_file = ifstream();
+
+    json::stream_parser json_parser;
+
+    string input_filename, output_filename;
+
+    void process_file();
+
     public:
 
-    void process_files(const string input_file, const string output_file);
 
     // Constructor
     FileAgent(const json::object &config);
