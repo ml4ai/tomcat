@@ -3,6 +3,7 @@
 #include <string>
 #include <boost/json.hpp>
 
+
 namespace json = boost::json;
 using namespace std;
 
@@ -60,6 +61,8 @@ class BaseMessageHandler {
 
     protected:
 
+    time_t start_time;
+
     // values read from config file
     string version = "not_set";
     string agent_name = "not_set";
@@ -109,7 +112,7 @@ class BaseMessageHandler {
 
     public:
 
-    BaseMessageHandler(Agent* agent) : agent(agent) {}
+    BaseMessageHandler(Agent* agent);
     void configure(const json::object &config);
 
     vector<string> get_input_topics();

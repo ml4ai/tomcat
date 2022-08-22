@@ -12,10 +12,14 @@ using namespace std;
 namespace json = boost::json;
 
 
+BaseMessageHandler::BaseMessageHandler(Agent* agent): agent(agent) {
+    time(&start_time);
+}
+
 void BaseMessageHandler::configure(const json::object &config) {
 
-    this->agent_name = val_or_else<string>(config, "agent_name", "not_set");
-    this->version = val_or_else<string>(config, "version", "not_set");
+    agent_name = val_or_else<string>(config, "agent_name", "not_set");
+    version = val_or_else<string>(config, "version", "not_set");
 
     // set up the version info data
     string owner = val_or_else<string>(config, "owner", "not_set");
@@ -63,7 +67,7 @@ void BaseMessageHandler::configure(const json::object &config) {
 	}}
     };
 
-    this->version_info_data = json::value_to<json::object>(jv);
+    version_info_data = json::value_to<json::object>(jv);
 
     // add config subscriptions and publications
     append_array(config, version_info_data, "publishes");
@@ -122,7 +126,7 @@ string BaseMessageHandler::get_timestamp() {
     ) + "Z";
 }
 
-// TODO use json::value in place of const?
+// get common header without topic-specific fields set
 json::object BaseMessageHandler::get_output_header(
 		const json::object &input_header,
                 const string timestamp) {
@@ -135,13 +139,13 @@ json::object BaseMessageHandler::get_output_header(
     return output_header;
 }
 
-// TODO use json::value in place of const?
+// get common msg without topic-specific fields set
 json::object BaseMessageHandler::get_output_msg(const json::object &input_msg,
                                                 const string timestamp) {
 
     json::object output_msg;
-    output_msg["source"] = this->agent_name;
-    output_msg["version"] = this->version;
+    output_msg["source"] = agent_name;
+    output_msg["version"] = version;
     output_msg["timestamp"] = timestamp;
 
     // add these if they exist and are non-empty
@@ -205,9 +209,14 @@ void BaseMessageHandler::process_message(const string topic,
 
         json::object input_data = val<json::object>(input_message,"data");
 
+	time_t now;
+	time(&now);
+
+	int uptime = now-start_time;
+
 	json::object out_data;
-	out_data["version"] = this->version;
-	out_data["uptime"] = 1234; // TODO get real
+	out_data["version"] = version;
+	out_data["uptime"] = uptime;
 	out_data["status"] = "up";
 	out_data["rollcall_id"] = 
             val_or_else<string>(input_data, "rollcall_id", "not set");

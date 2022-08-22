@@ -69,7 +69,7 @@ MqttAgent::MqttAgent(const json::object &config) {
 	message_handler.process_message(topic, input_message);
     });
 
-    auto rsp = this->mqtt_client->connect(connOpts)->get_connect_response();
+    auto rsp = mqtt_client->connect(connOpts)->get_connect_response();
     BOOST_LOG_TRIVIAL(info) << "Connected to the MQTT broker at " << address;
 
     // advise of subscribed topics
