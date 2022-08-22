@@ -1,7 +1,6 @@
 #include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/json/array.hpp>
-#include <mqtt/async_client.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <set>
 
@@ -16,6 +15,8 @@ BaseMessageHandler::BaseMessageHandler(Agent* agent): agent(agent) {
     time(&start_time);
 }
 
+// Using the config argument and hardcoded values, populate the global 
+// Version Info data structure.   
 void BaseMessageHandler::configure(const json::object &config) {
 
     agent_name = val_or_else<string>(config, "agent_name", "not_set");
@@ -87,36 +88,34 @@ void BaseMessageHandler::append_array(const json::object &src,
     dst[key] = dst_array;
 }
 
-// return the topics from "subscribes" or "publishes" fields
-vector<string> BaseMessageHandler::get_topics(const string which) {
+vector<string> BaseMessageHandler::get_array_field(const string name,
+                                                   const string field) {
 
-    set<string> topics;
+    set<string> values;
 
-    json::array arr = val<json::array>(version_info_data, which);
+    json::array arr = val<json::array>(version_info_data, name);
     for(size_t i = 0 ;  i < arr.size() ; i++) {
         json::value element = arr.at(i);
-        string topic = json::value_to<std::string>(element.at("topic"));
-	if(!topic.empty()) {
-            topics.insert(topic);
+        string value = json::value_to<std::string>(element.at(field));
+	if(!value.empty()) {
+            values.insert(value);
 	}
     }
 
     vector<string> ret;
-    for(auto& topic : topics) {
-        ret.push_back(topic);
+    for(auto &value : values) {
+        ret.push_back(value);
     }
 
     return ret;
 }
 
-
 vector<string> BaseMessageHandler::get_input_topics() {
-    return get_topics("subscribes");
+    return get_array_field("subscribes", "topic");
 }
 
-
 vector<string> BaseMessageHandler::get_output_topics() {
-    return get_topics("publishes");
+    return get_array_field("publishes", "topic");
 }
 
 /** Get current UTC timestamp in ISO-8601 format. */
@@ -126,7 +125,7 @@ string BaseMessageHandler::get_timestamp() {
     ) + "Z";
 }
 
-// create common header struct for an outgoing message
+// create the common header struct for an outgoing message
 json::object BaseMessageHandler::create_output_header(
         const json::object &input_message,
         const string timestamp,
@@ -142,7 +141,7 @@ json::object BaseMessageHandler::create_output_header(
     return output_header;
 }
 
-// create common msg struct for an outgoing message
+// create the common msg struct for an outgoing message
 json::object BaseMessageHandler::create_output_msg(
         const json::object &input_message,
         const string timestamp,
@@ -174,14 +173,12 @@ json::object BaseMessageHandler::create_output_msg(
 
 // return the message["header"]["message_type"] value
 string BaseMessageHandler::get_message_type(const json::object &message) {
-    json::object header = val<json::object>(message,"header");    
-    return val<string>(header, "message_type");
+    return val<string>(val<json::object>(message,"header"), "message_type");
 }
 
 // return the message["msg"]["sub_type"] value
 string BaseMessageHandler::get_sub_type(const json::object &message) {
-    json::object msg = val<json::object>(message,"msg");    
-    return val<string>(msg, "sub_type");
+    return val<string>(val<json::object>(message,"msg"), "sub_type");
 }
 
 // process messages that match our input fields

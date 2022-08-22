@@ -96,10 +96,6 @@ class BaseMessageHandler {
         }
     }
 
-    bool message_matches(const json::object &input_message,
-		         const string message_type,
-			 const string sub_type);
-
     string get_timestamp();
 
     void append_array(const json::object &src,
@@ -117,12 +113,12 @@ class BaseMessageHandler {
     string get_message_type(const json::object &message);
     string get_sub_type(const json::object &message);
 
-    vector<string> get_topics(string which);
+    vector<string> get_array_field(const string name, const string field);
 
     public:
 
     BaseMessageHandler(Agent* agent);
-    void configure(const json::object &config);
+    virtual void configure(const json::object &config);
 
     vector<string> get_input_topics();
     vector<string> get_output_topics();

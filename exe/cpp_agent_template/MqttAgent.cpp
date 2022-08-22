@@ -18,6 +18,7 @@ using namespace std::chrono;
 MqttAgent::MqttAgent(const json::object &config) {
 
     message_handler.configure(config);
+    heartbeat_producer.configure(config);
 
     version = json::value_to<string>(config.at("version"));
 
@@ -62,10 +63,11 @@ MqttAgent::MqttAgent(const json::object &config) {
             return;
         }
 
-	// Send message to handler
+	// Send message to handlers
         json::object input_message = 
 	    json::value_to<json::object>(json_parser.release());
 	message_handler.process_message(topic, input_message);
+	heartbeat_producer.process_message(topic, input_message);
     });
 
     auto rsp = mqtt_client->connect(connOpts)->get_connect_response();
@@ -95,9 +97,11 @@ void MqttAgent::write(const string topic, json::object &message) {
 void MqttAgent::start() {
     running = true;
     cout << "C++ Template Agent version " << version << " running." << endl;
+    heartbeat_producer.start();
 }
 
 void MqttAgent::stop() {
     running = false;
     cout << "C++ Template Agent version " << version << " stopped." << endl;
+    heartbeat_producer.stop();
 }

@@ -22,6 +22,7 @@ add_executable(
     MqttAgent.cpp
     FileAgent.cpp
     BaseMessageHandler.cpp
+    HeartbeatProducer.cpp
     ReferenceMessageHandler.cpp
     Configurator.cpp
     MessageQueue.cpp
