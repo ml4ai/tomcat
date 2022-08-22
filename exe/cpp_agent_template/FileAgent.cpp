@@ -85,11 +85,10 @@ void FileAgent::process_line(const string line) {
 }
 
 // write to filesystem
-void FileAgent::write(const string topic, json::object &message) {
+void FileAgent::publish(const string topic, json::object &message) {
 
     message["topic"] = topic;
 
     output_file << message << endl;
 
-    cout << "FileAgent::Write:  " << message << endl;
 }

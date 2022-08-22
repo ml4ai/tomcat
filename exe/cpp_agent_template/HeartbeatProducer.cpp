@@ -57,7 +57,7 @@ void HeartbeatProducer::publish_heartbeat() {
     output_message["data"] = output_data;
 
     // agent takes it from here
-    agent->write(HEARTBEAT_TOPIC, output_message);
+    agent->publish(HEARTBEAT_TOPIC, output_message);
 }
 
 // start publishing heartbeats

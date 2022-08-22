@@ -25,10 +25,11 @@ class Agent {
     Agent(const json::object &config);
 
     vector<string>get_input_topics();
+
     vector<string>get_output_topics();
 
     public:
 
 
-    virtual void write(const string topic, json::object &message) = 0;
+    virtual void publish(const string topic, json::object &message) = 0;
 };

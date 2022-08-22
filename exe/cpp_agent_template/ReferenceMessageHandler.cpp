@@ -54,7 +54,7 @@ void ReferenceMessageHandler::process_message(const string topic,
         output_message["data"] = output_data;
 
         // agent takes it from here
-        agent->write(output_topic, output_message);
+        agent->publish(output_topic, output_message);
 
     }
 

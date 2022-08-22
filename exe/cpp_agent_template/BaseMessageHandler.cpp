@@ -219,7 +219,7 @@ void BaseMessageHandler::process_message(const string topic,
 	output_message["data"] = output_data;
 
 	// agent takes it from here
-	agent->write(VERSION_INFO_TOPIC, output_message);
+	agent->publish(VERSION_INFO_TOPIC, output_message);
     }
 
     // If this is a rollcall request, reply with a rollcall response message
@@ -261,6 +261,6 @@ void BaseMessageHandler::process_message(const string topic,
 	output_message["data"] = output_data;
 
 	// agent takes it from here
-	agent->write(ROLLCALL_RESPONSE_TOPIC, output_message);
+	agent->publish(ROLLCALL_RESPONSE_TOPIC, output_message);
     }
 }

@@ -85,7 +85,7 @@ MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
     }
 }
 
-void MqttAgent::write(const string topic, json::object &message) {
+void MqttAgent::publish(const string topic, json::object &message) {
     if(running) {
         cout << "MqttAgent publishing on " << topic << endl;
         mqtt_client->publish(topic, json::serialize(message));
