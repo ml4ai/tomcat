@@ -8,13 +8,6 @@
 using namespace std;
 namespace json = boost::json;
 
-ReferenceMessageHandler::ReferenceMessageHandler(
-    Agent *agent,
-    const json::object &config) :  BaseMessageHandler(agent, config)
-{
-
-
-}
 
 void ReferenceMessageHandler::process_message(const string topic, 
                                               const json::object &message) {

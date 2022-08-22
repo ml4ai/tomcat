@@ -6,30 +6,27 @@
 #include <set>
 
 #include "Agent.hpp"
-
 #include "BaseMessageHandler.hpp"
 
 using namespace std;
 namespace json = boost::json;
 
 
-BaseMessageHandler::BaseMessageHandler(
-        Agent *agent,
-        const json::object &config): agent(agent) 
-{
+void BaseMessageHandler::configure(const json::object &config) {
 
-    agent_name = val_or_else<string>(config, "agent_name", "not_set");
-    version = val_or_else<string>(config, "version", "not_set");
-    owner = val_or_else<string>(config, "owner", "not_set");
+    this->agent_name = val_or_else<string>(config, "agent_name", "not_set");
+    this->version = val_or_else<string>(config, "version", "not_set");
 
     // set up the version info data
-    string source = TESTBED + string("/") + agent_name + string(":") + version;
+    string owner = val_or_else<string>(config, "owner", "not_set");
+    string testbed_source = 
+        TESTBED + string("/") + agent_name + string(":") + version;
 
     json::value jv = {
         { "agent_name", agent_name },
 	{ "version", version },
 	{ "owner", owner },
-	{ "source", { source } },
+	{ "source", { testbed_source } },
 	{ "subscribes", {
             {
                 { "topic", TRIAL_TOPIC },
@@ -66,7 +63,7 @@ BaseMessageHandler::BaseMessageHandler(
 	}}
     };
 
-    version_info_data = json::value_to<json::object>(jv);
+    this->version_info_data = json::value_to<json::object>(jv);
 
     // add config subscriptions and publications
     append_array(config, version_info_data, "publishes");
@@ -87,6 +84,7 @@ void BaseMessageHandler::append_array(const json::object &src,
 }
 
 
+// return the topics from 
 vector<string> BaseMessageHandler::get_topics(const string which) {
 
     set<string> topics;
@@ -106,6 +104,15 @@ vector<string> BaseMessageHandler::get_topics(const string which) {
     }
 
     return ret;
+}
+
+
+vector<string> BaseMessageHandler::get_input_topics() {
+    return get_topics("subscribes");
+}
+
+vector<string> BaseMessageHandler::get_output_topics() {
+    return get_topics("publishes");
 }
 
 /** Get current UTC timestamp in ISO-8601 format. */
@@ -133,8 +140,8 @@ json::object BaseMessageHandler::get_output_msg(const json::object &input_msg,
                                                 const string timestamp) {
 
     json::object output_msg;
-    output_msg["source"] = agent_name;
-    output_msg["version"] = version;
+    output_msg["source"] = this->agent_name;
+    output_msg["version"] = this->version;
     output_msg["timestamp"] = timestamp;
 
     // add these if they exist and are non-empty
@@ -196,14 +203,14 @@ void BaseMessageHandler::process_message(const string topic,
         json::object output_msg = get_output_msg(input_message, timestamp);
 	output_msg["sub_type"] = ROLLCALL_RESPONSE_SUB_TYPE;
 
-        json::object in_data = val<json::object>(input_message,"data");
+        json::object input_data = val<json::object>(input_message,"data");
 
 	json::object out_data;
-	out_data["version"] = version;
+	out_data["version"] = this->version;
 	out_data["uptime"] = 1234; // TODO get real
 	out_data["status"] = "up";
 	out_data["rollcall_id"] = 
-            val_or_else<string>(in_data, "rollcall_id", "not set");
+            val_or_else<string>(input_data, "rollcall_id", "not set");
 
 	json::object output_message;
 	output_message["header"] = output_header;

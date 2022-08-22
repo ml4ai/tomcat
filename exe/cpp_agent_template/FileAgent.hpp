@@ -13,11 +13,6 @@ class FileAgent : public Agent {
 
     public:
 
-    /** Constructor */
-    FileAgent(const json::object &config);
-
-    ~FileAgent(){}
-
     /* write output to the filesystem */
     void write(const string topic, json::object &message) override;
 };

@@ -63,13 +63,12 @@ class BaseMessageHandler {
     // values read from config file
     string version = "not_set";
     string agent_name = "not_set";
-    string owner = "not_set";
 
     // owner
     Agent *agent = nullptr;
 
     // version info message data sent at trial start
-    json::object version_info_data;
+    json::object version_info_data = json::object();
 
     // return T value for key or default T if key not found
     template <class T>
@@ -106,14 +105,15 @@ class BaseMessageHandler {
     json::object get_output_msg(const json::object &input_msg,
 		                const string timestamp);
 
+    vector<string> get_topics(string which);
 
     public:
 
-    BaseMessageHandler(Agent* agent, const json::object &config);
-    BaseMessageHandler(){}
-    ~BaseMessageHandler(){}
+    BaseMessageHandler(Agent* agent) : agent(agent) {}
+    void configure(const json::object &config);
 
-    vector<string> get_topics(string which);
+    vector<string> get_input_topics();
+    vector<string> get_output_topics();
 
     virtual void process_message(const string topic,
 		                 const json::object &message);

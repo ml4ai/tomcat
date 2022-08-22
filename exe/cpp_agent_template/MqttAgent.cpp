@@ -3,6 +3,7 @@
 #include <boost/log/trivial.hpp>
 #include "Agent.hpp"
 #include "MqttAgent.hpp"
+#include "BaseMessageHandler.hpp"
 #include <iostream>
 
 
@@ -15,7 +16,13 @@ namespace json = boost::json;
 using namespace std::chrono;
 
 
-MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
+MqttAgent::MqttAgent(const json::object &config) {
+
+    message_handler.configure(config);
+
+    version = json::value_to<string>(config.at("version"));
+
+    cout << "Initializing C++ Template Agent..." << endl;
 
 
     // set up MQTT params for broker connection
@@ -39,6 +46,10 @@ MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
 
     mqtt_client->set_message_callback([&](mqtt::const_message_ptr m_ptr) {
 
+        if(!running){
+	    return;
+        }
+
 	string topic = m_ptr->get_topic();
 
         // payload must be valid JSON
@@ -52,11 +63,10 @@ MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
             return;
         }
 
-	// create json message
-        json::object message = 
+	// Send message to handler
+        json::object input_message = 
 	    json::value_to<json::object>(json_parser.release());
-
-	read(topic, message);
+	message_handler.process_message(topic, input_message);
     });
 
     auto rsp = this->mqtt_client->connect(connOpts)->get_connect_response();
@@ -64,29 +74,31 @@ MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
 
     // advise of subscribed topics
     cout << "Subscription topics:" << endl;
-    for(string i : get_input_topics()) {
+    for(string i : message_handler.get_input_topics()) {
         mqtt_client->subscribe(i, 2);
 	cout << "    " << i << endl;
     }
 
     // advise of published topics
     cout << "Publication topics:" << endl;
-    for(string i : get_output_topics()) {
+    for(string i : message_handler.get_output_topics()) {
 	cout << "    " << i << endl;
     }
-
-    start();
 }
 
 void MqttAgent::write(const string topic, json::object &message) {
-    cout << "MqttAgent::write on " << topic << ": " << message << endl;
-    mqtt_client->publish(topic, json::serialize(message));
+    if(running) {
+        cout << "MqttAgent::write on " << topic << endl;
+        mqtt_client->publish(topic, json::serialize(message));
+    }
 }
 
 void MqttAgent::start() {
-
+    running = true;
+    cout << "C++ Template Agent version " << version << " running." << endl;
 }
 
 void MqttAgent::stop() {
-
+    running = false;
+    cout << "C++ Template Agent version " << version << " stopped." << endl;
 }

@@ -32,19 +32,13 @@ void signal_handler(int signal) { gSignalStatus = signal; }
 
 int main(int argc, char* argv[]) {
 
-    cout << "Starting C++ Template Agent..." << endl;
-    
     // get configuration
     Configurator configurator;
     json::object config = configurator.parse_args(argc, argv);
 
-    string version = json::value_to<string>(config.at("version"));
-
     // run this or the file agent based on config input
     MqttAgent mqtt_agent(config);
     mqtt_agent.start();
-
-    cout << "C++ Template Agent version " << version << " running." << endl;
 
     signal(SIGINT, signal_handler);
 

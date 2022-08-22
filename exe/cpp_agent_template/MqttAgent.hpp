@@ -4,6 +4,7 @@
 #include <boost/json.hpp>
 #include <mqtt/async_client.h>
 #include "Agent.hpp"
+#include "ReferenceMessageHandler.hpp"
 
 namespace json = boost::json;
 using namespace std;
@@ -12,19 +13,23 @@ using namespace std;
 /** Agent class that manages MQTT traffic  */
 class MqttAgent : public Agent {
 
+    ReferenceMessageHandler message_handler = ReferenceMessageHandler(this);
+
     std::shared_ptr<mqtt::async_client> mqtt_client;
 
     json::stream_parser json_parser;
 
+    bool running = false;
+
+    string version;
+
   public:
 
-    void start() override;
-    void stop() override;
+    void start();
+    void stop();
 
     /** Constructor */
     MqttAgent(const json::object &config);
-
-    ~MqttAgent(){}
 
     /* send output to the message bus */
     void write(const string topic, json::object &message) override;

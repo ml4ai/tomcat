@@ -19,7 +19,6 @@ find_package(
 )
 add_executable(
     main main.cpp
-    Agent.cpp
     MqttAgent.cpp
     FileAgent.cpp
     BaseMessageHandler.cpp

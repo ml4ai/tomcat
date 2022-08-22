@@ -15,9 +15,7 @@ class ReferenceMessageHandler: public BaseMessageHandler {
 
     public:
 
-    ReferenceMessageHandler(Agent* agent, const json::object &config);
-    ReferenceMessageHandler(){}
-    ~ReferenceMessageHandler(){}
+    ReferenceMessageHandler(Agent* agent) : BaseMessageHandler(agent) {}
 
     void process_message(const string topic,
                          const json::object &message) override;
