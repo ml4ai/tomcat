@@ -46,8 +46,6 @@ Additional settings are made in a JSON configuration file:
   "agent_name": "AC_UAZ_TA1_ReferenceAgent",
   "owner": "University of Arizona",
   "version": "1.0.0",
-  "config": [],
-  "dependencies": [],
   "source": [
     "https://gitlab.asist.aptima.com:5050/asist/testbed/AC_UAZ_TA1_ReferenceAgent:i.j.k"
   ],
