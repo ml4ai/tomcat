@@ -32,8 +32,6 @@ void HeartbeatProducer::publish_heartbeats() {
 }
 
 void HeartbeatProducer::publish_heartbeat() {
-    cout << "heartbeat" << endl;
-
     string timestamp = get_timestamp();
 
     // create common header
