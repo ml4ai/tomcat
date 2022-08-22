@@ -9,8 +9,7 @@ using namespace std;
 namespace json = boost::json;
 
 
-// process a custom-defined message.  Multiple output messages can be
-// generated from a single input message and sent to different topics. 
+// process a custom-defined message. 
 void ReferenceMessageHandler::process_message(const string topic, 
                                               const json::object &message) {
 
@@ -19,7 +18,7 @@ void ReferenceMessageHandler::process_message(const string topic,
     string input_message_type = "reference_agent_input_message_type";
     string input_sub_type = "reference_agent_input_sub_type";
 
-    // Process the message if the fields match
+    // Process the message if the fields match.  
     if ((input_topic.compare(topic) == 0) &&
         (input_message_type.compare(get_message_type(message)) == 0) &&
         (input_sub_type.compare(get_sub_type(message)) == 0)) {
@@ -44,7 +43,7 @@ void ReferenceMessageHandler::process_message(const string topic,
             output_sub_type
         );
 
-	// create a data element
+	// create a data element of any type
 	json::object output_data;
 	output_data["text"] = "Hello World!";
 
@@ -56,11 +55,8 @@ void ReferenceMessageHandler::process_message(const string topic,
 
         // agent takes it from here
         agent->write(output_topic, output_message);
+
     }
 
-
-    // propagate unhandled messages to the base class
-    else {
-        BaseMessageHandler::process_message(topic, message);
-    }
+    BaseMessageHandler::process_message(topic, message);
 }
