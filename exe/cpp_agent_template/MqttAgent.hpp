@@ -14,7 +14,6 @@ using namespace std;
 /** Agent class that manages MQTT traffic  */
 class MqttAgent : public Agent {
 
-    ReferenceMessageHandler message_handler = ReferenceMessageHandler(this);
     HeartbeatProducer heartbeat_producer = HeartbeatProducer(this);
 
     std::shared_ptr<mqtt::async_client> mqtt_client;
@@ -22,8 +21,6 @@ class MqttAgent : public Agent {
     json::stream_parser json_parser;
 
     bool running = false;
-
-    string version;
 
   public:
 

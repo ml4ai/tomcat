@@ -16,12 +16,10 @@ namespace json = boost::json;
 using namespace std::chrono;
 
 
-MqttAgent::MqttAgent(const json::object &config) {
+MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
 
     message_handler.configure(config);
     heartbeat_producer.configure(config);
-
-    version = json::value_to<string>(config.at("version"));
 
     cout << "Initializing C++ Template MQTT Agent..." << endl;
 

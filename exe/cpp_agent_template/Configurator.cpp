@@ -37,12 +37,19 @@ json::object Configurator::parse_args(int argc, char* argv[]) {
     // Validate configuration
     config = validate(config);
 
-    // add or override user specified fields.
+    // add or override user specified MQTT fields.
     json::value mqtt = {
         {"host", vm["mqtt.host"].as<string>()},
 	{"port", vm["mqtt.port"].as<int>()}
     };
     config["mqtt"] = mqtt;
+
+    // add file object
+    json::value file = {
+        {"in", vm["file.in"].as<string>()},
+	{"out", vm["file.out"].as<string>()}
+    };
+    config["file"] = file;
 
     // if the user wants the software version, show it and exit
     if (vm.count("version")) {
@@ -83,6 +90,14 @@ po::options_description Configurator::describe_options(){
         ("mqtt.port",
             po::value<int>()->default_value(1883), 
             "MQTT broker port"
+        )   
+        ("file.in",
+            po::value<string>()->default_value(""), 
+            "Input filename"
+        )   
+        ("file.out",
+            po::value<string>()->default_value(""), 
+            "Output filename"
         )   
     ;
 
