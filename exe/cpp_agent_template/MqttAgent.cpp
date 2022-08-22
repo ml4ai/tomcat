@@ -4,6 +4,7 @@
 #include "Agent.hpp"
 #include "MqttAgent.hpp"
 #include <iostream>
+#include <exception>
 
 
 // This class :
@@ -22,20 +23,21 @@ MqttAgent::MqttAgent(const json::object &config) {
 
     version = json::value_to<string>(config.at("version"));
 
-    cout << "Initializing C++ Template Agent..." << endl;
+    cout << "Initializing C++ Template MQTT Agent..." << endl;
 
 
     // set up MQTT params for broker connection
     json::object mqtt_config = json::value_to<json::object>(config.at("mqtt"));
     string host = json::value_to<string>(mqtt_config.at("host"));
     int port = json::value_to<int>(mqtt_config.at("port"));
-    string address = "tcp://" + host + ": " + to_string(port);
+    string address = "tcp://" + host + ":" + to_string(port);
 
     // Create an MQTT client smart pointer to be shared among threads.
     mqtt_client = make_shared<mqtt::async_client>(
-        address, 
-	"cpp_template_agent"
+        address,
+       	"cpp_template_agent"
     );
+
 
     // Connect options for a non-persistent session and automatic
     // reconnects.
@@ -70,7 +72,17 @@ MqttAgent::MqttAgent(const json::object &config) {
 	heartbeat_producer.process_message(topic, input_message);
     });
 
-    auto rsp = mqtt_client->connect(connOpts)->get_connect_response();
+
+    try {
+        auto rsp = mqtt_client->connect(connOpts)->get_connect_response();
+    } catch (exception& e) {
+        cerr << "Could not connect to MQTT Broker at " << address << endl;
+	cerr << "Exception: " << e.what() << endl;
+        exit(EXIT_FAILURE);
+    }
+
+
+
     BOOST_LOG_TRIVIAL(info) << "Connected to the MQTT broker at " << address;
 
     // advise of subscribed topics
