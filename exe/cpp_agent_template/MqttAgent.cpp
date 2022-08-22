@@ -3,7 +3,6 @@
 #include <boost/log/trivial.hpp>
 #include "Agent.hpp"
 #include "MqttAgent.hpp"
-#include "BaseMessageHandler.hpp"
 #include <iostream>
 
 
@@ -88,7 +87,7 @@ MqttAgent::MqttAgent(const json::object &config) {
 
 void MqttAgent::write(const string topic, json::object &message) {
     if(running) {
-        cout << "MqttAgent::write on " << topic << endl;
+        cout << "MqttAgent publishing on " << topic << endl;
         mqtt_client->publish(topic, json::serialize(message));
     }
 }

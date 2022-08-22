@@ -96,17 +96,26 @@ class BaseMessageHandler {
         }
     }
 
+    bool message_matches(const json::object &input_message,
+		         const string message_type,
+			 const string sub_type);
+
     string get_timestamp();
 
     void append_array(const json::object &src,
                       json::object &dst,
                       const string key);
 
-    json::object get_output_header(const json::object &input_header,
-		                   const string timestamp);
+    json::object create_output_header(const json::object &input_header,
+		                      const string timestamp,
+                                      const string output_message_type);
 
-    json::object get_output_msg(const json::object &input_msg,
-		                const string timestamp);
+    json::object create_output_msg(const json::object &input_msg,
+                                   const string timestamp,
+                                   const string output_sub_type);
+
+    string get_message_type(const json::object &message);
+    string get_sub_type(const json::object &message);
 
     vector<string> get_topics(string which);
 

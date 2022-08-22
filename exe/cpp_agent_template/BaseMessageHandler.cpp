@@ -87,8 +87,7 @@ void BaseMessageHandler::append_array(const json::object &src,
     dst[key] = dst_array;
 }
 
-
-// return the topics from 
+// return the topics from "subscribes" or "publishes" fields
 vector<string> BaseMessageHandler::get_topics(const string which) {
 
     set<string> topics;
@@ -115,6 +114,7 @@ vector<string> BaseMessageHandler::get_input_topics() {
     return get_topics("subscribes");
 }
 
+
 vector<string> BaseMessageHandler::get_output_topics() {
     return get_topics("publishes");
 }
@@ -126,12 +126,15 @@ string BaseMessageHandler::get_timestamp() {
     ) + "Z";
 }
 
-// get common header without topic-specific fields set
-json::object BaseMessageHandler::get_output_header(
-		const json::object &input_header,
-                const string timestamp) {
+// create common header struct for an outgoing message
+json::object BaseMessageHandler::create_output_header(
+        const json::object &input_message,
+        const string timestamp,
+	const string output_message_type) {
 
+    json::object input_header = val<json::object>(input_message, "header");
     json::object output_header;
+    output_header["message_type"] = output_message_type;
     output_header["timestamp"] = timestamp;
     output_header["version"] = 
         val_or_else<string>(input_header, "version", "1.0");
@@ -139,11 +142,15 @@ json::object BaseMessageHandler::get_output_header(
     return output_header;
 }
 
-// get common msg without topic-specific fields set
-json::object BaseMessageHandler::get_output_msg(const json::object &input_msg,
-                                                const string timestamp) {
+// create common msg struct for an outgoing message
+json::object BaseMessageHandler::create_output_msg(
+        const json::object &input_message,
+        const string timestamp,
+	const string output_sub_type) {
 
+    json::object input_msg = val<json::object>(input_message, "msg");
     json::object output_msg;
+    output_msg["message_type"] = output_sub_type;
     output_msg["source"] = agent_name;
     output_msg["version"] = version;
     output_msg["timestamp"] = timestamp;
@@ -165,67 +172,99 @@ json::object BaseMessageHandler::get_output_msg(const json::object &input_msg,
     return output_msg;
 }
 
+// return the message["header"]["message_type"] value
+string BaseMessageHandler::get_message_type(const json::object &message) {
+    json::object header = val<json::object>(message,"header");    
+    return val<string>(header, "message_type");
+}
+
+// return the message["msg"]["sub_type"] value
+string BaseMessageHandler::get_sub_type(const json::object &message) {
+    json::object msg = val<json::object>(message,"msg");    
+    return val<string>(msg, "sub_type");
+}
+
+// process messages that match our input fields
 void BaseMessageHandler::process_message(const string topic,
                                          const json::object &input_message) {
 
-    json::object input_header = val<json::object>(input_message,"header");
-    json::object input_msg = val<json::object>(input_message,"msg");
-    string input_message_type = val<string>(input_header, "message_type");
-    string in_sub_type = val<string>(input_msg, "sub_type");
+    string input_message_type = get_message_type(input_message);
+    string input_sub_type = get_sub_type(input_message);
 
     string timestamp = get_timestamp();
 
 
-    // if trial start send version info
+    // If this is a trial start, reply with a version info message
     if((topic.compare(TRIAL_TOPIC) == 0) &&
         (input_message_type.compare(TRIAL_MESSAGE_TYPE) == 0) &&
-        (in_sub_type.compare(TRIAL_SUB_TYPE_START) == 0))
+        (input_sub_type.compare(TRIAL_SUB_TYPE_START) == 0))
     {
-        json::object output_header = get_output_header(input_header, timestamp);
-	output_header["message_type"] = VERSION_INFO_MESSAGE_TYPE;
+	// create common header
+	json::object output_header = create_output_header(
+            input_message,
+            timestamp,
+            VERSION_INFO_MESSAGE_TYPE
+        );
+		
+        // create common msg
+        json::object output_msg = create_output_msg(
+            input_message,
+	    timestamp,
+	    VERSION_INFO_SUB_TYPE
+        );
 
-        json::object output_msg = get_output_msg(input_msg, timestamp);
-	output_msg["sub_type"] = VERSION_INFO_SUB_TYPE;
+	// data is already defined
+	json::object output_data = version_info_data;
 
+	// assemble outgoing message
 	json::object output_message;
 	output_message["header"] = output_header;
 	output_message["msg"] = output_msg;
-	output_message["data"] = version_info_data;
+	output_message["data"] = output_data;
 
+	// agent takes it from here
 	agent->write(VERSION_INFO_TOPIC, output_message);
     }
 
-    // if rollcall request send rollcall response
+    // If this is a rollcall request, reply with a rollcall response message
     else if((topic.compare(ROLLCALL_REQUEST_TOPIC) == 0) &&
         (input_message_type.compare(ROLLCALL_REQUEST_MESSAGE_TYPE) == 0) &&
-        (in_sub_type.compare(ROLLCALL_REQUEST_SUB_TYPE) == 0))
+        (input_sub_type.compare(ROLLCALL_REQUEST_SUB_TYPE) == 0))
     {
-        json::object output_header = 
-            get_output_header(input_message, timestamp);
-	output_header["message_type"] = ROLLCALL_RESPONSE_MESSAGE_TYPE;
+	// create common header for output message
+	json::object output_header = create_output_header(
+            input_message,
+            timestamp,
+            ROLLCALL_RESPONSE_MESSAGE_TYPE
+        );
 
-        json::object output_msg = get_output_msg(input_message, timestamp);
-	output_msg["sub_type"] = ROLLCALL_RESPONSE_SUB_TYPE;
+        // create common msg for output message
+        json::object output_msg = create_output_msg(
+            input_message,
+	    timestamp,
+	    ROLLCALL_RESPONSE_SUB_TYPE
+        );
 
-        json::object input_data = val<json::object>(input_message,"data");
-
+	// create data for output message
 	time_t now;
 	time(&now);
-
 	int uptime = now-start_time;
 
-	json::object out_data;
-	out_data["version"] = version;
-	out_data["uptime"] = uptime;
-	out_data["status"] = "up";
-	out_data["rollcall_id"] = 
+        json::object input_data = val<json::object>(input_message,"data");
+	json::object output_data;
+	output_data["version"] = version;
+	output_data["uptime"] = uptime;
+	output_data["status"] = "up";
+	output_data["rollcall_id"] = 
             val_or_else<string>(input_data, "rollcall_id", "not set");
 
+	// assemble finished message
 	json::object output_message;
 	output_message["header"] = output_header;
 	output_message["msg"] = output_msg;
-	output_message["data"] = out_data;
+	output_message["data"] = output_data;
 
+	// agent takes it from here
 	agent->write(ROLLCALL_RESPONSE_TOPIC, output_message);
     }
 }

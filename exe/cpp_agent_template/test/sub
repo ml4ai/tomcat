@@ -4,7 +4,7 @@
 
 
 mosquitto_sub \
--t "agent/reference_agent_output" \
+-t "reference_agent_output_topic" \
 -t "agent/control/rollcall/response" \
 -t "status/reference_agent/heartbeats" \
 -t "agent/reference_agent/versioninfo" | jq
