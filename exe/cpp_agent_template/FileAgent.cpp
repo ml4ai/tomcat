@@ -84,11 +84,14 @@ void FileAgent::process_line(const string line) {
     cerr << "File lines must contain topic, cannot process." << endl;
 }
 
-// write to filesystem
+// write to filesystem, include the topic in the message
 void FileAgent::publish(const string topic, json::object &message) {
-
     message["topic"] = topic;
-
     output_file << message << endl;
+    publish(topic, json::serialize(message));
+}
 
+
+void FileAgent::publish(const string topic, const string text) {
+    output_file << text << endl;
 }

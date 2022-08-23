@@ -32,4 +32,5 @@ class Agent {
 
 
     virtual void publish(const string topic, json::object &message) = 0;
+    virtual void publish(const string topic, const string text) = 0;
 };

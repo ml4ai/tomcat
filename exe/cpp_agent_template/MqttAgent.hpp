@@ -32,4 +32,7 @@ class MqttAgent : public Agent {
 
     /* send output to the message bus */
     void publish(const string topic, json::object &message) override;
+
+    /* send output to the message bus */
+    void publish(const string topic, const string text) override;
 };
