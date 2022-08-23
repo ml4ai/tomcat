@@ -1,11 +1,18 @@
 #pragma once
 
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/log/trivial.hpp>
+
 #include <string>
+#include <thread>
+#include <future>
 #include <boost/json.hpp>
 
 
 namespace json = boost::json;
 using namespace std;
+using namespace std::chrono;
+
 
 // input / output message format:
 // {
@@ -41,6 +48,11 @@ using namespace std;
 #define ROLLCALL_REQUEST_MESSAGE_TYPE "agent"
 #define ROLLCALL_REQUEST_SUB_TYPE "rollcall:request"
 
+// publications
+#define HEARTBEAT_TOPIC "status/reference_agent/heartbeats"
+#define HEARTBEAT_MESSAGE_TYPE "status"
+#define HEARTBEAT_SUB_TYPE "heartbeat"
+
 #define ROLLCALL_RESPONSE_TOPIC "agent/control/rollcall/response"
 #define ROLLCALL_RESPONSE_MESSAGE_TYPE "agent"
 #define ROLLCALL_RESPONSE_SUB_TYPE "rollcall:response"
@@ -54,6 +66,21 @@ class Agent;
 // A base class for subscribed message handlers
 class BaseMessageHandler {
 
+    // holds the result of the async heartbeat operation
+    std::future<void> heartbeat_future;
+
+    private:
+
+    bool running = false; // publish regular heartbeats when true
+    string state = "ok";
+    string status = "Uninitialized";
+    string testbed_version = "1.0";
+
+    void publish_heartbeat();
+    void publish_version_info(json::object input_message);
+    void publish_rollcall_response(json::object input_message);
+    void publish_heartbeats();
+
     protected:
 
     time_t start_time;
@@ -65,7 +92,10 @@ class BaseMessageHandler {
     // owner
     Agent *agent = nullptr;
 
-    // version info message data sent at trial start
+    // last received trial start or stop message
+    json::object trial_message = json::object();
+
+    // version info message data
     json::object version_info_data = json::object();
 
     // return T value for key or default T if key not found or value is null
@@ -123,4 +153,7 @@ class BaseMessageHandler {
 
     virtual void process_message(const string topic,
 		                 const json::object &message);
+
+    void start_heartbeats();
+    void stop_heartbeats();
 };

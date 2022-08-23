@@ -28,6 +28,9 @@ class Agent {
 
     vector<string>get_output_topics();
 
+    virtual void start();
+    virtual void stop();
+
     public:
 
 

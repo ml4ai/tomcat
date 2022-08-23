@@ -28,6 +28,15 @@ Agent::Agent(const json::object &config) {
 
 }
 
+void Agent::start(){
+    message_handler.start_heartbeats();
+}
+
+
+void Agent::stop(){
+    message_handler.stop_heartbeats();
+}
+
 void Agent::process_message(const string topic, 
                             const json::object &message) {
     message_handler.process_message(topic, message);

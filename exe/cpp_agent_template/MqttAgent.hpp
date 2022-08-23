@@ -5,7 +5,6 @@
 #include <mqtt/async_client.h>
 #include "Agent.hpp"
 #include "ReferenceMessageHandler.hpp"
-#include "HeartbeatProducer.hpp"
 
 namespace json = boost::json;
 using namespace std;
@@ -13,8 +12,6 @@ using namespace std;
 
 /** Agent class that manages MQTT traffic  */
 class MqttAgent : public Agent {
-
-    HeartbeatProducer heartbeat_producer = HeartbeatProducer(this);
 
     std::shared_ptr<mqtt::async_client> mqtt_client;
 
@@ -24,8 +21,8 @@ class MqttAgent : public Agent {
 
   public:
 
-    void start();
-    void stop();
+    void start() override ;
+    void stop() override ;
 
     /** Constructor */
     MqttAgent(const json::object &config);

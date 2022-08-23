@@ -18,10 +18,7 @@ using namespace std::chrono;
 
 MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
 
-    heartbeat_producer.configure(config);
-
     cout << "Initializing C++ Template MQTT Agent..." << endl;
-
 
     // set up MQTT params for broker connection
     json::object mqtt_config = json::value_to<json::object>(config.at("mqtt"));
@@ -66,7 +63,6 @@ MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
         json::object input_message = 
 	    json::value_to<json::object>(json_parser.release());
 	process_message(topic, input_message);
-	heartbeat_producer.process_message(topic, input_message);
     });
 
     try {
@@ -99,11 +95,11 @@ void MqttAgent::publish(const string topic, const string text) {
 void MqttAgent::start() {
     running = true;
     cout << "C++ Template Agent version " << version << " running." << endl;
-    heartbeat_producer.start();
+    Agent::start();
 }
 
 void MqttAgent::stop() {
+    Agent::stop();
     running = false;
     cout << "C++ Template Agent version " << version << " stopped." << endl;
-    heartbeat_producer.stop();
 }
