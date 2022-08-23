@@ -14,4 +14,4 @@ CONFIG+="drawtext=text='%{localtime}.%{eif\:1M*t-1K*trunc(t*1K)\:d}':fontsize=54
 RECORDINGS_FILEPATH="$out_dir/%Y-%m-%d_%H-%M-%S.%s.png"
 LOG_FILEPATH="$out_dir/ffmpeg.log"
 
-ffmpeg -f avfoundation -i 'Capture screen 1' -pix_fmt rgb24 -r "$frame_rate" -s 1280x720 -vf "$CONFIG" -strftime 1 "$RECORDINGS_FILEPATH" &> "$LOG_FILEPATH"
+ffmpeg -f avfoundation -i 'Capture screen 0' -pix_fmt rgb24 -r "$frame_rate" -s 1280x720 -vf "$CONFIG" -strftime 1 "$RECORDINGS_FILEPATH" &> "$LOG_FILEPATH" &
