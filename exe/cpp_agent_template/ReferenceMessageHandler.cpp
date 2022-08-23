@@ -15,17 +15,11 @@ void ReferenceMessageHandler::process_message(const string topic,
 
     // define specifics for this handler input
     string input_topic = "reference_agent_input_topic";
-    string input_message_type = "reference_agent_input_message_type";
-    string input_sub_type = "reference_agent_input_sub_type";
 
     // Process the message if the fields match.  
-    if ((input_topic.compare(topic) == 0) &&
-        (input_message_type.compare(get_message_type(message)) == 0) &&
-        (input_sub_type.compare(get_sub_type(message)) == 0)) {
+    if (input_topic.compare("reference_agent_output_topic") == 0) {
 
         string output_topic = "reference_agent_output_topic";
-        string output_message_type = "reference_agent_output_message_type";
-        string output_sub_type = "reference_agent_output_message_type";
        
         string timestamp = get_timestamp();
 
@@ -55,7 +49,6 @@ void ReferenceMessageHandler::process_message(const string topic,
 
         // agent takes it from here
         agent->publish(output_topic, output_message);
-
     }
 
     BaseMessageHandler::process_message(topic, message);

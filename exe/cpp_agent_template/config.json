@@ -2,18 +2,9 @@
   "agent_name": "AC_UAZ_TA1_ReferenceAgent",
   "owner": "University of Arizona",
   "version": "1.0.0",
-  "publishes": [
-    {
-      "topic": "reference_agent_output_topic",
-      "message_type": "reference_agent_output_message_type",
-      "sub_type": "reference_agent_output_sub_type"
-    }
-  ],
   "subscribes": [
-    {
-      "topic": "reference_agent_input_topic",
-      "message_type": "reference_agent_input_message_type",
-      "sub_type": "reference_agent_input_sub_type"
-    }
+    "reference_agent_input_topic_1",
+    "reference_agent_input_topic_2",
+    "reference_agent_input_topic_3"
   ]
 }

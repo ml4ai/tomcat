@@ -30,6 +30,11 @@ void BaseMessageHandler::configure(const json::object &config) {
     string testbed_source = 
         TESTBED + string("/") + agent_name + string(":") + version;
 
+    how about we just keep the config around and make this data 
+	    when we need it?
+
+	    Mutable globals suck
+
     json::value jv = {
         { "agent_name", agent_name },
 	{ "version", version },
@@ -212,8 +217,14 @@ json::object BaseMessageHandler::create_output_header(
     json::object output_header;
     output_header["message_type"] = output_message_type;
     output_header["timestamp"] = timestamp;
-    output_header["version"] = 
-        val_or_else<string>(input_header, "version", "1.0");
+    output_header["version"] = testbed_version;
+
+    json::value jv = {
+        { "message_type", output_message_type },
+        { "timestamp", timestamp },
+        { "version", testbed_version }
+    }
+
 
     return output_header;
 }

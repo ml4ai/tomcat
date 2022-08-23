@@ -15,7 +15,7 @@ class ReferenceMessageHandler: public BaseMessageHandler {
 
     public:
 
-
+    
 
 
     ReferenceMessageHandler(Agent* agent) : BaseMessageHandler(agent) {}
