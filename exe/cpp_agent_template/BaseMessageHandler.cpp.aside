@@ -14,27 +14,13 @@ namespace json = boost::json;
 
 BaseMessageHandler::BaseMessageHandler(Agent* agent): agent(agent) {
     time(&start_time);
-}
 
-// Using the config argument and hardcoded values, populate the global 
-// Version Info data structure.   
-void BaseMessageHandler::configure(const json::object &config) {
-
-    agent_name = val<string>(config, "agent_name", "not_set");
-    version = val<string>(config, "version", "not_set");
-
-    status = "Configuring";
-
-    // set up the version info data
-    string owner = val<string>(config, "owner", "not_set");
-    string testbed_source = 
-        TESTBED + string("/") + agent_name + string(":") + version;
-
+    // initialize our version info data with harcoded values
     json::value jv = {
-        { "agent_name", agent_name },
-	{ "version", version },
-	{ "owner", owner },
-	{ "source", { testbed_source } },
+        { "agent_name", "not set" },
+	{ "version", "not set" },
+	{ "owner", "not set" },
+	{ "source", { "not set" } },
 	{ "subscribes", {
             {
                 { "topic", TRIAL_TOPIC },
@@ -72,6 +58,44 @@ void BaseMessageHandler::configure(const json::object &config) {
     };
 
     version_info_data = json::value_to<json::object>(jv);
+}
+
+// return an element with structure like this:
+// {
+//     { "topic", VERSION_INFO_TOPIC },
+//     { "message_type", VERSION_INFO_MESSAGE_TYPE },
+//     { "sub_type", VERSION_INFO_SUB_TYPE }
+// }
+json::object BaseMessageHandler::get_message_bus_info(json::object input){
+
+    json::object obj = json::object();
+
+    string topic = val<string>(input,"topic");
+
+    if(!topic.empty()) {
+	string message_type = val<string>(input,"message_type", "not_set");
+	string sub_type = val<string>(input,"sub_type", "not_set");
+        obj["topic"] = topic;
+	obj["message_type"] = message_type;
+	obj["sub_type"] = sub_type;
+    };
+
+    return obj;
+}
+
+// Using the config argument and hardcoded values, populate the global 
+// Version Info data structure.   
+void BaseMessageHandler::configure(const json::object &config) {
+
+    agent_name = val<string>(config, "agent_name", "not_set");
+    version = val<string>(config, "version", "not_set");
+
+    status = "Configuring";
+
+    // set up the version info data
+    string owner = val<string>(config, "owner", "not_set");
+    string testbed_source = 
+        TESTBED + string("/") + agent_name + string(":") + version;
 
     // add config subscriptions and publications
     append_array(config, version_info_data, "publishes");
@@ -213,6 +237,13 @@ json::object BaseMessageHandler::create_output_header(
     output_header["message_type"] = output_message_type;
     output_header["timestamp"] = timestamp;
     output_header["version"] = testbed_version;
+
+    json::value jv = {
+        { "message_type", output_message_type },
+        { "timestamp", timestamp },
+        { "version", testbed_version }
+    };
+
 
     return output_header;
 }
@@ -364,7 +395,7 @@ void BaseMessageHandler::publish_rollcall_response(
     output_data["uptime"] = uptime;
     output_data["status"] = "up";
     output_data["rollcall_id"] = 
-        val<string>(input_data, "rollcall_id", "not set");
+        val<string>(input_data, "rollcall_id", "not_set");
 
     // assemble finished message
     json::object output_message;
