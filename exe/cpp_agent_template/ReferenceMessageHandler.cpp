@@ -2,11 +2,24 @@
 #include <boost/log/trivial.hpp>
 #include "ReferenceMessageHandler.hpp"
 #include "BaseMessageHandler.hpp"
+#include <boost/json/array.hpp>
 #include "Agent.hpp"
 
 
 using namespace std;
 namespace json = boost::json;
+
+void ReferenceMessageHandler::configure(const json::object &config) {
+    BaseMessageHandler::configure(config);	
+
+    // add subscriptions.  
+    json::array subs = val<json::array>(config, "subscribes");
+    for(size_t i = 0 ;  i < subs.size() ; i++) {
+	string topic = json::value_to<string>(subs.at(i));
+        add_subscription(topic);
+    }
+}
+
 
 
 // process a custom-defined message. 
@@ -27,14 +40,14 @@ void ReferenceMessageHandler::process_message(const string topic,
         json::object output_header = create_output_header(
             message,
             timestamp,
-            output_message_type
+            "not_set"
         );
 
         // create common msg
         json::object output_msg = create_output_msg(
             message,
             timestamp,
-            output_sub_type
+            "not_set"
         );
 
 	// create a data element of any type

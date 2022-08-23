@@ -15,6 +15,7 @@ class ReferenceMessageHandler: public BaseMessageHandler {
 
     public:
 
+    void configure(const json::object &config) override;
     
 
 

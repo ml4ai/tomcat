@@ -2,6 +2,7 @@
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/log/trivial.hpp>
+#include <boost/json/array.hpp>
 
 #include <string>
 #include <thread>
@@ -36,7 +37,11 @@ using namespace std::chrono;
 //   }
 // }
 
+// defaults for VersionInfoMessage if no config file is used.
 #define TESTBED "https://gitlab.asist.aptima.com:5050/asist/testbed"
+#define AGENT_NAME "BaseMessageHandler"
+#define OWNER "The University of Arizona"
+#define SOFTWARE_VERSION "1.0.0"
 
 // subscriptions
 #define TRIAL_TOPIC "trial"
@@ -69,21 +74,22 @@ class BaseMessageHandler {
     // holds the result of the async heartbeat operation
     std::future<void> heartbeat_future;
 
-    private:
+    time_t start_time;
 
     bool running = false; // publish regular heartbeats when true
     string state = "ok";
     string status = "Uninitialized";
     string testbed_version = "1.0";
 
-    void publish_heartbeat();
-    void publish_version_info(json::object input_message);
-    void publish_rollcall_response(json::object input_message);
+    json::array subscribes = json::array();
+    json::array publishes = json::array();
+
     void publish_heartbeats();
 
     protected:
 
-    time_t start_time;
+    void add_subscription(const string topic);
+
 
     // values read from config file
     string version = "not_set";
@@ -98,12 +104,11 @@ class BaseMessageHandler {
     // version info message data
     json::object version_info_data = json::object();
 
-    // return T value for key or fallback T if key not found or value is null
+    // return T value for key or fallback T if key not found 
     template <class T>
     T val(const json::object &src,
           const string key,
           const T fallback) {
-
         if(src.contains(key)) {
 	    if(src.at(key) == nullptr) {
                 return fallback;
@@ -114,33 +119,47 @@ class BaseMessageHandler {
         }
     }
 
-    // return T value for key or default T if key not found or value is null
+    // return T value for key or default T if key not found 
     template <class T>
     T val(const json::object &src, const string key) {
         return val(src, key, T());
     }
 
-    json::array subscribes = json::array();
-    json::array publishes = json::array();
-
     string get_timestamp();
 
-    void append_array(const json::object &src,
-                      json::object &dst,
-                      const string key);
+    vector<string> unique_values(
+        const json::array &array,
+        const string key
+    );
 
-    json::object create_output_header(const json::object &input_header,
-		                      const string timestamp,
-                                      const string output_message_type);
+    json::value create_message_bus_id(
+        const string topic,
+        const string message_type,
+        const string sub_type
+    );
 
-    json::object create_output_msg(const json::object &input_msg,
-                                   const string timestamp,
-                                   const string output_sub_type);
+    json::object create_message_body(
+        const json::object &input_message,
+        const string output_message_type,
+        const string output_sub_type
+    );
 
-    string get_message_type(const json::object &message);
-    string get_sub_type(const json::object &message);
+    json::object create_output_header(
+        const json::object &input_header,
+        const string timestamp,
+        const string output_message_type
+    );
 
-    vector<string> get_array_field(const string name, const string field);
+    json::object create_output_msg(
+        const json::object &input_msg,
+        const string timestamp,
+        const string output_sub_type
+    );
+
+    // output
+    void publish_heartbeat_message(); // use trial message
+    void publish_version_info_message(const json::object &input_message);
+    void publish_rollcall_response_message(const json::object &input_message);
 
     public:
 
@@ -150,8 +169,10 @@ class BaseMessageHandler {
     vector<string> get_input_topics();
     vector<string> get_output_topics();
 
-    virtual void process_message(const string topic,
-		                 const json::object &message);
+    virtual void process_message(
+        const string topic,
+        const json::object &message
+    );
 
     void start_heartbeats();
     void stop_heartbeats();
