@@ -26,7 +26,7 @@ __start_recording() {
   local script_name=$2
   local image_dir=$3
 
-  local command="./\$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/$script_name "
+  local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/; ./$script_name "
   command+="$image_dir $FRAME_RATE"
   ssh $EXPERIMENT_USER@$client_address "$command" >/dev/null
   return $?
@@ -41,7 +41,7 @@ __start_face_recording() {
   mkdir -p "$image_dir" >/dev/null
 
   echo -e "${padding}Starting ${EMPH}Face Recording${NC} on ${EMPH}$client_name${NC}?"
-  __start_recording $client_address "stream_webcam.scpt" "\$HOME$image_dir"
+  __start_recording "$client_address" "record_from_webcam.sh" "\$HOME$image_dir"
   if [[ $? -eq 0 ]]; then
     echo -e "${padding}${GREEN} ${EMPH}Face Recording${GREEN} successfully started.${NC}"
   fi
@@ -56,7 +56,7 @@ __start_screen_recording() {
   mkdir -p "$image_dir" >/dev/null
 
   echo -e "${padding}Starting ${EMPH}Screen Recording${NC} on ${EMPH}$client_name${NC}?"
-  __start_recording $client_address "record_screen.sh" "\$HOME$image_dir"
+  __start_recording "$client_address" "record_screen.sh" "\$HOME$image_dir"
   if [[ $? -eq 0 ]]; then
     echo -e "${padding}${EMPH} Screen Recording${GREEN} successfully started.${NC}"
   fi
