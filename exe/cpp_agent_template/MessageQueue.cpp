@@ -8,17 +8,45 @@
 
 #include "MessageQueue.hpp"
 
+// Further reading:  
+// https://www.boost.org/doc/libs/1_54_0/doc/html/boost/lockfree/queue.html
+// https://www.boost.org/doc/libs/1_54_0/doc/html/lockfree/examples.html
+
+/*
 boost::atomic_int producer_count(0);
 boost::atomic_int consumer_count(0);
+*/
 
-boost::lockfree::queue<mqtt::const_message_ptr*> my_queue(128);
+boost::lockfree::queue<json::object*> my_queue(128);
 
+/*
 const int iterations = 10000000;
 const int producer_thread_count = 4;
 const int consumer_thread_count = 4;
+*/
 
-bool MessageQueue::enqueue(mqtt::const_message_ptr *ptr) {
-   return my_queue.push(ptr);
+bool MessageQueue::enqueue(json::object *ptr) {
+    cout << "MessageQueue::enqueue" << endl;
+    bool ret =  my_queue.push(ptr);
+    if(ret) {
+        count ++;
+        cout << "Queue push. Size = " << count << endl;
+    } else {
+        cerr << "Queue push failed" << endl;
+    }
+    return ret;
+}
+
+json::object* MessageQueue::dequeue() {
+    cout << "MessageQueue::enqueue" << endl;
+
+    json::object* value;
+
+    my_queue.pop(value);
+    count --;
+    cout << "Queue pop. Size = " << count << endl;
+
+    return value;
 }
 
 

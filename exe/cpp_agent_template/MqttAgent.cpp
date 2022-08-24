@@ -50,7 +50,10 @@ MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
 	string topic = m_ptr->get_topic();
 	string text = m_ptr->get_payload_str();
 
-	process_message(topic, parse_json(text));
+	json::object obj = parse_json(text);
+	message_queue.enqueue(&obj);
+
+	process_message(topic, obj);
     });
 
     try {

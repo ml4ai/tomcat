@@ -13,13 +13,16 @@ using namespace std;
 /** Maintain a FIFO queue of messages */
 class MessageQueue {
 
+    int count = 0;  // elements in queue 
+
     public:
 
     // should take the processor as an arg
     // processor should support a busy(): bool call
-    MessageQueue();
+    MessageQueue(){}
 
-    bool enqueue(mqtt::const_message_ptr *ptr);
+    bool enqueue(json::object *ptr);
+    json::object* dequeue();
 
 
     // should enqueue messages

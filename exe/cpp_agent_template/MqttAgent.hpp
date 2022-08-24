@@ -4,7 +4,9 @@
 #include <boost/json.hpp>
 #include <mqtt/async_client.h>
 #include "Agent.hpp"
+#include "MessageQueue.hpp"
 #include "ReferenceMessageHandler.hpp"
+
 
 namespace json = boost::json;
 using namespace std;
@@ -16,6 +18,8 @@ class MqttAgent : public Agent {
     std::shared_ptr<mqtt::async_client> mqtt_client;
 
     bool running = false;
+
+    MessageQueue message_queue;
 
   public:
 
