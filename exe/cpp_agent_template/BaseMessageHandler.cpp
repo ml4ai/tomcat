@@ -247,6 +247,7 @@ void BaseMessageHandler::process_message(const string topic,
     }
 }
 
+// respond to Rollcall Request message
 void BaseMessageHandler::publish_rollcall_response_message(
 	const json::object &input_message) {
 
@@ -270,10 +271,12 @@ void BaseMessageHandler::publish_rollcall_response_message(
             output_data);
 }
 
+// respond to Trial Start message
 void BaseMessageHandler::publish_version_info_message(
     const json::object &input_message){
 
     // create version info data
+    // TODO add other fields
     json::object output_data;
     output_data["publishes"] = publishes;
     output_data["subscribes"] = subscribes;

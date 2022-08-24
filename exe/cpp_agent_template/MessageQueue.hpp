@@ -2,6 +2,7 @@
 
 #include <string>
 #include <boost/json.hpp>
+#include <mqtt/async_client.h>
 
 
 namespace json = boost::json;
@@ -17,6 +18,8 @@ class MessageQueue {
     // should take the processor as an arg
     // processor should support a busy(): bool call
     MessageQueue();
+
+    bool enqueue(mqtt::const_message_ptr *ptr);
 
 
     // should enqueue messages

@@ -1,15 +1,16 @@
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
-#include "Agent.hpp"
-#include "MqttAgent.hpp"
 #include <iostream>
 #include <exception>
+#include <mqtt/async_client.h>
 
+
+#include "Agent.hpp"
+#include "MqttAgent.hpp"
 
 // This class :
 //   Maintains the MQTT broker connection
-//
+//   Handles all traffic to and from the Message Bus
 
 using namespace std;
 namespace json = boost::json;
@@ -19,7 +20,6 @@ using namespace std::chrono;
 MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
 
     cout << "Running in MQTT Mode" << endl;
-
 
     // set up MQTT params for broker connection
     json::object mqtt_config = json::value_to<json::object>(config.at("mqtt"));
