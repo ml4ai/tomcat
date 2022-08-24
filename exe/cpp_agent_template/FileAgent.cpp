@@ -58,19 +58,9 @@ void FileAgent::process_file() {
 
 
 void FileAgent::process_line(const string line) {
-    // payload must be valid JSON
-    json_parser.reset();
-    error_code ec;
-    json_parser.write(line, ec);
-    if(ec) {
-        cerr << "Error reading from " << input_filename << endl;
-        cerr << "Message is not valid JSON." << endl;
-        cerr << "JSON parse error code: " << ec << endl;
-        return;
-    }
 
-    json::object message =
-        json::value_to<json::object>(json_parser.release());
+    // payload must be valid JSON
+    json::object message = parse_json(line);
 
     if(message.contains("topic")) {
         string topic = json::value_to<std::string>(message.at("topic"));
@@ -81,7 +71,7 @@ void FileAgent::process_line(const string line) {
     } 
 
     cerr << "Error reading from " << input_filename << endl;
-    cerr << "File lines must contain topic, cannot process." << endl;
+    cerr << "Line without topic: " << line << endl;
 }
 
 // write to filesystem, include the topic in the message
@@ -90,7 +80,6 @@ void FileAgent::publish(const string topic, json::object &message) {
     output_file << message << endl;
     publish(topic, json::serialize(message));
 }
-
 
 void FileAgent::publish(const string topic, const string text) {
     output_file << text << endl;

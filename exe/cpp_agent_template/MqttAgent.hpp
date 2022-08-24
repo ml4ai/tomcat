@@ -15,8 +15,6 @@ class MqttAgent : public Agent {
 
     std::shared_ptr<mqtt::async_client> mqtt_client;
 
-    json::stream_parser json_parser;
-
     bool running = false;
 
   public:

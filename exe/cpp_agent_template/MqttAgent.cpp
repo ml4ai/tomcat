@@ -47,22 +47,9 @@ MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
         }
 
 	string topic = m_ptr->get_topic();
+	string text = m_ptr->get_payload_str();
 
-        // payload must be valid JSON
-        json_parser.reset();
-        error_code ec;
-        json_parser.write(m_ptr->get_payload_str(), ec);
-        if(ec) {
-            cerr << "Error reading from topic: " << topic << endl;
-            cerr << "Message is not valid JSON." << endl;
-            cerr << "JSON parse error code: " << ec << endl;
-            return;
-        }
-
-	// Send message to handlers
-        json::object input_message = 
-	    json::value_to<json::object>(json_parser.release());
-	process_message(topic, input_message);
+	process_message(topic, parse_json(text));
     });
 
     try {

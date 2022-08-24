@@ -11,14 +11,16 @@ using namespace std;
 // interface for write method
 class Agent {
 
+    // this application class only processes JSON messages
+    json::stream_parser json_parser;
     
     ReferenceMessageHandler message_handler = ReferenceMessageHandler(this);
 
     protected:
 
-
-
     void process_message(const string topic, const json::object &message);
+
+    json::object parse_json(const string text);
 
     string version;
 
