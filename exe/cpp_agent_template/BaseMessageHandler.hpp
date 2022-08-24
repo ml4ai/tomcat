@@ -89,6 +89,21 @@ class BaseMessageHandler {
     protected:
 
     void add_subscription(const string topic);
+    void add_subscription(
+        const string topic,
+        const string message_type,
+        const string sub_type
+    );
+
+    void add_publication(const string topic);
+    void add_publication(
+        const string topic,
+        const string message_type,
+        const string sub_type
+    );
+
+    bool contains(const vector<string> haystack, const string needle);
+
 
 
     // values read from config file
@@ -132,7 +147,7 @@ class BaseMessageHandler {
         const string key
     );
 
-    json::value create_message_bus_id(
+    json::value create_bus_id(
         const string topic,
         const string message_type,
         const string sub_type

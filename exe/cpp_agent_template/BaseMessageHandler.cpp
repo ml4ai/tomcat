@@ -16,45 +16,55 @@ BaseMessageHandler::BaseMessageHandler(Agent* agent): agent(agent) {
     time(&start_time);
 
     // Subscriptions
-    subscribes.emplace_back(create_message_bus_id(
+    add_subscription(
         TRIAL_TOPIC,
 	TRIAL_MESSAGE_TYPE,
 	TRIAL_SUB_TYPE_STOP
-    ));
-    subscribes.emplace_back(create_message_bus_id(
+    );
+    add_subscription(
         TRIAL_TOPIC,
 	TRIAL_MESSAGE_TYPE,
 	TRIAL_SUB_TYPE_START
-    ));
-    subscribes.emplace_back(create_message_bus_id(
+    );
+    add_subscription(
         ROLLCALL_REQUEST_TOPIC,
 	ROLLCALL_REQUEST_MESSAGE_TYPE,
 	ROLLCALL_REQUEST_SUB_TYPE
-    ));
+    );
 
     // Publications
-    publishes.emplace_back(create_message_bus_id(
+    add_publication(
         HEARTBEAT_TOPIC,
         HEARTBEAT_MESSAGE_TYPE,
         HEARTBEAT_SUB_TYPE
-    ));
-    publishes.emplace_back(create_message_bus_id(
+    );
+    add_publication(
         ROLLCALL_RESPONSE_TOPIC,
         ROLLCALL_RESPONSE_MESSAGE_TYPE,
         ROLLCALL_RESPONSE_SUB_TYPE
-    ));
-    publishes.emplace_back(create_message_bus_id(
+    );
+    add_publication(
         VERSION_INFO_TOPIC,
         VERSION_INFO_MESSAGE_TYPE,
         VERSION_INFO_SUB_TYPE
-    ));
+    );
 }
 
+// return true if the vector contains the value
+bool BaseMessageHandler::contains(const vector<string> haystack, 
+                                  const string needle) {
+    for(auto &hay : haystack) {
+        if(needle.compare(hay) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
 
 // return a value with the fields identifying a message on the message bus
-json::value BaseMessageHandler::create_message_bus_id(const string topic,
-                                           const string message_type,
-                                           const string sub_type) {
+json::value BaseMessageHandler::create_bus_id(const string topic,
+                                              const string message_type,
+                                              const string sub_type) {
     json::value id = {
         { "topic", topic },
         { "message_type", message_type },
@@ -64,8 +74,24 @@ json::value BaseMessageHandler::create_message_bus_id(const string topic,
     return id;
 }
 
+void BaseMessageHandler::add_subscription(const string topic,
+                                          const string message_type,
+                                          const string sub_type) {
+    subscribes.emplace_back(create_bus_id(topic, message_type, sub_type));
+}
+
 void BaseMessageHandler::add_subscription(const string topic) {
-    publishes.emplace_back(create_message_bus_id(topic, "not_set", "not_set"));
+    add_subscription(topic, "not_set", "not_set");
+}
+
+void BaseMessageHandler::add_publication(const string topic,
+                                         const string message_type,
+                                         const string sub_type) {
+    publishes.emplace_back(create_bus_id(topic, message_type, sub_type));
+}
+
+void BaseMessageHandler::add_publication(const string topic) {
+    add_publication(topic, "not_set", "not_set");
 }
 
 // Using the config argument and hardcoded values, populate the global 
@@ -204,6 +230,7 @@ json::object BaseMessageHandler::create_output_msg(
 
     return output_msg;
 }
+
 
 // process messages with Message Bus identifiers that match ours
 void BaseMessageHandler::process_message(const string topic,
