@@ -142,34 +142,28 @@ vector<string> BaseMessageHandler::get_output_topics() {
     return unique_values(publishes, "topic");
 }
 
-// create the common header struct for an outgoing message
-json::object BaseMessageHandler::create_output_header(
+void BaseMessageHandler::publish(
+	const string output_topic,
+	const string output_message_type,
+	const string output_sub_type,
         const json::object &input_message,
-        const string timestamp,
-	const string output_message_type) {
+        const json::object &output_data) {
 
-    json::object input_header = val<json::object>(input_message, "header");
+    string timestamp = get_timestamp();
+
+    // Common Header
     json::object output_header;
+    json::object input_msg = val<json::object>(input_message, "msg");
     output_header["message_type"] = output_message_type;
     output_header["timestamp"] = timestamp;
     output_header["version"] = testbed_version;
 
-    return output_header;
-}
-
-// create the common msg struct for an outgoing message
-json::object BaseMessageHandler::create_output_msg(
-        const json::object &input_message,
-        const string timestamp,
-	const string output_sub_type) {
-
-    json::object input_msg = val<json::object>(input_message, "msg");
+    // Common Msg
     json::object output_msg;
     output_msg["message_type"] = output_sub_type;
     output_msg["source"] = agent_name;
     output_msg["version"] = version;
     output_msg["timestamp"] = timestamp;
-
     // add these only if they exist and are non-empty
     string experiment_id = val<string>(input_msg, "experiment_id");
     if(!experiment_id.empty()) {
@@ -188,9 +182,22 @@ json::object BaseMessageHandler::create_output_msg(
         output_msg["replay_root_id"] = replay_root_id;
     }
 
-    return output_msg;
+    json::object output_message;
+    output_message["header"] = output_header;
+    output_message["msg"] = output_msg;
+    output_message["data"] = output_data;
+
+    published_topics.push_back(output_topic);
+    agent->publish(output_topic, output_message);
 }
 
+void BaseMessageHandler::publish(
+	const string output_topic,
+        const json::object &input_message,
+        const json::object &output_data) {
+
+	publish(output_topic, "not_set", "not_set", input_message, output_data);
+}
 
 // process messages with Message Bus identifiers that match ours
 void BaseMessageHandler::process_message(const string topic,
@@ -202,11 +209,11 @@ void BaseMessageHandler::process_message(const string topic,
     string input_sub_type = 
         val<string>(val<json::object>(input_message,"msg"), "sub_type");
 
-    // process trial message
+    // trial message
     if((topic.compare(TRIAL_TOPIC) == 0) &&
     (input_message_type.compare(TRIAL_MESSAGE_TYPE) == 0)) {
 
-	// trial start
+	// start
         if (input_sub_type.compare(TRIAL_SUB_TYPE_START) == 0) {
 
 	    // set the testbed version if the trial header has it
@@ -215,14 +222,14 @@ void BaseMessageHandler::process_message(const string topic,
 	    if(!new_version.empty()) {
 	        testbed_version = new_version;
 	    }
-
 	    trial_message = input_message;
+
 	    publish_version_info_message(input_message);
 	    if(running) {
 	        publish_heartbeat_message();
 	    }
         }
-	// trial stop
+	// stop
 	else if (input_sub_type.compare(TRIAL_SUB_TYPE_STOP) == 0) {
             trial_message = input_message;
 	    if(running) {
@@ -231,7 +238,7 @@ void BaseMessageHandler::process_message(const string topic,
         }
     }
 
-    // process rollcall request message
+    // rollcall request message
     else if((topic.compare(ROLLCALL_REQUEST_TOPIC) == 0) &&
         (input_message_type.compare(ROLLCALL_REQUEST_MESSAGE_TYPE) == 0) &&
         (input_sub_type.compare(ROLLCALL_REQUEST_SUB_TYPE) == 0))
@@ -243,23 +250,7 @@ void BaseMessageHandler::process_message(const string topic,
 void BaseMessageHandler::publish_rollcall_response_message(
 	const json::object &input_message) {
 
-    string timestamp = get_timestamp();
-
-    // create common header for output message
-    json::object output_header = create_output_header(
-            input_message,
-            timestamp,
-            ROLLCALL_RESPONSE_MESSAGE_TYPE
-    );
-
-    // create common msg for output message
-    json::object output_msg = create_output_msg(
-            input_message,
-	    timestamp,
-	    ROLLCALL_RESPONSE_SUB_TYPE
-    );
-
-    // create data for output message
+    // create rollcall response data
     time_t now;
     time(&now);
     int uptime = now-start_time;
@@ -272,80 +263,40 @@ void BaseMessageHandler::publish_rollcall_response_message(
     output_data["rollcall_id"] = 
         val<string>(input_data, "rollcall_id", "not_set");
 
-    // assemble finished message
-    json::object output_message;
-    output_message["header"] = output_header;
-    output_message["msg"] = output_msg;
-    output_message["data"] = output_data;
-
-    // agent takes it from here
-    agent->publish(ROLLCALL_RESPONSE_TOPIC, output_message);
+    publish(ROLLCALL_RESPONSE_TOPIC,
+            ROLLCALL_RESPONSE_MESSAGE_TYPE,
+            ROLLCALL_RESPONSE_SUB_TYPE,
+            input_message,
+            output_data);
 }
 
 void BaseMessageHandler::publish_version_info_message(
     const json::object &input_message){
 
-    string timestamp = get_timestamp();
-
-    // create common header
-    json::object output_header = create_output_header(
-        input_message,
-        timestamp,
-        VERSION_INFO_MESSAGE_TYPE
-    );
-
-    // create common msg
-    json::object output_msg = create_output_msg(
-        input_message,
-        timestamp,
-        VERSION_INFO_SUB_TYPE
-    );
-
-    // create data
+    // create version info data
     json::object output_data;
     output_data["publishes"] = publishes;
     output_data["subscribes"] = subscribes;
 
-    // assemble outgoing message
-    json::object output_message;
-    output_message["header"] = output_header;
-    output_message["msg"] = output_msg;
-    output_message["data"] = output_data;
-
-    // agent takes it from here
-    agent->publish(VERSION_INFO_TOPIC, output_message);
+    publish(VERSION_INFO_TOPIC,
+            VERSION_INFO_MESSAGE_TYPE,
+            VERSION_INFO_SUB_TYPE,
+            input_message,
+            output_data);
 }
 
 // use the trial message as input
 void BaseMessageHandler::publish_heartbeat_message() {
 
-    string timestamp = get_timestamp();
-
-    // create common header
-    json::object output_header = create_output_header(
-        trial_message,
-        timestamp,
-        HEARTBEAT_MESSAGE_TYPE
-    );
-
-    // create common msg
-    json::object output_msg = create_output_msg(
-        trial_message,
-        timestamp,
-        HEARTBEAT_SUB_TYPE
-    );
-
+    // create heartbeat data
     json::object output_data;
     output_data["running"] = running;
     output_data["state"] = state;
     output_data["status"] = status;
 
-    // assemble outgoing message
-    json::object output_message;
-    output_message["header"] = output_header;
-    output_message["msg"] = output_msg;
-    output_message["data"] = output_data;
-
-    // agent takes it from here
-    agent->publish(HEARTBEAT_TOPIC, output_message);
+    publish(HEARTBEAT_TOPIC,
+            HEARTBEAT_MESSAGE_TYPE,
+            HEARTBEAT_SUB_TYPE,
+            trial_message,
+            output_data);
 }

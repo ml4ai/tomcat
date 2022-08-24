@@ -122,22 +122,18 @@ class BaseMessageHandler : public Utils {
         const string sub_type
     );
 
-    json::object create_message_body(
+    void publish(
+        const string output_topic,
         const json::object &input_message,
+        const json::object &output_data
+    );
+
+    void publish(
+        const string output_topic,
         const string output_message_type,
-        const string output_sub_type
-    );
-
-    json::object create_output_header(
-        const json::object &input_header,
-        const string timestamp,
-        const string output_message_type
-    );
-
-    json::object create_output_msg(
-        const json::object &input_msg,
-        const string timestamp,
-        const string output_sub_type
+        const string output_sub_type,
+        const json::object &input_message,
+        const json::object &output_data
     );
 
     // output
@@ -152,6 +148,7 @@ class BaseMessageHandler : public Utils {
 
     vector<string> get_input_topics();
     vector<string> get_output_topics();
+    vector<string> published_topics;
 
     virtual void process_message(
         const string topic,

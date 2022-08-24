@@ -31,46 +31,23 @@ void ReferenceMessageHandler::configure(const json::object &config) {
     }
 }
 
-
 // process a custom-defined message. 
-void ReferenceMessageHandler::process_message(const string topic, 
-                                              const json::object &message) {
+void ReferenceMessageHandler::process_message(const string input_topic, 
+                                              const json::object &input_message) {
 
     // Process the message if subscribed to the topic
-    if(contains(input_topics, topic)) {
-
-        string timestamp = get_timestamp();
-
-        // create common header
-        json::object output_header = create_output_header(
-            message,
-            timestamp,
-            "not_set"
-        );
-
-        // create common msg
-        json::object output_msg = create_output_msg(
-            message,
-            timestamp,
-            "not_set"
-        );
+    if(contains(input_topics, input_topic)) {
 
 	// create a data element of any type
 	json::object output_data;
-	output_data["topic"] = topic;
+	output_data["topic"] = input_topic;
 	output_data["text"] = "Hello World!";
-
-        // assemble outgoing message
-        json::object output_message;
-        output_message["header"] = output_header;
-        output_message["msg"] = output_msg;
-        output_message["data"] = output_data;
 
         // publish the output message on the output topics
 	for(auto &output_topic : output_topics) {
-            agent->publish(output_topic, output_message);
+            publish(output_topic, input_message, output_data);
 	}
     }
 
-    BaseMessageHandler::process_message(topic, message);
+    BaseMessageHandler::process_message(input_topic, input_message);
 }
