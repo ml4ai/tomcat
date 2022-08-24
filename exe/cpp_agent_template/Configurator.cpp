@@ -56,9 +56,6 @@ json::object Configurator::parse_args(int argc, char* argv[]) {
     string config_filename = vm["config"].as<string>();
     json::object config = parse_config_file(config_filename);
 
-    // Validate configuration
-    config = validate(config);
-
     // add or override user specified MQTT fields.
     json::value mqtt = {
         {"host", vm["mqtt.host"].as<string>()},
@@ -80,19 +77,39 @@ json::object Configurator::parse_args(int argc, char* argv[]) {
         exit(EXIT_SUCCESS);
     }
 
+    // Validate configuration
+    validate(config);
+
     return config;
 }
 
-// Check that all needed fields are in the config
-json::object Configurator::validate(json::object config){
+void Configurator::validate(json::object config){
 
-    // exi(EXIT_FAILURE) if any required fields do not exist.
-    
-    // config should have subscriptions, publications, and version number
-    return config;
+    // both filenames must be specified or both empty
+    json::object file = val<json::object>(config, "file");
+    string file_in = val<string>(file, "in");
+    string file_out = val<string>(file, "out");
+
+    if((file_in.empty() &&!file_out.empty()) ||
+        (!file_in.empty() &&file_out.empty())) 
+    {
+       cerr << "--file.in  = " << file_in << endl;
+       cerr << "--file.out = " << file_out << endl;
+       cerr << "need both specified for file mode" << endl;
+       
+       exit(EXIT_FAILURE);
+    }
+
+    // MQTT host must not be empty
+    json::object mqtt = val<json::object>(config, "mqtt");
+    string host = val<string>(mqtt, "host");
+
+    if(host.empty()) {
+       cerr << "--mqtt.host  = must not be empty" << endl;
+       
+       exit(EXIT_FAILURE);
+    }
 }
-
-
 
 // return an options description of all command line inputs
 po::options_description Configurator::describe_options(){

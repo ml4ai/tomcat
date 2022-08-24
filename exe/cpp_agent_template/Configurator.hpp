@@ -4,6 +4,7 @@
 #include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/program_options.hpp>
+#include "Utils.hpp"
 
 // Authors:   Joseph Astier, Adarsh Pyareral
 
@@ -14,13 +15,8 @@ using namespace std;
 
 
 // This class creates a configuration based on the config file and user input
-class Configurator {
+class Configurator : Utils {
 
-    public:
-        // return a JSON object based on command line arguments
-        json::object parse_args(int argc, char* argv[]);
-
-    private:
         // describe options
         po::options_description describe_options();
 
@@ -28,5 +24,10 @@ class Configurator {
         json::object parse_config_file(string filename);
 
 	// Check that required configuration fields are present
-	json::object validate(json::object config);
+	void validate(json::object config);
+
+    public:
+
+        // return a JSON object based on command line arguments
+        json::object parse_args(int argc, char* argv[]);
 };
