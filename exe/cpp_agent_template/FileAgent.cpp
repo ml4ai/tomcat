@@ -57,10 +57,7 @@ void FileAgent::process_file() {
 }
 
 void FileAgent::process_line(const string line) {
-
-    // payload must be valid JSON
     json::object message = parse_json(line);
-
     process_message(message);
 }
 

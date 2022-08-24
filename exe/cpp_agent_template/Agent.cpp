@@ -43,6 +43,10 @@ void Agent::process_message(const json::object &message){
     message_handler.process_message(message);
 }
 
+void Agent::enqueue_message(const json::object &message){
+    message_handler.enqueue_message(message);
+}
+
 // return JSON parsed from input or empty object if not valid JSON
 json::object Agent::parse_json(const string text) {
     json_parser.reset();

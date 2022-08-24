@@ -17,7 +17,7 @@ boost::atomic_int producer_count(0);
 boost::atomic_int consumer_count(0);
 */
 
-boost::lockfree::queue<json::object*> my_queue(128);
+boost::lockfree::queue<const json::object*> q(128);
 
 /*
 const int iterations = 10000000;
@@ -25,9 +25,9 @@ const int producer_thread_count = 4;
 const int consumer_thread_count = 4;
 */
 
-bool MessageQueue::enqueue(json::object *ptr) {
+bool MessageQueue::enqueue(const json::object *ptr) {
     cout << "MessageQueue::enqueue" << endl;
-    bool ret =  my_queue.push(ptr);
+    bool ret =  q.push(ptr);
     if(ret) {
         count ++;
         cout << "Queue push. Size = " << count << endl;
@@ -42,11 +42,19 @@ json::object* MessageQueue::dequeue() {
 
     json::object* value;
 
-    my_queue.pop(value);
+    q.pop(value);
     count --;
     cout << "Queue pop. Size = " << count << endl;
 
     return value;
+}
+
+bool MessageQueue::empty() {
+    return q.empty();
+}
+
+int MessageQueue::size() {
+    return count;
 }
 
 
@@ -56,7 +64,7 @@ void producer(void)
 {
     for (int i = 0; i != iterations; ++i) {
         int value = ++producer_count;
-        while (!my_queue.push(value))
+        while (!q.push(value))
             ;
     }
 }
@@ -66,11 +74,11 @@ void consumer(void)
 {
     int value;
     while (!done) {
-        while (my_queue.pop(value))
+        while (q.pop(value))
             ++consumer_count;
     }
 
-    while (my_queue.pop(value))
+    while (q.pop(value))
         ++consumer_count;
 }
 */

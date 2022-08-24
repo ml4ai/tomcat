@@ -22,6 +22,7 @@ class Agent : public Utils {
     string app_name;
 
     void process_message(const json::object &message);
+    void enqueue_message(const json::object &message);
 
     json::object parse_json(const string text);
 

@@ -53,7 +53,7 @@ MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
 	json::object obj = parse_json(text);
 	obj["topic"] = topic;
 
-	process_message(obj);
+	enqueue_message(obj);
     });
 
     try {

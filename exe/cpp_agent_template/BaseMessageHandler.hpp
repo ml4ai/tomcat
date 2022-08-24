@@ -74,24 +74,24 @@ class Agent;
 // A base class for subscribed message handlers
 class BaseMessageHandler : public Utils {
 
-    // holds the result of the async heartbeat operation
-    std::future<void> heartbeat_future;
-
-    // TODO need a future to check if stalled?
-    MessageQueue message_queue;
-
-
     time_t start_time;
 
+    // holds the result of the async heartbeat operation
+    std::future<void> heartbeat_future;
     bool running = false; // publish regular heartbeats when true
     string state = "ok";
     string status = "Uninitialized";
     string testbed_version = "1.0";
+    void publish_heartbeats();
+
+    // Message queue gets checked once per second
+    std::future<void> queue_future;
+    MessageQueue message_queue;
+    bool processing = false;
+    void check_queue();
 
     json::array subscribes = json::array();
     json::array publishes = json::array();
-
-    void publish_heartbeats();
 
     protected:
 
@@ -151,6 +151,9 @@ class BaseMessageHandler : public Utils {
 
     BaseMessageHandler(Agent* agent);
     virtual void configure(const json::object &config);
+
+    void enqueue_message(const json::object &input_message);
+    void process_next_message();
 
     vector<string> get_input_topics();
     vector<string> get_output_topics();

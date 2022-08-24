@@ -21,9 +21,11 @@ class MessageQueue {
     // processor should support a busy(): bool call
     MessageQueue(){}
 
-    bool enqueue(json::object *ptr);
+    bool enqueue(const json::object *ptr);
     json::object* dequeue();
 
+    bool empty();
+    int size();
 
     // should enqueue messages
   

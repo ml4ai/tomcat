@@ -120,6 +120,13 @@ void BaseMessageHandler::start_heartbeats() {
         &BaseMessageHandler::publish_heartbeats,
         this
     );
+
+    // start the asynchronous Message queue monitor
+    queue_future = async(
+        launch::async,
+        &BaseMessageHandler::check_queue,
+        this
+    );
 }
 
 // stop publishing heartbeats
@@ -132,6 +139,7 @@ void BaseMessageHandler::stop_heartbeats() {
     publish_heartbeat_message();
 
     heartbeat_future.wait();
+    queue_future.wait();
 }
 
 vector<string> BaseMessageHandler::get_input_topics() {
@@ -201,15 +209,47 @@ void BaseMessageHandler::publish(
 	publish(output_topic, "not_set", "not_set", input_message, output_data);
 }
 
+void BaseMessageHandler::enqueue_message(const json::object &input_message) {
+    message_queue.enqueue(&input_message);
+
+    cout << "BaseMessageHandler::enqueue_message() ";
+    cout << "Queue size = " << message_queue.size() << endl;
+}
+
+void BaseMessageHandler::check_queue() {
+    cout << "BaseMessageHandler::check_queue() ";
+    cout << "Queue size = " << message_queue.size() << endl;
+
+    this_thread::sleep_for(seconds(1));
+
+    while (running) {
+        this_thread::sleep_for(seconds(1));
+        if((message_queue.size() > 0) && !processing) {
+            process_next_message();
+        }
+    }
+}
+
+void BaseMessageHandler::process_next_message(){
+    cout << "BaseMessageHandler::process_next_message() ";
+    cout << "Queue size = " << message_queue.size() << endl;
+    if(message_queue.empty()) {
+        processing = false;
+    } else {
+        processing = true;
+	const json::object *ptr = message_queue.dequeue();
+	process_message(*ptr);
+    }
+}
+
 // process messages with Message Bus identifiers that match ours
 void BaseMessageHandler::process_message(const json::object &input_message) {
+    cout << "BaseMessageHandler::process_message() " << endl;
 
     string topic = val<string>(input_message, "topic");
     if(topic.empty()) {
         cerr << "BaseMessageHandler::process_message Error:" << endl;
         cerr << "No topic field in message, cannot process" << endl;
-	cerr << input_message << endl;
-	return;
     }
 
     string input_message_type = 
@@ -254,7 +294,13 @@ void BaseMessageHandler::process_message(const json::object &input_message) {
     {
         publish_rollcall_response_message(input_message);
     }
+
+    process_next_message();
 }
+
+
+
+
 
 // respond to Rollcall Request message
 void BaseMessageHandler::publish_rollcall_response_message(
