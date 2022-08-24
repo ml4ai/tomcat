@@ -18,13 +18,27 @@ using namespace std;
 json::object Configurator::parse_args(int argc, char* argv[]) {
 
     // set up options
-    po::options_description options = describe_options();
+    po::options_description desc = describe_options();
 
     // parse command line args into options
     po::variables_map vm;
     try {
-        po::store(po::parse_command_line(argc, argv, options), vm);
+	po::parsed_options parsed = po::command_line_parser(argc, argv)
+            .options(desc)
+	    .allow_unregistered()
+	    .run();
+        po::store(parsed, vm);
         po::notify(vm);
+
+	// don't run if there are unrecognized args
+        vector<string> unknown_args = 
+            po::collect_unrecognized(parsed.options,po::include_positional);
+
+	for(auto &wut : unknown_args) {
+	    cout << "Unknown arg: " << wut << endl;
+            exit(EXIT_FAILURE);
+	}
+
     } catch (exception& e) {
         cerr << "Could not parse command line args:" << endl;
 	cerr << "Exception: " << e.what() << endl;
@@ -34,7 +48,7 @@ json::object Configurator::parse_args(int argc, char* argv[]) {
 
     // if the user wants the help page, show it and exit
     if (vm.count("help")) {
-        cout << options << endl;
+        cout << desc << endl;
         exit(EXIT_SUCCESS);
     }
 
