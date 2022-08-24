@@ -183,14 +183,16 @@ void BaseMessageHandler::publish(
     }
 
     json::object output_message;
+    output_message["topic"] = output_topic;
     output_message["header"] = output_header;
     output_message["msg"] = output_msg;
     output_message["data"] = output_data;
 
     published_topics.push_back(output_topic);
-    agent->publish(output_topic, output_message);
+    agent->publish(output_message);
 }
 
+// Convenience method adding message_type and sub_type fields
 void BaseMessageHandler::publish(
 	const string output_topic,
         const json::object &input_message,
@@ -200,8 +202,15 @@ void BaseMessageHandler::publish(
 }
 
 // process messages with Message Bus identifiers that match ours
-void BaseMessageHandler::process_message(const string topic,
-                                         const json::object &input_message) {
+void BaseMessageHandler::process_message(const json::object &input_message) {
+
+    string topic = val<string>(input_message, "topic");
+    if(topic.empty()) {
+        cerr << "BaseMessageHandler::process_message Error:" << endl;
+        cerr << "No topic field in message, cannot process" << endl;
+	cerr << input_message << endl;
+	return;
+    }
 
     string input_message_type = 
         val<string>(val<json::object>(input_message,"header"), "message_type");

@@ -39,8 +39,8 @@ void Agent::stop(){
     message_handler.stop_heartbeats();
 }
 
-void Agent::process_message(const string topic, const json::object &message){
-    message_handler.process_message(topic, message);
+void Agent::process_message(const json::object &message){
+    message_handler.process_message(message);
 }
 
 // return JSON parsed from input or empty object if not valid JSON

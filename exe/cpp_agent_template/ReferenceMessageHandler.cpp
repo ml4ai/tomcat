@@ -32,8 +32,17 @@ void ReferenceMessageHandler::configure(const json::object &config) {
 }
 
 // process a custom-defined message. 
-void ReferenceMessageHandler::process_message(const string input_topic, 
-                                              const json::object &input_message) {
+void ReferenceMessageHandler::process_message(
+        const json::object &input_message) {
+
+    string input_topic = val<string>(input_message, "topic");
+    if(input_topic.empty()) {
+        cerr << "BaseMessageHandler::process_message Error:" << endl;
+        cerr << "No topic field in message, cannot process" << endl;
+        cerr << input_message << endl;
+        return;
+    }
+
 
     // Process the message if subscribed to the topic
     if(contains(input_topics, input_topic)) {
@@ -43,11 +52,11 @@ void ReferenceMessageHandler::process_message(const string input_topic,
 	output_data["topic"] = input_topic;
 	output_data["text"] = "Hello World!";
 
-        // publish the output message on the output topics
+        // publish the output message on each of the output topics
 	for(auto &output_topic : output_topics) {
             publish(output_topic, input_message, output_data);
 	}
     }
 
-    BaseMessageHandler::process_message(input_topic, input_message);
+    BaseMessageHandler::process_message(input_message);
 }

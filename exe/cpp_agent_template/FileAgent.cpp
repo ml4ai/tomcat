@@ -56,26 +56,15 @@ void FileAgent::process_file() {
     cout << "Done." << endl;
 }
 
-
 void FileAgent::process_line(const string line) {
 
     // payload must be valid JSON
     json::object message = parse_json(line);
 
-    if(message.contains("topic")) {
-        string topic = json::value_to<std::string>(message.at("topic"));
-//	cout << "Topic: " << topic << endl;
-//	cout << message << endl;
-        process_message(topic, message);
-	return;
-    } 
-
-    cerr << "Error reading from " << input_filename << endl;
-    cerr << "Line without topic: " << line << endl;
+    process_message(message);
 }
 
 // write to filesystem, include the topic in the message
-void FileAgent::publish(const string topic, json::object &message) {
-    message["topic"] = topic;
+void FileAgent::publish(json::object &message) {
     output_file << json::serialize(message) << endl;
 }

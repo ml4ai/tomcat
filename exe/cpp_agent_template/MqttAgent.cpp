@@ -51,9 +51,9 @@ MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
 	string text = m_ptr->get_payload_str();
 
 	json::object obj = parse_json(text);
-	message_queue.enqueue(&obj);
+	obj["topic"] = topic;
 
-	process_message(topic, obj);
+	process_message(obj);
     });
 
     try {
@@ -72,8 +72,15 @@ MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
     }
 }
 
-void MqttAgent::publish(const string topic, json::object &message) {
+void MqttAgent::publish(json::object &message) {
     if(running) {
+	string topic = val<string>(message, "topic");
+	if(topic.empty()) {
+            cerr << "MqttAgent::publish ERROR no topic in message" << endl;
+            cerr << message << endl;
+	    return;
+	}
+	message.erase("topic"); // do not publish topic with message on bus
         cout << "MqttAgent publishing on " << topic << endl;
         mqtt_client->publish(topic, json::serialize(message));
     }

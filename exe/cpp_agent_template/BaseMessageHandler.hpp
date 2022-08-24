@@ -9,6 +9,7 @@
 #include <future>
 #include <boost/json.hpp>
 #include "Utils.hpp"
+#include "MessageQueue.hpp"
 
 
 namespace json = boost::json;
@@ -18,20 +19,21 @@ using namespace std::chrono;
 
 // input / output message format:
 // {
+//   "topic": topic
 //   "header": {
 //     "version": testbed version or 0.1 if not in input
 //     "message_type": MESSAGE_TYPE
 //     "timestamp": UTC timestamp in ISO-8601 format
 //   },
 //   "msg": {
-//     "trial_id": field not included if empty in input
+//     "trial_id": from input, not included if empty
 //     "timestamp": UTC timestamp in ISO-8601 format
-//     "replay_id": field not included if empty in input
+//     "replay_id": from input, not included if empty
 //     "version": agent version
-//     "replay_root_id": field not included empty in input
+//     "replay_root_id": from input, not included if empty
 //     "sub_type": SUB_TYPE
 //     "source": agent name
-//     "experiment_id": field not included empty in input
+//     "experiment_id": from input, not included if empty
 //   },
 //   "data": {
 //       json::object // anything goes
@@ -74,6 +76,10 @@ class BaseMessageHandler : public Utils {
 
     // holds the result of the async heartbeat operation
     std::future<void> heartbeat_future;
+
+    // TODO need a future to check if stalled?
+    MessageQueue message_queue;
+
 
     time_t start_time;
 
@@ -150,10 +156,7 @@ class BaseMessageHandler : public Utils {
     vector<string> get_output_topics();
     vector<string> published_topics;
 
-    virtual void process_message(
-        const string topic,
-        const json::object &message
-    );
+    virtual void process_message(const json::object &message);
 
     void start_heartbeats();
     void stop_heartbeats();
