@@ -218,12 +218,16 @@ void BaseMessageHandler::process_message(const string topic,
 
 	    trial_message = input_message;
 	    publish_version_info_message(input_message);
-	    publish_heartbeat_message();
+	    if(running) {
+	        publish_heartbeat_message();
+	    }
         }
 	// trial stop
 	else if (input_sub_type.compare(TRIAL_SUB_TYPE_STOP) == 0) {
             trial_message = input_message;
-	    publish_heartbeat_message();
+	    if(running) {
+	        publish_heartbeat_message();
+	    }
         }
     }
 
