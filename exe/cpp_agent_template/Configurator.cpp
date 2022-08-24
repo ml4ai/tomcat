@@ -7,6 +7,7 @@
 #include <boost/program_options.hpp>
 #include <stdlib.h>
 #include <iostream>
+#include <exception>
 
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
@@ -21,8 +22,15 @@ json::object Configurator::parse_args(int argc, char* argv[]) {
 
     // parse command line args into options
     po::variables_map vm;
-    po::store(po::parse_command_line(argc, argv, options), vm);
-    po::notify(vm);
+    try {
+        po::store(po::parse_command_line(argc, argv, options), vm);
+        po::notify(vm);
+    } catch (exception& e) {
+        cerr << "Could not parse command line args:" << endl;
+	cerr << "Exception: " << e.what() << endl;
+        exit(EXIT_FAILURE);
+    }
+
 
     // if the user wants the help page, show it and exit
     if (vm.count("help")) {
