@@ -2,6 +2,7 @@
 
 #include <boost/json.hpp>
 #include "ReferenceMessageHandler.hpp"
+#include "Utils.hpp"
 
 namespace json = boost::json;
 
@@ -9,14 +10,16 @@ using namespace std;
 
 
 // interface for write method
-class Agent {
+class Agent : public Utils {
 
-    // this application class only processes JSON messages
+    // only process JSON messages
     json::stream_parser json_parser;
     
     ReferenceMessageHandler message_handler = ReferenceMessageHandler(this);
 
     protected:
+
+    string app_name;
 
     void process_message(const string topic, const json::object &message);
 
@@ -35,7 +38,5 @@ class Agent {
 
     public:
 
-
     virtual void publish(const string topic, json::object &message) = 0;
-    virtual void publish(const string topic, const string text) = 0;
 };

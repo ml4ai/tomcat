@@ -12,7 +12,11 @@ Agent::Agent(const json::object &config) {
 
     message_handler.configure(config);
 
-    version = json::value_to<string>(config.at("version"));
+    string agent_name = val<string>(config, "agent_name");
+    string version = val<string>(config, "version", "1.0.0");
+
+    app_name = agent_name + " version " + version;
+    cout << app_name << " initializing ..." << endl;
 
     // advise of subscribed topics
     cout << "Subscription topics:" << endl;

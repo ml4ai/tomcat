@@ -32,7 +32,4 @@ class FileAgent : public Agent {
 
     // write output to the filesystem 
     void publish(const string topic, json::object &message) override;
-
-    // write output to the filesystem 
-    void publish(const string topic, const string text) override;
 };

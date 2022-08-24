@@ -8,6 +8,7 @@
 #include <thread>
 #include <future>
 #include <boost/json.hpp>
+#include "Utils.hpp"
 
 
 namespace json = boost::json;
@@ -69,7 +70,7 @@ using namespace std::chrono;
 class Agent;
 
 // A base class for subscribed message handlers
-class BaseMessageHandler {
+class BaseMessageHandler : public Utils {
 
     // holds the result of the async heartbeat operation
     std::future<void> heartbeat_future;
@@ -102,10 +103,6 @@ class BaseMessageHandler {
         const string sub_type
     );
 
-    bool contains(const vector<string> haystack, const string needle);
-
-
-
     // values read from config file
     string version = "not_set";
     string agent_name = "not_set";
@@ -118,34 +115,6 @@ class BaseMessageHandler {
 
     // version info message data
     json::object version_info_data = json::object();
-
-    // return T value for key or fallback T if key not found 
-    template <class T>
-    T val(const json::object &src,
-          const string key,
-          const T fallback) {
-        if(src.contains(key)) {
-	    if(src.at(key) == nullptr) {
-                return fallback;
-	    }
-            return json::value_to<T>(src.at(key));
-        } else {
-            return fallback;
-        }
-    }
-
-    // return T value for key or default T if key not found 
-    template <class T>
-    T val(const json::object &src, const string key) {
-        return val(src, key, T());
-    }
-
-    string get_timestamp();
-
-    vector<string> unique_values(
-        const json::array &array,
-        const string key
-    );
 
     json::value create_bus_id(
         const string topic,

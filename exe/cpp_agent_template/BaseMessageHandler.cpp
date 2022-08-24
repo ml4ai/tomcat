@@ -50,17 +50,6 @@ BaseMessageHandler::BaseMessageHandler(Agent* agent): agent(agent) {
     );
 }
 
-// return true if the vector contains the value
-bool BaseMessageHandler::contains(const vector<string> haystack, 
-                                  const string needle) {
-    for(auto &hay : haystack) {
-        if(needle.compare(hay) == 0) {
-            return true;
-        }
-    }
-    return false;
-}
-
 // return a value with the fields identifying a message on the message bus
 json::value BaseMessageHandler::create_bus_id(const string topic,
                                               const string message_type,
@@ -145,41 +134,12 @@ void BaseMessageHandler::stop_heartbeats() {
     heartbeat_future.wait();
 }
 
-
-// return a vector of unique array values for the key
-vector<string> BaseMessageHandler::unique_values(const json::array &arr,
-                                                 const string key) {
-
-    set<string> values;
-    for(size_t i = 0 ;  i < arr.size() ; i++) {
-        json::value element = arr.at(i);
-        string value = json::value_to<std::string>(element.at(key));
-	if(!value.empty()) {
-            values.insert(value);
-	}
-    }
-
-    vector<string> ret;
-    for(auto &value : values) {
-        ret.push_back(value);
-    }
-
-    return ret;
-}
-
 vector<string> BaseMessageHandler::get_input_topics() {
     return unique_values(subscribes, "topic");
 }
 
 vector<string> BaseMessageHandler::get_output_topics() {
     return unique_values(publishes, "topic");
-}
-
-/** Get current UTC timestamp in ISO-8601 format. */
-string BaseMessageHandler::get_timestamp() {
-    return boost::posix_time::to_iso_extended_string(
-        boost::posix_time::microsec_clock::universal_time()
-    ) + "Z";
 }
 
 // create the common header struct for an outgoing message
