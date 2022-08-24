@@ -6,5 +6,9 @@
     "reference_agent_input_topic_1",
     "reference_agent_input_topic_2",
     "reference_agent_input_topic_3"
+  ],
+  "publishes": [
+    "reference_agent_input_output_topic_1",
+    "reference_agent_input_output_topic_2"
   ]
 }
