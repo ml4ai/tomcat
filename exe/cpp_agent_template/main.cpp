@@ -13,6 +13,7 @@
 #include "Configurator.hpp"
 #include "MqttAgent.hpp"
 #include "FileAgent.hpp"
+#include "Utils.hpp"
 
 // An extendable base class for Testbed Agents
 // Authors:   Joseph Astier, Adarsh Pyareral
@@ -33,23 +34,21 @@ void signal_handler(int signal) { gSignalStatus = signal; }
 
 int main(int argc, char* argv[]) {
 
+    Utils utils;
+
     // get configuration
     Configurator configurator;
     json::object config = configurator.parse_args(argc, argv);
 
     // If the user has specified input and output filenames, run 
     // in file mode
-    json::object file = json::value_to<json::object>(config.at("file"));
-    string input_file = json::value_to<string>(file.at("in"));
-    string output_file = json::value_to<string>(file.at("out"));
+    json::object file = utils.val<json::object>(config, "file");
+    string input_file = utils.val<string>(file, "in");
+    string output_file = utils.val<string>(file, "out");
 
-    // if either or both of the filenames are specified, run in File mode
-    if(!input_file.empty() || !output_file.empty()) {
-        FileAgent file_agent(config);
-    }
+    // if neither filename is specified, run in MQTT mode
+    if(input_file.empty() && output_file.empty()) {
 
-    else {
-        // Otherwise run in MQTT mode
         MqttAgent mqtt_agent(config);
         mqtt_agent.start();
 
@@ -68,5 +67,10 @@ int main(int argc, char* argv[]) {
             }
         }
     }
+    else {
+	// otherwise run in file mode
+        FileAgent file_agent(config);
+    }
+
     return EXIT_SUCCESS;
 }
