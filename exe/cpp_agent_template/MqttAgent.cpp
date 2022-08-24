@@ -18,6 +18,9 @@ using namespace std::chrono;
 
 MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
 
+    cout << "Running in MQTT Mode" << endl;
+
+
     // set up MQTT params for broker connection
     json::object mqtt_config = json::value_to<json::object>(config.at("mqtt"));
     string host = json::value_to<string>(mqtt_config.at("host"));

@@ -9,7 +9,7 @@ using namespace std;
 namespace json = boost::json;
 
 FileAgent::FileAgent(const json::object &config) : Agent(config) {
-    cout << "File Agent version " << version << endl;
+    cout << "Running in File Mode" << endl;
 
     json::object file_config = json::value_to<json::object>(config.at("file"));
     input_filename = json::value_to<string>(file_config.at("in"));
