@@ -64,8 +64,8 @@ void FileAgent::process_line(const string line) {
 
     if(message.contains("topic")) {
         string topic = json::value_to<std::string>(message.at("topic"));
-	cout << "Topic: " << topic << endl;
-	cout << message << endl;
+//	cout << "Topic: " << topic << endl;
+//	cout << message << endl;
         process_message(topic, message);
 	return;
     } 
