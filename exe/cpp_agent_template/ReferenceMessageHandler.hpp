@@ -11,14 +11,16 @@ class Agent;
 
 class ReferenceMessageHandler: public BaseMessageHandler {
 
-    vector<string> input_topics, output_topics;
+    // all subscribed topics
+    vector<string> input_topics;
+
+    // all publication topics
+    vector<string> output_topics;
 
     public:
 
     void configure(const json::object &config) override;
     
-
-
     ReferenceMessageHandler(Agent* agent) : BaseMessageHandler(agent) {}
 
     void process_message(const string topic,

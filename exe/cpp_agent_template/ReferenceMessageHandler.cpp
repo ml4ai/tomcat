@@ -13,27 +13,32 @@ void ReferenceMessageHandler::configure(const json::object &config) {
     BaseMessageHandler::configure(config);	
 
     // add subscriptions.  
+    input_topics.clear();
     json::array subs = val<json::array>(config, "subscribes");
     for(size_t i = 0 ;  i < subs.size() ; i++) {
 	string topic = json::value_to<string>(subs.at(i));
         add_subscription(topic);
+	input_topics.push_back(topic);
+    }
+
+    // add publications
+    output_topics.clear();
+    json::array pubs = val<json::array>(config, "publishes");
+    for(size_t i = 0 ;  i < pubs.size() ; i++) {
+	string topic = json::value_to<string>(pubs.at(i));
+        add_publication(topic);
+	output_topics.push_back(topic);
     }
 }
-
 
 
 // process a custom-defined message. 
 void ReferenceMessageHandler::process_message(const string topic, 
                                               const json::object &message) {
 
-    // define specifics for this handler input
-    string input_topic = "reference_agent_input_topic";
+    // Process the message if subscribed to the topic
+    if(contains(input_topics, topic)) {
 
-    // Process the message if the fields match.  
-    if (input_topic.compare("reference_agent_output_topic") == 0) {
-
-        string output_topic = "reference_agent_output_topic";
-       
         string timestamp = get_timestamp();
 
         // create common header
@@ -52,6 +57,7 @@ void ReferenceMessageHandler::process_message(const string topic,
 
 	// create a data element of any type
 	json::object output_data;
+	output_data["topic"] = topic;
 	output_data["text"] = "Hello World!";
 
         // assemble outgoing message
@@ -60,8 +66,10 @@ void ReferenceMessageHandler::process_message(const string topic,
         output_message["msg"] = output_msg;
         output_message["data"] = output_data;
 
-        // agent takes it from here
-        agent->publish(output_topic, output_message);
+        // publish the output message on the output topics
+	for(auto &output_topic : output_topics) {
+            agent->publish(output_topic, output_message);
+	}
     }
 
     BaseMessageHandler::process_message(topic, message);
