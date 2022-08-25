@@ -251,11 +251,6 @@ void BaseMessageHandler::process_message(const json::object &input_message) {
         cout << "processing " << topic << " " << endl;
     }
 
-    if(topic.empty()) {
-        cerr << "BaseMessageHandler::process_message Error:" << endl;
-        cerr << "No topic field in message, cannot process" << endl;
-    }
-
     string input_message_type = 
         val<string>(val<json::object>(input_message,"header"), "message_type");
 

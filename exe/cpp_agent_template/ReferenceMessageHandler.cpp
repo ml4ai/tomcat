@@ -36,13 +36,6 @@ void ReferenceMessageHandler::process_message(
         const json::object &input_message) {
 
     string input_topic = val<string>(input_message, "topic");
-    if(input_topic.empty()) {
-        cerr << "BaseMessageHandler::process_message Error:" << endl;
-        cerr << "No topic field in message, cannot process" << endl;
-        cerr << input_message << endl;
-        return;
-    }
-
 
     // Process the message if subscribed to the topic
     if(contains(input_topics, input_topic)) {
