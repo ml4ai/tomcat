@@ -197,7 +197,7 @@ void BaseMessageHandler::publish(
     output_message["msg"] = output_msg;
     output_message["data"] = output_data;
 
-    published_topics.push_back(output_topic);
+    traffic_out.push_back(output_topic);
     agent->publish(output_message);
 }
 
@@ -243,6 +243,7 @@ void BaseMessageHandler::process_next_message(){
 void BaseMessageHandler::process_message(const json::object &input_message) {
 
     string topic = val<string>(input_message, "topic");
+    traffic_in.push_back(topic);
 
     int size = message_queue.size();
     if(size > 3) {
@@ -283,6 +284,9 @@ void BaseMessageHandler::process_message(const json::object &input_message) {
 	    if(running) {
 	        publish_heartbeat_message();
 	    }
+	    cout << "TRIAL SUMMARY:" << endl;
+	    count_keys(traffic_in, "Messages Read:");
+	    count_keys(traffic_out, "Messages Written:");
         }
     }
 
@@ -296,9 +300,6 @@ void BaseMessageHandler::process_message(const json::object &input_message) {
 
     process_next_message();
 }
-
-
-
 
 
 // respond to Rollcall Request message

@@ -157,7 +157,7 @@ class BaseMessageHandler : public Utils {
 
     vector<string> get_input_topics();
     vector<string> get_output_topics();
-    vector<string> published_topics;
+    vector<string> traffic_out, traffic_in;
 
     virtual void process_message(const json::object &message);
 

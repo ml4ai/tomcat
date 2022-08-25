@@ -18,6 +18,8 @@ class Utils {
 
     public:
 
+    void count_keys(vector<string> data, string name);
+
     // return T value for key or fallback T if key not found 
     template <class T>
     T val(const json::object &src,
