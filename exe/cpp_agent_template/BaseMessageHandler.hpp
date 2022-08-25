@@ -9,7 +9,6 @@
 #include <future>
 #include <boost/json.hpp>
 #include "Utils.hpp"
-#include "MessageQueue.hpp"
 
 
 namespace json = boost::json;
@@ -86,7 +85,7 @@ class BaseMessageHandler : public Utils {
 
     // Message queue gets checked once per second
     std::future<void> queue_future;
-    MessageQueue message_queue;
+    vector<json::object> message_queue;
     bool processing = false;
     void check_queue();
 

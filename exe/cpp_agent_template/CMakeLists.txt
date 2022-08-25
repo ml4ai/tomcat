@@ -25,7 +25,6 @@ add_executable(
     BaseMessageHandler.cpp
     ReferenceMessageHandler.cpp
     Configurator.cpp
-    MessageQueue.cpp
     Utils.cpp
 )
 target_link_libraries(main PahoMqttCpp::paho-mqttpp3 ${Boost_LIBRARIES})

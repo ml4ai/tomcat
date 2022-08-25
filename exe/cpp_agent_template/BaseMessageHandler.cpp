@@ -210,15 +210,11 @@ void BaseMessageHandler::publish(
 }
 
 void BaseMessageHandler::enqueue_message(const json::object &input_message) {
-    message_queue.enqueue(&input_message);
-
-    cout << "BaseMessageHandler::enqueue_message() ";
-    cout << "Queue size = " << message_queue.size() << endl;
+    message_queue.push_back(input_message);
 }
 
+// check the message queue every second
 void BaseMessageHandler::check_queue() {
-    cout << "BaseMessageHandler::check_queue() ";
-    cout << "Queue size = " << message_queue.size() << endl;
 
     this_thread::sleep_for(seconds(1));
 
@@ -231,22 +227,31 @@ void BaseMessageHandler::check_queue() {
 }
 
 void BaseMessageHandler::process_next_message(){
-    cout << "BaseMessageHandler::process_next_message() ";
-    cout << "Queue size = " << message_queue.size() << endl;
     if(message_queue.empty()) {
         processing = false;
     } else {
         processing = true;
-	const json::object *ptr = message_queue.dequeue();
-	process_message(*ptr);
+	const json::object &obj = message_queue.front();
+
+	const json::object &copy = json::object(obj);
+        message_queue.erase(message_queue.begin());
+
+	process_message(copy);
     }
 }
 
 // process messages with Message Bus identifiers that match ours
 void BaseMessageHandler::process_message(const json::object &input_message) {
-    cout << "BaseMessageHandler::process_message() " << endl;
 
     string topic = val<string>(input_message, "topic");
+
+    int size = message_queue.size();
+    if(size > 3) {
+        cout << "processing " << topic << " " << size << endl;
+    } else {
+        cout << "processing " << topic << " " << endl;
+    }
+
     if(topic.empty()) {
         cerr << "BaseMessageHandler::process_message Error:" << endl;
         cerr << "No topic field in message, cannot process" << endl;
