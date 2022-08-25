@@ -45,13 +45,14 @@ __start_on_cheetah() {
   local padding=$1
   local python_script_name=$2
   local log_suffix=$3
+  local experimenter=$4
   local client_address="cheetah.local"
 
   local log_path="$EXPERIMENT_DIR/tmp/baseline_tasks_cheetah_${log_suffix}.log"
 
   while [[ $? -eq 0 ]]; do
     local command="cd \$HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks "
-    command+="&& $PYTHON ${python_script_name} -n AI  &> \$HOME$log_path &"
+    command+="&& $PYTHON ${python_script_name} -n $experimenter &> \$HOME$log_path &"
     ssh $EXPERIMENT_USER@$client_address "$command"
 
     if [[ $? -eq 0 ]]; then
@@ -120,12 +121,12 @@ __start_baseline_tasks() {
 
   yes_no_question "${padding}Do you want to start ${EMPH}Competitive Ping-Pong${NC}?"
   if [[ $? -eq 0 ]]; then
-    __start_on_cheetah "${padding} " "run_client_experimenter.py" "competitive_ping_pong"
+    __start_on_cheetah "${padding} " "run_client_experimenter.py" "competitive_ping_pong" "exp"
   fi
 
   yes_no_question "${padding}Do you want to start ${EMPH}Cooperative Ping-Pong${NC}?"
   if [[ $? -eq 0 ]]; then
-    __start_on_cheetah "${padding} " "run_client_ai.py" "cooperative_ping_pong"
+    __start_on_cheetah "${padding} " "run_client_ai.py" "cooperative_ping_pong" "ai"
   fi
 }
 
