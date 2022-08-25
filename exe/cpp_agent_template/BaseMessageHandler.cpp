@@ -201,6 +201,39 @@ void BaseMessageHandler::publish(
     agent->publish(output_message);
 }
 
+
+vector<string> BaseMessageHandler::add_subscriptions(
+   const json::object &config){
+
+    vector<string> ret;
+    json::array arr = val<json::array>(config, "subscribes");
+    for(size_t i = 0 ;  i < arr.size() ; i++) {
+        string topic = json::value_to<string>(arr.at(i));
+        add_subscription(topic);
+        ret.push_back(topic);
+    }
+
+    return ret;
+}
+
+
+vector<string> BaseMessageHandler::add_publications(
+   const json::object &config){
+
+    vector<string> ret;
+    json::array arr = val<json::array>(config, "publications");
+    for(size_t i = 0 ;  i < arr.size() ; i++) {
+        string topic = json::value_to<string>(arr.at(i));
+        add_publication(topic);
+        ret.push_back(topic);
+    }
+
+    return ret;
+}
+
+
+
+
 // Convenience method adding message_type and sub_type fields
 void BaseMessageHandler::publish(
 	const string output_topic,

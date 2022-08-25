@@ -95,6 +95,10 @@ class BaseMessageHandler : public Utils {
 
     protected:
 
+    vector<string> add_subscriptions(const json::object &config);
+    vector<string> add_publications(const json::object &config);
+
+
     void add_subscription(const string topic);
     void add_subscription(
         const string topic,
