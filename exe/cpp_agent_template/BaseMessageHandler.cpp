@@ -3,6 +3,7 @@
 #include <boost/json/array.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <set>
+#include <queue>
 #include <thread>
 
 #include "Agent.hpp"
@@ -210,7 +211,7 @@ void BaseMessageHandler::publish(
 }
 
 void BaseMessageHandler::enqueue_message(const json::object &input_message) {
-    message_queue.push_back(input_message);
+    message_queue.push(input_message);
 }
 
 // check the message queue every second
@@ -232,10 +233,8 @@ void BaseMessageHandler::process_next_message(){
     } else {
         processing = true;
 	const json::object &obj = message_queue.front();
-
 	const json::object &copy = json::object(obj);
-        message_queue.erase(message_queue.begin());
-
+        message_queue.pop();
 	process_message(copy);
     }
 }

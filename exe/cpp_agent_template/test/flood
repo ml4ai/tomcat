@@ -1,8 +1,8 @@
 #!/bin/bash
 
 
-while true
+for i in {1..1000}
 do
-./elkless_replayer all.metadata
+mosquitto_pub -t agent/control/rollcall/request -f  rollcall_request.metadata
 done
 
