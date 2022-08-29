@@ -36,11 +36,11 @@ void Agent::publish_heartbeat_message(){
 }
 
 void Agent::start(){
-    message_handler.start_heartbeats();
+    message_handler.start();
 }
 
 void Agent::stop(){
-    message_handler.stop_heartbeats();
+    message_handler.stop();
 }
 
 void Agent::process_message(const json::object &message){

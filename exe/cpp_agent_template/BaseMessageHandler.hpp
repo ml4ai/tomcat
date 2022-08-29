@@ -160,6 +160,6 @@ class BaseMessageHandler : public Utils {
 
     virtual void process_message(const json::object &message);
 
-    void start_heartbeats();
-    void stop_heartbeats();
+    void start();
+    void stop();
 };

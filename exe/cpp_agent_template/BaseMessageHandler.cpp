@@ -108,7 +108,7 @@ void BaseMessageHandler::publish_heartbeats() {
 }
 
 // start publishing heartbeats
-void BaseMessageHandler::start_heartbeats() {
+void BaseMessageHandler::start() {
 
     running = true;
     status = "I am processing messages";
@@ -125,7 +125,7 @@ void BaseMessageHandler::start_heartbeats() {
 }
 
 // stop publishing heartbeats
-void BaseMessageHandler::stop_heartbeats() {
+void BaseMessageHandler::stop() {
 
     running = false;
     status = "Stopped";
