@@ -26,7 +26,7 @@ class MinecraftExtractor:
         # message timestamp as the id of the record.
         total = 0
 
-        with open(out_filepath, "wa") as f:
+        with open(out_filepath, "a") as f:
             while True:
                 response = self._es.search(index="logstash*", query=query_body, sort=[{"msg.timestamp": "asc"}],
                                            size=10000)
