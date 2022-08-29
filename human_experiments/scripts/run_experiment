@@ -26,7 +26,7 @@ __help() {
   echo "[6]:  Starts Face and Screen recording"
   echo "[7]:  Starts the Baseline Tasks"
   echo "[8]:  Plays Instructive Video"
-  echo "[9]: Starts Minecraft"
+  echo "[9]:  Starts Minecraft"
   echo "[10]: Opens the Client Map"
   echo "[11]: Starts the Audio Streamer"
   echo "[12]: Opens the Final Survey"

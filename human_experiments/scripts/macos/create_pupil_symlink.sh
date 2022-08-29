@@ -18,11 +18,12 @@ else
   PADDING=$2
 fi
 
-PUPIL_RECORDER_LOCAL_DIR="$HOME/"
+# Local directory where pupil data is saved in the client machines
+PUPIL_RECORDER_LOCAL_DIR="$HOME/recordings/$(date +%Y_%m_%d)"
 
-# Remove a previous link that might exist
+# Remove any previous link that might exist
 if [[ -d "$PUPIL_RECORDER_LOCAL_DIR" ]]; then
-  rm "$PUPIL_RECORDER_LOCAL_DIR"
+  unlink "$PUPIL_RECORDER_LOCAL_DIR"
 fi
 
 if ln -s "$TARGET_DIR" "$PUPIL_RECORDER_LOCAL_DIR"; then
