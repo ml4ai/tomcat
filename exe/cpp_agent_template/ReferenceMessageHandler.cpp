@@ -25,13 +25,15 @@ void ReferenceMessageHandler::process_message(
     // Process the message if subscribed to the topic
     if(contains(input_topics, input_topic)) {
 
-	// create a data element of any type
-	json::object output_data;
-	output_data["topic"] = input_topic;
-	output_data["text"] = "Hello World!";
-
         // publish the output message on each of the output topics
 	for(auto &output_topic : output_topics) {
+
+            // create a data element 
+            json::object output_data;
+            output_data["input_topic"] = input_topic;
+            output_data["output_topic"] = output_topic;
+            output_data["text"] = "Hello World!";
+
             publish(output_topic, input_message, output_data);
 	}
     }

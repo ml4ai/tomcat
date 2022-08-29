@@ -3,6 +3,8 @@
 # Authors: Joseph Astier, Adarsh Pyarelal
 
 ./elkless_replayer trial_start.metadata
-./elkless_replayer reference_agent_input.metadata
+./elkless_replayer reference_agent_input_1.metadata
+./elkless_replayer reference_agent_input_2.metadata
+./elkless_replayer reference_agent_input_3.metadata
 ./elkless_replayer rollcall_request.metadata
 ./elkless_replayer trial_stop.metadata
