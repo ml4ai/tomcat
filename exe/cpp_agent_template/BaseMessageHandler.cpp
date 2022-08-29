@@ -91,15 +91,9 @@ void BaseMessageHandler::configure(const json::object &config) {
     // set up the global constants 
     agent_name = val<string>(config, "agent_name", AGENT_NAME);
     version = val<string>(config, "version", SOFTWARE_VERSION);
-    string owner = val<string>(config, "owner", OWNER);
-    string testbed_source = 
+    owner = val<string>(config, "owner", OWNER);
+    testbed_source = 
         TESTBED + string("/") + agent_name + string(":") + version;
-
-    // advise that we are on the bus but not yet started
-    status = "Not started";
-    publish_heartbeat_message();
-    
-    // this class is now fully configured and awaiting the start call
 }
 
 /** Function that publishes heartbeat messages while the agent is running */
@@ -328,9 +322,9 @@ void BaseMessageHandler::publish_version_info_message(
 
     // create version info data
     json::object output_data;
-    output_data["agent_name"] = AGENT_NAME;
-    output_data["owner"] = OWNER;
-    output_data["version"] = SOFTWARE_VERSION;
+    output_data["agent_name"] = agent_name;
+    output_data["owner"] = owner;
+    output_data["version"] = version;
     output_data["source"] = testbed_source;
     output_data["publishes"] = publishes;
     output_data["subscribes"] = subscribes;

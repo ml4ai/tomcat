@@ -80,9 +80,7 @@ class BaseMessageHandler : public Utils {
     // holds the result of the async heartbeat operation
     std::future<void> heartbeat_future;
     bool running = false; // publish regular heartbeats when true
-    string testbed_version = "1.0";
     void publish_heartbeats();
-    void publish_heartbeat_message();
     string status = "uninitialized";
 		    
     // true if a message is currently being handled.  Queue input
@@ -111,11 +109,15 @@ class BaseMessageHandler : public Utils {
         const string sub_type
     );
 
-    // values read from config file
+    // configuration
     string version = "not_set";
     string agent_name = "not_set";
+    string owner = "not_set";
+    string testbed_version = "1.0";
+    string testbed_source = "not_set";
 
-    // owner
+
+    // File or MQTT
     Agent *agent = nullptr;
 
     // last received trial start or stop message
@@ -154,6 +156,7 @@ class BaseMessageHandler : public Utils {
 
     void enqueue_message(const json::object &input_message);
     void process_next_message();
+    void publish_heartbeat_message();
 
     vector<string> get_input_topics();
     vector<string> get_output_topics();

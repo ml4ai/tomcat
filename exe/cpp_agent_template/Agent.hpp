@@ -23,6 +23,7 @@ class Agent : public Utils {
     string app_name;
 
     void process_message(const json::object &message);
+    void publish_heartbeat_message();
 
     json::object parse_json(const string text);
 

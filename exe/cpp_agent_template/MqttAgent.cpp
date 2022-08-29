@@ -73,6 +73,9 @@ MqttAgent::MqttAgent(const json::object &config) {
     for(string i : get_input_topics()) {
         mqtt_client->subscribe(i, 2);
     }
+
+    // send an early heartbeat to advise of configuration
+    Agent::publish_heartbeat_message();
 }
 
 // check the message queue every second

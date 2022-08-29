@@ -31,6 +31,10 @@ void Agent::configure(const json::object &config) {
     }
 }
 
+void Agent::publish_heartbeat_message(){
+    message_handler.publish_heartbeat_message();
+}
+
 void Agent::start(){
     message_handler.start_heartbeats();
 }
