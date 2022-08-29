@@ -1,0 +1,55 @@
+import argparse
+import json
+import os
+
+from elasticsearch import ElasticSearch
+
+
+class MinecraftExtractor:
+    def __init__(self, address: str, port: int, trial_id: str, trial_number: str):
+        self._trial_id = trial_id
+        self._trial_number = trial_number
+
+        url = f"http://{address}:{port}"
+        self._es = ElasticSearch(url)
+
+    def export(self, out_dir: str):
+        pit = self._es.open_point_in_time(index="logstash*", keep_alive="3m").body
+        query_body = {
+            "match": {
+                "msg.trial_id": self._trial_id
+            }
+        }
+
+        response = self._es.search(pit=pit, query=query_body)
+        print(f"{response['hits']['total']['value']} messages found.")
+
+        out_filepath = f"{out_dir}/MinecraftData_Trial-{self._trial_number}_ID-{self._trial_id}.metadata"
+        with open(out_filepath, "wa") as f:
+            for hit in response['hits']['hits']:
+                json.dump(hit['_source'], f)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        "Retrieves Minecraft data from all the trials in a experiment using elastic search.")
+    parser.add_argument("--address", default="localhost", help="Address of the elastic search server.")
+    parser.add_argument("--port", default=9200, help="Port of the elastic search server.")
+    parser.add_argument("--trial_info_filepath", required=True,
+                        help="Path to the file containing info about the trials in the experiment.")
+    parser.add_argument("--out_dir", required=True, help="Directory where files with the extracted data must be saved.")
+
+    args = parser.parse_args()
+
+    if not os.path.exists(args.trial_info_filepath):
+        raise Exception(f"The file {args.trial_info_filepath} does not exist.")
+
+    with open(args.trial_info_filepath, "r") as f:
+        trial_info = json.load(f)
+        for i in range(len(trial_info["id"])):
+            trial_id = trial_info["id"][i]
+            trial_number = trial_info["number"][i]
+            # One .metadata file per trial in the experiment
+            print(f"Extracting data from trial {trial_number}")
+            extractor = MinecraftExtractor(args.address, args.port, trial_id, trial_number)
+            extractor.export(args.out_dir)
