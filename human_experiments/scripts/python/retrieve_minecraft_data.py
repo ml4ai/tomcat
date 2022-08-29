@@ -2,7 +2,7 @@ import argparse
 import json
 import os
 
-from elasticsearch import ElasticSearch
+from elasticsearch import Elasticsearch
 
 
 class MinecraftExtractor:
@@ -11,7 +11,7 @@ class MinecraftExtractor:
         self._trial_number = trial_number
 
         url = f"http://{address}:{port}"
-        self._es = ElasticSearch(url)
+        self._es = Elasticsearch(url)
 
     def export(self, out_dir: str):
         pit = self._es.open_point_in_time(index="logstash*", keep_alive="3m").body
