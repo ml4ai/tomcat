@@ -2,8 +2,6 @@
 
 set -u
 
-SECONDS_TO_WAIT=300
-
 source configuration_helpers
 
 if [[ -z ${1+x} ]]; then
@@ -51,7 +49,7 @@ __stop_audio_streamer() {
 
   local pid_path="$EXPERIMENT_DIR/tmp/audio_streamer_$client_name.pid"
   local audio_streamer_pid=$(cat "$pid_path")
-  local command="kill $audio_streamer_pid \"$padding \""
+  local command="kill $audio_streamer_pid"
 
   echo -e "${padding}Stopping ${EMPH}Audio Streamer${NC}..."
   local stopped="n"
