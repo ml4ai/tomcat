@@ -116,15 +116,11 @@ class BaseMessageHandler : public Utils {
     string testbed_version = "1.0";
     string testbed_source = "not_set";
 
-
     // File or MQTT
     Agent *agent = nullptr;
 
     // last received trial start or stop message
     json::object trial_message = json::object();
-
-    // version info message data
-    json::object version_info_data = json::object();
 
     json::value create_bus_id(
         const string topic,
