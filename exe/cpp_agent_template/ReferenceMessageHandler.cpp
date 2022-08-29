@@ -36,5 +36,6 @@ void ReferenceMessageHandler::process_message(
 	}
     }
 
+    // forward the message to base class for further processing
     BaseMessageHandler::process_message(input_message);
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <boost/json.hpp>
 #include "ReferenceMessageHandler.hpp"
 #include "Utils.hpp"
@@ -28,7 +29,7 @@ class Agent : public Utils {
 
     string version;
 
-    Agent(const json::object &config);
+    void configure(const json::object &config);
 
     vector<string>get_input_topics();
 
@@ -39,5 +40,5 @@ class Agent : public Utils {
 
     public:
 
-    virtual void publish(json::object &message) = 0;
+    virtual void publish(json::object &message) {}
 };

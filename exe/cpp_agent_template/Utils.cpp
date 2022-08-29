@@ -39,13 +39,13 @@ vector<string> Utils::unique_values(const json::array &arr, const string key) {
     return ret;
 }
 
-void Utils::count_keys(vector<string> data, string name){
+// Report the number of times each key appears in the data vector
+void Utils::count_keys(vector<string> data, string report_name){
     json::object obj;
     for(auto &key: data) {
-	int value = val<int>(obj, key);
-	obj[key] = value + 1;
+	obj[key] = val<int>(obj, key) + 1;
     }
-    cout << name << endl;
+    cout << report_name << endl;
     for(auto it = obj.begin(); it !=obj.end(); ++it) {
         cout << it->value() << "\t" << it->key()  << endl;
     }
@@ -54,7 +54,7 @@ void Utils::count_keys(vector<string> data, string name){
 }
 
 
-/** Get current UTC timestamp in ISO-8601 format. */
+/** Return current UTC timestamp in ISO-8601 format. */
 string Utils::get_timestamp() {
     return boost::posix_time::to_iso_extended_string(
         boost::posix_time::microsec_clock::universal_time()

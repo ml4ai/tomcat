@@ -8,7 +8,7 @@
 using namespace std;
 namespace json = boost::json;
 
-Agent::Agent(const json::object &config) {
+void Agent::configure(const json::object &config) {
 
     message_handler.configure(config);
 
@@ -63,10 +63,12 @@ json::object Agent::parse_json(const string text) {
     return json::value_to<json::object>(json_parser.release());
 }
 
+// return all topics to which this agent is subscribed
 vector<string> Agent::get_input_topics(){
     return message_handler.get_input_topics();
 }
 
+// return all topics to which this Agent will publish
 vector<string> Agent::get_output_topics(){
     return message_handler.get_output_topics();
 }

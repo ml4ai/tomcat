@@ -51,7 +51,7 @@ BaseMessageHandler::BaseMessageHandler(Agent* agent): agent(agent) {
     );
 }
 
-// return a value with the fields identifying a message on the message bus
+// return a value with the three fields identifying a message
 json::value BaseMessageHandler::create_bus_id(const string topic,
                                               const string message_type,
                                               const string sub_type) {
@@ -87,14 +87,19 @@ void BaseMessageHandler::add_publication(const string topic) {
 // Using the config argument and hardcoded values, populate the global 
 // Version Info data structure.   
 void BaseMessageHandler::configure(const json::object &config) {
-    status = "Configuring";
 
-    // set up the version info data
+    // set up the global constants 
     agent_name = val<string>(config, "agent_name", AGENT_NAME);
     version = val<string>(config, "version", SOFTWARE_VERSION);
     string owner = val<string>(config, "owner", OWNER);
     string testbed_source = 
         TESTBED + string("/") + agent_name + string(":") + version;
+
+    // advise that we are on the bus but not yet started
+    status = "Not started";
+    publish_heartbeat_message();
+    
+    // this class is now fully configured and awaiting the start call
 }
 
 /** Function that publishes heartbeat messages while the agent is running */
@@ -102,7 +107,9 @@ void BaseMessageHandler::publish_heartbeats() {
 
     while (running) {
         this_thread::sleep_for(seconds(10));
-	publish_heartbeat_message();
+	if(running) {
+            publish_heartbeat_message();
+        }
     }
 }
 
@@ -134,7 +141,7 @@ void BaseMessageHandler::start_heartbeats() {
 void BaseMessageHandler::stop_heartbeats() {
 
     running = false;
-    status = "stopped";
+    status = "Stopped";
 
     // send immediate ack
     publish_heartbeat_message();
@@ -173,6 +180,7 @@ void BaseMessageHandler::publish(
     output_msg["source"] = agent_name;
     output_msg["version"] = version;
     output_msg["timestamp"] = timestamp;
+
     // add these only if they exist and are non-empty
     string experiment_id = val<string>(input_msg, "experiment_id");
     if(!experiment_id.empty()) {
@@ -202,6 +210,7 @@ void BaseMessageHandler::publish(
 }
 
 
+// add subscriptions as they appear in the config struct
 vector<string> BaseMessageHandler::add_subscriptions(
    const json::object &config){
 
@@ -217,6 +226,7 @@ vector<string> BaseMessageHandler::add_subscriptions(
 }
 
 
+// add publications as they appear in the config struct
 vector<string> BaseMessageHandler::add_publications(
    const json::object &config){
 
@@ -230,9 +240,6 @@ vector<string> BaseMessageHandler::add_publications(
 
     return ret;
 }
-
-
-
 
 // Convenience method adding message_type and sub_type fields
 void BaseMessageHandler::publish(
@@ -317,6 +324,7 @@ void BaseMessageHandler::process_message(const json::object &input_message) {
 	    if(running) {
 	        publish_heartbeat_message();
 	    }
+	    // Report the activity during the trial.
 	    cout << "TRIAL SUMMARY:" << endl;
 	    count_keys(traffic_in, "Messages Read:");
 	    count_keys(traffic_out, "Messages Written:");
@@ -333,7 +341,6 @@ void BaseMessageHandler::process_message(const json::object &input_message) {
 
     process_next_message();
 }
-
 
 // respond to Rollcall Request message
 void BaseMessageHandler::publish_rollcall_response_message(
@@ -382,7 +389,7 @@ void BaseMessageHandler::publish_heartbeat_message() {
     // create heartbeat data
     json::object output_data;
     output_data["running"] = running;
-    output_data["state"] = state;
+    output_data["state"] = "ok";
     output_data["status"] = status;
 
     publish(HEARTBEAT_TOPIC,

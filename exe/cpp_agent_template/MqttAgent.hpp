@@ -15,7 +15,7 @@ class MqttAgent : public Agent {
 
     std::shared_ptr<mqtt::async_client> mqtt_client;
 
-    bool running = false;
+    bool running = true;
 
   public:
 

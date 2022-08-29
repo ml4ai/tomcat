@@ -17,7 +17,7 @@ namespace json = boost::json;
 using namespace std::chrono;
 
 
-MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
+MqttAgent::MqttAgent(const json::object &config) {
 
     cout << "Running in MQTT Mode" << endl;
 
@@ -65,6 +65,8 @@ MqttAgent::MqttAgent(const json::object &config) : Agent(config) {
     }
 
     BOOST_LOG_TRIVIAL(info) << "Connected to the MQTT broker at " << address;
+
+    Agent::configure(config);
 
     // subscribe to input topics
     for(string i : get_input_topics()) {

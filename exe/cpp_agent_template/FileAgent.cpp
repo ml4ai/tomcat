@@ -8,7 +8,7 @@
 using namespace std;
 namespace json = boost::json;
 
-FileAgent::FileAgent(const json::object &config) : Agent(config) {
+FileAgent::FileAgent(const json::object &config) {
     cout << "Running in File Mode" << endl;
 
     json::object file_config = json::value_to<json::object>(config.at("file"));
@@ -40,6 +40,7 @@ FileAgent::FileAgent(const json::object &config) : Agent(config) {
         exit(EXIT_FAILURE);
     } 
 
+    Agent::configure(config);
     process_file();
 }
 

@@ -74,19 +74,25 @@ class Agent;
 // A base class for subscribed message handlers
 class BaseMessageHandler : public Utils {
 
+    // the start time is recorded for uptime computation.
     time_t start_time;
 
     // holds the result of the async heartbeat operation
     std::future<void> heartbeat_future;
     bool running = false; // publish regular heartbeats when true
-    string state = "ok";
-    string status = "Uninitialized";
     string testbed_version = "1.0";
     void publish_heartbeats();
-
+    void publish_heartbeat_message();
+    string status = "uninitialized";
+		    
     // Message queue gets checked once per second
     std::future<void> queue_future;
+
+    // A FIFO queue of messages from the bus
     queue<json::object> message_queue;
+
+    // true if a message is currently being handled.  Queue input
+    // that happens when true.
     bool processing = false;
     void check_queue();
 
@@ -97,7 +103,6 @@ class BaseMessageHandler : public Utils {
 
     vector<string> add_subscriptions(const json::object &config);
     vector<string> add_publications(const json::object &config);
-
 
     void add_subscription(const string topic);
     void add_subscription(
@@ -146,8 +151,6 @@ class BaseMessageHandler : public Utils {
         const json::object &output_data
     );
 
-    // output
-    void publish_heartbeat_message(); // use trial message
     void publish_version_info_message(const json::object &input_message);
     void publish_rollcall_response_message(const json::object &input_message);
 
