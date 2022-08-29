@@ -72,7 +72,7 @@ fi
 
 source check_global_variables
 source check_data_root_directory
-source check_connections
+#source check_connections
 
 echo -n -e "[1] Enter the experiment ${EMPH}time${NC} (e.g. 09): "
 read -r experiment_time
