@@ -20,13 +20,13 @@ void Agent::configure(const json::object &config) {
     // advise of subscribed topics
     cout << "Subscription topics:" << endl;
     for(string i : message_handler.get_input_topics()) {
-        cout << "    " << i << endl;
+        cout << "\t" << i << endl;
     }
 
     // advise of published topics
     cout << "Publication topics:" << endl;
     for(string i : message_handler.get_output_topics()) {
-        cout << "    " << i << endl;
+        cout << "\t" << i << endl;
     }
 }
 
