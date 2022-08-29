@@ -39,8 +39,7 @@ int main(int argc, char* argv[]) {
     Configurator configurator;
     json::object config = configurator.parse_args(argc, argv);
 
-    // If the user has specified input and output filenames, run 
-    // in file mode
+    // Read user specified filenames
     json::object file = utils.val<json::object>(config, "file");
     string input_file = utils.val<string>(file, "in");
     string output_file = utils.val<string>(file, "out");

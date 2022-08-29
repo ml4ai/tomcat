@@ -44,16 +44,19 @@ FileAgent::FileAgent(const json::object &config) {
     } 
 
     // process the input file 
-    cout << "Processing..." << endl;
+    cout << "Processing input file..." << endl;
     string line;
+    int n = 0;
     while(std::getline(input_file, line)) {
         json::object message = parse_json(line);
         message_handler.process_message(message);
+	n++;
     }
 
     // shutdown
     input_file.close();
     output_file.close();
+    cout << "Lines processed: " << n << endl;
     cout << "File processing complete." << endl;
 }
 
