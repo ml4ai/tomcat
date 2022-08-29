@@ -85,16 +85,9 @@ class BaseMessageHandler : public Utils {
     void publish_heartbeat_message();
     string status = "uninitialized";
 		    
-    // Message queue gets checked once per second
-    std::future<void> queue_future;
-
-    // A FIFO queue of messages from the bus
-    queue<json::object> message_queue;
-
     // true if a message is currently being handled.  Queue input
     // that happens when true.
     bool processing = false;
-    void check_queue();
 
     json::array subscribes = json::array();
     json::array publishes = json::array();

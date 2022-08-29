@@ -53,7 +53,8 @@ MqttAgent::MqttAgent(const json::object &config) {
 	json::object obj = parse_json(text);
 	obj["topic"] = topic;
 
-	enqueue_message(obj);
+	// enqueue message
+	message_queue.push(obj);
     });
 
     try {
@@ -74,6 +75,35 @@ MqttAgent::MqttAgent(const json::object &config) {
     }
 }
 
+// check the message queue every second
+void MqttAgent::check_queue() {
+
+    this_thread::sleep_for(seconds(1));
+
+    while (running) {
+        this_thread::sleep_for(seconds(1));
+	if(running) {
+            if((message_queue.size() > 0) && !busy) {
+                process_next_message();
+            }
+        }
+    }
+}
+
+void MqttAgent::process_next_message(){
+    if(message_queue.empty()) {
+        busy = false;
+    } else {
+        busy = true;
+        const json::object &obj = message_queue.front();
+        const json::object &copy = json::object(obj);
+	cout << "MqttAgent queue length = " << message_queue.size() << endl;
+        message_queue.pop();
+        process_message(copy);
+    }
+}
+
+
 void MqttAgent::publish(json::object &message) {
     if(running) {
 	string topic = val<string>(message, "topic");
@@ -91,11 +121,21 @@ void MqttAgent::publish(json::object &message) {
 void MqttAgent::start() {
     running = true;
     cout << app_name << " running." << endl;
+
+    // start the asynchronous Message queue monitor
+    queue_future = async(
+        launch::async,
+        &MqttAgent::check_queue,
+        this
+    );
+
     Agent::start();
 }
 
 void MqttAgent::stop() {
     Agent::stop();
     running = false;
+    queue_future.wait();
     cout << app_name << " stopped." << endl;
+
 }

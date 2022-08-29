@@ -128,13 +128,6 @@ void BaseMessageHandler::start_heartbeats() {
         &BaseMessageHandler::publish_heartbeats,
         this
     );
-
-    // start the asynchronous Message queue monitor
-    queue_future = async(
-        launch::async,
-        &BaseMessageHandler::check_queue,
-        this
-    );
 }
 
 // stop publishing heartbeats
@@ -147,7 +140,6 @@ void BaseMessageHandler::stop_heartbeats() {
     publish_heartbeat_message();
 
     heartbeat_future.wait();
-    queue_future.wait();
 }
 
 vector<string> BaseMessageHandler::get_input_topics() {
@@ -156,6 +148,15 @@ vector<string> BaseMessageHandler::get_input_topics() {
 
 vector<string> BaseMessageHandler::get_output_topics() {
     return unique_values(publishes, "topic");
+}
+
+// Convenience method adding message_type and sub_type fields
+void BaseMessageHandler::publish(
+    const string output_topic,
+    const json::object &input_message,
+    const json::object &output_data) {
+
+    publish(output_topic, "not_set", "not_set", input_message, output_data);
 }
 
 void BaseMessageHandler::publish(
@@ -231,7 +232,7 @@ vector<string> BaseMessageHandler::add_publications(
    const json::object &config){
 
     vector<string> ret;
-    json::array arr = val<json::array>(config, "publications");
+    json::array arr = val<json::array>(config, "publishes");
     for(size_t i = 0 ;  i < arr.size() ; i++) {
         string topic = json::value_to<string>(arr.at(i));
         add_publication(topic);
@@ -241,56 +242,11 @@ vector<string> BaseMessageHandler::add_publications(
     return ret;
 }
 
-// Convenience method adding message_type and sub_type fields
-void BaseMessageHandler::publish(
-	const string output_topic,
-        const json::object &input_message,
-        const json::object &output_data) {
-
-	publish(output_topic, "not_set", "not_set", input_message, output_data);
-}
-
-void BaseMessageHandler::enqueue_message(const json::object &input_message) {
-    message_queue.push(input_message);
-}
-
-// check the message queue every second
-void BaseMessageHandler::check_queue() {
-
-    this_thread::sleep_for(seconds(1));
-
-    while (running) {
-        this_thread::sleep_for(seconds(1));
-        if((message_queue.size() > 0) && !processing) {
-            process_next_message();
-        }
-    }
-}
-
-void BaseMessageHandler::process_next_message(){
-    if(message_queue.empty()) {
-        processing = false;
-    } else {
-        processing = true;
-	const json::object &obj = message_queue.front();
-	const json::object &copy = json::object(obj);
-        message_queue.pop();
-	process_message(copy);
-    }
-}
-
 // process messages with Message Bus identifiers that match ours
 void BaseMessageHandler::process_message(const json::object &input_message) {
 
     string topic = val<string>(input_message, "topic");
     traffic_in.push_back(topic);
-
-    int size = message_queue.size();
-    if(size > 3) {
-        cout << "processing " << topic << " " << size << endl;
-    } else {
-        cout << "processing " << topic << " " << endl;
-    }
 
     string input_message_type = 
         val<string>(val<json::object>(input_message,"header"), "message_type");
@@ -339,7 +295,7 @@ void BaseMessageHandler::process_message(const json::object &input_message) {
         publish_rollcall_response_message(input_message);
     }
 
-    process_next_message();
+    agent->process_next_message();
 }
 
 // respond to Rollcall Request message
