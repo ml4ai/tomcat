@@ -14,20 +14,30 @@ class MinecraftExtractor:
         self._es = Elasticsearch(url)
 
     def export(self, out_dir: str):
-        pit = self._es.open_point_in_time(index="logstash*", keep_alive="3m").body
         query_body = {
             "match": {
                 "msg.trial_id": self._trial_id
             }
         }
 
-        response = self._es.search(pit=pit, query=query_body)
-        print(f"{response['hits']['total']['value']} messages found.")
-
         out_filepath = f"{out_dir}/MinecraftData_Trial-{self._trial_number}_ID-{self._trial_id}.metadata"
+
+        # The maximum number of results we can retrieve at a time is 10000. Therefore, we apply pagination using the
+        # message timestamp as the id of the record.
+        total = 0
+
         with open(out_filepath, "wa") as f:
-            for hit in response['hits']['hits']:
-                json.dump(hit['_source'], f)
+            while True:
+                response = self._es.search(index="logstash*", query=query_body, sort=[{"msg.timestamp": "asc"}],
+                                           size=10000)
+                if len(response['hits']['hits']) == 0:
+                    break
+
+                total += len(response['hits']['hits'])
+                for hit in response['hits']['hits']:
+                    json.dump(hit['_source'], f)
+
+            print(f" {total} messages retrieved.")
 
 
 if __name__ == "__main__":
@@ -50,6 +60,6 @@ if __name__ == "__main__":
             trial_id = trial_info["id"][i]
             trial_number = trial_info["number"][i]
             # One .metadata file per trial in the experiment
-            print(f"Extracting data from trial {trial_number}")
+            print(f"Extracting data from trial {trial_number}...")
             extractor = MinecraftExtractor(args.address, args.port, trial_id, trial_number)
             extractor.export(args.out_dir)
