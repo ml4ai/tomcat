@@ -20,14 +20,10 @@ void ReferenceMessageHandler::configure(const json::object &config) {
 void ReferenceMessageHandler::process_message(
         const json::object &input_message) {
 
-    cout << "ReferenceMessageHandler::process_message start" << endl;
     string input_topic = val<string>(input_message, "topic");
-
-    cout << "processing " << input_topic << " " << endl;
 
     // Process the message if subscribed to the topic
     if(contains(input_topics, input_topic)) {
-	cout << "found topic " << input_topic << endl;
 
 	// create a data element of any type
 	json::object output_data;
@@ -39,8 +35,6 @@ void ReferenceMessageHandler::process_message(
             publish(output_topic, input_message, output_data);
 	}
     }
-
-    cout << "ReferenceMessageHandler::process_message done" << endl;
 
     // forward the message to base class for further processing
     BaseMessageHandler::process_message(input_message);
