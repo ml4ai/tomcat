@@ -116,11 +116,10 @@ __close_applications() {
   local padding=$3
 
   echo -e "${padding}Closing ${EMPH}all applications${NC}..."
-  __close_application $client_name $client_address "Mumble" "$padding "
-  __close_application $client_name $client_address "Aurora" "$padding "
-  __close_application $client_name $client_address "Pupil Capture" "$padding "
-  __close_application $client_name $client_address "Google Chrome" "$padding "
-  __close_application $client_name $client_address "Terminal" "$padding "
+  __close_application "$client_name" "$client_address" "Aurora" "$padding "
+  __close_application "$client_name" "$client_address" "Pupil Capture" "$padding "
+  __close_application "$client_name" "$client_address" "Google Chrome" "$padding "
+  __close_application "$client_name" "$client_address" "Terminal" "$padding "
 }
 
 __remove_pupil_symlink() {

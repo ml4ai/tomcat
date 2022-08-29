@@ -78,21 +78,16 @@ echo -n -e "[1] Enter the experiment ${EMPH}time${NC} (e.g. 09): "
 read -r experiment_time
 experiment_id=$(date +%Y_%m_%d_"$experiment_time")
 
-experiment_dir_tom=$data_dir_prefix_tom/$DATA_ROOT_DIR/exp_"$experiment_id"
 experiment_dir_cat=$data_dir_prefix_cat/$DATA_ROOT_DIR/exp_"$experiment_id"
 
 source create_data_directory_structure
-echo -e " Creating experiment ${EMPH}directory structure${NC} for ${EMPH}TOM${NC}..."
-create_data_directory_structure "$experiment_dir_tom" "  "
-echo -e " Creating experiment ${EMPH}directory structure${NC} for ${EMPH}CAT${NC}..."
+echo -e " Creating experiment ${EMPH}directory structure${NC}..."
 create_data_directory_structure "$experiment_dir_cat" "  "
 
 if [[ $GOTO -le 2 ]]; then
   echo " "
   yes_no_question "[2] Do you want to check ${EMPH}NFS${NC} status?"
   if [[ $? -eq 0 ]]; then
-    echo -e " Checking ${EMPH}NFS${NC} status for ${EMPH}TOM${NC}..."
-    source check_nfs "$experiment_dir_tom" "  "
     echo -e " Checking ${EMPH}NFS${NC} status for ${EMPH}CAT${NC}..."
     source check_nfs "$experiment_dir_cat" "  "
   fi
