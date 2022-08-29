@@ -255,6 +255,8 @@ void BaseMessageHandler::process_message(const json::object &input_message) {
 	// start
         if (input_sub_type.compare(TRIAL_SUB_TYPE_START) == 0) {
 
+	    cout << "Trial started"  << endl;
+
 	    // set the testbed version if the trial header has it
             json::object header = val<json::object>(input_message,"header");
 	    string new_version = val<string>(header, "version");
@@ -270,14 +272,16 @@ void BaseMessageHandler::process_message(const json::object &input_message) {
         }
 	// stop
 	else if (input_sub_type.compare(TRIAL_SUB_TYPE_STOP) == 0) {
+	    cout << "Trial stopped"  << endl;
             trial_message = input_message;
 	    if(running) {
 	        publish_heartbeat_message();
 	    }
 	    // Report the activity during the trial.
-	    cout << "TRIAL SUMMARY:" << endl;
-	    count_keys(traffic_in, "Messages Read:");
-	    count_keys(traffic_out, "Messages Written:");
+	    cout << "Messages read during Trial:" << endl;
+	    count_keys(traffic_in);
+	    cout << "Messages written during Trial:" << endl;
+	    count_keys(traffic_out);
         }
     }
 

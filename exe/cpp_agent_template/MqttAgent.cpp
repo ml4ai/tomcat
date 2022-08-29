@@ -100,8 +100,10 @@ void MqttAgent::process_next_message(){
         busy = true;
         const json::object &obj = message_queue.front();
         const json::object &copy = json::object(obj);
-	cout << "MqttAgent queue length = " << message_queue.size() << endl;
         message_queue.pop();
+        string topic = val<string>(copy, "topic");
+	int sz = message_queue.size();
+	cout << "Processing " << topic << ", " << sz << " in queue" << endl;
         message_handler.process_message(copy);
     }
 }
@@ -116,7 +118,7 @@ void MqttAgent::publish(json::object &message) {
 	    return;
 	}
 	message.erase("topic"); // do not publish topic with message on bus
-        cout << "MqttAgent publishing on " << topic << endl;
+        cout << "Publishing to " << topic << endl;
         mqtt_client->publish(topic, json::serialize(message));
     }
 }
@@ -141,4 +143,8 @@ void MqttAgent::stop() {
     running = false;
     queue_future.wait();
     cout << app_name << " stopped." << endl;
+    int sz = message_queue.size();
+    if(sz > 0) {
+        cout << "Messages left in processing queue: " << sz << endl;
+    }
 }

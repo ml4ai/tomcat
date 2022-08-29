@@ -18,7 +18,7 @@ class Utils {
 
     public:
 
-    void count_keys(vector<string> data, string name);
+    void count_keys(vector<string> keys);
 
     // return T value for key or fallback T if key not found 
     template <class T>
