@@ -327,8 +327,11 @@ void BaseMessageHandler::publish_version_info_message(
     const json::object &input_message){
 
     // create version info data
-    // TODO add other fields
     json::object output_data;
+    output_data["agent_name"] = AGENT_NAME;
+    output_data["owner"] = OWNER;
+    output_data["version"] = SOFTWARE_VERSION;
+    output_data["source"] = testbed_source;
     output_data["publishes"] = publishes;
     output_data["subscribes"] = subscribes;
 
