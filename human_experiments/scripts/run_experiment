@@ -26,7 +26,7 @@ __help() {
   echo "[6]:  Starts Face and Screen recording"
   echo "[7]:  Starts the Baseline Tasks"
   echo "[8]:  Plays Instructive Video"
-  echo "[9]: Starts Minecraft"
+  echo "[9]:  Starts Minecraft"
   echo "[10]: Opens the Client Map"
   echo "[11]: Starts the Audio Streamer"
   echo "[12]: Opens the Final Survey"
@@ -72,7 +72,7 @@ fi
 
 source check_global_variables
 source check_data_root_directory
-#source check_connections
+source check_connections
 
 echo -n -e "[1] Enter the experiment ${EMPH}time${NC} (e.g. 09): "
 read -r experiment_time

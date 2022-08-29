@@ -50,7 +50,6 @@ __stop_audio_streamer() {
   local pid_path="$EXPERIMENT_DIR/tmp/audio_streamer_$client_name.pid"
   local audio_streamer_pid
   audio_streamer_pid="$(cat "$pid_path")"
-  echo "PID: $audio_streamer_pid"
   local command="kill $audio_streamer_pid"
 
   echo -e "${padding}Stopping ${EMPH}Audio Streamer${NC}..."
@@ -159,11 +158,11 @@ __cleanup_on_client() {
     padding="$padding "
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
-#    __stop_face_and_screen_recording $client_name $client_address "$padding"
+    __stop_face_and_screen_recording $client_name $client_address "$padding"
     __stop_audio_streamer "$client_name" "$client_address" "$padding"
-#    __stop_minecraft $client_name $client_address "$padding"
-#    __close_applications $client_name $client_address "$padding"
-#    __close_extra_desktops $client_name $client_address "$padding"
+    __stop_minecraft $client_name $client_address "$padding"
+    __close_applications $client_name $client_address "$padding"
+    __close_extra_desktops $client_name $client_address "$padding"
   fi
 
 }
@@ -210,7 +209,7 @@ __cleanup() {
   __cleanup_on_client "leopard" "leopard.local" "$padding "
 
   echo -e "${padding}Killing ${EMPH}Minecraft${NC} in the ${EMPH}server${NC}..."
-  kill_minecraft "$padding "
+  source kill_minecraft "$padding "
   source stop_testbed "$EXPERIMENT_DIR" "$padding "
   __freeze_experiment_data "$padding "
   __backup_experiment_data "$padding "
