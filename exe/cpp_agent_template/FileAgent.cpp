@@ -9,20 +9,23 @@ using namespace std;
 namespace json = boost::json;
 
 FileAgent::FileAgent(const json::object &config) {
+
+    Agent::configure(config);
+
     cout << "Running in File Mode" << endl;
 
-    json::object file_config = json::value_to<json::object>(config.at("file"));
-    input_filename = json::value_to<string>(file_config.at("in"));
-    output_filename = json::value_to<string>(file_config.at("out"));
-
-    // both files must be specified
+    // Input and output filenames must both be specified
     // otherwise report a a configuration error
+    json::object file_config = json::value_to<json::object>(config.at("file"));
+    string input_filename = json::value_to<string>(file_config.at("in"));
+    string output_filename = json::value_to<string>(file_config.at("out"));
     if(input_filename.empty() || output_filename.empty()) {
         cerr << "file.in and file.out must be specified in file mode" << endl;
         exit(EXIT_FAILURE);
     }
 
     // open input file for reading
+    ifstream input_file;
     input_file.open(input_filename);
     if(input_file.is_open()) {
         cout << "Input file: " << input_filename << endl;
@@ -40,26 +43,18 @@ FileAgent::FileAgent(const json::object &config) {
         exit(EXIT_FAILURE);
     } 
 
-    Agent::configure(config);
-    process_file();
-}
-
-void FileAgent::process_file() {
+    // process the input file 
     cout << "Processing..." << endl;
     string line;
-
     while(std::getline(input_file, line)) {
-        process_line(line);
+        json::object message = parse_json(line);
+        message_handler.process_message(message);
     }
 
+    // shutdown
     input_file.close();
     output_file.close();
-    cout << "Done." << endl;
-}
-
-void FileAgent::process_line(const string line) {
-    json::object message = parse_json(line);
-    process_message(message);
+    cout << "File processing complete." << endl;
 }
 
 // write to filesystem, include the topic in the message

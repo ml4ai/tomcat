@@ -49,7 +49,6 @@ void Utils::count_keys(vector<string> data, string report_name){
     for(auto it = obj.begin(); it !=obj.end(); ++it) {
         cout << it->value() << "\t" << it->key()  << endl;
     }
-    cout << endl;
     data.clear();
 }
 

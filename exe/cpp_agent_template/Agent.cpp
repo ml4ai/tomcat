@@ -4,7 +4,6 @@
 #include "ReferenceMessageHandler.hpp"
 #include <iostream>
 
-
 using namespace std;
 namespace json = boost::json;
 
@@ -31,23 +30,6 @@ void Agent::configure(const json::object &config) {
     }
 }
 
-void Agent::publish_heartbeat_message(){
-    message_handler.publish_heartbeat_message();
-}
-
-void Agent::start(){
-    message_handler.start();
-}
-
-void Agent::stop(){
-    message_handler.stop();
-}
-
-void Agent::process_message(const json::object &message){
-    message_handler.process_message(message);
-}
-
-
 // return JSON parsed from input or empty object if not valid JSON
 json::object Agent::parse_json(const string text) {
     json_parser.reset();
@@ -62,14 +44,4 @@ json::object Agent::parse_json(const string text) {
     }
 
     return json::value_to<json::object>(json_parser.release());
-}
-
-// return all topics to which this agent is subscribed
-vector<string> Agent::get_input_topics(){
-    return message_handler.get_input_topics();
-}
-
-// return all topics to which this Agent will publish
-vector<string> Agent::get_output_topics(){
-    return message_handler.get_output_topics();
 }
