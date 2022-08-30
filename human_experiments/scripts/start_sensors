@@ -6,9 +6,18 @@ source configuration_helpers
 source wifi
 
 if [[ -z ${1+x} ]]; then
+  # In case the script is executed standalone.
+  text="${RED}Please provide an experiment directory as the first argument of "
+  text+="the call to this script.${NC}"
+  echo -e "$text"
+  exit 1
+fi
+EXPERIMENT_DIR=$1
+
+if [[ -z ${2+x} ]]; then
   PADDING=""
 else
-  PADDING=$1
+  PADDING=$2
 fi
 
 __start_sensor() {
@@ -31,7 +40,7 @@ __start_eye_tracker() {
   padding=" $padding"
 
   # Creating destination folder in the server
-  mkdir target_dir
+  mkdir -p target_dir
   if [[ $? -ne 0 ]]; then
     echo -e "${padding}${RED}Error when trying to create the folder ${target_dir}.${NC}"
     exit 1
