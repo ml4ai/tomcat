@@ -31,13 +31,18 @@ class MinecraftExtractor:
                 response = self._es.search(index="logstash*", query=query_body, sort=[{"msg.timestamp": "asc"}],
                                            size=10000)
                 if len(response['hits']['hits']) == 0:
+                    print(f" {total} messages retrieved in total.")
                     break
+                elif total > 0:
+                    print(f" {total} messages retrieved so far...")
 
                 total += len(response['hits']['hits'])
                 for hit in response['hits']['hits']:
-                    json.dump(hit['_source'], f)
-
-            print(f" {total} messages retrieved.")
+                    try:
+                        f.write(json.dumps(hit['_source']) + "\n")
+                    except Exception:
+                        # Ignore malformed json messages
+                        pass
 
 
 if __name__ == "__main__":
