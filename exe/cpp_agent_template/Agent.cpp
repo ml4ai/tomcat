@@ -32,7 +32,7 @@ void Agent::configure(const json::object &config) {
 // return JSON parsed from input or empty object if not valid JSON
 json::object Agent::parse_json(const std::string text) {
     json_parser.reset();
-    std::error_code ec;
+    json::error_code ec;
     json_parser.write(text, ec);
 
     // report error

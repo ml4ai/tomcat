@@ -153,7 +153,7 @@ json::object Configurator:: parse_config_file(std::string filename){
     }
 
     json::stream_parser p;
-    std::error_code ec;
+    json::error_code ec;
 
     // compose JSON from all lines in config file.  The file can
     // be in pretty or compact JSON format.
