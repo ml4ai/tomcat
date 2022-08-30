@@ -97,7 +97,7 @@ if [[ $GOTO -le 3 ]]; then
   echo " "
   yes_no_question "[3] Do you want to start ${EMPH}fNIRS and Eye-tracker systems${NC}?"
   if [[ $? -eq 0 ]]; then
-    source start_sensors " "
+    source start_sensors "$experiment_dir_cat" " "
   fi
 fi
 

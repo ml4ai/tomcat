@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -u
+
+if [[ -z ${1+x} ]]; then
+  TARGET_DIR=""
+else
+  TARGET_DIR=$1
+fi
+
+# Local directory where pupil data is saved in the client machines
+PUPIL_RECORDER_LOCAL_DIR="$HOME/recordings/$(date +%Y_%m_%d)"
+
+# Remove any previous link that might exist
+if [[ -d "$PUPIL_RECORDER_LOCAL_DIR" ]]; then
+  if ! unlink "$PUPIL_RECORDER_LOCAL_DIR"; then
+    echo "The directory $PUPIL_RECORDER_LOCAL_DIR is not a symbolic link."
+    exit 1
+  fi
+fi
+
+if ! ln -s "$TARGET_DIR" "$PUPIL_RECORDER_LOCAL_DIR"; then
+  echo "Failed to create symbolic link $TARGET_DIR -> $PUPIL_RECORDER_LOCAL_DIR."
+  exit 1
+fi
+
+exit 0
