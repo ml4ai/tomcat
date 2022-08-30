@@ -59,7 +59,7 @@ __monitor_testbed_launch() {
 }
 
 __watch_for_trial_id() {
-  watch_for_trial_id --exp_dir="$EXPERIMENT_DIR" &>/dev/null &
+  ./watch_for_trial_id --exp_dir="$EXPERIMENT_DIR" &> "$EXPERIMENT_DIR/tmp/trial_id_watcher.log" &
   echo $! > "$EXPERIMENT_DIR/tmp/trial_id_watcher.pid"
 }
 

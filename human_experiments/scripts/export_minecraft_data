@@ -22,4 +22,4 @@ fi
 
 TRIAL_INFO_FILEPATH="$EXPERIMENT_DIR/trial_info.json"
 OUT_DIR="$EXPERIMENT_DIR/minecraft"
-retrieve_minecraft_data --trial_info_filepath="$TRIAL_INFO_FILEPATH" --out_dir="$OUT_DIR" | sed "s/^/${padding} /"
+./retrieve_minecraft_data --trial_info_filepath="$TRIAL_INFO_FILEPATH" --out_dir="$OUT_DIR" | sed "s/^/${padding} /"
