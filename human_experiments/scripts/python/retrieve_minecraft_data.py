@@ -25,11 +25,17 @@ class MinecraftExtractor:
         # The maximum number of results we can retrieve at a time is 10000. Therefore, we apply pagination using the
         # message timestamp as the id of the record.
         total = 0
-
+        response = None
         with open(out_filepath, "a") as f:
             while True:
-                response = self._es.search(index="logstash*", query=query_body, sort=[{"msg.timestamp": "asc"}],
+                if response is None:
+                    response = self._es.search(index="logstash*", query=query_body, sort=[{"msg.timestamp": "asc"}],
                                            size=10000)
+                else:
+                    # We use search_after to retrieve data with timestamp later than the last record found
+                    response = self._es.search(index="logstash*", query=query_body, sort=[{"msg.timestamp": "asc"}],
+                                               size=10000, search_after=response["hits"]["hits"][-1]["sort"])
+
                 if len(response['hits']['hits']) == 0:
                     print(f" {total} messages retrieved in total.")
                     break
