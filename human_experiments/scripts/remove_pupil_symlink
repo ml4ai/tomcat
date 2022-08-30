@@ -2,7 +2,7 @@
 
 set -u
 
-source ../configuration_helpers
+source configuration_helpers
 
 # This script must be executed in the client side.
 
