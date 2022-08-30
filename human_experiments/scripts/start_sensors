@@ -40,8 +40,7 @@ __start_eye_tracker() {
   padding=" $padding"
 
   # Creating destination folder in the server
-  mkdir -p target_dir
-  if [[ $? -ne 0 ]]; then
+  if ! mkdir -p "$target_dir"; then
     echo -e "${padding}${RED}Error when trying to create the folder ${target_dir}.${NC}"
     exit 1
   fi
@@ -49,8 +48,8 @@ __start_eye_tracker() {
   # Creating a symbolic link between the local directory where recordings are stored and the directory in the server.
   yes_no_question "${padding}Do you want to update the symbolic link to the experiment directory?"
   if [[ $? -eq 0 ]]; then
-    local command="\$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/macos/create_pupil_symlink.sh "
-    command+="\$HOME/$target_dir \"$padding \""
+    local command="\$HOME$SYSTEMS_DIR/tomcat/human_experiments/scripts/create_pupil_symlink "
+    command+="\$HOME$target_dir \"$padding \""
     ssh "$EXPERIMENT_USER"@"$client_address" "$command"
   fi
 
