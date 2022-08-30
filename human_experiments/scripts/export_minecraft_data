@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -u
+
+source configuration_helpers
+
+if [[ -z ${1+x} ]]; then
+  # In case the script is executed standalone.
+  text="${RED}Please provide an experiment directory as the first argument of "
+  text+="the call to this script.${NC}"
+  echo -e "$text"
+  exit 1
+fi
+EXPERIMENT_DIR=$1
+
+if [[ -z ${2+x} ]]; then
+  padding=""
+else
+  padding=$2
+fi
+
+
+TRIAL_INFO_FILEPATH="$EXPERIMENT_DIR/trial_info.json"
+OUT_DIR="$EXPERIMENT_DIR/minecraft"
+retrieve_minecraft_data --trial_info_filepath="$TRIAL_INFO_FILEPATH" --out_dir="$OUT_DIR" | sed "s/^/${padding} /"
