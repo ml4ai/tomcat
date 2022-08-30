@@ -8,7 +8,10 @@
 namespace json = boost::json;
 
 // return true if the vector contains the value
-bool Utils::contains(const std::vector<std::string> haystack, const std::string needle) {
+bool Utils::contains(
+    const std::vector<std::string> haystack,
+    const std::string needle) {
+
     for(auto &hay : haystack) {
         if(needle.compare(hay) == 0) {
             return true;
@@ -18,7 +21,10 @@ bool Utils::contains(const std::vector<std::string> haystack, const std::string 
 }
 
 // return a vector of unique array values for the key
-std::vector<std::string> Utils::unique_values(const json::array &arr, const std::string key) {
+std::vector<std::string> Utils::unique_values(
+    const json::array &arr,
+    const std::string key) {
+
     std::set<std::string> values;
     for(size_t i = 0 ;  i < arr.size() ; i++) {
         json::value element = arr.at(i);

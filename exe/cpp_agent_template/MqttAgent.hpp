@@ -19,7 +19,6 @@ class MqttAgent : public Agent {
     bool running = true;
     bool busy = false;
 
-
     // Message queue gets checked once per second
     std::future<void> queue_future;
     void check_queue();
@@ -28,7 +27,7 @@ class MqttAgent : public Agent {
     std::queue<json::object> message_queue;
 
 
-  public:
+    public:
 
     void start() override ;
     void stop() override ;

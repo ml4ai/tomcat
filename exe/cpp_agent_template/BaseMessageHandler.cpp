@@ -240,11 +240,11 @@ void BaseMessageHandler::process_message(const json::object &input_message) {
     std::string topic = val<std::string>(input_message, "topic");
     traffic_in.push_back(topic);
 
-    std::string input_message_type = 
-        val<std::string>(val<json::object>(input_message,"header"), "message_type");
+    json::object header = val<json::object>(input_message,"header");
+    std::string input_message_type = val<std::string>(header, "message_type");
 
-    std::string input_sub_type = 
-        val<std::string>(val<json::object>(input_message,"msg"), "sub_type");
+    json::object msg = val<json::object>(input_message,"msg");
+    std::string input_sub_type = val<std::string>(msg, "sub_type");
 
     // trial message
     if((topic.compare(TRIAL_TOPIC) == 0) &&

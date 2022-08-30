@@ -45,5 +45,8 @@ class Utils {
         const std::string key
     );
 
-    bool contains(const std::vector<std::string> haystack, const std::string needle);
+    bool contains(
+        const std::vector<std::string> haystack,
+        const std::string needle
+    );
 };

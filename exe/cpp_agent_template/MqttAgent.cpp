@@ -19,15 +19,16 @@ MqttAgent::MqttAgent(const json::object &config) {
     std::cout << "Running in MQTT Mode" << std::endl;
 
     // set up MQTT params for broker connection
-    json::object mqtt_config = json::value_to<json::object>(config.at("mqtt"));
+    json::object mqtt_config = val<json::object>(config, "mqtt");
     std::string host = val<std::string>(mqtt_config, "host");
     int port = val<int>(mqtt_config, "port");
     std::string address = "tcp://" + host + ":" + std::to_string(port);
+    std::string agent_name = val<std::string>(config, "agent_name");
 
     // Create an MQTT client smart pointer to be shared among threads.
     mqtt_client = make_shared<mqtt::async_client>(
         address,
-       	"cpp_template_agent"
+       	agent_name.empty() ? "cpp_template_agent" : agent_name
     );
 
 
@@ -98,7 +99,8 @@ void MqttAgent::process_next_message(){
         message_queue.pop();
 	std::string topic = val<std::string>(copy, "topic");
 	int sz = message_queue.size();
-	std::cout << "Processing " << topic << ", " << sz << " in queue" << std::endl;
+	std::cout << "Processing " << topic << ", ";
+        std::cout << sz << " in queue" << std::endl;
         message_handler.process_message(copy);
     }
 }
@@ -140,6 +142,7 @@ void MqttAgent::stop() {
     int sz = message_queue.size();
     // advise if any input was unprocessed.
     if(sz > 0) {
-        std::cout << "Unprocessed input messages left in queue: " << sz << std::endl;
+        std::cout << "Unprocessed input messages left in queue: ";
+        std::cout << sz << std::endl;
     }
 }

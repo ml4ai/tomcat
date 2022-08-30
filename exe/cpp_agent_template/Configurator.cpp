@@ -70,7 +70,7 @@ json::object Configurator::parse_args(int argc, char* argv[]) {
 
     // if the user wants the software version, show it and exit
     if (vm.count("version")) {
-	std::string version = json::value_to<std::string>(config.at("version"));
+	std::string version = val<std::string>(config, "version");
         std::cout << version << std::endl;
         exit(EXIT_SUCCESS);
     }

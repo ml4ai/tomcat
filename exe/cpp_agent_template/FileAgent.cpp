@@ -18,7 +18,8 @@ FileAgent::FileAgent(const json::object &config) {
     std::string input_filename = val<std::string>(file_config, "in");
     std::string output_filename = val<std::string>(file_config, "out");
     if(input_filename.empty() || output_filename.empty()) {
-        std::cerr << "file.in and file.out must be specified in file mode" << std::endl;
+        std::cerr << "file.in and file.out must be specified in file mode";
+        std::cerr << std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -28,7 +29,8 @@ FileAgent::FileAgent(const json::object &config) {
     if(input_file.is_open()) {
         std::cout << "Input file: " << input_filename << std::endl;
     } else {
-	std::cerr << "Could not open " << input_filename << " for reading" << std::endl;
+	std::cerr << "Could not open " << input_filename;
+	std::cerr << " for reading" << std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -37,7 +39,8 @@ FileAgent::FileAgent(const json::object &config) {
     if(output_file.is_open()) {
         std::cout << "Output file: " << output_filename << std::endl;
     } else {
-	std::cerr << "Could not open " << output_filename << " for writing" << std::endl;
+	std::cerr << "Could not open " << output_filename;
+        std::cerr << " for writing" << std::endl;
         exit(EXIT_FAILURE);
     } 
 
