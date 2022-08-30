@@ -128,7 +128,7 @@ __remove_pupil_symlink() {
   local padding=$3
 
   echo -e "${padding}Removing ${EMPH}Pupil Symlink${NC}..."
-  local command="\$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/remove_pupil_symlink \"$padding \""
+  local command="\$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/remove_pupil_symlink"
   ssh "$EXPERIMENT_USER@$client_address $command"
 }
 
