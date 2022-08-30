@@ -6,9 +6,18 @@ source configuration_helpers
 source wifi
 
 if [[ -z ${1+x} ]]; then
+  # In case the script is executed standalone.
+  text="${RED}Please provide an experiment directory as the first argument of "
+  text+="the call to this script.${NC}"
+  echo -e "$text"
+  exit 1
+fi
+EXPERIMENT_DIR=$1
+
+if [[ -z ${2+x} ]]; then
   PADDING=""
 else
-  PADDING=$1
+  PADDING=$2
 fi
 
 __start_sensor() {
@@ -25,8 +34,28 @@ __start_eye_tracker() {
   local client_address=$2
   local padding=$3
 
+  local target_dir="$EXPERIMENT_DIR/$client_name/pupil_recorder"
+
   echo -e "${padding}Starting ${EMPH}Eye-tracker${NC} on ${EMPH}$client_name${NC}..."
-  __start_sensor $client_address "launch_pupil_capture.scpt"
+  padding=" $padding"
+
+  # Creating destination folder in the server
+  if ! mkdir -p "$target_dir"; then
+    echo -e "${padding}${RED}Error when trying to create the folder ${target_dir}.${NC}"
+    exit 1
+  fi
+
+  # Creating a symbolic link between the local directory where recordings are stored and the directory in the server.
+  yes_no_question "${padding}Do you want to update the symbolic link to the experiment directory?"
+  if [[ $? -eq 0 ]]; then
+    local command="\$HOME/$SYSTEMS_DIR/tomcat/human_experiments/scripts/create_pupil_symlink "
+    command+="\$HOME/$target_dir"
+    if ssh "$EXPERIMENT_USER"@"$client_address" "$command"; then
+       echo -e "${padding}${GREEN} Symbolic link created successfully.${NC}"
+    fi
+  fi
+
+  __start_sensor "$client_address" "launch_pupil_capture.scpt"
   if [[ $? -eq 0 ]]; then
     echo -e "${padding}${GREEN} ${EMPH}Eye-tracker${GREEN} system successfully launched.${NC}"
   fi
