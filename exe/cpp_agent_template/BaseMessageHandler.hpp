@@ -4,7 +4,6 @@
 #include <boost/log/trivial.hpp>
 #include <boost/json/array.hpp>
 
-#include <string>
 #include <thread>
 #include <queue>
 #include <future>
@@ -13,8 +12,6 @@
 
 
 namespace json = boost::json;
-using namespace std;
-using namespace std::chrono;
 
 
 // input / output message format:
@@ -81,63 +78,62 @@ class BaseMessageHandler : public Utils {
     std::future<void> heartbeat_future;
     bool running = false; // publish regular heartbeats when true
     void publish_heartbeats();
-    string status = "uninitialized";
+    std::string status = "uninitialized";
 		    
-    // true if a message is currently being handled.  Queue input
-    // that happens when true.
+    // true if a message is currently being handled.  Input queued when true.
     bool processing = false;
-
-    json::array subscribes = json::array();
-    json::array publishes = json::array();
 
     protected:
 
-    vector<string> add_subscriptions(const json::object &config);
-    vector<string> add_publications(const json::object &config);
-
-    void add_subscription(const string topic);
+    // subscription
+    json::array subscribes = json::array();
+    std::vector<std::string> add_subscriptions(const json::object &config);
+    void add_subscription(const std::string topic);
     void add_subscription(
-        const string topic,
-        const string message_type,
-        const string sub_type
+        const std::string topic,
+        const std::string message_type,
+        const std::string sub_type
     );
 
-    void add_publication(const string topic);
+    // publication
+    json::array publishes = json::array();
+    std::vector<std::string> add_publications(const json::object &config);
+    void add_publication(const std::string topic);
     void add_publication(
-        const string topic,
-        const string message_type,
-        const string sub_type
+        const std::string topic,
+        const std::string message_type,
+        const std::string sub_type
     );
 
     // configuration
-    string version = "not_set";
-    string agent_name = "not_set";
-    string owner = "not_set";
-    string testbed_version = "1.0";
-    string testbed_source = "not_set";
+    std::string version = "not_set";
+    std::string agent_name = "not_set";
+    std::string owner = "not_set";
+    std::string testbed_version = "1.0";
+    std::string testbed_source = "not_set";
 
-    // File or MQTT
+    // File or MQTT operations
     Agent *agent = nullptr;
 
     // last received trial start or stop message
     json::object trial_message = json::object();
 
     json::value create_bus_id(
-        const string topic,
-        const string message_type,
-        const string sub_type
+        const std::string topic,
+        const std::string message_type,
+        const std::string sub_type
     );
 
     void publish(
-        const string output_topic,
+        const std::string output_topic,
         const json::object &input_message,
         const json::object &output_data
     );
 
     void publish(
-        const string output_topic,
-        const string output_message_type,
-        const string output_sub_type,
+        const std::string output_topic,
+        const std::string output_message_type,
+        const std::string output_sub_type,
         const json::object &input_message,
         const json::object &output_data
     );
@@ -149,17 +145,13 @@ class BaseMessageHandler : public Utils {
 
     BaseMessageHandler(Agent* agent);
     virtual void configure(const json::object &config);
-
+    virtual void process_message(const json::object &message);
     void enqueue_message(const json::object &input_message);
     void process_next_message();
     void publish_heartbeat_message();
-
-    vector<string> get_input_topics();
-    vector<string> get_output_topics();
-    vector<string> traffic_out, traffic_in;
-
-    virtual void process_message(const json::object &message);
-
     void start();
     void stop();
+    std::vector<std::string> get_input_topics();
+    std::vector<std::string> get_output_topics();
+    std::vector<std::string> traffic_out, traffic_in;
 };

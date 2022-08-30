@@ -4,15 +4,12 @@
 #include <boost/json.hpp>
 #include <mqtt/async_client.h>
 #include <thread>
-#include <queue>
 #include <future>
 
 #include "Agent.hpp"
 #include "ReferenceMessageHandler.hpp"
 
 namespace json = boost::json;
-using namespace std;
-
 
 /** Agent class that manages MQTT traffic  */
 class MqttAgent : public Agent {
@@ -28,7 +25,7 @@ class MqttAgent : public Agent {
     void check_queue();
 
     // A FIFO queue of messages from the bus
-    queue<json::object> message_queue;
+    std::queue<json::object> message_queue;
 
 
   public:

@@ -7,9 +7,6 @@
 
 namespace json = boost::json;
 
-using namespace std;
-
-
 // interface for write method
 class Agent : public Utils {
 
@@ -18,12 +15,12 @@ class Agent : public Utils {
 
     protected:
 
-    string app_name;
+    std::string app_name;
 
     ReferenceMessageHandler message_handler = ReferenceMessageHandler(this);
 
 
-    json::object parse_json(const string text);
+    json::object parse_json(const std::string text);
 
     void configure(const json::object &config);
 

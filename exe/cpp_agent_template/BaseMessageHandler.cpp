@@ -9,9 +9,7 @@
 #include "Agent.hpp"
 #include "BaseMessageHandler.hpp"
 
-using namespace std;
 namespace json = boost::json;
-
 
 BaseMessageHandler::BaseMessageHandler(Agent* agent): agent(agent) {
     time(&start_time);
@@ -52,9 +50,9 @@ BaseMessageHandler::BaseMessageHandler(Agent* agent): agent(agent) {
 }
 
 // return a value with the three fields identifying a message
-json::value BaseMessageHandler::create_bus_id(const string topic,
-                                              const string message_type,
-                                              const string sub_type) {
+json::value BaseMessageHandler::create_bus_id(const std::string topic,
+                                              const std::string message_type,
+                                              const std::string sub_type) {
     json::value id = {
         { "topic", topic },
         { "message_type", message_type },
@@ -64,23 +62,23 @@ json::value BaseMessageHandler::create_bus_id(const string topic,
     return id;
 }
 
-void BaseMessageHandler::add_subscription(const string topic,
-                                          const string message_type,
-                                          const string sub_type) {
+void BaseMessageHandler::add_subscription(const std::string topic,
+                                          const std::string message_type,
+                                          const std::string sub_type) {
     subscribes.emplace_back(create_bus_id(topic, message_type, sub_type));
 }
 
-void BaseMessageHandler::add_subscription(const string topic) {
+void BaseMessageHandler::add_subscription(const std::string topic) {
     add_subscription(topic, "not_set", "not_set");
 }
 
-void BaseMessageHandler::add_publication(const string topic,
-                                         const string message_type,
-                                         const string sub_type) {
+void BaseMessageHandler::add_publication(const std::string topic,
+                                         const std::string message_type,
+                                         const std::string sub_type) {
     publishes.emplace_back(create_bus_id(topic, message_type, sub_type));
 }
 
-void BaseMessageHandler::add_publication(const string topic) {
+void BaseMessageHandler::add_publication(const std::string topic) {
     add_publication(topic, "not_set", "not_set");
 }
 
@@ -89,18 +87,18 @@ void BaseMessageHandler::add_publication(const string topic) {
 void BaseMessageHandler::configure(const json::object &config) {
 
     // set up the global constants 
-    agent_name = val<string>(config, "agent_name", AGENT_NAME);
-    version = val<string>(config, "version", SOFTWARE_VERSION);
-    owner = val<string>(config, "owner", OWNER);
+    agent_name = val<std::string>(config, "agent_name", AGENT_NAME);
+    version = val<std::string>(config, "version", SOFTWARE_VERSION);
+    owner = val<std::string>(config, "owner", OWNER);
     testbed_source = 
-        TESTBED + string("/") + agent_name + string(":") + version;
+        TESTBED + std::string("/") + agent_name + std::string(":") + version;
 }
 
 /** Function that publishes heartbeat messages while the agent is running */
 void BaseMessageHandler::publish_heartbeats() {
 
     while (running) {
-        this_thread::sleep_for(seconds(10));
+        std::this_thread::sleep_for(std::chrono::seconds(10));
 	if(running) {
             publish_heartbeat_message();
         }
@@ -117,8 +115,8 @@ void BaseMessageHandler::start() {
     publish_heartbeat_message();
 
     // Start threaded publishing
-    heartbeat_future = async(
-        launch::async,
+    heartbeat_future = std::async(
+        std::launch::async,
         &BaseMessageHandler::publish_heartbeats,
         this
     );
@@ -136,17 +134,17 @@ void BaseMessageHandler::stop() {
     heartbeat_future.wait();
 }
 
-vector<string> BaseMessageHandler::get_input_topics() {
+std::vector<std::string> BaseMessageHandler::get_input_topics() {
     return unique_values(subscribes, "topic");
 }
 
-vector<string> BaseMessageHandler::get_output_topics() {
+std::vector<std::string> BaseMessageHandler::get_output_topics() {
     return unique_values(publishes, "topic");
 }
 
 // Convenience method adding message_type and sub_type fields
 void BaseMessageHandler::publish(
-    const string output_topic,
+    const std::string output_topic,
     const json::object &input_message,
     const json::object &output_data) {
 
@@ -154,13 +152,13 @@ void BaseMessageHandler::publish(
 }
 
 void BaseMessageHandler::publish(
-	const string output_topic,
-	const string output_message_type,
-	const string output_sub_type,
+	const std::string output_topic,
+	const std::string output_message_type,
+	const std::string output_sub_type,
         const json::object &input_message,
         const json::object &output_data) {
 
-    string timestamp = get_timestamp();
+    std::string timestamp = get_timestamp();
 
     // Common Header
     json::object output_header;
@@ -177,19 +175,19 @@ void BaseMessageHandler::publish(
     output_msg["timestamp"] = timestamp;
 
     // add these only if they exist and are non-empty
-    string experiment_id = val<string>(input_msg, "experiment_id");
+    std::string experiment_id = val<std::string>(input_msg, "experiment_id");
     if(!experiment_id.empty()) {
         output_msg["experiment_id"] = experiment_id;
     }
-    string trial_id = val<string>(input_msg, "trial_id");
+    std::string trial_id = val<std::string>(input_msg, "trial_id");
     if(!trial_id.empty()) {
         output_msg["trial_id"] = trial_id;
     }
-    string replay_id = val<string>(input_msg, "replay_id");
+    std::string replay_id = val<std::string>(input_msg, "replay_id");
     if(!replay_id.empty()) {
         output_msg["replay_id"] = replay_id;
     }
-    string replay_root_id = val<string>(input_msg, "replay_root_id");
+    std::string replay_root_id = val<std::string>(input_msg, "replay_root_id");
     if(!replay_root_id.empty()) {
         output_msg["replay_root_id"] = replay_root_id;
     }
@@ -206,13 +204,13 @@ void BaseMessageHandler::publish(
 
 
 // add subscriptions as they appear in the config struct
-vector<string> BaseMessageHandler::add_subscriptions(
+std::vector<std::string> BaseMessageHandler::add_subscriptions(
    const json::object &config){
 
-    vector<string> ret;
+    std::vector<std::string> ret;
     json::array arr = val<json::array>(config, "subscribes");
     for(size_t i = 0 ;  i < arr.size() ; i++) {
-        string topic = json::value_to<string>(arr.at(i));
+        std::string topic = json::value_to<std::string>(arr.at(i));
         add_subscription(topic);
         ret.push_back(topic);
     }
@@ -222,13 +220,13 @@ vector<string> BaseMessageHandler::add_subscriptions(
 
 
 // add publications as they appear in the config struct
-vector<string> BaseMessageHandler::add_publications(
+std::vector<std::string> BaseMessageHandler::add_publications(
    const json::object &config){
 
-    vector<string> ret;
+    std::vector<std::string> ret;
     json::array arr = val<json::array>(config, "publishes");
     for(size_t i = 0 ;  i < arr.size() ; i++) {
-        string topic = json::value_to<string>(arr.at(i));
+        std::string topic = json::value_to<std::string>(arr.at(i));
         add_publication(topic);
         ret.push_back(topic);
     }
@@ -239,14 +237,14 @@ vector<string> BaseMessageHandler::add_publications(
 // process messages with Message Bus identifiers that match ours
 void BaseMessageHandler::process_message(const json::object &input_message) {
 
-    string topic = val<string>(input_message, "topic");
+    std::string topic = val<std::string>(input_message, "topic");
     traffic_in.push_back(topic);
 
-    string input_message_type = 
-        val<string>(val<json::object>(input_message,"header"), "message_type");
+    std::string input_message_type = 
+        val<std::string>(val<json::object>(input_message,"header"), "message_type");
 
-    string input_sub_type = 
-        val<string>(val<json::object>(input_message,"msg"), "sub_type");
+    std::string input_sub_type = 
+        val<std::string>(val<json::object>(input_message,"msg"), "sub_type");
 
     // trial message
     if((topic.compare(TRIAL_TOPIC) == 0) &&
@@ -255,11 +253,11 @@ void BaseMessageHandler::process_message(const json::object &input_message) {
 	// start
         if (input_sub_type.compare(TRIAL_SUB_TYPE_START) == 0) {
 
-	    cout << "Trial started"  << endl;
+	    std::cout << "Trial started"  << std::endl;
 
 	    // set the testbed version if the trial header has it
             json::object header = val<json::object>(input_message,"header");
-	    string new_version = val<string>(header, "version");
+	    std::string new_version = val<std::string>(header, "version");
 	    if(!new_version.empty()) {
 	        testbed_version = new_version;
 	    }
@@ -272,15 +270,15 @@ void BaseMessageHandler::process_message(const json::object &input_message) {
         }
 	// stop
 	else if (input_sub_type.compare(TRIAL_SUB_TYPE_STOP) == 0) {
-	    cout << "Trial stopped"  << endl;
+	    std::cout << "Trial stopped"  << std::endl;
             trial_message = input_message;
 	    if(running) {
 	        publish_heartbeat_message();
 	    }
 	    // Report the activity during the trial.
-	    cout << "Messages read during Trial:" << endl;
+	    std::cout << "Messages read during Trial:" << std::endl;
 	    count_keys(traffic_in);
-	    cout << "Messages written during Trial:" << endl;
+	    std::cout << "Messages written during Trial:" << std::endl;
 	    count_keys(traffic_out);
         }
     }
@@ -311,7 +309,7 @@ void BaseMessageHandler::publish_rollcall_response_message(
     output_data["uptime"] = uptime;
     output_data["status"] = "up";
     output_data["rollcall_id"] = 
-        val<string>(input_data, "rollcall_id", "not_set");
+        val<std::string>(input_data, "rollcall_id", "not_set");
 
     publish(ROLLCALL_RESPONSE_TOPIC,
             ROLLCALL_RESPONSE_MESSAGE_TYPE,

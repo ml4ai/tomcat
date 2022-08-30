@@ -2,50 +2,48 @@
 #include <boost/log/trivial.hpp>
 #include <iostream>
 #include <fstream>
-//#include <string>
 #include "FileAgent.hpp"
 
-using namespace std;
 namespace json = boost::json;
 
 FileAgent::FileAgent(const json::object &config) {
 
     Agent::configure(config);
 
-    cout << "Running in File Mode" << endl;
+    std::cout << "Running in File Mode" << std::endl;
 
     // Input and output filenames must both be specified
     // otherwise report a a configuration error
-    json::object file_config = json::value_to<json::object>(config.at("file"));
-    string input_filename = json::value_to<string>(file_config.at("in"));
-    string output_filename = json::value_to<string>(file_config.at("out"));
+    json::object file_config = val<json::object>(config, "file");
+    std::string input_filename = val<std::string>(file_config, "in");
+    std::string output_filename = val<std::string>(file_config, "out");
     if(input_filename.empty() || output_filename.empty()) {
-        cerr << "file.in and file.out must be specified in file mode" << endl;
+        std::cerr << "file.in and file.out must be specified in file mode" << std::endl;
         exit(EXIT_FAILURE);
     }
 
     // open input file for reading
-    ifstream input_file;
+    std::ifstream input_file;
     input_file.open(input_filename);
     if(input_file.is_open()) {
-        cout << "Input file: " << input_filename << endl;
+        std::cout << "Input file: " << input_filename << std::endl;
     } else {
-	cerr << "Could not open " << input_filename << " for reading" << endl;
+	std::cerr << "Could not open " << input_filename << " for reading" << std::endl;
         exit(EXIT_FAILURE);
     }
 
     // open output file for writing
     output_file.open(output_filename);
     if(output_file.is_open()) {
-        cout << "Output file: " << output_filename << endl;
+        std::cout << "Output file: " << output_filename << std::endl;
     } else {
-	cerr << "Could not open " << output_filename << " for writing" << endl;
+	std::cerr << "Could not open " << output_filename << " for writing" << std::endl;
         exit(EXIT_FAILURE);
     } 
 
     // process the input file 
-    cout << "Processing input file..." << endl;
-    string line;
+    std::cout << "Processing input file..." << std::endl;
+    std::string line;
     int n = 0;
     while(std::getline(input_file, line)) {
         json::object message = parse_json(line);
@@ -56,11 +54,11 @@ FileAgent::FileAgent(const json::object &config) {
     // shutdown
     input_file.close();
     output_file.close();
-    cout << "Lines processed: " << n << endl;
-    cout << "File processing complete." << endl;
+    std::cout << "Lines processed: " << n << std::endl;
+    std::cout << "File processing complete." << std::endl;
 }
 
 // write to filesystem, include the topic in the message
 void FileAgent::publish(json::object &message) {
-    output_file << json::serialize(message) << endl;
+    output_file << json::serialize(message) << std::endl;
 }

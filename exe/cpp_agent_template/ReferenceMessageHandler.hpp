@@ -1,21 +1,19 @@
 #pragma once
 
-#include <string>
 #include <boost/json.hpp>
 #include "BaseMessageHandler.hpp"
 
 namespace json = boost::json;
-using namespace std;
 
 class Agent;
 
 class ReferenceMessageHandler: public BaseMessageHandler {
 
     // all subscribed topics
-    vector<string> input_topics;
+    std::vector<std::string> input_topics;
 
     // all publication topics
-    vector<string> output_topics;
+    std::vector<std::string> output_topics;
 
     public:
 

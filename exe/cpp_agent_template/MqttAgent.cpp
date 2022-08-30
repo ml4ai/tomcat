@@ -12,20 +12,17 @@
 //   Maintains the MQTT broker connection
 //   Handles all traffic to and from the Message Bus
 
-using namespace std;
 namespace json = boost::json;
-using namespace std::chrono;
-
 
 MqttAgent::MqttAgent(const json::object &config) {
 
-    cout << "Running in MQTT Mode" << endl;
+    std::cout << "Running in MQTT Mode" << std::endl;
 
     // set up MQTT params for broker connection
     json::object mqtt_config = json::value_to<json::object>(config.at("mqtt"));
-    string host = json::value_to<string>(mqtt_config.at("host"));
-    int port = json::value_to<int>(mqtt_config.at("port"));
-    string address = "tcp://" + host + ":" + to_string(port);
+    std::string host = val<std::string>(mqtt_config, "host");
+    int port = val<int>(mqtt_config, "port");
+    std::string address = "tcp://" + host + ":" + std::to_string(port);
 
     // Create an MQTT client smart pointer to be shared among threads.
     mqtt_client = make_shared<mqtt::async_client>(
@@ -37,9 +34,9 @@ MqttAgent::MqttAgent(const json::object &config) {
     // Connect options for a non-persistent session and automatic
     // reconnects.
     auto connOpts = mqtt::connect_options_builder()
-                        .clean_session(true)
-                        .automatic_reconnect(seconds(2), seconds(30))
-                        .finalize();
+        .clean_session(true)
+        .automatic_reconnect(std::chrono::seconds(2), std::chrono::seconds(30))
+        .finalize();
 
     mqtt_client->set_message_callback([&](mqtt::const_message_ptr m_ptr) {
 
@@ -47,8 +44,8 @@ MqttAgent::MqttAgent(const json::object &config) {
 	    return;
         }
 
-	string topic = m_ptr->get_topic();
-	string text = m_ptr->get_payload_str();
+	std::string topic = m_ptr->get_topic();
+	std::string text = m_ptr->get_payload_str();
 
 	json::object obj = parse_json(text);
 	obj["topic"] = topic;
@@ -59,9 +56,10 @@ MqttAgent::MqttAgent(const json::object &config) {
 
     try {
         auto rsp = mqtt_client->connect(connOpts)->get_connect_response();
-    } catch (exception& e) {
-        cerr << "Could not connect to MQTT Broker at " << address << endl;
-	cerr << "Exception: " << e.what() << endl;
+    } catch (std::exception& e) {
+        std::cerr << "Could not connect to MQTT Broker at ";
+        std::cerr << address << std::endl;
+        std::cerr << "Exception: " << e.what() << std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -70,7 +68,7 @@ MqttAgent::MqttAgent(const json::object &config) {
     Agent::configure(config);
 
     // subscribe to input topics
-    for(string i : message_handler.get_input_topics()) {
+    for(std::string i : message_handler.get_input_topics()) {
         mqtt_client->subscribe(i, 2);
     }
 
@@ -80,11 +78,8 @@ MqttAgent::MqttAgent(const json::object &config) {
 
 // check the message queue every second
 void MqttAgent::check_queue() {
-
-    this_thread::sleep_for(seconds(1));
-
     while (running) {
-        this_thread::sleep_for(seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(1));
 	if(running) {
             if((message_queue.size() > 0) && !busy) {
                 process_next_message();
@@ -101,9 +96,9 @@ void MqttAgent::process_next_message(){
         const json::object &obj = message_queue.front();
         const json::object &copy = json::object(obj);
         message_queue.pop();
-        string topic = val<string>(copy, "topic");
+	std::string topic = val<std::string>(copy, "topic");
 	int sz = message_queue.size();
-	cout << "Processing " << topic << ", " << sz << " in queue" << endl;
+	std::cout << "Processing " << topic << ", " << sz << " in queue" << std::endl;
         message_handler.process_message(copy);
     }
 }
@@ -111,14 +106,15 @@ void MqttAgent::process_next_message(){
 
 void MqttAgent::publish(json::object &message) {
     if(running) {
-	string topic = val<string>(message, "topic");
+        std::string topic = val<std::string>(message, "topic");
 	if(topic.empty()) {
-            cerr << "MqttAgent::publish ERROR no topic in message" << endl;
-            cerr << message << endl;
+            std::cerr << "MqttAgent::publish ERROR:";
+            std::cerr << "No topic in message." << std::endl;
+            std::cerr << message << std::endl;
 	    return;
 	}
 	message.erase("topic"); // do not publish topic with message on bus
-        cout << "Publishing to " << topic << endl;
+        std::cout << "Publishing to " << topic << std::endl;
         mqtt_client->publish(topic, json::serialize(message));
     }
 }
@@ -126,15 +122,13 @@ void MqttAgent::publish(json::object &message) {
 // begin the asynchronous message queue monitor and start 
 void MqttAgent::start() {
     running = true;
-    cout << app_name << " running." << endl;
-
+    std::cout << app_name << " running." << std::endl;
     // start the asynchronous Message queue monitor
-    queue_future = async(
-        launch::async,
+    queue_future = std::async(
+        std::launch::async,
         &MqttAgent::check_queue,
         this
     );
-
     message_handler.start();
 }
 
@@ -142,9 +136,10 @@ void MqttAgent::stop() {
     message_handler.stop();
     running = false;
     queue_future.wait();
-    cout << app_name << " stopped." << endl;
+    std::cout << app_name << " stopped." << std::endl;
     int sz = message_queue.size();
+    // advise if any input was unprocessed.
     if(sz > 0) {
-        cout << "Messages left in processing queue: " << sz << endl;
+        std::cout << "Unprocessed input messages left in queue: " << sz << std::endl;
     }
 }

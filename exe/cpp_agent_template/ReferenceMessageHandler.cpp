@@ -6,7 +6,6 @@
 #include "Agent.hpp"
 
 
-using namespace std;
 namespace json = boost::json;
 
 void ReferenceMessageHandler::configure(const json::object &config) {
@@ -18,9 +17,9 @@ void ReferenceMessageHandler::configure(const json::object &config) {
 
 // process a custom-defined message. 
 void ReferenceMessageHandler::process_message(
-        const json::object &input_message) {
+    const json::object &input_message) {
 
-    string input_topic = val<string>(input_message, "topic");
+    std::string input_topic = val<std::string>(input_message, "topic");
 
     // Process the message if subscribed to the topic
     if(contains(input_topics, input_topic)) {

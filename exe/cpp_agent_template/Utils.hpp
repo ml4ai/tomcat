@@ -4,26 +4,23 @@
 #include <boost/log/trivial.hpp>
 #include <boost/json/array.hpp>
 
-#include <string>
 #include <thread>
 #include <future>
 #include <boost/json.hpp>
 
 namespace json = boost::json;
-using namespace std;
-using namespace std::chrono;
 
 // general functionality 
 class Utils {
 
     public:
 
-    void count_keys(vector<string> keys);
+    void count_keys(std::vector<std::string> keys);
 
     // return T value for key or fallback T if key not found 
     template <class T>
     T val(const json::object &src,
-          const string key,
+          const std::string key,
           const T fallback) {
         if(src.contains(key)) {
 	    if(src.at(key) == nullptr) {
@@ -37,16 +34,16 @@ class Utils {
 
     // return T value for key or default T if key not found 
     template <class T>
-    T val(const json::object &src, const string key) {
+    T val(const json::object &src, const std::string key) {
         return val(src, key, T());
     }
 
-    string get_timestamp();
+    std::string get_timestamp();
 
-    vector<string> unique_values(
+    std::vector<std::string> unique_values(
         const json::array &array,
-        const string key
+        const std::string key
     );
 
-    bool contains(const vector<string> haystack, const string needle);
+    bool contains(const std::vector<std::string> haystack, const std::string needle);
 };

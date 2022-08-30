@@ -21,9 +21,6 @@ namespace po = boost::program_options;
 namespace fs = boost::filesystem;
 namespace json = boost::json;
 
-using namespace std;
-using namespace std::chrono;
-
 namespace {
     volatile std::sig_atomic_t gSignalStatus;
 }
@@ -41,8 +38,8 @@ int main(int argc, char* argv[]) {
 
     // Read user specified filenames
     json::object file = utils.val<json::object>(config, "file");
-    string input_file = utils.val<string>(file, "in");
-    string output_file = utils.val<string>(file, "out");
+    std::string input_file = utils.val<std::string>(file, "in");
+    std::string output_file = utils.val<std::string>(file, "out");
 
     // if neither filename is specified, run in MQTT mode
     if(input_file.empty() && output_file.empty()) {
@@ -61,7 +58,7 @@ int main(int argc, char* argv[]) {
                 break;
             }
             else {
-                this_thread::sleep_for(milliseconds(100));
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
         }
     }

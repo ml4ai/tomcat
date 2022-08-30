@@ -3,14 +3,12 @@
 #include <boost/json/array.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <set>
-
 #include "Utils.hpp"
 
-using namespace std;
 namespace json = boost::json;
 
 // return true if the vector contains the value
-bool Utils::contains(const vector<string> haystack, const string needle) {
+bool Utils::contains(const std::vector<std::string> haystack, const std::string needle) {
     for(auto &hay : haystack) {
         if(needle.compare(hay) == 0) {
             return true;
@@ -20,16 +18,16 @@ bool Utils::contains(const vector<string> haystack, const string needle) {
 }
 
 // return a vector of unique array values for the key
-vector<string> Utils::unique_values(const json::array &arr, const string key) {
-    set<string> values;
+std::vector<std::string> Utils::unique_values(const json::array &arr, const std::string key) {
+    std::set<std::string> values;
     for(size_t i = 0 ;  i < arr.size() ; i++) {
         json::value element = arr.at(i);
-        string value = json::value_to<std::string>(element.at(key));
+        std::string value = json::value_to<std::string>(element.at(key));
 	if(!value.empty()) {
             values.insert(value);
 	}
     }
-    vector<string> ret;
+    std::vector<std::string> ret;
     for(auto &value : values) {
         ret.push_back(value);
     }
@@ -37,19 +35,19 @@ vector<string> Utils::unique_values(const json::array &arr, const string key) {
 }
 
 // Report the number of times each key appears in the data vector
-void Utils::count_keys(vector<string> data){
+void Utils::count_keys(std::vector<std::string> data){
     json::object obj;
     for(auto &key: data) {
-	obj[key] = val<int>(obj, key) + 1;
+        obj[key] = val<int>(obj, key) + 1;
     }
     for(auto it = obj.begin(); it !=obj.end(); ++it) {
-        cout << it->value() << "\t" << it->key()  << endl;
+        std::cout << it->value() << "\t" << it->key() << std::endl;
     }
     data.clear();
 }
 
 /** Return current UTC timestamp in ISO-8601 format. */
-string Utils::get_timestamp() {
+std::string Utils::get_timestamp() {
     return boost::posix_time::to_iso_extended_string(
         boost::posix_time::microsec_clock::universal_time()
     ) + "Z";
