@@ -21,6 +21,15 @@ else
   PADDING=$2
 fi
 
+__kill_trial_id_watcher() {
+  local padding=$1
+  local watcher_pid
+  watcher_pid="$(cat "$EXPERIMENT_DIR/tmp/trial_id_watcher.pid")"
+  if ! kill "$watcher_pid"; then
+    echo -e "${padding}${RED}Failed to kill trial id watcher.${NC}"
+  fi
+}
+
 __monitor_testbed_stop() {
   local log_path=$1
   local testbed_pid=$2
@@ -64,6 +73,7 @@ __stop_testbed() {
   local testbed_launched="n"
 
   echo -e "${padding}Stopping ${EMPH}Testbed${NC}..."
+  __kill_trial_id_watcher "$padding "
   while [[ $testbed_launched == "n" ]]; do
     pushd $HOME/$SYSTEMS_DIR/testbed/Local >/dev/null
     sudo ./testbed_down.sh &>$log_path &

@@ -58,6 +58,11 @@ __monitor_testbed_launch() {
   return 1
 }
 
+__watch_for_trial_id() {
+  watch_for_trial_id "$EXPERIMENT_DIR" &>/dev/null &
+  echo $! > "$EXPERIMENT_DIR/tmp/trial_id_watcher.pid"
+}
+
 __launch_testbed() {
   # Bring the testbed up and save logs
   local padding=$1
@@ -76,6 +81,7 @@ __launch_testbed() {
     if [[ $? -eq 0 ]]; then
       testbed_launched="y"
       echo -e "${padding}${GREEN} ${EMPH}Testbed${GREEN} successfully launched.${NC}"
+      __watch_for_trial_id
     else
       text="${padding}${RED} Error while launching the ${EMPH}testbed${RED}. Check the log file in "
       text+="${EMPH}$log_path${RED} for more details.${NC}"
