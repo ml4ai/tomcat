@@ -9,6 +9,7 @@ create_data_directory_structure() {
   local padding=$2
 
   __create_directory $data_root_dir "$padding"
+  __create_directory $data_root_dir/minecraft "$padding"
   __create_directory $data_root_dir/tmp "$padding"
   __create_directory $data_root_dir/lion "$padding"
   __create_directory $data_root_dir/tiger "$padding"

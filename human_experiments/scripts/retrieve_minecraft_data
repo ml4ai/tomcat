@@ -1,0 +1,76 @@
+#!/usr/bin/env python3
+
+import argparse
+import json
+import os
+
+from elasticsearch import Elasticsearch
+
+
+class MinecraftExtractor:
+    def __init__(self, address: str, port: int):
+        url = f"http://{address}:{port}"
+        self._es = Elasticsearch(url)
+
+    def export(self, out_dir: str, trial_id: str, trial_number: str):
+        query_body = {
+            "match": {
+                "msg.trial_id": trial_id
+            }
+        }
+
+        out_filepath = f"{out_dir}/MinecraftData_Trial-{trial_number}_ID-{trial_id}.metadata"
+
+        # The maximum number of results we can retrieve at a time is 10000. Therefore, we apply pagination using the
+        # message timestamp as the id of the record.
+        total = 0
+        response = None
+        with open(out_filepath, "a") as f:
+            while True:
+                if response is None:
+                    response = self._es.search(index="logstash*", query=query_body, sort=[{"msg.timestamp": "asc"}],
+                                           size=10000)
+                else:
+                    # We use search_after to retrieve data with timestamp later than the last record found
+                    response = self._es.search(index="logstash*", query=query_body, sort=[{"msg.timestamp": "asc"}],
+                                               size=10000, search_after=response["hits"]["hits"][-1]["sort"])
+
+                if len(response['hits']['hits']) == 0:
+                    print(f" {total} messages retrieved in total.")
+                    break
+                elif total > 0:
+                    print(f" {total} messages retrieved so far...")
+
+                total += len(response['hits']['hits'])
+                for hit in response['hits']['hits']:
+                    try:
+                        f.write(json.dumps(hit['_source']) + "\n")
+                    except Exception:
+                        # Ignore malformed json messages
+                        pass
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        "Retrieves Minecraft data from all the trials in a experiment using elastic search.")
+    parser.add_argument("--address", default="localhost", help="Address of the elastic search server.")
+    parser.add_argument("--port", default=9200, help="Port of the elastic search server.")
+    parser.add_argument("--trial_info_filepath", required=True,
+                        help="Path to the file containing info about the trials in the experiment.")
+    parser.add_argument("--out_dir", required=True, help="Directory where files with the extracted data must be saved.")
+
+    args = parser.parse_args()
+
+    if not os.path.exists(args.trial_info_filepath):
+        raise Exception(f"The file {args.trial_info_filepath} does not exist.")
+
+    extractor = MinecraftExtractor(args.address, args.port)
+
+    with open(args.trial_info_filepath, "r") as f:
+        trial_info = json.load(f)
+        for i in range(len(trial_info["id"])):
+            trial_id = trial_info["id"][i]
+            trial_number = trial_info["number"][i]
+            # One .metadata file per trial in the experiment
+            print(f"Extracting data from trial {trial_number}...")
+            extractor.export(args.out_dir, trial_id, trial_number)
