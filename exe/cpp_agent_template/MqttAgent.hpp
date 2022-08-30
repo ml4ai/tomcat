@@ -7,7 +7,6 @@
 #include <future>
 
 #include "Agent.hpp"
-#include "ReferenceMessageHandler.hpp"
 
 namespace json = boost::json;
 

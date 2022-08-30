@@ -23,8 +23,8 @@ add_executable(
     Agent.cpp
     MqttAgent.cpp
     FileAgent.cpp
-    BaseMessageHandler.cpp
-    ReferenceMessageHandler.cpp
+    Processor.cpp
+    ReferenceProcessor.cpp
     Configurator.cpp
     Utils.cpp
 )

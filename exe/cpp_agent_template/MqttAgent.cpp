@@ -69,12 +69,12 @@ MqttAgent::MqttAgent(const json::object &config) {
     Agent::configure(config);
 
     // subscribe to input topics
-    for(std::string i : message_handler.get_input_topics()) {
+    for(std::string i : reference_processor.get_input_topics()) {
         mqtt_client->subscribe(i, 2);
     }
 
     // send an early heartbeat to advise of configuration
-    message_handler.publish_heartbeat_message();
+    reference_processor.publish_heartbeat_message();
 }
 
 // check the message queue every second
@@ -101,7 +101,7 @@ void MqttAgent::process_next_message(){
 	int sz = message_queue.size();
 	std::cout << "Processing " << topic << ", ";
         std::cout << sz << " in queue" << std::endl;
-        message_handler.process_message(copy);
+        reference_processor.process_message(copy);
     }
 }
 
@@ -131,11 +131,11 @@ void MqttAgent::start() {
         &MqttAgent::check_queue,
         this
     );
-    message_handler.start();
+    reference_processor.start();
 }
 
 void MqttAgent::stop() {
-    message_handler.stop();
+    reference_processor.stop();
     running = false;
     queue_future.wait();
     std::cout << app_name << " stopped." << std::endl;

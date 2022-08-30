@@ -7,11 +7,11 @@
 #include <thread>
 
 #include "Agent.hpp"
-#include "BaseMessageHandler.hpp"
+#include "Processor.hpp"
 
 namespace json = boost::json;
 
-BaseMessageHandler::BaseMessageHandler(Agent* agent): agent(agent) {
+Processor::Processor(Agent* agent): agent(agent) {
     time(&start_time);
 
     // Subscriptions
@@ -50,7 +50,7 @@ BaseMessageHandler::BaseMessageHandler(Agent* agent): agent(agent) {
 }
 
 // return a value with the three fields identifying a message
-json::value BaseMessageHandler::create_bus_id(const std::string topic,
+json::value Processor::create_bus_id(const std::string topic,
                                               const std::string message_type,
                                               const std::string sub_type) {
     json::value id = {
@@ -62,29 +62,29 @@ json::value BaseMessageHandler::create_bus_id(const std::string topic,
     return id;
 }
 
-void BaseMessageHandler::add_subscription(const std::string topic,
+void Processor::add_subscription(const std::string topic,
                                           const std::string message_type,
                                           const std::string sub_type) {
     subscribes.emplace_back(create_bus_id(topic, message_type, sub_type));
 }
 
-void BaseMessageHandler::add_subscription(const std::string topic) {
+void Processor::add_subscription(const std::string topic) {
     add_subscription(topic, "not_set", "not_set");
 }
 
-void BaseMessageHandler::add_publication(const std::string topic,
+void Processor::add_publication(const std::string topic,
                                          const std::string message_type,
                                          const std::string sub_type) {
     publishes.emplace_back(create_bus_id(topic, message_type, sub_type));
 }
 
-void BaseMessageHandler::add_publication(const std::string topic) {
+void Processor::add_publication(const std::string topic) {
     add_publication(topic, "not_set", "not_set");
 }
 
 // Using the config argument and hardcoded values, populate the global 
 // Version Info data structure.   
-void BaseMessageHandler::configure(const json::object &config) {
+void Processor::configure(const json::object &config) {
 
     // set up the global constants 
     agent_name = val<std::string>(config, "agent_name", AGENT_NAME);
@@ -95,7 +95,7 @@ void BaseMessageHandler::configure(const json::object &config) {
 }
 
 /** Function that publishes heartbeat messages while the agent is running */
-void BaseMessageHandler::publish_heartbeats() {
+void Processor::publish_heartbeats() {
 
     while (running) {
         std::this_thread::sleep_for(std::chrono::seconds(10));
@@ -106,7 +106,7 @@ void BaseMessageHandler::publish_heartbeats() {
 }
 
 // start publishing heartbeats
-void BaseMessageHandler::start() {
+void Processor::start() {
 
     running = true;
     status = "I am processing messages";
@@ -117,13 +117,13 @@ void BaseMessageHandler::start() {
     // Start threaded publishing
     heartbeat_future = std::async(
         std::launch::async,
-        &BaseMessageHandler::publish_heartbeats,
+        &Processor::publish_heartbeats,
         this
     );
 }
 
 // stop publishing heartbeats
-void BaseMessageHandler::stop() {
+void Processor::stop() {
 
     running = false;
     status = "Stopped";
@@ -134,16 +134,16 @@ void BaseMessageHandler::stop() {
     heartbeat_future.wait();
 }
 
-std::vector<std::string> BaseMessageHandler::get_input_topics() {
+std::vector<std::string> Processor::get_input_topics() {
     return unique_values(subscribes, "topic");
 }
 
-std::vector<std::string> BaseMessageHandler::get_output_topics() {
+std::vector<std::string> Processor::get_output_topics() {
     return unique_values(publishes, "topic");
 }
 
 // Convenience method adding message_type and sub_type fields
-void BaseMessageHandler::publish(
+void Processor::publish(
     const std::string output_topic,
     const json::object &input_message,
     const json::object &output_data) {
@@ -151,7 +151,7 @@ void BaseMessageHandler::publish(
     publish(output_topic, "not_set", "not_set", input_message, output_data);
 }
 
-void BaseMessageHandler::publish(
+void Processor::publish(
 	const std::string output_topic,
 	const std::string output_message_type,
 	const std::string output_sub_type,
@@ -204,7 +204,7 @@ void BaseMessageHandler::publish(
 
 
 // add subscriptions as they appear in the config struct
-std::vector<std::string> BaseMessageHandler::add_subscriptions(
+std::vector<std::string> Processor::add_subscriptions(
    const json::object &config){
 
     std::vector<std::string> ret;
@@ -220,7 +220,7 @@ std::vector<std::string> BaseMessageHandler::add_subscriptions(
 
 
 // add publications as they appear in the config struct
-std::vector<std::string> BaseMessageHandler::add_publications(
+std::vector<std::string> Processor::add_publications(
    const json::object &config){
 
     std::vector<std::string> ret;
@@ -235,7 +235,7 @@ std::vector<std::string> BaseMessageHandler::add_publications(
 }
 
 // process messages with Message Bus identifiers that match ours
-void BaseMessageHandler::process_message(const json::object &input_message) {
+void Processor::process_message(const json::object &input_message) {
 
     std::string topic = val<std::string>(input_message, "topic");
     traffic_in.push_back(topic);
@@ -295,7 +295,7 @@ void BaseMessageHandler::process_message(const json::object &input_message) {
 }
 
 // respond to Rollcall Request message
-void BaseMessageHandler::publish_rollcall_response_message(
+void Processor::publish_rollcall_response_message(
 	const json::object &input_message) {
 
     // create rollcall response data
@@ -319,7 +319,7 @@ void BaseMessageHandler::publish_rollcall_response_message(
 }
 
 // respond to Trial Start message
-void BaseMessageHandler::publish_version_info_message(
+void Processor::publish_version_info_message(
     const json::object &input_message){
 
     // create version info data
@@ -339,7 +339,7 @@ void BaseMessageHandler::publish_version_info_message(
 }
 
 // use the trial message as input
-void BaseMessageHandler::publish_heartbeat_message() {
+void Processor::publish_heartbeat_message() {
 
     // create heartbeat data
     json::object output_data;

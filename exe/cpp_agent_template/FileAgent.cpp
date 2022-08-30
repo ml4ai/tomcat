@@ -50,7 +50,7 @@ FileAgent::FileAgent(const json::object &config) {
     int n = 0;
     while(std::getline(input_file, line)) {
         json::object message = parse_json(line);
-        message_handler.process_message(message);
+        reference_processor.process_message(message);
 	n++;
     }
 

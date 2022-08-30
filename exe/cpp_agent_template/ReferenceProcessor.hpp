@@ -1,13 +1,13 @@
 #pragma once
 
 #include <boost/json.hpp>
-#include "BaseMessageHandler.hpp"
+#include "Processor.hpp"
 
 namespace json = boost::json;
 
 class Agent;
 
-class ReferenceMessageHandler: public BaseMessageHandler {
+class ReferenceProcessor: public Processor {
 
     // all subscribed topics
     std::vector<std::string> input_topics;
@@ -19,7 +19,7 @@ class ReferenceMessageHandler: public BaseMessageHandler {
 
     void configure(const json::object &config) override;
     
-    ReferenceMessageHandler(Agent* agent) : BaseMessageHandler(agent) {}
+    ReferenceProcessor(Agent* agent) : Processor(agent) {}
 
     void process_message(const json::object &message) override;
 };

@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <boost/json.hpp>
-#include "ReferenceMessageHandler.hpp"
+#include "ReferenceProcessor.hpp"
 #include "Utils.hpp"
 
 namespace json = boost::json;
@@ -17,7 +17,7 @@ class Agent : public Utils {
 
     std::string app_name;
 
-    ReferenceMessageHandler message_handler = ReferenceMessageHandler(this);
+    ReferenceProcessor reference_processor = ReferenceProcessor(this);
 
 
     json::object parse_json(const std::string text);

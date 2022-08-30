@@ -1,22 +1,22 @@
 #include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
-#include "ReferenceMessageHandler.hpp"
-#include "BaseMessageHandler.hpp"
+#include "ReferenceProcessor.hpp"
+#include "Processor.hpp"
 #include <boost/json/array.hpp>
 #include "Agent.hpp"
 
 
 namespace json = boost::json;
 
-void ReferenceMessageHandler::configure(const json::object &config) {
-    BaseMessageHandler::configure(config);	
+void ReferenceProcessor::configure(const json::object &config) {
+    Processor::configure(config);	
 
     input_topics = add_subscriptions(config);
     output_topics = add_publications(config);
 }
 
 // process a custom-defined message. 
-void ReferenceMessageHandler::process_message(
+void ReferenceProcessor::process_message(
     const json::object &input_message) {
 
     std::string input_topic = val<std::string>(input_message, "topic");
@@ -38,5 +38,5 @@ void ReferenceMessageHandler::process_message(
     }
 
     // forward the message to base class for further processing
-    BaseMessageHandler::process_message(input_message);
+    Processor::process_message(input_message);
 }

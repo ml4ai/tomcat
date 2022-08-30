@@ -39,7 +39,7 @@ namespace json = boost::json;
 
 // defaults for VersionInfoMessage if no config file is used.
 #define TESTBED "https://gitlab.asist.aptima.com:5050/asist/testbed"
-#define AGENT_NAME "BaseMessageHandler"
+#define AGENT_NAME "Processor"
 #define OWNER "The University of Arizona"
 #define SOFTWARE_VERSION "1.0.0"
 
@@ -69,7 +69,7 @@ namespace json = boost::json;
 class Agent;
 
 // A base class for subscribed message handlers
-class BaseMessageHandler : public Utils {
+class Processor : public Utils {
 
     // the start time is recorded for uptime computation.
     time_t start_time;
@@ -143,7 +143,7 @@ class BaseMessageHandler : public Utils {
 
     public:
 
-    BaseMessageHandler(Agent* agent);
+    Processor(Agent* agent);
     virtual void configure(const json::object &config);
     virtual void process_message(const json::object &message);
     void enqueue_message(const json::object &input_message);

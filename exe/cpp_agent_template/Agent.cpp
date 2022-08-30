@@ -1,14 +1,14 @@
 #include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
 #include "Agent.hpp"
-#include "ReferenceMessageHandler.hpp"
+#include "ReferenceProcessor.hpp"
 #include <iostream>
 
 namespace json = boost::json;
 
 void Agent::configure(const json::object &config) {
 
-    message_handler.configure(config);
+    reference_processor.configure(config);
 
     std::string agent_name = val<std::string>(config, "agent_name");
     std::string version = val<std::string>(config, "version", "1.0.0");
@@ -18,13 +18,13 @@ void Agent::configure(const json::object &config) {
 
     // advise of subscribed topics
     std::cout << "Subscription topics:" << std::endl;
-    for(std::string i : message_handler.get_input_topics()) {
+    for(std::string i : reference_processor.get_input_topics()) {
         std::cout << "\t" << i << std::endl;
     }
 
     // advise of published topics
     std::cout << "Publication topics:" << std::endl;
-    for(std::string i : message_handler.get_output_topics()) {
+    for(std::string i : reference_processor.get_output_topics()) {
         std::cout << "\t" << i << std::endl;
     }
 }
