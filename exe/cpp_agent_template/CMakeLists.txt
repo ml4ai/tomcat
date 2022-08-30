@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g") # create gdb symbol table
 
 add_definitions(-DBOOST_LOG_DYN_LINK)
 find_package(
-    Boost 
+    Boost 1.79
     COMPONENTS 
     date_time
     chrono
