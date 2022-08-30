@@ -8,21 +8,18 @@ from elasticsearch import Elasticsearch
 
 
 class MinecraftExtractor:
-    def __init__(self, address: str, port: int, trial_id: str, trial_number: str):
-        self._trial_id = trial_id
-        self._trial_number = trial_number
-
+    def __init__(self, address: str, port: int):
         url = f"http://{address}:{port}"
         self._es = Elasticsearch(url)
 
-    def export(self, out_dir: str):
+    def export(self, out_dir: str, trial_id: str, trial_number: str):
         query_body = {
             "match": {
-                "msg.trial_id": self._trial_id
+                "msg.trial_id": trial_id
             }
         }
 
-        out_filepath = f"{out_dir}/MinecraftData_Trial-{self._trial_number}_ID-{self._trial_id}.metadata"
+        out_filepath = f"{out_dir}/MinecraftData_Trial-{trial_number}_ID-{trial_id}.metadata"
 
         # The maximum number of results we can retrieve at a time is 10000. Therefore, we apply pagination using the
         # message timestamp as the id of the record.
@@ -67,6 +64,8 @@ if __name__ == "__main__":
     if not os.path.exists(args.trial_info_filepath):
         raise Exception(f"The file {args.trial_info_filepath} does not exist.")
 
+    extractor = MinecraftExtractor(args.address, args.port)
+
     with open(args.trial_info_filepath, "r") as f:
         trial_info = json.load(f)
         for i in range(len(trial_info["id"])):
@@ -74,5 +73,4 @@ if __name__ == "__main__":
             trial_number = trial_info["number"][i]
             # One .metadata file per trial in the experiment
             print(f"Extracting data from trial {trial_number}...")
-            extractor = MinecraftExtractor(args.address, args.port, trial_id, trial_number)
-            extractor.export(args.out_dir)
+            extractor.export(args.out_dir, trial_id, trial_number)
