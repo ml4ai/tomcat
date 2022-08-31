@@ -72,13 +72,12 @@ void Processor::add_bus_id(json::array arr,
                            const std::string topic,
                            const std::string message_type,
                            const std::string sub_type) {
-    json::value id = {
+
+    arr.emplace_back(json::value {
         { "topic", topic },
         { "message_type", message_type },
         { "sub_type", sub_type }
-    };
-
-    arr.emplace_back(id);
+    });
 }
 
 // Function that publishes heartbeat messages on an interval
