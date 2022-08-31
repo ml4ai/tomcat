@@ -14,8 +14,8 @@ void ReferenceProcessor::configure(const json::object &config) {
     add_subscriptions(config);
     add_publications(config);
 
-    input_topics = get_input_topics();
-    output_topics = get_output_topics();
+    config_input_topics = get_array_values(subscribes, "topic");
+    config_output_topics = get_array_values(publishes, "topic");
 }
 
 // process a custom-defined message. 
@@ -25,10 +25,10 @@ void ReferenceProcessor::process_message(
     std::string input_topic = val<std::string>(input_message, "topic");
 
     // Process the message if subscribed to the topic
-    if(contains(input_topics, input_topic)) {
+    if(contains(config_input_topics, input_topic)) {
 
         // publish the output message on each of the output topics
-	for(auto &output_topic : output_topics) {
+	for(auto &output_topic : config_output_topics) {
 
             // create a data element 
             json::object output_data;

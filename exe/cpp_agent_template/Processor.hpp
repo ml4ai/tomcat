@@ -88,18 +88,14 @@ class Processor : public Utils {
     // subscription
     json::array subscribes = json::array();
     void add_subscriptions(const json::object &config);
-    void add_subscription(const std::string topic);
-    void add_subscription(
-        const std::string topic,
-        const std::string message_type,
-        const std::string sub_type
-    );
 
     // publication
     json::array publishes = json::array();
     void add_publications(const json::object &config);
-    void add_publication(const std::string topic);
-    void add_publication(
+
+    // Add an element to the publishes or subscribes array
+    void add_bus_id(
+        json::array arr,
         const std::string topic,
         const std::string message_type,
         const std::string sub_type
@@ -117,12 +113,6 @@ class Processor : public Utils {
 
     // last received trial start or stop message
     json::object trial_message = json::object();
-    json::value create_bus_id(const std::string topic);
-    json::value create_bus_id(
-        const std::string topic,
-        const std::string message_type,
-        const std::string sub_type
-    );
 
     void publish(
         const std::string output_topic,

@@ -40,7 +40,7 @@ class Utils {
 
     std::string get_timestamp();
 
-    std::vector<std::string> unique_values(
+    std::vector<std::string> get_array_values(
         const json::array &array,
         const std::string key
     );

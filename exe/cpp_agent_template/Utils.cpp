@@ -20,8 +20,8 @@ bool Utils::contains(
     return false;
 }
 
-// return a vector of unique array values for the key
-std::vector<std::string> Utils::unique_values(
+// return a vector of unique string values for an array element field
+std::vector<std::string> Utils::get_array_values(
     const json::array &arr,
     const std::string key) {
 

@@ -15,34 +15,40 @@ Processor::Processor(Agent* agent): agent(agent) {
     time(&start_time);
 
     // Subscriptions
-    add_subscription(
+    add_bus_id(
+        subscribes,
         TRIAL_TOPIC,
 	TRIAL_MESSAGE_TYPE,
 	TRIAL_SUB_TYPE_STOP
     );
-    add_subscription(
+    add_bus_id(
+        subscribes,
         TRIAL_TOPIC,
 	TRIAL_MESSAGE_TYPE,
 	TRIAL_SUB_TYPE_START
     );
-    add_subscription(
+    add_bus_id(
+        subscribes,
         ROLLCALL_REQUEST_TOPIC,
 	ROLLCALL_REQUEST_MESSAGE_TYPE,
 	ROLLCALL_REQUEST_SUB_TYPE
     );
 
     // Publications
-    add_publication(
+    add_bus_id(
+        publishes,
         HEARTBEAT_TOPIC,
         HEARTBEAT_MESSAGE_TYPE,
         HEARTBEAT_SUB_TYPE
     );
-    add_publication(
+    add_bus_id(
+        publishes,
         ROLLCALL_RESPONSE_TOPIC,
         ROLLCALL_RESPONSE_MESSAGE_TYPE,
         ROLLCALL_RESPONSE_SUB_TYPE
     );
-    add_publication(
+    add_bus_id(
+        publishes,
         VERSION_INFO_TOPIC,
         VERSION_INFO_MESSAGE_TYPE,
         VERSION_INFO_SUB_TYPE
@@ -61,46 +67,18 @@ void Processor::configure(const json::object &config) {
        	+ version;
 }
 
-// return a value with the three fields identifying a message
-json::value Processor::create_bus_id(const std::string topic,
-                                     const std::string message_type,
-                                     const std::string sub_type) {
+// Add an element to the publishes or subscribes array
+void Processor::add_bus_id(json::array arr,
+                           const std::string topic,
+                           const std::string message_type,
+                           const std::string sub_type) {
     json::value id = {
         { "topic", topic },
         { "message_type", message_type },
         { "sub_type", sub_type }
     };
 
-    return id;
-}
-
-// Convenience method for creating a bus ID with only the topic specified
-json::value Processor::create_bus_id(const std::string topic) {
-    return create_bus_id(topic, "not_set", "not_set");
-}
-
-// add a bus ID to the subscribes array
-void Processor::add_subscription(const std::string topic,
-                                 const std::string message_type,
-                                 const std::string sub_type) {
-    subscribes.emplace_back(create_bus_id(topic, message_type, sub_type));
-}
-
-// convenience method to add a subscription with only the topic specified
-void Processor::add_subscription(const std::string topic) {
-    add_subscription(topic, "not_set", "not_set");
-}
-
-// add a bus ID to the publishes array
-void Processor::add_publication(const std::string topic,
-                                const std::string message_type,
-                                const std::string sub_type) {
-    publishes.emplace_back(create_bus_id(topic, message_type, sub_type));
-}
-
-// convenience method to add a publication with only the topic specified
-void Processor::add_publication(const std::string topic) {
-    add_publication(topic, "not_set", "not_set");
+    arr.emplace_back(id);
 }
 
 // Function that publishes heartbeat messages on an interval
@@ -145,12 +123,12 @@ void Processor::stop() {
 
 // Return a vector of the subscribed topics
 std::vector<std::string> Processor::get_input_topics() {
-    return unique_values(subscribes, "topic");
+    return get_array_values(subscribes, "topic");
 }
 
 // Return a vector of the published topics
 std::vector<std::string> Processor::get_output_topics() {
-    return unique_values(publishes, "topic");
+    return get_array_values(publishes, "topic");
 }
 
 // Convenience method for publication without message_type or sub_type
@@ -220,21 +198,21 @@ void Processor::publish(
     traffic_out.push_back(output_topic);
 }
 
-// add subscriptions from the config struct.
+// add subscriptions from the topics in the config struct
 void Processor::add_subscriptions(const json::object &config){
     json::array arr = val<json::array>(config, "subscribes");
     for(size_t i = 0 ;  i < arr.size() ; i++) {
         std::string topic = json::value_to<std::string>(arr.at(i));
-        subscribes.emplace_back(create_bus_id(topic));
+	add_bus_id(subscribes, topic, "not_set", "not_set");
     }
 }
 
-// add publications from the config struct
+// add publications from the topics in the config struct
 void Processor::add_publications(const json::object &config){
     json::array arr = val<json::array>(config, "publishes");
     for(size_t i = 0 ;  i < arr.size() ; i++) {
         std::string topic = json::value_to<std::string>(arr.at(i));
-        publishes.emplace_back(create_bus_id(topic));
+	add_bus_id(publishes, topic, "not_set", "not_set");
     }
 }
 
