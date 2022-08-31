@@ -11,8 +11,11 @@ namespace json = boost::json;
 void ReferenceProcessor::configure(const json::object &config) {
     Processor::configure(config);	
 
-    input_topics = add_subscriptions(config);
-    output_topics = add_publications(config);
+    add_subscriptions(config);
+    add_publications(config);
+
+    input_topics = get_input_topics();
+    output_topics = get_output_topics();
 }
 
 // process a custom-defined message. 

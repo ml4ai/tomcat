@@ -49,10 +49,22 @@ Processor::Processor(Agent* agent): agent(agent) {
     );
 }
 
+// Set global variables 
+void Processor::configure(const json::object &config) {
+    agent_name = val<std::string>(config, "agent_name", AGENT_NAME);
+    version = val<std::string>(config, "version", SOFTWARE_VERSION);
+    owner = val<std::string>(config, "owner", OWNER);
+    testbed_source = TESTBED 
+        + std::string("/")
+   	+ agent_name
+       	+ std::string(":")
+       	+ version;
+}
+
 // return a value with the three fields identifying a message
 json::value Processor::create_bus_id(const std::string topic,
-                                              const std::string message_type,
-                                              const std::string sub_type) {
+                                     const std::string message_type,
+                                     const std::string sub_type) {
     json::value id = {
         { "topic", topic },
         { "message_type", message_type },
@@ -62,41 +74,37 @@ json::value Processor::create_bus_id(const std::string topic,
     return id;
 }
 
+// Convenience method for creating a bus ID with only the topic specified
+json::value Processor::create_bus_id(const std::string topic) {
+    return create_bus_id(topic, "not_set", "not_set");
+}
+
+// add a bus ID to the subscribes array
 void Processor::add_subscription(const std::string topic,
-                                          const std::string message_type,
-                                          const std::string sub_type) {
+                                 const std::string message_type,
+                                 const std::string sub_type) {
     subscribes.emplace_back(create_bus_id(topic, message_type, sub_type));
 }
 
+// convenience method to add a subscription with only the topic specified
 void Processor::add_subscription(const std::string topic) {
     add_subscription(topic, "not_set", "not_set");
 }
 
+// add a bus ID to the publishes array
 void Processor::add_publication(const std::string topic,
-                                         const std::string message_type,
-                                         const std::string sub_type) {
+                                const std::string message_type,
+                                const std::string sub_type) {
     publishes.emplace_back(create_bus_id(topic, message_type, sub_type));
 }
 
+// convenience method to add a publication with only the topic specified
 void Processor::add_publication(const std::string topic) {
     add_publication(topic, "not_set", "not_set");
 }
 
-// Using the config argument and hardcoded values, populate the global 
-// Version Info data structure.   
-void Processor::configure(const json::object &config) {
-
-    // set up the global constants 
-    agent_name = val<std::string>(config, "agent_name", AGENT_NAME);
-    version = val<std::string>(config, "version", SOFTWARE_VERSION);
-    owner = val<std::string>(config, "owner", OWNER);
-    testbed_source = 
-        TESTBED + std::string("/") + agent_name + std::string(":") + version;
-}
-
-/** Function that publishes heartbeat messages while the agent is running */
+// Function that publishes heartbeat messages on an interval
 void Processor::publish_heartbeats() {
-
     while (running) {
         std::this_thread::sleep_for(std::chrono::seconds(10));
 	if(running) {
@@ -111,10 +119,10 @@ void Processor::start() {
     running = true;
     status = "I am processing messages";
 
-    // send immediate ack
+    // send immediate heartbeat to acknowledge startup
     publish_heartbeat_message();
 
-    // Start threaded publishing
+    // Start the publishing thread
     heartbeat_future = std::async(
         std::launch::async,
         &Processor::publish_heartbeats,
@@ -128,21 +136,24 @@ void Processor::stop() {
     running = false;
     status = "Stopped";
 
-    // send immediate ack
+    // send immediate heartbeat to acknowledge shutdown
     publish_heartbeat_message();
 
+    // Stop the publishing thread
     heartbeat_future.wait();
 }
 
+// Return a vector of the subscribed topics
 std::vector<std::string> Processor::get_input_topics() {
     return unique_values(subscribes, "topic");
 }
 
+// Return a vector of the published topics
 std::vector<std::string> Processor::get_output_topics() {
     return unique_values(publishes, "topic");
 }
 
-// Convenience method adding message_type and sub_type fields
+// Convenience method for publication without message_type or sub_type
 void Processor::publish(
     const std::string output_topic,
     const json::object &input_message,
@@ -151,6 +162,7 @@ void Processor::publish(
     publish(output_topic, "not_set", "not_set", input_message, output_data);
 }
 
+// Compose a complete message for publication
 void Processor::publish(
 	const std::string output_topic,
 	const std::string output_message_type,
@@ -160,22 +172,23 @@ void Processor::publish(
 
     std::string timestamp = get_timestamp();
 
-    // Common Header
+    // Common header struct for output message
     json::object output_header;
-    json::object input_msg = val<json::object>(input_message, "msg");
     output_header["message_type"] = output_message_type;
     output_header["timestamp"] = timestamp;
     output_header["version"] = testbed_version;
 
-    // Common Msg
+    // Common msg struct for output message
     json::object output_msg;
     output_msg["message_type"] = output_sub_type;
     output_msg["source"] = agent_name;
     output_msg["version"] = version;
     output_msg["timestamp"] = timestamp;
-
-    // add these only if they exist and are non-empty
-    std::string experiment_id = val<std::string>(input_msg, "experiment_id");
+    // copy these fields from the input msg struct if they exist
+    // and are non-empty
+    json::object input_msg = val<json::object>(input_message, "msg");
+    std::string experiment_id = 
+        val<std::string>(input_msg, "experiment_id");
     if(!experiment_id.empty()) {
         output_msg["experiment_id"] = experiment_id;
     }
@@ -187,51 +200,42 @@ void Processor::publish(
     if(!replay_id.empty()) {
         output_msg["replay_id"] = replay_id;
     }
-    std::string replay_root_id = val<std::string>(input_msg, "replay_root_id");
+    std::string replay_root_id = 
+        val<std::string>(input_msg, "replay_root_id");
     if(!replay_root_id.empty()) {
         output_msg["replay_root_id"] = replay_root_id;
     }
 
+    // assemble output message 
     json::object output_message;
     output_message["topic"] = output_topic;
     output_message["header"] = output_header;
     output_message["msg"] = output_msg;
     output_message["data"] = output_data;
 
-    traffic_out.push_back(output_topic);
+    // publish output message
     agent->publish(output_message);
+
+    // log outbound traffic
+    traffic_out.push_back(output_topic);
 }
 
-
-// add subscriptions as they appear in the config struct
-std::vector<std::string> Processor::add_subscriptions(
-   const json::object &config){
-
-    std::vector<std::string> ret;
+// add subscriptions from the config struct.
+void Processor::add_subscriptions(const json::object &config){
     json::array arr = val<json::array>(config, "subscribes");
     for(size_t i = 0 ;  i < arr.size() ; i++) {
         std::string topic = json::value_to<std::string>(arr.at(i));
-        add_subscription(topic);
-        ret.push_back(topic);
+        subscribes.emplace_back(create_bus_id(topic));
     }
-
-    return ret;
 }
 
-
-// add publications as they appear in the config struct
-std::vector<std::string> Processor::add_publications(
-   const json::object &config){
-
-    std::vector<std::string> ret;
+// add publications from the config struct
+void Processor::add_publications(const json::object &config){
     json::array arr = val<json::array>(config, "publishes");
     for(size_t i = 0 ;  i < arr.size() ; i++) {
         std::string topic = json::value_to<std::string>(arr.at(i));
-        add_publication(topic);
-        ret.push_back(topic);
+        publishes.emplace_back(create_bus_id(topic));
     }
-
-    return ret;
 }
 
 // process messages with Message Bus identifiers that match ours

@@ -71,7 +71,7 @@ class Agent;
 // A base class for subscribed message handlers
 class Processor : public Utils {
 
-    // the start time is recorded for uptime computation.
+    // recorded for uptime computation.
     time_t start_time;
 
     // holds the result of the async heartbeat operation
@@ -87,7 +87,7 @@ class Processor : public Utils {
 
     // subscription
     json::array subscribes = json::array();
-    std::vector<std::string> add_subscriptions(const json::object &config);
+    void add_subscriptions(const json::object &config);
     void add_subscription(const std::string topic);
     void add_subscription(
         const std::string topic,
@@ -97,7 +97,7 @@ class Processor : public Utils {
 
     // publication
     json::array publishes = json::array();
-    std::vector<std::string> add_publications(const json::object &config);
+    void add_publications(const json::object &config);
     void add_publication(const std::string topic);
     void add_publication(
         const std::string topic,
@@ -117,7 +117,7 @@ class Processor : public Utils {
 
     // last received trial start or stop message
     json::object trial_message = json::object();
-
+    json::value create_bus_id(const std::string topic);
     json::value create_bus_id(
         const std::string topic,
         const std::string message_type,
@@ -146,7 +146,6 @@ class Processor : public Utils {
     Processor(Agent* agent);
     virtual void configure(const json::object &config);
     virtual void process_message(const json::object &message);
-    void enqueue_message(const json::object &input_message);
     void process_next_message();
     void publish_heartbeat_message();
     void start();
