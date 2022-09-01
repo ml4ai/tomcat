@@ -16,28 +16,22 @@ Processor::Processor(Agent* agent) : agent(agent) {
 
     // Subscriptions
     add_bus_id(
-        subscribes, TRIAL_TOPIC, TRIAL_MESSAGE_TYPE, TRIAL_SUB_TYPE_STOP);
+        subscribes, TRIAL_TOPIC, TRIAL_TYPE, TRIAL_SUB_TYPE_STOP);
     add_bus_id(
-        subscribes, TRIAL_TOPIC, TRIAL_MESSAGE_TYPE, TRIAL_SUB_TYPE_START);
-    add_bus_id(subscribes,
-               ROLLCALL_REQUEST_TOPIC,
-               ROLLCALL_REQUEST_MESSAGE_TYPE,
-               ROLLCALL_REQUEST_SUB_TYPE);
+        subscribes, TRIAL_TOPIC, TRIAL_TYPE, TRIAL_SUB_TYPE_START);
+    add_bus_id(
+        subscribes, ROLL_REQ_TOPIC, ROLL_REQ_TYPE, ROLL_REQ_SUB_TYPE);
 
     // Publications
     add_bus_id(
-        publishes, HEARTBEAT_TOPIC, HEARTBEAT_MESSAGE_TYPE, HEARTBEAT_SUB_TYPE);
-    add_bus_id(publishes,
-               ROLLCALL_RESPONSE_TOPIC,
-               ROLLCALL_RESPONSE_MESSAGE_TYPE,
-               ROLLCALL_RESPONSE_SUB_TYPE);
-    add_bus_id(publishes,
-               VERSION_INFO_TOPIC,
-               VERSION_INFO_MESSAGE_TYPE,
-               VERSION_INFO_SUB_TYPE);
+        publishes, HEARTBEAT_TOPIC, HEARTBEAT_TYPE, HEARTBEAT_SUB_TYPE);
+    add_bus_id(
+        publishes, ROLL_RES_TOPIC, ROLL_RES_TYPE, ROLL_RES_SUB_TYPE);
+    add_bus_id(
+        publishes, VERSION_TOPIC, VERSION_TYPE, VERSION_SUB_TYPE);
 }
 
-// Set global variables
+// Set global variables from the configuration file object
 void Processor::configure(const json::object& config) {
     agent_name = val<std::string>(config, "agent_name", AGENT_NAME);
     version = val<std::string>(config, "version", SOFTWARE_VERSION);
@@ -199,7 +193,7 @@ void Processor::process_message(const json::object& input_message) {
 
     // trial message
     if ((topic.compare(TRIAL_TOPIC) == 0) &&
-        (input_message_type.compare(TRIAL_MESSAGE_TYPE) == 0)) {
+        (input_message_type.compare(TRIAL_TYPE) == 0)) {
 
         // start
         if (input_sub_type.compare(TRIAL_SUB_TYPE_START) == 0) {
@@ -235,9 +229,9 @@ void Processor::process_message(const json::object& input_message) {
     }
 
     // rollcall request message
-    else if ((topic.compare(ROLLCALL_REQUEST_TOPIC) == 0) &&
-             (input_message_type.compare(ROLLCALL_REQUEST_MESSAGE_TYPE) == 0) &&
-             (input_sub_type.compare(ROLLCALL_REQUEST_SUB_TYPE) == 0)) {
+    else if ((topic.compare(ROLL_REQ_TOPIC) == 0) &&
+             (input_message_type.compare(ROLL_REQ_TYPE) == 0) &&
+             (input_sub_type.compare(ROLL_REQ_SUB_TYPE) == 0)) {
         publish_rollcall_response_message(input_message);
     }
 
@@ -261,11 +255,9 @@ void Processor::publish_rollcall_response_message(
     output_data["rollcall_id"] =
         val<std::string>(input_data, "rollcall_id", "not_set");
 
-    publish(ROLLCALL_RESPONSE_TOPIC,
-            ROLLCALL_RESPONSE_MESSAGE_TYPE,
-            ROLLCALL_RESPONSE_SUB_TYPE,
-            input_message,
-            output_data);
+    publish(
+        ROLL_RES_TOPIC, ROLL_RES_TYPE, ROLL_RES_SUB_TYPE, input_message,
+	output_data);
 }
 
 // respond to Trial Start message
@@ -281,9 +273,9 @@ void Processor::publish_version_info_message(
     output_data["publishes"] = publishes;
     output_data["subscribes"] = subscribes;
 
-    publish(VERSION_INFO_TOPIC,
-            VERSION_INFO_MESSAGE_TYPE,
-            VERSION_INFO_SUB_TYPE,
+    publish(VERSION_TOPIC,
+            VERSION_TYPE,
+            VERSION_SUB_TYPE,
             input_message,
             output_data);
 }
@@ -298,8 +290,7 @@ void Processor::publish_heartbeat_message() {
     output_data["status"] = status;
 
     publish(HEARTBEAT_TOPIC,
-            HEARTBEAT_MESSAGE_TYPE,
-            HEARTBEAT_SUB_TYPE,
-            trial_message,
-            output_data);
+            HEARTBEAT_TYPE, 
+	    HEARTBEAT_SUB_TYPE, 
+	    trial_message, output_data);
 }
