@@ -1,18 +1,16 @@
 #pragma once
 
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/log/trivial.hpp>
 #include <boost/json/array.hpp>
+#include <boost/log/trivial.hpp>
 
-#include <thread>
-#include <queue>
-#include <future>
-#include <boost/json.hpp>
 #include "Utils.hpp"
-
+#include <boost/json.hpp>
+#include <future>
+#include <queue>
+#include <thread>
 
 namespace json = boost::json;
-
 
 // input / output message format:
 // {
@@ -79,27 +77,24 @@ class Processor : public Utils {
     bool running = false; // publish regular heartbeats when true
     void publish_heartbeats();
     std::string status = "uninitialized";
-		    
+
     // true if a message is currently being handled.  Input queued when true.
     bool processing = false;
 
-    protected:
-
+  protected:
     // subscription
     json::array subscribes = json::array();
-    void add_subscriptions(const json::object &config);
+    void add_subscriptions(const json::object& config);
 
     // publication
     json::array publishes = json::array();
-    void add_publications(const json::object &config);
+    void add_publications(const json::object& config);
 
     // Add an element to the publishes or subscribes array
-    void add_bus_id(
-        json::array arr,
-        const std::string topic,
-        const std::string message_type,
-        const std::string sub_type
-    );
+    void add_bus_id(json::array arr,
+                    const std::string topic,
+                    const std::string message_type,
+                    const std::string sub_type);
 
     // configuration
     std::string version = "not_set";
@@ -109,33 +104,28 @@ class Processor : public Utils {
     std::string testbed_source = "not_set";
 
     // File or MQTT operations
-    Agent *agent = nullptr;
+    Agent* agent = nullptr;
 
     // last received trial start or stop message
     json::object trial_message = json::object();
 
-    void publish(
-        const std::string output_topic,
-        const json::object &input_message,
-        const json::object &output_data
-    );
+    void publish(const std::string output_topic,
+                 const json::object& input_message,
+                 const json::object& output_data);
 
-    void publish(
-        const std::string output_topic,
-        const std::string output_message_type,
-        const std::string output_sub_type,
-        const json::object &input_message,
-        const json::object &output_data
-    );
+    void publish(const std::string output_topic,
+                 const std::string output_message_type,
+                 const std::string output_sub_type,
+                 const json::object& input_message,
+                 const json::object& output_data);
 
-    void publish_version_info_message(const json::object &input_message);
-    void publish_rollcall_response_message(const json::object &input_message);
+    void publish_version_info_message(const json::object& input_message);
+    void publish_rollcall_response_message(const json::object& input_message);
 
-    public:
-
+  public:
     Processor(Agent* agent);
-    virtual void configure(const json::object &config);
-    virtual void process_message(const json::object &message);
+    virtual void configure(const json::object& config);
+    virtual void process_message(const json::object& message);
     void process_next_message();
     void publish_heartbeat_message();
     void start();

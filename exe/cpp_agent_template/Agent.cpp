@@ -1,12 +1,12 @@
-#include <boost/json.hpp>
-#include <boost/log/trivial.hpp>
 #include "Agent.hpp"
 #include "ReferenceProcessor.hpp"
+#include <boost/json.hpp>
+#include <boost/log/trivial.hpp>
 #include <iostream>
 
 namespace json = boost::json;
 
-void Agent::configure(const json::object &config) {
+void Agent::configure(const json::object& config) {
 
     reference_processor.configure(config);
 
@@ -18,13 +18,13 @@ void Agent::configure(const json::object &config) {
 
     // advise of subscribed topics
     std::cout << "Subscription topics:" << std::endl;
-    for(std::string i : reference_processor.get_input_topics()) {
+    for (std::string i : reference_processor.get_input_topics()) {
         std::cout << "\t" << i << std::endl;
     }
 
     // advise of published topics
     std::cout << "Publication topics:" << std::endl;
-    for(std::string i : reference_processor.get_output_topics()) {
+    for (std::string i : reference_processor.get_output_topics()) {
         std::cout << "\t" << i << std::endl;
     }
 }
@@ -36,7 +36,7 @@ json::object Agent::parse_json(const std::string text) {
     json_parser.write(text, ec);
 
     // report error
-    if(ec) {
+    if (ec) {
         std::cerr << "Error parsing JSON: " << text << std::endl;
         std::cerr << "JSON parse error code: " << ec << std::endl;
         return json::object();

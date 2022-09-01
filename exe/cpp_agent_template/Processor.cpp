@@ -1,9 +1,9 @@
-#include <boost/json.hpp>
-#include <boost/log/trivial.hpp>
-#include <boost/json/array.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <set>
+#include <boost/json.hpp>
+#include <boost/json/array.hpp>
+#include <boost/log/trivial.hpp>
 #include <queue>
+#include <set>
 #include <thread>
 
 #include "Agent.hpp"
@@ -11,60 +11,39 @@
 
 namespace json = boost::json;
 
-Processor::Processor(Agent* agent): agent(agent) {
+Processor::Processor(Agent* agent) : agent(agent) {
     time(&start_time);
 
     // Subscriptions
     add_bus_id(
-        subscribes,
-        TRIAL_TOPIC,
-	TRIAL_MESSAGE_TYPE,
-	TRIAL_SUB_TYPE_STOP
-    );
+        subscribes, TRIAL_TOPIC, TRIAL_MESSAGE_TYPE, TRIAL_SUB_TYPE_STOP);
     add_bus_id(
-        subscribes,
-        TRIAL_TOPIC,
-	TRIAL_MESSAGE_TYPE,
-	TRIAL_SUB_TYPE_START
-    );
-    add_bus_id(
-        subscribes,
-        ROLLCALL_REQUEST_TOPIC,
-	ROLLCALL_REQUEST_MESSAGE_TYPE,
-	ROLLCALL_REQUEST_SUB_TYPE
-    );
+        subscribes, TRIAL_TOPIC, TRIAL_MESSAGE_TYPE, TRIAL_SUB_TYPE_START);
+    add_bus_id(subscribes,
+               ROLLCALL_REQUEST_TOPIC,
+               ROLLCALL_REQUEST_MESSAGE_TYPE,
+               ROLLCALL_REQUEST_SUB_TYPE);
 
     // Publications
     add_bus_id(
-        publishes,
-        HEARTBEAT_TOPIC,
-        HEARTBEAT_MESSAGE_TYPE,
-        HEARTBEAT_SUB_TYPE
-    );
-    add_bus_id(
-        publishes,
-        ROLLCALL_RESPONSE_TOPIC,
-        ROLLCALL_RESPONSE_MESSAGE_TYPE,
-        ROLLCALL_RESPONSE_SUB_TYPE
-    );
-    add_bus_id(
-        publishes,
-        VERSION_INFO_TOPIC,
-        VERSION_INFO_MESSAGE_TYPE,
-        VERSION_INFO_SUB_TYPE
-    );
+        publishes, HEARTBEAT_TOPIC, HEARTBEAT_MESSAGE_TYPE, HEARTBEAT_SUB_TYPE);
+    add_bus_id(publishes,
+               ROLLCALL_RESPONSE_TOPIC,
+               ROLLCALL_RESPONSE_MESSAGE_TYPE,
+               ROLLCALL_RESPONSE_SUB_TYPE);
+    add_bus_id(publishes,
+               VERSION_INFO_TOPIC,
+               VERSION_INFO_MESSAGE_TYPE,
+               VERSION_INFO_SUB_TYPE);
 }
 
-// Set global variables 
-void Processor::configure(const json::object &config) {
+// Set global variables
+void Processor::configure(const json::object& config) {
     agent_name = val<std::string>(config, "agent_name", AGENT_NAME);
     version = val<std::string>(config, "version", SOFTWARE_VERSION);
     owner = val<std::string>(config, "owner", OWNER);
-    testbed_source = TESTBED 
-        + std::string("/")
-   	+ agent_name
-       	+ std::string(":")
-       	+ version;
+    testbed_source =
+        TESTBED + std::string("/") + agent_name + std::string(":") + version;
 }
 
 // Add an element to the publishes or subscribes array
@@ -73,18 +52,16 @@ void Processor::add_bus_id(json::array arr,
                            const std::string message_type,
                            const std::string sub_type) {
 
-    arr.emplace_back(json::value {
-        { "topic", topic },
-        { "message_type", message_type },
-        { "sub_type", sub_type }
-    });
+    arr.emplace_back(json::value{{"topic", topic},
+                                 {"message_type", message_type},
+                                 {"sub_type", sub_type}});
 }
 
 // Function that publishes heartbeat messages on an interval
 void Processor::publish_heartbeats() {
     while (running) {
         std::this_thread::sleep_for(std::chrono::seconds(10));
-	if(running) {
+        if (running) {
             publish_heartbeat_message();
         }
     }
@@ -100,11 +77,8 @@ void Processor::start() {
     publish_heartbeat_message();
 
     // Start the publishing thread
-    heartbeat_future = std::async(
-        std::launch::async,
-        &Processor::publish_heartbeats,
-        this
-    );
+    heartbeat_future =
+        std::async(std::launch::async, &Processor::publish_heartbeats, this);
 }
 
 // stop publishing heartbeats
@@ -131,21 +105,19 @@ std::vector<std::string> Processor::get_output_topics() {
 }
 
 // Convenience method for publication without message_type or sub_type
-void Processor::publish(
-    const std::string output_topic,
-    const json::object &input_message,
-    const json::object &output_data) {
+void Processor::publish(const std::string output_topic,
+                        const json::object& input_message,
+                        const json::object& output_data) {
 
     publish(output_topic, "not_set", "not_set", input_message, output_data);
 }
 
 // Compose a complete message for publication
-void Processor::publish(
-	const std::string output_topic,
-	const std::string output_message_type,
-	const std::string output_sub_type,
-        const json::object &input_message,
-        const json::object &output_data) {
+void Processor::publish(const std::string output_topic,
+                        const std::string output_message_type,
+                        const std::string output_sub_type,
+                        const json::object& input_message,
+                        const json::object& output_data) {
 
     std::string timestamp = get_timestamp();
 
@@ -164,26 +136,24 @@ void Processor::publish(
     // copy these fields from the input msg struct if they exist
     // and are non-empty
     json::object input_msg = val<json::object>(input_message, "msg");
-    std::string experiment_id = 
-        val<std::string>(input_msg, "experiment_id");
-    if(!experiment_id.empty()) {
+    std::string experiment_id = val<std::string>(input_msg, "experiment_id");
+    if (!experiment_id.empty()) {
         output_msg["experiment_id"] = experiment_id;
     }
     std::string trial_id = val<std::string>(input_msg, "trial_id");
-    if(!trial_id.empty()) {
+    if (!trial_id.empty()) {
         output_msg["trial_id"] = trial_id;
     }
     std::string replay_id = val<std::string>(input_msg, "replay_id");
-    if(!replay_id.empty()) {
+    if (!replay_id.empty()) {
         output_msg["replay_id"] = replay_id;
     }
-    std::string replay_root_id = 
-        val<std::string>(input_msg, "replay_root_id");
-    if(!replay_root_id.empty()) {
+    std::string replay_root_id = val<std::string>(input_msg, "replay_root_id");
+    if (!replay_root_id.empty()) {
         output_msg["replay_root_id"] = replay_root_id;
     }
 
-    // assemble output message 
+    // assemble output message
     json::object output_message;
     output_message["topic"] = output_topic;
     output_message["header"] = output_header;
@@ -198,77 +168,76 @@ void Processor::publish(
 }
 
 // add subscriptions from the topics in the config struct
-void Processor::add_subscriptions(const json::object &config){
+void Processor::add_subscriptions(const json::object& config) {
     json::array arr = val<json::array>(config, "subscribes");
-    for(size_t i = 0 ;  i < arr.size() ; i++) {
+    for (size_t i = 0; i < arr.size(); i++) {
         std::string topic = json::value_to<std::string>(arr.at(i));
-	add_bus_id(subscribes, topic, "not_set", "not_set");
+        add_bus_id(subscribes, topic, "not_set", "not_set");
     }
 }
 
 // add publications from the topics in the config struct
-void Processor::add_publications(const json::object &config){
+void Processor::add_publications(const json::object& config) {
     json::array arr = val<json::array>(config, "publishes");
-    for(size_t i = 0 ;  i < arr.size() ; i++) {
+    for (size_t i = 0; i < arr.size(); i++) {
         std::string topic = json::value_to<std::string>(arr.at(i));
-	add_bus_id(publishes, topic, "not_set", "not_set");
+        add_bus_id(publishes, topic, "not_set", "not_set");
     }
 }
 
 // process messages with Message Bus identifiers that match ours
-void Processor::process_message(const json::object &input_message) {
+void Processor::process_message(const json::object& input_message) {
 
     std::string topic = val<std::string>(input_message, "topic");
     traffic_in.push_back(topic);
 
-    json::object header = val<json::object>(input_message,"header");
+    json::object header = val<json::object>(input_message, "header");
     std::string input_message_type = val<std::string>(header, "message_type");
 
-    json::object msg = val<json::object>(input_message,"msg");
+    json::object msg = val<json::object>(input_message, "msg");
     std::string input_sub_type = val<std::string>(msg, "sub_type");
 
     // trial message
-    if((topic.compare(TRIAL_TOPIC) == 0) &&
-    (input_message_type.compare(TRIAL_MESSAGE_TYPE) == 0)) {
+    if ((topic.compare(TRIAL_TOPIC) == 0) &&
+        (input_message_type.compare(TRIAL_MESSAGE_TYPE) == 0)) {
 
-	// start
+        // start
         if (input_sub_type.compare(TRIAL_SUB_TYPE_START) == 0) {
 
-	    std::cout << "Trial started"  << std::endl;
+            std::cout << "Trial started" << std::endl;
 
-	    // set the testbed version if the trial header has it
-            json::object header = val<json::object>(input_message,"header");
-	    std::string new_version = val<std::string>(header, "version");
-	    if(!new_version.empty()) {
-	        testbed_version = new_version;
-	    }
-	    trial_message = input_message;
-
-	    publish_version_info_message(input_message);
-	    if(running) {
-	        publish_heartbeat_message();
-	    }
-        }
-	// stop
-	else if (input_sub_type.compare(TRIAL_SUB_TYPE_STOP) == 0) {
-	    std::cout << "Trial stopped"  << std::endl;
+            // set the testbed version if the trial header has it
+            json::object header = val<json::object>(input_message, "header");
+            std::string new_version = val<std::string>(header, "version");
+            if (!new_version.empty()) {
+                testbed_version = new_version;
+            }
             trial_message = input_message;
-	    if(running) {
-	        publish_heartbeat_message();
-	    }
-	    // Report the activity during the trial.
-	    std::cout << "Messages read during Trial:" << std::endl;
-	    count_keys(traffic_in);
-	    std::cout << "Messages written during Trial:" << std::endl;
-	    count_keys(traffic_out);
+
+            publish_version_info_message(input_message);
+            if (running) {
+                publish_heartbeat_message();
+            }
+        }
+        // stop
+        else if (input_sub_type.compare(TRIAL_SUB_TYPE_STOP) == 0) {
+            std::cout << "Trial stopped" << std::endl;
+            trial_message = input_message;
+            if (running) {
+                publish_heartbeat_message();
+            }
+            // Report the activity during the trial.
+            std::cout << "Messages read during Trial:" << std::endl;
+            count_keys(traffic_in);
+            std::cout << "Messages written during Trial:" << std::endl;
+            count_keys(traffic_out);
         }
     }
 
     // rollcall request message
-    else if((topic.compare(ROLLCALL_REQUEST_TOPIC) == 0) &&
-        (input_message_type.compare(ROLLCALL_REQUEST_MESSAGE_TYPE) == 0) &&
-        (input_sub_type.compare(ROLLCALL_REQUEST_SUB_TYPE) == 0))
-    {
+    else if ((topic.compare(ROLLCALL_REQUEST_TOPIC) == 0) &&
+             (input_message_type.compare(ROLLCALL_REQUEST_MESSAGE_TYPE) == 0) &&
+             (input_sub_type.compare(ROLLCALL_REQUEST_SUB_TYPE) == 0)) {
         publish_rollcall_response_message(input_message);
     }
 
@@ -277,19 +246,19 @@ void Processor::process_message(const json::object &input_message) {
 
 // respond to Rollcall Request message
 void Processor::publish_rollcall_response_message(
-	const json::object &input_message) {
+    const json::object& input_message) {
 
     // create rollcall response data
     time_t now;
     time(&now);
-    int uptime = now-start_time;
+    int uptime = now - start_time;
 
-    json::object input_data = val<json::object>(input_message,"data");
+    json::object input_data = val<json::object>(input_message, "data");
     json::object output_data;
     output_data["version"] = version;
     output_data["uptime"] = uptime;
     output_data["status"] = "up";
-    output_data["rollcall_id"] = 
+    output_data["rollcall_id"] =
         val<std::string>(input_data, "rollcall_id", "not_set");
 
     publish(ROLLCALL_RESPONSE_TOPIC,
@@ -301,7 +270,7 @@ void Processor::publish_rollcall_response_message(
 
 // respond to Trial Start message
 void Processor::publish_version_info_message(
-    const json::object &input_message){
+    const json::object& input_message) {
 
     // create version info data
     json::object output_data;

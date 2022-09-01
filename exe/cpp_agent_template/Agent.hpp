@@ -1,9 +1,9 @@
 #pragma once
 
-#include <iostream>
-#include <boost/json.hpp>
 #include "ReferenceProcessor.hpp"
 #include "Utils.hpp"
+#include <boost/json.hpp>
+#include <iostream>
 
 namespace json = boost::json;
 
@@ -13,22 +13,19 @@ class Agent : public Utils {
     // only process JSON messages
     json::stream_parser json_parser;
 
-    protected:
-
+  protected:
     std::string app_name;
 
     ReferenceProcessor reference_processor = ReferenceProcessor(this);
 
-
     json::object parse_json(const std::string text);
 
-    void configure(const json::object &config);
+    void configure(const json::object& config);
 
     virtual void start() {}
     virtual void stop() {}
 
-    public:
-
+  public:
     virtual void process_next_message() {}
-    virtual void publish(json::object &message) {}
+    virtual void publish(json::object& message) {}
 };

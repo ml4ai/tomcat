@@ -1,10 +1,10 @@
 #pragma once
 
-#include <iostream>
 #include <boost/json.hpp>
+#include <future>
+#include <iostream>
 #include <mqtt/async_client.h>
 #include <thread>
-#include <future>
 
 #include "Agent.hpp"
 
@@ -25,17 +25,15 @@ class MqttAgent : public Agent {
     // A FIFO queue of messages from the bus
     std::queue<json::object> message_queue;
 
-
-    public:
-
-    void start() override ;
-    void stop() override ;
+  public:
+    void start() override;
+    void stop() override;
 
     /** Constructor */
-    MqttAgent(const json::object &config);
+    MqttAgent(const json::object& config);
 
     /* send output to the message bus */
-    void publish(json::object &message) override;
+    void publish(json::object& message) override;
 
     void process_next_message() override;
 };

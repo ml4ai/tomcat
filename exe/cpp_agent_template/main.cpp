@@ -10,8 +10,8 @@
 #include <boost/program_options.hpp>
 
 #include "Configurator.hpp"
-#include "MqttAgent.hpp"
 #include "FileAgent.hpp"
+#include "MqttAgent.hpp"
 #include "Utils.hpp"
 
 // An extendable base class for Testbed Agents
@@ -27,7 +27,6 @@ namespace {
 
 void signal_handler(int signal) { gSignalStatus = signal; }
 
-
 int main(int argc, char* argv[]) {
 
     Utils utils;
@@ -42,7 +41,7 @@ int main(int argc, char* argv[]) {
     std::string output_file = utils.val<std::string>(file, "out");
 
     // if neither filename is specified, run in MQTT mode
-    if(input_file.empty() && output_file.empty()) {
+    if (input_file.empty() && output_file.empty()) {
 
         MqttAgent mqtt_agent(config);
         mqtt_agent.start();
@@ -63,7 +62,7 @@ int main(int argc, char* argv[]) {
         }
     }
     else {
-	// otherwise run in file mode
+        // otherwise run in file mode
         FileAgent file_agent(config);
     }
 
