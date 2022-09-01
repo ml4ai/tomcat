@@ -13,8 +13,17 @@ namespace json = boost::json;
 
 Processor::Processor(Agent* agent) : agent(agent) {
     time(&start_time);
+}
 
-    // Subscriptions
+void Processor::configure(const json::object& config) {
+    // Set global variables from the configuration file object
+    agent_name = val<std::string>(config, "agent_name", AGENT_NAME);
+    agent_version = val<std::string>(config, "version", AGENT_VERSION);
+    owner = val<std::string>(config, "owner", OWNING_INSTITUTION);
+    testbed_source = TESTBED_REPO
+        + std::string("/") + agent_name + std::string(":") + agent_version;
+
+    // Create subscription IDs
     add_bus_id(
         subscribes, TRIAL_TOPIC, TRIAL_TYPE, TRIAL_SUB_TYPE_STOP);
     add_bus_id(
@@ -22,7 +31,7 @@ Processor::Processor(Agent* agent) : agent(agent) {
     add_bus_id(
         subscribes, ROLL_REQ_TOPIC, ROLL_REQ_TYPE, ROLL_REQ_SUB_TYPE);
 
-    // Publications
+    // Create Publication IDs
     add_bus_id(
         publishes, HEARTBEAT_TOPIC, HEARTBEAT_TYPE, HEARTBEAT_SUB_TYPE);
     add_bus_id(
@@ -31,17 +40,8 @@ Processor::Processor(Agent* agent) : agent(agent) {
         publishes, VERSION_TOPIC, VERSION_TYPE, VERSION_SUB_TYPE);
 }
 
-// Set global variables from the configuration file object
-void Processor::configure(const json::object& config) {
-    agent_name = val<std::string>(config, "agent_name", AGENT_NAME);
-    version = val<std::string>(config, "version", SOFTWARE_VERSION);
-    owner = val<std::string>(config, "owner", OWNER);
-    testbed_source =
-        TESTBED + std::string("/") + agent_name + std::string(":") + version;
-}
-
 // Add an element to the publishes or subscribes array
-void Processor::add_bus_id(json::array arr,
+void Processor::add_bus_id(json::array &arr,
                            const std::string topic,
                            const std::string message_type,
                            const std::string sub_type) {
@@ -125,7 +125,7 @@ void Processor::publish(const std::string output_topic,
     json::object output_msg;
     output_msg["message_type"] = output_sub_type;
     output_msg["source"] = agent_name;
-    output_msg["version"] = version;
+    output_msg["version"] = agent_version;
     output_msg["timestamp"] = timestamp;
     // copy these fields from the input msg struct if they exist
     // and are non-empty
@@ -249,7 +249,7 @@ void Processor::publish_rollcall_response_message(
 
     json::object input_data = val<json::object>(input_message, "data");
     json::object output_data;
-    output_data["version"] = version;
+    output_data["version"] = agent_version;
     output_data["uptime"] = uptime;
     output_data["status"] = "up";
     output_data["rollcall_id"] =
@@ -268,7 +268,7 @@ void Processor::publish_version_info_message(
     json::object output_data;
     output_data["agent_name"] = agent_name;
     output_data["owner"] = owner;
-    output_data["version"] = version;
+    output_data["version"] = agent_version;
     output_data["source"] = testbed_source;
     output_data["publishes"] = publishes;
     output_data["subscribes"] = subscribes;

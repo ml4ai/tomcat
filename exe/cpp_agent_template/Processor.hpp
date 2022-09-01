@@ -36,10 +36,10 @@ namespace json = boost::json;
 // }
 
 // defaults for VersionInfoMessage if no config file is used.
-#define TESTBED "https://gitlab.asist.aptima.com:5050/asist/testbed"
+#define TESTBED_REPO "https://gitlab.asist.aptima.com:5050/asist/testbed"
+#define OWNING_INSTITUTION "The University of Arizona"
 #define AGENT_NAME "Processor"
-#define OWNER "The University of Arizona"
-#define SOFTWARE_VERSION "1.0.0"
+#define AGENT_VERSION "1.0.0"
 
 // subscriptions
 #define TRIAL_TOPIC "trial"
@@ -69,7 +69,7 @@ class Agent;
 // A base class for subscribed message handlers
 class Processor : public Utils {
 
-    // recorded for uptime computation.
+    // start time of this class instantiation
     time_t start_time;
 
     // holds the result of the async heartbeat operation
@@ -77,9 +77,6 @@ class Processor : public Utils {
     bool running = false; // publish regular heartbeats when true
     void publish_heartbeats();
     std::string status = "uninitialized";
-
-    // true if a message is currently being handled.  Input queued when true.
-    bool processing = false;
 
   protected:
     // subscription
@@ -91,22 +88,31 @@ class Processor : public Utils {
     void add_publications(const json::object& config);
 
     // Add an element to the publishes or subscribes array
-    void add_bus_id(json::array arr,
+    void add_bus_id(json::array &arr,
                     const std::string topic,
                     const std::string message_type,
                     const std::string sub_type);
 
-    // configuration
-    std::string version = "not_set";
+    // this software version
+    std::string agent_version = "not_set";
+
+    // this agent name on the Testbed
     std::string agent_name = "not_set";
+
+    // owning institution
     std::string owner = "not_set";
+
+    // Testbed version
     std::string testbed_version = "1.0";
+
+    // Testbed git repository
     std::string testbed_source = "not_set";
 
-    // File or MQTT operations
+    // agent using this class
     Agent* agent = nullptr;
 
-    // last received trial start or stop message
+    // last received trial start or stop message, used for creating
+    // asynchronous heartbeat messages
     json::object trial_message = json::object();
 
     void publish(const std::string output_topic,
@@ -118,7 +124,6 @@ class Processor : public Utils {
                  const std::string output_sub_type,
                  const json::object& input_message,
                  const json::object& output_data);
-
     void publish_version_info_message(const json::object& input_message);
     void publish_rollcall_response_message(const json::object& input_message);
 
