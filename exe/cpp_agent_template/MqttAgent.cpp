@@ -41,11 +41,8 @@ MqttAgent::MqttAgent(const json::object& config) {
             return;
         }
 
-        std::string topic = m_ptr->get_topic();
-        std::string text = m_ptr->get_payload_str();
-
-        json::object obj = parse_json(text);
-        obj["topic"] = topic;
+        json::object obj = parse_json(m_ptr->get_payload_str());
+        obj["topic"] = m_ptr->get_topic();
 
         // enqueue message
         message_queue.push(obj);
