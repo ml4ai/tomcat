@@ -10,8 +10,7 @@ class Agent;
 class ReferenceProcessor : public Processor {
 
     // topics found in the config file
-    std::vector<std::string> config_input_topics;
-    std::vector<std::string> config_output_topics;
+    std::vector<std::string> input_topics, output_topics;
 
   public:
     ReferenceProcessor(Agent* agent) : Processor(agent) {}
