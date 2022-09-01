@@ -3,19 +3,23 @@
 #include <fstream>
 #include <functional>
 #include <iostream>
-#include <queue>
 
 #include <boost/filesystem.hpp>
-#include <boost/program_options.hpp>
+#include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
+#include <boost/program_options.hpp>
 
-#include "ReferenceAgent.hpp"
+#include "Configurator.hpp"
+#include "FileAgent.hpp"
+#include "MqttAgent.hpp"
+#include "Utils.hpp"
+
+// An extendable base class for Testbed Agents
+// Authors:   Joseph Astier, Adarsh Pyareral
 
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
-
-using namespace std;
-using namespace std::chrono;
+namespace json = boost::json;
 
 namespace {
     volatile std::sig_atomic_t gSignalStatus;
@@ -23,76 +27,43 @@ namespace {
 
 void signal_handler(int signal) { gSignalStatus = signal; }
 
-
 int main(int argc, char* argv[]) {
 
-    // Setting up program options
-    po::options_description generic("Generic options");
+    Utils utils;
 
-    string config_path;
-    generic.add_options()("help,h", "Display this help message")(
-        "version,v",
-        "Display the version number")("config,c",
-                                      po::value<string>(&config_path),
-                                      "Path to (optional) config file.");
+    // get configuration
+    Configurator configurator;
+    json::object config = configurator.parse_args(argc, argv);
 
-    po::options_description config("Configuration");
+    // Read user specified filenames
+    json::object file = utils.val<json::object>(config, "file");
+    std::string input_file = utils.val<std::string>(file, "in");
+    std::string output_file = utils.val<std::string>(file, "out");
 
-    config.add_options()("mqtt.host",
-                         po::value<string>()->default_value("localhost"),
-                         "MQTT broker host")(
-        "mqtt.port", po::value<int>()->default_value(1883), "MQTT broker port");
+    // if neither filename is specified, run in MQTT mode
+    if (input_file.empty() && output_file.empty()) {
 
-    po::options_description cmdline_options;
-    cmdline_options.add(generic).add(config);
+        MqttAgent mqtt_agent(config);
+        mqtt_agent.start();
 
-    po::variables_map vm;
-    po::store(po::parse_command_line(argc, argv, cmdline_options), vm);
+        signal(SIGINT, signal_handler);
 
-    // We run notify this first time to pick up the -c/--config option
-    po::notify(vm);
+        while (true) {
+            if (gSignalStatus == SIGINT) {
+                BOOST_LOG_TRIVIAL(info)
+                    << "Keyboard interrupt detected (Ctrl-C), shutting down.";
 
-    // Print a help message
-    if (vm.count("help")) {
-        cout << cmdline_options;
-        return 1;
-    }
-
-    // If the -c/--config option is passed to the program on the command line,
-    // we check for the existence of the specified config file and load the
-    // options from it.
-    if (vm.count("config")) {
-        if (fs::exists(config_path)) {
-            po::store(po::parse_config_file(config_path.c_str(), config), vm);
-        }
-        else {
-            BOOST_LOG_TRIVIAL(error) << "Specified config file '" << config_path
-                                     << "' does not exist!";
-            return EXIT_FAILURE;
+                mqtt_agent.stop();
+                break;
+            }
+            else {
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
         }
     }
-
-    // We run the notify function a second time in order to process the config
-    // file
-    po::notify(vm);
-
-    string address = "tcp://" + vm["mqtt.host"].as<string>() + ":" +
-                     to_string(vm["mqtt.port"].as<int>());
-
-    signal(SIGINT, signal_handler);
-
-    ReferenceAgent agent(address);
-
-    while (true) {
-        if (gSignalStatus == SIGINT) {
-            BOOST_LOG_TRIVIAL(info)
-                << "Keyboard interrupt detected (Ctrl-C), shutting down.";
-            agent.stop();
-            break;
-        }
-        else {
-            this_thread::sleep_for(milliseconds(100));
-        }
+    else {
+        // otherwise run in file mode
+        FileAgent file_agent(config);
     }
 
     return EXIT_SUCCESS;

@@ -1,67 +1,46 @@
 #include "Agent.hpp"
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include "ReferenceProcessor.hpp"
 #include <boost/json.hpp>
 #include <boost/log/trivial.hpp>
+#include <iostream>
 
-using namespace std;
 namespace json = boost::json;
-using namespace std::chrono;
 
-/** Get current UTC timestamp in ISO-8601 format. */
-string get_timestamp() {
-    return boost::posix_time::to_iso_extended_string(
-               boost::posix_time::microsec_clock::universal_time()) +
-           "Z";
-}
+void Agent::configure(const json::object& config) {
 
-Agent::Agent(std::string address) {
-    // Create an MQTT client using a smart pointer to be shared among
-    // threads.
-    this->mqtt_client = make_shared<mqtt::async_client>(address, "agent");
+    reference_processor.configure(config);
 
-    // Connect options for a non-persistent session and automatic
-    // reconnects.
-    auto connOpts = mqtt::connect_options_builder()
-                        .clean_session(true)
-                        .automatic_reconnect(seconds(2), seconds(30))
-                        .finalize();
+    std::string agent_name = val<std::string>(config, "agent_name");
+    std::string version = val<std::string>(config, "version", "1.0.0");
 
-    mqtt_client->set_message_callback(
-        [&](mqtt::const_message_ptr msg) { process(msg); });
+    app_name = agent_name + " version " + version;
+    std::cout << app_name << " initializing ..." << std::endl;
 
-    auto rsp = this->mqtt_client->connect(connOpts)->get_connect_response();
-    BOOST_LOG_TRIVIAL(info) << "Connected to the MQTT broker at " << address;
+    // advise of subscribed topics
+    std::cout << "Subscription topics:" << std::endl;
+    for (std::string i : reference_processor.get_input_topics()) {
+        std::cout << "\t" << i << std::endl;
+    }
 
-    mqtt_client->subscribe("agent/dialog", 2);
-
-    /** Start publishing heartbeat messages */
-    heartbeat_future = async(launch::async, &Agent::publish_heartbeats, this);
-};
-
-/** Function that publishes heartbeat messages while the agent is running */
-void Agent::publish_heartbeats() {
-    while (this->running) {
-        this_thread::sleep_for(seconds(10));
-
-        string timestamp = get_timestamp();
-        json::value jv = {{"header",
-                           {{"timestamp", timestamp},
-                            {"message_type", "status"},
-                            {"version", "0.1"}}},
-                          {"msg",
-                           {{"timestamp", timestamp},
-                            {"sub_type", "heartbeat"},
-                            {"source", "tomcat-CDC"},
-                            {"version", "0.0.1"}}},
-                          {"data", {{"state", "ok"}}}};
-
-        mqtt_client
-            ->publish("status/tomcat-CDC/heartbeats", json::serialize(jv))
-            ->wait();
+    // advise of published topics
+    std::cout << "Publication topics:" << std::endl;
+    for (std::string i : reference_processor.get_output_topics()) {
+        std::cout << "\t" << i << std::endl;
     }
 }
 
-void Agent::stop() {
-    running = false;
-    heartbeat_future.wait();
+// return JSON parsed from input or empty object if not valid JSON
+json::object Agent::parse_json(const std::string text) {
+    json_parser.reset();
+    json::error_code ec;
+    json_parser.write(text, ec);
+
+    // report error
+    if (ec) {
+        std::cerr << "Error parsing JSON: " << text << std::endl;
+        std::cerr << "JSON parse error code: " << ec << std::endl;
+        return json::object();
+    }
+
+    return json::value_to<json::object>(json_parser.release());
 }
