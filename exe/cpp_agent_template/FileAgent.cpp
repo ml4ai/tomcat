@@ -41,6 +41,7 @@ FileAgent::FileAgent(const json::object& config) {
         std::cout << "Output file: " << output_filename << std::endl;
     }
     else {
+        input_file.close();
         std::cerr << "Could not open " << output_filename;
         std::cerr << " for writing" << std::endl;
         exit(EXIT_FAILURE);
