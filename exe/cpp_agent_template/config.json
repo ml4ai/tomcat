@@ -1,7 +1,7 @@
 {
   "agent_name": "AC_UAZ_TA1_ReferenceAgent",
   "owner": "University of Arizona",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "subscribes": [
     "reference_agent_input_topic_1",
     "reference_agent_input_topic_2",
