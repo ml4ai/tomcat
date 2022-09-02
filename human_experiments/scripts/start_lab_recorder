@@ -6,12 +6,23 @@ source configuration_helpers
 
 if [[ -z ${1+x} ]]; then
   # In case the script is executed standalone.
-  text="${RED}Please provide an experiment directory as the first argument of "
-  text+="the call to this script.${NC}"
+  text="\n${RED}Please provide an experiment directory as the first argument of "
+  text+="the call to this script.${NC}\n"
+  text+="${YELLOW}Example: ./start_lab_recorder /data/cat/dry_runs/testing_2022_08_31_01\n"
+  text+="(experiment directory must start with a slash '/' and not end with a slash.)${NC}\n"
   echo -e "$text"
   exit 1
 fi
 EXPERIMENT_DIR=$1
+
+if [[ ${EXPERIMENT_DIR::1} != "/" ]]; then
+  # In case the first character of experiment is not a slash '/'.
+  text="\n${RED}First character of experiment directory must be a slash '/' !${NC}\n"
+  text+="${YELLOW}Example: ./start_lab_recorder /data/cat/dry_runs/testing_2022_08_31_01\n"
+  text+="(experiment directory must start with a slash '/' and not end with a slash.)${NC}\n"
+  echo -e "$text"
+  exit 1
+fi  
 
 if [[ -z ${2+x} ]]; then
   PADDING=""
@@ -39,9 +50,9 @@ TIGER_CONFIG_FILE="~/git/ML4AI/tomcat/human_experiments/config/LabRecorder_confi
 LEOPARD_CONFIG_FILE="~/git/ML4AI/tomcat/human_experiments/config/LabRecorder_config/LabRecorder_Leopard_22347.cfg"
 
 # Set vars with Lion, Tigar and Leopard data (StorageLocation) path/file. 
-LION_STORAGE_LOCATION="${EXPERIMENT_DIR}/lion/ses-001/eeg/lion_ses-001_task-Default_run-001_eeg.xdf"
-TIGER_STORAGE_LOCATION="${EXPERIMENT_DIR}/tiger/ses-001/eeg/tiger_ses-001_task-Default_run-001_eeg.xdf"
-LEOPARD_STORAGE_LOCATION="${EXPERIMENT_DIR}/leopard/ses-001/eeg/leopard_ses-001_task-Default_run-001_eeg.xdf"
+LION_STORAGE_LOCATION="${EXPERIMENT_DIR}/lion_eeg_fnirs_pupil/lion_eeg_fnirs_pupil.xdf"
+TIGER_STORAGE_LOCATION="${EXPERIMENT_DIR}/tiger_eeg_fnirs_pupil/tiger_eeg_fnirs_pupil.xdf"
+LEOPARD_STORAGE_LOCATION="${EXPERIMENT_DIR}/leopard_eeg_fnirs_pupil/leopard_eeg_fnirs_pupil.xdf"
 
 
 echo " "
