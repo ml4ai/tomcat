@@ -35,9 +35,9 @@ def read_muliple_csv_files(path, csvfiles, total_time, file_name, sid):
         #display which file its currently reading 
         print(colored('\n\t File:','magenta'), csvfile)
         
-        df = pd.read_csv(os.path.join(path, csvfile), delimiter = ';')
-        
-        if df.empty:
+        try:
+            df = pd.read_csv(os.path.join(path, csvfile), delimiter = ';')
+        except:
             #check if the csv file is empty or not
             print(colored('[Error] CSV file is empty','red'), u'\N{cross mark}')
             break
@@ -51,6 +51,7 @@ def read_muliple_csv_files(path, csvfiles, total_time, file_name, sid):
             #check if the time taken by this session is within the range of SECONDS_PER_SESSION in task config file 
             print(colored('\t Time taken:', 'magenta'), delta, 'Seconds')
         else:
+            print(delta)
             print(colored('[Error] Timing for task is off by a large margin','red'), u'\N{cross mark}')
 
         #check if the subject IDs passed as an argument match the ones in the CSV files
@@ -64,14 +65,15 @@ def read_muliple_csv_files(path, csvfiles, total_time, file_name, sid):
         elif file_name == 'ping_pong':
             if 'competitive_0' in csvfile:
                 df = df.iloc[: , :-1]
-                print(colored('\t Two participants competeting against Human','magenta'))
+                print(colored('\t Two participants competeting against eachother','magenta'))
                 read_csv_column_name(df, sid, -4, file_name)
             elif 'competitive_1' in csvfile:
-                df = df.iloc[: , :-3]
-                print(colored('\t Single participant competeting against AI','magenta'))
-                read_csv_column_name(df, sid, -2, file_name)
+                df = df.iloc[: , :-1]
+                print(colored('\t Single participant competeting against Experimenter','magenta'))
+                read_csv_column_name(df, sid, -4, file_name)
             elif 'cooperative_0' in csvfile:
                 df = df.iloc[: , :-1]
+                print(colored('\t Three participant competeting against AI','magenta'))
                 read_csv_column_name(df, sid, -6, file_name)
 
         elif file_name == 'rest_state':
@@ -111,9 +113,9 @@ def csvread(path, all_files, file_name, sid):
 
 def fcount(rootdir, sid):
     #check if subdirectories for baseline task exist or not
-    file_names = ['finger_tapping', 'rest_state', 'affective', 'ping_pong']
+    file_names = sorted(['finger_tapping', 'rest_state', 'affective', 'ping_pong'])
     count = 0
-    for x in os.listdir(rootdir):
+    for x in sorted(os.listdir(rootdir)):
         if os.path.isdir(os.path.join(rootdir,x)): 
             if file_names[count] in x:
                 sleep(0.25)
