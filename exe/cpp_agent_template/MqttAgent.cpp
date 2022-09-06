@@ -45,7 +45,7 @@ MqttAgent::MqttAgent(const json::object& config) {
         obj["topic"] = m_ptr->get_topic();
 
         // enqueue message
-        message_queue.push(obj);
+        message_queue.push_back(obj);
     });
 
     try {
@@ -91,7 +91,7 @@ void MqttAgent::process_next_message() {
         busy = true;
         const json::object& obj = message_queue.front();
         const json::object& copy = json::object(obj);
-        message_queue.pop();
+        message_queue.pop_front();
         std::string topic = val<std::string>(copy, "topic");
         int sz = message_queue.size();
         std::cout << "Processing " << topic << ", ";

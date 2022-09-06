@@ -1,0 +1,40 @@
+{
+  "agent_name": "AC_UAZ_TA1_CDC_Agent",
+  "owner": "University of Arizona",
+  "version": "1.0.0",
+  "input": [
+    "cdc_agent_input_topic"
+  ],
+  "coordination_message": {
+     "topic": "agent/tomcat-CDC/coordination_event",
+     "type": "status",
+     "sub_type": "Event:dialog_coordination_event"
+  },
+  "heartbeat_message": {
+     "topic": "agent/tomcat-CDC/coordination_event",
+     "type": "status",
+     "sub_type": "Event:dialog_coordination_event"
+  },
+  "check_label_seq": [
+    {
+      "label1": "CriticalVictim",
+      "label2": "Move"
+    },
+    {
+      "label1": "HelpRequest",
+      "label2": "HelpOffer"
+    },
+    {
+      "label1": "HelpRequest",
+      "label2": "Move"
+    },
+    {
+      "label1": "CriticalVictim",
+      "label2": "RescueInteractions"
+    },
+    {
+      "label1": "Block",
+      "label2": "Engineer"
+    }
+  ]
+}

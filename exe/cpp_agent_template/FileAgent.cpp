@@ -27,7 +27,7 @@ FileAgent::FileAgent(const json::object& config) {
     std::ifstream input_file;
     input_file.open(input_filename);
     if (input_file.is_open()) {
-        std::cout << "Input file: " << input_filename << std::endl;
+        std::cout << "Input file:\t" << input_filename << std::endl;
     }
     else {
         std::cerr << "Could not open " << input_filename;
@@ -38,7 +38,7 @@ FileAgent::FileAgent(const json::object& config) {
     // open output file for writing
     output_file.open(output_filename);
     if (output_file.is_open()) {
-        std::cout << "Output file: " << output_filename << std::endl;
+        std::cout << "Output file:\t" << output_filename << std::endl;
     }
     else {
         input_file.close();
@@ -50,21 +50,21 @@ FileAgent::FileAgent(const json::object& config) {
     // process the input file
     std::cout << "Processing input file..." << std::endl;
     std::string line;
-    int n = 0;
+    int line_count = 0;
     while (std::getline(input_file, line)) {
         json::object message = parse_json(line);
         reference_processor.process_message(message);
-        n++;
+        line_count ++;
     }
 
-    // shutdown
+    // shutdown file operations
     input_file.close();
     output_file.close();
-    std::cout << "Lines processed: " << n << std::endl;
+    std::cout << "Input file lines processed: " << line_count << std::endl;
     std::cout << "File processing complete." << std::endl;
 }
 
-// write to filesystem, include the topic in the message
+// write the message to the output file, including the topic
 void FileAgent::publish(json::object& message) {
     output_file << json::serialize(message) << std::endl;
 }

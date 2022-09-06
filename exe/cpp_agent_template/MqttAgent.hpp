@@ -23,7 +23,7 @@ class MqttAgent : public Agent {
     void check_queue();
 
     // A FIFO queue of messages from the bus
-    std::queue<json::object> message_queue;
+    std::deque<json::object> message_queue;
 
   public:
     void start() override;

@@ -161,24 +161,6 @@ void Processor::publish(const std::string output_topic,
     traffic_out.push_back(output_topic);
 }
 
-// add subscriptions from the topics in the config struct
-void Processor::add_subscriptions(const json::object& config) {
-    json::array arr = val<json::array>(config, "subscribes");
-    for (size_t i = 0; i < arr.size(); i++) {
-        std::string topic = json::value_to<std::string>(arr.at(i));
-        add_bus_id(subscribes, topic, "not_set", "not_set");
-    }
-}
-
-// add publications from the topics in the config struct
-void Processor::add_publications(const json::object& config) {
-    json::array arr = val<json::array>(config, "publishes");
-    for (size_t i = 0; i < arr.size(); i++) {
-        std::string topic = json::value_to<std::string>(arr.at(i));
-        add_bus_id(publishes, topic, "not_set", "not_set");
-    }
-}
-
 // process messages with Message Bus identifiers that match ours
 void Processor::process_message(const json::object& input_message) {
 
@@ -197,9 +179,11 @@ void Processor::process_message(const json::object& input_message) {
 
         // start
         if (input_sub_type.compare(TRIAL_SUB_TYPE_START) == 0) {
-
             std::cout << "Trial started" << std::endl;
-
+	    // prepare to log the Message Bus traffic during the trial.
+	    traffic_in.clear();
+	    traffic_out.clear();
+            traffic_in.push_back(topic);
             // set the testbed version if the trial header has it
             json::object header = val<json::object>(input_message, "header");
             std::string new_version = val<std::string>(header, "version");
@@ -207,7 +191,6 @@ void Processor::process_message(const json::object& input_message) {
                 testbed_version = new_version;
             }
             trial_message = input_message;
-
             publish_version_info_message(input_message);
             if (running) {
                 publish_heartbeat_message();
@@ -220,10 +203,12 @@ void Processor::process_message(const json::object& input_message) {
             if (running) {
                 publish_heartbeat_message();
             }
-            // Report the activity during the trial.
-            std::cout << "Messages read during Trial:" << std::endl;
+            // Report the processing traffic during the trial.
+            std::cout << "Messages read during Trial: ";
+	    std::cout << traffic_in.size() << std::endl;
             count_keys(traffic_in);
-            std::cout << "Messages written during Trial:" << std::endl;
+            std::cout << "Messages written during Trial: ";
+	    std::cout << traffic_out.size() << std::endl;
             count_keys(traffic_out);
         }
     }
@@ -234,7 +219,6 @@ void Processor::process_message(const json::object& input_message) {
              (input_sub_type.compare(ROLL_REQ_SUB_TYPE) == 0)) {
         publish_rollcall_response_message(input_message);
     }
-
     agent->process_next_message();
 }
 

@@ -81,11 +81,9 @@ class Processor : public Utils {
   protected:
     // subscription
     json::array subscribes = json::array();
-    void add_subscriptions(const json::object& config);
 
     // publication
     json::array publishes = json::array();
-    void add_publications(const json::object& config);
 
     // Add an element to the publishes or subscribes array
     void add_bus_id(json::array &arr,

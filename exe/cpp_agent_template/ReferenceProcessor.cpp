@@ -9,8 +9,18 @@ namespace json = boost::json;
 
 void ReferenceProcessor::configure(const json::object& config) {
 
-    add_subscriptions(config);
-    add_publications(config);
+    // add subscriptions from config topics array
+    json::array subs = val<json::array>(config, "subscribes");
+    for (size_t i = 0; i < subs.size(); i++) {
+        std::string topic = json::value_to<std::string>(subs.at(i));
+        add_bus_id(subscribes, topic, "not_set", "not_set");
+    }
+
+    json::array pubs = val<json::array>(config, "publishes");
+    for (size_t i = 0; i < pubs.size(); i++) {
+        std::string topic = json::value_to<std::string>(pubs.at(i));
+        add_bus_id(publishes, topic, "not_set", "not_set");
+    }
 
     input_topics = get_array_values(subscribes, "topic");
     output_topics = get_array_values(publishes, "topic");

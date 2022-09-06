@@ -40,6 +40,9 @@ class Utils {
     std::vector<std::string> get_array_values(const json::array& array,
                                               const std::string key);
 
-    bool contains(const std::vector<std::string> haystack,
-                  const std::string needle);
+    // Return true if the iterator class I contains the instance of T
+    template <class I, class T> bool contains(I i, T t) {
+        return std::find(i.begin(), i.end(), t) != i.end();
+    }
+
 };
