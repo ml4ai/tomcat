@@ -1,0 +1,13 @@
+#test file
+
+check_label_seq:
+    - label1: "CriticalVictim"
+      label2: "Move"
+    - label1: "HelpRequest"
+      label2: "HelpOffer"
+    - label1: "HelpRequest"
+      label2: "Move"
+    - label1: "CriticalVictim"
+      label2: "RescueInteractions"
+    - label1: "Block"
+      label2: "Engineer"
