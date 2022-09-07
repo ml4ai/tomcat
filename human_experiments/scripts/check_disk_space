@@ -13,14 +13,13 @@ if [[ -z ${1+x} ]]; then
 fi
 experiment_dir=$1
 
-#524288000
 GB=1048576 # One GB in KB
-free_space="$(df -k "$experiment_dir" --output=avail | tail -n 1)"
-free_space="$(echo "scale=2; $free_space / $GB" | bc)"
+free_space_in_kb="$(df -k "$experiment_dir" --output=avail | tail -n 1)"
 
-if [[ $free_space -lt 500 ]]; then # 500G = 500*1024*1024k
+if [[ $free_space_in_kb -lt 524288000 ]]; then # 500G = 500*1024*1024k
+    free_space_in_gb="$(echo "scale=2; $free_space_in_kb / $GB" | bc)"
     error_msg="${RED} There isn't enough space available for the experiment in $experiment_dir.\n"
-    error_msg+=" We require 500GB of free space. Only $free_space GB is available.${NC}"
+    error_msg+=" We require 500GB of free space. Only $free_space_in_gb GB is available.${NC}"
     echo -e "$error_msg"
     exit 1
 fi
