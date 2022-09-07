@@ -10,26 +10,15 @@ namespace json = boost::json;
 CdcProcessor::CdcProcessor() : Processor() {
 }
 
-
 void CdcProcessor::configure(
     const json::object& config,
     Agent *agent) {
 
-    // add subscriptions from config topics array
-    json::array subs = val<json::array>(config, "subscribes");
-    for (size_t i = 0; i < subs.size(); i++) {
-        std::string topic = json::value_to<std::string>(subs.at(i));
-        add_bus_id(subscribes, topic, "not_set", "not_set");
-    }
+    // add input subscriptions
+    add_subscription(input_topic, input_type, input_sub_type);
 
-    json::array pubs = val<json::array>(config, "publishes");
-    for (size_t i = 0; i < pubs.size(); i++) {
-        std::string topic = json::value_to<std::string>(pubs.at(i));
-        add_bus_id(publishes, topic, "not_set", "not_set");
-    }
-
-    input_topics = get_array_values(subscribes, "topic");
-    output_topics = get_array_values(publishes, "topic");
+    // add output to publications
+    add_publication(output_topic, output_type, output_sub_type);
 
     Processor::configure(config, agent);
 }

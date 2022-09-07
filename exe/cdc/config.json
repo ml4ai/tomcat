@@ -2,16 +2,6 @@
   "agent_name": "tomcat-CDC",
   "owner": "University of Arizona",
   "version": "1.0.0",
-  "dialog_agent_message": {
-     "topic": "agent/dialog",
-     "type": "event",
-     "sub_type": "Event:dialogue_event"
-  },
-  "coordination_message": {
-     "topic": "agent/tomcat-CDC/coordination_event",
-     "type": "status",
-     "sub_type": "Event:dialog_coordination_event"
-  },
   "check_label_seq": [
     {
       "label1": "CriticalVictim",
