@@ -32,32 +32,44 @@ void Processor::configure(
     heartbeat_topic = "status/" + agent_name + "/heartbeats";
     version_topic = "agent/" + agent_name + "/versioninfo";
 
-    // Create subscription IDs
-    add_bus_id(
-        subscribes, TRIAL_TOPIC, TRIAL_TYPE, TRIAL_SUB_TYPE_STOP);
-    add_bus_id(
-        subscribes, TRIAL_TOPIC, TRIAL_TYPE, TRIAL_SUB_TYPE_START);
-    add_bus_id(
-        subscribes, ROLL_REQ_TOPIC, ROLL_REQ_TYPE, ROLL_REQ_SUB_TYPE);
+    // Create subscriptions
+    add_subscription(TRIAL_TOPIC, TRIAL_TYPE, TRIAL_SUB_TYPE_STOP);
+    add_subscription(TRIAL_TOPIC, TRIAL_TYPE, TRIAL_SUB_TYPE_START);
+    add_subscription(ROLL_REQ_TOPIC, ROLL_REQ_TYPE, ROLL_REQ_SUB_TYPE);
 
-    // Create Publication IDs
-    add_bus_id(
-        publishes, heartbeat_topic, HEARTBEAT_TYPE, HEARTBEAT_SUB_TYPE);
-    add_bus_id(
-        publishes, ROLL_RES_TOPIC, ROLL_RES_TYPE, ROLL_RES_SUB_TYPE);
-    add_bus_id(
-        publishes, version_topic, VERSION_TYPE, VERSION_SUB_TYPE);
+    // Create Publications
+    add_publication(heartbeat_topic, HEARTBEAT_TYPE, HEARTBEAT_SUB_TYPE);
+    add_publication(ROLL_RES_TOPIC, ROLL_RES_TYPE, ROLL_RES_SUB_TYPE);
+    add_publication(version_topic, VERSION_TYPE, VERSION_SUB_TYPE);
 }
 
-// Add an element to the publishes or subscribes array
-void Processor::add_bus_id(json::array &arr,
-                           const std::string topic,
-                           const std::string message_type,
-                           const std::string sub_type) {
+// Add an element to the publishes array
+void Processor::add_publication(const std::string topic,
+                                const std::string message_type,
+                                const std::string sub_type) {
+    publishes.emplace_back(json::value{{"topic", topic},
+                                       {"message_type", message_type},
+                                       {"sub_type", sub_type}});
+}
 
-    arr.emplace_back(json::value{{"topic", topic},
-                                 {"message_type", message_type},
-                                 {"sub_type", sub_type}});
+// Add an element to the subscribes array
+void Processor::add_subscription(const std::string topic,
+                                 const std::string message_type,
+                                 const std::string sub_type) {
+    subscribes.emplace_back(json::value{{"topic", topic},
+                                        {"message_type", message_type},
+                                        {"sub_type", sub_type}});
+}
+
+// return all the publication topics
+std::vector<std::string> Processor::get_publication_topics() {
+    return get_array_values(publishes, "topic");
+}
+
+
+// return all the subscription topics
+std::vector<std::string> Processor::get_subscription_topics() {
+    return get_array_values(subscribes, "topic");
 }
 
 // Function that publishes heartbeat messages on an interval

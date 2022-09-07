@@ -56,11 +56,11 @@ namespace json = boost::json;
 #define ROLL_RES_TYPE "agent"
 #define ROLL_RES_SUB_TYPE "rollcall:response"
 
-// topic set at config time   "agent/" + agent_name + "/versioninfo"
+// topic set at config time as  "agent/" + agent_name + "/versioninfo"
 #define VERSION_TYPE "agent"
 #define VERSION_SUB_TYPE "versioninfo"
 
-// topic set at config time   "status/" + agent_name + "/heartbeats"
+// topic set at config time as  "status/" + agent_name + "/heartbeats"
 #define HEARTBEAT_TYPE "status"
 #define HEARTBEAT_SUB_TYPE "heartbeat"
 
@@ -90,11 +90,23 @@ class Processor : public Utils {
     std::string heartbeat_topic = "heartbeat_topic_not_configured";
     std::string version_topic = "version_topic_not_configured";
 
-    // Add an element to the publishes or subscribes array
-    void add_bus_id(json::array &arr,
-                    const std::string topic,
-                    const std::string message_type,
-                    const std::string sub_type);
+    // add an element to the publishes array
+    void add_publication(
+        const std::string topic,
+        const std::string message_type,
+        const std::string sub_type);
+
+    // add an element to the subscribes array
+    void add_subscription(
+        const std::string topic,
+        const std::string message_type,
+        const std::string sub_type);
+
+    // return the subscription topics
+    std::vector<std::string> get_subscription_topics();
+
+    // return the publication topics
+    std::vector<std::string> get_publication_topics();
 
     // this software version
     std::string agent_version = "not_set";
