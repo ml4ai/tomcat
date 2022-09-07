@@ -7,6 +7,7 @@
 #include <thread>
 
 #include "Agent.hpp"
+#include "Processor.hpp"
 
 namespace json = boost::json;
 
@@ -30,7 +31,7 @@ class MqttAgent : public Agent {
     void stop() override;
 
     /** Constructor */
-    MqttAgent(const json::object& config);
+    MqttAgent(const json::object& config, Processor &processor);
 
     /* send output to the message bus */
     void publish(json::object& message) override;

@@ -11,11 +11,17 @@
 
 namespace json = boost::json;
 
-Processor::Processor(Agent* agent) : agent(agent) {
+Processor::Processor() {
     time(&start_time);
 }
 
-void Processor::configure(const json::object& config) {
+void Processor::configure(
+    const json::object& config,
+    Agent* agent) {
+
+    // TODO fix this
+    this->agent = agent;
+
     // Set global variables from the configuration file object
     agent_name = val<std::string>(config, "agent_name", AGENT_NAME);
     agent_version = val<std::string>(config, "version", AGENT_VERSION);

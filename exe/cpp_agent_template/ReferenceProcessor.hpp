@@ -13,9 +13,10 @@ class ReferenceProcessor : public Processor {
     std::vector<std::string> input_topics, output_topics;
 
   public:
-    ReferenceProcessor(Agent* agent) : Processor(agent) {}
 
-    void configure(const json::object& config) override;
+    ReferenceProcessor();
+
+    void configure(const json::object& config, Agent *agent);
 
     void process_message(const json::object& message) override;
 };

@@ -7,7 +7,13 @@
 
 namespace json = boost::json;
 
-void ReferenceProcessor::configure(const json::object& config) {
+ReferenceProcessor::ReferenceProcessor() : Processor() {
+}
+
+
+void ReferenceProcessor::configure(
+    const json::object& config,
+    Agent *agent) {
 
     // add subscriptions from config topics array
     json::array subs = val<json::array>(config, "subscribes");
@@ -25,7 +31,7 @@ void ReferenceProcessor::configure(const json::object& config) {
     input_topics = get_array_values(subscribes, "topic");
     output_topics = get_array_values(publishes, "topic");
 
-    Processor::configure(config);
+    Processor::configure(config, agent);
 }
 
 // process a custom-defined message.

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ReferenceProcessor.hpp"
+#include "Processor.hpp"
 #include "Utils.hpp"
 #include <boost/json.hpp>
 #include <iostream>
@@ -16,7 +16,7 @@ class Agent : public Utils {
   protected:
     std::string app_name;
 
-    ReferenceProcessor reference_processor = ReferenceProcessor(this);
+    Processor &processor; // TODO  = nullptr;
 
     json::object parse_json(const std::string text);
 
@@ -26,6 +26,7 @@ class Agent : public Utils {
     virtual void stop() {}
 
   public:
+    Agent(Processor &processor): processor(processor) {}
     virtual void process_next_message() {}
     virtual void publish(json::object& message) {}
 };

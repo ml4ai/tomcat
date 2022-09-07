@@ -126,8 +126,8 @@ class Processor : public Utils {
     void publish_rollcall_response_message(const json::object& input_message);
 
   public:
-    Processor(Agent* agent);
-    virtual void configure(const json::object& config);
+    Processor();
+    virtual void configure(const json::object& config, Agent *agent);
     virtual void process_message(const json::object& message);
     void process_next_message();
     void publish_heartbeat_message();

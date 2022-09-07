@@ -10,6 +10,7 @@
 #include <boost/program_options.hpp>
 
 #include "Configurator.hpp"
+#include "ReferenceProcessor.hpp"
 #include "FileAgent.hpp"
 #include "MqttAgent.hpp"
 #include "Utils.hpp"
@@ -31,6 +32,9 @@ int main(int argc, char* argv[]) {
 
     Utils utils;
 
+    // create processor for this agent
+    ReferenceProcessor processor = ReferenceProcessor();
+
     // get configuration
     Configurator configurator;
     json::object config = configurator.parse_args(argc, argv);
@@ -43,7 +47,8 @@ int main(int argc, char* argv[]) {
     // if neither filename is specified, run in MQTT mode
     if (input_file.empty() && output_file.empty()) {
 
-        MqttAgent mqtt_agent(config);
+        MqttAgent mqtt_agent(config, processor);
+
         mqtt_agent.start();
 
         signal(SIGINT, signal_handler);
@@ -63,7 +68,7 @@ int main(int argc, char* argv[]) {
     }
     else {
         // otherwise run in file mode
-        FileAgent file_agent(config);
+        FileAgent file_agent(config, processor);
     }
 
     return EXIT_SUCCESS;

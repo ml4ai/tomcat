@@ -6,7 +6,9 @@
 
 namespace json = boost::json;
 
-FileAgent::FileAgent(const json::object& config) {
+FileAgent::FileAgent(
+    const json::object& config,
+    Processor &processor) : Agent(processor) {
 
     Agent::configure(config);
 
@@ -53,7 +55,7 @@ FileAgent::FileAgent(const json::object& config) {
     int line_count = 0;
     while (std::getline(input_file, line)) {
         json::object message = parse_json(line);
-        reference_processor.process_message(message);
+        processor.process_message(message);
         line_count ++;
     }
 

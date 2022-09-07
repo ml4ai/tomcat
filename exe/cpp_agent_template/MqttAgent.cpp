@@ -5,6 +5,7 @@
 #include <mqtt/async_client.h>
 
 #include "Agent.hpp"
+#include "Processor.hpp"
 #include "MqttAgent.hpp"
 
 // This class :
@@ -13,7 +14,9 @@
 
 namespace json = boost::json;
 
-MqttAgent::MqttAgent(const json::object& config) {
+MqttAgent::MqttAgent(
+    const json::object& config,
+    Processor &processor) : Agent(processor) {
 
     std::cout << "Running in MQTT Mode" << std::endl;
 
@@ -63,12 +66,12 @@ MqttAgent::MqttAgent(const json::object& config) {
     Agent::configure(config);
 
     // subscribe to input topics
-    for (std::string i : reference_processor.get_input_topics()) {
+    for (std::string i : processor.get_input_topics()) {
         mqtt_client->subscribe(i, 2);
     }
 
     // send an early heartbeat to advise of configuration
-    reference_processor.publish_heartbeat_message();
+    processor.publish_heartbeat_message();
 }
 
 // check the message queue every second
@@ -96,7 +99,7 @@ void MqttAgent::process_next_message() {
         int sz = message_queue.size();
         std::cout << "Processing " << topic << ", ";
         std::cout << sz << " in queue" << std::endl;
-        reference_processor.process_message(copy);
+        processor.process_message(copy);
     }
 }
 
@@ -122,11 +125,11 @@ void MqttAgent::start() {
     // start the asynchronous Message queue monitor
     queue_future =
         std::async(std::launch::async, &MqttAgent::check_queue, this);
-    reference_processor.start();
+    processor.start();
 }
 
 void MqttAgent::stop() {
-    reference_processor.stop();
+    processor.stop();
     running = false;
     queue_future.wait();
     std::cout << app_name << " stopped." << std::endl;
