@@ -28,11 +28,11 @@ class MinecraftExtractor:
         with open(out_filepath, "a") as f:
             while True:
                 if response is None:
-                    response = self._es.search(index="logstash*", query=query_body, sort=[{"msg.timestamp": "asc"}],
+                    response = self._es.search(index="logstash*", query=query_body, sort=[{"@timestamp": "asc"}],
                                            size=10000)
                 else:
                     # We use search_after to retrieve data with timestamp later than the last record found
-                    response = self._es.search(index="logstash*", query=query_body, sort=[{"msg.timestamp": "asc"}],
+                    response = self._es.search(index="logstash*", query=query_body, sort=[{"@timestamp": "asc"}],
                                                size=10000, search_after=response["hits"]["hits"][-1]["sort"])
 
                 if len(response['hits']['hits']) == 0:
