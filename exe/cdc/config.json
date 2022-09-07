@@ -1,19 +1,21 @@
 {
-  "agent_name": "AC_UAZ_TA1_CDC_Agent",
+  "agent_name": "tomcat-CDC",
   "owner": "University of Arizona",
   "version": "1.0.0",
-  "input": [
-    "cdc_agent_input_topic"
-  ],
+  "dialog_agent_message": {
+     "topic": "agent/dialog",
+     "type": "event",
+     "sub_type": "Event:dialogue_event"
+  },
   "coordination_message": {
      "topic": "agent/tomcat-CDC/coordination_event",
      "type": "status",
      "sub_type": "Event:dialog_coordination_event"
   },
   "heartbeat_message": {
-     "topic": "agent/tomcat-CDC/coordination_event",
+     "topic": "status/tomcat-CDC/heartbeats",
      "type": "status",
-     "sub_type": "Event:dialog_coordination_event"
+     "sub_type": "heartbeat"
   },
   "check_label_seq": [
     {
