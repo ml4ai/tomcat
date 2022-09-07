@@ -52,17 +52,17 @@ namespace json = boost::json;
 #define ROLL_REQ_SUB_TYPE "rollcall:request"
 
 // publications
-#define HEARTBEAT_TOPIC "status/reference_agent/heartbeats"
-#define HEARTBEAT_TYPE "status"
-#define HEARTBEAT_SUB_TYPE "heartbeat"
-
 #define ROLL_RES_TOPIC "agent/control/rollcall/response"
 #define ROLL_RES_TYPE "agent"
 #define ROLL_RES_SUB_TYPE "rollcall:response"
 
-#define VERSION_TOPIC "agent/reference_agent/versioninfo"
+// topic set at config time   "agent/" + agent_name + "/versioninfo"
 #define VERSION_TYPE "agent"
 #define VERSION_SUB_TYPE "versioninfo"
+
+// topic set at config time   "status/" + agent_name + "/heartbeats"
+#define HEARTBEAT_TYPE "status"
+#define HEARTBEAT_SUB_TYPE "heartbeat"
 
 class Agent;
 
@@ -84,6 +84,11 @@ class Processor : public Utils {
 
     // publication
     json::array publishes = json::array();
+
+    // the heartbeat and version info topics contain the agent name
+    // and are set at config time
+    std::string heartbeat_topic = "heartbeat_topic_not_configured";
+    std::string version_topic = "version_topic_not_configured";
 
     // Add an element to the publishes or subscribes array
     void add_bus_id(json::array &arr,

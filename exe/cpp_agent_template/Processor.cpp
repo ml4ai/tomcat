@@ -19,7 +19,6 @@ void Processor::configure(
     const json::object& config,
     Agent* agent) {
 
-    // TODO fix this
     this->agent = agent;
 
     // Set global variables from the configuration file object
@@ -28,6 +27,10 @@ void Processor::configure(
     owner = val<std::string>(config, "owner", OWNING_INSTITUTION);
     testbed_source = TESTBED_REPO
         + std::string("/") + agent_name + std::string(":") + agent_version;
+
+    // define these topics based on the agent name
+    heartbeat_topic = "status/" + agent_name + "/heartbeats";
+    version_topic = "agent/" + agent_name + "/versioninfo";
 
     // Create subscription IDs
     add_bus_id(
@@ -39,11 +42,11 @@ void Processor::configure(
 
     // Create Publication IDs
     add_bus_id(
-        publishes, HEARTBEAT_TOPIC, HEARTBEAT_TYPE, HEARTBEAT_SUB_TYPE);
+        publishes, heartbeat_topic, HEARTBEAT_TYPE, HEARTBEAT_SUB_TYPE);
     add_bus_id(
         publishes, ROLL_RES_TOPIC, ROLL_RES_TYPE, ROLL_RES_SUB_TYPE);
     add_bus_id(
-        publishes, VERSION_TOPIC, VERSION_TYPE, VERSION_SUB_TYPE);
+        publishes, version_topic, VERSION_TYPE, VERSION_SUB_TYPE);
 }
 
 // Add an element to the publishes or subscribes array
@@ -263,7 +266,7 @@ void Processor::publish_version_info_message(
     output_data["publishes"] = publishes;
     output_data["subscribes"] = subscribes;
 
-    publish(VERSION_TOPIC,
+    publish(version_topic,
             VERSION_TYPE,
             VERSION_SUB_TYPE,
             input_message,
@@ -279,7 +282,7 @@ void Processor::publish_heartbeat_message() {
     output_data["state"] = "ok";
     output_data["status"] = status;
 
-    publish(HEARTBEAT_TOPIC,
+    publish(heartbeat_topic,
             HEARTBEAT_TYPE, 
 	    HEARTBEAT_SUB_TYPE, 
 	    trial_message, output_data);
