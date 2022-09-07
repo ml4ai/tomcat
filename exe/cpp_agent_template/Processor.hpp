@@ -35,39 +35,40 @@ namespace json = boost::json;
 //   }
 // }
 
-// defaults for VersionInfoMessage if no config file is used.
-#define TESTBED_REPO "https://gitlab.asist.aptima.com:5050/asist/testbed"
-#define OWNING_INSTITUTION "The University of Arizona"
-#define AGENT_NAME "Processor"
-#define AGENT_VERSION "1.0.0"
-
-// subscriptions
-#define TRIAL_TOPIC "trial"
-#define TRIAL_TYPE "trial"
-#define TRIAL_SUB_TYPE_START "start"
-#define TRIAL_SUB_TYPE_STOP "stop"
-
-#define ROLL_REQ_TOPIC "agent/control/rollcall/request"
-#define ROLL_REQ_TYPE "agent"
-#define ROLL_REQ_SUB_TYPE "rollcall:request"
-
-// publications
-#define ROLL_RES_TOPIC "agent/control/rollcall/response"
-#define ROLL_RES_TYPE "agent"
-#define ROLL_RES_SUB_TYPE "rollcall:response"
-
-// topic set at config time as  "agent/" + agent_name + "/versioninfo"
-#define VERSION_TYPE "agent"
-#define VERSION_SUB_TYPE "versioninfo"
-
-// topic set at config time as  "status/" + agent_name + "/heartbeats"
-#define HEARTBEAT_TYPE "status"
-#define HEARTBEAT_SUB_TYPE "heartbeat"
-
 class Agent;
 
 // A base class for subscribed message handlers
 class Processor : public Utils {
+
+    // base location of testbed repo
+    const std::string testbed_repo = 
+        "https://gitlab.asist.aptima.com:5050/asist/testbed";
+
+    // input rollcall request
+    const std::string roll_req_topic = "agent/control/rollcall/request";
+    const std::string roll_req_type = "agent";
+    const std::string roll_req_sub_type = "rollcall:request";
+
+    // input trial start and stop
+    const std::string trial_topic = "trial";
+    const std::string trial_type = "trial";
+    const std::string trial_sub_type_start = "start";
+    const std::string trial_sub_type_stop = "stop";
+
+    // output versioninfo (topic defined at config time)
+    std::string version_topic = "version_topic_not_configured";
+    const std::string version_type = "agent";
+    const std::string version_sub_type = "versioninfo";
+
+    // output heartbeat (topic defined at config time)
+    std::string heartbeat_topic = "heartbeat_topic_not_configured";
+    const std::string heartbeat_type = "status";
+    const std::string heartbeat_sub_type = "heartbeat";
+
+    // output rollcall response
+    const std::string roll_res_topic = "agent/control/rollcall/response";
+    const std::string roll_res_type = "agent";
+    const std::string roll_res_sub_type = "rollcall:response";
 
     // start time of this class instantiation
     time_t start_time;
@@ -85,10 +86,6 @@ class Processor : public Utils {
     // publication
     json::array publishes = json::array();
 
-    // the heartbeat and version info topics contain the agent name
-    // and are set at config time
-    std::string heartbeat_topic = "heartbeat_topic_not_configured";
-    std::string version_topic = "version_topic_not_configured";
 
     // add an element to the publishes array
     void add_publication(
@@ -115,7 +112,7 @@ class Processor : public Utils {
     std::string agent_name = "not_set";
 
     // owning institution
-    std::string owner = "not_set";
+    std::string owner = "The University of Arizona";
 
     // Testbed version
     std::string testbed_version = "1.0";

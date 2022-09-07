@@ -22,10 +22,10 @@ void Processor::configure(
     this->agent = agent;
 
     // Set global variables from the configuration file object
-    agent_name = val<std::string>(config, "agent_name", AGENT_NAME);
-    agent_version = val<std::string>(config, "version", AGENT_VERSION);
-    owner = val<std::string>(config, "owner", OWNING_INSTITUTION);
-    testbed_source = TESTBED_REPO
+    agent_name = val<std::string>(config, "agent_name", agent_name);
+    agent_version = val<std::string>(config, "version", agent_version);
+    owner = val<std::string>(config, "owner", owner);
+    testbed_source = testbed_repo
         + std::string("/") + agent_name + std::string(":") + agent_version;
 
     // define these topics based on the agent name
@@ -33,14 +33,14 @@ void Processor::configure(
     version_topic = "agent/" + agent_name + "/versioninfo";
 
     // Create subscriptions
-    add_subscription(TRIAL_TOPIC, TRIAL_TYPE, TRIAL_SUB_TYPE_STOP);
-    add_subscription(TRIAL_TOPIC, TRIAL_TYPE, TRIAL_SUB_TYPE_START);
-    add_subscription(ROLL_REQ_TOPIC, ROLL_REQ_TYPE, ROLL_REQ_SUB_TYPE);
+    add_subscription(trial_topic, trial_type, trial_sub_type_stop);
+    add_subscription(trial_topic, trial_type, trial_sub_type_start);
+    add_subscription(roll_req_topic, roll_req_type, roll_req_sub_type);
 
     // Create Publications
-    add_publication(heartbeat_topic, HEARTBEAT_TYPE, HEARTBEAT_SUB_TYPE);
-    add_publication(ROLL_RES_TOPIC, ROLL_RES_TYPE, ROLL_RES_SUB_TYPE);
-    add_publication(version_topic, VERSION_TYPE, VERSION_SUB_TYPE);
+    add_publication(heartbeat_topic, heartbeat_type, heartbeat_sub_type);
+    add_publication(roll_res_topic, roll_res_type, roll_res_sub_type);
+    add_publication(version_topic, version_type, version_sub_type);
 }
 
 // Add an element to the publishes array
@@ -195,11 +195,11 @@ void Processor::process_message(const json::object& input_message) {
     std::string input_sub_type = val<std::string>(msg, "sub_type");
 
     // trial message
-    if ((topic.compare(TRIAL_TOPIC) == 0) &&
-        (input_message_type.compare(TRIAL_TYPE) == 0)) {
+    if ((topic.compare(trial_topic) == 0) &&
+        (input_message_type.compare(trial_type) == 0)) {
 
         // start
-        if (input_sub_type.compare(TRIAL_SUB_TYPE_START) == 0) {
+        if (input_sub_type.compare(trial_sub_type_start) == 0) {
             std::cout << "Trial started" << std::endl;
 	    // prepare to log the Message Bus traffic during the trial.
 	    traffic_in.clear();
@@ -218,7 +218,7 @@ void Processor::process_message(const json::object& input_message) {
             }
         }
         // stop
-        else if (input_sub_type.compare(TRIAL_SUB_TYPE_STOP) == 0) {
+        else if (input_sub_type.compare(trial_sub_type_stop) == 0) {
             std::cout << "Trial stopped" << std::endl;
             trial_message = input_message;
             if (running) {
@@ -235,9 +235,9 @@ void Processor::process_message(const json::object& input_message) {
     }
 
     // rollcall request message
-    else if ((topic.compare(ROLL_REQ_TOPIC) == 0) &&
-             (input_message_type.compare(ROLL_REQ_TYPE) == 0) &&
-             (input_sub_type.compare(ROLL_REQ_SUB_TYPE) == 0)) {
+    else if ((topic.compare(roll_req_topic) == 0) &&
+             (input_message_type.compare(roll_req_type) == 0) &&
+             (input_sub_type.compare(roll_req_sub_type) == 0)) {
         publish_rollcall_response_message(input_message);
     }
     agent->process_next_message();
@@ -261,7 +261,7 @@ void Processor::publish_rollcall_response_message(
         val<std::string>(input_data, "rollcall_id", "not_set");
 
     publish(
-        ROLL_RES_TOPIC, ROLL_RES_TYPE, ROLL_RES_SUB_TYPE, input_message,
+        roll_res_topic, roll_res_type, roll_res_sub_type, input_message,
 	output_data);
 }
 
@@ -279,8 +279,8 @@ void Processor::publish_version_info_message(
     output_data["subscribes"] = subscribes;
 
     publish(version_topic,
-            VERSION_TYPE,
-            VERSION_SUB_TYPE,
+            version_type,
+            version_sub_type,
             input_message,
             output_data);
 }
@@ -295,7 +295,7 @@ void Processor::publish_heartbeat_message() {
     output_data["status"] = status;
 
     publish(heartbeat_topic,
-            HEARTBEAT_TYPE, 
-	    HEARTBEAT_SUB_TYPE, 
+            heartbeat_type, 
+	    heartbeat_sub_type, 
 	    trial_message, output_data);
 }
