@@ -21,6 +21,14 @@ find_package(
 
 add_executable(
     main main.cpp
+    Agent.cpp
+    MqttAgent.cpp
+    FileAgent.cpp
+    Processor.cpp
+    CdcProcessor.cpp
+    Configurator.cpp
+    Utils.cpp
+
 )
 target_link_libraries(main PahoMqttCpp::paho-mqttpp3 ${Boost_LIBRARIES})
 target_include_directories(main PRIVATE ${YAML_CPP_INCLUDE_DIR})
