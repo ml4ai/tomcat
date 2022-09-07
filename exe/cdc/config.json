@@ -12,11 +12,6 @@
      "type": "status",
      "sub_type": "Event:dialog_coordination_event"
   },
-  "heartbeat_message": {
-     "topic": "status/tomcat-CDC/heartbeats",
-     "type": "status",
-     "sub_type": "heartbeat"
-  },
   "check_label_seq": [
     {
       "label1": "CriticalVictim",
