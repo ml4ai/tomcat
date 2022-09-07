@@ -9,9 +9,9 @@ from time import sleep
 
 def check_time_difference(trial_start, trial_end):
     '''
-    The trial_start and trial_end comes in ISO-8601 format which
-    has to be converted into datetime format '%Y-%m-%d %H:%M:%S.%f' from which difference is 
-    calculated to find out the time taken by a mission. 
+    The timestamps for the start and end of the trial are published in ISO-8601
+    format, which has to be converted into datetime format '%Y-%m-%d %H:%M:%S.%f' from which
+    the difference is calculated to find out the time taken by a mission.
     '''
     trial_start = trial_start.split('T')[0] + " " + trial_start.split('T')[1].split('Z')[0]
     trial_end = trial_end.split('T')[0] + " " + trial_end.split('T')[1].split('Z')[0]
@@ -42,8 +42,16 @@ def read_subject_id(TrialMessages):
 
 def read_metadata_as_json(path):
     '''
-    This function reads metadata file as json loads, which makes sure header is 'event' -> .header.message_type = "event" and 
-    message is 'Event:MissionState' -> .msg.sub_type = "Event:MissionState", then reads mission start and stop timestamp from json_message["msg"]["timestamp"]
+    This function reads in a .metadata file, and performs some basic checks,
+    prints out the subject IDs, and checks the time difference between the
+    mission start and end times.
+
+    For the trial start and stop messages, it checks that:
+    - .header.message_type = "event"
+    - .msg.sub_type = "Event:MissionState"
+
+    It then reads the mission start and stop timestamps from the .msg.timestamp
+    field.
     '''
     TrialMessages = []
     with open(path, 'r') as f:
@@ -92,8 +100,8 @@ def checkfile(rootdir):
                 print(colored('\n[Error] Metadata file is missing','red', attrs=['bold']), u'\N{cross mark}')
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Minecraft Metadata Data Validation')
-    parser.add_argument("--p", required=True, help="Enter the Path to folder with baseline task data")
+    parser = argparse.ArgumentParser(description='Minecraft data validation script')
+    parser.add_argument("--p", required=True, help="Path to the folder with the baseline task data")
     arg = parser.parse_args()
     rootdir = arg.p
     print(colored('[Status] Root Directory:', 'red', attrs=['bold']), colored(rootdir, 'blue'))
