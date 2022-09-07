@@ -1,4 +1,4 @@
-import sys 
+import sys #We use sys.exit() so that all exceptions can properly propogate up and cause the interpreter to exit.
 import os
 import json
 import argparse
@@ -8,8 +8,11 @@ from termcolor import colored
 from time import sleep
 
 def check_time_difference(trial_start, trial_end):
-    #check difference in time
-    sleep(0.25)
+    '''
+    The trial_start and trial_end comes in "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" formate which
+    has to be formated into datetime formate '%Y-%m-%d %H:%M:%S.%f' from which difference is 
+    calculated to find out time taken by a mission. 
+    '''
     trial_start = trial_start.split('T')[0] + " " + trial_start.split('T')[1].split('Z')[0]
     trial_end = trial_end.split('T')[0] + " " + trial_end.split('T')[1].split('Z')[0]
 
@@ -30,16 +33,18 @@ def check_time_difference(trial_start, trial_end):
 
 def read_subject_id(TrialMessages):
     #Display subject IDs
-    sleep(0.25)
     print(colored('\n[Status] Subject info:', 'red', attrs=['bold']))
     for idx, sub in enumerate(TrialMessages[0]['data']['metadata']['trial']['subjects']):
         print(colored('\t Subect ID','magenta'), idx,":", sub)
 
     #Display trial name
-    sleep(0.25)
     print(colored('\n[Status] Mission name:', 'red', attrs=['bold']),TrialMessages[0]['data']['metadata']['trial']['name'])
 
 def read_metadata_as_json(path):
+    '''
+    This function reads .metadata file as json loads, which makes sure header is 'event' and 
+    message is 'Event:MissionState', then reads mission start and stop timestamp from json_message["msg"]["timestamp"]
+    '''
     TrialMessages = []
     with open(path, 'r') as f:
         for line in f:
@@ -53,11 +58,15 @@ def read_metadata_as_json(path):
                     else:
                         mission_end = json_message["msg"]["timestamp"]
             except:
-                print("[Error] Cannot read json line")
+                print(colored('[Error] Cannot read json line','red'), u'\N{cross mark}')
     read_subject_id(TrialMessages)
     check_time_difference(mission_start, mission_end)
 
 def checkfile(rootdir):
+    '''
+    This function checks if .metadata_file is present under the given path or not. It also checks
+    if the .metadata_file is empty or not. 
+    '''
     count = 0
     dir = os.listdir(rootdir)
 

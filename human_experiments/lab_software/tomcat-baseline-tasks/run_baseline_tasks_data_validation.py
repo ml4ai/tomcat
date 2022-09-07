@@ -65,15 +65,15 @@ def read_muliple_csv_files(path, csvfiles, total_time, file_name, sid):
         elif file_name == 'ping_pong':
             if 'competitive_0' in csvfile:
                 df = df.iloc[: , :-1]
-                print(colored('\t Two participants competeting against eachother','magenta'))
+                print(colored('\t Two participants competing against each other','magenta'))
                 read_csv_column_name(df, sid, -4, file_name)
             elif 'competitive_1' in csvfile:
                 df = df.iloc[: , :-1]
-                print(colored('\t Single participant competeting against Experimenter','magenta'))
+                print(colored('\t Single participant competing against Experimenter','magenta'))
                 read_csv_column_name(df, sid, -4, file_name)
             elif 'cooperative_0' in csvfile:
                 df = df.iloc[: , :-1]
-                print(colored('\t Three participant competeting against AI','magenta'))
+                print(colored('\t Three participants competing against AI','magenta'))
                 read_csv_column_name(df, sid, -6, file_name)
 
         elif file_name == 'rest_state':
@@ -118,7 +118,6 @@ def fcount(rootdir, sid):
     for x in sorted(os.listdir(rootdir)):
         if os.path.isdir(os.path.join(rootdir,x)): 
             if file_names[count] in x:
-                sleep(0.25)
                 print(colored('\n[Status] Sub Directory:', 'red', attrs=['bold']), colored(os.path.join(rootdir,x), 'green'), u'\N{check mark}')
                 csvread(os.path.join(rootdir,x), os.listdir(os.path.join(rootdir,x)), file_names[count], sid)
             else:
