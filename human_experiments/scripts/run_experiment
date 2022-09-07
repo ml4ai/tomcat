@@ -20,7 +20,7 @@ __help() {
   echo
   echo "[1]:  Set the experiment time"
   echo "[2]:  Checks the NFS status"
-  echo "[3]:  Starts fNIRS and Eye-tracker systems"
+  echo "[3]:  Starts Eye-tracker"
   echo "[4]:  Starts the Testbed"
   echo "[5]:  Starts the Lab Recorder"
   echo "[6]:  Starts Face and Screen recording"
@@ -96,7 +96,7 @@ fi
 
 if [[ $GOTO -le 3 ]]; then
   echo " "
-  yes_no_question "[3] Do you want to start ${EMPH}fNIRS and Eye-tracker systems${NC}?"
+  yes_no_question "[3] Do you want to start the ${EMPH}Eye-tracker${NC}?"
   if [[ $? -eq 0 ]]; then
     source start_sensors "$experiment_dir_cat" " "
   fi
