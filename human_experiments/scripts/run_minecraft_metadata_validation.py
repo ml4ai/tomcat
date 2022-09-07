@@ -9,9 +9,9 @@ from time import sleep
 
 def check_time_difference(trial_start, trial_end):
     '''
-    The trial_start and trial_end comes in "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" formate which
-    has to be formated into datetime formate '%Y-%m-%d %H:%M:%S.%f' from which difference is 
-    calculated to find out time taken by a mission. 
+    The trial_start and trial_end comes in ISO-8601 format which
+    has to be converted into datetime format '%Y-%m-%d %H:%M:%S.%f' from which difference is 
+    calculated to find out the time taken by a mission. 
     '''
     trial_start = trial_start.split('T')[0] + " " + trial_start.split('T')[1].split('Z')[0]
     trial_end = trial_end.split('T')[0] + " " + trial_end.split('T')[1].split('Z')[0]
@@ -42,8 +42,8 @@ def read_subject_id(TrialMessages):
 
 def read_metadata_as_json(path):
     '''
-    This function reads .metadata file as json loads, which makes sure header is 'event' and 
-    message is 'Event:MissionState', then reads mission start and stop timestamp from json_message["msg"]["timestamp"]
+    This function reads metadata file as json loads, which makes sure header is 'event' -> .header.message_type = "event" and 
+    message is 'Event:MissionState' -> .msg.sub_type = "Event:MissionState", then reads mission start and stop timestamp from json_message["msg"]["timestamp"]
     '''
     TrialMessages = []
     with open(path, 'r') as f:
@@ -58,14 +58,14 @@ def read_metadata_as_json(path):
                     else:
                         mission_end = json_message["msg"]["timestamp"]
             except:
-                print(colored('[Error] Cannot read json line','red'), u'\N{cross mark}')
+                print(colored('[Error] Cannot read JSON line','red'), u'\N{cross mark}')
     read_subject_id(TrialMessages)
     check_time_difference(mission_start, mission_end)
 
 def checkfile(rootdir):
     '''
-    This function checks if .metadata_file is present under the given path or not. It also checks
-    if the .metadata_file is empty or not. 
+    This function checks if the .metadata file is present under the given path or not. It also checks
+    if the .metadata file is empty or not. 
     '''
     count = 0
     dir = os.listdir(rootdir)
