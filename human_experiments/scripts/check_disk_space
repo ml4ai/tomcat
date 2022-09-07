@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -u
+
+source configuration_helpers
+
+if [[ -z ${1+x} ]]; then
+  # In case the script is executed standalone.
+  text="${RED}Please provide an experiment directory as the first argument of "
+  text+="the call to this script.${NC}"
+  echo -e "$text"
+  exit 1
+fi
+experiment_dir=$1
+
+#524288000
+free_space="$(df -k "$experiment_dir" --output=avail | tail -n 1 | / 1048576)"
+
+if [[ $free_space -lt 500 ]]; then # 500G = 500*1024*1024k
+    error_msg="${RED} There isn't enough space available for the experiment in $DATA_ROOT_DIR.\n"
+    error_msg+=" We require 500Gb of free space. Only $free_space Gb is available.${NC}"
+    echo -e "$error_msg"
+    return 1
+fi
+
+return 0
