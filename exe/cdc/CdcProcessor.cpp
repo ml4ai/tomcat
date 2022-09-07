@@ -7,8 +7,6 @@
 
 namespace json = boost::json;
 
-CdcProcessor::CdcProcessor() : Processor() {
-}
 
 void CdcProcessor::configure(
     const json::object& config,

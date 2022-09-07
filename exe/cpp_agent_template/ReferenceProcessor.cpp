@@ -7,9 +7,6 @@
 
 namespace json = boost::json;
 
-ReferenceProcessor::ReferenceProcessor() : Processor() {
-}
-
 void ReferenceProcessor::configure(
     const json::object& config,
     Agent *agent) {

@@ -14,7 +14,7 @@ class ReferenceProcessor : public Processor {
 
   public:
 
-    ReferenceProcessor();
+    ReferenceProcessor() : Processor() {}
 
     void configure(const json::object& config, Agent *agent);
 
