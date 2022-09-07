@@ -15,7 +15,7 @@ class CdcProcessor : public Processor {
     const std::string input_sub_type = "Event:dialogue_event";
 
     // output to our own message type
-    const std::string output_topic = "agent/tomcat-CDC/coordination_event;
+    const std::string output_topic = "agent/tomcat-CDC/coordination_event";
     const std::string output_type = "status";
     const std::string output_sub_type = "Event:dialog_coordination_event";
     
