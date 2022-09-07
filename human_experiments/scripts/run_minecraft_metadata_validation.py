@@ -4,7 +4,6 @@ import json
 import argparse
 import datetime
 from termcolor import colored
-from time import sleep
 
 
 def check_time_difference(trial_start, trial_end):
@@ -130,7 +129,6 @@ def checkfile(rootdir):
         for x in os.listdir(rootdir):
             if x.endswith(".metadata"):
                 # check if .metadata file exists or not
-                sleep(0.25)
                 print(
                     colored(
                         "\n[Status] Metadata File:", "red", attrs=["bold"]
