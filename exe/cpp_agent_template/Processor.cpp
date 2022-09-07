@@ -61,17 +61,6 @@ void Processor::add_subscription(const std::string topic,
                                         {"sub_type", sub_type}});
 }
 
-// return all the publication topics
-std::vector<std::string> Processor::get_publication_topics() {
-    return get_array_values(publishes, "topic");
-}
-
-
-// return all the subscription topics
-std::vector<std::string> Processor::get_subscription_topics() {
-    return get_array_values(subscribes, "topic");
-}
-
 // Function that publishes heartbeat messages on an interval
 void Processor::publish_heartbeats() {
     while (running) {

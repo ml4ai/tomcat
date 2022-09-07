@@ -11,22 +11,21 @@ void ReferenceProcessor::configure(
     const json::object& config,
     Agent *agent) {
 
-    // add subscriptions from config topics array
+    // add input subscriptions by topic only
     json::array subs = val<json::array>(config, "subscribes");
     for (size_t i = 0; i < subs.size(); i++) {
         std::string topic = json::value_to<std::string>(subs.at(i));
         add_subscription(topic, "not_set", "not_set");
     }
+    input_topics = get_input_topics();
 
+    // add output publications by topic only
     json::array pubs = val<json::array>(config, "publishes");
     for (size_t i = 0; i < pubs.size(); i++) {
         std::string topic = json::value_to<std::string>(pubs.at(i));
         add_publication(topic, "not_set", "not_set");
     }
-
-    // just covers our topics
-    input_topics = get_subscription_topics();
-    output_topics = get_publication_topics();
+    output_topics = get_output_topics();
 
     // now add the base class topics
     Processor::configure(config, agent);

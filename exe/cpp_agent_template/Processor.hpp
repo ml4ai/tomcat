@@ -86,7 +86,6 @@ class Processor : public Utils {
     // publication
     json::array publishes = json::array();
 
-
     // add an element to the publishes array
     void add_publication(
         const std::string topic,
@@ -98,12 +97,6 @@ class Processor : public Utils {
         const std::string topic,
         const std::string message_type,
         const std::string sub_type);
-
-    // return the subscription topics
-    std::vector<std::string> get_subscription_topics();
-
-    // return the publication topics
-    std::vector<std::string> get_publication_topics();
 
     // this software version
     std::string agent_version = "not_set";
