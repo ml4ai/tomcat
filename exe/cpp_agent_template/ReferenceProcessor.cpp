@@ -42,11 +42,11 @@ void ReferenceProcessor::process_message(const json::object& input_message) {
         // publish the output message on each of the output topics
         for (auto& output_topic : output_topics) {
 
-            // create a data element
-            json::object output_data;
-            output_data["input_topic"] = input_topic;
-            output_data["output_topic"] = output_topic;
-            output_data["text"] = "Hello World!";
+            // create a basic data element
+            json::object output_data = {
+                { "input_topic", input_topic },
+                { "output_topic", output_topic },
+                { "text", "ReferenceProcessor says Hello World!" }};
 
             publish(output_topic, input_message, output_data);
         }
