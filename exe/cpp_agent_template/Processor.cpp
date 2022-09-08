@@ -174,40 +174,37 @@ void Processor::publish(const std::string output_topic,
 // process messages with Message Bus identifiers that match ours
 void Processor::process_message(const json::object& input_message) {
 
-    std::string topic = val<std::string>(input_message, "topic");
-    traffic_in.push_back(topic);
+    std::string input_topic = val<std::string>(input_message, "topic");
+    traffic_in.push_back(input_topic);
 
-    json::object header = val<json::object>(input_message, "header");
-    std::string input_message_type = val<std::string>(header, "message_type");
+    json::object input_header = val<json::object>(input_message, "header");
+    std::string input_type = val<std::string>(input_header, "message_type");
 
     json::object msg = val<json::object>(input_message, "msg");
     std::string input_sub_type = val<std::string>(msg, "sub_type");
 
     // trial message
-    if ((topic.compare(trial_topic) == 0) &&
-        (input_message_type.compare(trial_type) == 0)) {
+    if ((trial_topic.compare(input_topic) == 0) &&
+        (trial_type.compare(input_type) == 0)) {
 
-        // start
-        if (input_sub_type.compare(trial_sub_type_start) == 0) {
+        // trial start
+        if (trial_sub_type_start.compare(input_sub_type) == 0) {
             std::cout << "Trial started" << std::endl;
 	    // prepare to log the Message Bus traffic during the trial.
 	    traffic_in.clear();
 	    traffic_out.clear();
-            traffic_in.push_back(topic);
+            traffic_in.push_back(input_topic);
             // set the testbed version if the trial header has it
-            json::object header = val<json::object>(input_message, "header");
-            std::string new_version = val<std::string>(header, "version");
-            if (!new_version.empty()) {
-                testbed_version = new_version;
-            }
+            testbed_version = 
+                val<std::string>(input_header, "version", testbed_version);
             trial_message = input_message;
             publish_version_info_message(input_message);
             if (running) {
                 publish_heartbeat_message();
             }
         }
-        // stop
-        else if (input_sub_type.compare(trial_sub_type_stop) == 0) {
+        // trial stop
+        else if (trial_sub_type_stop.compare(input_sub_type) == 0) {
             std::cout << "Trial stopped" << std::endl;
             trial_message = input_message;
             if (running) {
@@ -224,9 +221,9 @@ void Processor::process_message(const json::object& input_message) {
     }
 
     // rollcall request message
-    else if ((topic.compare(roll_req_topic) == 0) &&
-             (input_message_type.compare(roll_req_type) == 0) &&
-             (input_sub_type.compare(roll_req_sub_type) == 0)) {
+    else if ((roll_req_topic.compare(input_topic) == 0) &&
+             (roll_req_type.compare(input_type) == 0) &&
+             (roll_req_sub_type.compare(input_sub_type) == 0)) {
         publish_rollcall_response_message(input_message);
     }
     agent->process_next_message();
