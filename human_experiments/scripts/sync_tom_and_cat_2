@@ -1,0 +1,90 @@
+#!/bin/bash 
+
+##############################################################################
+#
+# Identification:
+#     Support script for script sync_tom_and_cat.
+#
+# Description:
+#     See sync_tom_and_cat.
+#
+# Output:
+#     All output goes to stdout for sync_tom_and_cat to do with it what it will. 
+#
+# Exit status:
+#     Following unix convention, this script exits with 0 on success, and
+#     non-zero if there was an error. 
+#
+# Author:
+#     Kobus Barnard
+#
+##############################################################################
+
+set -u
+
+# Our exit status will be that of the last command that failed. 
+exit_status=0
+
+# The initial commands in this script executes need to succeed, so we can
+# simplify error handling to trap failures to report them, and then ask bash to
+# exit. 
+set -e
+
+data="/data"
+# For testing. 
+# data="${TOMCAT_DIR}/data"
+
+# Must have trailing slashes for rsync (and paths must be devoid of spaces).
+cat_data_dir="${data}/cat/LangLab/experiments/"
+tom_data_dir="${data}/tom/LangLab/experiments/"
+
+# Generic error reporting for basic commands
+trap 'exit_status=$?;
+      echo 
+      echo TRP: Command on or near line $LINENO of $0 failed with status $exit_status 
+      echo RAW: $BASH_COMMAND
+      #
+      # The following naive parsing and eval assumes a limited number of cases
+      # of commands, all of which are in this file. In other words, this is OK,
+      # since all failures should be tested.
+      # 
+      clean_cmd=$(echo ${BASH_COMMAND} | sed "s/2>.*//")
+      # echo CMD: ${clean_cmd} 1>&2;
+      #
+      # Extract command from a=$(b).`
+      clean_cmd=$(echo ${clean_cmd} | sed "s/.*=\$(\(.*\))$/\1/")
+      #
+      eval echo EXP: ${clean_cmd}
+      echo ' ERR
+
+date_stamp=$(date +%y-%m-%d-%H-%M) 2>&1
+backup_suffix="-RSYNC-${date_stamp}"
+
+mkdir -p "${cat_data_dir}"  2>&1
+mkdir -p "${tom_data_dir}"  2>&1 
+
+rsync_options="-a -u -b --suffix ${backup_suffix}"
+
+if [[ "${IVI_VERBOSE}" != "0" ]]; then
+    rsync_options="-v ${rsync_options}"
+fi 
+
+# If we get this far, there may be some value of doing subsequent rsyncs even if
+# previous ones failed. 
+set +e 
+
+# The following should be fine if we reverse cat and tom, but since cat
+# currently has most of the data to be transfered, we start with it.
+# 
+rsync ${rsync_options} ${cat_data_dir} ${tom_data_dir} 2>&1
+rsync ${rsync_options} ${tom_data_dir} ${cat_data_dir} 2>&1
+
+# Redo the first rsync to make sure we synchronize any backups that the second
+# rsync created. 
+#
+rsync ${rsync_options} ${cat_data_dir} ${tom_data_dir} 2>&1
+
+end_date="$(date)"
+
+exit ${exit_status}
+
