@@ -58,7 +58,6 @@ while getopts ":ha" option; do
 done
 export ALL
 
-data_dir_prefix_tom=/data/tom
 data_dir_prefix_cat=/data/cat
 
 if [[ -z ${DEVELOP+x} ]]; then
@@ -71,6 +70,7 @@ if [[ -z ${GOTO+x} ]]; then
   GOTO=2
 fi
 
+source check_disk_space "$data_dir_prefix_cat"
 source check_global_variables
 source check_data_root_directory
 source check_connections

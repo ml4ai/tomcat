@@ -187,6 +187,7 @@ void Processor::process_message(const json::object& input_message) {
                 publish_heartbeat_message();
             }
         }
+
         // trial stop
         else if (trial_sub_type_stop.compare(input_sub_type) == 0) {
             std::cout << "Trial stopped" << std::endl;
@@ -230,9 +231,11 @@ void Processor::publish_rollcall_response_message(
     output_data["rollcall_id"] =
         val<std::string>(input_data, "rollcall_id", "not_set");
 
-    publish(
-        roll_res_topic, roll_res_type, roll_res_sub_type, input_message,
-	output_data);
+    publish(roll_res_topic,
+            roll_res_type,
+            roll_res_sub_type,
+            input_message,
+            output_data);
 }
 
 // respond to Trial Start message
@@ -267,5 +270,6 @@ void Processor::publish_heartbeat_message() {
     publish(heartbeat_topic,
             heartbeat_type, 
 	    heartbeat_sub_type, 
-	    trial_message, output_data);
+	    trial_message, 
+	    output_data);
 }
