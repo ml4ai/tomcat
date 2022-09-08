@@ -3,5 +3,6 @@
 mosquitto_sub \
 -t "status/tomcat-CDC/heartbeats/heartbeats" \
 -t "agent/tomcat-CDC/coordination_event" \
+-t "agent/control/rollcall/response" \
 -t "agent/tomcat-CDC/versioninfo" | jq
 
