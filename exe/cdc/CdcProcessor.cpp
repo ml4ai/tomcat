@@ -64,7 +64,11 @@ void CdcProcessor::process_message(const json::object& input_message) {
             { "output_topic", cdc_topic },
             { "text", "CDC processor says Hello World!" }};
 
-        publish(cdc_topic, input_message, output_data);
+        publish(cdc_topic,
+                cdc_type,
+		cdc_sub_type,
+                input_message,
+	       	output_data);
     }
 
     // forward the message to base class for further processing

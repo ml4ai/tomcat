@@ -124,10 +124,6 @@ class Processor : public Utils {
     json::object trial_message = json::object();
 
     void publish(const std::string output_topic,
-                 const json::object& input_message,
-                 const json::object& output_data);
-
-    void publish(const std::string output_topic,
                  const std::string output_message_type,
                  const std::string output_sub_type,
                  const json::object& input_message,

@@ -48,7 +48,11 @@ void ReferenceProcessor::process_message(const json::object& input_message) {
                 { "output_topic", output_topic },
                 { "text", "ReferenceProcessor says Hello World!" }};
 
-            publish(output_topic, input_message, output_data);
+            publish(output_topic, 
+                    "not_set",
+                    "not_set",
+                    input_message,
+                    output_data);
         }
     }
 

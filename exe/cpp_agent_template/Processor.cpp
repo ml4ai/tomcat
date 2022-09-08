@@ -108,13 +108,6 @@ std::vector<std::string> Processor::get_output_topics() {
     return get_array_values(publishes, "topic");
 }
 
-// Convenience method for publication without message_type or sub_type
-void Processor::publish(const std::string output_topic,
-                        const json::object& input_message,
-                        const json::object& output_data) {
-
-    publish(output_topic, "not_set", "not_set", input_message, output_data);
-}
 
 // Compose a complete message for publication
 void Processor::publish(const std::string output_topic,
