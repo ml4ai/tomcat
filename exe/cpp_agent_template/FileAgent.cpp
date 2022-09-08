@@ -55,7 +55,7 @@ FileAgent::FileAgent(
     int line_count = 0;
     while (std::getline(input_file, line)) {
         json::object message = parse_json(line);
-        processor.process_message(message);
+	process_message(message);
         line_count ++;
     }
 

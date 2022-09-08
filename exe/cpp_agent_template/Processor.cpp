@@ -109,16 +109,12 @@ std::vector<std::string> Processor::get_output_topics() {
 }
 
 // process messages with Message Bus identifiers that match ours
-void Processor::process_message(const json::object& input_message) {
-
-    std::string input_topic = val<std::string>(input_message, "topic");
+void Processor::process_message(const std::string input_topic,
+                                const std::string input_type,      
+                                const std::string input_sub_type,
+                                const json::object& input_message) {
+	
     traffic_in.push_back(input_topic);
-
-    json::object input_header = val<json::object>(input_message, "header");
-    std::string input_type = val<std::string>(input_header, "message_type");
-
-    json::object msg = val<json::object>(input_message, "msg");
-    std::string input_sub_type = val<std::string>(msg, "sub_type");
 
     // trial message
     if ((trial_topic.compare(input_topic) == 0) &&
@@ -131,9 +127,6 @@ void Processor::process_message(const json::object& input_message) {
 	    traffic_in.clear();
 	    traffic_out.clear();
             traffic_in.push_back(input_topic);
-            // set the testbed version if the trial header has it
-            testbed_version = 
-                val<std::string>(input_header, "version", testbed_version);
             trial_message = input_message;
             publish_version_info_message(input_message);
             if (running) {
@@ -197,6 +190,11 @@ void Processor::publish_rollcall_response_message(
 // respond to Trial Start message
 void Processor::publish_version_info_message(
     const json::object& input_message) {
+
+    // set the testbed_version global if the trial header has it
+    json::object input_header = val<json::object>(input_message, "header");
+    testbed_version = 
+        val<std::string>(input_header, "version", testbed_version);
 
     // create version info data
     json::object output_data = {

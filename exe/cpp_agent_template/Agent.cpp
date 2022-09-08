@@ -29,8 +29,21 @@ void Agent::configure(const json::object& config) {
     }
 }
 
+// Forward the message to the Processor with the Message Bus ID fields
 void Agent::process_message(const json::object& input_message) {
-    processor.process_message(input_message);
+
+    std::string input_topic = val<std::string>(input_message, "topic");
+
+    json::object input_header = val<json::object>(input_message, "header");
+    std::string input_type = val<std::string>(input_header, "message_type");
+
+    json::object msg = val<json::object>(input_message, "msg");
+    std::string input_sub_type = val<std::string>(msg, "sub_type");
+
+    processor.process_message(input_topic,
+                              input_type,
+                              input_sub_type,
+                              input_message);
 }
 
 void Agent::start() {

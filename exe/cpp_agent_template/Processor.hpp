@@ -134,7 +134,10 @@ class Processor : public Utils {
   public:
     Processor();
     virtual void configure(const json::object& config, Agent *agent);
-    virtual void process_message(const json::object& message);
+    virtual void process_message(const std::string input_topic,
+                                 const std::string input_type,
+                                 const std::string input_sub_type,
+                                 const json::object& input_message);
     void process_next_message();
     void publish_heartbeat_message();
     void start();

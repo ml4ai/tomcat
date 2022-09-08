@@ -26,11 +26,14 @@ class CdcProcessor : public Processor {
 
     json::object find_evidence(const json::object &input_file);
 
-  public:
+    public:
 
     CdcProcessor() : Processor() {}
 
     void configure(const json::object& config, Agent *agent);
 
-    void process_message(const json::object& message) override;
+    void process_message(const std::string input_topic,
+                         const std::string input_type,
+                         const std::string input_sub_type,
+                         const json::object& input_message) override;
 };

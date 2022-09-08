@@ -32,9 +32,10 @@ void ReferenceProcessor::configure(
 }
 
 // process a custom-defined message.
-void ReferenceProcessor::process_message(const json::object& input_message) {
-
-    std::string input_topic = val<std::string>(input_message, "topic");
+void ReferenceProcessor::process_message(const std::string input_topic,
+                                         const std::string input_type,
+                                         const std::string input_sub_type,
+                                         const json::object& input_message) {
 
     // Process the message if subscribed to the topic
     if (contains(input_topics, input_topic)) {
@@ -57,5 +58,8 @@ void ReferenceProcessor::process_message(const json::object& input_message) {
     }
 
     // forward the message to base class for further processing
-    Processor::process_message(input_message);
+    Processor::process_message(input_topic,
+                               input_type,
+                               input_sub_type,
+                               input_message);
 }

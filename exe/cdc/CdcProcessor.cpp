@@ -45,15 +45,10 @@ json::object CdcProcessor::find_evidence(
 }
 
 // process a Dialog Agent message
-void CdcProcessor::process_message(const json::object& input_message) {
-
-    std::string input_topic = val<std::string>(input_message, "topic");
-
-    json::object input_header = val<json::object>(input_message, "header");
-    std::string input_type = val<std::string>(input_header, "message_type");
-
-    json::object input_msg = val<json::object>(input_message, "msg");
-    std::string input_sub_type = val<std::string>(input_msg, "sub_type");
+void CdcProcessor::process_message(const std::string input_topic,
+                                   const std::string input_type,
+                                   const std::string input_sub_type,
+                                   const json::object& input_message) {
 
     // process Dialog Agent Message
     if ((dialog_topic.compare(input_topic) == 0) &&
@@ -64,7 +59,10 @@ void CdcProcessor::process_message(const json::object& input_message) {
     }
 
     // forward the message to base class for further processing
-    Processor::process_message(input_message);
+    Processor::process_message(input_topic,
+                               input_type,
+                               input_sub_type,
+                               input_message);
 }
 
 // publish output message
