@@ -1,4 +1,0 @@
-#!/bin/bash
-
-mosquitto_sub -t "agent/dialog" | jq
-
