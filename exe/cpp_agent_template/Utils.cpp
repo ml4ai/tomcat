@@ -44,3 +44,4 @@ std::string Utils::get_timestamp() {
                boost::posix_time::microsec_clock::universal_time()) +
            "Z";
 }
+

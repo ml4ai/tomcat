@@ -31,7 +31,8 @@ class Utils {
     }
 
     // return T value for key or default T if key not found
-    template <class T> T val(const json::object& src, const std::string key) {
+    template <class T>
+    T val(const json::object& src, const std::string key) {
         return val(src, key, T());
     }
 
@@ -45,4 +46,14 @@ class Utils {
         return std::find(i.begin(), i.end(), t) != i.end();
     }
 
+    // add the key value pair from src to dst if the value exists
+    template <class T>
+    void add_if(const json::object &src,
+                json::object &dst,
+                const std::string key) {
+        T value = val<T>(src, key);
+	if(!value.empty()) {
+	    dst[key] = value;
+	}
+    }
 };
