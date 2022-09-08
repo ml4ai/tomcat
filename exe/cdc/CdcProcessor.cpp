@@ -35,14 +35,16 @@ bool CdcProcessor::look_for_label(
     return false;
 }
 
+json::object CdcProcessor::find_evidence(
+    const json::object& input_message) {
 
-void CdcProcessor::publish_coordination_message(
-    const json::object &evidence) {
+    json::object evidence = {
+        { "evidence", "goes here" }};
 
+    return evidence;
 }
 
-
-// process a custom-defined message.
+// process a Dialog Agent message
 void CdcProcessor::process_message(const json::object& input_message) {
 
     std::string input_topic = val<std::string>(input_message, "topic");
@@ -58,19 +60,22 @@ void CdcProcessor::process_message(const json::object& input_message) {
         (dialog_type.compare(input_type) == 0) &&
         (dialog_sub_type.compare(input_sub_type) == 0)) {
 
-        // create a data element
-        json::object output_data = {
-            { "input_topic", input_topic },
-            { "output_topic", cdc_topic },
-            { "text", "CDC processor says Hello World!" }};
-
-        publish(cdc_topic,
-                cdc_type,
-		cdc_sub_type,
-                input_message,
-	       	output_data);
+        publish_coordination_message(input_message);
     }
 
     // forward the message to base class for further processing
     Processor::process_message(input_message);
+}
+
+// publish output message
+void CdcProcessor::publish_coordination_message(
+    const json::object& input_message) {
+
+    const json::object evidence = find_evidence(input_message);
+
+    publish(cdc_topic,
+            cdc_type,
+            cdc_sub_type,
+            input_message,
+            evidence);
 }
