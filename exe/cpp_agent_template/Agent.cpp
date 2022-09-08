@@ -29,6 +29,18 @@ void Agent::configure(const json::object& config) {
     }
 }
 
+void Agent::process_message(const json::object& input_message) {
+    processor.process_message(input_message);
+}
+
+void Agent::start() {
+    processor.start();
+}
+
+void Agent::stop() {
+    processor.stop();
+}
+
 // return JSON parsed from input or empty object if not valid JSON
 json::object Agent::parse_json(const std::string text) {
     json_parser.reset();

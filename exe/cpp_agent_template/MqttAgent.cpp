@@ -99,7 +99,7 @@ void MqttAgent::process_next_message() {
         int sz = message_queue.size();
         std::cout << "Processing " << topic << ", ";
         std::cout << sz << " in queue" << std::endl;
-        processor.process_message(copy);
+        process_message(copy);
     }
 }
 
@@ -125,11 +125,12 @@ void MqttAgent::start() {
     // start the asynchronous Message queue monitor
     queue_future =
         std::async(std::launch::async, &MqttAgent::check_queue, this);
-    processor.start();
+
+    Agent::start();
 }
 
 void MqttAgent::stop() {
-    processor.stop();
+    Agent::stop();
     running = false;
     queue_future.wait();
     std::cout << app_name << " stopped." << std::endl;
