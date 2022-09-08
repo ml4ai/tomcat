@@ -79,6 +79,9 @@ class Processor : public Utils {
     void publish_heartbeats();
     std::string status = "uninitialized";
 
+    // traffic reporting
+    std::vector<std::string> traffic_out, traffic_in;
+
   protected:
     // subscription
     json::array subscribes = json::array();
@@ -142,5 +145,4 @@ class Processor : public Utils {
     void stop();
     std::vector<std::string> get_input_topics();
     std::vector<std::string> get_output_topics();
-    std::vector<std::string> traffic_out, traffic_in;
 };
