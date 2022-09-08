@@ -10,17 +10,21 @@ class Agent;
 class CdcProcessor : public Processor {
 
     // subscription
-    const std::string input_topic = "agent/dialog";
-    const std::string input_type = "event";
-    const std::string input_sub_type = "Event:dialogue_event";
+    const std::string dialog_topic = "agent/dialog";
+    const std::string dialog_type = "event";
+    const std::string dialog_sub_type = "Event:dialogue_event";
+    std::vector<std::string> input_topics;
 
     // publication
-    const std::string output_topic = "agent/tomcat-CDC/coordination_event";
-    const std::string output_type = "status";
-    const std::string output_sub_type = "Event:dialog_coordination_event";
+    const std::string cdc_topic = "agent/tomcat-CDC/coordination_event";
+    const std::string cdc_type = "status";
+    const std::string cdc_sub_type = "Event:dialog_coordination_event";
+    std::vector<std::string> output_topics;
+    void publish_coordination_message(const json::object &evidence);
     
-    // topics found in the config file
-    std::vector<std::string> input_topics, output_topics;
+    // Simple function that allows you to look for a simple label
+    bool look_for_label(const json::array &extractions,
+		        const std::string label);
 
   public:
 
