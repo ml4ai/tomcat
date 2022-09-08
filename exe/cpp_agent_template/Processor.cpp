@@ -216,13 +216,16 @@ void Processor::publish_rollcall_response_message(
     time(&now);
     int uptime = now - start_time;
 
+    // get rollcall ID from input data
     json::object input_data = val<json::object>(input_message, "data");
-    json::object output_data;
-    output_data["version"] = agent_version;
-    output_data["uptime"] = uptime;
-    output_data["status"] = "up";
-    output_data["rollcall_id"] =
+    std::string rollcall_id = 
         val<std::string>(input_data, "rollcall_id", "not_set");
+
+    json::object output_data = {
+        { "version", agent_version },
+        { "uptime", uptime },
+        { "status", "up" },
+        { "rollcall_id", rollcall_id }};
 
     publish(roll_res_topic,
             roll_res_type,
@@ -236,13 +239,13 @@ void Processor::publish_version_info_message(
     const json::object& input_message) {
 
     // create version info data
-    json::object output_data;
-    output_data["agent_name"] = agent_name;
-    output_data["owner"] = owner;
-    output_data["version"] = agent_version;
-    output_data["source"] = testbed_source;
-    output_data["publishes"] = publishes;
-    output_data["subscribes"] = subscribes;
+    json::object output_data = {
+        { "agent_name", agent_name },
+        { "owner", owner },
+        { "version", agent_version },
+        { "source", testbed_source },
+        { "publishes", publishes },
+        { "subscribes", subscribes }};
 
     publish(version_topic,
             version_type,
@@ -255,10 +258,10 @@ void Processor::publish_version_info_message(
 void Processor::publish_heartbeat_message() {
 
     // create heartbeat data
-    json::object output_data;
-    output_data["running"] = running;
-    output_data["state"] = "ok";
-    output_data["status"] = status;
+    json::object output_data = {
+        { "running", running },
+        { "state", "ok" },
+        { "status", status }};
 
     publish(heartbeat_topic,
             heartbeat_type, 
