@@ -15,7 +15,8 @@ class Agent : public Utils {
 
     Processor &processor; 
 
-  protected:
+    protected:
+
     std::string app_name;
 
     json::object parse_json(const std::string text);
@@ -27,8 +28,9 @@ class Agent : public Utils {
 
     void process_message(const json::object& input_message);
 
-  public:
+    public:
+
     Agent(Processor &processor): processor(processor) {}
     virtual void process_next_message() {}
-    virtual void publish(json::object& message) {}
+    virtual void publish(const json::object& message) {}
 };

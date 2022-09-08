@@ -67,6 +67,6 @@ FileAgent::FileAgent(
 }
 
 // write the message to the output file, including the topic
-void FileAgent::publish(json::object& message) {
+void FileAgent::publish(const json::object& message) {
     output_file << json::serialize(message) << std::endl;
 }

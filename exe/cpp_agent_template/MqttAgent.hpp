@@ -34,7 +34,7 @@ class MqttAgent : public Agent {
     MqttAgent(const json::object& config, Processor &processor);
 
     /* send output to the message bus */
-    void publish(json::object& message) override;
+    void publish(const json::object& message) override;
 
     void process_next_message() override;
 };

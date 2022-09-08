@@ -16,5 +16,5 @@ class FileAgent : public Agent {
     FileAgent(const json::object& config, Processor &processor);
 
     // write output to the filesystem
-    void publish(json::object& message) override;
+    void publish(const json::object& message) override;
 };

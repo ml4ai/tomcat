@@ -157,6 +157,7 @@ void Processor::process_message(const std::string input_topic,
              (roll_req_sub_type.compare(input_sub_type) == 0)) {
         publish_rollcall_response_message(input_message);
     }
+
     agent->process_next_message();
 }
 
@@ -237,12 +238,13 @@ void Processor::publish(const std::string output_topic,
 
     std::string timestamp = get_timestamp();
 
-    // Common msg struct existing fields
+    // Common msg struct fields
     json::object output_msg = {
         { "message_type", output_sub_type },
         { "source", agent_name },
         { "version", agent_version },
         { "timestamp", timestamp }};
+
     // Common msg struct fields that may or may not exist
     json::object input_msg = val<json::object>(input_message, "msg");
     add_if<std::string>(input_msg, output_msg, std::string("experiment_id"));

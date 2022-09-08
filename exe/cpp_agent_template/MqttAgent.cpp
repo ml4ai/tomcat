@@ -103,18 +103,21 @@ void MqttAgent::process_next_message() {
     }
 }
 
-void MqttAgent::publish(json::object& message) {
+void MqttAgent::publish(const json::object& output_message) {
     if (running) {
-        std::string topic = val<std::string>(message, "topic");
+        std::string topic = val<std::string>(output_message, "topic");
         if (topic.empty()) {
             std::cerr << "MqttAgent::publish ERROR:";
             std::cerr << "No topic in message." << std::endl;
-            std::cerr << message << std::endl;
+            std::cerr << output_message << std::endl;
             return;
         }
-        message.erase("topic"); // do not publish topic with message on bus
+
+	// Do not publish the topic to the Message Bus
+	json::object no_topic_copy = json::object(output_message);
+        no_topic_copy.erase("topic"); 
         std::cout << "Publishing to " << topic << std::endl;
-        mqtt_client->publish(topic, json::serialize(message));
+        mqtt_client->publish(topic, json::serialize(no_topic_copy));
     }
 }
 
