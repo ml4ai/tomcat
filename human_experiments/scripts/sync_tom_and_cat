@@ -1,0 +1,87 @@
+#!/bin/bash 
+
+##############################################################################
+#
+# Identification:
+#     Synchronizes data between two cross mounted disks on LangLab computers
+#     tom and cat. 
+#
+# Description:
+#     This script synchronizes data between two cross mounted disks on LangLab
+#     computers tom and cat. The two data stores are set at the beginning of the
+#     script, and we assume they will not change very often.  In the rare case
+#     that there are two files that have the same name but are different, we
+#     move the older one to have a dated suffix. 
+#
+#     This script should be run as sudo on either cat or tom. Generally, it
+#     should be called right after data collection by the master "uber" script.
+#     In addition, it should be called by the scripts that pull data IVILAB
+#     servers. 
+#     
+#     We assume that this script lives in ${HOME}/tomcat/scripts, which should
+#     be symbolic link to the current code repo. Since this script should be run
+#     as sudo on a linux machine, ${HOME} is generally /root. 
+#
+#     This script relies on the UID for tom on tom is the same as the UID for
+#     cat on cat. This "feature" might be confusing, but so far it has not
+#     caused grief. 
+#
+# Output: 
+#     All output, including error output, goes to stdout, and is also appended
+#     to ${HOME}/tomcat/logs/sync_tom_and_cat.log. Because of this logging, in
+#     scripts, redirecting stdout to /dev/null might make sense. However, one
+#     should always check the exit status.
+#
+# Exit status:
+#     Following unix convention, this script exits with 0 on success, and
+#     non-zero if there was an error. 
+#
+# Author:
+#     Kobus Barnard
+#
+##############################################################################
+
+set -u 
+
+# Obscure bash code to set IVI_VERBOSE to 1 if it is set but NULL, 0 if unset,
+# and retain its value otherwise. Don't overthink bash syntax---it is not good
+# for you. We have this after the '-u' to test if this is valid on all bash
+# variants we come across. 
+#
+export IVI_VERBOSE=${IVI_VERBOSE-0}
+if [[ "${IVI_VERBOSE}" == "" ]]; then
+    export IVI_VERBOSE="1"
+fi 
+
+export TOMCAT_DIR="${HOME}/tomcat" 
+
+# Since this is run as sudo, we control the meaning of basic commands by
+# limiting the path to standard root controlled directories. 
+export PATH="/usr/bin:/bin:${TOMCAT_DIR}/scripts"
+
+# If this fails, we simply die, because we are not ready to do anything else. 
+set -e
+log_dir=${TOMCAT_DIR}/logs
+mkdir -p ${log_dir}
+log_file="${log_dir}/sync_tom_and_cat.log"
+# Test writing to log_file.
+touch "${log_file}" 
+
+# We want to execute sync_tom_and_cat_2, and report its error. Any other issues
+# are about logging, but where would we report that? The fall back would be to
+# send mail. Maybe in the next version. 
+#
+set +e 
+
+echo "============================================================================" | tee -a ${log_file}
+echo "Script sync_tom_and_cat_2 starting on: $(date)" | tee -a ${log_file}
+echo " " | tee -a ${log_file}
+
+set -o pipefail 
+sync_tom_and_cat_2 | tee -a ${log_file}
+exit_status=$?
+
+echo "Script sync_tom_and_cat exiting with status ${exit_status} on: $(date)" | tee -a ${log_file}
+
+exit ${exit_status}
+
