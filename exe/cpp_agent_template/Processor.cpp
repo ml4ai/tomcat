@@ -108,46 +108,6 @@ std::vector<std::string> Processor::get_output_topics() {
     return get_array_values(publishes, "topic");
 }
 
-
-// Compose a complete message for publication
-void Processor::publish(const std::string output_topic,
-                        const std::string output_message_type,
-                        const std::string output_sub_type,
-                        const json::object& input_message,
-                        const json::object& output_data) {
-
-    std::string timestamp = get_timestamp();
-
-    // Common msg struct existing fields
-    json::object output_msg = {
-        { "message_type", output_sub_type },
-        { "source", agent_name },
-        { "version", agent_version },
-        { "timestamp", timestamp }};
-    // Common msg struct fields that may or may not exist
-    json::object input_msg = val<json::object>(input_message, "msg");
-    add_if<std::string>(input_msg, output_msg, std::string("experiment_id"));
-    add_if<std::string>(input_msg, output_msg, std::string("trial_id"));
-    add_if<std::string>(input_msg, output_msg, std::string("replay_id"));
-    add_if<std::string>(input_msg, output_msg, std::string("replay_root_id"));
-
-    // compose output message
-    json::object output_message = {
-        { "topic", output_topic },
-	{ "header", {
-	    { "message_type", output_message_type },
-	    { "timestamp", timestamp },
-	    { "version", testbed_version }}},
-	{ "msg", output_msg },
-	{ "data", output_data }};
-
-    // publish output message
-    agent->publish(output_message);
-
-    // log outbound traffic
-    traffic_out.push_back(output_topic);
-}
-
 // process messages with Message Bus identifiers that match ours
 void Processor::process_message(const json::object& input_message) {
 
@@ -268,4 +228,43 @@ void Processor::publish_heartbeat_message() {
 	    heartbeat_sub_type, 
 	    trial_message, 
 	    output_data);
+}
+
+// Compose a complete message for publication
+void Processor::publish(const std::string output_topic,
+                        const std::string output_message_type,
+                        const std::string output_sub_type,
+                        const json::object& input_message,
+                        const json::object& output_data) {
+
+    std::string timestamp = get_timestamp();
+
+    // Common msg struct existing fields
+    json::object output_msg = {
+        { "message_type", output_sub_type },
+        { "source", agent_name },
+        { "version", agent_version },
+        { "timestamp", timestamp }};
+    // Common msg struct fields that may or may not exist
+    json::object input_msg = val<json::object>(input_message, "msg");
+    add_if<std::string>(input_msg, output_msg, std::string("experiment_id"));
+    add_if<std::string>(input_msg, output_msg, std::string("trial_id"));
+    add_if<std::string>(input_msg, output_msg, std::string("replay_id"));
+    add_if<std::string>(input_msg, output_msg, std::string("replay_root_id"));
+
+    // compose output message
+    json::object output_message = {
+        { "topic", output_topic },
+	{ "header", {
+	    { "message_type", output_message_type },
+	    { "timestamp", timestamp },
+	    { "version", testbed_version }}},
+	{ "msg", output_msg },
+	{ "data", output_data }};
+
+    // publish output message
+    agent->publish(output_message);
+
+    // log outbound traffic
+    traffic_out.push_back(output_topic);
 }
