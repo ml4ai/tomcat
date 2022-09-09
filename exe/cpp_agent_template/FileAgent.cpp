@@ -50,7 +50,6 @@ FileAgent::FileAgent(
     }
 
     // process the input file
-//    std::cout << "Processing input file..." << std::endl;
     std::string line;
     int line_count = 0;
     while (std::getline(input_file, line)) {

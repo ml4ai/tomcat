@@ -203,6 +203,10 @@ void Processor::process_message(const std::string topic,
             return;
 	}
 
+	if(!running) {
+	    return;
+	}
+
         // set global heartbeat message components and publish
         heartbeat_header = 
             new_header(header,timestamp, heartbeat_message_type);
@@ -240,10 +244,6 @@ void Processor::process_message(const std::string topic,
 
 // can be called asynchronously
 void Processor::publish_heartbeat_message() {
-
-    if(!running) {
-        return;
-    }
 
     // refresh the timestamps
     std::string timestamp = get_timestamp();

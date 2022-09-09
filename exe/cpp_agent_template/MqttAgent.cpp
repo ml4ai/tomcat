@@ -103,7 +103,7 @@ void MqttAgent::process_next() {
         message_queue.pop_front();
         std::string topic = val<std::string>(copy, "topic");
         int sz = message_queue.size();
-	if(sz > 2) {
+	if(sz > 1) {
             std::cout << sz << " messages in queue" << std::endl;
 	}
         process(topic, copy);
