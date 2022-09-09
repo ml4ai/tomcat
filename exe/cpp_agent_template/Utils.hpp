@@ -46,7 +46,7 @@ class Utils {
 
     // copy the key value pair from src to dst if the value exists
     template <class T>
-    void add_if(const json::object &src,
+    void copy_if(const json::object &src,
                 json::object &dst,
                 const std::string key) {
         T value = val<T>(src, key);

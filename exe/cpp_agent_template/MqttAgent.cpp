@@ -86,6 +86,7 @@ void MqttAgent::check_queue() {
     }
 }
 
+// the processor is requesting the next message in the queue
 void MqttAgent::process_next_message() {
     if (message_queue.empty()) {
         busy = false;
@@ -99,25 +100,15 @@ void MqttAgent::process_next_message() {
         int sz = message_queue.size();
         std::cout << "Processing " << topic << ", ";
         std::cout << sz << " in queue" << std::endl;
-        process_message(copy);
+        processor.process_message(topic, copy);
+	log_subscription_activity(topic);
     }
 }
 
-void MqttAgent::publish(const json::object& output_message) {
+void MqttAgent::publish(const std::string topic, const json::object& message) {
     if (running) {
-        std::string topic = val<std::string>(output_message, "topic");
-        if (topic.empty()) {
-            std::cerr << "MqttAgent::publish ERROR:";
-            std::cerr << "No topic in message." << std::endl;
-            std::cerr << output_message << std::endl;
-            return;
-        }
-
-	// Do not publish the topic to the Message Bus
-	json::object no_topic_copy = json::object(output_message);
-        no_topic_copy.erase("topic"); 
-        std::cout << "Publishing to " << topic << std::endl;
-        mqtt_client->publish(topic, json::serialize(no_topic_copy));
+        mqtt_client->publish(topic, json::serialize(message));
+	log_publication_activity(topic);
     }
 }
 
@@ -128,19 +119,19 @@ void MqttAgent::start() {
     // start the asynchronous Message queue monitor
     queue_future =
         std::async(std::launch::async, &MqttAgent::check_queue, this);
-
-    Agent::start();
+    processor.start();
 }
 
 void MqttAgent::stop() {
-    Agent::stop();
+    processor.stop();
     running = false;
     queue_future.wait();
     std::cout << app_name << " stopped." << std::endl;
     int sz = message_queue.size();
     // advise if any input was unprocessed.
     if (sz > 0) {
-        std::cout << "Unprocessed input messages left in queue: ";
+        std::cout << "Unprocessed messages remaining in queue: ";
         std::cout << sz << std::endl;
     }
+    summarize_activity();
 }

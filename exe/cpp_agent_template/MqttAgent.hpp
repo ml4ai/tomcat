@@ -11,7 +11,7 @@
 
 namespace json = boost::json;
 
-/** Agent class that manages MQTT traffic  */
+// Agent class that manages MQTT traffic
 class MqttAgent : public Agent {
 
     std::shared_ptr<mqtt::async_client> mqtt_client;
@@ -23,18 +23,19 @@ class MqttAgent : public Agent {
     std::future<void> queue_future;
     void check_queue();
 
-    // A FIFO queue of messages from the bus
+    // A FIFO queue of messages from the Message Bus
     std::deque<json::object> message_queue;
 
   public:
-    void start() override;
-    void stop() override;
+    void start();
+    void stop();
 
-    /** Constructor */
+    // Constructor 
     MqttAgent(const json::object& config, Processor &processor);
 
-    /* send output to the message bus */
-    void publish(const json::object& message) override;
+    // write a message to the Message Bus 
+    void publish(const std::string topic, 
+                 const json::object& message) override;
 
     void process_next_message() override;
 };

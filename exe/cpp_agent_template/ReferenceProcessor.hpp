@@ -19,7 +19,5 @@ class ReferenceProcessor : public Processor {
     void configure(const json::object& config, Agent *agent);
 
     void process_message(const std::string input_topic,
-                         const std::string input_type,      
-                         const std::string input_sub_type,
                          const json::object& input_message) override;
 };

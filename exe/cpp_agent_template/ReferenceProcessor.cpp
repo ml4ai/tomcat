@@ -32,34 +32,33 @@ void ReferenceProcessor::configure(
 }
 
 // process a custom-defined message.
-void ReferenceProcessor::process_message(const std::string input_topic,
-                                         const std::string input_type,
-                                         const std::string input_sub_type,
-                                         const json::object& input_message) {
+void ReferenceProcessor::process_message(const std::string topic,
+                                         const json::object& message) {
+
+    std::string timestamp = get_timestamp();
+
+    json::object header = val<json::object>(message, "header");
+    json::object msg = val<json::object>(message, "msg");
 
     // Process the message if subscribed to the topic
-    if (contains(input_topics, input_topic)) {
+    if (contains(input_topics, topic)) {
 
         // publish the output message on each of the output topics
         for (auto& output_topic : output_topics) {
 
-            // create a basic data element
-            json::object output_data = {
-                { "input_topic", input_topic },
-                { "output_topic", output_topic },
-                { "text", "ReferenceProcessor says Hello World!" }};
+            // create a basic message
+            json::object new_message = {
+                { "header", new_header(header, timestamp, "not_set") },
+                { "msg", new_msg(msg, timestamp, "not_set") },
+                { "data", {
+                    { "input_topic", topic },
+                    { "output_topic", output_topic },
+                    { "text", "ReferenceProcessor says Hello World!" }}}};
 
-            publish(output_topic, 
-                    "not_set",
-                    "not_set",
-                    input_message,
-                    output_data);
+            publish(output_topic, new_message);
         }
     }
 
     // forward the message to base class for further processing
-    Processor::process_message(input_topic,
-                               input_type,
-                               input_sub_type,
-                               input_message);
+    Processor::process_message(topic, message);
 }
