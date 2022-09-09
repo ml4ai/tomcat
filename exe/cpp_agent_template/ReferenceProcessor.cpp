@@ -36,7 +36,6 @@ void ReferenceProcessor::configure(
 void ReferenceProcessor::process_message(const std::string topic,
                                          const json::object& message) {
 
-    std::string timestamp = get_timestamp();
 
     json::object header = val<json::object>(message, "header");
     json::object msg = val<json::object>(message, "msg");
@@ -46,6 +45,8 @@ void ReferenceProcessor::process_message(const std::string topic,
 
         // publish to each of the publication topics
         for (auto& publication_topic : publication_topics) {
+
+            std::string timestamp = get_timestamp();
 
             // create a basic message
             json::object new_message = {
