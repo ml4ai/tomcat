@@ -7,18 +7,29 @@
 
 namespace json = boost::json;
 
-
 void CdcProcessor::configure(
     const json::object& config,
     Agent *agent) {
 
-    // add input subscriptions
-    add_subscription(dialog_topic, dialog_type, dialog_sub_type);
+    // base class configuration
+    Processor::configure(config, agent);
 
-    // add output to publications
+    // add Message Bus info
+    add_subscription(dialog_topic, dialog_type, dialog_sub_type);
     add_publication(cdc_topic, cdc_type, cdc_sub_type);
 
-    Processor::configure(config, agent);
+    // read the label pairs to be used in testing
+    label_pairs = val<json::array>(config, "check_label_seq");
+
+    // report the label configuration
+    std::cout << "CDC Processor test label pairs:" << std::endl;
+    for (size_t i = 0; i < label_pairs.size(); i++) {
+        json::value value = label_pairs.at(i);
+        json::object object = json::value_to<json::object>(value);
+        std::string label1 = val<std::string>(object, "label1");
+        std::string label2 = val<std::string>(object, "label2");
+        std::cout << i << "\t" << label1 << ", " << label2 << std::endl;
+    }
 }
 
 // Simple function that allows you to look for a simple label
@@ -36,7 +47,7 @@ bool CdcProcessor::look_for_label(
 }
 
 json::object CdcProcessor::find_evidence(
-    const json::object& input_message) {
+    const json::object& message) {
 
     json::object evidence = {
         { "evidence", "goes here" }};
@@ -44,36 +55,45 @@ json::object CdcProcessor::find_evidence(
     return evidence;
 }
 
-// process a Dialog Agent message
-void CdcProcessor::process_message(const std::string input_topic,
-                                   const std::string input_type,
-                                   const std::string input_sub_type,
-                                   const json::object& input_message) {
+// Process any message
+void CdcProcessor::process_message(const std::string topic,
+                                   const std::string type,
+                                   const std::string sub_type,
+                                   const json::object& message) {
+
+    // base class message processing
+    Processor::process_message(topic, type, sub_type, message);
 
     // process Dialog Agent Message
-    if ((dialog_topic.compare(input_topic) == 0) &&
-        (dialog_type.compare(input_type) == 0) &&
-        (dialog_sub_type.compare(input_sub_type) == 0)) {
+    if ((dialog_topic.compare(topic) == 0) &&
+        (dialog_type.compare(type) == 0) &&
+        (dialog_sub_type.compare(sub_type) == 0)) {
 
-        publish_coordination_message(input_message);
-    }
+	// make sure participant ID is not "Server"
+	const json::object data = val<json::object>(message, "data");
+	const std::string participant_id =
+            val<std::string>(data, "participant_id", "not_set");
+	if(participant_id.compare("Server") == 0) {
+	    return;
+        }
 
-    // forward the message to base class for further processing
-    Processor::process_message(input_topic,
-                               input_type,
-                               input_sub_type,
-                               input_message);
+	// enqueue the message while maintaining the queue size
+        if (utterance_queue.size() == utterance_window_size) {
+            utterance_queue.pop_front();
+        }
+        utterance_queue.push_back(message);
+
+	// look for label
+	
+
+        publish_cdc_message(message);
+    } 
 }
 
 // publish output message
-void CdcProcessor::publish_coordination_message(
-    const json::object& input_message) {
+void CdcProcessor::publish_cdc_message(const json::object& message) {
 
-    const json::object evidence = find_evidence(input_message);
+    const json::object evidence = find_evidence(message);
 
-    publish(cdc_topic,
-            cdc_type,
-            cdc_sub_type,
-            input_message,
-            evidence);
+    publish(cdc_topic, cdc_type, cdc_sub_type, message, evidence);
 }
