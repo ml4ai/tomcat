@@ -7,7 +7,6 @@
 namespace json = boost::json;
 
 void Agent::configure(const json::object& config) {
-
     processor.configure(config, this);
 
     std::string agent_name = val<std::string>(config, "agent_name");
@@ -18,32 +17,25 @@ void Agent::configure(const json::object& config) {
 
     // advise of subscribed topics
     std::cout << "Subscription topics:" << std::endl;
-    for (std::string i : processor.get_input_topics()) {
-        std::cout << "\t" << i << std::endl;
+    for (std::string topic : processor.get_input_topics()) {
+        std::cout << "\t" << topic << std::endl;
     }
 
     // advise of published topics
     std::cout << "Publication topics:" << std::endl;
-    for (std::string i : processor.get_output_topics()) {
-        std::cout << "\t" << i << std::endl;
+    for (std::string topic : processor.get_output_topics()) {
+        std::cout << "\t" << topic << std::endl;
     }
 }
 
-// Forward the message to the Processor with the Message Bus ID fields
-void Agent::process_message(const json::object& input_message) {
-
-    std::string input_topic = val<std::string>(input_message, "topic");
-
-    json::object input_header = val<json::object>(input_message, "header");
-    std::string input_type = val<std::string>(input_header, "message_type");
-
-    json::object msg = val<json::object>(input_message, "msg");
-    std::string input_sub_type = val<std::string>(msg, "sub_type");
-
-    processor.process_message(input_topic,
-                              input_type,
-                              input_sub_type,
-                              input_message);
+// Extract the Message Bus ID fields and send the message to the Processor.
+void Agent::process_message(const json::object& message) {
+    json::object header = val<json::object>(message, "header");
+    json::object msg = val<json::object>(message, "msg");
+    processor.process_message(val<std::string>(message, "topic"),
+                              val<std::string>(header, "message_type"),
+                              val<std::string>(msg, "sub_type"),
+                              message);
 }
 
 void Agent::start() {

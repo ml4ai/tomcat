@@ -15,6 +15,9 @@ class Utils {
 
   public:
     void count_keys(std::vector<std::string> keys);
+    std::string get_timestamp();
+    std::vector<std::string> get_array_values(const json::array& array,
+                                              const std::string key);
 
     // return T value for key or fallback T if key not found
     template <class T>
@@ -36,17 +39,12 @@ class Utils {
         return val(src, key, T());
     }
 
-    std::string get_timestamp();
-
-    std::vector<std::string> get_array_values(const json::array& array,
-                                              const std::string key);
-
     // Return true if the iterator class I contains the instance of T
     template <class I, class T> bool contains(I i, T t) {
         return std::find(i.begin(), i.end(), t) != i.end();
     }
 
-    // add the key value pair from src to dst if the value exists
+    // copy the key value pair from src to dst if the value exists
     template <class T>
     void add_if(const json::object &src,
                 json::object &dst,
