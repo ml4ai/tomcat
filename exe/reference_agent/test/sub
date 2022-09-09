@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Authors: Joseph Astier, Adarsh Pyarelal
+
+
+mosquitto_sub \
+-t "reference_agent_output_topic_1" \
+-t "reference_agent_output_topic_2" \
+-t "agent/control/rollcall/response" \
+-t "status/AC_UAZ_TA1_ReferenceAgent/heartbeats" \
+-t "agent/AC_UAZ_TA1_ReferenceAgent/versioninfo" | jq
