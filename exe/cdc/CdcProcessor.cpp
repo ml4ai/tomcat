@@ -57,16 +57,24 @@ json::object CdcProcessor::find_evidence(
 
 // Process any message
 void CdcProcessor::process_message(const std::string topic,
-                                   const std::string type,
-                                   const std::string sub_type,
                                    const json::object& message) {
 
     // base class message processing
-    Processor::process_message(topic, type, sub_type, message);
+    Processor::process_message(topic, message);
+
+    std::string timestamp = get_timestamp();
+
+    json::object header = val<json::object>(message, "header");
+    json::object msg = val<json::object>(message, "msg");
+
+    // filter message response by topic, message_type, and sub_type
+    std::string message_type = val<std::string>(header, "message_type");
+    std::string sub_type = val<std::string>(msg, "sub_type");
+
 
     // process Dialog Agent Message
     if ((dialog_topic.compare(topic) == 0) &&
-        (dialog_type.compare(type) == 0) &&
+        (dialog_type.compare(message_type) == 0) &&
         (dialog_sub_type.compare(sub_type) == 0)) {
 
 	// make sure participant ID is not "Server"
@@ -95,5 +103,4 @@ void CdcProcessor::publish_cdc_message(const json::object& message) {
 
     const json::object evidence = find_evidence(message);
 
-    publish(cdc_topic, cdc_type, cdc_sub_type, message, evidence);
 }

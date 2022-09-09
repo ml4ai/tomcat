@@ -40,7 +40,5 @@ class CdcProcessor : public Processor {
     void configure(const json::object& config, Agent *agent);
 
     void process_message(const std::string topic,
-                         const std::string type,
-                         const std::string sub_type,
                          const json::object& message) override;
 };
