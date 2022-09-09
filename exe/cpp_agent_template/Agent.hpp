@@ -13,9 +13,19 @@ class Agent : public Utils {
     // only process JSON messages
     json::stream_parser json_parser;
 
-    Processor &processor; 
+    // messages processed
+    std::vector<std::string> subscription_activity;
+
+    // messages published
+    std::vector<std::string> publication_activity;
 
     protected:
+
+    void log_subscription_activity(const std::string topic);
+    void log_publication_activity(const std::string topic);
+    void summarize_activity();
+
+    Processor &processor; 
 
     std::string app_name;
 
@@ -23,14 +33,14 @@ class Agent : public Utils {
 
     void configure(const json::object& config);
 
-    virtual void start();
-    virtual void stop();
-
     void process_message(const json::object& input_message);
 
     public:
 
     Agent(Processor &processor): processor(processor) {}
     virtual void process_next_message() {}
-    virtual void publish(const json::object& message) {}
+
+    virtual void publish(const std::string topic,
+                         const json::object& output_message) {}
+
 };

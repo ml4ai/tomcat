@@ -28,22 +28,22 @@ void Agent::configure(const json::object& config) {
     }
 }
 
-// Extract the Message Bus ID fields and send the message to the Processor.
-void Agent::process_message(const json::object& message) {
-    json::object header = val<json::object>(message, "header");
-    json::object msg = val<json::object>(message, "msg");
-    processor.process_message(val<std::string>(message, "topic"),
-                              val<std::string>(header, "message_type"),
-                              val<std::string>(msg, "sub_type"),
-                              message);
+void Agent::log_subscription_activity(const std::string topic){
+    subscription_activity.push_back(topic);
 }
 
-void Agent::start() {
-    processor.start();
+void Agent::log_publication_activity(const std::string topic){
+    publication_activity.push_back(topic);
 }
 
-void Agent::stop() {
-    processor.stop();
+// Report the activity on the subscription and publication topics
+void Agent::summarize_activity() {
+    std::cout << "Messages subscribed: ";
+    std::cout << subscription_activity.size() << std::endl;
+    count_keys(subscription_activity);
+    std::cout << "Messages published: ";
+    std::cout << publication_activity.size() << std::endl;
+    count_keys(publication_activity);
 }
 
 // return JSON parsed from input or empty object if not valid JSON
