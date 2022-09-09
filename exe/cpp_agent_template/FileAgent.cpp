@@ -50,14 +50,15 @@ FileAgent::FileAgent(
     }
 
     // process the input file
-    std::cout << "Processing input file..." << std::endl;
+//    std::cout << "Processing input file..." << std::endl;
     std::string line;
     int line_count = 0;
     while (std::getline(input_file, line)) {
         json::object message = parse_json(line);
-	std::string topic = val<std::string>(message, "topic");
-	processor.process_message(topic, message);
-	log_subscription_activity(topic);
+	if(!message.empty()) {
+            std::string topic = val<std::string>(message, "topic");
+            process(topic, message);
+	}
         line_count ++;
     }
     summarize_activity();
@@ -76,5 +77,5 @@ void FileAgent::publish(const std::string topic,
     json::object message_with_topic = json::object(message);
     message_with_topic["topic"] = topic;
     output_file << json::serialize(message_with_topic) << std::endl;
-    log_publication_activity(topic);
+    log_published_topic(topic);
 }

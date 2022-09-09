@@ -15,38 +15,47 @@ void Agent::configure(const json::object& config) {
     app_name = agent_name + " version " + version;
     std::cout << app_name << " initializing ..." << std::endl;
 
-    // advise of subscribed topics
+    // Every topic from which a message may be processed
     std::cout << "Subscription topics:" << std::endl;
-    for (std::string topic : processor.get_input_topics()) {
+    for (std::string topic : processor.get_subscription_topics()) {
         std::cout << "\t" << topic << std::endl;
     }
 
-    // advise of published topics
+    // Every topic to which a message may be published
     std::cout << "Publication topics:" << std::endl;
-    for (std::string topic : processor.get_output_topics()) {
+    for (std::string topic : processor.get_publication_topics()) {
         std::cout << "\t" << topic << std::endl;
     }
 }
 
-void Agent::log_subscription_activity(const std::string topic){
-    subscription_activity.push_back(topic);
+void Agent::process(const std::string topic, const json::object& message) {
+    std::cout << "Processing " << topic << "... " << std::endl;
+    processor.process_message(topic, message);
+    log_processed_topic(topic);
 }
 
-void Agent::log_publication_activity(const std::string topic){
-    publication_activity.push_back(topic);
+// record topic each time we process a message
+void Agent::log_processed_topic(const std::string topic){
+    processed_topics.push_back(topic);
 }
 
-// Report the activity on the subscription and publication topics
+// record topic each time we publish a message
+void Agent::log_published_topic(const std::string topic){
+    std::cout << "  Published " << topic << std::endl;
+    published_topics.push_back(topic);
+}
+
+// Report statistics on the subscription and publication topics
 void Agent::summarize_activity() {
-    std::cout << "Messages subscribed: ";
-    std::cout << subscription_activity.size() << std::endl;
-    count_keys(subscription_activity);
+    std::cout << "Messages processed: ";
+    std::cout << processed_topics.size() << std::endl;
+    count_keys(processed_topics);
     std::cout << "Messages published: ";
-    std::cout << publication_activity.size() << std::endl;
-    count_keys(publication_activity);
+    std::cout << published_topics.size() << std::endl;
+    count_keys(published_topics);
 }
 
-// return JSON parsed from input or empty object if not valid JSON
+// return JSON parsed from text or empty object if not valid JSON
 json::object Agent::parse_json(const std::string text) {
     json_parser.reset();
     json::error_code ec;

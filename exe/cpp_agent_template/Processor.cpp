@@ -117,15 +117,13 @@ void Processor::stop() {
     heartbeat_future.wait();
 }
 
-// Return a vector of the subscribed topics
-// TODO get_subscribed_topics
-std::vector<std::string> Processor::get_input_topics() {
+// Every topic from which a message may be processed
+std::vector<std::string> Processor::get_subscription_topics() {
     return get_array_values(subscribes, "topic");
 }
 
-// TODO get_published_topics
-// Return a vector of the published topics
-std::vector<std::string> Processor::get_output_topics() {
+// Every topic to which a message may be published
+std::vector<std::string> Processor::get_publication_topics() {
     return get_array_values(publishes, "topic");
 }
 
@@ -159,7 +157,7 @@ json::object Processor::new_msg(const json::object msg,
 }
 
 
-// process messages with Message Bus identifiers that match ours
+// process messages from subscribed topics
 void Processor::process_message(const std::string topic,
                                 const json::object& message) {
 
@@ -238,12 +236,14 @@ void Processor::process_message(const std::string topic,
             { "data", new_data }};
         publish(rollcall_response_topic, rollcall_response_message);
     }
-
-    agent->process_next_message();
 }
 
 // can be called asynchronously
 void Processor::publish_heartbeat_message() {
+
+    if(!running) {
+        return;
+    }
 
     // refresh the timestamps
     std::string timestamp = get_timestamp();

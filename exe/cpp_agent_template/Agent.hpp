@@ -10,37 +10,27 @@ namespace json = boost::json;
 // interface for write method
 class Agent : public Utils {
 
-    // only process JSON messages
+    // create json objects from text
     json::stream_parser json_parser;
 
-    // messages processed
-    std::vector<std::string> subscription_activity;
-
-    // messages published
-    std::vector<std::string> publication_activity;
+    // count the messages processed and published
+    std::vector<std::string> processed_topics, published_topics;
 
     protected:
 
-    void log_subscription_activity(const std::string topic);
-    void log_publication_activity(const std::string topic);
-    void summarize_activity();
-
     Processor &processor; 
-
     std::string app_name;
 
-    json::object parse_json(const std::string text);
-
+    void log_processed_topic(const std::string topic);
+    void log_published_topic(const std::string topic);
+    void summarize_activity();
     void configure(const json::object& config);
-
-    void process_message(const json::object& input_message);
+    json::object parse_json(const std::string text);
+    void process(const std::string topic, const json::object& message);
 
     public:
 
     Agent(Processor &processor): processor(processor) {}
-    virtual void process_next_message() {}
-
     virtual void publish(const std::string topic,
-                         const json::object& output_message) {}
-
+                         const json::object& message) {}
 };

@@ -11,6 +11,7 @@
 #include <thread>
 
 namespace json = boost::json;
+using string = std::string;
 
 class Agent;
 
@@ -21,29 +22,29 @@ class Processor : public Utils {
     const std::string testbed_repo = 
         "https://gitlab.asist.aptima.com:5050/asist/testbed";
 
-    // input rollcall request
+    // subscribed rollcall request
     const std::string rollcall_request_topic = 
         "agent/control/rollcall/request";
     const std::string rollcall_request_message_type = "agent";
     const std::string rollcall_request_sub_type = "rollcall:request";
 
-    // input trial start and stop
+    // subscribed trial start and stop
     const std::string trial_topic = "trial";
     const std::string trial_message_type = "trial";
     const std::string trial_sub_type_start = "start";
     const std::string trial_sub_type_stop = "stop";
 
-    // output versioninfo (topic defined at config time)
+    // published versioninfo (topic defined at config time)
     std::string version_info_topic = "version_topic_not_configured";
     const std::string version_info_message_type = "agent";
     const std::string version_info_sub_type = "versioninfo";
 
-    // output heartbeat (topic defined at config time)
+    // published heartbeat (topic defined at config time)
     std::string heartbeat_topic = "heartbeat_topic_not_configured";
     const std::string heartbeat_message_type = "status";
     const std::string heartbeat_sub_type = "heartbeat";
 
-    // output rollcall response
+    // published rollcall response
     const std::string rollcall_response_topic =
         "agent/control/rollcall/response";
     const std::string rollcall_response_message_type = "agent";
@@ -105,16 +106,16 @@ class Processor : public Utils {
                          const std::string sub_type);
 
 
-    void publish(const std::string topic, const json::object& message);
   public:
     Processor();
     virtual void configure(const json::object& config, Agent *agent);
     virtual void process_message(const std::string topic,
                                  const json::object& message);
+    void publish(const std::string topic, const json::object& message);
     void process_next_message();
     void publish_heartbeat_message();
     void start();
     void stop();
-    std::vector<std::string> get_input_topics();
-    std::vector<std::string> get_output_topics();
+    std::vector<std::string> get_subscription_topics();
+    std::vector<std::string> get_publication_topics();
 };

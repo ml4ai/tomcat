@@ -44,11 +44,16 @@ MqttAgent::MqttAgent(
             return;
         }
 
-        json::object obj = parse_json(m_ptr->get_payload_str());
-        obj["topic"] = m_ptr->get_topic();
+        json::object message = parse_json(m_ptr->get_payload_str());
+
+	if(message.empty()) {
+            return;
+        }
+
+        message["topic"] = m_ptr->get_topic();
 
         // enqueue message
-        message_queue.push_back(obj);
+        message_queue.push_back(message);
     });
 
     try {
@@ -65,8 +70,8 @@ MqttAgent::MqttAgent(
 
     Agent::configure(config);
 
-    // subscribe to input topics
-    for (std::string i : processor.get_input_topics()) {
+    // subscribe to topics
+    for (std::string i : processor.get_subscription_topics()) {
         mqtt_client->subscribe(i, 2);
     }
 
@@ -80,14 +85,14 @@ void MqttAgent::check_queue() {
         std::this_thread::sleep_for(std::chrono::seconds(1));
         if (running) {
             if ((message_queue.size() > 0) && !busy) {
-                process_next_message();
+                process_next();
             }
         }
     }
 }
 
-// the processor is requesting the next message in the queue
-void MqttAgent::process_next_message() {
+// process the next message in the queue
+void MqttAgent::process_next() {
     if (message_queue.empty()) {
         busy = false;
     }
@@ -98,17 +103,20 @@ void MqttAgent::process_next_message() {
         message_queue.pop_front();
         std::string topic = val<std::string>(copy, "topic");
         int sz = message_queue.size();
-        std::cout << "Processing " << topic << ", ";
-        std::cout << sz << " in queue" << std::endl;
-        processor.process_message(topic, copy);
-	log_subscription_activity(topic);
+	if(sz > 2) {
+            std::cout << sz << " messages in queue" << std::endl;
+	}
+        process(topic, copy);
+	process_next();
     }
 }
 
+// write the message to the topic on the Message Bus
 void MqttAgent::publish(const std::string topic, const json::object& message) {
+
     if (running) {
         mqtt_client->publish(topic, json::serialize(message));
-	log_publication_activity(topic);
+	log_published_topic(topic);
     }
 }
 
@@ -128,7 +136,7 @@ void MqttAgent::stop() {
     queue_future.wait();
     std::cout << app_name << " stopped." << std::endl;
     int sz = message_queue.size();
-    // advise if any input was unprocessed.
+    // advise if any messages were not processed
     if (sz > 0) {
         std::cout << "Unprocessed messages remaining in queue: ";
         std::cout << sz << std::endl;

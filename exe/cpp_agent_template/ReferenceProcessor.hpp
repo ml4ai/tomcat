@@ -9,8 +9,11 @@ class Agent;
 
 class ReferenceProcessor : public Processor {
 
-    // topics found in the config file
-    std::vector<std::string> input_topics, output_topics;
+    // Every topic from which a message may be processed
+    std::vector<std::string> subscription_topics;
+
+    // Every topic to which a message may be published
+    std::vector<std::string> publication_topics;
 
   public:
 
@@ -18,6 +21,6 @@ class ReferenceProcessor : public Processor {
 
     void configure(const json::object& config, Agent *agent);
 
-    void process_message(const std::string input_topic,
-                         const json::object& input_message) override;
+    void process_message(const std::string topic,
+                         const json::object& message) override;
 };

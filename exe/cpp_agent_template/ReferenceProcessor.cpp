@@ -7,27 +7,28 @@
 
 namespace json = boost::json;
 
+
 void ReferenceProcessor::configure(
     const json::object& config,
     Agent *agent) {
 
-    // add input subscriptions by topic only
+    // add subscriptions by topic only
     json::array subs = val<json::array>(config, "subscribes");
     for (size_t i = 0; i < subs.size(); i++) {
         std::string topic = json::value_to<std::string>(subs.at(i));
         add_subscription(topic, "not_set", "not_set");
     }
-    input_topics = get_input_topics();
+    subscription_topics = get_subscription_topics();
 
-    // add output publications by topic only
+    // add publications by topic only
     json::array pubs = val<json::array>(config, "publishes");
     for (size_t i = 0; i < pubs.size(); i++) {
         std::string topic = json::value_to<std::string>(pubs.at(i));
         add_publication(topic, "not_set", "not_set");
     }
-    output_topics = get_output_topics();
+    publication_topics = get_publication_topics();
 
-    // now add the base class topics
+    // configure the base class last, it will add its own topics
     Processor::configure(config, agent);
 }
 
@@ -41,21 +42,21 @@ void ReferenceProcessor::process_message(const std::string topic,
     json::object msg = val<json::object>(message, "msg");
 
     // Process the message if subscribed to the topic
-    if (contains(input_topics, topic)) {
+    if (contains(subscription_topics, topic)) {
 
-        // publish the output message on each of the output topics
-        for (auto& output_topic : output_topics) {
+        // publish to each of the publication topics
+        for (auto& publication_topic : publication_topics) {
 
             // create a basic message
             json::object new_message = {
                 { "header", new_header(header, timestamp, "not_set") },
                 { "msg", new_msg(msg, timestamp, "not_set") },
                 { "data", {
-                    { "input_topic", topic },
-                    { "output_topic", output_topic },
+                    { "subscription_topic", topic },
+                    { "publication_topic", publication_topic },
                     { "text", "ReferenceProcessor says Hello World!" }}}};
 
-            publish(output_topic, new_message);
+            publish(publication_topic, new_message);
         }
     }
 
