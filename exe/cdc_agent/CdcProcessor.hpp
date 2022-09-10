@@ -27,12 +27,11 @@ class CdcProcessor : public Processor {
     const std::string cdc_sub_type = "Event:dialog_coordination_event";
     void publish_cdc_message(const json::object &evidence);
     
-    // Simple function that allows you to look for a simple label
-    bool look_for_label(const json::array &extractions,
-		        const std::string label);
-
-    json::object find_evidence(const json::object &input_file); // TODO "file"?
-
+    // Coordination detection
+    bool has_label(const json::array &extractions, const std::string label);
+    void check_labels(json::array detected_sequences,
+                      const string label1, 
+                      const string label2);
     public:
 
     CdcProcessor() : Processor() {}
