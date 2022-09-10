@@ -29,7 +29,7 @@ class CdcProcessor : public Processor {
     
     // Coordination detection
     bool has_label(const json::array &extractions, const std::string label);
-    void check_labels(json::array detected_sequences,
+    void check_labels(json::array &detected_sequences,
                       const string label1, 
                       const string label2);
     public:

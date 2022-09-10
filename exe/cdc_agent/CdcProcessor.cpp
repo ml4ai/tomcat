@@ -32,7 +32,7 @@ void CdcProcessor::configure(
     }
 }
 
-void CdcProcessor::check_labels(json::array detected_sequences,
+void CdcProcessor::check_labels(json::array &detected_sequences,
 		                const string label1, 
 				const string label2) {
 
