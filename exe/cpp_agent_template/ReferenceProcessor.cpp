@@ -12,7 +12,7 @@ void ReferenceProcessor::configure(
     const json::object& config,
     Agent *agent) {
 
-    // add subscriptions by topic only
+    // add subscriptions 
     json::array subs = val<json::array>(config, "subscribes");
     for (size_t i = 0; i < subs.size(); i++) {
         std::string topic = json::value_to<std::string>(subs.at(i));
@@ -20,7 +20,7 @@ void ReferenceProcessor::configure(
     }
     subscription_topics = get_subscription_topics();
 
-    // add publications by topic only
+    // add publications 
     json::array pubs = val<json::array>(config, "publishes");
     for (size_t i = 0; i < pubs.size(); i++) {
         std::string topic = json::value_to<std::string>(pubs.at(i));
@@ -35,7 +35,6 @@ void ReferenceProcessor::configure(
 // process a custom-defined message.
 void ReferenceProcessor::process_message(const std::string topic,
                                          const json::object& message) {
-
 
     json::object header = val<json::object>(message, "header");
     json::object msg = val<json::object>(message, "msg");

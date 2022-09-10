@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
     Configurator configurator;
     json::object config = configurator.parse_args(argc, argv);
 
-    // Read user specified filenames
+    // check user-specified filenames
     json::object file = utils.val<json::object>(config, "file");
     std::string input_file = utils.val<std::string>(file, "in");
     std::string output_file = utils.val<std::string>(file, "out");
