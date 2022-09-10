@@ -25,29 +25,29 @@ class Processor : public Utils {
     // subscribed rollcall request
     const std::string rollcall_request_topic = 
         "agent/control/rollcall/request";
-    const std::string rollcall_request_message_type = "agent";
+    const std::string rollcall_request_type = "agent";
     const std::string rollcall_request_sub_type = "rollcall:request";
 
     // subscribed trial start and stop
     const std::string trial_topic = "trial";
-    const std::string trial_message_type = "trial";
+    const std::string trial_type = "trial";
     const std::string trial_sub_type_start = "start";
     const std::string trial_sub_type_stop = "stop";
 
     // published versioninfo (topic defined at config time)
     std::string version_info_topic = "version_topic_not_configured";
-    const std::string version_info_message_type = "agent";
+    const std::string version_info_type = "agent";
     const std::string version_info_sub_type = "versioninfo";
 
     // published heartbeat (topic defined at config time)
     std::string heartbeat_topic = "heartbeat_topic_not_configured";
-    const std::string heartbeat_message_type = "status";
+    const std::string heartbeat_type = "status";
     const std::string heartbeat_sub_type = "heartbeat";
 
     // published rollcall response
     const std::string rollcall_response_topic =
         "agent/control/rollcall/response";
-    const std::string rollcall_response_message_type = "agent";
+    const std::string rollcall_response_type = "agent";
     const std::string rollcall_response_sub_type = "rollcall:response";
 
     // start time of this class instantiation
@@ -58,6 +58,8 @@ class Processor : public Utils {
     bool running = false; // publish regular heartbeats when true
     void publish_heartbeats();
     std::string status = "uninitialized";
+
+    void update_heartbeat_message(json::object header, json::object msg);
 
   protected:
     // subscription
