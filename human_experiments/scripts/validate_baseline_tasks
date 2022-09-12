@@ -8,7 +8,7 @@ source configuration_helpers
 # otherwise it will get the usr/bin option that does not contain all the
 # modules we need.
 # The validation script has some string manipulation functionalities that are only present from Python3.9 and beyond.
-PYTHON="/usr/local/bin/python3.9"
+PYTHON="/usr/bin/python3.9"
 
 if [[ -z ${1+x} ]]; then
   # In case the script is executed standalone.
@@ -25,13 +25,13 @@ else
   PADDING=$2
 fi
 
-__validate_for_client() {
+__validate_from_client() {
   local client_name=$1
   local participant_id=$2
   local padding=$3
 
   if [[ $ALL -ne 1 ]]; then
-    yes_no_question "${padding}Do you validate baseline tasks on ${EMPH}$client_name${NC}?"
+    yes_no_question "${padding}Do you want to validate the baseline tasks on ${EMPH}$client_name${NC}?"
     ans=$?
     padding="$padding "
   fi
