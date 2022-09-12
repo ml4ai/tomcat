@@ -166,12 +166,13 @@ __cleanup_on_client() {
     padding="$padding "
   fi
   if [[ $ALL -eq 1 ]] || [[ $ans -eq 0 ]]; then
-    __stop_face_and_screen_recording "$client_name" "$client_address" "$padding"
-    __stop_audio_streamer "$client_name" "$client_address" "$padding"
-    __stop_minecraft "$client_name" "$client_address" "$padding"
-    __close_applications "$client_name" "$client_address" "$padding"
-    __remove_pupil_symlink "$client_name" "$client_address" "$padding"
-    __close_extra_desktops "$client_name" "$client_address" "$padding"
+    echo -e "${padding}Ending experiment on ${EMPH}$client_name${NC}..."
+    __stop_face_and_screen_recording "$client_name" "$client_address" "$padding "
+    __stop_audio_streamer "$client_name" "$client_address" "$padding "
+    __stop_minecraft "$client_name" "$client_address" "$padding "
+    __close_applications "$client_name" "$client_address" "$padding "
+    __remove_pupil_symlink "$client_name" "$client_address" "$padding "
+    __close_extra_desktops "$client_name" "$client_address" "$padding "
   fi
 
 }
