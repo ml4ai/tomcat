@@ -50,9 +50,9 @@ TIGER_CONFIG_FILE="~/git/ML4AI/tomcat/human_experiments/config/LabRecorder_confi
 LEOPARD_CONFIG_FILE="~/git/ML4AI/tomcat/human_experiments/config/LabRecorder_config/LabRecorder_Leopard_22347.cfg"
 
 # Set vars with Lion, Tigar and Leopard data (StorageLocation) path/file. 
-LION_STORAGE_LOCATION="${EXPERIMENT_DIR}/lion_eeg_fnirs_pupil/lion_eeg_fnirs_pupil.xdf"
-TIGER_STORAGE_LOCATION="${EXPERIMENT_DIR}/tiger_eeg_fnirs_pupil/tiger_eeg_fnirs_pupil.xdf"
-LEOPARD_STORAGE_LOCATION="${EXPERIMENT_DIR}/leopard_eeg_fnirs_pupil/leopard_eeg_fnirs_pupil.xdf"
+LION_STORAGE_LOCATION="${EXPERIMENT_DIR}/lion/eeg_fnirs_pupil/lion_eeg_fnirs_pupil.xdf"
+TIGER_STORAGE_LOCATION="${EXPERIMENT_DIR}/tiger/eeg_fnirs_pupil/tiger_eeg_fnirs_pupil.xdf"
+LEOPARD_STORAGE_LOCATION="${EXPERIMENT_DIR}/leopard/eeg_fnirs_pupil/leopard_eeg_fnirs_pupil.xdf"
 
 
 echo " "
