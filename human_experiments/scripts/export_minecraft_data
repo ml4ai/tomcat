@@ -29,4 +29,4 @@ OUT_DIR="$EXPERIMENT_DIR/minecraft"
 echo -n -e "${PADDING}Press any key to validate the Minecraft data."
 read -r
 
-$PYTHON run_minecraft_metadata_validation.py --p "$EXPERIMENT_DIR/minecraft" | sed "s/^/${PADDING} /"
+$PYTHON run_minecraft_metadata_validation.py --p "$OUT_DIR" | sed "s/^/${PADDING} /"
