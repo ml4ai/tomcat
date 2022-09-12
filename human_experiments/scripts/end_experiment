@@ -174,7 +174,6 @@ __cleanup_on_client() {
     __remove_pupil_symlink "$client_name" "$client_address" "$padding "
     __close_extra_desktops "$client_name" "$client_address" "$padding "
   fi
-
 }
 
 __freeze_experiment_data() {

@@ -128,6 +128,11 @@ __start_baseline_tasks() {
   if [[ $? -eq 0 ]]; then
     __start_on_cheetah "${padding} " "run_client_ai.py" "cooperative_ping_pong" "ai"
   fi
+
+  echo -n -e "${padding}Press any key to validate the baseline tasks data."
+  read -r
+
+  source validate_baseline_tasks "$EXPERIMENT_DIR" "$PADDING"
 }
 
 __start_baseline_tasks "$PADDING"
