@@ -170,7 +170,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--p",
         required=True,
-        help="Path to the folder with the baseline task data",
+        help="Path to the folder with the Minecraft data",
     )
     arg = parser.parse_args()
     rootdir = arg.p
