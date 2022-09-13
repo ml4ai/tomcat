@@ -1,0 +1,8 @@
+#!/bin/bash
+
+
+for i in {1..1000}
+do
+mosquitto_pub -t agent/control/rollcall/request -f  rollcall_request.metadata
+done
+

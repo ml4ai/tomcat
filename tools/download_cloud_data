@@ -77,7 +77,7 @@ if __name__ == '__main__':
         '-b',
         '--bucket',
         default = 'studies.aptima.com/study-3_2022',
-        help = 'Name of Good Cloud bucket'
+        help = 'Name of Google Cloud bucket.  Default is studies.aptima.com/study-3_2022'
     )
     parser.add_argument(
         'datasets', 

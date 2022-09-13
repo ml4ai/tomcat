@@ -1,34 +1,31 @@
 #pragma once
 
-#include <memory>
-#include <string>
-#include <thread>
-#include <future>
+#include "ReferenceProcessor.hpp"
+#include "Utils.hpp"
+#include <boost/json.hpp>
+#include <iostream>
 
-#include <mqtt/async_client.h>
+namespace json = boost::json;
 
-/** Class that represents our agent */
-class Agent {
-    std::shared_ptr<mqtt::async_client> mqtt_client;
+// interface for write method
+class Agent : public Utils {
 
-    /** Flag to specify whether the agent is running or not */
-    bool running = true;
+    // only process JSON messages
+    json::stream_parser json_parser;
 
-    /** std::future object to hold the result of the async heartbeat operation
-     */
-    std::future<void> heartbeat_future;
+  protected:
+    std::string app_name;
 
-    /** Function that processes incoming messages */
-    virtual void process(mqtt::const_message_ptr msg) {};
+    ReferenceProcessor reference_processor = ReferenceProcessor(this);
 
-    /** Function that publishes heartbeat messages while the agent is running */
-    void publish_heartbeats();
+    json::object parse_json(const std::string text);
 
+    void configure(const json::object& config);
+
+    virtual void start() {}
+    virtual void stop() {}
 
   public:
-    /** Constructor */
-    Agent(std::string address);
-
-    /** Stop the agent */
-    void stop();
+    virtual void process_next_message() {}
+    virtual void publish(json::object& message) {}
 };
