@@ -1,0 +1,38 @@
+#!/bin/bash
+
+set -u
+
+source configuration_helpers
+
+# We have to specify the full path of the python interpreter in the clients,
+# otherwise it will get the usr/bin option that does not contain all the
+# modules we need.
+# The validation script has some string manipulation functionalities that are only present from Python3.9 and beyond.
+PYTHON="/usr/bin/python3.9"
+
+if [[ -z ${1+x} ]]; then
+  # In case the script is executed standalone.
+  text="${RED}Please provide an experiment directory as the first argument of "
+  text+="the call to this script.${NC}"
+  echo -e "$text"
+  exit 1
+fi
+EXPERIMENT_DIR=$1
+
+if [[ -z ${2+x} ]]; then
+  PADDING=""
+else
+  PADDING=$2
+fi
+
+source collect_participant_ids "${PADDING} "
+echo -e "${PADDING}Validating the baseline tasks data."
+
+DATA_DIR="$EXPERIMENT_DIR/baseline_tasks"
+
+pushd "$HOME/$SYSTEMS_DIR/tomcat/human_experiments/lab_software/tomcat-baseline-tasks" > /dev/null
+  # We pipe with sed to add the padding to the output
+  $PYTHON run_baseline_tasks_data_validation.py --p "$DATA_DIR" \
+  --s "$LION_PARTICIPANT_ID" --s "$TIGER_PARTICIPANT_ID" --s "$LEOPARD_PARTICIPANT_ID" \
+  --s "ai" --s "exp" | sed "s/^/${PADDING} /"
+popd >/dev/null
